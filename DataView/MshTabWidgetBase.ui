@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MshTabWidgetBase</class>
+ <widget class="QWidget" name="MshTabWidgetBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>229</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>2</number>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="showMeshesCheckBox">
+     <property name="toolTip">
+      <string>Shows / hides mesh objects in the graphics views</string>
+     </property>
+     <property name="text">
+      <string>Show Meshes</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="DataView" name="treeView"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="clearAllPushButton">
+       <property name="text">
+        <string>Remove All</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clearSelectedPushButton">
+       <property name="text">
+        <string>Remove Selected</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showMeshNodesCheckBox">
+     <property name="toolTip">
+      <string>Shows / hides mesh node objects in the graphics views</string>
+     </property>
+     <property name="text">
+      <string>Show Mesh Nodes</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="DataView" name="mshNodeTableView"/>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showMeshElementsCheckBox">
+     <property name="toolTip">
+      <string>Shows / hides mesh element objects in the graphics views</string>
+     </property>
+     <property name="text">
+      <string>Show Mesh Elements</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="DataView" name="mshElemTableView"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DataView</class>
+   <extends>QTreeView</extends>
+   <header>DataView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

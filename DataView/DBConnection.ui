@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DBConnectionDialog</class>
+ <widget class="QDialog" name="DBConnectionDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>388</width>
+    <height>215</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Database Connection Settings</string>
+  </property>
+  <widget class="QDialogButtonBox" name="dbButtonBox">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>170</y>
+     <width>341</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="driverBox">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>20</y>
+     <width>201</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>QDB2 (IBM DB2)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QIBASE (Borland Interbase)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QMYSQL (MySQL)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QOCI (Oracle Call Interface)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QODBC (ODBC / MS SQL Server)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QPSQL (PostgreSQL)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QSQLITE (SQLite v.3 or above)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QSQLITE2 (SQLite v.2)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>QTDS (Sybase Adaptive Server)</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="driverLine">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Database Driver:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="hostnameLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Hostname:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="dbnameLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Database Name:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="usernameLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Username:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="passwordLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Password (optional):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="hostnameLine">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>50</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="dbnameLine">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>80</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="usernameLine">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>110</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="passwordLine">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>140</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>dbButtonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DBConnectionDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dbButtonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DBConnectionDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

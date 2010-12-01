@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindowClass</class>
+ <widget class="QMainWindow" name="MainWindowClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>602</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>OpenGeoSys Data Explorer</string>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>6</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>6</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="VisualizationWidget" name="visualizationWidget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>100</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionExportVRML2"/>
+     <addaction name="actionExportVTK"/>
+     <addaction name="actionExportObj"/>
+     <addaction name="actionExportOpenSG"/>
+    </widget>
+    <addaction name="action_Open"/>
+    <addaction name="action_Database"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="separator"/>
+    <addaction name="menuExport"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>Windows</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="action_DatabaseConnection"/>
+    <addaction name="action_VisualisationSettings"/>
+    <addaction name="action_TrackingSettings"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menuWindows"/>
+   <addaction name="menuSettings"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="mshDock">
+   <property name="windowTitle">
+    <string>Meshes</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="MshTabWidget" name="mshTabWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="stationDock">
+   <property name="windowTitle">
+    <string>Stations</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="StationTabWidget" name="stationTabWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="pntDock">
+   <property name="windowTitle">
+    <string>Points</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="PntTabWidget" name="pntTabWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="lineDock">
+   <property name="windowTitle">
+    <string>Lines</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_6">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="LineTabWidget" name="lineTabWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="vtkVisDock">
+   <property name="windowTitle">
+    <string>Visualization Pipeline</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_7">
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="VtkVisTabWidget" name="vtkVisTabWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="surfaceDock">
+   <property name="windowTitle">
+    <string>Surfaces</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="SurfaceTabWidget" name="surfaceTabWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="action_Open">
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="actionPoints_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Points view</string>
+   </property>
+  </action>
+  <action name="actionLines_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lines view</string>
+   </property>
+  </action>
+  <action name="actionStations_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Stations view</string>
+   </property>
+  </action>
+  <action name="actionMeshes_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Meshes view</string>
+   </property>
+  </action>
+  <action name="action_Database">
+   <property name="text">
+    <string>Database...</string>
+   </property>
+  </action>
+  <action name="action_DatabaseConnection">
+   <property name="text">
+    <string>Database Settings...</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import ...</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionExportVRML2">
+   <property name="text">
+    <string>VRML2</string>
+   </property>
+   <property name="toolTip">
+    <string>Export as VRML2</string>
+   </property>
+  </action>
+  <action name="actionExportObj">
+   <property name="text">
+    <string>Wavefront OBJ</string>
+   </property>
+  </action>
+  <action name="action_VisualisationSettings">
+   <property name="text">
+    <string>Visualisation Settings...</string>
+   </property>
+  </action>
+  <action name="actionExportVTK">
+   <property name="text">
+    <string>VTK</string>
+   </property>
+  </action>
+  <action name="actionExportOpenSG">
+   <property name="text">
+    <string>OpenSG</string>
+   </property>
+   <property name="toolTip">
+    <string>Export to OpenSG binary format</string>
+   </property>
+  </action>
+  <action name="action_TrackingSettings">
+   <property name="text">
+    <string>Tracking Settings...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>VisualizationWidget</class>
+   <extends>QWidget</extends>
+   <header>VisualizationWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PntTabWidget</class>
+   <extends>QWidget</extends>
+   <header>PntTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StationTabWidget</class>
+   <extends>QWidget</extends>
+   <header>StationTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LineTabWidget</class>
+   <extends>QWidget</extends>
+   <header>LineTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MshTabWidget</class>
+   <extends>QWidget</extends>
+   <header>MshTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VtkVisTabWidget</class>
+   <extends>QWidget</extends>
+   <header>VtkVisTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SurfaceTabWidget</class>
+   <extends>QWidget</extends>
+   <header>SurfaceTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>action_Open</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>open()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>223</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>223</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Database</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>openDatabase()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_DatabaseConnection</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>openDatabaseConnection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave_As</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_VisualisationSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showVisalizationPrefsDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_TrackingSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showTrackingSettingsDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>open()</slot>
+  <slot>openDatabase()</slot>
+  <slot>openDatabaseConnection()</slot>
+  <slot>import()</slot>
+  <slot>save()</slot>
+  <slot>showVisalizationPrefsDialog()</slot>
+  <slot>showTrackingSettingsDialog()</slot>
+ </slots>
+</ui>
