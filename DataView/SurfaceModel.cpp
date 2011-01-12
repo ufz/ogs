@@ -17,10 +17,7 @@ SurfaceModel::SurfaceModel( QString name, const GEOLIB::SurfaceVec* surfaceVec, 
 	_rootItem = new TreeItem(rootData, NULL);
 	setData(_surfaceVec, _rootItem);
 
-	_vtkSource = VtkSurfacesSource::New();
-	VtkSurfacesSource* source = static_cast<VtkSurfacesSource*>(_vtkSource);
-	source->SetName(name);
-	source->setSurfaces(_surfaceVec->getVector());
+	this->constructVTKObject();
 }
 
 SurfaceModel::~SurfaceModel()
@@ -33,6 +30,14 @@ int SurfaceModel::columnCount( const QModelIndex& parent /*= QModelIndex()*/ ) c
 	Q_UNUSED(parent)
 
 	return 4;
+}
+
+void SurfaceModel::constructVTKObject()
+{
+	_vtkSource = VtkSurfacesSource::New();
+	VtkSurfacesSource* source = static_cast<VtkSurfacesSource*>(_vtkSource);
+	source->SetName(this->_name);
+	source->setSurfaces(_surfaceVec->getVector());
 }
 
 void SurfaceModel::setData(const GEOLIB::SurfaceVec* surfaceVec, TreeItem* parent)
@@ -76,5 +81,8 @@ void SurfaceModel::setData(const GEOLIB::SurfaceVec* surfaceVec, TreeItem* paren
 void SurfaceModel::updateData()
 {
 	clearData();
+	this->_vtkSource->Delete();
+
 	TreeModel::updateData();
+	this->constructVTKObject();
 }

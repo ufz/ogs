@@ -38,6 +38,7 @@
 #include <QTime>
 #include <QFileInfo>
 #include <QColor>
+#include <QSettings>
 
 #ifdef OGS_USE_OPENSG
 #include "vtkOsgActor.h"
@@ -49,6 +50,11 @@ VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, OSG::SimpleSceneManager* m
 	delete _rootItem;
 	_rootItem = new TreeItem(rootData, NULL);
 	VtkVisPipelineItem::rootNode = _sceneManager->getRoot();
+
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
+	if (backgroundColorVariant != QVariant())
+		this->setBGColor(backgroundColorVariant.value<QColor>());
 }
 #else // OGS_USE_OPENSG
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
@@ -120,6 +126,8 @@ const QColor VtkVisPipeline::getBGColor() const
 
 void VtkVisPipeline::setBGColor(const QColor &color)
 {
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	settings.setValue("VtkBackgroundColor", color);
 	_renderer->SetBackground(color.redF(), color.greenF(), color.blueF());
 }
 

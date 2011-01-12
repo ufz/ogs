@@ -7,6 +7,7 @@
 #define CONDITEM_H
 
 #include "TreeItem.h"
+#include "FEMCondition.h"
 #include "VtkPointsSource.h"
 
 
@@ -19,20 +20,22 @@ class CondItem : public TreeItem
 
 public:
 	/// Constructor, automatically generates VTK object
-	CondItem(const QList<QVariant> &data, TreeItem *parent, const std::vector<CSourceTerm*> *sourceterms) : TreeItem(data, parent)
+	CondItem(const QList<QVariant> &data, TreeItem *parent, const FEMCondition* cond) : TreeItem(data, parent), _item(cond)
 	{
-		(void)sourceterms;
-		_vtkSource = VtkPointsSource::New();
+		//_vtkSource = VtkPointsSource::New();
 	};
 
-	~CondItem()	{ _vtkSource->Delete();	};
+	~CondItem()	{ /*_vtkSource->Delete();*/	};
+
+	const FEMCondition* getItem() { return _item; };
 
 	/// Returns the VTK object.
-	VtkPointsSource* vtkSource() const { return _vtkSource; };	
+	//VtkPointsSource* vtkSource() const { return _vtkSource; };	
 
 
 private:
-	VtkPointsSource* _vtkSource;
+	const FEMCondition* _item;
+	//VtkPointsSource* _vtkSource;
 };
 
 #endif //CONDITEM_H

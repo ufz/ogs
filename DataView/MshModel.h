@@ -29,6 +29,8 @@ public:
 	/// Returns the number of columns used for the data list
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
+	static Mesh_Group::CFEMesh* loadMeshFromFile(std::string fileName);
+
 public slots:
 	/// Adds a new mesh
 	void addMesh(Mesh_Group::CFEMesh* mesh, std::string &name);

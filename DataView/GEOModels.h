@@ -46,6 +46,7 @@ public slots:
 	bool removeStationVec(const std::string &name);
 
 	void addPolylineVec(std::vector<GEOLIB::Polyline*> *lines, const std::string &name, std::map<std::string,size_t>* ply_names = NULL);
+	bool appendPolylineVec(const std::vector<GEOLIB::Polyline*> &polylines, std::string &name);
 	bool removePolylineVec(const std::string &name);
 
 	void addSurfaceVec(std::vector<GEOLIB::Surface*> *surfaces, const std::string &name, std::map<std::string,size_t>* sfc_names = NULL);

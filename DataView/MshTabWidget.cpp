@@ -18,13 +18,14 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QFileDialog>
+#include <QSettings>
 
 MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
 : QWidget(parent)
 {
 	setupUi(this);
 
-	connect(this->clearSelectedPushButton, SIGNAL(clicked()), this, SLOT(removeMesh()));
+	connect(this->addMeshPushButton, SIGNAL(clicked()), this, SLOT(addMeshAction()));
 	connect(this->clearAllPushButton, SIGNAL(clicked()), this, SLOT(removeAllMeshes()));
 
 
@@ -39,6 +40,17 @@ MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
 */
 }
 
+void MshTabWidget::addMeshAction()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName(this, "Select mesh file", settings.value("lastOpenedFileDirectory").toString(), "OpenGeosys mesh files (*.msh);;All files (* *.*)");
+	if (!fileName.isEmpty())
+	{
+		std::string name = fileName.toStdString();
+		Mesh_Group::CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		if (msh) static_cast<MshModel*>(this->treeView->model())->addMesh(msh, name);
+	}
+}
 
 void MshTabWidget::removeMesh()
 {
@@ -59,8 +71,11 @@ void MshTabWidget::contextMenuEvent( QContextMenuEvent* event )
 	QMenu menu;
 	QAction* editMeshAction    = menu.addAction("Edit mesh...");
 	QAction* saveMeshAction    = menu.addAction("Save mesh...");
+	menu.addSeparator();
+	QAction* removeMeshAction    = menu.addAction("Remove...");
 	connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 	connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
+	connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 	menu.exec(event->globalPos());
 }
 
@@ -87,7 +102,7 @@ int MshTabWidget::writeMeshToFile() const
 
 		if (!fileName.empty())
 		{
-			std::fstream* out = new std::fstream(fileName.c_str(), fstream::out);
+			std::fstream* out = new std::fstream(fileName.c_str(), std::fstream::out);
 			if (out->is_open())
 			{
 				mesh->Write(out);

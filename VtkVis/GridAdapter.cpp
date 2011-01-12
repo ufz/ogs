@@ -18,6 +18,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnsignedCharArray.h>
 
+// Conversion from vtkUnstructuredGrid
+#include <vtkUnstructuredGrid.h>
+#include <vtkCell.h>
+
 using Mesh_Group::CFEMesh;
 
 GridAdapter::GridAdapter(const Mesh_Group::CFEMesh* mesh) :
@@ -161,7 +165,7 @@ int GridAdapter::readMeshFromFile(const std::string &filename)
 		trim(line);
 		if (line.compare("$ELEMENTS") == 0) break;
 
-		list<std::string> fields = splitString(line, ' ');
+		std::list<std::string> fields = splitString(line, ' ');
 
 		if (fields.size() >= 4)
 		{
@@ -198,7 +202,7 @@ int GridAdapter::readMeshFromFile(const std::string &filename)
 			trim(line);
 			if (line.compare("$LAYER") == 0) break;
 
-			list<std::string> fields = splitString(line, ' ');
+			std::list<std::string> fields = splitString(line, ' ');
 
 			if (fields.size() >= 6) {
 
@@ -333,4 +337,66 @@ Mesh_Group::CElem* GridAdapter::createElement(size_t node1, size_t node2, size_t
 	elem->SetNodeIndex(2, node3);
 	elem->InitializeMembers();
 	return elem;
+}
+
+Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
+{
+	if (!grid) return NULL;
+
+	Mesh_Group::CFEMesh* mesh = new Mesh_Group::CFEMesh();
+
+	size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
+	size_t nElems = grid->GetNumberOfCells();
+
+	// set mesh nodes
+	double* coords = NULL;
+	for (size_t i=0; i<nNodes; i++)
+	{
+		coords = grid->GetPoints()->GetPoint(i);
+		Mesh_Group::CNode* node = new Mesh_Group::CNode(i, coords[0], coords[1], coords[2]);
+		mesh->nod_vector.push_back(node);
+	}
+
+	// set mesh elements
+	vtkCell* cell(NULL);
+	for (size_t i=0; i<nElems; i++)
+	{
+		Mesh_Group::CElem* elem = new Mesh_Group::CElem();
+
+		MshElemType::type elem_type = MshElemType::INVALID;
+		int cell_type = grid->GetCellType(i);
+
+		switch (cell_type)
+		{
+			case VTK_TRIANGLE:		elem_type=MshElemType::TRIANGLE;	break;
+			case VTK_QUAD:			elem_type=MshElemType::QUAD;		break;
+			case VTK_TETRA:			elem_type=MshElemType::TETRAHEDRON;	break;
+			case VTK_HEXAHEDRON:	elem_type=MshElemType::HEXAHEDRON;	break;
+			case VTK_WEDGE:			elem_type=MshElemType::PRISM;		break;
+		}
+
+		if (elem_type != MshElemType::INVALID)
+			elem->SetElementType(elem_type);
+		else
+		{
+			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..." << std::endl;
+			return NULL;
+		}
+
+		elem->SetPatchIndex(0); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
+
+		cell = grid->GetCell(i);
+		size_t nElemNodes = cell->GetNumberOfPoints();
+		elem->SetNodesNumber(nElemNodes);
+		elem->nodes_index.resize(nElemNodes);
+
+		for (size_t j=0; j<nElemNodes; j++)
+		{
+			elem->SetNodeIndex(j, cell->GetPointId(j));
+		}
+
+		mesh->ele_vector.push_back(elem);
+	}
+	mesh->ConstructGrid();
+	return mesh;
 }

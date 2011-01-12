@@ -22,10 +22,7 @@ PntsModel::PntsModel( QString name, const GEOLIB::PointVec* pntVec, QObject* par
 	_rootItem = new TreeItem(rootData, NULL);
 	setData(pntVec, _rootItem);
 
-	_vtkSource = VtkPointsSource::New();
-	VtkPointsSource* pntsSource = static_cast<VtkPointsSource*>(_vtkSource);
-	pntsSource->SetName(name);
-	pntsSource->setPoints(pntVec->getVector());
+	this->constructVTKObject();
 }
 
 PntsModel::~PntsModel()
@@ -38,6 +35,14 @@ int PntsModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) cons
 	Q_UNUSED(parent)
 
 	return 4;
+}
+
+void PntsModel::constructVTKObject()
+{
+	_vtkSource = VtkPointsSource::New();
+	VtkPointsSource* pntsSource = static_cast<VtkPointsSource*>(_vtkSource);
+	pntsSource->SetName(this->_name);
+	pntsSource->setPoints(_pntVec->getVector());
 }
 
 QVariant PntsModel::data( const QModelIndex& index, int role ) const
@@ -171,5 +176,8 @@ bool PntsModel::setData( const QModelIndex& index, const QVariant& value, int ro
 void PntsModel::updateData()
 {
 	clearData();
+	this->_vtkSource->Delete();
+
 	Model::updateData();
+	this->constructVTKObject();
 }

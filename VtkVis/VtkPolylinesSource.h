@@ -38,7 +38,7 @@ public:
 
 protected:
 	VtkPolylinesSource();
-	~VtkPolylinesSource() {};
+	~VtkPolylinesSource();
 
 	/// Computes the polygonal data object.
 	int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);

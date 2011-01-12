@@ -31,7 +31,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 	size_t nElems = mesh->ele_vector.size();
 	size_t nElemNodes = mesh->ele_vector[0]->nodes_index.Size();
 
-	for (size_t layer_id=0; layer_id<=nLayers; layer_id++)
+	for (size_t layer_id=0; layer_id<nLayers; layer_id++)
 	{
 		// add nodes for new layer
 		size_t node_offset ( nNodes*layer_id );
@@ -44,7 +44,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 			new_mesh->nod_vector.push_back(node);
 		}
 
-		if (layer_id>0) // starting with the 2nd layer prism elements can be created
+		if (layer_id>0) // starting with the 2nd layer prism (or hex) elements can be created
 		{
 			// create prism elements connecting the last layer with the current one
 			node_offset = (layer_id-1)*nNodes;
@@ -76,12 +76,17 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 }
 
 // KR, based on code by WW
-Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh, const std::string &rasterfile, const size_t layer_id)
+Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id)
 {
 	if (msh == NULL) return NULL;
 	if (msh->getNumberOfMeshLayers() >= layer_id)
 	{
-		Mesh_Group::CFEMesh* new_mesh = new Mesh_Group::CFEMesh(msh);
+		if (msh==NULL)
+		{
+			std::cout << "Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." << std::endl;
+			return NULL;
+		}
+		Mesh_Group::CFEMesh* new_mesh = new Mesh_Group::CFEMesh(*msh);
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);
@@ -107,7 +112,12 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 		double locZ[4];
 
 		size_t nNodes = msh->nod_vector.size();
-		for(size_t i=0; i<nNodes; i++)
+		size_t nNodesPerLayer = nNodes / nLayers;
+
+		size_t firstNode = layer_id * nNodesPerLayer;
+		size_t lastNode  = firstNode + nNodesPerLayer;
+
+		for(size_t i=firstNode; i<lastNode; i++)
 		{
 			size_t xPos (static_cast<size_t>(ceil((msh->nod_vector[i]->X() - xDim.first) / delta)));
 			size_t yPos (static_cast<size_t>(ceil((msh->nod_vector[i]->Y() - yDim.first) / delta)));
@@ -204,12 +214,12 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	{
 		for (size_t i=0; i<nNodesPerLayer; i++)
 		{
-		   for (size_t k=0; k<nLayers+1; k++)
+		   for (size_t k=0; k<nLayers; k++)
 		   {
 			  Mesh_Group::CNode* node = mesh->nod_vector[k*nNodesPerLayer+i];
-			  if (k==0) node->SetBoundaryType('0');	// on the bottom
-			  else if (k==nLayers) node->SetBoundaryType('1'); // on the surface
-			  else node->SetBoundaryType('I'); // interior node
+			  if (k==0) node->SetBoundaryType('0');	               // on the surface
+			  else if (k==(nLayers-1)) node->SetBoundaryType('1'); // on the bottom
+			  else node->SetBoundaryType('I');                     // interior node
 		   }
 		}
 	}
@@ -218,13 +228,13 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	size_t flat(0);
 	for (size_t i=0; i<nNodesPerLayer; i++)
 	{
-		vector<long> tmp_connected_nodes;
+		std::vector<long> tmp_connected_nodes;
 		flat = 0;
 
-		for (size_t k=0; k<nLayers-1; k++)
+		for (size_t k=0; k<nLayers-2; k++) // top layer is not checked
 		{
-			Mesh_Group::CNode* bNode = mesh->nod_vector[k*nNodesPerLayer+i];	   // current node
-			Mesh_Group::CNode* tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i]; // some node but one layer above
+			Mesh_Group::CNode* bNode = mesh->nod_vector[k*nNodesPerLayer+i];     // current node
+			Mesh_Group::CNode* tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i]; // same node but one layer below
 
 			if (!tNode->GetMark())
 			{
@@ -251,7 +261,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 		}
 
 		//---- 27.01.2009. WW
-		if (flat==nLayers-1)
+		if (flat==nLayers-2/*1*/)
 		{
 
 			Mesh_Group::CNode* bNode = mesh->nod_vector[nNodesPerLayer+i];
@@ -260,8 +270,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 			for (size_t j=0; j<tmp_connected_nodes.size(); j++)
 				bNode->connected_nodes.push_back(tmp_connected_nodes[j]);
 
-			// eigentlich m�sste man genausogut the tmp-nodes zur topnode direkt dazupacken koennen?!
-			Mesh_Group::CNode* tNode = mesh->nod_vector[nLayers*nNodesPerLayer+i];
+			Mesh_Group::CNode* tNode = mesh->nod_vector[(nLayers-1)*nNodesPerLayer+i];
 			tNode->SetMark(false);
 			bNode->SetZ(tNode->Z());
 			bNode->SetBoundaryType('1');
@@ -278,8 +287,8 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	}
 
 
-	vector<Mesh_Group::CElem*> new_elems;
-	vector<size_t> false_node_idx;
+	std::vector<Mesh_Group::CElem*> new_elems;
+	std::vector<size_t> false_node_idx;
 	size_t nElems = mesh->ele_vector.size();
 	for(size_t i=0; i<nElems; i++)
 	{

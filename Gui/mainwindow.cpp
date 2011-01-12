@@ -5,36 +5,37 @@
 */
 
 #include "mainwindow.h"
-#include "msh_lib.h"
+
+// models
+#include "GEOModels.h"
 #include "PntsModel.h"
 #include "LinesModel.h"
 #include "StationTreeModel.h"
 #include "MshModel.h"
-#include "OGSError.h"
+#include "ConditionModel.h"
+
+//dialogs
 #include "DBConnectionDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "SHPImportDialog.h"
-#include "OGSRaster.h"
-#include "GEOModels.h"
 #include "ListPropertiesDialog.h"
+#include "VtkAddFilterDialog.h"
+#include "VisPrefsDialog.h"
+
+#include "OGSRaster.h"
+#include "OGSError.h"
 #include "Configure.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
-#include "VtkAddFilterDialog.h"
 #include "RecentFiles.h"
-#include "VisPrefsDialog.h"
 #include "TreeModelIterator.h"
 #include "VtkGeoImageSource.h"
 #include "VtkBGImageSource.h"
 #include "DatabaseConnection.h"
 
-#include "modeltest.h"
-
-// GEOLIB includes
-#include "Point.h"
-#include "Polyline.h"
-#include "Station.h"
-
+//test
+#include "fem_ele.h"
+#include "MeshQualityChecker.h"
 // FileIO includes
 #include "OGSIOVer4.h"
 #include "StationIO.h"
@@ -45,29 +46,15 @@
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
 
-// Qt Includes
+// Qt includes
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QGridLayout>
 #include <QSettings>
-#include <QComboBox>
-#include <QImage>
-#include <QPixmap>
 #include <QDesktopWidget>
-#include <QList>
 
-// VTK
-#include <vtkRenderWindow.h>
+// VTK includes
 #include <vtkVRMLExporter.h>
 #include <vtkOBJExporter.h>
-#include <vtkImageData.h>
-#include <vtkQImageToImageSource.h>
-#include <vtkTIFFReader.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageChangeInformation.h>
-#include <vtkRenderer.h>
-#include <vtkPlaneSource.h>
-#include <vtkImageShiftScale.h>
 
 #ifdef OGS_USE_OPENSG
 #include <OpenSG/OSGSceneFileHandler.h>
@@ -83,20 +70,11 @@
 #endif // OGS_USE_VRPN
 
 
-//OSG_USING_NAMESPACE
-
-#include <clocale>
-
-// for sizeof operator
-//#include "rf_st_new.h"
-//#include "rf_bc_new.h"
-
 /// FEM. 11.03.2010. WW
 #include "problem.h"
 Problem *aproblem = NULL;
 
 using namespace FileIO;
-
 
 MainWindow::MainWindow(QWidget *parent /* = 0*/)
 : QMainWindow(parent), _db (NULL)
@@ -118,7 +96,6 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 		this, SLOT(updateDataViews()));						// update data view when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex&)),
 		this, SLOT(showDiagramPrefsDialog(QModelIndex&)));		// connect treeview to diagramview
-
 
 	// point models
 	connect (_geoModels, SIGNAL(pointModelAdded(Model*)),
@@ -156,6 +133,13 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	mshTabWidget->treeView->setModel(_meshModels);
 	connect(mshTabWidget, SIGNAL(requestMeshRemoval(const QModelIndex&)),
 		_meshModels, SLOT(removeMesh(const QModelIndex&)));
+
+	// Setup connections for condition model to GUI
+	_conditionModel = new ConditionModel(_project);
+	conditionTabWidget->treeView->setModel(_conditionModel);
+	connect(conditionTabWidget, SIGNAL(requestConditionRemoval(const QModelIndex&)),
+		_conditionModel, SLOT(removeCondition(const QModelIndex&)));
+
 
 	// vtk visualization pipeline
 #ifdef OGS_USE_OPENSG
@@ -206,6 +190,10 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect((QObject*)(visualizationWidget->vtkPickCallback()), SIGNAL(actorPicked(vtkProp3D*)),
 		vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
 
+
+	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(Mesh_Group::CFEMesh*, std::string&)),
+		_meshModels, SLOT(addMesh(Mesh_Group::CFEMesh*, std::string&)));
+
 	//TEST new ModelTest(_vtkVisPipeline, this);
 
 	// Stack the data dock widgets together
@@ -216,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	// Restore window geometry
 	readSettings();
-	 
+
 	// Get info on screens geometry(ies)
 	_vtkWidget = visualizationWidget->vtkWidget;
 	QDesktopWidget* desktopWidget = QApplication::desktop();
@@ -262,11 +250,16 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect(showMshDockAction, SIGNAL(triggered(bool)), this, SLOT(showMshDockWidget(bool)));
 	menuWindows->addAction(showMshDockAction);
 
+	QAction* showCondDockAction = conditionDock->toggleViewAction();
+	showCondDockAction->setStatusTip(tr("Shows / hides the mesh view"));
+	connect(showCondDockAction, SIGNAL(triggered(bool)), this, SLOT(showMshDockWidget(bool)));
+	menuWindows->addAction(showMshDockAction);
+
 	QAction* showVisDockAction = vtkVisDock->toggleViewAction();
-	showVisDockAction->setStatusTip(tr("Shows / hides the mesh view"));
+	showVisDockAction->setStatusTip(tr("Shows / hides the FEM Conditions view"));
 	connect(showVisDockAction, SIGNAL(triggered(bool)), this, SLOT(showVisDockWidget(bool)));
 	menuWindows->addAction(showVisDockAction);
-	
+
 	// Presentation mode
 	QMenu* presentationMenu = new QMenu();
 	presentationMenu->setTitle("Presentation on");
@@ -314,6 +307,10 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 //	std::cout << "size of CSourceTerm: " << sizeof (CSourceTerm) << std::endl;
 //	std::cout << "size of CBoundaryCondition: " << sizeof (CBoundaryCondition) << std::endl;
 
+	std::cout << "size of CElem: " << sizeof (CElem) << std::endl;
+	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
+	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
+	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -387,7 +384,7 @@ void MainWindow::open()
 	QSettings settings("UFZ", "OpenGeoSys-5");
     QString fileName = QFileDialog::getOpenFileName(this,
 		"Select data file to open", settings.value("lastOpenedFileDirectory").toString(),
-		"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+		"Geosys files (*.gsp *.gli *.gml *.msh *.stn *.cnd);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
      if (!fileName.isEmpty())
 	 {
 		QDir dir = QDir(fileName);
@@ -484,7 +481,7 @@ void MainWindow::loadFile(const QString &fileName)
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QFileInfo fi(fileName);
-    string base = fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
+    std::string base = fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
     if (fi.suffix().toLower() == "gli") {
 #ifndef NDEBUG
     	 QTime myTimer0;
@@ -573,51 +570,26 @@ else if (fi.suffix().toLower() == "gsp")
 	// OpenGeoSys mesh files
     else if (fi.suffix().toLower() == "msh")
 	{
-		std::cout << "FEMRead ... " << std::flush;
-#ifndef NDEBUG
-		QTime myTimer;
-		myTimer.start();
-#endif
-		FEMDeleteAll();
-		CFEMesh* msh = FEMRead(base);
-		if (msh)
-		{
-#ifndef NDEBUG
-			QTime constructTimer;
-			constructTimer.start();
-#endif
-			msh->ConstructGrid();
-#ifndef NDEBUG
-			std::cout << "constructGrid time: " << constructTimer.elapsed() << " ms" << std::endl;
-			QTime fillTransformTimer;
-			fillTransformTimer.start();
-#endif
-			msh->FillTransformMatrix();
-#ifndef NDEBUG
-			std::cout << "fillTransformMatrix time: " << fillTransformTimer.elapsed() << " ms" << std::endl;
-#endif
-			std::string name = fileName.toStdString();
-			_meshModels->addMesh(msh, name);
-
-			//fem_msh_vector.push_back(msh);
-			//CompleteMesh();
-#ifndef NDEBUG
-			std::cout << "Loading time: " << myTimer.elapsed() << " ms" << std::endl;
-#endif
-	        cout << "Nr. Nodes: " << msh->nod_vector.size() << endl;
-		}
-		else
-		{
-			OGSError::box("Failed to load a mesh file.");
-            cout << "Failed to load a mesh file: " << base << endl;
-		}
+		std::string name = fileName.toStdString();
+		CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		if (msh) _meshModels->addMesh(msh, name);
+		else OGSError::box("Failed to load a mesh file.");
+	}
+	// FEM condition files
+	else if (fi.suffix().toLower() == "cnd")
+	{
+		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
+		XMLInterface xml(_geoModels, schemaName);
+		std::vector<FEMCondition*> conditions;
+		xml.readFEMCondFile(conditions, fileName);
+		if (!conditions.empty()) this->_conditionModel->addConditions(conditions);
 	}
 
 	// GMS borehole files
 	else if (fi.suffix().toLower() == "txt")
 	{
-		vector<GEOLIB::Point*> *boreholes = new vector<GEOLIB::Point*>();
-		string name = fi.baseName().toStdString();
+		std::vector<GEOLIB::Point*> *boreholes = new std::vector<GEOLIB::Point*>();
+		std::string name = fi.baseName().toStdString();
 
 		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
 			_geoModels->addStationVec(boreholes, name, GEOLIB::getRandomColor());
@@ -1098,11 +1070,11 @@ void MainWindow::startPresentationMode()
 {
 	// Save the QMainWindow state to restore when quitting presentation mode
 	_windowState = this->saveState();
-	
+
 	// Get the screen number from the QAction which sent the signal
 	QString actionText = static_cast<QAction*>(QObject::sender())->text();
 	int screen = actionText.split(" ").back().toInt();
-	
+
 	// Move the widget to the screen and maximize it
 	// Real fullscreen hides the menu
 	_vtkWidget->setParent(NULL, Qt::Window);

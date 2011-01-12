@@ -36,6 +36,7 @@ public slots:
 	void updateData();
 
 private:
+	void constructVTKObject();
 	void setData(const GEOLIB::PointVec* pntVec, TreeItem* parent);
 
 	const GEOLIB::PointVec* _pntVec;

@@ -8,19 +8,15 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
-#include <QStringList>
-#include <QList>
-#include <QByteArray>
 #include "FileFinder.h"
 #include "ProjectData.h"
 
 class GEOModels;
 class MshModel;
 class StationTreeModel;
+class ConditionModel;
 class VtkVisPipeline;
 class DatabaseConnection;
-class QRect;
-
 
 #ifdef OGS_USE_VRPN
 	class TrackingSettingsWidget;
@@ -94,6 +90,7 @@ private:
 	FileFinder _fileFinder;
 	GEOModels* _geoModels;
 	MshModel* _meshModels;
+	ConditionModel* _conditionModel;
 	ProjectData _project;
 	VtkVisPipeline* _vtkVisPipeline;
 	QList<QRect> _screenGeometries;

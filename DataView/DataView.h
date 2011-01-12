@@ -21,13 +21,12 @@ public:
 	void updateView();
 
 	/// Returns the selected indexes. Overwritten from QTableView to make it public.
-	//QModelIndexList selectedIndexes() const;
+	QModelIndexList selectedIndexes() const;
 
 protected slots:
 	/// Is called when the selection of this view changes. Emits a the signal
 	/// itemSelectionChanged()
-	//void selectionChanged(const QItemSelection &selected,
-	//	const QItemSelection &deselected);
+	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 	/// Selects items without sending signals.
 	//void selectionChangedFromOutside(const QItemSelection &selected,
@@ -37,6 +36,7 @@ protected slots:
 	//void clearSelection();
 
 private:
+
 
 signals:
 	void itemSelectionChanged(const QItemSelection &selected,

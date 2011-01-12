@@ -29,6 +29,10 @@ VtkPolylinesSource::VtkPolylinesSource()
 	GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
 }
 
+VtkPolylinesSource::~VtkPolylinesSource() 
+{
+}
+
 void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
 	this->Superclass::PrintSelf(os,indent);
@@ -76,17 +80,19 @@ int VtkPolylinesSource::RequestData( vtkInformation* request, vtkInformationVect
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
+
 	int lastMaxIndex = 0;
-	for (std::vector<GEOLIB::Polyline*>::const_iterator it = _polylines->begin();
-		it != _polylines->end(); ++it)
+	//for (std::vector<GEOLIB::Polyline*>::const_iterator it = _polylines->begin();
+	//	it != _polylines->end(); ++it)
+	for (size_t j=0; j<_polylines->size(); j++)
 	{
-		const int numPoints = (*it)->getNumberOfPoints();
+		const int numPoints = (*_polylines)[j]->getNumberOfPoints();
 		//const int numLines = numPoints - 1;
 
 		// Generate points
 		for (int i = 0; i < numPoints; i++)
 		{
-			const GEOLIB::Point* point = (**it)[i];
+			const GEOLIB::Point* point = (*(*_polylines)[j])[i];
 			const double* coords = point->getData();
 			newPoints->InsertNextPoint(coords);
 		}

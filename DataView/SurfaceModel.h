@@ -31,6 +31,7 @@ public slots:
 	void updateData();
 
 private:
+	void constructVTKObject();
 	void setData(const GEOLIB::SurfaceVec* surfaceVec, TreeItem* parent);
 
 	const GEOLIB::SurfaceVec* _surfaceVec;

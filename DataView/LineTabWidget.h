@@ -11,6 +11,10 @@
 // ** INCLUDES **
 #include "ui_LineTabWidgetBase.h"
 
+namespace GEOLIB {
+	class Polyline;
+}
+
 /**
  * LineTabWidget
  */
@@ -23,6 +27,8 @@ public:
 
 
 private:
+	/// Actions to be taken after a right mouse click is performed in the station view.
+	void contextMenuEvent( QContextMenuEvent* e );
 
 };
 

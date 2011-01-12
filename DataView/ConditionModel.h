@@ -9,9 +9,8 @@
 // ** INCLUDES **
 #include "TreeModel.h"
 #include "ProjectData.h"
-#include <QVector>
 
-class CSourceTerm;
+class FEMCondition;
 
 /**
  * The ConditionModel handels conditions such as ICs, BCs and STs on geometric objects 
@@ -32,10 +31,21 @@ public:
 	//bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 
 public slots:
-	/// Adds new source terms
-	void addSourceTerms(std::vector<CSourceTerm*> *sourceterms, const QString &name);
-	/// Returns the mesh with the given index.
-	const std::vector<CSourceTerm*> *getSourceTerms(const QModelIndex &idx) const;
+	/// Adds new FEM condition
+	void addCondition(FEMCondition* conditions);
+
+	/// Adds new FEM conditions
+	void addConditions(std::vector<FEMCondition*> &conditions);
+
+	/// Returns the FEM condition set on a GeoObject with the given name.
+	//const FEMCondition* getCondition(const string &name) const;
+
+	/// Removes the FEM condition set on a GeoObject with the given name.
+	//bool removeCondition(const string &name);
+
+	/// Removes the FEM condition with the given index.
+	bool removeCondition(const QModelIndex &idx);
+
 	/// Reloads all items.
 	//void updateData();
 
@@ -47,6 +57,9 @@ private:
 	TreeItem* _icParent;
 	TreeItem* _stParent;
 
+signals:
+	void condAdded(ConditionModel*, const QModelIndex&);
+	void condRemoved(ConditionModel*, const QModelIndex&);
 };
 
 #endif // CONDITIONMODEL_H

@@ -8,7 +8,7 @@
 #define LINESMODEL_H
 
 #include "Model.h"
-#include "TreeItem.h"
+#include "GeoTreeItem.h"
 #include "PolylineVec.h"
 
 #include <QVector>
@@ -27,13 +27,25 @@ public:
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
 public slots:
+	/// Opens a polyline-edit dialog.
+	void callEditPlyDialog();
 	/// Reloads all items.
 	void updateData();
 
 private:
+	/// Reconstructs the VtkPolylinesSource object
+	void constructVTKObject();
+	/// Inserts the polylines data into the TreeModel
 	void setData(const GEOLIB::PolylineVec* polylineVec, TreeItem* parent);
 
 	const GEOLIB::PolylineVec* _polylineVec;
 
+private slots:
+	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
+	void connectPolylineSegments(std::vector<size_t> indexlist, bool, bool);
+
+
+signals:
+	void requestAppendPolylines(const std::vector<GEOLIB::Polyline*> &polylines, std::string &ply_vec_name);
 };
 #endif // LINESMODEL_H

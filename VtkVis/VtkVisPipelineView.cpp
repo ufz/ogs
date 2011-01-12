@@ -28,6 +28,10 @@
 #include <vtkSmartPointer.h>
 #include "VtkGeoImageSource.h"
 
+#include "msh_mesh.h"
+#include <vtkUnstructuredGrid.h>
+#include <vtkXMLUnstructuredGridReader.h>
+#include <vtkGenericDataObjectReader.h>
 
 VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 : QTreeView(parent)
@@ -46,19 +50,28 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 	if (index.isValid())
 	{
 		// check if object is an image data object
-		//int objectType = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()))->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
+		int objectType = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()))->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
 
 		QMenu menu;
 		QAction* addFilterAction = menu.addAction("Add filter...");
-		//QAction* addMeshingAction = NULL;
-		//if (objectType == VTK_IMAGE_DATA) addMeshingAction = menu.addAction("Convert Image to Mesh...");
+		QAction* addMeshingAction = NULL;
+		if (objectType == VTK_IMAGE_DATA) 
+		{
+			addMeshingAction = menu.addAction("Convert Image to Mesh...");
+			connect(addMeshingAction, SIGNAL(triggered()), this, SLOT(convertImageToMesh()));
+		}
+		QAction* addConvertToCFEMeshAction = NULL;
+		if (objectType == VTK_UNSTRUCTURED_GRID) 
+		{
+			addConvertToCFEMeshAction = menu.addAction("Convert to Mesh...");
+			connect(addConvertToCFEMeshAction, SIGNAL(triggered()), this, SLOT(convertVTKToOGSMesh()));
+		}
 		menu.addSeparator();
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
 		QAction* removeAction = menu.addAction("Remove");
 
 		connect(addFilterAction, SIGNAL(triggered()), this, SLOT(addPipelineFilterItem()));
-		//connect(addMeshingAction, SIGNAL(triggered()), this, SLOT(convertImageToMesh()));
 		connect(exportVtkAction, SIGNAL(triggered()), this, SLOT(exportSelectedPipelineItemAsVtk()));
 		connect(exportOsgAction, SIGNAL(triggered()), this, SLOT(exportSelectedPipelineItemAsOsg()));
 		connect(removeAction, SIGNAL(triggered()), this, SLOT(removeSelectedPipelineItem()));
@@ -109,11 +122,31 @@ void VtkVisPipelineView::convertImageToMesh()
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()))->algorithm();
 
-	vtkSmartPointer<VtkGeoImageSource> imageSource = vtkSmartPointer<VtkGeoImageSource>(VtkGeoImageSource::SafeDownCast(algorithm));
-	vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>(imageSource->GetOutput());
+	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
+	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
 
 	Mesh_Group::CFEMesh* mesh = GridAdapter::convertImgToMesh(image, imageSource->getOrigin(), imageSource->getSpacing());
 	// now do something with the mesh (save, display, whatever... )
+	std::string msh_name("NewMesh");
+	emit meshAdded(mesh, msh_name);
+}
+
+void VtkVisPipelineView::convertVTKToOGSMesh()
+{
+	vtkSmartPointer<vtkAlgorithm> algorithm = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()))->algorithm();
+	vtkUnstructuredGrid* grid(NULL);
+
+	vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(algorithm); // for old filetypes
+	if (dataReader) grid = vtkUnstructuredGrid::SafeDownCast(dataReader->GetOutput());
+	else
+	{
+		vtkXMLUnstructuredGridReader* xmlReader = vtkXMLUnstructuredGridReader::SafeDownCast(algorithm); // for new filetypes
+		grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
+	}
+
+	Mesh_Group::CFEMesh* mesh = GridAdapter::convertUnstructuredGrid(grid);
+	std::string msh_name("NewMesh");
+	emit meshAdded(mesh, msh_name);
 }
 
 void VtkVisPipelineView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )

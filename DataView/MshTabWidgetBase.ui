@@ -36,16 +36,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="clearAllPushButton">
+      <widget class="QPushButton" name="addMeshPushButton">
        <property name="text">
-        <string>Remove All</string>
+        <string>Add mesh...</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="clearSelectedPushButton">
+      <widget class="QPushButton" name="clearAllPushButton">
        <property name="text">
-        <string>Remove Selected</string>
+        <string>Remove All</string>
        </property>
       </widget>
      </item>

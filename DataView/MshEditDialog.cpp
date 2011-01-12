@@ -1,5 +1,5 @@
 /**
- * \file DBConnectionDialog.cpp
+ * \file MshEditDialog.cpp
  * 2010/11/09 KR Initial implementation
  */
 
@@ -20,7 +20,7 @@ MshEditDialog::MshEditDialog(const Mesh_Group::CFEMesh* mesh, QDialog* parent)
 	this->gridLayoutLayerMapping->setColumnStretch(1, 200);
 	this->gridLayoutLayerMapping->setColumnStretch(2, 10);
 
-	size_t nLayers = mesh->getNumberOfMeshLayers()+1;
+	size_t nLayers = mesh->getNumberOfMeshLayers();
 	for (size_t i=0; i<nLayers; i++)
 	{
 		QString text = (i) ? "Layer" + QString::number(i) : "Surface";
@@ -65,16 +65,16 @@ void MshEditDialog::accept()
 			}
 			case 1:
 			{
-				size_t nLayers = _msh->getNumberOfMeshLayers()+1;
+				size_t nLayers = _msh->getNumberOfMeshLayers();
 				for (size_t i=0; i<nLayers; i++)
 				{
 					std::string imgPath ( this->_edits[i]->text().toStdString() );
 					if (!imgPath.empty())
 					{
-						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, i);
+						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, nLayers, i);
 					}
 				}
-				if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1);
+				//if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1);
 				break;
 			}
 			default:

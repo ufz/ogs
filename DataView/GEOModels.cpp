@@ -44,6 +44,7 @@ bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points, std::s
 	std::vector<PntsModel*>::iterator it(_pntModels.begin());
 	while (nfound && it != _pntModels.end()) {
 		if (((*it)->name()).contains (qname)) nfound = false;
+		else it++;
 	}
 	if (nfound) std::cerr << "Model not found" << std::endl;
 	else (*it)->updateData ();
@@ -99,7 +100,29 @@ void GEOModels::addPolylineVec( std::vector<GEOLIB::Polyline*> *lines, const std
 
 	PolylinesModel* model = new PolylinesModel(QString::fromStdString(name), this->getPolylineVecObj(name), this);
 	_lineModels.push_back(model);
+
+	connect(model, SIGNAL(requestAppendPolylines(const std::vector<GEOLIB::Polyline*>&, std::string&)),
+		this, SLOT(appendPolylineVec(const std::vector<GEOLIB::Polyline*>&, std::string&)));
+
 	emit polylineModelAdded(model);
+}
+
+bool GEOModels::appendPolylineVec(const std::vector<GEOLIB::Polyline*> &polylines, std::string &name)
+{
+	bool ret (GEOLIB::GEOObjects::appendPolylineVec (polylines, name));
+
+	// search model
+	QString qname (name.c_str());
+	bool nfound (true);
+	std::vector<PolylinesModel*>::iterator it(_lineModels.begin());
+	while (nfound && it != _lineModels.end()) {
+		if (((*it)->name()).contains (qname)) nfound = false;
+		else it++;
+	}
+	if (nfound) std::cerr << "Model not found" << std::endl;
+	else (*it)->updateData ();
+
+	return ret;
 }
 
 bool GEOModels::removePolylineVec( const std::string &name )

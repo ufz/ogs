@@ -12,6 +12,7 @@
 #include "msh_mesh.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
+class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
 
 namespace Mesh_Group
 {
@@ -65,6 +66,9 @@ public:
 
 	/// Converts greyscale image to quad mesh
 	static Mesh_Group::CFEMesh* convertImgToMesh(vtkImageData* img, const std::pair<double,double> &origin, const double &scalingFactor);
+
+	/// Converts a vtkUnstructuredGrid object to a CFEMesh
+	static Mesh_Group::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
 
 private:
 	/// Converts an FEM Mesh to a list of nodes and elements.

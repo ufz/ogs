@@ -31,6 +31,9 @@ private slots:
 	/// Open a dialog for editing meshes.
 	void openMshEditDialog();
 
+	/// Adds a new mesh.
+	void addMeshAction();
+
 	/// Remove the currently selected mesh.
 	void removeMesh();
 

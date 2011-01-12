@@ -3,13 +3,15 @@ set( SOURCES
 	ColorTableModel.cpp
 	ColorTableView.cpp
 	ConditionModel.cpp
+	ConditionTabWidget.cpp
+	ConditionView.cpp
+	DataView.cpp
 	DataViewWidget.cpp
 	DBConnectionDialog.cpp
-	FEMCondition.cpp
 	GEOModels.cpp
+	LineEditDialog.cpp
 	LinesModel.cpp
 	LineTabWidget.cpp
-	DataView.cpp
 	Model.cpp
 	MshEditDialog.cpp
 	MshItem.cpp
@@ -31,10 +33,13 @@ set( MOC_HEADERS
 	ColorTableModel.h
 	ColorTableView.h
 	ConditionModel.h
+	ConditionTabWidget.h
+	ConditionView.h
 	DataView.h
 	DataViewWidget.h
 	DBConnectionDialog.h
 	GEOModels.h
+	LineEditDialog.h
 	LinesModel.h
 	LineTabWidget.h
 	Model.h
@@ -54,15 +59,17 @@ set( MOC_HEADERS
 # Header files
 set( HEADERS
 	CondItem.h
-	FEMCondition.h
 	MshItem.h
 	MshLayerMapper.h
+        GeoTreeItem.h
 )
 
 # UI files
 set( UIS
+	ConditionTabWidgetBase.ui
 	DataViewWidgetBase.ui
 	DBConnection.ui
+	LineEdit.ui
 	LineTabWidgetBase.ui
 	MshEdit.ui
 	MshTabWidgetBase.ui

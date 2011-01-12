@@ -25,8 +25,7 @@ void DataView::updateView()
 }
 
 
-/* Selection/Deselection-Functionality -- currently not implemented
-
+// Selection/Deselection-Functionality -- currently not implemented
 QModelIndexList DataView::selectedIndexes() const
 {
 	return QTreeView::selectedIndexes();
@@ -38,7 +37,7 @@ void DataView::selectionChanged( const QItemSelection &selected, const QItemSele
 	emit itemSelectionChanged(selected, deselected);
 	return QTreeView::selectionChanged(selected, deselected);
 }
-
+/*
 void DataView::selectionChangedFromOutside( const QItemSelection &selected, const QItemSelection &deselected )
 {
 	QItemSelectionModel* selModel = this->selectionModel();
@@ -61,3 +60,4 @@ void DataView::clearSelection()
 	selectionModel()->clearSelection();
 }
 */
+

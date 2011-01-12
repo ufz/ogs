@@ -34,7 +34,7 @@ public:
 	static Mesh_Group::CFEMesh* CreateLayers(const Mesh_Group::CFEMesh* mesh, size_t nLayers, double thickness);
 
 	/// Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-	static Mesh_Group::CFEMesh* LayerMapping(const Mesh_Group::CFEMesh* msh, const std::string &rasterfile, const size_t layer_id);
+	static Mesh_Group::CFEMesh* LayerMapping(const Mesh_Group::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id);
 
 	/// \brief Checks for overlapping nodes between between layers and corrects these errors.
 	/// Note: this method has not been tested yet and will probably fail miserably! Please contact KR
