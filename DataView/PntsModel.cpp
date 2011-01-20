@@ -41,7 +41,7 @@ void PntsModel::constructVTKObject()
 {
 	_vtkSource = VtkPointsSource::New();
 	VtkPointsSource* pntsSource = static_cast<VtkPointsSource*>(_vtkSource);
-	pntsSource->SetName(this->_name);
+	pntsSource->SetName(this->_name + " - Points");
 	pntsSource->setPoints(_pntVec->getVector());
 }
 
