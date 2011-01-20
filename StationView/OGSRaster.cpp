@@ -141,6 +141,10 @@ bool OGSRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	if (tag.compare("NODATA_value")==0) { in >> value; header.noData = atoi(value.c_str()); }
 	else return false;
 
+	// correct raster position by half a pixel for correct visualisation
+	header.x = header.x+(header.cellsize/2);
+	header.y = header.y+(header.cellsize/2);
+
 	return true;
 }
 
