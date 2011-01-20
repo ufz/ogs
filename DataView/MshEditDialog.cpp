@@ -74,7 +74,7 @@ void MshEditDialog::accept()
 						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, nLayers, i);
 					}
 				}
-				//if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1);
+				//if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1); //TODO !!!
 				break;
 			}
 			default:
