@@ -26,7 +26,7 @@ public:
 
 private:
 	void contextMenuEvent( QContextMenuEvent* event );
-	
+
 private slots:
 	/// Open a dialog for editing meshes.
 	void openMshEditDialog();
@@ -43,6 +43,10 @@ private slots:
 	/// Calls the FileDialog to save a mesh to a file.
 	int writeMeshToFile() const;
 
+	/**
+	 * checks the mesh quality
+	 */
+	void checkMeshQuality () const;
 
 signals:
 	void requestMeshRemoval(const QModelIndex&);

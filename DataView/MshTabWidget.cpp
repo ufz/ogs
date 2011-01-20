@@ -13,6 +13,7 @@
 #include "MshModel.h"
 #include "OGSError.h"
 #include "TreeItem.h"
+#include "MeshQualityChecker.h"
 
 #include <QObject>
 #include <QMenu>
@@ -70,10 +71,12 @@ void MshTabWidget::contextMenuEvent( QContextMenuEvent* event )
 {
 	QMenu menu;
 	QAction* editMeshAction    = menu.addAction("Edit mesh...");
+	QAction* checkMeshAction    = menu.addAction("Check mesh quality...");
 	QAction* saveMeshAction    = menu.addAction("Save mesh...");
 	menu.addSeparator();
 	QAction* removeMeshAction    = menu.addAction("Remove...");
 	connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
+	connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 	connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
 	connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 	menu.exec(event->globalPos());
@@ -115,6 +118,25 @@ int MshTabWidget::writeMeshToFile() const
 		else OGSError::box("No file name entered.");
 	}
 	return 0;
+}
+
+void MshTabWidget::checkMeshQuality () const
+{
+	QModelIndex index = this->treeView->selectionModel()->currentIndex();
+	const Mesh_Group::CFEMesh* mesh = static_cast<MshModel*>(this->treeView->model())->getMesh(index)->getCFEMesh();
+
+	if (mesh) {
+		QString msh_name = QString::fromStdString(static_cast<MshModel*>(this->treeView->model())->getMesh(index)->getName());
+		std::string file_name = QFileDialog::getSaveFileName(NULL, "Save histogram as", msh_name, "raw data (*.txt)").toStdString();
+		Mesh_Group::MeshQualityChecker checker (mesh);
+		checker.checkTriangles ();
+
+		std::ofstream out (file_name.c_str());
+		for (size_t k(0); k<100; k++) {
+			out << k/100.0 << " " << checker.getHistogramm()[k] << std::endl;
+		}
+		out.close ();
+	}
 }
 
 /*
