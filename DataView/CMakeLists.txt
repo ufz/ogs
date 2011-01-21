@@ -69,7 +69,7 @@ set( UIS
 	ConditionTabWidgetBase.ui
 	DataViewWidgetBase.ui
 	DBConnection.ui
-	GMSHPrefsDialog.ui
+	GMSHPrefs.ui
 	LineEdit.ui
 	LineTabWidgetBase.ui
 	MshEdit.ui
