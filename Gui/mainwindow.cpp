@@ -17,8 +17,9 @@
 //dialogs
 #include "DBConnectionDialog.h"
 #include "DiagramPrefsDialog.h"
-#include "SHPImportDialog.h"
+#include "GMSHPrefsDialog.h"
 #include "ListPropertiesDialog.h"
+#include "SHPImportDialog.h"
 #include "VtkAddFilterDialog.h"
 #include "VisPrefsDialog.h"
 
@@ -895,6 +896,11 @@ void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
+void MainWindow::callGMSH(std::vector<std::string> selectedGeometries, double param1, double param2, double param3, double param4)
+{
+	std::cout << "Start meshing..." << std::endl;
+}
+
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 {
 	QString listName;
@@ -909,12 +915,18 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 		OGSError::box("No time series data available for borehole.");
 }
 
+void MainWindow::showGMSHPrefsDialog()
+{
+	GMSHPrefsDialog dlg(_geoModels);
+	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string>, double, double, double, double)), 
+		this, SLOT(callGMSH(std::vector<std::string>, double, double, double, double)));
+	dlg.exec();
+}
+
 void MainWindow::showVisalizationPrefsDialog()
 {
 	VisPrefsDialog dlg(_vtkVisPipeline);
 	dlg.exec();
-	//VisPrefsDialog* visPrefs = new VisPrefsDialog(_vtkVisPipeline); // LB memory leak
-    //visPrefs->show();
 }
 
 void MainWindow::showTrackingSettingsDialog()

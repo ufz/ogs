@@ -9,6 +9,7 @@ set( SOURCES
 	DataViewWidget.cpp
 	DBConnectionDialog.cpp
 	GEOModels.cpp
+	GMSHPrefsDialog.cpp
 	LineEditDialog.cpp
 	LinesModel.cpp
 	LineTabWidget.cpp
@@ -39,6 +40,7 @@ set( MOC_HEADERS
 	DataViewWidget.h
 	DBConnectionDialog.h
 	GEOModels.h
+	GMSHPrefsDialog.h
 	LineEditDialog.h
 	LinesModel.h
 	LineTabWidget.h

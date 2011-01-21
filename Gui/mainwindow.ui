@@ -81,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>815</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -117,7 +117,14 @@
     <addaction name="action_VisualisationSettings"/>
     <addaction name="action_TrackingSettings"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionMesh_Generation"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
    <addaction name="menuSettings"/>
   </widget>
@@ -379,6 +386,11 @@
     <string>Tracking Settings...</string>
    </property>
   </action>
+  <action name="actionMesh_Generation">
+   <property name="text">
+    <string>Mesh Generation...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -545,6 +557,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionMesh_Generation</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showGMSHPrefsDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>403</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -554,5 +582,6 @@
   <slot>save()</slot>
   <slot>showVisalizationPrefsDialog()</slot>
   <slot>showTrackingSettingsDialog()</slot>
+  <slot>showGMSHPrefsDialog()</slot>
  </slots>
 </ui>
