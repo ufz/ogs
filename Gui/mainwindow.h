@@ -46,7 +46,7 @@ protected slots:
 
     void open();
 	void save();
-	void callGMSH(std::vector<std::string> selectedGeometries, double param1, double param2, double param3, double param4);
+	void callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4);
 	void exportBoreholesToGMS(std::string listName, std::string fileName);
     void importGMS();
 	void importGoCad();
@@ -73,7 +73,7 @@ protected slots:
 	void on_actionExportVRML2_triggered(bool checked = false);
 	void on_actionExportObj_triggered(bool checked = false);
 	void on_actionExportOpenSG_triggered(bool checked = false);
-	
+
 	void createPresentationMenu();
 	void startPresentationMode();
 	void quitPresentationMode();
