@@ -47,7 +47,7 @@ private slots:
 	void reject();
 
 signals:
-	void requestMeshing(std::vector<std::string> const &, size_t, double, double, double);
+	void requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool);
 
 };
 
