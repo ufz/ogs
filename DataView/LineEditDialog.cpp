@@ -8,10 +8,10 @@
 #include <QStringListModel>
 
 
-LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* parent) 
+LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* parent)
 : QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel)
 {
-	setupUi(this);	
+	setupUi(this);
 
 	size_t nPly(ply_vec.size());
 	QStringList list;

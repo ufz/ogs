@@ -26,6 +26,7 @@ set( HEADERS
 	QNonScalableGraphicsTextItem.h
 	TreeItem.h
 	TreeModelIterator.h
+	StrictDoubleValidator.h
 )
 
 # UI files
