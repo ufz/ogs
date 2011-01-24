@@ -3,7 +3,7 @@
  * 2010/01/21 KR Initial implementation
  */
 
-#include "GeoObjects.h"
+#include "GEOObjects.h"
 #include "GMSHPrefsDialog.h"
 #include <QStringList>
 #include <QStringListModel>
