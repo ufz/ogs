@@ -476,13 +476,11 @@ int DatabaseConnection::loadValues(const int &listID, const int &stationID, cons
  */
 int DatabaseConnection::addListToDB(std::string path, std::string listName, std::string catName, GEOLIB::Station::StationType type)
 {
-	QSqlQuery query;
-	int listID, catID;
-	std::string line;
-	bool status=true, commit=true;
-
 	if (_db.open())
 	{
+		int listID, catID(0);
+		bool status=true, commit=true;
+
 		std::ifstream in( path.c_str() );
 
 		if (!in.is_open())
@@ -494,10 +492,12 @@ int DatabaseConnection::addListToDB(std::string path, std::string listName, std:
 		/* a name for the list in the first line of the file. this name is ignored here because
 		 * the real list name is required as parameter to this method
 		 */
+		std::string line;
 		getline(in, line);
 		if ((line.substr(0,1)).compare("!")==0)
 			line.substr( 1, line.length()-1 );
 
+		QSqlQuery query;
 		query.exec("select max(listid) from lists");
 		if (query.next())
 		{
