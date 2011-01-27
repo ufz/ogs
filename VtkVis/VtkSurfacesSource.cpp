@@ -27,6 +27,8 @@ vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");
 VtkSurfacesSource::VtkSurfacesSource()
 : _surfaces(NULL)
 {
+	this->SetColorBySurface(true);
+
 	this->SetNumberOfInputPorts(0);
 }
 
@@ -123,6 +125,16 @@ int VtkSurfacesSource::RequestInformation( vtkInformation* request, vtkInformati
 
 void VtkSurfacesSource::SetUserProperty( QString name, QVariant value )
 {
-	Q_UNUSED(name);
-	Q_UNUSED(value);
+	VtkAlgorithmProperties::SetUserProperty(name, value);
+
+	if (name.compare("ColorBySurface") == 0)
+	{
+		value.convert(QVariant::Bool);
+		this->SetColorBySurface(value.toBool());
+		this->SetScalarVisibility(value.toBool());
+	}
+
+
+	(*_algorithmUserProperties)[name] = value;
 }
+
