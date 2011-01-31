@@ -31,7 +31,6 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_BINARY_DIR}/Qt/Base
 	${CMAKE_BINARY_DIR}/Qt/Gui
 	${CMAKE_BINARY_DIR}/Qt/DataView
-	${CMAKE_BINARY_DIR}/Qt/StationView
 	${CMAKE_BINARY_DIR}/Qt/StratView
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
@@ -43,7 +42,6 @@ INCLUDE_DIRECTORIES(
 	../../FEM
 	../Base
 	../DataView
-	../StationView
 	../StratView
 	../VtkVis
 	../VtkAct
@@ -80,7 +78,6 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	OGSProject
 	QtBase
 	QtDataView
-	StationView
 	StratView
 	${Shapelib_LIBRARIES}
 	${libtiff_LIBRARIES}
@@ -146,7 +143,6 @@ IF (OGS_VRED_PLUGIN)
 		OGSProject
 		QtBase
 		QtDataView
-		StationView
 		StratView
 		${Shapelib_LIBRARIES}
 		${libtiff_LIBRARIES}

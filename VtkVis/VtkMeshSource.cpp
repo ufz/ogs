@@ -6,6 +6,7 @@
 
 
 #include "VtkMeshSource.h"
+#include "VtkColorLookupTable.h"
 
 // ** VTK INCLUDES **
 #include <vtkCellData.h>
@@ -45,10 +46,12 @@ VtkMeshSource::VtkMeshSource() : _matName("MatIDs")
 
 VtkMeshSource::~VtkMeshSource()
 {
+	/*
 	std::map<std::string, GEOLIB::Color*>::iterator it;
 	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); it++) {
 		delete it->second;
 	}
+	*/
 	delete _grid;
 }
 
@@ -159,30 +162,6 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	output->GetCellData()->AddArray(materialIDs);
 	output->GetCellData()->SetActiveAttribute(_matName, vtkDataSetAttributes::SCALARS);
-
-	if (ColorByMaterial)
-	{
-		// TODO Refactor this to use vtkLookupTable
-		vtkSmartPointer<vtkUnsignedCharArray> matColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-		matColors->SetNumberOfComponents(3);
-		matColors->SetName("MatColors");
-
-		vtkSmartPointer<vtkIntArray> materialIDs = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(_matName));
-
-		this->setColorLookupTable("./BoreholeColourReferenceMesh.txt");
-		if (_colorLookupTable.empty()) std::cout << "No look-up table for stratigraphy-colors specified. Generating colors on the fly..." << std::endl;
-
-		size_t nEntries = materialIDs->GetDataSize();
-		for (size_t i=0; i<nEntries; i++)
-		{
-			const GEOLIB::Color *c (GEOLIB::getColor(materialIDs->GetComponent(i,0), _colorLookupTable));
-			unsigned char color[3] = { (*c)[0], (*c)[1], (*c)[2] };
-			matColors->InsertNextTupleValue(color);
-		}
-
-		output->GetCellData()->AddArray(matColors);
-		output->GetCellData()->SetActiveAttribute("MatColors", vtkDataSetAttributes::SCALARS);
-	}
 
 	return 1;
 }

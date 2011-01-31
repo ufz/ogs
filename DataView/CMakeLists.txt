@@ -5,24 +5,32 @@ set( SOURCES
 	ConditionModel.cpp
 	ConditionTabWidget.cpp
 	ConditionView.cpp
+	DatabaseConnection.cpp
 	DataView.cpp
 	DataViewWidget.cpp
 	DBConnectionDialog.cpp
+	DiagramPrefsDialog.cpp
 	GEOModels.cpp
 	GMSHPrefsDialog.cpp
 	LineEditDialog.cpp
 	LinesModel.cpp
 	LineTabWidget.cpp
+	ListPropertiesDialog.cpp
 	Model.cpp
+	ModelTreeItem.cpp
 	MshEditDialog.cpp
 	MshItem.cpp
 	MshLayerMapper.cpp
 	MshModel.cpp
 	MshTabWidget.cpp
+	OGSRaster.cpp
 	PntsModel.cpp
 	PntTabWidget.cpp
+	QueryResultsDialog.cpp
 	SHPImportDialog.cpp
 	StationTabWidget.cpp
+	StationTreeModel.cpp
+	StationTreeView.cpp
 	SurfaceModel.cpp
 	SurfaceTabWidget.cpp
 	VisPrefsDialog.cpp
@@ -36,22 +44,28 @@ set( MOC_HEADERS
 	ConditionModel.h
 	ConditionTabWidget.h
 	ConditionView.h
+	DatabaseConnection.h
 	DataView.h
 	DataViewWidget.h
 	DBConnectionDialog.h
+	DiagramPrefsDialog.h
 	GEOModels.h
 	GMSHPrefsDialog.h
 	LineEditDialog.h
 	LinesModel.h
 	LineTabWidget.h
+	ListPropertiesDialog.h
 	Model.h
 	MshEditDialog.h
 	MshModel.h
 	MshTabWidget.h
 	PntsModel.h
 	PntTabWidget.h
+	QueryResultsDialog.h
 	SHPImportDialog.h
 	StationTabWidget.h
+	StationTreeModel.h
+	StationTreeView.h
 	SurfaceModel.h
 	SurfaceTabWidget.h
 	VisPrefsDialog.h
@@ -60,17 +74,22 @@ set( MOC_HEADERS
 
 # Header files
 set( HEADERS
+	BaseItem.h
 	CondItem.h
+	GeoTreeItem.h
+	ModelTreeItem.h
 	MshItem.h
 	MshLayerMapper.h
-        GeoTreeItem.h
+	OGSRaster.h
 )
 
 # UI files
 set( UIS
 	ConditionTabWidgetBase.ui
+	DatabaseResultView.ui
 	DataViewWidgetBase.ui
 	DBConnection.ui
+	DiagramPrefs.ui
 	GMSHPrefs.ui
 	LineEdit.ui
 	LineTabWidgetBase.ui
@@ -82,6 +101,12 @@ set( UIS
 	VisPrefs.ui
 	VisualizationWidgetBase.ui
 )
+
+# Put filter in a folder
+SOURCE_GROUP("Dialog Header Files" REGULAR_EXPRESSION "[.]*Dialog.h")
+SOURCE_GROUP("Dialog Source Files" REGULAR_EXPRESSION "[.]*Dialog.cpp")
+SOURCE_GROUP("Data Model Header Files" REGULAR_EXPRESSION "[.]*Item.h|[.]*Model.h|[.]*View.h")
+SOURCE_GROUP("Data Model Source Files" REGULAR_EXPRESSION "[.]*Item.cpp|[.]*Model.cpp|[.]*View.cpp")
 
 # Run Qts user interface compiler uic on .ui files
 qt4_wrap_ui( UI_HEADERS ${UIS} )
@@ -96,8 +121,8 @@ include_directories(
 	.
 	${CMAKE_BINARY_DIR}/Qt/Base
 	${CMAKE_BINARY_DIR}/Qt/DataView
-	${CMAKE_BINARY_DIR}/Qt/StationView/DiagramView
-	${CMAKE_BINARY_DIR}/Qt/StationView
+	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
+	${CMAKE_BINARY_DIR}/Qt/DataView/StratView
 	../../Base
 	../../MathLib
 	../../GEO
@@ -105,12 +130,16 @@ include_directories(
 	../../FEM
 	../../FileIO
 	../Base
-	../StationView
-	../StationView/DiagramView
+	./DiagramView
+	./StratView
 	../VtkVis
 	../VtkAct
 	${CMAKE_SOURCE_DIR}
 	${Shapelib_INCLUDE_DIR}	
+	#${OpenSG_INCLUDE_DIR}
+	#${OpenSGSupportlibs_INCLUDE_DIR}
+	${libtiff_INCLUDE_DIR}
+	${libgeotiff_INCLUDE_DIR}
 )
 
 if (OGS_COMPILE_QVTK)
@@ -143,11 +172,13 @@ add_library( QtDataView STATIC
 # Link Qt library
 target_link_libraries( QtDataView
 	${QT_LIBRARIES}
-	GEO
+	${libtiff_LIBRARIES}
+	${libgeotiff_LIBRARIES}
+	FEM
 	FileIO
+	GEO
 	MSH
 	QtBase
 	DiagramView
-	StationView
 	${Shapelib_LIBRARIES}
 )

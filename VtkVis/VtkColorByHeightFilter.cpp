@@ -26,6 +26,7 @@ VtkColorByHeightFilter::VtkColorByHeightFilter()
 {
 	ColorLookupTable = VtkColorLookupTable::New();
 	ColorLookupTable->GetTableRange(this->_tableRange);
+	ColorLookupTable->setInterpolationType(VtkColorLookupTable::LINEAR);
 	this->_tableRangeScaling = 1.0;
 }
 
