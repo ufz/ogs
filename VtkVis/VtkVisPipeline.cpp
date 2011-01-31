@@ -34,6 +34,10 @@
 #include <vtkXMLStructuredGridReader.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+#include <vtkFieldData.h>
+#include <vtkPointData.h>
+#include <vtkCellData.h>
+
 #include <QString>
 #include <QTime>
 #include <QFileInfo>
@@ -175,10 +179,29 @@ void VtkVisPipeline::loadFromFile(QString filename)
 		{
 			vtkGenericDataObjectReader* oldStyleReader = vtkGenericDataObjectReader::New();
 			oldStyleReader->SetFileName(filename.toStdString().c_str());
-			std::cout << "#scalars: " << oldStyleReader->GetNumberOfScalarsInFile() << std::endl;
-			oldStyleReader->SetScalarsName(oldStyleReader->GetScalarsNameInFile(2));
+			oldStyleReader->ReadAllFieldsOn();
+			oldStyleReader->ReadAllScalarsOn();
+			//std::cout << "#scalars: " << oldStyleReader->GetNumberOfScalarsInFile() << std::endl;
+			//oldStyleReader->SetScalarsName(oldStyleReader->GetScalarsNameInFile(2));
 			oldStyleReader->Update();
-			addPipelineItem(oldStyleReader);
+			vtkDataSet* dataSet = vtkDataSet::SafeDownCast(oldStyleReader->GetOutput());
+			if (dataSet)
+			{
+				vtkPointData* pointData = dataSet->GetPointData();
+				std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+				for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
+					std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+
+				vtkCellData* cellData = dataSet->GetCellData();
+				std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+				for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
+					std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+				
+				addPipelineItem(oldStyleReader);
+			}
+			else
+				std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
+
 			return;
 		}
 		else
