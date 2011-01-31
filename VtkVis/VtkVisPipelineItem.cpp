@@ -267,27 +267,22 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
 
-	vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
+	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
 	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 	if (mapper)
 	{
-		if (vtkProps->GetLookupTable() != NULL) 
-		{
-			_mapper->SetLookupTable(vtkProps->GetLookupTable());
-			double* d = _transformFilter->GetOutput()->GetScalarRange(); //something is wrong here ...
-			//d[0] = 0;
-			//d[1] = 64;
-			_mapper->SetScalarRange(d);
-			_mapper->Update();
-		}
-		else	// default color table
+		if (vtkProps->GetLookupTable() == NULL) // default color table
 		{
 			vtkLookupTable* lut = vtkLookupTable::New();
 			vtkProps->SetLookUpTable(lut);
-			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->Update();
 		}
+		else // specific color table 
+		{
+			_mapper->SetLookupTable(vtkProps->GetLookupTable());
+		}
+		_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
+		_mapper->Update();
 	}
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
