@@ -119,7 +119,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			gridPoints->InsertPoint(i, (*(*nodes)[i])[0], (*(*nodes)[i])[1], (*(*nodes)[i])[2]);
 
 	// Generate attribute vector for material groups
-	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
+ 	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
 		materialIDs->SetName(_matName);
 		materialIDs->SetNumberOfComponents(1);
 		//materialIDs->SetNumberOfTuples(nElems);

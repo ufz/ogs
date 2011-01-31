@@ -187,6 +187,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	_transformFilter->SetTransform(transform);
 
 	_transformFilter->SetInputConnection(_algorithm->GetOutputPort());
+	_transformFilter->Update();
 	_renderer = renderer;
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
@@ -275,9 +276,16 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 		{
 			_mapper->SetLookupTable(vtkProps->GetLookupTable());
 			double* d = _transformFilter->GetOutput()->GetScalarRange(); //something is wrong here ...
-			d[0] = 0;
-			d[1] = 7;
+			//d[0] = 0;
+			//d[1] = 64;
 			_mapper->SetScalarRange(d);
+			_mapper->Update();
+		}
+		else	// default color table
+		{
+			vtkLookupTable* lut = vtkLookupTable::New();
+			vtkProps->SetLookUpTable(lut);
+			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
 			_mapper->Update();
 		}
 	}
