@@ -949,10 +949,11 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 	if (!selectedGeometries.empty()) {
 		std::cout << "Start meshing..." << std::endl;
 
+		QSettings settings("UFZ", "OpenGeoSys-5");
 		QString fileName("");
 		if (!delete_geo_file)
 			fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as",
-					"", "GMSH geometry files (*.geo)");
+					settings.value("lastOpenedFileDirectory").toString(), "GMSH geometry files (*.geo)");
 		else
 			fileName = "tmp_gmsh.geo";
 
@@ -969,8 +970,14 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 			// todo
 		}
 
-		if (delete_geo_file) {
-			// delete tmp_gmsh.geo
+		if (delete_geo_file) { // delete file
+			std::string remove_command ("rm ");
+#ifdef _WIN32
+			remove_command = "del ";
+#endif
+			remove_command += fileName.toStdString();
+			std::cout << "remove command: " << remove_command << std::endl;
+			system(remove_command.c_str());
 		}
 	} else
 		std::cout << "No geometry information selected..." << std::endl;
