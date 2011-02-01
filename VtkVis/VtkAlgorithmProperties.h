@@ -238,6 +238,7 @@ protected:
 	
 	// Properties used in the GUI
 	QString _name;
+	QString _activeAttributeName;
 	
 	QMap<QString, QVariant>* _algorithmUserProperties;
 	QMap<QString, QList<QVariant> >* _algorithmUserVectorProperties;

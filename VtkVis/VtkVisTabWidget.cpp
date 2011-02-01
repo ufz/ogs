@@ -25,6 +25,9 @@
 #include "VtkAlgorithmPropertyCheckbox.h"
 #include "VtkAlgorithmPropertyVectorEdit.h"
 
+#include <vtkPointData.h>
+#include <vtkCellData.h>
+
 VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 : QWidget(parent)
 {
@@ -33,6 +36,8 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 	connect(this->vtkVisPipelineView, SIGNAL(itemSelected(VtkVisPipelineItem*)),
 		this, SLOT(setActiveItem(VtkVisPipelineItem*)));
 
+	connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(const QString&)),
+		this, SLOT(SetActiveAttributeOnItem(const QString&)));
 
 }
 
@@ -56,6 +61,30 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			double scale[3];
 			transform->GetScale(scale);
 			scaleZ->setText(QString::number(scale[2]));
+
+			vtkDataSet* dataSet = vtkDataSet::SafeDownCast(item->algorithm()->GetOutputDataObject(0));
+			QStringList dataSetAttributesList;
+			if (dataSet)
+			{
+				vtkPointData* pointData = dataSet->GetPointData();
+				std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+				for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
+				{
+					std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+					//dataSetAttributesList.push_back(pointData->GetArrayName(i));
+				}
+
+				vtkCellData* cellData = dataSet->GetCellData();
+				std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+				for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
+				{
+					std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+					dataSetAttributesList.push_back(cellData->GetArrayName(i));
+				}
+
+			}
+			this->activeScalarComboBox->clear();
+			this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
 		}
 		else
 			actorPropertiesGroupBox->setEnabled(false);
@@ -241,4 +270,10 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 void VtkVisTabWidget::addColorTable()
 {
 
+}
+
+void VtkVisTabWidget::SetActiveAttributeOnItem( const QString& attributeName )
+{
+	_item->SetActiveAttribute(attributeName, 0, false);
+	emit requestViewUpdate();
 }

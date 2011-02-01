@@ -35,6 +35,7 @@ void VtkCompositeThresholdFilter::init()
 	vtkThreshold* threshold = vtkThreshold::New();
 	threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
+	// TODO: Replace hardcoded "MatIds" by something more generic
 	vtkDataArray* materialIDs = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray("MatIDs");
 	std::cout << materialIDs->GetDataSize();
 	for (size_t i=0; i<10; i++) std::cout << materialIDs->GetComponent(i,0) << std::endl;
