@@ -36,8 +36,8 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 	connect(this->vtkVisPipelineView, SIGNAL(itemSelected(VtkVisPipelineItem*)),
 		this, SLOT(setActiveItem(VtkVisPipelineItem*)));
 
-	connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(const QString&)),
-		this, SLOT(SetActiveAttributeOnItem(const QString&)));
+	connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(int)),
+		this, SLOT(SetActiveAttributeOnItem(int)));
 
 }
 
@@ -71,7 +71,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 				for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
 				{
 					std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
-					//dataSetAttributesList.push_back(pointData->GetArrayName(i));
+					dataSetAttributesList.push_back(pointData->GetArrayName(i));
 				}
 
 				vtkCellData* cellData = dataSet->GetCellData();
@@ -272,8 +272,8 @@ void VtkVisTabWidget::addColorTable()
 
 }
 
-void VtkVisTabWidget::SetActiveAttributeOnItem( const QString& attributeName )
+void VtkVisTabWidget::SetActiveAttributeOnItem( int idx )
 {
-	_item->SetActiveAttribute(attributeName, 0, false);
+	_item->SetActiveAttribute(idx, 0);
 	emit requestViewUpdate();
 }

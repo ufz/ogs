@@ -32,7 +32,7 @@
 vtkStandardNewMacro(VtkMeshSource);
 vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
-VtkMeshSource::VtkMeshSource() : _matName("MatIDs")
+VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 {
 	this->SetNumberOfInputPorts(0);
 

@@ -43,11 +43,8 @@
 
 #include "VtkCompositeFilter.h"
 
-#include "VtkMeshSource.h"
-
 #include <vtkPointData.h>
 #include <vtkCellData.h>
-
 
 #ifdef OGS_USE_OPENSG
 OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
@@ -269,7 +266,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
 
-	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
+	vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
 	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 	if (mapper)
@@ -375,31 +372,47 @@ void VtkVisPipelineItem::SetScalarVisibility( bool on )
 	_mapper->SetScalarVisibility(on);
 }
 
-void VtkVisPipelineItem::SetActiveAttribute( const QString& name, int attributeType, bool onPointData )
+void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 {
-	std::string stdString = name.toStdString();
-	const char* charName = stdString.c_str();
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
-	if (dataSet)
+	bool onPointData(true);
+	double* range(NULL);
+
+	int nPointArrays = dataSet->GetPointData()->GetNumberOfArrays();
+	int nCellArrays  = dataSet->GetCellData()->GetNumberOfArrays();
+
+	if (nPointArrays+nCellArrays > 0)
 	{
-		if (onPointData)
+		if ( arrayIndex > nPointArrays-1 )
 		{
-			vtkPointData* pointData = dataSet->GetPointData();
-			pointData->SetActiveAttribute(charName, attributeType);
-			//pointData->SetActiveScalars(charName);
-			_mapper->SetScalarModeToUsePointData();
-			_mapper->SetScalarRange(dataSet->GetScalarRange());
-		} 
-		else
-		{
-			vtkCellData* cellData = dataSet->GetCellData();
-			cellData->SetActiveAttribute(charName, attributeType);
-			//cellData->SetActiveScalars(charName);
-			_mapper->SetScalarModeToUseCellData();
-			_mapper->SetScalarRange(dataSet->GetScalarRange());
+			onPointData = false;
+			arrayIndex-=nPointArrays;
 		}
-		_mapper->ScalarVisibilityOn();
-		_mapper->Update();
+
+		if (dataSet)
+		{
+			if (onPointData)
+			{
+				vtkPointData* pointData = dataSet->GetPointData();
+				const char* charName = pointData->GetArrayName(arrayIndex);
+				pointData->SetActiveAttribute(charName, attributeType);
+				range = pointData->GetArray(charName)->GetRange();
+				_mapper->SetScalarModeToUsePointData();
+				_mapper->SetScalarRange(dataSet->GetScalarRange());
+			} 
+			else
+			{
+				vtkCellData* cellData = dataSet->GetCellData();
+				const char* charName = cellData->GetArrayName(arrayIndex);
+				cellData->SetActiveAttribute(charName, attributeType);
+				range = cellData->GetArray(charName)->GetRange();
+				_mapper->SetScalarModeToUseCellData();
+				_mapper->SetScalarRange(dataSet->GetScalarRange());
+			}
+
+			_mapper->SetScalarRange(range);
+			_mapper->ScalarVisibilityOn();
+			_mapper->Update();
+		}
 	}
-	
 }
