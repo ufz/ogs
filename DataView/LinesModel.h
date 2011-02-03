@@ -14,7 +14,7 @@
 #include <QVector>
 
 /**
- * The PolylinesModel is a Qt model which represents Polylines. 
+ * \brief The PolylinesModel is a Qt model which represents geometric Polylines. 
  */
 class PolylinesModel : public Model
 {

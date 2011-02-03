@@ -20,7 +20,7 @@ namespace Mesh_Group {
 }
 
 /**
- * VtkVisPipelineView is a QTreeView and shows VtkVisPipelineItems.
+ * \brief VtkVisPipelineView is a QTreeView and shows VtkVisPipelineItems and their relation to each other.
  */
 class VtkVisPipelineView : public QTreeView
 {

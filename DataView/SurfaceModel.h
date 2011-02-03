@@ -14,7 +14,7 @@
 #include <QVector>
 
 /**
- * The SurfaceModel is a Qt model which represents Polylines. 
+ * \brief The SurfaceModel is a Qt model which represents geometric Surfaces. 
  */
 class SurfaceModel : public Model
 {

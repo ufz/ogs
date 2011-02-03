@@ -24,9 +24,9 @@ class QModelIndex;
 class PropertyBounds;
 
 /**
- * \brief A model for the QStationTreeView implementing a tree as a double-linked list.
+ * \brief A model for the StationTreeView implementing a tree as a double-linked list.
  * 
- * A model for the QStationTreeView implementing a tree as a double-linked list.
+ * A model for the StationTreeView implementing a tree as a double-linked list.
  * In addition to a simple TreeModel each item also contains a 2D / 3D GraphicsItem for visualization.
  * \sa TreeModel, StationTreeView, TreeItem, ModelTreeItem
  */

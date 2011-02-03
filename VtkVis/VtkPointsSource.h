@@ -15,8 +15,8 @@
 #include "GEOObjects.h"
 
 /**
- * VtkPointsSource is a VTK source object which can be used to feed a visualization
- * pipeline with point data. As a vtkPolyDataAlgorithm it outputs polygonal data.
+ * \brief VtkPointsSource is a VTK source object for the visualization
+ * of point data. As a vtkPolyDataAlgorithm it outputs polygonal data.
  */
 class VtkPointsSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
