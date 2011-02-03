@@ -12,7 +12,7 @@
 #include "ui_SurfaceTabWidgetBase.h"
 
 /**
- * SurfaceTabWidget
+ * \brief Widget containing the view for the SurfaceModel.
  */
 class SurfaceTabWidget : public QWidget, public Ui_SurfaceTabWidgetBase
 {

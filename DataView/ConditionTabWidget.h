@@ -12,7 +12,7 @@
 #include "ui_ConditionTabWidgetBase.h"
 
 /**
- * StationTabWidget
+ * \brief Widget containing the ConditionView.
  */
 class ConditionTabWidget : public QWidget, public Ui_ConditionTabWidgetBase
 {

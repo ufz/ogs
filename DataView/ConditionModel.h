@@ -13,7 +13,7 @@
 class FEMCondition;
 
 /**
- * The ConditionModel handels conditions such as ICs, BCs and STs on geometric objects 
+ * \brief The ConditionModel handels FEM conditions such as ICs, BCs and STs on geometric objects. 
  */
 
 class ConditionModel : public TreeModel

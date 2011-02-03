@@ -22,6 +22,10 @@ class DatabaseConnection;
 	class TrackingSettingsWidget;
 #endif // OGS_USE_VRPN
 
+
+/**
+ * Main program window for the graphical user interface of OpenGeoSys.
+ */
 class MainWindow : public QMainWindow, public Ui_MainWindowClass
 {
     Q_OBJECT
@@ -44,10 +48,15 @@ protected slots:
 	void showMshDockWidget( bool show );
 	void showVisDockWidget( bool show );
 
+	/// Function calls for opening files.
     void open();
+	/// Function calls for saving files.
 	void save();
+	/// Function calls for generating GMSH files from the GUI
 	void callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4, bool delete_geo_file);
+	/// Function calls for GMS export.
 	void exportBoreholesToGMS(std::string listName, std::string fileName);
+	/// Testing functionality for connection to FEM lib
 	void FEMTestStart();
     void importGMS();
 	void importGoCad();

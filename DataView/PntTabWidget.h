@@ -12,7 +12,7 @@
 #include "ui_PntTabWidgetBase.h"
 
 /**
- * PntTabWidget
+ * \brief Widget containing the view for the PointsModel.
  */
 class PntTabWidget : public QWidget, public Ui_PntTabWidgetBase
 {

@@ -12,7 +12,7 @@
 #include "ui_StationTabWidgetBase.h"
 
 /**
- * StationTabWidget
+ * \brief Widget containing StationTreeView-objects.
  */
 class StationTabWidget : public QWidget, public Ui_StationTabWidgetBase
 {

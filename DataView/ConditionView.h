@@ -10,8 +10,9 @@
 #include <QContextMenuEvent>
 
 /**
- * \brief A view for the StationTreeModel with a number of properties adequate for this kind of data
- * \sa StationTreeModel, ModelTreeItem
+ * \brief A view for FEM-Conditions (Initial- & Boundary Conditions / Source Terms) with a number of additional
+ * information such as Process Type, Distribution, etc.
+ * \sa ConditionModel, CondItem
  */
 class ConditionView : public QTreeView
 {

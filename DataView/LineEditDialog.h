@@ -14,7 +14,9 @@
 class QStringListModel;
 
 /**
- * \brief A dialog window for editing meshes in various ways
+ * \brief A dialog window for manipulation of polylines.
+ * Currently included functionality is the concatenation of polylines 
+ * as well as creating polygons or surfaces from polylines.
  */
 class LineEditDialog : public QDialog, private Ui_LineEdit
 {
@@ -34,8 +36,10 @@ private:
 
 
 private slots:
+	/// Instructions when polylines are selected.
 	void on_selectPlyButton_pressed();
 
+	/// Instructions when polylines are deselected.
 	void on_deselectPlyButton_pressed();
 
 	/// Instructions if the OK-Button has been pressed.
