@@ -13,10 +13,10 @@ class QRect;
 
 /**
  * \brief CheckboxDelegate modifies a model view to display boolean values as checkboxes.
- * Important: the column on which this delegate is set (
- * QAbstractItemView::setItemDelegateForColumn()) must not have the flags
- * Qt::ItemIsEditable or Qt::ItemIsUserCheckable set in the model.
-**/
+ *
+ * Important: the column on which this delegate is set (QAbstractItemView::setItemDelegateForColumn()) 
+ * must not have the flags Qt::ItemIsEditable or Qt::ItemIsUserCheckable set in the model.
+ **/
 class CheckboxDelegate : public QItemDelegate
 {
 	Q_OBJECT

@@ -195,7 +195,10 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 		emit requestViewUpdate();
 	}
 	else
+	{
 		actorPropertiesGroupBox->setEnabled(false);
+		this->activeScalarComboBox->clear();
+	}
 
 }
 

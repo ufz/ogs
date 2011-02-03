@@ -14,7 +14,7 @@
 class Model;
 
 /**
- * DataViewWidget
+ * \brief Widget containing views for geometrical objects.
  */
 class DataViewWidget : public QWidget, public Ui_DataViewWidgetBase
 {

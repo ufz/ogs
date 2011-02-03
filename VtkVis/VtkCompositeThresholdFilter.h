@@ -8,6 +8,7 @@
 
 #include "VtkCompositeFilter.h"
 
+/// @brief Visualises only parts of meshes that are above/below/within given thresholds.
 class VtkCompositeThresholdFilter : public VtkCompositeFilter
 {
 public:

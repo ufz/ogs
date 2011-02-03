@@ -13,7 +13,7 @@
 #include <QVector>
 
 /**
- * The PntsModel is a Qt model which represents Point objects.
+ * \brief The PntsModel is a Qt model which represents geometric Point objects.
  */
 class PntsModel : public Model
 {

@@ -16,7 +16,7 @@ namespace GEOLIB {
 }
 
 /**
- * LineTabWidget
+ * \brief Widget containing the view for the LinesModel.
  */
 class LineTabWidget : public QWidget, public Ui_LineTabWidgetBase
 {

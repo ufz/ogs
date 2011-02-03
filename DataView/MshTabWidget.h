@@ -15,7 +15,7 @@
 class MshModel;
 
 /**
- * Tab Widget for data views on meshes
+ * \brief Widget for data views of meshes.
  */
 class MshTabWidget : public QWidget, public Ui_MshTabWidgetBase
 {

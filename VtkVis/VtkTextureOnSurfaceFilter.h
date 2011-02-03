@@ -17,6 +17,7 @@ class QImage;
 
 /**
  * \brief Filter class for assigning a texture to a surface.
+ *
  * Use SetRaster() to define the texture that should be mapped on the object.
  * The input of this class is a vtkPolyData object. It is important to call SetTexture() before
  * calling SetInputConnection(). Texture coordinates will then be calculated automatically and

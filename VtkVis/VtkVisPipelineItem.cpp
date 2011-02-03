@@ -374,6 +374,11 @@ void VtkVisPipelineItem::SetScalarVisibility( bool on )
 
 void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 {
+	if (arrayIndex<0)
+	{
+		return;
+	}
+
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	bool onPointData(true);
 	double* range(NULL);
@@ -410,6 +415,8 @@ void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 				_mapper->SetScalarRange(dataSet->GetScalarRange());
 			}
 
+			double a = range[0];
+			double b = range[1];
 			_mapper->SetScalarRange(range);
 			_mapper->ScalarVisibilityOn();
 			_mapper->Update();
