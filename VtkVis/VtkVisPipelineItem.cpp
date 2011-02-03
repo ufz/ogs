@@ -130,7 +130,7 @@ VtkVisPipelineItem::~VtkVisPipelineItem()
 		_renderer->RemoveActor(_actor);
 		_mapper->Delete();
 		_actor->Delete();
-		//_algorithm->Delete();	// TODO: not calling delete causes memoryleak in some cases (e.g. building mesh from images), 
+		//_algorithm->Delete();	// TODO: not calling delete causes memoryleak in some cases (e.g. building mesh from images),
 		                        // always calling it causes error when closing program
 	#endif // OGS_USE_OPENSG
 		delete _compositeFilter;
@@ -196,7 +196,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 
 #ifdef OGS_USE_OPENSG
 	_actor = vtkOsgActor::New();
-	
+
 	// Transform vtkImageData to vtkPolyData for OpenSG-conversion
 	if (imageAlgorithm)
 	{
@@ -216,7 +216,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	};OSG::endEditCP(_parentNode);
 #else
 	_mapper->SetInputConnection(_transformFilter->GetOutputPort());
-	
+
 	// Use a special vtkImageActor instead of vtkActor
 	if (imageAlgorithm)
 	{
@@ -237,7 +237,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
 	if (vtkProps)
 		setVtkProperties(vtkProps);
-		
+
 
 	// Copy properties from parent
 	else
@@ -266,7 +266,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
 
-	vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
+	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
 	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 	if (mapper)
@@ -276,7 +276,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 			vtkLookupTable* lut = vtkLookupTable::New();
 			vtkProps->SetLookUpTable(lut);
 		}
-		else // specific color table 
+		else // specific color table
 		{
 			_mapper->SetLookupTable(vtkProps->GetLookupTable());
 		}
@@ -298,14 +298,14 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 			vtkSmartPointer<vtkProperty> itemProperty = vtkProps->GetProperties();
 			actor->SetProperty(itemProperty);
 		}
-    	
+
 		if (!vtkProps->GetScalarVisibility())
 			vtkProps->SetScalarVisibility(false);
 	}
 }
 
 int VtkVisPipelineItem::writeToFile(const std::string &filename) const
-{	
+{
 	if (!filename.empty())
 	{
 		if (filename.substr(filename.size() - 4).find("os") != std::string::npos)
@@ -399,7 +399,7 @@ void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 				range = pointData->GetArray(charName)->GetRange();
 				_mapper->SetScalarModeToUsePointData();
 				_mapper->SetScalarRange(dataSet->GetScalarRange());
-			} 
+			}
 			else
 			{
 				vtkCellData* cellData = dataSet->GetCellData();

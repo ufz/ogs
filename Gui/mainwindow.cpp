@@ -955,21 +955,23 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 		else
 			fileName = "tmp_gmsh.geo";
 
-		if (param4 == -1) // adaptive meshing selected
-		{
-			GMSHInterface gmsh_io(fileName.toStdString());
+		GMSHInterface gmsh_io(fileName.toStdString());
+		if (param4 == -1) { // adaptive meshing selected
 			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
 					selectedGeometries, param1, param2, param3);
-			std::string gmsh_command("gmsh -2 ");
-			std::string fname (fileName.toStdString());
-			gmsh_command += fname;
-			size_t pos (fname.rfind ("."));
-			if (pos != std::string::npos)
-				fname = fname.substr (0, pos);
-			gmsh_command += " -o " + fname + ".msh";
-			system(gmsh_command.c_str());
-		} else // homogeneous meshing selected
-		{
+			if (system(NULL) != 0) { // command processor available
+				std::string gmsh_command("gmsh -2 ");
+				std::string fname (fileName.toStdString());
+				gmsh_command += fname;
+				size_t pos (fname.rfind ("."));
+				if (pos != std::string::npos)
+					fname = fname.substr (0, pos);
+				gmsh_command += " -o " + fname + ".msh";
+				system(gmsh_command.c_str());
+			} else {
+				// give a error message here
+			}
+		} else { // homogeneous meshing selected
 			// todo
 		}
 
