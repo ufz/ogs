@@ -46,12 +46,6 @@ VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 
 VtkMeshSource::~VtkMeshSource()
 {
-	/*
-	std::map<std::string, GEOLIB::Color*>::iterator it;
-	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); it++) {
-		delete it->second;
-	}
-	*/
 	delete _grid;
 }
 
