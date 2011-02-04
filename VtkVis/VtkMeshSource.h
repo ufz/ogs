@@ -45,7 +45,7 @@ public:
 	 * Each element of the mesh is assigned an RGB-value based on its material group.
 	 * This method should only be called after setMesh()!
 	 */
-	ogsUserPropertyMacro(ColorByMaterial,bool);
+	//ogsUserPropertyMacro(ColorByMaterial,bool);
 
 	virtual void SetUserProperty(QString name, QVariant value);
 

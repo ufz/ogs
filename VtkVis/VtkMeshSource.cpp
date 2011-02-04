@@ -36,7 +36,7 @@ VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 {
 	this->SetNumberOfInputPorts(0);
 
-	this->SetColorByMaterial(true);
+	//this->SetColorByMaterial(true);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
@@ -169,14 +169,14 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 void VtkMeshSource::SetUserProperty( QString name, QVariant value )
 {
 	VtkAlgorithmProperties::SetUserProperty(name, value);
-
+/*
 	if (name.compare("ColorByMaterial") == 0)
 	{
 		value.convert(QVariant::Bool);
 		this->SetColorByMaterial(value.toBool());
 		this->SetScalarVisibility(value.toBool());
 	}
-
+*/
 
 	(*_algorithmUserProperties)[name] = value;
 }
