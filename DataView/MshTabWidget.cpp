@@ -129,11 +129,13 @@ void MshTabWidget::checkMeshQuality () const
 		QString msh_name = QString::fromStdString(static_cast<MshModel*>(this->treeView->model())->getMesh(index)->getName());
 		std::string file_name = QFileDialog::getSaveFileName(NULL, "Save histogram as", msh_name, "raw data (*.txt)").toStdString();
 		Mesh_Group::MeshQualityChecker checker (mesh);
-		checker.checkTriangles ();
+		checker.check ();
 
+		std::vector<size_t> histogramm (100,0);
+		checker.getHistogramm(histogramm);
 		std::ofstream out (file_name.c_str());
 		for (size_t k(0); k<100; k++) {
-			out << k/100.0 << " " << checker.getHistogramm()[k] << std::endl;
+			out << k/100.0 << " " << histogramm[k] << std::endl;
 		}
 		out.close ();
 	}
