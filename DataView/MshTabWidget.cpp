@@ -20,6 +20,7 @@
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QSettings>
+#include <QInputDialog>
 
 MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
 : QWidget(parent)
@@ -131,11 +132,17 @@ void MshTabWidget::checkMeshQuality () const
 		Mesh_Group::MeshQualityChecker checker (mesh);
 		checker.check ();
 
-		std::vector<size_t> histogramm (100,0);
+		// simple suggestion: number of classes with Sturges criterion
+		size_t nclasses (static_cast<size_t>(1 + 3.3 * log ((mesh->getElementVector()).size())));
+		bool ok;
+		size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
+
+		std::vector<size_t> histogramm (size,0);
 		checker.getHistogramm(histogramm);
 		std::ofstream out (file_name.c_str());
-		for (size_t k(0); k<100; k++) {
-			out << k/100.0 << " " << histogramm[k] << std::endl;
+		const size_t histogramm_size (histogramm.size());
+		for (size_t k(0); k<histogramm_size; k++) {
+			out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
 		}
 		out.close ();
 	}
