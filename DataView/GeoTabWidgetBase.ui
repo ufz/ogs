@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LineTabWidgetBase</class>
- <widget class="QWidget" name="LineTabWidgetBase">
+ <class>GeoTabWidgetBase</class>
+ <widget class="QWidget" name="GeoTabWidgetBase">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -18,16 +18,15 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="DataViewWidget" name="dataViewWidget" native="true"/>
+    <widget class="GeoTreeView" name="treeView"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DataViewWidget</class>
-   <extends>QWidget</extends>
-   <header>DataViewWidget.h</header>
-   <container>1</container>
+   <class>GeoTreeView</class>
+   <extends>QTreeView</extends>
+   <header>GeoTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

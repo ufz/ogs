@@ -41,11 +41,10 @@ protected:
 	void closeEvent( QCloseEvent* event );
 
 protected slots:
-	void showPntDockWidget( bool show );
-	void showLineDockWidget( bool show );
-	void showSurfaceDockWidget( bool show );
+	void showGeoDockWidget( bool show );
 	void showStationDockWidget( bool show );
 	void showMshDockWidget( bool show );
+	void showConditionDockWidget( bool show );
 	void showVisDockWidget( bool show );
 
 	/// Function calls for opening files.
@@ -71,11 +70,13 @@ protected slots:
 	void openRecentFile();
 	void about();
 	void showDiagramPrefsDialog(QModelIndex &index);
+	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showPropertiesDialog(std::string name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
+	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 

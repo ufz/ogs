@@ -11,8 +11,9 @@
 // ** INCLUDES **
 #include <QObject>
 #include "GEOObjects.h"
-#
+#include "GeoType.h"
 
+class GeoTreeModel;
 class Model;
 class PntsModel;
 class StationTreeModel;
@@ -34,9 +35,13 @@ public:
 	GEOModels(QObject* parent = 0);
 	~GEOModels();
 
+	GeoTreeModel* getGeoModel() { return _geoModel; }
 	StationTreeModel* getStationModel() { return _stationModel; }
 
 public slots:
+	/// Removes all parts (points, lines, surfaces) of the geometry with the given name.
+	void removeGeometry(std::string geo_name, GEOLIB::GEOTYPE type);
+
 	void addPointVec(std::vector<GEOLIB::Point*> *points, std::string &name, std::map<std::string, size_t>* name_pnt_id_map = NULL);
 	bool appendPointVec(const std::vector<GEOLIB::Point*> &points, std::string &name);
 	bool removePointVec(const std::string &name);
@@ -46,33 +51,28 @@ public slots:
 	bool removeStationVec(const std::string &name);
 
 	void addPolylineVec(std::vector<GEOLIB::Polyline*> *lines, const std::string &name, std::map<std::string,size_t>* ply_names = NULL);
-	bool appendPolylineVec(const std::vector<GEOLIB::Polyline*> &polylines, std::string &name);
+	bool appendPolylineVec(const std::vector<GEOLIB::Polyline*> &polylines, const std::string &name);
 	bool removePolylineVec(const std::string &name);
 
 	void addSurfaceVec(std::vector<GEOLIB::Surface*> *surfaces, const std::string &name, std::map<std::string,size_t>* sfc_names = NULL);
 	bool removeSurfaceVec(const std::string &name);
 
+	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
+	void connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, bool closePly, bool triangulatePly);
+
+
 protected:
-	std::vector<PntsModel*> _pntModels;
-	std::vector<PolylinesModel*> _lineModels;
-	std::vector<SurfaceModel*> _surfaceModels;;
+	GeoTreeModel* _geoModel;
 	StationTreeModel* _stationModel;
 
 private:
 
 signals:
-	void pointModelAdded(Model* model);
-	void pointModelRemoved(Model* model);
+	void geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE);
+	void geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE);
 
 	void stationVectorAdded(StationTreeModel* model, std::string name);
 	void stationVectorRemoved(StationTreeModel* model, std::string name);
-
-	void polylineModelAdded(Model* model);
-	void polylineModelRemoved(Model* model);
-
-	void surfaceModelAdded(Model* model);
-	void surfaceModelRemoved(Model* model);
-
 };
 
 #endif // GEOMODELS_H

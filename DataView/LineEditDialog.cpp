@@ -9,7 +9,7 @@
 
 
 LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* parent)
-: QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel)
+: QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel), _geoName(ply_vec.getName())
 {
 	setupUi(this);
 
@@ -64,7 +64,7 @@ void LineEditDialog::on_deselectPlyButton_pressed()
 void LineEditDialog::accept()
 {
 	std::vector<size_t> selectedIndeces = this->getSelectedIndeces(_selPly->stringList());
-	emit connectPolylines(selectedIndeces, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
+	emit connectPolylines(_geoName, selectedIndeces, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
 	this->done(QDialog::Accepted);
 }
 
