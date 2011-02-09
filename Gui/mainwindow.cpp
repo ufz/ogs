@@ -110,10 +110,13 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 		this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
 	connect(geoTabWidget->treeView,	SIGNAL(requestLineEditDialog(const std::string&)), 
 		this, SLOT(showLineEditDialog(const std::string&))); // open line edit dialog
+	connect(geoTabWidget->treeView,	SIGNAL(loadFEMCondFileRequested(std::string)), 
+		this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 		this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)), 
 		this, SLOT(updateDataViews()));
+
 
 	// Setup connections for mesh models to GUI
 	_meshModels = new MshModel(_project);
@@ -350,13 +353,9 @@ void MainWindow::showVisDockWidget(bool show)
 void MainWindow::open()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString
-			fileName =
-					QFileDialog::getOpenFileName(
-							this,
-							"Select data file to open",
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys files (*.gsp *.gli *.gml *.msh *.stn *.cnd *.bc);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+							"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
 	if (!fileName.isEmpty()) {
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -397,21 +396,10 @@ void MainWindow::openRecentFile()
 
 void MainWindow::save()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QStringList files = settings.value("recentFileList").toStringList();
-	QString dir_str;
-	if (files.size() != 0)
-		dir_str = QFileInfo(files[0]).absolutePath();
-	else
-		dir_str = QDir::homePath();
+	QString dir_str = this->getLastUsedDir();
 
-	QString
-			fileName =
-					QFileDialog::getSaveFileName(
-							this,
-							"Save data as",
-							dir_str,
-							"GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
+	QString fileName = QFileDialog::getSaveFileName(this, "Save data as", dir_str,
+						"GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
 
 	if (!fileName.isEmpty()) {
 		QFileInfo fi(fileName);
@@ -511,31 +499,6 @@ void MainWindow::loadFile(const QString &fileName)
 		else
 			OGSError::box("Failed to load a mesh file.");
 	}
-	// FEM condition files
-	else if (fi.suffix().toLower() == "cnd") {
-		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-		XMLInterface xml(_geoModels, schemaName);
-		std::vector<FEMCondition*> conditions;
-		xml.readFEMCondFile(conditions, fileName);
-		if (!conditions.empty())
-			this->_conditionModel->addConditions(conditions);
-	}
-	else if (fi.suffix().toLower() == "bc") {
-		std::vector<FEMCondition*> conditions;
-		//size_t old_size = bc_list.size();
-		QString name = fi.path() + "/";
-		BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, ""); // HACK
-		//for (size_t i=old_size; i<bc_list.size(); i++)
-		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin(); it != bc_list.end(); ++it)
-		{
-			BoundaryCondition* bc = new BoundaryCondition(*(*it));
-			conditions.push_back(bc);
-		}
-
-		if (!conditions.empty())
-			this->_conditionModel->addConditions(conditions);
-	}
-
 
 	// GMS borehole files
 	else if (fi.suffix().toLower() == "txt") {
@@ -835,6 +798,62 @@ void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 	dlg.exec();
 }
 
+void MainWindow::loadFEMConditionsFromFile(std::string geoName)
+{
+	/*
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
+	if (!fileName.isEmpty()) 
+	{
+		QFileInfo fi(fileName);
+		std::vector<FEMCondition*> conditions;
+
+		if (fi.suffix().toLower() == "cnd") {
+			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
+			XMLInterface xml(_geoModels, schemaName);
+			xml.readFEMCondFile(conditions, fileName);
+			if (!conditions.empty())
+				this->_conditionModel->addConditions(conditions);
+		}
+		else if (fi.suffix().toLower() == "bc")
+		{
+			QString name = fi.path() + "/";
+			BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
+			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin(); it != bc_list.end(); ++it)
+			{
+				BoundaryCondition* bc = new BoundaryCondition(*(*it));
+				conditions.push_back(bc);
+			}
+		}
+		else if (fi.suffix().toLower() == "ic")
+		{
+			QString name = fi.path() + "/";
+			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName); 
+			for (std::list<CInitialCondition*>::iterator it = ic_list.begin(); it != ic_list.end(); ++it)
+			{
+				CInitialCondition* ic = new CInitialCondition(*(*it));
+				conditions.push_back(ic);
+			}
+		}
+		else if (fi.suffix().toLower() == "st")
+		{
+			QString name = fi.path() + "/";
+			STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
+			for (std::list<CSourceTerm*>::iterator st = st_list.begin(); it != st_list.end(); ++it)
+			{
+				CSourceTerm* st = new CSourceTerm(*(*it));
+				conditions.push_back(st);
+			}
+		}
+		
+		if (!conditions.empty())
+			this->_conditionModel->addConditions(conditions);
+	}
+	*/
+}
+
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
@@ -864,14 +883,8 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 	if (!selectedGeometries.empty()) {
 		std::cout << "Start meshing..." << std::endl;
 
-		QSettings settings("UFZ", "OpenGeoSys-5");
 		QString fileName("");
-		QStringList files = settings.value("recentFileList").toStringList();
-		QString dir_str;
-		if (files.size() != 0)
-			dir_str = QFileInfo(files[0]).absolutePath();
-		else
-			dir_str = QDir::homePath();
+		QString dir_str = this->getLastUsedDir();
 
 		if (!delete_geo_file)
 			fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as",
@@ -1212,4 +1225,15 @@ void MainWindow::quitPresentationMode()
 
 	// Restore the previously saved QMainWindow state
 	this->restoreState(_windowState);
+}
+
+QString MainWindow::getLastUsedDir()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName("");
+	QStringList files = settings.value("recentFileList").toStringList();
+	if (files.size() != 0)
+		return QFileInfo(files[0]).absolutePath();
+	else
+		return QDir::homePath();
 }
