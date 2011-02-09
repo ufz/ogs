@@ -59,7 +59,7 @@ void GeoTreeModel::addPointList(QString geoName, const GEOLIB::PointVec* pointVe
 	for (size_t j=0; j<nPoints; j++)
 	{
 		QList<QVariant> pnt;
-		pnt << j << QString::number((*(*points)[j])[0],'f') << QString::number((*(*points)[j])[1],'f') << QString::number((*(*points)[j])[2],'f');
+		pnt << static_cast<unsigned>(j) << QString::number((*(*points)[j])[0],'f') << QString::number((*(*points)[j])[1],'f') << QString::number((*(*points)[j])[2],'f');
 		GeoTreeItem* point = new GeoTreeItem(pnt, pointList, static_cast<GEOLIB::Point*>((*points)[j]));
 		pointList->appendChild(point);
 	}
@@ -130,7 +130,7 @@ void GeoTreeModel::appendPolylines(const std::string &name, std::vector<GEOLIB::
 		{
 			for (int j=0; j<_lists[i]->childCount(); j++)
 			{
-				if (GEOLIB::POLYLINE == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType()) 
+				if (GEOLIB::POLYLINE == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
 				{
 					size_t nChildren = _lists[i]->child(j)->childCount();
 					TreeItem* parent = _lists[i]->child(j);
@@ -181,7 +181,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, const GEOLIB::SurfaceVec* sur
 	}
 
 	const std::vector<GEOLIB::Surface*> *surfaces = surfaceVec->getVector();
-	
+
 	QList<QVariant> sfcData;
 	sfcData << "Surfaces" << "" << "" << "";
 	//BaseItem* grpItem = new BaseItem(listName, stations);
@@ -237,7 +237,7 @@ void GeoTreeModel::removeGeoList(const std::string &name, GEOLIB::GEOTYPE type)
 		{
 			for (int j=0; j<_lists[i]->childCount(); j++)
 			{
-				if (type == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType()) 
+				if (type == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
 				{
 					QModelIndex index = createIndex(j, 0, _lists[i]->child(j));
 					removeRows(0, _lists[i]->child(j)->childCount(), index);
@@ -245,7 +245,7 @@ void GeoTreeModel::removeGeoList(const std::string &name, GEOLIB::GEOTYPE type)
 					break;
 				}
 			}
-			if (_lists[i]->childCount() == 0) 
+			if (_lists[i]->childCount() == 0)
 			{
 				_lists.erase(_lists.begin() + i);
 				removeRows(i, 1, QModelIndex());
