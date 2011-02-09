@@ -128,23 +128,30 @@ void MshTabWidget::checkMeshQuality () const
 
 	if (mesh) {
 		QString msh_name = QString::fromStdString(static_cast<MshModel*>(this->treeView->model())->getMesh(index)->getName());
-		std::string file_name = QFileDialog::getSaveFileName(NULL, "Save histogram as", msh_name, "raw data (*.txt)").toStdString();
-		Mesh_Group::MeshQualityChecker checker (mesh);
-		checker.check ();
+		QString file_name = QFileDialog::getSaveFileName(NULL, "Save histogram as", msh_name, "raw data (*.txt)");
 
-		// simple suggestion: number of classes with Sturges criterion
-		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
-		bool ok;
-		size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
+		if (!file_name.isEmpty())
+		{
+			Mesh_Group::MeshQualityChecker checker (mesh);
+			checker.check ();
 
-		std::vector<size_t> histogramm (size,0);
-		checker.getHistogramm(histogramm);
-		std::ofstream out (file_name.c_str());
-		const size_t histogramm_size (histogramm.size());
-		for (size_t k(0); k<histogramm_size; k++) {
-			out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
+			// simple suggestion: number of classes with Sturges criterion
+			size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
+			bool ok;
+			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
+
+			if (ok)
+			{
+				std::vector<size_t> histogramm (size,0);
+				checker.getHistogramm(histogramm);
+				std::ofstream out (file_name.toStdString().c_str());
+				const size_t histogramm_size (histogramm.size());
+				for (size_t k(0); k<histogramm_size; k++) {
+					out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
+				}
+				out.close ();
+			}
 		}
-		out.close ();
 	}
 }
 
