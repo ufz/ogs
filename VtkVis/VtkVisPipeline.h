@@ -36,6 +36,7 @@ class GeoTreeModel;
 class StationTreeModel;
 class TreeModel;
 class VtkVisPipelineItem;
+class VtkMeshSource;
 
 /**
  * \brief VtkVisPipeline manages the VTK visualization.
@@ -100,6 +101,9 @@ public slots:
 	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
 	/// vtkAlgorithms) from the pipeline.
 	void removePipelineItem(QModelIndex index);
+
+	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
+	void checkMeshQuality(VtkMeshSource* mesh);
 
 private:
 	void listArrays(vtkDataSet* dataSet);

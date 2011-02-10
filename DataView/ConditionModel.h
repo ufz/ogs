@@ -46,6 +46,8 @@ public slots:
 	/// Removes the FEM condition with the given index.
 	bool removeCondition(const QModelIndex &idx);
 
+	/// Removes conditions associated with the given geometry and type.
+	void removeFEMConditions(const std::string &geometry_name, GEOLIB::GEOTYPE type = GEOLIB::INVALID);
 	/// Reloads all items.
 	//void updateData();
 

@@ -16,6 +16,7 @@ SET( SOURCES
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
+	VtkCompositeSelectionFilter.cpp	
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
 	VtkFilterFactory.cpp
@@ -24,6 +25,7 @@ SET( SOURCES
 	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
+	VtkSelectionFilter.cpp
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
 	VtkTextureOnSurfaceFilter.cpp
@@ -62,6 +64,7 @@ SET( HEADERS
 	VtkCompositeImageToCylindersFilter.h
 	VtkCompositeLineToTubeFilter.h
 	VtkCompositePointToGlyphFilter.h
+	VtkCompositeSelectionFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
 	VtkFilterFactory.h
@@ -70,6 +73,7 @@ SET( HEADERS
 	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
+	VtkSelectionFilter.h
 	VtkStationSource.h
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h
