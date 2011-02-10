@@ -34,9 +34,6 @@
 #include "VtkBGImageSource.h"
 #include "DatabaseConnection.h"
 
-//test
-#include "fem_ele.h"
-#include "MathIO/CRSIO.h"
 // FileIO includes
 #include "OGSIOVer4.h"
 #include "StationIO.h"
@@ -46,6 +43,12 @@
 #include "GMSHInterface.h"
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
+
+//test
+#include "MathIO/CRSIO.h"
+
+// MSH
+#include "msh_mesh.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -104,17 +107,17 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 			this, SLOT(showDiagramPrefsDialog(QModelIndex&))); // connect treeview to diagramview
 
 	// geo model
-	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GEOLIB::GEOTYPE)), 
+	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GEOLIB::GEOTYPE)),
 		_geoModels,	SLOT(removeGeometry(std::string, GEOLIB::GEOTYPE)));
-	connect(geoTabWidget->treeView,	SIGNAL(saveToFileRequested(QString, QString)), 
+	connect(geoTabWidget->treeView,	SIGNAL(saveToFileRequested(QString, QString)),
 		this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
-	connect(geoTabWidget->treeView,	SIGNAL(requestLineEditDialog(const std::string&)), 
+	connect(geoTabWidget->treeView,	SIGNAL(requestLineEditDialog(const std::string&)),
 		this, SLOT(showLineEditDialog(const std::string&))); // open line edit dialog
-	connect(geoTabWidget->treeView,	SIGNAL(loadFEMCondFileRequested(std::string)), 
+	connect(geoTabWidget->treeView,	SIGNAL(loadFEMCondFileRequested(std::string)),
 		this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 		this, SLOT(updateDataViews()));
-	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)), 
+	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 		this, SLOT(updateDataViews()));
 
 
@@ -493,7 +496,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh") {
 		std::string name = fileName.toStdString();
-		CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		Mesh_Group::CFEMesh* msh = MshModel::loadMeshFromFile(name);
 		if (msh)
 			_meshModels->addMesh(msh, name);
 		else
@@ -513,7 +516,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// GMS mesh files
 	else if (fi.suffix().toLower() == "3dm") {
 		std::string name = fileName.toStdString();
-		CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
+		Mesh_Group::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
 		_meshModels->addMesh(mesh, name);
 	}
 	// goCAD files
@@ -544,7 +547,7 @@ void MainWindow::loadFile(const QString &fileName)
 		size_t len_rlat, len_rlon;
 		FileIO::NetCDFInterface::readNetCDFData(name, pnt_vec, _geoModels,
 				len_rlat, len_rlon);
-		CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
+		Mesh_Group::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
 				len_rlat, len_rlon);
 		//GridAdapter* grid = new GridAdapter(mesh);
 		_meshModels->addMesh(mesh, name);
@@ -805,7 +808,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
 							"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
-	if (!fileName.isEmpty()) 
+	if (!fileName.isEmpty())
 	{
 		QFileInfo fi(fileName);
 		std::vector<FEMCondition*> conditions;
@@ -830,7 +833,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		else if (fi.suffix().toLower() == "ic")
 		{
 			QString name = fi.path() + "/";
-			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName); 
+			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
 			for (std::list<CInitialCondition*>::iterator it = ic_list.begin(); it != ic_list.end(); ++it)
 			{
 				CInitialCondition* ic = new CInitialCondition(*(*it));
@@ -847,7 +850,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 				conditions.push_back(st);
 			}
 		}
-		
+
 		if (!conditions.empty())
 			this->_conditionModel->addConditions(conditions);
 	}
@@ -927,7 +930,7 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 				system(remove_command.c_str());
 			}
 		}
-	} 
+	}
 	else
 	{
 		OGSError::box("No geometry information selected.", "Error");
@@ -952,7 +955,7 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
-	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, bool, bool)), 
+	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, bool, bool)),
 		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, bool, bool)));
 	lineEdit.exec();
 }
