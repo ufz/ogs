@@ -422,6 +422,8 @@ void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 
 			_mapper->SetScalarRange(range);
 			_mapper->ScalarVisibilityOn();
+
+
 		}
 	}
 	_mapper->Update();

@@ -34,6 +34,11 @@
 #include "VtkBGImageSource.h"
 #include "DatabaseConnection.h"
 
+//test
+#include "rf_bc_new.h"
+#include "rf_st_new.h"
+#include "rf_ic_new.h"
+
 // FileIO includes
 #include "OGSIOVer4.h"
 #include "StationIO.h"
@@ -84,13 +89,29 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 {
     setupUi(this);
 
-	// Setup connection GEOObjects to GUI through GEOModels and tab widgets
+	// Setup various models
 	_geoModels = new GEOModels();
 	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
 
-	// station model
 	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
 
+	_meshModels = new MshModel(_project);
+	mshTabWidget->treeView->setModel(_meshModels);
+
+	_conditionModel = new ConditionModel(_project);
+
+	// vtk visualization pipeline
+#ifdef OGS_USE_OPENSG
+	OsgWidget* osgWidget = new OsgWidget(this, 0, Qt::Window);
+	//osgWidget->show();
+	osgWidget->sceneManager()->setRoot(makeCoredNode<OSG::Group>());
+	osgWidget->sceneManager()->showAll();
+	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer(), osgWidget->sceneManager());
+#else // OGS_USE_OPENSG
+	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
+#endif // OGS_USE_OPENSG
+
+	// station model connects
 	connect(stationTabWidget->treeView,
 			SIGNAL(stationListExportRequested(std::string, std::string)),
 			this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
@@ -106,7 +127,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex&)),
 			this, SLOT(showDiagramPrefsDialog(QModelIndex&))); // connect treeview to diagramview
 
-	// geo model
+	// geo model connects
 	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GEOLIB::GEOTYPE)),
 		_geoModels,	SLOT(removeGeometry(std::string, GEOLIB::GEOTYPE)));
 	connect(geoTabWidget->treeView,	SIGNAL(saveToFileRequested(QString, QString)),
@@ -119,32 +140,22 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 		this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 		this, SLOT(updateDataViews()));
+	//connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)), 
+	//	_conditionModel, SLOT(removeFEMConditions(std::string, GEOLIB::GEOTYPE)));
 
 
 	// Setup connections for mesh models to GUI
-	_meshModels = new MshModel(_project);
-	mshTabWidget->treeView->setModel(_meshModels);
 	connect(mshTabWidget, SIGNAL(requestMeshRemoval(const QModelIndex&)),
 			_meshModels, SLOT(removeMesh(const QModelIndex&)));
+	connect(mshTabWidget, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
+			_vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource*)));
 
 	// Setup connections for condition model to GUI
-	_conditionModel = new ConditionModel(_project);
 	conditionTabWidget->treeView->setModel(_conditionModel);
-	connect(conditionTabWidget,
-			SIGNAL(requestConditionRemoval(const QModelIndex&)),
+	connect(conditionTabWidget, SIGNAL(requestConditionRemoval(const QModelIndex&)),
 			_conditionModel, SLOT(removeCondition(const QModelIndex&)));
 
-	// vtk visualization pipeline
-#ifdef OGS_USE_OPENSG
-	OsgWidget* osgWidget = new OsgWidget(this, 0, Qt::Window);
-	//osgWidget->show();
-	osgWidget->sceneManager()->setRoot(makeCoredNode<OSG::Group>());
-	osgWidget->sceneManager()->showAll();
-	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer(), osgWidget->sceneManager());
-#else // OGS_USE_OPENSG
-	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
-#endif // OGS_USE_OPENSG
-
+	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 			_vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
@@ -803,7 +814,6 @@ void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 
 void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 {
-	/*
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
@@ -816,7 +826,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		if (fi.suffix().toLower() == "cnd") {
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 			XMLInterface xml(_geoModels, schemaName);
-			xml.readFEMCondFile(conditions, fileName);
+			xml.readFEMCondFile(conditions, fileName, QString::fromStdString(geoName));
 			if (!conditions.empty())
 				this->_conditionModel->addConditions(conditions);
 		}
@@ -826,7 +836,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
 			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin(); it != bc_list.end(); ++it)
 			{
-				BoundaryCondition* bc = new BoundaryCondition(*(*it));
+				BoundaryCondition* bc = new BoundaryCondition(*(*it), geoName);
 				conditions.push_back(bc);
 			}
 		}
@@ -834,9 +844,9 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			QString name = fi.path() + "/";
 			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::list<CInitialCondition*>::iterator it = ic_list.begin(); it != ic_list.end(); ++it)
+			for (std::vector<CInitialCondition*>::iterator it = ic_vector.begin(); it != ic_vector.end(); ++it)
 			{
-				CInitialCondition* ic = new CInitialCondition(*(*it));
+				InitialCondition* ic = new InitialCondition(*(*it), geoName);
 				conditions.push_back(ic);
 			}
 		}
@@ -844,9 +854,9 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			QString name = fi.path() + "/";
 			STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::list<CSourceTerm*>::iterator st = st_list.begin(); it != st_list.end(); ++it)
+			for (std::vector<CSourceTerm*>::iterator it = st_vector.begin(); it != st_vector.end(); ++it)
 			{
-				CSourceTerm* st = new CSourceTerm(*(*it));
+				SourceTerm* st = new SourceTerm(*(*it), geoName);
 				conditions.push_back(st);
 			}
 		}
@@ -854,7 +864,6 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		if (!conditions.empty())
 			this->_conditionModel->addConditions(conditions);
 	}
-	*/
 }
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
@@ -998,7 +1007,7 @@ void MainWindow::FEMTestStart()
 
 		std::cout << "reading matrix ... " << std::flush;
 		// read matrix
-		FileIO::readCompressedStorageFmt (in, n, iA, jA, A);
+		//FileIO::readCompressedStorageFmt (in, n, iA, jA, A); //KR does not compile under windows
 		in.close ();
 		std::cout << "done" << std::endl;
 

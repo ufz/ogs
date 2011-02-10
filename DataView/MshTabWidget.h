@@ -13,6 +13,11 @@
 #include "ui_MshTabWidgetBase.h"
 
 class MshModel;
+class VtkMeshSource;
+
+namespace Mesh_Group {
+	class CFEMesh;
+}
 
 /**
  * \brief Widget for data views of meshes.
@@ -46,9 +51,10 @@ private slots:
 	/**
 	 * checks the mesh quality
 	 */
-	void checkMeshQuality () const;
+	void checkMeshQuality();
 
 signals:
+	void qualityCheckRequested(VtkMeshSource*);
 	void requestMeshRemoval(const QModelIndex&);
 	void saveMeshAction();
 

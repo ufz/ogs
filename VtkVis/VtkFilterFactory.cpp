@@ -16,6 +16,7 @@
 #include "VtkCompositeTextureOnSurfaceFilter.h"
 #include "VtkCompositeThresholdFilter.h"
 #include "VtkCompositeColorByHeightFilter.h"
+#include "VtkCompositeSelectionFilter.h"
 
 #include <vtkDataSetSurfaceFilter.h>
 
@@ -80,6 +81,12 @@ const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 		"Extracts outer (polygonal) surface.",
 		VTK_UNSTRUCTURED_GRID, VTK_POLY_DATA));
 
+	filterList.push_back(VtkFilterInfo(
+		"VtkCompositeSelectionFilter",
+		"Mesh Quality Filter",
+		"This filter calculates the quality of meshes and highlights deformed elements.",
+		VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
+
 	return filterList;
 }
 
@@ -99,6 +106,9 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type, vtkAl
 		return new VtkCompositeThresholdFilter(inputAlgorithm);
 	else if (type.compare(QString("VtkCompositeColorByHeightFilter")) == 0)
 		return new VtkCompositeColorByHeightFilter(inputAlgorithm);
+	else if (type.compare(QString("VtkCompositeSelectionFilter")) == 0)
+		return new VtkCompositeSelectionFilter(inputAlgorithm);
+
 	else return NULL;
 }
 
