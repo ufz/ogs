@@ -81,11 +81,11 @@ const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 		"Extracts outer (polygonal) surface.",
 		VTK_UNSTRUCTURED_GRID, VTK_POLY_DATA));
 
-	filterList.push_back(VtkFilterInfo(
-		"VtkCompositeSelectionFilter",
-		"Mesh Quality Filter",
-		"This filter calculates the quality of meshes and highlights deformed elements.",
-		VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
+// 	filterList.push_back(VtkFilterInfo(
+// 		"VtkCompositeSelectionFilter",
+// 		"Mesh Quality Filter",
+// 		"This filter calculates the quality of meshes and highlights deformed elements.",
+// 		VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
 
 	return filterList;
 }

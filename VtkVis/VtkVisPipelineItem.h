@@ -86,7 +86,10 @@ public:
 	vtkTransformFilter* transformFilter() const { return _transformFilter; }
 
 	/// @brief Sets the selected attribute array for the visualisation of the data set.
-	void SetActiveAttribute(int arrayIndex, int attributeType = 0 /*vtkDataSetAttributes::SCALARS*/);
+	void SetActiveAttribute(const QString& name);
+
+	/// @brief Gets the last selected attribute.
+	const QString& GetActiveAttribute() const {return _activeAttribute; }
 	
 #ifdef OGS_USE_OPENSG
 	// HACK static rootNode is set by VtkVisPipeline constructor
@@ -105,6 +108,7 @@ protected:
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
 	vtkTransformFilter* _transformFilter;
+	QString _activeAttribute;
 
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
