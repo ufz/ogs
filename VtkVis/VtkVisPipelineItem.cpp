@@ -53,7 +53,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		vtkAlgorithm* algorithm,
 		TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL)
+	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (visParentItem)
@@ -75,7 +75,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/ )
-		: TreeItem(data, parentItem), _compositeFilter(compositeFilter)
+		: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
@@ -89,7 +89,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		vtkAlgorithm* algorithm, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL)
+	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (parentItem->parentItem())
@@ -104,7 +104,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _compositeFilter(compositeFilter)
+	: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 	}
@@ -134,7 +134,7 @@ VtkVisPipelineItem::~VtkVisPipelineItem()
 		                        // always calling it causes error when closing program
 	#endif // OGS_USE_OPENSG
 		delete _compositeFilter;
-		_transformFilter->Delete();
+		if (_transformFilter) _transformFilter->Delete();
 }
 
 VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
@@ -181,19 +181,24 @@ void VtkVisPipelineItem::setVisible( bool visible )
 void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 {
 	_activeAttribute = "";
-	_transformFilter = vtkTransformFilter::New();
-	vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-	transform->Identity();
-	_transformFilter->SetTransform(transform);
+	
+	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+	if (!imageAlgorithm)
+	{
+		
+		_transformFilter = vtkTransformFilter::New();
+		vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+		transform->Identity();
+		_transformFilter->SetTransform(transform);
 
-	_transformFilter->SetInputConnection(_algorithm->GetOutputPort());
-	_transformFilter->Update();
+		_transformFilter->SetInputConnection(_algorithm->GetOutputPort());
+		_transformFilter->Update();
+	}
+
 	_renderer = renderer;
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
-
-
-	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+	
 
 #ifdef OGS_USE_OPENSG
 	_actor = vtkOsgActor::New();
@@ -216,8 +221,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 		_parentNode->addChild(_actor->GetOsgRoot());
 	};OSG::endEditCP(_parentNode);
 #else
-	_mapper->SetInputConnection(_transformFilter->GetOutputPort());
-
+	
 	// Use a special vtkImageActor instead of vtkActor
 	if (imageAlgorithm)
 	{
@@ -228,6 +232,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	}
 	else
 	{
+		_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 		_actor = vtkActor::New();
 		static_cast<vtkActor*>(_actor)->SetMapper(_mapper);
 	}
@@ -269,9 +274,9 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 
 	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
-	//vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
-	//if (!imageAlgorithm)
-	//{
+	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+	if (!imageAlgorithm)
+	{
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 		if (mapper)
 		{
@@ -284,10 +289,10 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 			{
 				_mapper->SetLookupTable(vtkProps->GetLookupTable());
 			}
-			_mapper->SetScalarRange(_algorithm->GetOutput()->GetScalarRange());
+			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
 			_mapper->Update();			
 		}
-	//}
+	}
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
 	if (actor)
