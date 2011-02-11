@@ -180,6 +180,7 @@ void VtkVisPipelineItem::setVisible( bool visible )
 
 void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 {
+	_activeAttribute = "";
 	_transformFilter = vtkTransformFilter::New();
 	vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 	transform->Identity();
@@ -372,59 +373,51 @@ void VtkVisPipelineItem::SetScalarVisibility( bool on )
 	_mapper->SetScalarVisibility(on);
 }
 
-void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
+void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 {
-	if (arrayIndex<0)
-	{
-		return;
-	}
-
-	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
-	bool onPointData(true);
-	double* range(NULL);
-
-	int nPointArrays = dataSet->GetPointData()->GetNumberOfArrays();
-	int nCellArrays  = dataSet->GetCellData()->GetNumberOfArrays();
-
-	if (arrayIndex==(nPointArrays+nCellArrays))
+	// Get type by identifier
+	bool onPointData = true;
+	if (name.contains(QRegExp("^P-")))
+		onPointData = true;
+	else if (name.contains(QRegExp("^C-")))
+		onPointData = false;
+	else if (name.contains("Solid Color"))
 	{
 		_mapper->ScalarVisibilityOff();
+		return;
 	}
+	else
+		return;
 
-	else 
+	// Remove type identifier
+	std::string strippedName = QString(name).remove(0, 2).toStdString();
+	const char* charName = strippedName.c_str();
+
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0)); 
+	if (dataSet)
 	{
-		if ( arrayIndex > nPointArrays-1 )
+		double range[2];
+
+		if (onPointData)
 		{
-			onPointData = false;
-			arrayIndex-=nPointArrays;
+			vtkPointData* pointData = dataSet->GetPointData();
+			pointData->SetActiveAttribute(charName, vtkDataSetAttributes::SCALARS);
+			pointData->GetArray(charName)->GetRange(range);
+			_mapper->SetScalarModeToUsePointData();
+			_mapper->SetScalarRange(dataSet->GetScalarRange());
+		}
+		else
+		{
+			vtkCellData* cellData = dataSet->GetCellData();
+			cellData->SetActiveAttribute(charName, vtkDataSetAttributes::SCALARS);
+			cellData->GetArray(charName)->GetRange(range);
+			_mapper->SetScalarModeToUseCellData();
+			_mapper->SetScalarRange(dataSet->GetScalarRange());
 		}
 
-		if (dataSet)
-		{
-			if (onPointData)
-			{
-				vtkPointData* pointData = dataSet->GetPointData();
-				const char* charName = pointData->GetArrayName(arrayIndex);
-				pointData->SetActiveAttribute(charName, attributeType);
-				range = pointData->GetArray(charName)->GetRange();
-				_mapper->SetScalarModeToUsePointData();
-				_mapper->SetScalarRange(dataSet->GetScalarRange());
-			}
-			else
-			{
-				vtkCellData* cellData = dataSet->GetCellData();
-				const char* charName = cellData->GetArrayName(arrayIndex);
-				cellData->SetActiveAttribute(charName, attributeType);
-				range = cellData->GetArray(charName)->GetRange();
-				_mapper->SetScalarModeToUseCellData();
-				_mapper->SetScalarRange(dataSet->GetScalarRange());
-			}
-
-			_mapper->SetScalarRange(range);
-			_mapper->ScalarVisibilityOn();
-
-
-		}
+		_mapper->SetScalarRange(range);
+		_mapper->ScalarVisibilityOn();
+		_mapper->Update();
+		_activeAttribute = name;
 	}
-	_mapper->Update();
 }
