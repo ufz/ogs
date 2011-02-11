@@ -23,6 +23,7 @@ GEOModels::GEOModels( QObject* parent /*= 0*/ ) :
 GEOModels::~GEOModels()
 {
 	delete _stationModel;
+	delete _geoModel;
 }
 
 void GEOModels::removeGeometry(std::string geo_name, GEOLIB::GEOTYPE type)
@@ -95,7 +96,7 @@ bool GEOModels::appendPolylineVec(const std::vector<GEOLIB::Polyline*> &polyline
 	bool ret (GEOLIB::GEOObjects::appendPolylineVec (polylines, name));
 
 	this->_geoModel->appendPolylines(name, polylines);
-	emit geoDataAdded(_geoModel, name, GEOLIB::POLYLINE);
+	//emit geoDataUpdated(_geoModel, name, GEOLIB::POLYLINE);
 	return ret;
 }
 
@@ -115,12 +116,16 @@ void GEOModels::addSurfaceVec( std::vector<GEOLIB::Surface*> *surfaces, const st
 	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
 }
 
-bool GEOModels::appendSurfaceVec(const std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
+bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
 {
 	bool ret (GEOLIB::GEOObjects::appendSurfaceVec (surfaces, name));
 
-	this->_geoModel->appendSurfaces(name, surfaces);
-	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
+	if (ret)
+		this->_geoModel->appendSurfaces(name, surfaces);
+	else 
+		this->addSurfaceVec(&surfaces, name);
+
+	//emit geoDataUpdated(_geoModel, name, GEOLIB::SURFACE);
 	return ret;
 }
 
@@ -156,10 +161,9 @@ void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<
 
 				if (triangulatePly)
 				{
-					GEOLIB::Surface::createSurface(*new_line);
-
-					//std::list<GEOLIB::Triangle> triangles;
-					//earClippingTriangulationOfPolygon(new_line, triangles);
+					std::vector<GEOLIB::Surface*> new_sfc;
+					new_sfc.push_back(GEOLIB::Surface::createSurface(*new_line));
+					this->appendSurfaceVec(new_sfc, geoName);
 				}
 			}
 

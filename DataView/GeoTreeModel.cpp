@@ -130,10 +130,10 @@ void GeoTreeModel::appendPolylines(const std::string &name, std::vector<GEOLIB::
 		{
 			for (int j=0; j<_lists[i]->childCount(); j++)
 			{
-				if (GEOLIB::POLYLINE == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
+				GeoObjectListItem* parent = static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+				if (GEOLIB::POLYLINE == parent->getType())
 				{
-					size_t nChildren = _lists[i]->child(j)->childCount();
-					TreeItem* parent = _lists[i]->child(j);
+					size_t nChildren = parent->childCount();
 					size_t nPly = polylines.size();
 
 					for (size_t k=0; k<nPly; k++)
@@ -156,6 +156,8 @@ void GeoTreeModel::appendPolylines(const std::string &name, std::vector<GEOLIB::
 					}
 					std::cout << nPly << " polylines added." << std::endl;
 					reset();
+					parent->vtkSource()->Modified();
+
 					return;
 				}
 			}
@@ -233,10 +235,10 @@ void GeoTreeModel::appendSurfaces(const std::string &name, std::vector<GEOLIB::S
 		{
 			for (int j=0; j<_lists[i]->childCount(); j++)
 			{
-				if (GEOLIB::SURFACE == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
+				GeoObjectListItem* parent = static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+				if (GEOLIB::SURFACE == parent->getType())
 				{
-					size_t nChildren = _lists[i]->child(j)->childCount();
-					TreeItem* parent = _lists[i]->child(j);
+					size_t nChildren = parent->childCount();
 					size_t nSfc = surfaces.size();
 
 					for (size_t k=0; k<nSfc; k++)
@@ -268,6 +270,7 @@ void GeoTreeModel::appendSurfaces(const std::string &name, std::vector<GEOLIB::S
 					}
 					std::cout << nSfc << " surfaces added." << std::endl;
 					reset();
+					parent->vtkSource()->Modified();
 					return;
 				}
 			}
