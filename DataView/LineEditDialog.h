@@ -51,6 +51,7 @@ private slots:
 
 signals:
 	void connectPolylines(const std::string&, std::vector<size_t>, bool, bool);	
+	void triangulateSurface(const GEOLIB::Polyline);
 
 };
 

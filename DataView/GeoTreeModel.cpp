@@ -225,6 +225,56 @@ void GeoTreeModel::addSurfaceList(QString geoName, const GEOLIB::SurfaceVec* sur
 	reset();
 }
 
+void GeoTreeModel::appendSurfaces(const std::string &name, std::vector<GEOLIB::Surface*> surfaces)
+{
+	for (size_t i=0; i<_lists.size(); i++)
+	{
+		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+		{
+			for (int j=0; j<_lists[i]->childCount(); j++)
+			{
+				if (GEOLIB::SURFACE == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
+				{
+					size_t nChildren = _lists[i]->child(j)->childCount();
+					TreeItem* parent = _lists[i]->child(j);
+					size_t nSfc = surfaces.size();
+
+					for (size_t k=0; k<nSfc; k++)
+					{
+						QList<QVariant> surface;
+						std::string sfc_name("");
+						surface << "Surface " + QString::number(nChildren+k) << "" << "" << "";
+					
+						GeoTreeItem* surfaceItem = new GeoTreeItem(surface, parent, surfaces[k]);
+						parent->appendChild(surfaceItem);
+
+						const std::vector<GEOLIB::Point*> *nodesVec = surfaces[i]->getPointVec();
+						int nElems = static_cast<int>(surfaces[i]->getNTriangles());
+						for (int j=0; j<nElems; j++)
+						{
+							QList<QVariant> elem;
+							elem << j << static_cast<int>((*(*surfaces[i])[j])[0]) << static_cast<int>((*(*surfaces[i])[j])[1]) << static_cast<int>((*(*surfaces[i])[j])[2]);
+							TreeItem* child = new TreeItem(elem, surfaceItem);
+							surfaceItem->appendChild(child);
+
+							for (int k=0; k<3; k++)
+							{
+								QList<QVariant> node;
+								node << static_cast<int>((*(*surfaces[i])[j])[k]) << QString::number((*(*nodesVec)[(*(*surfaces[i])[j])[k]])[0],'f') << QString::number((*(*nodesVec)[(*(*surfaces[i])[j])[k]])[1],'f') << QString::number((*(*nodesVec)[(*(*surfaces[i])[j])[k]])[2],'f');
+								TreeItem* nchild = new TreeItem(node, child);
+								child->appendChild(nchild);
+							}
+						}
+					}
+					std::cout << nSfc << " surfaces added." << std::endl;
+					reset();
+					return;
+				}
+			}
+		}
+	}
+	OGSError::box("Error adding surface to geometry.");
+}
 
 /**
  * Removes the TreeItem with the given name including all its children

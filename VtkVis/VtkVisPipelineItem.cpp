@@ -268,20 +268,24 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 
 	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
-	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
-	if (mapper)
+	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+	if (!imageAlgorithm)
 	{
-		if (vtkProps->GetLookupTable() == NULL) // default color table
+		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+		if (mapper)
 		{
-			vtkLookupTable* lut = vtkLookupTable::New();
-			vtkProps->SetLookUpTable(lut);
+			if (vtkProps->GetLookupTable() == NULL) // default color table
+			{
+				vtkLookupTable* lut = vtkLookupTable::New();
+				vtkProps->SetLookUpTable(lut);
+			}
+			else // specific color table
+			{
+				_mapper->SetLookupTable(vtkProps->GetLookupTable());
+			}
+			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
+			_mapper->Update();			
 		}
-		else // specific color table
-		{
-			_mapper->SetLookupTable(vtkProps->GetLookupTable());
-		}
-		_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-		_mapper->Update();
 	}
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);

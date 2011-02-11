@@ -115,6 +115,15 @@ void GEOModels::addSurfaceVec( std::vector<GEOLIB::Surface*> *surfaces, const st
 	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
 }
 
+bool GEOModels::appendSurfaceVec(const std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
+{
+	bool ret (GEOLIB::GEOObjects::appendSurfaceVec (surfaces, name));
+
+	this->_geoModel->appendSurfaces(name, surfaces);
+	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
+	return ret;
+}
+
 bool GEOModels::removeSurfaceVec( const std::string &name )
 {
 	emit geoDataRemoved(_geoModel, name, GEOLIB::SURFACE);
@@ -144,13 +153,14 @@ void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<
 			if (closePly)
 			{
 				new_line = GEOLIB::Polyline::closePolyline(*new_line);
-	/*
+
 				if (triangulatePly)
 				{
-					std::list<GEOLIB::Triangle> triangles;
-					earClippingTriangulationOfPolygon(new_line, triangles);
+					GEOLIB::Surface::createSurface(*new_line);
+
+					//std::list<GEOLIB::Triangle> triangles;
+					//earClippingTriangulationOfPolygon(new_line, triangles);
 				}
-	*/
 			}
 
 			connected_ply.push_back(new_line);
