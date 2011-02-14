@@ -183,7 +183,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	_activeAttribute = "";
 	
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
-	if (!imageAlgorithm)
+	if (imageAlgorithm==NULL) // if algorithm is no image
 	{
 		
 		_transformFilter = vtkTransformFilter::New();
@@ -275,7 +275,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
-	if (!imageAlgorithm)
+	if (imageAlgorithm==NULL)
 	{
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 		if (mapper)
