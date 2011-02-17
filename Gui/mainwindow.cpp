@@ -640,8 +640,10 @@ QMenu* MainWindow::createImportFilesMenu()
 	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(importPetrel()));
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), this, SLOT(importRaster()));
+#ifdef OGS_USE_OPENSG
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(importRasterAsPoly()));
+#endif
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
 	connect(shapeFiles, SIGNAL(triggered()), this, SLOT(importShape()));
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
