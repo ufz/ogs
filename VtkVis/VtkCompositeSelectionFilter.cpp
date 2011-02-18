@@ -39,10 +39,6 @@ void VtkCompositeSelectionFilter::init()
 		threshold->Update();
 	(*_algorithmUserProperties)["Threshold"] = thresholdValue;
 
-	vtkUnstructuredGrid* sel = vtkUnstructuredGrid::SafeDownCast(selFilter->GetOutput());
-	vtkUnstructuredGrid* t = vtkUnstructuredGrid::SafeDownCast(threshold->GetOutput());
-
-
 	_outputAlgorithm = threshold;
 }
 
