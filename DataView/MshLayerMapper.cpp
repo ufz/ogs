@@ -30,6 +30,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 	size_t nNodes = mesh->nod_vector.size();
 	size_t nElems = mesh->ele_vector.size();
 
+	size_t count(0);
 	for (size_t layer_id=0; layer_id<nLayers; layer_id++)
 	{
 		// add nodes for new layer
@@ -49,7 +50,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 			node_offset = (layer_id-1)*nNodes;
 			for (size_t i=0; i<nElems; i++)
 			{
-				Mesh_Group::CElem* elem = new Mesh_Group::CElem();
+				Mesh_Group::CElem* elem = new Mesh_Group::CElem(i);
 				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
 				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
