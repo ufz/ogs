@@ -51,12 +51,14 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 	{
 		// check if object is an image data object
 		int objectType = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()))->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
+		bool isSourceItem = (this->selectionModel()->currentIndex().parent().isValid()) ? 0 : 1;
 
 		QMenu menu;
 		QAction* addFilterAction = menu.addAction("Add filter...");
 		QAction* addMeshingAction = NULL;
 		if (objectType == VTK_IMAGE_DATA) 
 		{
+			isSourceItem = false; // this exception is needed as image object are only displayed in the vis-pipeline
 			addMeshingAction = menu.addAction("Convert Image to Mesh...");
 			connect(addMeshingAction, SIGNAL(triggered()), this, SLOT(convertImageToMesh()));
 		}
@@ -69,12 +71,16 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		menu.addSeparator();
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
-		QAction* removeAction = menu.addAction("Remove");
+		QAction* removeAction = NULL;
+		if (!isSourceItem) 
+		{
+			removeAction = menu.addAction("Remove");
+			connect(removeAction, SIGNAL(triggered()), this, SLOT(removeSelectedPipelineItem()));
+		}
 
 		connect(addFilterAction, SIGNAL(triggered()), this, SLOT(addPipelineFilterItem()));
 		connect(exportVtkAction, SIGNAL(triggered()), this, SLOT(exportSelectedPipelineItemAsVtk()));
 		connect(exportOsgAction, SIGNAL(triggered()), this, SLOT(exportSelectedPipelineItemAsOsg()));
-		connect(removeAction, SIGNAL(triggered()), this, SLOT(removeSelectedPipelineItem()));
 
 		menu.exec(event->globalPos());
 	}

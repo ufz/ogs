@@ -927,8 +927,10 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 					fname = fname.substr (0, pos);
 				gmsh_command += " -o " + fname + ".msh";
 				system(gmsh_command.c_str());
+				//wait(3);
+
 			} else {
-				// give a error message here
+				OGSError::box("Error executing command", "Error");
 			}
 
 			if (delete_geo_file) { // delete file
@@ -975,10 +977,8 @@ void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
 	connect(
-			&dlg,
-			SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
-			this,
-			SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
+			&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
+			this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
 	dlg.exec();
 }
 
