@@ -140,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 		this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 		this, SLOT(updateDataViews()));
-	//connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)), 
+	//connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 	//	_conditionModel, SLOT(removeFEMConditions(std::string, GEOLIB::GEOTYPE)));
 
 
@@ -304,6 +304,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
+	std::cout << "size of int: " << sizeof (int) << " " << std::numeric_limits<int>::min() << " " << std::numeric_limits<int>::max() << std::endl;
+	std::cout << "size of long: " << sizeof (long) << std::endl;
+	std::cout << "size of size_t: " << sizeof (size_t) << std::endl;
 }
 
 MainWindow::~MainWindow()

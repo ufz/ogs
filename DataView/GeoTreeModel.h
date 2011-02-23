@@ -49,7 +49,7 @@ public:
 	/// Adds a subtree "Surfaces" to an existing geometry with the given name.
 	void addSurfaceList(QString geoName, const GEOLIB::SurfaceVec* surfaceVec);
 	/// Appends surfaces to the "Surface"-subtree
-	void GeoTreeModel::appendSurfaces(const std::string &name, std::vector<GEOLIB::Surface*> surfaces);
+	void appendSurfaces(const std::string &name, std::vector<GEOLIB::Surface*> surfaces);
 	/// Returns a list of all existing geometries.
 	const std::vector<GeoTreeItem*> &getLists() { return _lists; }
 	/**
@@ -68,7 +68,7 @@ public:
 
 	/// Returns the vtk-object indicated by type of the geometry indicated by name.
 	vtkPolyDataAlgorithm* vtkSource(const std::string &name, GEOLIB::GEOTYPE type) const;
-	
+
 private:
 	std::vector<GeoTreeItem*> _lists;
 

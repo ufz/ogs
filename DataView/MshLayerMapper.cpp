@@ -51,7 +51,8 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 			for (size_t i=0; i<nElems; i++)
 			{
 				Mesh_Group::CElem* elem = new Mesh_Group::CElem();
-				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
+				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE)
+					elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
 				else elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
 				elem->SetPatchIndex(layer_id-1);
 				elem->SetNodesNumber(2*nElemNodes);

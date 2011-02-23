@@ -49,7 +49,7 @@ bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points, std::s
 
 bool GEOModels::removePointVec( const std::string &name )
 {
-	
+
 	if (! isPntVecUsed(name)) {
 		emit geoDataRemoved(_geoModel, name, GEOLIB::POINT);
 		this->_geoModel->removeGeoList(name, GEOLIB::POINT);
@@ -122,7 +122,7 @@ bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const 
 
 	if (ret)
 		this->_geoModel->appendSurfaces(name, surfaces);
-	else 
+	else
 		this->addSurfaceVec(&surfaces, name);
 
 	//emit geoDataUpdated(_geoModel, name, GEOLIB::SURFACE);

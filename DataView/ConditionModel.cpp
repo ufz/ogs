@@ -117,7 +117,7 @@ void ConditionModel::removeFEMConditions(const std::string &geometry_name, GEOLI
 			const FEMCondition* cond = static_cast<CondItem*>(parent->child(i))->getItem();
 			if (geometry_name.compare(cond->getAssociatedGeometryName()) == 0)
 			{
-				if (type == GEOLIB::INVALID || type == cond->getGeoType()) 
+				if (type == GEOLIB::INVALID || type == cond->getGeoType())
 					parent->removeChildren(i,1);
 			}
 		}
