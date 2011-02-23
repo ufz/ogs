@@ -122,8 +122,13 @@ bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const 
 
 	if (ret)
 		this->_geoModel->appendSurfaces(name, surfaces);
-	else
-		this->addSurfaceVec(&surfaces, name);
+	else 
+	{
+		std::vector<GEOLIB::Surface*> *sfc = new std::vector<GEOLIB::Surface*>;
+		for (size_t i=0; i<surfaces.size(); i++)
+			sfc->push_back(surfaces[i]);
+		this->addSurfaceVec(sfc, name);
+	}
 
 	//emit geoDataUpdated(_geoModel, name, GEOLIB::SURFACE);
 	return ret;

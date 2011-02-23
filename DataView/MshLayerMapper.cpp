@@ -19,17 +19,16 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 		std::cout << "Error in MshLayerMapper::CreateLayers() - Invalid parameter: nLayers > 0 and thickness > 0 are required." << std::endl;
 		return NULL;
 	}
-
+/*
 	if ((mesh->ele_vector[0]->GetElementType() != MshElemType::TRIANGLE) && (mesh->ele_vector[0]->GetElementType() != MshElemType::QUAD)) // check if mesh elements are triangles or quads
 	{
 		std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle triangle- or quad-meshes... " << std::endl;
 		return NULL;
 	}
-
+*/
 	Mesh_Group::CFEMesh* new_mesh ( new Mesh_Group::CFEMesh() );
 	size_t nNodes = mesh->nod_vector.size();
 	size_t nElems = mesh->ele_vector.size();
-	size_t nElemNodes = mesh->ele_vector[0]->nodes_index.Size();
 
 	for (size_t layer_id=0; layer_id<nLayers; layer_id++)
 	{
@@ -51,9 +50,17 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 			for (size_t i=0; i<nElems; i++)
 			{
 				Mesh_Group::CElem* elem = new Mesh_Group::CElem();
-				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE)
-					elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
-				else elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
+				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
+				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
+				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
+				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::LINE) continue; // line elements are ignored and not duplicated
+				else 
+				{
+					std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
+					std::cout << "Element " << i << " is of type \"" << MshElemType2String(mesh->ele_vector[i]->GetElementType()) << "\"." << std::endl;
+					delete new_mesh;
+					return NULL;
+				}
 				elem->SetPatchIndex(layer_id-1);
 				elem->SetNodesNumber(2*nElemNodes);
 				elem->nodes_index.resize(2*nElemNodes);
@@ -70,8 +77,9 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
-	new_mesh->ConstructGrid();
-	new_mesh->FillTransformMatrix();
+	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
+	//new_mesh->ConstructGrid();
+	//new_mesh->FillTransformMatrix();
 
 	return new_mesh;
 }

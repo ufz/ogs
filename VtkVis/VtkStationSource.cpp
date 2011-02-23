@@ -80,19 +80,19 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
 	vtkSmartPointer<vtkPolyData> output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-	if (isBorehole)
-	{
-		this->setColorLookupTable("./BoreholeColourReference.txt");
-	    if (_colorLookupTable.empty()) std::cout << "No look-up table for stratigraphy-colors specified. Generating colors on the fly..." << std::endl;
-	}
-
 	vtkSmartPointer<vtkPoints> newStations = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
 		//newStations->Allocate(nStations);
 		newVerts->Allocate(nStations);
 
 	vtkSmartPointer<vtkCellArray> newLines;
-	if (isBorehole) newLines = vtkSmartPointer<vtkCellArray>::New();
+	if (isBorehole) 
+	{
+		newLines = vtkSmartPointer<vtkCellArray>::New();
+
+		this->setColorLookupTable("./BoreholeColourReference.txt");
+	    if (_colorLookupTable.empty()) std::cout << "No look-up table for stratigraphy-colors specified. Generating colors on the fly..." << std::endl;
+	}
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;

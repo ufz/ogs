@@ -643,8 +643,10 @@ QMenu* MainWindow::createImportFilesMenu()
 	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(importPetrel()));
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), this, SLOT(importRaster()));
+#ifdef OGS_USE_OPENSG
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(importRasterAsPoly()));
+#endif
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
 	connect(shapeFiles, SIGNAL(triggered()), this, SLOT(importShape()));
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
@@ -928,8 +930,10 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 					fname = fname.substr (0, pos);
 				gmsh_command += " -o " + fname + ".msh";
 				system(gmsh_command.c_str());
+				//wait(3);
+
 			} else {
-				// give a error message here
+				OGSError::box("Error executing command", "Error");
 			}
 
 			if (delete_geo_file) { // delete file
@@ -976,10 +980,8 @@ void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
 	connect(
-			&dlg,
-			SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
-			this,
-			SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
+			&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
+			this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
 	dlg.exec();
 }
 
