@@ -27,11 +27,12 @@ void VtkCompositePointToGlyphFilter::init()
 	this->_inputDataObjectType = VTK_DATA_SET;
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
+	size_t default_radius(150);
 	_glyphSource = vtkSphereSource::New();
-	_glyphSource->SetRadius(1);
+	_glyphSource->SetRadius(default_radius);
 	_glyphSource->SetPhiResolution(10);
 	_glyphSource->SetThetaResolution(10);
-	(*_algorithmUserProperties)["Radius"] = 1.0;
+	(*_algorithmUserProperties)["Radius"] = default_radius;
 	(*_algorithmUserProperties)["PhiResolution"] = 5;
 	(*_algorithmUserProperties)["ThetaResolution"] = 5;
 
@@ -41,11 +42,11 @@ void VtkCompositePointToGlyphFilter::init()
 	glyphFilter->SetScaleFactor(1.0);
 	glyphFilter->SetSource(_glyphSource->GetOutput());
 	glyphFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
-	(*_algorithmUserProperties)["ScaleMode"] = 0;
-	(*_algorithmUserProperties)["ScaleFactor"] = 1.0;
-	(*_algorithmUserProperties)["ColorMode"] = glyphFilter->GetColorMode();
-	(*_algorithmUserProperties)["VectorMode"] = glyphFilter->GetVectorMode();
-	(*_algorithmUserProperties)["Orient"] = glyphFilter->GetOrient();
+	//(*_algorithmUserProperties)["ScaleMode"] = 0;
+	//(*_algorithmUserProperties)["ScaleFactor"] = 1.0;
+	//(*_algorithmUserProperties)["ColorMode"] = glyphFilter->GetColorMode();
+	//(*_algorithmUserProperties)["VectorMode"] = glyphFilter->GetVectorMode();
+	//(*_algorithmUserProperties)["Orient"] = glyphFilter->GetOrient();
 
 	_outputAlgorithm = glyphFilter;
 }

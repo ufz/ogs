@@ -968,8 +968,8 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
-	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, bool, bool)),
-		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, bool, bool)));
+	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, double, bool, bool)),
+		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, double, bool, bool)));
 	lineEdit.exec();
 }
 
