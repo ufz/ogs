@@ -33,6 +33,8 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 {
 	setupUi(this);
 
+	this->scaleZ->setValidator(new QDoubleValidator(0, 100, 8, this));
+
 	connect(this->vtkVisPipelineView, SIGNAL(itemSelected(VtkVisPipelineItem*)),
 		this, SLOT(setActiveItem(VtkVisPipelineItem*)));
 
