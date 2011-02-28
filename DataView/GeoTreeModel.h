@@ -71,7 +71,11 @@ public:
 	vtkPolyDataAlgorithm* vtkSource(const std::string &name, GEOLIB::GEOTYPE type) const;
 
 private:
+	/// Adds children to the "Polylines" node
 	void addChildren(GeoObjectListItem* plyList, const GEOLIB::PolylineVec* polyline_vec, size_t start_index, size_t end_index);
+	
+	/// Adds children to the "Surfaces" node
+	void addChildren(GeoObjectListItem* sfcList, const GEOLIB::SurfaceVec* surface_vec, size_t start_index, size_t end_index);
 
 	std::vector<GeoTreeItem*> _lists;
 
