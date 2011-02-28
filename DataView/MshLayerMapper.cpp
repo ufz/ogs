@@ -75,6 +75,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 		}
 	}
 
+	new_mesh->NodesNumber_Linear = new_mesh->nod_vector.size();
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class

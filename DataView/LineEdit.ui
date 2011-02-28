@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>333</height>
+    <height>372</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>290</y>
+     <y>330</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -59,7 +59,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>250</y>
+     <y>290</y>
      <width>141</width>
      <height>17</height>
     </rect>
@@ -75,7 +75,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
+     <y>310</y>
      <width>161</width>
      <height>17</height>
     </rect>
@@ -154,6 +154,32 @@
    </property>
    <property name="text">
     <string>0.0</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="plyNameEdit">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>260</y>
+     <width>151</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>260</y>
+     <width>211</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Name of new polyline (optional)</string>
    </property>
   </widget>
  </widget>

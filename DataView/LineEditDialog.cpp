@@ -72,7 +72,8 @@ void LineEditDialog::accept()
 	{
 		std::string prox_string = this->proximityEdit->text().toStdString();
 		double prox = (prox_string.empty()) ? 0.0 : strtod( prox_string.c_str(), 0 );
-		emit connectPolylines(_geoName, selectedIndeces, prox, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
+		std::string ply_name = (plyNameEdit->text().toStdString().empty()) ? "" : plyNameEdit->text().toStdString();
+		emit connectPolylines(_geoName, selectedIndeces, prox, ply_name, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
 		this->done(QDialog::Accepted);
 	}
 	else

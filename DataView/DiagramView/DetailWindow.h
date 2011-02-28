@@ -9,6 +9,7 @@
 #include <QtGui/QWidget>
 #include "ui_DetailWindow.h"
 
+
 /**
  * \brief Creates a window containing a diagram.
  */
@@ -18,7 +19,7 @@ class DetailWindow : public QWidget, private Ui_DetailWindow
 
 public:
 	/// Creates an empty diagram window.
-	DetailWindow(QWidget* parent = 0);
+	//DetailWindow(QWidget* parent = 0);
 	/**
 	 * Creates a window containing a diagram.
 	 * \param filename ASCII file containing x and y values for the graph to be displayed.
@@ -31,6 +32,16 @@ public:
 	 */
 	DetailWindow(DiagramList* list, QWidget* parent = 0);
 	~DetailWindow(void);
+
+	/**
+	 * Adds another plot to window. Axes are automatically resized, a random color is used.
+	 */
+	void addList(DiagramList* list);
+
+	/**
+	 * Adds another plot with a given colour to window. Axes are automatically resized.
+	 */
+	void addList(DiagramList* list, QColor c);
 
 private:
 	/// Automatically resize window based on the measurements of the included graphs.

@@ -68,6 +68,9 @@ void DiagramPrefsDialog::accept()
 	if (_list[0]->size()>0)	
 	{
 		DetailWindow* stationView = new DetailWindow(_list[0]);
+		for (size_t i=1; i<_list.size(); i++)
+			stationView->addList(_list[i]);
+
 		stationView->show();
 	}
 	else 
