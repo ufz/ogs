@@ -54,7 +54,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::LINE) continue; // line elements are ignored and not duplicated
-				else 
+				else
 				{
 					std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
 					std::cout << "Element " << i << " is of type \"" << MshElemType2String(mesh->ele_vector[i]->GetElementType()) << "\"." << std::endl;
@@ -75,7 +75,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 		}
 	}
 
-	new_mesh->NodesNumber_Linear = new_mesh->nod_vector.size();
+	new_mesh->setNumberOfElementsFromElementsVectorSize ();
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
