@@ -37,7 +37,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 		double z_offset ( layer_id*thickness );
 		for (size_t i=0; i<nNodes; i++)
 		{
-			Mesh_Group::CNode* node = new Mesh_Group::CNode( node_offset + i );
+			Mesh_Group::CNode* node( new Mesh_Group::CNode( node_offset + i ) );
 			double coords[3] = { mesh->nod_vector[i]->X(), mesh->nod_vector[i]->Y(), mesh->nod_vector[i]->Z()-z_offset };
 			node->SetCoordinates(coords);
 			new_mesh->nod_vector.push_back(node);
@@ -49,7 +49,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 			node_offset = (layer_id-1)*nNodes;
 			for (size_t i=0; i<nElems; i++)
 			{
-				Mesh_Group::CElem* elem = new Mesh_Group::CElem();
+				Mesh_Group::CElem* elem( new Mesh_Group::CElem() );
 				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
 				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
@@ -95,7 +95,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 			std::cout << "Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." << std::endl;
 			return NULL;
 		}
-		Mesh_Group::CFEMesh* new_mesh = new Mesh_Group::CFEMesh(*msh);
+		Mesh_Group::CFEMesh* new_mesh( new Mesh_Group::CFEMesh(*msh) );
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);
@@ -341,7 +341,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 					 elem->GetNode(a)->SetBoundaryType('1');
 
 				// create a new tetrahedron
-				Mesh_Group::CElem* new_elem = new Mesh_Group::CElem();
+				Mesh_Group::CElem* new_elem( new Mesh_Group::CElem() );
 				new_elem->SetMark(true);
 				new_elem->SetElementType(MshElemType::TETRAHEDRON);
 				new_elem->SetPatchIndex(elem->GetPatchIndex());

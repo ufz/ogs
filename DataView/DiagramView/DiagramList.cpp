@@ -134,12 +134,8 @@ int DiagramList::readList(char* path)
     return 1;
 }*/
 
-
-int DiagramList::readList(const QString &path)
+int DiagramList::readList(const QString &path, std::vector<DiagramList*> &list)
 {
-	QString line;
-	QStringList fields;
-
 	QFile file(path);
 	QTextStream in( &file );
 
@@ -149,43 +145,64 @@ int DiagramList::readList(const QString &path)
 		return 0;
 	}
 
-	line = in.readLine();
-	fields = line.split('\t');
+	QString line = in.readLine();
+	QStringList fields = line.split('\t');
+	int nLists(fields.size()-1);
+
+	
 	if (fields.size() >= 2) 
 	{
-		int numberOfDays = 0;
-		QString stringDate = fields.takeFirst();
-		float value = fields.takeFirst().toDouble();
-		_startDate = QDateTime::fromString(stringDate, "dd.MM.yyyy");
-		QDateTime currentDate;
+		int numberOfDays(0);
+		QString stringDate(fields.takeFirst());
+		double value(0);
+		QDateTime startDate(QDateTime::fromString(stringDate, "dd.MM.yyyy"));
 
-		_coords.push_back(std::pair<float, float>(0, value));
+		for (int i=0; i<nLists; i++)
+		{
+			DiagramList* l = new DiagramList;
+			value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
+			l->setStartDate(startDate);
+			l->addNextPoint(0,value);
+			list.push_back(l);
+		}
+
+		QDateTime currentDate;
 
 		while (!in.atEnd()) {
 			line = in.readLine();
 			fields = line.split('\t');
-			if (fields.size() >= 2) {
+			if (fields.size() >= (nLists+1)) {
 				stringDate = fields.takeFirst();
-				//value = fields.takeFirst().toDouble();
-				value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
 				currentDate = QDateTime::fromString(stringDate, "dd.MM.yyyy");
+				numberOfDays = startDate.daysTo(currentDate);
 
-				numberOfDays = _startDate.daysTo(currentDate);
-				_coords.push_back(std::pair<float, float>(numberOfDays, value));
+				for (int i=0; i<nLists; i++)
+				{
+					value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
+					list[i]->addNextPoint(numberOfDays,value);
+				}
 			}
-			else return 0;
+			else 
+			{
+				qDebug("Unexpected file format...");
+				file.close();
+				return 0;
+			}
 		}
 	}
 	else
 	{
 		qDebug("Unexpected file format...");
+		file.close();
 		return 0;
 	}
 
 	file.close();
-	update();
-
-    return 1;
+	
+	for (int i=0; i<nLists; i++)
+		list[i]->update();
+	
+    return nLists;
 }
 
 void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)

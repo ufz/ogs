@@ -3,6 +3,7 @@
  * 2010/12/09 KR Initial implementation
  */
 
+#include "OGSError.h"
 #include "LineEditDialog.h"
 #include <QStringList>
 #include <QStringListModel>
@@ -12,6 +13,8 @@ LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* pare
 : QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel), _geoName(ply_vec.getName())
 {
 	setupUi(this);
+
+	this->proximityEdit->setValidator(new QDoubleValidator(0, 100, 8, this));
 
 	size_t nPly(ply_vec.size());
 	QStringList list;
@@ -64,8 +67,16 @@ void LineEditDialog::on_deselectPlyButton_pressed()
 void LineEditDialog::accept()
 {
 	std::vector<size_t> selectedIndeces = this->getSelectedIndeces(_selPly->stringList());
-	emit connectPolylines(_geoName, selectedIndeces, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
-	this->done(QDialog::Accepted);
+
+	if (!selectedIndeces.empty())
+	{
+		std::string prox_string = this->proximityEdit->text().toStdString();
+		double prox = (prox_string.empty()) ? 0.0 : strtod( prox_string.c_str(), 0 );
+		emit connectPolylines(_geoName, selectedIndeces, prox, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
+		this->done(QDialog::Accepted);
+	}
+	else
+		OGSError::box("No polylines selected", "Error");
 }
 
 void LineEditDialog::reject()

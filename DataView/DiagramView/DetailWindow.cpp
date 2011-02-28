@@ -25,8 +25,8 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	/* display */
 	/* ================================================== */
 
-	/* make up list-object for the first test station */
-	list->setName("Water Level Observation Station: Halberstadt 2002" /*Oschersleben 2003*/);
+	/* make up list-object for the first test station *
+	list->setName("Water Level Observation Station: Halberstadt 2002" /*Oschersleben 2003*);
 	list->setXLabel("Time");
 	list->setYLabel("Water Level");
 	list->setXUnit("day");
@@ -34,7 +34,7 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	list->setColor(QColor(Qt::red));
 	list->readList("c:\\project\\timeseries-a.stn");
 
-	/* make up list-object for the second test station */
+	/* make up list-object for the second test station *
 	list2->setName("Water Level Observation Station: Oschersleben 2002");
 	list2->setXLabel("Time");
 	list2->setYLabel("Water Level");
@@ -57,10 +57,11 @@ DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 	setupUi(this);
 	stationView->setRenderHints( QPainter::Antialiasing );
 
-	DiagramList* list  = new DiagramList();
-	list->readList(filename);
+	DiagramList::readList(filename, _list);
 
-	stationView->addGraph(list);
+	for (size_t i=0; i<_list.size(); i++)
+		stationView->addGraph(_list[i]);
+
 	resizeWindow();
 }
 
@@ -74,6 +75,8 @@ DetailWindow::DetailWindow(DiagramList* list, QWidget* parent) : QWidget(parent)
 
 DetailWindow::~DetailWindow()
 {
+	for (size_t i=0; i<_list.size(); i++)
+		delete _list[i];
 }
 
 void DetailWindow::on_closeButton_clicked()

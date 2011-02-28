@@ -21,7 +21,6 @@ DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, D
 	setAttribute(Qt::WA_DeleteOnClose);
 
 	_listID = -1; _stationID = -1;
-	_list = new DiagramList();
 	setupUi(this);
 	stationNameLabel->setText(QString::fromStdString(stn->getName()));
 	stationTypeLabel->setText(listName);
@@ -45,7 +44,8 @@ DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, D
 
 DiagramPrefsDialog::~DiagramPrefsDialog()
 {
-	delete _list;
+	for (size_t i=0; i<_list.size(); i++)
+		delete _list[i];
 	this->destroy();
 }
 
@@ -53,7 +53,7 @@ DiagramPrefsDialog::~DiagramPrefsDialog()
 /// Note: Clicking the "Load from file"-button overrides the database input!
 void DiagramPrefsDialog::accept()
 {
-	if (_list->size() == 0)	// data will be read from the database (if data has been loaded from file, size is already >0)
+	if (_list[0]->size() == 0)	// data will be read from the database (if data has been loaded from file, size is already >0)
 	{
 		if (_listID > 0 && _stationID > 0)
 		{
@@ -65,9 +65,9 @@ void DiagramPrefsDialog::accept()
 	}
 	
 	// data has been loaded
-	if (_list->size()>0)	
+	if (_list[0]->size()>0)	
 	{
-		DetailWindow* stationView = new DetailWindow(_list);
+		DetailWindow* stationView = new DetailWindow(_list[0]);
 		stationView->show();
 	}
 	else 
@@ -96,17 +96,19 @@ void DiagramPrefsDialog::on_loadFileButton_clicked()
  */
 int DiagramPrefsDialog::loadFile(const QString &filename)
 {
-	_list->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
-	_list->setXLabel("Time");
-	//_list->setYLabel("Water Level");
-	_list->setXUnit("day");
-	//_list->setYUnit("metres");
-	_list->setColor(QColor(Qt::red));
-
-	if (_list->readList(filename))
+	if (DiagramList::readList(filename, _list))
 	{
-		fromDateLine->setText(QString::number(_list->minXValue()));
-		toDateLine->setText(QString::number(_list->maxXValue()));
+		for (size_t i=0; i<_list.size(); i++)
+		{
+			_list[i]->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
+			_list[i]->setXLabel("Time");
+			//_list[i]->setYLabel("Water Level");
+			_list[i]->setXUnit("day");
+			//_list[i]->setYUnit("metres");
+			_list[i]->setColor(QColor(Qt::red));
+		}
+		fromDateLine->setText(QString::number(_list[0]->minXValue()));
+		toDateLine->setText(QString::number(_list[0]->maxXValue()));
 		return 1;
 	}
 
@@ -123,13 +125,15 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 {
 	if (!coords.empty())
 	{
-		_list->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
-		_list->setXLabel("Time");
-		//_list->setYLabel("Water Level");
-		_list->setXUnit("day");
-		//_list->setYUnit("metres");
-		_list->setColor(QColor(Qt::red));
-		_list->setList(coords);
+		DiagramList* l = new DiagramList;
+		l->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
+		l->setXLabel("Time");
+		//l->setYLabel("Water Level");
+		l->setXUnit("day");
+		//l->setYUnit("metres");
+		l->setColor(QColor(Qt::red));
+		l->setList(coords);
+		_list.push_back(l);
 		return 1;
 	}
 	return 0;

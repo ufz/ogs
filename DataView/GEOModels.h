@@ -59,7 +59,7 @@ public slots:
 	bool removeSurfaceVec(const std::string &name);
 
 	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
-	void connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, bool closePly, bool triangulatePly);
+	void connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, double proximity, bool closePly, bool triangulatePly);
 
 
 protected:

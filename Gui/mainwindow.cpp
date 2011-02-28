@@ -304,9 +304,6 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
-	std::cout << "size of int: " << sizeof (int) << " " << std::numeric_limits<int>::min() << " " << std::numeric_limits<int>::max() << std::endl;
-	std::cout << "size of long: " << sizeof (long) << std::endl;
-	std::cout << "size of size_t: " << sizeof (size_t) << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -971,8 +968,8 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
-	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, bool, bool)),
-		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, bool, bool)));
+	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, double, bool, bool)),
+		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, double, bool, bool)));
 	lineEdit.exec();
 }
 
