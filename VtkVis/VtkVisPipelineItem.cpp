@@ -181,11 +181,11 @@ void VtkVisPipelineItem::setVisible( bool visible )
 void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 {
 	_activeAttribute = "";
-	
+
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
 	if (imageAlgorithm==NULL) // if algorithm is no image
 	{
-		
+
 		_transformFilter = vtkTransformFilter::New();
 		vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 		transform->Identity();
@@ -198,7 +198,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	_renderer = renderer;
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
-	
+
 
 #ifdef OGS_USE_OPENSG
 	_actor = vtkOsgActor::New();
@@ -221,7 +221,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 		_parentNode->addChild(_actor->GetOsgRoot());
 	};OSG::endEditCP(_parentNode);
 #else
-	
+
 	// Use a special vtkImageActor instead of vtkActor
 	if (imageAlgorithm)
 	{
@@ -290,7 +290,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 				_mapper->SetLookupTable(vtkProps->GetLookupTable());
 			}
 			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->Update();			
+			_mapper->Update();
 		}
 	}
 
@@ -402,7 +402,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 	std::string strippedName = QString(name).remove(0, 2).toStdString();
 	const char* charName = strippedName.c_str();
 
-	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0)); 
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	if (dataSet)
 	{
 		double range[2];

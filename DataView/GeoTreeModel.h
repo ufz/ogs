@@ -69,7 +69,7 @@ public:
 
 	/// Returns the vtk-object indicated by type of the geometry indicated by name.
 	vtkPolyDataAlgorithm* vtkSource(const std::string &name, GEOLIB::GEOTYPE type) const;
-	
+
 private:
 	void addChildren(GeoObjectListItem* plyList, const GEOLIB::PolylineVec* polyline_vec, size_t start_index, size_t end_index);
 
