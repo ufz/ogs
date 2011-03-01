@@ -23,6 +23,8 @@
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <vtkMath.h>
 #include <vtkCommand.h>
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
 #include <QSettings>
 
@@ -106,6 +108,15 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	}
 
 	//eyeAngleSlider->setValue((int)(_vtkRender->GetActiveCamera()->GetEyeAngle() * 10));
+	
+	// Create an orientation marker using vtkAxesActor
+	vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
+	vtkOrientationMarkerWidget* markerWidget = vtkOrientationMarkerWidget::New();
+	markerWidget->SetOrientationMarker(axesActor);
+	//markerWidget->SetViewport(0.0, 0.0, 0.15, 0.3); // size
+	markerWidget->SetInteractor(vtkWidget->GetRenderWindow()->GetInteractor());
+	markerWidget->EnabledOn();
+	markerWidget->InteractiveOff();
 }
 
 VisualizationWidget::~VisualizationWidget()
