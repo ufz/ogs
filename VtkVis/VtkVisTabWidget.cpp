@@ -67,7 +67,6 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			this->buildScalarArrayComboBox(_item->algorithm());
 
 			// Set to last active attribute
-			int index = 0;
 			QString activeAttribute = item->GetActiveAttribute();
 			for (int i = 0; i < this->activeScalarComboBox->count(); i++)
 			{

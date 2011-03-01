@@ -20,6 +20,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QHeaderView>
+#include <QAbstractItemModel>
 
 //image to mesh conversion
 #include "GridAdapter.h"
@@ -36,16 +37,26 @@
 VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 : QTreeView(parent)
 {
-	setItemsExpandable(false);
+	this->setItemsExpandable(false);
 	//setEditTriggers(QAbstractItemView::AllEditTriggers);
 	CheckboxDelegate* checkboxDelegate = new CheckboxDelegate(this);
-	setItemDelegateForColumn(1, checkboxDelegate);
-	header()->setStretchLastSection(false);
-	header()->setResizeMode(QHeaderView::ResizeToContents);
+	this->setItemDelegateForColumn(1, checkboxDelegate);
+	this->header()->setStretchLastSection(false);
+	this->header()->setResizeMode(QHeaderView::ResizeToContents);
+}
+
+void VtkVisPipelineView::setModel(QAbstractItemModel* model)
+{
+	QTreeView::setModel(model);
+	
+	// Move Visisble checkbox to the left.
+	// This is done here because at constructor time there arent any sections.
+	this->header()->moveSection(1, 0);
 }
 
 void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 {
+	std::cout << this->header()->count() << std::endl;
 	QModelIndex index = selectionModel()->currentIndex();
 	if (index.isValid())
 	{
