@@ -59,7 +59,7 @@ const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 		"VtkCompositeThresholdFilter",
 		"Extract cells by threshold",
 		"This filter extracts cells from any dataset type that satisfy a threshold criterion. A cell satisfies the criterion if the (first) scalar value of (every or any) point satisfies the criterion. For example this can be used to show only certain material groups in a mesh.",
-		VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
+		VTK_POINT_SET, VTK_UNSTRUCTURED_GRID));
 
 	filterList.push_back(VtkFilterInfo(
 		"VtkCompositeColorByHeightFilter",
