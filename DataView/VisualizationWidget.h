@@ -54,9 +54,6 @@ protected slots:
 	/// Toggles stereo rendering on / off
 	void on_stereoToolButton_toggled(bool checked);
 
-	/// TODO Toggles full screen mode (actually not working)
-	void on_fullscreenToolButton_clicked(bool checked);
-
 	/// Adjusts the eye angle (separation) for stereo viewing
 	void on_eyeAngleSlider_valueChanged(int value);
 

@@ -79,19 +79,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="fullscreenToolButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Enables / disables fullscreen mode.</string>
-       </property>
-       <property name="text">
-        <string>F</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

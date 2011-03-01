@@ -186,12 +186,6 @@ void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
 	this->updateView();
 }
 
-void VisualizationWidget::on_fullscreenToolButton_clicked( bool checked )
-{
-	Q_UNUSED(checked)
-	vtkWidget->GetRenderWindow()->FullScreenOn();
-}
-
 void VisualizationWidget::on_eyeAngleSlider_valueChanged( int value )
 {
 	Q_UNUSED(value);
