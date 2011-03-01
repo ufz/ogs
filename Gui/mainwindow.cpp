@@ -936,7 +936,6 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 			if (delete_geo_file) { // delete file
 				std::string remove_command ("rm ");
 	#ifdef _WIN32
-				BASELIB::wait(3);
 				remove_command = "del ";
 	#endif
 				remove_command += fileName.toStdString();
@@ -1010,7 +1009,7 @@ void MainWindow::FEMTestStart()
 
 		std::cout << "reading matrix ... " << std::flush;
 		// read matrix
-		//FileIO::readCompressedStorageFmt (in, n, iA, jA, A); //KR does not compile under windows
+		FileIO::readCompressedStorageFmt (in, n, iA, jA, A);
 		in.close ();
 		std::cout << "done" << std::endl;
 
