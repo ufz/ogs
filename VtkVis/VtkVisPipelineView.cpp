@@ -175,11 +175,13 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected, const
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
 		emit actorSelected(item->actor());
 		emit itemSelected(item);
+		emit dataObjectSelected(vtkDataObject::SafeDownCast(item->algorithm()->GetOutputDataObject(0)));
 	}
 	else
 	{
 		emit actorSelected((vtkProp3D*)NULL);
 		emit itemSelected(NULL);
+		emit dataObjectSelected(NULL);
 	}
 		
 }
