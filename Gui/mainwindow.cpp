@@ -903,9 +903,20 @@ void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName
 void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4)
 {
 	std::cout << "Start meshing..." << std::endl;
-	GMSHInterface gmsh_io ("test_mesh.geo"); // fname.toStdString());
-	gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-			selectedGeometries, param1, param2, param3);
+	QString fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as", "","GMSH geometry files (*.geo)");
+
+	if (!fileName.isEmpty())
+	{
+		if (param4 == -1) // adaptive meshing selected
+		{
+			GMSHInterface gmsh_io (fileName.toStdString()); // fname.toStdString());
+			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels, selectedGeometries, param1, param2, param3);
+		}
+		else // homogeneous meshing selected
+		{
+			// todo
+		}
+	}
 }
 
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
