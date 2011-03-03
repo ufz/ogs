@@ -80,19 +80,19 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
 	vtkSmartPointer<vtkPolyData> output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-	if (isBorehole)
-	{
-		this->setColorLookupTable("./BoreholeColourReference.txt");
-	    if (_colorLookupTable.empty()) std::cout << "No look-up table for stratigraphy-colors specified. Generating colors on the fly..." << std::endl;
-	}
-
 	vtkSmartPointer<vtkPoints> newStations = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
 		//newStations->Allocate(nStations);
 		newVerts->Allocate(nStations);
 
 	vtkSmartPointer<vtkCellArray> newLines;
-	if (isBorehole) newLines = vtkSmartPointer<vtkCellArray>::New();
+	if (isBorehole) 
+	{
+		newLines = vtkSmartPointer<vtkCellArray>::New();
+
+		this->setColorLookupTable("./BoreholeColourReference.txt");
+	    if (_colorLookupTable.empty()) std::cout << "No look-up table for stratigraphy-colors specified. Generating colors on the fly..." << std::endl;
+	}
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
@@ -106,10 +106,6 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
 		colors->SetNumberOfComponents(3);
 		colors->SetName("StationColors");
-
-	vtkSmartPointer<vtkUnsignedCharArray> stratColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-		stratColors->SetNumberOfComponents(3);
-		stratColors->SetName("StratColors");
 
 	int lastMaxIndex = 0;
 
@@ -143,7 +139,7 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 				lastMaxIndex++;
 				const GEOLIB::Color *c (GEOLIB::getColor(soilNames[i], _colorLookupTable));
 				unsigned char sColor[3] = { (*c)[0], (*c)[1], (*c)[2] };
-				stratColors->InsertNextTupleValue(sColor);
+				colors->InsertNextTupleValue(sColor);
 			}
 			lastMaxIndex++;
 		}
@@ -154,21 +150,9 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	if (!isBorehole)
 		output->SetVerts(newVerts);
 	else
-	{
 		output->SetLines(newLines);
 
-		int nColors = stratColors->GetNumberOfTuples ();
-		for (int i=0; i<nColors; i++)
-		{
-			unsigned char c[3];
-			stratColors->GetTupleValue(i, c);
-			colors->InsertNextTupleValue(c);
-		}
-	}
-
-	//output->GetCellData()->SetScalars(colors);
 	output->GetCellData()->AddArray(colors);
-	output->GetCellData()->AddArray(stratColors);
 	output->GetCellData()->SetActiveScalars("StationColors");
 
 	return 1;

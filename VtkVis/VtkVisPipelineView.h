@@ -12,6 +12,7 @@
 #include <QTreeView>
 
 class QItemSelection;
+class QAbstractItemModel;
 class VtkVisPipelineItem;
 class vtkProp3D;
 
@@ -27,7 +28,11 @@ class VtkVisPipelineView : public QTreeView
 	Q_OBJECT
 
 public:
+	/// @brief Constructor.
 	VtkVisPipelineView(QWidget* parent = 0);
+	
+	/// @brief Overridden to set model specific header properties.
+	virtual void setModel(QAbstractItemModel* model);
 
 protected slots:
 	/// Emits itemSelected() signals when an items was selected.

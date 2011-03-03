@@ -23,6 +23,7 @@ GEOModels::GEOModels( QObject* parent /*= 0*/ ) :
 GEOModels::~GEOModels()
 {
 	delete _stationModel;
+	delete _geoModel;
 }
 
 void GEOModels::removeGeometry(std::string geo_name, GEOLIB::GEOTYPE type)
@@ -48,7 +49,7 @@ bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points, std::s
 
 bool GEOModels::removePointVec( const std::string &name )
 {
-	
+
 	if (! isPntVecUsed(name)) {
 		emit geoDataRemoved(_geoModel, name, GEOLIB::POINT);
 		this->_geoModel->removeGeoList(name, GEOLIB::POINT);
@@ -94,8 +95,7 @@ bool GEOModels::appendPolylineVec(const std::vector<GEOLIB::Polyline*> &polyline
 {
 	bool ret (GEOLIB::GEOObjects::appendPolylineVec (polylines, name));
 
-	this->_geoModel->appendPolylines(name, polylines);
-	emit geoDataAdded(_geoModel, name, GEOLIB::POLYLINE);
+	this->_geoModel->appendPolylines(name, this->getPolylineVecObj(name));
 	return ret;
 }
 
@@ -115,6 +115,23 @@ void GEOModels::addSurfaceVec( std::vector<GEOLIB::Surface*> *surfaces, const st
 	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
 }
 
+bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
+{
+	bool ret (GEOLIB::GEOObjects::appendSurfaceVec (surfaces, name));
+
+	if (ret)
+		this->_geoModel->appendSurfaces(name, this->getSurfaceVecObj(name));
+	else 
+	{
+		std::vector<GEOLIB::Surface*> *sfc = new std::vector<GEOLIB::Surface*>;
+		for (size_t i=0; i<surfaces.size(); i++)
+			sfc->push_back(surfaces[i]);
+		this->addSurfaceVec(sfc, name);
+	}
+
+	return ret;
+}
+
 bool GEOModels::removeSurfaceVec( const std::string &name )
 {
 	emit geoDataRemoved(_geoModel, name, GEOLIB::SURFACE);
@@ -122,9 +139,9 @@ bool GEOModels::removeSurfaceVec( const std::string &name )
 	return GEOObjects::removeSurfaceVec (name);
 }
 
-void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, bool closePly, bool triangulatePly)
+void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, double proximity, std::string ply_name, bool closePly, bool triangulatePly)
 {
-	const GEOLIB::PolylineVec* plyVec = this->getPolylineVecObj(geoName);
+	GEOLIB::PolylineVec* plyVec = this->getPolylineVecObj(geoName);
 
 	if (plyVec)
 	{
@@ -134,7 +151,7 @@ void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<
 			ply_list.push_back( (*polylines)[indexlist[i]] );
 
 		// connect polylines
-		GEOLIB::Polyline* new_line = GEOLIB::Polyline::contructPolylineFromSegments(ply_list);
+		GEOLIB::Polyline* new_line = GEOLIB::Polyline::contructPolylineFromSegments(ply_list, proximity);
 
 		if (new_line)
 		{
@@ -144,16 +161,18 @@ void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<
 			if (closePly)
 			{
 				new_line = GEOLIB::Polyline::closePolyline(*new_line);
-	/*
+
 				if (triangulatePly)
 				{
-					std::list<GEOLIB::Triangle> triangles;
-					earClippingTriangulationOfPolygon(new_line, triangles);
+					std::vector<GEOLIB::Surface*> new_sfc;
+					new_sfc.push_back(GEOLIB::Surface::createSurface(*new_line));
+					this->appendSurfaceVec(new_sfc, geoName);
 				}
-	*/
 			}
 
 			connected_ply.push_back(new_line);
+			if (!ply_name.empty())
+				plyVec->setNameOfElementByID(polylines->size(), ply_name);
 			this->appendPolylineVec(connected_ply, geoName);
 		}
 		else

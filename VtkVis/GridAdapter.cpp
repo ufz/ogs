@@ -101,7 +101,7 @@ const CFEMesh* GridAdapter::toCFEMesh() const
 	size_t nNodes = _nodes->size();
 	for (size_t i=0; i<nNodes; i++)
 	{
-		Mesh_Group::CNode* node = new Mesh_Group::CNode(i);
+		Mesh_Group::CNode* node(new Mesh_Group::CNode(i));
 		double coords[3] = { (*(*_nodes)[i])[0], (*(*_nodes)[i])[1], (*(*_nodes)[i])[2] };
 		node->SetCoordinates(coords);
 		mesh->nod_vector.push_back(node);
@@ -111,7 +111,7 @@ const CFEMesh* GridAdapter::toCFEMesh() const
 	size_t nElems = _elems->size();
 	for (size_t i=0; i<nElems; i++)
 	{
-		Mesh_Group::CElem* elem = new Mesh_Group::CElem();
+		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
 		elem->SetElementType((*_elems)[i]->type);
 		elem->SetPatchIndex((*_elems)[i]->material);
 
@@ -300,7 +300,7 @@ Mesh_Group::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std:
 			double coords[3] = { origin.first+(scalingFactor*j), origin.second+(scalingFactor*i), pixcol };
 			visNodes[index] = (colour[3]>0);
 
-			Mesh_Group::CNode* node = new Mesh_Group::CNode(index);
+			Mesh_Group::CNode* node(new Mesh_Group::CNode(index));
 			node->SetCoordinates(coords);
 			mesh->nod_vector.push_back(node);
 		}
@@ -328,7 +328,7 @@ Mesh_Group::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std:
 
 Mesh_Group::CElem* GridAdapter::createElement(size_t node1, size_t node2, size_t node3)
 {
-	Mesh_Group::CElem* elem = new Mesh_Group::CElem();
+	Mesh_Group::CElem* elem(new Mesh_Group::CElem());
 	elem->setElementProperties(MshElemType::TRIANGLE);
 	elem->SetPatchIndex(1);
 	elem->SetNodesNumber(3);
@@ -343,7 +343,7 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 {
 	if (!grid) return NULL;
 
-	Mesh_Group::CFEMesh* mesh = new Mesh_Group::CFEMesh();
+	Mesh_Group::CFEMesh* mesh(new Mesh_Group::CFEMesh());
 
 	size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
 	size_t nElems = grid->GetNumberOfCells();
@@ -353,7 +353,7 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 	for (size_t i=0; i<nNodes; i++)
 	{
 		coords = grid->GetPoints()->GetPoint(i);
-		Mesh_Group::CNode* node = new Mesh_Group::CNode(i, coords[0], coords[1], coords[2]);
+		Mesh_Group::CNode* node(new Mesh_Group::CNode(i, coords[0], coords[1], coords[2]));
 		mesh->nod_vector.push_back(node);
 	}
 
@@ -361,7 +361,7 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 	vtkCell* cell(NULL);
 	for (size_t i=0; i<nElems; i++)
 	{
-		Mesh_Group::CElem* elem = new Mesh_Group::CElem();
+		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
 
 		MshElemType::type elem_type = MshElemType::INVALID;
 		int cell_type = grid->GetCellType(i);

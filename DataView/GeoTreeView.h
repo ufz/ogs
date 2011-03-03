@@ -38,6 +38,8 @@ private:
 
 private slots:
 	void on_Clicked(QModelIndex idx);
+	/// Allows to add FEM Conditions to add to Geometry
+	void addFEMConditions();
 	/// Calls a LineEditDialog.
 	void connectPolylines();
 	/// Saves a geometry in a file.
@@ -48,6 +50,7 @@ private slots:
 signals:
 	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
+	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
 	void requestLineEditDialog(const std::string&);
 };

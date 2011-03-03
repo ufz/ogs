@@ -93,15 +93,42 @@ void GeoTreeModel::addPolylineList(QString geoName, const GEOLIB::PolylineVec* p
 	//BaseItem* grpItem = new BaseItem(listName, stations);
 	GeoObjectListItem* plyList = new GeoObjectListItem(plyData, geo, lines, GEOLIB::POLYLINE);
 	geo->appendChild(plyList);
+	this->addChildren(plyList, polylineVec, 0, lines->size());
+	reset();
+}
 
-	size_t nPly = lines->size();
+void GeoTreeModel::appendPolylines(const std::string &name, const GEOLIB::PolylineVec* polylineVec)
+{
+	for (size_t i=0; i<_lists.size(); i++)
+	{
+		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+		{
+			for (int j=0; j<_lists[i]->childCount(); j++)
+			{
+				GeoObjectListItem* parent = static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+				if (GEOLIB::POLYLINE == parent->getType())
+				{
+					this->addChildren(parent, polylineVec, parent->childCount(), polylineVec->getVector()->size());
+					reset();
+					parent->vtkSource()->Modified();
+					return;
+				}
+			}
+		}
+	}
+	OGSError::box("Error adding polyline to geometry.");
+}
 
-	for (size_t i=0; i<nPly; i++)
+void GeoTreeModel::addChildren(GeoObjectListItem* plyList, const GEOLIB::PolylineVec* polyline_vec, size_t start_index, size_t end_index)
+{
+	const std::vector<GEOLIB::Polyline*> *lines = polyline_vec->getVector();
+
+	for (size_t i=start_index; i<end_index; i++)
 	{
 		QList<QVariant> line;
 		std::string ply_name("");
 		line << "Line " + QString::number(i);
-		if (polylineVec->getNameOfElementByID(i, ply_name)) line << QString::fromStdString(ply_name) << "" << "";
+		if (polyline_vec->getNameOfElementByID(i, ply_name)) line << QString::fromStdString(ply_name) << "" << "";
 		else line << "" << "" << "";
 
 
@@ -117,51 +144,7 @@ void GeoTreeModel::addPolylineList(QString geoName, const GEOLIB::PolylineVec* p
 			lineItem->appendChild(child);
 		}
 	}
-	std::cout << nPly << " polylines added." << std::endl;
-
-	reset();
-}
-
-void GeoTreeModel::appendPolylines(const std::string &name, std::vector<GEOLIB::Polyline*> polylines)
-{
-	for (size_t i=0; i<_lists.size(); i++)
-	{
-		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
-		{
-			for (int j=0; j<_lists[i]->childCount(); j++)
-			{
-				if (GEOLIB::POLYLINE == static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
-				{
-					size_t nChildren = _lists[i]->child(j)->childCount();
-					TreeItem* parent = _lists[i]->child(j);
-					size_t nPly = polylines.size();
-
-					for (size_t k=0; k<nPly; k++)
-					{
-						QList<QVariant> line;
-						std::string ply_name("");
-						line << "Line " + QString::number(nChildren+k) << "" << "" << "";
-
-						GeoTreeItem* lineItem = new GeoTreeItem(line, parent, polylines[k]);
-						parent->appendChild(lineItem);
-
-						int nPoints = static_cast<int>(polylines[k]->getNumberOfPoints());
-						for (int l=0; l<nPoints; l++)
-						{
-							QList<QVariant> pnt;
-							pnt << static_cast<int>(polylines[k]->getPointID(l)) << QString::number((*(*polylines[k])[l])[0],'f') << QString::number((*(*polylines[k])[l])[1],'f') << QString::number((*(*polylines[k])[l])[2],'f');
-							TreeItem* child = new TreeItem(pnt, lineItem);
-							lineItem->appendChild(child);
-						}
-					}
-					std::cout << nPly << " polylines added." << std::endl;
-					reset();
-					return;
-				}
-			}
-		}
-	}
-	OGSError::box("Error adding polyline to geometry.");
+	std::cout << end_index-start_index << " polylines added." << std::endl;
 }
 
 void GeoTreeModel::addSurfaceList(QString geoName, const GEOLIB::SurfaceVec* surfaceVec)
@@ -184,18 +167,45 @@ void GeoTreeModel::addSurfaceList(QString geoName, const GEOLIB::SurfaceVec* sur
 
 	QList<QVariant> sfcData;
 	sfcData << "Surfaces" << "" << "" << "";
-	//BaseItem* grpItem = new BaseItem(listName, stations);
 	GeoObjectListItem* sfcList = new GeoObjectListItem(sfcData, geo, surfaces, GEOLIB::SURFACE);
 	geo->appendChild(sfcList);
+	this->addChildren(sfcList, surfaceVec, 0, surfaces->size());
 
-	size_t nSfc = surfaces->size();
+	reset();
+}
 
-	for (size_t i=0; i<nSfc; i++)
+void GeoTreeModel::appendSurfaces(const std::string &name, GEOLIB::SurfaceVec* surfaceVec)
+{
+	for (size_t i=0; i<_lists.size(); i++)
+	{
+		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+		{
+			for (int j=0; j<_lists[i]->childCount(); j++)
+			{
+				GeoObjectListItem* parent = static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+				if (GEOLIB::SURFACE == parent->getType())
+				{
+					this->addChildren(parent, surfaceVec, parent->childCount(), surfaceVec->getVector()->size());
+					reset();
+					parent->vtkSource()->Modified();
+					return;
+				}
+			}
+		}
+	}
+	OGSError::box("Error adding surface to geometry.");
+}
+
+void GeoTreeModel::addChildren(GeoObjectListItem* sfcList, const GEOLIB::SurfaceVec* surface_vec, size_t start_index, size_t end_index)
+{
+	const std::vector<GEOLIB::Surface*> *surfaces = surface_vec->getVector();
+
+	for (size_t i=start_index; i<end_index; i++)
 	{
 		QList<QVariant> surface;
 		std::string sfc_name("");
 		surface << "Surface " + QString::number(i);
-		if (surfaceVec->getNameOfElementByID(i, sfc_name)) surface << QString::fromStdString(sfc_name)  << "" << "";
+		if (surface_vec->getNameOfElementByID(i, sfc_name)) surface << QString::fromStdString(sfc_name)  << "" << "";
 		else  surface << "" << "" << "";
 
 		GeoTreeItem* surfaceItem = new GeoTreeItem(surface, sfcList, (*surfaces)[i]);
@@ -220,11 +230,8 @@ void GeoTreeModel::addSurfaceList(QString geoName, const GEOLIB::SurfaceVec* sur
 			}
 		}
 	}
-	std::cout << nSfc << " surfaces added." << std::endl;
-
-	reset();
+	std::cout << end_index-start_index << " surfaces added." << std::endl;
 }
-
 
 /**
  * Removes the TreeItem with the given name including all its children

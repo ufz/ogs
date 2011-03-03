@@ -33,11 +33,13 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 {
 	setupUi(this);
 
+	this->scaleZ->setValidator(new QDoubleValidator(0, 100, 8, this));
+
 	connect(this->vtkVisPipelineView, SIGNAL(itemSelected(VtkVisPipelineItem*)),
 		this, SLOT(setActiveItem(VtkVisPipelineItem*)));
 
-	connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(int)),
-		this, SLOT(SetActiveAttributeOnItem(int)));
+	connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(const QString&)),
+		this, SLOT(SetActiveAttributeOnItem(const QString&)));
 
 }
 
@@ -63,6 +65,18 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			scaleZ->setText(QString::number(scale[2]));
 
 			this->buildScalarArrayComboBox(_item->algorithm());
+
+			// Set to last active attribute
+			QString activeAttribute = item->GetActiveAttribute();
+			for (int i = 0; i < this->activeScalarComboBox->count(); i++)
+			{
+				QString itemText = this->activeScalarComboBox->itemText(i);
+				if (itemText.compare(activeAttribute) == 0)
+				{
+					this->activeScalarComboBox->setCurrentIndex(i);
+					break;
+				}
+			}
 		}
 		else
 			actorPropertiesGroupBox->setEnabled(false);
@@ -262,12 +276,13 @@ void VtkVisTabWidget::buildScalarArrayComboBox(vtkAlgorithm* algorithm)
 	QStringList dataSetAttributesList;
 	if (dataSet)
 	{
+
 		vtkPointData* pointData = dataSet->GetPointData();
 		//std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
 		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
 		{
 			//std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
-			dataSetAttributesList.push_back(pointData->GetArrayName(i));
+			dataSetAttributesList.push_back(QString("P-") + pointData->GetArrayName(i));
 		}
 
 		vtkCellData* cellData = dataSet->GetCellData();
@@ -275,13 +290,15 @@ void VtkVisTabWidget::buildScalarArrayComboBox(vtkAlgorithm* algorithm)
 		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
 		{
 			//std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
-			dataSetAttributesList.push_back(cellData->GetArrayName(i));
+			dataSetAttributesList.push_back(QString("C-") + cellData->GetArrayName(i));
 		}
 
 		dataSetAttributesList.push_back("Solid Color");	// all scalars switched off
 	}
+	this->activeScalarComboBox->blockSignals(true);
 	this->activeScalarComboBox->clear();
 	this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
+	this->activeScalarComboBox->blockSignals(false);
 }
 
 void VtkVisTabWidget::addColorTable()
@@ -289,9 +306,9 @@ void VtkVisTabWidget::addColorTable()
 
 }
 
-void VtkVisTabWidget::SetActiveAttributeOnItem( int idx )
+void VtkVisTabWidget::SetActiveAttributeOnItem( const QString &name )
 {
-	_item->SetActiveAttribute(idx, 0);
+	_item->SetActiveAttribute(name);
 	emit requestViewUpdate();
 }
 

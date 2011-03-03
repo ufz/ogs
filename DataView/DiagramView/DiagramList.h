@@ -76,13 +76,21 @@ public:
 
 	/// Returns the unit associated with the y-axis
 	QString getYUnit() const { return _yUnit; }
-	int readList(const QString &path);
+
+	/// Reads information from a file.
+	static int readList(const QString &path, std::vector<DiagramList*> &list);
 
 	/// Sets the colour of the graph.
 	void setColor(QColor c) { _colour = c; }
 
 	/// Sets the name of the graph to be displayed in the caption.
 	void setName(QString name) { _name = name; }
+
+	/// Adds a point at (x,y) to the list
+	void addNextPoint(float x, float y) { _coords.push_back(std::pair<float, float>(x, y)); }
+
+	/// Sets the start date (i.e. the min-value of the x-axis).
+	void setStartDate(QDateTime date) { _startDate = date; }
 
 	/// Specifies the meaning of the x Axis.
 	void setXLabel(QString label) { _xLabel = label; }

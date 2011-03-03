@@ -6,6 +6,7 @@
 #include "MshEditDialog.h"
 #include "StringTools.h"
 #include "msh_mesh.h"
+#include "OGSError.h"
 #include <QPushButton>
 #include <QFileDialog>
 
@@ -21,6 +22,8 @@ MshEditDialog::MshEditDialog(const Mesh_Group::CFEMesh* mesh, QDialog* parent)
 	this->gridLayoutLayerMapping->setColumnStretch(2, 10);
 
 	size_t nLayers = mesh->getNumberOfMeshLayers();
+	if (nLayers==0) nLayers=1; // adapt to old files where 2D meshes officially had "0" layers which makes no sense
+
 	for (size_t i=0; i<nLayers; i++)
 	{
 		QString text = (i) ? "Layer" + QString::number(i) : "Surface";
@@ -51,7 +54,7 @@ void MshEditDialog::accept()
 
 	if (tabIndex>=0)
 	{
-		Mesh_Group::CFEMesh* new_mesh;
+		Mesh_Group::CFEMesh* new_mesh = NULL;
 
 		switch (tabIndex)
 		{
@@ -66,6 +69,8 @@ void MshEditDialog::accept()
 			case 1:
 			{
 				size_t nLayers = _msh->getNumberOfMeshLayers();
+				if (nLayers==0) nLayers=1; // adapt to old files where 2D meshes officially had "0" layers which makes no sense
+
 				for (size_t i=0; i<nLayers; i++)
 				{
 					std::string imgPath ( this->_edits[i]->text().toStdString() );
@@ -85,6 +90,7 @@ void MshEditDialog::accept()
 			std::string mshname("NewMesh");
 			emit mshEditFinished(new_mesh, mshname);
 		}
+		else OGSError::box("Error creating mesh");
 	}
 	else
 	{

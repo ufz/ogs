@@ -18,6 +18,9 @@
 #include "VtkMeshSource.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkTrackedCamera.h"
+#include "VtkFilterFactory.h"
+#include "MeshQualityChecker.h"
+#include "VtkCompositeSelectionFilter.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>
@@ -34,6 +37,7 @@
 #include <vtkXMLRectilinearGridReader.h>
 #include <vtkXMLStructuredGridReader.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkTransformFilter.h>
 
 #include <vtkFieldData.h>
 #include <vtkPointData.h>
@@ -69,7 +73,11 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	rootData << "Object name" << "Visible";
 	delete _rootItem;
 	_rootItem = new TreeItem(rootData, NULL);
-	//_renderer->SetBackground(1,1,1);
+	
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
+	if (backgroundColorVariant != QVariant())
+		this->setBGColor(backgroundColorVariant.value<QColor>());
 }
 #endif // OGS_USE_OPENSG
 
@@ -391,4 +399,51 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 	}
 	else
 		std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
+}
+
+void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source)
+{
+	if (source) {
+		const Mesh_Group::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
+		Mesh_Group::MeshQualityChecker checker (mesh);
+		checker.check ();
+
+	/*
+		// simple suggestion: number of classes with Sturges criterion
+		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
+		bool ok;
+		size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
+
+		if (ok)
+		{
+			std::vector<size_t> histogramm (size,0);
+			checker.getHistogramm(histogramm);
+	*/
+			std::vector<double> quality = checker.getMeshQuality();
+
+			int nSources = this->_rootItem->childCount();
+			for (int i=0; i<nSources; i++)
+			{
+				VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+				if (parentItem->algorithm() == source)
+				{
+					QList<QVariant> itemData;
+					itemData << "MeshQualityFilter" << true;
+					
+					VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeSelectionFilter", parentItem->transformFilter());
+					static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray(quality);
+					VtkVisPipelineItem* item = new VtkVisPipelineItem(filter, parentItem, itemData);
+					this->addPipelineItem(item, this->createIndex(i, 0, item));
+				}
+			}
+	/*
+			std::ofstream out (file_name.toStdString().c_str());
+			const size_t histogramm_size (histogramm.size());
+			for (size_t k(0); k<histogramm_size; k++) {
+				out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
+			}
+			out.close ();
+		}
+	*/
+	}
 }

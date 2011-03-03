@@ -36,12 +36,12 @@ void VtkCompositeThresholdFilter::init()
 	threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
 	// TODO: Replace hardcoded "MatIds" by something more generic
-	vtkDataArray* materialIDs = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray("MatIDs");
+	vtkDataArray* materialIDs = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray(0);
 	std::cout << materialIDs->GetDataSize();
 	for (size_t i=0; i<10; i++) std::cout << materialIDs->GetComponent(i,0) << std::endl;
 	//vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->SetActiveAttribute("MatIDs", vtkDataSetAttributes::SCALARS);
 	//threshold->SetAttributeModeToUseCellData();
-	threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, "MatIDs");
+	threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, materialIDs->GetName());
 	//threshold->SetComponentModeToUseSelected();
 	
 	// Sets a filter property which will be user editable

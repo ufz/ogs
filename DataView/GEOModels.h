@@ -55,10 +55,11 @@ public slots:
 	bool removePolylineVec(const std::string &name);
 
 	void addSurfaceVec(std::vector<GEOLIB::Surface*> *surfaces, const std::string &name, std::map<std::string,size_t>* sfc_names = NULL);
+	bool appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const std::string &name);
 	bool removeSurfaceVec(const std::string &name);
 
 	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
-	void connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, bool closePly, bool triangulatePly);
+	void connectPolylineSegments(const std::string &geoName, std::vector<size_t> indexlist, double proximity, std::string ply_name, bool closePly, bool triangulatePly);
 
 
 protected:

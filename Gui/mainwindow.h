@@ -65,6 +65,7 @@ protected slots:
 	void importPetrel();
 	void importNetcdf();     //YW  07.2010
 	void importVtk();
+	void loadFEMConditionsFromFile(std::string);
 	void openDatabase();
 	void openDatabaseConnection();
 	void openRecentFile();
@@ -96,6 +97,7 @@ private:
 
 	void readSettings();
 	void writeSettings();
+	QString getLastUsedDir();
 
     QString curFile;
 

@@ -23,6 +23,8 @@
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <vtkMath.h>
 #include <vtkCommand.h>
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
 #include <QSettings>
 
@@ -106,6 +108,15 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	}
 
 	//eyeAngleSlider->setValue((int)(_vtkRender->GetActiveCamera()->GetEyeAngle() * 10));
+	
+	// Create an orientation marker using vtkAxesActor
+	vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
+	vtkOrientationMarkerWidget* markerWidget = vtkOrientationMarkerWidget::New();
+	markerWidget->SetOrientationMarker(axesActor);
+	//markerWidget->SetViewport(0.0, 0.0, 0.15, 0.3); // size
+	markerWidget->SetInteractor(vtkWidget->GetRenderWindow()->GetInteractor());
+	markerWidget->EnabledOn();
+	markerWidget->InteractiveOff();
 }
 
 VisualizationWidget::~VisualizationWidget()
@@ -148,6 +159,13 @@ void VisualizationWidget::updateView()
 void VisualizationWidget::showAll()
 {
 	_vtkRender->ResetCamera();
+	vtkCamera* cam = _vtkRender->GetActiveCamera();
+	double* fp = cam->GetFocalPoint();
+	double* p = cam->GetPosition();
+	double dist = sqrt(vtkMath::Distance2BetweenPoints(p, fp));
+	cam->SetPosition(fp[0], fp[1], fp[2] + dist);
+	cam->SetViewUp(0.0, 1.0, 0.0);
+	this->updateView();
 }
 
 void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
@@ -166,12 +184,6 @@ void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
 	}
 
 	this->updateView();
-}
-
-void VisualizationWidget::on_fullscreenToolButton_clicked( bool checked )
-{
-	Q_UNUSED(checked)
-	vtkWidget->GetRenderWindow()->FullScreenOn();
 }
 
 void VisualizationWidget::on_eyeAngleSlider_valueChanged( int value )
@@ -203,7 +215,7 @@ void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
 
 void VisualizationWidget::on_showAllPushButton_pressed()
 {
-	_vtkRender->ResetCamera();
+	this->showAll();
 }
 
 void VisualizationWidget::on_highlightToolButton_toggled(bool checked)
