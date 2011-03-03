@@ -78,7 +78,7 @@ private:
 	int readMeshFromFile(const std::string &filename);
 
 	/// Converts a string to a MshElemType
-	const MshElemType::type getElementType(const std::string &t);
+	MshElemType::type getElementType(const std::string &t) const;
 
 	/// Converts a GridAdapter into an CFEMesh.
 	const Mesh_Group::CFEMesh* toCFEMesh() const;

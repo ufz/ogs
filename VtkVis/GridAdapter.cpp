@@ -244,7 +244,7 @@ int GridAdapter::readMeshFromFile(const std::string &filename)
 	return 1;
 }
 
-const MshElemType::type GridAdapter::getElementType(const std::string &t)
+MshElemType::type GridAdapter::getElementType(const std::string &t) const
 {
 	if (t.compare("tri") == 0)  return MshElemType::TRIANGLE;
 	if (t.compare("line") == 0) return MshElemType::LINE;
