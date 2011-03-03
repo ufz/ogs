@@ -12,10 +12,10 @@
 #include <map>
 
 #include <vtkUnstructuredGridAlgorithm.h>
-
-#include "Color.h"
 #include "GridAdapter.h"
 #include "VtkAlgorithmProperties.h"
+
+class VtkColorLookupTable;
 
 /**
  * \brief VTK source object for the visualisation of unstructured grids
@@ -31,15 +31,8 @@ public:
 
 	const char* GetMaterialArrayName() const { return _matName; }
 
-	/// Returns the colour lookup table generated for material groups.
-	/// This method should only be called after setColorsFromMaterials().
-	const std::map<std::string, GEOLIB::Color*>& getColorLookupTable() const { return _colorLookupTable; };
-
 	/// Returns the base object of this grid
 	const GridAdapter* GetGrid() { return this->_grid; };
-
-	/// Sets a predefined color lookup table for the colouring of borehole stratigraphies
-	int setColorLookupTable(const std::string &filename) { return readColorLookupTable(_colorLookupTable, filename); };
 
 	/// Sets the grid object that should be visualized
 	void SetGrid(const GridAdapter* grid) { _grid = grid; };
@@ -53,7 +46,6 @@ public:
 	 * This method should only be called after setMesh()!
 	 */
 	ogsUserPropertyMacro(ColorByMaterial,bool);
-	//void setColorsFromMaterials();
 
 	virtual void SetUserProperty(QString name, QVariant value);
 
@@ -71,9 +63,6 @@ protected:
 	const GridAdapter* _grid;
 
 private:
-	/// The colour table for material groups. This table is generated in the setColorsFromMaterials() method.
-	std::map<std::string, GEOLIB::Color*> _colorLookupTable;
-
 	const char* _matName;
 
 };

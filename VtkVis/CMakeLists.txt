@@ -1,88 +1,86 @@
 # Source files
 SET( SOURCES
 	GridAdapter.cpp
+	QVtkDataSetMapper.cpp
 	VtkAddFilterDialog.cpp
+	VtkAlgorithmPropertyCheckbox.cpp
+	VtkAlgorithmPropertyLineEdit.cpp
+	VtkAlgorithmPropertyVectorEdit.cpp
 	VtkApplyColorTableFilter.cpp
+	VtkBGImageSource.cpp
 	VtkColorByHeightFilter.cpp
 	VtkColorLookupTable.cpp
+	VtkCompositeFilter.cpp
+	VtkCompositeColorByHeightFilter.cpp
+	VtkCompositeColormapToImageFilter.cpp
+	VtkCompositeImageToCylindersFilter.cpp
+	VtkCompositeLineToTubeFilter.cpp
+	VtkCompositePointToGlyphFilter.cpp
+	VtkCompositeTextureOnSurfaceFilter.cpp
+	VtkCompositeThresholdFilter.cpp
+	VtkFilterFactory.cpp
+	VtkGeoImageSource.cpp
+	VtkImageDataToLinePolyDataFilter.cpp
 	VtkMeshSource.cpp
-	VtkTextureOnSurfaceFilter.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
+	VtkTextureOnSurfaceFilter.cpp
+	VtkTrackedCamera.cpp
 	VtkVisPipeline.cpp
 	VtkVisPipelineItem.cpp
 	VtkVisPipelineView.cpp
 	VtkVisTabWidget.cpp
 	VtkVisHelper.cpp
-	VtkTrackedCamera.cpp
-	VtkGeoImageSource.cpp
-	VtkBGImageSource.cpp
-	VtkImageDataToLinePolyDataFilter.cpp
-	VtkAlgorithmPropertyLineEdit.cpp
-	VtkCompositeFilter.cpp
-	VtkCompositeImageToCylindersFilter.cpp
-	VtkAlgorithmPropertyCheckbox.cpp
-	VtkFilterFactory.cpp
-	VtkCompositeLineToTubeFilter.cpp
-	VtkCompositePointToGlyphFilter.cpp
-	VtkCompositeColorByHeightFilter.cpp
-	VtkCompositeColormapToImageFilter.cpp
-	VtkCompositeTextureOnSurfaceFilter.cpp
-	VtkCompositeThresholdFilter.cpp
-	VtkAlgorithmPropertyVectorEdit.cpp
-	QVtkDataSetMapper.cpp
 )
 
 # Moc headers
 SET( MOC_HEADERS
+	QVtkDataSetMapper.h
 	VtkAddFilterDialog.h
-	VtkVisPipeline.h
-	VtkVisPipelineView.h
-	VtkVisTabWidget.h
-	VtkTrackedCamera.h
+	VtkAlgorithmProperties.h
 	VtkAlgorithmPropertyLineEdit.h
 	VtkAlgorithmPropertyCheckbox.h
 	VtkAlgorithmPropertyVectorEdit.h
-	VtkAlgorithmProperties.h
-	QVtkDataSetMapper.h
+	VtkTrackedCamera.h
+	VtkVisPipeline.h
+	VtkVisPipelineView.h
+	VtkVisTabWidget.h
 )
 
 # Header files
 SET( HEADERS
 	GridAdapter.h
-	#OGSFilterInfo.h
 	VtkApplyColorTableFilter.h
+	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
 	VtkColorLookupTable.h
+	VtkCompositeFilter.h
+	VtkCompositeColorByHeightFilter.h
+	VtkCompositeColormapToImageFilter.h
+	VtkCompositeImageToCylindersFilter.h
+	VtkCompositeLineToTubeFilter.h
+	VtkCompositePointToGlyphFilter.h
+	VtkCompositeTextureOnSurfaceFilter.h
+	VtkCompositeThresholdFilter.h
+	VtkFilterFactory.h
+	VtkGeoImageSource.h
+	VtkImageDataToLinePolyDataFilter.h
 	VtkMeshSource.h
-	#VtkOGSFilter.h
-	VtkTextureOnSurfaceFilter.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
 	VtkStationSource.h
 	VtkSurfacesSource.h
+	VtkTextureOnSurfaceFilter.h
 	VtkVisHelper.h
-	VtkGeoImageSource.h
-	VtkBGImageSource.h
-	VtkImageDataToLinePolyDataFilter.h
-	VtkCompositeFilter.h
-	VtkCompositeImageToCylindersFilter.h
-	VtkFilterFactory.h
-	VtkCompositeLineToTubeFilter.h
-	VtkCompositePointToGlyphFilter.h
-	VtkCompositeColorByHeightFilter.h
-	VtkCompositeColormapToImageFilter.h
-	VtkCompositeTextureOnSurfaceFilter.h
-	VtkCompositeThresholdFilter.h
 	VtkVisPipelineItem.h
 )
 
 # UI files
 SET ( UIS
-	VtkVisTabWidgetBase.ui
 	VtkAddFilterDialogBase.ui
+	VtkVisTabWidgetBase.ui
 )
 
 # Put moc files in a project folder
@@ -113,7 +111,6 @@ INCLUDE_DIRECTORIES(
 	../../MSH
 	../Base
 	../DataView
-	../StationView
 )
 
 # Create the library

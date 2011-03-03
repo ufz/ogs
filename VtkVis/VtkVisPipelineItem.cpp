@@ -43,6 +43,10 @@
 
 #include "VtkCompositeFilter.h"
 
+
+#include "VtkMeshSource.h"
+
+
 #ifdef OGS_USE_OPENSG
 OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 
@@ -187,6 +191,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
 
+
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
 
 #ifdef OGS_USE_OPENSG
@@ -260,6 +265,22 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 {
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
+
+	vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
+
+	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+	if (mapper)
+	{
+		if (vtkProps->GetLookupTable() != NULL) 
+		{
+			_mapper->SetLookupTable(vtkProps->GetLookupTable());
+			double* d = _transformFilter->GetOutput()->GetScalarRange(); //something is wrong here ...
+			d[0] = 0;
+			d[1] = 7;
+			_mapper->SetScalarRange(d);
+			_mapper->Update();
+		}
+	}
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
 	if (actor)

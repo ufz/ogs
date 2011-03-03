@@ -7,7 +7,7 @@
 #include "VtkColorLookupTable.h"
 
 #include <cmath>
-
+#include <Color.h>
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro(VtkColorLookupTable);
@@ -73,14 +73,24 @@ void VtkColorLookupTable::Build()
 					unsigned char int_rgba[4];
 					int_rgba[3] = 255;
 					double pos = (i - lastValue.first) / (static_cast<double>(nextIndex - lastValue.first));
-					if (_type == VtkColorLookupTable::EXPONENTIAL)
-						for (size_t j=0; j<3; j++)
-							int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
-					else
+
+					if (_type == VtkColorLookupTable::LINEAR)
+					{
 						for (size_t j=0; j<3; j++)
 							int_rgba[j] = linInterpolation((lastValue.second)[j], (it->second)[j], pos);
-					this->SetTableValue(i, int_rgba);
+					}
+					else if (_type == VtkColorLookupTable::EXPONENTIAL)
+					{
+						for (size_t j=0; j<3; j++)
+							int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
+					}
+					else	// no interpolation
+					{
+							for (size_t j=0; j<3; j++)
+								int_rgba[j] = (lastValue.second)[j];
+					}
 
+					this->SetTableValue(i, int_rgba);
 				}
 			}
 
@@ -90,6 +100,17 @@ void VtkColorLookupTable::Build()
 	}
 	else
 		vtkLookupTable::Build();
+}
+
+void VtkColorLookupTable::readFromFile(const std::string &filename)
+{
+	std::map<std::string, GEOLIB::Color*> colors;
+	GEOLIB::readColorLookupTable(colors, filename);
+
+	for (std::map<std::string, GEOLIB::Color*>::iterator it = colors.begin(); it != colors.end(); ++it)
+	{
+		this->SetTableValue( strtod( it->first.c_str(), 0 ), (*(it->second))[0], (*(it->second))[1], (*(it->second))[2], 255 );
+	}
 }
 
 void VtkColorLookupTable::writeToFile(const std::string &filename)
@@ -112,25 +133,23 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
 
 void VtkColorLookupTable::SetTableValue(vtkIdType indx, unsigned char rgba[4])
 {
-  // Check the index to make sure it is valid
-  if (indx < 0)
-    {
-    vtkErrorMacro("Can't set the table value for negative index " << indx);
-    return;
-    }
-  if (indx >= this->NumberOfColors)
-    {
-    vtkErrorMacro("Index " << indx <<
-                  " is greater than the number of colors " <<
-                  this->NumberOfColors);
-    return;
-    }
+	// Check the index to make sure it is valid
+	if (indx < 0)
+	{
+		vtkErrorMacro("Can't set the table value for negative index " << indx);
+		return;
+	}
+	if (indx >= this->NumberOfColors)
+	{
+		vtkErrorMacro("Index " << indx << " is greater than the number of colors " << this->NumberOfColors);
+		return;
+	}
 
-  unsigned char *_rgba = this->Table->WritePointer(4*indx,4);
-  for (size_t i=0; i<4; i++) _rgba[i]=rgba[i];
+	unsigned char *_rgba = this->Table->WritePointer(4*indx,4);
+	for (size_t i=0; i<4; i++) _rgba[i]=rgba[i];
 
-  this->InsertTime.Modified();
-  this->Modified();
+	this->InsertTime.Modified();
+	this->Modified();
 }
 
 void VtkColorLookupTable::SetTableValue(vtkIdType indx, unsigned char r, unsigned char g, unsigned char b, unsigned char a)

@@ -28,9 +28,10 @@ class VtkColorLookupTable : public vtkLookupTable
 public:
 	/// Interpolation methods
 	enum LUTType {
-		LINEAR = 0,
-		EXPONENTIAL = 1,
-		SIGMOID = 2	// not yet implemented
+		NONE = 0,
+		LINEAR = 1,
+		EXPONENTIAL = 2,
+		SIGMOID = 3	// not yet implemented
 	};
 	
 	static const int DEFAULTMINVALUE = -9999;
@@ -63,6 +64,9 @@ public:
 
 	/// Sets the type of interpolation.
 	void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; };
+
+	/// Imports a color table from a file.
+	void readFromFile(const std::string &filename);
 
 	/// Exports a color table to a file.
 	void writeToFile(const std::string &filename);

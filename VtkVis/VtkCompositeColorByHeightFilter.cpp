@@ -39,11 +39,11 @@ void VtkCompositeColorByHeightFilter::init()
 
 	heightFilter->SetTableRange(-35, 800); // default min- and max-height (default: blue to red)
 	//heightFilter->GetColorLookupTable()->setInterpolationType(ColorLookupTable::EXPONENTIAL);
-	unsigned char a[4] = { 0, 0, 255, 255 };
-	unsigned char b[4] = { 0, 255, 0, 255 };
-	unsigned char c[4] = { 255, 255, 0, 255 };
-	unsigned char d[4] = { 255, 0, 0, 255 };
-	//unsigned char e[4] = { 255, 255, 255, 255 };
+	unsigned char a[4] = { 0, 0, 255, 255 };   // blue
+	unsigned char b[4] = { 0, 255, 0, 255 };   // green
+	unsigned char c[4] = { 255, 255, 0, 255 }; // yellow
+	unsigned char d[4] = { 255, 0, 0, 255 };   // red
+	//unsigned char e[4] = { 255, 255, 255, 255 }; // white
 	heightFilter->GetColorLookupTable()->setColor(0.0, a);
 	heightFilter->GetColorLookupTable()->setColor(0.2, b); // green at about 150m
 	heightFilter->GetColorLookupTable()->setColor(0.6, c); // yellow at about 450m and changing to red from then on

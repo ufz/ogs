@@ -17,6 +17,8 @@
 #include <QVariant>
 #include <QList>
 
+#include "VtkColorLookupTable.h"
+
 #define ogsUserPropertyMacro(name,type) \
 virtual void Set##name (type _arg) \
 { \
@@ -124,6 +126,7 @@ public:
 	{ 
 		_property = vtkProperty::New(); 
 		_texture  = NULL;
+		_lut      = NULL;
 		_scalarVisibility = true;
 		_algorithmUserProperties = new QMap<QString, QVariant>;
 		_algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
@@ -133,6 +136,7 @@ public:
 	{
 		_property->Delete();
 		if (_texture != NULL) _texture->Delete();
+		if (_lut != NULL) _lut->Delete();
 		delete _algorithmUserProperties;
 		delete _algorithmUserVectorProperties;
 	};
@@ -141,10 +145,25 @@ public:
 	vtkProperty* GetProperties() const { return _property; };
 	
 	/// @brief Returns a texture (if one has been assigned).
-	vtkTexture* GetTexture()       { return _texture; };
+	vtkTexture* GetTexture() { return _texture; };
 	/// @brief Sets a texture for the VtkVisPipelineItem.
 	void SetTexture(vtkTexture* t) { _texture = t; };
+
+	/// @brief Returns the colour lookup table (if one has been assigned).
+	VtkColorLookupTable* GetLookupTable() { return _lut; };
+	/// @brief Sets a colour lookup table for the VtkVisPipelineItem.
+	void SetLookUpTable(VtkColorLookupTable* lut) { _lut = lut; };
 	
+	/// Loads a predefined color lookup table from a file.
+	void SetLookUpTable(const std::string &filename)
+	{ 
+		VtkColorLookupTable* colorLookupTable = VtkColorLookupTable::New();
+		colorLookupTable->readFromFile(filename);
+		colorLookupTable->setInterpolationType(VtkColorLookupTable::NONE);
+		colorLookupTable->Build();
+		SetLookUpTable(colorLookupTable);
+	};
+
 	/// @brief Returns the scalar visibility.
 	bool GetScalarVisibility() const { return _scalarVisibility; }
 	/// @brief Sets the scalar visibility.
@@ -215,6 +234,7 @@ protected:
 
 	// Properties set on vtkMapper
 	bool _scalarVisibility;
+	VtkColorLookupTable* _lut;
 	
 	// Properties used in the GUI
 	QString _name;
