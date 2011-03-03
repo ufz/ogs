@@ -38,7 +38,7 @@
 VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 : QWidget(parent)
 {
-	setupUi(this);
+	this->setupUi(this);
 
 	_interactorStyle = VtkCustomInteractorStyle::New();
 	vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(_interactorStyle);
@@ -166,7 +166,7 @@ void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
 		eyeAngleSlider->setEnabled(false);
 	}
 
-	updateView();
+	this->updateView();
 }
 
 void VisualizationWidget::on_fullscreenToolButton_clicked( bool checked )
@@ -210,4 +210,10 @@ void VisualizationWidget::on_showAllPushButton_pressed()
 void VisualizationWidget::on_highlightToolButton_toggled(bool checked)
 {
 	_interactorStyle->setHighlightActor(checked);
+}
+
+void VisualizationWidget::on_orthogonalProjectionToolButton_toggled( bool checked )
+{
+	_vtkRender->GetActiveCamera()->SetParallelProjection(checked);
+	this->updateView();
 }

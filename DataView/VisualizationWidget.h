@@ -69,6 +69,9 @@ protected slots:
 	/// Toggles the display of bounding boxes around
 	void on_highlightToolButton_toggled(bool checked);
 
+	/// Toggles the orthogonal projection
+	void on_orthogonalProjectionToolButton_toggled(bool checked);
+
 private:
 	vtkRenderer* _vtkRender;
 	VtkCustomInteractorStyle* _interactorStyle;
