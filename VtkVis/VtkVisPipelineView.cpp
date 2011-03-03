@@ -56,7 +56,6 @@ void VtkVisPipelineView::setModel(QAbstractItemModel* model)
 
 void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 {
-	std::cout << this->header()->count() << std::endl;
 	QModelIndex index = selectionModel()->currentIndex();
 	if (index.isValid())
 	{

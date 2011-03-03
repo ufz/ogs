@@ -73,7 +73,11 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	rootData << "Object name" << "Visible";
 	delete _rootItem;
 	_rootItem = new TreeItem(rootData, NULL);
-	//_renderer->SetBackground(1,1,1);
+	
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
+	if (backgroundColorVariant != QVariant())
+		this->setBGColor(backgroundColorVariant.value<QColor>());
 }
 #endif // OGS_USE_OPENSG
 
