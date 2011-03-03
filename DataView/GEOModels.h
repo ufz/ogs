@@ -21,7 +21,7 @@ class SurfaceModel;
 class TreeModel;
 
 /**
- * GEOModels glues together the data management class GEOObjects and the GUI.
+ * \brief GEOModels connects the data management class GEOObjects and the GUI.
  * It inherits from GEOLIB::GEOObjects and additionally emits signals when
  * data objects are modified. The GUI connects to these signals. Model instances
  * are created for every data object.

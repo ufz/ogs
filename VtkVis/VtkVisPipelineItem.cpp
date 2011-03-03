@@ -266,7 +266,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
 
-	vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
+	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
 	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 	if (mapper)
@@ -374,6 +374,11 @@ void VtkVisPipelineItem::SetScalarVisibility( bool on )
 
 void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 {
+	if (arrayIndex<0)
+	{
+		return;
+	}
+
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	bool onPointData(true);
 	double* range(NULL);
@@ -410,6 +415,8 @@ void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 				_mapper->SetScalarRange(dataSet->GetScalarRange());
 			}
 
+			double a = range[0];
+			double b = range[1];
 			_mapper->SetScalarRange(range);
 			_mapper->ScalarVisibilityOn();
 			_mapper->Update();

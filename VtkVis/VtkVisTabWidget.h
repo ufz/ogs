@@ -12,7 +12,7 @@
 #include "ui_VtkVisTabWidgetBase.h"
 
 /**
- * VtkVisTabWidget contains a QTreeView of the VtkVisPipeline, a properties
+ * \brief Contains a QTreeView of the VtkVisPipeline and a properties
  * panel for adjusting vtkAlgorithms rendering and filter settings. 
  */
 class VtkVisTabWidget : public QWidget, public Ui_VtkVisTabWidgetBase

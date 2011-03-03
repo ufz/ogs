@@ -20,7 +20,7 @@ class vtkEventQtSlotConnect;
 #endif // OGS_USE_VRPN
 
 /**
- * VisualizationWidget is a widget which provides the 3d vtk scene view.
+ * \brief Widget containing the 3d VTK scene view.
  */
 class VisualizationWidget : public QWidget, public Ui_VisualizationWidgetBase
 {
