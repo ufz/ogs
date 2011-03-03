@@ -698,7 +698,7 @@ void MainWindow::about()
 
 QMenu* MainWindow::createImportFilesMenu()
 {
-	QMenu* importFiles = new QMenu("Import Files");
+	QMenu* importFiles = new QMenu("&Import Files");
 	QAction* gmsFiles = importFiles->addAction("GMS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
 	QAction* gocadFiles = importFiles->addAction("Gocad Files...");
@@ -707,11 +707,11 @@ QMenu* MainWindow::createImportFilesMenu()
 	connect(gocadFiles, SIGNAL(triggered()), this, SLOT(importGoCad()));
 	QAction* petrelFiles = importFiles->addAction("Petrel Files...");
 	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(importPetrel()));
-	QAction* rasterFiles = importFiles->addAction("Raster Files...");
+	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), this, SLOT(importRaster()));
 	QAction* rasterPolyFiles = importFiles->addAction("Raster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(importRasterAsPoly()));
-	QAction* shapeFiles = importFiles->addAction("Shape Files...");
+	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
 	connect(shapeFiles, SIGNAL(triggered()), this, SLOT(importShape()));
 	QAction* vtkFiles = importFiles->addAction("VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
