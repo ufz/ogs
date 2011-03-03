@@ -15,9 +15,8 @@
 #include "GEOObjects.h"
 
 /**
- * VtkPolylinesSource is a VTK source object which can be used to feed a
- * visualization pipeline with polyline data. As a vtkPolyDataAlgorithm it
- * outputs polygonal data.
+ * \brief VtkPolylinesSource is a VTK source object for the visualisation of
+ * polyline data. As a vtkPolyDataAlgorithm it outputs polygonal data.
  */
 class VtkPolylinesSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
