@@ -150,9 +150,9 @@ public:
 	void SetTexture(vtkTexture* t) { _texture = t; };
 
 	/// @brief Returns the colour lookup table (if one has been assigned).
-	VtkColorLookupTable* GetLookupTable() { return _lut; };
+	vtkLookupTable* GetLookupTable() { return _lut; };
 	/// @brief Sets a colour lookup table for the VtkVisPipelineItem.
-	void SetLookUpTable(VtkColorLookupTable* lut) { _lut = lut; };
+	void SetLookUpTable(vtkLookupTable* lut) { _lut = lut; };
 	
 	/// Loads a predefined color lookup table from a file.
 	void SetLookUpTable(const std::string &filename)
@@ -234,7 +234,7 @@ protected:
 
 	// Properties set on vtkMapper
 	bool _scalarVisibility;
-	VtkColorLookupTable* _lut;
+	vtkLookupTable* _lut;
 	
 	// Properties used in the GUI
 	QString _name;

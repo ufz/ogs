@@ -106,6 +106,7 @@ void VtkColorLookupTable::readFromFile(const std::string &filename)
 {
 	std::map<std::string, GEOLIB::Color*> colors;
 	GEOLIB::readColorLookupTable(colors, filename);
+	this->SetNumberOfTableValues(colors.size());
 
 	for (std::map<std::string, GEOLIB::Color*>::iterator it = colors.begin(); it != colors.end(); ++it)
 	{
