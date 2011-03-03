@@ -962,6 +962,15 @@ void MainWindow::showVisalizationPrefsDialog()
 	dlg.exec();
 }
 
+void MainWindow::FEMTestStart()
+{
+#ifndef NDEBUG
+	std::cout << "FEM Test here ..." << std::endl;
+#else
+	std::cout << "This is test functionality only..." << std::endl;
+#endif
+}
+
 void MainWindow::showTrackingSettingsDialog()
 {
 	#ifdef OGS_USE_VRPN

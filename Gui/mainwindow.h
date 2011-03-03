@@ -48,6 +48,7 @@ protected slots:
 	void save();
 	void callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4, bool delete_geo_file);
 	void exportBoreholesToGMS(std::string listName, std::string fileName);
+	void FEMTestStart();
     void importGMS();
 	void importGoCad();
 	void importRaster();

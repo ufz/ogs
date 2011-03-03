@@ -122,6 +122,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionFEM_Test"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuTools"/>
@@ -391,6 +392,11 @@
     <string>Mesh Generation...</string>
    </property>
   </action>
+  <action name="actionFEM_Test">
+   <property name="text">
+    <string>FEM Test</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -573,6 +579,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFEM_Test</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>FEMTestStart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>403</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -583,5 +605,6 @@
   <slot>showVisalizationPrefsDialog()</slot>
   <slot>showTrackingSettingsDialog()</slot>
   <slot>showGMSHPrefsDialog()</slot>
+  <slot>FEMTestStart()</slot>
  </slots>
 </ui>
