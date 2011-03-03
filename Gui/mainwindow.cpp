@@ -904,7 +904,6 @@ void MainWindow::importVtk()
 			QDir dir = QDir(fileName);
 			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		}
-	}
 }
 
 void MainWindow::showPropertiesDialog(std::string name)
