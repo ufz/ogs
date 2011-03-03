@@ -133,7 +133,7 @@ void MshTabWidget::checkMeshQuality () const
 		checker.check ();
 
 		// simple suggestion: number of classes with Sturges criterion
-		size_t nclasses (static_cast<size_t>(1 + 3.3 * log ((mesh->getElementVector()).size())));
+		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
 		bool ok;
 		size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
 
