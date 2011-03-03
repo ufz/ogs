@@ -40,7 +40,6 @@ class vtkTransformFilter;
  */
 class VtkVisPipelineItem : public TreeItem
 {
-
 public:
 	/// @brief Constructor for a source/filter object.
 	VtkVisPipelineItem(vtkAlgorithm* algorithm,
@@ -85,6 +84,10 @@ public:
 	int writeToFile(const std::string &filename) const;
 
 	vtkTransformFilter* transformFilter() const { return _transformFilter; }
+
+	void SetActiveAttribute(const QString& name,
+		int attributeType = 0, // vtkDataSetAttributes::SCALARS,
+		bool onPointData = true);
 	
 #ifdef OGS_USE_OPENSG
 	// HACK static rootNode is set by VtkVisPipeline constructor
@@ -107,8 +110,8 @@ protected:
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
-protected slots:
 	void SetScalarVisibility(bool on);
+
 };
 
 #endif // VTKVISPIPELINEITEM_H

@@ -33,6 +33,8 @@ protected slots:
 	void on_opacitySlider_sliderMoved(int value);
 	void on_scaleZ_textChanged(const QString &text);
 
+	void SetActiveAttributeOnItem(const QString& attributeName);
+
 private:
 	void addColorTable();
 	VtkVisPipelineItem* _item;

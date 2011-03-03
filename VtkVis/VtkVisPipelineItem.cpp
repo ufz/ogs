@@ -43,8 +43,10 @@
 
 #include "VtkCompositeFilter.h"
 
-
 #include "VtkMeshSource.h"
+
+#include <vtkPointData.h>
+#include <vtkCellData.h>
 
 
 #ifdef OGS_USE_OPENSG
@@ -371,4 +373,33 @@ vtkProp3D* VtkVisPipelineItem::actor() const
 void VtkVisPipelineItem::SetScalarVisibility( bool on )
 {
 	_mapper->SetScalarVisibility(on);
+}
+
+void VtkVisPipelineItem::SetActiveAttribute( const QString& name, int attributeType, bool onPointData )
+{
+	std::string stdString = name.toStdString();
+	const char* charName = stdString.c_str();
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
+	if (dataSet)
+	{
+		if (onPointData)
+		{
+			vtkPointData* pointData = dataSet->GetPointData();
+			pointData->SetActiveAttribute(charName, attributeType);
+			//pointData->SetActiveScalars(charName);
+			_mapper->SetScalarModeToUsePointData();
+			_mapper->SetScalarRange(dataSet->GetScalarRange());
+		} 
+		else
+		{
+			vtkCellData* cellData = dataSet->GetCellData();
+			cellData->SetActiveAttribute(charName, attributeType);
+			//cellData->SetActiveScalars(charName);
+			_mapper->SetScalarModeToUseCellData();
+			_mapper->SetScalarRange(dataSet->GetScalarRange());
+		}
+		_mapper->ScalarVisibilityOn();
+		_mapper->Update();
+	}
+	
 }
