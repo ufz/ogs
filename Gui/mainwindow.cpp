@@ -36,6 +36,7 @@
 
 //test
 #include "fem_ele.h"
+#include "MathIO/CRSIO.h"
 // FileIO includes
 #include "OGSIOVer4.h"
 #include "StationIO.h"
@@ -1039,6 +1040,53 @@ void MainWindow::FEMTestStart()
 {
 #ifndef NDEBUG
 	std::cout << "FEM Test here ..." << std::endl;
+	QSettings settings("UFZ", "OpenGeoSys-5");
+
+	QString fileName = QFileDialog::getOpenFileName(this,
+			"Select matrix file in binary compressed row storage format", settings.value(
+					"lastOpenedFileDirectory").toString(),
+			"binary matrix file (*.bin);;");
+
+	std::string fname (fileName.toStdString());
+	// open input stream
+	std::ifstream in (fname.c_str(), std::ios::binary);
+
+	if (in) {
+		unsigned n(0), *iA(NULL), *jA(NULL);
+		double *A(NULL);
+
+		std::cout << "reading matrix ... " << std::flush;
+		// read matrix
+		FileIO::readCompressedStorageFmt (in, n, iA, jA, A);
+		in.close ();
+		std::cout << "done" << std::endl;
+
+		// *** ToDo
+		// read right hand side
+		// solve system of linear equations
+
+
+//		std::cout << "n : " << n << std::endl;
+//		std::cout << "iA[n]: " << iA[n] << std::endl;
+//		std::cout << "iA: " << std::endl;
+//		for (size_t i(0); i<=n; i++) {
+//			std::cout << " " << iA[i];
+//		}
+//		std::cout << std::endl << "jA: " << std::endl;
+//		for (size_t i(0); i<iA[n]; i++) {
+//			std::cout << " " << jA[i];
+//		}
+//		std::cout << std::endl << "A: " << std::endl;
+//		for (size_t i(0); i<iA[n]; i++) {
+//			std::cout << " " << A[i];
+//		}
+//		std::cout << std::endl;
+
+		delete [] iA;
+		delete [] jA;
+		delete [] A;
+	}
+
 #else
 	std::cout << "This is test functionality only..." << std::endl;
 #endif
