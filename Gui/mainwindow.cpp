@@ -704,21 +704,21 @@ void MainWindow::about()
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QMenu* importFiles = new QMenu("&Import Files");
-	QAction* gmsFiles = importFiles->addAction("GMS Files...");
+	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
-	QAction* gocadFiles = importFiles->addAction("Gocad Files...");
-	QAction* netcdfFiles = importFiles->addAction("NetCDF Files...");
+	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
+	QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
 	connect(netcdfFiles, SIGNAL(triggered()), this, SLOT(importNetcdf()));
 	connect(gocadFiles, SIGNAL(triggered()), this, SLOT(importGoCad()));
-	QAction* petrelFiles = importFiles->addAction("Petrel Files...");
+	QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
 	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(importPetrel()));
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), this, SLOT(importRaster()));
-	QAction* rasterPolyFiles = importFiles->addAction("Raster Files as PolyData...");
+	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(importRasterAsPoly()));
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
 	connect(shapeFiles, SIGNAL(triggered()), this, SLOT(importShape()));
-	QAction* vtkFiles = importFiles->addAction("VTK Files...");
+	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
 
 	return importFiles;
