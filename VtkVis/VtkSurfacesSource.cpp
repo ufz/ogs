@@ -27,9 +27,13 @@ vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");
 VtkSurfacesSource::VtkSurfacesSource()
 : _surfaces(NULL)
 {
-	this->SetColorBySurface(true);
-
 	this->SetNumberOfInputPorts(0);
+	//this->SetColorBySurface(true);
+
+	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	vtkProperty* vtkProps = GetProperties();
+	vtkProps->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	vtkProps->SetEdgeVisibility(0);
 }
 
 void VtkSurfacesSource::PrintSelf( ostream& os, vtkIndent indent )
@@ -121,14 +125,14 @@ int VtkSurfacesSource::RequestInformation( vtkInformation* request, vtkInformati
 void VtkSurfacesSource::SetUserProperty( QString name, QVariant value )
 {
 	VtkAlgorithmProperties::SetUserProperty(name, value);
-
+/*
 	if (name.compare("ColorBySurface") == 0)
 	{
 		value.convert(QVariant::Bool);
 		this->SetColorBySurface(value.toBool());
 		this->SetScalarVisibility(value.toBool());
 	}
-
+*/
 	(*_algorithmUserProperties)[name] = value;
 }
 

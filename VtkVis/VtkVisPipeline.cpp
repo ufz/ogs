@@ -181,24 +181,11 @@ void VtkVisPipeline::loadFromFile(QString filename)
 			oldStyleReader->SetFileName(filename.toStdString().c_str());
 			oldStyleReader->ReadAllFieldsOn();
 			oldStyleReader->ReadAllScalarsOn();
-			//std::cout << "#scalars: " << oldStyleReader->GetNumberOfScalarsInFile() << std::endl;
-			//oldStyleReader->SetScalarsName(oldStyleReader->GetScalarsNameInFile(2));
 			oldStyleReader->Update();
 			vtkDataSet* dataSet = vtkDataSet::SafeDownCast(oldStyleReader->GetOutput());
 			if (dataSet)
 			{
-				vtkPointData* pointData = dataSet->GetPointData();
-				std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
-				for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
-					std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
-
-				vtkCellData* cellData = dataSet->GetCellData();
-				std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
-				for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-					std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
-				
-				//dataSet->GetPointData()->SetActiveScalars(dataSet->GetPointData()->GetArrayName(2));
-
+				this->listArrays(dataSet);
 				addPipelineItem(oldStyleReader);
 			}
 			else
@@ -210,12 +197,21 @@ void VtkVisPipeline::loadFromFile(QString filename)
 			return;
 
 		reader->SetFileName(filename.toStdString().c_str());
-		std::cout << "#cell scalars: " << reader->GetNumberOfCellArrays() << std::endl;
-		std::cout << "#point scalars: " << reader->GetNumberOfPointArrays() << std::endl;
-		//reader->GetCellArrayName(2);
-		//reader->ser
-		addPipelineItem(reader);
-		reader->Delete();
+		// TODO: insert ReadAllScalarsOn()-equivalent for xml-file-reader here, otherwise arrays are not available in GUI!
+		reader->Update();
+		//std::cout << "#cell scalars: " << reader->GetNumberOfCellArrays() << std::endl;
+		//std::cout << "#point scalars: " << reader->GetNumberOfPointArrays() << std::endl;
+
+		vtkDataSet* dataSet = reader->GetOutputAsDataSet();
+		if (dataSet)
+		{
+			this->listArrays(dataSet);
+			addPipelineItem(reader);
+		}
+		else
+			std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
+
+		//reader->Delete();
 	}
 
 	#ifndef NDEBUG
@@ -373,4 +369,22 @@ void VtkVisPipeline::removePipelineItem( QModelIndex index )
 
 	_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	emit vtkVisPipelineChanged();
+}
+
+void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
+{
+	if (dataSet)
+	{
+		vtkPointData* pointData = dataSet->GetPointData();
+		std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
+			std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+
+		vtkCellData* cellData = dataSet->GetCellData();
+		std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
+			std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+	}
+	else
+		std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
 }

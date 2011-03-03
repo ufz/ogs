@@ -62,116 +62,12 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			transform->GetScale(scale);
 			scaleZ->setText(QString::number(scale[2]));
 
-			vtkDataSet* dataSet = vtkDataSet::SafeDownCast(item->algorithm()->GetOutputDataObject(0));
-			QStringList dataSetAttributesList;
-			if (dataSet)
-			{
-				vtkPointData* pointData = dataSet->GetPointData();
-				std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
-				for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
-				{
-					std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
-					dataSetAttributesList.push_back(pointData->GetArrayName(i));
-				}
-
-				vtkCellData* cellData = dataSet->GetCellData();
-				std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
-				for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-				{
-					std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
-					dataSetAttributesList.push_back(cellData->GetArrayName(i));
-				}
-
-			}
-			this->activeScalarComboBox->clear();
-			this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
+			this->buildScalarArrayComboBox(_item->algorithm());
 		}
 		else
 			actorPropertiesGroupBox->setEnabled(false);
 
-		QFormLayout* layout = static_cast<QFormLayout*>(this->scrollAreaWidgetContents->layout());
-		while(layout->count())
-				delete layout->takeAt(0)->widget();
-
-		QMap<QString, QVariant>* propMap = NULL;
-		QMap<QString, QList<QVariant> >* propVecMap = NULL;
-		VtkAlgorithmProperties* algProps = NULL;
-		if (item->compositeFilter())
-		{
-			algProps = item->compositeFilter();
-			propMap = item->compositeFilter()->GetAlgorithmUserProperties();
-			propVecMap = item->compositeFilter()->GetAlgorithmUserVectorProperties();
-		}
-		else
-		{
-			algProps = dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
-			if (algProps)
-			{
-				propMap = algProps->GetAlgorithmUserProperties();
-				propVecMap = algProps->GetAlgorithmUserVectorProperties();
-			}
-		}
-
-		if (propMap && algProps)
-		{
-			QMapIterator<QString, QVariant> i(*propMap);
-			while (i.hasNext())
-			{
-				i.next();
-				QString key = i.key();
-				QVariant value = i.value();
-
-				VtkAlgorithmPropertyLineEdit* lineEdit;
-				VtkAlgorithmPropertyCheckbox* checkbox;
-				switch (value.type())
-				{
-					case QVariant::Double:
-						lineEdit = new VtkAlgorithmPropertyLineEdit(QString::number(value.toDouble()), key, QVariant::Double, algProps);
-						connect(lineEdit, SIGNAL(editingFinished()), this, SIGNAL(requestViewUpdate()));
-						layout->addRow(key, lineEdit);
-						break;
-
-					case QVariant::Int:
-						lineEdit = new VtkAlgorithmPropertyLineEdit(QString::number(value.toInt()), key, QVariant::Int, algProps);
-						connect(lineEdit, SIGNAL(editingFinished()), this, SIGNAL(requestViewUpdate()));
-						layout->addRow(key, lineEdit);
-						break;
-
-					case QVariant::Bool:
-						checkbox = new VtkAlgorithmPropertyCheckbox(value.toBool(), key, algProps);
-						connect(checkbox, SIGNAL(stateChanged(int)), this, SIGNAL(requestViewUpdate()));
-						layout->addRow(key, checkbox);
-						break;
-
-
-					default:
-						break;
-				}
-			}
-		}
-
-		if (propVecMap && algProps)
-		{
-			QMapIterator<QString, QList<QVariant> > i(*propVecMap);
-			while (i.hasNext())
-			{
-				i.next();
-				QString key = i.key();
-				QList<QVariant> values = i.value();
-
-				VtkAlgorithmPropertyVectorEdit* vectorEdit;
-				if (values.size() > 0)
-				{
-					QList<QString> valuesAsString;
-					foreach (QVariant variant, values)
-						valuesAsString.push_back(variant.toString());
-
-					vectorEdit = new VtkAlgorithmPropertyVectorEdit(valuesAsString, key, values.front().type(), algProps);
-					connect(vectorEdit, SIGNAL(editingFinished()), this, SIGNAL(requestViewUpdate()));
-					layout->addRow(key, vectorEdit);
-				}
-			}
-		}
+		this->buildProportiesDialog(item);
 		
 		//
 		///* Integrating colour tables into property-window (test!) */
@@ -270,6 +166,124 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 	}
 }
 
+void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
+{
+	QFormLayout* layout = static_cast<QFormLayout*>(this->scrollAreaWidgetContents->layout());
+	while(layout->count())
+			delete layout->takeAt(0)->widget();
+
+	QMap<QString, QVariant>* propMap = NULL;
+	QMap<QString, QList<QVariant> >* propVecMap = NULL;
+	VtkAlgorithmProperties* algProps = NULL;
+
+	// Retrieve algorithm properties
+	if (item->compositeFilter())
+	{
+		algProps = item->compositeFilter();
+		propMap = item->compositeFilter()->GetAlgorithmUserProperties();
+		propVecMap = item->compositeFilter()->GetAlgorithmUserVectorProperties();
+	}
+	else
+	{
+		algProps = dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
+		if (algProps)
+		{
+			propMap = algProps->GetAlgorithmUserProperties();
+			propVecMap = algProps->GetAlgorithmUserVectorProperties();
+		}
+	}
+
+	// Select appropriate GUI element and set connect for each property
+	if (propMap && algProps)
+	{
+		QMapIterator<QString, QVariant> i(*propMap);
+		while (i.hasNext())
+		{
+			i.next();
+			QString key = i.key();
+			QVariant value = i.value();
+
+			VtkAlgorithmPropertyLineEdit* lineEdit;
+			VtkAlgorithmPropertyCheckbox* checkbox;
+			switch (value.type())
+			{
+				case QVariant::Double:
+					lineEdit = new VtkAlgorithmPropertyLineEdit(QString::number(value.toDouble()), key, QVariant::Double, algProps);
+					connect(lineEdit, SIGNAL(editingFinished()), this, SIGNAL(requestViewUpdate()));
+					layout->addRow(key, lineEdit);
+					break;
+
+				case QVariant::Int:
+					lineEdit = new VtkAlgorithmPropertyLineEdit(QString::number(value.toInt()), key, QVariant::Int, algProps);
+					connect(lineEdit, SIGNAL(editingFinished()), this, SIGNAL(requestViewUpdate()));
+					layout->addRow(key, lineEdit);
+					break;
+
+				case QVariant::Bool:
+					checkbox = new VtkAlgorithmPropertyCheckbox(value.toBool(), key, algProps);
+					connect(checkbox, SIGNAL(stateChanged(int)), this, SIGNAL(requestViewUpdate()));
+					layout->addRow(key, checkbox);
+					break;
+
+
+				default:
+					break;
+			}
+		}
+	}
+
+	if (propVecMap && algProps)
+	{
+		QMapIterator<QString, QList<QVariant> > i(*propVecMap);
+		while (i.hasNext())
+		{
+			i.next();
+			QString key = i.key();
+			QList<QVariant> values = i.value();
+
+			VtkAlgorithmPropertyVectorEdit* vectorEdit;
+			if (values.size() > 0)
+			{
+				QList<QString> valuesAsString;
+				foreach (QVariant variant, values)
+					valuesAsString.push_back(variant.toString());
+
+				vectorEdit = new VtkAlgorithmPropertyVectorEdit(valuesAsString, key, values.front().type(), algProps);
+				connect(vectorEdit, SIGNAL(editingFinished()), this, SIGNAL(requestViewUpdate()));
+				layout->addRow(key, vectorEdit);
+			}
+		}
+	}
+}
+
+void VtkVisTabWidget::buildScalarArrayComboBox(vtkAlgorithm* algorithm)
+{
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(algorithm->GetOutputDataObject(0));
+	QStringList dataSetAttributesList;
+	if (dataSet)
+	{
+		vtkPointData* pointData = dataSet->GetPointData();
+		//std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
+		{
+			//std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+			dataSetAttributesList.push_back(pointData->GetArrayName(i));
+		}
+
+		vtkCellData* cellData = dataSet->GetCellData();
+		//std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
+		{
+			//std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+			dataSetAttributesList.push_back(cellData->GetArrayName(i));
+		}
+
+		dataSetAttributesList.push_back("Solid Color");	// all scalars switched off
+	}
+	this->activeScalarComboBox->clear();
+	this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
+}
+
 void VtkVisTabWidget::addColorTable()
 {
 
@@ -280,3 +294,4 @@ void VtkVisTabWidget::SetActiveAttributeOnItem( int idx )
 	_item->SetActiveAttribute(idx, 0);
 	emit requestViewUpdate();
 }
+

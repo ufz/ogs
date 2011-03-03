@@ -37,7 +37,8 @@ public:
 	/**
 	 * \brief Generates random colors for each surface.
 	 */
-	ogsUserPropertyMacro(ColorBySurface,bool);
+	//ogsUserPropertyMacro(ColorBySurface,bool);
+
 	virtual void SetUserProperty(QString name, QVariant value);
 
 protected:

@@ -23,6 +23,7 @@
 
 
 class vtkAlgorithm;
+class vtkDataSet;
 class vtkLight;
 class vtkPointSet;
 class vtkRenderer;
@@ -100,6 +101,8 @@ public slots:
 	void removePipelineItem(QModelIndex index);
 
 private:
+	void listArrays(vtkDataSet* dataSet);
+
 	vtkRenderer* _renderer;
 	QVector<vtkAlgorithm*> _sources;
 	std::list<vtkLight*> _lights;

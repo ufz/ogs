@@ -11,6 +11,8 @@
 // ** INCLUDES **
 #include "ui_VtkVisTabWidgetBase.h"
 
+class vtkAlgorithm;
+
 /**
  * \brief Contains a QTreeView of the VtkVisPipeline and a properties
  * panel for adjusting vtkAlgorithms rendering and filter settings. 
@@ -37,6 +39,12 @@ protected slots:
 
 private:
 	void addColorTable();
+
+	/// Reads the algorithm properties of the given pipeline item and builds a dialog for adjusting these properties in the GUI.
+	void buildProportiesDialog(VtkVisPipelineItem* item);
+
+	/// Reads the scalar arrays of the given vtk-object and constructs content for the scalar array selection box.
+	void buildScalarArrayComboBox(vtkAlgorithm* algorithm);
 	VtkVisPipelineItem* _item;
 
 signals:

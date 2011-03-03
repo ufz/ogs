@@ -386,7 +386,15 @@ void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 	int nPointArrays = dataSet->GetPointData()->GetNumberOfArrays();
 	int nCellArrays  = dataSet->GetCellData()->GetNumberOfArrays();
 
-	if (nPointArrays+nCellArrays > 0)
+	if (arrayIndex==(nPointArrays+nCellArrays))
+	{
+		_mapper->ScalarVisibilityOff();
+		
+	}
+
+	//if (nPointArrays+nCellArrays > 0)
+	//{
+	else 
 	{
 		if ( arrayIndex > nPointArrays-1 )
 		{
@@ -415,11 +423,10 @@ void VtkVisPipelineItem::SetActiveAttribute( int arrayIndex, int attributeType )
 				_mapper->SetScalarRange(dataSet->GetScalarRange());
 			}
 
-			double a = range[0];
-			double b = range[1];
 			_mapper->SetScalarRange(range);
 			_mapper->ScalarVisibilityOn();
-			_mapper->Update();
+			//_mapper->Update();
 		}
 	}
+		_mapper->Update();
 }
