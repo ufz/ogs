@@ -119,8 +119,8 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 
 		for(size_t i=firstNode; i<lastNode; i++)
 		{
-			size_t xPos (static_cast<size_t>(ceil((msh->nod_vector[i]->X() - xDim.first) / delta)));
-			size_t yPos (static_cast<size_t>(ceil((msh->nod_vector[i]->Y() - yDim.first) / delta)));
+			size_t xPos (static_cast<size_t>(floor((msh->nod_vector[i]->X() - xDim.first) / delta)));
+			size_t yPos (static_cast<size_t>(floor((msh->nod_vector[i]->Y() - yDim.first) / delta)));
 
 			locX[0] = xDim.first+xPos*delta;
 			locY[0] = yDim.first+yPos*delta;
