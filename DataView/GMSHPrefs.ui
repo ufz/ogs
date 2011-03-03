@@ -443,6 +443,28 @@
         <string>Homogeneous meshing</string>
        </property>
       </widget>
+      <widget class="QCheckBox" name="geoFileDelete">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>290</y>
+         <width>241</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Delete GMSH geo-file after generating mesh</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

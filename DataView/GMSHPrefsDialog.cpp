@@ -146,7 +146,8 @@ void GMSHPrefsDialog::accept()
 		val4 = strtod(param4->text().toStdString().c_str(), 0);
 	}
 
-	emit requestMeshing(selectedObjects, max_number_of_points_in_quadtree_leaf, mesh_density_scaling_pnts, mesh_density_scaling_stations, val4);
+	bool delete_geo_file = this->geoFileDelete->isChecked();
+	emit requestMeshing(selectedObjects, max_number_of_points_in_quadtree_leaf, mesh_density_scaling_pnts, mesh_density_scaling_stations, val4, delete_geo_file);
 	this->done(QDialog::Accepted);
 }
 

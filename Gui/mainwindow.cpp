@@ -900,7 +900,7 @@ void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
-void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4)
+void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4, bool delete_geo_file)
 {
 	std::cout << "Start meshing..." << std::endl;
 	QString fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as", "","GMSH geometry files (*.geo)");
@@ -936,8 +936,8 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
-	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double)),
-		this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double)));
+	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
+		this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
 	dlg.exec();
 }
 
