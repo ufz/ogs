@@ -175,6 +175,9 @@ void VtkVisPipeline::loadFromFile(QString filename)
 		{
 			vtkGenericDataObjectReader* oldStyleReader = vtkGenericDataObjectReader::New();
 			oldStyleReader->SetFileName(filename.toStdString().c_str());
+			std::cout << "#scalars: " << oldStyleReader->GetNumberOfScalarsInFile() << std::endl;
+			oldStyleReader->SetScalarsName(oldStyleReader->GetScalarsNameInFile(2));
+			oldStyleReader->Update();
 			addPipelineItem(oldStyleReader);
 			return;
 		}
@@ -182,6 +185,10 @@ void VtkVisPipeline::loadFromFile(QString filename)
 			return;
 
 		reader->SetFileName(filename.toStdString().c_str());
+		std::cout << "#cell scalars: " << reader->GetNumberOfCellArrays() << std::endl;
+		std::cout << "#point scalars: " << reader->GetNumberOfPointArrays() << std::endl;
+		//reader->GetCellArrayName(2);
+		//reader->ser
 		addPipelineItem(reader);
 		reader->Delete();
 	}

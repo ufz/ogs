@@ -34,6 +34,10 @@ public:
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
 
+	/**
+	 * \brief Generates random colors for each surface.
+	 */
+	ogsUserPropertyMacro(ColorBySurface,bool);
 	virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
