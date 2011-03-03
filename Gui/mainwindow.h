@@ -46,6 +46,7 @@ protected slots:
 
     void open();
 	void save();
+	void callGMSH(std::vector<std::string> selectedGeometries, double param1, double param2, double param3, double param4);
 	void exportBoreholesToGMS(std::string listName, std::string fileName);
     void importGMS();
 	void importGoCad();
@@ -60,6 +61,7 @@ protected slots:
 	void openRecentFile();
 	void about();
 	void showDiagramPrefsDialog(QModelIndex &index);
+	void showGMSHPrefsDialog();
 	void showPropertiesDialog(std::string name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();

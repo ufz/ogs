@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>443</width>
+    <width>446</width>
     <height>382</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
       <attribute name="title">
        <string>Geometry</string>
       </attribute>
-      <widget class="QPushButton" name="deselectPlyButton">
+      <widget class="QPushButton" name="deselectGeoButton">
        <property name="geometry">
         <rect>
          <x>190</x>
@@ -54,7 +54,7 @@
         <string>&lt;&lt;</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="selectPlyButton">
+      <widget class="QPushButton" name="selectGeoButton">
        <property name="geometry">
         <rect>
          <x>190</x>
@@ -67,23 +67,23 @@
         <string>&gt;&gt;</string>
        </property>
       </widget>
-      <widget class="QListView" name="allPlyView">
+      <widget class="QListView" name="allGeoView">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>70</y>
          <width>171</width>
-         <height>231</height>
+         <height>221</height>
         </rect>
        </property>
       </widget>
-      <widget class="QListView" name="selectedPlyView">
+      <widget class="QListView" name="selectedGeoView">
        <property name="geometry">
         <rect>
          <x>240</x>
          <y>70</y>
          <width>171</width>
-         <height>231</height>
+         <height>221</height>
         </rect>
        </property>
       </widget>
@@ -185,7 +185,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QRadioButton" name="radioButton_2">
+      <widget class="QRadioButton" name="radioAdaptive">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -287,13 +287,13 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="param1"/>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit_2"/>
+          <widget class="QLineEdit" name="param2"/>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEdit_3"/>
+          <widget class="QLineEdit" name="param3"/>
          </item>
          <item row="1" column="2">
           <spacer name="horizontalSpacer">
@@ -392,12 +392,12 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit_4"/>
+          <widget class="QLineEdit" name="param4"/>
          </item>
         </layout>
        </widget>
       </widget>
-      <widget class="QRadioButton" name="radioButton">
+      <widget class="QRadioButton" name="radioHomogeneous">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -415,9 +415,6 @@
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
@@ -426,5 +423,38 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>GMSHPrefs</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>221</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>GMSHPrefs</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>221</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
