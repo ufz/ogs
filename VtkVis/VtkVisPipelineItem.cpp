@@ -275,7 +275,7 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
 
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
-	if (imageAlgorithm == NULL)
+	if (imageAlgorithm==NULL)
 	{
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 		if (mapper)
