@@ -914,8 +914,11 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries, s
 
 		if (param4 == -1) // adaptive meshing selected
 		{
-			GMSHInterface gmsh_io (fileName.toStdString()); // fname.toStdString());
+			GMSHInterface gmsh_io (fileName.toStdString());
 			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels, selectedGeometries, param1, param2, param3);
+			std::string gmsh_command ("gmsh -2 ");
+			gmsh_command += fileName.toStdString();
+			system (gmsh_command.c_str());
 		}
 		else // homogeneous meshing selected
 		{
