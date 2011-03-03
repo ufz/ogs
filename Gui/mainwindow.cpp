@@ -898,14 +898,13 @@ void MainWindow::importVtk()
 			"Select VTK file(s) to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
 			"VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu);;");
-	foreach (QString fileName, fileNames)
-		{
-			if (!fileName.isEmpty()) {
-				_vtkVisPipeline->loadFromFile(fileName);
-				QDir dir = QDir(fileName);
-				settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-			}
+	foreach(QString fileName, fileNames) {
+		if (!fileName.isEmpty()) {
+			_vtkVisPipeline->loadFromFile(fileName);
+			QDir dir = QDir(fileName);
+			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		}
+	}
 }
 
 void MainWindow::showPropertiesDialog(std::string name)
@@ -961,7 +960,12 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
 					selectedGeometries, param1, param2, param3);
 			std::string gmsh_command("gmsh -2 ");
-			gmsh_command += fileName.toStdString();
+			std::string fname (fileName.toStdString());
+			gmsh_command += fname;
+			size_t pos (fname.rfind ("."));
+			if (pos != std::string::npos)
+				fname = fname.substr (0, pos);
+			gmsh_command += " -o " + fname + ".msh";
 			system(gmsh_command.c_str());
 		} else // homogeneous meshing selected
 		{
