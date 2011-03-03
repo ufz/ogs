@@ -16,12 +16,12 @@
 #include <QModelIndex>
 
 
-class GeoObjectListItem : public TreeItem 
+class GeoObjectListItem : public TreeItem
 {
 
 public:
 	/// Constructor for the TreeItem specifying the "Points"-subtree of a geometry.
-	GeoObjectListItem(const QList<QVariant> &data, TreeItem *parent,  const std::vector<GEOLIB::Point*> *geo_data = NULL, GEOLIB::GEOTYPE type = GEOLIB::POINT) 
+	GeoObjectListItem(const QList<QVariant> &data, TreeItem *parent,  const std::vector<GEOLIB::Point*> *geo_data = NULL, GEOLIB::GEOTYPE type = GEOLIB::POINT)
 		: TreeItem(data, parent), _vtkSource(VtkPointsSource::New()), _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -30,7 +30,7 @@ public:
 	}
 
 	/// Constructor for the TreeItem specifying the "Polylines"-subtree of a geometry.
-	GeoObjectListItem(const QList<QVariant> &data, TreeItem *parent,  const std::vector<GEOLIB::Polyline*> *geo_data = NULL, GEOLIB::GEOTYPE type = GEOLIB::POLYLINE) 
+	GeoObjectListItem(const QList<QVariant> &data, TreeItem *parent,  const std::vector<GEOLIB::Polyline*> *geo_data = NULL, GEOLIB::GEOTYPE type = GEOLIB::POLYLINE)
 		: TreeItem(data, parent), _vtkSource(VtkPolylinesSource::New()), _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -39,7 +39,7 @@ public:
 	}
 
 	/// Constructor for the TreeItem specifying the "Surfaces"-subtree of a geometry.
-	GeoObjectListItem(const QList<QVariant> &data, TreeItem *parent,  const std::vector<GEOLIB::Surface*> *geo_data = NULL, GEOLIB::GEOTYPE type = GEOLIB::SURFACE) 
+	GeoObjectListItem(const QList<QVariant> &data, TreeItem *parent,  const std::vector<GEOLIB::Surface*> *geo_data = NULL, GEOLIB::GEOTYPE type = GEOLIB::SURFACE)
 		: TreeItem(data, parent), _vtkSource(VtkSurfacesSource::New()),  _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -59,12 +59,11 @@ public:
 	vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; };
 
 private:
-	GEOLIB::GEOTYPE _type;
-
 	/// The Vtk data source object. This is the starting point for a Vtk data
 	/// visualization pipeline.
 	vtkPolyDataAlgorithm* _vtkSource;
 
+	GEOLIB::GEOTYPE _type;
 };
 
 #endif //GEOOBJECTLISTITEM_H
