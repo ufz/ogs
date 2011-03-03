@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
+    <width>526</width>
     <height>382</height>
    </rect>
   </property>
@@ -29,7 +29,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="GeoTab">
       <property name="sizePolicy">
@@ -44,7 +44,7 @@
       <widget class="QPushButton" name="deselectGeoButton">
        <property name="geometry">
         <rect>
-         <x>190</x>
+         <x>230</x>
          <y>190</y>
          <width>41</width>
          <height>23</height>
@@ -57,7 +57,7 @@
       <widget class="QPushButton" name="selectGeoButton">
        <property name="geometry">
         <rect>
-         <x>190</x>
+         <x>230</x>
          <y>160</y>
          <width>41</width>
          <height>23</height>
@@ -72,7 +72,7 @@
         <rect>
          <x>10</x>
          <y>70</y>
-         <width>171</width>
+         <width>201</width>
          <height>221</height>
         </rect>
        </property>
@@ -80,9 +80,9 @@
       <widget class="QListView" name="selectedGeoView">
        <property name="geometry">
         <rect>
-         <x>240</x>
+         <x>290</x>
          <y>70</y>
-         <width>171</width>
+         <width>201</width>
          <height>221</height>
         </rect>
        </property>
@@ -92,7 +92,7 @@
         <rect>
          <x>10</x>
          <y>50</y>
-         <width>121</width>
+         <width>141</width>
          <height>20</height>
         </rect>
        </property>
@@ -103,9 +103,9 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>240</x>
-         <y>50</y>
-         <width>121</width>
+         <x>290</x>
+         <y>40</y>
+         <width>151</width>
          <height>21</height>
         </rect>
        </property>
@@ -203,7 +203,7 @@
         <rect>
          <x>0</x>
          <y>70</y>
-         <width>411</width>
+         <width>491</width>
          <height>111</height>
         </rect>
        </property>
@@ -215,7 +215,7 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>401</width>
+          <width>481</width>
           <height>101</height>
          </rect>
         </property>
@@ -241,7 +241,7 @@
             <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text">
-            <string>Mesh Resolution</string>
+            <string>max number of points in Quadtree leaf</string>
            </property>
            <property name="margin">
             <number>5</number>
@@ -260,7 +260,7 @@
             <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text">
-            <string>LineParam</string>
+            <string>mesh density scaling for points</string>
            </property>
            <property name="margin">
             <number>5</number>
@@ -279,7 +279,7 @@
             <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text">
-            <string>PointParam</string>
+            <string>mesh density scaling for stations</string>
            </property>
            <property name="margin">
             <number>5</number>
@@ -287,13 +287,24 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="param1"/>
+          <widget class="QLineEdit" name="param1">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="param2"/>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="param3"/>
+          <widget class="QLineEdit" name="param2">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
           <spacer name="horizontalSpacer">
@@ -334,6 +345,16 @@
            </property>
           </spacer>
          </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="param3">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -354,7 +375,7 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>401</width>
+          <width>481</width>
           <height>51</height>
          </rect>
         </property>

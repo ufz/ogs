@@ -457,8 +457,12 @@ void MainWindow::save()
 		else if (fi.suffix().toLower() == "geo")
 		{
 			GMSHInterface gmsh_io (fileName.toStdString());
-//			gmsh_io.writeGMSHInputFile(gliName.toStdString(), *_geoModels);
-			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels);
+			std::vector<std::string> selected_geometries;
+			const size_t param1 (2);
+			const double param2 (0.3);
+			const double param3 (0.05);
+			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+					selected_geometries, param1, param2, param3);
 		}
 		else if (fi.suffix().toLower() == "gli") {
 //			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
@@ -896,9 +900,12 @@ void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
-void MainWindow::callGMSH(std::vector<std::string> selectedGeometries, double param1, double param2, double param3, double param4)
+void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries, size_t param1, double param2, double param3, double param4)
 {
 	std::cout << "Start meshing..." << std::endl;
+	GMSHInterface gmsh_io ("test_mesh.geo"); // fname.toStdString());
+	gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+			selectedGeometries, param1, param2, param3);
 }
 
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
@@ -918,8 +925,8 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
-	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string>, double, double, double, double)), 
-		this, SLOT(callGMSH(std::vector<std::string>, double, double, double, double)));
+	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double)),
+		this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double)));
 	dlg.exec();
 }
 
