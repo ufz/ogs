@@ -36,7 +36,6 @@
 
 //test
 #include "fem_ele.h"
-#include "MeshQualityChecker.h"
 // FileIO includes
 #include "OGSIOVer4.h"
 #include "StationIO.h"
@@ -610,7 +609,7 @@ void MainWindow::loadFile(const QString &fileName)
 		XMLInterface xml(_geoModels, schemaName);
 		std::vector<FEMCondition*> conditions;
 		xml.readFEMCondFile(conditions, fileName);
-		if (!conditions.empty()) 
+		if (!conditions.empty())
 			this->_conditionModel->addConditions(conditions);
 	}
 	else if (fi.suffix().toLower() == "bc") {
@@ -625,7 +624,7 @@ void MainWindow::loadFile(const QString &fileName)
 			conditions.push_back(bc);
 		}
 
-		if (!conditions.empty()) 
+		if (!conditions.empty())
 			this->_conditionModel->addConditions(conditions);
 	}
 
