@@ -7,16 +7,15 @@ set( SOURCES
 	ConditionView.cpp
 	DatabaseConnection.cpp
 	DataView.cpp
-	DataViewWidget.cpp
 	DBConnectionDialog.cpp
 	DiagramPrefsDialog.cpp
 	GEOModels.cpp
+	GeoTabWidget.cpp
+	GeoTreeModel.cpp
+	GeoTreeView.cpp
 	GMSHPrefsDialog.cpp
 	LineEditDialog.cpp
-	LinesModel.cpp
-	LineTabWidget.cpp
 	ListPropertiesDialog.cpp
-	Model.cpp
 	ModelTreeItem.cpp
 	MshEditDialog.cpp
 	MshItem.cpp
@@ -24,15 +23,11 @@ set( SOURCES
 	MshModel.cpp
 	MshTabWidget.cpp
 	OGSRaster.cpp
-	PntsModel.cpp
-	PntTabWidget.cpp
 	QueryResultsDialog.cpp
 	SHPImportDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
 	StationTreeView.cpp
-	SurfaceModel.cpp
-	SurfaceTabWidget.cpp
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
 )
@@ -46,28 +41,23 @@ set( MOC_HEADERS
 	ConditionView.h
 	DatabaseConnection.h
 	DataView.h
-	DataViewWidget.h
 	DBConnectionDialog.h
 	DiagramPrefsDialog.h
 	GEOModels.h
+	GeoTabWidget.h
+	GeoTreeModel.h
+	GeoTreeView.h
 	GMSHPrefsDialog.h
 	LineEditDialog.h
-	LinesModel.h
-	LineTabWidget.h
 	ListPropertiesDialog.h
-	Model.h
 	MshEditDialog.h
 	MshModel.h
 	MshTabWidget.h
-	PntsModel.h
-	PntTabWidget.h
 	QueryResultsDialog.h
 	SHPImportDialog.h
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h
-	SurfaceModel.h
-	SurfaceTabWidget.h
 	VisPrefsDialog.h
 	VisualizationWidget.h
 )
@@ -76,6 +66,7 @@ set( MOC_HEADERS
 set( HEADERS
 	BaseItem.h
 	CondItem.h
+	GeoObjectListItem.h
 	GeoTreeItem.h
 	ModelTreeItem.h
 	MshItem.h
@@ -87,17 +78,14 @@ set( HEADERS
 set( UIS
 	ConditionTabWidgetBase.ui
 	DatabaseResultView.ui
-	DataViewWidgetBase.ui
 	DBConnection.ui
 	DiagramPrefs.ui
+	GeoTabWidgetBase.ui
 	GMSHPrefs.ui
 	LineEdit.ui
-	LineTabWidgetBase.ui
 	MshEdit.ui
 	MshTabWidgetBase.ui
-	PntTabWidgetBase.ui
 	StationTabWidgetBase.ui
-	SurfaceTabWidgetBase.ui
 	VisPrefs.ui
 	VisualizationWidgetBase.ui
 )

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>815</width>
-    <height>808</height>
+    <width>801</width>
+    <height>745</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -80,7 +80,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>815</width>
+     <width>801</width>
      <height>21</height>
     </rect>
    </property>
@@ -174,42 +174,6 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="pntDock">
-   <property name="windowTitle">
-    <string>Points</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_4">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <property name="margin">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="PntTabWidget" name="pntTabWidget" native="true"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="lineDock">
-   <property name="windowTitle">
-    <string>Lines</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_6">
-    <layout class="QVBoxLayout" name="verticalLayout_5">
-     <property name="margin">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="LineTabWidget" name="lineTabWidget" native="true"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="vtkVisDock">
    <property name="windowTitle">
     <string>Visualization Pipeline</string>
@@ -228,37 +192,6 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="surfaceDock">
-   <property name="windowTitle">
-    <string>Surfaces</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_8">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="margin">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="SurfaceTabWidget" name="surfaceTabWidget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="conditionDock">
    <property name="windowTitle">
     <string>FEM Conditions</string>
@@ -273,6 +206,25 @@
      </property>
      <item>
       <widget class="ConditionTabWidget" name="conditionTabWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="geoDock">
+   <property name="windowTitle">
+    <string>Geometry</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="GeoTabWidget" name="geoTabWidget" native="true">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -407,21 +359,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>PntTabWidget</class>
-   <extends>QWidget</extends>
-   <header>PntTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>StationTabWidget</class>
    <extends>QWidget</extends>
    <header>StationTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LineTabWidget</class>
-   <extends>QWidget</extends>
-   <header>LineTabWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -437,15 +377,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SurfaceTabWidget</class>
-   <extends>QWidget</extends>
-   <header>SurfaceTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ConditionTabWidget</class>
    <extends>QWidget</extends>
    <header>ConditionTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GeoTabWidget</class>
+   <extends>QWidget</extends>
+   <header>GeoTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

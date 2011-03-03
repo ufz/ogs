@@ -33,6 +33,7 @@ private:
 
 	QStringListModel* _allPly;
 	QStringListModel* _selPly;
+	std::string _geoName;
 
 
 private slots:
@@ -49,7 +50,7 @@ private slots:
 	void reject();
 
 signals:
-	void connectPolylines(std::vector<size_t>, bool, bool);	
+	void connectPolylines(const std::string&, std::vector<size_t>, bool, bool);	
 
 };
 

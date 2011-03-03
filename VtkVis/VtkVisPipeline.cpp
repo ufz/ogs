@@ -8,10 +8,11 @@
 // ** INCLUDES **
 #include "VtkVisPipeline.h"
 
-#include "Model.h"
+//#include "Model.h"
 #include "TreeModel.h"
 #include "MshModel.h"
 #include "MshItem.h"
+#include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkMeshSource.h"
@@ -219,9 +220,9 @@ void VtkVisPipeline::loadFromFile(QString filename)
 	#endif
 }
 
-void VtkVisPipeline::addPipelineItem( Model* model )
+void VtkVisPipeline::addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
 {
-	addPipelineItem(model->vtkSource());
+	addPipelineItem(model->vtkSource(name, type));
 }
 
 void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string &name)
@@ -309,13 +310,16 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 #endif // OGS_USE_OPENSG
 }
 
-void VtkVisPipeline::removeSourceItem( Model* model )
+void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
 {
-	for (int i = 0; i < rowCount(); i++)
+	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
-		if (item->algorithm() == model->vtkSource())
+		if (item->algorithm() == model->vtkSource(name, type))
+		{
 			removePipelineItem(index(i, 0));
+			return;
+		}
 	}
 }
 
