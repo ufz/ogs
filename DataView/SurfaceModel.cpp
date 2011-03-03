@@ -36,7 +36,7 @@ void SurfaceModel::constructVTKObject()
 {
 	_vtkSource = VtkSurfacesSource::New();
 	VtkSurfacesSource* source = static_cast<VtkSurfacesSource*>(_vtkSource);
-	source->SetName(this->_name);
+	source->SetName(this->_name + " - Surfaces");
 	source->setSurfaces(_surfaceVec->getVector());
 }
 

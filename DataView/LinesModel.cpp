@@ -41,7 +41,7 @@ void PolylinesModel::constructVTKObject()
 {
 	_vtkSource = VtkPolylinesSource::New();
 	VtkPolylinesSource* source = static_cast<VtkPolylinesSource*>(_vtkSource);
-	source->SetName(this->_name);
+	source->SetName(this->_name + " - Lines");
 	source->setPolylines(_polylineVec->getVector());
 }
 
