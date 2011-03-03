@@ -1223,3 +1223,20 @@ void MainWindow::quitPresentationMode()
 	// Restore the previously saved QMainWindow state
 	this->restoreState(_windowState);
 }
+}
+
+void MainWindow::quitPresentationMode()
+{
+	// Remove the quit action
+	QAction* action = _vtkWidget->actions().back();
+	_vtkWidget->removeAction(action);
+	delete action;
+
+	// Add the widget back to visualization widget
+	visualizationWidget->layout()->addWidget(_vtkWidget);
+
+	QMainWindow::centralWidget()->show();
+
+	// Restore the previously saved QMainWindow state
+	this->restoreState(_windowState);
+}
