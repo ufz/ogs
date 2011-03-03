@@ -404,9 +404,6 @@ void MainWindow::save()
 	else
 		dir_str = QDir::homePath();
 
-	QString gliName = "Test"; //HACK change this!!!
-			//pntTabWidget->dataViewWidget->modelSelectComboBox->currentText();
-
 	QString
 			fileName =
 					QFileDialog::getSaveFileName(
@@ -415,7 +412,7 @@ void MainWindow::save()
 							dir_str,
 							"GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
 
-	if (!(fileName.isEmpty() || gliName.isEmpty())) {
+	if (!fileName.isEmpty()) {
 		QFileInfo fi(fileName);
 
 		if (fi.suffix().toLower() == "gsp") {
@@ -441,9 +438,7 @@ void MainWindow::save()
 			//			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
 			writeAllDataToGLIFileV4(fileName.toStdString(), *_geoModels);
 		}
-
-	} else if (!fileName.isEmpty() && gliName.isEmpty()) OGSError::box(
-			"No geometry data available.");
+	}
 }
 
 void MainWindow::loadFile(const QString &fileName)

@@ -78,10 +78,12 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		{
 			QAction* connectPlyAction(NULL);
 			if (list->getType() == GEOLIB::POLYLINE)
+			{
 				connectPlyAction = menu.addAction("Connect Polylines...");
+				connect(connectPlyAction, SIGNAL(triggered()), this, SLOT(connectPolylines()));
+			}
 			menu.addSeparator();
 			QAction* removeAction = menu.addAction("Remove " + item->data(0).toString());
-			connect(connectPlyAction, SIGNAL(triggered()), this, SLOT(connectPolylines()));
 			connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 		}
 		// The current index refers to a geo object
