@@ -201,9 +201,9 @@
       <widget class="QGroupBox" name="groupBox">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>10</x>
          <y>70</y>
-         <width>491</width>
+         <width>481</width>
          <height>111</height>
         </rect>
        </property>
@@ -221,7 +221,7 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>481</width>
+          <width>471</width>
           <height>101</height>
          </rect>
         </property>
@@ -239,7 +239,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>250</width>
              <height>0</height>
             </size>
            </property>
@@ -258,7 +258,7 @@
           <widget class="QLabel" name="label_4">
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>250</width>
              <height>0</height>
             </size>
            </property>
@@ -277,7 +277,7 @@
           <widget class="QLabel" name="label_5">
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>250</width>
              <height>0</height>
             </size>
            </property>
@@ -367,9 +367,9 @@
       <widget class="QGroupBox" name="groupBox_2">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>10</x>
          <y>210</y>
-         <width>491</width>
+         <width>481</width>
          <height>61</height>
         </rect>
        </property>
@@ -387,7 +387,7 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>481</width>
+          <width>471</width>
           <height>51</height>
          </rect>
         </property>
@@ -409,7 +409,7 @@
           <widget class="QLabel" name="label_6">
            <property name="minimumSize">
             <size>
-             <width>200</width>
+             <width>250</width>
              <height>0</height>
             </size>
            </property>
@@ -448,7 +448,7 @@
         <rect>
          <x>10</x>
          <y>290</y>
-         <width>241</width>
+         <width>421</width>
          <height>17</height>
         </rect>
        </property>
