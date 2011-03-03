@@ -119,10 +119,13 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	{
 		double coords[3] = { (*(*it))[0], (*(*it))[1], (*(*it))[2] };
 		vtkIdType sid = newStations->InsertNextPoint(coords);
-		newVerts->InsertNextCell(1, &sid);
-		colors->InsertNextTupleValue(stationColor);
-
-		if (isBorehole)
+		
+		if (!isBorehole)
+		{
+			newVerts->InsertNextCell(1, &sid);
+			colors->InsertNextTupleValue(stationColor);
+		}
+		else
 		{
 			std::vector<GEOLIB::Point*> profile = static_cast<GEOLIB::StationBorehole*>(*it)->getProfile();
 			std::vector<std::string> soilNames = static_cast<GEOLIB::StationBorehole*>(*it)->getSoilNames();
@@ -147,9 +150,10 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	}
 
 	output->SetPoints(newStations);
-	output->SetVerts(newVerts);
-
-	if (isBorehole)
+	
+	if (!isBorehole)
+		output->SetVerts(newVerts);
+	else
 	{
 		output->SetLines(newLines);
 
