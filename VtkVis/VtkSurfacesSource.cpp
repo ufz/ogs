@@ -65,9 +65,9 @@ int VtkSurfacesSource::RequestData( vtkInformation* request, vtkInformationVecto
 	vtkSmartPointer<vtkCellArray> newPolygons = vtkSmartPointer<vtkCellArray>::New();
 		//newPolygons->Allocate(nSurfaces);
 
-	vtkSmartPointer<vtkUnsignedCharArray> sfcColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-		sfcColors->SetNumberOfComponents(3);
-		sfcColors->SetName("Colors");
+	vtkSmartPointer<vtkIntArray> sfcIDs = vtkSmartPointer<vtkIntArray>::New();
+		sfcIDs->SetNumberOfComponents(1);
+		sfcIDs->SetName("SurfaceIDs");
 
 	for (size_t i=0; i<nPoints; i++)
 	{
@@ -75,13 +75,10 @@ int VtkSurfacesSource::RequestData( vtkInformation* request, vtkInformationVecto
 		newPoints->InsertNextPoint(coords);
 	}
 
+	vtkIdType count(0);
 	for (std::vector<GEOLIB::Surface*>::const_iterator it = _surfaces->begin();
 		it != _surfaces->end(); ++it)
 	{
-		//const GEOLIB::Color *c (GEOLIB::getColor(/*getNameOfSurface*/, _colorLookupTable));
-		const GEOLIB::Color *c = GEOLIB::getRandomColor();
-		unsigned char sColor[3] = { (*c)[0], (*c)[1], (*c)[2] };
-
 		const size_t nTriangles = (*it)->getNTriangles();
 
 		for (size_t i = 0; i < nTriangles; i++)
@@ -95,19 +92,17 @@ int VtkSurfacesSource::RequestData( vtkInformation* request, vtkInformationVecto
 				aPolygon->GetPointIds()->SetId(j, ((*triangle)[j]));
 			}
 			newPolygons->InsertNextCell(aPolygon);
-			sfcColors->InsertNextTupleValue(sColor);
+			sfcIDs->InsertNextValue(count);
 
 			aPolygon->Delete();
 		}
+		count++;
 	}
 
 	output->SetPoints(newPoints);
 	output->SetPolys(newPolygons);
-	output->GetCellData()->AddArray(sfcColors);
-	output->GetCellData()->SetActiveAttribute("Colors", vtkDataSetAttributes::SCALARS);
-
-	//const GEOLIB::Color* c = GEOLIB::getRandomColor();
-	//this->GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	output->GetCellData()->AddArray(sfcIDs);
+	output->GetCellData()->SetActiveAttribute("SurfaceIDs", vtkDataSetAttributes::SCALARS);
 
 	return 1;
 }
@@ -133,7 +128,6 @@ void VtkSurfacesSource::SetUserProperty( QString name, QVariant value )
 		this->SetColorBySurface(value.toBool());
 		this->SetScalarVisibility(value.toBool());
 	}
-
 
 	(*_algorithmUserProperties)[name] = value;
 }

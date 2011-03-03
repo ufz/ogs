@@ -197,6 +197,8 @@ void VtkVisPipeline::loadFromFile(QString filename)
 				for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
 					std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
 				
+				//dataSet->GetPointData()->SetActiveScalars(dataSet->GetPointData()->GetArrayName(2));
+
 				addPipelineItem(oldStyleReader);
 			}
 			else

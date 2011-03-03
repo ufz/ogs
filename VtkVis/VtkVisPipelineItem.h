@@ -85,9 +85,8 @@ public:
 
 	vtkTransformFilter* transformFilter() const { return _transformFilter; }
 
-	void SetActiveAttribute(const QString& name,
-		int attributeType = 0, // vtkDataSetAttributes::SCALARS,
-		bool onPointData = true);
+	/// @brief Sets the selected attribute array for the visualisation of the data set.
+	void SetActiveAttribute(int arrayIndex, int attributeType = 0 /*vtkDataSetAttributes::SCALARS*/);
 	
 #ifdef OGS_USE_OPENSG
 	// HACK static rootNode is set by VtkVisPipeline constructor
