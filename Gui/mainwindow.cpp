@@ -412,7 +412,7 @@ void MainWindow::open()
 							this,
 							"Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys files (*.gsp *.gli *.gml *.msh *.stn *.cnd);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+							"Geosys files (*.gsp *.gli *.gml *.msh *.stn *.cnd *.bc);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
 	if (!fileName.isEmpty()) {
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -610,9 +610,25 @@ void MainWindow::loadFile(const QString &fileName)
 		XMLInterface xml(_geoModels, schemaName);
 		std::vector<FEMCondition*> conditions;
 		xml.readFEMCondFile(conditions, fileName);
-		if (!conditions.empty()) this->_conditionModel->addConditions(
-				conditions);
+		if (!conditions.empty()) 
+			this->_conditionModel->addConditions(conditions);
 	}
+	else if (fi.suffix().toLower() == "bc") {
+		std::vector<FEMCondition*> conditions;
+		//size_t old_size = bc_list.size();
+		QString name = fi.path() + "/";
+		BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, ""); // HACK
+		//for (size_t i=old_size; i<bc_list.size(); i++)
+		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin(); it != bc_list.end(); ++it)
+		{
+			BoundaryCondition* bc = new BoundaryCondition(*(*it));
+			conditions.push_back(bc);
+		}
+
+		if (!conditions.empty()) 
+			this->_conditionModel->addConditions(conditions);
+	}
+
 
 	// GMS borehole files
 	else if (fi.suffix().toLower() == "txt") {

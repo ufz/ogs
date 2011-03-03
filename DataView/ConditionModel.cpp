@@ -11,12 +11,6 @@
 
 #include <QFileInfo>
 
-//#include "rf_bc_new.h"
-//#include "rf_ic_new.h"
-//#include "rf_st_new.h"
-
-//#include "VtkPointsSource.h"
-
 ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 : TreeModel(parent), _project(project)
 {
