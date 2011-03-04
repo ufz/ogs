@@ -35,6 +35,7 @@ SET( SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisTabWidget.cpp
 	VtkVisHelper.cpp
+	VisualizationWidget.cpp
 )
 
 # Moc headers
@@ -49,6 +50,7 @@ SET( MOC_HEADERS
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
+	VisualizationWidget.h
 )
 
 # Header files
@@ -85,6 +87,7 @@ SET( HEADERS
 SET ( UIS
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
+	VisualizationWidgetBase.ui
 )
 
 # Put moc files in a project folder
@@ -107,6 +110,7 @@ QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
 INCLUDE_DIRECTORIES(
 	.
+	../VtkAct
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	../../Base
 	../../FEM
