@@ -33,6 +33,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkGenericDataObjectReader.h>
+#include <vtkUnstructuredGridAlgorithm.h>
 
 VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 : QTreeView(parent)
@@ -150,16 +151,20 @@ void VtkVisPipelineView::convertImageToMesh()
 void VtkVisPipelineView::convertVTKToOGSMesh()
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()))->algorithm();
+	
 	vtkUnstructuredGrid* grid(NULL);
-
-	vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(algorithm); // for old filetypes
-	if (dataReader) grid = vtkUnstructuredGrid::SafeDownCast(dataReader->GetOutput());
+	vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
+	if (ugAlg) grid = ugAlg->GetOutput();
 	else
 	{
-		vtkXMLUnstructuredGridReader* xmlReader = vtkXMLUnstructuredGridReader::SafeDownCast(algorithm); // for new filetypes
-		grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
+		vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(algorithm); // for old filetypes
+		if (dataReader) grid = vtkUnstructuredGrid::SafeDownCast(dataReader->GetOutput());
+		else
+		{
+			vtkXMLUnstructuredGridReader* xmlReader = vtkXMLUnstructuredGridReader::SafeDownCast(algorithm); // for new filetypes
+			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
+		}
 	}
-
 	Mesh_Group::CFEMesh* mesh = GridAdapter::convertUnstructuredGrid(grid);
 	std::string msh_name("NewMesh");
 	emit meshAdded(mesh, msh_name);
