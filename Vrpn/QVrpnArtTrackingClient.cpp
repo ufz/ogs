@@ -34,6 +34,8 @@ QVrpnArtTrackingClient::~QVrpnArtTrackingClient()
 	settings.setValue("artDeviceNameAt", list.at(1));
 	settings.setValue("artUpdateInterval", _updateInterval);
 	settings.endGroup();
+	
+	delete _timer;
 }
 
 QVrpnArtTrackingClient* QVrpnArtTrackingClient::Instance(QObject* parent /*= NULL*/)

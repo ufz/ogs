@@ -190,7 +190,6 @@ bool VrpnArtTrackingClient::GetButtonData(int index)
 
 void VRPN_CALLBACK VrpnArtTrackingClient::CBHandleTracker(void *userdata, const vrpn_TRACKERCB t)
 {
-	int i;
 	(void)userdata;
 
 	VrpnArtTrackingClient *art = m_pInstance;
@@ -199,12 +198,12 @@ void VRPN_CALLBACK VrpnArtTrackingClient::CBHandleTracker(void *userdata, const 
 		if (t.sensor == 0)
 		{
 			//std::cout << "CBHandleTracker" << std::endl;
-			for (i=0; i<3; i++)
+			for (int i=0; i<3; i++)
 			{
 				art->m_dBodyTranslation[i] = t.pos[i];
 				//std::cout << t.pos[i] << std::endl;
 			}
-			for (i=0; i<4; i++)
+			for (int i=0; i<4; i++)
 			{
 				art->m_dBodyQuaternion[i] = t.quat[i];
 				//std::cout << t.quat[i] << std::endl;
@@ -212,9 +211,9 @@ void VRPN_CALLBACK VrpnArtTrackingClient::CBHandleTracker(void *userdata, const 
 		}
 		else if (t.sensor == 1)
 		{
-			for (i=0; i<3; i++)
+			for (int i=0; i<3; i++)
 				art->m_dFlyTranslation[i] = t.pos[i];
-			for (i=0; i<4; i++)
+			for (int i=0; i<4; i++)
 				art->m_dFlyQuaternion[i] = t.quat[i];
 		}
 	}

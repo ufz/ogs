@@ -178,7 +178,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected, const
 	}
 	else
 	{
-		emit actorSelected((vtkProp3D*)NULL);
+		emit actorSelected(NULL);
 		emit itemSelected(NULL);
 	}
 		

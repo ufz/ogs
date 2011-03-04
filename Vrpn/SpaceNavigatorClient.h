@@ -60,10 +60,10 @@ public:
 	void init(const char *deviceName, SpaceNavigatorAxes axis = Y);
 	
 	/// @brief Returns the translation values.
-	void getTranslation(double& retx, double& rety, double& retz);
+	void getTranslation(double& retx, double& rety, double& retz) const;
 	
 	/// @brief Returns the rotation values
-	void getRotation(double& retx, double& rety, double& retz);
+	void getRotation(double& retx, double& rety, double& retz) const;
 	
 	/// @brief Updates the translation and rotation values.
 	/// Must be called once per frame before getTranslation/Rotation.
