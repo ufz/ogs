@@ -19,6 +19,7 @@ SET( SOURCES
 	VtkCompositeSelectionFilter.cpp	
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
+	VtkConditionSource.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
@@ -67,6 +68,7 @@ SET( HEADERS
 	VtkCompositeSelectionFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
+	VtkConditionSource.h
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h

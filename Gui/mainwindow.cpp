@@ -529,7 +529,7 @@ void MainWindow::loadFile(const QString &fileName)
 	else if (fi.suffix().toLower() == "3dm") {
 		std::string name = fileName.toStdString();
 		Mesh_Group::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
-		_meshModels->addMesh(mesh, name);
+		if (mesh) _meshModels->addMesh(mesh, name);
 	}
 	// goCAD files
 	else if (fi.suffix().toLower() == "ts") {
