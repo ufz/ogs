@@ -40,6 +40,8 @@
 #include <vtkXMLImageDataWriter.h>
 #include <vtkImageActor.h>
 #include <vtkImageAlgorithm.h>
+#include <vtkTubeFilter.h>
+#include <vtkTriangleFilter.h>
 
 #include "VtkCompositeFilter.h"
 
@@ -217,7 +219,18 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	}
 	else
 	{
-		_mapper->SetInputConnection(_transformFilter->GetOutputPort());
+		// vtkTubeFilter generates triangle strips. These are not handled correctly
+		// by the OpenSG converter. So the strips are converted to ordinary triangles.
+		vtkTubeFilter* tubeFilter = dynamic_cast<vtkTubeFilter*>(_algorithm);
+		if (tubeFilter)
+		{
+			vtkSmartPointer<vtkTriangleFilter> triangulate = 
+				vtkSmartPointer<vtkTriangleFilter>::New();
+			triangulate->SetInputConnection(_transformFilter->GetOutputPort());
+			_mapper->SetInputConnection(triangulate->GetOutputPort());
+		}
+		else
+			_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 	}
 	_actor->SetMapper(_mapper);
 
