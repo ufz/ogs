@@ -964,8 +964,8 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 			index, listName);
 
 	if (stn->type() == GEOLIB::Station::STATION) {
-		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(stn, listName, _db);
-		prefs->show();
+		DiagramPrefsDialog prefs(stn, listName, _db);
+		prefs.show();
 	}
 	if (stn->type() == GEOLIB::Station::BOREHOLE) OGSError::box(
 			"No time series data available for borehole.");

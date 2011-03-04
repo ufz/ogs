@@ -53,7 +53,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		vtkAlgorithm* algorithm,
 		TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
+	: TreeItem(data, parentItem), _actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
+	  _compositeFilter(NULL), _transformFilter(NULL)
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (visParentItem)
@@ -75,7 +76,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/ )
-		: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
+		: TreeItem(data, parentItem), _actor(NULL), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(compositeFilter), _transformFilter(NULL)
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
@@ -89,7 +91,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		vtkAlgorithm* algorithm, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
+	: TreeItem(data, parentItem),	_actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(NULL), _transformFilter(NULL)
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (parentItem->parentItem())
@@ -104,7 +107,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
+	: TreeItem(data, parentItem), 	_actor(NULL), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(compositeFilter), _transformFilter(NULL)
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 	}

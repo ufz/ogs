@@ -11,6 +11,7 @@
 OsgWidget::OsgWidget (QWidget * parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
 :QGLWidget(parent, shareWidget, f)
 {
+	_timer = NULL;
 	_passiveWin = OSG::PassiveWindow::create();					 
 	_mgr = new OSG::SimpleSceneManager();
 	_mgr->setWindow(_passiveWin);
@@ -19,6 +20,7 @@ OsgWidget::OsgWidget (QWidget * parent, const QGLWidget *shareWidget, Qt::Window
 OsgWidget::OsgWidget (QGLContext *context, QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
 :QGLWidget(context, parent, shareWidget, f)
 {
+	_timer = NULL;
    	 _passiveWin = OSG::PassiveWindow::create();					 
 	_mgr = new OSG::SimpleSceneManager();
 	_mgr->setWindow(_passiveWin); 
@@ -27,6 +29,7 @@ OsgWidget::OsgWidget (QGLContext *context, QWidget *parent, const QGLWidget *sha
 OsgWidget::OsgWidget (const QGLFormat &format, QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
 :QGLWidget(format, parent, shareWidget, f)
 {
+	_timer = NULL;
    	 _passiveWin = OSG::PassiveWindow::create();					 
 	_mgr = new OSG::SimpleSceneManager();
 	_mgr->setWindow(_passiveWin);

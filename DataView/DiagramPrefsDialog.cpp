@@ -70,7 +70,7 @@ void DiagramPrefsDialog::accept()
 		DetailWindow* stationView = new DetailWindow(_list[0]);
 		for (size_t i=1; i<_list.size(); i++)
 			stationView->addList(_list[i]);
-
+		stationView->setAttribute(Qt::WA_DeleteOnClose);
 		stationView->show();
 	}
 	else 
