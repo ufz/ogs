@@ -37,6 +37,7 @@ void ConditionTabWidget::removeAllConditions()
 
 void ConditionTabWidget::contextMenuEvent( QContextMenuEvent* event )
 {
+	Q_UNUSED(event);
 	/*
 	QMenu menu;
 	QAction* editMeshAction    = menu.addAction("Edit mesh...");

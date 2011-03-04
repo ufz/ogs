@@ -65,7 +65,7 @@ public:
 	 * \param listName Here, the method will put the name of the geometry this object belongs to.
 	 * \return A geo-object (Point / Polyline / Surface)
 	 */
-	const GEOLIB::GeoObject* objectFromIndex( const QModelIndex& index, QString &geoName ) const;
+	//const GEOLIB::GeoObject* objectFromIndex( const QModelIndex& index, QString &geoName ) const;
 
 	/// Returns the vtk-object indicated by type of the geometry indicated by name.
 	vtkPolyDataAlgorithm* vtkSource(const std::string &name, GEOLIB::GEOTYPE type) const;

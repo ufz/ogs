@@ -89,7 +89,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 
 	if (!_polylines->empty())
 	{
-		int lastMaxIndex = 0;
+		//int lastMaxIndex = 0;
 		for (size_t j=0; j<_polylines->size(); j++)
 		{
 			const int nPoints = (*_polylines)[j]->getNumberOfPoints();
