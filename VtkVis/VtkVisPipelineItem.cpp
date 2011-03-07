@@ -342,7 +342,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			osgActor->SetVerbose(true);
 			osgActor->UpdateOsg();
 			OSG::SceneFileHandler::the().write(osgActor->GetOsgRoot(), filename.c_str());
-			osgActor->ClearOsg();
 			#else
 			QMessageBox::warning(NULL, "Functionality not implemented",
 				"Sorry but this program was not compiled with OpenSG support.");
