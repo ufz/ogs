@@ -34,6 +34,7 @@
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkGenericDataObjectReader.h>
 #include <vtkUnstructuredGridAlgorithm.h>
+#include <vtkTransformFilter.h>
 
 VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 : QTreeView(parent)
@@ -180,7 +181,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected, const
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
 		emit actorSelected(item->actor());
 		emit itemSelected(item);
-		emit dataObjectSelected(vtkDataObject::SafeDownCast(item->algorithm()->GetOutputDataObject(0)));
+		emit dataObjectSelected(vtkDataObject::SafeDownCast(item->transformFilter()->GetOutputDataObject(0)));
 	}
 	else
 	{
