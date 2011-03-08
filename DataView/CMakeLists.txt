@@ -29,7 +29,7 @@ set( SOURCES
 	StationTreeModel.cpp
 	StationTreeView.cpp
 	VisPrefsDialog.cpp
-	VisualizationWidget.cpp
+	
 )
 
 # Moc Header files
@@ -59,7 +59,6 @@ set( MOC_HEADERS
 	StationTreeModel.h
 	StationTreeView.h
 	VisPrefsDialog.h
-	VisualizationWidget.h
 )
 
 # Header files
@@ -87,7 +86,6 @@ set( UIS
 	MshTabWidgetBase.ui
 	StationTabWidgetBase.ui
 	VisPrefs.ui
-	VisualizationWidgetBase.ui
 )
 
 # Put filter in a folder
@@ -121,7 +119,6 @@ include_directories(
 	./DiagramView
 	./StratView
 	../VtkVis
-	../VtkAct
 	${CMAKE_SOURCE_DIR}
 	${Shapelib_INCLUDE_DIR}	
 	#${OpenSG_INCLUDE_DIR}

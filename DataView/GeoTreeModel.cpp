@@ -23,7 +23,7 @@ GeoTreeModel::GeoTreeModel( QObject *parent )
 GeoTreeModel::~GeoTreeModel()
 {
 }
-
+/*
 const GEOLIB::GeoObject* GeoTreeModel::objectFromIndex( const QModelIndex& index, QString &geoName ) const
 {
 	if (index.isValid())
@@ -35,7 +35,7 @@ const GEOLIB::GeoObject* GeoTreeModel::objectFromIndex( const QModelIndex& index
 	}
 	return NULL;
 }
-
+*/
 void GeoTreeModel::addPointList(QString geoName, const GEOLIB::PointVec* pointVec)
 {
 	const std::vector<GEOLIB::Point*> *points = pointVec->getVector();

@@ -15,6 +15,7 @@ class QItemSelection;
 class QAbstractItemModel;
 class VtkVisPipelineItem;
 class vtkProp3D;
+class vtkDataObject;
 
 namespace Mesh_Group {
 	class CFEMesh;
@@ -69,6 +70,7 @@ signals:
 	void requestAddPipelineFilterItem(QModelIndex);
 	void itemSelected(VtkVisPipelineItem*);
 	void actorSelected(vtkProp3D*);
+	void dataObjectSelected(vtkDataObject*);
 	void meshAdded(Mesh_Group::CFEMesh*, std::string&);
 
 };

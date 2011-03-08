@@ -81,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -89,6 +89,9 @@
      <string>&amp;File</string>
     </property>
     <widget class="QMenu" name="menuExport">
+     <property name="toolTip">
+      <string>Exports the entire scene to a 3d-format for visualization.</string>
+     </property>
      <property name="title">
       <string>Export</string>
      </property>
@@ -233,10 +236,16 @@
    <property name="text">
     <string>&amp;Open...</string>
    </property>
+   <property name="toolTip">
+    <string>Loads a OGS-native file. E.g. gli, gsp, gml, msh, stn.</string>
+   </property>
   </action>
   <action name="action_Exit">
    <property name="text">
     <string>&amp;Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exits the application.</string>
    </property>
   </action>
   <action name="actionPoints_view">
@@ -287,10 +296,16 @@
    <property name="text">
     <string>Database...</string>
    </property>
+   <property name="toolTip">
+    <string>Connects to a database.</string>
+   </property>
   </action>
   <action name="action_DatabaseConnection">
    <property name="text">
     <string>Database Settings...</string>
+   </property>
+   <property name="toolTip">
+    <string>Sets the database settings.</string>
    </property>
   </action>
   <action name="actionImport">
@@ -320,6 +335,9 @@
    <property name="text">
     <string>Visualisation Settings...</string>
    </property>
+   <property name="toolTip">
+    <string>Sets settings regarding the 3d view. E.g. Background color, illumantion.</string>
+   </property>
   </action>
   <action name="actionExportVTK">
    <property name="text">
@@ -338,10 +356,16 @@
    <property name="text">
     <string>Tracking Settings...</string>
    </property>
+   <property name="toolTip">
+    <string>Sets settings for head-tracking.</string>
+   </property>
   </action>
   <action name="actionMesh_Generation">
    <property name="text">
     <string>Mesh Generation...</string>
+   </property>
+   <property name="toolTip">
+    <string>Generates a mesh from a geometry.</string>
    </property>
   </action>
   <action name="actionFEM_Test">

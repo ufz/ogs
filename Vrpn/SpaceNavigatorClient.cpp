@@ -15,6 +15,9 @@ SpaceNavigatorClient::SpaceNavigatorClient()
 	_button = NULL;
 	_analog = NULL;
 	_unconsumedData = false;
+	_frameRotationFactor = 0.0;
+	_frameTranslationFactor = 0.0;
+	_upAxis = Y;
 
 	// set all fields to start values
 	_spacenavigator = this;
@@ -77,14 +80,14 @@ void SpaceNavigatorClient::init( const char *deviceName, SpaceNavigatorAxes axis
 		_upAxis = Y;
 }
 
-void SpaceNavigatorClient::getTranslation(double& retx, double& rety, double& retz)
+void SpaceNavigatorClient::getTranslation(double& retx, double& rety, double& retz) const
 {
 	retx = x * _frameTranslationFactor;
 	rety = y * _frameTranslationFactor;
 	retz = z * _frameTranslationFactor;
 }
 
-void SpaceNavigatorClient::getRotation(double& retx, double& rety, double& retz)
+void SpaceNavigatorClient::getRotation(double& retx, double& rety, double& retz) const
 {
 	retx = rx * _frameTranslationFactor;
 	rety = ry * _frameTranslationFactor;

@@ -38,7 +38,7 @@ VtkStationSource::VtkStationSource()
 VtkStationSource::~VtkStationSource()
 {
 	std::map<std::string, GEOLIB::Color*>::iterator it;
-	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); it++) {
+	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); ++it) {
 		delete it->second;
 	}
 }

@@ -56,6 +56,7 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	renderWindow->SetStereoTypeToCrystalEyes();
 	_vtkRender = vtkRenderer::New();
 	renderWindow->AddRenderer(_vtkRender);
+	_interactorStyle->SetDefaultRenderer(_vtkRender);
 #endif // OGS_VRED_PLUGIN                                                                                                               
 
 	QSettings settings("UFZ", "OpenGeoSys-5");

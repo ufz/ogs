@@ -28,7 +28,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Resets camera to view the entire scene</string>
+        <string>Resets camera to view the entire scene from above.</string>
        </property>
        <property name="text">
         <string>Show All</string>
@@ -57,6 +57,9 @@
      </item>
      <item>
       <widget class="QToolButton" name="highlightToolButton">
+       <property name="toolTip">
+        <string>When enabled a red bounding box is shown on selected items in the visualization pipeline.</string>
+       </property>
        <property name="text">
         <string>Highlight</string>
        </property>
@@ -70,6 +73,9 @@
      </item>
      <item>
       <widget class="QToolButton" name="orthogonalProjectionToolButton">
+       <property name="toolTip">
+        <string>Switches between perspective and orthogonal projection.</string>
+       </property>
        <property name="text">
         <string>Ortho</string>
        </property>

@@ -12,6 +12,7 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
@@ -62,11 +63,11 @@ int VtkPointsSource::RequestData( vtkInformation* request, vtkInformationVector*
 		return 0;
 	}
 
-	vtkInformation *outInfo = outputVector->GetInformationObject(0);
-	vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
+	vtkSmartPointer<vtkPolyData> output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-	vtkPoints* newPoints = vtkPoints::New();
-	vtkCellArray* newVerts = vtkCellArray::New();
+	vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
+	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
 	newPoints->Allocate(numPoints);
 	newVerts->Allocate(numPoints);
 
@@ -78,16 +79,12 @@ int VtkPointsSource::RequestData( vtkInformation* request, vtkInformationVector*
 		it != _points->end(); ++it)
 	{
 		double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
-		vtkIdType pid[1];
-		pid[0] = newPoints->InsertNextPoint(coords);
-		newVerts->InsertNextCell(1, pid);
+		vtkIdType pid = newPoints->InsertNextPoint(coords);
+		newVerts->InsertNextCell(1, &pid);
 	}
 
 	output->SetPoints(newPoints);
-	newPoints->Delete();
-
 	output->SetVerts(newVerts);
-	newVerts->Delete();
 
 	return 1;
 }

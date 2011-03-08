@@ -40,6 +40,8 @@
 #include <vtkXMLImageDataWriter.h>
 #include <vtkImageActor.h>
 #include <vtkImageAlgorithm.h>
+#include <vtkTubeFilter.h>
+#include <vtkTriangleFilter.h>
 
 #include "VtkCompositeFilter.h"
 
@@ -53,7 +55,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		vtkAlgorithm* algorithm,
 		TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
+	: TreeItem(data, parentItem), _actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
+	  _compositeFilter(NULL), _transformFilter(NULL)
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (visParentItem)
@@ -75,7 +78,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/ )
-		: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
+		: TreeItem(data, parentItem), _actor(NULL), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(compositeFilter), _transformFilter(NULL)
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
@@ -89,7 +93,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		vtkAlgorithm* algorithm, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
+	: TreeItem(data, parentItem),	_actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(NULL), _transformFilter(NULL)
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (parentItem->parentItem())
@@ -104,7 +109,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
+	: TreeItem(data, parentItem), 	_actor(NULL), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(compositeFilter), _transformFilter(NULL)
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 	}
@@ -213,7 +219,18 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	}
 	else
 	{
-		_mapper->SetInputConnection(_transformFilter->GetOutputPort());
+		// vtkTubeFilter generates triangle strips. These are not handled correctly
+		// by the OpenSG converter. So the strips are converted to ordinary triangles.
+		vtkTubeFilter* tubeFilter = dynamic_cast<vtkTubeFilter*>(_algorithm);
+		if (tubeFilter)
+		{
+			vtkSmartPointer<vtkTriangleFilter> triangulate = 
+				vtkSmartPointer<vtkTriangleFilter>::New();
+			triangulate->SetInputConnection(_transformFilter->GetOutputPort());
+			_mapper->SetInputConnection(triangulate->GetOutputPort());
+		}
+		else
+			_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 	}
 	_actor->SetMapper(_mapper);
 
@@ -325,7 +342,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			osgActor->SetVerbose(true);
 			osgActor->UpdateOsg();
 			OSG::SceneFileHandler::the().write(osgActor->GetOsgRoot(), filename.c_str());
-			osgActor->ClearOsg();
 			#else
 			QMessageBox::warning(NULL, "Functionality not implemented",
 				"Sorry but this program was not compiled with OpenSG support.");

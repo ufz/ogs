@@ -22,6 +22,7 @@ vtkCxxRevisionMacro(VtkSelectionFilter, "$Revision: 6995 $");
 
 
 VtkSelectionFilter::VtkSelectionFilter()
+: _threshold(0.0), _ifSmaller(0.0)
 {
 }
 

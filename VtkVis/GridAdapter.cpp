@@ -21,6 +21,7 @@
 // Conversion from vtkUnstructuredGrid
 #include <vtkUnstructuredGrid.h>
 #include <vtkCell.h>
+#include <vtkCellData.h>
 
 using Mesh_Group::CFEMesh;
 
@@ -356,9 +357,10 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 		Mesh_Group::CNode* node(new Mesh_Group::CNode(i, coords[0], coords[1], coords[2]));
 		mesh->nod_vector.push_back(node);
 	}
-
+	
 	// set mesh elements
 	vtkCell* cell(NULL);
+	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
 	for (size_t i=0; i<nElems; i++)
 	{
 		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
@@ -377,13 +379,12 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 
 		if (elem_type != MshElemType::INVALID)
 			elem->SetElementType(elem_type);
+			if (scalars) elem->SetPatchIndex(static_cast<int>(scalars->GetComponent(i,0))); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
 		else
 		{
 			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..." << std::endl;
 			return NULL;
 		}
-
-		elem->SetPatchIndex(0); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
 
 		cell = grid->GetCell(i);
 		size_t nElemNodes = cell->GetNumberOfPoints();

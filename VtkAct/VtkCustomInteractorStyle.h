@@ -13,8 +13,13 @@
 
 #include <vtkInteractorStyleTrackballCamera.h>
 
+class vtkDataObject;
+class vtkDataSetMapper;
+class vtkActor;
+
 /**
- * VtkCustomInteractorStyle is sub classed from vtkInteractorStyleTrackballCamera.
+ * VtkCustomInteractorStyle implements highlighting of an active actor and
+ * highlighting of picked cells inside a vtk object.
  */
 class VtkCustomInteractorStyle : public QObject, public vtkInteractorStyleTrackballCamera
 {
@@ -24,16 +29,31 @@ public:
 	static VtkCustomInteractorStyle* New();
 	vtkTypeMacro (VtkCustomInteractorStyle, vtkInteractorStyleTrackballCamera);
 
-	/// Handles key press events.
+	/// @biref Handles key press events.
 	virtual void OnChar();
+	
+	/// @brief Handles left mouse button events.
+	virtual void OnLeftButtonDown();
 
 public slots:
 	void highlightActor(vtkProp3D* prop);
-	
 	void setHighlightActor(bool on);
+	
+	/// @brief Sets the highlightable vtk object.
+	void pickableDataObject(vtkDataObject* object);
 
 protected:
 	VtkCustomInteractorStyle();
+	virtual ~VtkCustomInteractorStyle();
+	
+	/// @brief The vtk object to pick.
+	vtkDataObject* Data;
+	
+	/// @brief The mapper for highlighting the selected cell.
+	vtkDataSetMapper* selectedMapper;
+	
+	/// @brief The actor for highlighting the selected cell.
+	vtkActor* selectedActor;
 	
 
 private:
