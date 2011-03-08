@@ -193,16 +193,17 @@ Mesh_Group::CFEMesh* MshModel::loadMeshFromFile(std::string fileName)
 		QTime constructTimer;
 		constructTimer.start();
 #endif
-		//msh->ConstructGrid();
-		msh->ConstructGrid2_Test();
+/*
+		msh->ConstructGrid();
+*/
 		std::cout << "Nr. Nodes: " << msh->nod_vector.size() << endl;
 		std::cout << "Nr. Elements: " << msh->ele_vector.size() << endl;
-
+/*
 #ifndef NDEBUG
 		std::cout << "constructGrid time: " << constructTimer.elapsed() << " ms" << std::endl;
 #endif
 		msh->FillTransformMatrix();
-
+*/
 #ifndef NDEBUG
 		std::cout << "Loading time: " << myTimer.elapsed() << " ms" << std::endl;
 #endif

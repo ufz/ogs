@@ -53,17 +53,17 @@ GridAdapter::~GridAdapter()
 int GridAdapter::convertCFEMesh(const Mesh_Group::CFEMesh* mesh)
 {
 	if (!mesh) return 0;
-	Element* newElem = NULL;
-	size_t nElemNodes = 0;
-
-	size_t nElems = mesh->ele_vector.size();
+	
 	size_t nNodes = mesh->nod_vector.size();
-
 	for (size_t i=0; i<nNodes; i++)
 	{
 		GEOLIB::Point* pnt = new GEOLIB::Point(mesh->nod_vector[i]->X(), mesh->nod_vector[i]->Y(), mesh->nod_vector[i]->Z());
 		_nodes->push_back(pnt);
 	}
+
+	Element* newElem = NULL;
+	size_t nElems = mesh->ele_vector.size();
+	size_t nElemNodes = 0;
 
 	for (size_t i=0; i<nElems; i++)
 	{
