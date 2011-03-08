@@ -110,6 +110,9 @@ protected:
 	vtkTransformFilter* _transformFilter;
 	QString _activeAttribute;
 
+	/// Sets a color lookup table for the current scalar array.
+	void setLookupTableForActiveScalar();
+
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 

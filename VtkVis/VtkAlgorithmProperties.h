@@ -126,7 +126,6 @@ public:
 	{ 
 		_property = vtkProperty::New(); 
 		_texture  = NULL;
-		_lut      = NULL;
 		_scalarVisibility = true;
 		_algorithmUserProperties = new QMap<QString, QVariant>;
 		_algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
@@ -136,7 +135,9 @@ public:
 	{
 		_property->Delete();
 		if (_texture != NULL) _texture->Delete();
-		if (_lut != NULL) _lut->Delete();
+		
+		for (std::map<QString, vtkLookupTable*>::iterator it = _lut.begin(); it != _lut.end(); ++it)
+			it->second->Delete();
 		delete _algorithmUserProperties;
 		delete _algorithmUserVectorProperties;
 	};
@@ -150,18 +151,32 @@ public:
 	void SetTexture(vtkTexture* t) { _texture = t; };
 
 	/// @brief Returns the colour lookup table (if one has been assigned).
-	vtkLookupTable* GetLookupTable() { return _lut; };
-	/// @brief Sets a colour lookup table for the VtkVisPipelineItem.
-	void SetLookUpTable(vtkLookupTable* lut) { _lut = lut; };
+	vtkLookupTable* GetLookupTable(const QString& array_name) 
+	{ 
+		std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
+		if (it != _lut.end()) return it->second;
+		return NULL;
+	};
+
+	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
+	void SetLookUpTable(const QString array_name, vtkLookupTable* lut) 
+	{
+		if (array_name.length()>0)
+		{
+			std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
+			if (it != _lut.end()) it->second->Delete();
+			_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) ); 
+		}
+	};
 	
-	/// Loads a predefined color lookup table from a file.
-	void SetLookUpTable(const std::string &filename)
+	/// Loads a predefined color lookup table from a file for the specified scalar array.
+	void SetLookUpTable(const QString &array_name, const std::string &filename)
 	{ 
 		VtkColorLookupTable* colorLookupTable = VtkColorLookupTable::New();
 		colorLookupTable->readFromFile(filename);
 		colorLookupTable->setInterpolationType(VtkColorLookupTable::NONE);
 		colorLookupTable->Build();
-		SetLookUpTable(colorLookupTable);
+		SetLookUpTable(array_name, colorLookupTable);
 	};
 
 	/// @brief Returns the scalar visibility.
@@ -234,7 +249,7 @@ protected:
 
 	// Properties set on vtkMapper
 	bool _scalarVisibility;
-	vtkLookupTable* _lut;
+	std::map<QString, vtkLookupTable*> _lut;
 	
 	// Properties used in the GUI
 	QString _name;

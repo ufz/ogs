@@ -289,27 +289,9 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
 
-	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
-
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
 	if (imageAlgorithm==NULL)
-	{
-		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
-		if (mapper)
-		{
-			if (vtkProps->GetLookupTable() == NULL) // default color table
-			{
-				vtkLookupTable* lut = vtkLookupTable::New();
-				vtkProps->SetLookUpTable(lut);
-			}
-			else // specific color table
-			{
-				_mapper->SetLookupTable(vtkProps->GetLookupTable());
-			}
-			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->Update();
-		}
-	}
+		this->setLookupTableForActiveScalar();
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
 	if (actor)
@@ -440,9 +422,35 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 			_mapper->SetScalarRange(dataSet->GetScalarRange());
 		}
 
-		_mapper->SetScalarRange(range);
+		//_mapper->SetScalarRange(range);
+		this->setLookupTableForActiveScalar();
+
 		_mapper->ScalarVisibilityOn();
 		_mapper->Update();
 		_activeAttribute = name;
+	}
+}
+
+void VtkVisPipelineItem::setLookupTableForActiveScalar()
+{
+	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+	if (vtkProps)
+	{
+		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+		if (mapper)
+		{
+			if (vtkProps->GetLookupTable(this->GetActiveAttribute()) == NULL) // default color table
+			{
+				vtkLookupTable* lut = vtkLookupTable::New();
+				vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
+			}
+			else // specific color table
+			{
+				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->GetActiveAttribute()));
+			}
+
+			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
+			_mapper->Update();
+		}
 	}
 }

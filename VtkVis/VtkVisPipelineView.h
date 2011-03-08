@@ -45,6 +45,8 @@ private:
 	void contextMenuEvent(QContextMenuEvent* event);
 
 private slots:
+	/// Adds a color lookup table to the current scalar array of the selected pipeline item.
+	void addColorTable();
 	
 	/// Exports the currently selected item as a VTK file
 	void exportSelectedPipelineItemAsVtk();
@@ -66,13 +68,13 @@ private slots:
 	void convertVTKToOGSMesh();
 
 signals:
+	void requestViewUpdate();
 	void requestRemovePipelineItem(QModelIndex);
 	void requestAddPipelineFilterItem(QModelIndex);
 	void itemSelected(VtkVisPipelineItem*);
 	void actorSelected(vtkProp3D*);
 	void dataObjectSelected(vtkDataObject*);
 	void meshAdded(Mesh_Group::CFEMesh*, std::string&);
-
 };
 
 #endif // VTKVISPIPELINEVIEW_H
