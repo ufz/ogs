@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QSettings>
 
+#include "MeshIO/OGSMeshIO.h"
 
 MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
 : QWidget(parent)
@@ -108,10 +109,15 @@ int MshTabWidget::writeMeshToFile() const
 		if (!fileName.empty())
 		{
 			std::fstream* out = new std::fstream(fileName.c_str(), std::fstream::out);
-			if (out->is_open())
-			{
+			if (out->is_open()) {
 				mesh->Write(out);
 				out->close();
+				// write mesh without null-volume-elements
+//				std::ofstream out1 ("mesh_without_null_elements.msh");
+//				FileIO::OGSMeshIO ogs_mesh_io;
+//				ogs_mesh_io.write (mesh, out1);
+//				out1.close ();
+
 				return 1;
 			}
 			else

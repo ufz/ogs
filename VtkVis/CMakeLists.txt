@@ -112,6 +112,7 @@ INCLUDE_DIRECTORIES(
 	../../FEM
 	../../GEO
 	../../MathLib
+	../../FileIO
 	../../MSH
 	../Base
 	../DataView

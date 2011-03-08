@@ -19,7 +19,8 @@
 #include "VtkAlgorithmProperties.h"
 #include "VtkTrackedCamera.h"
 #include "VtkFilterFactory.h"
-#include "MeshQualityChecker.h"
+#include "MeshQualityShortestLongestRatio.h"
+#include "MeshQualityNormalisedVolumes.h"
 #include "VtkCompositeSelectionFilter.h"
 
 #include <vtkSmartPointer.h>
@@ -73,7 +74,7 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	rootData << "Object name" << "Visible";
 	delete _rootItem;
 	_rootItem = new TreeItem(rootData, NULL);
-	
+
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
 	if (backgroundColorVariant != QVariant())
@@ -405,7 +406,8 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source)
 {
 	if (source) {
 		const Mesh_Group::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
-		Mesh_Group::MeshQualityChecker checker (mesh);
+//		Mesh_Group::MeshQualityShortestLongestRatio checker (mesh);
+		Mesh_Group::MeshQualityNormalisedVolumes checker (mesh);
 		checker.check ();
 
 		std::vector<double> quality = checker.getMeshQuality();
