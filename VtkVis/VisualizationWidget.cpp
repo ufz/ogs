@@ -113,13 +113,13 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	//	cam->SetEyeAngle(settings.value("stereoEyeAngle").toDouble());
 	//else
 	//	cam->SetEyeAngle(2.0);
-
+/*
 	if (!stereoToolButton->isChecked())
 	{
 		eyeAngleLabel->setEnabled(false);
 		eyeAngleSlider->setEnabled(false);
 	}
-
+*/
 	//eyeAngleSlider->setValue((int)(_vtkRender->GetActiveCamera()->GetEyeAngle() * 10));
 	
 	// Create an orientation marker using vtkAxesActor
@@ -186,14 +186,14 @@ void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
 	if (checked)
 	{
 		vtkWidget->GetRenderWindow()->StereoRenderOn();
-		eyeAngleLabel->setEnabled(true);
-		eyeAngleSlider->setEnabled(true);
+		//eyeAngleLabel->setEnabled(true);
+		//eyeAngleSlider->setEnabled(true);
 	}
 	else
 	{
 		vtkWidget->GetRenderWindow()->StereoRenderOff();
-		eyeAngleLabel->setEnabled(false);
-		eyeAngleSlider->setEnabled(false);
+		//eyeAngleLabel->setEnabled(false);
+		//eyeAngleSlider->setEnabled(false);
 	}
 
 	this->updateView();
