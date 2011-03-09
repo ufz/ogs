@@ -25,8 +25,17 @@
 #include <vtkCommand.h>
 #include <vtkAxesActor.h>
 #include <vtkOrientationMarkerWidget.h>
+#include <vtkPNGWriter.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkSmartPointer.h>
 
 #include <QSettings>
+#include <QFileDialog>
+#include <QLineEdit>
+#include <QString>
+#include <QInputDialog>
+#include <QSettings>
+#include <QDir>
 
 #ifdef OGS_USE_VRPN
 #include "QSpaceNavigatorClient.h"
@@ -80,16 +89,19 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 		QString deviceName = settings.value("Tracking/artDeviceName").toString();
 		QString deviceNameAt = settings.value("Tracking/artDeviceNameAt").toString();
 		art->StartTracking(QString(deviceName + "@" + deviceNameAt).toStdString().c_str(),
-			settings.value("Tracking/artUpdateInterval").toInt());
+						   settings.value("Tracking/artUpdateInterval").toInt());
 	}
 	else
 		art->StartTracking("DTrack@141.65.34.36");
-	connect( art, SIGNAL(positionUpdated(double, double, double)), cam, SLOT(setTrackingData(double, double, double)) );
+	connect( art, SIGNAL(positionUpdated(double, double, double)),
+			 cam, SLOT(setTrackingData(double, double, double)) );
 
 	// Connect the vtk event to the qt slot
 	_qtConnect = vtkEventQtSlotConnect::New();
-	_qtConnect->Connect(vtkWidget->GetRenderWindow()->GetInteractor(), vtkCommand::EndInteractionEvent,
-		cam, SLOT(updatedFromOutside()));
+	_qtConnect->Connect(vtkWidget->GetRenderWindow()->GetInteractor(),
+						vtkCommand::EndInteractionEvent,
+						cam,
+						SLOT(updatedFromOutside()));
 
 #endif // OGS_USE_VRPN
 
@@ -227,5 +239,45 @@ void VisualizationWidget::on_highlightToolButton_toggled(bool checked)
 void VisualizationWidget::on_orthogonalProjectionToolButton_toggled( bool checked )
 {
 	_vtkRender->GetActiveCamera()->SetParallelProjection(checked);
+	this->updateView();
+}
+
+void VisualizationWidget::on_screenshotPushButton_pressed()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save screenshot"),
+						settings.value("lastScreenshotDir").toString(), "PNG file (*.png)");
+	if (filename.count() > 4)
+	{
+		bool ok;
+		int magnification = QInputDialog::getInt(this, tr("Screenshot magnification"),
+								tr("Enter a magnification factor for the resulting image."),
+								2, 1, 10, 1, &ok);
+		if (ok)
+		{
+			QDir dir(filename);
+			settings.setValue("lastScreenshotDir", dir.absolutePath());
+			this->screenshot(filename, magnification);
+		}
+	}
+}
+
+void VisualizationWidget::screenshot(QString filename, int magnification)
+{
+	vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
+		vtkSmartPointer<vtkWindowToImageFilter>::New();
+	windowToImageFilter->SetInput(vtkWidget->GetRenderWindow());
+	// Set the resolution of the output image
+	// magnification times the current resolution of vtk render window
+	windowToImageFilter->SetMagnification(magnification);
+	// Also record the alpha (transparency) channel
+	windowToImageFilter->SetInputBufferTypeToRGBA();
+	windowToImageFilter->Update();
+
+	vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
+	writer->SetFileName(filename.toStdString().c_str());
+	writer->SetInput(windowToImageFilter->GetOutput());
+	writer->Write();
+
 	this->updateView();
 }
