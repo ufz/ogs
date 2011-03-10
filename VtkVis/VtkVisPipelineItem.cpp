@@ -454,3 +454,4 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 		}
 	}
 }
+
