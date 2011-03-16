@@ -191,7 +191,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 			SIGNAL(actorSelected(vtkProp3D*)),
 			(QObject*) (visualizationWidget->interactorStyle()),
 			SLOT(highlightActor(vtkProp3D*)));
-		
+
 	// Propagates selected vtk object in the pipeline to the pick interactor
 	connect(vtkVisTabWidget->vtkVisPipelineView,
 			SIGNAL(dataObjectSelected(vtkDataObject*)),
@@ -976,7 +976,7 @@ void MainWindow::showLineEditDialog(const std::string &geoName)
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
 	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, double, std::string, bool, bool)),
 		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, double, std::string, bool, bool)));
-	lineEdit.exec();	
+	lineEdit.exec();
 }
 
 void MainWindow::showGMSHPrefsDialog()
@@ -996,6 +996,18 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	std::string project_name ("Circle");
+	std::vector<GEOLIB::Point*> *pnts (new std::vector<GEOLIB::Point*>);
+	GEOLIB::Point middle_pnt (0.0, 0.0, 0.0);
+	size_t resolution (36);
+	GEOLIB::Polygon *polygon(createPolygonFromCircle (middle_pnt, 2.0, *pnts, resolution));
+	std::vector<GEOLIB::Polyline*> *plys (new std::vector<GEOLIB::Polyline*>);
+	std::cout << "polygon: " << std::endl;
+	std::cout << *polygon << std::endl;
+	plys->push_back (polygon);
+	_geoModels->addPointVec (pnts, project_name);
+	_geoModels->addPolylineVec (plys, project_name);
+
 #ifndef NDEBUG
 	std::cout << "FEM Test here ..." << std::endl;
 	QSettings settings("UFZ", "OpenGeoSys-5");
