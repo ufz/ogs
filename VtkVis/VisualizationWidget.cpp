@@ -198,14 +198,14 @@ void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
 
 	this->updateView();
 }
-
+/*
 void VisualizationWidget::on_eyeAngleSlider_valueChanged( int value )
 {
 	Q_UNUSED(value);
 	//_vtkRender->GetActiveCamera()->SetEyeAngle(value / 10.0);
 	//updateView();
 }
-
+*/
 void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
 {
 	if (checked)
