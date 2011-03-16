@@ -19,6 +19,7 @@
 #include "GMSHPrefsDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
+#include "MshQualitySelectionDialog.h"
 #include "SHPImportDialog.h"
 #include "VtkAddFilterDialog.h"
 #include "VisPrefsDialog.h"
@@ -149,7 +150,8 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect(mshTabWidget, SIGNAL(requestMeshRemoval(const QModelIndex&)),
 			_meshModels, SLOT(removeMesh(const QModelIndex&)));
 	connect(mshTabWidget, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
-			_vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource*)));
+			this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+
 
 	// Setup connections for condition model to GUI
 	conditionTabWidget->treeView->setModel(_conditionModel);
@@ -985,6 +987,14 @@ void MainWindow::showGMSHPrefsDialog()
 	connect(
 			&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
 			this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
+	dlg.exec();
+}
+
+void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
+{
+	MshQualitySelectionDialog dlg(mshSource);
+	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource*, MshQualityType::type)),
+			_vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource*, MshQualityType::type)));
 	dlg.exec();
 }
 

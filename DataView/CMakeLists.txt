@@ -21,6 +21,7 @@ set( SOURCES
 	MshItem.cpp
 	MshLayerMapper.cpp
 	MshModel.cpp
+	MshQualitySelectionDialog.cpp
 	MshTabWidget.cpp
 	OGSRaster.cpp
 	QueryResultsDialog.cpp
@@ -52,6 +53,7 @@ set( MOC_HEADERS
 	ListPropertiesDialog.h
 	MshEditDialog.h
 	MshModel.h
+	MshQualitySelectionDialog.h
 	MshTabWidget.h
 	QueryResultsDialog.h
 	SHPImportDialog.h
@@ -83,6 +85,7 @@ set( UIS
 	GMSHPrefs.ui
 	LineEdit.ui
 	MshEdit.ui
+	MshQualitySelection.ui
 	MshTabWidgetBase.ui
 	StationTabWidgetBase.ui
 	VisPrefs.ui

@@ -402,15 +402,24 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 		std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
 }
 
-void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source)
+void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
 {
 	if (source) {
 		const Mesh_Group::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
-//		Mesh_Group::MeshQualityShortestLongestRatio checker (mesh);
-		Mesh_Group::MeshQualityNormalisedVolumes checker (mesh);
-		checker.check ();
+		Mesh_Group::MeshQualityChecker* checker (NULL);
+		if (t == MshQualityType::EDGERATIO)				checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh);
+		else if (t == MshQualityType::AREA)				checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh);
+		else if (t == MshQualityType::VOLUME)			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh); //HACK replace by correct measurement!
+		else if (t == MshQualityType::EQUIANGLESKEW)	checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh); //HACK replace by correct measurement!
+		else
+		{
+			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..." << std::endl;
+			delete checker;
+			return;
+		}
+		checker->check ();
 
-		std::vector<double> quality = checker.getMeshQuality();
+		std::vector<double> quality = checker->getMeshQuality();
 
 		int nSources = this->_rootItem->childCount();
 		for (int i=0; i<nSources; i++)
@@ -428,7 +437,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source)
 			}
 		}
 
-		/* *** write histogram *** */
+		/* *** write histogram *** *
 		// simple suggestion: number of classes with Sturges criterion
 //		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
 //			bool ok;
@@ -436,12 +445,14 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source)
 //			if (ok) ...
 		size_t size (1000);
 		std::vector<size_t> histogramm (size,0);
-		checker.getHistogramm(histogramm);
+		checker->getHistogramm(histogramm);
 		std::ofstream out ("mesh_histogramm.txt");
 		const size_t histogramm_size (histogramm.size());
 		for (size_t k(0); k<histogramm_size; k++) {
 			out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
 		}
 		out.close ();
+		*/
+		delete checker;
 	}
 }

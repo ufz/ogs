@@ -73,6 +73,7 @@ protected slots:
 	void showDiagramPrefsDialog(QModelIndex &index);
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
+	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
 	void showPropertiesDialog(std::string name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();

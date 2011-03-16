@@ -14,6 +14,7 @@
 #include "Color.h"
 #include "Point.h"
 #include "GeoType.h"
+#include "MshEnums.h"
 
 #include <QVector>
 #include <QMap>
@@ -103,7 +104,7 @@ public slots:
 	void removePipelineItem(QModelIndex index);
 
 	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
-	void checkMeshQuality(VtkMeshSource* mesh);
+	void checkMeshQuality(VtkMeshSource* mesh, MshQualityType::type t);
 
 private:
 	void listArrays(vtkDataSet* dataSet);
