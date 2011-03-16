@@ -58,7 +58,7 @@ protected slots:
 	void on_stereoToolButton_toggled(bool checked);
 
 	/// @brief Adjusts the eye angle (separation) for stereo viewing.
-	void on_eyeAngleSlider_valueChanged(int value);
+	//void on_eyeAngleSlider_valueChanged(int value);
 
 	/// @brief Toggles rectangular zooming mode.
 	void on_zoomToolButton_toggled(bool checked);

@@ -18,7 +18,7 @@
 #include "VtkApplyColorTableFilter.h"
 
 vtkStandardNewMacro(VtkApplyColorTableFilter);
-vtkCxxSetObjectMacro(VtkApplyColorTableFilter,ColorLookupTable,vtkLookupTable);
+vtkCxxSetObjectMacro(VtkApplyColorTableFilter, ColorLookupTable, vtkLookupTable);
 vtkCxxRevisionMacro(VtkApplyColorTableFilter, "$Revision: 6575 $");
 
 
@@ -29,8 +29,6 @@ VtkApplyColorTableFilter::VtkApplyColorTableFilter() : ColorLookupTable(NULL)
 
 VtkApplyColorTableFilter::~VtkApplyColorTableFilter()
 {
-	if (this->ColorLookupTable != NULL)
-		this->ColorLookupTable->UnRegister(this);
 }
 
 int VtkApplyColorTableFilter::RequestData( vtkInformation* request, 

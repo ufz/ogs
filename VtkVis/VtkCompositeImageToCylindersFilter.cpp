@@ -40,6 +40,9 @@ void VtkCompositeImageToCylindersFilter::init()
 	(*_algorithmUserProperties)["LengthScaleFactor"] = 1.0;
 	_lineFilter->Update();
 
+	//vtkPointData* pointData = _lineFilter->GetOutput()->GetPointData();
+	//pointData->GetArray(0)->SetName("Colors");
+
 	vtkSmartPointer<vtkLookupTable> colormap = vtkSmartPointer<vtkLookupTable>::New();
 	colormap->SetTableRange(0, 100);
 	colormap->SetHueRange(0.0, 0.666);
@@ -53,6 +56,8 @@ void VtkCompositeImageToCylindersFilter::init()
 	hueRangeList.push_back(0.666);
 	(*_algorithmUserVectorProperties)["TableRange"] = tableRangeList;
 	(*_algorithmUserVectorProperties)["HueRange"] = hueRangeList;
+
+	this->SetLookUpTable("Colours", colormap);
 
 	_ctf = VtkApplyColorTableFilter::New();
 	_ctf->SetInputConnection(_lineFilter->GetOutputPort());
@@ -101,6 +106,7 @@ void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name, QL
 		static_cast<vtkLookupTable*>(_ctf->GetColorLookupTable())->SetTableRange(values[0].toInt(), values[1].toInt());
 	else if (name.compare("HueRange") == 0)
 		static_cast<vtkLookupTable*>(_ctf->GetColorLookupTable())->SetHueRange(values[0].toDouble(), values[1].toDouble());
+
 }
 
 VtkCompositeImageToCylindersFilter::~VtkCompositeImageToCylindersFilter()
