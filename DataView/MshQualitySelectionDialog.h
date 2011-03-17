@@ -8,7 +8,7 @@
 
 
 #include "ui_MshQualitySelection.h"
-#include "MshEnums.h"
+#include "MSHEnums.h"
 
 class VtkMeshSource;
 

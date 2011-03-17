@@ -14,7 +14,7 @@
 #include "Color.h"
 #include "Point.h"
 #include "GeoType.h"
-#include "MshEnums.h"
+#include "MSHEnums.h"
 
 #include <QVector>
 #include <QMap>
@@ -80,7 +80,7 @@ public:
 	QModelIndex getIndex(vtkProp3D* actor);
 
 	Qt::ItemFlags flags( const QModelIndex &index ) const;
-	
+
 	/// @brief Loads a vtk object from the given file and adds it to the pipeline.
 	void loadFromFile(QString filename);
 
@@ -113,7 +113,7 @@ private:
 	QVector<vtkAlgorithm*> _sources;
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
-	
+
 #ifdef OGS_USE_OPENSG
 	OSG::SimpleSceneManager* _sceneManager;
 #endif // OGS_USE_OPENSG
