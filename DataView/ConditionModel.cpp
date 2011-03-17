@@ -37,9 +37,11 @@ ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 
 ConditionModel::~ConditionModel()
 {
+	/*
 	delete _icParent;
 	delete _bcParent;
 	delete _stParent;
+	*/
 }
 
 int ConditionModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const

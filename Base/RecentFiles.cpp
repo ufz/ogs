@@ -26,6 +26,11 @@ RecentFiles::RecentFiles(  QObject* parent, const char* slot,
 	updateRecentFileActions();
 }
 
+RecentFiles::~RecentFiles()
+{
+	delete _filesMenu;
+}
+
 QMenu* RecentFiles::menu()
 {
 	return _filesMenu;
