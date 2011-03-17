@@ -378,8 +378,10 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 		}
 
 		if (elem_type != MshElemType::INVALID)
+		{
 			elem->SetElementType(elem_type);
 			if (scalars) elem->SetPatchIndex(static_cast<int>(scalars->GetComponent(i,0))); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
+		}
 		else
 		{
 			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..." << std::endl;

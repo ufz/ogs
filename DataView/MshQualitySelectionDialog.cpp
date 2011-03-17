@@ -8,7 +8,7 @@
 
 /// Constructor
 MshQualitySelectionDialog::MshQualitySelectionDialog(VtkMeshSource* msh, QDialog* parent) 
-: _msh(msh), QDialog(parent)
+: QDialog(parent), _msh(msh)
 {
 	setupUi(this);
 	this->choiceEdges->toggle();
