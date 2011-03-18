@@ -20,6 +20,7 @@
 #include "VtkTrackedCamera.h"
 #include "VtkFilterFactory.h"
 #include "MeshQualityShortestLongestRatio.h"
+#include "MeshQualityNormalisedArea.h"
 #include "MeshQualityNormalisedVolumes.h"
 #include "MeshQualityEquiAngleSkew.h"
 #include "VtkCompositeSelectionFilter.h"
@@ -411,7 +412,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		if (t == MshQualityType::EDGERATIO)
 			checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh);
 		else if (t == MshQualityType::AREA)
-			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh); //HACK replace by correct measurement!
+			checker = new Mesh_Group::MeshQualityNormalisedArea(mesh);
 		else if (t == MshQualityType::VOLUME)
 			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
@@ -432,7 +433,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 			if (parentItem->algorithm() == source)
 			{
 				QList<QVariant> itemData;
-				itemData << "MeshQualityFilter" << true;
+				itemData << "MeshQuality: " + QString::fromStdString(MshQualityType2String(t)) << true;
 
 				VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeSelectionFilter", parentItem->transformFilter());
 				static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray(quality);

@@ -22,6 +22,9 @@ public:
 	virtual void SetUserProperty(QString name, QVariant value);
 
 private:
+	/// Returns a colour lookup table optimised for quality measures
+	VtkColorLookupTable* GetLookupTable();
+
 	std::vector<double> _selection;
 	
 };
