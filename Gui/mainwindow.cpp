@@ -319,6 +319,7 @@ MainWindow::~MainWindow()
 	delete _db;
 	delete _vtkVisPipeline;
 	delete _meshModels;
+	delete _conditionModel;
 	delete _geoModels;
 
 #ifdef OGS_USE_VRPN
