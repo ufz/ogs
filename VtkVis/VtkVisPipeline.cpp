@@ -22,6 +22,7 @@
 #include "MeshQualityShortestLongestRatio.h"
 #include "MeshQualityNormalisedArea.h"
 #include "MeshQualityNormalisedVolumes.h"
+#include "MeshQualityEquiAngleSkew.h"
 #include "VtkCompositeSelectionFilter.h"
 
 #include <vtkSmartPointer.h>
@@ -415,7 +416,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		else if (t == MshQualityType::VOLUME)
 			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
-			checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh); //HACK replace by correct measurement!
+			checker = new Mesh_Group::MeshQualityEquiAngleSkew(mesh);
 		else {
 			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..." << std::endl;
 			delete checker;

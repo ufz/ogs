@@ -309,7 +309,6 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	//	std::cout << "size of CSourceTerm: " << sizeof (CSourceTerm) << std::endl;
 	//	std::cout << "size of CBoundaryCondition: " << sizeof (CBoundaryCondition) << std::endl;
 
-	//	std::cout << "size of CElem: " << sizeof (CElem) << std::endl;
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
