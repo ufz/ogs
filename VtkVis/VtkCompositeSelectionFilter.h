@@ -19,7 +19,7 @@ public:
 
 	void setSelectionArray(std::vector<double> selection) { _selection = selection; init(); };
 
-	virtual void SetUserProperty(QString name, QVariant value);
+	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
 private:
 	/// Returns a colour lookup table optimised for quality measures

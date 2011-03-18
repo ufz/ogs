@@ -33,7 +33,7 @@ public:
 		Q_UNUSED(value);
  	}
 
-	void SetSelectionArray(std::vector<double> selection, double threshold, bool ifSmaller=true);
+	void SetSelectionArray(std::vector<double> selection, double thresholdLower, double thresholdUpper);
 
 
 protected:
@@ -47,7 +47,8 @@ protected:
 
 private:
 	std::vector<double> _selection;
-	double _threshold;
+	double _thresholdLower;
+	double _thresholdUpper;
 	double _ifSmaller;
 };
 

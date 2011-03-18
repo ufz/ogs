@@ -22,7 +22,7 @@ vtkCxxRevisionMacro(VtkSelectionFilter, "$Revision: 6995 $");
 
 
 VtkSelectionFilter::VtkSelectionFilter()
-: _threshold(0.0), _ifSmaller(0.0)
+: _thresholdLower(0.0), _thresholdUpper(1.0)
 {
 }
 
@@ -73,9 +73,9 @@ int VtkSelectionFilter::RequestData( vtkInformation*,
 	return 1;
 }
 
-void VtkSelectionFilter::SetSelectionArray(std::vector<double> selection, double threshold, bool ifSmaller)
+void VtkSelectionFilter::SetSelectionArray(std::vector<double> selection, double thresholdLower, double thresholdUpper)
 {
 	this->_selection = selection;
-	this->_threshold = threshold;
-	this->_ifSmaller = ifSmaller;
+	this->_thresholdLower = thresholdLower;
+	this->_thresholdUpper = thresholdUpper;
 }
