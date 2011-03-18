@@ -303,7 +303,8 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 	this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
 	this->activeScalarComboBox->blockSignals(false);
 	QList<QString>::iterator it = dataSetAttributesList.begin();
-	item->SetActiveAttribute(*it);
+	if (item->GetActiveAttribute().count() == 0)
+		item->SetActiveAttribute(*it);
 }
 
 void VtkVisTabWidget::addColorTable()

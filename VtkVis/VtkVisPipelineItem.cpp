@@ -56,7 +56,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
 	: TreeItem(data, parentItem), _actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
-	  _compositeFilter(NULL), _transformFilter(NULL)
+	  _compositeFilter(NULL), _transformFilter(NULL), _activeAttribute("")
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (visParentItem)
@@ -79,7 +79,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/ )
 		: TreeItem(data, parentItem), _actor(NULL), _mapper(NULL), _renderer(NULL),
-		  _compositeFilter(compositeFilter), _transformFilter(NULL)
+		  _compositeFilter(compositeFilter), _transformFilter(NULL), _activeAttribute("")
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
@@ -94,7 +94,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		vtkAlgorithm* algorithm, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
 	: TreeItem(data, parentItem),	_actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
-		  _compositeFilter(NULL), _transformFilter(NULL)
+		  _compositeFilter(NULL), _transformFilter(NULL), _activeAttribute("")
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (parentItem->parentItem())
@@ -110,7 +110,7 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
 	: TreeItem(data, parentItem), 	_actor(NULL), _mapper(NULL), _renderer(NULL),
-		  _compositeFilter(compositeFilter), _transformFilter(NULL)
+		  _compositeFilter(compositeFilter), _transformFilter(NULL), _activeAttribute("")
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 	}
@@ -390,6 +390,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 		onPointData = false;
 	else if (name.contains("Solid Color"))
 	{
+		_activeAttribute = name;
 		_mapper->ScalarVisibilityOff();
 		return;
 	}
