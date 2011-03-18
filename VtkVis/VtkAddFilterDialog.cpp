@@ -42,6 +42,11 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline* pipeline, QModelIndex pa
 
 			new QListWidgetItem(filter.readableName, filterListWidget);
 	}
+
+	// On double clicking an item the dialog gets accepted
+	connect(filterListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+			   this->buttonBox,SIGNAL(accepted()));
+
 }
 
 void VtkAddFilterDialog::on_buttonBox_accepted()
