@@ -33,6 +33,10 @@ VtkCustomInteractorStyle::VtkCustomInteractorStyle()
 {
 	selectedMapper = vtkDataSetMapper::New();
 	selectedActor = vtkActor::New();
+	selectedActor->SetMapper(selectedMapper);
+	selectedActor->GetProperty()->EdgeVisibilityOn();
+	selectedActor->GetProperty()->SetEdgeColor(1,0,0);
+	selectedActor->GetProperty()->SetLineWidth(3);
 	Data = NULL;
 }
 
@@ -73,7 +77,10 @@ void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
 {
 	Data = object;
 	if (!object)
+	{
 		this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(selectedActor);
+		selectedMapper->SetInputConnection(NULL);
+	}
 }
 
 // From http://www.vtk.org/Wiki/VTK/Examples/Cxx/Picking/CellPicking
@@ -134,11 +141,6 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
     
     
 	  selectedMapper->SetInputConnection(selected->GetProducerPort());
-    
-	  selectedActor->SetMapper(selectedMapper);
-	  selectedActor->GetProperty()->EdgeVisibilityOn();
-	  selectedActor->GetProperty()->SetEdgeColor(1,0,0);
-	  selectedActor->GetProperty()->SetLineWidth(3);
     
 	  this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(selectedActor);
     

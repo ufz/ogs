@@ -7,8 +7,9 @@ IF (MSVC)
 ENDIF (MSVC)
 
 
-# Find VTK
-FIND_PACKAGE( VTK REQUIRED )
+IF (NOT VTK_FOUND)
+	MESSAGE(FATAL_ERROR "Error: VTK was not found but is needed for the GUI. Aborting...")
+ENDIF (NOT VTK_FOUND)
 INCLUDE( ${VTK_USE_FILE} )
 
 # Find libgeotiff
