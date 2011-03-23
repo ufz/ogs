@@ -4,13 +4,15 @@
  */
 
 #include <QSettings>
+#include <QIntValidator>
 #include "VisPrefsDialog.h"
 
 #include "VtkVisPipeline.h"
+#include "VisualizationWidget.h"
 
 /// Constructor
-VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, QDialog* parent) : 
-	QDialog(parent), _vtkVisPipeline(pipeline), _above(0,0,2000000), _below(0,0,-2000000)
+VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget, QDialog* parent) :
+	QDialog(parent), _vtkVisPipeline(pipeline), _visWidget(widget), _above(0,0,2000000), _below(0,0,-2000000)
 {
 	setupUi(this);
 	if (_vtkVisPipeline->getLight(_above))
@@ -20,6 +22,8 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, QDialog* parent) :
 
 	QColor color = _vtkVisPipeline->getBGColor();
 	bgColorButton->setColor(_vtkVisPipeline->getBGColor());
+
+	//superelevationLineEdit->
 }
 
 VisPrefsDialog::~VisPrefsDialog()
@@ -46,6 +50,17 @@ void VisPrefsDialog::on_lightBelowBox_clicked()
 		_vtkVisPipeline->addLight(_below);
 	else
 		_vtkVisPipeline->removeLight(_below);
+}
+
+void VisPrefsDialog::on_superelevationPushButton_pressed()
+{
+
+}
+
+void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
+{
+	_visWidget->setShowAllOnLoad((bool)state);
+	_vtkVisPipeline->resetCameraOnAddOrRemove((bool)state);
 }
 
 void VisPrefsDialog::accept()

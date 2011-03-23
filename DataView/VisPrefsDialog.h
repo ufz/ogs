@@ -11,6 +11,7 @@
 #include "Point.h"
 
 class VtkVisPipeline;
+class VisualizationWidget;
 
 /**
  * \brief A dialog window for settung up a visualisation preferences
@@ -20,7 +21,8 @@ class VisPrefsDialog : public QDialog, private Ui_VisPrefsDialog
 	Q_OBJECT
 
 public:
-	VisPrefsDialog(VtkVisPipeline* pipeline, QDialog* parent = 0);
+	VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget,
+				   QDialog* parent = 0);
 	~VisPrefsDialog(void);
 
 
@@ -36,6 +38,12 @@ private slots:
 	/// Adds a light below the scene.
 	void on_lightBelowBox_clicked();
 
+	/// Sets the given superelevation on all vis pipeline source objects
+	void on_superelevationPushButton_pressed();
+
+	///
+	void on_loadShowAllCheckBox_stateChanged(int state);
+
 	/// Instructions if the OK-Button has been pressed.
 	void accept();
 
@@ -44,6 +52,7 @@ private slots:
 
 private:
 	VtkVisPipeline* _vtkVisPipeline;
+	VisualizationWidget* _visWidget;
 	GEOLIB::Point _above;
 	GEOLIB::Point _below;
 

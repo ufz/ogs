@@ -67,6 +67,8 @@ VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, OSG::SimpleSceneManager* m
 	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
 	if (backgroundColorVariant != QVariant())
 		this->setBGColor(backgroundColorVariant.value<QColor>());
+
+	_resetCameraOnAddOrRemove = true;
 }
 #else // OGS_USE_OPENSG
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
@@ -81,6 +83,8 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
 	if (backgroundColorVariant != QVariant())
 		this->setBGColor(backgroundColorVariant.value<QColor>());
+
+	_resetCameraOnAddOrRemove = true;
 }
 #endif // OGS_USE_OPENSG
 
@@ -261,7 +265,8 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	int parentChildCount = parentItem->childCount();
 	QModelIndex newIndex = index(parentChildCount - 1, 0, parent);
 
-	_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+	if (_resetCameraOnAddOrRemove)
+		_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	_actorMap.insert(item->actor(), newIndex);
 
 	// Do not interpolate images
@@ -382,7 +387,8 @@ void VtkVisPipeline::removePipelineItem( QModelIndex index )
 	//TreeItem* item = getItem(index);
 	removeRows(index.row(), 1, index.parent());
 
-	_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+	if (_resetCameraOnAddOrRemove)
+		_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	emit vtkVisPipelineChanged();
 }
 

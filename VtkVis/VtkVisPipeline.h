@@ -84,6 +84,9 @@ public:
 	/// @brief Loads a vtk object from the given file and adds it to the pipeline.
 	void loadFromFile(QString filename);
 
+	///
+	void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
+
 public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
@@ -113,6 +116,7 @@ private:
 	QVector<vtkAlgorithm*> _sources;
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
+	bool _resetCameraOnAddOrRemove;
 
 #ifdef OGS_USE_OPENSG
 	OSG::SimpleSceneManager* _sceneManager;

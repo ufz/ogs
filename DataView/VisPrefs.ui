@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>206</width>
-    <height>233</height>
+    <width>205</width>
+    <height>332</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Visualisation Settings</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QGroupBox" name="LightBox">
      <property name="title">
@@ -47,6 +47,63 @@
        <widget class="ColorPickerPushButton" name="bgColorButton">
         <property name="text">
          <string>(255,255,255)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="SuperelevationBox">
+     <property name="title">
+      <string>Superelevation</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLineEdit" name="superelevationLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Specify the superelevation factor. Click on the button to apply.</string>
+        </property>
+        <property name="text">
+         <string>1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="superelevationPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="ViewUpdateBox">
+     <property name="title">
+      <string>View Update</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="loadShowAllCheckBox">
+        <property name="toolTip">
+         <string>Resizes view to show the entire scene when loading new data.</string>
+        </property>
+        <property name="text">
+         <string>Reset view on load</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

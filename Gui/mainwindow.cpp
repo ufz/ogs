@@ -604,7 +604,7 @@ void MainWindow::loadPetrelFiles(const QStringList &sfc_file_names,
 
 void MainWindow::updateDataViews()
 {
-	visualizationWidget->showAll();
+	visualizationWidget->updateViewOnLoad();
 	geoTabWidget-> treeView->updateView();
 	stationTabWidget-> treeView->updateView();
 	mshTabWidget-> treeView->updateView();
@@ -1000,7 +1000,7 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 
 void MainWindow::showVisalizationPrefsDialog()
 {
-	VisPrefsDialog dlg(_vtkVisPipeline);
+	VisPrefsDialog dlg(_vtkVisPipeline, visualizationWidget);
 	dlg.exec();
 }
 

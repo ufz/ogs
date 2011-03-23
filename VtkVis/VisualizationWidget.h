@@ -40,12 +40,18 @@ public:
 	/// @brief Returns the VtkPickCallback.
 	VtkPickCallback* vtkPickCallback() const;
 
+	/// @brief See updateViewOnLoad().
+	void setShowAllOnLoad(bool show) { _isShowAllOnLoad = show; }
+
 public slots:
 	/// @brief Updates the the 3d view.
 	void updateView();
 
 	/// @brief Shows the entire scene on the views.
 	void showAll();
+
+	/// @brief Updates the view only or additionally shows the entire scene.
+	void updateViewOnLoad();
 
 	/// @brief Saves a magnified image of the current render window to a file.
 	void screenshot(QString filename, int magnification);
@@ -79,6 +85,7 @@ private:
 	vtkRenderer* _vtkRender;
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
+	bool _isShowAllOnLoad;
 	#ifdef OGS_USE_VRPN
 	vtkEventQtSlotConnect* _qtConnect;
 	#endif // OGS_USE_VRPN
