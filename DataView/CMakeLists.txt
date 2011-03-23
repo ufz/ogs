@@ -112,6 +112,7 @@ include_directories(
 	${CMAKE_BINARY_DIR}/Qt/DataView
 	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
 	${CMAKE_BINARY_DIR}/Qt/DataView/StratView
+	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	../../Base
 	../../MathLib
 	../../GEO
