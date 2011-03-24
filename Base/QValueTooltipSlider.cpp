@@ -22,6 +22,5 @@ QValueTooltipSlider::QValueTooltipSlider(QWidget *parent)
 
 void QValueTooltipSlider::setTooltipValue(int value)
 {
-	std::cout << value << std::endl;
 	QToolTip::showText(QCursor::pos(), QString::number(value));
 }
