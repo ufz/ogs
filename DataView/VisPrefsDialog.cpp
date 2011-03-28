@@ -5,6 +5,7 @@
 
 #include <QSettings>
 #include <QIntValidator>
+#include <QLineEdit>
 #include "VisPrefsDialog.h"
 
 #include "VtkVisPipeline.h"
@@ -23,7 +24,8 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* wi
 	QColor color = _vtkVisPipeline->getBGColor();
 	bgColorButton->setColor(_vtkVisPipeline->getBGColor());
 
-	//superelevationLineEdit->
+	QValidator* validator = new QIntValidator(1, 100000, this);
+	superelevationLineEdit->setValidator(validator);
 }
 
 VisPrefsDialog::~VisPrefsDialog()
@@ -54,22 +56,12 @@ void VisPrefsDialog::on_lightBelowBox_clicked()
 
 void VisPrefsDialog::on_superelevationPushButton_pressed()
 {
-
+	int factor = superelevationLineEdit->text().toInt();
+	_vtkVisPipeline->setGlobalSuperelevation(factor);
 }
 
 void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 {
 	_visWidget->setShowAllOnLoad((bool)state);
 	_vtkVisPipeline->resetCameraOnAddOrRemove((bool)state);
-}
-
-void VisPrefsDialog::accept()
-{
-	this->done(QDialog::Accepted);
-}
-
-
-void VisPrefsDialog::reject()
-{
-	this->done(QDialog::Rejected);
 }

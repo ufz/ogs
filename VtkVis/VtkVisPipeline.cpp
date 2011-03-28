@@ -235,6 +235,21 @@ void VtkVisPipeline::loadFromFile(QString filename)
 	#endif
 }
 
+void VtkVisPipeline::setGlobalSuperelevation(int factor) const
+{
+	// iterate over all source items
+	for (int i = 0; i < _rootItem->childCount(); ++i)
+	{
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+		item->setScale(1.0, 1.0, factor);
+
+		// recursively set on all child items
+		item->setScaleOnChilds(1.0, 1.0, 1.0);
+	}
+
+	emit vtkVisPipelineChanged();
+}
+
 void VtkVisPipeline::addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
 {
 	addPipelineItem(model->vtkSource(name, type));
