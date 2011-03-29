@@ -129,6 +129,7 @@ public:
 		_scalarVisibility = true;
 		_algorithmUserProperties = new QMap<QString, QVariant>;
 		_algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
+		_activeAttributeName = "";
 	}
 
 	virtual ~VtkAlgorithmProperties() 
@@ -240,6 +241,9 @@ public:
 			return QList<QVariant>();
 		}
 	}
+
+	/// @brief Returns the desired active attribute.
+	QString GetActiveAttribute() const { return _activeAttributeName; }
 	
 protected:
 
