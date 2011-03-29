@@ -1000,8 +1000,9 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 
 void MainWindow::showVisalizationPrefsDialog()
 {
-	VisPrefsDialog dlg(_vtkVisPipeline, visualizationWidget);
-	dlg.exec();
+	VisPrefsDialog* dlg = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->show();
 }
 
 void MainWindow::FEMTestStart()

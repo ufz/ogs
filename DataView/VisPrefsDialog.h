@@ -6,7 +6,7 @@
 #ifndef VISPREFSDIALOG_H
 #define VISPREFSDIALOG_H
 
-#include <QtGui/QMainWindow>
+#include <QDialog>
 #include "ui_VisPrefs.h"
 #include "Point.h"
 
@@ -21,12 +21,8 @@ class VisPrefsDialog : public QDialog, private Ui_VisPrefsDialog
 	Q_OBJECT
 
 public:
-	VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget,
-				   QDialog* parent = 0);
+	VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget, QDialog* parent = NULL);
 	~VisPrefsDialog(void);
-
-
-
 
 private slots:
 	/// Sets the background colour.
@@ -43,12 +39,6 @@ private slots:
 
 	///
 	void on_loadShowAllCheckBox_stateChanged(int state);
-
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
-
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
 
 private:
 	VtkVisPipeline* _vtkVisPipeline;

@@ -456,3 +456,21 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 	}
 }
 
+void VtkVisPipelineItem::setScale(double x, double y, double z) const
+{
+	vtkTransform* transform =
+		static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+	transform->Identity();
+	transform->Scale(x, y, z);
+	this->transformFilter()->Modified();
+
+}
+
+void VtkVisPipelineItem::setScaleOnChilds(double x, double y, double z) const
+{
+	for (int i = 0; i < this->childCount(); ++i)
+	{
+		VtkVisPipelineItem* child = this->child(i);
+		child->setScale(x, y, z);
+	}
+}
