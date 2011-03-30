@@ -51,7 +51,6 @@ void VtkCompositeSelectionFilter::SetUserVectorProperty( QString name, QList<QVa
 	VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
 	if (name.compare("Threshold Between") == 0)
-		// Set the vector property on the algorithm
 		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
 }
 
@@ -63,7 +62,6 @@ VtkColorLookupTable* VtkCompositeSelectionFilter::GetLookupTable()
 	unsigned char b[4] = { 0, 255, 0, 255 };   // green
 	unsigned char c[4] = { 255, 255, 0, 255 }; // yellow
 	unsigned char d[4] = { 255, 0, 0, 255 };   // red
-	//unsigned char e[4] = { 255, 255, 255, 255 }; // white
 	lut->setColor(1.0, a);
 	lut->setColor(0.5, b);
 	lut->setColor(0.25, c);

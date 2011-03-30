@@ -37,6 +37,7 @@ SET( SOURCES
 	VtkVisTabWidget.cpp
 	VtkVisHelper.cpp
 	VisualizationWidget.cpp
+	VisPrefsDialog.cpp
 )
 
 # Moc headers
@@ -52,6 +53,7 @@ SET( MOC_HEADERS
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
 	VisualizationWidget.h
+	VisPrefsDialog.h
 )
 
 # Header files
@@ -90,6 +92,7 @@ SET ( UIS
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
 	VisualizationWidgetBase.ui
+	VisPrefs.ui
 )
 
 # Put moc files in a project folder

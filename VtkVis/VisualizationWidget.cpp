@@ -130,6 +130,8 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	markerWidget->SetInteractor(vtkWidget->GetRenderWindow()->GetInteractor());
 	markerWidget->EnabledOn();
 	markerWidget->InteractiveOff();
+
+	_isShowAllOnLoad = true;
 }
 
 VisualizationWidget::~VisualizationWidget()
@@ -154,18 +156,7 @@ VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 	return _vtkPickCallback;
 }
 void VisualizationWidget::updateView()
-{
-	/*
-	vtkCamera* camera = _vtkRender->GetActiveCamera();
-	double x,y,z;
-	camera->GetFocalPoint(x, y, z);
-	std::cout << "Focal point: " << x << " " << y << " " << z << std::endl;
-	camera->GetPosition(x, y, z);
-	std::cout << "Position: " << x << " " << y << " " << z << std::endl;
-	camera->GetClippingRange(x, y);
-	std::cout << "Clipping range: " << x << " " << y << std::endl << std::endl;
-	*/
-	
+{	
 	vtkWidget->GetRenderWindow()->Render();
 }
 
@@ -179,6 +170,14 @@ void VisualizationWidget::showAll()
 	cam->SetPosition(fp[0], fp[1], fp[2] + dist);
 	cam->SetViewUp(0.0, 1.0, 0.0);
 	this->updateView();
+}
+
+void VisualizationWidget::updateViewOnLoad()
+{
+	if (_isShowAllOnLoad)
+		this->showAll();
+	else
+		updateView();
 }
 
 void VisualizationWidget::on_stereoToolButton_toggled( bool checked )

@@ -159,12 +159,8 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 
 	if (ok)
 	{
-		vtkTransform* transform = 
-			static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
-		transform->Identity();
-		transform->Scale(1.0, 1.0, scale);
-		_item->transformFilter()->Modified();
-
+		_item->setScale(1.0, 1.0, scale);
+	
 		for (int i = 0; i < _item->childCount(); i++)
 		{
 			VtkVisPipelineItem* childItem = _item->child(i);

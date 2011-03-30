@@ -28,9 +28,7 @@ set( SOURCES
 	SHPImportDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
-	StationTreeView.cpp
-	VisPrefsDialog.cpp
-	
+	StationTreeView.cpp	
 )
 
 # Moc Header files
@@ -60,7 +58,6 @@ set( MOC_HEADERS
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h
-	VisPrefsDialog.h
 )
 
 # Header files
@@ -88,7 +85,6 @@ set( UIS
 	MshQualitySelection.ui
 	MshTabWidgetBase.ui
 	StationTabWidgetBase.ui
-	VisPrefs.ui
 )
 
 # Put filter in a folder

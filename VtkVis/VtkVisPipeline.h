@@ -81,8 +81,15 @@ public:
 
 	Qt::ItemFlags flags( const QModelIndex &index ) const;
 
-	/// @brief Loads a vtk object from the given file and adds it to the pipeline.
+	/// \brief Loads a vtk object from the given file and adds it to the pipeline.
 	void loadFromFile(QString filename);
+
+	/// \brief Defaults to on.
+	void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
+	
+	/// \brief Sets a global superelevation factor on all source items and resets
+	/// the factor on other items to 1.
+	void setGlobalSuperelevation(int factor) const;
 
 public slots:
 	/// \brief Adds the given Model to the pipeline.
@@ -113,6 +120,7 @@ private:
 	QVector<vtkAlgorithm*> _sources;
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
+	bool _resetCameraOnAddOrRemove;
 
 #ifdef OGS_USE_OPENSG
 	OSG::SimpleSceneManager* _sceneManager;
@@ -122,7 +130,7 @@ private:
 
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.
-	void vtkVisPipelineChanged();
+	void vtkVisPipelineChanged() const;
 
 };
 

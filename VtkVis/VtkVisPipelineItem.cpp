@@ -261,7 +261,6 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	if (vtkProps)
 		setVtkProperties(vtkProps);
 
-
 	// Copy properties from parent
 	else
 	{
@@ -275,6 +274,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 				newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
 				newProps->SetTexture(parentProps->GetTexture());
 				setVtkProperties(newProps);
+				vtkProps = newProps;
 				parentItem = NULL;
 			}
 			else
@@ -282,6 +282,19 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 		}
 	}
 
+	// Set active scalar to the desired one from VtkAlgorithmProperties
+	// or to match those of the parent.
+	if (vtkProps)
+	{
+		if (vtkProps->GetActiveAttribute().length() > 0)
+			this->SetActiveAttribute(vtkProps->GetActiveAttribute());
+		else
+		{
+			VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+			if (visParentItem)
+				this->SetActiveAttribute(visParentItem->GetActiveAttribute());
+		}
+	}
 }
 
 void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
@@ -456,3 +469,21 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 	}
 }
 
+void VtkVisPipelineItem::setScale(double x, double y, double z) const
+{
+	vtkTransform* transform =
+		static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+	transform->Identity();
+	transform->Scale(x, y, z);
+	this->transformFilter()->Modified();
+
+}
+
+void VtkVisPipelineItem::setScaleOnChilds(double x, double y, double z) const
+{
+	for (int i = 0; i < this->childCount(); ++i)
+	{
+		VtkVisPipelineItem* child = this->child(i);
+		child->setScale(x, y, z);
+	}
+}
