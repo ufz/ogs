@@ -16,10 +16,10 @@
 #include "StringTools.h"
 #include "OGSError.h"
 
-// libgeotiff includes
+#ifdef libgeotiff_FOUND 
 #include "geo_tiffp.h"
 #include "xtiffio.h"
-
+#endif
 
 bool OGSRaster::loadImage(const QString &fileName, QImage &raster, QPointF &origin,
 						  double &scalingFactor, bool autoscale /* = true */, bool mirrorX /* = false */)
@@ -35,12 +35,14 @@ bool OGSRaster::loadImage(const QString &fileName, QImage &raster, QPointF &orig
 		if (mirrorX)
 			raster = raster.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
 	}
+#ifdef libgeotiff_FOUND 
 	else if (fileInfo.suffix().toLower() == "tif")
 	{
 		if (!loadImageFromTIFF(fileName, raster, origin, scalingFactor)) return false;
 		if (!mirrorX)
 			raster = raster.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
 	}
+#endif 
 	else
 	{
 		if (!loadImageFromFile(fileName, raster)) return false;
@@ -189,6 +191,7 @@ double* OGSRaster::loadDataFromASC(const QString &fileName, double &x0, double &
 	return NULL;
 }
 
+#ifdef libgeotiff_FOUND 
 bool OGSRaster::loadImageFromTIFF(const QString &fileName, QImage &raster, QPointF &origin, double &cellsize)
 {
 	TIFF* tiff = XTIFFOpen(fileName.toStdString().c_str(), "r");
@@ -284,7 +287,7 @@ bool OGSRaster::loadImageFromTIFF(const QString &fileName, QImage &raster, QPoin
 	std::cout << "OGSRaster::loadImageFromTIFF() - File not recognised as TIFF-Image." << std::endl;
 	return false;
 }
-
+#endif
 
 bool OGSRaster::loadImageFromFile(const QString &fileName, QImage &raster)
 {

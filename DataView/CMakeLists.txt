@@ -25,7 +25,6 @@ set( SOURCES
 	MshTabWidget.cpp
 	OGSRaster.cpp
 	QueryResultsDialog.cpp
-	SHPImportDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
 	StationTreeView.cpp	
@@ -54,7 +53,6 @@ set( MOC_HEADERS
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
 	QueryResultsDialog.h
-	SHPImportDialog.h
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h
@@ -118,12 +116,9 @@ include_directories(
 	./DiagramView
 	./StratView
 	../VtkVis
-	${CMAKE_SOURCE_DIR}
-	${Shapelib_INCLUDE_DIR}	
+	${CMAKE_SOURCE_DIR}	
 	#${OpenSG_INCLUDE_DIR}
 	#${OpenSGSupportlibs_INCLUDE_DIR}
-	${libtiff_INCLUDE_DIR}
-	${libgeotiff_INCLUDE_DIR}
 )
 
 if (OGS_COMPILE_QVTK)
@@ -137,6 +132,15 @@ ENDIF()
 IF (OGS_USE_OPENSG)
 	INCLUDE_DIRECTORIES( ${OpenSG_INCLUDE_DIRS} )
 ENDIF (OGS_USE_OPENSG)
+
+IF (Shapelib_FOUND)
+	SET( ${SOURCES} SHPImportDialog.cpp)
+	SET( ${MOC_HEADERS} SHPImportDialog.h)
+	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
+ENDIF () # Shapelib_FOUND
+IF (libtiff_FOUND AND libgeotiff_FOUND)
+	INCLUDE_DIRECTORIES( ${libtiff_INCLUDE_DIR}	${libgeotiff_INCLUDE_DIR} )
+ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
 
 # Put moc files in a project folder
 source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
@@ -156,13 +160,18 @@ add_library( QtDataView STATIC
 # Link Qt library
 target_link_libraries( QtDataView
 	${QT_LIBRARIES}
-	${libtiff_LIBRARIES}
-	${libgeotiff_LIBRARIES}
 	FEM
 	FileIO
 	GEO
 	MSH
 	QtBase
 	DiagramView
-	${Shapelib_LIBRARIES}
+	StratView
 )
+
+IF (Shapelib_FOUND)
+	TARGET_LINK_LIBRARIES( QtDataView ${Shapelib_LIBRARIES} )
+ENDIF () # Shapelib_FOUND
+IF (libtiff_FOUND AND libgeotiff_FOUND)
+	TARGET_LINK_LIBRARIES( QtDataView ${libtiff_LIBRARIES} ${libgeotiff_LIBRARIES} )
+ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
