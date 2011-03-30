@@ -54,6 +54,8 @@
 //test
 #include "MathIO/CRSIO.h"
 
+#include "StringTools.h"
+
 // MSH
 #include "msh_mesh.h"
 
@@ -1006,17 +1008,36 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::string project_name ("Circle");
-	std::vector<GEOLIB::Point*> *pnts (new std::vector<GEOLIB::Point*>);
-	GEOLIB::Point middle_pnt (0.0, 0.0, 0.0);
+	std::vector<std::string> station_names;
+	_geoModels->getStationNames (station_names);
+
 	size_t resolution (36);
-	GEOLIB::Polygon *polygon(createPolygonFromCircle (middle_pnt, 2.0, *pnts, resolution));
-	std::vector<GEOLIB::Polyline*> *plys (new std::vector<GEOLIB::Polyline*>);
-	std::cout << "polygon: " << std::endl;
-	std::cout << *polygon << std::endl;
-	plys->push_back (polygon);
-	_geoModels->addPointVec (pnts, project_name);
-	_geoModels->addPolylineVec (plys, project_name);
+	for (std::vector<std::string>::const_iterator it (station_names.begin());
+		it != station_names.end(); it++) {
+
+		std::string project_name ("Circle");
+		project_name += *it;
+
+		std::vector<GEOLIB::Point*> *pnts (new std::vector<GEOLIB::Point*>);
+		const std::vector<GEOLIB::Point*>* middle_pnts(_geoModels->getPointVec(*it));
+		std::vector<GEOLIB::Polyline*> *plys (new std::vector<GEOLIB::Polyline*>);
+		std::map<std::string, size_t>* ply_names (new std::map<std::string, size_t>);
+
+		for (size_t k(0); k<middle_pnts->size(); k++) {
+			GEOLIB::Polygon *polygon(createPolygonFromCircle (*((*middle_pnts)[k]), 1000.0, *pnts, resolution));
+			plys->push_back (polygon);
+			std::string station_name ("CircleAreaAroundStation");
+			if (dynamic_cast<GEOLIB::Station*>((*middle_pnts)[k])) {
+				station_name += (dynamic_cast<GEOLIB::Station*>((*middle_pnts)[k])->getName());
+			} else {
+				station_name += number2str (k);
+			}
+			ply_names->insert (std::pair<std::string, size_t> (station_name, k));
+		}
+
+		_geoModels->addPointVec (pnts, project_name);
+		_geoModels->addPolylineVec (plys, project_name, ply_names);
+	}
 
 #ifndef NDEBUG
 	std::cout << "FEM Test here ..." << std::endl;
@@ -1032,38 +1053,44 @@ void MainWindow::FEMTestStart()
 	std::ifstream in (fname.c_str(), std::ios::binary);
 
 	if (in) {
-		unsigned n(0), *iA(NULL), *jA(NULL);
-		double *A(NULL);
+		long n(0), *iA(NULL), *jA(NULL);
+		double *A(NULL), *rhs(NULL);
 
 		std::cout << "reading matrix ... " << std::flush;
-		// read matrix
-		FileIO::readCompressedStorageFmt (in, n, iA, jA, A);
+		// read matrix and right hand side (format provided by WW)
+		FileIO::readCompressedStorageFmt (in, n, iA, jA, A, rhs);
 		in.close ();
 		std::cout << "done" << std::endl;
 
-		// *** ToDo
-		// read right hand side
-		// solve system of linear equations
+		unsigned n_unsigned (n);
+		unsigned *iA_unsigned (new unsigned[n_unsigned+1]);
+		for (unsigned k(0); k<n_unsigned+1; k++)
+			iA_unsigned[k] = iA[k];
 
+		unsigned *jA_unsigned (new unsigned[iA_unsigned[n_unsigned]]);
+		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
+			jA_unsigned[k] = jA[k];
 
-//		std::cout << "n : " << n << std::endl;
-//		std::cout << "iA[n]: " << iA[n] << std::endl;
-//		std::cout << "iA: " << std::endl;
-//		for (size_t i(0); i<=n; i++) {
-//			std::cout << " " << iA[i];
-//		}
-//		std::cout << std::endl << "jA: " << std::endl;
-//		for (size_t i(0); i<iA[n]; i++) {
-//			std::cout << " " << jA[i];
-//		}
-//		std::cout << std::endl << "A: " << std::endl;
-//		for (size_t i(0); i<iA[n]; i++) {
-//			std::cout << " " << A[i];
-//		}
-//		std::cout << std::endl;
+		// write matrix
+		std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
+		if (mat_out) {
+			FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
+			mat_out.close();
+		}
+		// write right hand side
+		std::ofstream rhs_out ("rhs.dat");
+		if (rhs_out) {
+			for (unsigned k(0); k<n_unsigned; k++) {
+				rhs_out << rhs[k] << std::endl;
+			}
+			rhs_out.close();
+		}
 
 		delete [] iA;
 		delete [] jA;
+		delete [] iA_unsigned;
+		delete [] jA_unsigned;
+		delete [] rhs;
 		delete [] A;
 	}
 
