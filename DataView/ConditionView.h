@@ -36,10 +36,13 @@ private:
 private slots:
 	void on_Clicked(QModelIndex idx);
 	void removeCondition();
+	void removeAllConditions();
 
 signals:
 	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-	void conditionRemoved(std::string name);
+	void requestConditionRemoval(const QModelIndex&);
+
 };
 
+	
 #endif //CONDITIONVIEW_H

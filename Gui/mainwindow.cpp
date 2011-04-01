@@ -160,7 +160,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	// Setup connections for condition model to GUI
 	conditionTabWidget->treeView->setModel(_conditionModel);
-	connect(conditionTabWidget, SIGNAL(requestConditionRemoval(const QModelIndex&)),
+	connect(conditionTabWidget->treeView, SIGNAL(requestConditionRemoval(const QModelIndex&)),
 			_conditionModel, SLOT(removeCondition(const QModelIndex&)));
 
 	// VisPipeline Connects
@@ -847,8 +847,6 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 			XMLInterface xml(_geoModels, schemaName);
 			xml.readFEMCondFile(conditions, fileName, QString::fromStdString(geoName));
-			if (!conditions.empty())
-				this->_conditionModel->addConditions(conditions);
 		}
 		else if (fi.suffix().toLower() == "bc")
 		{

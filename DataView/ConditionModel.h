@@ -47,11 +47,13 @@ public slots:
 	bool removeCondition(const QModelIndex &idx);
 
 	/// Removes conditions associated with the given geometry and type.
-	void removeFEMConditions(const std::string &geometry_name, GEOLIB::GEOTYPE type = GEOLIB::INVALID);
+	void removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type);
 	/// Reloads all items.
 	//void updateData();
 
 private:
+	TreeItem* ConditionModel::getCondParent(TreeItem* parent, FEMCondition::CondType type);
+	TreeItem* ConditionModel::getGEOParent(const QString &geoName);
 	//void setData(std::vector<GEOLIB::GeoObject*> *points, TreeItem* parent);
 
 	ProjectData& _project;

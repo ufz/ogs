@@ -36,14 +36,30 @@ void ConditionView::selectionChanged( const QItemSelection &selected, const QIte
 void ConditionView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_UNUSED(event);
-//	QModelIndex index = this->selectionModel()->currentIndex();
-//	CondItem* item = static_cast<CondItem*>(index.internalPointer());
+	//	QModelIndex index = this->selectionModel()->currentIndex();
+	//	CondItem* item = static_cast<CondItem*>(index.internalPointer());
+	QMenu menu;
+	QAction* removeAction    = menu.addAction("Remove");
+	connect(removeAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
+	menu.exec(event->globalPos());
 
 }
 
 void ConditionView::removeCondition()
 {
-	TreeItem* item = static_cast<ConditionModel*>(model())->getItem(this->selectionModel()->currentIndex());
-	emit conditionRemoved((item->data(0).toString()).toStdString());
+	emit requestConditionRemoval(this->selectionModel()->currentIndex());
+}
+
+void ConditionView::removeAllConditions()
+{
+	ConditionModel* model = static_cast<ConditionModel*>(this->model());
+
+	for (size_t j=0; j<3; j++)
+	{
+		QModelIndex parentIndex = model->index(j, 0, QModelIndex());
+		int nChildren = model->getItem(parentIndex)->childCount();
+		for (int i=nChildren; i>=0; i--)
+			emit requestConditionRemoval(model->index(i, 0, parentIndex));
+	}
 }
 
