@@ -85,6 +85,12 @@ set( UIS
 	StationTabWidgetBase.ui
 )
 
+IF (Shapelib_FOUND)
+	SET( SOURCES ${SOURCES} SHPImportDialog.cpp)
+	SET( MOC_HEADERS ${MOC_HEADERS} SHPImportDialog.h)
+	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
+ENDIF () # Shapelib_FOUND
+
 # Put filter in a folder
 SOURCE_GROUP("Dialog Header Files" REGULAR_EXPRESSION "[.]*Dialog.h")
 SOURCE_GROUP("Dialog Source Files" REGULAR_EXPRESSION "[.]*Dialog.cpp")
@@ -117,8 +123,6 @@ include_directories(
 	./StratView
 	../VtkVis
 	${CMAKE_SOURCE_DIR}	
-	#${OpenSG_INCLUDE_DIR}
-	#${OpenSGSupportlibs_INCLUDE_DIR}
 )
 
 if (OGS_COMPILE_QVTK)
@@ -133,11 +137,6 @@ IF (OGS_USE_OPENSG)
 	INCLUDE_DIRECTORIES( ${OpenSG_INCLUDE_DIRS} )
 ENDIF (OGS_USE_OPENSG)
 
-IF (Shapelib_FOUND)
-	SET( ${SOURCES} SHPImportDialog.cpp)
-	SET( ${MOC_HEADERS} SHPImportDialog.h)
-	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
-ENDIF () # Shapelib_FOUND
 IF (libtiff_FOUND AND libgeotiff_FOUND)
 	INCLUDE_DIRECTORIES( ${libtiff_INCLUDE_DIR}	${libgeotiff_INCLUDE_DIR} )
 ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
