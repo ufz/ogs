@@ -52,8 +52,8 @@ public slots:
 	//void updateData();
 
 private:
-	TreeItem* ConditionModel::getCondParent(TreeItem* parent, FEMCondition::CondType type);
-	TreeItem* ConditionModel::getGEOParent(const QString &geoName);
+	TreeItem* getCondParent(TreeItem* parent, FEMCondition::CondType type);
+	TreeItem* getGEOParent(const QString &geoName);
 	//void setData(std::vector<GEOLIB::GeoObject*> *points, TreeItem* parent);
 
 	ProjectData& _project;
