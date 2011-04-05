@@ -21,18 +21,6 @@ class ConditionTabWidget : public QWidget, public Ui_ConditionTabWidgetBase
 public:
 	ConditionTabWidget(QWidget* parent = 0);
 
-	void removeCondition();
-
-	void removeAllConditions();
-
-	void contextMenuEvent( QContextMenuEvent* event );
-
-
-private:
-
-signals:
-	void requestConditionRemoval(const QModelIndex&);
-
 };
 
 #endif // CONDITIONTABWIDGET_H

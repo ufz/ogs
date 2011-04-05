@@ -8,6 +8,7 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
+#include "Configure.h"
 #include "FileFinder.h"
 #include "ProjectData.h"
 

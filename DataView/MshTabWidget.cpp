@@ -77,7 +77,7 @@ void MshTabWidget::contextMenuEvent( QContextMenuEvent* event )
 	QAction* checkMeshAction    = menu.addAction("Check mesh quality...");
 	QAction* saveMeshAction    = menu.addAction("Save mesh...");
 	menu.addSeparator();
-	QAction* removeMeshAction    = menu.addAction("Remove...");
+	QAction* removeMeshAction    = menu.addAction("Remove mesh");
 	connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 	connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 	connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));

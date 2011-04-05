@@ -29,7 +29,6 @@
 
 #include "OGSRaster.h"
 #include "OGSError.h"
-#include "Configure.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 #include "RecentFiles.h"
@@ -160,7 +159,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	// Setup connections for condition model to GUI
 	conditionTabWidget->treeView->setModel(_conditionModel);
-	connect(conditionTabWidget, SIGNAL(requestConditionRemoval(const QModelIndex&)),
+	connect(conditionTabWidget->treeView, SIGNAL(requestConditionRemoval(const QModelIndex&)),
 			_conditionModel, SLOT(removeCondition(const QModelIndex&)));
 
 	// VisPipeline Connects
@@ -699,55 +698,52 @@ void MainWindow::importGoCad()
 void MainWindow::importRaster()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
+	#ifdef libgeotiff_FOUND
+		QString geotiffExtension(" *.tif");
+	#else
+		QString geotiffExtension("");
+	#endif
 	QString fileName = QFileDialog::getOpenFileName(this,
 			"Select raster file to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
-			"Raster files (*.asc *.bmp *.jpg *.png *.tif);;");
-	QFileInfo fi(fileName);
-	QString fileType = fi.suffix().toLower();
-
-	if ((fileType == "asc") || (fileType == "tif") || (fileType == "png")
-			|| (fileType == "jpg") || (fileType == "bmp")) {
-		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
-		geoImage->setImageFilename(fileName);
-		_vtkVisPipeline->addPipelineItem(geoImage);
-
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-	}
-	else if (fileName.length() > 0) OGSError::box(
-			"File extension not supported.");
+			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
+	
+	VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
+	geoImage->setImageFilename(fileName);
+	_vtkVisPipeline->addPipelineItem(geoImage);
+    
+	QDir dir = QDir(fileName);
+	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 }
 
 void MainWindow::importRasterAsPoly()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
+	#ifdef libgeotiff_FOUND
+		QString geotiffExtension(" *.tif");
+	#else
+		QString geotiffExtension("");
+	#endif
 	QString fileName = QFileDialog::getOpenFileName(this,
 			"Select raster file to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
-			"Raster files (*.asc *.bmp *.jpg *.png *.tif);;");
-	QFileInfo fi(fileName);
+			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
+	
+	QImage raster;
+	QPointF origin;
+	double scalingFactor;
+	OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true);
+    
+	VtkBGImageSource* bg = VtkBGImageSource::New();
+	bg->SetOrigin(origin.x(), origin.y());
+	bg->SetCellSize(scalingFactor);
+	bg->SetRaster(raster);
+	bg->SetName(fileName);
+	_vtkVisPipeline->addPipelineItem(bg);
+    
+	QDir dir = QDir(fileName);
+	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 
-	if ((fi.suffix().toLower() == "asc") || (fi.suffix().toLower() == "tif")
-			|| (fi.suffix().toLower() == "png") || (fi.suffix().toLower()
-			== "jpg") || (fi.suffix().toLower() == "bmp")) {
-		QImage raster;
-		QPointF origin;
-		double scalingFactor;
-		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true);
-
-		VtkBGImageSource* bg = VtkBGImageSource::New();
-		bg->SetOrigin(origin.x(), origin.y());
-		bg->SetCellSize(scalingFactor);
-		bg->SetRaster(raster);
-		bg->SetName(fileName);
-		_vtkVisPipeline->addPipelineItem(bg);
-
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-
-	} else
-		OGSError::box("File extension not supported.");
 }
 
 #ifdef Shapelib_FOUND
@@ -847,8 +843,6 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 			XMLInterface xml(_geoModels, schemaName);
 			xml.readFEMCondFile(conditions, fileName, QString::fromStdString(geoName));
-			if (!conditions.empty())
-				this->_conditionModel->addConditions(conditions);
 		}
 		else if (fi.suffix().toLower() == "bc")
 		{

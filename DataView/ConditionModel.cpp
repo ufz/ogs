@@ -16,9 +16,9 @@ ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 {
 	QList<QVariant> rootData;
 	delete _rootItem;
-	rootData << "FEM Conditions";
+	rootData << "Name" << "Value";;
 	_rootItem = new TreeItem(rootData, NULL);
-
+/*
 	QList<QVariant> bcData;
 	bcData << "Boundary Conditions" << "";
 	_bcParent = new TreeItem(bcData, _rootItem);
@@ -33,15 +33,11 @@ ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 	stData << "Source Terms" << "";
 	_stParent = new TreeItem(stData, _rootItem);
 	_rootItem->appendChild(_stParent);
+*/
 }
 
 ConditionModel::~ConditionModel()
 {
-	/*
-	delete _icParent;
-	delete _bcParent;
-	delete _stParent;
-	*/
 }
 
 int ConditionModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
@@ -54,15 +50,15 @@ int ConditionModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ )
 
 void ConditionModel::addCondition(FEMCondition* c)
 {
+	TreeItem* geoParent = getGEOParent(QString::fromStdString(c->getAssociatedGeometryName()));
+	std::string g = c->getAssociatedGeometryName();
+	TreeItem* condParent = getCondParent(geoParent, c->getCondType());
+	std::string cd = condParent->data(0).toString().toStdString();
+
 	QList<QVariant> condData;
 	condData << QString::fromStdString(c->getGeoName()) << QString::fromStdString(c->getGeoTypeAsString());
-	TreeItem* parent(NULL);
-	size_t row(0);
-	if (c->getCondType() == FEMCondition::INITIAL_CONDITION)       { parent = _icParent; row=0; }
-	else if (c->getCondType() == FEMCondition::BOUNDARY_CONDITION) { parent = _bcParent; row=1; }
-	else if (c->getCondType() == FEMCondition::SOURCE_TERM)		   { parent = _stParent; row=2; }
-	CondItem* condItem = new CondItem(condData, parent, c);
-	parent->appendChild(condItem);
+	CondItem* condItem = new CondItem(condData, condParent, c);
+	condParent->appendChild(condItem);
 	// add process information
 	QList<QVariant> pcsData;
 	pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
@@ -83,7 +79,7 @@ void ConditionModel::addCondition(FEMCondition* c)
 	//	stListItem->vtkSource()->SetName(fi.fileName());
 	reset();
 
-	emit condAdded(this, this->index(parent->childCount()-1, 0, this->index(row, 0, QModelIndex())));
+	emit condAdded(this, this->index(condParent->childCount()-1, 0, this->index(condParent->row(), 0, QModelIndex())));
 }
 
 
@@ -97,31 +93,75 @@ bool ConditionModel::removeCondition(const QModelIndex &idx)
 {
 	if (idx.isValid())
 	{
-		CondItem* item = static_cast<CondItem*>(this->getItem(idx));
-		emit condRemoved(this, idx);
-		TreeItem* parent = item->parentItem();
-		parent->removeChildren(item->row(),1);
-		reset();
-		return true;
+		CondItem* item = dynamic_cast<CondItem*>(this->getItem(idx));
+		if (item)
+		{
+			emit condRemoved(this, idx);
+			TreeItem* parent = item->parentItem();
+			if (parent->childCount() <=1)
+				this->removeFEMConditions(QString::fromStdString(item->getItem()->getAssociatedGeometryName()), item->getItem()->getCondType());
+			else
+				parent->removeChildren(item->row(),1);
+			reset();
+			return true;
+		}
 	}
 
-	std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
+	std::cout << "ConditionModel::removeCondition() - Specified index does not exist." << std::endl;
 	return false;
 }
 
-void ConditionModel::removeFEMConditions(const std::string &geometry_name, GEOLIB::GEOTYPE type)
+void ConditionModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type = FEMCondition::UNSPECIFIED)
 {
-	for (int j=0; j<this->_rootItem->childCount(); j++)
+	TreeItem* geoParent = getGEOParent(geometry_name);
+
+	if ((type == FEMCondition::UNSPECIFIED) || (geoParent->childCount() <= 1)) //remove all conditions for the given geometry
 	{
-		TreeItem* parent = _rootItem->child(j);
-		for (int i=0; i<parent->childCount(); i++)
-		{
-			const FEMCondition* cond = static_cast<CondItem*>(parent->child(i))->getItem();
-			if (geometry_name.compare(cond->getAssociatedGeometryName()) == 0)
-			{
-				if (type == GEOLIB::INVALID || type == cond->getGeoType())
-					parent->removeChildren(i,1);
-			}
-		}
+		_rootItem->removeChildren(geoParent->row(),1);
+		return;
 	}
+
+	// remove only certain kind of conditions
+	TreeItem* condParent = getCondParent(geoParent, type);
+	geoParent->removeChildren(condParent->row(), 1);
+
+}
+
+
+
+TreeItem* ConditionModel::getGEOParent(const QString &geoName)
+{
+	int nLists = _rootItem->childCount();
+	for (int i=0; i<nLists; i++)
+	{
+		if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
+			return _rootItem->child(i);
+	}
+
+	QList<QVariant> geoData;
+	geoData << QVariant(geoName) << "";
+	TreeItem* geo = new TreeItem(geoData, _rootItem);
+	//_lists.push_back(geo);
+	_rootItem->appendChild(geo);
+	return geo;
+}
+
+TreeItem* ConditionModel::getCondParent(TreeItem* parent, FEMCondition::CondType type)
+{
+	QString condType("");
+	if (type == FEMCondition::INITIAL_CONDITION) condType = "Initial Conditions";
+	else if (type == FEMCondition::BOUNDARY_CONDITION) condType = "Boundary Conditions";
+	else if (type == FEMCondition::SOURCE_TERM)	condType = "Source Terms";
+	int nLists = parent->childCount();
+	for (int i=0; i<nLists; i++)
+	{
+		if (parent->child(i)->data(0).toString().compare(condType) == 0)
+			return parent->child(i);
+	}
+
+	QList<QVariant> condData;
+	condData << condType << "";
+	TreeItem* cond = new TreeItem(condData, parent);
+	parent->appendChild(cond);
+	return cond;
 }
