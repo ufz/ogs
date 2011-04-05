@@ -137,7 +137,7 @@ IF (Shapelib_FOUND)
 	SET( ${SOURCES} SHPImportDialog.cpp)
 	SET( ${MOC_HEADERS} SHPImportDialog.h)
 	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
-ENDIF () # Shapelib_FOUND
+ENDIF () # Shapelib_FOUND)
 IF (libtiff_FOUND AND libgeotiff_FOUND)
 	INCLUDE_DIRECTORIES( ${libtiff_INCLUDE_DIR}	${libgeotiff_INCLUDE_DIR} )
 ENDIF () # libtiff_FOUND AND libgeotiff_FOUND

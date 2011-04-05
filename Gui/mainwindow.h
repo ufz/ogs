@@ -61,7 +61,7 @@ protected slots:
 	void importGoCad();
 	void importRaster();
 	void importRasterAsPoly();
-#ifdef shapelib_FOUND
+#ifdef Shapelib_FOUND
 	void importShape();
 #endif
 	void importPetrel();
