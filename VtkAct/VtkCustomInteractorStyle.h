@@ -31,9 +31,16 @@ public:
 
 	/// @biref Handles key press events.
 	virtual void OnChar();
+
+	virtual void OnKeyDown();
+
+	virtual void OnKeyUp();
 	
-	/// @brief Handles left mouse button events.
+	/// @brief Handles left mouse button events (picking).
 	virtual void OnLeftButtonDown();
+
+	/// @brief Handles middle mouse button events (rotation point picking).
+	virtual void OnRightButtonDown();
 
 public slots:
 	void highlightActor(vtkProp3D* prop);
@@ -58,6 +65,11 @@ protected:
 
 private:
 	bool _highlightActor;
+	bool _alternateMouseActions;
+
+signals:
+	void requestViewUpdate();
+	void cursorChanged(Qt::CursorShape);
 
 };
 

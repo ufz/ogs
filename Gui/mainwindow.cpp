@@ -197,6 +197,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 			SIGNAL(actorSelected(vtkProp3D*)),
 			(QObject*) (visualizationWidget->interactorStyle()),
 			SLOT(highlightActor(vtkProp3D*)));
+	connect((QObject*) (visualizationWidget->interactorStyle()),
+			SIGNAL(requestViewUpdate()),
+			visualizationWidget, SLOT(updateView()));
 
 	// Propagates selected vtk object in the pipeline to the pick interactor
 	connect(vtkVisTabWidget->vtkVisPipelineView,
