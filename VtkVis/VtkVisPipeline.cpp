@@ -13,6 +13,7 @@
 #include "MshModel.h"
 #include "MshItem.h"
 #include "GeoTreeModel.h"
+#include "ConditionModel.h"
 #include "StationTreeModel.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkMeshSource.h"
@@ -260,6 +261,11 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
 	addPipelineItem(model->vtkSource(name));
 }
 
+void VtkVisPipeline::addPipelineItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type)
+{
+	addPipelineItem(model->vtkSource(name, type));
+}
+
 void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
 {
 	addPipelineItem(static_cast<MshItem*>(model->getItem(idx))->vtkSource());
@@ -342,6 +348,19 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 }
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
+{
+	for (int i = 0; i < _rootItem->childCount(); i++)
+	{
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
+		if (item->algorithm() == model->vtkSource(name, type))
+		{
+			removePipelineItem(index(i, 0));
+			return;
+		}
+	}
+}
+
+void VtkVisPipeline::removeSourceItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{

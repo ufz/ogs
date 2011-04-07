@@ -9,6 +9,11 @@
 #include <QTreeView>
 #include <QContextMenuEvent>
 
+#include "FEMCondition.h"
+
+class ConditionModel;
+
+
 /**
  * \brief A view for FEM-Conditions (Initial- & Boundary Conditions / Source Terms) with a number of additional
  * information such as Process Type, Distribution, etc.
@@ -36,11 +41,11 @@ private:
 private slots:
 	void on_Clicked(QModelIndex idx);
 	void removeCondition();
-	void removeAllConditions();
+	//void removeAllConditions();
 
 signals:
 	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-	void requestConditionRemoval(const QModelIndex&);
+	void conditionsRemoved(QString, FEMCondition::CondType);
 
 };
 

@@ -7,6 +7,7 @@
 
 #include "ConditionView.h"
 #include "ConditionModel.h"
+#include "CondObjectListItem.h"
 #include "CondItem.h"
 
 
@@ -38,18 +39,26 @@ void ConditionView::contextMenuEvent( QContextMenuEvent* event )
 	Q_UNUSED(event);
 	//	QModelIndex index = this->selectionModel()->currentIndex();
 	//	CondItem* item = static_cast<CondItem*>(index.internalPointer());
-	QMenu menu;
-	QAction* removeAction    = menu.addAction("Remove");
-	connect(removeAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
-	menu.exec(event->globalPos());
+	
+	CondObjectListItem* item = dynamic_cast<CondObjectListItem*>(static_cast<ConditionModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
+	if (item)
+	{
+		QMenu menu;
+		QAction* removeAction    = menu.addAction("Remove");
+		connect(removeAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
+		menu.exec(event->globalPos());
+	}
 
 }
 
 void ConditionView::removeCondition()
 {
-	emit requestConditionRemoval(this->selectionModel()->currentIndex());
+	CondObjectListItem* item = dynamic_cast<CondObjectListItem*>(static_cast<ConditionModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
+	QString geo_name = item->parentItem()->data(0).toString();
+	FEMCondition::CondType type = item->getType();
+	emit conditionsRemoved(geo_name, type);
 }
-
+/*
 void ConditionView::removeAllConditions()
 {
 	ConditionModel* model = static_cast<ConditionModel*>(this->model());
@@ -62,4 +71,4 @@ void ConditionView::removeAllConditions()
 			emit requestConditionRemoval(model->index(i, 0, parentIndex));
 	}
 }
-
+*/

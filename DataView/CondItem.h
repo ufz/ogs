@@ -25,13 +25,11 @@ public:
 		//_vtkSource = VtkPointsSource::New();
 	};
 
-	~CondItem()	{ /*_vtkSource->Delete();*/	};
+	~CondItem()	{};
 
 	const FEMCondition* getItem() { return _item; };
 
-	/// Returns the VTK object.
-	//VtkPointsSource* vtkSource() const { return _vtkSource; };	
-
+	const GEOLIB::GeoObject* getGeoObject() { return this->getGeoObject(); };
 
 private:
 	const FEMCondition* _item;
