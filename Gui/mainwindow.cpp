@@ -1003,8 +1003,8 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 
 void MainWindow::showVisalizationPrefsDialog()
 {
+	// Deletes itself on close
 	VisPrefsDialog* dlg = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 }
 
