@@ -8,6 +8,7 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
+#include "Configure.h"
 #include "FileFinder.h"
 #include "ProjectData.h"
 
@@ -61,7 +62,7 @@ protected slots:
 	void importGoCad();
 	void importRaster();
 	void importRasterAsPoly();
-#ifdef shapelib_FOUND
+#ifdef Shapelib_FOUND
 	void importShape();
 #endif
 	void importPetrel();
