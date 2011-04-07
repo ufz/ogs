@@ -92,20 +92,20 @@ Problem *aproblem = NULL;
 using namespace FileIO;
 
 MainWindow::MainWindow(QWidget *parent /* = 0*/)
-: QMainWindow(parent), _db (NULL)
+: QMainWindow(parent), _project(), _db (NULL)
 {
     setupUi(this);
 
 	// Setup various models
 	_geoModels = new GEOModels();
-	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
-
-	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
-
+	_project.setGEOObjects(_geoModels);
 	_meshModels = new MshModel(_project);
-	mshTabWidget->treeView->setModel(_meshModels);
-
 	_conditionModel = new ConditionModel(_project);
+
+	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
+	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
+	mshTabWidget->treeView->setModel(_meshModels);
+	conditionTabWidget->treeView->setModel(_conditionModel);
 
 	// vtk visualization pipeline
 #ifdef OGS_USE_OPENSG
@@ -159,15 +159,19 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 
 	// Setup connections for condition model to GUI
-	conditionTabWidget->treeView->setModel(_conditionModel);
-	connect(conditionTabWidget->treeView, SIGNAL(requestConditionRemoval(const QModelIndex&)),
-			_conditionModel, SLOT(removeCondition(const QModelIndex&)));
+	connect(conditionTabWidget->treeView, SIGNAL(conditionsRemoved(QString, FEMCondition::CondType)),
+			_conditionModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 			_vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 			_vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)));
+
+	connect(_conditionModel, SIGNAL(conditionAdded(ConditionModel*, std::string, FEMCondition::CondType)),
+			_vtkVisPipeline, SLOT(addPipelineItem(ConditionModel*, std::string, FEMCondition::CondType)));
+	connect(_conditionModel, SIGNAL(conditionsRemoved(ConditionModel*, std::string, FEMCondition::CondType)),
+			_vtkVisPipeline, SLOT(removeSourceItem(ConditionModel*, std::string, FEMCondition::CondType)));
 
 	connect(_geoModels, SIGNAL(stationVectorAdded(StationTreeModel*, std::string)),
 			_vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel*, std::string)));
@@ -325,7 +329,7 @@ MainWindow::~MainWindow()
 	delete _vtkVisPipeline;
 	delete _meshModels;
 	delete _conditionModel;
-	delete _geoModels;
+	//delete _geoModels;
 
 #ifdef OGS_USE_VRPN
 	delete _trackingSettingsWidget;
@@ -434,7 +438,7 @@ void MainWindow::save()
 
 		if (fi.suffix().toLower() == "gsp") {
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-			XMLInterface xml(_geoModels, schemaName);
+			XMLInterface xml(&_project, schemaName);
 			xml.writeProjectFile(fileName);
 		/*
 		} else if (fi.suffix().toLower() == "gml") {
@@ -498,7 +502,7 @@ void MainWindow::loadFile(const QString &fileName)
 		// 		GEOCalcPointMinMaxCoordinates();
 	} else if (fi.suffix().toLower() == "gsp") {
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-		XMLInterface xml(_geoModels, schemaName);
+		XMLInterface xml(&_project, schemaName);
 		xml.readProjectFile(fileName);
 	} else if (fi.suffix().toLower() == "gml") {
 #ifndef NDEBUG
@@ -506,7 +510,7 @@ void MainWindow::loadFile(const QString &fileName)
 		myTimer0.start();
 #endif
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-		XMLInterface xml(_geoModels, schemaName);
+		XMLInterface xml(&_project, schemaName);
 		xml.readGLIFile(fileName);
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
@@ -515,7 +519,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys observation station files (incl. boreholes)
 	else if (fi.suffix().toLower() == "stn") {
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-		XMLInterface xml(_geoModels, schemaName);
+		XMLInterface xml(&_project, schemaName);
 		xml.readSTNFile(fileName);
 	}
 	// OpenGeoSys mesh files
@@ -841,11 +845,14 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 	if (!fileName.isEmpty())
 	{
 		QFileInfo fi(fileName);
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+
 		std::vector<FEMCondition*> conditions;
 
 		if (fi.suffix().toLower() == "cnd") {
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-			XMLInterface xml(_geoModels, schemaName);
+			XMLInterface xml(&_project, schemaName);
 			xml.readFEMCondFile(conditions, fileName, QString::fromStdString(geoName));
 		}
 		else if (fi.suffix().toLower() == "bc")
@@ -887,14 +894,14 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-	XMLInterface xml(_geoModels, schemaName);
+	XMLInterface xml(&_project, schemaName);
 	xml.writeGLIFile(fileName, gliName);
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-	XMLInterface xml(_geoModels, schemaName);
+	XMLInterface xml(&_project, schemaName);
 	xml.writeSTNFile(fileName, listName);
 }
 
