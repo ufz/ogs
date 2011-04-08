@@ -37,8 +37,6 @@ void ConditionView::selectionChanged( const QItemSelection &selected, const QIte
 void ConditionView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_UNUSED(event);
-	//	QModelIndex index = this->selectionModel()->currentIndex();
-	//	CondItem* item = static_cast<CondItem*>(index.internalPointer());
 	
 	CondObjectListItem* item = dynamic_cast<CondObjectListItem*>(static_cast<ConditionModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
 	if (item)

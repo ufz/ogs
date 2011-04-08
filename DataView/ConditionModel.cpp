@@ -15,6 +15,7 @@
 #include <vtkPolyDataAlgorithm.h>
 #include <QFileInfo>
 
+
 ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 : TreeModel(parent), _project(project)
 {
@@ -34,7 +35,6 @@ int ConditionModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ )
 
 	return 2;
 }
-
 
 void ConditionModel::addConditionItem(FEMCondition* c)
 {
@@ -76,7 +76,6 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		std::cout << "Error in ConditionModel::addConditionItem() - Parent object not found..." << std::endl;
 }
 
-
 void ConditionModel::addConditions(std::vector<FEMCondition*> &conditions)
 {
 	for (size_t i=0; i<conditions.size(); i++)
@@ -115,6 +114,7 @@ bool ConditionModel::removeConditionItem(const QModelIndex &idx)
 	return false;
 }
 */
+
 void ConditionModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type)
 {
 	TreeItem* geoParent = this->getGEOParent(geometry_name);

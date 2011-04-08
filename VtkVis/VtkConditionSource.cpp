@@ -88,7 +88,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 	for (size_t i=0; i<nPoints; i++)
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
-		vtkIdType pid = newPoints->InsertNextPoint(coords);
+		newPoints->InsertNextPoint(coords);
 	}
 
 	int nIdx = static_cast<int>(_pnt_idx->size());

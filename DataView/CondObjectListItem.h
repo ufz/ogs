@@ -13,7 +13,12 @@
 #include "VtkConditionSource.h"
 #include <QModelIndex>
 
-
+/**
+ * \brief The CondObjectListItem is the TreeItem that contains the subtree for either initial conditions, 
+ * boundary conditions source terms. This item also contains the vtk source-item for visualisation of this
+ * information and the indices of the associated geometry-objects.
+ * \sa TreeItem
+ */
 class CondObjectListItem : public TreeItem
 {
 
@@ -36,6 +41,7 @@ public:
 		delete _surfacesIdx;
 	}
 
+	/// Adds the index of a geometry-object associated with a FEM condition (necessary for construction of VTK object).
 	void addIndex(GEOLIB::GEOTYPE type, size_t idx)
 	{
 		if (type==GEOLIB::POINT) _pointsIdx->push_back(idx);

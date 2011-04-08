@@ -12,28 +12,29 @@
 
 
 /**
- * \brief A TreeItem containing conditions of a FEM as well as the vtk object representing these conditions.
+ * \brief A TreeItem containing a condition of a FEM (BC, IC or ST).
  * \sa TreeItem
  */
 class CondItem : public TreeItem
 {
 
 public:
-	/// Constructor, automatically generates VTK object
-	CondItem(const QList<QVariant> &data, TreeItem *parent, const FEMCondition* cond) : TreeItem(data, parent), _item(cond)
+	/// Constructor
+	CondItem(const QList<QVariant> &data, TreeItem *parent, const FEMCondition* cond) 
+		: TreeItem(data, parent), _item(cond)
 	{
-		//_vtkSource = VtkPointsSource::New();
 	};
 
 	~CondItem()	{};
 
+	/// Returns the FEM Condition associated with the item.
 	const FEMCondition* getItem() { return _item; };
 
+	/// Returns the geo-object on which the condition is placed.
 	const GEOLIB::GeoObject* getGeoObject() { return this->getGeoObject(); };
 
 private:
 	const FEMCondition* _item;
-	//VtkPointsSource* _vtkSource;
 };
 
 #endif //CONDITEM_H

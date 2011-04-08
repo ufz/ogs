@@ -27,7 +27,7 @@ public:
 
 	vtkTypeRevisionMacro(VtkConditionSource,vtkPolyDataAlgorithm);
 
-	/// Sets the geo data as a vector
+	/// Sets the geo data (points, polylines and surfaces) as well as vectors containing the indeces of relevant objects
 	void setData(const std::vector<GEOLIB::Point*>* points, const std::vector<GEOLIB::Polyline*>* lines, const std::vector<GEOLIB::Surface*>* surfaces,
 		         std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx);
 
