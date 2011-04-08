@@ -26,18 +26,10 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* wi
 
 	QValidator* validator = new QIntValidator(1, 100000, this);
 	superelevationLineEdit->setValidator(validator);
-
-	//setAttribute(Qt::WA_DeleteOnClose);
 }
 
 VisPrefsDialog::~VisPrefsDialog()
 {
-}
-
-void VisPrefsDialog::closeEvent(QCloseEvent *e)
-{
-	this->deleteLater();
-	QDialog::closeEvent(e);
 }
 
 void VisPrefsDialog::on_bgColorButton_colorPicked( QColor color )

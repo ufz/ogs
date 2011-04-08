@@ -298,6 +298,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect(stationTabWidget->treeView,
 			SIGNAL(propertiesDialogRequested(std::string)), this,
 			SLOT(showPropertiesDialog(std::string)));
+
+	_visPrefsDialog = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
+
 	//	std::cout << "size of Point: " << sizeof (GEOLIB::Point) << std::endl;
 	//	std::cout << "size of CGLPoint: " << sizeof (CGLPoint) << std::endl;
 	//
@@ -327,6 +330,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 MainWindow::~MainWindow()
 {
+	delete _visPrefsDialog;
 	delete _db;
 	delete _vtkVisPipeline;
 	delete _meshModels;
@@ -1013,9 +1017,7 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 
 void MainWindow::showVisalizationPrefsDialog()
 {
-	// Deletes itself on close
-	VisPrefsDialog* dlg = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
-	dlg->show();
+	_visPrefsDialog->show();
 }
 
 void MainWindow::FEMTestStart()

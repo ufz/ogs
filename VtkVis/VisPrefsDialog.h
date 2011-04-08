@@ -24,9 +24,6 @@ public:
 	VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget, QDialog* parent = NULL);
 	~VisPrefsDialog(void);
 
-protected:
-	void closeEvent(QCloseEvent * e);
-
 protected slots:
 	/// Sets the background colour.
 	void on_bgColorButton_colorPicked(QColor color);
