@@ -28,10 +28,6 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* wi
 	superelevationLineEdit->setValidator(validator);
 }
 
-VisPrefsDialog::~VisPrefsDialog()
-{
-}
-
 void VisPrefsDialog::on_bgColorButton_colorPicked( QColor color )
 {
 	QColor bgColor(color.red(), color.green(), color.blue());

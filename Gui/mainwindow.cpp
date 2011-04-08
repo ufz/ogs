@@ -330,11 +330,11 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 MainWindow::~MainWindow()
 {
-	delete _visPrefsDialog;
 	delete _db;
 	delete _vtkVisPipeline;
 	delete _meshModels;
 	delete _conditionModel;
+	//delete _visPrefsDialog;
 	//delete _geoModels;
 
 #ifdef OGS_USE_VRPN

@@ -22,7 +22,6 @@ class VisPrefsDialog : public QDialog, private Ui_VisPrefsDialog
 
 public:
 	VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget, QDialog* parent = NULL);
-	~VisPrefsDialog(void);
 
 protected slots:
 	/// Sets the background colour.

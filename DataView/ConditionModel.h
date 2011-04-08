@@ -52,7 +52,7 @@ private:
 	CondObjectListItem* getCondParent(TreeItem* parent, FEMCondition::CondType type);
 	TreeItem* getGEOParent(const QString &geoName, bool create_item = false);
 	const GEOLIB::GeoObject* getGEOObject(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
-	size_t ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
+	size_t getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
 
 	ProjectData& _project;
 
