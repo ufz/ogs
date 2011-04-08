@@ -91,7 +91,7 @@ Problem *aproblem = NULL;
 using namespace FileIO;
 
 MainWindow::MainWindow(QWidget *parent /* = 0*/)
-: QMainWindow(parent), _project(), _db (NULL)
+: QMainWindow(parent), _db (NULL), _project()
 {
     setupUi(this);
 

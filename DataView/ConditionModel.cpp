@@ -67,7 +67,8 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		condItem->appendChild(pvInfo);
 		condItem->appendChild(disInfo);
 
-		condParent->addIndex(c->getGeoType(), getGEOIndex(c->getAssociatedGeometryName(), c->getGeoType(), c->getGeoName()));
+		int index = getGEOIndex(c->getAssociatedGeometryName(), c->getGeoType(), c->getGeoName());
+		if (index>=0) condParent->addIndex(c->getGeoType(), static_cast<size_t>(index));
 		reset();
 
 	}
@@ -137,7 +138,7 @@ const GEOLIB::GeoObject* ConditionModel::getGEOObject(const std::string &geo_nam
 	return NULL;
 }
 
-size_t ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const
+int ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const
 {
 	bool exists(false);
 	size_t idx(0);
@@ -146,7 +147,7 @@ size_t ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE 
 	else if (type==GEOLIB::SURFACE) exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name, idx);
 	
 	if (exists) return idx;
-	return NULL;
+	return -1;
 }
 
 TreeItem* ConditionModel::getGEOParent(const QString &geoName, bool create_item)

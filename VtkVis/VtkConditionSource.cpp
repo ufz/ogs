@@ -25,8 +25,8 @@ VtkConditionSource::VtkConditionSource()
 {
 	this->SetNumberOfInputPorts(0);
 
-	//const GEOLIB::Color* c = GEOLIB::getRandomColor();
-	//GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
 }
 
 void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points, const std::vector<GEOLIB::Polyline*>* lines, const std::vector<GEOLIB::Surface*>* surfaces,
@@ -89,16 +89,11 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
 		vtkIdType pid = newPoints->InsertNextPoint(coords);
-		newVerts->InsertNextCell(1, &pid);
 	}
 
 	int nIdx = static_cast<int>(_pnt_idx->size());
 	for (int i=0; i<nIdx; i++)
 	{
-		//size_t idx = (*_pnt_idx)[i];
-		//double coords[3] = {(*(*_points)[idx])[0], (*(*_points)[idx])[1], (*(*_points)[idx])[2]};
-		//vtkIdType pid = newPoints->InsertNextPoint(coords);
-		//newVerts->InsertNextCell(1, &pid);
 		vtkIdType id = static_cast<int>((*_pnt_idx)[i]);
 		newVerts->InsertNextCell(1, &id);
 	}
@@ -109,23 +104,9 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		{
 			size_t idx = (*_ply_idx)[j];
 			const int nPoints = (*_polylines)[idx]->getNumberOfPoints();
-			/*
+			newLines->InsertNextCell(nPoints);;
 			for (int i = 0; i < nPoints; i++)
-			{
-				const GEOLIB::Point* point = (*(*_polylines)[idx])[i];
-				const double* coords = point->getData();
-				newPoints->InsertNextPoint(coords);
-			}
-			*/
-			// Generate lines
-			newLines->InsertNextCell(nPoints);
-			//plyIDs->InsertNextValue(j);
-			for (int i = 0; i < nPoints; i++)
-			{
-				int p = (*(*_polylines)[idx]).getPointID(i);
 				newLines->InsertCellPoint((*(*_polylines)[idx]).getPointID(i));
-			}
-
 		}
 	}
 
@@ -133,9 +114,6 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 	{
 		for (size_t k=0; k<_sfc_idx->size(); k++)
 		{
-
-			// benötigte punkte für polys einfugen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 			size_t idx = (*_sfc_idx)[k];
 			
 			const size_t nTriangles = (*_surfaces)[idx]->getNTriangles();
