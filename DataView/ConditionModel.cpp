@@ -67,8 +67,9 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		condItem->appendChild(pvInfo);
 		condItem->appendChild(disInfo);
 
-		int index = getGEOIndex(c->getAssociatedGeometryName(), c->getGeoType(), c->getGeoName());
-		if (index>=0) condParent->addIndex(c->getGeoType(), static_cast<size_t>(index));
+		GEOLIB::GEOTYPE geo_type = c->getGeoType();
+		int index = (geo_type != GEOLIB::GEODOMAIN) ? getGEOIndex(c->getAssociatedGeometryName(), geo_type, c->getGeoName()) : 0;
+		if (index>=0) condParent->addIndex(geo_type, static_cast<size_t>(index));
 		reset();
 
 	}
@@ -80,8 +81,9 @@ void ConditionModel::addConditions(std::vector<FEMCondition*> &conditions)
 {
 	for (size_t i=0; i<conditions.size(); i++)
 	{
+		bool is_domain = (conditions[i]->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
 		const GEOLIB::GeoObject* object = this->getGEOObject(conditions[i]->getAssociatedGeometryName(), conditions[i]->getGeoType(), conditions[i]->getGeoName());
-		if (object)
+		if (object || is_domain)
 		{
 			conditions[i]->setGeoObj(object);
 			_project.addCondition(conditions[i]);
