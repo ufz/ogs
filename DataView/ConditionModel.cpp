@@ -69,7 +69,7 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		else
 		{
 			size_t nVals = dis_value.size()/2;
-			disData << nVals;
+			disData << static_cast<int>(nVals);
 			disInfo = new TreeItem(disData, condItem);
 			for (size_t i=0; i<nVals; i++)
 			{
