@@ -4,7 +4,7 @@
  */
 
 #include <QSettings>
-#include <QIntValidator>
+#include <QDoubleValidator>
 #include <QLineEdit>
 #include "VisPrefsDialog.h"
 
@@ -24,7 +24,7 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* wi
 	QColor color = _vtkVisPipeline->getBGColor();
 	bgColorButton->setColor(_vtkVisPipeline->getBGColor());
 
-	QValidator* validator = new QIntValidator(1, 100000, this);
+	QValidator* validator = new QDoubleValidator(0, 100000, 2, this);
 	superelevationLineEdit->setValidator(validator);
 }
 

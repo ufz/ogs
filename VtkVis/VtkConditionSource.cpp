@@ -138,6 +138,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		}
 	}
 
+	// draw a bounding box in case of of the conditions is "domain"
 	if (*_on_domain)
 	{
 		GEOLIB::AABB bounding_box (_points);
@@ -146,20 +147,17 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		box.push_back(bounding_box.getMaxPoint());
 
 		vtkIdType nPoints = newPoints->GetNumberOfPoints();
-		for (size_t z=0; z<2; z++) 
-			for (size_t y=0; y<2; y++)
-				for (size_t x=0; x<2; x++) {
-					double coords[3] = {box[x][0], box[y][1], box[z][2]};
-					newPoints->InsertNextPoint(coords);
-				}
 
+		for (size_t i=0; i<8; i++)
+		{
+			double coords[3] = {box[i%2][0], box[(i>>1)%2][1], box[i>>2][2]};
+			newPoints->InsertNextPoint(coords);
+		}
 		
 		for (size_t i=0; i<4; i++)
 		{
 			vtkIdType a[2] = {nPoints+i, nPoints+i+4};
 			vtkIdType b[2] = {nPoints+(i*2), nPoints+(i*2+1)};
-			int x=(static_cast<int>(i/2)*4+(i%2));
-			int y=(static_cast<int>(i/2)*4+(i%2)+2);
 			vtkIdType c[2] = {nPoints+(static_cast<int>(i/2)*4+(i%2)), nPoints+(static_cast<int>(i/2)*4+(i%2)+2)};
 			newLines->InsertNextCell(2, &a[0]);
 			newLines->InsertNextCell(2, &b[0]);

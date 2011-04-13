@@ -60,8 +60,26 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		QList<QVariant> disData;
 		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
 		std::vector<double> dis_value = c->getDisValue();
-		for (size_t i=0; i<dis_value.size(); i++) disData << dis_value[i];
-		TreeItem* disInfo = new TreeItem(disData, condItem);
+		TreeItem* disInfo;
+		if (c->getProcessDistributionType() != FiniteElement::LINEAR)
+		{
+			for (size_t i=0; i<dis_value.size(); i++) disData << dis_value[i];
+			disInfo = new TreeItem(disData, condItem);
+		}
+		else
+		{
+			size_t nVals = dis_value.size()/2;
+			disData << nVals;
+			disInfo = new TreeItem(disData, condItem);
+			for (size_t i=0; i<nVals; i++)
+			{
+				QList<QVariant> linData;
+				linData << dis_value[2*i] << dis_value[2*i+1];
+				TreeItem* linInfo = new TreeItem(linData, disInfo);
+				disInfo->appendChild(linInfo);
+			}
+		}
+		
 
 		condItem->appendChild(pcsInfo);
 		condItem->appendChild(pvInfo);
