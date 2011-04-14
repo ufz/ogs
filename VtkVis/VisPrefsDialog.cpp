@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QDoubleValidator>
 #include <QLineEdit>
+#include <QVariant>
 #include "VisPrefsDialog.h"
 
 #include "VtkVisPipeline.h"
@@ -26,7 +27,8 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* wi
 
 	QValidator* validator = new QDoubleValidator(0, 100000, 2, this);
 	superelevationLineEdit->setValidator(validator);
-	superelevationLineEdit->setText(settings.value("globalSuperelevation", 1.0));
+	QSettings settings("UFZ, OpenGeoSys-5");
+	superelevationLineEdit->setText(settings.value("globalSuperelevation", 1.0).toString());
 }
 
 void VisPrefsDialog::on_bgColorButton_colorPicked( QColor color )
@@ -53,7 +55,7 @@ void VisPrefsDialog::on_lightBelowBox_clicked()
 
 void VisPrefsDialog::on_superelevationPushButton_pressed()
 {
-	int factor = superelevationLineEdit->text().toInt();
+	double factor = superelevationLineEdit->text().toDouble();
 	_vtkVisPipeline->setGlobalSuperelevation(factor);
 
 	QSettings settings("UFZ, OpenGeoSys-5");
