@@ -45,7 +45,6 @@ void MshModel::addMeshObject(GridAdapter* mesh, std::string &name)
 	MshItem* newMesh = new MshItem(meshData, _rootItem, mesh);
 	if (newMesh->vtkSource())
 		newMesh->vtkSource()->SetName(fi.fileName());
-	std::cout << "name: " << fi.fileName().toStdString() << std::endl;
 	_rootItem->appendChild(newMesh);
 	reset();
 
