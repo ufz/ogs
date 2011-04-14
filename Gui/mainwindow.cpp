@@ -510,6 +510,8 @@ void MainWindow::loadFile(const QString &fileName)
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 		XMLInterface xml(&_project, schemaName);
 		xml.readProjectFile(fileName);
+		std::cout << "Adding missing meshes to GUI..." << std::endl;
+		_meshModels->updateModel();
 	} else if (fi.suffix().toLower() == "gml") {
 #ifndef NDEBUG
 		QTime myTimer0;
@@ -531,7 +533,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh") {
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh)
 			_meshModels->addMesh(msh, name);
 		else

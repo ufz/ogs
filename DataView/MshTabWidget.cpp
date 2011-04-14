@@ -51,7 +51,7 @@ void MshTabWidget::addMeshAction()
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh) static_cast<MshModel*>(this->treeView->model())->addMesh(msh, name);
 	}
 }
