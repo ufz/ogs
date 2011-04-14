@@ -11,9 +11,16 @@
 #include "ProjectData.h"
 
 class FEMCondition;
+class CondObjectListItem;
+class vtkPolyDataAlgorithm;
+
+namespace GEOLIB {
+	class GeoObject;
+	class GeoType;
+}
 
 /**
- * \brief The ConditionModel handels FEM conditions such as ICs, BCs and STs on geometric objects. 
+ * \brief The ConditionModel handels FEM conditions such as ICs, BCs and STs on geometric objects.
  */
 
 class ConditionModel : public TreeModel
@@ -25,45 +32,33 @@ public:
 	~ConditionModel();
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
-	//QVariant data(const QModelIndex& index, int role) const;
-	//QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-
-	//bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
+	vtkPolyDataAlgorithm* vtkSource(const std::string &name, FEMCondition::CondType type);
 
 public slots:
-	/// Adds new FEM condition
-	void addCondition(FEMCondition* conditions);
-
 	/// Adds new FEM conditions
 	void addConditions(std::vector<FEMCondition*> &conditions);
 
-	/// Returns the FEM condition set on a GeoObject with the given name.
-	//const FEMCondition* getCondition(const string &name) const;
-
-	/// Removes the FEM condition set on a GeoObject with the given name.
-	//bool removeCondition(const string &name);
-
-	/// Removes the FEM condition with the given index.
-	bool removeCondition(const QModelIndex &idx);
-
 	/// Removes conditions associated with the given geometry and type.
-	void removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type);
-	/// Reloads all items.
-	//void updateData();
+	void removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
 
 private:
-	TreeItem* getCondParent(TreeItem* parent, FEMCondition::CondType type);
-	TreeItem* getGEOParent(const QString &geoName);
-	//void setData(std::vector<GEOLIB::GeoObject*> *points, TreeItem* parent);
+	/// Adds a new FEM condition to the condition tree model
+	void addConditionItem(FEMCondition* conditions);
+
+	/// Removes the FEM condition with the given index.
+	//bool removeConditionItem(const QModelIndex &idx);
+
+	CondObjectListItem* createCondParent(TreeItem* parent, FEMCondition::CondType type);
+	CondObjectListItem* getCondParent(TreeItem* parent, FEMCondition::CondType type);
+	TreeItem* getGEOParent(const QString &geoName, bool create_item = false);
+	const GEOLIB::GeoObject* getGEOObject(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
+	size_t getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
 
 	ProjectData& _project;
-	TreeItem* _bcParent;
-	TreeItem* _icParent;
-	TreeItem* _stParent;
 
 signals:
-	void condAdded(ConditionModel*, const QModelIndex&);
-	void condRemoved(ConditionModel*, const QModelIndex&);
+	void conditionAdded(ConditionModel*, const std::string &name, FEMCondition::CondType);
+	void conditionsRemoved(ConditionModel*, const std::string &name, FEMCondition::CondType);
 };
 
 #endif // CONDITIONMODEL_H

@@ -5,10 +5,14 @@
 
 // ** INCLUDES **
 #include "ConditionModel.h"
+#include "CondObjectListItem.h"
 #include "CondItem.h"
+#include "GeoObject.h"
 #include "GEOObjects.h"
+#include "GeoType.h"
 #include "FEMCondition.h"
 
+#include <vtkPolyDataAlgorithm.h>
 #include <QFileInfo>
 
 ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
@@ -16,24 +20,8 @@ ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 {
 	QList<QVariant> rootData;
 	delete _rootItem;
-	rootData << "Name" << "Value";;
+	rootData << "Name" << "Value" << "" << "" << "";
 	_rootItem = new TreeItem(rootData, NULL);
-/*
-	QList<QVariant> bcData;
-	bcData << "Boundary Conditions" << "";
-	_bcParent = new TreeItem(bcData, _rootItem);
-	_rootItem->appendChild(_bcParent);
-
-	QList<QVariant> icData;
-	icData << "Initial Conditions" << "";
-	_icParent = new TreeItem(icData, _rootItem);
-	_rootItem->appendChild(_icParent);
-
-	QList<QVariant> stData;
-	stData << "Source Terms" << "";
-	_stParent = new TreeItem(stData, _rootItem);
-	_rootItem->appendChild(_stParent);
-*/
 }
 
 ConditionModel::~ConditionModel()
@@ -48,55 +36,70 @@ int ConditionModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ )
 }
 
 
-void ConditionModel::addCondition(FEMCondition* c)
+void ConditionModel::addConditionItem(FEMCondition* c)
 {
-	TreeItem* geoParent = getGEOParent(QString::fromStdString(c->getAssociatedGeometryName()));
-	std::string g = c->getAssociatedGeometryName();
-	TreeItem* condParent = getCondParent(geoParent, c->getCondType());
-	std::string cd = condParent->data(0).toString().toStdString();
+	TreeItem* geoParent = this->getGEOParent(QString::fromStdString(c->getAssociatedGeometryName()), true);
+	CondObjectListItem* condParent = this->getCondParent(geoParent, c->getCondType());
+	if (condParent==NULL) condParent = this->createCondParent(geoParent, c->getCondType());
 
-	QList<QVariant> condData;
-	condData << QString::fromStdString(c->getGeoName()) << QString::fromStdString(c->getGeoTypeAsString());
-	CondItem* condItem = new CondItem(condData, condParent, c);
-	condParent->appendChild(condItem);
-	// add process information
-	QList<QVariant> pcsData;
-	pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
-	TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
-	// add information on primary variable
-	QList<QVariant> pvData;
-	pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
-	TreeItem* pvInfo = new TreeItem(pvData, condItem);
-	// add distribution information
-	QList<QVariant> disData;
-	disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
-	TreeItem* disInfo = new TreeItem(disData, condItem);
+	if (condParent)
+	{
+		QList<QVariant> condData;
+		condData << QString::fromStdString(c->getGeoName()) << QString::fromStdString(c->getGeoTypeAsString());
+		CondItem* condItem = new CondItem(condData, condParent, c);
+		condParent->appendChild(condItem);
+		// add process information
+		QList<QVariant> pcsData;
+		pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
+		TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
+		// add information on primary variable
+		QList<QVariant> pvData;
+		pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
+		TreeItem* pvInfo = new TreeItem(pvData, condItem);
+		// add distribution information
+		QList<QVariant> disData;
+		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
+		std::vector<double> dis_value = c->getDisValue();
+		for (size_t i=0; i<dis_value.size(); i++) disData << dis_value[i];
+		TreeItem* disInfo = new TreeItem(disData, condItem);
 
-	condItem->appendChild(pcsInfo);
-	condItem->appendChild(pvInfo);
-	condItem->appendChild(disInfo);
-	//if (stListItem->vtkSource())
-	//	stListItem->vtkSource()->SetName(fi.fileName());
-	reset();
+		condItem->appendChild(pcsInfo);
+		condItem->appendChild(pvInfo);
+		condItem->appendChild(disInfo);
 
-	emit condAdded(this, this->index(condParent->childCount()-1, 0, this->index(condParent->row(), 0, QModelIndex())));
+		condParent->addIndex(c->getGeoType(), getGEOIndex(c->getAssociatedGeometryName(), c->getGeoType(), c->getGeoName()));
+		reset();
+
+	}
+	else
+		std::cout << "Error in ConditionModel::addConditionItem() - Parent object not found..." << std::endl;
 }
 
 
 void ConditionModel::addConditions(std::vector<FEMCondition*> &conditions)
 {
 	for (size_t i=0; i<conditions.size(); i++)
-		addCondition(conditions[i]);
+	{
+		const GEOLIB::GeoObject* object = this->getGEOObject(conditions[i]->getAssociatedGeometryName(), conditions[i]->getGeoType(), conditions[i]->getGeoName());
+		if (object)
+		{
+			conditions[i]->setGeoObj(object);
+			_project.addCondition(conditions[i]);
+			this->addConditionItem(conditions[i]);
+		}
+		else
+			std::cout << "Error in ConditionModel::addConditions() - Specified geometrical object " << conditions[i]->getGeoName() << " not found in associated geometry..." << std::endl;
+	}
 }
-
-bool ConditionModel::removeCondition(const QModelIndex &idx)
+/*
+bool ConditionModel::removeConditionItem(const QModelIndex &idx)
 {
 	if (idx.isValid())
 	{
 		CondItem* item = dynamic_cast<CondItem*>(this->getItem(idx));
 		if (item)
 		{
-			emit condRemoved(this, idx);
+			emit conditionRemoved(this, idx);
 			TreeItem* parent = item->parentItem();
 			if (parent->childCount() <=1)
 				this->removeFEMConditions(QString::fromStdString(item->getItem()->getAssociatedGeometryName()), item->getItem()->getCondType());
@@ -110,26 +113,43 @@ bool ConditionModel::removeCondition(const QModelIndex &idx)
 	std::cout << "ConditionModel::removeCondition() - Specified index does not exist." << std::endl;
 	return false;
 }
-
-void ConditionModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type = FEMCondition::UNSPECIFIED)
+*/
+void ConditionModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type)
 {
-	TreeItem* geoParent = getGEOParent(geometry_name);
+	TreeItem* geoParent = this->getGEOParent(geometry_name);
+	emit conditionsRemoved(this, geometry_name.toStdString(), type);
 
 	if ((type == FEMCondition::UNSPECIFIED) || (geoParent->childCount() <= 1)) //remove all conditions for the given geometry
+		removeRows(geoParent->row(), 1, QModelIndex());
+	else
 	{
-		_rootItem->removeChildren(geoParent->row(),1);
-		return;
+		TreeItem* condParent = getCondParent(geoParent, type);
+		removeRows(condParent->row(), 1, index(geoParent->row(), 0));
 	}
-
-	// remove only certain kind of conditions
-	TreeItem* condParent = getCondParent(geoParent, type);
-	geoParent->removeChildren(condParent->row(), 1);
-
+	_project.removeConditions(geometry_name.toStdString(), type);
 }
 
+const GEOLIB::GeoObject* ConditionModel::getGEOObject(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const
+{
+	if (type==GEOLIB::POINT) return this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementByName(obj_name);
+	else if (type==GEOLIB::POLYLINE) return this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementByName(obj_name);
+	else if (type==GEOLIB::SURFACE) return this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementByName(obj_name);
+	return NULL;
+}
 
+size_t ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const
+{
+	bool exists(false);
+	size_t idx(0);
+	if (type==GEOLIB::POINT) exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(obj_name, idx);
+	else if (type==GEOLIB::POLYLINE) exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(obj_name, idx);
+	else if (type==GEOLIB::SURFACE) exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name, idx);
 
-TreeItem* ConditionModel::getGEOParent(const QString &geoName)
+	if (exists) return idx;
+	return NULL;
+}
+
+TreeItem* ConditionModel::getGEOParent(const QString &geoName, bool create_item)
 {
 	int nLists = _rootItem->childCount();
 	for (int i=0; i<nLists; i++)
@@ -138,30 +158,60 @@ TreeItem* ConditionModel::getGEOParent(const QString &geoName)
 			return _rootItem->child(i);
 	}
 
-	QList<QVariant> geoData;
-	geoData << QVariant(geoName) << "";
-	TreeItem* geo = new TreeItem(geoData, _rootItem);
-	//_lists.push_back(geo);
-	_rootItem->appendChild(geo);
-	return geo;
+	if (create_item)
+	{
+		QList<QVariant> geoData;
+		geoData << QVariant(geoName) << "";
+		TreeItem* geo = new TreeItem(geoData, _rootItem);
+		_rootItem->appendChild(geo);
+		return geo;
+	}
+	return NULL;
 }
 
-TreeItem* ConditionModel::getCondParent(TreeItem* parent, FEMCondition::CondType type)
+CondObjectListItem* ConditionModel::getCondParent(TreeItem* parent, FEMCondition::CondType type)
 {
-	QString condType("");
-	if (type == FEMCondition::INITIAL_CONDITION) condType = "Initial Conditions";
-	else if (type == FEMCondition::BOUNDARY_CONDITION) condType = "Boundary Conditions";
-	else if (type == FEMCondition::SOURCE_TERM)	condType = "Source Terms";
 	int nLists = parent->childCount();
 	for (int i=0; i<nLists; i++)
 	{
-		if (parent->child(i)->data(0).toString().compare(condType) == 0)
-			return parent->child(i);
+		if (dynamic_cast<CondObjectListItem*>(parent->child(i))->getType() == type)
+			return dynamic_cast<CondObjectListItem*>(parent->child(i));
 	}
+	return NULL;
+}
 
+CondObjectListItem* ConditionModel::createCondParent(TreeItem* parent, FEMCondition::CondType type)
+{
+	QString condType(QString::fromStdString(FEMCondition::condTypeToString(type)));
 	QList<QVariant> condData;
 	condData << condType << "";
-	TreeItem* cond = new TreeItem(condData, parent);
-	parent->appendChild(cond);
-	return cond;
+
+//	TreeItem* cond = new TreeItem(condData, parent);
+//	parent->appendChild(cond);
+//	return cond;
+
+	std::string geo_name = parent->data(0).toString().toStdString();
+	const std::vector<GEOLIB::Point*> *pnts = _project.getGEOObjects()->getPointVec(geo_name);
+	const std::vector<GEOLIB::Polyline*> *plys = _project.getGEOObjects()->getPolylineVec(geo_name);
+	const std::vector<GEOLIB::Surface*> *sfcs = _project.getGEOObjects()->getSurfaceVec(geo_name);
+
+	if (pnts)
+	{
+		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts, plys, sfcs);
+		parent->appendChild(cond);
+		emit conditionAdded(this, parent->data(0).toString().toStdString(), type);
+		return cond;
+	}
+	return NULL;
+}
+
+vtkPolyDataAlgorithm* ConditionModel::vtkSource(const std::string &name, FEMCondition::CondType type)
+{
+	TreeItem* geoParent = this->getGEOParent(QString::fromStdString(name));
+	if (geoParent)
+	{
+		CondObjectListItem* condParent = this->getCondParent(geoParent, type);
+		if (condParent) return condParent->vtkSource();
+	}
+	return NULL;
 }

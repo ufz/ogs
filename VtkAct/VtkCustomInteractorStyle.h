@@ -20,6 +20,9 @@ class vtkActor;
 /**
  * VtkCustomInteractorStyle implements highlighting of an active actor and
  * highlighting of picked cells inside a vtk object.
+ * Picking occurs when a vtk object was selected, the alternate mouse mode is
+ * active (hold spacebar) and the user left clicks. On right click the cameras
+ * focal point (center of rotation) is set to the picking position.
  */
 class VtkCustomInteractorStyle : public QObject, public vtkInteractorStyleTrackballCamera
 {
@@ -31,9 +34,18 @@ public:
 
 	/// @biref Handles key press events.
 	virtual void OnChar();
+
+	/// @biref Handles key down events.
+	virtual void OnKeyDown();
+
+	/// @biref Handles key up events.
+	virtual void OnKeyUp();
 	
-	/// @brief Handles left mouse button events.
+	/// @brief Handles left mouse button events (picking).
 	virtual void OnLeftButtonDown();
+
+	/// @brief Handles middle mouse button events (rotation point picking).
+	virtual void OnRightButtonDown();
 
 public slots:
 	void highlightActor(vtkProp3D* prop);
@@ -58,6 +70,15 @@ protected:
 
 private:
 	bool _highlightActor;
+	bool _alternateMouseActions;
+
+signals:
+	/// @brief Emitted when something was picked.
+	void requestViewUpdate();
+
+	/// @brief Emitted when the cursor shape was changed due to alternate
+	/// mouse action mode.
+	void cursorChanged(Qt::CursorShape);
 
 };
 

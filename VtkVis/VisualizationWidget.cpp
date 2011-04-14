@@ -36,6 +36,7 @@
 #include <QInputDialog>
 #include <QSettings>
 #include <QDir>
+#include <QCursor>
 
 #ifdef OGS_USE_VRPN
 #include "QSpaceNavigatorClient.h"
@@ -132,6 +133,10 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	markerWidget->InteractiveOff();
 
 	_isShowAllOnLoad = true;
+
+	// Set alternate cursor shapes
+	connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)),
+			this, SLOT(setCursorShape(Qt::CursorShape)));
 }
 
 VisualizationWidget::~VisualizationWidget()
@@ -279,4 +284,9 @@ void VisualizationWidget::screenshot(QString filename, int magnification)
 	writer->Write();
 
 	this->updateView();
+}
+
+void VisualizationWidget::setCursorShape(Qt::CursorShape shape)
+{
+	this->setCursor(QCursor(shape));
 }

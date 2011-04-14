@@ -62,6 +62,7 @@ set( MOC_HEADERS
 set( HEADERS
 	BaseItem.h
 	CondItem.h
+	CondObjectListItem.h
 	GeoObjectListItem.h
 	GeoTreeItem.h
 	ModelTreeItem.h

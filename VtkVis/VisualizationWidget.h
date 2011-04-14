@@ -59,6 +59,10 @@ public slots:
 	/// @brief Returns the vtk renderer
 	vtkRenderer* renderer() const { return _vtkRender; }
 
+	/// @brief Sets the widgets cursor shape.
+	/// @see http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum
+	void setCursorShape(Qt::CursorShape shape);
+
 protected slots:
 	/// @brief Toggles stereo rendering on / off.
 	void on_stereoToolButton_toggled(bool checked);
