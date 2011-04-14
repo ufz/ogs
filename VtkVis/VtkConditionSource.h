@@ -27,9 +27,9 @@ public:
 
 	vtkTypeRevisionMacro(VtkConditionSource,vtkPolyDataAlgorithm);
 
-	/// Sets the geo data as a vector
+	/// Sets the geo data (points, polylines and surfaces) as well as vectors containing the indeces of relevant objects
 	void setData(const std::vector<GEOLIB::Point*>* points, const std::vector<GEOLIB::Polyline*>* lines, const std::vector<GEOLIB::Surface*>* surfaces,
-		         std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx);
+		         std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx, bool* use_domain = false);
 
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -51,6 +51,7 @@ protected:
 	std::vector<size_t>* _pnt_idx;
 	std::vector<size_t>* _ply_idx;
 	std::vector<size_t>* _sfc_idx;
+	bool* _on_domain;
 
 private:
 

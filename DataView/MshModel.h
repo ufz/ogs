@@ -29,8 +29,6 @@ public:
 	/// Returns the number of columns used for the data list
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
-	static Mesh_Group::CFEMesh* loadMeshFromFile(std::string fileName);
-
 public slots:
 	/// Adds a new mesh
 	void addMesh(Mesh_Group::CFEMesh* mesh, std::string &name);
@@ -42,6 +40,8 @@ public slots:
 	bool removeMesh(const QModelIndex &idx);
 	/// Removes the mesh with the given name.
 	bool removeMesh(const std::string &name);
+	/// Updates the model based on the ProjectData-object
+	void updateModel();
 	/// Returns the VTK source item for the mesh with the given index.
 	VtkMeshSource* vtkSource(const QModelIndex &idx) const;
 	/// Returns the VTK source item for the mesh with the given name.
@@ -49,7 +49,7 @@ public slots:
 
 private:
 	/// Adds the mesh to the GUI-Mesh-Model und -View
-	void addMesh(GridAdapter* mesh, std::string &name);
+	void addMeshObject(GridAdapter* mesh, std::string &name);
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
 	//bool isUniqueMeshName(std::string &name);

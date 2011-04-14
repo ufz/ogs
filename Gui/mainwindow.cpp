@@ -91,7 +91,7 @@ Problem *aproblem = NULL;
 using namespace FileIO;
 
 MainWindow::MainWindow(QWidget *parent /* = 0*/)
-: QMainWindow(parent), _project(), _db (NULL)
+: QMainWindow(parent), _db (NULL), _project()
 {
     setupUi(this);
 
@@ -298,6 +298,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect(stationTabWidget->treeView,
 			SIGNAL(propertiesDialogRequested(std::string)), this,
 			SLOT(showPropertiesDialog(std::string)));
+
+	_visPrefsDialog = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
+
 	//	std::cout << "size of Point: " << sizeof (GEOLIB::Point) << std::endl;
 	//	std::cout << "size of CGLPoint: " << sizeof (CGLPoint) << std::endl;
 	//
@@ -331,6 +334,7 @@ MainWindow::~MainWindow()
 	delete _vtkVisPipeline;
 	delete _meshModels;
 	delete _conditionModel;
+	//delete _visPrefsDialog;
 	//delete _geoModels;
 
 #ifdef OGS_USE_VRPN
@@ -506,6 +510,8 @@ void MainWindow::loadFile(const QString &fileName)
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 		XMLInterface xml(&_project, schemaName);
 		xml.readProjectFile(fileName);
+		std::cout << "Adding missing meshes to GUI..." << std::endl;
+		_meshModels->updateModel();
 	} else if (fi.suffix().toLower() == "gml") {
 #ifndef NDEBUG
 		QTime myTimer0;
@@ -527,7 +533,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh") {
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh)
 			_meshModels->addMesh(msh, name);
 		else
@@ -1013,9 +1019,7 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 
 void MainWindow::showVisalizationPrefsDialog()
 {
-	// Deletes itself on close
-	VisPrefsDialog* dlg = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
-	dlg->show();
+	_visPrefsDialog->show();
 }
 
 void MainWindow::FEMTestStart()

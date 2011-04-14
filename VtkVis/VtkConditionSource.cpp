@@ -5,6 +5,7 @@
 
 // ** INCLUDES **
 #include "VtkConditionSource.h"
+#include "AxisAlignedBoundingBox.h"
 
 #include <vtkCellArray.h>
 #include <vtkInformation.h>
@@ -21,16 +22,16 @@ vtkStandardNewMacro(VtkConditionSource);
 vtkCxxRevisionMacro(VtkConditionSource, "$Revision$");
 
 VtkConditionSource::VtkConditionSource()
-: _points(NULL), _polylines(NULL), _surfaces(NULL)
+: _points(NULL), _polylines(NULL), _surfaces(NULL), _pnt_idx(NULL), _ply_idx(NULL), _sfc_idx(NULL), _on_domain(false)
 {
 	this->SetNumberOfInputPorts(0);
 
-	//const GEOLIB::Color* c = GEOLIB::getRandomColor();
-	//GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
 }
 
 void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points, const std::vector<GEOLIB::Polyline*>* lines, const std::vector<GEOLIB::Surface*>* surfaces,
-								 std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx)
+								 std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx, bool* use_domain)
 {
 	_points    = points;
 	_polylines = lines;
@@ -38,6 +39,7 @@ void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points, cons
 	_pnt_idx   = pnt_idx;
 	_ply_idx   = ply_idx;
 	_sfc_idx   = sfc_idx;
+	_on_domain = use_domain;
 }
 
 void VtkConditionSource::PrintSelf( ostream& os, vtkIndent indent )
@@ -88,17 +90,12 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 	for (size_t i=0; i<nPoints; i++)
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
-		vtkIdType pid = newPoints->InsertNextPoint(coords);
-		newVerts->InsertNextCell(1, &pid);
+		newPoints->InsertNextPoint(coords);
 	}
 
 	int nIdx = static_cast<int>(_pnt_idx->size());
 	for (int i=0; i<nIdx; i++)
 	{
-		//size_t idx = (*_pnt_idx)[i];
-		//double coords[3] = {(*(*_points)[idx])[0], (*(*_points)[idx])[1], (*(*_points)[idx])[2]};
-		//vtkIdType pid = newPoints->InsertNextPoint(coords);
-		//newVerts->InsertNextCell(1, &pid);
 		vtkIdType id = static_cast<int>((*_pnt_idx)[i]);
 		newVerts->InsertNextCell(1, &id);
 	}
@@ -109,23 +106,9 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		{
 			size_t idx = (*_ply_idx)[j];
 			const int nPoints = (*_polylines)[idx]->getNumberOfPoints();
-			/*
+			newLines->InsertNextCell(nPoints);;
 			for (int i = 0; i < nPoints; i++)
-			{
-				const GEOLIB::Point* point = (*(*_polylines)[idx])[i];
-				const double* coords = point->getData();
-				newPoints->InsertNextPoint(coords);
-			}
-			*/
-			// Generate lines
-			newLines->InsertNextCell(nPoints);
-			//plyIDs->InsertNextValue(j);
-			for (int i = 0; i < nPoints; i++)
-			{
-				int p = (*(*_polylines)[idx]).getPointID(i);
 				newLines->InsertCellPoint((*(*_polylines)[idx]).getPointID(i));
-			}
-
 		}
 	}
 
@@ -133,9 +116,6 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 	{
 		for (size_t k=0; k<_sfc_idx->size(); k++)
 		{
-
-			// benötigte punkte für polys einfugen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 			size_t idx = (*_sfc_idx)[k];
 			
 			const size_t nTriangles = (*_surfaces)[idx]->getNTriangles();
@@ -157,6 +137,34 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 			}
 		}
 	}
+
+	// draw a bounding box in case of of the conditions is "domain"
+	if (*_on_domain)
+	{
+		GEOLIB::AABB bounding_box (_points);
+		std::vector<GEOLIB::Point> box;
+		box.push_back(bounding_box.getMinPoint());
+		box.push_back(bounding_box.getMaxPoint());
+
+		vtkIdType nPoints = newPoints->GetNumberOfPoints();
+
+		for (size_t i=0; i<8; i++)
+		{
+			double coords[3] = {box[i%2][0], box[(i>>1)%2][1], box[i>>2][2]};
+			newPoints->InsertNextPoint(coords);
+		}
+		
+		for (size_t i=0; i<4; i++)
+		{
+			vtkIdType a[2] = {nPoints+i, nPoints+i+4};
+			vtkIdType b[2] = {nPoints+(i*2), nPoints+(i*2+1)};
+			vtkIdType c[2] = {nPoints+(static_cast<int>(i/2)*4+(i%2)), nPoints+(static_cast<int>(i/2)*4+(i%2)+2)};
+			newLines->InsertNextCell(2, &a[0]);
+			newLines->InsertNextCell(2, &b[0]);
+			newLines->InsertNextCell(2, &c[0]);
+		}
+	}
+
 
 	output->SetPoints(newPoints);
 	output->SetVerts(newVerts);

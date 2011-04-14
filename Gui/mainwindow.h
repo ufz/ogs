@@ -18,6 +18,7 @@ class StationTreeModel;
 class ConditionModel;
 class VtkVisPipeline;
 class DatabaseConnection;
+class VisPrefsDialog;
 
 #ifdef OGS_USE_VRPN
 	class TrackingSettingsWidget;
@@ -118,6 +119,7 @@ private:
 	#ifdef OGS_USE_VRPN
 		TrackingSettingsWidget* _trackingSettingsWidget;
 	#endif // OGS_USE_VRPN
+	VisPrefsDialog* _visPrefsDialog;
 
 signals:
 	void fileUsed( QString filename );

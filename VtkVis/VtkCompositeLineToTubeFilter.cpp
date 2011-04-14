@@ -53,7 +53,7 @@ void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value
 	VtkAlgorithmProperties::SetUserProperty(name, value);
 
 	if (name.compare("Radius") == 0)
-		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(value.toInt());
+		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(value.toDouble());
 	else if (name.compare("NumberOfSides") == 0)
 		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
 	else if (name.compare("Capping") == 0)

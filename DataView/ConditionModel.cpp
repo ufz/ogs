@@ -15,6 +15,7 @@
 #include <vtkPolyDataAlgorithm.h>
 #include <QFileInfo>
 
+
 ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 : TreeModel(parent), _project(project)
 {
@@ -34,7 +35,6 @@ int ConditionModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ )
 
 	return 2;
 }
-
 
 void ConditionModel::addConditionItem(FEMCondition* c)
 {
@@ -60,14 +60,34 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		QList<QVariant> disData;
 		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
 		std::vector<double> dis_value = c->getDisValue();
-		for (size_t i=0; i<dis_value.size(); i++) disData << dis_value[i];
-		TreeItem* disInfo = new TreeItem(disData, condItem);
+		TreeItem* disInfo;
+		if (c->getProcessDistributionType() != FiniteElement::LINEAR)
+		{
+			for (size_t i=0; i<dis_value.size(); i++) disData << dis_value[i];
+			disInfo = new TreeItem(disData, condItem);
+		}
+		else
+		{
+			size_t nVals = dis_value.size()/2;
+			disData << static_cast<int>(nVals);
+			disInfo = new TreeItem(disData, condItem);
+			for (size_t i=0; i<nVals; i++)
+			{
+				QList<QVariant> linData;
+				linData << dis_value[2*i] << dis_value[2*i+1];
+				TreeItem* linInfo = new TreeItem(linData, disInfo);
+				disInfo->appendChild(linInfo);
+			}
+		}
+		
 
 		condItem->appendChild(pcsInfo);
 		condItem->appendChild(pvInfo);
 		condItem->appendChild(disInfo);
 
-		condParent->addIndex(c->getGeoType(), getGEOIndex(c->getAssociatedGeometryName(), c->getGeoType(), c->getGeoName()));
+		GEOLIB::GEOTYPE geo_type = c->getGeoType();
+		int index = (geo_type != GEOLIB::GEODOMAIN) ? getGEOIndex(c->getAssociatedGeometryName(), geo_type, c->getGeoName()) : 0;
+		if (index>=0) condParent->addIndex(geo_type, static_cast<size_t>(index));
 		reset();
 
 	}
@@ -75,13 +95,13 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		std::cout << "Error in ConditionModel::addConditionItem() - Parent object not found..." << std::endl;
 }
 
-
 void ConditionModel::addConditions(std::vector<FEMCondition*> &conditions)
 {
 	for (size_t i=0; i<conditions.size(); i++)
 	{
+		bool is_domain = (conditions[i]->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
 		const GEOLIB::GeoObject* object = this->getGEOObject(conditions[i]->getAssociatedGeometryName(), conditions[i]->getGeoType(), conditions[i]->getGeoName());
-		if (object)
+		if (object || is_domain)
 		{
 			conditions[i]->setGeoObj(object);
 			_project.addCondition(conditions[i]);
@@ -114,6 +134,7 @@ bool ConditionModel::removeConditionItem(const QModelIndex &idx)
 	return false;
 }
 */
+
 void ConditionModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type)
 {
 	TreeItem* geoParent = this->getGEOParent(geometry_name);
@@ -137,7 +158,7 @@ const GEOLIB::GeoObject* ConditionModel::getGEOObject(const std::string &geo_nam
 	return NULL;
 }
 
-size_t ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const
+int ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const
 {
 	bool exists(false);
 	size_t idx(0);
@@ -146,7 +167,7 @@ size_t ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE 
 	else if (type==GEOLIB::SURFACE) exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name, idx);
 
 	if (exists) return idx;
-	return NULL;
+	return -1;
 }
 
 TreeItem* ConditionModel::getGEOParent(const QString &geoName, bool create_item)
