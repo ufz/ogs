@@ -93,13 +93,14 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		scalars->SetName("Scalars");
 
 	size_t n_pnts = _points->size();
+	double value(0.0);
 	if (!_cond_vec->empty())
-		double value  = (*_cond_vec)[0]->getDisValue()[_cond_vec->size()-1]; // get an existing value for the distribution so scaling on point data will be correct during rendering process!
+		value = (*_cond_vec)[0]->getDisValue()[_cond_vec->size()-1]; // get an existing value for the distribution so scaling on point data will be correct during rendering process!
 	for (size_t i=0; i<n_pnts; i++)
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
 		newPoints->InsertNextPoint(coords);
-		scalars->InsertNextValue(0.0);
+		scalars->InsertNextValue(value);
 	}
 
 	size_t nCond = _cond_vec->size();
@@ -117,7 +118,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 			{
 				if ((*_points)[i] == pnt) 
 				{
-					id = static_cast<int>(i);
+					vtkIdType id = static_cast<int>(i);
 					newVerts->InsertNextCell(1, &id);
 					if (type == FiniteElement::CONSTANT)
 						scalars->SetValue(id, dis_values[0]);
