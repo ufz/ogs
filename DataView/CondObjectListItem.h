@@ -17,6 +17,9 @@
  * \brief The CondObjectListItem is the TreeItem that contains the subtree for either initial conditions, 
  * boundary conditions source terms. This item also contains the vtk source-item for visualisation of this
  * information and the indices of the associated geometry-objects.
+ * Upon creation the type of condition needs to be defined and the vector of points of the associated geometry
+ * is needed for created of the vtk-object.
+ * The actual FEM Condtions are added using the addCondition()-method.
  * \sa TreeItem
  */
 class CondObjectListItem : public TreeItem
@@ -24,7 +27,7 @@ class CondObjectListItem : public TreeItem
 
 public:
 	/// Constructor for the TreeItem specifying FEM Conditions.
-	CondObjectListItem(const QList<QVariant> &data, TreeItem *parent, FEMCondition::CondType type, const std::vector<GEOLIB::Point*> *points, const std::vector<GEOLIB::Polyline*> *lines, const std::vector<GEOLIB::Surface*> *surfaces)
+	CondObjectListItem(const QList<QVariant> &data, TreeItem *parent, FEMCondition::CondType type, const std::vector<GEOLIB::Point*> *points)
 		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(type), _cond_vec(new std::vector<FEMCondition*>), _use_domain(new bool(false))
 	{
 		QString display_name = parent->data(0).toString().append(" - ").append(QString::fromStdString(FEMCondition::condTypeToString(type)));

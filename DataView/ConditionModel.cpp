@@ -215,7 +215,7 @@ CondObjectListItem* ConditionModel::createCondParent(TreeItem* parent, FEMCondit
 
 	if (pnts)
 	{
-		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts, plys, sfcs);
+		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts);
 		parent->appendChild(cond);
 		emit conditionAdded(this, parent->data(0).toString().toStdString(), type);
 		return cond;
