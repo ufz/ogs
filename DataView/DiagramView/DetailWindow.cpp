@@ -18,15 +18,15 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	DiagramList* list2 = new DiagramList();
 
 
-	/* ================================================== */
-    /* input files should be defined in WaterML */
-	/* inserting the details below into the list-objects */
-	/* kind of simulates the information that would be */
-	/* included in a WaterML-file and is needed for */
-	/* display */
-	/* ================================================== */
+	// ================================================== 
+    // input files should be defined in WaterML 
+	// inserting the details below into the list-objects 
+	// kind of simulates the information that would be 
+	// included in a WaterML-file and is needed for 
+	// display 
+	// ================================================== 
 
-	/* make up list-object for the first test station *
+	// make up list-object for the first test station 
 	list->setName("Water Level Observation Station: Halberstadt 2002");
 	list->setXLabel("Time");
 	list->setYLabel("Water Level");
@@ -35,7 +35,7 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	list->setColor(QColor(Qt::red));
 	list->readList("c:\\project\\timeseries-a.stn");
 
-	/* make up list-object for the second test station *
+	// make up list-object for the second test station 
 	list2->setName("Water Level Observation Station: Oschersleben 2002");
 	list2->setXLabel("Time");
 	list2->setYLabel("Water Level");
@@ -44,7 +44,7 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	list2->setColor(QColor(Qt::green));
 	list2->readList("c:\\project\\timeseries-b.stn");
 
-	/* ================================================== *
+	// ==================================================
 
 
 	stationView->addGraph(list);
