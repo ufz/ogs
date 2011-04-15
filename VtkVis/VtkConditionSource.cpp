@@ -6,8 +6,10 @@
 // ** INCLUDES **
 #include "VtkConditionSource.h"
 #include "AxisAlignedBoundingBox.h"
+#include "FEMCondition.h"
 
 #include <vtkCellArray.h>
+#include <vtkDoubleArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
@@ -22,14 +24,14 @@ vtkStandardNewMacro(VtkConditionSource);
 vtkCxxRevisionMacro(VtkConditionSource, "$Revision$");
 
 VtkConditionSource::VtkConditionSource()
-: _points(NULL), _polylines(NULL), _surfaces(NULL), _pnt_idx(NULL), _ply_idx(NULL), _sfc_idx(NULL), _on_domain(false)
+: _points(NULL), _cond_vec(NULL), _on_domain(false)//_polylines(NULL), _surfaces(NULL), _pnt_idx(NULL), _ply_idx(NULL), _sfc_idx(NULL), _on_domain(false)
 {
 	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
 	GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
 }
-
+/*
 void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points, const std::vector<GEOLIB::Polyline*>* lines, const std::vector<GEOLIB::Surface*>* surfaces,
 								 std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx, bool* use_domain)
 {
@@ -39,6 +41,13 @@ void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points, cons
 	_pnt_idx   = pnt_idx;
 	_ply_idx   = ply_idx;
 	_sfc_idx   = sfc_idx;
+	_on_domain = use_domain;
+}
+*/
+void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points, const std::vector<FEMCondition*>* conds, bool* use_domain)
+{
+	_points    = points;
+	_cond_vec  = conds;
 	_on_domain = use_domain;
 }
 
@@ -79,64 +88,102 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
-	vtkSmartPointer<vtkIntArray> plyIDs = vtkSmartPointer<vtkIntArray>::New();
-		plyIDs->SetNumberOfComponents(1);
-		plyIDs->SetName("PolylineIDs");
-	vtkSmartPointer<vtkIntArray> sfcIDs = vtkSmartPointer<vtkIntArray>::New();
-		sfcIDs->SetNumberOfComponents(1);
-		sfcIDs->SetName("SurfaceIDs");
+	vtkSmartPointer<vtkDoubleArray> scalars = vtkSmartPointer<vtkDoubleArray>::New();
+		scalars->SetNumberOfComponents(1);
+		scalars->SetName("Scalars");
 
-	size_t nPoints = _points->size();
-	for (size_t i=0; i<nPoints; i++)
+	size_t n_pnts = _points->size();
+	if (!_cond_vec->empty())
+		double value  = (*_cond_vec)[0]->getDisValue()[_cond_vec->size()-1]; // get an existing value for the distribution so scaling on point data will be correct during rendering process!
+	for (size_t i=0; i<n_pnts; i++)
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
 		newPoints->InsertNextPoint(coords);
+		scalars->InsertNextValue(0.0);
 	}
 
-	int nIdx = static_cast<int>(_pnt_idx->size());
-	for (int i=0; i<nIdx; i++)
+	size_t nCond = _cond_vec->size();
+	for (size_t n=0; n<nCond; n++)
 	{
-		vtkIdType id = static_cast<int>((*_pnt_idx)[i]);
-		newVerts->InsertNextCell(1, &id);
-	}
+		FiniteElement::DistributionType type = (*_cond_vec)[n]->getProcessDistributionType();
+		const std::vector<double> dis_values = (*_cond_vec)[n]->getDisValue();
 
-	if (!_ply_idx->empty())
-	{
-		for (size_t j=0; j<_ply_idx->size(); j++)
+		if ((*_cond_vec)[n]->getGeoType() == GEOLIB::POINT)
 		{
-			size_t idx = (*_ply_idx)[j];
-			const int nPoints = (*_polylines)[idx]->getNumberOfPoints();
-			newLines->InsertNextCell(nPoints);;
-			for (int i = 0; i < nPoints; i++)
-				newLines->InsertCellPoint((*(*_polylines)[idx]).getPointID(i));
+			size_t nPoints = _points->size();
+			const GEOLIB::Point* pnt = static_cast<const GEOLIB::Point*>((*_cond_vec)[n]->getGeoObj());
+			int id(-1);
+			for (size_t i=0; i<nPoints; i++)
+			{
+				if ((*_points)[i] == pnt) 
+				{
+					id = static_cast<int>(i);
+					newVerts->InsertNextCell(1, &id);
+					if (type == FiniteElement::CONSTANT)
+						scalars->SetValue(id, dis_values[0]);
+					break;
+				}
+			}
+			if (id==-1) std::cout << "Error in VtkConditionSource::RequestData() - Point object not found ..." << std::endl;
 		}
-	}
-
-	if (!_sfc_idx->empty())
-	{
-		for (size_t k=0; k<_sfc_idx->size(); k++)
+		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::POLYLINE)
 		{
-			size_t idx = (*_sfc_idx)[k];
+			const GEOLIB::Polyline* ply = static_cast<const GEOLIB::Polyline*>((*_cond_vec)[n]->getGeoObj());
+			const int nPoints = ply->getNumberOfPoints();
+			newLines->InsertNextCell(nPoints);
+			for (int i = 0; i < nPoints; i++)
+			{
+				size_t pnt_id = ply->getPointID(i);
+				newLines->InsertCellPoint(pnt_id);
+				if (type == FiniteElement::CONSTANT)
+						scalars->SetValue(pnt_id, dis_values[0]);
+				else if (type == FiniteElement::LINEAR)
+				{
+					for (size_t j=0; j<dis_values.size(); j+=2)
+						if (dis_values[j] == pnt_id)
+						{
+							scalars->SetValue(pnt_id, dis_values[j+1]);
+							break;
+						}
+				}
+			}
+		}
+		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::SURFACE)
+		{
+			const GEOLIB::Surface* sfc = static_cast<const GEOLIB::Surface*>((*_cond_vec)[n]->getGeoObj());
 			
-			const size_t nTriangles = (*_surfaces)[idx]->getNTriangles();
+			const size_t nTriangles = sfc->getNTriangles();
 
-			for (size_t i = 0; i < nTriangles; i++)
+			for (size_t i=0; i<nTriangles; i++)
 			{
 				vtkPolygon* aPolygon = vtkPolygon::New();
 				aPolygon->GetPointIds()->SetNumberOfIds(3);
 
-				const GEOLIB::Triangle* triangle = (*(*_surfaces)[idx])[i];
+				const GEOLIB::Triangle* triangle = (*sfc)[i];
 				for (size_t j=0; j<3; j++)
 				{
-					aPolygon->GetPointIds()->SetId(j, ((*triangle)[j]));
+					size_t pnt_id = (*triangle)[j];
+					aPolygon->GetPointIds()->SetId(j, pnt_id);
+
+					if (type == FiniteElement::CONSTANT)
+							scalars->SetValue(pnt_id, dis_values[0]);
+					else if (type == FiniteElement::LINEAR)
+					{
+						for (size_t j=0; j<dis_values.size(); j+=2)
+							if (dis_values[j] == pnt_id)
+							{
+								scalars->SetValue(pnt_id, dis_values[j+1]);
+								break;
+							}
+					}
 				}
 				newPolys->InsertNextCell(aPolygon);
-				//sfcIDs->InsertNextValue(count);
 
 				aPolygon->Delete();
 			}
 		}
 	}
+
 
 	// draw a bounding box in case of of the conditions is "domain"
 	if (*_on_domain)
@@ -165,8 +212,9 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		}
 	}
 
-
 	output->SetPoints(newPoints);
+	output->GetPointData()->AddArray(scalars);
+	output->GetPointData()->SetActiveScalars("Scalars");
 	output->SetVerts(newVerts);
 	output->SetLines(newLines);
 	output->SetPolys(newPolys);

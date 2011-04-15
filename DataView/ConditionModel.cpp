@@ -79,15 +79,12 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 				disInfo->appendChild(linInfo);
 			}
 		}
-		
 
 		condItem->appendChild(pcsInfo);
 		condItem->appendChild(pvInfo);
 		condItem->appendChild(disInfo);
-
-		GEOLIB::GEOTYPE geo_type = c->getGeoType();
-		int index = (geo_type != GEOLIB::GEODOMAIN) ? getGEOIndex(c->getAssociatedGeometryName(), geo_type, c->getGeoName()) : 0;
-		if (index>=0) condParent->addIndex(geo_type, static_cast<size_t>(index));
+		
+		condParent->addCondition(c);
 		reset();
 
 	}
