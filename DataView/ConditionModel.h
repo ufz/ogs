@@ -62,6 +62,7 @@ private:
 	/// Returns the index of a geometric item of the given name and type for the associated geometry.
 	int getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
 
+
 	ProjectData& _project;
 
 signals:

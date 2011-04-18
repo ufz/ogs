@@ -79,15 +79,12 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 				disInfo->appendChild(linInfo);
 			}
 		}
-		
 
 		condItem->appendChild(pcsInfo);
 		condItem->appendChild(pvInfo);
 		condItem->appendChild(disInfo);
-
-		GEOLIB::GEOTYPE geo_type = c->getGeoType();
-		int index = (geo_type != GEOLIB::GEODOMAIN) ? getGEOIndex(c->getAssociatedGeometryName(), geo_type, c->getGeoName()) : 0;
-		if (index>=0) condParent->addIndex(geo_type, static_cast<size_t>(index));
+		
+		condParent->addCondition(c);
 		reset();
 
 	}
@@ -165,7 +162,7 @@ int ConditionModel::getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE typ
 	if (type==GEOLIB::POINT) exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(obj_name, idx);
 	else if (type==GEOLIB::POLYLINE) exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(obj_name, idx);
 	else if (type==GEOLIB::SURFACE) exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name, idx);
-	
+
 	if (exists) return idx;
 	return -1;
 }
@@ -206,6 +203,11 @@ CondObjectListItem* ConditionModel::createCondParent(TreeItem* parent, FEMCondit
 	QString condType(QString::fromStdString(FEMCondition::condTypeToString(type)));
 	QList<QVariant> condData;
 	condData << condType << "";
+
+//	TreeItem* cond = new TreeItem(condData, parent);
+//	parent->appendChild(cond);
+//	return cond;
+
 	std::string geo_name = parent->data(0).toString().toStdString();
 	const std::vector<GEOLIB::Point*> *pnts = _project.getGEOObjects()->getPointVec(geo_name);
 	const std::vector<GEOLIB::Polyline*> *plys = _project.getGEOObjects()->getPolylineVec(geo_name);
@@ -213,7 +215,7 @@ CondObjectListItem* ConditionModel::createCondParent(TreeItem* parent, FEMCondit
 
 	if (pnts)
 	{
-		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts, plys, sfcs);
+		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts);
 		parent->appendChild(cond);
 		emit conditionAdded(this, parent->data(0).toString().toStdString(), type);
 		return cond;

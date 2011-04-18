@@ -14,6 +14,8 @@
 
 #include "GEOObjects.h"
 
+class FEMCondition;
+
 /**
  * \brief VtkConditionSource is a VTK source object for the visualization
  * of FEM conditions. As a vtkPolyDataAlgorithm it outputs polygonal data.
@@ -27,9 +29,8 @@ public:
 
 	vtkTypeRevisionMacro(VtkConditionSource,vtkPolyDataAlgorithm);
 
-	/// Sets the geo data (points, polylines and surfaces) as well as vectors containing the indeces of relevant objects
-	void setData(const std::vector<GEOLIB::Point*>* points, const std::vector<GEOLIB::Polyline*>* lines, const std::vector<GEOLIB::Surface*>* surfaces,
-		         std::vector<size_t> *pnt_idx, std::vector<size_t> *ply_idx, std::vector<size_t> *sfc_idx, bool* use_domain = false);
+	/// Sets the FEMCondition that need to be visualised. The geometry points array is needed because polylines and surfaces are linked to this data.
+	void setData(const std::vector<GEOLIB::Point*>* points, const std::vector<FEMCondition*>* conds, bool* use_domain = false);
 
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -46,11 +47,7 @@ protected:
 	int RequestInformation(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);
 
 	const std::vector<GEOLIB::Point*>* _points;
-	const std::vector<GEOLIB::Polyline*>* _polylines;
-	const std::vector<GEOLIB::Surface*>* _surfaces;
-	std::vector<size_t>* _pnt_idx;
-	std::vector<size_t>* _ply_idx;
-	std::vector<size_t>* _sfc_idx;
+	const std::vector<FEMCondition*> *_cond_vec;
 	bool* _on_domain;
 
 private:
