@@ -721,12 +721,15 @@ void MainWindow::importRaster()
 					"lastOpenedFileDirectory").toString(),
 			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
 	
-	VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
-	geoImage->setImageFilename(fileName);
-	_vtkVisPipeline->addPipelineItem(geoImage);
-    
-	QDir dir = QDir(fileName);
-	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	if (!fileName.isEmpty())
+	{
+		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
+		geoImage->setImageFilename(fileName);
+		_vtkVisPipeline->addPipelineItem(geoImage);
+
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	}
 }
 
 void MainWindow::importRasterAsPoly()
@@ -742,21 +745,23 @@ void MainWindow::importRasterAsPoly()
 					"lastOpenedFileDirectory").toString(),
 			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
 	
-	QImage raster;
-	QPointF origin;
-	double scalingFactor;
-	OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true);
-    
-	VtkBGImageSource* bg = VtkBGImageSource::New();
-	bg->SetOrigin(origin.x(), origin.y());
-	bg->SetCellSize(scalingFactor);
-	bg->SetRaster(raster);
-	bg->SetName(fileName);
-	_vtkVisPipeline->addPipelineItem(bg);
-    
-	QDir dir = QDir(fileName);
-	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	if (!fileName.isEmpty())
+	{
+		QImage raster;
+		QPointF origin;
+		double scalingFactor;
+		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true);
 
+		VtkBGImageSource* bg = VtkBGImageSource::New();
+		bg->SetOrigin(origin.x(), origin.y());
+		bg->SetCellSize(scalingFactor);
+		bg->SetRaster(raster);
+		bg->SetName(fileName);
+		_vtkVisPipeline->addPipelineItem(bg);
+
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	}
 }
 
 #ifdef Shapelib_FOUND
