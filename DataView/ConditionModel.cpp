@@ -210,8 +210,6 @@ CondObjectListItem* ConditionModel::createCondParent(TreeItem* parent, FEMCondit
 
 	std::string geo_name = parent->data(0).toString().toStdString();
 	const std::vector<GEOLIB::Point*> *pnts = _project.getGEOObjects()->getPointVec(geo_name);
-	const std::vector<GEOLIB::Polyline*> *plys = _project.getGEOObjects()->getPolylineVec(geo_name);
-	const std::vector<GEOLIB::Surface*> *sfcs = _project.getGEOObjects()->getSurfaceVec(geo_name);
 
 	if (pnts)
 	{

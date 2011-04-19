@@ -236,7 +236,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 	#endif
 }
 
-void VtkVisPipeline::setGlobalSuperelevation(int factor) const
+void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 {
 	// iterate over all source items
 	for (int i = 0; i < _rootItem->childCount(); ++i)
