@@ -35,6 +35,9 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 
 	this->scaleZ->setValidator(new QDoubleValidator(0, 100, 8, this));
 
+	connect(this->vtkVisPipelineView, SIGNAL(requestViewUpdate()),
+		this, SIGNAL(requestViewUpdate()));
+
 	connect(this->vtkVisPipelineView, SIGNAL(itemSelected(VtkVisPipelineItem*)),
 		this, SLOT(setActiveItem(VtkVisPipelineItem*)));
 
@@ -64,7 +67,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			transform->GetScale(scale);
 			scaleZ->setText(QString::number(scale[2]));
 
-			this->buildScalarArrayComboBox(_item->algorithm());
+			this->buildScalarArrayComboBox(_item);
 
 			// Set to last active attribute
 			QString activeAttribute = item->GetActiveAttribute();
@@ -156,12 +159,8 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 
 	if (ok)
 	{
-		vtkTransform* transform = 
-			static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
-		transform->Identity();
-		transform->Scale(1.0, 1.0, scale);
-		_item->transformFilter()->Modified();
-
+		_item->setScale(1.0, 1.0, scale);
+	
 		for (int i = 0; i < _item->childCount(); i++)
 		{
 			VtkVisPipelineItem* childItem = _item->child(i);
@@ -270,9 +269,9 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 	}
 }
 
-void VtkVisTabWidget::buildScalarArrayComboBox(vtkAlgorithm* algorithm)
+void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 {
-	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(algorithm->GetOutputDataObject(0));
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(item->algorithm()->GetOutputDataObject(0));
 	QStringList dataSetAttributesList;
 	if (dataSet)
 	{
@@ -299,6 +298,9 @@ void VtkVisTabWidget::buildScalarArrayComboBox(vtkAlgorithm* algorithm)
 	this->activeScalarComboBox->clear();
 	this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
 	this->activeScalarComboBox->blockSignals(false);
+	QList<QString>::iterator it = dataSetAttributesList.begin();
+	if (item->GetActiveAttribute().count() == 0)
+		item->SetActiveAttribute(*it);
 }
 
 void VtkVisTabWidget::addColorTable()

@@ -126,7 +126,8 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 	
 	// Store the new set of points in the output
 	output->SetPoints(newPts);
-	
+	output->GetPointData()->GetArray(0)->SetName("Colours");
+
 	// Avoid keeping extra memory around
 	output->Squeeze();
 	

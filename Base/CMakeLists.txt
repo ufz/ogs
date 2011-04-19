@@ -9,6 +9,7 @@ set( SOURCES
 	TreeModelIterator.cpp
 	modeltest.cpp
 	CheckboxDelegate.cpp
+	QValueTooltipSlider.cpp
 )
 
 # Moc headers
@@ -18,6 +19,7 @@ set( MOC_HEADERS
 	ColorPickerPushButton.h
 	modeltest.h
 	CheckboxDelegate.h
+	QValueTooltipSlider.h
 )
 
 # Header files

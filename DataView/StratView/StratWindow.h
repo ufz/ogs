@@ -6,7 +6,7 @@
 #ifndef STRATWINDOW_H
 #define STRATWINDOW_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_StratWindow.h"
 
 namespace GEOLIB

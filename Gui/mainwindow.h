@@ -8,6 +8,7 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
+#include "Configure.h"
 #include "FileFinder.h"
 #include "ProjectData.h"
 
@@ -17,6 +18,7 @@ class StationTreeModel;
 class ConditionModel;
 class VtkVisPipeline;
 class DatabaseConnection;
+class VisPrefsDialog;
 
 #ifdef OGS_USE_VRPN
 	class TrackingSettingsWidget;
@@ -61,7 +63,9 @@ protected slots:
 	void importGoCad();
 	void importRaster();
 	void importRasterAsPoly();
+#ifdef Shapelib_FOUND
 	void importShape();
+#endif
 	void importPetrel();
 	void importNetcdf();     //YW  07.2010
 	void importVtk();
@@ -73,6 +77,7 @@ protected slots:
 	void showDiagramPrefsDialog(QModelIndex &index);
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
+	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
 	void showPropertiesDialog(std::string name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
@@ -114,6 +119,7 @@ private:
 	#ifdef OGS_USE_VRPN
 		TrackingSettingsWidget* _trackingSettingsWidget;
 	#endif // OGS_USE_VRPN
+	VisPrefsDialog* _visPrefsDialog;
 
 signals:
 	void fileUsed( QString filename );

@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QMenu>
 
+#include "Configure.h"
 #include "Station.h"
 #include "StationIO.h"
 #include "GMSInterface.h"
@@ -112,6 +113,7 @@ void StationTreeView::displayStratigraphy()
 	// get color table (horrible way to do it but there you go ...)
 	std::map<std::string, GEOLIB::Color*> colorLookupTable = static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(temp_name.toStdString()))->getColorLookupTable();
 	StratWindow* stratView = new StratWindow(static_cast<GEOLIB::StationBorehole*>(static_cast<StationTreeModel*>(model())->stationFromIndex(index, temp_name)), &colorLookupTable);
+	stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
 	stratView->show();
 }
 
@@ -185,6 +187,7 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
 			for (size_t i=0; i<stations->size(); i++)
 			{
 				StratWindow* stratView = new StratWindow(static_cast<GEOLIB::StationBorehole*>((*stations)[i]), &colorLookupTable);
+				stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
 				stratView->show();
 				stratView->stationView->saveAsImage("c:/project/" + QString::fromStdString(static_cast<GEOLIB::StationBorehole*>((*stations)[i])->getName()) + ".jpg");
 				stratView->close();

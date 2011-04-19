@@ -19,6 +19,7 @@ SET( SOURCES
 	VtkCompositeSelectionFilter.cpp	
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
+	VtkConditionSource.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
@@ -35,6 +36,8 @@ SET( SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisTabWidget.cpp
 	VtkVisHelper.cpp
+	VisualizationWidget.cpp
+	VisPrefsDialog.cpp
 )
 
 # Moc headers
@@ -49,6 +52,8 @@ SET( MOC_HEADERS
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
+	VisualizationWidget.h
+	VisPrefsDialog.h
 )
 
 # Header files
@@ -67,6 +72,7 @@ SET( HEADERS
 	VtkCompositeSelectionFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
+	VtkConditionSource.h
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
@@ -85,6 +91,8 @@ SET( HEADERS
 SET ( UIS
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
+	VisualizationWidgetBase.ui
+	VisPrefs.ui
 )
 
 # Put moc files in a project folder
@@ -107,11 +115,13 @@ QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
 INCLUDE_DIRECTORIES(
 	.
+	../VtkAct
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	../../Base
 	../../FEM
 	../../GEO
 	../../MathLib
+	../../FileIO
 	../../MSH
 	../Base
 	../DataView
@@ -126,7 +136,7 @@ ADD_LIBRARY( VtkVis STATIC
 	${UIS}
 )
 
-TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} )
+TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} QVTK )
 
 IF (OGS_USE_OPENSG)
 	USE_OPENSG(VtkVis)

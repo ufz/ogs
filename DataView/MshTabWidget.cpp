@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QSettings>
 
+#include "MeshIO/OGSMeshIO.h"
 
 MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
 : QWidget(parent)
@@ -50,7 +51,7 @@ void MshTabWidget::addMeshAction()
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = MshModel::loadMeshFromFile(name);
+		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh) static_cast<MshModel*>(this->treeView->model())->addMesh(msh, name);
 	}
 }
@@ -76,7 +77,7 @@ void MshTabWidget::contextMenuEvent( QContextMenuEvent* event )
 	QAction* checkMeshAction    = menu.addAction("Check mesh quality...");
 	QAction* saveMeshAction    = menu.addAction("Save mesh...");
 	menu.addSeparator();
-	QAction* removeMeshAction    = menu.addAction("Remove...");
+	QAction* removeMeshAction    = menu.addAction("Remove mesh");
 	connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 	connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 	connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
@@ -108,10 +109,15 @@ int MshTabWidget::writeMeshToFile() const
 		if (!fileName.empty())
 		{
 			std::fstream* out = new std::fstream(fileName.c_str(), std::fstream::out);
-			if (out->is_open())
-			{
+			if (out->is_open()) {
 				mesh->Write(out);
 				out->close();
+				// write mesh without null-volume-elements
+//				std::ofstream out1 ("mesh_without_null_elements.msh");
+//				FileIO::OGSMeshIO ogs_mesh_io;
+//				ogs_mesh_io.write (mesh, out1);
+//				out1.close ();
+
 				return 1;
 			}
 			else

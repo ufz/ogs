@@ -56,7 +56,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 	if (_grid == NULL) return;
 	const std::vector<GEOLIB::Point*> *nodes = _grid->getNodes();
 	const std::vector<GridAdapter::Element*> *elems = _grid->getElements();
-	if (nodes->size() == 0 || elems->size() == 0) return;
+	if (nodes->empty() || elems->empty() ) return;
 
 	os << indent << "== VtkMeshSource ==" << "\n";
 

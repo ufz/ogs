@@ -458,7 +458,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 		if (node->GetMark())
 		{
 			node->SetIndex(counter);
-			node->connected_elements.clear();
+			node->getConnectedElementIDs().clear();
 			node->connected_nodes.clear();
 			counter++;
 		}
@@ -529,7 +529,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	{
 		last = beg++;
 		Mesh_Group::CNode* node = *last;
-		if ( node->connected_elements.empty() )
+		if ( node->getConnectedElementIDs().empty() )
 		{
 		   delete node;
 		   node = NULL;

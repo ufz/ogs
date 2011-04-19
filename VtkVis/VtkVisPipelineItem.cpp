@@ -40,6 +40,8 @@
 #include <vtkXMLImageDataWriter.h>
 #include <vtkImageActor.h>
 #include <vtkImageAlgorithm.h>
+#include <vtkTubeFilter.h>
+#include <vtkTriangleFilter.h>
 
 #include "VtkCompositeFilter.h"
 
@@ -53,7 +55,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 		vtkAlgorithm* algorithm,
 		TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
+	: TreeItem(data, parentItem), _actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
+	  _compositeFilter(NULL), _transformFilter(NULL), _activeAttribute("")
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (visParentItem)
@@ -75,7 +78,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/ )
-		: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
+		: TreeItem(data, parentItem), _actor(NULL), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(compositeFilter), _transformFilter(NULL), _activeAttribute("")
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
@@ -89,7 +93,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		vtkAlgorithm* algorithm, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _algorithm(algorithm), _compositeFilter(NULL), _transformFilter(NULL)
+	: TreeItem(data, parentItem),	_actor(NULL), _algorithm(algorithm), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(NULL), _transformFilter(NULL), _activeAttribute("")
 	{
 		VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 		if (parentItem->parentItem())
@@ -104,7 +109,8 @@ OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
 	VtkVisPipelineItem::VtkVisPipelineItem(
 		VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
 		const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _compositeFilter(compositeFilter), _transformFilter(NULL)
+	: TreeItem(data, parentItem), 	_actor(NULL), _mapper(NULL), _renderer(NULL),
+		  _compositeFilter(compositeFilter), _transformFilter(NULL), _activeAttribute("")
 	{
 		_algorithm = _compositeFilter->GetOutputAlgorithm();
 	}
@@ -213,7 +219,18 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	}
 	else
 	{
-		_mapper->SetInputConnection(_transformFilter->GetOutputPort());
+		// vtkTubeFilter generates triangle strips. These are not handled correctly
+		// by the OpenSG converter. So the strips are converted to ordinary triangles.
+		vtkTubeFilter* tubeFilter = dynamic_cast<vtkTubeFilter*>(_algorithm);
+		if (tubeFilter)
+		{
+			vtkSmartPointer<vtkTriangleFilter> triangulate = 
+				vtkSmartPointer<vtkTriangleFilter>::New();
+			triangulate->SetInputConnection(_transformFilter->GetOutputPort());
+			_mapper->SetInputConnection(triangulate->GetOutputPort());
+		}
+		else
+			_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 	}
 	_actor->SetMapper(_mapper);
 
@@ -244,7 +261,6 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	if (vtkProps)
 		setVtkProperties(vtkProps);
 
-
 	// Copy properties from parent
 	else
 	{
@@ -258,6 +274,7 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 				newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
 				newProps->SetTexture(parentProps->GetTexture());
 				setVtkProperties(newProps);
+				vtkProps = newProps;
 				parentItem = NULL;
 			}
 			else
@@ -265,6 +282,19 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 		}
 	}
 
+	// Set active scalar to the desired one from VtkAlgorithmProperties
+	// or to match those of the parent.
+	if (vtkProps)
+	{
+		if (vtkProps->GetActiveAttribute().length() > 0)
+			this->SetActiveAttribute(vtkProps->GetActiveAttribute());
+		else
+		{
+			VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+			if (visParentItem)
+				this->SetActiveAttribute(visParentItem->GetActiveAttribute());
+		}
+	}
 }
 
 void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
@@ -272,27 +302,9 @@ void VtkVisPipelineItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 		_mapper, SLOT(SetScalarVisibility(bool)));
 
-	//vtkProps->SetLookUpTable("c:/Project/BoreholeColourReferenceMesh.txt"); //HACK ... needs to be put in GUI
-
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
 	if (imageAlgorithm==NULL)
-	{
-		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
-		if (mapper)
-		{
-			if (vtkProps->GetLookupTable() == NULL) // default color table
-			{
-				vtkLookupTable* lut = vtkLookupTable::New();
-				vtkProps->SetLookUpTable(lut);
-			}
-			else // specific color table
-			{
-				_mapper->SetLookupTable(vtkProps->GetLookupTable());
-			}
-			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->Update();
-		}
-	}
+		this->setLookupTableForActiveScalar();
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
 	if (actor)
@@ -325,7 +337,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			osgActor->SetVerbose(true);
 			osgActor->UpdateOsg();
 			OSG::SceneFileHandler::the().write(osgActor->GetOsgRoot(), filename.c_str());
-			osgActor->ClearOsg();
 			#else
 			QMessageBox::warning(NULL, "Functionality not implemented",
 				"Sorry but this program was not compiled with OpenSG support.");
@@ -392,6 +403,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 		onPointData = false;
 	else if (name.contains("Solid Color"))
 	{
+		_activeAttribute = name;
 		_mapper->ScalarVisibilityOff();
 		return;
 	}
@@ -424,9 +436,54 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 			_mapper->SetScalarRange(dataSet->GetScalarRange());
 		}
 
-		_mapper->SetScalarRange(range);
+		//_mapper->SetScalarRange(range);
+		this->setLookupTableForActiveScalar();
+
 		_mapper->ScalarVisibilityOn();
 		_mapper->Update();
 		_activeAttribute = name;
+	}
+}
+
+void VtkVisPipelineItem::setLookupTableForActiveScalar()
+{
+	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+	if (vtkProps)
+	{
+		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+		if (mapper)
+		{
+			if (vtkProps->GetLookupTable(this->GetActiveAttribute()) == NULL) // default color table
+			{
+				vtkLookupTable* lut = vtkLookupTable::New();
+				vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
+			}
+			else // specific color table
+			{
+				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->GetActiveAttribute()));
+			}
+
+			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
+			_mapper->Update();
+		}
+	}
+}
+
+void VtkVisPipelineItem::setScale(double x, double y, double z) const
+{
+	vtkTransform* transform =
+		static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+	transform->Identity();
+	transform->Scale(x, y, z);
+	this->transformFilter()->Modified();
+
+}
+
+void VtkVisPipelineItem::setScaleOnChilds(double x, double y, double z) const
+{
+	for (int i = 0; i < this->childCount(); ++i)
+	{
+		VtkVisPipelineItem* child = this->child(i);
+		child->setScale(x, y, z);
 	}
 }

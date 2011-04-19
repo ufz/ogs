@@ -52,6 +52,7 @@ void VtkCompositeColorByHeightFilter::init()
 	heightFilter->Update();
 
 	_outputAlgorithm = heightFilter;
+	_activeAttributeName = heightFilter->GetActiveAttribute();
 }
 
 void VtkCompositeColorByHeightFilter::SetUserProperty( QString name, QVariant value )

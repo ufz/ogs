@@ -38,7 +38,7 @@ VtkStationSource::VtkStationSource()
 VtkStationSource::~VtkStationSource()
 {
 	std::map<std::string, GEOLIB::Color*>::iterator it;
-	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); it++) {
+	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); ++it) {
 		delete it->second;
 	}
 }
@@ -82,32 +82,26 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 
 	vtkSmartPointer<vtkPoints> newStations = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
-		//newStations->Allocate(nStations);
 		newVerts->Allocate(nStations);
 
 	vtkSmartPointer<vtkCellArray> newLines;
-	if (isBorehole) 
-	{
-		newLines = vtkSmartPointer<vtkCellArray>::New();
 
-		this->setColorLookupTable("./BoreholeColourReference.txt");
-	    if (_colorLookupTable.empty()) std::cout << "No look-up table for stratigraphy-colors specified. Generating colors on the fly..." << std::endl;
-	}
+	if (isBorehole) 
+		newLines = vtkSmartPointer<vtkCellArray>::New();
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
-	// create colour (this assumes that all points in a list have the same colour.
-	// if this is not the case the colour for each point has to be set for each point
-	// individually in the loop below
-	GEOLIB::Color* c = static_cast<GEOLIB::Station*>((*_stations)[0])->getColor();
-	unsigned char stationColor[3] = { (*c)[0], (*c)[1], (*c)[2] };
+	vtkSmartPointer<vtkIntArray> station_ids = vtkSmartPointer<vtkIntArray>::New();
+		station_ids->SetNumberOfComponents(1);
+		station_ids->SetName("SiteIDs");
 
-	vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-		colors->SetNumberOfComponents(3);
-		colors->SetName("StationColors");
+	vtkSmartPointer<vtkIntArray> strat_ids = vtkSmartPointer<vtkIntArray>::New();
+		strat_ids->SetNumberOfComponents(1);
+		strat_ids->SetName("Stratigraphies");
 
-	int lastMaxIndex = 0;
+	size_t lastMaxIndex(0);
+	size_t site_count(0);
 
 	// Generate graphic objects
 	for (std::vector<GEOLIB::Point*>::const_iterator it = _stations->begin();
@@ -115,11 +109,11 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	{
 		double coords[3] = { (*(*it))[0], (*(*it))[1], (*(*it))[2] };
 		vtkIdType sid = newStations->InsertNextPoint(coords);
-		
+		station_ids->InsertNextValue(site_count);
+
 		if (!isBorehole)
 		{
 			newVerts->InsertNextCell(1, &sid);
-			colors->InsertNextTupleValue(stationColor);
 		}
 		else
 		{
@@ -129,31 +123,33 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 
 			for (size_t i=1; i<nLayers; i++)
 			{
-				double*pCoords = const_cast<double*>(profile[i]->getData());
+				double* pCoords = const_cast<double*>(profile[i]->getData());
 				double loc[3] = { pCoords[0], pCoords[1], pCoords[2] };
 				newStations->InsertNextPoint(loc);
+				station_ids->InsertNextValue(site_count);
 
 				newLines->InsertNextCell(2);
 				newLines->InsertCellPoint(lastMaxIndex);	// start of borehole-layer
 				newLines->InsertCellPoint(lastMaxIndex+1);	//end of boreholelayer
 				lastMaxIndex++;
-				const GEOLIB::Color *c (GEOLIB::getColor(soilNames[i], _colorLookupTable));
-				unsigned char sColor[3] = { (*c)[0], (*c)[1], (*c)[2] };
-				colors->InsertNextTupleValue(sColor);
+				strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
 			}
 			lastMaxIndex++;
 		}
+		site_count++;
 	}
 
 	output->SetPoints(newStations);
-	
+	//output->GetPointData()->AddArray(station_ids);	
+
 	if (!isBorehole)
 		output->SetVerts(newVerts);
 	else
+	{
 		output->SetLines(newLines);
-
-	output->GetCellData()->AddArray(colors);
-	output->GetCellData()->SetActiveScalars("StationColors");
+		output->GetCellData()->AddArray(strat_ids);
+		output->GetCellData()->SetActiveAttribute("Stratigraphies", vtkDataSetAttributes::SCALARS);
+	}
 
 	return 1;
 }
@@ -173,4 +169,19 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 {
 	Q_UNUSED(name);
 	Q_UNUSED(value);
+}
+
+size_t VtkStationSource::GetIndexByName( std::string name )
+{
+	vtkIdType max_key(0);
+	for (std::map<std::string, vtkIdType>::const_iterator it=_id_map.begin(); it != _id_map.end(); ++it)
+	{
+		if (name.compare(it->first) == 0)
+			return it->second;
+		if (it->second > max_key) max_key = it->second;
+	}
+	vtkIdType new_index(max_key+1);
+	std::cout << "Key \"" << name << "\" not found in color lookup table..." << std::endl;
+	_id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
+	return new_index;
 }

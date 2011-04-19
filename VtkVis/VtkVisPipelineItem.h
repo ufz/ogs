@@ -90,6 +90,13 @@ public:
 
 	/// @brief Gets the last selected attribute.
 	const QString& GetActiveAttribute() const {return _activeAttribute; }
+
+	/// @brief Sets the geometry and data scaling.
+	void setScale(double x, double y, double z) const;
+
+	/// @brief Sets the geometry and date scaling recursively on all childs of
+	/// this item.
+	void setScaleOnChilds(double x, double y, double z) const;
 	
 #ifdef OGS_USE_OPENSG
 	// HACK static rootNode is set by VtkVisPipeline constructor
@@ -109,6 +116,9 @@ protected:
 	VtkCompositeFilter* _compositeFilter;
 	vtkTransformFilter* _transformFilter;
 	QString _activeAttribute;
+
+	/// Sets a color lookup table for the current scalar array.
+	void setLookupTableForActiveScalar();
 
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);

@@ -45,8 +45,11 @@ INCLUDE_DIRECTORIES(
 	../StratView
 	../VtkVis
 	../VtkAct
-	${Shapelib_INCLUDE_DIR}	
 )
+
+IF (Shapelib_FOUND)
+	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
+ENDIF () # Shapelib_FOUND
 
 if (OGS_COMPILE_QVTK)
 	INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/Qt/QVTK ../QVTK)
@@ -55,7 +58,6 @@ endif (OGS_COMPILE_QVTK)
 # Put moc files in a project folder
 SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 SOURCE_GROUP("Moc Files" REGULAR_EXPRESSION "moc_.*")
-
 
 # Create the library
 ADD_EXECUTABLE( ogs-gui
@@ -67,7 +69,6 @@ ADD_EXECUTABLE( ogs-gui
 	${UIS}
 )
 
-# Link Qt library
 TARGET_LINK_LIBRARIES( ogs-gui
 	${QT_LIBRARIES}
 	Base
@@ -79,18 +80,23 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	QtBase
 	QtDataView
 	StratView
-	${Shapelib_LIBRARIES}
-	${libtiff_LIBRARIES}
-	${libgeotiff_LIBRARIES}
 	QVTK
 	VtkVis
 	VtkAct
 )
 
+IF (Shapelib_FOUND)
+	TARGET_LINK_LIBRARIES( ogs-gui ${Shapelib_LIBRARIES} )
+ENDIF () # Shapelib_FOUND
+
+IF (libtiff_FOUND AND libgeotiff_FOUND)
+	TARGET_LINK_LIBRARIES( ogs-gui ${libtiff_LIBRARIES} ${libgeotiff_LIBRARIES} )
+ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
+
 ADD_DEPENDENCIES ( ogs-gui VtkVis OGSProject )
 
-# Set linker flags
 IF(MSVC)
+	# Set linker flags
 	SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:MSVCRT")
 ENDIF(MSVC)
 

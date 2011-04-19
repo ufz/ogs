@@ -21,6 +21,7 @@
 // Conversion from vtkUnstructuredGrid
 #include <vtkUnstructuredGrid.h>
 #include <vtkCell.h>
+#include <vtkCellData.h>
 
 using Mesh_Group::CFEMesh;
 
@@ -52,17 +53,17 @@ GridAdapter::~GridAdapter()
 int GridAdapter::convertCFEMesh(const Mesh_Group::CFEMesh* mesh)
 {
 	if (!mesh) return 0;
-	Element* newElem = NULL;
-	size_t nElemNodes = 0;
-
-	size_t nElems = mesh->ele_vector.size();
+	
 	size_t nNodes = mesh->nod_vector.size();
-
 	for (size_t i=0; i<nNodes; i++)
 	{
 		GEOLIB::Point* pnt = new GEOLIB::Point(mesh->nod_vector[i]->X(), mesh->nod_vector[i]->Y(), mesh->nod_vector[i]->Z());
 		_nodes->push_back(pnt);
 	}
+
+	Element* newElem = NULL;
+	size_t nElems = mesh->ele_vector.size();
+	size_t nElemNodes = 0;
 
 	for (size_t i=0; i<nElems; i++)
 	{
@@ -356,9 +357,10 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 		Mesh_Group::CNode* node(new Mesh_Group::CNode(i, coords[0], coords[1], coords[2]));
 		mesh->nod_vector.push_back(node);
 	}
-
+	
 	// set mesh elements
 	vtkCell* cell(NULL);
+	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
 	for (size_t i=0; i<nElems; i++)
 	{
 		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
@@ -376,14 +378,15 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 		}
 
 		if (elem_type != MshElemType::INVALID)
+		{
 			elem->SetElementType(elem_type);
+			if (scalars) elem->SetPatchIndex(static_cast<int>(scalars->GetComponent(i,0))); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
+		}
 		else
 		{
 			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..." << std::endl;
 			return NULL;
 		}
-
-		elem->SetPatchIndex(0); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
 
 		cell = grid->GetCell(i);
 		size_t nElemNodes = cell->GetNumberOfPoints();

@@ -28,7 +28,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Resets camera to view the entire scene</string>
+        <string>Resets camera to view the entire scene from above.</string>
        </property>
        <property name="text">
         <string>Show All</string>
@@ -57,6 +57,9 @@
      </item>
      <item>
       <widget class="QToolButton" name="highlightToolButton">
+       <property name="toolTip">
+        <string>When enabled a red bounding box is shown on selected items in the visualization pipeline.</string>
+       </property>
        <property name="text">
         <string>Highlight</string>
        </property>
@@ -70,6 +73,9 @@
      </item>
      <item>
       <widget class="QToolButton" name="orthogonalProjectionToolButton">
+       <property name="toolTip">
+        <string>Switches between perspective and orthogonal projection.</string>
+       </property>
        <property name="text">
         <string>Ortho</string>
        </property>
@@ -99,46 +105,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="eyeAngleLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>The eye separation for stereo rendering.</string>
-       </property>
-       <property name="text">
-        <string>Eye Angle:</string>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSlider" name="eyeAngleSlider">
+      <widget class="QPushButton" name="screenshotPushButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="toolTip">
-        <string>The eye separation for stereo rendering.</string>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::TicksAbove</enum>
-       </property>
-       <property name="tickInterval">
-        <number>10</number>
+       <property name="text">
+        <string>Screenshot</string>
        </property>
       </widget>
      </item>

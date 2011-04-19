@@ -13,13 +13,17 @@
 #include "MshModel.h"
 #include "MshItem.h"
 #include "GeoTreeModel.h"
+#include "ConditionModel.h"
 #include "StationTreeModel.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkMeshSource.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkTrackedCamera.h"
 #include "VtkFilterFactory.h"
-#include "MeshQualityChecker.h"
+#include "MeshQualityShortestLongestRatio.h"
+#include "MeshQualityNormalisedArea.h"
+#include "MeshQualityNormalisedVolumes.h"
+#include "MeshQualityEquiAngleSkew.h"
 #include "VtkCompositeSelectionFilter.h"
 
 #include <vtkSmartPointer.h>
@@ -64,6 +68,8 @@ VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, OSG::SimpleSceneManager* m
 	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
 	if (backgroundColorVariant != QVariant())
 		this->setBGColor(backgroundColorVariant.value<QColor>());
+
+	_resetCameraOnAddOrRemove = true;
 }
 #else // OGS_USE_OPENSG
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
@@ -73,11 +79,13 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	rootData << "Object name" << "Visible";
 	delete _rootItem;
 	_rootItem = new TreeItem(rootData, NULL);
-	
+
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
 	if (backgroundColorVariant != QVariant())
 		this->setBGColor(backgroundColorVariant.value<QColor>());
+
+	_resetCameraOnAddOrRemove = true;
 }
 #endif // OGS_USE_OPENSG
 
@@ -228,6 +236,21 @@ void VtkVisPipeline::loadFromFile(QString filename)
 	#endif
 }
 
+void VtkVisPipeline::setGlobalSuperelevation(double factor) const
+{
+	// iterate over all source items
+	for (int i = 0; i < _rootItem->childCount(); ++i)
+	{
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+		item->setScale(1.0, 1.0, factor);
+
+		// recursively set on all child items
+		item->setScaleOnChilds(1.0, 1.0, 1.0);
+	}
+
+	emit vtkVisPipelineChanged();
+}
+
 void VtkVisPipeline::addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
 {
 	addPipelineItem(model->vtkSource(name, type));
@@ -236,6 +259,11 @@ void VtkVisPipeline::addPipelineItem(GeoTreeModel* model, const std::string &nam
 void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string &name)
 {
 	addPipelineItem(model->vtkSource(name));
+}
+
+void VtkVisPipeline::addPipelineItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type)
+{
+	addPipelineItem(model->vtkSource(name, type));
 }
 
 void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
@@ -249,16 +277,17 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	TreeItem* parentItem = item->parentItem();
 	parentItem->appendChild(item);
 
-	if (parent.isValid())  // KR scale children according to parent
+	if (!parent.isValid())  // Set global superelevation on source objects
 	{
-		double* scale = static_cast<VtkVisPipelineItem*>(parentItem)->actor()->GetScale();
-		item->actor()->SetScale(scale);
+		QSettings settings("UFZ, OpenGeoSys-5");
+		item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();
 	QModelIndex newIndex = index(parentChildCount - 1, 0, parent);
 
-	_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+	if (_resetCameraOnAddOrRemove)
+		_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	_actorMap.insert(item->actor(), newIndex);
 
 	// Do not interpolate images
@@ -309,7 +338,6 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 		itemName = QString(source->GetClassName());
 	itemData << itemName << true;
 
-
 	VtkVisPipelineItem* item = new VtkVisPipelineItem(source, parentItem, itemData);
 	this->addPipelineItem(item, parent);
 
@@ -319,6 +347,19 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 }
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
+{
+	for (int i = 0; i < _rootItem->childCount(); i++)
+	{
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
+		if (item->algorithm() == model->vtkSource(name, type))
+		{
+			removePipelineItem(index(i, 0));
+			return;
+		}
+	}
+}
+
+void VtkVisPipeline::removeSourceItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
@@ -379,7 +420,8 @@ void VtkVisPipeline::removePipelineItem( QModelIndex index )
 	//TreeItem* item = getItem(index);
 	removeRows(index.row(), 1, index.parent());
 
-	_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+	if (_resetCameraOnAddOrRemove)
+		_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	emit vtkVisPipelineChanged();
 }
 
@@ -401,49 +443,60 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 		std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
 }
 
-void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source)
+void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
 {
 	if (source) {
 		const Mesh_Group::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
-		Mesh_Group::MeshQualityChecker checker (mesh);
-		checker.check ();
-
-	/*
-		// simple suggestion: number of classes with Sturges criterion
-		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
-		bool ok;
-		size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
-
-		if (ok)
-		{
-			std::vector<size_t> histogramm (size,0);
-			checker.getHistogramm(histogramm);
-	*/
-			std::vector<double> quality = checker.getMeshQuality();
-
-			int nSources = this->_rootItem->childCount();
-			for (int i=0; i<nSources; i++)
-			{
-				VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
-				if (parentItem->algorithm() == source)
-				{
-					QList<QVariant> itemData;
-					itemData << "MeshQualityFilter" << true;
-					
-					VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeSelectionFilter", parentItem->transformFilter());
-					static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray(quality);
-					VtkVisPipelineItem* item = new VtkVisPipelineItem(filter, parentItem, itemData);
-					this->addPipelineItem(item, this->createIndex(i, 0, item));
-				}
-			}
-	/*
-			std::ofstream out (file_name.toStdString().c_str());
-			const size_t histogramm_size (histogramm.size());
-			for (size_t k(0); k<histogramm_size; k++) {
-				out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
-			}
-			out.close ();
+		Mesh_Group::MeshQualityChecker* checker (NULL);
+		if (t == MshQualityType::EDGERATIO)
+			checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh);
+		else if (t == MshQualityType::AREA)
+			checker = new Mesh_Group::MeshQualityNormalisedArea(mesh);
+		else if (t == MshQualityType::VOLUME)
+			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh);
+		else if (t == MshQualityType::EQUIANGLESKEW)
+			checker = new Mesh_Group::MeshQualityEquiAngleSkew(mesh);
+		else {
+			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..." << std::endl;
+			delete checker;
+			return;
 		}
-	*/
+		checker->check ();
+
+		std::vector<double> const &quality (checker->getMeshQuality());
+
+		int nSources = this->_rootItem->childCount();
+		for (int i=0; i<nSources; i++)
+		{
+			VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+			if (parentItem->algorithm() == source)
+			{
+				QList<QVariant> itemData;
+				itemData << "MeshQuality: " + QString::fromStdString(MshQualityType2String(t)) << true;
+
+				VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeSelectionFilter", parentItem->transformFilter());
+				static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray(quality);
+				VtkVisPipelineItem* item = new VtkVisPipelineItem(filter, parentItem, itemData);
+				this->addPipelineItem(item, this->createIndex(i, 0, item));
+			}
+		}
+
+		// *** write histogram
+		// simple suggestion: number of classes with Sturges criterion
+//		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
+//			bool ok;
+//			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
+//			if (ok) ...
+		size_t size (1000);
+		std::vector<size_t> histogramm (size,0);
+		checker->getHistogramm(histogramm);
+		std::ofstream out ("mesh_histogramm.txt");
+		const size_t histogramm_size (histogramm.size());
+		for (size_t k(0); k<histogramm_size; k++) {
+			out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
+		}
+		out.close ();
+
+		delete checker;
 	}
 }

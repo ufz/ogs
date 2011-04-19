@@ -46,6 +46,7 @@ public:
 	 * should be stored with the same keys: QSettings("UFZ", programName)
 	 */
 	RecentFiles(QObject* parent, const char* slot, QString settingsName, QString programName);
+	~RecentFiles();
 
 	/// Returns the created menu. Add this menu to your QMainWindow menu.
 	QMenu* menu();

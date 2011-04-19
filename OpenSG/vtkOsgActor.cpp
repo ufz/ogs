@@ -780,12 +780,12 @@ NodePtr vtkOsgActor::ProcessGeometryNonIndexedCopyAttributes(int gl_primitive_ty
 	beginEditCP(m_posgColors);
 	beginEditCP(m_posgNormals);{
 		int prim = 0;
-		vtkIdType npts, *pts, i;
 		if (pCells->GetNumberOfCells() > 0){
+			vtkIdType npts, *pts;
 			for (pCells->InitTraversal(); pCells->GetNextCell(npts, pts); prim++){
 				m_posgLengths->addValue(npts);
 				m_posgTypes->addValue(GL_POLYGON);
-				for (i=0; i<npts; i++){
+				for (int i=0; i<npts; i++){
 					double *aVertex;
 					double *aNormal;
 					unsigned char aColor[4];

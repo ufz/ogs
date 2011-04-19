@@ -14,6 +14,8 @@
 #include "Color.h"
 #include "Point.h"
 #include "GeoType.h"
+#include "MSHEnums.h"
+#include "FEMCondition.h"
 
 #include <QVector>
 #include <QMap>
@@ -29,10 +31,11 @@ class vtkLight;
 class vtkPointSet;
 class vtkRenderer;
 class vtkProp3D;
-class MshModel;
 class QModelIndex;
 class QString;
 class GeoTreeModel;
+class ConditionModel;
+class MshModel;
 class StationTreeModel;
 class TreeModel;
 class VtkVisPipelineItem;
@@ -79,14 +82,22 @@ public:
 	QModelIndex getIndex(vtkProp3D* actor);
 
 	Qt::ItemFlags flags( const QModelIndex &index ) const;
-	
-	/// @brief Loads a vtk object from the given file and adds it to the pipeline.
+
+	/// \brief Loads a vtk object from the given file and adds it to the pipeline.
 	void loadFromFile(QString filename);
+
+	/// \brief Defaults to on.
+	void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
+	
+	/// \brief Sets a global superelevation factor on all source items and resets
+	/// the factor on other items to 1.
+	void setGlobalSuperelevation(double factor) const;
 
 public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
 	void addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
+	void addPipelineItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
 	void addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
 
@@ -96,6 +107,7 @@ public slots:
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
 	void removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
+	void removeSourceItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type);
 	void removeSourceItem(StationTreeModel* model, const std::string &name);
 
 	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
@@ -103,7 +115,7 @@ public slots:
 	void removePipelineItem(QModelIndex index);
 
 	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
-	void checkMeshQuality(VtkMeshSource* mesh);
+	void checkMeshQuality(VtkMeshSource* mesh, MshQualityType::type t);
 
 private:
 	void listArrays(vtkDataSet* dataSet);
@@ -112,7 +124,8 @@ private:
 	QVector<vtkAlgorithm*> _sources;
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
-	
+	bool _resetCameraOnAddOrRemove;
+
 #ifdef OGS_USE_OPENSG
 	OSG::SimpleSceneManager* _sceneManager;
 #endif // OGS_USE_OPENSG
@@ -121,7 +134,7 @@ private:
 
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.
-	void vtkVisPipelineChanged();
+	void vtkVisPipelineChanged() const;
 
 };
 

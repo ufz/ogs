@@ -29,7 +29,7 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline* pipeline, QModelIndex pa
 	vtkDataObject* parentDataObject = parentItem->algorithm()->GetOutputDataObject(0);
 	int parentDataObjectType = parentDataObject->GetDataObjectType();
 
-	
+
 	QVector<VtkFilterInfo> filterList = VtkFilterFactory::GetFilterList();
 	foreach(VtkFilterInfo filter, filterList)
 	{
@@ -42,6 +42,11 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline* pipeline, QModelIndex pa
 
 			new QListWidgetItem(filter.readableName, filterListWidget);
 	}
+
+	// On double clicking an item the dialog gets accepted
+	connect(filterListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+			   this->buttonBox,SIGNAL(accepted()));
+
 }
 
 void VtkAddFilterDialog::on_buttonBox_accepted()
@@ -59,13 +64,13 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
 	VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_pipeline->getItem(_parentIndex));
 	QList<QVariant> itemData;
 	itemData << filterListWidget->currentItem()->text() << true;
-	
+
 	VtkCompositeFilter* filter;
 	if (dynamic_cast<vtkImageAlgorithm*>(parentItem->algorithm()))
 		filter = VtkFilterFactory::CreateCompositeFilter(filterName, parentItem->algorithm());
 	else
 		filter = VtkFilterFactory::CreateCompositeFilter(filterName, parentItem->transformFilter());
-	
+
 	VtkVisPipelineItem* item;
 	if (filter)
 		item = new VtkVisPipelineItem(filter, parentItem, itemData);

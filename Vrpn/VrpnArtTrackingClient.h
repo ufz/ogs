@@ -21,7 +21,7 @@ public:
 	void	StopTracking();
 	
 	/// @brief Returns true if tracking is started
-	bool	IsStarted(){return m_bTrackingStarted;}
+	bool	IsStarted() const {return m_bTrackingStarted;}
 
 	/// @brief Calls the vrpn mainloop functions. Must be called once per frame.
 	void	MainLoop();

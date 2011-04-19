@@ -36,11 +36,11 @@ void VtkCompositeLineToTubeFilter::init()
 
 	vtkTubeFilter* tubes = vtkTubeFilter::New();
 		tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
-		tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"StratColors");
+		tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"Stratigraphies");
 		tubes->SetRadius(150);
 		tubes->SetNumberOfSides(10);
 		tubes->SetCapping(1);
-	
+
 	(*_algorithmUserProperties)["Radius"] = 150.0;
 	(*_algorithmUserProperties)["NumberOfSides"] = 6;
 	(*_algorithmUserProperties)["Capping"] = true;
@@ -53,7 +53,7 @@ void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value
 	VtkAlgorithmProperties::SetUserProperty(name, value);
 
 	if (name.compare("Radius") == 0)
-		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(value.toInt());
+		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(value.toDouble());
 	else if (name.compare("NumberOfSides") == 0)
 		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
 	else if (name.compare("Capping") == 0)

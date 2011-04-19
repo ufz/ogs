@@ -7,6 +7,7 @@
 #define OGSRASTER_H
 
 #include <fstream>
+#include "Configure.h"
 
 class QImage;
 class QPointF;
@@ -95,7 +96,9 @@ private:
 	 * \param cellsize The size of each pixel in the image which is needed for re-scaling the data
 	 * \return True if the raster data was loaded correctly, false otherwise.
 	 */
+#ifdef libgeotiff_FOUND 
 	static bool loadImageFromTIFF(const QString &fileName, QImage &raster, QPointF &origin, double &scalingFactor);
+#endif
 
 	/**
 	 * Loads image files into a QPixmap object. Since images are not geo-referenced no origin point will be returned.

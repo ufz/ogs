@@ -28,51 +28,68 @@ class VisualizationWidget : public QWidget, public Ui_VisualizationWidgetBase
 
 public:
 
-	/// Constructor.
+	/// @brief Constructor.
 	VisualizationWidget(QWidget* parent = 0);
 
-	/// Destructor.
+	/// @brief Destructor.
 	~VisualizationWidget();
 
-	/// Returns the VtkCustomInteractorStyle.
+	/// @brief Returns the VtkCustomInteractorStyle.
 	VtkCustomInteractorStyle* interactorStyle() const;
 
-	/// Returns the VtkPickCallback.
+	/// @brief Returns the VtkPickCallback.
 	VtkPickCallback* vtkPickCallback() const;
 
+	/// @brief See updateViewOnLoad().
+	void setShowAllOnLoad(bool show) { _isShowAllOnLoad = show; }
+
 public slots:
-	/// Updates the the 3d view.
+	/// @brief Updates the the 3d view.
 	void updateView();
 
-	/// Shows the entire scene on the views.
+	/// @brief Shows the entire scene on the views.
 	void showAll();
 
-	/// Returns the vtk renderer
+	/// @brief Updates the view only or additionally shows the entire scene.
+	void updateViewOnLoad();
+
+	/// @brief Saves a magnified image of the current render window to a file.
+	void screenshot(QString filename, int magnification);
+
+	/// @brief Returns the vtk renderer
 	vtkRenderer* renderer() const { return _vtkRender; }
 
+	/// @brief Sets the widgets cursor shape.
+	/// @see http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum
+	void setCursorShape(Qt::CursorShape shape);
+
 protected slots:
-	/// Toggles stereo rendering on / off
+	/// @brief Toggles stereo rendering on / off.
 	void on_stereoToolButton_toggled(bool checked);
 
-	/// Adjusts the eye angle (separation) for stereo viewing
-	void on_eyeAngleSlider_valueChanged(int value);
+	/// @brief Adjusts the eye angle (separation) for stereo viewing.
+	//void on_eyeAngleSlider_valueChanged(int value);
 
-	/// Toggles rectangular zooming mode.
+	/// @brief Toggles rectangular zooming mode.
 	void on_zoomToolButton_toggled(bool checked);
 	
-	/// Resets the camera to view the entire scene
+	/// @brief Resets the camera to view the entire scene.
 	void on_showAllPushButton_pressed();
 	
-	/// Toggles the display of bounding boxes around
+	/// @brief Toggles the display of bounding boxes around.
 	void on_highlightToolButton_toggled(bool checked);
 
-	/// Toggles the orthogonal projection
+	/// @brief Toggles the orthogonal projection.
 	void on_orthogonalProjectionToolButton_toggled(bool checked);
+
+	/// @brief Saves a screenshot.
+	void on_screenshotPushButton_pressed();
 
 private:
 	vtkRenderer* _vtkRender;
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
+	bool _isShowAllOnLoad;
 	#ifdef OGS_USE_VRPN
 	vtkEventQtSlotConnect* _qtConnect;
 	#endif // OGS_USE_VRPN

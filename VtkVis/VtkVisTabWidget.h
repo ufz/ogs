@@ -44,7 +44,7 @@ private:
 	void buildProportiesDialog(VtkVisPipelineItem* item);
 
 	/// Reads the scalar arrays of the given vtk-object and constructs content for the scalar array selection box.
-	void buildScalarArrayComboBox(vtkAlgorithm* algorithm);
+	void buildScalarArrayComboBox(VtkVisPipelineItem* item);
 	VtkVisPipelineItem* _item;
 
 signals:

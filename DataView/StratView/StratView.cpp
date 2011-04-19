@@ -47,7 +47,7 @@ void StratView::saveAsImage(QString fileName)
 	this->update();
 
 	QRectF viewRect = _scene->itemsBoundingRect();
-	QImage img(viewRect.width()+2*_scene->MARGIN, 600, QImage::Format_ARGB32);
+	QImage img(static_cast<int>(viewRect.width())+2*_scene->MARGIN, 600, QImage::Format_ARGB32);
 	QPainter painter(&img);
 
 	this->render(&painter);
