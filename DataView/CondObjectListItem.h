@@ -28,10 +28,10 @@ class CondObjectListItem : public TreeItem
 public:
 	/// Constructor for the TreeItem specifying FEM Conditions.
 	CondObjectListItem(const QList<QVariant> &data, TreeItem *parent, FEMCondition::CondType type, const std::vector<GEOLIB::Point*> *points)
-		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(type), _cond_vec(new std::vector<FEMCondition*>), _use_domain(new bool(false))
+		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(type), _cond_vec(new std::vector<FEMCondition*>)
 	{
 		QString display_name = parent->data(0).toString().append(" - ").append(QString::fromStdString(FEMCondition::condTypeToString(type)));
-		static_cast<VtkConditionSource*>(_vtkSource)->setData( points, _cond_vec, _use_domain);
+		static_cast<VtkConditionSource*>(_vtkSource)->setData( points, _cond_vec);
 		static_cast<VtkConditionSource*>(_vtkSource)->SetName( display_name );
 	}
 
@@ -39,7 +39,6 @@ public:
 	{
 		_vtkSource->Delete();
 		delete _cond_vec;
-		delete _use_domain;
 	}
 
 	/// Adds FEMCondtion for construction of VTK object.
@@ -60,7 +59,6 @@ private:
 	vtkPolyDataAlgorithm* _vtkSource;
 	FEMCondition::CondType _type;
 	std::vector<FEMCondition*> *_cond_vec;
-	bool* _use_domain;
 };
 
 #endif //CONDOBJECTLISTITEM_H
