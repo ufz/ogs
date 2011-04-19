@@ -91,7 +91,7 @@ public:
 	
 	/// \brief Sets a global superelevation factor on all source items and resets
 	/// the factor on other items to 1.
-	void setGlobalSuperelevation(int factor) const;
+	void setGlobalSuperelevation(double factor) const;
 
 public slots:
 	/// \brief Adds the given Model to the pipeline.

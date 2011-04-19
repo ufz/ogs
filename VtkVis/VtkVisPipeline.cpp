@@ -236,7 +236,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 	#endif
 }
 
-void VtkVisPipeline::setGlobalSuperelevation(int factor) const
+void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 {
 	// iterate over all source items
 	for (int i = 0; i < _rootItem->childCount(); ++i)
@@ -277,10 +277,10 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	TreeItem* parentItem = item->parentItem();
 	parentItem->appendChild(item);
 
-	if (parent.isValid())  // KR scale children according to parent
+	if (!parent.isValid())  // Set global superelevation on source objects
 	{
-		double* scale = static_cast<VtkVisPipelineItem*>(parentItem)->actor()->GetScale();
-		item->actor()->SetScale(scale);
+		QSettings settings("UFZ, OpenGeoSys-5");
+		item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();
@@ -337,7 +337,6 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 	else
 		itemName = QString(source->GetClassName());
 	itemData << itemName << true;
-
 
 	VtkVisPipelineItem* item = new VtkVisPipelineItem(source, parentItem, itemData);
 	this->addPipelineItem(item, parent);
