@@ -108,16 +108,10 @@ int MshTabWidget::writeMeshToFile() const
 
 		if (!fileName.empty())
 		{
-			std::fstream* out = new std::fstream(fileName.c_str(), std::fstream::out);
-			if (out->is_open()) {
-				mesh->Write(out);
-				out->close();
-				// write mesh without null-volume-elements
-//				std::ofstream out1 ("mesh_without_null_elements.msh");
-//				FileIO::OGSMeshIO ogs_mesh_io;
-//				ogs_mesh_io.write (mesh, out1);
-//				out1.close ();
-
+			std::ofstream out (fileName.c_str());
+			if (out.is_open()) {
+				FileIO::OGSMeshIO::write (mesh, out);
+				out.close();
 				return 1;
 			}
 			else
