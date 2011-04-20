@@ -393,7 +393,7 @@ void MainWindow::open()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+							"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)", 0, QFileDialog::DontUseNativeDialog);
 	if (!fileName.isEmpty()) {
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -720,7 +720,7 @@ void MainWindow::importRaster()
 			"Select raster file to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
 			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
-	
+
 	if (!fileName.isEmpty())
 	{
 		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
@@ -744,7 +744,7 @@ void MainWindow::importRasterAsPoly()
 			"Select raster file to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
 			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
-	
+
 	if (!fileName.isEmpty())
 	{
 		QImage raster;
