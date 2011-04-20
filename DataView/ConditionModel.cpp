@@ -204,13 +204,8 @@ CondObjectListItem* ConditionModel::createCondParent(TreeItem* parent, FEMCondit
 	QList<QVariant> condData;
 	condData << condType << "";
 
-//	TreeItem* cond = new TreeItem(condData, parent);
-//	parent->appendChild(cond);
-//	return cond;
-
 	std::string geo_name = parent->data(0).toString().toStdString();
 	const std::vector<GEOLIB::Point*> *pnts = _project.getGEOObjects()->getPointVec(geo_name);
-
 	if (pnts)
 	{
 		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts);

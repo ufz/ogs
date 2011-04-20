@@ -897,7 +897,14 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		}
 
 		if (!conditions.empty())
+		{
 			this->_conditionModel->addConditions(conditions);
+
+			for (std::list<CBoundaryCondition*>::iterator it=bc_list.begin(); it!=bc_list.end(); ++it) delete *it;
+			bc_list.clear();
+			for (size_t i=0; i<ic_vector.size(); i++) delete ic_vector[i];
+			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+		}
 	}
 }
 
