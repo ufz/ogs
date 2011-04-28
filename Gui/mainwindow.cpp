@@ -393,7 +393,7 @@ void MainWindow::open()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)", 0, QFileDialog::DontUseNativeDialog);
+							"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
 	if (!fileName.isEmpty()) {
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());

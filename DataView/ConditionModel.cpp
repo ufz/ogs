@@ -61,7 +61,7 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
 		std::vector<double> dis_value = c->getDisValue();
 		TreeItem* disInfo;
-		if (c->getProcessDistributionType() != FiniteElement::LINEAR)
+		if (c->getProcessDistributionType() != FiniteElement::LINEAR || c->getProcessDistributionType() != FiniteElement::LINEAR_NEUMANN)
 		{
 			for (size_t i=0; i<dis_value.size(); i++) disData << dis_value[i];
 			disInfo = new TreeItem(disData, condItem);
