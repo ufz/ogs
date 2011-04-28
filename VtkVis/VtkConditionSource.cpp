@@ -134,7 +134,6 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 			newLines->InsertNextCell(nPoints);
 			for (int i = 0; i < nPoints; i++)
 			{
-				size_t x = ply->getPointID(i);
 				size_t pnt_id = ply->getPointID(i);//this->getIndex(ply->getPointID(i), newPoints, scalars, idx_map);
 				newLines->InsertCellPoint(pnt_id);
 
@@ -196,7 +195,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 			box.push_back(bounding_box.getMaxPoint());
 
 			vtkIdType nPoints = newPoints->GetNumberOfPoints();
-			size_t pnt_idx = _points->size();
+			//size_t pnt_idx = _points->size();
 
 			for (size_t i=0; i<8; i++)
 			{
