@@ -52,36 +52,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="showMeshNodesCheckBox">
-     <property name="toolTip">
-      <string>Shows / hides mesh node objects in the graphics views</string>
-     </property>
-     <property name="text">
-      <string>Show Mesh Nodes</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="DataView" name="mshNodeTableView"/>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showMeshElementsCheckBox">
-     <property name="toolTip">
-      <string>Shows / hides mesh element objects in the graphics views</string>
-     </property>
-     <property name="text">
-      <string>Show Mesh Elements</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="DataView" name="mshElemTableView"/>
+    <widget class="DataView" name="elementView"/>
    </item>
   </layout>
  </widget>

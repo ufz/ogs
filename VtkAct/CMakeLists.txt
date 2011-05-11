@@ -32,6 +32,14 @@ qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 include_directories(
 	.
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
+	../../Base
+	../../FEM
+	../../GEO
+	../../FileIO
+	../../FileIO/MeshIO
+	../../MSH
+	../../MathLib
+	../VtkVis
 )
 
 # Create the library
