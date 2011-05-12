@@ -16,6 +16,7 @@
 class vtkDataObject;
 class vtkDataSetMapper;
 class vtkActor;
+class GridAdapter;
 
 /**
  * VtkCustomInteractorStyle implements highlighting of an active actor and
@@ -79,6 +80,9 @@ signals:
 	/// @brief Emitted when the cursor shape was changed due to alternate
 	/// mouse action mode.
 	void cursorChanged(Qt::CursorShape);
+
+	/// @brief Emitted when a mesh element has been picked
+	void elementPicked(const GridAdapter*, const size_t);
 
 };
 

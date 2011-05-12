@@ -14,7 +14,7 @@
 
 #include <vtkPolyDataAlgorithm.h>
 #include <QFileInfo>
-
+		
 
 ConditionModel::ConditionModel( ProjectData &project, QObject* parent /*= 0*/ )
 : TreeModel(parent), _project(project)

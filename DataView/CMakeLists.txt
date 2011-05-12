@@ -9,6 +9,7 @@ set( SOURCES
 	DataView.cpp
 	DBConnectionDialog.cpp
 	DiagramPrefsDialog.cpp
+	ElementTreeModel.cpp
 	GEOModels.cpp
 	GeoTabWidget.cpp
 	GeoTreeModel.cpp
@@ -41,6 +42,7 @@ set( MOC_HEADERS
 	DataView.h
 	DBConnectionDialog.h
 	DiagramPrefsDialog.h
+	ElementTreeModel.h
 	GEOModels.h
 	GeoTabWidget.h
 	GeoTreeModel.h

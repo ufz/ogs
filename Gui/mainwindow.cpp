@@ -11,6 +11,7 @@
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 #include "MshModel.h"
+#include "ElementTreeModel.h"
 #include "ConditionModel.h"
 
 //dialogs
@@ -99,11 +100,13 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	_geoModels = new GEOModels();
 	_project.setGEOObjects(_geoModels);
 	_meshModels = new MshModel(_project);
+	_elementModel = new ElementTreeModel();
 	_conditionModel = new ConditionModel(_project);
 
 	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
 	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
+	mshTabWidget->elementView->setModel(_elementModel);
 	conditionTabWidget->treeView->setModel(_conditionModel);
 
 	// vtk visualization pipeline
@@ -151,9 +154,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 
 	// Setup connections for mesh models to GUI
-	connect(mshTabWidget, SIGNAL(requestMeshRemoval(const QModelIndex&)),
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
 			_meshModels, SLOT(removeMesh(const QModelIndex&)));
-	connect(mshTabWidget, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
+	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 			this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
 
 
@@ -213,6 +216,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect((QObject*) (visualizationWidget->vtkPickCallback()),
 			SIGNAL(actorPicked(vtkProp3D*)),
 			vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
+	connect((QObject*) (visualizationWidget->interactorStyle()),
+			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
+			this->_elementModel, SLOT(setElement(const GridAdapter*, const size_t)));
 
 	connect(vtkVisTabWidget->vtkVisPipelineView,
 			SIGNAL(meshAdded(Mesh_Group::CFEMesh*, std::string&)),
@@ -1334,3 +1340,4 @@ QString MainWindow::getLastUsedDir()
 	else
 		return QDir::homePath();
 }
+
