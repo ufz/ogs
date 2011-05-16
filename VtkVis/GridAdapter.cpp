@@ -400,6 +400,6 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 
 		mesh->ele_vector.push_back(elem);
 	}
-	mesh->ConstructGrid();
+	//mesh->ConstructGrid();
 	return mesh;
 }

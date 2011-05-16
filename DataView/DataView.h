@@ -25,8 +25,8 @@ class DataView : public QTreeView
 public:
 	DataView(QWidget* parent = 0);
 
+public slots:
 	void updateView();
-
 
 protected slots:
 	/// Is called when the selection of this view changes. Emits a the signal

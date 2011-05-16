@@ -280,7 +280,8 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	if (!parent.isValid())  // Set global superelevation on source objects
 	{
 		QSettings settings("UFZ, OpenGeoSys-5");
-		item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
+		if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
+			item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();

@@ -156,6 +156,8 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	// Setup connections for mesh models to GUI
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
 			_meshModels, SLOT(removeMesh(const QModelIndex&)));
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
+			_elementModel, SLOT(clearView()));
 	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 			this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
 
@@ -219,6 +221,10 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect((QObject*) (visualizationWidget->interactorStyle()),
 			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
 			this->_elementModel, SLOT(setElement(const GridAdapter*, const size_t)));
+	connect((QObject*) (visualizationWidget->interactorStyle()),
+			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
+			mshTabWidget->elementView, SLOT(updateView()));
+
 
 	connect(vtkVisTabWidget->vtkVisPipelineView,
 			SIGNAL(meshAdded(Mesh_Group::CFEMesh*, std::string&)),

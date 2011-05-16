@@ -33,8 +33,9 @@ DataView::DataView( QWidget* parent /*= 0*/ )
 void DataView::updateView()
 {
 	setAlternatingRowColors(true);
+	setColumnWidth(0,125);
 	size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
-	for (size_t i=0; i<nColumns; i++)
+	for (size_t i=1; i<nColumns; i++)
 		resizeColumnToContents(i);
 }
 

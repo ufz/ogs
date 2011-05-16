@@ -23,10 +23,10 @@ public:
 	ElementTreeModel( QObject* parent = 0 );
 	~ElementTreeModel();
 
+public slots:
 	/// Clears the tree.
 	void clearView();
 
-public slots:
 	/// Extracts information of the element with the given index from the given grid.
 	void setElement(const GridAdapter* grid, const size_t elem_index);
 

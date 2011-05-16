@@ -62,5 +62,6 @@ void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_ind
 void ElementTreeModel::clearView()
 {
 	_rootItem->removeChildren(0, _rootItem->childCount());
+	reset();
 }
 
