@@ -28,7 +28,7 @@ using Mesh_Group::CFEMesh;
 GridAdapter::GridAdapter(const Mesh_Group::CFEMesh* mesh) :
 	_name(""), _nodes(new std::vector<GEOLIB::Point*>), _elems(new std::vector<Element*>), _mesh(mesh)
 {
-	if (mesh) convertCFEMesh(mesh);
+	if (mesh) this->convertCFEMesh(mesh);
 }
 
 GridAdapter::GridAdapter(const std::string &filename) :
@@ -130,7 +130,7 @@ const CFEMesh* GridAdapter::toCFEMesh() const
 	}
 	// nfaces?
 	// nedges?
-	mesh->ConstructGrid();
+	//mesh->ConstructGrid();
 	std::cout << "done." << std::endl;
 
 	return mesh;

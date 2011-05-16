@@ -14,6 +14,7 @@
 
 class GEOModels;
 class MshModel;
+class ElementTreeModel;
 class StationTreeModel;
 class ConditionModel;
 class VtkVisPipeline;
@@ -110,6 +111,7 @@ private:
 	FileFinder _fileFinder;
 	GEOModels* _geoModels;
 	MshModel* _meshModels;
+	ElementTreeModel* _elementModel;
 	ConditionModel* _conditionModel;
 	ProjectData _project;
 	VtkVisPipeline* _vtkVisPipeline;
@@ -120,6 +122,7 @@ private:
 		TrackingSettingsWidget* _trackingSettingsWidget;
 	#endif // OGS_USE_VRPN
 	VisPrefsDialog* _visPrefsDialog;
+
 
 signals:
 	void fileUsed( QString filename );
