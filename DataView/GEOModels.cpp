@@ -121,7 +121,7 @@ bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const 
 
 	if (ret)
 		this->_geoModel->appendSurfaces(name, this->getSurfaceVecObj(name));
-	else 
+	else
 	{
 		std::vector<GEOLIB::Surface*> *sfc = new std::vector<GEOLIB::Surface*>;
 		for (size_t i=0; i<surfaces.size(); i++)
@@ -151,7 +151,7 @@ void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<
 			ply_list.push_back( (*polylines)[indexlist[i]] );
 
 		// connect polylines
-		GEOLIB::Polyline* new_line = GEOLIB::Polyline::contructPolylineFromSegments(ply_list, proximity);
+		GEOLIB::Polyline* new_line = GEOLIB::Polyline::constructPolylineFromSegments(ply_list, proximity);
 
 		if (new_line)
 		{
