@@ -157,7 +157,7 @@ double* OGSRaster::loadDataFromASC(const QString &fileName, double &x0, double &
 	if (!in.is_open())
     {
 		std::cout << "OGSRaster::loadImageFromASC() - Could not open file..." << std::endl;
-		return false;
+		return NULL;
 	}
 
 	ascHeader header;

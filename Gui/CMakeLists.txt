@@ -39,6 +39,7 @@ INCLUDE_DIRECTORIES(
 	../../GEO
 	../../FileIO
 	../../MSH
+	../../MSHGEOTOOLS
 	../../FEM
 	../Base
 	../DataView
@@ -75,6 +76,7 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	GEO
 	FileIO
 	MSH
+	MSHGEOTOOLS
 	FEM
 	OGSProject
 	QtBase
