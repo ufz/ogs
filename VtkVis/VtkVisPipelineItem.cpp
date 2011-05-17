@@ -471,11 +471,14 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 
 void VtkVisPipelineItem::setScale(double x, double y, double z) const
 {
-	vtkTransform* transform =
-		static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
-	transform->Identity();
-	transform->Scale(x, y, z);
-	this->transformFilter()->Modified();
+	if (this->transformFilter())
+	{
+		vtkTransform* transform =
+			static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		transform->Identity();
+		transform->Scale(x, y, z);
+		this->transformFilter()->Modified();
+	}
 
 }
 
