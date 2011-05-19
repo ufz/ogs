@@ -33,17 +33,18 @@ void VtkCompositePointToGlyphFilter::init()
 	_glyphSource->SetPhiResolution(10);
 	_glyphSource->SetThetaResolution(10);
 	(*_algorithmUserProperties)["Radius"] = default_radius;
-	(*_algorithmUserProperties)["PhiResolution"] = 5;
-	(*_algorithmUserProperties)["ThetaResolution"] = 5;
+	(*_algorithmUserProperties)["PhiResolution"] = 10;
+	(*_algorithmUserProperties)["ThetaResolution"] = 10;
 
 	vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-	glyphFilter->ScalingOn();
-	glyphFilter->SetScaleModeToScaleByScalar();
+	glyphFilter->ScalingOn();		// KR important to scale glyphs with double precision (e.g. 0.1 of their size for small datasets)
+	//glyphFilter->SetScaleModeToScaleByScalar();  // KR can easily obscure view when scalar values have large differences (this is also the default scaling method)
+	glyphFilter->SetScaleModeToDataScalingOff();	// KR scaling is possible but scalar values are ignored
 	glyphFilter->SetScaleFactor(1.0);
 	glyphFilter->SetSource(_glyphSource->GetOutput());
 	glyphFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 	//(*_algorithmUserProperties)["ScaleMode"] = 0;
-	//(*_algorithmUserProperties)["ScaleFactor"] = 1.0;
+	(*_algorithmUserProperties)["ScaleFactor"] = 1.0;
 	//(*_algorithmUserProperties)["ColorMode"] = glyphFilter->GetColorMode();
 	//(*_algorithmUserProperties)["VectorMode"] = glyphFilter->GetVectorMode();
 	//(*_algorithmUserProperties)["Orient"] = glyphFilter->GetOrient();

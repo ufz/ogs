@@ -379,7 +379,8 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 
 		if (elem_type != MshElemType::INVALID)
 		{
-			elem->SetElementType(elem_type);
+			//elem->SetElementType(elem_type);
+			elem->setElementProperties(elem_type);
 			if (scalars) elem->SetPatchIndex(static_cast<int>(scalars->GetComponent(i,0))); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
 		}
 		else
@@ -400,6 +401,6 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 
 		mesh->ele_vector.push_back(elem);
 	}
-	//mesh->ConstructGrid();
+	mesh->ConstructGrid();
 	return mesh;
 }
