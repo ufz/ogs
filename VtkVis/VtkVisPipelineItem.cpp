@@ -21,6 +21,8 @@
 #include <vtkTransform.h>
 #include <vtkTextureMapToPlane.h>
 
+#include <vtkGenericDataObjectWriter.h>
+
 #include <QMessageBox>
 #include <QObject>
 
@@ -350,11 +352,13 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 		vtkImageAlgorithm* algI = dynamic_cast<vtkImageAlgorithm*>(alg);
 		if (algPD)
 		{
+//			vtkGenericDataObjectWriter* pdWriter = vtkGenericDataObjectWriter::New();
 			vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
 				vtkSmartPointer<vtkXMLPolyDataWriter>::New();
 			pdWriter->SetInput(algPD->GetOutputDataObject(0));
 			std::string filenameWithExt = filename;
 			filenameWithExt.append(".vtp");
+//			filenameWithExt.append(".vtk");
 			pdWriter->SetFileName(filenameWithExt.c_str());
 			return pdWriter->Write();
 		}

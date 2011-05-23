@@ -113,23 +113,21 @@ const CFEMesh* GridAdapter::toCFEMesh() const
 	for (size_t i=0; i<nElems; i++)
 	{
 		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
-		elem->SetElementType((*_elems)[i]->type);
+		//elem->SetElementType((*_elems)[i]->type);
+		elem->setElementProperties((*_elems)[i]->type);
 		elem->SetPatchIndex((*_elems)[i]->material);
 
 		size_t nElemNodes = ((*_elems)[i]->nodes).size();
-		elem->SetNodesNumber(nElemNodes);
-		elem->nodes_index.resize(nElemNodes);
+		//elem->SetNodesNumber(nElemNodes);
+		//elem->nodes_index.resize(nElemNodes);
 		for (size_t j=0; j<nElemNodes; j++)
 		{
 			int a = (*_elems)[i]->nodes[j];
-			//elem->nodes_index[j] = a;
 			elem->SetNodeIndex(j, a);
 		}
 
 		mesh->ele_vector.push_back(elem);
 	}
-	// nfaces?
-	// nedges?
 	//mesh->ConstructGrid();
 	std::cout << "done." << std::endl;
 
