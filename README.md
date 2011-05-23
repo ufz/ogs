@@ -2,7 +2,7 @@
 
 ## Intro ##
 
-***This is the source code of the next generation[OpenGeoSys](http://www.opengeosys.net).***
+***This is the source code of the next generation [OpenGeoSys](http://www.opengeosys.net).***
 
 At the moment we are evaluating Git and Github as our main development infrastructure.
 To get started with Github have a look at these [customized help pages](http://ufz.github.com/help) or at
