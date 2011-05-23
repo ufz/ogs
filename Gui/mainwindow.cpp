@@ -1100,17 +1100,17 @@ void MainWindow::FEMTestStart()
 			if (!_meshModels) {
 				std::cout << "no mesh loaded" << std::endl;
 			} else {
-				std::string mesh_name ("3D_HGW");
+				std::string mesh_name ("model25");
 				Mesh_Group::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
 
 				Mesh_Group::ExtractMeshNodes extract_mesh_nodes (mesh);
-				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
-				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[0]), *(pnts_vec), polygon);
+//				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
+				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[19]), _geoModels, geo_names[0], polygon);
 				if (polygon)
 					polyline_vec->push_back (polygon);
-				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[1]), *(pnts_vec), polygon);
-				if (polygon)
-					polyline_vec->push_back (polygon);
+//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[1]), *(pnts_vec), polygon);
+//				if (polygon)
+//					polyline_vec->push_back (polygon);
 //				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[2]), *(pnts_vec), polygon);
 //				if (polygon)
 //					polyline_vec->push_back (polygon);

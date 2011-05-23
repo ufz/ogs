@@ -40,9 +40,10 @@ void GEOModels::addPointVec( std::vector<GEOLIB::Point*> *points, std::string &n
 	emit geoDataAdded(_geoModel, name, GEOLIB::POINT);
 }
 
-bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points, std::string &name)
+bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points,
+		std::string &name, std::vector<size_t>* ids)
 {
-	bool ret (GEOLIB::GEOObjects::appendPointVec (points, name));
+	bool ret (GEOLIB::GEOObjects::appendPointVec (points, name, ids));
 	// TODO import new points into geo-treeview
 	return ret;
 }
