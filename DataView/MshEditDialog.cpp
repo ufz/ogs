@@ -10,7 +10,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 
-MshEditDialog::MshEditDialog(const Mesh_Group::CFEMesh* mesh, QDialog* parent) 
+MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent) 
 : QDialog(parent), _msh(mesh)
 {
 	setupUi(this);
@@ -54,7 +54,7 @@ void MshEditDialog::accept()
 
 	if (tabIndex>=0)
 	{
-		Mesh_Group::CFEMesh* new_mesh = NULL;
+		MeshLib::CFEMesh* new_mesh = NULL;
 
 		switch (tabIndex)
 		{

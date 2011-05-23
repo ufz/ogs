@@ -47,7 +47,7 @@ void DataView::addMeshAction()
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
+		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh) static_cast<MshModel*>(this->model())->addMesh(msh, name);
 	}
 }
@@ -91,17 +91,17 @@ void DataView::openMshEditDialog()
 {
 	MshModel* model = static_cast<MshModel*>(this->model());
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const Mesh_Group::CFEMesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
+	const MeshLib::CFEMesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
 
 	MshEditDialog meshEdit(mesh);
-	connect(&meshEdit, SIGNAL(mshEditFinished(Mesh_Group::CFEMesh*, std::string&)), model, SLOT(addMesh(Mesh_Group::CFEMesh*, std::string&)));
+	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::CFEMesh*, std::string&)), model, SLOT(addMesh(MeshLib::CFEMesh*, std::string&)));
 	meshEdit.exec();
 }
 
 int DataView::writeMeshToFile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const Mesh_Group::CFEMesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
+	const MeshLib::CFEMesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
 
 	if (mesh)
 	{

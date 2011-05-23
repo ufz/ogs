@@ -23,9 +23,9 @@
 #include <vtkCell.h>
 #include <vtkCellData.h>
 
-using Mesh_Group::CFEMesh;
+using MeshLib::CFEMesh;
 
-GridAdapter::GridAdapter(const Mesh_Group::CFEMesh* mesh) :
+GridAdapter::GridAdapter(const MeshLib::CFEMesh* mesh) :
 	_name(""), _nodes(new std::vector<GEOLIB::Point*>), _elems(new std::vector<Element*>), _mesh(mesh)
 {
 	if (mesh) this->convertCFEMesh(mesh);
@@ -50,10 +50,10 @@ GridAdapter::~GridAdapter()
 }
 
 
-int GridAdapter::convertCFEMesh(const Mesh_Group::CFEMesh* mesh)
+int GridAdapter::convertCFEMesh(const MeshLib::CFEMesh* mesh)
 {
 	if (!mesh) return 0;
-	
+
 	size_t nNodes = mesh->nod_vector.size();
 	for (size_t i=0; i<nNodes; i++)
 	{
@@ -102,7 +102,7 @@ const CFEMesh* GridAdapter::toCFEMesh() const
 	size_t nNodes = _nodes->size();
 	for (size_t i=0; i<nNodes; i++)
 	{
-		Mesh_Group::CNode* node(new Mesh_Group::CNode(i));
+		MeshLib::CNode* node(new MeshLib::CNode(i));
 		double coords[3] = { (*(*_nodes)[i])[0], (*(*_nodes)[i])[1], (*(*_nodes)[i])[2] };
 		node->SetCoordinates(coords);
 		mesh->nod_vector.push_back(node);
@@ -112,7 +112,7 @@ const CFEMesh* GridAdapter::toCFEMesh() const
 	size_t nElems = _elems->size();
 	for (size_t i=0; i<nElems; i++)
 	{
-		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
+		MeshLib::CElem* elem(new MeshLib::CElem());
 		//elem->SetElementType((*_elems)[i]->type);
 		elem->setElementProperties((*_elems)[i]->type);
 		elem->SetPatchIndex((*_elems)[i]->material);
@@ -279,12 +279,12 @@ const std::vector<GridAdapter::Element*> *GridAdapter::getElements(size_t matID)
 	return matElems;
 }
 
-Mesh_Group::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std::pair<double,double> &origin, const double &scalingFactor)
+MeshLib::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std::pair<double,double> &origin, const double &scalingFactor)
 {
 	vtkSmartPointer<vtkUnsignedCharArray> pixelData = vtkSmartPointer<vtkUnsignedCharArray>(vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
 	int* dims = img->GetDimensions();
 
-	Mesh_Group::CFEMesh* mesh(new CFEMesh());
+	MeshLib::CFEMesh* mesh(new CFEMesh());
 	size_t imgHeight = dims[0];
 	size_t imgWidth  = dims[1];
 	std::vector<size_t> visNodes(imgWidth*imgHeight);
@@ -299,7 +299,7 @@ Mesh_Group::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std:
 			double coords[3] = { origin.first+(scalingFactor*j), origin.second+(scalingFactor*i), pixcol };
 			visNodes[index] = (colour[3]>0);
 
-			Mesh_Group::CNode* node(new Mesh_Group::CNode(index));
+			MeshLib::CNode* node(new MeshLib::CNode(index));
 			node->SetCoordinates(coords);
 			mesh->nod_vector.push_back(node);
 		}
@@ -325,9 +325,9 @@ Mesh_Group::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std:
 	return mesh;
 }
 
-Mesh_Group::CElem* GridAdapter::createElement(size_t node1, size_t node2, size_t node3)
+MeshLib::CElem* GridAdapter::createElement(size_t node1, size_t node2, size_t node3)
 {
-	Mesh_Group::CElem* elem(new Mesh_Group::CElem());
+	MeshLib::CElem* elem(new MeshLib::CElem());
 	elem->setElementProperties(MshElemType::TRIANGLE);
 	elem->SetPatchIndex(1);
 	elem->SetNodesNumber(3);
@@ -338,11 +338,11 @@ Mesh_Group::CElem* GridAdapter::createElement(size_t node1, size_t node2, size_t
 	return elem;
 }
 
-Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
+MeshLib::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
 {
 	if (!grid) return NULL;
 
-	Mesh_Group::CFEMesh* mesh(new Mesh_Group::CFEMesh());
+	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 
 	size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
 	size_t nElems = grid->GetNumberOfCells();
@@ -352,16 +352,16 @@ Mesh_Group::CFEMesh* GridAdapter::convertUnstructuredGrid(vtkUnstructuredGrid* g
 	for (size_t i=0; i<nNodes; i++)
 	{
 		coords = grid->GetPoints()->GetPoint(i);
-		Mesh_Group::CNode* node(new Mesh_Group::CNode(i, coords[0], coords[1], coords[2]));
+		MeshLib::CNode* node(new MeshLib::CNode(i, coords[0], coords[1], coords[2]));
 		mesh->nod_vector.push_back(node);
 	}
-	
+
 	// set mesh elements
 	vtkCell* cell(NULL);
 	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
 	for (size_t i=0; i<nElems; i++)
 	{
-		Mesh_Group::CElem* elem(new Mesh_Group::CElem());
+		MeshLib::CElem* elem(new MeshLib::CElem());
 
 		MshElemType::type elem_type = MshElemType::INVALID;
 		int cell_type = grid->GetCellType(i);

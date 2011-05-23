@@ -153,7 +153,7 @@ void VtkVisPipelineView::convertImageToMesh()
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
 
-	Mesh_Group::CFEMesh* mesh = GridAdapter::convertImgToMesh(image, imageSource->getOrigin(), imageSource->getSpacing());
+	MeshLib::CFEMesh* mesh = GridAdapter::convertImgToMesh(image, imageSource->getOrigin(), imageSource->getSpacing());
 	// now do something with the mesh (save, display, whatever... )
 	std::string msh_name("NewMesh");
 	emit meshAdded(mesh, msh_name);
@@ -176,7 +176,7 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}
-	Mesh_Group::CFEMesh* mesh = GridAdapter::convertUnstructuredGrid(grid);
+	MeshLib::CFEMesh* mesh = GridAdapter::convertUnstructuredGrid(grid);
 	std::string msh_name("NewMesh");
 	emit meshAdded(mesh, msh_name);
 }

@@ -230,8 +230,8 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(meshAdded(Mesh_Group::CFEMesh*, std::string&)),
-			_meshModels, SLOT(addMesh(Mesh_Group::CFEMesh*, std::string&)));
+			SIGNAL(meshAdded(MeshLib::CFEMesh*, std::string&)),
+			_meshModels, SLOT(addMesh(MeshLib::CFEMesh*, std::string&)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -325,11 +325,11 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	//	std::cout << "size of GEOLIB::Surface: " << sizeof (GEOLIB::Surface) << std::endl;
 	//	std::cout << "size of Surface: " << sizeof (Surface) << std::endl;
 	//
-	//	std::cout << "size of CCore: " << sizeof (Mesh_Group::CCore) << std::endl;
-	//	std::cout << "size of CNode: " << sizeof (Mesh_Group::CNode) << std::endl;
-	//	std::cout << "size of CElement: " << sizeof (Mesh_Group::CNode) << std::endl;
-	//	std::cout << "size of CEdge: " << sizeof (Mesh_Group::CEdge) << std::endl;
-	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
+	//	std::cout << "size of CCore: " << sizeof (MeshLib::CCore) << std::endl;
+	//	std::cout << "size of CNode: " << sizeof (MeshLib::CNode) << std::endl;
+	//	std::cout << "size of CElement: " << sizeof (MeshLib::CNode) << std::endl;
+	//	std::cout << "size of CEdge: " << sizeof (MeshLib::CEdge) << std::endl;
+	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 	//	std::cout << "size of Matrix: " << sizeof (Math_Group::Matrix) << std::endl;
 	//
 	//	std::cout << "size of vec<size_t>: " << sizeof (Math_Group::vec<size_t>) << std::endl;
@@ -340,7 +340,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
-	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
+	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -548,7 +548,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh") {
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
+		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh)
 			_meshModels->addMesh(msh, name);
 		else
@@ -568,7 +568,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// GMS mesh files
 	else if (fi.suffix().toLower() == "3dm") {
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
+		MeshLib::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
 		if (mesh) _meshModels->addMesh(mesh, name);
 	}
 	// goCAD files
@@ -599,7 +599,7 @@ void MainWindow::loadFile(const QString &fileName)
 		size_t len_rlat, len_rlon;
 		FileIO::NetCDFInterface::readNetCDFData(name, pnt_vec, _geoModels,
 				len_rlat, len_rlon);
-		Mesh_Group::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
+		MeshLib::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
 				len_rlat, len_rlon);
 		//GridAdapter* grid = new GridAdapter(mesh);
 		_meshModels->addMesh(mesh, name);
@@ -1101,9 +1101,9 @@ void MainWindow::FEMTestStart()
 				std::cout << "no mesh loaded" << std::endl;
 			} else {
 				std::string mesh_name ("model25");
-				Mesh_Group::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
+				MeshLib::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
 
-				Mesh_Group::ExtractMeshNodes extract_mesh_nodes (mesh);
+				MeshLib::ExtractMeshNodes extract_mesh_nodes (mesh);
 //				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
 				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[19]), _geoModels, geo_names[0], polygon);
 				if (polygon)

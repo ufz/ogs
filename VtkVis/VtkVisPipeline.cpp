@@ -447,16 +447,16 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
 {
 	if (source) {
-		const Mesh_Group::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
-		Mesh_Group::MeshQualityChecker* checker (NULL);
+		const MeshLib::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
+		MeshLib::MeshQualityChecker* checker (NULL);
 		if (t == MshQualityType::EDGERATIO)
-			checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh);
+			checker = new MeshLib::MeshQualityShortestLongestRatio(mesh);
 		else if (t == MshQualityType::AREA)
-			checker = new Mesh_Group::MeshQualityNormalisedArea(mesh);
+			checker = new MeshLib::MeshQualityNormalisedArea(mesh);
 		else if (t == MshQualityType::VOLUME)
-			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh);
+			checker = new MeshLib::MeshQualityNormalisedVolumes(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
-			checker = new Mesh_Group::MeshQualityEquiAngleSkew(mesh);
+			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
 		else {
 			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..." << std::endl;
 			delete checker;

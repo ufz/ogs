@@ -35,7 +35,7 @@ int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 	return 3;
 }
 
-void MshModel::addMesh(Mesh_Group::CFEMesh* mesh, std::string &name)
+void MshModel::addMesh(MeshLib::CFEMesh* mesh, std::string &name)
 {
 	_project.addMesh(mesh, name);
 	this->addMeshObject(new GridAdapter(mesh), name);
@@ -142,8 +142,8 @@ bool MshModel::removeMesh(const std::string &name)
 
 void MshModel::updateModel()
 {
-	const std::map<std::string, Mesh_Group::CFEMesh*> msh_vec = _project.getMeshObjects();
-	for (std::map<std::string, Mesh_Group::CFEMesh*>::const_iterator it(msh_vec.begin());	it != msh_vec.end(); ++it)
+	const std::map<std::string, MeshLib::CFEMesh*> msh_vec = _project.getMeshObjects();
+	for (std::map<std::string, MeshLib::CFEMesh*>::const_iterator it(msh_vec.begin());	it != msh_vec.end(); ++it)
 	{
 		if (this->getMesh(it->first) == NULL) 
 		{
