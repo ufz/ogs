@@ -43,7 +43,7 @@ public slots:
 	void removeGeometry(std::string geo_name, GEOLIB::GEOTYPE type);
 
 	void addPointVec(std::vector<GEOLIB::Point*> *points, std::string &name, std::map<std::string, size_t>* name_pnt_id_map = NULL);
-	bool appendPointVec(const std::vector<GEOLIB::Point*> &points, std::string &name);
+	bool appendPointVec(const std::vector<GEOLIB::Point*> &points, std::string &name, std::vector<size_t>* ids = NULL);
 	bool removePointVec(const std::string &name);
 
 	void addStationVec(std::vector<GEOLIB::Point*> *stations, std::string &name, const GEOLIB::Color* const color);
