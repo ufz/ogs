@@ -25,7 +25,7 @@ public:
 
 public slots:
 	/// @brief Sets the scalar visibility on this mapper.
-	void SetScalarVisibility(bool on);
+	virtual void SetScalarVisibility(bool on);
 
 protected:
 	/// @brief Constructor.

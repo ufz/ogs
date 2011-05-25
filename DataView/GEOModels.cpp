@@ -41,7 +41,7 @@ void GEOModels::addPointVec( std::vector<GEOLIB::Point*> *points, std::string &n
 }
 
 bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points,
-		std::string &name, std::vector<size_t>* ids)
+		const std::string &name, std::vector<size_t>* ids)
 {
 	bool ret (GEOLIB::GEOObjects::appendPointVec (points, name, ids));
 	// TODO import new points into geo-treeview
@@ -116,7 +116,7 @@ void GEOModels::addSurfaceVec( std::vector<GEOLIB::Surface*> *surfaces, const st
 	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
 }
 
-bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
+bool GEOModels::appendSurfaceVec(const std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
 {
 	bool ret (GEOLIB::GEOObjects::appendSurfaceVec (surfaces, name));
 
