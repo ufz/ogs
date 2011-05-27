@@ -23,8 +23,6 @@
 #include <vtkCell.h>
 #include <vtkCellData.h>
 
-using MeshLib::CFEMesh;
-
 GridAdapter::GridAdapter(const MeshLib::CFEMesh* mesh) :
 	_name(""), _nodes(new std::vector<GEOLIB::Point*>), _elems(new std::vector<Element*>), _mesh(mesh)
 {
@@ -87,15 +85,15 @@ int GridAdapter::convertCFEMesh(const MeshLib::CFEMesh* mesh)
 	return 1;
 }
 
-const CFEMesh* GridAdapter::getCFEMesh() const
+const MeshLib::CFEMesh* GridAdapter::getCFEMesh() const
 {
 	if (_mesh) return _mesh;
 	return toCFEMesh();
 }
 
-const CFEMesh* GridAdapter::toCFEMesh() const
+const MeshLib::CFEMesh* GridAdapter::toCFEMesh() const
 {
-	CFEMesh* mesh (new CFEMesh());
+	MeshLib::CFEMesh* mesh (new MeshLib::CFEMesh());
 	std::cout << "Converting mesh object ... ";
 
 	// set mesh nodes
@@ -284,7 +282,7 @@ MeshLib::CFEMesh* GridAdapter::convertImgToMesh(vtkImageData* img, const std::pa
 	vtkSmartPointer<vtkUnsignedCharArray> pixelData = vtkSmartPointer<vtkUnsignedCharArray>(vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
 	int* dims = img->GetDimensions();
 
-	MeshLib::CFEMesh* mesh(new CFEMesh());
+	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 	size_t imgHeight = dims[0];
 	size_t imgWidth  = dims[1];
 	std::vector<size_t> visNodes(imgWidth*imgHeight);
