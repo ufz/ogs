@@ -7,8 +7,10 @@
 #include "StringTools.h"
 #include "msh_mesh.h"
 #include "OGSError.h"
-#include <QPushButton>
+
 #include <QFileDialog>
+#include <QPushButton>
+#include <QSettings>
 
 MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent) 
 : QDialog(parent), _msh(mesh)
@@ -107,6 +109,12 @@ void MshEditDialog::reject()
 void MshEditDialog::getFileName()
 {
 	QPushButton* button = dynamic_cast<QPushButton*>(this->sender());
-	QString filename = QFileDialog::getOpenFileName(this, "Select raster file to open", "", "ASCII raster files (*.asc);;All files (* *.*)");
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString filename = QFileDialog::getOpenFileName(this, 
+			"Select raster file to open", 
+			settings.value("lastOpenedFileDirectory").toString(), 
+			"ASCII raster files (*.asc);;All files (* *.*)");
 	_fileButtonMap[button]->setText(filename);
+	QDir dir = QDir(filename);
+	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 }

@@ -51,8 +51,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 			{
 				MeshLib::CElem* elem( new MeshLib::CElem() );
 				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
-				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
-				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
+				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->setElementProperties(MshElemType::PRISM); // extrude triangles to prism
+				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->setElementProperties(MshElemType::HEXAHEDRON); // extrude quads to hexes
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::LINE) continue; // line elements are ignored and not duplicated
 				else
 				{
@@ -79,8 +79,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
-	//new_mesh->ConstructGrid();
-	//new_mesh->FillTransformMatrix();
+	new_mesh->ConstructGrid();
+	new_mesh->FillTransformMatrix();
 
 	return new_mesh;
 }
