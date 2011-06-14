@@ -22,9 +22,12 @@ VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlg
 
 void VtkCompositeSelectionFilter::init()
 {
+	char* filter_name = "Selection";
 	double thresholdLower(0.0), thresholdUpper(1.0);
 	this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
 	this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
+
+	this->SetLookUpTable(QString(filter_name), this->GetLookupTable());
 
 	VtkSelectionFilter* selFilter = VtkSelectionFilter::New();
 		selFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
@@ -33,7 +36,7 @@ void VtkCompositeSelectionFilter::init()
 
 	vtkThreshold* threshold = vtkThreshold::New();
 		threshold->SetInputConnection(selFilter->GetOutputPort());
-		threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, "Selection");
+		threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, filter_name);
 		threshold->SetSelectedComponent(0);
 		threshold->ThresholdBetween(thresholdLower, thresholdUpper);
 		threshold->Update();
