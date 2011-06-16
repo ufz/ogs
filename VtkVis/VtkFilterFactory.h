@@ -39,6 +39,7 @@ struct VtkFilterInfo
 {
 	/// @brief Constructor.
 	/// @param name The name of the filter (the class name)
+	/// @param readableName
 	/// @param description A short description of what the filter does
 	/// @param inputDataObjectType The input data type (see OutputDataObjectTypeAsString())
 	/// @param outputDataObjectType The output data type (see OutputDataObjectTypeAsString())

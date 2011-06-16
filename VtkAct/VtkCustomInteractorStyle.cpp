@@ -1,5 +1,5 @@
 /**
- * \file VtkInteractorStyle.cpp
+ * \file VtkCustomInteractorStyle.cpp
  * 21/6/2010 LB Initial implementation
  * 
  * Implementation of VtkInteractorStyle

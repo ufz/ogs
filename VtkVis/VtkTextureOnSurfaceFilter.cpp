@@ -1,5 +1,5 @@
 /**
- * \file VtkSurfacesSource.cpp
+ * \file VtkTextureOnSurfaceFilter.cpp
  * 3/2/2010 LB Initial implementation
  * 23/04/2010 KR Surface visualisation
  *
