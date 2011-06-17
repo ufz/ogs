@@ -88,15 +88,17 @@ public:
 	/// @brief Sets the selected attribute array for the visualisation of the data set.
 	void SetActiveAttribute(const QString& name);
 
+	void SetScalarRange(double min, double max);
+
 	/// @brief Gets the last selected attribute.
 	const QString& GetActiveAttribute() const {return _activeAttribute; }
 
 	/// @brief Sets the geometry and data scaling.
 	void setScale(double x, double y, double z) const;
 
-	/// @brief Sets the geometry and date scaling recursively on all childs of
+	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
-	void setScaleOnChilds(double x, double y, double z) const;
+	void setScaleOnChildren(double x, double y, double z) const;
 	
 #ifdef OGS_USE_OPENSG
 	// HACK static rootNode is set by VtkVisPipeline constructor

@@ -428,6 +428,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 			vtkPointData* pointData = dataSet->GetPointData();
 			pointData->SetActiveAttribute(charName, vtkDataSetAttributes::SCALARS);
 			pointData->GetArray(charName)->GetRange(range);
+			_algorithm->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
 			_mapper->SetScalarModeToUsePointData();
 			_mapper->SetScalarRange(dataSet->GetScalarRange());
 		}
@@ -436,6 +437,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 			vtkCellData* cellData = dataSet->GetCellData();
 			cellData->SetActiveAttribute(charName, vtkDataSetAttributes::SCALARS);
 			cellData->GetArray(charName)->GetRange(range);
+			_algorithm->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
 			_mapper->SetScalarModeToUseCellData();
 			_mapper->SetScalarRange(dataSet->GetScalarRange());
 		}
@@ -473,6 +475,12 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 	}
 }
 
+void VtkVisPipelineItem::SetScalarRange(double min, double max)
+{
+	_mapper->SetScalarRange(min, max);
+	_mapper->Update();
+}
+
 void VtkVisPipelineItem::setScale(double x, double y, double z) const
 {
 	if (this->transformFilter())
@@ -486,7 +494,7 @@ void VtkVisPipelineItem::setScale(double x, double y, double z) const
 
 }
 
-void VtkVisPipelineItem::setScaleOnChilds(double x, double y, double z) const
+void VtkVisPipelineItem::setScaleOnChildren(double x, double y, double z) const
 {
 	for (int i = 0; i < this->childCount(); ++i)
 	{

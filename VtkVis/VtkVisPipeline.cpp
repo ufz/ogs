@@ -245,7 +245,7 @@ void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 		item->setScale(1.0, 1.0, factor);
 
 		// recursively set on all child items
-		item->setScaleOnChilds(1.0, 1.0, 1.0);
+		item->setScaleOnChildren(1.0, 1.0, 1.0);
 	}
 
 	emit vtkVisPipelineChanged();

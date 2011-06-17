@@ -243,7 +243,7 @@ public:
 	}
 
 	/// @brief Returns the desired active attribute.
-	QString GetActiveAttribute() const { return _activeAttributeName; }
+	QString GetActiveAttribute() const { return _activeAttributeName; };
 	
 protected:
 

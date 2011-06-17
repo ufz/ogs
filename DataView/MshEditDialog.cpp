@@ -11,9 +11,10 @@
 #include <QFileDialog>
 #include <QPushButton>
 #include <QSettings>
+#include <QCheckBox>
 
 MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent) 
-: QDialog(parent), _msh(mesh)
+: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL)
 {
 	setupUi(this);
 
@@ -43,11 +44,27 @@ MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent)
 		this->gridLayoutLayerMapping->addWidget(_edits[i],    i, 1);
 		this->gridLayoutLayerMapping->addWidget(_buttons[i],  i, 2);
 	}
+
+	_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
+	_noDataDeleteBox->setChecked(false);
+	if (nLayers==1)
+	{
+		_noDataDeleteBox->setChecked(true);
+		this->gridLayoutLayerMapping->addWidget(_noDataDeleteBox, 2, 1);
+	}
 	
 }
 
 MshEditDialog::~MshEditDialog()
 {
+	delete _noDataDeleteBox;
+
+	for (int i=0; i<_labels.size(); i++)
+	{
+		delete _labels[i];
+		delete _edits[i];
+		delete _buttons[i];
+	}
 }
 
 void MshEditDialog::accept()
@@ -78,7 +95,7 @@ void MshEditDialog::accept()
 					std::string imgPath ( this->_edits[i]->text().toStdString() );
 					if (!imgPath.empty())
 					{
-						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, nLayers, i);
+						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
 					}
 				}
 				//if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1); //TODO !!!

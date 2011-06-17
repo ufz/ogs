@@ -12,6 +12,7 @@
 #include "MshLayerMapper.h"
 
 class QPushButton;
+class QCheckBox;
 
 namespace MeshLib
 {
@@ -37,6 +38,7 @@ private:
 	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
 	QVector<QLineEdit*> _edits;
 	QVector<QPushButton*> _buttons;
+	QCheckBox* _noDataDeleteBox;
 
 
 private slots:
