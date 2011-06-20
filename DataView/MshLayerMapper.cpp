@@ -6,6 +6,7 @@
 #include "MshLayerMapper.h"
 #include "OGSRaster.h"
 
+#include "MshEditor.h"
 #include "msh_mesh.h"
 #include "matrix_class.h"
 
@@ -51,8 +52,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 			{
 				MeshLib::CElem* elem( new MeshLib::CElem() );
 				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
-				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
-				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
+				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->setElementProperties(MshElemType::PRISM); // extrude triangles to prism
+				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->setElementProperties(MshElemType::HEXAHEDRON); // extrude quads to hexes
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::LINE) continue; // line elements are ignored and not duplicated
 				else
 				{
@@ -79,14 +80,14 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
-	//new_mesh->ConstructGrid();
-	//new_mesh->FillTransformMatrix();
+	new_mesh->ConstructGrid();
+	new_mesh->FillTransformMatrix();
 
 	return new_mesh;
 }
 
 // KR, based on code by WW
-MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id)
+MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id, bool removeNoDataValues)
 {
 	if (msh == NULL) return NULL;
 	if (msh->getNumberOfMeshLayers() >= layer_id)
@@ -126,6 +127,8 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 
 		size_t firstNode = layer_id * nNodesPerLayer;
 		size_t lastNode  = firstNode + nNodesPerLayer;
+
+		std::vector<size_t> noData_nodes;
 
 		for(size_t i=firstNode; i<lastNode; i++)
 		{
@@ -169,14 +172,38 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 			}
 			else
 			{
-				std::cout << "Warning: For node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ") there is no elevation data in the given raster." << std::endl;
+				std::cout << "Warning: No elevation data available for node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ")." << std::endl;
 				new_mesh->nod_vector[i]->SetZ(0);
 				new_mesh->nod_vector[i]->SetMark(false);
+				noData_nodes.push_back(i);
 			}
+		}
+
+		if ((nLayers == 1) && removeNoDataValues) 
+		{
+			if (noData_nodes.size() < (new_mesh->nod_vector.size()-2))
+			{
+				std::cout << "Removing " << noData_nodes.size() << " mesh nodes at NoData values ... " << std::endl;
+				MeshLib::CFEMesh* red_mesh = MshEditor::removeMeshNodes(new_mesh, noData_nodes);
+				if (!new_mesh->ele_vector.empty())
+				{
+					delete new_mesh;
+					new_mesh = red_mesh;
+				}
+				else
+				{
+					delete red_mesh;
+					std::cout << "Too many NoData values..." << std::endl;
+				}
+
+			}
+			else
+				std::cout << "Too many NoData values..." << std::endl;
 		}
 
 		new_mesh->ConstructGrid();
 		new_mesh->FillTransformMatrix();
+
 		delete []elevation;
 		return new_mesh;
 	}

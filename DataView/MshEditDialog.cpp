@@ -7,11 +7,14 @@
 #include "StringTools.h"
 #include "msh_mesh.h"
 #include "OGSError.h"
-#include <QPushButton>
+
 #include <QFileDialog>
+#include <QPushButton>
+#include <QSettings>
+#include <QCheckBox>
 
 MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent) 
-: QDialog(parent), _msh(mesh)
+: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL)
 {
 	setupUi(this);
 
@@ -41,11 +44,27 @@ MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent)
 		this->gridLayoutLayerMapping->addWidget(_edits[i],    i, 1);
 		this->gridLayoutLayerMapping->addWidget(_buttons[i],  i, 2);
 	}
+
+	_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
+	_noDataDeleteBox->setChecked(false);
+	if (nLayers==1)
+	{
+		_noDataDeleteBox->setChecked(true);
+		this->gridLayoutLayerMapping->addWidget(_noDataDeleteBox, 2, 1);
+	}
 	
 }
 
 MshEditDialog::~MshEditDialog()
 {
+	delete _noDataDeleteBox;
+
+	for (int i=0; i<_labels.size(); i++)
+	{
+		delete _labels[i];
+		delete _edits[i];
+		delete _buttons[i];
+	}
 }
 
 void MshEditDialog::accept()
@@ -76,7 +95,7 @@ void MshEditDialog::accept()
 					std::string imgPath ( this->_edits[i]->text().toStdString() );
 					if (!imgPath.empty())
 					{
-						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, nLayers, i);
+						new_mesh = MshLayerMapper::LayerMapping(_msh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
 					}
 				}
 				//if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1); //TODO !!!
@@ -107,6 +126,12 @@ void MshEditDialog::reject()
 void MshEditDialog::getFileName()
 {
 	QPushButton* button = dynamic_cast<QPushButton*>(this->sender());
-	QString filename = QFileDialog::getOpenFileName(this, "Select raster file to open", "", "ASCII raster files (*.asc);;All files (* *.*)");
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString filename = QFileDialog::getOpenFileName(this, 
+			"Select raster file to open", 
+			settings.value("lastOpenedFileDirectory").toString(), 
+			"ASCII raster files (*.asc);;All files (* *.*)");
 	_fileButtonMap[button]->setText(filename);
+	QDir dir = QDir(filename);
+	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 }

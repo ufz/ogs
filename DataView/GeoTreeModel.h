@@ -40,7 +40,7 @@ public:
 	/**
 	 * Inserts a new subtree under _rootItem for a geometry with the given name along with a subtree named "Points" for that new geometry.
 	 * \param geoName Name of the new subtree. If no name is given a default name is assigned.
-	 * \param points The list of points to be added as children of that subtree (no geometry can be added with a set of points!)
+	 * \param pointVec The list of points to be added as children of that subtree (no geometry can be added with a set of points!)
 	 */
 	void addPointList(QString geoName, const GEOLIB::PointVec* pointVec);
 	/// Adds a subtree "Polylines" to an existing geometry with the given name.
@@ -59,7 +59,7 @@ public:
 	 */
 	void removeGeoList(const std::string &name, GEOLIB::GEOTYPE type = GEOLIB::INVALID);
 
-	/**
+	/*
 	 * Returns the geo-object specified by the given index.
 	 * \param index Index of the requested item
 	 * \param listName Here, the method will put the name of the geometry this object belongs to.

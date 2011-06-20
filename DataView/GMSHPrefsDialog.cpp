@@ -1,5 +1,5 @@
 /**
- * \file GMSHPresDialog.cpp
+ * \file GMSHPrefsDialog.cpp
  * 2010/01/21 KR Initial implementation
  */
 

@@ -21,7 +21,7 @@ public:
 	~QNonScalableGraphicsTextItem();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	QRectF boundingRect();
+	virtual QRectF boundingRect() const;
 };
 
 #endif //QNONSCALABLETEXTITEM_H

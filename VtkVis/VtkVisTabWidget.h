@@ -38,8 +38,6 @@ protected slots:
 	void SetActiveAttributeOnItem(const QString &name);
 
 private:
-	void addColorTable();
-
 	/// Reads the algorithm properties of the given pipeline item and builds a dialog for adjusting these properties in the GUI.
 	void buildProportiesDialog(VtkVisPipelineItem* item);
 

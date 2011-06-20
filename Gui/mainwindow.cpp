@@ -561,9 +561,9 @@ void MainWindow::loadFile(const QString &fileName)
 				new std::vector<GEOLIB::Point*>();
 		std::string name = fi.baseName().toStdString();
 
-		if (GMSInterface::readBoreholesFromGMS(boreholes,
-				fileName.toStdString())) _geoModels->addStationVec(boreholes,
-				name, GEOLIB::getRandomColor());
+		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
+			_geoModels->addStationVec(boreholes, name, GEOLIB::getRandomColor());
+		else OGSError::box("Error reading GMS file.");
 	}
 	// GMS mesh files
 	else if (fi.suffix().toLower() == "3dm") {

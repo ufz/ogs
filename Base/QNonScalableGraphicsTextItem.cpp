@@ -39,7 +39,7 @@ void QNonScalableGraphicsTextItem::paint(QPainter *painter, const QStyleOptionGr
 }
 
 /// Returns the bounding rectangle of the text item.
-QRectF QNonScalableGraphicsTextItem::boundingRect()
+QRectF QNonScalableGraphicsTextItem::boundingRect() const
 {
 	QRectF rect = QGraphicsTextItem::boundingRect();
 	return QRectF(rect.x()-rect.width()/2, rect.y()-rect.height()/2,rect.width(), rect.height());

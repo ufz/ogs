@@ -24,6 +24,7 @@ DiagramScene::DiagramScene(QObject* parent) : QGraphicsScene(parent)
 /**
  * Creates a new scene.
  * \param list includes all necessary information of the graph to display.
+ * \param parent The parent QObject.
  */
 DiagramScene::DiagramScene(DiagramList* list, QObject* parent) : QGraphicsScene(parent)
 {

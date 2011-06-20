@@ -11,6 +11,7 @@
  * \param rect A rectangle specifying the size of the grid.
  * \param xCells The number of grid cells in x-direction.
  * \param yCells The number of grid cells in y-direction.
+ * \param parent The parent QGraphicsItem.
  */
 QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, QGraphicsItem* parent) : QGraphicsItem(parent)
 {
@@ -30,6 +31,7 @@ QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, QGraphicsItem*
  * \param height Height of the bounding rectangle.
  * \param xCells The number of grid cells in x-direction.
  * \param yCells The number of grid cells in y-direction.
+ * \param parent The parent QGraphicsItem.
  */
 QGraphicsGrid::QGraphicsGrid(int x, int y, int width, int height, int xCells, int yCells, QGraphicsItem* parent) : QGraphicsItem(parent)
 {
@@ -48,6 +50,7 @@ QGraphicsGrid::QGraphicsGrid(int x, int y, int width, int height, int xCells, in
  * \param yCells The number of grid cells in y-direction.
  * \param ticks Specifies if ticks are displayed for the grid.
  * \param pen The pen for drawing the grid.
+ * \param parent The parent QGraphicsItem.
  */
 QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, bool ticks, QPen pen, QGraphicsItem* parent) : QGraphicsItem(parent)
 {
@@ -78,6 +81,7 @@ QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, bool ticks, QP
  * \param yCells The number of grid cells in y-direction.
  * \param ticks Specifies if ticks are displayed for the grid.
  * \param pen The pen for drawing the grid.
+ * \param parent The parent QGraphicsItem.
  */
 QGraphicsGrid::QGraphicsGrid(int x, int y, int width, int height, int xCells, int yCells, bool ticks, QPen pen, QGraphicsItem* parent) : QGraphicsItem(parent)
 {

@@ -303,11 +303,6 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 		item->SetActiveAttribute(*it);
 }
 
-void VtkVisTabWidget::addColorTable()
-{
-
-}
-
 void VtkVisTabWidget::SetActiveAttributeOnItem( const QString &name )
 {
 	_item->SetActiveAttribute(name);

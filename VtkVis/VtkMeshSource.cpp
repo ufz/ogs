@@ -145,7 +145,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		nElemNodes = (*elems)[i]->nodes.size();
 		for (size_t j=0; j<nElemNodes; j++)
-			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[j]);
+			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[nElemNodes-1-j]);
 
 		output->InsertNextCell(newCell->GetCellType(), newCell->GetPointIds());
 		newCell->Delete();

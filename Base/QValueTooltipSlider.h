@@ -1,5 +1,5 @@
 /**
- * \file QValueSlider.h
+ * \file QValueTooltipSlider.h
  * 23/03/2011 LB Initial implementation
  */
 
