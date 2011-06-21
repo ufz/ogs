@@ -152,7 +152,7 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
 			_list[i]->setColor(QColor(Qt::red));
 		}
 		fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy"));//QString::number(_list[0]->minXValue()));
-		QDateTime endDate = _list[0]->getStartDate().addSecs(_list[0]->maxXValue());
+		QDateTime endDate = _list[0]->getStartDate().addSecs(static_cast<int>(_list[0]->maxXValue()));
 		toDateLine->setText(endDate.toString("dd.MM.yyyy"));//QString::number(_list[0]->maxXValue()));
 		this->createVisibilityCheckboxes();
 		return 1;
