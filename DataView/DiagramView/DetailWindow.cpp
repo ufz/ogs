@@ -6,9 +6,6 @@
 #include "DetailWindow.h"
 #include "Color.h"
 
-/**
- * Creates an empty window.
- */
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);

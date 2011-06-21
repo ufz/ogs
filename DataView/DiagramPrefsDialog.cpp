@@ -15,13 +15,6 @@
 #include <QMessageBox>
 
 
-/**
- * Opens a new dialog.
- * \param stn The station object associated the diagram
- * \param listName
- * \param db The database connection were the diagram-related data can be found
- * \param parent The parent QDialog.
- */
 DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, DatabaseConnection* db, QDialog* parent) 
 : QDialog(parent)
 {
@@ -66,8 +59,6 @@ DiagramPrefsDialog::~DiagramPrefsDialog()
 	this->destroy();
 }
 
-/// Instructions if the OK-Button has been pressed.
-/// Note: Clicking the "Load from file"-button overrides the database input!
 void DiagramPrefsDialog::accept()
 {
 	if ((fromDateLine->text().length()>0) && (toDateLine->text().length()>0) && (!_list.empty()))
@@ -119,13 +110,11 @@ void DiagramPrefsDialog::accept()
 		OGSError::box("No data found...");
 }
 
-/// Instructions if the Cancel-Button has been pressed.
 void DiagramPrefsDialog::reject()
 {
 	this->done(QDialog::Rejected);
 }
 
-/// Instructions if the "Load File"-Button has been pressed.
 void DiagramPrefsDialog::on_loadFileButton_clicked()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, "Select time series file to open", "","Time series files (*.stn *.txt)");
@@ -133,11 +122,6 @@ void DiagramPrefsDialog::on_loadFileButton_clicked()
 		loadFile(fileName);
 }
 
-/**
- * Loading data from a file
- * \param filename Name of the file containing the data
- * return 1 if everything is okay, 0 and an error message if there were errors
- */
 int DiagramPrefsDialog::loadFile(const QString &filename)
 {
 	if (DiagramList::readList(filename, _list))
@@ -162,11 +146,6 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
 	return 0;
 }
 
-/**
- * Setting up the QDiagramList object were the time series data will be stored
- * \param coords List of coordinates.
- * return 1 if everything is okay, 0 and an error message if there were errors
- */
 int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> > &coords)
 {
 	if (!coords.empty())

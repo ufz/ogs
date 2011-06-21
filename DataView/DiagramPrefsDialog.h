@@ -30,14 +30,47 @@ class DiagramPrefsDialog : public QDialog, private Ui_DiagramPrefs
 	Q_OBJECT
 
 public:
+	/**
+	 * Opens a new dialog based on station and the list this station belongs to. If a database connection
+	 * is available, the program will try to find data associated with the station, otherwise data can be
+	 * loaded from a file.
+	 * \param stn The station object associated the diagram.
+	 * \param listName The station list the station belongs to.
+	 * \param db The database connection were the diagram-related data can be found
+	 * \param parent The parent QDialog.
+	 */
 	DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, DatabaseConnection* db, QDialog* parent = 0);
+
+	/**
+	 * Opens a new dialog and automatically reads data from the specified file. The diagram is not associated
+	 * with any geometric object.
+	 * \param filename File containing data for the diagram(s) to be visualised.
+	 * \param parent The parent QDialog.
+	 */
 	DiagramPrefsDialog(const QString &filename, QDialog* parent = 0);
 	~DiagramPrefsDialog(void);
 
 
 private:
+	/**
+	 * Creates checkboxes for every list of data values found. Per default all of these are checked, i.e. all
+	 * diagrams will be visualised. Any checkbox the user unchecks will result in the associated data not being
+	 * visualised.
+	 */
 	void createVisibilityCheckboxes();
+
+	/**
+	 * Loading data from a file
+	 * \param filename Name of the file containing the data
+	 * return 1 if everything is okay, 0 and an error message if there were errors
+	 */
 	int loadFile(const QString &filename);
+
+	/**
+	 * Setting up the QDiagramList object were the time series data will be stored
+	 * \param coords List of coordinates.
+	 * return 1 if everything is okay, 0 and an error message if there were errors
+	 */
 	int loadList(const std::vector< std::pair<QDateTime, float> > &coords);
 
 	std::vector<DiagramList*> _list;
@@ -48,8 +81,14 @@ private:
 
 
 private slots:
+	/// Instructions if the OK-Button has been pressed.
+	/// Note: Clicking the "Load from file"-button overrides the database input!
 	void accept();
+
+	/// Instructions if the Cancel-Button has been pressed.
 	void reject();
+	
+	/// Instructions if the "Load File"-Button has been pressed.
 	void on_loadFileButton_clicked();
 
 signals:

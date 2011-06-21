@@ -75,7 +75,9 @@ protected slots:
 	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
+	/// Calls the diagram prefs dialog from the Tools menu.
 	void showDiagramPrefsDialog();
+	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
