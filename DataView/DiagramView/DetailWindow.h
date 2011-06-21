@@ -23,12 +23,14 @@ public:
 	/**
 	 * Creates a window containing a diagram.
 	 * \param filename ASCII file containing x and y values for the graph to be displayed.
+	 * \param parent The parent QWidget.
 	 */
 	DetailWindow(QString filename, QWidget* parent = 0);
 
 	/**
 	 * Creates a window containing a diagram
 	 * \param list A QDiagramList containing all the data points and necessary metainformation for a graph to be displayed
+	 * \param parent The parent QWidget.
 	 */
 	DetailWindow(DiagramList* list, QWidget* parent = 0);
 	~DetailWindow(void);

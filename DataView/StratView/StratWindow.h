@@ -25,6 +25,8 @@ public:
 	/**
 	 * Constructor
 	 * \param station The borehole object to be visualised.
+	 * \param stratColors A color map.
+	 * \param parent The parent QWidget.
 	 */
 	StratWindow(GEOLIB::StationBorehole* station, std::map<std::string, GEOLIB::Color*> *stratColors = NULL, QWidget* parent = 0);
 	~StratWindow(void) { this->destroy(); };

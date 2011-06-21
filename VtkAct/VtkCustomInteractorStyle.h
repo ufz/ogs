@@ -33,13 +33,13 @@ public:
 	static VtkCustomInteractorStyle* New();
 	vtkTypeMacro (VtkCustomInteractorStyle, vtkInteractorStyleTrackballCamera);
 
-	/// @biref Handles key press events.
+	/// @brief Handles key press events.
 	virtual void OnChar();
 
-	/// @biref Handles key down events.
+	/// @brief Handles key down events.
 	virtual void OnKeyDown();
 
-	/// @biref Handles key up events.
+	/// @brief Handles key up events.
 	virtual void OnKeyUp();
 	
 	/// @brief Handles left mouse button events (picking).

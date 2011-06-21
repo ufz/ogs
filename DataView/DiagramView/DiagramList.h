@@ -144,7 +144,6 @@ private:
 	 *		date (tab) value
 	 * where 'date' is given as 'dd.mm.yyyy'.
 	 * (Changes to that format are easily implemented using QTimeDate)
-	 * \param path The path of the ASCII file.
 	 * \return Returns 1 if everything is alright. Returns 0 and displays an error message if there was an error.
 	 */
 	int readLine(std::ifstream inFile, QDateTime &cDate, float &cValue);

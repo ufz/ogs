@@ -14,7 +14,9 @@
 /**
  * Opens a new dialog.
  * \param stn The station object associated the diagram
+ * \param listName
  * \param db The database connection were the diagram-related data can be found
+ * \param parent The parent QDialog.
  */
 DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, DatabaseConnection* db, QDialog* parent) : QDialog(parent)
 {

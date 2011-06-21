@@ -1,5 +1,5 @@
 /**
- * \file VtkAlgoritmProperties.h
+ * \file VtkAlgorithmProperties.h
  * 24/03/2010 KR Initial implementation
  *
  */

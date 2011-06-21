@@ -1,5 +1,5 @@
 /**
- * \file QValueSlider.cpp
+ * \file QValueTooltipSlider.cpp
  * 23/03/2011 LB Initial implementation
  * 
  * Implementation of QValueSlider class

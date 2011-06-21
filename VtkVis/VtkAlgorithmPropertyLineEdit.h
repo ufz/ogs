@@ -20,7 +20,7 @@ class VtkAlgorithmPropertyLineEdit : public QLineEdit
 	
 public:
 	/// @brief Constructor.
-	/// @param value The initial value of the text.
+	/// @param contents The initial text.
 	/// @param name The name of the user property to set.
 	/// @param type The type of the property.
 	/// @param algProps The VtkAlgorithmProperties object.

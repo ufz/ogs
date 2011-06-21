@@ -1,5 +1,5 @@
 /**
- * \file VtkOGSPolyDataAlgorithm.h
+ * \file VtkTextureOnSurfaceFilter.h
  * 28/05/2010 KR initial implementation
  *
  */

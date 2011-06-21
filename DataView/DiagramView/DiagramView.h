@@ -26,6 +26,7 @@ public:
 	/**
 	 * Creates a view already containing a graph
 	 * \param list Contains a list of data points and metainformation to be displayed by the scene.
+	 * \param parent The parent QWidget.
 	 */
 	DiagramView(DiagramList* list, QWidget* parent = 0);
 	~DiagramView();

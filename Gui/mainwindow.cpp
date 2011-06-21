@@ -1055,6 +1055,19 @@ void MainWindow::FEMTestStart()
 	std::vector<std::string> station_names;
 	_geoModels->getStationNames (station_names);
 
+	{
+		std::ofstream os ("Points5000000.gli");
+		if (os) {
+			os << "#POINTS" << std::endl;
+			for (size_t k(0); k<5000000; k++) {
+				os << k << " " << (rand()%1000)/1000.0
+					<< " " << (rand()%1000)/1000.0
+					<< " " << (rand()%1000)/1000.0 << std::endl;
+			}
+			os << "#STOP" << std::endl;
+		}
+	}
+
 	if (!station_names.empty()) {
 		size_t resolution(36);
 		for (std::vector<std::string>::const_iterator it(station_names.begin()); it

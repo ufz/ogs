@@ -55,6 +55,9 @@ public slots:
 	virtual bool removePolylineVec(const std::string &name);
 
 	virtual void addSurfaceVec(std::vector<GEOLIB::Surface*> *surfaces, const std::string &name, std::map<std::string,size_t>* sfc_names = NULL);
+	
+	/// @brief 
+	/// @param surfaces The surface vector.
 	virtual bool appendSurfaceVec(const std::vector<GEOLIB::Surface*> &surfaces, const std::string &name);
 	virtual bool removeSurfaceVec(const std::string &name);
 
