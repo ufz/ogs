@@ -8,10 +8,14 @@
 
 #include <QtGui/QMainWindow>
 #include "ui_DiagramPrefs.h"
-#include "DatabaseConnection.h"
-#include "Station.h"
 
+class DatabaseConnection;
 class DiagramList;
+class QCheckBox;
+
+namespace GEOLIB {
+	class Station;
+}
 
 /**
  * \brief A dialog that allows for setting preferences for a requested diagram.
@@ -27,14 +31,17 @@ class DiagramPrefsDialog : public QDialog, private Ui_DiagramPrefs
 
 public:
 	DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, DatabaseConnection* db, QDialog* parent = 0);
+	DiagramPrefsDialog(const QString &filename, QDialog* parent = 0);
 	~DiagramPrefsDialog(void);
 
 
 private:
+	void createVisibilityCheckboxes();
 	int loadFile(const QString &filename);
 	int loadList(const std::vector< std::pair<QDateTime, float> > &coords);
 
 	std::vector<DiagramList*> _list;
+	std::vector<QCheckBox*> _visability;
 	DatabaseConnection* _db;
 	int _listID;
 	int _stationID;

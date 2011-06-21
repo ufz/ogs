@@ -75,6 +75,7 @@ protected slots:
 	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
+	void showDiagramPrefsDialog();
 	void showDiagramPrefsDialog(QModelIndex &index);
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();

@@ -19,7 +19,7 @@ class DetailWindow : public QWidget, private Ui_DetailWindow
 
 public:
 	/// Creates an empty diagram window.
-	//DetailWindow(QWidget* parent = 0);
+	DetailWindow(QWidget* parent = 0);
 	/**
 	 * Creates a window containing a diagram.
 	 * \param filename ASCII file containing x and y values for the graph to be displayed.

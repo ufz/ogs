@@ -8,12 +8,13 @@
 
 /**
  * Creates an empty window.
- *
+ */
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
 	stationView->setRenderHints( QPainter::Antialiasing );
 
+/*
 	DiagramList* list  = new DiagramList();
 	DiagramList* list2 = new DiagramList();
 
@@ -51,8 +52,9 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	stationView->addGraph(list2);
 
 	resizeWindow();
+	*/
 }
-*/
+
 
 DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 {
@@ -100,6 +102,7 @@ void DetailWindow::addList(DiagramList* list)
 	QColor colour((*c)[0], (*c)[1], (*c)[2]);
 	delete c;
 	this->addList(list, colour);
+	resizeWindow();
 }
 
 void DetailWindow::addList(DiagramList* list, QColor c) 

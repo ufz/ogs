@@ -1020,6 +1020,22 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 			"No time series data available for borehole.");
 }
 
+void MainWindow::showDiagramPrefsDialog()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Text files (*.txt);;All files (* *.*)");
+	if (!fileName.isEmpty()) 
+	{
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName);
+		prefs->setAttribute(Qt::WA_DeleteOnClose);
+		prefs->show();
+	}
+}
+
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));

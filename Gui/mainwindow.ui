@@ -81,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -125,6 +125,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionDiagram_Viewer"/>
     <addaction name="actionFEM_Test"/>
    </widget>
    <addaction name="menu_File"/>
@@ -373,6 +374,11 @@
     <string>FEM Test</string>
    </property>
   </action>
+  <action name="actionDiagram_Viewer">
+   <property name="text">
+    <string>Diagram Viewer...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -559,6 +565,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionDiagram_Viewer</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showDiagramPrefsDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -570,5 +592,6 @@
   <slot>showTrackingSettingsDialog()</slot>
   <slot>showGMSHPrefsDialog()</slot>
   <slot>FEMTestStart()</slot>
+  <slot>showDiagramPrefsDialog()</slot>
  </slots>
 </ui>

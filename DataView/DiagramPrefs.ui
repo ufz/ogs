@@ -6,139 +6,114 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
-    <height>231</height>
+    <width>267</width>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Diagram Preferences</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>140</y>
-     <width>161</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <property name="layoutDirection">
-    <enum>Qt::LeftToRight</enum>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="fromDateLine">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>110</y>
-     <width>113</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="toDateLine">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>140</y>
-     <width>113</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="stationTypeLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>241</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>StationType</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="stationNameLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>50</y>
-     <width>241</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>StationName</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="viewDataLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>80</y>
-     <width>101</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>View Data</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="fromDateLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>110</y>
-     <width>46</width>
-     <height>14</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>From:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="toDateLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>140</y>
-     <width>46</width>
-     <height>14</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>To:</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="loadFileButton">
-   <property name="geometry">
-    <rect>
-     <x>187</x>
-     <y>187</y>
-     <width>75</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Load File</string>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QLabel" name="stationTypeLabel">
+     <property name="text">
+      <string>StationType</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="stationNameLabel">
+     <property name="font">
+      <font>
+       <family>MS Shell Dlg 2</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>StationName</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="viewDataLabel">
+     <property name="text">
+      <string>View Data</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="DateBoundsLayout">
+     <property name="margin">
+      <number>10</number>
+     </property>
+     <property name="spacing">
+      <number>20</number>
+     </property>
+     <item row="1" column="0">
+      <widget class="QLabel" name="fromDateLabel">
+       <property name="text">
+        <string>From:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="toDateLabel">
+       <property name="text">
+        <string>To:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="toDateLine"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="fromDateLine"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="CheckBoxLayout"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="ButtonLayout">
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="loadFileButton">
+       <property name="text">
+        <string>Load File</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
+ <tabstops>
+  <tabstop>fromDateLine</tabstop>
+  <tabstop>toDateLine</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>loadFileButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
