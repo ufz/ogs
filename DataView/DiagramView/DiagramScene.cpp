@@ -168,7 +168,7 @@ void DiagramScene::constructGrid()
 
 	for (int i = 0; i <= numXTicks; ++i) {
 		int x = static_cast<int>(_bounds.left()/_scaleX + (i * (_bounds.width()/_scaleX) / numXTicks));
-		QDateTime currentDate = _startDate.addDays(x);
+		QDateTime currentDate = _startDate.addSecs(x);
 		_xTicksText.push_back(addNonScalableText(currentDate.toString("dd.MM.yyyy")));
 		_xTicksText.last()->setPos(x*_scaleX, _bounds.bottom() + 15);
 	}

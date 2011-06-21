@@ -14,6 +14,7 @@
 
 #include <QList>
 #include <QMap>
+//#include <QObject>
 #include <QString>
 #include <QVariant>
 
@@ -38,8 +39,10 @@ class vtkTransformFilter;
  * Any VTK-object (source-items, filter-items, etc.) need to be put into a VtkPipelineItem
  * to be assigned a mapper, an actor and its visualization properties (colour, etc.).
  */
-class VtkVisPipelineItem : public TreeItem
+class VtkVisPipelineItem : /*public QObject,*/ public TreeItem
 {
+//	Q_OBJECT
+
 public:
 	/// @brief Constructor for a source/filter object.
 	VtkVisPipelineItem(vtkAlgorithm* algorithm,

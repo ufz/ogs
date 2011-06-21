@@ -2,6 +2,8 @@
 SET( SOURCES
 	GridAdapter.cpp
 	QVtkDataSetMapper.cpp
+	VisPrefsDialog.cpp
+	VisualizationWidget.cpp
 	VtkAddFilterDialog.cpp
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
@@ -31,18 +33,18 @@ SET( SOURCES
 	VtkSurfacesSource.cpp
 	VtkTextureOnSurfaceFilter.cpp
 	VtkTrackedCamera.cpp
+	VtkVisHelper.cpp
 	VtkVisPipeline.cpp
 	VtkVisPipelineItem.cpp
 	VtkVisPipelineView.cpp
 	VtkVisTabWidget.cpp
-	VtkVisHelper.cpp
-	VisualizationWidget.cpp
-	VisPrefsDialog.cpp
 )
 
 # Moc headers
 SET( MOC_HEADERS
 	QVtkDataSetMapper.h
+	VisPrefsDialog.h
+	VisualizationWidget.h
 	VtkAddFilterDialog.h
 	VtkAlgorithmProperties.h
 	VtkAlgorithmPropertyLineEdit.h
@@ -50,10 +52,9 @@ SET( MOC_HEADERS
 	VtkAlgorithmPropertyVectorEdit.h
 	VtkTrackedCamera.h
 	VtkVisPipeline.h
+	VtkVisPipelineItem.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
-	VisualizationWidget.h
-	VisPrefsDialog.h
 )
 
 # Header files
@@ -84,7 +85,6 @@ SET( HEADERS
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h
 	VtkVisHelper.h
-	VtkVisPipelineItem.h
 )
 
 # UI files

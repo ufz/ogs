@@ -39,7 +39,10 @@ void VtkCompositeThresholdFilter::init()
 	//vtkDataArray* activeScalar = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray(0);
 	//threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, activeScalar->GetName());
 	//threshold->SetComponentModeToUseSelected();
-	
+
+//double* range = threshold->GetOutput()->GetScalarRange();
+//std::cout << range[0] << ", " << range[1] << std::endl;
+
 	// Sets a filter property which will be user editable
 	threshold->SetSelectedComponent(0);
 	
@@ -78,6 +81,8 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVa
 	// Use the same name as in init()
 	if (name.compare("Threshold Between") == 0)
 	{
+		double* range = dynamic_cast<vtkUnstructuredGridAlgorithm*>(_outputAlgorithm)->GetOutput()->GetScalarRange();
+	//std::cout << range[0] << ", " << range[1] << std::endl;
 		// Set the vector property on the algorithm
 		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(values[0].toInt(), values[1].toInt());
 	}

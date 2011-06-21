@@ -103,15 +103,16 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
 	{
 		for (size_t i=0; i<_list.size(); i++)
 		{
-			_list[i]->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
+			//_list[i]->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
 			_list[i]->setXLabel("Time");
 			//_list[i]->setYLabel("Water Level");
 			_list[i]->setXUnit("day");
 			//_list[i]->setYUnit("metres");
 			_list[i]->setColor(QColor(Qt::red));
 		}
-		fromDateLine->setText(QString::number(_list[0]->minXValue()));
-		toDateLine->setText(QString::number(_list[0]->maxXValue()));
+		fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy"));//QString::number(_list[0]->minXValue()));
+		QDateTime endDate = _list[0]->getStartDate().addSecs(_list[0]->maxXValue());
+		toDateLine->setText(endDate.toString("dd.MM.yyyy"));//QString::number(_list[0]->maxXValue()));
 		return 1;
 	}
 

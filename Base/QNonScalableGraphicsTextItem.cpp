@@ -42,5 +42,5 @@ void QNonScalableGraphicsTextItem::paint(QPainter *painter, const QStyleOptionGr
 QRectF QNonScalableGraphicsTextItem::boundingRect() const
 {
 	QRectF rect = QGraphicsTextItem::boundingRect();
-	return QRectF(rect.x()-rect.width()/2, rect.y()-rect.height()/2,rect.width(), rect.height());
+	return rect;//QRectF(rect.x()-rect.width()/2, rect.y()-rect.height()/2,rect.width(), rect.height());
 }

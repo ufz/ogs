@@ -137,6 +137,8 @@ private:
 	/// Returns the maximum y-value of all the data points.
 	float calcMaxYValue();	
 
+	static QDateTime getDateTime(QString s);
+
 	/**
 	 * Reads an ASCII file containing the coordinates in the following format:
 	 *		date (tab) value

@@ -163,14 +163,6 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 void VtkMeshSource::SetUserProperty( QString name, QVariant value )
 {
 	VtkAlgorithmProperties::SetUserProperty(name, value);
-/*
-	if (name.compare("ColorByMaterial") == 0)
-	{
-		value.convert(QVariant::Bool);
-		this->SetColorByMaterial(value.toBool());
-		this->SetScalarVisibility(value.toBool());
-	}
-*/
 
 	(*_algorithmUserProperties)[name] = value;
 }
