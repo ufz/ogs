@@ -97,7 +97,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 			std::cout << "Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." << std::endl;
 			return NULL;
 		}
-		MeshLib::CFEMesh* new_mesh( new MeshLib::CFEMesh(*msh) );
+		MeshLib::CFEMesh* new_mesh( new MeshLib::CFEMesh(msh) );
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);
@@ -112,7 +112,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 		std::pair<double, double> xDim(x0, x0+width*delta);		// extension in x-dimension
 		std::pair<double, double> yDim(y0, y0+height*delta);	// extension in y-dimension
 
-		if (!meshFitsImage(msh, xDim, yDim))
+		if (!meshFitsImage(new_mesh, xDim, yDim))
 		{
 			delete []elevation;
 			return NULL;
@@ -172,7 +172,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 			}
 			else
 			{
-				std::cout << "Warning: No elevation data available for node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ")." << std::endl;
+				//std::cout << "Warning: No elevation data available for node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ")." << std::endl;
 				new_mesh->nod_vector[i]->SetZ(0);
 				new_mesh->nod_vector[i]->SetMark(false);
 				noData_nodes.push_back(i);
@@ -183,7 +183,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 		{
 			if (noData_nodes.size() < (new_mesh->nod_vector.size()-2))
 			{
-				std::cout << "Removing " << noData_nodes.size() << " mesh nodes at NoData values ... " << std::endl;
+				std::cout << "Warning: Removing " << noData_nodes.size() << " mesh nodes at NoData values ... " << std::endl;
 				MeshLib::CFEMesh* red_mesh = MshEditor::removeMeshNodes(new_mesh, noData_nodes);
 				if (!new_mesh->ele_vector.empty())
 				{

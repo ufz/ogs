@@ -77,7 +77,15 @@ public:
 	/// Returns the unit associated with the y-axis
 	QString getYUnit() const { return _yUnit; }
 
-	/// Reads information from a file.
+	/** 
+	 * Reads information from a file. The reader assumes that values in the file are seperated
+	 * by tabstops. Also, the first row should contain identifiers for the values and the first
+	 * column should contain timestamps. Currently accepted timestamps are of the following
+	 * formats:
+	 *   "dd.mm.yyyy"
+	 *   "dd.mm.yyyy.hh.mm.ss" (this is the timestamp format used for the UFZ database)
+	 * For each column after the timestamps a new diagram list is created.
+	 */
 	static int readList(const QString &path, std::vector<DiagramList*> &list);
 
 	/// Sets the colour of the graph.
