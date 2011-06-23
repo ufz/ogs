@@ -38,6 +38,7 @@ qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 include_directories(
 	.
 	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
+	${CMAKE_BINARY_DIR}/Qt/DataView
 	../../../Base
 	../../../GEO
 	../../Base
