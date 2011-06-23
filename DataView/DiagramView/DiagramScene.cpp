@@ -34,6 +34,23 @@ DiagramScene::DiagramScene(DiagramList* list, QObject* parent) : QGraphicsScene(
 
 DiagramScene::~DiagramScene()
 {
+	delete _grid;
+	delete _xAxis;
+	delete _yAxis;
+	delete _xLabel;
+	delete _yLabel;
+	delete _xUnit;
+	delete _yUnit;
+	for (int i=0; i<_graphCaptions.size(); i++) delete _graphCaptions[i];
+	_graphCaptions.clear();
+	for (int i=0; i<_graphs.size(); i++) delete _graphs[i];
+	_graphs.clear();
+	for (int i=0; i<_xTicksText.size(); i++) delete _xTicksText[i];
+	_xTicksText.clear();
+	for (int i=0; i<_yTicksText.size(); i++) delete _yTicksText[i];
+	_yTicksText.clear();
+	for (int i=0; i<_lists.size(); i++) delete _lists[i];
+	_lists.clear();
 }
 
 /// Adds an arrow object to the diagram which might be used as a coordinate axis, etc.
@@ -75,7 +92,8 @@ void DiagramScene::addGraph(DiagramList* list)
 	constructGrid();
 
 	_lists.push_back(list);
-	for (int i=0; i<_lists.size(); i++) drawGraph(_lists[i]);
+	for (int i=0; i<_lists.size(); i++) 
+		drawGraph(_lists[i]);
 
 	update();
 }

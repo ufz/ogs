@@ -5,6 +5,10 @@
 
 #include "DetailWindow.h"
 #include "Color.h"
+#include "DiagramPrefsDialog.h"
+
+#include <QFileDialog>
+#include <QSettings>
 
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
@@ -58,10 +62,11 @@ DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 	setupUi(this);
 	stationView->setRenderHints( QPainter::Antialiasing );
 
-	DiagramList::readList(filename, _list);
+	std::vector<DiagramList*> lists;
+	DiagramList::readList(filename, lists);
 
-	for (size_t i=0; i<_list.size(); i++)
-		stationView->addGraph(_list[i]);
+	for (size_t i=0; i<lists.size(); i++)
+		stationView->addGraph(lists[i]);
 
 	resizeWindow();
 }
@@ -76,8 +81,6 @@ DetailWindow::DetailWindow(DiagramList* list, QWidget* parent) : QWidget(parent)
 
 DetailWindow::~DetailWindow()
 {
-	for (size_t i=0; i<_list.size(); i++)
-		delete _list[i];
 }
 
 void DetailWindow::on_closeButton_clicked()
@@ -106,4 +109,20 @@ void DetailWindow::addList(DiagramList* list, QColor c)
 { 
 	list->setColor(c);
 	this->stationView->addGraph(list); 
+}
+
+void DetailWindow::on_addDataButton_clicked()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Text files (*.txt);;All files (* *.*)");
+	if (!fileName.isEmpty()) 
+	{
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName, this);
+		prefs->setAttribute(Qt::WA_DeleteOnClose);
+		prefs->show();
+	}
 }

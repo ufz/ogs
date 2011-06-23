@@ -41,6 +41,7 @@ include_directories(
 	../../../Base
 	../../../GEO
 	../../Base
+	../../DataView
 	${CMAKE_SOURCE_DIR}
 )
 

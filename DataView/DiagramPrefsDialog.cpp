@@ -42,8 +42,8 @@ DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, D
 	}
 }
 
-DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename, QDialog* parent)
-: QDialog(parent)
+DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename, DetailWindow* window, QDialog* parent)
+: QDialog(parent), _window(window)
 {
 	QFileInfo fi(filename);
 	setupUi(this);
@@ -54,8 +54,6 @@ DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename, QDialog* parent)
 
 DiagramPrefsDialog::~DiagramPrefsDialog()
 {
-	for (size_t i=0; i<_list.size(); i++)
-		delete _list[i];
 	this->destroy();
 }
 
@@ -77,26 +75,33 @@ void DiagramPrefsDialog::accept()
 		// data has been loaded
 		if (_list[0]->size()>0)	
 		{
-			DetailWindow* stationView = new DetailWindow();
-			stationView->setAttribute(Qt::WA_DeleteOnClose);
-			bool window_is_empty(true);
+			bool window_is_empty(false);
+			if (_window == NULL)
+			{
+				_window = new DetailWindow();
+				_window->setAttribute(Qt::WA_DeleteOnClose);
+				window_is_empty = true;
+			}
+			
+			
 			for (size_t i=0; i<_list.size(); i++)
 			{
 				if (this->_visability[i]->isChecked())
 				{
-					stationView->addList(_list[i]);
+					_window->addList(_list[i]);
 					window_is_empty = false;
 				}
 			}
 
 			if (!window_is_empty)
 			{
-				stationView->show();
+				_window->show();
 				this->done(QDialog::Accepted);
 			}
 			else
 			{
-				delete stationView;
+				delete _window;
+				_window = NULL;
 				OGSError::box("No dataset selected.");
 			}
 		}

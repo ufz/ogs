@@ -97,7 +97,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 			std::cout << "Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." << std::endl;
 			return NULL;
 		}
-		MeshLib::CFEMesh* new_mesh( new MeshLib::CFEMesh(msh) );
+		MeshLib::CFEMesh* new_mesh( new MeshLib::CFEMesh(*msh) );
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);

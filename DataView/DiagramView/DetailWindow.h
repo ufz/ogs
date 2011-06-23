@@ -49,9 +49,8 @@ private:
 	/// Automatically resize window based on the measurements of the included graphs.
 	void resizeWindow();
 
-	std::vector<DiagramList*> _list;
-
 private slots:
+	void on_addDataButton_clicked();
 	void on_closeButton_clicked();
 };
 

@@ -10,6 +10,7 @@
 #include "ui_DiagramPrefs.h"
 
 class DatabaseConnection;
+class DetailWindow;
 class DiagramList;
 class QCheckBox;
 
@@ -47,7 +48,8 @@ public:
 	 * \param filename File containing data for the diagram(s) to be visualised.
 	 * \param parent The parent QDialog.
 	 */
-	DiagramPrefsDialog(const QString &filename, QDialog* parent = 0);
+	DiagramPrefsDialog(const QString &filename, DetailWindow* window = NULL, QDialog* parent = 0);
+
 	~DiagramPrefsDialog(void);
 
 
@@ -78,6 +80,7 @@ private:
 	DatabaseConnection* _db;
 	int _listID;
 	int _stationID;
+	DetailWindow* _window;
 
 
 private slots:
