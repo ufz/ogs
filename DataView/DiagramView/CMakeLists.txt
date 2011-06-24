@@ -65,8 +65,6 @@ add_library( DiagramView STATIC
 	${UI_HEADERS}
 )
 
-add_dependencies(DiagramView QtDataView)
-
 # Link Qt library
 target_link_libraries( DiagramView
 	${QT_LIBRARIES}
