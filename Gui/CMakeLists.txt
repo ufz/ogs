@@ -31,7 +31,8 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_BINARY_DIR}/Qt/Base
 	${CMAKE_BINARY_DIR}/Qt/Gui
 	${CMAKE_BINARY_DIR}/Qt/DataView
-	${CMAKE_BINARY_DIR}/Qt/StratView
+	${CMAKE_BINARY_DIR}/Qt/DataView/StratView
+	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
 	../../Base
