@@ -16,7 +16,6 @@ DiagramList::DiagramList() : _maxX(0), _maxY(0), _minX(0), _minY(0), _xLabel("")
 
 DiagramList::~DiagramList()
 {
-	int a = 1;
 }
 
 float DiagramList::calcMinXValue()
