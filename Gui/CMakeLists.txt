@@ -43,7 +43,8 @@ INCLUDE_DIRECTORIES(
 	../../FEM
 	../Base
 	../DataView
-	../StratView
+	../DataView/StratView
+	../DataView/DiagramView
 	../VtkVis
 	../VtkAct
 )
