@@ -179,3 +179,4 @@ void DiagramPrefsDialog::createVisibilityCheckboxes()
 		_visability.push_back(box);
 	}
 }
+

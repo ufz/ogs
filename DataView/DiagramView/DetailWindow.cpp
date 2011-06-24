@@ -126,3 +126,4 @@ void DetailWindow::on_addDataButton_clicked()
 		prefs->show();
 	}
 }
+
