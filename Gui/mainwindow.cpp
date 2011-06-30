@@ -469,12 +469,18 @@ void MainWindow::save()
 		*/
 		} else if (fi.suffix().toLower() == "geo") {
 			GMSHInterface gmsh_io(fileName.toStdString());
+			std::vector<std::string> names;
+			this->_project.getGEOObjects()->getGeometryNames(names);
+			for (size_t i=0; i<names.size(); i++)
+				gmsh_io.writeGMSHInputFile(names[i], *(this->_project.getGEOObjects()));
+/*
 			std::vector<std::string> selected_geometries;
 			const size_t param1(2);
 			const double param2(0.3);
 			const double param3(0.05);
 			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
 					selected_geometries, param1, param2, param3);
+*/
 		} else if (fi.suffix().toLower() == "gli") {
 			//			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
 			writeAllDataToGLIFileV4(fileName.toStdString(), *_geoModels);

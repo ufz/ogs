@@ -93,11 +93,10 @@ int VtkSurfacesSource::RequestData( vtkInformation* request, vtkInformationVecto
 			const GEOLIB::Triangle* triangle = (**it)[i];
 			for (size_t j=0; j<3; j++)
 			{
-				aPolygon->GetPointIds()->SetId(j, ((*triangle)[j]));
+				aPolygon->GetPointIds()->SetId(j, ((*triangle)[2-j]));
 			}
 			newPolygons->InsertNextCell(aPolygon);
 			sfcIDs->InsertNextValue(count);
-
 			aPolygon->Delete();
 		}
 		count++;
@@ -125,14 +124,6 @@ int VtkSurfacesSource::RequestInformation( vtkInformation* request, vtkInformati
 void VtkSurfacesSource::SetUserProperty( QString name, QVariant value )
 {
 	VtkAlgorithmProperties::SetUserProperty(name, value);
-/*
-	if (name.compare("ColorBySurface") == 0)
-	{
-		value.convert(QVariant::Bool);
-		this->SetColorBySurface(value.toBool());
-		this->SetScalarVisibility(value.toBool());
-	}
-*/
 	(*_algorithmUserProperties)[name] = value;
 }
 

@@ -118,7 +118,7 @@ bool MshModel::removeMesh(const QModelIndex &idx)
 		return false;
 	}
 
-	std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
+	//std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
 	return false;
 }
 
@@ -145,7 +145,7 @@ void MshModel::updateModel()
 	const std::map<std::string, MeshLib::CFEMesh*> msh_vec = _project.getMeshObjects();
 	for (std::map<std::string, MeshLib::CFEMesh*>::const_iterator it(msh_vec.begin());	it != msh_vec.end(); ++it)
 	{
-		if (this->getMesh(it->first) == NULL) 
+		if (this->getMesh(it->first) == NULL) // if GridAdapter does not yet exist, create one.
 		{
 			std::string name = it->first;
 			addMeshObject(new GridAdapter(it->second), name);
