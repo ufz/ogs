@@ -38,6 +38,11 @@ void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_ind
 	TreeItem* typeItem = new TreeItem(typeData, elemItem);
 	elemItem->appendChild(typeItem);
 
+	QList<QVariant> materialData;
+	materialData << "MaterialID: " << QString::number(elem->material);
+	TreeItem* matItem = new TreeItem(materialData, elemItem);
+	elemItem->appendChild(matItem);
+
 	QList<QVariant> volData;
 	volData << "Area/Volume: " << QString::number(grid->getCFEMesh()->getElementVector()[elem_index]->calcVolume());
 	TreeItem* volItem = new TreeItem(volData, elemItem);
