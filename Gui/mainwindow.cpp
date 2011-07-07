@@ -771,7 +771,7 @@ void MainWindow::importRasterAsPoly()
 		QImage raster;
 		QPointF origin;
 		double scalingFactor;
-		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true);
+		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true, true);
 
 		VtkBGImageSource* bg = VtkBGImageSource::New();
 		bg->SetOrigin(origin.x(), origin.y());
