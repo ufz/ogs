@@ -41,9 +41,9 @@ if [ "$OSTYPE" == 'msys' ]; then
 			echo y | configure -opensource -nomake demos -nomake examples $QT_CONFIGURATION &&\
 			nmake && nmake clean &&\
 			exit\
-			" > build_qt.bat
+			" > build.bat
 
-			$COMSPEC \/k build_qt.bat
+			$COMSPEC \/k build.bat
 		fi
 		
 		export PATH=$PATH:$SOURCE_LOCATION/../libs/$QT_VERSION/bin
@@ -52,10 +52,9 @@ if [ "$OSTYPE" == 'msys' ]; then
 		echo "Qt already installed in $QMAKE_LOCATION"
 	fi
 	
-	cd "$SOURCE_LOCATION/../libs"
 	
 	# Install VTK
-	#http://www.vtk.org/files/release/5.6/vtk-5.6.1.tar.gz
+	cd "$SOURCE_LOCATION/../libs"
 	VTK_VERSION="vtk-5.6.1"
 	if [ ! -d $VTK_VERSION ]; then
 		# Download, extract, rename
@@ -92,5 +91,91 @@ if [ "$OSTYPE" == 'msys' ]; then
 			$COMSPEC \/c "devenv VTK.sln /Build Debug"
 			$COMSPEC \/c "devenv VTK.sln /Build Debug /Project QVTK"
 		fi
+	fi
+	
+	# Install shapelib
+	cd "$SOURCE_LOCATION/../libs"
+	SHAPELIB_VERSION="shapelib-1.3.0b2"
+	if [ ! -d $SHAPELIB_VERSION ]; then
+		# Download, extract
+		wget http://download.osgeo.org/shapelib/$SHAPELIB_VERSION.tar.gz
+		tar -xf $SHAPELIB_VERSION.tar.gz
+		rm -rf $SHAPELIB_VERSION.tar.gz
+	elif [ -f $SHAPELIB_VERSION/shapelib.lib ]; then
+		SHAPELIB_FOUND=true
+	fi
+	
+	if [ $SHAPELIB_FOUND ]; then
+		echo "Shapelib already installed in $SOURCE_LOCATION/../$SHAPELIB_VERSION"
+	else
+		# Compile
+		cd $SHAPELIB_VERSION
+		
+		echo " \
+		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+		nmake /f makefile.vc &&\
+		exit\
+		" > build.bat
+
+		$COMSPEC \/k build.bat
+	fi
+	
+	# Install libtiff
+	cd "$SOURCE_LOCATION/../libs"
+	LIBTIFF_VERSION="tiff-3.9.5"
+	if [ ! -d $LIBTIFF_VERSION ]; then
+		# Download, extract
+		wget ftp://ftp.remotesensing.org/pub/libtiff/$LIBTIFF_VERSION.tar.gz
+		tar -xf $LIBTIFF_VERSION.tar.gz
+		rm -rf $LIBTIFF_VERSION.tar.gz
+	elif [ -f $LIBTIFF_VERSION/libtiff/libtiff.lib ]; then
+		LIBTIFF_FOUND=true
+	fi
+	
+	if [ $LIBTIFF_FOUND ]; then
+		echo "Libtiff already installed in $SOURCE_LOCATION/../$LIBTIFF_VERSION"
+	else
+		# Compile
+		cd $LIBTIFF_VERSION
+		
+		echo " \
+		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+		nmake /f Makefile.vc lib &&\
+		exit\
+		" > build.bat
+
+		$COMSPEC \/k build.bat
+	fi
+	
+	# Install libgeotiff
+	cd "$SOURCE_LOCATION/../libs"
+	LIBGEOTIFF_VERSION="libgeotiff-1.3.0"
+	if [ ! -d $LIBGEOTIFF_VERSION ]; then
+		# Download, extract
+		wget http://download.osgeo.org/geotiff/libgeotiff/$LIBGEOTIFF_VERSION.tar.gz
+		tar -xf $LIBGEOTIFF_VERSION.tar.gz
+		rm -rf $LIBGEOTIFF_VERSION.tar.gz
+	elif [ -f $LIBGEOTIFF_VERSION/geotiff.lib ]; then
+		LIBGEOTIFF_FOUND=true
+	fi
+	
+	if [ $LIBGEOTIFF_FOUND ]; then
+		echo "Libgeotiff already installed in $SOURCE_LOCATION/../$LIBGEOTIFF_VERSION"
+	else
+		# Compile
+		cd $LIBGEOTIFF_VERSION
+		
+		# Download modified makefile
+		if [ ! -f makefile_mod.vc ]; then
+			wget --no-check-certificate https://gist.github.com/raw/1088657/0b846a9cdc529681bfb34be37dfba5d1a31dc419/makefile_mod.vc
+		fi
+		
+		echo " \
+		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+		nmake /f makefile_mod.vc geotiff.lib&&\
+		exit\
+		" > build.bat
+
+		$COMSPEC \/k build.bat
 	fi
 fi
