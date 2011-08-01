@@ -1032,7 +1032,7 @@ void MainWindow::showDiagramPrefsDialog()
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
 							"Text files (*.txt);;All files (* *.*)");
-	if (!fileName.isEmpty()) 
+	if (!fileName.isEmpty())
 	{
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -1077,94 +1077,94 @@ void MainWindow::FEMTestStart()
 	std::vector<std::string> station_names;
 	_geoModels->getStationNames (station_names);
 
-	{
-		std::ofstream os ("Points5000000.gli");
-		if (os) {
-			os << "#POINTS" << std::endl;
-			for (size_t k(0); k<5000000; k++) {
-				os << k << " " << (rand()%1000)/1000.0
-					<< " " << (rand()%1000)/1000.0
-					<< " " << (rand()%1000)/1000.0 << std::endl;
-			}
-			os << "#STOP" << std::endl;
-		}
-	}
+//	{
+//		std::ofstream os ("Points5000000.gli");
+//		if (os) {
+//			os << "#POINTS" << std::endl;
+//			for (size_t k(0); k<5000000; k++) {
+//				os << k << " " << (rand()%1000)/1000.0
+//					<< " " << (rand()%1000)/1000.0
+//					<< " " << (rand()%1000)/1000.0 << std::endl;
+//			}
+//			os << "#STOP" << std::endl;
+//		}
+//	}
 
-	if (!station_names.empty()) {
-		size_t resolution(36);
-		for (std::vector<std::string>::const_iterator it(station_names.begin()); it
-				!= station_names.end(); it++) {
+//	if (!station_names.empty()) {
+//		size_t resolution(36);
+//		for (std::vector<std::string>::const_iterator it(station_names.begin()); it
+//				!= station_names.end(); it++) {
+//
+//			std::string project_name("Circle");
+//			project_name += *it;
+//
+//			std::vector<GEOLIB::Point*> *pnts(new std::vector<GEOLIB::Point*>);
+//			const std::vector<GEOLIB::Point*>* middle_pnts(
+//					_geoModels->getPointVec(*it));
+//			std::vector<GEOLIB::Polyline*> *plys(new std::vector<
+//					GEOLIB::Polyline*>);
+//			std::map<std::string, size_t> * ply_names(new std::map<std::string,size_t>);
+//
+//			for (size_t k(0); k < middle_pnts->size(); k++) {
+//				GEOLIB::Polygon *polygon(createPolygonFromCircle(
+//						*((*middle_pnts)[k]), 450.0, *pnts, resolution));
+//				plys->push_back(polygon);
+//				std::string station_name("CircleAreaAroundStation");
+//				if (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])) {
+//					station_name
+//							+= (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])->getName());
+//				} else {
+//					station_name += number2str(k);
+//				}
+//				ply_names->insert(std::pair<std::string, size_t>(station_name,k));
+//			}
+//
+//			_geoModels->addPointVec(pnts, project_name);
+//			_geoModels->addPolylineVec(plys, project_name, ply_names);
+//		}
+//	}
 
-			std::string project_name("Circle");
-			project_name += *it;
-
-			std::vector<GEOLIB::Point*> *pnts(new std::vector<GEOLIB::Point*>);
-			const std::vector<GEOLIB::Point*>* middle_pnts(
-					_geoModels->getPointVec(*it));
-			std::vector<GEOLIB::Polyline*> *plys(new std::vector<
-					GEOLIB::Polyline*>);
-			std::map<std::string, size_t> * ply_names(new std::map<std::string,size_t>);
-
-			for (size_t k(0); k < middle_pnts->size(); k++) {
-				GEOLIB::Polygon *polygon(createPolygonFromCircle(
-						*((*middle_pnts)[k]), 450.0, *pnts, resolution));
-				plys->push_back(polygon);
-				std::string station_name("CircleAreaAroundStation");
-				if (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])) {
-					station_name
-							+= (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])->getName());
-				} else {
-					station_name += number2str(k);
-				}
-				ply_names->insert(std::pair<std::string, size_t>(station_name,k));
-			}
-
-			_geoModels->addPointVec(pnts, project_name);
-			_geoModels->addPolylineVec(plys, project_name, ply_names);
-		}
-	}
-
-	if (_geoModels) {
-		std::vector<std::string> geo_names;
-		_geoModels->getGeometryNames (geo_names);
-
-		if (!geo_names.empty()) {
-			std::vector<GEOLIB::Polyline*> const* plys (_geoModels->getPolylineVec (geo_names[0]));
-			std::vector<GEOLIB::Polyline*>* polyline_vec (new std::vector<GEOLIB::Polyline*>);
-			GEOLIB::Polygon* polygon (NULL);
-
-			if (!_meshModels) {
-				std::cout << "no mesh loaded" << std::endl;
-			} else {
-				std::string mesh_name ("model25");
-				MeshLib::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
-
-				MeshLib::ExtractMeshNodes extract_mesh_nodes (mesh);
-//				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
-				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[19]), _geoModels, geo_names[0], polygon);
-				if (polygon)
-					polyline_vec->push_back (polygon);
-//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[1]), *(pnts_vec), polygon);
+//	if (_geoModels) {
+//		std::vector<std::string> geo_names;
+//		_geoModels->getGeometryNames (geo_names);
+//
+//		if (!geo_names.empty()) {
+//			std::vector<GEOLIB::Polyline*> const* plys (_geoModels->getPolylineVec (geo_names[0]));
+//			std::vector<GEOLIB::Polyline*>* polyline_vec (new std::vector<GEOLIB::Polyline*>);
+//			GEOLIB::Polygon* polygon (NULL);
+//
+//			if (!_meshModels) {
+//				std::cout << "no mesh loaded" << std::endl;
+//			} else {
+//				std::string mesh_name ("model25");
+//				MeshLib::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
+//
+//				MeshLib::ExtractMeshNodes extract_mesh_nodes (mesh);
+////				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
+//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[19]), _geoModels, geo_names[0], polygon);
 //				if (polygon)
 //					polyline_vec->push_back (polygon);
-//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[2]), *(pnts_vec), polygon);
-//				if (polygon)
-//					polyline_vec->push_back (polygon);
-//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[3]), *(pnts_vec), polygon);
-//				if (polygon)
-//					polyline_vec->push_back (polygon);
-			}
-
-			if (!polyline_vec->empty()) {
-				if (_geoModels->appendPolylineVec (*polyline_vec, geo_names[0]))
-					std::cout << "added " << polyline_vec->size() << " polygons" << std::endl;
-				else
-					std::cout << "failed to add " << polyline_vec->size() << " polygons" << std::endl;
-
-				delete polyline_vec;
-			}
-		}
-	}
+////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[1]), *(pnts_vec), polygon);
+////				if (polygon)
+////					polyline_vec->push_back (polygon);
+////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[2]), *(pnts_vec), polygon);
+////				if (polygon)
+////					polyline_vec->push_back (polygon);
+////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[3]), *(pnts_vec), polygon);
+////				if (polygon)
+////					polyline_vec->push_back (polygon);
+//			}
+//
+//			if (!polyline_vec->empty()) {
+//				if (_geoModels->appendPolylineVec (*polyline_vec, geo_names[0]))
+//					std::cout << "added " << polyline_vec->size() << " polygons" << std::endl;
+//				else
+//					std::cout << "failed to add " << polyline_vec->size() << " polygons" << std::endl;
+//
+//				delete polyline_vec;
+//			}
+//		}
+//	}
 #ifndef NDEBUG
 	std::cout << "FEM Test here ..." << std::endl;
 	QSettings settings("UFZ", "OpenGeoSys-5");
@@ -1197,19 +1197,45 @@ void MainWindow::FEMTestStart()
 		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
 			jA_unsigned[k] = jA[k];
 
-		// write matrix
-		std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
-		if (mat_out) {
-			FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
-			mat_out.close();
+		// some tests
+        bool valid(true);
+		for (unsigned i = 0; i < n_unsigned && valid; ++i) {
+			const unsigned end (iA_unsigned[i+1]);
+			for (unsigned k (iA_unsigned[i]); k < end; k++)
+				if (jA_unsigned[k] >= n_unsigned) {
+					std::cout << "row " << i << " has column entry ";
+					std::cout << iA_unsigned[k] << " but matrix has dim ";
+					std::cout << n_unsigned << " x " << n_unsigned << std::endl;
+					valid = false;
+				}
 		}
-		// write right hand side
-		std::ofstream rhs_out ("rhs.dat");
-		if (rhs_out) {
-			for (unsigned k(0); k<n_unsigned; k++) {
-				rhs_out << rhs[k] << std::endl;
+		if (!valid) {
+			std::cout << "matrix not in valid format" << std::endl;
+		} else {
+	        unsigned min (iA_unsigned[1]-iA_unsigned[0]), max(iA_unsigned[1]-iA_unsigned[0]), max_idx(0), min_idx(0);
+	        for (unsigned k=0; k<n_unsigned; ++k) {
+	                unsigned deg = iA_unsigned[k+1]-iA_unsigned[k];
+	                if (deg < min) {min = deg; min_idx = k;}
+	                if (deg > max) {max = deg; max_idx = k;}
+	        }
+	        std::cout << "\taverage deg: " << double (iA_unsigned[n_unsigned]) / n_unsigned << std::endl;
+	        std::cout << "\trow " << max_idx << " with max deg " << max << std::endl;
+	        std::cout << "\trow " << min_idx << " with min deg " << min << std::endl;
+
+			// write matrix
+			std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
+			if (mat_out) {
+				FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
+				mat_out.close();
 			}
-			rhs_out.close();
+			// write right hand side
+			std::ofstream rhs_out ("rhs.dat");
+			if (rhs_out) {
+				for (unsigned k(0); k<n_unsigned; k++) {
+					rhs_out << rhs[k] << std::endl;
+				}
+				rhs_out.close();
+			}
 		}
 
 		delete [] iA;
