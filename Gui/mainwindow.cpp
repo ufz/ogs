@@ -772,6 +772,7 @@ void MainWindow::importRasterAsPoly()
 		QPointF origin;
 		double scalingFactor;
 		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, false);
+		//OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true, true);
 
 		VtkBGImageSource* bg = VtkBGImageSource::New();
 		bg->SetOrigin(origin.x(), origin.y());
@@ -1032,7 +1033,7 @@ void MainWindow::showDiagramPrefsDialog()
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 							settings.value("lastOpenedFileDirectory").toString(),
 							"Text files (*.txt);;All files (* *.*)");
-	if (!fileName.isEmpty()) 
+	if (!fileName.isEmpty())
 	{
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
