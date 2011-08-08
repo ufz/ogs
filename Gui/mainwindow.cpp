@@ -1074,8 +1074,12 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::vector<std::string> station_names;
-	_geoModels->getStationNames (station_names);
+	std::vector<std::string> geo_names;
+	_geoModels->getGeometryNames (geo_names);
+//	_geoModels->getStationNames (geo_names);
+
+	_geoModels->mergeGeometries (geo_names);
+
 
 //	{
 //		std::ofstream os ("Points5000000.gli");
@@ -1090,6 +1094,8 @@ void MainWindow::FEMTestStart()
 //		}
 //	}
 
+//	std::vector<std::string> station_names;
+//		_geoModels->getStationNames (station_names);
 //	if (!station_names.empty()) {
 //		size_t resolution(36);
 //		for (std::vector<std::string>::const_iterator it(station_names.begin()); it
