@@ -468,19 +468,19 @@ void MainWindow::save()
 			xml.writeGLIFile(fileName, gliName);
 		*/
 		} else if (fi.suffix().toLower() == "geo") {
+			// it works like this (none of it is particularily fast or optimised or anything):
+			// 1. merge all geometries that are currently loaded, all of these will be integrated into the mesh
+			// 2. if "useStationsAsConstraints"-parameter is true, GMSH-Interface will also integrate all stations that are currently loaded
+			// 3. after the geo-file is created the merged geometry is deleted again as it is no longer needed
 			GMSHInterface gmsh_io(fileName.toStdString());
 			std::vector<std::string> names;
 			this->_project.getGEOObjects()->getGeometryNames(names);
-			for (size_t i=0; i<names.size(); i++)
-				gmsh_io.writeGMSHInputFile(names[i], *(this->_project.getGEOObjects()));
-/*
-			std::vector<std::string> selected_geometries;
-			const size_t param1(2);
-			const double param2(0.3);
-			const double param3(0.05);
-			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-					selected_geometries, param1, param2, param3);
-*/
+			std::string merge_name("MergedGeometry");
+			_geoModels->mergeGeometries (names, merge_name);
+			gmsh_io.writeGMSHInputFile(merge_name, *(this->_project.getGEOObjects()), true);
+			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
+			this->_project.getGEOObjects()->removePolylineVec(merge_name);
+			this->_project.getGEOObjects()->removePointVec(merge_name);
 		} else if (fi.suffix().toLower() == "gli") {
 			//			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
 			writeAllDataToGLIFileV4(fileName.toStdString(), *_geoModels);
@@ -1079,7 +1079,8 @@ void MainWindow::FEMTestStart()
 	_geoModels->getGeometryNames (geo_names);
 //	_geoModels->getStationNames (geo_names);
 
-	_geoModels->mergeGeometries (geo_names);
+	std::string merge_name("MergedGeometry");
+	_geoModels->mergeGeometries (geo_names, merge_name);
 
 
 //	{
