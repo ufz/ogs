@@ -43,6 +43,7 @@
 #include "rf_st_new.h"
 #include "rf_ic_new.h"
 #include "wait.h"
+#include "MathIO/CRSIO.h"
 
 // FileIO includes
 #include "OGSIOVer4.h"
@@ -53,9 +54,6 @@
 #include "GMSHInterface.h"
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
-
-//test
-#include "MathIO/CRSIO.h"
 
 #include "StringTools.h"
 
@@ -163,6 +161,9 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 			_elementModel, SLOT(clearView()));
 	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 			this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+	connect(mshTabWidget->treeView, SIGNAL(requestDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)),
+			this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
+
 
 
 	// Setup connections for condition model to GUI
@@ -925,7 +926,9 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			for (std::list<CBoundaryCondition*>::iterator it=bc_list.begin(); it!=bc_list.end(); ++it) delete *it;
 			bc_list.clear();
 			for (size_t i=0; i<ic_vector.size(); i++) delete ic_vector[i];
+			ic_vector.clear();
 			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+			st_vector.clear();
 		}
 	}
 }
@@ -1465,5 +1468,46 @@ QString MainWindow::getLastUsedDir()
 		return QFileInfo(files[0]).absolutePath();
 	else
 		return QDir::homePath();
+}
+
+void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points)
+{
+	std::string geo_name("mshNodes");
+
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Geosys FEM condition files (*.st);;All files (* *.*)");
+	QFileInfo fi(fileName);
+	QString name = fi.path() + "/";
+
+	if (!fileName.isEmpty())
+	{
+
+		// create new geometry points vector by copying mesh nodes vector
+		std::vector<GEOLIB::Point*> *new_points = new std::vector<GEOLIB::Point*>;
+		std::map<std::string, size_t> *name_pnt_id_map = new std::map<std::string, size_t>;
+
+		for (size_t i=0; i<points->size(); i++)
+		{
+			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],(*(*points)[i])[1],(*(*points)[i])[2]);
+			new_points->push_back(pnt);
+			std::stringstream out;
+			out << i;
+			name_pnt_id_map->insert(std::pair<std::string, size_t>(out.str(), i));
+		}
+		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
+		
+		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, new_points);
+
+		// add boundary conditions to model
+		if (!conditions.empty())
+		{
+			this->_conditionModel->addConditions(conditions);
+			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+			st_vector.clear();
+		}
+	}
 }
 

@@ -5,6 +5,7 @@
 #ifndef DATAVIEW_H
 #define DATAVIEW_H
 
+#include "Point.h"
 #include <QTreeView>
 
 class MshModel;
@@ -13,7 +14,11 @@ class VtkMeshSource;
 namespace MeshLib {
 	class CFEMesh;
 }
-
+/*
+namespace GEOLIB {
+	class Point;
+}
+*/
 /**
  *	The DataView is table view which acts as a base class for displaying
  *  several OSG data formats.
@@ -50,6 +55,8 @@ private slots:
 	/// Adds a new mesh.
 	void addMeshAction();
 
+	void addDIRECTSourceTerms();
+
 	/// Remove the currently selected mesh.
 	void removeMesh();
 
@@ -68,7 +75,9 @@ private slots:
 signals:
 	void qualityCheckRequested(VtkMeshSource*);
 	void requestMeshRemoval(const QModelIndex&);
+	void requestDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*);
 	void saveMeshAction();
+	
 /*
 	void itemSelectionChanged(const QItemSelection &selected,
 		const QItemSelection &deselected);

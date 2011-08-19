@@ -356,9 +356,10 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
 				vtkSmartPointer<vtkXMLPolyDataWriter>::New();
 			pdWriter->SetInput(algPD->GetOutputDataObject(0));
+			//pdWriter->SetDataModeToAscii();
+			//pdWriter->SetCompressorTypeToNone();
 			std::string filenameWithExt = filename;
 			filenameWithExt.append(".vtp");
-//			filenameWithExt.append(".vtk");
 			pdWriter->SetFileName(filenameWithExt.c_str());
 			return pdWriter->Write();
 		}
@@ -367,6 +368,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
 				vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
 			ugWriter->SetInput(algUG->GetOutputDataObject(0));
+			//ugWriter->SetDataModeToAscii();
+			//ugWriter->SetCompressorTypeToNone();
 			std::string filenameWithExt = filename;
 			filenameWithExt.append(".vtu");
 			ugWriter->SetFileName(filenameWithExt.c_str());
@@ -446,7 +449,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 		this->setLookupTableForActiveScalar();
 
 		_mapper->ScalarVisibilityOn();
-		_mapper->Update();
+		//_mapper->Update();	// KR: TODO - this is incredibly slow ... WHY???
 		_activeAttribute = name;
 	}
 }
@@ -470,7 +473,7 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 			}
 
 			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->Update();
+			//_mapper->Update();  KR: not necessary?!
 		}
 	}
 }

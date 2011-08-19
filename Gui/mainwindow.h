@@ -99,6 +99,9 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
+	void loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points); //TODO put this in a better place
+	
+
 private:
 	QMenu* createImportFilesMenu();
     void loadFile(const QString &fileName);

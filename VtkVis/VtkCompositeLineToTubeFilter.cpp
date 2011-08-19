@@ -40,6 +40,7 @@ void VtkCompositeLineToTubeFilter::init()
 		tubes->SetRadius(150);
 		tubes->SetNumberOfSides(10);
 		tubes->SetCapping(1);
+		//tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
 
 	(*_algorithmUserProperties)["Radius"] = 150.0;
 	(*_algorithmUserProperties)["NumberOfSides"] = 6;

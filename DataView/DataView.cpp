@@ -78,10 +78,13 @@ void DataView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
 		QAction* saveMeshAction   = menu.addAction("Save mesh...");
 		menu.addSeparator();
+		QAction* directSTAction   = menu.addAction("Add DIRECT source terms...");
+		menu.addSeparator();
 		QAction* removeMeshAction = menu.addAction("Remove mesh");
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
+		connect(directSTAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
 		connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 		menu.exec(event->globalPos());
 	}
@@ -124,6 +127,14 @@ int DataView::writeMeshToFile() const
 	}
 	return 0;
 }
+
+void DataView::addDIRECTSourceTerms()
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+	const std::vector<GEOLIB::Point*> *points = static_cast<MshModel*>(this->model())->getMesh(index)->getNodes();
+	emit requestDIRECTSourceTerms(points);
+}
+
 
 void DataView::checkMeshQuality ()
 {
