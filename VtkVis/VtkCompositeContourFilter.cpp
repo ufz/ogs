@@ -64,7 +64,7 @@ void VtkCompositeContourFilter::SetUserVectorProperty( QString name, QList<QVari
 
 	// Use the same name as in init()
 	if (name.compare("Range") == 0)
-		static_cast<vtkContourFilter*>(_outputAlgorithm)->GenerateValues(values[0].toDouble(), values[1].toDouble(), VtkAlgorithmProperties::GetUserProperty("Number of Contours").toInt());
+		static_cast<vtkContourFilter*>(_outputAlgorithm)->GenerateValues(VtkAlgorithmProperties::GetUserProperty("Number of Contours").toInt(), values[0].toDouble(), values[1].toDouble());
 
 	
 }
