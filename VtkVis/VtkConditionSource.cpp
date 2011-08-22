@@ -120,7 +120,8 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 				if ((*_points)[i] == pnt) 
 				{
 					id = static_cast<int>(i);//(this->getIndex(i, newPoints, scalars, idx_map));
-					newVerts->InsertNextCell(1, &static_cast<vtkIdType>(id));
+					vtkIdType vtk_id = static_cast<vtkIdType>(id);
+					newVerts->InsertNextCell(1, &vtk_id);
 					if (type == FiniteElement::CONSTANT)
 						scalars->SetValue(id, dis_values[0]);
 					break;
