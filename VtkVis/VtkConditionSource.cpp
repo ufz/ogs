@@ -88,7 +88,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 
 	
 	size_t n_pnts = _points->size();
-	double value(0.0);
+	double value(-9999);
 	/*
 	if (!_cond_vec->empty())
 	{
@@ -96,6 +96,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 		value = dv[dv.size()-1]; // get an existing value for the distribution so scaling on point data will be correct during rendering process!
 	}
 	*/
+
 	for (size_t i=0; i<n_pnts; i++)
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
@@ -171,7 +172,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 					aPolygon->GetPointIds()->SetId(j, pnt_id);
 
 					if (type == FiniteElement::CONSTANT)
-						scalars->SetValue(pnt_id, dis_values[0]);
+						scalars->SetValue(pnt_id, dis_values[i]);
 					else if (type == FiniteElement::LINEAR)
 					{
 						for (size_t k=0; k<dis_values.size(); k+=2)

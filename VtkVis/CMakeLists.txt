@@ -1,6 +1,5 @@
 # Source files
 SET( SOURCES
-	GridAdapter.cpp
 	QVtkDataSetMapper.cpp
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
@@ -26,6 +25,7 @@ SET( SOURCES
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
+	VtkMeshConverter.cpp
 	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
@@ -60,7 +60,6 @@ SET( MOC_HEADERS
 
 # Header files
 SET( HEADERS
-	GridAdapter.h
 	VtkApplyColorTableFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
@@ -79,6 +78,7 @@ SET( HEADERS
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
+	VtkMeshConverter.h
 	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
