@@ -1483,11 +1483,10 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 
 	if (!fileName.isEmpty())
 	{
-
 		// create new geometry points vector by copying mesh nodes vector
 		std::vector<GEOLIB::Point*> *new_points = new std::vector<GEOLIB::Point*>;
 		std::map<std::string, size_t> *name_pnt_id_map = new std::map<std::string, size_t>;
-
+ 
 		for (size_t i=0; i<points->size(); i++)
 		{
 			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],(*(*points)[i])[1],(*(*points)[i])[2]);
@@ -1499,7 +1498,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
 		
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
-		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, new_points);
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name);
 
 		// add boundary conditions to model
 		if (!conditions.empty())
@@ -1511,3 +1510,4 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 	}
 }
 
+	

@@ -8,6 +8,7 @@
 #include "Point.h"
 #include <QTreeView>
 
+class GridAdapter;
 class MshModel;
 class VtkMeshSource;
 
