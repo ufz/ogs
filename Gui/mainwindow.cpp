@@ -1498,7 +1498,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
 		
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
-		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, new_points);
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name);
 
 		// add boundary conditions to model
 		if (!conditions.empty())
