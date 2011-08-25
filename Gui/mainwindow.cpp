@@ -843,7 +843,8 @@ void MainWindow::importFeflow()
     FEFLOWInterface feflowIO(_geoModels);
     Mesh_Group::CFEMesh *msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
     if (msh) {
-      _meshModels->addMesh(msh, fileName.toStdString());
+      string str = fileName.toStdString();
+      _meshModels->addMesh(msh, str);
       QDir dir = QDir(fileName);
       settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
       //_geoModels->modified("Feflow");
