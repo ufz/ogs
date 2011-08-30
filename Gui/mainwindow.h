@@ -69,6 +69,7 @@ protected slots:
 	void importPetrel();
 	void importNetcdf();     //YW  07.2010
 	void importVtk();
+    void importFeflow();
 	void loadFEMConditionsFromFile(std::string);
 	void openDatabase();
 	void openDatabaseConnection();

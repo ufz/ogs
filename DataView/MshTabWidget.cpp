@@ -110,7 +110,7 @@ int MshTabWidget::writeMeshToFile() const
 		{
 			std::fstream* out = new std::fstream(fileName.c_str(), std::fstream::out);
 			if (out->is_open()) {
-				mesh->Write(out);
+				mesh->Write(out, true);
 				out->close();
 				// write mesh without null-volume-elements
 //				std::ofstream out1 ("mesh_without_null_elements.msh");

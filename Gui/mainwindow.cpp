@@ -52,6 +52,7 @@
 #include "GMSHInterface.h"
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
+#include "FEFLOWInterface.h"
 
 //test
 #include "MathIO/CRSIO.h"
@@ -676,6 +677,8 @@ QMenu* MainWindow::createImportFilesMenu()
 #endif
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
+    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
+    connect( feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()) );
 
 	return importFiles;
 }
@@ -827,6 +830,30 @@ void MainWindow::importVtk()
 			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		}
 	}
+}
+
+void MainWindow::importFeflow()
+{
+  QSettings settings("UFZ", "OpenGeoSys-5");
+  QString fileName = QFileDialog::getOpenFileName(this,
+    "Select FEFLOW file(s) to import", settings.value(
+    "lastOpenedFileDirectory").toString(),
+    "FEFLOW files (*.fem);;");
+  if (!fileName.isEmpty()) {
+    FEFLOWInterface feflowIO(_geoModels);
+    Mesh_Group::CFEMesh *msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
+    if (msh) {
+      string str = fileName.toStdString();
+      _meshModels->addMesh(msh, str);
+      QDir dir = QDir(fileName);
+      settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+      //_geoModels->modified("Feflow");
+      updateDataViews();
+    } else {
+      OGSError::box("Failed to load a FEFLOW file.");
+    }
+  }
+  emit fileUsed(fileName);
 }
 
 void MainWindow::showPropertiesDialog(std::string name)
