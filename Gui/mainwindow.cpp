@@ -39,6 +39,9 @@
 #include "DatabaseConnection.h"
 
 //test
+#include "BoundaryCondition.h"
+#include "InitialCondition.h"
+#include "SourceTerm.h"
 #include "rf_bc_new.h"
 #include "rf_st_new.h"
 #include "rf_ic_new.h"

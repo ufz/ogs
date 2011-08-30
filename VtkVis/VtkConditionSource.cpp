@@ -172,7 +172,7 @@ int VtkConditionSource::RequestData( vtkInformation* request, vtkInformationVect
 					aPolygon->GetPointIds()->SetId(j, pnt_id);
 
 					if (type == FiniteElement::CONSTANT)
-						scalars->SetValue(pnt_id, dis_values[i]);
+						scalars->SetValue(pnt_id, dis_values[0]);
 					else if (type == FiniteElement::LINEAR)
 					{
 						for (size_t k=0; k<dis_values.size(); k+=2)
