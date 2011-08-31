@@ -463,8 +463,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 			{
 				if (!elem->GetNode(j)->GetMark())
 				{
-					MeshLib::CNode* node = elem->GetNode(j);
-					node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
+					MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
 				}
 			}
 		}
@@ -540,8 +539,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		   {
 			  if (!elem->GetNode(j)->GetMark())
 			  {
-				  MeshLib::CNode* node = elem->GetNode(j);
-				  node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
+				  MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
 			  }
 		   }
 		}

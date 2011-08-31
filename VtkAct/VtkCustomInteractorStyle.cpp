@@ -180,8 +180,10 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			selectedMapper->SetInputConnection(selected->GetProducerPort());
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(selectedActor);
-			emit requestViewUpdate();
 		}
+		else
+			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(selectedActor);
+		emit requestViewUpdate();
 	}
 	else
 		// Forward events

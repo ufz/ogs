@@ -23,7 +23,7 @@
 #include <QAbstractItemModel>
 
 //image to mesh conversion
-#include "GridAdapter.h"
+#include "VtkMeshConverter.h"
 #include <vtkDataObject.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
@@ -153,7 +153,7 @@ void VtkVisPipelineView::convertImageToMesh()
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
 
-	MeshLib::CFEMesh* mesh = GridAdapter::convertImgToMesh(image, imageSource->getOrigin(), imageSource->getSpacing());
+	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(), imageSource->getSpacing());
 	// now do something with the mesh (save, display, whatever... )
 	std::string msh_name("NewMesh");
 	emit meshAdded(mesh, msh_name);
@@ -176,7 +176,7 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}
-	MeshLib::CFEMesh* mesh = GridAdapter::convertUnstructuredGrid(grid);
+	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
 	std::string msh_name("NewMesh");
 	emit meshAdded(mesh, msh_name);
 }

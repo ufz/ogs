@@ -22,7 +22,6 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* wi
 	if (_vtkVisPipeline->getLight(_below))
 		lightBelowBox->toggle();
 
-	QColor color = _vtkVisPipeline->getBGColor();
 	bgColorButton->setColor(_vtkVisPipeline->getBGColor());
 
 	QValidator* validator = new QDoubleValidator(0, 100000, 2, this);

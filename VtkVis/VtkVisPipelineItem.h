@@ -32,6 +32,7 @@ class VtkAlgorithmProperties;
 class vtkOsgActor;
 class VtkCompositeFilter;
 class vtkTransformFilter;
+class vtkDataSetAttributes;
 
 /**
  * \brief An item in the VtkVisPipeline containing a graphic object to be visualized.
@@ -129,6 +130,10 @@ protected:
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 	void SetScalarVisibility(bool on);
+	
+private:
+	/// @see SetActiveAttribute()
+	bool setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name);
 
 };
 

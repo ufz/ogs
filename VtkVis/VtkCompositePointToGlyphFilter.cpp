@@ -10,6 +10,9 @@
 
 #include <vtkSphereSource.h>
 #include <vtkGlyph3D.h>
+#include <vtkDataSetAlgorithm.h>
+#include <vtkPointData.h>
+
 
 VtkCompositePointToGlyphFilter::VtkCompositePointToGlyphFilter( vtkAlgorithm* inputAlgorithm )
 : VtkCompositeFilter(inputAlgorithm)
@@ -33,8 +36,15 @@ void VtkCompositePointToGlyphFilter::init()
 	_glyphSource->SetPhiResolution(10);
 	_glyphSource->SetThetaResolution(10);
 	(*_algorithmUserProperties)["Radius"] = default_radius;
-	(*_algorithmUserProperties)["PhiResolution"] = 10;
-	(*_algorithmUserProperties)["ThetaResolution"] = 10;
+
+	size_t nPoints = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetNumberOfTuples();
+	int phi = 10-static_cast<size_t>(nPoints / 2000.0);
+	int theta = 10-static_cast<size_t>(nPoints / 2000.0);
+	if (phi<4) phi=4;
+	if (theta<3) theta=3;
+
+	(*_algorithmUserProperties)["PhiResolution"] = phi;
+	(*_algorithmUserProperties)["ThetaResolution"] = theta;
 
 	vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
 	glyphFilter->ScalingOn();		// KR important to scale glyphs with double precision (e.g. 0.1 of their size for small datasets)

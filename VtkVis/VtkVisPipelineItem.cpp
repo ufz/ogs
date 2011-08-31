@@ -49,6 +49,7 @@
 
 #include <vtkPointData.h>
 #include <vtkCellData.h>
+#include <vtkDataSetAttributes.h>
 
 #ifdef OGS_USE_OPENSG
 OSG::NodePtr VtkVisPipelineItem::rootNode = NullFC;
@@ -356,9 +357,10 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
 				vtkSmartPointer<vtkXMLPolyDataWriter>::New();
 			pdWriter->SetInput(algPD->GetOutputDataObject(0));
+			//pdWriter->SetDataModeToAscii();
+			//pdWriter->SetCompressorTypeToNone();
 			std::string filenameWithExt = filename;
 			filenameWithExt.append(".vtp");
-//			filenameWithExt.append(".vtk");
 			pdWriter->SetFileName(filenameWithExt.c_str());
 			return pdWriter->Write();
 		}
@@ -367,6 +369,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
 				vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
 			ugWriter->SetInput(algUG->GetOutputDataObject(0));
+			//ugWriter->SetDataModeToAscii();
+			//ugWriter->SetCompressorTypeToNone();
 			std::string filenameWithExt = filename;
 			filenameWithExt.append(".vtu");
 			ugWriter->SetFileName(filenameWithExt.c_str());
@@ -407,7 +411,7 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 		onPointData = false;
 	else if (name.contains("Solid Color"))
 	{
-		_activeAttribute = name;
+		_activeAttribute = "Solid Color";
 		_mapper->ScalarVisibilityOff();
 		return;
 	}
@@ -420,35 +424,68 @@ void VtkVisPipelineItem::SetActiveAttribute( const QString& name )
 
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	if (dataSet)
-	{
-		double range[2];
-
+	{		
 		if (onPointData)
 		{
 			vtkPointData* pointData = dataSet->GetPointData();
-			pointData->SetActiveAttribute(charName, vtkDataSetAttributes::SCALARS);
-			pointData->GetArray(charName)->GetRange(range);
-			_algorithm->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
-			_mapper->SetScalarModeToUsePointData();
-			_mapper->SetScalarRange(dataSet->GetScalarRange());
+			if(pointData)
+			{	
+				if(setActiveAttributeOnData(pointData, strippedName))
+				{
+					_algorithm->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
+					_mapper->SetScalarModeToUsePointData();
+				}
+				else
+				{
+					_activeAttribute = "Solid Color";
+					_mapper->ScalarVisibilityOff();
+					return;
+				}
+			}
 		}
 		else
 		{
 			vtkCellData* cellData = dataSet->GetCellData();
-			cellData->SetActiveAttribute(charName, vtkDataSetAttributes::SCALARS);
-			cellData->GetArray(charName)->GetRange(range);
-			_algorithm->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
-			_mapper->SetScalarModeToUseCellData();
-			_mapper->SetScalarRange(dataSet->GetScalarRange());
+			if(cellData)
+			{
+				if(setActiveAttributeOnData(cellData, strippedName))
+				{
+					_algorithm->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
+					_mapper->SetScalarModeToUseCellData();
+				}
+				else
+				{
+					_activeAttribute = "Solid Color";
+					_mapper->ScalarVisibilityOff();
+					return;
+				}
+			}
 		}
 
-		//_mapper->SetScalarRange(range);
+		_mapper->SetScalarRange(dataSet->GetScalarRange());
 		this->setLookupTableForActiveScalar();
-
 		_mapper->ScalarVisibilityOn();
-		_mapper->Update();
+		//_mapper->Update();	// KR: TODO - this is incredibly slow ... WHY???
 		_activeAttribute = name;
 	}
+}
+
+bool VtkVisPipelineItem::setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name)
+{
+	bool arrayFound = false;
+	for (int i = 0; i < data->GetNumberOfArrays() && !arrayFound; i++)
+	{
+		std::string arrayName = data->GetArrayName(i);
+		if(arrayName.compare(name) == 0)
+			arrayFound = true;
+	}
+	if(arrayFound)
+	{
+		data->SetActiveAttribute(name.c_str(), vtkDataSetAttributes::SCALARS);
+		return true;
+	}
+	else
+		return false;
 }
 
 void VtkVisPipelineItem::setLookupTableForActiveScalar()
@@ -470,7 +507,7 @@ void VtkVisPipelineItem::setLookupTableForActiveScalar()
 			}
 
 			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->Update();
+			//_mapper->Update();  KR: not necessary?!
 		}
 	}
 }
