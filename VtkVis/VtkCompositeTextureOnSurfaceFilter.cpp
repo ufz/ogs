@@ -70,12 +70,9 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 		settings.setValue("lastOpenedTextureFileDirectory", dir.absolutePath());
 	}
 	else
-	{
 		std::cout << "VtkCompositeTextureOnSurfaceFilter.init() - Error reading texture file..." << std::endl;
-	}
 
 	_outputAlgorithm = surface;
-
 }
 
 void VtkCompositeTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )

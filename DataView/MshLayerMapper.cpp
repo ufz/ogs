@@ -459,6 +459,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		{
 			elem->SetIndex(counter);
 			counter++;
+			/* KR unused variable
 			for (int j=0; j<elem->GetVertexNumber(); j++)
 			{
 				if (!elem->GetNode(j)->GetMark())
@@ -466,6 +467,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 					MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
 				}
 			}
+			*/
 		}
 		else
 		{
@@ -535,6 +537,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		{
 		   elem->SetIndex(counter);
 		   counter++;
+		   /* KR unused variable
 		   for (int j=0; j<elem->GetVertexNumber(); j++)
 		   {
 			  if (!elem->GetNode(j)->GetMark())
@@ -542,6 +545,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 				  MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
 			  }
 		   }
+		   */
 		}
 	}
 
