@@ -290,12 +290,16 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	if (vtkProps)
 	{
 		if (vtkProps->GetActiveAttribute().length() > 0)
+		{
 			this->SetActiveAttribute(vtkProps->GetActiveAttribute());
+		}
 		else
 		{
 			VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
 			if (visParentItem)
 				this->SetActiveAttribute(visParentItem->GetActiveAttribute());
+			if (vtkProps->GetTexture() != NULL)
+				this->SetActiveAttribute("Solid Color");
 		}
 	}
 }
