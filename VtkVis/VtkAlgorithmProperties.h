@@ -1,5 +1,5 @@
 /**
- * \file VtkAlgoritmProperties.h
+ * \file VtkAlgorithmProperties.h
  * 24/03/2010 KR Initial implementation
  *
  */
@@ -243,7 +243,7 @@ public:
 	}
 
 	/// @brief Returns the desired active attribute.
-	QString GetActiveAttribute() const { return _activeAttributeName; }
+	QString GetActiveAttribute() const { return _activeAttributeName; };
 	
 protected:
 

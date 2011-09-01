@@ -31,7 +31,8 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_BINARY_DIR}/Qt/Base
 	${CMAKE_BINARY_DIR}/Qt/Gui
 	${CMAKE_BINARY_DIR}/Qt/DataView
-	${CMAKE_BINARY_DIR}/Qt/StratView
+	${CMAKE_BINARY_DIR}/Qt/DataView/StratView
+	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
 	../../Base
@@ -39,10 +40,12 @@ INCLUDE_DIRECTORIES(
 	../../GEO
 	../../FileIO
 	../../MSH
+	../../MSHGEOTOOLS
 	../../FEM
 	../Base
 	../DataView
-	../StratView
+	../DataView/StratView
+	../DataView/DiagramView
 	../VtkVis
 	../VtkAct
 )
@@ -75,6 +78,7 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	GEO
 	FileIO
 	MSH
+	MSHGEOTOOLS
 	FEM
 	OGSProject
 	QtBase
@@ -177,7 +181,7 @@ IF (OGS_PACKAGING)
 	
 	INCLUDE(GetPrerequisites)
 	if (EXISTS ${OGS_GUI_EXE})
-		GET_PREREQUISITES(${OGS_GUI_EXE} OGS_GUI_DEPENDENCIES 1 1 "/usr/local/lib;/;${VTK_DIR}" "")
+		GET_PREREQUISITES(${OGS_GUI_EXE} OGS_GUI_DEPENDENCIES 1 1 "/usr/local/lib;/;${VTK_DIR};${OpenSG_LIBRARY_DIRS}" "")
 		MESSAGE (STATUS "ogs-gui depends on:")
 		FOREACH(DEPENDENCY ${OGS_GUI_DEPENDENCIES})
 			IF(NOT ${DEPENDENCY} STREQUAL "not") # Some bug on Linux?

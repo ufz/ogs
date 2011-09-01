@@ -31,7 +31,7 @@ public:
 
 public slots:
 	/// Adds a new mesh
-	void addMesh(Mesh_Group::CFEMesh* mesh, std::string &name);
+	void addMesh(MeshLib::CFEMesh* mesh, std::string &name);
 	/// Returns the mesh with the given index.
 	const GridAdapter* getMesh(const QModelIndex &idx) const;
 	/// Returns the mesh with the given name.

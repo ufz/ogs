@@ -420,8 +420,7 @@ int DatabaseConnection::getPropertyBounds(const int &listID, const QString &prop
  * \param stationID The ID of the station
  * \param startDate The start date for the requested time series data
  * \param endDate The end date for the requested time series data
- * \param xCoords x-coordinates of the retrieved data
- * \param yCoords y-coordinates of the retrieved data
+ * \param values The data
  * \return 1 if there were no errors, 0 and an error message otherwise.
  */
 int DatabaseConnection::loadValues(const int &listID, const int &stationID, const QDateTime &startDate, const QDateTime &endDate, std::vector< std::pair<QDateTime, float> > &values)
@@ -470,8 +469,8 @@ int DatabaseConnection::loadValues(const int &listID, const int &stationID, cons
 /**
  * Inserts a new station list into the database
  * \param path		the	path to the file containing the data
- * \param listname	the name of the list given a certain category
- * \param catname	the category of stations (i.e. boreholes)
+ * \param listName	the name of the list given a certain category
+ * \param catName	the category of stations (i.e. boreholes)
  * \param type		the OGS5 Stationtype
  */
 int DatabaseConnection::addListToDB(std::string path, std::string listName, std::string catName, GEOLIB::Station::StationType type)

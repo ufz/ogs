@@ -140,10 +140,12 @@ int VtkStationSource::RequestData( vtkInformation* request, vtkInformationVector
 	}
 
 	output->SetPoints(newStations);
-	//output->GetPointData()->AddArray(station_ids);	
 
 	if (!isBorehole)
+	{
 		output->SetVerts(newVerts);
+		output->GetPointData()->AddArray(station_ids);	
+	}
 	else
 	{
 		output->SetLines(newLines);

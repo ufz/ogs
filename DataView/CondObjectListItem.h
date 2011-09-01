@@ -10,6 +10,7 @@
 #include "FEMCondition.h"
 #include "TreeItem.h"
 #include <vtkPolyDataAlgorithm.h>
+#include <vtkThresholdPoints.h>
 #include "VtkConditionSource.h"
 #include <QModelIndex>
 
@@ -52,7 +53,16 @@ public:
 	FEMCondition::CondType getType() { return _type; };
 
 	/// Returns the Vtk polydata source object
-	vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; };
+	vtkPolyDataAlgorithm* vtkSource() const { 
+		return _vtkSource; 
+		/*
+		vtkThresholdPoints* threshold = vtkThresholdPoints::New();
+		threshold->SetInputConnection(_vtkSource->GetOutputPort());
+		threshold->ThresholdByUpper(-9998);
+		threshold->Update();
+		return threshold;
+		*/
+	};
 
 private:
 	/// The Vtk data source object. This is the starting point for a Vtk data visualization pipeline.

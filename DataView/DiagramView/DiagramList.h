@@ -77,7 +77,15 @@ public:
 	/// Returns the unit associated with the y-axis
 	QString getYUnit() const { return _yUnit; }
 
-	/// Reads information from a file.
+	/** 
+	 * Reads information from a file. The reader assumes that values in the file are seperated
+	 * by tabstops. Also, the first row should contain identifiers for the values and the first
+	 * column should contain timestamps. Currently accepted timestamps are of the following
+	 * formats:
+	 *   "dd.mm.yyyy"
+	 *   "dd.mm.yyyy.hh.mm.ss" (this is the timestamp format used for the UFZ database)
+	 * For each column after the timestamps a new diagram list is created.
+	 */
 	static int readList(const QString &path, std::vector<DiagramList*> &list);
 
 	/// Sets the colour of the graph.
@@ -137,12 +145,13 @@ private:
 	/// Returns the maximum y-value of all the data points.
 	float calcMaxYValue();	
 
+	static QDateTime getDateTime(QString s);
+
 	/**
 	 * Reads an ASCII file containing the coordinates in the following format:
 	 *		date (tab) value
 	 * where 'date' is given as 'dd.mm.yyyy'.
 	 * (Changes to that format are easily implemented using QTimeDate)
-	 * \param path The path of the ASCII file.
 	 * \return Returns 1 if everything is alright. Returns 0 and displays an error message if there was an error.
 	 */
 	int readLine(std::ifstream inFile, QDateTime &cDate, float &cValue);

@@ -22,13 +22,20 @@
 MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
 : TreeModel(parent), _project(project)
 {
-	QList<QVariant> rootData;
 	delete _rootItem;
-	rootData << "Mesh Name";
+	QList<QVariant> rootData;
+	rootData << "Mesh Name" << "Type" << "Node IDs";
 	_rootItem = new TreeItem(rootData, NULL);
 }
 
-void MshModel::addMesh(Mesh_Group::CFEMesh* mesh, std::string &name)
+int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
+{
+	Q_UNUSED(parent)
+
+	return 3;
+}
+
+void MshModel::addMesh(MeshLib::CFEMesh* mesh, std::string &name)
 {
 	_project.addMesh(mesh, name);
 	this->addMeshObject(new GridAdapter(mesh), name);
@@ -41,11 +48,30 @@ void MshModel::addMeshObject(GridAdapter* mesh, std::string &name)
 	name = fi.baseName().toStdString();
 	mesh->setName(name);
 	QList<QVariant> meshData;
-	meshData.push_back(QVariant(QString::fromStdString(name)));
+	meshData << QString::fromStdString(name) << "";
 	MshItem* newMesh = new MshItem(meshData, _rootItem, mesh);
 	if (newMesh->vtkSource())
 		newMesh->vtkSource()->SetName(fi.fileName());
 	_rootItem->appendChild(newMesh);
+
+	// display elements
+	const std::vector<GridAdapter::Element*> *elems = mesh->getElements();
+	size_t nElems (elems->size());
+	for (size_t i=0; i<nElems; i++)
+	{
+		QList<QVariant> elemData;
+		elemData << "Element " + QString::number(i) << QString::fromStdString(MshElemType2String((*elems)[i]->type));
+
+		QString nodestxt("");
+		size_t nNodes((*elems)[i]->nodes.size());
+		for (size_t j=0; j<nNodes; j++)
+			nodestxt.append(QString::number((*elems)[i]->nodes[j]) + ", ");
+		elemData << nodestxt.left(nodestxt.length()-2);
+
+		TreeItem* elem = new TreeItem(elemData, newMesh);
+		newMesh->appendChild(elem);
+	}
+
 	reset();
 
 	emit meshAdded(this, this->index(_rootItem->childCount()-1, 0, QModelIndex()));
@@ -55,8 +81,9 @@ const GridAdapter* MshModel::getMesh(const QModelIndex &idx) const
 {
 	if (idx.isValid())
 	{
-		MshItem* item = static_cast<MshItem*>(this->getItem(idx));
-		return item->getGrid();
+		MshItem* item = dynamic_cast<MshItem*>(this->getItem(idx));
+		if (item) return item->getGrid();
+		else return NULL;
 	}
 	std::cout << "MshModel::getMesh() - Specified index does not exist." << std::endl;
 	return NULL;
@@ -80,14 +107,18 @@ bool MshModel::removeMesh(const QModelIndex &idx)
 {
 	if (idx.isValid())
 	{
-		MshItem* item = static_cast<MshItem*>(this->getItem(idx));
-		emit meshRemoved(this, idx);
-		_rootItem->removeChildren(item->row(),1);
-		reset();
-		return true;
+		MshItem* item = dynamic_cast<MshItem*>(this->getItem(idx));
+		if (item)
+		{
+			emit meshRemoved(this, idx);
+			_rootItem->removeChildren(item->row(),1);
+			reset();
+			return true;
+		}
+		return false;
 	}
 
-	std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
+	//std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
 	return false;
 }
 
@@ -111,10 +142,10 @@ bool MshModel::removeMesh(const std::string &name)
 
 void MshModel::updateModel()
 {
-	const std::map<std::string, Mesh_Group::CFEMesh*> msh_vec = _project.getMeshObjects();
-	for (std::map<std::string, Mesh_Group::CFEMesh*>::const_iterator it(msh_vec.begin());	it != msh_vec.end(); ++it)
+	const std::map<std::string, MeshLib::CFEMesh*> msh_vec = _project.getMeshObjects();
+	for (std::map<std::string, MeshLib::CFEMesh*>::const_iterator it(msh_vec.begin());	it != msh_vec.end(); ++it)
 	{
-		if (this->getMesh(it->first) == NULL) 
+		if (this->getMesh(it->first) == NULL) // if GridAdapter does not yet exist, create one.
 		{
 			std::string name = it->first;
 			addMeshObject(new GridAdapter(it->second), name);
@@ -147,12 +178,7 @@ VtkMeshSource* MshModel::vtkSource(const std::string &name) const
 	return NULL;
 }
 
-int MshModel::columnCount( const QModelIndex& parent /*= QModelIndex()*/ ) const
-{
-	Q_UNUSED(parent)
 
-	return 1;
-}
 /*
 bool MshModel::isUniqueMeshName(std::string &name)
 {

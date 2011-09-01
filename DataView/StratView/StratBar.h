@@ -21,6 +21,8 @@ public:
 	/**
 	 * \brief Constructor
 	 * \param station The borehole whose stratigraphy will be visualised.
+	 * \param stratColors A color map.
+	 * \param parent The parent QGraphicsItem.
 	 */
 	StratBar(GEOLIB::StationBorehole* station, std::map<std::string, GEOLIB::Color*> *stratColors = NULL, QGraphicsItem* parent = 0);
 	~StratBar();

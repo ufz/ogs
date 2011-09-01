@@ -145,7 +145,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		nElemNodes = (*elems)[i]->nodes.size();
 		for (size_t j=0; j<nElemNodes; j++)
-			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[j]);
+			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[nElemNodes-1-j]);
 
 		output->InsertNextCell(newCell->GetCellType(), newCell->GetPointIds());
 		newCell->Delete();
@@ -163,14 +163,6 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 void VtkMeshSource::SetUserProperty( QString name, QVariant value )
 {
 	VtkAlgorithmProperties::SetUserProperty(name, value);
-/*
-	if (name.compare("ColorByMaterial") == 0)
-	{
-		value.convert(QVariant::Bool);
-		this->SetColorByMaterial(value.toBool());
-		this->SetScalarVisibility(value.toBool());
-	}
-*/
 
 	(*_algorithmUserProperties)[name] = value;
 }

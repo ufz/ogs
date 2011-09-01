@@ -39,7 +39,8 @@ public:
 	void SetRaster(QImage &img);
 
 	/// Sets the geo-referenced origin of the image (i.e. the lower left corner)
-	void SetOrigin(double x, double y) { _origin.first = x; _origin.second = y; };
+	virtual void SetOrigin(double x, double y, double z = 0.0) { _origin.first = x; _origin.second = y; (void)z; };
+	virtual void SetOrigin(double* pos) { _origin.first = pos[0]; _origin.second = pos[1]; };
 
 	virtual void SetUserProperty(QString name, QVariant value);
 

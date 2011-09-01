@@ -10,7 +10,7 @@
 
 class QImage;
 
-namespace Mesh_Group
+namespace MeshLib
 {
 	class CFEMesh;
 }
@@ -31,19 +31,19 @@ public:
 	 * \param thickness The thickness of each of these newly added layers
 	 * \return A mesh with the requested number of layers of prism/hex elements
 	 */
-	static Mesh_Group::CFEMesh* CreateLayers(const Mesh_Group::CFEMesh* mesh, size_t nLayers, double thickness);
+	static MeshLib::CFEMesh* CreateLayers(const MeshLib::CFEMesh* mesh, size_t nLayers, double thickness);
 
 	/// Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-	static Mesh_Group::CFEMesh* LayerMapping(const Mesh_Group::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id);
+	static MeshLib::CFEMesh* LayerMapping(const MeshLib::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id, bool removeNoDataValues = false);
 
 	/// \brief Checks for overlapping nodes between between layers and corrects these errors.
 	/// Note: this method has not been tested yet and will probably fail miserably! Please contact KR
 	/// if you intend to use it!
-	static void CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t nLayers, int integ);
+	static void CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLayers, int integ);
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
-	static bool meshFitsImage(const Mesh_Group::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim);
+	static bool meshFitsImage(const MeshLib::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim);
 
 
 };

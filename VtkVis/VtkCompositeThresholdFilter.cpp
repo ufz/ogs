@@ -35,15 +35,14 @@ void VtkCompositeThresholdFilter::init()
 	vtkThreshold* threshold = vtkThreshold::New();
 	threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-	// TODO: Replace hardcoded "MatIds" by something more generic
-	vtkDataArray* materialIDs = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray(0);
-	std::cout << materialIDs->GetDataSize();
-	for (size_t i=0; i<10; i++) std::cout << materialIDs->GetComponent(i,0) << std::endl;
-	//vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->SetActiveAttribute("MatIDs", vtkDataSetAttributes::SCALARS);
-	//threshold->SetAttributeModeToUseCellData();
-	threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, materialIDs->GetName());
+	// TODO: Initalisation
+	//vtkDataArray* activeScalar = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray(0);
+	//threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, activeScalar->GetName());
 	//threshold->SetComponentModeToUseSelected();
-	
+
+//double* range = threshold->GetOutput()->GetScalarRange();
+//std::cout << range[0] << ", " << range[1] << std::endl;
+
 	// Sets a filter property which will be user editable
 	threshold->SetSelectedComponent(0);
 	
@@ -61,9 +60,6 @@ void VtkCompositeThresholdFilter::init()
 	// Make a new entry in the property map for the SelectedComponent property
 	(*_algorithmUserProperties)["Selected Component"] = 0;
 	
-	// TODO 
-	//threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, static_cast<VtkMeshSource*>(algorithm)->GetMaterialArrayName());
-
 	// The threshold filter is last one and so it is also the _outputAlgorithm
 	_outputAlgorithm = threshold;
 }
@@ -84,6 +80,18 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVa
 
 	// Use the same name as in init()
 	if (name.compare("Threshold Between") == 0)
+	{
+		//double* range = dynamic_cast<vtkUnstructuredGridAlgorithm*>(_outputAlgorithm)->GetOutput()->GetScalarRange();
+		//std::cout << range[0] << ", " << range[1] << std::endl;
 		// Set the vector property on the algorithm
 		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(values[0].toInt(), values[1].toInt());
+	}
 }
+/*
+void VtkCompositeThresholdFilter::SetScalarRangeOnItem( double min, double max )
+{
+	_item->SetScalarRange(min, max);
+	emit requestViewUpdate();
+}
+
+*/

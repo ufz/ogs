@@ -15,6 +15,7 @@
  * \param hl Length of the arrow head
  * \param hw Width of the arrow head
  * \param pen The pen for drawing the arrow
+ * \param parent The parent QGraphicsItem.
  */
 QArrow::QArrow(float l, float a, float hl, float hw, QPen &pen, QGraphicsItem* parent) : QGraphicsItem(parent)
 {
@@ -30,6 +31,7 @@ QArrow::QArrow(float l, float a, float hl, float hw, QPen &pen, QGraphicsItem* p
  * \param l Length of the arrow
  * \param a Orientation of the arrow
  * \param pen The pen for drawing the arrow
+ * \param parent The parent QGraphicsItem.
  */
 QArrow::QArrow(float l, float a, QPen &pen, QGraphicsItem* parent) : QGraphicsItem(parent)
 {

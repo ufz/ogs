@@ -2,6 +2,7 @@
 set( SOURCES
 	DetailWindow.cpp
 	DiagramList.cpp
+	DiagramPrefsDialog.cpp
 	DiagramScene.cpp
 	DiagramView.cpp
 	QArrow.cpp
@@ -11,6 +12,7 @@ set( SOURCES
 # Moc Header files
 set( MOC_HEADERS
 	DetailWindow.h
+	DiagramPrefsDialog.h
 	DiagramView.h
 )
 
@@ -25,6 +27,7 @@ set( HEADERS
 # UI files
 set( UIS
 	DetailWindow.ui
+	DiagramPrefs.ui
 )
 
 # Run Qts user interface compiler uic on .ui files
@@ -38,9 +41,12 @@ qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 include_directories(
 	.
 	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
+	${CMAKE_BINARY_DIR}/Qt/DataView
 	../../../Base
 	../../../GEO
 	../../Base
+	../../DataView
+	../../../MathLib
 	${CMAKE_SOURCE_DIR}
 )
 

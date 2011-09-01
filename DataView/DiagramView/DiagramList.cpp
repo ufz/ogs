@@ -134,7 +134,7 @@ int DiagramList::readList(char* path)
     return 1;
 }*/
 
-int DiagramList::readList(const QString &path, std::vector<DiagramList*> &list)
+int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 {
 	QFile file(path);
 	QTextStream in( &file );
@@ -148,38 +148,46 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &list)
 	QString line = in.readLine();
 	QStringList fields = line.split('\t');
 	int nLists(fields.size()-1);
-
 	
 	if (fields.size() >= 2) 
 	{
-		int numberOfDays(0);
-		QString stringDate(fields.takeFirst());
-		double value(0);
-		QDateTime startDate(QDateTime::fromString(stringDate, "dd.MM.yyyy"));
-
+		fields.takeFirst();
 		for (int i=0; i<nLists; i++)
 		{
 			DiagramList* l = new DiagramList;
-			value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
-			l->setStartDate(startDate);
-			l->addNextPoint(0,value);
-			list.push_back(l);
+			l->setName(fields.takeFirst());
+			//value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
+			//l->setStartDate(startDate);
+			//l->addNextPoint(0,value);
+			lists.push_back(l);
 		}
-
-		QDateTime currentDate;
+		
+		bool first_loop(true);
+		int numberOfSecs(0);
+		double value(0);
+		QString stringDate("");
+		QDateTime startDate, currentDate;
 
 		while (!in.atEnd()) {
+
 			line = in.readLine();
 			fields = line.split('\t');
 			if (fields.size() >= (nLists+1)) {
 				stringDate = fields.takeFirst();
-				currentDate = QDateTime::fromString(stringDate, "dd.MM.yyyy");
-				numberOfDays = startDate.daysTo(currentDate);
+				currentDate = getDateTime(stringDate);
+				if (first_loop)
+				{
+					startDate = currentDate;
+					for (int i=0; i<nLists; i++) lists[i]->setStartDate(startDate);
+					first_loop = false;
+				}
+
+				numberOfSecs = startDate.secsTo(currentDate);
 
 				for (int i=0; i<nLists; i++)
 				{
 					value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
-					list[i]->addNextPoint(numberOfDays,value);
+					lists[i]->addNextPoint(numberOfSecs,value);
 				}
 			}
 			else 
@@ -200,7 +208,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &list)
 	file.close();
 	
 	for (int i=0; i<nLists; i++)
-		list[i]->update();
+		lists[i]->update();
 	
     return nLists;
 }
@@ -245,4 +253,12 @@ void DiagramList::update()
 	_maxX = calcMaxXValue();
 	_minY = calcMinYValue();
 	_maxY = calcMaxYValue();
+}
+
+QDateTime DiagramList::getDateTime(QString stringDate)
+{
+	if (stringDate.length() <=10) 
+		return QDateTime::fromString(stringDate, "dd.MM.yyyy");
+	else                 
+		return QDateTime::fromString(stringDate, "dd.MM.yyyy.HH.mm.ss");
 }

@@ -19,16 +19,18 @@ class DetailWindow : public QWidget, private Ui_DetailWindow
 
 public:
 	/// Creates an empty diagram window.
-	//DetailWindow(QWidget* parent = 0);
+	DetailWindow(QWidget* parent = 0);
 	/**
 	 * Creates a window containing a diagram.
 	 * \param filename ASCII file containing x and y values for the graph to be displayed.
+	 * \param parent The parent QWidget.
 	 */
 	DetailWindow(QString filename, QWidget* parent = 0);
 
 	/**
 	 * Creates a window containing a diagram
 	 * \param list A QDiagramList containing all the data points and necessary metainformation for a graph to be displayed
+	 * \param parent The parent QWidget.
 	 */
 	DetailWindow(DiagramList* list, QWidget* parent = 0);
 	~DetailWindow(void);
@@ -47,9 +49,8 @@ private:
 	/// Automatically resize window based on the measurements of the included graphs.
 	void resizeWindow();
 
-	std::vector<DiagramList*> _list;
-
 private slots:
+	void on_addDataButton_clicked();
 	void on_closeButton_clicked();
 };
 

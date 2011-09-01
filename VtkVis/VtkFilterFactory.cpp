@@ -17,6 +17,7 @@
 #include "VtkCompositeThresholdFilter.h"
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkCompositeSelectionFilter.h"
+#include "VtkCompositeContourFilter.h"
 
 #include <vtkDataSetSurfaceFilter.h>
 
@@ -67,6 +68,12 @@ const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 		"This filter will generate scalar values based on the elevation of each point in the dataset.",
 		VTK_POINT_SET, VTK_POLY_DATA));
 
+	filterList.push_back(VtkFilterInfo(
+		"VtkCompositeContourFilter",
+		"Generate contours based on scalar fields",
+		"Visualisation of contour-lines/-planes within dense scalar fields.",
+		VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
+
 	// Simple filters
 	filterList.push_back(VtkFilterInfo(
 		"VtkImageDataToLinePolyDataFilter",
@@ -108,6 +115,8 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type, vtkAl
 		return new VtkCompositeColorByHeightFilter(inputAlgorithm);
 	else if (type.compare(QString("VtkCompositeSelectionFilter")) == 0)
 		return new VtkCompositeSelectionFilter(inputAlgorithm);
+	else if (type.compare(QString("VtkCompositeContourFilter")) == 0)
+		return new VtkCompositeContourFilter(inputAlgorithm);
 
 	else return NULL;
 }

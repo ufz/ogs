@@ -1,5 +1,5 @@
 /**
- * \file VtkSurfacesSource.cpp
+ * \file VtkTextureOnSurfaceFilter.cpp
  * 3/2/2010 LB Initial implementation
  * 23/04/2010 KR Surface visualisation
  *
@@ -71,7 +71,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		{
 			double coords[3];
 			points->GetPoint(i, coords);
-			float newcoords[3] = {MATHLIB::normalize(min.first, max.first, coords[0]), MATHLIB::normalize(min.second, max.second, coords[1]), 0 /*coords[2]*/ };
+			float newcoords[3] = {MathLib::normalize(min.first, max.first, coords[0]), MathLib::normalize(min.second, max.second, coords[1]), 0 /*coords[2]*/ };
 			textureCoordinates->InsertNextTuple(newcoords);
 		}
 

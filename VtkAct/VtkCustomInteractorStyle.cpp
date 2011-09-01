@@ -1,5 +1,5 @@
 /**
- * \file VtkInteractorStyle.cpp
+ * \file VtkCustomInteractorStyle.cpp
  * 21/6/2010 LB Initial implementation
  * 
  * Implementation of VtkInteractorStyle
@@ -24,8 +24,11 @@
 #include <vtkRenderWindow.h>
 #include <vtkRendererCollection.h>
 #include <vtkCamera.h>
+#include <vtkAlgorithmOutput.h>
 
 #include <string>
+
+#include "VtkMeshSource.h"
 
 vtkStandardNewMacro(VtkCustomInteractorStyle);
 
@@ -168,12 +171,19 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			std::cout << "There are " << selected->GetNumberOfCells()
 					<< " cells in the selection." << std::endl;
 
+			// check if the underlying object is a mesh and if so, send a signal to the element model for display of information about the picked element.
+			vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
+			VtkMeshSource* source = dynamic_cast<VtkMeshSource*>(data_set);
+			if (source)
+				emit elementPicked(source->GetGrid(), picker->GetCellId());
 
 			selectedMapper->SetInputConnection(selected->GetProducerPort());
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(selectedActor);
-			emit requestViewUpdate();
 		}
+		else
+			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(selectedActor);
+		emit requestViewUpdate();
 	}
 	else
 		// Forward events

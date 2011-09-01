@@ -12,8 +12,9 @@
 #include "MshLayerMapper.h"
 
 class QPushButton;
+class QCheckBox;
 
-namespace Mesh_Group
+namespace MeshLib
 {
 	class CFEMesh;
 }
@@ -26,17 +27,18 @@ class MshEditDialog : public QDialog, private Ui_MshEdit
 	Q_OBJECT
 
 public:
-	MshEditDialog(const Mesh_Group::CFEMesh* mesh, QDialog* parent = 0);
+	MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent = 0);
 	~MshEditDialog(void);
 
 
 
 private:
-	const Mesh_Group::CFEMesh* _msh;
+	const MeshLib::CFEMesh* _msh;
 	QVector<QLabel*> _labels;
 	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
 	QVector<QLineEdit*> _edits;
 	QVector<QPushButton*> _buttons;
+	QCheckBox* _noDataDeleteBox;
 
 
 private slots:
@@ -49,7 +51,7 @@ private slots:
 	void reject();
 
 signals:
-	void mshEditFinished(Mesh_Group::CFEMesh*, std::string&);
+	void mshEditFinished(MeshLib::CFEMesh*, std::string&);
 
 };
 

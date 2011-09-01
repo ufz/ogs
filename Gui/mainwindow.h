@@ -14,6 +14,7 @@
 
 class GEOModels;
 class MshModel;
+class ElementTreeModel;
 class StationTreeModel;
 class ConditionModel;
 class VtkVisPipeline;
@@ -75,11 +76,14 @@ protected slots:
 	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
+	/// Calls the diagram prefs dialog from the Tools menu.
+	void showDiagramPrefsDialog();
+	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
-	void showPropertiesDialog(std::string name);
+	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
@@ -96,6 +100,9 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
+	void loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points); //TODO put this in a better place
+
+
 private:
 	QMenu* createImportFilesMenu();
     void loadFile(const QString &fileName);
@@ -111,6 +118,7 @@ private:
 	FileFinder _fileFinder;
 	GEOModels* _geoModels;
 	MshModel* _meshModels;
+	ElementTreeModel* _elementModel;
 	ConditionModel* _conditionModel;
 	ProjectData _project;
 	VtkVisPipeline* _vtkVisPipeline;
@@ -121,6 +129,7 @@ private:
 		TrackingSettingsWidget* _trackingSettingsWidget;
 	#endif // OGS_USE_VRPN
 	VisPrefsDialog* _visPrefsDialog;
+
 
 signals:
 	void fileUsed( QString filename );

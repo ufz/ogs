@@ -8,7 +8,7 @@ set( SOURCES
 	DatabaseConnection.cpp
 	DataView.cpp
 	DBConnectionDialog.cpp
-	DiagramPrefsDialog.cpp
+	ElementTreeModel.cpp
 	GEOModels.cpp
 	GeoTabWidget.cpp
 	GeoTreeModel.cpp
@@ -40,7 +40,7 @@ set( MOC_HEADERS
 	DatabaseConnection.h
 	DataView.h
 	DBConnectionDialog.h
-	DiagramPrefsDialog.h
+	ElementTreeModel.h
 	GEOModels.h
 	GeoTabWidget.h
 	GeoTreeModel.h
@@ -76,7 +76,6 @@ set( UIS
 	ConditionTabWidgetBase.ui
 	DatabaseResultView.ui
 	DBConnection.ui
-	DiagramPrefs.ui
 	GeoTabWidgetBase.ui
 	GMSHPrefs.ui
 	LineEdit.ui

@@ -8,8 +8,9 @@
 // ** INCLUDES **
 #include "VtkPickCallback.h"
 
-#include <vtkCellPicker.h>
 #include <vtkActor.h>
+#include <vtkCellPicker.h>
+
 
 VtkPickCallback* VtkPickCallback::New()
 {

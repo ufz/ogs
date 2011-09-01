@@ -245,7 +245,7 @@ void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 		item->setScale(1.0, 1.0, factor);
 
 		// recursively set on all child items
-		item->setScaleOnChilds(1.0, 1.0, 1.0);
+		item->setScaleOnChildren(1.0, 1.0, 1.0);
 	}
 
 	emit vtkVisPipelineChanged();
@@ -280,7 +280,8 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	if (!parent.isValid())  // Set global superelevation on source objects
 	{
 		QSettings settings("UFZ, OpenGeoSys-5");
-		item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
+		if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
+			item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();
@@ -446,16 +447,16 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
 {
 	if (source) {
-		const Mesh_Group::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
-		Mesh_Group::MeshQualityChecker* checker (NULL);
+		const MeshLib::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
+		MeshLib::MeshQualityChecker* checker (NULL);
 		if (t == MshQualityType::EDGERATIO)
-			checker = new Mesh_Group::MeshQualityShortestLongestRatio(mesh);
+			checker = new MeshLib::MeshQualityShortestLongestRatio(mesh);
 		else if (t == MshQualityType::AREA)
-			checker = new Mesh_Group::MeshQualityNormalisedArea(mesh);
+			checker = new MeshLib::MeshQualityNormalisedArea(mesh);
 		else if (t == MshQualityType::VOLUME)
-			checker = new Mesh_Group::MeshQualityNormalisedVolumes(mesh);
+			checker = new MeshLib::MeshQualityNormalisedVolumes(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
-			checker = new Mesh_Group::MeshQualityEquiAngleSkew(mesh);
+			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
 		else {
 			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..." << std::endl;
 			delete checker;

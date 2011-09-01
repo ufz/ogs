@@ -16,6 +16,7 @@
 class vtkDataObject;
 class vtkDataSetMapper;
 class vtkActor;
+class GridAdapter;
 
 /**
  * VtkCustomInteractorStyle implements highlighting of an active actor and
@@ -32,13 +33,13 @@ public:
 	static VtkCustomInteractorStyle* New();
 	vtkTypeMacro (VtkCustomInteractorStyle, vtkInteractorStyleTrackballCamera);
 
-	/// @biref Handles key press events.
+	/// @brief Handles key press events.
 	virtual void OnChar();
 
-	/// @biref Handles key down events.
+	/// @brief Handles key down events.
 	virtual void OnKeyDown();
 
-	/// @biref Handles key up events.
+	/// @brief Handles key up events.
 	virtual void OnKeyUp();
 	
 	/// @brief Handles left mouse button events (picking).
@@ -79,6 +80,9 @@ signals:
 	/// @brief Emitted when the cursor shape was changed due to alternate
 	/// mouse action mode.
 	void cursorChanged(Qt::CursorShape);
+
+	/// @brief Emitted when a mesh element has been picked
+	void elementPicked(const GridAdapter*, const size_t);
 
 };
 

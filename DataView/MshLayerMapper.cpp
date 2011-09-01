@@ -6,13 +6,14 @@
 #include "MshLayerMapper.h"
 #include "OGSRaster.h"
 
+#include "MshEditor.h"
 #include "msh_mesh.h"
 #include "matrix_class.h"
 
 #include <QImage>
 
 
-Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mesh, size_t nLayers, double thickness)
+MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, size_t nLayers, double thickness)
 {
 	if (nLayers < 1 || thickness <= 0)
 	{
@@ -26,7 +27,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 		return NULL;
 	}
 */
-	Mesh_Group::CFEMesh* new_mesh ( new Mesh_Group::CFEMesh() );
+	MeshLib::CFEMesh* new_mesh ( new MeshLib::CFEMesh() );
 	size_t nNodes = mesh->nod_vector.size();
 	size_t nElems = mesh->ele_vector.size();
 
@@ -37,7 +38,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 		double z_offset ( layer_id*thickness );
 		for (size_t i=0; i<nNodes; i++)
 		{
-			Mesh_Group::CNode* node( new Mesh_Group::CNode( node_offset + i ) );
+			MeshLib::CNode* node( new MeshLib::CNode( node_offset + i ) );
 			double coords[3] = { mesh->nod_vector[i]->X(), mesh->nod_vector[i]->Y(), mesh->nod_vector[i]->Z()-z_offset };
 			node->SetCoordinates(coords);
 			new_mesh->nod_vector.push_back(node);
@@ -49,10 +50,10 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 			node_offset = (layer_id-1)*nNodes;
 			for (size_t i=0; i<nElems; i++)
 			{
-				Mesh_Group::CElem* elem( new Mesh_Group::CElem() );
+				MeshLib::CElem* elem( new MeshLib::CElem() );
 				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
-				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->SetElementType(MshElemType::PRISM); // extrude triangles to prism
-				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->SetElementType(MshElemType::HEXAHEDRON); // extrude quads to hexes
+				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->setElementProperties(MshElemType::PRISM); // extrude triangles to prism
+				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->setElementProperties(MshElemType::HEXAHEDRON); // extrude quads to hexes
 				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::LINE) continue; // line elements are ignored and not duplicated
 				else
 				{
@@ -79,14 +80,14 @@ Mesh_Group::CFEMesh* MshLayerMapper::CreateLayers(const Mesh_Group::CFEMesh* mes
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
-	//new_mesh->ConstructGrid();
-	//new_mesh->FillTransformMatrix();
+	new_mesh->ConstructGrid();
+	new_mesh->FillTransformMatrix();
 
 	return new_mesh;
 }
 
 // KR, based on code by WW
-Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id)
+MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id, bool removeNoDataValues)
 {
 	if (msh == NULL) return NULL;
 	if (msh->getNumberOfMeshLayers() >= layer_id)
@@ -96,7 +97,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 			std::cout << "Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." << std::endl;
 			return NULL;
 		}
-		Mesh_Group::CFEMesh* new_mesh( new Mesh_Group::CFEMesh(*msh) );
+		MeshLib::CFEMesh* new_mesh( new MeshLib::CFEMesh(*msh) );
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);
@@ -111,7 +112,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 		std::pair<double, double> xDim(x0, x0+width*delta);		// extension in x-dimension
 		std::pair<double, double> yDim(y0, y0+height*delta);	// extension in y-dimension
 
-		if (!meshFitsImage(msh, xDim, yDim))
+		if (!meshFitsImage(new_mesh, xDim, yDim))
 		{
 			delete []elevation;
 			return NULL;
@@ -126,6 +127,8 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 
 		size_t firstNode = layer_id * nNodesPerLayer;
 		size_t lastNode  = firstNode + nNodesPerLayer;
+
+		std::vector<size_t> noData_nodes;
 
 		for(size_t i=firstNode; i<lastNode; i++)
 		{
@@ -169,14 +172,38 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 			}
 			else
 			{
-				std::cout << "Warning: For node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ") there is no elevation data in the given raster." << std::endl;
+				//std::cout << "Warning: No elevation data available for node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ")." << std::endl;
 				new_mesh->nod_vector[i]->SetZ(0);
 				new_mesh->nod_vector[i]->SetMark(false);
+				noData_nodes.push_back(i);
 			}
+		}
+
+		if ((nLayers == 1) && removeNoDataValues) 
+		{
+			if (noData_nodes.size() < (new_mesh->nod_vector.size()-2))
+			{
+				std::cout << "Warning: Removing " << noData_nodes.size() << " mesh nodes at NoData values ... " << std::endl;
+				MeshLib::CFEMesh* red_mesh = MshEditor::removeMeshNodes(new_mesh, noData_nodes);
+				if (!new_mesh->ele_vector.empty())
+				{
+					delete new_mesh;
+					new_mesh = red_mesh;
+				}
+				else
+				{
+					delete red_mesh;
+					std::cout << "Too many NoData values..." << std::endl;
+				}
+
+			}
+			else
+				std::cout << "Too many NoData values..." << std::endl;
 		}
 
 		new_mesh->ConstructGrid();
 		new_mesh->FillTransformMatrix();
+
 		delete []elevation;
 		return new_mesh;
 	}
@@ -188,7 +215,7 @@ Mesh_Group::CFEMesh* MshLayerMapper::LayerMapping(const Mesh_Group::CFEMesh* msh
 }
 
 // KR, based on code by WW (Note: this method has not been tested yet and will probably fail miserably!)
-bool MshLayerMapper::meshFitsImage(const Mesh_Group::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim)
+bool MshLayerMapper::meshFitsImage(const MeshLib::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim)
 {
 	double xMin(msh->nod_vector[0]->X());
 	double yMin(msh->nod_vector[0]->Y());
@@ -213,7 +240,7 @@ bool MshLayerMapper::meshFitsImage(const Mesh_Group::CFEMesh* msh, const std::pa
 	return true;
 }
 
-void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t nLayers, int integ)
+void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLayers, int integ)
 {
 	double ref_dep = -999999999.0;
 
@@ -226,7 +253,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 		{
 		   for (size_t k=0; k<nLayers; k++)
 		   {
-			  Mesh_Group::CNode* node = mesh->nod_vector[k*nNodesPerLayer+i];
+			  MeshLib::CNode* node = mesh->nod_vector[k*nNodesPerLayer+i];
 			  if (k==0) node->SetBoundaryType('0');	               // on the surface
 			  else if (k==(nLayers-1)) node->SetBoundaryType('1'); // on the bottom
 			  else node->SetBoundaryType('I');                     // interior node
@@ -243,8 +270,8 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 
 		for (size_t k=0; k<nLayers-2; k++) // top layer is not checked
 		{
-			Mesh_Group::CNode* bNode = mesh->nod_vector[k*nNodesPerLayer+i];     // current node
-			Mesh_Group::CNode* tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i]; // same node but one layer below
+			MeshLib::CNode* bNode = mesh->nod_vector[k*nNodesPerLayer+i];     // current node
+			MeshLib::CNode* tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i]; // same node but one layer below
 
 			if (!tNode->GetMark())
 			{
@@ -259,7 +286,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 				tNode->connected_nodes.clear();
 				for (int j=k; j>=0; j--)  //WW/YW. 23.01.2009
 				{
-					Mesh_Group::CNode* nNode = mesh->nod_vector[j*nNodesPerLayer+i];
+					MeshLib::CNode* nNode = mesh->nod_vector[j*nNodesPerLayer+i];
 					if (nNode->GetMark())
 					{
 						tNode->connected_nodes.push_back(nNode->GetIndex());
@@ -274,13 +301,13 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 		if (flat==nLayers-2/*1*/)
 		{
 
-			Mesh_Group::CNode* bNode = mesh->nod_vector[nNodesPerLayer+i];
+			MeshLib::CNode* bNode = mesh->nod_vector[nNodesPerLayer+i];
 			bNode->SetMark(true);
 			bNode->connected_nodes.clear();
 			for (size_t j=0; j<tmp_connected_nodes.size(); j++)
 				bNode->connected_nodes.push_back(tmp_connected_nodes[j]);
 
-			Mesh_Group::CNode* tNode = mesh->nod_vector[(nLayers-1)*nNodesPerLayer+i];
+			MeshLib::CNode* tNode = mesh->nod_vector[(nLayers-1)*nNodesPerLayer+i];
 			tNode->SetMark(false);
 			bNode->SetZ(tNode->Z());
 			bNode->SetBoundaryType('1');
@@ -297,12 +324,12 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	}
 
 
-	std::vector<Mesh_Group::CElem*> new_elems;
+	std::vector<MeshLib::CElem*> new_elems;
 	std::vector<size_t> false_node_idx;
 	size_t nElems = mesh->ele_vector.size();
 	for(size_t i=0; i<nElems; i++)
 	{
-		Mesh_Group::CElem* elem = mesh->ele_vector[i];
+		MeshLib::CElem* elem = mesh->ele_vector[i];
 		elem->SetMark(true);
 
 		flat = 0;
@@ -342,14 +369,14 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 					 elem->GetNode(a)->SetBoundaryType('1');
 
 				// create a new tetrahedron
-				Mesh_Group::CElem* new_elem( new Mesh_Group::CElem() );
+				MeshLib::CElem* new_elem( new MeshLib::CElem() );
 				new_elem->SetMark(true);
 				new_elem->SetElementType(MshElemType::TETRAHEDRON);
 				new_elem->SetPatchIndex(elem->GetPatchIndex());
 				new_elem->SetBoundaryType('I');
 				new_elem->SetNodesNumber(4);
 
-				Math_Group::vec<Mesh_Group::CNode*> nodes(4);
+				Math_Group::vec<MeshLib::CNode*> nodes(4);
 				nodes[0] = mesh->nod_vector[elem->nodes_index[a]];
 				nodes[1] = mesh->nod_vector[elem->nodes_index[b+3]];
 				nodes[2] = mesh->nod_vector[elem->nodes_index[c+3]];
@@ -389,7 +416,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 				elem->SetElementType(MshElemType::TETRAHEDRON);
 				elem->SetNodesNumber(4);
 
-				Math_Group::vec<Mesh_Group::CNode*> nodes(4);
+				Math_Group::vec<MeshLib::CNode*> nodes(4);
 				nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
 				nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
 				nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
@@ -422,24 +449,25 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 
 
 	// correct indeces of elements and delete false elements
-	std::vector<Mesh_Group::CElem*>::iterator beg_e = mesh->ele_vector.begin( ), last_e;
+	std::vector<MeshLib::CElem*>::iterator beg_e = mesh->ele_vector.begin( ), last_e;
 	long counter = 0;
 	while ( beg_e != mesh->ele_vector.end() )
 	{
 		last_e = beg_e++;
-		Mesh_Group::CElem* elem = *last_e;
+		MeshLib::CElem* elem = *last_e;
 		if (elem->GetMark())
 		{
 			elem->SetIndex(counter);
 			counter++;
+			/* KR unused variable
 			for (int j=0; j<elem->GetVertexNumber(); j++)
 			{
 				if (!elem->GetNode(j)->GetMark())
 				{
-					Mesh_Group::CNode* node = elem->GetNode(j);
-					node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
+					MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
 				}
 			}
+			*/
 		}
 		else
 		{
@@ -450,11 +478,11 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 
 	// correct indeces of nodes and delete false nodes
 	counter = 0;
-	std::vector<Mesh_Group::CNode*>::iterator beg = mesh->nod_vector.begin( ), last;
+	std::vector<MeshLib::CNode*>::iterator beg = mesh->nod_vector.begin( ), last;
 	while ( beg != mesh->nod_vector.end( ) )
 	{
 		last = beg++;
-		Mesh_Group::CNode* node = *last;
+		MeshLib::CNode* node = *last;
 		if (node->GetMark())
 		{
 			node->SetIndex(counter);
@@ -485,7 +513,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	while ( beg_e != mesh->ele_vector.end( ) )
 	{
 		last_e = beg_e++;
-		Mesh_Group::CElem* elem = *last_e;
+		MeshLib::CElem* elem = *last_e;
 
 		//10.02.2009. WW !!!!!!!!!!!!!!!!!!!!!!
 		for (int j=0; j<elem->GetVertexNumber(); j++)
@@ -509,14 +537,15 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 		{
 		   elem->SetIndex(counter);
 		   counter++;
+		   /* KR unused variable
 		   for (int j=0; j<elem->GetVertexNumber(); j++)
 		   {
 			  if (!elem->GetNode(j)->GetMark())
 			  {
-				  Mesh_Group::CNode* node = elem->GetNode(j);
-				  node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
+				  MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
 			  }
 		   }
+		   */
 		}
 	}
 
@@ -528,7 +557,7 @@ void MshLayerMapper::CheckLayerMapping(Mesh_Group::CFEMesh* mesh, const size_t n
 	while ( beg != mesh->nod_vector.end( ) )
 	{
 		last = beg++;
-		Mesh_Group::CNode* node = *last;
+		MeshLib::CNode* node = *last;
 		if ( node->getConnectedElementIDs().empty() )
 		{
 		   delete node;

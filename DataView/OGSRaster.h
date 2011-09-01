@@ -53,7 +53,6 @@ public:
 	 * \brief Loads an ASC file into a double array
 	 *
 	 * \param fileName Filename of the file that should be loaded.
-	 * \param values All pixel values in a 1D array.
 	 * \param x0 The x-coordinate of the origin.
  	 * \param y0 The y-coordinate of the origin.
 	 * \param width The width of the image.
@@ -82,7 +81,8 @@ private:
 	 * \param fileName Filename of the file that should be loaded.
 	 * \param raster The QPixmap into which the raster data will be written.
 	 * \param origin The upper left corner of the data set
-	 * \param cellsize The size of each pixel in the image which is needed for re-scaling the data
+	 * \param scalingFactor
+	 * \param autoscale
 	 * \return True if the raster data was loaded correctly, false otherwise.
 	 */
 	static bool loadImageFromASC(const QString &fileName, QImage &raster, QPointF &origin, double &scalingFactor, bool autoscale = true);
@@ -93,7 +93,7 @@ private:
 	 * \param fileName Filename of the file that should be loaded.
 	 * \param raster The QPixmap into which the raster data will be written.
 	 * \param origin The upper left corner of the data set
-	 * \param cellsize The size of each pixel in the image which is needed for re-scaling the data
+	 * \param scalingFactor
 	 * \return True if the raster data was loaded correctly, false otherwise.
 	 */
 #ifdef libgeotiff_FOUND 

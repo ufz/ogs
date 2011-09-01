@@ -26,9 +26,7 @@
 /// Create user properties with ogsUserPropertyMacro or ogsUserVecxPropertyMacro
 /// and initialize these properties inside the constructor with
 /// this->Set[Property Name](value)
-/// See VtkCompositeThresholdFilter for an example!
-
-/// @brief Base class for composite filters
+/// See VtkCompositeThresholdFilter for an example.
 class VtkCompositeFilter : public VtkAlgorithmProperties
 {
 public:
@@ -39,16 +37,21 @@ public:
 	/// @brief Destructor.
 	virtual ~VtkCompositeFilter();
 
-	/// @ Returns the type of the data input.
-	/// Can be compared with VTK_POLY_DATA, VTK_STRUCTURED_POINTS,
-	/// VTK_STRUCTURED_GRID, VTK_RECTILINEAR_GRID, VTK_UNSTRUCTURED_GRID,
-	/// VTK_IMAGE_DATA, VTK_DATA_SET.
+	/// @return the type of the data input.
+	/// Can be compared with
+	/// - VTK_POLY_DATA
+	/// - VTK_STRUCTURED_POINTS
+	/// - VTK_STRUCTURED_GRID
+	/// - VTK_RECTILINEAR_GRID
+	/// - VTK_UNSTRUCTURED_GRID
+	/// - VTK_IMAGE_DATA
+	/// - VTK_DATA_SET
 	int GetInputDataObjectType() const { return _inputDataObjectType; }
 
-	/// @ Returns the type of the data output.
+	/// @return the type of the data output.
 	int GetOutputDataObjectType() const { return _outputDataObjectType; }
 
-	/// @ Returns the last algorithm in this composite filter.
+	/// @return the last algorithm in this composite filter.
 	vtkAlgorithm* GetOutputAlgorithm() const { return _outputAlgorithm; }
 
 protected:

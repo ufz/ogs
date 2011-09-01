@@ -5,15 +5,17 @@
 
 #include "DetailWindow.h"
 #include "Color.h"
+#include "DiagramPrefsDialog.h"
 
-/**
- * Creates an empty window.
- *
+#include <QFileDialog>
+#include <QSettings>
+
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
 	stationView->setRenderHints( QPainter::Antialiasing );
 
+/*
 	DiagramList* list  = new DiagramList();
 	DiagramList* list2 = new DiagramList();
 
@@ -51,18 +53,20 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 	stationView->addGraph(list2);
 
 	resizeWindow();
+	*/
 }
-*/
+
 
 DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
 	stationView->setRenderHints( QPainter::Antialiasing );
 
-	DiagramList::readList(filename, _list);
+	std::vector<DiagramList*> lists;
+	DiagramList::readList(filename, lists);
 
-	for (size_t i=0; i<_list.size(); i++)
-		stationView->addGraph(_list[i]);
+	for (size_t i=0; i<lists.size(); i++)
+		stationView->addGraph(lists[i]);
 
 	resizeWindow();
 }
@@ -77,8 +81,6 @@ DetailWindow::DetailWindow(DiagramList* list, QWidget* parent) : QWidget(parent)
 
 DetailWindow::~DetailWindow()
 {
-	for (size_t i=0; i<_list.size(); i++)
-		delete _list[i];
 }
 
 void DetailWindow::on_closeButton_clicked()
@@ -100,6 +102,7 @@ void DetailWindow::addList(DiagramList* list)
 	QColor colour((*c)[0], (*c)[1], (*c)[2]);
 	delete c;
 	this->addList(list, colour);
+	resizeWindow();
 }
 
 void DetailWindow::addList(DiagramList* list, QColor c) 
@@ -107,3 +110,20 @@ void DetailWindow::addList(DiagramList* list, QColor c)
 	list->setColor(c);
 	this->stationView->addGraph(list); 
 }
+
+void DetailWindow::on_addDataButton_clicked()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Text files (*.txt);;All files (* *.*)");
+	if (!fileName.isEmpty()) 
+	{
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName, this);
+		prefs->setAttribute(Qt::WA_DeleteOnClose);
+		prefs->show();
+	}
+}
+

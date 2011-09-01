@@ -40,9 +40,10 @@ void GEOModels::addPointVec( std::vector<GEOLIB::Point*> *points, std::string &n
 	emit geoDataAdded(_geoModel, name, GEOLIB::POINT);
 }
 
-bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points, std::string &name)
+bool GEOModels::appendPointVec(const std::vector<GEOLIB::Point*> &points,
+		const std::string &name, std::vector<size_t>* ids)
 {
-	bool ret (GEOLIB::GEOObjects::appendPointVec (points, name));
+	bool ret (GEOLIB::GEOObjects::appendPointVec (points, name, ids));
 	// TODO import new points into geo-treeview
 	return ret;
 }
@@ -115,13 +116,13 @@ void GEOModels::addSurfaceVec( std::vector<GEOLIB::Surface*> *surfaces, const st
 	emit geoDataAdded(_geoModel, name, GEOLIB::SURFACE);
 }
 
-bool GEOModels::appendSurfaceVec(std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
+bool GEOModels::appendSurfaceVec(const std::vector<GEOLIB::Surface*> &surfaces, const std::string &name)
 {
 	bool ret (GEOLIB::GEOObjects::appendSurfaceVec (surfaces, name));
 
 	if (ret)
 		this->_geoModel->appendSurfaces(name, this->getSurfaceVecObj(name));
-	else 
+	else
 	{
 		std::vector<GEOLIB::Surface*> *sfc = new std::vector<GEOLIB::Surface*>;
 		for (size_t i=0; i<surfaces.size(); i++)
@@ -151,7 +152,7 @@ void GEOModels::connectPolylineSegments(const std::string &geoName, std::vector<
 			ply_list.push_back( (*polylines)[indexlist[i]] );
 
 		// connect polylines
-		GEOLIB::Polyline* new_line = GEOLIB::Polyline::contructPolylineFromSegments(ply_list, proximity);
+		GEOLIB::Polyline* new_line = GEOLIB::Polyline::constructPolylineFromSegments(ply_list, proximity);
 
 		if (new_line)
 		{

@@ -1,7 +1,8 @@
 # Source files
 SET( SOURCES
-	GridAdapter.cpp
 	QVtkDataSetMapper.cpp
+	VisPrefsDialog.cpp
+	VisualizationWidget.cpp
 	VtkAddFilterDialog.cpp
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
@@ -13,6 +14,7 @@ SET( SOURCES
 	VtkCompositeFilter.cpp
 	VtkCompositeColorByHeightFilter.cpp
 	VtkCompositeColormapToImageFilter.cpp
+	VtkCompositeContourFilter.cpp
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
@@ -23,6 +25,7 @@ SET( SOURCES
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
+	VtkMeshConverter.cpp
 	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
@@ -31,18 +34,18 @@ SET( SOURCES
 	VtkSurfacesSource.cpp
 	VtkTextureOnSurfaceFilter.cpp
 	VtkTrackedCamera.cpp
+	VtkVisHelper.cpp
 	VtkVisPipeline.cpp
 	VtkVisPipelineItem.cpp
 	VtkVisPipelineView.cpp
 	VtkVisTabWidget.cpp
-	VtkVisHelper.cpp
-	VisualizationWidget.cpp
-	VisPrefsDialog.cpp
 )
 
 # Moc headers
 SET( MOC_HEADERS
 	QVtkDataSetMapper.h
+	VisPrefsDialog.h
+	VisualizationWidget.h
 	VtkAddFilterDialog.h
 	VtkAlgorithmProperties.h
 	VtkAlgorithmPropertyLineEdit.h
@@ -50,15 +53,13 @@ SET( MOC_HEADERS
 	VtkAlgorithmPropertyVectorEdit.h
 	VtkTrackedCamera.h
 	VtkVisPipeline.h
+	VtkVisPipelineItem.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
-	VisualizationWidget.h
-	VisPrefsDialog.h
 )
 
 # Header files
 SET( HEADERS
-	GridAdapter.h
 	VtkApplyColorTableFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
@@ -66,6 +67,7 @@ SET( HEADERS
 	VtkCompositeFilter.h
 	VtkCompositeColorByHeightFilter.h
 	VtkCompositeColormapToImageFilter.h
+	VtkCompositeContourFilter.h
 	VtkCompositeImageToCylindersFilter.h
 	VtkCompositeLineToTubeFilter.h
 	VtkCompositePointToGlyphFilter.h
@@ -76,6 +78,7 @@ SET( HEADERS
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
+	VtkMeshConverter.h
 	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
@@ -84,7 +87,6 @@ SET( HEADERS
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h
 	VtkVisHelper.h
-	VtkVisPipelineItem.h
 )
 
 # UI files

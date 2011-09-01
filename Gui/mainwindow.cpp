@@ -11,6 +11,7 @@
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 #include "MshModel.h"
+#include "ElementTreeModel.h"
 #include "ConditionModel.h"
 
 //dialogs
@@ -38,10 +39,14 @@
 #include "DatabaseConnection.h"
 
 //test
+#include "BoundaryCondition.h"
+#include "InitialCondition.h"
+#include "SourceTerm.h"
 #include "rf_bc_new.h"
 #include "rf_st_new.h"
 #include "rf_ic_new.h"
 #include "wait.h"
+#include "MathIO/CRSIO.h"
 
 // FileIO includes
 #include "OGSIOVer4.h"
@@ -52,15 +57,16 @@
 #include "GMSHInterface.h"
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
+#include "GeoIO/Gmsh2GeoIO.h"
 #include "FEFLOWInterface.h"
-
-//test
-#include "MathIO/CRSIO.h"
 
 #include "StringTools.h"
 
 // MSH
 #include "msh_mesh.h"
+
+// MSHGEOTOOLS
+#include "ExtractMeshNodes.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -100,11 +106,13 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	_geoModels = new GEOModels();
 	_project.setGEOObjects(_geoModels);
 	_meshModels = new MshModel(_project);
+	_elementModel = new ElementTreeModel();
 	_conditionModel = new ConditionModel(_project);
 
 	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
 	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
+	mshTabWidget->elementView->setModel(_elementModel);
 	conditionTabWidget->treeView->setModel(_conditionModel);
 
 	// vtk visualization pipeline
@@ -152,10 +160,15 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 
 	// Setup connections for mesh models to GUI
-	connect(mshTabWidget, SIGNAL(requestMeshRemoval(const QModelIndex&)),
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
 			_meshModels, SLOT(removeMesh(const QModelIndex&)));
-	connect(mshTabWidget, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
+			_elementModel, SLOT(clearView()));
+	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 			this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+	connect(mshTabWidget->treeView, SIGNAL(requestDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)),
+			this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
+
 
 
 	// Setup connections for condition model to GUI
@@ -214,10 +227,17 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	connect((QObject*) (visualizationWidget->vtkPickCallback()),
 			SIGNAL(actorPicked(vtkProp3D*)),
 			vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
+	connect((QObject*) (visualizationWidget->interactorStyle()),
+			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
+			this->_elementModel, SLOT(setElement(const GridAdapter*, const size_t)));
+	connect((QObject*) (visualizationWidget->interactorStyle()),
+			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
+			mshTabWidget->elementView, SLOT(updateView()));
+
 
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(meshAdded(Mesh_Group::CFEMesh*, std::string&)),
-			_meshModels, SLOT(addMesh(Mesh_Group::CFEMesh*, std::string&)));
+			SIGNAL(meshAdded(MeshLib::CFEMesh*, std::string&)),
+			_meshModels, SLOT(addMesh(MeshLib::CFEMesh*, std::string&)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -311,11 +331,11 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	//	std::cout << "size of GEOLIB::Surface: " << sizeof (GEOLIB::Surface) << std::endl;
 	//	std::cout << "size of Surface: " << sizeof (Surface) << std::endl;
 	//
-	//	std::cout << "size of CCore: " << sizeof (Mesh_Group::CCore) << std::endl;
-	//	std::cout << "size of CNode: " << sizeof (Mesh_Group::CNode) << std::endl;
-	//	std::cout << "size of CElement: " << sizeof (Mesh_Group::CNode) << std::endl;
-	//	std::cout << "size of CEdge: " << sizeof (Mesh_Group::CEdge) << std::endl;
-	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
+	//	std::cout << "size of CCore: " << sizeof (MeshLib::CCore) << std::endl;
+	//	std::cout << "size of CNode: " << sizeof (MeshLib::CNode) << std::endl;
+	//	std::cout << "size of CElement: " << sizeof (MeshLib::CNode) << std::endl;
+	//	std::cout << "size of CEdge: " << sizeof (MeshLib::CEdge) << std::endl;
+	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 	//	std::cout << "size of Matrix: " << sizeof (Math_Group::Matrix) << std::endl;
 	//
 	//	std::cout << "size of vec<size_t>: " << sizeof (Math_Group::vec<size_t>) << std::endl;
@@ -326,7 +346,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
-	//	std::cout << "size of CFEMesh: " << sizeof (Mesh_Group::CFEMesh) << std::endl;
+	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -454,13 +474,19 @@ void MainWindow::save()
 			xml.writeGLIFile(fileName, gliName);
 		*/
 		} else if (fi.suffix().toLower() == "geo") {
+			// it works like this (none of it is particularily fast or optimised or anything):
+			// 1. merge all geometries that are currently loaded, all of these will be integrated into the mesh
+			// 2. if "useStationsAsConstraints"-parameter is true, GMSH-Interface will also integrate all stations that are currently loaded
+			// 3. after the geo-file is created the merged geometry is deleted again as it is no longer needed
 			GMSHInterface gmsh_io(fileName.toStdString());
-			std::vector<std::string> selected_geometries;
-			const size_t param1(2);
-			const double param2(0.3);
-			const double param3(0.05);
-			gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-					selected_geometries, param1, param2, param3);
+			std::vector<std::string> names;
+			this->_project.getGEOObjects()->getGeometryNames(names);
+			std::string merge_name("MergedGeometry");
+			_geoModels->mergeGeometries (names, merge_name);
+			gmsh_io.writeGMSHInputFile(merge_name, *(this->_project.getGEOObjects()), true);
+			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
+			this->_project.getGEOObjects()->removePolylineVec(merge_name);
+			this->_project.getGEOObjects()->removePointVec(merge_name);
 		} else if (fi.suffix().toLower() == "gli") {
 			//			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
 			writeAllDataToGLIFileV4(fileName.toStdString(), *_geoModels);
@@ -534,7 +560,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh") {
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
+		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh)
 			_meshModels->addMesh(msh, name);
 		else
@@ -547,14 +573,14 @@ void MainWindow::loadFile(const QString &fileName)
 				new std::vector<GEOLIB::Point*>();
 		std::string name = fi.baseName().toStdString();
 
-		if (GMSInterface::readBoreholesFromGMS(boreholes,
-				fileName.toStdString())) _geoModels->addStationVec(boreholes,
-				name, GEOLIB::getRandomColor());
+		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
+			_geoModels->addStationVec(boreholes, name, GEOLIB::getRandomColor());
+		else OGSError::box("Error reading GMS file.");
 	}
 	// GMS mesh files
 	else if (fi.suffix().toLower() == "3dm") {
 		std::string name = fileName.toStdString();
-		Mesh_Group::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
+		MeshLib::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
 		if (mesh) _meshModels->addMesh(mesh, name);
 	}
 	// goCAD files
@@ -585,7 +611,7 @@ void MainWindow::loadFile(const QString &fileName)
 		size_t len_rlat, len_rlon;
 		FileIO::NetCDFInterface::readNetCDFData(name, pnt_vec, _geoModels,
 				len_rlat, len_rlon);
-		Mesh_Group::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
+		MeshLib::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
 				len_rlat, len_rlon);
 		//GridAdapter* grid = new GridAdapter(mesh);
 		_meshModels->addMesh(mesh, name);
@@ -723,7 +749,7 @@ void MainWindow::importRaster()
 			"Select raster file to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
 			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
-	
+
 	if (!fileName.isEmpty())
 	{
 		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
@@ -747,13 +773,14 @@ void MainWindow::importRasterAsPoly()
 			"Select raster file to import", settings.value(
 					"lastOpenedFileDirectory").toString(),
 			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
-	
+
 	if (!fileName.isEmpty())
 	{
 		QImage raster;
 		QPointF origin;
 		double scalingFactor;
-		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true);
+		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, false);
+		//OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true, true);
 
 		VtkBGImageSource* bg = VtkBGImageSource::New();
 		bg->SetOrigin(origin.x(), origin.y());
@@ -841,9 +868,9 @@ void MainWindow::importFeflow()
     "FEFLOW files (*.fem);;");
   if (!fileName.isEmpty()) {
     FEFLOWInterface feflowIO(_geoModels);
-    Mesh_Group::CFEMesh *msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
+    MeshLib::CFEMesh *msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
     if (msh) {
-      string str = fileName.toStdString();
+      std::string str = fileName.toStdString();
       _meshModels->addMesh(msh, str);
       QDir dir = QDir(fileName);
       settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -856,7 +883,7 @@ void MainWindow::importFeflow()
   emit fileUsed(fileName);
 }
 
-void MainWindow::showPropertiesDialog(std::string name)
+void MainWindow::showPropertiesDialog(std::string const& name)
 {
 	ListPropertiesDialog dlg(name, _geoModels);
 	connect(
@@ -930,7 +957,9 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			for (std::list<CBoundaryCondition*>::iterator it=bc_list.begin(); it!=bc_list.end(); ++it) delete *it;
 			bc_list.clear();
 			for (size_t i=0; i<ic_vector.size(); i++) delete ic_vector[i];
+			ic_vector.clear();
 			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+			st_vector.clear();
 		}
 	}
 }
@@ -1024,11 +1053,28 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 			index, listName);
 
 	if (stn->type() == GEOLIB::Station::STATION) {
-		DiagramPrefsDialog prefs(stn, listName, _db);
-		prefs.show();
+		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(stn, listName, _db);
+		prefs->setAttribute(Qt::WA_DeleteOnClose);
+		prefs->show();
 	}
 	if (stn->type() == GEOLIB::Station::BOREHOLE) OGSError::box(
 			"No time series data available for borehole.");
+}
+
+void MainWindow::showDiagramPrefsDialog()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Text files (*.txt);;All files (* *.*)");
+	if (!fileName.isEmpty())
+	{
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName);
+		prefs->setAttribute(Qt::WA_DeleteOnClose);
+		prefs->show();
+	}
 }
 
 void MainWindow::showLineEditDialog(const std::string &geoName)
@@ -1063,95 +1109,211 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::vector<std::string> station_names;
-	_geoModels->getStationNames (station_names);
+//	// *** begin test CFEMesh::GetNODOnSFC ()
+//	{
+//		// get the surface
+//		std::vector<std::string> geo_names;
+//		_geoModels->getGeometryNames (geo_names);
+//		std::vector<GEOLIB::Surface*> const* sfcs (_geoModels->getSurfaceVec(geo_names[0]));
+//		GEOLIB::Surface const* sfc ((*sfcs)[0]);
+//
+//		std::string mesh_name ("/home/fischeth/Desktop/data/TestData/RectangleVictor/rectangle.msh");
+//		MeshLib::CFEMesh const* mesh (_project.getMesh (mesh_name));
+//
+//		std::vector<size_t> mesh_node_ids;
+//		mesh->GetNODOnSFC(sfc, mesh_node_ids);
+//		std::cout << mesh_node_ids.size() << " mesh nodes found" << std::endl;
+//		for (size_t k(0); k<mesh_node_ids.size(); k++) {
+//			std::cout << mesh_node_ids[k] << "\t" << std::flush;
+//		}
+//		std::cout << std::endl;
+//	}
+//	// *** end test CFEMesh::GetNODOnSFC ()
 
-	size_t resolution (36);
-	for (std::vector<std::string>::const_iterator it (station_names.begin());
-		it != station_names.end(); it++) {
+//	// *** begin test merge geometries
+//	std::vector<std::string> geo_names;
+//	_geoModels->getGeometryNames (geo_names);
+//	std::string merge_name("MergedGeometry");
+//	_geoModels->mergeGeometries (geo_names, merge_name);
+//	// *** end test merge geometries
 
-		std::string project_name ("Circle");
-		project_name += *it;
+//	std::string fname_mesh ("SurfaceBC.msh");
+//	FileIO::Gmsh2GeoIO::loadMeshAsGeometry(fname_mesh, _geoModels);
 
-		std::vector<GEOLIB::Point*> *pnts (new std::vector<GEOLIB::Point*>);
-		const std::vector<GEOLIB::Point*>* middle_pnts(_geoModels->getPointVec(*it));
-		std::vector<GEOLIB::Polyline*> *plys (new std::vector<GEOLIB::Polyline*>);
-		std::map<std::string, size_t>* ply_names (new std::map<std::string, size_t>);
+//	{
+//		std::ofstream os ("Points5000000.gli");
+//		if (os) {
+//			os << "#POINTS" << std::endl;
+//			for (size_t k(0); k<5000000; k++) {
+//				os << k << " " << (rand()%1000)/1000.0
+//					<< " " << (rand()%1000)/1000.0
+//					<< " " << (rand()%1000)/1000.0 << std::endl;
+//			}
+//			os << "#STOP" << std::endl;
+//		}
+//	}
 
-		for (size_t k(0); k<middle_pnts->size(); k++) {
-			GEOLIB::Polygon *polygon(createPolygonFromCircle (*((*middle_pnts)[k]), 450.0, *pnts, resolution));
-			plys->push_back (polygon);
-			std::string station_name ("CircleAreaAroundStation");
-			if (dynamic_cast<GEOLIB::Station*>((*middle_pnts)[k])) {
-				station_name += (dynamic_cast<GEOLIB::Station*>((*middle_pnts)[k])->getName());
-			} else {
-				station_name += number2str (k);
-			}
-			ply_names->insert (std::pair<std::string, size_t> (station_name, k));
-		}
+//	std::vector<std::string> station_names;
+//		_geoModels->getStationNames (station_names);
+//	if (!station_names.empty()) {
+//		size_t resolution(36);
+//		for (std::vector<std::string>::const_iterator it(station_names.begin()); it
+//				!= station_names.end(); it++) {
+//
+//			std::string project_name("Circle");
+//			project_name += *it;
+//
+//			std::vector<GEOLIB::Point*> *pnts(new std::vector<GEOLIB::Point*>);
+//			const std::vector<GEOLIB::Point*>* middle_pnts(
+//					_geoModels->getPointVec(*it));
+//			std::vector<GEOLIB::Polyline*> *plys(new std::vector<
+//					GEOLIB::Polyline*>);
+//			std::map<std::string, size_t> * ply_names(new std::map<std::string,size_t>);
+//
+//			for (size_t k(0); k < middle_pnts->size(); k++) {
+//				GEOLIB::Polygon *polygon(createPolygonFromCircle(
+//						*((*middle_pnts)[k]), 450.0, *pnts, resolution));
+//				plys->push_back(polygon);
+//				std::string station_name("CircleAreaAroundStation");
+//				if (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])) {
+//					station_name
+//							+= (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])->getName());
+//				} else {
+//					station_name += number2str(k);
+//				}
+//				ply_names->insert(std::pair<std::string, size_t>(station_name,k));
+//			}
+//
+//			_geoModels->addPointVec(pnts, project_name);
+//			_geoModels->addPolylineVec(plys, project_name, ply_names);
+//		}
+//	}
 
-		_geoModels->addPointVec (pnts, project_name);
-		_geoModels->addPolylineVec (plys, project_name, ply_names);
-	}
-
-#ifndef NDEBUG
-	std::cout << "FEM Test here ..." << std::endl;
-	QSettings settings("UFZ", "OpenGeoSys-5");
-
-	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select matrix file in binary compressed row storage format", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"binary matrix file (*.bin);;");
-
-	std::string fname (fileName.toStdString());
-	// open input stream
-	std::ifstream in (fname.c_str(), std::ios::binary);
-
-	if (in) {
-		long n(0), *iA(NULL), *jA(NULL);
-		double *A(NULL), *rhs(NULL);
-
-		std::cout << "reading matrix ... " << std::flush;
-		// read matrix and right hand side (format provided by WW)
-		FileIO::readCompressedStorageFmt (in, n, iA, jA, A, rhs);
-		in.close ();
-		std::cout << "done" << std::endl;
-
-		unsigned n_unsigned (n);
-		unsigned *iA_unsigned (new unsigned[n_unsigned+1]);
-		for (unsigned k(0); k<n_unsigned+1; k++)
-			iA_unsigned[k] = iA[k];
-
-		unsigned *jA_unsigned (new unsigned[iA_unsigned[n_unsigned]]);
-		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
-			jA_unsigned[k] = jA[k];
-
-		// write matrix
-		std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
-		if (mat_out) {
-			FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
-			mat_out.close();
-		}
-		// write right hand side
-		std::ofstream rhs_out ("rhs.dat");
-		if (rhs_out) {
-			for (unsigned k(0); k<n_unsigned; k++) {
-				rhs_out << rhs[k] << std::endl;
-			}
-			rhs_out.close();
-		}
-
-		delete [] iA;
-		delete [] jA;
-		delete [] iA_unsigned;
-		delete [] jA_unsigned;
-		delete [] rhs;
-		delete [] A;
-	}
-
-#else
+//	if (_geoModels) {
+//		std::vector<std::string> geo_names;
+//		_geoModels->getGeometryNames (geo_names);
+//
+//		if (!geo_names.empty()) {
+//			std::vector<GEOLIB::Polyline*> const* plys (_geoModels->getPolylineVec (geo_names[0]));
+//			std::vector<GEOLIB::Polyline*>* polyline_vec (new std::vector<GEOLIB::Polyline*>);
+//			GEOLIB::Polygon* polygon (NULL);
+//
+//			if (!_meshModels) {
+//				std::cout << "no mesh loaded" << std::endl;
+//			} else {
+//				std::string mesh_name ("model25");
+//				MeshLib::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
+//
+//				MeshLib::ExtractMeshNodes extract_mesh_nodes (mesh);
+////				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
+//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[19]), _geoModels, geo_names[0], polygon);
+//				if (polygon)
+//					polyline_vec->push_back (polygon);
+////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[1]), *(pnts_vec), polygon);
+////				if (polygon)
+////					polyline_vec->push_back (polygon);
+////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[2]), *(pnts_vec), polygon);
+////				if (polygon)
+////					polyline_vec->push_back (polygon);
+////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[3]), *(pnts_vec), polygon);
+////				if (polygon)
+////					polyline_vec->push_back (polygon);
+//			}
+//
+//			if (!polyline_vec->empty()) {
+//				if (_geoModels->appendPolylineVec (*polyline_vec, geo_names[0]))
+//					std::cout << "added " << polyline_vec->size() << " polygons" << std::endl;
+//				else
+//					std::cout << "failed to add " << polyline_vec->size() << " polygons" << std::endl;
+//
+//				delete polyline_vec;
+//			}
+//		}
+//	}
+//#ifndef NDEBUG
+//	std::cout << "FEM Test here ..." << std::endl;
+//	QSettings settings("UFZ", "OpenGeoSys-5");
+//
+//	QString fileName = QFileDialog::getOpenFileName(this,
+//			"Select matrix file in binary compressed row storage format", settings.value(
+//					"lastOpenedFileDirectory").toString(),
+//			"binary matrix file (*.bin);;");
+//
+//	std::string fname (fileName.toStdString());
+//	// open input stream
+//	std::ifstream in (fname.c_str(), std::ios::binary);
+//
+//	if (in) {
+//		long n(0), *iA(NULL), *jA(NULL);
+//		double *A(NULL), *rhs(NULL);
+//
+//		std::cout << "reading matrix ... " << std::flush;
+//		// read matrix and right hand side (format provided by WW)
+//		FileIO::readCompressedStorageFmt (in, n, iA, jA, A, rhs);
+//		in.close ();
+//		std::cout << "done" << std::endl;
+//
+//		unsigned n_unsigned (n);
+//		unsigned *iA_unsigned (new unsigned[n_unsigned+1]);
+//		for (unsigned k(0); k<n_unsigned+1; k++)
+//			iA_unsigned[k] = iA[k];
+//
+//		unsigned *jA_unsigned (new unsigned[iA_unsigned[n_unsigned]]);
+//		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
+//			jA_unsigned[k] = jA[k];
+//
+//		// some tests
+//        bool valid(true);
+//		for (unsigned i = 0; i < n_unsigned && valid; ++i) {
+//			const unsigned end (iA_unsigned[i+1]);
+//			for (unsigned k (iA_unsigned[i]); k < end; k++)
+//				if (jA_unsigned[k] >= n_unsigned) {
+//					std::cout << "row " << i << " has column entry ";
+//					std::cout << iA_unsigned[k] << " but matrix has dim ";
+//					std::cout << n_unsigned << " x " << n_unsigned << std::endl;
+//					valid = false;
+//				}
+//		}
+//		if (!valid) {
+//			std::cout << "matrix not in valid format" << std::endl;
+//		} else {
+//	        unsigned min (iA_unsigned[1]-iA_unsigned[0]), max(iA_unsigned[1]-iA_unsigned[0]), max_idx(0), min_idx(0);
+//	        for (unsigned k=0; k<n_unsigned; ++k) {
+//	                unsigned deg = iA_unsigned[k+1]-iA_unsigned[k];
+//	                if (deg < min) {min = deg; min_idx = k;}
+//	                if (deg > max) {max = deg; max_idx = k;}
+//	        }
+//	        std::cout << "\taverage deg: " << double (iA_unsigned[n_unsigned]) / n_unsigned << std::endl;
+//	        std::cout << "\trow " << max_idx << " with max deg " << max << std::endl;
+//	        std::cout << "\trow " << min_idx << " with min deg " << min << std::endl;
+//
+//			// write matrix
+//			std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
+//			if (mat_out) {
+//				FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
+//				mat_out.close();
+//			}
+//			// write right hand side
+//			std::ofstream rhs_out ("rhs.dat");
+//			if (rhs_out) {
+//				for (unsigned k(0); k<n_unsigned; k++) {
+//					rhs_out << rhs[k] << std::endl;
+//				}
+//				rhs_out.close();
+//			}
+//		}
+//
+//		delete [] iA;
+//		delete [] jA;
+//		delete [] iA_unsigned;
+//		delete [] jA_unsigned;
+//		delete [] rhs;
+//		delete [] A;
+//	}
+//
+//#else
 	std::cout << "This is test functionality only..." << std::endl;
-#endif
+//#endif
 }
 
 void MainWindow::showTrackingSettingsDialog()
@@ -1361,3 +1523,45 @@ QString MainWindow::getLastUsedDir()
 	else
 		return QDir::homePath();
 }
+
+void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points)
+{
+	std::string geo_name("mshNodes");
+
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+							settings.value("lastOpenedFileDirectory").toString(),
+							"Geosys FEM condition files (*.st);;All files (* *.*)");
+	QFileInfo fi(fileName);
+	QString name = fi.path() + "/";
+
+	if (!fileName.isEmpty())
+	{
+		// create new geometry points vector by copying mesh nodes vector
+		std::vector<GEOLIB::Point*> *new_points = new std::vector<GEOLIB::Point*>;
+		std::map<std::string, size_t> *name_pnt_id_map = new std::map<std::string, size_t>;
+
+		for (size_t i=0; i<points->size(); i++)
+		{
+			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],(*(*points)[i])[1],(*(*points)[i])[2]);
+			new_points->push_back(pnt);
+			std::stringstream out;
+			out << i;
+			name_pnt_id_map->insert(std::pair<std::string, size_t>(out.str(), i));
+		}
+		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
+
+		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name);
+
+		// add boundary conditions to model
+		if (!conditions.empty())
+		{
+			this->_conditionModel->addConditions(conditions);
+			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+			st_vector.clear();
+		}
+	}
+}
+
+
