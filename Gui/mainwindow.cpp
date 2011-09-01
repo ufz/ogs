@@ -870,7 +870,7 @@ void MainWindow::importFeflow()
     FEFLOWInterface feflowIO(_geoModels);
     MeshLib::CFEMesh *msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
     if (msh) {
-      string str = fileName.toStdString();
+      std::string str = fileName.toStdString();
       _meshModels->addMesh(msh, str);
       QDir dir = QDir(fileName);
       settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -883,7 +883,7 @@ void MainWindow::importFeflow()
   emit fileUsed(fileName);
 }
 
-void MainWindow::showPropertiesDialog(std::string name)
+void MainWindow::showPropertiesDialog(std::string const& name)
 {
 	ListPropertiesDialog dlg(name, _geoModels);
 	connect(
@@ -1540,7 +1540,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 		// create new geometry points vector by copying mesh nodes vector
 		std::vector<GEOLIB::Point*> *new_points = new std::vector<GEOLIB::Point*>;
 		std::map<std::string, size_t> *name_pnt_id_map = new std::map<std::string, size_t>;
- 
+
 		for (size_t i=0; i<points->size(); i++)
 		{
 			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],(*(*points)[i])[1],(*(*points)[i])[2]);
@@ -1550,7 +1550,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 			name_pnt_id_map->insert(std::pair<std::string, size_t>(out.str(), i));
 		}
 		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
-		
+
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
 		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name);
 
@@ -1564,4 +1564,4 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 	}
 }
 
-	
+

@@ -83,7 +83,7 @@ protected slots:
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
-	void showPropertiesDialog(std::string name);
+	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
@@ -101,7 +101,7 @@ protected slots:
 	void quitPresentationMode();
 
 	void loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points); //TODO put this in a better place
-	
+
 
 private:
 	QMenu* createImportFilesMenu();
