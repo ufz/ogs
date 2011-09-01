@@ -1230,90 +1230,90 @@ void MainWindow::FEMTestStart()
 //			}
 //		}
 //	}
-#ifndef NDEBUG
-	std::cout << "FEM Test here ..." << std::endl;
-	QSettings settings("UFZ", "OpenGeoSys-5");
-
-	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select matrix file in binary compressed row storage format", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"binary matrix file (*.bin);;");
-
-	std::string fname (fileName.toStdString());
-	// open input stream
-	std::ifstream in (fname.c_str(), std::ios::binary);
-
-	if (in) {
-		long n(0), *iA(NULL), *jA(NULL);
-		double *A(NULL), *rhs(NULL);
-
-		std::cout << "reading matrix ... " << std::flush;
-		// read matrix and right hand side (format provided by WW)
-		FileIO::readCompressedStorageFmt (in, n, iA, jA, A, rhs);
-		in.close ();
-		std::cout << "done" << std::endl;
-
-		unsigned n_unsigned (n);
-		unsigned *iA_unsigned (new unsigned[n_unsigned+1]);
-		for (unsigned k(0); k<n_unsigned+1; k++)
-			iA_unsigned[k] = iA[k];
-
-		unsigned *jA_unsigned (new unsigned[iA_unsigned[n_unsigned]]);
-		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
-			jA_unsigned[k] = jA[k];
-
-		// some tests
-        bool valid(true);
-		for (unsigned i = 0; i < n_unsigned && valid; ++i) {
-			const unsigned end (iA_unsigned[i+1]);
-			for (unsigned k (iA_unsigned[i]); k < end; k++)
-				if (jA_unsigned[k] >= n_unsigned) {
-					std::cout << "row " << i << " has column entry ";
-					std::cout << iA_unsigned[k] << " but matrix has dim ";
-					std::cout << n_unsigned << " x " << n_unsigned << std::endl;
-					valid = false;
-				}
-		}
-		if (!valid) {
-			std::cout << "matrix not in valid format" << std::endl;
-		} else {
-	        unsigned min (iA_unsigned[1]-iA_unsigned[0]), max(iA_unsigned[1]-iA_unsigned[0]), max_idx(0), min_idx(0);
-	        for (unsigned k=0; k<n_unsigned; ++k) {
-	                unsigned deg = iA_unsigned[k+1]-iA_unsigned[k];
-	                if (deg < min) {min = deg; min_idx = k;}
-	                if (deg > max) {max = deg; max_idx = k;}
-	        }
-	        std::cout << "\taverage deg: " << double (iA_unsigned[n_unsigned]) / n_unsigned << std::endl;
-	        std::cout << "\trow " << max_idx << " with max deg " << max << std::endl;
-	        std::cout << "\trow " << min_idx << " with min deg " << min << std::endl;
-
-			// write matrix
-			std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
-			if (mat_out) {
-				FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
-				mat_out.close();
-			}
-			// write right hand side
-			std::ofstream rhs_out ("rhs.dat");
-			if (rhs_out) {
-				for (unsigned k(0); k<n_unsigned; k++) {
-					rhs_out << rhs[k] << std::endl;
-				}
-				rhs_out.close();
-			}
-		}
-
-		delete [] iA;
-		delete [] jA;
-		delete [] iA_unsigned;
-		delete [] jA_unsigned;
-		delete [] rhs;
-		delete [] A;
-	}
-
-#else
+//#ifndef NDEBUG
+//	std::cout << "FEM Test here ..." << std::endl;
+//	QSettings settings("UFZ", "OpenGeoSys-5");
+//
+//	QString fileName = QFileDialog::getOpenFileName(this,
+//			"Select matrix file in binary compressed row storage format", settings.value(
+//					"lastOpenedFileDirectory").toString(),
+//			"binary matrix file (*.bin);;");
+//
+//	std::string fname (fileName.toStdString());
+//	// open input stream
+//	std::ifstream in (fname.c_str(), std::ios::binary);
+//
+//	if (in) {
+//		long n(0), *iA(NULL), *jA(NULL);
+//		double *A(NULL), *rhs(NULL);
+//
+//		std::cout << "reading matrix ... " << std::flush;
+//		// read matrix and right hand side (format provided by WW)
+//		FileIO::readCompressedStorageFmt (in, n, iA, jA, A, rhs);
+//		in.close ();
+//		std::cout << "done" << std::endl;
+//
+//		unsigned n_unsigned (n);
+//		unsigned *iA_unsigned (new unsigned[n_unsigned+1]);
+//		for (unsigned k(0); k<n_unsigned+1; k++)
+//			iA_unsigned[k] = iA[k];
+//
+//		unsigned *jA_unsigned (new unsigned[iA_unsigned[n_unsigned]]);
+//		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
+//			jA_unsigned[k] = jA[k];
+//
+//		// some tests
+//        bool valid(true);
+//		for (unsigned i = 0; i < n_unsigned && valid; ++i) {
+//			const unsigned end (iA_unsigned[i+1]);
+//			for (unsigned k (iA_unsigned[i]); k < end; k++)
+//				if (jA_unsigned[k] >= n_unsigned) {
+//					std::cout << "row " << i << " has column entry ";
+//					std::cout << iA_unsigned[k] << " but matrix has dim ";
+//					std::cout << n_unsigned << " x " << n_unsigned << std::endl;
+//					valid = false;
+//				}
+//		}
+//		if (!valid) {
+//			std::cout << "matrix not in valid format" << std::endl;
+//		} else {
+//	        unsigned min (iA_unsigned[1]-iA_unsigned[0]), max(iA_unsigned[1]-iA_unsigned[0]), max_idx(0), min_idx(0);
+//	        for (unsigned k=0; k<n_unsigned; ++k) {
+//	                unsigned deg = iA_unsigned[k+1]-iA_unsigned[k];
+//	                if (deg < min) {min = deg; min_idx = k;}
+//	                if (deg > max) {max = deg; max_idx = k;}
+//	        }
+//	        std::cout << "\taverage deg: " << double (iA_unsigned[n_unsigned]) / n_unsigned << std::endl;
+//	        std::cout << "\trow " << max_idx << " with max deg " << max << std::endl;
+//	        std::cout << "\trow " << min_idx << " with min deg " << min << std::endl;
+//
+//			// write matrix
+//			std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
+//			if (mat_out) {
+//				FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
+//				mat_out.close();
+//			}
+//			// write right hand side
+//			std::ofstream rhs_out ("rhs.dat");
+//			if (rhs_out) {
+//				for (unsigned k(0); k<n_unsigned; k++) {
+//					rhs_out << rhs[k] << std::endl;
+//				}
+//				rhs_out.close();
+//			}
+//		}
+//
+//		delete [] iA;
+//		delete [] jA;
+//		delete [] iA_unsigned;
+//		delete [] jA_unsigned;
+//		delete [] rhs;
+//		delete [] A;
+//	}
+//
+//#else
 	std::cout << "This is test functionality only..." << std::endl;
-#endif
+//#endif
 }
 
 void MainWindow::showTrackingSettingsDialog()
