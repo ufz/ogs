@@ -10,7 +10,6 @@
 
 // ** INCLUDES **
 #include "TreeItem.h"
-#include "Configure.h"
 
 #include <QList>
 #include <QMap>

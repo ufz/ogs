@@ -10,7 +10,6 @@
 
 // ** INCLUDES **
 #include "ui_VisualizationWidgetBase.h"
-#include "Configure.h"
 
 class vtkRenderer;
 class VtkCustomInteractorStyle;

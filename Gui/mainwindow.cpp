@@ -3,7 +3,7 @@
  * 4/11/2009 LB Initial implementation
  *
  */
-
+#include "Configure.h"
 #include "mainwindow.h"
 
 // models

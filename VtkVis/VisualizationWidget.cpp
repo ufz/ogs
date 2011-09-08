@@ -7,7 +7,6 @@
 
 // ** INCLUDES **
 #include "VisualizationWidget.h"
-#include "Configure.h"
 #include "Point.h"
 #include "VtkPickCallback.h"
 #include "VtkCustomInteractorStyle.h"

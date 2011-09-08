@@ -9,7 +9,6 @@
 #define VTKVISPIPELINE_H
 
 // ** INCLUDES **
-#include "Configure.h"
 #include "TreeModel.h"
 #include "Color.h"
 #include "Point.h"
