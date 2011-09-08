@@ -77,6 +77,7 @@
 // VTK includes
 #include <vtkVRMLExporter.h>
 #include <vtkOBJExporter.h>
+#include <vtkRenderer.h>
 
 #ifdef OGS_USE_OPENSG
 #include <OpenSG/OSGSceneFileHandler.h>
