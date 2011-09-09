@@ -17,11 +17,6 @@
 #include <QString>
 #include <QVariant>
 
-#ifdef OGS_USE_OPENSG
-	#include <OpenSG/OSGNode.h>
-	#include <OpenSG/OSGRefPtr.h>
-#endif // OGS_USE_OPENSG
-
 class vtkAlgorithm;
 class vtkPointSet;
 class QVtkDataSetMapper;
@@ -103,18 +98,8 @@ public:
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;
 	
-#ifdef OGS_USE_OPENSG
-	// HACK static rootNode is set by VtkVisPipeline constructor
-	/// Do not use this variable except in VtkVisPipeline constructor!
-	static OSG::NodePtr rootNode;
-
-protected:
-	vtkOsgActor* _actor;
-	OSG::RefPtr<OSG::NodePtr> _parentNode;
-#else // OGS_USE_OPENSG
 protected:
 	vtkProp3D* _actor;
-#endif // OGS_USE_OPENSG
 	vtkAlgorithm* _algorithm;
 	QVtkDataSetMapper* _mapper;
 	vtkRenderer* _renderer;

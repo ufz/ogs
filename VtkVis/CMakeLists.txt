@@ -53,7 +53,6 @@ SET( MOC_HEADERS
 	VtkAlgorithmPropertyVectorEdit.h
 	VtkTrackedCamera.h
 	VtkVisPipeline.h
-	VtkVisPipelineItem.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
 )
@@ -87,6 +86,7 @@ SET( HEADERS
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h
 	VtkVisHelper.h
+	VtkVisPipelineItem.h
 )
 
 # UI files

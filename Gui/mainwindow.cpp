@@ -83,8 +83,7 @@
 #include <OpenSG/OSGSceneFileHandler.h>
 #include <OpenSG/OSGCoredNodePtr.h>
 #include <OpenSG/OSGGroup.h>
-#include "vtkOsgActor.h"
-#include "OsgWidget.h"
+#include "vtkOsgConverter.h"
 #endif
 
 #ifdef OGS_USE_VRPN
@@ -117,15 +116,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	conditionTabWidget->treeView->setModel(_conditionModel);
 
 	// vtk visualization pipeline
-#ifdef OGS_USE_OPENSG
-	OsgWidget* osgWidget = new OsgWidget(this, 0, Qt::Window);
-	//osgWidget->show();
-	osgWidget->sceneManager()->setRoot(makeCoredNode<OSG::Group>());
-	osgWidget->sceneManager()->showAll();
-	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer(), osgWidget->sceneManager());
-#else // OGS_USE_OPENSG
 	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
-#endif // OGS_USE_OPENSG
 
 	// station model connects
 	connect(stationTabWidget->treeView,
@@ -1423,13 +1414,13 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 		while(*it)
 		{
 			VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(*it);
-			vtkOsgActor* actor = static_cast<vtkOsgActor*>(item->actor());
-			actor->SetVerbose(true);
-			actor->UpdateOsg();
-			beginEditCP(root);
-			root->addChild(actor->GetOsgRoot());
-			endEditCP(root);
-			actor->ClearOsg();
+			vtkOsgConverter converter(static_cast<vtkActor*>(item->actor()));
+			if(converter.WriteAnActor())
+			{
+				beginEditCP(root);
+				root->addChild(converter.GetOsgNode());
+				endEditCP(root);
+			}
 			++it;
 		}
 

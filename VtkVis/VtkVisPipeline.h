@@ -19,10 +19,6 @@
 #include <QVector>
 #include <QMap>
 
-#ifdef OGS_USE_OPENSG
-	#include <OpenSG/OSGSimpleSceneManager.h>
-#endif // OGS_USE_OPENSG
-
 
 class vtkAlgorithm;
 class vtkDataSet;
@@ -52,11 +48,7 @@ class VtkVisPipeline : public TreeModel
 public:
 
 	/// \brief Constructor
-#ifdef OGS_USE_OPENSG
-	VtkVisPipeline(vtkRenderer* renderer, OSG::SimpleSceneManager* manager, QObject* parent = 0);
-#else // OGS_USE_OPENSG
 	VtkVisPipeline(vtkRenderer* renderer, QObject* parent = 0);
-#endif // OGS_USE_OPENSG
 
 	/// \brief Emits vtkVisPipelineChanged() and calls base class method.
 	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
@@ -124,12 +116,6 @@ private:
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
 	bool _resetCameraOnAddOrRemove;
-
-#ifdef OGS_USE_OPENSG
-	OSG::SimpleSceneManager* _sceneManager;
-#endif // OGS_USE_OPENSG
-
-
 
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.

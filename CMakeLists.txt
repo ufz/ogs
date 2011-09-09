@@ -1,12 +1,3 @@
-
-# Visual Studio settings
-IF (MSVC)
-	ADD_DEFINITIONS(
-		-D/MP	# For multicore compiling
-	)
-ENDIF (MSVC)
-
-
 IF (NOT VTK_FOUND)
 	MESSAGE(FATAL_ERROR "Error: VTK was not found but is needed for the GUI. Aborting...")
 ENDIF (NOT VTK_FOUND)
