@@ -60,6 +60,7 @@
 #include "NetCDFInterface.h"    //YW  07.2010
 #include "GeoIO/Gmsh2GeoIO.h"
 #include "FEFLOWInterface.h"
+#include "MeshIO/TetGenInterface.h"
 
 #include "StringTools.h"
 
@@ -1110,6 +1111,22 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	// *** begin test TetGen read mesh
+	const std::string path ("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/MSH/");
+	std::string mesh_name ("ClosedSurface");
+	std::string fname_nodes(path+mesh_name+".1.node");
+	std::string fname_elements(path+mesh_name+".1.ele");
+
+	FileIO::TetGenInterface tetgen;
+	MeshLib::CFEMesh *mesh (tetgen.readTetGenMesh (fname_nodes, fname_elements));
+
+	if (mesh)
+		_meshModels->addMesh(mesh, mesh_name);
+	else
+		OGSError::box("Failed to load TetGen mesh file.");
+
+	// *** end test TetGen read mesh
+
 //	// *** begin creating closed surface mesh
 //	{
 //		std::string path("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/");
