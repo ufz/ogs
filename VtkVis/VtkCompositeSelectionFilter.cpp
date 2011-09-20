@@ -1,7 +1,7 @@
 /**
  * \file VtkCompositeSelectionFilter.cpp
  * 2011/02/10 KR Initial implementation
- * 
+ *
  * Implementation of VtkCompositeSelectionFilter class
  */
 
