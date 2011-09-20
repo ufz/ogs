@@ -15,7 +15,7 @@ class vtkAlgorithm;
 
 /**
  * \brief Contains a QTreeView of the VtkVisPipeline and a properties
- * panel for adjusting vtkAlgorithms rendering and filter settings. 
+ * panel for adjusting vtkAlgorithms rendering and filter settings.
  */
 class VtkVisTabWidget : public QWidget, public Ui_VtkVisTabWidgetBase
 {
@@ -34,9 +34,21 @@ protected slots:
 	void on_edgeColorPickerButton_colorPicked(QColor color);
 	void on_opacitySlider_sliderMoved(int value);
 	void on_scaleZ_textChanged(const QString &text);
-	void on_transX_textChanged(const QString &text) { this->translateItem(); };
-	void on_transY_textChanged(const QString &text) { this->translateItem(); };
-	void on_transZ_textChanged(const QString &text) { this->translateItem(); };
+	void on_transX_textChanged(const QString &text)
+	{
+		Q_UNUSED(text);
+		this->translateItem();
+	};
+	void on_transY_textChanged(const QString &text)
+	{
+		Q_UNUSED(text);
+		this->translateItem();
+	};
+	void on_transZ_textChanged(const QString &text)
+	{
+		Q_UNUSED(text);
+		this->translateItem();
+	};
 
 	void SetActiveAttributeOnItem(const QString &name);
 
