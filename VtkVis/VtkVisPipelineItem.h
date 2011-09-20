@@ -100,6 +100,9 @@ public:
 	/// @brief Sets the geometry and data scaling.
 	void setScale(double x, double y, double z) const;
 
+	/// @brief Translates the item in vis-space.
+	void setTranslation(double x, double y, double z) const;
+
 	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;

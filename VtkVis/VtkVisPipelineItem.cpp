@@ -535,6 +535,19 @@ void VtkVisPipelineItem::setScale(double x, double y, double z) const
 
 }
 
+void VtkVisPipelineItem::setTranslation(double x, double y, double z) const
+{
+	if (this->transformFilter())
+	{
+		vtkTransform* transform =
+			static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		transform->Identity();
+		transform->Translate(x, y, z);
+		this->transformFilter()->Modified();
+	}
+
+}
+
 void VtkVisPipelineItem::setScaleOnChildren(double x, double y, double z) const
 {
 	for (int i = 0; i < this->childCount(); ++i)

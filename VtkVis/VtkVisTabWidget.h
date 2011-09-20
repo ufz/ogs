@@ -34,6 +34,9 @@ protected slots:
 	void on_edgeColorPickerButton_colorPicked(QColor color);
 	void on_opacitySlider_sliderMoved(int value);
 	void on_scaleZ_textChanged(const QString &text);
+	void on_transX_textChanged(const QString &text) { this->translateItem(); };
+	void on_transY_textChanged(const QString &text) { this->translateItem(); };
+	void on_transZ_textChanged(const QString &text) { this->translateItem(); };
 
 	void SetActiveAttributeOnItem(const QString &name);
 
@@ -43,6 +46,9 @@ private:
 
 	/// Reads the scalar arrays of the given vtk-object and constructs content for the scalar array selection box.
 	void buildScalarArrayComboBox(VtkVisPipelineItem* item);
+
+	void translateItem();
+
 	VtkVisPipelineItem* _item;
 
 signals:

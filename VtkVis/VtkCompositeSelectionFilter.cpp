@@ -22,7 +22,7 @@ VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlg
 
 void VtkCompositeSelectionFilter::init()
 {
-	const char* filter_name = std::string("Selection").c_str();
+	const char* filter_name("Selection");
 	double thresholdLower(0.0), thresholdUpper(1.0);
 	this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
 	this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
