@@ -47,9 +47,10 @@ MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent)
 
 	_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
 	_noDataDeleteBox->setChecked(false);
+	_noDataDeleteBox->setEnabled(false);
 	if (nLayers==1)
 	{
-		_noDataDeleteBox->setChecked(true);
+		_noDataDeleteBox->setEnabled(true);
 		this->gridLayoutLayerMapping->addWidget(_noDataDeleteBox, 2, 1);
 	}
 	

@@ -685,6 +685,8 @@ void MainWindow::about()
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QMenu* importFiles = new QMenu("&Import Files");
+    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
+    connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
 	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
@@ -705,8 +707,6 @@ QMenu* MainWindow::createImportFilesMenu()
 #endif
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
-    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-    connect( feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()) );
 
 	return importFiles;
 }
