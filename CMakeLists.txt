@@ -1,12 +1,3 @@
-
-# Visual Studio settings
-IF (MSVC)
-	ADD_DEFINITIONS(
-		-D/MP	# For multicore compiling
-	)
-ENDIF (MSVC)
-
-
 IF (NOT VTK_FOUND)
 	MESSAGE(FATAL_ERROR "Error: VTK was not found but is needed for the GUI. Aborting...")
 ENDIF (NOT VTK_FOUND)
@@ -15,6 +6,9 @@ INCLUDE( ${VTK_USE_FILE} )
 # Find libgeotiff
 FIND_PACKAGE( LibTiff )
 FIND_PACKAGE( LibGeoTiff )
+IF(libgeotiff_FOUND)
+	ADD_DEFINITIONS(-Dlibgeotiff_FOUND)
+ENDIF() # libgeotiff_FOUND
 
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /ZI /Od /Ob0")
 

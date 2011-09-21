@@ -7,7 +7,6 @@
 #include <QFileDialog>
 #include <QMenu>
 
-#include "Configure.h"
 #include "Station.h"
 #include "StationIO.h"
 #include "GMSInterface.h"
