@@ -16,7 +16,7 @@
 #include "StringTools.h"
 #include "OGSError.h"
 
-#ifdef libgeotiff_FOUND 
+#ifdef libgeotiff_FOUND
 #include "geo_tiffp.h"
 #include "xtiffio.h"
 #endif
@@ -35,14 +35,14 @@ bool OGSRaster::loadImage(const QString &fileName, QImage &raster, QPointF &orig
 		if (mirrorX)
 			raster = raster.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
 	}
-#ifdef libgeotiff_FOUND 
+#ifdef libgeotiff_FOUND
 	else if (fileInfo.suffix().toLower() == "tif")
 	{
 		if (!loadImageFromTIFF(fileName, raster, origin, scalingFactor)) return false;
 		if (!mirrorX)
 			raster = raster.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
 	}
-#endif 
+#endif
 	else
 	{
 		if (!loadImageFromFile(fileName, raster)) return false;
@@ -65,7 +65,7 @@ bool OGSRaster::loadImageFromASC(const QString &fileName, QImage &raster, QPoint
 	if (readASCHeader(header, in))
 	{
 		int index=0, gVal;
-		double value, minVal=pow(2.0,16), maxVal=0;
+		double value, minVal=65536, maxVal=0;
 		double *pixVal (new double[header.ncols * header.nrows]);
 		QImage img(header.ncols, header.nrows, QImage::Format_ARGB32);
 
@@ -191,7 +191,7 @@ double* OGSRaster::loadDataFromASC(const QString &fileName, double &x0, double &
 	return NULL;
 }
 
-#ifdef libgeotiff_FOUND 
+#ifdef libgeotiff_FOUND
 bool OGSRaster::loadImageFromTIFF(const QString &fileName, QImage &raster, QPointF &origin, double &cellsize)
 {
 	TIFF* tiff = XTIFFOpen(fileName.toStdString().c_str(), "r");
@@ -346,7 +346,7 @@ int OGSRaster::getMaxValue(const QImage &raster)
 
 int OGSRaster::getMinValue(const QImage &raster)
 {
-	int value, minVal = static_cast <int> (pow(2.0,16));
+	int value, minVal = 65536;
 	for (int i=0; i<raster.width(); i++)
 	{
 		for (int j=0; j<raster.height(); j++)
