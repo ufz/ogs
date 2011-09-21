@@ -55,7 +55,7 @@
 #include "PetrelInterface.h"
 #include "GocadInterface.h"
 #include "XMLInterface.h"
-#include "GMSHInterface.h"
+#include "MeshIO/GMSHInterface.h"
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
 #include "GeoIO/Gmsh2GeoIO.h"
