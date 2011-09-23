@@ -35,7 +35,7 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 	{
 		// add nodes for new layer
 		size_t node_offset ( nNodes*layer_id );
-		double z_offset ( layer_id*thickness );
+// TF unused variable		double z_offset ( layer_id*thickness );
 		for (size_t i=0; i<nNodes; i++)
 		{
 			new_mesh->nod_vector.push_back(new MeshLib::CNode( node_offset + i, mesh->nod_vector[i]->getData()));
