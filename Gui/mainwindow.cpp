@@ -3,7 +3,7 @@
  * 4/11/2009 LB Initial implementation
  *
  */
-
+#include "Configure.h"
 #include "mainwindow.h"
 
 // models
@@ -79,13 +79,13 @@
 // VTK includes
 #include <vtkVRMLExporter.h>
 #include <vtkOBJExporter.h>
+#include <vtkRenderer.h>
 
 #ifdef OGS_USE_OPENSG
 #include <OpenSG/OSGSceneFileHandler.h>
 #include <OpenSG/OSGCoredNodePtr.h>
 #include <OpenSG/OSGGroup.h>
-#include "vtkOsgActor.h"
-#include "OsgWidget.h"
+#include "vtkOsgConverter.h"
 #endif
 
 #ifdef OGS_USE_VRPN
@@ -118,15 +118,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	conditionTabWidget->treeView->setModel(_conditionModel);
 
 	// vtk visualization pipeline
-#ifdef OGS_USE_OPENSG
-	OsgWidget* osgWidget = new OsgWidget(this, 0, Qt::Window);
-	//osgWidget->show();
-	osgWidget->sceneManager()->setRoot(makeCoredNode<OSG::Group>());
-	osgWidget->sceneManager()->showAll();
-	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer(), osgWidget->sceneManager());
-#else // OGS_USE_OPENSG
 	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
-#endif // OGS_USE_OPENSG
 
 	// station model connects
 	connect(stationTabWidget->treeView,
@@ -685,6 +677,8 @@ void MainWindow::about()
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QMenu* importFiles = new QMenu("&Import Files");
+    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
+    connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
 	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
@@ -705,8 +699,6 @@ QMenu* MainWindow::createImportFilesMenu()
 #endif
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
-    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-    connect( feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()) );
 
 	return importFiles;
 }
@@ -1565,13 +1557,13 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 		while(*it)
 		{
 			VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(*it);
-			vtkOsgActor* actor = static_cast<vtkOsgActor*>(item->actor());
-			actor->SetVerbose(true);
-			actor->UpdateOsg();
-			beginEditCP(root);
-			root->addChild(actor->GetOsgRoot());
-			endEditCP(root);
-			actor->ClearOsg();
+			vtkOsgConverter converter(static_cast<vtkActor*>(item->actor()));
+			if(converter.WriteAnActor())
+			{
+				beginEditCP(root);
+				root->addChild(converter.GetOsgNode());
+				endEditCP(root);
+			}
 			++it;
 		}
 

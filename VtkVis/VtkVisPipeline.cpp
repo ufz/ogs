@@ -53,25 +53,6 @@
 #include <QColor>
 #include <QSettings>
 
-#ifdef OGS_USE_OPENSG
-#include "vtkOsgActor.h"
-VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, OSG::SimpleSceneManager* manager, QObject* parent /*= 0*/)
-: TreeModel(parent), _renderer(renderer), _sceneManager(manager)
-{
-	QList<QVariant> rootData;
-	rootData << "Object name" << "Visible";
-	delete _rootItem;
-	_rootItem = new TreeItem(rootData, NULL);
-	VtkVisPipelineItem::rootNode = _sceneManager->getRoot();
-
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
-	if (backgroundColorVariant != QVariant())
-		this->setBGColor(backgroundColorVariant.value<QColor>());
-
-	_resetCameraOnAddOrRemove = true;
-}
-#else // OGS_USE_OPENSG
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 : TreeModel(parent), _renderer(renderer)
 {
@@ -87,7 +68,6 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 
 	_resetCameraOnAddOrRemove = true;
 }
-#endif // OGS_USE_OPENSG
 
 bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
 	int role /* = Qt::EditRole */ )
@@ -292,10 +272,8 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	_actorMap.insert(item->actor(), newIndex);
 
 	// Do not interpolate images
-#ifndef OGS_USE_OPENSG
-	if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
-		static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
-#endif // OGS_USE_OPENSG
+if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
+	static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
 
 	reset();
 	emit vtkVisPipelineChanged();
@@ -341,10 +319,6 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 
 	VtkVisPipelineItem* item = new VtkVisPipelineItem(source, parentItem, itemData);
 	this->addPipelineItem(item, parent);
-
-#ifdef OGS_USE_OPENSG
-	_sceneManager->showAll();
-#endif // OGS_USE_OPENSG
 }
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
