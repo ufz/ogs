@@ -1,9 +1,16 @@
+/*
+ * CRSMatrix.h
+ *
+ *  Created on: Sep 20, 2011
+ *      Author: TF
+ */
+
 #include "amuxCRS.h"
 #include <omp.h>
 #include <omp.h>
 #include <pthread.h>
 
-void amuxCRS (double a, 
+void amuxCRS (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
         double const * const A, double const * const x, double* y)
 {
@@ -18,7 +25,7 @@ void amuxCRS (double a,
 }
 
 struct MatMultThreadParam {
-	MatMultThreadParam (double scalar_factor, unsigned beg_row, unsigned end_row, 
+	MatMultThreadParam (double scalar_factor, unsigned beg_row, unsigned end_row,
 		unsigned const * const iA, unsigned const * const jA,
 	        double const * const A, double const * const x, double* y) :
 		_a (scalar_factor), _beg_row(beg_row), _end_row(end_row),
@@ -60,7 +67,7 @@ void* amuxCRSpthread (void* ptr)
 }
 } // end extern "C"
 
-void amuxCRSParallelPThreads (double a, 
+void amuxCRSParallelPThreads (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
 	double const * const A, double const * const x, double* y,
 	unsigned num_of_pthreads)
@@ -99,7 +106,7 @@ void amuxCRSParallelPThreads (double a,
 #endif
 }
 
-void amuxCRSParallelOpenMP (double a, 
+void amuxCRSParallelOpenMP (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
 	double const * const A, double const * const x, double* y,
 	unsigned num_of_omp_threads)

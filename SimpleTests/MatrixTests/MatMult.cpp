@@ -5,9 +5,9 @@
 #include <omp.h>
 #include <cstdlib>
 #include "sparse.h"
-#include "CRSMatrix.h"
-#include "CRSMatrixOpenMP.h"
-#include "CRSMatrixPThreads.h"
+#include "LinAlg/Sparse/CRSMatrix.h"
+#include "LinAlg/Sparse/CRSMatrixOpenMP.h"
+#include "LinAlg/Sparse/CRSMatrixPThreads.h"
 #include "RunTimeTimer.h"
 #include "CPUTimeTimer.h"
 
@@ -58,7 +58,8 @@ int main(int argc, char *argv[])
 	for (unsigned k(0); k<nnz; k++) A[k] = 2.0;
 */
 
-	CRSMatrix<double> mat (n, iA, jA, A);
+	MathLib::CRSMatrix<double> mat (n, iA, jA, A);
+	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
 //	CRSMatrixOpenMP<double> mat (n, iA, jA, A, n_threads);
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
 

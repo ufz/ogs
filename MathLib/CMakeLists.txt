@@ -1,16 +1,17 @@
 # Source files
 SET( HEADERS
-	amuxCRS.h
-        CRSMatrix.h
-        CRSMatrixPThreads.h
-        CRSMatrixOpenMP.h
-        CRSSymMatrix.h
+	LinAlg/MatrixBase.h
+	LinAlg/Sparse/amuxCRS.h
+        LinAlg/Sparse/CRSMatrix.h
+        LinAlg/Sparse/CRSMatrixPThreads.h
+        LinAlg/Sparse/CRSMatrixOpenMP.h
+        LinAlg/Sparse/CRSSymMatrix.h
         sparse.h
-        SparseMatrixBase.h
+        LinAlg/Sparse/SparseMatrixBase.h
 )
 
 SET( SOURCES
-        amuxCRS.cpp
+        LinAlg/Sparse/amuxCRS.cpp
 )
 
 INCLUDE_DIRECTORIES (

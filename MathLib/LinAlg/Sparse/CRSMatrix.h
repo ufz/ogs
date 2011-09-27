@@ -1,3 +1,10 @@
+/*
+ * CRSMatrix.h
+ *
+ *  Created on: Sep 20, 2011
+ *      Author: TF
+ */
+
 #ifndef CRSMATRIX_H
 #define CRSMATRIX_H
 
@@ -7,6 +14,8 @@
 #include "SparseMatrixBase.h"
 #include "sparse.h"
 #include "amuxCRS.h"
+
+namespace MathLib {
 
 template<class T> class CRSMatrix : public SparseMatrixBase<T>
 {
@@ -42,7 +51,7 @@ public:
 
 	virtual void amux(T d, T const * const x, T *y) const
 	{
-		amuxCRS(d, SparseMatrixBase<T>::_n_rows, _row_ptr, _col_idx, _data, x, y);
+		amuxCRS(d, MatrixBase::_n_rows, _row_ptr, _col_idx, _data, x, y);
 	}
 
 protected:
@@ -50,6 +59,8 @@ protected:
 	unsigned *_col_idx;
 	T* _data;
 };
+
+} // end namespace MathLib
 
 #endif
 

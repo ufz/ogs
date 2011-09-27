@@ -15,6 +15,8 @@
 #include "CRSMatrix.h"
 #include "amuxCRS.h"
 
+namespace MathLib {
+
 template<class T> class CRSMatrixPThreads : public CRSMatrix<T>
 {
 public:
@@ -41,6 +43,8 @@ public:
 protected:
 	unsigned _num_of_threads;
 };
+
+} // end namespace MathLib
 
 #endif
 
