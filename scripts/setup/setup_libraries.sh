@@ -6,12 +6,16 @@ cd libs
 
 QMAKE_LOCATION=`which qmake`
 
+QT_VERSION="qt-everywhere-opensource-src-4.7.3"
+VTK_VERSION="vtk-5.6.1"
+SHAPELIB_VERSION="shapelib-1.3.0b2"
+LIBTIFF_VERSION="tiff-3.9.5"
+LIBGEOTIFF_VERSION="libgeotiff-1.3.0"
+
 ## Windows specific
 if [ "$OSTYPE" == 'msys' ]; then
 	if [ -z "$QMAKE_LOCATION" ]; then
 		# Install Qt
-		QT_VERSION="qt-everywhere-opensource-src-4.7.3"
-		
 		if [ ! -d $QT_VERSION ]; then
 			# Download and extract
 			wget http://get.qt.nokia.com/qt/source/$QT_VERSION.zip -O ./$QT_VERSION.zip
@@ -55,7 +59,6 @@ if [ "$OSTYPE" == 'msys' ]; then
 	
 	# Install VTK
 	cd "$SOURCE_LOCATION/../libs"
-	VTK_VERSION="vtk-5.6.1"
 	if [ ! -d $VTK_VERSION ]; then
 		# Download, extract, rename
 		wget http://www.vtk.org/files/release/5.6/$VTK_VERSION.tar.gz -O ./$VTK_VERSION.tar.gz
@@ -95,7 +98,6 @@ if [ "$OSTYPE" == 'msys' ]; then
 	
 	# Install shapelib
 	cd "$SOURCE_LOCATION/../libs"
-	SHAPELIB_VERSION="shapelib-1.3.0b2"
 	if [ ! -d $SHAPELIB_VERSION ]; then
 		# Download, extract
 		wget http://download.osgeo.org/shapelib/$SHAPELIB_VERSION.tar.gz
@@ -122,7 +124,6 @@ if [ "$OSTYPE" == 'msys' ]; then
 	
 	# Install libtiff
 	cd "$SOURCE_LOCATION/../libs"
-	LIBTIFF_VERSION="tiff-3.9.5"
 	if [ ! -d $LIBTIFF_VERSION ]; then
 		# Download, extract
 		wget ftp://ftp.remotesensing.org/pub/libtiff/$LIBTIFF_VERSION.tar.gz
@@ -149,7 +150,6 @@ if [ "$OSTYPE" == 'msys' ]; then
 	
 	# Install libgeotiff
 	cd "$SOURCE_LOCATION/../libs"
-	LIBGEOTIFF_VERSION="libgeotiff-1.3.0"
 	if [ ! -d $LIBGEOTIFF_VERSION ]; then
 		# Download, extract
 		wget http://download.osgeo.org/geotiff/libgeotiff/$LIBGEOTIFF_VERSION.tar.gz
