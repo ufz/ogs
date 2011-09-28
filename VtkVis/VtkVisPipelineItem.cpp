@@ -192,9 +192,9 @@ void VtkVisPipelineItem::Initialize(vtkRenderer* renderer)
 	_activeAttribute = "";
 
 	vtkImageAlgorithm* imageAlgorithm = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+
 	if (imageAlgorithm==NULL) // if algorithm is no image
 	{
-
 		_transformFilter = vtkTransformFilter::New();
 		vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 		transform->Identity();
@@ -528,8 +528,10 @@ void VtkVisPipelineItem::setScale(double x, double y, double z) const
 	{
 		vtkTransform* transform =
 			static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		double* trans = transform->GetPosition();
 		transform->Identity();
 		transform->Scale(x, y, z);
+		transform->Translate(trans[0]/x, trans[1]/y, trans[2]/z);
 		this->transformFilter()->Modified();
 	}
 
@@ -541,7 +543,9 @@ void VtkVisPipelineItem::setTranslation(double x, double y, double z) const
 	{
 		vtkTransform* transform =
 			static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		double* scale = transform->GetScale();
 		transform->Identity();
+		transform->Scale(scale);
 		transform->Translate(x, y, z);
 		this->transformFilter()->Modified();
 	}

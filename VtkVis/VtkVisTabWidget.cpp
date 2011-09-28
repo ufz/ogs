@@ -68,10 +68,10 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
 			vtkTransform* transform = 
 			static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
-			//signals off
 			double scale[3];
 			transform->GetScale(scale);
-			double* trans = transform->GetPosition();
+			double trans[3];
+			transform->GetPosition(trans);
 
 			//switch signals off for just filling in text-boxes after clicking on an item
 			this->scaleZ->blockSignals(true);
@@ -79,9 +79,9 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			this->transY->blockSignals(true);
 			this->transZ->blockSignals(true);
 			this->scaleZ->setText(QString::number(scale[2]));
-			this->transX->setText(QString::number(trans[0]));
-			this->transY->setText(QString::number(trans[1]));
-			this->transZ->setText(QString::number(trans[2]));
+			this->transX->setText(QString::number(trans[0]/scale[0]));
+			this->transY->setText(QString::number(trans[1]/scale[1]));
+			this->transZ->setText(QString::number(trans[2]/scale[2]));
 			this->scaleZ->blockSignals(false);
 			this->transX->blockSignals(false);
 			this->transY->blockSignals(false);
