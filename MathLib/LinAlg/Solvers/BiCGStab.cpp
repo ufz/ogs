@@ -59,7 +59,7 @@ unsigned BiCGStab(CRSMatrix<double> const& A, double* const b, double* const x,
 			blas::copy(N, r, p); // p = r
 		else {
 //			blas::axpy(N, -omega, v, p); // p = (p-omega v)*beta+r
-//			const double beta = rho1 * alpha / (rho2 * omega);
+			const double beta = rho1 * alpha / (rho2 * omega);
 //			blas::scal(N, beta, p);
 //			blas::axpy(N, D_ONE, r, p);
 			// p = (p-omega v)*beta+r
