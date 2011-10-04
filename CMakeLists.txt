@@ -5,6 +5,10 @@ cmake_minimum_required(VERSION 2.6)
 project( OGS-6 )
 
 # Set cmake module path 
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+
+# Set cmake module path 
 #SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeConfiguration")
 
 ### For GNU C/CXX
@@ -27,6 +31,7 @@ SET( LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib )
 
 # Add subdirectories with the projects
 ADD_SUBDIRECTORY( Base )
+ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )
 ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
 ADD_SUBDIRECTORY( SimpleTests/SolverTests )

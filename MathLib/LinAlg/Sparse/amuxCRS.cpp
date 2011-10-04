@@ -7,8 +7,9 @@
 
 #include "amuxCRS.h"
 #include <omp.h>
-#include <omp.h>
 #include <pthread.h>
+
+namespace MathLib {
 
 void amuxCRS (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
@@ -153,3 +154,4 @@ void amuxCRSSym (double a,
 	}
 }
 
+} // end namespace MathLib

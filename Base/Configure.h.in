@@ -3,13 +3,19 @@
  *
  * #defines which gets set through CMake
  */
-#ifndef CONFIGURE_H
-#define CONFIGURE_H
+ #ifndef CONFIGURE_H
+ #define CONFIGURE_H
 
+#define OGS_QT_VERSION ${QT_VERSION_MAJOR}${QT_VERSION_MINOR}
 #define SOURCEPATH "${CMAKE_SOURCE_DIR}"
 
-#cmakedefine HAVE_PTHREADS
-#cmakedefine PROCESSOR_COUNT "${PROCESSOR_COUNT}"
+#cmakedefine OGS_VERSION "${OGS_VERSION}"
+#cmakedefine OGS_DATE "${OGS_DATE}"
+
+// for tests
+#cmakedefine OGS_EXECUTABLE "${OGS_EXECUTABLE}"
+#define PUT_TMP_DIR_IN "${PROJECT_BINARY_DIR}/tests/"
+
+#cmakedefine PROCESSOR_COUNT ${PROCESSOR_COUNT}
 
 #endif // CONFIGURE_H
-

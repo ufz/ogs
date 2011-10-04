@@ -12,10 +12,6 @@
 #include "../Sparse/CRSMatrix.h"
 #include "../Sparse/CRSMatrixDiagPrecond.h"
 
-#ifndef NDEBUG
-#include <iostream>
-#endif
-
 // CG solves the symmetric positive definite linear
 // system Ax=b using the Conjugate Gradient method.
 //
@@ -37,12 +33,12 @@ unsigned CG(CRSMatrix<double> const * mat, double const * const b,
 	unsigned N = mat->getNRows();
 	double *p, *q, *r, *rhat, rho, rho1 = 0.0;
 
-	p = new double[4* N ];
+	p = new double[4* N];
 	q = p + N;
 	r = q + N;
 	rhat = r + N;
 
-	double nrmb = sqrt(scpr(N, b, b, num_threads));
+	double nrmb = sqrt(scpr(b, b, N));
 	if (nrmb < std::numeric_limits<double>::epsilon()) {
 		blas::setzero(N, x);
 		eps = 0.0;
@@ -58,18 +54,15 @@ unsigned CG(CRSMatrix<double> const * mat, double const * const b,
 	}
 
 	double resid = blas::nrm2(N, r);
-	out << "0\t" << resid / nrmb << std::endl;
 	if (resid <= eps * nrmb) {
 		eps = resid / nrmb;
 		nsteps = 0;
 		delete[] p;
-		out.close();
 		return 0;
 	}
 
 	for (unsigned l = 1; l <= nsteps; ++l) {
 
-		out << l << "\t" << resid / nrmb << std::endl;
 #ifndef NDEBUG
 		std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
 #endif
@@ -97,7 +90,7 @@ unsigned CG(CRSMatrix<double> const * mat, double const * const b,
 		mat->amux(D_ONE, p, q);
 
 		// alpha = rho / p*q
-		double alpha = rho / scpr(N, p, q);
+		double alpha = rho / scpr(p, q, N);
 
 		// x += alpha * p
 		blas::axpy(N, alpha, p, x);
@@ -105,7 +98,7 @@ unsigned CG(CRSMatrix<double> const * mat, double const * const b,
 		// r -= alpha * q
 		blas::axpy(N, -alpha, q, r);
 
-		resid = sqrt(scpr(N, r, r));
+		resid = sqrt(scpr(r, r, N));
 
 		if (resid <= eps * nrmb) {
 			eps = resid / nrmb;
@@ -116,7 +109,6 @@ unsigned CG(CRSMatrix<double> const * mat, double const * const b,
 
 		rho1 = rho;
 	}
-	out.close();
 	eps = resid / nrmb;
 	delete[] p;
 	return 1;

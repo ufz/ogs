@@ -5,12 +5,15 @@
 
 #include "CRSMatrix.h"
 #include "sparse.h"
+#include "../Preconditioner/generateDiagPrecond.h"
+
+namespace MathLib {
 
 class CRSMatrixDiagPrecond : public CRSMatrix<double>
 {
 public:
-	CRSMatrixDiagPrecond (std::string const &fname, unsigned num_of_threads=1) 
-		: CRSMatrix<double>(fname, num_of_threads), _inv_diag(NULL) 
+	CRSMatrixDiagPrecond (std::string const &fname)
+		: CRSMatrix<double>(fname), _inv_diag(NULL)
 	{
 		_inv_diag = new double[_n_rows];
 		if (!generateDiagPrecond (_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {
@@ -19,7 +22,6 @@ public:
 	}
 
 	void precondApply(double* x) const {
-		omp_set_num_threads( _num_of_threads );
 		{
 			unsigned k;
 			#pragma omp parallel for
@@ -35,6 +37,8 @@ public:
 private:
 	double *_inv_diag;
 };
+
+}
 
 #endif
 

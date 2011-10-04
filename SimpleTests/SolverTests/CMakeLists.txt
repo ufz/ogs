@@ -27,7 +27,6 @@ ADD_EXECUTABLE( ConjugateGradientUnpreconditioned
 
 ADD_EXECUTABLE( ConjugateGradientDiagPrecond
         ConjugateGradientDiagonalPreconditioned.cpp
-        ../Preconditioner/generateDiagPrecond.cpp
         ${SOURCES}
         ${HEADERS}
 )
@@ -35,10 +34,14 @@ ADD_EXECUTABLE( ConjugateGradientDiagPrecond
 TARGET_LINK_LIBRARIES ( ConjugateGradientUnpreconditioned
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
+	MathLib
+	Base
 )
 
 TARGET_LINK_LIBRARIES ( ConjugateGradientDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
+	MathLib
+	Base
 )
 

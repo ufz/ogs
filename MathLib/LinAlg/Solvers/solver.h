@@ -2,7 +2,7 @@
  * solver.h
  *
  *  Created on: Sep 27, 2011
- *      Author: fischeth
+ *      Author: TF
  */
 
 #ifndef SOLVER_H_

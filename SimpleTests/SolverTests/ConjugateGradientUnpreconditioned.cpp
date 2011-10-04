@@ -1,18 +1,18 @@
 #include <fstream>
 #include <iostream>
 #include <omp.h>
-#include "CG.h"
-#include "CRSMatrix.h"
+#include "LinAlg/Solvers/CG.h"
+#include "LinAlg/Sparse/CRSMatrix.h"
 #include "sparse.h"
 #include "vector_io.h"
-#include "timeMeasurement.h"
+//#include "timeMeasurement.h"
 
 int main(int argc, char *argv[])
 {
 	// *** reading matrix in crs format from file
 	std::string fname("/work/fischeth/data/testmat.bin");
 //	std::ifstream in(fname.c_str(), std::ios::binary);
-	CRSMatrix<double> *mat (new CRSMatrix<double>(fname, 1));
+	MathLib::CRSMatrix<double> *mat (new MathLib::CRSMatrix<double>(fname));
 /*	double *A(NULL);
 	unsigned *iA(NULL), *jA(NULL), n;
 	if (in) {
@@ -49,13 +49,13 @@ int main(int argc, char *argv[])
 	std::cout << "solving system with CG method ... " << std::flush;
 	time_t start_time, end_time;
 	time(&start_time);
-	double cg_time (cputime(0.0));
+//	double cg_time (cputime(0.0));
 	double eps (1.0e-6);
 	unsigned steps (4000);
 	CG (mat, b, x, eps, steps, 1);
-	cg_time = cputime(cg_time);
+//	cg_time = cputime(cg_time);
 	time(&end_time);
-	std::cout << " in " << steps << " iterations (residuum is " << eps << ") took " << cg_time << " sec time and " << (end_time-start_time) << " sec" << std::endl;
+	std::cout << " in " << steps << " iterations (residuum is " << eps << ") took " << /*cg_time <<*/ " sec time and " << (end_time-start_time) << " sec" << std::endl;
 
 	delete mat;
 	delete [] x;

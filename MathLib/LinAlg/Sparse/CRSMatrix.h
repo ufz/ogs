@@ -14,6 +14,7 @@
 #include "SparseMatrixBase.h"
 #include "sparse.h"
 #include "amuxCRS.h"
+#include "../Preconditioner/generateDiagPrecond.h"
 
 namespace MathLib {
 
@@ -53,6 +54,9 @@ public:
 	{
 		amuxCRS(d, MatrixBase::_n_rows, _row_ptr, _col_idx, _data, x, y);
 	}
+
+    virtual void precondApply(T* x) const
+    {}
 
 protected:
 	unsigned *_row_ptr;

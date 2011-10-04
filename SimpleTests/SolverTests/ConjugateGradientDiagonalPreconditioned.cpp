@@ -1,12 +1,14 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 #include <omp.h>
-#include "CG.h"
-#include "CRSMatrixDiagPrecond.h"
+#include "LinAlg/Solvers/CG.h"
+#include "LinAlg/Sparse/CRSMatrixDiagPrecond.h"
 #include "sparse.h"
 #include "vector_io.h"
-#include "timeMeasurement.h"
+#include "RunTimeTimer.h"
+#include "CPUTimeTimer.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,13 +17,13 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	// read number of threads       
+	// read number of threads
 	unsigned num_omp_threads (1);
 	num_omp_threads = atoi (argv[3]);
 
 	// *** reading matrix in crs format from file
 	std::string fname(argv[1]);
-	CRSMatrixDiagPrecond *mat (new CRSMatrixDiagPrecond(fname, num_omp_threads));
+	MathLib::CRSMatrixDiagPrecond *mat (new MathLib::CRSMatrixDiagPrecond(fname));
 
 	unsigned n (mat->getNRows());
 	bool verbose (true);
@@ -48,22 +50,27 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	
+
 	if (verbose)
 		std::cout << "solving system with PCG method (diagonal preconditioner) ... " << std::flush;
-	time_t start_time, end_time;
-	time(&start_time);
-	double cg_time (cputime(0.0));
+
 	double eps (1.0e-6);
 	unsigned steps (4000);
-	CG (mat, b, x, eps, steps, num_omp_threads);
-	cg_time = cputime(cg_time);
-	time(&end_time);
+	RunTimeTimer run_timer;
+	CPUTimeTimer cpu_timer;
+	run_timer.start();
+	cpu_timer.start();
+
+	MathLib::CG (mat, b, x, eps, steps, num_omp_threads);
+
+	cpu_timer.stop();
+	run_timer.stop();
+
 	if (verbose) {
 		std::cout << " in " << steps << " iterations" << std::endl;
-		std::cout << "\t(residuum is " << eps << ") took " << cg_time << " sec time and " << (end_time-start_time) << " sec" << std::endl;
+		std::cout << "\t(residuum is " << eps << ") took " << cpu_timer.elapsed() << " sec time and " << run_timer.elapsed() << " sec" << std::endl;
 	} else {
-		std::cout << end_time-start_time << std::endl;
+		std::cout << cpu_timer.elapsed() << std::endl;
 	}
 
 	delete mat;

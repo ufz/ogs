@@ -1,6 +1,8 @@
 #include "sparse.h"
 
-bool generateDiagPrecond (unsigned n, double* A, unsigned* jA, unsigned* iA, 
+namespace MathLib {
+
+bool generateDiagPrecond (unsigned n, unsigned* iA, unsigned* jA, double* A,
 	double* diag)
 {
 	unsigned idx; // first idx of next row
@@ -26,4 +28,4 @@ bool generateDiagPrecond (unsigned n, double* A, unsigned* jA, unsigned* iA,
 	return true;
 }
 
-
+} // end namespace MathLib
