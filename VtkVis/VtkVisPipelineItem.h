@@ -10,6 +10,7 @@
 
 // ** INCLUDES **
 #include "TreeItem.h"
+#include "Configure.h"
 
 #include <QList>
 #include <QMap>
@@ -55,7 +56,7 @@ public:
 
 	/// @brief Initializes vtkMapper and vtkActor necessary for visualization of
 	/// the item and sets the item's properties.
-	void Initialize(vtkRenderer* renderer);
+	virtual void Initialize(vtkRenderer* renderer) = 0;
 
 	QVariant data(int column) const;
 	bool setData(int column, const QVariant &value);
@@ -65,6 +66,12 @@ public:
 
 	/// @brief Returns the actor as vtkProp3D
 	vtkProp3D* actor() const;
+
+	// Dummy for implementation in derived classes
+	virtual const QString GetActiveAttribute() const { return QString(""); }
+
+	// Dummy for implementation in derived classes
+	virtual void SetActiveAttribute(const QString& str) {};
 
 	/// @brief Returns the mapper
 	QVtkDataSetMapper* mapper() const { return _mapper; }
@@ -81,22 +88,14 @@ public:
 	/// @brief Writes this algorithm's vtkDataSet (i.e. vtkPolyData or vtkUnstructuredGrid) to a vtk-file.
 	int writeToFile(const std::string &filename) const;
 
-	vtkTransformFilter* transformFilter() const { return _transformFilter; }
-
-	/// @brief Sets the selected attribute array for the visualisation of the data set.
-	void SetActiveAttribute(const QString& name);
-
-	void SetScalarRange(double min, double max);
-
-	/// @brief Gets the last selected attribute.
-	const QString& GetActiveAttribute() const {return _activeAttribute; }
-
 	/// @brief Sets the geometry and data scaling.
-	void setScale(double x, double y, double z) const;
+	virtual void setScale(double x, double y, double z) const;
 
 	/// @brief Translates the item in vis-space.
-	void setTranslation(double x, double y, double z) const;
+	virtual void setTranslation(double x, double y, double z) const;
 
+	// Dummy for implementation in derived classes
+	virtual vtkTransformFilter* transformFilter() const { return NULL; }
 	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;
@@ -107,20 +106,12 @@ protected:
 	QVtkDataSetMapper* _mapper;
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
-	vtkTransformFilter* _transformFilter;
-	QString _activeAttribute;
 
-	/// Sets a color lookup table for the current scalar array.
-	void setLookupTableForActiveScalar();
-
-	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
-	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
+	virtual const int callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	void SetScalarVisibility(bool on);
 	
 private:
-	/// @see SetActiveAttribute()
-	bool setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name);
 
 };
 

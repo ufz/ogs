@@ -16,6 +16,8 @@
 #include "ConditionModel.h"
 #include "StationTreeModel.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisImageItem.h"
+#include "VtkVisPointSetItem.h"
 #include "VtkMeshSource.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkTrackedCamera.h"
@@ -272,8 +274,10 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	_actorMap.insert(item->actor(), newIndex);
 
 	// Do not interpolate images
-if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
-	static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
+#ifndef OGS_USE_OPENSG
+	if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
+		static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
+#endif // OGS_USE_OPENSG
 
 	reset();
 	emit vtkVisPipelineChanged();
@@ -317,8 +321,15 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 		itemName = QString(source->GetClassName());
 	itemData << itemName << true;
 
-	VtkVisPipelineItem* item = new VtkVisPipelineItem(source, parentItem, itemData);
+	VtkVisPipelineItem* item(NULL);
+	vtkImageAlgorithm* alg = dynamic_cast<vtkImageAlgorithm*>(source);
+	if (alg) item = new VtkVisImageItem(source, parentItem, itemData);
+	else item = new VtkVisPointSetItem(source, parentItem, itemData);
 	this->addPipelineItem(item, parent);
+
+#ifdef OGS_USE_OPENSG
+	_sceneManager->showAll();
+#endif // OGS_USE_OPENSG
 }
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
@@ -451,7 +462,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 
 				VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeSelectionFilter", parentItem->transformFilter());
 				static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray(quality);
-				VtkVisPipelineItem* item = new VtkVisPipelineItem(filter, parentItem, itemData);
+				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
 				this->addPipelineItem(item, this->createIndex(i, 0, item));
 			}
 		}
