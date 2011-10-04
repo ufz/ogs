@@ -15,7 +15,7 @@ namespace MathLib {
 unsigned BiCGStab(CRSMatrix<double> const& A, double* const b, double* const x,
 		double& eps, unsigned& nsteps)
 {
-	unsigned N(A.getNRows());
+	const unsigned N(A.getNRows());
 	double *v (new double[8* N]);
 	double *p (v + N);
 	double *phat (p + N);
@@ -58,10 +58,14 @@ unsigned BiCGStab(CRSMatrix<double> const& A, double* const b, double* const x,
 		if (l == 1)
 			blas::copy(N, r, p); // p = r
 		else {
-			blas::axpy(N, -omega, v, p); // p = (p-omega v)*beta+r
-			const double beta = rho1 * alpha / (rho2 * omega);
-			blas::scal(N, beta, p);
-			blas::axpy(N, D_ONE, r, p);
+//			blas::axpy(N, -omega, v, p); // p = (p-omega v)*beta+r
+//			const double beta = rho1 * alpha / (rho2 * omega);
+//			blas::scal(N, beta, p);
+//			blas::axpy(N, D_ONE, r, p);
+			// p = (p-omega v)*beta+r
+			for (unsigned k(0); k<N; k++) {
+				p[k] = (p[k] - omega * v[k]) * beta + r[k];
+			}
 		}
 
 		// p^ = C p
@@ -74,8 +78,11 @@ unsigned BiCGStab(CRSMatrix<double> const& A, double* const b, double* const x,
 		alpha = rho1 / blas::scpr(N, r0, v);
 
 		// s = r - alpha v
-		blas::copy(N, r, s);
-		blas::axpy(N, -alpha, v, s);
+//		blas::copy(N, r, s);
+//		blas::axpy(N, -alpha, v, s);
+		for (unsigned k(0); k<N; k++) {
+			s[k] = r[k] - alpha * v[k];
+		}
 
 		resid = blas::nrm2(N, s) / nrmb;
 #ifndef NDEBUG
