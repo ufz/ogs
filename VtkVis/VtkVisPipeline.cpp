@@ -326,10 +326,6 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 	if (alg) item = new VtkVisImageItem(source, parentItem, itemData);
 	else item = new VtkVisPointSetItem(source, parentItem, itemData);
 	this->addPipelineItem(item, parent);
-
-#ifdef OGS_USE_OPENSG
-	_sceneManager->showAll();
-#endif // OGS_USE_OPENSG
 }
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
