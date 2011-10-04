@@ -9,6 +9,8 @@
 #include "VtkAddFilterDialog.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisImageItem.h"
+#include "VtkVisPointSetItem.h"
 #include "VtkCompositeFilter.h"
 #include "VtkFilterFactory.h"
 
@@ -66,19 +68,24 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
 	itemData << filterListWidget->currentItem()->text() << true;
 
 	VtkCompositeFilter* filter;
-	if (dynamic_cast<vtkImageAlgorithm*>(parentItem->algorithm()))
+	if (dynamic_cast<VtkVisImageItem*>(parentItem))
 		filter = VtkFilterFactory::CreateCompositeFilter(filterName, parentItem->algorithm());
 	else
 		filter = VtkFilterFactory::CreateCompositeFilter(filterName, parentItem->transformFilter());
 
 	VtkVisPipelineItem* item;
 	if (filter)
-		item = new VtkVisPipelineItem(filter, parentItem, itemData);
+	{
+		if (filter->GetOutputDataObjectType() == VTK_IMAGE_DATA)
+			item = new VtkVisImageItem(filter, parentItem, itemData);
+		else
+			item = new VtkVisPointSetItem(filter, parentItem, itemData);
+	}
 	else
 	{
 		vtkAlgorithm* algorithm = VtkFilterFactory::CreateSimpleFilter(filterName);
 		if (algorithm)
-			item = new VtkVisPipelineItem(algorithm, parentItem, itemData);
+			item = new VtkVisPointSetItem(algorithm, parentItem, itemData);
 		else
 		{
 			std::cout << "Error: VtkFilterFavctory cannot create " << filterName.toStdString() << std::endl;

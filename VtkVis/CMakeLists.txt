@@ -35,9 +35,11 @@ SET( SOURCES
 	VtkTextureOnSurfaceFilter.cpp
 	VtkTrackedCamera.cpp
 	VtkVisHelper.cpp
+	VtkVisImageItem.cpp
 	VtkVisPipeline.cpp
 	VtkVisPipelineItem.cpp
 	VtkVisPipelineView.cpp
+	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
 )
 
@@ -86,7 +88,9 @@ SET( HEADERS
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h
 	VtkVisHelper.h
+	VtkVisImageItem.h
 	VtkVisPipelineItem.h
+	VtkVisPointSetItem.h
 )
 
 # UI files
@@ -129,10 +133,6 @@ INCLUDE_DIRECTORIES(
 	../DataView
 )
 
-IF(OGS_USE_VRPN)
-	INCLUDE_DIRECTORIES(../Vrpn)
-ENDIF() # OGS_USE_VRPN
-
 # Create the library
 ADD_LIBRARY( VtkVis STATIC
 	${SOURCES}
@@ -143,6 +143,10 @@ ADD_LIBRARY( VtkVis STATIC
 )
 
 TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} QVTK )
+
+IF(OGS_USE_VRPN)
+	INCLUDE_DIRECTORIES(../Vrpn)
+ENDIF() # OGS_USE_VRPN
 
 IF (OGS_USE_OPENSG)
 	USE_OPENSG(VtkVis)

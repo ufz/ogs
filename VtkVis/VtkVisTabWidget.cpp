@@ -66,39 +66,44 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 			visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
 			edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
 			opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
-			vtkTransform* transform = 
-			static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
-			double scale[3];
-			transform->GetScale(scale);
-			double trans[3];
-			transform->GetPosition(trans);
+			
+			vtkTransform* transform = static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
+			if (transform)
+			{
+				double scale[3];
+				transform->GetScale(scale);
+				double trans[3];
+				transform->GetPosition(trans);
 
-			//switch signals off for just filling in text-boxes after clicking on an item
-			this->scaleZ->blockSignals(true);
-			this->transX->blockSignals(true);
-			this->transY->blockSignals(true);
-			this->transZ->blockSignals(true);
-			this->scaleZ->setText(QString::number(scale[2]));
-			this->transX->setText(QString::number(trans[0]/scale[0]));
-			this->transY->setText(QString::number(trans[1]/scale[1]));
-			this->transZ->setText(QString::number(trans[2]/scale[2]));
-			this->scaleZ->blockSignals(false);
-			this->transX->blockSignals(false);
-			this->transY->blockSignals(false);
-			this->transZ->blockSignals(false);
-			//switch signals back on
-
+				//switch signals off for just filling in text-boxes after clicking on an item
+				this->scaleZ->blockSignals(true);
+				this->transX->blockSignals(true);
+				this->transY->blockSignals(true);
+				this->transZ->blockSignals(true);
+				this->scaleZ->setText(QString::number(scale[2]));
+				this->transX->setText(QString::number(trans[0]/scale[0]));
+				this->transY->setText(QString::number(trans[1]/scale[1]));
+				this->transZ->setText(QString::number(trans[2]/scale[2]));
+				this->scaleZ->blockSignals(false);
+				this->transX->blockSignals(false);
+				this->transY->blockSignals(false);
+				this->transZ->blockSignals(false);
+				//switch signals back on
+			}
 			this->buildScalarArrayComboBox(_item);
 
 			// Set to last active attribute
-			QString activeAttribute = item->GetActiveAttribute();
-			for (int i = 0; i < this->activeScalarComboBox->count(); i++)
+			QString activeAttribute = _item->GetActiveAttribute();
+			if (activeAttribute.length()>0)
 			{
-				QString itemText = this->activeScalarComboBox->itemText(i);
-				if (itemText.compare(activeAttribute) == 0)
+				for (int i = 0; i < this->activeScalarComboBox->count(); i++)
 				{
-					this->activeScalarComboBox->setCurrentIndex(i);
-					break;
+					QString itemText = this->activeScalarComboBox->itemText(i);
+					if (itemText.compare(activeAttribute) == 0)
+					{
+						this->activeScalarComboBox->setCurrentIndex(i);
+						break;
+					}
 				}
 			}
 		}
