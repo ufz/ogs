@@ -55,25 +55,6 @@
 #include <QColor>
 #include <QSettings>
 
-#ifdef OGS_USE_OPENSG
-#include "vtkOsgActor.h"
-VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, OSG::SimpleSceneManager* manager, QObject* parent /*= 0*/)
-: TreeModel(parent), _renderer(renderer), _sceneManager(manager)
-{
-	QList<QVariant> rootData;
-	rootData << "Object name" << "Visible";
-	delete _rootItem;
-	_rootItem = new TreeItem(rootData, NULL);
-	VtkVisPipelineItem::rootNode = _sceneManager->getRoot();
-
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
-	if (backgroundColorVariant != QVariant())
-		this->setBGColor(backgroundColorVariant.value<QColor>());
-
-	_resetCameraOnAddOrRemove = true;
-}
-#else // OGS_USE_OPENSG
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 : TreeModel(parent), _renderer(renderer)
 {
@@ -89,7 +70,6 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 
 	_resetCameraOnAddOrRemove = true;
 }
-#endif // OGS_USE_OPENSG
 
 bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
 	int role /* = Qt::EditRole */ )
