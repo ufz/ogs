@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	// *** init start vector x
 	for (size_t k(0); k<n; k++) {
-		x[k] = 0.0;
+		x[k] = 1.0;
 	}
 	// *** read rhs
 	fname = argv[2];
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
 
 	if (verbose)
-		std::cout << "solving system with PCG method (diagonal preconditioner) ... " << std::flush;
+		std::cout << "solving system with BiCGStab method (diagonal preconditioner) ... " << std::flush;
 
 	double eps (1.0e-6);
 	unsigned steps (4000);
