@@ -20,8 +20,9 @@ SET( HEADERS
         LinAlg/Solvers/TriangularSolve.h
         LinAlg/Solvers/IterativeLinearSolver.h
         LinAlg/Solvers/solver.h
-        LinAlg/Solvers/CG.h
         LinAlg/Solvers/BiCGStab.h
+        LinAlg/Solvers/CG.h
+        LinAlg/Solvers/GMRes.h
 	LinAlg/Sparse/amuxCRS.h
         LinAlg/Sparse/CRSMatrix.h
         LinAlg/Sparse/CRSMatrixPThreads.h
@@ -37,8 +38,9 @@ SET( SOURCES
 	EarClippingTriangulation.cpp  
 	LinkedTriangle.cpp
         LinAlg/Sparse/amuxCRS.cpp
-        LinAlg/Solvers/CG.cpp
         LinAlg/Solvers/BiCGStab.cpp
+        LinAlg/Solvers/CG.cpp
+        LinAlg/Solvers/GMRes.cpp
 	LinAlg/Solvers/GaussAlgorithm.cpp
         LinAlg/Solvers/TriangularSolve.cpp
 	LinAlg/Preconditioner/generateDiagPrecond.cpp

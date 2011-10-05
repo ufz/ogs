@@ -37,6 +37,13 @@ ADD_EXECUTABLE( BiCGStabDiagPrecond
         ${HEADERS}
 )
 
+ADD_EXECUTABLE( GMResDiagPrecond
+	GMResDiagPrecond.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+
+
 TARGET_LINK_LIBRARIES ( ConjugateGradientUnpreconditioned
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -52,6 +59,13 @@ TARGET_LINK_LIBRARIES ( ConjugateGradientDiagPrecond
 )
 
 TARGET_LINK_LIBRARIES( BiCGStabDiagPrecond
+        ${BLAS_LIBRARIES}
+        ${LAPACK_LIBRARIES}
+	MathLib
+	Base
+)
+
+TARGET_LINK_LIBRARIES( GMResDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
