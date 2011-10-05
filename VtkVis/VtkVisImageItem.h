@@ -46,7 +46,7 @@ public:
 	void Initialize(vtkRenderer* renderer);
 
 protected:
-	const int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
+	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:

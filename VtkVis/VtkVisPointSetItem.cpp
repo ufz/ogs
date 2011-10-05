@@ -157,7 +157,7 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	}
 }
 
-const int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
+int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
 	vtkPolyDataAlgorithm* algPD = dynamic_cast<vtkPolyDataAlgorithm*>(algorithm);
 	vtkUnstructuredGridAlgorithm* algUG = dynamic_cast<vtkUnstructuredGridAlgorithm*>(algorithm);

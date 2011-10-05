@@ -68,7 +68,7 @@ protected:
 	vtkTransformFilter* _transformFilter;
 	QString _activeAttribute;
 
-	const int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
+	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	/// Sets a color lookup table for the current scalar array.
 	void setLookupTableForActiveScalar();

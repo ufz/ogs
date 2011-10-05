@@ -71,7 +71,7 @@ public:
 	virtual const QString GetActiveAttribute() const { return QString(""); }
 
 	// Dummy for implementation in derived classes
-	virtual void SetActiveAttribute(const QString& str) {};
+	virtual void SetActiveAttribute(const QString& str) { (void)str; };
 
 	/// @brief Returns the mapper
 	QVtkDataSetMapper* mapper() const { return _mapper; }
@@ -107,7 +107,7 @@ protected:
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
 
-	virtual const int callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const;
+	virtual int callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	void SetScalarVisibility(bool on);
 	

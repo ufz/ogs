@@ -128,9 +128,11 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 	return 0;
 }
 
-const int VtkVisPipelineItem::callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const
+int VtkVisPipelineItem::callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const
 {
 	// needs to be implemented in derived classes!
+	(void)algorithm;
+	(void)filename;
 	return 0;
 }
 
@@ -146,12 +148,12 @@ void VtkVisPipelineItem::SetScalarVisibility( bool on )
 
 void VtkVisPipelineItem::setScale(double x, double y, double z) const
 {
-
+	(void)x; (void)y, (void)z;
 }
 
 void VtkVisPipelineItem::setTranslation(double x, double y, double z) const
 {
-
+	(void)x; (void)y, (void)z;
 }
 
 void VtkVisPipelineItem::setScaleOnChildren(double x, double y, double z) const

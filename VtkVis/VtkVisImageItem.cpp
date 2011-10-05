@@ -98,10 +98,11 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 
 void VtkVisImageItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 {
-	// todo
+	// todo implementation
+	(void)vtkProps;
 }
 
-const int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
+int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
 	vtkImageAlgorithm* algID = dynamic_cast<vtkImageAlgorithm*>(algorithm);
 	if (algID)
