@@ -278,18 +278,20 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 				if (k==0)
 				{
 					tmp_connected_nodes.clear();
-					for (size_t j=0; j<tNode->connected_nodes.size(); j++)
-						tmp_connected_nodes.push_back(tNode->connected_nodes[j]);
+					std::vector<size_t> const& connected_nodes (tNode->getConnectedNodes());
+					const size_t n_connected_nodes (connected_nodes.size());
+					for (size_t j=0; j<n_connected_nodes; j++)
+						tmp_connected_nodes.push_back(connected_nodes[j]);
 				}
 
 				tNode->SetZ(bNode->getData()[2]); // z coordinate changed to layer above
-				tNode->connected_nodes.clear();
+				tNode->getConnectedNodes().clear();
 				for (int j=k; j>=0; j--)  //WW/YW. 23.01.2009
 				{
 					MeshLib::CNode* nNode = mesh->nod_vector[j*nNodesPerLayer+i];
 					if (nNode->GetMark())
 					{
-						tNode->connected_nodes.push_back(nNode->GetIndex());
+						tNode->getConnectedNodes().push_back(nNode->GetIndex());
 						break;
 					}
 				}
@@ -303,9 +305,9 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 
 			MeshLib::CNode* bNode = mesh->nod_vector[nNodesPerLayer+i];
 			bNode->SetMark(true);
-			bNode->connected_nodes.clear();
+			bNode->getConnectedNodes().clear();
 			for (size_t j=0; j<tmp_connected_nodes.size(); j++)
-				bNode->connected_nodes.push_back(tmp_connected_nodes[j]);
+				bNode->getConnectedNodes().push_back(tmp_connected_nodes[j]);
 
 			MeshLib::CNode* tNode = mesh->nod_vector[(nLayers-1)*nNodesPerLayer+i];
 			tNode->SetMark(false);
@@ -316,8 +318,8 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 			{
 				tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i];
 				tNode->SetZ(ref_dep);
-				tNode->connected_nodes.clear();
-				tNode->connected_nodes.push_back(bNode->GetIndex());
+				tNode->getConnectedNodes().clear();
+				tNode->getConnectedNodes().push_back(bNode->GetIndex());
 			}
 		}
 
@@ -487,7 +489,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		{
 			node->SetIndex(counter);
 			node->getConnectedElementIDs().clear();
-			node->connected_nodes.clear();
+			node->getConnectedNodes().clear();
 			counter++;
 		}
 		else
