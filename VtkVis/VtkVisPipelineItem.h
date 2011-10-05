@@ -107,7 +107,7 @@ protected:
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
 
-	virtual int callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const;
+	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	void SetScalarVisibility(bool on);
 	

@@ -128,7 +128,7 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 	return 0;
 }
 
-int VtkVisPipelineItem::callVTKWriter(const vtkAlgorithm* algorithm, const std::string &filename) const
+int VtkVisPipelineItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
 	// needs to be implemented in derived classes!
 	(void)algorithm;
