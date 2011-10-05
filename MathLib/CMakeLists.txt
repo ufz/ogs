@@ -5,7 +5,6 @@ SET( HEADERS
 	MathTools.h
 	Vector3.h
 	EarClippingTriangulation.h  
-	LinkedTriangle.h
 	max.h
         sparse.h
 	vector_io.h
@@ -36,7 +35,6 @@ SET( SOURCES
 	LinearInterpolation.cpp  
 	MathTools.cpp
 	EarClippingTriangulation.cpp  
-	LinkedTriangle.cpp
         LinAlg/Sparse/amuxCRS.cpp
         LinAlg/Solvers/BiCGStab.cpp
         LinAlg/Solvers/CG.cpp
