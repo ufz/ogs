@@ -35,6 +35,10 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 
 	this->scaleZ->setValidator(new QDoubleValidator(0, 100, 8, this));
 
+	this->transX->setValidator(new QDoubleValidator(this));
+	this->transY->setValidator(new QDoubleValidator(this));
+	this->transZ->setValidator(new QDoubleValidator(this));
+
 	connect(this->vtkVisPipelineView, SIGNAL(requestViewUpdate()),
 		this, SIGNAL(requestViewUpdate()));
 
@@ -56,33 +60,58 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 		if (actor)
 		{
 			actorPropertiesGroupBox->setEnabled(true);
+			transformTabWidget->setEnabled(true);
 			vtkProperty* vtkProps = actor->GetProperty();
 			diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
 			visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
 			edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
 			opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
-			vtkTransform* transform = 
-				static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
-			double scale[3];
-			transform->GetScale(scale);
-			scaleZ->setText(QString::number(scale[2]));
+			
+			vtkTransform* transform = static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
+			if (transform)
+			{
+				double scale[3];
+				transform->GetScale(scale);
+				double trans[3];
+				transform->GetPosition(trans);
 
+				//switch signals off for just filling in text-boxes after clicking on an item
+				this->scaleZ->blockSignals(true);
+				this->transX->blockSignals(true);
+				this->transY->blockSignals(true);
+				this->transZ->blockSignals(true);
+				this->scaleZ->setText(QString::number(scale[2]));
+				this->transX->setText(QString::number(trans[0]/scale[0]));
+				this->transY->setText(QString::number(trans[1]/scale[1]));
+				this->transZ->setText(QString::number(trans[2]/scale[2]));
+				this->scaleZ->blockSignals(false);
+				this->transX->blockSignals(false);
+				this->transY->blockSignals(false);
+				this->transZ->blockSignals(false);
+				//switch signals back on
+			}
 			this->buildScalarArrayComboBox(_item);
 
 			// Set to last active attribute
-			QString activeAttribute = item->GetActiveAttribute();
-			for (int i = 0; i < this->activeScalarComboBox->count(); i++)
+			QString activeAttribute = _item->GetActiveAttribute();
+			if (activeAttribute.length()>0)
 			{
-				QString itemText = this->activeScalarComboBox->itemText(i);
-				if (itemText.compare(activeAttribute) == 0)
+				for (int i = 0; i < this->activeScalarComboBox->count(); i++)
 				{
-					this->activeScalarComboBox->setCurrentIndex(i);
-					break;
+					QString itemText = this->activeScalarComboBox->itemText(i);
+					if (itemText.compare(activeAttribute) == 0)
+					{
+						this->activeScalarComboBox->setCurrentIndex(i);
+						break;
+					}
 				}
 			}
 		}
 		else
+		{
 			actorPropertiesGroupBox->setEnabled(false);
+			transformTabWidget->setEnabled(false);
+		}
 
 		this->buildProportiesDialog(item);
 		
@@ -110,6 +139,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 	else
 	{
 		actorPropertiesGroupBox->setEnabled(false);
+		transformTabWidget->setEnabled(false);
 		this->activeScalarComboBox->clear();
 	}
 
@@ -175,6 +205,22 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 			}
 		}		
 
+		emit requestViewUpdate();
+	}
+}
+
+void VtkVisTabWidget::translateItem()
+{
+	bool okX(true), okY(true), okZ(true);
+	double trans[3];
+
+	trans[0] = transX->text().toDouble(&okX);
+	trans[1] = transY->text().toDouble(&okY);
+	trans[2] = transZ->text().toDouble(&okZ);
+
+	if (okX && okY && okZ)
+	{
+		_item->setTranslation(trans[0], trans[1], trans[2]);
 		emit requestViewUpdate();
 	}
 }

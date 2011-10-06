@@ -35,13 +35,10 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 	{
 		// add nodes for new layer
 		size_t node_offset ( nNodes*layer_id );
-		double z_offset ( layer_id*thickness );
+// TF unused variable		double z_offset ( layer_id*thickness );
 		for (size_t i=0; i<nNodes; i++)
 		{
-			MeshLib::CNode* node( new MeshLib::CNode( node_offset + i ) );
-			double coords[3] = { mesh->nod_vector[i]->X(), mesh->nod_vector[i]->Y(), mesh->nod_vector[i]->Z()-z_offset };
-			node->SetCoordinates(coords);
-			new_mesh->nod_vector.push_back(node);
+			new_mesh->nod_vector.push_back(new MeshLib::CNode( node_offset + i, mesh->nod_vector[i]->getData()));
 		}
 
 		if (layer_id>0) // starting with the 2nd layer prism (or hex) elements can be created
@@ -132,8 +129,8 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 
 		for(size_t i=firstNode; i<lastNode; i++)
 		{
-			size_t xPos (static_cast<size_t>(floor((msh->nod_vector[i]->X() - xDim.first) / delta)));
-			size_t yPos (static_cast<size_t>(floor((msh->nod_vector[i]->Y() - yDim.first) / delta)));
+			size_t xPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[0] - xDim.first) / delta)));
+			size_t yPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[1] - yDim.first) / delta)));
 
 			locX[0] = xDim.first+xPos*delta;
 			locY[0] = yDim.first+yPos*delta;
@@ -161,8 +158,9 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 			{
 				 // Interpolate
 				double ome[4];
-				double xi  = 2.0*(msh->nod_vector[i]->X()-0.5*(locX[0]+locX[1]))/delta;
-				double eta = 2.0*(msh->nod_vector[i]->Y()-0.5*(locY[1]+locY[2]))/delta;
+				double const*const coords (msh->nod_vector[i]->getData());
+				double xi  = 2.0*(coords[0]-0.5*(locX[0]+locX[1]))/delta;
+				double eta = 2.0*(coords[1]-0.5*(locY[1]+locY[2]))/delta;
 				MPhi2D(ome, xi, eta);
 
 				double z(0.0);
@@ -179,7 +177,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 			}
 		}
 
-		if ((nLayers == 1) && removeNoDataValues) 
+		if ((nLayers == 1) && removeNoDataValues)
 		{
 			if (noData_nodes.size() < (new_mesh->nod_vector.size()-2))
 			{
@@ -217,19 +215,21 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 // KR, based on code by WW (Note: this method has not been tested yet and will probably fail miserably!)
 bool MshLayerMapper::meshFitsImage(const MeshLib::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim)
 {
-	double xMin(msh->nod_vector[0]->X());
-	double yMin(msh->nod_vector[0]->Y());
-	double xMax(msh->nod_vector[0]->X());
-	double yMax(msh->nod_vector[0]->Y());
+	double const* pnt (msh->nod_vector[0]->getData());
+	double xMin(pnt[0]);
+	double yMin(pnt[1]);
+	double xMax(pnt[0]);
+	double yMax(pnt[1]);
 
 	size_t nNodes = msh->nod_vector.size();
 	for (size_t i=1; i<nNodes; i++)
 	{
-		if (xMin > msh->nod_vector[i]->X()) xMin = msh->nod_vector[i]->X();
-		else if (xMax < msh->nod_vector[i]->X()) xMax = msh->nod_vector[i]->X();
+		pnt = msh->nod_vector[i]->getData();
+		if (xMin > pnt[0]) xMin = pnt[0];
+		else if (xMax < pnt[0]) xMax = pnt[0];
 
-		if (yMin > msh->nod_vector[i]->Y()) yMin = msh->nod_vector[i]->Y();
-		else if (yMax < msh->nod_vector[i]->Y()) yMax = msh->nod_vector[i]->Y();
+		if (yMin > pnt[1]) yMin = pnt[1];
+		else if (yMax < pnt[1]) yMax = pnt[1];
 	}
 
 	if (xMin < xDim.first || xMax > xDim.second || yMin < yDim.first || yMax > yDim.second)
@@ -278,18 +278,20 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 				if (k==0)
 				{
 					tmp_connected_nodes.clear();
-					for (size_t j=0; j<tNode->connected_nodes.size(); j++)
-						tmp_connected_nodes.push_back(tNode->connected_nodes[j]);
+					std::vector<size_t> const& connected_nodes (tNode->getConnectedNodes());
+					const size_t n_connected_nodes (connected_nodes.size());
+					for (size_t j=0; j<n_connected_nodes; j++)
+						tmp_connected_nodes.push_back(connected_nodes[j]);
 				}
 
-				tNode->SetZ(bNode->Z()); // z coordinate changed to layer above
-				tNode->connected_nodes.clear();
+				tNode->SetZ(bNode->getData()[2]); // z coordinate changed to layer above
+				tNode->getConnectedNodes().clear();
 				for (int j=k; j>=0; j--)  //WW/YW. 23.01.2009
 				{
 					MeshLib::CNode* nNode = mesh->nod_vector[j*nNodesPerLayer+i];
 					if (nNode->GetMark())
 					{
-						tNode->connected_nodes.push_back(nNode->GetIndex());
+						tNode->getConnectedNodes().push_back(nNode->GetIndex());
 						break;
 					}
 				}
@@ -303,21 +305,21 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 
 			MeshLib::CNode* bNode = mesh->nod_vector[nNodesPerLayer+i];
 			bNode->SetMark(true);
-			bNode->connected_nodes.clear();
+			bNode->getConnectedNodes().clear();
 			for (size_t j=0; j<tmp_connected_nodes.size(); j++)
-				bNode->connected_nodes.push_back(tmp_connected_nodes[j]);
+				bNode->getConnectedNodes().push_back(tmp_connected_nodes[j]);
 
 			MeshLib::CNode* tNode = mesh->nod_vector[(nLayers-1)*nNodesPerLayer+i];
 			tNode->SetMark(false);
-			bNode->SetZ(tNode->Z());
+			bNode->SetZ(tNode->getData()[2]);
 			bNode->SetBoundaryType('1');
 			//
 			for (size_t k=1; k<nLayers; k++)
 			{
 				tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i];
 				tNode->SetZ(ref_dep);
-				tNode->connected_nodes.clear();
-				tNode->connected_nodes.push_back(bNode->GetIndex());
+				tNode->getConnectedNodes().clear();
+				tNode->getConnectedNodes().push_back(bNode->GetIndex());
 			}
 		}
 
@@ -335,8 +337,8 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		flat = 0;
 		for (size_t k=0; k<3;k++) //skip element when one node is marked ref_dep
 		{
-			if ( fabs(elem->GetNode(k)->Z()  +ref_dep)<std::numeric_limits<double>::min() ||
-			     fabs(elem->GetNode(k+3)->Z()+ref_dep)<std::numeric_limits<double>::min() )
+			if ( fabs(elem->GetNode(k)->getData()[2]  +ref_dep)<std::numeric_limits<double>::min() ||
+			     fabs(elem->GetNode(k+3)->getData()[2]+ref_dep)<std::numeric_limits<double>::min() )
 			{
 				flat = 1;
 				elem->SetMark(false);
@@ -348,7 +350,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		// If all nodes are okay, check if two z-values are identical
 		for (size_t k=0; k<3;k++)
 		{
-			if(fabs(elem->GetNode(k+3)->Z()-elem->GetNode(k)->Z()) < std::numeric_limits<double>::min())
+			if(fabs(elem->GetNode(k+3)->getData()[2]-elem->GetNode(k)->getData()[2]) < std::numeric_limits<double>::min())
 				false_node_idx.push_back(k);
 		}
 
@@ -487,7 +489,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		{
 			node->SetIndex(counter);
 			node->getConnectedElementIDs().clear();
-			node->connected_nodes.clear();
+			node->getConnectedNodes().clear();
 			counter++;
 		}
 		else

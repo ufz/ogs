@@ -3,7 +3,7 @@
  * 4/11/2009 LB Initial implementation
  *
  */
-
+#include "Configure.h"
 #include "mainwindow.h"
 
 // models
@@ -47,6 +47,7 @@
 #include "rf_ic_new.h"
 #include "wait.h"
 #include "MathIO/CRSIO.h"
+#include "Raster.h"
 
 // FileIO includes
 #include "OGSIOVer4.h"
@@ -54,11 +55,12 @@
 #include "PetrelInterface.h"
 #include "GocadInterface.h"
 #include "XMLInterface.h"
-#include "GMSHInterface.h"
+#include "MeshIO/GMSHInterface.h"
 #include "GMSInterface.h"
 #include "NetCDFInterface.h"    //YW  07.2010
 #include "GeoIO/Gmsh2GeoIO.h"
 #include "FEFLOWInterface.h"
+#include "MeshIO/TetGenInterface.h"
 
 #include "StringTools.h"
 
@@ -77,13 +79,13 @@
 // VTK includes
 #include <vtkVRMLExporter.h>
 #include <vtkOBJExporter.h>
+#include <vtkRenderer.h>
 
 #ifdef OGS_USE_OPENSG
 #include <OpenSG/OSGSceneFileHandler.h>
 #include <OpenSG/OSGCoredNodePtr.h>
 #include <OpenSG/OSGGroup.h>
-#include "vtkOsgActor.h"
-#include "OsgWidget.h"
+#include "vtkOsgConverter.h"
 #endif
 
 #ifdef OGS_USE_VRPN
@@ -116,15 +118,7 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 	conditionTabWidget->treeView->setModel(_conditionModel);
 
 	// vtk visualization pipeline
-#ifdef OGS_USE_OPENSG
-	OsgWidget* osgWidget = new OsgWidget(this, 0, Qt::Window);
-	//osgWidget->show();
-	osgWidget->sceneManager()->setRoot(makeCoredNode<OSG::Group>());
-	osgWidget->sceneManager()->showAll();
-	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer(), osgWidget->sceneManager());
-#else // OGS_USE_OPENSG
 	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
-#endif // OGS_USE_OPENSG
 
 	// station model connects
 	connect(stationTabWidget->treeView,
@@ -683,6 +677,8 @@ void MainWindow::about()
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QMenu* importFiles = new QMenu("&Import Files");
+    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
+    connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
 	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
@@ -703,8 +699,6 @@ QMenu* MainWindow::createImportFilesMenu()
 #endif
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
-    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-    connect( feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()) );
 
 	return importFiles;
 }
@@ -1025,7 +1019,7 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 				system(gmsh_command.c_str());
 				this->loadFile(fileName.left(fileName.length()-3).append("msh"));
 			} else {
-				OGSError::box("Error executing command", "Error");
+				OGSError::box("Error executing command gmsh - no command processor available", "Error");
 			}
 
 			if (delete_geo_file) { // delete file
@@ -1109,6 +1103,147 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	// *** begin test TetGen read mesh
+	const std::string path ("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/MSH/");
+	std::string mesh_name ("ClosedSurface");
+	std::string fname_nodes(path+mesh_name+".1.node");
+	std::string fname_elements(path+mesh_name+".1.ele");
+
+	FileIO::TetGenInterface tetgen;
+	MeshLib::CFEMesh *mesh (tetgen.readTetGenMesh (fname_nodes, fname_elements));
+
+	if (mesh)
+		_meshModels->addMesh(mesh, mesh_name);
+	else
+		OGSError::box("Failed to load TetGen mesh file.");
+
+	// *** end test TetGen read mesh
+
+//	// *** begin creating closed surface mesh
+//	{
+//		std::string path("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/");
+//		std::string fname(path+"ClosedSurface.geo");
+//		FileIO::GMSHInterface gmsh_io(fname);
+//
+//		std::vector<std::string> geometries;
+//		double param4(0);
+//
+//		// all geos for top surface
+//		geometries.push_back("Boreholes Ketzin Top");
+//		geometries.push_back("CoarseGridPointsAsStationsTop");
+//		geometries.push_back("MiddleGridPointsAsStationsTop");
+//		geometries.push_back("FineGridPointsAsStationsTop");
+//		geometries.push_back("KetzinPolygonTop");
+//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+//				geometries, param4);
+//
+//		geometries.clear();
+//		// all geos for bottom surface
+//		geometries.push_back("Boreholes Ketzin Bottom");
+//		geometries.push_back("CoarseGridPointsAsStationsBottom");
+//		geometries.push_back("MiddleGridPointsAsStationsBottom");
+//		geometries.push_back("FineGridPointsAsStationsBottom");
+//		geometries.push_back("KetzinPolygonBottom");
+//
+//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+//				geometries, param4);
+//
+//		geometries.clear();
+//		geometries.push_back("KetzinPolygonNorth");
+//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+//						geometries, param4);
+//		geometries.clear();
+//		geometries.push_back("KetzinPolygonWest");
+//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+//						geometries, param4);
+//		geometries.clear();
+//		geometries.push_back("KetzinPolygonSouth");
+//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+//						geometries, param4);
+//		geometries.clear();
+//		geometries.push_back("KetzinPolygonEast");
+//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+//						geometries, param4);
+//	}
+//	// *** end creating closed surface mesh
+
+//	// *** begin assign z values
+//	{
+//		// get the surface
+//		std::vector<std::string> geo_names;
+//		_geoModels->getGeometryNames (geo_names);
+//		std::vector<GEOLIB::Surface*> const* sfcs (_geoModels->getSurfaceVec(geo_names[0]));
+//		GEOLIB::Surface const* sfc ((*sfcs)[5]);
+//		const size_t n_triangles (sfc->getNTriangles());
+//		size_t k;
+//
+//		std::vector<GEOLIB::Point*> const* pnts (_geoModels->getPointVec(geo_names[1]));
+//
+//		// write Points (inclusive z values) to file
+//		std::ofstream out ("RasterPointsBottom.stn");
+//		if (out) {
+//			// data
+//			for (size_t n(0); n<pnts->size(); n++) {
+//				// search triangle the point is inside
+//				const double test_pnt[3] = { (*(*pnts)[n])[0], (*(*pnts)[n])[1], 0};
+//				for (k=0; k<n_triangles; k++) {
+//					GEOLIB::Triangle const * const tri ((*sfc)[k]);
+//					if (tri->containsPoint2D(test_pnt)) {
+//						// compute coefficients c0, c1, c2 for the plane f(x,y) = c0 x + c1 y + c2
+//						double c[3];
+//						GEOLIB::getPlaneCoefficients(*tri, c);
+//						const double zval (c[0] * test_pnt[0] + c[1] * test_pnt[1] + c[2]);
+//						out << "    <station x=\"" << test_pnt[0] << "\" y=\"" << test_pnt[1] << "\" z=\"" << zval << "\" id=\"" << n << "\">" << std::endl;
+//						out << "      <name>" << n << "</name>" << std::endl;
+//						out << "    </station>" << std::endl;
+//						break;
+//					}
+//				}
+//				if (k==n_triangles) {
+//					out << n << " " << test_pnt[0] << " " << test_pnt[1] << " -9999" << std::endl;
+//				}
+//			}
+//			out.close();
+//		}
+//	}
+//	// *** end assign z values
+
+//	// *** begin create raster test
+//	{
+//		// get the surface
+//		std::vector<std::string> geo_names;
+//		_geoModels->getGeometryNames (geo_names);
+//		std::vector<GEOLIB::Surface*> const* sfcs (_geoModels->getSurfaceVec(geo_names[0]));
+//		GEOLIB::Surface const* sfc ((*sfcs)[4]);
+//
+//		double cell_size(50);
+//		double no_data_val(-9999);
+//		GEOLIB::Raster my_raster (cell_size, no_data_val);
+//		size_t n_rows(0), n_cols(0);
+//		double *raster (my_raster.getRasterFromSurface(*sfc, n_rows, n_cols));
+//		// write raster to testfile
+//		std::ofstream out ("RasterTop-50m-New.asc");
+//		if (out) {
+//			// write header
+//			out << "ncols\t" << n_cols << std::endl;
+//			out << "nrows\t" << n_rows << std::endl;
+//			out << "xllcorner\t" << (sfc->getAABB().getMinPoint())[0] - 0.5 * cell_size << std::endl;
+//			out << "yllcorner\t" << (sfc->getAABB().getMinPoint())[1] - 0.5 * cell_size << std::endl;
+//			out << "cellsize\t" << cell_size << std::endl;
+//			out << "NODATA_value\t" << no_data_val << std::endl;
+//			// data
+//			for (size_t r(0); r<n_rows; r++) {
+//				for (size_t c(0); c<n_cols-1; c++) {
+//					out << raster[r*n_cols+c] << " ";
+//				}
+//				out << raster[(r+1)*n_cols-1] << std::endl;
+//			}
+//			out.close();
+//		}
+//		delete [] raster;
+//	}
+//	// *** end create raster test
+
 //	// *** begin test CFEMesh::GetNODOnSFC ()
 //	{
 //		// get the surface
@@ -1422,13 +1557,13 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 		while(*it)
 		{
 			VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(*it);
-			vtkOsgActor* actor = static_cast<vtkOsgActor*>(item->actor());
-			actor->SetVerbose(true);
-			actor->UpdateOsg();
-			beginEditCP(root);
-			root->addChild(actor->GetOsgRoot());
-			endEditCP(root);
-			actor->ClearOsg();
+			vtkOsgConverter converter(static_cast<vtkActor*>(item->actor()));
+			if(converter.WriteAnActor())
+			{
+				beginEditCP(root);
+				root->addChild(converter.GetOsgNode());
+				endEditCP(root);
+			}
 			++it;
 		}
 
