@@ -6,13 +6,13 @@
 #ifndef STRATVIEW_H
 #define STRATVIEW_H
 
-#include <QtGui/QWidget>
-#include <QGraphicsView>
 #include "StratScene.h"
+#include <QGraphicsView>
+#include <QtGui/QWidget>
 
 namespace GEOLIB
 {
-	class StationBorehole;
+class StationBorehole;
 }
 
 /**
@@ -25,11 +25,12 @@ public:
 	/**
 	 * Creates an empty view.
 	 */
-	StratView(QWidget* parent = 0) : _scene(NULL) {Q_UNUSED(parent);}
+	StratView(QWidget* parent = 0) : _scene(NULL) {Q_UNUSED(parent); }
 	~StratView();
 
 	/// Sets the Borehole whose data should be visualised.
-	void setStation(GEOLIB::StationBorehole* station, std::map<std::string, GEOLIB::Color*> *stratColors = NULL);
+	void setStation(GEOLIB::StationBorehole* station,
+	                std::map<std::string, GEOLIB::Color*>* stratColors = NULL);
 
 	/// Returns the height of the bounding rectangle of all objects within the scene.
 	int getHeight() { return static_cast<int>((_scene->itemsBoundingRect()).height()); }
@@ -44,14 +45,14 @@ protected:
 	void resizeEvent(QResizeEvent* event);
 
 private:
-    /// Initialises the view.
+	/// Initialises the view.
 	void initialize();
 
 	/// The minimum size of the window.
-	QSize minimumSizeHint() const { return QSize(3*_scene->MARGIN,2*_scene->MARGIN); }
+	QSize minimumSizeHint() const { return QSize(3 * _scene->MARGIN,2 * _scene->MARGIN); }
 
 	/// The default size of the window.
-	QSize sizeHint() const { return QSize(6*_scene->MARGIN, 4*_scene->MARGIN); }
+	QSize sizeHint() const { return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN); }
 
 	/// Updates the view automatically when a Borehole is added or when the window containing the view changes its state.
 	void update();

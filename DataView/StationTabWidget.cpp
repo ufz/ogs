@@ -1,7 +1,7 @@
 /**
  * \file StationTabWidget.cpp
  * 3/11/2009 LB Initial implementation
- * 
+ *
  * Implementation of StationTabWidget
  */
 
@@ -9,7 +9,7 @@
 #include "StationTabWidget.h"
 
 StationTabWidget::StationTabWidget( QWidget* parent /*= 0*/ )
-: QWidget(parent)
+	: QWidget(parent)
 {
 	setupUi(this);
 }

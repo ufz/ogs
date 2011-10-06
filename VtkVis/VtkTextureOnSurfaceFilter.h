@@ -4,14 +4,13 @@
  *
  */
 
-
 #ifndef VTKOGSPOLYDATAALGORITHM_H
 #define VTKOGSPOLYDATAALGORITHM_H
 
 // ** INCLUDES **
-#include <vtkPolyDataAlgorithm.h>
-#include <vtkImageData.h>
 #include "VtkAlgorithmProperties.h"
+#include <vtkImageData.h>
+#include <vtkPolyDataAlgorithm.h>
 
 class QImage;
 
@@ -24,7 +23,7 @@ class QImage;
  * the texture will also be saved in the VtkAlgorithmProperties object from which this class is
  * derived (i.e. the texture can be returned by VtkAlgorithmProperties::GetTexture()).
  *
- * For convenience this class also has a converter function ConvertImageToTexture() which uses 
+ * For convenience this class also has a converter function ConvertImageToTexture() which uses
  * a QImage as input.
  */
 class VtkTextureOnSurfaceFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
@@ -36,7 +35,7 @@ public:
 	vtkTypeRevisionMacro(VtkTextureOnSurfaceFilter,vtkPolyDataAlgorithm);
 
 	/// Prints the object data to an output stream.
-	void PrintSelf(ostream& os, vtkIndent indent);	
+	void PrintSelf(ostream& os, vtkIndent indent);
 
 	/// Sets the raster/image to be used as a texture map
 	void SetRaster(QImage &img, std::pair<float, float> origin, double scalingFactor);
@@ -49,9 +48,9 @@ protected:
 
 	/// Copies the input data and calculates texture coordinates (this requires that SetRaster() has
 	/// been called before this method is executed.
-	int RequestData(vtkInformation* request, 
-		            vtkInformationVector** inputVector, 
-					vtkInformationVector* outputVector);
+	int RequestData(vtkInformation* request,
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
 private:
 	std::pair<float, float> _origin;

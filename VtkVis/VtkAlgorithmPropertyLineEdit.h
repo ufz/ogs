@@ -17,7 +17,7 @@ class QString;
 class VtkAlgorithmPropertyLineEdit : public QLineEdit
 {
 	Q_OBJECT
-	
+
 public:
 	/// @brief Constructor.
 	/// @param contents The initial text.
@@ -25,15 +25,18 @@ public:
 	/// @param type The type of the property.
 	/// @param algProps The VtkAlgorithmProperties object.
 	/// @param parent The parent widget.
-	VtkAlgorithmPropertyLineEdit(const QString& contents, const QString& name,
-		QVariant::Type type, VtkAlgorithmProperties* algProps, QWidget* parent = 0);
+	VtkAlgorithmPropertyLineEdit(const QString& contents,
+	                             const QString& name,
+	                             QVariant::Type type,
+	                             VtkAlgorithmProperties* algProps,
+	                             QWidget* parent = 0);
 	virtual ~VtkAlgorithmPropertyLineEdit();
 
 private:
 	const QString _name;
 	VtkAlgorithmProperties* _algProps;
 	QVariant::Type _type;
-	
+
 private slots:
 	/// @brief This slots is automatically called when the text changed.
 	void setNewValue();

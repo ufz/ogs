@@ -6,9 +6,9 @@
 #ifndef QUERYRESULTSDIALOG_H
 #define QUERYRESULTSDIALOG_H
 
-#include <QtGui/QMainWindow>
-#include <QSqlQueryModel>
 #include "ui_DatabaseResultView.h"
+#include <QSqlQueryModel>
+#include <QtGui/QMainWindow>
 
 /**
  * \brief A Dialog for displaying the results of a database query in a table.
@@ -37,7 +37,6 @@ private slots:
 
 signals:
 	void listSelected(int listID);
-
 };
 
 #endif //QUERYRESULTSDIALOG_H

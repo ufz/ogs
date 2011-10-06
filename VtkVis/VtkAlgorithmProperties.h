@@ -4,112 +4,123 @@
  *
  */
 
-
 #ifndef VTKALGORITHMPROPERTIES_H
 #define VTKALGORITHMPROPERTIES_H
 
 // ** INCLUDES **
+#include <QList>
+#include <QMap>
 #include <QObject>
+#include <QString>
+#include <QVariant>
 #include <vtkProperty.h>
 #include <vtkTexture.h>
-#include <QString>
-#include <QMap>
-#include <QVariant>
-#include <QList>
 
 #include "VtkColorLookupTable.h"
 
 #define ogsUserPropertyMacro(name,type) \
-virtual void Set##name (type _arg) \
-{ \
-	vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " #name " to " << _arg); \
-	if (this->name != _arg)  \
+        virtual void Set ## name (type _arg) \
 	{ \
-		this->name = _arg; \
-		this->Modified(); \
-		(*(this->_algorithmUserProperties))[QString(#name)] = QVariant(_arg); \
+		vtkDebugMacro( \
+		        << this->GetClassName() << " (" << this << "): setting " # name " to " << \
+		        _arg); \
+		if (this->name != _arg)  \
+		{ \
+			this->name = _arg; \
+			this->Modified(); \
+			(*(this->_algorithmUserProperties))[QString(# name)] = QVariant(_arg); \
+		} \
 	} \
-} \
 \
-type name;
+        type name;
 // End of ogsUserPropertyMacro
 
 #define ogsUserVec2PropertyMacro(name,type) \
-virtual void Set##name (type _arg1, type _arg2) \
-{ \
-	vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to (" << _arg1 << "," << _arg2 << ")"); \
-	if ((this->name[0] != _arg1)||(this->name[1] != _arg2)) \
+        virtual void Set ## name (type _arg1, type _arg2) \
 	{ \
-		this->name[0] = _arg1; \
-		this->name[1] = _arg2; \
-		this->Modified(); \
-		QList<QVariant> list; \
-		list.push_back(QVariant(_arg1)); \
-		list.push_back(QVariant(_arg2)); \
-		(*(this->_algorithmUserVectorProperties))[QString(#name)] = list; \
+		vtkDebugMacro( \
+		        << this->GetClassName() << " (" << this << "): setting " << \
+		        # name " to (" << \
+		        _arg1 << "," << _arg2 << ")"); \
+		if ((this->name[0] != _arg1) || (this->name[1] != _arg2)) \
+		{ \
+			this->name[0] = _arg1; \
+			this->name[1] = _arg2; \
+			this->Modified(); \
+			QList<QVariant> list; \
+			list.push_back(QVariant(_arg1)); \
+			list.push_back(QVariant(_arg2)); \
+			(*(this->_algorithmUserVectorProperties))[QString(# name)] = list; \
+		} \
 	} \
-} \
 \
-virtual void Set##name (type _arg[2]) \
-{ \
-	this->Set##name (_arg[0], _arg[1]);\
-} \
+        virtual void Set ## name (type _arg[2]) \
+	{ \
+		this->Set ## name (_arg[0], _arg[1]); \
+	} \
 \
-type name[2];
+        type name[2];
 // End of ogsUserVec2PropertyMacro
 
 #define ogsUserVec3PropertyMacro(name,type) \
-virtual void Set##name (type _arg1, type _arg2, type _arg3) \
-{ \
-	vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to (" << _arg1 << "," << _arg2 << "," << _arg3 << ")"); \
-	if ((this->name[0] != _arg1)||(this->name[1] != _arg2)||(this->name[2] != _arg3)) \
+        virtual void Set ## name (type _arg1, type _arg2, type _arg3) \
 	{ \
-		this->name[0] = _arg1; \
-		this->name[1] = _arg2; \
-		this->name[2] = _arg3; \
-		this->Modified(); \
-		QList<QVariant> list; \
-		list.push_back(QVariant(_arg1)); \
-		list.push_back(QVariant(_arg2)); \
-		list.push_back(QVariant(_arg3)); \
-		(*(this->_algorithmUserVectorProperties))[QString(#name)] = list; \
+		vtkDebugMacro( \
+		        << this->GetClassName() << " (" << this << "): setting " << \
+		        # name " to (" << \
+		        _arg1 << "," << _arg2 << "," << _arg3 << ")"); \
+		if ((this->name[0] != _arg1) || (this->name[1] != _arg2) || (this->name[2] != _arg3)) \
+		{ \
+			this->name[0] = _arg1; \
+			this->name[1] = _arg2; \
+			this->name[2] = _arg3; \
+			this->Modified(); \
+			QList<QVariant> list; \
+			list.push_back(QVariant(_arg1)); \
+			list.push_back(QVariant(_arg2)); \
+			list.push_back(QVariant(_arg3)); \
+			(*(this->_algorithmUserVectorProperties))[QString(# name)] = list; \
+		} \
 	} \
-} \
 \
-virtual void Set##name (type _arg[3]) \
-{ \
-	this->Set##name (_arg[0], _arg[1], _arg[2]);\
-} \
+        virtual void Set ## name (type _arg[3]) \
+	{ \
+		this->Set ## name (_arg[0], _arg[1], _arg[2]); \
+	} \
 \
-type name[3];
+        type name[3];
 // End of ogsUserVec3PropertyMacro
 
 #define ogsUserVec4PropertyMacro(name,type) \
-virtual void Set##name (type _arg1, type _arg2, type _arg3, type _arg4) \
-{ \
-	vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to (" << _arg1 << "," << _arg2 << "," << _arg3 << "," << _arg4 << ")"); \
-	if ((this->name[0] != _arg1)||(this->name[1] != _arg2)||(this->name[2] != _arg3)||(this->name[3] != _arg4)) \
+        virtual void Set ## name (type _arg1, type _arg2, type _arg3, type _arg4) \
 	{ \
-		this->name[0] = _arg1; \
-		this->name[1] = _arg2; \
-		this->name[2] = _arg3; \
-		this->name[3] = _arg4; \
-		this->Modified(); \
-		QList<QVariant> list; \
-		list.push_back(QVariant(_arg1)); \
-		list.push_back(QVariant(_arg2)); \
-		list.push_back(QVariant(_arg3)); \
-		list.push_back(QVariant(_arg4)); \
-		(*(this->_algorithmUserVectorProperties))[QString(#name)] = list; \
+		vtkDebugMacro( \
+		        << this->GetClassName() << " (" << this << "): setting " << \
+		        # name " to (" << \
+		        _arg1 << "," << _arg2 << "," << _arg3 << "," << _arg4 << ")"); \
+		if ((this->name[0] != _arg1) || (this->name[1] != _arg2) || \
+		    (this->name[2] != _arg3) || (this->name[3] != _arg4)) \
+		{ \
+			this->name[0] = _arg1; \
+			this->name[1] = _arg2; \
+			this->name[2] = _arg3; \
+			this->name[3] = _arg4; \
+			this->Modified(); \
+			QList<QVariant> list; \
+			list.push_back(QVariant(_arg1)); \
+			list.push_back(QVariant(_arg2)); \
+			list.push_back(QVariant(_arg3)); \
+			list.push_back(QVariant(_arg4)); \
+			(*(this->_algorithmUserVectorProperties))[QString(# name)] = list; \
+		} \
 	} \
-} \
 \
-virtual void Set##name (type _arg[4]) \
-{ \
-	this->Set##name (_arg[0], _arg[1], _arg[2], _arg[3]);\
-} \
+        virtual void Set ## name (type _arg[4]) \
+	{ \
+		this->Set ## name (_arg[0], _arg[1], _arg[2], _arg[3]); \
+	} \
 \
-type name[4];
+        type name[4];
 // End of ogsUserVec4PropertyMacro
 
 /**
@@ -121,10 +132,10 @@ class VtkAlgorithmProperties : public QObject
 
 public:
 	/// Constructor (sets default values)
-	VtkAlgorithmProperties(QObject* parent = NULL) 
+	VtkAlgorithmProperties(QObject* parent = NULL)
 		: QObject(parent)
-	{ 
-		_property = vtkProperty::New(); 
+	{
+		_property = vtkProperty::New();
 		_texture  = NULL;
 		_scalarVisibility = true;
 		_algorithmUserProperties = new QMap<QString, QVariant>;
@@ -132,53 +143,54 @@ public:
 		_activeAttributeName = "";
 	}
 
-	virtual ~VtkAlgorithmProperties() 
+	virtual ~VtkAlgorithmProperties()
 	{
 		_property->Delete();
 		if (_texture != NULL) _texture->Delete();
-		
-		for (std::map<QString, vtkLookupTable*>::iterator it = _lut.begin(); it != _lut.end(); ++it)
+
+		for (std::map<QString, vtkLookupTable*>::iterator it = _lut.begin(); it != _lut.end();
+		     ++it)
 			it->second->Delete();
 		delete _algorithmUserProperties;
 		delete _algorithmUserVectorProperties;
-	};
-	
+	}
+
 	/// @brief Returns the vtk properties
-	vtkProperty* GetProperties() const { return _property; };
-	
+	vtkProperty* GetProperties() const { return _property; }
+
 	/// @brief Returns a texture (if one has been assigned).
-	vtkTexture* GetTexture() { return _texture; };
+	vtkTexture* GetTexture() { return _texture; }
 	/// @brief Sets a texture for the VtkVisPipelineItem.
-	void SetTexture(vtkTexture* t) { _texture = t; };
+	void SetTexture(vtkTexture* t) { _texture = t; }
 
 	/// @brief Returns the colour lookup table (if one has been assigned).
-	vtkLookupTable* GetLookupTable(const QString& array_name) 
-	{ 
+	vtkLookupTable* GetLookupTable(const QString& array_name)
+	{
 		std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
 		if (it != _lut.end()) return it->second;
 		return NULL;
-	};
+	}
 
 	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
-	void SetLookUpTable(const QString array_name, vtkLookupTable* lut) 
+	void SetLookUpTable(const QString array_name, vtkLookupTable* lut)
 	{
-		if (array_name.length()>0)
+		if (array_name.length() > 0)
 		{
 			std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
 			if (it != _lut.end()) it->second->Delete();
-			_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) ); 
+			_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
 		}
-	};
-	
+	}
+
 	/// Loads a predefined color lookup table from a file for the specified scalar array.
 	void SetLookUpTable(const QString &array_name, const std::string &filename)
-	{ 
+	{
 		VtkColorLookupTable* colorLookupTable = VtkColorLookupTable::New();
 		colorLookupTable->readFromFile(filename);
 		colorLookupTable->setInterpolationType(VtkColorLookupTable::NONE);
 		colorLookupTable->Build();
 		SetLookUpTable(array_name, colorLookupTable);
-	};
+	}
 
 	/// @brief Returns the scalar visibility.
 	bool GetScalarVisibility() const { return _scalarVisibility; }
@@ -188,12 +200,12 @@ public:
 		_scalarVisibility = on;
 		emit ScalarVisibilityChanged(on);
 	}
-	
+
 	/// @brief Returns the name. This is set to the file path if it is a source algorithm.
 	QString GetName() const { return _name; }
 	/// @brief Sets the name.
 	void SetName(QString name) { _name = name; }
-	
+
 	/// @brief Returns a map of user properties.
 	QMap<QString, QVariant>* GetAlgorithmUserProperties() const
 	{
@@ -243,8 +255,8 @@ public:
 	}
 
 	/// @brief Returns the desired active attribute.
-	QString GetActiveAttribute() const { return _activeAttributeName; };
-	
+	QString GetActiveAttribute() const { return _activeAttributeName; }
+
 protected:
 
 	// Properties set on vtkActor
@@ -254,17 +266,16 @@ protected:
 	// Properties set on vtkMapper
 	bool _scalarVisibility;
 	std::map<QString, vtkLookupTable*> _lut;
-	
+
 	// Properties used in the GUI
 	QString _name;
 	QString _activeAttributeName;
-	
+
 	QMap<QString, QVariant>* _algorithmUserProperties;
 	QMap<QString, QList<QVariant> >* _algorithmUserVectorProperties;
 
 signals:
 	void ScalarVisibilityChanged(bool on);
-
 };
 
 #endif // VTKALGORITHMPROPERTIES_H

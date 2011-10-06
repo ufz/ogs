@@ -4,13 +4,12 @@
  *
  */
 
-
 #ifndef VTKVISPIPELINEITEM_H
 #define VTKVISPIPELINEITEM_H
 
 // ** INCLUDES **
-#include "TreeItem.h"
 #include "Configure.h"
+#include "TreeItem.h"
 
 #include <QList>
 #include <QMap>
@@ -42,12 +41,12 @@ class VtkVisPipelineItem : /*public QObject,*/ public TreeItem
 public:
 	/// @brief Constructor for a source/filter object.
 	VtkVisPipelineItem(vtkAlgorithm* algorithm,
-		TreeItem* parentItem,
-		const QList<QVariant> data = QList<QVariant>());
+	                   TreeItem* parentItem,
+	                   const QList<QVariant> data = QList<QVariant>());
 
 	/// @brief Constructor for composite filter
 	VtkVisPipelineItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-		const QList<QVariant> data = QList<QVariant>());
+	                   const QList<QVariant> data = QList<QVariant>());
 
 	~VtkVisPipelineItem();
 
@@ -71,7 +70,7 @@ public:
 	virtual const QString GetActiveAttribute() const { return QString(""); }
 
 	// Dummy for implementation in derived classes
-	virtual void SetActiveAttribute(const QString& str) { (void)str; };
+	virtual void SetActiveAttribute(const QString& str) { (void)str; }
 
 	/// @brief Returns the mapper
 	QVtkDataSetMapper* mapper() const { return _mapper; }
@@ -99,7 +98,7 @@ public:
 	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;
-	
+
 protected:
 	vtkProp3D* _actor;
 	vtkAlgorithm* _algorithm;
@@ -110,9 +109,8 @@ protected:
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	void SetScalarVisibility(bool on);
-	
-private:
 
+private:
 };
 
 #endif // VTKVISPIPELINEITEM_H

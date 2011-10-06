@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef VTKVISIMAGEITEM_H
 #define VTKVISIMAGEITEM_H
 
@@ -28,16 +27,15 @@ class VtkCompositeFilter;
  */
 class VtkVisImageItem : public VtkVisPipelineItem
 {
-
 public:
 	/// @brief Constructor for a source/filter object.
 	VtkVisImageItem(vtkAlgorithm* algorithm,
-		TreeItem* parentItem,
-		const QList<QVariant> data = QList<QVariant>());
+	                TreeItem* parentItem,
+	                const QList<QVariant> data = QList<QVariant>());
 
 	/// @brief Constructor for composite filter
 	VtkVisImageItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-		const QList<QVariant> data = QList<QVariant>());
+	                const QList<QVariant> data = QList<QVariant>());
 
 	~VtkVisImageItem();
 
@@ -50,7 +48,6 @@ protected:
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
-
 };
 
 #endif // VTKVISIMAGEITEM_H

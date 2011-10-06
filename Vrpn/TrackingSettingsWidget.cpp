@@ -1,33 +1,33 @@
 /**
  * \file TrackingSettingsWidget.cpp
  * 06/09/2010 LB Initial implementation
- * 
+ *
  * Implementation of TrackingSettingsWidget class
  */
 
 // ** INCLUDES **
-#include "TrackingSettingsWidget.h"
-#include "VtkTrackedCamera.h"
 #include "QSpaceNavigatorClient.h"
 #include "QVrpnArtTrackingClient.h"
+#include "TrackingSettingsWidget.h"
+#include "VtkTrackedCamera.h"
 
 #include <QCompleter>
-#include <QStringList>
-#include <QLineEdit>
 #include <QDoubleValidator>
+#include <QLineEdit>
+#include <QStringList>
 
 TrackingSettingsWidget::TrackingSettingsWidget(VtkTrackedCamera* cam,
-	QWidget* parent /*= 0*/, Qt::WindowFlags f /*= 0*/)
-: QWidget(parent, f), _cam(cam)
+                                               QWidget* parent /*= 0*/, Qt::WindowFlags f /*= 0*/)
+	: QWidget(parent, f), _cam(cam)
 {
 	setupUi(this);
-	
+
 	QStringList deviceNameAtSuggestionList;
 	deviceNameAtSuggestionList << "141.65.34.36" << "visserv3.intern.ufz.de" << "localhost";
 	QCompleter* deviceNameAtCompleter = new QCompleter(deviceNameAtSuggestionList, this);
 	deviceNameAtCompleter->setCaseSensitivity(Qt::CaseInsensitive);
 	deviceNameAtLineEdit->setCompleter(deviceNameAtCompleter);
-	
+
 	offsetXLineEdit->setValidator(new QDoubleValidator(offsetXLineEdit));
 	offsetYLineEdit->setValidator(new QDoubleValidator(offsetYLineEdit));
 	offsetZLineEdit->setValidator(new QDoubleValidator(offsetZLineEdit));

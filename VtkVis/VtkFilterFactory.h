@@ -6,8 +6,8 @@
 #ifndef VTKFILTERFACTORY_H
 #define VTKFILTERFACTORY_H
 
-#include <QVector>
 #include <QString>
+#include <QVector>
 #include <vtkSetGet.h>
 
 class VtkCompositeFilter;
@@ -31,11 +31,10 @@ public:
 
 	/// @brief Creates a normal filter name.
 	static vtkAlgorithm* CreateSimpleFilter(QString type);
-
 };
 
 /// @brief Holds meta information about a filter
-struct VtkFilterInfo 
+struct VtkFilterInfo
 {
 	/// @brief Constructor.
 	/// @param name The name of the filter (the class name)
@@ -44,7 +43,7 @@ struct VtkFilterInfo
 	/// @param inputDataObjectType The input data type (see OutputDataObjectTypeAsString())
 	/// @param outputDataObjectType The output data type (see OutputDataObjectTypeAsString())
 	VtkFilterInfo(QString name, QString readableName, QString description,
-		int inputDataObjectType, int outputDataObjectType)
+	              int inputDataObjectType, int outputDataObjectType)
 	{
 		this->name = name;
 		this->readableName = readableName;
@@ -52,7 +51,7 @@ struct VtkFilterInfo
 		this->inputDataObjectType = inputDataObjectType;
 		this->outputDataObjectType = outputDataObjectType;
 	}
-	
+
 	/// @brief Default constructor.
 	VtkFilterInfo()
 	{
@@ -77,7 +76,6 @@ struct VtkFilterInfo
 		case VTK_DATA_SET: return QString("vtkDataSet");
 		default: return QString("Data type not defined!");
 		}
-
 	}
 
 	QString name;

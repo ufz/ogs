@@ -1,7 +1,7 @@
 /**
  * \file VtkAlgorithmPropertyVectorEdit.cpp
  * 22/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkAlgorithmPropertyVectorEdit class
  */
 
@@ -11,13 +11,17 @@
 #include "VtkAlgorithmProperties.h"
 
 #include <QDoubleValidator>
-#include <QIntValidator>
 #include <QHBoxLayout>
+#include <QIntValidator>
 #include <QLineEdit>
 #include <QSize>
 
-VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QString> contents, const QString& name, QVariant::Type type, VtkAlgorithmProperties* algProps, QWidget* parent /*= 0*/ )
-: QWidget(parent), _name(name), _algProps(algProps), _type(type)
+VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QString> contents,
+                                                                const QString& name,
+                                                                QVariant::Type type,
+                                                                VtkAlgorithmProperties* algProps,
+                                                                QWidget* parent /*= 0*/ )
+	: QWidget(parent), _name(name), _algProps(algProps), _type(type)
 {
 	QHBoxLayout* layout = new QHBoxLayout;
 	layout->setSpacing(3);
@@ -27,7 +31,7 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QStr
 	{
 		QLineEdit* lineEdit = new QLineEdit(content, this);
 		layout->addWidget(lineEdit);
-		
+
 		switch(_type)
 		{
 		case QVariant::Double:
@@ -50,7 +54,6 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QStr
 
 VtkAlgorithmPropertyVectorEdit::~VtkAlgorithmPropertyVectorEdit()
 {
-
 }
 
 void VtkAlgorithmPropertyVectorEdit::setNewValue()
@@ -62,7 +65,7 @@ void VtkAlgorithmPropertyVectorEdit::setNewValue()
 		QLineEdit* lineEdit = static_cast<QLineEdit*>(layout->itemAt(i)->widget());
 		list.push_back(QVariant(lineEdit->text()));
 	}
-	
+
 	_algProps->SetUserVectorProperty(_name, list);
 
 	emit editingFinished();

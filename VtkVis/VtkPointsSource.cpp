@@ -12,22 +12,22 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 vtkStandardNewMacro(VtkPointsSource);
 vtkCxxRevisionMacro(VtkPointsSource, "$Revision$");
 
 VtkPointsSource::VtkPointsSource()
-: _points(NULL)
+	: _points(NULL)
 {
 	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
-	GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 }
 
 void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
@@ -41,15 +41,18 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
 
 	int i = 0;
 	for (std::vector<GEOLIB::Point*>::const_iterator it = _points->begin();
-		it != _points->end(); ++it)
+	     it != _points->end(); ++it)
 	{
 		const double* coords = (*it)->getData();
-		os << indent << "Point " << i <<" (" << coords[0] << ", " << coords[1] << ", " << coords[2] << ")\n";
+		os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
+		coords[2] << ")\n";
 		i++;
 	}
 }
 
-int VtkPointsSource::RequestData( vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector )
+int VtkPointsSource::RequestData( vtkInformation* request,
+                                  vtkInformationVector** inputVector,
+                                  vtkInformationVector* outputVector )
 {
 	(void)request;
 	(void)inputVector;
@@ -59,12 +62,14 @@ int VtkPointsSource::RequestData( vtkInformation* request, vtkInformationVector*
 	int numPoints = _points->size();
 	if (numPoints == 0)
 	{
-		std::cout << "ERROR in VtkPointsSource::RequestData : Size of point vector is 0" << std::endl;
+		std::cout << "ERROR in VtkPointsSource::RequestData : Size of point vector is 0" <<
+		std::endl;
 		return 0;
 	}
 
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
-	vtkSmartPointer<vtkPolyData> output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+	vtkSmartPointer<vtkPolyData> output =
+	        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
 	vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
@@ -76,7 +81,7 @@ int VtkPointsSource::RequestData( vtkInformation* request, vtkInformationVector*
 
 	// Generate points and vertices
 	for (std::vector<GEOLIB::Point*>::const_iterator it = _points->begin();
-		it != _points->end(); ++it)
+	     it != _points->end(); ++it)
 	{
 		double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
 		vtkIdType pid = newPoints->InsertNextPoint(coords);
@@ -89,7 +94,9 @@ int VtkPointsSource::RequestData( vtkInformation* request, vtkInformationVector*
 	return 1;
 }
 
-int VtkPointsSource::RequestInformation( vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector )
+int VtkPointsSource::RequestInformation( vtkInformation* request,
+                                         vtkInformationVector** inputVector,
+                                         vtkInformationVector* outputVector )
 {
 	(void)request;
 	(void)inputVector;

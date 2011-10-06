@@ -6,47 +6,47 @@
  */
 
 // ** INCLUDES **
-#include "VisualizationWidget.h"
 #include "Point.h"
-#include "VtkPickCallback.h"
+#include "VisualizationWidget.h"
 #include "VtkCustomInteractorStyle.h"
+#include "VtkPickCallback.h"
 #include "VtkTrackedCamera.h"
 
+#include <vtkCamera.h>
+#include <vtkCellPicker.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
-#include <vtkCamera.h>
 #include <vtkSmartPointer.h>
-#include <vtkCellPicker.h>
 
-#include <vtkInteractorStyleSwitch.h>
-#include <vtkInteractorStyleRubberBandZoom.h>
-#include <vtkMath.h>
-#include <vtkCommand.h>
 #include <vtkAxesActor.h>
+#include <vtkCommand.h>
+#include <vtkInteractorStyleRubberBandZoom.h>
+#include <vtkInteractorStyleSwitch.h>
+#include <vtkMath.h>
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkPNGWriter.h>
-#include <vtkWindowToImageFilter.h>
 #include <vtkSmartPointer.h>
+#include <vtkWindowToImageFilter.h>
 
-#include <QSettings>
-#include <QFileDialog>
-#include <QLineEdit>
-#include <QString>
-#include <QInputDialog>
-#include <QSettings>
-#include <QDir>
 #include <QCursor>
+#include <QDir>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QSettings>
+#include <QSettings>
+#include <QString>
 
 #ifdef OGS_USE_VRPN
 #include "QSpaceNavigatorClient.h"
-#include "VtkTrackedCamera.h"
-#include <vtkEventQtSlotConnect.h>
 #include "QVrpnArtTrackingClient.h"
+#include "VtkTrackedCamera.h"
 #include <QTimer>
+#include <vtkEventQtSlotConnect.h>
 #endif // OGS_USE_VRPN
 
 VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
-: QWidget(parent)
+	: QWidget(parent)
 {
 	this->setupUi(this);
 
@@ -66,14 +66,14 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	_vtkRender = vtkRenderer::New();
 	renderWindow->AddRenderer(_vtkRender);
 	_interactorStyle->SetDefaultRenderer(_vtkRender);
-#endif // OGS_VRED_PLUGIN                                                                                                               
+#endif // OGS_VRED_PLUGIN
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
 
 #ifdef OGS_USE_VRPN
 	VtkTrackedCamera* cam = new VtkTrackedCamera(this);
 	_vtkRender->SetActiveCamera(cam);
-	connect( cam, SIGNAL(viewUpdated()), this, SLOT(updateView()) );           
+	connect( cam, SIGNAL(viewUpdated()), this, SLOT(updateView()) );
 
 	//QSpaceNavigatorClient* spacenav = QSpaceNavigatorClient::Instance();
 	//spacenav->init("spacenav@localhost", 1000 / 15, SpaceNavigatorClient::Z);
@@ -89,19 +89,19 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 		QString deviceName = settings.value("Tracking/artDeviceName").toString();
 		QString deviceNameAt = settings.value("Tracking/artDeviceNameAt").toString();
 		art->StartTracking(QString(deviceName + "@" + deviceNameAt).toStdString().c_str(),
-						   settings.value("Tracking/artUpdateInterval").toInt());
+		                   settings.value("Tracking/artUpdateInterval").toInt());
 	}
 	else
 		art->StartTracking("DTrack@141.65.34.36");
 	connect( art, SIGNAL(positionUpdated(double, double, double)),
-			 cam, SLOT(setTrackingData(double, double, double)) );
+	         cam, SLOT(setTrackingData(double, double, double)) );
 
 	// Connect the vtk event to the qt slot
 	_qtConnect = vtkEventQtSlotConnect::New();
 	_qtConnect->Connect(vtkWidget->GetRenderWindow()->GetInteractor(),
-						vtkCommand::EndInteractionEvent,
-						cam,
-						SLOT(updatedFromOutside()));
+	                    vtkCommand::EndInteractionEvent,
+	                    cam,
+	                    SLOT(updatedFromOutside()));
 
 #endif // OGS_USE_VRPN
 
@@ -114,14 +114,14 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	//else
 	//	cam->SetEyeAngle(2.0);
 /*
-	if (!stereoToolButton->isChecked())
-	{
-		eyeAngleLabel->setEnabled(false);
-		eyeAngleSlider->setEnabled(false);
-	}
-*/
+    if (!stereoToolButton->isChecked())
+    {
+        eyeAngleLabel->setEnabled(false);
+        eyeAngleSlider->setEnabled(false);
+    }
+ */
 	//eyeAngleSlider->setValue((int)(_vtkRender->GetActiveCamera()->GetEyeAngle() * 10));
-	
+
 	// Create an orientation marker using vtkAxesActor
 	vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
 	vtkOrientationMarkerWidget* markerWidget = vtkOrientationMarkerWidget::New();
@@ -135,7 +135,7 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 	// Set alternate cursor shapes
 	connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)),
-			this, SLOT(setCursorShape(Qt::CursorShape)));
+	        this, SLOT(setCursorShape(Qt::CursorShape)));
 }
 
 VisualizationWidget::~VisualizationWidget()
@@ -147,9 +147,9 @@ VisualizationWidget::~VisualizationWidget()
 
 	_interactorStyle->deleteLater();
 	_vtkPickCallback->deleteLater();
-	#ifdef OGS_USE_VRPN
+#ifdef OGS_USE_VRPN
 	_qtConnect->Delete();
-	#endif // OGS_USE_VRPN
+#endif     // OGS_USE_VRPN
 }
 VtkCustomInteractorStyle* VisualizationWidget::interactorStyle() const
 {
@@ -160,7 +160,7 @@ VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 	return _vtkPickCallback;
 }
 void VisualizationWidget::updateView()
-{	
+{
 	vtkWidget->GetRenderWindow()->Render();
 }
 
@@ -187,34 +187,30 @@ void VisualizationWidget::updateViewOnLoad()
 void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
 {
 	if (checked)
-	{
 		vtkWidget->GetRenderWindow()->StereoRenderOn();
 		//eyeAngleLabel->setEnabled(true);
 		//eyeAngleSlider->setEnabled(true);
-	}
 	else
-	{
 		vtkWidget->GetRenderWindow()->StereoRenderOff();
 		//eyeAngleLabel->setEnabled(false);
 		//eyeAngleSlider->setEnabled(false);
-	}
 
 	this->updateView();
 }
 /*
-void VisualizationWidget::on_eyeAngleSlider_valueChanged( int value )
-{
-	Q_UNUSED(value);
-	//_vtkRender->GetActiveCamera()->SetEyeAngle(value / 10.0);
-	//updateView();
-}
-*/
+   void VisualizationWidget::on_eyeAngleSlider_valueChanged( int value )
+   {
+    Q_UNUSED(value);
+    //_vtkRender->GetActiveCamera()->SetEyeAngle(value / 10.0);
+    //updateView();
+   }
+ */
 void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
 {
 	if (checked)
 	{
 		vtkSmartPointer<vtkInteractorStyleRubberBandZoom> interactorStyle =
-			vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
+		        vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
 		vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(interactorStyle);
 		QCursor cursor;
 		cursor.setShape(Qt::CrossCursor);
@@ -249,13 +245,16 @@ void VisualizationWidget::on_screenshotPushButton_pressed()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString filename = QFileDialog::getSaveFileName(this, tr("Save screenshot"),
-						settings.value("lastScreenshotDir").toString(), "PNG file (*.png)");
+	                                                settings.value(
+	                                                        "lastScreenshotDir").toString(),
+	                                                "PNG file (*.png)");
 	if (filename.count() > 4)
 	{
 		bool ok;
 		int magnification = QInputDialog::getInt(this, tr("Screenshot magnification"),
-								tr("Enter a magnification factor for the resulting image."),
-								2, 1, 10, 1, &ok);
+		                                         tr(
+		                                                 "Enter a magnification factor for the resulting image."),
+		                                         2, 1, 10, 1, &ok);
 		if (ok)
 		{
 			QDir dir(filename);
@@ -268,7 +267,7 @@ void VisualizationWidget::on_screenshotPushButton_pressed()
 void VisualizationWidget::screenshot(QString filename, int magnification)
 {
 	vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
-		vtkSmartPointer<vtkWindowToImageFilter>::New();
+	        vtkSmartPointer<vtkWindowToImageFilter>::New();
 	windowToImageFilter->SetInput(vtkWidget->GetRenderWindow());
 	// Set the resolution of the output image
 	// magnification times the current resolution of vtk render window

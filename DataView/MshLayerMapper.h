@@ -12,7 +12,7 @@ class QImage;
 
 namespace MeshLib
 {
-	class CFEMesh;
+class CFEMesh;
 }
 
 /**
@@ -21,8 +21,8 @@ namespace MeshLib
 class MshLayerMapper
 {
 public:
-	MshLayerMapper() {};
-	~MshLayerMapper() {};
+	MshLayerMapper() {}
+	~MshLayerMapper() {}
 
 	/**
 	 * Based on a triangle-or quad mesh this method creates a 3D mesh with with a given number of prism- or hex-layers
@@ -31,10 +31,16 @@ public:
 	 * \param thickness The thickness of each of these newly added layers
 	 * \return A mesh with the requested number of layers of prism/hex elements
 	 */
-	static MeshLib::CFEMesh* CreateLayers(const MeshLib::CFEMesh* mesh, size_t nLayers, double thickness);
+	static MeshLib::CFEMesh* CreateLayers(const MeshLib::CFEMesh* mesh,
+	                                      size_t nLayers,
+	                                      double thickness);
 
 	/// Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-	static MeshLib::CFEMesh* LayerMapping(const MeshLib::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id, bool removeNoDataValues = false);
+	static MeshLib::CFEMesh* LayerMapping(const MeshLib::CFEMesh* msh,
+	                                      const std::string &rasterfile,
+	                                      const size_t nLayers,
+	                                      const size_t layer_id,
+	                                      bool removeNoDataValues = false);
 
 	/// \brief Checks for overlapping nodes between between layers and corrects these errors.
 	/// Note: this method has not been tested yet and will probably fail miserably! Please contact KR
@@ -43,9 +49,9 @@ public:
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
-	static bool meshFitsImage(const MeshLib::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim);
-
-
+	static bool meshFitsImage(const MeshLib::CFEMesh* msh,
+	                          const std::pair<double, double> &xDim,
+	                          const std::pair<double, double> &yDim);
 };
 
 #endif //MSHLAYERMAPPER_H

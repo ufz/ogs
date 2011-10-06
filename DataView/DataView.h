@@ -12,14 +12,15 @@ class GridAdapter;
 class MshModel;
 class VtkMeshSource;
 
-namespace MeshLib {
-	class CFEMesh;
+namespace MeshLib
+{
+class CFEMesh;
 }
 /*
-namespace GEOLIB {
-	class Point;
-}
-*/
+   namespace GEOLIB {
+    class Point;
+   }
+ */
 /**
  *	The DataView is table view which acts as a base class for displaying
  *  several OSG data formats.
@@ -72,18 +73,17 @@ private slots:
 	 */
 	void checkMeshQuality();
 
-
 signals:
 	void qualityCheckRequested(VtkMeshSource*);
 	void requestMeshRemoval(const QModelIndex&);
 	void requestDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*);
 	void saveMeshAction();
-	
+
 /*
-	void itemSelectionChanged(const QItemSelection &selected,
-		const QItemSelection &deselected);
-	void itemSelectionChangedFromOutside(const QItemSelection &selected,
-		const QItemSelection &deselected);
-*/
+    void itemSelectionChanged(const QItemSelection &selected,
+        const QItemSelection &deselected);
+    void itemSelectionChangedFromOutside(const QItemSelection &selected,
+        const QItemSelection &deselected);
+ */
 };
 #endif // DATAVIEW_H

@@ -1,7 +1,7 @@
 /**
  * \file TreeModelIterator.cpp
  * 23/6/2010 LB Initial implementation
- * 
+ *
  * Implementation of TreeModelIterator
  */
 
@@ -12,7 +12,7 @@
 #include "TreeModel.h"
 
 TreeModelIterator::TreeModelIterator( TreeModel* model )
-: _current(NULL), _model(model)
+	: _current(NULL), _model(model)
 {
 	if (_model->rootItem()->childCount() > 0)
 	{
@@ -31,9 +31,7 @@ TreeItem* TreeModelIterator::operator*() const
 TreeModelIterator& TreeModelIterator::operator++()
 {
 	if (_current)
-	{
 		_current = next(_current);
-	}
 
 	return *this;
 }
@@ -56,7 +54,7 @@ TreeItem* TreeModelIterator::next( const TreeItem* current )
 		// walk the sibling
 		TreeItem* parent = current->parentItem();
 		next = parent ? parent->child(_currentIndex + 1)
-			: _model->rootItem()->child(_currentIndex + 1);
+		       : _model->rootItem()->child(_currentIndex + 1);
 		while (!next && parent)
 		{
 			// if we had no sibling walk up the parent
@@ -64,7 +62,7 @@ TreeItem* TreeModelIterator::next( const TreeItem* current )
 			parent = parent->parentItem();
 			_currentIndex = _parentIndex.pop();
 			next = parent ? parent->child(_currentIndex + 1)
-				: _model->rootItem()->child(_currentIndex + 1);
+			       : _model->rootItem()->child(_currentIndex + 1);
 		}
 		if (next)
 			++(_currentIndex);

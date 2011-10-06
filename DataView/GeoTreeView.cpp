@@ -3,19 +3,17 @@
  * 2011/02/07 KR Initial implementation
  */
 
-#include <iostream>
 #include <QFileDialog>
 #include <QMenu>
+#include <iostream>
 
-#include "GeoTreeView.h"
-#include "GeoTreeModel.h"
-#include "GeoTreeItem.h"
 #include "GeoObjectListItem.h"
+#include "GeoTreeItem.h"
+#include "GeoTreeModel.h"
+#include "GeoTreeView.h"
 #include "OGSError.h"
 
 #include "XMLInterface.h"
-
-
 
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 {
@@ -37,13 +35,15 @@ void GeoTreeView::on_Clicked(QModelIndex idx)
 	qDebug("%d, %d",idx.parent().row(), idx.row());
 }
 
-void GeoTreeView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
+void GeoTreeView::selectionChanged( const QItemSelection &selected,
+                                    const QItemSelection &deselected )
 {
 	emit itemSelectionChanged(selected, deselected);
 	return QTreeView::selectionChanged(selected, deselected);
 }
 
-void GeoTreeView::selectionChangedFromOutside( const QItemSelection &selected, const QItemSelection &deselected )
+void GeoTreeView::selectionChangedFromOutside( const QItemSelection &selected,
+                                               const QItemSelection &deselected )
 {
 	QItemSelectionModel* selModel = this->selectionModel();
 
@@ -82,7 +82,8 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			if (list->getType() == GEOLIB::POLYLINE)
 			{
 				connectPlyAction = menu.addAction("Connect Polylines...");
-				connect(connectPlyAction, SIGNAL(triggered()), this, SLOT(connectPolylines()));
+				connect(connectPlyAction, SIGNAL(triggered()), this,
+				        SLOT(connectPolylines()));
 			}
 			menu.addSeparator();
 			QAction* removeAction = menu.addAction("Remove " + item->data(0).toString());
@@ -93,23 +94,23 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		{
 			QString temp_name;
 			QMenu menu;
-	/*
-			if (static_cast<GeoTreeModel*>(model())->objectFromIndex(index, temp_name)->type() == GEOLIB::POINT)
-			{
-				QAction* stratAction = menu.addAction("Display Stratigraphy...");
-				QAction* exportAction = menu.addAction("Export to GMS...");
-				connect(stratAction, SIGNAL(triggered()), this, SLOT(displayStratigraphy()));
-				connect(exportAction, SIGNAL(triggered()), this, SLOT(exportStation()));
-				menu.exec(event->globalPos());
-			}
-			else
-			{
-				menu.addAction("View Information...");
-				QAction* showDiagramAction = menu.addAction("View Diagram...");
-				connect(showDiagramAction, SIGNAL(triggered()), this, SLOT(showDiagramPrefsDialog()));
-				menu.exec(event->globalPos());
-			}
-	*/
+			/*
+			        if (static_cast<GeoTreeModel*>(model())->objectFromIndex(index, temp_name)->type() == GEOLIB::POINT)
+			        {
+			            QAction* stratAction = menu.addAction("Display Stratigraphy...");
+			            QAction* exportAction = menu.addAction("Export to GMS...");
+			            connect(stratAction, SIGNAL(triggered()), this, SLOT(displayStratigraphy()));
+			            connect(exportAction, SIGNAL(triggered()), this, SLOT(exportStation()));
+			            menu.exec(event->globalPos());
+			        }
+			        else
+			        {
+			            menu.addAction("View Information...");
+			            QAction* showDiagramAction = menu.addAction("View Diagram...");
+			            connect(showDiagramAction, SIGNAL(triggered()), this, SLOT(showDiagramPrefsDialog()));
+			            menu.exec(event->globalPos());
+			        }
+			 */
 		}
 	}
 	menu.exec(event->globalPos());
@@ -117,32 +118,41 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 
 void GeoTreeView::addFEMConditions()
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(this->selectionModel()->currentIndex());
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
 	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
 }
 
 void GeoTreeView::writeToFile() const
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(this->selectionModel()->currentIndex());
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
 	QString gliName = item->data(0).toString();
-	QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as", gliName, "GeoSys mesh file (*.gml)");
-	if (!fileName.isEmpty()) {
+	QString fileName = QFileDialog::getSaveFileName(NULL,
+	                                                "Save geometry as",
+	                                                gliName,
+	                                                "GeoSys mesh file (*.gml)");
+	if (!fileName.isEmpty())
 		emit saveToFileRequested(gliName, fileName);
-	}
 }
 
 void GeoTreeView::removeList()
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(this->selectionModel()->currentIndex());
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
 
 	GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
-	if (list) emit listRemoved((item->parentItem()->data(0).toString()).toStdString(), list->getType());
-	else emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
+	if (list)
+		emit listRemoved((item->parentItem()->data(
+		                          0).toString()).toStdString(), list->getType());
+	else
+		emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
 }
 
 void GeoTreeView::connectPolylines()
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(this->selectionModel()->currentIndex())->parentItem();
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex())->parentItem();
 	emit requestLineEditDialog(item->data(0).toString().toStdString());
 }
 

@@ -1,22 +1,22 @@
 /**
  * \file VtkCompositeThresholdFilter.cpp
  * 25/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkCompositeThresholdFilter class
  */
 
 // ** INCLUDES **
 #include "VtkCompositeThresholdFilter.h"
 
+#include <vtkCellData.h>
 #include <vtkThreshold.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkCellData.h>
 
 #include <vtkIntArray.h>
 #include <vtkSmartPointer.h>
 
 VtkCompositeThresholdFilter::VtkCompositeThresholdFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm)
+	: VtkCompositeFilter(inputAlgorithm)
 {
 	this->init();
 }
@@ -45,10 +45,10 @@ void VtkCompositeThresholdFilter::init()
 
 	// Sets a filter property which will be user editable
 	threshold->SetSelectedComponent(0);
-	
+
 	// Sets a filter vector property which will be user editable
 	threshold->ThresholdBetween(0, 100);
-	
+
 	// Create a list for the ThresholdBetween (vector) property.
 	QList<QVariant> thresholdRangeList;
 	// Insert the values (same values as above)
@@ -56,10 +56,10 @@ void VtkCompositeThresholdFilter::init()
 	thresholdRangeList.push_back(100);
 	// Put that list in the property map
 	(*_algorithmUserVectorProperties)["Threshold Between"] = thresholdRangeList;
-	
+
 	// Make a new entry in the property map for the SelectedComponent property
 	(*_algorithmUserProperties)["Selected Component"] = 0;
-	
+
 	// The threshold filter is last one and so it is also the _outputAlgorithm
 	_outputAlgorithm = threshold;
 }
@@ -80,18 +80,17 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVa
 
 	// Use the same name as in init()
 	if (name.compare("Threshold Between") == 0)
-	{
 		//double* range = dynamic_cast<vtkUnstructuredGridAlgorithm*>(_outputAlgorithm)->GetOutput()->GetScalarRange();
 		//std::cout << range[0] << ", " << range[1] << std::endl;
 		// Set the vector property on the algorithm
-		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(values[0].toInt(), values[1].toInt());
-	}
+		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
+		        values[0].toInt(), values[1].toInt());
 }
 /*
-void VtkCompositeThresholdFilter::SetScalarRangeOnItem( double min, double max )
-{
-	_item->SetScalarRange(min, max);
-	emit requestViewUpdate();
-}
+   void VtkCompositeThresholdFilter::SetScalarRangeOnItem( double min, double max )
+   {
+    _item->SetScalarRange(min, max);
+    emit requestViewUpdate();
+   }
 
-*/
+ */

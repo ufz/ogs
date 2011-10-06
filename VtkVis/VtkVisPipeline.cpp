@@ -9,54 +9,54 @@
 #include "VtkVisPipeline.h"
 
 //#include "Model.h"
-#include "TreeModel.h"
-#include "MshModel.h"
-#include "MshItem.h"
-#include "GeoTreeModel.h"
 #include "ConditionModel.h"
-#include "StationTreeModel.h"
-#include "VtkVisPipelineItem.h"
-#include "VtkVisImageItem.h"
-#include "VtkVisPointSetItem.h"
-#include "VtkMeshSource.h"
-#include "VtkAlgorithmProperties.h"
-#include "VtkTrackedCamera.h"
-#include "VtkFilterFactory.h"
-#include "MeshQualityShortestLongestRatio.h"
+#include "GeoTreeModel.h"
+#include "MeshQualityEquiAngleSkew.h"
 #include "MeshQualityNormalisedArea.h"
 #include "MeshQualityNormalisedVolumes.h"
-#include "MeshQualityEquiAngleSkew.h"
+#include "MeshQualityShortestLongestRatio.h"
+#include "MshItem.h"
+#include "MshModel.h"
+#include "StationTreeModel.h"
+#include "TreeModel.h"
+#include "VtkAlgorithmProperties.h"
 #include "VtkCompositeSelectionFilter.h"
+#include "VtkFilterFactory.h"
+#include "VtkMeshSource.h"
+#include "VtkTrackedCamera.h"
+#include "VtkVisImageItem.h"
+#include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
 
-#include <vtkSmartPointer.h>
-#include <vtkRenderer.h>
 #include <vtkAlgorithm.h>
+#include <vtkCamera.h>
+#include <vtkGenericDataObjectReader.h>
+#include <vtkImageActor.h>
+#include <vtkImageReader2.h>
+#include <vtkLight.h>
 #include <vtkPointSet.h>
 #include <vtkProp3D.h>
-#include <vtkLight.h>
-#include <vtkGenericDataObjectReader.h>
-#include <vtkImageReader2.h>
-#include <vtkCamera.h>
-#include <vtkImageActor.h>
-#include <vtkXMLPolyDataReader.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkTransformFilter.h>
 #include <vtkXMLImageDataReader.h>
+#include <vtkXMLPolyDataReader.h>
 #include <vtkXMLRectilinearGridReader.h>
 #include <vtkXMLStructuredGridReader.h>
 #include <vtkXMLUnstructuredGridReader.h>
-#include <vtkTransformFilter.h>
 
+#include <vtkCellData.h>
 #include <vtkFieldData.h>
 #include <vtkPointData.h>
-#include <vtkCellData.h>
 
+#include <QColor>
+#include <QFileInfo>
+#include <QSettings>
 #include <QString>
 #include <QTime>
-#include <QFileInfo>
-#include <QColor>
-#include <QSettings>
 
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
-: TreeModel(parent), _renderer(renderer)
+	: TreeModel(parent), _renderer(renderer)
 {
 	QList<QVariant> rootData;
 	rootData << "Object name" << "Visible";
@@ -72,7 +72,7 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 }
 
 bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
-	int role /* = Qt::EditRole */ )
+                              int role /* = Qt::EditRole */ )
 {
 	emit vtkVisPipelineChanged();
 
@@ -85,7 +85,8 @@ void VtkVisPipeline::addLight(const GEOLIB::Point &pos)
 	for (std::list<vtkLight*>::iterator it = _lights.begin(); it != _lights.end(); ++it)
 	{
 		(*it)->GetPosition(lightPos);
-		if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2]) return;
+		if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
+			return;
 	}
 	vtkLight* l = vtkLight::New();
 	l->SetPosition(pos[0], pos[1], pos[2]);
@@ -99,7 +100,8 @@ vtkLight* VtkVisPipeline::getLight(const GEOLIB::Point &pos) const
 	for (std::list<vtkLight*>::const_iterator it = _lights.begin(); it != _lights.end(); ++it)
 	{
 		(*it)->GetPosition(lightPos);
-		if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2]) return (*it);
+		if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
+			return *it;
 	}
 	return NULL;
 }
@@ -123,7 +125,9 @@ void VtkVisPipeline::removeLight(const GEOLIB::Point &pos)
 const QColor VtkVisPipeline::getBGColor() const
 {
 	double* color = _renderer->GetBackground();
-	QColor c(static_cast<int>(color[0]*255), static_cast<int>(color[1]*255), static_cast<int>(color[2]*255));
+	QColor c(static_cast<int>(color[0] * 255),
+	         static_cast<int>(color[1] * 255),
+	         static_cast<int>(color[2] * 255));
 	return c;
 }
 
@@ -154,12 +158,12 @@ Qt::ItemFlags VtkVisPipeline::flags( const QModelIndex &index ) const
 
 void VtkVisPipeline::loadFromFile(QString filename)
 {
-	#ifndef NDEBUG
-	    	 QTime myTimer;
-	    	 myTimer.start();
-			std::cout << "VTK Read: " << filename.toStdString() <<
-				std::endl << std::flush;
-	#endif
+#ifndef NDEBUG
+	QTime myTimer;
+	myTimer.start();
+	std::cout << "VTK Read: " << filename.toStdString() <<
+	std::endl << std::flush;
+#endif
 
 	if (filename.size() > 0)
 	{
@@ -176,7 +180,8 @@ void VtkVisPipeline::loadFromFile(QString filename)
 			reader = vtkXMLUnstructuredGridReader::New();
 		else if (filename.endsWith("vtk"))
 		{
-			vtkGenericDataObjectReader* oldStyleReader = vtkGenericDataObjectReader::New();
+			vtkGenericDataObjectReader* oldStyleReader =
+			        vtkGenericDataObjectReader::New();
 			oldStyleReader->SetFileName(filename.toStdString().c_str());
 			oldStyleReader->ReadAllFieldsOn();
 			oldStyleReader->ReadAllScalarsOn();
@@ -188,7 +193,8 @@ void VtkVisPipeline::loadFromFile(QString filename)
 				addPipelineItem(oldStyleReader);
 			}
 			else
-				std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
+				std::cout << "Error loading vtk file: not a valid vtkDataSet." <<
+				std::endl;
 
 			return;
 		}
@@ -213,9 +219,9 @@ void VtkVisPipeline::loadFromFile(QString filename)
 		//reader->Delete();
 	}
 
-	#ifndef NDEBUG
-	    	 std::cout << myTimer.elapsed() << " ms" << std::endl;
-	#endif
+#ifndef NDEBUG
+	std::cout << myTimer.elapsed() << " ms" << std::endl;
+#endif
 }
 
 void VtkVisPipeline::setGlobalSuperelevation(double factor) const
@@ -233,7 +239,9 @@ void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 	emit vtkVisPipelineChanged();
 }
 
-void VtkVisPipeline::addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
+void VtkVisPipeline::addPipelineItem(GeoTreeModel* model,
+                                     const std::string &name,
+                                     GEOLIB::GEOTYPE type)
 {
 	addPipelineItem(model->vtkSource(name, type));
 }
@@ -243,7 +251,9 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
 	addPipelineItem(model->vtkSource(name));
 }
 
-void VtkVisPipeline::addPipelineItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type)
+void VtkVisPipeline::addPipelineItem(ConditionModel* model,
+                                     const std::string &name,
+                                     FEMCondition::CondType type)
 {
 	addPipelineItem(model->vtkSource(name, type));
 }
@@ -259,11 +269,12 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	TreeItem* parentItem = item->parentItem();
 	parentItem->appendChild(item);
 
-	if (!parent.isValid())  // Set global superelevation on source objects
+	if (!parent.isValid()) // Set global superelevation on source objects
 	{
 		QSettings settings("UFZ, OpenGeoSys-5");
 		if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
-			item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
+			item->setScale(1.0, 1.0, settings.value("globalSuperelevation",
+			                                        1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();
@@ -284,7 +295,7 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 }
 
 void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
-									  QModelIndex parent /* = QModelindex() */)
+                                      QModelIndex parent /* = QModelindex() */)
 {
 	TreeItem* parentItem = getItem(parent);
 
@@ -294,9 +305,10 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 
 	QList<QVariant> itemData;
 	QString itemName;
-	if (!parent.isValid())	// if source object
+	if (!parent.isValid()) // if source object
 	{
-		vtkGenericDataObjectReader* reader = dynamic_cast<vtkGenericDataObjectReader*>(source);
+		vtkGenericDataObjectReader* reader =
+		        dynamic_cast<vtkGenericDataObjectReader*>(source);
 		vtkImageReader2* imageReader = dynamic_cast<vtkImageReader2*>(source);
 		VtkAlgorithmProperties* props = dynamic_cast<VtkAlgorithmProperties*>(source);
 		if (reader)
@@ -323,12 +335,16 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 
 	VtkVisPipelineItem* item(NULL);
 	vtkImageAlgorithm* alg = dynamic_cast<vtkImageAlgorithm*>(source);
-	if (alg) item = new VtkVisImageItem(source, parentItem, itemData);
-	else item = new VtkVisPointSetItem(source, parentItem, itemData);
+	if (alg)
+		item = new VtkVisImageItem(source, parentItem, itemData);
+	else
+		item = new VtkVisPointSetItem(source, parentItem, itemData);
 	this->addPipelineItem(item, parent);
 }
 
-void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type)
+void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
+                                      const std::string &name,
+                                      GEOLIB::GEOTYPE type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
@@ -341,7 +357,9 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model, const std::string &na
 	}
 }
 
-void VtkVisPipeline::removeSourceItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type)
+void VtkVisPipeline::removeSourceItem(ConditionModel* model,
+                                      const std::string &name,
+                                      FEMCondition::CondType type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
@@ -412,7 +430,8 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 	if (dataSet)
 	{
 		vtkPointData* pointData = dataSet->GetPointData();
-		std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+		std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() <<
+		std::endl;
 		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
 			std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
 
@@ -427,7 +446,8 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 
 void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
 {
-	if (source) {
+	if (source)
+	{
 		const MeshLib::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
 		MeshLib::MeshQualityChecker* checker (NULL);
 		if (t == MshQualityType::EDGERATIO)
@@ -438,8 +458,12 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 			checker = new MeshLib::MeshQualityNormalisedVolumes(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
 			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
-		else {
-			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..." << std::endl;
+		else
+		{
+			std::cout <<
+			"Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..."
+			          <<
+			std::endl;
 			delete checker;
 			return;
 		}
@@ -448,17 +472,25 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		std::vector<double> const &quality (checker->getMeshQuality());
 
 		int nSources = this->_rootItem->childCount();
-		for (int i=0; i<nSources; i++)
+		for (int i = 0; i < nSources; i++)
 		{
-			VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+			VtkVisPipelineItem* parentItem =
+			        static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
 			if (parentItem->algorithm() == source)
 			{
 				QList<QVariant> itemData;
-				itemData << "MeshQuality: " + QString::fromStdString(MshQualityType2String(t)) << true;
+				itemData << "MeshQuality: " + QString::fromStdString(
+				        MshQualityType2String(t)) << true;
 
-				VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeSelectionFilter", parentItem->transformFilter());
-				static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray(quality);
-				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
+				VtkCompositeFilter* filter =
+				        VtkFilterFactory::CreateCompositeFilter(
+				                "VtkCompositeSelectionFilter",
+				                parentItem->transformFilter());
+				static_cast<VtkCompositeSelectionFilter*>(filter)->
+				setSelectionArray(quality);
+				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter,
+				                                                  parentItem,
+				                                                  itemData);
 				this->addPipelineItem(item, this->createIndex(i, 0, item));
 			}
 		}
@@ -474,9 +506,9 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		checker->getHistogramm(histogramm);
 		std::ofstream out ("mesh_histogramm.txt");
 		const size_t histogramm_size (histogramm.size());
-		for (size_t k(0); k<histogramm_size; k++) {
-			out << k/static_cast<double>(histogramm_size) << " " << histogramm[k] << std::endl;
-		}
+		for (size_t k(0); k < histogramm_size; k++)
+			out << k / static_cast<double>(histogramm_size) << " " << histogramm[k] <<
+			std::endl;
 		out.close ();
 
 		delete checker;

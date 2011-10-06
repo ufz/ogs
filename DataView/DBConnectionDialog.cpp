@@ -3,26 +3,22 @@
  * KR Initial implementation
  */
 
-#include <QSettings>
 #include "DBConnectionDialog.h"
-
+#include <QSettings>
 
 /// Constructor
 DBConnectionDialog::DBConnectionDialog(QDialog* parent) : QDialog(parent)
 {
 	setupUi(this);
 
-	int idx=0;
+	int idx = 0;
 	QSettings settings("UFZ", "OpenGeoSys-5");
 
 	if (!settings.value("DBProtocol", "").toString().isEmpty())
-	{
-		for (int i=0; i<driverBox->count(); i++)
-		{
-			if (driverBox->itemText(i).startsWith(settings.value("DBProtocol", "").toString()))
+		for (int i = 0; i < driverBox->count(); i++)
+			if (driverBox->itemText(i).startsWith(settings.value("DBProtocol",
+			                                                     "").toString()))
 				idx = i;
-		}
-	}
 
 	driverBox->setCurrentIndex(idx);
 	hostnameLine->setText(settings.value("DBHost",     "").toString());

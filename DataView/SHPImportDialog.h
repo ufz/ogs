@@ -6,9 +6,8 @@
 #ifndef SHPIMPORTDIALOG_H
 #define SHPIMPORTDIALOG_H
 
-#include <QtGui/QMainWindow>
 #include <QDialog>
-
+#include <QtGui/QMainWindow>
 
 class SHPInterface;
 class GEOModels;
@@ -33,8 +32,7 @@ public:
 	SHPImportDialog(std::string filename, GEOModels* geoModels, QDialog* parent = 0);
 	~SHPImportDialog();
 
-	QDialogButtonBox* _buttonBox;	/// The buttons used in this dialog.
-
+	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
 
 private:
 	/// Constructs a dialog window based on the information found in the selected shape file
@@ -43,8 +41,8 @@ private:
 	QGridLayout* _layout;
 	QLabel* _shpContentLabel;
 	QLabel* _nameLabel;
-	QLineEdit *_listName;
-	QRadioButton *_choice1, *_choice2;;
+	QLineEdit* _listName;
+	QRadioButton* _choice1, * _choice2;
 	std::string _filename;
 	short _fileType;
 	SHPInterface* _shpInterface;

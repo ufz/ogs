@@ -3,15 +3,15 @@
  * 2011/05/10 KR Initial implementation
  */
 
-#include "OGSError.h"
 #include "ElementTreeModel.h"
+#include "OGSError.h"
 #include "TreeItem.h"
 
 /**
  * Constructor.
  */
-ElementTreeModel::ElementTreeModel( QObject *parent )
-: TreeModel(parent)
+ElementTreeModel::ElementTreeModel( QObject* parent )
+	: TreeModel(parent)
 {
 	QList<QVariant> rootData;
 	delete _rootItem;
@@ -44,7 +44,8 @@ void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_ind
 	elemItem->appendChild(matItem);
 
 	QList<QVariant> volData;
-	volData << "Area/Volume: " << QString::number(grid->getCFEMesh()->getElementVector()[elem_index]->calcVolume());
+	volData << "Area/Volume: " <<
+	QString::number(grid->getCFEMesh()->getElementVector()[elem_index]->calcVolume());
 	TreeItem* volItem = new TreeItem(volData, elemItem);
 	elemItem->appendChild(volItem);
 
@@ -53,11 +54,13 @@ void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_ind
 	TreeItem* nodeListItem = new TreeItem(nodeListData, elemItem);
 	elemItem->appendChild(nodeListItem);
 
-	const std::vector<GEOLIB::Point*> *nodes = grid->getNodes();
-	for (size_t i=0; i<elem->nodes.size(); i++)
+	const std::vector<GEOLIB::Point*>* nodes = grid->getNodes();
+	for (size_t i = 0; i < elem->nodes.size(); i++)
 	{
 		QList<QVariant> nodeData;
-		nodeData << "Node " + QString::number(elem->nodes[i]) << QString::number((*(*nodes)[i])[0]) << QString::number((*(*nodes)[i])[1]) << QString::number((*(*nodes)[i])[2]);
+		nodeData << "Node " + QString::number(elem->nodes[i]) <<
+		QString::number((*(*nodes)[i])[0]) << QString::number((*(*nodes)[i])[1]) <<
+		QString::number((*(*nodes)[i])[2]);
 		TreeItem* nodeItem = new TreeItem(nodeData, nodeListItem);
 		nodeListItem->appendChild(nodeItem);
 	}

@@ -4,13 +4,12 @@
  *
  */
 
-
 #ifndef VTKCOLORBYHEIGHTFILTER_H
 #define VTKCOLORBYHEIGHTFILTER_H
 
 // ** INCLUDES **
-#include <vtkPolyDataAlgorithm.h>
 #include "VtkAlgorithmProperties.h"
+#include <vtkPolyDataAlgorithm.h>
 
 class VtkColorLookupTable;
 
@@ -21,12 +20,11 @@ class VtkColorLookupTable;
  * ColorLookupTable using the method GetColorLookupTable(). Using this method allows the user to set a number
  * of properties on that lookup table such as interpolation method, the range of values over which the lookup
  * table is calculated and so on.
- * If no range boundaries are explicitly set, the minimum and maximum height value will be calculated from 
+ * If no range boundaries are explicitly set, the minimum and maximum height value will be calculated from
  * the data and set as minimum and maximum value for the lookup table.
  */
 class VtkColorByHeightFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
-
 public:
 	/// @brief Create new objects with New() because of VTKs object reference counting.
 	static VtkColorByHeightFilter* New();
@@ -43,11 +41,11 @@ public:
 	virtual unsigned long GetMTime();
 
 	/// @brief Sets user properties.
- 	void SetUserProperty(QString name, QVariant value)
- 	{
+	void SetUserProperty(QString name, QVariant value)
+	{
 		Q_UNUSED(name);
 		Q_UNUSED(value);
- 	}
+	}
 
 	/// @brief Sets the boundaries for the color look-up table.
 	void SetTableRange(double min, double max);
@@ -61,9 +59,9 @@ protected:
 	~VtkColorByHeightFilter();
 
 	/// @brief The filter logic.
-	int RequestData(vtkInformation* request, 
-		            vtkInformationVector** inputVector, 
-					vtkInformationVector* outputVector);
+	int RequestData(vtkInformation* request,
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
 	/// @brief Calculates the color lookup table based on set parameters.
 	VtkColorLookupTable* BuildColorTable();

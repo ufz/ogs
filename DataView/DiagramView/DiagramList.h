@@ -6,12 +6,11 @@
 #ifndef DIAGRAMLIST_H
 #define DIAGRAMLIST_H
 
-#include <vector>
-#include <QPoint>
-#include <QPainterPath>
 #include <QColor>
 #include <QDateTime>
-
+#include <QPainterPath>
+#include <QPoint>
+#include <vector>
 
 /**
  * \brief A List of data points and all the necessary meta-information to draw a graph.
@@ -24,10 +23,10 @@ public:
 	~DiagramList();
 
 	/// Returns the colour of the graph.
-	QColor getColor() const {	return _colour; }
+	QColor getColor() const {   return _colour; }
 
 	/// Returns the height of the bounding box of all data points within the list.
-	float height()    const { return (_maxY-_minY); }
+	float height()    const { return _maxY - _minY;  }
 
 	/// Returns the minimum x-value.
 	float minXValue() const { return _minX; }
@@ -42,10 +41,10 @@ public:
 	float maxYValue() const { return _maxY; }
 
 	/// Returns the start date of this list
-	const QDateTime getStartDate() const { return _startDate; };
+	const QDateTime getStartDate() const { return _startDate; }
 
 	/// Returns the name of the diagram.
-	QString getName() const { return _name; };
+	QString getName() const { return _name; }
 
 	/**
 	 * Returns all the data points in form of a QPainterPath in scene coordinates.
@@ -77,7 +76,7 @@ public:
 	/// Returns the unit associated with the y-axis
 	QString getYUnit() const { return _yUnit; }
 
-	/** 
+	/**
 	 * Reads information from a file. The reader assumes that values in the file are seperated
 	 * by tabstops. Also, the first row should contain identifiers for the values and the first
 	 * column should contain timestamps. Currently accepted timestamps are of the following
@@ -114,7 +113,7 @@ public:
 
 	/**
 	 * Sets the list of x/y-coordinates.
-	 * Note: This function converts QDateTime values to float values of the number of 
+	 * Note: This function converts QDateTime values to float values of the number of
 	 * days from the first date (which is set as day 0)
 	 * \param coords List of coordinates.
 	 */
@@ -130,7 +129,7 @@ public:
 	size_t size();
 
 	/// Returns the width of the bounding box of all data points within the list.
-	double width() const { return _maxX-_minX; }
+	double width() const { return _maxX - _minX; }
 
 private:
 	/// Returns the minimum x-value of all the data points.
@@ -143,7 +142,7 @@ private:
 	float calcMinYValue();
 
 	/// Returns the maximum y-value of all the data points.
-	float calcMaxYValue();	
+	float calcMaxYValue();
 
 	static QDateTime getDateTime(QString s);
 
@@ -169,9 +168,8 @@ private:
 	QString _yLabel;
 	QString _xUnit;
 	QString _yUnit;
-	QColor  _colour;
+	QColor _colour;
 	QDateTime _startDate;
-
 };
 
 #endif //DIAGRAMLIST_H

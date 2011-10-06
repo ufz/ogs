@@ -1,11 +1,11 @@
 #include "Configure.h"
-#include <QtGui/QApplication>
 #include "mainwindow.h"
+#include <QtGui/QApplication>
 #ifdef OGS_USE_OPENSG
 #include <OpenSG/OSGBaseFunctions.h>
 #endif
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 #ifdef OGS_USE_OPENSG
 	OSG::osgInit(argc, argv);

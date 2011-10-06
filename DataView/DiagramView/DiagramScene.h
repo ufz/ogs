@@ -6,11 +6,11 @@
 #ifndef DIAGRAMSCENE_H
 #define DIAGRAMSCENE_H
 
-#include <QGraphicsScene>
-#include "QArrow.h"
 #include "DiagramList.h"
+#include "QArrow.h"
 #include "QGraphicsGrid.h"
 #include "QNonScalableGraphicsTextItem.h"
+#include <QGraphicsScene>
 
 class QDateTime;
 
@@ -28,11 +28,12 @@ public:
 	void addGraph(DiagramList* list);
 	QGraphicsGrid* addGrid(const QRectF &rect, int xTicks, int yTicks, const QPen &pen);
 
-	static const int MARGIN=30;	/// The margin between the boundary of the scene and the bounding box of all items within the scene
+	static const int MARGIN = 30; /// The margin between the boundary of the scene and the bounding box of all items within the scene
 
 private:
 	void addCaption(const QString &name, QPen &pen);
-	QNonScalableGraphicsTextItem* addNonScalableText(const QString &text, const QFont &font = QFont());
+	QNonScalableGraphicsTextItem* addNonScalableText(const QString &text,
+	                                                 const QFont &font = QFont());
 	void adjustAxis(float &min, float &max, int &numberOfTicks);
 	void adjustScaling();
 	void clearGrid();

@@ -18,17 +18,15 @@ class VtkMeshSource;
  */
 class MshItem : public TreeItem
 {
-
 public:
 	/// Constructor, automatically generates VTK object of the given mesh.
-	MshItem(const QList<QVariant> &data, TreeItem *parent, GridAdapter* grid);
+	MshItem(const QList<QVariant> &data, TreeItem* parent, GridAdapter* grid);
 	~MshItem();
 
 	/// Returns the mesh as a GridAdapter.
-	const GridAdapter* getGrid() const { return this->_meshSource->GetGrid(); };
+	const GridAdapter* getGrid() const { return this->_meshSource->GetGrid(); }
 	/// Returns the VTK object.
-	VtkMeshSource* vtkSource() const { return _meshSource; };	
-
+	VtkMeshSource* vtkSource() const { return _meshSource; }
 
 private:
 	VtkMeshSource* _meshSource;

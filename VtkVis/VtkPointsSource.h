@@ -4,13 +4,12 @@
  *
  */
 
-
 #ifndef VTKPOINTSSOURCE_H
 #define VTKPOINTSSOURCE_H
 
 // ** INCLUDES **
-#include <vtkPolyDataAlgorithm.h>
 #include "VtkAlgorithmProperties.h"
+#include <vtkPolyDataAlgorithm.h>
 
 #include "GEOObjects.h"
 
@@ -20,7 +19,6 @@
  */
 class VtkPointsSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
-
 public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkPointsSource* New();
@@ -28,7 +26,7 @@ public:
 	vtkTypeRevisionMacro(VtkPointsSource,vtkPolyDataAlgorithm);
 
 	/// Sets the points as a vector
-	void setPoints(const std::vector<GEOLIB::Point*>* points) { _points = points; };
+	void setPoints(const std::vector<GEOLIB::Point*>* points) { _points = points; }
 
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -37,18 +35,21 @@ public:
 
 protected:
 	VtkPointsSource();
-	~VtkPointsSource() {};
+	~VtkPointsSource() {}
 
 	/// Computes the polygonal data object.
-	int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);
+	int RequestData(vtkInformation* request,
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
-	int RequestInformation(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);
+	int RequestInformation(vtkInformation* request,
+	                       vtkInformationVector** inputVector,
+	                       vtkInformationVector* outputVector);
 
 	/// The points to visualize
 	const std::vector<GEOLIB::Point*>* _points;
 
 private:
-
 };
 
 #endif // VTKPOINTSSOURCE_H

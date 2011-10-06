@@ -6,9 +6,9 @@
 #ifndef COLORTABLEMODEL_H
 #define COLORTABLEMODEL_H
 
+#include "Color.h"
 #include <QAbstractTableModel>
 #include <QColor>
-#include "Color.h"
 
 /**
  * The PolylinesModel is a Qt model which represents Polylines.
@@ -18,7 +18,8 @@ class ColorTableModel : public QAbstractTableModel
 	Q_OBJECT
 
 public:
-	ColorTableModel( const std::map<std::string, GEOLIB::Color*> &colorLookupTable, QObject* parent = 0 );
+	ColorTableModel( const std::map<std::string, GEOLIB::Color*> &colorLookupTable,
+	                 QObject* parent = 0 );
 	~ColorTableModel();
 
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
@@ -31,12 +32,12 @@ public:
 		return _listOfPairs.size();
 	}
 
-	QVariant headerData( int section, Qt::Orientation orientation, int role /*= Qt::DisplayRole*/ ) const;
+	QVariant headerData( int section, Qt::Orientation orientation,
+	                     int role /*= Qt::DisplayRole*/ ) const;
 
 private:
 	bool buildTable( const std::map<std::string, GEOLIB::Color*> &colorLookupTable );
 
 	QList< QPair<QString, QColor> > _listOfPairs;
-
 };
 #endif // COLORTABLEMODEL_H

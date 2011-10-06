@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
@@ -16,8 +15,8 @@ class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
 
 namespace MeshLib
 {
-	class CFEMesh;
-	class CNode;
+class CFEMesh;
+class CNode;
 }
 
 /**
@@ -27,7 +26,9 @@ class VtkMeshConverter
 {
 public:
 	/// Converts greyscale image to quad mesh
-	static MeshLib::CFEMesh* convertImgToMesh(vtkImageData* img, const std::pair<double,double> &origin, const double &scalingFactor);
+	static MeshLib::CFEMesh* convertImgToMesh(vtkImageData* img,
+	                                          const std::pair<double,double> &origin,
+	                                          const double &scalingFactor);
 
 	/// Converts a vtkUnstructuredGrid object to a CFEMesh
 	static MeshLib::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);

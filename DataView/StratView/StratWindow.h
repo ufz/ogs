@@ -6,12 +6,12 @@
 #ifndef STRATWINDOW_H
 #define STRATWINDOW_H
 
-#include <QWidget>
 #include "ui_StratWindow.h"
+#include <QWidget>
 
 namespace GEOLIB
 {
-	class StationBorehole;
+class StationBorehole;
 }
 
 /**
@@ -28,8 +28,10 @@ public:
 	 * \param stratColors A color map.
 	 * \param parent The parent QWidget.
 	 */
-	StratWindow(GEOLIB::StationBorehole* station, std::map<std::string, GEOLIB::Color*> *stratColors = NULL, QWidget* parent = 0);
-	~StratWindow(void) { this->destroy(); };
+	StratWindow(GEOLIB::StationBorehole* station,
+	            std::map<std::string, GEOLIB::Color*>* stratColors = NULL,
+	            QWidget* parent = 0);
+	~StratWindow(void) { this->destroy(); }
 
 private:
 	/// Automatically resize window based on the measurements of the borehole.

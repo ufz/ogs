@@ -1,17 +1,17 @@
 /**
  * \file ColorPickerPushButton.cpp
  * 17/5/2010 LB Initial implementation
- * 
+ *
  * Implementation of ColorPickerPushButton
  */
 
 // ** INCLUDES **
 #include "ColorPickerPushButton.h"
 
- #include <QColorDialog>
+#include <QColorDialog>
 
 ColorPickerPushButton::ColorPickerPushButton( QWidget* parent /*= 0*/ )
-: QPushButton(parent)
+	: QPushButton(parent)
 {
 	setAutoFillBackground(true);
 	_color = QColor("white");
@@ -23,7 +23,7 @@ void ColorPickerPushButton::mouseReleaseEvent(QMouseEvent* e)
 	QColor newColor = QColorDialog::getColor(_color, NULL, "Choose a color");
 	if (!newColor.isValid())
 		return;
-	
+
 	setColor(newColor);
 
 	emit colorPicked(_color);

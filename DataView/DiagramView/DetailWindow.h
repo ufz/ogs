@@ -6,9 +6,8 @@
 #ifndef DETAILWINDOW_H
 #define DETAILWINDOW_H
 
-#include <QtGui/QWidget>
 #include "ui_DetailWindow.h"
-
+#include <QtGui/QWidget>
 
 /**
  * \brief Creates a window containing a diagram.
