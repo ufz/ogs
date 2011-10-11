@@ -6,6 +6,8 @@
 #ifndef GEOOBJECTLISTITEM_H
 #define GEOOBJECTLISTITEM_H
 
+#include "TreeItem.h"
+
 #include "GeoType.h"
 
 #include "VtkPointsSource.h"

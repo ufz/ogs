@@ -7,6 +7,7 @@
 #define QGRAPHICSGRID_H
 
 #include <QGraphicsItem>
+#include <QPen>
 
 /**
  * \brief A 2D carthesian grid as a QGraphicsItem.

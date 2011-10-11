@@ -7,6 +7,7 @@
 #define QARROW_H
 
 #include <QGraphicsItem>
+#include <QPen>
 
 const double PI = 3.14159265;
 
