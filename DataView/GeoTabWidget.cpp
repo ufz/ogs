@@ -7,7 +7,7 @@
 #include "GeoTabWidget.h"
 
 GeoTabWidget::GeoTabWidget( QWidget* parent /*= 0*/ )
-: QWidget(parent)
+	: QWidget(parent)
 {
 	setupUi(this);
 }

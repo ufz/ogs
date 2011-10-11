@@ -22,7 +22,6 @@ public:
 	virtual void SetUserProperty(QString name, QVariant value);
 
 private:
-	
 };
 
 #endif // VTKCOMPOSITETEXTUREONSURFACEFILTER_H

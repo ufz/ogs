@@ -6,8 +6,8 @@
 #ifndef QVRPNARTTRACKINGCLIENT_H
 #define QVRPNARTTRACKINGCLIENT_H
 
-#include <QObject>
 #include "VrpnArtTrackingClient.h"
+#include <QObject>
 
 #include <QTimer>
 
@@ -16,11 +16,11 @@ class QString;
 class QVrpnArtTrackingClient : public QObject, public VrpnArtTrackingClient
 {
 	Q_OBJECT
-	
+
 public:
-	 /// @brief Returns the singleton of this class
+	/// @brief Returns the singleton of this class
 	static QVrpnArtTrackingClient* Instance(QObject* parent = NULL);
-	
+
 	/// @brief Initializes and starts the tracking.
 	/// @param deviceName The name of the vrpn device @ vrpn server host name
 	/// e.g. DTrack@visserv3.intern.ufz.de
@@ -33,13 +33,13 @@ public:
 
 	/// @ Returns the update interval.
 	int updateInterval() const { return _updateInterval; }
-	
+
 public slots:
 	/// @brief Calls the vrpn mainloop functions. Must be called once per frame.
 	/// Is called automatically if an updateInterval was given in init().
 	void MainLoop();
 
-protected:	
+protected:
 	QVrpnArtTrackingClient(QObject* parent = NULL);
 	virtual ~QVrpnArtTrackingClient();
 
@@ -52,7 +52,7 @@ private:
 
 	/// The update interval
 	int _updateInterval;
-	
+
 	/// @brief This one points to the class itself.
 	/// You can use only one QVrpnArtTrackingClient because it´s static.
 	/// This is needed for the callback methods which only

@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef VTKVISTABWIDGET_H
 #define VTKVISTABWIDGET_H
 
@@ -38,17 +37,17 @@ protected slots:
 	{
 		Q_UNUSED(text);
 		this->translateItem();
-	};
+	}
 	void on_transY_textChanged(const QString &text)
 	{
 		Q_UNUSED(text);
 		this->translateItem();
-	};
+	}
 	void on_transZ_textChanged(const QString &text)
 	{
 		Q_UNUSED(text);
 		this->translateItem();
-	};
+	}
 
 	void SetActiveAttributeOnItem(const QString &name);
 
@@ -66,7 +65,6 @@ private:
 signals:
 	/// Is emitted when a property was changed.
 	void requestViewUpdate();
-
 };
 
 #endif // VTKVISTABWIDGET_H

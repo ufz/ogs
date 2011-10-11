@@ -6,8 +6,8 @@
 #ifndef VTKIMAGEDATATOLINEPOLYDATAFILTER_H
 #define VTKIMAGEDATATOLINEPOLYDATAFILTER_H
 
-#include <vtkPolyDataAlgorithm.h>
 #include "VtkAlgorithmProperties.h"
+#include <vtkPolyDataAlgorithm.h>
 
 class vtkInformation;
 class vtkInformationVector;
@@ -25,7 +25,7 @@ public:
 
 	/// @brief Prints information about itself.
 	void PrintSelf(ostream& os, vtkIndent indent);
-	
+
 	/// @brief Sets the scaling of the length of the lines.
 	ogsUserPropertyMacro(LengthScaleFactor,double);
 
@@ -45,20 +45,20 @@ protected:
 
 	/// @brief Destructor.
 	virtual ~VtkImageDataToLinePolyDataFilter();
-	
+
 	/// @brief Sets input port to vtkImageData.
 	virtual int FillInputPortInformation(int port, vtkInformation* info);
-	
+
 	/// @brief Converts the image data to lines
 	virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
-							vtkInformationVector* outputVector);
-	
+	                        vtkInformationVector* outputVector);
+
 	/// @brief The spacing of the image
 	double ImageSpacing;
 
 private:
-	VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&);	// Not implemented.
-	void operator=(const VtkImageDataToLinePolyDataFilter&);	// Not implemented
+	VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&); // Not implemented.
+	void operator=(const VtkImageDataToLinePolyDataFilter&); // Not implemented
 };
 
 #endif // VTKIMAGEDATATOLINEPOLYDATAFILTER_H

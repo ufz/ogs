@@ -1,9 +1,8 @@
 /**
  * \file TreeModelIterator.h
  * 23/6/2010 LB Initial implementation
- * 
+ *
  */
-
 
 #ifndef TREEMODELITERATOR_H
 #define TREEMODELITERATOR_H
@@ -27,7 +26,6 @@ class TreeItem;
  */
 class TreeModelIterator
 {
-
 public:
 	/// \brief Constructor. Provide a tree model to iterate over.
 	TreeModelIterator(TreeModel* model);
@@ -54,7 +52,6 @@ private:
 
 	/// \brief The traversal implementation.
 	TreeItem* next(const TreeItem* current);
-
 };
 
 #endif // TREEMODELITERATOR_H

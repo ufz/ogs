@@ -7,16 +7,17 @@
 #define CONDITIONMODEL_H
 
 // ** INCLUDES **
-#include "TreeModel.h"
 #include "ProjectData.h"
+#include "TreeModel.h"
 
 class FEMCondition;
 class CondObjectListItem;
 class vtkPolyDataAlgorithm;
 
-namespace GEOLIB {
-	class GeoObject;
-	class GeoType;
+namespace GEOLIB
+{
+class GeoObject;
+class GeoType;
 }
 
 /**
@@ -31,7 +32,7 @@ public:
 	ConditionModel(ProjectData &project, QObject* parent = 0);
 	~ConditionModel();
 
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 	/// Returns the vtk source object for the specified subtree of a geometry with the given name.
 	vtkPolyDataAlgorithm* vtkSource(const std::string &name, FEMCondition::CondType type);
 
@@ -40,7 +41,8 @@ public slots:
 	void addConditions(std::vector<FEMCondition*> &conditions);
 
 	/// Removes a subtree (BCs, ICs, STs) from the the model. If all conditions for a given geometry are removed, this tree is completely removed.
-	void removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
+	void removeFEMConditions(const QString &geometry_name,
+	                         FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
 
 private:
 	/// Adds a new FEM condition to the condition tree model.
@@ -58,10 +60,13 @@ private:
 	/// Returns the subtree item for a geometry with the given name. If create_item is true, this item will be created if it doesn't exist yet.
 	TreeItem* getGEOParent(const QString &geoName, bool create_item = false);
 	/// Returns the geo object for a geometric item of the given name and type for the associated geometry.
-	const GEOLIB::GeoObject* getGEOObject(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
+	const GEOLIB::GeoObject* getGEOObject(const std::string &geo_name,
+	                                      GEOLIB::GEOTYPE type,
+	                                      const std::string &obj_name) const;
 	/// Returns the index of a geometric item of the given name and type for the associated geometry.
-	int getGEOIndex(const std::string &geo_name, GEOLIB::GEOTYPE type, const std::string &obj_name) const;
-
+	int getGEOIndex(const std::string &geo_name,
+	                GEOLIB::GEOTYPE type,
+	                const std::string &obj_name) const;
 
 	ProjectData& _project;
 

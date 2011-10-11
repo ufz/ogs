@@ -4,21 +4,19 @@
  *
  */
 
-
 #ifndef VTKAPPLYCOLORTABLEFILTER_H
 #define VTKAPPLYCOLORTABLEFILTER_H
 
 // ** INCLUDES **
-#include <vtkPolyDataAlgorithm.h>
 #include "VtkAlgorithmProperties.h"
 #include <vtkLookupTable.h>
+#include <vtkPolyDataAlgorithm.h>
 
 /**
  * \brief Applying a color table to a vtk object.
  */
 class VtkApplyColorTableFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
-
 public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkApplyColorTableFilter* New();
@@ -54,10 +52,9 @@ protected:
 	~VtkApplyColorTableFilter();
 
 	/// Computes the unstructured grid data object.
-	int RequestData(vtkInformation* request, 
-		            vtkInformationVector** inputVector, 
-					vtkInformationVector* outputVector);
-
+	int RequestData(vtkInformation* request,
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
 private:
 	vtkLookupTable* ColorLookupTable;

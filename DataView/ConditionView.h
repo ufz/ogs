@@ -6,13 +6,12 @@
 #ifndef CONDITIONVIEW_H
 #define CONDITIONVIEW_H
 
-#include <QTreeView>
 #include <QContextMenuEvent>
+#include <QTreeView>
 
 #include "FEMCondition.h"
 
 class ConditionModel;
-
 
 /**
  * \brief A view for FEM-Conditions (Initial- & Boundary Conditions / Source Terms) with a number of additional
@@ -44,10 +43,9 @@ private slots:
 	//void removeAllConditions();
 
 signals:
-	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+	void itemSelectionChanged(const QItemSelection & selected,
+	                          const QItemSelection & deselected);
 	void conditionsRemoved(QString, FEMCondition::CondType);
-
 };
 
-	
 #endif //CONDITIONVIEW_H

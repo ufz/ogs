@@ -15,11 +15,9 @@ class VtkVisHelper
 public:
 	/// @brief Converts a QImage to vtkImageData.
 	static vtkImageData* QImageToVtkImageData(QImage &img);
-	
+
 	/// @brief Converts a QImage-object into a vtkTexture-object
 	static vtkTexture* QImageToVtkTexture(QImage &img);
-
-	
 };
 
 #endif // VTKVISHELPER_H

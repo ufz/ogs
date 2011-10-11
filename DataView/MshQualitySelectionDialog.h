@@ -6,9 +6,8 @@
 #ifndef MSHQUALITYSELECTIONDIALOG_H
 #define MSHQUALITYSELECTIONDIALOG_H
 
-
-#include "ui_MshQualitySelection.h"
 #include "MSHEnums.h"
+#include "ui_MshQualitySelection.h"
 
 class VtkMeshSource;
 
@@ -32,7 +31,6 @@ private slots:
 
 signals:
 	void measureSelected(VtkMeshSource*, MshQualityType::type);
-
 };
 
 #endif //MSHQUALITYSELECTIONDIALOG_H

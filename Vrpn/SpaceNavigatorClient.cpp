@@ -7,10 +7,9 @@
 #include "SpaceNavigatorClient.h"
 #include <iostream>
 
-
 SpaceNavigatorClient* SpaceNavigatorClient::_spacenavigator = 0;
 
-SpaceNavigatorClient::SpaceNavigatorClient() 
+SpaceNavigatorClient::SpaceNavigatorClient()
 {
 	_button = NULL;
 	_analog = NULL;
@@ -39,39 +38,57 @@ SpaceNavigatorClient::~SpaceNavigatorClient()
 	// clean up
 	if(_button)
 	{
-		_button->unregister_change_handler(NULL, (vrpn_BUTTONCHANGEHANDLER)SpaceNavigatorClient::_handleButtons);
+		_button->unregister_change_handler(
+		        NULL,
+		        (vrpn_BUTTONCHANGEHANDLER) SpaceNavigatorClient
+		        ::_handleButtons);
 		delete _button;
 		_button = NULL;
 	}
 	if(_analog)
 	{
-		_analog->unregister_change_handler(NULL, (vrpn_ANALOGCHANGEHANDLER)SpaceNavigatorClient::_handleAnalogs);
+		_analog->unregister_change_handler(
+		        NULL,
+		        (vrpn_ANALOGCHANGEHANDLER) SpaceNavigatorClient
+		        ::_handleAnalogs);
 		delete _analog;
 		_analog = NULL;
 	}
 }
 
-void SpaceNavigatorClient::init( const char *deviceName, SpaceNavigatorAxes axis /*= Y*/ )
+void SpaceNavigatorClient::init( const char* deviceName, SpaceNavigatorAxes axis /*= Y*/ )
 {
 	// Create new button_remote object that connects to the corresponding server object
 	// at the specified computer and register the callback function
 	if(_button)
 	{
-		_button->unregister_change_handler(NULL, (vrpn_BUTTONCHANGEHANDLER)SpaceNavigatorClient::_handleButtons);
+		_button->unregister_change_handler(
+		        NULL,
+		        (vrpn_BUTTONCHANGEHANDLER) SpaceNavigatorClient
+		        ::_handleButtons);
 		delete _button;
 	}
 	_button = new vrpn_Button_Remote(deviceName);
-	_button->register_change_handler(NULL, (vrpn_BUTTONCHANGEHANDLER)SpaceNavigatorClient::_handleButtons);
+	_button->register_change_handler(
+	        NULL,
+	        (vrpn_BUTTONCHANGEHANDLER) SpaceNavigatorClient::
+	        _handleButtons);
 
 	// Create new analog_remote object that connects to the corresponding server object
 	// at the specified computer and register the callback function
 	if(_analog)
 	{
-		_analog->unregister_change_handler(NULL, (vrpn_ANALOGCHANGEHANDLER)SpaceNavigatorClient::_handleAnalogs);
+		_analog->unregister_change_handler(
+		        NULL,
+		        (vrpn_ANALOGCHANGEHANDLER) SpaceNavigatorClient
+		        ::_handleAnalogs);
 		delete _analog;
 	}
 	_analog = new vrpn_Analog_Remote(deviceName);
-	_analog->register_change_handler(NULL, (vrpn_ANALOGCHANGEHANDLER)SpaceNavigatorClient::_handleAnalogs);
+	_analog->register_change_handler(
+	        NULL,
+	        (vrpn_ANALOGCHANGEHANDLER) SpaceNavigatorClient::
+	        _handleAnalogs);
 
 	// set up axis
 	if(axis == Z)
@@ -98,8 +115,8 @@ void SpaceNavigatorClient::update()
 {
 	double frameTime = getFrameTime(); // in ms
 	_frameTranslationFactor =  _translationFactor * (frameTime / 1000.0);
-	_frameRotationFactor = _rotationFactor * (frameTime / 800.0); 
-	
+	_frameRotationFactor = _rotationFactor * (frameTime / 800.0);
+
 	// process messages from server
 	this->_button->mainloop();
 	this->_analog->mainloop();
@@ -134,63 +151,62 @@ void SpaceNavigatorClient::setDomination(bool dominating)
 {
 	this->_dominating = dominating;
 
-	#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-		std::cout << "SpaceNavigator: Axis domination mode: ";
-		if(dominating)
-			std::cout << "ON" << std::endl;
-		else
-			std::cout << "OFF" << std::endl;
-	#endif // SPACENAVIGATOR_DEBUG_OUTPUT
+#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
+	std::cout << "SpaceNavigator: Axis domination mode: ";
+	if(dominating)
+		std::cout << "ON" << std::endl;
+	else
+		std::cout << "OFF" << std::endl;
+#endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
 void SpaceNavigatorClient::switchDomination()
 {
 	this->_dominating = !this->_dominating;
-	
-	#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-		std::cout << "SpaceNavigator: Axis domination mode: ";
-		if(_dominating)
-			std::cout << "ON" << std::endl;
-		else
-			std::cout << "OFF" << std::endl;
-	#endif // SPACENAVIGATOR_DEBUG_OUTPUT
+
+#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
+	std::cout << "SpaceNavigator: Axis domination mode: ";
+	if(_dominating)
+		std::cout << "ON" << std::endl;
+	else
+		std::cout << "OFF" << std::endl;
+#endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
 void SpaceNavigatorClient::setMode(SpaceNavigatorClient::SpaceNavigatorMode mode)
 {
 	this->_mode = mode;
 
-	#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-		std::cout << "SpaceNavigator: Transformation mode: ";
-		if(mode == TRANSROT)
-			std::cout << "TRANSLATION and ROTATION" << std::endl;
-		else if(mode == TRANS)
-			std::cout << "TRANSLATION only" << std::endl;
-		else if(mode == ROT)
-			std::cout << "ROTATION only" << std::endl;
-	#endif // SPACENAVIGATOR_DEBUG_OUTPUT
+#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
+	std::cout << "SpaceNavigator: Transformation mode: ";
+	if(mode == TRANSROT)
+		std::cout << "TRANSLATION and ROTATION" << std::endl;
+	else if(mode == TRANS)
+		std::cout << "TRANSLATION only" << std::endl;
+	else if(mode == ROT)
+		std::cout << "ROTATION only" << std::endl;
+#endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
 void SpaceNavigatorClient::switchMode()
 {
 	this->_mode = (SpaceNavigatorClient::SpaceNavigatorMode)((this->_mode + 1) % 3);
 
-	#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-		std::cout << "SpaceNavigator: Transformation mode: ";
-		if(_mode == TRANSROT)
-			std::cout << "TRANSLATION and ROTATION" << std::endl;
-		else if(_mode == TRANS)
-			std::cout << "TRANSLATION only" << std::endl;
-		else if(_mode == ROT)
-			std::cout << "ROTATION only" << std::endl;
-	#endif // SPACENAVIGATOR_DEBUG_OUTPUT
+#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
+	std::cout << "SpaceNavigator: Transformation mode: ";
+	if(_mode == TRANSROT)
+		std::cout << "TRANSLATION and ROTATION" << std::endl;
+	else if(_mode == TRANS)
+		std::cout << "TRANSLATION only" << std::endl;
+	else if(_mode == ROT)
+		std::cout << "ROTATION only" << std::endl;
+#endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
 void SpaceNavigatorClient::setDefaultButtonBehaviour(bool enable)
 {
 	_defaultButtonBehaviour = enable;
 }
-
 
 void SpaceNavigatorClient::invertAxis(SpaceNavigatorAxes axisToInvert)
 {
@@ -199,14 +215,14 @@ void SpaceNavigatorClient::invertAxis(SpaceNavigatorAxes axisToInvert)
 		if(_invertAxes[axisToInvert - 1] == 1.0)
 			_invertAxes[axisToInvert - 1] = -1.0;
 		else
-			_invertAxes[axisToInvert -1] = 1.0;
+			_invertAxes[axisToInvert - 1] = 1.0;
 	}
 }
 
-void VRPN_CALLBACK SpaceNavigatorClient::_handleButtons(void *, vrpn_BUTTONCB buttonData)
+void VRPN_CALLBACK SpaceNavigatorClient::_handleButtons(void*, vrpn_BUTTONCB buttonData)
 {
 	// read button data
-	_spacenavigator->buttons[buttonData.button] = buttonData.state ? true:false;
+	_spacenavigator->buttons[buttonData.button] = buttonData.state ? true : false;
 
 	if(_spacenavigator->_defaultButtonBehaviour)
 	{
@@ -216,11 +232,11 @@ void VRPN_CALLBACK SpaceNavigatorClient::_handleButtons(void *, vrpn_BUTTONCB bu
 		if(_spacenavigator->buttons[1])
 			_spacenavigator->switchDomination();
 	}
-	
+
 	_spacenavigator->_unconsumedData = true;
 }
 
-void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void *, vrpn_ANALOGCB analogData)
+void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void*, vrpn_ANALOGCB analogData)
 {
 	// read data from the analog axes
 	// range [0, 1]
@@ -234,32 +250,45 @@ void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void *, vrpn_ANALOGCB an
 			double max = analogData.channel[0];
 			int index = 0;
 			for(int i = 1; i < 6; i++)
-			{
 				if(abs(analogData.channel[i]) > abs(max))
 				{
 					index = i;
 					max = analogData.channel[i];
 				}
-			}
-			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z = _spacenavigator->rx = _spacenavigator->ry = _spacenavigator->rz = 0;
+			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z =
+			                                                  _spacenavigator->rx =
+			                                                          _spacenavigator->
+			                                                          ry = _spacenavigator->rz = 0;
 			switch(index)
 			{
-			case 0: _spacenavigator->x = max  * _spacenavigator->_invertAxes[0]; break;
-			case 2: _spacenavigator->y = max  * _spacenavigator->_invertAxes[1]; break;
-			case 1: _spacenavigator->z = max  * _spacenavigator->_invertAxes[2]; break;
-			case 3: _spacenavigator->rx = max  * _spacenavigator->_invertAxes[3]; break;
-			case 5: _spacenavigator->ry = max  * _spacenavigator->_invertAxes[4]; break;
-			case 4: _spacenavigator->rz = max  * _spacenavigator->_invertAxes[5]; break;
+			case 0: _spacenavigator->x = max  * _spacenavigator->_invertAxes[0];
+				break;
+			case 2: _spacenavigator->y = max  * _spacenavigator->_invertAxes[1];
+				break;
+			case 1: _spacenavigator->z = max  * _spacenavigator->_invertAxes[2];
+				break;
+			case 3: _spacenavigator->rx = max  * _spacenavigator->_invertAxes[3];
+				break;
+			case 5: _spacenavigator->ry = max  * _spacenavigator->_invertAxes[4];
+				break;
+			case 4: _spacenavigator->rz = max  * _spacenavigator->_invertAxes[5];
+				break;
 			}
 		}
 		else
 		{
-			_spacenavigator->x = analogData.channel[0] * _spacenavigator->_invertAxes[0];
-			_spacenavigator->y = analogData.channel[2] * _spacenavigator->_invertAxes[1];
-			_spacenavigator->z = analogData.channel[1] * _spacenavigator->_invertAxes[2];
-			_spacenavigator->rx = analogData.channel[3] * _spacenavigator->_invertAxes[3];
-			_spacenavigator->ry = analogData.channel[5] * _spacenavigator->_invertAxes[4];
-			_spacenavigator->rz = analogData.channel[4] * _spacenavigator->_invertAxes[5];
+			_spacenavigator->x = analogData.channel[0] *
+			                     _spacenavigator->_invertAxes[0];
+			_spacenavigator->y = analogData.channel[2] *
+			                     _spacenavigator->_invertAxes[1];
+			_spacenavigator->z = analogData.channel[1] *
+			                     _spacenavigator->_invertAxes[2];
+			_spacenavigator->rx = analogData.channel[3] *
+			                      _spacenavigator->_invertAxes[3];
+			_spacenavigator->ry = analogData.channel[5] *
+			                      _spacenavigator->_invertAxes[4];
+			_spacenavigator->rz = analogData.channel[4] *
+			                      _spacenavigator->_invertAxes[5];
 		}
 	}
 
@@ -271,26 +300,33 @@ void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void *, vrpn_ANALOGCB an
 			double max = analogData.channel[0];
 			int index = 0;
 			for(int i = 1; i < 3; i++)
-			{
 				if(abs(analogData.channel[i]) > abs(max))
 				{
 					index = i;
 					max = analogData.channel[i];
 				}
-			}
-			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z = _spacenavigator->rx = _spacenavigator->ry = _spacenavigator->rz = 0;
+			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z =
+			                                                  _spacenavigator->rx =
+			                                                          _spacenavigator->
+			                                                          ry = _spacenavigator->rz = 0;
 			switch(index)
 			{
-			case 0: _spacenavigator->x = max  * _spacenavigator->_invertAxes[0]; break;
-			case 2: _spacenavigator->y = max  * _spacenavigator->_invertAxes[1]; break;
-			case 1: _spacenavigator->z = max  * _spacenavigator->_invertAxes[2]; break;
+			case 0: _spacenavigator->x = max  * _spacenavigator->_invertAxes[0];
+				break;
+			case 2: _spacenavigator->y = max  * _spacenavigator->_invertAxes[1];
+				break;
+			case 1: _spacenavigator->z = max  * _spacenavigator->_invertAxes[2];
+				break;
 			}
 		}
 		else
 		{
-			_spacenavigator->x = analogData.channel[0] * _spacenavigator->_invertAxes[0];
-			_spacenavigator->y = analogData.channel[2] * _spacenavigator->_invertAxes[1];
-			_spacenavigator->z = analogData.channel[1] * _spacenavigator->_invertAxes[2];
+			_spacenavigator->x = analogData.channel[0] *
+			                     _spacenavigator->_invertAxes[0];
+			_spacenavigator->y = analogData.channel[2] *
+			                     _spacenavigator->_invertAxes[1];
+			_spacenavigator->z = analogData.channel[1] *
+			                     _spacenavigator->_invertAxes[2];
 			_spacenavigator->rx = _spacenavigator->ry = _spacenavigator->rz = 0;
 		}
 	}
@@ -303,26 +339,33 @@ void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void *, vrpn_ANALOGCB an
 			double max = analogData.channel[3];
 			int index = 3;
 			for(int i = 4; i < 6; i++)
-			{
 				if(abs(analogData.channel[i]) > abs(max))
 				{
 					index = i;
 					max = analogData.channel[i];
 				}
-			}
-			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z = _spacenavigator->rx = _spacenavigator->ry = _spacenavigator->rz = 0;
+			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z =
+			                                                  _spacenavigator->rx =
+			                                                          _spacenavigator->
+			                                                          ry = _spacenavigator->rz = 0;
 			switch(index)
 			{
-			case 3: _spacenavigator->rx = max  * _spacenavigator->_invertAxes[3]; break;
-			case 5: _spacenavigator->ry = max  * _spacenavigator->_invertAxes[4]; break;
-			case 4: _spacenavigator->rz = max  * _spacenavigator->_invertAxes[5]; break;
+			case 3: _spacenavigator->rx = max  * _spacenavigator->_invertAxes[3];
+				break;
+			case 5: _spacenavigator->ry = max  * _spacenavigator->_invertAxes[4];
+				break;
+			case 4: _spacenavigator->rz = max  * _spacenavigator->_invertAxes[5];
+				break;
 			}
 		}
 		else
 		{
-			_spacenavigator->rx = analogData.channel[3] * _spacenavigator->_invertAxes[3];
-			_spacenavigator->ry = analogData.channel[5] * _spacenavigator->_invertAxes[4];
-			_spacenavigator->rz = analogData.channel[4] * _spacenavigator->_invertAxes[5];
+			_spacenavigator->rx = analogData.channel[3] *
+			                      _spacenavigator->_invertAxes[3];
+			_spacenavigator->ry = analogData.channel[5] *
+			                      _spacenavigator->_invertAxes[4];
+			_spacenavigator->rz = analogData.channel[4] *
+			                      _spacenavigator->_invertAxes[5];
 			_spacenavigator->x = _spacenavigator->y = _spacenavigator->z = 0;
 		}
 	}
@@ -338,19 +381,21 @@ void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void *, vrpn_ANALOGCB an
 		_spacenavigator->ry = _spacenavigator->rz;
 		_spacenavigator->rz = temp;
 	}
-	
+
 	_spacenavigator->_unconsumedData = true;
-	
-	#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-	std::cout << "Translation: { " << _spacenavigator->x << ", " << _spacenavigator->y << ", " << _spacenavigator->z << " }" << std::endl;
-	std::cout << "Rotation: { " << _spacenavigator->rx << ", " << _spacenavigator->ry << ", " << _spacenavigator->rz << " }" << std::endl;
-	#endif // SPACENAVIGATOR_DEBUG_OUTPUT
+
+#ifdef SPACENAVIGATOR_DEBUG_OUTPUT
+	std::cout << "Translation: { " << _spacenavigator->x << ", " << _spacenavigator->y <<
+	", " << _spacenavigator->z << " }" << std::endl;
+	std::cout << "Rotation: { " << _spacenavigator->rx << ", " << _spacenavigator->ry <<
+	", " << _spacenavigator->rz << " }" << std::endl;
+#endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
 SpaceNavigatorClient* SpaceNavigatorClient::Instance()
 {
 	if(_spacenavigator == 0)
 		_spacenavigator = new SpaceNavigatorClient();
-	
+
 	return _spacenavigator;
 }

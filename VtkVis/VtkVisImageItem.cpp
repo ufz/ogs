@@ -4,32 +4,31 @@
  */
 
 // ** INCLUDES **
-#include "VtkVisImageItem.h"
 #include "VtkAlgorithmProperties.h"
+#include "VtkVisImageItem.h"
 
+#include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
 #include <vtkDataSetMapper.h>
-#include "QVtkDataSetMapper.h"
 #include <vtkImageAlgorithm.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
 // export test
-#include <vtkXMLImageDataWriter.h>
 #include <vtkImageActor.h>
-
+#include <vtkXMLImageDataWriter.h>
 
 VtkVisImageItem::VtkVisImageItem(
-	vtkAlgorithm* algorithm, TreeItem* parentItem,
-	const QList<QVariant> data /*= QList<QVariant>()*/)
-: VtkVisPipelineItem(algorithm, parentItem, data)
+        vtkAlgorithm* algorithm, TreeItem* parentItem,
+        const QList<QVariant> data /*= QList<QVariant>()*/)
+	: VtkVisPipelineItem(algorithm, parentItem, data)
 {
 }
 
 VtkVisImageItem::VtkVisImageItem(
-	VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-	const QList<QVariant> data /*= QList<QVariant>()*/)
-: VtkVisPipelineItem(compositeFilter, parentItem, data)
+        VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
+        const QList<QVariant> data /*= QList<QVariant>()*/)
+	: VtkVisPipelineItem(compositeFilter, parentItem, data)
 {
 }
 
@@ -55,26 +54,27 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 	if (vtkProps)
 		setVtkProperties(vtkProps);
 /*
-	// Copy properties from parent
-	else
+    // Copy properties from parent
+    else
+    {
+ */
+	VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+	while (parentItem)
 	{
-*/
-		VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
-		while (parentItem)
+		VtkAlgorithmProperties* parentProps =
+		        dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
+		if (parentProps)
 		{
-			VtkAlgorithmProperties* parentProps = dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
-			if (parentProps)
-			{
-				VtkAlgorithmProperties* newProps = new VtkAlgorithmProperties();
-				newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
-				newProps->SetTexture(parentProps->GetTexture());
-				setVtkProperties(newProps);
-				vtkProps = newProps;
-				parentItem = NULL;
-			}
-			else
-				parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+			VtkAlgorithmProperties* newProps = new VtkAlgorithmProperties();
+			newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
+			newProps->SetTexture(parentProps->GetTexture());
+			setVtkProperties(newProps);
+			vtkProps = newProps;
+			parentItem = NULL;
 		}
+		else
+			parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+	}
 //	}
 
 	// Set active scalar to the desired one from VtkAlgorithmProperties
@@ -82,12 +82,11 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 	if (vtkProps)
 	{
 		if (vtkProps->GetActiveAttribute().length() > 0)
-		{
 			this->SetActiveAttribute(vtkProps->GetActiveAttribute());
-		}
 		else
 		{
-			VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+			VtkVisPipelineItem* visParentItem =
+			        dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
 			if (visParentItem)
 				this->SetActiveAttribute(visParentItem->GetActiveAttribute());
 			if (vtkProps->GetTexture() != NULL)
@@ -107,7 +106,8 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
 	vtkImageAlgorithm* algID = dynamic_cast<vtkImageAlgorithm*>(algorithm);
 	if (algID)
 	{
-		vtkSmartPointer<vtkXMLImageDataWriter> iWriter = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+		vtkSmartPointer<vtkXMLImageDataWriter> iWriter =
+		        vtkSmartPointer<vtkXMLImageDataWriter>::New();
 		iWriter->SetInput(algID->GetOutputDataObject(0));
 		std::string filenameWithExt = filename;
 		filenameWithExt.append(".vti");

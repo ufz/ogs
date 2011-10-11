@@ -7,11 +7,12 @@
 #define QARROW_H
 
 #include <QGraphicsItem>
+#include <QPen>
 
 const double PI = 3.14159265;
 
 /**
- * \brief An arrow as a QGraphicsObject 
+ * \brief An arrow as a QGraphicsObject
  */
 class QArrow : public QGraphicsItem
 {
@@ -22,7 +23,7 @@ public:
 
 	double getLength();
 	double getAngle();
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 	QRectF boundingRect() const;
 	void setAngle(double a);
 	void setLength(double l);
@@ -35,7 +36,7 @@ private:
 	float _arrowAngle;
 	float _headLength;
 	float _headWidth;
-	QPen  _arrowPen;
+	QPen _arrowPen;
 };
 
 #endif //QARROW_H

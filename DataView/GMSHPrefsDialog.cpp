@@ -16,7 +16,7 @@
 #include <QStringListModel>
 
 GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* parent)
-: QDialog(parent), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
+	: QDialog(parent), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
 {
 	setupUi(this);
 
@@ -27,13 +27,25 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* 
 	this->param4->setText("0");
 
 	// object will be deleted by Qt
-	StrictIntValidator *max_number_of_points_in_quadtree_leaf_validator (new StrictIntValidator (1, 1000, this->param1));
+	StrictIntValidator* max_number_of_points_in_quadtree_leaf_validator (new StrictIntValidator (
+	                                                                             1,
+	                                                                             1000,
+	                                                                             this->param1));
 	param1->setValidator (max_number_of_points_in_quadtree_leaf_validator);
 	// object will be deleted by Qt
-	StrictDoubleValidator *mesh_density_scaling_pnts_validator(new StrictDoubleValidator (1e-10, 1.0, 5, this->param2));
+	StrictDoubleValidator* mesh_density_scaling_pnts_validator(new StrictDoubleValidator (
+	                                                                   1e-10,
+	                                                                   1.0,
+	                                                                   5,
+	                                                                   this
+	                                                                   ->param2));
 	param2->setValidator (mesh_density_scaling_pnts_validator);
 	// object will be deleted by Qt#
-	StrictDoubleValidator *mesh_density_scaling_stations_validator(new StrictDoubleValidator (1e-10, 1.0, 5, this->param3));
+	StrictDoubleValidator* mesh_density_scaling_stations_validator(new StrictDoubleValidator (
+	                                                                       1e-10,
+	                                                                       1.0,
+	                                                                       5,
+	                                                                       this->param3));
 	param3->setValidator (mesh_density_scaling_stations_validator);
 
 	std::vector<std::string> geoNames;
@@ -43,17 +55,14 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* 
 	std::vector<std::string> geo_station_names;
 	geoObjects->getStationNames(geo_station_names);
 
-	for (size_t k(0); k<geo_station_names.size(); k++) {
+	for (size_t k(0); k < geo_station_names.size(); k++)
 		geoNames.push_back (geo_station_names[k]);
-	}
 
 	size_t nGeoObjects(geoNames.size());
 	QStringList list;
 
-	for (size_t i=0; i<nGeoObjects; i++)
-	{
+	for (size_t i = 0; i < nGeoObjects; i++)
 		list.append(QString::fromStdString(geoNames[i]));
-	}
 
 	if (list.empty())
 	{
@@ -64,7 +73,7 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* 
 	_allGeo->setStringList(list);
 	this->allGeoView->setModel(_allGeo);
 	this->selectedGeoView->setModel(_selGeo);
-	this->radioAdaptive->toggle();	// default is adaptive meshing
+	this->radioAdaptive->toggle(); // default is adaptive meshing
 	this->on_radioAdaptive_toggled(true);
 }
 
@@ -130,10 +139,10 @@ void GMSHPrefsDialog::accept()
 
 	if (this->radioAdaptive->isChecked())
 	{
-		max_number_of_points_in_quadtree_leaf = str2number<size_t> (param1->text().toStdString().c_str());
-		if (max_number_of_points_in_quadtree_leaf == 0) {
+		max_number_of_points_in_quadtree_leaf = str2number<size_t> (
+		        param1->text().toStdString().c_str());
+		if (max_number_of_points_in_quadtree_leaf == 0)
 			max_number_of_points_in_quadtree_leaf = 10;
-		}
 		mesh_density_scaling_pnts = fabs (strtod(param2->text().toStdString().c_str(), 0));
 		if (mesh_density_scaling_pnts < sqrt(std::numeric_limits<double>::min()))
 			mesh_density_scaling_pnts = 0.5;
@@ -142,12 +151,15 @@ void GMSHPrefsDialog::accept()
 			mesh_density_scaling_stations = 0.05;
 	}
 	else
-	{
 		val4 = strtod(param4->text().toStdString().c_str(), 0);
-	}
 
 	bool delete_geo_file = this->geoFileDelete->isChecked();
-	emit requestMeshing(selectedObjects, max_number_of_points_in_quadtree_leaf, mesh_density_scaling_pnts, mesh_density_scaling_stations, val4, delete_geo_file);
+	emit requestMeshing(selectedObjects,
+	                    max_number_of_points_in_quadtree_leaf,
+	                    mesh_density_scaling_pnts,
+	                    mesh_density_scaling_stations,
+	                    val4,
+	                    delete_geo_file);
 	this->done(QDialog::Accepted);
 }
 
@@ -160,8 +172,6 @@ std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
 {
 	std::vector<std::string> indexList;
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
-	{
 		indexList.push_back(it->toStdString());
-	}
 	return indexList;
 }

@@ -23,7 +23,6 @@ public:
 
 private:
 	vtkSphereSource* _glyphSource;
-	
 };
 
 #endif // VTKCOMPOSITEPOINTTOGLYPHFILTER_H

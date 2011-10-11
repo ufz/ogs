@@ -1,19 +1,19 @@
 /**
  * \file RecentFiles.cpp
  * 5/11/2009 LB Initial implementation
- * 
+ *
  * Implementation of RecentFiles
  */
 
 // ** INCLUDES **
 #include "RecentFiles.h"
 
-#include <QSettings>
 #include <QFileInfo>
+#include <QSettings>
 
 RecentFiles::RecentFiles(  QObject* parent, const char* slot,
-	QString settingsName, QString programName )
-: QObject(parent), _settingsName(settingsName), _programName(programName)
+                           QString settingsName, QString programName )
+	: QObject(parent), _settingsName(settingsName), _programName(programName)
 {
 	_filesMenu = new QMenu(tr("Recent files"));
 	for (int i = 0; i < _maxFiles; i++)
@@ -38,7 +38,7 @@ QMenu* RecentFiles::menu()
 void RecentFiles::setCurrentFile( const QString& filename )
 {
 	_currentFile = filename;
-	
+
 	QSettings settings("UFZ", _programName);
 	QStringList files = settings.value(_settingsName).toStringList();
 	files.removeAll(filename);
@@ -64,7 +64,7 @@ void RecentFiles::updateRecentFileActions()
 		_fileActions[i]->setData(files[i]);
 		_fileActions[i]->setVisible(true);
 	}
-	
+
 	for (int i = numFiles; i < _maxFiles; ++i)
 		_fileActions[i]->setVisible(false);
 }

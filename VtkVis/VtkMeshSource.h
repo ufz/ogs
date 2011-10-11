@@ -4,16 +4,15 @@
  *
  */
 
-
 #ifndef VTKMESHSOURCE_H
 #define VTKMESHSOURCE_H
 
 // ** INCLUDES **
 #include <map>
 
-#include <vtkUnstructuredGridAlgorithm.h>
 #include "GridAdapter.h"
 #include "VtkAlgorithmProperties.h"
+#include <vtkUnstructuredGridAlgorithm.h>
 
 class VtkColorLookupTable;
 
@@ -22,7 +21,6 @@ class VtkColorLookupTable;
  */
 class VtkMeshSource : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {
-
 public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkMeshSource* New();
@@ -32,10 +30,10 @@ public:
 	const char* GetMaterialArrayName() const { return _matName; }
 
 	/// Returns the base object of this grid
-	const GridAdapter* GetGrid() { return this->_grid; };
+	const GridAdapter* GetGrid() { return this->_grid; }
 
 	/// Sets the grid object that should be visualized
-	void SetGrid(const GridAdapter* grid) { _grid = grid; };
+	void SetGrid(const GridAdapter* grid) { _grid = grid; }
 
 	/// Prints the mesh data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -55,16 +53,13 @@ protected:
 
 	/// Computes the unstructured grid data object.
 	int RequestData(vtkInformation* request,
-		            vtkInformationVector** inputVector,
-					vtkInformationVector* outputVector);
-
-
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
 	const GridAdapter* _grid;
 
 private:
 	const char* _matName;
-
 };
 
 #endif // VTKMESHSOURCE_H

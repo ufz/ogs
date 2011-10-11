@@ -6,13 +6,14 @@
 #ifndef GMSHPREFSDIALOG_H
 #define GMSHPREFSDIALOG_H
 
-#include <QtGui/QMainWindow>
 #include "ui_GMSHPrefs.h"
+#include <QtGui/QMainWindow>
 
 class QStringListModel;
 
-namespace GEOLIB {
-	class GEOObjects;
+namespace GEOLIB
+{
+class GEOObjects;
 }
 
 /**
@@ -26,14 +27,11 @@ public:
 	GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* parent = 0);
 	~GMSHPrefsDialog(void);
 
-
-
 private:
 	std::vector<std::string> getSelectedObjects(QStringList list);
 
 	QStringListModel* _allGeo;
 	QStringListModel* _selGeo;
-
 
 private slots:
 	void on_selectGeoButton_pressed();
@@ -48,7 +46,6 @@ private slots:
 
 signals:
 	void requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool);
-
 };
 
 #endif //GMSHPREFSDIALOG_H

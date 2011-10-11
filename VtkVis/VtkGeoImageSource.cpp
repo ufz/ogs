@@ -1,7 +1,7 @@
 /**
  * \file VtkGeoImageSource.cpp
  * 28/09/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkGeoImageSource class
  */
 
@@ -10,17 +10,17 @@
 
 #include "OGSRaster.h"
 
-#include <vtkObjectFactory.h>
-#include <vtkQImageToImageSource.h>
-#include <vtkImageChangeInformation.h>
-#include <vtkImageShiftScale.h>
-#include <vtkImageData.h>
 #include <vtkFloatArray.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkImageData.h>
+#include <vtkImageShiftScale.h>
+#include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkQImageToImageSource.h>
 
-#include <QString>
-#include <QPointF>
 #include <QImage>
+#include <QPointF>
+#include <QString>
 
 vtkStandardNewMacro(VtkGeoImageSource);
 
@@ -39,14 +39,14 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
 	input->GetDimensions(dims);
 	if (input->GetScalarType() != output->GetScalarType())
 	{
-    	vtkGenericWarningMacro(<< "Execute: input ScalarType, " << input->GetScalarType()
-    		<< ", must match out ScalarType " << output->GetScalarType());
+		vtkGenericWarningMacro(<< "Execute: input ScalarType, " << input->GetScalarType()
+		                       << ", must match out ScalarType " << output->GetScalarType());
 		return;
 	}
 	// HACK LB Multiply by number of scalar components due to RGBA values ?????
-	int size = dims[0]*dims[1]*dims[2]*input->GetNumberOfScalarComponents();
+	int size = dims[0] * dims[1] * dims[2] * input->GetNumberOfScalarComponents();
 
-	for(int i=0; i<size; i++)
+	for(int i = 0; i < size; i++)
 		outPtr[i] = inPtr[i];
 }
 
@@ -55,7 +55,7 @@ VtkGeoImageSource::VtkGeoImageSource()
 	_imageSource = vtkQImageToImageSource::New();
 	_imageInfo = vtkImageChangeInformation::New();
 	_imageShift = vtkImageShiftScale::New();
-	
+
 	_imageInfo->SetInputConnection(_imageSource->GetOutputPort());
 	_imageShift->SetInputConnection(_imageInfo->GetOutputPort());
 	_imageShift->SetOutputScalarTypeToUnsignedChar();
@@ -133,46 +133,46 @@ void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
 		// This is simply a #define for a big case list.
 		// It handles all data types that VTK supports.
 		vtkTemplateMacro(vtkSimpleImageFilterExampleExecute(
-			input, output, (VTK_TT*)(inPtr), (VTK_TT*)(outPtr)));
-		default:
-			vtkGenericWarningMacro("Execute: Unknown input ScalarType");
-			return;
+		                         input, output, (VTK_TT*)(inPtr), (VTK_TT*)(outPtr)));
+	default:
+		vtkGenericWarningMacro("Execute: Unknown input ScalarType");
+		return;
 	}
 
 /*
-	// Create normals
-	vtkFloatArray* normals = vtkFloatArray::New();
-	int numPoints = input->GetNumberOfPoints();
-	normals->SetNumberOfComponents(3);
-	normals->Allocate(3*numPoints);
-	float normal[3] = {0.f, 0.f, 1.f};
+    // Create normals
+    vtkFloatArray* normals = vtkFloatArray::New();
+    int numPoints = input->GetNumberOfPoints();
+    normals->SetNumberOfComponents(3);
+    normals->Allocate(3*numPoints);
+    float normal[3] = {0.f, 0.f, 1.f};
 
-	// vector data
-	std::cout << input->GetScalarTypeAsString() << std::endl;
-	vtkFloatArray* vectors = vtkFloatArray::New();
-	vectors->SetNumberOfComponents(3);
-	vectors->Allocate(3*numPoints);
-	int numScalarComponents = input->GetNumberOfScalarComponents();
+    // vector data
+    std::cout << input->GetScalarTypeAsString() << std::endl;
+    vtkFloatArray* vectors = vtkFloatArray::New();
+    vectors->SetNumberOfComponents(3);
+    vectors->Allocate(3*numPoints);
+    int numScalarComponents = input->GetNumberOfScalarComponents();
 
-	for (int i = 0; i < numPoints; i++)
-	{
-		normals->InsertTuple(i, normal);
-		float vector[3];
-		vector[0] = 1;
-		vector[1] = 1;
-		vector[2] = ((unsigned char*)inPtr)[i * numScalarComponents] * 0.1;
-		//std::cout << vector[2] << " ";
-		vectors->InsertTuple(i, vector);
-	}
+    for (int i = 0; i < numPoints; i++)
+    {
+        normals->InsertTuple(i, normal);
+        float vector[3];
+        vector[0] = 1;
+        vector[1] = 1;
+        vector[2] = ((unsigned char*)inPtr)[i * numScalarComponents] * 0.1;
+        //std::cout << vector[2] << " ";
+        vectors->InsertTuple(i, vector);
+    }
 
-	normals->SetName("Normals");
-	output->GetPointData()->SetNormals(normals);
-	normals->Delete();
+    normals->SetName("Normals");
+    output->GetPointData()->SetNormals(normals);
+    normals->Delete();
 
-	vectors->SetName("Vectors");
-	output->GetPointData()->SetVectors(vectors);
-	vectors->Delete();
-*/
+    vectors->SetName("Vectors");
+    output->GetPointData()->SetVectors(vectors);
+    vectors->Delete();
+ */
 }
 
 void VtkGeoImageSource::SetUserProperty( QString name, QVariant value )

@@ -3,10 +3,9 @@
  * KR Initial implementation
  */
 
-#include <math.h>
 #include "DiagramView.h"
 #include <QGraphicsTextItem>
-
+#include <math.h>
 
 DiagramView::DiagramView(QWidget* parent) : QGraphicsView(parent)
 {
@@ -65,27 +64,27 @@ void DiagramView::initialize()
  * appropriate transform for every single QGraphicsTextItem seperately.
  */
 /*
-void DiagramView::keepItemAspectRatio()
-{
-	double xFactor = transform().mapRect(QRectF(0, 0, 1, 1)).width();
-	double yFactor = transform().mapRect(QRectF(0, 0, 1, 1)).height();
+   void DiagramView::keepItemAspectRatio()
+   {
+    double xFactor = transform().mapRect(QRectF(0, 0, 1, 1)).width();
+    double yFactor = transform().mapRect(QRectF(0, 0, 1, 1)).height();
     QMatrix invertedScaling;
     invertedScaling.scale(1.0 , xFactor / yFactor);
 
-	scene->xLabel->setTransform(QTransform(invertedScaling));
-	scene->yLabel->setTransform(QTransform(invertedScaling));
-	scene->yLabel->rotate(-90);
-}
-*/
+    scene->xLabel->setTransform(QTransform(invertedScaling));
+    scene->yLabel->setTransform(QTransform(invertedScaling));
+    scene->yLabel->rotate(-90);
+   }
+ */
 
 QSize DiagramView::minimumSizeHint() const
 {
-    return QSize(3*_scene->MARGIN,2*_scene->MARGIN);
+	return QSize(3 * _scene->MARGIN,2 * _scene->MARGIN);
 }
 
 QSize DiagramView::sizeHint() const
 {
-    return QSize(6*_scene->MARGIN, 4*_scene->MARGIN);
+	return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN);
 }
 
 void DiagramView::resizeEvent(QResizeEvent* event)
@@ -106,6 +105,7 @@ void DiagramView::update()
 	//setResizeAnchor(QGraphicsView::AnchorViewCenter);
 	QRectF viewRect = _scene->itemsBoundingRect();
 	_scene->setSceneRect(viewRect);
-	QRectF sceneInView(0/*_scene->MARGIN*/,_scene->MARGIN/2,viewRect.width()/*+_scene->MARGIN*/,viewRect.height()+_scene->MARGIN);
+	QRectF sceneInView(0 /*_scene->MARGIN*/,_scene->MARGIN / 2,
+	                   viewRect.width() /*+_scene->MARGIN*/,viewRect.height() + _scene->MARGIN);
 	fitInView(sceneInView, Qt::IgnoreAspectRatio);
 }

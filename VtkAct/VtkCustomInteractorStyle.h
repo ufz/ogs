@@ -1,9 +1,8 @@
 /**
  * \file VtkCustomInteractorStyle.h
  * 21/6/2010 LB Initial implementation
- * 
+ *
  */
-
 
 #ifndef VTKCUSTOMINTERACTORSTYLE_H
 #define VTKCUSTOMINTERACTORSTYLE_H
@@ -41,7 +40,7 @@ public:
 
 	/// @brief Handles key up events.
 	virtual void OnKeyUp();
-	
+
 	/// @brief Handles left mouse button events (picking).
 	virtual void OnLeftButtonDown();
 
@@ -51,23 +50,22 @@ public:
 public slots:
 	void highlightActor(vtkProp3D* prop);
 	void setHighlightActor(bool on);
-	
+
 	/// @brief Sets the highlightable vtk object.
 	void pickableDataObject(vtkDataObject* object);
 
 protected:
 	VtkCustomInteractorStyle();
 	virtual ~VtkCustomInteractorStyle();
-	
+
 	/// @brief The vtk object to pick.
 	vtkDataObject* Data;
-	
+
 	/// @brief The mapper for highlighting the selected cell.
 	vtkDataSetMapper* selectedMapper;
-	
+
 	/// @brief The actor for highlighting the selected cell.
 	vtkActor* selectedActor;
-	
 
 private:
 	bool _highlightActor;
@@ -83,7 +81,6 @@ signals:
 
 	/// @brief Emitted when a mesh element has been picked
 	void elementPicked(const GridAdapter*, const size_t);
-
 };
 
 #endif // VTKINTERACTORSTYLE_H

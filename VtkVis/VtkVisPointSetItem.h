@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef VTKVISPOINTSETITEM_H
 #define VTKVISPOINTSETITEM_H
 
@@ -35,12 +34,12 @@ class VtkVisPointSetItem : public VtkVisPipelineItem
 public:
 	/// @brief Constructor for a source/filter object.
 	VtkVisPointSetItem(vtkAlgorithm* algorithm,
-		TreeItem* parentItem,
-		const QList<QVariant> data = QList<QVariant>());
+	                   TreeItem* parentItem,
+	                   const QList<QVariant> data = QList<QVariant>());
 
 	/// @brief Constructor for composite filter
 	VtkVisPointSetItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-		const QList<QVariant> data = QList<QVariant>());
+	                   const QList<QVariant> data = QList<QVariant>());
 
 	~VtkVisPointSetItem();
 
@@ -76,11 +75,9 @@ protected:
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
-
 private:
 	/// @see SetActiveAttribute()
 	bool setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name);
-
 };
 
 #endif // VTKVISPOINTSETITEM_H

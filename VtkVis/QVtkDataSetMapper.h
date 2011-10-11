@@ -13,7 +13,7 @@
 class QVtkDataSetMapper : public QObject, public vtkDataSetMapper
 {
 	Q_OBJECT
-	
+
 public:
 	/// @brief Create new objects with New() because of VTKs reference counting.
 	static QVtkDataSetMapper* New();
@@ -36,8 +36,8 @@ protected:
 	virtual ~QVtkDataSetMapper();
 
 private:
-	QVtkDataSetMapper(const QVtkDataSetMapper&);	// Not implemented.
-	void operator=(const QVtkDataSetMapper&);	// Not implemented
+	QVtkDataSetMapper(const QVtkDataSetMapper&); // Not implemented.
+	void operator=(const QVtkDataSetMapper&); // Not implemented
 };
 
 #endif // QVTKDATASETMAPPER_H

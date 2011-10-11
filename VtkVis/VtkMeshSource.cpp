@@ -4,16 +4,15 @@
  *
  */
 
-
-#include "VtkMeshSource.h"
 #include "VtkColorLookupTable.h"
+#include "VtkMeshSource.h"
 
 // ** VTK INCLUDES **
+#include "vtkObjectFactory.h"
 #include <vtkCellData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkIntArray.h>
-#include "vtkObjectFactory.h"
 #include <vtkPoints.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
@@ -28,7 +27,6 @@
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
 
-
 vtkStandardNewMacro(VtkMeshSource);
 vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
@@ -40,7 +38,7 @@ VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
-	vtkProps->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	vtkProps->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 	vtkProps->SetEdgeVisibility(1);
 }
 
@@ -53,28 +51,30 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 {
 	this->Superclass::PrintSelf(os,indent);
 
-	if (_grid == NULL) return;
-	const std::vector<GEOLIB::Point*> *nodes = _grid->getNodes();
-	const std::vector<GridAdapter::Element*> *elems = _grid->getElements();
-	if (nodes->empty() || elems->empty() ) return;
+	if (_grid == NULL)
+		return;
+	const std::vector<GEOLIB::Point*>* nodes = _grid->getNodes();
+	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
+	if (nodes->empty() || elems->empty() )
+		return;
 
 	os << indent << "== VtkMeshSource ==" << "\n";
 
 	int i = 0;
 	for (std::vector<GEOLIB::Point*>::const_iterator it = nodes->begin();
-		it != nodes->end(); ++it)
+	     it != nodes->end(); ++it)
 	{
-		os << indent << "Point " << i <<" (" << (*it)[0] << ", " << (*it)[1] << ", " << (*it)[2] << ")" << std::endl;
+		os << indent << "Point " << i << " (" << (*it)[0] << ", " << (*it)[1] << ", " <<
+		(*it)[2] << ")" << std::endl;
 		i++;
 	}
 
 	i = 0;
 	for (std::vector<GridAdapter::Element*>::const_iterator it = elems->begin();
-		it != elems->end(); ++it)
+	     it != elems->end(); ++it)
 	{
-
-		os << indent << "Element " << i <<": ";
-		for (size_t t=0; t<(*it)->nodes.size(); t++)
+		os << indent << "Element " << i << ": ";
+		for (size_t t = 0; t < (*it)->nodes.size(); t++)
 			os << (*it)->nodes[t] << " ";
 		os << std::endl;
 		i++;
@@ -82,15 +82,16 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 }
 
 int VtkMeshSource::RequestData( vtkInformation* request,
-							    vtkInformationVector** inputVector,
-								vtkInformationVector* outputVector )
+                                vtkInformationVector** inputVector,
+                                vtkInformationVector* outputVector )
 {
 	(void)request;
 	(void)inputVector;
 
-	if (_grid == NULL) return 0;
-	const std::vector<GEOLIB::Point*> *nodes = _grid->getNodes();
-	const std::vector<GridAdapter::Element*> *elems = _grid->getElements();
+	if (_grid == NULL)
+		return 0;
+	const std::vector<GEOLIB::Point*>* nodes = _grid->getNodes();
+	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
 
 	size_t nPoints = nodes->size();
 	size_t nElems  = elems->size();
@@ -99,58 +100,64 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		return 0;
 
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
-	vtkSmartPointer<vtkUnstructuredGrid> output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
-		output->Allocate(nElems);
+	vtkSmartPointer<vtkUnstructuredGrid> output = vtkUnstructuredGrid::SafeDownCast(
+	        outInfo->Get(vtkDataObject::DATA_OBJECT()));
+	output->Allocate(nElems);
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
 	// Insert grid points
 	vtkSmartPointer<vtkPoints> gridPoints = vtkSmartPointer<vtkPoints>::New();
-		gridPoints->Allocate(nPoints);
-		// Generate mesh nodes
-		for (size_t i=0; i<nPoints; i++)
-			gridPoints->InsertPoint(i, (*(*nodes)[i])[0], (*(*nodes)[i])[1], (*(*nodes)[i])[2]);
+	gridPoints->Allocate(nPoints);
+	// Generate mesh nodes
+	for (size_t i = 0; i < nPoints; i++)
+		gridPoints->InsertPoint(i, (*(*nodes)[i])[0], (*(*nodes)[i])[1], (*(*nodes)[i])[2]);
 
 	// Generate attribute vector for material groups
- 	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
-		materialIDs->SetName(_matName);
-		materialIDs->SetNumberOfComponents(1);
-		//materialIDs->SetNumberOfTuples(nElems);
+	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
+	materialIDs->SetName(_matName);
+	materialIDs->SetNumberOfComponents(1);
+	//materialIDs->SetNumberOfTuples(nElems);
 
 	// Generate mesh elements
-	for (size_t i=0; i<nElems; i++)
+	for (size_t i = 0; i < nElems; i++)
 	{
 		vtkCell* newCell;
 
 		switch ((*elems)[i]->type)
 		{
-			case MshElemType::TRIANGLE:
-				newCell = vtkTriangle::New();   break;
-			case MshElemType::LINE:
-				newCell = vtkLine::New();       break;
-			case MshElemType::QUAD:
-				newCell = vtkQuad::New();       break;
-			case MshElemType::HEXAHEDRON:
-				newCell = vtkHexahedron::New(); break;
-			case MshElemType::TETRAHEDRON:
-				newCell = vtkTetra::New();      break;
-			case MshElemType::PRISM:
-				newCell = vtkWedge::New();      break;
-			default:	// if none of the above can be applied
-				return 0;
+		case MshElemType::TRIANGLE:
+			newCell = vtkTriangle::New();
+			break;
+		case MshElemType::LINE:
+			newCell = vtkLine::New();
+			break;
+		case MshElemType::QUAD:
+			newCell = vtkQuad::New();
+			break;
+		case MshElemType::HEXAHEDRON:
+			newCell = vtkHexahedron::New();
+			break;
+		case MshElemType::TETRAHEDRON:
+			newCell = vtkTetra::New();
+			break;
+		case MshElemType::PRISM:
+			newCell = vtkWedge::New();
+			break;
+		default: // if none of the above can be applied
+			return 0;
 		}
 
 		materialIDs->InsertNextValue((*elems)[i]->material);
 
 		nElemNodes = (*elems)[i]->nodes.size();
-		for (size_t j=0; j<nElemNodes; j++)
-			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[nElemNodes-1-j]);
+		for (size_t j = 0; j < nElemNodes; j++)
+			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[nElemNodes - 1 - j]);
 
 		output->InsertNextCell(newCell->GetCellType(), newCell->GetPointIds());
 		newCell->Delete();
 	}
-
 
 	output->SetPoints(gridPoints);
 

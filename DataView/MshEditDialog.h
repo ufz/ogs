@@ -6,8 +6,8 @@
 #ifndef MSHEDITDIALOG_H
 #define MSHEDITDIALOG_H
 
-#include <QtGui/QMainWindow>
 #include "ui_MshEdit.h"
+#include <QtGui/QMainWindow>
 
 #include "MshLayerMapper.h"
 
@@ -16,7 +16,7 @@ class QCheckBox;
 
 namespace MeshLib
 {
-	class CFEMesh;
+class CFEMesh;
 }
 
 /**
@@ -30,8 +30,6 @@ public:
 	MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent = 0);
 	~MshEditDialog(void);
 
-
-
 private:
 	const MeshLib::CFEMesh* _msh;
 	QVector<QLabel*> _labels;
@@ -39,7 +37,6 @@ private:
 	QVector<QLineEdit*> _edits;
 	QVector<QPushButton*> _buttons;
 	QCheckBox* _noDataDeleteBox;
-
 
 private slots:
 	void getFileName();
@@ -52,7 +49,6 @@ private slots:
 
 signals:
 	void mshEditFinished(MeshLib::CFEMesh*, std::string&);
-
 };
 
 #endif //MSHEDITDIALOG_H

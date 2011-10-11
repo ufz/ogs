@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef CONDITIONTABWIDGET_H
 #define CONDITIONTABWIDGET_H
 
@@ -20,7 +19,6 @@ class ConditionTabWidget : public QWidget, public Ui_ConditionTabWidgetBase
 
 public:
 	ConditionTabWidget(QWidget* parent = 0);
-
 };
 
 #endif // CONDITIONTABWIDGET_H

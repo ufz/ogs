@@ -8,30 +8,30 @@
 // ** INCLUDES **
 #include "VtkPolylinesSource.h"
 
-#include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
-#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 vtkStandardNewMacro(VtkPolylinesSource);
 vtkCxxRevisionMacro(VtkPolylinesSource, "$Revision$");
 
 VtkPolylinesSource::VtkPolylinesSource()
-: _polylines(NULL)
+	: _polylines(NULL)
 {
-	this->SetNumberOfInputPorts(0);	
+	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
-	GetProperties()->SetColor((*c)[0]/255.0,(*c)[1]/255.0,(*c)[2]/255.0);
+	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 }
 
-VtkPolylinesSource::~VtkPolylinesSource() 
+VtkPolylinesSource::~VtkPolylinesSource()
 {
 }
 
@@ -43,7 +43,7 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 		return;
 
 	for (std::vector<GEOLIB::Polyline*>::const_iterator it = _polylines->begin();
-		it != _polylines->end(); ++it)
+	     it != _polylines->end(); ++it)
 	{
 		os << indent << "== Polyline ==" << "\n";
 		int numPoints = (*it)->getNumberOfPoints();
@@ -51,13 +51,15 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 		{
 			const GEOLIB::Point* point = (**it)[i];
 			const double* coords = point->getData();
-			os << indent << "Point " << i <<" (" << coords[0] << ", " << coords[1] << ", " << coords[2] << ")\n";
+			os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
+			", " << coords[2] << ")\n";
 		}
 	}
-
 }
 
-int VtkPolylinesSource::RequestData( vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector )
+int VtkPolylinesSource::RequestData( vtkInformation* request,
+                                     vtkInformationVector** inputVector,
+                                     vtkInformationVector* outputVector )
 {
 	(void)request;
 	(void)inputVector;
@@ -66,12 +68,15 @@ int VtkPolylinesSource::RequestData( vtkInformation* request, vtkInformationVect
 		return 0;
 	if (_polylines->size() == 0)
 	{
-		std::cout << "ERROR in VtkPolylineSource::RequestData : Size of polyline vector is 0" << std::endl;
+		std::cout <<
+		"ERROR in VtkPolylineSource::RequestData : Size of polyline vector is 0" <<
+		std::endl;
 		return 0;
 	}
 
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
-	vtkSmartPointer<vtkPolyData> output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+	vtkSmartPointer<vtkPolyData> output =
+	        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
 	vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> newLines = vtkSmartPointer<vtkCellArray>::New();
@@ -83,13 +88,13 @@ int VtkPolylinesSource::RequestData( vtkInformation* request, vtkInformationVect
 		return 1;
 
 	vtkSmartPointer<vtkIntArray> plyIDs = vtkSmartPointer<vtkIntArray>::New();
-		plyIDs->SetNumberOfComponents(1);
-		plyIDs->SetName("PolylineIDs");
+	plyIDs->SetNumberOfComponents(1);
+	plyIDs->SetName("PolylineIDs");
 
 	int lastMaxIndex = 0;
 	//for (std::vector<GEOLIB::Polyline*>::const_iterator it = _polylines->begin();
 	//	it != _polylines->end(); ++it)
-	for (size_t j=0; j<_polylines->size(); j++)
+	for (size_t j = 0; j < _polylines->size(); j++)
 	{
 		const int numPoints = (*_polylines)[j]->getNumberOfPoints();
 		//const int numLines = numPoints - 1;
@@ -119,7 +124,9 @@ int VtkPolylinesSource::RequestData( vtkInformation* request, vtkInformationVect
 	return 1;
 }
 
-int VtkPolylinesSource::RequestInformation( vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector )
+int VtkPolylinesSource::RequestInformation( vtkInformation* request,
+                                            vtkInformationVector** inputVector,
+                                            vtkInformationVector* outputVector )
 {
 	(void)request;
 	(void)inputVector;

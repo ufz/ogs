@@ -13,7 +13,8 @@
 
 #include <QIntValidator>
 
-class StrictIntValidator : public QIntValidator {
+class StrictIntValidator : public QIntValidator
+{
 public:
 	StrictIntValidator ( int min, int max, QObject* parent = 0) :
 		QIntValidator( min, max, parent)
@@ -23,9 +24,8 @@ public:
 	{
 		if (input.isEmpty()) return Intermediate;
 
-		if (QIntValidator::validate(input, pos) != Acceptable) {
+		if (QIntValidator::validate(input, pos) != Acceptable)
 			return Invalid;
-		}
 		return Acceptable;
 	}
 };

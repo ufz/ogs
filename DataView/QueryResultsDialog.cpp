@@ -3,8 +3,8 @@
  * KR Initial implementation
  */
 
-#include "QueryResultsDialog.h"
 #include "OGSError.h"
+#include "QueryResultsDialog.h"
 
 /**
  * Constructor.

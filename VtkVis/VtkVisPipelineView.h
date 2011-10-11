@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef VTKVISPIPELINEVIEW_H
 #define VTKVISPIPELINEVIEW_H
 
@@ -17,8 +16,9 @@ class VtkVisPipelineItem;
 class vtkProp3D;
 class vtkDataObject;
 
-namespace MeshLib {
-	class CFEMesh;
+namespace MeshLib
+{
+class CFEMesh;
 }
 
 /**
@@ -31,7 +31,7 @@ class VtkVisPipelineView : public QTreeView
 public:
 	/// @brief Constructor.
 	VtkVisPipelineView(QWidget* parent = 0);
-	
+
 	/// @brief Overridden to set model specific header properties.
 	virtual void setModel(QAbstractItemModel* model);
 
@@ -47,7 +47,7 @@ private:
 private slots:
 	/// Adds a color lookup table to the current scalar array of the selected pipeline item.
 	void addColorTable();
-	
+
 	/// Exports the currently selected item as a VTK file
 	void exportSelectedPipelineItemAsVtk();
 

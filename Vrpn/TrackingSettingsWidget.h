@@ -16,7 +16,7 @@ class QVrpnArtTrackingClient;
 class TrackingSettingsWidget : public QWidget, public Ui_TrackingSettingsWidgetBase
 {
 	Q_OBJECT
-	
+
 public:
 	TrackingSettingsWidget(VtkTrackedCamera* cam, QWidget* parent = 0, Qt::WindowFlags f = 0);
 	virtual ~TrackingSettingsWidget();

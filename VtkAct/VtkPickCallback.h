@@ -1,9 +1,8 @@
 /**
  * \file VtkPickCallback.h
  * 21/6/2010 LB Initial implementation
- * 
+ *
  */
-
 
 #ifndef VTKPICKCALLBACK_H
 #define VTKPICKCALLBACK_H
@@ -25,7 +24,7 @@ class VtkPickCallback : public QObject, public vtkCommand
 public:
 	static VtkPickCallback* New();
 
-	void Execute(vtkObject *caller, unsigned long eventId, void *callData);	
+	void Execute(vtkObject* caller, unsigned long eventId, void* callData);
 
 protected:
 	VtkPickCallback();
@@ -33,7 +32,6 @@ protected:
 signals:
 	/// Is emitted when an vtkActor was picked.
 	void actorPicked (vtkProp3D* actor);
-
 };
 
 #endif // VTKPICKCALLBACK_H

@@ -1,22 +1,22 @@
 /**
  * \file VtkImageDataToLinePolyDataFilter.cpp
  * 06/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkImageDataToLinePolyDataFilter class
  */
 
 // ** INCLUDES **
 #include "VtkImageDataToLinePolyDataFilter.h"
 
-#include <vtkObjectFactory.h>
+#include <vtkIdList.h>
+#include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
-#include <vtkPolyData.h>
-#include <vtkImageData.h>
-#include <vtkSmartPointer.h>
-#include <vtkIdList.h>
-#include <vtkPointData.h>
 #include <vtkLine.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 vtkStandardNewMacro(VtkImageDataToLinePolyDataFilter);
 
@@ -42,21 +42,22 @@ int VtkImageDataToLinePolyDataFilter::FillInputPortInformation(int, vtkInformati
 }
 
 int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
-	vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+                                                  vtkInformationVector** inputVector,
+                                                  vtkInformationVector* outputVector)
 {
 	vtkDebugMacro(<< "Executing VtkImageDataToPolyDataFilter");
-	
+
 	vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
 	vtkImageData* input = vtkImageData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 	vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
-	
+
 	void* inScalarPtr = input->GetScalarPointer();
 	int numScalarComponents = input->GetNumberOfScalarComponents();
 	double spacing[3];
 	input->GetSpacing(spacing);
-	this->ImageSpacing = spacing[0]; 
-	
+	this->ImageSpacing = spacing[0];
+
 	// Skip execution if there are no points
 	vtkIdType numPts = input->GetNumberOfPoints();
 	if (numPts < 1)
@@ -64,76 +65,75 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 		vtkDebugMacro("No data to extract lines!");
 		return 1;
 	}
-	
+
 	// Allocate memory for olds and new cell point lists
 	vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
 	ptIds->Allocate(VTK_CELL_SIZE);
 	vtkSmartPointer<vtkIdList> newPtIds = vtkSmartPointer<vtkIdList>::New();
 	newPtIds->Allocate(VTK_CELL_SIZE);
-	
+
 	// Allocate the space needed for the output cells.
 	output->Allocate(numPts);
-	
+
 	// Allocate space for a new set of points
 	vtkSmartPointer<vtkPoints> newPts = vtkSmartPointer<vtkPoints>::New();
 	newPts->Allocate(numPts * 2, numPts);
-	
+
 	// Allocate space for the data associated with the new set of points
 	vtkPointData* inPD = input->GetPointData();
 	vtkPointData* outPD = output->GetPointData();
 	outPD->CopyAllocate(inPD, numPts * 16, numPts);
-	
+
 	double dir[3] = {0, 0, 1};
-	
+
 	// Traverse all points creating another point with scalar distance in Z direction
 	for (vtkIdType ptId = 0; ptId < numPts; ++ptId)
 	{
 		// Compute length of the new line (scalar * LengthScaleFactor)
 		float length = ((unsigned char*)inScalarPtr)[ptId * numScalarComponents]
-						* this->LengthScaleFactor;
+		               * this->LengthScaleFactor;
 		//float length = (((unsigned char*)inScalarPtr)[ptId * numScalarComponents]* this->LengthScaleFactor > 50000) ? 50000 : ((unsigned char*)inScalarPtr)[ptId * numScalarComponents]* this->LengthScaleFactor;
-
 
 		// Skip this line if length is zero
 		if (length < 0.00000001f)
 			continue;
-		
+
 		// Get the old point location
 		double p[3];
 		input->GetPoint(ptId, p);
-		
+
 		// Compute the new point location
 		double newPt[3];
 		for(size_t i = 0; i < 3; ++i)
 			newPt[i] = p[i] + dir[i] * length;
-		
+
 		// Copy the old point
 		vtkIdType newOldId = newPts->InsertNextPoint(p);
 		newPtIds->InsertId(ptId * 2, ptId);
 		outPD->CopyData(inPD, ptId, newOldId);
-		
+
 		// Create the new point
 		vtkIdType newId = newPts->InsertNextPoint(newPt);
 		newPtIds->InsertId(ptId * 2 + 1, newId);
 		outPD->CopyData(inPD, ptId, newId);
-		
+
 		// Create the line
 		vtkSmartPointer<vtkLine> line = vtkSmartPointer<vtkLine>::New();
 		line->GetPointIds()->SetId(0, newOldId);
 		line->GetPointIds()->SetId(1, newId);
 		output->InsertNextCell(line->GetCellType(), line->GetPointIds());
 	}
-	
+
 	// Store the new set of points in the output
 	output->SetPoints(newPts);
 	output->GetPointData()->GetArray(0)->SetName("Colours");
 
 	// Avoid keeping extra memory around
 	output->Squeeze();
-	
+
 	vtkDebugMacro(<< "Created: "
-				  << newPts->GetNumberOfPoints() << " points, "
-				  << output->GetNumberOfCells() << " lines");
-				
+	              << newPts->GetNumberOfPoints() << " points, "
+	              << output->GetNumberOfCells() << " lines");
+
 	return 1;
 }

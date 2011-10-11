@@ -6,12 +6,12 @@
  */
 
 // ** INCLUDES **
+#include "ConditionModel.h"
 #include "ConditionTabWidget.h"
 #include "TreeItem.h"
-#include "ConditionModel.h"
 
 ConditionTabWidget::ConditionTabWidget( QWidget* parent /*= 0*/ )
-: QWidget(parent)
+	: QWidget(parent)
 {
 	setupUi(this);
 }

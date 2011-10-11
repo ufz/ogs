@@ -6,9 +6,9 @@
 #ifndef QSTATIONTREEVIEW_H
 #define QSTATIONTREEVIEW_H
 
-#include <QTreeView>
-#include <QContextMenuEvent>
 #include "PropertyBounds.h"
+#include <QContextMenuEvent>
+#include <QTreeView>
 
 #include "Station.h"
 
@@ -35,12 +35,13 @@ protected slots:
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 	/// Instructions if the selection of items in the view has changed by events outside the view (i.e. by actions made in the visualisation).
-	void selectionChangedFromOutside(const QItemSelection &selected, const QItemSelection &deselected);
+	void selectionChangedFromOutside(const QItemSelection &selected,
+	                                 const QItemSelection &deselected);
 
 private:
 	/// Actions to be taken after a right mouse click is performed in the station view.
 	void contextMenuEvent( QContextMenuEvent* e );
-	
+
 	/// Create image files from all stratigraphies in a borehole vector
 	void writeStratigraphiesAsImages(QString listName);
 
@@ -55,7 +56,8 @@ private slots:
 	void showDiagramPrefsDialog();
 
 signals:
-	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+	void itemSelectionChanged(const QItemSelection & selected,
+	                          const QItemSelection & deselected);
 	void propertiesDialogRequested(std::string name);
 	void stationListExportRequested(std::string listName, std::string fileName);
 	void stationListRemoved(std::string name);

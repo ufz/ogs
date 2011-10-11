@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef COLORPICKERPUSHBUTTON_H
 #define COLORPICKERPUSHBUTTON_H
 

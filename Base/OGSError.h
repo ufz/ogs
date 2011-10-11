@@ -13,7 +13,6 @@ class QString;
  */
 class OGSError
 {
-
 public:
 	static void box(QString e);
 	static void box(QString e, QString t);
@@ -21,7 +20,6 @@ public:
 protected:
 	OGSError();
 	~OGSError();
-
 };
 
 #endif //OGSERROR_H

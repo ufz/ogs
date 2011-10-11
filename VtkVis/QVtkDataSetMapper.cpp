@@ -1,7 +1,7 @@
 /**
  * \file QVtkDataSetMapper.cpp
  * 12/11/2010 LB Initial implementation
- * 
+ *
  * Implementation of QVtkDataSetMapper class
  */
 
@@ -13,7 +13,7 @@
 vtkStandardNewMacro(QVtkDataSetMapper);
 
 QVtkDataSetMapper::QVtkDataSetMapper()
-: QObject(NULL)
+	: QObject(NULL)
 {
 }
 

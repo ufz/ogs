@@ -6,8 +6,8 @@
 #ifndef VTKGEOIMAGESOURCE_H
 #define VTKGEOIMAGESOURCE_H
 
-#include <vtkSimpleImageToImageFilter.h>
 #include "VtkAlgorithmProperties.h"
+#include <vtkSimpleImageToImageFilter.h>
 
 class QString;
 class QPointF;
@@ -27,7 +27,7 @@ public:
 
 	/// @brief Prints information about itself.
 	void PrintSelf(ostream& os, vtkIndent indent);
-	
+
 	vtkImageData* getImageData();
 
 	std::pair<double, double> getOrigin();
@@ -35,11 +35,11 @@ public:
 	double getSpacing();
 
 	void setImageFilename(QString filename);
-	
+
 	void setImage(QImage& image);
-	
+
 	void setOrigin(QPointF origin);
-	
+
 	void setSpacing(double spacing);
 
 	virtual void SetUserProperty(QString name, QVariant value);
@@ -50,14 +50,14 @@ protected:
 
 	/// @brief Destructor.
 	virtual ~VtkGeoImageSource();
-	
+
 	/// @brief Filter execution.
 	virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
 private:
-	VtkGeoImageSource(const VtkGeoImageSource&);	// Not implemented.
-	void operator=(const VtkGeoImageSource&);	// Not implemented
-	
+	VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
+	void operator=(const VtkGeoImageSource&); // Not implemented
+
 	vtkQImageToImageSource* _imageSource;
 	vtkImageChangeInformation* _imageInfo;
 	vtkImageShiftScale* _imageShift;

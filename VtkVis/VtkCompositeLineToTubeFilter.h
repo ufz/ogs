@@ -8,7 +8,6 @@
 
 #include "VtkCompositeFilter.h"
 
-
 /// @brief Converts lines to tube-objects.
 class VtkCompositeLineToTubeFilter : public VtkCompositeFilter
 {
@@ -21,8 +20,6 @@ public:
 	virtual void SetUserProperty(QString name, QVariant value);
 
 private:
-
-	
 };
 
 #endif // VTKCOMPOSITELINETOTUBEFILTER_H

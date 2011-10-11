@@ -6,14 +6,12 @@
 #ifndef ELEMENTTREEMODEL_H
 #define ELEMENTTREEMODEL_H
 
-
-#include "TreeModel.h"
 #include "GridAdapter.h"
-
+#include "TreeModel.h"
 
 /**
  * \brief A model for the display of information concerning element information implemented as a TreeModel.
-  * \sa TreeModel, ElementTreeView, TreeItem
+ * \sa TreeModel, ElementTreeView, TreeItem
  */
 class ElementTreeModel : public TreeModel
 {
@@ -31,8 +29,6 @@ public slots:
 	void setElement(const GridAdapter* grid, const size_t elem_index);
 
 private:
-
-
 };
 
 #endif //ELEMENTTREEMODEL_H

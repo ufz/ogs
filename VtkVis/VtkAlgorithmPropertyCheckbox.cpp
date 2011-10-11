@@ -1,7 +1,7 @@
 /**
  * \file VtkAlgorithmPropertyCheckbox.cpp
  * 20/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkAlgorithmPropertyCheckbox class
  */
 
@@ -11,8 +11,9 @@
 #include "VtkAlgorithmProperties.h"
 
 VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(const bool value,
-	const QString& name, VtkAlgorithmProperties* algProps,
-	QWidget* parent /*= 0*/ )
+                                                           const QString& name,
+                                                           VtkAlgorithmProperties* algProps,
+                                                           QWidget* parent /*= 0*/ )
 	: QCheckBox(parent), _name(name), _algProps(algProps)
 {
 	this->setChecked(value);
@@ -21,7 +22,6 @@ VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(const bool value,
 
 VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox()
 {
-
 }
 
 void VtkAlgorithmPropertyCheckbox::setNewValue( int state )

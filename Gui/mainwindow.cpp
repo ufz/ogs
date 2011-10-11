@@ -7,12 +7,12 @@
 #include "mainwindow.h"
 
 // models
+#include "ConditionModel.h"
+#include "ElementTreeModel.h"
 #include "GEOModels.h"
 #include "GeoTreeModel.h"
-#include "StationTreeModel.h"
 #include "MshModel.h"
-#include "ElementTreeModel.h"
-#include "ConditionModel.h"
+#include "StationTreeModel.h"
 
 //dialogs
 #include "DBConnectionDialog.h"
@@ -21,46 +21,46 @@
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MshQualitySelectionDialog.h"
-#include "VtkAddFilterDialog.h"
 #include "VisPrefsDialog.h"
+#include "VtkAddFilterDialog.h"
 
 #ifdef Shapelib_FOUND
 #include "SHPImportDialog.h"
 #endif
 
-#include "OGSRaster.h"
+#include "DatabaseConnection.h"
 #include "OGSError.h"
-#include "VtkVisPipeline.h"
-#include "VtkVisPipelineItem.h"
+#include "OGSRaster.h"
 #include "RecentFiles.h"
 #include "TreeModelIterator.h"
-#include "VtkGeoImageSource.h"
 #include "VtkBGImageSource.h"
-#include "DatabaseConnection.h"
+#include "VtkGeoImageSource.h"
+#include "VtkVisPipeline.h"
+#include "VtkVisPipelineItem.h"
 
 //test
 #include "BoundaryCondition.h"
 #include "InitialCondition.h"
-#include "SourceTerm.h"
-#include "rf_bc_new.h"
-#include "rf_st_new.h"
-#include "rf_ic_new.h"
-#include "wait.h"
 #include "MathIO/CRSIO.h"
 #include "Raster.h"
+#include "SourceTerm.h"
+#include "rf_bc_new.h"
+#include "rf_ic_new.h"
+#include "rf_st_new.h"
+#include "wait.h"
 
 // FileIO includes
-#include "OGSIOVer4.h"
-#include "StationIO.h"
-#include "PetrelInterface.h"
-#include "GocadInterface.h"
-#include "XMLInterface.h"
-#include "MeshIO/GMSHInterface.h"
-#include "GMSInterface.h"
-#include "NetCDFInterface.h"    //YW  07.2010
-#include "GeoIO/Gmsh2GeoIO.h"
 #include "FEFLOWInterface.h"
+#include "GMSInterface.h"
+#include "GeoIO/Gmsh2GeoIO.h"
+#include "GocadInterface.h"
+#include "MeshIO/GMSHInterface.h"
 #include "MeshIO/TetGenInterface.h"
+#include "NetCDFInterface.h"    //YW  07.2010
+#include "OGSIOVer4.h"
+#include "PetrelInterface.h"
+#include "StationIO.h"
+#include "XMLInterface.h"
 
 #include "StringTools.h"
 
@@ -71,21 +71,21 @@
 #include "ExtractMeshNodes.h"
 
 // Qt includes
+#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
-#include <QDesktopWidget>
 
 // VTK includes
-#include <vtkVRMLExporter.h>
 #include <vtkOBJExporter.h>
 #include <vtkRenderer.h>
+#include <vtkVRMLExporter.h>
 
 #ifdef OGS_USE_OPENSG
-#include <OpenSG/OSGSceneFileHandler.h>
+#include "vtkOsgConverter.h"
 #include <OpenSG/OSGCoredNodePtr.h>
 #include <OpenSG/OSGGroup.h>
-#include "vtkOsgConverter.h"
+#include <OpenSG/OSGSceneFileHandler.h>
 #endif
 
 #ifdef OGS_USE_VRPN
@@ -95,14 +95,14 @@
 
 /// FEM. 11.03.2010. WW
 #include "problem.h"
-Problem *aproblem = NULL;
+Problem* aproblem = NULL;
 
 using namespace FileIO;
 
-MainWindow::MainWindow(QWidget *parent /* = 0*/)
-: QMainWindow(parent), _db (NULL), _project()
+MainWindow::MainWindow(QWidget* parent /* = 0*/)
+	: QMainWindow(parent), _db (NULL), _project()
 {
-    setupUi(this);
+	setupUi(this);
 
 	// Setup various models
 	_geoModels = new GEOModels();
@@ -122,116 +122,118 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	// station model connects
 	connect(stationTabWidget->treeView,
-			SIGNAL(stationListExportRequested(std::string, std::string)),
-			this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
+	        SIGNAL(stationListExportRequested(std::string, std::string)),
+	        this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
 	connect(stationTabWidget->treeView,
-			SIGNAL(stationListRemoved(std::string)), _geoModels,
-			SLOT(removeStationVec(std::string))); // update model when stations are removed
+	        SIGNAL(stationListRemoved(std::string)), _geoModels,
+	        SLOT(removeStationVec(std::string))); // update model when stations are removed
 	connect(stationTabWidget->treeView,
-			SIGNAL(stationListSaved(QString, QString)), this,
-			SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
+	        SIGNAL(stationListSaved(QString, QString)), this,
+	        SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
 	connect(_geoModels,
-			SIGNAL(stationVectorRemoved(StationTreeModel*, std::string)),
-			this, SLOT(updateDataViews())); // update data view when stations are removed
-	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex&)),
-			this, SLOT(showDiagramPrefsDialog(QModelIndex&))); // connect treeview to diagramview
+	        SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	        this, SLOT(updateDataViews())); // update data view when stations are removed
+	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
+	        this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
 
 	// geo model connects
 	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GEOLIB::GEOTYPE)),
-		_geoModels,	SLOT(removeGeometry(std::string, GEOLIB::GEOTYPE)));
-	connect(geoTabWidget->treeView,	SIGNAL(saveToFileRequested(QString, QString)),
-		this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
-	connect(geoTabWidget->treeView,	SIGNAL(requestLineEditDialog(const std::string&)),
-		this, SLOT(showLineEditDialog(const std::string&))); // open line edit dialog
-	connect(geoTabWidget->treeView,	SIGNAL(loadFEMCondFileRequested(std::string)),
-		this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
-	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
-		this, SLOT(updateDataViews()));
-	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
-		this, SLOT(updateDataViews()));
+	        _geoModels, SLOT(removeGeometry(std::string, GEOLIB::GEOTYPE)));
+	connect(geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
+	        this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
+	connect(geoTabWidget->treeView, SIGNAL(requestLineEditDialog(const std::string &)),
+	        this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
+	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
+	        this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
+	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
+	        this, SLOT(updateDataViews()));
+	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
+	        this, SLOT(updateDataViews()));
 	//connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
 	//	_conditionModel, SLOT(removeFEMConditions(std::string, GEOLIB::GEOTYPE)));
 
-
 	// Setup connections for mesh models to GUI
-	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
-			_meshModels, SLOT(removeMesh(const QModelIndex&)));
-	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex&)),
-			_elementModel, SLOT(clearView()));
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
+	        _meshModels, SLOT(removeMesh(const QModelIndex &)));
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
+	        _elementModel, SLOT(clearView()));
 	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
-			this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
-	connect(mshTabWidget->treeView, SIGNAL(requestDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)),
-			this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
-
-
+	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+	connect(mshTabWidget->treeView,
+	        SIGNAL(requestDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)),
+	        this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
 
 	// Setup connections for condition model to GUI
-	connect(conditionTabWidget->treeView, SIGNAL(conditionsRemoved(QString, FEMCondition::CondType)),
-			_conditionModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
+	connect(conditionTabWidget->treeView,
+	        SIGNAL(conditionsRemoved(QString, FEMCondition::CondType)),
+	        _conditionModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
 
 	// VisPipeline Connects
-	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
-			_vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)));
-	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
-			_vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)));
+	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
+	        _vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)));
+	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
+	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)));
 
-	connect(_conditionModel, SIGNAL(conditionAdded(ConditionModel*, std::string, FEMCondition::CondType)),
-			_vtkVisPipeline, SLOT(addPipelineItem(ConditionModel*, std::string, FEMCondition::CondType)));
-	connect(_conditionModel, SIGNAL(conditionsRemoved(ConditionModel*, std::string, FEMCondition::CondType)),
-			_vtkVisPipeline, SLOT(removeSourceItem(ConditionModel*, std::string, FEMCondition::CondType)));
+	connect(_conditionModel,
+	        SIGNAL(conditionAdded(ConditionModel *, std::string, FEMCondition::CondType)),
+	        _vtkVisPipeline,
+	        SLOT(addPipelineItem(ConditionModel *, std::string, FEMCondition::CondType)));
+	connect(_conditionModel,
+	        SIGNAL(conditionsRemoved(ConditionModel *, std::string, FEMCondition::CondType)),
+	        _vtkVisPipeline,
+	        SLOT(removeSourceItem(ConditionModel *, std::string, FEMCondition::CondType)));
 
-	connect(_geoModels, SIGNAL(stationVectorAdded(StationTreeModel*, std::string)),
-			_vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel*, std::string)));
-	connect(_geoModels, SIGNAL(stationVectorRemoved(StationTreeModel*, std::string)),
-			_vtkVisPipeline, SLOT(removeSourceItem(StationTreeModel*, std::string)));
+	connect(_geoModels, SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
+	        _vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel *, std::string)));
+	connect(_geoModels, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	        _vtkVisPipeline, SLOT(removeSourceItem(StationTreeModel *, std::string)));
 
-	connect(_meshModels, SIGNAL(meshAdded(MshModel*, QModelIndex)),
-			_vtkVisPipeline, SLOT(addPipelineItem(MshModel*,QModelIndex)));
-	connect(_meshModels, SIGNAL(meshRemoved(MshModel*, QModelIndex)),
-			_vtkVisPipeline, SLOT(removeSourceItem(MshModel*, QModelIndex)));
+	connect(_meshModels, SIGNAL(meshAdded(MshModel *, QModelIndex)),
+	        _vtkVisPipeline, SLOT(addPipelineItem(MshModel *,QModelIndex)));
+	connect(_meshModels, SIGNAL(meshRemoved(MshModel *, QModelIndex)),
+	        _vtkVisPipeline, SLOT(removeSourceItem(MshModel *, QModelIndex)));
 
 	connect(_vtkVisPipeline, SIGNAL(vtkVisPipelineChanged()),
-			visualizationWidget->vtkWidget, SLOT(update()));
+	        visualizationWidget->vtkWidget, SLOT(update()));
 	connect(_vtkVisPipeline, SIGNAL(vtkVisPipelineChanged()),
-			vtkVisTabWidget->vtkVisPipelineView, SLOT(expandAll()));
+	        vtkVisTabWidget->vtkVisPipelineView, SLOT(expandAll()));
 
 	vtkVisTabWidget->vtkVisPipelineView->setModel(_vtkVisPipeline);
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(requestRemovePipelineItem(QModelIndex)), _vtkVisPipeline,
-			SLOT(removePipelineItem(QModelIndex)));
+	        SIGNAL(requestRemovePipelineItem(QModelIndex)), _vtkVisPipeline,
+	        SLOT(removePipelineItem(QModelIndex)));
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(requestAddPipelineFilterItem(QModelIndex)), this,
-			SLOT(showAddPipelineFilterItemDialog(QModelIndex)));
+	        SIGNAL(requestAddPipelineFilterItem(QModelIndex)), this,
+	        SLOT(showAddPipelineFilterItemDialog(QModelIndex)));
 	connect(vtkVisTabWidget, SIGNAL(requestViewUpdate()), visualizationWidget,
-			SLOT(updateView()));
+	        SLOT(updateView()));
 
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(actorSelected(vtkProp3D*)),
-			(QObject*) (visualizationWidget->interactorStyle()),
-			SLOT(highlightActor(vtkProp3D*)));
+	        SIGNAL(actorSelected(vtkProp3D*)),
+	        (QObject*) (visualizationWidget->interactorStyle()),
+	        SLOT(highlightActor(vtkProp3D*)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-			SIGNAL(requestViewUpdate()),
-			visualizationWidget, SLOT(updateView()));
+	        SIGNAL(requestViewUpdate()),
+	        visualizationWidget, SLOT(updateView()));
 
 	// Propagates selected vtk object in the pipeline to the pick interactor
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(dataObjectSelected(vtkDataObject*)),
-			(QObject*) (visualizationWidget->interactorStyle()),
-			SLOT(pickableDataObject(vtkDataObject*)));
+	        SIGNAL(dataObjectSelected(vtkDataObject*)),
+	        (QObject*) (visualizationWidget->interactorStyle()),
+	        SLOT(pickableDataObject(vtkDataObject*)));
 	connect((QObject*) (visualizationWidget->vtkPickCallback()),
-			SIGNAL(actorPicked(vtkProp3D*)),
-			vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
+	        SIGNAL(actorPicked(vtkProp3D*)),
+	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
-			this->_elementModel, SLOT(setElement(const GridAdapter*, const size_t)));
+	        SIGNAL(elementPicked(const GridAdapter *, const size_t)),
+	        this->_elementModel, SLOT(setElement(const GridAdapter *, const size_t)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-			SIGNAL(elementPicked(const GridAdapter*, const size_t)),
-			mshTabWidget->elementView, SLOT(updateView()));
-
+	        SIGNAL(elementPicked(const GridAdapter *, const size_t)),
+	        mshTabWidget->elementView, SLOT(updateView()));
 
 	connect(vtkVisTabWidget->vtkVisPipelineView,
-			SIGNAL(meshAdded(MeshLib::CFEMesh*, std::string&)),
-			_meshModels, SLOT(addMesh(MeshLib::CFEMesh*, std::string&)));
+	        SIGNAL(meshAdded(MeshLib::CFEMesh *, std::string &)),
+	        _meshModels, SLOT(addMesh(MeshLib::CFEMesh *, std::string &)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -257,62 +259,62 @@ MainWindow::MainWindow(QWidget *parent /* = 0*/)
 
 	// Setup recent files menu
 	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()),
-			"recentFileList", "OpenGeoSys-5");
+	                                           "recentFileList", "OpenGeoSys-5");
 	connect(this, SIGNAL(fileUsed(QString)), recentFiles,
-			SLOT(setCurrentFile(QString)));
+	        SLOT(setCurrentFile(QString)));
 	menu_File->insertMenu(action_Exit, recentFiles->menu());
 
 	// Setup Windows menu
 	QAction* showGeoDockAction = geoDock->toggleViewAction();
 	showGeoDockAction->setStatusTip(tr("Shows / hides the geometry view"));
 	connect(showGeoDockAction, SIGNAL(triggered(bool)), this,
-			SLOT(showGeoDockWidget(bool)));
+	        SLOT(showGeoDockWidget(bool)));
 	menuWindows->addAction(showGeoDockAction);
 
 	QAction* showStationDockAction = stationDock->toggleViewAction();
 	showStationDockAction->setStatusTip(tr("Shows / hides the station view"));
 	connect(showStationDockAction, SIGNAL(triggered(bool)), this,
-			SLOT(showStationDockWidget(bool)));
+	        SLOT(showStationDockWidget(bool)));
 	menuWindows->addAction(showStationDockAction);
 
 	QAction* showMshDockAction = mshDock->toggleViewAction();
 	showMshDockAction->setStatusTip(tr("Shows / hides the mesh view"));
 	connect(showMshDockAction, SIGNAL(triggered(bool)), this,
-			SLOT(showMshDockWidget(bool)));
+	        SLOT(showMshDockWidget(bool)));
 	menuWindows->addAction(showMshDockAction);
 
 	QAction* showCondDockAction = conditionDock->toggleViewAction();
 	showCondDockAction->setStatusTip(tr("Shows / hides the FEM conditions view"));
 	connect(showCondDockAction, SIGNAL(triggered(bool)), this,
-			SLOT(showMshDockWidget(bool)));
+	        SLOT(showMshDockWidget(bool)));
 	menuWindows->addAction(showMshDockAction);
 
 	QAction* showVisDockAction = vtkVisDock->toggleViewAction();
 	showVisDockAction->setStatusTip(tr("Shows / hides the VTK Pipeline view"));
 	connect(showVisDockAction, SIGNAL(triggered(bool)), this,
-			SLOT(showVisDockWidget(bool)));
+	        SLOT(showVisDockWidget(bool)));
 	menuWindows->addAction(showVisDockAction);
 
 	// Presentation mode
 	QMenu* presentationMenu = new QMenu();
 	presentationMenu->setTitle("Presentation on");
 	connect(presentationMenu, SIGNAL(aboutToShow()), this,
-			SLOT(createPresentationMenu()));
+	        SLOT(createPresentationMenu()));
 	menuWindows->insertMenu(showVisDockAction, presentationMenu);
 
 	_fileFinder.addDirectory(".");
 	_fileFinder.addDirectory(std::string(SOURCEPATH).append("/FileIO"));
 
-	#ifdef OGS_USE_VRPN
-		VtkTrackedCamera* cam = static_cast<VtkTrackedCamera*>
-			(visualizationWidget->renderer()->GetActiveCamera());
-		_trackingSettingsWidget = new TrackingSettingsWidget(cam, visualizationWidget, Qt::Window);
-	#endif // OGS_USE_VRPN
+#ifdef OGS_USE_VRPN
+	VtkTrackedCamera* cam = static_cast<VtkTrackedCamera*>
+	                        (visualizationWidget->renderer()->GetActiveCamera());
+	_trackingSettingsWidget = new TrackingSettingsWidget(cam, visualizationWidget, Qt::Window);
+#endif     // OGS_USE_VRPN
 
 	// connects for station model
 	connect(stationTabWidget->treeView,
-			SIGNAL(propertiesDialogRequested(std::string)), this,
-			SLOT(showPropertiesDialog(std::string)));
+	        SIGNAL(propertiesDialogRequested(std::string)), this,
+	        SLOT(showPropertiesDialog(std::string)));
 
 	_visPrefsDialog = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
 
@@ -407,9 +409,12 @@ void MainWindow::open()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
-	if (!fileName.isEmpty()) {
+	                                                 settings.value(
+	                                                         "lastOpenedFileDirectory").
+	                                                 toString(),
+	                                                 "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+	if (!fileName.isEmpty())
+	{
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		loadFile(fileName);
@@ -418,12 +423,14 @@ void MainWindow::open()
 
 void MainWindow::openDatabase()
 {
-	if (_db == NULL) {
+	if (_db == NULL)
+	{
 		_db = new DatabaseConnection(_geoModels);
 		_db->dbConnect();
 	}
 
-	if (_db != NULL && _db->isConnected()) {
+	if (_db != NULL && _db->isConnected())
+	{
 		_db->getListSelection();
 		updateDataViews();
 	}
@@ -431,43 +438,52 @@ void MainWindow::openDatabase()
 
 void MainWindow::openDatabaseConnection()
 {
-	if (_db == NULL) _db = new DatabaseConnection(_geoModels);
+	if (_db == NULL)
+		_db = new DatabaseConnection(_geoModels);
 	DBConnectionDialog* dbConn = new DBConnectionDialog();
 	connect(
-			dbConn,
-			SIGNAL(connectionRequested(QString, QString, QString, QString, QString)),
-			_db,
-			SLOT(setConnection(QString, QString, QString, QString, QString)));
+	        dbConn,
+	        SIGNAL(connectionRequested(QString, QString, QString, QString, QString)),
+	        _db,
+	        SLOT(setConnection(QString, QString, QString, QString, QString)));
 	dbConn->show();
 }
 
 void MainWindow::openRecentFile()
 {
 	QAction* action = qobject_cast<QAction*> (sender());
-	if (action) loadFile(action->data().toString());
+	if (action)
+		loadFile(action->data().toString());
 }
 
 void MainWindow::save()
 {
 	QString dir_str = this->getLastUsedDir();
 
-	QString fileName = QFileDialog::getSaveFileName(this, "Save data as", dir_str,
-						"GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
+	QString fileName = QFileDialog::getSaveFileName(
+	        this,
+	        "Save data as",
+	        dir_str,
+	        "GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
 
-	if (!fileName.isEmpty()) {
+	if (!fileName.isEmpty())
+	{
 		QFileInfo fi(fileName);
 
-		if (fi.suffix().toLower() == "gsp") {
+		if (fi.suffix().toLower() == "gsp")
+		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 			XMLInterface xml(&_project, schemaName);
 			xml.writeProjectFile(fileName);
-		/*
-		} else if (fi.suffix().toLower() == "gml") {
-			std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-			XMLInterface xml(_geoModels, schemaName);
-			xml.writeGLIFile(fileName, gliName);
-		*/
-		} else if (fi.suffix().toLower() == "geo") {
+			/*
+			   } else if (fi.suffix().toLower() == "gml") {
+			    std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
+			    XMLInterface xml(_geoModels, schemaName);
+			    xml.writeGLIFile(fileName, gliName);
+			 */
+		}
+		else if (fi.suffix().toLower() == "geo")
+		{
 			// it works like this (none of it is particularily fast or optimised or anything):
 			// 1. merge all geometries that are currently loaded, all of these will be integrated into the mesh
 			// 2. if "useStationsAsConstraints"-parameter is true, GMSH-Interface will also integrate all stations that are currently loaded
@@ -477,63 +493,70 @@ void MainWindow::save()
 			this->_project.getGEOObjects()->getGeometryNames(names);
 			std::string merge_name("MergedGeometry");
 			_geoModels->mergeGeometries (names, merge_name);
-			gmsh_io.writeGMSHInputFile(merge_name, *(this->_project.getGEOObjects()), true);
+			gmsh_io.writeGMSHInputFile(merge_name,
+			                           *(this->_project.getGEOObjects()), true);
 			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
 			this->_project.getGEOObjects()->removePolylineVec(merge_name);
 			this->_project.getGEOObjects()->removePointVec(merge_name);
-		} else if (fi.suffix().toLower() == "gli") {
+		}
+		else if (fi.suffix().toLower() == "gli")
 			//			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
 			writeAllDataToGLIFileV4(fileName.toStdString(), *_geoModels);
-		}
 	}
 }
 
 void MainWindow::loadFile(const QString &fileName)
 {
 	QFile file(fileName);
-	if (!file.open(QFile::ReadOnly)) {
+	if (!file.open(QFile::ReadOnly))
+	{
 		QMessageBox::warning(this, tr("Application"), tr(
-				"Cannot read file %1:\n%2.") .arg(fileName) .arg(
-				file.errorString()));
+		                             "Cannot read file %1:\n%2.").arg(fileName).arg(
+		                             file.errorString()));
 		return;
 	}
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QFileInfo fi(fileName);
 	std::string
-			base =
-					fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
-	if (fi.suffix().toLower() == "gli") {
+	        base =
+	        fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
+	if (fi.suffix().toLower() == "gli")
+	{
 #ifndef NDEBUG
 		QTime myTimer0;
 		myTimer0.start();
 #endif
-		//    	FileIO::readGLIFileV4 (fileName.toStdString(), _geoModels);
+		//      FileIO::readGLIFileV4 (fileName.toStdString(), _geoModels);
 		readGLIFileV4(fileName.toStdString(), _geoModels);
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 #endif
 		//
 		//#ifndef NDEBUG
-		//    	QTime myTimer;
-		//    	myTimer.start();
-		//    	std::cout << "GEOLIB_Read_GeoLib ... " << std::flush;
+		//      QTime myTimer;
+		//      myTimer.start();
+		//      std::cout << "GEOLIB_Read_GeoLib ... " << std::flush;
 		//#endif
-		//    	GEOLIB_Read_GeoLib(base); //fileName.toStdString());
+		//      GEOLIB_Read_GeoLib(base); //fileName.toStdString());
 		//        cout << "Nr. Points: " << gli_points_vector.size() << endl;
 		//		cout << "Nr. Lines: " << polyline_vector.size() << endl;
 		//		cout << "Nr. Surfaces: " << surface_vector.size() << endl;
 		//#ifndef NDEBUG
-		//    	 std::cout << myTimer.elapsed() << " ms" << std::endl;
+		//       std::cout << myTimer.elapsed() << " ms" << std::endl;
 		//#endif
-		// 		GEOCalcPointMinMaxCoordinates();
-	} else if (fi.suffix().toLower() == "gsp") {
+		//              GEOCalcPointMinMaxCoordinates();
+	}
+	else if (fi.suffix().toLower() == "gsp")
+	{
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 		XMLInterface xml(&_project, schemaName);
 		xml.readProjectFile(fileName);
 		std::cout << "Adding missing meshes to GUI..." << std::endl;
 		_meshModels->updateModel();
-	} else if (fi.suffix().toLower() == "gml") {
+	}
+	else if (fi.suffix().toLower() == "gml")
+	{
 #ifndef NDEBUG
 		QTime myTimer0;
 		myTimer0.start();
@@ -546,13 +569,15 @@ void MainWindow::loadFile(const QString &fileName)
 #endif
 	}
 	// OpenGeoSys observation station files (incl. boreholes)
-	else if (fi.suffix().toLower() == "stn") {
+	else if (fi.suffix().toLower() == "stn")
+	{
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
 		XMLInterface xml(&_project, schemaName);
 		xml.readSTNFile(fileName);
 	}
 	// OpenGeoSys mesh files
-	else if (fi.suffix().toLower() == "msh") {
+	else if (fi.suffix().toLower() == "msh")
+	{
 		std::string name = fileName.toStdString();
 		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
 		if (msh)
@@ -562,23 +587,28 @@ void MainWindow::loadFile(const QString &fileName)
 	}
 
 	// GMS borehole files
-	else if (fi.suffix().toLower() == "txt") {
-		std::vector<GEOLIB::Point*> *boreholes =
-				new std::vector<GEOLIB::Point*>();
+	else if (fi.suffix().toLower() == "txt")
+	{
+		std::vector<GEOLIB::Point*>* boreholes =
+		        new std::vector<GEOLIB::Point*>();
 		std::string name = fi.baseName().toStdString();
 
 		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
 			_geoModels->addStationVec(boreholes, name, GEOLIB::getRandomColor());
-		else OGSError::box("Error reading GMS file.");
+		else
+			OGSError::box("Error reading GMS file.");
 	}
 	// GMS mesh files
-	else if (fi.suffix().toLower() == "3dm") {
+	else if (fi.suffix().toLower() == "3dm")
+	{
 		std::string name = fileName.toStdString();
 		MeshLib::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
-		if (mesh) _meshModels->addMesh(mesh, name);
+		if (mesh)
+			_meshModels->addMesh(mesh, name);
 	}
 	// goCAD files
-	else if (fi.suffix().toLower() == "ts") {
+	else if (fi.suffix().toLower() == "ts")
+	{
 #ifndef NDEBUG
 		QTime myTimer;
 		myTimer.start();
@@ -592,21 +622,23 @@ void MainWindow::loadFile(const QString &fileName)
 
 	// NetCDF files
 	// YW  07.2010
-	else if (fi.suffix().toLower() == "nc") {
+	else if (fi.suffix().toLower() == "nc")
+	{
 #ifndef NDEBUG
 		QTime myTimer;
 		myTimer.start();
 		std::cout << "NetCDF Read ...\n" << std::flush;
 #endif
 		std::string name = fileName.toStdString();
-		std::vector<GEOLIB::Point*> *pnt_vec =
-				new std::vector<GEOLIB::Point*>();
+		std::vector<GEOLIB::Point*>* pnt_vec =
+		        new std::vector<GEOLIB::Point*>();
 		/* Data dimensions. */
 		size_t len_rlat, len_rlon;
 		FileIO::NetCDFInterface::readNetCDFData(name, pnt_vec, _geoModels,
-				len_rlat, len_rlon);
+		                                        len_rlat, len_rlon);
 		MeshLib::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
-				len_rlat, len_rlon);
+		                                                                       len_rlat,
+		                                                                       len_rlon);
 		//GridAdapter* grid = new GridAdapter(mesh);
 		_meshModels->addMesh(mesh, name);
 #ifndef NDEBUG
@@ -619,18 +651,20 @@ void MainWindow::loadFile(const QString &fileName)
 }
 
 void MainWindow::loadPetrelFiles(const QStringList &sfc_file_names,
-		const QStringList &well_path_file_names)
+                                 const QStringList &well_path_file_names)
 {
 	QStringList::const_iterator it = sfc_file_names.begin();
 	std::list<std::string> sfc_files;
-	while (it != sfc_file_names.end()) {
+	while (it != sfc_file_names.end())
+	{
 		sfc_files.push_back((*it).toStdString());
 		++it;
 	}
 
 	it = well_path_file_names.begin();
 	std::list<std::string> well_path_files;
-	while (it != well_path_file_names.end()) {
+	while (it != well_path_file_names.end())
+	{
 		well_path_files.push_back((*it).toStdString());
 		++it;
 	}
@@ -643,9 +677,9 @@ void MainWindow::loadPetrelFiles(const QStringList &sfc_file_names,
 void MainWindow::updateDataViews()
 {
 	visualizationWidget->updateViewOnLoad();
-	geoTabWidget-> treeView->updateView();
-	stationTabWidget-> treeView->updateView();
-	mshTabWidget-> treeView->updateView();
+	geoTabWidget->treeView->updateView();
+	stationTabWidget->treeView->updateView();
+	mshTabWidget->treeView->updateView();
 
 	QApplication::restoreOverrideCursor();
 }
@@ -670,15 +704,15 @@ void MainWindow::about()
 {
 	QString ogsVersion = QString(OGS_VERSION);
 	QMessageBox::about(this, tr("About OpenGeoSys-5"), tr(
-			"Built on %1\nOGS Version: %2"). arg(
-			QDate::currentDate().toString()).arg(ogsVersion));
+	                           "Built on %1\nOGS Version: %2").arg(
+	                           QDate::currentDate().toString()).arg(ogsVersion));
 }
 
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QMenu* importFiles = new QMenu("&Import Files");
-    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-    connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
+	QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
+	connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
 	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
@@ -707,10 +741,11 @@ void MainWindow::importGMS()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select GMS file to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"GMS files (*.txt *.3dm)");
-	if (!fileName.isEmpty()) {
+	                                                "Select GMS file to import", settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                "GMS files (*.txt *.3dm)");
+	if (!fileName.isEmpty())
+	{
 		loadFile(fileName);
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -721,10 +756,12 @@ void MainWindow::importGoCad()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select data file to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"Gocad files (*.ts);;Gocad lines (*.tline)");
-	if (!fileName.isEmpty()) {
+	                                                "Select data file to import",
+	                                                settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                "Gocad files (*.ts);;Gocad lines (*.tline)");
+	if (!fileName.isEmpty())
+	{
 		loadFile(fileName);
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -734,15 +771,18 @@ void MainWindow::importGoCad()
 void MainWindow::importRaster()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	#ifdef libgeotiff_FOUND
-		QString geotiffExtension(" *.tif");
-	#else
-		QString geotiffExtension("");
-	#endif
+#ifdef libgeotiff_FOUND
+	QString geotiffExtension(" *.tif");
+#else
+	QString geotiffExtension("");
+#endif
 	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select raster file to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
+	                                                "Select raster file to import",
+	                                                settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                QString(
+	                                                        "Raster files (*.asc *.bmp *.jpg *.png%1);;")
+	                                                .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
@@ -758,15 +798,18 @@ void MainWindow::importRaster()
 void MainWindow::importRasterAsPoly()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	#ifdef libgeotiff_FOUND
-		QString geotiffExtension(" *.tif");
-	#else
-		QString geotiffExtension("");
-	#endif
+#ifdef libgeotiff_FOUND
+	QString geotiffExtension(" *.tif");
+#else
+	QString geotiffExtension("");
+#endif
 	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select raster file to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			QString("Raster files (*.asc *.bmp *.jpg *.png%1);;").arg(geotiffExtension));
+	                                                "Select raster file to import",
+	                                                settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                QString(
+	                                                        "Raster files (*.asc *.bmp *.jpg *.png%1);;")
+	                                                .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
@@ -793,12 +836,14 @@ void MainWindow::importShape()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select shape file to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"ESRI Shape files (*.shp );;");
+	                                                "Select shape file to import",
+	                                                settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                "ESRI Shape files (*.shp );;");
 	QFileInfo fi(fileName);
 
-	if (fi.suffix().toLower() == "shp" || fi.suffix().toLower() == "dbf") {
+	if (fi.suffix().toLower() == "shp" || fi.suffix().toLower() == "dbf")
+	{
 		SHPImportDialog dlg((fileName.toUtf8()).constData(), _geoModels);
 		dlg.exec();
 
@@ -811,11 +856,18 @@ void MainWindow::importShape()
 void MainWindow::importPetrel()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QStringList sfc_file_names = QFileDialog::getOpenFileNames(this,
-			"Select surface data file(s) to import", "", "Petrel files (*)");
-	QStringList well_path_file_names = QFileDialog::getOpenFileNames(this,
-			"Select well path data file(s) to import", "", "Petrel files (*)");
-	if (sfc_file_names.size() != 0 || well_path_file_names.size() != 0) {
+	QStringList sfc_file_names = QFileDialog::getOpenFileNames(
+	        this,
+	        "Select surface data file(s) to import",
+	        "",
+	        "Petrel files (*)");
+	QStringList well_path_file_names = QFileDialog::getOpenFileNames(
+	        this,
+	        "Select well path data file(s) to import",
+	        "",
+	        "Petrel files (*)");
+	if (sfc_file_names.size() != 0 || well_path_file_names.size() != 0)
+	{
 		loadPetrelFiles(sfc_file_names, well_path_file_names);
 		QDir dir = QDir(sfc_file_names.at(0));
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -827,10 +879,12 @@ void MainWindow::importNetcdf()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this,
-			"Select NetCDF file to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"NetCDF files (*.nc);;");
-	if (!fileName.isEmpty()) {
+	                                                "Select NetCDF file to import",
+	                                                settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                "NetCDF files (*.nc);;");
+	if (!fileName.isEmpty())
+	{
 		loadFile(fileName);
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -841,11 +895,14 @@ void MainWindow::importVtk()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QStringList fileNames = QFileDialog::getOpenFileNames(this,
-			"Select VTK file(s) to import", settings.value(
-					"lastOpenedFileDirectory").toString(),
-			"VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu);;");
+	                                                      "Select VTK file(s) to import",
+	                                                      settings.value(
+	                                                              "lastOpenedFileDirectory").
+	                                                      toString(),
+	                                                      "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu);;");
 	foreach(QString fileName, fileNames) {
-		if (!fileName.isEmpty()) {
+		if (!fileName.isEmpty())
+		{
 			_vtkVisPipeline->loadFromFile(fileName);
 			QDir dir = QDir(fileName);
 			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -855,36 +912,39 @@ void MainWindow::importVtk()
 
 void MainWindow::importFeflow()
 {
-  QSettings settings("UFZ", "OpenGeoSys-5");
-  QString fileName = QFileDialog::getOpenFileName(this,
-    "Select FEFLOW file(s) to import", settings.value(
-    "lastOpenedFileDirectory").toString(),
-    "FEFLOW files (*.fem);;");
-  if (!fileName.isEmpty()) {
-    FEFLOWInterface feflowIO(_geoModels);
-    MeshLib::CFEMesh *msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
-    if (msh) {
-      std::string str = fileName.toStdString();
-      _meshModels->addMesh(msh, str);
-      QDir dir = QDir(fileName);
-      settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-      //_geoModels->modified("Feflow");
-      updateDataViews();
-    } else {
-      OGSError::box("Failed to load a FEFLOW file.");
-    }
-  }
-  emit fileUsed(fileName);
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName(this,
+	                                                "Select FEFLOW file(s) to import",
+	                                                settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                "FEFLOW files (*.fem);;");
+	if (!fileName.isEmpty())
+	{
+		FEFLOWInterface feflowIO(_geoModels);
+		MeshLib::CFEMesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
+		if (msh)
+		{
+			std::string str = fileName.toStdString();
+			_meshModels->addMesh(msh, str);
+			QDir dir = QDir(fileName);
+			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+			//_geoModels->modified("Feflow");
+			updateDataViews();
+		}
+		else
+			OGSError::box("Failed to load a FEFLOW file.");
+	}
+	emit fileUsed(fileName);
 }
 
 void MainWindow::showPropertiesDialog(std::string const& name)
 {
 	ListPropertiesDialog dlg(name, _geoModels);
 	connect(
-			&dlg,
-			SIGNAL(propertyBoundariesChanged(std::string, std::vector<PropertyBounds>)),
-			_geoModels,
-			SLOT(filterStationVec(std::string, std::vector<PropertyBounds>)));
+	        &dlg,
+	        SIGNAL(propertyBoundariesChanged(std::string, std::vector<PropertyBounds>)),
+	        _geoModels,
+	        SLOT(filterStationVec(std::string, std::vector<PropertyBounds>)));
 	dlg.exec();
 }
 
@@ -898,8 +958,10 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
+	                                                 settings.value(
+	                                                         "lastOpenedFileDirectory").
+	                                                 toString(),
+	                                                 "Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
 		QFileInfo fi(fileName);
@@ -908,7 +970,8 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 
 		std::vector<FEMCondition*> conditions;
 
-		if (fi.suffix().toLower() == "cnd") {
+		if (fi.suffix().toLower() == "cnd")
+		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 			XMLInterface xml(&_project, schemaName);
 			xml.readFEMCondFile(conditions, fileName, QString::fromStdString(geoName));
@@ -917,7 +980,8 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			QString name = fi.path() + "/";
 			BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin(); it != bc_list.end(); ++it)
+			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
+			     it != bc_list.end(); ++it)
 			{
 				BoundaryCondition* bc = new BoundaryCondition(*(*it), geoName);
 				conditions.push_back(bc);
@@ -927,7 +991,8 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			QString name = fi.path() + "/";
 			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::vector<CInitialCondition*>::iterator it = ic_vector.begin(); it != ic_vector.end(); ++it)
+			for (std::vector<CInitialCondition*>::iterator it = ic_vector.begin();
+			     it != ic_vector.end(); ++it)
 			{
 				InitialCondition* ic = new InitialCondition(*(*it), geoName);
 				conditions.push_back(ic);
@@ -937,7 +1002,8 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			QString name = fi.path() + "/";
 			STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::vector<CSourceTerm*>::iterator it = st_vector.begin(); it != st_vector.end(); ++it)
+			for (std::vector<CSourceTerm*>::iterator it = st_vector.begin();
+			     it != st_vector.end(); ++it)
 			{
 				SourceTerm* st = new SourceTerm(*(*it), geoName);
 				conditions.push_back(st);
@@ -948,11 +1014,15 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			this->_conditionModel->addConditions(conditions);
 
-			for (std::list<CBoundaryCondition*>::iterator it=bc_list.begin(); it!=bc_list.end(); ++it) delete *it;
+			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
+			     it != bc_list.end(); ++it)
+				delete *it;
 			bc_list.clear();
-			for (size_t i=0; i<ic_vector.size(); i++) delete ic_vector[i];
+			for (size_t i = 0; i < ic_vector.size(); i++)
+				delete ic_vector[i];
 			ic_vector.clear();
-			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+			for (size_t i = 0; i < st_vector.size(); i++)
+				delete st_vector[i];
 			st_vector.clear();
 		}
 	}
@@ -973,26 +1043,29 @@ void MainWindow::writeStationListToFile(QString listName, QString fileName)
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
-		std::string fileName)
+                                      std::string fileName)
 {
-	const std::vector<GEOLIB::Point*> *stations(_geoModels->getStationVec(
-			listName));
+	const std::vector<GEOLIB::Point*>* stations(_geoModels->getStationVec(
+	                                                    listName));
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
 void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
-		size_t param1, double param2, double param3, double param4,
-		bool delete_geo_file)
+                          size_t param1, double param2, double param3, double param4,
+                          bool delete_geo_file)
 {
-	if (!selectedGeometries.empty()) {
+	if (!selectedGeometries.empty())
+	{
 		std::cout << "Start meshing..." << std::endl;
 
 		QString fileName("");
 		QString dir_str = this->getLastUsedDir();
 
 		if (!delete_geo_file)
-			fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as",
-					dir_str, "GMSH geometry files (*.geo)");
+			fileName = QFileDialog::getSaveFileName(this,
+			                                        "Save GMSH-file as",
+			                                        dir_str,
+			                                        "GMSH geometry files (*.geo)");
 		else
 			fileName = "tmp_gmsh.geo";
 
@@ -1000,15 +1073,18 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 		{
 			GMSHInterface gmsh_io(fileName.toStdString());
 
-			if (param4 == -1) { // adaptive meshing selected
+			if (param4 == -1) // adaptive meshing selected
 				gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-						selectedGeometries, param1, param2, param3);
-			} else { // homogeneous meshing selected
+				                                    selectedGeometries,
+				                                    param1,
+				                                    param2,
+				                                    param3);
+			else // homogeneous meshing selected
 				gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-						selectedGeometries, param4);
-			}
+				                                    selectedGeometries, param4);
 
-			if (system(NULL) != 0) { // command processor available
+			if (system(NULL) != 0) // command processor available
+			{
 				std::string gmsh_command("gmsh -2 ");
 				std::string fname (fileName.toStdString());
 				gmsh_command += fname;
@@ -1017,16 +1093,19 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 					fname = fname.substr (0, pos);
 				gmsh_command += " -o " + fname + ".msh";
 				system(gmsh_command.c_str());
-				this->loadFile(fileName.left(fileName.length()-3).append("msh"));
-			} else {
-				OGSError::box("Error executing command gmsh - no command processor available", "Error");
+				this->loadFile(fileName.left(fileName.length() - 3).append("msh"));
 			}
+			else
+				OGSError::box(
+				        "Error executing command gmsh - no command processor available",
+				        "Error");
 
-			if (delete_geo_file) { // delete file
+			if (delete_geo_file) // delete file
+			{
 				std::string remove_command ("rm ");
-	#ifdef _WIN32
+#ifdef _WIN32
 				remove_command = "del ";
-	#endif
+#endif
 				remove_command += fileName.toStdString();
 				std::cout << "remove command: " << remove_command << std::endl;
 				system(remove_command.c_str());
@@ -1044,23 +1123,27 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 {
 	QString listName;
 	GEOLIB::Station* stn = _geoModels->getStationModel()->stationFromIndex(
-			index, listName);
+	        index, listName);
 
-	if (stn->type() == GEOLIB::Station::STATION) {
+	if (stn->type() == GEOLIB::Station::STATION)
+	{
 		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(stn, listName, _db);
 		prefs->setAttribute(Qt::WA_DeleteOnClose);
 		prefs->show();
 	}
-	if (stn->type() == GEOLIB::Station::BOREHOLE) OGSError::box(
-			"No time series data available for borehole.");
+	if (stn->type() == GEOLIB::Station::BOREHOLE)
+		OGSError::box(
+		        "No time series data available for borehole.");
 }
 
 void MainWindow::showDiagramPrefsDialog()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-							settings.value("lastOpenedFileDirectory").toString(),
-							"Text files (*.txt);;All files (* *.*)");
+	                                                 settings.value(
+	                                                         "lastOpenedFileDirectory").
+	                                                 toString(),
+	                                                 "Text files (*.txt);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
 		QDir dir = QDir(fileName);
@@ -1074,8 +1157,14 @@ void MainWindow::showDiagramPrefsDialog()
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
-	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<size_t>, double, std::string, bool, bool)),
-		_geoModels, SLOT(connectPolylineSegments(const std::string&, std::vector<size_t>, double, std::string, bool, bool)));
+	connect(&lineEdit,
+	        SIGNAL(connectPolylines(const std::string &, std::vector<size_t>, double,
+	                                std::string, bool,
+	                                bool)),
+	        _geoModels,
+	        SLOT(connectPolylineSegments(const std::string &, std::vector<size_t>, double,
+	                                     std::string,
+	                                     bool, bool)));
 	lineEdit.exec();
 }
 
@@ -1083,16 +1172,20 @@ void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
 	connect(
-			&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
-			this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
+	        &dlg,
+	        SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double,
+	                              double, bool)),
+	        this,
+	        SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double,
+	                      bool)));
 	dlg.exec();
 }
 
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 {
 	MshQualitySelectionDialog dlg(mshSource);
-	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource*, MshQualityType::type)),
-			_vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource*, MshQualityType::type)));
+	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource *, MshQualityType::type)),
+	        _vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource *, MshQualityType::type)));
 	dlg.exec();
 }
 
@@ -1106,11 +1199,11 @@ void MainWindow::FEMTestStart()
 	// *** begin test TetGen read mesh
 	const std::string path ("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/MSH/");
 	std::string mesh_name ("ClosedSurface");
-	std::string fname_nodes(path+mesh_name+".1.node");
-	std::string fname_elements(path+mesh_name+".1.ele");
+	std::string fname_nodes(path + mesh_name + ".1.node");
+	std::string fname_elements(path + mesh_name + ".1.ele");
 
 	FileIO::TetGenInterface tetgen;
-	MeshLib::CFEMesh *mesh (tetgen.readTetGenMesh (fname_nodes, fname_elements));
+	MeshLib::CFEMesh* mesh (tetgen.readTetGenMesh (fname_nodes, fname_elements));
 
 	if (mesh)
 		_meshModels->addMesh(mesh, mesh_name);
@@ -1457,7 +1550,7 @@ void MainWindow::showTrackingSettingsDialog()
 	_trackingSettingsWidget->show();
 #else // OGS_USE_VRPN
 	QMessageBox::warning(this, "Functionality not implemented",
-			"Sorry but this progam was not compiled with VRPN support.");
+	                     "Sorry but this progam was not compiled with VRPN support.");
 #endif // OGS_USE_VRPN
 }
 
@@ -1477,10 +1570,13 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	int count = 0;
 	QString filename = QFileDialog::getSaveFileName(this,
-			"Export object to vtk-files", settings.value(
-					"lastExportedFileDirectory").toString(),
-			"VTK files (*.vtp *.vtu)");
-	if (!filename.isEmpty()) {
+	                                                "Export object to vtk-files",
+	                                                settings.value(
+	                                                        "lastExportedFileDirectory").
+	                                                toString(),
+	                                                "VTK files (*.vtp *.vtu)");
+	if (!filename.isEmpty())
+	{
 		QDir dir = QDir(filename);
 		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 
@@ -1488,10 +1584,11 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 		basename.append("/" + QFileInfo(filename).baseName().toStdString());
 		TreeModelIterator it(_vtkVisPipeline);
 		++it;
-		while (*it) {
+		while (*it)
+		{
 			count++;
 			static_cast<VtkVisPipelineItem*> (*it)->writeToFile(basename
-					+ number2str(count));
+			                                                    + number2str(count));
 			++it;
 		}
 	}
@@ -1502,17 +1599,19 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 	Q_UNUSED(checked)
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getSaveFileName(this,
-			"Save scene to VRML file", settings.value(
-					"lastExportedFileDirectory").toString(),
-			"VRML files (*.wrl);;");
-	if (!fileName.isEmpty()) {
+	                                                "Save scene to VRML file", settings.value(
+	                                                        "lastExportedFileDirectory").
+	                                                toString(),
+	                                                "VRML files (*.wrl);;");
+	if (!fileName.isEmpty())
+	{
 		QDir dir = QDir(fileName);
 		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 
 		vtkVRMLExporter* exporter = vtkVRMLExporter::New();
 		exporter->SetFileName(fileName.toStdString().c_str());
 		exporter->SetRenderWindow(
-				visualizationWidget->vtkWidget->GetRenderWindow());
+		        visualizationWidget->vtkWidget->GetRenderWindow());
 		exporter->Write();
 		exporter->Delete();
 	}
@@ -1523,16 +1622,20 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 	Q_UNUSED(checked)
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getSaveFileName(this,
-			"Save scene to Wavefront OBJ files", settings.value(
-					"lastExportedFileDirectory").toString(), ";;");
-	if (!fileName.isEmpty()) {
+	                                                "Save scene to Wavefront OBJ files",
+	                                                settings.value(
+	                                                        "lastExportedFileDirectory").
+	                                                toString(),
+	                                                ";;");
+	if (!fileName.isEmpty())
+	{
 		QDir dir = QDir(fileName);
 		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 
 		vtkOBJExporter* exporter = vtkOBJExporter::New();
 		exporter->SetFilePrefix(fileName.toStdString().c_str());
 		exporter->SetRenderWindow(
-				visualizationWidget->vtkWidget->GetRenderWindow());
+		        visualizationWidget->vtkWidget->GetRenderWindow());
 		exporter->Write();
 		exporter->Delete();
 	}
@@ -1544,8 +1647,8 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 #ifdef OGS_USE_OPENSG
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString filename = QFileDialog::getSaveFileName(
-			this, "Export scene to OpenSG binary file", settings.value(
-					"lastExportedFileDirectory").toString(), "OpenSG files (*.osb);;");
+	        this, "Export scene to OpenSG binary file", settings.value(
+	                "lastExportedFileDirectory").toString(), "OpenSG files (*.osb);;");
 	if (!filename.isEmpty())
 	{
 		QDir dir = QDir(filename);
@@ -1569,9 +1672,9 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 
 		OSG::SceneFileHandler::the().write(root, filename.toStdString().c_str());
 	}
-#else
+#else // ifdef OGS_USE_OPENSG
 	QMessageBox::warning(this, "Functionality not implemented",
-			"Sorry but this progam was not compiled with OpenSG support.");
+	                     "Sorry but this progam was not compiled with OpenSG support.");
 #endif
 }
 
@@ -1579,27 +1682,31 @@ void MainWindow::createPresentationMenu()
 {
 	QMenu* menu = static_cast<QMenu*> (QObject::sender());
 	menu->clear();
-	if (!_vtkWidget->parent()) {
+	if (!_vtkWidget->parent())
+	{
 		QAction* action = new QAction("Quit presentation mode", menu);
 		connect(action, SIGNAL(triggered()), this, SLOT(quitPresentationMode()));
 		action->setShortcutContext(Qt::WidgetShortcut);
 		action->setShortcut(QKeySequence(Qt::Key_Escape));
 		menu->addAction(action);
-	} else {
+	}
+	else
+	{
 		int count = 0;
 		const int currentScreen = QApplication::desktop()->screenNumber(
-				visualizationWidget);
+		        visualizationWidget);
 		foreach (QRect screenGeo, _screenGeometries)
-			{
-				Q_UNUSED(screenGeo);
-				QAction* action = new QAction(
-						QString("On screen %1").arg(count), menu);
-				connect(action, SIGNAL(triggered()), this,
-						SLOT(startPresentationMode()));
-				if (count == currentScreen) action->setEnabled(false);
-				menu->addAction(action);
-				++count;
-			}
+		{
+			Q_UNUSED(screenGeo);
+			QAction* action = new QAction(
+			        QString("On screen %1").arg(count), menu);
+			connect(action, SIGNAL(triggered()), this,
+			        SLOT(startPresentationMode()));
+			if (count == currentScreen)
+				action->setEnabled(false);
+			menu->addAction(action);
+			++count;
+		}
 	}
 }
 
@@ -1616,7 +1723,7 @@ void MainWindow::startPresentationMode()
 	// Real fullscreen hides the menu
 	_vtkWidget->setParent(NULL, Qt::Window);
 	_vtkWidget->move(QPoint(_screenGeometries[screen].x(),
-			_screenGeometries[screen].y()));
+	                        _screenGeometries[screen].y()));
 	//_vtkWidget->showFullScreen();
 	_vtkWidget->showMaximized();
 
@@ -1659,26 +1766,30 @@ QString MainWindow::getLastUsedDir()
 		return QDir::homePath();
 }
 
-void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points)
+void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>* points)
 {
 	std::string geo_name("mshNodes");
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-							settings.value("lastOpenedFileDirectory").toString(),
-							"Geosys FEM condition files (*.st);;All files (* *.*)");
+	                                                 settings.value(
+	                                                         "lastOpenedFileDirectory").
+	                                                 toString(),
+	                                                 "Geosys FEM condition files (*.st);;All files (* *.*)");
 	QFileInfo fi(fileName);
 	QString name = fi.path() + "/";
 
 	if (!fileName.isEmpty())
 	{
 		// create new geometry points vector by copying mesh nodes vector
-		std::vector<GEOLIB::Point*> *new_points = new std::vector<GEOLIB::Point*>;
-		std::map<std::string, size_t> *name_pnt_id_map = new std::map<std::string, size_t>;
+		std::vector<GEOLIB::Point*>* new_points = new std::vector<GEOLIB::Point*>;
+		std::map<std::string, size_t>* name_pnt_id_map = new std::map<std::string, size_t>;
 
-		for (size_t i=0; i<points->size(); i++)
+		for (size_t i = 0; i < points->size(); i++)
 		{
-			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],(*(*points)[i])[1],(*(*points)[i])[2]);
+			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],
+			                                       (*(*points)[i])[1],
+			                                       (*(*points)[i])[2]);
 			new_points->push_back(pnt);
 			std::stringstream out;
 			out << i;
@@ -1687,16 +1798,18 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*> *points
 		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
 
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
-		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name);
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(
+		        st_vector,
+		        geo_name);
 
 		// add boundary conditions to model
 		if (!conditions.empty())
 		{
 			this->_conditionModel->addConditions(conditions);
-			for (size_t i=0; i<st_vector.size(); i++) delete st_vector[i];
+			for (size_t i = 0; i < st_vector.size(); i++)
+				delete st_vector[i];
 			st_vector.clear();
 		}
 	}
 }
-
 

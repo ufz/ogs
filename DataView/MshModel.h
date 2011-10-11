@@ -5,14 +5,13 @@
  *
  */
 
-
 #ifndef MSHMODEL_H
 #define MSHMODEL_H
 
 // ** INCLUDES **
-#include "TreeModel.h"
-#include "ProjectData.h"
 #include "GridAdapter.h"
+#include "ProjectData.h"
+#include "TreeModel.h"
 
 class VtkMeshSource;
 
@@ -58,7 +57,6 @@ private:
 signals:
 	void meshAdded(MshModel*, const QModelIndex&);
 	void meshRemoved(MshModel*, const QModelIndex&);
-
 };
 
 #endif // MSHMODEL_H
