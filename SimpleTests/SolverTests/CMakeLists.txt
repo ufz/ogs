@@ -44,6 +44,9 @@ ADD_EXECUTABLE( GMResDiagPrecond
 )
 
 
+IF (WIN32)
+        TARGET_LINK_LIBRARIES(ConjugateGradientUnpreconditioned Winmm.lib)
+ENDIF (WIN32)
 TARGET_LINK_LIBRARIES ( ConjugateGradientUnpreconditioned
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -51,6 +54,9 @@ TARGET_LINK_LIBRARIES ( ConjugateGradientUnpreconditioned
 	Base
 )
 
+IF (WIN32)
+        TARGET_LINK_LIBRARIES(ConjugateGradientDiagPrecond Winmm.lib)
+ENDIF (WIN32)
 TARGET_LINK_LIBRARIES ( ConjugateGradientDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -58,6 +64,9 @@ TARGET_LINK_LIBRARIES ( ConjugateGradientDiagPrecond
 	Base
 )
 
+IF (WIN32)
+        TARGET_LINK_LIBRARIES(BiCGStabDiagPrecond Winmm.lib)
+ENDIF (WIN32)
 TARGET_LINK_LIBRARIES( BiCGStabDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -65,6 +74,9 @@ TARGET_LINK_LIBRARIES( BiCGStabDiagPrecond
 	Base
 )
 
+IF (WIN32)
+        TARGET_LINK_LIBRARIES(GMResDiagPrecond Winmm.lib)
+ENDIF (WIN32)
 TARGET_LINK_LIBRARIES( GMResDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}

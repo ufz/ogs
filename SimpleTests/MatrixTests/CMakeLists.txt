@@ -19,6 +19,10 @@ ADD_EXECUTABLE( MatMult
         ${HEADERS}
 )
 
+IF (WIN32)
+        TARGET_LINK_LIBRARIES(MatMult Winmm.lib)
+ENDIF (WIN32)
+
 TARGET_LINK_LIBRARIES ( MatMult
 	Base
 	MathLib
