@@ -1,19 +1,19 @@
 /**
  * \file VtkCompositeColormapToImageFilter.cpp
  * 21/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkCompositeColormapToImageFilter class
  */
 
 // ** INCLUDES **
 #include "VtkCompositeColormapToImageFilter.h"
 
-#include <vtkLookupTable.h>
 #include <vtkImageMapToColors.h>
+#include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 
 VtkCompositeColormapToImageFilter::VtkCompositeColormapToImageFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm)
+	: VtkCompositeFilter(inputAlgorithm)
 {
 	this->init();
 }
@@ -58,7 +58,8 @@ void VtkCompositeColormapToImageFilter::SetUserProperty( QString name, QVariant 
 	if (name.compare("PassAlphaToOutput") == 0)
 		map->SetPassAlphaToOutput(value.toBool());
 	else if (name.compare("NumberOfColors") == 0)
-		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetNumberOfTableValues(value.toInt());
+		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetNumberOfTableValues(
+		        value.toInt());
 }
 
 void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
@@ -67,7 +68,10 @@ void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QLi
 
 	vtkImageMapToColors* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
 	if (name.compare("TableRange") == 0)
-		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(values[0].toInt(), values[1].toInt());
+		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(
+		        values[0].toInt(), values[1].toInt());
 	else if (name.compare("HueRange") == 0)
-		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetHueRange(values[0].toDouble(), values[1].toDouble());
+		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetHueRange(values[0].toDouble(
+		                                                                         ),
+		                                                                 values[1].toDouble());
 }

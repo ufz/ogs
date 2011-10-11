@@ -24,11 +24,13 @@ public:
 	 * \param parent The parent item in the tree
 	 * \param item The GeoObject (i.e. Point, Polyline or Surface)
 	 */
-	GeoTreeItem(const QList<QVariant> &data, TreeItem *parent, const GEOLIB::GeoObject* item = NULL) : TreeItem(data, parent), _item(item) {};
-	~GeoTreeItem() {};
-	
+	GeoTreeItem(const QList<QVariant> &data,
+	            TreeItem* parent,
+	            const GEOLIB::GeoObject* item = NULL) : TreeItem(data, parent), _item(item) {}
+	~GeoTreeItem() {}
+
 	/// Returns the geo-object associated with this item (i.e. a point, polyline or surface).
-	const GEOLIB::GeoObject* getGeoObject() const { return _item; };
+	const GEOLIB::GeoObject* getGeoObject() const { return _item; }
 
 private:
 	const GEOLIB::GeoObject* _item;

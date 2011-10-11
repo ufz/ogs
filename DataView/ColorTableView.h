@@ -5,8 +5,8 @@
 #ifndef COLORTABLEVIEW_H
 #define COLORTABLEVIEW_H
 
-#include <QTableView>
 #include <QItemDelegate>
+#include <QTableView>
 
 /**
  *	A QTableView to display colour lookup tables.
@@ -18,7 +18,6 @@ class ColorTableView : public QTableView
 public:
 	/// Constructor
 	ColorTableView(QWidget* parent = 0);
-	
 };
 
 /**
@@ -30,10 +29,11 @@ class ColorTableViewDelegate : public QItemDelegate
 
 public:
 	/// Constructor
-	ColorTableViewDelegate(QWidget *parent = 0) : QItemDelegate(parent) {};
+	ColorTableViewDelegate(QWidget* parent = 0) : QItemDelegate(parent) {}
 
 	/// Overwrites the paint-method to set user-defined properties instead of the default properties.
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	void paint(QPainter* painter, const QStyleOptionViewItem &option,
+	           const QModelIndex &index) const;
 
 	QSize sizeHint( const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 };

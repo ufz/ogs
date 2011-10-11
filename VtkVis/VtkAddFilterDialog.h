@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef VTKADDFILTERDIALOG_H
 #define VTKADDFILTERDIALOG_H
 
@@ -14,7 +13,6 @@
 class VtkVisPipeline;
 class QModelIndex;
 class QRadioButton;
-
 
 /**
  * \brief Dialog for selecting a filter to be applied to a VtkPipelineItem.
@@ -38,6 +36,5 @@ private:
 	VtkVisPipeline* _pipeline;
 	QModelIndex _parentIndex;
 };
-
 
 #endif // VTKADDFILTERDIALOG_H

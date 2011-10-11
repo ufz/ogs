@@ -12,17 +12,17 @@
 /**
  * \brief Objects nodes for the TreeModel.
  *
- * The TreeItem class provides simple items that contain several pieces of data, 
+ * The TreeItem class provides simple items that contain several pieces of data,
  * and which can provide information about their parent and child items
  * \sa TreeModel
  */
 class TreeItem
 {
 public:
-	TreeItem(const QList<QVariant> &data, TreeItem *parent);
+	TreeItem(const QList<QVariant> &data, TreeItem* parent);
 	virtual ~TreeItem();
 
-	void appendChild(TreeItem *child);
+	void appendChild(TreeItem* child);
 	TreeItem* child(int row) const;
 	virtual int childCount() const;
 	virtual int columnCount() const;
@@ -35,8 +35,7 @@ public:
 private:
 	QList<TreeItem*> _childItems;
 	QList<QVariant> _itemData;
-	TreeItem* _parentItem;     
-
+	TreeItem* _parentItem;
 };
 
 #endif //QTREEITEM_H

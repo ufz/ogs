@@ -3,8 +3,8 @@
  * KR Initial implementation
  */
 
-#include <QPainter>
 #include "QGraphicsGrid.h"
+#include <QPainter>
 
 /**
  * Creates a grid using a QRectF object and a default pen and no ticks.
@@ -13,12 +13,13 @@
  * \param yCells The number of grid cells in y-direction.
  * \param parent The parent QGraphicsItem.
  */
-QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, QGraphicsItem* parent) : QGraphicsItem(parent)
+QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells,
+                             QGraphicsItem* parent) : QGraphicsItem(parent)
 {
 	_numberOfXCells = xCells;
 	_numberOfYCells = yCells;
-	_bounds		   = rect;
-	_showTicks	   = false;
+	_bounds        = rect;
+	_showTicks     = false;
 
 	initDefaultPens();
 }
@@ -33,12 +34,18 @@ QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, QGraphicsItem*
  * \param yCells The number of grid cells in y-direction.
  * \param parent The parent QGraphicsItem.
  */
-QGraphicsGrid::QGraphicsGrid(int x, int y, int width, int height, int xCells, int yCells, QGraphicsItem* parent) : QGraphicsItem(parent)
+QGraphicsGrid::QGraphicsGrid(int x,
+                             int y,
+                             int width,
+                             int height,
+                             int xCells,
+                             int yCells,
+                             QGraphicsItem* parent) : QGraphicsItem(parent)
 {
 	_numberOfXCells = xCells;
 	_numberOfYCells = yCells;
-	_bounds		    = QRectF(x,y,width,height);
-	_showTicks	    = false;
+	_bounds         = QRectF(x,y,width,height);
+	_showTicks      = false;
 
 	initDefaultPens();
 }
@@ -52,12 +59,17 @@ QGraphicsGrid::QGraphicsGrid(int x, int y, int width, int height, int xCells, in
  * \param pen The pen for drawing the grid.
  * \param parent The parent QGraphicsItem.
  */
-QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, bool ticks, QPen pen, QGraphicsItem* parent) : QGraphicsItem(parent)
+QGraphicsGrid::QGraphicsGrid(QRectF rect,
+                             int xCells,
+                             int yCells,
+                             bool ticks,
+                             QPen pen,
+                             QGraphicsItem* parent) : QGraphicsItem(parent)
 {
 	_numberOfXCells = xCells;
 	_numberOfYCells = yCells;
-	_bounds		    = rect;
-	_showTicks	    = ticks;
+	_bounds         = rect;
+	_showTicks      = ticks;
 
 	_outside = pen;
 	_outside.setCosmetic(true);
@@ -68,7 +80,6 @@ QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, bool ticks, QP
 	_inside.setColor(iColour);
 	_inside.setStyle(Qt::DotLine);
 	_inside.setCosmetic(true);
-
 }
 
 /**
@@ -83,12 +94,20 @@ QGraphicsGrid::QGraphicsGrid(QRectF rect, int xCells, int yCells, bool ticks, QP
  * \param pen The pen for drawing the grid.
  * \param parent The parent QGraphicsItem.
  */
-QGraphicsGrid::QGraphicsGrid(int x, int y, int width, int height, int xCells, int yCells, bool ticks, QPen pen, QGraphicsItem* parent) : QGraphicsItem(parent)
+QGraphicsGrid::QGraphicsGrid(int x,
+                             int y,
+                             int width,
+                             int height,
+                             int xCells,
+                             int yCells,
+                             bool ticks,
+                             QPen pen,
+                             QGraphicsItem* parent) : QGraphicsItem(parent)
 {
 	_numberOfXCells = xCells;
 	_numberOfYCells = yCells;
-	_bounds		    = QRectF(x,y,width,height);
-	_showTicks	    = ticks;
+	_bounds         = QRectF(x,y,width,height);
+	_showTicks      = ticks;
 
 	_outside = pen;
 	_outside.setCosmetic(true);
@@ -123,58 +142,67 @@ void QGraphicsGrid::initDefaultPens()
 }
 
 /// Paints the grid.
-void QGraphicsGrid::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void QGraphicsGrid::paint(QPainter* painter,
+                          const QStyleOptionGraphicsItem* option,
+                          QWidget* widget)
 {
 	Q_UNUSED (option)
 	Q_UNUSED (widget)
 
-    if (!_bounds.isValid()) return;
-	
+	if (!_bounds.isValid())
+		return;
+
 	/* draw outside rectangle */
 	QBrush brush(Qt::NoBrush);
 	painter->setPen(_outside);
 	painter->drawRect(_bounds);
 
 	/* draw horizontal lines */
-	for (int i = 0; i <= _numberOfXCells; ++i) {
-         int x = static_cast<int>(_bounds.left() + (i * (_bounds.width()-1) / _numberOfXCells));
+	for (int i = 0; i <= _numberOfXCells; ++i)
+	{
+		int x =
+		        static_cast<int>(_bounds.left() +
+		                         (i * (_bounds.width() - 1) / _numberOfXCells));
 
-		 if (i>0 && i<_numberOfXCells)
-		 {
-			 painter->setPen(_inside);
-		     painter->drawLine(x, (int)_bounds.top(), x, (int)_bounds.bottom());
-		 }
+		if (i > 0 && i < _numberOfXCells)
+		{
+			painter->setPen(_inside);
+			painter->drawLine(x, (int)_bounds.top(), x, (int)_bounds.bottom());
+		}
 
-		 /* draw ticks on x-axis */
-		 if (_showTicks)
-		 {
-			 //double label = bounds.left() + (i * bounds.width() / numberOfXCells);
-			 painter->setPen(_outside);
-	         painter->drawLine(x, (int)_bounds.bottom(), x, (int)_bounds.bottom() + 5);
-		     //painter->drawText(x - margin, bounds.bottom() + 5, 2*margin, 20,
+		/* draw ticks on x-axis */
+		if (_showTicks)
+		{
+			//double label = bounds.left() + (i * bounds.width() / numberOfXCells);
+			painter->setPen(_outside);
+			painter->drawLine(x, (int)_bounds.bottom(), x, (int)_bounds.bottom() + 5);
+			//painter->drawText(x - margin, bounds.bottom() + 5, 2*margin, 20,
 			//				   Qt::AlignHCenter | Qt::AlignTop, QString::number(label));
-		 }
-    }
+		}
+	}
 
 	/* draw vertical lines */
-    for (int j = 0; j <= _numberOfYCells; ++j) {
-        int y = static_cast<int>(_bounds.bottom() - (j * (_bounds.height()-1) / _numberOfYCells));
+	for (int j = 0; j <= _numberOfYCells; ++j)
+	{
+		int y =
+		        static_cast<int>(_bounds.bottom() -
+		                         (j * (_bounds.height() - 1) / _numberOfYCells));
 
-		 if (j>0 && j<_numberOfYCells)
-		 {
-			 painter->setPen(_inside);
-			 painter->drawLine((int)_bounds.left(), y, (int)_bounds.right(), y);
-		 }
+		if (j > 0 && j < _numberOfYCells)
+		{
+			painter->setPen(_inside);
+			painter->drawLine((int)_bounds.left(), y, (int)_bounds.right(), y);
+		}
 
-		 /* draw ticks on y-axis */
-		 if (_showTicks)
-		 {
-			 //double label = bounds.top() + (j * bounds.height() / numberOfYCells);
-			 painter->setPen(_outside);
-	         painter->drawLine((int)_bounds.left() - 5, y, (int)_bounds.left(), y);
-			 //painter->drawText(bounds.left() - margin, y - 10, margin - 5, 20,
-			 //	               Qt::AlignRight | Qt::AlignVCenter, QString::number(label));
-		 }
+		/* draw ticks on y-axis */
+		if (_showTicks)
+		{
+			//double label = bounds.top() + (j * bounds.height() / numberOfYCells);
+			painter->setPen(_outside);
+			painter->drawLine((int)_bounds.left() - 5, y, (int)_bounds.left(), y);
+			//painter->drawText(bounds.left() - margin, y - 10, margin - 5, 20,
+			//	               Qt::AlignRight | Qt::AlignVCenter, QString::number(label));
+		}
 	}
 }
 

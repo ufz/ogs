@@ -1,7 +1,7 @@
 /**
  * \file VtkCompositeTextureOnSurfaceFilter.cpp
  * 18/11/2010 KR Initial implementation
- * 
+ *
  * Implementation of VtkCompositeTextureOnSurfaceFilter class
  */
 
@@ -18,9 +18,9 @@
 #include <QFileInfo>
 #include <QSettings>
 
-
-VtkCompositeTextureOnSurfaceFilter::VtkCompositeTextureOnSurfaceFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm)
+VtkCompositeTextureOnSurfaceFilter::VtkCompositeTextureOnSurfaceFilter(
+        vtkAlgorithm* inputAlgorithm )
+	: VtkCompositeFilter(inputAlgorithm)
 {
 	this->init();
 }
@@ -49,20 +49,23 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 	QWidget* parent = 0;
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(parent,
-		"Select raster file to apply as texture",
-		settings.value("lastOpenedTextureFileDirectory").toString(),
-		"Raster files (*.asc *.bmp *.jpg *.png *.tif);;");
+	                                                "Select raster file to apply as texture",
+	                                                settings.value(
+	                                                        "lastOpenedTextureFileDirectory").
+	                                                toString(),
+	                                                "Raster files (*.asc *.bmp *.jpg *.png *.tif);;");
 	QFileInfo fi(fileName);
 
-	if ((fi.suffix().toLower() == "asc") || (fi.suffix().toLower() == "tif") || (fi.suffix().toLower() == "png") || 
-		(fi.suffix().toLower() == "jpg") || (fi.suffix().toLower() == "bmp"))
+	if ((fi.suffix().toLower() == "asc") || (fi.suffix().toLower() == "tif") ||
+	    (fi.suffix().toLower() == "png") ||
+	    (fi.suffix().toLower() == "jpg") || (fi.suffix().toLower() == "bmp"))
 	{
 		QImage img;
 		QPointF origin;
-		double scalingFactor=0;
+		double scalingFactor = 0;
 
 		OGSRaster::loadImage(fileName, img, origin, scalingFactor);
-		std::pair<float, float> org(origin.x(), origin.y()); 
+		std::pair<float, float> org(origin.x(), origin.y());
 		surface->SetRaster(img, org, scalingFactor);
 		surface->Update();
 
@@ -70,7 +73,9 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 		settings.setValue("lastOpenedTextureFileDirectory", dir.absolutePath());
 	}
 	else
-		std::cout << "VtkCompositeTextureOnSurfaceFilter.init() - Error reading texture file..." << std::endl;
+		std::cout <<
+		"VtkCompositeTextureOnSurfaceFilter.init() - Error reading texture file..." <<
+		std::endl;
 
 	_outputAlgorithm = surface;
 }
@@ -78,5 +83,4 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 void VtkCompositeTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )
 {
 	VtkAlgorithmProperties::SetUserProperty(name, value);
-
 }

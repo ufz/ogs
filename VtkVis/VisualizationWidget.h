@@ -1,9 +1,8 @@
-	/**
+/**
  * \file VisualizationWidget.h
  * 3/11/2009 LB Initial implementation
  *
  */
-
 
 #ifndef VISUALIZATIONWIDGET_H
 #define VISUALIZATIONWIDGET_H
@@ -71,10 +70,10 @@ protected slots:
 
 	/// @brief Toggles rectangular zooming mode.
 	void on_zoomToolButton_toggled(bool checked);
-	
+
 	/// @brief Resets the camera to view the entire scene.
 	void on_showAllPushButton_pressed();
-	
+
 	/// @brief Toggles the display of bounding boxes around.
 	void on_highlightToolButton_toggled(bool checked);
 
@@ -89,9 +88,9 @@ private:
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
 	bool _isShowAllOnLoad;
-	#ifdef OGS_USE_VRPN
+#ifdef OGS_USE_VRPN
 	vtkEventQtSlotConnect* _qtConnect;
-	#endif // OGS_USE_VRPN
+#endif     // OGS_USE_VRPN
 };
 
 #endif // VISUALIZATIONWIDGET_H

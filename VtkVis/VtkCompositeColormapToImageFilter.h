@@ -22,7 +22,6 @@ public:
 	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
 private:
-	
 };
 
 #endif // VTKCOMPOSITECOLORMAPTOIMAGEFILTER_H

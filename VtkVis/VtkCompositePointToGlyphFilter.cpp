@@ -1,21 +1,20 @@
 /**
  * \file VtkCompositePointToGlyphFilter.cpp
  * 21/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkCompositePointToGlyphFilter class
  */
 
 // ** INCLUDES **
 #include "VtkCompositePointToGlyphFilter.h"
 
-#include <vtkSphereSource.h>
-#include <vtkGlyph3D.h>
 #include <vtkDataSetAlgorithm.h>
+#include <vtkGlyph3D.h>
 #include <vtkPointData.h>
-
+#include <vtkSphereSource.h>
 
 VtkCompositePointToGlyphFilter::VtkCompositePointToGlyphFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm)
+	: VtkCompositeFilter(inputAlgorithm)
 {
 	this->init();
 }
@@ -37,19 +36,23 @@ void VtkCompositePointToGlyphFilter::init()
 	_glyphSource->SetThetaResolution(10);
 	(*_algorithmUserProperties)["Radius"] = default_radius;
 
-	size_t nPoints = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetNumberOfTuples();
-	int phi = 10-static_cast<size_t>(nPoints / 2000.0);
-	int theta = 10-static_cast<size_t>(nPoints / 2000.0);
-	if (phi<4) phi=4;
-	if (theta<3) theta=3;
+	size_t nPoints =
+	        static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->
+	        GetNumberOfTuples();
+	int phi = 10 - static_cast<size_t>(nPoints / 2000.0);
+	int theta = 10 - static_cast<size_t>(nPoints / 2000.0);
+	if (phi < 4)
+		phi = 4;
+	if (theta < 3)
+		theta = 3;
 
 	(*_algorithmUserProperties)["PhiResolution"] = phi;
 	(*_algorithmUserProperties)["ThetaResolution"] = theta;
 
 	vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-	glyphFilter->ScalingOn();		// KR important to scale glyphs with double precision (e.g. 0.1 of their size for small datasets)
+	glyphFilter->ScalingOn();   // KR important to scale glyphs with double precision (e.g. 0.1 of their size for small datasets)
 	//glyphFilter->SetScaleModeToScaleByScalar();  // KR can easily obscure view when scalar values have large differences (this is also the default scaling method)
-	glyphFilter->SetScaleModeToDataScalingOff();	// KR scaling is possible but scalar values are ignored
+	glyphFilter->SetScaleModeToDataScalingOff(); // KR scaling is possible but scalar values are ignored
 	glyphFilter->SetScaleFactor(1.0);
 	glyphFilter->SetSource(_glyphSource->GetOutput());
 	glyphFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());

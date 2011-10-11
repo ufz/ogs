@@ -4,21 +4,20 @@
  *
  */
 
-
 #ifndef VTKVISPIPELINE_H
 #define VTKVISPIPELINE_H
 
 // ** INCLUDES **
-#include "Configure.h"
-#include "TreeModel.h"
 #include "Color.h"
-#include "Point.h"
+#include "Configure.h"
+#include "FEMCondition.h"
 #include "GeoType.h"
 #include "MSHEnums.h"
-#include "FEMCondition.h"
+#include "Point.h"
+#include "TreeModel.h"
 
-#include <QVector>
 #include <QMap>
+#include <QVector>
 
 class vtkAlgorithm;
 class vtkDataSet;
@@ -77,7 +76,7 @@ public:
 
 	/// \brief Defaults to on.
 	void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
-	
+
 	/// \brief Sets a global superelevation factor on all source items and resets
 	/// the factor on other items to 1.
 	void setGlobalSuperelevation(double factor) const;
@@ -86,7 +85,9 @@ public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
 	void addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
-	void addPipelineItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type);
+	void addPipelineItem(ConditionModel* model,
+	                     const std::string &name,
+	                     FEMCondition::CondType type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
 	void addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
 
@@ -96,7 +97,9 @@ public slots:
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
 	void removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
-	void removeSourceItem(ConditionModel* model, const std::string &name, FEMCondition::CondType type);
+	void removeSourceItem(ConditionModel* model,
+	                      const std::string &name,
+	                      FEMCondition::CondType type);
 	void removeSourceItem(StationTreeModel* model, const std::string &name);
 
 	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
@@ -118,7 +121,6 @@ private:
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.
 	void vtkVisPipelineChanged() const;
-
 };
 
 #endif // VTKVISPIPELINE_H

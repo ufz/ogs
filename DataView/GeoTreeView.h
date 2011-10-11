@@ -6,12 +6,12 @@
 #ifndef GEOTREEVIEW_H
 #define GEOTREEVIEW_H
 
-#include <QTreeView>
-#include <QContextMenuEvent>
 #include "GeoType.h"
+#include <QContextMenuEvent>
+#include <QTreeView>
 
 /**
- * \brief A view for the GeoTreeModel 
+ * \brief A view for the GeoTreeModel
  * \sa GeoTreeModel, GeoTreeItem
  */
 class GeoTreeView : public QTreeView
@@ -30,7 +30,8 @@ protected slots:
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 	/// Instructions if the selection of items in the view has changed by events outside the view (i.e. by actions made in the visualisation).
-	void selectionChangedFromOutside(const QItemSelection &selected, const QItemSelection &deselected);
+	void selectionChangedFromOutside(const QItemSelection &selected,
+	                                 const QItemSelection &deselected);
 
 private:
 	/// Actions to be taken after a right mouse click is performed in the station view.
@@ -46,9 +47,10 @@ private slots:
 	void writeToFile() const;
 	/// Removes a whole geometry or parts of it.
 	void removeList();
-	
+
 signals:
-	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+	void itemSelectionChanged(const QItemSelection & selected,
+	                          const QItemSelection & deselected);
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;

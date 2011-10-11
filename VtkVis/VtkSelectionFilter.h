@@ -4,19 +4,15 @@
  *
  */
 
-
 #ifndef VTKSELECTIONFILTER_H
 #define VTKSELECTIONFILTER_H
 
 // ** INCLUDES **
-#include <vtkUnstructuredGridAlgorithm.h>
 #include "VtkAlgorithmProperties.h"
-
-
+#include <vtkUnstructuredGridAlgorithm.h>
 
 class VtkSelectionFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {
-
 public:
 	/// @brief Create new objects with New() because of VTKs object reference counting.
 	static VtkSelectionFilter* New();
@@ -27,23 +23,24 @@ public:
 	void PrintSelf(ostream& os, vtkIndent indent);
 
 	/// @brief Sets user properties.
- 	void SetUserProperty(QString name, QVariant value)
- 	{
+	void SetUserProperty(QString name, QVariant value)
+	{
 		Q_UNUSED(name);
 		Q_UNUSED(value);
- 	}
+	}
 
-	void SetSelectionArray(std::vector<double> selection, double thresholdLower, double thresholdUpper);
-
+	void SetSelectionArray(std::vector<double> selection,
+	                       double thresholdLower,
+	                       double thresholdUpper);
 
 protected:
 	VtkSelectionFilter();
 	~VtkSelectionFilter();
 
 	/// @brief The filter logic.
-	int RequestData(vtkInformation* request, 
-		            vtkInformationVector** inputVector, 
-					vtkInformationVector* outputVector);
+	int RequestData(vtkInformation* request,
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
 private:
 	std::vector<double> _selection;

@@ -1,7 +1,7 @@
 /**
  * \file VtkTrackedCamera.cpp
  * 25/08/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkTrackedCamera class
  */
 
@@ -14,7 +14,7 @@
 #include <QSettings>
 
 VtkTrackedCamera::VtkTrackedCamera(QObject* parent)
-: QObject(parent), vtkOpenGLCamera()
+	: QObject(parent), vtkOpenGLCamera()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	settings.beginGroup("Tracking");
@@ -107,7 +107,7 @@ void VtkTrackedCamera::updateView()
 	double y = _trackedPosition[1] * _realToVirtualScale;
 	double z = _trackedPosition[2] * _realToVirtualScale;
 	double angle = vtkMath::DegreesFromRadians(
-			2*atan(0.5*_screenHeight*_realToVirtualScale / y));
+	        2 * atan(0.5 * _screenHeight * _realToVirtualScale / y));
 
 	//double newfocal[3] = {_x + x, _y, _z + z};
 	//double newpos[3] = {_x + x, _y + y, _z + z};
@@ -118,7 +118,7 @@ void VtkTrackedCamera::updateView()
 	//SetViewUp(viewup);
 	//SetClippingRange(_zNear, _zFar);
 	SetViewShear(x / y, z / y, 1); // see http://www.vtk.org/pipermail/vtkusers/2005-March/078735.html
-	
+
 	emit viewUpdated();
 }
 
@@ -127,16 +127,16 @@ void VtkTrackedCamera::updatedFromOutside()
 	double pos[3], dir[3];
 	GetPosition(pos);
 	GetDirectionOfProjection(dir);
-	
-	vtkMath::Normalize(dir);				// Get the view direction
-	dir[0] = dir[0] * _trackedPosition[1];	// Multiplying the view direction
-	dir[1] = dir[1] * _trackedPosition[1];	// with the tracked distance to the
-	dir[2] = dir[2] * _trackedPosition[1];	// display results in the vector
-	_focalPoint[0] = dir[0] + pos[0];		// from the position to the new
-	_focalPoint[1] = dir[1] + pos[1];		// focal point.
+
+	vtkMath::Normalize(dir);            // Get the view direction
+	dir[0] = dir[0] * _trackedPosition[1]; // Multiplying the view direction
+	dir[1] = dir[1] * _trackedPosition[1]; // with the tracked distance to the
+	dir[2] = dir[2] * _trackedPosition[1]; // display results in the vector
+	_focalPoint[0] = dir[0] + pos[0];   // from the position to the new
+	_focalPoint[1] = dir[1] + pos[1];   // focal point.
 	_focalPoint[2] = dir[2] + pos[2];
-	
+
 	updateView();
-	
+
 	//std::cout << "Camera slot" << std::endl;
 }

@@ -3,18 +3,21 @@
  * 14/06/2010  KR Initial implementation
  */
 
-#include <QSettings>
+#include "VisPrefsDialog.h"
 #include <QDoubleValidator>
 #include <QLineEdit>
+#include <QSettings>
 #include <QVariant>
-#include "VisPrefsDialog.h"
 
-#include "VtkVisPipeline.h"
 #include "VisualizationWidget.h"
+#include "VtkVisPipeline.h"
 
 /// Constructor
-VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline, VisualizationWidget* widget, QDialog* parent) :
-	QDialog(parent), _vtkVisPipeline(pipeline), _visWidget(widget), _above(0,0,2000000), _below(0,0,-2000000)
+VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline,
+                               VisualizationWidget* widget,
+                               QDialog* parent) :
+	QDialog(parent), _vtkVisPipeline(pipeline), _visWidget(widget),
+	_above(0,0,2000000), _below(0,0,-2000000)
 {
 	setupUi(this);
 	if (_vtkVisPipeline->getLight(_above))

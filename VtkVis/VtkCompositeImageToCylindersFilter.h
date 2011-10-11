@@ -26,7 +26,6 @@ public:
 
 	void SetUserVectorProperty( QString name, QList<QVariant> values );
 
-
 private:
 	VtkImageDataToLinePolyDataFilter* _lineFilter;
 	VtkApplyColorTableFilter* _ctf;

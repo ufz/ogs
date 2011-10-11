@@ -13,7 +13,8 @@
 
 #include <QDoubleValidator>
 
-class StrictDoubleValidator : public QDoubleValidator {
+class StrictDoubleValidator : public QDoubleValidator
+{
 public:
 	StrictDoubleValidator ( double min, double max, size_t decimals, QObject* parent = 0) :
 		QDoubleValidator( min, max, decimals, parent)
@@ -23,9 +24,8 @@ public:
 	{
 		if (input.isEmpty() || input == ".") return Intermediate;
 
-		if (QDoubleValidator::validate(input, pos) != Acceptable) {
+		if (QDoubleValidator::validate(input, pos) != Acceptable)
 			return Invalid;
-		}
 		return Acceptable;
 	}
 };

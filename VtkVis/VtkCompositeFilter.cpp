@@ -1,7 +1,7 @@
 /**
  * \file VtkCompositeFilter.cpp
  * 19/10/2010 LB Initial implementation
- * 
+ *
  * Implementation of VtkCompositeFilter class
  */
 
@@ -10,17 +10,17 @@
 
 #include "VtkCompositeImageToCylindersFilter.h"
 
-#include <QVector>
-#include <QString>
 #include <QMapIterator>
+#include <QString>
+#include <QVector>
 
 VtkCompositeFilter::VtkCompositeFilter(vtkAlgorithm* inputAlgorithm)
-: _inputDataObjectType(0), _outputDataObjectType(1),
-  _inputAlgorithm(inputAlgorithm)
+	: _inputDataObjectType(0), _outputDataObjectType(1),
+	  _inputAlgorithm(inputAlgorithm)
 {
 }
 
 VtkCompositeFilter::~VtkCompositeFilter()
 {
-	 _outputAlgorithm->Delete();
+	_outputAlgorithm->Delete();
 }

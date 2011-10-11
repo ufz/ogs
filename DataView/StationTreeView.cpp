@@ -3,22 +3,20 @@
  * KR Initial implementation
  */
 
-#include <iostream>
 #include <QFileDialog>
 #include <QMenu>
+#include <iostream>
 
+#include "GMSInterface.h"
 #include "Station.h"
 #include "StationIO.h"
-#include "GMSInterface.h"
 
-#include "StationTreeView.h"
-#include "StationTreeModel.h"
-#include "ModelTreeItem.h"
-#include "StratWindow.h"
 #include "DiagramPrefsDialog.h"
+#include "ModelTreeItem.h"
 #include "OGSError.h"
-
-
+#include "StationTreeModel.h"
+#include "StationTreeView.h"
+#include "StratWindow.h"
 
 StationTreeView::StationTreeView(QWidget* parent) : QTreeView(parent)
 {
@@ -39,13 +37,15 @@ void StationTreeView::on_Clicked(QModelIndex idx)
 	qDebug("%d, %d",idx.parent().row(), idx.row());
 }
 
-void StationTreeView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
+void StationTreeView::selectionChanged( const QItemSelection &selected,
+                                        const QItemSelection &deselected )
 {
 	emit itemSelectionChanged(selected, deselected);
 	return QTreeView::selectionChanged(selected, deselected);
 }
 
-void StationTreeView::selectionChangedFromOutside( const QItemSelection &selected, const QItemSelection &deselected )
+void StationTreeView::selectionChangedFromOutside( const QItemSelection &selected,
+                                                   const QItemSelection &deselected )
 {
 	QItemSelectionModel* selModel = this->selectionModel();
 
@@ -63,7 +63,7 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 	ModelTreeItem* item = static_cast<ModelTreeItem*>(index.internalPointer());
 
 	// The current index refers to a parent item (e.g. a listname)
-	if (item->childCount()>0)
+	if (item->childCount() > 0)
 	{
 		QMenu menu;
 		QAction* propertyAction = menu.addAction("Display list properties...");
@@ -84,7 +84,9 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 		QString temp_name;
 		QMenu menu;
 
-		if (static_cast<StationTreeModel*>(model())->stationFromIndex(index, temp_name)->type() == GEOLIB::Station::BOREHOLE)
+		if (static_cast<StationTreeModel*>(model())->stationFromIndex(index,
+		                                                              temp_name)->type() ==
+		    GEOLIB::Station::BOREHOLE)
 		{
 			QAction* stratAction = menu.addAction("Display Stratigraphy...");
 			QAction* exportAction = menu.addAction("Export to GMS...");
@@ -96,7 +98,8 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 		{
 			menu.addAction("View Information...");
 			QAction* showDiagramAction = menu.addAction("View Diagram...");
-			connect(showDiagramAction, SIGNAL(triggered()), this, SLOT(showDiagramPrefsDialog()));
+			connect(showDiagramAction, SIGNAL(triggered()), this,
+			        SLOT(showDiagramPrefsDialog()));
 			menu.exec(event->globalPos());
 		}
 	}
@@ -108,23 +111,33 @@ void StationTreeView::displayStratigraphy()
 
 	QString temp_name;
 	// get list name
-	static_cast<StationTreeModel*>(model())->stationFromIndex(this->selectionModel()->currentIndex(), temp_name);
+	static_cast<StationTreeModel*>(model())->stationFromIndex(
+	        this->selectionModel()->currentIndex(), temp_name);
 	// get color table (horrible way to do it but there you go ...)
-	std::map<std::string, GEOLIB::Color*> colorLookupTable = static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(temp_name.toStdString()))->getColorLookupTable();
-	StratWindow* stratView = new StratWindow(static_cast<GEOLIB::StationBorehole*>(static_cast<StationTreeModel*>(model())->stationFromIndex(index, temp_name)), &colorLookupTable);
+	std::map<std::string,
+	         GEOLIB::Color*> colorLookupTable =
+	        static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(
+	                                               temp_name.
+	                                               toStdString()))
+	        ->getColorLookupTable();
+	StratWindow* stratView =
+	        new StratWindow(static_cast<GEOLIB::StationBorehole*>(static_cast<StationTreeModel*>(
+	                                                                      model())
+	                                                              ->stationFromIndex(index,
+	                                                                                 temp_name)),
+	                        &colorLookupTable);
 	stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
 	stratView->show();
 }
 
-
 void StationTreeView::saveList()
 {
-	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(this->selectionModel()->currentIndex());
+	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
 	QString listName = item->data(0).toString();
 	QString fileName = QFileDialog::getSaveFileName(this, "Save station list", "","*.stn");
-    if (!fileName.isEmpty()) {
+	if (!fileName.isEmpty())
 		emit stationListSaved(listName, fileName);
-	}
 }
 
 void StationTreeView::exportList()
@@ -133,29 +146,42 @@ void StationTreeView::exportList()
 	//QString Name = static_cast<StationTreeModel*>(model())->getItem(this->selectionModel()->currentIndex())->data(0).toString();
 	//writeStratigraphiesAsImages(Name);
 
-	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(this->selectionModel()->currentIndex());
+	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
 	std::string listName = item->data(0).toString().toStdString();
-	QString fileName = QFileDialog::getSaveFileName(this, "Export Boreholes to GMS-Format", "","*.txt");
-    if (!fileName.isEmpty()) {
+	QString fileName = QFileDialog::getSaveFileName(this,
+	                                                "Export Boreholes to GMS-Format",
+	                                                "",
+	                                                "*.txt");
+	if (!fileName.isEmpty())
 		emit stationListExportRequested(listName, fileName.toStdString());
-	}
 }
 
 void StationTreeView::exportStation()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	QString fileName = QFileDialog::getSaveFileName(this, "Export Borehole to GMS-Format", "","*.txt");
-    if (!fileName.isEmpty()) {
-    	QString temp_name;
+	QString fileName = QFileDialog::getSaveFileName(this,
+	                                                "Export Borehole to GMS-Format",
+	                                                "",
+	                                                "*.txt");
+	if (!fileName.isEmpty())
+	{
+		QString temp_name;
 		std::vector<std::string> temp_soil_names;
 		temp_soil_names.push_back(""); // soil name vector needs to be initialised
-		GMSInterface::writeBoreholeToGMS(static_cast<GEOLIB::StationBorehole*>(static_cast<StationTreeModel*>(model())->stationFromIndex(index, temp_name)), fileName.toStdString(), temp_soil_names);
-    }
+		GMSInterface::writeBoreholeToGMS(static_cast<GEOLIB::StationBorehole*>(static_cast<
+		                                                                               StationTreeModel
+		                                                                               *>(
+		                                                                               model())->stationFromIndex(index,
+		                                                                                                          temp_name)),
+		                                 fileName.toStdString(), temp_soil_names);
+	}
 }
 
 void StationTreeView::removeStationList()
 {
-	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(this->selectionModel()->currentIndex());
+	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
 	emit stationListRemoved((item->data(0).toString()).toStdString());
 }
 
@@ -174,23 +200,38 @@ void StationTreeView::showDiagramPrefsDialog()
 
 void StationTreeView::writeStratigraphiesAsImages(QString listName)
 {
-	std::map<std::string, GEOLIB::Color*> colorLookupTable = static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(listName.toStdString()))->getColorLookupTable();
+	std::map<std::string,
+	         GEOLIB::Color*> colorLookupTable =
+	        static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(
+	                                               listName.
+	                                               toStdString()))
+	        ->getColorLookupTable();
 	std::vector<ModelTreeItem*> lists = static_cast<StationTreeModel*>(model())->getLists();
 	size_t nLists = lists.size();
-	for (size_t i=0; i<nLists; i++)
-	{
-		if ( listName.toStdString().compare( lists[i]->data(0).toString().toStdString() ) == 0 )
+	for (size_t i = 0; i < nLists; i++)
+		if ( listName.toStdString().compare( lists[i]->data(0).toString().toStdString() )
+		     == 0 )
 		{
-			const std::vector<GEOLIB::Point*> *stations = dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
+			const std::vector<GEOLIB::Point*>* stations =
+			        dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
 
-			for (size_t i=0; i<stations->size(); i++)
+			for (size_t i = 0; i < stations->size(); i++)
 			{
-				StratWindow* stratView = new StratWindow(static_cast<GEOLIB::StationBorehole*>((*stations)[i]), &colorLookupTable);
+				StratWindow* stratView =
+				        new StratWindow(static_cast<GEOLIB::StationBorehole*>((*
+				                                                               stations)
+				                                                              [i]),
+				                        &colorLookupTable);
 				stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
 				stratView->show();
-				stratView->stationView->saveAsImage("c:/project/" + QString::fromStdString(static_cast<GEOLIB::StationBorehole*>((*stations)[i])->getName()) + ".jpg");
+				stratView->stationView->saveAsImage(
+				        "c:/project/" +
+				        QString::fromStdString(static_cast<GEOLIB::StationBorehole*>((
+				                                                                             *
+				                                                                             stations)
+				                                                                     [
+				                                                                             i])->getName()) + ".jpg");
 				stratView->close();
 			}
 		}
-	}
 }

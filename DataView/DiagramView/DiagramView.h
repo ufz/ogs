@@ -6,12 +6,12 @@
 #ifndef DIAGRAMVIEW_H
 #define DIAGRAMVIEW_H
 
-#include <QtGui/QWidget>
-#include <QGraphicsView>
 #include "DiagramScene.h"
+#include <QGraphicsView>
+#include <QtGui/QWidget>
 
 /**
- * \brief A view in which to display a DiagramScene. 
+ * \brief A view in which to display a DiagramScene.
  *
  * A view in which to display a DiagramScene. It supports resizing of the window and loading of data into the diagram.
  */
@@ -45,8 +45,8 @@ protected:
 private:
 	void initialize();
 	void keepItemAspectRatio();
-        QSize minimumSizeHint() const;
-        QSize sizeHint() const;
+	QSize minimumSizeHint() const;
+	QSize sizeHint() const;
 	void update();
 
 	DiagramScene* _scene;

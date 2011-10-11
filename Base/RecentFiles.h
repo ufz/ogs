@@ -4,14 +4,13 @@
  *
  */
 
-
 #ifndef RECENTFILES_H
 #define RECENTFILES_H
 
 // ** INCLUDES **
-#include <QObject>
-#include <QMenu>
 #include <QAction>
+#include <QMenu>
+#include <QObject>
 
 class QString;
 
@@ -68,7 +67,6 @@ private:
 	QString _programName;
 	enum { _maxFiles = 5 };
 	QAction* _fileActions[_maxFiles];
-
 };
 
 #endif // RECENTFILES_H

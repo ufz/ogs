@@ -1,20 +1,19 @@
 /**
  * \file VtkCompositeLineToTubeFilter.cpp
  * 18/11/2010 KR Initial implementation
- * 
+ *
  * Implementation of VtkCompositeLineToTubeFilter class
  */
 
 // ** INCLUDES **
 #include "VtkCompositeLineToTubeFilter.h"
 
-#include <vtkSmartPointer.h>
 #include <vtkCleanPolyData.h>
+#include <vtkSmartPointer.h>
 #include <vtkTubeFilter.h>
 
-
 VtkCompositeLineToTubeFilter::VtkCompositeLineToTubeFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm)
+	: VtkCompositeFilter(inputAlgorithm)
 {
 	this->init();
 }
@@ -30,17 +29,17 @@ void VtkCompositeLineToTubeFilter::init()
 
 	// collapse coincident points
 	vtkSmartPointer<vtkCleanPolyData> mergePoints = vtkSmartPointer<vtkCleanPolyData>::New();
-		mergePoints->SetInputConnection(0, _inputAlgorithm->GetOutputPort(0));
-		mergePoints->SetTolerance(0.0);
-		mergePoints->ConvertLinesToPointsOn();
+	mergePoints->SetInputConnection(0, _inputAlgorithm->GetOutputPort(0));
+	mergePoints->SetTolerance(0.0);
+	mergePoints->ConvertLinesToPointsOn();
 
 	vtkTubeFilter* tubes = vtkTubeFilter::New();
-		tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
-		tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"Stratigraphies");
-		tubes->SetRadius(150);
-		tubes->SetNumberOfSides(10);
-		tubes->SetCapping(1);
-		//tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
+	tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
+	tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"Stratigraphies");
+	tubes->SetRadius(150);
+	tubes->SetNumberOfSides(10);
+	tubes->SetCapping(1);
+	//tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
 
 	(*_algorithmUserProperties)["Radius"] = 150.0;
 	(*_algorithmUserProperties)["NumberOfSides"] = 6;

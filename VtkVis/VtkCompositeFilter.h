@@ -12,7 +12,7 @@
 /// use vtk filter and custom filter. To subclass this you have to implement the
 /// init() function. There you combine the filters. Make sure to set the members
 /// _inputDataObjectType, _outputDataObjectType and _outputAlgorithm. Make also
-/// sure to implement VtkAlgorithmProperties::SetUserProperty() and 
+/// sure to implement VtkAlgorithmProperties::SetUserProperty() and
 /// VtkAlgorithmProperties::SetUserVectorProperty().
 ///
 /// Allocate vtk objects inside init() with vtkSmartPointer except for the last
@@ -33,7 +33,7 @@ public:
 	/// @brief Constructor.
 	/// @param inputAlgorithm The algorithm to attach this filter to.
 	VtkCompositeFilter(vtkAlgorithm* inputAlgorithm);
-	
+
 	/// @brief Destructor.
 	virtual ~VtkCompositeFilter();
 

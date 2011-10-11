@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef GEOTABWIDGET_H
 #define GEOTABWIDGET_H
 
@@ -21,10 +20,7 @@ class GeoTabWidget : public QWidget, public Ui_GeoTabWidgetBase
 public:
 	GeoTabWidget(QWidget* parent = 0);
 
-
-
 private:
-
 };
 
 #endif // GEOTABWIDGET_H

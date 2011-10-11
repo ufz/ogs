@@ -30,7 +30,8 @@ public:
 	bool setData(const QModelIndex &index, const QVariant &value, int role /* = Qt::EditRole */);
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 	TreeItem* getItem(const QModelIndex &index) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+	QVariant headerData(int section, Qt::Orientation orientation, int role =
+	                            Qt::DisplayRole) const;
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	QModelIndex parent(const QModelIndex &index) const;
 	bool removeRows(int row, int count, const QModelIndex & parent);
@@ -43,10 +44,10 @@ public slots:
 	void updateData();
 
 protected:
-     TreeItem* _rootItem;
+	TreeItem* _rootItem;
 
 private:
-     void setupModelData(const QStringList &lines, TreeItem *parent);
+	void setupModelData(const QStringList &lines, TreeItem* parent);
 };
 
 #endif //QTREEMODEL_H

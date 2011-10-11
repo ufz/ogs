@@ -7,66 +7,78 @@
 #include "OGSRaster.h"
 
 #include "MshEditor.h"
-#include "msh_mesh.h"
 #include "matrix_class.h"
+#include "msh_mesh.h"
 
 #include <QImage>
 
-
-MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, size_t nLayers, double thickness)
+MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
+                                               size_t nLayers,
+                                               double thickness)
 {
 	if (nLayers < 1 || thickness <= 0)
 	{
-		std::cout << "Error in MshLayerMapper::CreateLayers() - Invalid parameter: nLayers > 0 and thickness > 0 are required." << std::endl;
+		std::cout <<
+		"Error in MshLayerMapper::CreateLayers() - Invalid parameter: nLayers > 0 and thickness > 0 are required."
+		          << std::endl;
 		return NULL;
 	}
 /*
-	if ((mesh->ele_vector[0]->GetElementType() != MshElemType::TRIANGLE) && (mesh->ele_vector[0]->GetElementType() != MshElemType::QUAD)) // check if mesh elements are triangles or quads
-	{
-		std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle triangle- or quad-meshes... " << std::endl;
-		return NULL;
-	}
-*/
+    if ((mesh->ele_vector[0]->GetElementType() != MshElemType::TRIANGLE) && (mesh->ele_vector[0]->GetElementType() != MshElemType::QUAD)) // check if mesh elements are triangles or quads
+    {
+        std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle triangle- or quad-meshes... " << std::endl;
+        return NULL;
+    }
+ */
 	MeshLib::CFEMesh* new_mesh ( new MeshLib::CFEMesh() );
 	size_t nNodes = mesh->nod_vector.size();
 	size_t nElems = mesh->ele_vector.size();
 
-	for (size_t layer_id=0; layer_id<nLayers; layer_id++)
+	for (size_t layer_id = 0; layer_id < nLayers; layer_id++)
 	{
 		// add nodes for new layer
-		size_t node_offset ( nNodes*layer_id );
+		size_t node_offset ( nNodes * layer_id );
 // TF unused variable		double z_offset ( layer_id*thickness );
-		for (size_t i=0; i<nNodes; i++)
-		{
-			new_mesh->nod_vector.push_back(new MeshLib::CNode( node_offset + i, mesh->nod_vector[i]->getData()));
-		}
+		for (size_t i = 0; i < nNodes; i++)
+			new_mesh->nod_vector.push_back(new MeshLib::CNode( node_offset + i,
+			                                                   mesh->nod_vector[i]->
+			                                                   getData()));
 
-		if (layer_id>0) // starting with the 2nd layer prism (or hex) elements can be created
+		if (layer_id > 0) // starting with the 2nd layer prism (or hex) elements can be created
 		{
 			// create prism elements connecting the last layer with the current one
-			node_offset = (layer_id-1)*nNodes;
-			for (size_t i=0; i<nElems; i++)
+			node_offset = (layer_id - 1) * nNodes;
+			for (size_t i = 0; i < nElems; i++)
 			{
 				MeshLib::CElem* elem( new MeshLib::CElem() );
 				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
-				if (mesh->ele_vector[i]->GetElementType()==MshElemType::TRIANGLE) elem->setElementProperties(MshElemType::PRISM); // extrude triangles to prism
-				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::QUAD) elem->setElementProperties(MshElemType::HEXAHEDRON); // extrude quads to hexes
-				else if (mesh->ele_vector[i]->GetElementType()==MshElemType::LINE) continue; // line elements are ignored and not duplicated
+				if (mesh->ele_vector[i]->GetElementType() == MshElemType::TRIANGLE)
+					elem->setElementProperties(MshElemType::PRISM);                                           // extrude triangles to prism
+				else if (mesh->ele_vector[i]->GetElementType() == MshElemType::QUAD)
+					elem->setElementProperties(MshElemType::HEXAHEDRON);                                            // extrude quads to hexes
+				else if (mesh->ele_vector[i]->GetElementType() == MshElemType::LINE)
+					continue;                                            // line elements are ignored and not duplicated
 				else
 				{
-					std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
-					std::cout << "Element " << i << " is of type \"" << MshElemType2String(mesh->ele_vector[i]->GetElementType()) << "\"." << std::endl;
+					std::cout <<
+					"Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..."
+					          << std::endl;
+					std::cout << "Element " << i << " is of type \"" <<
+					MshElemType2String(mesh->ele_vector[i]->GetElementType())
+					          <<
+					"\"." << std::endl;
 					delete new_mesh;
 					return NULL;
 				}
-				elem->SetPatchIndex(layer_id-1);
-				elem->SetNodesNumber(2*nElemNodes);
-				elem->nodes_index.resize(2*nElemNodes);
-				for (size_t j=0; j<nElemNodes; j++)
+				elem->SetPatchIndex(layer_id - 1);
+				elem->SetNodesNumber(2 * nElemNodes);
+				elem->nodes_index.resize(2 * nElemNodes);
+				for (size_t j = 0; j < nElemNodes; j++)
 				{
 					long idx = mesh->ele_vector[i]->GetNodeIndex(j);
-					elem->SetNodeIndex(j, node_offset+idx);
-					elem->SetNodeIndex(j+nElemNodes, node_offset+nNodes+idx);
+					elem->SetNodeIndex(j, node_offset + idx);
+					elem->SetNodeIndex(j + nElemNodes,
+					                   node_offset + nNodes + idx);
 				}
 				new_mesh->ele_vector.push_back(elem);
 			}
@@ -84,34 +96,43 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh, siz
 }
 
 // KR, based on code by WW
-MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, const std::string &rasterfile, const size_t nLayers, const size_t layer_id, bool removeNoDataValues)
+MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
+                                               const std::string &rasterfile,
+                                               const size_t nLayers,
+                                               const size_t layer_id,
+                                               bool removeNoDataValues)
 {
-	if (msh == NULL) return NULL;
+	if (msh == NULL)
+		return NULL;
 	if (msh->getNumberOfMeshLayers() >= layer_id)
 	{
-		if (msh==NULL)
+		if (msh == NULL)
 		{
-			std::cout << "Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." << std::endl;
+			std::cout <<
+			"Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." <<
+			std::endl;
 			return NULL;
 		}
 		MeshLib::CFEMesh* new_mesh( new MeshLib::CFEMesh(*msh) );
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);
-		double* elevation = OGSRaster::loadDataFromASC(QString::fromStdString(rasterfile), x0, y0, width, height, delta);
+		double* elevation = OGSRaster::loadDataFromASC(QString::fromStdString(
+		                                                       rasterfile), x0, y0, width,
+		                                               height, delta);
 
-		if (elevation==NULL)
+		if (elevation == NULL)
 		{
-			delete []elevation;
+			delete [] elevation;
 			return NULL;
 		}
 
-		std::pair<double, double> xDim(x0, x0+width*delta);		// extension in x-dimension
-		std::pair<double, double> yDim(y0, y0+height*delta);	// extension in y-dimension
+		std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
+		std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
 
 		if (!meshFitsImage(new_mesh, xDim, yDim))
 		{
-			delete []elevation;
+			delete [] elevation;
 			return NULL;
 		}
 
@@ -127,44 +148,48 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 
 		std::vector<size_t> noData_nodes;
 
-		for(size_t i=firstNode; i<lastNode; i++)
+		for(size_t i = firstNode; i < lastNode; i++)
 		{
-			size_t xPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[0] - xDim.first) / delta)));
-			size_t yPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[1] - yDim.first) / delta)));
+			size_t xPos (static_cast<size_t>(floor(
+			                                         (msh->nod_vector[i]->getData()[0]
+			                                          - xDim.first) / delta)));
+			size_t yPos (static_cast<size_t>(floor(
+			                                         (msh->nod_vector[i]->getData()[1]
+			                                          - yDim.first) / delta)));
 
-			locX[0] = xDim.first+xPos*delta;
-			locY[0] = yDim.first+yPos*delta;
-			locZ[0] = elevation[yPos*width+xPos];
+			locX[0] = xDim.first + xPos * delta;
+			locY[0] = yDim.first + yPos * delta;
+			locZ[0] = elevation[yPos * width + xPos];
 
-			locX[1] = xDim.first+(xPos+1)*delta;
-			locY[1] = yDim.first+yPos*delta;
-			locZ[1] = elevation[yPos*width+(xPos+1)];
+			locX[1] = xDim.first + (xPos + 1) * delta;
+			locY[1] = yDim.first + yPos * delta;
+			locZ[1] = elevation[yPos * width + (xPos + 1)];
 
-			locX[2] = xDim.first+(xPos+1)*delta;
-			locY[2] = yDim.first+(yPos+1)*delta;
-			locZ[2] = elevation[(yPos+1)*width+(xPos+1)];
+			locX[2] = xDim.first + (xPos + 1) * delta;
+			locY[2] = yDim.first + (yPos + 1) * delta;
+			locZ[2] = elevation[(yPos + 1) * width + (xPos + 1)];
 
-			locX[3] = xDim.first+xPos*delta;
-			locY[3] = yDim.first+(yPos+1)*delta;
-			locZ[3] = elevation[(yPos+1)*width+xPos];
+			locX[3] = xDim.first + xPos * delta;
+			locY[3] = yDim.first + (yPos + 1) * delta;
+			locZ[3] = elevation[(yPos + 1) * width + xPos];
 
 			bool noData(false);
-			for(size_t j=0; j<4; j++)
-			{
-				if(fabs(locZ[j]+9999)<std::numeric_limits<double>::min()) noData = true;
-			}
+			for(size_t j = 0; j < 4; j++)
+				if(fabs(locZ[j] + 9999) < std::numeric_limits<double>::min())
+					noData = true;
 
 			if(!noData)
 			{
-				 // Interpolate
+				// Interpolate
 				double ome[4];
-				double const*const coords (msh->nod_vector[i]->getData());
-				double xi  = 2.0*(coords[0]-0.5*(locX[0]+locX[1]))/delta;
-				double eta = 2.0*(coords[1]-0.5*(locY[1]+locY[2]))/delta;
+				double const* const coords (msh->nod_vector[i]->getData());
+				double xi  = 2.0 * (coords[0] - 0.5 * (locX[0] + locX[1])) / delta;
+				double eta = 2.0 * (coords[1] - 0.5 * (locY[1] + locY[2])) / delta;
 				MPhi2D(ome, xi, eta);
 
 				double z(0.0);
-				for(size_t j=0; j<4; j++) z += ome[j]*locZ[j];
+				for(size_t j = 0; j < 4; j++)
+					z += ome[j] * locZ[j];
 				new_mesh->nod_vector[i]->SetZ(z);
 				new_mesh->nod_vector[i]->SetMark(true);
 			}
@@ -179,10 +204,13 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 
 		if ((nLayers == 1) && removeNoDataValues)
 		{
-			if (noData_nodes.size() < (new_mesh->nod_vector.size()-2))
+			if (noData_nodes.size() < (new_mesh->nod_vector.size() - 2))
 			{
-				std::cout << "Warning: Removing " << noData_nodes.size() << " mesh nodes at NoData values ... " << std::endl;
-				MeshLib::CFEMesh* red_mesh = MshEditor::removeMeshNodes(new_mesh, noData_nodes);
+				std::cout << "Warning: Removing " << noData_nodes.size() <<
+				" mesh nodes at NoData values ... " << std::endl;
+				MeshLib::CFEMesh* red_mesh = MshEditor::removeMeshNodes(
+				        new_mesh,
+				        noData_nodes);
 				if (!new_mesh->ele_vector.empty())
 				{
 					delete new_mesh;
@@ -193,7 +221,6 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 					delete red_mesh;
 					std::cout << "Too many NoData values..." << std::endl;
 				}
-
 			}
 			else
 				std::cout << "Too many NoData values..." << std::endl;
@@ -202,18 +229,20 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh, cons
 		new_mesh->ConstructGrid();
 		new_mesh->FillTransformMatrix();
 
-		delete []elevation;
+		delete [] elevation;
 		return new_mesh;
 	}
 	else
-	{
-		std::cout << "Error in MshLayerMapper::LayerMapping() - Mesh has only " << msh->getNumberOfMeshLayers() << " Layers, cannot assign layer " << layer_id << "..." << std::endl;
-	}
+		std::cout << "Error in MshLayerMapper::LayerMapping() - Mesh has only " <<
+		msh->getNumberOfMeshLayers() << " Layers, cannot assign layer " << layer_id <<
+		"..." << std::endl;
 	return NULL;
 }
 
 // KR, based on code by WW (Note: this method has not been tested yet and will probably fail miserably!)
-bool MshLayerMapper::meshFitsImage(const MeshLib::CFEMesh* msh, const std::pair<double, double> &xDim, const std::pair<double, double> &yDim)
+bool MshLayerMapper::meshFitsImage(const MeshLib::CFEMesh* msh,
+                                   const std::pair<double, double> &xDim,
+                                   const std::pair<double, double> &yDim)
 {
 	double const* pnt (msh->nod_vector[0]->getData());
 	double xMin(pnt[0]);
@@ -222,14 +251,18 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::CFEMesh* msh, const std::pair<
 	double yMax(pnt[1]);
 
 	size_t nNodes = msh->nod_vector.size();
-	for (size_t i=1; i<nNodes; i++)
+	for (size_t i = 1; i < nNodes; i++)
 	{
 		pnt = msh->nod_vector[i]->getData();
-		if (xMin > pnt[0]) xMin = pnt[0];
-		else if (xMax < pnt[0]) xMax = pnt[0];
+		if (xMin > pnt[0])
+			xMin = pnt[0];
+		else if (xMax < pnt[0])
+			xMax = pnt[0];
 
-		if (yMin > pnt[1]) yMin = pnt[1];
-		else if (yMax < pnt[1]) yMax = pnt[1];
+		if (yMin > pnt[1])
+			yMin = pnt[1];
+		else if (yMax < pnt[1])
+			yMax = pnt[1];
 	}
 
 	if (xMin < xDim.first || xMax > xDim.second || yMin < yDim.first || yMax > yDim.second)
@@ -244,54 +277,57 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 {
 	double ref_dep = -999999999.0;
 
-	size_t nNodesPerLayer = mesh->nod_vector.size() / (nLayers+1);
+	size_t nNodesPerLayer = mesh->nod_vector.size() / (nLayers + 1);
 
 	//18.02.2009 WW
 	if (integ)
 	{
-		for (size_t i=0; i<nNodesPerLayer; i++)
-		{
-		   for (size_t k=0; k<nLayers; k++)
-		   {
-			  MeshLib::CNode* node = mesh->nod_vector[k*nNodesPerLayer+i];
-			  if (k==0) node->SetBoundaryType('0');	               // on the surface
-			  else if (k==(nLayers-1)) node->SetBoundaryType('1'); // on the bottom
-			  else node->SetBoundaryType('I');                     // interior node
-		   }
-		}
+		for (size_t i = 0; i < nNodesPerLayer; i++)
+			for (size_t k = 0; k < nLayers; k++)
+			{
+				MeshLib::CNode* node = mesh->nod_vector[k * nNodesPerLayer + i];
+				if (k == 0)
+					node->SetBoundaryType('0');  // on the surface
+				else if (k == (nLayers - 1))
+					node->SetBoundaryType('1');  // on the bottom
+				else
+					node->SetBoundaryType('I');  // interior node
+			}
 	}
 
-
 	size_t flat(0);
-	for (size_t i=0; i<nNodesPerLayer; i++)
+	for (size_t i = 0; i < nNodesPerLayer; i++)
 	{
 		std::vector<long> tmp_connected_nodes;
 		flat = 0;
 
-		for (size_t k=0; k<nLayers-2; k++) // top layer is not checked
+		for (size_t k = 0; k < nLayers - 2; k++) // top layer is not checked
 		{
-			MeshLib::CNode* bNode = mesh->nod_vector[k*nNodesPerLayer+i];     // current node
-			MeshLib::CNode* tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i]; // same node but one layer below
+			MeshLib::CNode* bNode = mesh->nod_vector[k * nNodesPerLayer + i]; // current node
+			MeshLib::CNode* tNode = mesh->nod_vector[(k + 1) * nNodesPerLayer + i]; // same node but one layer below
 
 			if (!tNode->GetMark())
 			{
-				if (k==0)
+				if (k == 0)
 				{
 					tmp_connected_nodes.clear();
-					std::vector<size_t> const& connected_nodes (tNode->getConnectedNodes());
+					std::vector<size_t> const& connected_nodes (
+					        tNode->getConnectedNodes());
 					const size_t n_connected_nodes (connected_nodes.size());
-					for (size_t j=0; j<n_connected_nodes; j++)
+					for (size_t j = 0; j < n_connected_nodes; j++)
 						tmp_connected_nodes.push_back(connected_nodes[j]);
 				}
 
 				tNode->SetZ(bNode->getData()[2]); // z coordinate changed to layer above
 				tNode->getConnectedNodes().clear();
-				for (int j=k; j>=0; j--)  //WW/YW. 23.01.2009
+				for (int j = k; j >= 0; j--) //WW/YW. 23.01.2009
 				{
-					MeshLib::CNode* nNode = mesh->nod_vector[j*nNodesPerLayer+i];
+					MeshLib::CNode* nNode =
+					        mesh->nod_vector[j * nNodesPerLayer + i];
 					if (nNode->GetMark())
 					{
-						tNode->getConnectedNodes().push_back(nNode->GetIndex());
+						tNode->getConnectedNodes().push_back(
+						        nNode->GetIndex());
 						break;
 					}
 				}
@@ -300,155 +336,156 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		}
 
 		//---- 27.01.2009. WW
-		if (flat==nLayers-2/*1*/)
+		if (flat == nLayers - 2 /*1*/)
 		{
-
-			MeshLib::CNode* bNode = mesh->nod_vector[nNodesPerLayer+i];
+			MeshLib::CNode* bNode = mesh->nod_vector[nNodesPerLayer + i];
 			bNode->SetMark(true);
 			bNode->getConnectedNodes().clear();
-			for (size_t j=0; j<tmp_connected_nodes.size(); j++)
+			for (size_t j = 0; j < tmp_connected_nodes.size(); j++)
 				bNode->getConnectedNodes().push_back(tmp_connected_nodes[j]);
 
-			MeshLib::CNode* tNode = mesh->nod_vector[(nLayers-1)*nNodesPerLayer+i];
+			MeshLib::CNode* tNode =
+			        mesh->nod_vector[(nLayers - 1) * nNodesPerLayer + i];
 			tNode->SetMark(false);
 			bNode->SetZ(tNode->getData()[2]);
 			bNode->SetBoundaryType('1');
 			//
-			for (size_t k=1; k<nLayers; k++)
+			for (size_t k = 1; k < nLayers; k++)
 			{
-				tNode = mesh->nod_vector[(k+1)*nNodesPerLayer+i];
+				tNode = mesh->nod_vector[(k + 1) * nNodesPerLayer + i];
 				tNode->SetZ(ref_dep);
 				tNode->getConnectedNodes().clear();
 				tNode->getConnectedNodes().push_back(bNode->GetIndex());
 			}
 		}
-
 	}
-
 
 	std::vector<MeshLib::CElem*> new_elems;
 	std::vector<size_t> false_node_idx;
 	size_t nElems = mesh->ele_vector.size();
-	for(size_t i=0; i<nElems; i++)
+	for(size_t i = 0; i < nElems; i++)
 	{
 		MeshLib::CElem* elem = mesh->ele_vector[i];
 		elem->SetMark(true);
 
 		flat = 0;
-		for (size_t k=0; k<3;k++) //skip element when one node is marked ref_dep
-		{
-			if ( fabs(elem->GetNode(k)->getData()[2]  +ref_dep)<std::numeric_limits<double>::min() ||
-			     fabs(elem->GetNode(k+3)->getData()[2]+ref_dep)<std::numeric_limits<double>::min() )
+		for (size_t k = 0; k < 3; k++) //skip element when one node is marked ref_dep
+
+			if ( fabs(elem->GetNode(k)->getData()[2]  + ref_dep) <
+			     std::numeric_limits<double>::min() ||
+			     fabs(elem->GetNode(k + 3)->getData()[2] + ref_dep) <
+			     std::numeric_limits<double>::min() )
 			{
 				flat = 1;
 				elem->SetMark(false);
 				break;
 			}
-		}
-		if (flat==1) continue;
+		if (flat == 1)
+			continue;
 
 		// If all nodes are okay, check if two z-values are identical
-		for (size_t k=0; k<3;k++)
-		{
-			if(fabs(elem->GetNode(k+3)->getData()[2]-elem->GetNode(k)->getData()[2]) < std::numeric_limits<double>::min())
+		for (size_t k = 0; k < 3; k++)
+			if(fabs(elem->GetNode(k +
+			                      3)->getData()[2] - elem->GetNode(k)->getData()[2]) <
+			   std::numeric_limits<double>::min())
 				false_node_idx.push_back(k);
-		}
 
 		switch(false_node_idx.size())
 		{
-			case 0: // everything okay, take the prism as it is
-			{
-				elem->SetMark(true);
-				break;
-			}
-			case 1:	// one node of the prism is marked false, i.e. create two tetrahedron elements from the remaining 5 prism nodes
-			{
-				size_t a = false_node_idx[0];
-				size_t b = (a+2)%3;
-				size_t c = (a+1)%3;
+		case 0: // everything okay, take the prism as it is
+		{
+			elem->SetMark(true);
+			break;
+		}
+		case 1: // one node of the prism is marked false, i.e. create two tetrahedron elements from the remaining 5 prism nodes
+		{
+			size_t a = false_node_idx[0];
+			size_t b = (a + 2) % 3;
+			size_t c = (a + 1) % 3;
 
-				if (elem->GetNode(a+3)->GetBoundaryType()=='1') //24.02.2009. WW
-					 elem->GetNode(a)->SetBoundaryType('1');
+			if (elem->GetNode(a + 3)->GetBoundaryType() == '1') //24.02.2009. WW
+				elem->GetNode(a)->SetBoundaryType('1');
 
-				// create a new tetrahedron
-				MeshLib::CElem* new_elem( new MeshLib::CElem() );
-				new_elem->SetMark(true);
-				new_elem->SetElementType(MshElemType::TETRAHEDRON);
-				new_elem->SetPatchIndex(elem->GetPatchIndex());
-				new_elem->SetBoundaryType('I');
-				new_elem->SetNodesNumber(4);
+			// create a new tetrahedron
+			MeshLib::CElem* new_elem( new MeshLib::CElem() );
+			new_elem->SetMark(true);
+			new_elem->SetElementType(MshElemType::TETRAHEDRON);
+			new_elem->SetPatchIndex(elem->GetPatchIndex());
+			new_elem->SetBoundaryType('I');
+			new_elem->SetNodesNumber(4);
 
-				Math_Group::vec<MeshLib::CNode*> nodes(4);
-				nodes[0] = mesh->nod_vector[elem->nodes_index[a]];
-				nodes[1] = mesh->nod_vector[elem->nodes_index[b+3]];
-				nodes[2] = mesh->nod_vector[elem->nodes_index[c+3]];
-				nodes[3] = mesh->nod_vector[elem->nodes_index[c]];
-				new_elem->SetNodes(nodes, true);
+			Math_Group::vec<MeshLib::CNode*> nodes(4);
+			nodes[0] = mesh->nod_vector[elem->nodes_index[a]];
+			nodes[1] = mesh->nod_vector[elem->nodes_index[b + 3]];
+			nodes[2] = mesh->nod_vector[elem->nodes_index[c + 3]];
+			nodes[3] = mesh->nod_vector[elem->nodes_index[c]];
+			new_elem->SetNodes(nodes, true);
 
-				new_elem->nodes_index.resize(4);
-				for (size_t k=0; k<4; k++)
-					new_elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
-				new_elems.push_back(new_elem);
+			new_elem->nodes_index.resize(4);
+			for (size_t k = 0; k < 4; k++)
+				new_elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
+			new_elems.push_back(new_elem);
 
-				// change prism-element to 2nd tetrahedron
-				elem->SetMark(true);
-				elem->SetElementType(MshElemType::TETRAHEDRON);
-				elem->SetNodesNumber(4);
+			// change prism-element to 2nd tetrahedron
+			elem->SetMark(true);
+			elem->SetElementType(MshElemType::TETRAHEDRON);
+			elem->SetNodesNumber(4);
 
-				nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
-				nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
-				nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
-				nodes[3] = mesh->nod_vector[elem->nodes_index[b+3]];
-				elem->SetNodes(nodes, true);
+			nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
+			nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
+			nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
+			nodes[3] = mesh->nod_vector[elem->nodes_index[b + 3]];
+			elem->SetNodes(nodes, true);
 
-				elem->nodes_index.resize(4);
-				for (size_t k=0; k<4; k++)
-					elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
-				break;
-			}
-			case 2: // two nodes of the prism are marked false, i.e. create a tetrahedron element from the remaining 4 prism nodes
-			{
-				size_t a = false_node_idx[0];
-				size_t b = (a+2)%3;
-				size_t c = (a+1)%3;
-				if (false_node_idx[1]==b)		a = c;
-				else if(false_node_idx[1]==c)	a = b;
+			elem->nodes_index.resize(4);
+			for (size_t k = 0; k < 4; k++)
+				elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
+			break;
+		}
+		case 2: // two nodes of the prism are marked false, i.e. create a tetrahedron element from the remaining 4 prism nodes
+		{
+			size_t a = false_node_idx[0];
+			size_t b = (a + 2) % 3;
+			size_t c = (a + 1) % 3;
+			if (false_node_idx[1] == b)
+				a = c;
+			else if(false_node_idx[1] == c)
+				a = b;
 
-				elem->SetMark(true);
-				elem->SetElementType(MshElemType::TETRAHEDRON);
-				elem->SetNodesNumber(4);
+			elem->SetMark(true);
+			elem->SetElementType(MshElemType::TETRAHEDRON);
+			elem->SetNodesNumber(4);
 
-				Math_Group::vec<MeshLib::CNode*> nodes(4);
-				nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
-				nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
-				nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
-				nodes[3] = mesh->nod_vector[elem->nodes_index[a+3]];
-				elem->SetNodes(nodes, true);
+			Math_Group::vec<MeshLib::CNode*> nodes(4);
+			nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
+			nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
+			nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
+			nodes[3] = mesh->nod_vector[elem->nodes_index[a + 3]];
+			elem->SetNodes(nodes, true);
 
-				elem->nodes_index.resize(4);
-				for (size_t k=0; k<4; k++)
-					elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
-				/*
-				//for j, l nodes if they becomes on top surface. 24.02.2009. WW
-				if (node_b->GetBoundaryType()=='1')
-					elem->nodes[0]->SetBoundaryType('1');
-				if (node_t->GetBoundaryType()=='1')
-					elem->nodes[2]->SetBoundaryType('1');
-				*/
-				break;
-			}
-			case 3: // three nodes of the prism is marked false, ditch the whole element
-			{
-				elem->SetMark(false);
-				break;
-			}
+			elem->nodes_index.resize(4);
+			for (size_t k = 0; k < 4; k++)
+				elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
+			/*
+			   //for j, l nodes if they becomes on top surface. 24.02.2009. WW
+			   if (node_b->GetBoundaryType()=='1')
+			    elem->nodes[0]->SetBoundaryType('1');
+			   if (node_t->GetBoundaryType()=='1')
+			    elem->nodes[2]->SetBoundaryType('1');
+			 */
+			break;
+		}
+		case 3: // three nodes of the prism is marked false, ditch the whole element
+		{
+			elem->SetMark(false);
+			break;
+		}
 		}
 	}
 
 	// add the newly created elements to the elements vector
-	for(size_t i=0; i<new_elems.size(); i++)
+	for(size_t i = 0; i < new_elems.size(); i++)
 		mesh->ele_vector.push_back(new_elems[i]);
-
 
 	// correct indeces of elements and delete false elements
 	std::vector<MeshLib::CElem*>::iterator beg_e = mesh->ele_vector.begin( ), last_e;
@@ -462,14 +499,14 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 			elem->SetIndex(counter);
 			counter++;
 			/* KR unused variable
-			for (int j=0; j<elem->GetVertexNumber(); j++)
-			{
-				if (!elem->GetNode(j)->GetMark())
-				{
-					MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
-				}
-			}
-			*/
+			   for (int j=0; j<elem->GetVertexNumber(); j++)
+			   {
+			    if (!elem->GetNode(j)->GetMark())
+			    {
+			        MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
+			    }
+			   }
+			 */
 		}
 		else
 		{
@@ -502,11 +539,10 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 
 	// correct element indeces again after deleting nodes
 	nElems = mesh->ele_vector.size();
-	for(size_t i=0; i<nElems; i++)
-	{
-		for(int j=0; j< mesh->ele_vector[i]->GetVertexNumber(); j++)
-			mesh->ele_vector[i]->nodes_index[j] = mesh->ele_vector[i]->GetNode(j)->GetIndex();
-	}
+	for(size_t i = 0; i < nElems; i++)
+		for(int j = 0; j < mesh->ele_vector[i]->GetVertexNumber(); j++)
+			mesh->ele_vector[i]->nodes_index[j] =
+			        mesh->ele_vector[i]->GetNode(j)->GetIndex();
 
 	// delete elements if two of its nodes are identical (can this actually happen?????)
 	beg_e = mesh->ele_vector.begin();
@@ -518,17 +554,15 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		MeshLib::CElem* elem = *last_e;
 
 		//10.02.2009. WW !!!!!!!!!!!!!!!!!!!!!!
-		for (int j=0; j<elem->GetVertexNumber(); j++)
+		for (int j = 0; j < elem->GetVertexNumber(); j++)
 		{
 			flatf = false;
-			for (int k=j; k<elem->GetVertexNumber(); k++)
-			{
-				if (elem->GetNodeIndex(j)==elem->GetNodeIndex(k))
+			for (int k = j; k < elem->GetVertexNumber(); k++)
+				if (elem->GetNodeIndex(j) == elem->GetNodeIndex(k))
 				{
 					flatf = true;
 					break;
 				}
-			}
 		}
 		if (flatf)
 		{
@@ -537,17 +571,17 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		}
 		else
 		{
-		   elem->SetIndex(counter);
-		   counter++;
-		   /* KR unused variable
-		   for (int j=0; j<elem->GetVertexNumber(); j++)
-		   {
-			  if (!elem->GetNode(j)->GetMark())
-			  {
-				  MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
-			  }
-		   }
-		   */
+			elem->SetIndex(counter);
+			counter++;
+			/* KR unused variable
+			   for (int j=0; j<elem->GetVertexNumber(); j++)
+			   {
+			   if (!elem->GetNode(j)->GetMark())
+			   {
+			       MeshLib::CNode* node = mesh->nod_vector[elem->GetNode(j)->connected_nodes[0]];
+			   }
+			   }
+			 */
 		}
 	}
 
@@ -562,23 +596,22 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 		MeshLib::CNode* node = *last;
 		if ( node->getConnectedElementIDs().empty() )
 		{
-		   delete node;
-		   node = NULL;
-		   beg = mesh->nod_vector.erase(last);
+			delete node;
+			node = NULL;
+			beg = mesh->nod_vector.erase(last);
 		}
 		else
 		{
-		   node->SetIndex(counter);
-		   counter++;
+			node->SetIndex(counter);
+			counter++;
 		}
 	}
 
 	nElems = mesh->ele_vector.size();
-	for (size_t i=0; i<nElems; i++)
-	{
-		for (int j=0; j<mesh->ele_vector[i]->GetVertexNumber(); j++)
-			mesh->ele_vector[i]->nodes_index[j] = mesh->ele_vector[i]->GetNode(j)->GetIndex();
-	}
+	for (size_t i = 0; i < nElems; i++)
+		for (int j = 0; j < mesh->ele_vector[i]->GetVertexNumber(); j++)
+			mesh->ele_vector[i]->nodes_index[j] =
+			        mesh->ele_vector[i]->GetNode(j)->GetIndex();
 
 	mesh->ConstructGrid();
 }

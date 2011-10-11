@@ -1,12 +1,12 @@
 /**
  * \file ColorTableView.cpp
  * 17/06/2010 KR Initial implementation
- * 
+ *
  */
 
+#include "ColorTableView.h"
 #include <QHeaderView>
 #include <QPainter>
-#include "ColorTableView.h"
 
 ColorTableView::ColorTableView( QWidget* parent /*= 0*/ ) : QTableView(parent)
 {
@@ -16,7 +16,9 @@ ColorTableView::ColorTableView( QWidget* parent /*= 0*/ ) : QTableView(parent)
 	this->resizeRowsToContents();
 }
 
-void ColorTableViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ColorTableViewDelegate::paint(QPainter* painter,
+                                   const QStyleOptionViewItem &option,
+                                   const QModelIndex &index) const
 {
 	QColor val;
 	if (index.column() == 1)
@@ -32,10 +34,12 @@ void ColorTableViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 		QItemDelegate::paint(painter, option, index);
 }
 
-QSize ColorTableViewDelegate::sizeHint( const QStyleOptionViewItem &option, const QModelIndex &index ) const
+QSize ColorTableViewDelegate::sizeHint( const QStyleOptionViewItem &option,
+                                        const QModelIndex &index ) const
 {
 	QSize s = QItemDelegate::sizeHint(option, index);
-	if( s.isValid() ) s.setHeight((int)(0.5*s.height()));
+	if( s.isValid() )
+		s.setHeight((int)(0.5 * s.height()));
 	return s;
 }
 

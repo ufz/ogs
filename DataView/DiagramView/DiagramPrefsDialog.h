@@ -6,16 +6,17 @@
 #ifndef DIAGRAMPREFSDIALOG_H
 #define DIAGRAMPREFSDIALOG_H
 
-#include <QtGui/QMainWindow>
 #include "ui_DiagramPrefs.h"
+#include <QtGui/QMainWindow>
 
 class DatabaseConnection;
 class DetailWindow;
 class DiagramList;
 class QCheckBox;
 
-namespace GEOLIB {
-	class Station;
+namespace GEOLIB
+{
+class Station;
 }
 
 /**
@@ -40,7 +41,10 @@ public:
 	 * \param db The database connection were the diagram-related data can be found
 	 * \param parent The parent QDialog.
 	 */
-	DiagramPrefsDialog(GEOLIB::Station* stn, QString listName, DatabaseConnection* db, QDialog* parent = 0);
+	DiagramPrefsDialog(GEOLIB::Station* stn,
+	                   QString listName,
+	                   DatabaseConnection* db,
+	                   QDialog* parent = 0);
 
 	/**
 	 * Opens a new dialog and automatically reads data from the specified file. The diagram is not associated
@@ -48,10 +52,11 @@ public:
 	 * \param filename File containing data for the diagram(s) to be visualised.
 	 * \param parent The parent QDialog.
 	 */
-	DiagramPrefsDialog(const QString &filename, DetailWindow* window = NULL, QDialog* parent = 0);
+	DiagramPrefsDialog(const QString &filename,
+	                   DetailWindow* window = NULL,
+	                   QDialog* parent = 0);
 
 	~DiagramPrefsDialog(void);
-
 
 private:
 	/**
@@ -82,7 +87,6 @@ private:
 	int _stationID;
 	DetailWindow* _window;
 
-
 private slots:
 	/// Instructions if the OK-Button has been pressed.
 	/// Note: Clicking the "Load from file"-button overrides the database input!
@@ -90,13 +94,11 @@ private slots:
 
 	/// Instructions if the Cancel-Button has been pressed.
 	void reject();
-	
+
 	/// Instructions if the "Load File"-Button has been pressed.
 	void on_loadFileButton_clicked();
 
 signals:
-
-
 };
 
 #endif //DIAGRAMPREFSDIALOG_H

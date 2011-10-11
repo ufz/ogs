@@ -15,14 +15,13 @@ class VtkCompositeColorByHeightFilter : public VtkCompositeFilter
 {
 public:
 	VtkCompositeColorByHeightFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeColorByHeightFilter() {};
+	virtual ~VtkCompositeColorByHeightFilter() {}
 
 	virtual void init();
 
 	virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	
 };
 
 #endif // VTKCOMPOSITECOLORBYHEIGHTFILTER_H

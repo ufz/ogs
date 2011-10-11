@@ -6,7 +6,6 @@
 #ifndef GEOTREEMODEL_H
 #define GEOTREEMODEL_H
 
-
 #include <vector>
 
 #include "GeoType.h"
@@ -16,8 +15,9 @@
 #include "TreeModel.h"
 #include <vtkPolyDataAlgorithm.h>
 
-namespace GEOLIB {
-	class GeoObject;
+namespace GEOLIB
+{
+class GeoObject;
 }
 
 class QString;
@@ -27,7 +27,7 @@ class GeoObjectListItem;
 
 /**
  * \brief A model for the GeoTreeView implementing a tree as a double-linked list.
-  * \sa TreeModel, GeoTreeView, TreeItem, GeoTreeItem
+ * \sa TreeModel, GeoTreeView, TreeItem, GeoTreeItem
  */
 class GeoTreeModel : public TreeModel
 {
@@ -72,13 +72,18 @@ public:
 
 private:
 	/// Adds children to the "Polylines" node
-	void addChildren(GeoObjectListItem* plyList, const GEOLIB::PolylineVec* polyline_vec, size_t start_index, size_t end_index);
-	
+	void addChildren(GeoObjectListItem* plyList,
+	                 const GEOLIB::PolylineVec* polyline_vec,
+	                 size_t start_index,
+	                 size_t end_index);
+
 	/// Adds children to the "Surfaces" node
-	void addChildren(GeoObjectListItem* sfcList, const GEOLIB::SurfaceVec* surface_vec, size_t start_index, size_t end_index);
+	void addChildren(GeoObjectListItem* sfcList,
+	                 const GEOLIB::SurfaceVec* surface_vec,
+	                 size_t start_index,
+	                 size_t end_index);
 
 	std::vector<GeoTreeItem*> _lists;
-
 };
 
 #endif //GEOTREEMODEL_H

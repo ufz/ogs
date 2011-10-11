@@ -16,13 +16,13 @@ class vrpn_Analog_Remote;
 class VrpnClient : public QObject
 {
 	Q_OBJECT
-	
+
 public:
 	VrpnClient(QString deviceName, int updateInterval = 100, QObject* parent = NULL);
 	virtual ~VrpnClient();
-	
+
 	double getAnalog(int channel);
-	
+
 public slots:
 	void update();
 

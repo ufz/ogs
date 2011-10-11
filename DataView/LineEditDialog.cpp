@@ -3,14 +3,14 @@
  * 2010/12/09 KR Initial implementation
  */
 
-#include "OGSError.h"
 #include "LineEditDialog.h"
+#include "OGSError.h"
 #include <QStringList>
 #include <QStringListModel>
 
-
 LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* parent)
-: QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel), _geoName(ply_vec.getName())
+	: QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel),
+	  _geoName(ply_vec.getName())
 {
 	setupUi(this);
 
@@ -18,7 +18,7 @@ LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* pare
 
 	size_t nPly(ply_vec.size());
 	QStringList list;
-	for (size_t i=0; i<nPly; i++)
+	for (size_t i = 0; i < nPly; i++)
 	{
 		std::string ply_name("");
 		ply_vec.getNameOfElementByID(i, ply_name);
@@ -72,8 +72,15 @@ void LineEditDialog::accept()
 	{
 		std::string prox_string = this->proximityEdit->text().toStdString();
 		double prox = (prox_string.empty()) ? 0.0 : strtod( prox_string.c_str(), 0 );
-		std::string ply_name = (plyNameEdit->text().toStdString().empty()) ? "" : plyNameEdit->text().toStdString();
-		emit connectPolylines(_geoName, selectedIndeces, prox, ply_name, this->closePlyCheckBox->isChecked(), this->createSfcCheckBox->isChecked());
+		std::string ply_name =
+		        (plyNameEdit->text().toStdString().empty()) ? "" : plyNameEdit->text().
+		        toStdString();
+		emit connectPolylines(_geoName,
+		                      selectedIndeces,
+		                      prox,
+		                      ply_name,
+		                      this->closePlyCheckBox->isChecked(),
+		                      this->createSfcCheckBox->isChecked());
 		this->done(QDialog::Accepted);
 	}
 	else
@@ -90,7 +97,7 @@ std::vector<size_t> LineEditDialog::getSelectedIndeces(QStringList list)
 	std::vector<size_t> indexList;
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
-		QString s = it->mid(5, it->indexOf("  ")-5);
+		QString s = it->mid(5, it->indexOf("  ") - 5);
 		indexList.push_back(atoi(s.toStdString().c_str()));
 	}
 	return indexList;

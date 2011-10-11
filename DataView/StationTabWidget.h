@@ -4,7 +4,6 @@
  *
  */
 
-
 #ifndef STATIONTABWIDGET_H
 #define STATIONTABWIDGET_H
 
@@ -21,10 +20,7 @@ class StationTabWidget : public QWidget, public Ui_StationTabWidgetBase
 public:
 	StationTabWidget(QWidget* parent = 0);
 
-
-
 private:
-
 };
 
 #endif // STATIONTABWIDGET_H

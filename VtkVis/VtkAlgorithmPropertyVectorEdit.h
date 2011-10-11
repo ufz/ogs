@@ -6,9 +6,9 @@
 #ifndef VTKALGORITHMPROPERTYVECTOREDIT_H
 #define VTKALGORITHMPROPERTYVECTOREDIT_H
 
-#include <QWidget>
 #include <QList>
 #include <QVariant>
+#include <QWidget>
 
 class VtkAlgorithmProperties;
 
@@ -25,8 +25,11 @@ public:
 	/// @param type The type of the property.
 	/// @param algProps The VtkAlgorithmProperties object.
 	/// @param parent The parent widget.
-	VtkAlgorithmPropertyVectorEdit(const QList<QString> contents, const QString& name,
-		QVariant::Type type, VtkAlgorithmProperties* algProps, QWidget* parent = 0);
+	VtkAlgorithmPropertyVectorEdit(const QList<QString> contents,
+	                               const QString& name,
+	                               QVariant::Type type,
+	                               VtkAlgorithmProperties* algProps,
+	                               QWidget* parent = 0);
 	virtual ~VtkAlgorithmPropertyVectorEdit();
 
 private:

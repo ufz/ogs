@@ -15,52 +15,55 @@
 #include <vtkUnsignedCharArray.h>
 
 // Conversion from vtkUnstructuredGrid
-#include <vtkUnstructuredGrid.h>
 #include <vtkCell.h>
 #include <vtkCellData.h>
+#include <vtkUnstructuredGrid.h>
 
-MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img, const std::pair<double,double> &origin, const double &scalingFactor)
+MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
+                                                     const std::pair<double,double> &origin,
+                                                     const double &scalingFactor)
 {
-	vtkSmartPointer<vtkUnsignedCharArray> pixelData = vtkSmartPointer<vtkUnsignedCharArray>(vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
+	vtkSmartPointer<vtkUnsignedCharArray> pixelData = vtkSmartPointer<vtkUnsignedCharArray>(
+	        vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
 	int* dims = img->GetDimensions();
 
 	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 	size_t imgHeight = dims[0];
 	size_t imgWidth  = dims[1];
-	std::vector<size_t> visNodes(imgWidth*imgHeight);
+	std::vector<size_t> visNodes(imgWidth * imgHeight);
 
-	for (size_t i=0; i<imgWidth; i++)
-	{
-		for (size_t j=0; j<imgHeight; j++)
+	for (size_t i = 0; i < imgWidth; i++)
+		for (size_t j = 0; j < imgHeight; j++)
 		{
-			size_t index = i*imgHeight+j;
+			size_t index = i * imgHeight + j;
 			const double* colour = pixelData->GetTuple4(index);
-			double pixcol = 0.3*colour[0] + 0.6*colour[1] + 0.1*colour[2];
-			double coords[3] = { origin.first+(scalingFactor*j), origin.second+(scalingFactor*i), pixcol };
-			visNodes[index] = (colour[3]>0);
+			double pixcol = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
+			double coords[3] =
+			{ origin.first + (scalingFactor * j), origin.second + (scalingFactor * i),
+			  pixcol };
+			visNodes[index] = (colour[3] > 0);
 
 			MeshLib::CNode* node(new MeshLib::CNode(index));
 			node->SetCoordinates(coords);
 			mesh->nod_vector.push_back(node);
 		}
-	}
 
 	// set mesh elements
-	for (size_t i=0; i<imgWidth-1; i++)
-    {
-		for (size_t j=0; j<imgHeight-1; j++)
+	for (size_t i = 0; i < imgWidth - 1; i++)
+		for (size_t j = 0; j < imgHeight - 1; j++)
 		{
-			int index = i*imgHeight+j;
+			int index = i * imgHeight + j;
 
 			// if node is visible
 			if (visNodes[index])
 			{
-
-				mesh->ele_vector.push_back(createElement(index, index+1, index+imgHeight)); // upper left triangle
-				mesh->ele_vector.push_back(createElement(index+1, index+imgHeight+1, index+imgHeight)); // lower right triangle
+				mesh->ele_vector.push_back(createElement(index, index + 1, index +
+				                                         imgHeight));       // upper left triangle
+				mesh->ele_vector.push_back(createElement(index + 1, index +
+				                                         imgHeight + 1, index +
+				                                         imgHeight));                   // lower right triangle
 			}
 		}
-	}
 	mesh->ConstructGrid();
 	return mesh;
 }
@@ -80,7 +83,8 @@ MeshLib::CElem* VtkMeshConverter::createElement(size_t node1, size_t node2, size
 
 MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
 {
-	if (!grid) return NULL;
+	if (!grid)
+		return NULL;
 
 	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 
@@ -89,7 +93,7 @@ MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid*
 
 	// set mesh nodes
 	double* coords = NULL;
-	for (size_t i=0; i<nNodes; i++)
+	for (size_t i = 0; i < nNodes; i++)
 	{
 		coords = grid->GetPoints()->GetPoint(i);
 		MeshLib::CNode* node(new MeshLib::CNode(i, coords[0], coords[1], coords[2]));
@@ -99,7 +103,7 @@ MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid*
 	// set mesh elements
 	vtkCell* cell(NULL);
 	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
-	for (size_t i=0; i<nElems; i++)
+	for (size_t i = 0; i < nElems; i++)
 	{
 		MeshLib::CElem* elem(new MeshLib::CElem());
 
@@ -108,22 +112,30 @@ MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid*
 
 		switch (cell_type)
 		{
-			case VTK_TRIANGLE:		elem_type=MshElemType::TRIANGLE;	break;
-			case VTK_QUAD:			elem_type=MshElemType::QUAD;		break;
-			case VTK_TETRA:			elem_type=MshElemType::TETRAHEDRON;	break;
-			case VTK_HEXAHEDRON:	elem_type=MshElemType::HEXAHEDRON;	break;
-			case VTK_WEDGE:			elem_type=MshElemType::PRISM;		break;
+		case VTK_TRIANGLE:      elem_type = MshElemType::TRIANGLE;
+			break;
+		case VTK_QUAD:          elem_type = MshElemType::QUAD;
+			break;
+		case VTK_TETRA:         elem_type = MshElemType::TETRAHEDRON;
+			break;
+		case VTK_HEXAHEDRON:    elem_type = MshElemType::HEXAHEDRON;
+			break;
+		case VTK_WEDGE:         elem_type = MshElemType::PRISM;
+			break;
 		}
 
 		if (elem_type != MshElemType::INVALID)
 		{
 			//elem->SetElementType(elem_type);
 			elem->setElementProperties(elem_type);
-			if (scalars) elem->SetPatchIndex(static_cast<int>(scalars->GetComponent(i,0))); // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
+			if (scalars)
+				elem->SetPatchIndex(static_cast<int>(scalars->GetComponent(i,0)));  // HACK the name of the correct scalar array of the vtk file should probably be passed as an argument?!
 		}
 		else
 		{
-			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..." << std::endl;
+			std::cout <<
+			"Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..."
+			          << std::endl;
 			return NULL;
 		}
 
@@ -132,10 +144,8 @@ MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid*
 		elem->SetNodesNumber(nElemNodes);
 		elem->nodes_index.resize(nElemNodes);
 
-		for (size_t j=0; j<nElemNodes; j++)
-		{
+		for (size_t j = 0; j < nElemNodes; j++)
 			elem->SetNodeIndex(j, cell->GetPointId(j));
-		}
 
 		mesh->ele_vector.push_back(elem);
 	}

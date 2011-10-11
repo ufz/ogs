@@ -4,13 +4,12 @@
  *
  */
 
-
 #ifndef VTKPOLYLINESSOURCE_H
 #define VTKPOLYLINESSOURCE_H
 
 // ** INCLUDES **
-#include <vtkPolyDataAlgorithm.h>
 #include "VtkAlgorithmProperties.h"
+#include <vtkPolyDataAlgorithm.h>
 
 #include "GEOObjects.h"
 
@@ -20,7 +19,6 @@
  */
 class VtkPolylinesSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
-
 public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkPolylinesSource* New();
@@ -28,7 +26,7 @@ public:
 	vtkTypeRevisionMacro(VtkPolylinesSource,vtkPolyDataAlgorithm);
 
 	/// Sets the polyline vector.
-	void setPolylines(const std::vector<GEOLIB::Polyline*> *polylines) { _polylines = polylines; };
+	void setPolylines(const std::vector<GEOLIB::Polyline*>* polylines) { _polylines = polylines; }
 
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -40,15 +38,18 @@ protected:
 	~VtkPolylinesSource();
 
 	/// Computes the polygonal data object.
-	int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);
+	int RequestData(vtkInformation* request,
+	                vtkInformationVector** inputVector,
+	                vtkInformationVector* outputVector);
 
-	int RequestInformation(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);
+	int RequestInformation(vtkInformation* request,
+	                       vtkInformationVector** inputVector,
+	                       vtkInformationVector* outputVector);
 
 	/// The polylines to visualize.
-	const std::vector<GEOLIB::Polyline*> *_polylines;
+	const std::vector<GEOLIB::Polyline*>* _polylines;
 
 private:
-
 };
 
 #endif // VTKPOLYLINESSOURCE_H

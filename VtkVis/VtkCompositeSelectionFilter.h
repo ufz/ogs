@@ -13,11 +13,12 @@ class VtkCompositeSelectionFilter : public VtkCompositeFilter
 {
 public:
 	VtkCompositeSelectionFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeSelectionFilter() {};
+	virtual ~VtkCompositeSelectionFilter() {}
 
 	virtual void init();
 
-	void setSelectionArray(std::vector<double> selection) { _selection = selection; init(); };
+	void setSelectionArray(std::vector<double> selection) { _selection = selection;
+		                                                init(); }
 
 	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
@@ -26,7 +27,6 @@ private:
 	VtkColorLookupTable* GetLookupTable();
 
 	std::vector<double> _selection;
-	
 };
 
 #endif // VTKCOMPOSITESELECTIONFILTER_H

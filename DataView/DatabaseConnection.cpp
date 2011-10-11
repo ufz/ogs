@@ -4,22 +4,22 @@
  */
 
 #include "DatabaseConnection.h"
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QSqlQueryModel>
-#include <QVariant>
-#include <QSettings>
 #include "DateTools.h"
 #include "OGSError.h"
 #include "QueryResultsDialog.h"
 #include "StringTools.h"
+#include <QSettings>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QVariant>
 
-#include <iostream>
 #include <fstream>
-
+#include <iostream>
 
 /// The OGS5-Connection to a database
-DatabaseConnection::DatabaseConnection(GEOLIB::GEOObjects* geoObjects, QObject* parent) : QObject(parent), _geoObjects(geoObjects)
+DatabaseConnection::DatabaseConnection(GEOLIB::GEOObjects* geoObjects,
+                                       QObject* parent) : QObject(parent), _geoObjects(geoObjects)
 {
 }
 
@@ -43,7 +43,8 @@ int DatabaseConnection::dbConnect()
 	QString pass     = settings.value("DBPass",     "").toString();
 
 	//default connection
-	if (protocol.isEmpty() || hostname.isEmpty() || dbname.isEmpty() || user.isEmpty() || pass.isEmpty())
+	if (protocol.isEmpty() || hostname.isEmpty() || dbname.isEmpty() || user.isEmpty() ||
+	    pass.isEmpty())
 	{
 		protocol = "QOCI";
 		hostname = "cora1-vip.leipzig.ufz.de";
@@ -64,7 +65,11 @@ int DatabaseConnection::dbConnect()
  * \param pass The password for the specified user name
  * \return 1 if the connection has been established, 0 (and an error message) otherwise.
  */
-int DatabaseConnection::dbConnect(QString protocol, QString hostname, QString dbname, QString user, QString pass)
+int DatabaseConnection::dbConnect(QString protocol,
+                                  QString hostname,
+                                  QString dbname,
+                                  QString user,
+                                  QString pass)
 {
 	QSqlDatabase::removeDatabase(_db.connectionName());
 
@@ -86,7 +91,11 @@ int DatabaseConnection::dbConnect(QString protocol, QString hostname, QString db
  * \param pass The password for the specified user name
  * \return 1 if the connection has been established, 0 (and an error message) otherwise.
  */
-int DatabaseConnection::setConnection(QString protocol, QString hostname, QString dbname, QString user, QString pass)
+int DatabaseConnection::setConnection(QString protocol,
+                                      QString hostname,
+                                      QString dbname,
+                                      QString user,
+                                      QString pass)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 
@@ -109,8 +118,10 @@ int DatabaseConnection::test(bool showBox)
 {
 	if (_db.open())
 	{
-		if (showBox) OGSError::box("Database connection established.");
-		else std::cout << "Database connection established...\n";
+		if (showBox)
+			OGSError::box("Database connection established.");
+		else
+			std::cout << "Database connection established...\n";
 		_db.close();
 		return 1;
 	}
@@ -122,7 +133,6 @@ int DatabaseConnection::test(bool showBox)
 		return 0;
 	}
 }
-
 
 /// Outputting an error related to the database connection
 void DatabaseConnection::databaseError()
@@ -140,8 +150,9 @@ void DatabaseConnection::getListSelection()
 {
 	if (_db.open())
 	{
-		QSqlQueryModel *qModel = new QSqlQueryModel();
-		qModel->setQuery("select l.listid, c.catname, l.listname from lists l, categories c where c.catid=l.catid order by c.catname");
+		QSqlQueryModel* qModel = new QSqlQueryModel();
+		qModel->setQuery(
+		        "select l.listid, c.catname, l.listname from lists l, categories c where c.catid=l.catid order by c.catname");
 
 		QueryResultsDialog* dbView = new QueryResultsDialog();
 		connect(dbView, SIGNAL(listSelected(int)), this, SLOT(loadStationList(int)));
@@ -150,7 +161,6 @@ void DatabaseConnection::getListSelection()
 		dbView->exec();
 
 		_db.close();
-
 	}
 	else
 		databaseError();
@@ -169,7 +179,6 @@ bool DatabaseConnection::isConnected()
  */
 int DatabaseConnection::loadStationList(const int &listID)
 {
-
 	return loadStationList(listID, GEOLIB::getRandomColor());
 }
 
@@ -185,35 +194,61 @@ int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const c
 	{
 		QSqlQuery query, stnQuery;
 		QString stationName;
-		std::vector<GEOLIB::Point*> *stations = new std::vector<GEOLIB::Point*>;
+		std::vector<GEOLIB::Point*>* stations = new std::vector<GEOLIB::Point*>;
 
-		query.exec("select stationtype from geosysstationtypes where listid=" + QString::number(listID));
+		query.exec(
+		        "select stationtype from geosysstationtypes where listid=" +
+		        QString::number(listID));
 
 		if (query.next())
 		{
-			GEOLIB::Station::StationType type = static_cast<GEOLIB::Station::StationType>(query.value(0).toInt());
+			GEOLIB::Station::StationType type =
+			        static_cast<GEOLIB::Station::StationType>(query.value(0).toInt());
 			if (type == GEOLIB::Station::BOREHOLE)
-				query.exec("select c.catname, l.listname from lists l, categories c, boreholes b where c.catid=l.catid and l.listid=b.listid and l.listid=" + QString::number(listID));
+				query.exec(
+				        "select c.catname, l.listname from lists l, categories c, boreholes b where c.catid=l.catid and l.listid=b.listid and l.listid="
+				        + QString::number(listID));
 			else
-				query.exec("select c.catname, l.listname from lists l, categories c where c.catid=l.catid and l.listid=" + QString::number(listID));
+				query.exec(
+				        "select c.catname, l.listname from lists l, categories c where c.catid=l.catid and l.listid="
+				        + QString::number(listID));
 
 			if (query.next())
 			{
-				QString listName = (query.value(0)).toString() + " (" + (query.value(1)).toString() + ")";
+				QString listName = (query.value(0)).toString() + " (" +
+				                   (query.value(1)).toString() + ")";
 
 				if (type == GEOLIB::Station::BOREHOLE)
-					stnQuery.exec("select s.stationid, s.name, s.x, s.y, s.z, b.bdepth, to_char(b.bdate, 'YYYY-MM-DD') from stations s, boreholes b where s.listid=b.listid and s.stationid=b.stationid and s.listid=" + QString::number(listID) + " order by stationid");
+					stnQuery.exec(
+					        "select s.stationid, s.name, s.x, s.y, s.z, b.bdepth, to_char(b.bdate, 'YYYY-MM-DD') from stations s, boreholes b where s.listid=b.listid and s.stationid=b.stationid and s.listid="
+					        + QString::number(listID) + " order by stationid");
 				else
-					stnQuery.exec("select stationid, name, x, y, z from stations where listid=" + QString::number(listID) + " order by stationid");
+					stnQuery.exec(
+					        "select stationid, name, x, y, z from stations where listid="
+					        + QString::number(listID) + " order by stationid");
 
 				while (stnQuery.next())
 				{
 					stationName = stnQuery.value(1).toString();
-					if (stationName.isEmpty()) stationName = "Station" + stnQuery.value(0).toString();
+					if (stationName.isEmpty())
+						stationName = "Station" +
+						              stnQuery.value(0).toString();
 
 					GEOLIB::Station* newStation;
-					if (type == GEOLIB::Station::BOREHOLE) newStation = GEOLIB::StationBorehole::createStation(stationName.toStdString(), stnQuery.value(2).toDouble(), stnQuery.value(3).toDouble(), stnQuery.value(4).toDouble(), stnQuery.value(5).toDouble(), stnQuery.value(6).toString().toStdString());
-					else newStation = GEOLIB::Station::createStation(stationName.toStdString(), stnQuery.value(2).toDouble(), stnQuery.value(3).toDouble(), stnQuery.value(4).toDouble());
+					if (type == GEOLIB::Station::BOREHOLE)
+						newStation = GEOLIB::StationBorehole::createStation(
+						        stationName.toStdString(),
+						        stnQuery.value(2).toDouble(),
+						        stnQuery.value(3).toDouble(),
+						        stnQuery.value(4).toDouble(),
+						        stnQuery.value(5).toDouble(),
+						        stnQuery.value(6).toString().toStdString());
+					else
+						newStation = GEOLIB::Station::createStation(
+						        stationName.toStdString(),
+						        stnQuery.value(2).toDouble(),
+						        stnQuery.value(3).toDouble(),
+						        stnQuery.value(4).toDouble());
 					newStation->setColor(color);
 					stations->push_back(newStation);
 				}
@@ -223,7 +258,8 @@ int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const c
 					addStratigraphy(listID, stations);
 
 				std::string temp_name (listName.toStdString());
-				if (!stations->empty()) _geoObjects->addStationVec(stations, temp_name , color);
+				if (!stations->empty())
+					_geoObjects->addStationVec(stations, temp_name, color);
 
 				_db.close();
 				//emit listLoaded(listName);
@@ -233,7 +269,9 @@ int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const c
 		}
 		else
 		{
-			std::cout << "DatabaseConnection::loadList() - No database entry found for the selected key." << std::endl;
+			std::cout <<
+			"DatabaseConnection::loadList() - No database entry found for the selected key."
+			          << std::endl;
 			_db.close();
 		}
 	}
@@ -249,30 +287,40 @@ int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const c
  * \param stations List of station objects for which stratigraphy data will be provided
  * \return 1 if there were no errors, 0 and an error message otherwise.
  */
-int DatabaseConnection::addStratigraphy(int listID, std::vector<GEOLIB::Point*> *stations)
+int DatabaseConnection::addStratigraphy(int listID, std::vector<GEOLIB::Point*>* stations)
 {
 	if (_db.open())
 	{
 		QSqlQuery strat;
 
 		size_t size = stations->size();
-		for (size_t i=0; i<size; i++)
+		for (size_t i = 0; i < size; i++)
 		{
 			int count = 1;
-			GEOLIB::StationBorehole* newStation = static_cast<GEOLIB::StationBorehole*>((*stations)[i]);
-			strat.exec("select s.layerid, s.thickness, s.strat from stations t, stratigraphies s where s.listid=" + QString::number(listID) + " and s.listid=t.listid and s.stationid=t.stationid and t.name='" + QString::fromStdString(static_cast<GEOLIB::Station*>((*stations)[i])->getName()) + "' order by layerid");
+			GEOLIB::StationBorehole* newStation =
+			        static_cast<GEOLIB::StationBorehole*>((*stations)[i]);
+			strat.exec(
+			        "select s.layerid, s.thickness, s.strat from stations t, stratigraphies s where s.listid="
+			        + QString::number(
+			                listID) +
+			        " and s.listid=t.listid and s.stationid=t.stationid and t.name='" +
+			        QString::fromStdString(static_cast<GEOLIB::Station*>((*stations)[i])
+			                               ->
+			                               getName()) + "' order by layerid");
 
 			while (strat.next())
 			{
-				if (count==strat.value(0))
-				{
-					newStation->addSoilLayer (strat.value(1).toDouble(), (strat.value(2).toString()).toStdString());
+				if (count == strat.value(0))
+					newStation->addSoilLayer (strat.value(1).toDouble(),
+					                          (strat.value(
+					                                   2).toString()).
+					                          toStdString());
 					//newStation->type = Station::BOREHOLE;
-				}
 				else
-				{
-					std::cout << "DatabaseConnection::addStratigraphy - Station " << static_cast<GEOLIB::Station*>((*stations)[i])->getName() << ": Stratigraphy incomplete...\n";
-				}
+					std::cout <<
+					"DatabaseConnection::addStratigraphy - Station " <<
+					static_cast<GEOLIB::Station*>((*stations)[i])->getName() <<
+					": Stratigraphy incomplete...\n";
 				count++;
 			}
 			(*stations)[i] = newStation;
@@ -299,8 +347,11 @@ int DatabaseConnection::getListID(const QString &list, const double &x, const do
 	if (_db.open())
 	{
 		QSqlQuery query;
-		query.exec("select l.listid from lists l, categories c, stations s where l.catid = c.catid and l.listid = s.listid and s.x="
-			       + QString::number(x,'f') + " and s.y=" + QString::number(y,'f') + " and c.catname='" + list.left(list.indexOf(" (")) + "'");
+		query.exec(
+		        "select l.listid from lists l, categories c, stations s where l.catid = c.catid and l.listid = s.listid and s.x="
+		        + QString::number(x,'f') + " and s.y=" + QString::number(y,
+		                                                                 'f') +
+		        " and c.catname='" + list.left(list.indexOf(" (")) + "'");
 
 		if (query.next())
 			return query.value(0).toInt();
@@ -323,7 +374,10 @@ int DatabaseConnection::getStationID(const int &listID, const double &x, const d
 	if (_db.open())
 	{
 		QSqlQuery query;
-		query.exec("select stationid from stations where listid=" + QString::number(listID) + " and x=" + QString::number(x,'f') + " and y=" + QString::number(y,'f'));
+		query.exec("select stationid from stations where listid=" + QString::number(
+		                   listID) + " and x=" + QString::number(x,
+		                                                         'f') + " and y=" +
+		           QString::number(y,'f'));
 
 		QString oldq = query.lastQuery();
 		if (query.next())
@@ -349,14 +403,14 @@ int DatabaseConnection::getListProperties(const int &listID, std::vector<QString
 	if (_db.open())
 	{
 		QSqlQuery query;
-		query.exec("select column_name,data_type from all_tab_cols where table_name =\'STATIONS\'");
+		query.exec(
+		        "select column_name,data_type from all_tab_cols where table_name =\'STATIONS\'");
 		while (query.next())
-		{
-			if ((query.value(0).toString()).compare("LISTID") != 0 && (query.value(0).toString()).compare("STATIONID") != 0 && (query.value(1).toString()).compare("VARCHAR2") != 0)
-			{
+			if ((query.value(0).toString()).compare("LISTID") != 0 &&
+			    (query.value(0).toString()).compare("STATIONID") != 0 &&
+			    (query.value(1).toString()).compare("VARCHAR2") != 0)
 				propNames.push_back(query.value(0).toString());
-			}
-		}
+
 		return 1;
 	}
 	return 0;
@@ -370,14 +424,19 @@ int DatabaseConnection::getListProperties(const int &listID, std::vector<QString
  * \param endDate The value of the last date for that station found in the database
  * \return 1 if there were no errors, 0 and an error message otherwise.
  */
-int DatabaseConnection::getDateBounds(const int &listID, const int &stationID, QString &startDate, QString &endDate)
+int DatabaseConnection::getDateBounds(const int &listID,
+                                      const int &stationID,
+                                      QString &startDate,
+                                      QString &endDate)
 {
 	startDate = "";
 	endDate = "";
 	if (_db.open())
 	{
 		QSqlQuery query;
-		query.exec("select to_char(min(mdate), 'DD.MM.YYYY'), to_char(max(mdate), 'DD.MM.YYYY') from mvalues where listid=" + QString::number(listID) + " and stationID=" + QString::number(stationID));
+		query.exec(
+		        "select to_char(min(mdate), 'DD.MM.YYYY'), to_char(max(mdate), 'DD.MM.YYYY') from mvalues where listid="
+		        + QString::number(listID) + " and stationID=" + QString::number(stationID));
 		if (query.next())
 		{
 			startDate = query.value(0).toString();
@@ -397,12 +456,18 @@ int DatabaseConnection::getDateBounds(const int &listID, const int &stationID, Q
  * \param max The largest value of that property found in the database
  * \return 1 if there were no errors, 0 and an error message otherwise.
  */
-int DatabaseConnection::getPropertyBounds(const int &listID, const QString &prop, double &min, double &max)
+int DatabaseConnection::getPropertyBounds(const int &listID,
+                                          const QString &prop,
+                                          double &min,
+                                          double &max)
 {
 	if (_db.open())
 	{
 		QSqlQuery query;
-		query.exec("select min(" + prop + "),  max(" + prop + ") from stations where listid=" + QString::number(listID));
+		query.exec(
+		        "select min(" + prop + "),  max(" + prop +
+		        ") from stations where listid=" +
+		        QString::number(listID));
 		if (query.next())
 		{
 			min = query.value(0).toDouble();
@@ -423,24 +488,30 @@ int DatabaseConnection::getPropertyBounds(const int &listID, const QString &prop
  * \param values The data
  * \return 1 if there were no errors, 0 and an error message otherwise.
  */
-int DatabaseConnection::loadValues(const int &listID, const int &stationID, const QDateTime &startDate, const QDateTime &endDate, std::vector< std::pair<QDateTime, float> > &values)
+int DatabaseConnection::loadValues(const int &listID,
+                                   const int &stationID,
+                                   const QDateTime &startDate,
+                                   const QDateTime &endDate,
+                                   std::vector< std::pair<QDateTime, float> > &values)
 {
-	if (startDate<endDate && _db.open())
+	if (startDate < endDate && _db.open())
 	{
 		QSqlQuery query;
 
-		query.prepare("select to_char(mdate,'YYYY-MM-DD'),mvalue from mvalues where listid=:listID and stationid=:stationID "
-					  "and mdate>=to_date(:startDate,'DD.MM.YYYY') and mdate<=to_date(:endDate,'DD.MM.YYYY') order by mdate");
-		query.bindValue(":listID",		listID);
-		query.bindValue(":stationID",	stationID);
-		query.bindValue(":startDate",	startDate.toString("dd.MM.yyyy"));
-		query.bindValue(":endDate",		endDate.toString("dd.MM.yyyy"));
+		query.prepare(
+		        "select to_char(mdate,'YYYY-MM-DD'),mvalue from mvalues where listid=:listID and stationid=:stationID "
+		        "and mdate>=to_date(:startDate,'DD.MM.YYYY') and mdate<=to_date(:endDate,'DD.MM.YYYY') order by mdate");
+		query.bindValue(":listID",      listID);
+		query.bindValue(":stationID",   stationID);
+		query.bindValue(":startDate",   startDate.toString("dd.MM.yyyy"));
+		query.bindValue(":endDate",     endDate.toString("dd.MM.yyyy"));
 		query.exec();
 
 		while (query.next())
-		{
-			values.push_back( std::pair<QDateTime, float>(query.value(0).toDateTime(), static_cast<float>(query.value(1).toDouble())) );
-		}
+			values.push_back( std::pair<QDateTime, float>(query.value(0).toDateTime(),
+			                                              static_cast<float>(query.
+			                                                                 value(1).
+			                                                                 toDouble())) );
 
 		_db.close();
 		return 1;
@@ -450,21 +521,13 @@ int DatabaseConnection::loadValues(const int &listID, const int &stationID, cons
 	return 0;
 }
 
-
-
-
-
-
-
-
 /*********************************************
- * Inserting data into the database.         *
- * Be very careful what you do with any of   *
- * functions below.					         *
- * You might corrupt the database otherwise. *
- * --KR                                      *
- *********************************************/
-
+* Inserting data into the database.         *
+* Be very careful what you do with any of   *
+* functions below.					         *
+* You might corrupt the database otherwise. *
+* --KR                                      *
+*********************************************/
 
 /**
  * Inserts a new station list into the database
@@ -473,18 +536,22 @@ int DatabaseConnection::loadValues(const int &listID, const int &stationID, cons
  * \param catName	the category of stations (i.e. boreholes)
  * \param type		the OGS5 Stationtype
  */
-int DatabaseConnection::addListToDB(std::string path, std::string listName, std::string catName, GEOLIB::Station::StationType type)
+int DatabaseConnection::addListToDB(std::string path,
+                                    std::string listName,
+                                    std::string catName,
+                                    GEOLIB::Station::StationType type)
 {
 	if (_db.open())
 	{
 		int listID, catID(0);
-		bool status=true, commit=true;
+		bool status = true, commit = true;
 
 		std::ifstream in( path.c_str() );
 
 		if (!in.is_open())
 		{
-			std::cout << "DatabaseConnection::addListToDB() - Could not open file..." << std::endl;
+			std::cout <<
+			"DatabaseConnection::addListToDB() - Could not open file..." << std::endl;
 			return 0;
 		}
 
@@ -493,8 +560,8 @@ int DatabaseConnection::addListToDB(std::string path, std::string listName, std:
 		 */
 		std::string line;
 		getline(in, line);
-		if ((line.substr(0,1)).compare("!")==0)
-			line.substr( 1, line.length()-1 );
+		if ((line.substr(0,1)).compare("!") == 0)
+			line.substr( 1, line.length() - 1 );
 
 		QSqlQuery query;
 		query.exec("select max(listid) from lists");
@@ -502,7 +569,9 @@ int DatabaseConnection::addListToDB(std::string path, std::string listName, std:
 		{
 			listID = query.value(0).toInt() + 1;
 
-			query.exec("select catid from categories where catname='" + QString::fromStdString(catName) + "'");
+			query.exec(
+			        "select catid from categories where catname='" +
+			        QString::fromStdString(catName) + "'");
 
 			if (query.next())
 				catID = query.value(0).toInt();
@@ -511,32 +580,45 @@ int DatabaseConnection::addListToDB(std::string path, std::string listName, std:
 				query.exec("select max(catid) from categories");
 				if (query.next())
 					catID = query.value(0).toInt() + 1;
-				query.prepare("insert into categories values (" + QString::number(catID) + ", '" + QString::fromStdString(catName) +"')");
+				query.prepare("insert into categories values (" +
+				              QString::number(
+				                      catID) + ", '" + QString::fromStdString(
+				                      catName) + "')");
 				commitTransaction(query);
 			}
 
 			_db.transaction();
-			query.exec("insert into lists values(" + QString::number(listID) + ", '" + QString::fromStdString(listName) + "', " + QString::number(catID) + ", 0)");
-			if (type == GEOLIB::Station::BOREHOLE) query.exec("insert into geosysstationtypes values (" + QString::number(listID) + ", 2)");
+			query.exec("insert into lists values(" + QString::number(
+			                   listID) + ", '" + QString::fromStdString(
+			                   listName) + "', " +
+			           QString::number(catID) + ", 0)");
+			if (type == GEOLIB::Station::BOREHOLE)
+				query.exec(
+				        "insert into geosysstationtypes values (" + QString::number(
+				                listID) + ", 2)");
 
-			int stationID=1;
+			int stationID = 1;
 
 			/* read all stations */
 			while ( getline(in, line) )
 			{
-				if (type == GEOLIB::Station::BOREHOLE) status = addBoreholeToDB(listID, stationID, line);
-				else status = addStationToDB(listID, stationID, line);
+				if (type == GEOLIB::Station::BOREHOLE)
+					status = addBoreholeToDB(listID, stationID, line);
+				else
+					status = addStationToDB(listID, stationID, line);
 
 				if (!status)
 				{
 					databaseError();
-					commit=false;
+					commit = false;
 				}
 				stationID++;
 			}
 
-			if (commit) _db.commit();
-			else _db.rollback();
+			if (commit)
+				_db.commit();
+			else
+				_db.rollback();
 
 			_db.close();
 			in.close();
@@ -588,7 +670,8 @@ bool DatabaseConnection::addBoreholeToDB(int listID, int stationID, std::string 
 
 	if (addStationToDB(listID, stationID, line))
 	{
-		query.prepare("insert into boreholes values (:listid, :stationid, :bdepth, to_date(:bdate, 'DD.MM.YYYY'))");
+		query.prepare(
+		        "insert into boreholes values (:listid, :stationid, :bdepth, to_date(:bdate, 'DD.MM.YYYY'))");
 		query.bindValue(":listid", listID);
 		query.bindValue(":stationid", stationID);
 		query.bindValue(":bdepth", station->getDepth());
@@ -617,7 +700,8 @@ int DatabaseConnection::addStratigraphyToDB(std::string path, int listID)
 
 		if (!in.is_open())
 		{
-			std::cout << "DatabaseConnection::addListToDB() - Could not open file..." << std::endl;
+			std::cout <<
+			"DatabaseConnection::addListToDB() - Could not open file..." << std::endl;
 			return 0;
 		}
 
@@ -626,7 +710,6 @@ int DatabaseConnection::addStratigraphyToDB(std::string path, int listID)
 		{
 			if (query.value(0).toInt() == 1)
 			{
-
 				_db.transaction();
 
 				/* read all stations */
@@ -636,24 +719,37 @@ int DatabaseConnection::addStratigraphyToDB(std::string path, int listID)
 
 					stationName = fields.front();
 					fields.pop_front();
-					query.exec("select stationid from stations where listid=" + QString::number(listID) + " and name='" + QString::fromStdString(stationName) + "'" );
+					query.exec(
+					        "select stationid from stations where listid=" +
+					        QString::number(
+					                listID) + " and name='" +
+					        QString::fromStdString(
+					                stationName) + "'" );
 
 					if (query.next() && fields.size() >= 3)
 					{
 						stationID = query.value(0).toInt();
 
-						query.prepare("insert into stratigraphies values (:listid, :stationid, :layerid, :thickness, :strat, :petro)");
+						query.prepare(
+						        "insert into stratigraphies values (:listid, :stationid, :layerid, :thickness, :strat, :petro)");
 						query.bindValue(":listid", listID);
 						query.bindValue(":stationid", stationID);
-						query.bindValue(":layerid", atoi(fields.front().c_str()));
+						query.bindValue(":layerid",
+						                atoi(fields.front().c_str()));
 						fields.pop_front();
-						query.bindValue(":thickness", strtod(replaceString(",", ".", fields.front()).c_str(),0));
+						query.bindValue(":thickness",
+						                strtod(replaceString(",", ".",
+						                                     fields.front())
+						                       .c_str(),0));
 						fields.pop_front();
-						query.bindValue(":strat", QString::fromStdString(fields.front()));
+						query.bindValue(":strat",
+						                QString::fromStdString(fields.front()));
 						fields.pop_front();
 
 						if (!fields.empty())
-							query.bindValue(":petro", QString::fromStdString(fields.front()));
+							query.bindValue(":petro",
+							                QString::fromStdString(
+							                        fields.front()));
 						else
 							query.bindValue(":petro", "");
 
@@ -696,16 +792,18 @@ int DatabaseConnection::addMeasuredValuesToDB(std::string path, int listID, int 
 
 		if (!in.is_open())
 		{
-			std::cout << "DatabaseConnection::addMeasuredValuesToDB() - Could not open file..." << std::endl;
+			std::cout <<
+			"DatabaseConnection::addMeasuredValuesToDB() - Could not open file..." <<
+			std::endl;
 			return 0;
 		}
 
-		query.exec("select count(*) from stations where listid=" + QString::number(listID) + " and stationid=" + QString::number(stationID));
+		query.exec("select count(*) from stations where listid=" + QString::number(
+		                   listID) + " and stationid=" + QString::number(stationID));
 		if (query.next())
 		{
 			if (query.value(0).toInt() == 1)
 			{
-
 				_db.transaction();
 
 				while ( getline(in, line) )
@@ -714,12 +812,17 @@ int DatabaseConnection::addMeasuredValuesToDB(std::string path, int listID, int 
 
 					QString a = query.lastQuery();
 
-					query.prepare("insert into mvalues values (:listid, :stationid, to_date(:mdatetime,'DD.MM.YYYY'), :mvalue)");
+					query.prepare(
+					        "insert into mvalues values (:listid, :stationid, to_date(:mdatetime,'DD.MM.YYYY'), :mvalue)");
 					query.bindValue(":listid", listID);
 					query.bindValue(":stationid", stationID);
-					query.bindValue(":mdatetime", QString::fromStdString(fields.front()));
+					query.bindValue(":mdatetime",
+					                QString::fromStdString(fields.front()));
 					fields.pop_front();
-					query.bindValue(":mvalue", strtod(replaceString(",", ".", fields.front()).c_str(),0));
+					query.bindValue(":mvalue",
+					                strtod(replaceString(",", ".",
+					                                     fields.front()).c_str(),
+					                       0));
 					fields.pop_front();
 					query.exec();
 				}
@@ -740,8 +843,6 @@ int DatabaseConnection::addMeasuredValuesToDB(std::string path, int listID, int 
 
 	return 0;
 }
-
-
 
 /**
  * Executing a query as an encapsulated transaction

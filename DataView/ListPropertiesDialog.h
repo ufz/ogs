@@ -6,12 +6,11 @@
 #ifndef LISTPROPERTIESDIALOG_H
 #define LISTPROPERTIESDIALOG_H
 
-#include <vector>
-#include <QtGui/QMainWindow>
-#include <QDialog>
 #include "GEOModels.h"
 #include "Station.h"
-
+#include <QDialog>
+#include <QtGui/QMainWindow>
+#include <vector>
 
 class QLabel;
 class QLineEdit;
@@ -32,13 +31,16 @@ public:
 	~ListPropertiesDialog();
 
 private:
-	int getPropertyBounds(const std::vector<GEOLIB::Point*> *stations, const std::string &prop, double &minVal, double &maxVal);
+	int getPropertyBounds(const std::vector<GEOLIB::Point*>* stations,
+	                      const std::string &prop,
+	                      double &minVal,
+	                      double &maxVal);
 	void setupDialog();
 
-	QDialogButtonBox* _buttonBox;		/// The buttons used in this dialog.
-	std::vector<QLabel*> _propLabel;	/// The names of the properties.
-	std::vector<QLineEdit*> _minValue;	/// The minimum values of each property.
-	std::vector<QLineEdit*> _maxValue;	/// The maximum values of each property.
+	QDialogButtonBox* _buttonBox;   /// The buttons used in this dialog.
+	std::vector<QLabel*> _propLabel; /// The names of the properties.
+	std::vector<QLineEdit*> _minValue; /// The minimum values of each property.
+	std::vector<QLineEdit*> _maxValue; /// The maximum values of each property.
 
 	std::string _listName;
 	GEOModels* _geoModels;
