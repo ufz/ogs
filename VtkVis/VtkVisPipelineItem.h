@@ -87,14 +87,24 @@ public:
 	/// @brief Writes this algorithm's vtkDataSet (i.e. vtkPolyData or vtkUnstructuredGrid) to a vtk-file.
 	int writeToFile(const std::string &filename) const;
 
-	/// @brief Sets the geometry and data scaling.
+	/** 
+ 	 * @brief Scales the data in visualisation-space.
+     * This function is empty and needs to be implemented by derived classes.
+     */
 	virtual void setScale(double x, double y, double z) const;
 
-	/// @brief Translates the item in vis-space.
+	/** 
+ 	 * @brief Translates the item in visualisation-space.
+     * This function is empty and needs to be implemented by derived classes.
+     */
 	virtual void setTranslation(double x, double y, double z) const;
 
-	// Dummy for implementation in derived classes
+	/** 
+ 	 * Returns the transform filter for the object.
+     * This function is empty and needs to be implemented by derived classes.
+     */
 	virtual vtkTransformFilter* transformFilter() const { return NULL; }
+
 	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;
@@ -106,6 +116,10 @@ protected:
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
 
+	/** 
+	 * Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
+     * This function is empty and needs to be implemented by derived classes.
+	 */
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	void SetScalarVisibility(bool on);

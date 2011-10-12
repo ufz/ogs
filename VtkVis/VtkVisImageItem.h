@@ -20,10 +20,11 @@ class vtkOsgActor;
 class VtkCompositeFilter;
 
 /**
- * \brief An item in the VtkVisPipeline containing a graphic object to be visualized.
+ * \brief An item in the VtkVisPipeline containing an image to be visualized.
  *
- * Any VTK-object (source-items, filter-items, etc.) need to be put into a VtkPipelineItem
- * to be assigned a mapper, an actor and its visualization properties (colour, etc.).
+ * Any vtkImageAlgorithm object is represented by a VtkVisImageItem to be assigned a mapper, 
+ * an actor and its visualization properties.
+ * \sa VtkVisPipelineItem
  */
 class VtkVisImageItem : public VtkVisPipelineItem
 {
@@ -44,6 +45,7 @@ public:
 	void Initialize(vtkRenderer* renderer);
 
 protected:
+	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
