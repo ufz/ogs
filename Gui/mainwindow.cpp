@@ -487,6 +487,7 @@ void MainWindow::save()
 			// it works like this (none of it is particularily fast or optimised or anything):
 			// 1. merge all geometries that are currently loaded, all of these will be integrated into the mesh
 			// 2. if "useStationsAsConstraints"-parameter is true, GMSH-Interface will also integrate all stations that are currently loaded
+			//    if "useSteinerPoints"-parameter is true, additional points will be inserted in large areas without information
 			// 3. after the geo-file is created the merged geometry is deleted again as it is no longer needed
 			GMSHInterface gmsh_io(fileName.toStdString());
 			std::vector<std::string> names;
@@ -494,7 +495,7 @@ void MainWindow::save()
 			std::string merge_name("MergedGeometry");
 			_geoModels->mergeGeometries (names, merge_name);
 			gmsh_io.writeGMSHInputFile(merge_name,
-			                           *(this->_project.getGEOObjects()), true);
+			                           *(this->_project.getGEOObjects()), true, true);
 			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
 			this->_project.getGEOObjects()->removePolylineVec(merge_name);
 			this->_project.getGEOObjects()->removePointVec(merge_name);
@@ -518,8 +519,7 @@ void MainWindow::loadFile(const QString &fileName)
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QFileInfo fi(fileName);
-	std::string
-	        base =
+	std::string base =
 	        fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
 	if (fi.suffix().toLower() == "gli")
 	{
@@ -716,9 +716,9 @@ QMenu* MainWindow::createImportFilesMenu()
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
 	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
+	connect(gocadFiles, SIGNAL(triggered()), this, SLOT(importGoCad()));
 	QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
 	connect(netcdfFiles, SIGNAL(triggered()), this, SLOT(importNetcdf()));
-	connect(gocadFiles, SIGNAL(triggered()), this, SLOT(importGoCad()));
 	QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
 	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(importPetrel()));
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
