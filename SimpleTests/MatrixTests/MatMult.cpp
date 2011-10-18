@@ -53,15 +53,10 @@ int main(int argc, char *argv[])
 		std::cout << "Parameters read: n=" << n << ", nnz=" << nnz << std::endl;
 	}
 
-/*
-	// test: fill all nnz entries with 1
-	for (unsigned k(0); k<nnz; k++) A[k] = 2.0;
-*/
-
-	MathLib::CRSMatrix<double> mat (n, iA, jA, A);
-	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
-//	CRSMatrixOpenMP<double> mat (n, iA, jA, A, n_threads);
+//	MathLib::CRSMatrix<double> mat (n, iA, jA, A);
+	MathLib::CRSMatrixOpenMP<double> mat (n, iA, jA, A, n_threads);
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
+	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -77,26 +72,14 @@ int main(int argc, char *argv[])
 	run_timer.start();
 	cpu_timer.start();
 	for (size_t k(0); k<n_mults; k++) {
-//		std::cout << "mult " << k << " ... " << std::flush;
 		mat.amux (1.0, x, y);
-//		std::cout << "ok" << std::endl;
 	}
 	cpu_timer.stop();
 	run_timer.stop();
 
-/*
-	// test result of matrix vector mult
-	std::cout << "simple test of matrix vector mult ... " << std::flush;
-	for (unsigned k(0); k<n; k++) {
-		if (std::fabs(y[k] - 2*(iA[k+1]-iA[k])) > std::numeric_limits<double>::min()) {
-			std::cout << "value y[" << k << "] = " << y[k] << " not equal to number of entries in row " << k << ", that is " << iA[k+1]-iA[k] << std::endl;
-		}
-	}
-*/
-
 	if (verbose) {
-		std::cout << "done ["
-<< cpu_timer.elapsed() << " sec cpu time], [" << run_timer.elapsed() << " sec run time]" << std::endl;
+		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], ["
+				<< run_timer.elapsed() << " sec run time]" << std::endl;
 	} else {
 		if (argc == 5) {
 			std::ofstream result_os (argv[4], std::ios::app);
