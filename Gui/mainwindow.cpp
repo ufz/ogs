@@ -93,6 +93,10 @@
 #include "VtkTrackedCamera.h"
 #endif // OGS_USE_VRPN
 
+
+// test only
+#include "rf_mmp_new.h"
+
 /// FEM. 11.03.2010. WW
 #include "problem.h"
 Problem* aproblem = NULL;
@@ -341,6 +345,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	//	std::cout << "size of CBoundaryCondition: " << sizeof (CBoundaryCondition) << std::endl;
 
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
+		std::cout << "size of CMediumProperties: " << sizeof(CMediumProperties) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 }
