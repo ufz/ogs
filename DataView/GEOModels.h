@@ -72,6 +72,8 @@ public slots:
 	                              const std::string &name);
 	virtual bool removeSurfaceVec(const std::string &name);
 
+	void addNameForElement(const std::string &geometry_name, const std::string &object_type, size_t id, std::string new_name);
+
 	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
 	void connectPolylineSegments(const std::string &geoName,
 	                             std::vector<size_t> indexlist,

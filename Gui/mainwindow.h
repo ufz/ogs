@@ -79,6 +79,8 @@ protected slots:
 	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
+	/// Allows setting the name for a geometric object
+	void showGeoNameDialog(const std::string &geometry_name, const std::string &object_type, size_t id);
 	/// Calls the diagram prefs dialog from the Tools menu.
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).

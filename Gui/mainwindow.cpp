@@ -21,6 +21,7 @@
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MshQualitySelectionDialog.h"
+#include "SetNameDialog.h"
 #include "VisPrefsDialog.h"
 #include "VtkAddFilterDialog.h"
 
@@ -147,6 +148,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
 	connect(geoTabWidget->treeView, SIGNAL(requestLineEditDialog(const std::string &)),
 	        this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
+	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const std::string&, size_t)),
+			this, SLOT(showGeoNameDialog(const std::string&, const std::string&, size_t)));
 	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
 	        this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -1157,6 +1160,19 @@ void MainWindow::showDiagramPrefsDialog()
 		prefs->setAttribute(Qt::WA_DeleteOnClose);
 		prefs->show();
 	}
+}
+
+void MainWindow::showGeoNameDialog(const std::string &geometry_name, const std::string &object_type, size_t id)
+{
+	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, GEOLIB::convertGeoType(object_type), id);
+	SetNameDialog dlg(geometry_name, object_type, id, old_name);
+	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const std::string&, size_t, std::string)), 
+		this->_geoModels, SLOT(addNameForElement(const std::string&, const std::string&, size_t, std::string)));
+	dlg.exec();
+
+	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, 
+		GEOLIB::convertGeoType(object_type), id, 
+		this->_geoModels->getElementNameByID(geometry_name, GEOLIB::convertGeoType(object_type), id));
 }
 
 void MainWindow::showLineEditDialog(const std::string &geoName)

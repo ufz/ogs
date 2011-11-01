@@ -43,6 +43,8 @@ private slots:
 	void addFEMConditions();
 	/// Calls a LineEditDialog.
 	void connectPolylines();
+	/// Calls a SetNameDialog.
+	void setNameForElement();
 	/// Saves a geometry in a file.
 	void writeToFile() const;
 	/// Removes a whole geometry or parts of it.
@@ -55,6 +57,7 @@ signals:
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
 	void requestLineEditDialog(const std::string&);
+	void requestNameChangeDialog(const std::string&, const std::string&, size_t);
 };
 
 #endif //GEOTREEVIEW_H

@@ -25,6 +25,7 @@ set( SOURCES
 	MshTabWidget.cpp
 	OGSRaster.cpp
 	QueryResultsDialog.cpp
+	SetNameDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
 	StationTreeView.cpp	
@@ -53,6 +54,7 @@ set( MOC_HEADERS
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
 	QueryResultsDialog.h
+	SetNameDialog.h
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h

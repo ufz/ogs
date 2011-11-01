@@ -63,10 +63,32 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 	GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
 	QMenu menu;
 
-	if (item->childCount() > 0)
+	// The current index is a list of points/polylines/surfaces
+	if (list != NULL)
 	{
+		QAction* connectPlyAction(NULL);
+		if (list->getType() == GEOLIB::POLYLINE)
+		{
+			connectPlyAction = menu.addAction("Connect Polylines...");
+			connect(connectPlyAction, SIGNAL(triggered()), this,
+			        SLOT(connectPolylines()));
+		}
+		menu.addSeparator();
+		QAction* removeAction = menu.addAction("Remove " + item->data(0).toString());
+		connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
+	}
+	else
+	{
+		GeoObjectListItem* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
+		
+		// The current index refers to a geo-object
+		if (parent != NULL)
+		{
+			QAction* addNameAction = menu.addAction("Set name for element...");
+			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
+		}
 		// The current index refers to the name of a geometry-object
-		if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
+		else if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
 		{
 			QAction* addCNDAction = menu.addAction("Add FEM Conditions...");
 			QAction* saveAction = menu.addAction("Save geometry...");
@@ -76,43 +98,8 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 			connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 		}
-		else if (list != NULL)
-		{
-			QAction* connectPlyAction(NULL);
-			if (list->getType() == GEOLIB::POLYLINE)
-			{
-				connectPlyAction = menu.addAction("Connect Polylines...");
-				connect(connectPlyAction, SIGNAL(triggered()), this,
-				        SLOT(connectPolylines()));
-			}
-			menu.addSeparator();
-			QAction* removeAction = menu.addAction("Remove " + item->data(0).toString());
-			connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
-		}
-		// The current index refers to a geo object
-		else
-		{
-			QString temp_name;
-			QMenu menu;
-			/*
-			        if (static_cast<GeoTreeModel*>(model())->objectFromIndex(index, temp_name)->type() == GEOLIB::POINT)
-			        {
-			            QAction* stratAction = menu.addAction("Display Stratigraphy...");
-			            QAction* exportAction = menu.addAction("Export to GMS...");
-			            connect(stratAction, SIGNAL(triggered()), this, SLOT(displayStratigraphy()));
-			            connect(exportAction, SIGNAL(triggered()), this, SLOT(exportStation()));
-			            menu.exec(event->globalPos());
-			        }
-			        else
-			        {
-			            menu.addAction("View Information...");
-			            QAction* showDiagramAction = menu.addAction("View Diagram...");
-			            connect(showDiagramAction, SIGNAL(triggered()), this, SLOT(showDiagramPrefsDialog()));
-			            menu.exec(event->globalPos());
-			        }
-			 */
-		}
 	}
+
 	menu.exec(event->globalPos());
 }
 
@@ -123,17 +110,11 @@ void GeoTreeView::addFEMConditions()
 	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
 }
 
-void GeoTreeView::writeToFile() const
+void GeoTreeView::connectPolylines()
 {
 	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
-	QString gliName = item->data(0).toString();
-	QString fileName = QFileDialog::getSaveFileName(NULL,
-	                                                "Save geometry as",
-	                                                gliName,
-	                                                "GeoSys mesh file (*.gml)");
-	if (!fileName.isEmpty())
-		emit saveToFileRequested(gliName, fileName);
+	        this->selectionModel()->currentIndex())->parentItem();
+	emit requestLineEditDialog(item->data(0).toString().toStdString());
 }
 
 void GeoTreeView::removeList()
@@ -149,10 +130,23 @@ void GeoTreeView::removeList()
 		emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
 }
 
-void GeoTreeView::connectPolylines()
+void GeoTreeView::setNameForElement()
 {
 	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex())->parentItem();
-	emit requestLineEditDialog(item->data(0).toString().toStdString());
+	        this->selectionModel()->currentIndex());
+	size_t id = item->data(0).toInt();
+	std::string type = GEOLIB::convertGeoTypeToString(dynamic_cast<GeoObjectListItem*>(item->parentItem())->getType());
+		std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
+	emit requestNameChangeDialog(geometry_name, type, id);
 }
 
+void GeoTreeView::writeToFile() const
+{
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
+	QString gliName = item->data(0).toString();
+	QString fileName = QFileDialog::getSaveFileName(NULL,
+						"Save geometry as", gliName, "GeoSys mesh file (*.gml)");
+	if (!fileName.isEmpty())
+		emit saveToFileRequested(gliName, fileName);
+}
