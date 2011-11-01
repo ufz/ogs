@@ -11,7 +11,7 @@
 #include <QVBoxLayout>
 
 SetNameDialog::SetNameDialog(const std::string &parent_name, const std::string &object_type_name, size_t id, const std::string &old_name = "", QDialog* parent) :
-	_parent_name(parent_name), _object_type_name(object_type_name), _id(id)
+	QDialog(parent), _parent_name(parent_name), _object_type_name(object_type_name), _id(id)
 {
 	setupDialog(old_name);
 	show();
@@ -46,7 +46,7 @@ void SetNameDialog::setupDialog(const std::string &old_name)
 
 void SetNameDialog::accept()
 {
-	emit requestNameChange(_parent_name, _object_type_name, _id, _new_name->text().toStdString());	
+	emit requestNameChange(_parent_name, _object_type_name, _id, _new_name->text().toStdString());
 	this->done(QDialog::Accepted);
 }
 
