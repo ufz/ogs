@@ -95,8 +95,10 @@
 #endif // OGS_USE_VRPN
 
 
-// test only
-#include "rf_mmp_new.h"
+//// test only
+//#include "rf_mmp_new.h"
+//#include "rf_msp_new.h"
+#include "rf_mfp_new.h"
 
 /// FEM. 11.03.2010. WW
 #include "problem.h"
@@ -348,7 +350,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	//	std::cout << "size of CBoundaryCondition: " << sizeof (CBoundaryCondition) << std::endl;
 
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
-		std::cout << "size of CMediumProperties: " << sizeof(CMediumProperties) << std::endl;
+//		std::cout << "size of CMediumProperties: " << sizeof(CMediumProperties) << std::endl;
+//		std::cout << "size of CSolidProperties: " << sizeof(SolidProp::CSolidProperties) << std::endl;
+		std::cout << "size of CFluidProperties: " << sizeof(CFluidProperties) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 }
@@ -1166,12 +1170,12 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const std::
 {
 	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, GEOLIB::convertGeoType(object_type), id);
 	SetNameDialog dlg(geometry_name, object_type, id, old_name);
-	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const std::string&, size_t, std::string)), 
+	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const std::string&, size_t, std::string)),
 		this->_geoModels, SLOT(addNameForElement(const std::string&, const std::string&, size_t, std::string)));
 	dlg.exec();
 
-	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, 
-		GEOLIB::convertGeoType(object_type), id, 
+	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name,
+		GEOLIB::convertGeoType(object_type), id,
 		this->_geoModels->getElementNameByID(geometry_name, GEOLIB::convertGeoType(object_type), id));
 }
 
