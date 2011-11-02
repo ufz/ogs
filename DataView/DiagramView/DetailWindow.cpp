@@ -82,7 +82,7 @@ DetailWindow::DetailWindow(std::vector<size_t> data, QWidget* parent) : QWidget(
 {
 	setupUi(this);
 	size_t nEntries = data.size();
-	std::vector<std::pair<float, float>> list_data(nEntries);
+	std::vector< std::pair<float, float> > list_data(nEntries);
 
 	for (size_t i=0; i<nEntries; i++)
 		list_data.push_back(std::pair<float, float>(static_cast<float>(i), static_cast<float>(data[i])));
