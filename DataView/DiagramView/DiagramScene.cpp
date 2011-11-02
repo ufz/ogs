@@ -193,14 +193,26 @@ void DiagramScene::constructGrid()
 	QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
 	_grid = addGrid(_bounds, numXTicks, numYTicks, pen);
 
-	for (int i = 0; i <= numXTicks; ++i)
+	if (_startDate == QDateTime())
 	{
-		int x =
-		        static_cast<int>(_bounds.left() / _scaleX +
-		                         (i * (_bounds.width() / _scaleX) / numXTicks));
-		QDateTime currentDate = _startDate.addSecs(x);
-		_xTicksText.push_back(addNonScalableText(currentDate.toString("dd.MM.yyyy")));
-		_xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
+		for (int i = 0; i <= numXTicks; ++i)
+		{
+			int x = static_cast<int>(_bounds.left() / _scaleX +
+									 (i * (_bounds.width() / _scaleX) / numXTicks));
+			_xTicksText.push_back(addNonScalableText(QString::number(x)));
+			_xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
+		}
+	}
+	else
+	{
+		for (int i = 0; i <= numXTicks; ++i)
+		{
+			int x = static_cast<int>(_bounds.left() / _scaleX +
+									 (i * (_bounds.width() / _scaleX) / numXTicks));
+			QDateTime currentDate = _startDate.addSecs(x);
+			_xTicksText.push_back(addNonScalableText(currentDate.toString("dd.MM.yyyy")));
+			_xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
+		}
 	}
 
 	for (int j = 0; j <= numYTicks; ++j)

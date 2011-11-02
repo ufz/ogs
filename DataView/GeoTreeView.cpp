@@ -88,15 +88,18 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
 		}
 		// The current index refers to the name of a geometry-object
-		else if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
+		else if (item->childCount() > 0)
 		{
-			QAction* addCNDAction = menu.addAction("Add FEM Conditions...");
-			QAction* saveAction = menu.addAction("Save geometry...");
-			menu.addSeparator();
-			QAction* removeAction = menu.addAction("Remove geometry");
-			connect(addCNDAction, SIGNAL(triggered()), this, SLOT(addFEMConditions()));
-			connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
-			connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
+			if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
+			{
+				QAction* addCNDAction = menu.addAction("Add FEM Conditions...");
+				QAction* saveAction = menu.addAction("Save geometry...");
+				menu.addSeparator();
+				QAction* removeAction = menu.addAction("Remove geometry");
+				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(addFEMConditions()));
+				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
+				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
+			}
 		}
 	}
 

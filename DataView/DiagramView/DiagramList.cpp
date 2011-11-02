@@ -217,15 +217,14 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
 {
 	int numberOfDays;
-	QDateTime startDate;
 
-	startDate = coords[0].first;
+	this->_startDate = coords[0].first;
 	_coords.push_back(std::pair<float, float>(0, coords[0].second));
 
 	size_t nCoords = coords.size();
 	for (size_t i = 1; i < nCoords; i++)
 	{
-		numberOfDays = startDate.daysTo(coords[i].first);
+		numberOfDays = this->_startDate.daysTo(coords[i].first);
 		_coords.push_back(std::pair<float, float>(numberOfDays, coords[i].second));
 	}
 
@@ -234,6 +233,7 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
 
 void DiagramList::setList(std::vector< std::pair<float, float> > coords)
 {
+	this->_startDate = QDateTime();
 	size_t nCoords = coords.size();
 	for (size_t i = 0; i < nCoords; i++)
 		_coords.push_back(coords[i]);
