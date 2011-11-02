@@ -58,9 +58,9 @@ void GeoTreeModel::addPointList(QString geoName, const GEOLIB::PointVec* pointVe
 		std::string pnt_name("");
 		pointVec->getNameOfElementByID(j, pnt_name);
 		QList<QVariant> pnt;
-		pnt << static_cast<unsigned>(j) 
-			<< QString::number((*(*points)[j])[0], 'f') 
-			<< QString::number((*(*points)[j])[1], 'f') 
+		pnt << static_cast<unsigned>(j)
+			<< QString::number((*(*points)[j])[0], 'f')
+			<< QString::number((*(*points)[j])[1], 'f')
 			<< QString::number((*(*points)[j])[2], 'f')
 			<< QString::fromStdString(pnt_name);
 		GeoTreeItem* point =
@@ -305,7 +305,7 @@ void GeoTreeModel::setNameForItem(const std::string &name, GEOLIB::GEOTYPE type,
 {
 	int type_idx(0);
 	int col_idx(1);
-	
+
 	switch(type)
 	{
 		case GEOLIB::POINT:
@@ -333,7 +333,7 @@ void GeoTreeModel::setNameForItem(const std::string &name, GEOLIB::GEOTYPE type,
 			for (int j=0; j<object_list->childCount(); j++)
 			{
 				TreeItem* item = object_list->child(j);
-				if (item->data(0).toInt() == id)
+				if (static_cast<size_t>(item->data(0).toInt()) == id)
 				{
 					item->setData(col_idx, QString::fromStdString(item_name));
 					break;
