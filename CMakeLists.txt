@@ -34,6 +34,7 @@ ADD_SUBDIRECTORY( Base )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )
 ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
-ADD_SUBDIRECTORY( SimpleTests/SolverTests )
-
+IF(NOT MSVC)
+        ADD_SUBDIRECTORY( SimpleTests/SolverTests )
+ENDIF(MSVC)
 
