@@ -87,7 +87,7 @@ DetailWindow::DetailWindow(std::vector<size_t> data, QWidget* parent) : QWidget(
 	for (size_t i=0; i<nEntries; i++)
 		list_data.push_back(std::pair<float, float>(static_cast<float>(i), static_cast<float>(data[i])));
 
-	DiagramList* list;
+	DiagramList* list = new DiagramList();
 	list->setList(list_data);
 	list->setXUnit("Value");
 	list->setYUnit("Amount");
