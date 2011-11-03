@@ -27,7 +27,7 @@
 
 namespace MathLib {
 
-unsigned CG(CRSMatrix<double> const * mat, double const * const b,
+unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		double* const x, double& eps, unsigned& nsteps, unsigned num_threads)
 {
 	unsigned N = mat->getNRows();

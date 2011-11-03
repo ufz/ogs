@@ -37,7 +37,7 @@ inline void applPlRot(double& dx, double& dy, double cs, double sn)
 }
 
 // solve H y = s and update x += MVy
-static void update(const CRSMatrix<double>& A, unsigned k, double* H,
+static void update(const CRSMatrix<double,unsigned>& A, unsigned k, double* H,
 		unsigned ldH, double* s, double* V, double* x)
 {
 	const size_t n(A.getNRows());
@@ -59,7 +59,7 @@ static void update(const CRSMatrix<double>& A, unsigned k, double* H,
 	delete[] y;
 }
 
-unsigned GMRes(const CRSMatrix<double>& A, double* const b, double* const x,
+unsigned GMRes(const CRSMatrix<double,unsigned>& A, double* const b, double* const x,
 		double& eps, unsigned m, unsigned& nsteps)
 {
 	double resid;

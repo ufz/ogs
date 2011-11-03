@@ -5,13 +5,13 @@
 
 namespace MathLib {
 
-template<class T> class SparseMatrixBase : public MatrixBase
+template<typename FP_TYPE, typename IDX_TYPE> class SparseMatrixBase : public MatrixBase
 {
 public:
-	SparseMatrixBase(unsigned n1, unsigned n2) : MatrixBase (n1,n2) {}
+	SparseMatrixBase(IDX_TYPE n1, IDX_TYPE n2) : MatrixBase (n1,n2) {}
 	SparseMatrixBase() : MatrixBase () {}
-	virtual void amux(T d, T const * const x, T *y) const = 0;         // y +=d*Ax
-	virtual ~SparseMatrixBase() { }
+	virtual void amux(FP_TYPE d, FP_TYPE const * const x, FP_TYPE *y) const = 0;         // y +=d*Ax
+	virtual ~SparseMatrixBase() {};
 };
 
 } // end namespace MathLib

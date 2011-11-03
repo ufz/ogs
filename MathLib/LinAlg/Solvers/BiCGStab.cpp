@@ -12,7 +12,7 @@
 
 namespace MathLib {
 
-unsigned BiCGStab(CRSMatrix<double> const& A, double* const b, double* const x,
+unsigned BiCGStab(CRSMatrix<double, unsigned> const& A, double* const b, double* const x,
 		double& eps, unsigned& nsteps)
 {
 	const unsigned N(A.getNRows());
