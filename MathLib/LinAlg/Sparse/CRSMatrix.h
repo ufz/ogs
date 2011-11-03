@@ -11,6 +11,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <cassert>
 #include "SparseMatrixBase.h"
 #include "sparse.h"
 #include "amuxCRS.h"
@@ -59,7 +60,57 @@ public:
     virtual void precondApply(FP_TYPE* x) const
     {}
 
+    /**
+     * get the number of non-zero entries
+     * @return number of non-zero entries
+     */
     IDX_TYPE getNNZ() const { return _row_ptr[MatrixBase::_n_rows]; }
+
+    /**
+     * This is the constant access operator to a non-zero matrix entry.
+     * Precondition: the entries have to be in the sparsity pattern!
+     * @param row the row number
+     * @param col the column number
+     * @return The corresponding matrix entry.
+     */
+    FP_TYPE const& operator() (IDX_TYPE row, IDX_TYPE col) const
+    {
+    	assert(0 <= row && row < MatrixBase::_n_rows);
+
+    	// linear search - for matrices with many entries per row binary search is much faster
+    	const IDX_TYPE idx_end (_row_ptr[row+1]);
+    	IDX_TYPE j(_row_ptr[row]), k;
+
+    	while (j<idx_end && (k=_col_idx[j]) <= col) {
+    		if (k == col) {
+    			return _data[j];
+    		}
+    		j++;
+    	}
+    }
+
+    /**
+	 * This is the non constant access operator to a non-zero matrix entry.
+	 * Precondition: the entries have to be in the sparsity pattern!
+	 * @param row the row number
+	 * @param col the column number
+	 * @return The corresponding matrix entry that can be modified by the user.
+	 */
+	FP_TYPE & operator() (IDX_TYPE row, IDX_TYPE col)
+	{
+		assert(0 <= row && row < MatrixBase::_n_rows);
+
+		// linear search - for matrices with many entries per row binary search is much faster
+		const IDX_TYPE idx_end (_row_ptr[row+1]);
+		IDX_TYPE j(_row_ptr[row]), k;
+
+		while (j<idx_end && (k=_col_idx[j]) <= col) {
+			if (k == col) {
+				return _data[j];
+			}
+			j++;
+		}
+	}
 
 protected:
 	IDX_TYPE *_row_ptr;
