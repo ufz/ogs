@@ -73,7 +73,7 @@ public:
      * @param col the column number
      * @return The corresponding matrix entry.
      */
-    FP_TYPE const& operator() (IDX_TYPE row, IDX_TYPE col) const
+    FP_TYPE operator() (IDX_TYPE row, IDX_TYPE col) const
     {
     	assert(0 <= row && row < MatrixBase::_n_rows);
 
@@ -87,6 +87,7 @@ public:
     		}
     		j++;
     	}
+    	return 0.0;
     }
 
     /**
@@ -110,6 +111,22 @@ public:
 			}
 			j++;
 		}
+	}
+
+	void eraseEntries (IDX_TYPE n_entries, IDX_TYPE* rows, IDX_TYPE *cols)
+	{
+		// ToDo
+		//*** determine the number of new entries
+		unsigned cnt_new_entries(_row_ptr[MatrixBase::_n_rows]);
+
+		//*** create new memory
+		//*** copy the entries
+		//*** apply changes to attributes
+	}
+
+	void getColumn(IDX_TYPE col, FP_TYPE* column_entries)
+	{
+		// ToDo
 	}
 
 protected:
