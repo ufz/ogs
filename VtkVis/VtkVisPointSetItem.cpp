@@ -34,8 +34,8 @@
 VtkVisPointSetItem::VtkVisPointSetItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: VtkVisPipelineItem(algorithm, parentItem,
-	                     data), _transformFilter(NULL), _activeAttribute("")
+	: VtkVisPipelineItem(algorithm, parentItem, data), _mapper(NULL),
+	_transformFilter(NULL), _activeAttribute("")
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -56,14 +56,15 @@ VtkVisPointSetItem::VtkVisPointSetItem(
 VtkVisPointSetItem::VtkVisPointSetItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: VtkVisPipelineItem(compositeFilter, parentItem,
-	                     data), _transformFilter(NULL), _activeAttribute("")
+	: VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(NULL),
+	_transformFilter(NULL), _activeAttribute("")
 {
 }
 
 VtkVisPointSetItem::~VtkVisPointSetItem()
 {
 	_transformFilter->Delete();
+	_mapper->Delete();
 }
 
 void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
@@ -81,7 +82,6 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
 
-	// Use a special vtkImageActor instead of vtkActor
 	_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 	_actor = vtkActor::New();
 	static_cast<vtkActor*>(_actor)->SetMapper(_mapper);
@@ -131,6 +131,11 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				this->SetActiveAttribute("Solid Color");
 		}
 	}
+}
+
+void VtkVisPointSetItem::SetScalarVisibility( bool on )
+{
+	_mapper->SetScalarVisibility(on);
 }
 
 void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)

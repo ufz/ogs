@@ -11,15 +11,17 @@
 #include "VtkVisPipelineItem.h"
 
 class vtkAlgorithm;
+class vtkDataSetAttributes;
 class vtkPointSet;
-class QVtkDataSetMapper;
 class vtkProp3D;
 class vtkRenderer;
-class VtkAlgorithmProperties;
-class vtkOsgActor;
-class VtkCompositeFilter;
 class vtkTransformFilter;
-class vtkDataSetAttributes;
+class QVtkDataSetMapper;
+
+class vtkOsgActor;
+
+class VtkAlgorithmProperties;
+class VtkCompositeFilter;
 
 /**
  * \brief An item in the VtkVisPipeline containing a point set object to be visualized.
@@ -75,8 +77,12 @@ protected:
 	/// Sets a color lookup table for the current scalar array.
 	void setLookupTableForActiveScalar();
 
+	void SetScalarVisibility(bool on);
+
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
+
+	QVtkDataSetMapper* _mapper;
 
 private:
 	/// @see SetActiveAttribute()

@@ -18,15 +18,17 @@
 #include <QVariant>
 
 class vtkAlgorithm;
+class vtkDataSetAttributes;
 class vtkPointSet;
-class QVtkDataSetMapper;
 class vtkProp3D;
 class vtkRenderer;
-class VtkAlgorithmProperties;
-class vtkOsgActor;
-class VtkCompositeFilter;
 class vtkTransformFilter;
-class vtkDataSetAttributes;
+class QVtkDataSetMapper;
+
+class vtkOsgActor;
+
+class VtkAlgorithmProperties;
+class VtkCompositeFilter;
 
 /**
  * \brief An item in the VtkVisPipeline containing a graphic object to be visualized.
@@ -72,9 +74,6 @@ public:
 	// Dummy for implementation in derived classes
 	virtual void SetActiveAttribute(const QString& str) { (void)str; }
 
-	/// @brief Returns the mapper
-	QVtkDataSetMapper* mapper() const { return _mapper; }
-
 	/// @brief Returns the composite filter
 	VtkCompositeFilter* compositeFilter() const { return _compositeFilter; }
 
@@ -112,7 +111,6 @@ public:
 protected:
 	vtkProp3D* _actor;
 	vtkAlgorithm* _algorithm;
-	QVtkDataSetMapper* _mapper;
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
 
@@ -121,8 +119,6 @@ protected:
      * This function is empty and needs to be implemented by derived classes.
 	 */
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
-
-	void SetScalarVisibility(bool on);
 
 private:
 };

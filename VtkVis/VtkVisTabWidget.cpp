@@ -9,9 +9,11 @@
 #include "VtkColorByHeightFilter.h"
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisImageItem.h"
 #include "VtkVisTabWidget.h"
 
 #include <vtkActor.h>
+#include <vtkImageChangeInformation.h>
 #include <vtkProperty.h>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
@@ -54,12 +56,12 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 	if (item)
 	{
 		_item = item;
+		transformTabWidget->setEnabled(true);
 
 		vtkActor* actor = dynamic_cast<vtkActor*>(_item->actor());
-		if (actor)
+		if (actor) // if data set
 		{
 			actorPropertiesGroupBox->setEnabled(true);
-			transformTabWidget->setEnabled(true);
 			vtkProperty* vtkProps = actor->GetProperty();
 			diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
 			visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
@@ -105,10 +107,22 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 					}
 				}
 		}
-		else
+		else // if image
 		{
+			VtkVisImageItem* img = dynamic_cast<VtkVisImageItem*>(_item);
 			actorPropertiesGroupBox->setEnabled(false);
-			transformTabWidget->setEnabled(false);
+			vtkImageChangeInformation* transform = img->getImageTransformation();
+			double trans[3];
+			transform->GetOriginTranslation(trans);
+			this->transX->blockSignals(true);
+			this->transY->blockSignals(true);
+			this->transZ->blockSignals(true);
+			this->transX->setText(QString::number(trans[0]));
+			this->transY->setText(QString::number(trans[1]));
+			this->transZ->setText(QString::number(trans[2]));
+			this->transX->blockSignals(false);
+			this->transY->blockSignals(false);
+			this->transZ->blockSignals(false);
 		}
 
 		this->buildProportiesDialog(item);

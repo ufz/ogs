@@ -38,7 +38,7 @@ public:
 
 	void setImage(QImage& image);
 
-	void setOrigin(QPointF origin);
+	void setOrigin(double x, double y, double z);
 
 	void setSpacing(double spacing);
 
