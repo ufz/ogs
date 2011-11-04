@@ -68,6 +68,7 @@ public:
 	void setTranslation(double x, double y, double z) const;
 
 protected:
+	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;
 	QString _activeAttribute;
 
@@ -81,8 +82,6 @@ protected:
 
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
-
-	QVtkDataSetMapper* _mapper;
 
 private:
 	/// @see SetActiveAttribute()

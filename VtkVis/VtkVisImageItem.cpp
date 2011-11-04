@@ -46,7 +46,6 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 	_renderer = renderer;
 
 	// Use a special vtkImageActor instead of vtkActor
-	vtkImageAlgorithm* imageAlg = static_cast<vtkImageAlgorithm*>(_algorithm);
 	vtkImageActor* imageActor = vtkImageActor::New();
 	imageActor->SetInput(_transformFilter->GetOutput());
 	_actor = imageActor;
@@ -119,20 +118,4 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
 void VtkVisImageItem::setTranslation(double x, double y, double z) const
 {
 	_transformFilter->SetOriginTranslation(x,y,z);
-	/*
-	vtkImageAlgorithm* img = dynamic_cast<vtkImageAlgorithm*>(this->algorithm());
-	if (img)
-	{
-		//img->setori
-		/*
-		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
-		double* scale = transform->GetScale();
-		transform->Identity();
-		transform->Scale(scale);
-		transform->Translate(x, y, z);
-		this->transformFilter()->Modified();
-
-	}
-	*/
 }
