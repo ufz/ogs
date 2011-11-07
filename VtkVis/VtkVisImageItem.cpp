@@ -119,3 +119,8 @@ void VtkVisImageItem::setTranslation(double x, double y, double z) const
 {
 	_transformFilter->SetOriginTranslation(x,y,z);
 }
+
+vtkAlgorithm* VtkVisImageItem::transformFilter() const
+{ 
+	return _transformFilter; 
+}

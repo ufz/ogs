@@ -58,18 +58,18 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 		_item = item;
 		transformTabWidget->setEnabled(true);
 
-		vtkActor* actor = dynamic_cast<vtkActor*>(_item->actor());
-		if (actor) // if data set
+		vtkTransformFilter* transform_filter = dynamic_cast<vtkTransformFilter*>(_item->transformFilter());
+		if (transform_filter) // if data set
 		{
 			actorPropertiesGroupBox->setEnabled(true);
-			vtkProperty* vtkProps = actor->GetProperty();
+			vtkProperty* vtkProps = static_cast<vtkActor*>(_item->actor())->GetProperty();
 			diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
 			visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
 			edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
 			opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
 
 			vtkTransform* transform =
-			        static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
+			        static_cast<vtkTransform*>(transform_filter->GetTransform());
 			if (transform)
 			{
 				double scale[3];
@@ -109,9 +109,9 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 		}
 		else // if image
 		{
-			VtkVisImageItem* img = dynamic_cast<VtkVisImageItem*>(_item);
+			const VtkVisImageItem* img = static_cast<VtkVisImageItem*>(_item);
 			actorPropertiesGroupBox->setEnabled(false);
-			vtkImageChangeInformation* transform = img->getImageTransformation();
+			vtkImageChangeInformation* transform = static_cast<vtkImageChangeInformation*>(img->transformFilter());
 			double trans[3];
 			transform->GetOriginTranslation(trans);
 			this->transX->blockSignals(true);

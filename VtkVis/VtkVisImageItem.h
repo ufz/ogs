@@ -48,7 +48,7 @@ public:
 
 	void setTranslation(double x, double y, double z) const;
 
-	vtkImageChangeInformation* getImageTransformation() const { return _transformFilter; }
+	vtkAlgorithm* transformFilter() const;
 
 protected:
 	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.

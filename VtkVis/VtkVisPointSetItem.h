@@ -53,7 +53,7 @@ public:
 	/// the item and sets the item's properties.
 	void Initialize(vtkRenderer* renderer);
 
-	vtkTransformFilter* transformFilter() const { return _transformFilter; }
+	vtkAlgorithm* transformFilter() const;
 
 	/// @brief Sets the selected attribute array for the visualisation of the data set.
 	void SetActiveAttribute(const QString& name);

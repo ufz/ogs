@@ -40,6 +40,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
 	{
+		// special case if parent is image but child is not (e.g. Image2BarChartFilter)
 		if (dynamic_cast<vtkImageAlgorithm*>(visParentItem->algorithm()))
 			_algorithm->SetInputConnection(visParentItem->algorithm()->GetOutputPort());
 		else
@@ -332,7 +333,7 @@ void VtkVisPointSetItem::setScale(double x, double y, double z) const
 	if (this->transformFilter())
 	{
 		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		        static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
 		double* trans = transform->GetPosition();
 		transform->Identity();
 		transform->Scale(x, y, z);
@@ -346,7 +347,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 	if (this->transformFilter())
 	{
 		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		        static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
 		double* scale = transform->GetScale();
 		transform->Identity();
 		transform->Scale(scale);
@@ -355,3 +356,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 	}
 }
 
+vtkAlgorithm* VtkVisPointSetItem::transformFilter() const 
+{ 
+	return _transformFilter; 
+}

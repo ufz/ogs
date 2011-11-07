@@ -100,9 +100,9 @@ public:
 
 	/** 
  	 * Returns the transform filter for the object.
-     * This function is empty and needs to be implemented by derived classes.
+     * This function needs to be implemented by derived classes.
      */
-	virtual vtkTransformFilter* transformFilter() const { return NULL; }
+	virtual vtkAlgorithm* transformFilter() const = 0;
 
 	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
