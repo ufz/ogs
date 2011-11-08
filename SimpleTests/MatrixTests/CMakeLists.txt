@@ -19,11 +19,27 @@ ADD_EXECUTABLE( MatMult
         ${HEADERS}
 )
 
+# Create the executable
+ADD_EXECUTABLE( MatTestRemoveRowsCols
+        MatTestRemoveRowsCols.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+
 IF (WIN32)
         TARGET_LINK_LIBRARIES(MatMult Winmm.lib)
 ENDIF (WIN32)
 
 TARGET_LINK_LIBRARIES ( MatMult
+	Base
+	MathLib
+)
+
+IF (WIN32)
+        TARGET_LINK_LIBRARIES(MatTestRemoveRowsCols Winmm.lib)
+ENDIF (WIN32)
+
+TARGET_LINK_LIBRARIES ( MatTestRemoveRowsCols
 	Base
 	MathLib
 )
