@@ -145,17 +145,27 @@ public:
 	void eraseEntries (IDX_TYPE n_rows_cols,
 					IDX_TYPE const*const rows, IDX_TYPE const*const cols)
 	{
+//		std::cout << "original: " << std::endl;
+//		printMat();
 		IDX_TYPE n_cols(MatrixBase::_n_rows);
 		//*** remove the rows
 		removeRows(n_rows_cols, rows);
+//		std::cout << "removed rows: " << std::endl;
+//		printMat();
 		//*** transpose
 		transpose(n_cols);
+//		std::cout << "transposed: " << std::endl;
+//		printMat();
 		//*** remove columns in original means removing rows in the transposed
 		removeRows(n_rows_cols, cols);
+//		std::cout << "removed rows: " << std::endl;
+//		printMat();
 		//*** transpose again
 		transpose(MatrixBase::_n_rows);
-		//*** apply changes to the column indices
-		correctColumnIndices(n_rows_cols, cols);
+//		std::cout << "transposed: " << std::endl;
+//		printMat();
+//		//*** apply changes to the column indices
+//		correctColumnIndices(n_rows_cols, cols);
 	}
 
 	/**
@@ -316,6 +326,18 @@ protected:
 		}
 
 		delete[] mapping;
+	}
+
+	void printMat() const
+	{
+		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+			std::cout << k << ": " << std::flush;
+			const IDX_TYPE row_end(_row_ptr[k+1]);
+			for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {
+				std::cout << _col_idx[j] << " " << std::flush;
+			}
+			std::cout << std::endl;
+		}
 	}
 
 	IDX_TYPE *_row_ptr;

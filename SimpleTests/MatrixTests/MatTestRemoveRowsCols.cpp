@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		in.close();
 		timer.stop();
 		if (verbose) {
-			std::cout << "ok, " << timer.elapsed() << " s)" << std::endl;
+			std::cout << "ok, " << timer.elapsed() << " s" << std::endl;
 		}
 	} else {
 		std::cout << "error reading matrix from " << fname_mat << std::endl;
@@ -51,13 +51,13 @@ int main(int argc, char *argv[])
 
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 
-	const unsigned n_rows_cols_to_erase(10);
+	const unsigned n_rows_cols_to_erase(3);
 	unsigned *rows_to_erase(new unsigned[n_rows_cols_to_erase]);
 	unsigned *cols_to_erase(new unsigned[n_rows_cols_to_erase]);
 
 	for (unsigned k(0); k<n_rows_cols_to_erase; k++) {
-		rows_to_erase[k] = k*5;
-		cols_to_erase[k] = k*5;
+		rows_to_erase[k] = (k+1)*2;
+		cols_to_erase[k] = (k+1)*2;
 	}
 
 	mat.eraseEntries(n_rows_cols_to_erase, rows_to_erase, cols_to_erase);
