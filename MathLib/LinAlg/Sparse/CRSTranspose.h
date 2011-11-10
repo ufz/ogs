@@ -2,17 +2,17 @@
  * CRSTranspose.h
  *
  *  Created on: Sep 27, 2011
- *      Author: fischeth
+ *      Author: TF
  */
 
 #ifndef CRSTRANSPOSE_H_
 #define CRSTRANSPOSE_H_
 
-void CS_transp(unsigned n, double* A, unsigned* jA, unsigned *iA,
-               double* B, unsigned *jB, unsigned *iB)
+void CS_transp(unsigned n, unsigned *iA, unsigned* jA, double* A,
+				unsigned *iB, unsigned *jB, double* B)
 {
   unsigned nnz = iA[n];
-  unsigned *inz = new unsigned[n];
+  unsigned *inz(new unsigned[n]);
 
   for (unsigned i=0; i<n; ++i) inz[i] = 0;
 

@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	// *** reading matrix in crs format from file
 	std::string fname("/work/fischeth/data/testmat.bin");
 //	std::ifstream in(fname.c_str(), std::ios::binary);
-	MathLib::CRSMatrix<double> *mat (new MathLib::CRSMatrix<double>(fname));
+	MathLib::CRSMatrix<double, unsigned> *mat (new MathLib::CRSMatrix<double, unsigned>(fname));
 /*	double *A(NULL);
 	unsigned *iA(NULL), *jA(NULL), n;
 	if (in) {

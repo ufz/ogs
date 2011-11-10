@@ -11,9 +11,9 @@
 namespace MathLib {
 
 // forward declaration
-template <typename T> class CRSMatrix;
+template <typename PF_TYPE, typename IDX_TYPE> class CRSMatrix;
 
-unsigned CG(CRSMatrix<double> const * mat, double const * const b,
+unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		double* const x, double& eps, unsigned& nsteps, unsigned num_threads = 1);
 
 } // end namespace MathLib

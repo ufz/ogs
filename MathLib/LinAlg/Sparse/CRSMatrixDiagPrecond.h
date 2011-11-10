@@ -9,11 +9,11 @@
 
 namespace MathLib {
 
-class CRSMatrixDiagPrecond : public CRSMatrix<double>
+class CRSMatrixDiagPrecond : public CRSMatrix<double, unsigned>
 {
 public:
 	CRSMatrixDiagPrecond (std::string const &fname)
-		: CRSMatrix<double>(fname), _inv_diag(new double[_n_rows])
+		: CRSMatrix<double, unsigned>(fname), _inv_diag(new double[_n_rows])
 	{
 		if (!generateDiagPrecond (_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {
 			std::cout << "Could not create diagonal preconditioner" << std::endl;

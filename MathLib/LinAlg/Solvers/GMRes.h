@@ -12,7 +12,7 @@
 
 namespace MathLib {
 
-unsigned GMRes(const CRSMatrix<double>& mat, double* const b, double* const x,
+unsigned GMRes(const CRSMatrix<double,unsigned>& mat, double* const b, double* const x,
                         double& eps, unsigned m, unsigned& steps);
 
 } // end namespace MathLib

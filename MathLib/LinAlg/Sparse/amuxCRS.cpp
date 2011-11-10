@@ -14,20 +14,6 @@
 
 namespace MathLib {
 
-void amuxCRS (double a,
-	unsigned n, unsigned const * const iA, unsigned const * const jA,
-        double const * const A, double const * const x, double* y)
-{
-	for (unsigned i(0); i<n; i++) {
-		y[i] = 0.0;
-		const unsigned end (iA[i+1]);
-		for (unsigned j(iA[i]); j<end; j++) {
-			y[i] += A[j] * x[jA[j]];
-		}
-		y[i] *= a;
-	}
-}
-
 struct MatMultThreadParam {
 	MatMultThreadParam (double scalar_factor, unsigned beg_row, unsigned end_row,
 		unsigned const * const iA, unsigned const * const jA,
@@ -49,14 +35,14 @@ struct MatMultThreadParam {
 extern "C" {
 void* amuxCRSpthread (void* ptr)
 {
-	MatMultThreadParam *thread_param ((MatMultThreadParam*)(ptr));
-	const double a (thread_param->_a);
-	const unsigned beg_row (thread_param->_beg_row);
-	const unsigned end_row (thread_param->_end_row);
-	unsigned const * const iA (thread_param->_row_ptr);
-	unsigned const * const jA (thread_param->_col_idx);
-        double const * const A (thread_param->_data);
-	double const * const x (thread_param->_x);
+	MatMultThreadParam *thread_param((MatMultThreadParam*) (ptr));
+	const double a(thread_param->_a);
+	const unsigned beg_row(thread_param->_beg_row);
+	const unsigned end_row(thread_param->_end_row);
+	unsigned const * const iA(thread_param->_row_ptr);
+	unsigned const * const jA(thread_param->_col_idx);
+	double const * const A(thread_param->_data);
+	double const * const x(thread_param->_x);
 	double* y(thread_param->_y);
 
 	for (unsigned i(beg_row); i<end_row; i++) {
@@ -110,24 +96,23 @@ void amuxCRSParallelPThreads (double a,
 #endif
 }
 
-void amuxCRSParallelOpenMP (double a,
-	unsigned n, unsigned const * const iA, unsigned const * const jA,
-	double const * const A, double const * const x, double* y,
-	unsigned num_of_omp_threads)
+void amuxCRSParallelOpenMP(double a, unsigned n, unsigned const * const iA,
+				unsigned const * const jA, double const * const A, double const * const x,
+				double* y, unsigned num_of_omp_threads)
 {
-        unsigned i;
-        omp_set_num_threads(num_of_omp_threads);
-        {
-                #pragma omp parallel for
-                for (i=0; i<n; i++) {
-                        y[i] = 0.0;
-                        const unsigned end (iA[i+1]);
-                        for (unsigned j(iA[i]); j<end; j++) {
-                                y[i] += A[j] * x[jA[j]];
-                        }
-                        y[i] *= a;
-                }
-        }
+	unsigned i;
+	omp_set_num_threads(num_of_omp_threads);
+	{
+#pragma omp parallel for
+		for (i = 0; i < n; i++) {
+			y[i] = 0.0;
+			const unsigned end(iA[i + 1]);
+			for (unsigned j(iA[i]); j < end; j++) {
+				y[i] += A[j] * x[jA[j]];
+			}
+			y[i] *= a;
+		}
+	}
 }
 
 void amuxCRSSym (double a,
@@ -139,17 +124,17 @@ void amuxCRSSym (double a,
 	}
 
 	for (unsigned i(0); i<n; i++) {
-			unsigned j (iA[i]);
-			// handle diagonal
-			if (jA[j] == i) {
+		unsigned j (iA[i]);
+		// handle diagonal
+		if (jA[j] == i) {
+			y[i] += A[j] * x[jA[j]];
+			j++;
+		}
+		const unsigned end (iA[i+1]);
+		for (; j<end; j++) {
 				y[i] += A[j] * x[jA[j]];
-				j++;
-			}
-			const unsigned end (iA[i+1]);
-			for (; j<end; j++) {
-					y[i] += A[j] * x[jA[j]];
-					y[jA[j]] += A[j] * x[i];
-			}
+				y[jA[j]] += A[j] * x[i];
+		}
 	}
 
 	for (unsigned i(0); i<n; i++) {
