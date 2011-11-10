@@ -17,6 +17,7 @@
 //dialogs
 #include "DBConnectionDialog.h"
 #include "DiagramPrefsDialog.h"
+#include "FEMConditionSetupDialog.h"
 #include "GMSHPrefsDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
@@ -48,7 +49,6 @@
 #include "rf_bc_new.h"
 #include "rf_ic_new.h"
 #include "rf_st_new.h"
-#include "wait.h"
 
 // FileIO includes
 #include "FEFLOWInterface.h"
@@ -150,8 +150,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
 	connect(geoTabWidget->treeView, SIGNAL(requestLineEditDialog(const std::string &)),
 	        this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
-	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const std::string&, size_t)),
-			this, SLOT(showGeoNameDialog(const std::string&, const std::string&, size_t)));
+	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)),
+			this, SLOT(showGeoNameDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
+	connect(geoTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)),
+			this, SLOT(showCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
 	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
 	        this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -1166,43 +1168,54 @@ void MainWindow::showDiagramPrefsDialog()
 	}
 }
 
-void MainWindow::showGeoNameDialog(const std::string &geometry_name, const std::string &object_type, size_t id)
+void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id)
 {
-	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, GEOLIB::convertGeoType(object_type), id);
-	SetNameDialog dlg(geometry_name, object_type, id, old_name);
-	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const std::string&, size_t, std::string)),
-		this->_geoModels, SLOT(addNameForElement(const std::string&, const std::string&, size_t, std::string)));
+	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+	SetNameDialog dlg(geometry_name, GEOLIB::convertGeoTypeToString(object_type), id, old_name);
+	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GEOLIB::GEOTYPE, size_t, std::string)),
+		this->_geoModels, SLOT(addNameForElement(const std::string&, const GEOLIB::GEOTYPE, size_t, std::string)));
 	dlg.exec();
 
-	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name,
-		GEOLIB::convertGeoType(object_type), id,
-		this->_geoModels->getElementNameByID(geometry_name, GEOLIB::convertGeoType(object_type), id));
+	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type, 
+		id,	this->_geoModels->getElementNameByID(geometry_name, object_type, id));
+}
+
+void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id)
+{
+	std::string geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+	if (geo_name.empty())
+	{
+		this->showGeoNameDialog(geometry_name, object_type, id);
+		geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+	}
+	// Object should now have a name ... if not, cancel the setup process
+	if (geo_name.empty())
+		OGSError::box("FEM Condition Setup cancelled.");
+	else
+	{
+		FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name));
+		connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_conditionModel, SLOT(addCondition(FEMCondition*)));
+		dlg.exec();
+	}
 }
 
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
 	connect(&lineEdit,
-	        SIGNAL(connectPolylines(const std::string &, std::vector<size_t>, double,
-	                                std::string, bool,
-	                                bool)),
-	        _geoModels,
-	        SLOT(connectPolylineSegments(const std::string &, std::vector<size_t>, double,
-	                                     std::string,
-	                                     bool, bool)));
+	        SIGNAL(connectPolylines(const std::string &, std::vector<size_t>, double, std::string, bool, bool)),
+	        _geoModels, 
+			SLOT(connectPolylineSegments(const std::string &, std::vector<size_t>, double, std::string, bool, bool)));
 	lineEdit.exec();
 }
 
 void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
-	connect(
-	        &dlg,
-	        SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double,
-	                              double, bool)),
+	connect(&dlg,
+	        SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
 	        this,
-	        SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double,
-	                      bool)));
+	        SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
 	dlg.exec();
 }
 
@@ -1221,6 +1234,9 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	//FEMConditionSetupDialog* dlg = new FEMConditionSetupDialog(this->_project);
+	//dlg->exec();
+
 	// *** begin test TetGen read mesh
 	const std::string path ("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/MSH/");
 	std::string mesh_name ("ClosedSurface");
@@ -1233,340 +1249,7 @@ void MainWindow::FEMTestStart()
 	if (mesh)
 		_meshModels->addMesh(mesh, mesh_name);
 	else
-		OGSError::box("Failed to load TetGen mesh file.");
-
-	// *** end test TetGen read mesh
-
-//	// *** begin creating closed surface mesh
-//	{
-//		std::string path("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/");
-//		std::string fname(path+"ClosedSurface.geo");
-//		FileIO::GMSHInterface gmsh_io(fname);
-//
-//		std::vector<std::string> geometries;
-//		double param4(0);
-//
-//		// all geos for top surface
-//		geometries.push_back("Boreholes Ketzin Top");
-//		geometries.push_back("CoarseGridPointsAsStationsTop");
-//		geometries.push_back("MiddleGridPointsAsStationsTop");
-//		geometries.push_back("FineGridPointsAsStationsTop");
-//		geometries.push_back("KetzinPolygonTop");
-//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-//				geometries, param4);
-//
-//		geometries.clear();
-//		// all geos for bottom surface
-//		geometries.push_back("Boreholes Ketzin Bottom");
-//		geometries.push_back("CoarseGridPointsAsStationsBottom");
-//		geometries.push_back("MiddleGridPointsAsStationsBottom");
-//		geometries.push_back("FineGridPointsAsStationsBottom");
-//		geometries.push_back("KetzinPolygonBottom");
-//
-//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-//				geometries, param4);
-//
-//		geometries.clear();
-//		geometries.push_back("KetzinPolygonNorth");
-//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-//						geometries, param4);
-//		geometries.clear();
-//		geometries.push_back("KetzinPolygonWest");
-//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-//						geometries, param4);
-//		geometries.clear();
-//		geometries.push_back("KetzinPolygonSouth");
-//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-//						geometries, param4);
-//		geometries.clear();
-//		geometries.push_back("KetzinPolygonEast");
-//		gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
-//						geometries, param4);
-//	}
-//	// *** end creating closed surface mesh
-
-//	// *** begin assign z values
-//	{
-//		// get the surface
-//		std::vector<std::string> geo_names;
-//		_geoModels->getGeometryNames (geo_names);
-//		std::vector<GEOLIB::Surface*> const* sfcs (_geoModels->getSurfaceVec(geo_names[0]));
-//		GEOLIB::Surface const* sfc ((*sfcs)[5]);
-//		const size_t n_triangles (sfc->getNTriangles());
-//		size_t k;
-//
-//		std::vector<GEOLIB::Point*> const* pnts (_geoModels->getPointVec(geo_names[1]));
-//
-//		// write Points (inclusive z values) to file
-//		std::ofstream out ("RasterPointsBottom.stn");
-//		if (out) {
-//			// data
-//			for (size_t n(0); n<pnts->size(); n++) {
-//				// search triangle the point is inside
-//				const double test_pnt[3] = { (*(*pnts)[n])[0], (*(*pnts)[n])[1], 0};
-//				for (k=0; k<n_triangles; k++) {
-//					GEOLIB::Triangle const * const tri ((*sfc)[k]);
-//					if (tri->containsPoint2D(test_pnt)) {
-//						// compute coefficients c0, c1, c2 for the plane f(x,y) = c0 x + c1 y + c2
-//						double c[3];
-//						GEOLIB::getPlaneCoefficients(*tri, c);
-//						const double zval (c[0] * test_pnt[0] + c[1] * test_pnt[1] + c[2]);
-//						out << "    <station x=\"" << test_pnt[0] << "\" y=\"" << test_pnt[1] << "\" z=\"" << zval << "\" id=\"" << n << "\">" << std::endl;
-//						out << "      <name>" << n << "</name>" << std::endl;
-//						out << "    </station>" << std::endl;
-//						break;
-//					}
-//				}
-//				if (k==n_triangles) {
-//					out << n << " " << test_pnt[0] << " " << test_pnt[1] << " -9999" << std::endl;
-//				}
-//			}
-//			out.close();
-//		}
-//	}
-//	// *** end assign z values
-
-//	// *** begin create raster test
-//	{
-//		// get the surface
-//		std::vector<std::string> geo_names;
-//		_geoModels->getGeometryNames (geo_names);
-//		std::vector<GEOLIB::Surface*> const* sfcs (_geoModels->getSurfaceVec(geo_names[0]));
-//		GEOLIB::Surface const* sfc ((*sfcs)[4]);
-//
-//		double cell_size(50);
-//		double no_data_val(-9999);
-//		GEOLIB::Raster my_raster (cell_size, no_data_val);
-//		size_t n_rows(0), n_cols(0);
-//		double *raster (my_raster.getRasterFromSurface(*sfc, n_rows, n_cols));
-//		// write raster to testfile
-//		std::ofstream out ("RasterTop-50m-New.asc");
-//		if (out) {
-//			// write header
-//			out << "ncols\t" << n_cols << std::endl;
-//			out << "nrows\t" << n_rows << std::endl;
-//			out << "xllcorner\t" << (sfc->getAABB().getMinPoint())[0] - 0.5 * cell_size << std::endl;
-//			out << "yllcorner\t" << (sfc->getAABB().getMinPoint())[1] - 0.5 * cell_size << std::endl;
-//			out << "cellsize\t" << cell_size << std::endl;
-//			out << "NODATA_value\t" << no_data_val << std::endl;
-//			// data
-//			for (size_t r(0); r<n_rows; r++) {
-//				for (size_t c(0); c<n_cols-1; c++) {
-//					out << raster[r*n_cols+c] << " ";
-//				}
-//				out << raster[(r+1)*n_cols-1] << std::endl;
-//			}
-//			out.close();
-//		}
-//		delete [] raster;
-//	}
-//	// *** end create raster test
-
-//	// *** begin test CFEMesh::GetNODOnSFC ()
-//	{
-//		// get the surface
-//		std::vector<std::string> geo_names;
-//		_geoModels->getGeometryNames (geo_names);
-//		std::vector<GEOLIB::Surface*> const* sfcs (_geoModels->getSurfaceVec(geo_names[0]));
-//		GEOLIB::Surface const* sfc ((*sfcs)[0]);
-//
-//		std::string mesh_name ("/home/fischeth/Desktop/data/TestData/RectangleVictor/rectangle.msh");
-//		MeshLib::CFEMesh const* mesh (_project.getMesh (mesh_name));
-//
-//		std::vector<size_t> mesh_node_ids;
-//		mesh->GetNODOnSFC(sfc, mesh_node_ids);
-//		std::cout << mesh_node_ids.size() << " mesh nodes found" << std::endl;
-//		for (size_t k(0); k<mesh_node_ids.size(); k++) {
-//			std::cout << mesh_node_ids[k] << "\t" << std::flush;
-//		}
-//		std::cout << std::endl;
-//	}
-//	// *** end test CFEMesh::GetNODOnSFC ()
-
-//	// *** begin test merge geometries
-//	std::vector<std::string> geo_names;
-//	_geoModels->getGeometryNames (geo_names);
-//	std::string merge_name("MergedGeometry");
-//	_geoModels->mergeGeometries (geo_names, merge_name);
-//	// *** end test merge geometries
-
-//	std::string fname_mesh ("SurfaceBC.msh");
-//	FileIO::Gmsh2GeoIO::loadMeshAsGeometry(fname_mesh, _geoModels);
-
-//	{
-//		std::ofstream os ("Points5000000.gli");
-//		if (os) {
-//			os << "#POINTS" << std::endl;
-//			for (size_t k(0); k<5000000; k++) {
-//				os << k << " " << (rand()%1000)/1000.0
-//					<< " " << (rand()%1000)/1000.0
-//					<< " " << (rand()%1000)/1000.0 << std::endl;
-//			}
-//			os << "#STOP" << std::endl;
-//		}
-//	}
-
-//	std::vector<std::string> station_names;
-//		_geoModels->getStationNames (station_names);
-//	if (!station_names.empty()) {
-//		size_t resolution(36);
-//		for (std::vector<std::string>::const_iterator it(station_names.begin()); it
-//				!= station_names.end(); it++) {
-//
-//			std::string project_name("Circle");
-//			project_name += *it;
-//
-//			std::vector<GEOLIB::Point*> *pnts(new std::vector<GEOLIB::Point*>);
-//			const std::vector<GEOLIB::Point*>* middle_pnts(
-//					_geoModels->getPointVec(*it));
-//			std::vector<GEOLIB::Polyline*> *plys(new std::vector<
-//					GEOLIB::Polyline*>);
-//			std::map<std::string, size_t> * ply_names(new std::map<std::string,size_t>);
-//
-//			for (size_t k(0); k < middle_pnts->size(); k++) {
-//				GEOLIB::Polygon *polygon(createPolygonFromCircle(
-//						*((*middle_pnts)[k]), 450.0, *pnts, resolution));
-//				plys->push_back(polygon);
-//				std::string station_name("CircleAreaAroundStation");
-//				if (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])) {
-//					station_name
-//							+= (dynamic_cast<GEOLIB::Station*> ((*middle_pnts)[k])->getName());
-//				} else {
-//					station_name += number2str(k);
-//				}
-//				ply_names->insert(std::pair<std::string, size_t>(station_name,k));
-//			}
-//
-//			_geoModels->addPointVec(pnts, project_name);
-//			_geoModels->addPolylineVec(plys, project_name, ply_names);
-//		}
-//	}
-
-//	if (_geoModels) {
-//		std::vector<std::string> geo_names;
-//		_geoModels->getGeometryNames (geo_names);
-//
-//		if (!geo_names.empty()) {
-//			std::vector<GEOLIB::Polyline*> const* plys (_geoModels->getPolylineVec (geo_names[0]));
-//			std::vector<GEOLIB::Polyline*>* polyline_vec (new std::vector<GEOLIB::Polyline*>);
-//			GEOLIB::Polygon* polygon (NULL);
-//
-//			if (!_meshModels) {
-//				std::cout << "no mesh loaded" << std::endl;
-//			} else {
-//				std::string mesh_name ("model25");
-//				MeshLib::CFEMesh const* mesh ((_meshModels->getMesh (mesh_name))->getCFEMesh());
-//
-//				MeshLib::ExtractMeshNodes extract_mesh_nodes (mesh);
-////				std::vector<GEOLIB::Point*> * pnts_vec (const_cast<std::vector<GEOLIB::Point*>*>(_geoModels->getPointVec(geo_names[0])));
-//				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[19]), _geoModels, geo_names[0], polygon);
-//				if (polygon)
-//					polyline_vec->push_back (polygon);
-////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[1]), *(pnts_vec), polygon);
-////				if (polygon)
-////					polyline_vec->push_back (polygon);
-////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[2]), *(pnts_vec), polygon);
-////				if (polygon)
-////					polyline_vec->push_back (polygon);
-////				extract_mesh_nodes.getPolygonFromPolyline (*((*plys)[3]), *(pnts_vec), polygon);
-////				if (polygon)
-////					polyline_vec->push_back (polygon);
-//			}
-//
-//			if (!polyline_vec->empty()) {
-//				if (_geoModels->appendPolylineVec (*polyline_vec, geo_names[0]))
-//					std::cout << "added " << polyline_vec->size() << " polygons" << std::endl;
-//				else
-//					std::cout << "failed to add " << polyline_vec->size() << " polygons" << std::endl;
-//
-//				delete polyline_vec;
-//			}
-//		}
-//	}
-//#ifndef NDEBUG
-//	std::cout << "FEM Test here ..." << std::endl;
-//	QSettings settings("UFZ", "OpenGeoSys-5");
-//
-//	QString fileName = QFileDialog::getOpenFileName(this,
-//			"Select matrix file in binary compressed row storage format", settings.value(
-//					"lastOpenedFileDirectory").toString(),
-//			"binary matrix file (*.bin);;");
-//
-//	std::string fname (fileName.toStdString());
-//	// open input stream
-//	std::ifstream in (fname.c_str(), std::ios::binary);
-//
-//	if (in) {
-//		long n(0), *iA(NULL), *jA(NULL);
-//		double *A(NULL), *rhs(NULL);
-//
-//		std::cout << "reading matrix ... " << std::flush;
-//		// read matrix and right hand side (format provided by WW)
-//		FileIO::readCompressedStorageFmt (in, n, iA, jA, A, rhs);
-//		in.close ();
-//		std::cout << "done" << std::endl;
-//
-//		unsigned n_unsigned (n);
-//		unsigned *iA_unsigned (new unsigned[n_unsigned+1]);
-//		for (unsigned k(0); k<n_unsigned+1; k++)
-//			iA_unsigned[k] = iA[k];
-//
-//		unsigned *jA_unsigned (new unsigned[iA_unsigned[n_unsigned]]);
-//		for (unsigned k(0); k<iA_unsigned[n_unsigned]; k++)
-//			jA_unsigned[k] = jA[k];
-//
-//		// some tests
-//        bool valid(true);
-//		for (unsigned i = 0; i < n_unsigned && valid; ++i) {
-//			const unsigned end (iA_unsigned[i+1]);
-//			for (unsigned k (iA_unsigned[i]); k < end; k++)
-//				if (jA_unsigned[k] >= n_unsigned) {
-//					std::cout << "row " << i << " has column entry ";
-//					std::cout << iA_unsigned[k] << " but matrix has dim ";
-//					std::cout << n_unsigned << " x " << n_unsigned << std::endl;
-//					valid = false;
-//				}
-//		}
-//		if (!valid) {
-//			std::cout << "matrix not in valid format" << std::endl;
-//		} else {
-//	        unsigned min (iA_unsigned[1]-iA_unsigned[0]), max(iA_unsigned[1]-iA_unsigned[0]), max_idx(0), min_idx(0);
-//	        for (unsigned k=0; k<n_unsigned; ++k) {
-//	                unsigned deg = iA_unsigned[k+1]-iA_unsigned[k];
-//	                if (deg < min) {min = deg; min_idx = k;}
-//	                if (deg > max) {max = deg; max_idx = k;}
-//	        }
-//	        std::cout << "\taverage deg: " << double (iA_unsigned[n_unsigned]) / n_unsigned << std::endl;
-//	        std::cout << "\trow " << max_idx << " with max deg " << max << std::endl;
-//	        std::cout << "\trow " << min_idx << " with min deg " << min << std::endl;
-//
-//			// write matrix
-//			std::ofstream mat_out ("testmat.bin", std::ios::out|std::ios::binary);
-//			if (mat_out) {
-//				FileIO::writeCompressedStorageFmt (mat_out, n_unsigned, iA_unsigned, jA_unsigned, A);
-//				mat_out.close();
-//			}
-//			// write right hand side
-//			std::ofstream rhs_out ("rhs.dat");
-//			if (rhs_out) {
-//				for (unsigned k(0); k<n_unsigned; k++) {
-//					rhs_out << rhs[k] << std::endl;
-//				}
-//				rhs_out.close();
-//			}
-//		}
-//
-//		delete [] iA;
-//		delete [] jA;
-//		delete [] iA_unsigned;
-//		delete [] jA_unsigned;
-//		delete [] rhs;
-//		delete [] A;
-//	}
-//
-//#else
-	std::cout << "This is test functionality only..." << std::endl;
-//#endif
+		OGSError::box("Failed to load TetGen mesh file.");	std::cout << "This is test functionality only..." << std::endl;
 }
 
 void MainWindow::showTrackingSettingsDialog()

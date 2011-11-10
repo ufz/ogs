@@ -84,7 +84,9 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		// The current index refers to a geo-object
 		if (parent != NULL)
 		{
-			QAction* addNameAction = menu.addAction("Set name for element...");
+			QAction* addCondAction = menu.addAction("Set as FEM condition...");
+			QAction* addNameAction = menu.addAction("Set name...");
+			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setElementAsCondition()));
 			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
 		}
 		// The current index refers to the name of a geometry-object
@@ -133,13 +135,23 @@ void GeoTreeView::removeList()
 		emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
 }
 
+void GeoTreeView::setElementAsCondition()
+{
+	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
+	const size_t id = item->row();
+	const GEOLIB::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
+	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
+	emit requestCondSetupDialog(geometry_name, type, id);
+}
+
 void GeoTreeView::setNameForElement()
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
-	size_t id = item->data(0).toInt();
-	std::string type = GEOLIB::convertGeoTypeToString(dynamic_cast<GeoObjectListItem*>(item->parentItem())->getType());
-		std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
+	const size_t id = item->row();
+	const GEOLIB::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
+	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
 	emit requestNameChangeDialog(geometry_name, type, id);
 }
 

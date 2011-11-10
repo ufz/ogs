@@ -43,6 +43,8 @@ private slots:
 	void addFEMConditions();
 	/// Calls a LineEditDialog.
 	void connectPolylines();
+	/// Calls a FEMConditionSetupDialog.
+	void setElementAsCondition();
 	/// Calls a SetNameDialog.
 	void setNameForElement();
 	/// Saves a geometry in a file.
@@ -56,8 +58,9 @@ signals:
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
+	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
 	void requestLineEditDialog(const std::string&);
-	void requestNameChangeDialog(const std::string&, const std::string&, size_t);
+	void requestNameChangeDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
 };
 
 #endif //GEOTREEVIEW_H

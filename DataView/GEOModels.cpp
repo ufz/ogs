@@ -208,10 +208,9 @@ void GEOModels::connectPolylineSegments(const std::string &geoName,
 }
 
 
-void GEOModels::addNameForElement(const std::string &geometry_name, const std::string &object_type, size_t id, std::string new_name)
+void GEOModels::addNameForElement(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, std::string new_name)
 {
-	GEOLIB::GEOTYPE type = GEOLIB::convertGeoType(object_type);
-	switch(type) {
+	switch(object_type) {
 		case GEOLIB::POINT:
 			{
 				GEOLIB::PointVec* pnt_vec = this->getPointVecObj(geometry_name);

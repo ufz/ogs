@@ -7,6 +7,8 @@
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPointSetItem.h"
 
+#include <limits>
+
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
 #include <vtkCellData.h>
@@ -111,8 +113,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				parentItem = NULL;
 			}
 			else
-				parentItem =
-				        dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+				parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
 		}
 	}
 
@@ -228,15 +229,9 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			vtkPointData* pointData = dataSet->GetPointData();
 			if(pointData)
 			{
-				if(setActiveAttributeOnData(pointData, strippedName))
+				if(activeAttributeExists(pointData, strippedName))
 				{
-					_algorithm->SetInputArrayToProcess(
-					        0,
-					        0,
-					        0,
-					        vtkDataObject::
-					        FIELD_ASSOCIATION_POINTS,
-					        charName);
+					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
 					_mapper->SetScalarModeToUsePointData();
 				}
 				else
@@ -252,15 +247,9 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			vtkCellData* cellData = dataSet->GetCellData();
 			if(cellData)
 			{
-				if(setActiveAttributeOnData(cellData, strippedName))
+				if(activeAttributeExists(cellData, strippedName))
 				{
-					_algorithm->SetInputArrayToProcess(
-					        0,
-					        0,
-					        0,
-					        vtkDataObject::
-					        FIELD_ASSOCIATION_CELLS,
-					        charName);
+					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
 					_mapper->SetScalarModeToUseCellData();
 				}
 				else
@@ -272,15 +261,16 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			}
 		}
 
+		_activeAttribute = name;
 		_mapper->SetScalarRange(dataSet->GetScalarRange());
 		this->setLookupTableForActiveScalar();
 		_mapper->ScalarVisibilityOn();
+
 		//_mapper->Update();	// KR: TODO - this is incredibly slow ... WHY???
-		_activeAttribute = name;
 	}
 }
 
-bool VtkVisPointSetItem::setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name)
+bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::string& name)
 {
 	bool arrayFound = false;
 	for (int i = 0; i < data->GetNumberOfArrays() && !arrayFound; i++)
@@ -312,12 +302,11 @@ void VtkVisPointSetItem::setLookupTableForActiveScalar()
 				vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
 			}
 			else // specific color table
+				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->GetActiveAttribute()));
 
-				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->
-				                                                 GetActiveAttribute()));
-
-			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			//_mapper->Update();  KR: not necessary?!
+			//_mapper->SetScalarRange(this->_transformFilter->GetOutput()->GetScalarRange());
+			_mapper->SetScalarRange(vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0))->GetScalarRange());
+			//_mapper->Update();  //KR: not necessary?!
 		}
 	}
 }

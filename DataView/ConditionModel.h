@@ -17,7 +17,6 @@ class vtkPolyDataAlgorithm;
 namespace GEOLIB
 {
 class GeoObject;
-class GeoType;
 }
 
 /**
@@ -40,13 +39,16 @@ public slots:
 	/// Adds a vector of FEM Conditions to the model. Objects in the vector can consist of BCs, ICs or STs in any combination and sequence.
 	void addConditions(std::vector<FEMCondition*> &conditions);
 
+	/// Adds a single FEM Conditions to the model
+	void addCondition(FEMCondition* condition);
+
 	/// Removes a subtree (BCs, ICs, STs) from the the model. If all conditions for a given geometry are removed, this tree is completely removed.
 	void removeFEMConditions(const QString &geometry_name,
 	                         FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
 
 private:
 	/// Adds a new FEM condition to the condition tree model.
-	void addConditionItem(FEMCondition* conditions);
+	void addConditionItem(FEMCondition* condition);
 
 	/// Removes the FEM condition with the given index.
 	//bool removeConditionItem(const QModelIndex &idx);
@@ -59,10 +61,7 @@ private:
 
 	/// Returns the subtree item for a geometry with the given name. If create_item is true, this item will be created if it doesn't exist yet.
 	TreeItem* getGEOParent(const QString &geoName, bool create_item = false);
-	/// Returns the geo object for a geometric item of the given name and type for the associated geometry.
-	const GEOLIB::GeoObject* getGEOObject(const std::string &geo_name,
-	                                      GEOLIB::GEOTYPE type,
-	                                      const std::string &obj_name) const;
+
 	/// Returns the index of a geometric item of the given name and type for the associated geometry.
 	int getGEOIndex(const std::string &geo_name,
 	                GEOLIB::GEOTYPE type,

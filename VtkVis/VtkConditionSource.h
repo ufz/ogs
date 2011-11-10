@@ -57,6 +57,7 @@ private:
 
 	const std::vector<GEOLIB::Point*>* _points;
 	const std::vector<FEMCondition*>* _cond_vec;
+	std::map<FiniteElement::DistributionType, vtkIdType> _dis_type_map;
 };
 
 #endif // VTKCONDITIONSOURCE_H

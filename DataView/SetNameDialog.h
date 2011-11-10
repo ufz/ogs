@@ -6,6 +6,8 @@
 #ifndef SETNAMEDIALOG_H
 #define SETNAMEDIALOG_H
 
+#include "GeoType.h"
+
 #include <QDialog>
 #include <QtGui/QMainWindow>
 
@@ -23,7 +25,11 @@ class SetNameDialog : public QDialog
 
 public:
 	/// Constructor
-	SetNameDialog(const std::string &parent_name, const std::string &object_type_name, size_t id, const std::string &old_name, QDialog* parent = 0);
+	SetNameDialog(const std::string &parent_name, 
+				  const std::string &object_type_name, 
+				  size_t id, 
+				  const std::string &old_name, 
+				  QDialog* parent = 0);
 	~SetNameDialog();
 
 	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
@@ -48,7 +54,7 @@ private slots:
 	void reject();
 
 signals:
-	void requestNameChange(const std::string&, const std::string&, size_t, std::string);
+	void requestNameChange(const std::string&, const GEOLIB::GEOTYPE, size_t, std::string);
 };
 
 #endif //SETNAMEDIALOG_H

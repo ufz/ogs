@@ -39,15 +39,15 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 {
 	TreeItem* geoParent =
 	        this->getGEOParent(QString::fromStdString(c->getAssociatedGeometryName()), true);
-	CondObjectListItem* condParent = this->getCondParent(geoParent, c->getCondType());
+		CondObjectListItem* condParent = this->getCondParent(geoParent, c->getCondType());
 	if (condParent == NULL)
 		condParent = this->createCondParent(geoParent, c->getCondType());
 
 	if (condParent)
 	{
 		QList<QVariant> condData;
-		condData << QString::fromStdString(c->getGeoName()) << QString::fromStdString(
-		        c->getGeoTypeAsString());
+		condData << QString::fromStdString(c->getGeoName()) 
+			     << QString::fromStdString(c->getGeoTypeAsString());
 		CondItem* condItem = new CondItem(condData, condParent, c);
 		condParent->appendChild(condItem);
 		// add process information
@@ -56,13 +56,11 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
 		// add information on primary variable
 		QList<QVariant> pvData;
-		pvData <<
-		QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
+		pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
 		TreeItem* pvInfo = new TreeItem(pvData, condItem);
 		// add distribution information
 		QList<QVariant> disData;
-		disData <<
-		QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
+		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
 		std::vector<double> dis_value = c->getDisValue();
 		TreeItem* disInfo;
 		if (!(c->getProcessDistributionType() == FiniteElement::LINEAR ||
@@ -94,33 +92,37 @@ void ConditionModel::addConditionItem(FEMCondition* c)
 		reset();
 	}
 	else
-		std::cout <<
-		"Error in ConditionModel::addConditionItem() - Parent object not found..." <<
-		std::endl;
+		std::cout << "Error in ConditionModel::addConditionItem() - Parent object not found..." << std::endl;
+}
+
+void ConditionModel::addCondition(FEMCondition* condition)
+{
+	const bool is_domain = (condition->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
+
+	const GEOLIB::GeoObject* object = condition->getGeoObj();
+	if (object == NULL)
+	{
+		object = _project.getGEOObjects()->getGEOObject(
+						 condition->getAssociatedGeometryName(),
+						 condition->getGeoType(),
+						 condition->getGeoName());
+		condition->setGeoObj(object);
+	}
+	if (object || is_domain)
+	{
+		_project.addCondition(condition);
+		this->addConditionItem(condition);
+	}
+	else
+		std::cout << "Error in ConditionModel::addConditions() - Specified geometrical object "
+		          << condition->getGeoName() << " not found in associated geometry..." 
+				  << std::endl;
 }
 
 void ConditionModel::addConditions(std::vector<FEMCondition*> &conditions)
 {
 	for (size_t i = 0; i < conditions.size(); i++)
-	{
-		bool is_domain = (conditions[i]->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
-		const GEOLIB::GeoObject* object = this->getGEOObject(
-		        conditions[i]->getAssociatedGeometryName(),
-		        conditions[i]->getGeoType(),
-		        conditions[i]->getGeoName());
-		if (object || is_domain)
-		{
-			conditions[i]->setGeoObj(object);
-			_project.addCondition(conditions[i]);
-			this->addConditionItem(conditions[i]);
-		}
-		else
-			std::cout <<
-			"Error in ConditionModel::addConditions() - Specified geometrical object "
-			          << conditions[i]->getGeoName() <<
-			" not found in associated geometry..." <<
-			std::endl;
-	}
+		this->addCondition(conditions[i]);
 }
 /*
    bool ConditionModel::removeConditionItem(const QModelIndex &idx)
@@ -159,22 +161,6 @@ void ConditionModel::removeFEMConditions(const QString &geometry_name, FEMCondit
 		removeRows(condParent->row(), 1, index(geoParent->row(), 0));
 	}
 	_project.removeConditions(geometry_name.toStdString(), type);
-}
-
-const GEOLIB::GeoObject* ConditionModel::getGEOObject(const std::string &geo_name,
-                                                      GEOLIB::GEOTYPE type,
-                                                      const std::string &obj_name) const
-{
-	if (type == GEOLIB::POINT)
-		return this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementByName(
-		               obj_name);
-	else if (type == GEOLIB::POLYLINE)
-		return this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->
-		       getElementByName(obj_name);
-	else if (type == GEOLIB::SURFACE)
-		return this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementByName(
-		               obj_name);
-	return NULL;
 }
 
 int ConditionModel::getGEOIndex(const std::string &geo_name,

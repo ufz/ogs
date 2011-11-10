@@ -84,8 +84,8 @@ protected:
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
-	/// @see SetActiveAttribute()
-	bool setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name);
+	/// Checks if the selected attribute actually exists for the data set
+	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
 };
 
 #endif // VTKVISPOINTSETITEM_H

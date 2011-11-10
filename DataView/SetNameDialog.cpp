@@ -3,7 +3,8 @@
  * 2011/10/26 KR Initial implementation
  */
 
-#include <SetNameDialog.h>
+#include "SetNameDialog.h"
+
 #include <QDialogButtonBox>
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -46,7 +47,7 @@ void SetNameDialog::setupDialog(const std::string &old_name)
 
 void SetNameDialog::accept()
 {
-	emit requestNameChange(_parent_name, _object_type_name, _id, _new_name->text().toStdString());
+	emit requestNameChange(_parent_name, GEOLIB::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
 	this->done(QDialog::Accepted);
 }
 

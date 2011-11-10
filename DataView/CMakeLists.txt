@@ -9,6 +9,7 @@ set( SOURCES
 	DataView.cpp
 	DBConnectionDialog.cpp
 	ElementTreeModel.cpp
+	FEMConditionSetupDialog.cpp
 	GEOModels.cpp
 	GeoTabWidget.cpp
 	GeoTreeModel.cpp
@@ -42,6 +43,7 @@ set( MOC_HEADERS
 	DataView.h
 	DBConnectionDialog.h
 	ElementTreeModel.h
+	FEMConditionSetupDialog.h
 	GEOModels.h
 	GeoTabWidget.h
 	GeoTreeModel.h
@@ -78,6 +80,7 @@ set( UIS
 	ConditionTabWidgetBase.ui
 	DatabaseResultView.ui
 	DBConnection.ui
+	FEMConditionSetup.ui
 	GeoTabWidgetBase.ui
 	GMSHPrefs.ui
 	LineEdit.ui

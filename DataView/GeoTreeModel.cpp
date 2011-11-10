@@ -328,15 +328,15 @@ void GeoTreeModel::setNameForItem(const std::string &name, GEOLIB::GEOTYPE type,
 		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
 		{
 			TreeItem* object_list = _lists[i]->child(type_idx);
-			for (int j=0; j<object_list->childCount(); j++)
-			{
-				TreeItem* item = object_list->child(j);
-				if (static_cast<size_t>(item->data(0).toInt()) == id)
-				{
+//			for (int j=0; j<object_list->childCount(); j++)
+//			{
+				TreeItem* item = object_list->child(/*j*/id);
+//				if (static_cast<size_t>(item->data(0).toInt()) == id)
+//				{
 					item->setData(col_idx, QString::fromStdString(item_name));
-					break;
-				}
-			}
+//					break;
+//				}
+//			}
 			break;
 		}
 	}
