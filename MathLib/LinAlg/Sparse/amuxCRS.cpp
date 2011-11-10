@@ -6,8 +6,11 @@
  */
 
 #include "amuxCRS.h"
+#include <stddef.h>
 #include <omp.h>
+#ifdef HAVE_PTHREADS
 #include <pthread.h>
+#endif
 
 namespace MathLib {
 

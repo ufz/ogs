@@ -59,7 +59,7 @@ public:
 
 	virtual void amux(FP_TYPE d, FP_TYPE const * const x, FP_TYPE *y) const
 	{
-		amuxCRS(d, MatrixBase::_n_rows, _row_ptr, _col_idx, _data, x, y);
+		amuxCRS<FP_TYPE, IDX_TYPE>(d, this->getNRows(), _row_ptr, _col_idx, _data, x, y);
 	}
 
     virtual void precondApply(FP_TYPE* x) const
