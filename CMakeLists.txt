@@ -36,5 +36,5 @@ ADD_SUBDIRECTORY( MathLib )
 ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
 IF(NOT MSVC)
         ADD_SUBDIRECTORY( SimpleTests/SolverTests )
-ENDIF(MSVC)
+ENDIF(NOT MSVC)
 
