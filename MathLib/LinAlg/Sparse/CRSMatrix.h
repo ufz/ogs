@@ -43,11 +43,13 @@ public:
 	}
 
 	CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
-		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n), _row_ptr(iA), _col_idx(jA), _data(A)
+		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n),
+		_row_ptr(iA), _col_idx(jA), _data(A)
 	{}
 
 	CRSMatrix(IDX_TYPE n1) :
-		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n1, n1), _row_ptr(NULL), _col_idx(NULL), _data(NULL)
+		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n1, n1),
+		_row_ptr(NULL), _col_idx(NULL), _data(NULL)
 	{}
 
 	virtual ~CRSMatrix()
@@ -72,6 +74,59 @@ public:
     IDX_TYPE getNNZ() const { return _row_ptr[MatrixBase::_n_rows]; }
 
     /**
+     * This method inserts/overwrites a non-zero matrix entry.
+	 * Precondition: the entry have to be in the sparsity pattern!
+     * @param row the row number
+     * @param col the column number
+     * @param val the value that should be set at pos row,col
+     * @return a value > 0, if the entry is not contained in the sparsity pattern
+     */
+	int setValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
+	{
+		assert(0 <= row && row < MatrixBase::_n_rows);
+
+		// linear search - for matrices with many entries per row binary search is much faster
+		const IDX_TYPE idx_end (_row_ptr[row+1]);
+		IDX_TYPE j(_row_ptr[row]), k;
+
+		while (j<idx_end && (k=_col_idx[j]) <= col) {
+			if (k == col) {
+				_data[j] = val;
+				return 0;
+			}
+			j++;
+		}
+		return 1;
+	}
+
+    /**
+     * This method adds value val to an existing matrix entry at position row,col.
+	 * Precondition: the entry have to be in the sparsity pattern!
+     * @param row the row number
+     * @param col the column number
+     * @param val the value that should be set at pos row,col
+     * @return a value > 0, if the entry is not contained in the sparsity pattern
+     */
+	int addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
+	{
+		assert(0 <= row && row < MatrixBase::_n_rows);
+
+		// linear search - for matrices with many entries per row binary search is much faster
+		const IDX_TYPE idx_end (_row_ptr[row+1]);
+		IDX_TYPE j(_row_ptr[row]), k;
+
+		while (j<idx_end && (k=_col_idx[j]) <= col) {
+			if (k == col) {
+				_data[j] += val;
+				return 0;
+			}
+			j++;
+		}
+		return 1;
+	}
+
+
+    /**
      * This is the constant access operator to a non-zero matrix entry.
      * Precondition: the entries have to be in the sparsity pattern!
      * @param row the row number
@@ -94,29 +149,6 @@ public:
     	}
     	return 0.0;
     }
-
-    /**
-	 * This is the non constant access operator to a non-zero matrix entry.
-	 * Precondition: the entries have to be in the sparsity pattern!
-	 * @param row the row number
-	 * @param col the column number
-	 * @return The corresponding matrix entry that can be modified by the user.
-	 */
-	FP_TYPE & operator() (IDX_TYPE row, IDX_TYPE col)
-	{
-		assert(0 <= row && row < MatrixBase::_n_rows);
-
-		// linear search - for matrices with many entries per row binary search is much faster
-		const IDX_TYPE idx_end (_row_ptr[row+1]);
-		IDX_TYPE j(_row_ptr[row]), k;
-
-		while (j<idx_end && (k=_col_idx[j]) <= col) {
-			if (k == col) {
-				return _data[j];
-			}
-			j++;
-		}
-	}
 
 	/**
 	 * get const access to the row pointer array of CRS matrix
@@ -145,27 +177,15 @@ public:
 	void eraseEntries (IDX_TYPE n_rows_cols,
 					IDX_TYPE const*const rows, IDX_TYPE const*const cols)
 	{
-//		std::cout << "original: " << std::endl;
-//		printMat();
 		IDX_TYPE n_cols(MatrixBase::_n_rows);
 		//*** remove the rows
 		removeRows(n_rows_cols, rows);
-//		std::cout << "removed rows: " << std::endl;
-//		printMat();
 		//*** transpose
 		transpose(n_cols);
-//		std::cout << "transposed: " << std::endl;
-//		printMat();
 		//*** remove columns in original means removing rows in the transposed
 		removeRows(n_rows_cols, cols);
-//		std::cout << "removed rows: " << std::endl;
-//		printMat();
 		//*** transpose again
 		transpose(MatrixBase::_n_rows);
-//		std::cout << "transposed: " << std::endl;
-//		printMat();
-//		//*** apply changes to the column indices
-//		correctColumnIndices(n_rows_cols, cols);
 	}
 
 	/**
@@ -303,31 +323,7 @@ protected:
 		delete[] data_trans;
 	}
 
-	void correctColumnIndices(IDX_TYPE n_rows_cols, IDX_TYPE const*const cols)
-	{
-		// create the mapping
-		const IDX_TYPE size(MatrixBase::_n_rows + n_rows_cols);
-		IDX_TYPE *mapping(new IDX_TYPE[size]);
-		IDX_TYPE k(0);
-		for (IDX_TYPE i(0); i < n_rows_cols; i++) {
-			while (k < cols[i]) {
-				mapping[k] = k - i;
-				k++;
-			}
-		}
-		for (IDX_TYPE k(cols[n_rows_cols - 1]); k < size; k++) {
-			mapping[k] = k - n_rows_cols;
-		}
-
-		// apply mapping to _col_idx
-		const IDX_TYPE nnz(_row_ptr[MatrixBase::_n_rows]);
-		for (IDX_TYPE k(0); k < nnz; k++) {
-			_col_idx[k] = mapping[_col_idx[k]];
-		}
-
-		delete[] mapping;
-	}
-
+#ifndef NDEBUG
 	void printMat() const
 	{
 		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
@@ -339,6 +335,7 @@ protected:
 			std::cout << std::endl;
 		}
 	}
+#endif
 
 	IDX_TYPE *_row_ptr;
 	IDX_TYPE *_col_idx;

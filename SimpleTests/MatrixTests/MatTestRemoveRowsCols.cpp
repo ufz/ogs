@@ -49,7 +49,17 @@ int main(int argc, char *argv[])
 		std::cout << "Parameters read: n=" << n << ", nnz=" << nnz << std::endl;
 	}
 
-	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
+	MathLib::CRSMatrix<double, unsigned> *mat (new MathLib::CRSMatrix<double, unsigned>(n, iA, jA, A));
+
+	const double val0 ((*mat)(1,1));
+	std::cout << val0 << std::endl;
+
+//	double val ((*(const_cast<MathLib::CRSMatrix<double, unsigned> const*>(mat)))(1,1));
+//	std::cout << val << std::endl;
+
+	MathLib::CRSMatrix<double, unsigned> const& ref_mat(*mat);
+	double val1 (ref_mat(1,1));
+	std::cout << val1 << std::endl;
 
 	const unsigned n_rows_cols_to_erase(3);
 	unsigned *rows_to_erase(new unsigned[n_rows_cols_to_erase]);
@@ -60,12 +70,14 @@ int main(int argc, char *argv[])
 		cols_to_erase[k] = (k+1)*2;
 	}
 
-	mat.eraseEntries(n_rows_cols_to_erase, rows_to_erase, cols_to_erase);
+	mat->eraseEntries(n_rows_cols_to_erase, rows_to_erase, cols_to_erase);
 	delete[] rows_to_erase;
 	delete[] cols_to_erase;
 
 	fname_mat = argv[2];
 	std::ofstream out (fname_mat.c_str(), std::ios::binary);
-	CS_write (out, mat.getNRows(), mat.getRowPtrArray(), mat.getColIdxArray(), mat.getEntryArray());
+	CS_write (out, mat->getNRows(), mat->getRowPtrArray(), mat->getColIdxArray(), mat->getEntryArray());
 	out.close();
+
+	delete mat;
 }
