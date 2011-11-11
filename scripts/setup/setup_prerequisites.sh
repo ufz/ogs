@@ -43,6 +43,15 @@ if [ "$OSTYPE" == 'msys' ]; then
 		wget --no-check-certificate https://github.com/downloads/ufz/devguide/7za.exe
 	fi
 
+	# jom
+	JOM_LOCATION=`which jom`
+	if [ ! -z "$JOM_LOCATION" ]; then
+		echo "jom found."
+	else
+		cd ~/bin
+		wget --no-check-certificate https://github.com/downloads/ufz/devguide/jom.exe
+	fi
+
 fi
 
 cd "$SOURCE_LOCATION/scripts/setup"
