@@ -9,7 +9,7 @@
 #include "VtkVisPipeline.h"
 
 //#include "Model.h"
-#include "ConditionModel.h"
+#include "ProcessModel.h"
 #include "GeoTreeModel.h"
 #include "MeshQualityEquiAngleSkew.h"
 #include "MeshQualityNormalisedArea.h"
