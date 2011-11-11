@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConditionTabWidgetBase</class>
- <widget class="QWidget" name="ConditionTabWidgetBase">
+ <class>ModellingTabWidgetBase</class>
+ <widget class="QWidget" name="ModellingTabWidgetBase">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -18,15 +18,15 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="ConditionView" name="treeView"/>
+    <widget class="ProcessView" name="treeView"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ConditionView</class>
+   <class>ProcessView</class>
    <extends>QTreeView</extends>
-   <header>ConditionView.h</header>
+   <header>ProcessView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

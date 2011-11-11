@@ -116,13 +116,13 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_project.setGEOObjects(_geoModels);
 	_meshModels = new MshModel(_project);
 	_elementModel = new ElementTreeModel();
-	_conditionModel = new ConditionModel(_project);
+	_processModel = new ProcessModel(_project);
 
 	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
 	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
 	mshTabWidget->elementView->setModel(_elementModel);
-	conditionTabWidget->treeView->setModel(_conditionModel);
+	modellingTabWidget->treeView->setModel(_processModel);
 
 	// vtk visualization pipeline
 	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
@@ -161,7 +161,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	//connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
-	//	_conditionModel, SLOT(removeFEMConditions(std::string, GEOLIB::GEOTYPE)));
+	//	_processModel, SLOT(removeFEMConditions(std::string, GEOLIB::GEOTYPE)));
 
 	// Setup connections for mesh models to GUI
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
@@ -175,9 +175,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
 
 	// Setup connections for condition model to GUI
-	connect(conditionTabWidget->treeView,
+	connect(modellingTabWidget->treeView,
 	        SIGNAL(conditionsRemoved(QString, FEMCondition::CondType)),
-	        _conditionModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
+	        _processModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -185,11 +185,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)));
 
-	connect(_conditionModel,
+	connect(_processModel,
 	        SIGNAL(conditionAdded(ConditionModel *, std::string, FEMCondition::CondType)),
 	        _vtkVisPipeline,
 	        SLOT(addPipelineItem(ConditionModel *, std::string, FEMCondition::CondType)));
-	connect(_conditionModel,
+	connect(_processModel,
 	        SIGNAL(conditionsRemoved(ConditionModel *, std::string, FEMCondition::CondType)),
 	        _vtkVisPipeline,
 	        SLOT(removeSourceItem(ConditionModel *, std::string, FEMCondition::CondType)));
@@ -364,7 +364,7 @@ MainWindow::~MainWindow()
 	delete _db;
 	delete _vtkVisPipeline;
 	delete _meshModels;
-	delete _conditionModel;
+	delete _processModel;
 	//delete _visPrefsDialog;
 	//delete _geoModels;
 
@@ -1026,7 +1026,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 
 		if (!conditions.empty())
 		{
-			this->_conditionModel->addConditions(conditions);
+			this->_processModel->addConditions(conditions);
 
 			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
 			     it != bc_list.end(); ++it)
@@ -1194,7 +1194,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 	else
 	{
 		FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name));
-		connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_conditionModel, SLOT(addCondition(FEMCondition*)));
+		connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
 		dlg.exec();
 	}
 }
@@ -1513,7 +1513,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>* points
 		// add boundary conditions to model
 		if (!conditions.empty())
 		{
-			this->_conditionModel->addConditions(conditions);
+			this->_processModel->addConditions(conditions);
 			for (size_t i = 0; i < st_vector.size(); i++)
 				delete st_vector[i];
 			st_vector.clear();

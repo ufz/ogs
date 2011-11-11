@@ -15,7 +15,7 @@ class GEOModels;
 class MshModel;
 class ElementTreeModel;
 class StationTreeModel;
-class ConditionModel;
+class ProcessModel;
 class VtkVisPipeline;
 class DatabaseConnection;
 class VisPrefsDialog;
@@ -126,7 +126,7 @@ private:
 	GEOModels* _geoModels;
 	MshModel* _meshModels;
 	ElementTreeModel* _elementModel;
-	ConditionModel* _conditionModel;
+	ProcessModel* _processModel;
 	ProjectData _project;
 	VtkVisPipeline* _vtkVisPipeline;
 	QList<QRect> _screenGeometries;

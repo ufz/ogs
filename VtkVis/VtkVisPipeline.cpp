@@ -251,7 +251,7 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
 	addPipelineItem(model->vtkSource(name));
 }
 
-void VtkVisPipeline::addPipelineItem(ConditionModel* model,
+void VtkVisPipeline::addPipelineItem(ProcessModel* model,
                                      const std::string &name,
                                      FEMCondition::CondType type)
 {
@@ -357,7 +357,7 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
 	}
 }
 
-void VtkVisPipeline::removeSourceItem(ConditionModel* model,
+void VtkVisPipeline::removeSourceItem(ProcessModel* model,
                                       const std::string &name,
                                       FEMCondition::CondType type)
 {

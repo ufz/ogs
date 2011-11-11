@@ -28,7 +28,7 @@ class vtkProp3D;
 class QModelIndex;
 class QString;
 class GeoTreeModel;
-class ConditionModel;
+class ProcessModel;
 class MshModel;
 class StationTreeModel;
 class TreeModel;
@@ -85,7 +85,7 @@ public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
 	void addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
-	void addPipelineItem(ConditionModel* model,
+	void addPipelineItem(ProcessModel* model,
 	                     const std::string &name,
 	                     FEMCondition::CondType type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
@@ -97,7 +97,7 @@ public slots:
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
 	void removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
-	void removeSourceItem(ConditionModel* model,
+	void removeSourceItem(ProcessModel* model,
 	                      const std::string &name,
 	                      FEMCondition::CondType type);
 	void removeSourceItem(StationTreeModel* model, const std::string &name);

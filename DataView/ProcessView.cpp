@@ -1,5 +1,5 @@
 /**
- * \file ConditionView.cpp
+ * \file ProcessView.cpp
  * 2010/12/13 KR Initial implementation
  */
 
@@ -10,11 +10,11 @@
 #include "ConditionModel.h"
 #include "ConditionView.h"
 
-ConditionView::ConditionView(QWidget* parent) : QTreeView(parent)
+ProcessView::ProcessView(QWidget* parent) : QTreeView(parent)
 {
 }
 
-void ConditionView::updateView()
+void ProcessView::updateView()
 {
 	setAlternatingRowColors(true);
 	resizeColumnToContents(0);
@@ -22,24 +22,24 @@ void ConditionView::updateView()
 	setColumnWidth(2,50);
 }
 
-void ConditionView::on_Clicked(QModelIndex idx)
+void ProcessView::on_Clicked(QModelIndex idx)
 {
 	qDebug("%d, %d",idx.parent().row(), idx.row());
 }
 
-void ConditionView::selectionChanged( const QItemSelection &selected,
+void ProcessView::selectionChanged( const QItemSelection &selected,
                                       const QItemSelection &deselected )
 {
 	emit itemSelectionChanged(selected, deselected);
 	return QTreeView::selectionChanged(selected, deselected);
 }
 
-void ConditionView::contextMenuEvent( QContextMenuEvent* event )
+void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_UNUSED(event);
 
 	CondObjectListItem* item =
-	        dynamic_cast<CondObjectListItem*>(static_cast<ConditionModel*>(this->model())->
+	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
 	                                          getItem(this
 	                                                  ->
 	                                                  selectionModel()->currentIndex()));
@@ -52,10 +52,10 @@ void ConditionView::contextMenuEvent( QContextMenuEvent* event )
 	}
 }
 
-void ConditionView::removeCondition()
+void ProcessView::removeCondition()
 {
 	CondObjectListItem* item =
-	        dynamic_cast<CondObjectListItem*>(static_cast<ConditionModel*>(this->model())->
+	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
 	                                          getItem(this
 	                                                  ->
 	                                                  selectionModel()->currentIndex()));
@@ -64,7 +64,7 @@ void ConditionView::removeCondition()
 	emit conditionsRemoved(geo_name, type);
 }
 /*
-   void ConditionView::removeAllConditions()
+   void ProcessView::removeAllConditions()
    {
     ConditionModel* model = static_cast<ConditionModel*>(this->model());
 

@@ -1,10 +1,10 @@
 /**
- * \file ConditionModel.h
+ * \file ProcessModel.h
  * 18/10/2010 KR Initial implementation
  */
 
-#ifndef CONDITIONMODEL_H
-#define CONDITIONMODEL_H
+#ifndef PROCESSMODEL_H
+#define PROCESSMODEL_H
 
 // ** INCLUDES **
 #include "ProjectData.h"
@@ -20,16 +20,17 @@ class GeoObject;
 }
 
 /**
- * \brief A model for the ConditionView implementing a tree of FEM-Conditions (BCs, ICs, STs) as a double-linked list.
- * \sa TreeModel, ConditionView, TreeItem, CondObjectListItem
+ * \brief A model implementing a tree structure for process-relevant information such as
+ * process types, FEM-Conditions (BCs, ICs, STs), etc. as a double-linked list.
+ * \sa TreeModel, ProcessView, TreeItem, CondObjectListItem
  */
-class ConditionModel : public TreeModel
+class ProcessModel : public TreeModel
 {
 	Q_OBJECT
 
 public:
-	ConditionModel(ProjectData &project, QObject* parent = 0);
-	~ConditionModel();
+	ProcessModel(ProjectData &project, QObject* parent = 0);
+	~ProcessModel();
 
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 	/// Returns the vtk source object for the specified subtree of a geometry with the given name.
@@ -70,8 +71,8 @@ private:
 	ProjectData& _project;
 
 signals:
-	void conditionAdded(ConditionModel*, const std::string &name, FEMCondition::CondType);
-	void conditionsRemoved(ConditionModel*, const std::string &name, FEMCondition::CondType);
+	void conditionAdded(ProcessModel*, const std::string &name, FEMCondition::CondType);
+	void conditionsRemoved(ProcessModel*, const std::string &name, FEMCondition::CondType);
 };
 
-#endif // CONDITIONMODEL_H
+#endif // PROCESSMODEL_H

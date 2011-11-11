@@ -1,10 +1,10 @@
 /**
- * \file ConditionView.h
+ * \file ProcessView.h
  * 2010/12/13 KR Initial implementation
  */
 
-#ifndef CONDITIONVIEW_H
-#define CONDITIONVIEW_H
+#ifndef PROCESSVIEW_H
+#define PROCESSVIEW_H
 
 #include <QContextMenuEvent>
 #include <QTreeView>
@@ -18,13 +18,13 @@ class ConditionModel;
  * information such as Process Type, Distribution, etc.
  * \sa ConditionModel, CondItem
  */
-class ConditionView : public QTreeView
+class ProcessView : public QTreeView
 {
 	Q_OBJECT
 
 public:
 	/// Constructor
-	ConditionView(QWidget* parent = 0);
+	ProcessView(QWidget* parent = 0);
 
 	/// Update the view to visualise changes made to the underlying data
 	void updateView();
@@ -48,4 +48,4 @@ signals:
 	void conditionsRemoved(QString, FEMCondition::CondType);
 };
 
-#endif //CONDITIONVIEW_H
+#endif //PROCESSVIEW_H

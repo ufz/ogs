@@ -1,5 +1,5 @@
 /**
- * \file ConditionTabWidget.cpp
+ * \file ModellingTabWidget.cpp
  * 2010/12/14 KR Initial implementation
  *
  * Implementation of StationTabWidget
@@ -10,7 +10,7 @@
 #include "ConditionTabWidget.h"
 #include "TreeItem.h"
 
-ConditionTabWidget::ConditionTabWidget( QWidget* parent /*= 0*/ )
+ModellingTabWidget::ModellingTabWidget( QWidget* parent /*= 0*/ )
 	: QWidget(parent)
 {
 	setupUi(this);

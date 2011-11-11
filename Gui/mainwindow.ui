@@ -198,7 +198,7 @@
   </widget>
   <widget class="QDockWidget" name="conditionDock">
    <property name="windowTitle">
-    <string>FEM Conditions</string>
+    <string>Modelling</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -209,7 +209,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="ConditionTabWidget" name="conditionTabWidget" native="true"/>
+      <widget class="ModellingTabWidget" name="conditionTabWidget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -407,15 +407,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ConditionTabWidget</class>
-   <extends>QWidget</extends>
-   <header>ConditionTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>GeoTabWidget</class>
    <extends>QWidget</extends>
    <header>GeoTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ModellingTabWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ModellingTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
