@@ -7,7 +7,7 @@
 #include "mainwindow.h"
 
 // models
-#include "ConditionModel.h"
+#include "ProcessModel.h"
 #include "ElementTreeModel.h"
 #include "GEOModels.h"
 #include "GeoTreeModel.h"
@@ -186,13 +186,13 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)));
 
 	connect(_processModel,
-	        SIGNAL(conditionAdded(ConditionModel *, std::string, FEMCondition::CondType)),
+	        SIGNAL(conditionAdded(ProcessModel *, std::string, FEMCondition::CondType)),
 	        _vtkVisPipeline,
-	        SLOT(addPipelineItem(ConditionModel *, std::string, FEMCondition::CondType)));
+	        SLOT(addPipelineItem(ProcessModel *, std::string, FEMCondition::CondType)));
 	connect(_processModel,
-	        SIGNAL(conditionsRemoved(ConditionModel *, std::string, FEMCondition::CondType)),
+	        SIGNAL(conditionsRemoved(ProcessModel *, std::string, FEMCondition::CondType)),
 	        _vtkVisPipeline,
-	        SLOT(removeSourceItem(ConditionModel *, std::string, FEMCondition::CondType)));
+	        SLOT(removeSourceItem(ProcessModel *, std::string, FEMCondition::CondType)));
 
 	connect(_geoModels, SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
 	        _vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel *, std::string)));
@@ -248,8 +248,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
-	tabifyDockWidget(mshDock, conditionDock);
-	tabifyDockWidget(conditionDock, stationDock);
+	tabifyDockWidget(mshDock, modellingDock);
+	tabifyDockWidget(modellingDock, stationDock);
 
 	// Restore window geometry
 	readSettings();
@@ -294,9 +294,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SLOT(showMshDockWidget(bool)));
 	menuWindows->addAction(showMshDockAction);
 
-	QAction* showCondDockAction = conditionDock->toggleViewAction();
-	showCondDockAction->setStatusTip(tr("Shows / hides the FEM conditions view"));
-	connect(showCondDockAction, SIGNAL(triggered(bool)), this,
+	QAction* showModellingDockAction = modellingDock->toggleViewAction();
+	showModellingDockAction->setStatusTip(tr("Shows / hides the Process view"));
+	connect(showModellingDockAction, SIGNAL(triggered(bool)), this,
 	        SLOT(showMshDockWidget(bool)));
 	menuWindows->addAction(showMshDockAction);
 
@@ -406,9 +406,9 @@ void MainWindow::showMshDockWidget(bool show)
 void MainWindow::showConditionDockWidget(bool show)
 {
 	if (show)
-		conditionDock->show();
+		modellingDock->show();
 	else
-		conditionDock->hide();
+		modellingDock->hide();
 }
 
 void MainWindow::showVisDockWidget(bool show)

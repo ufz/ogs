@@ -8,12 +8,12 @@
 #define MODELLINGTABWIDGET_H
 
 // ** INCLUDES **
-#include "ui_ConditionTabWidgetBase.h"
+#include "ui_ModellingTabWidgetBase.h"
 
 /**
  * \brief Widget containing the ProcessView.
  */
-class ModellingTabWidget : public QWidget, public Ui_ConditionTabWidgetBase
+class ModellingTabWidget : public QWidget, public Ui_ModellingTabWidgetBase
 {
 	Q_OBJECT
 

@@ -60,8 +60,8 @@ private:
 	/// Returns the subtree-item for a given type of condtion.
 	CondObjectListItem* getCondParent(TreeItem* parent, FEMCondition::CondType type);
 
-	/// Returns the subtree item for a geometry with the given name. If create_item is true, this item will be created if it doesn't exist yet.
-	TreeItem* getGEOParent(const QString &geoName, bool create_item = false);
+	/// Returns the subtree item for a process with the given name. If create_item is true, this item will be created if it doesn't exist yet.
+	TreeItem* getProcessParent(const QString &processName, bool create_item = false);
 
 	/// Returns the index of a geometric item of the given name and type for the associated geometry.
 	int getGEOIndex(const std::string &geo_name,

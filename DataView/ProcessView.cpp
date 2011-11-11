@@ -5,10 +5,10 @@
 
 #include <QMenu>
 
-#include "CondItem.h"
+#include "ProcessItem.h"
 #include "CondObjectListItem.h"
-#include "ConditionModel.h"
-#include "ConditionView.h"
+#include "ProcessModel.h"
+#include "ProcessView.h"
 
 ProcessView::ProcessView(QWidget* parent) : QTreeView(parent)
 {

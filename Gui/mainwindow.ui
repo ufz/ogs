@@ -196,7 +196,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="conditionDock">
+  <widget class="QDockWidget" name="modellingDock">
    <property name="windowTitle">
     <string>Modelling</string>
    </property>
@@ -209,7 +209,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="ModellingTabWidget" name="conditionTabWidget" native="true"/>
+      <widget class="ModellingTabWidget" name="modellingTabWidget" native="true"/>
      </item>
     </layout>
    </widget>

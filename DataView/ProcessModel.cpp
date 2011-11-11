@@ -4,9 +4,9 @@
  */
 
 // ** INCLUDES **
-#include "CondItem.h"
+#include "ProcessItem.h"
 #include "CondObjectListItem.h"
-#include "ConditionModel.h"
+#include "ProcessModel.h"
 #include "FEMCondition.h"
 #include "GEOObjects.h"
 #include "GeoObject.h"
@@ -37,11 +37,11 @@ int ProcessModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) c
 
 void ProcessModel::addConditionItem(FEMCondition* c)
 {
-	TreeItem* geoParent =
-	        this->getGEOParent(QString::fromStdString(c->getAssociatedGeometryName()), true);
-		CondObjectListItem* condParent = this->getCondParent(geoParent, c->getCondType());
+	TreeItem* processParent =
+	        this->getProcessParent(QString::fromStdString(c->getAssociatedGeometryName()), true);
+		CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
 	if (condParent == NULL)
-		condParent = this->createCondParent(geoParent, c->getCondType());
+		condParent = this->createCondParent(processParent, c->getCondType());
 
 	if (condParent)
 	{
@@ -150,15 +150,15 @@ void ProcessModel::addConditions(std::vector<FEMCondition*> &conditions)
 
 void ProcessModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type)
 {
-	TreeItem* geoParent = this->getGEOParent(geometry_name);
+	TreeItem* processParent = this->getProcessParent(geometry_name);
 	emit conditionsRemoved(this, geometry_name.toStdString(), type);
 
-	if ((type == FEMCondition::UNSPECIFIED) || (geoParent->childCount() <= 1)) //remove all conditions for the given geometry
-		removeRows(geoParent->row(), 1, QModelIndex());
+	if ((type == FEMCondition::UNSPECIFIED) || (processParent->childCount() <= 1)) //remove all conditions for the given geometry
+		removeRows(processParent->row(), 1, QModelIndex());
 	else
 	{
-		TreeItem* condParent = getCondParent(geoParent, type);
-		removeRows(condParent->row(), 1, index(geoParent->row(), 0));
+		TreeItem* condParent = getCondParent(processParent, type);
+		removeRows(condParent->row(), 1, index(processParent->row(), 0));
 	}
 	_project.removeConditions(geometry_name.toStdString(), type);
 }
@@ -193,20 +193,20 @@ int ProcessModel::getGEOIndex(const std::string &geo_name,
 	return -1;
 }
 
-TreeItem* ProcessModel::getGEOParent(const QString &geoName, bool create_item)
+TreeItem* ProcessModel::getProcessParent(const QString &processName, bool create_item)
 {
 	int nLists = _rootItem->childCount();
 	for (int i = 0; i < nLists; i++)
-		if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
+		if (_rootItem->child(i)->data(0).toString().compare(processName) == 0)
 			return _rootItem->child(i);
 
 	if (create_item)
 	{
-		QList<QVariant> geoData;
-		geoData << QVariant(geoName) << "";
-		TreeItem* geo = new TreeItem(geoData, _rootItem);
-		_rootItem->appendChild(geo);
-		return geo;
+		QList<QVariant> processData;
+		processData << QVariant(processName) << "";
+		TreeItem* process = new TreeItem(processData, _rootItem);
+		_rootItem->appendChild(process);
+		return process;
 	}
 	return NULL;
 }
@@ -241,10 +241,10 @@ CondObjectListItem* ProcessModel::createCondParent(TreeItem* parent, FEMConditio
 vtkPolyDataAlgorithm* ProcessModel::vtkSource(const std::string &name,
                                                 FEMCondition::CondType type)
 {
-	TreeItem* geoParent = this->getGEOParent(QString::fromStdString(name));
-	if (geoParent)
+	TreeItem* processParent = this->getProcessParent(QString::fromStdString(name));
+	if (processParent)
 	{
-		CondObjectListItem* condParent = this->getCondParent(geoParent, type);
+		CondObjectListItem* condParent = this->getCondParent(processParent, type);
 		if (condParent)
 			return condParent->vtkSource();
 	}

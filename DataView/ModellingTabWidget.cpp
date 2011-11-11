@@ -6,8 +6,8 @@
  */
 
 // ** INCLUDES **
-#include "ConditionModel.h"
-#include "ConditionTabWidget.h"
+#include "ProcessModel.h"
+#include "ModellingTabWidget.h"
 #include "TreeItem.h"
 
 ModellingTabWidget::ModellingTabWidget( QWidget* parent /*= 0*/ )
