@@ -125,6 +125,13 @@ public:
 		return 1;
 	}
 
+    /**
+     * This is an access operator to a non-zero matrix entry. If the value of
+     * a non-existing matrix entry is requested it will be 0.0 returned.
+     * @param row the row number
+     * @param col the column number
+     * @return The corresponding matrix entry or 0.0.
+     */
 	double getValue(IDX_TYPE row, IDX_TYPE col)
 	{
 		assert(0 <= row && row < MatrixBase::_n_rows);
