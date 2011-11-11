@@ -125,6 +125,22 @@ public:
 		return 1;
 	}
 
+	double getValue(IDX_TYPE row, IDX_TYPE col)
+	{
+		assert(0 <= row && row < MatrixBase::_n_rows);
+
+		// linear search - for matrices with many entries per row binary search is much faster
+		const IDX_TYPE idx_end (_row_ptr[row+1]);
+		IDX_TYPE j(_row_ptr[row]), k;
+
+		while (j<idx_end && (k=_col_idx[j]) <= col) {
+			if (k == col) {
+				return _data[j];
+			}
+			j++;
+		}
+		return 0.0;
+	}
 
     /**
      * This is the constant access operator to a non-zero matrix entry.
