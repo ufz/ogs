@@ -14,8 +14,8 @@ class QString;
 class OGSError
 {
 public:
-	static void box(QString e);
-	static void box(QString e, QString t);
+	static void box(const QString &e);
+	static void box(const QString &e, const QString &t);
 
 protected:
 	OGSError();

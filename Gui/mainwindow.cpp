@@ -988,7 +988,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 			XMLInterface xml(&_project, schemaName);
-			xml.readFEMCondFile(conditions, fileName, QString::fromStdString(geoName));
+			xml.readFEMCondFile(conditions, fileName);
 		}
 		else if (fi.suffix().toLower() == "bc")
 		{

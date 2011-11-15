@@ -37,11 +37,10 @@ int ProcessModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) c
 
 void ProcessModel::addConditionItem(FEMCondition* c)
 {
-	TreeItem* processParent =
-	        this->getProcessParent(QString::fromStdString(c->getAssociatedGeometryName()), true);
-		CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
+	TreeItem* processParent = this->getProcessParent(QString::fromStdString(convertProcessTypeToString(c->getProcessType())), true);
+	CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
 	if (condParent == NULL)
-		condParent = this->createCondParent(processParent, c->getCondType());
+		condParent = this->createCondParent(processParent, c->getCondType(), c->getAssociatedGeometryName());
 
 	if (condParent)
 	{
@@ -51,9 +50,9 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 		CondItem* condItem = new CondItem(condData, condParent, c);
 		condParent->appendChild(condItem);
 		// add process information
-		QList<QVariant> pcsData;
-		pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
-		TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
+		//QList<QVariant> pcsData;
+		//pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
+		//TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
 		// add information on primary variable
 		QList<QVariant> pvData;
 		pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
@@ -84,7 +83,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 			}
 		}
 
-		condItem->appendChild(pcsInfo);
+		//condItem->appendChild(pcsInfo);
 		condItem->appendChild(pvInfo);
 		condItem->appendChild(disInfo);
 
@@ -170,26 +169,14 @@ int ProcessModel::getGEOIndex(const std::string &geo_name,
 	bool exists(false);
 	size_t idx(0);
 	if (type == GEOLIB::POINT)
-		exists =
-		        this->_project.getGEOObjects()->getPointVecObj(geo_name)->
-		        getElementIDByName(
-		                obj_name,
-		                idx);
+		exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(obj_name, idx);
 	else if (type == GEOLIB::POLYLINE)
-		exists =
-		        this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->
-		        getElementIDByName(
-		                obj_name,
-		                idx);
+		exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(obj_name,idx);
 	else if (type == GEOLIB::SURFACE)
-		exists =
-		        this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->
-		        getElementIDByName(
-		                obj_name,
-		                idx);
+		exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name,idx);
 
 	if (exists)
-		return idx;
+		return static_cast<int>(idx);
 	return -1;
 }
 
@@ -220,14 +207,14 @@ CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, FEMCondition::
 	return NULL;
 }
 
-CondObjectListItem* ProcessModel::createCondParent(TreeItem* parent, FEMCondition::CondType type)
+CondObjectListItem* ProcessModel::createCondParent(TreeItem* parent, FEMCondition::CondType type, const std::string &geometry_name)
 {
 	QString condType(QString::fromStdString(FEMCondition::condTypeToString(type)));
 	QList<QVariant> condData;
 	condData << condType << "";
 
-	std::string geo_name = parent->data(0).toString().toStdString();
-	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(geo_name);
+	//std::string geo_name = parent->data(0).toString().toStdString();
+	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(geometry_name);
 	if (pnts)
 	{
 		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts);
