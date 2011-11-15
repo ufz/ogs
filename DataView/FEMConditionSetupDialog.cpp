@@ -13,10 +13,10 @@
 #include "InitialCondition.h"
 #include "SourceTerm.h"
 
-FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_geometry, 
-												 const GEOLIB::GEOTYPE type, 
+FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_geometry,
+												 const GEOLIB::GEOTYPE type,
 												 const std::string &geo_name,
-												 const GEOLIB::GeoObject* const geo_object, 
+												 const GEOLIB::GeoObject* const geo_object,
 												 QDialog* parent)
 : QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _secondValueEdit(NULL),
   _first_value_validator(NULL), _second_value_validator(NULL)
@@ -33,7 +33,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent)
-	: QDialog(parent), _cond(cond), _secondValueEdit(NULL), 
+	: QDialog(parent), _cond(cond), _secondValueEdit(NULL),
 	  _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	setupDialog();
@@ -58,11 +58,11 @@ void FEMConditionSetupDialog::setupDialog()
 	this->firstValueEdit->setText("0");
 	this->firstValueEdit->setValidator (_first_value_validator);
 
-	const std::list<std::string> process_names = getAllProcessNames();
+	const std::list<std::string> process_names = FiniteElement::getAllProcessNames();
 	for (std::list<std::string>::const_iterator it = process_names.begin(); it != process_names.end(); ++it)
 		this->processTypeBox->addItem(QString::fromStdString(*it));
 
-	const std::list<std::string> pv_names = getAllPrimaryVariableNames();
+	const std::list<std::string> pv_names = FiniteElement::getAllPrimaryVariableNames();
 	for (std::list<std::string>::const_iterator it = pv_names.begin(); it != pv_names.end(); ++it)
 		this->pvTypeBox->addItem(QString::fromStdString(*it));
 /*
@@ -74,8 +74,8 @@ void FEMConditionSetupDialog::setupDialog()
 
 void FEMConditionSetupDialog::accept()
 {
-	_cond.setProcessType(static_cast<ProcessType>(this->processTypeBox->currentIndex() + 1));
-	_cond.setProcessPrimaryVariable(static_cast<PrimaryVariable>(this->pvTypeBox->currentIndex() + 1));
+	_cond.setProcessType(static_cast<FiniteElement::ProcessType>(this->processTypeBox->currentIndex() + 1));
+	_cond.setProcessPrimaryVariable(static_cast<FiniteElement::PrimaryVariable>(this->pvTypeBox->currentIndex() + 1));
 
 	switch(this->disTypeBox->currentIndex())
 	{
@@ -94,7 +94,7 @@ void FEMConditionSetupDialog::accept()
 		default:
 			_cond.setProcessDistributionType(FiniteElement::INVALID_DIS_TYPE);
 	}
-	
+
 	std::vector<double> dis_values;
 	dis_values.push_back(strtod(this->firstValueEdit->text().toStdString().c_str(), 0));
 	if (this->_secondValueEdit)
