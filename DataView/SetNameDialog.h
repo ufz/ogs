@@ -9,7 +9,6 @@
 #include "GeoType.h"
 
 #include <QDialog>
-#include <QtGui/QMainWindow>
 
 class QDialogButtonBox;
 class QLabel;

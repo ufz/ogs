@@ -8,6 +8,7 @@
 
 #include "MSHEnums.h"
 #include "ui_MshQualitySelection.h"
+#include <QDialog>
 
 class VtkMeshSource;
 

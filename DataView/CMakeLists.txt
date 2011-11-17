@@ -22,6 +22,7 @@ set( SOURCES
 	MshModel.cpp
 	MshQualitySelectionDialog.cpp
 	MshTabWidget.cpp
+	NewProcessDialog.cpp
 	OGSRaster.cpp
 	ProcessModel.cpp
 	ProcessView.cpp
@@ -53,6 +54,7 @@ set( MOC_HEADERS
 	MshModel.h
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
+	NewProcessDialog.h
 	ProcessModel.h
 	ProcessView.h
 	QueryResultsDialog.h
@@ -87,6 +89,7 @@ set( UIS
 	MshEdit.ui
 	MshQualitySelection.ui
 	MshTabWidgetBase.ui
+	NewProcess.ui
 	StationTabWidgetBase.ui
 )
 

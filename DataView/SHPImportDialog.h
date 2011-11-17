@@ -7,7 +7,6 @@
 #define SHPIMPORTDIALOG_H
 
 #include <QDialog>
-#include <QtGui/QMainWindow>
 
 class SHPInterface;
 class GEOModels;

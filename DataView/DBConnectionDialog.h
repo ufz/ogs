@@ -8,7 +8,7 @@
 
 #include "ui_DBConnection.h"
 #include <QSqlQueryModel>
-#include <QtGui/QMainWindow>
+#include <QDialog>
 
 /**
  * \brief A dialog window for settung up a database connection

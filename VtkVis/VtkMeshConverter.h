@@ -25,16 +25,24 @@ class CNode;
 class VtkMeshConverter
 {
 public:
-	/// Converts greyscale image to quad mesh
+	/**
+	 * Converts greyscale image to a mesh
+	 * \param type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param setAsElevation defines how image intensities are interpreted (as elevation or as material IDs)
+	 */
 	static MeshLib::CFEMesh* convertImgToMesh(vtkImageData* img,
 	                                          const std::pair<double,double> &origin,
-	                                          const double &scalingFactor);
+	                                          const double &scalingFactor,
+											  MshElemType::type t,
+											  bool setAsElevation);
 
 	/// Converts a vtkUnstructuredGrid object to a CFEMesh
 	static MeshLib::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
 
 private:
-	static MeshLib::CElem* createElement(size_t node1, size_t node2, size_t node3);
+	static MeshLib::CElem* createElement(MshElemType::type t,
+		                                 size_t node1, size_t node2, 
+										 size_t node3, size_t node4 = 0);
 };
 
 #endif // VTKMESHCONVERTER_H

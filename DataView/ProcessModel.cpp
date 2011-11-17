@@ -147,19 +147,37 @@ void ProcessModel::addConditions(std::vector<FEMCondition*> &conditions)
    }
  */
 
-void ProcessModel::removeFEMConditions(const QString &geometry_name, FEMCondition::CondType type)
+void ProcessModel::addProcess(ProcessInfo *pcs)
 {
-	TreeItem* processParent = this->getProcessParent(geometry_name);
-	emit conditionsRemoved(this, geometry_name.toStdString(), type);
+	QString pcs_name = QString::fromStdString(FiniteElement::convertProcessTypeToString(pcs->getProcessType()));
+	TreeItem* exists = this->getProcessParent(pcs_name, true);
+	reset();
+}
 
-	if ((type == FEMCondition::UNSPECIFIED) || (processParent->childCount() <= 1)) //remove all conditions for the given geometry
-		removeRows(processParent->row(), 1, QModelIndex());
-	else
+void ProcessModel::removeFEMConditions(const QString &process_name, FEMCondition::CondType type)
+{
+	TreeItem* processParent = this->getProcessParent(process_name);
+	emit conditionsRemoved(this, process_name.toStdString(), type);
+
+	if (type != FEMCondition::UNSPECIFIED)
 	{
 		TreeItem* condParent = getCondParent(processParent, type);
 		removeRows(condParent->row(), 1, index(processParent->row(), 0));
 	}
-	_project.removeConditions(geometry_name.toStdString(), type);
+	_project.removeConditions(process_name.toStdString(), type);
+}
+
+void ProcessModel::removeProcess(const QString &process_name)
+{
+	TreeItem* processParent = this->getProcessParent(process_name);
+	removeRows(processParent->row(), 1, QModelIndex());
+}
+
+void ProcessModel::removeAllProcesses()
+{
+	int nProcesses = _rootItem->childCount();
+	if (nProcesses > 0)
+		removeRows(0, nProcesses, QModelIndex());
 }
 
 int ProcessModel::getGEOIndex(const std::string &geo_name,

@@ -9,7 +9,6 @@
 #include "GEOModels.h"
 #include "Station.h"
 #include <QDialog>
-#include <QtGui/QMainWindow>
 #include <vector>
 
 class QLabel;

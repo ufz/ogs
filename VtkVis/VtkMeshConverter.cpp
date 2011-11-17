@@ -21,26 +21,36 @@
 
 MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const std::pair<double,double> &origin,
-                                                     const double &scalingFactor)
+                                                     const double &scalingFactor,
+													 MshElemType::type t,
+													 bool setAsElevation)
 {
+	if ((t != MshElemType::TRIANGLE) && (t != MshElemType::QUAD))
+	{
+		std::cout << "Error in VtkMeshConverter::convertImgToMesh() - Invalid Mesh Element Type..." << std::endl;
+		return NULL;
+	}
+
 	vtkSmartPointer<vtkUnsignedCharArray> pixelData = vtkSmartPointer<vtkUnsignedCharArray>(
 	        vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
 	int* dims = img->GetDimensions();
 
 	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
-	size_t imgHeight = dims[0];
-	size_t imgWidth  = dims[1];
-	std::vector<size_t> visNodes(imgWidth * imgHeight);
+	const size_t imgHeight = dims[0];
+	const size_t imgWidth  = dims[1];
+	double* pixVal (new double[imgHeight * imgWidth]);
+	bool* visNodes(new bool[imgWidth * imgHeight]);
 
 	for (size_t i = 0; i < imgWidth; i++)
 		for (size_t j = 0; j < imgHeight; j++)
 		{
-			size_t index = i * imgHeight + j;
+			const size_t index = i * imgHeight + j;
 			const double* colour = pixelData->GetTuple4(index);
-			double pixcol = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
-			double coords[3] =
-			{ origin.first + (scalingFactor * j), origin.second + (scalingFactor * i),
-			  pixcol };
+			pixVal[index] = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
+			double zValue = (setAsElevation) ? pixVal[index] : 0.0;
+			double coords[3] = { origin.first + (scalingFactor * j), 
+								 origin.second + (scalingFactor * i), 
+								 zValue };
 			visNodes[index] = (colour[3] > 0);
 
 			MeshLib::CNode* node(new MeshLib::CNode(index));
@@ -52,31 +62,45 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	for (size_t i = 0; i < imgWidth - 1; i++)
 		for (size_t j = 0; j < imgHeight - 1; j++)
 		{
-			int index = i * imgHeight + j;
+			const int index = i * imgHeight + j;
 
 			// if node is visible
 			if (visNodes[index])
 			{
-				mesh->ele_vector.push_back(createElement(index, index + 1, index +
-				                                         imgHeight));       // upper left triangle
-				mesh->ele_vector.push_back(createElement(index + 1, index +
-				                                         imgHeight + 1, index +
-				                                         imgHeight));                   // lower right triangle
+				if (t == MshElemType::TRIANGLE)
+				{
+					mesh->ele_vector.push_back(createElement(t, index, index + 1, 
+															 index + imgHeight));       // upper left triangle
+					mesh->ele_vector.push_back(createElement(t, index + 1, 
+															 index + imgHeight + 1, 
+															 index + imgHeight));                   // lower right triangle
+				}
+				if (t == MshElemType::QUAD)
+				{
+					mesh->ele_vector.push_back(createElement(t, index, index + 1, 
+															 index + imgHeight + 1,
+															 index + imgHeight));
+				}
 			}
 		}
 	mesh->ConstructGrid();
+	delete [] pixVal;
+	delete [] visNodes;
 	return mesh;
 }
 
-MeshLib::CElem* VtkMeshConverter::createElement(size_t node1, size_t node2, size_t node3)
+MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, size_t node1, size_t node2, size_t node3, size_t node4)
 {
 	MeshLib::CElem* elem(new MeshLib::CElem());
-	elem->setElementProperties(MshElemType::TRIANGLE);
-	elem->SetPatchIndex(1);
-	elem->SetNodesNumber(3);
+	const size_t nNodes = (t == MshElemType::QUAD) ? 4 : 3;
+	elem->setElementProperties(t);
+	elem->SetPatchIndex(0);
+	elem->SetNodesNumber(nNodes);
 	elem->SetNodeIndex(0, node1);
 	elem->SetNodeIndex(1, node2);
 	elem->SetNodeIndex(2, node3);
+	if (t ==  MshElemType::QUAD)
+		elem->SetNodeIndex(3, node4);
 	elem->InitializeMembers();
 	return elem;
 }
@@ -88,8 +112,8 @@ MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid*
 
 	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 
-	size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
-	size_t nElems = grid->GetNumberOfCells();
+	const size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
+	const size_t nElems = grid->GetNumberOfCells();
 
 	// set mesh nodes
 	double* coords = NULL;

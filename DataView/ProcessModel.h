@@ -43,9 +43,17 @@ public slots:
 	/// Adds a single FEM Conditions to the model
 	void addCondition(FEMCondition* condition);
 
+	/// Adds a process to the model
+	void addProcess(ProcessInfo* pcs);
+
 	/// Removes a subtree (BCs, ICs, STs) from the the model. If all conditions for a given geometry are removed, this tree is completely removed.
-	void removeFEMConditions(const QString &geometry_name,
-	                         FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
+	void removeFEMConditions(const QString &process_name, FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
+
+	/// Removes a process from the model
+	void removeProcess(const QString &process_name);
+
+	/// Removes all processes from the model
+	void removeAllProcesses();
 
 private:
 	/// Adds a new FEM condition to the condition tree model.

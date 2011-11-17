@@ -9,7 +9,7 @@
 #include "ui_FEMConditionSetup.h"
 #include "FEMCondition.h"
 
-#include <QtGui/QMainWindow>
+#include <QDialog>
 
 class StrictDoubleValidator;
 
