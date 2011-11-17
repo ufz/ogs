@@ -62,7 +62,10 @@ private slots:
 	void addPipelineFilterItem();
 
 	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
-	void convertImageToMesh();
+	void constructMeshFromImage(QString msh_name, bool use_triangle_elements, bool use_elevation);
+
+	/// Calls the dialog to 
+	void showImageToMeshConversionDialog();
 
 	/// Calls the conversion method for making a vtk grid an ogs mesh.
 	void convertVTKToOGSMesh();

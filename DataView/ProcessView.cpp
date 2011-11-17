@@ -40,9 +40,7 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 
 	CondObjectListItem* item =
 	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
-	                                          getItem(this
-	                                                  ->
-	                                                  selectionModel()->currentIndex()));
+	                                          getItem(this->selectionModel()->currentIndex()));
 	if (item)
 	{
 		QMenu menu;
@@ -56,12 +54,10 @@ void ProcessView::removeCondition()
 {
 	CondObjectListItem* item =
 	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
-	                                          getItem(this
-	                                                  ->
-	                                                  selectionModel()->currentIndex()));
-	QString geo_name = item->parentItem()->data(0).toString();
+	                                          getItem(this->selectionModel()->currentIndex()));
+	QString process_name = item->parentItem()->data(0).toString();
 	FEMCondition::CondType type = item->getType();
-	emit conditionsRemoved(geo_name, type);
+	emit conditionsRemoved(process_name, type);
 }
 /*
    void ProcessView::removeAllConditions()

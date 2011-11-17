@@ -19,6 +19,13 @@ class ModellingTabWidget : public QWidget, public Ui_ModellingTabWidgetBase
 
 public:
 	ModellingTabWidget(QWidget* parent = 0);
+
+private slots:
+	void on_addProcessButton_pressed();
+	void on_deleteAllButton_pressed();
+
+signals:
+	void requestNewProcess();
 };
 
 #endif // MODELLINGTABWIDGET_H

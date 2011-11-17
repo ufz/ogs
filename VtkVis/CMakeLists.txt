@@ -1,5 +1,6 @@
 # Source files
 SET( SOURCES
+	MeshFromRasterDialog.cpp
 	QVtkDataSetMapper.cpp
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
@@ -45,6 +46,7 @@ SET( SOURCES
 
 # Moc headers
 SET( MOC_HEADERS
+	MeshFromRasterDialog.h
 	QVtkDataSetMapper.h
 	VisPrefsDialog.h
 	VisualizationWidget.h
@@ -95,6 +97,7 @@ SET( HEADERS
 
 # UI files
 SET ( UIS
+	MeshFromRaster.ui
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
 	VisualizationWidgetBase.ui

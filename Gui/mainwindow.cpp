@@ -22,6 +22,7 @@
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MshQualitySelectionDialog.h"
+#include "NewProcessDialog.h"
 #include "SetNameDialog.h"
 #include "VisPrefsDialog.h"
 #include "VtkAddFilterDialog.h"
@@ -178,6 +179,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(modellingTabWidget->treeView,
 	        SIGNAL(conditionsRemoved(QString, FEMCondition::CondType)),
 	        _processModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
+	connect(modellingTabWidget, SIGNAL(requestNewProcess()), this, SLOT(showNewProcessDialog()));
+
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -1199,23 +1202,27 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 	}
 }
 
+void MainWindow::showNewProcessDialog()
+{
+	NewProcessDialog dlg(_project);
+	connect(&dlg, SIGNAL(addProcess(ProcessInfo*)),
+	        _processModel, SLOT(addProcess(ProcessInfo*)));
+	dlg.exec();
+}
+
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
-	connect(&lineEdit,
-	        SIGNAL(connectPolylines(const std::string &, std::vector<size_t>, double, std::string, bool, bool)),
-	        _geoModels, 
-			SLOT(connectPolylineSegments(const std::string &, std::vector<size_t>, double, std::string, bool, bool)));
+	connect(&lineEdit, SIGNAL(connectPolylines(const std::string &, std::vector<size_t>, double, std::string, bool, bool)),
+	        _geoModels, SLOT(connectPolylineSegments(const std::string &, std::vector<size_t>, double, std::string, bool, bool)));
 	lineEdit.exec();
 }
 
 void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
-	connect(&dlg,
-	        SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
-	        this,
-	        SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
+	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
+	        this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
 	dlg.exec();
 }
 

@@ -8,7 +8,7 @@
 
 #include "ui_DatabaseResultView.h"
 #include <QSqlQueryModel>
-#include <QtGui/QMainWindow>
+#include <QDialog>
 
 /**
  * \brief A Dialog for displaying the results of a database query in a table.

@@ -7,7 +7,7 @@
 #define GMSHPREFSDIALOG_H
 
 #include "ui_GMSHPrefs.h"
-#include <QtGui/QMainWindow>
+#include <QDialog>
 
 class QStringListModel;
 

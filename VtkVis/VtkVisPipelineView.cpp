@@ -25,6 +25,7 @@
 //image to mesh conversion
 #include "VtkGeoImageSource.h"
 #include "VtkMeshConverter.h"
+#include "MeshFromRasterDialog.h"
 #include <vtkDataObject.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
@@ -82,7 +83,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 			isSourceItem = false; // this exception is needed as image object are only displayed in the vis-pipeline
 			addMeshingAction = menu.addAction("Convert Image to Mesh...");
 			connect(addMeshingAction, SIGNAL(triggered()), this,
-			        SLOT(convertImageToMesh()));
+			        SLOT(showImageToMeshConversionDialog()));
 		}
 		else
 		{
@@ -162,23 +163,28 @@ void VtkVisPipelineView::addPipelineFilterItem()
 	emit requestAddPipelineFilterItem(selectionModel()->currentIndex());
 }
 
-void VtkVisPipelineView::convertImageToMesh()
+void VtkVisPipelineView::showImageToMeshConversionDialog()
+{
+	MeshFromRasterDialog* dlg = new MeshFromRasterDialog();
+	connect(dlg, SIGNAL(setMeshParameters(QString, bool, bool)),
+		    this, SLOT(constructMeshFromImage(QString, bool, bool)));
+	dlg->exec();
+}
+
+void VtkVisPipelineView::constructMeshFromImage(QString msh_name, bool use_triangle_elements, bool use_elevation)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-	                                         getItem(this->
-	                                                 selectionModel()
-	                                                 ->currentIndex()))->algorithm();
+	                                         getItem(this->selectionModel()->currentIndex()))->algorithm();
 
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
-
-	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image,
-	                                                            imageSource->getOrigin(),
-	                                                            imageSource->getSpacing());
-	// now do something with the mesh (save, display, whatever... )
-	std::string msh_name("NewMesh");
-	emit meshAdded(mesh, msh_name);
+	
+	MshElemType::type element_type = (use_triangle_elements) ? MshElemType::TRIANGLE : MshElemType::QUAD;
+	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
+																imageSource->getSpacing(), element_type, use_elevation);
+	std::string new_mesh_name(msh_name.toStdString());
+	emit meshAdded(mesh, new_mesh_name);
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()

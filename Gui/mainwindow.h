@@ -79,6 +79,7 @@ protected slots:
 	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
+	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 	/// Call dialog for creating or modifying FEM conditions.
 	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
 	/// Allows setting the name for a geometric object
@@ -90,13 +91,13 @@ protected slots:
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
+	void showNewProcessDialog();
 	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
-	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 
 	void on_actionExportVTK_triggered(bool checked = false);
 	void on_actionExportVRML2_triggered(bool checked = false);
