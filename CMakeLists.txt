@@ -4,7 +4,6 @@ ENDIF (NOT VTK_FOUND)
 INCLUDE( ${VTK_USE_FILE} )
 
 # Find libgeotiff
-FIND_PACKAGE( LibTiff )
 FIND_PACKAGE( LibGeoTiff )
 IF(libgeotiff_FOUND)
 	ADD_DEFINITIONS(-Dlibgeotiff_FOUND)

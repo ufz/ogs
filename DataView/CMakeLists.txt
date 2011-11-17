@@ -142,9 +142,9 @@ IF (OGS_USE_OPENSG)
 	INCLUDE_DIRECTORIES( ${OpenSG_INCLUDE_DIRS} )
 ENDIF (OGS_USE_OPENSG)
 
-IF (libtiff_FOUND AND libgeotiff_FOUND)
-	INCLUDE_DIRECTORIES( ${libtiff_INCLUDE_DIR}	${libgeotiff_INCLUDE_DIR} )
-ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
+IF (libgeotiff_FOUND)
+	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+ENDIF () # libgeotiff_FOUND
 
 # Put moc files in a project folder
 source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
@@ -176,6 +176,6 @@ target_link_libraries( QtDataView
 IF (Shapelib_FOUND)
 	TARGET_LINK_LIBRARIES( QtDataView ${Shapelib_LIBRARIES} )
 ENDIF () # Shapelib_FOUND
-IF (libtiff_FOUND AND libgeotiff_FOUND)
-	TARGET_LINK_LIBRARIES( QtDataView ${libtiff_LIBRARIES} ${libgeotiff_LIBRARIES} )
-ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
+IF (libgeotiff_FOUND)
+	TARGET_LINK_LIBRARIES( QtDataView ${libgeotiff_LIBRARIES} )
+ENDIF () # libgeotiff_FOUND
