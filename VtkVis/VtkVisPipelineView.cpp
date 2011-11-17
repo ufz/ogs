@@ -183,7 +183,8 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, bool use_trian
 	MshElemType::type element_type = (use_triangle_elements) ? MshElemType::TRIANGLE : MshElemType::QUAD;
 	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
 																imageSource->getSpacing(), element_type, use_elevation);
-	emit meshAdded(mesh, msh_name.toStdString());
+	std::string new_mesh_name(msh_name.toStdString());
+	emit meshAdded(mesh, new_mesh_name);
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
