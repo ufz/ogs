@@ -40,7 +40,7 @@ public:
 	static MeshLib::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
 
 private:
-	static MeshLib::CElem* createElement(MshElemType::type t,
+	static MeshLib::CElem* createElement(MshElemType::type t, int mat,
 		                                 size_t node1, size_t node2, 
 										 size_t node3, size_t node4 = 0);
 };

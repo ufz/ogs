@@ -67,34 +67,36 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			// if node is visible
 			if (visNodes[index])
 			{
+				const int mat = (setAsElevation) ? 0 : static_cast<int>(pixVal[index]);
 				if (t == MshElemType::TRIANGLE)
 				{
-					mesh->ele_vector.push_back(createElement(t, index, index + 1, 
+					mesh->ele_vector.push_back(createElement(t, mat, index, index + 1, 
 															 index + imgHeight));       // upper left triangle
-					mesh->ele_vector.push_back(createElement(t, index + 1, 
+					mesh->ele_vector.push_back(createElement(t, mat, index + 1, 
 															 index + imgHeight + 1, 
 															 index + imgHeight));                   // lower right triangle
 				}
 				if (t == MshElemType::QUAD)
 				{
-					mesh->ele_vector.push_back(createElement(t, index, index + 1, 
+					mesh->ele_vector.push_back(createElement(t, mat, index, index + 1, 
 															 index + imgHeight + 1,
 															 index + imgHeight));
 				}
 			}
 		}
+
 	mesh->ConstructGrid();
 	delete [] pixVal;
 	delete [] visNodes;
 	return mesh;
 }
 
-MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, size_t node1, size_t node2, size_t node3, size_t node4)
+MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, int mat, size_t node1, size_t node2, size_t node3, size_t node4)
 {
 	MeshLib::CElem* elem(new MeshLib::CElem());
 	const size_t nNodes = (t == MshElemType::QUAD) ? 4 : 3;
 	elem->setElementProperties(t);
-	elem->SetPatchIndex(0);
+	elem->SetPatchIndex(mat);
 	elem->SetNodesNumber(nNodes);
 	elem->SetNodeIndex(0, node1);
 	elem->SetNodeIndex(1, node2);
