@@ -51,33 +51,27 @@ int main(int argc, char *argv[])
 
 	MathLib::CRSMatrix<double, unsigned> *mat (new MathLib::CRSMatrix<double, unsigned>(n, iA, jA, A));
 
-	const double val0 ((*mat)(1,1));
-	std::cout << val0 << std::endl;
-
-//	double val ((*(const_cast<MathLib::CRSMatrix<double, unsigned> const*>(mat)))(1,1));
-//	std::cout << val << std::endl;
-
-	MathLib::CRSMatrix<double, unsigned> const& ref_mat(*mat);
-	double val1 (ref_mat(1,1));
-	std::cout << val1 << std::endl;
-
-	const unsigned n_rows_cols_to_erase(3);
-	unsigned *rows_to_erase(new unsigned[n_rows_cols_to_erase]);
-	unsigned *cols_to_erase(new unsigned[n_rows_cols_to_erase]);
+	const unsigned n_rows_cols_to_erase(300);
+	unsigned *rows_cols_to_erase(new unsigned[n_rows_cols_to_erase]);
 
 	for (unsigned k(0); k<n_rows_cols_to_erase; k++) {
-		rows_to_erase[k] = (k+1)*2;
-		cols_to_erase[k] = (k+1)*2;
+		rows_cols_to_erase[k] = (k+1)*2;
 	}
 
-	mat->eraseEntries(n_rows_cols_to_erase, rows_to_erase, cols_to_erase);
-	delete[] rows_to_erase;
-	delete[] cols_to_erase;
+	RunTimeTimer timer;
+	std::cout << "erasing " << n_rows_cols_to_erase << " rows and columns ... " << std::flush;
+	timer.start();
+	mat->eraseEntries(n_rows_cols_to_erase, rows_cols_to_erase);
+	timer.stop();
+	std::cout << "ok, " << timer.elapsed() << " s" << std::endl;
+	delete[] rows_cols_to_erase;
 
 	fname_mat = argv[2];
 	std::ofstream out (fname_mat.c_str(), std::ios::binary);
 	CS_write (out, mat->getNRows(), mat->getRowPtrArray(), mat->getColIdxArray(), mat->getEntryArray());
 	out.close();
+
+	std::cout << "wrote " << fname_mat << " with " << mat->getNRows() << " rows and " << mat->getRowPtrArray()[mat->getNRows()] << " entries" << std::endl;
 
 	delete mat;
 }
