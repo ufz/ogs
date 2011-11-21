@@ -194,19 +194,17 @@ public:
 	/**
 	 * erase rows and columns from sparse matrix
 	 * @param n_rows_cols number of rows / columns to remove
-	 * @param rows sorted list of rows that should be removed
-	 * @param cols sorted list of columns that should be removed
+	 * @param rows_cols sorted list of rows/columns that should be removed
 	 */
-	void eraseEntries (IDX_TYPE n_rows_cols,
-					IDX_TYPE const*const rows, IDX_TYPE const*const cols)
+	void eraseEntries(IDX_TYPE n_rows_cols, IDX_TYPE const* const rows_cols)
 	{
 		IDX_TYPE n_cols(MatrixBase::_n_rows);
 		//*** remove the rows
-		removeRows(n_rows_cols, rows);
+		removeRows(n_rows_cols, rows_cols);
 		//*** transpose
 		transpose(n_cols);
 		//*** remove columns in original means removing rows in the transposed
-		removeRows(n_rows_cols, cols);
+		removeRows(n_rows_cols, rows_cols);
 		//*** transpose again
 		transpose(MatrixBase::_n_rows);
 	}
@@ -241,11 +239,16 @@ protected:
 		row_ptr_new[0] = 0;
 		IDX_TYPE row_cnt (1), erase_row_cnt(0);
 		for (unsigned k(0); k<MatrixBase::_n_rows; k++) {
-			if (k != rows[erase_row_cnt]) {
+			if (erase_row_cnt < n_rows_cols) {
+				if (k != rows[erase_row_cnt]) {
+					row_ptr_new[row_cnt] = _row_ptr[k+1] - _row_ptr[k];
+					row_cnt++;
+				} else {
+					erase_row_cnt++;
+				}
+			} else {
 				row_ptr_new[row_cnt] = _row_ptr[k+1] - _row_ptr[k];
 				row_cnt++;
-			} else {
-				erase_row_cnt++;
 			}
 		}
 
@@ -269,7 +272,20 @@ protected:
 		row_cnt = 0;
 		// copy column index and data entries
 		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
-			if (k != rows[erase_row_cnt]) {
+			if (erase_row_cnt < n_rows_cols) {
+				if (k != rows[erase_row_cnt]) {
+					const IDX_TYPE end (_row_ptr[k+1]);
+					// walk through row
+					for (IDX_TYPE j(_row_ptr[k]); j<end; j++) {
+						col_idx_new[row_ptr_new_tmp[row_cnt]] = _col_idx[j];
+						data_new[row_ptr_new_tmp[row_cnt]] = _data[j];
+						row_ptr_new_tmp[row_cnt]++;
+					}
+					row_cnt++;
+				} else {
+					erase_row_cnt++;
+				}
+			} else {
 				const IDX_TYPE end (_row_ptr[k+1]);
 				// walk through row
 				for (IDX_TYPE j(_row_ptr[k]); j<end; j++) {
@@ -278,8 +294,6 @@ protected:
 					row_ptr_new_tmp[row_cnt]++;
 				}
 				row_cnt++;
-			} else {
-				erase_row_cnt++;
 			}
 		}
 
@@ -288,6 +302,7 @@ protected:
 		BASELIB::swap (col_idx_new, _col_idx);
 		BASELIB::swap (data_new, _data);
 
+		delete [] row_ptr_new_tmp;
 		delete [] row_ptr_new;
 		delete [] col_idx_new;
 		delete [] data_new;
