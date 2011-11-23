@@ -37,6 +37,7 @@ set( SOURCES
 set( MOC_HEADERS
 	ColorTableModel.h
 	ColorTableView.h
+	CondItem.h	
 	DatabaseConnection.h
 	DataView.h
 	DBConnectionDialog.h

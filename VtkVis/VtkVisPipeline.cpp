@@ -251,11 +251,9 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
 	addPipelineItem(model->vtkSource(name));
 }
 
-void VtkVisPipeline::addPipelineItem(ProcessModel* model,
-                                     const std::string &name,
-                                     FEMCondition::CondType type)
+void VtkVisPipeline::addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
 {
-	addPipelineItem(model->vtkSource(name, type));
+	addPipelineItem(model->vtkSource(pcs_type, cond_type));
 }
 
 void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
@@ -273,8 +271,7 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	{
 		QSettings settings("UFZ, OpenGeoSys-5");
 		if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
-			item->setScale(1.0, 1.0, settings.value("globalSuperelevation",
-			                                        1.0).toDouble());
+			item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();
@@ -357,14 +354,12 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
 	}
 }
 
-void VtkVisPipeline::removeSourceItem(ProcessModel* model,
-                                      const std::string &name,
-                                      FEMCondition::CondType type)
+void VtkVisPipeline::removeSourceItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
-		if (item->algorithm() == model->vtkSource(name, type))
+		if (item->algorithm() == model->vtkSource(pcs_type, cond_type))
 		{
 			removePipelineItem(index(i, 0));
 			return;

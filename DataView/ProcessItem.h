@@ -1,38 +1,34 @@
 /**
- * \file CondItem.h
- * 20/10/2010 KR Initial implementation
+ * \file ProcessItem.h
+ * 2011/11/22 KR Initial implementation
  */
 
-#ifndef CONDITEM_H
-#define CONDITEM_H
+#ifndef PROCESSITEM_H
+#define PROCESSITEM_H
 
-#include "FEMCondition.h"
 #include "TreeItem.h"
-#include "VtkPointsSource.h"
+#include "ProcessInfo.h"
 
 /**
- * \brief A TreeItem containing a condition of a FEM (BC, IC or ST).
+ * \brief A TreeItem representing process information.
  * \sa TreeItem
  */
-class CondItem : public TreeItem
+class ProcessItem : public TreeItem
 {
 public:
 	/// Constructor
-	CondItem(const QList<QVariant> &data, TreeItem* parent, const FEMCondition* cond)
-		: TreeItem(data, parent), _item(cond)
+	ProcessItem(const QList<QVariant> &data, TreeItem* parent, const ProcessInfo* pcs)
+		: TreeItem(data, parent), _item(pcs)
 	{
 	}
 
-	~CondItem() {}
+	~ProcessItem() {}
 
-	/// Returns the FEM Condition associated with the item.
-	const FEMCondition* getItem() { return _item; }
-
-	/// Returns the geo-object on which the condition is placed.
-	const GEOLIB::GeoObject* getGeoObject() { return this->getGeoObject(); }
+	/// Returns the	Process Information associated with the item.
+	const ProcessInfo* getItem() { return _item; }
 
 private:
-	const FEMCondition* _item;
+	const ProcessInfo* _item;
 };
 
-#endif //CONDITEM_H
+#endif //PROCESSITEM_H

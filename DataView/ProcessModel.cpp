@@ -6,6 +6,8 @@
 // ** INCLUDES **
 #include "ProcessItem.h"
 #include "CondObjectListItem.h"
+#include "CondItem.h"
+#include "ProcessItem.h"
 #include "ProcessModel.h"
 #include "FEMCondition.h"
 #include "GEOObjects.h"
@@ -37,10 +39,16 @@ int ProcessModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) c
 
 void ProcessModel::addConditionItem(FEMCondition* c)
 {
-	TreeItem* processParent = this->getProcessParent(QString::fromStdString(convertProcessTypeToString(c->getProcessType())), true);
+	ProcessItem* processParent = this->getProcessParent(c->getProcessType());
+	if (processParent == NULL)
+	{
+		ProcessInfo* pcs = new ProcessInfo(c->getProcessType(), c->getProcessPrimaryVariable(), NULL);
+		processParent = this->addProcess(pcs);
+	}
+
 	CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
 	if (condParent == NULL)
-		condParent = this->createCondParent(processParent, c->getCondType(), c->getAssociatedGeometryName());
+		condParent = this->createCondParent(processParent, c->getCondType() /*, c->getAssociatedGeometryName()*/);
 
 	if (condParent)
 	{
@@ -147,37 +155,55 @@ void ProcessModel::addConditions(std::vector<FEMCondition*> &conditions)
    }
  */
 
-void ProcessModel::addProcess(ProcessInfo *pcs)
+ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 {
-	QString pcs_name = QString::fromStdString(FiniteElement::convertProcessTypeToString(pcs->getProcessType()));
-	TreeItem* exists = this->getProcessParent(pcs_name, true);
-	reset();
+	if (this->getProcessParent(pcs->getProcessType()) == NULL)
+	{
+		this->_project.addProcess(pcs);
+		QList<QVariant> processData;
+		processData << QVariant(QString::fromStdString(FiniteElement::convertProcessTypeToString(pcs->getProcessType()))) << "";
+		ProcessItem* process = new ProcessItem(processData, _rootItem, pcs);
+		_rootItem->appendChild(process);
+		reset();
+		return process;
+	}
+	else
+	{
+		std::cout << "Error in ProcessModel::addProcess() - " 
+			      << FiniteElement::convertProcessTypeToString(pcs->getProcessType()) 
+				  << " already exists." << std::endl;
+		return NULL;
+	}
 }
 
-void ProcessModel::removeFEMConditions(const QString &process_name, FEMCondition::CondType type)
+void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
 {
-	TreeItem* processParent = this->getProcessParent(process_name);
-	emit conditionsRemoved(this, process_name.toStdString(), type);
+	ProcessItem* processParent = this->getProcessParent(pcs_type);
+	emit conditionsRemoved(this, pcs_type, cond_type);
 
-	if (type != FEMCondition::UNSPECIFIED)
+	if (cond_type != FEMCondition::UNSPECIFIED)
 	{
-		TreeItem* condParent = getCondParent(processParent, type);
+		CondObjectListItem* condParent = getCondParent(processParent, cond_type);
 		removeRows(condParent->row(), 1, index(processParent->row(), 0));
 	}
-	_project.removeConditions(process_name.toStdString(), type);
+	_project.removeConditions(pcs_type, cond_type);
 }
 
-void ProcessModel::removeProcess(const QString &process_name)
+void ProcessModel::removeProcess(const FiniteElement::ProcessType type)
 {
-	TreeItem* processParent = this->getProcessParent(process_name);
+	const ProcessItem* processParent = this->getProcessParent(type);
+	this->_project.removeProcess(type);
 	removeRows(processParent->row(), 1, QModelIndex());
 }
 
 void ProcessModel::removeAllProcesses()
 {
 	int nProcesses = _rootItem->childCount();
-	if (nProcesses > 0)
-		removeRows(0, nProcesses, QModelIndex());
+	for (int i=0; i<nProcesses; i++)
+	{
+		ProcessItem* item = static_cast<ProcessItem*>(_rootItem->child(i));
+		removeProcess(item->getItem()->getProcessType());
+	}
 }
 
 int ProcessModel::getGEOIndex(const std::string &geo_name,
@@ -198,25 +224,17 @@ int ProcessModel::getGEOIndex(const std::string &geo_name,
 	return -1;
 }
 
-TreeItem* ProcessModel::getProcessParent(const QString &processName, bool create_item)
+ProcessItem* ProcessModel::getProcessParent(const FiniteElement::ProcessType type) const
 {
 	int nLists = _rootItem->childCount();
 	for (int i = 0; i < nLists; i++)
-		if (_rootItem->child(i)->data(0).toString().compare(processName) == 0)
-			return _rootItem->child(i);
+		if (static_cast<ProcessItem*>(_rootItem->child(i))->getItem()->getProcessType() == type)
+			return static_cast<ProcessItem*>(_rootItem->child(i));
 
-	if (create_item)
-	{
-		QList<QVariant> processData;
-		processData << QVariant(processName) << "";
-		TreeItem* process = new TreeItem(processData, _rootItem);
-		_rootItem->appendChild(process);
-		return process;
-	}
 	return NULL;
 }
 
-CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, FEMCondition::CondType type)
+CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, const FEMCondition::CondType type)
 {
 	int nLists = parent->childCount();
 	for (int i = 0; i < nLists; i++)
@@ -225,31 +243,33 @@ CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, FEMCondition::
 	return NULL;
 }
 
-CondObjectListItem* ProcessModel::createCondParent(TreeItem* parent, FEMCondition::CondType type, const std::string &geometry_name)
+CondObjectListItem* ProcessModel::createCondParent(TreeItem* parent, const FEMCondition::CondType cond_type /*, const std::string &geometry_name*/)
 {
-	QString condType(QString::fromStdString(FEMCondition::condTypeToString(type)));
+	QString condType(QString::fromStdString(FEMCondition::condTypeToString(cond_type)));
 	QList<QVariant> condData;
 	condData << condType << "";
-
-	//std::string geo_name = parent->data(0).toString().toStdString();
+/*
 	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(geometry_name);
 	if (pnts)
 	{
-		CondObjectListItem* cond = new CondObjectListItem(condData, parent, type, pnts);
+*/
+		CondObjectListItem* cond = new CondObjectListItem(condData, parent, cond_type, NULL/*pnts*/);
 		parent->appendChild(cond);
-		emit conditionAdded(this, parent->data(0).toString().toStdString(), type);
+		/*emit conditionAdded(this, parent->data(0).toString().toStdString(), type);*/
 		return cond;
+/*
 	}
+
 	return NULL;
+*/
 }
 
-vtkPolyDataAlgorithm* ProcessModel::vtkSource(const std::string &name,
-                                                FEMCondition::CondType type)
+vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
 {
-	TreeItem* processParent = this->getProcessParent(QString::fromStdString(name));
+	ProcessItem* processParent = this->getProcessParent(pcs_type);
 	if (processParent)
 	{
-		CondObjectListItem* condParent = this->getCondParent(processParent, type);
+		CondObjectListItem* condParent = this->getCondParent(processParent, cond_type);
 		if (condParent)
 			return condParent->vtkSource();
 	}

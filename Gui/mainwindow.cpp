@@ -62,7 +62,10 @@
 #include "OGSIOVer4.h"
 #include "PetrelInterface.h"
 #include "StationIO.h"
-#include "XMLInterface.h"
+#include "XmlCndInterface.h"
+#include "XmlGmlInterface.h"
+#include "XmlGspInterface.h"
+#include "XmlStnInterface.h"
 
 #include "StringTools.h"
 
@@ -129,17 +132,13 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
 
 	// station model connects
-	connect(stationTabWidget->treeView,
-	        SIGNAL(stationListExportRequested(std::string, std::string)),
+	connect(stationTabWidget->treeView, SIGNAL(stationListExportRequested(std::string, std::string)),
 	        this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
-	connect(stationTabWidget->treeView,
-	        SIGNAL(stationListRemoved(std::string)), _geoModels,
+	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geoModels,
 	        SLOT(removeStationVec(std::string))); // update model when stations are removed
-	connect(stationTabWidget->treeView,
-	        SIGNAL(stationListSaved(QString, QString)), this,
+	connect(stationTabWidget->treeView, SIGNAL(stationListSaved(QString, QString)), this,
 	        SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
-	connect(_geoModels,
-	        SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	connect(_geoModels, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
 	        this, SLOT(updateDataViews())); // update data view when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
 	        this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
@@ -155,8 +154,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 			this, SLOT(showGeoNameDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
 	connect(geoTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
-	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
-	        this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -176,11 +173,14 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
 
 	// Setup connections for condition model to GUI
-	connect(modellingTabWidget->treeView,
-	        SIGNAL(conditionsRemoved(QString, FEMCondition::CondType)),
-	        _processModel, SLOT(removeFEMConditions(QString, FEMCondition::CondType)));
-	connect(modellingTabWidget, SIGNAL(requestNewProcess()), this, SLOT(showNewProcessDialog()));
-
+	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const FEMCondition::CondType)),
+	        _processModel, SLOT(removeFEMConditions(const FiniteElement::ProcessType, const FEMCondition::CondType)));
+	connect(modellingTabWidget->treeView, SIGNAL(processRemoved(const FiniteElement::ProcessType)),
+	        _processModel, SLOT(removeProcess(const FiniteElement::ProcessType)));
+	connect(modellingTabWidget, SIGNAL(requestNewProcess()), 
+		    this, SLOT(showNewProcessDialog()));
+	connect(modellingTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
+	        this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -188,14 +188,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)));
 
-	connect(_processModel,
-	        SIGNAL(conditionAdded(ProcessModel *, std::string, FEMCondition::CondType)),
-	        _vtkVisPipeline,
-	        SLOT(addPipelineItem(ProcessModel *, std::string, FEMCondition::CondType)));
-	connect(_processModel,
-	        SIGNAL(conditionsRemoved(ProcessModel *, std::string, FEMCondition::CondType)),
-	        _vtkVisPipeline,
-	        SLOT(removeSourceItem(ProcessModel *, std::string, FEMCondition::CondType)));
+	connect(_processModel, SIGNAL(conditionAdded(ProcessModel *,  const FiniteElement::ProcessType, const FEMCondition::CondType)),
+	        _vtkVisPipeline, SLOT(addPipelineItem(ProcessModel *,  const FiniteElement::ProcessType, const FEMCondition::CondType)));
+	connect(_processModel, SIGNAL(conditionsRemoved(ProcessModel *, const FiniteElement::ProcessType, const FEMCondition::CondType)),
+	        _vtkVisPipeline, SLOT(removeSourceItem(ProcessModel *, const FiniteElement::ProcessType, const FEMCondition::CondType)));
 
 	connect(_geoModels, SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
 	        _vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel *, std::string)));
@@ -425,10 +421,7 @@ void MainWindow::showVisDockWidget(bool show)
 void MainWindow::open()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",settings.value("lastOpenedFileDirectory").toString(),
 	                                                 "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
@@ -490,8 +483,8 @@ void MainWindow::save()
 		if (fi.suffix().toLower() == "gsp")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-			XMLInterface xml(&_project, schemaName);
-			xml.writeProjectFile(fileName);
+			XmlGspInterface xml(&_project, schemaName);
+			xml.writeFile(fileName);
 			/*
 			   } else if (fi.suffix().toLower() == "gml") {
 			    std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
@@ -567,8 +560,8 @@ void MainWindow::loadFile(const QString &fileName)
 	else if (fi.suffix().toLower() == "gsp")
 	{
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-		XMLInterface xml(&_project, schemaName);
-		xml.readProjectFile(fileName);
+		XmlGspInterface xml(&_project, schemaName);
+		xml.readFile(fileName);
 		std::cout << "Adding missing meshes to GUI..." << std::endl;
 		_meshModels->updateModel();
 	}
@@ -579,8 +572,8 @@ void MainWindow::loadFile(const QString &fileName)
 		myTimer0.start();
 #endif
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-		XMLInterface xml(&_project, schemaName);
-		xml.readGLIFile(fileName);
+		XmlGmlInterface xml(&_project, schemaName);
+		xml.readFile(fileName);
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 #endif
@@ -589,8 +582,8 @@ void MainWindow::loadFile(const QString &fileName)
 	else if (fi.suffix().toLower() == "stn")
 	{
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-		XMLInterface xml(&_project, schemaName);
-		xml.readSTNFile(fileName);
+		XmlStnInterface xml(&_project, schemaName);
+		xml.readFile(fileName);
 	}
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh")
@@ -990,8 +983,8 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 		if (fi.suffix().toLower() == "cnd")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-			XMLInterface xml(&_project, schemaName);
-			xml.readFEMCondFile(conditions, fileName);
+			XmlCndInterface xml(&_project, schemaName);
+			xml.readFile(conditions, fileName);
 		}
 		else if (fi.suffix().toLower() == "bc")
 		{
@@ -1048,15 +1041,15 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-	XMLInterface xml(&_project, schemaName);
-	xml.writeGLIFile(fileName, gliName);
+	XmlGmlInterface xml(&_project, schemaName);
+	xml.writeFile(fileName, gliName);
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-	XMLInterface xml(&_project, schemaName);
-	xml.writeSTNFile(fileName, listName);
+	XmlStnInterface xml(&_project, schemaName);
+	xml.writeFile(fileName, listName);
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,

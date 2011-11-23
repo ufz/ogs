@@ -11,6 +11,7 @@
 #include "TreeModel.h"
 
 class FEMCondition;
+class ProcessItem;
 class CondObjectListItem;
 class vtkPolyDataAlgorithm;
 
@@ -33,8 +34,8 @@ public:
 	~ProcessModel();
 
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
-	/// Returns the vtk source object for the specified subtree of a geometry with the given name.
-	vtkPolyDataAlgorithm* vtkSource(const std::string &name, FEMCondition::CondType type);
+	/// Returns the vtk source object for the specified subtree of a process with the given name.
+	vtkPolyDataAlgorithm* vtkSource(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type);
 
 public slots:
 	/// Adds a vector of FEM Conditions to the model. Objects in the vector can consist of BCs, ICs or STs in any combination and sequence.
@@ -44,13 +45,13 @@ public slots:
 	void addCondition(FEMCondition* condition);
 
 	/// Adds a process to the model
-	void addProcess(ProcessInfo* pcs);
+	ProcessItem* addProcess(ProcessInfo* pcs);
 
-	/// Removes a subtree (BCs, ICs, STs) from the the model. If all conditions for a given geometry are removed, this tree is completely removed.
-	void removeFEMConditions(const QString &process_name, FEMCondition::CondType type = FEMCondition::UNSPECIFIED);
+	/// Removes a subtree (BCs, ICs, STs) from the the model.
+	void removeFEMConditions(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type);
 
 	/// Removes a process from the model
-	void removeProcess(const QString &process_name);
+	void removeProcess(const FiniteElement::ProcessType type);
 
 	/// Removes all processes from the model
 	void removeAllProcesses();
@@ -63,13 +64,13 @@ private:
 	//bool removeConditionItem(const QModelIndex &idx);
 
 	/// Creates the TreeItem for one of the condition subtrees.
-	CondObjectListItem* createCondParent(TreeItem* parent, FEMCondition::CondType type, const std::string &geometry_name);
+	CondObjectListItem* createCondParent(TreeItem* parent, const FEMCondition::CondType type /*, const std::string &geometry_name*/);
 
 	/// Returns the subtree-item for a given type of condtion.
-	CondObjectListItem* getCondParent(TreeItem* parent, FEMCondition::CondType type);
+	CondObjectListItem* getCondParent(TreeItem* parent, const FEMCondition::CondType type) ;
 
 	/// Returns the subtree item for a process with the given name. If create_item is true, this item will be created if it doesn't exist yet.
-	TreeItem* getProcessParent(const QString &processName, bool create_item = false);
+	ProcessItem* getProcessParent(const FiniteElement::ProcessType type) const;
 
 	/// Returns the index of a geometric item of the given name and type for the associated geometry.
 	int getGEOIndex(const std::string &geo_name,
@@ -79,8 +80,8 @@ private:
 	ProjectData& _project;
 
 signals:
-	void conditionAdded(ProcessModel*, const std::string &name, FEMCondition::CondType);
-	void conditionsRemoved(ProcessModel*, const std::string &name, FEMCondition::CondType);
+	void conditionAdded(ProcessModel*, const FiniteElement::ProcessType, const FEMCondition::CondType);
+	void conditionsRemoved(ProcessModel*, const FiniteElement::ProcessType, const FEMCondition::CondType);
 };
 
 #endif // PROCESSMODEL_H

@@ -94,11 +94,9 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		{
 			if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
 			{
-				QAction* addCNDAction = menu.addAction("Add FEM Conditions...");
 				QAction* saveAction = menu.addAction("Save geometry...");
 				menu.addSeparator();
 				QAction* removeAction = menu.addAction("Remove geometry");
-				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(addFEMConditions()));
 				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
@@ -106,13 +104,6 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 	}
 
 	menu.exec(event->globalPos());
-}
-
-void GeoTreeView::addFEMConditions()
-{
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
-	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
 }
 
 void GeoTreeView::connectPolylines()

@@ -38,38 +38,60 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_UNUSED(event);
 
-	CondObjectListItem* item =
+	ProcessItem* pcs_item = dynamic_cast<ProcessItem*>(static_cast<ProcessModel*>(this->model())->
+	                                          getItem(this->selectionModel()->currentIndex()));
+	CondObjectListItem* cond_item =
 	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
 	                                          getItem(this->selectionModel()->currentIndex()));
-	if (item)
+
+	if (pcs_item || cond_item)
 	{
 		QMenu menu;
-		QAction* removeAction    = menu.addAction("Remove");
-		connect(removeAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
+
+		if (cond_item)
+		{
+			QAction* removeCondAction    = menu.addAction("Remove conditions");
+			connect(removeCondAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
+		}
+
+		if (pcs_item)
+		{
+			QAction* addCNDAction = menu.addAction("Add FEM Conditions...");
+			QAction* removePCSAction    = menu.addAction("Remove process");
+			connect(addCNDAction, SIGNAL(triggered()), this, SLOT(addFEMConditions()));
+			connect(removePCSAction, SIGNAL(triggered()), this, SLOT(removeProcess()));
+		}
+
 		menu.exec(event->globalPos());
 	}
 }
 
 void ProcessView::removeCondition()
 {
-	CondObjectListItem* item =
-	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
-	                                          getItem(this->selectionModel()->currentIndex()));
-	QString process_name = item->parentItem()->data(0).toString();
-	FEMCondition::CondType type = item->getType();
-	emit conditionsRemoved(process_name, type);
+	CondObjectListItem* item = dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
+	
+	if (item)
+	{
+		const FiniteElement::ProcessType pcs_type = static_cast<ProcessItem*>(item->parentItem())->getItem()->getProcessType();
+		const FEMCondition::CondType cond_type = item->getType();
+		emit conditionsRemoved(pcs_type, cond_type);
+	}
 }
-/*
-   void ProcessView::removeAllConditions()
-   {
-    ConditionModel* model = static_cast<ConditionModel*>(this->model());
 
-    for (size_t j=0; j<3; j++)
-    {
-        QModelIndex parentIndex = model->index(j, 0, QModelIndex());
-        int nChildren = model->getItem(parentIndex)->childCount();
-        for (int i=nChildren; i>=0; i--)
-            emit requestConditionRemoval(model->index(i, 0, parentIndex));
-    }
-   }
- */
+void ProcessView::removeProcess()
+{
+	ProcessItem* item = dynamic_cast<ProcessItem*>(static_cast<ProcessModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
+	
+	if (item)
+	{
+		const FiniteElement::ProcessType pcs_type = item->getItem()->getProcessType();
+		emit processRemoved(pcs_type);
+	}
+}
+
+void ProcessView::addFEMConditions()
+{
+	TreeItem* item = static_cast<ProcessModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
+	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
+}

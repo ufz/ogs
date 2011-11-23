@@ -124,9 +124,8 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to vtk-file",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),"(*.*)");
+	                                settings.value("lastExportedFileDirectory").toString(),
+									"All files (* *.*)");
 	if (!filename.isEmpty())
 	{
 		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
@@ -141,8 +140,7 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to OpenSG file",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
+	                                                settings.value("lastExportedFileDirectory").
 	                                                toString(), "OpenSG file (*.osb)");
 	if (!filename.isEmpty())
 	{

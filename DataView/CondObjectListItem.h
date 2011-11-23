@@ -28,10 +28,9 @@ public:
 	/// Constructor for the TreeItem specifying FEM Conditions.
 	CondObjectListItem(const QList<QVariant> &data,
 	                   TreeItem* parent,
-	                   FEMCondition::CondType type,
+	                   const FEMCondition::CondType type,
 	                   const std::vector<GEOLIB::Point*>* points)
-		: TreeItem(data,
-		           parent), _vtkSource(VtkConditionSource::New()),  _type(type),
+		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(type),
 		  _cond_vec(new std::vector<FEMCondition*>)
 	{
 		QString display_name = parent->data(0).toString().append(" - ").append(
@@ -54,7 +53,7 @@ public:
 	}
 
 	/// Returns the type of geo-objects contained in the subtree of this item.
-	FEMCondition::CondType getType() { return _type; }
+	const FEMCondition::CondType getType() const { return _type; }
 
 	/// Returns the Vtk polydata source object
 	vtkPolyDataAlgorithm* vtkSource() const
