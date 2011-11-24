@@ -532,7 +532,8 @@ void MainWindow::loadFile(const QString &fileName)
 		myTimer0.start();
 #endif
 		//      FileIO::readGLIFileV4 (fileName.toStdString(), _geoModels);
-		readGLIFileV4(fileName.toStdString(), _geoModels);
+		std::string unique_name;
+		readGLIFileV4(fileName.toStdString(), _geoModels, unique_name);
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 #endif
@@ -1183,7 +1184,7 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GEOLI
 		this->_geoModels, SLOT(addNameForElement(const std::string&, const GEOLIB::GEOTYPE, size_t, std::string)));
 	dlg.exec();
 
-	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type, 
+	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
 		id,	this->_geoModels->getElementNameByID(geometry_name, object_type, id));
 }
 
