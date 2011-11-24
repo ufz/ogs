@@ -99,7 +99,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 		reset();
 	}
 	else
-		std::cout << "Error in ConditionModel::addConditionItem() - Parent object not found..." << std::endl;
+		std::cout << "Error in ProcessModel::addConditionItem() - Parent object not found..." << std::endl;
 }
 
 void ProcessModel::addCondition(FEMCondition* condition)
@@ -121,8 +121,8 @@ void ProcessModel::addCondition(FEMCondition* condition)
 		this->addConditionItem(condition);
 	}
 	else
-		std::cout << "Error in ConditionModel::addConditions() - Specified geometrical object "
-		          << condition->getGeoName() << " not found in associated geometry..." 
+		std::cout << "Error in ProcessModel::addConditions() - Specified geometrical object \""
+		          << condition->getGeoName() << "\" not found in associated geometry..." 
 				  << std::endl;
 }
 
@@ -131,29 +131,6 @@ void ProcessModel::addConditions(std::vector<FEMCondition*> &conditions)
 	for (size_t i = 0; i < conditions.size(); i++)
 		this->addCondition(conditions[i]);
 }
-/*
-   bool ConditionModel::removeConditionItem(const QModelIndex &idx)
-   {
-    if (idx.isValid())
-    {
-        CondItem* item = dynamic_cast<CondItem*>(this->getItem(idx));
-        if (item)
-        {
-            emit conditionRemoved(this, idx);
-            TreeItem* parent = item->parentItem();
-            if (parent->childCount() <=1)
-                this->removeFEMConditions(QString::fromStdString(item->getItem()->getAssociatedGeometryName()), item->getItem()->getCondType());
-            else
-                parent->removeChildren(item->row(),1);
-            reset();
-            return true;
-        }
-    }
-
-    std::cout << "ConditionModel::removeCondition() - Specified index does not exist." << std::endl;
-    return false;
-   }
- */
 
 ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 {

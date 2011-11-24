@@ -13,8 +13,6 @@
 #include "GeoTreeView.h"
 #include "OGSError.h"
 
-#include "XMLInterface.h"
-
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 {
 //	setContextMenuPolicy(Qt::CustomContextMenu);

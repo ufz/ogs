@@ -74,7 +74,7 @@ protected slots:
 	void importNetcdf(); //YW  07.2010
 	void importVtk();
 	void importFeflow();
-	void loadFEMConditionsFromFile(std::string);
+	void loadFEMConditions(std::string geoName);
 	void openDatabase();
 	void openDatabaseConnection();
 	void openRecentFile();
@@ -113,6 +113,7 @@ protected slots:
 private:
 	QMenu* createImportFilesMenu();
 	void loadFile(const QString &fileName);
+	void loadFEMConditionsFromFile(const QString &fileName, std::string geoName = "");
 	void loadPetrelFiles(const QStringList &sfc_file_names,
 	                     const QStringList &well_path_file_names);
 

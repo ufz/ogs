@@ -62,10 +62,10 @@
 #include "OGSIOVer4.h"
 #include "PetrelInterface.h"
 #include "StationIO.h"
-#include "XmlCndInterface.h"
-#include "XmlGmlInterface.h"
-#include "XmlGspInterface.h"
-#include "XmlStnInterface.h"
+#include "XmlIO/XmlCndInterface.h"
+#include "XmlIO/XmlGmlInterface.h"
+#include "XmlIO/XmlGspInterface.h"
+#include "XmlIO/XmlStnInterface.h"
 
 #include "StringTools.h"
 
@@ -180,7 +180,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(modellingTabWidget, SIGNAL(requestNewProcess()), 
 		    this, SLOT(showNewProcessDialog()));
 	connect(modellingTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
-	        this, SLOT(loadFEMConditionsFromFile(std::string))); // add FEM Conditions
+	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -422,7 +422,7 @@ void MainWindow::open()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",settings.value("lastOpenedFileDirectory").toString(),
-	                                                 "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+	                                                 "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
 		QDir dir = QDir(fileName);
@@ -485,12 +485,6 @@ void MainWindow::save()
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 			XmlGspInterface xml(&_project, schemaName);
 			xml.writeFile(fileName);
-			/*
-			   } else if (fi.suffix().toLower() == "gml") {
-			    std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-			    XMLInterface xml(_geoModels, schemaName);
-			    xml.writeGLIFile(fileName, gliName);
-			 */
 		}
 		else if (fi.suffix().toLower() == "geo")
 		{
@@ -594,6 +588,13 @@ void MainWindow::loadFile(const QString &fileName)
 			_meshModels->addMesh(msh, name);
 		else
 			OGSError::box("Failed to load a mesh file.");
+	}
+	else if ((fi.suffix().toLower() == "cnd") ||
+		     (fi.suffix().toLower() == "bc") ||
+			 (fi.suffix().toLower() == "ic") ||
+			 (fi.suffix().toLower() == "st"))
+	{
+		this->loadFEMConditionsFromFile(fileName);
 	}
 
 	// GMS borehole files
@@ -964,34 +965,45 @@ void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 	dlg.exec();
 }
 
-void MainWindow::loadFEMConditionsFromFile(std::string geoName)
+
+void MainWindow::loadFEMConditions(std::string geoName)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
-	                                                 "Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
+														settings.value(
+																"lastOpenedFileDirectory").
+														toString(),
+														"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
+	QDir dir = QDir(fileName);
+	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+
 	if (!fileName.isEmpty())
+		this->loadFEMConditionsFromFile(fileName, geoName);
+}
+
+void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string geoName)
+{
+	std::vector<FEMCondition*> conditions;
+	QFileInfo fi(fileName);
+	if (fi.suffix().toLower() == "cnd")
 	{
-		QFileInfo fi(fileName);
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-
-		std::vector<FEMCondition*> conditions;
-
-		if (fi.suffix().toLower() == "cnd")
+		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
+		XmlCndInterface xml(&_project, schemaName);
+		xml.readFile(conditions, fileName);
+	}
+	else 
+	{
+		if (geoName.empty())
 		{
-			std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-			XmlCndInterface xml(&_project, schemaName);
-			xml.readFile(conditions, fileName);
+			QFileInfo fi(fileName);
+			geoName = fi.fileName().toStdString();
 		}
-		else if (fi.suffix().toLower() == "bc")
+		if (fi.suffix().toLower() == "bc")
 		{
 			QString name = fi.path() + "/";
 			BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
 			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
-			     it != bc_list.end(); ++it)
+					it != bc_list.end(); ++it)
 			{
 				BoundaryCondition* bc = new BoundaryCondition(*(*it), geoName);
 				conditions.push_back(bc);
@@ -1002,7 +1014,7 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			QString name = fi.path() + "/";
 			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
 			for (std::vector<CInitialCondition*>::iterator it = ic_vector.begin();
-			     it != ic_vector.end(); ++it)
+					it != ic_vector.end(); ++it)
 			{
 				InitialCondition* ic = new InitialCondition(*(*it), geoName);
 				conditions.push_back(ic);
@@ -1013,28 +1025,27 @@ void MainWindow::loadFEMConditionsFromFile(std::string geoName)
 			QString name = fi.path() + "/";
 			STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
 			for (std::vector<CSourceTerm*>::iterator it = st_vector.begin();
-			     it != st_vector.end(); ++it)
+					it != st_vector.end(); ++it)
 			{
 				SourceTerm* st = new SourceTerm(*(*it), geoName);
 				conditions.push_back(st);
 			}
 		}
+	}
+	if (!conditions.empty())
+	{
+		this->_processModel->addConditions(conditions);
 
-		if (!conditions.empty())
-		{
-			this->_processModel->addConditions(conditions);
-
-			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
-			     it != bc_list.end(); ++it)
-				delete *it;
-			bc_list.clear();
-			for (size_t i = 0; i < ic_vector.size(); i++)
-				delete ic_vector[i];
-			ic_vector.clear();
-			for (size_t i = 0; i < st_vector.size(); i++)
-				delete st_vector[i];
-			st_vector.clear();
-		}
+		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
+			    it != bc_list.end(); ++it)
+			delete *it;
+		bc_list.clear();
+		for (size_t i = 0; i < ic_vector.size(); i++)
+			delete ic_vector[i];
+		ic_vector.clear();
+		for (size_t i = 0; i < st_vector.size(); i++)
+			delete st_vector[i];
+		st_vector.clear();
 	}
 }
 
@@ -1506,9 +1517,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>* points
 		this->_geoModels->addPointVec(new_points, geo_name, name_pnt_id_map);
 
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
-		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(
-		        st_vector,
-		        geo_name);
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector,geo_name);
 
 		// add boundary conditions to model
 		if (!conditions.empty())
