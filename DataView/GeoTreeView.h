@@ -38,6 +38,8 @@ private:
 	void contextMenuEvent( QContextMenuEvent* e );
 
 private slots:
+	/// Allows to add FEM Conditions to a process
+	void loadFEMConditions();
 	void on_Clicked(QModelIndex idx);
 	/// Calls a LineEditDialog.
 	void connectPolylines();
@@ -54,6 +56,7 @@ signals:
 	void itemSelectionChanged(const QItemSelection & selected,
 	                          const QItemSelection & deselected);
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
+	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
 	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
 	void requestLineEditDialog(const std::string&);

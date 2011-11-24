@@ -93,9 +93,11 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
 			{
 				QAction* saveAction = menu.addAction("Save geometry...");
+				QAction* addCNDAction = menu.addAction("Load FEM Conditions...");
 				menu.addSeparator();
 				QAction* removeAction = menu.addAction("Remove geometry");
 				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
+				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
 				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
 		}
@@ -153,4 +155,11 @@ void GeoTreeView::writeToFile() const
 						"Save geometry as", gliName, "GeoSys mesh file (*.gml)");
 	if (!fileName.isEmpty())
 		emit saveToFileRequested(gliName, fileName);
+}
+
+void GeoTreeView::loadFEMConditions()
+{
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
+	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
 }

@@ -56,9 +56,7 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 
 		if (pcs_item)
 		{
-			QAction* addCNDAction = menu.addAction("Add FEM Conditions...");
 			QAction* removePCSAction    = menu.addAction("Remove process");
-			connect(addCNDAction, SIGNAL(triggered()), this, SLOT(addFEMConditions()));
 			connect(removePCSAction, SIGNAL(triggered()), this, SLOT(removeProcess()));
 		}
 
@@ -89,9 +87,3 @@ void ProcessView::removeProcess()
 	}
 }
 
-void ProcessView::addFEMConditions()
-{
-	TreeItem* item = static_cast<ProcessModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
-	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
-}

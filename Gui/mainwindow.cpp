@@ -154,6 +154,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 			this, SLOT(showGeoNameDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
 	connect(geoTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
+	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
+	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -179,8 +181,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _processModel, SLOT(removeProcess(const FiniteElement::ProcessType)));
 	connect(modellingTabWidget, SIGNAL(requestNewProcess()), 
 		    this, SLOT(showNewProcessDialog()));
-	connect(modellingTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
-	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -996,8 +996,10 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 	{
 		if (geoName.empty())
 		{
+			// assume that geoName is identical to filename of the currently loaded file (but with *.gli-extension)
 			QFileInfo fi(fileName);
 			geoName = fi.fileName().toStdString();
+			geoName = geoName.substr(0, geoName.find_last_of(".")).append(".gli");
 		}
 		if (fi.suffix().toLower() == "bc")
 		{

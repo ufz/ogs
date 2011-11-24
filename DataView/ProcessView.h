@@ -38,8 +38,6 @@ private:
 	void contextMenuEvent( QContextMenuEvent* e );
 
 private slots:
-	/// Allows to add FEM Conditions to a process
-	void addFEMConditions();
 	void on_Clicked(QModelIndex idx);
 	void removeCondition();
 	void removeProcess();
@@ -47,7 +45,6 @@ private slots:
 signals:
 	void conditionsRemoved(const FiniteElement::ProcessType, const FEMCondition::CondType);
 	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-	void loadFEMCondFileRequested(std::string);
 	void processRemoved(const FiniteElement::ProcessType);
 };
 
