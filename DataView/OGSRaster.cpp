@@ -103,7 +103,7 @@ bool OGSRaster::loadImageFromASC(const QString &fileName,
 			{ // scale intensities and set nodata values to zero (black)
 				if (pixVal[index + i] != header.noData)
 				{
-					value = (pixVal[index + i] == header.noData) ? minVal : pixVal[index + i];
+					value = pixVal[index + i];
 					gVal = (autoscale) ? 
 						static_cast<int> (floor((value -minVal) * scalingFactor)) : static_cast<int> (value);
 					//gVal = value; // saudi arabia
@@ -178,9 +178,10 @@ bool OGSRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	else
 		return false;
 
-	// correct raster position by half a pixel for correct visualisation
-	header.x = header.x + (header.cellsize / 2);
-	header.y = header.y + (header.cellsize / 2);
+	// correct raster position by half a pixel for correct visualisation 
+	// argh! wrong! correction has to happen in visualisation object, otherwise the actual data is wrong
+	//header.x = header.x + (header.cellsize / 2);
+	//header.y = header.y + (header.cellsize / 2);
 
 	return true;
 }

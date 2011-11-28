@@ -24,9 +24,15 @@ MeshFromRasterDialog::~MeshFromRasterDialog()
 
 void MeshFromRasterDialog::accept()
 {
-	emit setMeshParameters(this->mshNameEdit->text(),
-						   this->triButton->isChecked(),
-						   this->elevationButton->isChecked());
+	UseIntensityAs::type i_type(UseIntensityAs::ELEVATION);
+	if (this->materialButton->isChecked()) i_type = UseIntensityAs::MATERIAL;
+	else if (this->ignoreButton->isChecked()) i_type = UseIntensityAs::NONE;
+
+	MshElemType::type e_type(MshElemType::TRIANGLE);
+	if (this->quadButton->isChecked()) e_type = MshElemType::QUAD;
+	else if (this->hexButton->isChecked()) e_type = MshElemType::HEXAHEDRON;
+
+	emit setMeshParameters(this->mshNameEdit->text(), e_type, i_type);
 	this->done(QDialog::Accepted);
 }
 

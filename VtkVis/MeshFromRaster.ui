@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>180</height>
+    <height>220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,6 +44,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QRadioButton" name="ignoreButton">
+        <property name="text">
+         <string>Ignore</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -64,6 +71,16 @@
        <widget class="QRadioButton" name="quadButton">
         <property name="text">
          <string>rectangles</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="hexButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>hexahedra</string>
         </property>
        </widget>
       </item>

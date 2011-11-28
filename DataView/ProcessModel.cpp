@@ -48,7 +48,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 	CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
 	if (condParent == NULL)
-		condParent = this->createCondParent(processParent, c->getCondType() /*, c->getAssociatedGeometryName()*/);
+		condParent = this->createCondParent(processParent, c->getCondType(), c->getAssociatedGeometryName());
 
 	if (condParent)
 	{
@@ -220,25 +220,22 @@ CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, const FEMCondi
 	return NULL;
 }
 
-CondObjectListItem* ProcessModel::createCondParent(TreeItem* parent, const FEMCondition::CondType cond_type /*, const std::string &geometry_name*/)
+CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, const FEMCondition::CondType cond_type, const std::string &geometry_name)
 {
 	QString condType(QString::fromStdString(FEMCondition::condTypeToString(cond_type)));
 	QList<QVariant> condData;
 	condData << condType << "";
-/*
+
 	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(geometry_name);
 	if (pnts)
 	{
-*/
-		CondObjectListItem* cond = new CondObjectListItem(condData, parent, cond_type, NULL/*pnts*/);
+		CondObjectListItem* cond = new CondObjectListItem(condData, parent, cond_type, pnts);
 		parent->appendChild(cond);
-		/*emit conditionAdded(this, parent->data(0).toString().toStdString(), type);*/
+		emit conditionAdded(this, parent->getItem()->getProcessType(), cond_type);
 		return cond;
-/*
 	}
 
 	return NULL;
-*/
 }
 
 vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)

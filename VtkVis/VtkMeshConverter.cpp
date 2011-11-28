@@ -22,10 +22,10 @@
 MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const std::pair<double,double> &origin,
                                                      const double &scalingFactor,
-													 MshElemType::type t,
-													 bool setAsElevation)
+													 MshElemType::type elem_type,
+													 UseIntensityAs::type intensity_type)
 {
-	if ((t != MshElemType::TRIANGLE) && (t != MshElemType::QUAD))
+	if ((elem_type != MshElemType::TRIANGLE) && (elem_type != MshElemType::QUAD))
 	{
 		std::cout << "Error in VtkMeshConverter::convertImgToMesh() - Invalid Mesh Element Type..." << std::endl;
 		return NULL;
@@ -35,52 +35,88 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	        vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
 	int* dims = img->GetDimensions();
 
-	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 	const size_t imgHeight = dims[0];
 	const size_t imgWidth  = dims[1];
-	double* pixVal (new double[imgHeight * imgWidth]);
-	bool* visNodes(new bool[imgWidth * imgHeight]);
+	const size_t incHeight = imgHeight+1;
+	const size_t incWidth  = imgWidth+1;
+	double* pixVal (new double[incHeight * incWidth]);
+	bool* visNodes(new bool[incWidth * incHeight]);
+	int* node_idx_map(new int[incWidth * incHeight]);
 
+	for (size_t j = 0; j < incWidth; j++)
+	{
+		pixVal[j]=0;
+		visNodes[j]=false;
+		node_idx_map[j]=-1;
+	}
 	for (size_t i = 0; i < imgWidth; i++)
+	{
 		for (size_t j = 0; j < imgHeight; j++)
 		{
-			const size_t index = i * imgHeight + j;
-			const double* colour = pixelData->GetTuple4(index);
+			const size_t img_idx = i * imgHeight + j;
+			const size_t index = (i+1) * incHeight + j;
+			const double* colour = pixelData->GetTuple4(img_idx);
 			pixVal[index] = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
-			double zValue = (setAsElevation) ? pixVal[index] : 0.0;
-			double coords[3] = { origin.first + (scalingFactor * j), 
-								 origin.second + (scalingFactor * i), 
-								 zValue };
 			visNodes[index] = (colour[3] > 0);
+			node_idx_map[index]=-1;
+		}
+		pixVal[(i+2)*incHeight-1]=0;
+		visNodes[(i+2)*incHeight-1]=false;
+		node_idx_map[(i+2)*incHeight-1]=-1;
+	}
 
-			MeshLib::CNode* node(new MeshLib::CNode(index));
-			node->SetCoordinates(coords);
-			mesh->nod_vector.push_back(node);
+	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
+	size_t node_idx_count(0);
+	const double x_offset(origin.first - scalingFactor/2.0);
+	const double y_offset(origin.second - scalingFactor/2.0);
+
+	for (size_t i = 0; i < incWidth; i++)
+		for (size_t j = 0; j < incHeight; j++)
+		{
+			const size_t index = i * incHeight + j;
+
+			bool set_node (false);
+			if (j==0 && i==imgWidth) set_node = visNodes[index];
+			else if (j==0)			 set_node = (visNodes[index] || visNodes[index+incHeight]);
+			else if (i==imgWidth)	 set_node = (visNodes[index] || visNodes[index-1]);
+			else					 set_node = (visNodes[index] || visNodes[index-1] || visNodes[index+incHeight] || visNodes[index+incHeight-1]);
+
+			if (set_node)
+			{
+				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : 0.0;
+				const double coords[3] = { x_offset + (scalingFactor * j), 
+									       y_offset + (scalingFactor * i), 
+									       zValue };
+
+				MeshLib::CNode* node(new MeshLib::CNode(node_idx_count));
+				node->SetCoordinates(coords);
+				mesh->nod_vector.push_back(node);
+				node_idx_map[index] = node_idx_count;
+				node_idx_count++;
+			}
 		}
 
 	// set mesh elements
-	for (size_t i = 0; i < imgWidth - 1; i++)
-		for (size_t j = 0; j < imgHeight - 1; j++)
+	for (size_t i = 0; i < imgWidth; i++)
+		for (size_t j = 0; j < imgHeight; j++)
 		{
-			const int index = i * imgHeight + j;
-
-			// if node is visible
-			if (visNodes[index])
+			const int index = i * incHeight + j;
+			if ((node_idx_map[index]!=-1) && (node_idx_map[index+1]!=-1) && (node_idx_map[index+incHeight]!=-1) && (node_idx_map[index+incHeight+1]!=-1) && (visNodes[index+incHeight]))
 			{
-				const int mat = (setAsElevation) ? 0 : static_cast<int>(pixVal[index]);
-				if (t == MshElemType::TRIANGLE)
+				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
+				if (elem_type == MshElemType::TRIANGLE)
 				{
-					mesh->ele_vector.push_back(createElement(t, mat, index, index + 1, 
-															 index + imgHeight));       // upper left triangle
-					mesh->ele_vector.push_back(createElement(t, mat, index + 1, 
-															 index + imgHeight + 1, 
-															 index + imgHeight));                   // lower right triangle
+					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index], node_idx_map[index + 1], 
+															 node_idx_map[index + incHeight]));       // upper left triangle
+					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index + 1], 
+															 node_idx_map[index + incHeight + 1], 
+															 node_idx_map[index + incHeight]));                   // lower right triangle
 				}
-				if (t == MshElemType::QUAD)
+				if (elem_type == MshElemType::QUAD)
 				{
-					mesh->ele_vector.push_back(createElement(t, mat, index, index + 1, 
-															 index + imgHeight + 1,
-															 index + imgHeight));
+					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index], node_idx_map[index + 1], 
+															 node_idx_map[index + incHeight + 1],
+															 node_idx_map[index + incHeight]));
 				}
 			}
 		}
@@ -88,6 +124,7 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	mesh->ConstructGrid();
 	delete [] pixVal;
 	delete [] visNodes;
+	delete [] node_idx_map;
 	return mesh;
 }
 
@@ -96,13 +133,12 @@ MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, int mat, si
 	MeshLib::CElem* elem(new MeshLib::CElem());
 	const size_t nNodes = (t == MshElemType::QUAD) ? 4 : 3;
 	elem->setElementProperties(t);
-	elem->SetPatchIndex(mat);
-	elem->SetNodesNumber(nNodes);
 	elem->SetNodeIndex(0, node1);
 	elem->SetNodeIndex(1, node2);
 	elem->SetNodeIndex(2, node3);
 	if (t ==  MshElemType::QUAD)
 		elem->SetNodeIndex(3, node4);
+	elem->SetPatchIndex(mat);
 	elem->InitializeMembers();
 	return elem;
 }

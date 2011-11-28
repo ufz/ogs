@@ -7,6 +7,7 @@
 #define MSHFROMRASTERDIALOG_H
 
 #include "ui_MeshFromRaster.h"
+#include "VtkMeshConverter.h"
 
 #include <QtGui/QDialog>
 
@@ -32,7 +33,7 @@ private slots:
 	void reject();
 
 signals:
-	void setMeshParameters(QString, bool, bool);
+	void setMeshParameters(QString, MshElemType::type, UseIntensityAs::type);
 
 };
 

@@ -19,6 +19,16 @@ class CFEMesh;
 class CNode;
 }
 
+/// Selection of possible interpretations for intensities
+struct UseIntensityAs
+{
+	enum type {
+		ELEVATION,
+		MATERIAL,
+		NONE
+	};
+};
+
 /**
  * \brief Adapter class to convert FEM Mesh to a representation more suited for visualisation purposes
  */
@@ -27,14 +37,14 @@ class VtkMeshConverter
 public:
 	/**
 	 * Converts greyscale image to a mesh
-	 * \param type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-	 * \param setAsElevation defines how image intensities are interpreted (as elevation or as material IDs)
+	 * \parelem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static MeshLib::CFEMesh* convertImgToMesh(vtkImageData* img,
 	                                          const std::pair<double,double> &origin,
 	                                          const double &scalingFactor,
-											  MshElemType::type t,
-											  bool setAsElevation);
+											  MshElemType::type elem_type,
+											  UseIntensityAs::type intensity_type);
 
 	/// Converts a vtkUnstructuredGrid object to a CFEMesh
 	static MeshLib::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
