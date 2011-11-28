@@ -4,8 +4,8 @@
 #include <iostream>
 #include <cassert>
 
-extern void CS_write(char*, unsigned, unsigned const*, unsigned const*, double const*);
-extern void CS_read(char*, unsigned&, unsigned*&, unsigned*&, double*&);
+//extern void CS_write(char*, unsigned, unsigned const*, unsigned const*, double const*);
+//extern void CS_read(char*, unsigned&, unsigned*&, unsigned*&, double*&);
 
 template<class T> void CS_write(std::ostream &os, unsigned n, unsigned const* iA, unsigned const* jA, T const* A)
 {
