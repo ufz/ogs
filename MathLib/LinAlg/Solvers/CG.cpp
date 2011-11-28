@@ -7,6 +7,8 @@
 
 #include <limits>
 
+#include <omp.h>
+
 #include "MathTools.h"
 #include "blas.h"
 #include "../Sparse/CRSMatrix.h"
@@ -79,7 +81,7 @@ unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 			// p = r^ + beta * p
 			unsigned k;
 			omp_set_num_threads(num_threads);
-#pragma omp parallel for
+//#pragma omp parallel for
 			for (k = 0; k < N; k++) {
 				p[k] = rhat[k] + beta * p[k];
 			}
