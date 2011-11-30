@@ -92,6 +92,7 @@ void amuxCRSParallelPThreads (double a,
 	delete [] thread_param_array;
 	delete [] thread_array;
 #else
+	(void) num_of_pthreads;
 	amuxCRS (a, n, iA, jA, A, x, y);
 #endif
 }
