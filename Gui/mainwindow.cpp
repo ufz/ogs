@@ -179,7 +179,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _processModel, SLOT(removeFEMConditions(const FiniteElement::ProcessType, const FEMCondition::CondType)));
 	connect(modellingTabWidget->treeView, SIGNAL(processRemoved(const FiniteElement::ProcessType)),
 	        _processModel, SLOT(removeProcess(const FiniteElement::ProcessType)));
-	connect(modellingTabWidget, SIGNAL(requestNewProcess()), 
+	connect(modellingTabWidget, SIGNAL(requestNewProcess()),
 		    this, SLOT(showNewProcessDialog()));
 
 	// VisPipeline Connects
@@ -788,13 +788,9 @@ void MainWindow::importRaster()
 #else
 	QString geotiffExtension("");
 #endif
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select raster file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                QString(
-	                                                        "Raster files (*.asc *.bmp *.jpg *.png%1);;")
-	                                                .arg(geotiffExtension));
+	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
+					settings.value("lastOpenedFileDirectory").toString(), QString(
+									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
@@ -815,13 +811,10 @@ void MainWindow::importRasterAsPoly()
 #else
 	QString geotiffExtension("");
 #endif
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select raster file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                QString(
-	                                                        "Raster files (*.asc *.bmp *.jpg *.png%1);;")
-	                                                .arg(geotiffExtension));
+	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
+					settings.value("lastOpenedFileDirectory").toString(), QString(
+									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(
+									geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
@@ -847,10 +840,8 @@ void MainWindow::importRasterAsPoly()
 void MainWindow::importShape()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select shape file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
+	QString fileName = QFileDialog::getOpenFileName(this, "Select shape file to import",
+					settings.value("lastOpenedFileDirectory").toString(),
 	                                                "ESRI Shape files (*.shp );;");
 	QFileInfo fi(fileName);
 
@@ -992,7 +983,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		XmlCndInterface xml(&_project, schemaName);
 		xml.readFile(conditions, fileName);
 	}
-	else 
+	else
 	{
 		if (geoName.empty())
 		{

@@ -84,8 +84,8 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			if (set_node)
 			{
 				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : 0.0;
-				const double coords[3] = { x_offset + (scalingFactor * j), 
-									       y_offset + (scalingFactor * i), 
+				const double coords[3] = { x_offset + (scalingFactor * j),
+									       y_offset + (scalingFactor * i),
 									       zValue };
 
 				MeshLib::CNode* node(new MeshLib::CNode(node_idx_count));
@@ -106,15 +106,15 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
 				if (elem_type == MshElemType::TRIANGLE)
 				{
-					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index], node_idx_map[index + 1], 
+					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index], node_idx_map[index + 1],
 															 node_idx_map[index + incHeight]));       // upper left triangle
-					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index + 1], 
-															 node_idx_map[index + incHeight + 1], 
+					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index + 1],
+															 node_idx_map[index + incHeight + 1],
 															 node_idx_map[index + incHeight]));                   // lower right triangle
 				}
 				if (elem_type == MshElemType::QUAD)
 				{
-					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index], node_idx_map[index + 1], 
+					mesh->ele_vector.push_back(createElement(elem_type, mat, node_idx_map[index], node_idx_map[index + 1],
 															 node_idx_map[index + incHeight + 1],
 															 node_idx_map[index + incHeight]));
 				}
@@ -130,17 +130,24 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 
 MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, int mat, size_t node1, size_t node2, size_t node3, size_t node4)
 {
-	MeshLib::CElem* elem(new MeshLib::CElem());
-	const size_t nNodes = (t == MshElemType::QUAD) ? 4 : 3;
-	elem->setElementProperties(t);
-	elem->SetNodeIndex(0, node1);
-	elem->SetNodeIndex(1, node2);
-	elem->SetNodeIndex(2, node3);
-	if (t ==  MshElemType::QUAD)
-		elem->SetNodeIndex(3, node4);
-	elem->SetPatchIndex(mat);
-	elem->InitializeMembers();
-	return elem;
+//	MeshLib::CElem* elem(new MeshLib::CElem);
+////	const size_t nNodes = (t == MshElemType::QUAD) ? 4 : 3;
+//	elem->setElementProperties(t);
+//	elem->SetNodeIndex(0, node1);
+//	elem->SetNodeIndex(1, node2);
+//	elem->SetNodeIndex(2, node3);
+//	if (t ==  MshElemType::QUAD)
+//		elem->SetNodeIndex(3, node4);
+//	elem->SetPatchIndex(mat);
+//	elem->InitializeMembers();
+//	return elem;
+
+	if (t == MshElemType::QUAD) {
+		return new MeshLib::CElem (t, node1, node2, node3, node4, mat);
+	} else {
+		return new MeshLib::CElem (t, node1, node2, node3, mat);
+	}
+
 }
 
 MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
@@ -204,7 +211,7 @@ MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid*
 		cell = grid->GetCell(i);
 		size_t nElemNodes = cell->GetNumberOfPoints();
 		elem->SetNodesNumber(nElemNodes);
-		elem->nodes_index.resize(nElemNodes);
+		elem->getNodeIndices().resize(nElemNodes);
 
 		for (size_t j = 0; j < nElemNodes; j++)
 			elem->SetNodeIndex(j, cell->GetPointId(j));
