@@ -9,6 +9,9 @@
 
 int main(int argc, char *argv[])
 {
+	(void) argc;
+	(void) argv;
+
 	// *** reading matrix in crs format from file
 	std::string fname("/work/fischeth/data/testmat.bin");
 //	std::ifstream in(fname.c_str(), std::ios::binary);

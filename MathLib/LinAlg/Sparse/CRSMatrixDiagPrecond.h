@@ -55,19 +55,20 @@ public:
 			delete [] _inv_diag;
 		_inv_diag = new double[_n_rows];
 
-//		if (!generateDiagPrecond(_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {
-//			std::cout << "Could not create diagonal preconditioner" << std::endl;
-//		}
-		if (!generateDiagPrecondRowSum(_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {
+		if (!generateDiagPrecond(_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {
 			std::cout << "Could not create diagonal preconditioner" << std::endl;
 		}
-//		if (!generateDiagPrecondRowMax(_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {
+//		if (!generateDiagPrecondRowSum(_n_rows, _row_ptr, _data, _inv_diag)) {
+//			std::cout << "Could not create diagonal preconditioner" << std::endl;
+//		}
+//		if (!generateDiagPrecondRowMax(_n_rows, _row_ptr, _data, _inv_diag)) {
 //			std::cout << "Could not create diagonal preconditioner" << std::endl;
 //		}
 
 	}
 
-	void precondApply(double* x) const {
+	void precondApply(double* x) const
+	{
 		{
 			unsigned k;
 //			#pragma omp parallel for
@@ -77,7 +78,8 @@ public:
 		}
 	}
 
-	~CRSMatrixDiagPrecond() {
+	~CRSMatrixDiagPrecond()
+	{
 		delete [] _inv_diag;
 	}
 private:
