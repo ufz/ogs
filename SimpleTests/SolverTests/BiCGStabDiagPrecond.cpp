@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 	}
 
 	// read number of threads
-	unsigned num_omp_threads (1);
-	num_omp_threads = atoi (argv[3]);
+//	unsigned num_omp_threads (1);
+//	num_omp_threads = atoi (argv[3]);
 
 	// *** reading matrix in crs format from file
 	std::string fname(argv[1]);

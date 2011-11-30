@@ -30,11 +30,9 @@ bool generateDiagPrecond (unsigned n, unsigned const*const iA, unsigned const*co
 	return true;
 }
 
-bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, unsigned const*const jA,
-				double const*const A, double* diag)
+bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, double const*const A, double* diag)
 {
 	unsigned idx; // first idx of next row
-	unsigned c; // column
 	unsigned j;
 
 	for (unsigned r(0); r<n; ++r) {
@@ -52,11 +50,9 @@ bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, unsigned con
 	return true;
 }
 
-bool generateDiagPrecondRowMax(unsigned n, unsigned const*const iA, unsigned const*const jA,
-				double const*const A, double* diag)
+bool generateDiagPrecondRowMax(unsigned n, unsigned const*const iA, double const*const A, double* diag)
 {
 	unsigned idx; // first idx of next row
-	unsigned c; // column
 	unsigned j;
 
 	for (unsigned r(0); r<n; ++r) {

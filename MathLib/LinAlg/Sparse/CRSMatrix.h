@@ -64,7 +64,7 @@ public:
 		amuxCRS<FP_TYPE, IDX_TYPE>(d, this->getNRows(), _row_ptr, _col_idx, _data, x, y);
 	}
 
-    virtual void precondApply(FP_TYPE* x) const
+    virtual void precondApply(FP_TYPE* /*x*/) const
     {}
 
     /**
