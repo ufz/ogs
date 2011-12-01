@@ -4,11 +4,13 @@
  */
 
 #include <QMenu>
+#include <QFileDialog>
 
 #include "ProcessItem.h"
 #include "CondObjectListItem.h"
 #include "ProcessModel.h"
 #include "ProcessView.h"
+
 
 ProcessView::ProcessView(QWidget* parent) : QTreeView(parent)
 {
@@ -47,7 +49,6 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 	if (pcs_item || cond_item)
 	{
 		QMenu menu;
-
 		if (cond_item)
 		{
 			QAction* removeCondAction    = menu.addAction("Remove conditions");
@@ -59,7 +60,6 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 			QAction* removePCSAction    = menu.addAction("Remove process");
 			connect(removePCSAction, SIGNAL(triggered()), this, SLOT(removeProcess()));
 		}
-
 		menu.exec(event->globalPos());
 	}
 }
@@ -86,4 +86,3 @@ void ProcessView::removeProcess()
 		emit processRemoved(pcs_type);
 	}
 }
-

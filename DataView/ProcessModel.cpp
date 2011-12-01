@@ -170,6 +170,8 @@ void ProcessModel::removeProcess(const FiniteElement::ProcessType type)
 {
 	const ProcessItem* processParent = this->getProcessParent(type);
 	this->_project.removeProcess(type);
+
+	//for (
 	removeRows(processParent->row(), 1, QModelIndex());
 }
 

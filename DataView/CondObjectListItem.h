@@ -53,7 +53,7 @@ public:
 	}
 
 	/// Returns the type of geo-objects contained in the subtree of this item.
-	const FEMCondition::CondType getType() const { return _type; }
+	FEMCondition::CondType getType() const { return _type; }
 
 	/// Returns the Vtk polydata source object
 	vtkPolyDataAlgorithm* vtkSource() const

@@ -6,11 +6,9 @@
 #ifndef NEWPROCESSDIALOG_H
 #define NEWPROCESSDIALOG_H
 
-#include "ui_NewProcess.h"
-
 #include <QDialog>
 
-#include "ProjectData.h"
+#include "ui_NewProcess.h"
 
 class ProcessInfo;
 
@@ -23,9 +21,9 @@ class NewProcessDialog : public QDialog, private Ui_NewProcess
 
 public:
 	/// Constructor for creating a new FEM condition.
-	NewProcessDialog(ProjectData &project, QDialog* parent = 0);
+	NewProcessDialog(QDialog* parent = 0);
 
-	~NewProcessDialog(void);
+	~NewProcessDialog(void) {};
 
 private:
 	void setupDialog();

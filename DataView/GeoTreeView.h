@@ -51,6 +51,8 @@ private slots:
 	void writeToFile() const;
 	/// Removes a whole geometry or parts of it.
 	void removeList();
+	/// Saves FEM Conditions associated with the given geometry
+	void saveFEMConditions();
 
 signals:
 	void itemSelectionChanged(const QItemSelection & selected,
@@ -61,6 +63,7 @@ signals:
 	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
 	void requestLineEditDialog(const std::string&);
 	void requestNameChangeDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
+	void saveFEMConditionsRequested(QString, QString);
 };
 
 #endif //GEOTREEVIEW_H

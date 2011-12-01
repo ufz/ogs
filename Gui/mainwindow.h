@@ -96,6 +96,7 @@ protected slots:
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
+	void writeFEMConditionsToFile(QString geoName, QString fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
 

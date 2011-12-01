@@ -131,7 +131,6 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, int mat, size_t node1, size_t node2, size_t node3, size_t node4)
 {
 	MeshLib::CElem* elem(new MeshLib::CElem());
-	const size_t nNodes = (t == MshElemType::QUAD) ? 4 : 3;
 	elem->setElementProperties(t);
 	elem->SetNodeIndex(0, node1);
 	elem->SetNodeIndex(1, node2);

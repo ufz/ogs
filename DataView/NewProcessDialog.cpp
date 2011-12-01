@@ -8,15 +8,11 @@
 #include "ProcessInfo.h"
 
 
-NewProcessDialog::NewProcessDialog(ProjectData &project, QDialog* parent)
+NewProcessDialog::NewProcessDialog(QDialog* parent)
 : QDialog(parent)
 {
 	setupUi(this);
 	setupDialog();
-}
-
-NewProcessDialog::~NewProcessDialog()
-{
 }
 
 void NewProcessDialog::setupDialog()

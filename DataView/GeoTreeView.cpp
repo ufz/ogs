@@ -94,10 +94,12 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			{
 				QAction* saveAction = menu.addAction("Save geometry...");
 				QAction* addCNDAction = menu.addAction("Load FEM Conditions...");
+				QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
 				menu.addSeparator();
 				QAction* removeAction = menu.addAction("Remove geometry");
 				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
+				connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
 				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
 		}
@@ -152,7 +154,7 @@ void GeoTreeView::writeToFile() const
 	        this->selectionModel()->currentIndex());
 	QString gliName = item->data(0).toString();
 	QString fileName = QFileDialog::getSaveFileName(NULL,
-						"Save geometry as", gliName, "GeoSys mesh file (*.gml)");
+						"Save geometry as", gliName, "GeoSys geometry file (*.gml)");
 	if (!fileName.isEmpty())
 		emit saveToFileRequested(gliName, fileName);
 }
@@ -162,4 +164,13 @@ void GeoTreeView::loadFEMConditions()
 	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
+}
+
+void GeoTreeView::saveFEMConditions()
+{
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
+	QString fileName = QFileDialog::getSaveFileName(NULL,
+						"Save FEM Conditions as", "", "GeoSys FEM Condition file (*.cnd)");
+	emit saveFEMConditionsRequested(item->data(0).toString(), fileName);
 }
