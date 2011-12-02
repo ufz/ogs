@@ -100,7 +100,6 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		}
 
 		// r -= alpha * q
-		blas::axpy(N, -alpha, q, r);
 		#pragma omp parallel for
 		for (k = 0; k < N; k++) {
 			r[k] -= alpha * q[k];
