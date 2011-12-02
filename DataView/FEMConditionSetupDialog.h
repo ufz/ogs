@@ -53,7 +53,7 @@ private slots:
 	/// Instructions if the Cancel-Button has been pressed.
 	void reject();
 
-	//void on_condTypeBox_currentIndexChanged(int index);
+	void on_condTypeBox_currentIndexChanged(int index);
 
 	void on_disTypeBox_currentIndexChanged(int index);
 

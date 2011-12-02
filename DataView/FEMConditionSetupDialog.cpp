@@ -51,7 +51,7 @@ void FEMConditionSetupDialog::setupDialog()
 	if (_cond.getGeoType() == GEOLIB::POLYLINE)
 	{
 		this->disTypeBox->addItem("Linear (Direchlet)");
-		this->disTypeBox->addItem("Linear (Neumann)");
+		//this->disTypeBox->addItem("Linear (Neumann)");
 	}
 	_first_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
 	_second_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
@@ -77,22 +77,20 @@ void FEMConditionSetupDialog::accept()
 	_cond.setProcessType(static_cast<FiniteElement::ProcessType>(this->processTypeBox->currentIndex() + 1));
 	_cond.setProcessPrimaryVariable(static_cast<FiniteElement::PrimaryVariable>(this->pvTypeBox->currentIndex() + 1));
 
-	switch(this->disTypeBox->currentIndex())
+	QString dis_type_text = this->disTypeBox->currentText();
+	if (condTypeBox->currentIndex()>1)
 	{
-		case 0:
-			_cond.setProcessDistributionType(FiniteElement::CONSTANT);
-			break;
-		case 1:
-			_cond.setProcessDistributionType(FiniteElement::CONSTANT_NEUMANN);
-			break;
-		case 2:
-			_cond.setProcessDistributionType(FiniteElement::LINEAR);
-			break;
-		case 3:
+		if (this->disTypeBox->currentIndex()>0) 
 			_cond.setProcessDistributionType(FiniteElement::LINEAR_NEUMANN);
-			break;
-		default:
-			_cond.setProcessDistributionType(FiniteElement::INVALID_DIS_TYPE);
+		else 
+			_cond.setProcessDistributionType(FiniteElement::CONSTANT_NEUMANN);
+	}
+	else
+	{
+		if (this->disTypeBox->currentIndex()>0) 
+			_cond.setProcessDistributionType(FiniteElement::LINEAR);
+		else 
+			_cond.setProcessDistributionType(FiniteElement::CONSTANT);
 	}
 
 	std::vector<double> dis_values;
@@ -123,18 +121,34 @@ void FEMConditionSetupDialog::reject()
 	this->done(QDialog::Rejected);
 }
 
-/*
+
 void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 {
-	if (index==1)
-		this->geoNameBox->addItem("Domain");
+	//if (index==1)
+	//	this->geoNameBox->addItem("Domain");
 	// remove "Domain" if IC is unselected
+	if (index>1) // source terms selected
+	{
+		while (this->disTypeBox->count()>0)
+			this->disTypeBox->removeItem(0);
+		this->disTypeBox->addItem("Constant (Neumann)");
+		if (_cond.getGeoType() == GEOLIB::POLYLINE)
+			this->disTypeBox->addItem("Linear (Neumann)");
+	}
+	else
+	{
+		while (this->disTypeBox->count()>0)
+			this->disTypeBox->removeItem(0);
+		this->disTypeBox->addItem("Constant (Direchlet)");
+		if (_cond.getGeoType() == GEOLIB::POLYLINE)
+			this->disTypeBox->addItem("Linear (Direchlet)");
+	}
 }
-*/
+
 
 void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 {
-	if (index>1) // linear
+	if (index>0) // linear
 	{
 		if (!_secondValueEdit)
 		{
