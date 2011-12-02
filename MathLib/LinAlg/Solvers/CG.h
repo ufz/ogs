@@ -14,7 +14,12 @@ namespace MathLib {
 template <typename PF_TYPE, typename IDX_TYPE> class CRSMatrix;
 
 unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
+		double* const x, double& eps, unsigned& nsteps);
+
+#ifdef _OPENMP
+unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		double* const x, double& eps, unsigned& nsteps, unsigned num_threads = 1);
+#endif
 
 } // end namespace MathLib
 
