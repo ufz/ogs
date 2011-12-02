@@ -43,7 +43,7 @@ private slots:
 	void removeProcess();
 
 signals:
-	void conditionsRemoved(const FiniteElement::ProcessType, const FEMCondition::CondType);
+	void conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType);
 	void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void processRemoved(const FiniteElement::ProcessType);
 };

@@ -72,7 +72,7 @@ void ProcessView::removeCondition()
 	{
 		const FiniteElement::ProcessType pcs_type = static_cast<ProcessItem*>(item->parentItem())->getItem()->getProcessType();
 		const FEMCondition::CondType cond_type = item->getType();
-		emit conditionsRemoved(pcs_type, cond_type);
+		emit conditionsRemoved(pcs_type, "", cond_type);
 	}
 }
 

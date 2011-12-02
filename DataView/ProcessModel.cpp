@@ -146,33 +146,47 @@ ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 	}
 	else
 	{
-		std::cout << "Error in ProcessModel::addProcess() - " 
+		std::cout << "Warning in ProcessModel::addProcess() - " 
 			      << FiniteElement::convertProcessTypeToString(pcs->getProcessType()) 
 				  << " already exists." << std::endl;
 		return NULL;
 	}
 }
 
-void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
+void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type, const std::string &geometry_name, const FEMCondition::CondType cond_type)
 {
-	ProcessItem* processParent = this->getProcessParent(pcs_type);
-	emit conditionsRemoved(this, pcs_type, cond_type);
+	_project.removeConditions(pcs_type, geometry_name, cond_type);
 
-	if (cond_type != FEMCondition::UNSPECIFIED)
+	while (_rootItem->childCount()>0)
 	{
-		CondObjectListItem* condParent = getCondParent(processParent, cond_type);
-		removeRows(condParent->row(), 1, index(processParent->row(), 0));
+		ProcessItem* pcs = static_cast<ProcessItem*>(_rootItem->child(0));
+		for (int j=0; j<pcs->childCount(); j++)
+			emit conditionsRemoved(this, pcs->getItem()->getProcessType(), (static_cast<CondObjectListItem*>(pcs->child(j)))->getType());
+
+		_rootItem->removeChildren(0, 1);
 	}
-	_project.removeConditions(pcs_type, cond_type);
+
+	const std::vector<FEMCondition*> conds = _project.getConditions(FiniteElement::INVALID_PROCESS, "", FEMCondition::UNSPECIFIED);
+	if (!conds.empty())
+	{
+		size_t nConds (conds.size());
+		for (size_t i=0; i<nConds; i++)
+			this->addConditionItem(conds[i]);
+	}
+	reset();
 }
 
 void ProcessModel::removeProcess(const FiniteElement::ProcessType type)
 {
+	this->removeFEMConditions(type, "", FEMCondition::UNSPECIFIED);
+	
 	const ProcessItem* processParent = this->getProcessParent(type);
-	this->_project.removeProcess(type);
-
-	//for (
-	removeRows(processParent->row(), 1, QModelIndex());
+	if (processParent)
+	{
+		this->_project.removeProcess(type);
+		removeRows(processParent->row(), 1, QModelIndex());
+	}
+	reset();
 }
 
 void ProcessModel::removeAllProcesses()

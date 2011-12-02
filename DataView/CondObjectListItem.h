@@ -53,20 +53,10 @@ public:
 	}
 
 	/// Returns the type of geo-objects contained in the subtree of this item.
-	FEMCondition::CondType getType() const { return _type; }
+	FEMCondition::CondType getType() const { return _type; };
 
 	/// Returns the Vtk polydata source object
-	vtkPolyDataAlgorithm* vtkSource() const
-	{
-		return _vtkSource;
-		/*
-		   vtkThresholdPoints* threshold = vtkThresholdPoints::New();
-		   threshold->SetInputConnection(_vtkSource->GetOutputPort());
-		   threshold->ThresholdByUpper(-9998);
-		   threshold->Update();
-		   return threshold;
-		 */
-	}
+	vtkPolyDataAlgorithm* vtkSource() const	{ return _vtkSource; };
 
 private:
 	/// The Vtk data source object. This is the starting point for a Vtk data visualization pipeline.

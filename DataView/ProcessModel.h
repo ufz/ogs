@@ -47,8 +47,8 @@ public slots:
 	/// Adds a process to the model
 	ProcessItem* addProcess(ProcessInfo* pcs);
 
-	/// Removes a subtree (BCs, ICs, STs) from the the model.
-	void removeFEMConditions(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type);
+	/// Removes FEMConditions from the the model. Conditions can be specified by process type, geometry name or condition type or a combination of the three.
+	void removeFEMConditions(const FiniteElement::ProcessType pcs_type, const std::string &geometry_name, const FEMCondition::CondType cond_type);
 
 	/// Removes a process from the model
 	void removeProcess(const FiniteElement::ProcessType type);

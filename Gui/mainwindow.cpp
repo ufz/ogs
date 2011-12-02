@@ -177,11 +177,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>*)));
 
 	// Setup connections for process model to GUI
-	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const FEMCondition::CondType)),
-	        _processModel, SLOT(removeFEMConditions(const FiniteElement::ProcessType, const FEMCondition::CondType)));
+	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)),
+	        _processModel, SLOT(removeFEMConditions(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)));
 	connect(modellingTabWidget->treeView, SIGNAL(processRemoved(const FiniteElement::ProcessType)),
 	        _processModel, SLOT(removeProcess(const FiniteElement::ProcessType)));
-	connect(modellingTabWidget, SIGNAL(requestNewProcess()), 
+	connect(modellingTabWidget, SIGNAL(requestNewProcess()),
 		    this, SLOT(showNewProcessDialog()));
 
 	// VisPipeline Connects
@@ -790,13 +790,9 @@ void MainWindow::importRaster()
 #else
 	QString geotiffExtension("");
 #endif
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select raster file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                QString(
-	                                                        "Raster files (*.asc *.bmp *.jpg *.png%1);;")
-	                                                .arg(geotiffExtension));
+	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
+					settings.value("lastOpenedFileDirectory").toString(), QString(
+									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
@@ -817,13 +813,10 @@ void MainWindow::importRasterAsPoly()
 #else
 	QString geotiffExtension("");
 #endif
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select raster file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                QString(
-	                                                        "Raster files (*.asc *.bmp *.jpg *.png%1);;")
-	                                                .arg(geotiffExtension));
+	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
+					settings.value("lastOpenedFileDirectory").toString(), QString(
+									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(
+									geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
@@ -849,10 +842,8 @@ void MainWindow::importRasterAsPoly()
 void MainWindow::importShape()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select shape file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
+	QString fileName = QFileDialog::getOpenFileName(this, "Select shape file to import",
+					settings.value("lastOpenedFileDirectory").toString(),
 	                                                "ESRI Shape files (*.shp );;");
 	QFileInfo fi(fileName);
 
@@ -871,15 +862,9 @@ void MainWindow::importPetrel()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QStringList sfc_file_names = QFileDialog::getOpenFileNames(
-	        this,
-	        "Select surface data file(s) to import",
-	        "",
-	        "Petrel files (*)");
+	        this, "Select surface data file(s) to import", "", "Petrel files (*)");
 	QStringList well_path_file_names = QFileDialog::getOpenFileNames(
-	        this,
-	        "Select well path data file(s) to import",
-	        "",
-	        "Petrel files (*)");
+	        this, "Select well path data file(s) to import", "", "Petrel files (*)");
 	if (sfc_file_names.size() != 0 || well_path_file_names.size() != 0)
 	{
 		loadPetrelFiles(sfc_file_names, well_path_file_names);
@@ -994,7 +979,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		XmlCndInterface xml(&_project, schemaName);
 		xml.readFile(conditions, fileName);
 	}
-	else 
+	else
 	{
 		if (geoName.empty())
 		{
