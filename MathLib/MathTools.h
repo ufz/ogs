@@ -2,7 +2,7 @@
  * \file MathTools.h
  *
  *  Created on: Jan 13, 2010
- *      Author: fischeth
+ *      Author: TF
  */
 
 #ifndef MATHTOOLS_H_
@@ -11,7 +11,11 @@
 #include <vector>
 #include <cmath>
 #include <limits>
+
+#include <omp.h>
+
 #include "Point.h"
+
 
 namespace MathLib {
 
@@ -22,12 +26,18 @@ namespace MathLib {
  * \param n the size of the array
  * */
 template<class T> inline
-double scpr(const T* v0, const T* v1, size_t n) {
+double scpr(const T* v0, const T* v1, size_t n)
+{
 	long double res(0.0);
 	for (size_t k(0); k<n; k++)
 		res += v0[k] * v1[k];
 	return (double) res;
 }
+
+#ifdef _OPENMP
+double scpr(double const * const v, double const * const w, unsigned n,
+        unsigned num_of_threads);
+#endif
 
 /**
  * computes the cross (or vector) product of the 3d vectors u and v

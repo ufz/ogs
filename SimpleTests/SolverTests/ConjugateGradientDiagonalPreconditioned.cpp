@@ -61,7 +61,11 @@ int main(int argc, char *argv[])
 	run_timer.start();
 	cpu_timer.start();
 
-	MathLib::CG (mat, b, x, eps, steps, num_omp_threads);
+	if (num_omp_threads == 1) {
+		MathLib::CG(mat, b, x, eps, steps);
+	} else {
+		MathLib::CGParallel(mat, b, x, eps, steps, num_omp_threads);
+	}
 
 	cpu_timer.stop();
 	run_timer.stop();

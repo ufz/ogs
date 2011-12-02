@@ -38,6 +38,7 @@ SET( SOURCES
         LinAlg/Sparse/amuxCRS.cpp
         LinAlg/Solvers/BiCGStab.cpp
         LinAlg/Solvers/CG.cpp
+        LinAlg/Solvers/CGParallel.cpp
         LinAlg/Solvers/GMRes.cpp
 	LinAlg/Solvers/GaussAlgorithm.cpp
         LinAlg/Solvers/TriangularSolve.cpp
