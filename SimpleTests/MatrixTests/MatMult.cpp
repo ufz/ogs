@@ -53,8 +53,11 @@ int main(int argc, char *argv[])
 		std::cout << "Parameters read: n=" << n << ", nnz=" << nnz << std::endl;
 	}
 
-//	MathLib::CRSMatrix<double> mat (n, iA, jA, A);
+#ifdef _OPENMP
 	MathLib::CRSMatrixOpenMP<double> mat (n, iA, jA, A, n_threads);
+#else
+	MathLib::CRSMatrix<double> mat (n, iA, jA, A);
+#endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
 	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
 

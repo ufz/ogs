@@ -22,10 +22,12 @@ void amuxCRSParallelPThreads (double a,
         double const * const A, double const * const x, double* y,
 	unsigned num_of_pthreads);
 
+#ifdef _OPENMP
 void amuxCRSParallelOpenMP (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
         double const * const A, double const * const x, double* y,
 	unsigned num_of_omp_threads);
+#endif
 
 void amuxCRSSym (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,

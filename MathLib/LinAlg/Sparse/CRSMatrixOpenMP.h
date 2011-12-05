@@ -8,6 +8,7 @@
 #ifndef CRSMATRIXOPENMP_H_
 #define CRSMATRIXOPENMP_H_
 
+#ifdef _OPENMP
 #include <string>
 
 #include "CRSMatrix.h"
@@ -42,5 +43,7 @@ private:
 };
 
 } // end namespace MathLib
+
+#endif // _OPENMP
 
 #endif /* CRSMATRIXOPENMP_H_ */

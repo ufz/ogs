@@ -92,11 +92,11 @@ void amuxCRSParallelPThreads (double a,
 	delete [] thread_param_array;
 	delete [] thread_array;
 #else
-	(void) num_of_pthreads;
 	amuxCRS (a, n, iA, jA, A, x, y);
 #endif
 }
 
+#ifdef _OPENMP
 void amuxCRSParallelOpenMP(double a, unsigned n, unsigned const * const iA,
 				unsigned const * const jA, double const * const A, double const * const x,
 				double* y, unsigned num_of_omp_threads)
@@ -115,6 +115,7 @@ void amuxCRSParallelOpenMP(double a, unsigned n, unsigned const * const iA,
 		}
 	}
 }
+#endif
 
 void amuxCRSSym (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
