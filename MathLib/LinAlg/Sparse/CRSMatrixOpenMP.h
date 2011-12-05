@@ -16,26 +16,26 @@
 
 namespace MathLib {
 
-template<class T> class CRSMatrixOpenMP : public CRSMatrix<T, unsigned> {
+template<typename FP_TYPE, typename IDX_TYPE> class CRSMatrixOpenMP : public CRSMatrix<FP_TYPE, IDX_TYPE> {
 public:
 	CRSMatrixOpenMP(std::string const &fname, unsigned num_of_threads) :
-			CRSMatrix<T, unsigned>(fname), _num_of_threads (num_of_threads)
+			CRSMatrix<FP_TYPE, IDX_TYPE>(fname), _num_of_threads (num_of_threads)
 	{}
 
-	CRSMatrixOpenMP(unsigned n, unsigned *iA, unsigned *jA, T* A, unsigned num_of_threads) :
-		CRSMatrix<T, unsigned>(n, iA, jA, A), _num_of_threads (num_of_threads)
+	CRSMatrixOpenMP(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A, unsigned num_of_threads) :
+		CRSMatrix<FP_TYPE, IDX_TYPE>(n, iA, jA, A), _num_of_threads (num_of_threads)
 	{}
 
 	CRSMatrixOpenMP(unsigned n1) :
-		CRSMatrix<T, unsigned>(n1), _num_of_threads (1)
+		CRSMatrix<FP_TYPE, IDX_TYPE>(n1), _num_of_threads (1)
 	{}
 
 	virtual ~CRSMatrixOpenMP()
 	{}
 
-	virtual void amux(T d, T const * const x, T *y) const
+	virtual void amux(FP_TYPE d, FP_TYPE const * const x, FP_TYPE *y) const
 	{
-		amuxCRSParallelOpenMP(d, MatrixBase::_n_rows, CRSMatrix<T,unsigned>::_row_ptr, CRSMatrix<T,unsigned>::_col_idx, CRSMatrix<T,unsigned>::_data, x, y, _num_of_threads);
+		amuxCRSParallelOpenMP(d, MatrixBase::_n_rows, CRSMatrix<FP_TYPE,IDX_TYPE>::_row_ptr, CRSMatrix<FP_TYPE,IDX_TYPE>::_col_idx, CRSMatrix<FP_TYPE,IDX_TYPE>::_data, x, y, _num_of_threads);
 	}
 
 private:

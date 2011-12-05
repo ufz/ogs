@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef _OPENMP
-	MathLib::CRSMatrixOpenMP<double> mat (n, iA, jA, A, n_threads);
+	MathLib::CRSMatrixOpenMP<double, unsigned> mat (n, iA, jA, A, n_threads);
 #else
-	MathLib::CRSMatrix<double> mat (n, iA, jA, A);
+	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
 	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
