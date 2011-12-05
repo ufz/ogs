@@ -25,7 +25,7 @@ void amuxCRSParallelPThreads (double a,
 #ifdef _OPENMP
 template<typename FP_TYPE, typename IDX_TYPE>
 void amuxCRSParallelOpenMP (FP_TYPE a,
-				IDX_TYPE n, IDX_TYPE const * const iA, IDX_TYPE const * const jA,
+				unsigned n, IDX_TYPE const * const iA, IDX_TYPE const * const jA,
 				FP_TYPE const * const A, FP_TYPE const * const x, FP_TYPE* y,
 				unsigned num_of_omp_threads)
 {
