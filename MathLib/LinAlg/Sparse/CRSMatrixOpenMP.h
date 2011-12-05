@@ -22,7 +22,7 @@ public:
 			CRSMatrix<FP_TYPE, IDX_TYPE>(fname), _num_of_threads (num_of_threads)
 	{}
 
-	CRSMatrixOpenMP(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A, unsigned num_of_threads) :
+	CRSMatrixOpenMP(unsigned n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A, unsigned num_of_threads) :
 		CRSMatrix<FP_TYPE, IDX_TYPE>(n, iA, jA, A), _num_of_threads (num_of_threads)
 	{}
 
