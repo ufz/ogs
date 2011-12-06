@@ -70,11 +70,11 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
 		std::vector<double> dis_value = c->getDisValue();
 		TreeItem* disInfo;
-		if (!(c->getProcessDistributionType() == FiniteElement::LINEAR ||
-		      c->getProcessDistributionType() == FiniteElement::LINEAR_NEUMANN))
+		if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
+		    c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
 		{
-			for (size_t i = 0; i < dis_value.size(); i++)
-				disData << dis_value[i];
+			//for (size_t i = 0; i < dis_value.size(); i++)
+			disData << dis_value[0];
 			disInfo = new TreeItem(disData, condItem);
 		}
 		else

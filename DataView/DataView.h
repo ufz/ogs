@@ -57,7 +57,7 @@ private slots:
 	/// Adds a new mesh.
 	void addMeshAction();
 
-	void addDIRECTSourceTerms();
+	void loadDIRECTSourceTerms();
 
 	/// Remove the currently selected mesh.
 	void removeMesh();
