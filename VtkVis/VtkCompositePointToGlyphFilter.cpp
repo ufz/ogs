@@ -29,7 +29,7 @@ void VtkCompositePointToGlyphFilter::init()
 	this->_inputDataObjectType = VTK_DATA_SET;
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
-	int default_radius(150);
+	double default_radius(150.0);
 	_glyphSource = vtkSphereSource::New();
 	_glyphSource->SetRadius(default_radius);
 	_glyphSource->SetPhiResolution(10);
