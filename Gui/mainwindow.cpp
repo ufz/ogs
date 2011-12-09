@@ -163,8 +163,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
-	//connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GEOLIB::GEOTYPE)),
-	//	_processModel, SLOT(removeFEMConditions(std::string, GEOLIB::GEOTYPE)));
+	connect(geoTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
+		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+	connect(geoTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
+		    _vtkVisPipeline, SLOT(removeHighlightedGeoObject()));
+
 
 	// Setup connections for mesh models to GUI
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),

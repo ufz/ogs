@@ -33,16 +33,18 @@ void VtkCompositeLineToTubeFilter::init()
 	mergePoints->SetTolerance(0.0);
 	mergePoints->ConvertLinesToPointsOn();
 
+	int default_radius(GetInitialRadius());
+	int default_number_of_sides(8);
 	vtkTubeFilter* tubes = vtkTubeFilter::New();
 	tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
 	tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"Stratigraphies");
-	tubes->SetRadius(150);
-	tubes->SetNumberOfSides(10);
+	tubes->SetRadius(default_radius);
+	tubes->SetNumberOfSides(default_number_of_sides);
 	tubes->SetCapping(1);
 	//tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
 
-	(*_algorithmUserProperties)["Radius"] = 150.0;
-	(*_algorithmUserProperties)["NumberOfSides"] = 6;
+	(*_algorithmUserProperties)["Radius"] = default_radius;
+	(*_algorithmUserProperties)["NumberOfSides"] = default_number_of_sides;
 	(*_algorithmUserProperties)["Capping"] = true;
 
 	_outputAlgorithm = tubes;
@@ -58,4 +60,18 @@ void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value
 		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
 	else if (name.compare("Capping") == 0)
 		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetCapping(value.toBool());
+}
+
+int VtkCompositeLineToTubeFilter::GetInitialRadius() const
+{
+	double bounding_box[6];
+	static_cast<vtkPolyData*>(this->_inputAlgorithm->GetOutputDataObject(0))->GetBounds(bounding_box);
+	double x_diff = abs(bounding_box[0]-bounding_box[1]);
+	double y_diff = abs(bounding_box[2]-bounding_box[3]);
+	double z_diff = abs(bounding_box[5]-bounding_box[5]);
+
+	double max = (x_diff > y_diff) ? x_diff : y_diff;
+	max = (max > z_diff) ? max : z_diff;
+
+	return ceil(max/300.0);
 }

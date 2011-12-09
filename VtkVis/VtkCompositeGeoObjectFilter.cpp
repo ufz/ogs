@@ -11,13 +11,32 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkThreshold.h>
+#include <vtkAlgorithmOutput.h>
 
+#include "VtkPolylinesSource.h"
+#include "VtkSurfacesSource.h"
 #include "VtkCompositePointToGlyphFilter.h"
 #include "VtkCompositeLineToTubeFilter.h"
 
 VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm), _index(0), _type(GEOLIB::INVALID)
+	: VtkCompositeFilter(inputAlgorithm), _type(GEOLIB::POINT), _threshold(vtkThreshold::New())
 {
+	if (inputAlgorithm->GetNumberOfInputPorts() && inputAlgorithm->GetNumberOfInputConnections(0))
+	{
+	  vtkAlgorithmOutput* ao = inputAlgorithm->GetInputConnection(0,0);
+
+	  if (ao)
+	  {
+		vtkAlgorithm* parentAlg = ao->GetProducer();
+
+	  if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL) 
+		_type = GEOLIB::POLYLINE;
+	  else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL) 
+		_type = GEOLIB::SURFACE;
+	  }
+
+	}
+
 	this->init();
 }
 
@@ -30,23 +49,30 @@ void VtkCompositeGeoObjectFilter::init()
 	this->_inputDataObjectType = VTK_POLY_DATA;
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
-	vtkThreshold* threshold = vtkThreshold::New();
-	threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
-	threshold->SetSelectedComponent(0);
-	threshold->ThresholdBetween(_index, _index);
+	_threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
+	_threshold->SetSelectedComponent(0);
+	_threshold->ThresholdBetween(0,0);
 
 	vtkDataSetSurfaceFilter* surface = vtkDataSetSurfaceFilter::New();
-	surface->SetInputConnection(threshold->GetOutputPort());
+	surface->SetInputConnection(_threshold->GetOutputPort());
 
+	VtkCompositeFilter* composite;
 	if (_type == GEOLIB::POINT)
 	{
-		VtkCompositePointToGlyphFilter* pts = new VtkCompositePointToGlyphFilter(surface);
+		 composite = new VtkCompositePointToGlyphFilter(surface);
+		_outputAlgorithm = composite->GetOutputAlgorithm();
 	}
 	else if (_type == GEOLIB::POLYLINE)
 	{
-		VtkCompositeLineToTubeFilter* ltt = new VtkCompositeLineToTubeFilter(surface);
+		composite = new VtkCompositeLineToTubeFilter(surface);
+		_outputAlgorithm = composite->GetOutputAlgorithm();
 	}
+	else
+		_outputAlgorithm = surface;
 
-	_outputAlgorithm = surface;
 }
 
+void VtkCompositeGeoObjectFilter::SetIndex(size_t idx) 
+{
+	_threshold->ThresholdBetween(idx, idx);
+}

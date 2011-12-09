@@ -9,6 +9,8 @@
 #include "VtkCompositeFilter.h"
 #include "GeoType.h"
 
+class vtkThreshold;
+
 /// @brief Hightlights a single GeoObject
 class VtkCompositeGeoObjectFilter : public VtkCompositeFilter
 {
@@ -25,15 +27,11 @@ public:
 		Q_UNUSED(value);
 	}
 
-	void SetIndex(size_t idx, GEOLIB::GEOTYPE type) 
-	{ 
-		_index = idx; 
-		_type = type;
-	};
+	void SetIndex(size_t idx);
 
 private:
-	size_t _index;
 	GEOLIB::GEOTYPE _type;
+	vtkThreshold* _threshold;
 };
 
 #endif // VTKCOMPOSITEGEOOBJECTFILTER_H
