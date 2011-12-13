@@ -123,8 +123,9 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 	{
 		QList<QVariant> line_data;
 		std::string ply_name("");
-		ply_name = polyline_vec->getNameOfElementByID(i, ply_name);
-		line_data << "Line " + QString::number(i) << QString::fromStdString(ply_name) << "" << "";
+		if (polyline_vec->getNameOfElementByID(i, ply_name))
+			line_data << "Line " + QString::number(i) << QString::fromStdString(ply_name) << "" << "";
+		else line_data << "Line " + QString::number(i) << "" << "" << "";
 
 		const GEOLIB::Polyline &line(*(lines[i]));
 		GeoTreeItem* lineItem(new GeoTreeItem(line_data, plyList, &line));
