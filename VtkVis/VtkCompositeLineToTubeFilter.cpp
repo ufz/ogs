@@ -73,5 +73,5 @@ float VtkCompositeLineToTubeFilter::GetInitialRadius() const
 	double max = (x_diff > y_diff) ? x_diff : y_diff;
 	max = (max > z_diff) ? max : z_diff;
 
-	return max/100.0;
+	return max/200.0;
 }
