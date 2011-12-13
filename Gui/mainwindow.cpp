@@ -727,11 +727,15 @@ void MainWindow::about()
 	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
 		QDate::currentDate().toString()).arg(ogsVersion);
 #ifdef OGS_BUILD_INFO
-	QString gitCommit = QString(GIT_COMMIT_INFO);
-	QString gitBranch = QString(GIT_BRANCH_INFO);
 	about.append(QString("Svn commit: %1\n").arg(SVN_REVISION));
+#ifdef GIT_COMMIT_INFO
+	QString gitCommit = QString(GIT_COMMIT_INFO);
 	about.append(QString("Git commit: %1\n").arg(gitCommit.mid(7)));
+#endif // GIT_COMMIT_INFO
+#ifdef GIT_BRANCH_INFO
+	QString gitBranch = QString(GIT_BRANCH_INFO);
 	about.append(QString("Git branch: %1\n").arg(gitBranch.mid(2)));
+#endif // GIT_BRANCH_INFO
 #endif // OGS_BUILD_INFO
 	QMessageBox::about(this, "About OpenGeoSys-5", about);
 }
