@@ -106,7 +106,7 @@
 //// test only
 //#include "rf_mmp_new.h"
 //#include "rf_msp_new.h"
-#include "rf_mfp_new.h"
+//#include "rf_mfp_new.h"
 
 /// FEM. 11.03.2010. WW
 #include "problem.h"
@@ -361,7 +361,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
 //		std::cout << "size of CMediumProperties: " << sizeof(CMediumProperties) << std::endl;
 //		std::cout << "size of CSolidProperties: " << sizeof(SolidProp::CSolidProperties) << std::endl;
-		std::cout << "size of CFluidProperties: " << sizeof(CFluidProperties) << std::endl;
+//		std::cout << "size of CFluidProperties: " << sizeof(CFluidProperties) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 }
@@ -723,7 +723,7 @@ void MainWindow::writeSettings()
 void MainWindow::about()
 {
 	QString ogsVersion = QString(OGS_VERSION);
-	
+
 	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
 		QDate::currentDate().toString()).arg(ogsVersion);
 #ifdef OGS_BUILD_INFO
@@ -913,17 +913,24 @@ void MainWindow::importNetcdf()
 void MainWindow::importTetGen()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select TetGen file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                "TetGen files (*.nc);;");
-	if (!fileName.isEmpty())
-	{
-		loadFile(fileName);
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-	}}
+	QString node_fname(QFileDialog::getOpenFileName(this, "Select TetGen node file",
+					settings.value("lastOpenedFileDirectory").toString(),
+					"TetGen node files (*.node);;"));
+	QString element_fname(QFileDialog::getOpenFileName(this, "Select TetGen element file",
+					settings.value("lastOpenedFileDirectory").toString(),
+					"TetGen element files (*.ele);;"));
+
+	if (!node_fname.isEmpty() && !element_fname.isEmpty()) {
+		FileIO::TetGenInterface tetgen;
+		MeshLib::CFEMesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
+		if (msh) {
+			std::string name(node_fname.toStdString());
+			_meshModels->addMesh(msh, name);
+		} else
+			OGSError::box("Failed to load a TetGen mesh.");
+		settings.setValue("lastOpenedFileDirectory", QDir(node_fname).absolutePath());
+	}
+}
 
 void MainWindow::importVtk()
 {
