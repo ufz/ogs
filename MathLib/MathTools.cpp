@@ -15,7 +15,6 @@ double scpr(double const * const v, double const * const w, unsigned n,
 {
         long double res (0.0);
         unsigned k;
-        omp_set_num_threads (num_of_threads);
         #pragma omp parallel
         {
                 #pragma omp parallel for reduction (+:res)
