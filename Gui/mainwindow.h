@@ -74,6 +74,7 @@ protected slots:
 	void importNetcdf(); //YW  07.2010
 	void importVtk();
 	void importFeflow();
+	void importTetGen();
 	void loadFEMConditions(std::string geoName);
 	void openDatabase();
 	void openDatabaseConnection();

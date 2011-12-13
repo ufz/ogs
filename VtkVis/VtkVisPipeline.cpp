@@ -531,7 +531,6 @@ void VtkVisPipeline::highlightGeoObject(const vtkPolyDataAlgorithm* source, int 
 															parentItem->transformFilter());
 			static_cast<VtkCompositeGeoObjectFilter*>(filter)->SetIndex(index);
 			VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
-			//_highlighted_geo_index = this->createIndex(i, 0, item);
 			QModelIndex parent_index = static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());
 			_highlighted_geo_index = this->addPipelineItem(item, parent_index);
 			break;
