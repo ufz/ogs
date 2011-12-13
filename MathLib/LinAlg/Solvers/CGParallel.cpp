@@ -65,18 +65,23 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		return 0;
 	}
 
+	unsigned k;
 	for (unsigned l = 1; l <= nsteps; ++l) {
 #ifndef NDEBUG
 		std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
 #endif
 		// r^ = C r
-		blas::copy(N, r, rhat);
+		// rhat = r
+//		blas::copy(N, r, rhat);
+		#pragma omp parallel for
+		for (k = 0; k < N; k++) {
+			rhat[k] = r[k];
+		}
 		mat->precondApply(rhat);
 
 		// rho = r * r^;
 		rho = scpr(r, rhat, N, num_threads);
 
-		unsigned k;
 		if (l > 1) {
 			double beta = rho / rho1;
 			// p = r^ + beta * p
@@ -84,10 +89,20 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 			for (k = 0; k < N; k++) {
 				p[k] = rhat[k] + beta * p[k];
 			}
-		} else blas::copy(N, rhat, p);
+		} else {
+//			blas::copy(N, rhat, p);
+			#pragma omp parallel for
+			for (k = 0; k < N; k++) {
+				p[k] = rhat[k];
+			}
+		}
 
 		// q = Ap
-		blas::setzero(N, q);
+//		blas::setzero(N, q);
+		#pragma omp parallel for
+		for (k = 0; k < N; k++) {
+			q[k] = 0.0;
+		}
 		mat->amux(D_ONE, p, q);
 
 		// alpha = rho / p*q
