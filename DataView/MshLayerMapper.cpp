@@ -85,7 +85,7 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 		}
 	}
 
-	new_mesh->setNumberOfElementsFromElementsVectorSize ();
+	new_mesh->setNumberOfNodesFromNodesVectorSize ();
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class

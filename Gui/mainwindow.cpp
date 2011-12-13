@@ -99,6 +99,9 @@
 #include "VtkTrackedCamera.h"
 #endif // OGS_USE_VRPN
 
+#ifdef OGS_BUILD_INFO
+#include "BuildInfo.h"
+#endif // OGS_BUILD_INFO
 
 //// test only
 //#include "rf_mmp_new.h"
@@ -720,9 +723,21 @@ void MainWindow::writeSettings()
 void MainWindow::about()
 {
 	QString ogsVersion = QString(OGS_VERSION);
-	QMessageBox::about(this, tr("About OpenGeoSys-5"), tr(
-	                           "Built on %1\nOGS Version: %2").arg(
-	                           QDate::currentDate().toString()).arg(ogsVersion));
+	
+	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
+		QDate::currentDate().toString()).arg(ogsVersion);
+#ifdef OGS_BUILD_INFO
+	about.append(QString("Svn commit: %1\n").arg(SVN_REVISION));
+#ifdef GIT_COMMIT_INFO
+	QString gitCommit = QString(GIT_COMMIT_INFO);
+	about.append(QString("Git commit: %1\n").arg(gitCommit.mid(7)));
+#endif // GIT_COMMIT_INFO
+#ifdef GIT_BRANCH_INFO
+	QString gitBranch = QString(GIT_BRANCH_INFO);
+	about.append(QString("Git branch: %1\n").arg(gitBranch.mid(2)));
+#endif // GIT_BRANCH_INFO
+#endif // OGS_BUILD_INFO
+	QMessageBox::about(this, "About OpenGeoSys-5", about);
 }
 
 QMenu* MainWindow::createImportFilesMenu()
