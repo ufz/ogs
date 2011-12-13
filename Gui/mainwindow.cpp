@@ -727,7 +727,9 @@ void MainWindow::about()
 	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
 		QDate::currentDate().toString()).arg(ogsVersion);
 #ifdef OGS_BUILD_INFO
+#ifdef SVN_REVISION
 	about.append(QString("Svn commit: %1\n").arg(SVN_REVISION));
+#endif
 #ifdef GIT_COMMIT_INFO
 	QString gitCommit = QString(GIT_COMMIT_INFO);
 	about.append(QString("Git commit: %1\n").arg(gitCommit.mid(7)));
