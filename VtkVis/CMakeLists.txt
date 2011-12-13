@@ -16,6 +16,7 @@ SET( SOURCES
 	VtkCompositeColorByHeightFilter.cpp
 	VtkCompositeColormapToImageFilter.cpp
 	VtkCompositeContourFilter.cpp
+	VtkCompositeGeoObjectFilter.cpp
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
@@ -71,6 +72,7 @@ SET( HEADERS
 	VtkCompositeColorByHeightFilter.h
 	VtkCompositeColormapToImageFilter.h
 	VtkCompositeContourFilter.h
+	VtkCompositeGeoObjectFilter.h
 	VtkCompositeImageToCylindersFilter.h
 	VtkCompositeLineToTubeFilter.h
 	VtkCompositePointToGlyphFilter.h

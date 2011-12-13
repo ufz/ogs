@@ -10,6 +10,8 @@
 #include <QContextMenuEvent>
 #include <QTreeView>
 
+class vtkPolyDataAlgorithm;
+
 /**
  * \brief A view for the GeoTreeModel
  * \sa GeoTreeModel, GeoTreeItem
@@ -55,8 +57,9 @@ private slots:
 	void saveFEMConditions();
 
 signals:
-	void itemSelectionChanged(const QItemSelection & selected,
-	                          const QItemSelection & deselected);
+	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
+	void removeGeoItemSelection();
+	//void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;

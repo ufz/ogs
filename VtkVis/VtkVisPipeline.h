@@ -23,6 +23,7 @@ class vtkAlgorithm;
 class vtkDataSet;
 class vtkLight;
 class vtkPointSet;
+class vtkPolyDataAlgorithm;
 class vtkRenderer;
 class vtkProp3D;
 class QModelIndex;
@@ -87,10 +88,10 @@ public slots:
 	void addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
 	void addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
-	void addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
+	QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
 
 	/// \brief Inserts the vtkAlgorithm as a child of the given QModelIndex to the pipeline.
-	void addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
+	QModelIndex addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
 
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
@@ -105,6 +106,9 @@ public slots:
 	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
 	void checkMeshQuality(VtkMeshSource* mesh, MshQualityType::type t);
 
+	void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);
+	void removeHighlightedGeoObject();
+
 private:
 	void listArrays(vtkDataSet* dataSet);
 
@@ -113,6 +117,9 @@ private:
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
 	bool _resetCameraOnAddOrRemove;
+
+	QModelIndex _highlighted_geo_index;
+
 
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.

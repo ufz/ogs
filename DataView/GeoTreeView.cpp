@@ -15,8 +15,6 @@
 
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 {
-//	setContextMenuPolicy(Qt::CustomContextMenu);
-//    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
 }
 
 void GeoTreeView::updateView()
@@ -36,8 +34,18 @@ void GeoTreeView::on_Clicked(QModelIndex idx)
 void GeoTreeView::selectionChanged( const QItemSelection &selected,
                                     const QItemSelection &deselected )
 {
-	emit itemSelectionChanged(selected, deselected);
-	return QTreeView::selectionChanged(selected, deselected);
+	const QModelIndex idx = *(selected.indexes().begin());
+	const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+
+	const GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem());
+	if (list_item)
+		emit geoItemSelected(list_item->vtkSource(), tree_item->row());
+	else
+		emit removeGeoItemSelection();
+
+
+	//emit itemSelectionChanged(selected, deselected);
+	//return QTreeView::selectionChanged(selected, deselected);
 }
 
 void GeoTreeView::selectionChangedFromOutside( const QItemSelection &selected,
