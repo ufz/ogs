@@ -33,7 +33,7 @@ void VtkCompositeLineToTubeFilter::init()
 	mergePoints->SetTolerance(0.0);
 	mergePoints->ConvertLinesToPointsOn();
 
-	int default_radius(GetInitialRadius());
+	double default_radius(GetInitialRadius());
 	int default_number_of_sides(8);
 	vtkTubeFilter* tubes = vtkTubeFilter::New();
 	tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
@@ -62,7 +62,7 @@ void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value
 		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetCapping(value.toBool());
 }
 
-int VtkCompositeLineToTubeFilter::GetInitialRadius() const
+float VtkCompositeLineToTubeFilter::GetInitialRadius() const
 {
 	double bounding_box[6];
 	static_cast<vtkPolyData*>(this->_inputAlgorithm->GetOutputDataObject(0))->GetBounds(bounding_box);
@@ -73,5 +73,5 @@ int VtkCompositeLineToTubeFilter::GetInitialRadius() const
 	double max = (x_diff > y_diff) ? x_diff : y_diff;
 	max = (max > z_diff) ? max : z_diff;
 
-	return ceil(max/300.0);
+	return max/200.0;
 }

@@ -29,7 +29,7 @@ void VtkCompositePointToGlyphFilter::init()
 	this->_inputDataObjectType = VTK_DATA_SET;
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
-	int default_radius(GetInitialRadius());
+	double default_radius(GetInitialRadius());
 	_glyphSource = vtkSphereSource::New();
 	_glyphSource->SetRadius(default_radius);
 	_glyphSource->SetPhiResolution(10);
@@ -87,7 +87,7 @@ void VtkCompositePointToGlyphFilter::SetUserProperty( QString name, QVariant val
 		static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetOrient(value.toBool());
 }
 
-int VtkCompositePointToGlyphFilter::GetInitialRadius() const
+float VtkCompositePointToGlyphFilter::GetInitialRadius() const
 {
 	double bounding_box[6];
 	static_cast<vtkPolyData*>(this->_inputAlgorithm->GetOutputDataObject(0))->GetBounds(bounding_box);
@@ -98,5 +98,5 @@ int VtkCompositePointToGlyphFilter::GetInitialRadius() const
 	double max = (x_diff > y_diff) ? x_diff : y_diff;
 	max = (max > z_diff) ? max : z_diff;
 
-	return ceil(max/300.0);
+	return max/100.0;
 }

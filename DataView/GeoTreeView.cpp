@@ -34,16 +34,17 @@ void GeoTreeView::on_Clicked(QModelIndex idx)
 void GeoTreeView::selectionChanged( const QItemSelection &selected,
                                     const QItemSelection &deselected )
 {
-	const QModelIndex idx = *(selected.indexes().begin());
-	const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+	if (!selected.isEmpty())
+	{
+		const QModelIndex idx = *(selected.indexes().begin());
+		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
 
-	const GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem());
-	if (list_item)
-		emit geoItemSelected(list_item->vtkSource(), tree_item->row());
-	else
-		emit removeGeoItemSelection();
-
-
+		const GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem());
+		if (list_item)
+			emit geoItemSelected(list_item->vtkSource(), tree_item->row());
+		else
+			emit removeGeoItemSelection();
+	}
 	//emit itemSelectionChanged(selected, deselected);
 	//return QTreeView::selectionChanged(selected, deselected);
 }
