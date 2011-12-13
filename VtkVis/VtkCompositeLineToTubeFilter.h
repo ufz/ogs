@@ -20,7 +20,7 @@ public:
 	virtual void SetUserProperty(QString name, QVariant value);
 
 private:
-	int GetInitialRadius() const;
+	float GetInitialRadius() const;
 };
 
 #endif // VTKCOMPOSITELINETOTUBEFILTER_H
