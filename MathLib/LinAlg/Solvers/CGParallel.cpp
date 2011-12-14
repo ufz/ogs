@@ -99,10 +99,12 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 					p[k] = rhat[k];
 				}
 			}
+		}
 
-			// q = Ap
-			mat->amux(D_ONE, p, q);
-
+		// q = Ap
+		mat->amux(D_ONE, p, q);
+		#pragma omp parallel
+		{
 			// alpha = rho / p*q
 			double alpha = rho / scpr(p, q, N);
 
