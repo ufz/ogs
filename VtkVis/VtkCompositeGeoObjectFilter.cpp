@@ -18,6 +18,8 @@
 #include "VtkCompositePointToGlyphFilter.h"
 #include "VtkCompositeLineToTubeFilter.h"
 
+#include <vtkPointData.h>
+
 VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm), _type(GEOLIB::POINT), _threshold(vtkThreshold::New())
 {
@@ -59,7 +61,8 @@ void VtkCompositeGeoObjectFilter::init()
 	VtkCompositeFilter* composite;
 	if (_type == GEOLIB::POINT)
 	{
-		 composite = new VtkCompositePointToGlyphFilter(surface);
+		composite = new VtkCompositePointToGlyphFilter(surface);
+		composite->SetUserProperty("Radius", this->GetInitialRadius());
 		_outputAlgorithm = composite->GetOutputAlgorithm();
 	}
 	else if (_type == GEOLIB::POLYLINE)

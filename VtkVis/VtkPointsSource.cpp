@@ -17,6 +17,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkCellData.h>
 
 vtkStandardNewMacro(VtkPointsSource);
 vtkCxxRevisionMacro(VtkPointsSource, "$Revision$");
@@ -75,21 +76,31 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
 	newPoints->Allocate(numPoints);
 	newVerts->Allocate(numPoints);
+	
+	vtkSmartPointer<vtkIntArray> pointIDs = vtkSmartPointer<vtkIntArray>::New();
+	pointIDs->SetNumberOfComponents(1);
+	pointIDs->SetName("PointIDs");
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
 	// Generate points and vertices
+	int i = 0;
 	for (std::vector<GEOLIB::Point*>::const_iterator it = _points->begin();
 	     it != _points->end(); ++it)
 	{
 		double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
 		vtkIdType pid = newPoints->InsertNextPoint(coords);
 		newVerts->InsertNextCell(1, &pid);
+		
+		pointIDs->InsertNextValue(i);
+		i++;
 	}
 
 	output->SetPoints(newPoints);
 	output->SetVerts(newVerts);
+	output->GetCellData()->AddArray(pointIDs);
+	output->GetCellData()->SetActiveAttribute("PointIDs", vtkDataSetAttributes::SCALARS);
 
 	return 1;
 }
