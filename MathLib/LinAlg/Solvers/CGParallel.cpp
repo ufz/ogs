@@ -71,17 +71,17 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
 #endif
 
+		// r^ = C r
+		// rhat = r
+//		blas::copy(N, r, rhat);
+		#pragma omp parallel for
+		for (k = 0; k < N; k++) {
+			rhat[k] = r[k];
+		}
+		mat->precondApply(rhat);
+
 		#pragma omp parallel
 		{
-			// r^ = C r
-			// rhat = r
-//			blas::copy(N, r, rhat);
-			#pragma omp parallel for
-			for (k = 0; k < N; k++) {
-				rhat[k] = r[k];
-			}
-			mat->precondApply(rhat);
-
 			// rho = r * r^;
 			rho = scpr(r, rhat, N);
 
