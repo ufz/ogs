@@ -41,12 +41,8 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 	double * __restrict__ rhat(new double[N]);
 	double rho, rho1 = 0.0;
 
-//	p = new double[4* N];
-//	q = p + N;
-//	r = q + N;
-//	rhat = r + N;
-
 	double nrmb = sqrt(scpr(b, b, N));
+
 	if (nrmb < std::numeric_limits<double>::epsilon()) {
 		blas::setzero(N, x);
 		eps = 0.0;
@@ -74,41 +70,42 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 #ifndef NDEBUG
 		std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
 #endif
-		// r^ = C r
-		// rhat = r
-//		blas::copy(N, r, rhat);
-		#pragma omp parallel for
-		for (k = 0; k < N; k++) {
-			rhat[k] = r[k];
-		}
-		mat->precondApply(rhat);
-
-		// rho = r * r^;
-		rho = scpr(r, rhat, N);
-
-		if (l > 1) {
-			double beta = rho / rho1;
-			// p = r^ + beta * p
-			#pragma omp parallel for
-			for (k = 0; k < N; k++) {
-				p[k] = rhat[k] + beta * p[k];
-			}
-		} else {
-//			blas::copy(N, rhat, p);
-			#pragma omp parallel for
-			for (k = 0; k < N; k++) {
-				p[k] = rhat[k];
-			}
-		}
-
-		// q = Ap
-		mat->amux(D_ONE, p, q);
-
-		// alpha = rho / p*q
-		double alpha = rho / scpr(p, q, N);
 
 		#pragma omp parallel
 		{
+			// r^ = C r
+			// rhat = r
+//			blas::copy(N, r, rhat);
+			#pragma omp parallel for
+			for (k = 0; k < N; k++) {
+				rhat[k] = r[k];
+			}
+			mat->precondApply(rhat);
+
+			// rho = r * r^;
+			rho = scpr(r, rhat, N);
+
+			if (l > 1) {
+				double beta = rho / rho1;
+				// p = r^ + beta * p
+				#pragma omp parallel for
+				for (k = 0; k < N; k++) {
+					p[k] = rhat[k] + beta * p[k];
+				}
+			} else {
+//				blas::copy(N, rhat, p);
+				#pragma omp parallel for
+				for (k = 0; k < N; k++) {
+					p[k] = rhat[k];
+				}
+			}
+
+			// q = Ap
+			mat->amux(D_ONE, p, q);
+
+			// alpha = rho / p*q
+			double alpha = rho / scpr(p, q, N);
+
 			// x += alpha * p
 			#pragma omp for nowait
 			for (k = 0; k < N; k++) {
@@ -122,9 +119,9 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 			}
 
 			#pragma omp barrier
-		}
 
-		resid = sqrt(scpr(r, r, N));
+			resid = sqrt(scpr(r, r, N));
+		} // end #pragma omp parallel
 
 		if (resid <= eps * nrmb) {
 			eps = resid / nrmb;
