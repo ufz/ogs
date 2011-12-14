@@ -2,13 +2,11 @@
 set( SOURCES
 	ColorTableModel.cpp
 	ColorTableView.cpp
-	ConditionModel.cpp
-	ConditionTabWidget.cpp
-	ConditionView.cpp
 	DatabaseConnection.cpp
 	DataView.cpp
 	DBConnectionDialog.cpp
 	ElementTreeModel.cpp
+	FEMConditionSetupDialog.cpp
 	GEOModels.cpp
 	GeoTabWidget.cpp
 	GeoTreeModel.cpp
@@ -16,6 +14,7 @@ set( SOURCES
 	GMSHPrefsDialog.cpp
 	LineEditDialog.cpp
 	ListPropertiesDialog.cpp
+	ModellingTabWidget.cpp
 	ModelTreeItem.cpp
 	MshEditDialog.cpp
 	MshItem.cpp
@@ -23,8 +22,12 @@ set( SOURCES
 	MshModel.cpp
 	MshQualitySelectionDialog.cpp
 	MshTabWidget.cpp
+	NewProcessDialog.cpp
 	OGSRaster.cpp
+	ProcessModel.cpp
+	ProcessView.cpp
 	QueryResultsDialog.cpp
+	SetNameDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
 	StationTreeView.cpp	
@@ -34,13 +37,12 @@ set( SOURCES
 set( MOC_HEADERS
 	ColorTableModel.h
 	ColorTableView.h
-	ConditionModel.h
-	ConditionTabWidget.h
-	ConditionView.h
+	CondItem.h	
 	DatabaseConnection.h
 	DataView.h
 	DBConnectionDialog.h
 	ElementTreeModel.h
+	FEMConditionSetupDialog.h
 	GEOModels.h
 	GeoTabWidget.h
 	GeoTreeModel.h
@@ -48,11 +50,16 @@ set( MOC_HEADERS
 	GMSHPrefsDialog.h
 	LineEditDialog.h
 	ListPropertiesDialog.h
+	ModellingTabWidget.h
 	MshEditDialog.h
 	MshModel.h
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
+	NewProcessDialog.h
+	ProcessModel.h
+	ProcessView.h
 	QueryResultsDialog.h
+	SetNameDialog.h
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h
@@ -61,7 +68,7 @@ set( MOC_HEADERS
 # Header files
 set( HEADERS
 	BaseItem.h
-	CondItem.h
+	ProcessItem.h
 	CondObjectListItem.h
 	GeoObjectListItem.h
 	GeoTreeItem.h
@@ -73,15 +80,17 @@ set( HEADERS
 
 # UI files
 set( UIS
-	ConditionTabWidgetBase.ui
 	DatabaseResultView.ui
 	DBConnection.ui
+	FEMConditionSetup.ui
 	GeoTabWidgetBase.ui
 	GMSHPrefs.ui
 	LineEdit.ui
+	ModellingTabWidgetBase.ui
 	MshEdit.ui
 	MshQualitySelection.ui
 	MshTabWidgetBase.ui
+	NewProcess.ui
 	StationTabWidgetBase.ui
 )
 
@@ -137,9 +146,9 @@ IF (OGS_USE_OPENSG)
 	INCLUDE_DIRECTORIES( ${OpenSG_INCLUDE_DIRS} )
 ENDIF (OGS_USE_OPENSG)
 
-IF (libtiff_FOUND AND libgeotiff_FOUND)
-	INCLUDE_DIRECTORIES( ${libtiff_INCLUDE_DIR}	${libgeotiff_INCLUDE_DIR} )
-ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
+IF (libgeotiff_FOUND)
+	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+ENDIF () # libgeotiff_FOUND
 
 # Put moc files in a project folder
 source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
@@ -171,6 +180,6 @@ target_link_libraries( QtDataView
 IF (Shapelib_FOUND)
 	TARGET_LINK_LIBRARIES( QtDataView ${Shapelib_LIBRARIES} )
 ENDIF () # Shapelib_FOUND
-IF (libtiff_FOUND AND libgeotiff_FOUND)
-	TARGET_LINK_LIBRARIES( QtDataView ${libtiff_LIBRARIES} ${libgeotiff_LIBRARIES} )
-ENDIF () # libtiff_FOUND AND libgeotiff_FOUND
+IF (libgeotiff_FOUND)
+	TARGET_LINK_LIBRARIES( QtDataView ${libgeotiff_LIBRARIES} )
+ENDIF () # libgeotiff_FOUND

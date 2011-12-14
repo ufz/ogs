@@ -34,12 +34,7 @@ bool OGSRaster::loadImage(const QString &fileName, QImage &raster, QPointF &orig
 		if (!loadImageFromASC(fileName, raster, origin, scalingFactor, autoscale))
 			return false;
 		if (mirrorX)
-			raster = raster.transformed(QTransform(1,
-			                                       0,
-			                                       0,
-			                                       -1,
-			                                       0,
-			                                       0), Qt::FastTransformation);
+			raster = raster.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
 	}
 #ifdef libgeotiff_FOUND
 	else if (fileInfo.suffix().toLower() == "tif")
@@ -47,12 +42,7 @@ bool OGSRaster::loadImage(const QString &fileName, QImage &raster, QPointF &orig
 		if (!loadImageFromTIFF(fileName, raster, origin, scalingFactor))
 			return false;
 		if (!mirrorX)
-			raster = raster.transformed(QTransform(1,
-			                                       0,
-			                                       0,
-			                                       -1,
-			                                       0,
-			                                       0), Qt::FastTransformation);
+			raster = raster.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
 	}
 #endif
 	else if (!loadImageFromFile(fileName, raster))
@@ -94,12 +84,8 @@ bool OGSRaster::loadImageFromASC(const QString &fileName,
 				pixVal[index + i] = strtod(replaceString(",", ".", s).c_str(),0);
 				if (pixVal[index + i] != header.noData)
 				{ // find intensity bounds but ignore noData values
-					minVal =
-					        (pixVal[index +
-					                i] < minVal) ? pixVal[index + i] : minVal;
-					maxVal =
-					        (pixVal[index +
-					                i] > maxVal) ? pixVal[index + i] : maxVal;
+					minVal = (pixVal[index + i] < minVal) ? pixVal[index + i] : minVal;
+					maxVal = (pixVal[index + i] > maxVal) ? pixVal[index + i] : maxVal;
 				}
 			}
 		}
@@ -117,14 +103,9 @@ bool OGSRaster::loadImageFromASC(const QString &fileName,
 			{ // scale intensities and set nodata values to zero (black)
 				if (pixVal[index + i] != header.noData)
 				{
-					value =
-					        (pixVal[index + i] ==
-					         header.noData) ? minVal : pixVal[index + i];
-					gVal =
-					        (autoscale) ? static_cast<int> (floor((value -
-					                                               minVal) *
-					                                              scalingFactor))
-						: static_cast<int> (value);
+					value = pixVal[index + i];
+					gVal = (autoscale) ? 
+						static_cast<int> (floor((value -minVal) * scalingFactor)) : static_cast<int> (value);
 					//gVal = value; // saudi arabia
 					img.setPixel(i,j, qRgba(gVal, gVal, gVal, 255));
 				}
@@ -197,9 +178,10 @@ bool OGSRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	else
 		return false;
 
-	// correct raster position by half a pixel for correct visualisation
-	header.x = header.x + (header.cellsize / 2);
-	header.y = header.y + (header.cellsize / 2);
+	// correct raster position by half a pixel for correct visualisation 
+	// argh! wrong! correction has to happen in visualisation object, otherwise the actual data is wrong
+	//header.x = header.x + (header.cellsize / 2);
+	//header.y = header.y + (header.cellsize / 2);
 
 	return true;
 }

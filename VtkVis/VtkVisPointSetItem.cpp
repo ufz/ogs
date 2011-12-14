@@ -7,6 +7,8 @@
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPointSetItem.h"
 
+#include <limits>
+
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
 #include <vtkCellData.h>
@@ -34,12 +36,13 @@
 VtkVisPointSetItem::VtkVisPointSetItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: VtkVisPipelineItem(algorithm, parentItem,
-	                     data), _transformFilter(NULL), _activeAttribute("")
+	: VtkVisPipelineItem(algorithm, parentItem, data), _mapper(NULL),
+	_transformFilter(NULL), _activeAttribute("")
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
 	{
+		// special case if parent is image but child is not (e.g. Image2BarChartFilter)
 		if (dynamic_cast<vtkImageAlgorithm*>(visParentItem->algorithm()))
 			_algorithm->SetInputConnection(visParentItem->algorithm()->GetOutputPort());
 		else
@@ -56,14 +59,15 @@ VtkVisPointSetItem::VtkVisPointSetItem(
 VtkVisPointSetItem::VtkVisPointSetItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: VtkVisPipelineItem(compositeFilter, parentItem,
-	                     data), _transformFilter(NULL), _activeAttribute("")
+	: VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(NULL),
+	_transformFilter(NULL), _activeAttribute("")
 {
 }
 
 VtkVisPointSetItem::~VtkVisPointSetItem()
 {
 	_transformFilter->Delete();
+	_mapper->Delete();
 }
 
 void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
@@ -81,7 +85,6 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
 
-	// Use a special vtkImageActor instead of vtkActor
 	_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 	_actor = vtkActor::New();
 	static_cast<vtkActor*>(_actor)->SetMapper(_mapper);
@@ -110,8 +113,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				parentItem = NULL;
 			}
 			else
-				parentItem =
-				        dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+				parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
 		}
 	}
 
@@ -131,6 +133,11 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				this->SetActiveAttribute("Solid Color");
 		}
 	}
+}
+
+void VtkVisPointSetItem::SetScalarVisibility( bool on )
+{
+	_mapper->SetScalarVisibility(on);
 }
 
 void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
@@ -222,15 +229,9 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			vtkPointData* pointData = dataSet->GetPointData();
 			if(pointData)
 			{
-				if(setActiveAttributeOnData(pointData, strippedName))
+				if(activeAttributeExists(pointData, strippedName))
 				{
-					_algorithm->SetInputArrayToProcess(
-					        0,
-					        0,
-					        0,
-					        vtkDataObject::
-					        FIELD_ASSOCIATION_POINTS,
-					        charName);
+					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
 					_mapper->SetScalarModeToUsePointData();
 				}
 				else
@@ -246,15 +247,9 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			vtkCellData* cellData = dataSet->GetCellData();
 			if(cellData)
 			{
-				if(setActiveAttributeOnData(cellData, strippedName))
+				if(activeAttributeExists(cellData, strippedName))
 				{
-					_algorithm->SetInputArrayToProcess(
-					        0,
-					        0,
-					        0,
-					        vtkDataObject::
-					        FIELD_ASSOCIATION_CELLS,
-					        charName);
+					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
 					_mapper->SetScalarModeToUseCellData();
 				}
 				else
@@ -266,15 +261,16 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			}
 		}
 
+		_activeAttribute = name;
 		_mapper->SetScalarRange(dataSet->GetScalarRange());
 		this->setLookupTableForActiveScalar();
 		_mapper->ScalarVisibilityOn();
+
 		//_mapper->Update();	// KR: TODO - this is incredibly slow ... WHY???
-		_activeAttribute = name;
 	}
 }
 
-bool VtkVisPointSetItem::setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name)
+bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::string& name)
 {
 	bool arrayFound = false;
 	for (int i = 0; i < data->GetNumberOfArrays() && !arrayFound; i++)
@@ -306,12 +302,11 @@ void VtkVisPointSetItem::setLookupTableForActiveScalar()
 				vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
 			}
 			else // specific color table
+				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->GetActiveAttribute()));
 
-				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->
-				                                                 GetActiveAttribute()));
-
-			_mapper->SetScalarRange(_transformFilter->GetOutput()->GetScalarRange());
-			//_mapper->Update();  KR: not necessary?!
+			//_mapper->SetScalarRange(this->_transformFilter->GetOutput()->GetScalarRange());
+			_mapper->SetScalarRange(vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0))->GetScalarRange());
+			//_mapper->Update();  //KR: not necessary?!
 		}
 	}
 }
@@ -327,7 +322,7 @@ void VtkVisPointSetItem::setScale(double x, double y, double z) const
 	if (this->transformFilter())
 	{
 		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		        static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
 		double* trans = transform->GetPosition();
 		transform->Identity();
 		transform->Scale(x, y, z);
@@ -341,7 +336,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 	if (this->transformFilter())
 	{
 		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->transformFilter()->GetTransform());
+		        static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
 		double* scale = transform->GetScale();
 		transform->Identity();
 		transform->Scale(scale);
@@ -350,3 +345,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 	}
 }
 
+vtkAlgorithm* VtkVisPointSetItem::transformFilter() const 
+{ 
+	return _transformFilter; 
+}

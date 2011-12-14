@@ -10,9 +10,8 @@
  * and the data associated with each column.
  */
 TreeItem::TreeItem(const QList<QVariant> &data, TreeItem* parent)
+: _itemData(data), _parentItem(parent)
 {
-	_parentItem = parent;
-	_itemData = data;
 }
 
 /**

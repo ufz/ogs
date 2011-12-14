@@ -206,3 +206,30 @@ void GEOModels::connectPolylineSegments(const std::string &geoName,
 	else
 		OGSError::box("Corresponding geometry not found.");
 }
+
+
+void GEOModels::addNameForElement(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, std::string new_name)
+{
+	switch(object_type) {
+		case GEOLIB::POINT:
+			{
+				GEOLIB::PointVec* pnt_vec = this->getPointVecObj(geometry_name);
+				pnt_vec->setNameForElement(id, new_name);
+				break;
+			}
+		case GEOLIB::POLYLINE:
+			{
+				GEOLIB::PolylineVec* ply_vec = this->getPolylineVecObj(geometry_name);
+				ply_vec->setNameForElement(id, new_name);
+				break;
+			}
+		case GEOLIB::SURFACE:
+			{
+				GEOLIB::SurfaceVec* sfc_vec = this->getSurfaceVecObj(geometry_name);
+				sfc_vec->setNameForElement(id, new_name);
+				break;
+			}
+		default:
+			std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." << std::endl;
+	}
+}

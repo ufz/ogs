@@ -24,7 +24,7 @@
 
 //image to mesh conversion
 #include "VtkGeoImageSource.h"
-#include "VtkMeshConverter.h"
+#include "MeshFromRasterDialog.h"
 #include <vtkDataObject.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
@@ -82,7 +82,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 			isSourceItem = false; // this exception is needed as image object are only displayed in the vis-pipeline
 			addMeshingAction = menu.addAction("Convert Image to Mesh...");
 			connect(addMeshingAction, SIGNAL(triggered()), this,
-			        SLOT(convertImageToMesh()));
+			        SLOT(showImageToMeshConversionDialog()));
 		}
 		else
 		{
@@ -123,9 +123,8 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to vtk-file",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),"(*.*)");
+	                                settings.value("lastExportedFileDirectory").toString(),
+									"All files (* *.*)");
 	if (!filename.isEmpty())
 	{
 		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
@@ -140,8 +139,7 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to OpenSG file",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
+	                                                settings.value("lastExportedFileDirectory").
 	                                                toString(), "OpenSG file (*.osb)");
 	if (!filename.isEmpty())
 	{
@@ -162,32 +160,35 @@ void VtkVisPipelineView::addPipelineFilterItem()
 	emit requestAddPipelineFilterItem(selectionModel()->currentIndex());
 }
 
-void VtkVisPipelineView::convertImageToMesh()
+void VtkVisPipelineView::showImageToMeshConversionDialog()
+{
+	MeshFromRasterDialog* dlg = new MeshFromRasterDialog();
+	connect(dlg, SIGNAL(setMeshParameters(QString, MshElemType::type, UseIntensityAs::type)),
+		    this, SLOT(constructMeshFromImage(QString, MshElemType::type, UseIntensityAs::type)));
+	dlg->exec();
+}
+
+void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::type element_type, UseIntensityAs::type intensity_type)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-	                                         getItem(this->
-	                                                 selectionModel()
-	                                                 ->currentIndex()))->algorithm();
+	                                         getItem(this->selectionModel()->currentIndex()))->algorithm();
 
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
-
-	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image,
-	                                                            imageSource->getOrigin(),
-	                                                            imageSource->getSpacing());
-	// now do something with the mesh (save, display, whatever... )
-	std::string msh_name("NewMesh");
-	emit meshAdded(mesh, msh_name);
+	
+	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
+																imageSource->getSpacing(), 
+																element_type, intensity_type);
+	std::string new_mesh_name(msh_name.toStdString());
+	emit meshAdded(mesh, new_mesh_name);
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
-	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-	                                         getItem(this->
-	                                                 selectionModel()
-	                                                 ->currentIndex()))->algorithm();
+	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
+												this->selectionModel()->currentIndex()))->algorithm();
 
 	vtkUnstructuredGrid* grid(NULL);
 	vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
@@ -195,14 +196,14 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 		grid = ugAlg->GetOutput();
 	else
 	{
-		vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(
-		        algorithm);                                                                   // for old filetypes
+		// for old filetypes
+		vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(algorithm);
 		if (dataReader)
 			grid = vtkUnstructuredGrid::SafeDownCast(dataReader->GetOutput());
 		else
 		{
-			vtkXMLUnstructuredGridReader* xmlReader =
-			        vtkXMLUnstructuredGridReader::SafeDownCast(algorithm);                       // for new filetypes
+			// for new filetypes
+			vtkXMLUnstructuredGridReader* xmlReader = vtkXMLUnstructuredGridReader::SafeDownCast(algorithm);
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}

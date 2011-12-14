@@ -36,10 +36,8 @@
 VtkVisPipelineItem::VtkVisPipelineItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data,
-	           parentItem),   _actor(NULL), _algorithm(algorithm), _mapper(NULL),
-	  _renderer(NULL),
-	  _compositeFilter(NULL)
+	: TreeItem(data, parentItem),   _actor(NULL), _algorithm(algorithm),
+	  _renderer(NULL),_compositeFilter(NULL)
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -49,8 +47,7 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 VtkVisPipelineItem::VtkVisPipelineItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem),   _actor(NULL), _mapper(NULL), _renderer(NULL),
-	  _compositeFilter(compositeFilter)
+	: TreeItem(data, parentItem), _actor(NULL), _renderer(NULL), _compositeFilter(compositeFilter)
 {
 	_algorithm = _compositeFilter->GetOutputAlgorithm();
 }
@@ -58,7 +55,6 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 VtkVisPipelineItem::~VtkVisPipelineItem()
 {
 	_renderer->RemoveActor(_actor);
-	_mapper->Delete();
 	_actor->Delete();
 	delete _compositeFilter;
 }
@@ -138,11 +134,6 @@ int VtkVisPipelineItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 vtkProp3D* VtkVisPipelineItem::actor() const
 {
 	return _actor;
-}
-
-void VtkVisPipelineItem::SetScalarVisibility( bool on )
-{
-	_mapper->SetScalarVisibility(on);
 }
 
 void VtkVisPipelineItem::setScale(double x, double y, double z) const

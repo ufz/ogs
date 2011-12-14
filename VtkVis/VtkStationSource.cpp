@@ -72,7 +72,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
 
 	if (!_stations)
 		return 0;
-	int nStations = _stations->size();
+	size_t nStations = _stations->size();
 	if (nStations == 0)
 		return 0;
 

@@ -59,6 +59,8 @@ public:
 	 */
 	void removeGeoList(const std::string &name, GEOLIB::GEOTYPE type = GEOLIB::INVALID);
 
+	void setNameForItem(const std::string &name, GEOLIB::GEOTYPE type, size_t id, std::string item_name);
+
 	/*
 	 * Returns the geo-object specified by the given index.
 	 * \param index Index of the requested item

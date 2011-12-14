@@ -9,7 +9,7 @@
 #include "VtkVisPipeline.h"
 
 //#include "Model.h"
-#include "ConditionModel.h"
+#include "ProcessModel.h"
 #include "GeoTreeModel.h"
 #include "MeshQualityEquiAngleSkew.h"
 #include "MeshQualityNormalisedArea.h"
@@ -21,6 +21,7 @@
 #include "TreeModel.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkCompositeSelectionFilter.h"
+#include "VtkCompositeGeoObjectFilter.h"
 #include "VtkFilterFactory.h"
 #include "VtkMeshSource.h"
 #include "VtkTrackedCamera.h"
@@ -56,7 +57,7 @@
 #include <QTime>
 
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
-	: TreeModel(parent), _renderer(renderer)
+	: TreeModel(parent), _renderer(renderer), _highlighted_geo_index(QModelIndex())
 {
 	QList<QVariant> rootData;
 	rootData << "Object name" << "Visible";
@@ -251,11 +252,9 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
 	addPipelineItem(model->vtkSource(name));
 }
 
-void VtkVisPipeline::addPipelineItem(ConditionModel* model,
-                                     const std::string &name,
-                                     FEMCondition::CondType type)
+void VtkVisPipeline::addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
 {
-	addPipelineItem(model->vtkSource(name, type));
+	addPipelineItem(model->vtkSource(pcs_type, cond_type));
 }
 
 void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
@@ -263,7 +262,7 @@ void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
 	addPipelineItem(static_cast<MshItem*>(model->getItem(idx))->vtkSource());
 }
 
-void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent)
+QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent)
 {
 	item->Initialize(_renderer);
 	TreeItem* parentItem = item->parentItem();
@@ -273,8 +272,7 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 	{
 		QSettings settings("UFZ, OpenGeoSys-5");
 		if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
-			item->setScale(1.0, 1.0, settings.value("globalSuperelevation",
-			                                        1.0).toDouble());
+			item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}
 
 	int parentChildCount = parentItem->childCount();
@@ -292,9 +290,11 @@ void VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex
 
 	reset();
 	emit vtkVisPipelineChanged();
+
+	return newIndex;
 }
 
-void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
+QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
                                       QModelIndex parent /* = QModelindex() */)
 {
 	TreeItem* parentItem = getItem(parent);
@@ -339,7 +339,7 @@ void VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 		item = new VtkVisImageItem(source, parentItem, itemData);
 	else
 		item = new VtkVisPointSetItem(source, parentItem, itemData);
-	this->addPipelineItem(item, parent);
+	return this->addPipelineItem(item, parent);
 }
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
@@ -357,14 +357,12 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
 	}
 }
 
-void VtkVisPipeline::removeSourceItem(ConditionModel* model,
-                                      const std::string &name,
-                                      FEMCondition::CondType type)
+void VtkVisPipeline::removeSourceItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
-		if (item->algorithm() == model->vtkSource(name, type))
+		if (item->algorithm() == model->vtkSource(pcs_type, cond_type))
 		{
 			removePipelineItem(index(i, 0));
 			return;
@@ -492,6 +490,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 				                                                  parentItem,
 				                                                  itemData);
 				this->addPipelineItem(item, this->createIndex(i, 0, item));
+				break;
 			}
 		}
 
@@ -512,5 +511,38 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		out.close ();
 
 		delete checker;
+	}
+}
+
+void VtkVisPipeline::highlightGeoObject(const vtkPolyDataAlgorithm* source, int index)
+{
+	this->removeHighlightedGeoObject();
+	int nSources = this->_rootItem->childCount();
+	for (int i = 0; i < nSources; i++)
+	{
+		VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+		if (parentItem->algorithm() == source)
+		{
+			QList<QVariant> itemData;
+			itemData << "Selected GeoObject" << true;
+
+			VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter(
+															"VtkCompositeGeoObjectFilter",
+															parentItem->transformFilter());
+			static_cast<VtkCompositeGeoObjectFilter*>(filter)->SetIndex(index);
+			VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
+			QModelIndex parent_index = static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());
+			_highlighted_geo_index = this->addPipelineItem(item, parent_index);
+			break;
+		}
+	}
+}
+
+void VtkVisPipeline::removeHighlightedGeoObject()
+{
+	if (_highlighted_geo_index != QModelIndex())
+	{
+		this->removePipelineItem(_highlighted_geo_index);
+		_highlighted_geo_index = QModelIndex();
 	}
 }

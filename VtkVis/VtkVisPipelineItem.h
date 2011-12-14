@@ -18,15 +18,17 @@
 #include <QVariant>
 
 class vtkAlgorithm;
+class vtkDataSetAttributes;
 class vtkPointSet;
-class QVtkDataSetMapper;
 class vtkProp3D;
 class vtkRenderer;
-class VtkAlgorithmProperties;
-class vtkOsgActor;
-class VtkCompositeFilter;
 class vtkTransformFilter;
-class vtkDataSetAttributes;
+class QVtkDataSetMapper;
+
+class vtkOsgActor;
+
+class VtkAlgorithmProperties;
+class VtkCompositeFilter;
 
 /**
  * \brief An item in the VtkVisPipeline containing a graphic object to be visualized.
@@ -72,9 +74,6 @@ public:
 	// Dummy for implementation in derived classes
 	virtual void SetActiveAttribute(const QString& str) { (void)str; }
 
-	/// @brief Returns the mapper
-	QVtkDataSetMapper* mapper() const { return _mapper; }
-
 	/// @brief Returns the composite filter
 	VtkCompositeFilter* compositeFilter() const { return _compositeFilter; }
 
@@ -87,14 +86,24 @@ public:
 	/// @brief Writes this algorithm's vtkDataSet (i.e. vtkPolyData or vtkUnstructuredGrid) to a vtk-file.
 	int writeToFile(const std::string &filename) const;
 
-	/// @brief Sets the geometry and data scaling.
+	/** 
+ 	 * @brief Scales the data in visualisation-space.
+     * This function is empty and needs to be implemented by derived classes.
+     */
 	virtual void setScale(double x, double y, double z) const;
 
-	/// @brief Translates the item in vis-space.
+	/** 
+ 	 * @brief Translates the item in visualisation-space.
+     * This function is empty and needs to be implemented by derived classes.
+     */
 	virtual void setTranslation(double x, double y, double z) const;
 
-	// Dummy for implementation in derived classes
-	virtual vtkTransformFilter* transformFilter() const { return NULL; }
+	/** 
+ 	 * Returns the transform filter for the object.
+     * This function needs to be implemented by derived classes.
+     */
+	virtual vtkAlgorithm* transformFilter() const = 0;
+
 	/// @brief Sets the geometry and date scaling recursively on all children of
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;
@@ -102,13 +111,14 @@ public:
 protected:
 	vtkProp3D* _actor;
 	vtkAlgorithm* _algorithm;
-	QVtkDataSetMapper* _mapper;
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
 
+	/** 
+	 * Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
+     * This function is empty and needs to be implemented by derived classes.
+	 */
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
-
-	void SetScalarVisibility(bool on);
 
 private:
 };

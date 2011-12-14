@@ -1,5 +1,6 @@
 # Source files
 SET( SOURCES
+	MeshFromRasterDialog.cpp
 	QVtkDataSetMapper.cpp
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
@@ -15,6 +16,7 @@ SET( SOURCES
 	VtkCompositeColorByHeightFilter.cpp
 	VtkCompositeColormapToImageFilter.cpp
 	VtkCompositeContourFilter.cpp
+	VtkCompositeGeoObjectFilter.cpp
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
@@ -45,6 +47,7 @@ SET( SOURCES
 
 # Moc headers
 SET( MOC_HEADERS
+	MeshFromRasterDialog.h
 	QVtkDataSetMapper.h
 	VisPrefsDialog.h
 	VisualizationWidget.h
@@ -69,6 +72,7 @@ SET( HEADERS
 	VtkCompositeColorByHeightFilter.h
 	VtkCompositeColormapToImageFilter.h
 	VtkCompositeContourFilter.h
+	VtkCompositeGeoObjectFilter.h
 	VtkCompositeImageToCylindersFilter.h
 	VtkCompositeLineToTubeFilter.h
 	VtkCompositePointToGlyphFilter.h
@@ -95,6 +99,7 @@ SET( HEADERS
 
 # UI files
 SET ( UIS
+	MeshFromRaster.ui
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
 	VisualizationWidgetBase.ui

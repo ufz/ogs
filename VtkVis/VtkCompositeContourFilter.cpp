@@ -42,7 +42,7 @@ void VtkCompositeContourFilter::init()
 	// Put that list in the property map
 	(*_algorithmUserVectorProperties)["Range"] = contourRangeList;
 
-	// Make a new entry in the property map for the SelectedComponent property
+	// Make a new entry in the property map for the "Number of Values" property
 	(*_algorithmUserProperties)["Number of Contours"] = 10;
 
 	// The threshold filter is last one and so it is also the _outputAlgorithm

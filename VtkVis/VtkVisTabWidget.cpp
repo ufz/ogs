@@ -9,9 +9,11 @@
 #include "VtkColorByHeightFilter.h"
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisImageItem.h"
 #include "VtkVisTabWidget.h"
 
 #include <vtkActor.h>
+#include <vtkImageChangeInformation.h>
 #include <vtkProperty.h>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
@@ -54,20 +56,20 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 	if (item)
 	{
 		_item = item;
+		transformTabWidget->setEnabled(true);
 
-		vtkActor* actor = dynamic_cast<vtkActor*>(_item->actor());
-		if (actor)
+		vtkTransformFilter* transform_filter = dynamic_cast<vtkTransformFilter*>(_item->transformFilter());
+		if (transform_filter) // if data set
 		{
 			actorPropertiesGroupBox->setEnabled(true);
-			transformTabWidget->setEnabled(true);
-			vtkProperty* vtkProps = actor->GetProperty();
+			vtkProperty* vtkProps = static_cast<vtkActor*>(_item->actor())->GetProperty();
 			diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
 			visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
 			edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
 			opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
 
 			vtkTransform* transform =
-			        static_cast<vtkTransform*>(_item->transformFilter()->GetTransform());
+			        static_cast<vtkTransform*>(transform_filter->GetTransform());
 			if (transform)
 			{
 				double scale[3];
@@ -105,10 +107,22 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 					}
 				}
 		}
-		else
+		else // if image
 		{
+			const VtkVisImageItem* img = static_cast<VtkVisImageItem*>(_item);
 			actorPropertiesGroupBox->setEnabled(false);
-			transformTabWidget->setEnabled(false);
+			vtkImageChangeInformation* transform = static_cast<vtkImageChangeInformation*>(img->transformFilter());
+			double trans[3];
+			transform->GetOriginTranslation(trans);
+			this->transX->blockSignals(true);
+			this->transY->blockSignals(true);
+			this->transZ->blockSignals(true);
+			this->transX->setText(QString::number(trans[0]));
+			this->transY->setText(QString::number(trans[1]));
+			this->transZ->setText(QString::number(trans[2]));
+			this->transX->blockSignals(false);
+			this->transY->blockSignals(false);
+			this->transZ->blockSignals(false);
 		}
 
 		this->buildProportiesDialog(item);

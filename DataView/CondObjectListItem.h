@@ -28,10 +28,9 @@ public:
 	/// Constructor for the TreeItem specifying FEM Conditions.
 	CondObjectListItem(const QList<QVariant> &data,
 	                   TreeItem* parent,
-	                   FEMCondition::CondType type,
+	                   const FEMCondition::CondType type,
 	                   const std::vector<GEOLIB::Point*>* points)
-		: TreeItem(data,
-		           parent), _vtkSource(VtkConditionSource::New()),  _type(type),
+		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(type),
 		  _cond_vec(new std::vector<FEMCondition*>)
 	{
 		QString display_name = parent->data(0).toString().append(" - ").append(
@@ -54,20 +53,10 @@ public:
 	}
 
 	/// Returns the type of geo-objects contained in the subtree of this item.
-	FEMCondition::CondType getType() { return _type; }
+	FEMCondition::CondType getType() const { return _type; };
 
 	/// Returns the Vtk polydata source object
-	vtkPolyDataAlgorithm* vtkSource() const
-	{
-		return _vtkSource;
-		/*
-		   vtkThresholdPoints* threshold = vtkThresholdPoints::New();
-		   threshold->SetInputConnection(_vtkSource->GetOutputPort());
-		   threshold->ThresholdByUpper(-9998);
-		   threshold->Update();
-		   return threshold;
-		 */
-	}
+	vtkPolyDataAlgorithm* vtkSource() const	{ return _vtkSource; };
 
 private:
 	/// The Vtk data source object. This is the starting point for a Vtk data visualization pipeline.

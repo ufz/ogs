@@ -23,12 +23,13 @@ class vtkAlgorithm;
 class vtkDataSet;
 class vtkLight;
 class vtkPointSet;
+class vtkPolyDataAlgorithm;
 class vtkRenderer;
 class vtkProp3D;
 class QModelIndex;
 class QString;
 class GeoTreeModel;
-class ConditionModel;
+class ProcessModel;
 class MshModel;
 class StationTreeModel;
 class TreeModel;
@@ -85,21 +86,17 @@ public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
 	void addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
-	void addPipelineItem(ConditionModel* model,
-	                     const std::string &name,
-	                     FEMCondition::CondType type);
+	void addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
-	void addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
+	QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
 
 	/// \brief Inserts the vtkAlgorithm as a child of the given QModelIndex to the pipeline.
-	void addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
+	QModelIndex addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
 
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
 	void removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
-	void removeSourceItem(ConditionModel* model,
-	                      const std::string &name,
-	                      FEMCondition::CondType type);
+	void removeSourceItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void removeSourceItem(StationTreeModel* model, const std::string &name);
 
 	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
@@ -109,6 +106,9 @@ public slots:
 	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
 	void checkMeshQuality(VtkMeshSource* mesh, MshQualityType::type t);
 
+	void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);
+	void removeHighlightedGeoObject();
+
 private:
 	void listArrays(vtkDataSet* dataSet);
 
@@ -117,6 +117,9 @@ private:
 	std::list<vtkLight*> _lights;
 	QMap<vtkProp3D*, QModelIndex> _actorMap;
 	bool _resetCameraOnAddOrRemove;
+
+	QModelIndex _highlighted_geo_index;
+
 
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.

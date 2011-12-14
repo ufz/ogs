@@ -51,7 +51,7 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 			for (size_t i = 0; i < nElems; i++)
 			{
 				MeshLib::CElem* elem( new MeshLib::CElem() );
-				size_t nElemNodes = mesh->ele_vector[i]->nodes_index.Size();
+				size_t nElemNodes = mesh->ele_vector[i]->getNodeIndices().Size();
 				if (mesh->ele_vector[i]->GetElementType() == MshElemType::TRIANGLE)
 					elem->setElementProperties(MshElemType::PRISM);                                           // extrude triangles to prism
 				else if (mesh->ele_vector[i]->GetElementType() == MshElemType::QUAD)
@@ -72,7 +72,7 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 				}
 				elem->SetPatchIndex(layer_id - 1);
 				elem->SetNodesNumber(2 * nElemNodes);
-				elem->nodes_index.resize(2 * nElemNodes);
+				elem->getNodeIndices().resize(2 * nElemNodes);
 				for (size_t j = 0; j < nElemNodes; j++)
 				{
 					long idx = mesh->ele_vector[i]->GetNodeIndex(j);
@@ -85,7 +85,7 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 		}
 	}
 
-	new_mesh->setNumberOfElementsFromElementsVectorSize ();
+	new_mesh->setNumberOfNodesFromNodesVectorSize ();
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
 	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
@@ -415,15 +415,15 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 			new_elem->SetNodesNumber(4);
 
 			Math_Group::vec<MeshLib::CNode*> nodes(4);
-			nodes[0] = mesh->nod_vector[elem->nodes_index[a]];
-			nodes[1] = mesh->nod_vector[elem->nodes_index[b + 3]];
-			nodes[2] = mesh->nod_vector[elem->nodes_index[c + 3]];
-			nodes[3] = mesh->nod_vector[elem->nodes_index[c]];
+			nodes[0] = mesh->nod_vector[elem->getNodeIndices()[a]];
+			nodes[1] = mesh->nod_vector[elem->getNodeIndices()[b + 3]];
+			nodes[2] = mesh->nod_vector[elem->getNodeIndices()[c + 3]];
+			nodes[3] = mesh->nod_vector[elem->getNodeIndices()[c]];
 			new_elem->SetNodes(nodes, true);
 
-			new_elem->nodes_index.resize(4);
+			new_elem->getNodeIndices().resize(4);
 			for (size_t k = 0; k < 4; k++)
-				new_elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
+				new_elem->getNodeIndices()[k] = elem->GetNode(k)->GetIndex();
 			new_elems.push_back(new_elem);
 
 			// change prism-element to 2nd tetrahedron
@@ -431,15 +431,15 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 			elem->SetElementType(MshElemType::TETRAHEDRON);
 			elem->SetNodesNumber(4);
 
-			nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
-			nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
-			nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
-			nodes[3] = mesh->nod_vector[elem->nodes_index[b + 3]];
+			nodes[0] = mesh->nod_vector[elem->getNodeIndices()[b]];
+			nodes[1] = mesh->nod_vector[elem->getNodeIndices()[a]];
+			nodes[2] = mesh->nod_vector[elem->getNodeIndices()[c]];
+			nodes[3] = mesh->nod_vector[elem->getNodeIndices()[b + 3]];
 			elem->SetNodes(nodes, true);
 
-			elem->nodes_index.resize(4);
+			elem->getNodeIndices().resize(4);
 			for (size_t k = 0; k < 4; k++)
-				elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
+				elem->getNodeIndices()[k] = elem->GetNode(k)->GetIndex();
 			break;
 		}
 		case 2: // two nodes of the prism are marked false, i.e. create a tetrahedron element from the remaining 4 prism nodes
@@ -457,15 +457,15 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 			elem->SetNodesNumber(4);
 
 			Math_Group::vec<MeshLib::CNode*> nodes(4);
-			nodes[0] = mesh->nod_vector[elem->nodes_index[b]];
-			nodes[1] = mesh->nod_vector[elem->nodes_index[a]];
-			nodes[2] = mesh->nod_vector[elem->nodes_index[c]];
-			nodes[3] = mesh->nod_vector[elem->nodes_index[a + 3]];
+			nodes[0] = mesh->nod_vector[elem->getNodeIndices()[b]];
+			nodes[1] = mesh->nod_vector[elem->getNodeIndices()[a]];
+			nodes[2] = mesh->nod_vector[elem->getNodeIndices()[c]];
+			nodes[3] = mesh->nod_vector[elem->getNodeIndices()[a + 3]];
 			elem->SetNodes(nodes, true);
 
-			elem->nodes_index.resize(4);
+			elem->getNodeIndices().resize(4);
 			for (size_t k = 0; k < 4; k++)
-				elem->nodes_index[k] = elem->GetNode(k)->GetIndex();
+				elem->getNodeIndices()[k] = elem->GetNode(k)->GetIndex();
 			/*
 			   //for j, l nodes if they becomes on top surface. 24.02.2009. WW
 			   if (node_b->GetBoundaryType()=='1')
@@ -541,7 +541,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 	nElems = mesh->ele_vector.size();
 	for(size_t i = 0; i < nElems; i++)
 		for(int j = 0; j < mesh->ele_vector[i]->GetVertexNumber(); j++)
-			mesh->ele_vector[i]->nodes_index[j] =
+			mesh->ele_vector[i]->getNodeIndices()[j] =
 			        mesh->ele_vector[i]->GetNode(j)->GetIndex();
 
 	// delete elements if two of its nodes are identical (can this actually happen?????)
@@ -610,7 +610,7 @@ void MshLayerMapper::CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLay
 	nElems = mesh->ele_vector.size();
 	for (size_t i = 0; i < nElems; i++)
 		for (int j = 0; j < mesh->ele_vector[i]->GetVertexNumber(); j++)
-			mesh->ele_vector[i]->nodes_index[j] =
+			mesh->ele_vector[i]->getNodeIndices()[j] =
 			        mesh->ele_vector[i]->GetNode(j)->GetIndex();
 
 	mesh->ConstructGrid();

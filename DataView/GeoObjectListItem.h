@@ -16,6 +16,12 @@
 #include <QModelIndex>
 #include <vtkPolyDataAlgorithm.h>
 
+/**
+ * Creates parent items for geometric object lists (i.e. points, polylines and surfaces)
+ * for the GeoTreeModel
+ *
+ * \sa GeoTreeModel, GeoTreeItem
+ */
 class GeoObjectListItem : public TreeItem
 {
 public:

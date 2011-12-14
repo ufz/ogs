@@ -17,7 +17,7 @@ OGSError::~OGSError()
  * Displays an error in a QMessageBox
  * \param e The error message.
  */
-void OGSError::box(QString e)
+void OGSError::box(const QString &e)
 {
 	box(e, "OpenGeoSys");
 }
@@ -28,7 +28,7 @@ void OGSError::box(QString e)
  * \param t The title of the message box
  * \sa QMessageBox
  */
-void OGSError::box(QString e, QString t)
+void OGSError::box(const QString &e, const QString &t)
 {
 	QMessageBox msgBox;
 	msgBox.setWindowTitle(t);

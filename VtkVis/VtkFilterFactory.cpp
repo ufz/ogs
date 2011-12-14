@@ -11,6 +11,7 @@
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkCompositeColormapToImageFilter.h"
 #include "VtkCompositeContourFilter.h"
+#include "VtkCompositeGeoObjectFilter.h"
 #include "VtkCompositeImageToCylindersFilter.h"
 #include "VtkCompositeLineToTubeFilter.h"
 #include "VtkCompositePointToGlyphFilter.h"
@@ -118,6 +119,8 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
 		return new VtkCompositeSelectionFilter(inputAlgorithm);
 	else if (type.compare(QString("VtkCompositeContourFilter")) == 0)
 		return new VtkCompositeContourFilter(inputAlgorithm);
+	else if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)
+		return new VtkCompositeGeoObjectFilter(inputAlgorithm);
 
 	else
 		return NULL;

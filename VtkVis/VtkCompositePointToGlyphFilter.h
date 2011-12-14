@@ -22,6 +22,8 @@ public:
 	virtual void SetUserProperty(QString name, QVariant value);
 
 private:
+	float GetInitialRadius() const;
+
 	vtkSphereSource* _glyphSource;
 };
 

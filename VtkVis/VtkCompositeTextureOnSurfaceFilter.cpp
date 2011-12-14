@@ -50,8 +50,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(parent,
 	                                                "Select raster file to apply as texture",
-	                                                settings.value(
-	                                                        "lastOpenedTextureFileDirectory").
+	                                                settings.value("lastOpenedTextureFileDirectory").
 	                                                toString(),
 	                                                "Raster files (*.asc *.bmp *.jpg *.png *.tif);;");
 	QFileInfo fi(fileName);

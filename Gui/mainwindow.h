@@ -15,7 +15,7 @@ class GEOModels;
 class MshModel;
 class ElementTreeModel;
 class StationTreeModel;
-class ConditionModel;
+class ProcessModel;
 class VtkVisPipeline;
 class DatabaseConnection;
 class VisPrefsDialog;
@@ -74,11 +74,17 @@ protected slots:
 	void importNetcdf(); //YW  07.2010
 	void importVtk();
 	void importFeflow();
-	void loadFEMConditionsFromFile(std::string);
+	void importTetGen();
+	void loadFEMConditions(std::string geoName);
 	void openDatabase();
 	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
+	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
+	/// Call dialog for creating or modifying FEM conditions.
+	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
+	/// Allows setting the name for a geometric object
+	void showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
 	/// Calls the diagram prefs dialog from the Tools menu.
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
@@ -86,13 +92,14 @@ protected slots:
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
+	void showNewProcessDialog();
 	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
+	void writeFEMConditionsToFile(QString geoName, QString fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
-	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 
 	void on_actionExportVTK_triggered(bool checked = false);
 	void on_actionExportVRML2_triggered(bool checked = false);
@@ -108,6 +115,7 @@ protected slots:
 private:
 	QMenu* createImportFilesMenu();
 	void loadFile(const QString &fileName);
+	void loadFEMConditionsFromFile(const QString &fileName, std::string geoName = "");
 	void loadPetrelFiles(const QStringList &sfc_file_names,
 	                     const QStringList &well_path_file_names);
 
@@ -122,7 +130,7 @@ private:
 	GEOModels* _geoModels;
 	MshModel* _meshModels;
 	ElementTreeModel* _elementModel;
-	ConditionModel* _conditionModel;
+	ProcessModel* _processModel;
 	ProjectData _project;
 	VtkVisPipeline* _vtkVisPipeline;
 	QList<QRect> _screenGeometries;

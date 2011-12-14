@@ -11,19 +11,22 @@
 #include "VtkVisPipelineItem.h"
 
 class vtkAlgorithm;
+class vtkImageChangeInformation;
 class vtkPointSet;
-class QVtkDataSetMapper;
 class vtkProp3D;
 class vtkRenderer;
-class VtkAlgorithmProperties;
+
 class vtkOsgActor;
+
+class VtkAlgorithmProperties;
 class VtkCompositeFilter;
 
 /**
- * \brief An item in the VtkVisPipeline containing a graphic object to be visualized.
+ * \brief An item in the VtkVisPipeline containing an image to be visualized.
  *
- * Any VTK-object (source-items, filter-items, etc.) need to be put into a VtkPipelineItem
- * to be assigned a mapper, an actor and its visualization properties (colour, etc.).
+ * Any vtkImageAlgorithm object is represented by a VtkVisImageItem to be assigned a mapper, 
+ * an actor and its visualization properties.
+ * \sa VtkVisPipelineItem
  */
 class VtkVisImageItem : public VtkVisPipelineItem
 {
@@ -43,11 +46,17 @@ public:
 	/// the item and sets the item's properties.
 	void Initialize(vtkRenderer* renderer);
 
+	void setTranslation(double x, double y, double z) const;
+
+	vtkAlgorithm* transformFilter() const;
+
 protected:
+	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
+	vtkImageChangeInformation* _transformFilter;
 };
 
 #endif // VTKVISIMAGEITEM_H

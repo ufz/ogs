@@ -80,11 +80,10 @@ void VtkGeoImageSource::setImageFilename(QString filename)
 	QPointF origin;
 	double spacing;
 	OGSRaster::loadImage(filename, *raster, origin, spacing);
-	//int imgwidth = raster->width();
-	//int imgheight = raster->height();
 	this->setImage(*raster);
 	delete raster;
-	this->setOrigin(origin);
+	// correct raster position by half a pixel for correct visualisation 
+	this->setOrigin(origin.x()+(spacing/2.0), origin.y()+(spacing/2.0), -10.0);
 	this->setSpacing(spacing);
 	this->SetName(filename);
 }
@@ -113,9 +112,9 @@ void VtkGeoImageSource::setImage(QImage& image)
 	_imageSource->Update(); // crashes otherwise
 }
 
-void VtkGeoImageSource::setOrigin(QPointF origin)
+void VtkGeoImageSource::setOrigin(double x, double y, double z)
 {
-	_imageInfo->SetOutputOrigin(origin.x(), origin.y(), -10.0);
+	_imageInfo->SetOutputOrigin(x, y, z);
 }
 
 void VtkGeoImageSource::setSpacing(double spacing)

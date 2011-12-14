@@ -105,6 +105,8 @@
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
     <addaction name="menuExport"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="action_Exit"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
@@ -128,10 +130,17 @@
     <addaction name="actionDiagram_Viewer"/>
     <addaction name="actionFEM_Test"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
    <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -196,9 +205,9 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="conditionDock">
+  <widget class="QDockWidget" name="modellingDock">
    <property name="windowTitle">
-    <string>FEM Conditions</string>
+    <string>Modelling</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -209,7 +218,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="ConditionTabWidget" name="conditionTabWidget" native="true"/>
+      <widget class="ModellingTabWidget" name="modellingTabWidget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -379,6 +388,11 @@
     <string>Diagram Viewer...</string>
    </property>
   </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -407,15 +421,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ConditionTabWidget</class>
-   <extends>QWidget</extends>
-   <header>ConditionTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>GeoTabWidget</class>
    <extends>QWidget</extends>
    <header>GeoTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ModellingTabWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ModellingTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -581,6 +595,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>about()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -593,5 +623,6 @@
   <slot>showGMSHPrefsDialog()</slot>
   <slot>FEMTestStart()</slot>
   <slot>showDiagramPrefsDialog()</slot>
+  <slot>about()</slot>
  </slots>
 </ui>

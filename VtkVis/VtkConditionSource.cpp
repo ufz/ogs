@@ -80,6 +80,10 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	vtkSmartPointer<vtkPolyData> output =
 	        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
+	vtkSmartPointer<vtkIdTypeArray> distypes = vtkSmartPointer<vtkIdTypeArray>::New();
+	distypes->SetNumberOfComponents(1);
+	distypes->SetName("DisTypes");
+
 	vtkSmartPointer<vtkDoubleArray> scalars = vtkSmartPointer<vtkDoubleArray>::New();
 	scalars->SetNumberOfComponents(1);
 	scalars->SetName("Scalars");
@@ -94,18 +98,17 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 
 	size_t n_pnts = _points->size();
 	double value(-9999);
-	/*
-	   if (!_cond_vec->empty())
-	   {
-	    const std::vector<double> dv = (*_cond_vec)[0]->getDisValue();
-	    value = dv[dv.size()-1]; // get an existing value for the distribution so scaling on point data will be correct during rendering process!
-	   }
-	 */
+	if (!_cond_vec->empty())
+	{
+		const std::vector<double> dv = (*_cond_vec)[0]->getDisValue();
+		value = dv[dv.size()-1]; // get an existing value for the distribution so scaling on point data will be correct during rendering process!
+	}
 
 	for (size_t i = 0; i < n_pnts; i++)
 	{
 		double coords[3] = {(*(*_points)[i])[0], (*(*_points)[i])[1], (*(*_points)[i])[2]};
 		newPoints->InsertNextPoint(coords);
+		distypes->InsertNextValue(0);
 		scalars->InsertNextValue(value);
 	}
 
@@ -114,6 +117,15 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	{
 		FiniteElement::DistributionType type = (*_cond_vec)[n]->getProcessDistributionType();
 		const std::vector<double> dis_values = (*_cond_vec)[n]->getDisValue();
+
+		vtkIdType dis_type_value(0);
+		std::map<FiniteElement::DistributionType, vtkIdType>::const_iterator it(_dis_type_map.find(type));
+		if (it == _dis_type_map.end()) 
+		{
+			dis_type_value = static_cast<vtkIdType>(_dis_type_map.size());
+			_dis_type_map.insert(std::pair<FiniteElement::DistributionType, size_t>(type, dis_type_value));
+		}
+		else dis_type_value = it->second;
 
 		if ((*_cond_vec)[n]->getGeoType() == GEOLIB::POINT)
 		{
@@ -129,6 +141,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					newVerts->InsertNextCell(1, &vtk_id);
 					if (type == FiniteElement::CONSTANT)
 						scalars->SetValue(id, dis_values[0]);
+					distypes->SetValue(id, dis_type_value);
 					break;
 				}
 			if (id == -1)
@@ -146,6 +159,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			{
 				size_t pnt_id = ply->getPointID(i); //this->getIndex(ply->getPointID(i), newPoints, scalars, idx_map);
 				newLines->InsertCellPoint(pnt_id);
+				distypes->SetValue(pnt_id, dis_type_value);
 
 				if (type == FiniteElement::CONSTANT)
 					scalars->SetValue(pnt_id, dis_values[0]);
@@ -178,6 +192,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				{
 					size_t pnt_id = (*triangle)[j]; //this->getIndex((*triangle)[j], newPoints, scalars, idx_map);
 					aPolygon->GetPointIds()->SetId(j, pnt_id);
+					distypes->SetValue(pnt_id, dis_type_value);
 
 					if (type == FiniteElement::CONSTANT)
 						scalars->SetValue(pnt_id, dis_values[0]);
@@ -188,8 +203,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 							    pnt_id)
 							//if (this->getIndex(static_cast<size_t>(dis_values[j]), newPoints, scalars, idx_map) == pnt_id)
 							{
-								scalars->SetValue(pnt_id,
-								                  dis_values[j + 1]);
+								scalars->SetValue(pnt_id,dis_values[j + 1]);
 								break;
 							}
 					}
@@ -215,6 +229,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				double coords[3] =
 				{box[i % 2][0], box[(i >> 1) % 2][1], box[i >> 2][2]};
 				newPoints->InsertNextPoint(coords);
+				distypes->InsertNextValue(dis_type_value);
 				scalars->InsertNextValue(0.0);
 				//idx_map.insert( std::pair<size_t,size_t>(pnt_idx+i, nPoints+i));
 			}
@@ -223,12 +238,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			{
 				vtkIdType a[2] = {nPoints + i, nPoints + i + 4};
 				vtkIdType b[2] = {nPoints + (i * 2), nPoints + (i * 2 + 1)};
-				vtkIdType c[2] =
-				{nPoints +
-				(static_cast<int>(i /
-					          2) * 4 +
-					(i %
-					2)), nPoints + (static_cast<int>(i / 2) * 4 + (i % 2) + 2)};
+				vtkIdType c[2] = {nPoints + (static_cast<int>(i / 2) * 4 + (i % 2)), nPoints + (static_cast<int>(i / 2) * 4 + (i % 2) + 2)};
 				newLines->InsertNextCell(2, &a[0]);
 				newLines->InsertNextCell(2, &b[0]);
 				newLines->InsertNextCell(2, &c[0]);
@@ -237,6 +247,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	}
 
 	output->SetPoints(newPoints);
+	output->GetPointData()->AddArray(distypes);
 	output->GetPointData()->AddArray(scalars);
 	output->GetPointData()->SetActiveScalars("Scalars");
 	output->SetVerts(newVerts);

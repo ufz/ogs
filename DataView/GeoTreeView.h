@@ -10,6 +10,8 @@
 #include <QContextMenuEvent>
 #include <QTreeView>
 
+class vtkPolyDataAlgorithm;
+
 /**
  * \brief A view for the GeoTreeModel
  * \sa GeoTreeModel, GeoTreeItem
@@ -38,23 +40,33 @@ private:
 	void contextMenuEvent( QContextMenuEvent* e );
 
 private slots:
+	/// Allows to add FEM Conditions to a process
+	void loadFEMConditions();
 	void on_Clicked(QModelIndex idx);
-	/// Allows to add FEM Conditions to add to Geometry
-	void addFEMConditions();
 	/// Calls a LineEditDialog.
 	void connectPolylines();
+	/// Calls a FEMConditionSetupDialog.
+	void setElementAsCondition();
+	/// Calls a SetNameDialog.
+	void setNameForElement();
 	/// Saves a geometry in a file.
 	void writeToFile() const;
 	/// Removes a whole geometry or parts of it.
 	void removeList();
+	/// Saves FEM Conditions associated with the given geometry
+	void saveFEMConditions();
 
 signals:
-	void itemSelectionChanged(const QItemSelection & selected,
-	                          const QItemSelection & deselected);
+	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
+	void removeGeoItemSelection();
+	//void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
+	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
 	void requestLineEditDialog(const std::string&);
+	void requestNameChangeDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
+	void saveFEMConditionsRequested(QString, QString);
 };
 
 #endif //GEOTREEVIEW_H

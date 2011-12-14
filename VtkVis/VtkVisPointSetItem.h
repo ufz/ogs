@@ -11,25 +11,28 @@
 #include "VtkVisPipelineItem.h"
 
 class vtkAlgorithm;
+class vtkDataSetAttributes;
 class vtkPointSet;
-class QVtkDataSetMapper;
 class vtkProp3D;
 class vtkRenderer;
-class VtkAlgorithmProperties;
-class vtkOsgActor;
-class VtkCompositeFilter;
 class vtkTransformFilter;
-class vtkDataSetAttributes;
+class QVtkDataSetMapper;
+
+class vtkOsgActor;
+
+class VtkAlgorithmProperties;
+class VtkCompositeFilter;
 
 /**
- * \brief An item in the VtkVisPipeline containing a graphic object to be visualized.
+ * \brief An item in the VtkVisPipeline containing a point set object to be visualized.
  *
- * Any VTK-object (source-items, filter-items, etc.) need to be put into a VtkPipelineItem
- * to be assigned a mapper, an actor and its visualization properties (colour, etc.).
+ * Any VTK point set object (i.e. vtkUnstructuredGrid- and vtkPolyDataAlgorithm-objects) 
+ * are represented by a VtkVisPointSetItem to be assigned a mapper, an actor and its 
+ * visualization properties (colour, scalar values, etc.).
+ * \sa VtkVisPipelineItem
  */
 class VtkVisPointSetItem : public VtkVisPipelineItem
 {
-//	Q_OBJECT
 
 public:
 	/// @brief Constructor for a source/filter object.
@@ -50,34 +53,39 @@ public:
 	/// the item and sets the item's properties.
 	void Initialize(vtkRenderer* renderer);
 
-	vtkTransformFilter* transformFilter() const { return _transformFilter; }
+	vtkAlgorithm* transformFilter() const;
 
 	/// @brief Sets the selected attribute array for the visualisation of the data set.
 	void SetActiveAttribute(const QString& name);
 
+	/// @brief Sets the scalar range for the selected data array
 	void SetScalarRange(double min, double max);
 
-	/// @brief Sets the geometry and data scaling.
+	/// @brief Scales the data in visualisation-space.
 	void setScale(double x, double y, double z) const;
 
-	/// @brief Translates the item in vis-space.
+	/// @brief Translates the item in visualisation-space.
 	void setTranslation(double x, double y, double z) const;
 
 protected:
+	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;
 	QString _activeAttribute;
 
+	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 
 	/// Sets a color lookup table for the current scalar array.
 	void setLookupTableForActiveScalar();
 
+	void SetScalarVisibility(bool on);
+
 	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
 	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
-	/// @see SetActiveAttribute()
-	bool setActiveAttributeOnData(vtkDataSetAttributes* data, std::string& name);
+	/// Checks if the selected attribute actually exists for the data set
+	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
 };
 
 #endif // VTKVISPOINTSETITEM_H
