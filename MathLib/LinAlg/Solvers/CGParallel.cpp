@@ -35,12 +35,16 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 {
 	omp_set_num_threads(num_threads);
 	unsigned N = mat->getNRows();
-	double *p, *q, *r, *rhat, rho, rho1 = 0.0;
+	double * __restrict__ p(new double[N]);
+	double * __restrict__ q(new double[N]);
+	double * __restrict__ r(new double[N]);
+	double * __restrict__ rhat(new double[N]);
+	double rho, rho1 = 0.0;
 
-	p = new double[4* N];
-	q = p + N;
-	r = q + N;
-	rhat = r + N;
+//	p = new double[4* N];
+//	q = p + N;
+//	r = q + N;
+//	rhat = r + N;
 
 	double nrmb = sqrt(scpr(b, b, N));
 	if (nrmb < std::numeric_limits<double>::epsilon()) {
