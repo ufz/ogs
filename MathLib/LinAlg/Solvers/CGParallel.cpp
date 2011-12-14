@@ -80,34 +80,32 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		}
 		mat->precondApply(rhat);
 
-		#pragma omp parallel
-		{
-			// rho = r * r^;
-			rho = scpr(r, rhat, N);
+		// rho = r * r^;
+		rho = scpr(r, rhat, N);
 
-			if (l > 1) {
-				double beta = rho / rho1;
-				// p = r^ + beta * p
-				#pragma omp parallel for
-				for (k = 0; k < N; k++) {
-					p[k] = rhat[k] + beta * p[k];
-				}
-			} else {
+		if (l > 1) {
+			double beta = rho / rho1;
+			// p = r^ + beta * p
+			#pragma omp parallel for
+			for (k = 0; k < N; k++) {
+				p[k] = rhat[k] + beta * p[k];
+			}
+		} else {
 //				blas::copy(N, rhat, p);
-				#pragma omp parallel for
-				for (k = 0; k < N; k++) {
-					p[k] = rhat[k];
-				}
+			#pragma omp parallel for
+			for (k = 0; k < N; k++) {
+				p[k] = rhat[k];
 			}
 		}
 
 		// q = Ap
 		mat->amux(D_ONE, p, q);
+
+		// alpha = rho / p*q
+		double alpha = rho / scpr(p, q, N);
+
 		#pragma omp parallel
 		{
-			// alpha = rho / p*q
-			double alpha = rho / scpr(p, q, N);
-
 			// x += alpha * p
 			#pragma omp for nowait
 			for (k = 0; k < N; k++) {
@@ -121,9 +119,9 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 			}
 
 			#pragma omp barrier
-
-			resid = sqrt(scpr(r, r, N));
 		} // end #pragma omp parallel
+
+		resid = sqrt(scpr(r, r, N));
 
 		if (resid <= eps * nrmb) {
 			eps = resid / nrmb;
