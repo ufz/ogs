@@ -35,8 +35,7 @@ double scpr(const T* v0, const T* v1, size_t n)
 }
 
 #ifdef _OPENMP
-double scpr(double const * const v, double const * const w, unsigned n,
-        unsigned num_of_threads);
+double scpr(double const * const v, double const * const w, unsigned n);
 #endif
 
 /**

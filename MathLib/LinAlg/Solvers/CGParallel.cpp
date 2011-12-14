@@ -84,7 +84,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		mat->precondApply(rhat);
 
 		// rho = r * r^;
-		rho = scpr(r, rhat, N, num_threads);
+		rho = scpr(r, rhat, N);
 
 		if (l > 1) {
 			double beta = rho / rho1;
@@ -102,29 +102,29 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		}
 
 		// q = Ap
-//		blas::setzero(N, q);
-		#pragma omp parallel for
-		for (k = 0; k < N; k++) {
-			q[k] = 0.0;
-		}
 		mat->amux(D_ONE, p, q);
 
 		// alpha = rho / p*q
-		double alpha = rho / scpr(p, q, N, num_threads);
+		double alpha = rho / scpr(p, q, N);
 
-		// x += alpha * p
-		#pragma omp parallel for
-		for (k = 0; k < N; k++) {
-			x[k] += alpha * p[k];
+		#pragma omp parallel
+		{
+			// x += alpha * p
+			#pragma omp for nowait
+			for (k = 0; k < N; k++) {
+				x[k] += alpha * p[k];
+			}
+
+			// r -= alpha * q
+			#pragma omp for nowait
+			for (k = 0; k < N; k++) {
+				r[k] -= alpha * q[k];
+			}
+
+			#pragma omp barrier
 		}
 
-		// r -= alpha * q
-		#pragma omp parallel for
-		for (k = 0; k < N; k++) {
-			r[k] -= alpha * q[k];
-		}
-
-		resid = sqrt(scpr(r, r, N, num_threads));
+		resid = sqrt(scpr(r, r, N));
 
 		if (resid <= eps * nrmb) {
 			eps = resid / nrmb;
