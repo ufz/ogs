@@ -10,15 +10,14 @@
 namespace MathLib {
 
 #ifdef _OPENMP
-double scpr(double const * const v, double const * const w, unsigned n,
-        unsigned num_of_threads)
+double scpr(double const * const v, double const * const w, unsigned n)
 {
-        long double res (0.0);
+        long double res (v[0]*w[0]);
         unsigned k;
         #pragma omp parallel
         {
                 #pragma omp parallel for reduction (+:res)
-                for (k = 0; k<n; k++) {
+                for (k = 1; k<n; k++) {
                         res += v[k] * w[k];
                 }
         }
