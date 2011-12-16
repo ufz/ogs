@@ -60,7 +60,7 @@ void VtkCompositeGeoObjectFilter::init()
 
 	VtkCompositeFilter* composite;
 	if (_type == GEOLIB::POINT)
-	{
+	{  
 		composite = new VtkCompositePointToGlyphFilter(surface);
 		composite->SetUserProperty("Radius", this->GetInitialRadius());
 		_outputAlgorithm = composite->GetOutputAlgorithm();

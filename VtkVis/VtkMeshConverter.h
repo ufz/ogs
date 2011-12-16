@@ -46,10 +46,35 @@ public:
 											  MshElemType::type elem_type,
 											  UseIntensityAs::type intensity_type);
 
+	/**
+	 * Converts double array with raster values to a mesh
+	 * \parelem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param intensity_type defines how image intensities are interpreted
+	 */
+	static MeshLib::CFEMesh* convertImgToMesh(const double* img,
+	                                          const std::pair<double,double> &origin,
+											  const double imgHeight,
+											  const double imgWidth,
+	                                          const double &scalingFactor,
+											  MshElemType::type elem_type,
+											  UseIntensityAs::type intensity_type);
+
 	/// Converts a vtkUnstructuredGrid object to a CFEMesh
 	static MeshLib::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
 
 private:
+	/// Does the actual mesh generation based on the data given to the public methods.
+	static MeshLib::CFEMesh* constructMesh(const double* pixVal,
+										   int* node_idx_map,
+										   const bool* visNodes,
+										   const std::pair<double,double> &origin,
+										   const size_t &imgHeight,
+										   const size_t &imgWidth,
+										   const double &scalingFactor,
+										   MshElemType::type elem_type,
+										   UseIntensityAs::type intensity_type);
+
+	/// Creates a mesh element based on the given data.
 	static MeshLib::CElem* createElement(MshElemType::type t, int mat,
 		                                 size_t node1, size_t node2, 
 										 size_t node3, size_t node4 = 0);
