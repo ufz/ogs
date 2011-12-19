@@ -118,13 +118,9 @@ int DataView::writeMeshToFile() const
 		QSettings settings("UFZ", "OpenGeoSys-5");
 		QString mshName = QString::fromStdString(
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
-		std::string fileName = QFileDialog::getSaveFileName(NULL,
-		                                                    "Save mesh as",
-		                                                    settings.value(
-		                                                            "lastOpenedFileDirectory")
-		                                                    .toString(),
-		                                                    "GeoSys mesh file (*.msh)").
-		                       toStdString();
+		std::string fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
+		                                    settings.value("lastOpenedFileDirectory").toString(),
+											"GeoSys mesh file (*.msh)").toStdString();
 
 		if (!fileName.empty())
 		{
@@ -149,9 +145,9 @@ int DataView::writeMeshToFile() const
 void DataView::loadDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const std::vector<GEOLIB::Point*>* points = static_cast<MshModel*>(this->model())->getMesh(
-	        index)->getNodes();
-	emit requestDIRECTSourceTerms(points);
+	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	const std::vector<GEOLIB::Point*>* points = grid->getNodes();
+	emit requestDIRECTSourceTerms(grid->getName(), points);
 }
 
 void DataView::checkMeshQuality ()

@@ -110,7 +110,7 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
-	void loadDIRECTSourceTerms(const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
+	void loadDIRECTSourceTerms(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
 
 private:
 	QMenu* createImportFilesMenu();
