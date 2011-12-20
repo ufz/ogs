@@ -345,7 +345,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 	}
 }
 
-vtkAlgorithm* VtkVisPointSetItem::transformFilter() const 
-{ 
-	return _transformFilter; 
+vtkAlgorithm* VtkVisPointSetItem::transformFilter() const
+{
+	return _transformFilter;
 }

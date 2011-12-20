@@ -121,6 +121,6 @@ void VtkVisImageItem::setTranslation(double x, double y, double z) const
 }
 
 vtkAlgorithm* VtkVisImageItem::transformFilter() const
-{ 
-	return _transformFilter; 
+{
+	return _transformFilter;
 }
