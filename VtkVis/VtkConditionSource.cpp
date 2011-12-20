@@ -213,6 +213,18 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				aPolygon->Delete();
 			}
 		}
+		// HACK: this is currently used when applying DIRECT conditions
+		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::INVALID)
+		{
+			size_t nValues = dis_values.size();
+			for (size_t i=0; i<nValues; i+=2)
+			{
+				vtkIdType vtk_id = static_cast<vtkIdType>(dis_values[i]);
+				newVerts->InsertNextCell(1, &vtk_id);
+				scalars->SetValue(vtk_id, dis_values[i+1]);
+				distypes->SetValue(vtk_id, dis_type_value);
+			}
+		}
 		// draw a bounding box in case of of the conditions is "domain"
 		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::GEODOMAIN)
 		{

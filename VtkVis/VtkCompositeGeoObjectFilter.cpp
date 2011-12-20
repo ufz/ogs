@@ -60,7 +60,7 @@ void VtkCompositeGeoObjectFilter::init()
 
 	VtkCompositeFilter* composite;
 	if (_type == GEOLIB::POINT)
-	{
+	{  
 		composite = new VtkCompositePointToGlyphFilter(surface);
 		composite->SetUserProperty("Radius", this->GetInitialRadius());
 		_outputAlgorithm = composite->GetOutputAlgorithm();
@@ -86,9 +86,9 @@ float VtkCompositeGeoObjectFilter::GetInitialRadius() const
 {
 	double bounding_box[6];
 	static_cast<vtkPolyData*>(this->_inputAlgorithm->GetOutputDataObject(0))->GetBounds(bounding_box);
-	double x_diff = abs(bounding_box[0]-bounding_box[1]);
-	double y_diff = abs(bounding_box[2]-bounding_box[3]);
-	double z_diff = abs(bounding_box[5]-bounding_box[5]);
+	double x_diff = fabs(bounding_box[0]-bounding_box[1]);
+	double y_diff = fabs(bounding_box[2]-bounding_box[3]);
+	double z_diff = fabs(bounding_box[5]-bounding_box[6]);
 
 	double max = (x_diff > y_diff) ? x_diff : y_diff;
 	max = (max > z_diff) ? max : z_diff;

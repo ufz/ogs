@@ -73,7 +73,6 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 		if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
 		    c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
 		{
-			//for (size_t i = 0; i < dis_value.size(); i++)
 			disData << dis_value[0];
 			disInfo = new TreeItem(disData, condItem);
 		}
@@ -104,7 +103,9 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 void ProcessModel::addCondition(FEMCondition* condition)
 {
-	const bool is_domain = (condition->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
+	bool is_domain = (condition->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
+	// HACK: direct source terms are not domain conditions but they also don't contain geo-object-names
+	if (condition->getProcessDistributionType() == FiniteElement::DIRECT) is_domain = true;
 
 	const GEOLIB::GeoObject* object = condition->getGeoObj();
 	if (object == NULL)

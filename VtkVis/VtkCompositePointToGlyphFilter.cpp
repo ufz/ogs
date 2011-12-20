@@ -29,22 +29,22 @@ void VtkCompositePointToGlyphFilter::init()
 	this->_inputDataObjectType = VTK_DATA_SET;
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
+	size_t nPoints = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)
+						->GetOutput()->GetPointData()->GetNumberOfTuples();
+	int phi (10 - static_cast<size_t>(nPoints / 2000.0));
+	int theta (phi);
+	if (phi < 4)
+	{
+		phi = 4;
+		theta = 4; // for theta 3 would be possible, too, but 4 looks much better
+	}
+
 	double default_radius(GetInitialRadius());
 	_glyphSource = vtkSphereSource::New();
 	_glyphSource->SetRadius(default_radius);
-	_glyphSource->SetPhiResolution(10);
-	_glyphSource->SetThetaResolution(10);
+	_glyphSource->SetPhiResolution(phi);
+	_glyphSource->SetThetaResolution(theta);
 	(*_algorithmUserProperties)["Radius"] = default_radius;
-
-	size_t nPoints =
-	        static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->
-	        GetNumberOfTuples();
-	int phi = 10 - static_cast<size_t>(nPoints / 2000.0);
-	int theta = 10 - static_cast<size_t>(nPoints / 2000.0);
-	if (phi < 4)
-		phi = 4;
-	if (theta < 3)
-		theta = 3;
 
 	(*_algorithmUserProperties)["PhiResolution"] = phi;
 	(*_algorithmUserProperties)["ThetaResolution"] = theta;
@@ -91,9 +91,9 @@ float VtkCompositePointToGlyphFilter::GetInitialRadius() const
 {
 	double bounding_box[6];
 	static_cast<vtkPolyData*>(this->_inputAlgorithm->GetOutputDataObject(0))->GetBounds(bounding_box);
-	double x_diff = abs(bounding_box[0]-bounding_box[1]);
-	double y_diff = abs(bounding_box[2]-bounding_box[3]);
-	double z_diff = abs(bounding_box[5]-bounding_box[5]);
+	double x_diff = fabs(bounding_box[0]-bounding_box[1]);
+	double y_diff = fabs(bounding_box[2]-bounding_box[3]);
+	double z_diff = fabs(bounding_box[5]-bounding_box[6]);
 
 	double max = (x_diff > y_diff) ? x_diff : y_diff;
 	max = (max > z_diff) ? max : z_diff;

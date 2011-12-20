@@ -19,7 +19,6 @@
 #include <vtkCellData.h>
 #include <vtkUnstructuredGrid.h>
 
-#include <QTime>
 
 MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const std::pair<double,double> &origin,
@@ -66,7 +65,72 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		visNodes[(i+2)*incHeight-1]=false;
 		node_idx_map[(i+2)*incHeight-1]=-1;
 	}
+	
+	MeshLib::CFEMesh* mesh = constructMesh(pixVal, node_idx_map, visNodes, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
 
+	delete [] pixVal;
+	delete [] visNodes;
+	delete [] node_idx_map;
+
+	return mesh;
+}
+
+MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(const double* img,
+													 const std::pair<double,double> &origin,
+													 const size_t imgHeight,
+													 const size_t imgWidth,
+													 const double &scalingFactor,
+													 MshElemType::type elem_type,
+													UseIntensityAs::type intensity_type)
+{
+	const size_t incHeight = imgHeight+1;
+	const size_t incWidth  = imgWidth+1;
+	double* pixVal (new double[incHeight * incWidth]);
+	bool* visNodes(new bool[incWidth * incHeight]);
+	int* node_idx_map(new int[incWidth * incHeight]);
+
+	for (size_t j = 0; j < incWidth; j++)
+	{
+		pixVal[j]=0;
+		visNodes[j]=false;
+		node_idx_map[j]=-1;
+	}
+	for (size_t i = 0; i < imgWidth; i++)
+	{
+		for (size_t j = 0; j < imgHeight; j++)
+		{
+			const size_t img_idx = i * imgHeight + j;
+			const size_t index = (i+1) * incHeight + j;
+			pixVal[index] = img[img_idx];
+			visNodes[index] = 1;
+			node_idx_map[index]=-1;
+		}
+		pixVal[(i+2)*incHeight-1]=0;
+		visNodes[(i+2)*incHeight-1]=false;
+		node_idx_map[(i+2)*incHeight-1]=-1;
+	}
+	
+	MeshLib::CFEMesh* mesh = constructMesh(pixVal, node_idx_map, visNodes, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
+
+	delete [] pixVal;
+	delete [] visNodes;
+	delete [] node_idx_map;
+
+	return mesh;
+}
+
+MeshLib::CFEMesh* VtkMeshConverter::constructMesh(const double* pixVal,
+												  int* node_idx_map,
+												  const bool* visNodes,
+												  const std::pair<double,double> &origin,
+                                                  const size_t &imgHeight,
+												  const size_t &imgWidth,
+                                                  const double &scalingFactor,
+										 		  MshElemType::type elem_type,
+												  UseIntensityAs::type intensity_type)
+{
+	const size_t incHeight = imgHeight+1;
+	const size_t incWidth  = imgWidth+1;
 	MeshLib::CFEMesh* mesh(new MeshLib::CFEMesh());
 	size_t node_idx_count(0);
 	const double x_offset(origin.first - scalingFactor/2.0);
@@ -98,8 +162,6 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			}
 		}
 
-		QTime myTimer0;
-		myTimer0.start();
 	// set mesh elements
 	for (size_t i = 0; i < imgWidth; i++)
 		for (size_t j = 0; j < imgHeight; j++)
@@ -125,11 +187,7 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			}
 		}
 
-		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 	mesh->ConstructGrid();
-	delete [] pixVal;
-	delete [] visNodes;
-	delete [] node_idx_map;
 	return mesh;
 }
 
@@ -145,13 +203,6 @@ MeshLib::CElem* VtkMeshConverter::createElement(MshElemType::type t, int mat, si
 	elem->SetPatchIndex(mat);
 	elem->InitializeMembers();
 	return elem;
-/*
-	if (t == MshElemType::QUAD) {
-		return new MeshLib::CElem (t, node1, node2, node3, node4, mat);
-	} else {
-		return new MeshLib::CElem (t, node1, node2, node3, mat);
-	}
-*/
 }
 
 MeshLib::CFEMesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
