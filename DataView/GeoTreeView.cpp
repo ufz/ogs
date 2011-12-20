@@ -34,6 +34,7 @@ void GeoTreeView::on_Clicked(QModelIndex idx)
 void GeoTreeView::selectionChanged( const QItemSelection &selected,
                                     const QItemSelection &deselected )
 {
+	Q_UNUSED(deselected);
 	if (!selected.isEmpty())
 	{
 		const QModelIndex idx = *(selected.indexes().begin());

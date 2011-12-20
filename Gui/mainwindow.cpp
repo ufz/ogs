@@ -1548,15 +1548,9 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 
 		for (size_t i = 0; i < points->size(); i++)
 		{
-			GEOLIB::Point* pnt = new GEOLIB::Point((*(*points)[i])[0],
-			                                       (*(*points)[i])[1],
-			                                       (*(*points)[i])[2]);
-			new_points->push_back(pnt);
-			std::stringstream out;
-			out << i;
-			//name_pnt_id_map->insert(std::pair<std::string, size_t>(out.str(), i));
+			new_points->push_back(new GEOLIB::Point((*(*points)[i])[0], (*(*points)[i])[1], (*(*points)[i])[2]));
 		}
-		this->_geoModels->addPointVec(new_points, geo_name/*, name_pnt_id_map*/);
+		this->_geoModels->addPointVec(new_points, geo_name /*, name_pnt_id_map*/);
 
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
 		// access via st_vector (i.e. global vector from rf_st_new.h)
