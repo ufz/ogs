@@ -77,8 +77,8 @@ MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 
 MeshLib::CFEMesh* VtkMeshConverter::convertImgToMesh(const double* img,
 													 const std::pair<double,double> &origin,
-													 const double imgHeight,
-													 const double imgWidth,
+													 const size_t imgHeight,
+													 const size_t imgWidth,
 													 const double &scalingFactor,
 													 MshElemType::type elem_type,
 													UseIntensityAs::type intensity_type)
