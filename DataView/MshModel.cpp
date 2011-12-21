@@ -46,7 +46,8 @@ void MshModel::addMesh(MeshLib::CFEMesh* mesh, std::string &name)
 void MshModel::addMesh(GridAdapter* mesh)
 {
 	MeshLib::CFEMesh* ogsmesh( const_cast<MeshLib::CFEMesh*>(mesh->getCFEMesh()) );
-	_project.addMesh(ogsmesh, mesh->getName());
+	std::string msh_name = mesh->getName();
+	_project.addMesh(ogsmesh, msh_name);
 	this->addMeshObject(mesh);
 }
 
