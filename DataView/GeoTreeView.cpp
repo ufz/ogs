@@ -88,7 +88,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 	else
 	{
 		GeoObjectListItem* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
-		
+
 		// The current index refers to a geo-object
 		if (parent != NULL)
 		{
