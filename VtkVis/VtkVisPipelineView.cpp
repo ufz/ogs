@@ -23,13 +23,14 @@
 #include <QSettings>
 
 //image to mesh conversion
+#include "msh_mesh.h"
+#include "GridAdapter.h"
 #include "VtkGeoImageSource.h"
 #include "MeshFromRasterDialog.h"
 #include <vtkDataObject.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 
-#include "msh_mesh.h"
 #include <vtkGenericDataObjectReader.h>
 #include <vtkTransformFilter.h>
 #include <vtkUnstructuredGrid.h>
@@ -177,18 +178,19 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
 	
-	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
-																imageSource->getSpacing(), 
-																element_type, intensity_type);
-	std::string new_mesh_name(msh_name.toStdString());
-	emit meshAdded(mesh, new_mesh_name);
+	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
+															imageSource->getSpacing(), 
+															element_type, intensity_type);
+	mesh->setName(msh_name.toStdString());
+	emit meshAdded(mesh);
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
 {
-	vtkSmartPointer<vtkAlgorithm> algorithm =
-	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
-												this->selectionModel()->currentIndex()))->algorithm();
+	VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
+												this->selectionModel()->currentIndex()));
+	vtkSmartPointer<vtkAlgorithm> algorithm = item->algorithm();
+	        
 
 	vtkUnstructuredGrid* grid(NULL);
 	vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
@@ -207,9 +209,9 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}
-	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
-	std::string msh_name("NewMesh");
-	emit meshAdded(mesh, msh_name);
+	GridAdapter* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
+	mesh->setName(item->data(0).toString().toStdString());
+	emit meshAdded(mesh);
 }
 
 void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,

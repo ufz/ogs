@@ -82,8 +82,7 @@ void MshEditDialog::accept()
 		{
 			int nLayers = atoi(this->editNLayers->text().toStdString().c_str());
 			double thickness =
-			        strtod(replaceString(",", ".",
-			                             this->editThickness->text().toStdString()).
+			        strtod(replaceString(",", ".", this->editThickness->text().toStdString()).
 			               c_str(), 0);
 
 			new_mesh = MshLayerMapper::CreateLayers(_msh, nLayers, thickness);

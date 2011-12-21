@@ -38,11 +38,21 @@ int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 void MshModel::addMesh(MeshLib::CFEMesh* mesh, std::string &name)
 {
 	_project.addMesh(mesh, name);
-	this->addMeshObject(new GridAdapter(mesh), name);
+	GridAdapter* grid = new GridAdapter(mesh);
+	grid->setName(name);
+	this->addMeshObject(grid);
 }
 
-void MshModel::addMeshObject(GridAdapter* mesh, std::string &name)
+void MshModel::addMesh(GridAdapter* mesh)
 {
+	MeshLib::CFEMesh* ogsmesh( const_cast<MeshLib::CFEMesh*>(mesh->getCFEMesh()) );
+	_project.addMesh(ogsmesh, mesh->getName());
+	this->addMeshObject(mesh);
+}
+
+void MshModel::addMeshObject(GridAdapter* mesh)
+{
+	std::string name(mesh->getName());
 	std::cout << "name: " << name << std::endl;
 	QFileInfo fi(QString::fromStdString(name));
 	name = fi.baseName().toStdString();
@@ -121,7 +131,6 @@ bool MshModel::removeMesh(const QModelIndex &idx)
 		return false;
 	}
 
-	//std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
 	return false;
 }
 
@@ -152,7 +161,7 @@ void MshModel::updateModel()
 		if (this->getMesh(it->first) == NULL) // if GridAdapter does not yet exist, create one.
 		{
 			std::string name = it->first;
-			addMeshObject(new GridAdapter(it->second), name);
+			addMeshObject(new GridAdapter(it->second));
 		}
 }
 
@@ -182,39 +191,4 @@ VtkMeshSource* MshModel::vtkSource(const std::string &name) const
 	return NULL;
 }
 
-/*
-   bool MshModel::isUniqueMeshName(std::string &name)
-   {
-    int count(0);
-    bool isUnique(false);
-    std::string cpName;
-
-    while (!isUnique)
-    {
-        isUnique = true;
-        cpName = name;
-
-        count++;
-        // If the original name already exists we start to add numbers to name for
-        // as long as it takes to make the name unique.
-        if (count>1) cpName = cpName + "-" + number2str(count);
-
-        for (int i=0; i<_rootItem->childCount(); i++)
-        {
-            TreeItem* item = _rootItem->child(i);
-            if (item->data(0).toString().toStdString().compare(cpName) == 0) isUnique = false;
-        }
-    }
-
-    // At this point cpName is a unique name and isUnique is true.
-    // If cpName is not the original name, "name" is changed and isUnique is set to false,
-    // indicating that a vector with the original name already exists.
-    if (count>1)
-    {
-        isUnique = false;
-        name = cpName;
-    }
-    return isUnique;
-   }
- */
 

@@ -38,11 +38,15 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 	{
 		// add nodes for new layer
 		size_t node_offset ( nNodes * layer_id );
-// TF unused variable		double z_offset ( layer_id*thickness );
+		double z_offset ( layer_id*thickness );
 		for (size_t i = 0; i < nNodes; i++)
-			new_mesh->nod_vector.push_back(new MeshLib::CNode( node_offset + i,
-			                                                   mesh->nod_vector[i]->
-			                                                   getData()));
+		{
+			const double* coords = mesh->nod_vector[i]->getData();
+			new_mesh->nod_vector.push_back( new MeshLib::CNode(node_offset + i,
+															   coords[0], 
+															   coords[1], 
+															   coords[2]-z_offset) );
+		}
 
 		if (layer_id > 0) // starting with the 2nd layer prism (or hex) elements can be created
 		{
@@ -60,13 +64,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 					continue;                                            // line elements are ignored and not duplicated
 				else
 				{
-					std::cout <<
-					"Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..."
-					          << std::endl;
-					std::cout << "Element " << i << " is of type \"" <<
-					MshElemType2String(mesh->ele_vector[i]->GetElementType())
-					          <<
-					"\"." << std::endl;
+					std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
+					std::cout << "Element " << i << " is of type \"" << MshElemType2String(mesh->ele_vector[i]->GetElementType()) << "\"." << std::endl;
 					delete new_mesh;
 					return NULL;
 				}
@@ -88,7 +87,6 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 	new_mesh->setNumberOfNodesFromNodesVectorSize ();
 	new_mesh->setNumberOfMeshLayers(nLayers);
 
-	// HACK this crashes on linux systems probably because of uninitialised variables in the the element class
 	new_mesh->ConstructGrid();
 	new_mesh->FillTransformMatrix();
 

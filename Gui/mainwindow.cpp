@@ -249,9 +249,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SIGNAL(elementPicked(const GridAdapter *, const size_t)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 
-	connect(vtkVisTabWidget->vtkVisPipelineView,
-	        SIGNAL(meshAdded(MeshLib::CFEMesh *, std::string &)),
-	        _meshModels, SLOT(addMesh(MeshLib::CFEMesh *, std::string &)));
+	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(GridAdapter*)),
+	        _meshModels, SLOT(addMesh(GridAdapter*)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -1286,9 +1285,6 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	//FEMConditionSetupDialog* dlg = new FEMConditionSetupDialog(this->_project);
-	//dlg->exec();
-
 	// *** begin test TetGen read mesh
 	const std::string path ("/home/fischeth/Desktop/data/Ketzin/PSglobal/Tom/MSH/");
 	std::string mesh_name ("ClosedSurface");
