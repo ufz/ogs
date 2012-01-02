@@ -108,7 +108,7 @@ void Cluster::subdivide(unsigned bmin)
 			delete _l_adj_mat;
 			_l_adj_mat = NULL;
 		} // end if next recursion step
-	} // end if ( connected && size () > bmin )
+	} // end if (size > bmin)
 }
 
 
@@ -122,9 +122,9 @@ void Cluster::updatePerm(unsigned* reordering, unsigned &isep0,
 			while (beg < end && reordering[end] >= 1)
 				--end;
 			// local permutation
-			BASELIB::swap(l_op_perm[beg], l_op_perm[end]);
-			BASELIB::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
-			BASELIB::swap(reordering[beg], reordering[end]);
+			BaseLib::swap(l_op_perm[beg], l_op_perm[end]);
+			BaseLib::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
+			BaseLib::swap(reordering[beg], reordering[end]);
 		}
 		++beg;
 	}
@@ -140,9 +140,9 @@ void Cluster::updatePerm(unsigned* reordering, unsigned &isep0,
 			while (beg < end && reordering[end] == 2)
 				--end;
 			// local permutation
-			BASELIB::swap(l_op_perm[beg], l_op_perm[end]);
-			BASELIB::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
-			BASELIB::swap(reordering[beg], reordering[end]);
+			BaseLib::swap(l_op_perm[beg], l_op_perm[end]);
+			BaseLib::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
+			BaseLib::swap(reordering[beg], reordering[end]);
 		}
 		++beg;
 	}

@@ -8,7 +8,7 @@
 // STL
 #include <vector>
 
-// BASELIB
+// BaseLib
 #include "swap.h"
 #include "printList.h"
 #include "uniqueListInsert.h"
@@ -119,7 +119,7 @@ void EarClippingTriangulation::ensureCWOrientation ()
 	if (_original_orient == MathLib::CCW) {
 		// switch orientation
 		for (size_t k(0); k<n_pnts/2; k++) {
-			BASELIB::swap (_pnts[k], _pnts[n_pnts-1-k]);
+			BaseLib::swap (_pnts[k], _pnts[n_pnts-1-k]);
 		}
 	}
 }
@@ -222,11 +222,11 @@ void EarClippingTriangulation::clipEars()
 				MathLib::Orientation orientation = getOrientation(_pnts[*prevprev], _pnts[*prev],
 						_pnts[*next]);
 				if (orientation == CW) {
-					BASELIB::uniqueListInsert(_convex_vertex_list, *prev);
+					BaseLib::uniqueListInsert(_convex_vertex_list, *prev);
 					// prev is convex
 					if (isEar(*prevprev, *prev, *next)) {
 						// prev is an ear tip
-						BASELIB::uniqueListInsert(_ear_list, *prev);
+						BaseLib::uniqueListInsert(_ear_list, *prev);
 					} else {
 						// if necessary remove prev
 						_ear_list.remove(*prev);
@@ -261,11 +261,11 @@ void EarClippingTriangulation::clipEars()
 				orientation = getOrientation(_pnts[*prev], _pnts[*next],
 						_pnts[*nextnext]);
 				if (orientation == CW) {
-					BASELIB::uniqueListInsert(_convex_vertex_list, *next);
+					BaseLib::uniqueListInsert(_convex_vertex_list, *next);
 					// next is convex
 					if (isEar(*prev, *next, *nextnext)) {
 						// next is an ear tip
-						BASELIB::uniqueListInsert(_ear_list, *next);
+						BaseLib::uniqueListInsert(_ear_list, *next);
 					} else {
 						// if necessary remove *next
 						_ear_list.remove(*next);

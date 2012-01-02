@@ -9,7 +9,7 @@
 
 #include <ctime>
 
-namespace BASELIB {
+namespace BaseLib {
 
 void wait(int seconds)
 {
@@ -23,6 +23,6 @@ void wait(int seconds)
 	while((cur_time - start_time) < seconds);
 }
 
-} // end namespace BASELIB
+} // end namespace BaseLib
 
 #endif //WAIT_H

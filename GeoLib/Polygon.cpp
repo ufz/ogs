@@ -267,7 +267,7 @@ void Polygon::ensureCWOrientation ()
 		size_t tmp_n_pnts (n_pnts);
 		tmp_n_pnts++; // include last point of polygon (which is identical to the first)
 		for (size_t k(0); k<tmp_n_pnts/2; k++) {
-			BASELIB::swap (_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts-1-k]);
+			BaseLib::swap (_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts-1-k]);
 		}
 	}
 
@@ -288,7 +288,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 			const_cast<std::vector<Point*>& >(_ply_pnts).push_back (intersection_pnt);
 
 			// split Polygon
-			if (idx0 > idx1) BASELIB::swap (idx0, idx1);
+			if (idx0 > idx1) BaseLib::swap (idx0, idx1);
 
 			GEOLIB::Polygon* polygon0 (new GEOLIB::Polygon((*polygon_it)->getPointsVec(), false));
 			for (size_t k(0); k<=idx0; k++) polygon0->addPoint ((*polygon_it)->getPointID (k));
@@ -343,7 +343,7 @@ void Polygon::splitPolygonAtPoint (std::list<GEOLIB::Polygon*>::iterator polygon
 			delete [] perm;
 			delete [] id_vec;
 
-			if (idx0 > idx1) BASELIB::swap (idx0, idx1);
+			if (idx0 > idx1) BaseLib::swap (idx0, idx1);
 
 			// create two closed polylines
 			GEOLIB::Polygon* polygon0 (new GEOLIB::Polygon((*polygon_it)->getPointsVec()));

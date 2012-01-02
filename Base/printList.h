@@ -13,7 +13,7 @@
 #include <string>
 #include <iostream>
 
-namespace BASELIB {
+namespace BaseLib {
 
 void printList (std::list<size_t> const& mylist, std::string const& title)
 {
@@ -25,6 +25,6 @@ void printList (std::list<size_t> const& mylist, std::string const& title)
 	std::cout << std::endl;
 }
 
-} // end namespace BASELIB
+} // end namespace BaseLib
 
 #endif /* PRINTLIST_H_ */
