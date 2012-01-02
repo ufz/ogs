@@ -14,6 +14,36 @@
 // Base
 #include "swap.h"
 
+template <class T>
+void quickSort(T* array, unsigned beg, unsigned end)
+{
+  if (beg < end) {
+    unsigned p = partition_(array, beg, end);
+    quickSort(array, beg, p);
+    quickSort(array, p+1, end);
+  }
+}
+
+template <class T>
+unsigned partition_(T* array, unsigned beg, unsigned end)
+{
+  unsigned i = beg+1;
+  unsigned j = end-1;
+  T m = array[beg];
+
+  for (;;) {
+    while ((i<end) && (array[i] < m)) i++;
+    while ((j>beg) && !(array[j] < m)) j--;
+
+    if (i >= j) break;
+    BASELIB::swap(array[i], array[j]);
+  }
+
+  BASELIB::swap(array[beg], array[j]);
+  return j;
+}
+
+
 /**
  * version of partition_ that additional updates the permutation vector
  * */
