@@ -938,8 +938,7 @@ void MainWindow::importVtk()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QStringList fileNames = QFileDialog::getOpenFileNames(this,
 	                                                      "Select VTK file(s) to import",
-	                                                      settings.value(
-	                                                              "lastOpenedFileDirectory").
+	                                                      settings.value("lastOpenedFileDirectory").
 	                                                      toString(),
 	                                                      "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu);;");
 	foreach(QString fileName, fileNames) {

@@ -299,10 +299,6 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 {
 	TreeItem* parentItem = getItem(parent);
 
-	// If the parent is not the root TreeItem
-	//if (parent.isValid())
-	//	VtkVisPipelineItem* visParentItem = static_cast<VtkVisPipelineItem*>(parentItem);
-
 	QList<QVariant> itemData;
 	QString itemName;
 	if (!parent.isValid()) // if source object

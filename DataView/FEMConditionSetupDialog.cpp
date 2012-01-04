@@ -154,7 +154,7 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 		{
 			_secondValueEdit = new QLineEdit("0");
 			_secondValueEdit->setValidator(_second_value_validator);
-			static_cast<QGridLayout*>(this->layout())->addWidget(_secondValueEdit,5,1) ;
+			static_cast<QGridLayout*>(this->layout())->addWidget(_secondValueEdit,6,1) ;
 		}
 	}
 	else	// constant
