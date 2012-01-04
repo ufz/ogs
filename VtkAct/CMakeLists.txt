@@ -12,7 +12,7 @@ set( MOC_HEADERS
 
 # Header files
 set( HEADERS
-	
+
 )
 
 # UI files
