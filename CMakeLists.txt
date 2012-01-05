@@ -5,8 +5,9 @@ cmake_minimum_required(VERSION 2.6)
 project( OGS-6 )
 
 # Set cmake module path 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+  "${CMAKE_SOURCE_DIR}/scripts/cmake/cmake"
+  "${CMAKE_SOURCE_DIR}/scripts/cmake")
 
 # Set cmake module path 
 #SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeConfiguration")
