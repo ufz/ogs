@@ -115,9 +115,7 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 
 		double x0(0), y0(0), delta(1);
 		size_t width(1), height(1);
-		double* elevation = OGSRaster::loadDataFromASC(QString::fromStdString(
-		                                                       rasterfile), x0, y0, width,
-		                                               height, delta);
+		double* elevation = OGSRaster::loadDataFromASC(rasterfile, x0, y0, width,height, delta);
 
 		if (elevation == NULL)
 		{

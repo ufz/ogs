@@ -2,9 +2,11 @@
 set( SOURCES
 	ColorTableModel.cpp
 	ColorTableView.cpp
+	CondFromRasterDialog.cpp
 	DatabaseConnection.cpp
 	DataView.cpp
 	DBConnectionDialog.cpp
+	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	FEMConditionSetupDialog.cpp
 	GEOModels.cpp
@@ -37,6 +39,7 @@ set( SOURCES
 set( MOC_HEADERS
 	ColorTableModel.h
 	ColorTableView.h
+	CondFromRasterDialog.h
 	CondItem.h	
 	DatabaseConnection.h
 	DataView.h
@@ -68,7 +71,7 @@ set( MOC_HEADERS
 # Header files
 set( HEADERS
 	BaseItem.h
-	ProcessItem.h
+	DirectConditionGenerator.h	
 	CondObjectListItem.h
 	GeoObjectListItem.h
 	GeoTreeItem.h
@@ -76,10 +79,12 @@ set( HEADERS
 	MshItem.h
 	MshLayerMapper.h
 	OGSRaster.h
+	ProcessItem.h	
 )
 
 # UI files
 set( UIS
+	CondFromRaster.ui
 	DatabaseResultView.ui
 	DBConnection.ui
 	FEMConditionSetup.ui

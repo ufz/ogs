@@ -63,8 +63,8 @@ public:
 	 * \param delta The size of each pixel in the image which is needed for re-scaling the data.
 	 * \return True if the raster data was loaded correctly, false otherwise.
 	 */
-	static double* loadDataFromASC(const QString &fileName,
-	                               double& x0,
+	static double* loadDataFromASC(const std::string &fileName,
+	                               double &x0,
 	                               double &y0,
 	                               size_t &width,
 	                               size_t &height,

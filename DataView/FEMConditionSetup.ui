@@ -48,13 +48,7 @@
     <widget class="QComboBox" name="processTypeBox"/>
    </item>
    <item row="4" column="1">
-    <widget class="QComboBox" name="disTypeBox">
-     <item>
-      <property name="text">
-       <string>Constant (Direchlet)</string>
-      </property>
-     </item>
-    </widget>
+    <widget class="QComboBox" name="disTypeBox"/>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_5">

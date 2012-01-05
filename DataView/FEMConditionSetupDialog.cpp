@@ -48,15 +48,21 @@ FEMConditionSetupDialog::~FEMConditionSetupDialog()
 
 void FEMConditionSetupDialog::setupDialog()
 {
-	if (_cond.getGeoType() == GEOLIB::POLYLINE)
+	if (_cond.getGeoType() != GEOLIB::INVALID)
 	{
-		this->disTypeBox->addItem("Linear (Direchlet)");
-		//this->disTypeBox->addItem("Linear (Neumann)");
+		this->disTypeBox->addItem("Constant (Direchlet)");
+		if (_cond.getGeoType() == GEOLIB::POLYLINE)
+			this->disTypeBox->addItem("Linear (Direchlet)");
+
+		_first_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
+		_second_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
+		this->firstValueEdit->setText("0");
+		this->firstValueEdit->setValidator (_first_value_validator);
 	}
-	_first_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
-	_second_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
-	this->firstValueEdit->setText("0");
-	this->firstValueEdit->setValidator (_first_value_validator);
+	else	// direct
+	{
+		this->disTypeBox->addItem("Direct");
+	}
 
 	const std::list<std::string> process_names = FiniteElement::getAllProcessNames();
 	for (std::list<std::string>::const_iterator it = process_names.begin(); it != process_names.end(); ++it)
@@ -77,27 +83,34 @@ void FEMConditionSetupDialog::accept()
 	_cond.setProcessType(static_cast<FiniteElement::ProcessType>(this->processTypeBox->currentIndex() + 1));
 	_cond.setProcessPrimaryVariable(static_cast<FiniteElement::PrimaryVariable>(this->pvTypeBox->currentIndex() + 1));
 
-	QString dis_type_text = this->disTypeBox->currentText();
-	if (condTypeBox->currentIndex()>1)
+	if (_cond.getGeoType() != GEOLIB::INVALID)
 	{
-		if (this->disTypeBox->currentIndex()>0) 
-			_cond.setProcessDistributionType(FiniteElement::LINEAR_NEUMANN);
-		else 
-			_cond.setProcessDistributionType(FiniteElement::CONSTANT_NEUMANN);
-	}
-	else
-	{
-		if (this->disTypeBox->currentIndex()>0) 
-			_cond.setProcessDistributionType(FiniteElement::LINEAR);
-		else 
-			_cond.setProcessDistributionType(FiniteElement::CONSTANT);
-	}
+		//QString dis_type_text = this->disTypeBox->currentText();
+		if (condTypeBox->currentIndex()>1)
+		{
+			if (this->disTypeBox->currentIndex()>0) 
+				_cond.setProcessDistributionType(FiniteElement::LINEAR_NEUMANN);
+			else 
+				_cond.setProcessDistributionType(FiniteElement::CONSTANT_NEUMANN);
+		}
+		else
+		{
+			if (this->disTypeBox->currentIndex()>0) 
+				_cond.setProcessDistributionType(FiniteElement::LINEAR);
+			else 
+				_cond.setProcessDistributionType(FiniteElement::CONSTANT);
+		}
 
-	std::vector<double> dis_values;
-	dis_values.push_back(strtod(this->firstValueEdit->text().toStdString().c_str(), 0));
-	if (this->_secondValueEdit)
-		dis_values.push_back(strtod(this->_secondValueEdit->text().toStdString().c_str(), 0));
-	_cond.setDisValue(dis_values);
+		std::vector<double> dis_values;
+		dis_values.push_back(strtod(this->firstValueEdit->text().toStdString().c_str(), 0));
+		if (this->_secondValueEdit)
+			dis_values.push_back(strtod(this->_secondValueEdit->text().toStdString().c_str(), 0));
+		_cond.setDisValue(dis_values);
+	}
+	else	// direct
+	{
+		_cond.setProcessDistributionType(FiniteElement::DIRECT);
+	}
 
 	FEMCondition* new_cond(NULL);
 	switch(this->condTypeBox->currentIndex())

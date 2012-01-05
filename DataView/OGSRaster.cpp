@@ -186,14 +186,14 @@ bool OGSRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	return true;
 }
 
-double* OGSRaster::loadDataFromASC(const QString &fileName,
+double* OGSRaster::loadDataFromASC(const std::string &fileName,
                                    double &x0,
                                    double &y0,
                                    size_t &width,
                                    size_t &height,
                                    double &delta)
 {
-	std::ifstream in( fileName.toStdString().c_str() );
+	std::ifstream in( fileName.c_str() );
 
 	if (!in.is_open())
 	{
