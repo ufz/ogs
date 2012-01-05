@@ -2,13 +2,16 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
-#include <omp.h>
 #include "LinAlg/Solvers/BiCGStab.h"
 #include "LinAlg/Sparse/CRSMatrixDiagPrecond.h"
 #include "sparse.h"
 #include "vector_io.h"
 #include "RunTimeTimer.h"
 #include "CPUTimeTimer.h"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 int main(int argc, char *argv[])
 {
