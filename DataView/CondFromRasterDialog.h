@@ -20,11 +20,11 @@ class CondFromRasterDialog : public QDialog, private Ui_CondFromRaster
 	Q_OBJECT
 
 public:
-	CondFromRasterDialog(const ProjectData &project, QDialog* parent = 0);
+	CondFromRasterDialog(const ProjectData* project, QDialog* parent = 0);
 	~CondFromRasterDialog(void);
 
 private:
-	const ProjectData _project;
+	const ProjectData* _project;
 
 private slots:
 	void on_selectButton_pressed();

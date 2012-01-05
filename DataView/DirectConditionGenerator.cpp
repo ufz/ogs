@@ -10,7 +10,7 @@
 
 
 
-const std::map<size_t,double> DirectConditionGenerator::fromRasterToNodes(const MeshLib::CFEMesh &mesh, const std::string &filename)
+const std::vector< std::pair<size_t,double> > DirectConditionGenerator::fromRasterToNodes(const MeshLib::CFEMesh &mesh, const std::string &filename)
 {
 	if (_direct_values.empty())
 	{
@@ -30,9 +30,11 @@ const std::map<size_t,double> DirectConditionGenerator::fromRasterToNodes(const 
 				size_t cell_x = static_cast<size_t>(floor((coords[0] - origin_x)/delta));
 				size_t cell_y = static_cast<size_t>(floor((coords[1] - origin_y)/delta));
 				size_t index = cell_y*imgwidth+cell_x;
-				_direct_values.insert(std::pair<size_t, double>(i,img[index]));
+				_direct_values.push_back( std::pair<size_t, double>(i,img[index]) );
 			}
 		}
+
+		delete[] img;
 
 	}
 	else
@@ -48,7 +50,7 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
 	
 	if (out)
 	{
-		for (std::map<size_t,double>::const_iterator it = _direct_values.begin(); it != _direct_values.end(); ++it)
+		for (std::vector< std::pair<size_t,double> >::const_iterator it = _direct_values.begin(); it != _direct_values.end(); ++it)
 			out << it->first << "\t" << it->second << std::endl;
 
 		out.close();

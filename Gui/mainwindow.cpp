@@ -116,7 +116,7 @@ Problem* aproblem = NULL;
 using namespace FileIO;
 
 MainWindow::MainWindow(QWidget* parent /* = 0*/)
-	: QMainWindow(parent), _db (NULL), _project()
+	: QMainWindow(parent), _db (NULL), _project(), _import_files_menu(NULL)
 {
 	setupUi(this);
 
@@ -273,7 +273,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		_screenGeometries.push_back(desktopWidget->availableGeometry((int)i));
 
 	// Setup import files menu
-	menu_File->insertMenu(action_Exit, createImportFilesMenu());
+	_import_files_menu = createImportFilesMenu();
+	menu_File->insertMenu(action_Exit, _import_files_menu);
 
 	// Setup recent files menu
 	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()),
@@ -368,6 +369,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 
 MainWindow::~MainWindow()
 {
+	delete _import_files_menu;
 	delete _db;
 	delete _vtkVisPipeline;
 	delete _meshModels;
@@ -1285,7 +1287,7 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	CondFromRasterDialog dlg(this->_project);
+	CondFromRasterDialog dlg(&_project);
 	dlg.exec();
 }
 

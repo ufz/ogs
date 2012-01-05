@@ -136,6 +136,8 @@ private:
 	QList<QRect> _screenGeometries;
 	QWidget* _vtkWidget;
 	QByteArray _windowState;
+	QMenu* _import_files_menu;
+
 #ifdef OGS_USE_VRPN
 	TrackingSettingsWidget* _trackingSettingsWidget;
 #endif     // OGS_USE_VRPN

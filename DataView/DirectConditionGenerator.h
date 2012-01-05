@@ -15,12 +15,12 @@ public:
 	DirectConditionGenerator() {};
 	~DirectConditionGenerator() {};
 
-	const std::map<size_t,double> fromRasterToNodes(const MeshLib::CFEMesh &mesh, const std::string &filename);
+	const std::vector< std::pair<size_t,double> > fromRasterToNodes(const MeshLib::CFEMesh &mesh, const std::string &filename);
 
 	int writeToFile(const std::string &name) const;
 
 private:
-	std::map<size_t,double> _direct_values;
+	std::vector< std::pair<size_t,double> > _direct_values;
 
 };
 

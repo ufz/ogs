@@ -10,16 +10,12 @@
 
 #include "DirectConditionGenerator.h"
 
-namespace MeshLib {
-	#include "msh_mesh.h"
-}
-
-CondFromRasterDialog::CondFromRasterDialog(const ProjectData &project, QDialog* parent)
+CondFromRasterDialog::CondFromRasterDialog(const ProjectData *project, QDialog* parent)
 	: QDialog(parent), _project(project)
 {
 	setupUi(this);
 
-	const std::map<std::string, MeshLib::CFEMesh*> msh_map = project.getMeshObjects();
+	const std::map<std::string, MeshLib::CFEMesh*> msh_map = project->getMeshObjects();
 
 	for (std::map<std::string, MeshLib::CFEMesh*>::const_iterator it = msh_map.begin();
 			                                                      it != msh_map.end(); ++it)
@@ -59,7 +55,7 @@ void CondFromRasterDialog::accept()
 	
 	std::string mesh_name (this->meshBox->currentText().toStdString());
 	std::string raster_name (this->rasterEdit->text().toStdString());
-	const MeshLib::CFEMesh* mesh = _project.getMesh(mesh_name);
+	const MeshLib::CFEMesh* mesh = _project->getMesh(mesh_name);
 
 	if (this->directButton->isChecked())
 	{
