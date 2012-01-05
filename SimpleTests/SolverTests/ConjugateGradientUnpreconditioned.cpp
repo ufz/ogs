@@ -1,11 +1,14 @@
 #include <fstream>
 #include <iostream>
-#include <omp.h>
 #include "LinAlg/Solvers/CG.h"
 #include "LinAlg/Sparse/CRSMatrix.h"
 #include "sparse.h"
 #include "vector_io.h"
 //#include "timeMeasurement.h"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 int main(int argc, char *argv[])
 {

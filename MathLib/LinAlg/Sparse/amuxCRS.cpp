@@ -7,7 +7,9 @@
 
 #include "amuxCRS.h"
 #include <cstddef>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #ifdef HAVE_PTHREADS
 #include <pthread.h>
 #endif

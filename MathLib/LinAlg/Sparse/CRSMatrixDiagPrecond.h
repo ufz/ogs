@@ -1,7 +1,9 @@
 #ifndef CRSMATRIXDIAGPRECOND_H
 #define CRSMATRIXDIAGPRECOND_H
 
-//#include <omp.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "CRSMatrix.h"
 #include "sparse.h"

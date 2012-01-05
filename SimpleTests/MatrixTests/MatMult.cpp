@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
-#include <omp.h>
 #include <cstdlib>
 #include "sparse.h"
 #include "LinAlg/Sparse/CRSMatrix.h"
@@ -10,6 +9,10 @@
 #include "LinAlg/Sparse/CRSMatrixPThreads.h"
 #include "RunTimeTimer.h"
 #include "CPUTimeTimer.h"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 int main(int argc, char *argv[])
 {
