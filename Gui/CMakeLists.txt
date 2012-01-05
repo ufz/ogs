@@ -133,17 +133,17 @@ IF (OGS_VRED_PLUGIN)
 	ADD_DEFINITIONS(
 		-DBOOST_PYTHON_DYNAMIC_LIB
 	)
-  
+
 	INCLUDE_DIRECTORIES(
 		#${VRED_DIR}/include/vred
-	    ${VRED_DIR}/include/boost-1.34-vc8.0
-	    ${VRED_DIR}/include/python-2.52-vc8.0
-	    #${VRED_DIR}/include/zlib-1.23
-	    #${VRED_DIR}/include/OpenSG
-	    #${VRED_DIR}/include/OpenSG/OpenSG
+    ${VRED_DIR}/include/boost-1.34-vc8.0
+    ${VRED_DIR}/include/python-2.52-vc8.0
+    #${VRED_DIR}/include/zlib-1.23
+    #${VRED_DIR}/include/OpenSG
+    #${VRED_DIR}/include/OpenSG/OpenSG
 	)
 	LINK_DIRECTORIES( ${VRED_DIR}/bin/WIN32 )
-	
+
 	ADD_LIBRARY( ogs-gui-vred SHARED
 		${SOURCES}
 		${HEADERS}
@@ -170,7 +170,7 @@ IF (OGS_VRED_PLUGIN)
 		VtkAct
 		#boost_python-vc80-mt-1_34_1
 	)
-	
+
 	ADD_DEPENDENCIES ( ogs-gui-vred VtkVis OGSProject )
 ENDIF (OGS_VRED_PLUGIN)
 
@@ -180,20 +180,20 @@ ENDIF (OGS_VRED_PLUGIN)
 
 IF (OGS_PACKAGING)
 	INSTALL (TARGETS ogs-gui RUNTIME DESTINATION bin COMPONENT ogs_gui)
-	
+
 	IF(MSVC)
 		SET(OGS_GUI_EXE ${OGS_EXECUTABLE}-gui.exe)
 	ELSE(MSVC)
 		SET(OGS_GUI_EXE ${OGS_EXECUTABLE}-gui)
 	ENDIF(MSVC)
-	
+
 	INCLUDE(GetPrerequisites)
 	if (EXISTS ${OGS_GUI_EXE})
 		GET_PREREQUISITES(${OGS_GUI_EXE} OGS_GUI_DEPENDENCIES 1 1 "/usr/local/lib;/;${VTK_DIR};${OpenSG_LIBRARY_DIRS}" "")
 		MESSAGE (STATUS "ogs-gui depends on:")
 		FOREACH(DEPENDENCY ${OGS_GUI_DEPENDENCIES})
 			IF(NOT ${DEPENDENCY} STREQUAL "not") # Some bug on Linux?
-				message("${DEPENDENCY}")				
+				message("${DEPENDENCY}")
 				GP_RESOLVE_ITEM ("/" "${DEPENDENCY}" ${OGS_GUI_EXE} "/usr/local/lib;/;${VTK_DIR}" DEPENDENCY_PATH)
 				SET (DEPENDENCY_PATHS ${DEPENDENCY_PATHS} ${DEPENDENCY_PATH})
 			ENDIF()
