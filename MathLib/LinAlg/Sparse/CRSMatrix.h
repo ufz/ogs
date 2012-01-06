@@ -298,9 +298,9 @@ protected:
 		}
 
 		MatrixBase::_n_rows -= n_rows_cols;
-		BASELIB::swap (row_ptr_new, _row_ptr);
-		BASELIB::swap (col_idx_new, _col_idx);
-		BASELIB::swap (data_new, _data);
+		BaseLib::swap (row_ptr_new, _row_ptr);
+		BaseLib::swap (col_idx_new, _col_idx);
+		BaseLib::swap (data_new, _data);
 
 		delete [] row_ptr_new_tmp;
 		delete [] row_ptr_new;
@@ -351,9 +351,9 @@ protected:
 		}
 
 		MatrixBase::_n_rows = n_cols;
-		BASELIB::swap(row_ptr_trans, _row_ptr);
-		BASELIB::swap(col_idx_trans, _col_idx);
-		BASELIB::swap(data_trans, _data);
+		BaseLib::swap(row_ptr_trans, _row_ptr);
+		BaseLib::swap(col_idx_trans, _col_idx);
+		BaseLib::swap(data_trans, _data);
 
 		delete[] row_ptr_nnz;
 		delete[] row_ptr_trans;

@@ -137,8 +137,8 @@ void genAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 			if (i < jA[k])
 				jAn[con[i]++] = jA[k];
 
-	BASELIB::swap(jA, jAn);
-	BASELIB::swap(iA, iAn);
+	BaseLib::swap(jA, jAn);
+	BaseLib::swap(iA, iAn);
 
 	delete[] jAn;
 	delete[] con;
@@ -184,8 +184,8 @@ void genFullAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 		}
 	}
 
-	BASELIB::swap(jA, jAn);
-	BASELIB::swap(iA, iAn);
+	BaseLib::swap(jA, jAn);
+	BaseLib::swap(iA, iAn);
 
 	delete[] jAn;
 	delete[] iAn;

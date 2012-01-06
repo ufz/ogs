@@ -36,10 +36,10 @@ unsigned partition_(T* array, unsigned beg, unsigned end)
     while ((j>beg) && !(array[j] < m)) j--;
 
     if (i >= j) break;
-    BASELIB::swap(array[i], array[j]);
+    BaseLib::swap(array[i], array[j]);
   }
 
-  BASELIB::swap(array[beg], array[j]);
+  BaseLib::swap(array[beg], array[j]);
   return j;
 }
 
@@ -67,14 +67,15 @@ size_t partition_(T1* array, size_t beg, size_t end, T2 *second_array)
 		while ((j > beg) && !(array[j] <= m))
 			j--;
 
-		if (i >= j)
-			break;
-		BASELIB::swap(array[i], array[j]);
-		BASELIB::swap(second_array[i], second_array[j]);
+		if (i >= j) break;
+
+		BaseLib::swap(array[i], array[j]);
+		BaseLib::swap(second_array[i], second_array[j]);
 	}
 
-	BASELIB::swap(array[beg], array[j]);
-	BASELIB::swap(second_array[beg], second_array[j]);
+	BaseLib::swap(array[beg], array[j]);
+	BaseLib::swap(second_array[beg], second_array[j]);
+
 	return j;
 }
 
@@ -121,12 +122,12 @@ private:
 
 			if (i >= j)
 				break;
-			BASELIB::swap(array[i], array[j]);
-			BASELIB::swap(perm[i], perm[j]);
+			BaseLib::swap(array[i], array[j]);
+			BaseLib::swap(perm[i], perm[j]);
 		}
 
-		BASELIB::swap(array[beg], array[j]);
-		BASELIB::swap(perm[beg], perm[j]);
+		BaseLib::swap(array[beg], array[j]);
+		BaseLib::swap(perm[beg], perm[j]);
 		return j;
 	}
 
@@ -169,12 +170,12 @@ private:
 
 			if (i >= j)
 				break;
-			BASELIB::swap(array[i], array[j]);
-			BASELIB::swap(perm[i], perm[j]);
+			BaseLib::swap(array[i], array[j]);
+			BaseLib::swap(perm[i], perm[j]);
 		}
 
-		BASELIB::swap(array[beg], array[j]);
-		BASELIB::swap(perm[beg], perm[j]);
+		BaseLib::swap(array[beg], array[j]);
+		BaseLib::swap(perm[beg], perm[j]);
 		return j;
 	}
 
@@ -201,12 +202,12 @@ private:
 
 			if (i >= j)
 				break;
-			BASELIB::swap(perm[i], perm[j]);
-			BASELIB::swap(array[i], array[j]);
+			BaseLib::swap(perm[i], perm[j]);
+			BaseLib::swap(array[i], array[j]);
 		}
 
-		BASELIB::swap(perm[beg], perm[j]);
-		BASELIB::swap(array[beg], array[j]);
+		BaseLib::swap(perm[beg], perm[j]);
+		BaseLib::swap(array[beg], array[j]);
 		return j;
 	}
 

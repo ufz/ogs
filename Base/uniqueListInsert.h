@@ -10,7 +10,7 @@
 
 #include <list>
 
-namespace BASELIB {
+namespace BaseLib {
 
 void uniqueListInsert (std::list<size_t>& list, size_t element)
 {
@@ -23,6 +23,6 @@ void uniqueListInsert (std::list<size_t>& list, size_t element)
 	list.push_back (element);
 }
 
-} // end namespace BASELIB
+} // end namespace BaseLib
 
 #endif /* UNIQUELISTINSERT_H_ */
