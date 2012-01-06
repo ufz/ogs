@@ -4,12 +4,8 @@ cmake_minimum_required(VERSION 2.6)
 # Project name
 project( OGS-6 )
 
-# Set cmake module path
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_SOURCE_DIR}/scripts/cmake/cmake"
-  "${CMAKE_SOURCE_DIR}/scripts/cmake")
-
-INCLUDE(GetCompilerInfoString)
+### CMake setup ###
+INCLUDE(scripts/cmake/CMakeSetup.cmake)
 
 # Finds
 FIND_PACKAGE(OpenMP)
