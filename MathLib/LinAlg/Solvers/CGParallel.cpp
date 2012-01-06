@@ -35,7 +35,6 @@ namespace MathLib {
 unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		double* const x, double& eps, unsigned& nsteps, unsigned num_threads)
 {
-	omp_set_num_threads(num_threads);
 	unsigned N = mat->getNRows();
 	double * __restrict__ p(new double[N]);
 	double * __restrict__ q(new double[N]);

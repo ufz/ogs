@@ -28,7 +28,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
 					# see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=33144
 					SET(CMAKE_CXX_FLAGS "-O3 -mtune=native -msse4.2 -DNDEBUG")
 				ELSE()
-                	SET(CMAKE_CXX_FLAGS "-O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
+                	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
 				ENDIF()
         ENDIF()
         # -g
