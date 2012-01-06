@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
 	std::string fname_mat (argv[1]);
 
-	bool verbose (true);
+	bool verbose (false);
 
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
 		if (verbose) {
-			std::cout << "ok, " << timer.elapsed() << " s)" << std::endl;
+			std::cout << "ok, [wclock: " << timer.elapsed() << " s]" << std::endl;
 		}
 	} else {
 		std::cout << "error reading matrix from " << fname_mat << std::endl;
@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
 
 //	MathLib::CRSMatrix<double, unsigned> mat(n, iA, jA, A);
 	MathLib::CRSMatrixReordered mat(n, iA, jA, A);
-	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -85,8 +84,20 @@ int main(int argc, char *argv[])
 	cluster_tree.createClusterTree(op_perm, po_perm, 1000);
 	cpu_timer.stop();
 	run_timer.stop();
-	if (verbose)
+	if (verbose) {
 		std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
+	} else {
+		if (argc == 4) {
+			std::ofstream result_os(argv[3], std::ios::app);
+			if (result_os) {
+				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " calc nested dissection perm" << std::endl;
+			}
+			result_os.close();
+		} else {
+			std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " calc nested dissection perm" << std::endl;
+		}
+	}
+
 
 	// applying the nested dissection reordering
 	if (verbose) {
@@ -98,6 +109,17 @@ int main(int argc, char *argv[])
 	cpu_timer.stop();
 	run_timer.stop();
 	if (verbose) std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
+	else {
+		if (argc == 4) {
+			std::ofstream result_os(argv[3], std::ios::app);
+			if (result_os) {
+				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " applying nested dissection perm" << std::endl;
+			}
+			result_os.close();
+		} else {
+			std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
+		}
+	}
 
 #ifndef NDEBUG
 //	MathLib::AdjMat *global_reordered_adj_mat((cluster_tree.getGlobalAdjMat())->getMat(0,n,op_perm, po_perm));
@@ -109,11 +131,11 @@ int main(int argc, char *argv[])
 //	fname_out += "_adj.bin";
 //	std::ofstream os (fname_out.c_str(), std::ios::binary);
 //	CS_write(os, n, global_reordered_adj_mat->getRowPtrArray(), global_reordered_adj_mat->getColIdxArray(), adj_mat_data);
-	std::string fname_fem_out (fname_mat);
-	fname_fem_out = fname_fem_out.substr(0,fname_mat.length()-4);
-	fname_fem_out += "_fem_reordered.bin";
-	std::ofstream os (fname_fem_out.c_str(), std::ios::binary);
-	CS_write(os, n, mat.getRowPtrArray(), mat.getColIdxArray(), mat.getEntryArray());
+//	std::string fname_fem_out (fname_mat);
+//	fname_fem_out = fname_fem_out.substr(0,fname_mat.length()-4);
+//	fname_fem_out += "_fem_reordered.bin";
+//	std::ofstream os (fname_fem_out.c_str(), std::ios::binary);
+//	CS_write(os, n, mat.getRowPtrArray(), mat.getColIdxArray(), mat.getEntryArray());
 #endif
 
 	if (verbose) {
@@ -128,13 +150,13 @@ int main(int argc, char *argv[])
 	run_timer.stop();
 
 	if (verbose) {
-		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], ["
-				<< run_timer.elapsed() << " sec run time]" << std::endl;
+		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], [wclock: "
+				<< run_timer.elapsed() << " sec]" << std::endl;
 	} else {
 		if (argc == 4) {
 			std::ofstream result_os (argv[3], std::ios::app);
 			if (result_os) {
-				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
+				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " " << n_mults << " MatVecMults, matrix " << fname_mat << std::endl;
 			}
 			result_os.close();
 		} else {
