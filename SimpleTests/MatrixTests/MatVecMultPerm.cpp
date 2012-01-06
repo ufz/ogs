@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
 		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], ["
 				<< run_timer.elapsed() << " sec run time]" << std::endl;
 	} else {
-		if (argc == 5) {
-			std::ofstream result_os (argv[4], std::ios::app);
+		if (argc == 4) {
+			std::ofstream result_os (argv[3], std::ios::app);
 			if (result_os) {
 				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
 			}

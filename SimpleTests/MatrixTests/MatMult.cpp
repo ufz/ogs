@@ -58,8 +58,10 @@ int main(int argc, char *argv[])
 
 #ifdef _OPENMP
 	MathLib::CRSMatrixOpenMP<double, unsigned> mat (n, iA, jA, A, n_threads);
+	std::cout << "OpenMP matrix class used" << std::endl;
 #else
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
+	std::cout << "matrix class without OpenMP used" << std::endl;
 #endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
 	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
