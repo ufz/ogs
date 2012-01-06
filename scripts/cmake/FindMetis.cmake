@@ -12,12 +12,12 @@
 
 FIND_PATH(METIS_INCLUDE_DIR metis.h
 	/usr/include/metis
-	/home/fischeth/include/
+	$ENV{HOME}/include/
 )
 
 FIND_LIBRARY(METIS_LIBRARY metis
 	/usr/lib
-	/home/fischeth/lib/
+	$ENV{HOME}/lib/
 )
 
 IF(METIS_INCLUDE_DIR)
