@@ -7,6 +7,7 @@
 #include "DirectConditionGenerator.h"
 
 #include "OGSRaster.h"
+#include "MshEditor.h"
 #include "PointWithID.h"
 
 
@@ -19,7 +20,7 @@ const std::vector< std::pair<size_t,double> > DirectConditionGenerator::fromRast
 
 		double* img = OGSRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 
-		const std::vector<GEOLIB::PointWithID*> surface_nodes ( this->getSurfaceNodes(mesh) );		
+		const std::vector<GEOLIB::PointWithID*> surface_nodes ( MshEditor::getSurfaceNodes(mesh) );		
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
 		const size_t nNodes(surface_nodes.size());
 		for (size_t i=0; i<nNodes; i++)
@@ -60,30 +61,3 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
 	return 0;
 }
 
-const std::vector<GEOLIB::PointWithID*> DirectConditionGenerator::getSurfaceNodes(const MeshLib::CFEMesh &mesh)
-{
-	// Sort points lexicographically
-	size_t nNodes (mesh.nod_vector.size());
-	std::vector<GEOLIB::PointWithID*> nodes;
-	std::vector<size_t> perm;
-	for (size_t j(0); j<nNodes; j++)
-	{
-		nodes.push_back(new GEOLIB::PointWithID(mesh.nod_vector[j]->getData(), j));		
-		perm.push_back(j);
-	}
-	Quicksort<GEOLIB::PointWithID*> (nodes, 0, nodes.size(), perm);
-
-	// Extract surface points
-	double eps (sqrt(std::numeric_limits<double>::min()));
-	std::vector<GEOLIB::PointWithID*> surface_pnts;
-	for (size_t k(1); k < nNodes; k++)
-	{
-		const GEOLIB::PointWithID& p0 (*(nodes[k - 1]));
-		const GEOLIB::PointWithID& p1 (*(nodes[k]));
-		if (fabs (p0[0] - p1[0]) > eps || fabs (p0[1] - p1[1]) > eps)
-			surface_pnts.push_back (nodes[k - 1]);
-	}
-	// Add last point
-	surface_pnts.push_back (nodes[nNodes - 1]);
-	return surface_pnts;
-}

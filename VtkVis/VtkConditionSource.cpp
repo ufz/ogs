@@ -95,7 +95,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
-
+	
 	size_t n_pnts = _points->size();
 	double value(-9999);
 	if (!_cond_vec->empty())
@@ -111,7 +111,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		distypes->InsertNextValue(0);
 		scalars->InsertNextValue(value);
 	}
-
+	
 	size_t nCond = _cond_vec->size();
 	for (size_t n = 0; n < nCond; n++)
 	{

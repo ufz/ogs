@@ -9,10 +9,6 @@
 
 #include "msh_mesh.h"
 
-namespace GEOLIB {
-	class PointWithID;
-}
-
 class DirectConditionGenerator
 {
 public:
@@ -20,8 +16,6 @@ public:
 	~DirectConditionGenerator() {};
 
 	const std::vector< std::pair<size_t,double> > fromRasterToSurfaceNodes(const MeshLib::CFEMesh &mesh, const std::string &filename);
-
-	const std::vector<GEOLIB::PointWithID*> getSurfaceNodes(const MeshLib::CFEMesh &mesh);
 
 	int writeToFile(const std::string &name) const;
 
