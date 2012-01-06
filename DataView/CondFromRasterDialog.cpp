@@ -60,7 +60,7 @@ void CondFromRasterDialog::accept()
 	if (this->directButton->isChecked())
 	{
 		DirectConditionGenerator dcg;
-		dcg.fromRasterToNodes(*mesh, raster_name);
+		dcg.fromRasterToSurfaceNodes(*mesh, raster_name);
 		dcg.writeToFile(raster_name + ".txt");
 	}
 	else
