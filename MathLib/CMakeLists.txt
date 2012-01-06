@@ -47,12 +47,20 @@ FILE(GLOB_RECURSE HEADERS . *.h)
 #	LinAlg/Preconditioner/generateDiagPrecond.cpp
 #)
 
+FIND_PACKAGE( Metis )
+IF (METIS_FOUND)
+	MESSAGE (STATUS "metis found.")
+ELSE(METIS_FOUND)
+	MESSAGE (STATUS "metis not found.")
+ENDIF(METIS_FOUND)
+
 FILE(GLOB_RECURSE SOURCES . *.cpp)
 
 INCLUDE_DIRECTORIES (
 	.
 	../Base
 	../GeoLib
+	${METIS_INCLUDE_DIR}
 )
 
 # Create the library

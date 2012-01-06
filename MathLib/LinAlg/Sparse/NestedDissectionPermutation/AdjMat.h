@@ -39,7 +39,7 @@ public:
 	{}
 
 	/**
-	 * The
+	 *
 	 */
 	void makeSymmetric();
 
@@ -57,7 +57,7 @@ public:
 private:
 	/**
 	 * copy constructor
-	 * @param src another AdjMat with data for initializiation
+	 * @param src another AdjMat with data for initialization
 	 */
 	AdjMat(const AdjMat&);
 

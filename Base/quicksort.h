@@ -43,16 +43,23 @@ unsigned partition_(T* array, unsigned beg, unsigned end)
   return j;
 }
 
-
 /**
- * version of partition_ that additional updates the permutation vector
- * */
-template <class T>
-size_t partition_(T* array, size_t beg, size_t end, size_t *perm)
+ * Permutes the entries of a part of an array such that all entries that are smaller
+ * than a certain value are at the beginning of the array and all entries that are
+ * bigger are at the end of the array. This version of partition_ permutes a second
+ * array second_array according to the sorting.
+ * @param array array to sort
+ * @param beg beginning index in array for sorting
+ * @param end end-1 is the last index in array for sorting
+ * @param second_array the second array is permuted according to the sort process of array
+ * @return
+ */
+template <typename T1, typename T2>
+size_t partition_(T1* array, size_t beg, size_t end, T2 *second_array)
 {
 	size_t i = beg + 1;
 	size_t j = end - 1;
-	T m = array[beg];
+	T1 m = array[beg];
 
 	for (;;) {
 		while ((i < end) && (array[i] <= m))
@@ -63,24 +70,29 @@ size_t partition_(T* array, size_t beg, size_t end, size_t *perm)
 		if (i >= j)
 			break;
 		BASELIB::swap(array[i], array[j]);
-		BASELIB::swap(perm[i], perm[j]);
+		BASELIB::swap(second_array[i], second_array[j]);
 	}
 
 	BASELIB::swap(array[beg], array[j]);
-	BASELIB::swap(perm[beg], perm[j]);
+	BASELIB::swap(second_array[beg], second_array[j]);
 	return j;
 }
 
 /**
- * version of quickSort that stores the permutation
- * */
-template <class T>
-void quicksort(T* array, size_t beg, size_t end, size_t* perm)
+ * version of quickSort that permutes the entries of a second array
+ * according to the permutation of the first array
+ * @param array array to sort
+ * @param beg beginning index in array for sorting
+ * @param end end-1 is the last index in array for sorting
+ * @param second_array the second array is permuted according to the sort process of array
+ */
+template <typename T1, typename T2>
+void quicksort(T1* array, size_t beg, size_t end, T2* second_array)
 {
 	if (beg < end) {
-		size_t p = partition_(array, beg, end, perm);
-		quicksort(array, beg, p, perm);
-		quicksort(array, p+1, end, perm);
+		size_t p = partition_(array, beg, end, second_array);
+		quicksort(array, beg, p, second_array);
+		quicksort(array, p+1, end, second_array);
 	}
 }
 

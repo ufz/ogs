@@ -46,6 +46,10 @@ public:
 
 	virtual bool isSeparator() const = 0;
 
+#ifndef NDEBUG
+	AdjMat const* getGlobalAdjMat() const { return _g_adj_mat; }
+#endif
+
 protected:
 	/** \brief Method returns the pointer to the parent cluster.
 	 \returns parent cluster */

@@ -5,6 +5,8 @@
  *      Author: TF
  */
 
+#include "metis.h"
+
 // BaseLib
 #include "swap.h"
 
@@ -14,13 +16,14 @@
 #include "Separator.h"
 #include "AdjMat.h"
 
+// METIS function
+//extern "C" void METIS_ComputeVertexSeparator(unsigned*, unsigned*, unsigned*,
+//					   unsigned*, unsigned*, unsigned*, unsigned*);
+
+//extern "C" void METIS_NodeND(unsigned*, unsigned*, unsigned*,
+//				   unsigned*, unsigned*, unsigned*, unsigned*);
 
 namespace MathLib {
-
-// METIS function
-extern "C" void METIS_NodeComputeSeparator(unsigned*, unsigned*, unsigned*,
-					   unsigned*, unsigned*, unsigned*,
-					   unsigned*, unsigned*);
 
 Cluster::Cluster (unsigned n, unsigned* iA, unsigned* jA)
   : ClusterBase (n, iA, jA)
@@ -42,72 +45,81 @@ void Cluster::subdivide(unsigned bmin)
 		unsigned *xadj(const_cast<unsigned*>(_l_adj_mat->getRowPtrArray()));
 		unsigned *adjncy(const_cast<unsigned*>(_l_adj_mat->getColIdxArray()));
 //		unsigned nparts = 2;
-		unsigned options = 0; // for METIS
-		unsigned sepsize(0); // for METIS
+		unsigned options[METIS_NOPTIONS]; // for METIS
+		METIS_SetDefaultOptions(options);
+//		options[METIS OPTION PTYPE] = METIS PTYPE RB;
+//		options[METIS OPTION OBJTYPE] = METIS OBJTYPE CUT;
+//		options[METIS OPTION CTYPE] = METIS CTYPE SHEM;
+//		options[] = ;
+//		options[] = ;
+//		options[] = ;
+
+//		unsigned sepsize(0); // for METIS
 		unsigned *vwgt(new unsigned[n_rows + 1]);
-		const unsigned nnz(xadj[n_rows]);
-		unsigned *adjwgt(new unsigned[nnz]);
+//		const unsigned nnz(xadj[n_rows]);
+//		unsigned *adjwgt(new unsigned[nnz]);
 		for (unsigned k(0); k < n_rows + 1; k++)
 			vwgt[k] = 1;
-		for (unsigned k(0); k < nnz; k++)
-			adjwgt[k] = 1;
-		unsigned *part(new unsigned[n_rows + 1]);
+//		for (unsigned k(0); k < nnz; k++)
+//			adjwgt[k] = 1;
+//		unsigned *part(new unsigned[n_rows + 1]);
 
 		// subdivide the index set into three parts employing METIS
-		METIS_NodeComputeSeparator(&n_rows, xadj, adjncy, vwgt, adjwgt, &options,
-				&sepsize, part);
+//		METIS_ComputeVertexSeparator(&n_rows, xadj, adjncy, vwgt, &options,
+//				&sepsize, part);
+		METIS_NodeND(&n_rows, xadj, adjncy, vwgt, options, _g_op_perm, _g_po_perm);
 
-		// create and init local permutations
-		unsigned *l_op_perm(new unsigned[size]);
-		unsigned *l_po_perm(new unsigned[size]);
-		for (unsigned i = 0; i < size; ++i)
-			l_op_perm[i] = l_po_perm[i] = i;
-
-		unsigned isep1, isep2;
-		updatePerm(part, isep1, isep2, l_op_perm, l_po_perm);
-		delete[] part;
-
-		// update global permutation
-		unsigned *t_op_perm = new unsigned[size];
-		for (unsigned k = 0; k < size; ++k)
-			t_op_perm[k] = _g_op_perm[_beg + l_op_perm[k]];
-
-		for (unsigned k = _beg; k < _end; ++k) {
-			_g_op_perm[k] = t_op_perm[k - _beg];
-			_g_po_perm[_g_op_perm[k]] = k;
-		}
-		delete[] t_op_perm;
-
-		// next recursion step
-		if ((isep1 >= bmin) && (isep2 - isep1 >= bmin)) {
-			// construct adj matrices for [0, isep1), [isep1,isep2), [isep2, _end)
-			AdjMat *l_adj0(_l_adj_mat->getMat(0, isep1, l_op_perm, l_po_perm));
-			AdjMat *l_adj1(_l_adj_mat->getMat(isep1, isep2, l_op_perm, l_po_perm));
-			AdjMat *l_adj2(_l_adj_mat->getMat(isep2, size, l_op_perm, l_po_perm));
-
-			delete[] l_op_perm;
-			delete[] l_po_perm;
-			delete _l_adj_mat;
-			_l_adj_mat = NULL;
-
-			_n_sons = 3;
-			_sons = new ClusterBase*[_n_sons];
-
-			isep1 += _beg;
-			isep2 += _beg;
-
-			// constructing child nodes for index cluster tree
-			_sons[0] = new Cluster(this, _beg, isep1, _g_op_perm, _g_po_perm, _g_adj_mat, l_adj0);
-			_sons[1] = new Cluster(this, isep1, isep2, _g_op_perm, _g_po_perm, _g_adj_mat, l_adj1);
-			_sons[2] = new Separator(this, isep2, _end, _g_op_perm,	_g_po_perm, _g_adj_mat, l_adj2);
-
-			dynamic_cast<Cluster*>(_sons[0])->subdivide(bmin);
-			dynamic_cast<Cluster*>(_sons[1])->subdivide(bmin);
-
-		} else {
-			delete _l_adj_mat;
-			_l_adj_mat = NULL;
-		} // end if next recursion step
+//		// create and init local permutations
+//		unsigned *l_op_perm(new unsigned[size]);
+//		unsigned *l_po_perm(new unsigned[size]);
+//		for (unsigned i = 0; i < size; ++i)
+//			l_op_perm[i] = l_po_perm[i] = i;
+//
+//		unsigned isep1, isep2;
+//		updatePerm(part, isep1, isep2, l_op_perm, l_po_perm);
+//		delete[] part;
+//
+//		// update global permutation
+//		unsigned *t_op_perm = new unsigned[size];
+//		for (unsigned k = 0; k < size; ++k)
+//			t_op_perm[k] = _g_op_perm[_beg + l_op_perm[k]];
+//
+//		for (unsigned k = _beg; k < _end; ++k) {
+//			_g_op_perm[k] = t_op_perm[k - _beg];
+//			_g_po_perm[_g_op_perm[k]] = k;
+//		}
+//		delete[] t_op_perm;
+//
+//		// next recursion step
+//		if ((isep1 >= bmin) && (isep2 - isep1 >= bmin)) {
+//			// construct adj matrices for [0, isep1), [isep1,isep2), [isep2, _end)
+//			AdjMat *l_adj0(_l_adj_mat->getMat(0, isep1, l_op_perm, l_po_perm));
+//			AdjMat *l_adj1(_l_adj_mat->getMat(isep1, isep2, l_op_perm, l_po_perm));
+//			AdjMat *l_adj2(_l_adj_mat->getMat(isep2, size, l_op_perm, l_po_perm));
+//
+//			delete[] l_op_perm;
+//			delete[] l_po_perm;
+//			delete _l_adj_mat;
+//			_l_adj_mat = NULL;
+//
+//			_n_sons = 3;
+//			_sons = new ClusterBase*[_n_sons];
+//
+//			isep1 += _beg;
+//			isep2 += _beg;
+//
+//			// constructing child nodes for index cluster tree
+//			_sons[0] = new Cluster(this, _beg, isep1, _g_op_perm, _g_po_perm, _g_adj_mat, l_adj0);
+//			_sons[1] = new Cluster(this, isep1, isep2, _g_op_perm, _g_po_perm, _g_adj_mat, l_adj1);
+//			_sons[2] = new Separator(this, isep2, _end, _g_op_perm,	_g_po_perm, _g_adj_mat, l_adj2);
+//
+//			dynamic_cast<Cluster*>(_sons[0])->subdivide(bmin);
+//			dynamic_cast<Cluster*>(_sons[1])->subdivide(bmin);
+//
+//		} else {
+//			delete _l_adj_mat;
+//			_l_adj_mat = NULL;
+//		} // end if next recursion step
 	} // end if ( connected && size () > bmin )
 }
 

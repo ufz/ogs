@@ -6,6 +6,13 @@ IF ( CMAKE_USE_PTHREADS_INIT )
         MESSAGE (STATUS "pthread library found." )
 ENDIF (CMAKE_USE_PTHREADS_INIT )
 
+FIND_PACKAGE( Metis )
+IF (METIS_FOUND)
+	MESSAGE (STATUS "metis found.")
+ELSE(METIS_FOUND)
+	MESSAGE (STATUS "metis not found.")
+ENDIF(METIS_FOUND)
+
 INCLUDE_DIRECTORIES(
         .
 	../../Base/
@@ -26,6 +33,13 @@ ADD_EXECUTABLE( MatTestRemoveRowsCols
         ${HEADERS}
 )
 
+ADD_EXECUTABLE( MatVecMultPerm
+        MatVecMultPerm.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+
+
 IF (WIN32)
         TARGET_LINK_LIBRARIES(MatMult Winmm.lib)
 ENDIF (WIN32)
@@ -44,3 +58,8 @@ TARGET_LINK_LIBRARIES ( MatTestRemoveRowsCols
 	MathLib
 )
 
+TARGET_LINK_LIBRARIES ( MatVecMultPerm
+	Base
+	MathLib
+	${METIS_LIBRARIES}
+)
