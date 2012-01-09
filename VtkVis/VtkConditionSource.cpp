@@ -284,12 +284,6 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	output->SetLines(newLines);
 	output->SetPolys(newPolys);
 
-	std::cout << "Points:" << newPoints->GetNumberOfPoints() << std::endl;
-	std::cout << "dis:" << distypes->GetNumberOfTuples() << std::endl;
-	std::cout << "scalars:" << scalars->GetNumberOfTuples() << std::endl;
-
-	std::cout << "scalars min:" << scalars->GetRange()[0] << ", max:" << scalars->GetRange()[1] << std::endl;
-
 	return 1;
 }
 
