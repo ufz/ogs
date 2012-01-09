@@ -64,7 +64,7 @@ private:
 	//bool removeConditionItem(const QModelIndex &idx);
 
 	/// Creates the TreeItem for one of the condition subtrees.
-	CondObjectListItem* createCondParent(ProcessItem* parent, const FEMCondition::CondType type, const std::string &geometry_name);
+	CondObjectListItem* createCondParent(ProcessItem* parent, FEMCondition* cond);
 
 	/// Returns the subtree-item for a given type of condtion.
 	CondObjectListItem* getCondParent(TreeItem* parent, const FEMCondition::CondType type) ;

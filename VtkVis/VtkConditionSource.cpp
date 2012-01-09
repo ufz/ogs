@@ -62,17 +62,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	(void)request;
 	(void)inputVector;
 
-	if  ( _points )
-	{
-		if (_points->empty())
-		{
-			std::cout <<
-			"ERROR in VtkConditionSource::RequestData : Size of point vector is 0" <<
-			std::endl;
-			return 0;
-		}
-	}
-	else
+	if (this->_points->empty() || this->_cond_vec->empty())
 		return 0;
 
 	vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
@@ -95,7 +85,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
-	
+	/*
 	size_t n_pnts = _points->size();
 	double value(-9999);
 	if (!_cond_vec->empty())
@@ -111,7 +101,8 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		distypes->InsertNextValue(0);
 		scalars->InsertNextValue(value);
 	}
-	
+	*/
+	vtkIdType pnt_id = 0;
 	size_t nCond = _cond_vec->size();
 	for (size_t n = 0; n < nCond; n++)
 	{
@@ -129,6 +120,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 
 		if ((*_cond_vec)[n]->getGeoType() == GEOLIB::POINT)
 		{
+			/*
 			size_t nPoints = _points->size();
 			const GEOLIB::Point* pnt =
 			        static_cast<const GEOLIB::Point*>((*_cond_vec)[n]->getGeoObj());
@@ -138,45 +130,60 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				{
 					id = static_cast<int>(i); //(this->getIndex(i, newPoints, scalars, idx_map));
 					vtkIdType vtk_id = static_cast<vtkIdType>(id);
-					newVerts->InsertNextCell(1, &vtk_id);
-					if (type == FiniteElement::CONSTANT)
-						scalars->SetValue(id, dis_values[0]);
-					distypes->SetValue(id, dis_type_value);
+					*/
+					const GEOLIB::Point* pnt = static_cast<const GEOLIB::Point*>((*_cond_vec)[n]->getGeoObj());
+					double coords[3] = {(*pnt)[0], (*pnt)[1], (*pnt)[2]};
+					newPoints->InsertNextPoint(coords);
+					
+					newVerts->InsertNextCell(1, &pnt_id);
+					if (type == FiniteElement::CONSTANT || type == FiniteElement::CONSTANT_NEUMANN)
+						scalars->InsertNextValue(dis_values[0]);
+					else scalars->InsertNextValue(0);
+					distypes->InsertNextValue(dis_type_value);
+					pnt_id++;
+			/*
 					break;
 				}
 			if (id == -1)
 				std::cout <<
 				"Error in VtkConditionSource::RequestData() - Point object not found ..."
 				          << std::endl;
+			*/
 		}
 		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::POLYLINE)
 		{
-			const GEOLIB::Polyline* ply =
-			        static_cast<const GEOLIB::Polyline*>((*_cond_vec)[n]->getGeoObj());
+			const GEOLIB::Polyline* ply = static_cast<const GEOLIB::Polyline*>((*_cond_vec)[n]->getGeoObj());
 			const int nPoints = ply->getNumberOfPoints();
 			newLines->InsertNextCell(nPoints);
+			double value (0);
 			for (int i = 0; i < nPoints; i++)
 			{
-				size_t pnt_id = ply->getPointID(i); //this->getIndex(ply->getPointID(i), newPoints, scalars, idx_map);
+				size_t point_index = ply->getPointID(i);
+				
+				double coords[3] = {(*(*_points)[point_index])[0], (*(*_points)[point_index])[1], (*(*_points)[point_index])[2]};
+				newPoints->InsertNextPoint(coords);
 				newLines->InsertCellPoint(pnt_id);
-				distypes->SetValue(pnt_id, dis_type_value);
+				distypes->InsertNextValue(dis_type_value);
 
-				if (type == FiniteElement::CONSTANT)
-					scalars->SetValue(pnt_id, dis_values[0]);
-				else if (type == FiniteElement::LINEAR)
+				if (type == FiniteElement::CONSTANT || type == FiniteElement::CONSTANT_NEUMANN)
+					scalars->InsertNextValue(dis_values[0]);
+				else if (type == FiniteElement::LINEAR || type == FiniteElement::LINEAR_NEUMANN)
 				{
 					for (size_t j = 0; j < dis_values.size(); j += 2)
-						if (static_cast<size_t>(dis_values[j]) == pnt_id)
-						//if (this->getIndex(static_cast<size_t>(dis_values[j]), newPoints, scalars, idx_map) == pnt_id)
-						{
-							scalars->SetValue(pnt_id, dis_values[j + 1]);
-							break;
-						}
+					{
+						if (static_cast<size_t>(dis_values[j]) == point_index)
+							value = dis_values[j + 1];
+					}
+					scalars->InsertNextValue(value);
 				}
+				else scalars->InsertNextValue(0);
+				pnt_id++;
 			}
 		}
 		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::SURFACE)
 		{
+			std::vector<int> point_idx_map(_points->size(), -1);
+
 			const GEOLIB::Surface* sfc =
 			        static_cast<const GEOLIB::Surface*>((*_cond_vec)[n]->getGeoObj());
 
@@ -190,23 +197,32 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				const GEOLIB::Triangle* triangle = (*sfc)[i];
 				for (size_t j = 0; j < 3; j++)
 				{
-					size_t pnt_id = (*triangle)[j]; //this->getIndex((*triangle)[j], newPoints, scalars, idx_map);
-					aPolygon->GetPointIds()->SetId(j, pnt_id);
-					distypes->SetValue(pnt_id, dis_type_value);
+					size_t point_index ((*triangle)[j]);
 
-					if (type == FiniteElement::CONSTANT)
-						scalars->SetValue(pnt_id, dis_values[0]);
-					else if (type == FiniteElement::LINEAR)
+					if (point_idx_map[point_index] == -1)
 					{
-						for (size_t k = 0; k < dis_values.size(); k += 2)
-							if (static_cast<size_t>(dis_values[j]) ==
-							    pnt_id)
-							//if (this->getIndex(static_cast<size_t>(dis_values[j]), newPoints, scalars, idx_map) == pnt_id)
-							{
-								scalars->SetValue(pnt_id,dis_values[j + 1]);
-								break;
-							}
+						point_idx_map[point_index] = pnt_id;
+						double coords[3] = {(*(*_points)[point_index])[0], (*(*_points)[point_index])[1], (*(*_points)[point_index])[2]};
+						newPoints->InsertNextPoint(coords);
+						aPolygon->GetPointIds()->SetId(j, pnt_id);
+						distypes->InsertNextValue(dis_type_value);
+						
+						if (type == FiniteElement::CONSTANT || type == FiniteElement::CONSTANT_NEUMANN)
+							scalars->InsertNextValue(dis_values[0]);
+						else if (type == FiniteElement::LINEAR || type == FiniteElement::LINEAR_NEUMANN)
+						{
+							for (size_t k = 0; k < dis_values.size(); k += 2)
+								if (static_cast<size_t>(dis_values[j]) == point_index)
+								{
+									scalars->InsertNextValue(dis_values[j + 1]);
+									break;
+								}
+						}
+						else scalars->InsertNextValue(0);
+						pnt_id++;
 					}
+					else
+						aPolygon->GetPointIds()->SetId(j, static_cast<vtkIdType>(point_idx_map[point_index]));
 				}
 				newPolys->InsertNextCell(aPolygon);
 
@@ -219,10 +235,12 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			size_t nValues = dis_values.size();
 			for (size_t i=0; i<nValues; i+=2)
 			{
-				vtkIdType vtk_id = static_cast<vtkIdType>(dis_values[i]);
-				newVerts->InsertNextCell(1, &vtk_id);
-				scalars->SetValue(vtk_id, dis_values[i+1]);
-				distypes->SetValue(vtk_id, dis_type_value);
+				double coords[3] = {(*(*_points)[dis_values[i]])[0], (*(*_points)[dis_values[i]])[1], (*(*_points)[dis_values[i]])[2]};
+				vtkIdType pid = newPoints->InsertNextPoint(coords);
+				newVerts->InsertNextCell(1, &pid);
+				scalars->InsertNextValue(dis_values[i+1]);
+				distypes->InsertNextValue(dis_type_value);
+				pnt_id++;
 			}
 		}
 		// draw a bounding box in case of of the conditions is "domain"
@@ -265,6 +283,12 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	output->SetVerts(newVerts);
 	output->SetLines(newLines);
 	output->SetPolys(newPolys);
+
+	std::cout << "Points:" << newPoints->GetNumberOfPoints() << std::endl;
+	std::cout << "dis:" << distypes->GetNumberOfTuples() << std::endl;
+	std::cout << "scalars:" << scalars->GetNumberOfTuples() << std::endl;
+
+	std::cout << "scalars min:" << scalars->GetRange()[0] << ", max:" << scalars->GetRange()[1] << std::endl;
 
 	return 1;
 }
