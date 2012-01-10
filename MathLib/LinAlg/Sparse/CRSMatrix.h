@@ -117,6 +117,7 @@ public:
 
 		while (j<idx_end && (k=_col_idx[j]) <= col) {
 			if (k == col) {
+				#pragma omp atomic
 				_data[j] += val;
 				return 0;
 			}
