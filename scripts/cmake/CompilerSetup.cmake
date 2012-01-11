@@ -49,8 +49,12 @@ ENDIF (OGS_PROFILE)
 IF (WIN32)
 	## For Visual Studio compiler
 	IF (MSVC)
-		ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS
-			-D_CRT_XNONSTDC_NO_WARNINGS -D__restrict__=__restrict)
+		ADD_DEFINITIONS(
+			-D_CRT_SECURE_NO_WARNINGS
+			-D_CRT_NONSTDC_NO_WARNINGS
+			-D_CRT_XNONSTDC_NO_WARNINGS
+			-D__restrict__=__restrict   # this fixes #5
+		)
 		# Sets warning level 3 and ignores some warnings
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267")
 	# cygwin
