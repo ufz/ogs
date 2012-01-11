@@ -39,6 +39,7 @@ private:
 	QDateTime currentInitialDateTime;
 	GridAdapter* currentMesh;
 	char* currentPath;
+	QString setName();
 	
 private slots:
 	void accept();
@@ -48,7 +49,7 @@ private slots:
 	void on_comboBoxDim2_currentIndexChanged(int id);
 	void on_comboBoxDim3_currentIndexChanged(int id);
 	void on_comboBoxDim4_currentIndexChanged(int id);
-	
+
 };
 
 #endif //NETCDFCONFIGUREDIALOG_H

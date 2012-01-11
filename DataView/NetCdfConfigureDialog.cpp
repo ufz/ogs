@@ -17,6 +17,8 @@ NetCdfConfigureDialog::NetCdfConfigureDialog(char* fileName, QDialog* parent) : 
 
 	setDimensionSelect();
 
+	lineEditName->setText(setName());
+
 }
 
 NetCdfConfigureDialog::~NetCdfConfigureDialog()
@@ -127,6 +129,7 @@ void NetCdfConfigureDialog::on_comboBoxDim3_currentIndexChanged(int id)
 		dateTimeEditDim3->setMaximumDateTime(lastDateTime);
 
 		currentInitialDateTime = initialDateTime;
+		lineEditName->setText(setName());
 	}
 }
 
@@ -364,12 +367,23 @@ GridAdapter* NetCdfConfigureDialog::getMesh()
 	return currentMesh;
 }
 
-std::string NetCdfConfigureDialog::getName()
+
+QString NetCdfConfigureDialog::setName()
 {
 	std::string name;
-	QString qName = dateTimeEditDim3->date().toString(Qt::DateFormat::LocalDate);
-	name.append(currentPath).append(" ").append(qName.toStdString());
-	return name;
+	name.append(currentPath);
+	name.erase(0,name.find_last_of("/")+1);
+	name.erase(name.find_last_of("."));
+	QString qstr = QString::fromStdString(name);
+	return qstr;
+}
+
+std::string NetCdfConfigureDialog::getName()
+{
+	std::string name = (lineEditName->text()).toStdString();
+	QString date = dateTimeEditDim3->date().toString(Qt::DateFormat::LocalDate);
+	name.append(" - ").append(date.toStdString());
+	return name;	
 }
 
 
