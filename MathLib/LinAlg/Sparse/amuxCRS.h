@@ -28,7 +28,7 @@ void amuxCRSParallelOpenMP (FP_TYPE a,
 				unsigned n, IDX_TYPE const * const __restrict__ iA, IDX_TYPE const * const __restrict__ jA,
 				FP_TYPE const * const A, FP_TYPE const * const __restrict__ x, FP_TYPE* __restrict__ y)
 {
-	unsigned i;
+	OPENMP_LOOP_TYPE i;
 	{
 #pragma omp parallel for
 		for (i = 0; i < n; i++) {

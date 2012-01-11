@@ -63,3 +63,10 @@ IF (WIN32)
 		ADD_DEFINITIONS( -DGCC )
 	ENDIF (MSVC)
 ENDIF (WIN32)
+
+# Missing OpenMP 3.0 implementation fix for Windows, this fixes #6
+IF(MSVC)
+	ADD_DEFINITIONS(-DOPENMP_LOOP_TYPE=int)
+ELSE()
+	ADD_DEFINITIONS(-DOPENMP_LOOP_TYPE=unsigned)
+ENDIF()

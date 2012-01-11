@@ -67,7 +67,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		return 0;
 	}
 
-	unsigned k;
+	OPENMP_LOOP_TYPE k;
 	for (unsigned l = 1; l <= nsteps; ++l) {
 #ifndef NDEBUG
 		std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
