@@ -3,6 +3,7 @@ set( SOURCES
 	ColorTableModel.cpp
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
+	ConditionWriterDialog.cpp
 	DatabaseConnection.cpp
 	DataView.cpp
 	DBConnectionDialog.cpp
@@ -41,6 +42,7 @@ set( MOC_HEADERS
 	ColorTableView.h
 	CondFromRasterDialog.h
 	CondItem.h	
+	ConditionWriterDialog.h
 	DatabaseConnection.h
 	DataView.h
 	DBConnectionDialog.h
@@ -85,6 +87,7 @@ set( HEADERS
 # UI files
 set( UIS
 	CondFromRaster.ui
+	ConditionWriter.ui
 	DatabaseResultView.ui
 	DBConnection.ui
 	FEMConditionSetup.ui

@@ -81,6 +81,7 @@ protected slots:
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
+	void showConditionWriterDialog();
 	/// Call dialog for creating or modifying FEM conditions.
 	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
 	/// Allows setting the name for a geometric object
@@ -97,7 +98,7 @@ protected slots:
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
-	void writeFEMConditionsToFile(QString geoName, QString fileName);
+	void writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
 

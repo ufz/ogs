@@ -17,6 +17,7 @@
 //dialogs
 #include "DBConnectionDialog.h"
 #include "CondFromRasterDialog.h"
+#include "ConditionWriterDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
 #include "GMSHPrefsDialog.h"
@@ -164,8 +165,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 			this, SLOT(showCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t)));
 	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
 	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
-	connect(geoTabWidget->treeView, SIGNAL(saveFEMConditionsRequested(QString, QString)),
-	        this, SLOT(writeFEMConditionsToFile(QString, QString)));
+	//connect(geoTabWidget->treeView, SIGNAL(saveFEMConditionsRequested(QString, QString)),
+	//        this, SLOT(writeFEMConditionsToFile(QString, QString)));
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -193,6 +194,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _processModel, SLOT(removeProcess(const FiniteElement::ProcessType)));
 	connect(modellingTabWidget, SIGNAL(requestNewProcess()),
 		    this, SLOT(showNewProcessDialog()));
+	connect(modellingTabWidget->treeView, SIGNAL(saveConditionsRequested()),
+			this, SLOT(showConditionWriterDialog()));
 
 	// VisPipeline Connects
 	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GEOLIB::GEOTYPE)),
@@ -1001,7 +1004,6 @@ void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 	dlg.exec();
 }
 
-
 void MainWindow::loadFEMConditions(std::string geoName)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
@@ -1087,27 +1089,37 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 	}
 }
 
-void MainWindow::writeFEMConditionsToFile(QString geoName, QString fileName)
+void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName)
 {
 	QFileInfo fi(fileName);
 	if (fi.suffix().compare("cnd") == 0 )
 	{
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
-		xml.writeFile(fileName, geoName);
+		xml.writeFile(fileName, geoName, type);
 	}
-	else if (fi.suffix().compare("bc") == 0 )
+	else 
 	{
 		const std::vector<FEMCondition*> conds = _project.getConditions();
 		for (size_t i=0; i<conds.size(); i++)
 		{
-			if ((conds[i]->getCondType() == FEMCondition::BOUNDARY_CONDITION) && 
+			if ((conds[i]->getCondType() == type) && 
 				(QString::fromStdString(conds[i]->getAssociatedGeometryName()) == geoName))
 			{
-				bc_list.push_back(new CBoundaryCondition(static_cast<BoundaryCondition*>(conds[i])));
+				if (type == FEMCondition::BOUNDARY_CONDITION)
+					bc_list.push_back(new CBoundaryCondition(static_cast<BoundaryCondition*>(conds[i])));
+				else if (type == FEMCondition::INITIAL_CONDITION)
+					ic_vector.push_back(new CInitialCondition(static_cast<InitialCondition*>(conds[i])));
+				else if (type == FEMCondition::SOURCE_TERM)
+					st_vector.push_back(new CSourceTerm(static_cast<SourceTerm*>(conds[i])));
 			}
 		}
-		BCWrite(fileName.toStdString());
+		if (type == FEMCondition::BOUNDARY_CONDITION)
+			BCWrite(fileName.toStdString());
+		else if (type == FEMCondition::INITIAL_CONDITION)
+			ICWrite(fileName.toStdString());
+		else if (type == FEMCondition::SOURCE_TERM)
+			STWrite(fileName.toStdString());
 	}
 }
 
@@ -1200,6 +1212,14 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 		OGSError::box("No geometry information selected.", "Error");
 		std::cout << "No geometry information selected..." << std::endl;
 	}
+}
+
+void MainWindow::showConditionWriterDialog()
+{
+	ConditionWriterDialog dlg(_geoModels);
+	connect(&dlg , SIGNAL(saveFEMConditionsRequested(const QString&, const FEMCondition::CondType, const QString&)),
+	        this, SLOT(writeFEMConditionsToFile(const QString&, const FEMCondition::CondType, const QString&)));
+	dlg.exec();
 }
 
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)

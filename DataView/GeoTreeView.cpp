@@ -104,12 +104,12 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			{
 				QAction* saveAction = menu.addAction("Save geometry...");
 				QAction* addCNDAction = menu.addAction("Load FEM Conditions...");
-				QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
+				//QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
 				menu.addSeparator();
 				QAction* removeAction = menu.addAction("Remove geometry");
 				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
-				connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
+				//connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
 				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
 		}
@@ -175,12 +175,13 @@ void GeoTreeView::loadFEMConditions()
 	        this->selectionModel()->currentIndex());
 	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
 }
-
+/*
 void GeoTreeView::saveFEMConditions()
 {
 	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	QString fileName = QFileDialog::getSaveFileName(NULL,
-						"Save FEM Conditions as", "", "OpenGeoSys FEM Condition file (*.cnd);; GeoSys Boundary Condition (*.bc)");
+						"Save FEM Conditions as", "", "OpenGeoSys FEM Condition file (*.cnd);; GeoSys Boundary Condition (*.bc);; GeoSys Initial Condition (*.ic);; GeoSys Source Condition (*.st)");
 	emit saveFEMConditionsRequested(item->data(0).toString(), fileName);
 }
+*/

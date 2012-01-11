@@ -51,13 +51,15 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 		QMenu menu;
 		if (cond_item)
 		{
-			QAction* removeCondAction    = menu.addAction("Remove conditions");
+			QAction* removeCondAction = menu.addAction("Remove conditions");
 			connect(removeCondAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
 		}
 
 		if (pcs_item)
 		{
-			QAction* removePCSAction    = menu.addAction("Remove process");
+			QAction* saveCondAction  = menu.addAction("Save FEM Conditions...");
+			QAction* removePCSAction = menu.addAction("Remove process");
+			connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveConditions()));
 			connect(removePCSAction, SIGNAL(triggered()), this, SLOT(removeProcess()));
 		}
 		menu.exec(event->globalPos());
@@ -74,6 +76,11 @@ void ProcessView::removeCondition()
 		const FEMCondition::CondType cond_type = item->getType();
 		emit conditionsRemoved(pcs_type, "", cond_type);
 	}
+}
+
+void ProcessView::saveConditions()
+{
+	emit saveConditionsRequested();
 }
 
 void ProcessView::removeProcess()
