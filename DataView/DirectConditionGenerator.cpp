@@ -27,7 +27,7 @@ const std::vector< std::pair<size_t,double> > DirectConditionGenerator::fromRast
 		{
 			const double* coords (surface_nodes[i]->getData());
 
-			if (coords[0]>=origin_x && coords[0]<(origin_x+(delta*imgheight)) && coords[1]>=origin_y && coords[1]<(origin_y+(delta*imgwidth)))
+			if (coords[0]>=origin_x && coords[0]<(origin_x+(delta*imgwidth)) && coords[1]>=origin_y && coords[1]<(origin_y+(delta*imgheight)))
 			{
 				size_t cell_x = static_cast<size_t>(floor((coords[0] - origin_x)/delta));
 				size_t cell_y = static_cast<size_t>(floor((coords[1] - origin_y)/delta));

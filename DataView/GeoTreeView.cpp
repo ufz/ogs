@@ -181,6 +181,6 @@ void GeoTreeView::saveFEMConditions()
 	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	QString fileName = QFileDialog::getSaveFileName(NULL,
-						"Save FEM Conditions as", "", "GeoSys FEM Condition file (*.cnd)");
+						"Save FEM Conditions as", "", "OpenGeoSys FEM Condition file (*.cnd);; GeoSys Boundary Condition (*.bc)");
 	emit saveFEMConditionsRequested(item->data(0).toString(), fileName);
 }

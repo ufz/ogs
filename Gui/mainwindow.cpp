@@ -43,14 +43,17 @@
 #include "VtkVisPipelineItem.h"
 
 //test
+//#include "MathIO/CRSIO.h"
+//#include "Raster.h"
+
+// FEM Conditions
 #include "BoundaryCondition.h"
 #include "InitialCondition.h"
-#include "MathIO/CRSIO.h"
-#include "Raster.h"
 #include "SourceTerm.h"
 #include "rf_bc_new.h"
 #include "rf_ic_new.h"
 #include "rf_st_new.h"
+#include "FEMIO/BoundaryConditionIO.h"
 
 // FileIO includes
 #include "FEFLOWInterface.h"
@@ -1086,9 +1089,26 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 
 void MainWindow::writeFEMConditionsToFile(QString geoName, QString fileName)
 {
-	std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-	XmlCndInterface xml(&_project, schemaName);
-	xml.writeFile(fileName, geoName);
+	QFileInfo fi(fileName);
+	if (fi.suffix().compare("cnd") == 0 )
+	{
+		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
+		XmlCndInterface xml(&_project, schemaName);
+		xml.writeFile(fileName, geoName);
+	}
+	else if (fi.suffix().compare("bc") == 0 )
+	{
+		const std::vector<FEMCondition*> conds = _project.getConditions();
+		for (size_t i=0; i<conds.size(); i++)
+		{
+			if ((conds[i]->getCondType() == FEMCondition::BOUNDARY_CONDITION) && 
+				(QString::fromStdString(conds[i]->getAssociatedGeometryName()) == geoName))
+			{
+				bc_list.push_back(new CBoundaryCondition(static_cast<BoundaryCondition*>(conds[i])));
+			}
+		}
+		BCWrite(fileName.toStdString());
+	}
 }
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
