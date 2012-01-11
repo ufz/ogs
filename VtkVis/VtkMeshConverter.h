@@ -74,6 +74,8 @@ private:
 	static GridAdapter::Element* createElement(MshElemType::type t, int mat,
 		                                 size_t node1, size_t node2, 
 										 size_t node3, size_t node4 = 0);
+
+	static double getExistingValue(const double* img, size_t length);
 };
 
 #endif // VTKMESHCONVERTER_H

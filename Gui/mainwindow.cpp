@@ -23,6 +23,7 @@
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MshQualitySelectionDialog.h"
+#include "NetCdfConfigureDialog.h"
 #include "NewProcessDialog.h"
 #include "SetNameDialog.h"
 #include "VisPrefsDialog.h"
@@ -643,7 +644,7 @@ void MainWindow::loadFile(const QString &fileName)
 	}
 
 	// NetCDF files
-	// YW  07.2010
+	// CH  01.2012
 	else if (fi.suffix().toLower() == "nc")
 	{
 #ifndef NDEBUG
@@ -652,17 +653,19 @@ void MainWindow::loadFile(const QString &fileName)
 		std::cout << "NetCDF Read ...\n" << std::flush;
 #endif
 		std::string name = fileName.toStdString();
-		std::vector<GEOLIB::Point*>* pnt_vec =
-		        new std::vector<GEOLIB::Point*>();
-		/* Data dimensions. */
-		size_t len_rlat, len_rlon;
-		FileIO::NetCDFInterface::readNetCDFData(name, pnt_vec, _geoModels,
-		                                        len_rlat, len_rlon);
-		MeshLib::CFEMesh* mesh = FileIO::NetCDFInterface::createMeshFromPoints(pnt_vec,
-		                                                                       len_rlat,
-		                                                                       len_rlon);
-		//GridAdapter* grid = new GridAdapter(mesh);
-		_meshModels->addMesh(mesh, name);
+		char * filebuffer = new char[name.length()];
+		char* nameFile = strcpy(filebuffer,name.c_str());
+		GridAdapter* mesh;
+				
+		NetCdfConfigureDialog dlg(nameFile);
+		dlg.exec();
+		if (dlg.getMesh() != NULL)
+		{
+			mesh = dlg.getMesh();
+			mesh->setName(dlg.getName());
+			_meshModels->addMesh(mesh);
+		}
+
 #ifndef NDEBUG
 		std::cout << myTimer.elapsed() << " ms" << std::endl;
 #endif
