@@ -49,8 +49,12 @@ ENDIF (OGS_PROFILE)
 IF (WIN32)
 	## For Visual Studio compiler
 	IF (MSVC)
-		ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS
-			-D_CRT_XNONSTDC_NO_WARNINGS)
+		ADD_DEFINITIONS(
+			-D_CRT_SECURE_NO_WARNINGS
+			-D_CRT_NONSTDC_NO_WARNINGS
+			-D_CRT_XNONSTDC_NO_WARNINGS
+			-D__restrict__=__restrict   # this fixes #5
+		)
 		# Sets warning level 3 and ignores some warnings
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267")
 	# cygwin
@@ -59,3 +63,10 @@ IF (WIN32)
 		ADD_DEFINITIONS( -DGCC )
 	ENDIF (MSVC)
 ENDIF (WIN32)
+
+# Missing OpenMP 3.0 implementation fix for Windows, this fixes #6
+IF(MSVC)
+	ADD_DEFINITIONS(-DOPENMP_LOOP_TYPE=int)
+ELSE()
+	ADD_DEFINITIONS(-DOPENMP_LOOP_TYPE=unsigned)
+ENDIF()

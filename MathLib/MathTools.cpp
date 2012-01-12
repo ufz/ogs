@@ -13,7 +13,7 @@ namespace MathLib {
 double scpr(double const * const v, double const * const w, unsigned n)
 {
 	long double res (v[0]*w[0]);
-	unsigned k;
+	OPENMP_LOOP_TYPE k;
 
 	#pragma omp parallel for reduction (+:res)
 	for (k = 1; k<n; k++) {
