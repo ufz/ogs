@@ -132,8 +132,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					vtkIdType vtk_id = static_cast<vtkIdType>(id);
 					*/
 					const GEOLIB::Point* pnt = static_cast<const GEOLIB::Point*>((*_cond_vec)[n]->getGeoObj());
-					double coords[3] = {(*pnt)[0], (*pnt)[1], (*pnt)[2]};
-					newPoints->InsertNextPoint(coords);
+					newPoints->InsertNextPoint(pnt->getData());
 					
 					newVerts->InsertNextCell(1, &pnt_id);
 					if (type == FiniteElement::CONSTANT || type == FiniteElement::CONSTANT_NEUMANN)
@@ -160,8 +159,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			{
 				size_t point_index = ply->getPointID(i);
 				
-				double coords[3] = {(*(*_points)[point_index])[0], (*(*_points)[point_index])[1], (*(*_points)[point_index])[2]};
-				newPoints->InsertNextPoint(coords);
+				newPoints->InsertNextPoint((*_points)[point_index]->getData());
 				newLines->InsertCellPoint(pnt_id);
 				distypes->InsertNextValue(dis_type_value);
 
@@ -202,8 +200,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					if (point_idx_map[point_index] == -1)
 					{
 						point_idx_map[point_index] = pnt_id;
-						double coords[3] = {(*(*_points)[point_index])[0], (*(*_points)[point_index])[1], (*(*_points)[point_index])[2]};
-						newPoints->InsertNextPoint(coords);
+						newPoints->InsertNextPoint((*_points)[point_index]->getData());
 						aPolygon->GetPointIds()->SetId(j, pnt_id);
 						distypes->InsertNextValue(dis_type_value);
 						
@@ -235,8 +232,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			size_t nValues = dis_values.size();
 			for (size_t i=0; i<nValues; i+=2)
 			{
-				double coords[3] = {(*(*_points)[dis_values[i]])[0], (*(*_points)[dis_values[i]])[1], (*(*_points)[dis_values[i]])[2]};
-				vtkIdType pid = newPoints->InsertNextPoint(coords);
+				vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_values[i]]->getData());
 				newVerts->InsertNextCell(1, &pid);
 				scalars->InsertNextValue(dis_values[i+1]);
 				distypes->InsertNextValue(dis_type_value);

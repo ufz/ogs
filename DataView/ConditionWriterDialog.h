@@ -9,7 +9,7 @@
 #include "ui_ConditionWriter.h"
 #include <QDialog>
 
-#include "GeoObjects.h"
+#include "GEOObjects.h"
 #include "FEMCondition.h"
 
 /**
