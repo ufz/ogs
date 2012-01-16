@@ -34,12 +34,13 @@ private:
 	int getTimeStep();
 	int getDim4();
 	int getResolution();
-	NcFile *currentFile;
-	NcVar *currentVar;
-	QDateTime currentInitialDateTime;
-	GridAdapter* currentMesh;
-	char* currentPath;
 	QString setName();
+
+	NcFile *_currentFile;
+	NcVar *_currentVar;
+	QDateTime _currentInitialDateTime;
+	GridAdapter* _currentMesh;
+	char* _currentPath;
 	
 private slots:
 	void accept();
