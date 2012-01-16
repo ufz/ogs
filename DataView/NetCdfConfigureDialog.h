@@ -4,13 +4,13 @@
 #ifndef NETCDFCONFIGUREDIALOG_H
 #define NETCDFCONFIGUREDIALOG_H
 
-#include <vtknetcdf\netcdf.h>
-#include <vtknetcdf\netcdfcpp.h>
+#include <vtknetcdf/netcdf.h>
+#include <vtknetcdf/netcdfcpp.h>
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
 #include "GEOObjects.h"
 #include "msh_mesh.h"
-#include "..\Qt\VtkVis\VtkMeshConverter.h"
+#include "VtkMeshConverter.h"
 #include <QSettings>
 #include <QMessageBox>
 
