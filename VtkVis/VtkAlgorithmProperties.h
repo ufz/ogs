@@ -172,12 +172,16 @@ public:
 	}
 
 	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
-	void SetLookUpTable(const QString array_name, vtkLookupTable* lut)
+	void SetLookUpTable(const QString &array_name, vtkLookupTable* lut)
 	{
 		if (array_name.length() > 0)
 		{
 			std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
-			if (it != _lut.end()) it->second->Delete();
+			if (it != _lut.end()) 
+			{
+				it->second->Delete();
+				_lut.erase(it);
+			}
 			_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
 		}
 	}
