@@ -89,6 +89,8 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
 	bool* visNodes(new bool[incWidth * incHeight]);
 	int* node_idx_map(new int[incWidth * incHeight]);
 
+	double noDataValue = getExistingValue(img, imgWidth*imgHeight);
+
 	for (size_t j = 0; j < incWidth; j++)
 	{
 		pixVal[j]=0;
@@ -101,8 +103,17 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
 		{
 			const size_t img_idx = i * imgHeight + j;
 			const size_t index = (i+1) * incHeight + j;
-			pixVal[index] = img[img_idx];
-			visNodes[index] = 1;
+			if (img[img_idx] == -9999)
+			{
+				visNodes[index] = false;
+				pixVal[index] = noDataValue;
+			}
+			else
+			{
+				pixVal[index] = img[img_idx];
+				visNodes[index] = true;
+			}
+
 			node_idx_map[index]=-1;
 		}
 		pixVal[(i+2)*incHeight-1]=0;
@@ -265,4 +276,14 @@ GridAdapter* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid
 		mesh->addElement(elem);
 	}
 	return mesh;
+}
+
+double VtkMeshConverter::getExistingValue(const double* img, size_t length)
+{
+	for (size_t i=0; i<length; i++)
+	{
+		if (img[i] != -9999)
+			return img[i];
+	}
+	return -9999;
 }
