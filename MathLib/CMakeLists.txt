@@ -27,7 +27,7 @@ SET ( MathLib_LinAlg_Dense_Files
 	LinAlg/Dense/Matrix.h
 )
 SOURCE_GROUP( MathLib\\LinAlg\\Dense FILES ${MathLib_LinAlg_Dense_Files})
-SET ( SOURCES ${SOURCES} )
+SET ( SOURCES ${SOURCES} ${MathLib_LinAlg_Dense_Files})
 
 SET ( MathLib_LinAlg_Sparse_Files
 	LinAlg/Sparse/amuxCRS.h
@@ -70,11 +70,11 @@ SOURCE_GROUP( MathLib\\LinAlg\\Preconditioner FILES ${MathLib_LinAlg_Preconditio
 SET ( SOURCES ${SOURCES} ${MathLib_LinAlg_Preconditioner_Files})
 
 IF (METIS_FOUND)
-	FILE(GLOB MathLib_LinAlg_Sparse_NestedDissection_HEADERS
-		LinAlg/Sparse/NestedDissectionPermutation *.h)
+	FILE(GLOB MathLib_LinAlg_Sparse_NestedDissectionPermutation_HEADERS
+		LinAlg/Sparse/NestedDissectionPermutation/*.h)
 
-	FILE(GLOB MathLib_LinAlg_Sparse_NestedDissection_SOURCES
-		LinAlg/Sparse/NestedDissectionPermutation *.cpp)
+	FILE(GLOB MathLib_LinAlg_Sparse_NestedDissectionPermutation_SOURCES
+		LinAlg/Sparse/NestedDissectionPermutation/*.cpp)
 
 	SOURCE_GROUP( MathLib\\LinAlg\\Sparse\\NestedDissectionPermutation FILES
 		${MathLib_LinAlg_Sparse_NestedDissectionPermutation_HEADERS}
