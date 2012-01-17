@@ -254,8 +254,8 @@ long NetCdfConfigureDialog::convertDateToMinutes(QDateTime initialDateTime, QDat
 
 int NetCdfConfigureDialog::getTimeStep()
 {
-	QTime selectedTime = dateTimeEditDim3->time();
-	QDate selectedDate = dateTimeEditDim3->date();
+	//QTime selectedTime = dateTimeEditDim3->time();
+	//QDate selectedDate = dateTimeEditDim3->date();
 
 	NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
 	
