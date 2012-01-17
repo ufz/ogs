@@ -87,7 +87,8 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	QVTK
 	VtkVis
 	VtkAct
-  vtkNetCDF
+    vtkNetCDF
+    vtkNetCDF_cxx
 )
 
 IF (Shapelib_FOUND)
