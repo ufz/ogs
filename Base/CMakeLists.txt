@@ -1,5 +1,5 @@
 # Source files
-SET( HEADERS
+SET ( Base_Files
         binarySearch.h
         Configure.h.in
 	CPUTimeTimer.h
@@ -14,23 +14,21 @@ SET( HEADERS
 	TimeMeasurementBase.h
         uniqueListInsert.h
         wait.h
-)
-
-SET( SOURCES
 	binarySearch.cpp
 	DateTools.cpp
         CPUTimeTimer.cpp
 	RunTimeTimer.cpp
 	StringTools.cpp
 )
+SOURCE_GROUP( Base FILES ${Base_Files})
 
 # Create the library
-ADD_LIBRARY( Base STATIC ${HEADERS} ${SOURCES} )
+ADD_LIBRARY( Base STATIC ${Base_Files})
 
 SET_TARGET_PROPERTIES(Base PROPERTIES LINKER_LANGUAGE CXX)
 
 INCLUDE_DIRECTORIES(
-        ../GEOLib
+        ../GeoLib
         ../MathLib
         .
 )

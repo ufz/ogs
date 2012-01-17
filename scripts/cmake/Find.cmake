@@ -13,7 +13,6 @@ FIND_PROGRAM(GPROF_PATH gprof DOC "GNU profiler gprof")
 
 FIND_PACKAGE(cppcheck)
 
-
 ######################
 ### Find libraries ###
 ######################
@@ -23,4 +22,6 @@ IF(OPENMP_FOUND)
 	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 ENDIF()
+
+FIND_PACKAGE(METIS)
 
