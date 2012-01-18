@@ -1290,7 +1290,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 
 		FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
 		connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
-		int accepted = dlg.exec();
+		dlg.exec();
 	}
 }
 

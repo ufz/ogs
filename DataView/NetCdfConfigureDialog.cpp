@@ -321,13 +321,13 @@ void NetCdfConfigureDialog::createMesh()
 		long* newOrigin = new long[_currentVar->num_dims()];
 		for (int i=0; i < _currentVar->num_dims(); i++) newOrigin[i]=0;
 		newOrigin[comboBoxDim3->currentIndex()] = getTimeStep(); //set origin to selected time
-		NcBool myStartBool = _currentVar->set_cur(newOrigin);
+		_currentVar->set_cur(newOrigin);
 		//Dimension 4:
 		if (_currentVar->num_dims() > 3) newOrigin[comboBoxDim4->currentIndex()] = getDim4(); //if there are is a 4th dimension 
 		delete newOrigin;
 	}
 	
-	NcBool arrayOfValues = _currentVar->get(dimArrayT2mMax,edgeT2Max); //create Array of Values
+	_currentVar->get(dimArrayT2mMax,edgeT2Max); //create Array of Values
 
 	for (int i=0; i < (sizeLat*sizeLon); i++)
 	{

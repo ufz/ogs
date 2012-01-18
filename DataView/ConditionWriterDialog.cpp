@@ -67,7 +67,7 @@ void ConditionWriterDialog::accept()
 		QString geo_name = this->geoBox->currentText();
 		if (this->geoBox->currentIndex() == 0) geo_name = "";
 
-		FEMCondition::CondType cond_type;
+		FEMCondition::CondType cond_type(FEMCondition::UNSPECIFIED);;
 		switch (this->condTypeBox->currentIndex())
 		{
 			case 0: 
