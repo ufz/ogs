@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 		MathLib::CG(mat, b, x, eps, steps);
 	} else {
 		#ifdef _OPENMP
-		MathLib::CGParallel(mat, b, x, eps, steps, num_omp_threads);
+		MathLib::CGParallel(mat, b, x, eps, steps);
 		#else
 		std::cout << "OpenMP is not switched on" << std::endl;
 		#endif

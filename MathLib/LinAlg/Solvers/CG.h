@@ -18,7 +18,7 @@ unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 
 #ifdef _OPENMP
 unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const b,
-		double* const x, double& eps, unsigned& nsteps, unsigned num_threads = 1);
+		double* const x, double& eps, unsigned& nsteps);
 #endif
 
 } // end namespace MathLib

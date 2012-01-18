@@ -33,9 +33,9 @@ namespace MathLib {
 
 #ifdef _OPENMP
 unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const b,
-		double* const x, double& eps, unsigned& nsteps, unsigned num_threads)
+		double* const x, double& eps, unsigned& nsteps)
 {
-	unsigned N = mat->getNRows();
+	const unsigned N(mat->getNRows());
 	double * __restrict__ p(new double[N]);
 	double * __restrict__ q(new double[N]);
 	double * __restrict__ r(new double[N]);
@@ -63,6 +63,9 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		eps = resid / nrmb;
 		nsteps = 0;
 		delete[] p;
+		delete[] q;
+		delete[] r;
+		delete[] rhat;
 		return 0;
 	}
 
@@ -128,6 +131,9 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 			eps = resid / nrmb;
 			nsteps = l;
 			delete[] p;
+			delete[] q;
+			delete[] r;
+			delete[] rhat;
 			return 0;
 		}
 
@@ -135,6 +141,9 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 	}
 	eps = resid / nrmb;
 	delete[] p;
+	delete[] q;
+	delete[] r;
+	delete[] rhat;
 	return 1;
 }
 #endif
