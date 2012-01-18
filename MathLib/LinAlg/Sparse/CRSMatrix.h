@@ -199,15 +199,14 @@ public:
 	 */
 	void eraseEntries(IDX_TYPE n_rows_cols, IDX_TYPE const* const rows_cols)
 	{
-		IDX_TYPE n_cols(MatrixBase::_n_rows);
 		//*** remove the rows
 		removeRows(n_rows_cols, rows_cols);
 		//*** transpose
-		transpose(n_cols);
+		transpose();
 		//*** remove columns in original means removing rows in the transposed
 		removeRows(n_rows_cols, rows_cols);
 		//*** transpose again
-		transpose(MatrixBase::_n_rows);
+		transpose();
 	}
 
 	/**
@@ -309,11 +308,11 @@ protected:
 		delete [] data_new;
 	}
 
-	void transpose (IDX_TYPE n_cols)
+	void transpose ()
 	{
 		// create a helper array row_ptr_nnz
-		IDX_TYPE *row_ptr_nnz(new IDX_TYPE[n_cols+1]);
-		for (IDX_TYPE k(0); k <= n_cols; k++) {
+		IDX_TYPE *row_ptr_nnz(new IDX_TYPE[MatrixBase::_n_cols+1]);
+		for (IDX_TYPE k(0); k <= MatrixBase::_n_cols; k++) {
 			row_ptr_nnz[k] = 0;
 		}
 
@@ -324,19 +323,19 @@ protected:
 		}
 
 		// create row_ptr_trans
-		IDX_TYPE *row_ptr_trans(new IDX_TYPE[n_cols + 1]);
+		IDX_TYPE *row_ptr_trans(new IDX_TYPE[MatrixBase::_n_cols + 1]);
 		row_ptr_trans[0] = 0;
-		for (IDX_TYPE k(0); k < n_cols; k++) {
+		for (IDX_TYPE k(0); k < MatrixBase::_n_cols; k++) {
 			row_ptr_trans[k+1] = row_ptr_trans[k] + row_ptr_nnz[k];
 		}
 
 		// make a copy of row_ptr_trans
-		for (IDX_TYPE k(0); k <= n_cols; k++) {
+		for (IDX_TYPE k(0); k <= MatrixBase::_n_cols; k++) {
 			row_ptr_nnz[k] = row_ptr_trans[k];
 		}
 
 		// create arrays col_idx_trans and data_trans
-		assert(nnz == row_ptr_trans[n_cols]);
+		assert(nnz == row_ptr_trans[MatrixBase::_n_cols]);
 		IDX_TYPE *col_idx_trans(new IDX_TYPE[nnz]);
 		FP_TYPE *data_trans(new FP_TYPE[nnz]);
 
@@ -351,7 +350,7 @@ protected:
 			}
 		}
 
-		MatrixBase::_n_rows = n_cols;
+		BaseLib::swap(MatrixBase::_n_rows, MatrixBase::_n_cols);
 		BaseLib::swap(row_ptr_trans, _row_ptr);
 		BaseLib::swap(col_idx_trans, _col_idx);
 		BaseLib::swap(data_trans, _data);
