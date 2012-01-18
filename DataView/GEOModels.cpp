@@ -11,6 +11,8 @@
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 
+#include "StringTools.h"
+
 #include "OGSError.h"
 
 GEOModels::GEOModels( QObject* parent /*= 0*/ ) :
@@ -210,26 +212,40 @@ void GEOModels::connectPolylineSegments(const std::string &geoName,
 
 void GEOModels::addNameForElement(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, std::string new_name)
 {
-	switch(object_type) {
-		case GEOLIB::POINT:
-			{
-				GEOLIB::PointVec* pnt_vec = this->getPointVecObj(geometry_name);
-				pnt_vec->setNameForElement(id, new_name);
-				break;
-			}
-		case GEOLIB::POLYLINE:
-			{
-				GEOLIB::PolylineVec* ply_vec = this->getPolylineVecObj(geometry_name);
-				ply_vec->setNameForElement(id, new_name);
-				break;
-			}
-		case GEOLIB::SURFACE:
-			{
-				GEOLIB::SurfaceVec* sfc_vec = this->getSurfaceVecObj(geometry_name);
-				sfc_vec->setNameForElement(id, new_name);
-				break;
-			}
-		default:
-			std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." << std::endl;
-	}
+	if (object_type == GEOLIB::POINT)
+		this->getPointVecObj(geometry_name)->setNameForElement(id, new_name);
+	else if (object_type == GEOLIB::POLYLINE)
+		this->getPolylineVecObj(geometry_name)->setNameForElement(id, new_name);
+	else if (object_type == GEOLIB::SURFACE)
+		this->getSurfaceVecObj(geometry_name)->setNameForElement(id, new_name);
+	else
+		std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." << std::endl;
 }
+
+void GEOModels::addNameForObjectPoints(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, const std::string &geo_object_name, const std::string &new_name)
+{
+	const GEOLIB::GeoObject* obj = this->getGEOObject(geometry_name, object_type, geo_object_name);
+	GEOLIB::PointVec* pnt_vec = this->getPointVecObj(geometry_name);
+	if (object_type == GEOLIB::POLYLINE)
+	{
+		const GEOLIB::Polyline* ply = dynamic_cast<const GEOLIB::Polyline*>(obj);
+		size_t nPoints = ply->getNumberOfPoints();
+		for (size_t i=0; i<nPoints; i++)
+			pnt_vec->setNameForElement(ply->getPointID(i), new_name + "_Point" + number2str(ply->getPointID(i)));
+	}
+	else if (object_type == GEOLIB::SURFACE)
+	{
+		const GEOLIB::Surface* sfc = dynamic_cast<const GEOLIB::Surface*>(obj);
+		size_t nTriangles = sfc->getNTriangles();
+		for (size_t i=0; i<nTriangles; i++)
+		{
+			const GEOLIB::Triangle* tri = (*sfc)[i];
+			pnt_vec->setNameForElement((*tri)[0], new_name + "_Point" + number2str((*tri)[0]));
+			pnt_vec->setNameForElement((*tri)[1], new_name + "_Point" + number2str((*tri)[1]));
+			pnt_vec->setNameForElement((*tri)[2], new_name + "_Point" + number2str((*tri)[2]));
+		}	
+	}
+	else
+		std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." << std::endl;
+}
+

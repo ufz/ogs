@@ -83,7 +83,7 @@ protected slots:
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 	void showConditionWriterDialog();
 	/// Call dialog for creating or modifying FEM conditions.
-	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
+	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, bool on_points = false);
 	/// Allows setting the name for a geometric object
 	void showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
 	/// Calls the diagram prefs dialog from the Tools menu.

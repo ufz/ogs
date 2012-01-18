@@ -92,10 +92,19 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		// The current index refers to a geo-object
 		if (parent != NULL)
 		{
-			QAction* addCondAction = menu.addAction("Set as FEM condition...");
+			QMenu* cond_menu = new QMenu("Set FEM Condition");
+			menu.addMenu(cond_menu);
+			QAction* addCondAction = cond_menu->addAction("On object...");
+			QAction* addCondPointAction = cond_menu->addAction("On all points...");
 			QAction* addNameAction = menu.addAction("Set name...");
-			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setElementAsCondition()));
+			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setObjectAsCondition()));
 			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
+
+			if (parent->getType() == GEOLIB::POINT)
+				addCondPointAction->setEnabled(false);
+			else
+				connect(addCondPointAction, SIGNAL(triggered()), this, SLOT(setObjectPointsAsCondition()));
+
 		}
 		// The current index refers to the name of a geometry-object
 		else if (item->childCount() > 0)
@@ -138,14 +147,14 @@ void GeoTreeView::removeList()
 		emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
 }
 
-void GeoTreeView::setElementAsCondition()
+void GeoTreeView::setElementAsCondition(bool set_on_points)
 {
 	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	const size_t id = item->row();
 	const GEOLIB::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
-	emit requestCondSetupDialog(geometry_name, type, id);
+	emit requestCondSetupDialog(geometry_name, type, id, set_on_points);
 }
 
 void GeoTreeView::setNameForElement()

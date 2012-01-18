@@ -8,6 +8,7 @@
 #include "FEMEnums.h"
 #include "ProjectData.h"
 #include "StrictDoubleValidator.h"
+#include "StringTools.h"
 
 #include "BoundaryCondition.h"
 #include "InitialCondition.h"
@@ -17,8 +18,9 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 												 const GEOLIB::GEOTYPE type,
 												 const std::string &geo_name,
 												 const GEOLIB::GeoObject* const geo_object,
+												 bool  on_points,
 												 QDialog* parent)
-: QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _secondValueEdit(NULL),
+: QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points), _secondValueEdit(NULL),
   _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	_cond.setGeoType(type);
@@ -108,24 +110,13 @@ void FEMConditionSetupDialog::accept()
 		_cond.setDisValue(dis_values);
 	}
 	else	// direct
-	{
 		_cond.setProcessDistributionType(FiniteElement::DIRECT);
-	}
 
-	FEMCondition* new_cond(NULL);
-	switch(this->condTypeBox->currentIndex())
-	{
-		case 0:
-			new_cond = new BoundaryCondition(_cond);
-			break;
-		case 1:
-			new_cond = new InitialCondition(_cond);
-			break;
-		default:
-			new_cond = new SourceTerm(_cond);
-	}
+	if (!_set_on_points)
+		emit addFEMCondition(this->typeCast(_cond));
+	else
+		this->copyCondOnPoints();
 
-	emit addFEMCondition(new_cond);
 	this->done(QDialog::Accepted);
 }
 
@@ -180,4 +171,61 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 		}
 	}
 
+}
+
+FEMCondition* FEMConditionSetupDialog::typeCast(const FEMCondition &cond)
+{
+	FEMCondition* new_cond(NULL);
+	switch(this->condTypeBox->currentIndex())
+	{
+		case 0:
+			new_cond = new BoundaryCondition(cond);
+			break;
+		case 1:
+			new_cond = new InitialCondition(cond);
+			break;
+		default:
+			new_cond = new SourceTerm(cond);
+	}
+	return new_cond;
+}
+
+void FEMConditionSetupDialog::copyCondOnPoints()
+{
+	if (_cond.getGeoType() == GEOLIB::POLYLINE)
+	{
+		const GEOLIB::Polyline* ply = dynamic_cast<const GEOLIB::Polyline*>(_cond.getGeoObj());
+		size_t nPoints = ply->getNumberOfPoints();
+		for (size_t i=0; i<nPoints; i++)
+		{
+			FEMCondition* cond = new FEMCondition(_cond);
+			cond->setGeoObj(NULL);
+			cond->setGeoType(GEOLIB::POINT);
+			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str(ply->getPointID(i)));
+			cond->clearDisValues();
+			cond->setDisValue((*ply->getPoint(i))[2]);
+			emit addFEMCondition(this->typeCast(*cond));
+		}
+	}
+	else if (_cond.getGeoType() == GEOLIB::SURFACE)
+	{
+		const GEOLIB::Surface* sfc = dynamic_cast<const GEOLIB::Surface*>(_cond.getGeoObj());
+		size_t nTriangles = sfc->getNTriangles();
+		for (size_t i=0; i<nTriangles; i++)
+		{
+			const GEOLIB::Triangle* tri = (*sfc)[i];
+			for (size_t j=0; j<3; j++)
+			{
+				FEMCondition* cond = new FEMCondition(_cond);
+				cond->setGeoObj(NULL);
+				cond->setGeoType(GEOLIB::POINT);
+				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
+				cond->clearDisValues();
+				cond->setDisValue((*tri->getPoint(i))[2]);
+				emit addFEMCondition(this->typeCast(*cond));
+			}
+		}	
+	}
+	else
+		std::cout << "Error discerning GeoType ..." << std::endl;
 }

@@ -32,6 +32,7 @@ public:
 							const GEOLIB::GEOTYPE type, 
 							const std::string &geo_name, 
 							const GEOLIB::GeoObject* const geo_object, 
+							bool  on_points = false,
 							QDialog* parent = 0);
 
 	/// Constructor for editing an existing FEM condition.
@@ -42,6 +43,7 @@ private:
 	void setupDialog();
 
 	FEMCondition _cond;
+	bool _set_on_points;
 	QLineEdit* _secondValueEdit;
 	StrictDoubleValidator* _first_value_validator;
 	StrictDoubleValidator* _second_value_validator;
@@ -56,6 +58,10 @@ private slots:
 	void on_condTypeBox_currentIndexChanged(int index);
 
 	void on_disTypeBox_currentIndexChanged(int index);
+
+	void copyCondOnPoints();
+
+	FEMCondition* typeCast(const FEMCondition &cond);
 
 signals:
 	void addFEMCondition(FEMCondition*);

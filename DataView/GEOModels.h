@@ -72,7 +72,11 @@ public slots:
 	                              const std::string &name);
 	virtual bool removeSurfaceVec(const std::string &name);
 
+	/// Adds the name 'new_name' for the geo-object specified by the parameters
 	void addNameForElement(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, std::string new_name);
+
+	/// Adds a generic name to all points that are part of the specified geo-object
+	void addNameForObjectPoints(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, const std::string &geo_object_name, const std::string &new_name);
 
 	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
 	void connectPolylineSegments(const std::string &geoName,
