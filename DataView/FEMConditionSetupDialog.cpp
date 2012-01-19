@@ -221,7 +221,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				cond->setGeoType(GEOLIB::POINT);
 				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
 				cond->clearDisValues();
-				cond->setDisValue((*tri->getPoint(i))[2]);
+				cond->setDisValue((*tri->getPoint(j))[2]);
 				emit addFEMCondition(this->typeCast(*cond));
 			}
 		}	
