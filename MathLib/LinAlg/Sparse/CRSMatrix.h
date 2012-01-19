@@ -245,7 +245,7 @@ protected:
 	{
 		// copy the data
 		IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
-		for	(IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+		for	(IDX_TYPE k(0); k<=MatrixBase::_n_rows; k++) {
 			_row_ptr[k] = row_ptr[k];
 		}
 
