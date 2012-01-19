@@ -230,7 +230,37 @@ public:
 		}
 	}
 
+	CRSMatrix<FP_TYPE, IDX_TYPE>* getTranspose() const
+	{
+		CRSMatrix<FP_TYPE, IDX_TYPE>* transposed_mat(new CRSMatrix<FP_TYPE, IDX_TYPE>(this));
+		transposed_mat->transpose();
+		return transposed_mat;
+	}
+
 protected:
+	CRSMatrix(CRSMatrix const& rhs) :
+		SparseMatrixBase<FP_TYPE, IDX_TYPE> (rhs.getNRows(), rhs.getNCols()),
+		_row_ptr(new IDX_TYPE[rhs.getNRows() + 1]), _col_idx(new IDX_TYPE[rhs.getNNZ()]),
+		_data(new FP_TYPE[rhs.getNNZ()])
+	{
+		// copy the data
+		IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
+		for	(IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+			_row_ptr[k] = row_ptr[k];
+		}
+
+		IDX_TYPE nnz(rhs.getNNZ());
+		IDX_TYPE const*const col_idx(rhs.getColIdxArray());
+		for	(IDX_TYPE k(0); k<nnz; k++) {
+			_col_idx[k] = col_idx[k];
+		}
+
+		FP_TYPE const*const data(rhs.getData());
+		for	(IDX_TYPE k(0); k<nnz; k++) {
+			_data[k] = data[k];
+		}
+	}
+
 	void removeRows (IDX_TYPE n_rows_cols, IDX_TYPE const*const rows)
 	{
 		//*** determine the number of new rows and the number of entries without the rows
