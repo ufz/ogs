@@ -11,7 +11,9 @@
 //#include "MSHEnums.h"
 #include "GridAdapter.h"
 
-//class GridAdapter;
+#include "TemplatePoint.h"
+#include "Point.h"
+
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
 
@@ -76,6 +78,8 @@ private:
 										 size_t node3, size_t node4 = 0);
 
 	static double getExistingValue(const double* img, size_t length);
+
+	static void writepoints(std::vector<GEOLIB::Point*> pnts, size_t id);
 };
 
 #endif // VTKMESHCONVERTER_H

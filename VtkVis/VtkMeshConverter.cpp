@@ -44,7 +44,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	bool* visNodes(new bool[incWidth * incHeight]);
 	int* node_idx_map(new int[incWidth * incHeight]);
 
-	for (size_t j = 0; j < incWidth; j++)
+	for (size_t j = 0; j < incHeight; j++)
 	{
 		pixVal[j]=0;
 		visNodes[j]=false;
@@ -146,6 +146,9 @@ GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 	size_t node_idx_count(0);
 	const double x_offset(origin.first - scalingFactor/2.0);
 	const double y_offset(origin.second - scalingFactor/2.0);
+	
+		std::vector<GEOLIB::Point*> pixvalpoints;
+
 
 	for (size_t i = 0; i < incWidth; i++)
 		for (size_t j = 0; j < incHeight; j++)
@@ -164,10 +167,13 @@ GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 				grid->addNode(new GEOLIB::Point(x_offset + (scalingFactor * j),
 										        y_offset + (scalingFactor * i),
 										        zValue));
+				pixvalpoints.push_back(new GEOLIB::Point(x_offset + (scalingFactor * j), y_offset + (scalingFactor * i), zValue));
 				node_idx_map[index] = node_idx_count;
 				node_idx_count++;
 			}
 		}
+
+			writepoints(pixvalpoints,0);
 
 	// set mesh elements
 	for (size_t i = 0; i < imgWidth; i++)
@@ -287,3 +293,18 @@ double VtkMeshConverter::getExistingValue(const double* img, size_t length)
 	}
 	return -9999;
 }
+
+void VtkMeshConverter::writepoints(std::vector<GEOLIB::Point*> pnts, size_t id)
+{
+	std::string number;
+	if (id==0) number = "0";
+	if (id==0) number = "1";
+	if (id==0) number = "2";
+	std::ofstream out("c:/project/test" + number + ".gli");
+
+	out << "#POINTS" << std::endl;
+	for (size_t i=0; i<pnts.size(); i++)
+		out << i << "\t" << (*pnts[i])[0] << "\t" << (*pnts[i])[1] << "\t" << (*pnts[i])[2] << std::endl;
+	out.close();
+}
+
