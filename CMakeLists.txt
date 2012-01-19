@@ -9,6 +9,7 @@ cmake_minimum_required(VERSION 2.6)
 project( OGS-6 )
 
 ### CMake includes ###
+INCLUDE(scripts/cmake/Functions.cmake)
 INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
 INCLUDE(scripts/cmake/Find.cmake)
