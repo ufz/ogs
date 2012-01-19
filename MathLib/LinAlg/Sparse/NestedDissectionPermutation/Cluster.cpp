@@ -38,7 +38,7 @@ void Cluster::subdivide(unsigned bmin)
 
 		idx_t *xadj(new idx_t[n_rows+1]);
 		unsigned const*const original_row_ptr(_l_adj_mat->getRowPtrArray());
-		for(unsigned k(0); k<=n_rows; k++) {
+		for(idx_t k(0); k<=n_rows; k++) {
 			xadj[k] = original_row_ptr[k];
 		}
 
@@ -62,7 +62,7 @@ void Cluster::subdivide(unsigned bmin)
 		idx_t *vwgt(new idx_t[n_rows + 1]);
 //		const unsigned nnz(xadj[n_rows]);
 //		unsigned *adjwgt(new unsigned[nnz]);
-		for (unsigned k(0); k < n_rows + 1; k++)
+		for (idx_t k(0); k < n_rows + 1; k++)
 			vwgt[k] = 1;
 //		for (unsigned k(0); k < nnz; k++)
 //			adjwgt[k] = 1;
@@ -71,8 +71,26 @@ void Cluster::subdivide(unsigned bmin)
 		// subdivide the index set into three parts employing METIS
 //		METIS_ComputeVertexSeparator(&n_rows, xadj, adjncy, vwgt, &options,
 //				&sepsize, part);
-		METIS_NodeND(&n_rows, xadj, adjncy, vwgt, options, _g_op_perm, _g_po_perm);
-
+		idx_t *loc_op_perm(new idx_t[n_rows]);
+		idx_t *loc_po_perm(new idx_t[n_rows]);
+		for (idx_t k(0); k<n_rows; k++) {
+			loc_op_perm[k] = _g_op_perm[k];
+		}
+		for (idx_t k(0); k<n_rows; k++) {
+			loc_po_perm[k] = _g_po_perm[k];
+		}
+		METIS_NodeND(&n_rows, xadj, adjncy, vwgt, options, loc_op_perm, loc_po_perm);
+		for (idx_t k(0); k<n_rows; k++) {
+			_g_op_perm[k] = loc_op_perm[k];
+		}
+		for (idx_t k(0); k<n_rows; k++) {
+			_g_po_perm[k] = loc_po_perm[k];
+		}
+		delete [] loc_op_perm;
+		delete [] loc_po_perm;
+		delete [] vwgt;
+		delete [] adjncy;
+		delete [] xadj;
 //		// create and init local permutations
 //		unsigned *l_op_perm(new unsigned[size]);
 //		unsigned *l_po_perm(new unsigned[size]);
