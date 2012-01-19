@@ -16,13 +16,6 @@
 #include "Separator.h"
 #include "AdjMat.h"
 
-// METIS function
-//extern "C" void METIS_ComputeVertexSeparator(unsigned*, unsigned*, unsigned*,
-//					   unsigned*, unsigned*, unsigned*, unsigned*);
-
-//extern "C" void METIS_NodeND(unsigned*, unsigned*, unsigned*,
-//				   unsigned*, unsigned*, unsigned*, unsigned*);
-
 namespace MathLib {
 
 Cluster::Cluster (unsigned n, unsigned* iA, unsigned* jA)
@@ -41,11 +34,22 @@ void Cluster::subdivide(unsigned bmin)
 	const unsigned size(_end - _beg);
 	if (size > bmin) {
 
-		unsigned n_rows(_l_adj_mat->getNRows());
-		unsigned *xadj(const_cast<unsigned*>(_l_adj_mat->getRowPtrArray()));
-		unsigned *adjncy(const_cast<unsigned*>(_l_adj_mat->getColIdxArray()));
+		idx_t n_rows(static_cast<idx_t>(_l_adj_mat->getNRows()));
+
+		idx_t *xadj(new idx_t[n_rows+1]);
+		unsigned const*const original_row_ptr(_l_adj_mat->getRowPtrArray());
+		for(unsigned k(0); k<=n_rows; k++) {
+			xadj[k] = original_row_ptr[k];
+		}
+
+		unsigned nnz(_l_adj_mat->getNNZ());
+		idx_t *adjncy(new idx_t[nnz]);
+		unsigned const*const original_adjncy(_l_adj_mat->getColIdxArray());
+		for(unsigned k(0); k<nnz; k++) {
+			adjncy[k] = original_adjncy[k];
+		}
 //		unsigned nparts = 2;
-		unsigned options[METIS_NOPTIONS]; // for METIS
+		idx_t options[METIS_NOPTIONS]; // for METIS
 		METIS_SetDefaultOptions(options);
 //		options[METIS OPTION PTYPE] = METIS PTYPE RB;
 //		options[METIS OPTION OBJTYPE] = METIS OBJTYPE CUT;
@@ -55,7 +59,7 @@ void Cluster::subdivide(unsigned bmin)
 //		options[] = ;
 
 //		unsigned sepsize(0); // for METIS
-		unsigned *vwgt(new unsigned[n_rows + 1]);
+		idx_t *vwgt(new idx_t[n_rows + 1]);
 //		const unsigned nnz(xadj[n_rows]);
 //		unsigned *adjwgt(new unsigned[nnz]);
 		for (unsigned k(0); k < n_rows + 1; k++)
