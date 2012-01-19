@@ -232,7 +232,7 @@ public:
 
 	CRSMatrix<FP_TYPE, IDX_TYPE>* getTranspose() const
 	{
-		CRSMatrix<FP_TYPE, IDX_TYPE>* transposed_mat(new CRSMatrix<FP_TYPE, IDX_TYPE>(this));
+		CRSMatrix<FP_TYPE, IDX_TYPE>* transposed_mat(new CRSMatrix<FP_TYPE, IDX_TYPE>(*this));
 		transposed_mat->transpose();
 		return transposed_mat;
 	}
@@ -255,7 +255,7 @@ protected:
 			_col_idx[k] = col_idx[k];
 		}
 
-		FP_TYPE const*const data(rhs.getData());
+		FP_TYPE const*const data(rhs.getEntryArray());
 		for	(IDX_TYPE k(0); k<nnz; k++) {
 			_data[k] = data[k];
 		}
