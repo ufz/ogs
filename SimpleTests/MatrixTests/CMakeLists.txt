@@ -38,6 +38,18 @@ IF (METIS_FOUND)
 		MathLib
 		${METIS_LIBRARIES}
 	)
+
+	ADD_EXECUTABLE( MatVecMultNDPermOpenMP
+        	MatVecMultNDPermOpenMP.cpp
+	        ${SOURCES}
+        	${HEADERS}
+	)
+
+	TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
+		Base
+		MathLib
+		${METIS_LIBRARIES}
+	)
 ENDIF(METIS_FOUND)
 
 

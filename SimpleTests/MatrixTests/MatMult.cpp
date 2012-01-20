@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);
-	MathLib::CRSMatrixOpenMP<double, unsigned> mat (n, iA, jA, A, n_threads);
+	MathLib::CRSMatrixOpenMP<double, unsigned> mat (n, iA, jA, A);
 #else
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
