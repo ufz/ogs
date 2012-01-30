@@ -37,6 +37,7 @@
 #include <vtkUnstructuredGridAlgorithm.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+
 VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
 {
@@ -261,20 +262,17 @@ void VtkVisPipelineView::addColorTable()
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this, "Select color table",
-	                                                settings.value(
-	                                                        "lastOpenedTextureFileDirectory").
-	                                                toString(),
-	                                                "Color table files (*.lut);;");
+	                                                settings.value("lastOpenedTextureFileDirectory"). toString(), 
+													"Color table files (*.xml);;");
 	QFileInfo fi(fileName);
 
-	if (fi.suffix().toLower() == "lut")
+	if (fi.suffix().toLower() == "xml")
 	{
 		VtkAlgorithmProperties* props =
 		        dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
 		if (props)
 		{
-			const std::string file (fileName.toStdString());
-			props->SetLookUpTable(array_name, file);
+			props->SetLookUpTable(array_name, fileName);
 			item->SetActiveAttribute(array_name);
 			emit requestViewUpdate();
 		}

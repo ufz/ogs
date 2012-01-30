@@ -12,6 +12,12 @@
 #include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 
+#include <QSettings>
+#include <QFileDialog>
+
+#include "VtkColorLookupTable.h"
+#include "XmlIO/XmlLutReader.h"
+
 VtkCompositeColormapToImageFilter::VtkCompositeColormapToImageFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)
 {
@@ -27,10 +33,28 @@ void VtkCompositeColormapToImageFilter::init()
 	this->_inputDataObjectType = VTK_IMAGE_DATA;
 	this->_outputDataObjectType = VTK_IMAGE_DATA;
 
-	vtkSmartPointer<vtkLookupTable> colormap = vtkSmartPointer<vtkLookupTable>::New();
-	colormap->SetTableRange(0, 100);
-	colormap->SetHueRange(0.0, 0.666);
+	vtkSmartPointer<VtkColorLookupTable> colormap;
+
+	QWidget* parent = 0;
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName(parent,
+	                                                "Select color lookup table",
+	                                                settings.value("lastOpenedTextureFileDirectory").
+	                                                toString(),
+	                                                "Lookup table XML files (*.xml);;");
+	if (!fileName.length()==0)
+	{
+		colormap = XmlLutReader::readFromFile(fileName);
+	}
+	else
+	{
+		colormap = vtkSmartPointer<VtkColorLookupTable>::New();
+		colormap->SetTableRange(0, 100);
+		colormap->SetHueRange(0.0, 0.666);
+	}
 	colormap->SetNumberOfTableValues(256);
+	colormap->Build();
+
 	QList<QVariant> tableRangeList;
 	tableRangeList.push_back(0);
 	tableRangeList.push_back(100);

@@ -36,9 +36,6 @@ public:
 	/// the points in a cell.
 	ogsUserPropertyMacro(ColorsOnCells,bool);
 
-	//void SetColorsOnPointsOn() { _colorsOnPoints = true; };
-	//void SetColorsOnCellsOn() { _colorsOnPoints = false; };
-
 	virtual unsigned long GetMTime();
 
 	virtual void SetUserProperty(QString name, QVariant value)
@@ -58,7 +55,7 @@ protected:
 
 private:
 	vtkLookupTable* ColorLookupTable;
-	//bool _colorsOnPoints;
+
 };
 
 #endif // VTKAPPLYCOLORTABLEFILTER_H
