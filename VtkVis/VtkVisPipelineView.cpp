@@ -179,8 +179,8 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
 	
-	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
-															imageSource->getSpacing(), 
+	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->GetOutput()->GetOrigin(),
+															imageSource->GetOutput()->GetSpacing()[0], 
 															element_type, intensity_type);
 	mesh->setName(msh_name.toStdString());
 	emit meshAdded(mesh);

@@ -31,6 +31,7 @@ SET( SOURCES
 	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
+	VtkRaster.cpp
 	VtkSelectionFilter.cpp
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
@@ -87,6 +88,7 @@ SET( HEADERS
 	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
+	VtkRaster.h
 	VtkSelectionFilter.h
 	VtkStationSource.h
 	VtkSurfacesSource.h

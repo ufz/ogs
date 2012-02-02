@@ -21,8 +21,8 @@
 
 
 GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
-                                                     const std::pair<double,double> &origin,
-                                                     const double &scalingFactor,
+                                                     const double origin[3],
+                                                     const double scalingFactor,
 													 MshElemType::type elem_type,
 													 UseIntensityAs::type intensity_type)
 {
@@ -76,7 +76,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 }
 
 GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
-													 const std::pair<double,double> &origin,
+													 const double origin[3],
 													 const size_t imgHeight,
 													 const size_t imgWidth,
 													 const double &scalingFactor,
@@ -133,7 +133,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
 GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 												  int* node_idx_map,
 												  const bool* visNodes,
-												  const std::pair<double,double> &origin,
+												  const double origin[3],
                                                   const size_t &imgHeight,
 												  const size_t &imgWidth,
                                                   const double &scalingFactor,
@@ -144,8 +144,8 @@ GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 	const size_t incWidth  = imgWidth+1;
 	GridAdapter* grid = new GridAdapter(NULL);
 	size_t node_idx_count(0);
-	const double x_offset(origin.first - scalingFactor/2.0);
-	const double y_offset(origin.second - scalingFactor/2.0);
+	const double x_offset(origin[0] - scalingFactor/2.0);
+	const double y_offset(origin[1] - scalingFactor/2.0);
 
 	for (size_t i = 0; i < incWidth; i++)
 		for (size_t j = 0; j < incHeight; j++)

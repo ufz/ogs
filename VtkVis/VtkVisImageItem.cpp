@@ -6,11 +6,13 @@
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisImageItem.h"
+#include "VtkGeoImageSource.h"
 
 #include <vtkActor.h>
 #include <vtkDataSetMapper.h>
 #include <vtkImageAlgorithm.h>
 #include <vtkImageChangeInformation.h>
+#include <vtkImageData.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
@@ -39,8 +41,13 @@ VtkVisImageItem::~VtkVisImageItem()
 
 void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
+	VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
 	_transformFilter = vtkImageChangeInformation::New();
 	_transformFilter->SetInputConnection(_algorithm->GetOutputPort());
+	double origin[3] = {0,0,0};
+	double scaling[3] = {1,1,1};
+	_transformFilter->SetOutputOrigin(origin);//img->GetOutput()->GetOrigin());
+	_transformFilter->SetOutputSpacing(img->GetOutput()->GetSpacing());
 	_transformFilter->Update();
 
 	_renderer = renderer;

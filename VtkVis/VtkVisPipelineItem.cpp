@@ -96,6 +96,9 @@ void VtkVisPipelineItem::setVisible( bool visible )
 	_actor->SetVisibility((int)visible);
 	_actor->Modified();
 	_renderer->Render();
+
+	double extend[6];
+	_actor->GetBounds(extend);
 }
 
 int VtkVisPipelineItem::writeToFile(const std::string &filename) const

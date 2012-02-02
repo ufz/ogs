@@ -8,7 +8,8 @@
 // ** INCLUDES **
 #include "VtkGeoImageSource.h"
 
-#include "OGSRaster.h"
+//#include "OGSRaster.h"
+#include "VtkRaster.h"
 
 #include <vtkFloatArray.h>
 #include <vtkImageChangeInformation.h>
@@ -52,14 +53,8 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
 
 VtkGeoImageSource::VtkGeoImageSource()
 {
-	_imageSource = vtkQImageToImageSource::New();
 	_imageInfo = vtkImageChangeInformation::New();
 	_imageShift = vtkImageShiftScale::New();
-
-	_imageInfo->SetInputConnection(_imageSource->GetOutputPort());
-	_imageShift->SetInputConnection(_imageInfo->GetOutputPort());
-	_imageShift->SetOutputScalarTypeToUnsignedChar();
-	this->SetInputConnection(_imageShift->GetOutputPort());
 }
 
 VtkGeoImageSource::~VtkGeoImageSource()
@@ -76,15 +71,26 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 
 void VtkGeoImageSource::setImageFilename(QString filename)
 {
-	QImage* raster = new QImage;
-	QPointF origin;
-	double spacing;
-	OGSRaster::loadImage(filename, *raster, origin, spacing);
-	this->setImage(*raster);
-	delete raster;
+	//QImage* raster = new QImage;
+	//QPointF origin;
+	//double spacing;
+	//OGSRaster::loadImage(filename, *raster, origin, spacing);
+	//this->setImage(*raster);
+	//delete raster;
 	// correct raster position by half a pixel for correct visualisation 
-	this->setOrigin(origin.x()+(spacing/2.0), origin.y()+(spacing/2.0), -10.0);
-	this->setSpacing(spacing);
+	this->_imageSource = VtkRaster::loadImage(filename.toStdString());
+
+	_imageShift->SetInputConnection(_imageSource->GetOutputPort());
+	_imageShift->SetOutputScalarTypeToUnsignedChar();
+	_imageInfo->SetInputConnection(_imageShift->GetOutputPort());
+	this->SetInputConnection(_imageShift->GetOutputPort());
+
+	double origin[3];
+	double spacing[3];
+	this->_imageSource->GetOutput()->GetOrigin(origin);
+	this->_imageSource->GetOutput()->GetSpacing(spacing);
+	this->setOrigin(origin[0]+(spacing[0]/2.0), origin[1]+(spacing[0]/2.0), -10.0);
+	this->setSpacing(spacing[0]);
 	this->SetName(filename);
 }
 
@@ -93,25 +99,13 @@ vtkImageData* VtkGeoImageSource::getImageData()
 	return this->_imageSource->GetImageDataInput(0);
 }
 
-std::pair<double, double> VtkGeoImageSource::getOrigin()
-{
-	double* origin = this->_imageInfo->GetOutputOrigin();
-	std::pair<double, double> p(origin[0], origin[1]);
-	return p;
-}
-
-double VtkGeoImageSource::getSpacing()
-{
-	double* spacing = this->_imageInfo->GetOutputSpacing();
-	return spacing[0];
-}
-
+/*
 void VtkGeoImageSource::setImage(QImage& image)
 {
 	_imageSource->SetQImage(&image);
 	_imageSource->Update(); // crashes otherwise
 }
-
+*/
 void VtkGeoImageSource::setOrigin(double x, double y, double z)
 {
 	_imageInfo->SetOutputOrigin(x, y, z);

@@ -36,8 +36,8 @@ public:
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static GridAdapter* convertImgToMesh(vtkImageData* img,
-									      const std::pair<double,double> &origin,
-	                                      const double &scalingFactor,
+									      const double origin[3],
+	                                      const double scalingFactor,
 										  MshElemType::type elem_type,
 										  UseIntensityAs::type intensity_type);
 
@@ -47,7 +47,7 @@ public:
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static GridAdapter* convertImgToMesh(const double* img,
-	                                      const std::pair<double,double> &origin,
+	                                      const double origin[3],
 										  const size_t imgHeight,
 										  const size_t imgWidth,
 	                                      const double &scalingFactor,
@@ -62,7 +62,7 @@ private:
 	static GridAdapter* constructMesh(const double* pixVal,
 									   int* node_idx_map,
 									   const bool* visNodes,
-									   const std::pair<double,double> &origin,
+									   const double origin[3],
 									   const size_t &imgHeight,
 									   const size_t &imgWidth,
 									   const double &scalingFactor,

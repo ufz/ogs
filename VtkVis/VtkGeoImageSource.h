@@ -30,17 +30,11 @@ public:
 
 	vtkImageData* getImageData();
 
-	std::pair<double, double> getOrigin();
-
-	double getSpacing();
+	vtkImageChangeInformation* getImageChangeTransformation() const { return _imageInfo; };
 
 	void setImageFilename(QString filename);
 
-	void setImage(QImage& image);
-
-	void setOrigin(double x, double y, double z);
-
-	void setSpacing(double spacing);
+	//void setImage(QImage& image);
 
 	virtual void SetUserProperty(QString name, QVariant value);
 
@@ -54,11 +48,16 @@ protected:
 	/// @brief Filter execution.
 	virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
+	void setOrigin(double x, double y, double z);
+
+	void setSpacing(double spacing);
+
+
 private:
 	VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
 	void operator=(const VtkGeoImageSource&); // Not implemented
 
-	vtkQImageToImageSource* _imageSource;
+	vtkImageAlgorithm* _imageSource;
 	vtkImageChangeInformation* _imageInfo;
 	vtkImageShiftScale* _imageShift;
 };
