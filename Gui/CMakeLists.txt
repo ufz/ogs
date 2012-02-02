@@ -35,28 +35,24 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
-	../../Base
-	../../MathLib
-	../../GEO
-	../../FileIO
-	../../MSH
-	../../MSHGEOTOOLS
-	../../FEM
-	../Base
-	../DataView
-	../DataView/StratView
-	../DataView/DiagramView
-	../VtkVis
-	../VtkAct
+	${CMAKE_SOURCE_DIR}/Base
+	${CMAKE_SOURCE_DIR}/MathLib
+	${CMAKE_SOURCE_DIR}/GEO
+	${CMAKE_SOURCE_DIR}/FileIO
+	${CMAKE_SOURCE_DIR}/MSH
+	${CMAKE_SOURCE_DIR}/MSHGEOTOOLS
+	${CMAKE_SOURCE_DIR}/FEM
+	${CMAKE_SOURCE_DIR}/Qt/Base
+	${CMAKE_SOURCE_DIR}/Qt/DataView
+	${CMAKE_SOURCE_DIR}/Qt/DataView/StratView
+	${CMAKE_SOURCE_DIR}/Qt/DataView/DiagramView
+	${CMAKE_SOURCE_DIR}/Qt/VtkVis
+	${CMAKE_SOURCE_DIR}/Qt/VtkAct
 )
 
 IF (Shapelib_FOUND)
 	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
 ENDIF () # Shapelib_FOUND
-
-if (OGS_COMPILE_QVTK)
-	INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/Qt/QVTK ../QVTK)
-endif (OGS_COMPILE_QVTK)
 
 # Put moc files in a project folder
 SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
@@ -87,8 +83,8 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	QVTK
 	VtkVis
 	VtkAct
-    vtkNetCDF
-    vtkNetCDF_cxx
+	vtkNetCDF
+	vtkNetCDF_cxx
 )
 
 IF (Shapelib_FOUND)
@@ -117,12 +113,12 @@ ENDIF() # OGS_BUILD_INFO
 ### OpenSG support ###
 IF (OGS_USE_OPENSG)
 	USE_OPENSG(ogs-gui)
-	INCLUDE_DIRECTORIES( ../OpenSG )
+	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Qt/OpenSG )
 	TARGET_LINK_LIBRARIES( ogs-gui OgsOpenSG )
 ENDIF (OGS_USE_OPENSG)
 
 IF(OGS_USE_VRPN)
-	INCLUDE_DIRECTORIES( ../Vrpn ${CMAKE_BINARY_DIR}/Qt/Vrpn )
+	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Qt/Vrpn ${CMAKE_BINARY_DIR}/Qt/Vrpn )
 	TARGET_LINK_LIBRARIES( ogs-gui ${VRPN_LIBRARIES} OgsVrpn )
 ENDIF()
 
