@@ -32,7 +32,7 @@ class VtkMeshConverter
 public:
 	/**
 	 * Converts greyscale image to a mesh
-	 * \parelem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static GridAdapter* convertImgToMesh(vtkImageData* img,
@@ -43,7 +43,7 @@ public:
 
 	/**
 	 * Converts double array with raster values to a mesh
-	 * \parelem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static GridAdapter* convertImgToMesh(const double* img,
