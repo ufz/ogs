@@ -42,12 +42,14 @@ VtkVisImageItem::~VtkVisImageItem()
 void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
 	VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
+
 	_transformFilter = vtkImageChangeInformation::New();
-	_transformFilter->SetInputConnection(_algorithm->GetOutputPort());
-	double origin[3] = {0,0,0};
-	double scaling[3] = {1,1,1};
-	_transformFilter->SetOutputOrigin(origin);//img->GetOutput()->GetOrigin());
-	_transformFilter->SetOutputSpacing(img->GetOutput()->GetSpacing());
+	_transformFilter->SetInputConnection(img->GetOutputPort());
+	double x0, y0, z0;
+	img->getOrigin(x0, y0, z0);
+	double spacing = img->getSpacing();
+	_transformFilter->SetOutputOrigin(x0, y0, z0);
+	_transformFilter->SetOutputSpacing(spacing, spacing, spacing);
 	_transformFilter->Update();
 
 	_renderer = renderer;

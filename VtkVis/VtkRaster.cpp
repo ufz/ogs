@@ -28,13 +28,15 @@
 #include "xtiffio.h"
 #endif
 */
-vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName, bool autoscale /* = true */)
+vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
+                                        double& x0, double& y0,
+                                        double& delta, bool autoscale)
 {
 	QFileInfo fileInfo(QString::fromStdString(fileName));
 
 	if (fileInfo.suffix().toLower() == "asc")
 	{
-		return loadImageFromASC(fileName, autoscale);
+        return loadImageFromASC(fileName, x0, y0, delta, autoscale);
 	}
 /*
 #ifdef libgeotiff_FOUND
@@ -49,22 +51,18 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName, bool autosc
 */
 }
 
-vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName, bool autoscale)
+vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
+                                            double& x0, double& y0,
+                                            double& delta, bool autoscale)
 {
-	double x0(0), y0(0), delta(1);
 	size_t width(0), height(0);
 	float* data = loadDataFromASC(fileName, x0, y0, width, height, delta);
 
-	//delta = 1;
-	//x0 = 0; y0=0;
 	vtkImageImport* image = vtkImageImport::New();
-		image->SetDataSpacing(delta, delta, delta);
-		image->SetDataOrigin(x0, y0, 0);
-		image->SetWholeExtent(x0, x0+width-1, y0, y0+height-1, 0, 0);
-		image->SetDataExtent(x0, x0+width-1, y0, y0+height-1, 0, 0);
-		//image->SetDataExtentToWholeExtent();
+		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
+		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
+		image->SetDataExtentToWholeExtent();
 		image->SetDataScalarTypeToFloat();
-		//image->SetDataScalarTypeToUnsignedChar();
 		image->SetNumberOfScalarComponents(1);
 		image->SetImportVoidPointer(data, 0);
 		image->Update();

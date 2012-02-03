@@ -44,7 +44,11 @@ public:
 	 * \param mirrorX Mirror around x-axis.
 	 * \return True if the raster data was loaded correctly, false otherwise.
 	 */
-	static vtkImageAlgorithm* loadImage(const std::string &fileName, bool autoscale = false);
+    static vtkImageAlgorithm* loadImage(const std::string &fileName,
+                                        double& x0,
+                                        double& y0,
+                                        double& delta,
+                                        bool autoscale = false);
 
 	/**
 	 * \brief Loads an ASC file into a double array
@@ -80,7 +84,9 @@ private:
 	 * \param autoscale
 	 * \return True if the raster data was loaded correctly, false otherwise.
 	 */
-	static vtkImageImport* loadImageFromASC(const std::string &fileName, bool autoscale = true);
+    static vtkImageImport* loadImageFromASC(const std::string &fileName,
+                                            double& x0, double& y0,
+                                            double& delta, bool autoscale = false);
 
 	/**
 	 * Loads ArcGIS asc-files to a QPixmap object and automatically does a contrast stretching to adjust values to 8 bit greyscale images.

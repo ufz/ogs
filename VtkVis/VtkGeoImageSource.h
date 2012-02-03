@@ -13,7 +13,6 @@ class QString;
 class QPointF;
 class QImage;
 class vtkQImageToImageSource;
-class vtkImageChangeInformation;
 class vtkImageShiftScale;
 class vtkImageData;
 
@@ -30,11 +29,11 @@ public:
 
 	vtkImageData* getImageData();
 
-	vtkImageChangeInformation* getImageChangeTransformation() const { return _imageInfo; };
-
 	void setImageFilename(QString filename);
 
-	//void setImage(QImage& image);
+	void getOrigin(double& x, double& y, double& z) const;
+
+	double getSpacing() const;
 
 	virtual void SetUserProperty(QString name, QVariant value);
 
@@ -48,18 +47,14 @@ protected:
 	/// @brief Filter execution.
 	virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
-	void setOrigin(double x, double y, double z);
-
-	void setSpacing(double spacing);
-
-
 private:
 	VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
 	void operator=(const VtkGeoImageSource&); // Not implemented
 
 	vtkImageAlgorithm* _imageSource;
-	vtkImageChangeInformation* _imageInfo;
 	vtkImageShiftScale* _imageShift;
+
+	double _x0, _y0, _z0, _spacing;
 };
 
 #endif // VTKGEOIMAGESOURCE_H

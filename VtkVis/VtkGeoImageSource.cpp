@@ -53,14 +53,12 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
 
 VtkGeoImageSource::VtkGeoImageSource()
 {
-	_imageInfo = vtkImageChangeInformation::New();
 	_imageShift = vtkImageShiftScale::New();
 }
 
 VtkGeoImageSource::~VtkGeoImageSource()
 {
-	_imageSource->Delete();
-	_imageInfo->Delete();
+	if(_imageSource) _imageSource->Delete();
 	_imageShift->Delete();
 }
 
@@ -71,27 +69,13 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 
 void VtkGeoImageSource::setImageFilename(QString filename)
 {
-	//QImage* raster = new QImage;
-	//QPointF origin;
-	//double spacing;
-	//OGSRaster::loadImage(filename, *raster, origin, spacing);
-	//this->setImage(*raster);
-	//delete raster;
-	// correct raster position by half a pixel for correct visualisation 
-	this->_imageSource = VtkRaster::loadImage(filename.toStdString());
+	this->_imageSource = VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing);
 
 	_imageShift->SetInputConnection(_imageSource->GetOutputPort());
 	_imageShift->SetOutputScalarTypeToUnsignedChar();
-	_imageInfo->SetInputConnection(_imageShift->GetOutputPort());
 	this->SetInputConnection(_imageShift->GetOutputPort());
-
-	double origin[3];
-	double spacing[3];
-	this->_imageSource->GetOutput()->GetOrigin(origin);
-	this->_imageSource->GetOutput()->GetSpacing(spacing);
-	this->setOrigin(origin[0]+(spacing[0]/2.0), origin[1]+(spacing[0]/2.0), -10.0);
-	this->setSpacing(spacing[0]);
 	this->SetName(filename);
+	this->_z0 = -10;
 }
 
 vtkImageData* VtkGeoImageSource::getImageData()
@@ -99,21 +83,16 @@ vtkImageData* VtkGeoImageSource::getImageData()
 	return this->_imageSource->GetImageDataInput(0);
 }
 
-/*
-void VtkGeoImageSource::setImage(QImage& image)
+void VtkGeoImageSource::getOrigin(double& x, double& y, double& z) const
 {
-	_imageSource->SetQImage(&image);
-	_imageSource->Update(); // crashes otherwise
-}
-*/
-void VtkGeoImageSource::setOrigin(double x, double y, double z)
-{
-	_imageInfo->SetOutputOrigin(x, y, z);
+	x = this->_x0;
+	y = this->_y0;
+	z = this->_z0;
 }
 
-void VtkGeoImageSource::setSpacing(double spacing)
+double VtkGeoImageSource::getSpacing() const
 {
-	_imageInfo->SetOutputSpacing(spacing, spacing, spacing);
+	return this->_spacing;
 }
 
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
