@@ -149,6 +149,11 @@ ADD_LIBRARY( VtkVis STATIC
 	${UIS}
 )
 
+IF (libgeotiff_FOUND)
+	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+	TARGET_LINK_LIBRARIES( VtkVis ${libgeotiff_LIBRARIES} )
+ENDIF () # libgeotiff_FOUND
+
 TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} QVTK )
 
 IF(OGS_USE_VRPN)

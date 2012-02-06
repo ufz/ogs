@@ -12,48 +12,41 @@
 
 #include <QFileInfo>
 
-#include "OGSError.h"
 #include "StringTools.h"
 
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 
 #include <vtkImageAlgorithm.h>
+#include <vtkImageData.h>
 #include <vtkImageImport.h>
+#include <vtkImageReader2.h>
+#include <vtkPNGReader.h>
+#include <vtkJPEGReader.h>
+#include <vtkBMPReader.h>
 
-
-/*
 #ifdef libgeotiff_FOUND
 #include "geo_tiffp.h"
 #include "xtiffio.h"
 #endif
-*/
+
 vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
-                                        double& x0, double& y0,
-                                        double& delta, bool autoscale)
+                                        double& x0, double& y0, double& delta)
 {
 	QFileInfo fileInfo(QString::fromStdString(fileName));
 
 	if (fileInfo.suffix().toLower() == "asc")
-	{
-        return loadImageFromASC(fileName, x0, y0, delta, autoscale);
-	}
-/*
+        return loadImageFromASC(fileName, x0, y0, delta);
 #ifdef libgeotiff_FOUND
-	else if (fileInfo.suffix().toLower() == "tif")
-	{
-		if (!loadImageFromTIFF(fileName, raster))
-			return false;
-	}
+	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
+		return loadImageFromTIFF(fileName, x0, y0, delta);
 #endif
-	else if (!loadImageFromFile(fileName, raster))
-		return false;
-*/
+	else 
+		return loadImageFromFile(fileName);
 }
 
 vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
-                                            double& x0, double& y0,
-                                            double& delta, bool autoscale)
+                                            double& x0, double& y0, double& delta)
 {
 	size_t width(0), height(0);
 	float* data = loadDataFromASC(fileName, x0, y0, width, height, delta);
@@ -63,7 +56,7 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
 		image->SetDataExtentToWholeExtent();
 		image->SetDataScalarTypeToFloat();
-		image->SetNumberOfScalarComponents(1);
+		image->SetNumberOfScalarComponents(2);
 		image->SetImportVoidPointer(data, 0);
 		image->Update();
 
@@ -156,19 +149,36 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 		height = header.nrows;
 		delta  = header.cellsize;
 
-		float* values = new float[header.ncols * header.nrows];
+		float* values = new float[header.ncols * header.nrows * 2];
 
-		int index(0);
+		int col_index(0);
+		float max_val = header.noData;
 		std::string s("");
 		// read the file into a double-array
 		for (int j = 0; j < header.nrows; j++)
 		{
-			index = (header.nrows - j - 1) * header.ncols;
+			col_index = (header.nrows - j - 1) * header.ncols;
 			for (int i = 0; i < header.ncols; i++)
 			{
 				in >> s;
-				values[index + i] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
+				size_t index = 2*(col_index+i);
+				values[index] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
+				if (values[index] > max_val)
+					max_val = values[index];
 			}
+		}
+
+		// shift noData values into normal pixel-range and set transparancy values for all pixels
+		size_t nPixels = header.ncols * header.nrows;
+		for (int j = 0; j <nPixels; j++)
+		{
+			if (values[j*2] == header.noData)
+			{
+				values[j*2] = max_val;
+				values[j*2+1] = 0;
+			}
+			else
+				values[j*2+1] = max_val;
 		}
 
 		in.close();
@@ -176,14 +186,13 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 	}
 	return NULL;
 }
-/*
+
 #ifdef libgeotiff_FOUND
-bool VtkRaster::loadImageFromTIFF(const std::string &fileName,
-                                  QImage &raster,
-                                  QPointF &origin,
+vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
+                                  double &x0, double &y0,
                                   double &cellsize)
 {
-	TIFF* tiff = XTIFFOpen(fileName.toStdString().c_str(), "r");
+	TIFF* tiff = XTIFFOpen(fileName.c_str(), "r");
 
 	if (tiff)
 	{
@@ -221,8 +230,8 @@ bool VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			// get upper left point / origin
 			if (TIFFGetField(tiff, GTIFF_TIEPOINTS, &pntCount, &pnts))
 			{
-				origin.setX(pnts[3]);
-				origin.setY(pnts[4] - (imgHeight * cellsize)); // the origin should be the lower left corner of the img
+				x0 = pnts[3];
+				y0 = pnts[4] - (imgHeight * cellsize); // the origin should be the lower left corner of the img
 			}
 
 			// read pixel values
@@ -249,8 +258,8 @@ bool VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			                                 &cmap_blue);
 
 			int lineindex = 0, idx = 0;
-			QImage img(imgWidth, imgHeight, QImage::Format_ARGB32);
-
+			
+			float* data = new float[imgWidth * imgHeight * 4];
 			int* pxl (new int[4]);
 			for (int j = 0; j < imgHeight; j++)
 			{
@@ -258,87 +267,91 @@ bool VtkRaster::loadImageFromTIFF(const std::string &fileName,
 				for (int i = 0; i < imgWidth; i++)
 				{ // scale intensities and set nodata values to white (i.e. the background colour)
 					idx = TIFFGetR(pixVal[lineindex + i]);
+					size_t pos  = 4 * (lineindex+i);
 					if (colormap_used)
-						img.setPixel(i,j,
-						             qRgba(cmap_red[idx] >> 8,
-						                   cmap_green[idx] >> 8,
-						                   cmap_blue[idx] >> 8, 255));
+					{
+						data[pos]   = cmap_red[idx] >> 8;
+						data[pos+1] = cmap_green[idx] >> 8;
+						data[pos+2] = cmap_blue[idx] >> 8;
+						data[pos+3] = 1;
+					}
 					else
 					{
 						//img.setPixel(i,j, qRgba(TIFFGetB(pixVal[idx]), TIFFGetG(pixVal[idx]), TIFFGetR(pixVal[idx]), TIFFGetA(pixVal[idx])));
 						uint32toRGBA(pixVal[lineindex + i], pxl);
-						img.setPixel(i,j,
-						             qRgba(pxl[0], pxl[1], pxl[2], pxl[3]));
+						data[pos]   = pxl[0];
+						data[pos+1] = pxl[1];
+						data[pos+2] = pxl[2];
+						data[pos+3] = pxl[3];
 					}
 				}
 			}
 			delete [] pxl;
 
-			raster = img;
+			// set transparency values according to maximum pixel value
+			if (colormap_used)
+			{
+				float max_val(0);
+				size_t nPixels = 4*imgWidth*imgHeight;
+				for (size_t j = 0; j < nPixels; j++)
+					if (data[j]>max_val)
+						max_val = data[j];
+
+				for (size_t j = 0; j < nPixels; j+=4)
+					data[j+3] = max_val;
+			}
+
+			vtkImageImport* image = vtkImageImport::New();
+				image->SetWholeExtent(0, imgWidth-1, 0, imgHeight-1, 0, 0);
+				image->SetDataExtent(0, imgWidth-1, 0, imgHeight-1, 0, 0);
+				image->SetDataExtentToWholeExtent();
+				image->SetDataScalarTypeToFloat();
+				image->SetNumberOfScalarComponents(4);
+				image->SetImportVoidPointer(data, 0);
+				image->Update();
 
 			_TIFFfree(pixVal);
 			GTIFFree(geoTiff);
 			XTIFFClose(tiff);
-			return true;
+			return image;
 		}
 
 		XTIFFClose(tiff);
 		std::cout <<
 		"OGSRaster::loadImageFromTIFF() - File not recognised as GeoTIFF-Image." <<
 		std::endl;
-		return false;
+		return NULL;
 	}
 
 	std::cout << "OGSRaster::loadImageFromTIFF() - File not recognised as TIFF-Image." <<
 	std::endl;
-	return false;
+	return NULL;
 }
 #endif
 
-bool VtkRaster::loadImageFromFile(const std::string &fileName, QImage &raster)
+vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 {
-	return raster.load(fileName);
-}
+	QString file_name (QString::fromStdString(fileName));
+	QFileInfo fi(file_name);
+	vtkImageReader2* image(NULL);
 
-void VtkRaster::convertToGreyscale(vtkImageData &raster, const int &min, const int &max)
-{
-	int value = 0;
-	double scalingFactor = 255.0 / (max - min);
-
-	for (int i = 0; i < raster.width(); i++)
-		for (int j = 0; j < raster.height(); j++)
-		{
-			QRgb pix = raster.pixel(i,j);
-			value =
-			        static_cast<int>(floor(((0.3 * qRed(pix) + 0.6 * qGreen(pix) +
-			                                 0.1 *
-			                                 qBlue(pix)) - min) * scalingFactor));
-			raster.setPixel(i, j, qRgb(value, value, value));
-		}
-}
-
-int* VtkRaster::getGreyscaleData(vtkImageData &raster, const int &min, const int &max)
-{
-	int index = 0;
-	double scalingFactor = 255.0 / (max - min);
-	int* pixVal (new int[raster.height() * raster.width()]);
-
-	for (int j = 0; j < raster.height(); j++)
+	if (fi.suffix().toLower() == "png")
+		image = vtkPNGReader::New();
+	else if ((fi.suffix().toLower() == "jpg") || (fi.suffix().toLower() == "jpeg"))
+		image = vtkJPEGReader::New();
+	else if (fi.suffix().toLower() == "bmp")
+		image = vtkBMPReader::New();
+	else
 	{
-		index = j * raster.width();
-		for (int i = 0; i < raster.width(); i++)
-		{
-			QRgb pix = raster.pixel(i,j);
-			pixVal[index +
-			       i] =
-			        static_cast<int>(floor(((0.3 * qRed(pix) + 0.6 * qGreen(pix) +
-			                                 0.1 *
-			                                 qBlue(pix)) - min) * scalingFactor));
-		}
+		std::cout << "VtkRaster::readImageFromFile() - File format not support, please convert to BMP, JPG, PNG or TIFF..." << std::endl;
+		return NULL;
 	}
-	return pixVal;
+
+	image->SetFileName(fileName.c_str());
+	image->GetOutput()->SetScalarTypeToFloat();
+	image->Update();
+	return image;
 }
-*/
 
 void VtkRaster::uint32toRGBA(const unsigned int s, int* p)
 {

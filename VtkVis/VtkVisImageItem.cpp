@@ -15,6 +15,7 @@
 #include <vtkImageData.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkImageShiftScale.h>
 
 // export
 #include <vtkImageActor.h>
@@ -43,12 +44,20 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
 	VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
 
+	double range[2];
+	img->getRange(range);
+	vtkImageShiftScale* scale = vtkImageShiftScale::New();
+	scale->SetOutputScalarTypeToUnsignedChar();
+	scale->SetInputConnection(img->GetOutputPort());
+	scale->SetShift(-range[0]);
+	scale->SetScale(255.0/(range[1]-range[0]));
+
 	_transformFilter = vtkImageChangeInformation::New();
-	_transformFilter->SetInputConnection(img->GetOutputPort());
-	double x0, y0, z0;
-	img->getOrigin(x0, y0, z0);
+	_transformFilter->SetInputConnection(scale->GetOutputPort());
+	double origin[3];
+	img->getOrigin(origin);
 	double spacing = img->getSpacing();
-	_transformFilter->SetOutputOrigin(x0, y0, z0);
+	_transformFilter->SetOutputOrigin(origin);
 	_transformFilter->SetOutputSpacing(spacing, spacing, spacing);
 	_transformFilter->Update();
 

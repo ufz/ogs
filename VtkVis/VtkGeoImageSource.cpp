@@ -17,11 +17,11 @@
 #include <vtkImageShiftScale.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkQImageToImageSource.h>
-
-#include <QImage>
-#include <QPointF>
-#include <QString>
+//#include <vtkQImageToImageSource.h>
+#include <vtkIntArray.h>
+//#include <QImage>
+//#include <QPointF>
+//#include <QString>
 
 vtkStandardNewMacro(VtkGeoImageSource);
 
@@ -52,14 +52,13 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
 }
 
 VtkGeoImageSource::VtkGeoImageSource()
+: _imageSource(NULL), _x0(0), _y0(0), _z0(0), _spacing(1)
 {
-	_imageShift = vtkImageShiftScale::New();
 }
 
 VtkGeoImageSource::~VtkGeoImageSource()
 {
 	if(_imageSource) _imageSource->Delete();
-	_imageShift->Delete();
 }
 
 void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
@@ -67,15 +66,13 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 	this->Superclass::PrintSelf(os, indent);
 }
 
-void VtkGeoImageSource::setImageFilename(QString filename)
+void VtkGeoImageSource::readImage(QString filename)
 {
 	this->_imageSource = VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing);
-
-	_imageShift->SetInputConnection(_imageSource->GetOutputPort());
-	_imageShift->SetOutputScalarTypeToUnsignedChar();
-	this->SetInputConnection(_imageShift->GetOutputPort());
+	this->SetInputConnection(_imageSource->GetOutputPort());
 	this->SetName(filename);
 	this->_z0 = -10;
+
 }
 
 vtkImageData* VtkGeoImageSource::getImageData()
@@ -83,16 +80,22 @@ vtkImageData* VtkGeoImageSource::getImageData()
 	return this->_imageSource->GetImageDataInput(0);
 }
 
-void VtkGeoImageSource::getOrigin(double& x, double& y, double& z) const
+void VtkGeoImageSource::getOrigin(double origin[3]) const
 {
-	x = this->_x0;
-	y = this->_y0;
-	z = this->_z0;
+	origin[0] = this->_x0;
+	origin[1] = this->_y0;
+	origin[2] = this->_z0;
 }
 
 double VtkGeoImageSource::getSpacing() const
 {
 	return this->_spacing;
+}
+
+void VtkGeoImageSource::getRange(double range[2])
+{
+	this->_imageSource->Update();	
+	_imageSource->GetOutput()->GetPointData()->GetArray(0)->GetRange(range);
 }
 
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)

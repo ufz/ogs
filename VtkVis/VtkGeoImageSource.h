@@ -29,9 +29,11 @@ public:
 
 	vtkImageData* getImageData();
 
-	void setImageFilename(QString filename);
+	void readImage(QString filename);
 
-	void getOrigin(double& x, double& y, double& z) const;
+	void getOrigin(double origin[3]) const;
+
+	void getRange(double range[2]);
 
 	double getSpacing() const;
 
@@ -52,7 +54,6 @@ private:
 	void operator=(const VtkGeoImageSource&); // Not implemented
 
 	vtkImageAlgorithm* _imageSource;
-	vtkImageShiftScale* _imageShift;
 
 	double _x0, _y0, _z0, _spacing;
 };
