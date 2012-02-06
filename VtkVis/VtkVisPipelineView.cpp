@@ -28,7 +28,6 @@
 #include "VtkGeoImageSource.h"
 #include "MeshFromRasterDialog.h"
 #include <vtkDataObject.h>
-#include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 
 #include <vtkGenericDataObjectReader.h>
@@ -177,11 +176,12 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	                                         getItem(this->selectionModel()->currentIndex()))->algorithm();
 
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
-	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
+	double origin[3];
+	imageSource->getOrigin(origin);
 	
-	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->GetOutput()->GetOrigin(),
-															imageSource->GetOutput()->GetSpacing()[0], 
-															element_type, intensity_type);
+	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin,
+														   imageSource->getSpacing(), 
+														   element_type, intensity_type);
 	mesh->setName(msh_name.toStdString());
 	emit meshAdded(mesh);
 }

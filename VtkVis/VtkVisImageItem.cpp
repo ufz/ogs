@@ -13,6 +13,7 @@
 #include <vtkImageAlgorithm.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageData.h>
+#include <vtkPointData.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkImageShiftScale.h>
@@ -42,10 +43,17 @@ VtkVisImageItem::~VtkVisImageItem()
 
 void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
-	VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
+	vtkImageAlgorithm* img = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+	img->Update();
+	//VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
 
+	double origin[3];
+	double spacing[3];
 	double range[2];
-	img->getRange(range);
+	img->GetOutput()->GetOrigin(origin);
+	img->GetOutput()->GetSpacing(spacing);
+	//img->getRange(range);
+	img->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
 	vtkImageShiftScale* scale = vtkImageShiftScale::New();
 	scale->SetOutputScalarTypeToUnsignedChar();
 	scale->SetInputConnection(img->GetOutputPort());
@@ -54,11 +62,11 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 
 	_transformFilter = vtkImageChangeInformation::New();
 	_transformFilter->SetInputConnection(scale->GetOutputPort());
-	double origin[3];
-	img->getOrigin(origin);
-	double spacing = img->getSpacing();
-	_transformFilter->SetOutputOrigin(origin);
-	_transformFilter->SetOutputSpacing(spacing, spacing, spacing);
+	//double origin[3];
+	//img->getOrigin(origin);
+	//double spacing = img->getSpacing();
+	//_transformFilter->SetOutputOrigin(origin2);
+	//_transformFilter->SetOutputSpacing(spacing2);
 	_transformFilter->Update();
 
 	_renderer = renderer;

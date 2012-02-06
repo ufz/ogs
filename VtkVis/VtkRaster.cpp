@@ -52,6 +52,8 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 	float* data = loadDataFromASC(fileName, x0, y0, width, height, delta);
 
 	vtkImageImport* image = vtkImageImport::New();
+		image->SetDataOrigin(x0, y0, 0);
+		image->SetDataSpacing(delta, delta,delta);
 		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
 		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
 		image->SetDataExtentToWholeExtent();
@@ -302,6 +304,8 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			}
 
 			vtkImageImport* image = vtkImageImport::New();
+				image->SetDataOrigin(x0, y0, 0);
+				image->SetDataSpacing(cellsize, cellsize, cellsize);
 				image->SetWholeExtent(0, imgWidth-1, 0, imgHeight-1, 0, 0);
 				image->SetDataExtent(0, imgWidth-1, 0, imgHeight-1, 0, 0);
 				image->SetDataExtentToWholeExtent();

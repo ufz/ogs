@@ -73,6 +73,8 @@ void VtkGeoImageSource::readImage(QString filename)
 	this->SetName(filename);
 	this->_z0 = -10;
 
+	this->GetOutput()->SetOrigin(_x0, _y0, _z0);
+	this->GetOutput()->SetSpacing(_spacing, _spacing, _spacing);
 }
 
 vtkImageData* VtkGeoImageSource::getImageData()
@@ -113,41 +115,6 @@ void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
 		vtkGenericWarningMacro("Execute: Unknown input ScalarType");
 		return;
 	}
-
-/*
-    // Create normals
-    vtkFloatArray* normals = vtkFloatArray::New();
-    int numPoints = input->GetNumberOfPoints();
-    normals->SetNumberOfComponents(3);
-    normals->Allocate(3*numPoints);
-    float normal[3] = {0.f, 0.f, 1.f};
-
-    // vector data
-    std::cout << input->GetScalarTypeAsString() << std::endl;
-    vtkFloatArray* vectors = vtkFloatArray::New();
-    vectors->SetNumberOfComponents(3);
-    vectors->Allocate(3*numPoints);
-    int numScalarComponents = input->GetNumberOfScalarComponents();
-
-    for (int i = 0; i < numPoints; i++)
-    {
-        normals->InsertTuple(i, normal);
-        float vector[3];
-        vector[0] = 1;
-        vector[1] = 1;
-        vector[2] = ((unsigned char*)inPtr)[i * numScalarComponents] * 0.1;
-        //std::cout << vector[2] << " ";
-        vectors->InsertTuple(i, vector);
-    }
-
-    normals->SetName("Normals");
-    output->GetPointData()->SetNormals(normals);
-    normals->Delete();
-
-    vectors->SetName("Vectors");
-    output->GetPointData()->SetVectors(vectors);
-    vectors->Delete();
- */
 }
 
 void VtkGeoImageSource::SetUserProperty( QString name, QVariant value )
