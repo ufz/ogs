@@ -14,14 +14,11 @@
 #include <vtkFloatArray.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageData.h>
+#include <vtkImageImport.h>
 #include <vtkImageShiftScale.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-//#include <vtkQImageToImageSource.h>
 #include <vtkIntArray.h>
-//#include <QImage>
-//#include <QPointF>
-//#include <QString>
 
 vtkStandardNewMacro(VtkGeoImageSource);
 
@@ -66,12 +63,17 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 	this->Superclass::PrintSelf(os, indent);
 }
 
-void VtkGeoImageSource::readImage(QString filename)
+void VtkGeoImageSource::readImage(const QString &filename)
 {
-	this->_imageSource = VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing);
+	this->setImage(VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing), filename, _x0, _y0, _spacing);
+}
+
+void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString &name, double x0, double y0, double spacing)
+{
+	this->_imageSource = image;
 	this->SetInputConnection(_imageSource->GetOutputPort());
-	this->SetName(filename);
-	this->_z0 = -10;
+	this->SetName(name);
+	_x0 = x0; _y0 = y0; _z0 = -10; _spacing = spacing;
 
 	this->GetOutput()->SetOrigin(_x0, _y0, _z0);
 	this->GetOutput()->SetSpacing(_spacing, _spacing, _spacing);
@@ -81,7 +83,7 @@ vtkImageData* VtkGeoImageSource::getImageData()
 {
 	return this->_imageSource->GetImageDataInput(0);
 }
-
+/*
 void VtkGeoImageSource::getOrigin(double origin[3]) const
 {
 	origin[0] = this->_x0;
@@ -99,7 +101,7 @@ void VtkGeoImageSource::getRange(double range[2])
 	this->_imageSource->Update();	
 	_imageSource->GetOutput()->GetPointData()->GetArray(0)->GetRange(range);
 }
-
+*/
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
 	vtkDebugMacro(<< "Executing VtkGeoImageSource")

@@ -178,10 +178,10 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	double origin[3];
 	imageSource->GetOutput()->GetOrigin(origin);
+	double spacing[3];
+	imageSource->GetOutput()->GetSpacing(spacing);
 	
-	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin,
-														   imageSource->getSpacing(), 
-														   element_type, intensity_type);
+	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
 	mesh->setName(msh_name.toStdString());
 	emit meshAdded(mesh);
 }

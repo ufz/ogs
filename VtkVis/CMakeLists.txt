@@ -138,6 +138,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/MSH
 	${CMAKE_SOURCE_DIR}/Qt/Base
 	${CMAKE_SOURCE_DIR}/Qt/DataView
+	${CMAKE_BINARY_DIR}/Qt/DataView
 )
 
 # Create the library

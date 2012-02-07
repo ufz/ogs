@@ -38,7 +38,7 @@ public:
 	void PrintSelf(ostream& os, vtkIndent indent);
 
 	/// Sets the raster/image to be used as a texture map
-	void SetRaster(QImage &img, std::pair<float, float> origin, double scalingFactor);
+	void SetRaster(vtkImageAlgorithm* img, double x0, double y0, double scalingFactor);
 
 	virtual void SetUserProperty(QString name, QVariant value);
 

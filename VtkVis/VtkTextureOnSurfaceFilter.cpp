@@ -15,6 +15,7 @@
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkImageShiftScale.h>
 
 #include "MathTools.h"
 #include "VtkTextureOnSurfaceFilter.h"
@@ -77,8 +78,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		float newcoords[3] =
 		{MathLib::normalize(min.first, max.first, coords[0]), MathLib::normalize(min.second,
 			                                                                 max.second,
-			                                                                 coords[1]),
-		 0 /*coords[2]*/ };
+			                                                                 coords[1]),0 /*coords[2]*/ };
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
 
@@ -93,14 +93,28 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	return 1;
 }
 
-void VtkTextureOnSurfaceFilter::SetRaster(QImage &img,
-                                          std::pair<float, float> origin,
+void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
+                                          double x0, double y0,
                                           double scalingFactor)
 {
-	_origin = origin;
+	double range[2];
+	img->Update();
+	img->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
+	vtkSmartPointer<vtkImageShiftScale> scale = vtkSmartPointer<vtkImageShiftScale>::New();
+	scale->SetInputConnection(img->GetOutputPort());
+	scale->SetShift(-range[0]);
+	scale->SetScale(255.0/(range[1]-range[0]));
+	scale->Update();
+
+	vtkSmartPointer<vtkImageData> imgData = scale->GetOutput();
+
+	vtkTexture* texture = vtkTexture::New();
+	texture->InterpolateOff();
+	texture->RepeatOff();
+	texture->SetInput(imgData);
+	_origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));
 	_scalingFactor = scalingFactor;
-	QImage raster = img.transformed(QTransform(1, 0, 0, -1, 0, 0), Qt::FastTransformation);
-	this->SetTexture(VtkVisHelper::QImageToVtkTexture(raster));
+	this->SetTexture(texture);
 }
 
 void VtkTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )

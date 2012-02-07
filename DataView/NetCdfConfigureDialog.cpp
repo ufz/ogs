@@ -3,10 +3,20 @@
 
 #include "NetCdfConfigureDialog.h"
 
+#include "VtkMeshConverter.h"
+#include "GridAdapter.h"
+#include "VtkGeoImageSource.h"
+#include "VtkRaster.h"
+
+#include <QMessageBox>
+#include <QSettings>
+
+#include <vtkImageImport.h>
+
 // Constructor
-NetCdfConfigureDialog::NetCdfConfigureDialog(char* fileName, QDialog* parent) 
-	: QDialog(parent), _currentFile(new NcFile(fileName,NcFile::ReadOnly)), 
-	  _currentInitialDateTime(QDateTime()), _currentMesh(NULL), _currentPath(fileName)
+NetCdfConfigureDialog::NetCdfConfigureDialog(const std::string &fileName, QDialog* parent) 
+	: QDialog(parent), _currentFile(new NcFile(fileName.c_str(), NcFile::ReadOnly)), 
+	  _currentInitialDateTime(QDateTime()), _currentMesh(NULL), _currentRaster(NULL), _currentPath(fileName)
 {
 	setupUi(this);
 
@@ -19,6 +29,8 @@ NetCdfConfigureDialog::NetCdfConfigureDialog(char* fileName, QDialog* parent)
 
 	lineEditName->setText(setName());
 
+	this->radioMesh->setChecked(true);
+
 }
 
 NetCdfConfigureDialog::~NetCdfConfigureDialog()
@@ -30,16 +42,16 @@ void NetCdfConfigureDialog::accept()
 {
 	QMessageBox valueErrorBox;
 	if (_currentVar->num_dims() < 3){
-		valueErrorBox.setText("Selected Variable has less dimensions.");
+		valueErrorBox.setText("Selected Variable has not enough dimensions.");
 		valueErrorBox.exec();
 	}else if (doubleSpinBoxDim2Start->value() == doubleSpinBoxDim2Start->maximum()){
-		valueErrorBox.setText("Lon has invalid dimension.");
+		valueErrorBox.setText("Lon has invalid extend.");
 		valueErrorBox.exec();
 	}else if(doubleSpinBoxDim1Start->value() == doubleSpinBoxDim1Start->maximum()){
-		valueErrorBox.setText("Lat has invalid dimension.");
+		valueErrorBox.setText("Lat has invalid extend.");
 		valueErrorBox.exec();
 	}else{
-		createMesh();
+		createDataObject();
 		delete _currentFile;
 		this->done(QDialog::Accepted);
 	}
@@ -254,9 +266,6 @@ long NetCdfConfigureDialog::convertDateToMinutes(QDateTime initialDateTime, QDat
 
 int NetCdfConfigureDialog::getTimeStep()
 {
-	//QTime selectedTime = dateTimeEditDim3->time();
-	//QDate selectedDate = dateTimeEditDim3->date();
-
 	NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
 	
 	int datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
@@ -276,7 +285,7 @@ int NetCdfConfigureDialog::getDim4()
 	return currentValueDim3;
 }	
 
-int NetCdfConfigureDialog::getResolution()
+double NetCdfConfigureDialog::getResolution()
 {
 	if (comboBoxDim1->currentIndex() > -1)
 	{
@@ -287,33 +296,38 @@ int NetCdfConfigureDialog::getResolution()
 		if (size < 2)
 		{
 			return 1;
-		}else{
-			int resolution = ((lastValue-firstValue) / (size-1)) * 100;
+		}
+		else
+		{
+			double interval = fabs(lastValue-firstValue);
+			double resolution = (double)interval/(size-1);
 			return resolution;
 		}
-	}else{
-		return 1;
+	}
+	else
+	{
+		return 0;
 	}
 }
 
-void NetCdfConfigureDialog::createMesh()
+void NetCdfConfigureDialog::createDataObject()
 {
-	size_t* edgeT2Max = new size_t[_currentVar->num_dims()];
+	size_t* length = new size_t[_currentVar->num_dims()];
 	double originLon = 0, originLat = 0;
 	double lastLon = 0, lastLat = 0;
 	size_t sizeLon = 0, sizeLat = 0;
 	getDimEdges(comboBoxDim1->currentIndex(), sizeLat, originLat, lastLat);
 	getDimEdges(comboBoxDim2->currentIndex(), sizeLon, originLon, lastLon);
 
-	for(int i=0; i < _currentVar->num_dims(); i++) edgeT2Max[i]=1;
+	for(int i=0; i < _currentVar->num_dims(); i++) length[i]=1;
 
 	// set array edges: lat x lon
-	edgeT2Max[comboBoxDim1->currentIndex()]=sizeLat;
-	edgeT2Max[comboBoxDim2->currentIndex()]=sizeLon;
+	length[comboBoxDim1->currentIndex()]=sizeLat;
+	length[comboBoxDim2->currentIndex()]=sizeLon;
 
 	// set up array
-	double* dimArrayT2mMax = new double[sizeLat*sizeLon];
-	for(int i=0; i < (sizeLat*sizeLon); i++) dimArrayT2mMax[i]=0;
+	double* data_array = new double[sizeLat*sizeLon];
+	for(int i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
 
 	//Time-Dimension:
 	if (_currentVar->num_dims() > 2)
@@ -327,15 +341,17 @@ void NetCdfConfigureDialog::createMesh()
 		delete newOrigin;
 	}
 	
-	_currentVar->get(dimArrayT2mMax,edgeT2Max); //create Array of Values
+	_currentVar->get(data_array,length); //create Array of Values
 
 	for (int i=0; i < (sizeLat*sizeLon); i++)
 	{
-		dimArrayT2mMax[i] = dimArrayT2mMax[i] - 273; // convert from kalvin to celsius
-		if (dimArrayT2mMax[i] < -10000 ) dimArrayT2mMax[i] = -9999; // all values < -10000, set to "no-value"
+		//data_array[i] = data_array[i] - 273; // convert from kalvin to celsius
+		if (data_array[i] < -10000 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
 	}
 		
-	double originNetCdf[3] = {originLon,originLat,0}; // lon,lat
+	double origin_x = (originLon < lastLon) ? originLon : lastLon;
+	double origin_y = (originLat < lastLat) ? originLat : lastLat;
+	double originNetCdf[3] = {origin_x, origin_y, 0};
 
 	MshElemType::type meshElemType = MshElemType::QUAD;
 	UseIntensityAs::type useIntensity = UseIntensityAs::MATERIAL;
@@ -352,20 +368,23 @@ void NetCdfConfigureDialog::createMesh()
 		useIntensity = UseIntensityAs::MATERIAL;
 	}
 
-	double resolution = (doubleSpinBoxResolution->value()) * 0.01;
+	double resolution = (doubleSpinBoxResolution->value());
 
-	_currentMesh = VtkMeshConverter::convertImgToMesh(dimArrayT2mMax,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);
+	if (originLat > lastLat) // reverse lines in vertical direction if the original file has its origin in the northwest corner
+		this->reverseNorthSouth(data_array, sizeLon, sizeLat);
+
+	if (this->radioMesh->isChecked())
+		_currentMesh = VtkMeshConverter::convertImgToMesh(data_array,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);
+	else
+	{
+		vtkImageImport* image = VtkRaster::loadImageFromArray(data_array, originNetCdf[0], originNetCdf[1], sizeLon, sizeLat, resolution, -9999.0);
+		_currentRaster = VtkGeoImageSource::New();
+		_currentRaster->setImage(image, QString::fromStdString(this->getName()), originNetCdf[0], originNetCdf[1], resolution);
+	}
 	
-	delete edgeT2Max;
-	delete dimArrayT2mMax;
+	delete[] length;
+	delete[] data_array;
 }
-
-
-GridAdapter* NetCdfConfigureDialog::getMesh()
-{
-	return _currentMesh;
-}
-
 
 QString NetCdfConfigureDialog::setName()
 {
@@ -385,6 +404,43 @@ std::string NetCdfConfigureDialog::getName()
 	return name;	
 }
 
+void NetCdfConfigureDialog::reverseNorthSouth(double* data, size_t width, size_t height)
+{
+	double* cp_array = new double[width*height];
 
+	for (size_t i=0; i<height; i++)
+	{
+		for (size_t j=0; j<width; j++)
+		{
+			size_t old_index((width*height)-(width*(i+1)));
+			size_t new_index(width*i);
+			cp_array[new_index+j] = data[old_index+j];
+		}
+	}
+
+	size_t length(height*width);
+	for (size_t i=0; i<length; i++)
+		data[i] = cp_array[i];
+
+	delete[] cp_array;
+}
+
+void NetCdfConfigureDialog::on_radioMesh_toggled(bool isTrue)
+{
+	if (isTrue) // output set to "mesh"
+	{
+		this->label_2->setEnabled(true);
+		this->label_3->setEnabled(true);
+		this->comboBoxMeshElemType->setEnabled(true);
+		this->comboBoxUseIntensity->setEnabled(true);
+	}
+	else // output set to "raster"
+	{
+		this->label_2->setEnabled(false);
+		this->label_3->setEnabled(false);
+		this->comboBoxMeshElemType->setEnabled(false);
+		this->comboBoxUseIntensity->setEnabled(false);
+	}
+}
 
 

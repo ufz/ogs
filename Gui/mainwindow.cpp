@@ -659,17 +659,19 @@ void MainWindow::loadFile(const QString &fileName)
 		std::cout << "NetCDF Read ...\n" << std::flush;
 #endif
 		std::string name = fileName.toStdString();
-		char * filebuffer = new char[name.length()];
-		char* nameFile = strcpy(filebuffer,name.c_str());
 		GridAdapter* mesh;
 				
-		NetCdfConfigureDialog dlg(nameFile);
+		NetCdfConfigureDialog dlg(name);
 		dlg.exec();
 		if (dlg.getMesh() != NULL)
 		{
 			mesh = dlg.getMesh();
 			mesh->setName(dlg.getName());
 			_meshModels->addMesh(mesh);
+		}
+		if (dlg.getRaster() != NULL)
+		{
+			_vtkVisPipeline->addPipelineItem(dlg.getRaster());
 		}
 
 #ifndef NDEBUG

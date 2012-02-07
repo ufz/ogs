@@ -16,6 +16,7 @@ class vtkQImageToImageSource;
 class vtkImageShiftScale;
 class vtkImageData;
 
+
 class VtkGeoImageSource : public vtkSimpleImageToImageFilter, public VtkAlgorithmProperties
 {
 public:
@@ -27,15 +28,20 @@ public:
 	/// @brief Prints information about itself.
 	void PrintSelf(ostream& os, vtkIndent indent);
 
+	/// Returns the ImageData object
 	vtkImageData* getImageData();
 
-	void readImage(QString filename);
+	/// Reads an image from file
+	void readImage(const QString &filename);
 
-	void getOrigin(double origin[3]) const;
+	/// Imports an existing image object
+	void setImage(vtkImageAlgorithm* img, const QString &name, double x0, double y0, double spacing);
 
-	void getRange(double range[2]);
+	//void getOrigin(double origin[3]) const;
 
-	double getSpacing() const;
+	//void getRange(double range[2]);
+
+	//double getSpacing() const;
 
 	virtual void SetUserProperty(QString name, QVariant value);
 

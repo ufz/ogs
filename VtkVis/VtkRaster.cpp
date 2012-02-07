@@ -65,6 +65,42 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 	return image;
 }
 
+vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, size_t &width, size_t &height, double &delta, double noData)
+{
+	size_t length = height*width;
+	float* data = new float[length*2];
+	float max_val=noData;
+	for (size_t j=0; j<length; j++)
+	{
+		data[j*2] = static_cast<float>(data_array[j]);
+		max_val = (data[j*2]>max_val) ? data[j*2] : max_val;
+	}
+	for (size_t j=0; j<length; j++)
+	{
+		if (data[j*2]==noData) 
+		{
+			data[j*2] = max_val;
+			data[j*2+1] = 0;
+		}
+		else
+			data[j*2+1] = max_val;
+	}
+
+	vtkImageImport* image = vtkImageImport::New();
+		image->SetDataSpacing(delta, delta, delta);
+		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
+		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
+		image->SetDataExtent(0, width-1, 0, height-1-1, 0, 0);
+		image->SetDataExtentToWholeExtent();
+		image->SetDataScalarTypeToFloat();
+		image->SetNumberOfScalarComponents(2);
+		image->SetImportVoidPointer(data, 0);
+		image->Update();
+
+	return image;
+}
+
+
 bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 {
 	std::string line, tag, value;

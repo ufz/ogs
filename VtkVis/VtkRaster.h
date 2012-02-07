@@ -67,6 +67,14 @@ public:
 	                              size_t &height,
 	                              double &delta);
 
+    static vtkImageImport* loadImageFromArray(double* data_array, 
+											  double &x0, 
+											  double &y0, 
+											  size_t &width,
+											  size_t &height,
+											  double &delta,
+											  double noData);
+
 private:
 	/**
 	 * Loads ArcGIS asc-files to a vtkImageImport object.

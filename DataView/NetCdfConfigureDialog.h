@@ -4,44 +4,24 @@
 #ifndef NETCDFCONFIGUREDIALOG_H
 #define NETCDFCONFIGUREDIALOG_H
 
-//#include <vtknetcdf/netcdf.h>
 #include <vtknetcdf/netcdfcpp.h>
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
-#include "GEOObjects.h"
-#include "msh_mesh.h"
-#include "VtkMeshConverter.h"
-#include <QSettings>
-#include <QMessageBox>
+
+class GridAdapter;
+class VtkGeoImageSource;
 
 class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 {
 	Q_OBJECT
 
 public:
-	NetCdfConfigureDialog(char* fileName, QDialog* parent = 0);
+	NetCdfConfigureDialog(const std::string &fileName, QDialog* parent = 0);
 	~NetCdfConfigureDialog(void);
-	GridAdapter* getMesh();
+	GridAdapter* getMesh() { return _currentMesh; };
 	std::string getName();
-private:
-	void setVariableSelect();
-	void setDimensionSelect();
-	void getDimEdges(int dimId,size_t &size, double &firstValue, double &lastValue);
-	void getDaysTime(double minSince, QTime &time, int &days);
-	long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
-	void createMesh();
-	int valueWithMaxDim();
-	int getTimeStep();
-	int getDim4();
-	int getResolution();
-	QString setName();
+	VtkGeoImageSource* getRaster() { return _currentRaster; };
 
-	NcFile *_currentFile;
-	NcVar *_currentVar;
-	QDateTime _currentInitialDateTime;
-	GridAdapter* _currentMesh;
-	char* _currentPath;
-	
 private slots:
 	void accept();
 	void reject();
@@ -50,7 +30,29 @@ private slots:
 	void on_comboBoxDim2_currentIndexChanged(int id);
 	void on_comboBoxDim3_currentIndexChanged(int id);
 	void on_comboBoxDim4_currentIndexChanged(int id);
+	void on_radioMesh_toggled(bool isTrue);
 
+private:
+	void setVariableSelect();
+	void setDimensionSelect();
+	void getDimEdges(int dimId,size_t &size, double &firstValue, double &lastValue);
+	void getDaysTime(double minSince, QTime &time, int &days);
+	long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
+	void createDataObject();
+	int valueWithMaxDim();
+	int getTimeStep();
+	int getDim4();
+	double getResolution();
+	QString setName();
+	void reverseNorthSouth(double* data, size_t width, size_t height);
+	
+	NcFile *_currentFile;
+	NcVar *_currentVar;
+	QDateTime _currentInitialDateTime;
+	GridAdapter* _currentMesh;
+	VtkGeoImageSource* _currentRaster;
+	std::string _currentPath;
 };
 
 #endif //NETCDFCONFIGUREDIALOG_H
+
