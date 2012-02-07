@@ -67,6 +67,9 @@ public:
 	/// @brief Translates the item in visualisation-space.
 	void setTranslation(double x, double y, double z) const;
 
+	/// @brief Enables / disables backface culling.
+	void setBackfaceCulling(bool enable) const;
+
 protected:
 	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;

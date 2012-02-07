@@ -54,9 +54,13 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 
 	void* inScalarPtr = input->GetScalarPointer();
 	int numScalarComponents = input->GetNumberOfScalarComponents();
+
 	double spacing[3];
 	input->GetSpacing(spacing);
 	this->ImageSpacing = spacing[0];
+
+	int dimensions[3];
+	input->GetDimensions(dimensions);
 
 	// Skip execution if there are no points
 	vtkIdType numPts = input->GetNumberOfPoints();
@@ -84,14 +88,25 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 	vtkPointData* outPD = output->GetPointData();
 	outPD->CopyAllocate(inPD, numPts * 16, numPts);
 
+	// Compute scaling factor that max height is 0.1 * longest image dimension
+	double range[2];
+	inPD->GetArray(0)->GetRange(range);
+	float scalingFactor = (std::max(dimensions[0], dimensions[1]) * spacing[0] * 0.1)
+	                      / std::max(range[0], range[1]);
+
 	double dir[3] = {0, 0, 1};
 
 	// Traverse all points creating another point with scalar distance in Z direction
 	for (vtkIdType ptId = 0; ptId < numPts; ++ptId)
 	{
+		// Skip translucent pixels
+		float opacity = ((float*)inScalarPtr)[ptId * numScalarComponents + 1];
+		if (opacity < 0.00000001f)
+			continue;
+
 		// Compute length of the new line (scalar * LengthScaleFactor)
-		float length = ((unsigned char*)inScalarPtr)[ptId * numScalarComponents]
-		               * this->LengthScaleFactor;
+		float length = ((float*)inScalarPtr)[ptId * numScalarComponents]
+		               * scalingFactor * this->LengthScaleFactor;
 		//float length = (((unsigned char*)inScalarPtr)[ptId * numScalarComponents]* this->LengthScaleFactor > 50000) ? 50000 : ((unsigned char*)inScalarPtr)[ptId * numScalarComponents]* this->LengthScaleFactor;
 
 		// Skip this line if length is zero

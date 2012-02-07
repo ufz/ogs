@@ -660,7 +660,7 @@ void MainWindow::loadFile(const QString &fileName)
 #endif
 		std::string name = fileName.toStdString();
 		GridAdapter* mesh;
-				
+
 		NetCdfConfigureDialog dlg(name);
 		dlg.exec();
 		if (dlg.getMesh() != NULL)
@@ -1103,12 +1103,12 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 		XmlCndInterface xml(&_project, schemaName);
 		xml.writeFile(fileName, geoName, type);
 	}
-	else 
+	else
 	{
 		const std::vector<FEMCondition*> conds = _project.getConditions();
 		for (size_t i=0; i<conds.size(); i++)
 		{
-			if ((conds[i]->getCondType() == type) && 
+			if ((conds[i]->getCondType() == type) &&
 				(QString::fromStdString(conds[i]->getAssociatedGeometryName()) == geoName))
 			{
 				if (type == FEMCondition::BOUNDARY_CONDITION)
@@ -1335,6 +1335,21 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	std::map<std::string, MeshLib::CFEMesh*> const& mesh_map (_project.getMeshObjects());
+
+	std::string mesh_name(mesh_map.begin()->first);
+	std::cout << "[Test] get mesh " << mesh_name << " ... " << std::flush;
+	MeshLib::CFEMesh const*const mesh (_project.getMesh(mesh_name));
+	if (mesh) {
+		std::cout << "done" << std::endl;
+		std::cout << "[Test] writing mesh in TetGen file format ... " << std::flush;
+		FileIO::TetGenInterface tetgen_io;
+		tetgen_io.writeTetGenMesh(mesh_name+".node", mesh_name+".ele", mesh);
+		std::cout << "done" << std::endl;
+	} else {
+		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
+	}
+
 	CondFromRasterDialog dlg(&_project);
 	dlg.exec();
 }
@@ -1579,7 +1594,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 		// create new geometry points vector by copying mesh nodes vector
 		std::vector<GEOLIB::Point*>* new_points = new std::vector<GEOLIB::Point*>;
 		//ignore name map because it makes things incredibly slow (and mesh-nodes cannot have names anyway, can they?)
-		//std::map<std::string, size_t>* name_pnt_id_map = new std::map<std::string, size_t>; 
+		//std::map<std::string, size_t>* name_pnt_id_map = new std::map<std::string, size_t>;
 
 		for (size_t i = 0; i < points->size(); i++)
 		{

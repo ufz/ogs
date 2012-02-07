@@ -26,20 +26,23 @@ public:
 	               QDialog* parent = NULL);
 
 protected slots:
-	/// Sets the background colour.
+	/// @brief Sets the background colour.
 	void on_bgColorButton_colorPicked(QColor color);
 
-	/// Adds a light above the scene.
+	/// @brief Adds a light above the scene.
 	void on_lightAboveBox_clicked();
 
-	/// Adds a light below the scene.
+	/// @brief Adds a light below the scene.
 	void on_lightBelowBox_clicked();
 
-	/// Sets the given superelevation on all vis pipeline source objects
+	/// @brief Sets the given superelevation on all vis pipeline source objects
 	void on_superelevationPushButton_pressed();
 
-	///
+	/// @brief
 	void on_loadShowAllCheckBox_stateChanged(int state);
+
+	/// @brief Culls backfacing rendering primitives on all actors.
+	void on_cullBackfacesCheckBox_stateChanged(int state);
 
 private:
 	VtkVisPipeline* _vtkVisPipeline;
