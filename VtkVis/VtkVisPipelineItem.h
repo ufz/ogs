@@ -92,6 +92,10 @@ public:
      */
 	virtual void setScale(double x, double y, double z) const;
 
+	/// @brief Sets the geometry and date scaling recursively on all children of
+	/// this item.
+	void setScaleOnChildren(double x, double y, double z) const;
+
 	/** 
  	 * @brief Translates the item in visualisation-space.
      * This function is empty and needs to be implemented by derived classes.
@@ -104,9 +108,11 @@ public:
      */
 	virtual vtkAlgorithm* transformFilter() const = 0;
 
-	/// @brief Sets the geometry and date scaling recursively on all children of
-	/// this item.
-	void setScaleOnChildren(double x, double y, double z) const;
+	/// @brief Enables / disables backface culling.
+	virtual void setBackfaceCulling(bool enable) const;
+
+	/// @brief Enables / disables backface culling on all children.
+	void setBackfaceCullingOnChildren(bool enable) const;
 
 protected:
 	vtkProp3D* _actor;

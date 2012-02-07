@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QRegExp>
+#include <QSettings>
 
 // export test
 #include <vtkPolyDataAlgorithm.h>
@@ -133,6 +134,11 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				this->SetActiveAttribute("Solid Color");
 		}
 	}
+
+	// Set global backface culling
+	QSettings settings("UFZ, OpenGeoSys-5");
+	bool backfaceCulling = settings.value("globalCullBackfaces", 0).toBool();
+	this->setBackfaceCulling(backfaceCulling);
 }
 
 void VtkVisPointSetItem::SetScalarVisibility( bool on )
@@ -348,4 +354,9 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 vtkAlgorithm* VtkVisPointSetItem::transformFilter() const
 {
 	return _transformFilter;
+}
+
+void VtkVisPointSetItem::setBackfaceCulling(bool enable) const
+{
+	static_cast<vtkActor*>(this->_actor)->GetProperty()->SetBackfaceCulling((int)enable);
 }

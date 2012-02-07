@@ -156,3 +156,19 @@ void VtkVisPipelineItem::setScaleOnChildren(double x, double y, double z) const
 		child->setScale(x, y, z);
 	}
 }
+
+void VtkVisPipelineItem::setBackfaceCulling(bool enable) const
+{
+	// Reimplemented in subclass
+	(void)enable;
+}
+
+void VtkVisPipelineItem::setBackfaceCullingOnChildren(bool enable) const
+{
+	for (int i = 0; i < this->childCount(); ++i)
+	{
+		VtkVisPipelineItem* child = this->child(i);
+		child->setBackfaceCulling((int)enable);
+		child->setBackfaceCullingOnChildren((int)enable);
+	}
+}

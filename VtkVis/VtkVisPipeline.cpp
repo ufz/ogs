@@ -240,6 +240,21 @@ void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 	emit vtkVisPipelineChanged();
 }
 
+void VtkVisPipeline::setGlobalBackfaceCulling(bool enable) const
+{
+	// iterate over all source items
+	for (int i = 0; i < _rootItem->childCount(); ++i)
+	{
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+		item->setBackfaceCulling(enable);
+
+		// recursively set on all child items
+		item->setBackfaceCullingOnChildren(enable);
+	}
+
+	emit vtkVisPipelineChanged();
+}
+
 void VtkVisPipeline::addPipelineItem(GeoTreeModel* model,
                                      const std::string &name,
                                      GEOLIB::GEOTYPE type)
