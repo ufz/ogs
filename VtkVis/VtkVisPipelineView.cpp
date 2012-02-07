@@ -26,10 +26,10 @@
 #include "msh_mesh.h"
 #include "GridAdapter.h"
 #include "VtkGeoImageSource.h"
+#include <vtkImageData.h>
 #include "MeshFromRasterDialog.h"
 #include <vtkDataObject.h>
 #include <vtkSmartPointer.h>
-
 #include <vtkGenericDataObjectReader.h>
 #include <vtkTransformFilter.h>
 #include <vtkUnstructuredGrid.h>
@@ -177,7 +177,7 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	double origin[3];
-	imageSource->getOrigin(origin);
+	imageSource->GetOutput()->GetOrigin(origin);
 	
 	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin,
 														   imageSource->getSpacing(), 

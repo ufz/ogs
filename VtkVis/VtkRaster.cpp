@@ -52,8 +52,8 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 	float* data = loadDataFromASC(fileName, x0, y0, width, height, delta);
 
 	vtkImageImport* image = vtkImageImport::New();
-		image->SetDataOrigin(x0, y0, 0);
 		image->SetDataSpacing(delta, delta,delta);
+		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
 		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
 		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
 		image->SetDataExtentToWholeExtent();
