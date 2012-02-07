@@ -335,7 +335,7 @@ void NetCdfConfigureDialog::createMesh()
 		if (dimArrayT2mMax[i] < -10000 ) dimArrayT2mMax[i] = -9999; // all values < -10000, set to "no-value"
 	}
 		
-	std::pair <double,double> originNetCdf (originLon,originLat); // lon,lat
+	double originNetCdf[3] = {originLon,originLat,0}; // lon,lat
 
 	MshElemType::type meshElemType = MshElemType::QUAD;
 	UseIntensityAs::type useIntensity = UseIntensityAs::MATERIAL;

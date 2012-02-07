@@ -14,6 +14,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkFloatArray.h>
 
 #include "VtkApplyColorTableFilter.h"
 
@@ -47,10 +48,9 @@ int VtkApplyColorTableFilter::RequestData( vtkInformation* request,
 	        vtkSmartPointer<vtkUnsignedCharArray>::New();
 	colorArray->SetNumberOfComponents(4);
 	colorArray->SetName("Colors");
-	vtkSmartPointer<vtkUnsignedCharArray> scalars =
-	        (!ColorsOnCells) ? vtkUnsignedCharArray::SafeDownCast(
-	                input->GetPointData()->GetScalars())
-		: vtkUnsignedCharArray::SafeDownCast(input->GetCellData()->GetScalars());
+	vtkSmartPointer<vtkFloatArray> scalars = (!ColorsOnCells) 
+		? vtkFloatArray::SafeDownCast(input->GetPointData()->GetScalars())
+		: vtkFloatArray::SafeDownCast(input->GetCellData()->GetScalars());
 	int limit = (!ColorsOnCells) ? input->GetNumberOfPoints() : input->GetNumberOfCells();
 
 	for (int i = 0; i < limit; i++)

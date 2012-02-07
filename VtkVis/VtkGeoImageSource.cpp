@@ -8,7 +8,8 @@
 // ** INCLUDES **
 #include "VtkGeoImageSource.h"
 
-#include "OGSRaster.h"
+//#include "OGSRaster.h"
+#include "VtkRaster.h"
 
 #include <vtkFloatArray.h>
 #include <vtkImageChangeInformation.h>
@@ -16,11 +17,11 @@
 #include <vtkImageShiftScale.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkQImageToImageSource.h>
-
-#include <QImage>
-#include <QPointF>
-#include <QString>
+//#include <vtkQImageToImageSource.h>
+#include <vtkIntArray.h>
+//#include <QImage>
+//#include <QPointF>
+//#include <QString>
 
 vtkStandardNewMacro(VtkGeoImageSource);
 
@@ -51,22 +52,13 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
 }
 
 VtkGeoImageSource::VtkGeoImageSource()
+: _imageSource(NULL), _x0(0), _y0(0), _z0(0), _spacing(1)
 {
-	_imageSource = vtkQImageToImageSource::New();
-	_imageInfo = vtkImageChangeInformation::New();
-	_imageShift = vtkImageShiftScale::New();
-
-	_imageInfo->SetInputConnection(_imageSource->GetOutputPort());
-	_imageShift->SetInputConnection(_imageInfo->GetOutputPort());
-	_imageShift->SetOutputScalarTypeToUnsignedChar();
-	this->SetInputConnection(_imageShift->GetOutputPort());
 }
 
 VtkGeoImageSource::~VtkGeoImageSource()
 {
-	_imageSource->Delete();
-	_imageInfo->Delete();
-	_imageShift->Delete();
+	if(_imageSource) _imageSource->Delete();
 }
 
 void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
@@ -74,18 +66,15 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 	this->Superclass::PrintSelf(os, indent);
 }
 
-void VtkGeoImageSource::setImageFilename(QString filename)
+void VtkGeoImageSource::readImage(QString filename)
 {
-	QImage* raster = new QImage;
-	QPointF origin;
-	double spacing;
-	OGSRaster::loadImage(filename, *raster, origin, spacing);
-	this->setImage(*raster);
-	delete raster;
-	// correct raster position by half a pixel for correct visualisation 
-	this->setOrigin(origin.x()+(spacing/2.0), origin.y()+(spacing/2.0), -10.0);
-	this->setSpacing(spacing);
+	this->_imageSource = VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing);
+	this->SetInputConnection(_imageSource->GetOutputPort());
 	this->SetName(filename);
+	this->_z0 = -10;
+
+	this->GetOutput()->SetOrigin(_x0, _y0, _z0);
+	this->GetOutput()->SetSpacing(_spacing, _spacing, _spacing);
 }
 
 vtkImageData* VtkGeoImageSource::getImageData()
@@ -93,33 +82,22 @@ vtkImageData* VtkGeoImageSource::getImageData()
 	return this->_imageSource->GetImageDataInput(0);
 }
 
-std::pair<double, double> VtkGeoImageSource::getOrigin()
+void VtkGeoImageSource::getOrigin(double origin[3]) const
 {
-	double* origin = this->_imageInfo->GetOutputOrigin();
-	std::pair<double, double> p(origin[0], origin[1]);
-	return p;
+	origin[0] = this->_x0;
+	origin[1] = this->_y0;
+	origin[2] = this->_z0;
 }
 
-double VtkGeoImageSource::getSpacing()
+double VtkGeoImageSource::getSpacing() const
 {
-	double* spacing = this->_imageInfo->GetOutputSpacing();
-	return spacing[0];
+	return this->_spacing;
 }
 
-void VtkGeoImageSource::setImage(QImage& image)
+void VtkGeoImageSource::getRange(double range[2])
 {
-	_imageSource->SetQImage(&image);
-	_imageSource->Update(); // crashes otherwise
-}
-
-void VtkGeoImageSource::setOrigin(double x, double y, double z)
-{
-	_imageInfo->SetOutputOrigin(x, y, z);
-}
-
-void VtkGeoImageSource::setSpacing(double spacing)
-{
-	_imageInfo->SetOutputSpacing(spacing, spacing, spacing);
+	this->_imageSource->Update();	
+	_imageSource->GetOutput()->GetPointData()->GetArray(0)->GetRange(range);
 }
 
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
@@ -137,41 +115,6 @@ void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
 		vtkGenericWarningMacro("Execute: Unknown input ScalarType");
 		return;
 	}
-
-/*
-    // Create normals
-    vtkFloatArray* normals = vtkFloatArray::New();
-    int numPoints = input->GetNumberOfPoints();
-    normals->SetNumberOfComponents(3);
-    normals->Allocate(3*numPoints);
-    float normal[3] = {0.f, 0.f, 1.f};
-
-    // vector data
-    std::cout << input->GetScalarTypeAsString() << std::endl;
-    vtkFloatArray* vectors = vtkFloatArray::New();
-    vectors->SetNumberOfComponents(3);
-    vectors->Allocate(3*numPoints);
-    int numScalarComponents = input->GetNumberOfScalarComponents();
-
-    for (int i = 0; i < numPoints; i++)
-    {
-        normals->InsertTuple(i, normal);
-        float vector[3];
-        vector[0] = 1;
-        vector[1] = 1;
-        vector[2] = ((unsigned char*)inPtr)[i * numScalarComponents] * 0.1;
-        //std::cout << vector[2] << " ";
-        vectors->InsertTuple(i, vector);
-    }
-
-    normals->SetName("Normals");
-    output->GetPointData()->SetNormals(normals);
-    normals->Delete();
-
-    vectors->SetName("Vectors");
-    output->GetPointData()->SetVectors(vectors);
-    vectors->Delete();
- */
 }
 
 void VtkGeoImageSource::SetUserProperty( QString name, QVariant value )

@@ -17,6 +17,7 @@
 #include <vtkTexture.h>
 
 #include "VtkColorLookupTable.h"
+#include "XmlIO/XmlLutReader.h"
 
 #define ogsUserPropertyMacro(name,type) \
         virtual void Set ## name (type _arg) \
@@ -187,12 +188,12 @@ public:
 	}
 
 	/// Loads a predefined color lookup table from a file for the specified scalar array.
-	void SetLookUpTable(const QString &array_name, const std::string &filename)
+	void SetLookUpTable(const QString &array_name, const QString &filename)
 	{
-		VtkColorLookupTable* colorLookupTable = VtkColorLookupTable::New();
-		colorLookupTable->readFromFile(filename);
-		colorLookupTable->setInterpolationType(VtkColorLookupTable::NONE);
+		VtkColorLookupTable* colorLookupTable = XmlLutReader::readFromFile(filename);
+		//colorLookupTable->setInterpolationType(VtkColorLookupTable::NONE);
 		colorLookupTable->Build();
+		//colorLookupTable->SetNumberOfTableValues(256);
 		SetLookUpTable(array_name, colorLookupTable);
 	}
 

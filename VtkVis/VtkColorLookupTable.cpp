@@ -43,6 +43,10 @@ unsigned char VtkColorLookupTable::expInterpolation(unsigned char a,
 
 void VtkColorLookupTable::Build()
 {
+	double range[2];
+	this->GetTableRange(range);
+	const double interval = range[1]-range[0];
+	const vtkIdType nColours = this->GetNumberOfTableValues();
 	if (!_dict.empty())
 	{
 		// make sure that color map starts with the first color in the dictionary
@@ -53,7 +57,7 @@ void VtkColorLookupTable::Build()
 		startcolor[3] = _dict.begin()->second[3];
 		std::pair<size_t, unsigned char*> lastValue(0, startcolor);
 		size_t nextIndex(0);
-
+/*
 		// make sure that color map ends with the last color in the dictionary
 		std::map<double, unsigned char*>::iterator lastitr = _dict.end();
 		--lastitr;
@@ -64,7 +68,7 @@ void VtkColorLookupTable::Build()
 				lastcolor[i] = lastitr->second[i];
 			_dict.insert( std::pair<double, unsigned char*>(1.0, lastcolor) );
 		}
-
+*/
 		for (std::map<double, unsigned char*>::const_iterator it = _dict.begin();
 		     it != _dict.end(); ++it)
 		{
@@ -72,8 +76,8 @@ void VtkColorLookupTable::Build()
 			//rgba[0] = (*it->second)[0]; rgba[1] = (*it->second)[1]; rgba[2] = (*it->second)[2]; rgba[3] = 255;
 
 			nextIndex =
-			        static_cast<size_t>( floor(it->first * this->GetNumberOfTableValues()) );
-			if (nextIndex >= static_cast<size_t>(this->GetNumberOfTableValues()))
+			        static_cast<size_t>( floor(((it->first-range[0])/interval) * (double)nColours) );
+			if (nextIndex >= static_cast<size_t>(nColours))
 				nextIndex--;                                                   // this happens for the very last colour
 			this->SetTableValue(nextIndex, it->second);
 
@@ -89,21 +93,11 @@ void VtkColorLookupTable::Build()
 
 					if (_type == VtkColorLookupTable::LINEAR)
 						for (size_t j = 0; j < 3; j++)
-							int_rgba[j] =
-							        linInterpolation(
-							                (lastValue.second)[j],
-							                (it->second)[j],
-							                pos);
+							int_rgba[j] = linInterpolation( (lastValue.second)[j], (it->second)[j], pos);
 					else if (_type == VtkColorLookupTable::EXPONENTIAL)
 						for (size_t j = 0; j < 3; j++)
-							int_rgba[j] =
-							        expInterpolation(
-							                (lastValue.second)[j],
-							                (it->second)[j],
-							                0.2,
-							                pos);
+							int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
 					else // no interpolation
-
 						for (size_t j = 0; j < 3; j++)
 							int_rgba[j] = (lastValue.second)[j];
 
@@ -116,19 +110,6 @@ void VtkColorLookupTable::Build()
 	}
 	else
 		vtkLookupTable::Build();
-}
-
-void VtkColorLookupTable::readFromFile(const std::string &filename)
-{
-	std::map<std::string, GEOLIB::Color*> colors;
-	GEOLIB::readColorLookupTable(colors, filename);
-	this->SetNumberOfTableValues(colors.size());
-
-	for (std::map<std::string, GEOLIB::Color*>::iterator it = colors.begin(); it != colors.end();
-	     ++it)
-		this->SetTableValue( static_cast<vtkIdType>(strtod( it->first.c_str(),
-		                                                    0 )), (*(it->second))[0],
-		                     (*(it->second))[1], (*(it->second))[2], 255 );
 }
 
 void VtkColorLookupTable::writeToFile(const std::string &filename)
@@ -196,31 +177,21 @@ void VtkColorLookupTable::GetTableValue(vtkIdType indx, unsigned char rgba[4])
 
 void VtkColorLookupTable::setColor(double pos, unsigned char rgba[4])
 {
-	if (pos >= 0 && pos <= 1)
-	{
-		unsigned char* dict_rgba = new unsigned char[4];
-		for (size_t i = 0; i < 4; i++)
-			dict_rgba[i] = rgba[i];
-		_dict.insert( std::pair<double, unsigned char*>(pos, dict_rgba) );
-	}
-	else
-		std::cout << "ColorLookupTable::setValue() - Error: pos should be in [0,1]" <<
-		std::endl;
+	unsigned char* dict_rgba = new unsigned char[4];
+	for (size_t i = 0; i < 4; i++)
+		dict_rgba[i] = rgba[i];
+	_dict.insert( std::pair<double, unsigned char*>(pos, dict_rgba) );
 }
 
 void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
 {
 	indx =
-	        ((indx <
-	          this->TableRange[0]) ? static_cast<vtkIdType>(this->TableRange[0]) : (indx >=
-	                                                                                this
-	                                                                                ->
-	                                                                                TableRange[1] ? static_cast<vtkIdType>(this->TableRange[1]) - 1 : indx));
+	        ((indx < this->TableRange[0]) 
+				? static_cast<vtkIdType>(this->TableRange[0]) 
+				: (indx >=this->TableRange[1] ? static_cast<vtkIdType>(this->TableRange[1]) - 1 : indx));
 	indx =
-	        static_cast<size_t>( floor( (indx -
-	                                     this->TableRange[0]) *
-	                                    (this->NumberOfColors /
-	                                     (this->TableRange[1] - this->TableRange[0])) ) );
+	        static_cast<size_t>( floor( (indx - this->TableRange[0]) *
+	                                    (this->NumberOfColors / (this->TableRange[1] - this->TableRange[0])) ) );
 
 	unsigned char* _rgba;
 	_rgba = this->Table->GetPointer(indx * 4);

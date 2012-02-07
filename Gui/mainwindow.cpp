@@ -830,7 +830,7 @@ void MainWindow::importRaster()
 	if (!fileName.isEmpty())
 	{
 		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
-		geoImage->setImageFilename(fileName);
+		geoImage->readImage(fileName);
 		_vtkVisPipeline->addPipelineItem(geoImage);
 
 		QDir dir = QDir(fileName);

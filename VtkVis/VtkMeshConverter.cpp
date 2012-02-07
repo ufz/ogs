@@ -18,11 +18,12 @@
 #include <vtkCell.h>
 #include <vtkCellData.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkFloatArray.h>
 
 
 GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
-                                                     const std::pair<double,double> &origin,
-                                                     const double &scalingFactor,
+                                                     const double origin[3],
+                                                     const double scalingFactor,
 													 MshElemType::type elem_type,
 													 UseIntensityAs::type intensity_type)
 {
@@ -32,8 +33,8 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		return NULL;
 	}
 
-	vtkSmartPointer<vtkUnsignedCharArray> pixelData = vtkSmartPointer<vtkUnsignedCharArray>(
-	        vtkUnsignedCharArray::SafeDownCast(img->GetPointData()->GetScalars()));
+	vtkSmartPointer<vtkFloatArray> pixelData = vtkSmartPointer<vtkFloatArray>(
+	        vtkFloatArray::SafeDownCast(img->GetPointData()->GetScalars()));
 	int* dims = img->GetDimensions();
 
 	const size_t imgHeight = dims[0];
@@ -56,9 +57,26 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		{
 			const size_t img_idx = i * imgHeight + j;
 			const size_t index = (i+1) * incHeight + j;
-			const double* colour = pixelData->GetTuple4(img_idx);
-			pixVal[index] = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
-			visNodes[index] = (colour[3] > 0);
+			int nTuple = pixelData->GetNumberOfComponents();
+			double* colour;
+			if (nTuple == 2)	//Grey+Alpha
+			{
+				colour = pixelData->GetTuple2(img_idx);
+				pixVal[index] = colour[0];
+			
+			}
+			else if (nTuple == 4)	//RGBA
+			{
+				colour = pixelData->GetTuple4(img_idx);
+				pixVal[index] = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
+			}
+			else
+			{
+				std::cout << "Unsupported pixel composition!" << std::endl;
+				return NULL;
+			}
+			
+			visNodes[index] = (colour[nTuple-1] > 0);
 			node_idx_map[index]=-1;
 		}
 		pixVal[(i+2)*incHeight-1]=0;
@@ -76,7 +94,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 }
 
 GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
-													 const std::pair<double,double> &origin,
+													 const double origin[3],
 													 const size_t imgHeight,
 													 const size_t imgWidth,
 													 const double &scalingFactor,
@@ -133,7 +151,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
 GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 												  int* node_idx_map,
 												  const bool* visNodes,
-												  const std::pair<double,double> &origin,
+												  const double origin[3],
                                                   const size_t &imgHeight,
 												  const size_t &imgWidth,
                                                   const double &scalingFactor,
@@ -144,8 +162,8 @@ GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 	const size_t incWidth  = imgWidth+1;
 	GridAdapter* grid = new GridAdapter(NULL);
 	size_t node_idx_count(0);
-	const double x_offset(origin.first - scalingFactor/2.0);
-	const double y_offset(origin.second - scalingFactor/2.0);
+	const double x_offset(origin[0] - scalingFactor/2.0);
+	const double y_offset(origin[1] - scalingFactor/2.0);
 
 	for (size_t i = 0; i < incWidth; i++)
 		for (size_t j = 0; j < incHeight; j++)
