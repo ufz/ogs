@@ -177,7 +177,7 @@ public:
 		if (array_name.length() > 0)
 		{
 			std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
-			if (it != _lut.end()) 
+			if (it != _lut.end())
 			{
 				it->second->Delete();
 				_lut.erase(it);
