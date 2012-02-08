@@ -346,7 +346,7 @@ void NetCdfConfigureDialog::createDataObject()
 	for (int i=0; i < (sizeLat*sizeLon); i++)
 	{
 		//data_array[i] = data_array[i] - 273; // convert from kalvin to celsius
-		if (data_array[i] < -10000 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
+		if (data_array[i] < -9999 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
 	}
 		
 	double origin_x = (originLon < lastLon) ? originLon : lastLon;
