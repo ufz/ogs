@@ -327,7 +327,7 @@ void NetCdfConfigureDialog::createDataObject()
 
 	// set up array
 	double* data_array = new double[sizeLat*sizeLon];
-	for(int i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
+	for(size_t i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
 
 	//Time-Dimension:
 	if (_currentVar->num_dims() > 2)
@@ -343,7 +343,7 @@ void NetCdfConfigureDialog::createDataObject()
 	
 	_currentVar->get(data_array,length); //create Array of Values
 
-	for (int i=0; i < (sizeLat*sizeLon); i++)
+	for (size_t i=0; i < (sizeLat*sizeLon); i++)
 	{
 		//data_array[i] = data_array[i] - 273; // convert from kalvin to celsius
 		if (data_array[i] < -10000 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
