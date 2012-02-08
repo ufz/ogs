@@ -83,7 +83,7 @@ vtkImageData* VtkGeoImageSource::getImageData()
 {
 	return this->_imageSource->GetImageDataInput(0);
 }
-/*
+
 void VtkGeoImageSource::getOrigin(double origin[3]) const
 {
 	origin[0] = this->_x0;
@@ -101,7 +101,7 @@ void VtkGeoImageSource::getRange(double range[2])
 	this->_imageSource->Update();	
 	_imageSource->GetOutput()->GetPointData()->GetArray(0)->GetRange(range);
 }
-*/
+
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
 	vtkDebugMacro(<< "Executing VtkGeoImageSource")
