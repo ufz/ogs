@@ -601,7 +601,9 @@ void MainWindow::loadFile(const QString &fileName)
 	else if (fi.suffix().toLower() == "msh")
 	{
 		std::string name = fileName.toStdString();
-		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
+
+		FileIO::OGSMeshIO meshIO;
+		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
 			_meshModels->addMesh(msh, name);
 		else
