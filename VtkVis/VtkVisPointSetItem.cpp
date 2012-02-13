@@ -109,8 +109,8 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				VtkAlgorithmProperties* newProps = new VtkAlgorithmProperties();
 				newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
 				newProps->SetTexture(parentProps->GetTexture());
-				setVtkProperties(newProps);
 				vtkProps = newProps;
+				setVtkProperties(newProps);
 				parentItem = NULL;
 			}
 			else
@@ -297,6 +297,7 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
 void VtkVisPointSetItem::setLookupTableForActiveScalar()
 {
 	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+
 	if (vtkProps)
 	{
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);

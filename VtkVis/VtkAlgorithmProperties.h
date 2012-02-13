@@ -171,7 +171,7 @@ public:
 		if (it != _lut.end()) return it->second;
 		return NULL;
 	}
-
+	
 	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
 	void SetLookUpTable(const QString &array_name, vtkLookupTable* lut)
 	{
