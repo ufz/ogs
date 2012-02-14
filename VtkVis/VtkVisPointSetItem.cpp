@@ -39,7 +39,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
 	: VtkVisPipelineItem(algorithm, parentItem, data), _mapper(NULL),
-	_transformFilter(NULL), _activeAttribute("")
+	_transformFilter(NULL)
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -62,7 +62,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
 	: VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(NULL),
-	_transformFilter(NULL), _activeAttribute("")
+	_transformFilter(NULL)
 {
 }
 
@@ -157,7 +157,6 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 	                 _mapper, SLOT(SetScalarVisibility(bool)));
 
-	_activeAttribute = vtkProps->GetActiveAttribute();
 	this->setLookupTableForActiveScalar();
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
@@ -223,7 +222,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 		onPointData = false;
 	else if (name.contains("Solid Color"))
 	{
-		_activeAttribute = "Solid Color";
+		_vtkProps->SetActiveAttribute("Solid Color");
 		_mapper->ScalarVisibilityOff();
 		return;
 	}
@@ -249,7 +248,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 				}
 				else
 				{
-					_activeAttribute = "Solid Color";
+					_vtkProps->SetActiveAttribute("Solid Color");
 					_mapper->ScalarVisibilityOff();
 					return;
 				}
@@ -267,14 +266,14 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 				}
 				else
 				{
-					_activeAttribute = "Solid Color";
+					_vtkProps->SetActiveAttribute("Solid Color");
 					_mapper->ScalarVisibilityOff();
 					return;
 				}
 			}
 		}
 
-		_activeAttribute = name;
+		_vtkProps->SetActiveAttribute(name);
 		_mapper->SetScalarRange(dataSet->GetScalarRange());
 		this->setLookupTableForActiveScalar();
 		_mapper->ScalarVisibilityOn();

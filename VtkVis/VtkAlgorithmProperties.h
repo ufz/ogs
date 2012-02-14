@@ -262,6 +262,9 @@ public:
 		}
 	}
 
+	/// @brief Set the active attribute
+	void SetActiveAttribute(QString name) { _activeAttributeName = name; }
+
 	/// @brief Returns the desired active attribute.
 	QString GetActiveAttribute() const { return _activeAttributeName; }
 
