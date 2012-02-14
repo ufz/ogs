@@ -6,6 +6,7 @@
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPointSetItem.h"
+#include "VtkCompositeFilter.h"
 
 #include <limits>
 
@@ -73,7 +74,6 @@ VtkVisPointSetItem::~VtkVisPointSetItem()
 
 void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 {
-	_activeAttribute = "";
 	_transformFilter = vtkTransformFilter::New();
 	vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 	transform->Identity();
@@ -91,11 +91,16 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	static_cast<vtkActor*>(_actor)->SetMapper(_mapper);
 	_renderer->AddActor(_actor);
 
-	// Set pre-set properties
+	// Determine the right pre-set properties
+	// Order is: _algorithm, _compositeFilter, create a new one with props copied from parent
 	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
 	if (vtkProps)
 		setVtkProperties(vtkProps);
-
+	else
+		vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_compositeFilter);
+	
+	if (vtkProps)
+		setVtkProperties(vtkProps);
 	// Copy properties from parent
 	else
 	{
@@ -106,11 +111,10 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 			        dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
 			if (parentProps)
 			{
-				VtkAlgorithmProperties* newProps = new VtkAlgorithmProperties();
-				newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
-				newProps->SetTexture(parentProps->GetTexture());
-				vtkProps = newProps;
-				setVtkProperties(newProps);
+				vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
+				vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
+				vtkProps->SetTexture(parentProps->GetTexture());
+				setVtkProperties(vtkProps);
 				parentItem = NULL;
 			}
 			else
@@ -148,9 +152,12 @@ void VtkVisPointSetItem::SetScalarVisibility( bool on )
 
 void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 {
+	_vtkProps = vtkProps;
+
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 	                 _mapper, SLOT(SetScalarVisibility(bool)));
 
+	_activeAttribute = vtkProps->GetActiveAttribute();
 	this->setLookupTableForActiveScalar();
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
@@ -296,24 +303,21 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
 
 void VtkVisPointSetItem::setLookupTableForActiveScalar()
 {
-	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
-
-	if (vtkProps)
+	if (_vtkProps)
 	{
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 		if (mapper)
 		{
-			if (vtkProps->GetLookupTable(this->GetActiveAttribute()) == NULL) // default color table
+			if (_vtkProps->GetLookupTable(this->GetActiveAttribute()) == NULL) // default color table
 			{
-				vtkLookupTable* lut = vtkLookupTable::New();
-				vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
+				vtkLookupTable* lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
+				_vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
 			}
 			else // specific color table
-				_mapper->SetLookupTable(vtkProps->GetLookupTable(this->GetActiveAttribute()));
+				_mapper->SetLookupTable(_vtkProps->GetLookupTable(this->GetActiveAttribute()));
 
 			//_mapper->SetScalarRange(this->_transformFilter->GetOutput()->GetScalarRange());
 			_mapper->SetScalarRange(vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0))->GetScalarRange());
-			//_mapper->Update();  //KR: not necessary?!
 		}
 	}
 }

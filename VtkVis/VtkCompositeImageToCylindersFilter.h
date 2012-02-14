@@ -9,7 +9,6 @@
 #include "VtkCompositeFilter.h"
 
 class VtkImageDataToLinePolyDataFilter;
-class VtkApplyColorTableFilter;
 
 /// @brief Creates cylinders that stand on top of the image with the length
 /// of the corresponding first sub-pixel value (the red value). Useful to
@@ -28,7 +27,6 @@ public:
 
 private:
 	VtkImageDataToLinePolyDataFilter* _lineFilter;
-	VtkApplyColorTableFilter* _ctf;
 };
 
 #endif // VTKCOMPOSITEIMAGETOCYLINDERSFILTER_H

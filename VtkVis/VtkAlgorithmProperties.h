@@ -168,8 +168,10 @@ public:
 	vtkLookupTable* GetLookupTable(const QString& array_name)
 	{
 		std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
-		if (it != _lut.end()) return it->second;
-		return NULL;
+		if (it != _lut.end())
+			return it->second;
+		else
+			return NULL;
 	}
 	
 	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
@@ -184,6 +186,7 @@ public:
 				_lut.erase(it);
 			}
 			_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
+			_activeAttributeName = array_name;
 		}
 	}
 
@@ -261,6 +264,7 @@ public:
 
 	/// @brief Returns the desired active attribute.
 	QString GetActiveAttribute() const { return _activeAttributeName; }
+
 
 protected:
 

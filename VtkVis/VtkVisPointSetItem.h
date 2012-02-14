@@ -89,6 +89,10 @@ protected:
 private:
 	/// Checks if the selected attribute actually exists for the data set
 	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
+
+	/// @brief The active VtkAlgorithmProperties.
+	/// From algorithm, compositeFilter, or copied from parent
+	VtkAlgorithmProperties* _vtkProps;
 };
 
 #endif // VTKVISPOINTSETITEM_H
