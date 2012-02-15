@@ -20,6 +20,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
+#include <vtkProperty.h>
+#include <vtkLookupTable.h>
 
 #include <QObject>
 #include <QRegExp>

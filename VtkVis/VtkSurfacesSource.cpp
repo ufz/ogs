@@ -20,6 +20,7 @@
 #include <vtkPolygon.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkSurfacesSource);
 vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");

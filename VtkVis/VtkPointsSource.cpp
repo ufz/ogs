@@ -18,6 +18,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkCellData.h>
+#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkPointsSource);
 vtkCxxRevisionMacro(VtkPointsSource, "$Revision$");

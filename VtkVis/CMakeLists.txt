@@ -43,6 +43,7 @@ SET( SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
+	VtkAlgorithmProperties.cpp
 )
 
 # Moc headers

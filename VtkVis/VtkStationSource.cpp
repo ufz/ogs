@@ -21,6 +21,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkStationSource);
 vtkCxxRevisionMacro(VtkStationSource, "$Revision$");
