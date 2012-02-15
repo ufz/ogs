@@ -13,11 +13,11 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
-#include <vtkProperty.h>
-#include <vtkTexture.h>
 
-#include "VtkColorLookupTable.h"
-#include "XmlIO/XmlLutReader.h"
+class vtkProperty;
+class vtkTexture;
+class vtkLookupTable;
+
 
 #define ogsUserPropertyMacro(name,type) \
         virtual void Set ## name (type _arg) \
@@ -133,134 +133,72 @@ class VtkAlgorithmProperties : public QObject
 
 public:
 	/// Constructor (sets default values)
-	VtkAlgorithmProperties(QObject* parent = NULL)
-		: QObject(parent)
-	{
-		_property = vtkProperty::New();
-		_texture  = NULL;
-		_scalarVisibility = true;
-		_algorithmUserProperties = new QMap<QString, QVariant>;
-		_algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
-		_activeAttributeName = "";
-	}
+	VtkAlgorithmProperties(QObject* parent = NULL);
 
-	virtual ~VtkAlgorithmProperties()
-	{
-		_property->Delete();
-		if (_texture != NULL) _texture->Delete();
-
-		for (std::map<QString, vtkLookupTable*>::iterator it = _lut.begin(); it != _lut.end();
-		     ++it)
-			it->second->Delete();
-		delete _algorithmUserProperties;
-		delete _algorithmUserVectorProperties;
-	}
+	virtual ~VtkAlgorithmProperties();
 
 	/// @brief Returns the vtk properties
 	vtkProperty* GetProperties() const { return _property; }
 
 	/// @brief Returns a texture (if one has been assigned).
 	vtkTexture* GetTexture() { return _texture; }
+
 	/// @brief Sets a texture for the VtkVisPipelineItem.
 	void SetTexture(vtkTexture* t) { _texture = t; }
 
 	/// @brief Returns the colour lookup table (if one has been assigned).
-	vtkLookupTable* GetLookupTable(const QString& array_name)
-	{
-		std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
-		if (it != _lut.end()) return it->second;
-		return NULL;
-	}
-	
+	vtkLookupTable* GetLookupTable(const QString& array_name);
+
 	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
-	void SetLookUpTable(const QString &array_name, vtkLookupTable* lut)
-	{
-		if (array_name.length() > 0)
-		{
-			std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
-			if (it != _lut.end())
-			{
-				it->second->Delete();
-				_lut.erase(it);
-			}
-			_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
-		}
-	}
+	void SetLookUpTable(const QString &array_name, vtkLookupTable* lut);
 
 	/// Loads a predefined color lookup table from a file for the specified scalar array.
-	void SetLookUpTable(const QString &array_name, const QString &filename)
-	{
-		VtkColorLookupTable* colorLookupTable = XmlLutReader::readFromFile(filename);
-		//colorLookupTable->setInterpolationType(VtkColorLookupTable::NONE);
-		colorLookupTable->Build();
-		//colorLookupTable->SetNumberOfTableValues(256);
-		SetLookUpTable(array_name, colorLookupTable);
-	}
+	void SetLookUpTable(const QString &array_name, const QString &filename);
 
 	/// @brief Returns the scalar visibility.
 	bool GetScalarVisibility() const { return _scalarVisibility; }
+	
 	/// @brief Sets the scalar visibility.
-	void SetScalarVisibility(bool on)
-	{
-		_scalarVisibility = on;
-		emit ScalarVisibilityChanged(on);
-	}
+	void SetScalarVisibility(bool on);
 
 	/// @brief Returns the name. This is set to the file path if it is a source algorithm.
 	QString GetName() const { return _name; }
+	
 	/// @brief Sets the name.
 	void SetName(QString name) { _name = name; }
 
 	/// @brief Returns a map of user properties.
-	QMap<QString, QVariant>* GetAlgorithmUserProperties() const
-	{
+	QMap<QString, QVariant>* GetAlgorithmUserProperties() const {
 		return _algorithmUserProperties;
 	}
 
 	/// @brief Returns a map of vector user properties.
-	QMap<QString, QList<QVariant> >* GetAlgorithmUserVectorProperties() const
-	{
+	QMap<QString, QList<QVariant> >* GetAlgorithmUserVectorProperties() const {
 		return _algorithmUserVectorProperties;
 	}
 
 	/// @brief Sets a user property. This should be implemented by subclasses.
-	virtual void SetUserProperty(QString name, QVariant value)
-	{
+	virtual void SetUserProperty(QString name, QVariant value) {
 		(*_algorithmUserProperties)[name] = value;
 	}
 
 	/// @brief Returns the value of a user property.
-	QVariant GetUserProperty(QString name) const
-	{
-		if (this->_algorithmUserProperties->contains(name))
-			return this->_algorithmUserProperties->value(name);
-		else
-		{
-			std::cout << "Not a valid property: " << name.toStdString() << std::endl;
-			return QVariant();
-		}
-	}
+	QVariant GetUserProperty(QString name) const;
 
 	/// @brief Sets a vector user property. This should be implemented by subclasses.
-	virtual void SetUserVectorProperty(QString name, QList<QVariant> values)
-	{
+	virtual void SetUserVectorProperty(QString name, QList<QVariant> values) {
 		(*_algorithmUserVectorProperties)[name] = values;
 	}
 
 	/// @brief Returns a list of values of a vector user property.
-	QList<QVariant> GetUserVectorProperty(QString name) const
-	{
-		if (this->_algorithmUserVectorProperties->contains(name))
-			return this->_algorithmUserVectorProperties->value(name);
-		else
-		{
-			std::cout << "Not a valid property: " << name.toStdString() << std::endl;
-			return QList<QVariant>();
-		}
-	}
+	QList<QVariant> GetUserVectorProperty(QString name) const;
+
+	/// @brief Set the active attribute
+	void SetActiveAttribute(QString name) { _activeAttributeName = name; }
 
 	/// @brief Returns the desired active attribute.
 	QString GetActiveAttribute() const { return _activeAttributeName; }
+
 
 protected:
 

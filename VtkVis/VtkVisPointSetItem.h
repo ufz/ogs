@@ -47,7 +47,7 @@ public:
 	~VtkVisPointSetItem();
 
 	/// @brief Gets the last selected attribute.
-	const QString GetActiveAttribute() const {return _activeAttribute; }
+	const QString GetActiveAttribute() const {return _vtkProps->GetActiveAttribute(); }
 
 	/// @brief Initializes vtkMapper and vtkActor necessary for visualization of
 	/// the item and sets the item's properties.
@@ -73,7 +73,6 @@ public:
 protected:
 	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;
-	QString _activeAttribute;
 
 	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
@@ -89,6 +88,10 @@ protected:
 private:
 	/// Checks if the selected attribute actually exists for the data set
 	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
+
+	/// @brief The active VtkAlgorithmProperties.
+	/// From algorithm, compositeFilter, or copied from parent
+	VtkAlgorithmProperties* _vtkProps;
 };
 
 #endif // VTKVISPOINTSETITEM_H

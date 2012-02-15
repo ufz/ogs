@@ -8,7 +8,6 @@ SET( SOURCES
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
-	VtkApplyColorTableFilter.cpp
 	VtkBGImageSource.cpp
 	VtkColorByHeightFilter.cpp
 	VtkColorLookupTable.cpp
@@ -44,6 +43,7 @@ SET( SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
+	VtkAlgorithmProperties.cpp
 )
 
 # Moc headers
@@ -65,7 +65,6 @@ SET( MOC_HEADERS
 
 # Header files
 SET( HEADERS
-	VtkApplyColorTableFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
 	VtkColorLookupTable.h

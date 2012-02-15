@@ -18,6 +18,7 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkUnsignedCharArray.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkProperty.h>
 
 // OGS Cell Types
 #include <vtkHexahedron.h>

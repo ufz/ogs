@@ -16,6 +16,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkImageShiftScale.h>
+#include <vtkImageAlgorithm.h>
+#include <vtkProperty.h>
+#include <vtkTexture.h>
 
 #include "MathTools.h"
 #include "VtkTextureOnSurfaceFilter.h"

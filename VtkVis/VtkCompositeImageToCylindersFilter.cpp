@@ -8,7 +8,6 @@
 // ** INCLUDES **
 #include "VtkCompositeImageToCylindersFilter.h"
 
-#include "VtkApplyColorTableFilter.h"
 #include "VtkImageDataToLinePolyDataFilter.h"
 
 #include <vtkLookupTable.h>
@@ -35,16 +34,12 @@ void VtkCompositeImageToCylindersFilter::init()
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
 	_lineFilter = VtkImageDataToLinePolyDataFilter::New();
-	//lineFilter = VtkImageDataToLinePolyDataFilter::New();
 	_lineFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 	_lineFilter->SetLengthScaleFactor(1);
 	(*_algorithmUserProperties)["LengthScaleFactor"] = 1.0;
 	_lineFilter->Update();
 
-	//vtkPointData* pointData = _lineFilter->GetOutput()->GetPointData();
-	//pointData->GetArray(0)->SetName("Colors");
-
-	vtkSmartPointer<vtkLookupTable> colormap = vtkSmartPointer<vtkLookupTable>::New();
+	vtkLookupTable* colormap = vtkLookupTable::New();
 	colormap->SetTableRange(0, 100);
 	colormap->SetHueRange(0.0, 0.666);
 	colormap->SetNumberOfTableValues(256);
@@ -58,14 +53,10 @@ void VtkCompositeImageToCylindersFilter::init()
 	(*_algorithmUserVectorProperties)["TableRange"] = tableRangeList;
 	(*_algorithmUserVectorProperties)["HueRange"] = hueRangeList;
 
-	this->SetLookUpTable("Colours", colormap);
-
-	_ctf = VtkApplyColorTableFilter::New();
-	_ctf->SetInputConnection(_lineFilter->GetOutputPort());
-	_ctf->SetColorLookupTable(colormap);
+	this->SetLookUpTable("Colors", colormap);
 
 	vtkTubeFilter* tubeFilter = vtkTubeFilter::New();
-	tubeFilter->SetInputConnection(_ctf->GetOutputPort());
+	tubeFilter->SetInputConnection(_lineFilter->GetOutputPort());
 	tubeFilter->CappingOn();
 	tubeFilter->SetNumberOfSides(6);
 	tubeFilter->SetRadius(_lineFilter->GetImageSpacing() * 0.25);
@@ -86,8 +77,11 @@ void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant
 	// VtkImageDataToLinePolyDataFilter is equal to _firstAlgorithm
 	// vtkTubeFilter is equal _outputAlgorithm
 	if (name.compare("NumberOfColors") == 0)
-		static_cast<vtkLookupTable*>(_ctf->GetColorLookupTable())->SetNumberOfTableValues(
-		        value.toInt());
+	{
+		vtkLookupTable* lut = this->GetLookupTable("Colors");
+		if(lut)
+			lut->SetNumberOfTableValues(value.toInt());
+	}
 	else if (name.compare("NumberOfSides") == 0)
 		static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
 	else if (name.compare("Capping") == 0)
@@ -105,17 +99,20 @@ void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
 	_lineFilter->SetUserVectorProperty(name, values);
 
 	if (name.compare("TableRange") == 0)
-		static_cast<vtkLookupTable*>(_ctf->GetColorLookupTable())->SetTableRange(
-		        values[0].toInt(),
-		        values[1].toInt());
+	{
+		vtkLookupTable* lut = this->GetLookupTable("Colors");
+		if(lut)
+			lut->SetTableRange(values[0].toInt(), values[1].toInt());
+	}
 	else if (name.compare("HueRange") == 0)
-		static_cast<vtkLookupTable*>(_ctf->GetColorLookupTable())->SetHueRange(
-		        values[0].toDouble(),
-		        values[1].toDouble());
+	{
+		vtkLookupTable* lut = this->GetLookupTable("Colors");
+		if(lut)
+			lut->SetHueRange(values[0].toDouble(), values[1].toDouble());
+	}
 }
 
 VtkCompositeImageToCylindersFilter::~VtkCompositeImageToCylindersFilter()
 {
 	_lineFilter->Delete();
-	_ctf->Delete();
 }
