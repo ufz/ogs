@@ -60,6 +60,7 @@ void VtkCompositeColormapToImageFilter::init()
 	colormap->SetNumberOfTableValues(256);
 	colormap->Build();
 
+	colormap->GetTableRange(range);
 	QList<QVariant> tableRangeList;
 	tableRangeList.push_back(range[0]);
 	tableRangeList.push_back(range[1]);

@@ -55,7 +55,7 @@ void VtkColorLookupTable::Build()
 		startcolor[1] = _dict.begin()->second[1];
 		startcolor[2] = _dict.begin()->second[2];
 		startcolor[3] = _dict.begin()->second[3];
-		std::pair<size_t, unsigned char*> lastValue(0, startcolor);
+		std::pair<size_t, unsigned char*> lastValue(range[0], startcolor);
 		size_t nextIndex(0);
 /*
 		// make sure that color map ends with the last color in the dictionary
