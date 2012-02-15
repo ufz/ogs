@@ -75,8 +75,9 @@ void VtkColorLookupTable::Build()
 			//unsigned char rgba[4];
 			//rgba[0] = (*it->second)[0]; rgba[1] = (*it->second)[1]; rgba[2] = (*it->second)[2]; rgba[3] = 255;
 
+			double val = (it->first < range[0]) ? range[0] : ((it->first > range[1]) ? range[1] : it->first);
 			nextIndex =
-			        static_cast<size_t>( floor(((it->first-range[0])/interval) * (double)nColours) );
+			        static_cast<size_t>( floor( ((val-range[0])/interval) * (double)nColours) );
 			if (nextIndex >= static_cast<size_t>(nColours))
 				nextIndex--;                                                   // this happens for the very last colour
 			this->SetTableValue(nextIndex, it->second);
