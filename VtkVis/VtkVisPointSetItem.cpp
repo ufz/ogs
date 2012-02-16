@@ -99,28 +99,30 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	if (vtkProps)
 		setVtkProperties(vtkProps);
 	else
+	{
 		vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_compositeFilter);
 	
-	if (vtkProps)
-		setVtkProperties(vtkProps);
-	// Copy properties from parent
-	else
-	{
-		VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
-		while (parentItem)
+		if (vtkProps)
+			setVtkProperties(vtkProps);
+		// Copy properties from parent
+		else
 		{
-			VtkAlgorithmProperties* parentProps =
-			        dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
-			if (parentProps)
+			VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+			while (parentItem)
 			{
-				vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
-				vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
-				vtkProps->SetTexture(parentProps->GetTexture());
-				setVtkProperties(vtkProps);
-				parentItem = NULL;
+				VtkAlgorithmProperties* parentProps =
+						dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
+				if (parentProps)
+				{
+					vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
+					vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
+					vtkProps->SetTexture(parentProps->GetTexture());
+					setVtkProperties(vtkProps);
+					parentItem = NULL;
+				}
+				else
+					parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
 			}
-			else
-				parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
 		}
 	}
 
@@ -304,13 +306,14 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
 
 void VtkVisPointSetItem::setLookupTableForActiveScalar()
 {
-	if (_vtkProps)
+	if (_vtkProps && this->GetActiveAttribute().length() > 0)
 	{
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
 		if (mapper)
 		{
 			if (_vtkProps->GetLookupTable(this->GetActiveAttribute()) == NULL) // default color table
 			{
+				std::cout << "Active att: " << this->GetActiveAttribute().toStdString() << std::endl;
 				vtkLookupTable* lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
 				_vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
 			}
