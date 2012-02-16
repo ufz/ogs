@@ -107,17 +107,18 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
 	scale->SetInputConnection(img->GetOutputPort());
 	scale->SetShift(-range[0]);
 	scale->SetScale(255.0/(range[1]-range[0]));
+	scale->SetOutputScalarTypeToUnsignedChar();
 	scale->Update();
-
-	vtkSmartPointer<vtkImageData> imgData = scale->GetOutput();
 
 	vtkTexture* texture = vtkTexture::New();
 	texture->InterpolateOff();
 	texture->RepeatOff();
-	texture->SetInput(imgData);
+	// texture->EdgeClampOn(); // does not work
+	texture->SetInput(scale->GetOutput());
+	this->SetTexture(texture);
+
 	_origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));
 	_scalingFactor = scalingFactor;
-	this->SetTexture(texture);
 }
 
 void VtkTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )
