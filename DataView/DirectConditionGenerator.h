@@ -15,7 +15,9 @@ public:
 	DirectConditionGenerator() {};
 	~DirectConditionGenerator() {};
 
-	const std::vector< std::pair<size_t,double> > fromRasterToSurfaceNodes(const MeshLib::CFEMesh &mesh, const std::string &filename);
+	const std::vector< std::pair<size_t,double> > directToSurfaceNodes(const MeshLib::CFEMesh &mesh, const std::string &filename);
+
+	const std::vector< std::pair<size_t,double> > directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename);
 
 	int writeToFile(const std::string &name) const;
 

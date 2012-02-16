@@ -353,28 +353,30 @@ void NetCdfConfigureDialog::createDataObject()
 	double origin_y = (originLat < lastLat) ? originLat : lastLat;
 	double originNetCdf[3] = {origin_x, origin_y, 0};
 
-	MshElemType::type meshElemType = MshElemType::QUAD;
-	UseIntensityAs::type useIntensity = UseIntensityAs::MATERIAL;
-	if ((comboBoxMeshElemType->currentIndex()) == 1) 
-	{
-		meshElemType = MshElemType::TRIANGLE;
-	}else{
-		meshElemType = MshElemType::QUAD;
-	}
-	if ((comboBoxUseIntensity->currentIndex()) == 1)
-	{
-		useIntensity = UseIntensityAs::ELEVATION;
-	}else{
-		useIntensity = UseIntensityAs::MATERIAL;
-	}
-
 	double resolution = (doubleSpinBoxResolution->value());
 
 	if (originLat > lastLat) // reverse lines in vertical direction if the original file has its origin in the northwest corner
 		this->reverseNorthSouth(data_array, sizeLon, sizeLat);
 
 	if (this->radioMesh->isChecked())
+	{
+		MshElemType::type meshElemType = MshElemType::QUAD;
+		UseIntensityAs::type useIntensity = UseIntensityAs::MATERIAL;
+		if ((comboBoxMeshElemType->currentIndex()) == 1) 
+		{
+			meshElemType = MshElemType::TRIANGLE;
+		}else{
+			meshElemType = MshElemType::QUAD;
+		}
+		if ((comboBoxUseIntensity->currentIndex()) == 1)
+		{
+			useIntensity = UseIntensityAs::ELEVATION;
+		}else{
+			useIntensity = UseIntensityAs::MATERIAL;
+		}
+
 		_currentMesh = VtkMeshConverter::convertImgToMesh(data_array,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);
+	}
 	else
 	{
 		vtkImageImport* image = VtkRaster::loadImageFromArray(data_array, originNetCdf[0], originNetCdf[1], sizeLon, sizeLat, resolution, -9999.0);
