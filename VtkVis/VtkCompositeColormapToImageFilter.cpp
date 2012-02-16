@@ -41,7 +41,7 @@ void VtkCompositeColormapToImageFilter::init()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(parent,
 	                                                "Select color lookup table",
-	                                                settings.value("lastOpenedTextureFileDirectory").
+	                                                settings.value("lastOpenedLookupTableFileDirectory").
 	                                                toString(),
 	                                                "Lookup table XML files (*.xml);;");
 	double range[2];
@@ -50,6 +50,7 @@ void VtkCompositeColormapToImageFilter::init()
 	if (!fileName.length()==0)
 	{
 		colormap = XmlLutReader::readFromFile(fileName);
+		settings.setValue("lastOpenedLookupTableFileDirectory", fileName);
 	}
 	else
 	{
