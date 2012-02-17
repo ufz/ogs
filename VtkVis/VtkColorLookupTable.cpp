@@ -46,7 +46,7 @@ void VtkColorLookupTable::Build()
 	this->GetTableRange(range);
 	const double interval = range[1]-range[0];
 	this->SetNumberOfTableValues(ceil(interval)+1);
-	const vtkIdType nColours = this->GetNumberOfTableValues();
+//	const vtkIdType nColours = this->GetNumberOfTableValues();
 	if (!_dict.empty())
 	{
 		// make sure that color map starts with the first color in the dictionary
@@ -162,8 +162,8 @@ void VtkColorLookupTable::setColor(double pos, unsigned char rgba[4])
 void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
 {
 	indx =
-	        ((indx < this->TableRange[0]) 
-				? static_cast<vtkIdType>(this->TableRange[0]) 
+	        ((indx < this->TableRange[0])
+				? static_cast<vtkIdType>(this->TableRange[0])
 				: (indx >=this->TableRange[1] ? static_cast<vtkIdType>(this->TableRange[1]) - 1 : indx));
 	indx =
 	        static_cast<size_t>( floor( (indx - this->TableRange[0]) *
