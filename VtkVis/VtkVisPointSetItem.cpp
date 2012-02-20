@@ -96,16 +96,12 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	// Determine the right pre-set properties
 	// Order is: _algorithm, _compositeFilter, create a new one with props copied from parent
 	VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
-	if (vtkProps)
-		setVtkProperties(vtkProps);
-	else
+	if (!vtkProps)
 	{
 		vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_compositeFilter);
 	
-		if (vtkProps)
-			setVtkProperties(vtkProps);
-		// Copy properties from parent
-		else
+		// Copy properties from parent or create a new VtkAlgorithmProperties
+		if (!vtkProps)
 		{
 			VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
 			while (parentItem)
@@ -117,30 +113,31 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 					vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
 					vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
 					vtkProps->SetTexture(parentProps->GetTexture());
-					setVtkProperties(vtkProps);
 					parentItem = NULL;
 				}
 				else
 					parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
 			}
+
+			// Has no parents
+			if (!vtkProps)
+				vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
 		}
 	}
+	setVtkProperties(vtkProps);
 
 	// Set active scalar to the desired one from VtkAlgorithmProperties
 	// or to match those of the parent.
-	if (vtkProps)
+	if (vtkProps->GetActiveAttribute().length() > 0)
+		this->SetActiveAttribute(vtkProps->GetActiveAttribute());
+	else
 	{
-		if (vtkProps->GetActiveAttribute().length() > 0)
-			this->SetActiveAttribute(vtkProps->GetActiveAttribute());
-		else
-		{
-			VtkVisPointSetItem* visParentItem =
-			        dynamic_cast<VtkVisPointSetItem*>(this->parentItem());
-			if (visParentItem)
-				this->SetActiveAttribute(visParentItem->GetActiveAttribute());
-			if (vtkProps->GetTexture() != NULL)
-				this->SetActiveAttribute("Solid Color");
-		}
+		VtkVisPointSetItem* visParentItem =
+		        dynamic_cast<VtkVisPointSetItem*>(this->parentItem());
+		if (visParentItem)
+			this->SetActiveAttribute(visParentItem->GetActiveAttribute());
+		if (vtkProps->GetTexture() != NULL)
+			this->SetActiveAttribute("Solid Color");
 	}
 
 	// Set global backface culling
