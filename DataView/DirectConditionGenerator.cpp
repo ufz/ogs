@@ -50,8 +50,8 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 
 const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename)
 {
-	double no_data_value = -9999; // TODO: get this from asc-reader!
-	double node_val[8] = {0,0,0,0,0,0,0,0}; // maximum possible number of nodes per face (just in case ...)
+	double no_data_value (-9999); // TODO: get this from asc-reader!
+	double ratio (1); // TODO: get correct value
 
 	if (_direct_values.empty())
 	{
@@ -59,8 +59,16 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 
 		double origin_x(0), origin_y(0), delta(0);
 		size_t imgwidth(0), imgheight(0);
+		double node_val[8] = {0,0,0,0,0,0,0,0}; // maximum possible number of nodes per face (just in case ...)
+
+		FiniteElement::CElement* fem ( new FiniteElement::CElement(mesh.GetCoordinateFlag()) );
 
 		double* img = OGSRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+
+		const size_t nNodes(mesh.nod_vector.size());
+		std::vector<double> val(nNodes, 0.0);
+		for(size_t i = 0; i < nNodes; i++)
+			mesh.nod_vector[i]->SetMark(false);
 
 		// copied from CFEMesh::Precipitation2NeumannBC() by WW
 		size_t nFaces = mesh.face_vector.size();
@@ -70,10 +78,12 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			if(!elem->GetMark())
 				continue;
 
+			// if face is on the surface of the mesh
 			size_t nElemNodes = elem->GetNodesNumber(false);
 			for(size_t k=0; k<nElemNodes; k++)
 				node_val[k] = 0.0;
 
+			// get values from the raster for all nodes of the face
 			for(size_t k=0; k<nElemNodes; k++)
 			{
 				//MeshLib::CNode* node = elem->GetNode(k);
@@ -107,23 +117,30 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 					node_val[k] = 0.;
 			}
 
+			// get area of the surface element face
 			elem->ComputeVolume();
 
-			FiniteElement::CElement* fem ( NULL );
+			// do the actual surface integration
 			fem->setOrder(mesh.getOrder() + 1);
 			fem->ConfigElement(elem);
 			fem->FaceIntegration(node_val);
 
+			// add up the integrated values (nodes get values added for all faces they are part of)
 			for(size_t k=0; k<elem->GetNodesNumber(false); k++)
 			{
 				MeshLib::CNode* node = elem->GetNode(k);
 				node->SetMark(true);
-				//val[node->GetIndex()] += node_val[k];
-				_direct_values.push_back( std::pair<size_t, double>(node->GetIndex(), node_val[k]) );
+				val[node->GetIndex()] += node_val[k];
 			}
 		}
 
-
+		for(size_t k=0; k<nNodes; k++)
+		{
+			if (!mesh.nod_vector[k]->GetMark())
+				continue;
+				// Assuming the unit of precipitation is mm/day
+			_direct_values.push_back( std::pair<size_t, double>(k, val[k] * ratio * 1e-3) );
+		}
 	}
 	else
 		std::cout << "Error in DiretConditionGenerator::directWithSurfaceIntegration() - Data vector contains outdated values..." << std::endl;
