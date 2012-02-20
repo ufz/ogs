@@ -91,7 +91,6 @@ IF (Shapelib_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${Shapelib_LIBRARIES} )
 ENDIF () # Shapelib_FOUND
 
-MESSAGE(STATUS "${libgeotiff_LIBRARIES}")
 IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
