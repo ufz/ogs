@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
 		if (verbose) {
-			std::cout << "ok, " << timer.elapsed() << " s)" << std::endl;
+			std::cout << "ok, " << timer.elapsed() << " s" << std::endl;
 		}
 	} else {
 		std::cout << "error reading matrix from " << fname_mat << std::endl;
@@ -87,6 +87,8 @@ int main(int argc, char *argv[])
 	if (verbose) {
 		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], ["
 				<< run_timer.elapsed() << " sec run time]" << std::endl;
+		std::cout << "CPU time: " << cpu_timer.elapsed() << std::endl;
+		std::cout << "wclock time: " << run_timer.elapsed() << std::endl;
 	} else {
 		if (argc == 5) {
 			std::ofstream result_os (argv[4], std::ios::app);
