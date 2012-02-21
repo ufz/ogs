@@ -548,9 +548,12 @@ void MainWindow::loadFile(const QString &fileName)
 		QTime myTimer0;
 		myTimer0.start();
 #endif
-		//      FileIO::readGLIFileV4 (fileName.toStdString(), _geoModels);
 		std::string unique_name;
-		readGLIFileV4(fileName.toStdString(), _geoModels, unique_name);
+		std::vector<std::string> errors;
+		if (! readGLIFileV4(fileName.toStdString(), _geoModels, unique_name, errors)) {
+			for (size_t k(0); k<errors.size(); k++)
+				OGSError::box(QString::fromStdString(errors[k]));
+		}
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 #endif
