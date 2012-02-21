@@ -1338,6 +1338,7 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	/*
 	std::map<std::string, MeshLib::CFEMesh*> const& mesh_map (_project.getMeshObjects());
 
 	std::string mesh_name(mesh_map.begin()->first);
@@ -1352,7 +1353,7 @@ void MainWindow::FEMTestStart()
 	} else {
 		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
 	}
-
+	*/
 	CondFromRasterDialog dlg(&_project);
 	dlg.exec();
 }
