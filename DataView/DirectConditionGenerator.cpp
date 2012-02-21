@@ -42,7 +42,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 
 	}
 	else
-		std::cout << "Error in DiretConditionGenerator::directToSurfaceNodes() - Data vector contains outdated values..." << std::endl;
+		std::cout << "Error in DirectConditionGenerator::directToSurfaceNodes() - Data vector contains outdated values..." << std::endl;
 
 	return _direct_values;
 }
@@ -75,7 +75,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 		for(size_t i=0; i<nFaces; i++)
 		{
 			MeshLib::CElem* elem = mesh.face_vector[i];
-			if(!elem->GetMark())
+			if (!elem->GetMark())
 				continue;
 
 			// if face is on the surface of the mesh
@@ -143,7 +143,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 		}
 	}
 	else
-		std::cout << "Error in DiretConditionGenerator::directWithSurfaceIntegration() - Data vector contains outdated values..." << std::endl;
+		std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - Data vector contains outdated values..." << std::endl;
 
 	return _direct_values;
 }
