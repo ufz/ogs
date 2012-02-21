@@ -5,6 +5,7 @@
 #include "OGSError.h"
 
 #include <QMessageBox>
+#include <QString>
 
 OGSError::OGSError()
 {}

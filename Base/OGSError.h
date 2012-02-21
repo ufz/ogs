@@ -6,7 +6,7 @@
 #ifndef OGSERROR_H
 #define OGSERROR_H
 
-#include <QString>
+class QString;
 
 /**
  * \brief Manages error messages via message boxes
