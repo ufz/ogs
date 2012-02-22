@@ -172,3 +172,24 @@ void VtkVisPipelineItem::setBackfaceCullingOnChildren(bool enable) const
 		child->setBackfaceCullingOnChildren((int)enable);
 	}
 }
+
+QStringList VtkVisPipelineItem::getScalarArrayNames() const
+{
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->algorithm()->GetOutputDataObject(0));
+	QStringList dataSetAttributesList;
+	if (dataSet)
+	{
+		vtkPointData* pointData = dataSet->GetPointData();
+		//std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
+			//std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+			dataSetAttributesList.push_back(QString("P-") + pointData->GetArrayName(i));
+
+		vtkCellData* cellData = dataSet->GetCellData();
+		//std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
+			//std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+			dataSetAttributesList.push_back(QString("C-") + cellData->GetArrayName(i));
+	}
+	return dataSetAttributesList;
+}

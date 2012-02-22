@@ -70,6 +70,8 @@ public:
 	/// @brief Enables / disables backface culling.
 	void setBackfaceCulling(bool enable) const;
 
+	VtkAlgorithmProperties* getVtkProperties() const { return _vtkProps; }
+
 protected:
 	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;

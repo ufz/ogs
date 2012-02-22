@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QRegExp>
 #include <QSettings>
+#include <QStringList>
 
 // export test
 #include <vtkPolyDataAlgorithm.h>
@@ -106,13 +107,15 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 			VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
 			while (parentItem)
 			{
-				VtkAlgorithmProperties* parentProps =
-						dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
+				VtkAlgorithmProperties* parentProps = NULL;
+				if(dynamic_cast<VtkVisPointSetItem*>(parentItem))
+					parentProps = dynamic_cast<VtkVisPointSetItem*>(parentItem)->getVtkProperties();
 				if (parentProps)
 				{
 					vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
 					vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
 					vtkProps->SetTexture(parentProps->GetTexture());
+					vtkProps->SetActiveAttribute(parentProps->GetActiveAttribute());
 					parentItem = NULL;
 				}
 				else
@@ -124,21 +127,20 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 				vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
 		}
 	}
-	setVtkProperties(vtkProps);
-
-	// Set active scalar to the desired one from VtkAlgorithmProperties
-	// or to match those of the parent.
-	if (vtkProps->GetActiveAttribute().length() > 0)
-		this->SetActiveAttribute(vtkProps->GetActiveAttribute());
-	else
+	_vtkProps = vtkProps;
+	
+	if (vtkProps->GetActiveAttribute().length() == 0)
 	{
-		VtkVisPointSetItem* visParentItem =
-		        dynamic_cast<VtkVisPointSetItem*>(this->parentItem());
-		if (visParentItem)
-			this->SetActiveAttribute(visParentItem->GetActiveAttribute());
-		if (vtkProps->GetTexture() != NULL)
-			this->SetActiveAttribute("Solid Color");
+		// Get first scalar and set it to active
+		QStringList arrayNames = this->getScalarArrayNames();
+		if (arrayNames.length() > 0)
+			vtkProps->SetActiveAttribute(arrayNames[0]);
+		else
+			vtkProps->SetActiveAttribute("Solid Color");
 	}
+	this->setVtkProperties(vtkProps);
+	this->SetActiveAttribute(vtkProps->GetActiveAttribute());
+	
 
 	// Set global backface culling
 	QSettings settings("UFZ, OpenGeoSys-5");
@@ -153,12 +155,8 @@ void VtkVisPointSetItem::SetScalarVisibility( bool on )
 
 void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 {
-	_vtkProps = vtkProps;
-
 	QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
 	                 _mapper, SLOT(SetScalarVisibility(bool)));
-
-	this->setLookupTableForActiveScalar();
 
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
 	if (actor)
