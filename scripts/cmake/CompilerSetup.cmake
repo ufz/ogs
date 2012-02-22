@@ -28,7 +28,6 @@ IF (${CMAKE_C_COMPILER} MATCHES "icc.*$" OR ${CMAKE_CXX_COMPILER} MATCHES "icpc.
                 SET(CMAKE_CXX_FLAGS "-O3 -DNDEBUG")
         ENDIF()
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall")
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -openmp")
 ENDIF(${CMAKE_C_COMPILER} MATCHES "icc.*$" OR ${CMAKE_CXX_COMPILER} MATCHES
 "icpc.*$")
 
