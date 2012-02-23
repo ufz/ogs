@@ -58,9 +58,6 @@ public:
 	/// @brief Sets the selected attribute array for the visualisation of the data set.
 	void SetActiveAttribute(const QString& name);
 
-	/// @brief Sets the scalar range for the selected data array
-	void SetScalarRange(double min, double max);
-
 	/// @brief Scales the data in visualisation-space.
 	void setScale(double x, double y, double z) const;
 
@@ -78,9 +75,6 @@ protected:
 
 	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
-
-	/// Sets a color lookup table for the current scalar array.
-	void setLookupTableForActiveScalar();
 
 	void SetScalarVisibility(bool on);
 

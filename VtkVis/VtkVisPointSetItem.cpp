@@ -232,6 +232,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 	std::string strippedName = QString(name).remove(0, 2).toStdString();
 	const char* charName = strippedName.c_str();
 
+	double range[2];
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	if (dataSet)
 	{
@@ -244,6 +245,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 				{
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
 					_mapper->SetScalarModeToUsePointData();
+					pointData->GetArray(strippedName.c_str())->GetRange(range);
 				}
 				else
 				{
@@ -262,6 +264,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 				{
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
 					_mapper->SetScalarModeToUseCellData();
+					cellData->GetArray(strippedName.c_str())->GetRange(range);
 				}
 				else
 				{
@@ -272,12 +275,29 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			}
 		}
 
+		std::cout << "Range for " << name.toStdString() << " :" << range[0] << " " << range[1] << std::endl;
 		_vtkProps->SetActiveAttribute(name);
-		_mapper->SetScalarRange(dataSet->GetScalarRange());
-		this->setLookupTableForActiveScalar();
-		_mapper->ScalarVisibilityOn();
 
-		//_mapper->Update();	// KR: TODO - this is incredibly slow ... WHY???
+		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+		if (mapper)
+		{
+			// Create a default color table when there is no lookup table for this attribute
+			vtkLookupTable* lut = _vtkProps->GetLookupTable(name);
+			if (lut == NULL)
+			{
+				std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
+				lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
+				lut->SetTableRange(range);
+				_vtkProps->SetLookUpTable(name, lut);
+			}
+
+			_mapper->SetLookupTable(lut);
+			_mapper->UseLookupTableScalarRangeOn();
+			//_mapper->SetScalarRange(range); // not necessary when UseLookupTableScalarRange is on
+		}
+
+		_mapper->ScalarVisibilityOn();
+		_mapper->Update();
 	}
 }
 
@@ -297,34 +317,6 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
 	}
 	else
 		return false;
-}
-
-void VtkVisPointSetItem::setLookupTableForActiveScalar()
-{
-	if (_vtkProps && this->GetActiveAttribute().length() > 0)
-	{
-		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
-		if (mapper)
-		{
-			if (_vtkProps->GetLookupTable(this->GetActiveAttribute()) == NULL) // default color table
-			{
-				std::cout << "Active att: " << this->GetActiveAttribute().toStdString() << std::endl;
-				vtkLookupTable* lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
-				_vtkProps->SetLookUpTable(GetActiveAttribute(), lut);
-			}
-			else // specific color table
-				_mapper->SetLookupTable(_vtkProps->GetLookupTable(this->GetActiveAttribute()));
-
-			//_mapper->SetScalarRange(this->_transformFilter->GetOutput()->GetScalarRange());
-			_mapper->SetScalarRange(vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0))->GetScalarRange());
-		}
-	}
-}
-
-void VtkVisPointSetItem::SetScalarRange(double min, double max)
-{
-	_mapper->SetScalarRange(min, max);
-	_mapper->Update();
 }
 
 void VtkVisPointSetItem::setScale(double x, double y, double z) const
