@@ -49,6 +49,9 @@ public:
 	/// @brief Gets the last selected attribute.
 	const QString GetActiveAttribute() const {return _vtkProps->GetActiveAttribute(); }
 
+	/// @brief Get the scalar range for the active attribute
+	void GetRangeForActiveAttribute(double range[2]) const;
+
 	/// @brief Initializes vtkMapper and vtkActor necessary for visualization of
 	/// the item and sets the item's properties.
 	void Initialize(vtkRenderer* renderer);
@@ -72,6 +75,8 @@ public:
 protected:
 	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;
+	bool _onPointData;
+	std::string _activeArrayName;
 
 	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;

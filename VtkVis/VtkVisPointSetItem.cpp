@@ -7,6 +7,7 @@
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPointSetItem.h"
 #include "VtkCompositeFilter.h"
+#include "VtkCompositeThresholdFilter.h"
 
 #include <limits>
 
@@ -42,7 +43,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
 	: VtkVisPipelineItem(algorithm, parentItem, data), _mapper(NULL),
-	_transformFilter(NULL)
+	_transformFilter(NULL), _onPointData(true), _activeArrayName("")
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -65,7 +66,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
 	: VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(NULL),
-	_transformFilter(NULL)
+	_transformFilter(NULL), _onPointData(true), _activeArrayName("")
 {
 }
 
@@ -146,6 +147,18 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	QSettings settings("UFZ, OpenGeoSys-5");
 	bool backfaceCulling = settings.value("globalCullBackfaces", 0).toBool();
 	this->setBackfaceCulling(backfaceCulling);
+
+	// Set the correct threshold range
+	if (dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter))
+	{
+		double range[2];
+		this->GetRangeForActiveAttribute(range);
+		QList<QVariant> thresholdRangeList;
+		thresholdRangeList.push_back(range[0]);
+		thresholdRangeList.push_back(range[1]);
+		dynamic_cast<VtkCompositeFilter*>(this->_compositeFilter)
+			->SetUserVectorProperty("Threshold Between", thresholdRangeList);
+	}
 }
 
 void VtkVisPointSetItem::SetScalarVisibility( bool on )
@@ -214,11 +227,10 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 {
 	// Get type by identifier
-	bool onPointData = true;
 	if (name.contains(QRegExp("^P-")))
-		onPointData = true;
+		_onPointData = true;
 	else if (name.contains(QRegExp("^C-")))
-		onPointData = false;
+		_onPointData = false;
 	else if (name.contains("Solid Color"))
 	{
 		_vtkProps->SetActiveAttribute("Solid Color");
@@ -229,26 +241,27 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 		return;
 
 	// Remove type identifier
-	std::string strippedName = QString(name).remove(0, 2).toStdString();
-	const char* charName = strippedName.c_str();
+	_activeArrayName = QString(name).remove(0, 2).toStdString();
+	const char* charName = _activeArrayName.c_str();
 
 	double range[2];
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	if (dataSet)
 	{
-		if (onPointData)
+		if (_onPointData)
 		{
 			vtkPointData* pointData = dataSet->GetPointData();
 			if(pointData)
 			{
-				if(activeAttributeExists(pointData, strippedName))
+				if(activeAttributeExists(pointData, _activeArrayName))
 				{
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
 					_mapper->SetScalarModeToUsePointData();
-					pointData->GetArray(strippedName.c_str())->GetRange(range);
+					pointData->GetArray(_activeArrayName.c_str())->GetRange(range);
 				}
 				else
 				{
+					_activeArrayName = "";
 					_vtkProps->SetActiveAttribute("Solid Color");
 					_mapper->ScalarVisibilityOff();
 					return;
@@ -260,14 +273,15 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			vtkCellData* cellData = dataSet->GetCellData();
 			if(cellData)
 			{
-				if(activeAttributeExists(cellData, strippedName))
+				if(activeAttributeExists(cellData, _activeArrayName))
 				{
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
 					_mapper->SetScalarModeToUseCellData();
-					cellData->GetArray(strippedName.c_str())->GetRange(range);
+					cellData->GetArray(_activeArrayName.c_str())->GetRange(range);
 				}
 				else
 				{
+					_activeArrayName = "";
 					_vtkProps->SetActiveAttribute("Solid Color");
 					_mapper->ScalarVisibilityOff();
 					return;
@@ -324,7 +338,7 @@ void VtkVisPointSetItem::setScale(double x, double y, double z) const
 	if (this->transformFilter())
 	{
 		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
+			static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
 		double* trans = transform->GetPosition();
 		transform->Identity();
 		transform->Scale(x, y, z);
@@ -338,7 +352,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 	if (this->transformFilter())
 	{
 		vtkTransform* transform =
-		        static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
+			static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
 		double* scale = transform->GetScale();
 		transform->Identity();
 		transform->Scale(scale);
@@ -355,4 +369,23 @@ vtkAlgorithm* VtkVisPointSetItem::transformFilter() const
 void VtkVisPointSetItem::setBackfaceCulling(bool enable) const
 {
 	static_cast<vtkActor*>(this->_actor)->GetProperty()->SetBackfaceCulling((int)enable);
+}
+
+void VtkVisPointSetItem::GetRangeForActiveAttribute(double range[2]) const
+{
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
+	if (dataSet && _activeArrayName.length() > 0)
+	{
+		if (_onPointData)
+		{
+			vtkPointData* pointData = dataSet->GetPointData();
+			if(pointData)
+				pointData->GetArray(_activeArrayName.c_str())->GetRange(range);
+		}
+		else
+		{
+			vtkCellData* cellData = dataSet->GetCellData();
+				cellData->GetArray(_activeArrayName.c_str())->GetRange(range);
+		}
+	}
 }
