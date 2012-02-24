@@ -11,6 +11,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <limits>
+
 VtkCompositeContourFilter::VtkCompositeContourFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)
 {
