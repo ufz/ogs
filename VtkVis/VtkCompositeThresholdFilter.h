@@ -9,6 +9,8 @@
 #include "VtkCompositeFilter.h"
 
 /// @brief Visualises only parts of meshes that are above/below/within given thresholds.
+/// In init() the threshold is first set to double min / max values. Set the
+/// threshold later on via SetUserVectorProperty() to the actual data range.
 class VtkCompositeThresholdFilter : public VtkCompositeFilter
 {
 public:

@@ -49,7 +49,8 @@ void DataView::addMeshAction()
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
-		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
+		FileIO::OGSMeshIO meshIO;
+		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
 			static_cast<MshModel*>(this->model())->addMesh(msh, name);
 	}
@@ -126,17 +127,10 @@ int DataView::writeMeshToFile() const
 
 		if (!fileName.empty())
 		{
-			std::ofstream out (fileName.c_str());
-			if (out.is_open())
-			{
-				FileIO::OGSMeshIO::write (mesh, out);
-				out.close();
-				return 1;
-			}
-			else
-				std::cout <<
-				"MshTabWidget::saveMeshFile() - Could not create file..." <<
-				std::endl;
+			FileIO::OGSMeshIO meshIO;
+			meshIO.setMesh(mesh);
+			meshIO.writeToFile(fileName.c_str());
+			return 1;
 		}
 		else
 			OGSError::box("No file name entered.");

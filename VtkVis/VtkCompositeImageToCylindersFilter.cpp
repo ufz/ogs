@@ -39,21 +39,25 @@ void VtkCompositeImageToCylindersFilter::init()
 	(*_algorithmUserProperties)["LengthScaleFactor"] = 1.0;
 	_lineFilter->Update();
 
+	double range[2];
+	// The data is always on points
+	vtkDataSet::SafeDownCast(_lineFilter->GetOutputDataObject(0))->GetPointData()->GetScalars()->GetRange(range);
+
 	vtkLookupTable* colormap = vtkLookupTable::New();
-	colormap->SetTableRange(0, 100);
+	colormap->SetTableRange(range[0], range[1]);
 	colormap->SetHueRange(0.0, 0.666);
 	colormap->SetNumberOfTableValues(256);
 	colormap->ForceBuild();
 	QList<QVariant> tableRangeList;
-	tableRangeList.push_back(0);
-	tableRangeList.push_back(100);
+	tableRangeList.push_back(range[0]);
+	tableRangeList.push_back(range[1]);
 	QList<QVariant> hueRangeList;
 	hueRangeList.push_back(0.0);
 	hueRangeList.push_back(0.666);
 	(*_algorithmUserVectorProperties)["TableRange"] = tableRangeList;
 	(*_algorithmUserVectorProperties)["HueRange"] = hueRangeList;
 
-	this->SetLookUpTable("Colors", colormap);
+	this->SetLookUpTable("P-Colors", colormap);
 
 	vtkTubeFilter* tubeFilter = vtkTubeFilter::New();
 	tubeFilter->SetInputConnection(_lineFilter->GetOutputPort());
@@ -78,7 +82,7 @@ void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant
 	// vtkTubeFilter is equal _outputAlgorithm
 	if (name.compare("NumberOfColors") == 0)
 	{
-		vtkLookupTable* lut = this->GetLookupTable("Colors");
+		vtkLookupTable* lut = this->GetLookupTable("P-Colors");
 		if(lut)
 			lut->SetNumberOfTableValues(value.toInt());
 	}
@@ -100,13 +104,13 @@ void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
 
 	if (name.compare("TableRange") == 0)
 	{
-		vtkLookupTable* lut = this->GetLookupTable("Colors");
+		vtkLookupTable* lut = this->GetLookupTable("P-Colors");
 		if(lut)
-			lut->SetTableRange(values[0].toInt(), values[1].toInt());
+			lut->SetTableRange(values[0].toDouble(), values[1].toDouble());
 	}
 	else if (name.compare("HueRange") == 0)
 	{
-		vtkLookupTable* lut = this->GetLookupTable("Colors");
+		vtkLookupTable* lut = this->GetLookupTable("P-Colors");
 		if(lut)
 			lut->SetHueRange(values[0].toDouble(), values[1].toDouble());
 	}
