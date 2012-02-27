@@ -22,6 +22,7 @@
 #include <QSettings>
 
 #include "MeshIO/OGSMeshIO.h"
+#include "Writer.h" // necessary to avoid Linker Error in Windows
 
 DataView::DataView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
