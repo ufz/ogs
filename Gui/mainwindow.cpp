@@ -503,7 +503,7 @@ void MainWindow::save()
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 			XmlGspInterface xml(&_project, schemaName);
-			xml.writeFile(fileName);
+			xml.writeToFile(fileName.toStdString());
 		}
 		else if (fi.suffix().toLower() == "geo")
 		{
@@ -1108,7 +1108,9 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 	{
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
-		xml.writeFile(fileName, geoName, type);
+		xml.setNameForExport(geoName.toStdString());
+		xml.setConditionType(type);
+		xml.writeToFile(fileName.toStdString());
 	}
 	else
 	{
@@ -1139,21 +1141,22 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
 	XmlGmlInterface xml(&_project, schemaName);
-	xml.writeFile(fileName, gliName);
+	xml.setNameForExport(gliName.toStdString());
+	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
 	XmlStnInterface xml(&_project, schemaName);
-	xml.writeFile(fileName, listName);
+	xml.setNameForExport(listName.toStdString());
+	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
                                       std::string fileName)
 {
-	const std::vector<GEOLIB::Point*>* stations(_geoModels->getStationVec(
-	                                                    listName));
+	const std::vector<GEOLIB::Point*>* stations(_geoModels->getStationVec(listName));
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
