@@ -11,6 +11,7 @@
 
 #include "ProjectData.h"
 
+class StrictDoubleValidator;
 
 /**
  * \brief A dialog window for creating DIRECT boundary conditions from raster files
@@ -24,9 +25,12 @@ public:
 	~CondFromRasterDialog(void);
 
 private:
+
 	const ProjectData* _project;
+	StrictDoubleValidator* _scale_validator;
 
 private slots:
+	void on_integrateButton_toggled(bool isSelected);
 	void on_selectButton_pressed();
 
 	/// Instructions if the OK-Button has been pressed.

@@ -80,13 +80,17 @@ void DataView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
 		QAction* saveMeshAction   = menu.addAction("Save mesh...");
 		menu.addSeparator();
-		QAction* directSTAction   = menu.addAction("Load DIRECT source terms...");
+		QMenu direct_cond_menu("DIRECT Conditions");
+		menu.addMenu(&direct_cond_menu);
+		QAction* addDirectAction  = direct_cond_menu.addAction("Add...");
+		QAction* loadDirectAction = direct_cond_menu.addAction("Load...");
 		menu.addSeparator();
 		QAction* removeMeshAction = menu.addAction("Remove mesh");
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
-		connect(directSTAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
+		connect(addDirectAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
+		connect(loadDirectAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
 		connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 		menu.exec(event->globalPos());
 	}
@@ -139,6 +143,14 @@ int DataView::writeMeshToFile() const
 	}
 	return 0;
 }
+
+void DataView::addDIRECTSourceTerms()
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	emit requestCondSetupDialog(grid->getName(), GEOLIB::INVALID, 0, false);
+}
+
 
 void DataView::loadDIRECTSourceTerms()
 {

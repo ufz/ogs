@@ -11,6 +11,7 @@
 
 #include <QDialog>
 
+class QPushButton;
 class StrictDoubleValidator;
 
 namespace GEOLIB {
@@ -45,6 +46,7 @@ private:
 	FEMCondition _cond;
 	bool _set_on_points;
 	QLineEdit* _secondValueEdit;
+	QPushButton* _directButton;
 	StrictDoubleValidator* _first_value_validator;
 	StrictDoubleValidator* _second_value_validator;
 
@@ -58,6 +60,8 @@ private slots:
 	void on_condTypeBox_currentIndexChanged(int index);
 
 	void on_disTypeBox_currentIndexChanged(int index);
+
+	void on_directButton_pressed();
 
 	void copyCondOnPoints();
 

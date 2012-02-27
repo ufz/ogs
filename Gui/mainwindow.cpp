@@ -185,6 +185,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _elementModel, SLOT(clearView()));
 	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t, bool)),
+			this, SLOT(showCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t, bool)));
 	connect(mshTabWidget->treeView, SIGNAL(requestDIRECTSourceTerms(const std::string, const std::vector<GEOLIB::Point*>*)),
 	        this, SLOT(loadDIRECTSourceTerms(const std::string, const std::vector<GEOLIB::Point*>*)));
 
@@ -1279,7 +1281,12 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GEOLI
 
 void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, bool on_points)
 {
-	std::string geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+	std::string geo_name("");
+	if (object_type != GEOLIB::INVALID)
+		geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+	else
+		geo_name = geometry_name; // in this case this is actually the mesh name
+
 	if (geo_name.empty())
 	{
 		this->showGeoNameDialog(geometry_name, object_type, id);

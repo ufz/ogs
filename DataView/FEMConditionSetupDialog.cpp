@@ -9,6 +9,7 @@
 #include "ProjectData.h"
 #include "StrictDoubleValidator.h"
 #include "StringTools.h"
+#include "CondFromRasterDialog.h"
 
 #include "BoundaryCondition.h"
 #include "InitialCondition.h"
@@ -43,6 +44,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* pa
 
 FEMConditionSetupDialog::~FEMConditionSetupDialog()
 {
+	delete _directButton;
 	delete _secondValueEdit;
 	delete _first_value_validator;
 	delete _second_value_validator;
@@ -63,7 +65,10 @@ void FEMConditionSetupDialog::setupDialog()
 	}
 	else	// direct
 	{
+		_directButton = new QPushButton("Calculate Values");
+		static_cast<QGridLayout*>(this->layout())->addWidget(_directButton,6,1) ;
 		this->disTypeBox->addItem("Direct");
+
 	}
 
 	const std::list<std::string> process_names = FiniteElement::getAllProcessNames();
@@ -108,14 +113,22 @@ void FEMConditionSetupDialog::accept()
 		if (this->_secondValueEdit)
 			dis_values.push_back(strtod(this->_secondValueEdit->text().toStdString().c_str(), 0));
 		_cond.setDisValue(dis_values);
-	}
-	else	// direct
-		_cond.setProcessDistributionType(FiniteElement::DIRECT);
 
-	if (!_set_on_points)
-		emit addFEMCondition(this->typeCast(_cond));
-	else
-		this->copyCondOnPoints();
+		if (!_set_on_points)
+			emit addFEMCondition(this->typeCast(_cond));
+		else
+			this->copyCondOnPoints();
+	}
+	else	// direct on mesh
+	{
+		if (this->_secondValueEdit->text().length() == 0)
+		{
+			OGSError::box("No source file for direct values selected.");
+			return;
+		}
+		_cond.setProcessDistributionType(FiniteElement::DIRECT);
+		// insert file name containing values
+	}
 
 	this->done(QDialog::Accepted);
 }
@@ -171,6 +184,11 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 		}
 	}
 
+}
+
+void FEMConditionSetupDialog::on_directButton_pressed()
+{
+	// call direct condition generator
 }
 
 FEMCondition* FEMConditionSetupDialog::typeCast(const FEMCondition &cond)

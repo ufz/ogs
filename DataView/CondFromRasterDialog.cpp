@@ -9,11 +9,18 @@
 #include <QSettings>
 
 #include "DirectConditionGenerator.h"
+#include "OGSError.h"
+#include "StrictDoubleValidator.h"
 
 CondFromRasterDialog::CondFromRasterDialog(const ProjectData *project, QDialog* parent)
 	: QDialog(parent), _project(project)
 {
 	setupUi(this);
+
+	this->scalingEdit->setEnabled(false);
+	_scale_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
+	this->scalingEdit->setText("1.0");
+	this->scalingEdit->setValidator (_scale_validator);
 
 	const std::map<std::string, MeshLib::CFEMesh*> msh_map = project->getMeshObjects();
 
@@ -26,6 +33,7 @@ CondFromRasterDialog::CondFromRasterDialog(const ProjectData *project, QDialog* 
 
 CondFromRasterDialog::~CondFromRasterDialog()
 {
+	delete _scale_validator;
 }
 
 void CondFromRasterDialog::on_selectButton_pressed()
@@ -52,9 +60,21 @@ void CondFromRasterDialog::on_selectButton_pressed()
 
 void CondFromRasterDialog::accept()
 {
-	
 	std::string mesh_name (this->meshBox->currentText().toStdString());
 	std::string raster_name (this->rasterEdit->text().toStdString());
+	double scaling_factor = strtod(this->scalingEdit->text().toStdString().c_str(), 0);
+
+	if (mesh_name.empty())
+	{
+		OGSError::box("No mesh selected.");
+		return;
+	}
+	if (raster_name.empty())
+	{
+		OGSError::box("No raster selected.");
+		return;
+	}
+	
 	const MeshLib::CFEMesh* mesh = _project->getMesh(mesh_name);
 
 	if (this->directButton->isChecked())
@@ -65,6 +85,11 @@ void CondFromRasterDialog::accept()
 	}
 	else
 	{
+		if (scaling_factor == 0)
+		{
+			OGSError::box("No valid scaling factor given.");
+			return;
+		}
 		MeshLib::CFEMesh* new_mesh = const_cast<MeshLib::CFEMesh*>(mesh);
 		DirectConditionGenerator dcg;
 		dcg.directWithSurfaceIntegration(*new_mesh, raster_name);
@@ -78,3 +103,7 @@ void CondFromRasterDialog::reject()
 	this->done(QDialog::Rejected);
 }
 
+void CondFromRasterDialog::on_integrateButton_toggled(bool isSelected)
+{
+	this->scalingEdit->setEnabled(isSelected);
+}
