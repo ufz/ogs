@@ -19,6 +19,7 @@
 #include <vtkPolygon.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkProperty.h>
 
 #include <vtkLookupTable.h>
 

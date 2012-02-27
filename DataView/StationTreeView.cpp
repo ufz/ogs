@@ -62,6 +62,9 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 	QModelIndex index = this->selectionModel()->currentIndex();
 	ModelTreeItem* item = static_cast<ModelTreeItem*>(index.internalPointer());
 
+	if (!item)  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a treeview
+		return;
+
 	// The current index refers to a parent item (e.g. a listname)
 	if (item->childCount() > 0)
 	{

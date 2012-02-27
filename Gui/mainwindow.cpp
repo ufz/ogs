@@ -548,9 +548,12 @@ void MainWindow::loadFile(const QString &fileName)
 		QTime myTimer0;
 		myTimer0.start();
 #endif
-		//      FileIO::readGLIFileV4 (fileName.toStdString(), _geoModels);
 		std::string unique_name;
-		readGLIFileV4(fileName.toStdString(), _geoModels, unique_name);
+		std::vector<std::string> errors;
+		if (! readGLIFileV4(fileName.toStdString(), _geoModels, unique_name, errors)) {
+			for (size_t k(0); k<errors.size(); k++)
+				OGSError::box(QString::fromStdString(errors[k]));
+		}
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 #endif
@@ -1337,6 +1340,7 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	/*
 	std::map<std::string, MeshLib::CFEMesh*> const& mesh_map (_project.getMeshObjects());
 
 	std::string mesh_name(mesh_map.begin()->first);
@@ -1351,7 +1355,7 @@ void MainWindow::FEMTestStart()
 	} else {
 		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
 	}
-
+	*/
 	CondFromRasterDialog dlg(&_project);
 	dlg.exec();
 }
@@ -1619,4 +1623,5 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 		}
 	}
 }
+
 

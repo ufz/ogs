@@ -208,7 +208,7 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 
 		// shift noData values into normal pixel-range and set transparancy values for all pixels
 		size_t nPixels = header.ncols * header.nrows;
-		for (int j = 0; j <nPixels; j++)
+		for (size_t j = 0; j < nPixels; j++)
 		{
 			if (values[j*2] == header.noData)
 			{

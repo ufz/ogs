@@ -16,7 +16,6 @@ vtkCxxRevisionMacro(VtkColorLookupTable, "$Revision$");
 VtkColorLookupTable::VtkColorLookupTable()
 	: _type(VtkColorLookupTable::LINEAR)
 {
-	this->SetNumberOfTableValues(256);
 }
 
 VtkColorLookupTable::~VtkColorLookupTable()
@@ -46,50 +45,27 @@ void VtkColorLookupTable::Build()
 	double range[2];
 	this->GetTableRange(range);
 	const double interval = range[1]-range[0];
-	const vtkIdType nColours = this->GetNumberOfTableValues();
+	this->SetNumberOfTableValues(ceil(interval)+1);
+//	const vtkIdType nColours = this->GetNumberOfTableValues();
 	if (!_dict.empty())
 	{
 		// make sure that color map starts with the first color in the dictionary
-		unsigned char* startcolor = new unsigned char[4];
-		startcolor[0] = _dict.begin()->second[0];
-		startcolor[1] = _dict.begin()->second[1];
-		startcolor[2] = _dict.begin()->second[2];
-		startcolor[3] = _dict.begin()->second[3];
+		unsigned char startcolor[4] = { 0, 0 , 0 , 0 };
 		std::pair<size_t, unsigned char*> lastValue(0, startcolor);
 		size_t nextIndex(0);
-/*
-		// make sure that color map ends with the last color in the dictionary
-		std::map<double, unsigned char*>::iterator lastitr = _dict.end();
-		--lastitr;
-		if (lastitr->first != 1)
-		{
-			unsigned char* lastcolor = new unsigned char[4];
-			for (size_t i = 0; i < 4; i++)
-				lastcolor[i] = lastitr->second[i];
-			_dict.insert( std::pair<double, unsigned char*>(1.0, lastcolor) );
-		}
-*/
-		for (std::map<double, unsigned char*>::const_iterator it = _dict.begin();
-		     it != _dict.end(); ++it)
-		{
-			//unsigned char rgba[4];
-			//rgba[0] = (*it->second)[0]; rgba[1] = (*it->second)[1]; rgba[2] = (*it->second)[2]; rgba[3] = 255;
 
-			nextIndex =
-			        static_cast<size_t>( floor(((it->first-range[0])/interval) * (double)nColours) );
-			if (nextIndex >= static_cast<size_t>(nColours))
-				nextIndex--;                                                   // this happens for the very last colour
+		for (std::map<double, unsigned char*>::const_iterator it = _dict.begin(); it != _dict.end(); ++it)
+		{
+			double val = (it->first < range[0]) ? range[0] : ((it->first > range[1]) ? range[1] : it->first);
+			nextIndex = static_cast<size_t>( floor(val-range[0]) );
+
 			this->SetTableValue(nextIndex, it->second);
 
-			if ( nextIndex - lastValue.first > 1 )
+			if ( nextIndex - lastValue.first > 0 )
 				for (size_t i = lastValue.first + 1; i < nextIndex; i++)
 				{
 					unsigned char int_rgba[4];
-					int_rgba[3] = 255;
-					double pos =
-					        (i -
-					         lastValue.first) /
-					        (static_cast<double>(nextIndex - lastValue.first));
+					double pos = (i - lastValue.first) / (static_cast<double>(nextIndex - lastValue.first));
 
 					if (_type == VtkColorLookupTable::LINEAR)
 						for (size_t j = 0; j < 3; j++)
@@ -186,8 +162,8 @@ void VtkColorLookupTable::setColor(double pos, unsigned char rgba[4])
 void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
 {
 	indx =
-	        ((indx < this->TableRange[0]) 
-				? static_cast<vtkIdType>(this->TableRange[0]) 
+	        ((indx < this->TableRange[0])
+				? static_cast<vtkIdType>(this->TableRange[0])
 				: (indx >=this->TableRange[1] ? static_cast<vtkIdType>(this->TableRange[1]) - 1 : indx));
 	indx =
 	        static_cast<size_t>( floor( (indx - this->TableRange[0]) *

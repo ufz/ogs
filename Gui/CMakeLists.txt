@@ -95,10 +95,6 @@ IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
 
-IF (libtiff_FOUND)
-	TARGET_LINK_LIBRARIES( ogs-gui ${libtiff_LIBRARIES} )
-ENDIF () # libtiff_FOUND
-
 ADD_DEPENDENCIES ( ogs-gui VtkVis OGSProject )
 
 IF(MSVC)
@@ -161,7 +157,6 @@ IF (OGS_VRED_PLUGIN)
 		QtDataView
 		StratView
 		${Shapelib_LIBRARIES}
-		${libtiff_LIBRARIES}
 		${libgeotiff_LIBRARIES}
 		QVTK
 		VtkVis

@@ -8,6 +8,7 @@
 // ** INCLUDES **
 #include "VtkCompositeSelectionFilter.h"
 #include "VtkSelectionFilter.h"
+#include "VtkColorLookupTable.h"
 
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkSmartPointer.h>

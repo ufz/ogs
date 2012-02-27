@@ -17,6 +17,7 @@
 #include <QString>
 #include <QVariant>
 
+class QStringList;
 class vtkAlgorithm;
 class vtkDataSetAttributes;
 class vtkPointSet;
@@ -113,6 +114,10 @@ public:
 
 	/// @brief Enables / disables backface culling on all children.
 	void setBackfaceCullingOnChildren(bool enable) const;
+
+	/// @brief Returns a list of array names prefixed with P- or C-
+	/// for point and cell data.
+	QStringList getScalarArrayNames() const;
 
 protected:
 	vtkProp3D* _actor;

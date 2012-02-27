@@ -13,6 +13,7 @@
 #include <vtkPolyDataAlgorithm.h>
 
 class QImage;
+class vtkImageAlgorithm;
 
 /**
  * \brief Filter class for assigning a texture to a surface.

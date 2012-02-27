@@ -8,6 +8,10 @@
 
 #include "VtkCompositeFilter.h"
 
+#include <vector>
+
+class VtkColorLookupTable;
+
 /// @brief This filter colors the input by the points z-value.
 class VtkCompositeSelectionFilter : public VtkCompositeFilter
 {

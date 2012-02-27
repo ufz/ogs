@@ -60,12 +60,15 @@ void CondFromRasterDialog::accept()
 	if (this->directButton->isChecked())
 	{
 		DirectConditionGenerator dcg;
-		dcg.fromRasterToSurfaceNodes(*mesh, raster_name);
+		dcg.directToSurfaceNodes(*mesh, raster_name);
 		dcg.writeToFile(raster_name + ".txt");
 	}
 	else
 	{
-		// send integrate signal
+		MeshLib::CFEMesh* new_mesh = const_cast<MeshLib::CFEMesh*>(mesh);
+		DirectConditionGenerator dcg;
+		dcg.directWithSurfaceIntegration(*new_mesh, raster_name);
+		dcg.writeToFile(raster_name + ".txt");
 	}
 	this->done(QDialog::Accepted);
 }
