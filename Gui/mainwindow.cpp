@@ -633,7 +633,7 @@ void MainWindow::loadFile(const QString &fileName)
 		std::string name = fi.baseName().toStdString();
 
 		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
-			_geoModels->addStationVec(boreholes, name, GEOLIB::getRandomColor());
+			_geoModels->addStationVec(boreholes, name);
 		else
 			OGSError::box("Error reading GMS file.");
 	}
@@ -1667,9 +1667,9 @@ void MainWindow::asciiread()
 		crowns->push_back(crown);
 	}
 	std::string stnname("Trees");
-	_geoModels->addStationVec(trees, stnname, new GEOLIB::Color(0,0,0) );
+	_geoModels->addStationVec(trees, stnname);
 	stnname = "Crowns";
-	_geoModels->addStationVec(crowns, stnname, new GEOLIB::Color(0,0,0) );
+	_geoModels->addStationVec(crowns, stnname);
 
 	in.close();
 }

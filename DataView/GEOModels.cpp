@@ -70,10 +70,9 @@ bool GEOModels::removePointVec( const std::string &name )
 }
 
 void GEOModels::addStationVec( std::vector<GEOLIB::Point*>* stations,
-                               std::string &name,
-                               const GEOLIB::Color* const color )
+                               std::string &name)
 {
-	GEOObjects::addStationVec(stations, name, color);
+	GEOObjects::addStationVec(stations, name);
 
 	_stationModel->addStationList(QString::fromStdString(name), stations);
 	emit stationVectorAdded(_stationModel, name);
