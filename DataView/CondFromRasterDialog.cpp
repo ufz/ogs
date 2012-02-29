@@ -18,7 +18,7 @@ CondFromRasterDialog::CondFromRasterDialog(const std::map<std::string, MeshLib::
 	setupUi(this);
 
 	this->scalingEdit->setEnabled(false);
-	_scale_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
+	_scale_validator = new StrictDoubleValidator(-1e+10, 1e+20, 5);
 	this->scalingEdit->setText("1.0");
 	this->scalingEdit->setValidator (_scale_validator);
 
@@ -44,7 +44,7 @@ void CondFromRasterDialog::on_selectButton_pressed()
 #endif
 	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file",
 					settings.value("lastOpenedFileDirectory").toString(), QString(
-									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
+									"Raster files (*.asc *.grd);;") .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{

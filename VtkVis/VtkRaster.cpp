@@ -355,7 +355,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 				nImages++;
 			} while (TIFFReadDirectory(tiff));
 			if (nImages > 1)
-				std::cout << "OGSRaster::loadImageFromTIFF() - File contains " <<
+				std::cout << "VtkRaster::loadImageFromTIFF() - File contains " <<
 				nImages << " images. This method is not tested for this case." <<
 				std::endl;
 
@@ -369,7 +369,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			{
 				if (pnts[0] != pnts[1])
 					std::cout <<
-					"OGSRaster::loadImageFromTIFF() - Warning: Original raster data has anisotrop pixel size!"
+					"VtkRaster::loadImageFromTIFF() - Warning: Original raster data has anisotrop pixel size!"
 					          << std::endl;
 				cellsize = pnts[0];
 			}
@@ -388,7 +388,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 				if (!TIFFReadRGBAImage(tiff, imgWidth, imgHeight, pixVal, 0))
 				{
 					std::cout <<
-					"OGSRaster::loadImageFromTIFF() - Error reading GeoTIFF file."
+					"VtkRaster::loadImageFromTIFF() - Error reading GeoTIFF file."
 					          << std::endl;
 					_TIFFfree(pixVal);
 					GTIFFree(geoTiff);
@@ -467,12 +467,12 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 
 		XTIFFClose(tiff);
 		std::cout <<
-		"OGSRaster::loadImageFromTIFF() - File not recognised as GeoTIFF-Image." <<
+		"VtkRaster::loadImageFromTIFF() - File not recognised as GeoTIFF-Image." <<
 		std::endl;
 		return NULL;
 	}
 
-	std::cout << "OGSRaster::loadImageFromTIFF() - File not recognised as TIFF-Image." <<
+	std::cout << "VtkRaster::loadImageFromTIFF() - File not recognised as TIFF-Image." <<
 	std::endl;
 	return NULL;
 }

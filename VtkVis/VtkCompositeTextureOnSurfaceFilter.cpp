@@ -53,11 +53,11 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 	                                                "Select raster file to apply as texture",
 	                                                settings.value("lastOpenedTextureFileDirectory").
 	                                                toString(),
-	                                                "Raster files (*.asc *.bmp *.jpg *.png *.tif);;NetCDF files (*.nc);;");
+	                                                "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif);;NetCDF files (*.nc);;");
 	QFileInfo fi(fileName);
 
 	if ((fi.suffix().toLower() == "asc") || (fi.suffix().toLower() == "tif") ||
-	    (fi.suffix().toLower() == "png") ||
+	    (fi.suffix().toLower() == "png") || (fi.suffix().toLower() == "grd") ||
 	    (fi.suffix().toLower() == "jpg") || (fi.suffix().toLower() == "bmp"))
 	{
 		double x0(0), y0(0), scalingFactor(1);

@@ -6,7 +6,7 @@
 
 #include "DirectConditionGenerator.h"
 
-#include "OGSRaster.h"
+#include "VtkRaster.h"
 #include "MshEditor.h"
 #include "PointWithID.h"
 
@@ -19,11 +19,12 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		double origin_x(0), origin_y(0), delta(0);
 		size_t imgwidth(0), imgheight(0);
 
-		double* img = OGSRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+		float* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 
 		const std::vector<GEOLIB::PointWithID*> surface_nodes ( MshEditor::getSurfaceNodes(mesh) );
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
 		const size_t nNodes(surface_nodes.size());
+		_direct_values.reserve(nNodes);
 		for (size_t i=0; i<nNodes; i++)
 		{
 			const double* coords (surface_nodes[i]->getData());
@@ -68,7 +69,11 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 
 		FiniteElement::CElement* fem ( new FiniteElement::CElement(mesh.GetCoordinateFlag()) );
 
-		double* img = OGSRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+		float* img;
+		if (filename.substr(filename.length()-3,3).compare("asc") == 0)
+			img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+		else if (filename.substr(filename.length()-3,3).compare("grd") == 0)
+			img = VtkRaster::loadDataFromSurfer(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 
 		const size_t nNodes(mesh.nod_vector.size());
 		std::vector<double> val(nNodes, 0.0);
@@ -121,6 +126,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			}
 		}
 
+		_direct_values.reserve(nNodes);
 		for(size_t k=0; k<nNodes; k++)
 		{
 			if (!mesh.nod_vector[k]->GetMark())
