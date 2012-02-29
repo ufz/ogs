@@ -374,7 +374,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 //		std::cout << "size of CFluidProperties: " << sizeof(CFluidProperties) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
-	this->asciiread();
 }
 
 MainWindow::~MainWindow()
@@ -1645,31 +1644,4 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 			st_vector.clear();
 		}
 	}
-}
-
-void MainWindow::asciiread()
-{
-	double x,y,z,height;
-	int intname;
-	std::string name, type;
-	std::ifstream in("c:/project/input.txt");
-	std::vector<GEOLIB::Point*> *trees = new std::vector<GEOLIB::Point*>;
-	std::vector<GEOLIB::Point*> *crowns = new std::vector<GEOLIB::Point*>;
-
-	GEOLIB::Polyline* ply = new GEOLIB::Polyline(*trees);
-	while (!in.eof())
-	{
-		in >> intname >> x >> y >> z >> height >> type;
-		GEOLIB::StationBorehole* tree = GEOLIB::StationBorehole::createStation((QString::number(intname)).toStdString(), x, y, z+height, height);
-		tree->addSoilLayer(height, type);
-		GEOLIB::Station* crown = GEOLIB::Station::createStation((QString::number(intname)).toStdString(), x, y, z+height);
-		trees->push_back(tree);
-		crowns->push_back(crown);
-	}
-	std::string stnname("Trees");
-	_geoModels->addStationVec(trees, stnname);
-	stnname = "Crowns";
-	_geoModels->addStationVec(crowns, stnname);
-
-	in.close();
 }

@@ -138,8 +138,6 @@ private:
 	QWidget* _vtkWidget;
 	QByteArray _windowState;
 	QMenu* _import_files_menu;
-
-	void asciiread();
 	
 #ifdef OGS_USE_VRPN
 	TrackingSettingsWidget* _trackingSettingsWidget;
