@@ -126,7 +126,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			if (!mesh.nod_vector[k]->GetMark())
 				continue;
 				// Assuming the unit of precipitation is mm/day
-			_direct_values.push_back( std::pair<size_t, double>(k, val[k] * scaling) );
+			_direct_values.push_back( std::pair<size_t, double>(k, val[k] / scaling) );
 		}
 	}
 	else

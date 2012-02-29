@@ -29,7 +29,7 @@ class VtkRaster
 		double x;
 		double y;
 		double cellsize;
-		int noData;
+		std::string noData;
 	};
 
 public:
@@ -61,6 +61,13 @@ public:
 	 * \return A float-array of pixel values incl. opacity (noData values are transparent)
 	 */
 	static float* loadDataFromASC(const std::string &fileName,
+	                              double &x0,
+	                              double &y0,
+	                              size_t &width,
+	                              size_t &height,
+	                              double &delta);
+
+	static float* loadDataFromSurfer(const std::string &fileName,
 	                              double &x0,
 	                              double &y0,
 	                              size_t &width,
@@ -114,6 +121,14 @@ private:
 	 * \return True if the header could be read correctly, false otherwise.
 	 */
 	static bool readASCHeader(ascHeader &header, std::ifstream &in);
+
+	/**
+	 * Reads the header of a Surfer grd-file.
+	 * \param header The ascHeader-object into which all the information will be written.
+	 * \param in FileInputStream used for reading the data.
+	 * \return True if the header could be read correctly, false otherwise.
+	 */
+	static bool readSurferHeader(ascHeader &header, std::ifstream &in);
 
 	/// Converts an uint32-number into a quadruple representing RGBA-colours for a pixel.
 	static void uint32toRGBA(const unsigned int s, int* p);

@@ -836,7 +836,7 @@ void MainWindow::importRaster()
 #endif
 	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
 					settings.value("lastOpenedFileDirectory").toString(), QString(
-									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
+									"Raster files (*.asc *.grd *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{

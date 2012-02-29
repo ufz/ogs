@@ -35,7 +35,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 {
 	QFileInfo fileInfo(QString::fromStdString(fileName));
 
-	if (fileInfo.suffix().toLower() == "asc")
+	if (fileInfo.suffix().toLower() == "asc" || fileInfo.suffix().toLower() == "grd")
         return loadImageFromASC(fileName, x0, y0, delta);
 #ifdef libgeotiff_FOUND
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
@@ -49,8 +49,13 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
                                             double& x0, double& y0, double& delta)
 {
 	size_t width(0), height(0);
-	float* data = loadDataFromASC(fileName, x0, y0, width, height, delta);
+	float* data;
 
+	if (fileName.substr(fileName.length()-3, 3).compare("asc") == 0)
+		data = loadDataFromASC(fileName, x0, y0, width, height, delta);
+	else
+		data = loadDataFromSurfer(fileName, x0, y0, width, height, delta);
+	
 	vtkImageImport* image = vtkImageImport::New();
 		image->SetDataSpacing(delta, delta,delta);
 		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
@@ -149,7 +154,7 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	if (tag.compare("NODATA_value") == 0)
 	{
 		in >> value;
-		header.noData = atoi(value.c_str());
+		header.noData = value.c_str();
 	}
 	else
 		return false;
@@ -190,7 +195,8 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 		float* values = new float[header.ncols * header.nrows * 2];
 
 		int col_index(0);
-		float max_val = header.noData;
+		int noData = atoi(header.noData.c_str());
+		float max_val = noData;
 		std::string s("");
 		// read the file into a double-array
 		for (int j = 0; j < header.nrows; j++)
@@ -210,7 +216,110 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 		size_t nPixels = header.ncols * header.nrows;
 		for (size_t j = 0; j < nPixels; j++)
 		{
-			if (values[j*2] == header.noData)
+			if (values[j*2] == noData)
+			{
+				values[j*2] = max_val;
+				values[j*2+1] = 0;
+			}
+			else
+				values[j*2+1] = max_val;
+		}
+
+		in.close();
+		return values;
+	}
+	return NULL;
+}
+
+bool VtkRaster::readSurferHeader(ascHeader &header, std::ifstream &in)
+{
+	std::string line, tag, value;
+	double min, max;
+
+	in >> tag;
+
+	if (tag.compare("DSAA") != 0)
+	{
+		std::cout << "Error in readSurferHeader() - No Surfer file..." << std::endl;
+		return false;
+	}
+	else
+	{
+		in >> header.ncols >> header.nrows;
+		in >> min >> max;
+		header.x = min;
+		header.cellsize = (max-min)/(double)header.ncols;
+
+		in >> min >> max;
+		header.y = min;
+
+		if (ceil((max-min)/(double)header.nrows) == ceil(header.cellsize))
+			header.cellsize = ceil(header.cellsize);
+		else
+		{
+			std::cout << "Error in readSurferHeader() - Anisotropic cellsize detected..." << std::endl;
+			return 0;
+		}
+		in >> min >> max; // ignore min- and max-values
+
+		header.noData = "1.70141E+038";
+	}
+
+	return true;
+}
+
+float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
+                                   double &x0,
+                                   double &y0,
+                                   size_t &width,
+                                   size_t &height,
+                                   double &delta)
+{
+	std::ifstream in( fileName.c_str() );
+
+	if (!in.is_open())
+	{
+		std::cout << "VtkRaster::loadImageFromSurfer() - Could not open file..." << std::endl;
+		return NULL;
+	}
+
+	ascHeader header;
+
+	if (readSurferHeader(header, in))
+	{
+		x0     = header.x;
+		y0     = header.y;
+		width  = header.ncols;
+		height = header.nrows;
+		delta  = header.cellsize;
+
+		float* values = new float[header.ncols * header.nrows * 2];
+
+		int col_index(0);
+		int noData = -9999;
+		float max_val = noData;
+		std::string s("");
+		// read the file into a double-array
+		for (int j = 0; j < header.nrows; j++)
+		{
+			col_index = j * header.ncols;
+			for (int i = 0; i < header.ncols; i++)
+			{
+				in >> s;
+				if (s.compare(header.noData) == 0)
+					s = "-9999";
+				size_t index = 2*(col_index+i);
+				values[index] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
+				if (values[index] > max_val)
+					max_val = values[index];
+			}
+		}
+
+		// shift noData values into normal pixel-range and set transparancy values for all pixels
+		size_t nPixels = header.ncols * header.nrows;
+		for (size_t j = 0; j < nPixels; j++)
+		{
+			if (values[j*2] == noData)
 			{
 				values[j*2] = max_val;
 				values[j*2+1] = 0;
