@@ -18,6 +18,9 @@ namespace GEOLIB {
 	class GeoObject;
 }
 
+namespace MeshLib {
+	class CFEMesh;
+}
 
 /**
  * \brief A dialog window for adding FEM Conditions based
@@ -38,6 +41,10 @@ public:
 
 	/// Constructor for editing an existing FEM condition.
 	FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent = 0);
+
+	/// Constructor for creating DIRECT FEM conditions on MeshNodes.
+	FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent = 0);
+
 	~FEMConditionSetupDialog(void);
 
 private:
@@ -45,8 +52,9 @@ private:
 
 	FEMCondition _cond;
 	bool _set_on_points;
-	QLineEdit* _secondValueEdit;
-	QPushButton* _directButton;
+	QLineEdit* _secondValueEdit; // needed for linear conditions
+	QPushButton* directButton; // needed for direct conditions
+	const MeshLib::CFEMesh* _mesh; // needed for direct conditions
 	StrictDoubleValidator* _first_value_validator;
 	StrictDoubleValidator* _second_value_validator;
 
@@ -61,7 +69,9 @@ private slots:
 
 	void on_disTypeBox_currentIndexChanged(int index);
 
-	void on_directButton_pressed();
+	void directButton_pressed();
+
+	void direct_path_changed(std::string path);
 
 	void copyCondOnPoints();
 

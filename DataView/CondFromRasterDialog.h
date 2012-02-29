@@ -10,6 +10,7 @@
 #include <QDialog>
 
 #include "ProjectData.h"
+#include "GridAdapter.h"
 
 class StrictDoubleValidator;
 
@@ -21,12 +22,11 @@ class CondFromRasterDialog : public QDialog, private Ui_CondFromRaster
 	Q_OBJECT
 
 public:
-	CondFromRasterDialog(const ProjectData* project, QDialog* parent = 0);
+	CondFromRasterDialog(const std::map<std::string, MeshLib::CFEMesh*> &msh_map, QDialog* parent = 0);
 	~CondFromRasterDialog(void);
 
 private:
-
-	const ProjectData* _project;
+	const std::map<std::string, MeshLib::CFEMesh*> _msh_map;
 	StrictDoubleValidator* _scale_validator;
 
 private slots:
@@ -40,7 +40,7 @@ private slots:
 	void reject();
 	
 signals:
-
+	void directNodesWritten(std::string);
 };
 
 #endif //CONDFROMRASTERDIALOG_H

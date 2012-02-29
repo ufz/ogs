@@ -12,8 +12,8 @@
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
 
-CondFromRasterDialog::CondFromRasterDialog(const ProjectData *project, QDialog* parent)
-	: QDialog(parent), _project(project)
+CondFromRasterDialog::CondFromRasterDialog(const std::map<std::string, MeshLib::CFEMesh*> &msh_map, QDialog* parent)
+	: QDialog(parent), _msh_map(msh_map)
 {
 	setupUi(this);
 
@@ -22,11 +22,9 @@ CondFromRasterDialog::CondFromRasterDialog(const ProjectData *project, QDialog* 
 	this->scalingEdit->setText("1.0");
 	this->scalingEdit->setValidator (_scale_validator);
 
-	const std::map<std::string, MeshLib::CFEMesh*> msh_map = project->getMeshObjects();
-
-	for (std::map<std::string, MeshLib::CFEMesh*>::const_iterator it = msh_map.begin();
-			                                                      it != msh_map.end(); ++it)
-		 this->meshBox->addItem(QString::fromStdString(it->first));
+	for (std::map<std::string, MeshLib::CFEMesh*>::const_iterator it = _msh_map.begin();
+			                                                      it != _msh_map.end(); ++it)
+	    this->meshBox->addItem(QString::fromStdString(it->first));
 
 	this->directButton->setChecked(true);
 }
@@ -75,13 +73,14 @@ void CondFromRasterDialog::accept()
 		return;
 	}
 	
-	const MeshLib::CFEMesh* mesh = _project->getMesh(mesh_name);
+	const MeshLib::CFEMesh* mesh = (_msh_map.find(mesh_name))->second;
+	std::string direct_node_name(raster_name + ".txt");
 
 	if (this->directButton->isChecked())
 	{
 		DirectConditionGenerator dcg;
 		dcg.directToSurfaceNodes(*mesh, raster_name);
-		dcg.writeToFile(raster_name + ".txt");
+		dcg.writeToFile(direct_node_name);
 	}
 	else
 	{
@@ -92,9 +91,10 @@ void CondFromRasterDialog::accept()
 		}
 		MeshLib::CFEMesh* new_mesh = const_cast<MeshLib::CFEMesh*>(mesh);
 		DirectConditionGenerator dcg;
-		dcg.directWithSurfaceIntegration(*new_mesh, raster_name);
-		dcg.writeToFile(raster_name + ".txt");
+		dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
+		dcg.writeToFile(direct_node_name);
 	}
+	emit directNodesWritten(direct_node_name);
 	this->done(QDialog::Accepted);
 }
 

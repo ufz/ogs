@@ -22,7 +22,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 												 bool  on_points,
 												 QDialog* parent)
 : QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points), _secondValueEdit(NULL),
-  _first_value_validator(NULL), _second_value_validator(NULL)
+  _mesh(NULL), _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	_cond.setGeoType(type);
 	_cond.setGeoName(geo_name);
@@ -31,8 +31,6 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 	setupUi(this);
 
 	setupDialog();
-
-
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent)
@@ -42,9 +40,22 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* pa
 	setupDialog();
 }
 
+FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent)
+: QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false), _secondValueEdit(NULL),
+  _mesh(mesh), _first_value_validator(NULL), _second_value_validator(NULL)
+{
+	_cond.setGeoType(GEOLIB::INVALID);
+	_cond.setGeoName(name);
+	_cond.setGeoObj(NULL);
+
+	setupUi(this);
+
+	setupDialog();
+}
+
 FEMConditionSetupDialog::~FEMConditionSetupDialog()
 {
-	delete _directButton;
+	delete directButton;
 	delete _secondValueEdit;
 	delete _first_value_validator;
 	delete _second_value_validator;
@@ -63,12 +74,13 @@ void FEMConditionSetupDialog::setupDialog()
 		this->firstValueEdit->setText("0");
 		this->firstValueEdit->setValidator (_first_value_validator);
 	}
-	else	// direct
+	else	// direct on mesh
 	{
-		_directButton = new QPushButton("Calculate Values");
-		static_cast<QGridLayout*>(this->layout())->addWidget(_directButton,6,1) ;
+		this->valueLabel->setText("DirectNode File");
+		directButton = new QPushButton("Calculate Values");
+		static_cast<QGridLayout*>(this->layout())->addWidget(directButton,6,1) ;
+		connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
 		this->disTypeBox->addItem("Direct");
-
 	}
 
 	const std::list<std::string> process_names = FiniteElement::getAllProcessNames();
@@ -121,12 +133,8 @@ void FEMConditionSetupDialog::accept()
 	}
 	else	// direct on mesh
 	{
-		if (this->_secondValueEdit->text().length() == 0)
-		{
-			OGSError::box("No source file for direct values selected.");
-			return;
-		}
 		_cond.setProcessDistributionType(FiniteElement::DIRECT);
+		this->firstValueEdit->text();
 		// insert file name containing values
 	}
 
@@ -186,9 +194,18 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 
 }
 
-void FEMConditionSetupDialog::on_directButton_pressed()
+void FEMConditionSetupDialog::directButton_pressed()
 {
-	// call direct condition generator
+	std::map<std::string, MeshLib::CFEMesh*> msh_map;
+	msh_map.insert( std::pair<std::string, MeshLib::CFEMesh*>(this->_cond.getGeoName(), const_cast<MeshLib::CFEMesh*>(this->_mesh)) );
+	CondFromRasterDialog dlg(msh_map);
+	connect(&dlg, SIGNAL(directNodesWritten(std::string)), this, SLOT(direct_path_changed(std::string)));
+	dlg.exec();
+}
+
+void FEMConditionSetupDialog::direct_path_changed(std::string path)
+{
+	this->firstValueEdit->setText(QString::fromStdString(path));
 }
 
 FEMCondition* FEMConditionSetupDialog::typeCast(const FEMCondition &cond)

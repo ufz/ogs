@@ -32,6 +32,11 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 			{
 				size_t cell_x = static_cast<size_t>(floor((coords[0] - origin_x)/delta));
 				size_t cell_y = static_cast<size_t>(floor((coords[1] - origin_y)/delta));
+
+				// if node outside of raster use raster boundary values
+				cell_x = (cell_x < 0) ?  0 : ((cell_x > imgwidth)  ? (imgwidth-1)  : cell_x);
+				cell_y = (cell_y < 0) ?  0 : ((cell_y > imgheight) ? (imgheight-1) : cell_y);
+				
 				size_t index = cell_y*imgwidth+cell_x;
 				if (img[index] != -9999)
 					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index]) );
@@ -48,7 +53,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 }
 
 
-const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename)
+const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename, double scaling)
 {
 	double no_data_value (-9999); // TODO: get this from asc-reader!
 	double ratio (1); // TODO: get correct value
@@ -86,33 +91,15 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			// get values from the raster for all nodes of the face
 			for(size_t k=0; k<nElemNodes; k++)
 			{
-				//MeshLib::CNode* node = elem->GetNode(k);
 				double const* const pnt_k (elem->GetNode(k)->getData());
+				size_t cell_x = static_cast<size_t>(floor((pnt_k[0] - origin_x) / delta));
+				size_t cell_y = static_cast<size_t>(floor((pnt_k[1] - origin_y) / delta));
 
-				size_t nx = static_cast<size_t>(floor((pnt_k[0] - origin_x) / delta));
-				size_t ny = static_cast<size_t>(floor((pnt_k[1] - origin_y) / delta));
-				/*
-				if(ny < 0)
-					ny = 0;
-				if(ny > static_cast<long>(nrows))
-					ny = nrows;
+				// if node outside of raster use raster boundary values
+				cell_x = (cell_x < 0) ?  0 : ((cell_x > imgwidth)  ? (imgwidth-1)  : cell_x);
+				cell_y = (cell_y < 0) ?  0 : ((cell_y > imgheight) ? (imgheight-1) : cell_y);
 
-				if(nx * csize + x0 >= pnt_k[0])
-					nx -= 1;
-				if(ny * csize + y0 >= pnt_k[1])
-					ny -= 1;
-				if(nx >= static_cast<long>(ncols) - 1)
-					nx = ncols - 2;
-				if(ny >= static_cast<long>(nrows) - 1)
-					ny = nrows - 2;
-				if(nx < 0)
-					nx = 0;
-				if(ny < 0)
-					ny = 0;
-
-				node_val[k] = zz[ncols * ny + nx];
-				*/
-				node_val[k] = img[ny * imgwidth + nx];
+				node_val[k] = img[cell_y * imgwidth + cell_x];
 				if (fabs(node_val[k] - no_data_value) < std::numeric_limits<double>::min())
 					node_val[k] = 0.;
 			}
@@ -139,7 +126,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			if (!mesh.nod_vector[k]->GetMark())
 				continue;
 				// Assuming the unit of precipitation is mm/day
-			_direct_values.push_back( std::pair<size_t, double>(k, val[k] /* ratio * 1e-3*/) );
+			_direct_values.push_back( std::pair<size_t, double>(k, val[k] * scaling) );
 		}
 	}
 	else

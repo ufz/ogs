@@ -374,6 +374,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 //		std::cout << "size of CFluidProperties: " << sizeof(CFluidProperties) << std::endl;
 	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
 	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
+	this->asciiread();
 }
 
 MainWindow::~MainWindow()
@@ -605,12 +606,14 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh")
 	{
-		std::string name = fileName.toStdString();
-
 		FileIO::OGSMeshIO meshIO;
+		std::string name = fileName.toStdString();
 		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
-			_meshModels->addMesh(msh, name);
+		{
+			std::string mesh_name = fi.baseName().toStdString();
+			_meshModels->addMesh(msh, mesh_name);
+		}
 		else
 			OGSError::box("Failed to load a mesh file.");
 	}
@@ -1305,9 +1308,19 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 		if (on_points)
 			this->_geoModels->addNameForObjectPoints(geometry_name, object_type, geo_name, geometry_name);
 
-		FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
-		connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
-		dlg.exec();
+		if (object_type != GEOLIB::INVALID)
+		{
+			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
+			connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
+			dlg.exec();
+		}
+		else 
+		{
+			const MeshLib::CFEMesh* mesh = _project.getMesh(geo_name);
+			FEMConditionSetupDialog dlg(geo_name, mesh);
+			connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
+			dlg.exec();
+		}
 	}
 }
 
@@ -1366,7 +1379,7 @@ void MainWindow::FEMTestStart()
 		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
 	}
 	*/
-	CondFromRasterDialog dlg(&_project);
+	CondFromRasterDialog dlg(_project.getMeshObjects());
 	dlg.exec();
 }
 
@@ -1634,4 +1647,29 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 	}
 }
 
+void MainWindow::asciiread()
+{
+	double x,y,z,height;
+	int intname;
+	std::string name, type;
+	std::ifstream in("c:/project/input.txt");
+	std::vector<GEOLIB::Point*> *trees = new std::vector<GEOLIB::Point*>;
+	std::vector<GEOLIB::Point*> *crowns = new std::vector<GEOLIB::Point*>;
 
+	GEOLIB::Polyline* ply = new GEOLIB::Polyline(*trees);
+	while (!in.eof())
+	{
+		in >> intname >> x >> y >> z >> height >> type;
+		GEOLIB::StationBorehole* tree = GEOLIB::StationBorehole::createStation((QString::number(intname)).toStdString(), x, y, z+height, height);
+		tree->addSoilLayer(height, type);
+		GEOLIB::Station* crown = GEOLIB::Station::createStation((QString::number(intname)).toStdString(), x, y, z+height);
+		trees->push_back(tree);
+		crowns->push_back(crown);
+	}
+	std::string stnname("Trees");
+	_geoModels->addStationVec(trees, stnname, new GEOLIB::Color(0,0,0) );
+	stnname = "Crowns";
+	_geoModels->addStationVec(crowns, stnname, new GEOLIB::Color(0,0,0) );
+
+	in.close();
+}
