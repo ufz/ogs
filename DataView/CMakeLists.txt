@@ -27,7 +27,6 @@ set( SOURCES
 	MshTabWidget.cpp
 	NetCdfConfigureDialog.cpp
 	NewProcessDialog.cpp
-	OGSRaster.cpp
 	ProcessModel.cpp
 	ProcessView.cpp
 	QueryResultsDialog.cpp
@@ -82,7 +81,6 @@ set( HEADERS
 	ModelTreeItem.h
 	MshItem.h
 	MshLayerMapper.h
-	OGSRaster.h
 	ProcessItem.h	
 )
 
