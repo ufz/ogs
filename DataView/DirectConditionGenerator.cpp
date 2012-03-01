@@ -31,13 +31,13 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 
 			if (coords[0]>=origin_x && coords[0]<(origin_x+(delta*imgwidth)) && coords[1]>=origin_y && coords[1]<(origin_y+(delta*imgheight)))
 			{
-				size_t cell_x = static_cast<size_t>(floor((coords[0] - origin_x)/delta));
-				size_t cell_y = static_cast<size_t>(floor((coords[1] - origin_y)/delta));
+				int cell_x = static_cast<int>(floor((coords[0] - origin_x)/delta));
+				int cell_y = static_cast<int>(floor((coords[1] - origin_y)/delta));
 
 				// if node outside of raster use raster boundary values
-				cell_x = (cell_x < 0) ?  0 : ((cell_x > imgwidth)  ? (imgwidth-1)  : cell_x);
-				cell_y = (cell_y < 0) ?  0 : ((cell_y > imgheight) ? (imgheight-1) : cell_y);
-				
+				cell_x = (cell_x < 0) ?  0 : ((static_cast<size_t>(cell_x) > imgwidth)  ? (imgwidth-1)  : cell_x);
+				cell_y = (cell_y < 0) ?  0 : ((static_cast<size_t>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
+
 				size_t index = cell_y*imgwidth+cell_x;
 				if (img[index] != -9999)
 					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index]) );
@@ -57,7 +57,6 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename, double scaling)
 {
 	double no_data_value (-9999); // TODO: get this from asc-reader!
-	double ratio (1); // TODO: get correct value
 
 	if (_direct_values.empty())
 	{
@@ -97,12 +96,12 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			for(size_t k=0; k<nElemNodes; k++)
 			{
 				double const* const pnt_k (elem->GetNode(k)->getData());
-				size_t cell_x = static_cast<size_t>(floor((pnt_k[0] - origin_x) / delta));
-				size_t cell_y = static_cast<size_t>(floor((pnt_k[1] - origin_y) / delta));
+				int cell_x = static_cast<int>(floor((pnt_k[0] - origin_x) / delta));
+				int cell_y = static_cast<int>(floor((pnt_k[1] - origin_y) / delta));
 
 				// if node outside of raster use raster boundary values
-				cell_x = (cell_x < 0) ?  0 : ((cell_x > imgwidth)  ? (imgwidth-1)  : cell_x);
-				cell_y = (cell_y < 0) ?  0 : ((cell_y > imgheight) ? (imgheight-1) : cell_y);
+				cell_x = (cell_x < 0) ?  0 : ((static_cast<size_t>(cell_x) > imgwidth)  ? (imgwidth-1)  : cell_x);
+				cell_y = (cell_y < 0) ?  0 : ((static_cast<size_t>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
 
 				node_val[k] = img[cell_y * imgwidth + cell_x];
 				if (fabs(node_val[k] - no_data_value) < std::numeric_limits<double>::min())
