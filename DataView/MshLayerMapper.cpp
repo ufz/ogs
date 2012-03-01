@@ -5,6 +5,7 @@
 
 #include "MshLayerMapper.h"
 #include "VtkRaster.h"
+#include "OGSRaster.h"
 
 #include "MshEditor.h"
 #include "matrix_class.h"
@@ -31,8 +32,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
     }
  */
 	MeshLib::CFEMesh* new_mesh ( new MeshLib::CFEMesh() );
-	size_t nNodes = mesh->nod_vector.size();
-	size_t nElems = mesh->ele_vector.size();
+	const size_t nNodes = mesh->nod_vector.size();
+	const size_t nElems = mesh->ele_vector.size();
 
 	for (size_t layer_id = 0; layer_id < nLayers; layer_id++)
 	{
@@ -155,19 +156,19 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 
 			locX[0] = xDim.first + xPos * delta;
 			locY[0] = yDim.first + yPos * delta;
-			locZ[0] = elevation[yPos * width + xPos];
+			locZ[0] = elevation[2*(yPos * width + xPos)];
 
 			locX[1] = xDim.first + (xPos + 1) * delta;
 			locY[1] = yDim.first + yPos * delta;
-			locZ[1] = elevation[yPos * width + (xPos + 1)];
+			locZ[1] = elevation[2*(yPos * width + (xPos + 1))];
 
 			locX[2] = xDim.first + (xPos + 1) * delta;
 			locY[2] = yDim.first + (yPos + 1) * delta;
-			locZ[2] = elevation[(yPos + 1) * width + (xPos + 1)];
+			locZ[2] = elevation[2*((yPos + 1) * width + (xPos + 1))];
 
 			locX[3] = xDim.first + xPos * delta;
 			locY[3] = yDim.first + (yPos + 1) * delta;
-			locZ[3] = elevation[(yPos + 1) * width + xPos];
+			locZ[3] = elevation[2*((yPos + 1) * width + xPos)];
 
 			bool noData(false);
 			for(size_t j = 0; j < 4; j++)
