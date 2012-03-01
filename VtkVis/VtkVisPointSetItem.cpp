@@ -75,6 +75,10 @@ VtkVisPointSetItem::~VtkVisPointSetItem()
 	_transformFilter->Delete();
 	_mapper->Delete();
 }
+const QString VtkVisPointSetItem::GetActiveAttribute() const
+{
+	return _vtkProps->GetActiveAttribute();
+}
 
 void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 {

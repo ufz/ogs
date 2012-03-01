@@ -11,6 +11,7 @@
 #include "CheckboxDelegate.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
 
 #include <vtkDataSetMapper.h>
 #include <vtkProp3D.h>
@@ -268,8 +269,8 @@ void VtkVisPipelineView::addColorTable()
 
 	if (fi.suffix().toLower() == "xml")
 	{
-		VtkAlgorithmProperties* props =
-		        dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
+		VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
+		VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
 		if (props)
 		{
 			props->SetLookUpTable(array_name, fileName);
