@@ -297,6 +297,10 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 		_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	_actorMap.insert(item->actor(), newIndex);
 
+	// Do not interpolate images
+	if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
+		static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
+
 	reset();
 	emit vtkVisPipelineChanged();
 
