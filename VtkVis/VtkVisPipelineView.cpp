@@ -22,6 +22,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QSettings>
+#include <QMessageBox>
 
 //image to mesh conversion
 #include "msh_mesh.h"
@@ -270,12 +271,18 @@ void VtkVisPipelineView::addColorTable()
 	if (fi.suffix().toLower() == "xml")
 	{
 		VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
-		VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
-		if (props)
+		if (pointSetItem)
 		{
-			props->SetLookUpTable(array_name, fileName);
-			item->SetActiveAttribute(array_name);
-			emit requestViewUpdate();
+			VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
+			if (props)
+			{
+				props->SetLookUpTable(array_name, fileName);
+				item->SetActiveAttribute(array_name);
+				emit requestViewUpdate();
+			}
 		}
+		else
+			QMessageBox::warning(NULL, "Color lookup table could not be applied.",
+								 "Color lookup tables can only be applied to VtkVisPointSetItem.");
 	}
 }
