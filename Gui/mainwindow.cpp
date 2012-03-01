@@ -36,7 +36,7 @@
 
 #include "DatabaseConnection.h"
 #include "OGSError.h"
-#include "OGSRaster.h"
+#include "VtkRaster.h"
 #include "RecentFiles.h"
 #include "TreeModelIterator.h"
 #include "VtkBGImageSource.h"
@@ -865,15 +865,12 @@ void MainWindow::importRasterAsPoly()
 	if (!fileName.isEmpty())
 	{
 		QImage raster;
-		QPointF origin;
-		double scalingFactor;
-		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, false);
-		//OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true, true);
-
+		double origin[2];
+		double cellSize;
+		vtkImageAlgorithm* imageAlgorithm = VtkRaster::loadImage(
+			fileName.toStdString(), origin[0], origin[1], cellSize);
 		VtkBGImageSource* bg = VtkBGImageSource::New();
-		bg->SetOrigin(origin.x(), origin.y());
-		bg->SetCellSize(scalingFactor);
-		bg->SetRaster(raster);
+		bg->SetRaster(imageAlgorithm, origin[0], origin[1], cellSize);
 		bg->SetName(fileName);
 		_vtkVisPipeline->addPipelineItem(bg);
 

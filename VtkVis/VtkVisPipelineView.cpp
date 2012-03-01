@@ -11,6 +11,7 @@
 #include "CheckboxDelegate.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
 
 #include <vtkDataSetMapper.h>
 #include <vtkProp3D.h>
@@ -21,6 +22,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QSettings>
+#include <QMessageBox>
 
 //image to mesh conversion
 #include "msh_mesh.h"
@@ -268,13 +270,19 @@ void VtkVisPipelineView::addColorTable()
 
 	if (fi.suffix().toLower() == "xml")
 	{
-		VtkAlgorithmProperties* props =
-		        dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
-		if (props)
+		VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
+		if (pointSetItem)
 		{
-			props->SetLookUpTable(array_name, fileName);
-			item->SetActiveAttribute(array_name);
-			emit requestViewUpdate();
+			VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
+			if (props)
+			{
+				props->SetLookUpTable(array_name, fileName);
+				item->SetActiveAttribute(array_name);
+				emit requestViewUpdate();
+			}
 		}
+		else
+			QMessageBox::warning(NULL, "Color lookup table could not be applied.",
+								 "Color lookup tables can only be applied to VtkVisPointSetItem.");
 	}
 }

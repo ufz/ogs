@@ -2,7 +2,6 @@
  * \file VtkRaster.h
  * 2012/02/01 KR Initial implementation
  *
- * (Re-implementation of the old OGSRaster class.)
  */
 #ifndef VTKRASTER_H
 #define VTKRASTER_H

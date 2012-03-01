@@ -12,7 +12,7 @@
 
 #include "VtkAlgorithmProperties.h"
 
-class QImage;
+class vtkImageAlgorithm;
 
 /**
  * \brief Uses an image source to create a plane in the 3D with the given
@@ -26,21 +26,8 @@ public:
 
 	vtkTypeRevisionMacro(VtkBGImageSource, vtkTextureMapToPlane);
 
-	/// Sets the surfaces vector
-	void SetImage(vtkTexture* texture);
-
-	/// Sets the cellsize (i.e. the actual dimension of a pixel)
-	void SetCellSize(double c) { _cellsize = c; }
-
 	/// Sets the raster/image to be used as a texture map
-	void SetRaster(QImage &img);
-
-	/// Sets the geo-referenced origin of the image (i.e. the lower left corner)
-	virtual void SetOrigin(double x, double y, double z = 0.0) { _origin.first = x;
-		                                                     _origin.second = y;
-		                                                     (void)z; }
-	virtual void SetOrigin(double* pos) { _origin.first = pos[0];
-		                              _origin.second = pos[1]; }
+	void SetRaster(vtkImageAlgorithm *img, double x0, double y0, double scalingFactor);
 
 	virtual void SetUserProperty(QString name, QVariant value);
 

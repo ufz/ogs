@@ -41,7 +41,7 @@ OSG_USING_NAMESPACE
 
 vtkOsgConverter::vtkOsgConverter(vtkActor* actor) :
 	_actor(actor),
-	_verbose(false),
+	_verbose(true),
 	_osgRoot(NullFC),
 	_osgTransform(NullFC)
 {
@@ -735,7 +735,7 @@ TextureChunkPtr vtkOsgConverter::CreateTexture(vtkTexture* vtkTexture)
 		{
 			data = imgPointData->GetScalars();
 			if (_verbose)
-				std::cout << "    found texture data in point data" << std::endl;
+				std::cout << "    Found texture data in point data" << std::endl;
 		}
 
 	if (imgCellData != NULL)
@@ -743,7 +743,7 @@ TextureChunkPtr vtkOsgConverter::CreateTexture(vtkTexture* vtkTexture)
 		{
 			data = imgCellData->GetScalars();
 			if (_verbose)
-				std::cout << "    found texture data in cell data" << std::endl;
+				std::cout << "    Found texture data in cell data" << std::endl;
 		}
 
 	if (data == NULL)
@@ -785,6 +785,8 @@ TextureChunkPtr vtkOsgConverter::CreateTexture(vtkTexture* vtkTexture)
 		osgImage->setDataType(Image::OSG_UINT8_IMAGEDATA);
 		if (iImgComps == 1)
 			osgImage->setPixelFormat(Image::OSG_L_PF);
+		else if (iImgComps == 2)
+			osgImage->setPixelFormat(Image::OSG_LA_PF);
 		else if (iImgComps == 3)
 			osgImage->setPixelFormat(Image::OSG_RGB_PF);
 		else if (iImgComps == 4)
@@ -807,8 +809,8 @@ TextureChunkPtr vtkOsgConverter::CreateTexture(vtkTexture* vtkTexture)
 	if (_verbose)
 	{
 		std::cout << "    Loading image with " << iImgDims[0] << " x " << iImgDims[1] <<
-		" x " << iImgDims[2] << "pixels." << std::endl;
-		std::cout << "    components: " << iImgComps << std::endl;
+		" x " << iImgDims[2] << " pixels." << std::endl;
+		std::cout << "    Components: " << iImgComps << std::endl;
 		std::cout << "End CreateTexture()" << std::endl;
 	}
 
