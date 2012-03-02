@@ -25,6 +25,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkTexture.h>
 #include <vtkUnsignedCharArray.h>
+#include <vtkCellDataToPointData.h>
+#include <vtkLookupTable.h>
 
 #include <OpenSG/OSGGeoFunctions.h>
 #include <OpenSG/OSGGroup.h>
@@ -48,7 +50,6 @@ vtkOsgConverter::vtkOsgConverter(vtkActor* actor) :
 	TransformPtr tptr;
 	_osgRoot = makeCoredNode<osg::Transform>(&tptr);
 	_osgTransform = tptr;
-	_mapper = _actor->GetMapper();
 }
 
 vtkOsgConverter::~vtkOsgConverter(void)
@@ -58,14 +59,15 @@ vtkOsgConverter::~vtkOsgConverter(void)
 
 bool vtkOsgConverter::WriteAnActor()
 {
+	vtkMapper* actorMapper = _actor->GetMapper();
 	// see if the actor has a mapper. it could be an assembly
-	if (_actor->GetMapper() == NULL)
+	if (actorMapper == NULL)
 		return false;
 	// dont export when not visible
 	if (_actor->GetVisibility() == 0)
 		return false;
 
-	vtkDataObject* inputDO = _actor->GetMapper()->GetInputDataObject(0, 0);
+	vtkDataObject* inputDO = actorMapper->GetInputDataObject(0, 0);
 	if (inputDO == NULL)
 		return false;
 
@@ -90,30 +92,59 @@ bool vtkOsgConverter::WriteAnActor()
 	else
 		pd = static_cast<vtkPolyData*>(inputDO);
 
+	// Convert cell data to point data
+	//if (actorMapper->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_DATA)
+	vtkCellDataToPointData* cellDataToPointData = vtkCellDataToPointData::New();
+	cellDataToPointData->PassCellDataOff();
+	cellDataToPointData->SetInput(pd);
+	cellDataToPointData->Update();
+	pd = cellDataToPointData->GetPolyDataOutput();
+	cellDataToPointData->Delete();
+
+	// Get the color range from actors lookup table
+	double range[2];
+	vtkLookupTable* actorLut = static_cast<vtkLookupTable*>(actorMapper->GetLookupTable());
+	actorLut->GetTableRange(range);
+
 	// Copy mapper to a new one
 	vtkPolyDataMapper* pm = vtkPolyDataMapper::New();
 	pm->SetInput(pd);
-	pm->SetScalarRange(_actor->GetMapper()->GetScalarRange());
-	pm->SetScalarVisibility(_actor->GetMapper()->GetScalarVisibility());
-	pm->SetLookupTable(_actor->GetMapper()->GetLookupTable());
-	pm->SetScalarMode(_actor->GetMapper()->GetScalarMode());
+	pm->SetScalarVisibility(actorMapper->GetScalarVisibility());
 
+	// Clone the lut because otherwise the original lut gets destroyed
+	vtkLookupTable* lut = vtkLookupTable::New();
+	actorLut->DeepCopy(lut);
+	lut->SetTableRange(range);
+	lut->Build();
+	pm->SetLookupTable(lut);
+	pm->SetScalarRange(range);
+
+	// Only point data is supported, was actorMapper->GetScalarMode()
+	pm->SetScalarMode(actorMapper->GetScalarMode());
+	//pm->SetScalarMode(VTK_SCALAR_MODE_USE_POINT_DATA);
+
+	pm->Update();
+
+	vtkIndent indent;
+	lut->PrintSelf(std::cout, indent);
+	/*
 	if(pm->GetScalarMode() == VTK_SCALAR_MODE_USE_POINT_FIELD_DATA ||
 	   pm->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_FIELD_DATA )
 	{
-		if(_actor->GetMapper()->GetArrayAccessMode() == VTK_GET_ARRAY_BY_ID )
-			pm->ColorByArrayComponent(_actor->GetMapper()->GetArrayId(),
-			                          _actor->GetMapper()->GetArrayComponent());
+		if(actorMapper->GetArrayAccessMode() == VTK_GET_ARRAY_BY_ID )
+			pm->ColorByArrayComponent(actorMapper->GetArrayId(),
+			                          actorMapper->GetArrayComponent());
 		else
-			pm->ColorByArrayComponent(_actor->GetMapper()->GetArrayName(),
-			                          _actor->GetMapper()->GetArrayComponent());
+			pm->ColorByArrayComponent(actorMapper->GetArrayName(),
+			                          actorMapper->GetArrayComponent());
 	}
+	*/
 
-	_mapper = pm;
 	// vtkPoints* points = pd->GetPoints();
 	vtkPointData* pntData = pd->GetPointData();
 	bool hasTexCoords = false;
 	vtkUnsignedCharArray* vtkColors  = pm->MapScalars(1.0);
+	//vtkUnsignedCharArray* vtkColors  = lut->MapScalars(pntData->GetArray(0), VTK_RGBA, 0);
 
 	// ARRAY SIZES
 	vtkIdType m_iNumPoints = pd->GetNumberOfPoints();
@@ -138,7 +169,7 @@ bool vtkOsgConverter::WriteAnActor()
 		std::cout << "  number of primitives: " << m_iNumGLPrimitives << std::endl;
 	}
 
-	_mapper->Update();
+	//pm->Update();
 
 	// NORMALS
 	vtkDataArray* vtkNormals = NULL;
@@ -271,7 +302,7 @@ bool vtkOsgConverter::WriteAnActor()
 	_osgTransform->setMatrix(m);
 	endEditCP(_osgTransform);
 
-	_mapper->Update();
+	//pm->Update();
 
 	// Get the converted OpenSG node
 	NodePtr osgGeomNode = Node::create();
@@ -291,12 +322,11 @@ bool vtkOsgConverter::WriteAnActor()
 	GeoTexCoords2dPtr osgTexCoords = GeoTexCoords2d::create();
 
 	//Rendering with OpenSG simple indexed geometry
-	if (((m_iNormalType == PER_VERTEX) || (m_iNormalType == NOT_GIVEN))  &&
-	    ((m_iColorType == PER_VERTEX) || (m_iColorType == NOT_GIVEN)))
+	if (((m_iNormalType == PER_VERTEX) || (m_iNormalType == NOT_GIVEN)) &&
+		((m_iColorType == PER_VERTEX) || (m_iColorType == NOT_GIVEN)))
 	{
 		if (_verbose)
-			std::cout << "Start ProcessGeometryNormalsAndColorsPerVertex()" <<
-			std::endl;
+			std::cout << "Start ProcessGeometryNormalsAndColorsPerVertex()" << std::endl;
 
 		//getting the vertices:
 		beginEditCP(osgPoints);
@@ -318,8 +348,7 @@ bool vtkOsgConverter::WriteAnActor()
 				for (int i = 0; i < iNumNormals; i++)
 				{
 					aNormal = vtkNormals->GetTuple(i);
-					osgNormals->addValue(Vec3f(aNormal[0], aNormal[1],
-					                           aNormal[2]));
+					osgNormals->addValue(Vec3f(aNormal[0], aNormal[1], aNormal[2]));
 				}
 			} endEditCP(osgNormals);
 			if (iNumNormals != m_iNumPoints)
@@ -327,8 +356,7 @@ bool vtkOsgConverter::WriteAnActor()
 				std::cout <<
 				"WARNING: CVtkActorToOpenSG::ProcessGeometryNormalsAndColorsPerVertex() number of normals"
 				          << std::endl;
-				std::cout << "should equal the number of vertices (points)!" <<
-				std::endl << std::endl;
+				std::cout << "should equal the number of vertices (points)!" <<	std::endl << std::endl;
 			}
 		}
 
@@ -353,8 +381,7 @@ bool vtkOsgConverter::WriteAnActor()
 				std::cout <<
 				"WARNING: CVtkActorToOpenSG::ProcessGeometryNormalsAndColorsPerVertex() number of colors"
 				          << std::endl;
-				std::cout << "should equal the number of vertices (points)!" <<
-				std::endl << std::endl;
+				std::cout << "should equal the number of vertices (points)!" << std::endl << std::endl;
 			}
 		}
 
@@ -418,8 +445,7 @@ bool vtkOsgConverter::WriteAnActor()
 			prim = 0;
 			pCells = pd->GetStrips();
 			if (pCells->GetNumberOfCells() > 0)
-				for (pCells->InitTraversal(); pCells->GetNextCell(npts, pts);
-				     prim++)
+				for (pCells->InitTraversal(); pCells->GetNextCell(npts, pts); prim++)
 				{
 					osgLengths->addValue(npts);
 					osgTypes->addValue(GL_TRIANGLE_STRIP);
@@ -464,36 +490,28 @@ bool vtkOsgConverter::WriteAnActor()
 		if(m_iNumGLPolygons > 0)
 		{
 			if(m_iNumGLPolygons != m_iNumGLPrimitives)
-				std::cout <<
-				"WARNING: vtkActor contains different kind of primitives" <<
-				std::endl;
+				std::cout << "WARNING: vtkActor contains different kind of primitives" << std::endl;
 			gl_primitive_type = GL_POLYGON;
 			//osgConversionSuccess = this->ProcessGeometryNonIndexedCopyAttributes(GL_POLYGON, pd, osgGeometry);
 		}
 		else if(m_iNumGLLineStrips > 0)
 		{
 			if (m_iNumGLLineStrips != m_iNumGLPrimitives)
-				std::cout <<
-				"WARNING: vtkActor contains different kind of primitives" <<
-				std::endl;
+				std::cout << "WARNING: vtkActor contains different kind of primitives" << std::endl;
 			gl_primitive_type = GL_LINE_STRIP;
 			//osgConversionSuccess = this->ProcessGeometryNonIndexedCopyAttributes(GL_LINE_STRIP, pd osgGeometry);
 		}
 		else if(m_iNumGLTriStrips > 0)
 		{
 			if (m_iNumGLTriStrips != m_iNumGLPrimitives)
-				std::cout <<
-				"WARNING: vtkActor contains different kind of primitives" <<
-				std::endl;
+				std::cout << "WARNING: vtkActor contains different kind of primitives" << std::endl;
 			gl_primitive_type = GL_TRIANGLE_STRIP;
 			//osgConversionSuccess = this->ProcessGeometryNonIndexedCopyAttributes(GL_TRIANGLE_STRIP, pd osgGeometry);
 		}
 		else if (m_iNumGLPoints > 0)
 		{
 			if (m_iNumGLPoints != m_iNumGLPrimitives)
-				std::cout <<
-				"WARNING: vtkActor contains different kind of primitives" <<
-				std::endl;
+				std::cout << "WARNING: vtkActor contains different kind of primitives" << std::endl;
 			gl_primitive_type = GL_POINTS;
 			//osgConversionSuccess = this->ProcessGeometryNonIndexedCopyAttributes(GL_POINTS, pd osgGeometry);
 		}
@@ -512,9 +530,7 @@ bool vtkOsgConverter::WriteAnActor()
 			{
 				std::cout <<
 				"CVtkActorToOpenSG::ProcessGeometryNonIndexedCopyAttributes(int gl_primitive_type)"
-				          << std::endl;
-				std::cout <<
-				"  was called with non implemented gl_primitive_type!" << std::endl;
+				<< std::endl << " was called with non implemented gl_primitive_type!" << std::endl;
 			}
 
 			beginEditCP(osgTypes);
@@ -539,50 +555,35 @@ bool vtkOsgConverter::WriteAnActor()
 							unsigned char aColor[4];
 
 							aVertex = pd->GetPoint(pts[i]);
-							osgPoints->addValue(Vec3f(aVertex[0],
-							                          aVertex[1],
-							                          aVertex[2]));
+							osgPoints->addValue(Vec3f(aVertex[0], aVertex[1], aVertex[2]));
 
 							if (m_iNormalType == PER_VERTEX)
 							{
 								aNormal =
 								        vtkNormals->GetTuple(pts[i]);
-								osgNormals->addValue(Vec3f(aNormal[
-								                                   0
-								                           ],
-								                           aNormal[1], aNormal[2]));
+								osgNormals->addValue(Vec3f(aNormal[0], aNormal[1], aNormal[2]));
 							}
 							else if (m_iNormalType == PER_CELL)
 							{
 								aNormal = vtkNormals->GetTuple(prim);
-								osgNormals->addValue(Vec3f(aNormal[
-								                                   0
-								                           ],
-								                           aNormal[1], aNormal[2]));
+								osgNormals->addValue(Vec3f(aNormal[0], aNormal[1], aNormal[2]));
 							}
 
 							if (m_iColorType == PER_VERTEX)
 							{
-								vtkColors->GetTupleValue(pts[i],
-								                         aColor);
-								float r = ((float) aColor[0]) /
-								          255.0f;
-								float g = ((float) aColor[1]) /
-								          255.0f;
-								float b = ((float) aColor[2]) /
-								          255.0f;
+								vtkColors->GetTupleValue(pts[i], aColor);
+								float r = ((float) aColor[0]) /	 255.0f;
+								float g = ((float) aColor[1]) / 255.0f;
+								float b = ((float) aColor[2]) / 255.0f;
 								osgColors->addValue(Color3f(r, g, b));
 							}
 							else if (m_iColorType == PER_CELL)
 							{
 								vtkColors->GetTupleValue(prim,
 								                         aColor);
-								float r = ((float) aColor[0]) /
-								          255.0f;
-								float g = ((float) aColor[1]) /
-								          255.0f;
-								float b = ((float) aColor[2]) /
-								          255.0f;
+								float r = ((float) aColor[0]) /	255.0f;
+								float g = ((float) aColor[1]) / 255.0f;
+								float b = ((float) aColor[2]) / 255.0f;
 								osgColors->addValue(Color3f(r, g, b));
 							}
 						}
@@ -609,8 +610,7 @@ bool vtkOsgConverter::WriteAnActor()
 						{
 							double texCoords[3];
 							vtkTexCoords->GetTuple(i, texCoords);
-							osgTexCoords->addValue(Vec2f(texCoords[0],
-							                             texCoords[1]));
+							osgTexCoords->addValue(Vec2f(texCoords[0], texCoords[1]));
 						}
 					} endEditCP(osgTexCoords);
 				}
@@ -680,6 +680,8 @@ bool vtkOsgConverter::WriteAnActor()
 	beginEditCP(_osgRoot);
 	_osgRoot->addChild(osgGeomNode);
 	endEditCP(_osgRoot);
+
+	pm->Delete();
 
 	return true;
 }
@@ -842,11 +844,11 @@ ChunkMaterialPtr vtkOsgConverter::CreateMaterial(bool lit, bool hasTexCoords)
 	if (_verbose)
 	{
 		std::cout << "    Colors:" << std::endl;
-		std::cout << "    diffuse " << diffuse << " * " << diffuseColor[0] << " " <<
+		std::cout << "      diffuse " << diffuse << " * " << diffuseColor[0] << " " <<
 		diffuseColor[1] << " " << diffuseColor[2] << std::endl;
-		std::cout << "    ambient " << ambient << " * " << ambientColor[0] << " " <<
+		std::cout << "      ambient " << ambient << " * " << ambientColor[0] << " " <<
 		ambientColor[1] << " " << ambientColor[2] << std::endl;
-		std::cout << "    specular " << specular << " * " << specularColor[0] << " " <<
+		std::cout << "      specular " << specular << " * " << specularColor[0] << " " <<
 		specularColor[1] << " " << specularColor[2] << std::endl;
 	}
 
@@ -936,7 +938,7 @@ ChunkMaterialPtr vtkOsgConverter::CreateMaterial(bool lit, bool hasTexCoords)
 	} endEditCP(osgChunkMaterial);
 
 	if (_verbose)
-		std::cout << "    End CreateMaterial()" << std::endl;
+		std::cout << "End CreateMaterial()" << std::endl;
 
 	return osgChunkMaterial;
 }

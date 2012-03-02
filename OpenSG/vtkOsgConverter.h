@@ -43,7 +43,6 @@ protected:
 
 private:
 	vtkActor* _actor;
-	vtkMapper* _mapper;
 
 	enum {NOT_GIVEN, PER_VERTEX, PER_CELL};
 	bool _verbose;
