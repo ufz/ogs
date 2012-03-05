@@ -92,15 +92,6 @@ bool vtkOsgConverter::WriteAnActor()
 	else
 		pd = static_cast<vtkPolyData*>(inputDO);
 
-	// Convert cell data to point data
-	//if (actorMapper->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_DATA)
-	vtkCellDataToPointData* cellDataToPointData = vtkCellDataToPointData::New();
-	cellDataToPointData->PassCellDataOff();
-	cellDataToPointData->SetInput(pd);
-	cellDataToPointData->Update();
-	pd = cellDataToPointData->GetPolyDataOutput();
-	cellDataToPointData->Delete();
-
 	// Get the color range from actors lookup table
 	double range[2];
 	vtkLookupTable* actorLut = static_cast<vtkLookupTable*>(actorMapper->GetLookupTable());
@@ -108,6 +99,22 @@ bool vtkOsgConverter::WriteAnActor()
 
 	// Copy mapper to a new one
 	vtkPolyDataMapper* pm = vtkPolyDataMapper::New();
+	// Convert cell data to point data
+	// NOTE: Comment this out to export a mesh
+	if (actorMapper->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_DATA)
+	{
+		vtkCellDataToPointData* cellDataToPointData = vtkCellDataToPointData::New();
+		cellDataToPointData->PassCellDataOff();
+		cellDataToPointData->SetInput(pd);
+		cellDataToPointData->Update();
+		pd = cellDataToPointData->GetPolyDataOutput();
+		cellDataToPointData->Delete();
+
+		pm->SetScalarMode(VTK_SCALAR_MODE_USE_POINT_DATA);
+	}
+	else
+		pm->SetScalarMode(actorMapper->GetScalarMode());
+
 	pm->SetInput(pd);
 	pm->SetScalarVisibility(actorMapper->GetScalarVisibility());
 
@@ -118,16 +125,8 @@ bool vtkOsgConverter::WriteAnActor()
 	lut->Build();
 	pm->SetLookupTable(lut);
 	pm->SetScalarRange(range);
-
-	// Only point data is supported, was actorMapper->GetScalarMode()
-	pm->SetScalarMode(actorMapper->GetScalarMode());
-	//pm->SetScalarMode(VTK_SCALAR_MODE_USE_POINT_DATA);
-
 	pm->Update();
 
-	vtkIndent indent;
-	lut->PrintSelf(std::cout, indent);
-	/*
 	if(pm->GetScalarMode() == VTK_SCALAR_MODE_USE_POINT_FIELD_DATA ||
 	   pm->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_FIELD_DATA )
 	{
@@ -138,13 +137,11 @@ bool vtkOsgConverter::WriteAnActor()
 			pm->ColorByArrayComponent(actorMapper->GetArrayName(),
 			                          actorMapper->GetArrayComponent());
 	}
-	*/
 
-	// vtkPoints* points = pd->GetPoints();
+
 	vtkPointData* pntData = pd->GetPointData();
 	bool hasTexCoords = false;
-	vtkUnsignedCharArray* vtkColors  = pm->MapScalars(1.0);
-	//vtkUnsignedCharArray* vtkColors  = lut->MapScalars(pntData->GetArray(0), VTK_RGBA, 0);
+	vtkUnsignedCharArray* vtkColors = pm->MapScalars(1.0);
 
 	// ARRAY SIZES
 	vtkIdType m_iNumPoints = pd->GetNumberOfPoints();
@@ -168,8 +165,6 @@ bool vtkOsgConverter::WriteAnActor()
 		std::cout << "  number of GL_TRIANGLE_STRIPS: " << m_iNumGLTriStrips << std::endl;
 		std::cout << "  number of primitives: " << m_iNumGLPrimitives << std::endl;
 	}
-
-	//pm->Update();
 
 	// NORMALS
 	vtkDataArray* vtkNormals = NULL;
