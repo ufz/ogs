@@ -122,15 +122,17 @@ int DataView::writeMeshToFile() const
 		QSettings settings("UFZ", "OpenGeoSys-5");
 		QString mshName = QString::fromStdString(
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
-		std::string fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
-		                                    settings.value("lastOpenedFileDirectory").toString(),
-											"GeoSys mesh file (*.msh)").toStdString();
+		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
+		                                    settings.value("lastOpenedMeshFileDirectory").toString(),
+											"GeoSys mesh file (*.msh)");
 
-		if (!fileName.empty())
+		if (!fileName.isEmpty())
 		{
 			FileIO::OGSMeshIO meshIO;
 			meshIO.setMesh(mesh);
-			meshIO.writeToFile(fileName.c_str());
+			meshIO.writeToFile(fileName.toStdString().c_str());
+			QDir dir = QDir(fileName);
+			settings.setValue("lastOpenedMeshFileDirectory", dir.absolutePath());
 			return 1;
 		}
 		else
