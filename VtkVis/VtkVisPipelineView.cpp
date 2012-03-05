@@ -102,7 +102,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
 		QAction* removeAction = NULL;
-		if (!isSourceItem || vtkProps == NULL)
+		if (!isSourceItem || vtkProps->IsRemovable())
 		{
 			removeAction = menu.addAction("Remove");
 			connect(removeAction, SIGNAL(triggered()), this,

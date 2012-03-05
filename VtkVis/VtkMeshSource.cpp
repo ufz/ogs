@@ -33,6 +33,7 @@ vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
 VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
 	//this->SetColorByMaterial(true);

@@ -42,6 +42,7 @@ VtkConditionSource::~VtkConditionSource()
 void VtkConditionSource::setData(const std::vector<GEOLIB::Point*>* points,
                                  const std::vector<FEMCondition*>* conds)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	_points    = points;
 	_cond_vec  = conds;
 }
