@@ -512,13 +512,16 @@ void MainWindow::save()
 			// 2. if "useStationsAsConstraints"-parameter is true, GMSH-Interface will also integrate all stations that are currently loaded
 			//    if "useSteinerPoints"-parameter is true, additional points will be inserted in large areas without information
 			// 3. after the geo-file is created the merged geometry is deleted again as it is no longer needed
-			GMSHInterface gmsh_io(fileName.toStdString());
 			std::vector<std::string> names;
 			this->_project.getGEOObjects()->getGeometryNames(names);
 			std::string merge_name("MergedGeometry");
 			_geoModels->mergeGeometries (names, merge_name);
-			gmsh_io.writeGMSHInputFile(merge_name,
-			                           *(this->_project.getGEOObjects()), true, true);
+			names.clear();
+			names.push_back(merge_name);
+
+			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, GMSHInterface::MeshDensityAlgorithm::AdaptivMeshDensity, names);
+			gmsh_io.writeFile(gileName.toStdString());
+
 			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
 			this->_project.getGEOObjects()->removePolylineVec(merge_name);
 			this->_project.getGEOObjects()->removePointVec(merge_name);
@@ -1186,13 +1189,13 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 			GMSHInterface gmsh_io(fileName.toStdString());
 
 			if (param4 == -1) // adaptive meshing selected
-				gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+				gmsh_io.writeAllDataToGMSHInputFileAdaptive(*_geoModels,
 				                                    selectedGeometries,
 				                                    param1,
 				                                    param2,
 				                                    param3);
 			else // homogeneous meshing selected
-				gmsh_io.writeAllDataToGMSHInputFile(*_geoModels,
+				gmsh_io.writeAllDataToGMSHInputFileFixedMeshDensity(*_geoModels,
 				                                    selectedGeometries, param4);
 
 			if (system(NULL) != 0) // command processor available
@@ -1313,7 +1316,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 			connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
 			dlg.exec();
 		}
-		else 
+		else
 		{
 			const MeshLib::CFEMesh* mesh = _project.getMesh(geo_name);
 			FEMConditionSetupDialog dlg(geo_name, mesh);
