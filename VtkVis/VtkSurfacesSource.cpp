@@ -28,6 +28,7 @@ vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");
 VtkSurfacesSource::VtkSurfacesSource()
 	: _surfaces(NULL)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 	//this->SetColorBySurface(true);
 

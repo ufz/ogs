@@ -35,7 +35,7 @@ VtkVisPipelineItem::VtkVisPipelineItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
 	: TreeItem(data, parentItem),   _actor(NULL), _algorithm(algorithm),
-	  _renderer(NULL),_compositeFilter(NULL)
+	  _renderer(NULL), _compositeFilter(NULL), _vtkProps(NULL)
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -45,7 +45,8 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 VtkVisPipelineItem::VtkVisPipelineItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _actor(NULL), _renderer(NULL), _compositeFilter(compositeFilter)
+	: TreeItem(data, parentItem), _actor(NULL), _renderer(NULL), _compositeFilter(compositeFilter),
+	  _vtkProps(NULL)
 {
 	_algorithm = _compositeFilter->GetOutputAlgorithm();
 }

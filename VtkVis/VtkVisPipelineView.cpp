@@ -65,13 +65,10 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 	if (index.isValid())
 	{
 		// check object type
-		vtkAlgorithm* algorithm =
-		        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())
-		                                         ->
-		                                         getItem(this->selectionModel()->
-		                                                 currentIndex()))->algorithm();
-		int objectType = algorithm->GetOutputDataObject(0)->GetDataObjectType();
-		VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(algorithm);
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(
+			this->model())->getItem(this->selectionModel()->currentIndex()));
+		int objectType = item->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
+		VtkAlgorithmProperties* vtkProps = item->getVtkProperties();
 		bool isSourceItem =
 		        (this->selectionModel()->currentIndex().parent().isValid()) ? 0 : 1;
 
@@ -82,7 +79,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* addMeshingAction(NULL);
 		if (objectType == VTK_IMAGE_DATA)
 		{
-			isSourceItem = false; // this exception is needed as image object are only displayed in the vis-pipeline
+			// this exception is needed as image object are only displayed in the vis-pipeline
+			isSourceItem = false;
 			addMeshingAction = menu.addAction("Convert Image to Mesh...");
 			connect(addMeshingAction, SIGNAL(triggered()), this,
 			        SLOT(showImageToMeshConversionDialog()));
@@ -104,7 +102,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
 		QAction* removeAction = NULL;
-		if (!isSourceItem || vtkProps == NULL)
+		if (!isSourceItem || vtkProps->IsRemovable())
 		{
 			removeAction = menu.addAction("Remove");
 			connect(removeAction, SIGNAL(triggered()), this,

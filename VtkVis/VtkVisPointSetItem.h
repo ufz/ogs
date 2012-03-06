@@ -70,8 +70,6 @@ public:
 	/// @brief Enables / disables backface culling.
 	void setBackfaceCulling(bool enable) const;
 
-	VtkAlgorithmProperties* getVtkProperties() const { return _vtkProps; }
-
 protected:
 	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;
@@ -90,9 +88,6 @@ private:
 	/// Checks if the selected attribute actually exists for the data set
 	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
 
-	/// @brief The active VtkAlgorithmProperties.
-	/// From algorithm, compositeFilter, or copied from parent
-	VtkAlgorithmProperties* _vtkProps;
 };
 
 #endif // VTKVISPOINTSETITEM_H

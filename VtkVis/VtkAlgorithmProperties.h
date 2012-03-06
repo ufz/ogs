@@ -167,6 +167,9 @@ public:
 	/// @brief Sets the name.
 	void SetName(QString name) { _name = name; }
 
+	/// @brief Is this algorithm removable from the pipeline (view).
+	bool IsRemovable() const { return _removable; }
+
 	/// @brief Returns a map of user properties.
 	QMap<QString, QVariant>* GetAlgorithmUserProperties() const {
 		return _algorithmUserProperties;
@@ -213,6 +216,7 @@ protected:
 	// Properties used in the GUI
 	QString _name;
 	QString _activeAttributeName;
+	bool _removable;
 
 	QMap<QString, QVariant>* _algorithmUserProperties;
 	QMap<QString, QList<QVariant> >* _algorithmUserVectorProperties;

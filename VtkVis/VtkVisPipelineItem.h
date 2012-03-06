@@ -84,7 +84,8 @@ public:
 	/// @brief Sets the visibility of the VTK object in the visualization.
 	void setVisible(bool visible);
 
-	/// @brief Writes this algorithm's vtkDataSet (i.e. vtkPolyData or vtkUnstructuredGrid) to a vtk-file.
+	/// @brief Writes this algorithm's vtkDataSet (i.e. vtkPolyData or vtkUnstructuredGrid)
+	/// to a vtk-file.
 	int writeToFile(const std::string &filename) const;
 
 	/** 
@@ -119,11 +120,18 @@ public:
 	/// for point and cell data.
 	QStringList getScalarArrayNames() const;
 
+	///	@brief Returns the VtkAlgorithmProperties.
+	VtkAlgorithmProperties* getVtkProperties() const { return _vtkProps; };
+
 protected:
 	vtkProp3D* _actor;
 	vtkAlgorithm* _algorithm;
 	vtkRenderer* _renderer;
 	VtkCompositeFilter* _compositeFilter;
+
+	/// @brief The active VtkAlgorithmProperties.
+	/// From algorithm, compositeFilter, or copied from parent
+	VtkAlgorithmProperties* _vtkProps;
 
 	/** 
 	 * Selects the appropriate VTK-Writer object and writes the object to a file with the given name.

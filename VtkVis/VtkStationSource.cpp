@@ -30,6 +30,7 @@ vtkCxxRevisionMacro(VtkStationSource, "$Revision$");
 VtkStationSource::VtkStationSource()
 	: _stations(NULL)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
