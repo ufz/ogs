@@ -212,7 +212,8 @@ size_t VtkStationSource::GetIndexByName( std::string name )
 		if (it->second > max_key)
 			max_key = it->second;
 	}
-	vtkIdType new_index(max_key + 1);
+
+	vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
 	std::cout << "Key \"" << name << "\" (Index " << new_index << ") not found in color lookup table..." << std::endl;
 	_id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
 	return new_index;

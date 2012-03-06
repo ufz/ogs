@@ -5,7 +5,6 @@
 
 #include "MshLayerMapper.h"
 #include "VtkRaster.h"
-#include "OGSRaster.h"
 
 #include "MshEditor.h"
 #include "matrix_class.h"
