@@ -40,14 +40,14 @@ void ConditionWriterDialog::on_fileNameButton_pressed()
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getSaveFileName(this, "Select path",
-					settings.value("lastOpenedFileDirectory").toString(), filetypes);
+					settings.value("lastOpenedConditionsFileDirectory").toString(), filetypes);
 
 	if (!fileName.isEmpty())
 	{
 		this->fileNameEdit->setText(fileName);
 
 		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedConditionsFileDirectory", dir.absolutePath());
 	}
 }
 

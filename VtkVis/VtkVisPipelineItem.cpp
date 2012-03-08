@@ -8,6 +8,7 @@
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkCompositeFilter.h"
 
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
@@ -18,15 +19,12 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTextureMapToPlane.h>
-
 #include <vtkGenericDataObjectWriter.h>
-
-#include <QMessageBox>
-
-#include "VtkCompositeFilter.h"
-
 #include <vtkCellData.h>
 #include <vtkPointData.h>
+#include <vtkImageActor.h>
+
+#include <QMessageBox>
 
 #ifdef OGS_USE_OPENSG
 #include "vtkOsgConverter.h"
@@ -37,7 +35,7 @@ VtkVisPipelineItem::VtkVisPipelineItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
 	: TreeItem(data, parentItem),   _actor(NULL), _algorithm(algorithm),
-	  _renderer(NULL),_compositeFilter(NULL)
+	  _renderer(NULL), _compositeFilter(NULL), _vtkProps(NULL)
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -47,7 +45,8 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 VtkVisPipelineItem::VtkVisPipelineItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: TreeItem(data, parentItem), _actor(NULL), _renderer(NULL), _compositeFilter(compositeFilter)
+	: TreeItem(data, parentItem), _actor(NULL), _renderer(NULL), _compositeFilter(compositeFilter),
+	  _vtkProps(NULL)
 {
 	_algorithm = _compositeFilter->GetOutputAlgorithm();
 }
@@ -105,15 +104,21 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 		if (filename.substr(filename.size() - 4).find("os") != std::string::npos)
 		{
 #ifdef OGS_USE_OPENSG
-			vtkOsgConverter osgConverter(static_cast<vtkActor*>(_actor));
-			if(osgConverter.WriteAnActor())
-				OSG::SceneFileHandler::the().write(
-				        osgConverter.GetOsgNode(), filename.c_str());
-#else
+			if(!dynamic_cast<vtkImageActor*>(_actor))
+			{
+				vtkOsgConverter osgConverter(static_cast<vtkActor*>(_actor));
+				if(osgConverter.WriteAnActor())
+					OSG::SceneFileHandler::the().write(
+					        osgConverter.GetOsgNode(), filename.c_str());
+			}
+			else
+				QMessageBox::warning(NULL, "Conversion to OpenSG not possible",
+					"It is not possible to convert an vtkImageData based object\nto OpenSG. If you want to convert raster data import it via \" File / Import / Raster Files as PolyData\"!");
+#else       	
 			QMessageBox::warning(
-			        NULL,
-			        "Functionality not implemented",
-			        "Sorry but this program was not compiled with OpenSG support.");
+				NULL,
+				"Functionality not implemented",
+				"Sorry but this program was not compiled with OpenSG support.");
 #endif
 			return 0;
 		}

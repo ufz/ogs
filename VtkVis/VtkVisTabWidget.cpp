@@ -198,7 +198,8 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 	bool ok = true;
 	double scale = text.toDouble(&ok);
 
-	if (ok)
+	// If z scale becomes zero, the object becomes invisible
+	if (ok && scale != 0.0)
 	{
 		_item->setScale(1.0, 1.0, scale);
 

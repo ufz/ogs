@@ -26,6 +26,7 @@ vtkCxxRevisionMacro(VtkPointsSource, "$Revision$");
 VtkPointsSource::VtkPointsSource()
 	: _points(NULL)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();

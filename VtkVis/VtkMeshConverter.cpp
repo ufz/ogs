@@ -109,7 +109,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
 
 	double noDataValue = getExistingValue(img, imgWidth*imgHeight);
 
-	for (size_t j = 0; j < incWidth; j++)
+	for (size_t j = 0; j < imgHeight; j++)
 	{
 		pixVal[j]=0;
 		visNodes[j]=false;

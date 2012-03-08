@@ -11,6 +11,7 @@
 #include "CheckboxDelegate.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
 
 #include <vtkDataSetMapper.h>
 #include <vtkProp3D.h>
@@ -21,6 +22,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QSettings>
+#include <QMessageBox>
 
 //image to mesh conversion
 #include "msh_mesh.h"
@@ -63,13 +65,10 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 	if (index.isValid())
 	{
 		// check object type
-		vtkAlgorithm* algorithm =
-		        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())
-		                                         ->
-		                                         getItem(this->selectionModel()->
-		                                                 currentIndex()))->algorithm();
-		int objectType = algorithm->GetOutputDataObject(0)->GetDataObjectType();
-		VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(algorithm);
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(
+			this->model())->getItem(this->selectionModel()->currentIndex()));
+		int objectType = item->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
+		VtkAlgorithmProperties* vtkProps = item->getVtkProperties();
 		bool isSourceItem =
 		        (this->selectionModel()->currentIndex().parent().isValid()) ? 0 : 1;
 
@@ -80,7 +79,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* addMeshingAction(NULL);
 		if (objectType == VTK_IMAGE_DATA)
 		{
-			isSourceItem = false; // this exception is needed as image object are only displayed in the vis-pipeline
+			// this exception is needed as image object are only displayed in the vis-pipeline
+			isSourceItem = false;
 			addMeshingAction = menu.addAction("Convert Image to Mesh...");
 			connect(addMeshingAction, SIGNAL(triggered()), this,
 			        SLOT(showImageToMeshConversionDialog()));
@@ -102,7 +102,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
 		QAction* removeAction = NULL;
-		if (!isSourceItem || vtkProps == NULL)
+		if (!isSourceItem || vtkProps->IsRemovable())
 		{
 			removeAction = menu.addAction("Remove");
 			connect(removeAction, SIGNAL(triggered()), this,
@@ -268,13 +268,19 @@ void VtkVisPipelineView::addColorTable()
 
 	if (fi.suffix().toLower() == "xml")
 	{
-		VtkAlgorithmProperties* props =
-		        dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
-		if (props)
+		VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
+		if (pointSetItem)
 		{
-			props->SetLookUpTable(array_name, fileName);
-			item->SetActiveAttribute(array_name);
-			emit requestViewUpdate();
+			VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
+			if (props)
+			{
+				props->SetLookUpTable(array_name, fileName);
+				item->SetActiveAttribute(array_name);
+				emit requestViewUpdate();
+			}
 		}
+		else
+			QMessageBox::warning(NULL, "Color lookup table could not be applied.",
+								 "Color lookup tables can only be applied to VtkVisPointSetItem.");
 	}
 }

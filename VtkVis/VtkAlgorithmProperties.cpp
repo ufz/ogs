@@ -23,6 +23,7 @@ VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= NULL*/)
 	_algorithmUserProperties = new QMap<QString, QVariant>;
 	_algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
 	_activeAttributeName = "";
+	_removable = true;
 }
 
 VtkAlgorithmProperties::~VtkAlgorithmProperties()

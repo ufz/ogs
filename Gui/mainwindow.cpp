@@ -36,7 +36,7 @@
 
 #include "DatabaseConnection.h"
 #include "OGSError.h"
-#include "OGSRaster.h"
+#include "VtkRaster.h"
 #include "RecentFiles.h"
 #include "TreeModelIterator.h"
 #include "VtkBGImageSource.h"
@@ -440,12 +440,12 @@ void MainWindow::showVisDockWidget(bool show)
 void MainWindow::open()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",settings.value("lastOpenedFileDirectory").toString(),
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",settings.value("lastOpenedOgsFileDirectory").toString(),
 	                                                 "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
 		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedOgsFileDirectory", dir.absolutePath());
 		loadFile(fileName);
 	}
 }
@@ -838,7 +838,7 @@ void MainWindow::importRaster()
 	QString geotiffExtension("");
 #endif
 	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
-					settings.value("lastOpenedFileDirectory").toString(), QString(
+					settings.value("lastOpenedRasterFileDirectory").toString(), QString(
 									"Raster files (*.asc *.grd *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
@@ -848,7 +848,7 @@ void MainWindow::importRaster()
 		_vtkVisPipeline->addPipelineItem(geoImage);
 
 		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
 }
 
@@ -861,27 +861,24 @@ void MainWindow::importRasterAsPoly()
 	QString geotiffExtension("");
 #endif
 	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
-					settings.value("lastOpenedFileDirectory").toString(), QString(
+					settings.value("lastOpenedRasterFileDirectory").toString(), QString(
 									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(
 									geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
 		QImage raster;
-		QPointF origin;
-		double scalingFactor;
-		OGSRaster::loadImage(fileName, raster, origin, scalingFactor, false);
-		//OGSRaster::loadImage(fileName, raster, origin, scalingFactor, true, true);
-
+		double origin[2];
+		double cellSize;
+		vtkImageAlgorithm* imageAlgorithm = VtkRaster::loadImage(
+			fileName.toStdString(), origin[0], origin[1], cellSize);
 		VtkBGImageSource* bg = VtkBGImageSource::New();
-		bg->SetOrigin(origin.x(), origin.y());
-		bg->SetCellSize(scalingFactor);
-		bg->SetRaster(raster);
+		bg->SetRaster(imageAlgorithm, origin[0], origin[1], cellSize);
 		bg->SetName(fileName);
 		_vtkVisPipeline->addPipelineItem(bg);
 
 		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
 }
 
@@ -890,7 +887,7 @@ void MainWindow::importShape()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this, "Select shape file to import",
-					settings.value("lastOpenedFileDirectory").toString(),
+					settings.value("lastOpenedShapeFileDirectory").toString(),
 	                                                "ESRI Shape files (*.shp );;");
 	QFileInfo fi(fileName);
 
@@ -900,7 +897,7 @@ void MainWindow::importShape()
 		dlg.exec();
 
 		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
 	}
 }
 #endif
@@ -941,10 +938,10 @@ void MainWindow::importTetGen()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString node_fname(QFileDialog::getOpenFileName(this, "Select TetGen node file",
-					settings.value("lastOpenedFileDirectory").toString(),
+					settings.value("lastOpenedTetgenFileDirectory").toString(),
 					"TetGen node files (*.node);;"));
 	QString element_fname(QFileDialog::getOpenFileName(this, "Select TetGen element file",
-					settings.value("lastOpenedFileDirectory").toString(),
+					settings.value("lastOpenedTetgenFileDirectory").toString(),
 					"TetGen element files (*.ele);;"));
 
 	if (!node_fname.isEmpty() && !element_fname.isEmpty()) {
@@ -955,7 +952,7 @@ void MainWindow::importTetGen()
 			_meshModels->addMesh(msh, name);
 		} else
 			OGSError::box("Failed to load a TetGen mesh.");
-		settings.setValue("lastOpenedFileDirectory", QDir(node_fname).absolutePath());
+		settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
 	}
 }
 
@@ -964,7 +961,7 @@ void MainWindow::importVtk()
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QStringList fileNames = QFileDialog::getOpenFileNames(this,
 	                                                      "Select VTK file(s) to import",
-	                                                      settings.value("lastOpenedFileDirectory").
+	                                                      settings.value("lastOpenedVtkFileDirectory").
 	                                                      toString(),
 	                                                      "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu);;");
 	foreach(QString fileName, fileNames) {
@@ -972,7 +969,7 @@ void MainWindow::importVtk()
 		{
 			_vtkVisPipeline->loadFromFile(fileName);
 			QDir dir = QDir(fileName);
-			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+			settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
 		}
 	}
 }
@@ -1648,3 +1645,4 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 		}
 	}
 }
+

@@ -2,7 +2,6 @@
  * \file VtkRaster.h
  * 2012/02/01 KR Initial implementation
  *
- * (Re-implementation of the old OGSRaster class.)
  */
 #ifndef VTKRASTER_H
 #define VTKRASTER_H
@@ -50,7 +49,9 @@ public:
                                         double& delta);
 
 	/**
-	 * \brief Loads an ASC file into a double array
+	 * \brief Loads an ASC file into a double array. 
+	 * The array alternates between pixel values and their respective alpha-values, i.e.
+	 * result = { pixel0-value; pixel0-alpha, pixel1-value; pixel1-alpha; ... }
 	 *
 	 * \param fileName Filename of the file that should be loaded.
 	 * \param x0 The x-coordinate of the origin.
@@ -67,6 +68,10 @@ public:
 	                              size_t &height,
 	                              double &delta);
 
+	/**
+	 * \brief Loads an ASC file into a double array. 
+	 * Works exactly like loadDataFromASC().
+	 */
 	static float* loadDataFromSurfer(const std::string &fileName,
 	                              double &x0,
 	                              double &y0,
@@ -74,6 +79,9 @@ public:
 	                              size_t &height,
 	                              double &delta);
 
+	/**
+	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
+	 */
     static vtkImageImport* loadImageFromArray(double* data_array, 
 											  double &x0, 
 											  double &y0, 
