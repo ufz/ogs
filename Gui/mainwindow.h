@@ -53,7 +53,7 @@ protected slots:
 	/// Function calls for saving files.
 	void save();
 	/// Function calls for generating GMSH files from the GUI
-	void callGMSH(std::vector<std::string> const & selectedGeometries,
+	void callGMSH(std::vector<std::string> & selectedGeometries,
 	              size_t param1,
 	              double param2,
 	              double param3,
@@ -138,7 +138,7 @@ private:
 	QWidget* _vtkWidget;
 	QByteArray _windowState;
 	QMenu* _import_files_menu;
-	
+
 #ifdef OGS_USE_VRPN
 	TrackingSettingsWidget* _trackingSettingsWidget;
 #endif     // OGS_USE_VRPN

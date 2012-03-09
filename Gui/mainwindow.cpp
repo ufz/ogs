@@ -519,8 +519,11 @@ void MainWindow::save()
 			names.clear();
 			names.push_back(merge_name);
 
-			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, GMSHInterface::MeshDensityAlgorithm::AdaptivMeshDensity, names);
-			gmsh_io.writeFile(gileName.toStdString());
+			double param1(0.5); // mesh density scaling on normal points
+			double param2(0.05); // mesh density scaling on station points
+			size_t param3(2); // points per leaf
+			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, FileIO::GMSHInterface::AdaptiveMeshDensity, param1, param2, param3, names);
+			gmsh_io.writeToFile(fileName.toStdString());
 
 			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
 			this->_project.getGEOObjects()->removePolylineVec(merge_name);
@@ -1162,7 +1165,7 @@ void MainWindow::exportBoreholesToGMS(std::string listName,
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
-void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
+void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                           size_t param1, double param2, double param3, double param4,
                           bool delete_geo_file)
 {
@@ -1183,17 +1186,17 @@ void MainWindow::callGMSH(std::vector<std::string> const & selectedGeometries,
 
 		if (!fileName.isEmpty())
 		{
-			GMSHInterface gmsh_io(fileName.toStdString());
-
-			if (param4 == -1) // adaptive meshing selected
-				gmsh_io.writeAllDataToGMSHInputFileAdaptive(*_geoModels,
-				                                    selectedGeometries,
-				                                    param1,
-				                                    param2,
-				                                    param3);
-			else // homogeneous meshing selected
-				gmsh_io.writeAllDataToGMSHInputFileFixedMeshDensity(*_geoModels,
-				                                    selectedGeometries, param4);
+			if (param4 == -1) { // adaptive meshing selected
+				GMSHInterface gmsh_io(*(static_cast<GEOLIB::GEOObjects*> (_geoModels)), true,
+								FileIO::GMSHInterface::AdaptiveMeshDensity, param2, param3, param1,
+								selectedGeometries);
+				gmsh_io.writeToFile(fileName.toStdString());
+			} else { // homogeneous meshing selected
+				GMSHInterface gmsh_io(*(static_cast<GEOLIB::GEOObjects*> (_geoModels)), true,
+								FileIO::GMSHInterface::FixedMeshDensity, param2, param3, param1,
+								selectedGeometries);
+				gmsh_io.writeToFile(fileName.toStdString());
+			}
 
 			if (system(NULL) != 0) // command processor available
 			{
@@ -1342,8 +1345,8 @@ void MainWindow::showLineEditDialog(const std::string &geoName)
 void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
-	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool)),
-	        this, SLOT(callGMSH(std::vector<std::string> const &, size_t, double, double, double, bool)));
+	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> &, size_t, double, double, double, bool)),
+	        this, SLOT(callGMSH(std::vector<std::string> &, size_t, double, double, double, bool)));
 	dlg.exec();
 }
 
