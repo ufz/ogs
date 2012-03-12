@@ -120,8 +120,7 @@ bool vtkOsgConverter::WriteAnActor()
 
 	// Clone the lut because otherwise the original lut gets destroyed
 	vtkLookupTable* lut = vtkLookupTable::New();
-	actorLut->DeepCopy(lut);
-	lut->SetTableRange(range);
+	lut->DeepCopy(actorLut);
 	lut->Build();
 	pm->SetLookupTable(lut);
 	pm->SetScalarRange(range);
