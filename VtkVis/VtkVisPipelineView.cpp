@@ -261,10 +261,10 @@ void VtkVisPipelineView::addColorTable()
 	const QString array_name = item->GetActiveAttribute();
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this, "Select color table",
-	                                                settings.value("lastOpenedTextureFileDirectory"). toString(), 
+	QString filename = QFileDialog::getOpenFileName(this, "Select color table",
+	                                                settings.value("lastOpenedLutFileDirectory"). toString(), 
 													"Color table files (*.xml);;");
-	QFileInfo fi(fileName);
+	QFileInfo fi(filename);
 
 	if (fi.suffix().toLower() == "xml")
 	{
@@ -274,7 +274,7 @@ void VtkVisPipelineView::addColorTable()
 			VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
 			if (props)
 			{
-				props->SetLookUpTable(array_name, fileName);
+				props->SetLookUpTable(array_name, filename);
 				item->SetActiveAttribute(array_name);
 				emit requestViewUpdate();
 			}
@@ -282,5 +282,7 @@ void VtkVisPipelineView::addColorTable()
 		else
 			QMessageBox::warning(NULL, "Color lookup table could not be applied.",
 								 "Color lookup tables can only be applied to VtkVisPointSetItem.");
+		QDir dir = QDir(filename);
+		settings.setValue("lastOpenedLutFileDirectory", dir.absolutePath());
 	}
 }
