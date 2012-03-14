@@ -27,6 +27,7 @@
 #include <vtkUnsignedCharArray.h>
 #include <vtkCellDataToPointData.h>
 #include <vtkLookupTable.h>
+#include <vtkDiscretizableColorTransferFunction.h>
 
 #include <OpenSG/OSGGeoFunctions.h>
 #include <OpenSG/OSGGroup.h>
@@ -101,7 +102,8 @@ bool vtkOsgConverter::WriteAnActor()
 	vtkPolyDataMapper* pm = vtkPolyDataMapper::New();
 	// Convert cell data to point data
 	// NOTE: Comment this out to export a mesh
-	if (actorMapper->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_DATA)
+	if (actorMapper->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_DATA ||
+		actorMapper->GetScalarMode() == VTK_SCALAR_MODE_USE_CELL_FIELD_DATA)
 	{
 		vtkCellDataToPointData* cellDataToPointData = vtkCellDataToPointData::New();
 		cellDataToPointData->PassCellDataOff();
@@ -118,10 +120,17 @@ bool vtkOsgConverter::WriteAnActor()
 	pm->SetInput(pd);
 	pm->SetScalarVisibility(actorMapper->GetScalarVisibility());
 
-	// Clone the lut because otherwise the original lut gets destroyed
-	vtkLookupTable* lut = vtkLookupTable::New();
-	lut->DeepCopy(actorLut);
-	lut->Build();
+	vtkLookupTable* lut = NULL;
+	// ParaView OpenSG Exporter
+	if (dynamic_cast<vtkDiscretizableColorTransferFunction*>(actorMapper->GetLookupTable()))
+		lut = actorLut;
+	// Clone the lut in OGS because otherwise the original lut gets destroyed
+	else
+	{
+		lut = vtkLookupTable::New();
+		lut->DeepCopy(actorLut);
+		lut->Build();
+	}
 	pm->SetLookupTable(lut);
 	pm->SetScalarRange(range);
 	pm->Update();
