@@ -153,6 +153,8 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 			                                         (msh->nod_vector[i]->getData()[1]
 			                                          - yDim.first) / delta)));
 
+			
+
 			locX[0] = xDim.first + xPos * delta;
 			locY[0] = yDim.first + yPos * delta;
 			locZ[0] = elevation[2*(yPos * width + xPos)];
@@ -178,9 +180,13 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 			{
 				// Interpolate
 				double ome[4];
-				double const* const coords (msh->nod_vector[i]->getData());
+				const double* coords (msh->nod_vector[i]->getData());
 				double xi  = 2.0 * (coords[0] - 0.5 * (locX[0] + locX[1])) / delta;
 				double eta = 2.0 * (coords[1] - 0.5 * (locY[1] + locY[2])) / delta;
+				
+				// this does not work but should in theory replace the calculation of locX and locY
+				//double xi = msh->nod_vector[i]->getData()[0] - (xDim.first + xPos * delta) - delta;
+				//double eta = msh->nod_vector[i]->getData()[1] - (yDim.first + yPos * delta) - delta;
 				MPhi2D(ome, xi, eta);
 
 				double z(0.0);

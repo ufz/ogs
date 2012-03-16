@@ -37,11 +37,14 @@ void VtkCompositeLineToTubeFilter::init()
 	int default_number_of_sides(8);
 	vtkTubeFilter* tubes = vtkTubeFilter::New();
 	tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
+
+	//tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"StationValue");
+	//tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
+
 	tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"Stratigraphies");
 	tubes->SetRadius(default_radius);
 	tubes->SetNumberOfSides(default_number_of_sides);
 	tubes->SetCapping(1);
-	//tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
 
 	(*_algorithmUserProperties)["Radius"] = default_radius;
 	(*_algorithmUserProperties)["NumberOfSides"] = default_number_of_sides;

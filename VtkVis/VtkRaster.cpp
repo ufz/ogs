@@ -396,27 +396,28 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 					return false;
 				}
 
-			// read colormap if it exists
+			// check for colormap
+			uint16 photometric;
+			TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &photometric);
+			// read colormap
 			uint16* cmap_red = NULL, * cmap_green = NULL, * cmap_blue = NULL;
 			int colormap_used = TIFFGetField(tiff,
-			                                 TIFFTAG_COLORMAP,
-			                                 &cmap_red,
-			                                 &cmap_green,
-			                                 &cmap_blue);
+											TIFFTAG_COLORMAP,
+											&cmap_red,
+											&cmap_green,
+											&cmap_blue);
 
-			int lineindex = 0, idx = 0;
-			
 			float* data = new float[imgWidth * imgHeight * 4];
 			int* pxl (new int[4]);
 			for (int j = 0; j < imgHeight; j++)
 			{
-				lineindex = j * imgWidth;
+				int lineindex = j * imgWidth;
 				for (int i = 0; i < imgWidth; i++)
 				{ // scale intensities and set nodata values to white (i.e. the background colour)
-					idx = TIFFGetR(pixVal[lineindex + i]);
 					size_t pos  = 4 * (lineindex+i);
-					if (colormap_used)
+					if (photometric==1)
 					{
+						int idx = TIFFGetR(pixVal[lineindex + i]);
 						data[pos]   = cmap_red[idx] >> 8;
 						data[pos+1] = cmap_green[idx] >> 8;
 						data[pos+2] = cmap_blue[idx] >> 8;
