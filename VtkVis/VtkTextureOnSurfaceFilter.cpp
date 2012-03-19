@@ -107,7 +107,7 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
 	scale->SetInputConnection(img->GetOutputPort());
 	scale->SetShift(-range[0]);
 	scale->SetScale(255.0/(range[1]-range[0]));
-	scale->SetOutputScalarTypeToUnsignedChar();
+	scale->SetOutputScalarTypeToUnsignedChar(); // Comment this out to get colored grayscale textures
 	scale->Update();
 
 	vtkTexture* texture = vtkTexture::New();
