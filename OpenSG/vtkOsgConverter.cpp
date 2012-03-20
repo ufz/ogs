@@ -39,6 +39,7 @@
 #include <OpenSG/OSGPolygonChunk.h>
 #include <OpenSG/OSGSimpleGeometry.h>
 #include <OpenSG/OSGTwoSidedLightingChunk.h>
+#include <OpenSG/OSGTextureChunk.h>
 
 OSG_USING_NAMESPACE
 
