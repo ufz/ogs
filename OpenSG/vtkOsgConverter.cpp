@@ -936,6 +936,11 @@ ChunkMaterialPtr vtkOsgConverter::CreateMaterial(bool lit, bool hasTexCoords)
 						std::cout << "    Add TextureChunk" << std::endl;
 					osgChunkMaterial->addChunk(osgTextureChunk);
 				}
+
+				// Per default EnvMode is set to GL_REPLACE which does not lit the surface
+				beginEditCP(osgTextureChunk);
+				osgTextureChunk->setEnvMode(GL_COMBINE);
+				endEditCP(osgTextureChunk);
 			}
 		}
 	} endEditCP(osgChunkMaterial);
