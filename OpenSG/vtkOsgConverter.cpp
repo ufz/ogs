@@ -941,7 +941,7 @@ ChunkMaterialPtr vtkOsgConverter::CreateMaterial(bool lit, bool hasTexCoords)
 
 				// Per default EnvMode is set to GL_REPLACE which does not lit the surface
 				beginEditCP(osgTextureChunk);
-				osgTextureChunk->setEnvMode(GL_COMBINE);
+				osgTextureChunk->setEnvMode(GL_MODULATE);
 				endEditCP(osgTextureChunk);
 			}
 		}
