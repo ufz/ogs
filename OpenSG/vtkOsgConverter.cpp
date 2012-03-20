@@ -40,6 +40,7 @@
 #include <OpenSG/OSGSimpleGeometry.h>
 #include <OpenSG/OSGTwoSidedLightingChunk.h>
 #include <OpenSG/OSGTextureChunk.h>
+#include <OpenSG/OSGGL.h>
 
 OSG_USING_NAMESPACE
 
