@@ -414,10 +414,11 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 				int lineindex = j * imgWidth;
 				for (int i = 0; i < imgWidth; i++)
 				{ // scale intensities and set nodata values to white (i.e. the background colour)
-					size_t pos  = 4 * (lineindex+i);
+					size_t pxl_idx(lineindex+i);
+					size_t pos  = 4 * (pxl_idx);
 					if (photometric==1)
 					{
-						int idx = TIFFGetR(pixVal[lineindex + i]);
+						int idx = TIFFGetR(pixVal[pxl_idx]);
 						data[pos]   = cmap_red[idx] >> 8;
 						data[pos+1] = cmap_green[idx] >> 8;
 						data[pos+2] = cmap_blue[idx] >> 8;
@@ -425,19 +426,17 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 					}
 					else
 					{
-						//img.setPixel(i,j, qRgba(TIFFGetB(pixVal[idx]), TIFFGetG(pixVal[idx]), TIFFGetR(pixVal[idx]), TIFFGetA(pixVal[idx])));
-						uint32toRGBA(pixVal[lineindex + i], pxl);
-						data[pos]   = pxl[0];
-						data[pos+1] = pxl[1];
-						data[pos+2] = pxl[2];
-						data[pos+3] = pxl[3];
+						data[pos]   = TIFFGetR(pixVal[pxl_idx]);
+						data[pos+1] = TIFFGetG(pixVal[pxl_idx]);
+						data[pos+2] = TIFFGetB(pixVal[pxl_idx]);
+						data[pos+3] = TIFFGetA(pixVal[pxl_idx]);
 					}
 				}
 			}
 			delete [] pxl;
 
 			// set transparency values according to maximum pixel value
-			if (colormap_used)
+			if (photometric==1)
 			{
 				float max_val(0);
 				size_t nPixels = 4*imgWidth*imgHeight;

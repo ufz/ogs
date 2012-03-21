@@ -93,7 +93,6 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 	return new_mesh;
 }
 
-// KR, based on code by WW
 MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
                                                const std::string &rasterfile,
                                                const size_t nLayers,
@@ -132,10 +131,6 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 			return NULL;
 		}
 
-		double locX[4];
-		double locY[4];
-		double locZ[4];
-
 		size_t nNodes = msh->nod_vector.size();
 		size_t nNodesPerLayer = nNodes / nLayers;
 
@@ -143,17 +138,54 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 		size_t lastNode  = firstNode + nNodesPerLayer;
 
 		std::vector<size_t> noData_nodes;
+		//double locX[4];
+		//double locY[4];
+		double locZ[4];
 
+		const double half_delta = 0.5*delta;
 		for(size_t i = firstNode; i < lastNode; i++)
 		{
-			size_t xPos (static_cast<size_t>(floor(
-			                                         (msh->nod_vector[i]->getData()[0]
-			                                          - xDim.first) / delta)));
-			size_t yPos (static_cast<size_t>(floor(
-			                                         (msh->nod_vector[i]->getData()[1]
-			                                          - yDim.first) / delta)));
+			const double* coords = msh->nod_vector[i]->getData();
+			// position in raster
+			const double xPos ((coords[0] - xDim.first) / delta);
+			const double yPos ((coords[1] - yDim.first) / delta);
+			// raster cell index
+			const size_t xIdx (static_cast<size_t>(floor(xPos)));
+			const size_t yIdx (static_cast<size_t>(floor(yPos)));
 
-			
+			// deviation of mesh node from centre of raster cell ( in [-1:1) because it is normalised by delta/2 )
+			const double xShift = (xPos-xIdx-half_delta)/half_delta; 
+			const double yShift = (yPos-yIdx-half_delta)/half_delta;
+
+			const int xShiftIdx = (xShift>=0) ? ceil(xShift) : floor(xShift);
+			const int yShiftIdx = (yShift>=0) ? ceil(yShift) : floor(yShift);
+
+			const size_t x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};
+			const size_t y_nb[4] = {0, 0, yShiftIdx, yShiftIdx};
+
+			locZ[0] = elevation[2*(yIdx*width + xIdx)];
+			if (fabs(locZ[0] + 9999) > std::numeric_limits<double>::min())
+			{
+				for (size_t j=1; j<4; j++)
+				{
+					locZ[j] = elevation[2*((yIdx+y_nb[j])*width + (xIdx+x_nb[j]))];
+					if (fabs(locZ[j] + 9999) < std::numeric_limits<double>::min())
+						locZ[j]=locZ[0];
+				}
+
+				double ome[4];
+				double xi = 1-fabs(xShift);
+				double eta = 1-fabs(xShift);
+				MPhi2D(ome, xi, eta);
+
+				double z(0.0);
+				for(size_t j = 0; j < 4; j++)
+					z += ome[j] * locZ[j];
+					//z += ome[j] * elevation[2*((yPos+y_nb[j]) * width + (xPos+x_nb[j]))];
+
+			/*
+			size_t xPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[0] - xDim.first) / delta)));
+			size_t yPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[1] - yDim.first) / delta)));
 
 			locX[0] = xDim.first + xPos * delta;
 			locY[0] = yDim.first + yPos * delta;
@@ -185,13 +217,26 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 				double eta = 2.0 * (coords[1] - 0.5 * (locY[1] + locY[2])) / delta;
 				
 				// this does not work but should in theory replace the calculation of locX and locY
-				//double xi = msh->nod_vector[i]->getData()[0] - (xDim.first + xPos * delta) - delta;
-				//double eta = msh->nod_vector[i]->getData()[1] - (yDim.first + yPos * delta) - delta;
+				double xi2 = (msh->nod_vector[i]->getData()[0] - (xDim.first + xPos * delta) - (0.5*delta)) / (0.5*delta);
+				double eta2 = (msh->nod_vector[i]->getData()[1] - (yDim.first + yPos * delta) - (0.5*delta)) / (0.5*delta);
 				MPhi2D(ome, xi, eta);
 
+				min_xi = (xi<min_xi) ? xi : min_xi;
+				min_xi2 = (xi2<min_xi2) ? xi2 : min_xi2;
+				min_eta = (eta<min_eta) ? eta : min_eta;
+				min_eta2 = (eta2<min_eta2) ? eta2 : min_eta2;
+				max_xi = (xi>max_xi) ? xi : max_xi;
+				max_xi2 = (xi2>max_xi2) ? xi2 : max_xi2;
+				max_eta = (eta>max_eta) ? eta : max_eta;
+				max_eta2 = (eta2>max_eta2) ? eta2 : max_eta2;
+
 				double z(0.0);
+				size_t x_idx[4] = {0, 1, 1, 0};
+				size_t y_idx[4] = {0, 0, 1, 1};
 				for(size_t j = 0; j < 4; j++)
 					z += ome[j] * locZ[j];
+					//z += ome[j] * elevation[2*((yPos+y_idx[j]) * width + (xPos+x_idx[j]))];
+			*/
 				new_mesh->nod_vector[i]->SetZ(z);
 				new_mesh->nod_vector[i]->SetMark(true);
 			}
