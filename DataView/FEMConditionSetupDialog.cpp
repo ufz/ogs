@@ -22,7 +22,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 												 bool  on_points,
 												 QDialog* parent)
 : QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points), _secondValueEdit(NULL),
-  _mesh(NULL), _first_value_validator(NULL), _second_value_validator(NULL)
+  directButton(NULL), _mesh(NULL), _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	_cond.setGeoType(type);
 	_cond.setGeoName(geo_name);
@@ -34,7 +34,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent)
-	: QDialog(parent), _cond(cond), _secondValueEdit(NULL),
+	: QDialog(parent), _cond(cond), _secondValueEdit(NULL), directButton(NULL),
 	  _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	setupDialog();
@@ -42,7 +42,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* pa
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent)
 : QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false), _secondValueEdit(NULL),
-  _mesh(mesh), _first_value_validator(NULL), _second_value_validator(NULL)
+  directButton(NULL), _mesh(mesh), _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	_cond.setGeoType(GEOLIB::INVALID);
 	_cond.setGeoName(name);

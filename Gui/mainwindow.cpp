@@ -1643,5 +1643,3 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 	}
 }
 
-
-

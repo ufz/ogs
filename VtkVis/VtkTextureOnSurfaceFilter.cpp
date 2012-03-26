@@ -74,14 +74,44 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	textureCoordinates->SetNumberOfComponents(3);
 	textureCoordinates->SetName("TextureCoordinates");
 	size_t nPoints = points->GetNumberOfPoints();
+	
+/*	
+	double dist(0.0);
+	for (size_t i = 0; i < nPoints; i++)
+	{
+		double coords[3];
+		if ((i==0) || (i==173))
+		{
+			if (i==0) dist=0;
+		}
+		else
+		{
+			points->GetPoint(i-1, coords);
+			GEOLIB::Point* pnt = new GEOLIB::Point(coords);
+			points->GetPoint(i, coords);
+			GEOLIB::Point* pnt2 = new GEOLIB::Point(coords);
+			if (i<173)
+				dist += sqrt(MathLib::sqrDist(pnt, pnt2));
+			else
+				dist -= sqrt(MathLib::sqrDist(pnt, pnt2));
+		}
+		points->GetPoint(i, coords);
+		double x = MathLib::normalize(0, 8404, dist);
+		double z = MathLib::normalize(-79.5, 1.5, coords[2]);
+		float newcoords[3] = {x, 0, z};
+		textureCoordinates->InsertNextTuple(newcoords);
+	}
+
+*/
+
+
 	for (size_t i = 0; i < nPoints; i++)
 	{
 		double coords[3];
 		points->GetPoint(i, coords);
-		float newcoords[3] =
-		{MathLib::normalize(min.first, max.first, coords[0]), MathLib::normalize(min.second,
-			                                                                 max.second,
-			                                                                 coords[1]),0 /*coords[2]*/ };
+		float newcoords[3] = { MathLib::normalize(min.first, max.first, coords[0]), 
+		                       MathLib::normalize(min.second,max.second, coords[1]),
+							   0 };
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
 
@@ -107,7 +137,7 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
 	scale->SetInputConnection(img->GetOutputPort());
 	scale->SetShift(-range[0]);
 	scale->SetScale(255.0/(range[1]-range[0]));
-	scale->SetOutputScalarTypeToUnsignedChar(); // Comment this out to get colored grayscale textures
+	//scale->SetOutputScalarTypeToUnsignedChar(); // Comment this out to get colored grayscale textures
 	scale->Update();
 
 	vtkTexture* texture = vtkTexture::New();

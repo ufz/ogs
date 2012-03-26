@@ -138,10 +138,6 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 		size_t lastNode  = firstNode + nNodesPerLayer;
 
 		std::vector<size_t> noData_nodes;
-		//double locX[4];
-		//double locY[4];
-		double locZ[4];
-
 		const double half_delta = 0.5*delta;
 		for(size_t i = firstNode; i < lastNode; i++)
 		{
@@ -160,9 +156,11 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 			const int xShiftIdx = (xShift>=0) ? ceil(xShift) : floor(xShift);
 			const int yShiftIdx = (yShift>=0) ? ceil(yShift) : floor(yShift);
 
+			// determining the neighbouring pixels that add weight to the interpolation
 			const size_t x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};
 			const size_t y_nb[4] = {0, 0, yShiftIdx, yShiftIdx};
 
+			double locZ[4];
 			locZ[0] = elevation[2*(yIdx*width + xIdx)];
 			if (fabs(locZ[0] + 9999) > std::numeric_limits<double>::min())
 			{
@@ -181,68 +179,11 @@ MeshLib::CFEMesh* MshLayerMapper::LayerMapping(const MeshLib::CFEMesh* msh,
 				double z(0.0);
 				for(size_t j = 0; j < 4; j++)
 					z += ome[j] * locZ[j];
-					//z += ome[j] * elevation[2*((yPos+y_nb[j]) * width + (xPos+x_nb[j]))];
-
-			/*
-			size_t xPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[0] - xDim.first) / delta)));
-			size_t yPos (static_cast<size_t>(floor((msh->nod_vector[i]->getData()[1] - yDim.first) / delta)));
-
-			locX[0] = xDim.first + xPos * delta;
-			locY[0] = yDim.first + yPos * delta;
-			locZ[0] = elevation[2*(yPos * width + xPos)];
-
-			locX[1] = xDim.first + (xPos + 1) * delta;
-			locY[1] = yDim.first + yPos * delta;
-			locZ[1] = elevation[2*(yPos * width + (xPos + 1))];
-
-			locX[2] = xDim.first + (xPos + 1) * delta;
-			locY[2] = yDim.first + (yPos + 1) * delta;
-			locZ[2] = elevation[2*((yPos + 1) * width + (xPos + 1))];
-
-			locX[3] = xDim.first + xPos * delta;
-			locY[3] = yDim.first + (yPos + 1) * delta;
-			locZ[3] = elevation[2*((yPos + 1) * width + xPos)];
-
-			bool noData(false);
-			for(size_t j = 0; j < 4; j++)
-				if(fabs(locZ[j] + 9999) < std::numeric_limits<double>::min())
-					noData = true;
-
-			if(!noData)
-			{
-				// Interpolate
-				double ome[4];
-				const double* coords (msh->nod_vector[i]->getData());
-				double xi  = 2.0 * (coords[0] - 0.5 * (locX[0] + locX[1])) / delta;
-				double eta = 2.0 * (coords[1] - 0.5 * (locY[1] + locY[2])) / delta;
-				
-				// this does not work but should in theory replace the calculation of locX and locY
-				double xi2 = (msh->nod_vector[i]->getData()[0] - (xDim.first + xPos * delta) - (0.5*delta)) / (0.5*delta);
-				double eta2 = (msh->nod_vector[i]->getData()[1] - (yDim.first + yPos * delta) - (0.5*delta)) / (0.5*delta);
-				MPhi2D(ome, xi, eta);
-
-				min_xi = (xi<min_xi) ? xi : min_xi;
-				min_xi2 = (xi2<min_xi2) ? xi2 : min_xi2;
-				min_eta = (eta<min_eta) ? eta : min_eta;
-				min_eta2 = (eta2<min_eta2) ? eta2 : min_eta2;
-				max_xi = (xi>max_xi) ? xi : max_xi;
-				max_xi2 = (xi2>max_xi2) ? xi2 : max_xi2;
-				max_eta = (eta>max_eta) ? eta : max_eta;
-				max_eta2 = (eta2>max_eta2) ? eta2 : max_eta2;
-
-				double z(0.0);
-				size_t x_idx[4] = {0, 1, 1, 0};
-				size_t y_idx[4] = {0, 0, 1, 1};
-				for(size_t j = 0; j < 4; j++)
-					z += ome[j] * locZ[j];
-					//z += ome[j] * elevation[2*((yPos+y_idx[j]) * width + (xPos+x_idx[j]))];
-			*/
 				new_mesh->nod_vector[i]->SetZ(z);
 				new_mesh->nod_vector[i]->SetMark(true);
 			}
 			else
 			{
-				//std::cout << "Warning: No elevation data available for node " << i << " (" << msh->nod_vector[i]->X() << ", " << msh->nod_vector[i]->Y() << ")." << std::endl;
 				new_mesh->nod_vector[i]->SetZ(0);
 				new_mesh->nod_vector[i]->SetMark(false);
 				noData_nodes.push_back(i);
