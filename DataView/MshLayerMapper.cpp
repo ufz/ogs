@@ -54,18 +54,19 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 			node_offset = (layer_id - 1) * nNodes;
 			for (size_t i = 0; i < nElems; i++)
 			{
+				const MeshLib::CElem* sfc_elem( mesh->ele_vector[i] );
 				MeshLib::CElem* elem( new MeshLib::CElem() );
-				size_t nElemNodes = mesh->ele_vector[i]->getNodeIndices().Size();
-				if (mesh->ele_vector[i]->GetElementType() == MshElemType::TRIANGLE)
+				size_t nElemNodes = sfc_elem->getNodeIndices().Size();
+				if (sfc_elem->GetElementType() == MshElemType::TRIANGLE)
 					elem->setElementProperties(MshElemType::PRISM);                                           // extrude triangles to prism
-				else if (mesh->ele_vector[i]->GetElementType() == MshElemType::QUAD)
+				else if (sfc_elem->GetElementType() == MshElemType::QUAD)
 					elem->setElementProperties(MshElemType::HEXAHEDRON);                                            // extrude quads to hexes
-				else if (mesh->ele_vector[i]->GetElementType() == MshElemType::LINE)
+				else if (sfc_elem->GetElementType() == MshElemType::LINE)
 					continue;                                            // line elements are ignored and not duplicated
 				else
 				{
 					std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
-					std::cout << "Element " << i << " is of type \"" << MshElemType2String(mesh->ele_vector[i]->GetElementType()) << "\"." << std::endl;
+					std::cout << "Element " << i << " is of type \"" << MshElemType2String(sfc_elem->GetElementType()) << "\"." << std::endl;
 					delete new_mesh;
 					return NULL;
 				}
@@ -74,10 +75,9 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 				elem->getNodeIndices().resize(2 * nElemNodes);
 				for (size_t j = 0; j < nElemNodes; j++)
 				{
-					long idx = mesh->ele_vector[i]->GetNodeIndex(j);
+					long idx = sfc_elem->GetNodeIndex(j);
 					elem->SetNodeIndex(j, node_offset + idx);
-					elem->SetNodeIndex(j + nElemNodes,
-					                   node_offset + nNodes + idx);
+					elem->SetNodeIndex(j + nElemNodes, node_offset + nNodes + idx);
 				}
 				new_mesh->ele_vector.push_back(elem);
 			}

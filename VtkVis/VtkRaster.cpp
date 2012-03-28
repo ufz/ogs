@@ -72,7 +72,7 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 
 vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, size_t &width, size_t &height, double &delta, double noData)
 {
-	size_t length = height*width;
+	const size_t length = height*width;
 	float* data = new float[length*2];
 	float max_val=noData;
 	for (size_t j=0; j<length; j++)
@@ -84,11 +84,14 @@ vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, do
 	{
 		if (data[j*2]==noData) 
 		{
-			data[j*2] = max_val;
+			data[j*2] = max_val;//delete
 			data[j*2+1] = 0;
 		}
 		else
+		{
+			data[j*2] = max_val-data[j*2];//max_val;
 			data[j*2+1] = max_val;
+		}
 	}
 
 	vtkImageImport* image = vtkImageImport::New();

@@ -112,7 +112,8 @@ void SHPImportDialog::setupDialog()
 
 void SHPImportDialog::accept()
 {
-	if (_listName->text().compare("") == 0)
+	QString list_name(_listName->text());
+	if (list_name.compare("") == 0)
 	{
 		OGSError::box("Please insert a name for the data in this file.");
 		return;
@@ -122,20 +123,20 @@ void SHPImportDialog::accept()
 		if (_fileType == 1 && _choice1->isChecked())
 			_shpInterface->readSHPFile(_filename,
 			                           SHPInterface::POINT,
-			                           _listName->text().toStdString());
+			                           list_name.toStdString());
 		if (_fileType == 1 && _choice2->isChecked())
 			_shpInterface->readSHPFile(_filename,
 			                           SHPInterface::STATION,
-			                           _listName->text().toStdString());
+			                           list_name.toStdString());
 		if (_fileType == 2 && _choice1->isChecked())
 			_shpInterface->readSHPFile(_filename,
 			                           SHPInterface::POLYLINE,
-			                           _listName->text().toStdString());
+			                           list_name.toStdString());
 		if (_fileType == 2 && _choice2->isChecked())
 			_shpInterface->readSHPFile(_filename,
 			                           SHPInterface::POLYGON,
-			                           _listName->text().toStdString());
-		emit shpLoaded(_listName->text());
+			                           list_name.toStdString());
+		emit shpLoaded(list_name);
 	}
 	this->done(QDialog::Accepted);
 }

@@ -1083,9 +1083,27 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 			}
 		}
 	}
+	this->addFEMConditions(conditions);
+}
+
+void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
+{
 	if (!conditions.empty())
 	{
-		this->_processModel->addConditions(conditions);
+		for (size_t i = 0; i < conditions.size(); i++)
+		{
+			/*
+			if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
+			{
+				this->_geoModels->addPointVec(GEOLIB::PointVec::deepcopy(points), conditions[i]->getGeoName());
+				std::string file_path = fi.absoluteDir().absolutePath().toStdString();
+				std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, file_path);
+			}
+			*/
+			this->_processModel->addCondition(conditions[i]);
+
+		}
+		//this->_processModel->addConditions(conditions);
 
 		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
 			    it != bc_list.end(); ++it)
@@ -1097,6 +1115,32 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		for (size_t i = 0; i < st_vector.size(); i++)
 			delete st_vector[i];
 		st_vector.clear();
+	}
+}
+
+void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vector<GEOLIB::Point*>* points)
+{
+	std::string geo_name(mshname);
+
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+	                                                 settings.value(
+	                                                         "lastOpenedFileDirectory").
+	                                                 toString(),
+	                                                 "Geosys FEM condition files (*.st);;All files (* *.*)");
+	QFileInfo fi(fileName);
+	QString name = fi.path() + "/";
+
+	if (!fileName.isEmpty())
+	{
+		this->_geoModels->addPointVec(GEOLIB::PointVec::deepcopy(points), geo_name);
+
+		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
+		// access via st_vector (i.e. global vector from rf_st_new.h)
+		std::string file_path = fi.absoluteDir().absolutePath().toStdString();
+		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, file_path);
+
+		this->addFEMConditions(conditions);
 	}
 }
 
@@ -1599,47 +1643,5 @@ QString MainWindow::getLastUsedDir()
 		return QFileInfo(files[0]).absolutePath();
 	else
 		return QDir::homePath();
-}
-
-void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vector<GEOLIB::Point*>* points)
-{
-	std::string geo_name(mshname);
-
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
-	                                                 "Geosys FEM condition files (*.st);;All files (* *.*)");
-	QFileInfo fi(fileName);
-	QString name = fi.path() + "/";
-
-	if (!fileName.isEmpty())
-	{
-		// create new geometry points vector by copying mesh nodes vector
-		std::vector<GEOLIB::Point*>* new_points = new std::vector<GEOLIB::Point*>;
-		//ignore name map because it makes things incredibly slow (and mesh-nodes cannot have names anyway, can they?)
-		//std::map<std::string, size_t>* name_pnt_id_map = new std::map<std::string, size_t>;
-
-		for (size_t i = 0; i < points->size(); i++)
-		{
-			new_points->push_back(new GEOLIB::Point((*(*points)[i])[0], (*(*points)[i])[1], (*(*points)[i])[2]));
-		}
-		this->_geoModels->addPointVec(new_points, geo_name /*, name_pnt_id_map*/);
-
-		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
-		// access via st_vector (i.e. global vector from rf_st_new.h)
-		std::string file_path = fi.absoluteDir().absolutePath().toStdString();
-		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, file_path);
-
-		// add boundary conditions to model
-		if (!conditions.empty())
-		{
-			this->_processModel->addConditions(conditions);
-			for (size_t i = 0; i < st_vector.size(); i++)
-				delete st_vector[i];
-			st_vector.clear();
-		}
-	}
 }
 

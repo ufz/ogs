@@ -71,11 +71,20 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	//calculate texture coordinates
 	vtkPoints* points = input->GetPoints();
 	vtkSmartPointer<vtkFloatArray> textureCoordinates = vtkSmartPointer<vtkFloatArray>::New();
-	textureCoordinates->SetNumberOfComponents(3);
+	textureCoordinates->SetNumberOfComponents(2);
 	textureCoordinates->SetName("TextureCoordinates");
 	size_t nPoints = points->GetNumberOfPoints();
-	
 /*	
+	float newcoords[2] = {0, 0};
+	textureCoordinates->InsertNextTuple(newcoords);
+	float newcoords2[2] = {1, 0};
+	textureCoordinates->InsertNextTuple(newcoords2);
+	float newcoords3[2] = {1, 1};
+	textureCoordinates->InsertNextTuple(newcoords3);
+	float newcoords4[2] = {0, 1};
+	textureCoordinates->InsertNextTuple(newcoords4);
+*/
+
 	double dist(0.0);
 	for (size_t i = 0; i < nPoints; i++)
 	{
@@ -98,12 +107,11 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		points->GetPoint(i, coords);
 		double x = MathLib::normalize(0, 8404, dist);
 		double z = MathLib::normalize(-79.5, 1.5, coords[2]);
-		float newcoords[3] = {x, 0, z};
+		float newcoords[2] = {x, z};
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
 
-*/
-
+/*
 
 	for (size_t i = 0; i < nPoints; i++)
 	{
@@ -114,7 +122,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 							   0 };
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
-
+*/
 	// put it all together
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
 	vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));

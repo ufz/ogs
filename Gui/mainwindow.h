@@ -114,6 +114,7 @@ protected slots:
 	void loadDIRECTSourceTerms(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
 
 private:
+	void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions);
 	QMenu* createImportFilesMenu();
 	void loadFile(const QString &fileName);
 	void loadFEMConditionsFromFile(const QString &fileName, std::string geoName = "");

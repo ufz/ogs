@@ -124,19 +124,22 @@ void FEMConditionSetupDialog::accept()
 		dis_values.push_back(strtod(this->firstValueEdit->text().toStdString().c_str(), 0));
 		if (this->_secondValueEdit)
 			dis_values.push_back(strtod(this->_secondValueEdit->text().toStdString().c_str(), 0));
-		_cond.setDisValue(dis_values);
-
-		if (!_set_on_points)
-			emit addFEMCondition(this->typeCast(_cond));
-		else
-			this->copyCondOnPoints();
+		_cond.setDisValues(dis_values);
 	}
 	else	// direct on mesh
 	{
 		_cond.setProcessDistributionType(FiniteElement::DIRECT);
-		this->firstValueEdit->text();
-		// insert file name containing values
+		std::string direct_node_path = this->firstValueEdit->text().toStdString();
+		_cond.setDirectFileName(direct_node_path);
+		std::vector< std::pair<size_t, double> > node_values;
+		SourceTerm::getDirectNodeValues(direct_node_path, node_values);
+		_cond.setDisValues(node_values);
 	}
+
+	if (!_set_on_points)
+		emit addFEMCondition(this->typeCast(_cond));
+	else
+		this->copyCondOnPoints();
 
 	this->done(QDialog::Accepted);
 }
@@ -152,21 +155,24 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 	//if (index==1)
 	//	this->geoNameBox->addItem("Domain");
 	// remove "Domain" if IC is unselected
-	if (index>1) // source terms selected
+	if (_cond.getGeoType() != GEOLIB::INVALID)
 	{
-		while (this->disTypeBox->count()>0)
-			this->disTypeBox->removeItem(0);
-		this->disTypeBox->addItem("Constant (Neumann)");
-		if (_cond.getGeoType() == GEOLIB::POLYLINE)
-			this->disTypeBox->addItem("Linear (Neumann)");
-	}
-	else
-	{
-		while (this->disTypeBox->count()>0)
-			this->disTypeBox->removeItem(0);
-		this->disTypeBox->addItem("Constant (Direchlet)");
-		if (_cond.getGeoType() == GEOLIB::POLYLINE)
-			this->disTypeBox->addItem("Linear (Direchlet)");
+		if (index>1) // source terms selected
+		{
+			while (this->disTypeBox->count()>0)
+				this->disTypeBox->removeItem(0);
+			this->disTypeBox->addItem("Constant (Neumann)");
+			if (_cond.getGeoType() == GEOLIB::POLYLINE)
+				this->disTypeBox->addItem("Linear (Neumann)");
+		}
+		else
+		{
+			while (this->disTypeBox->count()>0)
+				this->disTypeBox->removeItem(0);
+			this->disTypeBox->addItem("Constant (Direchlet)");
+			if (_cond.getGeoType() == GEOLIB::POLYLINE)
+				this->disTypeBox->addItem("Linear (Direchlet)");
+		}
 	}
 }
 

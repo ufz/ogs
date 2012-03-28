@@ -21,7 +21,7 @@ void GeoTreeView::updateView()
 {
 	setAlternatingRowColors(true);
 	//resizeColumnToContents(0);
-	setColumnWidth(1,150);
+	setColumnWidth(0,150);
 	setColumnWidth(1,50);
 	setColumnWidth(2,50);
 }
