@@ -45,8 +45,10 @@ void VtkCompositeColormapToImageFilter::init()
 	                                                toString(),
 	                                                "Lookup table XML files (*.xml);;");
 	double range[2];
-	dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
-
+	//dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
+	range[0]=7.0;
+	range[1]=18.0;
+/*
 	if (!fileName.length()==0)
 	{
 		colormap = XmlLutReader::readFromFile(fileName);
@@ -54,10 +56,11 @@ void VtkCompositeColormapToImageFilter::init()
 	}
 	else
 	{
+*/
 		colormap = vtkSmartPointer<VtkColorLookupTable>::New();
 		colormap->SetTableRange(range[0], range[1]);
 		colormap->SetHueRange(0.0, 0.666);
-	}
+//	}
 	colormap->SetNumberOfTableValues(256);
 	colormap->Build();
 

@@ -19,6 +19,9 @@
 #include <QFileInfo>
 #include <QSettings>
 
+#include "VtkCompositeColormapToImageFilter.h"
+
+
 VtkCompositeTextureOnSurfaceFilter::VtkCompositeTextureOnSurfaceFilter(
         vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)
@@ -80,7 +83,12 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 			image->GetOutput()->GetOrigin(origin);
 			double spacing[3];
 			image->GetOutput()->GetSpacing(spacing);
-			surface->SetRaster(image, origin[0], origin[1], spacing[0]);
+
+			VtkCompositeColormapToImageFilter* cm = new VtkCompositeColormapToImageFilter(image);
+
+			vtkImageAlgorithm* img = dynamic_cast<vtkImageAlgorithm*>(cm->GetOutputAlgorithm());
+
+			surface->SetRaster(img, origin[0], origin[1], spacing[0]);
 			surface->Update();
 		}
 	}
