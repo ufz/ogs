@@ -84,12 +84,12 @@ vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, do
 	{
 		if (data[j*2]==noData) 
 		{
-			data[j*2] = max_val;//delete
+			data[j*2] = max_val;
 			data[j*2+1] = 0;
 		}
 		else
 		{
-			data[j*2] = max_val-data[j*2];//max_val;
+			//data[j*2] = max_val-data[j*2];//delete;
 			data[j*2+1] = max_val;
 		}
 	}

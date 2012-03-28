@@ -72,17 +72,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	textureCoordinates->SetNumberOfComponents(2);
 	textureCoordinates->SetName("TextureCoordinates");
 	size_t nPoints = points->GetNumberOfPoints();
-/*	
-	float newcoords[2] = {0, 0};
-	textureCoordinates->InsertNextTuple(newcoords);
-	float newcoords2[2] = {1, 0};
-	textureCoordinates->InsertNextTuple(newcoords2);
-	float newcoords3[2] = {1, 1};
-	textureCoordinates->InsertNextTuple(newcoords3);
-	float newcoords4[2] = {0, 1};
-	textureCoordinates->InsertNextTuple(newcoords4);
-*/
-
+/*  // adaptation for netcdf-curtain for TERENO Demo
 	double dist(0.0);
 	for (size_t i = 0; i < nPoints; i++)
 	{
@@ -108,19 +98,16 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		float newcoords[2] = {x, z};
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
-
-/*
-
+*/
 	for (size_t i = 0; i < nPoints; i++)
 	{
 		double coords[3];
 		points->GetPoint(i, coords);
-		float newcoords[3] = { MathLib::normalize(min.first, max.first, coords[0]), 
-		                       MathLib::normalize(min.second,max.second, coords[1]),
-							   0 };
+		float newcoords[2] = { MathLib::normalize(min.first, max.first, coords[0]), 
+		                       MathLib::normalize(min.second,max.second, coords[1])};
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
-*/
+
 	// put it all together
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
 	vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
