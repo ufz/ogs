@@ -1137,6 +1137,15 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 
 		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
 		// access via st_vector (i.e. global vector from rf_st_new.h)
+
+		for (std::vector<CSourceTerm*>::const_iterator it = st_vector.begin(); it != st_vector.end();
+	     ++it)
+		{
+			if ((*it)->getProcessDistributionType() == FiniteElement::DIRECT)
+			{
+			}
+		}
+
 		std::string file_path = fi.absoluteDir().absolutePath().toStdString();
 		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, file_path);
 
