@@ -160,7 +160,7 @@ GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
-	GridAdapter* grid = new GridAdapter(NULL);
+	GridAdapter* grid = new GridAdapter();
 	size_t node_idx_count(0);
 	const double x_offset(origin[0] - scalingFactor/2.0);
 	const double y_offset(origin[1] - scalingFactor/2.0);
@@ -235,7 +235,7 @@ GridAdapter* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid
 	if (!grid)
 		return NULL;
 
-	GridAdapter* mesh = new GridAdapter(NULL);
+	GridAdapter* mesh = new GridAdapter();
 
 	const size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
 	const size_t nElems = grid->GetNumberOfCells();

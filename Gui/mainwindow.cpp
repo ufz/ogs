@@ -522,7 +522,7 @@ void MainWindow::save()
 			double param1(0.5); // mesh density scaling on normal points
 			double param2(0.05); // mesh density scaling on station points
 			size_t param3(2); // points per leaf
-			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, FileIO::GMSHInterface::AdaptiveMeshDensity, param1, param2, param3, names);
+			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, FileIO::GMSH::AdaptiveMeshDensity, param1, param2, param3, names);
 			gmsh_io.writeToFile(fileName.toStdString());
 
 			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
@@ -1188,19 +1188,22 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 		{
 			if (param4 == -1) { // adaptive meshing selected
 				GMSHInterface gmsh_io(*(static_cast<GEOLIB::GEOObjects*> (_geoModels)), true,
-								FileIO::GMSHInterface::AdaptiveMeshDensity, param2, param3, param1,
+								FileIO::GMSH::AdaptiveMeshDensity, param2, param3, param1,
 								selectedGeometries);
+				gmsh_io.setPrecision(20);
 				gmsh_io.writeToFile(fileName.toStdString());
 			} else { // homogeneous meshing selected
 				GMSHInterface gmsh_io(*(static_cast<GEOLIB::GEOObjects*> (_geoModels)), true,
-								FileIO::GMSHInterface::FixedMeshDensity, param2, param3, param1,
+								FileIO::GMSH::FixedMeshDensity, param4, param3, param1,
 								selectedGeometries);
+				gmsh_io.setPrecision(20);
 				gmsh_io.writeToFile(fileName.toStdString());
 			}
 
+
 			if (system(NULL) != 0) // command processor available
 			{
-				std::string gmsh_command("gmsh -2 ");
+				std::string gmsh_command("gmsh -2 -algo meshadapt ");
 				std::string fname (fileName.toStdString());
 				gmsh_command += fname;
 				size_t pos (fname.rfind ("."));
