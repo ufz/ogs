@@ -1428,6 +1428,7 @@ void MainWindow::FEMTestStart()
 		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
 	}
 	*/
+
 	CondFromRasterDialog dlg(_project.getMeshObjects());
 	dlg.exec();
 }
