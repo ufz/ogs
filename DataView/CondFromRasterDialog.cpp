@@ -84,7 +84,7 @@ void CondFromRasterDialog::accept()
 	}
 	else
 	{
-		if (fabs(scaling_factor) > 0)
+		if (scaling_factor <= 0)
 		{
 			OGSError::box("No valid scaling factor given.");
 			return;
