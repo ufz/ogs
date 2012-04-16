@@ -120,11 +120,18 @@ void FEMConditionSetupDialog::accept()
 				_cond.setProcessDistributionType(FiniteElement::CONSTANT);
 		}
 
+		std::vector<size_t> dis_nodes;
 		std::vector<double> dis_values;
+		dis_nodes.push_back(0);		// HACK: default value is first node
 		dis_values.push_back(strtod(this->firstValueEdit->text().toStdString().c_str(), 0));
 		if (this->_secondValueEdit)
+		{
+			const GEOLIB::Polyline* line = dynamic_cast<const GEOLIB::Polyline*>(_cond.getGeoObj());
+			if (line) 
+				dis_nodes.push_back(line->getNumberOfPoints()-1);	// HACK: default value is last node
 			dis_values.push_back(strtod(this->_secondValueEdit->text().toStdString().c_str(), 0));
-		_cond.setDisValues(dis_values);
+		}
+		_cond.setDisValues(dis_nodes, dis_values);
 	}
 	else	// direct on mesh
 	{
@@ -244,7 +251,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 			cond->setGeoType(GEOLIB::POINT);
 			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str(ply->getPointID(i)));
 			cond->clearDisValues();
-			cond->setDisValue((*ply->getPoint(i))[2]);
+			cond->addDisValue((*ply->getPoint(i))[2]);
 			emit addFEMCondition(this->typeCast(*cond));
 		}
 	}
@@ -262,7 +269,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				cond->setGeoType(GEOLIB::POINT);
 				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
 				cond->clearDisValues();
-				cond->setDisValue((*tri->getPoint(j))[2]);
+				cond->addDisValue((*tri->getPoint(j))[2]);
 				emit addFEMCondition(this->typeCast(*cond));
 			}
 		}	

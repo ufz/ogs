@@ -1151,6 +1151,7 @@ void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vec
 
 		this->addFEMConditions(conditions);
 	}
+*/
 }
 
 void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName)
