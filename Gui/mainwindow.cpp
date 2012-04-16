@@ -188,7 +188,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t, bool)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, size_t, bool)));
 	connect(mshTabWidget->treeView, SIGNAL(requestDIRECTSourceTerms(const std::string, const std::vector<GEOLIB::Point*>*)),
-	        this, SLOT(loadDIRECTSourceTerms(const std::string, const std::vector<GEOLIB::Point*>*)));
+	        this, SLOT(loadDIRECTSourceTermsFromASCII(const std::string, const std::vector<GEOLIB::Point*>*)));
 
 	// Setup connections for process model to GUI
 	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)),
@@ -1092,18 +1092,18 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 	{
 		for (size_t i = 0; i < conditions.size(); i++)
 		{
-			/*
+			
 			if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
 			{
-				this->_geoModels->addPointVec(GEOLIB::PointVec::deepcopy(points), conditions[i]->getGeoName());
-				std::string file_path = fi.absoluteDir().absolutePath().toStdString();
-				std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, file_path);
+				std::vector<GEOLIB::Point*> *points = GEOLIB::PointVec::deepcopy(_meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes());
+				GEOLIB::PointVec pnt_vec("MeshNodes", points);
+				std::vector<GEOLIB::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
+				std::string geo_name = conditions[i]->getGeoName();
+				this->_geoModels->addPointVec(cond_points, geo_name);
 			}
-			*/
+			
 			this->_processModel->addCondition(conditions[i]);
-
 		}
-		//this->_processModel->addConditions(conditions);
 
 		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
 			    it != bc_list.end(); ++it)
@@ -1118,40 +1118,44 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 	}
 }
 
-void MainWindow::loadDIRECTSourceTerms(const std::string mshname, const std::vector<GEOLIB::Point*>* points)
+// Legacy function (only required for ascii st-files): reads values for 'direct' source terms
+void MainWindow::loadDIRECTSourceTermsFromASCII(const std::string mshname, const std::vector<GEOLIB::Point*>* points)
 {
 	std::string geo_name(mshname);
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
+	                                                 settings.value("lastOpenedFileDirectory").toString(),
 	                                                 "Geosys FEM condition files (*.st);;All files (* *.*)");
 	QFileInfo fi(fileName);
-	QString name = fi.path() + "/";
+	std::string file_path = fi.absoluteDir().absolutePath().toStdString() + "/";
 
 	if (!fileName.isEmpty())
 	{
-		this->_geoModels->addPointVec(GEOLIB::PointVec::deepcopy(points), geo_name);
-
-		STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geo_name);
-		// access via st_vector (i.e. global vector from rf_st_new.h)
+		std::string st_file_name (file_path);
+		STRead(st_file_name.append(fi.baseName().toStdString()), *_geoModels, geo_name);
 
 		for (std::vector<CSourceTerm*>::const_iterator it = st_vector.begin(); it != st_vector.end();
 	     ++it)
 		{
 			if ((*it)->getProcessDistributionType() == FiniteElement::DIRECT)
 			{
+				CSourceTerm ast = **it;
+				SourceTerm* st = new SourceTerm(ast, mshname);
+				std::vector< std::pair<size_t, double> > node_values;
+				SourceTerm::getDirectNodeValues(file_path + (*it)->fname, node_values);
+				st->setGeoName(mshname);
+				st->setDisValues(node_values);
+
+				std::vector<GEOLIB::Point*> *points2 = GEOLIB::PointVec::deepcopy(points);
+				GEOLIB::PointVec pnt_vec("MeshNodes", points2);
+				std::vector<GEOLIB::Point*> *cond_points = pnt_vec.getSubset(st->getDisNodes());
+				std::string geometry_name = st->getGeoName();
+				this->_geoModels->addPointVec(cond_points, geometry_name);
+				this->_processModel->addCondition(st);
 			}
 		}
-
-		std::string file_path = fi.absoluteDir().absolutePath().toStdString();
-		std::vector<FEMCondition*> conditions = SourceTerm::createDirectSourceTerms(st_vector, geo_name, file_path);
-
-		this->addFEMConditions(conditions);
 	}
-*/
 }
 
 void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName)

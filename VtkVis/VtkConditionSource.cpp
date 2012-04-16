@@ -235,7 +235,8 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			size_t nValues = dis_values.size();
 			for (size_t i=0; i<nValues; i++)
 			{
-				vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_nodes[i]]->getData());
+				//vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_nodes[i]]->getData());
+				vtkIdType pid = newPoints->InsertNextPoint((*_points)[i]->getData());
 				newVerts->InsertNextCell(1, &pid);
 				scalars->InsertNextValue(dis_values[i]);
 				distypes->InsertNextValue(dis_type_value);

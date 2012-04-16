@@ -111,7 +111,7 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
-	void loadDIRECTSourceTerms(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
+	void loadDIRECTSourceTermsFromASCII(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
 
 private:
 	void addFEMConditions(const std::vector<FEMCondition*> conditions);

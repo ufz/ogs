@@ -57,10 +57,6 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 			    << QString::fromStdString(c->getGeoTypeAsString());
 	CondItem* condItem = new CondItem(condData, condParent, c);
 	condParent->appendChild(condItem);
-	// add process information
-	//QList<QVariant> pcsData;
-	//pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
-	//TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
 	// add information on primary variable
 	QList<QVariant> pvData;
 	pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
