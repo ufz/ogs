@@ -109,7 +109,8 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 	for (size_t n = 0; n < nCond; n++)
 	{
 		FiniteElement::DistributionType type = (*_cond_vec)[n]->getProcessDistributionType();
-		const std::vector<double> dis_values = (*_cond_vec)[n]->getDisValue();
+		const std::vector<size_t> dis_nodes = (*_cond_vec)[n]->getDisNodes();
+		const std::vector<double> dis_values = (*_cond_vec)[n]->getDisValues();
 
 		vtkIdType dis_type_value(0);
 		std::map<FiniteElement::DistributionType, vtkIdType>::const_iterator it(_dis_type_map.find(type));
@@ -169,10 +170,10 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					scalars->InsertNextValue(dis_values[0]);
 				else if (type == FiniteElement::LINEAR || type == FiniteElement::LINEAR_NEUMANN)
 				{
-					for (size_t j = 0; j < dis_values.size(); j += 2)
+					for (size_t j = 0; j < dis_values.size(); j ++)
 					{
-						if (static_cast<size_t>(dis_values[j]) == point_index)
-							value = dis_values[j + 1];
+						if (static_cast<size_t>(dis_nodes[j]) == point_index)
+							value = dis_values[j];
 					}
 					scalars->InsertNextValue(value);
 				}
@@ -210,10 +211,10 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 							scalars->InsertNextValue(dis_values[0]);
 						else if (type == FiniteElement::LINEAR || type == FiniteElement::LINEAR_NEUMANN)
 						{
-							for (size_t k = 0; k < dis_values.size(); k += 2)
-								if (static_cast<size_t>(dis_values[j]) == point_index)
+							for (size_t k = 0; k < dis_values.size(); k++)
+								if (static_cast<size_t>(dis_nodes[j]) == point_index)
 								{
-									scalars->InsertNextValue(dis_values[j + 1]);
+									scalars->InsertNextValue(dis_values[j]);
 									break;
 								}
 						}
@@ -232,11 +233,12 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		else if ((*_cond_vec)[n]->getGeoType() == GEOLIB::INVALID)
 		{
 			size_t nValues = dis_values.size();
-			for (size_t i=0; i<nValues; i+=2)
+			for (size_t i=0; i<nValues; i++)
 			{
-				vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_values[i]]->getData());
+				//vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_nodes[i]]->getData());
+				vtkIdType pid = newPoints->InsertNextPoint((*_points)[i]->getData());
 				newVerts->InsertNextCell(1, &pid);
-				scalars->InsertNextValue(dis_values[i+1]);
+				scalars->InsertNextValue(dis_values[i]);
 				distypes->InsertNextValue(dis_type_value);
 				pnt_id++;
 			}

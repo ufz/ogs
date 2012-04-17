@@ -72,7 +72,7 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 
 vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, size_t &width, size_t &height, double &delta, double noData)
 {
-	size_t length = height*width;
+	const size_t length = height*width;
 	float* data = new float[length*2];
 	float max_val=noData;
 	for (size_t j=0; j<length; j++)
@@ -88,7 +88,10 @@ vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, do
 			data[j*2+1] = 0;
 		}
 		else
+		{
+			//data[j*2] = max_val-data[j*2];//delete;
 			data[j*2+1] = max_val;
+		}
 	}
 
 	vtkImageImport* image = vtkImageImport::New();
@@ -396,27 +399,29 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 					return false;
 				}
 
-			// read colormap if it exists
+			// check for colormap
+			uint16 photometric;
+			TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &photometric);
+			// read colormap
 			uint16* cmap_red = NULL, * cmap_green = NULL, * cmap_blue = NULL;
 			int colormap_used = TIFFGetField(tiff,
-			                                 TIFFTAG_COLORMAP,
-			                                 &cmap_red,
-			                                 &cmap_green,
-			                                 &cmap_blue);
+											TIFFTAG_COLORMAP,
+											&cmap_red,
+											&cmap_green,
+											&cmap_blue);
 
-			int lineindex = 0, idx = 0;
-			
 			float* data = new float[imgWidth * imgHeight * 4];
 			int* pxl (new int[4]);
 			for (int j = 0; j < imgHeight; j++)
 			{
-				lineindex = j * imgWidth;
+				int lineindex = j * imgWidth;
 				for (int i = 0; i < imgWidth; i++)
 				{ // scale intensities and set nodata values to white (i.e. the background colour)
-					idx = TIFFGetR(pixVal[lineindex + i]);
-					size_t pos  = 4 * (lineindex+i);
-					if (colormap_used)
+					size_t pxl_idx(lineindex+i);
+					size_t pos  = 4 * (pxl_idx);
+					if (photometric==1)
 					{
+						int idx = TIFFGetR(pixVal[pxl_idx]);
 						data[pos]   = cmap_red[idx] >> 8;
 						data[pos+1] = cmap_green[idx] >> 8;
 						data[pos+2] = cmap_blue[idx] >> 8;
@@ -424,19 +429,17 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 					}
 					else
 					{
-						//img.setPixel(i,j, qRgba(TIFFGetB(pixVal[idx]), TIFFGetG(pixVal[idx]), TIFFGetR(pixVal[idx]), TIFFGetA(pixVal[idx])));
-						uint32toRGBA(pixVal[lineindex + i], pxl);
-						data[pos]   = pxl[0];
-						data[pos+1] = pxl[1];
-						data[pos+2] = pxl[2];
-						data[pos+3] = pxl[3];
+						data[pos]   = TIFFGetR(pixVal[pxl_idx]);
+						data[pos+1] = TIFFGetG(pixVal[pxl_idx]);
+						data[pos+2] = TIFFGetB(pixVal[pxl_idx]);
+						data[pos+3] = TIFFGetA(pixVal[pxl_idx]);
 					}
 				}
 			}
 			delete [] pxl;
 
 			// set transparency values according to maximum pixel value
-			if (colormap_used)
+			if (photometric==1)
 			{
 				float max_val(0);
 				size_t nPixels = 4*imgWidth*imgHeight;

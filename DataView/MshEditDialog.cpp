@@ -25,12 +25,13 @@ MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent)
 	this->gridLayoutLayerMapping->setColumnStretch(2, 10);
 
 	size_t nLayers = mesh->getNumberOfMeshLayers();
-	if (nLayers == 0)
-		nLayers = 1;   // adapt to old files where 2D meshes officially had "0" layers which makes no sense
 
-	for (size_t i = 0; i < nLayers; i++)
+	for (size_t i = 0; i <= nLayers+1; i++)
 	{
-		QString text = (i) ? "Layer" + QString::number(i) : "Surface";
+		QString text("");
+		if (i==0) text="Surface";
+		else if (i>nLayers) text="Layer" + QString::number(nLayers) + "-Bottom";
+		else text="Layer" + QString::number(i) + "-Top";
 		QLabel* label = new QLabel(text);
 		QLineEdit* edit = new QLineEdit();
 		QPushButton* button = new QPushButton("...");
@@ -44,12 +45,14 @@ MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent)
 		this->gridLayoutLayerMapping->addWidget(_labels[i],   i, 0);
 		this->gridLayoutLayerMapping->addWidget(_edits[i],    i, 1);
 		this->gridLayoutLayerMapping->addWidget(_buttons[i],  i, 2);
+
+		if (nLayers==0) break; // don't add bottom layer if mesh contains only surface
 	}
 
 	_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
 	_noDataDeleteBox->setChecked(false);
 	_noDataDeleteBox->setEnabled(false);
-	if (nLayers == 1)
+	if (nLayers == 0)
 	{
 		_noDataDeleteBox->setEnabled(true);
 		this->gridLayoutLayerMapping->addWidget(_noDataDeleteBox, 2, 1);
@@ -80,33 +83,39 @@ void MshEditDialog::accept()
 		{
 		case 0:
 		{
-			int nLayers = atoi(this->editNLayers->text().toStdString().c_str());
-			double thickness =
-			        strtod(replaceString(",", ".", this->editThickness->text().toStdString()).
-			               c_str(), 0);
-
+			const int nLayers = atoi(this->editNLayers->text().toStdString().c_str());
+			const double thickness = strtod(replaceString(",", ".", this->editThickness->text().toStdString()).c_str(), 0);
 			new_mesh = MshLayerMapper::CreateLayers(_msh, nLayers, thickness);
 			break;
 		}
 		case 1:
 		{
-			size_t nLayers = _msh->getNumberOfMeshLayers();
-			if (nLayers == 0)
-				nLayers = 1;  // adapt to old files where 2D meshes officially had "0" layers which makes no sense
-
-			for (size_t i = 0; i < nLayers; i++)
+			new_mesh = new MeshLib::CFEMesh(*_msh);
+			const size_t nLayers = _msh->getNumberOfMeshLayers();
+			if (nLayers==0)
 			{
-				std::string imgPath ( this->_edits[i]->text().toStdString() );
+				const std::string imgPath ( this->_edits[0]->text().toStdString() );
 				if (!imgPath.empty())
-					new_mesh = MshLayerMapper::LayerMapping(
-					        _msh,
-					        imgPath,
-					        nLayers,
-					        i,
-					        _noDataDeleteBox->
-					        isChecked());
+					MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, _noDataDeleteBox->isChecked());
 			}
-			//if (nLayers>1) MshLayerMapper::CheckLayerMapping(new_mesh, nLayers, 1); //TODO !!!
+			else
+			{
+				for (size_t i = 1; i <= nLayers+1; i++)
+				{
+					const std::string imgPath ( this->_edits[i]->text().toStdString() );
+					if (!imgPath.empty())
+					{
+						int result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i-1, _noDataDeleteBox->isChecked());
+						if (result==0) break;
+					}
+				}
+			}
+			if (nLayers>0 && this->_edits[0]->text().length()>0) 
+			{
+				MeshLib::CFEMesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
+				delete new_mesh;
+				new_mesh = final_mesh;
+			}
 			break;
 		}
 		default:

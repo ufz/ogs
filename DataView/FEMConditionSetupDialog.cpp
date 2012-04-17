@@ -22,7 +22,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 												 bool  on_points,
 												 QDialog* parent)
 : QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points), _secondValueEdit(NULL),
-  _mesh(NULL), _first_value_validator(NULL), _second_value_validator(NULL)
+  directButton(NULL), _mesh(NULL), _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	_cond.setGeoType(type);
 	_cond.setGeoName(geo_name);
@@ -34,7 +34,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent)
-	: QDialog(parent), _cond(cond), _secondValueEdit(NULL),
+	: QDialog(parent), _cond(cond), _secondValueEdit(NULL), directButton(NULL),
 	  _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	setupDialog();
@@ -42,7 +42,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* pa
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent)
 : QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false), _secondValueEdit(NULL),
-  _mesh(mesh), _first_value_validator(NULL), _second_value_validator(NULL)
+  directButton(NULL), _mesh(mesh), _first_value_validator(NULL), _second_value_validator(NULL)
 {
 	_cond.setGeoType(GEOLIB::INVALID);
 	_cond.setGeoName(name);
@@ -120,23 +120,33 @@ void FEMConditionSetupDialog::accept()
 				_cond.setProcessDistributionType(FiniteElement::CONSTANT);
 		}
 
+		std::vector<size_t> dis_nodes;
 		std::vector<double> dis_values;
+		dis_nodes.push_back(0);		// HACK: default value is first node
 		dis_values.push_back(strtod(this->firstValueEdit->text().toStdString().c_str(), 0));
 		if (this->_secondValueEdit)
+		{
+			const GEOLIB::Polyline* line = dynamic_cast<const GEOLIB::Polyline*>(_cond.getGeoObj());
+			if (line) 
+				dis_nodes.push_back(line->getNumberOfPoints()-1);	// HACK: default value is last node
 			dis_values.push_back(strtod(this->_secondValueEdit->text().toStdString().c_str(), 0));
-		_cond.setDisValue(dis_values);
-
-		if (!_set_on_points)
-			emit addFEMCondition(this->typeCast(_cond));
-		else
-			this->copyCondOnPoints();
+		}
+		_cond.setDisValues(dis_nodes, dis_values);
 	}
 	else	// direct on mesh
 	{
 		_cond.setProcessDistributionType(FiniteElement::DIRECT);
-		this->firstValueEdit->text();
-		// insert file name containing values
+		std::string direct_node_path = this->firstValueEdit->text().toStdString();
+		_cond.setDirectFileName(direct_node_path);
+		std::vector< std::pair<size_t, double> > node_values;
+		SourceTerm::getDirectNodeValues(direct_node_path, node_values);
+		_cond.setDisValues(node_values);
 	}
+
+	if (!_set_on_points)
+		emit addFEMCondition(this->typeCast(_cond));
+	else
+		this->copyCondOnPoints();
 
 	this->done(QDialog::Accepted);
 }
@@ -152,21 +162,24 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 	//if (index==1)
 	//	this->geoNameBox->addItem("Domain");
 	// remove "Domain" if IC is unselected
-	if (index>1) // source terms selected
+	if (_cond.getGeoType() != GEOLIB::INVALID)
 	{
-		while (this->disTypeBox->count()>0)
-			this->disTypeBox->removeItem(0);
-		this->disTypeBox->addItem("Constant (Neumann)");
-		if (_cond.getGeoType() == GEOLIB::POLYLINE)
-			this->disTypeBox->addItem("Linear (Neumann)");
-	}
-	else
-	{
-		while (this->disTypeBox->count()>0)
-			this->disTypeBox->removeItem(0);
-		this->disTypeBox->addItem("Constant (Direchlet)");
-		if (_cond.getGeoType() == GEOLIB::POLYLINE)
-			this->disTypeBox->addItem("Linear (Direchlet)");
+		if (index>1) // source terms selected
+		{
+			while (this->disTypeBox->count()>0)
+				this->disTypeBox->removeItem(0);
+			this->disTypeBox->addItem("Constant (Neumann)");
+			if (_cond.getGeoType() == GEOLIB::POLYLINE)
+				this->disTypeBox->addItem("Linear (Neumann)");
+		}
+		else
+		{
+			while (this->disTypeBox->count()>0)
+				this->disTypeBox->removeItem(0);
+			this->disTypeBox->addItem("Constant (Direchlet)");
+			if (_cond.getGeoType() == GEOLIB::POLYLINE)
+				this->disTypeBox->addItem("Linear (Direchlet)");
+		}
 	}
 }
 
@@ -238,7 +251,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 			cond->setGeoType(GEOLIB::POINT);
 			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str(ply->getPointID(i)));
 			cond->clearDisValues();
-			cond->setDisValue((*ply->getPoint(i))[2]);
+			cond->addDisValue((*ply->getPoint(i))[2]);
 			emit addFEMCondition(this->typeCast(*cond));
 		}
 	}
@@ -256,7 +269,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				cond->setGeoType(GEOLIB::POINT);
 				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
 				cond->clearDisValues();
-				cond->setDisValue((*tri->getPoint(j))[2]);
+				cond->addDisValue((*tri->getPoint(j))[2]);
 				emit addFEMCondition(this->typeCast(*cond));
 			}
 		}	

@@ -57,10 +57,6 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 			    << QString::fromStdString(c->getGeoTypeAsString());
 	CondItem* condItem = new CondItem(condData, condParent, c);
 	condParent->appendChild(condItem);
-	// add process information
-	//QList<QVariant> pcsData;
-	//pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
-	//TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
 	// add information on primary variable
 	QList<QVariant> pvData;
 	pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
@@ -68,23 +64,24 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 	// add distribution information
 	QList<QVariant> disData;
 	disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
-	std::vector<double> dis_value = c->getDisValue();
+	std::vector<size_t> dis_nodes  = c->getDisNodes();
+	std::vector<double> dis_values = c->getDisValues();
 	TreeItem* disInfo;
 	if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
 		c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
 	{
-		disData << dis_value[0];
+		disData << dis_values[0];
 		disInfo = new TreeItem(disData, condItem);
 	}
 	else
 	{
-		size_t nVals = dis_value.size() / 2;
+		size_t nVals = dis_values.size();
 		disData << static_cast<int>(nVals);
 		disInfo = new TreeItem(disData, condItem);
 		for (size_t i = 0; i < nVals; i++)
 		{
 			QList<QVariant> linData;
-			linData << dis_value[2 * i] << dis_value[2 * i + 1];
+			linData << static_cast<int>(dis_nodes[i]) << dis_values[i];
 			TreeItem* linInfo = new TreeItem(linData, disInfo);
 			disInfo->appendChild(linInfo);
 		}

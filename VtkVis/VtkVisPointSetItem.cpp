@@ -293,7 +293,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			}
 		}
 
-		std::cout << "Range for " << name.toStdString() << " :" << range[0] << " " << range[1] << std::endl;
+		//std::cout << "Range for " << name.toStdString() << " :" << range[0] << " " << range[1] << std::endl;
 		_vtkProps->SetActiveAttribute(name);
 
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
@@ -303,7 +303,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			vtkLookupTable* lut = _vtkProps->GetLookupTable(name);
 			if (lut == NULL)
 			{
-				std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
+				//std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
 				lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
 				lut->SetTableRange(range);
 				_vtkProps->SetLookUpTable(name, lut);
