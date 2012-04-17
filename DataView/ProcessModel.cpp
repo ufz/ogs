@@ -81,7 +81,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 		for (size_t i = 0; i < nVals; i++)
 		{
 			QList<QVariant> linData;
-			linData << dis_nodes[i] << dis_values[i];
+			linData << static_cast<int>(dis_nodes[i]) << dis_values[i];
 			TreeItem* linInfo = new TreeItem(linData, disInfo);
 			disInfo->appendChild(linInfo);
 		}
