@@ -476,7 +476,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		}
 		checker->check ();
 
-		std::vector<double> const &quality (checker->getMeshQuality());
+		std::vector<double> const quality (checker->getMeshQuality());
 
 		int nSources = this->_rootItem->childCount();
 		for (int i = 0; i < nSources; i++)
