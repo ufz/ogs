@@ -11,6 +11,7 @@
 
 #include <QDialog>
 
+class QComboBox;
 class QPushButton;
 class StrictDoubleValidator;
 
@@ -52,11 +53,10 @@ private:
 
 	FEMCondition _cond;
 	bool _set_on_points;
-	QLineEdit* _secondValueEdit; // needed for linear conditions
+	QComboBox* _combobox; //needed for on_points & linear conds
 	QPushButton* directButton; // needed for direct conditions
 	const MeshLib::CFEMesh* _mesh; // needed for direct conditions
 	StrictDoubleValidator* _first_value_validator;
-	StrictDoubleValidator* _second_value_validator;
 
 private slots:
 	/// Instructions if the OK-Button has been pressed.
@@ -71,14 +71,14 @@ private slots:
 
 	void directButton_pressed();
 
-	void direct_path_changed(std::string path);
+	void addDisValues(std::vector< std::pair<size_t,double> > direct_values);
 
 	void copyCondOnPoints();
 
 	FEMCondition* typeCast(const FEMCondition &cond);
 
 signals:
-	void addFEMCondition(FEMCondition*);
+	void createFEMCondition(std::vector<FEMCondition*>);
 
 };
 

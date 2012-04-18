@@ -98,6 +98,7 @@ protected slots:
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
+	void addFEMConditions(const std::vector<FEMCondition*> conditions);
 	void writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
@@ -114,7 +115,6 @@ protected slots:
 	void loadDIRECTSourceTermsFromASCII(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
 
 private:
-	void addFEMConditions(const std::vector<FEMCondition*> conditions);
 	QMenu* createImportFilesMenu();
 	void loadFile(const QString &fileName);
 	void loadFEMConditionsFromFile(const QString &fileName, std::string geoName = "");

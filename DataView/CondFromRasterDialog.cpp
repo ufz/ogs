@@ -61,6 +61,7 @@ void CondFromRasterDialog::accept()
 	std::string mesh_name (this->meshBox->currentText().toStdString());
 	std::string raster_name (this->rasterEdit->text().toStdString());
 	double scaling_factor = strtod(this->scalingEdit->text().toStdString().c_str(), 0);
+	std::vector< std::pair<size_t,double> > direct_values;
 
 	if (mesh_name.empty())
 	{
@@ -79,8 +80,8 @@ void CondFromRasterDialog::accept()
 	if (this->directButton->isChecked())
 	{
 		DirectConditionGenerator dcg;
-		dcg.directToSurfaceNodes(*mesh, raster_name);
-		dcg.writeToFile(direct_node_name);
+		direct_values = dcg.directToSurfaceNodes(*mesh, raster_name);
+		//dcg.writeToFile(direct_node_name);
 	}
 	else
 	{
@@ -91,10 +92,11 @@ void CondFromRasterDialog::accept()
 		}
 		MeshLib::CFEMesh* new_mesh = const_cast<MeshLib::CFEMesh*>(mesh);
 		DirectConditionGenerator dcg;
-		dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
-		dcg.writeToFile(direct_node_name);
+		direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
+		//dcg.writeToFile(direct_node_name);
 	}
-	emit directNodesWritten(direct_node_name);
+	//emit directNodesWritten(direct_node_name);
+	emit transmitDisValues(direct_values);
 	this->done(QDialog::Accepted);
 }
 
