@@ -41,7 +41,7 @@ public:
 							QDialog* parent = 0);
 
 	/// Constructor for editing an existing FEM condition.
-	FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent = 0);
+	FEMConditionSetupDialog(const FEMCondition &cond, QDialog* parent = 0);
 
 	/// Constructor for creating DIRECT FEM conditions on MeshNodes.
 	FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent = 0);
@@ -49,7 +49,10 @@ public:
 	~FEMConditionSetupDialog(void);
 
 private:
+	/// Sets layout of the dialog according to properties of the object
 	void setupDialog();
+	/// Inserts existing values if an existing FEMCondition is being edited
+	void setValuesFromCond();
 
 	FEMCondition _cond;
 	bool _set_on_points;

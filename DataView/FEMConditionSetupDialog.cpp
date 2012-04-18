@@ -30,15 +30,16 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 	_cond.setGeoObj(geo_object);
 
 	setupUi(this);
-
 	setupDialog();
 }
 
-FEMConditionSetupDialog::FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent)
+FEMConditionSetupDialog::FEMConditionSetupDialog(const FEMCondition &cond, QDialog* parent)
 	: QDialog(parent), _cond(cond), _set_on_points(false), _combobox(NULL), directButton(NULL), 
 	_mesh(NULL), _first_value_validator(NULL)
 {
+	setupUi(this);
 	setupDialog();
+	setValuesFromCond();
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent)
@@ -50,7 +51,6 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const 
 	_cond.setGeoObj(NULL);
 
 	setupUi(this);
-
 	setupDialog();
 }
 
@@ -104,6 +104,44 @@ void FEMConditionSetupDialog::setupDialog()
 */
 }
 
+void FEMConditionSetupDialog::setValuesFromCond()
+{
+	QString pcs_type = QString::fromStdString(FiniteElement::convertProcessTypeToString(_cond.getProcessType()));
+	this->processTypeBox->setCurrentIndex(this->processTypeBox->findText(pcs_type));
+
+	QString pv_type = QString::fromStdString(FiniteElement::convertPrimaryVariableToString(_cond.getProcessPrimaryVariable()));
+	this->pvTypeBox->setCurrentIndex(this->pvTypeBox->findText(pv_type));
+
+	int idx(0);
+	if (_cond.getCondType() == FEMCondition::INITIAL_CONDITION)
+		this->condTypeBox->setCurrentIndex(1);
+	else if (_cond.getCondType() == FEMCondition::SOURCE_TERM)
+	{
+		this->condTypeBox->setCurrentIndex(2);
+		on_condTypeBox_currentIndexChanged(2);
+	}
+
+	if (_cond.getGeoType() != GEOLIB::INVALID)
+	{
+		if (_cond.getProcessDistributionType() == FiniteElement::CONSTANT || _cond.getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
+		{
+			this->disTypeBox->setCurrentIndex(0);
+			this->firstValueEdit->setText(QString::number(_cond.getDisValues()[0]));
+		}
+		else
+		{
+			this->disTypeBox->setCurrentIndex(1);
+			directButton = new QPushButton(QString::number(static_cast<int>(_cond.getDisValues().size())) + " values");
+		}
+	}
+	else	// direct on mesh
+	{
+		size_t nValues (_cond.getDisValues().size());
+		this->directButton->setText(QString::number(static_cast<int>(_cond.getDisValues().size())) + " values");
+	}
+}
+
+
 void FEMConditionSetupDialog::accept()
 {
 	_cond.setProcessType(static_cast<FiniteElement::ProcessType>(this->processTypeBox->currentIndex() + 1));
@@ -118,7 +156,7 @@ void FEMConditionSetupDialog::accept()
 			else 
 			{
 				_cond.setProcessDistributionType(FiniteElement::CONSTANT_NEUMANN);
-				_cond.addDisValue(this->firstValueEdit->text().toDouble());
+				_cond.setConstantDisValue(this->firstValueEdit->text().toDouble());
 			}
 		}
 		else
@@ -128,7 +166,7 @@ void FEMConditionSetupDialog::accept()
 			else
 			{
 				_cond.setProcessDistributionType(FiniteElement::CONSTANT);
-				_cond.addDisValue(this->firstValueEdit->text().toDouble());
+				_cond.setConstantDisValue(this->firstValueEdit->text().toDouble());
 			}
 		}
 	}
@@ -267,7 +305,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 			cond->setGeoType(GEOLIB::POINT);
 			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str(ply->getPointID(i)));
 			cond->clearDisValues();
-			cond->addDisValue((*ply->getPoint(i))[2]);
+			cond->setConstantDisValue((*ply->getPoint(i))[2]);
 			conditions.push_back(this->typeCast(*cond));
 		}
 		emit createFEMCondition(conditions);
@@ -286,7 +324,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				cond->setGeoType(GEOLIB::POINT);
 				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
 				cond->clearDisValues();
-				cond->addDisValue((*tri->getPoint(j))[2]);
+				cond->setConstantDisValue((*tri->getPoint(j))[2]);
 				conditions.push_back(this->typeCast(*cond));
 			}
 		}	
