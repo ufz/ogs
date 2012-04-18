@@ -43,7 +43,8 @@ public slots:
 
 	virtual void addPointVec(std::vector<GEOLIB::Point*>* points,
 	                         std::string &name,
-	                         std::map<std::string, size_t>* name_pnt_id_map = NULL);
+	                         std::map<std::string, size_t>* name_pnt_id_map = NULL,
+	                         double eps = sqrt(std::numeric_limits<double>::min()));
 	virtual bool appendPointVec(const std::vector<GEOLIB::Point*> &points,
 	                            const std::string &name,
 	                            std::vector<size_t>* ids = NULL);

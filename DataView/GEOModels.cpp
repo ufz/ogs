@@ -40,9 +40,10 @@ void GEOModels::removeGeometry(std::string geo_name, GEOLIB::GEOTYPE type)
 
 void GEOModels::addPointVec( std::vector<GEOLIB::Point*>* points,
                              std::string &name,
-                             std::map<std::string, size_t>* name_pnt_id_map )
+                             std::map<std::string, size_t>* name_pnt_id_map,
+                             double eps)
 {
-	GEOObjects::addPointVec(points, name, name_pnt_id_map);
+	GEOObjects::addPointVec(points, name, name_pnt_id_map, eps);
 	_geoModel->addPointList(QString::fromStdString(name), this->getPointVecObj(name));
 	emit geoDataAdded(_geoModel, name, GEOLIB::POINT);
 }
@@ -242,7 +243,7 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name, const G
 			pnt_vec->setNameForElement((*tri)[0], new_name + "_Point" + number2str((*tri)[0]));
 			pnt_vec->setNameForElement((*tri)[1], new_name + "_Point" + number2str((*tri)[1]));
 			pnt_vec->setNameForElement((*tri)[2], new_name + "_Point" + number2str((*tri)[2]));
-		}	
+		}
 	}
 	else
 		std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." << std::endl;
