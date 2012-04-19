@@ -77,8 +77,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 				for (size_t j = 0; j < nElemNodes; j++)
 				{
 					long idx = sfc_elem->GetNodeIndex(j);
-					elem->SetNodeIndex(j, node_offset + idx);
-					elem->SetNodeIndex(j + nElemNodes, node_offset + nNodes + idx);
+					elem->SetNodeIndex(nElemNodes-j-1, node_offset + idx);
+					elem->SetNodeIndex(nElemNodes-j-1 + nElemNodes, node_offset + nNodes + idx);
 				}
 				new_mesh->ele_vector.push_back(elem);
 			}
