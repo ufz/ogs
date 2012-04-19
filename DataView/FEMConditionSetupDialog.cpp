@@ -84,10 +84,11 @@ void FEMConditionSetupDialog::setupDialog()
 	}
 	else	// direct on mesh
 	{
+		this->disTypeBox->addItem("Direct");
+		static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
 		directButton = new QPushButton("Calculate Values");
 		static_cast<QGridLayout*>(this->layout())->addWidget(directButton,5,1);
 		connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
-		this->disTypeBox->addItem("Direct");
 	}
 
 	const std::list<std::string> process_names = FiniteElement::getAllProcessNames();
@@ -172,7 +173,6 @@ void FEMConditionSetupDialog::accept()
 	}
 	else	// direct on mesh
 		_cond.setProcessDistributionType(FiniteElement::DIRECT);
-
 	if (_cond.getDisValues().size()==0)
 	{
 		OGSError::box("No distribution values specified!");
