@@ -85,7 +85,7 @@ void FEMConditionSetupDialog::setupDialog()
 	else	// direct on mesh
 	{
 		this->disTypeBox->addItem("Direct");
-		static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
+		//static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
 		directButton = new QPushButton("Calculate Values");
 		static_cast<QGridLayout*>(this->layout())->addWidget(directButton,5,1);
 		connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));

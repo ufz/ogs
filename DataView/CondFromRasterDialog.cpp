@@ -75,7 +75,7 @@ void CondFromRasterDialog::accept()
 	}
 	
 	const MeshLib::CFEMesh* mesh = (_msh_map.find(mesh_name))->second;
-	std::string direct_node_name(raster_name + ".txt");
+	//std::string direct_node_name(raster_name + ".txt");
 
 	if (this->directButton->isChecked())
 	{
