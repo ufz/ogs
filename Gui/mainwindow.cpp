@@ -20,6 +20,7 @@
 #include "ConditionWriterDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
+#include "OGSFileConverter.h"
 #include "GMSHPrefsDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
@@ -1335,6 +1336,12 @@ void MainWindow::showDiagramPrefsDialog()
 		prefs->setAttribute(Qt::WA_DeleteOnClose);
 		prefs->show();
 	}
+}
+
+void MainWindow::showFileConverterDialog()
+{
+	OGSFileConverter dlg;
+	dlg.exec();
 }
 
 void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id)

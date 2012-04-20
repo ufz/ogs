@@ -31,6 +31,7 @@ set( SOURCES
 	ProcessModel.cpp
 	ProcessView.cpp
 	QueryResultsDialog.cpp
+	SelectMeshDialog.cpp
 	SetNameDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
@@ -66,6 +67,7 @@ set( MOC_HEADERS
 	ProcessModel.h
 	ProcessView.h
 	QueryResultsDialog.h
+	SelectMeshDialog.h
 	SetNameDialog.h
 	StationTabWidget.h
 	StationTreeModel.h

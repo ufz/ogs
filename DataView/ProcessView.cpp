@@ -12,6 +12,7 @@
 #include "ProcessModel.h"
 #include "ProcessView.h"
 #include "FEMConditionSetupDialog.h"
+#include "SelectMeshDialog.h"
 
 ProcessView::ProcessView(QWidget* parent) : QTreeView(parent)
 {
