@@ -22,7 +22,6 @@ set( SOURCES
 	ModelTreeItem.cpp
 	MshEditDialog.cpp
 	MshItem.cpp
-	MshLayerMapper.cpp
 	MshModel.cpp
 	MshQualitySelectionDialog.cpp
 	MshTabWidget.cpp
@@ -84,7 +83,6 @@ set( HEADERS
 	GeoTreeItem.h
 	ModelTreeItem.h
 	MshItem.h
-	MshLayerMapper.h
 	ProcessItem.h	
 )
 
