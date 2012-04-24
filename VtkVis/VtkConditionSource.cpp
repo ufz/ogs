@@ -172,7 +172,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				{
 					for (size_t j = 0; j < dis_values.size(); j ++)
 					{
-						if (static_cast<size_t>(dis_nodes[j]) == i)
+						if (static_cast<int>(dis_nodes[j]) == i)
 							value = dis_values[j];
 					}
 					scalars->InsertNextValue(value);
