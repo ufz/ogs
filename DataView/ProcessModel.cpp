@@ -259,3 +259,11 @@ vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType p
 	}
 	return NULL;
 }
+
+void ProcessModel::replaceCondition(const QModelIndex &idx, FEMCondition* condition)
+{
+	// remove old condition
+	this->getItem(idx)->parentItem()->removeChildren(this->getItem(idx)->row(),1);
+	//add new condition
+	this->addCondition(condition);
+}

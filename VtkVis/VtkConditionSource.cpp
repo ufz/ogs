@@ -172,12 +172,13 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				{
 					for (size_t j = 0; j < dis_values.size(); j ++)
 					{
-						if (static_cast<size_t>(dis_nodes[j]) == point_index)
+						if (static_cast<size_t>(dis_nodes[j]) == i)
 							value = dis_values[j];
 					}
 					scalars->InsertNextValue(value);
 				}
-				else scalars->InsertNextValue(0);
+				else 
+					scalars->InsertNextValue(0);
 				pnt_id++;
 			}
 		}

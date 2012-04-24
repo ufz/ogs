@@ -1,11 +1,17 @@
 # Source files
 SET( SOURCES
 	mainwindow.cpp
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/OGSFileConverter.cpp
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/FileListDialog.cpp
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/ConversionTools.cpp
 )
 
 # Moc Header files
 SET( MOC_HEADERS
 	mainwindow.h
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/OGSFileConverter.h
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/FileListDialog.h
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/ConversionTools.h
 )
 
 # Header files
@@ -16,6 +22,8 @@ SET( HEADERS
 # UI files
 SET( UIS
 	mainwindow.ui
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/OGSFileConverter.ui
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/FileList.ui
 )
 
 
@@ -48,6 +56,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/Qt/DataView/DiagramView
 	${CMAKE_SOURCE_DIR}/Qt/VtkVis
 	${CMAKE_SOURCE_DIR}/Qt/VtkAct
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter
 )
 
 IF (Shapelib_FOUND)

@@ -11,6 +11,7 @@
 
 #include <QDialog>
 
+class QComboBox;
 class QPushButton;
 class StrictDoubleValidator;
 
@@ -40,7 +41,7 @@ public:
 							QDialog* parent = 0);
 
 	/// Constructor for editing an existing FEM condition.
-	FEMConditionSetupDialog(FEMCondition &cond, QDialog* parent = 0);
+	FEMConditionSetupDialog(const FEMCondition &cond, QDialog* parent = 0);
 
 	/// Constructor for creating DIRECT FEM conditions on MeshNodes.
 	FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent = 0);
@@ -48,15 +49,17 @@ public:
 	~FEMConditionSetupDialog(void);
 
 private:
+	/// Sets layout of the dialog according to properties of the object
 	void setupDialog();
+	/// Inserts existing values if an existing FEMCondition is being edited
+	void setValuesFromCond();
 
 	FEMCondition _cond;
 	bool _set_on_points;
-	QLineEdit* _secondValueEdit; // needed for linear conditions
+	QComboBox* _combobox; //needed for on_points & linear conds
 	QPushButton* directButton; // needed for direct conditions
 	const MeshLib::CFEMesh* _mesh; // needed for direct conditions
 	StrictDoubleValidator* _first_value_validator;
-	StrictDoubleValidator* _second_value_validator;
 
 private slots:
 	/// Instructions if the OK-Button has been pressed.
@@ -71,14 +74,14 @@ private slots:
 
 	void directButton_pressed();
 
-	void direct_path_changed(std::string path);
+	void addDisValues(std::vector< std::pair<size_t,double> > direct_values);
 
 	void copyCondOnPoints();
 
 	FEMCondition* typeCast(const FEMCondition &cond);
 
 signals:
-	void addFEMCondition(FEMCondition*);
+	void createFEMCondition(std::vector<FEMCondition*>);
 
 };
 

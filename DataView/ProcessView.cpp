@@ -8,9 +8,11 @@
 
 #include "ProcessItem.h"
 #include "CondObjectListItem.h"
+#include "CondItem.h"
 #include "ProcessModel.h"
 #include "ProcessView.h"
-
+#include "FEMConditionSetupDialog.h"
+#include "SelectMeshDialog.h"
 
 ProcessView::ProcessView(QWidget* parent) : QTreeView(parent)
 {
@@ -40,30 +42,28 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_UNUSED(event);
 
-	ProcessItem* pcs_item = dynamic_cast<ProcessItem*>(static_cast<ProcessModel*>(this->model())->
-	                                          getItem(this->selectionModel()->currentIndex()));
-	CondObjectListItem* cond_item =
-	        dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->
-	                                          getItem(this->selectionModel()->currentIndex()));
+	const QModelIndex idx(this->selectionModel()->currentIndex());
+	QMenu menu;
 
-	if (pcs_item || cond_item)
+	if (this->isProcessItem(idx))
 	{
-		QMenu menu;
-		if (cond_item)
-		{
-			QAction* removeCondAction = menu.addAction("Remove conditions");
-			connect(removeCondAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
-		}
-
-		if (pcs_item)
-		{
-			QAction* saveCondAction  = menu.addAction("Save FEM Conditions...");
-			QAction* removePCSAction = menu.addAction("Remove process");
-			connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveConditions()));
-			connect(removePCSAction, SIGNAL(triggered()), this, SLOT(removeProcess()));
-		}
-		menu.exec(event->globalPos());
+		QAction* saveCondAction  = menu.addAction("Save FEM Conditions...");
+		QAction* removePCSAction = menu.addAction("Remove process");
+		connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveConditions()));
+		connect(removePCSAction, SIGNAL(triggered()), this, SLOT(removeProcess()));
 	}
+	else if (this->isListItem(idx))
+	{
+		QAction* removeCondAction = menu.addAction("Remove conditions");
+		connect(removeCondAction, SIGNAL(triggered()), this, SLOT(removeCondition()));
+	}
+	else if (this->isConditionItem(idx))
+	{
+		QAction* editCondAction = menu.addAction("Edit condition");
+		connect(editCondAction, SIGNAL(triggered()), this, SLOT(editCondition()));
+	}
+
+	menu.exec(event->globalPos());
 }
 
 void ProcessView::removeCondition()
@@ -76,6 +76,24 @@ void ProcessView::removeCondition()
 		const FEMCondition::CondType cond_type = item->getType();
 		emit conditionsRemoved(pcs_type, "", cond_type);
 	}
+}
+
+void ProcessView::editCondition()
+{
+	CondItem* item = dynamic_cast<CondItem*>(static_cast<ProcessModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
+	
+	if (item)
+	{
+		FEMConditionSetupDialog dlg(*(item->getItem()));
+		connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(replaceCondition(std::vector<FEMCondition*>)));
+		dlg.exec();
+	}
+}
+
+void ProcessView::replaceCondition(std::vector<FEMCondition*> conditions)
+{
+	static_cast<ProcessModel*>(this->model())->replaceCondition(this->selectionModel()->currentIndex(), conditions[0]);
+	this->reset();
 }
 
 void ProcessView::saveConditions()
@@ -92,4 +110,25 @@ void ProcessView::removeProcess()
 		const FiniteElement::ProcessType pcs_type = item->getItem()->getProcessType();
 		emit processRemoved(pcs_type);
 	}
+}
+
+bool ProcessView::isProcessItem(const QModelIndex &idx) const
+{
+	ProcessItem* pcs_item = dynamic_cast<ProcessItem*>(static_cast<ProcessModel*>(this->model())->getItem(idx));
+	if (pcs_item) return true;
+	return false;
+}
+
+bool ProcessView::isListItem(const QModelIndex &idx) const
+{
+	CondObjectListItem* cond_item = dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->getItem(idx));
+	if (cond_item) return true;
+	return false;
+}
+
+bool ProcessView::isConditionItem(const QModelIndex &idx) const
+{
+	CondObjectListItem* cond_item = dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->getItem(idx.parent()));
+	if (cond_item) return true;
+	return false;
 }

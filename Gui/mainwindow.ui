@@ -127,6 +127,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionFile_Converter"/>
     <addaction name="actionDiagram_Viewer"/>
     <addaction name="actionFEM_Test"/>
    </widget>
@@ -393,6 +394,11 @@
     <string>About</string>
    </property>
   </action>
+  <action name="actionFile_Converter">
+   <property name="text">
+    <string>File Converter...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -611,6 +617,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFile_Converter</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showFileConverterDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -624,5 +646,6 @@
   <slot>FEMTestStart()</slot>
   <slot>showDiagramPrefsDialog()</slot>
   <slot>about()</slot>
+  <slot>showFileConverterDialog()</slot>
  </slots>
 </ui>

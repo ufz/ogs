@@ -20,6 +20,7 @@
 #include "ConditionWriterDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
+#include "OGSFileConverter.h"
 #include "GMSHPrefsDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
@@ -1022,9 +1023,7 @@ void MainWindow::loadFEMConditions(std::string geoName)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-														settings.value(
-																"lastOpenedFileDirectory").
-														toString(),
+														settings.value("lastOpenedFileDirectory").toString(),
 														"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
 	QDir dir = QDir(fileName);
 	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -1103,6 +1102,7 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 				std::vector<GEOLIB::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
 				std::string geo_name = conditions[i]->getGeoName();
 				this->_geoModels->addPointVec(cond_points, geo_name);
+				conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
 			}
 
 			this->_processModel->addCondition(conditions[i]);
@@ -1335,6 +1335,12 @@ void MainWindow::showDiagramPrefsDialog()
 	}
 }
 
+void MainWindow::showFileConverterDialog()
+{
+	OGSFileConverter dlg;
+	dlg.exec();
+}
+
 void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id)
 {
 	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
@@ -1371,14 +1377,14 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 		if (object_type != GEOLIB::INVALID)
 		{
 			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
-			connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
+			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}
 		else
 		{
 			const MeshLib::CFEMesh* mesh = _project.getMesh(geo_name);
 			FEMConditionSetupDialog dlg(geo_name, mesh);
-			connect(&dlg, SIGNAL(addFEMCondition(FEMCondition*)), this->_processModel, SLOT(addCondition(FEMCondition*)));
+			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}
 	}
@@ -1441,8 +1447,10 @@ void MainWindow::FEMTestStart()
 //		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
 //	}
 
+	/*
 	CondFromRasterDialog dlg(_project.getMeshObjects());
 	dlg.exec();
+	*/
 }
 
 void MainWindow::showTrackingSettingsDialog()

@@ -56,6 +56,9 @@ public slots:
 	/// Removes all processes from the model
 	void removeAllProcesses();
 
+	/// Remove the given TreeItem and replace it with another condition (this is used for editing FEMConditions)
+	void replaceCondition(const QModelIndex &idx, FEMCondition* condition);
+
 private:
 	/// Adds a new FEM condition to the condition tree model.
 	void addConditionItem(FEMCondition* condition);

@@ -36,11 +36,16 @@ protected slots:
 private:
 	/// Actions to be taken after a right mouse click is performed in the station view.
 	void contextMenuEvent( QContextMenuEvent* e );
+	bool isProcessItem(const QModelIndex &idx) const;
+	bool isListItem(const QModelIndex &idx) const;
+	bool isConditionItem(const QModelIndex &idx) const;
 
 private slots:
 	void on_Clicked(QModelIndex idx);
+	void editCondition();
 	void removeCondition();
 	void removeProcess();
+	void replaceCondition(std::vector<FEMCondition*> conditions);
 	void saveConditions();
 
 signals:
@@ -51,3 +56,4 @@ signals:
 };
 
 #endif //PROCESSVIEW_H
+
