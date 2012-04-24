@@ -44,10 +44,6 @@
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 
-//test
-//#include "MathIO/CRSIO.h"
-//#include "Raster.h"
-
 // FEM Conditions
 #include "BoundaryCondition.h"
 #include "InitialCondition.h"
@@ -77,6 +73,7 @@
 
 // MSH
 #include "msh_mesh.h"
+#include "MeshGrid.h"
 
 // MSHGEOTOOLS
 #include "ExtractMeshNodes.h"
@@ -1098,7 +1095,7 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 	{
 		for (size_t i = 0; i < conditions.size(); i++)
 		{
-			
+
 			if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
 			{
 				std::vector<GEOLIB::Point*> *points = GEOLIB::PointVec::deepcopy(_meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes());
@@ -1107,7 +1104,7 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 				std::string geo_name = conditions[i]->getGeoName();
 				this->_geoModels->addPointVec(cond_points, geo_name);
 			}
-			
+
 			this->_processModel->addCondition(conditions[i]);
 		}
 
@@ -1426,22 +1423,23 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	/*
-	std::map<std::string, MeshLib::CFEMesh*> const& mesh_map (_project.getMeshObjects());
-
-	std::string mesh_name(mesh_map.begin()->first);
-	std::cout << "[Test] get mesh " << mesh_name << " ... " << std::flush;
-	MeshLib::CFEMesh const*const mesh (_project.getMesh(mesh_name));
-	if (mesh) {
-		std::cout << "done" << std::endl;
-		std::cout << "[Test] writing mesh in TetGen file format ... " << std::flush;
-		FileIO::TetGenInterface tetgen_io;
-		tetgen_io.writeTetGenMesh(mesh_name+".node", mesh_name+".ele", mesh);
-		std::cout << "done" << std::endl;
-	} else {
-		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
-	}
-	*/
+//	std::map<std::string, MeshLib::CFEMesh*> const& mesh_map (_project.getMeshObjects());
+//
+//	std::string mesh_name(mesh_map.begin()->first);
+//	std::cout << "[Test] get mesh " << mesh_name << " ... " << std::flush;
+//	MeshLib::CFEMesh const*const mesh (_project.getMesh(mesh_name));
+//	if (mesh) {
+//		std::cout << "done" << std::endl;
+//#ifndef NDEBUG
+//		(mesh->getMeshGrid())->createMeshGridGeometry(_project.getGEOObjects());
+//#endif
+////		std::cout << "[Test] writing mesh in TetGen file format ... " << std::flush;
+////		FileIO::TetGenInterface tetgen_io;
+////		tetgen_io.writeTetGenMesh(mesh_name+".node", mesh_name+".ele", mesh);
+//		std::cout << "done" << std::endl;
+//	} else {
+//		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
+//	}
 
 	CondFromRasterDialog dlg(_project.getMeshObjects());
 	dlg.exec();
