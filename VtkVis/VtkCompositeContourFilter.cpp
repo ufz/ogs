@@ -11,6 +11,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <limits>
+
 VtkCompositeContourFilter::VtkCompositeContourFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)
 {
@@ -31,14 +33,19 @@ void VtkCompositeContourFilter::init()
 	vtkContourFilter* contour = vtkContourFilter::New();
 	contour->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
+	// Setting the threshold to min / max values to ensure that the whole data
+	// is first processed. This is needed for correct lookup table generation.
+	const double dMin = std::numeric_limits<double>::min();
+	const double dMax = std::numeric_limits<double>::max();
+	
 	// Sets a filter vector property which will be user editable
-	contour->GenerateValues(10, 0, 100);
+	contour->GenerateValues(10, dMin, dMax);
 
 	// Create a list for the ThresholdBetween (vector) property.
 	QList<QVariant> contourRangeList;
 	// Insert the values (same values as above)
-	contourRangeList.push_back(0);
-	contourRangeList.push_back(100);
+	contourRangeList.push_back(dMin);
+	contourRangeList.push_back(dMax);
 	// Put that list in the property map
 	(*_algorithmUserVectorProperties)["Range"] = contourRangeList;
 

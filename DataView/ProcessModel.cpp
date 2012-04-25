@@ -48,57 +48,50 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 	CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
 	if (condParent == NULL)
-		condParent = this->createCondParent(processParent, c->getCondType(), c->getAssociatedGeometryName());
-
-	if (condParent)
-	{
-		QList<QVariant> condData;
-		condData << QString::fromStdString(c->getGeoName()) 
-			     << QString::fromStdString(c->getGeoTypeAsString());
-		CondItem* condItem = new CondItem(condData, condParent, c);
-		condParent->appendChild(condItem);
-		// add process information
-		//QList<QVariant> pcsData;
-		//pcsData << QString::fromStdString(convertProcessTypeToString(c->getProcessType()));
-		//TreeItem* pcsInfo = new TreeItem(pcsData, condItem);
-		// add information on primary variable
-		QList<QVariant> pvData;
-		pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
-		TreeItem* pvInfo = new TreeItem(pvData, condItem);
-		// add distribution information
-		QList<QVariant> disData;
-		disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
-		std::vector<double> dis_value = c->getDisValue();
-		TreeItem* disInfo;
-		if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
-		    c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
-		{
-			disData << dis_value[0];
-			disInfo = new TreeItem(disData, condItem);
-		}
-		else
-		{
-			size_t nVals = dis_value.size() / 2;
-			disData << static_cast<int>(nVals);
-			disInfo = new TreeItem(disData, condItem);
-			for (size_t i = 0; i < nVals; i++)
-			{
-				QList<QVariant> linData;
-				linData << dis_value[2 * i] << dis_value[2 * i + 1];
-				TreeItem* linInfo = new TreeItem(linData, disInfo);
-				disInfo->appendChild(linInfo);
-			}
-		}
-
-		//condItem->appendChild(pcsInfo);
-		condItem->appendChild(pvInfo);
-		condItem->appendChild(disInfo);
-
+		condParent = this->createCondParent(processParent, c);
+	else
 		condParent->addCondition(c);
-		reset();
+
+	QList<QVariant> condData;
+	condData << QString::fromStdString(c->getGeoName()) 
+			    << QString::fromStdString(c->getGeoTypeAsString());
+	CondItem* condItem = new CondItem(condData, condParent, c);
+	condParent->appendChild(condItem);
+	// add information on primary variable
+	QList<QVariant> pvData;
+	pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
+	TreeItem* pvInfo = new TreeItem(pvData, condItem);
+	// add distribution information
+	QList<QVariant> disData;
+	disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
+	std::vector<size_t> dis_nodes  = c->getDisNodes();
+	std::vector<double> dis_values = c->getDisValues();
+	TreeItem* disInfo;
+	if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
+		c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
+	{
+		disData << dis_values[0];
+		disInfo = new TreeItem(disData, condItem);
 	}
 	else
-		std::cout << "Error in ProcessModel::addConditionItem() - Parent object not found..." << std::endl;
+	{
+		size_t nVals = dis_values.size();
+		disData << static_cast<int>(nVals);
+		disInfo = new TreeItem(disData, condItem);
+		for (size_t i = 0; i < nVals; i++)
+		{
+			QList<QVariant> linData;
+			linData << static_cast<int>(dis_nodes[i]) << dis_values[i];
+			TreeItem* linInfo = new TreeItem(linData, disInfo);
+			disInfo->appendChild(linInfo);
+		}
+	}
+
+	//condItem->appendChild(pcsInfo);
+	condItem->appendChild(pvInfo);
+	condItem->appendChild(disInfo);
+
+	reset();
 }
 
 void ProcessModel::addCondition(FEMCondition* condition)
@@ -237,19 +230,19 @@ CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, const FEMCondi
 	return NULL;
 }
 
-CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, const FEMCondition::CondType cond_type, const std::string &geometry_name)
+CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, FEMCondition* cond)
 {
-	QString condType(QString::fromStdString(FEMCondition::condTypeToString(cond_type)));
+	QString condType(QString::fromStdString(FEMCondition::condTypeToString(cond->getCondType())));
 	QList<QVariant> condData;
 	condData << condType << "";
 
-	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(geometry_name);
+	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(cond->getAssociatedGeometryName());
 	if (pnts)
 	{
-		CondObjectListItem* cond = new CondObjectListItem(condData, parent, cond_type, pnts);
-		parent->appendChild(cond);
-		emit conditionAdded(this, parent->getItem()->getProcessType(), cond_type);
-		return cond;
+		CondObjectListItem* cond_list = new CondObjectListItem(condData, parent, cond, pnts);
+		parent->appendChild(cond_list);
+		emit conditionAdded(this, parent->getItem()->getProcessType(), cond->getCondType());
+		return cond_list;
 	}
 
 	return NULL;
@@ -265,4 +258,12 @@ vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType p
 			return condParent->vtkSource();
 	}
 	return NULL;
+}
+
+void ProcessModel::replaceCondition(const QModelIndex &idx, FEMCondition* condition)
+{
+	// remove old condition
+	this->getItem(idx)->parentItem()->removeChildren(this->getItem(idx)->row(),1);
+	//add new condition
+	this->addCondition(condition);
 }

@@ -6,6 +6,7 @@
 #define DATAVIEW_H
 
 #include "Point.h"
+#include "GeoType.h"
 #include <QTreeView>
 
 class GridAdapter;
@@ -57,6 +58,8 @@ private slots:
 	/// Adds a new mesh.
 	void addMeshAction();
 
+	void addDIRECTSourceTerms();
+
 	void loadDIRECTSourceTerms();
 
 	/// Remove the currently selected mesh.
@@ -75,6 +78,7 @@ private slots:
 
 signals:
 	void qualityCheckRequested(VtkMeshSource*);
+	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
 	void requestDIRECTSourceTerms(const std::string, const std::vector<GEOLIB::Point*>*);
 	void saveMeshAction();

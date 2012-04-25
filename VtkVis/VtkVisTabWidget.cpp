@@ -198,7 +198,8 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 	bool ok = true;
 	double scale = text.toDouble(&ok);
 
-	if (ok)
+	// If z scale becomes zero, the object becomes invisible
+	if (ok && scale != 0.0)
 	{
 		_item->setScale(1.0, 1.0, scale);
 
@@ -344,24 +345,8 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 
 void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 {
-	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(item->algorithm()->GetOutputDataObject(0));
-	QStringList dataSetAttributesList;
-	if (dataSet)
-	{
-		vtkPointData* pointData = dataSet->GetPointData();
-		//std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
-		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
-			//std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
-			dataSetAttributesList.push_back(QString("P-") + pointData->GetArrayName(i));
-
-		vtkCellData* cellData = dataSet->GetCellData();
-		//std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
-		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-			//std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
-			dataSetAttributesList.push_back(QString("C-") + cellData->GetArrayName(i));
-
-		dataSetAttributesList.push_back("Solid Color"); // all scalars switched off
-	}
+	QStringList dataSetAttributesList = item->getScalarArrayNames();
+	dataSetAttributesList.push_back("Solid Color"); // all scalars switched off
 	this->activeScalarComboBox->blockSignals(true);
 	this->activeScalarComboBox->clear();
 	this->activeScalarComboBox->insertItems(0, dataSetAttributesList);

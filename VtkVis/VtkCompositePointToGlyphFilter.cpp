@@ -57,7 +57,7 @@ void VtkCompositePointToGlyphFilter::init()
 	glyphFilter->SetSource(_glyphSource->GetOutput());
 	glyphFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 	//(*_algorithmUserProperties)["ScaleMode"] = 0;
-	(*_algorithmUserProperties)["ScaleFactor"] = 1.0;
+	//(*_algorithmUserProperties)["ScaleFactor"] = 1.0;
 	//(*_algorithmUserProperties)["ColorMode"] = glyphFilter->GetColorMode();
 	//(*_algorithmUserProperties)["VectorMode"] = glyphFilter->GetVectorMode();
 	//(*_algorithmUserProperties)["Orient"] = glyphFilter->GetOrient();

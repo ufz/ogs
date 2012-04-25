@@ -8,7 +8,6 @@ SET( SOURCES
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
-	VtkApplyColorTableFilter.cpp
 	VtkBGImageSource.cpp
 	VtkColorByHeightFilter.cpp
 	VtkColorLookupTable.cpp
@@ -31,6 +30,7 @@ SET( SOURCES
 	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
+	VtkRaster.cpp
 	VtkSelectionFilter.cpp
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
@@ -43,6 +43,7 @@ SET( SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
+	VtkAlgorithmProperties.cpp
 )
 
 # Moc headers
@@ -64,7 +65,6 @@ SET( MOC_HEADERS
 
 # Header files
 SET( HEADERS
-	VtkApplyColorTableFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
 	VtkColorLookupTable.h
@@ -87,6 +87,7 @@ SET( HEADERS
 	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
+	VtkRaster.h
 	VtkSelectionFilter.h
 	VtkStationSource.h
 	VtkSurfacesSource.h
@@ -125,17 +126,18 @@ QT4_WRAP_UI( UI_HEADERS ${UIS} )
 QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
 INCLUDE_DIRECTORIES(
-	.
-	../VtkAct
+	${CMAKE_SOURCE_DIR}/Qt/VtkVis
+	${CMAKE_SOURCE_DIR}/Qt/VtkAct
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
-	../../Base
-	../../FEM
-	../../GEO
-	../../MathLib
-	../../FileIO
-	../../MSH
-	../Base
-	../DataView
+	${CMAKE_SOURCE_DIR}/Base
+	${CMAKE_SOURCE_DIR}/FEM
+	${CMAKE_SOURCE_DIR}/GEO
+	${CMAKE_SOURCE_DIR}/MathLib
+	${CMAKE_SOURCE_DIR}/FileIO
+	${CMAKE_SOURCE_DIR}/MSH
+	${CMAKE_SOURCE_DIR}/Qt/Base
+	${CMAKE_SOURCE_DIR}/Qt/DataView
+	${CMAKE_BINARY_DIR}/Qt/DataView
 )
 
 # Create the library
@@ -147,13 +149,20 @@ ADD_LIBRARY( VtkVis STATIC
 	${UIS}
 )
 
+IF (libgeotiff_FOUND)
+	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+	TARGET_LINK_LIBRARIES( VtkVis ${libgeotiff_LIBRARIES} )
+ENDIF () # libgeotiff_FOUND
+
 TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} QVTK )
 
+ADD_DEPENDENCIES(VtkVis QtDataView)
+
 IF(OGS_USE_VRPN)
-	INCLUDE_DIRECTORIES(../Vrpn)
+	INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Qt/Vrpn)
 ENDIF() # OGS_USE_VRPN
 
 IF (OGS_USE_OPENSG)
 	USE_OPENSG(VtkVis)
-	INCLUDE_DIRECTORIES( ../OpenSG )
+	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Qt/OpenSG )
 ENDIF (OGS_USE_OPENSG)

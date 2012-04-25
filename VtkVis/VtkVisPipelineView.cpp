@@ -11,6 +11,7 @@
 #include "CheckboxDelegate.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
 
 #include <vtkDataSetMapper.h>
 #include <vtkProp3D.h>
@@ -21,20 +22,22 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QSettings>
+#include <QMessageBox>
 
 //image to mesh conversion
+#include "msh_mesh.h"
+#include "GridAdapter.h"
 #include "VtkGeoImageSource.h"
+#include <vtkImageData.h>
 #include "MeshFromRasterDialog.h"
 #include <vtkDataObject.h>
-#include <vtkImageData.h>
 #include <vtkSmartPointer.h>
-
-#include "msh_mesh.h"
 #include <vtkGenericDataObjectReader.h>
 #include <vtkTransformFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridAlgorithm.h>
 #include <vtkXMLUnstructuredGridReader.h>
+
 
 VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -62,13 +65,10 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 	if (index.isValid())
 	{
 		// check object type
-		vtkAlgorithm* algorithm =
-		        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())
-		                                         ->
-		                                         getItem(this->selectionModel()->
-		                                                 currentIndex()))->algorithm();
-		int objectType = algorithm->GetOutputDataObject(0)->GetDataObjectType();
-		VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(algorithm);
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(
+			this->model())->getItem(this->selectionModel()->currentIndex()));
+		int objectType = item->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
+		VtkAlgorithmProperties* vtkProps = item->getVtkProperties();
 		bool isSourceItem =
 		        (this->selectionModel()->currentIndex().parent().isValid()) ? 0 : 1;
 
@@ -79,7 +79,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* addMeshingAction(NULL);
 		if (objectType == VTK_IMAGE_DATA)
 		{
-			isSourceItem = false; // this exception is needed as image object are only displayed in the vis-pipeline
+			// this exception is needed as image object are only displayed in the vis-pipeline
+			isSourceItem = false;
 			addMeshingAction = menu.addAction("Convert Image to Mesh...");
 			connect(addMeshingAction, SIGNAL(triggered()), this,
 			        SLOT(showImageToMeshConversionDialog()));
@@ -101,7 +102,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
 		QAction* removeAction = NULL;
-		if (!isSourceItem || vtkProps == NULL)
+		if (!isSourceItem || vtkProps->IsRemovable())
 		{
 			removeAction = menu.addAction("Remove");
 			connect(removeAction, SIGNAL(triggered()), this,
@@ -175,20 +176,22 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	                                         getItem(this->selectionModel()->currentIndex()))->algorithm();
 
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
-	vtkSmartPointer<vtkImageData> image = imageSource->GetOutput();
+	double origin[3];
+	imageSource->GetOutput()->GetOrigin(origin);
+	double spacing[3];
+	imageSource->GetOutput()->GetSpacing(spacing);
 	
-	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertImgToMesh(image, imageSource->getOrigin(),
-																imageSource->getSpacing(), 
-																element_type, intensity_type);
-	std::string new_mesh_name(msh_name.toStdString());
-	emit meshAdded(mesh, new_mesh_name);
+	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
+	mesh->setName(msh_name.toStdString());
+	emit meshAdded(mesh);
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
 {
-	vtkSmartPointer<vtkAlgorithm> algorithm =
-	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
-												this->selectionModel()->currentIndex()))->algorithm();
+	VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
+												this->selectionModel()->currentIndex()));
+	vtkSmartPointer<vtkAlgorithm> algorithm = item->algorithm();
+	        
 
 	vtkUnstructuredGrid* grid(NULL);
 	vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
@@ -207,9 +210,9 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}
-	MeshLib::CFEMesh* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
-	std::string msh_name("NewMesh");
-	emit meshAdded(mesh, msh_name);
+	GridAdapter* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
+	mesh->setName(item->data(0).toString().toStdString());
+	emit meshAdded(mesh);
 }
 
 void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
@@ -258,23 +261,28 @@ void VtkVisPipelineView::addColorTable()
 	const QString array_name = item->GetActiveAttribute();
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this, "Select color table",
-	                                                settings.value(
-	                                                        "lastOpenedTextureFileDirectory").
-	                                                toString(),
-	                                                "Color table files (*.lut);;");
-	QFileInfo fi(fileName);
+	QString filename = QFileDialog::getOpenFileName(this, "Select color table",
+	                                                settings.value("lastOpenedLutFileDirectory"). toString(), 
+													"Color table files (*.xml);;");
+	QFileInfo fi(filename);
 
-	if (fi.suffix().toLower() == "lut")
+	if (fi.suffix().toLower() == "xml")
 	{
-		VtkAlgorithmProperties* props =
-		        dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
-		if (props)
+		VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
+		if (pointSetItem)
 		{
-			const std::string file (fileName.toStdString());
-			props->SetLookUpTable(array_name, file);
-			item->SetActiveAttribute(array_name);
-			emit requestViewUpdate();
+			VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
+			if (props)
+			{
+				props->SetLookUpTable(array_name, filename);
+				item->SetActiveAttribute(array_name);
+				emit requestViewUpdate();
+			}
 		}
+		else
+			QMessageBox::warning(NULL, "Color lookup table could not be applied.",
+								 "Color lookup tables can only be applied to VtkVisPointSetItem.");
+		QDir dir = QDir(filename);
+		settings.setValue("lastOpenedLutFileDirectory", dir.absolutePath());
 	}
 }

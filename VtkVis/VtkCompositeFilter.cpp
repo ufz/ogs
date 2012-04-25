@@ -8,7 +8,7 @@
 // ** INCLUDES **
 #include "VtkCompositeFilter.h"
 
-#include "VtkCompositeImageToCylindersFilter.h"
+#include <vtkAlgorithm.h>
 
 #include <QMapIterator>
 #include <QString>

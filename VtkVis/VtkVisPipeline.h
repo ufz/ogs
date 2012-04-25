@@ -82,6 +82,9 @@ public:
 	/// the factor on other items to 1.
 	void setGlobalSuperelevation(double factor) const;
 
+	/// \brief Enables / disables backface culling on all actors.
+	void setGlobalBackfaceCulling(bool enable) const;
+
 public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);

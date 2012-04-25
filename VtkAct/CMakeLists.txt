@@ -12,7 +12,7 @@ set( MOC_HEADERS
 
 # Header files
 set( HEADERS
-	
+
 )
 
 # UI files
@@ -30,16 +30,16 @@ source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 
 include_directories(
-	.
+	${CMAKE_SOURCE_DIR}/Qt/VtkAct
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
-	../../Base
-	../../FEM
-	../../GEO
-	../../FileIO
-	../../FileIO/MeshIO
-	../../MSH
-	../../MathLib
-	../VtkVis
+	${CMAKE_SOURCE_DIR}/Base
+	${CMAKE_SOURCE_DIR}/FEM
+	${CMAKE_SOURCE_DIR}/GEO
+	${CMAKE_SOURCE_DIR}/FileIO
+	${CMAKE_SOURCE_DIR}/FileIO/MeshIO
+	${CMAKE_SOURCE_DIR}/MSH
+	${CMAKE_SOURCE_DIR}/MathLib
+	${CMAKE_SOURCE_DIR}/Qt/VtkVis
 )
 
 # Create the library

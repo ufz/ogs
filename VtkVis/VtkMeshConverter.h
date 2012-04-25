@@ -7,17 +7,12 @@
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
-// ** INCLUDES **
-#include "msh_mesh.h"
+//#include <utility>
+//#include "MSHEnums.h"
+#include "GridAdapter.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
-
-namespace MeshLib
-{
-class CFEMesh;
-class CNode;
-}
 
 /// Selection of possible interpretations for intensities
 struct UseIntensityAs
@@ -37,47 +32,49 @@ class VtkMeshConverter
 public:
 	/**
 	 * Converts greyscale image to a mesh
-	 * \parelem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
-	static MeshLib::CFEMesh* convertImgToMesh(vtkImageData* img,
-	                                          const std::pair<double,double> &origin,
-	                                          const double &scalingFactor,
-											  MshElemType::type elem_type,
-											  UseIntensityAs::type intensity_type);
+	static GridAdapter* convertImgToMesh(vtkImageData* img,
+									      const double origin[3],
+	                                      const double scalingFactor,
+										  MshElemType::type elem_type,
+										  UseIntensityAs::type intensity_type);
 
 	/**
 	 * Converts double array with raster values to a mesh
-	 * \parelem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
-	static MeshLib::CFEMesh* convertImgToMesh(const double* img,
-	                                          const std::pair<double,double> &origin,
-											  const size_t imgHeight,
-											  const size_t imgWidth,
-	                                          const double &scalingFactor,
-											  MshElemType::type elem_type,
-											  UseIntensityAs::type intensity_type);
+	static GridAdapter* convertImgToMesh(const double* img,
+	                                      const double origin[3],
+										  const size_t imgHeight,
+										  const size_t imgWidth,
+	                                      const double &scalingFactor,
+										  MshElemType::type elem_type,
+										  UseIntensityAs::type intensity_type);
 
 	/// Converts a vtkUnstructuredGrid object to a CFEMesh
-	static MeshLib::CFEMesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
+	static GridAdapter* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
 
 private:
 	/// Does the actual mesh generation based on the data given to the public methods.
-	static MeshLib::CFEMesh* constructMesh(const double* pixVal,
-										   int* node_idx_map,
-										   const bool* visNodes,
-										   const std::pair<double,double> &origin,
-										   const size_t &imgHeight,
-										   const size_t &imgWidth,
-										   const double &scalingFactor,
-										   MshElemType::type elem_type,
-										   UseIntensityAs::type intensity_type);
+	static GridAdapter* constructMesh(const double* pixVal,
+									   int* node_idx_map,
+									   const bool* visNodes,
+									   const double origin[3],
+									   const size_t &imgHeight,
+									   const size_t &imgWidth,
+									   const double &scalingFactor,
+									   MshElemType::type elem_type,
+									   UseIntensityAs::type intensity_type);
 
 	/// Creates a mesh element based on the given data.
-	static MeshLib::CElem* createElement(MshElemType::type t, int mat,
+	static GridAdapter::Element* createElement(MshElemType::type t, int mat,
 		                                 size_t node1, size_t node2, 
 										 size_t node3, size_t node4 = 0);
+
+	static double getExistingValue(const double* img, size_t length);
 };
 
 #endif // VTKMESHCONVERTER_H

@@ -65,7 +65,7 @@ public:
 	void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; }
 
 	/// Imports a color table from a file.
-	void readFromFile(const std::string &filename);
+	//void readFromFile(const std::string &filename);
 
 	/// Exports a color table to a file.
 	void writeToFile(const std::string &filename);

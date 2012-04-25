@@ -45,7 +45,7 @@ private slots:
 	void reject();
 
 signals:
-	void requestMeshing(std::vector<std::string> const &, size_t, double, double, double, bool);
+	void requestMeshing(std::vector<std::string> &, size_t, double, double, double, bool);
 };
 
 #endif //GMSHPREFSDIALOG_H

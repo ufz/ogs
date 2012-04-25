@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="processTypeLabel">
      <property name="text">
       <string>Process Type</string>
      </property>
@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item row="4" column="0">
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="disTypeLabel">
      <property name="text">
       <string>Distribution Type</string>
      </property>
@@ -35,7 +35,7 @@
     </widget>
    </item>
    <item row="5" column="0">
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="valueLabel">
      <property name="text">
       <string>Value</string>
      </property>
@@ -48,16 +48,10 @@
     <widget class="QComboBox" name="processTypeBox"/>
    </item>
    <item row="4" column="1">
-    <widget class="QComboBox" name="disTypeBox">
-     <item>
-      <property name="text">
-       <string>Constant (Direchlet)</string>
-      </property>
-     </item>
-    </widget>
+    <widget class="QComboBox" name="disTypeBox"/>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="pvTypeLabel">
      <property name="text">
       <string>Primary Variable</string>
      </property>
@@ -96,7 +90,7 @@
     </spacer>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="condTypeLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>

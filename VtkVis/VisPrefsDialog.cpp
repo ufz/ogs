@@ -31,6 +31,7 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline,
 	superelevationLineEdit->setValidator(validator);
 	QSettings settings("UFZ, OpenGeoSys-5");
 	superelevationLineEdit->setText(settings.value("globalSuperelevation", 1.0).toString());
+	cullBackfacesCheckBox->setCheckState(Qt::CheckState(settings.value("globalCullBackfaces", 0).toInt()));
 }
 
 void VisPrefsDialog::on_bgColorButton_colorPicked( QColor color )
@@ -69,3 +70,12 @@ void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 	_visWidget->setShowAllOnLoad((bool)state);
 	_vtkVisPipeline->resetCameraOnAddOrRemove((bool)state);
 }
+
+void VisPrefsDialog::on_cullBackfacesCheckBox_stateChanged(int state)
+{
+	_vtkVisPipeline->setGlobalBackfaceCulling((bool)state);
+
+	QSettings settings("UFZ, OpenGeoSys-5");
+	settings.setValue("globalCullBackfaces", state);
+}
+

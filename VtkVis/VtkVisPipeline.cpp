@@ -240,6 +240,21 @@ void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 	emit vtkVisPipelineChanged();
 }
 
+void VtkVisPipeline::setGlobalBackfaceCulling(bool enable) const
+{
+	// iterate over all source items
+	for (int i = 0; i < _rootItem->childCount(); ++i)
+	{
+		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+		item->setBackfaceCulling(enable);
+
+		// recursively set on all child items
+		item->setBackfaceCullingOnChildren(enable);
+	}
+
+	emit vtkVisPipelineChanged();
+}
+
 void VtkVisPipeline::addPipelineItem(GeoTreeModel* model,
                                      const std::string &name,
                                      GEOLIB::GEOTYPE type)
@@ -283,10 +298,8 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 	_actorMap.insert(item->actor(), newIndex);
 
 	// Do not interpolate images
-#ifndef OGS_USE_OPENSG
 	if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
 		static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
-#endif // OGS_USE_OPENSG
 
 	reset();
 	emit vtkVisPipelineChanged();
@@ -298,10 +311,6 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
                                       QModelIndex parent /* = QModelindex() */)
 {
 	TreeItem* parentItem = getItem(parent);
-
-	// If the parent is not the root TreeItem
-	//if (parent.isValid())
-	//	VtkVisPipelineItem* visParentItem = static_cast<VtkVisPipelineItem*>(parentItem);
 
 	QList<QVariant> itemData;
 	QString itemName;

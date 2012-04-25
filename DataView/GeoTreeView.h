@@ -38,6 +38,8 @@ protected slots:
 private:
 	/// Actions to be taken after a right mouse click is performed in the station view.
 	void contextMenuEvent( QContextMenuEvent* e );
+	/// Calls a FEMConditionSetupDialog.
+	void setElementAsCondition(bool set_on_points = false);
 
 private slots:
 	/// Allows to add FEM Conditions to a process
@@ -45,16 +47,16 @@ private slots:
 	void on_Clicked(QModelIndex idx);
 	/// Calls a LineEditDialog.
 	void connectPolylines();
-	/// Calls a FEMConditionSetupDialog.
-	void setElementAsCondition();
 	/// Calls a SetNameDialog.
 	void setNameForElement();
+	void setObjectAsCondition() { setElementAsCondition(false); };
+	void setObjectPointsAsCondition() { setElementAsCondition(true); };
 	/// Saves a geometry in a file.
 	void writeToFile() const;
 	/// Removes a whole geometry or parts of it.
 	void removeList();
 	/// Saves FEM Conditions associated with the given geometry
-	void saveFEMConditions();
+	//void saveFEMConditions();
 
 signals:
 	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
@@ -63,10 +65,10 @@ signals:
 	void listRemoved(std::string name, GEOLIB::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
-	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
+	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t, bool on_points);
 	void requestLineEditDialog(const std::string&);
 	void requestNameChangeDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
-	void saveFEMConditionsRequested(QString, QString);
+	//void saveFEMConditionsRequested(QString, QString);
 };
 
 #endif //GEOTREEVIEW_H

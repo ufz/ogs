@@ -13,8 +13,9 @@ class vtkInformation;
 class vtkInformationVector;
 
 /// @brief Creates lines that stand on top of the image with the length
-/// of the corresponding first sub-pixel value (the red value). Used by
-/// VtkCompositeImageDataToCylindersFilter.
+/// of the corresponding first sub-pixel value (the grey or red value).
+/// The maximum height is 0.1 * longest image dimension.
+/// Used by VtkCompositeImageDataToCylindersFilter.
 class VtkImageDataToLinePolyDataFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
 public:

@@ -18,6 +18,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkPolylinesSource);
 vtkCxxRevisionMacro(VtkPolylinesSource, "$Revision$");
@@ -25,6 +26,7 @@ vtkCxxRevisionMacro(VtkPolylinesSource, "$Revision$");
 VtkPolylinesSource::VtkPolylinesSource()
 	: _polylines(NULL)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();

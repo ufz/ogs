@@ -18,6 +18,7 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkUnsignedCharArray.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkProperty.h>
 
 // OGS Cell Types
 #include <vtkHexahedron.h>
@@ -32,9 +33,8 @@ vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
 VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
-
-	//this->SetColorByMaterial(true);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
@@ -93,9 +93,9 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	const std::vector<GEOLIB::Point*>* nodes = _grid->getNodes();
 	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
 
-	size_t nPoints = nodes->size();
-	size_t nElems  = elems->size();
-	size_t nElemNodes = 0;
+	const size_t nPoints = nodes->size();
+	const size_t nElems  = elems->size();
+	//size_t nElemNodes = 0;
 	if (nPoints == 0 || nElems == 0)
 		return 0;
 
@@ -118,14 +118,15 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
 	materialIDs->SetName(_matName);
 	materialIDs->SetNumberOfComponents(1);
-	//materialIDs->SetNumberOfTuples(nElems);
+	materialIDs->SetNumberOfTuples(nElems);
 
 	// Generate mesh elements
 	for (size_t i = 0; i < nElems; i++)
 	{
 		vtkCell* newCell;
+		const GridAdapter::Element* elem = (*elems)[i];
 
-		switch ((*elems)[i]->type)
+		switch (elem->type)
 		{
 		case MshElemType::TRIANGLE:
 			newCell = vtkTriangle::New();
@@ -149,11 +150,11 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			return 0;
 		}
 
-		materialIDs->InsertNextValue((*elems)[i]->material);
+		materialIDs->InsertValue(i,(elem->material));
 
-		nElemNodes = (*elems)[i]->nodes.size();
+		const size_t nElemNodes (elem->nodes.size());
 		for (size_t j = 0; j < nElemNodes; j++)
-			newCell->GetPointIds()->SetId(j, (*elems)[i]->nodes[nElemNodes - 1 - j]);
+			newCell->GetPointIds()->SetId(j, elem->nodes[nElemNodes - 1 - j]);
 
 		output->InsertNextCell(newCell->GetCellType(), newCell->GetPointIds());
 		newCell->Delete();

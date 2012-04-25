@@ -9,7 +9,10 @@
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
+
 #include <vtkUnstructuredGridAlgorithm.h>
+
+#include <vector>
 
 class VtkSelectionFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {

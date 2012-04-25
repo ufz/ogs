@@ -212,7 +212,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 	{
 		QList<QVariant> surface;
 		std::string sfc_name("");
-		sfc_name = surface_vec->getNameOfElementByID(i, sfc_name);
+		surface_vec->getNameOfElementByID(i, sfc_name);
 		surface << "Surface " + QString::number(i) << QString::fromStdString(sfc_name) << "" << "";
 
 		const GEOLIB::Surface &sfc(*(*surfaces)[i]);
