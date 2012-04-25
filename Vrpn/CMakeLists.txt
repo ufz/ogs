@@ -36,10 +36,10 @@ Qt4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
 ### Include directories ###
 INCLUDE_DIRECTORIES(
-	.
-	${CMAKE_BINARY_DIR}/Qt/Vrpn/
+	${CMAKE_SOURCE_DIR}/Qt/Vrpn
+	${CMAKE_BINARY_DIR}/Qt/Vrpn
 	${VRPN_INCLUDE_DIRS}
-	../VtkVis
+	${CMAKE_SOURCE_DIR}/Qt/VtkVis
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 )
 

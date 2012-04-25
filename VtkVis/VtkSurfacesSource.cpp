@@ -20,6 +20,7 @@
 #include <vtkPolygon.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkSurfacesSource);
 vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");
@@ -27,6 +28,7 @@ vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");
 VtkSurfacesSource::VtkSurfacesSource()
 	: _surfaces(NULL)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 	//this->SetColorBySurface(true);
 

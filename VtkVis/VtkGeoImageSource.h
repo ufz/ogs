@@ -13,9 +13,9 @@ class QString;
 class QPointF;
 class QImage;
 class vtkQImageToImageSource;
-class vtkImageChangeInformation;
 class vtkImageShiftScale;
 class vtkImageData;
+
 
 class VtkGeoImageSource : public vtkSimpleImageToImageFilter, public VtkAlgorithmProperties
 {
@@ -28,19 +28,23 @@ public:
 	/// @brief Prints information about itself.
 	void PrintSelf(ostream& os, vtkIndent indent);
 
+	/// @brief Returns the ImageData object.
 	vtkImageData* getImageData();
 
-	std::pair<double, double> getOrigin();
+	/// @brief Reads an image from file.
+	void readImage(const QString &filename);
 
-	double getSpacing();
+	/// @brief Imports an existing image object.
+	void setImage(vtkImageAlgorithm* img, const QString &name, double x0, double y0, double spacing);
 
-	void setImageFilename(QString filename);
+	/// @brief Returns the origin in world coordinates.
+	void getOrigin(double origin[3]) const;
 
-	void setImage(QImage& image);
+	/// @brief Returns the scalar data range.
+	void getRange(double range[2]);
 
-	void setOrigin(double x, double y, double z);
-
-	void setSpacing(double spacing);
+	/// @brief Returns the spacing betweeen two pixels.
+	double getSpacing() const;
 
 	virtual void SetUserProperty(QString name, QVariant value);
 
@@ -58,9 +62,9 @@ private:
 	VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
 	void operator=(const VtkGeoImageSource&); // Not implemented
 
-	vtkQImageToImageSource* _imageSource;
-	vtkImageChangeInformation* _imageInfo;
-	vtkImageShiftScale* _imageShift;
+	vtkImageAlgorithm* _imageSource;
+
+	double _x0, _y0, _z0, _spacing;
 };
 
 #endif // VTKGEOIMAGESOURCE_H

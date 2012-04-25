@@ -11,6 +11,7 @@
 #include "VtkStationSource.h"
 
 #include "vtkObjectFactory.h"
+#include <vtkDoubleArray.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkInformation.h>
@@ -21,6 +22,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkStationSource);
 vtkCxxRevisionMacro(VtkStationSource, "$Revision$");
@@ -28,6 +30,7 @@ vtkCxxRevisionMacro(VtkStationSource, "$Revision$");
 VtkStationSource::VtkStationSource()
 	: _stations(NULL)
 {
+	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
 	const GEOLIB::Color* c = GEOLIB::getRandomColor();
@@ -76,6 +79,15 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	if (nStations == 0)
 		return 0;
 
+	bool useStationValues(false);
+	double sValue=static_cast<GEOLIB::Station*>((*_stations)[0])->getStationValue();
+	for (size_t i = 1; i < nStations; i++)
+		if (static_cast<GEOLIB::Station*>((*_stations)[i])->getStationValue() != sValue)
+		{
+			useStationValues = true;
+			break;
+		}
+
 	bool isBorehole =
 	        (static_cast<GEOLIB::Station*>((*_stations)[0])->type() ==
 	GEOLIB::Station::BOREHOLE) ? true : false;
@@ -100,6 +112,10 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	station_ids->SetNumberOfComponents(1);
 	station_ids->SetName("SiteIDs");
 
+	vtkSmartPointer<vtkDoubleArray> station_values = vtkSmartPointer<vtkDoubleArray>::New();
+	station_values->SetNumberOfComponents(1);
+	station_values->SetName("StationValue");
+
 	vtkSmartPointer<vtkIntArray> strat_ids = vtkSmartPointer<vtkIntArray>::New();
 	strat_ids->SetNumberOfComponents(1);
 	strat_ids->SetName("Stratigraphies");
@@ -114,6 +130,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
 		double coords[3] = { (*(*it))[0], (*(*it))[1], (*(*it))[2] };
 		vtkIdType sid = newStations->InsertNextPoint(coords);
 		station_ids->InsertNextValue(site_count);
+		if (useStationValues)
+			station_values->InsertNextValue(static_cast<GEOLIB::Station*>(*it)->getStationValue());
 
 		if (!isBorehole)
 			newVerts->InsertNextCell(1, &sid);
@@ -137,6 +155,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
 				newLines->InsertCellPoint(lastMaxIndex + 1); //end of boreholelayer
 				lastMaxIndex++;
 				strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
+				if (useStationValues)
+					station_values->InsertNextValue(static_cast<GEOLIB::Station*>(*it)->getStationValue());
 			}
 			lastMaxIndex++;
 		}
@@ -157,7 +177,9 @@ int VtkStationSource::RequestData( vtkInformation* request,
 		output->GetCellData()->SetActiveAttribute("Stratigraphies",
 		                                          vtkDataSetAttributes::SCALARS);
 	}
-
+	if (useStationValues)
+		output->GetPointData()->AddArray(station_values);
+	
 	return 1;
 }
 
@@ -191,8 +213,9 @@ size_t VtkStationSource::GetIndexByName( std::string name )
 		if (it->second > max_key)
 			max_key = it->second;
 	}
-	vtkIdType new_index(max_key + 1);
-	std::cout << "Key \"" << name << "\" not found in color lookup table..." << std::endl;
+
+	vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
+	std::cout << "Key \"" << name << "\" (Index " << new_index << ") not found in color lookup table..." << std::endl;
 	_id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
 	return new_index;
 }

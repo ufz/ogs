@@ -22,6 +22,7 @@
 #include <QSettings>
 
 #include "MeshIO/OGSMeshIO.h"
+#include "Writer.h" // necessary to avoid Linker Error in Windows
 
 DataView::DataView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -49,7 +50,8 @@ void DataView::addMeshAction()
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
-		MeshLib::CFEMesh* msh = FileIO::OGSMeshIO::loadMeshFromFile(name);
+		FileIO::OGSMeshIO meshIO;
+		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
 			static_cast<MshModel*>(this->model())->addMesh(msh, name);
 	}
@@ -80,13 +82,17 @@ void DataView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
 		QAction* saveMeshAction   = menu.addAction("Save mesh...");
 		menu.addSeparator();
-		QAction* directSTAction   = menu.addAction("Load DIRECT source terms...");
+		QMenu direct_cond_menu("DIRECT Conditions");
+		menu.addMenu(&direct_cond_menu);
+		QAction* addDirectAction  = direct_cond_menu.addAction("Add...");
+		QAction* loadDirectAction = direct_cond_menu.addAction("Load...");
 		menu.addSeparator();
 		QAction* removeMeshAction = menu.addAction("Remove mesh");
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
-		connect(directSTAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
+		connect(addDirectAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
+		connect(loadDirectAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
 		connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 		menu.exec(event->globalPos());
 	}
@@ -100,10 +106,8 @@ void DataView::openMshEditDialog()
 	        static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
 
 	MshEditDialog meshEdit(mesh);
-	connect(&meshEdit,
-	        SIGNAL(mshEditFinished(MeshLib::CFEMesh *,
-	                               std::string &)), model,
-	        SLOT(addMesh(MeshLib::CFEMesh *, std::string &)));
+	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::CFEMesh*, std::string &)), 
+		    model, SLOT(addMesh(MeshLib::CFEMesh*, std::string &)));
 	meshEdit.exec();
 }
 
@@ -118,29 +122,32 @@ int DataView::writeMeshToFile() const
 		QSettings settings("UFZ", "OpenGeoSys-5");
 		QString mshName = QString::fromStdString(
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
-		std::string fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
-		                                    settings.value("lastOpenedFileDirectory").toString(),
-											"GeoSys mesh file (*.msh)").toStdString();
+		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
+		                                    settings.value("lastOpenedMeshFileDirectory").toString(),
+											"GeoSys mesh file (*.msh)");
 
-		if (!fileName.empty())
+		if (!fileName.isEmpty())
 		{
-			std::ofstream out (fileName.c_str());
-			if (out.is_open())
-			{
-				FileIO::OGSMeshIO::write (mesh, out);
-				out.close();
-				return 1;
-			}
-			else
-				std::cout <<
-				"MshTabWidget::saveMeshFile() - Could not create file..." <<
-				std::endl;
+			FileIO::OGSMeshIO meshIO;
+			meshIO.setMesh(mesh);
+			meshIO.writeToFile(fileName.toStdString().c_str());
+			QDir dir = QDir(fileName);
+			settings.setValue("lastOpenedMeshFileDirectory", dir.absolutePath());
+			return 1;
 		}
 		else
 			OGSError::box("No file name entered.");
 	}
 	return 0;
 }
+
+void DataView::addDIRECTSourceTerms()
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	emit requestCondSetupDialog(grid->getName(), GEOLIB::INVALID, 0, false);
+}
+
 
 void DataView::loadDIRECTSourceTerms()
 {

@@ -8,6 +8,8 @@
 
 #include "VtkAlgorithmProperties.h"
 
+class vtkAlgorithm;
+
 /// @brief Is used to combine several filter in one VtkVisPipelineItem. You can
 /// use vtk filter and custom filter. To subclass this you have to implement the
 /// init() function. There you combine the filters. Make sure to set the members

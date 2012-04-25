@@ -47,7 +47,10 @@ public:
 	~VtkVisPointSetItem();
 
 	/// @brief Gets the last selected attribute.
-	const QString GetActiveAttribute() const {return _activeAttribute; }
+	const QString GetActiveAttribute() const;
+
+	/// @brief Get the scalar range for the active attribute
+	void GetRangeForActiveAttribute(double range[2]) const;
 
 	/// @brief Initializes vtkMapper and vtkActor necessary for visualization of
 	/// the item and sets the item's properties.
@@ -58,25 +61,23 @@ public:
 	/// @brief Sets the selected attribute array for the visualisation of the data set.
 	void SetActiveAttribute(const QString& name);
 
-	/// @brief Sets the scalar range for the selected data array
-	void SetScalarRange(double min, double max);
-
 	/// @brief Scales the data in visualisation-space.
 	void setScale(double x, double y, double z) const;
 
 	/// @brief Translates the item in visualisation-space.
 	void setTranslation(double x, double y, double z) const;
 
+	/// @brief Enables / disables backface culling.
+	void setBackfaceCulling(bool enable) const;
+
 protected:
 	QVtkDataSetMapper* _mapper;
 	vtkTransformFilter* _transformFilter;
-	QString _activeAttribute;
+	bool _onPointData;
+	std::string _activeArrayName;
 
 	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
 	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
-
-	/// Sets a color lookup table for the current scalar array.
-	void setLookupTableForActiveScalar();
 
 	void SetScalarVisibility(bool on);
 
@@ -86,6 +87,7 @@ protected:
 private:
 	/// Checks if the selected attribute actually exists for the data set
 	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
+
 };
 
 #endif // VTKVISPOINTSETITEM_H

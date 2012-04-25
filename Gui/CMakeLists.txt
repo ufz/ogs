@@ -1,11 +1,17 @@
 # Source files
 SET( SOURCES
 	mainwindow.cpp
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/OGSFileConverter.cpp
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/FileListDialog.cpp
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/ConversionTools.cpp
 )
 
 # Moc Header files
 SET( MOC_HEADERS
 	mainwindow.h
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/OGSFileConverter.h
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/FileListDialog.h
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/ConversionTools.h
 )
 
 # Header files
@@ -16,6 +22,8 @@ SET( HEADERS
 # UI files
 SET( UIS
 	mainwindow.ui
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/OGSFileConverter.ui
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter/FileList.ui
 )
 
 
@@ -35,28 +43,25 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_BINARY_DIR}/Qt/DataView/DiagramView
 	${CMAKE_BINARY_DIR}/Qt/VtkVis
 	${CMAKE_BINARY_DIR}/Qt/VtkAct
-	../../Base
-	../../MathLib
-	../../GEO
-	../../FileIO
-	../../MSH
-	../../MSHGEOTOOLS
-	../../FEM
-	../Base
-	../DataView
-	../DataView/StratView
-	../DataView/DiagramView
-	../VtkVis
-	../VtkAct
+	${CMAKE_SOURCE_DIR}/Base
+	${CMAKE_SOURCE_DIR}/MathLib
+	${CMAKE_SOURCE_DIR}/GEO
+	${CMAKE_SOURCE_DIR}/FileIO
+	${CMAKE_SOURCE_DIR}/MSH
+	${CMAKE_SOURCE_DIR}/MSHGEOTOOLS
+	${CMAKE_SOURCE_DIR}/FEM
+	${CMAKE_SOURCE_DIR}/Qt/Base
+	${CMAKE_SOURCE_DIR}/Qt/DataView
+	${CMAKE_SOURCE_DIR}/Qt/DataView/StratView
+	${CMAKE_SOURCE_DIR}/Qt/DataView/DiagramView
+	${CMAKE_SOURCE_DIR}/Qt/VtkVis
+	${CMAKE_SOURCE_DIR}/Qt/VtkAct
+	${CMAKE_SOURCE_DIR}/UTL/FileConverter/OGSFileConverter
 )
 
 IF (Shapelib_FOUND)
 	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
 ENDIF () # Shapelib_FOUND
-
-if (OGS_COMPILE_QVTK)
-	INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/Qt/QVTK ../QVTK)
-endif (OGS_COMPILE_QVTK)
 
 # Put moc files in a project folder
 SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
@@ -87,6 +92,8 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	QVTK
 	VtkVis
 	VtkAct
+	vtkNetCDF
+	vtkNetCDF_cxx
 )
 
 IF (Shapelib_FOUND)
@@ -96,10 +103,6 @@ ENDIF () # Shapelib_FOUND
 IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
-
-IF (libtiff_FOUND)
-	TARGET_LINK_LIBRARIES( ogs-gui ${libtiff_LIBRARIES} )
-ENDIF () # libtiff_FOUND
 
 ADD_DEPENDENCIES ( ogs-gui VtkVis OGSProject )
 
@@ -115,12 +118,12 @@ ENDIF() # OGS_BUILD_INFO
 ### OpenSG support ###
 IF (OGS_USE_OPENSG)
 	USE_OPENSG(ogs-gui)
-	INCLUDE_DIRECTORIES( ../OpenSG )
+	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Qt/OpenSG )
 	TARGET_LINK_LIBRARIES( ogs-gui OgsOpenSG )
 ENDIF (OGS_USE_OPENSG)
 
 IF(OGS_USE_VRPN)
-	INCLUDE_DIRECTORIES( ../Vrpn ${CMAKE_BINARY_DIR}/Qt/Vrpn )
+	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Qt/Vrpn ${CMAKE_BINARY_DIR}/Qt/Vrpn )
 	TARGET_LINK_LIBRARIES( ogs-gui ${VRPN_LIBRARIES} OgsVrpn )
 ENDIF()
 
@@ -133,17 +136,17 @@ IF (OGS_VRED_PLUGIN)
 	ADD_DEFINITIONS(
 		-DBOOST_PYTHON_DYNAMIC_LIB
 	)
-  
+
 	INCLUDE_DIRECTORIES(
 		#${VRED_DIR}/include/vred
-	    ${VRED_DIR}/include/boost-1.34-vc8.0
-	    ${VRED_DIR}/include/python-2.52-vc8.0
-	    #${VRED_DIR}/include/zlib-1.23
-	    #${VRED_DIR}/include/OpenSG
-	    #${VRED_DIR}/include/OpenSG/OpenSG
+    ${VRED_DIR}/include/boost-1.34-vc8.0
+    ${VRED_DIR}/include/python-2.52-vc8.0
+    #${VRED_DIR}/include/zlib-1.23
+    #${VRED_DIR}/include/OpenSG
+    #${VRED_DIR}/include/OpenSG/OpenSG
 	)
 	LINK_DIRECTORIES( ${VRED_DIR}/bin/WIN32 )
-	
+
 	ADD_LIBRARY( ogs-gui-vred SHARED
 		${SOURCES}
 		${HEADERS}
@@ -163,14 +166,13 @@ IF (OGS_VRED_PLUGIN)
 		QtDataView
 		StratView
 		${Shapelib_LIBRARIES}
-		${libtiff_LIBRARIES}
 		${libgeotiff_LIBRARIES}
 		QVTK
 		VtkVis
 		VtkAct
 		#boost_python-vc80-mt-1_34_1
 	)
-	
+
 	ADD_DEPENDENCIES ( ogs-gui-vred VtkVis OGSProject )
 ENDIF (OGS_VRED_PLUGIN)
 
@@ -180,20 +182,20 @@ ENDIF (OGS_VRED_PLUGIN)
 
 IF (OGS_PACKAGING)
 	INSTALL (TARGETS ogs-gui RUNTIME DESTINATION bin COMPONENT ogs_gui)
-	
+
 	IF(MSVC)
 		SET(OGS_GUI_EXE ${OGS_EXECUTABLE}-gui.exe)
 	ELSE(MSVC)
 		SET(OGS_GUI_EXE ${OGS_EXECUTABLE}-gui)
 	ENDIF(MSVC)
-	
+
 	INCLUDE(GetPrerequisites)
 	if (EXISTS ${OGS_GUI_EXE})
 		GET_PREREQUISITES(${OGS_GUI_EXE} OGS_GUI_DEPENDENCIES 1 1 "/usr/local/lib;/;${VTK_DIR};${OpenSG_LIBRARY_DIRS}" "")
 		MESSAGE (STATUS "ogs-gui depends on:")
 		FOREACH(DEPENDENCY ${OGS_GUI_DEPENDENCIES})
 			IF(NOT ${DEPENDENCY} STREQUAL "not") # Some bug on Linux?
-				message("${DEPENDENCY}")				
+				message("${DEPENDENCY}")
 				GP_RESOLVE_ITEM ("/" "${DEPENDENCY}" ${OGS_GUI_EXE} "/usr/local/lib;/;${VTK_DIR}" DEPENDENCY_PATH)
 				SET (DEPENDENCY_PATHS ${DEPENDENCY_PATHS} ${DEPENDENCY_PATH})
 			ENDIF()

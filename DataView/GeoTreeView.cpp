@@ -21,7 +21,7 @@ void GeoTreeView::updateView()
 {
 	setAlternatingRowColors(true);
 	//resizeColumnToContents(0);
-	setColumnWidth(1,150);
+	setColumnWidth(0,150);
 	setColumnWidth(1,50);
 	setColumnWidth(2,50);
 }
@@ -87,15 +87,27 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 	}
 	else
 	{
+		if (!item)  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a treeview
+			return;
+
 		GeoObjectListItem* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
 
 		// The current index refers to a geo-object
 		if (parent != NULL)
 		{
-			QAction* addCondAction = menu.addAction("Set as FEM condition...");
+			QMenu* cond_menu = new QMenu("Set FEM Condition");
+			menu.addMenu(cond_menu);
+			QAction* addCondAction = cond_menu->addAction("On object...");
+			QAction* addCondPointAction = cond_menu->addAction("On all points...");
 			QAction* addNameAction = menu.addAction("Set name...");
-			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setElementAsCondition()));
+			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setObjectAsCondition()));
 			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
+
+			if (parent->getType() == GEOLIB::POINT)
+				addCondPointAction->setEnabled(false);
+			else
+				connect(addCondPointAction, SIGNAL(triggered()), this, SLOT(setObjectPointsAsCondition()));
+
 		}
 		// The current index refers to the name of a geometry-object
 		else if (item->childCount() > 0)
@@ -104,12 +116,12 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			{
 				QAction* saveAction = menu.addAction("Save geometry...");
 				QAction* addCNDAction = menu.addAction("Load FEM Conditions...");
-				QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
+				//QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
 				menu.addSeparator();
 				QAction* removeAction = menu.addAction("Remove geometry");
 				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
-				connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
+				//connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
 				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
 		}
@@ -138,14 +150,14 @@ void GeoTreeView::removeList()
 		emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
 }
 
-void GeoTreeView::setElementAsCondition()
+void GeoTreeView::setElementAsCondition(bool set_on_points)
 {
 	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	const size_t id = item->row();
 	const GEOLIB::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
-	emit requestCondSetupDialog(geometry_name, type, id);
+	emit requestCondSetupDialog(geometry_name, type, id, set_on_points);
 }
 
 void GeoTreeView::setNameForElement()
@@ -175,12 +187,13 @@ void GeoTreeView::loadFEMConditions()
 	        this->selectionModel()->currentIndex());
 	emit loadFEMCondFileRequested(item->data(0).toString().toStdString());
 }
-
+/*
 void GeoTreeView::saveFEMConditions()
 {
 	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	QString fileName = QFileDialog::getSaveFileName(NULL,
-						"Save FEM Conditions as", "", "GeoSys FEM Condition file (*.cnd)");
+						"Save FEM Conditions as", "", "OpenGeoSys FEM Condition file (*.cnd);; GeoSys Boundary Condition (*.bc);; GeoSys Initial Condition (*.ic);; GeoSys Source Condition (*.st)");
 	emit saveFEMConditionsRequested(item->data(0).toString(), fileName);
 }
+*/

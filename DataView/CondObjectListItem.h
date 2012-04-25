@@ -28,13 +28,14 @@ public:
 	/// Constructor for the TreeItem specifying FEM Conditions.
 	CondObjectListItem(const QList<QVariant> &data,
 	                   TreeItem* parent,
-	                   const FEMCondition::CondType type,
+	                   FEMCondition* cond,
 	                   const std::vector<GEOLIB::Point*>* points)
-		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(type),
+		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(cond->getCondType()),
 		  _cond_vec(new std::vector<FEMCondition*>)
 	{
+		_cond_vec->push_back(cond);
 		QString display_name = parent->data(0).toString().append(" - ").append(
-		        QString::fromStdString(FEMCondition::condTypeToString(type)));
+		        QString::fromStdString(FEMCondition::condTypeToString(_type)));
 		static_cast<VtkConditionSource*>(_vtkSource)->setData( points, _cond_vec);
 		static_cast<VtkConditionSource*>(_vtkSource)->SetName( display_name );
 	}

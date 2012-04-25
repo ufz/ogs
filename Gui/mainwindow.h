@@ -53,7 +53,7 @@ protected slots:
 	/// Function calls for saving files.
 	void save();
 	/// Function calls for generating GMSH files from the GUI
-	void callGMSH(std::vector<std::string> const & selectedGeometries,
+	void callGMSH(std::vector<std::string> & selectedGeometries,
 	              size_t param1,
 	              double param2,
 	              double param3,
@@ -81,14 +81,16 @@ protected slots:
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
+	void showConditionWriterDialog();
 	/// Call dialog for creating or modifying FEM conditions.
-	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
+	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, bool on_points = false);
 	/// Allows setting the name for a geometric object
 	void showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
 	/// Calls the diagram prefs dialog from the Tools menu.
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
+	void showFileConverterDialog();
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
@@ -97,7 +99,8 @@ protected slots:
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
-	void writeFEMConditionsToFile(QString geoName, QString fileName);
+	void addFEMConditions(const std::vector<FEMCondition*> conditions);
+	void writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
 
@@ -110,7 +113,7 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
-	void loadDIRECTSourceTerms(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
+	void loadDIRECTSourceTermsFromASCII(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
 
 private:
 	QMenu* createImportFilesMenu();
@@ -136,6 +139,8 @@ private:
 	QList<QRect> _screenGeometries;
 	QWidget* _vtkWidget;
 	QByteArray _windowState;
+	QMenu* _import_files_menu;
+
 #ifdef OGS_USE_VRPN
 	TrackingSettingsWidget* _trackingSettingsWidget;
 #endif     // OGS_USE_VRPN

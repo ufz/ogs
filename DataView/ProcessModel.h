@@ -56,6 +56,9 @@ public slots:
 	/// Removes all processes from the model
 	void removeAllProcesses();
 
+	/// Remove the given TreeItem and replace it with another condition (this is used for editing FEMConditions)
+	void replaceCondition(const QModelIndex &idx, FEMCondition* condition);
+
 private:
 	/// Adds a new FEM condition to the condition tree model.
 	void addConditionItem(FEMCondition* condition);
@@ -64,7 +67,7 @@ private:
 	//bool removeConditionItem(const QModelIndex &idx);
 
 	/// Creates the TreeItem for one of the condition subtrees.
-	CondObjectListItem* createCondParent(ProcessItem* parent, const FEMCondition::CondType type, const std::string &geometry_name);
+	CondObjectListItem* createCondParent(ProcessItem* parent, FEMCondition* cond);
 
 	/// Returns the subtree-item for a given type of condtion.
 	CondObjectListItem* getCondParent(TreeItem* parent, const FEMCondition::CondType type) ;

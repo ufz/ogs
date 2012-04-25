@@ -173,22 +173,11 @@ bool DatabaseConnection::isConnected()
 }
 
 /**
- * Loads a list of stations with a random colour
+ * Loads a list of stations.
  * \param listID The ID of the list that is requested
  * \return 1 if there were no errors, 0 and an error message otherwise.
  */
-int DatabaseConnection::loadStationList(const int &listID)
-{
-	return loadStationList(listID, GEOLIB::getRandomColor());
-}
-
-/**
- * Loads a list of stations with a specified colour
- * \param listID The ID of the list that is requested
- * \param color The colour which will be assigned to the objects in the list
- * \return 1 if there were no errors, 0 and an error message otherwise.
- */
-int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const color)
+int DatabaseConnection::loadStationList(int listID)
 {
 	if (_db.open())
 	{
@@ -249,7 +238,7 @@ int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const c
 						        stnQuery.value(2).toDouble(),
 						        stnQuery.value(3).toDouble(),
 						        stnQuery.value(4).toDouble());
-					newStation->setColor(color);
+
 					stations->push_back(newStation);
 				}
 
@@ -259,7 +248,7 @@ int DatabaseConnection::loadStationList(int listID, const GEOLIB::Color* const c
 
 				std::string temp_name (listName.toStdString());
 				if (!stations->empty())
-					_geoObjects->addStationVec(stations, temp_name, color);
+					_geoObjects->addStationVec(stations, temp_name);
 
 				_db.close();
 				//emit listLoaded(listName);

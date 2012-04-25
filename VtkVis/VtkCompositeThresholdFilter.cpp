@@ -11,9 +11,10 @@
 #include <vtkCellData.h>
 #include <vtkThreshold.h>
 #include <vtkUnstructuredGrid.h>
-
 #include <vtkIntArray.h>
 #include <vtkSmartPointer.h>
+
+#include <limits>
 
 VtkCompositeThresholdFilter::VtkCompositeThresholdFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)
@@ -35,25 +36,23 @@ void VtkCompositeThresholdFilter::init()
 	vtkThreshold* threshold = vtkThreshold::New();
 	threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-	// TODO: Initalisation
-	//vtkDataArray* activeScalar = vtkDataSet::SafeDownCast(threshold->GetInput())->GetCellData()->GetArray(0);
-	//threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, activeScalar->GetName());
-	//threshold->SetComponentModeToUseSelected();
-
-//double* range = threshold->GetOutput()->GetScalarRange();
-//std::cout << range[0] << ", " << range[1] << std::endl;
+	// Note: There is no need to select the input array because it is
+	//       automatically selected.
 
 	// Sets a filter property which will be user editable
 	threshold->SetSelectedComponent(0);
 
-	// Sets a filter vector property which will be user editable
-	threshold->ThresholdBetween(0, 100);
+	// Setting the threshold to min / max values to ensure that the whole data
+	// is first processed. This is needed for correct lookup table generation.
+	const double dMin = std::numeric_limits<double>::min();
+	const double dMax = std::numeric_limits<double>::max();
+	threshold->ThresholdBetween(dMin, dMax);
 
 	// Create a list for the ThresholdBetween (vector) property.
 	QList<QVariant> thresholdRangeList;
 	// Insert the values (same values as above)
-	thresholdRangeList.push_back(0);
-	thresholdRangeList.push_back(100);
+	thresholdRangeList.push_back(dMin);
+	thresholdRangeList.push_back(dMax);
 	// Put that list in the property map
 	(*_algorithmUserVectorProperties)["Threshold Between"] = thresholdRangeList;
 
@@ -80,17 +79,7 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVa
 
 	// Use the same name as in init()
 	if (name.compare("Threshold Between") == 0)
-		//double* range = dynamic_cast<vtkUnstructuredGridAlgorithm*>(_outputAlgorithm)->GetOutput()->GetScalarRange();
-		//std::cout << range[0] << ", " << range[1] << std::endl;
 		// Set the vector property on the algorithm
 		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
-		        values[0].toInt(), values[1].toInt());
+		        values[0].toDouble(), values[1].toDouble());
 }
-/*
-   void VtkCompositeThresholdFilter::SetScalarRangeOnItem( double min, double max )
-   {
-    _item->SetScalarRange(min, max);
-    emit requestViewUpdate();
-   }
-
- */

@@ -36,7 +36,6 @@ public:
 	int getStationID(const int &listID, const double &x, const double &y);
 	void getListSelection();
 	bool isConnected();
-	int loadStationList(int listID, const GEOLIB::Color* const color);
 	int loadValues(const int &listID,
 	               const int &stationID,
 	               const QDateTime &startDate,
@@ -50,7 +49,7 @@ public slots:
 	              QString dbname,
 	              QString user,
 	              QString pass);
-	int loadStationList(const int &listID);
+	int loadStationList(int listID);
 	int setConnection(QString protocol,
 	                  QString hostname,
 	                  QString dbname,

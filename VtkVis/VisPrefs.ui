@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>188</width>
-    <height>296</height>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -104,6 +104,25 @@
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Rendering</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QCheckBox" name="cullBackfacesCheckBox">
+        <property name="toolTip">
+         <string>If enabled, all objects (such as triangles, quads) which normals are not pointing towards the view are not rendered.</string>
+        </property>
+        <property name="text">
+         <string>Cull backfaces</string>
         </property>
        </widget>
       </item>

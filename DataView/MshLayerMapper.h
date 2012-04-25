@@ -36,16 +36,14 @@ public:
 	                                      double thickness);
 
 	/// Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-	static MeshLib::CFEMesh* LayerMapping(const MeshLib::CFEMesh* msh,
+	static int LayerMapping(MeshLib::CFEMesh* msh,
 	                                      const std::string &rasterfile,
 	                                      const size_t nLayers,
 	                                      const size_t layer_id,
 	                                      bool removeNoDataValues = false);
 
-	/// \brief Checks for overlapping nodes between between layers and corrects these errors.
-	/// Note: this method has not been tested yet and will probably fail miserably! Please contact KR
-	/// if you intend to use it!
-	static void CheckLayerMapping(MeshLib::CFEMesh* mesh, const size_t nLayers, int integ);
+	/// Blends a mesh with the surface given by dem_raster. Nodes and elements above the surface are either removed or adapted to fit the surface.
+	static MeshLib::CFEMesh* blendLayersWithSurface(MeshLib::CFEMesh* mesh, const size_t nLayers, const std::string &dem_raster);
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
