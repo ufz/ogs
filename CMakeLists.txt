@@ -14,6 +14,7 @@ INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
 INCLUDE(scripts/cmake/Find.cmake)
 INCLUDE(scripts/cmake/ProjectSetup.cmake)
+INCLUDE(scripts/cmake/DocumentationSetup.cmake)
 
 ###############
 ### Options ###
