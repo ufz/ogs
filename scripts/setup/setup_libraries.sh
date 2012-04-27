@@ -176,18 +176,19 @@ if [ "$OSTYPE" == 'msys' ]; then
 	# Check for existing installation
 	elif [ -f metis/build/windows/libmetis/Release/metis.lib ]; then
 		METIS_FOUND=true
-		cp metis/build/windows/libmetis/Release/metis.lib lib/metis.lib
-		cp metis/include/metis.h include/metis.h
 	fi
 
 	if [ $METIS_FOUND ]; then
 		echo "Metis already installed in $LIBS_LOCATION/metis"
 	else
 		# Compile
-		cd $METIS_VERSION
+		cd metis
 		$COMSPEC \/c "vsgen.bat -G \"$CMAKE_GENERATOR\""
 		cd build/windows
 		cmake --build . --config Release --target metis
+		cd ../..
+		cp build/windows/libmetis/Release/metis.lib ../lib/metis.lib
+		cp include/metis.h ../include/metis.h
 	fi
 fi
 

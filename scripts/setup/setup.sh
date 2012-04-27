@@ -37,7 +37,7 @@ source setup_prerequisites.sh
 
 source setup_libraries.sh
 
-source setup_builds.sh
+# source setup_builds.sh
 
 if [ $QT_WAS_BUILT ]; then
 	echo "Important note: Make sure to add the Qt environment variables!"
