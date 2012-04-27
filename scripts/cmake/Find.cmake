@@ -18,7 +18,7 @@ FIND_PACKAGE(cppcheck)
 ######################
 
 # Clang does not have OpenMP support atm, see https://github.com/ufz/ogs/issues/8
-IF(CMAKE_CXX_COMPILER MATCHES "!clang")
+IF(NOT COMPILER_IS_CLANG)
 	FIND_PACKAGE(OpenMP)
 ENDIF () # !clang
 IF(OPENMP_FOUND)
