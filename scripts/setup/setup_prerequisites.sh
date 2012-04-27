@@ -1,46 +1,32 @@
 #!/usr/bin/env bash
 
+# Check for prerequisites
+CMAKE_LOCATION=`which cmake`
+if [ -z "$CMAKE_LOCATION" ]; then
+	echo "CMake not found! Aborting..."
+	exit 1
+fi
+
+source $SOURCE_LOCATION/scripts/base/download_file_with_cmake.sh
+source $SOURCE_LOCATION/scripts/base/configure_compiler.sh
+
 ## Windows specific
 if [ "$OSTYPE" == 'msys' ]; then
-	
-	# Check Visual Studio version and setup CMake generator
-	if [ -z "$VS80COMNTOOLS" ]; then
-		if [ -z "$VS90COMNTOOLS" ]; then
-			if [ -z "VS100COMNTOOLS" ]; then
-				echo "Error: Visual Studio not found"
-				exit 1
-			else
-				WIN_DEVENV_PATH="$VS100COMNTOOLS..\\IDE\\"
-				CMAKE_GENERATOR="Visual Studio 10"
-			fi
-		else
-			WIN_DEVENV_PATH="$VS90COMNTOOLS..\\IDE"
-			CMAKE_GENERATOR="Visual Studio 9 2008"
-		fi
-	else
-		WIN_DEVENV_PATH="$VS80COMNTOOLS..\\IDE"
-		CMAKE_GENERATOR="Visual Studio 8 2005"
-	fi
-	
-	if [ "$ARCHITECTURE" == "x64" ]; then
-		CMAKE_GENERATOR="$CMAKE_GENERATOR Win64"
-	fi
-	
-	# Replace backslashes in WIN_DEVENV_PATH
-	DEVENV_PATH=$(echo "$WIN_DEVENV_PATH" | awk '{ gsub(/\\/, "/"); print }')
-	DEVENV_PATH=$(echo "$DEVENV_PATH" | awk '{ gsub(/C:\//, "/c/"); print }')
-	
-	echo "Visual Studio found: $DEVENV_PATH"
-	echo "CMake Generator: $CMAKE_GENERATOR"
-	export PATH=$PATH:$DEVENV_PATH
-	
+
+	mkdir -vp ~/bin
+
 	# 7-zip
 	SEVENZIP_LOCATION=`which 7za`
 	if [ ! -z "$SEVENZIP_LOCATION" ]; then
 		echo "7-zip found."
 	else
 		cd ~/bin
-		wget --no-check-certificate https://github.com/downloads/ufz/devguide/7za.exe
+		download_file http://dl.dropbox.com/u/5581063/7za.exe ./7za.exe e92604e043f51c604b6d1ac3bcd3a202
+	fi
+	SEVENZIP_LOCATION=`which 7za`
+	if [ -z "$SEVENZIP_LOCATION" ]; then
+		echo "7-zip not downloaded! Aborting..."
+		exit 1
 	fi
 
 	# jom
@@ -49,9 +35,15 @@ if [ "$OSTYPE" == 'msys' ]; then
 		echo "jom found."
 	else
 		cd ~/bin
-		wget --no-check-certificate https://github.com/downloads/ufz/devguide/jom.exe
+		download_file http://dl.dropbox.com/u/5581063/jom.exe ./jom.exe 335428f223d36f0a39faaa845222346d
+	fi
+	JOM_LOCATION=`which jom`
+	if [ -z "$JOM_LOCATION" ]; then
+		echo "jom not downloaded! Aborting..."
+		exit 1
 	fi
 
 fi
+
 
 cd "$SOURCE_LOCATION/scripts/setup"
