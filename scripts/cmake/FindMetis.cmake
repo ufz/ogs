@@ -13,11 +13,13 @@
 FIND_PATH(METIS_INCLUDE_DIR metis.h
 	/usr/include/metis
 	$ENV{HOME}/include/
+	${CMAKE_SOURCE_DIR}/../libs/include
 )
 
 FIND_LIBRARY(METIS_LIBRARY metis
 	/usr/lib
 	$ENV{HOME}/lib/
+	${CMAKE_SOURCE_DIR}/../libs/lib
 )
 
 IF(METIS_INCLUDE_DIR)
