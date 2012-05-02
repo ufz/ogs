@@ -86,4 +86,28 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	return acos (scpr (v0,v1,3) / (sqrt(scpr(v0,v0,3)) * sqrt(scpr (v1,v1,3))));
 }
 
+double calcDetTriangle(const double p0[3], const double p1[3],	const double p2[3])
+{
+	const double u0 (p2[0] - p0[0]);
+	const double u1 (p2[1] - p0[1]);
+	const double u2 (p2[2] - p0[2]);
+
+	const double v0 (p1[0] - p0[0]);
+	const double v1 (p1[1] - p0[1]);
+	const double v2 (p1[2] - p0[2]);
+
+	const double z0 (u1*v2 - u2*v1);
+	const double z1 (u2*v0 - u0*v2);
+	const double z2 (u0*v1 - u1*v0);
+
+	return 0.5 * sqrt(z0*z0 + z1*z1 + z2 * z2);
+}
+
+double calcDetTetrahedron(const double* x1, const double* x2, const double* x3, const double* x4)
+{
+	return fabs((x1[0] - x4[0]) * ((x2[1] - x4[1]) * (x3[2] - x4[2]) - (x2[2] - x4[2]) * (x3[1] - x4[1]))
+	          - (x1[1] - x4[1]) * ((x2[0] - x4[0]) * (x3[2] - x4[2]) - (x2[2] - x4[2]) * (x3[0] - x4[0]))
+	          + (x1[2] - x4[2]) * ((x2[0] - x4[0]) * (x3[1] - x4[1]) - (x2[1] - x4[1]) * (x3[0] - x4[0]))) / 6.0;
+}
+
 } // namespace

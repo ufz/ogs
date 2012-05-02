@@ -94,6 +94,10 @@ float normalize(float min, float max, float val);
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
 
+double calcDetTriangle(const double p0[3], const double p1[3],	const double p2[3]);
+
+double calcDetTetrahedron(const double* x1, const double* x2, const double* x3, const double* x4);
+
 /**
  * simple power function that takes as a second argument an integer instead of a float
  * @param base basis of the expression
