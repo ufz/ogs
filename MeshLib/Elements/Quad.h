@@ -28,11 +28,19 @@ namespace MeshLib {
 class Quad : public Face
 {
 public:
+	/// Constructor with an array of mesh nodes.
 	Quad(Node* nodes[4], size_t value = 0);
+
+	/// Constructor using single mesh nodes.
 	Quad(Node* n0, Node* n1, Node* n2, Node* n3, size_t value = 0);
+
+	/// Copy constructor
 	Quad(const Quad &quad);
+
+	/// Destructor
 	virtual ~Quad();
 
+	/// Get the number of nodes for this element.
 	size_t getNNodes() const { return 4; };
 
 protected:

@@ -23,9 +23,16 @@ class Element;
 class Node : public GEOLIB::PointWithID
 {
 public:
-	Node(double const*const coords, size_t id = std::numeric_limits<size_t>::max());
+	/// Constructor using a coordinate array
+	Node(const double coords[3], size_t id = std::numeric_limits<size_t>::max());
+
+	/// Constructor using single coordinates
 	Node(double x, double y, double z, size_t id = std::numeric_limits<size_t>::max());
+
+	/// Copy constructor
 	Node(const Node &node);
+
+	/// Destructor
 	~Node();
 
 private:

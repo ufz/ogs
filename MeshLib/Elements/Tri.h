@@ -29,11 +29,19 @@ namespace MeshLib {
 class Tri : public Face
 {
 public:
+	/// Constructor with an array of mesh nodes.
 	Tri(Node* nodes[3], size_t value = 0);
+
+	/// Constructor using single mesh nodes.
 	Tri(Node* n0, Node* n1, Node* n2, size_t value = 0);
+
+	/// Copy constructor
 	Tri(const Tri &tri);
+
+	/// Destructor
 	virtual ~Tri();
 
+	/// Get the number of nodes for this element.
 	size_t getNNodes() const { return 3; };
 
 protected:

@@ -9,7 +9,7 @@
 
 namespace MeshLib {
 
-Node::Node(double const*const coords, size_t id)
+Node::Node(const double coords[3], size_t id)
 	: GEOLIB::PointWithID(coords, id)
 {
 }

@@ -12,13 +12,25 @@
 
 namespace MeshLib {
 
+/**
+ * A mesh node for finite element meshes.
+ */
 class FemNode : public Node
 {
 public:
+	/// Constructor using a coordinate array
 	FemNode(double const*const coords, size_t id = std::numeric_limits<size_t>::max());
+	
+	/// Constructor using single coordinates
 	FemNode(double x, double y, double z, size_t id = std::numeric_limits<size_t>::max());
+
+	/// Constructor using a mesh node
 	FemNode(const Node &node);
+
+	/// Copy constructor
 	FemNode(const FemNode &node);
+
+	/// Destructor
 	~FemNode();
 
 }; /* class */

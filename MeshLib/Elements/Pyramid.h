@@ -29,11 +29,19 @@ namespace MeshLib {
 class Pyramid : public Cell
 {
 public:
+	/// Constructor with an array of mesh nodes.
 	Pyramid(Node* nodes[5], size_t value = 0);
+
+	/// Constructor using single mesh nodes.
 	Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, size_t value = 0);
+
+	/// Copy constructor
 	Pyramid(const Pyramid &pyramid);
+
+	/// Destructor
 	virtual ~Pyramid();
 
+	/// Get the number of nodes for this element.
 	size_t getNNodes() const { return 5; };
 
 protected:

@@ -31,10 +31,16 @@ namespace MeshLib {
 class Hex : public Cell
 {
 public:
+	/// Constructor with an array of mesh nodes.
 	Hex(Node* nodes[8], size_t value = 0);
+
+	/// Copy constructor
 	Hex(const Hex &hex);
+
+	/// Destructor
 	virtual ~Hex();
 
+	/// Get the number of nodes for this element.
 	size_t getNNodes() const { return 8; };
 
 protected:

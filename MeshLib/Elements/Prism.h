@@ -29,11 +29,19 @@ namespace MeshLib {
 class Prism : public Cell
 {
 public:
+	/// Constructor with an array of mesh nodes.
 	Prism(Node* nodes[6], size_t value = 0);
+
+	/// Constructor using single mesh nodes.
 	Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, size_t value = 0);
+
+	/// Copy constructor
 	Prism(const Prism &prism);
+
+	/// Destructor
 	virtual ~Prism();
 
+	/// Get the number of nodes for this element.
 	size_t getNNodes() const { return 6; };
 
 protected:
