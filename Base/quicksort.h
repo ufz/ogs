@@ -15,16 +15,6 @@
 #include "swap.h"
 
 template <class T>
-void quickSort(T* array, unsigned beg, unsigned end)
-{
-  if (beg < end) {
-    unsigned p = partition_(array, beg, end);
-    quickSort(array, beg, p);
-    quickSort(array, p+1, end);
-  }
-}
-
-template <class T>
 unsigned partition_(T* array, unsigned beg, unsigned end)
 {
   unsigned i = beg+1;
@@ -41,6 +31,16 @@ unsigned partition_(T* array, unsigned beg, unsigned end)
 
   BaseLib::swap(array[beg], array[j]);
   return j;
+}
+
+template <class T>
+void quickSort(T* array, unsigned beg, unsigned end)
+{
+  if (beg < end) {
+    unsigned p = partition_(array, beg, end);
+    quickSort(array, beg, p);
+    quickSort(array, p+1, end);
+  }
 }
 
 /**

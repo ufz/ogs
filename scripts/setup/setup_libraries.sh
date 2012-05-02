@@ -1,181 +1,195 @@
 #!/usr/bin/env bash
 
-cd "$SOURCE_LOCATION/../"
-mkdir -vp libs
-cd libs
+LIBS_LOCATION="$SOURCE_LOCATION/../libs"
+
+mkdir -vp $LIBS_LOCATION
+cd $LIBS_LOCATION
+mkdir -vp include
+mkdir -vp lib
 
 QMAKE_LOCATION=`which qmake`
 
-QT_VERSION="qt-everywhere-opensource-src-4.7.3"
-VTK_VERSION="vtk-5.6.1"
+QT_VERSION="qt-everywhere-opensource-src-4.7.4"
+VTK_VERSION="vtk-5.8.0"
 SHAPELIB_VERSION="shapelib-1.3.0b2"
-LIBTIFF_VERSION="tiff-3.9.5"
 LIBGEOTIFF_VERSION="libgeotiff-1.3.0"
+INSTANTCLIENT_VERSION="instantclient_11_2"
+METIS_VERSION="metis-5.0.2"
 
 ## Windows specific
 if [ "$OSTYPE" == 'msys' ]; then
-	if [ -z "$QMAKE_LOCATION" ]; then
-		# Install Qt
-		if [ ! -d $QT_VERSION ]; then
-			# Download and extract
-			wget http://get.qt.nokia.com/qt/source/$QT_VERSION.zip -O ./$QT_VERSION.zip
-			7za x $QT_VERSION.zip
-			rm $QT_VERSION.zip
-		elif [ -f $QT_VERSION/bin/qmake.exe -a -f $QT_VERSION/bin/QtGui4.dll ]; then
-			# Already installed
-			QT_FOUND=true
-		fi
-		
-		if [ $QT_FOUND ]; then
-			echo "Qt already installed in $SOURCE_LOCATION/../$QT_VERSION"
-		else
-			# Compile
-			
-			# TODO: -mp flag for multiprocessor compiling?
-			if [ $LIB_DEBUG ]; then
-				QT_CONFIGURATION="-debug-and-release"
-			else
-				QT_CONFIGURATION="-release"
-			fi
-			
-			cd $QT_VERSION
+#	if [ -z "$QMAKE_LOCATION" ]; then
+#		# Install Qt
+#		if [ ! -d qt ]; then
+#			# Download and extract
+#			download_file http://get.qt.nokia.com/qt/source/$QT_VERSION.zip ./$QT_VERSION.zip
+#			7za x $QT_VERSION.zip
+#			mv $QT_VERSION/ qt/
+#			rm $QT_VERSION.zip
+#
+#		elif [ -f qt/bin/qmake.exe -a -f qt/bin/QtGui4.dll -a -f qt/bin/QtGuid4.dll ]; then
+#			# Already installed
+#			QT_FOUND=true
+#		fi
+#
+#		if [ $QT_FOUND ]; then
+#			echo "Qt already installed in $LIBS_LOCATION/qt"
+#		else
+#			# Compile
+#			QT_CONFIGURATION="-debug-and-release"
+#
+#			# Get instantclient
+#			QT_SQL_ARGS=""
+#			if [ $QT_SQL ]; then
+#				if [ ! -d instantclient ]; then
+#					if [ "$ARCHITECTURE" == "x64" ]; then
+#						download_file http://dl.dropbox.com/u/5581063/instantclient_11_2_x64.zip ./instantclient_11_2_x64.zip 015bd1b163571988cacf70e7d6185cb5
+#						7za x instantclient_11_2_x64.zip
+#						mv instantclient_11_2/ instantclient/
+#						rm instantclient_11_2_x64.zip
+#					fi
+#				fi
+#				QT_SQL_ARGS="-qt-sql-oci -I %cd%\..\instantclient\sdk\include -L %cd%\..\instantclient\sdk\lib\msvc"
+#			fi
+#
+#			cd qt
+#
+#			echo " \
+#			\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+#			echo y | configure -opensource -no-accessibility -no-dsp -no-vcproj -no-phonon -no-webkit -no-scripttools -nomake demos -nomake examples $QT_CONFIGURATION $QT_SQL_ARGS &&\
+#			jom && nmake clean &&\
+#			exit\
+#			" > build.bat
+#
+#			$COMSPEC \/k build.bat
+#			QT_WAS_BUILT=true
+#		fi
+#
+#		export PATH=$PATH:$LIBS_LOCATION/qt/bin
+#
+#	else
+#		echo "Qt already installed in $QMAKE_LOCATION"
+#	fi
+#
+#
+#	# Install VTK
+#	cd $LIBS_LOCATION
+#	if [ ! -d vtk ]; then
+#		# Download, extract, rename
+#		download_file http://www.vtk.org/files/release/5.8/$VTK_VERSION.tar.gz ./$VTK_VERSION.tar.gz
+#		tar -xf $VTK_VERSION.tar.gz
+#		rm $VTK_VERSION.tar.gz
+#	# Check for existing installation
+#	elif [ -f vtk/build/bin/Release/QVTK.lib -a -f vtk/build/bin/Release/vtkRendering.lib ]; then
+#		if [ $LIB_DEBUG ]; then
+#			if [ -f vtk/build/bin/Debug/QVTK.lib -a -f vtk/build/bin/Debug/vtkRendering.lib ]; then
+#				VTK_FOUND=true
+#			fi
+#		else
+#			VTK_FOUND=true
+#		fi
+#	fi
+#
+#	if [ $VTK_FOUND ]; then
+#		echo "VTK already installed in $LIBS_LOCATION/vtk"
+#	else
+#		# Compile
+#		cd vtk
+#		mkdir -vp build
+#		cd build
+#		cmake .. -DBUILD_TESTING=OFF -DVTK_USE_QT=ON -G "$CMAKE_GENERATOR"
+#		cmake ..
+#		#$COMSPEC \/c "echo %PATH%"
+#		$COMSPEC \/c "devenv VTK.sln /Build Release"
+#		$COMSPEC \/c "devenv VTK.sln /Build Release /Project QVTK"
+#		$COMSPEC \/c "devenv VTK.sln /Build Debug"
+#		$COMSPEC \/c "devenv VTK.sln /Build Debug /Project QVTK"
+#	fi
+#
+#	# Install shapelib
+#	cd $LIBS_LOCATION
+#	if [ ! -d shapelib ]; then
+#		# Download, extract
+#		download_file http://download.osgeo.org/shapelib/$SHAPELIB_VERSION.tar.gz ./$SHAPELIB_VERSION.tar.gz
+#		tar -xf $SHAPELIB_VERSION.tar.gz
+#		mv $SHAPELIB_VERSION/ shapelib/
+#		rm -rf $SHAPELIB_VERSION.tar.gz
+#	elif [ -f shapelib/shapelib.lib ]; then
+#		SHAPELIB_FOUND=true
+#	fi
+#
+#	if [ $SHAPELIB_FOUND ]; then
+#		echo "Shapelib already installed in $LIBS_LOCATION/shapelib"
+#	else
+#		# Compile
+#		cd shapelib
+#
+#		echo " \
+#		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+#		nmake /f makefile.vc &&\
+#		exit\
+#		" > build.bat
+#
+#		$COMSPEC \/k build.bat
+#	fi
+#
+#	# Install libgeotiff
+#	cd $LIBS_LOCATION
+#	if [ ! -d libgeotiff ]; then
+#		# Download, extract
+#		download_file http://download.osgeo.org/geotiff/libgeotiff/$LIBGEOTIFF_VERSION.tar.gz ./$LIBGEOTIFF_VERSION.tar.gz
+#		tar -xf $LIBGEOTIFF_VERSION.tar.gz
+#		mv $LIBGEOTIFF_VERSION/ libgeotiff/
+#		rm -rf $LIBGEOTIFF_VERSION.tar.gz
+#	elif [ -f libgeotiff/geotiff.lib ]; then
+#		LIBGEOTIFF_FOUND=true
+#	fi
+#
+#	if [ $LIBGEOTIFF_FOUND ]; then
+#		echo "Libgeotiff already installed in $LIBS_LOCATION/libgeotiff"
+#	else
+#		# Compile
+#		cd libgeotiff
+#
+#		# Download modified makefile
+#		if [ ! -f makefile_mod.vc ]; then
+#			download_file http://dl.dropbox.com/u/5581063/makefile_mod.vc ./makefile_mod.vc 14fb13a5bd04ffc298fee7825dc7679f
+#		fi
+#
+#		echo " \
+#		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+#		nmake /f makefile_mod.vc all&&\
+#		exit\
+#		" > build.bat
+#
+#		$COMSPEC \/k build.bat
+#	fi
 
-			echo " \
-			\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
-			echo y | configure -opensource -nomake demos -nomake examples $QT_CONFIGURATION &&\
-			nmake && nmake clean &&\
-			exit\
-			" > build.bat
-
-			$COMSPEC \/k build.bat
-		fi
-		
-		export PATH=$PATH:$SOURCE_LOCATION/../libs/$QT_VERSION/bin
-		
-	else
-		echo "Qt already installed in $QMAKE_LOCATION"
-	fi
-	
-	
-	# Install VTK
-	cd "$SOURCE_LOCATION/../libs"
-	if [ ! -d $VTK_VERSION ]; then
+	# Install Metis
+	cd $LIBS_LOCATION
+	if [ ! -d metis ]; then
 		# Download, extract, rename
-		wget http://www.vtk.org/files/release/5.6/$VTK_VERSION.tar.gz -O ./$VTK_VERSION.tar.gz
-		tar -xf $VTK_VERSION.tar.gz
-		mv VTK/ $VTK_VERSION/
-		rm $VTK_VERSION.tar.gz
+		download_file http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/$METIS_VERSION.tar.gz ./$METIS_VERSION.tar.gz
+		tar -xf $METIS_VERSION.tar.gz
+		mv $METIS_VERSION/ metis/
+		rm $METIS_VERSION.tar.gz
 	# Check for existing installation
-	elif [ -f $VTK_VERSION/build/bin/Release/QVTK.lib -a -f $VTK_VERSION/build/bin/Release/vtkRendering.lib ]; then
-		if [ $LIB_DEBUG ]; then
-			if [ -f $VTK_VERSION/build/bin/Debug/QVTK.lib -a -f $VTK_VERSION/build/bin/Debug/vtkRendering.lib ]; then
-				VTK_FOUND=true
-			fi
-		else
-			VTK_FOUND=true
-		fi
+	elif [ -f metis/build/windows/libmetis/Release/metis.lib ]; then
+		METIS_FOUND=true
 	fi
-	
-	if [ $VTK_FOUND ]; then
-		echo "VTK already installed in $SOURCE_LOCATION/../$VTK_VERSION"
-	else
-		# Compile
-		cd $VTK_VERSION
-		mkdir -vp build
-		cd build
-		cmake .. -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=OFF -DVTK_USE_GUISUPPORT=ON -DVTK_USE_QT=ON -DVTK_USE_QVTK_QTOPENGL=ON -G "$CMAKE_GENERATOR"
-		cmake ..
-		echo "PATH: $PATH"
-		qmake -v
-		$COMSPEC \/c "devenv.com VTK.sln /Build Release"
-		$COMSPEC \/c "devenv VTK.sln /Build Release /Project QVTK"
-		
-		if [ $LIB_DEBUG ]; then
-			$COMSPEC \/c "devenv VTK.sln /Build Debug"
-			$COMSPEC \/c "devenv VTK.sln /Build Debug /Project QVTK"
-		fi
-	fi
-	
-	# Install shapelib
-	cd "$SOURCE_LOCATION/../libs"
-	if [ ! -d $SHAPELIB_VERSION ]; then
-		# Download, extract
-		wget http://download.osgeo.org/shapelib/$SHAPELIB_VERSION.tar.gz
-		tar -xf $SHAPELIB_VERSION.tar.gz
-		rm -rf $SHAPELIB_VERSION.tar.gz
-	elif [ -f $SHAPELIB_VERSION/shapelib.lib ]; then
-		SHAPELIB_FOUND=true
-	fi
-	
-	if [ $SHAPELIB_FOUND ]; then
-		echo "Shapelib already installed in $SOURCE_LOCATION/../$SHAPELIB_VERSION"
-	else
-		# Compile
-		cd $SHAPELIB_VERSION
-		
-		echo " \
-		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
-		nmake /f makefile.vc &&\
-		exit\
-		" > build.bat
 
-		$COMSPEC \/k build.bat
-	fi
-	
-	# Install libtiff
-	cd "$SOURCE_LOCATION/../libs"
-	if [ ! -d $LIBTIFF_VERSION ]; then
-		# Download, extract
-		wget ftp://ftp.remotesensing.org/pub/libtiff/$LIBTIFF_VERSION.tar.gz
-		tar -xf $LIBTIFF_VERSION.tar.gz
-		rm -rf $LIBTIFF_VERSION.tar.gz
-	elif [ -f $LIBTIFF_VERSION/libtiff/libtiff.lib ]; then
-		LIBTIFF_FOUND=true
-	fi
-	
-	if [ $LIBTIFF_FOUND ]; then
-		echo "Libtiff already installed in $SOURCE_LOCATION/../$LIBTIFF_VERSION"
+	if [ $METIS_FOUND ]; then
+		echo "Metis already installed in $LIBS_LOCATION/metis"
 	else
 		# Compile
-		cd $LIBTIFF_VERSION
-		
-		echo " \
-		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
-		nmake /f Makefile.vc lib &&\
-		exit\
-		" > build.bat
-
-		$COMSPEC \/k build.bat
-	fi
-	
-	# Install libgeotiff
-	cd "$SOURCE_LOCATION/../libs"
-	if [ ! -d $LIBGEOTIFF_VERSION ]; then
-		# Download, extract
-		wget http://download.osgeo.org/geotiff/libgeotiff/$LIBGEOTIFF_VERSION.tar.gz
-		tar -xf $LIBGEOTIFF_VERSION.tar.gz
-		rm -rf $LIBGEOTIFF_VERSION.tar.gz
-	elif [ -f $LIBGEOTIFF_VERSION/geotiff.lib ]; then
-		LIBGEOTIFF_FOUND=true
-	fi
-	
-	if [ $LIBGEOTIFF_FOUND ]; then
-		echo "Libgeotiff already installed in $SOURCE_LOCATION/../$LIBGEOTIFF_VERSION"
-	else
-		# Compile
-		cd $LIBGEOTIFF_VERSION
-		
-		# Download modified makefile
-		if [ ! -f makefile_mod.vc ]; then
-			wget --no-check-certificate https://gist.github.com/raw/1088657/0b846a9cdc529681bfb34be37dfba5d1a31dc419/makefile_mod.vc
-		fi
-		
-		echo " \
-		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
-		nmake /f makefile_mod.vc geotiff.lib&&\
-		exit\
-		" > build.bat
-
-		$COMSPEC \/k build.bat
+		cd metis
+		$COMSPEC \/c "vsgen.bat -G \"$CMAKE_GENERATOR\""
+		cd build/windows
+		cmake --build . --config Release --target metis
+		cd ../..
+		cp build/windows/libmetis/Release/metis.lib ../lib/metis.lib
+		cp include/metis.h ../include/metis.h
 	fi
 fi
+
+cd $SOURCE_LOCATION/scripts/setup
