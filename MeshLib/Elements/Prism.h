@@ -14,6 +14,7 @@ namespace MeshLib {
 
 /**
  * A 3d Prism Element.
+ * @code
  *
  *  Prism:   5
  *           o
@@ -25,6 +26,8 @@ namespace MeshLib {
  *       |.     .|
  *       o-------o
  *       0       1
+ *
+ * @endcode
  */
 class Prism : public Cell
 {
@@ -53,3 +56,4 @@ protected:
 } /* namespace */
 
 #endif /* PRISM_H_ */
+

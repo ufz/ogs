@@ -1,22 +1,23 @@
 /**
- * Tet.h
+ * Tet4.h
  *
- *      Date: 2012/05/02
+ *      Date: 2012/05/03
  *      Author: KR
  */
 
-#ifndef TET_H_
-#define TET_H_
+#ifndef TET4_H_
+#define TET4_H_
 
-#include "Cell.h"
+#include "Tet.h"
+#include "FemElem.h"
 
 namespace MeshLib {
 
 /**
- * A 3d Tetrahedron Element.
+ * A 3d Tetrahedron Finite Element with 10 Nodes.
  * @code
  *
- *  Tet:  3
+ *  Tet4: 3
  *        o
  *       /|\
  *      / | \
@@ -30,34 +31,31 @@ namespace MeshLib {
  *
  * @endcode
  */
-class Tet : public Cell
+class Tet4 : public Tet, public FemElem
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Tet(Node* nodes[4], size_t value = 0);
+	Tet4(Node* nodes[4], size_t value = 0);
 
 	/// Constructor using single mesh nodes.
-	Tet(Node* n0, Node* n1, Node* n2, Node* n3, size_t value = 0);
+	Tet4(Node* n0, Node* n1, Node* n2, Node* n3, size_t value = 0);
+
+	/// Constructor using a simple Tetrahedron
+	Tet4(const Tet &tet);
 
 	/// Copy constructor
-	Tet(const Tet &tet);
+	Tet4(const Tet4 &tet);
 
 	/// Destructor
-	virtual ~Tet();
-
-	/// Get the number of nodes for this element.
-	virtual size_t getNNodes() const { return 4; };
+	virtual ~Tet4();
 
 protected:
-	/// Constructor without nodes (for use of derived classes)
-	Tet(size_t value = 0);
-
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
-	double calcVolume();
+	GEOLIB::Point calcCoG();
 
 }; /* class */
 
 } /* namespace */
 
-#endif /* TET_H_ */
+#endif /* TET4_H_ */
 

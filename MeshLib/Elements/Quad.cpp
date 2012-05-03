@@ -31,6 +31,7 @@ Quad::Quad(const Quad &quad)
 	: Face(MshElemType::QUAD, quad.getValue())
 {
 	Node* nodes[4] = { new Node(*quad.getNode(0)), new Node(*quad.getNode(1)), new Node(*quad.getNode(2)), new Node(*quad.getNode(3)) };
+	_nodes = nodes;
 	_area = quad.getArea();
 }
 
@@ -45,3 +46,4 @@ double Quad::calcArea()
 }
 
 }
+

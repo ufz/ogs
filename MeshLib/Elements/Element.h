@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "MshEnums.h"
+#include "Mesh.h"
 
 namespace MeshLib {
 
@@ -52,6 +53,12 @@ protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Element(MshElemType::type type, size_t value = 0);
 
+	/**
+	 * Get an editale Node.
+	 * This method is called by Mesh::addElement(Element*), see friend definition.
+	 */
+	Node* getNode(size_t i);
+
 	MshElemType::type _type;
 	size_t _value;
 	Node** _nodes;
@@ -59,8 +66,12 @@ protected:
 
 private:
 
+/* friend functions: */
+	friend void Mesh::addElement(Element*);
+
 }; /* class */
 
 } /* namespace */
 
 #endif /* ELEMENT_H_ */
+

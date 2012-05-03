@@ -31,6 +31,7 @@ Edge::Edge(const Edge &edge)
 	: Element(MshElemType::LINE, edge.getValue())
 {
 	Node* nodes[2] = { new Node(*edge.getNode(0)), new Node(*edge.getNode(1)) };
+	_nodes = nodes;
 	_length = edge.getLength();
 }
 
@@ -44,3 +45,4 @@ double Edge::calcLength()
 }
 
 }
+

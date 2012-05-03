@@ -35,6 +35,37 @@ public:
 	/// Destructor
 	virtual ~Mesh();
 
+	/// Add a node to the mesh.
+	void addNode(Node* node);
+
+	/// Add an element to the mesh.
+	void addElement(Element* elem);
+
+	/// Get the node with the given index.
+	const Node* getNode(size_t idx) const { return _nodes[idx]; };
+
+	/// Get the element with the given index.
+	const Element* getElement(size_t idx) const { return _elements[idx]; };
+
+	/// Get the number of elements
+	size_t getNElements() const { return _elements.size(); };
+
+	/// Get the number of nodes
+	size_t getNNodes() const { return _nodes.size(); };
+
+	/**
+	 * Remove the node with the given index.
+	 * NOTE: Removing a node also removes all elements that this node is part of!
+	 */
+	//void removeNode(size_t idx);
+
+	/** 
+	 * Remove the element with the given index.
+	 * NOTE: If any node of this element is not part of any other element it will
+	 * also be removed!
+	 */
+	//void removeElement(size_t idx);
+
 	/// Get name of the mesh.
 	const std::string getName() const { return _name; };
 
@@ -57,3 +88,4 @@ protected:
 } /* namespace */
 
 #endif /* MESH_H_ */
+

@@ -32,6 +32,7 @@ Prism::Prism(const Prism &prism)
 {
 	Node* nodes[6] = { new Node(*prism.getNode(0)), new Node(*prism.getNode(1)), new Node(*prism.getNode(2)), 
 		               new Node(*prism.getNode(3)), new Node(*prism.getNode(4)), new Node(*prism.getNode(5)) };
+	_nodes = nodes;
 	_volume = prism.getVolume();
 }
 
@@ -47,3 +48,4 @@ double Prism::calcVolume()
 }
 
 }
+

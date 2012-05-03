@@ -24,6 +24,7 @@ Hex::Hex(const Hex &hex)
 {
 	Node* nodes[8] = { new Node(*hex.getNode(0)), new Node(*hex.getNode(1)), new Node(*hex.getNode(2)), new Node(*hex.getNode(3)),
 	                   new Node(*hex.getNode(4)), new Node(*hex.getNode(5)), new Node(*hex.getNode(6)), new Node(*hex.getNode(7)) };
+	_nodes = nodes;
 	_volume = hex.getVolume();
 }
 
@@ -42,3 +43,4 @@ double Hex::calcVolume()
 }
 
 }
+

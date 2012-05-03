@@ -27,10 +27,16 @@ Tet::Tet(Node* n0, Node* n1, Node* n2, Node* n3, size_t value)
 	this->_volume = this->calcVolume();
 }
 
+Tet::Tet(size_t value)
+	: Cell(MshElemType::TETRAHEDRON, value)
+{
+}
+
 Tet::Tet(const Tet &tet)
 	: Cell(MshElemType::TETRAHEDRON, tet.getValue())
 {
 	Node* nodes[4] = { new Node(*tet.getNode(0)), new Node(*tet.getNode(1)), new Node(*tet.getNode(2)), new Node(*tet.getNode(3)) };
+	_nodes = nodes;
 	_volume = tet.getVolume();
 }
 
@@ -44,3 +50,4 @@ double Tet::calcVolume()
 }
 
 }
+

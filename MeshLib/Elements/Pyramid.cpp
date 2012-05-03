@@ -32,6 +32,7 @@ Pyramid::Pyramid(const Pyramid &prism)
 {
 	Node* nodes[5] = { new Node(*prism.getNode(0)), new Node(*prism.getNode(1)), new Node(*prism.getNode(2)), 
 		               new Node(*prism.getNode(3)), new Node(*prism.getNode(4)) };
+	_nodes = nodes;
 	_volume = prism.getVolume();
 }
 
@@ -46,3 +47,4 @@ double Pyramid::calcVolume()
 }
 
 }
+

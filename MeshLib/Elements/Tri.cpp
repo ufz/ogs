@@ -31,6 +31,7 @@ Tri::Tri(const Tri &tri)
 	: Face(MshElemType::TRIANGLE, tri.getValue())
 {
 	Node* nodes[3] = { new Node(*tri.getNode(0)), new Node(*tri.getNode(1)), new Node(*tri.getNode(2)) };
+	_nodes = nodes;
 	_area = tri.getArea();
 }
 
@@ -44,3 +45,4 @@ double Tri::calcArea()
 }
 
 }
+

@@ -14,6 +14,7 @@ namespace MeshLib {
 
 /**
  * A 3d Hexahedron Element.
+ * @code
  *
  *  Hex:  7        6
  *        o--------o
@@ -27,6 +28,8 @@ namespace MeshLib {
  *    |.       |/
  *    o--------o
  *    0        1
+ *
+ * @endcode
  */
 class Hex : public Cell
 {
@@ -52,3 +55,4 @@ protected:
 } /* namespace */
 
 #endif /* HEX_H_ */
+

@@ -14,9 +14,10 @@ namespace MeshLib {
 
 /**
  * A 2d Quadliteral Element.
+ * @code
  *
  *        3           2
- * QUAD4: o-----------o
+ *  Quad: o-----------o
  *        |           |
  *        |           |
  *        |           |
@@ -24,6 +25,8 @@ namespace MeshLib {
  *        |           |
  *        o-----------o
  *        0           1
+ *
+ * @endcode
  */
 class Quad : public Face
 {
@@ -53,3 +56,4 @@ protected:
 } /* namespace */
 
 #endif /* QUAD_H_ */
+

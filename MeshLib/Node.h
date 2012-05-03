@@ -11,7 +11,9 @@
 #include <cstdlib>
 #include <limits>
 #include <vector>
+
 #include "PointWithID.h"
+#include "Mesh.h"
 
 namespace MeshLib {
 
@@ -32,14 +34,37 @@ public:
 	/// Copy constructor
 	Node(const Node &node);
 
+	/// Get an element the node is part of.
+	const Element* getElement(size_t idx) const { return _elements[idx]; };
+
+	/// Get all elements the node is part of.
+	const std::vector<const Element*> getElements() const { return _elements; };
+
+	/// Get number of elements the node is part of.
+	size_t getNElements() const { return _elements.size(); };
+
 	/// Destructor
 	~Node();
 
-private:
-	std::vector<Element*> _elements;
+protected:
+	/**
+	 * Add an element the node is part of.
+	 * This method is called by Mesh::addElement(Element*), see friend definition.
+	 */
+	void addElement(const Element* elem) { _elements.push_back(elem); };
+
+	/// Remove an element the node is part of.
+	//void removeElement(const Element* elem);
+
+	std::vector<const Element*> _elements;
+
+/* friend functions: */
+	friend void Mesh::addElement(Element*);
+	//friend void Mesh::removeElement(size_t);
 
 }; /* class */
 
 } /* namespace */
 
 #endif /* NODE_H_ */
+

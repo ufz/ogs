@@ -14,8 +14,9 @@ namespace MeshLib {
 
 /**
  * A 2d Triangle Element.
+ * @code
  *
- *   Tri:   2
+ *  Tri:    2
  *          o
  *         / \
  *        /   \
@@ -25,6 +26,7 @@ namespace MeshLib {
  *    o-----------o
  *    0           1
  *
+ * @endcode
  */
 class Tri : public Face
 {
@@ -53,3 +55,4 @@ protected:
 } /* namespace */
 
 #endif /* TRI_H_ */
+

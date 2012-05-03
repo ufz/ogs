@@ -14,6 +14,7 @@ namespace MeshLib {
 
 /**
  * A 3d Pyramid Element.
+ * @code
  *
  *  Pyramid:   o 4
  *           //|\
@@ -25,6 +26,8 @@ namespace MeshLib {
  *     ./      |/
  *    o--------o
  *    0        1
+ *
+ * @endcode
  */
 class Pyramid : public Cell
 {
@@ -53,3 +56,4 @@ protected:
 } /* namespace */
 
 #endif /* PYRAMID_H_ */
+
