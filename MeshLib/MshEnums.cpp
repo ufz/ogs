@@ -1,11 +1,11 @@
 /**
- * MSHEnums.cpp
+ * MshEnums.cpp
  *
  *      Date: 2012/05/02
  *      Author: KR
  */
 
-#include "MSHEnums.h"
+#include "MshEnums.h"
 
 const std::string MshElemType2String(const MshElemType::type t)
 {

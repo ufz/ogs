@@ -1,5 +1,5 @@
 /**
- * MSHEnums.h
+ * MshEnums.h
  *
  *      Date: 2012/05/02
  *      Author: KR
