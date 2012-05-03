@@ -21,6 +21,7 @@ ADD_EXECUTABLE( MatMult
         ${SOURCES}
         ${HEADERS}
 )
+SET_TARGET_PROPERTIES(MatMult PROPERTIES FOLDER SimpleTests)
 
 # Create the executable
 ADD_EXECUTABLE( MatTestRemoveRowsCols
@@ -28,6 +29,7 @@ ADD_EXECUTABLE( MatTestRemoveRowsCols
         ${SOURCES}
         ${HEADERS}
 )
+SET_TARGET_PROPERTIES(MatTestRemoveRowsCols PROPERTIES FOLDER SimpleTests)
 
 IF (METIS_FOUND)
 	ADD_EXECUTABLE( MatVecMultPerm
@@ -35,6 +37,7 @@ IF (METIS_FOUND)
 	        ${SOURCES}
         	${HEADERS}
 	)
+	SET_TARGET_PROPERTIES(MatVecMultPerm PROPERTIES FOLDER SimpleTests)
 
 	TARGET_LINK_LIBRARIES ( MatVecMultPerm
 		Base
@@ -48,6 +51,7 @@ IF (METIS_FOUND)
 	        ${SOURCES}
         	${HEADERS}
 	)
+	SET_TARGET_PROPERTIES(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
 
 	TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
 		Base

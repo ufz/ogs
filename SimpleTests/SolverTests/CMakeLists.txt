@@ -24,24 +24,28 @@ ADD_EXECUTABLE( ConjugateGradientUnpreconditioned
         ${SOURCES}
         ${HEADERS}
 )
+SET_TARGET_PROPERTIES(ConjugateGradientUnpreconditioned PROPERTIES FOLDER SimpleTests)
 
 ADD_EXECUTABLE( ConjugateGradientDiagPrecond
         ConjugateGradientDiagonalPreconditioned.cpp
         ${SOURCES}
         ${HEADERS}
 )
+SET_TARGET_PROPERTIES(ConjugateGradientDiagPrecond PROPERTIES FOLDER SimpleTests)
 
 ADD_EXECUTABLE( BiCGStabDiagPrecond
 	BiCGStabDiagPrecond.cpp
         ${SOURCES}
         ${HEADERS}
 )
+SET_TARGET_PROPERTIES(BiCGStabDiagPrecond PROPERTIES FOLDER SimpleTests)
 
 ADD_EXECUTABLE( GMResDiagPrecond
 	GMResDiagPrecond.cpp
         ${SOURCES}
         ${HEADERS}
 )
+SET_TARGET_PROPERTIES(GMResDiagPrecond PROPERTIES FOLDER SimpleTests)
 
 
 IF (WIN32)
