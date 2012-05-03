@@ -9,6 +9,7 @@
 #define MESH_H_
 
 #include <cstdlib>
+#include <string>
 #include <vector>
 
 namespace MeshLib {
