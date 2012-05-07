@@ -11,8 +11,9 @@ ENDIF (CMAKE_USE_PTHREADS_INIT )
 
 INCLUDE_DIRECTORIES(
         .
-	../../Base/
-	../../MathLib/
+	${CMAKE_SOURCE_DIR}/Base/
+	${CMAKE_SOURCE_DIR}/Base/logog/include
+	${CMAKE_SOURCE_DIR}/MathLib/
 )
 
 # Create the executable
@@ -22,6 +23,7 @@ ADD_EXECUTABLE( MatMult
         ${HEADERS}
 )
 SET_TARGET_PROPERTIES(MatMult PROPERTIES FOLDER SimpleTests)
+TARGET_LINK_LIBRARIES(MatMult logog)
 
 # Create the executable
 ADD_EXECUTABLE( MatTestRemoveRowsCols
