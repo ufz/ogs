@@ -60,8 +60,8 @@ protected:
 	Node* getNode(size_t i);
 
 	MshElemType::type _type;
-	size_t _value;
 	Node** _nodes;
+	size_t _value;
 	std::vector<Element*> _neighbors;
 
 private:
