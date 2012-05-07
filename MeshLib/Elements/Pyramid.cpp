@@ -13,27 +13,32 @@
 namespace MeshLib {
 
 Pyramid::Pyramid(Node* nodes[5], size_t value)
-	: Cell(nodes, MshElemType::PYRAMID, value)
+	: Cell(MshElemType::PYRAMID, value)
 {
+	_nodes = nodes;
 	this->_volume = this->calcVolume();
 }
 
 Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, size_t value)
 	: Cell(MshElemType::PYRAMID, value)
 {
-	Node* nodes[5] = { n0, n1, n2, n3, n4 };
-	_nodes = nodes;
+	_nodes = new Node*[5];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
+	_nodes[3] = n3;
+	_nodes[4] = n4;
 
 	this->_volume = this->calcVolume();
 }
 
-Pyramid::Pyramid(const Pyramid &prism)
-	: Cell(MshElemType::PYRAMID, prism.getValue())
+Pyramid::Pyramid(const Pyramid &pyramid)
+	: Cell(MshElemType::PYRAMID, pyramid.getValue())
 {
-	Node* nodes[5] = { new Node(*prism.getNode(0)), new Node(*prism.getNode(1)), new Node(*prism.getNode(2)), 
-		               new Node(*prism.getNode(3)), new Node(*prism.getNode(4)) };
-	_nodes = nodes;
-	_volume = prism.getVolume();
+	_nodes = new Node*[5];
+	for (size_t i=0; i<5; i++)
+		_nodes[i] = pyramid._nodes[i];
+	_volume = pyramid.getVolume();
 }
 
 Pyramid::~Pyramid()

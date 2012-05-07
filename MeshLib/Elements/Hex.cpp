@@ -14,17 +14,18 @@
 namespace MeshLib {
 
 Hex::Hex(Node* nodes[8], size_t value)
-	: Cell(nodes, MshElemType::HEXAHEDRON, value)
+	: Cell(MshElemType::HEXAHEDRON, value)
 {
+	_nodes = nodes;
 	this->_volume = this->calcVolume();
 }
 
 Hex::Hex(const Hex &hex)
 	: Cell(MshElemType::HEXAHEDRON, hex.getValue())
 {
-	Node* nodes[8] = { new Node(*hex.getNode(0)), new Node(*hex.getNode(1)), new Node(*hex.getNode(2)), new Node(*hex.getNode(3)),
-	                   new Node(*hex.getNode(4)), new Node(*hex.getNode(5)), new Node(*hex.getNode(6)), new Node(*hex.getNode(7)) };
-	_nodes = nodes;
+	_nodes = new Node*[8];
+	for (size_t i=0; i<8; i++)
+		_nodes[i] = hex._nodes[i];
 	_volume = hex.getVolume();
 }
 

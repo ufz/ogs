@@ -13,16 +13,22 @@
 namespace MeshLib {
 
 Prism::Prism(Node* nodes[6], size_t value)
-	: Cell(nodes, MshElemType::PRISM, value)
+	: Cell(MshElemType::PRISM, value)
 {
+	_nodes = _nodes;
 	this->_volume = this->calcVolume();
 }
 
 Prism::Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, size_t value)
 	: Cell(MshElemType::PRISM, value)
 {
-	Node* nodes[6] = { n0, n1, n2, n3, n4, n5 };
-	_nodes = nodes;
+	_nodes = new Node*[6];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
+	_nodes[3] = n3;
+	_nodes[4] = n4;
+	_nodes[5] = n5;
 
 	this->_volume = this->calcVolume();
 }
@@ -30,9 +36,9 @@ Prism::Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, size_t 
 Prism::Prism(const Prism &prism)
 	: Cell(MshElemType::PRISM, prism.getValue())
 {
-	Node* nodes[6] = { new Node(*prism.getNode(0)), new Node(*prism.getNode(1)), new Node(*prism.getNode(2)), 
-		               new Node(*prism.getNode(3)), new Node(*prism.getNode(4)), new Node(*prism.getNode(5)) };
-	_nodes = nodes;
+	_nodes = new Node*[6];
+	for (size_t i=0; i<6; i++)
+		_nodes[i] = prism._nodes[i];
 	_volume = prism.getVolume();
 }
 

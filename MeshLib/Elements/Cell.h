@@ -28,9 +28,10 @@ public:
 	virtual ~Cell();
 
 protected:
+/*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Cell(Node** nodes, MshElemType::type type, size_t value = 0);
-
+*/
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Cell(MshElemType::type type, size_t value = 0);
 

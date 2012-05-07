@@ -28,9 +28,10 @@ public:
 	virtual ~Face();
 
 protected:
+/*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Face(Node** nodes, MshElemType::type type, size_t value = 0);
-
+*/
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Face(MshElemType::type type, size_t value = 0);
 

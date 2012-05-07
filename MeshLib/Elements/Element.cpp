@@ -12,13 +12,14 @@
 
 namespace MeshLib {
 
+/*
 Element::Element(Node** nodes, MshElemType::type type, size_t value)
 	: _nodes(nodes), _type(type), _value(value)
 {
 }
-
+*/
 Element::Element(MshElemType::type type, size_t value)
-	: _type(type), _value(value)
+	: _nodes(NULL), _type(type), _value(value)
 {
 }
 

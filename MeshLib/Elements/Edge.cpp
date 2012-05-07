@@ -13,16 +13,18 @@
 namespace MeshLib {
 
 Edge::Edge(Node* nodes[2], size_t value)
-	: Element(nodes, MshElemType::LINE, value)
+	: Element(MshElemType::LINE, value)
 {
+	_nodes = nodes;
 	this->_length = this->calcLength();
 }
 
 Edge::Edge(Node* n0, Node* n1, size_t value)
 	: Element(MshElemType::LINE, value)
 {
-	Node* nodes[2] = { n0, n1 };
-	_nodes = nodes;
+	_nodes = new Node*[2];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
 
 	this->_length = this->calcLength();
 }
@@ -30,8 +32,9 @@ Edge::Edge(Node* n0, Node* n1, size_t value)
 Edge::Edge(const Edge &edge)
 	: Element(MshElemType::LINE, edge.getValue())
 {
-	Node* nodes[2] = { new Node(*edge.getNode(0)), new Node(*edge.getNode(1)) };
-	_nodes = nodes;
+	_nodes = new Node*[2];
+	_nodes[0] = edge._nodes[0];
+	_nodes[1] = edge._nodes[1];
 	_length = edge.getLength();
 }
 

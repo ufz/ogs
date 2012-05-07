@@ -13,16 +13,20 @@
 namespace MeshLib {
 
 Quad::Quad(Node* nodes[4], size_t value)
-	: Face(nodes, MshElemType::TRIANGLE, value)
+	: Face(MshElemType::TRIANGLE, value)
 {
+	_nodes = nodes;
 	this->_area = this->calcArea();
 }
 
 Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, size_t value)
 	: Face(MshElemType::TRIANGLE, value)
 {
-	Node* nodes[4] = { n0, n1, n2, n3 };
-	_nodes = nodes;
+	_nodes = new Node*[4];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
+	_nodes[3] = n3;
 
 	this->_area = this->calcArea();
 }
@@ -30,8 +34,9 @@ Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, size_t value)
 Quad::Quad(const Quad &quad)
 	: Face(MshElemType::QUAD, quad.getValue())
 {
-	Node* nodes[4] = { new Node(*quad.getNode(0)), new Node(*quad.getNode(1)), new Node(*quad.getNode(2)), new Node(*quad.getNode(3)) };
-	_nodes = nodes;
+	_nodes = new Node*[4];
+	for (size_t i=0; i<4; i++)
+		_nodes[i] = quad._nodes[i];
 	_area = quad.getArea();
 }
 

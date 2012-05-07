@@ -13,22 +13,20 @@ namespace MeshLib {
 Tet4::Tet4(Node* nodes[4], size_t value)
 	: Tet(nodes, value), FemElem()
 {
-	_centre_of_gravity = this->calcCoG();
+	this->calcCoG();
 }
 
 Tet4::Tet4(const Tet &tet)
-	: Tet(tet.getValue()), FemElem()
+	: Tet(tet), FemElem()
 {
-	Node* nodes[4] = { new Node(*tet.getNode(0)), new Node(*tet.getNode(1)), new Node(*tet.getNode(2)), new Node(*tet.getNode(3)) };
-	_nodes = nodes;
-	_centre_of_gravity = this->calcCoG();
+	this->calcCoG();
 }
 
 Tet4::Tet4(const Tet4 &tet)
 	: Tet(tet.getValue()), FemElem()
 {
-	Node* nodes[4] = { new Node(*tet.getNode(0)), new Node(*tet.getNode(1)), new Node(*tet.getNode(2)), new Node(*tet.getNode(3)) };
-	_nodes = nodes;
+	for (size_t i=0; i<4; i++)
+		_nodes[i] = tet._nodes[i];
 	_centre_of_gravity = tet.getCentreOfGravity();
 }
 
@@ -36,11 +34,10 @@ Tet4::~Tet4()
 {
 }
 
-GEOLIB::Point Tet4::calcCoG()
+void Tet4::calcCoG()
 {
-	GEOLIB::Point cog(0,0,0);
+	_centre_of_gravity = 0;
 	//TODO calculation!
-	return cog;
 }
 
 }

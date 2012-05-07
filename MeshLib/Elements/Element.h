@@ -47,9 +47,10 @@ public:
 	virtual ~Element();
 
 protected:
+/*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Element(Node** nodes, MshElemType::type type, size_t value = 0);
-
+*/
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Element(MshElemType::type type, size_t value = 0);
 
@@ -59,9 +60,9 @@ protected:
 	 */
 	Node* getNode(size_t i);
 
+	Node** _nodes;
 	MshElemType::type _type;
 	size_t _value;
-	Node** _nodes;
 	std::vector<Element*> _neighbors;
 
 private:

@@ -51,7 +51,7 @@ public:
 
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
-	GEOLIB::Point calcCoG();
+	void calcCoG();
 
 }; /* class */
 

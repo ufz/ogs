@@ -13,16 +13,19 @@
 namespace MeshLib {
 
 Tri::Tri(Node* nodes[3], size_t value)
-	: Face(nodes, MshElemType::TRIANGLE, value)
+	: Face(MshElemType::TRIANGLE, value)
 {
+	_nodes = nodes;
 	this->_area = this->calcArea();
 }
 
 Tri::Tri(Node* n0, Node* n1, Node* n2, size_t value)
 	: Face(MshElemType::TRIANGLE, value)
 {
-	Node* nodes[3] = { n0, n1, n2 };
-	_nodes = nodes;
+	_nodes = new Node*[3];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
 
 	this->_area = this->calcArea();
 }
@@ -30,8 +33,9 @@ Tri::Tri(Node* n0, Node* n1, Node* n2, size_t value)
 Tri::Tri(const Tri &tri)
 	: Face(MshElemType::TRIANGLE, tri.getValue())
 {
-	Node* nodes[3] = { new Node(*tri.getNode(0)), new Node(*tri.getNode(1)), new Node(*tri.getNode(2)) };
-	_nodes = nodes;
+	_nodes = new Node*[3];
+	for (size_t i=0; i<3; i++)
+		_nodes[i] = tri._nodes[i];
 	_area = tri.getArea();
 }
 
