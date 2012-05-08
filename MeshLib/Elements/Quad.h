@@ -32,10 +32,10 @@ class Quad : public Face
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Quad(Node* nodes[4], size_t value = 0);
+	Quad(Node* nodes[4], unsigned value = 0);
 
 	/// Constructor using single mesh nodes.
-	Quad(Node* n0, Node* n1, Node* n2, Node* n3, size_t value = 0);
+	Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value = 0);
 
 	/// Copy constructor
 	Quad(const Quad &quad);
@@ -44,13 +44,13 @@ public:
 	virtual ~Quad();
 
 	/// Get the number of edges for this element.
-	size_t getNEdges() const { return 4; };
+	unsigned getNEdges() const { return 4; };
 
 	/// Get the number of neighbors for this element.
-	size_t getNNeighbors() const { return 4; };
+	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual size_t getNNodes() const { return 4; };
+	virtual unsigned getNNodes() const { return 4; };
 
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.

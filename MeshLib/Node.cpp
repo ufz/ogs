@@ -9,12 +9,12 @@
 
 namespace MeshLib {
 
-Node::Node(const double coords[3], size_t id)
+Node::Node(const double coords[3], unsigned id)
 	: GEOLIB::PointWithID(coords, id)
 {
 }
 
-Node::Node(double x, double y, double z, size_t id)
+Node::Node(double x, double y, double z, unsigned id)
 	: GEOLIB::PointWithID(x, y, z, id)
 {
 }

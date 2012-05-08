@@ -12,17 +12,17 @@
 
 namespace MeshLib {
 
-Pyramid::Pyramid(Node* nodes[5], size_t value)
+Pyramid::Pyramid(Node* nodes[5], unsigned value)
 	: Cell(MshElemType::PYRAMID, value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[5];
-	for (size_t i=0; i<5; i++)
+	for (unsigned i=0; i<5; i++)
 		_neighbors[i] = NULL;
 	this->_volume = this->calcVolume();
 }
 
-Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, size_t value)
+Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned value)
 	: Cell(MshElemType::PYRAMID, value)
 {
 	_nodes = new Node*[5];
@@ -32,7 +32,7 @@ Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, size_t value)
 	_nodes[3] = n3;
 	_nodes[4] = n4;
 	_neighbors = new Element*[5];
-	for (size_t i=0; i<5; i++)
+	for (unsigned i=0; i<5; i++)
 		_neighbors[i] = NULL;
 
 	this->_volume = this->calcVolume();
@@ -43,7 +43,7 @@ Pyramid::Pyramid(const Pyramid &pyramid)
 {
 	_nodes = new Node*[5];
 	_neighbors = new Element*[5];
-	for (size_t i=0; i<5; i++)
+	for (unsigned i=0; i<5; i++)
 	{
 		_nodes[i] = pyramid._nodes[i];
 		_neighbors[i] = pyramid._neighbors[i];
@@ -57,8 +57,8 @@ Pyramid::~Pyramid()
 
 double Pyramid::calcVolume()
 {
-	return MathLib::calcDetTetrahedron(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[4]->getData())
-		 + MathLib::calcDetTetrahedron(_nodes[2]->getData(), _nodes[3]->getData(), _nodes[0]->getData(), _nodes[4]->getData());
+	return MathLib::calcTetrahedronVolume(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[4]->getData())
+		 + MathLib::calcTetrahedronVolume(_nodes[2]->getData(), _nodes[3]->getData(), _nodes[0]->getData(), _nodes[4]->getData());
 }
 
 }

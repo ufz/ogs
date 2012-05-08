@@ -12,14 +12,14 @@
 
 namespace MeshLib {
 
-Edge::Edge(Node* nodes[2], size_t value)
+Edge::Edge(Node* nodes[2], unsigned value)
 	: Element(MshElemType::LINE, value)
 {
 	_nodes = nodes;
 	this->_length = this->calcLength();
 }
 
-Edge::Edge(Node* n0, Node* n1, size_t value)
+Edge::Edge(Node* n0, Node* n1, unsigned value)
 	: Element(MshElemType::LINE, value)
 {
 	_nodes = new Node*[2];

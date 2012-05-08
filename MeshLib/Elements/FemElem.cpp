@@ -10,12 +10,12 @@
 namespace MeshLib {
 
 FemElem::FemElem()
-	: _centre_of_gravity(GEOLIB::Point(0,0,0))
+	: _centroid(GEOLIB::Point(0,0,0))
 {
 }
 
 FemElem::FemElem(const FemElem &elem)
-	: _centre_of_gravity(elem.getCentreOfGravity())
+	: _centroid(elem.getCentroid())
 {
 }
 

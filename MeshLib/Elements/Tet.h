@@ -34,10 +34,10 @@ class Tet : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Tet(Node* nodes[4], size_t value = 0);
+	Tet(Node* nodes[4], unsigned value = 0);
 
 	/// Constructor using single mesh nodes.
-	Tet(Node* n0, Node* n1, Node* n2, Node* n3, size_t value = 0);
+	Tet(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value = 0);
 
 	/// Copy constructor
 	Tet(const Tet &tet);
@@ -46,20 +46,20 @@ public:
 	virtual ~Tet();
 
 	/// Get the number of edges for this element.
-	size_t getNEdges() const { return 6; };
+	unsigned getNEdges() const { return 6; };
 	
 	/// Get the number of faces for this element.
-	size_t getNFaces() const { return 4; };
+	unsigned getNFaces() const { return 4; };
 
 	/// Get the number of neighbors for this element.
-	size_t getNNeighbors() const { return 4; };
+	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual size_t getNNodes() const { return 4; };
+	virtual unsigned getNNodes() const { return 4; };
 
 protected:
 	/// Constructor without nodes (for use of derived classes)
-	Tet(size_t value = 0);
+	Tet(unsigned value = 0);
 
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
 	double calcVolume();

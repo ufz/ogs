@@ -33,10 +33,10 @@ class Pyramid : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Pyramid(Node* nodes[5], size_t value = 0);
+	Pyramid(Node* nodes[5], unsigned value = 0);
 
 	/// Constructor using single mesh nodes.
-	Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, size_t value = 0);
+	Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned value = 0);
 
 	/// Copy constructor
 	Pyramid(const Pyramid &pyramid);
@@ -45,16 +45,16 @@ public:
 	virtual ~Pyramid();
 
 	/// Get the number of edges for this element.
-	size_t getNEdges() const { return 8; };
+	unsigned getNEdges() const { return 8; };
 
 	/// Get the number of faces for this element.
-	size_t getNFaces() const { return 5; };
+	unsigned getNFaces() const { return 5; };
 
 	/// Get the number of neighbors for this element.
-	size_t getNNeighbors() const { return 5; };
+	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual size_t getNNodes() const { return 5; };
+	virtual unsigned getNNodes() const { return 5; };
 
 protected:
 	/// Calculates the volume of a prism by subdividing it into two tetrahedra.

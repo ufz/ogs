@@ -20,7 +20,9 @@ namespace MeshLib {
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
 	: _name(name), _nodes(nodes), _elements(elements)
 {
-	this->removeIdenticalNodes();
+	this->makeNodesUnique();
+	this->setElementInformationForNodes();
+	this->setNeighborInformationForElements();
 }
 
 Mesh::Mesh(const Mesh &mesh)
@@ -31,7 +33,7 @@ Mesh::Mesh(const Mesh &mesh)
 Mesh::Mesh(const std::string &file_name)
 {
 	// read mesh
-	this->removeIdenticalNodes();
+	this->makeNodesUnique();
 }
 
 Mesh::~Mesh()
@@ -45,9 +47,22 @@ Mesh::~Mesh()
 		delete _nodes[i];
 }
 
-void Mesh::removeIdenticalNodes()
+void Mesh::makeNodesUnique()
 {
 	//check for unique mesh nodes
+	//PointVec::makePntsUnique
+	
+	//replace node pointers in elements
+	unsigned nElements (_elements.size());
+	for (unsigned i=0; i<nElements; i++)
+	{
+		unsigned nNodes (_elements[i]->getNNodes());
+		for (unsigned j=0; j<nNodes; j++)
+			_elements[i]->getNodeIndex(j);
+	}
+
+	//set correct id for each node
+	
 }
 
 void Mesh::addNode(Node* node)
@@ -60,11 +75,40 @@ void Mesh::addElement(Element* elem)
 	_elements.push_back(elem); 
 
 	// add element informatin to nodes
-	size_t nNodes (elem->getNNodes());
-	for (size_t i=0; i<nNodes; i++)
-		elem->getNode(i)->addElement(elem);
+	unsigned nNodes (elem->getNNodes());
+	for (unsigned i=0; i<nNodes; i++)
+		elem->_nodes[i]->addElement(elem);
 }
 
+void Mesh::setElementInformationForNodes()
+{
+	const size_t nElements (_elements.size());
+	for (unsigned i=0; i<nElements; i++)
+	{
+		const unsigned nNodes (_elements[i]->getNNodes());
+		for (unsigned j=0; j<nNodes; j++)
+			_elements[i]->_nodes[j]->addElement(_elements[i]);
+	}
+}
+
+void Mesh::setNeighborInformationForElements()
+{
+	/* TODO
+	const size_t nElements(_elements.size());
+	std::vector<std::vector<char>> nb (nElements, std::vector<char>(nElements));
+
+	for (unsigned i=0; i<nElements; i++)
+	{
+		Element* elem = _elements[i];
+		const size_t nNodes (elem->getNNodes());
+		for (unsigned j=0; j<nNodes; j++)
+		{
+			const Node* node = elem->getNode(j);
+			
+		}
+	}
+	*/
+}
 
 }
 

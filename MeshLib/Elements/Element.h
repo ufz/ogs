@@ -21,39 +21,44 @@ class Node;
  */
 class Element
 {
+	/* friend functions: */
+	friend void Mesh::setElementInformationForNodes();
+	friend void Mesh::addElement(Element*);
+	
+
 public:
 	/// Get node with local index i.
-	const Node* getNode(size_t i) const;
+	const Node* getNode(unsigned i) const;
 
 	/// Get array of element nodes.
 	Node* const* getNodes() const { return _nodes; };
 
 	/// Get dimension of the mesh element.
-	virtual size_t getDimension() const = 0;
+	virtual unsigned getDimension() const = 0;
 
 	/// Get the number of edges for this element.
-	virtual size_t getNEdges() const = 0;
+	virtual unsigned getNEdges() const = 0;
 
 	/// Get the number of faces for this element.
-	virtual size_t getNFaces() const = 0;
+	virtual unsigned getNFaces() const = 0;
 
 	/// Get the specified neighbor.
-	const Element* getNeighbor(size_t i) const;
+	const Element* getNeighbor(unsigned i) const;
 
 	/// Get the number of neighbors for this element.
-	virtual size_t getNNeighbors() const = 0;
+	virtual unsigned getNNeighbors() const = 0;
 
 	/// Get the number of nodes for this element.
-	virtual size_t getNNodes() const = 0;
+	virtual unsigned getNNodes() const = 0;
 
 	/// Get the global index for the node with local index i.
-	size_t getNodeIndex(size_t i) const;
+	unsigned getNodeIndex(unsigned i) const;
 
 	/// Get the type of the mesh element (as a MshElemType-enum).
 	MshElemType::type getType() const { return _type; };
 
 	/// Get the value for this element.
-	size_t getValue() const { return _value; };
+	unsigned getValue() const { return _value; };
 
 	bool hasNeighbor(Element* elem) const;
 
@@ -63,26 +68,17 @@ public:
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
-	Element(Node** nodes, MshElemType::type type, size_t value = 0);
+	Element(Node** nodes, MshElemType::type type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Element(MshElemType::type type, size_t value = 0);
-
-	/**
-	 * Get an editale Node.
-	 * This method is called by Mesh::addElement(Element*), see friend definition.
-	 */
-	Node* getNode(size_t i);
+	Element(MshElemType::type type, unsigned value = 0);
 
 	Node** _nodes;
 	MshElemType::type _type;
-	size_t _value;
+	unsigned _value;
 	Element** _neighbors;
 
 private:
-
-/* friend functions: */
-	friend void Mesh::addElement(Element*);
 
 }; /* class */
 

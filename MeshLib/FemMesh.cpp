@@ -12,7 +12,6 @@ namespace MeshLib {
 FemMesh::FemMesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
 	: Mesh(name, nodes, elements)
 {
-	this->removeIdenticalNodes();
 }
 
 FemMesh::FemMesh(const Mesh &mesh)
