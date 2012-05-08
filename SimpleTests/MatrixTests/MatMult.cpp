@@ -9,6 +9,7 @@
 #include "LinAlg/Sparse/CRSMatrixPThreads.h"
 #include "RunTimeTimer.h"
 #include "CPUTimeTimer.h"
+#include "logog.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -16,8 +17,12 @@
 
 int main(int argc, char *argv[])
 {
+	LOGOG_INITIALIZE();
+	logog::Cout* logogCout = new logog::Cout;
+
 	if (argc < 4) {
 		std::cout << "Usage: " << argv[0] << " num_of_threads matrix number_of_multiplications resultfile" << std::endl;
+		INFO("Usage: %s num_of_threads matrix number_of_multiplications resultfile", argv[0]);
 		exit (1);
 	}
 
@@ -31,30 +36,22 @@ int main(int argc, char *argv[])
 
 	std::string fname_mat (argv[2]);
 
-	bool verbose (true);
-
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
 	double *A(NULL);
 	unsigned *iA(NULL), *jA(NULL), n;
 	if (in) {
-		if (verbose) {
-			std::cout << "reading matrix from " << fname_mat << " ... " << std::flush;
-		}
+		DBUG("reading matrix from %s ...", fname_mat.c_str());
 		RunTimeTimer timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
-		if (verbose) {
-			std::cout << "ok, " << timer.elapsed() << " s" << std::endl;
-		}
+		DBUG("ok, %n s", timer.elapsed());
 	} else {
-		std::cout << "error reading matrix from " << fname_mat << std::endl;
+		ERR("error reading matrix from %s", fname_mat.c_str());
 	}
 	unsigned nnz(iA[n]);
-	if (verbose) {
-		std::cout << "Parameters read: n=" << n << ", nnz=" << nnz << std::endl;
-	}
+	INFO("Parameters read: n=%n, nnz=%n", n, nnz);
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);
@@ -63,7 +60,7 @@ int main(int argc, char *argv[])
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
-	std::cout << mat.getNRows() << " x " << mat.getNCols() << std::endl;
+	INFO("%n x %n", mat.getNRows(), mat.getNCols());
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -71,9 +68,7 @@ int main(int argc, char *argv[])
 	for (unsigned k(0); k<n; ++k)
 		x[k] = 1.0;
 
-	if (verbose) {
-		std::cout << "matrix vector multiplication with Toms amuxCRS (" << n_threads << " threads) ... " << std::flush;
-	}
+	DBUG("matrix vector multiplication with Toms amuxCRS (%n threads) ...", n_threads);
 	RunTimeTimer run_timer;
 	CPUTimeTimer cpu_timer;
 	run_timer.start();
@@ -84,25 +79,26 @@ int main(int argc, char *argv[])
 	cpu_timer.stop();
 	run_timer.stop();
 
-	if (verbose) {
-		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], ["
-				<< run_timer.elapsed() << " sec run time]" << std::endl;
-		std::cout << "CPU time: " << cpu_timer.elapsed() << std::endl;
-		std::cout << "wclock time: " << run_timer.elapsed() << std::endl;
-	} else {
-		if (argc == 5) {
-			std::ofstream result_os (argv[4], std::ios::app);
-			if (result_os) {
-				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
-			}
-			result_os.close();
-		} else {
-			std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
+	DBUG("done [%n sec cpu time], [%n sec run time]", cpu_timer.elapsed(), run_timer.elapsed());
+	DBUG("CPU time: %n", cpu_timer.elapsed());
+	DBUG("wclock time: %n", run_timer.elapsed());
+
+	if (argc == 5) {
+		std::ofstream result_os (argv[4], std::ios::app);
+		if (result_os) {
+			result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
 		}
+		result_os.close();
+	} else {
+		INFO("%n \t %n", cpu_timer.elapsed(), run_timer.elapsed());
 	}
+
 
 	delete [] x;
 	delete [] y;
+
+	delete logogCout;
+	LOGOG_SHUTDOWN();
 
 	return 0;
 }

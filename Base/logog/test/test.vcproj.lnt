@@ -1,0 +1,11 @@
+/* -dConfiguration= ... none provided  */
+-D_UNICODE                     //  27: CharacterSet = "1" 
+-DUNICODE                      //  27: CharacterSet = "" 
+-i"..\include"                 //  47: AdditionalIncludeDirectories = "..\include" 
+-DWIN32                        //  48: PreprocessorDefinitions = "WIN32;_DEBUG;_CONSOLE" 
+-D_DEBUG                       //  48: PreprocessorDefinitions = "" 
+-D_CONSOLE                     //  48: PreprocessorDefinitions = "" 
+-D_MT                          //  51: RuntimeLibrary = "3" 
+-D_DEBUG                       //  51: RuntimeLibrary = "" 
+-D_DLL                         //  51: RuntimeLibrary = "" 
+.\test.cpp                     // 180: RelativePath = ".\test.cpp" 
