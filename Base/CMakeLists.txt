@@ -13,3 +13,4 @@ INCLUDE_DIRECTORIES(
         .
 )
 
+ADD_SUBDIRECTORY(logog)
