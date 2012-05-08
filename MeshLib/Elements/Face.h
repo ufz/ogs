@@ -24,6 +24,9 @@ public:
 	/// Get dimension of the mesh element.
 	size_t getDimension() const { return 2; };
 
+	/// 2D elements have no faces.
+	size_t getNFaces() const { return 0; };
+
 	/// Destructor
 	virtual ~Face();
 

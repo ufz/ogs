@@ -43,8 +43,14 @@ public:
 	/// Destructor
 	virtual ~Quad();
 
+	/// Get the number of edges for this element.
+	size_t getNEdges() const { return 4; };
+
+	/// Get the number of neighbors for this element.
+	size_t getNNeighbors() const { return 4; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 4; };
+	virtual size_t getNNodes() const { return 4; };
 
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.

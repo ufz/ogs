@@ -31,6 +31,18 @@ public:
 	/// Get dimension of the mesh element.
 	virtual size_t getDimension() const = 0;
 
+	/// Get the number of edges for this element.
+	virtual size_t getNEdges() const = 0;
+
+	/// Get the number of faces for this element.
+	virtual size_t getNFaces() const = 0;
+
+	/// Get the specified neighbor.
+	const Element* getNeighbor(size_t i) const;
+
+	/// Get the number of neighbors for this element.
+	virtual size_t getNNeighbors() const = 0;
+
 	/// Get the number of nodes for this element.
 	virtual size_t getNNodes() const = 0;
 
@@ -42,6 +54,8 @@ public:
 
 	/// Get the value for this element.
 	size_t getValue() const { return _value; };
+
+	bool hasNeighbor(Element* elem) const;
 
 	/// Destructor
 	virtual ~Element();
@@ -63,7 +77,7 @@ protected:
 	Node** _nodes;
 	MshElemType::type _type;
 	size_t _value;
-	std::vector<Element*> _neighbors;
+	Element** _neighbors;
 
 private:
 

@@ -31,7 +31,7 @@ public:
 	FemNode(const FemNode &node);
 
 	/// Destructor
-	~FemNode();
+	virtual ~FemNode();
 
 }; /* class */
 

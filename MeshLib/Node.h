@@ -44,7 +44,7 @@ public:
 	size_t getNElements() const { return _elements.size(); };
 
 	/// Destructor
-	~Node();
+	virtual ~Node();
 
 protected:
 	/**
@@ -52,9 +52,6 @@ protected:
 	 * This method is called by Mesh::addElement(Element*), see friend definition.
 	 */
 	void addElement(const Element* elem) { _elements.push_back(elem); };
-
-	/// Remove an element the node is part of.
-	//void removeElement(const Element* elem);
 
 	std::vector<const Element*> _elements;
 

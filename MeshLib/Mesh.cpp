@@ -64,48 +64,7 @@ void Mesh::addElement(Element* elem)
 	for (size_t i=0; i<nNodes; i++)
 		elem->getNode(i)->addElement(elem);
 }
-/*
-void Mesh::removeNode(size_t idx)
-{
-	if (idx < _nodes.size())
-	{
-		const std::vector<const Element*> node_elems = _nodes[idx]->getElements();
-		for (std::vector<const Element*>::const_iterator it  = node_elems.begin();
-									                     it != node_elems.end(); ++it)
-		{
-			
-			//for (si
-		}
-		_nodes.erase(_nodes.begin()+idx);
-		return;
-	}
-	std::cerr << "Mesh::removeNode(" << idx << ") - Index does not exist." << std::endl;
-}
 
-void Mesh::removeElement(size_t idx)
-{
-	if (idx < _elements.size())
-	{
-		Element* elem (_elements[idx]);
-		size_t nNodes (elem->getNNodes());
-		for (size_t i=0; i<nNodes; i++)
-		{
-			Node* node (const_cast<Node*>(elem->getNode(i)));
-			// remove element from nodes element-list
-			if (node->getNElements()>1)	
-			{
-				std::vector<Node*>::iterator it (_nodes.begin()+node->getID());
-				delete node;
-				_nodes.erase(it);
-			}
-			// delete node if it is not part of any element
-			else	
-				node->removeElement(elem);
-		}
-		return;
-	}
-	std::cerr << "Mesh::removeElement(" << idx << ") - Index does not exist." << std::endl;
-}
-*/
+
 }
 

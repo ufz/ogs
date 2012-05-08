@@ -27,19 +27,6 @@ Node::Node(const Node &node)
 Node::~Node()
 {
 }
-/*
-void Node::removeElement(const Element* elem)
-{
-	for (std::vector<const Element*>::iterator it  = _elements.begin();
-		                                       it != _elements.end(); ++it)
-	{
-		if (*it == elem)
-		{
-			_elements.erase(it);
-			return;
-		}
-	}
-}
-*/
+
 }
 

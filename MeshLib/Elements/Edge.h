@@ -38,14 +38,23 @@ public:
 	/// Destructor
 	virtual ~Edge();
 
+	/// 1D elements have no edges
+	size_t getNEdges() const { return 0; };
+
+	/// Get the number of faces for this element.
+	size_t getNFaces() const { return 0; };
+
 	/// Get the length of this 1d element.
 	double getLength() const { return _length; };
 
 	/// Get dimension of the mesh element.
 	size_t getDimension() const { return 1; };
 
+	/// Get the number of neighbors for this element.
+	size_t getNNeighbors() const { return 0; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 2; };
+	virtual size_t getNNodes() const { return 2; };
 
 
 protected:

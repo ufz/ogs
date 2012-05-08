@@ -37,14 +37,26 @@ public:
 	/// Constructor with an array of mesh nodes.
 	Hex(Node* nodes[8], size_t value = 0);
 
+	/// Constructor using single mesh nodes.
+	Hex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7, size_t value);
+
 	/// Copy constructor
 	Hex(const Hex &hex);
 
 	/// Destructor
 	virtual ~Hex();
 
+	/// Get the number of edges for this element.
+	size_t getNEdges() const { return 12; };
+
+	/// Get the number of faces for this element.
+	size_t getNFaces() const { return 6; };
+
+	/// Get the number of neighbors for this element.
+	size_t getNNeighbors() const { return 6; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 8; };
+	virtual size_t getNNodes() const { return 8; };
 
 protected:
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.

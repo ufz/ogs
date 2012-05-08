@@ -17,6 +17,27 @@ Hex::Hex(Node* nodes[8], size_t value)
 	: Cell(MshElemType::HEXAHEDRON, value)
 {
 	_nodes = nodes;
+	_neighbors = new Element*[6];
+	for (size_t i=0; i<6; i++)
+		_neighbors[i] = NULL;
+	this->_volume = this->calcVolume();
+}
+
+Hex::Hex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7, size_t value)
+	: Cell(MshElemType::HEXAHEDRON, value)
+{
+	_nodes = new Node*[8];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
+	_nodes[3] = n3;
+	_nodes[4] = n4;
+	_nodes[5] = n5;
+	_nodes[6] = n6;
+	_nodes[7] = n7;
+	_neighbors = new Element*[6];
+	for (size_t i=0; i<6; i++)
+		_neighbors[i] = NULL;
 	this->_volume = this->calcVolume();
 }
 
@@ -26,6 +47,9 @@ Hex::Hex(const Hex &hex)
 	_nodes = new Node*[8];
 	for (size_t i=0; i<8; i++)
 		_nodes[i] = hex._nodes[i];
+	_neighbors = new Element*[6];
+	for (size_t i=0; i<6; i++)
+		_neighbors[i] = hex._neighbors[i];
 	_volume = hex.getVolume();
 }
 

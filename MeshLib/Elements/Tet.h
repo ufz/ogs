@@ -45,6 +45,15 @@ public:
 	/// Destructor
 	virtual ~Tet();
 
+	/// Get the number of edges for this element.
+	size_t getNEdges() const { return 6; };
+	
+	/// Get the number of faces for this element.
+	size_t getNFaces() const { return 4; };
+
+	/// Get the number of neighbors for this element.
+	size_t getNNeighbors() const { return 4; };
+
 	/// Get the number of nodes for this element.
 	virtual size_t getNNodes() const { return 4; };
 

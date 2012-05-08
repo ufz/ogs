@@ -53,19 +53,6 @@ public:
 	/// Get the number of nodes
 	size_t getNNodes() const { return _nodes.size(); };
 
-	/**
-	 * Remove the node with the given index.
-	 * NOTE: Removing a node also removes all elements that this node is part of!
-	 */
-	//void removeNode(size_t idx);
-
-	/** 
-	 * Remove the element with the given index.
-	 * NOTE: If any node of this element is not part of any other element it will
-	 * also be removed!
-	 */
-	//void removeElement(size_t idx);
-
 	/// Get name of the mesh.
 	const std::string getName() const { return _name; };
 

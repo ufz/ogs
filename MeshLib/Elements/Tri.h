@@ -43,8 +43,14 @@ public:
 	/// Destructor
 	virtual ~Tri();
 
+	/// Get the number of edges for this element.
+	size_t getNEdges() const { return 3; };
+
+	/// Get the number of neighbors for this element.
+	size_t getNNeighbors() const { return 3; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 3; };
+	virtual size_t getNNodes() const { return 3; };
 
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.

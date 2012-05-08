@@ -44,8 +44,17 @@ public:
 	/// Destructor
 	virtual ~Pyramid();
 
+	/// Get the number of edges for this element.
+	size_t getNEdges() const { return 8; };
+
+	/// Get the number of faces for this element.
+	size_t getNFaces() const { return 5; };
+
+	/// Get the number of neighbors for this element.
+	size_t getNNeighbors() const { return 5; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 5; };
+	virtual size_t getNNodes() const { return 5; };
 
 protected:
 	/// Calculates the volume of a prism by subdividing it into two tetrahedra.
