@@ -29,7 +29,7 @@ MeshIO::MeshIO()
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
-	std::cout << "Read mesh ... " << std::flush;
+	std::cout << "Read mesh ... " << std::endl;
 /*
    #ifndef NDEBUG
     QTime myTimer;
@@ -122,7 +122,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 
 	MeshLib::Element* elem;
 					
-	switch(index)
+	switch(elem_type)
 	{
 	case MshElemType::LINE:
 		for (int i = 0; i < 2; i++)

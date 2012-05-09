@@ -25,8 +25,8 @@ class Element;
 class Node : public GEOLIB::PointWithID
 {
 	/* friend functions: */
-	friend void Mesh::setElementInformationForNodes();
-	friend void Mesh::addElement(Element*);
+	friend class Mesh;//void Mesh::setElementInformationForNodes();
+	//friend void Mesh::addElement(Element*);
 	
 
 public:

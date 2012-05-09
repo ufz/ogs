@@ -22,8 +22,8 @@ class Node;
 class Element
 {
 	/* friend functions: */
-	friend void Mesh::setElementInformationForNodes();
-	friend void Mesh::addElement(Element*);
+	friend class Mesh;//void Mesh::setElementInformationForNodes();
+	//friend void Mesh::addElement(Element*);
 	
 
 public:

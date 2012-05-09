@@ -5,6 +5,10 @@
  *      Author: KR
  */
 
+/**
+ * This is currently just test functionality for testing ogs-6 mesh data structures!
+ */
+
 #ifndef MESHIO_H_
 #define MESHIO_H_
 

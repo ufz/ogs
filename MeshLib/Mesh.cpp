@@ -30,12 +30,6 @@ Mesh::Mesh(const Mesh &mesh)
 {
 }
 
-Mesh::Mesh(const std::string &file_name)
-{
-	// read mesh
-	this->makeNodesUnique();
-}
-
 Mesh::~Mesh()
 {
 	const size_t nElements (_elements.size());

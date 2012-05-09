@@ -31,9 +31,6 @@ public:
 	/// Copy constructor
 	Mesh(const Mesh &mesh);
 
-	/// Constructor for reading a mesh from a file
-	Mesh(const std::string &file_name);
-
 	/// Destructor
 	virtual ~Mesh();
 
