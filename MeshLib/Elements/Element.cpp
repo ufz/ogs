@@ -26,7 +26,6 @@ Element::Element(MshElemType::type type, unsigned value)
 Element::~Element()
 {
 	delete[] this->_nodes;
-	delete[] this->_neighbors;
 }
 
 const Element* Element::getNeighbor(unsigned i) const

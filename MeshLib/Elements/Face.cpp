@@ -21,6 +21,7 @@ Face::Face(MshElemType::type type, unsigned value)
 
 Face::~Face()
 {
+	delete[] this->_neighbors;
 }
 
 

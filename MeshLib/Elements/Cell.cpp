@@ -21,6 +21,7 @@ Cell::Cell(MshElemType::type type, unsigned value)
 
 Cell::~Cell()
 {
+	delete[] this->_neighbors;
 }
 
 
