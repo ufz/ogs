@@ -27,9 +27,6 @@ public:
 	/// Copy constructor
 	FemMesh(const FemMesh &mesh);
 
-	/// Constructor for reading a mesh from a file
-	FemMesh(const std::string &file_name);
-
 	/// Destructor
 	virtual ~FemMesh();
 

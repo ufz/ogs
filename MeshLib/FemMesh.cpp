@@ -24,11 +24,6 @@ FemMesh::FemMesh(const FemMesh &mesh)
 {
 }
 
-FemMesh::FemMesh(const std::string &file_name)
-	: Mesh(file_name)
-{
-}
-
 FemMesh::~FemMesh()
 {
 

@@ -98,7 +98,7 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3]);
  * Calculates the area of a triangle. 
  * The formula is A=.5*|u x v|, i.e. half of the area of the parallelogram specified by u=p0->p1 and v=p0->p2.
  */
-double calcTriangleArea(const double p0[3], const double p1[3],	const double p2[3]);
+double calcTriangleArea(const double* p0, const double* p1,	const double* p2);
 
 /** 
  * Calculates the volume of a tetrahedron. 

@@ -86,7 +86,7 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	return acos (scpr (v0,v1,3) / (sqrt(scpr(v0,v0,3)) * sqrt(scpr (v1,v1,3))));
 }
 
-double calcTriangleaArea(const double p0[3], const double p1[3],	const double p2[3])
+double calcTriangleArea(const double* p0, const double* p1, const double* p2)
 {
 	const double u0 (p2[0] - p0[0]);
 	const double u1 (p2[1] - p0[1]);
