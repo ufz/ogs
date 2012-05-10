@@ -334,7 +334,7 @@ void Polygon::splitPolygonAtPoint (std::list<GEOLIB::Polygon*>::iterator polygon
 		perm[k] = k;
 	}
 
-	quicksort (id_vec, 0, n, perm);
+	BaseLib::quicksort (id_vec, 0, n, perm);
 
 	for (size_t k(0); k<n-1; k++) {
 		if (id_vec[k] == id_vec[k+1]) {

@@ -1,7 +1,9 @@
 #ifndef TIMEMEASUREMENT_H
 #define TIMEMEASUREMENT_H
 
-class TimeMeasurementBase 
+namespace BaseLib {
+
+class TimeMeasurementBase
 {
 public:
 	virtual void start () = 0;
@@ -10,5 +12,6 @@ public:
 	virtual ~TimeMeasurementBase () {};
 };
 
-#endif
+} // end namespace BaseLib
 
+#endif
