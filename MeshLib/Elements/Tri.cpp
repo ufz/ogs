@@ -12,26 +12,39 @@
 
 namespace MeshLib {
 
-Tri::Tri(Node* nodes[3], size_t value)
-	: Face(nodes, MshElemType::TRIANGLE, value)
+Tri::Tri(Node* nodes[3], unsigned value)
+	: Face(MshElemType::TRIANGLE, value)
 {
+	_nodes = nodes;
+	_neighbors = new Element*[3];
+	for (unsigned i=0; i<3; i++)
+		_neighbors[i] = NULL;
 	this->_area = this->calcArea();
 }
 
-Tri::Tri(Node* n0, Node* n1, Node* n2, size_t value)
+Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
 	: Face(MshElemType::TRIANGLE, value)
 {
-	Node* nodes[3] = { n0, n1, n2 };
-	_nodes = nodes;
-
+	_nodes = new Node*[3];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
+	_neighbors = new Element*[3];
+	for (unsigned i=0; i<3; i++)
+		_neighbors[i] = NULL;
 	this->_area = this->calcArea();
 }
 
 Tri::Tri(const Tri &tri)
 	: Face(MshElemType::TRIANGLE, tri.getValue())
 {
-	Node* nodes[3] = { new Node(*tri.getNode(0)), new Node(*tri.getNode(1)), new Node(*tri.getNode(2)) };
-	_nodes = nodes;
+	_nodes = new Node*[3];
+	_neighbors = new Element*[3];
+	for (unsigned i=0; i<3; i++)
+	{
+		_nodes[i] = tri._nodes[i];
+		_neighbors[i] = tri._neighbors[i];
+	}
 	_area = tri.getArea();
 }
 
@@ -41,7 +54,7 @@ Tri::~Tri()
 
 double Tri::calcArea()
 {
-	return MathLib::calcDetTriangle(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData());
+	return MathLib::calcTriangleArea(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData());
 }
 
 }

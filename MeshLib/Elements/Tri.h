@@ -32,10 +32,10 @@ class Tri : public Face
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Tri(Node* nodes[3], size_t value = 0);
+	Tri(Node* nodes[3], unsigned value = 0);
 
 	/// Constructor using single mesh nodes.
-	Tri(Node* n0, Node* n1, Node* n2, size_t value = 0);
+	Tri(Node* n0, Node* n1, Node* n2, unsigned value = 0);
 
 	/// Copy constructor
 	Tri(const Tri &tri);
@@ -43,8 +43,14 @@ public:
 	/// Destructor
 	virtual ~Tri();
 
+	/// Get the number of edges for this element.
+	unsigned getNEdges() const { return 3; };
+
+	/// Get the number of neighbors for this element.
+	unsigned getNNeighbors() const { return 3; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 3; };
+	virtual unsigned getNNodes() const { return 3; };
 
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.

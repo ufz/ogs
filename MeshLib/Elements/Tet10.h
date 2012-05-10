@@ -42,7 +42,7 @@ class Tet10 : public Tet, public FemElem
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Tet10(Node* nodes[10], size_t value = 0);
+	Tet10(Node* nodes[10], unsigned value = 0);
 
 	/// Constructor using a simple Tetrahedron
 	Tet10(const Tet &tet);
@@ -54,11 +54,11 @@ public:
 	virtual ~Tet10();
 
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 10; };
+	unsigned getNNodes() const { return 10; };
 
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
-	GEOLIB::Point calcCoG();
+	void calcCentroid();
 
 }; /* class */
 

@@ -10,44 +10,48 @@
 
 namespace MeshLib {
 
-Tet10::Tet10(Node* nodes[10], size_t value)
+Tet10::Tet10(Node* nodes[10], unsigned value)
 	: Tet(value), FemElem()
 {
 	_nodes = nodes;
 	this->_volume = this->calcVolume();
-	_centre_of_gravity = this->calcCoG();
+	this->calcCentroid();
 }
 
 Tet10::Tet10(const Tet &tet)
 	: Tet(tet.getValue()), FemElem()
 {
-	Node* nodes[10]; //= { n0, n1, n2, n3 };
-	//TODO: Calculate additional nodes!
-	_nodes = nodes;
+	_nodes = new Node*[10];
+	unsigned nNodes (tet.getNNodes());
+	for (unsigned i=0; i<nNodes; i++)
+		_nodes[i] = const_cast<Node*>(tet.getNode(i));
+
+	if (nNodes < this->getNNodes())
+	{
+		//TODO: Calculate additional nodes!
+	}
+
 	this->_volume = this->calcVolume();
-	_centre_of_gravity = this->calcCoG();
+	this->calcCentroid();
 }
 
 Tet10::Tet10(const Tet10 &tet)
 	: Tet(tet.getValue()), FemElem()
 {
-	Node* nodes[10] = { new Node(*tet.getNode(0)), new Node(*tet.getNode(1)), new Node(*tet.getNode(2)), 
-		                new Node(*tet.getNode(3)), new Node(*tet.getNode(4)), new Node(*tet.getNode(5)), 
-						new Node(*tet.getNode(6)), new Node(*tet.getNode(7)), new Node(*tet.getNode(8)), 
-						new Node(*tet.getNode(9)) };
-	_nodes = nodes;
-	_centre_of_gravity = tet.getCentreOfGravity();
+	_nodes = new Node*[10];
+	for (unsigned i=0; i<10; i++)
+		_nodes[i] = tet._nodes[i];
+	_centroid = tet.getCentroid();
 }
 
 Tet10::~Tet10()
 {
 }
 
-GEOLIB::Point Tet10::calcCoG()
+void Tet10::calcCentroid()
 {
-	GEOLIB::Point cog(0,0,0);
 	//TODO calculation!
-	return cog;
+	_centroid = 0;
 }
 
 }

@@ -8,13 +8,13 @@
 #include "Cell.h"
 
 namespace MeshLib {
-
-Cell::Cell(Node** nodes, MshElemType::type type, size_t value)
+/*
+Cell::Cell(Node** nodes, MshElemType::type type, unsigned value)
 	: Element(nodes, type, value)
 {
 }
-
-Cell::Cell(MshElemType::type type, size_t value)
+*/
+Cell::Cell(MshElemType::type type, unsigned value)
 	: Element(type, value)
 {
 }

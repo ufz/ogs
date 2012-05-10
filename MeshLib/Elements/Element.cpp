@@ -12,31 +12,48 @@
 
 namespace MeshLib {
 
-Element::Element(Node** nodes, MshElemType::type type, size_t value)
-	: _type(type), _nodes(nodes), _value(value)
+/*
+Element::Element(Node** nodes, MshElemType::type type, unsigned value)
 {
 }
-
-Element::Element(MshElemType::type type, size_t value)
-	: _type(type), _nodes(NULL), _value(value)
+*/
+Element::Element(MshElemType::type type, unsigned value)
+	: _nodes(NULL), _type(type), _value(value)
 {
 }
 
 Element::~Element()
 {
 	delete[] this->_nodes;
+	delete[] this->_neighbors;
 }
 
-const Node* Element::getNode(size_t i) const
+const Element* Element::getNeighbor(unsigned i) const
 {
-	assert(i<getNNodes() && "Error in MeshLib::Element - Index does not exist.");
+	assert(i < getNNeighbors() && "Error in MeshLib::Element::getNeighbor() - Index does not exist.");
+	return _neighbors[i];
+}
+
+const Node* Element::getNode(unsigned i) const
+{
+	assert(i < getNNodes() && "Error in MeshLib::Element::getNode() - Index does not exist.");
+	assert(_nodes[i] != NULL && "Error in MeshLib::Element::getNode() - Node is NULL.");
 	return _nodes[i];
 }
 
-size_t Element::getNodeIndex(size_t i) const
+unsigned Element::getNodeIndex(unsigned i) const 
 {
-	assert(i<getNNodes() && "Error in MeshLib::Element - Index does not exist.");
+	assert(i<getNNodes() && "Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
 	return _nodes[i]->getID();
+}
+
+bool Element::hasNeighbor(Element* elem) const
+{
+	unsigned nNeighbors (this->getNNeighbors());
+	for (unsigned i=0; i<nNeighbors; i++)
+		if (this->_neighbors[i]==elem)
+			return true;
+	return false;
 }
 
 }

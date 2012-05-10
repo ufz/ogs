@@ -27,10 +27,10 @@ class Edge : public Element
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Edge(Node* nodes[2], size_t value = 0);
+	Edge(Node* nodes[2], unsigned value = 0);
 
 	/// Constructor using single nodes
-	Edge(Node* n1, Node* n2, size_t value = 0);
+	Edge(Node* n1, Node* n2, unsigned value = 0);
 
 	/// Copy constructor
 	Edge(const Edge &edge);
@@ -38,14 +38,23 @@ public:
 	/// Destructor
 	virtual ~Edge();
 
+	/// 1D elements have no edges
+	unsigned getNEdges() const { return 0; };
+
+	/// Get the number of faces for this element.
+	unsigned getNFaces() const { return 0; };
+
 	/// Get the length of this 1d element.
 	double getLength() const { return _length; };
 
 	/// Get dimension of the mesh element.
-	size_t getDimension() const { return 1; };
+	unsigned getDimension() const { return 1; };
+
+	/// Get the number of neighbors for this element.
+	unsigned getNNeighbors() const { return 0; };
 
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 2; };
+	virtual unsigned getNNodes() const { return 2; };
 
 
 protected:

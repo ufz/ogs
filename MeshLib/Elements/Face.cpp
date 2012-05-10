@@ -8,13 +8,13 @@
 #include "Face.h"
 
 namespace MeshLib {
-
-Face::Face(Node** nodes, MshElemType::type type, size_t value)
+/*
+Face::Face(Node** nodes, MshElemType::type type, unsigned value)
 	: Element(nodes, type, value)
 {
 }
-
-Face::Face(MshElemType::type type, size_t value)
+*/
+Face::Face(MshElemType::type type, unsigned value)
 	: Element(type, value)
 {
 }

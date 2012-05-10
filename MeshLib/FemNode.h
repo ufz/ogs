@@ -19,10 +19,10 @@ class FemNode : public Node
 {
 public:
 	/// Constructor using a coordinate array
-	FemNode(double const*const coords, size_t id = std::numeric_limits<size_t>::max());
+	FemNode(double const*const coords, unsigned id = std::numeric_limits<unsigned>::max());
 	
 	/// Constructor using single coordinates
-	FemNode(double x, double y, double z, size_t id = std::numeric_limits<size_t>::max());
+	FemNode(double x, double y, double z, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Constructor using a mesh node
 	FemNode(const Node &node);
@@ -31,7 +31,7 @@ public:
 	FemNode(const FemNode &node);
 
 	/// Destructor
-	~FemNode();
+	virtual ~FemNode();
 
 }; /* class */
 

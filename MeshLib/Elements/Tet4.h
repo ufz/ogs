@@ -35,10 +35,10 @@ class Tet4 : public Tet, public FemElem
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Tet4(Node* nodes[4], size_t value = 0);
+	Tet4(Node* nodes[4], unsigned value = 0);
 
 	/// Constructor using single mesh nodes.
-	Tet4(Node* n0, Node* n1, Node* n2, Node* n3, size_t value = 0);
+	Tet4(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value = 0);
 
 	/// Constructor using a simple Tetrahedron
 	Tet4(const Tet &tet);
@@ -51,7 +51,7 @@ public:
 
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
-	GEOLIB::Point calcCoG();
+	void calcCentroid();
 
 }; /* class */
 

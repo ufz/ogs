@@ -13,18 +13,43 @@
 
 namespace MeshLib {
 
-Hex::Hex(Node* nodes[8], size_t value)
-	: Cell(nodes, MshElemType::HEXAHEDRON, value)
+Hex::Hex(Node* nodes[8], unsigned value)
+	: Cell(MshElemType::HEXAHEDRON, value)
 {
+	_nodes = nodes;
+	_neighbors = new Element*[6];
+	for (unsigned i=0; i<6; i++)
+		_neighbors[i] = NULL;
+	this->_volume = this->calcVolume();
+}
+
+Hex::Hex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7, unsigned value)
+	: Cell(MshElemType::HEXAHEDRON, value)
+{
+	_nodes = new Node*[8];
+	_nodes[0] = n0;
+	_nodes[1] = n1;
+	_nodes[2] = n2;
+	_nodes[3] = n3;
+	_nodes[4] = n4;
+	_nodes[5] = n5;
+	_nodes[6] = n6;
+	_nodes[7] = n7;
+	_neighbors = new Element*[6];
+	for (unsigned i=0; i<6; i++)
+		_neighbors[i] = NULL;
 	this->_volume = this->calcVolume();
 }
 
 Hex::Hex(const Hex &hex)
 	: Cell(MshElemType::HEXAHEDRON, hex.getValue())
 {
-	Node* nodes[8] = { new Node(*hex.getNode(0)), new Node(*hex.getNode(1)), new Node(*hex.getNode(2)), new Node(*hex.getNode(3)),
-	                   new Node(*hex.getNode(4)), new Node(*hex.getNode(5)), new Node(*hex.getNode(6)), new Node(*hex.getNode(7)) };
-	_nodes = nodes;
+	_nodes = new Node*[8];
+	for (unsigned i=0; i<8; i++)
+		_nodes[i] = hex._nodes[i];
+	_neighbors = new Element*[6];
+	for (unsigned i=0; i<6; i++)
+		_neighbors[i] = hex._neighbors[i];
 	_volume = hex.getVolume();
 }
 
@@ -34,12 +59,12 @@ Hex::~Hex()
 
 double Hex::calcVolume()
 {
-	return MathLib::calcDetTetrahedron(_nodes[4]->getData(), _nodes[7]->getData(), _nodes[5]->getData(), _nodes[0]->getData())
-		 + MathLib::calcDetTetrahedron(_nodes[5]->getData(), _nodes[3]->getData(), _nodes[1]->getData(), _nodes[0]->getData())
-		 + MathLib::calcDetTetrahedron(_nodes[5]->getData(), _nodes[7]->getData(), _nodes[3]->getData(), _nodes[0]->getData())
-		 + MathLib::calcDetTetrahedron(_nodes[5]->getData(), _nodes[7]->getData(), _nodes[6]->getData(), _nodes[2]->getData())
-		 + MathLib::calcDetTetrahedron(_nodes[1]->getData(), _nodes[3]->getData(), _nodes[5]->getData(), _nodes[2]->getData())
-		 + MathLib::calcDetTetrahedron(_nodes[3]->getData(), _nodes[7]->getData(), _nodes[5]->getData(), _nodes[2]->getData());
+	return MathLib::calcTetrahedronVolume(_nodes[4]->getData(), _nodes[7]->getData(), _nodes[5]->getData(), _nodes[0]->getData())
+		 + MathLib::calcTetrahedronVolume(_nodes[5]->getData(), _nodes[3]->getData(), _nodes[1]->getData(), _nodes[0]->getData())
+		 + MathLib::calcTetrahedronVolume(_nodes[5]->getData(), _nodes[7]->getData(), _nodes[3]->getData(), _nodes[0]->getData())
+		 + MathLib::calcTetrahedronVolume(_nodes[5]->getData(), _nodes[7]->getData(), _nodes[6]->getData(), _nodes[2]->getData())
+		 + MathLib::calcTetrahedronVolume(_nodes[1]->getData(), _nodes[3]->getData(), _nodes[5]->getData(), _nodes[2]->getData())
+		 + MathLib::calcTetrahedronVolume(_nodes[3]->getData(), _nodes[7]->getData(), _nodes[5]->getData(), _nodes[2]->getData());
 }
 
 }

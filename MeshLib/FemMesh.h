@@ -31,7 +31,7 @@ public:
 	FemMesh(const std::string &file_name);
 
 	/// Destructor
-	~FemMesh();
+	virtual ~FemMesh();
 
 
 }; /* class */

@@ -33,10 +33,10 @@ class Prism : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Prism(Node* nodes[6], size_t value = 0);
+	Prism(Node* nodes[6], unsigned value = 0);
 
 	/// Constructor using single mesh nodes.
-	Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, size_t value = 0);
+	Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, unsigned value = 0);
 
 	/// Copy constructor
 	Prism(const Prism &prism);
@@ -44,8 +44,17 @@ public:
 	/// Destructor
 	virtual ~Prism();
 
+	/// Get the number of edges for this element.
+	unsigned getNEdges() const { return 9; };
+
+	/// Get the number of faces for this element.
+	unsigned getNFaces() const { return 5; };
+
+	/// Get the number of neighbors for this element.
+	unsigned getNNeighbors() const { return 5; };
+
 	/// Get the number of nodes for this element.
-	size_t getNNodes() const { return 6; };
+	virtual unsigned getNNodes() const { return 6; };
 
 protected:
 	/// Calculates the volume of a prism by subdividing it into three tetrahedra.
