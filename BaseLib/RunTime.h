@@ -1,5 +1,12 @@
-#ifndef RUNTIMETIMER_H
-#define RUNTIMETIMER_H
+/*
+ * RunTime.h
+ *
+ *  Created on: May 10, 2012
+ *      Author: TF
+ */
+
+#ifndef RUNTIME_H
+#define RUNTIME_H
 
 #include "TimeMeasurementBase.h"
 
@@ -11,13 +18,15 @@
 
 #include "TimeMeasurementBase.h"
 
-class RunTimeTimer : public TimeMeasurementBase
+namespace BaseLib {
+
+class RunTime : public TimeMeasurementBase
 {
 public:
 	virtual void start();
 	virtual void stop();
 	virtual double elapsed();
-	~RunTimeTimer() {};
+	~RunTime() {};
 private:
 #ifndef _WIN32
 	timeval _start;
@@ -27,5 +36,7 @@ private:
 	unsigned long _stop;
 #endif
 };
+
+} // end namespace BaseLib
 
 #endif

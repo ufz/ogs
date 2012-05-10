@@ -8,8 +8,8 @@
 #include <cstdlib>
 
 // BaseLib
-#include "RunTimeTimer.h"
-#include "CPUTimeTimer.h"
+#include "RunTime.h"
+#include "CPUTime.h"
 
 // MathLib
 #include "sparse.h"
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 		if (verbose) {
 			std::cout << "reading matrix from " << fname_mat << " ... " << std::flush;
 		}
-		RunTimeTimer timer;
+		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
 		x[k] = 1.0;
 
 	// create time measurement objects
-	RunTimeTimer run_timer;
-	CPUTimeTimer cpu_timer;
+	BaseLib::RunTime run_timer;
+	BaseLib::CPUTime cpu_timer;
 
 	// calculate the nested dissection reordering
 	if (verbose) {

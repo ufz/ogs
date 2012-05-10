@@ -11,8 +11,8 @@
 #include "LinAlg/Sparse/CRSMatrixDiagPrecond.h"
 #include "sparse.h"
 #include "vector_io.h"
-#include "RunTimeTimer.h"
-#include "CPUTimeTimer.h"
+#include "RunTime.h"
+#include "CPUTime.h"
 
 int main(int argc, char *argv[])
 {
@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
 
 	double eps(1.0e-6);
 	unsigned steps(4000);
-	RunTimeTimer run_timer;
-	CPUTimeTimer cpu_timer;
+	BaseLib::RunTime run_timer;
+	BaseLib::CPUTime cpu_timer;
 	run_timer.start();
 	cpu_timer.start();
 
