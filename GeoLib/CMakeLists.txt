@@ -7,13 +7,13 @@ ADD_LIBRARY(GeoLib STATIC ${SOURCES_GEOLIB})
 
 include_directories(
 	.
-	../Base
+	../BaseLib
 	../MathLib
 )
 
 
 target_link_libraries (GeoLib
-	Base
+	BaseLib
 	MathLib
 )
 

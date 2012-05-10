@@ -11,8 +11,8 @@ ENDIF (CMAKE_USE_PTHREADS_INIT )
 
 INCLUDE_DIRECTORIES(
         .
-	${CMAKE_SOURCE_DIR}/Base/
-	${CMAKE_SOURCE_DIR}/Base/logog/include
+	${CMAKE_SOURCE_DIR}/BaseLib/
+	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
 	${CMAKE_SOURCE_DIR}/MathLib/
 )
 
@@ -42,7 +42,7 @@ IF (METIS_FOUND)
 	SET_TARGET_PROPERTIES(MatVecMultPerm PROPERTIES FOLDER SimpleTests)
 
 	TARGET_LINK_LIBRARIES ( MatVecMultPerm
-		Base
+		BaseLib
 		MathLib
 		${METIS_LIBRARIES}
 		${ADDITIONAL_LIBS}
@@ -56,7 +56,7 @@ IF (METIS_FOUND)
 	SET_TARGET_PROPERTIES(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
 
 	TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
-		Base
+		BaseLib
 		MathLib
 		${METIS_LIBRARIES}
 		${ADDITIONAL_LIBS}
@@ -69,7 +69,7 @@ IF (WIN32)
 ENDIF (WIN32)
 
 TARGET_LINK_LIBRARIES ( MatMult
-	Base
+	BaseLib
 	MathLib
 )
 
@@ -78,7 +78,7 @@ IF (WIN32)
 ENDIF (WIN32)
 
 TARGET_LINK_LIBRARIES ( MatTestRemoveRowsCols
-	Base
+	BaseLib
 	MathLib
 )
 
