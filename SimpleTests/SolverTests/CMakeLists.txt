@@ -14,7 +14,7 @@ ENDIF (CMAKE_USE_PTHREADS_INIT )
 
 INCLUDE_DIRECTORIES(
         .
-	../../Base/
+	../../BaseLib/
 	../../MathLib/
 )
 
@@ -55,7 +55,7 @@ TARGET_LINK_LIBRARIES ( ConjugateGradientUnpreconditioned
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
-	Base
+	BaseLib
 )
 
 IF (WIN32)
@@ -65,7 +65,7 @@ TARGET_LINK_LIBRARIES ( ConjugateGradientDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
-	Base
+	BaseLib
 )
 
 IF (WIN32)
@@ -75,7 +75,7 @@ TARGET_LINK_LIBRARIES( BiCGStabDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
-	Base
+	BaseLib
 )
 
 IF (WIN32)
@@ -85,6 +85,6 @@ TARGET_LINK_LIBRARIES( GMResDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
-	Base
+	BaseLib
 )
 

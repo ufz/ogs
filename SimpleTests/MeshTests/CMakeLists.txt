@@ -1,8 +1,8 @@
 
 INCLUDE_DIRECTORIES(
         .
-	${CMAKE_SOURCE_DIR}/Base/
-	${CMAKE_SOURCE_DIR}/Base/logog/include
+	${CMAKE_SOURCE_DIR}/BaseLib/
+	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
 	${CMAKE_SOURCE_DIR}/FileIO/
 	${CMAKE_SOURCE_DIR}/MathLib/
 	${CMAKE_SOURCE_DIR}/MeshLib/
@@ -19,7 +19,7 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	MeshLib
 	FileIO	
 	MathLib	
-	Base
+	BaseLib
 	GeoLib
 )
 

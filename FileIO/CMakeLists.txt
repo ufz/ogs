@@ -7,7 +7,7 @@ ADD_LIBRARY(FileIO STATIC ${SOURCES})
 
 include_directories(
 	.
-	../Base
+	../BaseLib
 	../GeoLib
 	../MathLib
 	../MeshLib

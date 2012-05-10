@@ -10,14 +10,14 @@ ADD_LIBRARY(MeshLib STATIC ${SOURCES})
 
 include_directories(
 	.
-	../Base
+	../BaseLib
 	../GeoLib
 	../MathLib
 )
 
 
 target_link_libraries (MeshLib
-	Base
+	BaseLib
 	GeoLib
 	MathLib
 )

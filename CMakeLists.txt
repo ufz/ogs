@@ -30,7 +30,7 @@ ENDIF() # GCC AND GPROF_PATH
 ######################
 
 # Add subdirectories with the projects
-ADD_SUBDIRECTORY( Base )
+ADD_SUBDIRECTORY( BaseLib )
 ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )

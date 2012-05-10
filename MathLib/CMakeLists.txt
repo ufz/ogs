@@ -25,7 +25,7 @@ ENDIF ()
 
 INCLUDE_DIRECTORIES (
 	.
-	../Base
+	../BaseLib
 	../GeoLib
 )
 

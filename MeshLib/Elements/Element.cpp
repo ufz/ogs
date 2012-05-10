@@ -14,7 +14,6 @@ namespace MeshLib {
 
 /*
 Element::Element(Node** nodes, MshElemType::type type, unsigned value)
-	: _nodes(nodes), _type(type), _value(value)
 {
 }
 */
