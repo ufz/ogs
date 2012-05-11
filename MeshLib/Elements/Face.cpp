@@ -6,6 +6,7 @@
  */
 
 #include "Face.h"
+#include "Edge.h"
 
 namespace MeshLib {
 /*
@@ -23,6 +24,7 @@ Face::~Face()
 {
 	delete[] this->_neighbors;
 }
+
 
 
 }

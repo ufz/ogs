@@ -36,7 +36,7 @@ protected:
 	Cell(MshElemType::type type, unsigned value = 0);
 
 	/// Calculate the volume of this 3d element.
-	virtual double calcVolume() = 0;
+	virtual double computeVolume() = 0;
 
 	double _volume;
 

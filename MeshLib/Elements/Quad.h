@@ -54,8 +54,12 @@ public:
 
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.
-	double calcArea();
+	double computeArea();
 
+	/// Return a specific edge node.
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+
+	static const unsigned _edge_nodes[4][2];
 
 }; /* class */
 

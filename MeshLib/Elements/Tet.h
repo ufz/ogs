@@ -45,9 +45,15 @@ public:
 	/// Destructor
 	virtual ~Tet();
 
+	/// Returns the face i of the element.
+	const Element* getFace(unsigned i) const;
+
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 6; };
 	
+	/// Get the number of nodes for face i.
+	unsigned getNFaceNodes(unsigned i) const { return 3; };
+
 	/// Get the number of faces for this element.
 	unsigned getNFaces() const { return 4; };
 
@@ -62,7 +68,13 @@ protected:
 	Tet(unsigned value = 0);
 
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
-	double calcVolume();
+	double computeVolume();
+
+	/// Return a specific edge node.
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+
+	static const unsigned _face_nodes[4][3];
+	static const unsigned _edge_nodes[6][2];
 
 }; /* class */
 

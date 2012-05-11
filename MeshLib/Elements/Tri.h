@@ -54,7 +54,12 @@ public:
 
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
-	double calcArea();
+	double computeArea();
+
+	/// Return a specific edge node.
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	
+	static const unsigned _edge_nodes[3][2];
 
 }; /* class */
 

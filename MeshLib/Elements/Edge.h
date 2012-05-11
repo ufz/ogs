@@ -38,8 +38,17 @@ public:
 	/// Destructor
 	virtual ~Edge();
 
+	/// Returns the edge i of the element.
+	const Element* getEdge(unsigned i) const { return NULL; };
+
+	/// Returns the face i of the element.
+	const Element* getFace(unsigned i) const { return NULL; };
+
 	/// 1D elements have no edges
 	unsigned getNEdges() const { return 0; };
+
+	/// Get the number of nodes for face i.
+	unsigned getNFaceNodes(unsigned i) const { return 0; };
 
 	/// Get the number of faces for this element.
 	unsigned getNFaces() const { return 0; };
@@ -59,7 +68,13 @@ public:
 
 protected:
 	/// Calculate the length of this 1d element.
-	double calcLength();
+	double computeLength();
+
+	/// 1D elements have no edges.
+	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return NULL; };
+
+	/// 1D elements have no faces.
+	Node* getFaceNode(unsigned face_id, unsigned node_id) const { return NULL; };
 
 	double _length;
 

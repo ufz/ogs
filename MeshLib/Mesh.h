@@ -40,6 +40,12 @@ public:
 	/// Add an element to the mesh.
 	void addElement(Element* elem);
 
+	/// Get the minimum edge length over all elements of the mesh.
+	double getMinEdgeLength() { return _edge_length[0]; };
+
+	/// Get the maximum edge length over all elements of the mesh.
+	double getMaxEdgeLength() { return _edge_length[1]; };
+
 	/// Get the node with the given index.
 	const Node* getNode(unsigned idx) const { return _nodes[idx]; };
 
@@ -71,6 +77,7 @@ protected:
 	/// Fills in the neighbor-information for elements.
 	void setNeighborInformationForElements();
 
+	static double _edge_length[2];
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;

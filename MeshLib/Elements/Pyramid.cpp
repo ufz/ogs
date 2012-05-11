@@ -7,10 +7,36 @@
 
 #include "Pyramid.h"
 #include "Node.h"
+#include "Tri.h"
+#include "Quad.h"
 
 #include "MathTools.h"
 
 namespace MeshLib {
+
+const unsigned Pyramid::_face_nodes[5][4] =
+{
+	{0, 1, 4, 99}, // Face 0
+	{1, 2, 4, 99}, // Face 1
+	{2, 3, 4, 99}, // Face 2
+	{3, 0, 4, 99}, // Face 3
+	{0, 3, 2,  1}  // Face 4
+};
+ 
+const unsigned Pyramid::_edge_nodes[8][2] =
+{
+	{0, 1}, // Edge 0
+	{1, 2}, // Edge 1
+	{2, 3}, // Edge 2
+	{0, 3}, // Edge 3
+	{0, 4}, // Edge 4
+	{1, 4}, // Edge 5
+	{2, 4}, // Edge 6
+	{3, 4}  // Edge 7
+};
+
+const unsigned Pyramid::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
+
 
 Pyramid::Pyramid(Node* nodes[5], unsigned value)
 	: Cell(MshElemType::PYRAMID, value)
@@ -19,7 +45,7 @@ Pyramid::Pyramid(Node* nodes[5], unsigned value)
 	_neighbors = new Element*[5];
 	for (unsigned i=0; i<5; i++)
 		_neighbors[i] = NULL;
-	this->_volume = this->calcVolume();
+	this->_volume = this->computeVolume();
 }
 
 Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned value)
@@ -35,7 +61,7 @@ Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned valu
 	for (unsigned i=0; i<5; i++)
 		_neighbors[i] = NULL;
 
-	this->_volume = this->calcVolume();
+	this->_volume = this->computeVolume();
 }
 
 Pyramid::Pyramid(const Pyramid &pyramid)
@@ -55,10 +81,36 @@ Pyramid::~Pyramid()
 {
 }
 
-double Pyramid::calcVolume()
+double Pyramid::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[4]->getData())
 		 + MathLib::calcTetrahedronVolume(_nodes[2]->getData(), _nodes[3]->getData(), _nodes[0]->getData(), _nodes[4]->getData());
+}
+
+const Element* Pyramid::getFace(unsigned i) const
+{
+	if (i<this->getNFaces())
+	{
+		unsigned nFaceNodes (this->getNFaceNodes(i));
+		Node** nodes = new Node*[nFaceNodes];
+		for (unsigned j=0; j<nFaceNodes; j++)
+			nodes[j] = _nodes[_face_nodes[i][j]];
+
+		if (i<4)
+			return new Tri(nodes);
+		else
+			return new Quad(nodes);
+	}
+	std::cerr << "Error in MeshLib::Element::getFace() - Index does not exist." << std::endl;
+	return NULL;
+}
+
+unsigned Pyramid::getNFaceNodes(unsigned i) const
+{
+	if (i<5)
+		return _n_face_nodes[i];
+	std::cerr << "Error in MeshLib::Element::getNFaceNodes() - Index does not exist." << std::endl;
+	return 0;
 }
 
 }

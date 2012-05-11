@@ -12,6 +12,16 @@
 	
 namespace MeshLib {
 
+
+const unsigned Quad::_edge_nodes[4][2] =
+{
+	{0, 1}, // Edge 0
+	{1, 2}, // Edge 1
+	{0, 2}, // Edge 2
+	{0, 3}  // Edge 3
+};
+
+
 Quad::Quad(Node* nodes[4], unsigned value)
 	: Face(MshElemType::TRIANGLE, value)
 {
@@ -19,7 +29,7 @@ Quad::Quad(Node* nodes[4], unsigned value)
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->calcArea();
+	this->_area = this->computeArea();
 }
 
 Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
@@ -33,7 +43,7 @@ Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->calcArea();
+	this->_area = this->computeArea();
 }
 
 Quad::Quad(const Quad &quad)
@@ -53,7 +63,7 @@ Quad::~Quad()
 {
 }
 
-double Quad::calcArea()
+double Quad::computeArea()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData())
          + MathLib::calcTriangleArea(_nodes[2]->getData(), _nodes[3]->getData(), _nodes[0]->getData());

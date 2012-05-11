@@ -16,7 +16,7 @@ Edge::Edge(Node* nodes[2], unsigned value)
 	: Element(MshElemType::LINE, value)
 {
 	_nodes = nodes;
-	this->_length = this->calcLength();
+	this->_length = this->computeLength();
 }
 
 Edge::Edge(Node* n0, Node* n1, unsigned value)
@@ -26,7 +26,7 @@ Edge::Edge(Node* n0, Node* n1, unsigned value)
 	_nodes[0] = n0;
 	_nodes[1] = n1;
 
-	this->_length = this->calcLength();
+	this->_length = this->computeLength();
 }
 
 Edge::Edge(const Edge &edge)
@@ -42,7 +42,7 @@ Edge::~Edge()
 {
 }
 
-double Edge::calcLength()
+double Edge::computeLength()
 {
 	return sqrt(MathLib::sqrDist(_nodes[0]->getData(), _nodes[1]->getData()));
 }

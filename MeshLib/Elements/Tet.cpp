@@ -7,10 +7,31 @@
 
 #include "Tet.h"
 #include "Node.h"
+#include "Tri.h"
 
 #include "MathTools.h"
 
 namespace MeshLib {
+
+
+const unsigned Tet::_face_nodes[4][3] =
+{
+	{0, 2, 1}, // Face 0
+	{0, 1, 3}, // Face 1
+	{1, 2, 3}, // Face 2
+	{2, 0, 3}  // Face 3
+};
+ 
+const unsigned Tet::_edge_nodes[6][2] =
+{
+	{0, 1}, // Edge 0
+	{1, 2}, // Edge 1
+	{0, 2}, // Edge 2
+	{0, 3}, // Edge 3
+	{1, 3}, // Edge 4
+	{2, 3}  // Edge 5
+};
+
 
 Tet::Tet(Node* nodes[4], unsigned value)
 	: Cell(MshElemType::TETRAHEDRON, value)
@@ -19,7 +40,7 @@ Tet::Tet(Node* nodes[4], unsigned value)
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
-	this->_volume = this->calcVolume();
+	this->_volume = this->computeVolume();
 }
 
 Tet::Tet(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
@@ -33,7 +54,7 @@ Tet::Tet(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
-	this->_volume = this->calcVolume();
+	this->_volume = this->computeVolume();
 }
 
 Tet::Tet(unsigned value)
@@ -61,9 +82,23 @@ Tet::~Tet()
 {
 }
 
-double Tet::calcVolume()
+double Tet::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[3]->getData());
+}
+
+const Element* Tet::getFace(unsigned i) const
+{
+	if (i<this->getNFaces())
+	{
+		unsigned nFaceNodes (this->getNFaceNodes(i));
+		Node** nodes = new Node*[nFaceNodes];
+		for (unsigned j=0; j<nFaceNodes; j++)
+			nodes[j] = _nodes[_face_nodes[i][j]];
+		return new Tri(nodes);
+	}
+	std::cerr << "Error in MeshLib::Element::getFace() - Index does not exist." << std::endl;
+	return NULL;
 }
 
 }

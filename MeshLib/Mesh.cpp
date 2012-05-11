@@ -20,6 +20,7 @@ namespace MeshLib {
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
 	: _name(name), _nodes(nodes), _elements(elements)
 {
+	double _edge_length[2] = {0, 0};
 	this->makeNodesUnique();
 	this->setElementInformationForNodes();
 	this->setNeighborInformationForElements();

@@ -36,9 +36,18 @@ public:
 	/// Get dimension of the mesh element.
 	virtual unsigned getDimension() const = 0;
 
+	/// Returns the edge i of the element.
+	const Element* getEdge(unsigned i) const;
+
+	/// Returns the face i of the element.
+	virtual const Element* getFace(unsigned i) const = 0;
+
 	/// Get the number of edges for this element.
 	virtual unsigned getNEdges() const = 0;
 
+	/// Get the number of nodes for face i.
+	virtual unsigned getNFaceNodes(unsigned i) const = 0;
+	
 	/// Get the number of faces for this element.
 	virtual unsigned getNFaces() const = 0;
 
@@ -66,12 +75,11 @@ public:
 	virtual ~Element();
 
 protected:
-/*
-	/// Constructor for a generic mesh element containing an array of mesh nodes.
-	Element(Node** nodes, MshElemType::type type, unsigned value = 0);
-*/
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Element(MshElemType::type type, unsigned value = 0);
+
+	/// Return a specific edge node.
+	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
 	Node** _nodes;
 	MshElemType::type _type;

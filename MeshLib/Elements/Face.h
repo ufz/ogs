@@ -24,6 +24,12 @@ public:
 	/// Get dimension of the mesh element.
 	unsigned getDimension() const { return 2; };
 
+	/// Returns the face i of the element.
+	const Element* getFace(unsigned i) const { return this->getEdge(i); };
+
+	/// Get the number of nodes for face i.
+	unsigned getNFaceNodes(unsigned i) const { return 2; };
+
 	/// 2D elements have no faces.
 	unsigned getNFaces() const { return 0; };
 
@@ -39,7 +45,7 @@ protected:
 	Face(MshElemType::type type, unsigned value = 0);
 
 	/// Calculate the area of this 2d element.
-	virtual double calcArea() = 0;
+	virtual double computeArea() = 0;
 
 	double _area;
 

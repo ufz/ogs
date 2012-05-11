@@ -14,7 +14,7 @@ Tet10::Tet10(Node* nodes[10], unsigned value)
 	: Tet(value), FemElem()
 {
 	_nodes = nodes;
-	this->_volume = this->calcVolume();
+	this->_volume = this->computeVolume();
 	this->calcCentroid();
 }
 
@@ -31,7 +31,7 @@ Tet10::Tet10(const Tet &tet)
 		//TODO: Calculate additional nodes!
 	}
 
-	this->_volume = this->calcVolume();
+	this->_volume = this->computeVolume();
 	this->calcCentroid();
 }
 

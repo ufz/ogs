@@ -12,6 +12,15 @@
 
 namespace MeshLib {
 
+
+const unsigned Tri::_edge_nodes[3][2] =
+{
+	{0, 1}, // Edge 0
+	{1, 2}, // Edge 1
+	{0, 2}  // Edge 2
+};
+
+
 Tri::Tri(Node* nodes[3], unsigned value)
 	: Face(MshElemType::TRIANGLE, value)
 {
@@ -19,7 +28,7 @@ Tri::Tri(Node* nodes[3], unsigned value)
 	_neighbors = new Element*[3];
 	for (unsigned i=0; i<3; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->calcArea();
+	this->_area = this->computeArea();
 }
 
 Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
@@ -32,7 +41,7 @@ Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
 	_neighbors = new Element*[3];
 	for (unsigned i=0; i<3; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->calcArea();
+	this->_area = this->computeArea();
 }
 
 Tri::Tri(const Tri &tri)
@@ -52,7 +61,7 @@ Tri::~Tri()
 {
 }
 
-double Tri::calcArea()
+double Tri::computeArea()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData());
 }

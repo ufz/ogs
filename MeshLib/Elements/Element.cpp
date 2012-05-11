@@ -7,6 +7,7 @@
 
 #include "Element.h"
 #include "Node.h"
+#include "Edge.h"
 
 #include <cassert>
 
@@ -27,23 +28,41 @@ Element::~Element()
 	delete[] this->_nodes;
 }
 
+const Element* Element::getEdge(unsigned i) const
+{
+	if (i < getNEdges())
+	{
+		Node** nodes = new Node*[2];
+		nodes[0] = getEdgeNode(i,0);
+		nodes[1] = getEdgeNode(i,1);
+		return new Edge(nodes);
+	}
+	std::cerr << "Error in MeshLib::Element::getEdge() - Index does not exist." << std::endl;
+	return NULL;
+}
+
 const Element* Element::getNeighbor(unsigned i) const
 {
-	assert(i < getNNeighbors() && "Error in MeshLib::Element::getNeighbor() - Index does not exist.");
-	return _neighbors[i];
+	if (i < getNNeighbors())
+		return _neighbors[i];
+	std::cerr << "Error in MeshLib::Element::getNeighbor() - Index does not exist." << std::endl;
+	return NULL;
 }
 
 const Node* Element::getNode(unsigned i) const
 {
-	assert(i < getNNodes() && "Error in MeshLib::Element::getNode() - Index does not exist.");
-	assert(_nodes[i] != NULL && "Error in MeshLib::Element::getNode() - Node is NULL.");
-	return _nodes[i];
+	if (i < getNNodes())
+		return _nodes[i];
+	std::cerr << "Error in MeshLib::Element::getNode() - Index does not exist." << std::endl;
+	return NULL;
 }
 
 unsigned Element::getNodeIndex(unsigned i) const 
 {
-	assert(i<getNNodes() && "Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
-	return _nodes[i]->getID();
+	if (i<getNNodes())
+		return _nodes[i]->getID();
+	std::cerr << "Error in MeshLib::Element::getNodeIndex() - Index does not exist." << std::endl;
+	return NULL;
 }
 
 bool Element::hasNeighbor(Element* elem) const
