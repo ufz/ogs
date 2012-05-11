@@ -8,9 +8,9 @@
 #include <fstream>
 #include <iostream>
 
-// Base
-#include "RunTimeTimer.h"
-#include "CPUTimeTimer.h"
+// BaseLib
+#include "RunTime.h"
+#include "CPUTime.h"
 
 // MathLib
 #include "LinAlg/Sparse/CRSMatrix.h"
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 		if (verbose) {
 			std::cout << "reading matrix from " << fname_mat << " ... " << std::flush;
 		}
-		RunTimeTimer timer;
+		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		in.close();
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 		rows_cols_to_erase[k] = (k+1)*2;
 	}
 
-	RunTimeTimer timer;
+	BaseLib::RunTime timer;
 	std::cout << "erasing " << n_rows_cols_to_erase << " rows and columns ... " << std::flush;
 	timer.start();
 	mat->eraseEntries(n_rows_cols_to_erase, rows_cols_to_erase);

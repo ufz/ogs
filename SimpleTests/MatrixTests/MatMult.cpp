@@ -7,8 +7,8 @@
 #include "LinAlg/Sparse/CRSMatrix.h"
 #include "LinAlg/Sparse/CRSMatrixOpenMP.h"
 #include "LinAlg/Sparse/CRSMatrixPThreads.h"
-#include "RunTimeTimer.h"
-#include "CPUTimeTimer.h"
+#include "RunTime.h"
+#include "CPUTime.h"
 #include "logog.hpp"
 
 #ifdef _OPENMP
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	unsigned *iA(NULL), *jA(NULL), n;
 	if (in) {
 		DBUG("reading matrix from %s ...", fname_mat.c_str());
-		RunTimeTimer timer;
+		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
 		x[k] = 1.0;
 
 	DBUG("matrix vector multiplication with Toms amuxCRS (%n threads) ...", n_threads);
-	RunTimeTimer run_timer;
-	CPUTimeTimer cpu_timer;
+	BaseLib::RunTime run_timer;
+	BaseLib::CPUTime cpu_timer;
 	run_timer.start();
 	cpu_timer.start();
 	for (size_t k(0); k<n_mults; k++) {

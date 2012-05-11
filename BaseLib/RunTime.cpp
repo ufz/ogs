@@ -1,6 +1,15 @@
-#include "RunTimeTimer.h"
+/*
+ * RunTime.cpp
+ *
+ *  Created on: May 10, 2012
+ *      Author: TF
+ */
 
-void RunTimeTimer::start()
+#include "RunTime.h"
+
+namespace BaseLib {
+
+void RunTime::start()
 {
 #ifndef _WIN32
 	gettimeofday(&_start, 0);
@@ -9,7 +18,7 @@ void RunTimeTimer::start()
 #endif
 }
 
-void RunTimeTimer::stop()
+void RunTime::stop()
 {
 #ifndef _WIN32
 	gettimeofday(&_stop, 0);
@@ -18,7 +27,7 @@ void RunTimeTimer::stop()
 #endif
 }
 
-double RunTimeTimer::elapsed()
+double RunTime::elapsed()
 {
 #ifndef _WIN32
 	return (_stop.tv_sec + _stop.tv_usec/1000000.0 - (_start.tv_sec + _start.tv_usec/1000000.0));
@@ -26,3 +35,5 @@ double RunTimeTimer::elapsed()
 	return (_stop - _start) / 1000;
 #endif
 }
+
+} // end namespace BaseLib

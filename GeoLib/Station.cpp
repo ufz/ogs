@@ -308,7 +308,7 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
 			borehole->_date = 0;
 		else
 		{
-			borehole->_date = strDate2double(fields.front());
+			borehole->_date = BaseLib::strDate2double(fields.front());
 			fields.pop_front();
 		}
 	}
@@ -329,7 +329,7 @@ StationBorehole* StationBorehole::createStation(const std::string &name, double 
 	(*station)[1]   = y;
 	(*station)[2]   = z;
 	station->_depth = depth;
-	if (date.compare("0000-00-00")) station->_date  = xmlDate2double(date);
+	if (date.compare("0000-00-00")) station->_date  = BaseLib::xmlDate2double(date);
 	return station;
 }
 

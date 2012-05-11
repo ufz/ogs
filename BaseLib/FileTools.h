@@ -11,6 +11,7 @@
 // ** INCLUDES **
 #include <sys/stat.h>
 
+namespace BaseLib {
 /**
  * Returns true if given file exists. From http://www.techbytes.ca/techbyte103.html
  */
@@ -42,5 +43,7 @@ static bool IsFileExisting(std::string strFilename)
 
 	return(blnReturn);
 }
+
+} // end namespace BaseLib
 
 #endif // FILETOOLS_H

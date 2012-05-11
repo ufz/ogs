@@ -55,7 +55,7 @@ AdjMat* AdjMat::getMat(unsigned beg, unsigned end,
 
 	delete[] pos;
 	for (i = 0; i < nsize; ++i)
-		quickSort(jAn, iAn[i], iAn[i + 1]);
+		BaseLib::quickSort(jAn, iAn[i], iAn[i + 1]);
 	return new AdjMat(nsize, iAn, jAn, NULL);
 }
 

@@ -14,6 +14,8 @@
 // Base
 #include "swap.h"
 
+namespace BaseLib {
+
 template <class T>
 unsigned partition_(T* array, unsigned beg, unsigned end)
 {
@@ -97,8 +99,12 @@ void quicksort(T1* array, size_t beg, size_t end, T2* second_array)
 	}
 }
 
+} // end namespace BaseLib
+
 // STL
 #include <vector>
+
+namespace BaseLib {
 
 template <typename T>
 class Quicksort {
@@ -219,7 +225,8 @@ private:
 			quicksort(perm, p+1, end, array);
 		}
 	}
-
 };
+
+} // end namespace BaseLib
 
 #endif /* QUICKSORT_H_ */

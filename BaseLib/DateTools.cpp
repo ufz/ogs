@@ -10,6 +10,8 @@
 #include <cmath>
 #include <cstdlib>
 
+namespace BaseLib {
+
 double date2double(int y, int m, int d)
 {
 	if ( (y<1000 || y>9999) || (m<1 || m>12) || (d<1 || d>31) )
@@ -75,3 +77,5 @@ double xmlDate2double(const std::string &s)
 	}
 	return 0;
 }
+
+} // end namespace BaseLib
