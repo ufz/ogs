@@ -53,7 +53,7 @@ public:
 	unsigned getNEdges() const { return 12; };
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { return 4; };
+	unsigned getNFaceNodes(unsigned i) const { (void)i; return 4; };
 
 	/// Get the number of faces for this element.
 	unsigned getNFaces() const { return 6; };

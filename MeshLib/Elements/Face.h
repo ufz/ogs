@@ -28,7 +28,7 @@ public:
 	const Element* getFace(unsigned i) const { return this->getEdge(i); };
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { return 2; };
+	unsigned getNFaceNodes(unsigned i) const { (void)i; return 2; };
 
 	/// 2D elements have no faces.
 	unsigned getNFaces() const { return 0; };

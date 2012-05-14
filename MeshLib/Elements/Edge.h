@@ -39,16 +39,16 @@ public:
 	virtual ~Edge();
 
 	/// Returns the edge i of the element.
-	const Element* getEdge(unsigned i) const { return NULL; };
+	const Element* getEdge(unsigned i) const { (void)i; return NULL; };
 
 	/// Returns the face i of the element.
-	const Element* getFace(unsigned i) const { return NULL; };
+	const Element* getFace(unsigned i) const { (void)i; return NULL; };
 
 	/// 1D elements have no edges
 	unsigned getNEdges() const { return 0; };
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { return 0; };
+	unsigned getNFaceNodes(unsigned i) const { (void)i; return 0; };
 
 	/// Get the number of faces for this element.
 	unsigned getNFaces() const { return 0; };
@@ -71,10 +71,10 @@ protected:
 	double computeLength();
 
 	/// 1D elements have no edges.
-	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return NULL; };
+	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { (void)edge_id; (void)node_id; return NULL; };
 
 	/// 1D elements have no faces.
-	Node* getFaceNode(unsigned face_id, unsigned node_id) const { return NULL; };
+	Node* getFaceNode(unsigned face_id, unsigned node_id) const { (void)face_id; (void)node_id; return NULL; };
 
 	double _length;
 

@@ -42,7 +42,7 @@ const unsigned Prism::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 Prism::Prism(Node* nodes[6], unsigned value)
 	: Cell(MshElemType::PRISM, value)
 {
-	_nodes = _nodes;
+	_nodes = nodes;
 	_neighbors = new Element*[5];
 	for (unsigned i=0; i<5; i++)
 		_neighbors[i] = NULL;
