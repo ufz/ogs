@@ -20,7 +20,7 @@ Node::Node(double x, double y, double z, unsigned id)
 }
 
 Node::Node(const Node &node)
-	: GEOLIB::PointWithID(node.getData(), node.getID())
+	: GEOLIB::PointWithID(node.getCoords(), node.getID())
 {
 }
 

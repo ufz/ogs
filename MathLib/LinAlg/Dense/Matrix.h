@@ -87,7 +87,7 @@ public:
     */
    void write (std::ostream& out) const;
 
-   T const* getData () { return data; }
+   T const* getCoords () { return data; }
 
 private:
    // zero based addressing, but Fortran storage layout

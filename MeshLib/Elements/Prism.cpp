@@ -83,9 +83,9 @@ Prism::~Prism()
 
 double Prism::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[3]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[1]->getData(), _nodes[4]->getData(), _nodes[2]->getData(), _nodes[3]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[2]->getData(), _nodes[4]->getData(), _nodes[5]->getData(), _nodes[3]->getData());
+	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[1]->getCoords(), _nodes[4]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[4]->getCoords(), _nodes[5]->getCoords(), _nodes[3]->getCoords());
 }
 
 const Element* Prism::getFace(unsigned i) const

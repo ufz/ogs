@@ -84,7 +84,7 @@ Tet::~Tet()
 
 double Tet::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[3]->getData());
+	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords());
 }
 
 const Element* Tet::getFace(unsigned i) const

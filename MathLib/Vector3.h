@@ -121,7 +121,7 @@ public:
 	/// Returns the squared length
 	double LenSqr(void) const
 	{
-		return scpr (this->getData (), this->getData (), 3);
+		return scpr (this->getCoords (), this->getCoords (), 3);
 	}
 
 	/// Returns the length

@@ -52,7 +52,7 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 
 double sqrNrm2 (const GEOLIB::Point* p0)
 {
-	return scpr (p0->getData(), p0->getData(), 3);
+	return scpr (p0->getCoords(), p0->getCoords(), 3);
 }
 
 double sqrDist (const GEOLIB::Point* p0, const GEOLIB::Point* p1)

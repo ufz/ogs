@@ -44,7 +44,7 @@ Edge::~Edge()
 
 double Edge::computeLength()
 {
-	return sqrt(MathLib::sqrDist(_nodes[0]->getData(), _nodes[1]->getData()));
+	return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
 }
 
 }

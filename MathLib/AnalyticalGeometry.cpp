@@ -142,7 +142,7 @@ bool isPointInTriangle (const double p[3], const double a[3], const double b[3],
 bool isPointInTriangle (const GEOLIB::Point* p,
 		const GEOLIB::Point* a, const GEOLIB::Point* b, const GEOLIB::Point* c)
 {
-	return isPointInTriangle (p->getData(), a->getData(), b->getData(), c->getData());
+	return isPointInTriangle (p->getCoords(), a->getCoords(), b->getCoords(), c->getCoords());
 }
 
 // NewellPlane from book Real-Time Collision detection p. 494
@@ -199,13 +199,13 @@ void rotatePointsToXY(Vector &plane_normal,
 	double *tmp (NULL);
 	size_t n_pnts(pnts.size());
 	for (size_t k(0); k < n_pnts; k++) {
-		tmp = rot_mat * pnts[k]->getData();
+		tmp = rot_mat * pnts[k]->getCoords();
 		for (size_t j(0); j < 3; j++)
 			(*(pnts[k]))[j] = tmp[j];
 		delete [] tmp;
 	}
 
-	tmp = rot_mat * plane_normal.getData();
+	tmp = rot_mat * plane_normal.getCoords();
 	for (size_t j(0); j < 3; j++)
 		plane_normal[j] = tmp[j];
 

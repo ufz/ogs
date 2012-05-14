@@ -72,7 +72,7 @@ public:
 
 	bool containsPoint (const Point &pnt) const
 	{
-		return containsPoint (pnt.getData());
+		return containsPoint (pnt.getCoords());
 	}
 
 	/**

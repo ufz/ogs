@@ -376,7 +376,7 @@ void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names, st
 			if (dynamic_cast<GEOLIB::Station*>((*pnts)[0]) == NULL) {
 				nPoints = pnts->size();
 				for (size_t k(0); k<nPoints; k++) {
-					merged_points->push_back (new GEOLIB::Point (((*pnts)[k])->getData()));
+					merged_points->push_back (new GEOLIB::Point (((*pnts)[k])->getCoords()));
 				}
 			}
 			if (geo_names.size()-1 > j)

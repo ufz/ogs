@@ -63,7 +63,7 @@ public:
 	}
 
 	/** returns an array containing the coordinates of the point */
-	const T* getData () const { return _x; }
+	const T* getCoords () const { return _x; }
 
 	/** write point coordinates into stream (used from operator<<)
 	 * \param os a standard output stream

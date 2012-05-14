@@ -380,7 +380,7 @@ GEOLIB::Polygon* createPolygonFromCircle (GEOLIB::Point const& middle_pnt, doubl
 	// create points
 	double angle (2.0 * M_PI / resolution);
 	for (size_t k(0); k<resolution; k++) {
-		GEOLIB::Point *pnt (new GEOLIB::Point(middle_pnt.getData()));
+		GEOLIB::Point *pnt (new GEOLIB::Point(middle_pnt.getCoords()));
 		(*pnt)[0] += radius * cos (k*angle);
 		(*pnt)[1] += radius * sin (k*angle);
 		pnts.push_back (pnt);

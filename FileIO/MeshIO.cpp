@@ -203,7 +203,7 @@ int MeshIO::write(std::ostream &out)
 	out << n_nodes << std::endl;
 	for (size_t i(0); i < n_nodes; i++)
 	{
-		double const* const coords (_mesh->nod_vector[i]->getData());
+		double const* const coords (_mesh->nod_vector[i]->getCoords());
 		out << i << " " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
 	}
 
