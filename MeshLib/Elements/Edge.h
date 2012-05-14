@@ -44,6 +44,9 @@ public:
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const { (void)i; return NULL; };
 
+	/// Compute the minimum and maximum squared edge length for this element
+	void computeSqrEdgeLengthRange(double &min, double &max) const { min = _length; max = _length; };
+
 	/// 1D elements have no edges
 	unsigned getNEdges() const { return 0; };
 

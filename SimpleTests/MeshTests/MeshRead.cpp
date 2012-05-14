@@ -17,13 +17,13 @@
 
 int main(int argc, char *argv[])
 {
-	std::string file_name("/mnt/visdata/tom/data/TestMeshes/Mesh-dx1.00-Layered20.msh");
+	//std::string file_name("/mnt/visdata/tom/data/TestMeshes/Mesh-dx1.00-Layered20.msh");
+	std::string file_name("c:/Project/PlyTestMesh.msh");
 	std::cout << "sizeof(double): " << sizeof (double) << std::endl;
 	std::cout << "sizeof(GeoLib::Point): " << sizeof (GEOLIB::Point) << std::endl;
 	std::cout << "sizeof(GeoLib::PointWithID): " << sizeof (GEOLIB::PointWithID) << std::endl;
 	std::cout << "sizeof(Node): " << sizeof (MeshLib::Node) << std::endl;
 	std::cout << "sizeof(Element): " << sizeof (MeshLib::Element) << std::endl;
-	//std::string file_name("c:/Project/PlyTestMesh.msh");
 	FileIO::MeshIO mesh_io;
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;

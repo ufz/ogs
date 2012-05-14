@@ -9,7 +9,7 @@
 #include "Node.h"
 #include "Edge.h"
 
-#include <cassert>
+#include "MathTools.h"
 
 namespace MeshLib {
 
@@ -41,6 +41,19 @@ const Element* Element::getEdge(unsigned i) const
 	return NULL;
 }
 
+void Element::computeSqrEdgeLengthRange(double &min, double &max) const
+{
+	min = std::numeric_limits<double>::max();
+	max = std::numeric_limits<double>::min();
+	unsigned nEdges (this->getNEdges());
+	for (unsigned i=0; i<nEdges; i++)
+	{
+		double dist (MathLib::sqrDist(getEdgeNode(i,0)->getData(), getEdgeNode(i,1)->getData()));
+		min = (dist<min) ? dist : min;
+		max = (dist>max) ? dist : max;
+	}
+}
+
 const Element* Element::getNeighbor(unsigned i) const
 {
 	if (i < getNNeighbors())
@@ -62,7 +75,7 @@ unsigned Element::getNodeIndex(unsigned i) const
 	if (i<getNNodes())
 		return _nodes[i]->getID();
 	std::cerr << "Error in MeshLib::Element::getNodeIndex() - Index does not exist." << std::endl;
-	return NULL;
+	return std::numeric_limits<unsigned>::max();
 }
 
 bool Element::hasNeighbor(Element* elem) const

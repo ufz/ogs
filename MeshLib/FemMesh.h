@@ -30,6 +30,8 @@ public:
 	/// Destructor
 	virtual ~FemMesh();
 
+private:
+
 
 }; /* class */
 

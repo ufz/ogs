@@ -20,7 +20,8 @@ namespace MeshLib {
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
 	: _name(name), _nodes(nodes), _elements(elements)
 {
-	double _edge_length[2] = {0, 0};
+	_edge_length[0] = 0;
+	_edge_length[1] = 0;
 	this->makeNodesUnique();
 	this->setElementInformationForNodes();
 	this->setNeighborInformationForElements();
@@ -84,6 +85,16 @@ void Mesh::setElementInformationForNodes()
 		for (unsigned j=0; j<nNodes; j++)
 			_elements[i]->_nodes[j]->addElement(_elements[i]);
 	}
+}
+
+void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length)
+{
+	if (min_length <= max_length)
+	{
+		_edge_length[0] = min_length;
+		_edge_length[1] = max_length;
+	}
+	std::cerr << "Error in MeshLib::Mesh::setEdgeLengthRange() - min length < max length." << std::endl;
 }
 
 void Mesh::setNeighborInformationForElements()

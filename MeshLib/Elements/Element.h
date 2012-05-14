@@ -27,6 +27,9 @@ class Element
 	
 
 public:
+	/// Compute the minimum and maximum squared edge length for this element
+	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
+
 	/// Get node with local index i.
 	const Node* getNode(unsigned i) const;
 

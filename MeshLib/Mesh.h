@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-
 namespace MeshLib 
 {
 	class Node;
@@ -52,6 +51,12 @@ public:
 	/// Get the element with the given index.
 	const Element* getElement(unsigned idx) const { return _elements[idx]; };
 
+	/// Get the minimum edge length for the mesh
+	double getMinEdgeLength() const { return _edge_length[0]; };
+
+	/// Get the maximum edge length for the mesh
+	double getMaxEdgeLength() const { return _edge_length[1]; };
+
 	/// Get the number of elements
 	size_t getNElements() const { return _elements.size(); };
 
@@ -66,6 +71,8 @@ public:
 
 	/// Get the element-vector for the mesh.
 	const std::vector<Element*> getElements() const { return _elements; };
+
+	void setEdgeLengthRange(const double &min_length, const double &max_length);
 	
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
@@ -77,7 +84,7 @@ protected:
 	/// Fills in the neighbor-information for elements.
 	void setNeighborInformationForElements();
 
-	static double _edge_length[2];
+	double _edge_length[2];
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
