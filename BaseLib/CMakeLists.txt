@@ -13,4 +13,9 @@ INCLUDE_DIRECTORIES(
         .
 )
 
+# Add logog subdirectory and group its targets in a Visual Studio folder
 ADD_SUBDIRECTORY(logog)
+SET_PROPERTY(TARGET Continuous PROPERTY FOLDER "logog")
+SET_PROPERTY(TARGET logog PROPERTY FOLDER "logog")
+SET_PROPERTY(TARGET logog-doc PROPERTY FOLDER "logog")
+SET_PROPERTY(TARGET test-logog PROPERTY FOLDER "logog")
