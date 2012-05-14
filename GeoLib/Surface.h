@@ -16,10 +16,10 @@
 #include "Triangle.h"
 #include "AxisAlignedBoundingBox.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief A Surface is represented by Triangles. It consists of a reference
  * to a vector of (pointers to) points (m_sfc_pnts) and a vector that stores

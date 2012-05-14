@@ -10,11 +10,11 @@
 // Base
 #include "StringTools.h"
 #include "DateTools.h"
-// GEOLIB
+// GeoLib
 #include "Station.h"
 
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Station::Station(double x, double y, double z, std::string name, Color* const color) :
 	Point (x,y,z), _name(name), _type(Station::STATION), _color(color)

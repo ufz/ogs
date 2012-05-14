@@ -8,10 +8,10 @@
 #ifndef TEMPLATEVEC_H_
 #define TEMPLATEVEC_H_
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief The class TemplateVec takes a unique name and manages
  * a std::vector of pointers to data elements of type T.
@@ -176,6 +176,6 @@ private:
 	std::map<std::string, size_t>* _name_id_map;
 };
 
-} // end namespace GEOLIB
+} // end namespace GeoLib
 
 #endif /* TEMPLATEVEC_H_ */

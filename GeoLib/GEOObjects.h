@@ -22,11 +22,11 @@
 #include "Color.h"
 #include "Station.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 ///
 /**
- * \defgroup GEOLIB This module consists of classes governing geometric objects
+ * \defgroup GeoLib This module consists of classes governing geometric objects
  * and related algorithms.
  */
 

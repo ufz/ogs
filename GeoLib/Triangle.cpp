@@ -13,7 +13,7 @@
 #include "LinAlg/Dense/Matrix.h"
 #include "Vector3.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Triangle::Triangle (std::vector<Point *> const &pnt_vec) :
 	_pnts(pnt_vec), _initialized (false), _longest_edge (0.0)
@@ -54,24 +54,24 @@ void Triangle::setTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 
 bool Triangle::containsPoint (const double *pnt) const
 {
-	GEOLIB::Point const& a_tmp (*(_pnts[_pnt_ids[0]]));
-	GEOLIB::Point const& b_tmp (*(_pnts[_pnt_ids[1]]));
-	GEOLIB::Point const& c_tmp (*(_pnts[_pnt_ids[2]]));
+	GeoLib::Point const& a_tmp (*(_pnts[_pnt_ids[0]]));
+	GeoLib::Point const& b_tmp (*(_pnts[_pnt_ids[1]]));
+	GeoLib::Point const& c_tmp (*(_pnts[_pnt_ids[2]]));
 
-	GEOLIB::Point s(a_tmp);
+	GeoLib::Point s(a_tmp);
 	for (size_t k(0); k<3; k++) {
 		s[k] += b_tmp[k] + c_tmp[k];
 		s[k] /= 3.0;
 	}
 
 	double eps (1e-2);
-	GEOLIB::Point const a (a_tmp[0] + eps *(a_tmp[0]-s[0]),
+	GeoLib::Point const a (a_tmp[0] + eps *(a_tmp[0]-s[0]),
 			a_tmp[1] + eps *(a_tmp[1]-s[1]),
 			a_tmp[2] + eps *(a_tmp[2]-s[2]));
-	GEOLIB::Point const b (b_tmp[0] + eps *(b_tmp[0]-s[0]),
+	GeoLib::Point const b (b_tmp[0] + eps *(b_tmp[0]-s[0]),
 				b_tmp[1] + eps *(b_tmp[1]-s[1]),
 				b_tmp[2] + eps *(b_tmp[2]-s[2]));
-	GEOLIB::Point const c (c_tmp[0] + eps *(c_tmp[0]-s[0]),
+	GeoLib::Point const c (c_tmp[0] + eps *(c_tmp[0]-s[0]),
 				c_tmp[1] + eps *(c_tmp[1]-s[1]),
 				c_tmp[2] + eps *(c_tmp[2]-s[2]));
 
@@ -156,9 +156,9 @@ bool Triangle::containsPoint (const double *pnt) const
 
 bool Triangle::containsPoint2D (const double *pnt) const
 {
-	GEOLIB::Point const& a (*(_pnts[_pnt_ids[0]]));
-	GEOLIB::Point const& b (*(_pnts[_pnt_ids[1]]));
-	GEOLIB::Point const& c (*(_pnts[_pnt_ids[2]]));
+	GeoLib::Point const& a (*(_pnts[_pnt_ids[0]]));
+	GeoLib::Point const& b (*(_pnts[_pnt_ids[1]]));
+	GeoLib::Point const& c (*(_pnts[_pnt_ids[2]]));
 
 	// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
 	MathLib::Matrix<double> mat (2,2);
@@ -183,9 +183,9 @@ bool Triangle::containsPoint2D (const double *pnt) const
 
 void getPlaneCoefficients(Triangle const& tri, double c[3])
 {
-	GEOLIB::Point const& p0 (*(tri.getPoint(0)));
-	GEOLIB::Point const& p1 (*(tri.getPoint(1)));
-	GEOLIB::Point const& p2 (*(tri.getPoint(2)));
+	GeoLib::Point const& p0 (*(tri.getPoint(0)));
+	GeoLib::Point const& p1 (*(tri.getPoint(1)));
+	GeoLib::Point const& p2 (*(tri.getPoint(2)));
 	MathLib::Matrix<double> mat (3,3);
 	mat(0,0) = p0[0];
 	mat(0,1) = p0[1];
@@ -204,4 +204,4 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
 	gauss.execute (c);
 }
 
-} // end namespace GEOLIB
+} // end namespace GeoLib

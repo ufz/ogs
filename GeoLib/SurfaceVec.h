@@ -12,7 +12,7 @@
 #include "TemplateVec.h"
 #include "Surface.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
  * Class SurfaceVec encapsulate a std::vector of Surfaces

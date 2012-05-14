@@ -65,8 +65,8 @@ Quad::~Quad()
 
 double Quad::computeArea()
 {
-	return MathLib::calcTriangleArea(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData())
-         + MathLib::calcTriangleArea(_nodes[2]->getData(), _nodes[3]->getData(), _nodes[0]->getData());
+	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords())
+         + MathLib::calcTriangleArea(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords());
 }
 
 }

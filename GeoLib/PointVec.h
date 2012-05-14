@@ -6,7 +6,7 @@
  */
 
 
-// GEOLIB
+// GeoLib
 #include "Point.h"
 #include "Station.h"
 #include "AxisAlignedBoundingBox.h"
@@ -22,10 +22,10 @@
 #ifndef POINTVEC_H_
 #define POINTVEC_H_
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief This class manages pointers to Points in a std::vector along with a name.
  * It also handles the deleting of points. Additionally, each vector of points is identified by
@@ -48,7 +48,7 @@ public:
 	 * pointer the vector of names of the points
 	 * and sets the type of PointVec.
 	 * @param name the name of the point group
-	 * @param points pointer to a vector of GEOLIB::Pointers -
+	 * @param points pointer to a vector of GeoLib::Pointers -
 	 * PointVec will take the ownership of the vector,
 	 * i.e. delete the points and the vector itself
 	 * @param name_id_map the names to the points -
@@ -143,10 +143,10 @@ public:
 	const std::vector<size_t>& getIDMap () const { return _pnt_id_map; }
 
 	double getShortestPointDistance () const;
-	const GEOLIB::AABB& getAxisAlignedBoundingBox () const;
+	const GeoLib::AABB& getAxisAlignedBoundingBox () const;
 
 private:
-	void makePntsUnique (std::vector<GEOLIB::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map);
+	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map);
 
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
@@ -164,7 +164,7 @@ private:
 	/**
 	 * pointer to a vector of pointers to Points
 	 *
-	 * The destructor of PointVec will delete all GEOLIB::Points
+	 * The destructor of PointVec will delete all GeoLib::Points
 	 * inside the vector.
 	 */
 	std::vector<Point*> *_pnt_vec;

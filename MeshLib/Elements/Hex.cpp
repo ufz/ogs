@@ -87,12 +87,12 @@ Hex::~Hex()
 
 double Hex::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[4]->getData(), _nodes[7]->getData(), _nodes[5]->getData(), _nodes[0]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[5]->getData(), _nodes[3]->getData(), _nodes[1]->getData(), _nodes[0]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[5]->getData(), _nodes[7]->getData(), _nodes[3]->getData(), _nodes[0]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[5]->getData(), _nodes[7]->getData(), _nodes[6]->getData(), _nodes[2]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[1]->getData(), _nodes[3]->getData(), _nodes[5]->getData(), _nodes[2]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[3]->getData(), _nodes[7]->getData(), _nodes[5]->getData(), _nodes[2]->getData());
+	return MathLib::calcTetrahedronVolume(_nodes[4]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[0]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[3]->getCoords(), _nodes[1]->getCoords(), _nodes[0]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[7]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[7]->getCoords(), _nodes[6]->getCoords(), _nodes[2]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[1]->getCoords(), _nodes[3]->getCoords(), _nodes[5]->getCoords(), _nodes[2]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[3]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[2]->getCoords());
 }
 
 const Element* Hex::getFace(unsigned i) const

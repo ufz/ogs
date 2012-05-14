@@ -12,7 +12,7 @@
 #include "Color.h"
 #include "StringTools.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Color* getRandomColor()
 {
@@ -66,7 +66,7 @@ const Color* getColor(const std::string &id, std::map<std::string, Color*> &colo
 	return c;
 }
 
-const Color* getColor(double id, std::map<std::string, GEOLIB::Color*> &colors)
+const Color* getColor(double id, std::map<std::string, GeoLib::Color*> &colors)
 {
 	std::ostringstream stream;
 	stream << id;

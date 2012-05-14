@@ -8,7 +8,7 @@
 #ifndef QUADTREE_H_
 #define QUADTREE_H_
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
  * A quadtree is a rooted tree in which every internal
@@ -92,7 +92,7 @@ public:
 		bool pnt_in_quadtree (false);
 		double equal_pnt_dist (MathLib::fastpow(2, _depth) * fabs(_ll[0] - _ur[0]) * 1e-6);
 		for (size_t k(0); k<_pnts.size() && !pnt_in_quadtree; k++) {
-			const double sqr_dist (MathLib::sqrDist(_pnts[k]->getData(), pnt->getData()));
+			const double sqr_dist (MathLib::sqrDist(_pnts[k]->getCoords(), pnt->getCoords()));
 			if (sqr_dist < equal_pnt_dist) {
 				pnt_in_quadtree = true;
 			}
@@ -222,7 +222,7 @@ public:
 		}
 	}
 
-	void getQuadTree (std::vector<POINT*>& pnts, std::vector<GEOLIB::Polyline*>& plys) const
+	void getQuadTree (std::vector<POINT*>& pnts, std::vector<GeoLib::Polyline*>& plys) const
 	{
 		size_t pnt_pos (pnts.size());
 		pnts.push_back (new POINT (_ll));

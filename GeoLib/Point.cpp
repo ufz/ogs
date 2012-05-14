@@ -11,7 +11,7 @@
 
 #include "Point.h"
 
-bool operator<= (const GEOLIB::Point& p0, const GEOLIB::Point& p1)
+bool operator<= (const GeoLib::Point& p0, const GeoLib::Point& p1)
 {
 	double tol (sqrt (std::numeric_limits<double>::min()));
 
@@ -31,25 +31,25 @@ bool operator<= (const GEOLIB::Point& p0, const GEOLIB::Point& p1)
 	}
 }
 
-namespace GEOLIB {
+namespace GeoLib {
 
-bool lessX (GEOLIB::Point const & p0, GEOLIB::Point const & p1)
+bool lessX (GeoLib::Point const & p0, GeoLib::Point const & p1)
 {
 	if (p0[0] <= p1[0]) return true;
 	return false;
 }
 
-bool lessY (GEOLIB::Point const & p0, GEOLIB::Point const & p1)
+bool lessY (GeoLib::Point const & p0, GeoLib::Point const & p1)
 {
 	if (p0[1] <= p1[1]) return true;
 	return false;
 }
 
-bool lessZ (GEOLIB::Point const & p0, GEOLIB::Point const & p1)
+bool lessZ (GeoLib::Point const & p0, GeoLib::Point const & p1)
 {
 	if (p0[2] <= p1[2]) return true;
 	return false;
 }
 
 
-} // end namespace GEOLIB
+} // end namespace GeoLib

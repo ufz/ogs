@@ -22,7 +22,7 @@ public:
 	virtual ~FemElem();
 
 	/// Get the number of nodes for this element.
-	const GEOLIB::Point& getCentroid() const { return _centroid; };
+	const GeoLib::Point& getCentroid() const { return _centroid; };
 
 protected:
 	/// Constructor.
@@ -34,7 +34,7 @@ protected:
 	/// Calculate centre of gravity
 	virtual void calcCentroid() = 0;
 
-	GEOLIB::Point _centroid;
+	GeoLib::Point _centroid;
 
 }; /* class */
 

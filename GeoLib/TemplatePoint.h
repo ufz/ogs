@@ -15,10 +15,10 @@
 
 #include "GeoObject.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief class-template for points can be instantiated by a numeric type.
  * \param T the coordinate type
@@ -63,7 +63,7 @@ public:
 	}
 
 	/** returns an array containing the coordinates of the point */
-	const T* getData () const { return _x; }
+	const T* getCoords () const { return _x; }
 
 	/** write point coordinates into stream (used from operator<<)
 	 * \param os a standard output stream

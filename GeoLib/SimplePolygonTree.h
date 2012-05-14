@@ -11,7 +11,7 @@
 #include "Polygon.h"
 // FileIO
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
  * \brief This class computes and stores the topological relations between

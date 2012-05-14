@@ -7,7 +7,7 @@
 
 #include "SimplePolygonTree.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 SimplePolygonTree::SimplePolygonTree(const Polygon* polygon, SimplePolygonTree* parent) :
 	_node (polygon), _parent (parent)
@@ -180,4 +180,4 @@ void createPolygonTree (std::list<SimplePolygonTree*>& list_of_simple_polygon_hi
 }
 
 
-} // end namespace GEOLIB
+} // end namespace GeoLib

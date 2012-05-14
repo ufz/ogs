@@ -20,12 +20,12 @@ FemNode::FemNode(double x, double y, double z, unsigned id)
 }
 
 FemNode::FemNode(const Node &node)
-	: Node(node.getData(), node.getID())
+	: Node(node.getCoords(), node.getID())
 {
 }
 
 FemNode::FemNode(const FemNode &node)
-	: Node(node.getData(), node.getID())
+	: Node(node.getCoords(), node.getID())
 {
 }
 

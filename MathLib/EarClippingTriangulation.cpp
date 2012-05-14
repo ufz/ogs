@@ -18,8 +18,8 @@
 
 namespace MathLib {
 
-EarClippingTriangulation::EarClippingTriangulation(const GEOLIB::Polygon* polygon,
-		std::list<GEOLIB::Triangle> &triangles, bool rot)
+EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygon,
+		std::list<GeoLib::Triangle> &triangles, bool rot)
 {
 	copyPolygonPoints (polygon);
 
@@ -32,14 +32,14 @@ EarClippingTriangulation::EarClippingTriangulation(const GEOLIB::Polygon* polygo
 	initLists ();
 	clipEars ();
 
-	std::vector<GEOLIB::Point*> const& ref_pnts_vec (polygon->getPointsVec());
-	std::list<GEOLIB::Triangle>::const_iterator it (_triangles.begin());
+	std::vector<GeoLib::Point*> const& ref_pnts_vec (polygon->getPointsVec());
+	std::list<GeoLib::Triangle>::const_iterator it (_triangles.begin());
 	if (_original_orient == MathLib::CW) {
 		while (it != _triangles.end()) {
 			const size_t i0 (polygon->getPointID ((*it)[0]));
 			const size_t i1 (polygon->getPointID ((*it)[1]));
 			const size_t i2 (polygon->getPointID ((*it)[2]));
-			triangles.push_back (GEOLIB::Triangle (ref_pnts_vec, i0, i1, i2));
+			triangles.push_back (GeoLib::Triangle (ref_pnts_vec, i0, i1, i2));
 			it++;
 		}
 	} else {
@@ -48,7 +48,7 @@ EarClippingTriangulation::EarClippingTriangulation(const GEOLIB::Polygon* polygo
 			const size_t i0 (polygon->getPointID (n_pnts-(*it)[0]));
 			const size_t i1 (polygon->getPointID (n_pnts-(*it)[1]));
 			const size_t i2 (polygon->getPointID (n_pnts-(*it)[2]));
-			triangles.push_back (GEOLIB::Triangle (ref_pnts_vec, i0, i1, i2));
+			triangles.push_back (GeoLib::Triangle (ref_pnts_vec, i0, i1, i2));
 			it++;
 		}
 	}
@@ -62,12 +62,12 @@ EarClippingTriangulation::~EarClippingTriangulation()
 	}
 }
 
-void EarClippingTriangulation::copyPolygonPoints (const GEOLIB::Polygon* polygon)
+void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon)
 {
 	// copy points - last point is identical to the first
 	size_t n_pnts (polygon->getNumberOfPoints()-1);
 	for (size_t k(0); k < n_pnts; k++) {
-		_pnts.push_back (new GEOLIB::Point (*(polygon->getPoint(k))));
+		_pnts.push_back (new GeoLib::Point (*(polygon->getPoint(k))));
 	}
 }
 
@@ -207,7 +207,7 @@ void EarClippingTriangulation::clipEars()
 					prev--;
 				}
 				// add triangle
-				_triangles.push_back(GEOLIB::Triangle(_pnts, *prev, ear, *next));
+				_triangles.push_back(GeoLib::Triangle(_pnts, *prev, ear, *next));
 
 				// check the orientation of prevprev, prev, next
 				std::list<size_t>::iterator prevprev;
@@ -294,9 +294,9 @@ void EarClippingTriangulation::clipEars()
 	it = next;
 	next++;
 	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == CCW)
-		_triangles.push_back(GEOLIB::Triangle(_pnts, *prev, *next, *it));
+		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *next, *it));
 	else
-		_triangles.push_back(GEOLIB::Triangle(_pnts, *prev, *it, *next));
+		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
 }
 
 } // end namespace MathLib

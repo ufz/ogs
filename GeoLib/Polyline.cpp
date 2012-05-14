@@ -10,7 +10,7 @@
 
 #include "Polyline.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Polyline::Polyline(const std::vector<Point*>& pnt_vec) :
 	GeoObject(), _ply_pnts(pnt_vec)
@@ -115,7 +115,7 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
 	size_t nLines = ply_vec.size();
 
 	Polyline* new_ply = new Polyline(*ply_vec[0]);
-	std::vector<GEOLIB::Point*> pnt_vec(new_ply->getPointsVec());
+	std::vector<GeoLib::Point*> pnt_vec(new_ply->getPointsVec());
 
 	std::vector<Polyline*> local_ply_vec;
 	for (size_t i = 1; i < nLines; i++) {
@@ -210,14 +210,14 @@ Polyline* Polyline::closePolyline(const Polyline& ply)
 	return NULL;
 }
 
-Location::type Polyline::getLocationOfPoint (size_t k, GEOLIB::Point const & pnt) const
+Location::type Polyline::getLocationOfPoint (size_t k, GeoLib::Point const & pnt) const
 {
 	assert (k<_ply_pnt_ids.size()-1);
 
-	GEOLIB::Point const& source (*(_ply_pnts[_ply_pnt_ids[k]]));
-	GEOLIB::Point const& dest (*(_ply_pnts[_ply_pnt_ids[k+1]]));
-	GEOLIB::Point a (dest[0]-source[0], dest[1]-source[1], dest[2]-source[2]); // vector
-	GEOLIB::Point b (pnt[0]-source[0], pnt[1]-source[1], pnt[2]-source[2]); // vector
+	GeoLib::Point const& source (*(_ply_pnts[_ply_pnt_ids[k]]));
+	GeoLib::Point const& dest (*(_ply_pnts[_ply_pnt_ids[k+1]]));
+	GeoLib::Point a (dest[0]-source[0], dest[1]-source[1], dest[2]-source[2]); // vector
+	GeoLib::Point b (pnt[0]-source[0], pnt[1]-source[1], pnt[2]-source[2]); // vector
 
 	double det_2x2 (a[0]*b[1] - a[1]*b[0]);
 
@@ -258,4 +258,4 @@ bool containsEdge (const Polyline& ply, size_t id0, size_t id1)
 }
 
 
-} // end namespace GEOLIB
+} // end namespace GeoLib

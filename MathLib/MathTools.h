@@ -70,13 +70,13 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
  * @param squaredDistance The square of the distance within which the two points should be
  * @return true if p1 and p2 are within the given distance of each other, false otherwise
  */
-bool checkDistance(GEOLIB::Point const &p0, GEOLIB::Point const &p1, double squaredDistance);
+bool checkDistance(GeoLib::Point const &p0, GeoLib::Point const &p1, double squaredDistance);
 
 /** squared euklid norm of the vector p0 */
-double sqrNrm2(const GEOLIB::Point* const p0);
+double sqrNrm2(const GeoLib::Point* const p0);
 
-/** squared dist between GEOLIB::Points p0 and p1 */
-double sqrDist(const GEOLIB::Point* p0, const GEOLIB::Point* p1);
+/** squared dist between GeoLib::Points p0 and p1 */
+double sqrDist(const GeoLib::Point* p0, const GeoLib::Point* p1);
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 double sqrDist(const double* p0, const double* p1);

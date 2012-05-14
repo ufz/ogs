@@ -7,7 +7,7 @@
 
 #include "Raster.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Raster::Raster(double cell_size, double no_data_val) :
 	_cell_size(cell_size), _no_data_val(no_data_val)
@@ -46,7 +46,7 @@ double* Raster::getRasterFromSurface(Surface const& sfc, size_t &n_x_pnts, size_
 					Triangle const * const tri (sfc[k]);
 					// compute coefficients c0, c1, c2 for the plane f(x,y) = c0 x + c1 y + c2
 					double coeff[3] = {0.0, 0.0, 0.0};
-					GEOLIB::getPlaneCoefficients(*tri, coeff);
+					GeoLib::getPlaneCoefficients(*tri, coeff);
 					z_vals[r*n_y_pnts+c] = coeff[0] * test_pnt[0] + coeff[1] * test_pnt[1] + coeff[2];
 					break;
 				}

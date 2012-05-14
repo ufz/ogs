@@ -11,10 +11,10 @@
 #include "TemplateVec.h"
 #include "Polyline.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief class PolylineVec encapsulate a std::vector of Polylines
  * additional one can give the vector of polylines a name

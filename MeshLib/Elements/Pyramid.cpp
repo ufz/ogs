@@ -83,8 +83,8 @@ Pyramid::~Pyramid()
 
 double Pyramid::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[0]->getData(), _nodes[1]->getData(), _nodes[2]->getData(), _nodes[4]->getData())
-		 + MathLib::calcTetrahedronVolume(_nodes[2]->getData(), _nodes[3]->getData(), _nodes[0]->getData(), _nodes[4]->getData());
+	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[4]->getCoords())
+		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords(), _nodes[4]->getCoords());
 }
 
 const Element* Pyramid::getFace(unsigned i) const
