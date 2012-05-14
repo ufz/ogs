@@ -18,11 +18,14 @@ namespace MeshLib {
 class Cell : public Element
 {
 public:
-	/// Get the volume of this 3d element.
-	virtual double getVolume() const { return _volume; };
+	/// Returns the length, area or volume of a 1D, 2D or 3D element
+	double getContent() const { return _volume; };
 
 	/// Get dimension of the mesh element.
 	unsigned getDimension() const { return 3; };
+
+	/// Get the volume of this 3d element.
+	virtual double getVolume() const { return _volume; };
 
 	/// Destructor
 	virtual ~Cell();

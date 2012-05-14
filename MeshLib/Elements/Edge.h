@@ -38,6 +38,9 @@ public:
 	/// Destructor
 	virtual ~Edge();
 
+	/// Returns the length, area or volume of a 1D, 2D or 3D element
+	double getContent() const { return _length; };
+
 	/// Returns the edge i of the element.
 	const Element* getEdge(unsigned i) const { (void)i; return NULL; };
 

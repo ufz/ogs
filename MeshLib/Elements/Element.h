@@ -30,6 +30,9 @@ public:
 	/// Compute the minimum and maximum squared edge length for this element
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
+	/// Returns the length, area or volume of a 1D, 2D or 3D element
+	virtual double getContent() const = 0;
+
 	/// Get node with local index i.
 	const Node* getNode(unsigned i) const;
 

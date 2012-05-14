@@ -72,6 +72,11 @@ public:
 	/// Get the element-vector for the mesh.
 	const std::vector<Element*> getElements() const { return _elements; };
 
+	/** 
+	 * Set the minimum and maximum length over the edges of the mesh.
+	 * This should have been previously calcumlated using the Element::computeSqrEdgeLengthRange(min, max) 
+	 * function or by some other means.
+	 */
 	void setEdgeLengthRange(const double &min_length, const double &max_length);
 	
 protected:
