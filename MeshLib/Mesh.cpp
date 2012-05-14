@@ -94,7 +94,8 @@ void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length
 		_edge_length[0] = min_length;
 		_edge_length[1] = max_length;
 	}
-	std::cerr << "Error in MeshLib::Mesh::setEdgeLengthRange() - min length < max length." << std::endl;
+	else
+		std::cerr << "Error in MeshLib::Mesh::setEdgeLengthRange() - min length < max length." << std::endl;
 }
 
 void Mesh::setNeighborInformationForElements()
