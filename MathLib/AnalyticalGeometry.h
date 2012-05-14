@@ -10,10 +10,10 @@
 
 // MathLib
 #include "Vector3.h"
-// GEOLIB
+// GeoLib
 #include "Triangle.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 	class Polyline;
 }
 
@@ -37,7 +37,7 @@ Orientation getOrientation (const double& p0_x, const double& p0_y,
 /**
  * wrapper for getOrientation ()
  */
-Orientation getOrientation (const GEOLIB::Point* p0, const GEOLIB::Point* p1, const GEOLIB::Point* p2);
+Orientation getOrientation (const GeoLib::Point* p0, const GeoLib::Point* p1, const GeoLib::Point* p2);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
@@ -47,17 +47,17 @@ Orientation getOrientation (const GEOLIB::Point* p0, const GEOLIB::Point* p1, co
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
  */
-void getNewellPlane (const std::vector<GEOLIB::Point*>& pnts, MathLib::Vector &plane_normal, double& d);
+void getNewellPlane (const std::vector<GeoLib::Point*>& pnts, MathLib::Vector &plane_normal, double& d);
 
 /**
  *
  * @param plane_normal
  * @param pnts
  */
-void rotatePointsToXY(MathLib::Vector &plane_normal, std::vector<GEOLIB::Point*> &pnts);
+void rotatePointsToXY(MathLib::Vector &plane_normal, std::vector<GeoLib::Point*> &pnts);
 
-bool isPointInTriangle (const GEOLIB::Point* p,
-		const GEOLIB::Point* a, const GEOLIB::Point* b, const GEOLIB::Point* c);
+bool isPointInTriangle (const GeoLib::Point* p,
+		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
 
 /**
  * test for intersections of the line segments of the Polyline
@@ -67,7 +67,7 @@ bool isPointInTriangle (const GEOLIB::Point* p,
  * @param intersection_pnt the intersection point if the line segments intersect
  * @return true, if the polyline contains intersections
  */
-bool lineSegmentsIntersect (const GEOLIB::Polyline* ply, size_t &idx0, size_t &idx1, GEOLIB::Point& intersection_pnt);
+bool lineSegmentsIntersect (const GeoLib::Polyline* ply, size_t &idx0, size_t &idx1, GeoLib::Point& intersection_pnt);
 
 /**
  * A line segment is given by its two end-points. The function checks,
@@ -80,8 +80,8 @@ bool lineSegmentsIntersect (const GEOLIB::Polyline* ply, size_t &idx0, size_t &i
  * @param s the intersection point
  * @return true, if the line segments intersect, else false
  */
-bool lineSegmentIntersect (const GEOLIB::Point& a, const GEOLIB::Point& b,
-		const GEOLIB::Point& c, const GEOLIB::Point& d, GEOLIB::Point& s);
+bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
+		const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
 
 } // end namespace MathLib
 

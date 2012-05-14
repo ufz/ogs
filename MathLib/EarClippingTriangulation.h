@@ -11,7 +11,7 @@
 // STL
 #include <list>
 
-// GEOLIB
+// GeoLib
 #include "Polygon.h"
 #include "Triangle.h"
 
@@ -22,13 +22,13 @@ namespace MathLib {
 
 class EarClippingTriangulation {
 public:
-	EarClippingTriangulation(const GEOLIB::Polygon* ply, std::list<GEOLIB::Triangle> &triangles, bool rot = true);
+	EarClippingTriangulation(const GeoLib::Polygon* ply, std::list<GeoLib::Triangle> &triangles, bool rot = true);
 	virtual ~EarClippingTriangulation();
 private:
 	/**
 	 * copies the points of the polygon to the vector _pnts
 	 */
-	inline void copyPolygonPoints (const GEOLIB::Polygon* polygon);
+	inline void copyPolygonPoints (const GeoLib::Polygon* polygon);
 	inline void rotate ();
 	inline void ensureCWOrientation ();
 
@@ -41,7 +41,7 @@ private:
 	/**
 	 * a copy of the polygon points
 	 */
-	std::vector<GEOLIB::Point*> _pnts;
+	std::vector<GeoLib::Point*> _pnts;
 	std::list<size_t> _vertex_list;
 	std::list<size_t> _convex_vertex_list;
 	std::list<size_t> _ear_list;
@@ -49,7 +49,7 @@ private:
 	/**
 	 * triangles of the triangulation (maybe in the wrong orientation)
 	 */
-	std::list<GEOLIB::Triangle> _triangles;
+	std::list<GeoLib::Triangle> _triangles;
 
 	MathLib::Orientation _original_orient;
 };

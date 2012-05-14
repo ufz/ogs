@@ -7,7 +7,7 @@
 
 #include <list>
 
-// GEOLIB
+// GeoLib
 #include "Surface.h"
 #include "AxisAlignedBoundingBox.h"
 #include "Polygon.h"
@@ -16,7 +16,7 @@
 #include "AnalyticalGeometry.h"
 #include "EarClippingTriangulation.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Surface::Surface (const std::vector<Point*> &pnt_vec) :
 	GeoObject(), _sfc_pnts(pnt_vec), _bv()
@@ -52,17 +52,17 @@ Surface* Surface::createSurface(const Polyline &ply)
 		polygon->computeListOfSimplePolygons ();
 
 		// create surfaces from simple polygons
-		const std::list<GEOLIB::Polygon*>& list_of_simple_polygons (polygon->getListOfSimplePolygons());
-		for (std::list<GEOLIB::Polygon*>::const_iterator simple_polygon_it (list_of_simple_polygons.begin());
+		const std::list<GeoLib::Polygon*>& list_of_simple_polygons (polygon->getListOfSimplePolygons());
+		for (std::list<GeoLib::Polygon*>::const_iterator simple_polygon_it (list_of_simple_polygons.begin());
 			simple_polygon_it != list_of_simple_polygons.end(); ++simple_polygon_it) {
 
-			std::list<GEOLIB::Triangle> triangles;
+			std::list<GeoLib::Triangle> triangles;
 			std::cout << "triangulation of surface: ... " << std::flush;
 			MathLib::EarClippingTriangulation(*simple_polygon_it, triangles);
 			std::cout << "done - " << triangles.size () << " triangles " << std::endl;
 
 			// add Triangles to Surface
-			std::list<GEOLIB::Triangle>::const_iterator it (triangles.begin());
+			std::list<GeoLib::Triangle>::const_iterator it (triangles.begin());
 			while (it != triangles.end()) {
 				sfc->addTriangle ((*it)[0], (*it)[1], (*it)[2]);
 				it++;

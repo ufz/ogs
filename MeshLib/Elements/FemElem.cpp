@@ -10,7 +10,7 @@
 namespace MeshLib {
 
 FemElem::FemElem()
-	: _centroid(GEOLIB::Point(0,0,0))
+	: _centroid(GeoLib::Point(0,0,0))
 {
 }
 

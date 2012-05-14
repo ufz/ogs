@@ -8,7 +8,7 @@
 #ifndef QUADTREE_H_
 #define QUADTREE_H_
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
  * A quadtree is a rooted tree in which every internal
@@ -222,7 +222,7 @@ public:
 		}
 	}
 
-	void getQuadTree (std::vector<POINT*>& pnts, std::vector<GEOLIB::Polyline*>& plys) const
+	void getQuadTree (std::vector<POINT*>& pnts, std::vector<GeoLib::Polyline*>& plys) const
 	{
 		size_t pnt_pos (pnts.size());
 		pnts.push_back (new POINT (_ll));

@@ -8,10 +8,10 @@
 #include "BruteForceClosestPair.h"
 #include "MathTools.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 BruteForceClosestPair::BruteForceClosestPair(
-		std::vector<GEOLIB::Point*> const & pnts, size_t& id0, size_t& id1) :
+		std::vector<GeoLib::Point*> const & pnts, size_t& id0, size_t& id1) :
 	ClosestPair (pnts, id0, id1)
 {
 	double sqr_shortest_dist (MathLib::sqrDist (_pnts[0], _pnts[1]));
@@ -31,4 +31,4 @@ BruteForceClosestPair::BruteForceClosestPair(
 	id1 = _id1;
 }
 
-} // end namespace GEOLIB
+} // end namespace GeoLib

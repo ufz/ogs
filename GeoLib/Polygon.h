@@ -11,14 +11,14 @@
 // STL
 #include <list>
 
-// GEOLIB
+// GeoLib
 #include "AxisAlignedBoundingBox.h"
 #include "Polyline.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  */
 
 /**
@@ -64,9 +64,9 @@ public:
 	 * @param pnt the Point
 	 * @return if point is inside the polygon true, else false
 	 */
-	bool isPntInPolygon (const GEOLIB::Point& pnt) const;
+	bool isPntInPolygon (const GeoLib::Point& pnt) const;
 	/**
-	 * wrapper for method isPntInPolygon (const GEOLIB::Point&)
+	 * wrapper for method isPntInPolygon (const GeoLib::Point&)
 	 * @param x x coordinate of point
 	 * @param y y coordinate of point
 	 * @param z z coordinate of point
@@ -74,7 +74,7 @@ public:
 	 */
 	bool isPntInPolygon (double x, double y, double z) const;
 	bool isPolylineInPolygon (const Polyline& ply) const;
-	GEOLIB::Point* getIntersectionPointPolygonLine (GEOLIB::Point const & a, GEOLIB::Point const & b) const;
+	GeoLib::Point* getIntersectionPointPolygonLine (GeoLib::Point const & a, GeoLib::Point const & b) const;
 	void computeListOfSimplePolygons ();
 	const std::list<Polygon*>& getListOfSimplePolygons ();
 
@@ -85,7 +85,7 @@ private:
 	 * @param pnt point that is edge type computed for
 	 * @return a value of enum EdgeType
 	 */
-	EdgeType::value getEdgeType (size_t k, GEOLIB::Point const & pnt) const;
+	EdgeType::value getEdgeType (size_t k, GeoLib::Point const & pnt) const;
 
 	void calculateAxisAlignedBoundingBox ();
 	void ensureCWOrientation ();
@@ -96,9 +96,9 @@ private:
 	AABB _aabb;
 };
 
-GEOLIB::Polygon* createPolygonFromCircle (GEOLIB::Point const& middle_pnt, double radius,
-		std::vector<GEOLIB::Point*> & pnts, size_t resolution = 12);
+GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, double radius,
+		std::vector<GeoLib::Point*> & pnts, size_t resolution = 12);
 
-} // end namespace GEOLIB
+} // end namespace GeoLib
 
 #endif /* POLYGON_H_ */

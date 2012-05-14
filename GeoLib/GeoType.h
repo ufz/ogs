@@ -10,10 +10,10 @@
 
 #include <string>
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  */
 
 enum GEOTYPE {
@@ -30,6 +30,6 @@ GEOTYPE convertGeoType (const std::string& geo_type_str);
 
 std::string convertGeoTypeToString (GEOTYPE geo_type);
 
-} // end namespace GEOLIB
+} // end namespace GeoLib
 
 #endif /* GEOTYPE_H_ */

@@ -15,10 +15,10 @@
 
 #include "GeoObject.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief class-template for points can be instantiated by a numeric type.
  * \param T the coordinate type

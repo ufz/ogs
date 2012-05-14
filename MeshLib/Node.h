@@ -22,7 +22,7 @@ class Element;
 /**
  * A mesh node with coordinates in 3D space.
  */
-class Node : public GEOLIB::PointWithID
+class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
 	friend class Mesh;//void Mesh::setElementInformationForNodes();

@@ -8,7 +8,7 @@
 #include "PointVec.h"
 #include "BruteForceClosestPair.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 		std::map<std::string, size_t>* name_id_map, PointType type) :
@@ -145,7 +145,7 @@ double PointVec::getShortestPointDistance () const
 	return sqrt (_sqr_shortest_dist);
 }
 
-void PointVec::makePntsUnique (std::vector<GEOLIB::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map)
+void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map)
 {
 	size_t n_pnts_in_file (pnt_vec->size());
 	std::vector<size_t> perm;
@@ -156,7 +156,7 @@ void PointVec::makePntsUnique (std::vector<GEOLIB::Point*>* pnt_vec, std::vector
 	}
 
 	// sort the points
-	BaseLib::Quicksort<GEOLIB::Point*> (*pnt_vec, 0, n_pnts_in_file, perm);
+	BaseLib::Quicksort<GeoLib::Point*> (*pnt_vec, 0, n_pnts_in_file, perm);
 
 	// unfortunately quicksort is not stable -
 	// sort identical points by id - to make sorting stable
@@ -199,7 +199,7 @@ void PointVec::makePntsUnique (std::vector<GEOLIB::Point*>* pnt_vec, std::vector
 	}
 
 	// reverse permutation
-	BaseLib::Quicksort<GEOLIB::Point*> (perm, 0, n_pnts_in_file, *pnt_vec);
+	BaseLib::Quicksort<GeoLib::Point*> (perm, 0, n_pnts_in_file, *pnt_vec);
 
 	// remove the second, third, ... occurrence from vector
 	for (size_t k(0); k<n_pnts_in_file; k++) {
@@ -209,7 +209,7 @@ void PointVec::makePntsUnique (std::vector<GEOLIB::Point*>* pnt_vec, std::vector
 		}
 	}
 	// remove NULL-ptr from vector
-	for (std::vector<GEOLIB::Point*>::iterator it(pnt_vec->begin()); it != pnt_vec->end(); ) {
+	for (std::vector<GeoLib::Point*>::iterator it(pnt_vec->begin()); it != pnt_vec->end(); ) {
 		if (*it == NULL) {
 			it = pnt_vec->erase (it);
 		}

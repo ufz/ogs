@@ -17,10 +17,10 @@
 #include "PropertyBounds.h"
 
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief An observation station as a geometric object (i.e. basically a Point with some additional information.
  *

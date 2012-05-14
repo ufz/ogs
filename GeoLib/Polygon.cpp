@@ -23,7 +23,7 @@
 #include "quicksort.h"
 #include "swap.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 Polygon::Polygon(const Polyline &ply, bool init) :
 	Polyline (ply)
@@ -59,16 +59,16 @@ bool Polygon::initialise ()
 	}
 }
 
-bool Polygon::isPntInPolygon (GEOLIB::Point const & pnt) const
+bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
 {
-	GEOLIB::Point min_aabb_pnt (_aabb.getMinPoint());
-	GEOLIB::Point max_aabb_pnt (_aabb.getMaxPoint());
+	GeoLib::Point min_aabb_pnt (_aabb.getMinPoint());
+	GeoLib::Point max_aabb_pnt (_aabb.getMaxPoint());
 
 	if (pnt[0] < min_aabb_pnt[0] || max_aabb_pnt[0] < pnt[0] || pnt[1] < min_aabb_pnt[1] || max_aabb_pnt[1] < pnt[1])
 		return false;
 
 	size_t n_intersections (0);
-	GEOLIB::Point s;
+	GeoLib::Point s;
 
 	if (_simple_polygon_list.empty ()) {
 		const size_t n_nodes (getNumberOfPoints()-1);
@@ -102,7 +102,7 @@ bool Polygon::isPntInPolygon (GEOLIB::Point const & pnt) const
 
 bool Polygon::isPntInPolygon (double x, double y, double z) const
 {
-	const GEOLIB::Point pnt(x,y,z);
+	const GeoLib::Point pnt(x,y,z);
 	return isPntInPolygon (pnt);
 }
 
@@ -119,9 +119,9 @@ bool Polygon::isPolylineInPolygon (const Polyline& ply) const
 	return false;
 }
 
-GEOLIB::Point* Polygon::getIntersectionPointPolygonLine (GEOLIB::Point const & a, GEOLIB::Point const & b) const
+GeoLib::Point* Polygon::getIntersectionPointPolygonLine (GeoLib::Point const & a, GeoLib::Point const & b) const
 {
-	GEOLIB::Point* s (new GEOLIB::Point (0,0,0));
+	GeoLib::Point* s (new GeoLib::Point (0,0,0));
 
 	if (_simple_polygon_list.empty ()) {
 		const size_t n_nodes (getNumberOfPoints()-1);
@@ -168,19 +168,19 @@ void Polygon::computeListOfSimplePolygons ()
 	}
 }
 
-EdgeType::value Polygon::getEdgeType (size_t k, GEOLIB::Point const & pnt) const
+EdgeType::value Polygon::getEdgeType (size_t k, GeoLib::Point const & pnt) const
 {
 	switch (getLocationOfPoint(k, pnt)) {
 	case Location::LEFT: {
-		const GEOLIB::Point & v (*(getPoint(k)));
-		const GEOLIB::Point & w (*(getPoint(k+1)));
+		const GeoLib::Point & v (*(getPoint(k)));
+		const GeoLib::Point & w (*(getPoint(k+1)));
 		if (v[1] < pnt[1] && pnt[1] <= w[1]) return EdgeType::CROSSING;
 		else return EdgeType::INESSENTIAL;
 		break;
 	}
 	case Location::RIGHT: {
-		const GEOLIB::Point & v (*(getPoint(k)));
-		const GEOLIB::Point & w (*(getPoint(k+1)));
+		const GeoLib::Point & v (*(getPoint(k)));
+		const GeoLib::Point & w (*(getPoint(k+1)));
 		if (w[1] < pnt[1] && pnt[1] <= v[1]) return EdgeType::CROSSING;
 		else return EdgeType::INESSENTIAL;
 		break;
@@ -207,9 +207,9 @@ void Polygon::ensureCWOrientation ()
 	// *** pre processing: rotate points to xy-plan
 	// *** copy points to vector - last point is identical to the first
 	size_t n_pnts (this->getNumberOfPoints()-1);
-	std::vector<GEOLIB::Point*> tmp_polygon_pnts;
+	std::vector<GeoLib::Point*> tmp_polygon_pnts;
 	for (size_t k(0); k < n_pnts; k++) {
-		tmp_polygon_pnts.push_back (new GEOLIB::Point (*(this->getPoint(k))));
+		tmp_polygon_pnts.push_back (new GeoLib::Point (*(this->getPoint(k))));
 	}
 
 	// *** calculate supporting plane (plane normal and
@@ -280,7 +280,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 {
 	size_t idx0 (0), idx1 (0);
 	while (polygon_it != _simple_polygon_list.end()) {
-		GEOLIB::Point *intersection_pnt (new GEOLIB::Point);
+		GeoLib::Point *intersection_pnt (new GeoLib::Point);
 		bool is_simple (!MathLib::lineSegmentsIntersect (*polygon_it, idx0, idx1, *intersection_pnt));
 		if (!is_simple) {
 			// adding intersection point to pnt_vec
@@ -290,7 +290,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 			// split Polygon
 			if (idx0 > idx1) BaseLib::swap (idx0, idx1);
 
-			GEOLIB::Polygon* polygon0 (new GEOLIB::Polygon((*polygon_it)->getPointsVec(), false));
+			GeoLib::Polygon* polygon0 (new GeoLib::Polygon((*polygon_it)->getPointsVec(), false));
 			for (size_t k(0); k<=idx0; k++) polygon0->addPoint ((*polygon_it)->getPointID (k));
 			polygon0->addPoint (intersection_pnt_id);
 			for (size_t k(idx1+1); k<(*polygon_it)->getNumberOfPoints(); k++)
@@ -300,7 +300,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 				exit (1);
 			}
 
-			GEOLIB::Polygon* polygon1 (new GEOLIB::Polygon((*polygon_it)->getPointsVec(), false));
+			GeoLib::Polygon* polygon1 (new GeoLib::Polygon((*polygon_it)->getPointsVec(), false));
 			polygon1->addPoint (intersection_pnt_id);
 			for (size_t k(idx0+1); k<=idx1; k++)
 				polygon1->addPoint ((*polygon_it)->getPointID (k));
@@ -311,7 +311,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 			}
 
 			// remove original polyline and add two new polylines
-			std::list<GEOLIB::Polygon*>::iterator polygon0_it, polygon1_it;
+			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
 			polygon_it = _simple_polygon_list.erase (polygon_it);
 			polygon1_it = _simple_polygon_list.insert (polygon_it, polygon1);
 			polygon0_it = _simple_polygon_list.insert (polygon1_it, polygon0);
@@ -325,7 +325,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 	}
 }
 
-void Polygon::splitPolygonAtPoint (std::list<GEOLIB::Polygon*>::iterator polygon_it)
+void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon_it)
 {
 	size_t n ((*polygon_it)->getNumberOfPoints()-1), idx0 (0), idx1(0);
 	size_t *id_vec (new size_t[n]), *perm (new size_t[n]);
@@ -346,20 +346,20 @@ void Polygon::splitPolygonAtPoint (std::list<GEOLIB::Polygon*>::iterator polygon
 			if (idx0 > idx1) BaseLib::swap (idx0, idx1);
 
 			// create two closed polylines
-			GEOLIB::Polygon* polygon0 (new GEOLIB::Polygon((*polygon_it)->getPointsVec()));
+			GeoLib::Polygon* polygon0 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
 			for (size_t k(0); k<=idx0; k++)
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			for (size_t k(idx1+1); k<(*polygon_it)->getNumberOfPoints(); k++)
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			polygon0->initialise();
 
-			GEOLIB::Polygon* polygon1 (new GEOLIB::Polygon((*polygon_it)->getPointsVec()));
+			GeoLib::Polygon* polygon1 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
 			for (size_t k(idx0); k<=idx1; k++)
 				polygon1->addPoint ((*polygon_it)->getPointID (k));
 			polygon1->initialise();
 
 			// remove original polygon and add two new polygons
-			std::list<GEOLIB::Polygon*>::iterator polygon0_it, polygon1_it;
+			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
 			polygon1_it = _simple_polygon_list.insert (_simple_polygon_list.erase (polygon_it), polygon1);
 			polygon0_it = _simple_polygon_list.insert (polygon1_it, polygon0);
 
@@ -373,21 +373,21 @@ void Polygon::splitPolygonAtPoint (std::list<GEOLIB::Polygon*>::iterator polygon
 	delete [] id_vec;
 }
 
-GEOLIB::Polygon* createPolygonFromCircle (GEOLIB::Point const& middle_pnt, double radius,
-		std::vector<GEOLIB::Point*> & pnts, size_t resolution)
+GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, double radius,
+		std::vector<GeoLib::Point*> & pnts, size_t resolution)
 {
 	const size_t off_set (pnts.size());
 	// create points
 	double angle (2.0 * M_PI / resolution);
 	for (size_t k(0); k<resolution; k++) {
-		GEOLIB::Point *pnt (new GEOLIB::Point(middle_pnt.getCoords()));
+		GeoLib::Point *pnt (new GeoLib::Point(middle_pnt.getCoords()));
 		(*pnt)[0] += radius * cos (k*angle);
 		(*pnt)[1] += radius * sin (k*angle);
 		pnts.push_back (pnt);
 	}
 
 	// create polygon
-	GEOLIB::Polygon* polygon (new GEOLIB::Polygon (pnts, false));
+	GeoLib::Polygon* polygon (new GeoLib::Polygon (pnts, false));
 	for (size_t k(0); k<resolution; k++) {
 		polygon->addPoint (k+off_set);
 	}
@@ -397,4 +397,4 @@ GEOLIB::Polygon* createPolygonFromCircle (GEOLIB::Point const& middle_pnt, doubl
 }
 
 
-} // end namespace GEOLIB
+} // end namespace GeoLib

@@ -10,7 +10,7 @@
 
 #include "Surface.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 class Raster {
 public:

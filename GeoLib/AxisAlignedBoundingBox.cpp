@@ -10,7 +10,7 @@
 #include <cmath>
 #include "AxisAlignedBoundingBox.h"
 
-namespace GEOLIB {
+namespace GeoLib {
 
 AABB::AABB ()
 {
@@ -20,7 +20,7 @@ AABB::AABB ()
 	}
 }
 
-AABB::AABB ( const std::vector<GEOLIB::Point*> *points )
+AABB::AABB ( const std::vector<GeoLib::Point*> *points )
 {
 	size_t nPoints (points->size());
 	for (size_t i=0; i<nPoints; i++)
@@ -29,7 +29,7 @@ AABB::AABB ( const std::vector<GEOLIB::Point*> *points )
 	}
 }
 
-void AABB::update (GEOLIB::Point const & pnt)
+void AABB::update (GeoLib::Point const & pnt)
 {
 	update (pnt[0], pnt[1], pnt[2]);
 }
@@ -44,7 +44,7 @@ void AABB::update (double x, double y, double z)
 	if (_max_pnt[2] < z) _max_pnt[2] = z;
 }
 
-bool AABB::containsPoint (GEOLIB::Point const & pnt, double eps) const
+bool AABB::containsPoint (GeoLib::Point const & pnt, double eps) const
 {
 	return containsPoint (pnt[0], pnt[1], pnt[2], eps);
 }

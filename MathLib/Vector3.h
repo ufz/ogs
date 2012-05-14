@@ -24,17 +24,17 @@ namespace MathLib {
  *	operators.  (* is cross product.)
  */
 template <class T>
-class TemplateVector : public GEOLIB::TemplatePoint<T>
+class TemplateVector : public GeoLib::TemplatePoint<T>
 {
 public:
-	TemplateVector() : GEOLIB::TemplatePoint<T>() {};
-	TemplateVector(T x1, T x2, T x3) : GEOLIB::TemplatePoint<T>(x1, x2, x3) {};
- 	TemplateVector(const GEOLIB::TemplatePoint<T> & rhs) :
- 		GEOLIB::TemplatePoint<T>(rhs[0], rhs[1], rhs[2])
+	TemplateVector() : GeoLib::TemplatePoint<T>() {};
+	TemplateVector(T x1, T x2, T x3) : GeoLib::TemplatePoint<T>(x1, x2, x3) {};
+ 	TemplateVector(const GeoLib::TemplatePoint<T> & rhs) :
+ 		GeoLib::TemplatePoint<T>(rhs[0], rhs[1], rhs[2])
  	{}
  	/** constructs a vector from the gien points */
- 	TemplateVector(const GEOLIB::TemplatePoint<T> &a, const GEOLIB::TemplatePoint<T> &b) :
- 	 	GEOLIB::TemplatePoint<T>(b[0]-a[0], b[1]-a[1], b[2]-a[2])
+ 	TemplateVector(const GeoLib::TemplatePoint<T> &a, const GeoLib::TemplatePoint<T> &b) :
+ 	 	GeoLib::TemplatePoint<T>(b[0]-a[0], b[1]-a[1], b[2]-a[2])
  	{}
 	~TemplateVector() {};
 
@@ -58,7 +58,7 @@ public:
 		return *this;
 	}
 
-	TemplateVector& operator+=(const GEOLIB::TemplatePoint<T>& pnt)
+	TemplateVector& operator+=(const GeoLib::TemplatePoint<T>& pnt)
 	{
 		for (size_t i(0); i<3; i++) this->_x[i] += pnt[i];
 		return *this;

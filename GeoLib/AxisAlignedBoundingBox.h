@@ -12,11 +12,11 @@
 #include <vector>
 #include <limits>
 
-namespace GEOLIB {
+namespace GeoLib {
 
 /**
  *
- * \ingroup GEOLIB
+ * \ingroup GeoLib
  *
  * \brief Class AABB is a bounding box around a given geometric entity
  * */
@@ -31,9 +31,9 @@ public:
 	/**
 	 * construction of object using vector of points
 	 * */
-	AABB ( const std::vector<GEOLIB::Point*> *points );
+	AABB ( const std::vector<GeoLib::Point*> *points );
 
-	void update (GEOLIB::Point const & pnt);
+	void update (GeoLib::Point const & pnt);
 	/**
 	 * update axis aligned bounding box
 	 */
@@ -51,10 +51,10 @@ public:
 	 * check if point is in the axis aligned bounding box
 	 * (employing containsPoint (double x, double y, double z))
 	 */
-	bool containsPoint (GEOLIB::Point const & pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+	bool containsPoint (GeoLib::Point const & pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/**
-	 * wrapper for GEOLIB::Point
+	 * wrapper for GeoLib::Point
 	 */
 	bool containsPoint (const double *pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
@@ -64,12 +64,12 @@ public:
 	 */
 	bool containsPoint (double x, double y, double z, double eps = std::numeric_limits<double>::epsilon()) const;
 
-	GEOLIB::Point getMinPoint () const { return _min_pnt; }
-	GEOLIB::Point getMaxPoint () const { return _max_pnt; }
+	GeoLib::Point getMinPoint () const { return _min_pnt; }
+	GeoLib::Point getMaxPoint () const { return _max_pnt; }
 
 private:
-	GEOLIB::Point _min_pnt;
-	GEOLIB::Point _max_pnt;
+	GeoLib::Point _min_pnt;
+	GeoLib::Point _max_pnt;
 };
 
 } // end namespace

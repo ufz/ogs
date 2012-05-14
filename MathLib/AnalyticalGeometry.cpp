@@ -43,14 +43,14 @@ Orientation getOrientation (const double& p0_x, const double& p0_y,
 	return CW;
 }
 
-Orientation getOrientation (const GEOLIB::Point* p0, const GEOLIB::Point* p1, const GEOLIB::Point* p2)
+Orientation getOrientation (const GeoLib::Point* p0, const GeoLib::Point* p1, const GeoLib::Point* p2)
 {
 		return getOrientation ((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
-bool lineSegmentIntersect (const GEOLIB::Point& a, const GEOLIB::Point& b,
-		const GEOLIB::Point& c, const GEOLIB::Point& d,
-		GEOLIB::Point& s)
+bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
+		const GeoLib::Point& c, const GeoLib::Point& d,
+		GeoLib::Point& s)
 {
 	Matrix<double> mat(2,2);
 	mat(0,0) = b[0] - a[0];
@@ -98,7 +98,7 @@ bool lineSegmentIntersect (const GEOLIB::Point& a, const GEOLIB::Point& b,
 	return false;
 }
 
-bool lineSegmentsIntersect (const GEOLIB::Polyline* ply, size_t &idx0, size_t &idx1, GEOLIB::Point& intersection_pnt)
+bool lineSegmentsIntersect (const GeoLib::Polyline* ply, size_t &idx0, size_t &idx1, GeoLib::Point& intersection_pnt)
 {
 	size_t n_segs (ply->getNumberOfPoints() - 1);
 	/**
@@ -139,14 +139,14 @@ bool isPointInTriangle (const double p[3], const double a[3], const double b[3],
 	return false;
 }
 
-bool isPointInTriangle (const GEOLIB::Point* p,
-		const GEOLIB::Point* a, const GEOLIB::Point* b, const GEOLIB::Point* c)
+bool isPointInTriangle (const GeoLib::Point* p,
+		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c)
 {
 	return isPointInTriangle (p->getCoords(), a->getCoords(), b->getCoords(), c->getCoords());
 }
 
 // NewellPlane from book Real-Time Collision detection p. 494
-void getNewellPlane(const std::vector<GEOLIB::Point*>& pnts, Vector &plane_normal,
+void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, Vector &plane_normal,
 		double& d)
 {
 	d = 0;
@@ -169,7 +169,7 @@ void getNewellPlane(const std::vector<GEOLIB::Point*>& pnts, Vector &plane_norma
 
 
 void rotatePointsToXY(Vector &plane_normal,
-		std::vector<GEOLIB::Point*> &pnts)
+		std::vector<GeoLib::Point*> &pnts)
 {
 	double small_value (sqrt (std::numeric_limits<double>::min()));
 	if (fabs(plane_normal[0]) < small_value && fabs(plane_normal[1]) < small_value)
