@@ -25,6 +25,9 @@ IF((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 	OPTION(OGS_PROFILE "Enables compiling with flags set for profiling with gprof." OFF)
 ENDIF() # GCC AND GPROF_PATH
 
+# Disable Qt
+OPTION(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
+
 ######################
 ### Subdirectories ###
 ######################
