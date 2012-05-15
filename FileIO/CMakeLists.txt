@@ -2,15 +2,22 @@
 GET_SOURCE_FILES(SOURCES_FILEIO)
 SET ( SOURCES ${SOURCES_FILEIO})
 
+IF (QT4_FOUND)
+	GET_SOURCE_FILES(SOURCES_XML XmlIO)
+	SET ( SOURCES ${SOURCES} ${SOURCES_XML})
+ENDIF (QT4_FOUND)
+
 # Create the library
 ADD_LIBRARY(FileIO STATIC ${SOURCES})
 
 include_directories(
 	.
-	../BaseLib
-	../GeoLib
-	../MathLib
-	../MeshLib
+	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/FemLib
+	${CMAKE_SOURCE_DIR}/GeoLib
+	${CMAKE_SOURCE_DIR}/MathLib
+	${CMAKE_SOURCE_DIR}/MeshLib
+	${CMAKE_SOURCE_DIR}/OGS
 )
 
 target_link_libraries (FileIO

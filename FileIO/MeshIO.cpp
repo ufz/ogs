@@ -30,12 +30,7 @@ MeshIO::MeshIO()
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
 	std::cout << "Read mesh ... " << std::endl;
-/*
-   #ifndef NDEBUG
-    QTime myTimer;
-    myTimer.start();
-   #endif
- */
+
 	std::ifstream in (file_name.c_str(),std::ios::in);
 	if (!in.is_open())
 	{
@@ -105,11 +100,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 		std::cout << "Nr. Nodes: " << nodes.size() << std::endl;
 		std::cout << "Nr. Elements: " << elements.size() << std::endl;
 
-		/*
-		   #ifndef NDEBUG
-				std::cout << "Loading time: " << myTimer.elapsed() << " ms" << std::endl;
-		   #endif
-		 */
+		in.close();
 		return mesh;
 	}
 	else 
@@ -171,14 +162,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	default:
 		elem = NULL;
 	}	
-
-
-	/*
-		neighbors.resize(nfaces);
-		for (unsigned i = 0; i < nfaces; i++)
-			neighbors[i] = NULL;
-	*/
-
+	
 	return elem;
 }
 

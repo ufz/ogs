@@ -34,10 +34,12 @@ OPTION(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
 
 # Add subdirectories with the projects
 ADD_SUBDIRECTORY( BaseLib )
+ADD_SUBDIRECTORY( FemLib )
 ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )
 ADD_SUBDIRECTORY( MeshLib )
+ADD_SUBDIRECTORY( OGS )
 ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
 ADD_SUBDIRECTORY( SimpleTests/MeshTests )
 IF(NOT MSVC)
