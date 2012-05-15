@@ -10,7 +10,7 @@
 
 // FEM
 #include "FEMEnums.h"
-class CRFProcess;
+//class CRFProcess;
 
 /**
  * \brief Class ProcessInfo stores the process type,
@@ -36,7 +36,7 @@ public:
 	 * @param pcs a pointer to the process
 	 * @return
 	 */
-	ProcessInfo (FiniteElement::ProcessType pcs_type, FiniteElement::PrimaryVariable pcs_pv, CRFProcess* pcs);
+	ProcessInfo (FiniteElement::ProcessType pcs_type, FiniteElement::PrimaryVariable pcs_pv/*, CRFProcess* pcs*/);
 
 	/**
 	 * Sets the process type.
@@ -54,7 +54,7 @@ public:
 	 * Sets the value for the pointer to an object of class CRFProcess.
 	 * @param pcs the pointer to an object of class CRFProcess
 	 */
-	void setProcess (CRFProcess* pcs);
+	//void setProcess (CRFProcess* pcs);
 
 	/**
 	 * Get the process type.
@@ -72,7 +72,7 @@ public:
 	 * Get a pointer to an object of type CRFProcess.
 	 * @return a pointer to an object of type CRFProcess
 	 */
-	CRFProcess* getProcess () const;
+	//CRFProcess* getProcess () const;
 
 	virtual ~ProcessInfo();
 
@@ -89,6 +89,6 @@ protected:
 	/**
 	 * pointer to the object of class CRFProcess
 	 */
-	CRFProcess* _pcs;
+	//CRFProcess* _pcs;
 };
 #endif                                            /* PROCESSINFO_H_ */

@@ -13,7 +13,7 @@ ProjectData::ProjectData()
 ProjectData::~ProjectData()
 {
 	delete _geoObjects;
-	for (std::map<std::string, MeshLib::CFEMesh*>::iterator it = _msh_vec.begin();
+	for (std::map<std::string, MeshLib::Mesh*>::iterator it = _msh_vec.begin();
 	     it != _msh_vec.end(); ++it)
 		delete it->second;
 	size_t nCond (_cond_vec.size());
@@ -21,13 +21,13 @@ ProjectData::~ProjectData()
 		delete _cond_vec[i];
 }
 
-void ProjectData::addMesh(MeshLib::CFEMesh* mesh, std::string &name)
+void ProjectData::addMesh(MeshLib::Mesh* mesh, std::string &name)
 {
 	isUniqueMeshName(name);
 	_msh_vec[name] = mesh;
 }
 
-const MeshLib::CFEMesh* ProjectData::getMesh(const std::string &name) const
+const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 {
 	return _msh_vec.find(name)->second;
 }
@@ -192,7 +192,7 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 		if (count > 1)
 			cpName = cpName + "-" + number2str(count);
 
-		for (std::map<std::string, MeshLib::CFEMesh*>::iterator it = _msh_vec.begin();
+		for (std::map<std::string, MeshLib::Mesh*>::iterator it = _msh_vec.begin();
 		     it != _msh_vec.end(); ++it)
 			if ( cpName.compare(it->first) == 0 )
 				isUnique = false;

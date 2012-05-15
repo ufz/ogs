@@ -10,6 +10,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/FemLib
 	${CMAKE_SOURCE_DIR}/GeoLib
+	${CMAKE_SOURCE_DIR}/MathLib
 	${CMAKE_SOURCE_DIR}/MeshLib
 )
 

@@ -8,7 +8,6 @@
 #include "ProcessInfo.h"
 
 #include "GEOObjects.h" //for SourceTerm
-#include "GridAdapter.h"
 
 FEMCondition::FEMCondition(const std::string &geometry_name, CondType t)
 	: _type(t), _geoName("[unspecified]"), _associated_geometry(geometry_name)
@@ -22,13 +21,13 @@ FEMCondition::FEMCondition(const std::string &geometry_name, CondType t)
 FEMCondition::FEMCondition(const std::string &geometry_name, FiniteElement::ProcessType pt,
 				FiniteElement::PrimaryVariable pv, GeoLib::GEOTYPE gt, const std::string &gn,
 				FiniteElement::DistributionType dt, CondType ct)
-	: ProcessInfo(pt, pv, NULL),  GeoInfo(gt, NULL), DistributionInfo(dt), _type(ct),
+	: ProcessInfo(pt, pv/*, NULL*/),  GeoInfo(gt, NULL), DistributionInfo(dt), _type(ct),
 	  _geoName(gn), _associated_geometry(geometry_name)
 {
 }
 
 FEMCondition::FEMCondition(const FEMCondition &cond, CondType t)
-	: ProcessInfo(cond.getProcessType(), cond.getProcessPrimaryVariable(), NULL),
+	: ProcessInfo(cond.getProcessType(), cond.getProcessPrimaryVariable()/*, NULL*/),
 	  GeoInfo(cond.getGeoType(), cond.getGeoObj()),
 	  DistributionInfo(cond.getProcessDistributionType()),
 	  _type(t),

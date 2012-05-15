@@ -35,7 +35,7 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
                              double eps)
 {
 	isUniquePointVecName(name);
-	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::POINT, eps));
+	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::POINT/*, eps*/));
 }
 
 bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
