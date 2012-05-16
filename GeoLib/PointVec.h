@@ -5,24 +5,28 @@
  *      Author: TF / KR
  */
 
-
 // GeoLib
+#include "AxisAlignedBoundingBox.h"
 #include "Point.h"
 #include "Station.h"
-#include "AxisAlignedBoundingBox.h"
 
-// Base
-#include "quicksort.h"
+// BaseLib
 #include "binarySearch.h"
+#include "quicksort.h"
 
-#include <vector>
-#include <string>
 #include <map>
+#include <string>
+#include <vector>
 
 #ifndef POINTVEC_H_
 #define POINTVEC_H_
 
-namespace GeoLib {
+#include "TemplateVec.h"
+
+namespace GeoLib
+{
+
+class PointWithID;
 
 /**
  * \ingroup GeoLib
@@ -32,7 +36,7 @@ namespace GeoLib {
  * a unique name from class GEOObject. For this reason PointVec should have
  * a name.
  * */
-class PointVec
+class PointVec : public TemplateVec<Point>
 {
 public:
 	/// Signals if the vector contains object of type Point or Station
@@ -55,13 +59,18 @@ public:
 	 * PointVec will take the ownership of the vector, i.e. it
 	 * deletes the names
 	 * @param type the type of the point, \sa enum PointType
+	 * @param rel_eps This is a relative error tolerance value for the test of identical points.
+	 * The size of the axis aligned bounding box multiplied with the value of rel_eps gives the
+	 * real tolerance \f$tol\f$. Two points \f$p_0, p_1 \f$ are identical iff
+	 * \f$|p_1 - p_0| \le tol.\f$
 	 * @return an object of type PointVec
 	 */
-	PointVec (const std::string& name, std::vector<Point*>* points, std::map<std::string, size_t>* name_id_map = NULL,
-				PointType type = PointVec::POINT);
+	PointVec (const std::string& name, std::vector<Point*>* points,
+	          std::map<std::string, size_t>* name_id_map = NULL,
+	          PointType type = PointVec::POINT, double rel_eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** Destructor deletes all Points of this PointVec. */
-	~PointVec ();
+	virtual ~PointVec ();
 
 	/**
 	 * Method adds a Point to the (internal) standard vector and takes the ownership.
@@ -70,83 +79,36 @@ public:
 	 * @param pnt the pointer to the Point
 	 * @return the id of the point within the internal vector
 	 */
-	size_t push_back (Point *pnt);
+	size_t push_back (Point* pnt);
 
 	/**
-	 * push_back adds new elements at the end of the vector _pnt_vec.
+	 * push_back adds new elements at the end of the vector _data_vec.
 	 * @param pnt a pointer to the point, PointVec takes ownership of the point
 	 * @param name the name of the point
 	 */
-	void push_back (Point *pnt, const std::string& name);
+	virtual void push_back (Point* pnt, std::string const*const name);
 
-	/**
-	 * get the actual number of Points
-	 */
-	size_t size () const { return _pnt_vec->size(); }
 	/**
 	 * get the type of Point, this can be either POINT or STATION
 	 *
 	 */
 	PointType getType() const { return _type; }
 
-	/**
-	 * getVector returns the internal vector of Points,
-	 * you are not able to change the Points or the address of the vector.
-	 */
-	const std::vector<Point*>* getVector () const { return _pnt_vec; }
-
-	std::vector<Point*> *filterStations(const std::vector<PropertyBounds> &bounds) const;
-
-	/** sets the name of the object
-	 * \param n the name as standard string */
-	void setName(const std::string & n) { _name = n; }
-	/** returns the name of the object */
-	std::string getName () const { return _name; }
-
-	/**
-	 * search the vector of names for the ID of the point with the given name
-	 * @param name the name of the point
-	 * @param id the id of the point
-	 * @return the id of the point
-	 */
-	bool getElementIDByName (const std::string& name, size_t &id) const;
-
-	/**
-	 * Method searchs for point with the given name. If it found a point with the name
-	 * it returns a pointer to the point, else it returns the NULL pointer.
-	 * @param name the name of the point
-	 * @return the pointer to the point or NULL
-	 */
-	const Point* getElementByName (const std::string& name) const;
-
-	/**
-	 * The method returns true if the given element of type T
-	 * can be found and the element has a name, else method returns false.
-	 * @param data the data element, one wants to know the name
-	 * @param name the name of the data element (if the data element is
-	 * found and the data element has a name)
-	 * @return if element is found and has a name: true, else false
-	 */
-	bool getNameOfElement (const Point* data, std::string& name) const;
-
-	/**
-	 * The method returns true if there is a name associated
-	 * with the given id, else method returns false.
-	 * @param id the id
-	 * @param element_name if a name associated with the id
-	 * is found name is assigned to element_name
-	 * @return if there is name associated with the given id:
-	 * true, else false
-	 */
-	bool getNameOfElementByID (size_t id, std::string& element_name) const;
+	std::vector<Point*>* filterStations(const std::vector<PropertyBounds> &bounds) const;
 
 	const std::vector<size_t>& getIDMap () const { return _pnt_id_map; }
 
 	double getShortestPointDistance () const;
 	const GeoLib::AABB& getAxisAlignedBoundingBox () const;
 
+	/// Creates a real copy of the point vector in memeory.
+	static std::vector<GeoLib::Point*>* deepcopy(const std::vector<GeoLib::Point*> *pnt_vec);
+
+	/// Returns a subset of this point vector containing only the points specified in "subset" as PointWithID-objects
+	std::vector<GeoLib::Point*>* getSubset(const std::vector<size_t> &subset);
+
 private:
-	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map);
+	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
@@ -159,23 +121,11 @@ private:
 	// this way the compiler does not create a (possible unwanted) assignment operator
 	PointVec& operator= (const PointVec& rhs);
 
-	size_t uniqueInsert (Point *pnt);
+	size_t uniqueInsert (Point* pnt);
 
-	/**
-	 * pointer to a vector of pointers to Points
-	 *
-	 * The destructor of PointVec will delete all GeoLib::Points
-	 * inside the vector.
-	 */
-	std::vector<Point*> *_pnt_vec;
-	/**
-	 * used to store the name associated with a point
-	 */
-	std::map<std::string, size_t>* _name_id_map;
 	/** the type of the point (\sa enum PointType) */
 	PointType _type;
-	/** the name of the object */
-	std::string _name;
+
 	/**
 	 * permutation of the geometric elements according
 	 * to their lexicographical order
@@ -192,9 +142,8 @@ private:
 	double _sqr_shortest_dist;
 
 	void calculateAxisAlignedBoundingBox ();
-	AABB aabb;
+	AABB _aabb;
 };
-
 } // end namespace
 
 #endif /* POINTVEC_H_ */

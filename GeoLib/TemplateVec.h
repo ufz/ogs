@@ -8,8 +8,8 @@
 #ifndef TEMPLATEVEC_H_
 #define TEMPLATEVEC_H_
 
-namespace GeoLib {
-
+namespace GeoLib
+{
 /**
  * \ingroup GeoLib
  *
@@ -32,7 +32,8 @@ public:
 	 * the data_vec.
 
 	 */
-	TemplateVec (const std::string &name, std::vector<T*> *data_vec, std::map<std::string, size_t>* elem_name_map = NULL) :
+	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
+	             std::map<std::string, size_t>* elem_name_map = NULL) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{}
 
@@ -41,7 +42,7 @@ public:
 	 */
 	virtual ~TemplateVec ()
 	{
-		for (size_t k(0); k<size(); k++) delete (*_data_vec)[k];
+		for (size_t k(0); k < size(); k++) delete (*_data_vec)[k];
 		delete _data_vec;
 		delete _name_id_map;
 	}
@@ -77,21 +78,23 @@ public:
 	{
 		std::map<std::string,size_t>::const_iterator it (_name_id_map->find (name));
 
-		if (it != _name_id_map->end()) {
+		if (it != _name_id_map->end())
+		{
 			id = it->second;
 			return true;
-		} else return false;
+		}
+		else return false;
 	}
 
+	/// Returns an element with the given name.
 	const T* getElementByName (const std::string& name) const
 	{
 		size_t id;
 		bool ret (getElementIDByName (name, id));
-		if (ret) {
+		if (ret)
 			return (*_data_vec)[id];
-		} else {
+		else
 			return NULL;
-		}
 	}
 
 	/**
@@ -105,11 +108,13 @@ public:
 	 */
 	bool getNameOfElementByID (size_t id, std::string& element_name) const
 	{
-		if (! _name_id_map) return false;
+		if (!_name_id_map) return false;
 		// search in map for id
 		std::map<std::string,size_t>::const_iterator it (_name_id_map->begin());
-		while (it != _name_id_map->end()) {
-			if (it->second == id) {
+		while (it != _name_id_map->end())
+		{
+			if (it->second == id)
+			{
 				element_name = it->first;
 				return true;
 			}
@@ -118,9 +123,10 @@ public:
 		return false;
 	}
 
+	/// Return the name of an element based on its ID.
 	void setNameOfElementByID (size_t id, std::string& element_name)
 	{
-		if (! _name_id_map) return;
+		if (!_name_id_map) return;
 		_name_id_map->insert( std::pair<std::string, size_t>(element_name, id) );
 	}
 
@@ -134,28 +140,48 @@ public:
 	 */
 	bool getNameOfElement (const T* data, std::string& name) const
 	{
-		for (size_t k(0); k<_data_vec->size(); k++) {
-			if ((*_data_vec)[k] == data) {
+		for (size_t k(0); k < _data_vec->size(); k++)
+			if ((*_data_vec)[k] == data)
 				return getNameOfElementByID (k, name);
-			}
-		}
+
 		return false;
 	}
 
-	void push_back (T* data_element, std::string const * const name = NULL)
+	/// Adds a new element to the vector.
+	virtual void push_back (T* data_element, std::string const* const name = NULL)
 	{
 		_data_vec->push_back (data_element);
 		if (name == NULL) return;
-		if (! name->empty()) {
-			if (_name_id_map == NULL) {
+		if (!name->empty())
+		{
+			if (_name_id_map == NULL)
 				_name_id_map = new std::map <std::string, size_t>;
-			}
-			_name_id_map->insert (std::pair<std::string,size_t>(*name, _data_vec->size()-1));
+			_name_id_map->insert (std::pair<std::string,size_t>(*name, _data_vec->size() - 1));
 		}
 	}
 
+	/// Sets the given name for the element of the given ID.
+	void setNameForElement(size_t id, std::string const& name)
+	{
+		if (_name_id_map == NULL)
+			_name_id_map = new std::map<std::string, size_t>;
 
-private:
+		if ( !_name_id_map->empty())
+		{
+			for (std::map<std::string, size_t>::iterator it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
+				if (it->second == id)
+				{
+					_name_id_map->erase(it); //check if old name already exists and delete it
+					break;
+				}
+		}
+		if (!name.empty()) {
+			//insert new or revised name
+			_name_id_map->insert(std::pair<std::string, size_t>(name, id));
+		}
+	}
+
+protected:
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
 	TemplateVec (const TemplateVec &);
@@ -169,13 +195,12 @@ private:
 	/**
 	 * pointer to a vector of data elements
 	 */
-	std::vector <T*> *_data_vec;
+	std::vector <T*>* _data_vec;
 	/**
 	 * store names associated with the element ids
 	 */
 	std::map<std::string, size_t>* _name_id_map;
 };
-
 } // end namespace GeoLib
 
 #endif /* TEMPLATEVEC_H_ */

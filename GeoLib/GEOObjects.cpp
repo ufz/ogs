@@ -5,7 +5,10 @@
  *      Author: TF / KR
  */
 
+// GeoLib
 #include "GEOObjects.h"
+
+// BaseLib
 #include "StringTools.h"
 
 #include <fstream>
@@ -500,7 +503,7 @@ int GEOObjects::exists(const std::string &geometry_name) const
 			return i;
 
 	// HACK for enabling conversion of files without loading the associated geometry
-	if (size>0 && _pnt_vecs[0]->getName().compare("conversionTestRun#1")==0)	
+	if (size>0 && _pnt_vecs[0]->getName().compare("conversionTestRun#1")==0)
 		return 1;
 
 	return -1;
