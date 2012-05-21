@@ -13,7 +13,7 @@
 #include "GeoTreeModel.h"
 #include "MeshQualityEquiAngleSkew.h"
 #include "MeshQualityArea.h"
-#include "MeshQualityVolumes.h"
+#include "MeshQualityVolume.h"
 #include "MeshQualityShortestLongestRatio.h"
 #include "MshItem.h"
 #include "MshModel.h"
@@ -462,7 +462,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		else if (t == MshQualityType::AREA)
 			checker = new MeshLib::MeshQualityArea(mesh);
 		else if (t == MshQualityType::VOLUME)
-			checker = new MeshLib::MeshQualityVolumes(mesh);
+			checker = new MeshLib::MeshQualityVolume(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
 			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
 		else
