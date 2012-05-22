@@ -8,6 +8,9 @@
 // ** INCLUDES **
 #include "VtkVisPipeline.h"
 
+// MathLib
+#include "InterpolationAlgorithms/LinearIntervalInterpolation.h"
+
 //#include "Model.h"
 #include "ProcessModel.h"
 #include "GeoTreeModel.h"
@@ -477,15 +480,14 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		std::vector<double> quality (checker->getMeshQuality());
 		// transform area and volume criterion values to [0, 1]
 		if (t == MshQualityType::AREA || t == MshQualityType::VOLUME) {
-			const double min(checker->getMinValue());
-			const double max(checker->getMaxValue());
-			// compute linear interpolation polynom: y = m * x + n
-			long double m (1/(max-min));
-			long double n (-m * min);
-
-			const size_t n_quality(quality.size());
-			for (size_t k(0); k<n_quality; k++)
-				quality[k] = m * quality[k] + n;
+			try {
+				MathLib::LinearIntervalInterpolation<double> lin_intpol(checker->getMinValue(), checker->getMaxValue(), 0, 1);
+				const size_t n_quality(quality.size());
+				for (size_t k(0); k<n_quality; k++)
+					quality[k] = lin_intpol(quality[k]);
+			} catch (std::runtime_error& exception) {
+				std::cout << "run time error: " << exception.what() << std::endl;
+			}
 		}
 
 		int nSources = this->_rootItem->childCount();
