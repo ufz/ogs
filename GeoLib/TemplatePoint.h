@@ -72,15 +72,6 @@ public:
 		os << _x[0] << " " << _x[1] << " " << _x[2] << std::flush;
 	}
 
-	/**
-	 * write point coordinates into string
-	*/
-	virtual std::string write () const {
-		std::ostringstream strStream;
-		strStream << _x[0] << " " << _x[1] << " " << _x[2];
-		return strStream.str();
-	}
-
 	/** read point coordinates into stream (used from operator>>) */
 	virtual void read (std::istream &is) {
 		is >> _x[0] >> _x[1] >> _x[2];
