@@ -74,7 +74,6 @@
 
 // MSH
 #include "msh_mesh.h"
-#include "MeshGrid.h"
 
 // MSHGEOTOOLS
 #include "ExtractMeshNodes.h"
