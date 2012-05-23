@@ -65,9 +65,9 @@ void FEMConditionSetupDialog::setupDialog()
 {
 	if (_cond.getGeoType() != GEOLIB::INVALID)
 	{
-		this->disTypeBox->addItem("Constant (Direchlet)");
+		this->disTypeBox->addItem("Constant (Dirichlet)");
 		if (_cond.getGeoType() == GEOLIB::POLYLINE)
-			this->disTypeBox->addItem("Linear (Direchlet)");
+			this->disTypeBox->addItem("Linear (Dirichlet)");
 
 		if (this->_set_on_points)
 		{
@@ -216,9 +216,9 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 		{
 			while (this->disTypeBox->count()>0)
 				this->disTypeBox->removeItem(0);
-			this->disTypeBox->addItem("Constant (Direchlet)");
+			this->disTypeBox->addItem("Constant (Dirichlet)");
 			if (_cond.getGeoType() == GEOLIB::POLYLINE)
-				this->disTypeBox->addItem("Linear (Direchlet)");
+				this->disTypeBox->addItem("Linear (Dirichlet)");
 		}
 	}
 }
