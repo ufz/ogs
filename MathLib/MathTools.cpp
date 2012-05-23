@@ -9,22 +9,6 @@
 
 namespace MathLib {
 
-#ifdef _OPENMP
-double scpr(double const * const v, double const * const w, unsigned n)
-{
-	long double res (v[0]*w[0]);
-	OPENMP_LOOP_TYPE k;
-
-	#pragma omp parallel for reduction (+:res)
-	for (k = 1; k<n; k++) {
-		res += v[k] * w[k];
-	}
-
-	return res;
-}
-#endif
-
-
 void crossProd(const double u[3], const double v[3], double r[3])
 {
 	r[0] = u[1] * v[2] - u[2] * v[1];
@@ -39,7 +23,7 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 	double v[3] = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
 	// orthogonal projection: (g(lambda)-p) * v = 0 => in order to compute lambda we define a help vector u
 	double u[3] = {p[0] - a[0], p[1] - a[1], p[2] - a[2]};
-	lambda = scpr (u, v, 3) / scpr (v, v, 3);
+	lambda = scpr<double,3> (u, v) / scpr<double,3> (v, v);
 
 	// compute projected point
 	double proj_pnt[3];
@@ -52,19 +36,19 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 
 double sqrNrm2 (const GeoLib::Point* p0)
 {
-	return scpr (p0->getCoords(), p0->getCoords(), 3);
+	return scpr<double,3> (p0->getCoords(), p0->getCoords());
 }
 
 double sqrDist (const GeoLib::Point* p0, const GeoLib::Point* p1)
 {
 	const double v[3] = {(*p1)[0] - (*p0)[0], (*p1)[1] - (*p0)[1], (*p1)[2] - (*p0)[2]};
-	return scpr (v, v, 3);
+	return scpr<double,3>(v,v);
 }
 
 double sqrDist(const double* p0, const double* p1)
 {
 	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-	return scpr (v, v, 3);
+	return scpr<double,3>(v,v);
 }
 
 bool checkDistance(GeoLib::Point const &p0, GeoLib::Point const &p1, double squaredDistance)
@@ -83,7 +67,7 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	const double v1[3] = {p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2]};
 
 	// apply Cauchy Schwarz inequality
-	return acos (scpr (v0,v1,3) / (sqrt(scpr(v0,v0,3)) * sqrt(scpr (v1,v1,3))));
+	return acos (scpr<double,3> (v0,v1) / (sqrt(scpr<double,3>(v0,v0)) * sqrt(scpr<double,3>(v1,v1))));
 }
 
 double calcTriangleArea(const double* p0, const double* p1, const double* p2)

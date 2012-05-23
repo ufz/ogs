@@ -18,27 +18,58 @@
 
 #include "Point.h"
 
-
 namespace MathLib {
 
 /**
- * standard inner product in R^3
+ * standard inner product in R^N
  * \param v0 array of type T representing the vector
  * \param v1 array of type T representing the vector
- * \param n the size of the array
  * */
-template<class T> inline
-double scpr(const T* v0, const T* v1, size_t n)
+template<typename T, int N> inline
+T scpr(T const * const v0, T const * const v1)
 {
-	long double res(0.0);
-	for (size_t k(0); k<n; k++)
+	T res (v0[0]*v1[0]);
+#ifdef _OPENMP
+	OPENMP_LOOP_TYPE k;
+
+	#pragma omp parallel for reduction (+:res)
+	for (k = 1; k<N; k++) {
 		res += v0[k] * v1[k];
-	return (double) res;
+	}
+#else
+	for (size_t k(1); k < N; k++)
+		res += v0[k] * v1[k];
+#endif
+	return res;
 }
 
+template <> inline
+double scpr<double,3>(double const * const v0, double const * const v1)
+{
+	double res (v0[0]*v1[0]);
+	for (size_t k(1); k < 3; k++)
+		res += v0[k] * v1[k];
+	return res;
+}
+
+template<typename T> inline
+T scpr(T const * const v0, T const * const v1, unsigned n)
+{
+	T res (v0[0]*v1[0]);
 #ifdef _OPENMP
-double scpr(double const * const v, double const * const w, unsigned n);
+	OPENMP_LOOP_TYPE k;
+
+	#pragma omp parallel for reduction (+:res)
+	for (k = 1; k<n; k++) {
+		res += v0[k] * v1[k];
+	}
+#else
+	for (size_t k(1); k < n; k++)
+		res += v0[k] * v1[k];
 #endif
+	return res;
+}
+
 
 /**
  * computes the cross (or vector) product of the 3d vectors u and v
@@ -94,14 +125,14 @@ float normalize(float min, float max, float val);
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
 
-/** 
- * Calculates the area of a triangle. 
+/**
+ * Calculates the area of a triangle.
  * The formula is A=.5*|u x v|, i.e. half of the area of the parallelogram specified by u=p0->p1 and v=p0->p2.
  */
 double calcTriangleArea(const double* p0, const double* p1,	const double* p2);
 
-/** 
- * Calculates the volume of a tetrahedron. 
+/**
+ * Calculates the volume of a tetrahedron.
  * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
  */
 double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4);
