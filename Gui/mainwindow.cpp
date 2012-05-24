@@ -1457,6 +1457,26 @@ void MainWindow::FEMTestStart()
 		(*points)[i] = new GEOLIB::Point(mesh->nod_vector[nodes[i]]->getData());
 	}
 	_geoModels->addPointVec(points, std::string("testpoints"));
+	findNodesFromGeo();
+}
+
+void MainWindow::findNodesFromGeo()
+{
+	MeshLib::CFEMesh* msh = const_cast<MeshLib::CFEMesh*>(this->_project.getMesh("Ammer-Homogen100m-Final"));
+	const std::vector<GEOLIB::Point*> *pnt_vec = this->_geoModels->getPointVec("AmmerSTGeometry.gli");
+	const std::vector<GEOLIB::Polyline*> *ply_vec = this->_geoModels->getPolylineVec("AmmerSTGeometry.gli");
+	std::vector<long> msh_nodes;
+	
+	const GEOLIB::Polyline* ply = (*ply_vec)[0];
+	msh->GetNODOnPLY(ply, msh_nodes);
+
+	std::vector<GEOLIB::Point*> *new_points = new std::vector<GEOLIB::Point*>;
+	for (size_t i=0; i<msh_nodes.size(); i++)
+	{
+		new_points->push_back(new GEOLIB::Point(msh->nod_vector[msh_nodes[i]]->getData()));
+	}
+	std::string pnt_name("new_points");
+	this->_geoModels->addPointVec(new_points, pnt_name);
 }
 
 void MainWindow::showTrackingSettingsDialog()
