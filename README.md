@@ -18,3 +18,9 @@ problems (multi-physics). Parallel versions of OGS are available relying on
 both MPI and OpenMP concepts. Application areas of OGS are currently CO2
 sequestration, geothermal energy, water resources management, hydrology and 
 waste deposition.
+
+## Development ##
+
+- To get started checkout the [developer guide](http://ufz.github.com/devguide)
+- For the actual build status see the [Jenkins-CI server](https://svn.ufz.de/hudson/view/OGS-6/)
+- Have a look at the [Doxygen documentation](https://svn.ufz.de/hudson/view/OGS-6/job/OGS-6-Docs/lastSuccessfulBuild/artifact/build/docs/index.html)
