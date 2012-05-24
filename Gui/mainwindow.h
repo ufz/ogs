@@ -63,7 +63,6 @@ protected slots:
 	void exportBoreholesToGMS(std::string listName, std::string fileName);
 	/// Testing functionality for connection to FEM lib
 	void FEMTestStart();
-	void findNodesFromGeo();
 	void importGMS();
 	void importGoCad();
 	void importRaster();

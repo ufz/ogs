@@ -1456,7 +1456,8 @@ void MainWindow::FEMTestStart()
 	{
 		(*points)[i] = new GEOLIB::Point(mesh->nod_vector[nodes[i]]->getData());
 	}
-	_geoModels->addPointVec(points, std::string("testpoints"));
+	std::string testpoints_name("testpoints");
+	_geoModels->addPointVec(points, testpoints_name);
 	//findNodesFromGeo();
 }
 
