@@ -27,6 +27,7 @@
 #include <vtkTetra.h>
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
+#include <vtkPyramid.h>
 
 vtkStandardNewMacro(VtkMeshSource);
 vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
@@ -146,7 +147,11 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		case MshElemType::PRISM:
 			newCell = vtkWedge::New();
 			break;
+		case MshElemType::PYRAMID:
+			newCell = vtkPyramid::New();
+			break;
 		default: // if none of the above can be applied
+			std::cerr << "[VtkMeshSource::RequestData] unknown element type " << elem->type << std::endl;
 			return 0;
 		}
 
