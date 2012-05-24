@@ -129,11 +129,11 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		switch (elem->type)
 		{
-		case MshElemType::TRIANGLE:
-			newCell = vtkTriangle::New();
-			break;
 		case MshElemType::LINE:
 			newCell = vtkLine::New();
+			break;
+		case MshElemType::TRIANGLE:
+			newCell = vtkTriangle::New();
 			break;
 		case MshElemType::QUAD:
 			newCell = vtkQuad::New();
@@ -151,7 +151,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			newCell = vtkPyramid::New();
 			break;
 		default: // if none of the above can be applied
-			std::cerr << "[VtkMeshSource::RequestData] unknown element type " << elem->type << std::endl;
+			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->type) << "." << std::endl;
 			return 0;
 		}
 
