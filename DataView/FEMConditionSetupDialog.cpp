@@ -22,7 +22,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 												 const GEOLIB::GeoObject* const geo_object,
 												 bool  on_points,
 												 QDialog* parent)
-: QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points), 
+: QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points),
   _combobox(NULL), directButton(NULL), _mesh(NULL), _first_value_validator(NULL)
 {
 	_cond.setGeoType(type);
@@ -34,7 +34,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const FEMCondition &cond, QDialog* parent)
-	: QDialog(parent), _cond(cond), _set_on_points(false), _combobox(NULL), directButton(NULL), 
+	: QDialog(parent), _cond(cond), _set_on_points(false), _combobox(NULL), directButton(NULL),
 	_mesh(NULL), _first_value_validator(NULL)
 {
 	setupUi(this);
@@ -75,7 +75,7 @@ void FEMConditionSetupDialog::setupDialog()
 			_combobox->addItem("Elevation");
 			static_cast<QGridLayout*>(this->layout())->addWidget(_combobox,5,1) ;
 		}
-		else 
+		else
 		{
 			_first_value_validator = new StrictDoubleValidator(-1e+10, 1e+10, 5);
 			this->firstValueEdit->setText("0");
@@ -113,7 +113,6 @@ void FEMConditionSetupDialog::setValuesFromCond()
 	QString pv_type = QString::fromStdString(FiniteElement::convertPrimaryVariableToString(_cond.getProcessPrimaryVariable()));
 	this->pvTypeBox->setCurrentIndex(this->pvTypeBox->findText(pv_type));
 
-	int idx(0);
 	if (_cond.getCondType() == FEMCondition::INITIAL_CONDITION)
 		this->condTypeBox->setCurrentIndex(1);
 	else if (_cond.getCondType() == FEMCondition::SOURCE_TERM)
@@ -137,7 +136,6 @@ void FEMConditionSetupDialog::setValuesFromCond()
 	}
 	else	// direct on mesh
 	{
-		size_t nValues (_cond.getDisValues().size());
 		this->directButton->setText(QString::number(static_cast<int>(_cond.getDisValues().size())) + " values");
 	}
 }
@@ -152,9 +150,9 @@ void FEMConditionSetupDialog::accept()
 	{
 		if (condTypeBox->currentIndex()>1)
 		{
-			if (this->disTypeBox->currentIndex()>0) 
+			if (this->disTypeBox->currentIndex()>0)
 				_cond.setProcessDistributionType(FiniteElement::LINEAR_NEUMANN);
-			else 
+			else
 			{
 				_cond.setProcessDistributionType(FiniteElement::CONSTANT_NEUMANN);
 				_cond.setConstantDisValue(this->firstValueEdit->text().toDouble());
@@ -162,7 +160,7 @@ void FEMConditionSetupDialog::accept()
 		}
 		else
 		{
-			if (this->disTypeBox->currentIndex()>0) 
+			if (this->disTypeBox->currentIndex()>0)
 				_cond.setProcessDistributionType(FiniteElement::LINEAR);
 			else
 			{
@@ -251,7 +249,7 @@ void FEMConditionSetupDialog::directButton_pressed()
 		const std::vector<size_t> nodes = _cond.getDisNodes();
 		const std::vector<double> values = _cond.getDisValues();
 		LinearEditDialog dlg(*line, nodes, values);
-		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)), 
+		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)),
 				this, SLOT(addDisValues(std::vector< std::pair<size_t,double> >)));
 		dlg.exec();
 	}
@@ -261,7 +259,7 @@ void FEMConditionSetupDialog::directButton_pressed()
 		msh_map.insert( std::pair<std::string, MeshLib::CFEMesh*>(this->_cond.getGeoName(), const_cast<MeshLib::CFEMesh*>(this->_mesh)) );
 		CondFromRasterDialog dlg(msh_map);
 		//connect(&dlg, SIGNAL(directNodesWritten(std::string)), this, SLOT(direct_path_changed(std::string)));
-		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)), 
+		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)),
 				this, SLOT(addDisValues(std::vector< std::pair<size_t,double> >)));
 		dlg.exec();
 	}
@@ -327,7 +325,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				cond->setConstantDisValue((*tri->getPoint(j))[2]);
 				conditions.push_back(this->typeCast(*cond));
 			}
-		}	
+		}
 		emit createFEMCondition(conditions);
 	}
 	else
