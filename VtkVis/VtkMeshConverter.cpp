@@ -270,6 +270,8 @@ GridAdapter* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid
 			break;
 		case VTK_WEDGE:         elem_type = MshElemType::PRISM;
 			break;
+		case VTK_PYRAMID:       elem_type = MshElemType::PYRAMID;
+			break;
 		}
 
 		if (elem_type != MshElemType::INVALID)
