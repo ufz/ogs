@@ -116,7 +116,7 @@ private:
 	 *	4		3,0,4,7 left
 	 *	5		4,5,6,7 top
 	 * @param pnt (input) coordinates of the point
-	 * @param sqr_dists (output) squared distances of the point to the faces
+	 * @param dists (output) squared distances of the point to the faces
 	 * ordered in the same sequence as above described
 	 * @param coords coordinates of the grid cell
 	 */

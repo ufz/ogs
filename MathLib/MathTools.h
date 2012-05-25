@@ -80,7 +80,7 @@ void crossProd (const double u[3], const double v[3], double r[3]);
 /**
  * calcProjPntToLineAndDists computes the orthogonal projection
  * of a point p to the line described by the points a and b,
- * $g(\lambda) = a + \lambda (b - a)$,
+ * \f$g(\lambda) = a + \lambda (b - a)\f$,
  * the distance between p and the projected point
  * and the distances between the projected point and the end
  * points a, b of the line
