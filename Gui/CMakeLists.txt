@@ -92,9 +92,13 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	QVTK
 	VtkVis
 	VtkAct
-	vtkNetCDF
-	vtkNetCDF_cxx
 )
+
+IF(VTK_NETCDF_FOUND)
+	TARGET_LINK_LIBRARIES( ogs-gui vtkNetCDF vtkNetCDF_cxx )
+ELSE()
+	TARGET_LINK_LIBRARIES( ogs-gui ${NETCDF_LIBRARIES} )
+ENDIF()
 
 IF (Shapelib_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${Shapelib_LIBRARIES} )

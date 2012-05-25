@@ -7,7 +7,7 @@
 #ifdef VTK_NETCDF_FOUND
 #include <vtknetcdf/netcdfcpp.h>
 #else
-#include <netcdf.h>
+#include <netcdfcpp.h>
 #endif
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
