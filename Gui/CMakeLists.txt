@@ -93,6 +93,9 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	StratView
 	VtkVis
 	VtkAct
+	vtkRendering
+	vtkWidgets
+	QVTK
 )
 
 IF(VTK_NETCDF_FOUND)
