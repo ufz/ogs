@@ -27,7 +27,10 @@ vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
 		for (size_t i = 0; i < imgWidth; i++)
 		{
 			QRgb pix = img.pixel(i,j);
-			const float color[3] = { qRed(pix), qGreen(pix), qBlue(pix) };
+			const float color[3] = { static_cast<float>(qRed(pix)),
+									 static_cast<float>(qGreen(pix)),
+									 static_cast<float>(qBlue(pix))
+								   };
 			data->SetTuple(j * imgWidth + i, color);
 		}
 
