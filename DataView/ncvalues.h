@@ -13,7 +13,11 @@
 #include <iostream>
 #include <sstream>
 #include <limits.h>
+#ifdef VTK_NETCDF_FOUND
 #include <vtknetcdf/netcdf.h>
+#else
+#include <netcdf.h>
+#endif
 
 // Documentation warned this might change and now it has, for
 // consistency with C interface

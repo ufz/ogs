@@ -8,12 +8,15 @@
 // ** INCLUDES **
 #include "VtkVisPipeline.h"
 
+// MathLib
+#include "InterpolationAlgorithms/LinearIntervalInterpolation.h"
+
 //#include "Model.h"
 #include "ProcessModel.h"
 #include "GeoTreeModel.h"
 #include "MeshQualityEquiAngleSkew.h"
-#include "MeshQualityNormalisedArea.h"
-#include "MeshQualityNormalisedVolumes.h"
+#include "MeshQualityArea.h"
+#include "MeshQualityVolume.h"
 #include "MeshQualityShortestLongestRatio.h"
 #include "MshItem.h"
 #include "MshModel.h"
@@ -460,23 +463,32 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		if (t == MshQualityType::EDGERATIO)
 			checker = new MeshLib::MeshQualityShortestLongestRatio(mesh);
 		else if (t == MshQualityType::AREA)
-			checker = new MeshLib::MeshQualityNormalisedArea(mesh);
+			checker = new MeshLib::MeshQualityArea(mesh);
 		else if (t == MshQualityType::VOLUME)
-			checker = new MeshLib::MeshQualityNormalisedVolumes(mesh);
+			checker = new MeshLib::MeshQualityVolume(mesh);
 		else if (t == MshQualityType::EQUIANGLESKEW)
 			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
 		else
 		{
-			std::cout <<
-			"Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..."
-			          <<
-			std::endl;
+			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..."
+							<< std::endl;
 			delete checker;
 			return;
 		}
 		checker->check ();
 
-		std::vector<double> const &quality (checker->getMeshQuality());
+		std::vector<double> quality (checker->getMeshQuality());
+		// transform area and volume criterion values to [0, 1]
+		if (t == MshQualityType::AREA || t == MshQualityType::VOLUME) {
+			try {
+				MathLib::LinearIntervalInterpolation<double> lin_intpol(checker->getMinValue(), checker->getMaxValue(), 0, 1);
+				const size_t n_quality(quality.size());
+				for (size_t k(0); k<n_quality; k++)
+					quality[k] = lin_intpol(quality[k]);
+			} catch (std::runtime_error& exception) {
+				std::cout << "run time error: " << exception.what() << std::endl;
+			}
+		}
 
 		int nSources = this->_rootItem->childCount();
 		for (int i = 0; i < nSources; i++)
@@ -503,21 +515,39 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 			}
 		}
 
-		// *** write histogram
+		// *** construct and write histogram
 		// simple suggestion: number of classes with Sturges criterion
-//		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
+		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
 //			bool ok;
-//			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogramm", "number of histogramm classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
+//			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogram", "number of histogram classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
 //			if (ok) ...
-		size_t size (1000);
-		std::vector<size_t> histogramm (size,0);
-		checker->getHistogramm(histogramm);
-		std::ofstream out ("mesh_histogramm.txt");
-		const size_t histogramm_size (histogramm.size());
-		for (size_t k(0); k < histogramm_size; k++)
-			out << k / static_cast<double>(histogramm_size) << " " << histogramm[k] <<
-			std::endl;
-		out.close ();
+
+		BASELIB::Histogram<double> histogram (checker->getHistogram(nclasses));
+		std::ofstream out ("mesh_histogram.txt");
+		if (out) {
+			out << "# histogram depicts mesh quality criterion " << MshQualityType2String(t)
+				<< " for mesh " << source->GetGrid()->getName() << std::endl;
+			nclasses = histogram.getNrBins();
+			std::vector<size_t> const& bin_cnts(histogram.getBinCounts());
+			const double min (histogram.getMinimum());
+			const double bin_width (histogram.getBinWidth());
+
+			for (size_t k(0); k < nclasses; k++)
+				out << min+k*bin_width << " " << bin_cnts[k] << std::endl;
+			out.close ();
+		} else {
+			std::cerr << "could not open file mesh_histgram.txt" << std::endl;
+		}
+
+//		size_t size (100);
+//		std::vector<size_t> histogram (size,0);
+//		checker->getHistogram(histogram);
+//		std::ofstream out ("mesh_histogram.txt");
+//		const size_t histogram_size (histogram.size());
+//		for (size_t k(0); k < histogram_size; k++)
+//			out << k / static_cast<double>(histogram_size) << " " << histogram[k] <<
+//			std::endl;
+//		out.close ();
 
 		delete checker;
 	}

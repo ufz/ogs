@@ -74,7 +74,6 @@
 
 // MSH
 #include "msh_mesh.h"
-#include "MeshGrid.h"
 
 // MSHGEOTOOLS
 #include "ExtractMeshNodes.h"
@@ -1447,11 +1446,21 @@ void MainWindow::FEMTestStart()
 //		std::cout << "[Test] could not load mesh " << mesh_name << std::endl;
 //	}
 
-	/*
-	CondFromRasterDialog dlg(_project.getMeshObjects());
-	dlg.exec();
-	*/
+	const std::vector<GEOLIB::Polyline*> *lines = this->_geoModels->getPolylineVec("WESS Rivers");
+	MeshLib::CFEMesh* mesh = const_cast<MeshLib::CFEMesh*>(_project.getMesh("Ammer-Homogen100m-Final"));
+	std::vector<size_t> nodes;
+	mesh->GetNODOnPLY((*lines)[0], nodes);
+
+	std::vector<GEOLIB::Point*> *points = new std::vector<GEOLIB::Point*>(nodes.size());
+	for (size_t i=0; i<nodes.size(); i++)
+	{
+		(*points)[i] = new GEOLIB::Point(mesh->nod_vector[nodes[i]]->getData());
+	}
+	std::string testpoints_name("testpoints");
+	_geoModels->addPointVec(points, testpoints_name);
+	//findNodesFromGeo();
 }
+
 
 void MainWindow::showTrackingSettingsDialog()
 {

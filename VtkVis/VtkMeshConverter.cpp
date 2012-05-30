@@ -270,6 +270,8 @@ GridAdapter* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid
 			break;
 		case VTK_WEDGE:         elem_type = MshElemType::PRISM;
 			break;
+		case VTK_PYRAMID:       elem_type = MshElemType::PYRAMID;
+			break;
 		}
 
 		if (elem_type != MshElemType::INVALID)
@@ -280,7 +282,7 @@ GridAdapter* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid
 		}
 		else
 		{
-			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type ..." << std::endl;
+			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type \"" << cell_type << "\" ..." << std::endl;
 			return NULL;
 		}
 

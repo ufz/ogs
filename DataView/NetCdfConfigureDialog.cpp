@@ -153,6 +153,7 @@ void NetCdfConfigureDialog::on_comboBoxDim4_currentIndexChanged(int id)
 		double firstValue=0, lastValue=0;
 		size_t size = 0;
 		getDimEdges(id,size,firstValue,lastValue);
+		// WARNING: Implicit conversion to int in spinBoxDim4->set*()
 		spinBoxDim4->setValue(firstValue);
 		spinBoxDim4->setMinimum(firstValue);
 		spinBoxDim4->setMaximum(lastValue);
@@ -228,7 +229,11 @@ void NetCdfConfigureDialog::getDimEdges(int dimId, size_t &size, double &firstVa
 			int sizeOfDim = tmpVarOfDim->get_dim(0)->size();
 			size = sizeOfDim;
 			double arrayOfDimStart[1] = {0};
+#ifdef VTK_NETCDF_FOUND
 			size_t edgeOfArray[1] = {1};
+#else
+			long edgeOfArray[1] = {1};
+#endif
 			long edgeOrigin[1] = {0};
 			tmpVarOfDim->set_cur(edgeOrigin);
 			tmpVarOfDim->get(arrayOfDimStart,edgeOfArray);
@@ -268,7 +273,7 @@ int NetCdfConfigureDialog::getTimeStep()
 {
 	NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
 	
-	int datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
+	const double datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
 
 	double timeArray[1] = {datesToMinutes};
 	double currentTime = timeVar->get_index(timeArray);
@@ -279,7 +284,7 @@ int NetCdfConfigureDialog::getTimeStep()
 int NetCdfConfigureDialog::getDim4()
 {
 	NcVar* dim3Var = _currentFile->get_var(comboBoxDim4->currentIndex());
-	double timeArray[1] = {spinBoxDim4->value()};
+	double timeArray[1] = {static_cast<double>(spinBoxDim4->value())};
 	double currentValueDim3 = dim3Var->get_index(timeArray);
 	if (currentValueDim3 < 0) currentValueDim3=0; //if the value isn't found in the array, set it to 0 as default...
 	return currentValueDim3;
@@ -312,7 +317,11 @@ double NetCdfConfigureDialog::getResolution()
 
 void NetCdfConfigureDialog::createDataObject()
 {
+#ifdef VTK_NETCDF_FOUND
 	size_t* length = new size_t[_currentVar->num_dims()];
+#else
+	long* length = new long[_currentVar->num_dims()];
+#endif
 	double originLon = 0, originLat = 0;
 	double lastLon = 0, lastLat = 0;
 	size_t sizeLon = 0, sizeLat = 0;

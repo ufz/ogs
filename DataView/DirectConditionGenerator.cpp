@@ -20,6 +20,8 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		size_t imgwidth(0), imgheight(0);
 
 		float* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+		if (img == 0)
+			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;
 
 		const std::vector<GEOLIB::PointWithID*> surface_nodes ( MshEditor::getSurfaceNodes(mesh) );
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
@@ -68,11 +70,14 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 
 		FiniteElement::CElement* fem ( new FiniteElement::CElement(mesh.GetCoordinateFlag()) );
 
-		float* img;
+		float* img = 0;
 		if (filename.substr(filename.length()-3,3).compare("asc") == 0)
 			img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 		else if (filename.substr(filename.length()-3,3).compare("grd") == 0)
 			img = VtkRaster::loadDataFromSurfer(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+
+		if (img == 0)
+			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;
 
 		const size_t nNodes(mesh.nod_vector.size());
 		std::vector<double> val(nNodes, 0.0);
