@@ -1367,7 +1367,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GEO
 	}
 	// Object should now have a name ... if not, cancel the setup process
 	if (geo_name.empty())
-		OGSError::box("FEM Condition Setup cancelled.");
+		OGSError::box("FEM Condition Setup canceled.");
 	else
 	{
 		if (on_points)
