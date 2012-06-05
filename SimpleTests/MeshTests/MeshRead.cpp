@@ -10,6 +10,10 @@
 #include "RunTime.h"
 #include "tclap/CmdLine.h"
 
+// BaseLib/logog
+#include "logog.hpp"
+
+
 // MeshLib
 #include "Node.h"
 #include "Elements/Element.h"
@@ -18,6 +22,9 @@
 
 int main(int argc, char *argv[])
 {
+	LOGOG_INITIALIZE();
+	logog::Cout* logogCout = new logog::Cout;
+
 	TCLAP::CmdLine cmd("Simple mesh loading test", ' ', "0.1");
 
 	// Define a value argument and add it to the command line.
@@ -43,10 +50,14 @@ int main(int argc, char *argv[])
 	MeshLib::Mesh* mesh = mesh_io.loadMeshFromFile(fname);
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
+//	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
+	INFO ("mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 	run_time.stop();
-	std::cout << "time for reading: " << run_time.elapsed() << " s" << std::endl;
+//	std::cout << "time for reading: " << run_time.elapsed() << " s" << std::endl;
+	INFO ("time for reading: %f s", run_time.elapsed());
 #endif
 	delete mesh;
+	delete logogCout;
+	LOGOG_SHUTDOWN();
 }
 

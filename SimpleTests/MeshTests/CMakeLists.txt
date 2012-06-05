@@ -22,5 +22,6 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	MathLib	
 	BaseLib
 	GeoLib
+	logog
 )
 
