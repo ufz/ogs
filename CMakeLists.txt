@@ -28,6 +28,12 @@ ENDIF() # GCC AND GPROF_PATH
 # Disable Qt
 OPTION(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
 
+# Print CMake variable values
+IF (OGS_CMAKE_DEBUG)
+	INCLUDE(ListAllCMakeVariableValues)
+	list_all_cmake_variable_values()
+ENDIF (OGS_CMAKE_DEBUG)
+
 ######################
 ### Subdirectories ###
 ######################
