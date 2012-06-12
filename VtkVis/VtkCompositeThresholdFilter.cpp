@@ -59,6 +59,10 @@ void VtkCompositeThresholdFilter::init()
 	// Make a new entry in the property map for the SelectedComponent property
 	(*_algorithmUserProperties)["Selected Component"] = 0;
 
+	// Must all scalars match the criterium
+	threshold->SetAllScalars(1);
+	(*_algorithmUserProperties)["Evaluate all points"] = true;
+
 	// The threshold filter is last one and so it is also the _outputAlgorithm
 	_outputAlgorithm = threshold;
 }
@@ -71,6 +75,8 @@ void VtkCompositeThresholdFilter::SetUserProperty( QString name, QVariant value 
 	if (name.compare("Selected Component") == 0)
 		// Set the property on the algorithm
 		static_cast<vtkThreshold*>(_outputAlgorithm)->SetSelectedComponent(value.toInt());
+	else if (name.compare("Evaluate all points") == 0)
+		static_cast<vtkThreshold*>(_outputAlgorithm)->SetAllScalars(value.toBool());
 }
 
 void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
