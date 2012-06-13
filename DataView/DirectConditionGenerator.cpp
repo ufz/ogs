@@ -21,7 +21,10 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 
 		float* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 		if (img == 0)
+		{
 			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;
+			return _direct_values;
+			}
 
 		const std::vector<GEOLIB::PointWithID*> surface_nodes ( MshEditor::getSurfaceNodes(mesh) );
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
@@ -37,12 +40,12 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 				int cell_y = static_cast<int>(floor((coords[1] - origin_y)/delta));
 
 				// if node outside of raster use raster boundary values
-				cell_x = (cell_x < 0) ?  0 : ((static_cast<size_t>(cell_x) > imgwidth)  ? (imgwidth-1)  : cell_x);
-				cell_y = (cell_y < 0) ?  0 : ((static_cast<size_t>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
+				cell_x = (cell_x < 0) ?  0 : ((static_cast<int>(cell_x) > imgwidth)  ? (imgwidth-1)  : cell_x);
+				cell_y = (cell_y < 0) ?  0 : ((static_cast<int>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
 
 				size_t index = cell_y*imgwidth+cell_x;
 				if (fabs(img[index] + 9999) > std::numeric_limits<float>::min())
-					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index]) );
+					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index*2]) );
 			}
 		}
 
@@ -77,7 +80,10 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 			img = VtkRaster::loadDataFromSurfer(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 
 		if (img == 0)
+		{
 			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;
+			return _direct_values;
+		}
 
 		const size_t nNodes(mesh.nod_vector.size());
 		std::vector<double> val(nNodes, 0.0);
@@ -108,7 +114,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 				cell_x = (cell_x < 0) ?  0 : ((static_cast<size_t>(cell_x) > imgwidth)  ? (imgwidth-1)  : cell_x);
 				cell_y = (cell_y < 0) ?  0 : ((static_cast<size_t>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
 
-				node_val[k] = img[cell_y * imgwidth + cell_x];
+				node_val[k] = img[ 2 * (cell_y * imgwidth + cell_x) ];
 				if (fabs(node_val[k] - no_data_value) < std::numeric_limits<double>::min())
 					node_val[k] = 0.;
 			}
