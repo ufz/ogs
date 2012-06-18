@@ -46,12 +46,12 @@ int main(int argc, char *argv[])
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
-		DBUG("ok, %n s", timer.elapsed());
+		DBUG("ok, %e s", timer.elapsed());
 	} else {
 		ERR("error reading matrix from %s", fname_mat.c_str());
 	}
 	unsigned nnz(iA[n]);
-	INFO("Parameters read: n=%n, nnz=%n", n, nnz);
+	INFO("Parameters read: n=%i, nnz=%i", n, nnz);
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
-	INFO("%n x %n", mat.getNRows(), mat.getNCols());
+	INFO("%i x %i", mat.getNRows(), mat.getNCols());
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	for (unsigned k(0); k<n; ++k)
 		x[k] = 1.0;
 
-	DBUG("matrix vector multiplication with Toms amuxCRS (%n threads) ...", n_threads);
+	DBUG("matrix vector multiplication with Toms amuxCRS (%i threads) ...", n_threads);
 	BaseLib::RunTime run_timer;
 	BaseLib::CPUTime cpu_timer;
 	run_timer.start();
@@ -79,9 +79,9 @@ int main(int argc, char *argv[])
 	cpu_timer.stop();
 	run_timer.stop();
 
-	DBUG("done [%n sec cpu time], [%n sec run time]", cpu_timer.elapsed(), run_timer.elapsed());
-	DBUG("CPU time: %n", cpu_timer.elapsed());
-	DBUG("wclock time: %n", run_timer.elapsed());
+	DBUG("done [%e sec cpu time], [%e sec run time]", cpu_timer.elapsed(), run_timer.elapsed());
+	DBUG("CPU time: %e", cpu_timer.elapsed());
+	DBUG("wclock time: %e", run_timer.elapsed());
 
 	if (argc == 5) {
 		std::ofstream result_os (argv[4], std::ios::app);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 		}
 		result_os.close();
 	} else {
-		INFO("%n \t %n", cpu_timer.elapsed(), run_timer.elapsed());
+		INFO("%e \t %e", cpu_timer.elapsed(), run_timer.elapsed());
 	}
 
 
