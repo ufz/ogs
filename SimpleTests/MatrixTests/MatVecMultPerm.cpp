@@ -10,6 +10,7 @@
 // BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
+#include "tclap/CmdLine.h"
 
 // MathLib
 #include "sparse.h"
@@ -21,18 +22,35 @@
 
 int main(int argc, char *argv[])
 {
-	if (argc < 4) {
-		std::cout << "Usage: " << argv[0] << " matrix number_of_multiplications resultfile" << std::endl;
-		return 1;
-	}
+	TCLAP::CmdLine cmd("Simple matrix vector multiplication test", ' ', "0.1");
+
+	// Define a value argument and add it to the command line.
+	// A value arg defines a flag and a type of value that it expects,
+	// such as "-m matrix".
+	TCLAP::ValueArg<std::string> matrix_arg("m","matrix","input matrix file",true,"","string");
+
+	// Add the argument mesh_arg to the CmdLine object. The CmdLine object
+	// uses this Arg to parse the command line.
+	cmd.add( matrix_arg );
+
+//	TCLAP::ValueArg<unsigned> n_cores_arg("n", "number-cores", "number of cores to use", true, "1", "number");
+//	cmd.add( n_cores_arg );
+
+	TCLAP::ValueArg<unsigned> n_mults_arg("n", "number-of-multiplications", "number of multiplications to perform", true, 10, "unsigned");
+	cmd.add( n_mults_arg );
+
+	TCLAP::ValueArg<std::string> output_arg("o", "output", "output file", false, "", "string");
+	cmd.add( output_arg );
+
+	TCLAP::ValueArg<unsigned> verbosity_arg("v", "verbose", "level of verbosity [0 very low information, 1 much information]", false, 0, "string");
+	cmd.add( verbosity_arg );
+
+	cmd.parse( argc, argv );
 
 	// read the number of multiplication to execute
-	unsigned n_mults (0);
-	n_mults = atoi (argv[2]);
-
-	std::string fname_mat (argv[1]);
-
-	bool verbose (false);
+	unsigned n_mults (n_mults_arg.getValue());
+	std::string fname_mat (matrix_arg.getValue());
+	bool verbose (verbosity_arg.getValue());
 
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
@@ -87,8 +105,8 @@ int main(int argc, char *argv[])
 	if (verbose) {
 		std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
 	} else {
-		if (argc == 4) {
-			std::ofstream result_os(argv[3], std::ios::app);
+		if (! output_arg.getValue().empty()) {
+			std::ofstream result_os(output_arg.getValue().c_str(), std::ios::app);
 			if (result_os) {
 				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " calc nested dissection perm" << std::endl;
 			}
@@ -110,8 +128,8 @@ int main(int argc, char *argv[])
 	run_timer.stop();
 	if (verbose) std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
 	else {
-		if (argc == 4) {
-			std::ofstream result_os(argv[3], std::ios::app);
+		if (! ((output_arg.getValue()).empty())) {
+			std::ofstream result_os((output_arg.getValue()).c_str(), std::ios::app);
 			if (result_os) {
 				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " applying nested dissection perm" << std::endl;
 			}
@@ -153,8 +171,8 @@ int main(int argc, char *argv[])
 		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], [wclock: "
 				<< run_timer.elapsed() << " sec]" << std::endl;
 	} else {
-		if (argc == 4) {
-			std::ofstream result_os (argv[3], std::ios::app);
+		if (! output_arg.getValue().empty()) {
+			std::ofstream result_os (output_arg.getValue().c_str(), std::ios::app);
 			if (result_os) {
 				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " " << n_mults << " MatVecMults, matrix " << fname_mat << std::endl;
 			}

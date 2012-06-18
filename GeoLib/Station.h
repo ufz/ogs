@@ -73,7 +73,6 @@ public:
 	 * \param y The y-coordinate of the station.
 	 * \param z The z-coordinate of the station.
 	 * \param name The name of the station.
-	 * \param color The color of the station in visualisation.
 	 */
 	Station(double x = 0.0,
 	        double y = 0.0,
@@ -117,7 +116,11 @@ public:
 	/// Determines if the station's parameters are within the the bounds of the current selection (see property system for details)
 	bool inSelection(const std::vector<PropertyBounds> &bounds);
 
-	/// Returns true if all properties of this stations are within the boundaries given by \param bounds and false otherwise
+	/**
+	 * Returns true if all properties of this stations are within the boundaries given by bounds and false otherwise
+	 * @param properties the bounds
+	 * @return true if all properties of this stations are within the boundaries, else false
+	 */
 	bool inSelection(std::map<std::string, double> properties) const;
 
 	/// Returns the name of the station.
