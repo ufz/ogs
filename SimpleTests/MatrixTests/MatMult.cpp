@@ -1,3 +1,10 @@
+/*
+ * MatMult.cpp
+ *
+ *  Created on: Jan 3, 2012
+ *      Author: TF
+ */
+
 #include <fstream>
 #include <iostream>
 #include <cmath>
@@ -7,9 +14,12 @@
 #include "LinAlg/Sparse/CRSMatrix.h"
 #include "LinAlg/Sparse/CRSMatrixOpenMP.h"
 #include "LinAlg/Sparse/CRSMatrixPThreads.h"
+
+// BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
 #include "logog.hpp"
+#include "tclap/CmdLine.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -18,40 +28,57 @@
 int main(int argc, char *argv[])
 {
 	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
 
-	if (argc < 4) {
-		std::cout << "Usage: " << argv[0] << " num_of_threads matrix number_of_multiplications resultfile" << std::endl;
-		INFO("Usage: %s num_of_threads matrix number_of_multiplications resultfile", argv[0]);
-		exit (1);
-	}
+	TCLAP::CmdLine cmd("Simple matrix vector multiplication test", ' ', "0.1");
 
-	// read number of threads
-	unsigned n_threads (1);
-	n_threads = atoi (argv[1]);
+	// Define a value argument and add it to the command line.
+	// A value arg defines a flag and a type of value that it expects,
+	// such as "-m matrix".
+	TCLAP::ValueArg<std::string> matrix_arg("m", "matrix", "input matrix file", true, "", "string");
+
+	// Add the argument mesh_arg to the CmdLine object. The CmdLine object
+	// uses this Arg to parse the command line.
+	cmd.add( matrix_arg );
+
+	TCLAP::ValueArg<unsigned> n_cores_arg("p", "number-cores", "number of cores to use", false, 1, "number");
+	cmd.add( n_cores_arg );
+
+	TCLAP::ValueArg<unsigned> n_mults_arg("n", "number-of-multiplications", "number of multiplications to perform", true, 10, "number");
+	cmd.add( n_mults_arg );
+
+	TCLAP::ValueArg<std::string> output_arg("o", "output", "output file", false, "", "string");
+	cmd.add( output_arg );
+
+	TCLAP::ValueArg<unsigned> verbosity_arg("v", "verbose", "level of verbosity [0 very low information, 1 much information]", false, 0, "string");
+	cmd.add( verbosity_arg );
+
+	cmd.parse( argc, argv );
 
 	// read the number of multiplication to execute
-	unsigned n_mults (0);
-	n_mults = atoi (argv[3]);
+	unsigned n_mults (n_mults_arg.getValue());
+	std::string fname_mat (matrix_arg.getValue());
 
-	std::string fname_mat (argv[2]);
+	logog::Cout* logogCout = new logog::Cout;
+
+	// read number of threads
+	unsigned n_threads (n_cores_arg.getValue());
 
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
 	double *A(NULL);
 	unsigned *iA(NULL), *jA(NULL), n;
 	if (in) {
-		DBUG("reading matrix from %s ...", fname_mat.c_str());
+		INFO("reading matrix from %s ...", fname_mat.c_str());
 		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
-		DBUG("ok, %e s", timer.elapsed());
+		INFO("ok, %e s", timer.elapsed());
 	} else {
 		ERR("error reading matrix from %s", fname_mat.c_str());
 	}
 	unsigned nnz(iA[n]);
-	INFO("Parameters read: n=%i, nnz=%i", n, nnz);
+	INFO("Parameters read: n=%d, nnz=%d", n, nnz);
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);
@@ -60,7 +87,7 @@ int main(int argc, char *argv[])
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
-	INFO("%i x %i", mat.getNRows(), mat.getNCols());
+	INFO("%d x %d", mat.getNRows(), mat.getNCols());
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -68,7 +95,7 @@ int main(int argc, char *argv[])
 	for (unsigned k(0); k<n; ++k)
 		x[k] = 1.0;
 
-	DBUG("matrix vector multiplication with Toms amuxCRS (%i threads) ...", n_threads);
+	INFO("matrix vector multiplication with Toms amuxCRS (%d threads) ...", n_threads);
 	BaseLib::RunTime run_timer;
 	BaseLib::CPUTime cpu_timer;
 	run_timer.start();
@@ -79,12 +106,12 @@ int main(int argc, char *argv[])
 	cpu_timer.stop();
 	run_timer.stop();
 
-	DBUG("done [%e sec cpu time], [%e sec run time]", cpu_timer.elapsed(), run_timer.elapsed());
-	DBUG("CPU time: %e", cpu_timer.elapsed());
-	DBUG("wclock time: %e", run_timer.elapsed());
+	INFO("done [%e sec cpu time], [%e sec run time]", cpu_timer.elapsed(), run_timer.elapsed());
+	INFO("CPU time: %e", cpu_timer.elapsed());
+	INFO("wclock time: %e", run_timer.elapsed());
 
-	if (argc == 5) {
-		std::ofstream result_os (argv[4], std::ios::app);
+	if (! output_arg.getValue().empty()) {
+		std::ofstream result_os (output_arg.getValue().c_str(), std::ios::app);
 		if (result_os) {
 			result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
 		}
