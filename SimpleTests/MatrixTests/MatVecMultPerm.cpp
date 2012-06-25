@@ -10,7 +10,11 @@
 // BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
+// BaseLib/tclap
 #include "tclap/CmdLine.h"
+// BaseLib/logog
+#include "logog.hpp"
+#include "formatter.hpp"
 
 // MathLib
 #include "sparse.h"
@@ -20,8 +24,22 @@
 #include "LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
 #include "LinAlg/Sparse/CRSMatrix.h"
 
+/**
+ * new formatter for logog
+ */
+class FormatterCustom : public logog::FormatterGCC
+{
+    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+    {
+        return ( Formatter::GetTopicFlags( topic ) &
+                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
+    }
+};
+
 int main(int argc, char *argv[])
 {
+	LOGOG_INITIALIZE();
+
 	TCLAP::CmdLine cmd("The purpose of this program is the speed test of sparse matrix vector multiplication (MVM), where the matrix is stored in CRS format. Before executing the MVM a nested dissection reordering is performed.", ' ', "0.1");
 
 	// Define a value argument and add it to the command line.
@@ -52,30 +70,34 @@ int main(int argc, char *argv[])
 	std::string fname_mat (matrix_arg.getValue());
 	bool verbose (verbosity_arg.getValue());
 
+	FormatterCustom *custom_format (new FormatterCustom);
+	logog::Cout *logogCout(new logog::Cout);
+	logogCout->SetFormatter(*custom_format);
+
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
 	double *A(NULL);
 	unsigned *iA(NULL), *jA(NULL), n;
 	if (in) {
 		if (verbose) {
-			std::cout << "reading matrix from " << fname_mat << " ... " << std::flush;
+			INFO("reading matrix from %s ...", fname_mat.c_str());
 		}
 		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
 		if (verbose) {
-			std::cout << "ok, [wclock: " << timer.elapsed() << " s]" << std::endl;
+			INFO("ok, %e s", timer.elapsed());
 		}
 	} else {
-		std::cout << "error reading matrix from " << fname_mat << std::endl;
+		ERR("error reading matrix from %s", fname_mat.c_str());
+		return -1;
 	}
 	unsigned nnz(iA[n]);
 	if (verbose) {
-		std::cout << "Parameters read: n=" << n << ", nnz=" << nnz << std::endl;
+		INFO("Parameters read: n=%d, nnz=%d", n, nnz);
 	}
 
-//	MathLib::CRSMatrix<double, unsigned> mat(n, iA, jA, A);
 	MathLib::CRSMatrixReordered mat(n, iA, jA, A);
 
 	double *x(new double[n]);
@@ -90,7 +112,7 @@ int main(int argc, char *argv[])
 
 	// calculate the nested dissection reordering
 	if (verbose) {
-		std::cout << "calculating nested dissection permutation of matrix ... " << std::flush;
+		INFO("*** calculating nested dissection (ND) permutation of matrix ...");
 	}
 	run_timer.start();
 	cpu_timer.start();
@@ -103,40 +125,20 @@ int main(int argc, char *argv[])
 	cpu_timer.stop();
 	run_timer.stop();
 	if (verbose) {
-		std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
-	} else {
-		if (! output_arg.getValue().empty()) {
-			std::ofstream result_os(output_arg.getValue().c_str(), std::ios::app);
-			if (result_os) {
-				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " calc nested dissection perm" << std::endl;
-			}
-			result_os.close();
-		} else {
-			std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " calc nested dissection perm" << std::endl;
-		}
+		INFO("\t[ND] - took %e sec \t%e sec", cpu_timer.elapsed(), run_timer.elapsed());
 	}
-
 
 	// applying the nested dissection reordering
 	if (verbose) {
-		std::cout << "applying nested dissection permutation to FEM matrix ... " << std::flush;
+		INFO("\t[ND] applying nested dissection permutation to FEM matrix ... ");
 	}
 	run_timer.start();
 	cpu_timer.start();
 	mat.reorderMatrix(op_perm, po_perm);
 	cpu_timer.stop();
 	run_timer.stop();
-	if (verbose) std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
-	else {
-		if (! ((output_arg.getValue()).empty())) {
-			std::ofstream result_os((output_arg.getValue()).c_str(), std::ios::app);
-			if (result_os) {
-				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " applying nested dissection perm" << std::endl;
-			}
-			result_os.close();
-		} else {
-			std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
-		}
+	if (verbose) {
+		INFO("\t[ND]: - took %e sec\t%e sec", cpu_timer.elapsed(), run_timer.elapsed());
 	}
 
 #ifndef NDEBUG
@@ -150,7 +152,7 @@ int main(int argc, char *argv[])
 #endif
 
 	if (verbose) {
-		std::cout << "matrix vector multiplication with Toms amuxCRS ... " << std::flush;
+		INFO("*** matrix vector multiplication (MVM) with Toms amuxCRS ... ");
 	}
 	run_timer.start();
 	cpu_timer.start();
@@ -161,18 +163,7 @@ int main(int argc, char *argv[])
 	run_timer.stop();
 
 	if (verbose) {
-		std::cout << "done [" << cpu_timer.elapsed() << " sec cpu time], [wclock: "
-				<< run_timer.elapsed() << " sec]" << std::endl;
-	} else {
-		if (! output_arg.getValue().empty()) {
-			std::ofstream result_os (output_arg.getValue().c_str(), std::ios::app);
-			if (result_os) {
-				result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << " " << n_mults << " MatVecMults, matrix " << fname_mat << std::endl;
-			}
-			result_os.close();
-		} else {
-			std::cout << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
-		}
+		INFO("\t[MVM] - took %e sec\t %e sec", cpu_timer.elapsed(), run_timer.elapsed());
 	}
 
 	delete [] x;

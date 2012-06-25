@@ -44,6 +44,7 @@ IF (METIS_FOUND)
 	TARGET_LINK_LIBRARIES ( MatVecMultPerm
 		BaseLib
 		MathLib
+		logog
 		${METIS_LIBRARIES}
 		${ADDITIONAL_LIBS}
 	)
