@@ -18,12 +18,27 @@
 // BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
+// BaseLib/logog
 #include "logog.hpp"
+#include "formatter.hpp"
+// BaseLib/tclap
 #include "tclap/CmdLine.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+/**
+ * new formatter for logog
+ */
+class FormatterCustom : public logog::FormatterGCC
+{
+    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+    {
+        return ( Formatter::GetTopicFlags( topic ) &
+                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
+    }
+};
 
 int main(int argc, char *argv[])
 {
@@ -58,7 +73,15 @@ int main(int argc, char *argv[])
 	unsigned n_mults (n_mults_arg.getValue());
 	std::string fname_mat (matrix_arg.getValue());
 
-	logog::Cout* logogCout = new logog::Cout;
+	FormatterCustom *custom_format (new FormatterCustom);
+	logog::Cout *logogCout(new logog::Cout);
+	logogCout->SetFormatter(*custom_format);
+
+	logog::LogFile *logog_file(NULL);
+	if (! output_arg.getValue().empty()) {
+		logog_file = new logog::LogFile(output_arg.getValue().c_str());
+		logog_file->SetFormatter( *custom_format );
+	}
 
 	// read number of threads
 	unsigned n_threads (n_cores_arg.getValue());
@@ -87,7 +110,7 @@ int main(int argc, char *argv[])
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
 //	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
-	INFO("%d x %d", mat.getNRows(), mat.getNCols());
+	INFO("%d x %d ", mat.getNRows(), mat.getNCols());
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -124,7 +147,9 @@ int main(int argc, char *argv[])
 	delete [] x;
 	delete [] y;
 
+	delete custom_format;
 	delete logogCout;
+	delete logog_file;
 	LOGOG_SHUTDOWN();
 
 	return 0;

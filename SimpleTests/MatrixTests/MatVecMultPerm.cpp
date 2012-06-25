@@ -22,12 +22,12 @@
 
 int main(int argc, char *argv[])
 {
-	TCLAP::CmdLine cmd("Simple matrix vector multiplication test", ' ', "0.1");
+	TCLAP::CmdLine cmd("The purpose of this program is the speed test of sparse matrix vector multiplication (MVM), where the matrix is stored in CRS format. Before executing the MVM a nested dissection reordering is performed.", ' ', "0.1");
 
 	// Define a value argument and add it to the command line.
 	// A value arg defines a flag and a type of value that it expects,
 	// such as "-m matrix".
-	TCLAP::ValueArg<std::string> matrix_arg("m","matrix","input matrix file",true,"","string");
+	TCLAP::ValueArg<std::string> matrix_arg("m","matrix","input matrix file in CRS format",true,"","file name of the matrix in CRS format");
 
 	// Add the argument mesh_arg to the CmdLine object. The CmdLine object
 	// uses this Arg to parse the command line.
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 //	TCLAP::ValueArg<unsigned> n_cores_arg("n", "number-cores", "number of cores to use", true, "1", "number");
 //	cmd.add( n_cores_arg );
 
-	TCLAP::ValueArg<unsigned> n_mults_arg("n", "number-of-multiplications", "number of multiplications to perform", true, 10, "unsigned");
+	TCLAP::ValueArg<unsigned> n_mults_arg("n", "number-of-multiplications", "number of multiplications to perform", true, 10, "number of multiplications");
 	cmd.add( n_mults_arg );
 
 	TCLAP::ValueArg<std::string> output_arg("o", "output", "output file", false, "", "string");
@@ -140,20 +140,13 @@ int main(int argc, char *argv[])
 	}
 
 #ifndef NDEBUG
-//	MathLib::AdjMat *global_reordered_adj_mat((cluster_tree.getGlobalAdjMat())->getMat(0,n,op_perm, po_perm));
-//	const unsigned adj_nnz(global_reordered_adj_mat->getNNZ());
-//	double* adj_mat_data(new double[adj_nnz]);
-//	for (unsigned k(0); k<adj_nnz; k++) adj_mat_data[k] = 1.0;
-//	std::string fname_out (fname_mat);
-//	fname_out = fname_out.substr(0,fname_mat.length()-4);
-//	fname_out += "_adj.bin";
-//	std::ofstream os (fname_out.c_str(), std::ios::binary);
-//	CS_write(os, n, global_reordered_adj_mat->getRowPtrArray(), global_reordered_adj_mat->getColIdxArray(), adj_mat_data);
-//	std::string fname_fem_out (fname_mat);
-//	fname_fem_out = fname_fem_out.substr(0,fname_mat.length()-4);
-//	fname_fem_out += "_fem_reordered.bin";
-//	std::ofstream os (fname_fem_out.c_str(), std::ios::binary);
-//	CS_write(os, n, mat.getRowPtrArray(), mat.getColIdxArray(), mat.getEntryArray());
+//	std::string fname_mat_out(fname_mat.substr(0,fname_mat.length()-4)+"-reordered.bin");
+//	std::ofstream os (fname_mat_out.c_str(), std::ios::binary);
+//	if (os) {
+//		std::cout << "writing matrix to " << fname_mat_out << " ... " << std::flush;
+//		CS_write(os, n, mat.getRowPtrArray(), mat.getColIdxArray(), mat.getEntryArray());
+//		std::cout << "done" << std::endl;
+//	}
 #endif
 
 	if (verbose) {
