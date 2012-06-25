@@ -7,6 +7,10 @@
 
 #include <cstdlib>
 
+#ifdef OGS_BUILD_INFO
+#include "BuildInfo.h"
+#endif
+
 // BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
@@ -73,6 +77,10 @@ int main(int argc, char *argv[])
 	FormatterCustom *custom_format (new FormatterCustom);
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
+
+#ifdef OGS_BUILD_INFO
+	INFO("git commit: %s, executed on machine: ", GIT_COMMIT_INFO);
+#endif
 
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
