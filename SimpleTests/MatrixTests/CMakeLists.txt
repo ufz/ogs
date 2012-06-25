@@ -34,14 +34,14 @@ ADD_EXECUTABLE( MatTestRemoveRowsCols
 SET_TARGET_PROPERTIES(MatTestRemoveRowsCols PROPERTIES FOLDER SimpleTests)
 
 IF (METIS_FOUND)
-	ADD_EXECUTABLE( MatVecMultPerm
-        	MatVecMultPerm.cpp
+	ADD_EXECUTABLE( MatVecMultNDPerm
+        	MatVecMultNDPerm.cpp
 	        ${SOURCES}
         	${HEADERS}
 	)
-	SET_TARGET_PROPERTIES(MatVecMultPerm PROPERTIES FOLDER SimpleTests)
+	SET_TARGET_PROPERTIES(MatVecMultNDPerm PROPERTIES FOLDER SimpleTests)
 
-	TARGET_LINK_LIBRARIES ( MatVecMultPerm
+	TARGET_LINK_LIBRARIES ( MatVecMultNDPerm
 		BaseLib
 		MathLib
 		logog
