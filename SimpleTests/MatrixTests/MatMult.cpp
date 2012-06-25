@@ -96,12 +96,12 @@ int main(int argc, char *argv[])
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
-		INFO("ok, %e s", timer.elapsed());
+		INFO("\t- took %e s", timer.elapsed());
 	} else {
 		ERR("error reading matrix from %s", fname_mat.c_str());
 	}
 	unsigned nnz(iA[n]);
-	INFO("Parameters read: n=%d, nnz=%d", n, nnz);
+	INFO("\tParameters read: n=%d, nnz=%d", n, nnz);
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);
@@ -109,8 +109,6 @@ int main(int argc, char *argv[])
 #else
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
 #endif
-//	CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
-	INFO("%d x %d ", mat.getNRows(), mat.getNCols());
 
 	double *x(new double[n]);
 	double *y(new double[n]);
@@ -129,20 +127,7 @@ int main(int argc, char *argv[])
 	cpu_timer.stop();
 	run_timer.stop();
 
-	INFO("done [%e sec cpu time], [%e sec run time]", cpu_timer.elapsed(), run_timer.elapsed());
-	INFO("CPU time: %e", cpu_timer.elapsed());
-	INFO("wclock time: %e", run_timer.elapsed());
-
-	if (! output_arg.getValue().empty()) {
-		std::ofstream result_os (output_arg.getValue().c_str(), std::ios::app);
-		if (result_os) {
-			result_os << cpu_timer.elapsed() << "\t" << run_timer.elapsed() << std::endl;
-		}
-		result_os.close();
-	} else {
-		INFO("%e \t %e", cpu_timer.elapsed(), run_timer.elapsed());
-	}
-
+	INFO("\t[MVM] - took %e sec cpu time, %e sec run time", cpu_timer.elapsed(), run_timer.elapsed());
 
 	delete [] x;
 	delete [] y;

@@ -1,5 +1,5 @@
 /*
- * MatVecMultPerm.cpp
+ * MatVecMultNDPerm.cpp
  *
  *  Created on: Jan 3, 2012
  *      Author: TF
