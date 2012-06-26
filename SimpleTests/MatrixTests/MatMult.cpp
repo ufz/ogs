@@ -24,6 +24,11 @@
 // BaseLib/tclap
 #include "tclap/CmdLine.h"
 
+#ifdef OGS_BUILD_INFO
+#include "BuildInfo.h"
+#include <sys/unistd.h>
+#endif
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -85,6 +90,20 @@ int main(int argc, char *argv[])
 
 	// read number of threads
 	unsigned n_threads (n_cores_arg.getValue());
+
+#ifdef OGS_BUILD_INFO
+	INFO("compiler: %s", CMAKE_CXX_COMPILER);
+	if (std::string(CMAKE_BUILD_TYPE).compare("Release") == 0) {
+		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
+	} else {
+		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
+	}
+	const size_t length(256);
+	char *hostname(new char[length]);
+	gethostname (hostname, length);
+	INFO("hostname: %s", hostname);
+	delete [] hostname;
+#endif
 
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
