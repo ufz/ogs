@@ -7,6 +7,7 @@
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPointSetItem.h"
 #include "VtkCompositeFilter.h"
+#include "VtkCompositeContourFilter.h"
 #include "VtkCompositeThresholdFilter.h"
 
 #include <limits>
@@ -153,7 +154,8 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	this->setBackfaceCulling(backfaceCulling);
 
 	// Set the correct threshold range
-	if (dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter))
+	if ( dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter) ||
+		 dynamic_cast<VtkCompositeContourFilter*>(this->_compositeFilter) )
 	{
 		double range[2];
 		this->GetRangeForActiveAttribute(range);
@@ -161,7 +163,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 		thresholdRangeList.push_back(range[0]);
 		thresholdRangeList.push_back(range[1]);
 		dynamic_cast<VtkCompositeFilter*>(this->_compositeFilter)
-			->SetUserVectorProperty("Threshold Between", thresholdRangeList);
+			->SetUserVectorProperty("Range", thresholdRangeList);
 	}
 }
 
