@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	logogCout->SetFormatter(*custom_format);
 
 #ifdef OGS_BUILD_INFO
-	INFO("compiler: %s", CMAKE_CXX_COMPILER);
+	INFO("%s was build with compiler %s", argv[0], CMAKE_CXX_COMPILER);
 	if (std::string(CMAKE_BUILD_TYPE).compare("Release") == 0) {
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
 	} else {
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 #endif
 
 	if (verbose) {
-		INFO("*** matrix vector multiplication (MVM) with Toms amuxCRS ... ");
+		INFO("*** %d matrix vector multiplications (MVM) with Toms amuxCRS ... ", n_mults);
 	}
 	run_timer.start();
 	cpu_timer.start();
