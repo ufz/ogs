@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	unsigned n_threads (n_cores_arg.getValue());
 
 #ifdef OGS_BUILD_INFO
-	INFO("compiler: %s", CMAKE_CXX_COMPILER);
+	INFO("%s was build with compiler %s", argv[0], CMAKE_CXX_COMPILER);
 	if (std::string(CMAKE_BUILD_TYPE).compare("Release") == 0) {
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
 	} else {
@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
 		INFO("\t- took %e s", timer.elapsed());
 	} else {
 		ERR("error reading matrix from %s", fname_mat.c_str());
+		return -1;
 	}
 	unsigned nnz(iA[n]);
 	INFO("\tParameters read: n=%d, nnz=%d", n, nnz);
@@ -135,7 +136,7 @@ int main(int argc, char *argv[])
 	for (unsigned k(0); k<n; ++k)
 		x[k] = 1.0;
 
-	INFO("matrix vector multiplication with Toms amuxCRS (%d threads) ...", n_threads);
+	INFO("*** %d matrix vector multiplications (MVM) with Toms amuxCRS (%d threads) ...", n_mults, n_threads);
 	BaseLib::RunTime run_timer;
 	BaseLib::CPUTime cpu_timer;
 	run_timer.start();
