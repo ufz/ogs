@@ -7,6 +7,11 @@
 
 #include <cstdlib>
 
+#ifdef OGS_BUILD_INFO
+#include "BuildInfo.h"
+#include <sys/unistd.h>
+#endif
+
 // BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
@@ -74,6 +79,20 @@ int main(int argc, char *argv[])
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 
+#ifdef OGS_BUILD_INFO
+	INFO("compiler: %s", CMAKE_CXX_COMPILER);
+	if (std::string(CMAKE_BUILD_TYPE).compare("Release") == 0) {
+		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
+	} else {
+		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
+	}
+	const size_t length(256);
+	char *hostname(new char[length]);
+	gethostname (hostname, length);
+	INFO("hostname: %s", hostname);
+	delete [] hostname;
+#endif
+
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
 	double *A(NULL);
@@ -87,7 +106,7 @@ int main(int argc, char *argv[])
 		CS_read(in, n, iA, jA, A);
 		timer.stop();
 		if (verbose) {
-			INFO("ok, %e s", timer.elapsed());
+			INFO("\t- took %e s", timer.elapsed());
 		}
 	} else {
 		ERR("error reading matrix from %s", fname_mat.c_str());
@@ -95,7 +114,7 @@ int main(int argc, char *argv[])
 	}
 	unsigned nnz(iA[n]);
 	if (verbose) {
-		INFO("Parameters read: n=%d, nnz=%d", n, nnz);
+		INFO("\tParameters read: n=%d, nnz=%d", n, nnz);
 	}
 
 	MathLib::CRSMatrixReordered mat(n, iA, jA, A);
