@@ -1,0 +1,27 @@
+/**
+ * \file BuildInfo.h.in
+ * 24/08/2010 LB Initial implementation
+ * #defines which gets set through CMake
+ */
+
+#ifndef BUILDINFO_H
+#define BUILDINFO_H
+
+#cmakedefine CMAKE_CMD_ARGS "${CMAKE_CMD_ARGS}"
+#cmakedefine CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}"
+
+// #cmakedefine SVN_REVISION "${SVN_REVISION}"
+// #cmakedefine GIT_COMMIT_INFO "${GIT_COMMIT_INFO}"
+// #cmakedefine GIT_BRANCH_INFO "${GIT_BRANCH_INFO}"
+// #cmakedefine BUILD_TIMESTAMP "${BUILD_TIMESTAMP}"
+// #cmakedefine CMAKE_RUN_TIMESTAMP ""
+// #cmakedefine CMAKE_SYSTEM "${CMAKE_SYSTEM}-x${BITS}"
+
+#cmakedefine CMAKE_SYSTEM_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}"
+#cmakedefine CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}"
+#cmakedefine CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
+#cmakedefine CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}"
+#cmakedefine CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}"
+#cmakedefine CMAKE_GENERATOR "${CMAKE_GENERATOR}"
+
+#endif // BUILDINFO_H

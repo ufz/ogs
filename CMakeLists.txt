@@ -34,6 +34,11 @@ IF (OGS_CMAKE_DEBUG)
 	list_all_cmake_variable_values()
 ENDIF (OGS_CMAKE_DEBUG)
 
+OPTION(OGS_BUILD_INFO "Should build information be generated" ON)
+IF (OGS_BUILD_INFO)
+	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
+ENDIF (OGS_BUILD_INFO)
+
 ######################
 ### Subdirectories ###
 ######################
@@ -51,4 +56,8 @@ ADD_SUBDIRECTORY( SimpleTests/MeshTests )
 IF(NOT MSVC)
         ADD_SUBDIRECTORY( SimpleTests/SolverTests )
 ENDIF(NOT MSVC)
+
+# Create Configure.h
+CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)
+
 
