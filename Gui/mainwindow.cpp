@@ -1093,18 +1093,24 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 	{
 		for (size_t i = 0; i < conditions.size(); i++)
 		{
-
+			bool condition_ok(true);
 			if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
 			{
-				std::vector<GEOLIB::Point*> *points = GEOLIB::PointVec::deepcopy(_meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes());
-				GEOLIB::PointVec pnt_vec("MeshNodes", points);
-				std::vector<GEOLIB::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
-				std::string geo_name = conditions[i]->getGeoName();
-				this->_geoModels->addPointVec(cond_points, geo_name);
-				conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
+				if (_meshModels->getMesh(conditions[i]->getAssociatedGeometryName()) != NULL) {
+					std::vector<GEOLIB::Point*> *points = GEOLIB::PointVec::deepcopy(_meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes());
+					GEOLIB::PointVec pnt_vec("MeshNodes", points);
+					std::vector<GEOLIB::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
+					std::string geo_name = conditions[i]->getGeoName();
+					this->_geoModels->addPointVec(cond_points, geo_name);
+					conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
+				} else {
+					OGSError::box("Please load an appropriate geometry first", "Error");
+					condition_ok = false;
+				}
 			}
-
-			this->_processModel->addCondition(conditions[i]);
+			if (condition_ok) {
+				this->_processModel->addCondition(conditions[i]);
+			}
 		}
 
 		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();

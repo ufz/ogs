@@ -35,9 +35,9 @@ void VtkCompositeContourFilter::init()
 
 	// Setting the threshold to min / max values to ensure that the whole data
 	// is first processed. This is needed for correct lookup table generation.
-	const double dMin = std::numeric_limits<double>::min();
-	const double dMax = std::numeric_limits<double>::max();
-	
+	double dMin = std::numeric_limits<double>::min();
+	double dMax = std::numeric_limits<double>::max();
+
 	// Sets a filter vector property which will be user editable
 	contour->GenerateValues(10, dMin, dMax);
 
