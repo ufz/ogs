@@ -26,7 +26,6 @@
 
 #ifdef OGS_BUILD_INFO
 #include "BuildInfo.h"
-#include <sys/unistd.h>
 #endif
 
 #ifdef _OPENMP
@@ -98,11 +97,7 @@ int main(int argc, char *argv[])
 	} else {
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
 	}
-	const size_t length(256);
-	char *hostname(new char[length]);
-	gethostname (hostname, length);
-	INFO("hostname: %s", hostname);
-	delete [] hostname;
+	INFO("hostname: %s", HOSTNAME);
 #endif
 
 	// *** reading matrix in crs format from file
