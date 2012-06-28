@@ -5,7 +5,7 @@
  *              http://www.opengeosys.com/LICENSE.txt
  *
  *
- * \file DateTools.h
+ * \file wait.h
  *
  * Created on 2011-02-17 by Karsten Rink
  */

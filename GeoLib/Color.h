@@ -5,7 +5,7 @@
  *              http://www.opengeosys.com/LICENSE.txt
  *
  *
- * \file Color.cpp
+ * \file Color.h
  *
  * Created on 2010-02-04 by Karsten Rink
  *

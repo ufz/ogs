@@ -5,7 +5,7 @@
  *              http://www.opengeosys.com/LICENSE.txt
  *
  *
- * \file Tet.cpp
+ * \file FemElem.cpp
  *
  * Created on 2012-05-03 by Karsten Rink
  */

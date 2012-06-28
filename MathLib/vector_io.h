@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
+ * \file vector_io.h
+ *
+ * Created on xxxx-xx-xx by Thomas Fischer
+ */
+
 #ifndef VECTOR_IO_H
 #define VECTOR_IO_H
 

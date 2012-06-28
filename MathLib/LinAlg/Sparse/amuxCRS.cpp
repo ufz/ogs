@@ -5,7 +5,7 @@
  *              http://www.opengeosys.com/LICENSE.txt
  *
  *
- * \file CRSMatrix.h
+ * \file amuxCRS.cpp
  *
  * Created on 2011-09-20 by Thomas Fischer
  */

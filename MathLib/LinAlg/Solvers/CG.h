@@ -5,7 +5,7 @@
  *              http://www.opengeosys.com/LICENSE.txt
  *
  *
- * \file solver.h
+ * \file CG.h
  *
  * Created on 2011-09-27 by Thomas Fischer
  */
