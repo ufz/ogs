@@ -125,6 +125,27 @@ int main(int argc, char *argv[])
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);
+	unsigned *mat_entries_per_core(new unsigned[n_threads]);
+	for (unsigned k(0); k<n_threads; k++) {
+		mat_entries_per_core[k] = 0;
+	}
+
+	OPENMP_LOOP_TYPE i;
+	{
+#pragma omp parallel for
+		for (i = 0; i < n; i++) {
+			mat_entries_per_core[omp_get_thread_num()] += iA[i + 1] - iA[i];
+		}
+	}
+
+	INFO("*** work per core ***");
+	for (unsigned k(0); k<n_threads; k++) {
+		INFO("\t%d\t%d", k, mat_entries_per_core[k]);
+	}
+#endif
+
+#ifdef _OPENMP
+	omp_set_num_threads(n_threads);
 	MathLib::CRSMatrixOpenMP<double, unsigned> mat (n, iA, jA, A);
 #else
 	MathLib::CRSMatrix<double, unsigned> mat (n, iA, jA, A);
