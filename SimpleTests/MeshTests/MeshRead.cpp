@@ -1,8 +1,7 @@
 /*
  * MeshRead.cpp
  *
- *  Created on: 2012/05/09
- *      Author: KR
+ * Created on 2012/05/09 by Karsten Rink
  */
 
 // BaseLib

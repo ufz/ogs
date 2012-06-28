@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file Station.h
- * KR Initial implementation
+ *
+ * Created by Karsten Rink
  */
 
 #ifndef GEO_STATION_H

@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file Vector3.h
- * 27/10/2009 LB Initial implementation
+ *
+ * Created on 2009-10-27 by Lars Bilke
  * From: http://www.strout.net/info/coding/classlib/intro.html
  * with modifications to derive from TemplatePoint
  */

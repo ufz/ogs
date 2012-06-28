@@ -1,8 +1,13 @@
-/*
- * DistributionInfo.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Sep 28, 2010
- *      Author: TF
+ *
+ * \file DistributionInfo.h
+ *
+ * Created on 2010-09-28 by Thomas Fischer
  */
 
 #ifndef DISTRIBUTIONINFO_H_

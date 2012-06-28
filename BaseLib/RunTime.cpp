@@ -1,8 +1,13 @@
-/*
- * RunTime.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: May 10, 2012
- *      Author: TF
+ *
+ * \file RunTime.cpp
+ *
+ * Created on 2012-05-10 by Thomas Fischer
  */
 
 #include "RunTime.h"

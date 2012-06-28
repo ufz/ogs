@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file FileTools.h
- * 26/4/2010 LB Initial implementation
+ *
+ * Created on 2010-04-26 by Lars Bilke
  *
  */
 

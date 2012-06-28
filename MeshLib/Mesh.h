@@ -1,8 +1,13 @@
 /**
- * Mesh.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Mesh.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef MESH_H_
@@ -12,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace MeshLib 
+namespace MeshLib
 {
 	class Node;
 	class Element;
@@ -72,13 +77,13 @@ public:
 	/// Get the element-vector for the mesh.
 	const std::vector<Element*> getElements() const { return _elements; };
 
-	/** 
+	/**
 	 * Set the minimum and maximum length over the edges of the mesh.
-	 * This should have been previously calcumlated using the Element::computeSqrEdgeLengthRange(min, max) 
+	 * This should have been previously calcumlated using the Element::computeSqrEdgeLengthRange(min, max)
 	 * function or by some other means.
 	 */
 	void setEdgeLengthRange(const double &min_length, const double &max_length);
-	
+
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();

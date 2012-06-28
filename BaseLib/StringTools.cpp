@@ -1,8 +1,13 @@
-/*
- * StringTools.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jun 16, 2010
- *      Author: TF
+ *
+ * \file StringTools.cpp
+ *
+ * Created on 2010-06-16 by Thomas Fischer
  */
 
 #include "StringTools.h"

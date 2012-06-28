@@ -1,10 +1,13 @@
-/*
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file Matrix.h
  *
- *  Created on: Mar 24, 2010
- *      Author: TF
- *  modified on:Jul 13, 2010
- *      HS & ZC
+ * Created on 2011-05-24 by Thomas Fischer
  */
 
 #ifndef MATRIX_H

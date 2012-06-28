@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file FEMCondition.h
- * 25/11/2010 KR inital implementation
+ *
+ * Created on 2010-11-25 by Karsten Rink
  *
  */
 
@@ -77,7 +84,7 @@ public:
 	/// The first value specifies the point id, the second the value for that point.
 	void setDisValues(const std::vector< std::pair<size_t, double> > &dis_values);
 
-	/// Removes all distribution values 
+	/// Removes all distribution values
 	void clearDisValues() { _disValues.resize(0); };
 
 	/// Sets the name of the geo-object the condition is assigned to.
