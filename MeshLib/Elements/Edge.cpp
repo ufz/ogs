@@ -1,8 +1,7 @@
 /**
- * Edge.cpp
+ * \file Edge.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Edge.h"

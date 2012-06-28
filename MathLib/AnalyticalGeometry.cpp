@@ -1,8 +1,7 @@
-/*
+/**
  * \file AnalyticalGeometry.cpp
  *
- *  Created on: Mar 17, 2010
- *      Author: TF
+ *  Created on 2010-03-17 by Thomas Fischer
  */
 
 #include <cmath>

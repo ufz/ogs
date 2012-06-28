@@ -1,8 +1,7 @@
 /**
- * FemMesh.cpp
+ * \file FemMesh.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "FemMesh.h"

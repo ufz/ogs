@@ -1,8 +1,7 @@
 /**
- * Prism.h
+ * \file Prism.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef PRISM_H_

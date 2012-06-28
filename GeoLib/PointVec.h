@@ -1,8 +1,7 @@
-/*
+/**
  * \file PointVec.h
  *
- *  Created on: Feb 2, 2010
- *      Author: TF / KR
+ *  Created on 2010-02-02 by Thomas Fischer / KR
  */
 
 // GeoLib

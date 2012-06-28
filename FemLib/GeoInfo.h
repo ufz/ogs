@@ -1,8 +1,7 @@
-/*
- * GeoInfo.h
+/**
+ * \file GeoInfo.h
  *
- *  Created on: Jun 18, 2010
- *      Author: TF
+ *  Created on 2010-06-18 by Thomas Fischer
  */
 
 #ifndef GEOINFO_H_

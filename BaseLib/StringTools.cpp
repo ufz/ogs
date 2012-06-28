@@ -1,8 +1,7 @@
-/*
- * StringTools.cpp
+/**
+ * \file StringTools.cpp
  *
- *  Created on: Jun 16, 2010
- *      Author: TF
+ *  Created on 2010-06-16 by Thomas Fischer
  */
 
 #include "StringTools.h"

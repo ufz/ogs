@@ -1,8 +1,7 @@
-/*
- * MemWatch.cpp
+/**
+ * \file MemWatch.cpp
  *
- *  Created on: May 7, 2012
- *      Author: TF
+ *  Created on 2012-05-07 by Thomas Fischer
  */
 
 #include "MemWatch.h"

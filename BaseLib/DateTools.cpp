@@ -1,9 +1,7 @@
-/*
- * DateTools.cpp
+/**
+ * \file DateTools.cpp
  *
- *  Created on: Jun 16, 2010
- *      Author: KR Initial implementation (in header file)
- *      TF moved implementation to source file
+ *  Created on 2010-06-16 by Karsten Rink
  */
 
 #include "DateTools.h"

@@ -1,8 +1,7 @@
 /**
- * Element.h
+ * \file Element.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef ELEMENT_H_
@@ -24,7 +23,7 @@ class Element
 	/* friend functions: */
 	friend class Mesh;//void Mesh::setElementInformationForNodes();
 	//friend void Mesh::addElement(Element*);
-	
+
 
 public:
 	/// Compute the minimum and maximum squared edge length for this element
@@ -53,7 +52,7 @@ public:
 
 	/// Get the number of nodes for face i.
 	virtual unsigned getNFaceNodes(unsigned i) const = 0;
-	
+
 	/// Get the number of faces for this element.
 	virtual unsigned getNFaces() const = 0;
 

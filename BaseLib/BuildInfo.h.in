@@ -1,7 +1,8 @@
 /**
  * \file BuildInfo.h.in
- * 24/08/2010 LB Initial implementation
- * #defines which gets set through CMake
+ * #defines which gets set through CMake.
+ *
+ * Created on 2010-08-24 by Lars Bilke
  */
 
 #ifndef BUILDINFO_H

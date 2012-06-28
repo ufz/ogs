@@ -1,8 +1,7 @@
-/*
- * CRSMatrixReordered.h
+/**
+ * \file CRSMatrixReordered.h
  *
- *  Created on: Jan 3, 2012
- *      Author: TF
+ *  Created on 2012-01-03 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXREORDERED_H_

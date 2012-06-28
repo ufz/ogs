@@ -1,8 +1,7 @@
-/*
- * Raster.h
+/**
+ * \file Raster.h
  *
- *  Created on: Sep 7, 2011
- *      Author: TF
+ *  Created on 2011-09-07 by Thomas Fischer
  */
 
 #ifndef RASTER_H_

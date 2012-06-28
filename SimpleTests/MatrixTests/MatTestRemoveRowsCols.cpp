@@ -1,8 +1,7 @@
-/*
+/**
  * MatTestRemoveRowsCols.cpp
  *
- *  Created on: Nov 8, 2011
- *      Author: TF
+ *  Created on 2011-11-08 by Thomas Fischer
  */
 
 #include <fstream>

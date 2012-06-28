@@ -1,8 +1,7 @@
 /**
- * Tet.cpp
+ * \file Tet.cpp
  *
- *      Date: 2012/05/03
- *      Author: KR
+ * Created on 2012-05-03 by Karsten Rink
  */
 
 #include "FemElem.h"

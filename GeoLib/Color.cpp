@@ -1,9 +1,7 @@
-/*
- * Color.cpp
+/**
+ * \file Color.cpp
  *
- *  Created on: Jun 16, 2010
- *      Author: KR initial implementation in header
- *      TF moved implementation to separate source file
+ *  Created on 2010-06-16 by Karsten Rink
  */
 
 #include <iostream>

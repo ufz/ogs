@@ -1,8 +1,7 @@
-/*
- * QuadTree.h
+/**
+ * \file QuadTree.h
  *
- *  Created on: Nov 9, 2010
- *      Author: TF
+ *  Created on 2010-11-09 by Thomas Fischer
  */
 
 #ifndef QUADTREE_H_

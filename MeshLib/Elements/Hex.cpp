@@ -1,8 +1,7 @@
 /**
- * Hex.cpp
+ * \file Hex.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Hex.h"
@@ -23,7 +22,7 @@ const unsigned Hex::_face_nodes[6][4] =
 	{3, 0, 4, 7}, // Face 4
 	{4, 5, 6, 7}  // Face 5
 };
- 
+
 const unsigned Hex::_edge_nodes[12][2] =
 {
 	{0, 1}, // Edge 0

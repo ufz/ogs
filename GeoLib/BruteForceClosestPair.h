@@ -1,8 +1,7 @@
-/*
- * BruteForceClosestPair.h
+/**
+ * \file BruteForceClosestPair.h
  *
- *  Created on: Jan 25, 2011
- *      Author: TF
+ *  Created on 2011-01-25 by Thomas Fischer
  */
 
 #ifndef BRUTEFORCECLOSESTPAIR_H_

@@ -1,8 +1,7 @@
-/*
- * CRSMatrixPThreads.h
+/**
+ * \file CRSMatrixPThreads.h
  *
- *  Created on: Aug 2, 2011
- *      Author: TF
+ *  Created on 2011-08-02 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXPTHREADS_H

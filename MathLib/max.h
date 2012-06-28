@@ -1,8 +1,7 @@
-/*
- * max.h
+/**
+ * \file max.h
  *
- *  Created on: Apr 20, 2010
- *      Author: TF
+ *  Created on 2010-04-20 by Thomas Fischer
  */
 
 #ifndef MAX_H_

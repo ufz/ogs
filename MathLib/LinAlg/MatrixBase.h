@@ -1,8 +1,7 @@
-/*
- * MatrixBase.h
+/**
+ * \file MatrixBase.h
  *
- *  Created on: Sep 27, 2011
- *      Author: TF
+ *  Created on 2011-09-27 by Thomas Fischer
  */
 
 #ifndef MATRIXBASE_H_

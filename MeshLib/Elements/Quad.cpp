@@ -1,15 +1,14 @@
 /**
- * Quad.cpp
+ * \file Quad.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Quad.h"
 #include "Node.h"
 
 #include "MathTools.h"
-	
+
 namespace MeshLib {
 
 

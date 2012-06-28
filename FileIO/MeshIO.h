@@ -1,8 +1,7 @@
 /**
- * MeshIO.h
+ * \file MeshIO.h
  *
- *      Date: 2012/05/08
- *      Author: KR
+ * Created on 2012-05-08 by Karsten Rink
  */
 
 /**

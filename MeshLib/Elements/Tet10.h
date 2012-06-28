@@ -1,8 +1,7 @@
 /**
- * Tet10.h
+ * \file Tet10.h
  *
- *      Date: 2012/05/03
- *      Author: KR
+ * Created on 2012-05-03 by Karsten Rink
  */
 
 #ifndef TET10_H_

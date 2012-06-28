@@ -1,8 +1,7 @@
-/*
- * CG.cpp
+/**
+ * \file CG.cpp
  *
- *  Created on: Sep 27, 2011
- *      Author: TF
+ *  Created on 2011-09-27 by Thomas Fischer
  */
 
 #include <limits>

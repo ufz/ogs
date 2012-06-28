@@ -1,10 +1,7 @@
-/*
+/**
  * \file Matrix.h
  *
- *  Created on: Mar 24, 2010
- *      Author: TF
- *  modified on:Jul 13, 2010
- *      HS & ZC
+ *  Created on 2011-05-24 by Thomas Fischer
  */
 
 #ifndef MATRIX_H

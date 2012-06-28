@@ -1,8 +1,7 @@
 /**
- * Tet.h
+ * \file Tet.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef TET_H_
@@ -50,7 +49,7 @@ public:
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 6; };
-	
+
 	/// Get the number of nodes for face i.
 	unsigned getNFaceNodes(unsigned i) const { (void)i; return 3; };
 

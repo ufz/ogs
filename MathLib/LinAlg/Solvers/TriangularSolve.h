@@ -1,8 +1,7 @@
-/*
- * TriangularSolve.h
+/**
+ * \file TriangularSolve.h
  *
- *  Created on: May 6, 2010
- *      Author: TF
+ *  Created on 2011-05-06 by Thomas Fischer
  */
 
 #ifndef TRIANGULARSOLVE_H_

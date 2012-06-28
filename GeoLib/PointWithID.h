@@ -1,8 +1,7 @@
-/*
- * PointWithID.h
+/**
+ * \file PointWithID.h
  *
- *  Created on: Jan 25, 2011
- *      Author: TF
+ *  Created on 2011-01-25 by Thomas Fischer
  */
 
 #ifndef POINTWITHID_H_

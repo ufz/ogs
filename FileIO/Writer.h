@@ -1,6 +1,7 @@
 /**
  * \file Writer.h
- * 13/02/2012 LB Initial implementation
+ *
+ * Created on 2012-02-13 by Lars Bilke
  */
 
 #ifndef WRITER_H

@@ -1,8 +1,7 @@
-/*
- * GMRes.h
+/**
+ * \file GMRes.h
  *
- *  Created on: Oct 4, 2011
- *      Author: TF
+ *  Created on 2011-10-04 by Thomas Fischer
  */
 
 #ifndef GMRES_H_

@@ -1,8 +1,7 @@
-/*
- * Polygon.h
+/**
+ * \file Polygon.h
  *
- *  Created on: Jun 21, 2010
- *      Author: TF
+ *  Created on 2010-06-21 by Thomas Fischer
  */
 
 #ifndef POLYGON_H_

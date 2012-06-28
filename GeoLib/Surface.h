@@ -1,8 +1,7 @@
-/*
- * Surface.h
+/**
+ * \file Surface.h
  *
- *  Created on: Jan 22, 2010
- *      Author: TF
+ *  Created on 2010-01-22 by Thomas Fischer
  */
 
 #ifndef SURFACE_H_

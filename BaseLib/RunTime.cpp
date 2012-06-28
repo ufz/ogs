@@ -1,8 +1,7 @@
-/*
- * RunTime.cpp
+/**
+ * \file RunTime.cpp
  *
- *  Created on: May 10, 2012
- *      Author: TF
+ *  Created on 2012-05-10 by Thomas Fischer
  */
 
 #include "RunTime.h"

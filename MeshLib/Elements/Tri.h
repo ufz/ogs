@@ -1,8 +1,7 @@
 /**
- * Tri.h
+ * \file Tri.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef TRI_H_
@@ -58,7 +57,7 @@ protected:
 
 	/// Return a specific edge node.
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
-	
+
 	static const unsigned _edge_nodes[3][2];
 
 }; /* class */

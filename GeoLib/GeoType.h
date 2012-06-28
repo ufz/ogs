@@ -1,8 +1,7 @@
-/*
- * GeoType.h
+/**
+ * \file GeoType.h
  *
- *  Created on: Jun 17, 2010
- *      Author: TF
+ *  Created on 2010-06-17 by Thomas Fischer
  */
 
 #ifndef GEOTYPE_H_
@@ -23,7 +22,7 @@ enum GEOTYPE {
 	SURFACE,   //!< SURFACE
 	VOLUME,    //!< VOLUME
 	GEODOMAIN, //!< GEODOMAIN
-	COLUMN     //!< COLUMN. //WW/JOD 
+	COLUMN     //!< COLUMN. //WW/JOD
 };
 
 GEOTYPE convertGeoType (const std::string& geo_type_str);

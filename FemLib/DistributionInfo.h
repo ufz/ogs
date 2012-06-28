@@ -1,8 +1,7 @@
-/*
- * DistributionInfo.h
+/**
+ * \file DistributionInfo.h
  *
- *  Created on: Sep 28, 2010
- *      Author: TF
+ *  Created on 2010-09-28 by Thomas Fischer
  */
 
 #ifndef DISTRIBUTIONINFO_H_

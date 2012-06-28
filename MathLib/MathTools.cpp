@@ -1,8 +1,7 @@
-/*
- * MathTools.cpp
+/**
+ * \file MathTools.cpp
  *
- *  Created on: Jan 13, 2010
- *      Author: TF
+ *  Created on 2010-01-13 by Thomas Fischer
  */
 
 #include "MathTools.h"

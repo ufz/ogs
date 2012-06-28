@@ -1,8 +1,7 @@
-/*
- * Surface.cpp
+/**
+ * \file Surface.cpp
  *
- *  Created on: Apr 22, 2010
- *      Author: TF
+ *  Created on 2010-04-22 by Thomas Fischer
  */
 
 #include <list>

@@ -1,8 +1,7 @@
-/*
- * Polyline.cpp
+/**
+ * \file Polyline.cpp
  *
- *  Created on: Jun 21, 2010
- *      Author: TF
+ *  Created on 2010-06-21 by Thomas Fischer
  */
 
 // Base

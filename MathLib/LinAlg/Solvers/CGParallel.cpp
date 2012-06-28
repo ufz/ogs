@@ -1,8 +1,7 @@
-/*
- * CGParallel.cpp
+/**
+ * \file CGParallel.cpp
  *
- *  Created on: Dec 2, 2011
- *      Author: TF
+ *  Created on 2011-12-02 by Thomas Fischer
  */
 
 #include <limits>

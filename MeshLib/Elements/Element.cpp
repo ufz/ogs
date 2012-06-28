@@ -1,8 +1,7 @@
 /**
- * Element.cpp
+ * \file Element.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Element.h"
@@ -70,7 +69,7 @@ const Node* Element::getNode(unsigned i) const
 	return NULL;
 }
 
-unsigned Element::getNodeIndex(unsigned i) const 
+unsigned Element::getNodeIndex(unsigned i) const
 {
 	if (i<getNNodes())
 		return _nodes[i]->getID();

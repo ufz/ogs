@@ -1,8 +1,7 @@
-/*
- * BiCGStab.cpp
+/**
+ * \file BiCGStab.cpp
  *
- *  Created on: Oct 4, 2011
- *      Author: TF
+ *  Created on 2011-10-04 by Thomas Fischer
  */
 
 #include "BiCGStab.h"

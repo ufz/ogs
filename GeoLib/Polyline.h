@@ -1,8 +1,7 @@
-/*
- * PolyLine.h
+/**
+ * \file PolyLine.h
  *
- *  Created on: Jan 14, 2010
- *      Author: TF
+ *  Created on 2010-01-14 by Thomas Fischer
  */
 
 #ifndef POLYLINE_H_

@@ -1,8 +1,7 @@
-/*
- * PiecewiseLinearInterpolation.cpp
+/**
+ * \file PiecewiseLinearInterpolation.cpp
  *
- *  Created on: Sep 7, 2010
- *      Author: TF
+ *  Created on 2010-09-07 by Thomas Fischer
  */
 
 #include "PiecewiseLinearInterpolation.h"

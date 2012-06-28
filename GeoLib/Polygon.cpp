@@ -1,8 +1,7 @@
-/*
- * Polygon.cpp
+/**
+ * \file Polygon.cpp
  *
- *  Created on: Jun 21, 2010
- *      Author: TF
+ *  Created on 2010-06-21 by Thomas Fischer
  */
 
 #include <cstdlib> // for exit

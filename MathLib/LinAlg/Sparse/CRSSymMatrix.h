@@ -1,8 +1,7 @@
-/*
- * CRSSymMatrix.h
+/**
+ * \file CRSSymMatrix.h
  *
- *  Created on: Jul 22, 2011
- *      Author: fischeth
+ *  Created on 2011-07-22 by Thomas Fischer
  */
 
 #ifndef CRSSYMMATRIX_H_

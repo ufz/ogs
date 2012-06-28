@@ -1,8 +1,7 @@
-/*
- * printList.h
+/**
+ * \file printList.h
  *
- *  Created on: Feb 23, 2011
- *      Author: TF
+ *  Created on 2011-02-23 by Thomas Fischer
  */
 
 #ifndef PRINTLIST_H_

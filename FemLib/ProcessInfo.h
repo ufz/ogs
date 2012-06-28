@@ -1,8 +1,7 @@
-/*
+/**
  * \file ProcessInfo.h
  *
- *  Created on: Sep 2, 2010
- *      Author: TF
+ *  Created on 2010-09-02 by Thomas Fischer
  */
 
 #ifndef PROCESSINFO_H_

@@ -1,8 +1,7 @@
 /**
- * Prism.cpp
+ * \file Prism.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Prism.h"
@@ -22,7 +21,7 @@ const unsigned Prism::_face_nodes[5][4] =
 	{2, 0, 3,  5}, // Face 3
 	{3, 4, 5, 99}  // Face 4
 };
- 
+
 const unsigned Prism::_edge_nodes[9][2] =
 {
 	{0, 1}, // Edge 0

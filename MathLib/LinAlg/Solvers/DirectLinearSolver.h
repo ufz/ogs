@@ -1,8 +1,7 @@
-/*
- * DirectLinearSolver.h
+/**
+ * \file DirectLinearSolver.h
  *
- *  Created on: Jan 7, 2011
- *      Author: TF
+ *  Created on 2011-01-07 by Thomas Fischer
  */
 
 #ifndef DIRECTLINEARSOLVER_H_

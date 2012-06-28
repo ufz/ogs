@@ -1,8 +1,7 @@
-/*
- * CPUTime.h
+/**
+ * \file CPUTime.h
  *
- *  Created on: May 10, 2012
- *      Author: TF
+ *  Created on 2012-05-10 by Thomas Fischer
  */
 
 #ifndef CPUTIME_H

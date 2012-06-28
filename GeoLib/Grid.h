@@ -1,8 +1,7 @@
-/*
- * Grid.h
+/**
+ * \file Grid.h
  *
- *  Created on: Feb 2, 2012
- *      Author: TF
+ *  Created on 2012-02-02 by Thomas Fischer
  */
 
 #ifndef GRID_H_

@@ -1,8 +1,7 @@
-/*
- * DenseDirectLinearSolver.h
+/**
+ * \file DenseDirectLinearSolver.h
  *
- *  Created on: Jan 7, 2011
- *      Author: TF
+ *  Created on 2011-01-07 by Thomas Fischer
  */
 
 #ifndef DENSEDIRECTLINEARSOLVER_H_

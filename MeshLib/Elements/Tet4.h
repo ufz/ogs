@@ -1,8 +1,7 @@
 /**
- * Tet4.h
+ * \file Tet4.h
  *
- *      Date: 2012/05/03
- *      Author: KR
+ * Created on 2012-05-03 by Karsten Rink
  */
 
 #ifndef TET4_H_

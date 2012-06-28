@@ -1,8 +1,7 @@
-/*
- * SimplePolygonTree.cpp
+/**
+ * \file SimplePolygonTree.cpp
  *
- *  Created on: Jun 22, 2010
- *      Author: TF
+ *  Created on 2010-06-22 by Thomas Fischer
  */
 
 #include "SimplePolygonTree.h"

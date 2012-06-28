@@ -1,8 +1,7 @@
-/*
- * GEOObjects.h
+/**
+ * \file GEOObjects.h
  *
- *  Created on: Jan 21, 2010
- *      Author: TF / KR
+ *  Created on 2010-01-21 by Thomas Fischer / KR
  */
 
 #ifndef GEOOBJECTS_H_

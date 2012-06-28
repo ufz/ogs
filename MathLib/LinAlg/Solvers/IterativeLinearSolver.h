@@ -1,8 +1,7 @@
-/*
- * IterativeLinearSolver.h
+/**
+ * \file IterativeLinearSolver.h
  *
- *  Created on: Jan 7, 2011
- *      Author: TF
+ *  Created on 2011-01-07 by Thomas Fischer
  */
 
 #ifndef ITERATIVELINEARSOLVER_H_

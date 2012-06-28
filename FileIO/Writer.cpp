@@ -1,8 +1,7 @@
 /**
  * \file Writer.cpp
- * 13/02/2012 LB Initial implementation
  *
- * Implementation of the Writer class
+ * Created on 2012-02-13 by Lars Bilke
  */
 
 // ** INCLUDES **

@@ -1,8 +1,7 @@
-/*
- * @file LinearIntervalInterpolation.h
+/**
+ * \file  LinearIntervalInterpolation.h
  *
- *  Created on: May 22, 2012
- *      Author: fischeth
+ *  Created on 2012-05-22 by Thomas Fischer
  */
 
 #ifndef LINEARINTERVALINTERPOLATION_H_

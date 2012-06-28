@@ -1,8 +1,7 @@
-/*
- * quicksort.h
+/**
+ * \file quicksort.h
  *
- *  Created on: May 26, 2010
- *      Author: TF
+ *  Created on 2010-05-26 by Thomas Fischer
  */
 
 #ifndef QUICKSORT_H_

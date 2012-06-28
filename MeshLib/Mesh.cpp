@@ -1,8 +1,7 @@
 /**
- * Mesh.cpp
+ * \file Mesh.cpp
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Mesh.h"
@@ -47,7 +46,7 @@ void Mesh::makeNodesUnique()
 {
 	//check for unique mesh nodes
 	//PointVec::makePntsUnique
-	
+
 	//replace node pointers in elements
 	unsigned nElements (_elements.size());
 	for (unsigned i=0; i<nElements; i++)
@@ -58,17 +57,17 @@ void Mesh::makeNodesUnique()
 	}
 
 	//set correct id for each node
-	
+
 }
 
 void Mesh::addNode(Node* node)
 {
-	_nodes.push_back(node); 
+	_nodes.push_back(node);
 }
 
-void Mesh::addElement(Element* elem) 
+void Mesh::addElement(Element* elem)
 {
-	_elements.push_back(elem); 
+	_elements.push_back(elem);
 
 	// add element informatin to nodes
 	unsigned nNodes (elem->getNNodes());
@@ -111,7 +110,7 @@ void Mesh::setNeighborInformationForElements()
 		for (unsigned j=0; j<nNodes; j++)
 		{
 			const Node* node = elem->getNode(j);
-			
+
 		}
 	}
 	*/

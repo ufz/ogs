@@ -1,8 +1,7 @@
-/*
- * DistributionInfo.cpp
+/**
+ * \file DistributionInfo.cpp
  *
- *  Created on: Sep 28, 2010
- *      Author: fischeth
+ *  Created on 2010-09-28 by Thomas Fischer
  */
 
 #include "DistributionInfo.h"

@@ -1,8 +1,7 @@
-/*
- * CRSMatrix.h
+/**
+ * \file CRSMatrix.h
  *
- *  Created on: Sep 20, 2011
- *      Author: TF
+ *  Created on 2011-09-20 by Thomas Fischer
  */
 
 #include "amuxCRS.h"

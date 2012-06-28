@@ -1,8 +1,7 @@
-/*
- * GMRes.cpp
+/**
+ * \file GMRes.cpp
  *
- *  Created on: Oct 4, 2011
- *      Author: TF
+ *  Created on 2011-10-04 by Thomas Fischer
  */
 
 #include "GMRes.h"

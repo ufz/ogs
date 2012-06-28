@@ -1,8 +1,7 @@
 /**
- * FemNode.h
+ * \file FemNode.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef FEMNODE_H_
@@ -20,7 +19,7 @@ class FemNode : public Node
 public:
 	/// Constructor using a coordinate array
 	FemNode(double const*const coords, unsigned id = std::numeric_limits<unsigned>::max());
-	
+
 	/// Constructor using single coordinates
 	FemNode(double x, double y, double z, unsigned id = std::numeric_limits<unsigned>::max());
 

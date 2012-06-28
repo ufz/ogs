@@ -1,8 +1,7 @@
-/*
- * solver.h
+/**
+ * \file solver.h
  *
- *  Created on: Sep 27, 2011
- *      Author: TF
+ *  Created on 2011-09-27 by Thomas Fischer
  */
 
 #ifndef CG_H_

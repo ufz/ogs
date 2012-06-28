@@ -1,8 +1,7 @@
 /**
- * Cell.h
+ * \file Cell.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef CELL_H_
@@ -45,7 +44,7 @@ protected:
 
 }; /* class */
 
-}		
+}
 
 #endif /* CELL_H_ */
 

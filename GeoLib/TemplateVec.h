@@ -1,8 +1,7 @@
-/*
- * TemplateVec.h
+/**
+ * \file TemplateVec.h
  *
- *  Created on: Feb 26, 2010
- *      Author: TF
+ *  Created on 2010-02-26 by Thomas Fischer
  */
 
 #ifndef TEMPLATEVEC_H_

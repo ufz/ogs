@@ -1,6 +1,7 @@
 /**
  * \file FileTools.h
- * 26/4/2010 LB Initial implementation
+ *
+ * Created on 2010-04-26 by Lars Bilke
  *
  */
 

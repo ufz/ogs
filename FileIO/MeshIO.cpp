@@ -1,8 +1,7 @@
 /**
- * MeshIO.cpp
+ * \file MeshIO.cpp
  *
- *      Date: 2012/05/08
- *      Author: KR
+ * Created on 2012-05-08 by Karsten Rink
  */
 
 #include "GEOObjects.h"
@@ -103,7 +102,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 		in.close();
 		return mesh;
 	}
-	else 
+	else
 	{
 		in.close();
 		return NULL;
@@ -121,7 +120,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	unsigned* idx = new unsigned[8];
 
 	MeshLib::Element* elem;
-					
+
 	switch(elem_type)
 	{
 	case MshElemType::LINE:
@@ -161,8 +160,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		break;
 	default:
 		elem = NULL;
-	}	
-	
+	}
+
 	return elem;
 }
 

@@ -1,8 +1,7 @@
-/*
- * GeoInfo.cpp
+/**
+ * \file GeoInfo.cpp
  *
- *  Created on: Jun 18, 2010
- *      Author: TF
+ *  Created on 2010-06-18 by Thomas Fischer
  */
 
 // STL

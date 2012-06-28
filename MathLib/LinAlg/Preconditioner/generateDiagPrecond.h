@@ -1,8 +1,7 @@
-/*
- * generateDiagPrecond.h
+/**
+ * \file generateDiagPrecond.h
  *
- *  Created on: Sep 28, 2011
- *      Author: TF
+ *  Created on 2011-09-28 by Thomas Fischer
  */
 
 #ifndef GENERATEDIAGPRECOND_H_

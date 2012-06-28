@@ -1,8 +1,7 @@
 /**
- * Pyramid.h
+ * \file Pyramid.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef PYRAMID_H_

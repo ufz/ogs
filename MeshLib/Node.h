@@ -1,8 +1,7 @@
 /**
- * Node.h
+ * \file Node.h
  *
- *      Date: 2012/05/02
- *      Author: KR
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef NODE_H_
@@ -27,7 +26,7 @@ class Node : public GeoLib::PointWithID
 	/* friend functions: */
 	friend class Mesh;//void Mesh::setElementInformationForNodes();
 	//friend void Mesh::addElement(Element*);
-	
+
 
 public:
 	/// Constructor using a coordinate array
