@@ -1,8 +1,13 @@
-/*
- * GEOObjects.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jan 21, 2010
- *      Author: TF / KR
+ *
+ * \file GEOObjects.h
+ *
+ * Created on 2010-01-21 by Thomas Fischer / Karsten Rink
  */
 
 #ifndef GEOOBJECTS_H_

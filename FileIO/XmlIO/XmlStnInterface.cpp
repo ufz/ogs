@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file XmlStnInterface.cpp
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #include "XmlStnInterface.h"
@@ -118,7 +125,7 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				        new GeoLib::Station(
 							strtod((station.attribute("x")).toStdString().c_str(), 0),
 				            strtod((station.attribute("y")).toStdString().c_str(), 0),
-				            zVal, 
+				            zVal,
 							stationName);
 				s->setStationValue(stationValue);
 				stations->push_back(s);
@@ -177,7 +184,7 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot, GeoLib::Stati
 				depth_check = depth;
 			}
 			else
-				std::cout << "Warning: Skipped layer \"" << horizonName << "\" in borehole \"" 
+				std::cout << "Warning: Skipped layer \"" << horizonName << "\" in borehole \""
 					      << borehole->getName() << "\" because of thickness 0.0." << std::endl;
 		}
 		else

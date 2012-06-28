@@ -1,8 +1,13 @@
-/*
- * CRSMatrixPThreads.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Aug 2, 2011
- *      Author: TF
+ *
+ * \file CRSMatrixPThreads.h
+ *
+ * Created on 2011-08-02 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXPTHREADS_H

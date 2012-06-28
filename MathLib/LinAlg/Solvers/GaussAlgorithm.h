@@ -1,8 +1,13 @@
-/*
- * GaussAlgorithm.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: May 6, 2010
- *      Author: TF
+ *
+ * \file GaussAlgorithm.h
+ *
+ * Created on 2011-05-06 by Thomas Fischer
  */
 
 #ifndef GAUSSALGORITHM_H_

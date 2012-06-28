@@ -1,8 +1,13 @@
-/*
- * @file OctTree.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Feb 27, 2012
- *      Author: TF
+ *
+ * \file  OctTree.h
+ *
+ * Created on 2012-02-27 by Thomas Fischer
  */
 
 #ifndef OCTTREE_H_

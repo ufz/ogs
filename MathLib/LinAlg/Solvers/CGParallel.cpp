@@ -1,8 +1,13 @@
-/*
- * CGParallel.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Dec 2, 2011
- *      Author: TF
+ *
+ * \file CGParallel.cpp
+ *
+ * Created on 2011-12-02 by Thomas Fischer
  */
 
 #include <limits>

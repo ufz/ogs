@@ -1,8 +1,13 @@
-/*
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file ProcessInfo.h
  *
- *  Created on: Sep 2, 2010
- *      Author: TF
+ * Created on 2010-09-02 by Thomas Fischer
  */
 
 #ifndef PROCESSINFO_H_

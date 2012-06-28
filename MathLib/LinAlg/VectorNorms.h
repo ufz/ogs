@@ -1,8 +1,13 @@
-/*
- * VectorNorms.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jun 6, 2011
- *      Author: TF
+ *
+ * \file VectorNorms.h
+ *
+ * Created on 2011-06-06 by Thomas Fischer
  */
 
 #ifndef VECTORNORMS_H_

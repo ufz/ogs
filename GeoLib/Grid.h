@@ -1,8 +1,13 @@
-/*
- * Grid.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Feb 2, 2012
- *      Author: TF
+ *
+ * \file Grid.h
+ *
+ * Created on 2012-02-02 by Thomas Fischer
  */
 
 #ifndef GRID_H_

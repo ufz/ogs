@@ -1,8 +1,13 @@
 /**
- * Tet.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Tet.cpp
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Tet.h"
@@ -21,7 +26,7 @@ const unsigned Tet::_face_nodes[4][3] =
 	{1, 2, 3}, // Face 2
 	{2, 0, 3}  // Face 3
 };
- 
+
 const unsigned Tet::_edge_nodes[6][2] =
 {
 	{0, 1}, // Edge 0

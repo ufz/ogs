@@ -1,8 +1,13 @@
-/*
- * ClusterBase.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: 02.01.2012
- *      Author: TF
+ *
+ * \file ClusterBase.cpp
+ *
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 //#include "blas.h"

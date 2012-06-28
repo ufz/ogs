@@ -1,9 +1,13 @@
-/*
- * DateTools.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jun 16, 2010
- *      Author: KR Initial implementation (in header file)
- *      TF moved implementation to source file
+ *
+ * \file DateTools.cpp
+ *
+ * Created on 2010-06-16 by Karsten Rink
  */
 
 #include "DateTools.h"

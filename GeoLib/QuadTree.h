@@ -1,8 +1,13 @@
-/*
- * QuadTree.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Nov 9, 2010
- *      Author: TF
+ *
+ * \file QuadTree.h
+ *
+ * Created on 2010-11-09 by Thomas Fischer
  */
 
 #ifndef QUADTREE_H_

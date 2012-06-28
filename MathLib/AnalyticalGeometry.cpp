@@ -1,8 +1,13 @@
-/*
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file AnalyticalGeometry.cpp
  *
- *  Created on: Mar 17, 2010
- *      Author: TF
+ * Created on 2010-03-17 by Thomas Fischer
  */
 
 #include <cmath>
