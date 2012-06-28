@@ -1,7 +1,7 @@
 /**
  * \file  OctTree.h
  *
- *  Created on 2012-02-27 by Thomas Fischer
+ * Created on 2012-02-27 by Thomas Fischer
  */
 
 #ifndef OCTTREE_H_

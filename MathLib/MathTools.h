@@ -1,7 +1,7 @@
 /**
  * \file MathTools.h
  *
- *  Created on 2010-01-13 by Thomas Fischer
+ * Created on 2010-01-13 by Thomas Fischer
  */
 
 #ifndef MATHTOOLS_H_

@@ -1,6 +1,7 @@
 /**
  * \file Station.h
- * KR Initial implementation
+ *
+ * Created by Karsten Rink
  */
 
 #ifndef GEO_STATION_H

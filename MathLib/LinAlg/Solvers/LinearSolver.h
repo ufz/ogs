@@ -1,7 +1,7 @@
 /**
  * \file LinearSolver.h
  *
- *  Created on 2011-01-07 by Thomas Fischer
+ * Created on 2011-01-07 by Thomas Fischer
  */
 
 #ifndef LINEARSOLVER_H_

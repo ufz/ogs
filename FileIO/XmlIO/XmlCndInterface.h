@@ -1,6 +1,7 @@
 /**
  * \file XmlCndInterface.h
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #ifndef XMLCNDINTERFACE_H
@@ -40,7 +41,7 @@ public:
 	int readFile(std::vector<FEMCondition*> &conditions, const QString &fileName);
 
 	void setConditionType(FEMCondition::CondType type) { _type = type; };
-	
+
 
 protected:
 	int write(std::ostream& stream);

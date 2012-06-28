@@ -1,7 +1,7 @@
 /**
  * \file Surface.cpp
  *
- *  Created on 2010-04-22 by Thomas Fischer
+ * Created on 2010-04-22 by Thomas Fischer
  */
 
 #include <list>

@@ -1,7 +1,7 @@
 /**
  * \file EarClippingTriangulation.cpp
  *
- *  Created on 2011-02-23 by Thomas Fischer
+ * Created on 2011-02-23 by Thomas Fischer
  */
 
 // STL

@@ -1,7 +1,7 @@
 /**
  * \file Color.cpp
  *
- *  Created on 2010-06-16 by Karsten Rink
+ * Created on 2010-06-16 by Karsten Rink
  */
 
 #include <iostream>

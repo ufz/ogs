@@ -1,7 +1,7 @@
 /**
  * \file BiCGStab.h
  *
- *  Created on 2011-10-04 by Thomas Fischer
+ * Created on 2011-10-04 by Thomas Fischer
  */
 
 #ifndef BICGSTAB_H_

@@ -1,7 +1,7 @@
 /**
  * MatVecMultNDPermOpenMP.cpp
  *
- *  Created on 2012-01-20 by Thomas Fischer
+ * Created on 2012-01-20 by Thomas Fischer
  */
 
 #include <cstdlib>

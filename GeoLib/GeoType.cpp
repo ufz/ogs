@@ -1,7 +1,7 @@
 /**
  * \file GeoType.cpp
  *
- *  Created on 2010-12-01 by Thomas Fischer
+ * Created on 2010-12-01 by Thomas Fischer
  */
 
 #include "GeoType.h"

@@ -1,7 +1,7 @@
 /**
  * \file PiecewiseLinearInterpolation.h
  *
- *  Created on 2010-09-07 by Thomas Fischer
+ * Created on 2010-09-07 by Thomas Fischer
  */
 
 #ifndef PIECEWISELINEARINTERPOLATION_H_

@@ -1,6 +1,7 @@
 /**
  * \file XmlGspInterface.cpp
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #include "XmlGspInterface.h"
@@ -67,7 +68,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 			for(int j = 0; j < childList.count(); j++)
 			{
 				const QDomNode child_node (childList.at(j));
-				if (child_node.nodeName().compare("file") == 0) 
+				if (child_node.nodeName().compare("file") == 0)
 				{
 					std::cout << "path: " << path.toStdString() << "#" << std::endl;
 					std::cout << "file name: " << (child_node.toElement().text()).toStdString() << "#" << std::endl;

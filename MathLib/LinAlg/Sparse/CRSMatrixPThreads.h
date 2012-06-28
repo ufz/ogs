@@ -1,7 +1,7 @@
 /**
  * \file CRSMatrixPThreads.h
  *
- *  Created on 2011-08-02 by Thomas Fischer
+ * Created on 2011-08-02 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXPTHREADS_H

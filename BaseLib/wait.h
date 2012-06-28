@@ -1,6 +1,7 @@
 /**
  * \file DateTools.h
- * 2011/02/17 KR Initial implementation
+ *
+ * Created on 2011-02-17 by Karsten Rink
  */
 
 

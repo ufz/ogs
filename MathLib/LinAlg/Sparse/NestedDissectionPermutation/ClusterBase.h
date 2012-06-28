@@ -1,7 +1,7 @@
 /**
  * \file ClusterBase.h
  *
- *  Created on 2012-01-02 by Thomas Fischer
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 #ifndef CLUSTERBASE_H_

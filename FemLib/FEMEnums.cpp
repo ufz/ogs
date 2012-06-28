@@ -1,7 +1,7 @@
 /**
  * \file FEMEnums.cpp
  *
- *  Created on 2010-09-02 by Thomas Fischer
+ * Created on 2010-09-02 by Thomas Fischer
  */
 
 #include "FEMEnums.h"

@@ -1,7 +1,7 @@
 /*
  * \file Cluster.h
  *
- *  Created on 2012-01-02 by Thomas Fischer
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 #ifndef CLUSTER_H_

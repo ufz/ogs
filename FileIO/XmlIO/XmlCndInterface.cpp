@@ -1,6 +1,7 @@
 /**
  * \file XmlCndInterface.cpp
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #include "XmlCndInterface.h"
@@ -124,10 +125,10 @@ void XmlCndInterface::readConditions( const QDomNode &listRoot,
 						{
 							std::vector<size_t> disNodes;
 							std::vector<double> disValues;
-							if (c->getProcessDistributionType()==FiniteElement::CONSTANT || 
+							if (c->getProcessDistributionType()==FiniteElement::CONSTANT ||
 								c->getProcessDistributionType()==FiniteElement::CONSTANT_NEUMANN)
 								disValues.push_back( strtod(distProps.at(j).toElement().text().toStdString().c_str(), 0) );
-							else if (c->getProcessDistributionType()==FiniteElement::LINEAR || 
+							else if (c->getProcessDistributionType()==FiniteElement::LINEAR ||
 								     c->getProcessDistributionType()==FiniteElement::LINEAR_NEUMANN ||
 									 c->getProcessDistributionType()==FiniteElement::DIRECT)
 							{

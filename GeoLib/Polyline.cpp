@@ -1,7 +1,7 @@
 /**
  * \file Polyline.cpp
  *
- *  Created on 2010-06-21 by Thomas Fischer
+ * Created on 2010-06-21 by Thomas Fischer
  */
 
 // Base

@@ -1,7 +1,7 @@
 /**
  * \file CRSMatrixReorderedOpenMP.cpp
  *
- *  Created on 2012-01-12 by Thomas Fischer
+ * Created on 2012-01-12 by Thomas Fischer
  */
 
 #ifdef _OPENMP

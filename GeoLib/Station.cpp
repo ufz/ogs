@@ -1,6 +1,7 @@
 /**
  * \file Station.cpp
- * KR Initial implementation
+ *
+ * Created by Karsten Rink
  */
 
 #include <cmath>
@@ -247,7 +248,7 @@ int StationBorehole::addStratigraphy(const std::vector<GeoLib::Point*> &profile,
 		}
 		return 1;
 	}
-	
+
 	std::cout << "Error in StationBorehole::addStratigraphy() - Length of parameter vectors does not match." << std::endl;
 	return 0;
 }

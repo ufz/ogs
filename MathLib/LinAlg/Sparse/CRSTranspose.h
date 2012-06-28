@@ -1,7 +1,7 @@
 /**
  * \file CRSTranspose.h
  *
- *  Created on 2011-09-27 by Thomas Fischer
+ * Created on 2011-09-27 by Thomas Fischer
  */
 
 #ifndef CRSTRANSPOSE_H_

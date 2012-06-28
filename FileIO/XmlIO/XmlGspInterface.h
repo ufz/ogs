@@ -1,6 +1,7 @@
 /**
  * \file XmlGspInterface.h
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #ifndef XMLGSPINTERFACE_H
@@ -29,7 +30,7 @@ public:
 	/// Reads an xml-file containing a GeoSys project.
 	/// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.
 	int readFile(const QString &fileName);
-	
+
 	int writeToFile(std::string filename);
 
 protected:

@@ -1,7 +1,7 @@
 /**
  * \file GMRes.cpp
  *
- *  Created on 2011-10-04 by Thomas Fischer
+ * Created on 2011-10-04 by Thomas Fischer
  */
 
 #include "GMRes.h"

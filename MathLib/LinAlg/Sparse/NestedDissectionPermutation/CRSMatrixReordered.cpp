@@ -1,7 +1,7 @@
 /**
  * \file CRSMatrixReordered.cpp
  *
- *  Created on 2012-01-03 by Thomas Fischer
+ * Created on 2012-01-03 by Thomas Fischer
  */
 
 // BaseLib

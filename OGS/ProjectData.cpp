@@ -1,6 +1,7 @@
 /**
  * \file ProjectData.cpp
- * 25/08/2010 KR Initial implementation
+ *
+ * Created on 2010-08-25 by Karsten Rink
  */
 
 #include "ProjectData.h"
@@ -63,7 +64,7 @@ const ProcessInfo* ProjectData::getProcess(FiniteElement::ProcessType type) cons
 		if ((*it)->getProcessType() == type)
 			return *it;
 
-	std::cout << "Error in ProjectData::getProcess() - No " 
+	std::cout << "Error in ProjectData::getProcess() - No "
 			  << FiniteElement::convertProcessTypeToString(type) << " process found..." << std::endl;
 	return NULL;
 }
@@ -114,7 +115,7 @@ const std::vector<FEMCondition*> ProjectData::getConditions(FiniteElement::Proce
 															std::string geo_name,
                                                             FEMCondition::CondType cond_type) const
 {
-	// if all 
+	// if all
 	if (pcs_type == FiniteElement::INVALID_PROCESS && geo_name.empty() && cond_type == FEMCondition::UNSPECIFIED)
 		return _cond_vec;
 

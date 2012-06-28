@@ -1,7 +1,7 @@
 /**
  * \file BiCGStab.cpp
  *
- *  Created on 2011-10-04 by Thomas Fischer
+ * Created on 2011-10-04 by Thomas Fischer
  */
 
 #include "BiCGStab.h"

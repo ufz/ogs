@@ -1,7 +1,7 @@
 /**
  * \file RunTime.h
  *
- *  Created on 2012-05-10 by Thomas Fischer
+ * Created on 2012-05-10 by Thomas Fischer
  */
 
 #ifndef RUNTIME_H

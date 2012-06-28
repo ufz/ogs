@@ -1,7 +1,7 @@
 /**
  * \file Triangle.h
  *
- *  Created on 2010-03-23 by Thomas Fischer
+ * Created on 2010-03-23 by Thomas Fischer
  */
 
 #ifndef TRIANGLE_H_

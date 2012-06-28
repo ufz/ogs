@@ -1,7 +1,7 @@
 /**
  * \file VectorNorms.h
  *
- *  Created on 2011-06-06 by Thomas Fischer
+ * Created on 2011-06-06 by Thomas Fischer
  */
 
 #ifndef VECTORNORMS_H_

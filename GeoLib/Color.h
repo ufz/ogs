@@ -1,6 +1,7 @@
 /**
  * \file Color.cpp
- * 04/02/2010 KR Initial implementation
+ *
+ * Created on 2010-02-04 by Karsten Rink
  *
  */
 

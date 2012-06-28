@@ -1,6 +1,7 @@
 /**
  * \file FileFinder.h
- * 26/10/2010 KR Initial implementation
+ *
+ * Created on 2010-10-26 by Karsten Rink
  */
 
 #ifndef FILEFINDER_H

@@ -1,7 +1,7 @@
 /**
  * \file PointVec.cpp
  *
- *  Created on 2010-06-11 by Thomas Fischer
+ * Created on 2010-06-11 by Thomas Fischer
  */
 
 // GeoLib

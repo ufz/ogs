@@ -1,7 +1,7 @@
 /**
  * \file AxisAlignedBoundingBox.h
  *
- *  Created on 2010-04-22 by Thomas Fischer
+ * Created on 2010-04-22 by Thomas Fischer
  */
 
 #ifndef AXISALIGNEDBOUNDINGBOX_H_

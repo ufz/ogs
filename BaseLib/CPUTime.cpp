@@ -1,7 +1,7 @@
 /**
  * \file CPUTime.cpp
  *
- *  Created on 2012-05-10 by Thomas Fischer
+ * Created on 2012-05-10 by Thomas Fischer
  */
 
 #include "CPUTime.h"

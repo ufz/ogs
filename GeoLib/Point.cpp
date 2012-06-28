@@ -1,7 +1,7 @@
 /**
  * \file Point.cpp
  *
- *  Created on 2010-06-22 by Thomas Fischer
+ * Created on 2010-06-22 by Thomas Fischer
  */
 
 

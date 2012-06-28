@@ -1,7 +1,7 @@
 /**
  * \file AnalyticalGeometry.h
  *
- *  Created on 2010-03-17 by Thomas Fischer
+ * Created on 2010-03-17 by Thomas Fischer
  */
 
 #ifndef ANALYTICAL_GEOMETRY_H_

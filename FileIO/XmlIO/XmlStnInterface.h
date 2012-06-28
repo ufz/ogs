@@ -1,6 +1,7 @@
 /**
  * \file XmlStnInterface.h
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #ifndef XMLSTNINTERFACE_H

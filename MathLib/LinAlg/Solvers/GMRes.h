@@ -1,7 +1,7 @@
 /**
  * \file GMRes.h
  *
- *  Created on 2011-10-04 by Thomas Fischer
+ * Created on 2011-10-04 by Thomas Fischer
  */
 
 #ifndef GMRES_H_

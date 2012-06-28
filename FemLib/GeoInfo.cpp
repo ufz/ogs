@@ -1,7 +1,7 @@
 /**
  * \file GeoInfo.cpp
  *
- *  Created on 2010-06-18 by Thomas Fischer
+ * Created on 2010-06-18 by Thomas Fischer
  */
 
 // STL

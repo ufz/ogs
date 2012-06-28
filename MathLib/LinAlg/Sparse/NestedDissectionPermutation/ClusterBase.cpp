@@ -1,7 +1,7 @@
 /**
  * \file ClusterBase.cpp
  *
- *  Created on 2012-01-02 by Thomas Fischer
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 //#include "blas.h"

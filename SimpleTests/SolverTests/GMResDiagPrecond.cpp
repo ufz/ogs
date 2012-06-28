@@ -1,7 +1,7 @@
 /**
  * GMResDiagPrecond.cpp
  *
- *  Created on 2011-10-05 by Thomas Fischer
+ * Created on 2011-10-05 by Thomas Fischer
  */
 
 #include <iostream>

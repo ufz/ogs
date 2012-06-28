@@ -1,7 +1,7 @@
 /**
  * \file Matrix.h
  *
- *  Created on 2011-05-24 by Thomas Fischer
+ * Created on 2011-05-24 by Thomas Fischer
  */
 
 #ifndef MATRIX_H

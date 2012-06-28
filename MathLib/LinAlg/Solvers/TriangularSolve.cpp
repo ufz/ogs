@@ -1,7 +1,7 @@
 /**
  * \file TriangularSolve.cpp
  *
- *  Created on 2011-05-05 by Thomas Fischer
+ * Created on 2011-05-05 by Thomas Fischer
  */
 
 #include "../Dense/Matrix.h"

@@ -1,7 +1,7 @@
 /**
  * \file GeoType.h
  *
- *  Created on 2010-06-17 by Thomas Fischer
+ * Created on 2010-06-17 by Thomas Fischer
  */
 
 #ifndef GEOTYPE_H_

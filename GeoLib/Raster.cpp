@@ -1,7 +1,7 @@
 /**
  * \file Raster.cpp
  *
- *  Created on 2011-09-07 by Thomas Fischer
+ * Created on 2011-09-07 by Thomas Fischer
  */
 
 #include "Raster.h"

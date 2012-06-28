@@ -1,7 +1,7 @@
 /**
  * \file GaussAlgorithm.h
  *
- *  Created on 2011-05-06 by Thomas Fischer
+ * Created on 2011-05-06 by Thomas Fischer
  */
 
 #ifndef GAUSSALGORITHM_H_

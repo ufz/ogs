@@ -1,7 +1,7 @@
 /**
  * \file GEOObjects.cpp
  *
- *  Created on 2010-01-21 by Thomas Fischer / KR
+ * Created on 2010-01-21 by Thomas Fischer / Karsten Rink
  */
 
 // GeoLib

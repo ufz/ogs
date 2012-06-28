@@ -1,6 +1,7 @@
 /**
  * \file XmlLutReader.h
- * 2011/01/30 KR Initial implementation
+ *
+ * Created on 2011-01-30 by Karsten Rink
  */
 
 #ifndef XMLLUTREADER_H
@@ -47,7 +48,7 @@ public:
 				lut->setInterpolationType(VtkColorLookupTable::LINEAR);
 			else if (docElement.attribute("interpolation").compare("Exponential") == 0)
 				lut->setInterpolationType(VtkColorLookupTable::EXPONENTIAL);
-			else 
+			else
 				lut->setInterpolationType(VtkColorLookupTable::NONE);
 		}
 		else // default
@@ -58,10 +59,10 @@ public:
 
 		while (!point.isNull())
 		{
-			if ((point.nodeName().compare("Point") == 0 ) 
+			if ((point.nodeName().compare("Point") == 0 )
 				&& point.hasAttribute("x")
-				&& point.hasAttribute("r") 
-				&& point.hasAttribute("g") 
+				&& point.hasAttribute("r")
+				&& point.hasAttribute("g")
 				&& point.hasAttribute("b"))
 			{
 				double value = strtod((point.attribute("x")).toStdString().c_str(),0);

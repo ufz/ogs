@@ -1,6 +1,7 @@
 /**
  * \file FEMEnums.h
- * 31/08/2010 KR inital implementation
+ *
+ * Created on 2010-08-31 by Karsten Rink
  *
  */
 
@@ -205,7 +206,7 @@ const std::list<std::string> getAllDistributionNames();
 /** \brief Types of error method supported by OpenGeoSys.
  * If you change this enum, make sure you apply the changes to
  * the functions convertErrorMethod(), convertErrorMethodToString()
-   Non-Linear and Coupling options (see also CRFProcess::CalcIterationNODError()): 
+   Non-Linear and Coupling options (see also CRFProcess::CalcIterationNODError()):
    --> LMAX:	max(|x1-x0|)  -- Infinity norm: Local max error (across all elements) of solution vector delta (absolute error). Tolerance required for each primary variable.
    --> ENORM:	|x1-x0|       -- Euclidian norm: Norm of the solution vector delta (absolute error). Norm taken over entire solution vector (all primary variables) and checked against a single tolerance.
    --> EVNORM:	|x1-x0|       -- Euclidian varient norm: Norm of the solution vector delta (absolute error). Norm taken over solution vector of each primary variable, checked againes a tolerence specific to each variable.
@@ -214,10 +215,10 @@ const std::list<std::string> getAllDistributionNames();
  */
 enum ErrorMethod
 {
-	INVALID_ERROR_METHOD = 0,   
+	INVALID_ERROR_METHOD = 0,
 	LMAX,
-	ENORM, 
-	EVNORM,	
+	ENORM,
+	EVNORM,
 	ERNORM,
 	BNORM
 };

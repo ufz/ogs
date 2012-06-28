@@ -1,7 +1,7 @@
 /**
  * \file AdjMat.cpp
  *
- *  Created on 2012-01-02 by Thomas Fischer
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 // Base

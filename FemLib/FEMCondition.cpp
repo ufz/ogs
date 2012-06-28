@@ -1,6 +1,7 @@
 /**
  * \file FEMCondition.cpp
- * 25/11/2010 KR inital implementation
+ *
+ * Created on 2010-11-25 by Karsten Rink
  *
  */
 

@@ -1,7 +1,7 @@
 /**
  * \file MemWatch.cpp
  *
- *  Created on 2012-05-07 by Thomas Fischer
+ * Created on 2012-05-07 by Thomas Fischer
  */
 
 #include "MemWatch.h"

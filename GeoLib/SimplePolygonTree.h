@@ -1,7 +1,7 @@
 /**
  * \file SimplePolygonTree.h
  *
- *  Created on 2010-06-22 by Thomas Fischer
+ * Created on 2010-06-22 by Thomas Fischer
  */
 
 #ifndef SIMPLEPOLYGONTREE_H_

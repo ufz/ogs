@@ -1,7 +1,7 @@
 /**
  * \file BruteForceClosestPair.cpp
  *
- *  Created on 2011-01-25 by Thomas Fischer
+ * Created on 2011-01-25 by Thomas Fischer
  */
 
 #include "BruteForceClosestPair.h"

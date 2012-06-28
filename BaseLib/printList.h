@@ -1,7 +1,7 @@
 /**
  * \file printList.h
  *
- *  Created on 2011-02-23 by Thomas Fischer
+ * Created on 2011-02-23 by Thomas Fischer
  */
 
 #ifndef PRINTLIST_H_

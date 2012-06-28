@@ -1,6 +1,7 @@
 /**
  * \file XMLInterface.cpp
- * 18/02/2010 KR Initial implementation
+ *
+ * Created on 2010-18-02 by Karsten Rink
  */
 
 #include "ProjectData.h"

@@ -1,7 +1,7 @@
 /**
  * \file CRSMatrixOpenMP.h
  *
- *  Created on 2011-08-08 by Thomas Fischer
+ * Created on 2011-08-08 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXOPENMP_H_

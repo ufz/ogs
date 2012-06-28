@@ -1,7 +1,7 @@
 /**
  * \file TemplatePoint.h
  *
- *  Created on 2010-01-28 by Thomas Fischer
+ * Created on 2010-01-28 by Thomas Fischer
  */
 
 #ifndef TEMPLATEPOINT_H_

@@ -1,7 +1,7 @@
 /**
  * \file PolylineVec.h
  *
- *  Created on 2010-02-09 by Thomas Fischer
+ * Created on 2010-02-09 by Thomas Fischer
  */
 
 #ifndef POLYLINEVEC_H_

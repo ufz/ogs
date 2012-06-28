@@ -1,7 +1,7 @@
 /**
  * \file GeoObject.h
  *
- *  Created on 2010-08-27 by Thomas Fischer
+ * Created on 2010-08-27 by Thomas Fischer
  */
 
 #ifndef GEOOBJECT_H_

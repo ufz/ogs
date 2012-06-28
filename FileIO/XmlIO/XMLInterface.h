@@ -1,6 +1,7 @@
 /**
  * \file XMLInterface.h
- * 18/02/2010 KR Initial implementation
+ *
+ * Created on 2010-02-18 by Karsten Rink
  */
 
 #ifndef XMLINTERFACE_H

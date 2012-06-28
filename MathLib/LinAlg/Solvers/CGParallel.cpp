@@ -1,7 +1,7 @@
 /**
  * \file CGParallel.cpp
  *
- *  Created on 2011-12-02 by Thomas Fischer
+ * Created on 2011-12-02 by Thomas Fischer
  */
 
 #include <limits>

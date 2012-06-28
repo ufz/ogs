@@ -1,7 +1,7 @@
 /**
  * \file Triangle.cpp
  *
- *  Created on 2011-06-06 by Thomas Fischer
+ * Created on 2011-06-06 by Thomas Fischer
  */
 
 #include "Triangle.h"

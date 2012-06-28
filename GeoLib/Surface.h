@@ -1,7 +1,7 @@
 /**
  * \file Surface.h
  *
- *  Created on 2010-01-22 by Thomas Fischer
+ * Created on 2010-01-22 by Thomas Fischer
  */
 
 #ifndef SURFACE_H_

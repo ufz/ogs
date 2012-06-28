@@ -1,6 +1,7 @@
 /**
  * \file PropertyBounds.h
- * 18/01/2010 KR Initial implementation
+ *
+ * Created on 2010-01-18 by Karsten Rink
  */
 
 #ifndef PROPERTYBOUNDS_H

@@ -1,7 +1,7 @@
 /**
  * \file MemWatch.h
  *
- *  Created on 2012-05-07 by Thomas Fischer
+ * Created on 2012-05-07 by Thomas Fischer
  */
 
 #ifndef MEMWATCH_H_
