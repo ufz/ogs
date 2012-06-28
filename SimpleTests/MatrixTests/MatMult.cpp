@@ -1,5 +1,10 @@
 /**
- * MatMult.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ * \file MatMult.cpp
  *
  * Created on 2012-01-03 by Thomas Fischer
  */
@@ -22,6 +27,10 @@
 #include "formatter.hpp"
 // BaseLib/tclap
 #include "tclap/CmdLine.h"
+
+#ifdef UNIX
+#include <sys/unistd.h>
+#endif
 
 #ifdef OGS_BUILD_INFO
 #include "BuildInfo.h"
@@ -96,7 +105,14 @@ int main(int argc, char *argv[])
 	} else {
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
 	}
-	INFO("hostname: %s", HOSTNAME);
+#endif
+
+#ifdef UNIX
+	const int max_host_name_len (255);
+	char *hostname(new char[max_host_name_len]);
+	if (gethostname(hostname, max_host_name_len) == 0)
+		INFO("hostname: %s", hostname);
+	delete [] host_name_len;
 #endif
 
 	// *** reading matrix in crs format from file
