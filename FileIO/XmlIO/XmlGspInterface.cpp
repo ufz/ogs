@@ -1,22 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www./**
  * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
- *
- *
-opengeosys.com)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www./**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
- *
- *
-opengeosys.com/LICENSE.txt
  *
  *
  * \file XmlGspInterface.cpp
@@ -138,7 +124,7 @@ int XmlGspInterface::write(std::ostream& stream)
 
 	QDomDocument doc("OGS-PROJECT-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysProject");
-	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.net");
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.net" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation",
 	                   "http://141.65.34.25/OpenGeoSysProject.xsd" );
