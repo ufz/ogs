@@ -27,7 +27,14 @@ OpenGeoSys is distributed under a Modified BSD License which encourages users to
 attribute the work of the OpenGeoSys Community especially in scientific
 publications. See the [LICENSE.txt][license-source] for the license text.
 
-[ogs]: http://www.opengeosys.net
+[ogs]: http://www./**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
+opengeosys.com
 [devguide]: http://ufz.github.com/devguide
 [jenkins-ci]: https://svn.ufz.de/hudson/view/OGS-6/
 [docs]: https://svn.ufz.de/hudson/view/OGS-6/job/OGS-6-Docs/lastSuccessfulBuild/artifact/build/docs/index.html

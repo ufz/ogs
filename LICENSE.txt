@@ -1,4 +1,11 @@
-Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+Copyright (c) 2012, OpenGeoSys Community (http://www./**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
+opengeosys.com)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -16,7 +23,14 @@ modification, are permitted provided that the following conditions are met:
    derived from this software without specific prior written permission.
 5. Attribute the OpenGeoSys Community, preferably citing an appropriate
    paper listed on the OpenGeoSys Community homepage:
-   http://www.opengeosys.net/papers
+   http://www./**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
+opengeosys.com/papers
 
 THIS SOFTWARE IS PROVIDED BY THE OpenGeoSys Community ''AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
