@@ -1,8 +1,13 @@
-/*
- * FEMEnums.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Sep 2, 2010
- *      Author: TF
+ *
+ * \file FEMEnums.cpp
+ *
+ * Created on 2010-09-02 by Thomas Fischer
  */
 
 #include "FEMEnums.h"
@@ -106,11 +111,11 @@ std::string convertProcessTypeToString ( ProcessType pcs_type )
 
 bool isFlowProcess (ProcessType pcs_type)
 {
-	if (   pcs_type == LIQUID_FLOW || pcs_type == FLUID_FLOW 
+	if (   pcs_type == LIQUID_FLOW || pcs_type == FLUID_FLOW
 		|| pcs_type == RICHARDS_FLOW || pcs_type == GROUNDWATER_FLOW
 		|| pcs_type == PS_GLOBAL || pcs_type == MULTI_PHASE_FLOW
 		|| pcs_type == DEFORMATION_FLOW || pcs_type == DEFORMATION_H2
-	    || pcs_type == TWO_PHASE_FLOW || pcs_type == OVERLAND_FLOW 
+	    || pcs_type == TWO_PHASE_FLOW || pcs_type == OVERLAND_FLOW
 	    || pcs_type == AIR_FLOW || pcs_type == PTC_FLOW)
 		return true;
 	return false;
@@ -118,7 +123,7 @@ bool isFlowProcess (ProcessType pcs_type)
 
 bool isMultiFlowProcess (ProcessType pcs_type)
 {
-	if (pcs_type == PS_GLOBAL || 
+	if (pcs_type == PS_GLOBAL ||
 		pcs_type == MULTI_PHASE_FLOW ||
 		pcs_type == TWO_PHASE_FLOW ||
 		pcs_type == DEFORMATION_H2)

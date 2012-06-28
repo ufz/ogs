@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	(void) argv;
 
 	// *** reading matrix in crs format from file
-	std::string fname("/work/fischeth/data/testmat.bin");
+	std::string fname("/work/Thomas Fischer/data/testmat.bin");
 //	std::ifstream in(fname.c_str(), std::ios::binary);
 	MathLib::CRSMatrix<double, unsigned> *mat (new MathLib::CRSMatrix<double, unsigned>(fname));
 /*	double *A(NULL);
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 		x[k] = 1.0;
 	}
 	// *** read rhs
-	fname = "/work/fischeth/data/rhs.dat";
+	fname = "/work/Thomas Fischer/data/rhs.dat";
 	std::ifstream in(fname.c_str());
 	if (in) {
 		read (in, n, b);

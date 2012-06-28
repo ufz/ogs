@@ -1,8 +1,13 @@
-/*
- * Surface.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Apr 22, 2010
- *      Author: TF
+ *
+ * \file Surface.cpp
+ *
+ * Created on 2010-04-22 by Thomas Fischer
  */
 
 #include <list>

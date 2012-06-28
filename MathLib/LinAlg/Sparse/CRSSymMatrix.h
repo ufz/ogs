@@ -1,8 +1,13 @@
-/*
- * CRSSymMatrix.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jul 22, 2011
- *      Author: fischeth
+ *
+ * \file CRSSymMatrix.h
+ *
+ * Created on 2011-07-22 by Thomas Fischer
  */
 
 #ifndef CRSSYMMATRIX_H_

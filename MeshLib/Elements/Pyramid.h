@@ -1,8 +1,13 @@
 /**
- * Pyramid.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Pyramid.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef PYRAMID_H_

@@ -1,8 +1,7 @@
-/*
+/**
  * Separator.h
  *
- *  Created on: 02.01.2012
- *      Author: TF
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 #ifndef SEPARATOR_H_

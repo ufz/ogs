@@ -1,8 +1,13 @@
-/*
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
+ *
  * \file PointVec.h
  *
- *  Created on: Feb 2, 2010
- *      Author: TF / KR
+ * Created on 2010-02-02 by Thomas Fischer / Karsten Rink
  */
 
 // GeoLib
