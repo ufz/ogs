@@ -6,7 +6,7 @@
 // ** INCLUDES **
 #include "VtkCompositeContourFilter.h"
 
-#include <vtkCellData.h>
+#include <vtkPointData.h>
 #include <vtkContourFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
@@ -33,19 +33,32 @@ void VtkCompositeContourFilter::init()
 	vtkContourFilter* contour = vtkContourFilter::New();
 	contour->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-	// Setting the threshold to min / max values to ensure that the whole data
-	// is first processed. This is needed for correct lookup table generation.
-	double dMin = std::numeric_limits<double>::min();
-	double dMax = std::numeric_limits<double>::max();
+	// Getting the scalar range from the active point data scalar of the input algorithm
+	// This assumes that we do not want to contour on cell data.
+	double range[2];
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(_inputAlgorithm->GetOutputDataObject(0));
+	if(dataSet)
+	{
+		vtkPointData* pointData = dataSet->GetPointData();
+		if(pointData)
+			pointData->GetScalars()->GetRange(range);
+	}
+	else
+	{
+		// Setting the range to min / max values, this will result in a "bad table range"
+		// vtk warning.
+		range[0] = std::numeric_limits<double>::min();
+		range[1] = std::numeric_limits<double>::max();
+	}
 
 	// Sets a filter vector property which will be user editable
-	contour->GenerateValues(10, dMin, dMax);
+	contour->GenerateValues(10, range[0], range[1]);
 
 	// Create a list for the ThresholdBetween (vector) property.
 	QList<QVariant> contourRangeList;
 	// Insert the values (same values as above)
-	contourRangeList.push_back(dMin);
-	contourRangeList.push_back(dMax);
+	contourRangeList.push_back(range[0]);
+	contourRangeList.push_back(range[1]);
 	// Put that list in the property map
 	(*_algorithmUserVectorProperties)["Range"] = contourRangeList;
 
