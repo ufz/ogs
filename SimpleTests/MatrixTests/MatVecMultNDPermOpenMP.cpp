@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	// uses this Arg to parse the command line.
 	cmd.add( matrix_arg );
 
-	TCLAP::ValueArg<unsigned> n_cores_arg("n", "number-cores", "number of cores to use", true, 1, "number of cores");
+	TCLAP::ValueArg<unsigned> n_cores_arg("p", "number-cores", "number of cores to use", true, 1, "number of cores");
 	cmd.add( n_cores_arg );
 
 	TCLAP::ValueArg<unsigned> n_mults_arg("n", "number-of-multiplications", "number of multiplications to perform", true, 10, "number of multiplications");
