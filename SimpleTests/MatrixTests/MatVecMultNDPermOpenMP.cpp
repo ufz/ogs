@@ -35,6 +35,10 @@
 #include "BuildInfo.h"
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 /**
  * new formatter for logog
  */
@@ -129,8 +133,16 @@ int main(int argc, char *argv[])
 		INFO("\tParameters read: n=%d, nnz=%d", n, nnz);
 	}
 
+#ifdef _OPENMP
+	omp_set_num_threads(n_threads);
 	MathLib::CRSMatrixReorderedOpenMP mat(n, iA, jA, A);
-
+#else
+	delete [] iA;
+	delete [] jA;
+	delete [] A;
+	ERROR("program is not using OpenMP");
+	return -1;
+#endif
 	double *x(new double[n]);
 	double *y(new double[n]);
 
@@ -185,7 +197,7 @@ int main(int argc, char *argv[])
 	run_timer.stop();
 
 	if (verbose) {
-		INFO("\t[MVM] - took %e sec\t %e sec", cpu_timer.elapsed(), run_timer.elapsed());
+		INFO("\t[MVM] - took %e sec cpu time, %e sec run time", cpu_timer.elapsed(), run_timer.elapsed());
 	}
 
 	delete [] x;
