@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file ProjectData.h
- * 25/08/2010 KR Initial implementation
+ *
+ * Created on 2010-08-25 by Karsten Rink
  */
 
 #ifndef PROJECTDATA_H_
@@ -89,7 +96,7 @@ public:
 	                             const std::string &cond_name);
 
 	/// Removes all FEM Conditions with the given type from the given process
-	virtual void removeConditions(FiniteElement::ProcessType pcs_type = FiniteElement::INVALID_PROCESS, 
+	virtual void removeConditions(FiniteElement::ProcessType pcs_type = FiniteElement::INVALID_PROCESS,
 								  std::string geo_name = "",
 								  FEMCondition::CondType cond_type = FEMCondition::UNSPECIFIED);
 

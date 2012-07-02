@@ -1,8 +1,13 @@
-/*
- * ClusterBase.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: 02.01.2012
- *      Author: TF
+ *
+ * \file ClusterBase.h
+ *
+ * Created on 2012-01-02 by Thomas Fischer
  */
 
 #ifndef CLUSTERBASE_H_

@@ -1,8 +1,13 @@
 /**
- * Prism.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Prism.cpp
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Prism.h"
@@ -22,7 +27,7 @@ const unsigned Prism::_face_nodes[5][4] =
 	{2, 0, 3,  5}, // Face 3
 	{3, 4, 5, 99}  // Face 4
 };
- 
+
 const unsigned Prism::_edge_nodes[9][2] =
 {
 	{0, 1}, // Edge 0

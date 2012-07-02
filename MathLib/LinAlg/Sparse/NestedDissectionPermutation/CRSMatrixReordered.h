@@ -1,8 +1,13 @@
-/*
- * CRSMatrixReordered.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Jan 3, 2012
- *      Author: TF
+ *
+ * \file CRSMatrixReordered.h
+ *
+ * Created on 2012-01-03 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXREORDERED_H_

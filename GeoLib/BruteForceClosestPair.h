@@ -1,8 +1,13 @@
-/*
- * BruteForceClosestPair.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Jan 25, 2011
- *      Author: TF
+ *
+ * \file BruteForceClosestPair.h
+ *
+ * Created on 2011-01-25 by Thomas Fischer
  */
 
 #ifndef BRUTEFORCECLOSESTPAIR_H_

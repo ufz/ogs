@@ -1,8 +1,13 @@
 /**
- * Element.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Element.cpp
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Element.h"
@@ -70,7 +75,7 @@ const Node* Element::getNode(unsigned i) const
 	return NULL;
 }
 
-unsigned Element::getNodeIndex(unsigned i) const 
+unsigned Element::getNodeIndex(unsigned i) const
 {
 	if (i<getNNodes())
 		return _nodes[i]->getID();

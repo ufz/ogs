@@ -1,8 +1,13 @@
-/*
- * GEOObjects.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Jan 21, 2010
- *      Author: TF / KR
+ *
+ * \file GEOObjects.cpp
+ *
+ * Created on 2010-01-21 by Thomas Fischer / Karsten Rink
  */
 
 // GeoLib

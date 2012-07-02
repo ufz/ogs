@@ -1,14 +1,21 @@
-/*
- * MatVecMultNDPerm.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jan 3, 2012
- *      Author: TF
+ * @file MatVecMultNDPerm.cpp
+ *
+ * Created on 2012-01-03 by Thomas Fischer
  */
 
 #include <cstdlib>
 
 #ifdef OGS_BUILD_INFO
 #include "BuildInfo.h"
+#endif
+
+#ifdef UNIX
 #include <sys/unistd.h>
 #endif
 
@@ -52,7 +59,7 @@ int main(int argc, char *argv[])
 	// such as "-m matrix".
 	TCLAP::ValueArg<std::string> matrix_arg("m","matrix","input matrix file in CRS format",true,"","file name of the matrix in CRS format");
 
-	// Add the argument mesh_arg to the CmdLine object. The CmdLine object
+	// Add the argument matrix_arg to the CmdLine object. The CmdLine object
 	// uses this Arg to parse the command line.
 	cmd.add( matrix_arg );
 
@@ -86,6 +93,9 @@ int main(int argc, char *argv[])
 	} else {
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
 	}
+#endif
+
+#ifdef UNIX
 	const size_t length(256);
 	char *hostname(new char[length]);
 	gethostname (hostname, length);
@@ -187,6 +197,11 @@ int main(int argc, char *argv[])
 
 	delete [] x;
 	delete [] y;
+
+	delete custom_format;
+	delete logogCout;
+	LOGOG_SHUTDOWN();
+
 
 	return 0;
 }

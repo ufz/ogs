@@ -1,8 +1,13 @@
-/*
- * DistributionInfo.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Sep 28, 2010
- *      Author: fischeth
+ *
+ * \file DistributionInfo.cpp
+ *
+ * Created on 2010-09-28 by Thomas Fischer
  */
 
 #include "DistributionInfo.h"

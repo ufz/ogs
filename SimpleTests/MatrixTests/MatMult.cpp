@@ -1,8 +1,12 @@
-/*
- * MatMult.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jan 3, 2012
- *      Author: TF
+ * \file MatMult.cpp
+ *
+ * Created on 2012-01-03 by Thomas Fischer
  */
 
 #include <fstream>
@@ -24,9 +28,12 @@
 // BaseLib/tclap
 #include "tclap/CmdLine.h"
 
+#ifdef UNIX
+#include <sys/unistd.h>
+#endif
+
 #ifdef OGS_BUILD_INFO
 #include "BuildInfo.h"
-#include <sys/unistd.h>
 #endif
 
 #ifdef _OPENMP
@@ -98,11 +105,14 @@ int main(int argc, char *argv[])
 	} else {
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
 	}
-	const size_t length(256);
-	char *hostname(new char[length]);
-	gethostname (hostname, length);
-	INFO("hostname: %s", hostname);
-	delete [] hostname;
+#endif
+
+#ifdef UNIX
+	const int max_host_name_len (255);
+	char *hostname(new char[max_host_name_len]);
+	if (gethostname(hostname, max_host_name_len) == 0)
+		INFO("hostname: %s", hostname);
+	delete [] host_name_len;
 #endif
 
 	// *** reading matrix in crs format from file
@@ -122,6 +132,27 @@ int main(int argc, char *argv[])
 	}
 	unsigned nnz(iA[n]);
 	INFO("\tParameters read: n=%d, nnz=%d", n, nnz);
+
+#ifdef _OPENMP
+	omp_set_num_threads(n_threads);
+	unsigned *mat_entries_per_core(new unsigned[n_threads]);
+	for (unsigned k(0); k<n_threads; k++) {
+		mat_entries_per_core[k] = 0;
+	}
+
+	OPENMP_LOOP_TYPE i;
+	{
+#pragma omp parallel for
+		for (i = 0; i < n; i++) {
+			mat_entries_per_core[omp_get_thread_num()] += iA[i + 1] - iA[i];
+		}
+	}
+
+	INFO("*** work per core ***");
+	for (unsigned k(0); k<n_threads; k++) {
+		INFO("\t%d\t%d", k, mat_entries_per_core[k]);
+	}
+#endif
 
 #ifdef _OPENMP
 	omp_set_num_threads(n_threads);

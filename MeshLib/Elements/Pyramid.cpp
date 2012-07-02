@@ -1,8 +1,13 @@
 /**
- * Pyramid.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Pyramid.cpp
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Pyramid.h"
@@ -22,7 +27,7 @@ const unsigned Pyramid::_face_nodes[5][4] =
 	{3, 0, 4, 99}, // Face 3
 	{0, 3, 2,  1}  // Face 4
 };
- 
+
 const unsigned Pyramid::_edge_nodes[8][2] =
 {
 	{0, 1}, // Edge 0

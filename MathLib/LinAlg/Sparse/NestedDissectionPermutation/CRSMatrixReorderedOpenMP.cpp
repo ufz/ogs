@@ -1,8 +1,13 @@
-/*
- * CRSMatrixReorderedOpenMP.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Jan 20, 2012
- *      Author: TF
+ *
+ * \file CRSMatrixReorderedOpenMP.cpp
+ *
+ * Created on 2012-01-12 by Thomas Fischer
  */
 
 #ifdef _OPENMP

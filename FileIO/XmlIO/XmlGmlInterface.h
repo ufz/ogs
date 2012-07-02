@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file XmlGmlInterface.h
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #ifndef XMLGMLINTERFACE_H

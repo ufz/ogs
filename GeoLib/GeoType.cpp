@@ -1,8 +1,13 @@
-/*
- * GeoType.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Dec 1, 2010
- *      Author: TF
+ *
+ * \file GeoType.cpp
+ *
+ * Created on 2010-12-01 by Thomas Fischer
  */
 
 #include "GeoType.h"

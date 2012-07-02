@@ -1,8 +1,13 @@
-/*
- * TemplatePoint.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Jan 28, 2010
- *      Author: fischeth
+ *
+ * \file TemplatePoint.h
+ *
+ * Created on 2010-01-28 by Thomas Fischer
  */
 
 #ifndef TEMPLATEPOINT_H_

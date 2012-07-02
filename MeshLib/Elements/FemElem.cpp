@@ -1,8 +1,13 @@
 /**
- * Tet.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/03
- *      Author: KR
+ *
+ * \file FemElem.cpp
+ *
+ * Created on 2012-05-03 by Karsten Rink
  */
 
 #include "FemElem.h"

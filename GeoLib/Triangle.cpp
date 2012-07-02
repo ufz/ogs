@@ -1,8 +1,13 @@
-/*
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file Triangle.cpp
  *
- *  Created on: Jun 6, 2011
- *      Author: TF
+ * Created on 2011-06-06 by Thomas Fischer
  */
 
 #include "Triangle.h"

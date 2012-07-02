@@ -1,8 +1,13 @@
 /**
- * Face.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Face.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef FACE_H_
@@ -53,7 +58,7 @@ protected:
 	double _area;
 
 private:
-	
+
 
 }; /* class */
 

@@ -1,6 +1,13 @@
 /**
- * \file DateTools.h
- * 2011/02/17 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
+ * \file wait.h
+ *
+ * Created on 2011-02-17 by Karsten Rink
  */
 
 

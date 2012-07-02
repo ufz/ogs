@@ -1,8 +1,13 @@
 /**
- * Hex.cpp
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Hex.cpp
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #include "Hex.h"
@@ -23,7 +28,7 @@ const unsigned Hex::_face_nodes[6][4] =
 	{3, 0, 4, 7}, // Face 4
 	{4, 5, 6, 7}  // Face 5
 };
- 
+
 const unsigned Hex::_edge_nodes[12][2] =
 {
 	{0, 1}, // Edge 0

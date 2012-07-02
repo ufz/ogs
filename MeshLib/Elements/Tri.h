@@ -1,8 +1,13 @@
 /**
- * Tri.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Tri.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef TRI_H_
@@ -58,7 +63,7 @@ protected:
 
 	/// Return a specific edge node.
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
-	
+
 	static const unsigned _edge_nodes[3][2];
 
 }; /* class */

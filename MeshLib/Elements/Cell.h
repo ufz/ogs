@@ -1,8 +1,13 @@
 /**
- * Cell.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Cell.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef CELL_H_
@@ -45,7 +50,7 @@ protected:
 
 }; /* class */
 
-}		
+}
 
 #endif /* CELL_H_ */
 

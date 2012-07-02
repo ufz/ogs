@@ -1,8 +1,13 @@
 /**
- * Tet4.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/03
- *      Author: KR
+ *
+ * \file Tet4.h
+ *
+ * Created on 2012-05-03 by Karsten Rink
  */
 
 #ifndef TET4_H_

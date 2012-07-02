@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file FEMCondition.cpp
- * 25/11/2010 KR inital implementation
+ *
+ * Created on 2010-11-25 by Karsten Rink
  *
  */
 

@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file XMLInterface.cpp
- * 18/02/2010 KR Initial implementation
+ *
+ * Created on 2010-18-02 by Karsten Rink
  */
 
 #include "ProjectData.h"

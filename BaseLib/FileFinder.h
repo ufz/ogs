@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file FileFinder.h
- * 26/10/2010 KR Initial implementation
+ *
+ * Created on 2010-10-26 by Karsten Rink
  */
 
 #ifndef FILEFINDER_H

@@ -1,8 +1,13 @@
 /**
- * Hex.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Hex.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef HEX_H_

@@ -1,8 +1,13 @@
-/*
- * GMRes.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Oct 4, 2011
- *      Author: TF
+ *
+ * \file GMRes.h
+ *
+ * Created on 2011-10-04 by Thomas Fischer
  */
 
 #ifndef GMRES_H_

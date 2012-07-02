@@ -1,6 +1,13 @@
 /**
- * \file Color.cpp
- * 04/02/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
+ * \file Color.h
+ *
+ * Created on 2010-02-04 by Karsten Rink
  *
  */
 

@@ -1,6 +1,13 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
  * \file XmlCndInterface.cpp
- * 2011/11/23 KR as derived class from XMLInterface
+ *
+ * Created on 2011-11-23 by Karsten Rink
  */
 
 #include "XmlCndInterface.h"
@@ -124,10 +131,10 @@ void XmlCndInterface::readConditions( const QDomNode &listRoot,
 						{
 							std::vector<size_t> disNodes;
 							std::vector<double> disValues;
-							if (c->getProcessDistributionType()==FiniteElement::CONSTANT || 
+							if (c->getProcessDistributionType()==FiniteElement::CONSTANT ||
 								c->getProcessDistributionType()==FiniteElement::CONSTANT_NEUMANN)
 								disValues.push_back( strtod(distProps.at(j).toElement().text().toStdString().c_str(), 0) );
-							else if (c->getProcessDistributionType()==FiniteElement::LINEAR || 
+							else if (c->getProcessDistributionType()==FiniteElement::LINEAR ||
 								     c->getProcessDistributionType()==FiniteElement::LINEAR_NEUMANN ||
 									 c->getProcessDistributionType()==FiniteElement::DIRECT)
 							{
@@ -171,7 +178,7 @@ int XmlCndInterface::write(std::ostream& stream)
 
 	QDomDocument doc("OGS-CND-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysCond");
-	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.net" );
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysCND.xsd" );
 

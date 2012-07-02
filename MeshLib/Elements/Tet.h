@@ -1,8 +1,13 @@
 /**
- * Tet.h
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *      Date: 2012/05/02
- *      Author: KR
+ *
+ * \file Tet.h
+ *
+ * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef TET_H_
@@ -50,7 +55,7 @@ public:
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 6; };
-	
+
 	/// Get the number of nodes for face i.
 	unsigned getNFaceNodes(unsigned i) const { (void)i; return 3; };
 

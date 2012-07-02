@@ -1,8 +1,13 @@
-/*
- * Raster.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: Sep 7, 2011
- *      Author: TF
+ *
+ * \file Raster.cpp
+ *
+ * Created on 2011-09-07 by Thomas Fischer
  */
 
 #include "Raster.h"

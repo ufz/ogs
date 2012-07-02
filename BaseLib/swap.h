@@ -1,3 +1,14 @@
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
+ *
+ *
+ * \file swap.h
+ *
+ * Created on xxxx-xx-xx by xx
+ */
 #ifndef SWAP_H_
 #define SWAP_H_
 

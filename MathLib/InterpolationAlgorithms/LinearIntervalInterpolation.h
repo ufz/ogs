@@ -1,8 +1,13 @@
-/*
- * @file LinearIntervalInterpolation.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: May 22, 2012
- *      Author: fischeth
+ *
+ * \file  LinearIntervalInterpolation.h
+ *
+ * Created on 2012-05-22 by Thomas Fischer
  */
 
 #ifndef LINEARINTERVALINTERPOLATION_H_

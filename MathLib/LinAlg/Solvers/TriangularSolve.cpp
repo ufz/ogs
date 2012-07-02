@@ -1,8 +1,13 @@
-/*
- * TriangularSolve.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.com/LICENSE.txt
  *
- *  Created on: May 5, 2010
- *      Author: TF
+ *
+ * \file TriangularSolve.cpp
+ *
+ * Created on 2011-05-05 by Thomas Fischer
  */
 
 #include "../Dense/Matrix.h"

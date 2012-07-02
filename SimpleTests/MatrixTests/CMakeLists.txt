@@ -60,6 +60,7 @@ IF (METIS_FOUND)
 	TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
 		BaseLib
 		MathLib
+		logog
 		${METIS_LIBRARIES}
 		${ADDITIONAL_LIBS}
 	)
