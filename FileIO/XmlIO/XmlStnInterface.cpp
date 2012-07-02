@@ -1,22 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www./**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
- *
- *
-opengeosys.com)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www./**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
- *
- *
-opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.com/LICENSE.txt
  *
  *
  * \file XmlStnInterface.cpp
@@ -224,14 +210,7 @@ int XmlStnInterface::write(std::ostream& stream)
 
 	QDomDocument doc("OGS-STN-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysSTN");
-	root.setAttribute( "xmlns:ogs", "http://www./**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
- *
- *
-opengeosys.com" );
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysSTN.xsd" );
 
