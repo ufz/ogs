@@ -26,6 +26,23 @@ ADD_EXECUTABLE( MatMult
 SET_TARGET_PROPERTIES(MatMult PROPERTIES FOLDER SimpleTests)
 TARGET_LINK_LIBRARIES(MatMult logog)
 
+IF ( HAVE_PTHREADS )
+ADD_EXECUTABLE( MatVecMultPthreads
+        MatVecMultPthreads.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+SET_TARGET_PROPERTIES(MatVecMultPthreads PROPERTIES FOLDER SimpleTests)
+TARGET_LINK_LIBRARIES(MatVecMultPthreads 
+	pthread
+	BaseLib
+	MathLib
+	logog)
+ENDIF ( HAVE_PTHREADS )
+
+SET_TARGET_PROPERTIES(MatMult PROPERTIES FOLDER SimpleTests)
+TARGET_LINK_LIBRARIES(MatMult logog)
+
 # Create the executable
 ADD_EXECUTABLE( MatTestRemoveRowsCols
         MatTestRemoveRowsCols.cpp

@@ -54,9 +54,9 @@ void* amuxCRSpthread (void* ptr)
 	double* y(thread_param->_y);
 
 	for (unsigned i(beg_row); i<end_row; i++) {
-		y[i] = 0.0;
+		y[i] = A[iA[i]] * x[jA[iA[i]]];
 		const unsigned end (iA[i+1]);
-		for (unsigned j(iA[i]); j<end; j++) {
+		for (unsigned j(iA[i]+1); j<end; j++) {
 			y[i] += A[j] * x[jA[j]];
 		}
 		y[i] *= a;
@@ -104,6 +104,44 @@ void amuxCRSParallelPThreads (double a,
 	amuxCRS (a, n, iA, jA, A, x, y);
 #endif
 }
+
+void amuxCRSParallelPThreads (double a,
+	unsigned n, unsigned const * const iA, unsigned const * const jA,
+	double const * const A, double const * const x, double* y,
+	unsigned num_of_pthreads, unsigned const*const workload_intervals)
+{
+#ifdef HAVE_PTHREADS
+	// fill thread data objects
+	MatMultThreadParam** thread_param_array (new MatMultThreadParam*[num_of_pthreads]);
+	for (unsigned k(0); k<num_of_pthreads; k++) {
+		thread_param_array[k] = new MatMultThreadParam (a, workload_intervals[k], workload_intervals[k+1], iA, jA, A, x, y);
+	}
+
+	// allocate thread_array and return value array
+	pthread_t *thread_array (new pthread_t[num_of_pthreads]);
+	int *ret_vals (new int[num_of_pthreads]);
+
+	// create threads
+	for (unsigned k(0); k<num_of_pthreads; k++) {
+		ret_vals[k] = pthread_create( &(thread_array[k]), NULL, amuxCRSpthread, thread_param_array[k]);
+	}
+
+	// join threads
+	for (unsigned k(0); k<num_of_pthreads; k++) {
+		pthread_join (thread_array[k], NULL);
+	}
+
+	delete [] ret_vals;
+	for (unsigned k(0); k<num_of_pthreads; k++)
+		delete thread_param_array[k];
+	delete [] thread_param_array;
+	delete [] thread_array;
+#else
+	(void)num_of_pthreads;
+	amuxCRS (a, n, iA, jA, A, x, y);
+#endif
+}
+
 
 void amuxCRSSym (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
