@@ -36,8 +36,8 @@
 #include "BuildInfo.h"
 #endif
 
-#ifdef _OPENMP
-#include <omp.h>
+#ifdef HAVE_PTHREADS
+#include <pthread.h>
 #endif
 
 /**
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 	unsigned nnz(iA[n]);
 	INFO("\tParameters read: n=%d, nnz=%d", n, nnz);
 
-//#ifdef HAVE_PTHREADS
+#ifdef HAVE_PTHREADS
 	unsigned n_threads(n_cores_arg.getValue());
 	MathLib::CRSMatrixPThreads<double> mat (n, iA, jA, A, n_threads);
 
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 
 	delete [] x;
 	delete [] y;
-//#endif
+#endif
 
 	delete custom_format;
 	delete logogCout;
