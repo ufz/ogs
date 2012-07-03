@@ -94,6 +94,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	_renderer = renderer;
 	_mapper = QVtkDataSetMapper::New();
 	_mapper->InterpolateScalarsBeforeMappingOff();
+	_mapper->SetColorModeToMapScalars();
 
 	_mapper->SetInputConnection(_transformFilter->GetOutputPort());
 	_actor = vtkActor::New();
