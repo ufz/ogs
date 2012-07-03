@@ -106,7 +106,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	if (!vtkProps)
 	{
 		vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_compositeFilter);
-	
+
 		// Copy properties from parent or create a new VtkAlgorithmProperties
 		if (!vtkProps)
 		{
@@ -134,7 +134,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 		}
 	}
 	_vtkProps = vtkProps;
-	
+
 	if (vtkProps->GetActiveAttribute().length() == 0)
 	{
 		// Get first scalar and set it to active
@@ -146,7 +146,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	}
 	this->setVtkProperties(vtkProps);
 	this->SetActiveAttribute(vtkProps->GetActiveAttribute());
-	
+
 
 	// Set global backface culling
 	QSettings settings("UFZ, OpenGeoSys-5");
@@ -154,8 +154,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	this->setBackfaceCulling(backfaceCulling);
 
 	// Set the correct threshold range
-	if ( dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter) ||
-		 dynamic_cast<VtkCompositeContourFilter*>(this->_compositeFilter) )
+	if ( dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter) )
 	{
 		double range[2];
 		this->GetRangeForActiveAttribute(range);
