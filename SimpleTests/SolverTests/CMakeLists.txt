@@ -1,17 +1,3 @@
-## pthread ##
-SET ( CMAKE_THREAD_PREFER_PTHREAD On )
-FIND_PACKAGE( Threads )
-
-# Find blas
-FIND_PACKAGE ( BLAS REQUIRED )
-# Find lapack
-FIND_PACKAGE ( LAPACK REQUIRED )
-
-IF ( CMAKE_USE_PTHREADS_INIT )
-        SET (HAVE_PTHREADS TRUE)
-        MESSAGE (STATUS "pthread library found." )
-ENDIF (CMAKE_USE_PTHREADS_INIT )
-
 INCLUDE_DIRECTORIES(
         .
 	../../BaseLib/
