@@ -12,7 +12,9 @@ project( OGS-6 )
 INCLUDE(scripts/cmake/Functions.cmake)
 INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
-INCLUDE(scripts/cmake/Find.cmake)
+IF(NOT OGS_NO_EXTERNAL_LIBS)
+	INCLUDE(scripts/cmake/Find.cmake)
+ENDIF() # NOT OGS_NO_EXTERNAL_LIBS
 INCLUDE(scripts/cmake/ProjectSetup.cmake)
 INCLUDE(scripts/cmake/DocumentationSetup.cmake)
 
@@ -39,6 +41,8 @@ IF (OGS_BUILD_INFO)
 	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
 ENDIF (OGS_BUILD_INFO)
 
+OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
+
 ######################
 ### Subdirectories ###
 ######################
@@ -57,7 +61,4 @@ IF(NOT MSVC)
         ADD_SUBDIRECTORY( SimpleTests/SolverTests )
 ENDIF(NOT MSVC)
 
-# Create Configure.h
 CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)
-
-

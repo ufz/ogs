@@ -32,4 +32,8 @@
 #cmakedefine CMAKE_GENERATOR "${CMAKE_GENERATOR}"
 #cmakedefine HOSTNAME "${HOSTNAME}"
 
+#ifndef CMAKE_CXX_FLAGS
+#define CMAKE_CXX_FLAGS ""
+#endif // CMAKE_CXX_FLAGS
+
 #endif // BUILDINFO_H
