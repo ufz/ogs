@@ -31,8 +31,13 @@ void amuxCRS(FP_TYPE a, IDX_TYPE n, IDX_TYPE const * const iA, IDX_TYPE const * 
 
 void amuxCRSParallelPThreads (double a,
 	unsigned n, unsigned const * const iA, unsigned const * const jA,
-        double const * const A, double const * const x, double* y,
+	double const * const A, double const * const x, double* y,
 	unsigned num_of_pthreads);
+
+void amuxCRSParallelPThreads (double a,
+	unsigned n, unsigned const * const iA, unsigned const * const jA,
+	double const * const A, double const * const x, double* y,
+	unsigned num_of_pthreads, unsigned const*const workload_intervals);
 
 #ifdef _OPENMP
 template<typename FP_TYPE, typename IDX_TYPE>
