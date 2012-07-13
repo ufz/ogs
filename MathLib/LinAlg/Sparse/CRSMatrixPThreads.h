@@ -88,6 +88,12 @@ protected:
 			if (!found)
 				_workload_intervals[k] = beg;
 		}
+
+		for (unsigned k(0); k<_n_threads; k++) {
+			std::cout << "proc " << k << ": [" << _workload_intervals[k] << "," << _workload_intervals[k+1] << ") - "
+				<< _workload_intervals[k+1] - _workload_intervals[k] << " rows and "
+				<< this->_row_ptr[_workload_intervals[k+1]] - this->_row_ptr[_workload_intervals[k]] << " entries" << std::endl;
+		}
 	}
 
 	const unsigned _n_threads;
