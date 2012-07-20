@@ -16,7 +16,6 @@
 #include <vtkPoints.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkUnsignedCharArray.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkProperty.h>
 
@@ -96,7 +95,6 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	const size_t nPoints = nodes->size();
 	const size_t nElems  = elems->size();
-	//size_t nElemNodes = 0;
 	if (nPoints == 0 || nElems == 0)
 		return 0;
 
@@ -124,31 +122,31 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	// Generate mesh elements
 	for (size_t i = 0; i < nElems; i++)
 	{
-		vtkCell* newCell;
+		int type(0);
 		const GridAdapter::Element* elem = (*elems)[i];
 
 		switch (elem->type)
 		{
 		case MshElemType::LINE:
-			newCell = vtkLine::New();
+			type = 3;
 			break;
 		case MshElemType::TRIANGLE:
-			newCell = vtkTriangle::New();
+			type = 5;
 			break;
 		case MshElemType::QUAD:
-			newCell = vtkQuad::New();
+			type = 8;
 			break;
 		case MshElemType::HEXAHEDRON:
-			newCell = vtkHexahedron::New();
+			type = 12;
 			break;
 		case MshElemType::TETRAHEDRON:
-			newCell = vtkTetra::New();
+			type = 10;
 			break;
 		case MshElemType::PRISM:
-			newCell = vtkWedge::New();
+			type = 13;
 			break;
 		case MshElemType::PYRAMID:
-			newCell = vtkPyramid::New();
+			type = 14;
 			break;
 		default: // if none of the above can be applied
 			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->type) << "." << std::endl;
@@ -156,13 +154,13 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		}
 
 		materialIDs->InsertValue(i,(elem->material));
+		vtkIdList* point_ids = vtkIdList::New();
 
 		const size_t nElemNodes (elem->nodes.size());
 		for (size_t j = 0; j < nElemNodes; j++)
-			newCell->GetPointIds()->SetId(j, elem->nodes[nElemNodes - 1 - j]);
+			point_ids->InsertNextId(elem->nodes[nElemNodes-1-j]);
 
-		output->InsertNextCell(newCell->GetCellType(), newCell->GetPointIds());
-		newCell->Delete();
+		output->InsertNextCell(type, point_ids);
 	}
 
 	output->SetPoints(gridPoints);

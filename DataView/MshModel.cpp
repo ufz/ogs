@@ -68,18 +68,26 @@ void MshModel::addMeshObject(GridAdapter* mesh)
 	// display elements
 	const std::vector<GridAdapter::Element*>* elems = mesh->getElements();
 	const size_t nElems (elems->size());
+	QString elem_type_string("");
+	MshElemType::type elem_type(MshElemType::INVALID);
+
 	for (size_t i = 0; i < nElems; i++)
 	{
 		const GridAdapter::Element* current_element = (*elems)[i];
 		QList<QVariant> elemData;
-		elemData << "Element " + QString::number(i) << QString::fromStdString(
-		        MshElemType2String(current_element->type));
+		
+		if (current_element->type != elem_type)
+		{
+			elem_type = current_element->type;
+			elem_type_string = QString::fromStdString(MshElemType2String(current_element->type));
+		}
 
 		QString nodestxt("");
 		const size_t nNodes(current_element->nodes.size());
 		for (size_t j = 0; j < nNodes; j++)
 			nodestxt.append(QString::number(current_element->nodes[j]) + ", ");
-		elemData << nodestxt.left(nodestxt.length() - 2);
+
+		elemData << "Element " + QString::number(i) << elem_type_string << nodestxt.left(nodestxt.length() - 2);
 
 		TreeItem* elem = new TreeItem(elemData, newMesh);
 		newMesh->appendChild(elem);
