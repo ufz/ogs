@@ -14,11 +14,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn,
-                                       QString listName,
+DiagramPrefsDialog::DiagramPrefsDialog(const GEOLIB::Station* stn,
+                                       const QString &listName,
                                        DatabaseConnection* db,
                                        QDialog* parent)
-	: QDialog(parent)
+	: QDialog(parent), _window(NULL)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 
@@ -43,6 +43,18 @@ DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn,
 			}
 		}
 	}
+}
+
+DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QDialog* parent)
+	: QDialog(parent), _window(NULL)
+{
+	setupUi(this);
+	stationNameLabel->setText(QString::fromStdString(stn->getName()));
+	stationTypeLabel->setText("");
+
+	fromDateLine->setText(QString::number(stn->getSensorData()->getStartTime()));
+	toDateLine->setText(QString::number(stn->getSensorData()->getStartTime()));
+	this->createVisibilityCheckboxes();
 }
 
 DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename,

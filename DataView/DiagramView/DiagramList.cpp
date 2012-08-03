@@ -5,6 +5,7 @@
 
 #include "DiagramList.h"
 #include "StringTools.h"
+#include "SensorData.h"
 #include <QFile>
 #include <QTextStream>
 #include <limits>
@@ -184,10 +185,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 
 				for (int i = 0; i < nLists; i++)
 				{
-					value =
-					        strtod(replaceString(",", ".",
-					                             fields.takeFirst().toStdString(
-					                                     )).c_str(),0);
+					value = strtod(replaceString(",", ".",fields.takeFirst().toStdString()).c_str(),0);
 					lists[i]->addNextPoint(numberOfSecs,value);
 				}
 			}
@@ -210,6 +208,45 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 
 	for (int i = 0; i < nLists; i++)
 		lists[i]->update();
+
+	return nLists;
+}
+
+int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lists)
+{
+	const std::vector<SensorDataType::type> time_series_names (data->getTimeSeriesNames());
+	int nLists(time_series_names.size());
+
+	std::vector<size_t> time_steps;
+	if (data->getStepSize()>0)
+	{
+		const size_t start    = data->getStartTime();
+		const size_t end      = data->getEndTime();
+		const size_t stepsize = data->getStepSize();
+		for (size_t i = start; i <= end;  i+=stepsize)
+			time_steps.push_back(i);
+	}
+	else
+		time_steps = data->getTimeSteps();
+	
+	size_t nValues (time_steps.size());
+
+	for (int i = 0; i < nLists; i++)
+	{
+		DiagramList* l = new DiagramList;
+		l->setName(QString::fromStdString(SensorData::convertSensorDataType2String(time_series_names[i])));
+		l->setXLabel("Time");
+		l->setXUnit("day");
+		lists.push_back(l);
+
+		const std::vector<float> *time_series = data->getTimeSeries(time_series_names[i]);
+		// lists[i]->setStartDate(startDate);
+		
+		for (int j = 0; j < nValues; j++)
+			lists[i]->addNextPoint(time_steps[j], (*time_series)[j]);
+
+		lists[i]->update();
+	}	
 
 	return nLists;
 }

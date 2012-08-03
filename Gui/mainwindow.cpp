@@ -74,6 +74,7 @@
 
 // MSH
 #include "msh_mesh.h"
+#include "MshEditor.h" //test
 
 // MSHGEOTOOLS
 #include "ExtractMeshNodes.h"
@@ -1318,8 +1319,7 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 		prefs->show();
 	}
 	if (stn->type() == GEOLIB::Station::BOREHOLE)
-		OGSError::box(
-		        "No time series data available for borehole.");
+		OGSError::box("No time series data available for borehole.");
 }
 
 void MainWindow::showDiagramPrefsDialog()
@@ -1434,6 +1434,9 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	std::string name ("Test");
+	_meshModels->addMesh(MshEditor::getMeshSurface(*_project.getMesh("Ammer-Homogen100m-Final")), name);
+
 /*
 	const std::vector<GEOLIB::Polyline*> *lines = this->_geoModels->getPolylineVec("WESS Rivers");
 	MeshLib::CFEMesh* mesh = const_cast<MeshLib::CFEMesh*>(_project.getMesh("Ammer-Homogen100m-Final"));

@@ -12,6 +12,8 @@
 #include <QPoint>
 #include <vector>
 
+class SensorData;
+
 /**
  * \brief A List of data points and all the necessary meta-information to draw a graph.
  */
@@ -86,6 +88,8 @@ public:
 	 * For each column after the timestamps a new diagram list is created.
 	 */
 	static int readList(const QString &path, std::vector<DiagramList*> &list);
+
+	static int readList(const SensorData* data, std::vector<DiagramList*> &list);
 
 	/// Sets the colour of the graph.
 	void setColor(QColor c) { _colour = c; }
