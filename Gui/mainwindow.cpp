@@ -1312,9 +1312,10 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 	GEOLIB::Station* stn = _geoModels->getStationModel()->stationFromIndex(
 	        index, listName);
 
-	if (stn->type() == GEOLIB::Station::STATION)
+	if ((stn->type() == GEOLIB::Station::STATION) && stn->getSensorData())
 	{
-		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(stn, listName, _db);
+		DiagramPrefsDialog* prefs ( new DiagramPrefsDialog(stn) );
+		//DiagramPrefsDialog* prefs = new DiagramPrefsDialog(stn, listName, _db);
 		prefs->setAttribute(Qt::WA_DeleteOnClose);
 		prefs->show();
 	}

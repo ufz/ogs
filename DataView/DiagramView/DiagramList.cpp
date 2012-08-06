@@ -4,6 +4,7 @@
  */
 
 #include "DiagramList.h"
+#include "DateTools.h"
 #include "StringTools.h"
 #include "SensorData.h"
 #include <QFile>
@@ -228,6 +229,12 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 	}
 	else
 		time_steps = data->getTimeSteps();
+
+	bool is_date (false);
+
+	if (!(int2date(time_steps[0])).empty())
+		is_date = true;
+
 	
 	size_t nValues (time_steps.size());
 
@@ -236,14 +243,28 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 		DiagramList* l = new DiagramList;
 		l->setName(QString::fromStdString(SensorData::convertSensorDataType2String(time_series_names[i])));
 		l->setXLabel("Time");
-		l->setXUnit("day");
 		lists.push_back(l);
 
 		const std::vector<float> *time_series = data->getTimeSeries(time_series_names[i]);
-		// lists[i]->setStartDate(startDate);
-		
-		for (int j = 0; j < nValues; j++)
-			lists[i]->addNextPoint(time_steps[j], (*time_series)[j]);
+
+		if (is_date)
+		{
+			l->setXUnit("day");
+			QDateTime startDate(getDateTime(QString::fromStdString(int2date(time_steps[0]))));
+			lists[i]->setStartDate(startDate);
+			int numberOfSecs(0);
+			for (int j = 0; j < nValues; j++)
+			{
+				numberOfSecs = startDate.secsTo(getDateTime(QString::fromStdString(int2date(time_steps[j]))));
+				lists[i]->addNextPoint(numberOfSecs, (*time_series)[j]);
+			}
+		}
+		else
+		{
+			l->setXUnit("time step");
+			for (int j = 0; j < nValues; j++)
+				lists[i]->addNextPoint(time_steps[j], (*time_series)[j]);
+		}
 
 		lists[i]->update();
 	}	

@@ -125,8 +125,8 @@ void ListPropertiesDialog::accept()
 	{
 		if (_propLabel[i]->text().compare("date") == 0)
 		{
-			minVal = xmlDate2double(_minValue[i]->text().toStdString());
-			maxVal = xmlDate2double(_maxValue[i]->text().toStdString());
+			minVal = xmlDate2int(_minValue[i]->text().toStdString());
+			maxVal = xmlDate2int(_maxValue[i]->text().toStdString());
 		}
 		else
 		{

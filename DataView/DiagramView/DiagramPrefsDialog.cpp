@@ -51,9 +51,10 @@ DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QDialog* parent)
 	setupUi(this);
 	stationNameLabel->setText(QString::fromStdString(stn->getName()));
 	stationTypeLabel->setText("");
+	DiagramList::readList(stn->getSensorData(), _list);
 
 	fromDateLine->setText(QString::number(stn->getSensorData()->getStartTime()));
-	toDateLine->setText(QString::number(stn->getSensorData()->getStartTime()));
+	toDateLine->setText(QString::number(stn->getSensorData()->getEndTime()));
 	this->createVisibilityCheckboxes();
 }
 
