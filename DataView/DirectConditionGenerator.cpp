@@ -40,8 +40,8 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 				int cell_y = static_cast<int>(floor((coords[1] - origin_y)/delta));
 
 				// if node outside of raster use raster boundary values
-				cell_x = (cell_x < 0) ?  0 : ((static_cast<int>(cell_x) > imgwidth)  ? (imgwidth-1)  : cell_x);
-				cell_y = (cell_y < 0) ?  0 : ((static_cast<int>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
+				cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(imgwidth )) ? (imgwidth-1)  : cell_x);
+				cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(imgheight)) ? (imgheight-1) : cell_y);
 
 				size_t index = cell_y*imgwidth+cell_x;
 				if (fabs(img[index] + 9999) > std::numeric_limits<float>::min())

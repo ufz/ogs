@@ -253,7 +253,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 			QDateTime startDate(getDateTime(QString::fromStdString(int2date(time_steps[0]))));
 			lists[i]->setStartDate(startDate);
 			int numberOfSecs(0);
-			for (int j = 0; j < nValues; j++)
+			for (size_t j = 0; j < nValues; j++)
 			{
 				numberOfSecs = startDate.secsTo(getDateTime(QString::fromStdString(int2date(time_steps[j]))));
 				lists[i]->addNextPoint(numberOfSecs, (*time_series)[j]);
@@ -262,7 +262,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 		else
 		{
 			l->setXUnit("time step");
-			for (int j = 0; j < nValues; j++)
+			for (size_t j = 0; j < nValues; j++)
 				lists[i]->addNextPoint(time_steps[j], (*time_series)[j]);
 		}
 
