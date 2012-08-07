@@ -404,7 +404,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &photometric);
 			// read colormap
 			uint16* cmap_red = NULL, * cmap_green = NULL, * cmap_blue = NULL;
-			int colormap_used = TIFFGetField(tiff,
+			/*int colormap_used = */TIFFGetField(tiff,
 											TIFFTAG_COLORMAP,
 											&cmap_red,
 											&cmap_green,
