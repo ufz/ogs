@@ -47,10 +47,10 @@ public:
 	/// Get dimension of the mesh element.
 	virtual unsigned getDimension() const = 0;
 
-	/// Returns the edge i of the element.
+	/// Returns the i-th edge of the element.
 	const Element* getEdge(unsigned i) const;
 
-	/// Returns the face i of the element.
+	/// Returns the i-th face of the element.
 	virtual const Element* getFace(unsigned i) const = 0;
 
 	/// Get the number of edges for this element.

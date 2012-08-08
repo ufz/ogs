@@ -129,7 +129,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 
 	switch(elem_type)
 	{
-	case MshElemType::LINE:
+	case MshElemType::EDGE:
 		for (int i = 0; i < 2; i++)
 			ss >> idx[i];
 		elem = new MeshLib::Edge(nodes[idx[0]], nodes[idx[1]], patch_index);

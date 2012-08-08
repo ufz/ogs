@@ -14,7 +14,7 @@
 
 const std::string MshElemType2String(const MshElemType::type t)
 {
-	if (t == MshElemType::LINE)
+	if (t == MshElemType::EDGE)
 		return "line";
 	if (t == MshElemType::QUAD)
 		return "quad";
@@ -34,7 +34,7 @@ const std::string MshElemType2String(const MshElemType::type t)
 MshElemType::type String2MshElemType(const std::string &s)
 {
 	if (s.compare("line") == 0)
-		return MshElemType::LINE;
+		return MshElemType::EDGE;
 	if (s.compare("quad") == 0)
 		return MshElemType::QUAD;
 	if (s.compare("hex")  == 0)
