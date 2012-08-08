@@ -7,8 +7,9 @@
  *
  * \file Station.h
  *
- * Created by Karsten Rink
+ * Created on 2010-07-01 by Karsten Rink
  */
+
 
 #ifndef GEO_STATION_H
 #define GEO_STATION_H
@@ -18,10 +19,10 @@
 #include <string>
 #include <vector>
 
-#include "Color.h"
 #include "Point.h"
 #include "Polyline.h"
 #include "PropertyBounds.h"
+#include "SensorData.h"
 
 namespace GeoLib
 {
@@ -30,8 +31,9 @@ namespace GeoLib
  *
  * \brief An observation station as a geometric object (i.e. basically a Point with some additional information.
  *
- * An observation station as a geometric object. Such a station is basically a point object
- * with some additional information such as colour, a name, etc.
+ * An observation station as a geometric object. A station is basically a point object
+ * with some additional information. This may include a name, a stratigraphy (only for the derived class StationBore),
+ * time series data (as a SensorData-object), etc.
  *
  * Notes concerning the property-system used in this class:
  * Variables of Station and derived classes can be defined to be "properties" of this class.
@@ -44,6 +46,8 @@ namespace GeoLib
  * and write-functions need to be actually implemented as static functions to avoid casting problems with the
  * function pointers used to dynamically connect the GUI functionality to the variables defined within the
  * station-classes. Please refer to the documentation of the properties defined below for details.
+ *
+ * \sa StationBorehole, SensorData
  */
 class Station : public Point
 {
@@ -123,11 +127,7 @@ public:
 	/// Determines if the station's parameters are within the the bounds of the current selection (see property system for details)
 	bool inSelection(const std::vector<PropertyBounds> &bounds);
 
-	/**
-	 * Returns true if all properties of this stations are within the boundaries given by bounds and false otherwise
-	 * @param properties the bounds
-	 * @return true if all properties of this stations are within the boundaries, else false
-	 */
+	/// Returns true if all properties of this stations are within the boundaries given by \param bounds and false otherwise
 	bool inSelection(std::map<std::string, double> properties) const;
 
 	/// Returns the name of the station.
@@ -142,9 +142,17 @@ public:
 	/// Creates a new station object based on the given parameters.
 	static Station* createStation(const std::string &name, double x, double y, double z);
 
+	/// Returns the specific value for this station
 	double getStationValue() { return this->_station_value; };
 
+	/// Allows to set a specific value for this station (e.g. for classification)
 	void setStationValue(double station_value) { this->_station_value = station_value; };
+
+	/// Allows to add sensor data from a CSV file to the observation site
+	void addSensorDataFromCSV(const std::string &file_name) { this->_sensor_data = new SensorData(file_name); };
+
+	/// Returns all the sensor data for this observation site
+	const SensorData* getSensorData() { return this->_sensor_data; };
 
 protected:
 	/**
@@ -183,6 +191,8 @@ protected:
 
 private:
 	double _station_value;
+	SensorData* _sensor_data;
+
 };
 
 /********* Boreholes *********/
@@ -211,7 +221,7 @@ public:
 	                                      std::string date = "");
 
 	/// Adds a stratigraphy to a borehole given a vector of points of length "n" and a vector of soil names of length "n-1".
-	int addStratigraphy(const std::vector<GeoLib::Point*> &profile, const std::vector<std::string> soil_names);
+	int addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> soil_names);
 
 	/// Reads the stratigraphy for a specified station from a file
 	static int addStratigraphy(const std::string &path, StationBorehole* borehole);
@@ -262,17 +272,13 @@ protected:
 		                                           (StationBorehole*)stnObject;
 		                                   return stn->_depth; }
 	/// Returns the date this borehole has been drilled. Please see the documentation for Station::getX for details concerning the syntax.
-	static double getDate(void* stnObject)  { StationBorehole* stn =
-		                                          (StationBorehole*)stnObject;
-		                                  return stn->_date; }
+	static double getDate(void* stnObject)  { StationBorehole* stn = (StationBorehole*)stnObject; return stn->_date; }
 	/// Sets the depth of this borehole. Please see the documentation for Station::getX for details concerning the syntax.
 	static void setDepth(void* stnObject, double val) { StationBorehole* stn =
 		                                                    (StationBorehole*)stnObject;
 		                                            stn->_depth = val; }
 	/// Sets the date when this borehole has been drilled. Please see the documentation for Station::getX for details concerning the syntax.
-	static void setDate(void* stnObject, double val) { StationBorehole* stn =
-		                                                   (StationBorehole*)stnObject;
-		                                           stn->_date = val; }
+	static void setDate(void* stnObject, double val) { StationBorehole* stn = (StationBorehole*)stnObject; stn->_date = static_cast<int>(val); }
 
 private:
 	/// Adds a layer for the specified borehole profile based on the information given in the stringlist
@@ -289,7 +295,7 @@ private:
 	//std::vector<long> _soilType;
 	double _zCoord; // height at which the borehole officially begins (this might _not_ be the actual elevation)
 	double _depth; // depth of the borehole
-	double _date; // date when the borehole has been drilled
+	int _date; // date when the borehole has been drilled
 
 	/// Contains the names for all the soil layers
 	std::vector<std::string> _soilName;
