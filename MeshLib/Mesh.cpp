@@ -112,34 +112,24 @@ void Mesh::setNeighborInformationForElements()
 	{
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
-		const size_t nNodes (_elements[m]->getNNodes());
+		Element *const element (_elements[m]);
+		const size_t nNodes (element->getNNodes());
 		for (unsigned n(0); n<nNodes; n++)
 		{
-			const std::vector<Element*> conn_elems (_elements[m]->getNode(n)->getElements());
+			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
 			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
 		}
-		
+
 		const unsigned nNeighbors ( neighbors.size() );
-		/*std::vector<bool> done (nNeighbors, false);
-		// mark off the element itself
-		for (unsigned j(0); j<nNeighbors; j++)
-			if (neighbors[j] == _elements[m])
-				done[j] = true;
-				*/
+
 		// check if connected element is indeed a neighbour and mark all doubles of that element as 'done'
 		for (unsigned i(0); i<nNeighbors; i++)
-			//if (!done[i])
+		{
+			if (element->addNeighbor(neighbors[i]))
 			{
-				if (_elements[m]->addNeighbor(neighbors[i]))
-				{
-					neighbors[i]->addNeighbor(_elements[m]);
-				}/*
-					for (unsigned j(0); j<nNeighbors; j++)
-						if (!done[j] && (neighbors[j] == neighbors[i]))
-							done[j] = true;
-							*/
-					
+				neighbors[i]->addNeighbor(element);
 			}
+		}
 	}
 }
 

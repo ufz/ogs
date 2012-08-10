@@ -48,7 +48,7 @@ public:
 	const Element* getElement(unsigned idx) const { return _elements[idx]; };
 
 	/// Get all elements the node is part of.
-	const std::vector<Element*> getElements() const { return _elements; };
+	const std::vector<Element*>& getElements() const { return _elements; };
 
 	/// Get number of elements the node is part of.
 	size_t getNElements() const { return _elements.size(); };

@@ -52,12 +52,13 @@ bool Element::addNeighbor(Element* e)
 		const unsigned eNodes (e->getNNodes());
 		const Node* const* e_nodes = e->getNodes();
 		unsigned count(0);
+		const unsigned dim (this->getDimension());
 		for (unsigned i(0); i<nNodes; i++)
 			for (unsigned j(0); j<eNodes; j++)
 				if (_nodes[i] == e_nodes[j])
 					//std::cout << _nodes[i]->getID() << " == " << e_nodes[j]->getID() << std::endl;
 					// increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
-					if ((++count)>=this->getDimension())
+					if ((++count)>=dim)
 					{
 						_neighbors[n]=e;
 						return true;

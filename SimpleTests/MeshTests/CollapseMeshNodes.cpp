@@ -17,7 +17,6 @@
 // BaseLib/logog
 #include "logog.hpp"
 
-
 // MeshLib
 #include "Node.h"
 #include "Elements/Element.h"
