@@ -24,15 +24,13 @@ Face::Face(Node** nodes, MshElemType::type type, unsigned value)
 {
 }
 */
-Face::Face(MshElemType::type type, unsigned value)
-	: Element(type, value)
+Face::Face(unsigned value)
+	: Element(value)
 {
 }
 
 Face::~Face()
-{
-	delete[] this->_neighbors;
-}
+{}
 
 void Face::getSurfaceNormal(double normal[3]) const
 {

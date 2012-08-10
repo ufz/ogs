@@ -18,14 +18,14 @@
 namespace MeshLib {
 
 Edge::Edge(Node* nodes[2], unsigned value)
-	: Element(MshElemType::EDGE, value)
+	: Element(value)
 {
 	_nodes = nodes;
 	this->_length = this->computeLength();
 }
 
 Edge::Edge(Node* n0, Node* n1, unsigned value)
-	: Element(MshElemType::EDGE, value)
+	: Element(value)
 {
 	_nodes = new Node*[2];
 	_nodes[0] = n0;
@@ -35,7 +35,7 @@ Edge::Edge(Node* n0, Node* n1, unsigned value)
 }
 
 Edge::Edge(const Edge &edge)
-	: Element(MshElemType::EDGE, edge.getValue())
+	: Element(edge.getValue())
 {
 	_nodes = new Node*[2];
 	_nodes[0] = edge._nodes[0];
@@ -50,6 +50,11 @@ Edge::~Edge()
 double Edge::computeLength()
 {
 	return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
+}
+
+Element* Edge::clone() const
+{
+	return new Edge(*this);
 }
 
 }

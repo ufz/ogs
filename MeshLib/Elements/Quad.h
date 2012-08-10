@@ -57,6 +57,18 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 4; };
 
+	/**
+	 * Method returns the type of the element. In this case QUAD will be returned.
+	 * @return MshElemType::QUAD
+	 */
+	virtual MshElemType::type getType() const { return MshElemType::QUAD; }
+
+	/**
+	 * Method clone is inherited from class Element. It makes a deep copy of the Quad instance.
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const;
+
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.
 	double computeArea();

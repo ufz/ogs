@@ -57,6 +57,18 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 3; };
 
+	/**
+	 * Method returns the type of the element. In this case TRIANGLE will be returned.
+	 * @return MshElemType::TRIANGLE
+	 */
+	virtual MshElemType::type getType() const { return MshElemType::TRIANGLE; }
+
+	/**
+	 * Method clone is inherited from class Element. It makes a deep copy of the Tri instance.
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const;
+
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
 	double computeArea();

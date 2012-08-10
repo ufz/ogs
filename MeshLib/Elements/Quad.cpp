@@ -28,7 +28,7 @@ const unsigned Quad::_edge_nodes[4][2] =
 
 
 Quad::Quad(Node* nodes[4], unsigned value)
-	: Face(MshElemType::TRIANGLE, value)
+	: Face(value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[4];
@@ -38,7 +38,7 @@ Quad::Quad(Node* nodes[4], unsigned value)
 }
 
 Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
-	: Face(MshElemType::TRIANGLE, value)
+	: Face(value)
 {
 	_nodes = new Node*[4];
 	_nodes[0] = n0;
@@ -52,7 +52,7 @@ Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
 }
 
 Quad::Quad(const Quad &quad)
-	: Face(MshElemType::QUAD, quad.getValue())
+	: Face(quad.getValue())
 {
 	_nodes = new Node*[4];
 	_neighbors = new Element*[4];
@@ -73,6 +73,12 @@ double Quad::computeArea()
 	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords())
          + MathLib::calcTriangleArea(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords());
 }
+
+Element* Quad::clone() const
+{
+	return new Quad(*this);
+}
+
 
 }
 

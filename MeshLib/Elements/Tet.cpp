@@ -39,7 +39,7 @@ const unsigned Tet::_edge_nodes[6][2] =
 
 
 Tet::Tet(Node* nodes[4], unsigned value)
-	: Cell(MshElemType::TETRAHEDRON, value)
+	: Cell(value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[4];
@@ -49,7 +49,7 @@ Tet::Tet(Node* nodes[4], unsigned value)
 }
 
 Tet::Tet(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
-	: Cell(MshElemType::TETRAHEDRON, value)
+	: Cell(value)
 {
 	_nodes = new Node*[4];
 	_nodes[0] = n0;
@@ -63,7 +63,7 @@ Tet::Tet(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
 }
 
 Tet::Tet(unsigned value)
-	: Cell(MshElemType::TETRAHEDRON, value)
+	: Cell(value)
 {
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
@@ -71,7 +71,7 @@ Tet::Tet(unsigned value)
 }
 
 Tet::Tet(const Tet &tet)
-	: Cell(MshElemType::TETRAHEDRON, tet.getValue())
+	: Cell(tet.getValue())
 {
 	_nodes = new Node*[4];
 	_neighbors = new Element*[4];
@@ -105,6 +105,12 @@ const Element* Tet::getFace(unsigned i) const
 	std::cerr << "Error in MeshLib::Element::getFace() - Index does not exist." << std::endl;
 	return NULL;
 }
+
+Element* Tet::clone() const
+{
+	return new Tet(*this);
+}
+
 
 }
 

@@ -39,13 +39,20 @@ public:
 	/// Destructor
 	virtual ~Cell();
 
+	/**
+	 * This method is pure virtual and is inherited from class @sa Element.
+	 * It has to be implemented in the derived classes of class Cell!
+	 * @return a copy of the object
+	 */
+	virtual Element* clone() const = 0;
+
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Cell(Node** nodes, MshElemType::type type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Cell(MshElemType::type type, unsigned value = 0);
+	Cell(unsigned value = 0);
 
 	/// Calculate the volume of this 3d element.
 	virtual double computeVolume() = 0;
