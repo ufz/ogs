@@ -243,7 +243,7 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 	return 1;
 }
 
-int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> soil_names)
+int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names)
 {
 	if (((profile.size()-1) == soil_names.size()) && (soil_names.size()>0))
 	{

@@ -48,7 +48,7 @@ public:
 	const Element* getElement(unsigned idx) const { return _elements[idx]; };
 
 	/// Get all elements the node is part of.
-	const std::vector<const Element*> getElements() const { return _elements; };
+	const std::vector<Element*> getElements() const { return _elements; };
 
 	/// Get number of elements the node is part of.
 	size_t getNElements() const { return _elements.size(); };
@@ -61,9 +61,9 @@ protected:
 	 * Add an element the node is part of.
 	 * This method is called by Mesh::addElement(Element*), see friend definition.
 	 */
-	void addElement(const Element* elem) { _elements.push_back(elem); };
+	void addElement(Element* elem) { _elements.push_back(elem); };
 
-	std::vector<const Element*> _elements;
+	std::vector<Element*> _elements;
 
 }; /* class */
 

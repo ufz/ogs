@@ -34,7 +34,7 @@ Face::~Face()
 	delete[] this->_neighbors;
 }
 
-const double* Face::getSurfaceNormal() const
+void Face::getSurfaceNormal(double normal[3]) const
 {
 	const double edge1[3] = { (*this->_nodes[0])[0]-(*this->_nodes[1])[0],
 				 			  (*this->_nodes[0])[1]-(*this->_nodes[1])[1],
@@ -42,9 +42,7 @@ const double* Face::getSurfaceNormal() const
 	const double edge2[3] = { (*this->_nodes[1])[0]-(*this->_nodes[2])[0],
 							  (*this->_nodes[1])[1]-(*this->_nodes[2])[1],
 							  (*this->_nodes[1])[2]-(*this->_nodes[2])[2] };
-	double normal[3];
 	MathLib::crossProd(edge1, edge2, normal);
-	return normal;
 }
 
 }

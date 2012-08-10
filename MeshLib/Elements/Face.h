@@ -43,7 +43,7 @@ public:
 	unsigned getNFaces() const { return 0; };
 
 	/// Returns the surface normal of a 2D element.
-	const double* getSurfaceNormal() const;
+	void getSurfaceNormal(double normal[3]) const;
 
 	/// Destructor
 	virtual ~Face();

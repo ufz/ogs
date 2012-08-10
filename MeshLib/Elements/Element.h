@@ -35,6 +35,13 @@ public:
 	/// Compute the minimum and maximum squared edge length for this element
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
+	/**
+	 * \brief Tries to add an element e as neighbour to this element. 
+	 * If the elements really are neighbours, the element is added to the
+	 * neighbour-ist and true is returned. Otherwise false is returned.
+	 */
+	bool addNeighbor(Element* e);
+
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	virtual double getContent() const = 0;
 
