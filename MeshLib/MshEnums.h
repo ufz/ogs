@@ -22,7 +22,7 @@ struct MshElemType
 {
 	enum type {
 		INVALID,
-		LINE,
+		EDGE,
 		QUAD,
 		HEXAHEDRON,
 		TRIANGLE,

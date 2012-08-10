@@ -129,7 +129,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 
 	switch(elem_type)
 	{
-	case MshElemType::LINE:
+	case MshElemType::EDGE:
 		for (int i = 0; i < 2; i++)
 			ss >> idx[i];
 		elem = new MeshLib::Edge(nodes[idx[0]], nodes[idx[1]], patch_index);
@@ -215,7 +215,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	size_t n_elements(0);
 
 	for (size_t i(0); i < ele_vector_size; i++) {
-		if ((ele_vec[i])->getType() == MshElemType::LINE) {
+		if ((ele_vec[i])->getType() == MshElemType::EDGE) {
 			non_line_element[i] = false;
 			non_null_element[i] = false;
 		} else {

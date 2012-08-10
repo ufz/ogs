@@ -30,6 +30,7 @@ Edge::Edge(Node* n0, Node* n1, unsigned value)
 	_nodes = new Node*[2];
 	_nodes[0] = n0;
 	_nodes[1] = n1;
+
 	this->_length = this->computeLength();
 }
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- OpenGeoSysProject schema; initial implementation: Karsten Rink, 2010-08-20 -->
+  
+  <!-- object containing just a source file definition -->
+  <xs:complexType name="projectElement">
+    <xs:sequence>
+	<xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- object containing a required reference to a geometry file -->
+  <xs:complexType name="geoElement">
+    <xs:complexContent>
+      <xs:extension base="projectElement">
+        <xs:sequence>
+          <xs:element name="geoReference" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- msh-object with optional geometry- and texture-reference -->
+  <xs:complexType name="mshElement">
+    <xs:complexContent>
+      <xs:extension base="projectElement">
+        <xs:sequence>
+          <xs:element name="geoReference" type="xs:string" minOccurs="0" />
+          <xs:element name="texture" type="xs:string" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  <!-- definition of file content -->    
+  <xs:element name="OpenGeoSysProject">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="geo" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="msh" type="mshElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="bc"  type="geoElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="ic"  type="geoElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="st"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="mfp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="mmp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="msp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="np"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="out" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="pcs" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="sim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="tim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="fct" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="stn" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>  
+  </xs:element> 
+
+</xs:schema>

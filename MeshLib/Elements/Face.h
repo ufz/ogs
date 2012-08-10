@@ -15,6 +15,7 @@
 
 #include "Element.h"
 
+
 namespace MeshLib {
 
 /**
@@ -40,6 +41,9 @@ public:
 
 	/// 2D elements have no faces.
 	unsigned getNFaces() const { return 0; };
+
+	/// Returns the surface normal of a 2D element.
+	const double* getSurfaceNormal() const;
 
 	/// Destructor
 	virtual ~Face();
