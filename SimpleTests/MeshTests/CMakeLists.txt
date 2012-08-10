@@ -1,3 +1,6 @@
+IF (WIN32)
+	SET ( ADDITIONAL_LIBS Winmm.lib )
+ENDIF()
 
 INCLUDE_DIRECTORIES(
         .
@@ -23,6 +26,7 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	BaseLib
 	GeoLib
 	logog
+	${ADDITIONAL_LIBS}
 )
 
 # Create CollapseMeshNodes executable

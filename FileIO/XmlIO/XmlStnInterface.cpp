@@ -95,19 +95,24 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 		    station.hasAttribute("y"))
 		{
 			std::string stationName("[NN]");
+			std::string sensor_data_file_name("");
 			std::string boreholeDate("0000-00-00");
 			double boreholeDepth(0.0), stationValue(0.0);
 
 			QDomNodeList stationFeatures = station.childNodes();
 			for(int i = 0; i < stationFeatures.count(); i++)
 			{
+				// check for general station features
 				const QDomNode feature_node (stationFeatures.at(i));
 				const QString feature_name (feature_node.nodeName());
 				const std::string element_text (feature_node.toElement().text().toStdString());
 				if (feature_name.compare("name") == 0)
 					stationName = feature_node.toElement().text().toStdString();
+				if (feature_name.compare("sensordata") == 0)
+					sensor_data_file_name = feature_node.toElement().text().toStdString();
 				/* add other station features here */
 
+				// check for general borehole features
 				else if (feature_name.compare("value") == 0)
 					stationValue = strtod(element_text.c_str(), 0);
 				else if (feature_name.compare("bdepth") == 0)
@@ -117,10 +122,7 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				/* add other borehole features here */
 			}
 
-			double zVal = (station.hasAttribute("z")) ? strtod((station.attribute(
-			                                                            "z")).
-			                                                   toStdString().c_str(),
-			                                                   0) : 0.0;
+			double zVal = (station.hasAttribute("z")) ? strtod((station.attribute("z")).toStdString().c_str(), 0) : 0.0;
 
 			if (station.nodeName().compare("station") == 0)
 			{
@@ -128,9 +130,11 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				        new GeoLib::Station(
 							strtod((station.attribute("x")).toStdString().c_str(), 0),
 				            strtod((station.attribute("y")).toStdString().c_str(), 0),
-				            zVal,
+				            zVal, 
 							stationName);
 				s->setStationValue(stationValue);
+				if (!sensor_data_file_name.empty())
+						s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name, station_file_name));
 				stations->push_back(s);
 			}
 			else if (station.nodeName().compare("borehole") == 0)
@@ -144,17 +148,15 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				        boreholeDate);
 				s->setStationValue(stationValue);
 				/* add stratigraphy to the borehole */
-				for(int i = 0; i < stationFeatures.count(); i++)
-					if (stationFeatures.at(i).nodeName().compare("strat") == 0)
-						this->readStratigraphy(stationFeatures.at(i), s);
+				for(int j = 0; j < stationFeatures.count(); j++)
+					if (stationFeatures.at(j).nodeName().compare("strat") == 0)
+						this->readStratigraphy(stationFeatures.at(j), s);
 
 				stations->push_back(s);
 			}
 		}
 		else
-			std::cout <<
-			"XmlStnInterface::readStations() - Attribute missing in <station> tag ..." <<
-			std::endl;
+			std::cout << "XmlStnInterface::readStations() - Attribute missing in <station> tag ..." << std::endl;
 		station = station.nextSiblingElement();
 	}
 }
