@@ -43,18 +43,19 @@ int main(int argc, char *argv[])
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+#endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-#endif
 	MeshLib::Mesh* mesh = mesh_io.loadMeshFromFile(fname);
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 //	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
 	INFO ("mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+#endif
 	run_time.stop();
 //	std::cout << "time for reading: " << run_time.elapsed() << " s" << std::endl;
 	INFO ("time for reading: %f s", run_time.elapsed());
-#endif
+
 /*
 	unsigned elem_id = 1;
 	const MeshLib::Element* e = mesh->getElement(elem_id);
