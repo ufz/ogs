@@ -45,7 +45,7 @@ const unsigned Prism::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
 
 Prism::Prism(Node* nodes[6], unsigned value)
-	: Cell(MshElemType::PRISM, value)
+	: Cell(value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[5];
@@ -55,7 +55,7 @@ Prism::Prism(Node* nodes[6], unsigned value)
 }
 
 Prism::Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, unsigned value)
-	: Cell(MshElemType::PRISM, value)
+	: Cell(value)
 {
 	_nodes = new Node*[6];
 	_nodes[0] = n0;
@@ -71,7 +71,7 @@ Prism::Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, unsigne
 }
 
 Prism::Prism(const Prism &prism)
-	: Cell(MshElemType::PRISM, prism.getValue())
+	: Cell(prism.getValue())
 {
 	_nodes = new Node*[6];
 	for (unsigned i=0; i<6; i++)
@@ -119,5 +119,10 @@ unsigned Prism::getNFaceNodes(unsigned i) const
 	return 0;
 }
 
+Element* Prism::clone() const
+{
+	return new Prism(*this);
 }
+
+} // end namespace MeshLib
 

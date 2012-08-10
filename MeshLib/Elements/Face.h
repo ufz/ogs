@@ -44,13 +44,20 @@ public:
 	/// Destructor
 	virtual ~Face();
 
+	/**
+	 * This method is pure virtual and is inherited from class @sa Element.
+	 * It has to be implemented in the derived classes of class Face!
+	 * @return a copy of the object
+	 */
+	virtual Element* clone() const = 0;
+
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Face(Node** nodes, MshElemType::type type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Face(MshElemType::type type, unsigned value = 0);
+	Face(unsigned value = 0);
 
 	/// Calculate the area of this 2d element.
 	virtual double computeArea() = 0;

@@ -27,7 +27,7 @@ const unsigned Tri::_edge_nodes[3][2] =
 
 
 Tri::Tri(Node* nodes[3], unsigned value)
-	: Face(MshElemType::TRIANGLE, value)
+	: Face(value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[3];
@@ -37,7 +37,7 @@ Tri::Tri(Node* nodes[3], unsigned value)
 }
 
 Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
-	: Face(MshElemType::TRIANGLE, value)
+	: Face(value)
 {
 	_nodes = new Node*[3];
 	_nodes[0] = n0;
@@ -50,7 +50,7 @@ Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
 }
 
 Tri::Tri(const Tri &tri)
-	: Face(MshElemType::TRIANGLE, tri.getValue())
+	: Face(tri.getValue())
 {
 	_nodes = new Node*[3];
 	_neighbors = new Element*[3];
@@ -64,6 +64,11 @@ Tri::Tri(const Tri &tri)
 
 Tri::~Tri()
 {
+}
+
+Element* Tri::clone() const
+{
+	return new Tri(*this);
 }
 
 double Tri::computeArea()

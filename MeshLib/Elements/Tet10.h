@@ -61,6 +61,18 @@ public:
 	/// Get the number of nodes for this element.
 	unsigned getNNodes() const { return 10; };
 
+	/**
+	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.
+	 * @return MshElemType::TETRAHEDRON
+	 */
+	virtual MshElemType::type getType() const { return MshElemType::TETRAHEDRON; }
+
+	/**
+	 * Method clone is inherited from class Element. It makes a deep copy of the Tet10 instance.
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const;
+
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
 	void calcCentroid();

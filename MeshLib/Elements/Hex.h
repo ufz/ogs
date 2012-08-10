@@ -69,6 +69,18 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 8; };
 
+	/**
+	 * Method returns the type of the element. In this case HEXAHEDRON will be returned.
+	 * @return MshElemType::HEXAHEDRON
+	 */
+	virtual MshElemType::type getType() const { return MshElemType::HEXAHEDRON; }
+
+	/**
+	 * Method clone is inherited from class Element. It makes a deep copy of the Hex instance.
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const;
+
 protected:
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
 	double computeVolume();

@@ -23,14 +23,15 @@ Element::Element(Node** nodes, MshElemType::type type, unsigned value)
 {
 }
 */
-Element::Element(MshElemType::type type, unsigned value)
-	: _nodes(NULL), _type(type), _value(value)
+Element::Element(unsigned value)
+	: _nodes(NULL), _value(value), _neighbors(NULL)
 {
 }
 
 Element::~Element()
 {
-	delete[] this->_nodes;
+	delete [] this->_nodes;
+	delete [] this->_neighbors;
 }
 
 const Element* Element::getEdge(unsigned i) const
@@ -71,8 +72,14 @@ const Node* Element::getNode(unsigned i) const
 {
 	if (i < getNNodes())
 		return _nodes[i];
-	std::cerr << "Error in MeshLib::Element::getNode() - Index does not exist." << std::endl;
+	std::cerr << "Error in MeshLib::Element::getNode() - Index " << i << " in " << MshElemType2String(getType()) <<  " does not exist." << std::endl;
 	return NULL;
+}
+
+void Element::setNode(unsigned idx, Node* node)
+{
+	if (idx < getNNodes())
+		_nodes[idx] = node;
 }
 
 unsigned Element::getNodeIndex(unsigned i) const

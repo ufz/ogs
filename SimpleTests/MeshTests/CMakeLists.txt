@@ -25,3 +25,19 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	logog
 )
 
+# Create CollapseMeshNodes executable
+ADD_EXECUTABLE( CollapseMeshNodes
+        CollapseMeshNodes.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+
+TARGET_LINK_LIBRARIES ( CollapseMeshNodes
+	MeshLib
+	FileIO	
+	MathLib	
+	BaseLib
+	GeoLib
+	logog
+)
+

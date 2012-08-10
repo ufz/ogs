@@ -59,5 +59,10 @@ void Tet10::calcCentroid()
 	_centroid = 0;
 }
 
+Element* Tet10::clone() const
+{
+	return new Tet10(*this);
+}
+
 }
 

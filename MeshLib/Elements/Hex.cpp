@@ -47,7 +47,7 @@ const unsigned Hex::_edge_nodes[12][2] =
 
 
 Hex::Hex(Node* nodes[8], unsigned value)
-	: Cell(MshElemType::HEXAHEDRON, value)
+	: Cell(value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[6];
@@ -57,7 +57,7 @@ Hex::Hex(Node* nodes[8], unsigned value)
 }
 
 Hex::Hex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7, unsigned value)
-	: Cell(MshElemType::HEXAHEDRON, value)
+	: Cell(value)
 {
 	_nodes = new Node*[8];
 	_nodes[0] = n0;
@@ -75,7 +75,7 @@ Hex::Hex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, N
 }
 
 Hex::Hex(const Hex &hex)
-	: Cell(MshElemType::HEXAHEDRON, hex.getValue())
+	: Cell(hex.getValue())
 {
 	_nodes = new Node*[8];
 	for (unsigned i=0; i<8; i++)
@@ -114,5 +114,9 @@ const Element* Hex::getFace(unsigned i) const
 	return NULL;
 }
 
+Element* Hex::clone() const
+{
+	return new Hex(*this);
 }
 
+} // end namespace MeshLib

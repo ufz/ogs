@@ -67,6 +67,19 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 6; };
 
+	/**
+	 * Method returns the type of the element. In this case PRISM will be returned.
+	 * @return MshElemType::PRISM
+	 */
+	virtual MshElemType::type getType() const { return MshElemType::PRISM; }
+
+	/**
+	 * Method clone is inherited from class Element. It makes a deep copy of the
+	 * Hex instance employing the copy constructor of class Prism.
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const;
+
 protected:
 	/// Calculates the volume of a prism by subdividing it into three tetrahedra.
 	double computeVolume();

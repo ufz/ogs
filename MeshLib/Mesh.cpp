@@ -75,7 +75,7 @@ void Mesh::addElement(Element* elem)
 {
 	_elements.push_back(elem);
 
-	// add element informatin to nodes
+	// add element information to nodes
 	unsigned nNodes (elem->getNNodes());
 	for (unsigned i=0; i<nNodes; i++)
 		elem->_nodes[i]->addElement(elem);

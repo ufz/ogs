@@ -44,7 +44,7 @@ const unsigned Pyramid::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
 
 
 Pyramid::Pyramid(Node* nodes[5], unsigned value)
-	: Cell(MshElemType::PYRAMID, value)
+	: Cell(value)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[5];
@@ -54,7 +54,7 @@ Pyramid::Pyramid(Node* nodes[5], unsigned value)
 }
 
 Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned value)
-	: Cell(MshElemType::PYRAMID, value)
+	: Cell(value)
 {
 	_nodes = new Node*[5];
 	_nodes[0] = n0;
@@ -70,7 +70,7 @@ Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned valu
 }
 
 Pyramid::Pyramid(const Pyramid &pyramid)
-	: Cell(MshElemType::PYRAMID, pyramid.getValue())
+	: Cell(pyramid.getValue())
 {
 	_nodes = new Node*[5];
 	_neighbors = new Element*[5];
@@ -118,5 +118,9 @@ unsigned Pyramid::getNFaceNodes(unsigned i) const
 	return 0;
 }
 
+Element* Pyramid::clone() const
+{
+	return new Pyramid(*this);
 }
 
+} // end namespace MeshLib

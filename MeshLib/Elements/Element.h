@@ -41,6 +41,13 @@ public:
 	/// Get node with local index i.
 	const Node* getNode(unsigned i) const;
 
+	/**
+	 * (Re)Sets the node of the element.
+	 * @param idx the index of the pointer to a node within the element
+	 * @param node a pointer to a node
+	 */
+	void setNode(unsigned idx, Node* node);
+
 	/// Get array of element nodes.
 	Node* const* getNodes() const { return _nodes; };
 
@@ -75,7 +82,7 @@ public:
 	unsigned getNodeIndex(unsigned i) const;
 
 	/// Get the type of the mesh element (as a MshElemType-enum).
-	MshElemType::type getType() const { return _type; };
+	virtual MshElemType::type getType() const = 0;
 
 	/// Get the value for this element.
 	unsigned getValue() const { return _value; };
@@ -85,15 +92,21 @@ public:
 	/// Destructor
 	virtual ~Element();
 
+	/**
+	 * Method clone is a pure virtual method in the abstract base class Element.
+	 * It has to be implemented in the derived classes (for instance in class Hex).
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const = 0;
+
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Element(MshElemType::type type, unsigned value = 0);
+	Element(unsigned value = 0);
 
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
 	Node** _nodes;
-	MshElemType::type _type;
 	unsigned _value;
 	Element** _neighbors;
 

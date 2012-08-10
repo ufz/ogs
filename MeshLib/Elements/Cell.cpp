@@ -19,15 +19,13 @@ Cell::Cell(Node** nodes, MshElemType::type type, unsigned value)
 {
 }
 */
-Cell::Cell(MshElemType::type type, unsigned value)
-	: Element(type, value)
+Cell::Cell(unsigned value)
+	: Element(value)
 {
 }
 
 Cell::~Cell()
-{
-	delete[] this->_neighbors;
-}
+{}
 
 
 }
