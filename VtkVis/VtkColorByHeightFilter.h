@@ -22,6 +22,8 @@ class VtkColorLookupTable;
  * table is calculated and so on.
  * If no range boundaries are explicitly set, the minimum and maximum height value will be calculated from
  * the data and set as minimum and maximum value for the lookup table.
+ * ColorLookupTable must be deleted manually.
+ * \see VtkCompositeColorByHeightFilter::init() for example usage.
  */
 class VtkColorByHeightFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
@@ -65,12 +67,6 @@ protected:
 
 	/// @brief Calculates the color lookup table based on set parameters.
 	VtkColorLookupTable* BuildColorTable();
-
-	/// @brief Returns the value of the smallest z-coordinate in the data set.
-	double getMinHeight(vtkPolyData* data);
-
-	/// @brief Returns the value of the largest z-coordinate in the data set.
-	double getMaxHeight(vtkPolyData* data);
 
 	VtkColorLookupTable* ColorLookupTable;
 

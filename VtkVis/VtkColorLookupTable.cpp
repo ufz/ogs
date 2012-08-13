@@ -68,13 +68,13 @@ void VtkColorLookupTable::Build()
 					double pos = (i - lastValue.first) / (static_cast<double>(nextIndex - lastValue.first));
 
 					if (_type == VtkColorLookupTable::LINEAR)
-						for (size_t j = 0; j < 3; j++)
+						for (size_t j = 0; j < 4; j++)
 							int_rgba[j] = linInterpolation( (lastValue.second)[j], (it->second)[j], pos);
 					else if (_type == VtkColorLookupTable::EXPONENTIAL)
-						for (size_t j = 0; j < 3; j++)
+						for (size_t j = 0; j < 4; j++)
 							int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
 					else // no interpolation
-						for (size_t j = 0; j < 3; j++)
+						for (size_t j = 0; j < 4; j++)
 							int_rgba[j] = (lastValue.second)[j];
 
 					this->SetTableValue(i, int_rgba);
