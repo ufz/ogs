@@ -609,11 +609,15 @@ void MainWindow::loadFile(const QString &fileName)
 	// OpenGeoSys mesh files
 	else if (fi.suffix().toLower() == "msh")
 	{
+		QTime myTimer0;
+		myTimer0.start();
+
 		FileIO::OGSMeshIO meshIO;
 		std::string name = fileName.toStdString();
 		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
 		{
+			std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
 			std::string mesh_name = fi.baseName().toStdString();
 			_meshModels->addMesh(msh, mesh_name);
 		}
@@ -1292,10 +1296,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 		}
 	}
 	else
-	{
-		OGSError::box("No geometry information selected.", "Error");
 		std::cout << "No geometry information selected..." << std::endl;
-	}
 }
 
 void MainWindow::showConditionWriterDialog()

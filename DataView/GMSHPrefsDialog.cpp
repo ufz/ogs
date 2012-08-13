@@ -15,11 +15,13 @@
 #include <QStringList>
 #include <QStringListModel>
 
+#include "OGSError.h"
+
 GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* parent)
 	: QDialog(parent), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
 {
 	setupUi(this);
-
+	
 	// default parameters
 	this->param1->setText("2");
 	this->param2->setText("0.3");
@@ -59,8 +61,8 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* 
 		geoNames.push_back (geo_station_names[k]);
 
 	size_t nGeoObjects(geoNames.size());
-	QStringList list;
 
+	QStringList list;
 	for (size_t i = 0; i < nGeoObjects; i++)
 		list.append(QString::fromStdString(geoNames[i]));
 
@@ -131,6 +133,12 @@ void GMSHPrefsDialog::on_radioAdaptive_toggled(bool isTrue)
 
 void GMSHPrefsDialog::accept()
 {
+	if (this->_selGeo->stringList().empty())
+	{
+		OGSError::box("No geometry loaded. Geometric data\n is necessary for mesh generation.");
+		this->done(QDialog::Rejected);
+	}
+
 	std::vector<std::string> selectedObjects = this->getSelectedObjects(_selGeo->stringList());
 	size_t max_number_of_points_in_quadtree_leaf (10);
 	double mesh_density_scaling_pnts(0.5);
