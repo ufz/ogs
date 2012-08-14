@@ -30,7 +30,7 @@ public:
 	~ListPropertiesDialog();
 
 private:
-	int getPropertyBounds(const std::vector<GEOLIB::Point*>* stations,
+	int getPropertyBounds(const std::vector<GeoLib::Point*>* stations,
 	                      const std::string &prop,
 	                      double &minVal,
 	                      double &maxVal);

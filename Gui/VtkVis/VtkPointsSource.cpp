@@ -29,7 +29,7 @@ VtkPointsSource::VtkPointsSource()
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
-	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	const GeoLib::Color* c = GeoLib::getRandomColor();
 	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 }
 
@@ -43,7 +43,7 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
 	os << indent << "== VtkPointsSource ==" << "\n";
 
 	int i = 0;
-	for (std::vector<GEOLIB::Point*>::const_iterator it = _points->begin();
+	for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
 	     it != _points->end(); ++it)
 	{
 		const double* coords = (*it)->getData();
@@ -78,7 +78,7 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
 	newPoints->Allocate(numPoints);
 	newVerts->Allocate(numPoints);
-	
+
 	vtkSmartPointer<vtkIntArray> pointIDs = vtkSmartPointer<vtkIntArray>::New();
 	pointIDs->SetNumberOfComponents(1);
 	pointIDs->SetName("PointIDs");
@@ -88,13 +88,13 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 
 	// Generate points and vertices
 	int i = 0;
-	for (std::vector<GEOLIB::Point*>::const_iterator it = _points->begin();
+	for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
 	     it != _points->end(); ++it)
 	{
 		double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
 		vtkIdType pid = newPoints->InsertNextPoint(coords);
 		newVerts->InsertNextCell(1, &pid);
-		
+
 		pointIDs->InsertNextValue(i);
 		i++;
 	}

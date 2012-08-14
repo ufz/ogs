@@ -28,8 +28,8 @@ public:
 	/// Constructor for the TreeItem specifying the "Points"-subtree of a geometry.
 	GeoObjectListItem(const QList<QVariant> &data,
 	                  TreeItem* parent,
-	                  const std::vector<GEOLIB::Point*>* geo_data = NULL,
-	                  GEOLIB::GEOTYPE type = GEOLIB::POINT)
+	                  const std::vector<GeoLib::Point*>* geo_data = NULL,
+	                  GeoLib::GEOTYPE type = GeoLib::POINT)
 		: TreeItem(data, parent), _vtkSource(VtkPointsSource::New()), _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -40,8 +40,8 @@ public:
 	/// Constructor for the TreeItem specifying the "Polylines"-subtree of a geometry.
 	GeoObjectListItem(const QList<QVariant> &data,
 	                  TreeItem* parent,
-	                  const std::vector<GEOLIB::Polyline*>* geo_data = NULL,
-	                  GEOLIB::GEOTYPE type = GEOLIB::POLYLINE)
+	                  const std::vector<GeoLib::Polyline*>* geo_data = NULL,
+	                  GeoLib::GEOTYPE type = GeoLib::POLYLINE)
 		: TreeItem(data, parent), _vtkSource(VtkPolylinesSource::New()), _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -52,8 +52,8 @@ public:
 	/// Constructor for the TreeItem specifying the "Surfaces"-subtree of a geometry.
 	GeoObjectListItem(const QList<QVariant> &data,
 	                  TreeItem* parent,
-	                  const std::vector<GEOLIB::Surface*>* geo_data = NULL,
-	                  GEOLIB::GEOTYPE type = GEOLIB::SURFACE)
+	                  const std::vector<GeoLib::Surface*>* geo_data = NULL,
+	                  GeoLib::GEOTYPE type = GeoLib::SURFACE)
 		: TreeItem(data, parent), _vtkSource(VtkSurfacesSource::New()),  _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -67,7 +67,7 @@ public:
 	}
 
 	/// Returns the type of geo-objects contained in the subtree of this item.
-	GEOLIB::GEOTYPE getType() { return _type; }
+	GeoLib::GEOTYPE getType() { return _type; }
 
 	/// Returns the Vtk polydata source object
 	vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; }
@@ -77,7 +77,7 @@ private:
 	/// visualization pipeline.
 	vtkPolyDataAlgorithm* _vtkSource;
 
-	GEOLIB::GEOTYPE _type;
+	GeoLib::GEOTYPE _type;
 };
 
 #endif //GEOOBJECTLISTITEM_H

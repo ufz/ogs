@@ -19,13 +19,13 @@ class LinearEditDialog : public QDialog, private Ui_LinearEdit
 	Q_OBJECT
 
 public:
-	LinearEditDialog(const GEOLIB::Polyline &line, const std::vector<size_t> &dis_nodes, const std::vector<double> &dis_values, QDialog* parent = 0);
+	LinearEditDialog(const GeoLib::Polyline &line, const std::vector<size_t> &dis_nodes, const std::vector<double> &dis_values, QDialog* parent = 0);
 	~LinearEditDialog(void);
 
 private:
 	void setupDialog(const std::vector<size_t> &dis_nodes, const std::vector<double> &dis_values);
 
-	const GEOLIB::Polyline _line;
+	const GeoLib::Polyline _line;
 
 private slots:
 	void on_comboBox_currentIndexChanged(int index);
@@ -35,7 +35,7 @@ private slots:
 
 	/// Instructions if the Cancel-Button has been pressed.
 	void reject();
-	
+
 signals:
 	void transmitDisValues(std::vector< std::pair<size_t,double> >);
 };

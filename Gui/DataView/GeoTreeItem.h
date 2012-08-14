@@ -26,14 +26,14 @@ public:
 	 */
 	GeoTreeItem(const QList<QVariant> &data,
 	            TreeItem* parent,
-	            const GEOLIB::GeoObject* item = NULL) : TreeItem(data, parent), _item(item) {}
+	            const GeoLib::GeoObject* item = NULL) : TreeItem(data, parent), _item(item) {}
 	~GeoTreeItem() {}
 
 	/// Returns the geo-object associated with this item (i.e. a point, polyline or surface).
-	const GEOLIB::GeoObject* getGeoObject() const { return _item; }
+	const GeoLib::GeoObject* getGeoObject() const { return _item; }
 
 private:
-	const GEOLIB::GeoObject* _item;
+	const GeoLib::GeoObject* _item;
 };
 
 #endif //GEOTREEITEM_H

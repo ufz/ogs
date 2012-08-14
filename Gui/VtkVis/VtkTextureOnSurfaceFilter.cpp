@@ -84,9 +84,9 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		else
 		{
 			points->GetPoint(i-1, coords);
-			GEOLIB::Point* pnt = new GEOLIB::Point(coords);
+			GeoLib::Point* pnt = new GeoLib::Point(coords);
 			points->GetPoint(i, coords);
-			GEOLIB::Point* pnt2 = new GEOLIB::Point(coords);
+			GeoLib::Point* pnt2 = new GeoLib::Point(coords);
 			if (i<173)
 				dist += sqrt(MathLib::sqrDist(pnt, pnt2));
 			else
@@ -103,7 +103,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	{
 		double coords[3];
 		points->GetPoint(i, coords);
-		float newcoords[2] = { MathLib::normalize(min.first, max.first, coords[0]), 
+		float newcoords[2] = { MathLib::normalize(min.first, max.first, coords[0]),
 		                       MathLib::normalize(min.second,max.second, coords[1])};
 		textureCoordinates->InsertNextTuple(newcoords);
 	}

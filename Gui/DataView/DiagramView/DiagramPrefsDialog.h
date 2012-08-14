@@ -14,7 +14,7 @@ class DetailWindow;
 class DiagramList;
 class QCheckBox;
 
-namespace GEOLIB
+namespace GeoLib
 {
 class Station;
 }
@@ -41,7 +41,7 @@ public:
 	 * \param db The database connection were the diagram-related data can be found
 	 * \param parent The parent QDialog.
 	 */
-	DiagramPrefsDialog(const GEOLIB::Station* stn,
+	DiagramPrefsDialog(const GeoLib::Station* stn,
 	                   const QString &listName,
 	                   DatabaseConnection* db,
 	                   QDialog* parent = 0);
@@ -51,7 +51,7 @@ public:
 	 * \param stn The station object associated the diagram.
 	 * \param parent The parent QDialog.
 	 */
-	DiagramPrefsDialog(GEOLIB::Station* stn, QDialog* parent = 0);
+	DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent = 0);
 
 	/**
 	 * Opens a new dialog and automatically reads data from the specified file. The diagram is not associated

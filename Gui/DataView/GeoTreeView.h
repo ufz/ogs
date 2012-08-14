@@ -62,12 +62,12 @@ signals:
 	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
 	void removeGeoItemSelection();
 	//void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-	void listRemoved(std::string name, GEOLIB::GEOTYPE);
+	void listRemoved(std::string name, GeoLib::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
-	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t, bool on_points);
+	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const size_t, bool on_points);
 	void requestLineEditDialog(const std::string&);
-	void requestNameChangeDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t);
+	void requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, const size_t);
 	//void saveFEMConditionsRequested(QString, QString);
 };
 

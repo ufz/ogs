@@ -19,7 +19,7 @@ SET( SOURCES
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
-	VtkCompositeSelectionFilter.cpp	
+	VtkCompositeSelectionFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
 	VtkConditionSource.cpp
@@ -128,18 +128,18 @@ QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 INCLUDE( ${VTK_USE_FILE} )
 
 INCLUDE_DIRECTORIES(
-	${CMAKE_SOURCE_DIR}/Qt/VtkVis
-	${CMAKE_SOURCE_DIR}/Qt/VtkAct
-	${CMAKE_BINARY_DIR}/Qt/VtkVis
-	${CMAKE_SOURCE_DIR}/Base
-	${CMAKE_SOURCE_DIR}/FEM
-	${CMAKE_SOURCE_DIR}/GEO
+	${CMAKE_SOURCE_DIR}/Gui/VtkVis
+	${CMAKE_SOURCE_DIR}/Gui/VtkAct
+	${CMAKE_BINARY_DIR}/Gui/VtkVis
+	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/FemLib
+	${CMAKE_SOURCE_DIR}/GeoLib
 	${CMAKE_SOURCE_DIR}/MathLib
 	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/MSH
-	${CMAKE_SOURCE_DIR}/Qt/Base
-	${CMAKE_SOURCE_DIR}/Qt/DataView
-	${CMAKE_BINARY_DIR}/Qt/DataView
+	${CMAKE_SOURCE_DIR}/MeshLib
+	${CMAKE_SOURCE_DIR}/Gui/Base
+	${CMAKE_SOURCE_DIR}/Gui/DataView
+	${CMAKE_BINARY_DIR}/Gui/DataView
 )
 
 # Create the library
@@ -161,10 +161,10 @@ TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} )
 ADD_DEPENDENCIES(VtkVis QtDataView)
 
 IF(OGS_USE_VRPN)
-	INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Qt/Vrpn)
+	INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Gui/Vrpn)
 ENDIF() # OGS_USE_VRPN
 
 IF (OGS_USE_OPENSG)
 	USE_OPENSG(VtkVis)
-	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Qt/OpenSG )
+	INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Gui/OpenSG )
 ENDIF (OGS_USE_OPENSG)

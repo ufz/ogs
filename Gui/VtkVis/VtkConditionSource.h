@@ -31,7 +31,7 @@ public:
 	vtkTypeRevisionMacro(VtkConditionSource,vtkPolyDataAlgorithm);
 
 	/// Sets the FEMCondition that need to be visualised. The geometry points array is needed because polylines and surfaces are linked to this data.
-	void setData(const std::vector<GEOLIB::Point*>* points,
+	void setData(const std::vector<GeoLib::Point*>* points,
 	             const std::vector<FEMCondition*>* conds);
 
 	/// Prints its data on a stream.
@@ -55,7 +55,7 @@ protected:
 private:
 	//size_t getIndex(size_t idx, vtkSmartPointer<vtkPoints> newPoints, vtkSmartPointer<vtkDoubleArray> scalars, std::map<size_t, size_t> &idx_map);
 
-	const std::vector<GEOLIB::Point*>* _points;
+	const std::vector<GeoLib::Point*>* _points;
 	const std::vector<FEMCondition*>* _cond_vec;
 	std::map<FiniteElement::DistributionType, vtkIdType> _dis_type_map;
 };

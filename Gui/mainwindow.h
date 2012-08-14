@@ -83,9 +83,9 @@ protected slots:
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 	void showConditionWriterDialog();
 	/// Call dialog for creating or modifying FEM conditions.
-	void showCondSetupDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id, bool on_points = false);
+	void showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, bool on_points = false);
 	/// Allows setting the name for a geometric object
-	void showGeoNameDialog(const std::string &geometry_name, const GEOLIB::GEOTYPE object_type, size_t id);
+	void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id);
 	/// Calls the diagram prefs dialog from the Tools menu.
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
@@ -113,7 +113,7 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
-	void loadDIRECTSourceTermsFromASCII(const std::string name, const std::vector<GEOLIB::Point*>* points); //TODO put this in a better place
+	void loadDIRECTSourceTermsFromASCII(const std::string name, const std::vector<GeoLib::Point*>* points); //TODO put this in a better place
 
 private:
 	QMenu* createImportFilesMenu();

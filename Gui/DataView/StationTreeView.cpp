@@ -89,7 +89,7 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 
 		if (static_cast<StationTreeModel*>(model())->stationFromIndex(index,
 		                                                              temp_name)->type() ==
-		    GEOLIB::Station::BOREHOLE)
+		    GeoLib::Station::BOREHOLE)
 		{
 			QAction* stratAction = menu.addAction("Display Stratigraphy...");
 			QAction* exportAction = menu.addAction("Export to GMS...");
@@ -118,13 +118,13 @@ void StationTreeView::displayStratigraphy()
 	        this->selectionModel()->currentIndex(), temp_name);
 	// get color table (horrible way to do it but there you go ...)
 	std::map<std::string,
-	         GEOLIB::Color*> colorLookupTable =
+	         GeoLib::Color*> colorLookupTable =
 	        static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(
 	                                               temp_name.
 	                                               toStdString()))
 	        ->getColorLookupTable();
 	StratWindow* stratView =
-	        new StratWindow(static_cast<GEOLIB::StationBorehole*>(static_cast<StationTreeModel*>(
+	        new StratWindow(static_cast<GeoLib::StationBorehole*>(static_cast<StationTreeModel*>(
 	                                                                      model())
 	                                                              ->stationFromIndex(index,
 	                                                                                 temp_name)),
@@ -172,7 +172,7 @@ void StationTreeView::exportStation()
 		QString temp_name;
 		std::vector<std::string> temp_soil_names;
 		temp_soil_names.push_back(""); // soil name vector needs to be initialised
-		GMSInterface::writeBoreholeToGMS(static_cast<GEOLIB::StationBorehole*>(static_cast<
+		GMSInterface::writeBoreholeToGMS(static_cast<GeoLib::StationBorehole*>(static_cast<
 		                                                                               StationTreeModel
 		                                                                               *>(
 		                                                                               model())->stationFromIndex(index,
@@ -204,7 +204,7 @@ void StationTreeView::showDiagramPrefsDialog()
 void StationTreeView::writeStratigraphiesAsImages(QString listName)
 {
 	std::map<std::string,
-	         GEOLIB::Color*> colorLookupTable =
+	         GeoLib::Color*> colorLookupTable =
 	        static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(
 	                                               listName.
 	                                               toStdString()))
@@ -215,13 +215,13 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
 		if ( listName.toStdString().compare( lists[i]->data(0).toString().toStdString() )
 		     == 0 )
 		{
-			const std::vector<GEOLIB::Point*>* stations =
+			const std::vector<GeoLib::Point*>* stations =
 			        dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
 
 			for (size_t i = 0; i < stations->size(); i++)
 			{
 				StratWindow* stratView =
-				        new StratWindow(static_cast<GEOLIB::StationBorehole*>((*
+				        new StratWindow(static_cast<GeoLib::StationBorehole*>((*
 				                                                               stations)
 				                                                              [i]),
 				                        &colorLookupTable);
@@ -229,7 +229,7 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
 				stratView->show();
 				stratView->stationView->saveAsImage(
 				        "c:/project/" +
-				        QString::fromStdString(static_cast<GEOLIB::StationBorehole*>((
+				        QString::fromStdString(static_cast<GeoLib::StationBorehole*>((
 				                                                                             *
 				                                                                             stations)
 				                                                                     [

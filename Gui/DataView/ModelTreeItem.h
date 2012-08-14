@@ -28,20 +28,20 @@ public:
 	~ModelTreeItem() { delete _item; }
 
 	/// Returns the station object from which this item has been constructed
-	GEOLIB::Station* getStation() { return _stn; }
+	GeoLib::Station* getStation() { return _stn; }
 
 	/// Returns the BaseItem associated with this item
 	BaseItem* getItem() const;
 
 	/// Associates a station object with this item
-	void setStation(GEOLIB::Station* stn) { _stn = stn; }
+	void setStation(GeoLib::Station* stn) { _stn = stn; }
 
 	/// Associates a BaseItem with this item
 	void setItem( BaseItem* item ) { _item = item; }
 
 private:
 	BaseItem* _item;
-	GEOLIB::Station* _stn;
+	GeoLib::Station* _stn;
 };
 
 #endif //QMODELTREEITEM_H

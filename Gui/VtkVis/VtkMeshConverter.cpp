@@ -63,7 +63,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			{
 				colour = pixelData->GetTuple2(img_idx);
 				pixVal[index] = colour[0];
-			
+
 			}
 			else if (nTuple == 4)	//RGBA
 			{
@@ -75,7 +75,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 				std::cout << "Unsupported pixel composition!" << std::endl;
 				return NULL;
 			}
-			
+
 			visNodes[index] = (colour[nTuple-1] > 0);
 			node_idx_map[index]=-1;
 		}
@@ -83,7 +83,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		visNodes[(i+2)*incHeight-1]=false;
 		node_idx_map[(i+2)*incHeight-1]=-1;
 	}
-	
+
 	GridAdapter* mesh = constructMesh(pixVal, node_idx_map, visNodes, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
 
 	delete [] pixVal;
@@ -138,7 +138,7 @@ GridAdapter* VtkMeshConverter::convertImgToMesh(const double* img,
 		visNodes[(i+2)*incHeight-1]=false;
 		node_idx_map[(i+2)*incHeight-1]=-1;
 	}
-	
+
 	GridAdapter* mesh = constructMesh(pixVal, node_idx_map, visNodes, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
 
 	delete [] pixVal;
@@ -179,7 +179,7 @@ GridAdapter* VtkMeshConverter::constructMesh(const double* pixVal,
 			if (set_node)
 			{
 				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : 0.0;
-				grid->addNode(new GEOLIB::Point(x_offset + (scalingFactor * j),
+				grid->addNode(new GeoLib::Point(x_offset + (scalingFactor * j),
 										        y_offset + (scalingFactor * i),
 										        zValue));
 				node_idx_map[index] = node_idx_count;
@@ -245,7 +245,7 @@ GridAdapter* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid
 	for (size_t i = 0; i < nNodes; i++)
 	{
 		coords = grid->GetPoints()->GetPoint(i);
-		mesh->addNode(new GEOLIB::Point(coords[0], coords[1], coords[2]));
+		mesh->addNode(new GeoLib::Point(coords[0], coords[1], coords[2]));
 	}
 
 	// set mesh elements

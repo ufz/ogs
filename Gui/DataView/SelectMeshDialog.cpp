@@ -11,7 +11,7 @@
 #include <QComboBox>
 #include <QVBoxLayout>
 
-SelectMeshDialog::SelectMeshDialog(const GEOLIB::GeoObject* geo_object, const std::list<std::string> &msh_names, QDialog* parent) :
+SelectMeshDialog::SelectMeshDialog(const GeoLib::GeoObject* geo_object, const std::list<std::string> &msh_names, QDialog* parent) :
 	QDialog(parent), _geo_object(geo_object)
 {
 	setupDialog(msh_names);
@@ -51,7 +51,7 @@ void SelectMeshDialog::setupDialog(const std::list<std::string> &msh_names)
 
 void SelectMeshDialog::accept()
 {
-	//emit requestNameChange(_parent_name, GEOLIB::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
+	//emit requestNameChange(_parent_name, GeoLib::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
 	this->done(QDialog::Accepted);
 }
 

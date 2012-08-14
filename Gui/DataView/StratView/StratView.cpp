@@ -12,8 +12,8 @@ StratView::~StratView()
 	delete _scene;
 }
 
-void StratView::setStation(GEOLIB::StationBorehole* station,
-                           std::map<std::string, GEOLIB::Color*>* stratColors)
+void StratView::setStation(GeoLib::StationBorehole* station,
+                           std::map<std::string, GeoLib::Color*>* stratColors)
 {
 	_scene = new StratScene(station, stratColors);
 	setScene(_scene);

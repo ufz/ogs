@@ -11,7 +11,7 @@
 #include <QFileInfo>
 #include <QSettings>
 
-ConditionWriterDialog::ConditionWriterDialog(const GEOLIB::GEOObjects *geo_objects, QDialog* parent)
+ConditionWriterDialog::ConditionWriterDialog(const GeoLib::GEOObjects *geo_objects, QDialog* parent)
 	: QDialog(parent)
 {
 	setupUi(this);
@@ -70,13 +70,13 @@ void ConditionWriterDialog::accept()
 		FEMCondition::CondType cond_type(FEMCondition::UNSPECIFIED);;
 		switch (this->condTypeBox->currentIndex())
 		{
-			case 0: 
+			case 0:
 				cond_type = FEMCondition::UNSPECIFIED; break;
-			case 1: 
+			case 1:
 				cond_type = FEMCondition::BOUNDARY_CONDITION; break;
-			case 2: 
+			case 2:
 				cond_type = FEMCondition::INITIAL_CONDITION; break;
-			case 3: 
+			case 3:
 				cond_type = FEMCondition::SOURCE_TERM; break;
 			default:
 				std::cout << "Error in ConditionWriterDialog..." << std::endl;

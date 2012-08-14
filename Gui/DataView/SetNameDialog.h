@@ -24,10 +24,10 @@ class SetNameDialog : public QDialog
 
 public:
 	/// Constructor
-	SetNameDialog(const std::string &parent_name, 
-				  const std::string &object_type_name, 
-				  size_t id, 
-				  const std::string &old_name, 
+	SetNameDialog(const std::string &parent_name,
+				  const std::string &object_type_name,
+				  size_t id,
+				  const std::string &old_name,
 				  QDialog* parent = 0);
 	~SetNameDialog();
 
@@ -53,7 +53,7 @@ private slots:
 	void reject();
 
 signals:
-	void requestNameChange(const std::string&, const GEOLIB::GEOTYPE, size_t, std::string);
+	void requestNameChange(const std::string&, const GeoLib::GEOTYPE, size_t, std::string);
 };
 
 #endif //SETNAMEDIALOG_H

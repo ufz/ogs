@@ -42,10 +42,10 @@ void ListPropertiesDialog::setupDialog()
 	int i = 0;
 	double minVal = 0, maxVal = 0;
 
-	const std::vector<GEOLIB::Point*>* stations ( _geoModels->getStationVec(_listName));
+	const std::vector<GeoLib::Point*>* stations ( _geoModels->getStationVec(_listName));
 
 	std::map<std::string,
-	         double> properties = static_cast<GEOLIB::Station*>((*stations)[0])->getProperties();
+	         double> properties = static_cast<GeoLib::Station*>((*stations)[0])->getProperties();
 	QGridLayout* layout = new QGridLayout;
 
 	setWindowTitle("List Properties");
@@ -88,7 +88,7 @@ void ListPropertiesDialog::setupDialog()
 	setLayout(layout);
 }
 
-int ListPropertiesDialog::getPropertyBounds(const std::vector<GEOLIB::Point*>* stations,
+int ListPropertiesDialog::getPropertyBounds(const std::vector<GeoLib::Point*>* stations,
                                             const std::string &prop,
                                             double &minVal,
                                             double &maxVal)
@@ -96,14 +96,14 @@ int ListPropertiesDialog::getPropertyBounds(const std::vector<GEOLIB::Point*>* s
 	if (!stations->empty())
 	{
 		std::map<std::string, double> properties (
-		        static_cast<GEOLIB::Station*>((*stations)[0])->getProperties());
+		        static_cast<GeoLib::Station*>((*stations)[0])->getProperties());
 		minVal = properties[prop];
 		maxVal = properties[prop];
 
 		size_t size = stations->size();
 		for (size_t i = 1; i < size; i++)
 		{
-			properties = static_cast<GEOLIB::Station*>((*stations)[i])->getProperties();
+			properties = static_cast<GeoLib::Station*>((*stations)[i])->getProperties();
 			if (minVal > properties[prop])
 				minVal = properties[prop];
 			if (maxVal < properties[prop])

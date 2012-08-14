@@ -18,7 +18,7 @@ class ColorTableModel : public QAbstractTableModel
 	Q_OBJECT
 
 public:
-	ColorTableModel( const std::map<std::string, GEOLIB::Color*> &colorLookupTable,
+	ColorTableModel( const std::map<std::string, GeoLib::Color*> &colorLookupTable,
 	                 QObject* parent = 0 );
 	~ColorTableModel();
 
@@ -36,7 +36,7 @@ public:
 	                     int role /*= Qt::DisplayRole*/ ) const;
 
 private:
-	bool buildTable( const std::map<std::string, GEOLIB::Color*> &colorLookupTable );
+	bool buildTable( const std::map<std::string, GeoLib::Color*> &colorLookupTable );
 
 	QList< QPair<QString, QColor> > _listOfPairs;
 };

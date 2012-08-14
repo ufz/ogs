@@ -47,7 +47,7 @@ void SetNameDialog::setupDialog(const std::string &old_name)
 
 void SetNameDialog::accept()
 {
-	emit requestNameChange(_parent_name, GEOLIB::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
+	emit requestNameChange(_parent_name, GeoLib::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
 	this->done(QDialog::Accepted);
 }
 

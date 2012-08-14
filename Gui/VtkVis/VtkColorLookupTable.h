@@ -16,7 +16,7 @@
 /**
  * \brief Calculates and stores a colour lookup table.
  *
- * Based on a start colour and an end colour, RGB-values are interpolated and stored in vector of GEOLIB::Color. If no
+ * Based on a start colour and an end colour, RGB-values are interpolated and stored in vector of GeoLib::Color. If no
  * colours are set, default values are used for start (blue) and end (red). The number of entries of the colour table can
  * be set in the constructor, the default value is 256. If additional colours are inserted into the table using setColor()
  * the interpolation will be calculated iteratively between set colour values. Interpolation can be linear (default) or

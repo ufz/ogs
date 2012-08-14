@@ -15,7 +15,7 @@ class ProcessItem;
 class CondObjectListItem;
 class vtkPolyDataAlgorithm;
 
-namespace GEOLIB
+namespace GeoLib
 {
 class GeoObject;
 }
@@ -77,7 +77,7 @@ private:
 
 	/// Returns the index of a geometric item of the given name and type for the associated geometry.
 	int getGEOIndex(const std::string &geo_name,
-	                GEOLIB::GEOTYPE type,
+	                GeoLib::GEOTYPE type,
 	                const std::string &obj_name) const;
 
 	ProjectData& _project;

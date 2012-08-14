@@ -53,7 +53,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 		condParent->addCondition(c);
 
 	QList<QVariant> condData;
-	condData << QString::fromStdString(c->getGeoName()) 
+	condData << QString::fromStdString(c->getGeoName())
 			    << QString::fromStdString(c->getGeoTypeAsString());
 	CondItem* condItem = new CondItem(condData, condParent, c);
 	condParent->appendChild(condItem);
@@ -96,11 +96,11 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 void ProcessModel::addCondition(FEMCondition* condition)
 {
-	bool is_domain = (condition->getGeoType() == GEOLIB::GEODOMAIN) ? true : false;
+	bool is_domain = (condition->getGeoType() == GeoLib::GEODOMAIN) ? true : false;
 	// HACK: direct source terms are not domain conditions but they also don't contain geo-object-names
 	if (condition->getProcessDistributionType() == FiniteElement::DIRECT) is_domain = true;
 
-	const GEOLIB::GeoObject* object = condition->getGeoObj();
+	const GeoLib::GeoObject* object = condition->getGeoObj();
 	if (object == NULL)
 	{
 		object = _project.getGEOObjects()->getGEOObject(
@@ -116,7 +116,7 @@ void ProcessModel::addCondition(FEMCondition* condition)
 	}
 	else
 		std::cout << "Error in ProcessModel::addConditions() - Specified geometrical object \""
-		          << condition->getGeoName() << "\" not found in associated geometry..." 
+		          << condition->getGeoName() << "\" not found in associated geometry..."
 				  << std::endl;
 }
 
@@ -140,8 +140,8 @@ ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 	}
 	else
 	{
-		std::cout << "Warning in ProcessModel::addProcess() - " 
-			      << FiniteElement::convertProcessTypeToString(pcs->getProcessType()) 
+		std::cout << "Warning in ProcessModel::addProcess() - "
+			      << FiniteElement::convertProcessTypeToString(pcs->getProcessType())
 				  << " already exists." << std::endl;
 		return NULL;
 	}
@@ -173,7 +173,7 @@ void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type
 void ProcessModel::removeProcess(const FiniteElement::ProcessType type)
 {
 	this->removeFEMConditions(type, "", FEMCondition::UNSPECIFIED);
-	
+
 	const ProcessItem* processParent = this->getProcessParent(type);
 	if (processParent)
 	{
@@ -194,16 +194,16 @@ void ProcessModel::removeAllProcesses()
 }
 
 int ProcessModel::getGEOIndex(const std::string &geo_name,
-                                GEOLIB::GEOTYPE type,
+                                GeoLib::GEOTYPE type,
                                 const std::string &obj_name) const
 {
 	bool exists(false);
 	size_t idx(0);
-	if (type == GEOLIB::POINT)
+	if (type == GeoLib::POINT)
 		exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(obj_name, idx);
-	else if (type == GEOLIB::POLYLINE)
+	else if (type == GeoLib::POLYLINE)
 		exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(obj_name,idx);
-	else if (type == GEOLIB::SURFACE)
+	else if (type == GeoLib::SURFACE)
 		exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name,idx);
 
 	if (exists)
@@ -236,7 +236,7 @@ CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, FEMCondi
 	QList<QVariant> condData;
 	condData << condType << "";
 
-	const std::vector<GEOLIB::Point*>* pnts = _project.getGEOObjects()->getPointVec(cond->getAssociatedGeometryName());
+	const std::vector<GeoLib::Point*>* pnts = _project.getGEOObjects()->getPointVec(cond->getAssociatedGeometryName());
 	if (pnts)
 	{
 		CondObjectListItem* cond_list = new CondObjectListItem(condData, parent, cond, pnts);

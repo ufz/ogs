@@ -10,7 +10,7 @@
 #include <QGraphicsView>
 #include <QtGui/QWidget>
 
-namespace GEOLIB
+namespace GeoLib
 {
 class StationBorehole;
 }
@@ -29,8 +29,8 @@ public:
 	~StratView();
 
 	/// Sets the Borehole whose data should be visualised.
-	void setStation(GEOLIB::StationBorehole* station,
-	                std::map<std::string, GEOLIB::Color*>* stratColors = NULL);
+	void setStation(GeoLib::StationBorehole* station,
+	                std::map<std::string, GeoLib::Color*>* stratColors = NULL);
 
 	/// Returns the height of the bounding rectangle of all objects within the scene.
 	int getHeight() { return static_cast<int>((_scene->itemsBoundingRect()).height()); }

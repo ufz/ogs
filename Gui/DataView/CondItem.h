@@ -29,7 +29,7 @@ public:
 	const FEMCondition* getItem() { return _item; }
 
 	/// Returns the geo-object on which the condition is placed.
-	const GEOLIB::GeoObject* getGeoObject() { return this->getGeoObject(); }
+	const GeoLib::GeoObject* getGeoObject() { return this->getGeoObject(); }
 
 private:
 	const FEMCondition* _item;

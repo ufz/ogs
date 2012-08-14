@@ -8,7 +8,7 @@
 
 #include <QDialog>
 
-namespace GEOLIB {
+namespace GeoLib {
 	class GeoObject;
 }
 
@@ -26,8 +26,8 @@ class SelectMeshDialog : public QDialog
 
 public:
 	/// Constructor
-	SelectMeshDialog(const GEOLIB::GeoObject* geo_object, 
-				  const std::list<std::string> &msh_names, 
+	SelectMeshDialog(const GeoLib::GeoObject* geo_object,
+				  const std::list<std::string> &msh_names,
 				  QDialog* parent = 0);
 	~SelectMeshDialog();
 
@@ -40,7 +40,7 @@ private:
 	QLabel* _txt_label;
 	QComboBox* _msh_names;
 	QVBoxLayout* _layout;
-	const GEOLIB::GeoObject* _geo_object;
+	const GeoLib::GeoObject* _geo_object;
 
 
 private slots:
@@ -51,7 +51,7 @@ private slots:
 	void reject();
 
 signals:
-	//void requestNameChange(const std::string&, const GEOLIB::GEOTYPE, size_t, std::string);
+	//void requestNameChange(const std::string&, const GeoLib::GEOTYPE, size_t, std::string);
 };
 
 #endif //SELECTMESHDIALOG_H

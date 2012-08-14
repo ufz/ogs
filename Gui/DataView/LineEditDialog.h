@@ -23,7 +23,7 @@ class LineEditDialog : public QDialog, private Ui_LineEdit
 	Q_OBJECT
 
 public:
-	LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* parent = 0);
+	LineEditDialog(const GeoLib::PolylineVec &ply_vec, QDialog* parent = 0);
 	~LineEditDialog(void);
 
 private:
@@ -53,7 +53,7 @@ signals:
 	                      std::string,
 	                      bool,
 	                      bool);
-	void triangulateSurface(const GEOLIB::Polyline);
+	void triangulateSurface(const GeoLib::Polyline);
 };
 
 #endif //LINEEDITDIALOG_H

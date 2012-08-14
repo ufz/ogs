@@ -36,7 +36,7 @@ VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
-	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	const GeoLib::Color* c = GeoLib::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
 	vtkProps->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 	vtkProps->SetEdgeVisibility(1);
@@ -53,7 +53,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 
 	if (_grid == NULL)
 		return;
-	const std::vector<GEOLIB::Point*>* nodes = _grid->getNodes();
+	const std::vector<GeoLib::Point*>* nodes = _grid->getNodes();
 	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
 	if (nodes->empty() || elems->empty() )
 		return;
@@ -61,7 +61,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 	os << indent << "== VtkMeshSource ==" << "\n";
 
 	int i = 0;
-	for (std::vector<GEOLIB::Point*>::const_iterator it = nodes->begin();
+	for (std::vector<GeoLib::Point*>::const_iterator it = nodes->begin();
 	     it != nodes->end(); ++it)
 	{
 		os << indent << "Point " << i << " (" << (*it)[0] << ", " << (*it)[1] << ", " <<
@@ -90,7 +90,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	if (_grid == NULL)
 		return 0;
-	const std::vector<GEOLIB::Point*>* nodes = _grid->getNodes();
+	const std::vector<GeoLib::Point*>* nodes = _grid->getNodes();
 	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
 
 	const size_t nPoints = nodes->size();

@@ -85,7 +85,7 @@ QModelIndex StationTreeModel::index( int row, int column,
  * \param listName Here, the method will put the name of the list this station belongs to.
  * \return The station object associated with the tree item
  */
-GEOLIB::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
+GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
                                                      QString &listName ) const
 {
 	if (index.isValid())
@@ -113,7 +113,7 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
  * \param listName Name of the new subtree. If no name is given a default name is assigned.
  * \param stations The list with stations to be added as children of that subtree
  */
-void StationTreeModel::addStationList(QString listName, const std::vector<GEOLIB::Point*>* stations)
+void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib::Point*>* stations)
 {
 	QList<QVariant> grpName;
 	if (listName.compare("") == 0) // if no name is given a default name is assigned
@@ -134,7 +134,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GEOLIB
 	for (int i = 0; i < vectorSize; i++)
 	{
 		QList<QVariant> stn;
-		stn.push_back(QVariant(QString::fromStdString(static_cast<GEOLIB::Station*>((*
+		stn.push_back(QVariant(QString::fromStdString(static_cast<GeoLib::Station*>((*
 		                                                                             stations)
 		                                                                            [i])->
 		                                              getName())));
@@ -143,7 +143,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GEOLIB
 		stn.push_back(QVariant(QString::number((*(*stations)[i])[2],'f')));
 
 		ModelTreeItem* child = new ModelTreeItem(stn, group);
-		child->setStation(static_cast<GEOLIB::Station*>((*stations)[i]));
+		child->setStation(static_cast<GeoLib::Station*>((*stations)[i]));
 		group->appendChild(child);
 	}
 
@@ -219,14 +219,14 @@ void StationTreeModel::removeStationList(const std::string &name)
  * If no station in the list fulfills the given description an error msg is given.
  */
 void StationTreeModel::filterStations(const std::string &listName,
-                                      const std::vector<GEOLIB::Point*>* stations,
+                                      const std::vector<GeoLib::Point*>* stations,
                                       const std::vector<PropertyBounds> &bounds)
 {
-	std::vector<GEOLIB::Point*>* filteredStations = new std::vector<GEOLIB::Point*>;
+	std::vector<GeoLib::Point*>* filteredStations = new std::vector<GeoLib::Point*>;
 
 	size_t vectorSize = stations->size();
 	for (size_t i = 0; i < vectorSize; i++)
-		if (static_cast<GEOLIB::Station*>((*stations)[i])->inSelection(bounds))
+		if (static_cast<GeoLib::Station*>((*stations)[i])->inSelection(bounds))
 			filteredStations->push_back((*stations)[i]);
 
 	if (filteredStations->empty())

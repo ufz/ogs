@@ -7,6 +7,7 @@
 #define STRATSCENE_H
 
 #include "Station.h"
+#include "Color.h"
 #include <QGraphicsScene>
 
 class StratBar;
@@ -19,8 +20,8 @@ class StratScene : public QGraphicsScene
 {
 public:
 	/// Constructor
-	StratScene(GEOLIB::StationBorehole* station,
-	           std::map<std::string, GEOLIB::Color*>* stratColors = NULL,
+	StratScene(GeoLib::StationBorehole* station,
+	           std::map<std::string, GeoLib::Color*>* stratColors = NULL,
 	           QObject* parent = 0);
 	~StratScene();
 
@@ -29,7 +30,7 @@ public:
 
 private:
 	/// Adds text labels indicating the depth at the beginning and end of each soil layer
-	void addDepthLabels(std::vector<GEOLIB::Point*> profile, double offset);
+	void addDepthLabels(std::vector<GeoLib::Point*> profile, double offset);
 
 	/// Add a non-scalable text item to the scene.
 	QNonScalableGraphicsTextItem* addNonScalableText(const QString &text,
@@ -37,12 +38,12 @@ private:
 
 	/// Adds text labels indicating the name of each soil layer
 	void addSoilNameLabels(std::vector<std::string> soilNames,
-	                       std::vector<GEOLIB::Point*> profile,
+	                       std::vector<GeoLib::Point*> profile,
 	                       double offset);
 
 	/// Add a stratigraphy-bar to the scene.
-	StratBar* addStratBar(GEOLIB::StationBorehole* station,
-	                      std::map<std::string, GEOLIB::Color*>* stratColors = NULL);
+	StratBar* addStratBar(GeoLib::StationBorehole* station,
+	                      std::map<std::string, GeoLib::Color*>* stratColors = NULL);
 };
 
 #endif //STRATSCENE_H

@@ -75,7 +75,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 	if (list != NULL)
 	{
 		QAction* connectPlyAction(NULL);
-		if (list->getType() == GEOLIB::POLYLINE)
+		if (list->getType() == GeoLib::POLYLINE)
 		{
 			connectPlyAction = menu.addAction("Connect Polylines...");
 			connect(connectPlyAction, SIGNAL(triggered()), this,
@@ -103,7 +103,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setObjectAsCondition()));
 			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
 
-			if (parent->getType() == GEOLIB::POINT)
+			if (parent->getType() == GeoLib::POINT)
 				addCondPointAction->setEnabled(false);
 			else
 				connect(addCondPointAction, SIGNAL(triggered()), this, SLOT(setObjectPointsAsCondition()));
@@ -147,7 +147,7 @@ void GeoTreeView::removeList()
 		emit listRemoved((item->parentItem()->data(
 		                          0).toString()).toStdString(), list->getType());
 	else
-		emit listRemoved((item->data(0).toString()).toStdString(), GEOLIB::INVALID);
+		emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::INVALID);
 }
 
 void GeoTreeView::setElementAsCondition(bool set_on_points)
@@ -155,7 +155,7 @@ void GeoTreeView::setElementAsCondition(bool set_on_points)
 	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	const size_t id = item->row();
-	const GEOLIB::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
+	const GeoLib::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
 	emit requestCondSetupDialog(geometry_name, type, id, set_on_points);
 }
@@ -165,7 +165,7 @@ void GeoTreeView::setNameForElement()
 	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
 	const size_t id = item->row();
-	const GEOLIB::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
+	const GeoLib::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
 	emit requestNameChangeDialog(geometry_name, type, id);
 }

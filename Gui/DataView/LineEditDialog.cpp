@@ -8,7 +8,7 @@
 #include <QStringList>
 #include <QStringListModel>
 
-LineEditDialog::LineEditDialog(const GEOLIB::PolylineVec &ply_vec, QDialog* parent)
+LineEditDialog::LineEditDialog(const GeoLib::PolylineVec &ply_vec, QDialog* parent)
 	: QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel),
 	  _geoName(ply_vec.getName())
 {

@@ -18,7 +18,7 @@ namespace MeshLib
 class CFEMesh;
 }
 /*
-   namespace GEOLIB {
+   namespace GeoLib {
     class Point;
    }
  */
@@ -78,9 +78,9 @@ private slots:
 
 signals:
 	void qualityCheckRequested(VtkMeshSource*);
-	void requestCondSetupDialog(const std::string&, const GEOLIB::GEOTYPE, const size_t, bool on_points);
+	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
-	void requestDIRECTSourceTerms(const std::string, const std::vector<GEOLIB::Point*>*);
+	void requestDIRECTSourceTerms(const std::string, const std::vector<GeoLib::Point*>*);
 	void saveMeshAction();
 
 /*

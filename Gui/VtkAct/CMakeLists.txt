@@ -30,16 +30,16 @@ source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 qt4_wrap_cpp( MOC_SOURCES ${MOC_HEADERS} )
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/Qt/VtkAct
-	${CMAKE_BINARY_DIR}/Qt/VtkAct
-	${CMAKE_SOURCE_DIR}/Base
-	${CMAKE_SOURCE_DIR}/FEM
-	${CMAKE_SOURCE_DIR}/GEO
+	${CMAKE_SOURCE_DIR}/Gui/VtkAct
+	${CMAKE_BINARY_DIR}/Gui/VtkAct
+	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/FemLib
+	${CMAKE_SOURCE_DIR}/GeoLib
 	${CMAKE_SOURCE_DIR}/FileIO
 	${CMAKE_SOURCE_DIR}/FileIO/MeshIO
-	${CMAKE_SOURCE_DIR}/MSH
+	${CMAKE_SOURCE_DIR}/MeshLib
 	${CMAKE_SOURCE_DIR}/MathLib
-	${CMAKE_SOURCE_DIR}/Qt/VtkVis
+	${CMAKE_SOURCE_DIR}/Gui/VtkVis
 )
 
 # Create the library

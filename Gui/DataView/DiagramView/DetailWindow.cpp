@@ -115,7 +115,7 @@ void DetailWindow::resizeWindow()
 
 void DetailWindow::addList(DiagramList* list)
 {
-	GEOLIB::Color* c = GEOLIB::getRandomColor();
+	GeoLib::Color* c = GeoLib::getRandomColor();
 	QColor colour((*c)[0], (*c)[1], (*c)[2]);
 	delete c;
 	this->addList(list, colour);

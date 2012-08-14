@@ -17,11 +17,11 @@
 
 #include "OGSError.h"
 
-GMSHPrefsDialog::GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* parent)
+GMSHPrefsDialog::GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* parent)
 	: QDialog(parent), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
 {
 	setupUi(this);
-	
+
 	// default parameters
 	this->param1->setText("2");
 	this->param2->setText("0.3");

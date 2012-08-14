@@ -27,7 +27,7 @@ public:
 	/// Returns the colour lookup table generated for boreholes.
 	/// This method should only be called after the colour lookup table has actually been build (via RequestData() or setColorLookupTable()).
 	const std::map<std::string,
-	               GEOLIB::Color*>& getColorLookupTable() const { return _colorLookupTable; }
+	               GeoLib::Color*>& getColorLookupTable() const { return _colorLookupTable; }
 
 	/// Sets a predefined color lookup table for the colouring of borehole stratigraphies
 	int setColorLookupTable(const std::string &filename) { return readColorLookupTable(
@@ -35,7 +35,7 @@ public:
 		                                                              filename); }
 
 	/// Sets the stations as a vector
-	void setStations(const std::vector<GEOLIB::Point*>* stations) { _stations = stations; }
+	void setStations(const std::vector<GeoLib::Point*>* stations) { _stations = stations; }
 
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -56,11 +56,11 @@ protected:
 	                       vtkInformationVector* outputVector);
 
 	/// The stations to visualize
-	const std::vector<GEOLIB::Point*>* _stations;
+	const std::vector<GeoLib::Point*>* _stations;
 
 	/// The colour table for stratigraphic data. This table is either set using the setColorLookupTable() method or is generated
 	/// automatically with random colours while creating the VtkStationSource-object.
-	std::map<std::string, GEOLIB::Color*> _colorLookupTable;
+	std::map<std::string, GeoLib::Color*> _colorLookupTable;
 
 private:
 	size_t GetIndexByName( std::string name );

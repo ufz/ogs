@@ -32,7 +32,7 @@ public:
 private:
 	float GetInitialRadius() const;
 
-	GEOLIB::GEOTYPE _type;
+	GeoLib::GEOTYPE _type;
 	vtkThreshold* _threshold;
 };
 

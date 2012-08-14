@@ -14,7 +14,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-DiagramPrefsDialog::DiagramPrefsDialog(const GEOLIB::Station* stn,
+DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
                                        const QString &listName,
                                        DatabaseConnection* db,
                                        QDialog* parent)
@@ -45,7 +45,7 @@ DiagramPrefsDialog::DiagramPrefsDialog(const GEOLIB::Station* stn,
 	}
 }
 
-DiagramPrefsDialog::DiagramPrefsDialog(GEOLIB::Station* stn, QDialog* parent)
+DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
 	: QDialog(parent), _window(NULL)
 {
 	setupUi(this);

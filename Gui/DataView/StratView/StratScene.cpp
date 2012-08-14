@@ -13,8 +13,8 @@
 #include "StratBar.h"
 #include "StratScene.h"
 
-StratScene::StratScene(GEOLIB::StationBorehole* station,
-                       std::map<std::string, GEOLIB::Color*>* stratColors,
+StratScene::StratScene(GeoLib::StationBorehole* station,
+                       std::map<std::string, GeoLib::Color*>* stratColors,
                        QObject* parent) : QGraphicsScene(parent)
 {
 	QRectF textBounds;
@@ -58,7 +58,7 @@ StratScene::~StratScene()
 {
 }
 
-void StratScene::addDepthLabels(std::vector<GEOLIB::Point*> profile, double offset)
+void StratScene::addDepthLabels(std::vector<GeoLib::Point*> profile, double offset)
 {
 	QRectF textBounds;
 	double vertPos = MARGIN;
@@ -85,7 +85,7 @@ QNonScalableGraphicsTextItem* StratScene::addNonScalableText(const QString &text
 }
 
 void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
-                                   std::vector<GEOLIB::Point*> profile,
+                                   std::vector<GeoLib::Point*> profile,
                                    double offset)
 {
 	//QRectF textBounds;
@@ -105,8 +105,8 @@ void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
 	}
 }
 
-StratBar* StratScene::addStratBar(GEOLIB::StationBorehole* station,
-                                  std::map<std::string, GEOLIB::Color*>* stratColors)
+StratBar* StratScene::addStratBar(GeoLib::StationBorehole* station,
+                                  std::map<std::string, GeoLib::Color*>* stratColors)
 {
 	StratBar* b = new StratBar(station, stratColors);
 	addItem(b);

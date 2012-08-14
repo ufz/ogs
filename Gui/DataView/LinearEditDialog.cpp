@@ -5,7 +5,7 @@
 
 #include "LinearEditDialog.h"
 
-LinearEditDialog::LinearEditDialog(const GEOLIB::Polyline &line, const std::vector<size_t> &dis_nodes, const std::vector<double> &dis_values, QDialog* parent)
+LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line, const std::vector<size_t> &dis_nodes, const std::vector<double> &dis_values, QDialog* parent)
 	: QDialog(parent), _line(line)
 {
 	setupUi(this);

@@ -83,7 +83,7 @@ bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
 	return TreeModel::setData(index, value, role);
 }
 
-void VtkVisPipeline::addLight(const GEOLIB::Point &pos)
+void VtkVisPipeline::addLight(const GeoLib::Point &pos)
 {
 	double lightPos[3];
 	for (std::list<vtkLight*>::iterator it = _lights.begin(); it != _lights.end(); ++it)
@@ -98,7 +98,7 @@ void VtkVisPipeline::addLight(const GEOLIB::Point &pos)
 	_lights.push_back(l);
 }
 
-vtkLight* VtkVisPipeline::getLight(const GEOLIB::Point &pos) const
+vtkLight* VtkVisPipeline::getLight(const GeoLib::Point &pos) const
 {
 	double lightPos[3];
 	for (std::list<vtkLight*>::const_iterator it = _lights.begin(); it != _lights.end(); ++it)
@@ -110,7 +110,7 @@ vtkLight* VtkVisPipeline::getLight(const GEOLIB::Point &pos) const
 	return NULL;
 }
 
-void VtkVisPipeline::removeLight(const GEOLIB::Point &pos)
+void VtkVisPipeline::removeLight(const GeoLib::Point &pos)
 {
 	double lightPos[3];
 	for (std::list<vtkLight*>::iterator it = _lights.begin(); it != _lights.end(); ++it)
@@ -260,7 +260,7 @@ void VtkVisPipeline::setGlobalBackfaceCulling(bool enable) const
 
 void VtkVisPipeline::addPipelineItem(GeoTreeModel* model,
                                      const std::string &name,
-                                     GEOLIB::GEOTYPE type)
+                                     GeoLib::GEOTYPE type)
 {
 	addPipelineItem(model->vtkSource(name, type));
 }
@@ -356,7 +356,7 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
 
 void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
                                       const std::string &name,
-                                      GEOLIB::GEOTYPE type)
+                                      GeoLib::GEOTYPE type)
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{

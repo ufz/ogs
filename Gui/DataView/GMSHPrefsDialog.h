@@ -11,7 +11,7 @@
 
 class QStringListModel;
 
-namespace GEOLIB
+namespace GeoLib
 {
 class GEOObjects;
 }
@@ -24,7 +24,7 @@ class GMSHPrefsDialog : public QDialog, private Ui_GMSHPrefs
 	Q_OBJECT
 
 public:
-	GMSHPrefsDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* parent = 0);
+	GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* parent = 0);
 	~GMSHPrefsDialog(void);
 
 private:

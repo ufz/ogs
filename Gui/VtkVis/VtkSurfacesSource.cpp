@@ -32,7 +32,7 @@ VtkSurfacesSource::VtkSurfacesSource()
 	this->SetNumberOfInputPorts(0);
 	//this->SetColorBySurface(true);
 
-	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	const GeoLib::Color* c = GeoLib::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
 	vtkProps->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 	vtkProps->SetEdgeVisibility(0);
@@ -59,7 +59,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	if (nSurfaces == 0)
 		return 0;
 
-	const std::vector<GEOLIB::Point*>* surfacePoints = (*_surfaces)[0]->getPointVec();
+	const std::vector<GeoLib::Point*>* surfacePoints = (*_surfaces)[0]->getPointVec();
 	size_t nPoints = surfacePoints->size();
 
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
@@ -85,7 +85,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	}
 
 	vtkIdType count(0);
-	for (std::vector<GEOLIB::Surface*>::const_iterator it = _surfaces->begin();
+	for (std::vector<GeoLib::Surface*>::const_iterator it = _surfaces->begin();
 	     it != _surfaces->end(); ++it)
 	{
 		const size_t nTriangles = (*it)->getNTriangles();
@@ -95,7 +95,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 			vtkPolygon* aPolygon = vtkPolygon::New();
 			aPolygon->GetPointIds()->SetNumberOfIds(3);
 
-			const GEOLIB::Triangle* triangle = (**it)[i];
+			const GeoLib::Triangle* triangle = (**it)[i];
 			for (size_t j = 0; j < 3; j++)
 				aPolygon->GetPointIds()->SetId(j, ((*triangle)[2 - j]));
 			newPolygons->InsertNextCell(aPolygon);

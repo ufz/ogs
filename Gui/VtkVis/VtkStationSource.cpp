@@ -33,14 +33,14 @@ VtkStationSource::VtkStationSource()
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
-	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	const GeoLib::Color* c = GeoLib::getRandomColor();
 	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 	delete c;
 }
 
 VtkStationSource::~VtkStationSource()
 {
-	std::map<std::string, GEOLIB::Color*>::iterator it;
+	std::map<std::string, GeoLib::Color*>::iterator it;
 	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); ++it)
 		delete it->second;
 }
@@ -55,7 +55,7 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
 	os << indent << "== VtkStationSource ==" << "\n";
 
 	int i = 0;
-	for (std::vector<GEOLIB::Point*>::const_iterator it = _stations->begin();
+	for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
 	     it != _stations->end(); ++it)
 	{
 		const double* coords = (*it)->getData();
@@ -80,17 +80,17 @@ int VtkStationSource::RequestData( vtkInformation* request,
 		return 0;
 
 	bool useStationValues(false);
-	double sValue=static_cast<GEOLIB::Station*>((*_stations)[0])->getStationValue();
+	double sValue=static_cast<GeoLib::Station*>((*_stations)[0])->getStationValue();
 	for (size_t i = 1; i < nStations; i++)
-		if (static_cast<GEOLIB::Station*>((*_stations)[i])->getStationValue() != sValue)
+		if (static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue() != sValue)
 		{
 			useStationValues = true;
 			break;
 		}
 
 	bool isBorehole =
-	        (static_cast<GEOLIB::Station*>((*_stations)[0])->type() ==
-	GEOLIB::Station::BOREHOLE) ? true : false;
+	        (static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
+	GeoLib::Station::BOREHOLE) ? true : false;
 
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
 	vtkSmartPointer<vtkPolyData> output =
@@ -124,23 +124,23 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	size_t site_count(0);
 
 	// Generate graphic objects
-	for (std::vector<GEOLIB::Point*>::const_iterator it = _stations->begin();
+	for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
 	     it != _stations->end(); ++it)
 	{
 		double coords[3] = { (*(*it))[0], (*(*it))[1], (*(*it))[2] };
 		vtkIdType sid = newStations->InsertNextPoint(coords);
 		station_ids->InsertNextValue(site_count);
 		if (useStationValues)
-			station_values->InsertNextValue(static_cast<GEOLIB::Station*>(*it)->getStationValue());
+			station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
 
 		if (!isBorehole)
 			newVerts->InsertNextCell(1, &sid);
 		else
 		{
-			std::vector<GEOLIB::Point*> profile =
-			        static_cast<GEOLIB::StationBorehole*>(*it)->getProfile();
+			std::vector<GeoLib::Point*> profile =
+			        static_cast<GeoLib::StationBorehole*>(*it)->getProfile();
 			std::vector<std::string> soilNames =
-			        static_cast<GEOLIB::StationBorehole*>(*it)->getSoilNames();
+			        static_cast<GeoLib::StationBorehole*>(*it)->getSoilNames();
 			const size_t nLayers = profile.size();
 
 			for (size_t i = 1; i < nLayers; i++)
@@ -156,7 +156,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
 				lastMaxIndex++;
 				strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
 				if (useStationValues)
-					station_values->InsertNextValue(static_cast<GEOLIB::Station*>(*it)->getStationValue());
+					station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
 			}
 			lastMaxIndex++;
 		}
@@ -179,7 +179,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	}
 	if (useStationValues)
 		output->GetPointData()->AddArray(station_values);
-	
+
 	return 1;
 }
 

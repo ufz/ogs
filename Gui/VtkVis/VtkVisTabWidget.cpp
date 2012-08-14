@@ -132,7 +132,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 		//VtkStationSource* test = dynamic_cast<VtkStationSource*>(_item->algorithm());
 		//if (test)
 		//{
-		//	std::map<std::string, GEOLIB::Color> colors = test->getColorLookupTable();
+		//	std::map<std::string, GeoLib::Color> colors = test->getColorLookupTable();
 		//	if (!colors.empty())
 		//	{
 		//		ColorTableModel* ctm = new ColorTableModel(colors);

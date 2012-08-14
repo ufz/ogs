@@ -21,7 +21,7 @@
 #include <vtkPointData.h>
 
 VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm), _type(GEOLIB::POINT), _threshold(vtkThreshold::New())
+	: VtkCompositeFilter(inputAlgorithm), _type(GeoLib::POINT), _threshold(vtkThreshold::New())
 {
 	if (inputAlgorithm->GetNumberOfInputPorts() && inputAlgorithm->GetNumberOfInputConnections(0))
 	{
@@ -31,10 +31,10 @@ VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlg
 	  {
 		vtkAlgorithm* parentAlg = ao->GetProducer();
 
-	  if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL) 
-		_type = GEOLIB::POLYLINE;
-	  else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL) 
-		_type = GEOLIB::SURFACE;
+	  if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL)
+		_type = GeoLib::POLYLINE;
+	  else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL)
+		_type = GeoLib::SURFACE;
 	  }
 
 	}
@@ -59,13 +59,13 @@ void VtkCompositeGeoObjectFilter::init()
 	surface->SetInputConnection(_threshold->GetOutputPort());
 
 	VtkCompositeFilter* composite;
-	if (_type == GEOLIB::POINT)
-	{  
+	if (_type == GeoLib::POINT)
+	{
 		composite = new VtkCompositePointToGlyphFilter(surface);
 		composite->SetUserProperty("Radius", this->GetInitialRadius());
 		_outputAlgorithm = composite->GetOutputAlgorithm();
 	}
-	else if (_type == GEOLIB::POLYLINE)
+	else if (_type == GeoLib::POLYLINE)
 	{
 		composite = new VtkCompositeLineToTubeFilter(surface);
 		composite->SetUserProperty("Radius", this->GetInitialRadius());
@@ -77,7 +77,7 @@ void VtkCompositeGeoObjectFilter::init()
 
 }
 
-void VtkCompositeGeoObjectFilter::SetIndex(size_t idx) 
+void VtkCompositeGeoObjectFilter::SetIndex(size_t idx)
 {
 	_threshold->ThresholdBetween(idx, idx);
 }

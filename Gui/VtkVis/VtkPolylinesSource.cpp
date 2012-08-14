@@ -29,7 +29,7 @@ VtkPolylinesSource::VtkPolylinesSource()
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
-	const GEOLIB::Color* c = GEOLIB::getRandomColor();
+	const GeoLib::Color* c = GeoLib::getRandomColor();
 	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
 }
 
@@ -44,14 +44,14 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 	if (_polylines->size() == 0)
 		return;
 
-	for (std::vector<GEOLIB::Polyline*>::const_iterator it = _polylines->begin();
+	for (std::vector<GeoLib::Polyline*>::const_iterator it = _polylines->begin();
 	     it != _polylines->end(); ++it)
 	{
 		os << indent << "== Polyline ==" << "\n";
 		int numPoints = (*it)->getNumberOfPoints();
 		for (int i = 0; i < numPoints; i++)
 		{
-			const GEOLIB::Point* point = (**it)[i];
+			const GeoLib::Point* point = (**it)[i];
 			const double* coords = point->getData();
 			os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
 			", " << coords[2] << ")\n";
@@ -94,7 +94,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 	plyIDs->SetName("PolylineIDs");
 
 	int lastMaxIndex = 0;
-	//for (std::vector<GEOLIB::Polyline*>::const_iterator it = _polylines->begin();
+	//for (std::vector<GeoLib::Polyline*>::const_iterator it = _polylines->begin();
 	//	it != _polylines->end(); ++it)
 	for (size_t j = 0; j < _polylines->size(); j++)
 	{
@@ -104,7 +104,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		// Generate points
 		for (int i = 0; i < numPoints; i++)
 		{
-			const GEOLIB::Point* point = (*(*_polylines)[j])[i];
+			const GeoLib::Point* point = (*(*_polylines)[j])[i];
 			const double* coords = point->getData();
 			newPoints->InsertNextPoint(coords);
 		}

@@ -15,7 +15,7 @@ class QComboBox;
 class QPushButton;
 class StrictDoubleValidator;
 
-namespace GEOLIB {
+namespace GeoLib {
 	class GeoObject;
 }
 
@@ -33,10 +33,10 @@ class FEMConditionSetupDialog : public QDialog, private Ui_FEMConditionSetup
 
 public:
 	/// Constructor for creating a new FEM condition.
-	FEMConditionSetupDialog(const std::string &associated_geometry, 
-							const GEOLIB::GEOTYPE type, 
-							const std::string &geo_name, 
-							const GEOLIB::GeoObject* const geo_object, 
+	FEMConditionSetupDialog(const std::string &associated_geometry,
+							const GeoLib::GEOTYPE type,
+							const std::string &geo_name,
+							const GeoLib::GeoObject* const geo_object,
 							bool  on_points = false,
 							QDialog* parent = 0);
 

@@ -106,7 +106,7 @@ void DataView::openMshEditDialog()
 	        static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
 
 	MshEditDialog meshEdit(mesh);
-	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::CFEMesh*, std::string &)), 
+	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::CFEMesh*, std::string &)),
 		    model, SLOT(addMesh(MeshLib::CFEMesh*, std::string &)));
 	meshEdit.exec();
 }
@@ -145,7 +145,7 @@ void DataView::addDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
-	emit requestCondSetupDialog(grid->getName(), GEOLIB::INVALID, 0, false);
+	emit requestCondSetupDialog(grid->getName(), GeoLib::INVALID, 0, false);
 }
 
 
@@ -153,7 +153,7 @@ void DataView::loadDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
-	const std::vector<GEOLIB::Point*>* points = grid->getNodes();
+	const std::vector<GeoLib::Point*>* points = grid->getNodes();
 	emit requestDIRECTSourceTerms(grid->getName(), points);
 }
 

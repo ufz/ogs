@@ -43,7 +43,7 @@ protected:
 	int write(std::ostream& stream);
 
 private:
-	/// Reads GEOLIB::Station- or StationBorehole-objects from an xml-file
+	/// Reads GeoLib::Station- or StationBorehole-objects from an xml-file
 	void readStations  ( const QDomNode &stationsRoot, std::vector<GeoLib::Point*>* stations, const std::string &station_file_name);
 
 	/// Writes borehole-specific data to a station-xml-file.
@@ -54,7 +54,7 @@ private:
 	/// Reads the stratigraphy of a borehole from an xml-file
 	void readStratigraphy( const QDomNode &stratRoot, GeoLib::StationBorehole*  borehole );
 
-	/// Reads GEOLIB::Station- or StationBorehole-objects from an xml-file using the RapidXML parser
+	/// Reads GeoLib::Station- or StationBorehole-objects from an xml-file using the RapidXML parser
 	void rapidReadStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name);
 
 	/// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser

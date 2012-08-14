@@ -9,7 +9,7 @@
 #include "ui_StratWindow.h"
 #include <QWidget>
 
-namespace GEOLIB
+namespace GeoLib
 {
 class StationBorehole;
 }
@@ -28,8 +28,8 @@ public:
 	 * \param stratColors A color map.
 	 * \param parent The parent QWidget.
 	 */
-	StratWindow(GEOLIB::StationBorehole* station,
-	            std::map<std::string, GEOLIB::Color*>* stratColors = NULL,
+	StratWindow(GeoLib::StationBorehole* station,
+	            std::map<std::string, GeoLib::Color*>* stratColors = NULL,
 	            QWidget* parent = 0);
 	~StratWindow(void) { this->destroy(); }
 

@@ -47,8 +47,8 @@ protected slots:
 private:
 	VtkVisPipeline* _vtkVisPipeline;
 	VisualizationWidget* _visWidget;
-	GEOLIB::Point _above;
-	GEOLIB::Point _below;
+	GeoLib::Point _above;
+	GeoLib::Point _below;
 };
 
 #endif //VISPREFSDIALOG_H

@@ -29,7 +29,7 @@ public:
 	CondObjectListItem(const QList<QVariant> &data,
 	                   TreeItem* parent,
 	                   FEMCondition* cond,
-	                   const std::vector<GEOLIB::Point*>* points)
+	                   const std::vector<GeoLib::Point*>* points)
 		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(cond->getCondType()),
 		  _cond_vec(new std::vector<FEMCondition*>)
 	{

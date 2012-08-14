@@ -54,10 +54,10 @@ void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_ind
 	TreeItem* nodeListItem = new TreeItem(nodeListData, elemItem);
 	elemItem->appendChild(nodeListItem);
 
-	const std::vector<GEOLIB::Point*>* nodes_vec = grid->getNodes();
+	const std::vector<GeoLib::Point*>* nodes_vec = grid->getNodes();
 	for (size_t i = 0; i < elem->nodes.size(); i++)
 	{
-		const GEOLIB::Point* pnt = (*nodes_vec)[elem->nodes[i]];
+		const GeoLib::Point* pnt = (*nodes_vec)[elem->nodes[i]];
 		QList<QVariant> nodeData;
 		nodeData << "Node " + QString::number(elem->nodes[i]) <<
 		QString::number((*pnt)[0]) << QString::number((*pnt)[1]) <<

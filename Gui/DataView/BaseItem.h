@@ -21,7 +21,7 @@
 class BaseItem
 {
 public:
-	BaseItem(const QString &listName, const std::vector<GEOLIB::Point*>* stations = NULL )
+	BaseItem(const QString &listName, const std::vector<GeoLib::Point*>* stations = NULL )
 		: _stations(stations), _vtkSource(VtkStationSource::New())
 	{
 		// create the vtk-object for 3d-visualisation of this list
@@ -40,14 +40,14 @@ public:
 	/// Sets the model index
 	void setModelIndex( QModelIndex index ) { _modelIndex = index; }
 
-	const std::vector<GEOLIB::Point*>* getStations() { return _stations; }
+	const std::vector<GeoLib::Point*>* getStations() { return _stations; }
 
 	/// Returns the Vtk polydata source object
 	vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; }
 
 private:
 	QModelIndex _modelIndex;
-	const std::vector<GEOLIB::Point*>* _stations;
+	const std::vector<GeoLib::Point*>* _stations;
 
 	/// The Vtk data source object. This is the starting point for a Vtk data
 	/// visualization pipeline.

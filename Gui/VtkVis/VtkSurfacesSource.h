@@ -27,7 +27,7 @@ public:
 	vtkTypeRevisionMacro(VtkSurfacesSource,vtkPolyDataAlgorithm);
 
 	/// Sets the surfaces vector
-	void setSurfaces(const std::vector<GEOLIB::Surface*>* surfaces) { _surfaces = surfaces; }
+	void setSurfaces(const std::vector<GeoLib::Surface*>* surfaces) { _surfaces = surfaces; }
 
 	/// Prints its data on a stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -53,7 +53,7 @@ protected:
 	                       vtkInformationVector* outputVector);
 
 	/// The surfaces to visualize
-	const std::vector<GEOLIB::Surface*>* _surfaces;
+	const std::vector<GeoLib::Surface*>* _surfaces;
 
 private:
 };

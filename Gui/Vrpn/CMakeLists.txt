@@ -36,11 +36,11 @@ Qt4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
 ### Include directories ###
 INCLUDE_DIRECTORIES(
-	${CMAKE_SOURCE_DIR}/Qt/Vrpn
-	${CMAKE_BINARY_DIR}/Qt/Vrpn
+	${CMAKE_SOURCE_DIR}/Gui/Vrpn
+	${CMAKE_BINARY_DIR}/Gui/Vrpn
 	${VRPN_INCLUDE_DIRS}
-	${CMAKE_SOURCE_DIR}/Qt/VtkVis
-	${CMAKE_BINARY_DIR}/Qt/VtkVis
+	${CMAKE_SOURCE_DIR}/Gui/VtkVis
+	${CMAKE_BINARY_DIR}/Gui/VtkVis
 )
 
 # Put moc files in a project folder

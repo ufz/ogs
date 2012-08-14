@@ -41,6 +41,8 @@ IF (OGS_BUILD_INFO)
 	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
 ENDIF (OGS_BUILD_INFO)
 
+OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
+
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 ######################
@@ -59,6 +61,10 @@ ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
 ADD_SUBDIRECTORY( SimpleTests/MeshTests )
 IF(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
 	ADD_SUBDIRECTORY( SimpleTests/SolverTests )
+ENDIF()
+IF(OGS_BUILD_GUI)
+	ADD_DEFINITIONS(-DOGS_USE_QT)
+	ADD_SUBDIRECTORY(Gui)
 ENDIF()
 
 CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)

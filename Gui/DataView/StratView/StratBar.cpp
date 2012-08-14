@@ -6,8 +6,8 @@
 #include "StratBar.h"
 #include <QPainter>
 
-StratBar::StratBar(GEOLIB::StationBorehole* station,
-                   std::map<std::string, GEOLIB::Color*>* stratColors,
+StratBar::StratBar(GeoLib::StationBorehole* station,
+                   std::map<std::string, GeoLib::Color*>* stratColors,
                    QGraphicsItem* parent) :
 	QGraphicsItem(parent), _station(station)
 {
@@ -17,7 +17,7 @@ StratBar::StratBar(GEOLIB::StationBorehole* station,
 
 StratBar::~StratBar()
 {
-//	std::map<std::string, GEOLIB::Color*>::iterator it;
+//	std::map<std::string, GeoLib::Color*>::iterator it;
 //	for (it = _stratColors.begin(); it != _stratColors.end(); it++) {
 //		delete it->second;
 //	}
@@ -41,7 +41,7 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 	//painter->drawRect(_bar);
 
 	//pen.setWidth(1);
-	std::vector<GEOLIB::Point*> profile = _station->getProfile();
+	std::vector<GeoLib::Point*> profile = _station->getProfile();
 	std::vector<std::string> soilNames = _station->getSoilNames();
 	size_t nLayers = profile.size();
 
@@ -52,7 +52,7 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 		top += height;
 		height = logHeight(((*(profile[i - 1]))[2] - (*(profile[i]))[2]));
 		QRectF layer(0, top, BARWIDTH, height);
-		const GEOLIB::Color* c (GEOLIB::getColor(soilNames[i], _stratColors));
+		const GeoLib::Color* c (GeoLib::getColor(soilNames[i], _stratColors));
 		QBrush brush(QColor((int)(*c)[0],
 		                    (int)(*c)[1],
 		                    (int)(*c)[2],
@@ -68,7 +68,7 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 double StratBar::totalLogHeight() const
 {
 	double height = 0;
-	std::vector<GEOLIB::Point*> profile = _station->getProfile();
+	std::vector<GeoLib::Point*> profile = _station->getProfile();
 
 	for (size_t i = 1; i < profile.size(); i++)
 		height += ( log((*(profile[i - 1]))[2] - (*(profile[i]))[2] + 1) * 100 );

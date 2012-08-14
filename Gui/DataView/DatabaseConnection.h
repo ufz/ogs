@@ -21,7 +21,7 @@ class DatabaseConnection : public QObject
 	Q_OBJECT
 
 public:
-	DatabaseConnection(GEOLIB::GEOObjects* geoObjects, QObject* parent = 0);
+	DatabaseConnection(GeoLib::GEOObjects* geoObjects, QObject* parent = 0);
 	~DatabaseConnection();
 
 	int dbConnect();
@@ -58,21 +58,21 @@ public slots:
 
 private:
 	void databaseError();
-	int addStratigraphy(int listID, std::vector<GEOLIB::Point*>* stations);
+	int addStratigraphy(int listID, std::vector<GeoLib::Point*>* stations);
 	bool commitTransaction(QSqlQuery query);
 
 	//data-insert functions -- be careful!
 	int addListToDB(std::string path,
 	                std::string listName,
 	                std::string catName,
-	                GEOLIB::Station::StationType type);
+	                GeoLib::Station::StationType type);
 	bool addStationToDB(int listID, int stationID, std::string line);
 	bool addBoreholeToDB(int listID, int stationID, std::string line);
 	int addStratigraphyToDB(std::string path, int listID);
 	int addMeasuredValuesToDB(std::string path, int listID, int stationID);
 
 	QSqlDatabase _db;
-	GEOLIB::GEOObjects* _geoObjects;
+	GeoLib::GEOObjects* _geoObjects;
 
 signals:
 	void listLoaded(QString listName);

@@ -13,7 +13,7 @@ SET( HEADERS
 
 ### Include directories ###
 INCLUDE_DIRECTORIES(
-	${CMAKE_SOURCE_DIR}/Qt/OpenSG
+	${CMAKE_SOURCE_DIR}/Gui/OpenSG
 )
 
 ### Create the library ###

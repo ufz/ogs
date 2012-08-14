@@ -17,9 +17,9 @@
 #include "SourceTerm.h"
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_geometry,
-												 const GEOLIB::GEOTYPE type,
+												 const GeoLib::GEOTYPE type,
 												 const std::string &geo_name,
-												 const GEOLIB::GeoObject* const geo_object,
+												 const GeoLib::GeoObject* const geo_object,
 												 bool  on_points,
 												 QDialog* parent)
 : QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points),
@@ -46,7 +46,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const 
 : QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false),  _combobox(NULL), directButton(NULL),
   _mesh(mesh), _first_value_validator(NULL)
 {
-	_cond.setGeoType(GEOLIB::INVALID);
+	_cond.setGeoType(GeoLib::INVALID);
 	_cond.setGeoName(name);
 	_cond.setGeoObj(NULL);
 
@@ -63,10 +63,10 @@ FEMConditionSetupDialog::~FEMConditionSetupDialog()
 
 void FEMConditionSetupDialog::setupDialog()
 {
-	if (_cond.getGeoType() != GEOLIB::INVALID)
+	if (_cond.getGeoType() != GeoLib::INVALID)
 	{
 		this->disTypeBox->addItem("Constant (Dirichlet)");
-		if (_cond.getGeoType() == GEOLIB::POLYLINE)
+		if (_cond.getGeoType() == GeoLib::POLYLINE)
 			this->disTypeBox->addItem("Linear (Dirichlet)");
 
 		if (this->_set_on_points)
@@ -121,7 +121,7 @@ void FEMConditionSetupDialog::setValuesFromCond()
 		on_condTypeBox_currentIndexChanged(2);
 	}
 
-	if (_cond.getGeoType() != GEOLIB::INVALID)
+	if (_cond.getGeoType() != GeoLib::INVALID)
 	{
 		if (_cond.getProcessDistributionType() == FiniteElement::CONSTANT || _cond.getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
 		{
@@ -146,7 +146,7 @@ void FEMConditionSetupDialog::accept()
 	_cond.setProcessType(static_cast<FiniteElement::ProcessType>(this->processTypeBox->currentIndex() + 1));
 	_cond.setProcessPrimaryVariable(static_cast<FiniteElement::PrimaryVariable>(this->pvTypeBox->currentIndex() + 1));
 
-	if (_cond.getGeoType() != GEOLIB::INVALID)
+	if (_cond.getGeoType() != GeoLib::INVALID)
 	{
 		if (condTypeBox->currentIndex()>1)
 		{
@@ -200,14 +200,14 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 	//if (index==1)
 	//	this->geoNameBox->addItem("Domain");
 	// remove "Domain" if IC is unselected
-	if (_cond.getGeoType() != GEOLIB::INVALID)
+	if (_cond.getGeoType() != GeoLib::INVALID)
 	{
 		if (index>1) // source terms selected
 		{
 			while (this->disTypeBox->count()>0)
 				this->disTypeBox->removeItem(0);
 			this->disTypeBox->addItem("Constant (Neumann)");
-			if (_cond.getGeoType() == GEOLIB::POLYLINE)
+			if (_cond.getGeoType() == GeoLib::POLYLINE)
 				this->disTypeBox->addItem("Linear (Neumann)");
 		}
 		else
@@ -215,7 +215,7 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 			while (this->disTypeBox->count()>0)
 				this->disTypeBox->removeItem(0);
 			this->disTypeBox->addItem("Constant (Dirichlet)");
-			if (_cond.getGeoType() == GEOLIB::POLYLINE)
+			if (_cond.getGeoType() == GeoLib::POLYLINE)
 				this->disTypeBox->addItem("Linear (Dirichlet)");
 		}
 	}
@@ -245,7 +245,7 @@ void FEMConditionSetupDialog::directButton_pressed()
 {
 	if (this->_mesh == NULL)
 	{
-		const GEOLIB::Polyline* line = dynamic_cast<const GEOLIB::Polyline*>(_cond.getGeoObj());
+		const GeoLib::Polyline* line = dynamic_cast<const GeoLib::Polyline*>(_cond.getGeoObj());
 		const std::vector<size_t> nodes = _cond.getDisNodes();
 		const std::vector<double> values = _cond.getDisValues();
 		LinearEditDialog dlg(*line, nodes, values);
@@ -292,15 +292,15 @@ FEMCondition* FEMConditionSetupDialog::typeCast(const FEMCondition &cond)
 void FEMConditionSetupDialog::copyCondOnPoints()
 {
 	std::vector<FEMCondition*> conditions;
-	if (_cond.getGeoType() == GEOLIB::POLYLINE)
+	if (_cond.getGeoType() == GeoLib::POLYLINE)
 	{
-		const GEOLIB::Polyline* ply = dynamic_cast<const GEOLIB::Polyline*>(_cond.getGeoObj());
+		const GeoLib::Polyline* ply = dynamic_cast<const GeoLib::Polyline*>(_cond.getGeoObj());
 		size_t nPoints = ply->getNumberOfPoints();
 		for (size_t i=0; i<nPoints; i++)
 		{
 			FEMCondition* cond = new FEMCondition(_cond);
 			cond->setGeoObj(NULL);
-			cond->setGeoType(GEOLIB::POINT);
+			cond->setGeoType(GeoLib::POINT);
 			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str(ply->getPointID(i)));
 			cond->clearDisValues();
 			cond->setConstantDisValue((*ply->getPoint(i))[2]);
@@ -308,18 +308,18 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 		}
 		emit createFEMCondition(conditions);
 	}
-	else if (_cond.getGeoType() == GEOLIB::SURFACE)
+	else if (_cond.getGeoType() == GeoLib::SURFACE)
 	{
-		const GEOLIB::Surface* sfc = dynamic_cast<const GEOLIB::Surface*>(_cond.getGeoObj());
+		const GeoLib::Surface* sfc = dynamic_cast<const GeoLib::Surface*>(_cond.getGeoObj());
 		size_t nTriangles = sfc->getNTriangles();
 		for (size_t i=0; i<nTriangles; i++)
 		{
-			const GEOLIB::Triangle* tri = (*sfc)[i];
+			const GeoLib::Triangle* tri = (*sfc)[i];
 			for (size_t j=0; j<3; j++)
 			{
 				FEMCondition* cond = new FEMCondition(_cond);
 				cond->setGeoObj(NULL);
-				cond->setGeoType(GEOLIB::POINT);
+				cond->setGeoType(GeoLib::POINT);
 				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
 				cond->clearDisValues();
 				cond->setConstantDisValue((*tri->getPoint(j))[2]);

@@ -21,8 +21,8 @@ ADD_EXECUTABLE( MeshRead
 
 TARGET_LINK_LIBRARIES ( MeshRead
 	MeshLib
-	FileIO	
-	MathLib	
+	FileIO
+	MathLib
 	BaseLib
 	GeoLib
 	logog
@@ -38,8 +38,8 @@ ADD_EXECUTABLE( CollapseMeshNodes
 
 TARGET_LINK_LIBRARIES ( CollapseMeshNodes
 	MeshLib
-	FileIO	
-	MathLib	
+	FileIO
+	MathLib
 	BaseLib
 	GeoLib
 	logog

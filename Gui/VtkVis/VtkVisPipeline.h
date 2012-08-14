@@ -52,13 +52,13 @@ public:
 	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
 	/// \brief Adds a light to the scene at the given coordinates.
-	void addLight(const GEOLIB::Point &pos);
+	void addLight(const GeoLib::Point &pos);
 
 	/// \brief Returns a light (or NULL) for the given coordinates.
-	vtkLight* getLight(const GEOLIB::Point &pos) const;
+	vtkLight* getLight(const GeoLib::Point &pos) const;
 
 	/// \brief Removes a light at the given coordinates (if possible).
-	void removeLight(const GEOLIB::Point &pos);
+	void removeLight(const GeoLib::Point &pos);
 
 	/// \brief Returns the background-colour of the scene.
 	const QColor getBGColor() const;
@@ -88,7 +88,7 @@ public:
 public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
-	void addPipelineItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
+	void addPipelineItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
 	void addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
 	QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
@@ -98,7 +98,7 @@ public slots:
 
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
-	void removeSourceItem(GeoTreeModel* model, const std::string &name, GEOLIB::GEOTYPE type);
+	void removeSourceItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
 	void removeSourceItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void removeSourceItem(StationTreeModel* model, const std::string &name);
 

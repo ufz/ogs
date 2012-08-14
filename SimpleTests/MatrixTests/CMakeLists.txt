@@ -31,7 +31,7 @@ ADD_EXECUTABLE( MatVecMultPthreads
         ${HEADERS}
 )
 SET_TARGET_PROPERTIES(MatVecMultPthreads PROPERTIES FOLDER SimpleTests)
-TARGET_LINK_LIBRARIES(MatVecMultPthreads 
+TARGET_LINK_LIBRARIES(MatVecMultPthreads
 	pthread
 	BaseLib
 	MathLib

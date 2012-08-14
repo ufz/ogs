@@ -44,8 +44,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 		{
 			const double* coords = mesh->nod_vector[i]->getData();
 			new_mesh->nod_vector.push_back( new MeshLib::CNode(node_offset + i,
-															   coords[0], 
-															   coords[1], 
+															   coords[0],
+															   coords[1],
 															   coords[2]-z_offset) );
 		}
 
@@ -148,7 +148,7 @@ int MshLayerMapper::LayerMapping(MeshLib::CFEMesh* new_mesh,
 			const size_t yIdx (static_cast<size_t>(floor(yPos)));
 
 			// deviation of mesh node from centre of raster cell ( in [-1:1) because it is normalised by delta/2 )
-			const double xShift = (xPos-xIdx-half_delta)/half_delta; 
+			const double xShift = (xPos-xIdx-half_delta)/half_delta;
 			const double yShift = (yPos-yIdx-half_delta)/half_delta;
 
 			const int xShiftIdx = (xShift>=0) ? ceil(xShift) : floor(xShift);
@@ -266,7 +266,7 @@ MeshLib::CFEMesh* MshLayerMapper::blendLayersWithSurface(MeshLib::CFEMesh* mesh,
 	const size_t nNodesPerLayer = nNodes / (nLayers+1);
 	std::vector<bool> is_surface_node(nNodes, false);
 	std::vector<bool> nodes_below_surface(nNodes, false);
-	
+
 	// check if bottom layer nodes are below DEM
 	const size_t bottom_firstNode = nLayers * nNodesPerLayer;
 	const size_t bottom_lastNode  = bottom_firstNode + nNodesPerLayer;
@@ -312,16 +312,16 @@ MeshLib::CFEMesh* MshLayerMapper::blendLayersWithSurface(MeshLib::CFEMesh* mesh,
 		}
 	}
 
-	std::vector<GEOLIB::Point*> *nodes = new std::vector<GEOLIB::Point*>;
+	std::vector<GeoLib::Point*> *nodes = new std::vector<GeoLib::Point*>;
 	std::vector<int> node_index_map(nNodes, -1);
 	size_t node_count(0);
 	for (size_t j=0; j<nNodes; j++)
 	{
 		if (nodes_below_surface[j])
 		{
-			nodes->push_back(new GEOLIB::Point(mesh->nod_vector[j]->getData()));
+			nodes->push_back(new GeoLib::Point(mesh->nod_vector[j]->getData()));
 			node_index_map[j]=node_count++;
-		}	
+		}
 	}
 
 	const size_t nElems = mesh->ele_vector.size();
@@ -329,11 +329,11 @@ MeshLib::CFEMesh* MshLayerMapper::blendLayersWithSurface(MeshLib::CFEMesh* mesh,
 	for (size_t j=0; j<nElems; j++)
 	{
 		const MeshLib::CElem* elem = mesh->ele_vector[j];
-	
+
 		size_t count(0);
 		for (size_t i=0; i<6; i++) // check top surface of prism
 			if (nodes_below_surface[elem->GetNodeIndex(i)]) count++;
-		
+
 		if (count==6) // copy prism elements if all six nodes are valid
 		{
 			GridAdapter::Element* prism = new GridAdapter::Element;

@@ -20,7 +20,7 @@ class ConditionWriterDialog : public QDialog, private Ui_ConditionWriter
 	Q_OBJECT
 
 public:
-	ConditionWriterDialog(const GEOLIB::GEOObjects* geoObjects, QDialog* parent = 0);
+	ConditionWriterDialog(const GeoLib::GEOObjects* geoObjects, QDialog* parent = 0);
 	~ConditionWriterDialog(void);
 
 private slots:
