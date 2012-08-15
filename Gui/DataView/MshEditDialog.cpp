@@ -6,14 +6,14 @@
 #include "MshEditDialog.h"
 #include "OGSError.h"
 #include "StringTools.h"
-#include "msh_mesh.h"
+#include "Mesh.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QSettings>
 
-MshEditDialog::MshEditDialog(const MeshLib::CFEMesh* mesh, QDialog* parent)
+MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL)
 {
 	setupUi(this);
@@ -110,7 +110,7 @@ void MshEditDialog::accept()
 					}
 				}
 			}
-			if (nLayers>0 && this->_edits[0]->text().length()>0) 
+			if (nLayers>0 && this->_edits[0]->text().length()>0)
 			{
 				MeshLib::CFEMesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
 				delete new_mesh;

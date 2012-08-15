@@ -7,7 +7,11 @@
 #ifndef DIRECTCONDITIONGENERATOR_H
 #define DIRECTCONDITIONGENERATOR_H
 
-#include "msh_mesh.h"
+#include <vector>
+
+namespace MeshLib {
+	class Mesh;
+}
 
 class DirectConditionGenerator
 {
@@ -15,9 +19,9 @@ public:
 	DirectConditionGenerator() {};
 	~DirectConditionGenerator() {};
 
-	const std::vector< std::pair<size_t,double> >& directToSurfaceNodes(const MeshLib::CFEMesh &mesh, const std::string &filename);
+	const std::vector< std::pair<size_t,double> >& directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename);
 
-	const std::vector< std::pair<size_t,double> >& directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename, double scaling);
+	const std::vector< std::pair<size_t,double> >& directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling);
 
 	int writeToFile(const std::string &name) const;
 

@@ -9,9 +9,12 @@
 #define MSHMODEL_H
 
 // ** INCLUDES **
-#include "GridAdapter.h"
 #include "ProjectData.h"
 #include "TreeModel.h"
+
+namespace MeshLib {
+	class Mesh;
+}
 
 class VtkMeshSource;
 
@@ -32,11 +35,11 @@ public slots:
 	/// Adds a new mesh
 	void addMesh(GridAdapter* mesh);
 	/// Adds a new mesh
-	void addMesh(MeshLib::CFEMesh* mesh, std::string &name); // needs only to be a slot for MshLayerMapper. Otherwise normal function would be okay.
+	void addMesh(MeshLib::Mesh* mesh, std::string &name); // needs only to be a slot for MshLayerMapper. Otherwise normal function would be okay.
 	/// Returns the mesh with the given index.
-	const GridAdapter* getMesh(const QModelIndex &idx) const;
+	const MeshLib::Mesh* getMesh(const QModelIndex &idx) const;
 	/// Returns the mesh with the given name.
-	const GridAdapter* getMesh(const std::string &name) const;
+	const MeshLib::Mesh* getMesh(const std::string &name) const;
 	/// Removes the mesh with the given index.
 	bool removeMesh(const QModelIndex &idx);
 	/// Removes the mesh with the given name.
@@ -50,7 +53,7 @@ public slots:
 
 private:
 	/// Adds the mesh to the GUI-Mesh-Model und -View
-	void addMeshObject(GridAdapter* mesh);
+	void addMeshObject(MeshLib::Mesh* mesh);
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
 	//bool isUniqueMeshName(std::string &name);

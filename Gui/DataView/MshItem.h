@@ -9,8 +9,11 @@
 #include "TreeItem.h"
 #include "VtkMeshSource.h"
 
-class GridAdapter;
 class VtkMeshSource;
+
+namespace MeshLib {
+	class Mesh;
+}
 
 /**
  * \brief A TreeItem containing a mesh and the associated vtk object used in the Mesh Model.
@@ -24,7 +27,7 @@ public:
 	~MshItem();
 
 	/// Returns the mesh as a GridAdapter.
-	const GridAdapter* getGrid() const { return this->_meshSource->GetGrid(); }
+	const MeshLib::Mesh* getGrid() const { return this->_meshSource->GetGrid(); }
 	/// Returns the VTK object.
 	VtkMeshSource* vtkSource() const { return _meshSource; }
 

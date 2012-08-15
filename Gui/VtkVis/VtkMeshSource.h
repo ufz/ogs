@@ -10,11 +10,14 @@
 // ** INCLUDES **
 #include <map>
 
-#include "GridAdapter.h"
 #include "VtkAlgorithmProperties.h"
 #include <vtkUnstructuredGridAlgorithm.h>
 
 class VtkColorLookupTable;
+
+namespace MeshLib {
+	class Mesh;
+}
 
 /**
  * \brief VTK source object for the visualisation of unstructured grids
@@ -30,10 +33,10 @@ public:
 	const char* GetMaterialArrayName() const { return _matName; }
 
 	/// Returns the base object of this grid
-	const GridAdapter* GetGrid() { return this->_grid; }
+	const MeshLib::Mesh* GetGrid() { return this->_grid; }
 
 	/// Sets the grid object that should be visualized
-	void SetGrid(const GridAdapter* grid) { _grid = grid; }
+	void SetGrid(const MeshLib::Mesh* grid) { _grid = grid; }
 
 	/// Prints the mesh data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -56,7 +59,7 @@ protected:
 	                vtkInformationVector** inputVector,
 	                vtkInformationVector* outputVector);
 
-	const GridAdapter* _grid;
+	const MeshLib::Mesh* _grid;
 
 private:
 	const char* _matName;

@@ -6,8 +6,11 @@
 #ifndef ELEMENTTREEMODEL_H
 #define ELEMENTTREEMODEL_H
 
-#include "GridAdapter.h"
 #include "TreeModel.h"
+
+namespace MeshLib {
+	class Mesh;
+}
 
 /**
  * \brief A model for the display of information concerning element information implemented as a TreeModel.
@@ -26,7 +29,7 @@ public slots:
 	void clearView();
 
 	/// Extracts information of the element with the given index from the given grid.
-	void setElement(const GridAdapter* grid, const size_t elem_index);
+	void setElement(const MeshLib::Mesh* grid, const size_t elem_index);
 
 private:
 };

@@ -6,6 +6,9 @@
 
 #include "VtkColorLookupTable.h"
 #include "VtkMeshSource.h"
+#include "Mesh.h"
+#include "Node.h"
+#include "Element.h"
 
 // ** VTK INCLUDES **
 #include "vtkObjectFactory.h"
@@ -53,8 +56,8 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 
 	if (_grid == NULL)
 		return;
-	const std::vector<GeoLib::Point*>* nodes = _grid->getNodes();
-	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
+	const std::vector<GeoLib::Node*>* nodes = _grid->getNodes();
+	const std::vector<MeshLib::Element*>* elems = _grid->getElements();
 	if (nodes->empty() || elems->empty() )
 		return;
 

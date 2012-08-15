@@ -6,7 +6,7 @@
  */
 
 #include "DataView.h"
-#include "GridAdapter.h"
+#include "Mesh.h"
 #include "MshEditDialog.h"
 #include "MshItem.h"
 #include "MshModel.h"
@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QSettings>
 
-#include "MeshIO/OGSMeshIO.h"
+#include "MeshIO.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 
 DataView::DataView( QWidget* parent /*= 0*/ )
@@ -50,8 +50,8 @@ void DataView::addMeshAction()
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
-		FileIO::OGSMeshIO meshIO;
-		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
+		FileIO::MeshIO meshIO;
+		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
 			static_cast<MshModel*>(this->model())->addMesh(msh, name);
 	}
@@ -102,8 +102,8 @@ void DataView::openMshEditDialog()
 {
 	MshModel* model = static_cast<MshModel*>(this->model());
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const MeshLib::CFEMesh* mesh =
-	        static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
+	const MeshLib::Mesh* mesh =
+	        static_cast<MshModel*>(this->model())->getMesh(index);
 
 	MshEditDialog meshEdit(mesh);
 	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::CFEMesh*, std::string &)),
@@ -114,8 +114,8 @@ void DataView::openMshEditDialog()
 int DataView::writeMeshToFile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const MeshLib::CFEMesh* mesh =
-	        static_cast<MshModel*>(this->model())->getMesh(index)->getCFEMesh();
+	const MeshLib::Mesh* mesh =
+	        static_cast<MshModel*>(this->model())->getMesh(index);
 
 	if (mesh)
 	{
@@ -128,7 +128,7 @@ int DataView::writeMeshToFile() const
 
 		if (!fileName.isEmpty())
 		{
-			FileIO::OGSMeshIO meshIO;
+			FileIO::MeshIO meshIO;
 			meshIO.setMesh(mesh);
 			meshIO.writeToFile(fileName.toStdString().c_str());
 			QDir dir = QDir(fileName);
@@ -144,7 +144,7 @@ int DataView::writeMeshToFile() const
 void DataView::addDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
 	emit requestCondSetupDialog(grid->getName(), GeoLib::INVALID, 0, false);
 }
 
@@ -152,9 +152,9 @@ void DataView::addDIRECTSourceTerms()
 void DataView::loadDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const GridAdapter* grid = static_cast<MshModel*>(this->model())->getMesh(index);
-	const std::vector<GeoLib::Point*>* points = grid->getNodes();
-	emit requestDIRECTSourceTerms(grid->getName(), points);
+	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	// TODO6 const std::vector<MeshLib::Node*>* nodes = grid->getNodes();
+	// TODO6 emit requestDIRECTSourceTerms(grid->getName(), nodes);
 }
 
 void DataView::checkMeshQuality ()

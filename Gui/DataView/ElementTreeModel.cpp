@@ -6,6 +6,8 @@
 #include "ElementTreeModel.h"
 #include "OGSError.h"
 #include "TreeItem.h"
+#include "Mesh.h"
+#include "Elements/Element.h"
 
 /**
  * Constructor.
@@ -23,10 +25,10 @@ ElementTreeModel::~ElementTreeModel()
 {
 }
 
-void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_index)
+void ElementTreeModel::setElement(const MeshLib::Mesh* grid, const size_t elem_index)
 {
 	this->clearView();
-	GridAdapter::Element* elem = (*(grid->getElements()))[elem_index];
+	const MeshLib::Element* elem = grid->getElement(elem_index);
 
 	QList<QVariant> elemData;
 	elemData << "Element " + QString::number(elem_index) << "" << "" << "";
@@ -34,7 +36,7 @@ void ElementTreeModel::setElement(const GridAdapter* grid, const size_t elem_ind
 	_rootItem->appendChild(elemItem);
 
 	QList<QVariant> typeData;
-	typeData << "Element Type: " << QString::fromStdString(MshElemType2String(elem->type));
+	typeData << "Element Type: " << QString::fromStdString(MshElemType2String(elem->getType()));
 	TreeItem* typeItem = new TreeItem(typeData, elemItem);
 	elemItem->appendChild(typeItem);
 

@@ -30,7 +30,7 @@ IF(COMPILER_IS_GCC)
         ENDIF()
         # -g
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra -fno-nonansi-builtins")
-        ADD_DEFINITIONS( -DGCC )
+        ADD_DEFINITIONS( -DGCC -Wfatal-errors)
 ENDIF() # COMPILER_IS_GCC
 
 ### Intel compiler

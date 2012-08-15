@@ -9,10 +9,11 @@
 #include "VtkRaster.h"
 #include "MshEditor.h"
 #include "PointWithID.h"
+#include "Mesh.h"
 
-#include "fem_ele.h"
+#include <cmath>
 
-const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::CFEMesh &mesh, const std::string &filename)
+const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
 {
 	if (_direct_values.empty())
 	{
@@ -32,7 +33,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		_direct_values.reserve(nNodes);
 		for (size_t i=0; i<nNodes; i++)
 		{
-			const double* coords (surface_nodes[i]->getData());
+			const double* coords (surface_nodes[i]->getCoords());
 
 			if (coords[0]>=origin_x && coords[0]<(origin_x+(delta*imgwidth)) && coords[1]>=origin_y && coords[1]<(origin_y+(delta*imgheight)))
 			{
@@ -59,7 +60,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 }
 
 
-const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::CFEMesh &mesh, const std::string &filename, double scaling)
+const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
 	double no_data_value (-9999); // TODO: get this from asc-reader!
 
