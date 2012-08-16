@@ -110,6 +110,8 @@ void amuxCRSParallelPThreads (double a,
 	double const * const A, double const * const x, double* y,
 	unsigned num_of_pthreads, unsigned const*const workload_intervals)
 {
+    (void) n;   // Unused if HAVE_PTHREADS is not defined.
+
 #ifdef HAVE_PTHREADS
 	// fill thread data objects
 	MatMultThreadParam** thread_param_array (new MatMultThreadParam*[num_of_pthreads]);
