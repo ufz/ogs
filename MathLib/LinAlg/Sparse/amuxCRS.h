@@ -47,12 +47,13 @@ void amuxCRSParallelOpenMP (FP_TYPE const a, unsigned const n,
     FP_TYPE const * const __restrict__ x, FP_TYPE* __restrict__ y)
 {
 	OPENMP_LOOP_TYPE i;
+    IDX_TYPE j;
 	{
-#pragma omp parallel for
+#pragma omp parallel for private(j)
 		for (i = 0; i < n; i++) {
 			const IDX_TYPE end(iA[i + 1]);
 			y[i] = A[iA[i]] * x[jA[iA[i]]];
-			for (IDX_TYPE j(iA[i]+1); j < end; j++) {
+			for (j = iA[i]+1; j < end; j++) {
 				y[i] += A[j] * x[jA[j]];
 			}
 			y[i] *= a;
