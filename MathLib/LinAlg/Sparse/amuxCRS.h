@@ -41,9 +41,10 @@ void amuxCRSParallelPThreads (double a,
 
 #ifdef _OPENMP
 template<typename FP_TYPE, typename IDX_TYPE>
-void amuxCRSParallelOpenMP (FP_TYPE a,
-				unsigned n, IDX_TYPE const * const __restrict__ iA, IDX_TYPE const * const __restrict__ jA,
-				FP_TYPE const * const A, FP_TYPE const * const __restrict__ x, FP_TYPE* __restrict__ y)
+void amuxCRSParallelOpenMP (FP_TYPE const a, unsigned const n,
+    IDX_TYPE const * const __restrict__ iA,
+    IDX_TYPE const * const __restrict__ jA, FP_TYPE const * const A,
+    FP_TYPE const * const __restrict__ x, FP_TYPE* __restrict__ y)
 {
 	OPENMP_LOOP_TYPE i;
 	{
