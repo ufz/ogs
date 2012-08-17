@@ -36,6 +36,9 @@ Element::~Element()
 
 bool Element::addNeighbor(Element* e)
 {
+	if (e == this)
+		return false;
+
 	unsigned n(0);
 	unsigned nNeighbors (this->getNNeighbors());
 	for (n=0; n<nNeighbors; n++)
