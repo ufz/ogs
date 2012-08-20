@@ -101,7 +101,6 @@
      <addaction name="actionExportOpenSG"/>
     </widget>
     <addaction name="action_Open"/>
-    <addaction name="action_Database"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
     <addaction name="menuExport"/>
@@ -118,7 +117,6 @@
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="action_DatabaseConnection"/>
     <addaction name="action_VisualisationSettings"/>
     <addaction name="action_TrackingSettings"/>
    </widget>
@@ -474,38 +472,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_Database</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindowClass</receiver>
-   <slot>openDatabase()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_DatabaseConnection</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindowClass</receiver>
-   <slot>openDatabaseConnection()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionSave_As</sender>
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
@@ -620,8 +586,6 @@
  </connections>
  <slots>
   <slot>open()</slot>
-  <slot>openDatabase()</slot>
-  <slot>openDatabaseConnection()</slot>
   <slot>import()</slot>
   <slot>save()</slot>
   <slot>showVisalizationPrefsDialog()</slot>

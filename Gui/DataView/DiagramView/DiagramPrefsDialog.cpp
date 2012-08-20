@@ -3,7 +3,6 @@
  * KR Initial implementation
  */
 
-#include "DatabaseConnection.h"
 #include "DetailWindow.h"
 #include "DiagramList.h"
 #include "DiagramPrefsDialog.h"
@@ -27,22 +26,6 @@ DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
 	setupUi(this);
 	stationNameLabel->setText(QString::fromStdString(stn->getName()));
 	stationTypeLabel->setText(listName);
-
-	if (db)
-	{
-		_db = db;
-		_listID    = _db->getListID(listName, (*stn)[0], (*stn)[1]);
-		_stationID = _db->getStationID(_listID, (*stn)[0], (*stn)[1]);
-		if (_listID > 0 && _stationID > 0)
-		{
-			QString startDate, endDate;
-			if (_db->getDateBounds(_listID, _stationID, startDate, endDate))
-			{
-				fromDateLine->setText(startDate);
-				toDateLine->setText(endDate);
-			}
-		}
-	}
 }
 
 DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
@@ -80,21 +63,6 @@ void DiagramPrefsDialog::accept()
 	if ((fromDateLine->text().length() > 0) && (toDateLine->text().length() > 0) &&
 	    (!_list.empty()))
 	{
-		if (_list[0]->size() == 0) // data will be read from the database (if data has been loaded from file, size is already >0)
-
-			if (_listID > 0 && _stationID > 0)
-			{
-				std::vector< std::pair<QDateTime, float> > values;
-				_db->loadValues(_listID, _stationID,
-				                QDateTime::fromString(
-				                        fromDateLine->text(),
-				                        "dd.MM.yyyy"),
-				                QDateTime::fromString(toDateLine->text(),
-				                                      "dd.MM.yyyy"), values);
-				if (!loadList(values))
-					OGSError::box("No data found.");
-			}
-
 		// data has been loaded
 		if (_list[0]->size() > 0)
 		{

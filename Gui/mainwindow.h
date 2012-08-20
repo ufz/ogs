@@ -17,7 +17,6 @@ class ElementTreeModel;
 class StationTreeModel;
 class ProcessModel;
 class VtkVisPipeline;
-class DatabaseConnection;
 class VisPrefsDialog;
 
 #ifdef OGS_USE_VRPN
@@ -76,8 +75,6 @@ protected slots:
 	void importFeflow();
 	void importTetGen();
 	void loadFEMConditions(std::string geoName);
-	void openDatabase();
-	void openDatabaseConnection();
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
@@ -128,7 +125,6 @@ private:
 
 	QString curFile;
 
-	DatabaseConnection* _db;
 	BaseLib::FileFinder _fileFinder;
 	GEOModels* _geoModels;
 	MshModel* _meshModels;

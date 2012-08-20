@@ -4,9 +4,7 @@ set( SOURCES
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
 	ConditionWriterDialog.cpp
-	DatabaseConnection.cpp
 	DataView.cpp
-	DBConnectionDialog.cpp
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	FEMConditionSetupDialog.cpp
@@ -30,7 +28,6 @@ set( SOURCES
 	NewProcessDialog.cpp
 	ProcessModel.cpp
 	ProcessView.cpp
-	QueryResultsDialog.cpp
 	SelectMeshDialog.cpp
 	SetNameDialog.cpp
 	StationTabWidget.cpp
@@ -44,9 +41,7 @@ set( MOC_HEADERS
 	ColorTableView.h
 	CondFromRasterDialog.h
 	ConditionWriterDialog.h
-	DatabaseConnection.h
 	DataView.h
-	DBConnectionDialog.h
 	ElementTreeModel.h
 	FEMConditionSetupDialog.h
 	GEOModels.h
@@ -66,7 +61,6 @@ set( MOC_HEADERS
 	NewProcessDialog.h
 	ProcessModel.h
 	ProcessView.h
-	QueryResultsDialog.h
 	SelectMeshDialog.h
 	SetNameDialog.h
 	StationTabWidget.h
@@ -92,8 +86,6 @@ set( HEADERS
 set( UIS
 	CondFromRaster.ui
 	ConditionWriter.ui
-	DatabaseResultView.ui
-	DBConnection.ui
 	FEMConditionSetup.ui
 	GeoTabWidgetBase.ui
 	GMSHPrefs.ui

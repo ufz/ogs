@@ -15,7 +15,6 @@
 #include "StationTreeModel.h"
 
 //dialogs
-#include "DBConnectionDialog.h"
 #include "CondFromRasterDialog.h"
 #include "ConditionWriterDialog.h"
 #include "DiagramPrefsDialog.h"
@@ -35,7 +34,6 @@
 #include "SHPImportDialog.h"
 #endif
 
-#include "DatabaseConnection.h"
 #include "OGSError.h"
 #include "VtkRaster.h"
 #include "RecentFiles.h"
@@ -61,7 +59,7 @@
 #include "GocadInterface.h"
 #include "MeshIO/GMSHInterface.h"
 #include "MeshIO/TetGenInterface.h"
-#include "NetCDFInterface.h"    //YW  07.2010
+#include "NetCDFInterface.h" 
 #include "OGSIOVer4.h"
 #include "PetrelInterface.h"
 #include "StationIO.h"
@@ -72,12 +70,8 @@
 
 #include "StringTools.h"
 
-// MSH
-#include "msh_mesh.h"
-#include "MshEditor.h" //test
-
 // MSHGEOTOOLS
-#include "ExtractMeshNodes.h"
+//TODO6 #include "ExtractMeshNodes.h"
 
 // Qt includes
 #include <QDesktopWidget>
@@ -107,19 +101,11 @@
 #include "BuildInfo.h"
 #endif // OGS_BUILD_INFO
 
-//// test only
-//#include "rf_mmp_new.h"
-//#include "rf_msp_new.h"
-//#include "rf_mfp_new.h"
-
-/// FEM. 11.03.2010. WW
-#include "problem.h"
-Problem* aproblem = NULL;
 
 using namespace FileIO;
 
 MainWindow::MainWindow(QWidget* parent /* = 0*/)
-	: QMainWindow(parent), _db (NULL), _project(), _import_files_menu(NULL)
+	: QMainWindow(parent), _project(), _import_files_menu(NULL)
 {
 	setupUi(this);
 
@@ -377,7 +363,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 MainWindow::~MainWindow()
 {
 	delete _import_files_menu;
-	delete _db;
 	delete _vtkVisPipeline;
 	delete _meshModels;
 	delete _processModel;
@@ -446,34 +431,6 @@ void MainWindow::open()
 		settings.setValue("lastOpenedOgsFileDirectory", dir.absolutePath());
 		loadFile(fileName);
 	}
-}
-
-void MainWindow::openDatabase()
-{
-	if (_db == NULL)
-	{
-		_db = new DatabaseConnection(_geoModels);
-		_db->dbConnect();
-	}
-
-	if (_db != NULL && _db->isConnected())
-	{
-		_db->getListSelection();
-		updateDataViews();
-	}
-}
-
-void MainWindow::openDatabaseConnection()
-{
-	if (_db == NULL)
-		_db = new DatabaseConnection(_geoModels);
-	DBConnectionDialog* dbConn = new DBConnectionDialog();
-	connect(
-	        dbConn,
-	        SIGNAL(connectionRequested(QString, QString, QString, QString, QString)),
-	        _db,
-	        SLOT(setConnection(QString, QString, QString, QString, QString)));
-	dbConn->show();
 }
 
 void MainWindow::openRecentFile()
@@ -1316,7 +1273,6 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 	if ((stn->type() == GeoLib::Station::STATION) && stn->getSensorData())
 	{
 		DiagramPrefsDialog* prefs ( new DiagramPrefsDialog(stn) );
-		//DiagramPrefsDialog* prefs = new DiagramPrefsDialog(stn, listName, _db);
 		prefs->setAttribute(Qt::WA_DeleteOnClose);
 		prefs->show();
 	}
