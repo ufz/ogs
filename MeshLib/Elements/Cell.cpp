@@ -19,16 +19,22 @@ Cell::Cell(Node** nodes, MshElemType::type type, unsigned value)
 {
 }
 */
-Cell::Cell(MshElemType::type type, unsigned value)
-	: Element(type, value)
+Cell::Cell(unsigned value)
+	: Element(value)
 {
 }
 
 Cell::~Cell()
-{
-	delete[] this->_neighbors;
-}
+{}
 
+bool Cell::isOnSurface() const
+{
+	unsigned n (this->getNNeighbors());
+	for (unsigned i(0); i<n; i++)
+		if (!this->_neighbors[i])
+			return true;
+	return false;
+}
 
 }
 

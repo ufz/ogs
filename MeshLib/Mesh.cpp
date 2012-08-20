@@ -35,6 +35,8 @@ Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::
 Mesh::Mesh(const Mesh &mesh)
 	: _name(mesh.getName()), _nodes(mesh.getNodes()), _elements(mesh.getElements())
 {
+	this->setElementInformationForNodes();
+	this->setNeighborInformationForElements();
 }
 
 Mesh::~Mesh()
@@ -75,7 +77,7 @@ void Mesh::addElement(Element* elem)
 {
 	_elements.push_back(elem);
 
-	// add element informatin to nodes
+	// add element information to nodes
 	unsigned nNodes (elem->getNNodes());
 	for (unsigned i=0; i<nNodes; i++)
 		elem->_nodes[i]->addElement(elem);
@@ -105,21 +107,30 @@ void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length
 
 void Mesh::setNeighborInformationForElements()
 {
-	/* TODO
-	const size_t nElements(_elements.size());
-	std::vector<std::vector<char>> nb (nElements, std::vector<char>(nElements));
-
-	for (unsigned i=0; i<nElements; i++)
+	const size_t nElements = _elements.size();
+	for (unsigned m(0); m<nElements; m++)
 	{
-		Element* elem = _elements[i];
-		const size_t nNodes (elem->getNNodes());
-		for (unsigned j=0; j<nNodes; j++)
+		// create vector with all elements connected to current element (includes lots of doubles!)
+		std::vector<Element*> neighbors;
+		Element *const element (_elements[m]);
+		const size_t nNodes (element->getNNodes());
+		for (unsigned n(0); n<nNodes; n++)
 		{
-			const Node* node = elem->getNode(j);
+			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
+			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+		}
 
+		const unsigned nNeighbors ( neighbors.size() );
+
+		// check if connected element is indeed a neighbour and mark all doubles of that element as 'done'
+		for (unsigned i(0); i<nNeighbors; i++)
+		{
+			if (element->addNeighbor(neighbors[i]))
+			{
+				neighbors[i]->addNeighbor(element);
+			}
 		}
 	}
-	*/
 }
 
 }

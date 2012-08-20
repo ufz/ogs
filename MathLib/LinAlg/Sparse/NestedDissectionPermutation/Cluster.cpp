@@ -5,7 +5,7 @@
  *              http://www.opengeosys.com/LICENSE.txt
  *
  *
- * \fileCluster.cpp
+ * \file Cluster.cpp
  *
  * Created on 2012-01-02 by Thomas Fischer
  */

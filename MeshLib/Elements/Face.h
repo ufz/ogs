@@ -15,6 +15,7 @@
 
 #include "Element.h"
 
+
 namespace MeshLib {
 
 /**
@@ -41,8 +42,18 @@ public:
 	/// 2D elements have no faces.
 	unsigned getNFaces() const { return 0; };
 
+	/// Returns the surface normal of a 2D element.
+	void getSurfaceNormal(double normal[3]) const;
+
 	/// Destructor
 	virtual ~Face();
+
+	/**
+	 * This method is pure virtual and is inherited from class @sa Element.
+	 * It has to be implemented in the derived classes of class Face!
+	 * @return a copy of the object
+	 */
+	virtual Element* clone() const = 0;
 
 protected:
 /*
@@ -50,7 +61,7 @@ protected:
 	Face(Node** nodes, MshElemType::type type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Face(MshElemType::type type, unsigned value = 0);
+	Face(unsigned value = 0);
 
 	/// Calculate the area of this 2d element.
 	virtual double computeArea() = 0;

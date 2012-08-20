@@ -43,18 +43,30 @@ int main(int argc, char *argv[])
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+#endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-#endif
 	MeshLib::Mesh* mesh = mesh_io.loadMeshFromFile(fname);
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 //	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
 	INFO ("mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+#endif
 	run_time.stop();
 //	std::cout << "time for reading: " << run_time.elapsed() << " s" << std::endl;
 	INFO ("time for reading: %f s", run_time.elapsed());
-#endif
+
+/*
+	unsigned elem_id = 1;
+	const MeshLib::Element* e = mesh->getElement(elem_id);
+	const size_t nElems = mesh->getNElements();
+	for (unsigned i=0; i< e->getNNeighbors(); i++)
+	{
+		for (unsigned j=0; j< nElems; j++)
+			if (mesh->getElement(j) == e->getNeighbor(i))
+				std::cout << "neighbour of " << elem_id << " : " << j << std::endl;
+	}
+*/
 	delete mesh;
 	delete logogCout;
 	LOGOG_SHUTDOWN();

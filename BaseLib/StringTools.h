@@ -69,6 +69,28 @@ template<typename T> T str2number (const std::string &str)
  */
 void trim(std::string &str, char ch=' ');
 
+namespace BaseLib {
+
+/**
+ * Extract the filename from a path
+ */
+std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
+
+/**
+ * Checks if file_name already contains a qualified path and if not copies the path from source.
+ */
+std::string copyPathToFileName(const std::string &file_name, const std::string &source);
+
+/**
+ * extracts the path of a fully qualified path name of the file
+ * @param fname [input] the fully qualified path name of the file
+ * @param path [output] the path of the fully qualified path name of the file
+ */
+void extractPath (std::string const& fname, std::string& path);
+
+
+} // end namespace BaseLib
+
 #ifdef MSVC
 void correctScientificNotation(std::string filename, size_t precision = 0);
 #endif

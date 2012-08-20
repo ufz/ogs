@@ -76,6 +76,9 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 2; };
 
+	virtual MshElemType::type getType() const { return MshElemType::EDGE; }
+
+	virtual Element* clone() const;
 
 protected:
 	/// Calculate the length of this 1d element.

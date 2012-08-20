@@ -1,3 +1,6 @@
+IF (WIN32)
+	SET ( ADDITIONAL_LIBS Winmm.lib )
+ENDIF()
 
 INCLUDE_DIRECTORIES(
         .
@@ -17,6 +20,23 @@ ADD_EXECUTABLE( MeshRead
 )
 
 TARGET_LINK_LIBRARIES ( MeshRead
+	MeshLib
+	FileIO	
+	MathLib	
+	BaseLib
+	GeoLib
+	logog
+	${ADDITIONAL_LIBS}
+)
+
+# Create CollapseMeshNodes executable
+ADD_EXECUTABLE( CollapseMeshNodes
+        CollapseMeshNodes.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+
+TARGET_LINK_LIBRARIES ( CollapseMeshNodes
 	MeshLib
 	FileIO	
 	MathLib	

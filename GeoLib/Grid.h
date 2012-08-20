@@ -17,6 +17,7 @@
 
 // GeoLib
 #include "AxisAlignedBoundingBox.h"
+#include "GEOObjects.h"
 
 #ifndef NDEBUG
 // BaseLib
@@ -30,8 +31,8 @@ class Grid : public GeoLib::AABB
 {
 public:
 	/**
-	 * @brief The constructor of the grid object takes a vector of points. Furthermore the
-	 * use can specify the maximum number of points per grid cell (in the average!).
+	 * @brief The constructor of the grid object takes a vector of points or nodes. Furthermore the
+	 * use can specify the *average* maximum number of points per grid cell.
 	 *
 	 * The number of grid cells are computed with the following formula
 	 * \f$\frac{n_{points}}{n_{cells}} \le n_{max\_per\_cell}\f$
@@ -54,9 +55,9 @@ public:
 	}
 
 	/**
-	 * The method calculates the grid cell within the grid to given point is belonging to, i.e.,
-	 * the (internal) coordinates of the grid are computed. The method searches the actual
-	 * grid cell and all its possible neighbors for the POINT object which has the smallest
+	 * The method calculates the grid cell the given point is belonging to, i.e.,
+	 * the (internal) coordinates of the grid cell are computed. The method searches the actual
+	 * grid cell and all its neighbors for the POINT object which has the smallest
 	 * distance. A pointer to this object is returned.
 	 *
 	 * If there is not such a point, i.e., all the searched grid cells do not contain any
@@ -68,15 +69,15 @@ public:
 	POINT const* getNearestPoint(double const*const pnt) const;
 
 	/**
-	 * Method fetchs all points that are located within grid cells that intersects
-	 * the axis aligned cube defined by its center and half edge length.
+	 * Method fetches the vectors of all grid cells intersecting the axis aligned cube
+	 * defined by its center and half edge length.
 	 *
 	 * @param pnt (input) the center point of the axis aligned cube
 	 * @param half_len (input) half of the edge length of the axis aligned cube
-	 * @param pnts (output) all points within grid cells that intersects
+	 * @param pnts (output) vector of vectors of points within grid cells that intersects
 	 * the axis aligned cube
 	 */
-	void getPointsWithinCube(double const*const pnt, double half_len, std::vector<POINT*>& pnts) const;
+	void getVecsOfGridCellsIntersectingCube(double const*const pnt, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const;
 
 #ifndef NDEBUG
 	/**
@@ -289,15 +290,19 @@ POINT const* Grid<POINT>::getNearestPoint(double const*const pnt) const
 
 	double len (sqrt(MathLib::sqrDist(pnt, nearest_pnt->getCoords())));
 	// search all other grid cells within the cube with the edge nodes
-	std::vector<POINT*> pnts;
-	getPointsWithinCube(pnt, len, pnts);
+	std::vector<std::vector<POINT*> const*> vecs_of_pnts;
+	getVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
 
-	const size_t n_pnts(pnts.size());
-	for (size_t k(0); k<n_pnts; k++) {
-		const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
-		if (sqr_dist < sqr_min_dist) {
-			sqr_min_dist = sqr_dist;
-			nearest_pnt = pnts[k];
+	const size_t n_vecs(vecs_of_pnts.size());
+	for (size_t j(0); j<n_vecs; j++) {
+		std::vector<POINT*> const& pnts(vecs_of_pnts[j]);
+		const size_t n_pnts(pnts.size());
+		for (size_t k(0); k<n_pnts; k++) {
+			const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
+			if (sqr_dist < sqr_min_dist) {
+				sqr_min_dist = sqr_dist;
+				nearest_pnt = pnts[k];
+			}
 		}
 	}
 
@@ -305,7 +310,7 @@ POINT const* Grid<POINT>::getNearestPoint(double const*const pnt) const
 }
 
 template <typename POINT>
-void Grid<POINT>::getPointsWithinCube(double const*const pnt, double half_len, std::vector<POINT*>& pnts) const
+void Grid<POINT>::getVecsOfGridCellsIntersectingCube(double const*const pnt, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	double tmp_pnt[3] = {pnt[0]-half_len, pnt[1]-half_len, pnt[2]-half_len}; // min
 	size_t min_coords[3];
@@ -322,11 +327,12 @@ void Grid<POINT>::getPointsWithinCube(double const*const pnt, double half_len, s
 		for (coords[1] = min_coords[1]; coords[1] < max_coords[1]+1; coords[1]++) {
 			const size_t coords0_p_coords1_x_steps0 (coords[0] + coords[1] * _n_steps[0]);
 			for (coords[2] = min_coords[2]; coords[2] < max_coords[2]+1; coords[2]++) {
-				// copy pnts
-				const size_t n_pnts(_grid_quad_to_node_map[coords0_p_coords1_x_steps0 + coords[2] * steps0_x_steps1].size());
-				for (size_t k(0); k<n_pnts; k++) {
-					pnts.push_back(_grid_quad_to_node_map[coords0_p_coords1_x_steps0 + coords[2] * steps0_x_steps1][k]);
-				}
+				pnts.push_back (&(_grid_quad_to_node_map[coords0_p_coords1_x_steps0 + coords[2] * steps0_x_steps1]));
+//				// copy pnts
+//				const size_t n_pnts(_grid_quad_to_node_map[coords0_p_coords1_x_steps0 + coords[2] * steps0_x_steps1].size());
+//				for (size_t k(0); k<n_pnts; k++) {
+//					pnts.push_back(_grid_quad_to_node_map[coords0_p_coords1_x_steps0 + coords[2] * steps0_x_steps1][k]);
+//				}
 			}
 		}
 	}

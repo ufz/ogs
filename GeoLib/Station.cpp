@@ -7,8 +7,9 @@
  *
  * \file Station.cpp
  *
- * Created by Karsten Rink
+ * Created on 2010-07-01 by Karsten Rink
  */
+
 
 #include <cmath>
 #include <cstdlib>
@@ -23,7 +24,7 @@
 namespace GeoLib
 {
 Station::Station(double x, double y, double z, std::string name) :
-	Point (x,y,z), _name(name), _type(Station::STATION), _station_value(0.0)
+	Point (x,y,z), _name(name), _type(Station::STATION), _station_value(0.0), _sensor_data(NULL)
 {
 	addProperty("x", &getX, &Station::setX);
 	addProperty("y", &getY, &Station::setY);
@@ -31,7 +32,7 @@ Station::Station(double x, double y, double z, std::string name) :
 }
 
 Station::Station(Point* coords, std::string name) :
-	Point (*coords), _name(name), _type(Station::STATION), _station_value(0.0)
+	Point (*coords), _name(name), _type(Station::STATION), _station_value(0.0), _sensor_data(NULL)
 {
 	addProperty("x", &getX, &Station::setX);
 	addProperty("y", &getY, &Station::setY);
@@ -40,7 +41,7 @@ Station::Station(Point* coords, std::string name) :
 
 Station::Station(Station const& src) :
 	Point(src.getCoords()), _name(src._name), _type(src._type),
-	_station_value(src._station_value)
+	_station_value(src._station_value), _sensor_data(NULL)
 {
 	addProperty("x", &getX, &Station::setX);
 	addProperty("y", &getY, &Station::setY);
@@ -58,6 +59,7 @@ void Station::addProperty(std::string pname, double (* getFct)(void*), void (* s
 
 Station::~Station()
 {
+	delete this->_sensor_data;
 }
 
 Station* Station::createStation(const std::string & line)
@@ -241,7 +243,7 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 	return 1;
 }
 
-int StationBorehole::addStratigraphy(const std::vector<GeoLib::Point*> &profile, const std::vector<std::string> soil_names)
+int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names)
 {
 	if (((profile.size()-1) == soil_names.size()) && (soil_names.size()>0))
 	{
@@ -326,7 +328,7 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
 			borehole->_date = 0;
 		else
 		{
-			borehole->_date = BaseLib::strDate2double(fields.front());
+			borehole->_date = BaseLib::strDate2int(fields.front());
 			fields.pop_front();
 		}
 	}
@@ -353,7 +355,7 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
 	(*station)[2]   = z;
 	station->_depth = depth;
 	if (date.compare("0000-00-00") != 0)
-		station->_date  = BaseLib::xmlDate2double(date);
+		station->_date  = BaseLib::xmlDate2int(date);
 	return station;
 }
 

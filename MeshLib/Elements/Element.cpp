@@ -23,14 +23,48 @@ Element::Element(Node** nodes, MshElemType::type type, unsigned value)
 {
 }
 */
-Element::Element(MshElemType::type type, unsigned value)
-	: _nodes(NULL), _type(type), _value(value)
+Element::Element(unsigned value)
+	: _nodes(NULL), _value(value), _neighbors(NULL)
 {
 }
 
 Element::~Element()
 {
-	delete[] this->_nodes;
+	delete [] this->_nodes;
+	delete [] this->_neighbors;
+}
+
+bool Element::addNeighbor(Element* e)
+{
+	unsigned n(0);
+	unsigned nNeighbors (this->getNNeighbors());
+	for (n=0; n<nNeighbors; n++)
+	{
+		if (this->_neighbors[n] == e)
+			return false;
+		if (this->_neighbors[n] == NULL)
+			break;
+	}
+
+	if (n<nNeighbors)
+	{
+		const unsigned nNodes (this->getNNodes());
+		const unsigned eNodes (e->getNNodes());
+		const Node* const* e_nodes = e->getNodes();
+		unsigned count(0);
+		const unsigned dim (this->getDimension());
+		for (unsigned i(0); i<nNodes; i++)
+			for (unsigned j(0); j<eNodes; j++)
+				if (_nodes[i] == e_nodes[j])
+					//std::cout << _nodes[i]->getID() << " == " << e_nodes[j]->getID() << std::endl;
+					// increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
+					if ((++count)>=dim)
+					{
+						_neighbors[n]=e;
+						return true;
+					}
+	}
+	return false;
 }
 
 const Element* Element::getEdge(unsigned i) const
@@ -71,8 +105,14 @@ const Node* Element::getNode(unsigned i) const
 {
 	if (i < getNNodes())
 		return _nodes[i];
-	std::cerr << "Error in MeshLib::Element::getNode() - Index does not exist." << std::endl;
+	std::cerr << "Error in MeshLib::Element::getNode() - Index " << i << " in " << MshElemType2String(getType()) <<  " does not exist." << std::endl;
 	return NULL;
+}
+
+void Element::setNode(unsigned idx, Node* node)
+{
+	if (idx < getNNodes())
+		_nodes[idx] = node;
 }
 
 unsigned Element::getNodeIndex(unsigned i) const

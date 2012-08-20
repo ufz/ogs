@@ -68,6 +68,18 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 4; };
 
+	/**
+	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.
+	 * @return MshElemType::TETRAHEDRON
+	 */
+	virtual MshElemType::type getType() const { return MshElemType::TETRAHEDRON; }
+
+	/**
+	 * Method clone is inherited from class Element. It makes a deep copy of the Tet instance.
+	 * @return an exact copy of the object
+	 */
+	virtual Element* clone() const;
+
 protected:
 	/// Constructor without nodes (for use of derived classes)
 	Tet(unsigned value = 0);
