@@ -7,6 +7,7 @@
 #include "OGSError.h"
 #include "TreeItem.h"
 #include "Mesh.h"
+#include "Node.h"
 #include "Elements/Element.h"
 
 /**
@@ -41,13 +42,13 @@ void ElementTreeModel::setElement(const MeshLib::Mesh* grid, const size_t elem_i
 	elemItem->appendChild(typeItem);
 
 	QList<QVariant> materialData;
-	materialData << "MaterialID: " << QString::number(elem->material);
+	materialData << "MaterialID: " << QString::number(elem->getValue());
 	TreeItem* matItem = new TreeItem(materialData, elemItem);
 	elemItem->appendChild(matItem);
 
 	QList<QVariant> volData;
 	volData << "Area/Volume: " <<
-	QString::number(grid->getCFEMesh()->getElementVector()[elem_index]->calcVolume());
+	QString::number(grid->getElement(elem_index)->getContent());
 	TreeItem* volItem = new TreeItem(volData, elemItem);
 	elemItem->appendChild(volItem);
 
@@ -56,14 +57,15 @@ void ElementTreeModel::setElement(const MeshLib::Mesh* grid, const size_t elem_i
 	TreeItem* nodeListItem = new TreeItem(nodeListData, elemItem);
 	elemItem->appendChild(nodeListItem);
 
-	const std::vector<GeoLib::Point*>* nodes_vec = grid->getNodes();
-	for (size_t i = 0; i < elem->nodes.size(); i++)
+	//const std::vector<MeshLib::Node*> nodes_vec = grid->getNodes();
+	size_t nElemNodes = elem->getNNodes();
+	for (size_t i = 0; i < nElemNodes; i++)
 	{
-		const GeoLib::Point* pnt = (*nodes_vec)[elem->nodes[i]];
+		const MeshLib::Node* node = elem->getNode(i);
 		QList<QVariant> nodeData;
-		nodeData << "Node " + QString::number(elem->nodes[i]) <<
-		QString::number((*pnt)[0]) << QString::number((*pnt)[1]) <<
-		QString::number((*pnt)[2]);
+		nodeData << "Node " + QString::number(node->getID()) <<
+		QString::number((*node)[0]) << QString::number((*node)[1]) <<
+		QString::number((*node)[2]);
 		TreeItem* nodeItem = new TreeItem(nodeData, nodeListItem);
 		nodeListItem->appendChild(nodeItem);
 	}

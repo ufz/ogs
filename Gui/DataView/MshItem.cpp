@@ -3,7 +3,6 @@
  * 17/05/2010 KR Initial implementation
  */
 
-#include "GridAdapter.h"
 #include "MshItem.h"
 #include "VtkMeshSource.h"
 
@@ -13,11 +12,11 @@
  * \param parent The parent item in the tree
  * \param grid The mesh associated with this item
  */
-MshItem::MshItem(const QList<QVariant> &data, TreeItem* parent, GridAdapter* grid)
+MshItem::MshItem(const QList<QVariant> &data, TreeItem* parent, MeshLib::Mesh* grid)
 	: TreeItem(data, parent)
 {
 	_meshSource = VtkMeshSource::New();
-	_meshSource->SetGrid(grid);
+	_meshSource->SetMesh(grid);
 }
 
 MshItem::~MshItem()

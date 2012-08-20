@@ -53,7 +53,7 @@ void DataView::addMeshAction()
 		FileIO::MeshIO meshIO;
 		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
-			static_cast<MshModel*>(this->model())->addMesh(msh, name);
+			static_cast<MshModel*>(this->model())->addMesh(msh);
 	}
 }
 

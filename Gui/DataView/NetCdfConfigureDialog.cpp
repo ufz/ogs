@@ -4,7 +4,6 @@
 #include "NetCdfConfigureDialog.h"
 
 #include "VtkMeshConverter.h"
-#include "GridAdapter.h"
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
 

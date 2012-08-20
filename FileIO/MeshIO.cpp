@@ -21,6 +21,8 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+#include "StringTools.h"
+
 #include <iomanip>
 #include <sstream>
 
@@ -99,7 +101,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 			}
 		}
 
-		MeshLib::Mesh* mesh (new MeshLib::Mesh(file_name, nodes, elements));
+
+		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name), nodes, elements));
 		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
 
 		std::cout << "Nr. Nodes: " << nodes.size() << std::endl;

@@ -80,7 +80,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 
 	for (size_t i = 0; i < nPoints; i++)
 	{
-		double* coords = const_cast<double*>((*surfacePoints)[i]->getData());
+		double* coords = const_cast<double*>((*surfacePoints)[i]->getCoords());
 		newPoints->InsertNextPoint(coords);
 	}
 

@@ -46,7 +46,7 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
 	for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
 	     it != _points->end(); ++it)
 	{
-		const double* coords = (*it)->getData();
+		const double* coords = (*it)->getCoords();
 		os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
 		coords[2] << ")\n";
 		i++;

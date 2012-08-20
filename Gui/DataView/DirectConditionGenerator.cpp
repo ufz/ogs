@@ -59,7 +59,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 	return _direct_values;
 }
 
-
+/* TODO6
 const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
 	double no_data_value (-9999); // TODO: get this from asc-reader!
@@ -151,7 +151,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 
 	return _direct_values;
 }
-
+*/
 
 int DirectConditionGenerator::writeToFile(const std::string &name) const
 {

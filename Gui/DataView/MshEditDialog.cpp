@@ -3,6 +3,7 @@
  * 2010/11/09 KR Initial implementation
  */
 
+/* TODO6
 #include "MshEditDialog.h"
 #include "OGSError.h"
 #include "StringTools.h"
@@ -155,3 +156,4 @@ void MshEditDialog::getFileName()
 	QDir dir = QDir(filename);
 	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 }
+*/

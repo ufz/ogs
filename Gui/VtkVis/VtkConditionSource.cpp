@@ -135,7 +135,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					vtkIdType vtk_id = static_cast<vtkIdType>(id);
 					*/
 					const GeoLib::Point* pnt = static_cast<const GeoLib::Point*>((*_cond_vec)[n]->getGeoObj());
-					newPoints->InsertNextPoint(pnt->getData());
+					newPoints->InsertNextPoint(pnt->getCoords());
 
 					newVerts->InsertNextCell(1, &pnt_id);
 					if (type == FiniteElement::CONSTANT || type == FiniteElement::CONSTANT_NEUMANN)
@@ -162,7 +162,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			{
 				size_t point_index = ply->getPointID(i);
 
-				newPoints->InsertNextPoint((*_points)[point_index]->getData());
+				newPoints->InsertNextPoint((*_points)[point_index]->getCoords());
 				newLines->InsertCellPoint(pnt_id);
 				distypes->InsertNextValue(dis_type_value);
 
@@ -204,7 +204,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					if (point_idx_map[point_index] == -1)
 					{
 						point_idx_map[point_index] = pnt_id;
-						newPoints->InsertNextPoint((*_points)[point_index]->getData());
+						newPoints->InsertNextPoint((*_points)[point_index]->getCoords());
 						aPolygon->GetPointIds()->SetId(j, pnt_id);
 						distypes->InsertNextValue(dis_type_value);
 
@@ -237,7 +237,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			for (size_t i=0; i<nValues; i++)
 			{
 				//vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_nodes[i]]->getData());
-				vtkIdType pid = newPoints->InsertNextPoint((*_points)[i]->getData());
+				vtkIdType pid = newPoints->InsertNextPoint((*_points)[i]->getCoords());
 				newVerts->InsertNextCell(1, &pid);
 				scalars->InsertNextValue(dis_values[i]);
 				distypes->InsertNextValue(dis_type_value);

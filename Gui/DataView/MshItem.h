@@ -23,11 +23,11 @@ class MshItem : public TreeItem
 {
 public:
 	/// Constructor, automatically generates VTK object of the given mesh.
-	MshItem(const QList<QVariant> &data, TreeItem* parent, GridAdapter* grid);
+	MshItem(const QList<QVariant> &data, TreeItem* parent, MeshLib::Mesh* grid);
 	~MshItem();
 
 	/// Returns the mesh as a GridAdapter.
-	const MeshLib::Mesh* getGrid() const { return this->_meshSource->GetGrid(); }
+	const MeshLib::Mesh* getMesh() const { return this->_meshSource->GetMesh(); }
 	/// Returns the VTK object.
 	VtkMeshSource* vtkSource() const { return _meshSource; }
 

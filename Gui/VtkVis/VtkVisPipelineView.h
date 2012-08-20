@@ -78,7 +78,7 @@ signals:
 	void itemSelected(VtkVisPipelineItem*);
 	void actorSelected(vtkProp3D*);
 	void dataObjectSelected(vtkDataObject*);
-	void meshAdded(GridAdapter*);
+	void meshAdded(MeshLib::Mesh*);
 };
 
 #endif // VTKVISPIPELINEVIEW_H

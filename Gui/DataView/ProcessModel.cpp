@@ -42,7 +42,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 	ProcessItem* processParent = this->getProcessParent(c->getProcessType());
 	if (processParent == NULL)
 	{
-		ProcessInfo* pcs = new ProcessInfo(c->getProcessType(), c->getProcessPrimaryVariable(), NULL);
+		ProcessInfo* pcs = new ProcessInfo(c->getProcessType(), c->getProcessPrimaryVariable()/* TODO6, NULL*/);
 		processParent = this->addProcess(pcs);
 	}
 

@@ -93,7 +93,8 @@ void CondFromRasterDialog::accept()
 		}
 		MeshLib::Mesh* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
 		DirectConditionGenerator dcg;
-		direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
+		//TODO6: direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
+		
 		//dcg.writeToFile(direct_node_name);
 	}
 	//emit directNodesWritten(direct_node_name);

@@ -3,7 +3,7 @@
  * 4/11/2009 LB Initial implementation
  *
  */
-#include "Configure.h"
+//TODO6 #include "Configure.h"
 #include "mainwindow.h"
 
 // models
@@ -20,7 +20,7 @@
 #include "ConditionWriterDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
-#include "OGSFileConverter.h"
+//TODO6 #include "OGSFileConverter.h"
 #include "GMSHPrefsDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
@@ -257,7 +257,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SIGNAL(elementPicked(const GridAdapter *, const size_t)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 
-	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(GridAdapter*)),
+	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
 	        _meshModels, SLOT(addMesh(GridAdapter*)));
 
 	// Stack the data dock widgets together
@@ -567,9 +567,9 @@ void MainWindow::loadFile(const QString &fileName)
 		//#ifndef NDEBUG
 		//      QTime myTimer;
 		//      myTimer.start();
-		//      std::cout << "GEOLIB_Read_GeoLib ... " << std::flush;
+		//      std::cout << "GeoLib_Read_GeoLib ... " << std::flush;
 		//#endif
-		//      GEOLIB_Read_GeoLib(base); //fileName.toStdString());
+		//      GeoLib_Read_GeoLib(base); //fileName.toStdString());
 		//        cout << "Nr. Points: " << gli_points_vector.size() << endl;
 		//		cout << "Nr. Lines: " << polyline_vector.size() << endl;
 		//		cout << "Nr. Surfaces: " << surface_vector.size() << endl;
@@ -1341,13 +1341,13 @@ void MainWindow::showDiagramPrefsDialog()
 		prefs->show();
 	}
 }
-
+/* TODO6
 void MainWindow::showFileConverterDialog()
 {
 	OGSFileConverter dlg;
 	dlg.exec();
 }
-
+*/
 void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id)
 {
 	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);

@@ -33,9 +33,7 @@ public:
 
 public slots:
 	/// Adds a new mesh
-	void addMesh(GridAdapter* mesh);
-	/// Adds a new mesh
-	void addMesh(MeshLib::Mesh* mesh, std::string &name); // needs only to be a slot for MshLayerMapper. Otherwise normal function would be okay.
+	void addMesh(MeshLib::Mesh* mesh); // needs only to be a slot for MshLayerMapper. Otherwise normal function would be okay.
 	/// Returns the mesh with the given index.
 	const MeshLib::Mesh* getMesh(const QModelIndex &idx) const;
 	/// Returns the mesh with the given name.

@@ -13,6 +13,8 @@
 #include "ProjectData.h"
 #include "StringTools.h"
 
+#include "Mesh.h"
+
 ProjectData::ProjectData()
 : _geoObjects (NULL)
 {}
@@ -20,35 +22,46 @@ ProjectData::ProjectData()
 ProjectData::~ProjectData()
 {
 	delete _geoObjects;
-	for (std::map<std::string, MeshLib::Mesh*>::iterator it = _msh_vec.begin();
-	     it != _msh_vec.end(); ++it)
-		delete it->second;
+	for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+		delete *it;
 	size_t nCond (_cond_vec.size());
 	for (size_t i = 0; i < nCond; i++)
 		delete _cond_vec[i];
 }
 
-void ProjectData::addMesh(MeshLib::Mesh* mesh, std::string &name)
+void ProjectData::addMesh(MeshLib::Mesh* mesh)
 {
+	std::string name = mesh->getName();
 	isUniqueMeshName(name);
-	_msh_vec[name] = mesh;
+	mesh->setName(name);
+	_msh_vec.push_back(mesh);
 }
 
 const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 {
-	return _msh_vec.find(name)->second;
+	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+		if (name.compare((*it)->getName()) == 0)
+			return *it;
+	return NULL;
 }
 
 bool ProjectData::removeMesh(const std::string &name)
 {
-	delete _msh_vec[name];
-	size_t result = _msh_vec.erase(name);
-	return result > 0;
+	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+		if (name.compare((*it)->getName()) == 0)
+		{
+			delete *it;
+			_msh_vec.erase(it);
+			return true;
+		}
+	return false;
 }
 
 bool ProjectData::meshExists(const std::string &name)
 {
-	if (_msh_vec.count(name)>0) return true;
+	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+		if (name.compare((*it)->getName()) == 0)
+			return true;
 	return false;
 }
 

@@ -62,11 +62,11 @@ void ListPropertiesDialog::setupDialog()
 		{
 			_min->setText(QString::number(minVal, 'f'));
 			if (_prop->text().compare("date") == 0)
-				_min->setText(QString::fromStdString(date2string(minVal)));
+				_min->setText(QString::fromStdString(BaseLib::date2string(minVal)));
 
 			_max->setText(QString::number(maxVal, 'f'));
 			if (_prop->text().compare("date") == 0)
-				_max->setText(QString::fromStdString(date2string(maxVal)));
+				_max->setText(QString::fromStdString(BaseLib::date2string(maxVal)));
 		}
 
 		_propLabel.push_back(_prop);
@@ -125,8 +125,8 @@ void ListPropertiesDialog::accept()
 	{
 		if (_propLabel[i]->text().compare("date") == 0)
 		{
-			minVal = xmlDate2int(_minValue[i]->text().toStdString());
-			maxVal = xmlDate2int(_maxValue[i]->text().toStdString());
+			minVal = BaseLib::xmlDate2int(_minValue[i]->text().toStdString());
+			maxVal = BaseLib::xmlDate2int(_maxValue[i]->text().toStdString());
 		}
 		else
 		{

@@ -25,8 +25,7 @@
 #include <QMessageBox>
 
 //image to mesh conversion
-#include "msh_mesh.h"
-#include "GridAdapter.h"
+#include "Mesh.h"
 #include "VtkGeoImageSource.h"
 #include <vtkImageData.h>
 #include "MeshFromRasterDialog.h"
@@ -181,7 +180,7 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	double spacing[3];
 	imageSource->GetOutput()->GetSpacing(spacing);
 	
-	GridAdapter* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
+	MeshLib::Mesh* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
 	mesh->setName(msh_name.toStdString());
 	emit meshAdded(mesh);
 }
@@ -210,7 +209,7 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}
-	GridAdapter* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
+	MeshLib::Mesh* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
 	mesh->setName(item->data(0).toString().toStdString());
 	emit meshAdded(mesh);
 }

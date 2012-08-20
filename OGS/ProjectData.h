@@ -16,7 +16,10 @@
 #include "FEMCondition.h"
 #include "FEMEnums.h"
 #include "GEOObjects.h"
-#include "Mesh.h"
+
+namespace MeshLib {
+	class Mesh;
+}
 
 /**
  * The ProjectData Object contains all the data needed for a certain project, i.e. all
@@ -45,13 +48,13 @@ public:
 	//** Mesh functionality **//
 
 	/// Adds a new mesh
-	virtual void addMesh(MeshLib::Mesh* mesh, std::string &name);
+	virtual void addMesh(MeshLib::Mesh* mesh);
 
 	/// Returns the mesh with the given name.
 	const MeshLib::Mesh* getMesh(const std::string &name) const;
 
 	/// Returns all the meshes with their respective names
-	const std::map<std::string, MeshLib::Mesh*>& getMeshObjects() const { return _msh_vec; }
+	const std::vector<MeshLib::Mesh*>& getMeshObjects() const { return _msh_vec; }
 
 	/// Removes the mesh with the given name.
 	virtual bool removeMesh(const std::string &name);
@@ -102,7 +105,7 @@ public:
 
 private:
 	GeoLib::GEOObjects* _geoObjects;
-	std::map<std::string, MeshLib::Mesh*> _msh_vec;
+	std::vector<MeshLib::Mesh*> _msh_vec;
 	std::vector<ProcessInfo*> _pcs_vec;
 	std::vector<FEMCondition*> _cond_vec;
 };

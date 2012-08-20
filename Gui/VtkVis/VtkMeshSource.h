@@ -33,10 +33,10 @@ public:
 	const char* GetMaterialArrayName() const { return _matName; }
 
 	/// Returns the base object of this grid
-	const MeshLib::Mesh* GetGrid() { return this->_grid; }
+	const MeshLib::Mesh* GetMesh() { return this->_grid; }
 
 	/// Sets the grid object that should be visualized
-	void SetGrid(const MeshLib::Mesh* grid) { _grid = grid; }
+	void SetMesh(const MeshLib::Mesh* grid) { _grid = grid; }
 
 	/// Prints the mesh data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);

@@ -42,7 +42,7 @@ void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 	{
 		size_t nRows = tableWidget->rowCount();
 		for (size_t i=0; i<nRows; i++)
-			tableWidget->item(i,0)->setText(QString::number(_line[i]->getData()[2]));
+			tableWidget->item(i,0)->setText(QString::number(_line[i]->getCoords()[2]));
 	}
 }
 

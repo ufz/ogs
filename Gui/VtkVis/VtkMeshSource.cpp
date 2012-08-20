@@ -8,7 +8,9 @@
 #include "VtkMeshSource.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "Element.h"
+#include "Elements/Element.h"
+
+#include "Color.h"
 
 // ** VTK INCLUDES **
 #include "vtkObjectFactory.h"
@@ -56,31 +58,26 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 
 	if (_grid == NULL)
 		return;
-	const std::vector<GeoLib::Node*>* nodes = _grid->getNodes();
-	const std::vector<MeshLib::Element*>* elems = _grid->getElements();
-	if (nodes->empty() || elems->empty() )
+	const std::vector<MeshLib::Node*> nodes = _grid->getNodes();
+	const std::vector<MeshLib::Element*> elems = _grid->getElements();
+	if (nodes.empty() || elems.empty() )
 		return;
 
 	os << indent << "== VtkMeshSource ==" << "\n";
 
 	int i = 0;
-	for (std::vector<GeoLib::Point*>::const_iterator it = nodes->begin();
-	     it != nodes->end(); ++it)
+	for (std::vector<MeshLib::Node*>::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
 	{
-		os << indent << "Point " << i << " (" << (*it)[0] << ", " << (*it)[1] << ", " <<
-		(*it)[2] << ")" << std::endl;
-		i++;
+		os << indent << "Point " << i << " (" << (*it)[0] << ", " << (*it)[1] << ", " << (*it)[2] << ")" << std::endl;
 	}
 
 	i = 0;
-	for (std::vector<GridAdapter::Element*>::const_iterator it = elems->begin();
-	     it != elems->end(); ++it)
+	for (std::vector<MeshLib::Element*>::const_iterator it = elems.begin(); it != elems.end(); ++it)
 	{
 		os << indent << "Element " << i << ": ";
-		for (size_t t = 0; t < (*it)->nodes.size(); t++)
-			os << (*it)->nodes[t] << " ";
+		for (size_t t = 0; t < (*it)->getNNodes(); t++)
+			os << (*it)->getNode(t)->getID() << " "; 
 		os << std::endl;
-		i++;
 	}
 }
 
@@ -93,11 +90,11 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	if (_grid == NULL)
 		return 0;
-	const std::vector<GeoLib::Point*>* nodes = _grid->getNodes();
-	const std::vector<GridAdapter::Element*>* elems = _grid->getElements();
+	const std::vector<MeshLib::Node*> nodes = _grid->getNodes();
+	const std::vector<MeshLib::Element*> elems = _grid->getElements();
 
-	const size_t nPoints = nodes->size();
-	const size_t nElems  = elems->size();
+	const size_t nPoints = _grid->getNNodes();
+	const size_t nElems  = _grid->getNElements();
 	if (nPoints == 0 || nElems == 0)
 		return 0;
 
@@ -114,7 +111,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	gridPoints->Allocate(nPoints);
 	// Generate mesh nodes
 	for (size_t i = 0; i < nPoints; i++)
-		gridPoints->InsertPoint(i, (*(*nodes)[i])[0], (*(*nodes)[i])[1], (*(*nodes)[i])[2]);
+		gridPoints->InsertPoint(i, (*nodes[i])[0], (*nodes[i])[1], (*nodes[i])[2]);
 
 	// Generate attribute vector for material groups
 	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
@@ -126,11 +123,11 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	for (size_t i = 0; i < nElems; i++)
 	{
 		int type(0);
-		const GridAdapter::Element* elem = (*elems)[i];
+		const MeshLib::Element* elem = elems[i];
 
-		switch (elem->type)
+		switch (elem->getType())
 		{
-		case MshElemType::LINE:
+		case MshElemType::EDGE:
 			type = 3;
 			break;
 		case MshElemType::TRIANGLE:
@@ -152,16 +149,16 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			type = 14;
 			break;
 		default: // if none of the above can be applied
-			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->type) << "." << std::endl;
+			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->getType()) << "." << std::endl;
 			return 0;
 		}
 
-		materialIDs->InsertValue(i,(elem->material));
+		materialIDs->InsertValue(i,(elem->getValue()));
 		vtkIdList* point_ids = vtkIdList::New();
 
-		const size_t nElemNodes (elem->nodes.size());
+		const size_t nElemNodes (elem->getNNodes());
 		for (size_t j = 0; j < nElemNodes; j++)
-			point_ids->InsertNextId(elem->nodes[nElemNodes-1-j]);
+			point_ids->InsertNextId(elem->getNode(nElemNodes-1-j)->getID());
 
 		output->InsertNextCell(type, point_ids);
 	}

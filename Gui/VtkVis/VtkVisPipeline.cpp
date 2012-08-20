@@ -14,10 +14,10 @@
 //#include "Model.h"
 #include "ProcessModel.h"
 #include "GeoTreeModel.h"
-#include "MeshQualityEquiAngleSkew.h"
-#include "MeshQualityArea.h"
-#include "MeshQualityVolume.h"
-#include "MeshQualityShortestLongestRatio.h"
+#include "MeshQuality/MeshQualityEquiAngleSkew.h"
+#include "MeshQuality/MeshQualityArea.h"
+#include "MeshQuality/MeshQualityVolume.h"
+#include "MeshQuality/MeshQualityShortestLongestRatio.h"
 #include "MshItem.h"
 #include "MshModel.h"
 #include "StationTreeModel.h"
@@ -458,7 +458,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 {
 	if (source)
 	{
-		const MeshLib::CFEMesh* mesh = source->GetGrid()->getCFEMesh();
+		const MeshLib::Mesh* mesh = source->GetMesh();
 		MeshLib::MeshQualityChecker* checker (NULL);
 		if (t == MshQualityType::EDGERATIO)
 			checker = new MeshLib::MeshQualityShortestLongestRatio(mesh);
@@ -517,7 +517,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 
 		// *** construct and write histogram
 		// simple suggestion: number of classes with Sturges criterion
-		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>((mesh->getElementVector()).size()))));
+		size_t nclasses (static_cast<size_t>(1 + 3.3 * log (static_cast<float>(mesh->getNElements()))));
 //			bool ok;
 //			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogram", "number of histogram classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
 //			if (ok) ...
@@ -526,7 +526,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		std::ofstream out ("mesh_histogram.txt");
 		if (out) {
 			out << "# histogram depicts mesh quality criterion " << MshQualityType2String(t)
-				<< " for mesh " << source->GetGrid()->getName() << std::endl;
+				<< " for mesh " << source->GetMesh()->getName() << std::endl;
 			nclasses = histogram.getNrBins();
 			std::vector<size_t> const& bin_cnts(histogram.getBinCounts());
 			const double min (histogram.getMinimum());

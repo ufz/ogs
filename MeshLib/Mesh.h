@@ -84,6 +84,9 @@ public:
 	 */
 	void setEdgeLengthRange(const double &min_length, const double &max_length);
 
+	/// Changes the name of the mesh.
+	void setName(const std::string &name) { this->_name = name; };
+
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();

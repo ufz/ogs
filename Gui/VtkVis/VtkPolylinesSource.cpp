@@ -52,7 +52,7 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 		for (int i = 0; i < numPoints; i++)
 		{
 			const GeoLib::Point* point = (**it)[i];
-			const double* coords = point->getData();
+			const double* coords = point->getCoords();
 			os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
 			", " << coords[2] << ")\n";
 		}
@@ -105,7 +105,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		for (int i = 0; i < numPoints; i++)
 		{
 			const GeoLib::Point* point = (*(*_polylines)[j])[i];
-			const double* coords = point->getData();
+			const double* coords = point->getCoords();
 			newPoints->InsertNextPoint(coords);
 		}
 

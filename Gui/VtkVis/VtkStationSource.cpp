@@ -58,7 +58,7 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
 	for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
 	     it != _stations->end(); ++it)
 	{
-		const double* coords = (*it)->getData();
+		const double* coords = (*it)->getCoords();
 		os << indent << "Station " << i << " (" << coords[0] << ", " << coords[1] <<
 		", " << coords[2] << ")\n";
 		i++;
@@ -145,7 +145,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
 
 			for (size_t i = 1; i < nLayers; i++)
 			{
-				double* pCoords = const_cast<double*>(profile[i]->getData());
+				double* pCoords = const_cast<double*>(profile[i]->getCoords());
 				double loc[3] = { pCoords[0], pCoords[1], pCoords[2] };
 				newStations->InsertNextPoint(loc);
 				station_ids->InsertNextValue(site_count);

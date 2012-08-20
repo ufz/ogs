@@ -179,7 +179,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			        ->GetInputConnection(0,0)->GetProducer();
 			VtkMeshSource* source = dynamic_cast<VtkMeshSource*>(data_set);
 			if (source)
-				emit elementPicked(source->GetGrid(), picker->GetCellId());
+				emit elementPicked(source->GetMesh(), picker->GetCellId());
 
 			selectedMapper->SetInputConnection(selected->GetProducerPort());
 

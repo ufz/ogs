@@ -3,11 +3,11 @@
  * 01/11/2010 KR Initial implementation
  */
 
+/*  TODO6
 #include "MshLayerMapper.h"
 #include "VtkRaster.h"
 
 #include "MshEditor.h"
-#include "GridAdapter.h"
 #include "matrix_class.h"
 #include "msh_mesh.h"
 
@@ -24,13 +24,8 @@ MeshLib::CFEMesh* MshLayerMapper::CreateLayers(const MeshLib::CFEMesh* mesh,
 		          << std::endl;
 		return NULL;
 	}
-/*
-    if ((mesh->ele_vector[0]->GetElementType() != MshElemType::TRIANGLE) && (mesh->ele_vector[0]->GetElementType() != MshElemType::QUAD)) // check if mesh elements are triangles or quads
-    {
-        std::cout << "Error in MshLayerMapper::CreateLayers() - Method can only handle triangle- or quad-meshes... " << std::endl;
-        return NULL;
-    }
- */
+
+
 	MeshLib::CFEMesh* new_mesh ( new MeshLib::CFEMesh() );
 	const size_t nNodes = mesh->nod_vector.size();
 	const size_t nElems = mesh->ele_vector.size();
@@ -411,3 +406,4 @@ MeshLib::CFEMesh* MshLayerMapper::blendLayersWithSurface(MeshLib::CFEMesh* mesh,
 	return struct_mesh;
 }
 
+*/

@@ -12,7 +12,10 @@
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
 
-class GridAdapter;
+namespace MeshLib {
+	class Mesh;
+}
+
 class VtkGeoImageSource;
 
 class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
@@ -22,7 +25,7 @@ class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 public:
 	NetCdfConfigureDialog(const std::string &fileName, QDialog* parent = 0);
 	~NetCdfConfigureDialog(void);
-	GridAdapter* getMesh() { return _currentMesh; };
+	MeshLib::Mesh* getMesh() { return _currentMesh; };
 	std::string getName();
 	VtkGeoImageSource* getRaster() { return _currentRaster; };
 
@@ -53,7 +56,7 @@ private:
 	NcFile *_currentFile;
 	NcVar *_currentVar;
 	QDateTime _currentInitialDateTime;
-	GridAdapter* _currentMesh;
+	MeshLib::Mesh* _currentMesh;
 	VtkGeoImageSource* _currentRaster;
 	std::string _currentPath;
 };

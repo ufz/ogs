@@ -90,7 +90,7 @@ protected slots:
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
-	void showFileConverterDialog();
+	//TODO6 void showFileConverterDialog();
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
@@ -129,7 +129,7 @@ private:
 	QString curFile;
 
 	DatabaseConnection* _db;
-	FileFinder _fileFinder;
+	BaseLib::FileFinder _fileFinder;
 	GEOModels* _geoModels;
 	MshModel* _meshModels;
 	ElementTreeModel* _elementModel;

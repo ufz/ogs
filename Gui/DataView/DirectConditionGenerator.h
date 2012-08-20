@@ -21,7 +21,8 @@ public:
 
 	const std::vector< std::pair<size_t,double> >& directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename);
 
-	const std::vector< std::pair<size_t,double> >& directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling);
+	//TODO6
+	//const std::vector< std::pair<size_t,double> >& directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling);
 
 	int writeToFile(const std::string &name) const;
 
