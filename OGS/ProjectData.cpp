@@ -47,7 +47,7 @@ const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 
 bool ProjectData::removeMesh(const std::string &name)
 {
-	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
 		if (name.compare((*it)->getName()) == 0)
 		{
 			delete *it;
