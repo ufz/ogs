@@ -8,11 +8,12 @@
 #ifndef STRICTDOUBLEVALIDATOR_H_
 #define STRICTDOUBLEVALIDATOR_H_
 
-// source code adapted from:
-// http://developer.qt.nokia.com/faq/answer/i_can_still_insert_numbers_outside_the_range_specified_with_a_qdoublevalida
-
 #include <QDoubleValidator>
 
+/**
+ * \brief A validator for an input field which only accepts decimals.
+ * Source code adapted from [Qt developer fac](http://developer.qt.nokia.com/faq/answer/i_can_still_insert_numbers_outside_the_range_specified_with_a_qdoublevalida)
+ */
 class StrictDoubleValidator : public QDoubleValidator
 {
 public:

@@ -8,6 +8,9 @@
 
 #include <QSlider>
 
+/**
+ * \brief A QSlider which shows its value as a tooltip when moved.
+ */
 class QValueTooltipSlider : public QSlider
 {
 	Q_OBJECT

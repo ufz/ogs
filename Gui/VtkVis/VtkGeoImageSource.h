@@ -16,7 +16,9 @@ class vtkQImageToImageSource;
 class vtkImageShiftScale;
 class vtkImageData;
 
-
+/**
+ * \brief The VtkVisPipeline source object of a geo-referenced image (file).
+ */
 class VtkGeoImageSource : public vtkSimpleImageToImageFilter, public VtkAlgorithmProperties
 {
 public:

@@ -14,6 +14,9 @@
 
 #include <vector>
 
+/**
+ * \brief
+ */
 class VtkSelectionFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {
 public:

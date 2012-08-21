@@ -10,6 +10,9 @@ class QImage;
 class vtkTexture;
 class vtkImageData;
 
+/**
+ * \brief Some data conversion helper functions.
+ */
 class VtkVisHelper
 {
 public:

@@ -18,6 +18,9 @@ namespace MeshLib {
 
 class VtkGeoImageSource;
 
+/**
+ * \brief The dialog which presents the user options to load NetCDF-files.
+ */
 class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 {
 	Q_OBJECT
@@ -52,7 +55,7 @@ private:
 	double getResolution();
 	QString setName();
 	void reverseNorthSouth(double* data, size_t width, size_t height);
-	
+
 	NcFile *_currentFile;
 	NcVar *_currentVar;
 	QDateTime _currentInitialDateTime;
