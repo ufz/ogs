@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <netcdf.h>
 
-using namespace GEOLIB;
+using namespace GeoLib;
 using namespace MeshLib;
 
 /* Names of variables. */
@@ -24,8 +24,8 @@ using namespace MeshLib;
 namespace FileIO
 {
 void NetCDFInterface::readNetCDFData(std::string &ifname,
-                                     std::vector<GEOLIB::Point*>* points_vec,
-                                     GEOLIB::GEOObjects* obj,
+                                     std::vector<Point*>* points_vec,
+                                     GEOObjects* obj,
                                      size_t &NRLAT,
                                      size_t &NRLON)
 {
@@ -159,7 +159,7 @@ void NetCDFInterface::readNetCDFData(std::string &ifname,
 	obj->addPointVec(points_vec, ifname);
 }
 
-CFEMesh* NetCDFInterface::createMeshFromPoints(std::vector<GEOLIB::Point*>* points_vec,
+CFEMesh* NetCDFInterface::createMeshFromPoints(std::vector<Point*>* points_vec,
                                                size_t &NRLAT,
                                                size_t &NRLON)
 {
