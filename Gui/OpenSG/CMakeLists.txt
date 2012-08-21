@@ -23,3 +23,5 @@ ADD_LIBRARY( OgsOpenSG STATIC
 )
 
 USE_OPENSG(OgsOpenSG)
+
+set_property(TARGET OgsOpenSG PROPERTY FOLDER "DataExplorer")

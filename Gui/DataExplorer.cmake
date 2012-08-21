@@ -128,6 +128,8 @@ IF(OGS_USE_VRPN)
 	TARGET_LINK_LIBRARIES( ogs-gui ${VRPN_LIBRARIES} OgsVrpn )
 ENDIF()
 
+set_property(TARGET ogs-gui PROPERTY FOLDER "DataExplorer")
+
 ###################
 ### VRED plugin ###
 ###################

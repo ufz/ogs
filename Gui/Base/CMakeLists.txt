@@ -55,3 +55,5 @@ add_library( QtBase STATIC
 )
 
 target_link_libraries( QtBase ${QT_LIBRARIES} )
+
+set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")

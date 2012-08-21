@@ -186,3 +186,5 @@ ENDIF () # Shapelib_FOUND
 IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( QtDataView ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
+
+set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")

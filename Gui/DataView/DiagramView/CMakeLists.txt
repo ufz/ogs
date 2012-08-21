@@ -69,3 +69,5 @@ target_link_libraries( DiagramView
 	${QT_LIBRARIES}
 	GeoLib
 )
+
+set_property(TARGET DiagramView PROPERTY FOLDER "DataExplorer")

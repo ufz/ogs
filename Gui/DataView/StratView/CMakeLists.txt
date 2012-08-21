@@ -43,8 +43,6 @@ include_directories(
 # Put moc files in a project folder
 source_group("Moc Files" REGULAR_EXPRESSION moc_*)
 
-
-
 # Create the library
 #add_executable( StratView
 add_library( StratView STATIC
@@ -61,3 +59,5 @@ target_link_libraries( StratView
 	BaseLib
 	GeoLib
 )
+
+set_property(TARGET StratView PROPERTY FOLDER "DataExplorer")

@@ -52,3 +52,5 @@ add_library( VtkAct STATIC
 )
 
 target_link_libraries( VtkAct ${QT_LIBRARIES} )
+
+set_property(TARGET VtkAct PROPERTY FOLDER "DataExplorer")
