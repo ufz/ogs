@@ -112,32 +112,47 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 	std::vector<Element*> const& orig_elements(_orig_mesh->getElements());
 	const size_t n_elements(orig_elements.size());
 	std::vector<Element*> elements(n_elements);
-	for (size_t k(0); k < n_elements; k++) {
+	std::vector<size_t> mapped_node_ids_of_element;
+	for (size_t k(0), cnt(0); k < n_elements; k++) {
 		Element const*const kth_orig_elem(orig_elements[k]);
 		const size_t n_nodes_element (kth_orig_elem->getNNodes());
+		mapped_node_ids_of_element.clear();
 		for (size_t i(0); i<n_nodes_element; i++) {
 			const size_t orig_node_id (kth_orig_elem->getNode(i)->getID());
-			size_t orig_node_pos (std::numeric_limits<size_t>::max());
 			std::map<size_t, size_t>::const_iterator it(orig_ids_map.find(orig_node_id));
 			if (it == orig_ids_map.end()) {
 				std::cerr << "[MeshCoarsener::operator()] could not found mesh node id" << std::endl;
+			} else {
+				mapped_node_ids_of_element.push_back(id_map[it->second]);
 			}
-			orig_node_pos = it->second;
+		}
 
-			// check if nodes of the element are collapsed
-			bool not_collapsed (true);
-			for (size_t i(0); i<n_nodes_element-1 && not_collapsed; i++) {
-				Node const*const node_i(elements[k]->getNode(i));
-				for (size_t j(i+1); j<n_nodes_element && not_collapsed; j++) {
-					if (node_i == elements[k]->getNode(j)) {
-						not_collapsed = false;
-					}
+		// check if nodes of the element are collapsed
+		bool not_collapsed (true);
+		for (size_t i(0); i<n_nodes_element-1 && not_collapsed; i++) {
+			const size_t id_i(mapped_node_ids_of_element[i]);
+			for (size_t j(i+1); j<n_nodes_element && not_collapsed; j++) {
+				if (id_i == mapped_node_ids_of_element[j]) {
+					not_collapsed = false;
 				}
 			}
-			if (! not_collapsed) {
-				delete elements[k];
-				elements[k] = NULL;
+		}
+		if (! not_collapsed) {
+			Element* elem (kth_orig_elem->clone());
+			if (elem != NULL) {
+				for (size_t i(0); i<n_nodes_element; i++) {
+					elem->setNode(i, nodes[mapped_node_ids_of_element[i]]);
+				}
+				Element* revised_elem(elem->reviseElement());
+				elements[cnt] = revised_elem;
+				cnt++;
 			}
+		} else {
+			elements[cnt] = kth_orig_elem.clone();
+			for (size_t i(0); i<n_nodes_element; i++) {
+				elements[cnt]->setNode(i, nodes[mapped_node_ids_of_element[i]]);
+			}
+			cnt++;
 		}
 	}
 
