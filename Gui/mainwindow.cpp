@@ -3,7 +3,7 @@
  * 4/11/2009 LB Initial implementation
  *
  */
-//TODO6 #include "Configure.h"
+#include "Configure.h"
 #include "mainwindow.h"
 
 // models
@@ -52,11 +52,11 @@
 // TODO6 #include "FEFLOWInterface.h"
 #include "GMSInterface.h"
 #include "Gmsh2GeoIO.h"
-// TODO6 #include "GocadInterface.h"
+#include "Legacy/OGSIOVer4.h"
+#include "Legacy/LegacyMeshIO.h"
 #include "MeshIO/GMSHInterface.h"
 #include "MeshIO/TetGenInterface.h"
 #include "NetCDFInterface.h" 
-// TODO6 #include "OGSIOVer4.h"
 #include "PetrelInterface.h"
 // TODO6 #include "StationIO.h"
 #include "XmlIO/XmlCndInterface.h"
@@ -66,7 +66,9 @@
 
 #include "StringTools.h"
 
-// MSHGEOTOOLS
+// MeshLib
+#include "Mesh.h"
+#include "MshEditor.h"
 //TODO6 #include "ExtractMeshNodes.h"
 
 // Qt includes
@@ -480,9 +482,6 @@ void MainWindow::save()
 			this->_project.getGEOObjects()->removePolylineVec(merge_name);
 			this->_project.getGEOObjects()->removePointVec(merge_name);
 		}
-		else if (fi.suffix().toLower() == "gli")
-			//			writeGLIFileV4 (fileName.toStdString(), gliName.toStdString(), *_geoModels);
-			writeAllDataToGLIFileV4(fileName.toStdString(), *_geoModels);
 	}
 }
 
@@ -567,12 +566,11 @@ void MainWindow::loadFile(const QString &fileName)
 
 		FileIO::OGSMeshIO meshIO;
 		std::string name = fileName.toStdString();
-		MeshLib::CFEMesh* msh = meshIO.loadMeshFromFile(name);
+		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
 		{
+			_meshModels->addMesh(msh);
 			std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
-			std::string mesh_name = fi.baseName().toStdString();
-			_meshModels->addMesh(msh, mesh_name);
 		}
 		else
 			OGSError::box("Failed to load a mesh file.");
@@ -601,22 +599,9 @@ void MainWindow::loadFile(const QString &fileName)
 	else if (fi.suffix().toLower() == "3dm")
 	{
 		std::string name = fileName.toStdString();
-		MeshLib::CFEMesh* mesh = GMSInterface::readGMS3DMMesh(name);
+		MeshLib::Mesh* mesh = GMSInterface::readGMS3DMMesh(name);
 		if (mesh)
-			_meshModels->addMesh(mesh, name);
-	}
-	// goCAD files
-	else if (fi.suffix().toLower() == "ts")
-	{
-#ifndef NDEBUG
-		QTime myTimer;
-		myTimer.start();
-		std::cout << "GoCad Read ... " << std::flush;
-#endif
-		FileIO::GocadInterface(fileName.toStdString(), _geoModels);
-#ifndef NDEBUG
-		std::cout << myTimer.elapsed() << " ms" << std::endl;
-#endif
+			_meshModels->addMesh(mesh);
 	}
 
 	// NetCDF files
@@ -629,7 +614,7 @@ void MainWindow::loadFile(const QString &fileName)
 		std::cout << "NetCDF Read ...\n" << std::flush;
 #endif
 		std::string name = fileName.toStdString();
-		GridAdapter* mesh;
+		MeshLib::Mesh* mesh (NULL);
 
 		NetCdfConfigureDialog dlg(name);
 		dlg.exec();
@@ -728,12 +713,12 @@ void MainWindow::about()
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QMenu* importFiles = new QMenu("&Import Files");
+/* TODO6
 	QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
 	connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
+*/
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
-	QAction* gocadFiles = importFiles->addAction("&Gocad Files...");
-	connect(gocadFiles, SIGNAL(triggered()), this, SLOT(importGoCad()));
 	QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
 	connect(netcdfFiles, SIGNAL(triggered()), this, SLOT(importNetcdf()));
 	QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
@@ -763,22 +748,6 @@ void MainWindow::importGMS()
 	                                                "Select GMS file to import", settings.value(
 	                                                        "lastOpenedFileDirectory").toString(),
 	                                                "GMS files (*.txt *.3dm)");
-	if (!fileName.isEmpty())
-	{
-		loadFile(fileName);
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-	}
-}
-
-void MainWindow::importGoCad()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select data file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                "Gocad files (*.ts);;Gocad lines (*.tline)");
 	if (!fileName.isEmpty())
 	{
 		loadFile(fileName);
@@ -904,10 +873,11 @@ void MainWindow::importTetGen()
 
 	if (!node_fname.isEmpty() && !element_fname.isEmpty()) {
 		FileIO::TetGenInterface tetgen;
-		MeshLib::CFEMesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
+		MeshLib::Mesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
 		if (msh) {
 			std::string name(node_fname.toStdString());
-			_meshModels->addMesh(msh, name);
+			msh->setName(name);
+			_meshModels->addMesh(msh);
 		} else
 			OGSError::box("Failed to load a TetGen mesh.");
 		settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
@@ -931,7 +901,7 @@ void MainWindow::importVtk()
 		}
 	}
 }
-
+/* TODO6
 void MainWindow::importFeflow()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
@@ -943,14 +913,14 @@ void MainWindow::importFeflow()
 	if (!fileName.isEmpty())
 	{
 		FEFLOWInterface feflowIO(_geoModels);
-		MeshLib::CFEMesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
+		MeshLib::Mesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
 		if (msh)
 		{
-			std::string str = fileName.toStdString();
-			_meshModels->addMesh(msh, str);
+			std::string name = fileName.toStdString();
+			msh->setName(name);
+			_meshModels->addMesh(msh);
 			QDir dir = QDir(fileName);
 			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-			//_geoModels->modified("Feflow");
 			updateDataViews();
 		}
 		else
@@ -958,7 +928,7 @@ void MainWindow::importFeflow()
 	}
 	emit fileUsed(fileName);
 }
-
+*/
 void MainWindow::showPropertiesDialog(std::string const& name)
 {
 	ListPropertiesDialog dlg(name, _geoModels);
@@ -991,58 +961,15 @@ void MainWindow::loadFEMConditions(std::string geoName)
 
 void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string geoName)
 {
-	std::vector<FEMCondition*> conditions;
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "cnd")
-	{
+	{	
+		std::vector<FEMCondition*> conditions;
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
 		xml.readFile(conditions, fileName);
+		this->addFEMConditions(conditions);
 	}
-	else
-	{
-		if (geoName.empty())
-		{
-			// assume that geoName is identical to filename of the currently loaded file (but with *.gli-extension)
-			QFileInfo fi(fileName);
-			geoName = fi.fileName().toStdString();
-			geoName = geoName.substr(0, geoName.find_last_of(".")).append(".gli");
-		}
-		if (fi.suffix().toLower() == "bc")
-		{
-			QString name = fi.path() + "/";
-			BCRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
-					it != bc_list.end(); ++it)
-			{
-				BoundaryCondition* bc = new BoundaryCondition(*(*it), geoName);
-				conditions.push_back(bc);
-			}
-		}
-		else if (fi.suffix().toLower() == "ic")
-		{
-			QString name = fi.path() + "/";
-			ICRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::vector<CInitialCondition*>::iterator it = ic_vector.begin();
-					it != ic_vector.end(); ++it)
-			{
-				InitialCondition* ic = new InitialCondition(*(*it), geoName);
-				conditions.push_back(ic);
-			}
-		}
-		else if (fi.suffix().toLower() == "st")
-		{
-			QString name = fi.path() + "/";
-			STRead((name.append(fi.baseName())).toStdString(), *_geoModels, geoName);
-			for (std::vector<CSourceTerm*>::iterator it = st_vector.begin();
-					it != st_vector.end(); ++it)
-			{
-				SourceTerm* st = new SourceTerm(*(*it), geoName);
-				conditions.push_back(st);
-			}
-		}
-	}
-	this->addFEMConditions(conditions);
 }
 
 void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
@@ -1070,57 +997,6 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 				this->_processModel->addCondition(conditions[i]);
 			}
 		}
-
-		for (std::list<CBoundaryCondition*>::iterator it = bc_list.begin();
-			    it != bc_list.end(); ++it)
-			delete *it;
-		bc_list.clear();
-		for (size_t i = 0; i < ic_vector.size(); i++)
-			delete ic_vector[i];
-		ic_vector.clear();
-		for (size_t i = 0; i < st_vector.size(); i++)
-			delete st_vector[i];
-		st_vector.clear();
-	}
-}
-
-// Legacy function (only required for ascii st-files): reads values for 'direct' source terms
-void MainWindow::loadDIRECTSourceTermsFromASCII(const std::string mshname, const std::vector<GeoLib::Point*>* points)
-{
-	std::string geo_name(mshname);
-
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value("lastOpenedFileDirectory").toString(),
-	                                                 "Geosys FEM condition files (*.st);;All files (* *.*)");
-	QFileInfo fi(fileName);
-	std::string file_path = fi.absoluteDir().absolutePath().toStdString() + "/";
-
-	if (!fileName.isEmpty())
-	{
-		std::string st_file_name (file_path);
-		STRead(st_file_name.append(fi.baseName().toStdString()), *_geoModels, geo_name);
-
-		for (std::vector<CSourceTerm*>::const_iterator it = st_vector.begin(); it != st_vector.end();
-	     ++it)
-		{
-			if ((*it)->getProcessDistributionType() == FiniteElement::DIRECT)
-			{
-				CSourceTerm ast = **it;
-				SourceTerm* st = new SourceTerm(ast, mshname);
-				std::vector< std::pair<size_t, double> > node_values;
-				SourceTerm::getDirectNodeValues(file_path + (*it)->fname, node_values);
-				st->setGeoName(mshname);
-				st->setDisValues(node_values);
-
-				std::vector<GeoLib::Point*> *points2 = GeoLib::PointVec::deepcopy(points);
-				GeoLib::PointVec pnt_vec("MeshNodes", points2);
-				std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(st->getDisNodes());
-				std::string geometry_name = st->getGeoName();
-				this->_geoModels->addPointVec(cond_points, geometry_name);
-				this->_processModel->addCondition(st);
-			}
-		}
 	}
 }
 
@@ -1134,29 +1010,6 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 		xml.setNameForExport(geoName.toStdString());
 		xml.setConditionType(type);
 		xml.writeToFile(fileName.toStdString());
-	}
-	else
-	{
-		const std::vector<FEMCondition*> conds = _project.getConditions();
-		for (size_t i=0; i<conds.size(); i++)
-		{
-			if ((conds[i]->getCondType() == type) &&
-				(QString::fromStdString(conds[i]->getAssociatedGeometryName()) == geoName))
-			{
-				if (type == FEMCondition::BOUNDARY_CONDITION)
-					bc_list.push_back(new CBoundaryCondition(static_cast<BoundaryCondition*>(conds[i])));
-				else if (type == FEMCondition::INITIAL_CONDITION)
-					ic_vector.push_back(new CInitialCondition(static_cast<InitialCondition*>(conds[i])));
-				else if (type == FEMCondition::SOURCE_TERM)
-					st_vector.push_back(new CSourceTerm(static_cast<SourceTerm*>(conds[i])));
-			}
-		}
-		if (type == FEMCondition::BOUNDARY_CONDITION)
-			BCWrite(fileName.toStdString());
-		else if (type == FEMCondition::INITIAL_CONDITION)
-			ICWrite(fileName.toStdString());
-		else if (type == FEMCondition::SOURCE_TERM)
-			STWrite(fileName.toStdString());
 	}
 }
 
@@ -1341,7 +1194,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 		}
 		else
 		{
-			const MeshLib::CFEMesh* mesh = _project.getMesh(geo_name);
+			const MeshLib::Mesh* mesh = _project.getMesh(geo_name);
 			FEMConditionSetupDialog dlg(geo_name, mesh);
 			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
@@ -1388,8 +1241,8 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::string name ("Test");
-	_meshModels->addMesh(MshEditor::getMeshSurface(*_project.getMesh("Ammer-Homogen100m-Final")), name);
+	//std::string name ("Test");
+	//_meshModels->addMesh(MshEditor::getMeshSurface(*_project.getMesh("Ammer-Homogen100m-Final")), name);
 
 /*
 	const std::vector<GeoLib::Polyline*> *lines = this->_geoModels->getPolylineVec("WESS Rivers");

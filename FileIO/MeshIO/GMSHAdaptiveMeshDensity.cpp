@@ -27,14 +27,14 @@ GMSHAdaptiveMeshDensity::~GMSHAdaptiveMeshDensity()
 	delete _quad_tree;
 }
 
-void GMSHAdaptiveMeshDensity::init(std::vector<GEOLIB::Point const*> const& pnts)
+void GMSHAdaptiveMeshDensity::init(std::vector<GeoLib::Point const*> const& pnts)
 {
 	// *** QuadTree - determining bounding box
 #ifndef NDEBUG
 	std::cout << "[GMSHAdaptiveMeshDensity::init]" << std::endl;
 	std::cout << "\tcomputing axis aligned bounding box (2D) for quadtree ... " << std::flush;
 #endif
-	GEOLIB::Point min(pnts[0]->getData()), max(pnts[0]->getData());
+	GeoLib::Point min(pnts[0]->getCoords()), max(pnts[0]->getCoords());
 	size_t n_pnts(pnts.size());
 	for (size_t k(1); k<n_pnts; k++) {
 		for (size_t j(0); j<2; j++)
@@ -52,7 +52,7 @@ void GMSHAdaptiveMeshDensity::init(std::vector<GEOLIB::Point const*> const& pnts
 #ifndef NDEBUG
 	std::cout << "\tcreating quadtree ... " << std::flush;
 #endif
-	_quad_tree = new GEOLIB::QuadTree<GEOLIB::Point> (min, max, _max_pnts_per_leaf);
+	_quad_tree = new GeoLib::QuadTree<GeoLib::Point> (min, max, _max_pnts_per_leaf);
 #ifndef NDEBUG
 	std::cout << "ok" << std::endl;
 #endif
@@ -61,7 +61,7 @@ void GMSHAdaptiveMeshDensity::init(std::vector<GEOLIB::Point const*> const& pnts
 	addPoints(pnts);
 }
 
-void GMSHAdaptiveMeshDensity::addPoints(std::vector<GEOLIB::Point const*> const& pnts)
+void GMSHAdaptiveMeshDensity::addPoints(std::vector<GeoLib::Point const*> const& pnts)
 {
 	// *** QuadTree - insert points
 	const size_t n_pnts(pnts.size());
@@ -77,34 +77,34 @@ void GMSHAdaptiveMeshDensity::addPoints(std::vector<GEOLIB::Point const*> const&
 	_quad_tree->balance();
 }
 
-double GMSHAdaptiveMeshDensity::getMeshDensityAtPoint(GEOLIB::Point const*const pnt) const
+double GMSHAdaptiveMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const pnt) const
 {
-	GEOLIB::Point ll, ur;
+	GeoLib::Point ll, ur;
 	_quad_tree->getLeaf(*pnt, ll, ur);
 	return _pnt_density * (ur[0] - ll[0]);
 }
 
-double GMSHAdaptiveMeshDensity::getMeshDensityAtStation(GEOLIB::Point const*const pnt) const
+double GMSHAdaptiveMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const pnt) const
 {
-	GEOLIB::Point ll, ur;
+	GeoLib::Point ll, ur;
 	_quad_tree->getLeaf(*pnt, ll, ur);
 	return (_station_density * (ur[0] - ll[0]));
 }
 
-void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GEOLIB::Point*> & pnts, size_t additional_levels) const
+void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pnts, size_t additional_levels) const
 {
 	// get Steiner points
 	size_t max_depth(0);
 	_quad_tree->getMaxDepth(max_depth);
 
-	std::list<GEOLIB::QuadTree<GEOLIB::Point>*> leaf_list;
+	std::list<GeoLib::QuadTree<GeoLib::Point>*> leaf_list;
 	_quad_tree->getLeafs(leaf_list);
 
-	for (std::list<GEOLIB::QuadTree<GEOLIB::Point>*>::const_iterator it(leaf_list.begin()); it
+	for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
 					!= leaf_list.end(); it++) {
 		if ((*it)->getPoints().empty()) {
 			// compute point from square
-			GEOLIB::Point ll, ur;
+			GeoLib::Point ll, ur;
 			(*it)->getSquarePoints(ll, ur);
 			if ((*it)->getDepth() + additional_levels > max_depth) {
 				additional_levels = max_depth - (*it)->getDepth();
@@ -113,7 +113,7 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GEOLIB::Point*> & pn
 			const double delta ((ur[0] - ll[0]) / (2 * n_pnts_per_quad_dim));
 			for (size_t i(0); i<n_pnts_per_quad_dim; i++) {
 				for (size_t j(0); j<n_pnts_per_quad_dim; j++) {
-					pnts.push_back(new GEOLIB::Point (ll[0] + (2*i+1) * delta, ll[1] + (2*j+1) * delta, 0.0));
+					pnts.push_back(new GeoLib::Point (ll[0] + (2*i+1) * delta, ll[1] + (2*j+1) * delta, 0.0));
 				}
 			}
 

@@ -13,10 +13,9 @@ namespace FileIO
 {
 PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
                                  std::list<std::string> &well_path_fnames,
-                                 std::string &unique_model_name, GEOLIB::GEOObjects* geo_obj) :
-	_unique_name(unique_model_name), pnt_vec(new std::vector<GEOLIB::Point*>),
-	well_vec(new std::vector<GEOLIB::Point*>), ply_vec(new std::vector<
-	                                                           GEOLIB::Polyline*>)
+                                 std::string &unique_model_name, GeoLib::GEOObjects* geo_obj) :
+	_unique_name(unique_model_name), pnt_vec(new std::vector<GeoLib::Point*>),
+	well_vec(new std::vector<GeoLib::Point*>), ply_vec(new std::vector<GeoLib::Polyline*>)
 {
 	for (std::list<std::string>::const_iterator it(sfc_fnames.begin()); it
 	     != sfc_fnames.end(); ++it)
@@ -92,7 +91,7 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
 		size_t idx(pnt_vec->size());
 		while (in)
 		{
-			pnt_vec->push_back(new GEOLIB::Point);
+			pnt_vec->push_back(new GeoLib::Point);
 			in >> *((*pnt_vec)[idx]);
 			if (!in)
 			{
@@ -165,7 +164,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		std::cout << "PetrelInterface::readPetrelWellTrace: " << well_head_x << "," <<
 		well_head_y << "," << well_kb << std::endl;
 		well_vec->push_back(
-		        static_cast<GEOLIB::StationBorehole*> (new GEOLIB::StationBorehole(
+		        static_cast<GeoLib::StationBorehole*> (new GeoLib::StationBorehole(
 		                                                       well_head_x, well_head_y,
 		                                                       well_kb)));
 
@@ -219,12 +218,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 			stream >> md;
 			stream >> x >> y >> z;
 			//			pnt_vec->push_back (new GEOLIB::Point (x,y,z));
-			static_cast<GEOLIB::StationBorehole*> ((*well_vec)[well_vec->size()
-			                                                   - 1])->addSoilLayer(
-			        x,
-			        y,
-			        z,
-			        "unknown");
+			static_cast<GeoLib::StationBorehole*> ((*well_vec)[well_vec->size()- 1])->addSoilLayer(x,y,z,"unknown");
 			stream >> tvd >> dx >> dy >> azim >> incl >> dls;
 		}
 		in.getline(buffer, MAX_COLS_PER_ROW);

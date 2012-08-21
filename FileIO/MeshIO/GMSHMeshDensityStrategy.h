@@ -23,8 +23,8 @@ namespace FileIO
 class GMSHMeshDensityStrategy
 {
 public:
-	virtual void init(std::vector<GEOLIB::Point const*> const&) = 0;
-	virtual double getMeshDensityAtPoint(GEOLIB::Point const*const) const = 0;
+	virtual void init(std::vector<GeoLib::Point const*> const&) = 0;
+	virtual double getMeshDensityAtPoint(GeoLib::Point const*const) const = 0;
 };
 
 } // end namespace

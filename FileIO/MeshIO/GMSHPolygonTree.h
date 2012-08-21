@@ -23,10 +23,10 @@
 
 namespace FileIO {
 
-class GMSHPolygonTree: public GEOLIB::SimplePolygonTree {
+class GMSHPolygonTree: public GeoLib::SimplePolygonTree {
 public:
-	GMSHPolygonTree(GEOLIB::Polygon* polygon, GMSHPolygonTree * parent,
-					GEOLIB::GEOObjects &geo_objs, std::string const& geo_name,
+	GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree * parent,
+					GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
 					GMSHMeshDensityStrategy * mesh_density_strategy);
 	virtual ~GMSHPolygonTree();
 
@@ -36,7 +36,7 @@ public:
 	 * @param pnt the station point
 	 * @return true if the station is inside the polygon
 	 */
-	bool insertStation(GEOLIB::Point const* pnt);
+	bool insertStation(GeoLib::Point const* pnt);
 	/**
 	 * If at least one (end) point (of a line segment) of the polyline is inside the polygon
 	 * the polyline is inserted to the internal vector of polylines.
@@ -50,7 +50,7 @@ public:
 	 * are checked recursively.
 	 * @param ply the polyline that should be inserted
 	 */
-	void insertPolyline(GEOLIB::PolylineWithSegmentMarker * ply);
+	void insertPolyline(GeoLib::PolylineWithSegmentMarker * ply);
 
 	/**
 	 * Initialize the mesh density strategy with data. In case of GMSHAdaptiveMeshDensity
@@ -72,15 +72,15 @@ public:
 	void writeAdditionalPointData(size_t & pnt_id_offset, size_t sfc_number, std::ostream& out) const;
 
 private:
-	void getPointsFromSubPolygons(std::vector<GEOLIB::Point const*>& pnts);
-	void getStationsInsideSubPolygons(std::vector<GEOLIB::Point const*>& stations);
+	void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
+	void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
 	const std::list<SimplePolygonTree*>& getChilds() const;
-	const std::list<GEOLIB::GEOObjects*>& getGeoObjects () const;
+	const std::list<GeoLib::GEOObjects*>& getGeoObjects () const;
 
-	GEOLIB::GEOObjects & _geo_objs;
+	GeoLib::GEOObjects & _geo_objs;
 	std::string const& _geo_name;
-	std::vector<GEOLIB::Point const*> _stations;
-	std::vector<GEOLIB::PolylineWithSegmentMarker*> _plys;
+	std::vector<GeoLib::Point const*> _stations;
+	std::vector<GeoLib::PolylineWithSegmentMarker*> _plys;
 	std::vector<FileIO::GMSHLine*> _gmsh_lines_for_constraints;
 
 	GMSHMeshDensityStrategy * _mesh_density_strategy;

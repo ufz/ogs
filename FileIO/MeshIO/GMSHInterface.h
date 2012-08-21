@@ -58,7 +58,7 @@ public:
 	 * @param selected_geometries vector of names of geometries, that should be employed for mesh generation.
 	 * @return
 	 */
-	GMSHInterface (GEOLIB::GEOObjects & geo_objs,
+	GMSHInterface (GeoLib::GEOObjects & geo_objs,
 					bool include_stations_as_constraints,
 					GMSH::MeshDensityAlgorithm mesh_density_algorithm,
 					double param1, double param2, size_t param3,
@@ -94,7 +94,7 @@ private:
 	size_t _n_lines;
 	size_t _n_plane_sfc;
 
-	GEOLIB::GEOObjects & _geo_objs;
+	GeoLib::GEOObjects & _geo_objs;
 	std::vector<std::string>& _selected_geometries;
 	std::string _gmsh_geo_name;
 	std::list<GMSHPolygonTree*> _polygon_tree_list;

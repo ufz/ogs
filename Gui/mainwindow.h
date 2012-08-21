@@ -63,16 +63,15 @@ protected slots:
 	/// Testing functionality for connection to FEM lib
 	void FEMTestStart();
 	void importGMS();
-	void importGoCad();
 	void importRaster();
 	void importRasterAsPoly();
 #ifdef Shapelib_FOUND
 	void importShape();
 #endif
 	void importPetrel();
-	void importNetcdf(); //YW  07.2010
+	void importNetcdf();
 	void importVtk();
-	void importFeflow();
+	// TODO6 void importFeflow();
 	void importTetGen();
 	void loadFEMConditions(std::string geoName);
 	void openRecentFile();

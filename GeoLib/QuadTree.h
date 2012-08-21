@@ -13,6 +13,8 @@
 #ifndef QUADTREE_H_
 #define QUADTREE_H_
 
+#include "Polyline.h"
+
 namespace GeoLib {
 
 /**

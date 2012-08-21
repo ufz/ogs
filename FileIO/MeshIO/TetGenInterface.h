@@ -11,7 +11,7 @@
 // forward declaration of mesh class
 namespace MeshLib
 {
-class CFEMesh;
+	class Mesh;
 }
 
 namespace FileIO
@@ -31,7 +31,7 @@ public:
 	 * @param ele_fname
 	 * @param mesh
 	 */
-	void writeTetGenMesh (std::string const& nodes_fname, std::string const& ele_fname, MeshLib::CFEMesh const*const mesh) const;
+	void writeTetGenMesh (std::string const& nodes_fname, std::string const& ele_fname, MeshLib::Mesh const*const mesh) const;
 
 	/**
 	 * Method reads the TetGen mesh from node file and element file.
@@ -39,17 +39,17 @@ public:
 	 * @param ele_fname file name of the elements file
 	 * @return on success the method returns a (pointer to a) CFEMesh, else the method returns NULL
 	 */
-	MeshLib::CFEMesh* readTetGenMesh (std::string const& nodes_fname,
-	                                  std::string const& ele_fname);
+	MeshLib::Mesh* readTetGenMesh (std::string const& nodes_fname,
+	                               std::string const& ele_fname);
 	/** in order to have a direct access to the
 	 * data structures for nodes and elements we make
 	 * class TetGenInterface a friend of the mesh class
 	 */
-	friend class MeshLib::CFEMesh;
+	friend class MeshLib::Mesh;
 
 private:
-	void writeTetGenNodes(std::string const& nodes_fname, MeshLib::CFEMesh const*const mesh) const;
-	void writeTetGenElements(std::string const& ele_fname, MeshLib::CFEMesh const*const mesh) const;
+	void writeTetGenNodes(std::string const& nodes_fname, MeshLib::Mesh const*const mesh) const;
+	void writeTetGenElements(std::string const& ele_fname, MeshLib::Mesh const*const mesh) const;
 	/**
 	 * Method reads the nodes from stream and stores them in the node vector of the mesh class.
 	 * For this purpose it uses methods parseNodesFileHeader() and parseNodes().
@@ -108,7 +108,7 @@ private:
 	/**
 	 * the mesh that is returned if all data is read
 	 */
-	MeshLib::CFEMesh* _mesh;
+	MeshLib::Mesh* _mesh;
 	/**
 	 * the value is true if the indexing is zero based, else false
 	 */

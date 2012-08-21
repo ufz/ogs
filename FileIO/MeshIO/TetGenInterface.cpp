@@ -31,13 +31,13 @@ TetGenInterface::~TetGenInterface()
 }
 
 void TetGenInterface::writeTetGenMesh(std::string const& nodes_fname, std::string const& ele_fname,
-				MeshLib::CFEMesh const* const mesh) const
+				MeshLib::Mesh const* const mesh) const
 {
 	writeTetGenNodes(nodes_fname, mesh);
 	writeTetGenElements(ele_fname, mesh);
 }
 
-void TetGenInterface::writeTetGenNodes(std::string const& nodes_fname, MeshLib::CFEMesh const*const mesh) const
+void TetGenInterface::writeTetGenNodes(std::string const& nodes_fname, MeshLib::Mesh const*const mesh) const
 {
 	std::ofstream out(nodes_fname.c_str());
 	if (out) {

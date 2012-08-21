@@ -69,6 +69,14 @@ public:
 	void addPoint(size_t pos);
 
 	/**
+	 * Method inserts a new point (that have to be inside the _ply_pnts vector)
+	 * at the given position in the polyline.
+	 * @param pos the position in the polyline, pos have to be a value into the interval [0, number of points)
+	 * @param pnt_id the id of the new point in the vector of points the polyline is based on
+	 */
+	virtual void insertPoint(size_t pos, size_t pnt_id);
+
+	/**
 	 * Closes a polyline by adding a line sement that connects start- and end-point.
 	 * \param ply A Polyline containing at least three points.
 	 * \result A polygon.
