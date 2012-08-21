@@ -52,10 +52,10 @@
 // TODO6 #include "FEFLOWInterface.h"
 #include "GMSInterface.h"
 #include "Gmsh2GeoIO.h"
+#include "Legacy/MeshIO.h"
 #include "Legacy/OGSIOVer4.h"
-#include "Legacy/LegacyMeshIO.h"
 #include "MeshIO/GMSHInterface.h"
-#include "MeshIO/TetGenInterface.h"
+// TODO6 #include "MeshIO/TetGenInterface.h"
 #include "NetCDFInterface.h" 
 #include "PetrelInterface.h"
 // TODO6 #include "StationIO.h"
@@ -68,6 +68,7 @@
 
 // MeshLib
 #include "Mesh.h"
+#include "Node.h"
 #include "MshEditor.h"
 //TODO6 #include "ExtractMeshNodes.h"
 
@@ -169,8 +170,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, size_t, bool)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, size_t, bool)));
-	connect(mshTabWidget->treeView, SIGNAL(requestDIRECTSourceTerms(const std::string, const std::vector<GeoLib::Point*>*)),
-	        this, SLOT(loadDIRECTSourceTermsFromASCII(const std::string, const std::vector<GeoLib::Point*>*)));
 
 	// Setup connections for process model to GUI
 	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)),
@@ -560,7 +559,7 @@ void MainWindow::loadFile(const QString &fileName)
 		QTime myTimer0;
 		myTimer0.start();
 
-		FileIO::OGSMeshIO meshIO;
+		FileIO::MeshIO meshIO;
 		std::string name = fileName.toStdString();
 		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
@@ -868,6 +867,7 @@ void MainWindow::importTetGen()
 					"TetGen element files (*.ele);;"));
 
 	if (!node_fname.isEmpty() && !element_fname.isEmpty()) {
+		/* TODO6
 		FileIO::TetGenInterface tetgen;
 		MeshLib::Mesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
 		if (msh) {
@@ -877,6 +877,7 @@ void MainWindow::importTetGen()
 		} else
 			OGSError::box("Failed to load a TetGen mesh.");
 		settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
+		*/
 	}
 }
 
@@ -978,8 +979,12 @@ void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
 			if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
 			{
 				if (_meshModels->getMesh(conditions[i]->getAssociatedGeometryName()) != NULL) {
-					std::vector<GeoLib::Point*> *points = GeoLib::PointVec::deepcopy(_meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes());
-					GeoLib::PointVec pnt_vec("MeshNodes", points);
+					std::vector<MeshLib::Node*> nodes = _meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes();
+					const size_t nPoints(nodes.size());
+					std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nPoints);
+					for (size_t j = 0; j < nPoints; j++)
+						(*new_points)[j] = new GeoLib::Point(nodes[j]->getCoords());
+					GeoLib::PointVec pnt_vec("MeshNodes", new_points);
 					std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
 					std::string geo_name = conditions[i]->getGeoName();
 					this->_geoModels->addPointVec(cond_points, geo_name);

@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <netcdf.h>
 
-using namespace GeoLib;
-using namespace MeshLib;
+#include "Mesh.h"
+#include "Node.h"
+#include "Elements/Quad.h"
 
 /* Names of variables. */
 #define DIM_RLAT "rlat"
@@ -24,8 +25,8 @@ using namespace MeshLib;
 namespace FileIO
 {
 void NetCDFInterface::readNetCDFData(std::string &ifname,
-                                     std::vector<Point*>* points_vec,
-                                     GEOObjects* obj,
+                                     std::vector<GeoLib::Point*>* points_vec,
+                                     GeoLib::GEOObjects* obj,
                                      size_t &NRLAT,
                                      size_t &NRLON)
 {
@@ -150,7 +151,7 @@ void NetCDFInterface::readNetCDFData(std::string &ifname,
 	printf("Reading netCDF file successfully!\n");
 
 	for (size_t i = 0; i < len_vals; i++)
-		points_vec->push_back(new Point( lon_in[i], lat_in[i], var_in[i] ));
+		points_vec->push_back(new GeoLib::Point( lon_in[i], lat_in[i], var_in[i] ));
 
 	delete [] lat_in;
 	delete [] lon_in;
@@ -159,45 +160,32 @@ void NetCDFInterface::readNetCDFData(std::string &ifname,
 	obj->addPointVec(points_vec, ifname);
 }
 
-CFEMesh* NetCDFInterface::createMeshFromPoints(std::vector<Point*>* points_vec,
+MeshLib::Mesh* NetCDFInterface::createMeshFromPoints(std::vector<GeoLib::Point*>* points_vec,
                                                size_t &NRLAT,
                                                size_t &NRLON)
 {
 	std::cout << "Converting points data to mesh with quad elements\n";
-	CFEMesh* mesh = new CFEMesh();
 
 	// setmesh nodes
 	size_t nNodes = points_vec->size();
+	std::vector<MeshLib::Node*> nodes(nNodes);
 	for (size_t i = 0; i < nNodes; i++)
 	{
-		MeshLib::CNode* node = new MeshLib::CNode(i);
-		double coords[3] =
-		{(*(*points_vec)[i])[0], (*(*points_vec)[i])[1], (*(*points_vec)[i])[2]};
-		node->SetCoordinates(coords);
-		mesh->nod_vector.push_back(node);
+		MeshLib::Node* node = new MeshLib::Node((*(*points_vec)[i])[0], (*(*points_vec)[i])[1], (*(*points_vec)[i])[2]);
+		nodes[i] = node;
 	}
 
 	// set mesh elements
+	std::vector<MeshLib::Element*> elements;
 	for (size_t i = 0; i < NRLAT - 1; i++)
 		for (size_t j = 0; j < NRLON - 1; j++)
 		{
 			size_t n_Elems = i * NRLON + j;
-			// TF 11/2011 - using instead the constructor
-//			MeshLib::CElem* elem = new MeshLib::CElem();
-//			elem->setElementProperties(MshElemType::QUAD);
-//			// Assignment for the element nodes
-//			elem->nodes_index[0] = (long) (n_Elems);
-//			elem->nodes_index[1] = (long) (n_Elems + 1);
-//			elem->nodes_index[2] = (long) (n_Elems + NRLON + 1);
-//			elem->nodes_index[3] = (long) (n_Elems + NRLON);
-//			// Initialize topological properties
-//			elem->InitializeMembers();
-			MeshLib::CElem* elem = new MeshLib::CElem(MshElemType::QUAD, n_Elems, n_Elems + 1, n_Elems + NRLON + 1, n_Elems + NRLON, 0);
-
-			mesh->ele_vector.push_back(elem);
+			MeshLib::Element* elem = new MeshLib::Quad(nodes[n_Elems], nodes[n_Elems+1], nodes[n_Elems+NRLON+1], nodes[n_Elems+NRLON], 0);
+			elements.push_back(elem);
 		}
-	// Establish topology of a grid
-	mesh->ConstructGrid();
+
+	MeshLib::Mesh* mesh = new MeshLib::Mesh("NetCDF", nodes, elements);
 	std::cout << "Mesh is generated successfully!\n" << std::endl;
 	return mesh;
 }

@@ -17,13 +17,12 @@
 #include "GMSHPolygonTree.h"
 #include "GMSHMeshDensityStrategy.h"
 
-// GEOLIB
+// GeoLib
 #include "GEOObjects.h"
 #include "Polygon.h"
 
-namespace MeshLib
-{
-class CFEMesh;
+namespace MeshLib {
+	class Mesh;
 }
 
 namespace FileIO
@@ -76,7 +75,7 @@ public:
 	 * @param mesh the new mesh
 	 * @return
 	 */
-	static void readGMSHMesh (std::string const& fname, MeshLib::CFEMesh* mesh);
+	static void readGMSHMesh (std::string const& fname, MeshLib::Mesh* mesh);
 
 protected:
 	int write(std::ostream& stream);
@@ -88,6 +87,8 @@ private:
 	 * @param out
 	 */
 	void writeGMSHInputFile(std::ostream & out);
+
+	static void readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids);
 
 	void writePoints(std::ostream& out) const;
 

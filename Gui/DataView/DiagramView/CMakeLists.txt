@@ -67,5 +67,5 @@ add_library( DiagramView STATIC
 # Link Qt library
 target_link_libraries( DiagramView
 	${QT_LIBRARIES}
-	GEO
+	GeoLib
 )

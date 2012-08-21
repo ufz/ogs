@@ -74,13 +74,13 @@ ADD_EXECUTABLE( ogs-gui
 
 TARGET_LINK_LIBRARIES( ogs-gui
 	${QT_LIBRARIES}
-	Base
-	GEO
+	BaseLib
+	GeoLib
 	FileIO
-	MSH
-	MSHGEOTOOLS
-	FEM
-	OGSProject
+	MeshLib
+	#MSHGEOTOOLS
+	FemLib
+	OgsLib
 	QtBase
 	QtDataView
 	StratView

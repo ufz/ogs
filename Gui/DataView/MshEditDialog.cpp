@@ -3,8 +3,9 @@
  * 2010/11/09 KR Initial implementation
  */
 
-/* TODO6
+
 #include "MshEditDialog.h"
+
 #include "OGSError.h"
 #include "StringTools.h"
 #include "Mesh.h"
@@ -18,7 +19,7 @@ MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL)
 {
 	setupUi(this);
-
+/* TODO6
 	this->gridLayoutLayerMapping->setMargin(5);
 	this->gridLayoutLayerMapping->setColumnMinimumWidth(2,10);
 	this->gridLayoutLayerMapping->setColumnStretch(0, 80);
@@ -58,6 +59,7 @@ MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 		_noDataDeleteBox->setEnabled(true);
 		this->gridLayoutLayerMapping->addWidget(_noDataDeleteBox, 2, 1);
 	}
+	*/
 }
 
 MshEditDialog::~MshEditDialog()
@@ -74,6 +76,7 @@ MshEditDialog::~MshEditDialog()
 
 void MshEditDialog::accept()
 {
+/* TODO6
 	int tabIndex = this->tabWidget->currentIndex();
 
 	if (tabIndex >= 0)
@@ -135,6 +138,7 @@ void MshEditDialog::accept()
 	else
 		std::cout << "Error in MshEditDialog::accept() - No tab selected... " << std::endl;
 	this->done(QDialog::Accepted);
+*/
 }
 
 void MshEditDialog::reject()
@@ -156,4 +160,3 @@ void MshEditDialog::getFileName()
 	QDir dir = QDir(filename);
 	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 }
-*/

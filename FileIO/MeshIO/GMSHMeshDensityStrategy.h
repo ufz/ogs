@@ -11,7 +11,7 @@
 #include <ostream>
 #include <vector>
 
-// GEOLIB
+// GeoLib
 #include "Point.h"
 
 namespace FileIO

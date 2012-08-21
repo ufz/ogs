@@ -14,16 +14,16 @@ GMSHFixedMeshDensity::GMSHFixedMeshDensity(double mesh_density) :
 {
 }
 
-void GMSHFixedMeshDensity::init(std::vector<GEOLIB::Point const*> const& vec)
+void GMSHFixedMeshDensity::init(std::vector<GeoLib::Point const*> const& vec)
 {
 	// to avoid a warning here:
 	(void)(vec);
 }
 
-double GMSHFixedMeshDensity::getMeshDensityAtPoint(GEOLIB::Point const*const pnt) const
+double GMSHFixedMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const pnt) const
 {
 	// to avoid a warning here:
-	(void)(const_cast<GEOLIB::Point const*>(pnt));
+	(void)(const_cast<GeoLib::Point const*>(pnt));
 	return _mesh_density;
 }
 

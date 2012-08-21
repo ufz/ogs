@@ -3,7 +3,7 @@
  * 2011/08/30 KR inital implementation
  *
  */
-
+/*
 #include "SourceTerm.h"
 #include "rf_st_new.h"
 
@@ -60,3 +60,4 @@ void SourceTerm::getDirectNodeValues(const std::string &filename,
 		str_in.clear();
 	}
 }
+*/

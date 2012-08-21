@@ -22,7 +22,7 @@ namespace MeshLib {
 }
 
 /**
- * \brief Manages the import and export of Aquaveo GMS files into and out of GEOLIB.
+ * \brief Manages the import and export of Aquaveo GMS files into and out of GeoLib.
  */
 class GMSInterface
 {

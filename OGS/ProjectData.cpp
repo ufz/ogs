@@ -212,9 +212,8 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 		if (count > 1)
 			cpName = cpName + "-" + number2str(count);
 
-		for (std::map<std::string, MeshLib::Mesh*>::iterator it = _msh_vec.begin();
-		     it != _msh_vec.end(); ++it)
-			if ( cpName.compare(it->first) == 0 )
+		for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+			if ( cpName.compare((*it)->getName()) == 0 )
 				isUnique = false;
 	}
 

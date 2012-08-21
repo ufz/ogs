@@ -16,7 +16,7 @@
 #include "GMSHPoint.h"
 #include "GMSHLine.h"
 
-// GEOLIB
+// GeoLib
 #include "SimplePolygonTree.h"
 #include "GEOObjects.h"
 #include "PolylineWithSegmentMarker.h"

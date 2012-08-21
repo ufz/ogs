@@ -58,6 +58,6 @@ add_library( StratView STATIC
 # Link Qt library
 target_link_libraries( StratView
 	${QT_LIBRARIES}
-	Base
-	GEO
+	BaseLib
+	GeoLib
 )

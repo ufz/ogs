@@ -97,12 +97,12 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 
 /*
    // all boreholes to GMS which each borehole in a single file
-   void StationIO::writeBoreholesToGMS(const std::vector<GEOLIB::Point*> *stations)
+   void StationIO::writeBoreholesToGMS(const std::vector<GeoLib::Point*> *stations)
    {
     //std::vector<std::string> soilID(1);
     std::vector<std::string> soilID = readSoilIDfromFile("d:/BodeTimeline.txt");
     for (size_t i=0; i<stations->size(); i++)
-        StationIO::writeBoreholeToGMS(static_cast<GEOLIB::StationBorehole*>((*stations)[i]), std::string("Borehole-" + static_cast<GEOLIB::StationBorehole*>((*stations)[i])->getName() + ".txt"), soilID);
+        StationIO::writeBoreholeToGMS(static_cast<GeoLib::StationBorehole*>((*stations)[i]), std::string("Borehole-" + static_cast<GeoLib::StationBorehole*>((*stations)[i])->getName() + ".txt"), soilID);
     StationIO::writeSoilIDTable(soilID, "SoilIDReference.txt");
    }
  */

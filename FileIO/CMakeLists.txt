@@ -20,6 +20,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/MathLib
 	${CMAKE_SOURCE_DIR}/MeshLib
 	${CMAKE_SOURCE_DIR}/OGS
+	${CMAKE_BINARY_DIR}/BaseLib
 )
 
 target_link_libraries (FileIO

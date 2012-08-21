@@ -109,8 +109,6 @@ protected slots:
 	void startPresentationMode();
 	void quitPresentationMode();
 
-	void loadDIRECTSourceTermsFromASCII(const std::string name, const std::vector<GeoLib::Point*>* points); //TODO put this in a better place
-
 private:
 	QMenu* createImportFilesMenu();
 	void loadFile(const QString &fileName);

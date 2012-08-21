@@ -171,10 +171,10 @@ add_library( QtDataView STATIC
 # Link Qt library
 target_link_libraries( QtDataView
 	${QT_LIBRARIES}
-	FEM
+	FemLib
 	FileIO
-	GEO
-	MSH
+	GeoLib
+	MeshLib
 	QtBase
 	DiagramView
 	StratView

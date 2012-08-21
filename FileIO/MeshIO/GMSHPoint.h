@@ -8,7 +8,7 @@
 #ifndef GMSHPOINT_H_
 #define GMSHPOINT_H_
 
-// GEOLIB
+// GeoLib
 #include "PointWithID.h"
 
 namespace FileIO {

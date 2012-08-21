@@ -3,8 +3,9 @@
  * 2011/08/30 KR inital implementation
  *
  */
-
+/*
 #include "BoundaryCondition.h"
+
 #include "rf_bc_new.h"
 
 BoundaryCondition::BoundaryCondition(const CBoundaryCondition &bc, const std::string &geometry_name)
@@ -24,3 +25,4 @@ BoundaryCondition::BoundaryCondition(const CBoundaryCondition &bc, const std::st
 		this->setDisValues(dis_nodes, bc.getDistribedBC());
 	}
 }
+*/

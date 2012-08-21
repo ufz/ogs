@@ -11,7 +11,7 @@
 // FileIO
 #include "GMSHMeshDensityStrategy.h"
 
-// GEOLIB
+// GeoLib
 #include "Point.h"
 #include "QuadTree.h"
 #ifndef NDEBUG
@@ -34,7 +34,7 @@ public:
 	double getMeshDensityAtStation(GeoLib::Point const*const) const;
 	void getSteinerPoints (std::vector<GeoLib::Point*> & pnts, size_t additional_levels = 0) const;
 #ifndef NDEBUG
-	void getQuadTreeGeometry(std::vector<GEOLIB::Point*> &pnts, std::vector<GEOLIB::Polyline*> &plys) const;
+	void getQuadTreeGeometry(std::vector<GeoLib::Point*> &pnts, std::vector<GeoLib::Polyline*> &plys) const;
 #endif
 
 private:

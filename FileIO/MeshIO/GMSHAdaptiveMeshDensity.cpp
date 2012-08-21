@@ -10,7 +10,7 @@
 // FileIO
 #include "MeshIO/GMSHAdaptiveMeshDensity.h"
 
-// GEOLIB
+// GeoLib
 #include "Polygon.h"
 
 namespace FileIO {
@@ -122,23 +122,23 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pn
 }
 
 #ifndef NDEBUG
-void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GEOLIB::Point*> &pnts,
-				std::vector<GEOLIB::Polyline*> &plys) const
+void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &pnts,
+				std::vector<GeoLib::Polyline*> &plys) const
 {
-	std::list<GEOLIB::QuadTree<GEOLIB::Point>*> leaf_list;
+	std::list<GeoLib::QuadTree<GeoLib::Point>*> leaf_list;
 	_quad_tree->getLeafs(leaf_list);
 
-	for (std::list<GEOLIB::QuadTree<GEOLIB::Point>*>::const_iterator it(leaf_list.begin()); it
+	for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
 		!= leaf_list.end(); it++) {
 		// fetch corner points from leaf
-		GEOLIB::Point *ll(new GEOLIB::Point), *ur(new GEOLIB::Point);
+		GeoLib::Point *ll(new GeoLib::Point), *ur(new GeoLib::Point);
 		(*it)->getSquarePoints(*ll, *ur);
 		size_t pnt_offset (pnts.size());
 		pnts.push_back(ll);
-		pnts.push_back(new GEOLIB::Point((*ur)[0], (*ll)[1], 0.0));
+		pnts.push_back(new GeoLib::Point((*ur)[0], (*ll)[1], 0.0));
 		pnts.push_back(ur);
-		pnts.push_back(new GEOLIB::Point((*ll)[0], (*ur)[1], 0.0));
-		plys.push_back(new GEOLIB::Polyline(pnts));
+		pnts.push_back(new GeoLib::Point((*ll)[0], (*ur)[1], 0.0));
+		plys.push_back(new GeoLib::Polyline(pnts));
 		plys[plys.size()-1]->addPoint(pnt_offset);
 		plys[plys.size()-1]->addPoint(pnt_offset+1);
 		plys[plys.size()-1]->addPoint(pnt_offset+2);

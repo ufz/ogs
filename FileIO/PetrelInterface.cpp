@@ -217,7 +217,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 			std::stringstream stream(line);
 			stream >> md;
 			stream >> x >> y >> z;
-			//			pnt_vec->push_back (new GEOLIB::Point (x,y,z));
+			//			pnt_vec->push_back (new GeoLib::Point (x,y,z));
 			static_cast<GeoLib::StationBorehole*> ((*well_vec)[well_vec->size()- 1])->addSoilLayer(x,y,z,"unknown");
 			stream >> tvd >> dx >> dy >> azim >> incl >> dls;
 		}

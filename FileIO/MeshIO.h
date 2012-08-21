@@ -10,9 +10,6 @@
  * Created on 2012-05-08 by Karsten Rink
  */
 
-/**
- * This is currently just test functionality for testing ogs-6 mesh data structures!
- */
 
 #ifndef MESHIO_H_
 #define MESHIO_H_
@@ -32,6 +29,9 @@ namespace MeshLib
 
 namespace FileIO
 {
+/**
+ * Legacy support for mesh files for OGS Version 5 and below
+ */
 class MeshIO : public Writer
 {
 public:
