@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace GEOLIB
+namespace GeoLib
 {
 class GEOObjects;
 }
@@ -28,7 +28,7 @@ public:
 	/// Import climate data from a NetCDF file.
 	static void readNetCDFData(std::string &fname,
 	                           std::vector<GeoLib::Point*>* points_vec,
-	                           GEOLIB::GEOObjects* geo_obj,
+	                           GeoLib::GEOObjects* geo_obj,
 	                           size_t &NRLAT,
 	                           size_t &NRLON);
 	/// Convert imported point data to an CFEMesh.
