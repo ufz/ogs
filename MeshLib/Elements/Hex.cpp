@@ -119,4 +119,60 @@ Element* Hex::clone() const
 	return new Hex(*this);
 }
 
+Element* Hex::reviseElement() const
+{
+//	{0, 1}, // Edge 0
+//	{1, 2}, // Edge 1
+//	{2, 3}, // Edge 2
+//	{0, 3}, // Edge 3
+//	{0, 4}, // Edge 4
+//	{1, 5}, // Edge 5
+//	{2, 6}, // Edge 6
+//	{3, 7}, // Edge 7
+//	{4, 5}, // Edge 8
+//	{5, 6}, // Edge 9
+//	{6, 7}, // Edge 10
+//	{4, 7}  // Edge 11
+
+	std::vector<size_t> collapsed_edges;
+
+	for (size_t edge(0); edge<getNEdges(); edge++) {
+		if (_nodes[_edge_nodes[edge][0]] == _nodes[_edge_nodes[edge][1]]) {
+			collapsed_edges.push_back(edge);
+		}
+	}
+
+	if (collapsed_edges.size() == 1) {
+		std::cerr << "[Hex::reviseElement()] collapsing of one edge in hexahedron not handled" << std::endl;
+		return NULL;
+	}
+
+	if (collapsed_edges.size() == 2) {
+		if (collapsed_edges[0] == 0 && collapsed_edges[1] == 2) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 1 && collapsed_edges[1] == 3) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 4 && collapsed_edges[1] == 5) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 5 && collapsed_edges[1] == 6) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 6 && collapsed_edges[1] == 7) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 7 && collapsed_edges[1] == 4) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 8 && collapsed_edges[1] == 10) {
+			// create a prism
+		}
+		if (collapsed_edges[0] == 9 && collapsed_edges[1] == 11) {
+			// create a prism
+		}
+	}
+}
+
 } // end namespace MeshLib

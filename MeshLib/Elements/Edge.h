@@ -80,6 +80,12 @@ public:
 
 	virtual Element* clone() const;
 
+	/**
+	 * If for instance two nodes of the element are collapsed the Edge element disappears.
+	 * @return NULL
+	 */
+	virtual Element* reviseElement() const;
+
 protected:
 	/// Calculate the length of this 1d element.
 	double computeLength();

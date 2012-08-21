@@ -21,18 +21,24 @@ namespace MeshLib {
  * A 3d Hexahedron Element.
  * @code
  *
- *  Hex:  7        6
- *        o--------o
- *       /:       /|
- *      / :      / |
- *   4 /  :   5 /  |
- *    o--------o   |
- *    |   o....|...o 2
- *    |  .3    |  /
- *    | .      | /
- *    |.       |/
- *    o--------o
- *    0        1
+ *  Hex:
+ *                10
+ *          7-----------6
+ *         /:          /|
+ *        / :         / |
+ *     11/  :        /9 |
+ *      /  7:       /   | 6
+ *     /    : 8    /    |
+ *    4-----------5     |
+ *    |     :     | 2   |
+ *    |     3.....|.....2
+ *    |    .      |    /
+ *  4 |   .       |5  /
+ *    | 3.        |  / 1
+ *    | .         | /
+ *    |.          |/
+ *    0-----------1
+ *          0
  *
  * @endcode
  */
@@ -80,6 +86,12 @@ public:
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
+
+	/**
+	 * Revise the hexahedron if for instance two nodes of the element are collapsed.
+	 * @return a element with nice properties
+	 */
+	virtual Element* reviseElement() const;
 
 protected:
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.

@@ -36,7 +36,7 @@ public:
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
 	/**
-	 * \brief Tries to add an element e as neighbour to this element. 
+	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
 	 * neighbour-ist and true is returned. Otherwise false is returned.
 	 */
@@ -105,6 +105,12 @@ public:
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const = 0;
+
+	/**
+	 * Revise the element if for instance two nodes of the element are collapsed.
+	 * @return a element with nice properties
+	 */
+	virtual Element* reviseElement() const = 0;
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
