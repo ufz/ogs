@@ -24,10 +24,25 @@
 #include "MeshIO.h"
 #include "MeshCoarsener.h"
 
+
+/**
+ * new formatter for logog
+ */
+class FormatterCustom : public logog::FormatterGCC
+{
+    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+    {
+        return ( Formatter::GetTopicFlags( topic ) &
+                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
+    }
+};
+
 int main(int argc, char *argv[])
 {
 	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
+	FormatterCustom *custom_format (new FormatterCustom);
+	logog::Cout *logogCout(new logog::Cout);
+	logogCout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Collapse mesh nodes and, if necessary, remove elements", ' ', "0.1");
 
@@ -70,7 +85,7 @@ int main(int argc, char *argv[])
 	run_time.start();
 #endif
 	MeshLib::MeshCoarsener mesh_coarsener(mesh);
-	MeshLib::Mesh *collapsed_mesh(mesh_coarsener (10));
+	MeshLib::Mesh *collapsed_mesh(mesh_coarsener (0.1));
 #ifndef WIN32
 	run_time.stop();
 	unsigned long mem_with_meshgrid (mem_watch.getVirtMemUsage());
@@ -86,6 +101,9 @@ int main(int argc, char *argv[])
 
 	delete mesh;
 	delete collapsed_mesh;
+	delete custom_format;
 	delete logogCout;
 	LOGOG_SHUTDOWN();
+
+	return 0;
 }
