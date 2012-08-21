@@ -253,11 +253,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	// Get info on screens geometry(ies)
 	_vtkWidget = visualizationWidget->vtkWidget;
 	QDesktopWidget* desktopWidget = QApplication::desktop();
-#if OGS_QT_VERSION < 46
-	const unsigned int screenCount = desktopWidget->numScreens();
-#else
 	const unsigned int screenCount = desktopWidget->screenCount();
-#endif // OGS_QT_VERSION < 46
 	for (size_t i = 0; i < screenCount; ++i)
 		_screenGeometries.push_back(desktopWidget->availableGeometry((int)i));
 
