@@ -42,7 +42,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const FEMCondition &cond, QDial
 	setValuesFromCond();
 }
 
-FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent)
+FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::Mesh* mesh, QDialog* parent)
 : QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false),  _combobox(NULL), directButton(NULL),
   _mesh(mesh), _first_value_validator(NULL)
 {
@@ -255,9 +255,9 @@ void FEMConditionSetupDialog::directButton_pressed()
 	}
 	else
 	{
-		std::map<std::string, MeshLib::CFEMesh*> msh_map;
-		msh_map.insert( std::pair<std::string, MeshLib::CFEMesh*>(this->_cond.getGeoName(), const_cast<MeshLib::CFEMesh*>(this->_mesh)) );
-		CondFromRasterDialog dlg(msh_map);
+		std::vector<MeshLib::Mesh*> msh_vec;
+		msh_vec.push_back( const_cast<MeshLib::Mesh*>(this->_mesh) );
+		CondFromRasterDialog dlg(msh_vec);
 		//connect(&dlg, SIGNAL(directNodesWritten(std::string)), this, SLOT(direct_path_changed(std::string)));
 		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)),
 				this, SLOT(addDisValues(std::vector< std::pair<size_t,double> >)));

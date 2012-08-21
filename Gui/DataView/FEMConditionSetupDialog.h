@@ -20,7 +20,7 @@ namespace GeoLib {
 }
 
 namespace MeshLib {
-	class CFEMesh;
+	class Mesh;
 }
 
 /**
@@ -44,7 +44,7 @@ public:
 	FEMConditionSetupDialog(const FEMCondition &cond, QDialog* parent = 0);
 
 	/// Constructor for creating DIRECT FEM conditions on MeshNodes.
-	FEMConditionSetupDialog(const std::string &name, const MeshLib::CFEMesh* mesh, QDialog* parent = 0);
+	FEMConditionSetupDialog(const std::string &name, const MeshLib::Mesh* mesh, QDialog* parent = 0);
 
 	~FEMConditionSetupDialog(void);
 
@@ -58,7 +58,7 @@ private:
 	bool _set_on_points;
 	QComboBox* _combobox; //needed for on_points & linear conds
 	QPushButton* directButton; // needed for direct conditions
-	const MeshLib::CFEMesh* _mesh; // needed for direct conditions
+	const MeshLib::Mesh* _mesh; // needed for direct conditions
 	StrictDoubleValidator* _first_value_validator;
 
 private slots:

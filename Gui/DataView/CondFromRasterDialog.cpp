@@ -13,8 +13,8 @@
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
 
-CondFromRasterDialog::CondFromRasterDialog(const std::map<std::string, MeshLib::Mesh*> &msh_map, QDialog* parent)
-	: QDialog(parent), _msh_map(msh_map)
+CondFromRasterDialog::CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &msh_vec, QDialog* parent)
+	: QDialog(parent), _msh_vec(msh_vec)
 {
 	setupUi(this);
 
@@ -23,9 +23,8 @@ CondFromRasterDialog::CondFromRasterDialog(const std::map<std::string, MeshLib::
 	this->scalingEdit->setText("1.0");
 	this->scalingEdit->setValidator (_scale_validator);
 
-	for (std::map<std::string, MeshLib::Mesh*>::const_iterator it = _msh_map.begin();
-			                                                   it != _msh_map.end(); ++it)
-	    this->meshBox->addItem(QString::fromStdString(it->first));
+	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	    this->meshBox->addItem(QString::fromStdString((*it)->getName()));
 
 	this->directButton->setChecked(true);
 }
@@ -75,9 +74,15 @@ void CondFromRasterDialog::accept()
 		return;
 	}
 
-	const MeshLib::Mesh* mesh = (_msh_map.find(mesh_name))->second;
-	//std::string direct_node_name(raster_name + ".txt");
+	MeshLib::Mesh* mesh (NULL);
+	for (size_t i=0; i<_msh_vec.size(); i++)
+		if (_msh_vec[i]->getName().compare(mesh_name) == 0)
+		{
+			mesh = _msh_vec[i];
+			break;
+		}
 
+	
 	if (this->directButton->isChecked())
 	{
 		DirectConditionGenerator dcg;
@@ -93,7 +98,7 @@ void CondFromRasterDialog::accept()
 		}
 		MeshLib::Mesh* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
 		DirectConditionGenerator dcg;
-		//TODO6: direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
+		direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
 		
 		//dcg.writeToFile(direct_node_name);
 	}
