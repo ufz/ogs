@@ -13,6 +13,7 @@
 #include "Pyramid.h"
 #include "Node.h"
 #include "Tri.h"
+#include "Tet.h"
 #include "Quad.h"
 
 #include "MathTools.h"
@@ -128,12 +129,12 @@ Element* Pyramid::reviseElement() const
 	// try to create tetrahedron
 	if (_nodes[_edge_nodes[0][0]] == _nodes[_edge_nodes[0][1]]
 		|| _nodes[_edge_nodes[1][0]] == _nodes[_edge_nodes[1][1]]) {
-		return new Tet(_nodes[0], _nodes[2], _nodes[3], _nodes[4]);
+		return new Tet(_nodes[0], _nodes[2], _nodes[3], _nodes[4], _value);
 	}
 
 	if (_nodes[_edge_nodes[2][0]] == _nodes[_edge_nodes[2][1]]
 	|| _nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
-		return new Tet(_nodes[0], _nodes[1], _nodes[2], _nodes[4]);
+		return new Tet(_nodes[0], _nodes[1], _nodes[2], _nodes[4], _value);
 	}
 
 	return NULL;

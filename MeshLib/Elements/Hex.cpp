@@ -13,6 +13,7 @@
 #include "Hex.h"
 #include "Node.h"
 #include "Quad.h"
+#include "Prism.h"
 
 #include "MathTools.h"
 
@@ -136,28 +137,28 @@ Element* Hex::reviseElement() const
 	if (collapsed_edges.size() == 2) {
 		// try to create a prism out of the hex
 		if (collapsed_edges[0] == 0 && collapsed_edges[1] == 2) {
-			return new Prism(_nodes[0],_nodes[4], _nodes[5], _nodes[3], _nodes[7], _nodes[6]);
+			return new Prism(_nodes[0],_nodes[4], _nodes[5], _nodes[3], _nodes[7], _nodes[6], _value);
 		}
 		if (collapsed_edges[0] == 1 && collapsed_edges[1] == 3) {
-			return new Prism(_nodes[0],_nodes[4], _nodes[7], _nodes[1], _nodes[5], _nodes[6]);
+			return new Prism(_nodes[0],_nodes[4], _nodes[7], _nodes[1], _nodes[5], _nodes[6], _value);
 		}
 		if (collapsed_edges[0] == 4 && collapsed_edges[1] == 5) {
-			return new Prism(_nodes[0],_nodes[7], _nodes[3], _nodes[1], _nodes[6], _nodes[2]);
+			return new Prism(_nodes[0],_nodes[7], _nodes[3], _nodes[1], _nodes[6], _nodes[2], _value);
 		}
 		if (collapsed_edges[0] == 5 && collapsed_edges[1] == 6) {
-			return new Prism(_nodes[0],_nodes[1], _nodes[4], _nodes[3], _nodes[2], _nodes[7]);
+			return new Prism(_nodes[0],_nodes[1], _nodes[4], _nodes[3], _nodes[2], _nodes[7], _value);
 		}
 		if (collapsed_edges[0] == 6 && collapsed_edges[1] == 7) {
-			return new Prism(_nodes[0],_nodes[3], _nodes[4], _nodes[1], _nodes[2], _nodes[5]);
+			return new Prism(_nodes[0],_nodes[3], _nodes[4], _nodes[1], _nodes[2], _nodes[5], _value);
 		}
 		if (collapsed_edges[0] == 7 && collapsed_edges[1] == 4) {
-			return new Prism(_nodes[0],_nodes[1], _nodes[5], _nodes[3], _nodes[2], _nodes[6]);
+			return new Prism(_nodes[0],_nodes[1], _nodes[5], _nodes[3], _nodes[2], _nodes[6], _value);
 		}
 		if (collapsed_edges[0] == 8 && collapsed_edges[1] == 10) {
-			return new Prism(_nodes[0],_nodes[1], _nodes[4], _nodes[3], _nodes[2], _nodes[7]);
+			return new Prism(_nodes[0],_nodes[1], _nodes[4], _nodes[3], _nodes[2], _nodes[7], _value);
 		}
 		if (collapsed_edges[0] == 9 && collapsed_edges[1] == 11) {
-			return new Prism(_nodes[0],_nodes[3], _nodes[4], _nodes[1], _nodes[2], _nodes[5]);
+			return new Prism(_nodes[0],_nodes[3], _nodes[4], _nodes[1], _nodes[2], _nodes[5], _value);
 		}
 		return NULL;
 	}
