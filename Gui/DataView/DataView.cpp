@@ -1,8 +1,12 @@
 /**
- * \file DataView.cpp
- * 24/9/2009 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of DataView
+ * \file DataView.cpp
+ *
+ * Created on 2009-09-24 by Lars Bilke
  */
 
 #include "DataView.h"

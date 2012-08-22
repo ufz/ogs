@@ -1,7 +1,12 @@
 /**
- * \file VtkColorLookupTable.cpp
- * 23/04/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkColorLookupTable.cpp
+ *
+ * Created on 2010-04-23 by Karsten Rink
  */
 
 #include "VtkColorLookupTable.h"

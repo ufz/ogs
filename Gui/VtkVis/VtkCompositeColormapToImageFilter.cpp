@@ -1,8 +1,12 @@
 /**
- * \file VtkCompositeColormapToImageFilter.cpp
- * 21/10/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkCompositeColormapToImageFilter class
+ * \file VtkCompositeColormapToImageFilter.cpp
+ *
+ * Created on 2010-10-21 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -101,6 +105,6 @@ void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QLi
 		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(
 		        values[0].toInt(), values[1].toInt());
 	else if (name.compare("HueRange") == 0)
-		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetHueRange(values[0].toDouble(), 
+		static_cast<vtkLookupTable*>(map->GetLookupTable())->SetHueRange(values[0].toDouble(),
 									 values[1].toDouble());
 }

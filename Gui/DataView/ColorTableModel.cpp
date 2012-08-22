@@ -1,9 +1,12 @@
 /**
- * \file ColorTableModel.cpp
- * 24/9/2009 LB Initial implementation
- * 05/05/2010 KR 2d graphic functionality removed and various layout changes
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of PolylinesModel
+ * \file ColorTableModel.cpp
+ *
+ * Created on 2009-09-24 by Lars Bilke
  */
 
 #include "ColorTableModel.h"

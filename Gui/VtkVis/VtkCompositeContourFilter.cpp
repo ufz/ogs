@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file VtkCompositeContourFilter.cpp
- * 2011/08/05 KR Initial implementation
+ *
+ * Created on 2011-08-05 by Karsten Rink
  */
 
 // ** INCLUDES **

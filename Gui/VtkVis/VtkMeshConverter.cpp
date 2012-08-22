@@ -1,7 +1,12 @@
 /**
- * \file VtkMeshConverter.cpp
- * 23/08/2011 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkMeshConverter.cpp
+ *
+ * Created on 2011-08-23 by Karsten Rink
  */
 
 #include "VtkMeshConverter.h"
@@ -205,12 +210,12 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
 				if (elem_type == MshElemType::TRIANGLE)
 				{
-					MeshLib::Tri* tri1 (new MeshLib::Tri(nodes[node_idx_map[index]], nodes[node_idx_map[index + 1]], 
+					MeshLib::Tri* tri1 (new MeshLib::Tri(nodes[node_idx_map[index]], nodes[node_idx_map[index + 1]],
 						                                 nodes[node_idx_map[index + incHeight]], mat));	// upper left triangle
-					MeshLib::Tri* tri2 (new MeshLib::Tri(nodes[node_idx_map[index + 1]], nodes[node_idx_map[index + incHeight + 1]], 
+					MeshLib::Tri* tri2 (new MeshLib::Tri(nodes[node_idx_map[index + 1]], nodes[node_idx_map[index + incHeight + 1]],
 						                                 nodes[node_idx_map[index + incHeight]], mat));	// lower right triangle
 					elements.push_back(tri1);
-					elements.push_back(tri2);                 
+					elements.push_back(tri2);
 				}
 				if (elem_type == MshElemType::QUAD)
 				{
@@ -255,32 +260,32 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		int cell_type = grid->GetCellType(i);
 		switch (cell_type)
 		{
-		case VTK_TRIANGLE:      
+		case VTK_TRIANGLE:
 			elem = new MeshLib::Tri(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], material);
 			break;
-		case VTK_QUAD:          
+		case VTK_QUAD:
 			elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
 			break;
-		case VTK_PIXEL:          
+		case VTK_PIXEL:
 			elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]], material);
 			break;
 		case VTK_TETRA:
 			elem = new MeshLib::Tet(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
 			break;
 		case VTK_HEXAHEDRON:
-			elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], 
+			elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]],
 				                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], material);
 			break;
 		case VTK_VOXEL:
-			elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]], 
+			elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]],
 				                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[7]], nodes[node_ids[6]], material);
 			break;
 		case VTK_PYRAMID:
 			elem = new MeshLib::Pyramid(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
 				                        nodes[node_ids[3]], nodes[node_ids[4]], material);
 			break;
-		case VTK_WEDGE:         
-			elem = new MeshLib::Prism(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], 
+		case VTK_WEDGE:
+			elem = new MeshLib::Prism(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
 				                      nodes[node_ids[3]], nodes[node_ids[4]], nodes[node_ids[5]], material);
 			break;
 		default:

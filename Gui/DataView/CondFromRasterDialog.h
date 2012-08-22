@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file CondFromRasterDialog.h
- * 2012/01/04 KR Initial implementation
+ *
+ * Created on 2012-01-04 by Karsten Rink
  */
 
 #ifndef CONDFROMRASTERDIALOG_H

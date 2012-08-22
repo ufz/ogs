@@ -1,7 +1,12 @@
 /**
- * \file VtkStationSource.h
- * 24/02/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkStationSource.h
+ *
+ * Created on 2010-02-24 by Karsten Rink
  */
 
 #ifndef VTKSTATIONSOURCE_H

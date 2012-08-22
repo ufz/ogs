@@ -1,7 +1,12 @@
 /**
- * \file VtkBGImageSource.cpp
- * 30/04/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkBGImageSource.cpp
+ *
+ * Created on 2010-04-30 by Karsten Rink
  */
 
 // ** INCLUDES **

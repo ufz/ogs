@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file ElementTreeModel.cpp
- * 2011/05/10 KR Initial implementation
+ *
+ * Created on 2011-05-10 by Karsten Rink
  */
 
 #include "ElementTreeModel.h"

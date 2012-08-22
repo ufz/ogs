@@ -1,8 +1,12 @@
 /**
- * \file VrpnClient.cpp
- * 30/08/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VrpnClient class
+ * \file VrpnClient.cpp
+ *
+ * Created on 2010-08-30 by Lars Bilke
  */
 
 // ** INCLUDES **

@@ -1,7 +1,12 @@
 /**
- * \file DirectConditionGenerator.cpp
- * 2012/01/04 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file DirectConditionGenerator.cpp
+ *
+ * Created on 2012-01-04 by Karsten Rink
  */
 
 #include "DirectConditionGenerator.h"

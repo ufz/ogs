@@ -1,7 +1,12 @@
 /**
- * \file GMSInterface.h
- * 08/06/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file GMSInterface.h
+ *
+ * Created on 2010-06-08 by Lars Bilke
  */
 
 #ifndef GMSINTERFACE_H_
@@ -24,7 +29,7 @@ namespace MeshLib {
 /**
  * \brief Manages the import and export of Aquaveo GMS files into and out of GeoLib.
  *
- * This class currently supports reading and writing ASCII borehole files as well as 
+ * This class currently supports reading and writing ASCII borehole files as well as
  * (partially) reading mesh files.
  * The 3dm-mesh-file-reader is based on example meshes and does currently only support
  * the following element types: E4T (tetrahedra), E4P/E5P (pyramids) and E6W (wedges/prisms).

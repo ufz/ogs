@@ -1,7 +1,12 @@
 /**
- * \file VtkMeshSource.h
- * 19/03/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkMeshSource.h
+ *
+ * Created on 2010-03-19 by Karsten Rink
  */
 
 #ifndef VTKMESHSOURCE_H

@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file GMSHPrefsDialog.cpp
- * 2010/01/21 KR Initial implementation
+ *
+ * Created on 2010-01-21 by Karsten Rink
  */
 
 // Base

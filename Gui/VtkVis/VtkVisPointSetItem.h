@@ -1,7 +1,12 @@
 /**
- * \file VtkVisPointSetItem.h
- * 2011/09/29 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkVisPointSetItem.h
+ *
+ * Created on 2011-09-29 by Karsten Rink
  */
 
 #ifndef VTKVISPOINTSETITEM_H
@@ -26,8 +31,8 @@ class VtkCompositeFilter;
 /**
  * \brief An item in the VtkVisPipeline containing a point set object to be visualized.
  *
- * Any VTK point set object (i.e. vtkUnstructuredGrid- and vtkPolyDataAlgorithm-objects) 
- * are represented by a VtkVisPointSetItem to be assigned a mapper, an actor and its 
+ * Any VTK point set object (i.e. vtkUnstructuredGrid- and vtkPolyDataAlgorithm-objects)
+ * are represented by a VtkVisPointSetItem to be assigned a mapper, an actor and its
  * visualization properties (colour, scalar values, etc.).
  * \sa VtkVisPipelineItem
  */

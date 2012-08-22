@@ -1,7 +1,12 @@
 /**
- * \file mainwindow.h
- * 4/11/2009 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file mainwindow.h
+ *
+ * Created on 2009-11-04 by Lars Bilke
  */
 
 #ifndef MAINWINDOW_H

@@ -1,9 +1,12 @@
 /**
- * \file MshTabWidget.cpp
- * 3/11/2009 LB Initial implementation
- * 18/05/2010 KR Re-Implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of MshTabWidget
+ * \file MshTabWidget.cpp
+ *
+ * Created on 2009-11-03 by Lars Bilke
  */
 
 // ** INCLUDES **

@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file VtkTrackedCamera.h
- * 25/08/2010 LB Initial implementation
+ *
+ *  Created on 2010-08-25 by Lars Bilke
  */
 
 #ifndef VTKTRACKEDCAMERA_H

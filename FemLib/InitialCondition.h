@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file InitialCondition.h
- * 2011/08/30 KR inital implementation
+ *
+ * Created on 2011-08-30 by Karsten Rink
  *
  */
 

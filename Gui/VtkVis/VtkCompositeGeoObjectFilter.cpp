@@ -1,8 +1,12 @@
 /**
- * \file VtkCompositeGeoObjectFilter.cpp
- * 2011/12/02 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkCompositeGeoObjectFilter class
+ * \file VtkCompositeGeoObjectFilter.cpp
+ *
+ * Created on 2011-12-02 by Karsten Rink
  */
 
 // ** INCLUDES **

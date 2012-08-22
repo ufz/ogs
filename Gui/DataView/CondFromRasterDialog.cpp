@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file CondFromRasterDialog.cpp
- * 2012/01/04 KR Initial implementation
+ *
+ * Created on 2012-01-04 by Karsten Rink
  */
 
 #include "CondFromRasterDialog.h"
@@ -82,7 +88,7 @@ void CondFromRasterDialog::accept()
 			break;
 		}
 
-	
+
 	if (this->directButton->isChecked())
 	{
 		DirectConditionGenerator dcg;
@@ -99,7 +105,7 @@ void CondFromRasterDialog::accept()
 		MeshLib::Mesh* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
 		DirectConditionGenerator dcg;
 		direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
-		
+
 		//dcg.writeToFile(direct_node_name);
 	}
 	//emit directNodesWritten(direct_node_name);

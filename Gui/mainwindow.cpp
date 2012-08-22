@@ -1,7 +1,12 @@
 /**
- * \file mainwindow.h
- * 4/11/2009 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file mainwindow.h
+ *
+ * Created on 2009-11-04 by Lars Bilke
  */
 #include "Configure.h"
 #include "mainwindow.h"
@@ -816,7 +821,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 {
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "cnd")
-	{	
+	{
 		std::vector<FEMCondition*> conditions;
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);

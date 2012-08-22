@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file QValueTooltipSlider.h
- * 23/03/2011 LB Initial implementation
+ *
+ * Created on 2011-03-23 by Lars Bilke
  */
 
 #ifndef QVALUETOOLTIPSLIDER_H

@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file ProcessView.cpp
- * 2010/12/13 KR Initial implementation
+ *
+ * Created on 2010-12-13 by Karsten Rink
  */
 
 #include <QMenu>
@@ -69,7 +75,7 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 void ProcessView::removeCondition()
 {
 	CondObjectListItem* item = dynamic_cast<CondObjectListItem*>(static_cast<ProcessModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
-	
+
 	if (item)
 	{
 		const FiniteElement::ProcessType pcs_type = static_cast<ProcessItem*>(item->parentItem())->getItem()->getProcessType();
@@ -81,7 +87,7 @@ void ProcessView::removeCondition()
 void ProcessView::editCondition()
 {
 	CondItem* item = dynamic_cast<CondItem*>(static_cast<ProcessModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
-	
+
 	if (item)
 	{
 		FEMConditionSetupDialog dlg(*(item->getItem()));
@@ -104,7 +110,7 @@ void ProcessView::saveConditions()
 void ProcessView::removeProcess()
 {
 	ProcessItem* item = dynamic_cast<ProcessItem*>(static_cast<ProcessModel*>(this->model())->getItem(this->selectionModel()->currentIndex()));
-	
+
 	if (item)
 	{
 		const FiniteElement::ProcessType pcs_type = item->getItem()->getProcessType();

@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file StratScene.cpp
- * 2010/03/16 - KR Initial implementation
+ *
+ * Created on 2010-03-16 by Karsten Rink
  */
 
 #include <limits>

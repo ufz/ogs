@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file VtkCompositeSelectionFilter.h
- * 2011/02/10 KR Initial implementation
+ *
+ * Created on 2011-02-10 by Karsten Rink
  */
 
 #ifndef VTKCOMPOSITESELECTIONFILTER_H
