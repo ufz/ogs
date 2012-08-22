@@ -22,10 +22,7 @@ class Node;
 /**
  * A 1d Edge or Line Element.
  * @code
- *
- *  Edge: o--------o
- *        0        1
- *
+ *  0--------1
  * @endcode
  */
 class Edge : public Element
