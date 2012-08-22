@@ -38,14 +38,22 @@ public:
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
-	 * neighbour-ist and true is returned. Otherwise false is returned.
+	 * neighbour-list and true is returned. Otherwise false is returned.
 	 */
 	bool addNeighbor(Element* e);
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	virtual double getContent() const = 0;
 
-	/// Get node with local index i.
+	/**
+	 * Get node with local index i where i should be at most the number
+	 * of nodes of the element
+	 * @param i local index of node, at most the number of nodes of the
+	 * element that you can obtain with Element::getNNodes()
+	 * @return a pointer to the appropriate (and constant, i.e. not
+	 * modifiable by the user) instance of class Node or a NULL pointer
+	 * @sa Element::getNodeIndex()
+	 */
 	const Node* getNode(unsigned i) const;
 
 	/**
@@ -85,7 +93,14 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const = 0;
 
-	/// Get the global index for the node with local index i.
+	/**
+	 * Get the global index for the Node with local index i.
+	 * The index i should be at most the number of nodes of the element.
+	 * @param i local index of Node, at most the number of nodes of the
+	 * element that you can obtain with Element::getNNodes()
+	 * @return the global index or std::numeric_limits<unsigned>::max()
+	 * @sa Element::getNode()
+	 */
 	unsigned getNodeIndex(unsigned i) const;
 
 	/// Get the type of the mesh element (as a MshElemType-enum).
@@ -107,8 +122,12 @@ public:
 	virtual Element* clone() const = 0;
 
 	/**
-	 * Revise the element if for instance two nodes of the element are collapsed.
-	 * @return a element with nice properties
+	 * This method should be called after at least two nodes of an element
+	 * are collapsed. The node collapsing can/have to lead to an edge collapse.
+	 * This method tries to create a new element of an appropriate type. The
+	 * value of the attribute _value is carried over. In contrast to this the
+	 * neighbor information is not carried over.
+	 * @return an element of a different element type (MshElemType) or NULL
 	 */
 	virtual Element* reviseElement() const = 0;
 
