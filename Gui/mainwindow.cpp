@@ -382,24 +382,29 @@ void MainWindow::showVisDockWidget(bool show)
 		vtkVisDock->hide();
 }
 
-void MainWindow::open()
+void MainWindow::open(int file_type)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",settings.value("lastOpenedOgsFileDirectory").toString(),
-	                                                 "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)");
+	ImportFileType::type t = static_cast<ImportFileType::type>(file_type);
+	QString type_str = QString::fromStdString((ImportFileType::convertImportFileTypeToString(t)));
+	QString fileName = QFileDialog::getOpenFileName(this,
+	                                                "Select " + type_str + " file to import", 
+													settings.value("lastOpenedFileDirectory").toString(),
+	                                                QString::fromStdString(ImportFileType::getFileSuffixString(t)));
 	if (!fileName.isEmpty())
 	{
+		loadFile(t, fileName);
 		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedOgsFileDirectory", dir.absolutePath());
-		loadFile(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
+
 }
 
 void MainWindow::openRecentFile()
 {
 	QAction* action = qobject_cast<QAction*> (sender());
 	if (action)
-		loadFile(action->data().toString());
+		loadFile(ImportFileType::OGS, action->data().toString());
 }
 
 void MainWindow::save()
@@ -449,7 +454,7 @@ void MainWindow::save()
 	}
 }
 
-void MainWindow::loadFile(const QString &fileName)
+void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 {
 	QFile file(fileName);
 	if (!file.open(QFile::ReadOnly))
@@ -462,106 +467,113 @@ void MainWindow::loadFile(const QString &fileName)
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QFileInfo fi(fileName);
-	std::string base =
-	        fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
-	if (fi.suffix().toLower() == "gli")
-	{
-#ifndef NDEBUG
-		QTime myTimer0;
-		myTimer0.start();
-#endif
-		std::string unique_name;
-		std::vector<std::string> errors;
-		if (! readGLIFileV4(fileName.toStdString(), _geoModels, unique_name, errors)) {
-			for (size_t k(0); k<errors.size(); k++)
-				OGSError::box(QString::fromStdString(errors[k]));
-		}
-#ifndef NDEBUG
-		std::cout << myTimer0.elapsed() << " ms" << std::endl;
-#endif
-	}
-	else if (fi.suffix().toLower() == "gsp")
-	{
-		std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-		XmlGspInterface xml(&_project, schemaName);
-		xml.readFile(fileName);
-		std::cout << "Adding missing meshes to GUI..." << std::endl;
-		_meshModels->updateModel();
-	}
-	else if (fi.suffix().toLower() == "gml")
-	{
-#ifndef NDEBUG
-		QTime myTimer0;
-		myTimer0.start();
-#endif
-		std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-		XmlGmlInterface xml(&_project, schemaName);
-		xml.readFile(fileName);
-#ifndef NDEBUG
-		std::cout << myTimer0.elapsed() << " ms" << std::endl;
-#endif
-	}
-	// OpenGeoSys observation station files (incl. boreholes)
-	else if (fi.suffix().toLower() == "stn")
-	{
-		std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-		XmlStnInterface xml(&_project, schemaName);
-		xml.readFile(fileName);
-	}
-	// OpenGeoSys mesh files
-	else if (fi.suffix().toLower() == "msh")
-	{
-		QTime myTimer0;
-		myTimer0.start();
+	std::string base = fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
 
-		FileIO::MeshIO meshIO;
-		std::string name = fileName.toStdString();
-		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
+	if (t == ImportFileType::OGS)
+	{
+		if (fi.suffix().toLower() == "gli")
+		{
+#ifndef NDEBUG
+			QTime myTimer0;
+			myTimer0.start();
+#endif
+			std::string unique_name;
+			std::vector<std::string> errors;
+			if (! readGLIFileV4(fileName.toStdString(), _geoModels, unique_name, errors)) {
+				for (size_t k(0); k<errors.size(); k++)
+					OGSError::box(QString::fromStdString(errors[k]));
+			}
+#ifndef NDEBUG
+			std::cout << myTimer0.elapsed() << " ms" << std::endl;
+#endif
+		}
+		else if (fi.suffix().toLower() == "gsp")
+		{
+			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
+			XmlGspInterface xml(&_project, schemaName);
+			xml.readFile(fileName);
+			std::cout << "Adding missing meshes to GUI..." << std::endl;
+			_meshModels->updateModel();
+		}
+		else if (fi.suffix().toLower() == "gml")
+		{
+			std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
+			XmlGmlInterface xml(&_project, schemaName);
+			xml.readFile(fileName);
+		}
+		// OpenGeoSys observation station files (incl. boreholes)
+		else if (fi.suffix().toLower() == "stn")
+		{
+			std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
+			XmlStnInterface xml(&_project, schemaName);
+			xml.readFile(fileName);
+		}
+		// OpenGeoSys mesh files
+		else if (fi.suffix().toLower() == "msh")
+		{
+			QTime myTimer0;
+			myTimer0.start();
+
+			FileIO::MeshIO meshIO;
+			std::string name = fileName.toStdString();
+			MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
+			if (msh)
+			{
+				_meshModels->addMesh(msh);
+				std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
+			}
+			else
+				OGSError::box("Failed to load a mesh file.");
+		}
+		else if (fi.suffix().toLower() == "cnd")
+		{
+			this->loadFEMConditionsFromFile(fileName);
+		}
+	}
+	else if (t == ImportFileType::FEFLOW)
+	{
+		/* TODO6
+		FEFLOWInterface feflowIO(_geoModels);
+		MeshLib::Mesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
 		if (msh)
 		{
+			std::string name = fileName.toStdString();
+			msh->setName(name);
 			_meshModels->addMesh(msh);
-			std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
+			QDir dir = QDir(fileName);
+			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+			updateDataViews();
 		}
 		else
-			OGSError::box("Failed to load a mesh file.");
+			OGSError::box("Failed to load a FEFLOW file.");	
+		*/
 	}
-	else if ((fi.suffix().toLower() == "cnd") ||
-		     (fi.suffix().toLower() == "bc") ||
-			 (fi.suffix().toLower() == "ic") ||
-			 (fi.suffix().toLower() == "st"))
+	else if (t == ImportFileType::GMS)
 	{
-		this->loadFEMConditionsFromFile(fileName);
-	}
+		// GMS borehole files
+		if (fi.suffix().toLower() == "txt")
+		{
+			std::vector<GeoLib::Point*>* boreholes = new std::vector<GeoLib::Point*>();
+			std::string name = fi.baseName().toStdString();
 
-	// GMS borehole files
-	else if (fi.suffix().toLower() == "txt")
-	{
-		std::vector<GeoLib::Point*>* boreholes = new std::vector<GeoLib::Point*>();
-		std::string name = fi.baseName().toStdString();
-
-		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
-			_geoModels->addStationVec(boreholes, name);
-		else
-			OGSError::box("Error reading GMS file.");
+			if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
+				_geoModels->addStationVec(boreholes, name);
+			else
+				OGSError::box("Error reading GMS file.");
+		}
+		// GMS mesh files
+		else if (fi.suffix().toLower() == "3dm")
+		{
+			std::string name = fileName.toStdString();
+			MeshLib::Mesh* mesh = GMSInterface::readGMS3DMMesh(name);
+			if (mesh)
+				_meshModels->addMesh(mesh);
+		}
 	}
-	// GMS mesh files
-	else if (fi.suffix().toLower() == "3dm")
+	else if (t == ImportFileType::NETCDF)
 	{
-		std::string name = fileName.toStdString();
-		MeshLib::Mesh* mesh = GMSInterface::readGMS3DMMesh(name);
-		if (mesh)
-			_meshModels->addMesh(mesh);
-	}
-
-	// NetCDF files
-	// CH  01.2012
-	else if (fi.suffix().toLower() == "nc")
-	{
-#ifndef NDEBUG
-		QTime myTimer;
-		myTimer.start();
-		std::cout << "NetCDF Read ...\n" << std::flush;
-#endif
+		// NetCDF files
+		// CH  01.2012
 		std::string name = fileName.toStdString();
 		MeshLib::Mesh* mesh (NULL);
 
@@ -577,38 +589,65 @@ void MainWindow::loadFile(const QString &fileName)
 		{
 			_vtkVisPipeline->addPipelineItem(dlg.getRaster());
 		}
-
-#ifndef NDEBUG
-		std::cout << myTimer.elapsed() << " ms" << std::endl;
+	}
+	else if (t == ImportFileType::RASTER)
+	{
+		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
+		geoImage->readImage(fileName);
+		_vtkVisPipeline->addPipelineItem(geoImage);
+	}
+	else if (t == ImportFileType::POLYRASTER)
+	{
+		QImage raster;
+		double origin[2];
+		double cellSize;
+		vtkImageAlgorithm* imageAlgorithm = VtkRaster::loadImage(fileName.toStdString(), origin[0], origin[1], cellSize);
+		VtkBGImageSource* bg = VtkBGImageSource::New();
+		bg->SetRaster(imageAlgorithm, origin[0], origin[1], cellSize);
+		bg->SetName(fileName);
+		_vtkVisPipeline->addPipelineItem(bg);
+		//QDir dir = QDir(fileName);
+		//settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
+	}
+#ifdef Shapelib_FOUND
+	else if (t == ImportFileType::SHAPE)
+	{
+		SHPImportDialog dlg((fileName.toUtf8()).constData(), _geoModels);
+		dlg.exec();
+		//QDir dir = QDir(fileName);
+		//settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
+	}
 #endif
+	else if (t == ImportFileType::TETGEN)
+	{
+		QSettings settings("UFZ", "OpenGeoSys-5");
+		QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
+						                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
+						                                     "TetGen element files (*.ele);;");
+
+		if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+			/* TODO6
+			FileIO::TetGenInterface tetgen;
+			MeshLib::Mesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
+			if (msh) {
+				std::string name(node_fname.toStdString());
+				msh->setName(name);
+				_meshModels->addMesh(msh);
+			} else
+				OGSError::box("Failed to load a TetGen mesh.");
+			settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
+			*/
+		}	
+	}
+	else if (t == ImportFileType::VTK)
+	{
+		_vtkVisPipeline->loadFromFile(fileName);
+		//QDir dir = QDir(fileName);
+		//settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
 	}
 	updateDataViews();
 
-	emit fileUsed(fileName);
-}
-
-void MainWindow::loadPetrelFiles(const QStringList &sfc_file_names,
-                                 const QStringList &well_path_file_names)
-{
-	QStringList::const_iterator it = sfc_file_names.begin();
-	std::list<std::string> sfc_files;
-	while (it != sfc_file_names.end())
-	{
-		sfc_files.push_back((*it).toStdString());
-		++it;
-	}
-
-	it = well_path_file_names.begin();
-	std::list<std::string> well_path_files;
-	while (it != well_path_file_names.end())
-	{
-		well_path_files.push_back((*it).toStdString());
-		++it;
-	}
-
-	std::string unique_str(*(sfc_files.begin()));
-
-	PetrelInterface(sfc_files, well_path_files, unique_str, _geoModels);
+	if (t == ImportFileType::OGS) emit fileUsed(fileName);
 }
 
 void MainWindow::updateDataViews()
@@ -670,34 +709,27 @@ QMenu* MainWindow::createImportFilesMenu()
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(gmsFiles, ImportFileType::GMS);
-
 	QAction* gmshFiles = importFiles->addAction("&GMSH Files...");
 	connect(gmshFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
-
 	QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
 	connect(netcdfFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(netcdfFiles, ImportFileType::NETCDF);
-
 	QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
-	connect(petrelFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(petrelFiles, ImportFileType::PETREL);
-
+	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(loadPetrelFiles()));
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
-
 #ifdef OGS_USE_OPENSG
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
-	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(importRasterAsPoly()));
+	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
+	_signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);
 #endif
-
 #ifdef Shapelib_FOUND
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
 	connect(shapeFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(shapeFiles, ImportFileType::SHAPE);
 #endif
-
 	QAction* tetgenFiles = importFiles->addAction("&TetGen Files...");
 	connect( tetgenFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
 	_signal_mapper->setMapping(tetgenFiles, ImportFileType::TETGEN);
@@ -706,115 +738,12 @@ QMenu* MainWindow::createImportFilesMenu()
 	connect( vtkFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
 	_signal_mapper->setMapping(vtkFiles, ImportFileType::VTK);
 	
-	connect(_signal_mapper, SIGNAL(mapped(int)), this, SLOT(openFile(int)));
+	connect(_signal_mapper, SIGNAL(mapped(int)), this, SLOT(open(int)));
 	
 	return importFiles;
 }
 
-void MainWindow::openFile(int file_type)
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select GMS file to import", settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                "GMS files (*.txt *.3dm)");
-	if (!fileName.isEmpty())
-	{
-		loadFile(fileName);
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-	}
-}
-
-void MainWindow::importGMS()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select GMSH file to import", settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                "GMSH meshes (*.msh)");
-	if (!fileName.isEmpty())
-	{
-		loadFile(fileName);
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-	}
-}
-
-void MainWindow::importRaster()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-#ifdef libgeotiff_FOUND
-	QString geotiffExtension(" *.tif");
-#else
-	QString geotiffExtension("");
-#endif
-	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
-					settings.value("lastOpenedRasterFileDirectory").toString(), QString(
-									"Raster files (*.asc *.grd *.bmp *.jpg *.png%1);;") .arg(geotiffExtension));
-
-	if (!fileName.isEmpty())
-	{
-		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
-		geoImage->readImage(fileName);
-		_vtkVisPipeline->addPipelineItem(geoImage);
-
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
-	}
-}
-
-void MainWindow::importRasterAsPoly()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-#ifdef libgeotiff_FOUND
-	QString geotiffExtension(" *.tif");
-#else
-	QString geotiffExtension("");
-#endif
-	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file to import",
-					settings.value("lastOpenedRasterFileDirectory").toString(), QString(
-									"Raster files (*.asc *.bmp *.jpg *.png%1);;") .arg(
-									geotiffExtension));
-
-	if (!fileName.isEmpty())
-	{
-		QImage raster;
-		double origin[2];
-		double cellSize;
-		vtkImageAlgorithm* imageAlgorithm = VtkRaster::loadImage(
-			fileName.toStdString(), origin[0], origin[1], cellSize);
-		VtkBGImageSource* bg = VtkBGImageSource::New();
-		bg->SetRaster(imageAlgorithm, origin[0], origin[1], cellSize);
-		bg->SetName(fileName);
-		_vtkVisPipeline->addPipelineItem(bg);
-
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
-	}
-}
-
-#ifdef Shapelib_FOUND
-void MainWindow::importShape()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this, "Select shape file to import",
-					settings.value("lastOpenedShapeFileDirectory").toString(),
-	                                                "ESRI Shape files (*.shp );;");
-	QFileInfo fi(fileName);
-
-	if (fi.suffix().toLower() == "shp" || fi.suffix().toLower() == "dbf")
-	{
-		SHPImportDialog dlg((fileName.toUtf8()).constData(), _geoModels);
-		dlg.exec();
-
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
-	}
-}
-#endif
-
-void MainWindow::importPetrel()
+void MainWindow::loadPetrelFiles()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QStringList sfc_file_names = QFileDialog::getOpenFileNames(
@@ -823,99 +752,32 @@ void MainWindow::importPetrel()
 	        this, "Select well path data file(s) to import", "", "Petrel files (*)");
 	if (sfc_file_names.size() != 0 || well_path_file_names.size() != 0)
 	{
-		loadPetrelFiles(sfc_file_names, well_path_file_names);
+		QStringList::const_iterator it = sfc_file_names.begin();
+		std::list<std::string> sfc_files;
+		while (it != sfc_file_names.end())
+		{
+			sfc_files.push_back((*it).toStdString());
+			++it;
+		}
+
+		it = well_path_file_names.begin();
+		std::list<std::string> well_path_files;
+		while (it != well_path_file_names.end())
+		{
+			well_path_files.push_back((*it).toStdString());
+			++it;
+		}
+
+		std::string unique_str(*(sfc_files.begin()));
+
+		PetrelInterface(sfc_files, well_path_files, unique_str, _geoModels);
+
+
 		QDir dir = QDir(sfc_file_names.at(0));
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
 }
 
-//YW  07.2010
-void MainWindow::importNetcdf()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select NetCDF file to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                "NetCDF files (*.nc);;");
-	if (!fileName.isEmpty())
-	{
-		loadFile(fileName);
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-	}
-}
-
-void MainWindow::importTetGen()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString node_fname(QFileDialog::getOpenFileName(this, "Select TetGen node file",
-					settings.value("lastOpenedTetgenFileDirectory").toString(),
-					"TetGen node files (*.node);;"));
-	QString element_fname(QFileDialog::getOpenFileName(this, "Select TetGen element file",
-					settings.value("lastOpenedTetgenFileDirectory").toString(),
-					"TetGen element files (*.ele);;"));
-
-	if (!node_fname.isEmpty() && !element_fname.isEmpty()) {
-		/* TODO6
-		FileIO::TetGenInterface tetgen;
-		MeshLib::Mesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
-		if (msh) {
-			std::string name(node_fname.toStdString());
-			msh->setName(name);
-			_meshModels->addMesh(msh);
-		} else
-			OGSError::box("Failed to load a TetGen mesh.");
-		settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
-		*/
-	}
-}
-
-void MainWindow::importVtk()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QStringList fileNames = QFileDialog::getOpenFileNames(this,
-	                                                      "Select VTK file(s) to import",
-	                                                      settings.value("lastOpenedVtkFileDirectory").
-	                                                      toString(),
-	                                                      "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu);;");
-	foreach(QString fileName, fileNames) {
-		if (!fileName.isEmpty())
-		{
-			_vtkVisPipeline->loadFromFile(fileName);
-			QDir dir = QDir(fileName);
-			settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
-		}
-	}
-}
-/* TODO6
-void MainWindow::importFeflow()
-{
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select FEFLOW file(s) to import",
-	                                                settings.value(
-	                                                        "lastOpenedFileDirectory").toString(),
-	                                                "FEFLOW files (*.fem);;");
-	if (!fileName.isEmpty())
-	{
-		FEFLOWInterface feflowIO(_geoModels);
-		MeshLib::Mesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
-		if (msh)
-		{
-			std::string name = fileName.toStdString();
-			msh->setName(name);
-			_meshModels->addMesh(msh);
-			QDir dir = QDir(fileName);
-			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-			updateDataViews();
-		}
-		else
-			OGSError::box("Failed to load a FEFLOW file.");
-	}
-	emit fileUsed(fileName);
-}
-*/
 void MainWindow::showPropertiesDialog(std::string const& name)
 {
 	ListPropertiesDialog dlg(name, _geoModels);
@@ -1073,7 +935,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 					fname = fname.substr (0, pos);
 				gmsh_command += " -o " + fname + ".msh";
 				system(gmsh_command.c_str());
-				this->loadFile(fileName.left(fileName.length() - 3).append("msh"));
+				this->loadFile(ImportFileType::GMSH, fileName.left(fileName.length() - 3).append("msh"));
 			}
 			else
 				OGSError::box(

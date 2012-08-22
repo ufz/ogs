@@ -51,7 +51,7 @@ protected slots:
 	void showVisDockWidget( bool show );
 
 	/// Function calls for opening files.
-	void open();
+	void open(int i = 0);
 	/// Function calls for saving files.
 	void save();
 	/// Function calls for generating GMSH files from the GUI
@@ -65,19 +65,8 @@ protected slots:
 	void exportBoreholesToGMS(std::string listName, std::string fileName);
 	/// Testing functionality for connection to FEM lib
 	void FEMTestStart();
-	void importGMS();
-	void importRaster();
-	void importRasterAsPoly();
-#ifdef Shapelib_FOUND
-	void importShape();
-#endif
-	void importPetrel();
-	void importNetcdf();
-	void importVtk();
-	// TODO6 void importFeflow();
-	void importTetGen();
+	void loadPetrelFiles();
 	void loadFEMConditions(std::string geoName);
-	void openFile(int file_type);
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
@@ -115,11 +104,8 @@ protected slots:
 
 private:
 	QMenu* createImportFilesMenu();
-	void loadFile(const QString &fileName);
+	void loadFile(ImportFileType::type t, const QString &fileName);
 	void loadFEMConditionsFromFile(const QString &fileName, std::string geoName = "");
-	void loadPetrelFiles(const QStringList &sfc_file_names,
-	                     const QStringList &well_path_file_names);
-
 	void readSettings();
 	void writeSettings();
 	QString getLastUsedDir();
