@@ -18,18 +18,19 @@
 namespace MeshLib {
 
 /**
- * A 2d Triangle Element.
+ * This class represents a 2d triangle element. The following sketch shows the node and edge numbering.
+ * @anchor TriNodeAndEdgeNumbering
  * @code
  *
- *  Tri:    2
+ *          2
  *          o
  *         / \
  *        /   \
- *       /     \
+ *      2/     \1
  *      /       \
  *     /         \
- *    o-----------o
- *    0           1
+ *    0-----------1
+ *          0
  *
  * @endcode
  */
@@ -68,6 +69,16 @@ public:
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
+
+	/**
+	 * This method should be called after at least two nodes of the triangle
+	 * element are collapsed. As a consequence of the node collapsing an edge
+	 * of the triangle will be collapsed. If one of the edges is collapsed we
+	 * obtain an edge. In this case the method will create the appropriate
+	 * object of class Edge.
+	 * @return an Edge object or NULL
+	 */
+	virtual Element* reviseElement() const;
 
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
