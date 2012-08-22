@@ -113,15 +113,15 @@ Element* Tet::clone() const
 
 Element* Tet::reviseElement() const
 {
-	if (_nodes[0] == _nodes[1] || _nodes[0] == _nodes[3]) {
+	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
 		return new Triangle (_nodes[0], _nodes[2], _nodes[3], _value);
 	}
 
-	if (_nodes[0] == _nodes[2] || _nodes[1] == _nodes[2]) {
+	if (_nodes[2] == _nodes[0]) {
 		return new Triangle (_nodes[0], _nodes[1], _nodes[3], _value);
 	}
 
-	if (_nodes[2] == _nodes[3]) {
+	if (_nodes[0] == _nodes[3] || _nodes[1] == _nodes[3] || _nodes[2] == _nodes[3]) {
 		return new Triangle (_nodes[0], _nodes[1], _nodes[2], _value);
 	}
 
