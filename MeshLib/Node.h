@@ -63,6 +63,9 @@ protected:
 	 */
 	void addElement(Element* elem) { _elements.push_back(elem); };
 
+	/// Sets the ID of a node to the given value.
+	void setID(unsigned id) { this->_id = id; };
+
 	std::vector<Element*> _elements;
 
 }; /* class */

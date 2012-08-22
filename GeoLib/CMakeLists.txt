@@ -1,8 +1,8 @@
 # Source files
-GET_SOURCE_FILES(SOURCES_GEOLIB)
+GET_SOURCE_FILES(SOURCES_GeoLib)
 
 # Create the library
-ADD_LIBRARY(GeoLib STATIC ${SOURCES_GEOLIB})
+ADD_LIBRARY(GeoLib STATIC ${SOURCES_GeoLib})
 
 
 include_directories(

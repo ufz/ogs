@@ -32,6 +32,9 @@ struct MshElemType
 	};
 };
 
+/**
+ * \brief Describes a mesh quality criteria.
+ */
 struct MshQualityType
 {
 	enum type {

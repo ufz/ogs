@@ -106,9 +106,6 @@ public:
 	double getShortestPointDistance () const;
 	const GeoLib::AABB& getAxisAlignedBoundingBox () const;
 
-	/// Creates a real copy of the point vector in memeory.
-	static std::vector<GeoLib::Point*>* deepcopy(const std::vector<GeoLib::Point*> *pnt_vec);
-
 	/// Returns a subset of this point vector containing only the points specified in "subset" as PointWithID-objects
 	std::vector<GeoLib::Point*>* getSubset(const std::vector<size_t> &subset);
 
