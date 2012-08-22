@@ -45,7 +45,7 @@ void MshModel::addMesh(MeshLib::Mesh* mesh)
 	this->addMeshObject(mesh);
 }
 
-void MshModel::addMeshObject(MeshLib::Mesh* mesh)
+void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 {
 	std::cout << "name: " << mesh->getName() << std::endl;
 	QString display_name (QString::fromStdString(mesh->getName()));
@@ -123,15 +123,9 @@ bool MshModel::removeMesh(const QModelIndex &idx)
 	{
 		MshItem* item = dynamic_cast<MshItem*>(this->getItem(idx));
 		if (item)
-		{
-			emit meshRemoved(this, idx);
-			_rootItem->removeChildren(item->row(),1);
-			reset();
-			return true;
-		}
+			return this->removeMesh(item->getMesh()->getName());
 		return false;
 	}
-
 	return false;
 }
 
@@ -149,8 +143,7 @@ bool MshModel::removeMesh(const std::string &name)
 		}
 	}
 
-	std::cout << "MshModel::removeMesh() - No entry found with name \"" << name << "." <<
-	std::endl;
+	std::cout << "MshModel::removeMesh() - No entry found with name \"" << name << "." << std::endl;
 	return false;
 }
 

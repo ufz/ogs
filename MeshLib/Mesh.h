@@ -77,6 +77,9 @@ public:
 	/// Get the element-vector for the mesh.
 	const std::vector<Element*> getElements() const { return _elements; };
 
+	/// Resets the IDs of all mesh-nodes to their position in the node vector
+	void resetNodeIDs();
+
 	/**
 	 * Set the minimum and maximum length over the edges of the mesh.
 	 * This should have been previously calcumlated using the Element::computeSqrEdgeLengthRange(min, max)

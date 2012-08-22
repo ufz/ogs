@@ -13,7 +13,7 @@ MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
 
 	this->elevationButton->setChecked(true);
 	this->triButton->setChecked(true);
-	this->mshNameEdit->setText("NewMesh");
+	this->mshNameEdit->setText("RasterDataMesh");
 }
 
 

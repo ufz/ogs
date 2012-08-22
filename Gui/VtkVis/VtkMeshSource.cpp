@@ -49,7 +49,6 @@ VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 
 VtkMeshSource::~VtkMeshSource()
 {
-	delete _grid;
 }
 
 void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
@@ -134,7 +133,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			type = 5;
 			break;
 		case MshElemType::QUAD:
-			type = 8;
+			type = 9;
 			break;
 		case MshElemType::HEXAHEDRON:
 			type = 12;
@@ -158,7 +157,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		const size_t nElemNodes (elem->getNNodes());
 		for (size_t j = 0; j < nElemNodes; j++)
-			point_ids->InsertNextId(elem->getNode(nElemNodes-1-j)->getID());
+			point_ids->InsertNextId(elem->getNode(j)->getID());
 
 		output->InsertNextCell(type, point_ids);
 	}

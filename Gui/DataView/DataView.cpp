@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QSettings>
 
-#include "MeshIO.h"
+#include "Legacy/MeshIO.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 
 DataView::DataView( QWidget* parent /*= 0*/ )

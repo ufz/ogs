@@ -56,7 +56,6 @@
 #include "Legacy/OGSIOVer4.h"
 #include "MeshIO/GMSHInterface.h"
 // TODO6 #include "MeshIO/TetGenInterface.h"
-#include "NetCDFInterface.h" 
 #include "PetrelInterface.h"
 // TODO6 #include "StationIO.h"
 #include "XmlIO/XmlCndInterface.h"
@@ -78,6 +77,7 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QSettings>
+#include <QSignalMapper>
 
 // VTK includes
 #include <vtkOBJExporter.h>
@@ -234,14 +234,14 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SIGNAL(actorPicked(vtkProp3D*)),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-	        SIGNAL(elementPicked(const GridAdapter *, const size_t)),
-	        this->_elementModel, SLOT(setElement(const GridAdapter *, const size_t)));
+	        SIGNAL(elementPicked(const MeshLib::Mesh *, const size_t)),
+	        this->_elementModel, SLOT(setElement(const MeshLib::Mesh *, const size_t)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-	        SIGNAL(elementPicked(const GridAdapter *, const size_t)),
+	        SIGNAL(elementPicked(const MeshLib::Mesh *, const size_t)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 
 	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
-	        _meshModels, SLOT(addMesh(GridAdapter*)));
+	        _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -322,35 +322,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SLOT(showPropertiesDialog(std::string)));
 
 	_visPrefsDialog = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
-
-	//	std::cout << "size of Point: " << sizeof (GeoLib::Point) << std::endl;
-	//	std::cout << "size of CGLPoint: " << sizeof (CGLPoint) << std::endl;
-	//
-	//	std::cout << "size of Polyline: " << sizeof (GeoLib::Polyline) << std::endl;
-	//	std::cout << "size of CGLPolyline: " << sizeof (CGLPolyline) << std::endl;
-	//
-	//	std::cout << "size of GeoLib::Surface: " << sizeof (GeoLib::Surface) << std::endl;
-	//	std::cout << "size of Surface: " << sizeof (Surface) << std::endl;
-	//
-	//	std::cout << "size of CCore: " << sizeof (MeshLib::CCore) << std::endl;
-	//	std::cout << "size of CNode: " << sizeof (MeshLib::CNode) << std::endl;
-	//	std::cout << "size of CElement: " << sizeof (MeshLib::CNode) << std::endl;
-	//	std::cout << "size of CEdge: " << sizeof (MeshLib::CEdge) << std::endl;
-	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
-	//	std::cout << "size of Matrix: " << sizeof (Math_Group::Matrix) << std::endl;
-	//
-	//	std::cout << "size of vec<size_t>: " << sizeof (Math_Group::vec<size_t>) << std::endl;
-	//	std::cout << "size of std::vector: " << sizeof (std::vector<size_t>) << std::endl;
-
-	//	std::cout << "size of CSourceTerm: " << sizeof (CSourceTerm) << std::endl;
-	//	std::cout << "size of CBoundaryCondition: " << sizeof (CBoundaryCondition) << std::endl;
-
-	//	std::cout << "size of CElement: " << sizeof (FiniteElement::CElement) << std::endl;
-//		std::cout << "size of CMediumProperties: " << sizeof(CMediumProperties) << std::endl;
-//		std::cout << "size of CSolidProperties: " << sizeof(SolidProp::CSolidProperties) << std::endl;
-//		std::cout << "size of CFluidProperties: " << sizeof(CFluidProperties) << std::endl;
-	//	std::cout << "size of CRFProcess: " << sizeof (CRFProcess) << std::endl;
-	//	std::cout << "size of CFEMesh: " << sizeof (MeshLib::CFEMesh) << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -359,8 +330,6 @@ MainWindow::~MainWindow()
 	delete _vtkVisPipeline;
 	delete _meshModels;
 	delete _processModel;
-	//delete _visPrefsDialog;
-	//delete _geoModels;
 
 #ifdef OGS_USE_VRPN
 	delete _trackingSettingsWidget;
@@ -510,20 +479,6 @@ void MainWindow::loadFile(const QString &fileName)
 #ifndef NDEBUG
 		std::cout << myTimer0.elapsed() << " ms" << std::endl;
 #endif
-		//
-		//#ifndef NDEBUG
-		//      QTime myTimer;
-		//      myTimer.start();
-		//      std::cout << "GeoLib_Read_GeoLib ... " << std::flush;
-		//#endif
-		//      GeoLib_Read_GeoLib(base); //fileName.toStdString());
-		//        cout << "Nr. Points: " << gli_points_vector.size() << endl;
-		//		cout << "Nr. Lines: " << polyline_vector.size() << endl;
-		//		cout << "Nr. Surfaces: " << surface_vector.size() << endl;
-		//#ifndef NDEBUG
-		//       std::cout << myTimer.elapsed() << " ms" << std::endl;
-		//#endif
-		//              GEOCalcPointMinMaxCoordinates();
 	}
 	else if (fi.suffix().toLower() == "gsp")
 	{
@@ -581,8 +536,7 @@ void MainWindow::loadFile(const QString &fileName)
 	// GMS borehole files
 	else if (fi.suffix().toLower() == "txt")
 	{
-		std::vector<GeoLib::Point*>* boreholes =
-		        new std::vector<GeoLib::Point*>();
+		std::vector<GeoLib::Point*>* boreholes = new std::vector<GeoLib::Point*>();
 		std::string name = fi.baseName().toStdString();
 
 		if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
@@ -707,42 +661,78 @@ void MainWindow::about()
 
 QMenu* MainWindow::createImportFilesMenu()
 {
+	_signal_mapper = new QSignalMapper(this);
 	QMenu* importFiles = new QMenu("&Import Files");
 /* TODO6
 	QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
 	connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
 */
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
-	connect(gmsFiles, SIGNAL(triggered()), this, SLOT(importGMS()));
+	connect(gmsFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(gmsFiles, ImportFileType::GMS);
+
+	QAction* gmshFiles = importFiles->addAction("&GMSH Files...");
+	connect(gmshFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
+
 	QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
-	connect(netcdfFiles, SIGNAL(triggered()), this, SLOT(importNetcdf()));
+	connect(netcdfFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(netcdfFiles, ImportFileType::NETCDF);
+
 	QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
-	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(importPetrel()));
+	connect(petrelFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(petrelFiles, ImportFileType::PETREL);
+
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
-	connect(rasterFiles, SIGNAL(triggered()), this, SLOT(importRaster()));
+	connect(rasterFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
+
 #ifdef OGS_USE_OPENSG
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(importRasterAsPoly()));
 #endif
+
 #ifdef Shapelib_FOUND
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
-	connect(shapeFiles, SIGNAL(triggered()), this, SLOT(importShape()));
+	connect(shapeFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(shapeFiles, ImportFileType::SHAPE);
 #endif
-	QAction* tetgenFiles = importFiles->addAction("&TetGen Files...");
-	connect( tetgenFiles, SIGNAL(triggered()), this, SLOT(importTetGen()) );
-	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
-	connect( vtkFiles, SIGNAL(triggered()), this, SLOT(importVtk()) );
 
+	QAction* tetgenFiles = importFiles->addAction("&TetGen Files...");
+	connect( tetgenFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
+	_signal_mapper->setMapping(tetgenFiles, ImportFileType::TETGEN);
+
+	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
+	connect( vtkFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
+	_signal_mapper->setMapping(vtkFiles, ImportFileType::VTK);
+	
+	connect(_signal_mapper, SIGNAL(mapped(int)), this, SLOT(openFile(int)));
+	
 	return importFiles;
 }
 
-void MainWindow::importGMS()
+void MainWindow::openFile(int file_type)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString fileName = QFileDialog::getOpenFileName(this,
 	                                                "Select GMS file to import", settings.value(
 	                                                        "lastOpenedFileDirectory").toString(),
 	                                                "GMS files (*.txt *.3dm)");
+	if (!fileName.isEmpty())
+	{
+		loadFile(fileName);
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	}
+}
+
+void MainWindow::importGMS()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QString fileName = QFileDialog::getOpenFileName(this,
+	                                                "Select GMSH file to import", settings.value(
+	                                                        "lastOpenedFileDirectory").toString(),
+	                                                "GMSH meshes (*.msh)");
 	if (!fileName.isEmpty())
 	{
 		loadFile(fileName);

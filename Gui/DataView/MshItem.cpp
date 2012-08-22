@@ -12,11 +12,11 @@
  * \param parent The parent item in the tree
  * \param grid The mesh associated with this item
  */
-MshItem::MshItem(const QList<QVariant> &data, TreeItem* parent, MeshLib::Mesh* grid)
+MshItem::MshItem(const QList<QVariant> &data, TreeItem* parent, const MeshLib::Mesh* mesh)
 	: TreeItem(data, parent)
 {
 	_meshSource = VtkMeshSource::New();
-	_meshSource->SetMesh(grid);
+	_meshSource->SetMesh(mesh);
 }
 
 MshItem::~MshItem()

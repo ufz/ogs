@@ -23,6 +23,13 @@ namespace MeshLib {
 
 /**
  * \brief Manages the import and export of Aquaveo GMS files into and out of GeoLib.
+ *
+ * This class currently supports reading and writing ASCII borehole files as well as 
+ * (partially) reading mesh files.
+ * The 3dm-mesh-file-reader is based on example meshes and does currently only support
+ * the following element types: E4T (tetrahedra), E4P/E5P (pyramids) and E6W (wedges/prisms).
+ * Not supported are E8H (Hex), E4Q (Quad), E3T (Tri) as well as higher order elements.
+ * Please refer to the file format documentation of GMS for details.
  */
 class GMSInterface
 {

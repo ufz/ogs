@@ -9,6 +9,7 @@
 
 #include "FileFinder.h"
 #include "ProjectData.h"
+#include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
 
 class GEOModels;
@@ -18,6 +19,8 @@ class StationTreeModel;
 class ProcessModel;
 class VtkVisPipeline;
 class VisPrefsDialog;
+
+class QSignalMapper;
 
 #ifdef OGS_USE_VRPN
 class TrackingSettingsWidget;
@@ -74,6 +77,7 @@ protected slots:
 	// TODO6 void importFeflow();
 	void importTetGen();
 	void loadFEMConditions(std::string geoName);
+	void openFile(int file_type);
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
@@ -133,6 +137,7 @@ private:
 	QWidget* _vtkWidget;
 	QByteArray _windowState;
 	QMenu* _import_files_menu;
+	QSignalMapper* _signal_mapper;
 
 #ifdef OGS_USE_VRPN
 	TrackingSettingsWidget* _trackingSettingsWidget;
@@ -141,6 +146,7 @@ private:
 
 signals:
 	void fileUsed( QString filename );
+	void fileOpenRequested( int );
 };
 
 class StartQt4

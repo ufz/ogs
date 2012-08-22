@@ -244,13 +244,15 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		return NULL;
 	}
 
-	std::cout << "Read GMS-3DM data...";
+	std::cout << "Read GMS-3DM mesh ... ";
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
+	std::map<unsigned, unsigned> id_map;
 
 	// elements are listed before nodes in 3dm-format, therefore
 	// traverse file twice and read first nodes and then elements
-	std::string d1,d2;
+	std::string dummy;
+	unsigned id(0), count(0);
 	double x[3];
 	// read nodes
 	while ( getline(in, line) )
@@ -258,15 +260,18 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		if (line[0] == 'N') // "ND" for Node
 		{
 			std::stringstream str(line);
-			str >> d1 >> d2 >> x[0] >> x[1] >> x[2];
-			MeshLib::Node* node = new MeshLib::Node(x);
+			str >> dummy >> id >> x[0] >> x[1] >> x[2];
+			MeshLib::Node* node = new MeshLib::Node(x, id);
+			id_map.insert(std::pair<unsigned, unsigned>(id,count++));
 			nodes.push_back(node);
 		}
 	}
+	in.close();
 
 	// NOTE: Element types E8H (Hex), E4Q (Quad), E3T (Tri) are not implemented yet
 	// read elements
-	in.seekg(0, std::ios::beg);
+	in.open(filename.c_str());
+	getline(in, line); // "MESH3D"
 	unsigned node_idx[6], mat_id;
 	while ( getline(in, line) )
 	{
@@ -276,23 +281,26 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 
 		if (element_id.compare("E6W") == 0)	// Prism
 		{
-			str >> d1 >> d2 >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] 
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] 
 			    >> node_idx[4] >> node_idx[5] >> mat_id;
-			elem = new MeshLib::Prism(nodes[node_idx[0]-1], nodes[node_idx[1]-1], nodes[node_idx[2]-1], 
-									  nodes[node_idx[3]-1], nodes[node_idx[4]-1], nodes[node_idx[5]-1], mat_id);
+			elem = new MeshLib::Prism(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second], 
+									  nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], 
+									  nodes[id_map.find(node_idx[4])->second], nodes[id_map.find(node_idx[5])->second], mat_id);
 			elements.push_back(elem);
 		}
 		else if (element_id.compare("E4T") == 0) // Tet
 		{
-			str >> d1 >> d2 >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> mat_id;
-			elem = new MeshLib::Tet(nodes[node_idx[0]-1], nodes[node_idx[1]-1], nodes[node_idx[2]-1], nodes[node_idx[3]-1], mat_id);
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> mat_id;
+			elem = new MeshLib::Tet(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second], 
+				                    nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], mat_id);
 			elements.push_back(elem);
 		}
 		else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
 		{
-			str >> d1 >> d2 >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> node_idx[4] >> mat_id;
-			elem = new MeshLib::Pyramid(nodes[node_idx[0]-1], nodes[node_idx[1]-1], nodes[node_idx[2]-1], 
-										nodes[node_idx[3]-1], nodes[node_idx[4]-1], mat_id);
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> node_idx[4] >> mat_id;
+			elem = new MeshLib::Pyramid(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second], 
+				                        nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], 
+										nodes[id_map.find(node_idx[4])->second], mat_id);
 			elements.push_back(elem);
 		}
 		else if (element_id.compare("ND ") == 0) // Node
@@ -301,7 +309,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		}
 		else //default
 		{
-			std::cout << "GMSInterface::readGMS3DMMesh() - Element type \"" << element_id << "\"not recognised ..." << std::endl;
+			std::cout << std::endl << "GMSInterface::readGMS3DMMesh() - Element type \"" << element_id << "\"not recognised ..." << std::endl;
 			return NULL;
 		}
 	}

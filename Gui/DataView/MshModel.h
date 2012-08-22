@@ -51,7 +51,7 @@ public slots:
 
 private:
 	/// Adds the mesh to the GUI-Mesh-Model und -View
-	void addMeshObject(MeshLib::Mesh* mesh);
+	void addMeshObject(const MeshLib::Mesh* mesh);
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
 	//bool isUniqueMeshName(std::string &name);

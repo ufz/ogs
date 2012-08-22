@@ -221,7 +221,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 			}
 		}
 
-	return new MeshLib::Mesh("vtkImageData-Mesh", nodes, elements);
+	return new MeshLib::Mesh("RasterDataMesh", nodes, elements); // the name is only a temp-name, the name given in the dialog is set later
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
@@ -261,12 +261,19 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		case VTK_QUAD:          
 			elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
 			break;
+		case VTK_PIXEL:          
+			elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]], material);
+			break;
 		case VTK_TETRA:
-			elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
+			elem = new MeshLib::Tet(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
 			break;
 		case VTK_HEXAHEDRON:
 			elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], 
-				                          nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], material);
+				                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], material);
+			break;
+		case VTK_VOXEL:
+			elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]], 
+				                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[7]], nodes[node_ids[6]], material);
 			break;
 		case VTK_PYRAMID:
 			elem = new MeshLib::Pyramid(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
