@@ -61,9 +61,9 @@ Element* Edge::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1]) {
 		return NULL;
-	} else {
-		return new Edge(*this);
 	}
+
+	return NULL;
 }
 
 }
