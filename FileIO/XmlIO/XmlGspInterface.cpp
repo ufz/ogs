@@ -16,7 +16,7 @@
 #include "XmlStnInterface.h"
 #include "XmlCndInterface.h"
 
-#include "MeshIO.h"
+#include "Legacy/MeshIO.h"
 #include "Mesh.h"
 
 #include <QFileInfo>

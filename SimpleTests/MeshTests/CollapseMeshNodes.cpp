@@ -21,7 +21,7 @@
 #include "Node.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
-#include "MeshIO.h"
+#include "Legacy/MeshIO.h"
 #include "MeshCoarsener.h"
 
 int main(int argc, char *argv[])
