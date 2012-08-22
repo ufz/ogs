@@ -18,19 +18,22 @@
 namespace MeshLib {
 
 /**
- * A 3d Prism Element.
+ * A 3d Prism Element. The following sketch shows the node and edge numbering.
  * @code
- *
- *  Prism:   5
- *           o
+ *           5
  *          /:\
- *         / : \
- *        /  o  \
- *     3 o-------o 4
- *       | . 2 . |
- *       |.     .|
- *       o-------o
- *       0       1
+ *        8/ : \7
+ *        /  :5 \
+ *       /   : 6  \
+ *      3---------4
+ *      |    :    |
+ *      |    2    |
+ *     3|   . .   |4
+ *      | 2.   .1 |
+ *      | .     . |
+ *      |.       .|
+ *      0---------1
+ *           0
  *
  * @endcode
  */
