@@ -18,20 +18,22 @@
 namespace MeshLib {
 
 /**
- * A 3d Tetrahedron Element.
+ * This class represents a 3d tetrahedron element. The following sketch shows the node and edge numbering.
+ * @anchor TetrahedronNodeAndEdgeNumbering
  * @code
- *
- *  Tet:  3
- *        o
- *       /|\
- *      / | \
- *     /  |  \
- *  0 o...|...o 2
- *     \  |  /
- *      \ | /
- *       \|/
- *        o
- *        1
+ *          3
+ *         /|\
+ *        / | \
+ *      3/  |  \5
+ *      /   |4  \
+ *     /    |    \
+ *    0.....|.....2
+ *     \    |  2 /
+ *      \   |   /
+ *      0\  |  /1
+ *        \ | /
+ *         \|/
+ *          1
  *
  * @endcode
  */
@@ -80,6 +82,15 @@ public:
 	 */
 	virtual Element* clone() const;
 
+	/**
+	 * This method should be called after at least two nodes of the tetrahedron
+	 * element are collapsed. As a consequence of the node collapsing an edge
+	 * of the tetrahedron will be collapsed. If one edge is collapsed we obtain
+	 * a triangle.
+	 * @return a Triangle object or NULL
+	 */
+	virtual Element* reviseElement() const;
+
 protected:
 	/// Constructor without nodes (for use of derived classes)
 	Tet(unsigned value = 0);
@@ -87,7 +98,12 @@ protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
 	double computeVolume();
 
-	/// Return a specific edge node.
+	/**
+	 * Return a specific edge node, see @ref TetrahedronNodeAndEdgeNumbering for numbering
+	 * @param edge_id the id/number of the edge, have to be an integer value in the interval [0,6]
+	 * @param node_id the id of the node within the edge (either 0 or 1)
+	 * @return a pointer to the internal Node
+	 */
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	static const unsigned _face_nodes[4][3];
