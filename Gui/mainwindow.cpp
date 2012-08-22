@@ -570,6 +570,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				_meshModels->addMesh(mesh);
 		}
 	}
+	else if (t == ImportFileType::GMSH)
+	{
+		// TODO6
+	}
 	else if (t == ImportFileType::NETCDF)
 	{
 		// NetCDF files

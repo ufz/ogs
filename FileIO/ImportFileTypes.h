@@ -48,7 +48,7 @@ public:
 		else if (t==ImportFileType::SHAPE) return "Shape";
 		else if (t==ImportFileType::TETGEN) return "TetGen node";
 		else if (t==ImportFileType::VTK) return "VTK";
-		else "";
+		else return "";
 	}
 
 	static std::string getFileSuffixString(ImportFileType::type t)
@@ -73,7 +73,7 @@ public:
 			return "TetGen node files (*.node)";
 		else if (t==ImportFileType::VTK) 
 			return "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu)";
-		else "All files (*.*)";
+		else return "All files (*.*)";
 }
 
 };
