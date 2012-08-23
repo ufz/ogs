@@ -1,7 +1,12 @@
 /**
- * \file VtkRaster.h
- * 2012/02/01 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkRaster.h
+ *
+ * Created on 2012-02-01 by Karsten Rink
  */
 #ifndef VTKRASTER_H
 #define VTKRASTER_H
@@ -15,7 +20,7 @@ class vtkImageReader2;
 /**
  * \brief Loading raster data such as images or ArcGIS-data into VTK image data structures.
  *
- * The VtkRaster class enables loading of raster data such as images or ArcGIS-data. Supported image formats are ..... 
+ * The VtkRaster class enables loading of raster data such as images or ArcGIS-data. Supported image formats are .....
  * Georeferenced data can be imported via the GeoTIFF- or asc-format.
  */
 class VtkRaster
@@ -49,7 +54,7 @@ public:
                                         double& delta);
 
 	/**
-	 * \brief Loads an ASC file into a double array. 
+	 * \brief Loads an ASC file into a double array.
 	 * The array alternates between pixel values and their respective alpha-values, i.e.
 	 * result = { pixel0-value; pixel0-alpha, pixel1-value; pixel1-alpha; ... }
 	 *
@@ -69,7 +74,7 @@ public:
 	                              double &delta);
 
 	/**
-	 * \brief Loads an ASC file into a double array. 
+	 * \brief Loads an ASC file into a double array.
 	 * Works exactly like loadDataFromASC().
 	 */
 	static float* loadDataFromSurfer(const std::string &fileName,
@@ -82,9 +87,9 @@ public:
 	/**
 	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
 	 */
-    static vtkImageImport* loadImageFromArray(double* data_array, 
-											  double &x0, 
-											  double &y0, 
+    static vtkImageImport* loadImageFromArray(double* data_array,
+											  double &x0,
+											  double &y0,
 											  size_t &width,
 											  size_t &height,
 											  double &delta,

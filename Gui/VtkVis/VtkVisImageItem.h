@@ -1,7 +1,12 @@
 /**
- * \file VtkVisImageItem.h
- * 2011/09/29 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkVisImageItem.h
+ *
+ * Created on 2011-09-29 by Karsten Rink
  */
 
 #ifndef VTKVISIMAGEITEM_H
@@ -24,7 +29,7 @@ class VtkCompositeFilter;
 /**
  * \brief An item in the VtkVisPipeline containing an image to be visualized.
  *
- * Any vtkImageAlgorithm object is represented by a VtkVisImageItem to be assigned a mapper, 
+ * Any vtkImageAlgorithm object is represented by a VtkVisImageItem to be assigned a mapper,
  * an actor and its visualization properties.
  * \sa VtkVisPipelineItem
  */

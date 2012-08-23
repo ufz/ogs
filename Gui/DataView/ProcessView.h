@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file ProcessView.h
- * 2010/12/13 KR Initial implementation
+ *
+ * Created on 2010-12-13 by Karsten Rink
  */
 
 #ifndef PROCESSVIEW_H

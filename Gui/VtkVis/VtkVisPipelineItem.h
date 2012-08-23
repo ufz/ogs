@@ -1,7 +1,12 @@
 /**
- * \file VtkVisPipelineItem.h
- * 17/2/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkVisPipelineItem.h
+ *
+ * Created on 2010-02-17 by Lars Bilke
  */
 
 #ifndef VTKVISPIPELINEITEM_H
@@ -88,7 +93,7 @@ public:
 	/// to a vtk-file.
 	int writeToFile(const std::string &filename) const;
 
-	/** 
+	/**
  	 * @brief Scales the data in visualisation-space.
      * This function is empty and needs to be implemented by derived classes.
      */
@@ -98,13 +103,13 @@ public:
 	/// this item.
 	void setScaleOnChildren(double x, double y, double z) const;
 
-	/** 
+	/**
  	 * @brief Translates the item in visualisation-space.
      * This function is empty and needs to be implemented by derived classes.
      */
 	virtual void setTranslation(double x, double y, double z) const;
 
-	/** 
+	/**
  	 * Returns the transform filter for the object.
      * This function needs to be implemented by derived classes.
      */
@@ -133,7 +138,7 @@ protected:
 	/// From algorithm, compositeFilter, or copied from parent
 	VtkAlgorithmProperties* _vtkProps;
 
-	/** 
+	/**
 	 * Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
      * This function is empty and needs to be implemented by derived classes.
 	 */

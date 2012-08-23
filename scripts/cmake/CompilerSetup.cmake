@@ -5,7 +5,7 @@ SET_DEFAULT_BUILD_TYPE(Debug)
 INCLUDE(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 
 # Set compiler helper variables
-IF (CMAKE_CXX_COMPILER MATCHES ".*clang")
+IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	SET(COMPILER_IS_CLANG 1)
 ENDIF ()
 IF(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
@@ -18,28 +18,33 @@ ENDIF ()
 ### GNU C/CXX compiler
 IF(COMPILER_IS_GCC)
 		get_gcc_version(GCC_VERSION)
-        IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
-                MESSAGE(STATUS "Set GCC release flags")
+		IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
+				MESSAGE(STATUS "Set GCC release flags")
 				IF(APPLE AND GCC_VERSION VERSION_LESS "4.3" AND NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode" )
 					# -march=native does not work here when on normal gcc compiler
 					# see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=33144
 					SET(CMAKE_CXX_FLAGS "-O3 -mtune=native -msse4.2 -DNDEBUG")
 				ELSE()
-                	SET(CMAKE_CXX_FLAGS "-O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
+					SET(CMAKE_CXX_FLAGS "-O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
 				ENDIF()
-        ENDIF()
-        # -g
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra -fno-nonansi-builtins")
-        ADD_DEFINITIONS( -DGCC -Wfatal-errors)
+		ENDIF()
+		# -g
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra")
+		IF(COMPILER_IS_CLANG)
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+		ELSE()
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-nonansi-builtins")
+		ENDIF() # COMPILER_IS_CLANG
+		ADD_DEFINITIONS( -DGCC -Wfatal-errors)
 ENDIF() # COMPILER_IS_GCC
 
 ### Intel compiler
 IF (COMPILER_IS_INTEL)
-        IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
-                MESSAGE(STATUS "Set Intel release flags")
-                SET(CMAKE_CXX_FLAGS "-O3 -DNDEBUG")
-        ENDIF()
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall")
+		IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
+				MESSAGE(STATUS "Set Intel release flags")
+				SET(CMAKE_CXX_FLAGS "-O3 -DNDEBUG")
+		ENDIF()
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall")
 ENDIF() # COMPILER_IS_INTEL
 
 # Profiling

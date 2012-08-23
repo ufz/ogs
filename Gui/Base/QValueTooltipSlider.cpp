@@ -1,8 +1,12 @@
 /**
- * \file QValueTooltipSlider.cpp
- * 23/03/2011 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of QValueSlider class
+ * \file QValueTooltipSlider.cpp
+ *
+ * Created on 2011-03-23 by Lars Bilke
  */
 
 // ** INCLUDES **

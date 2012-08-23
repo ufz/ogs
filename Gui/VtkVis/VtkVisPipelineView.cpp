@@ -1,8 +1,12 @@
 /**
- * \file VtkVisPipelineView.cpp
- * 18/2/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkVisPipelineView
+ * \file VtkVisPipelineView.cpp
+ *
+ * Created on 2010-02-18 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -179,7 +183,7 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::t
 	imageSource->GetOutput()->GetOrigin(origin);
 	double spacing[3];
 	imageSource->GetOutput()->GetSpacing(spacing);
-	
+
 	MeshLib::Mesh* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
 	mesh->setName(msh_name.toStdString());
 	emit meshAdded(mesh);
@@ -190,7 +194,7 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 	VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
 												this->selectionModel()->currentIndex()));
 	vtkSmartPointer<vtkAlgorithm> algorithm = item->algorithm();
-	        
+
 
 	vtkUnstructuredGrid* grid(NULL);
 	vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
@@ -261,7 +265,7 @@ void VtkVisPipelineView::addColorTable()
 
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString filename = QFileDialog::getOpenFileName(this, "Select color table",
-	                                                settings.value("lastOpenedLutFileDirectory"). toString(), 
+	                                                settings.value("lastOpenedLutFileDirectory"). toString(),
 													"Color table files (*.xml);;");
 	QFileInfo fi(filename);
 

@@ -1,8 +1,12 @@
 /**
- * \file VtkAddFilterDialog.cpp
- * 23/2/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkAddFilterDialog
+ * \file VtkAddFilterDialog.cpp
+ *
+ * Created on 2010-02-23 by Lars Bilke
  */
 
 // ** INCLUDES **

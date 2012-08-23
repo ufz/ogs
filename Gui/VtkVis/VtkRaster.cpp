@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file VtkRaster.cpp
- * 2012/02/01 KR Initial implementation
+ *
+ * Created on 2012-02-01 by Karsten Rink
  */
 
 #include "VtkRaster.h"
@@ -41,7 +47,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
 		return loadImageFromTIFF(fileName, x0, y0, delta);
 #endif
-	else 
+	else
 		return loadImageFromFile(fileName);
 }
 
@@ -55,7 +61,7 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 		data = loadDataFromASC(fileName, x0, y0, width, height, delta);
 	else
 		data = loadDataFromSurfer(fileName, x0, y0, width, height, delta);
-	
+
 	vtkImageImport* image = vtkImageImport::New();
 		image->SetDataSpacing(delta, delta,delta);
 		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
@@ -82,7 +88,7 @@ vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, do
 	}
 	for (size_t j=0; j<length; j++)
 	{
-		if (data[j*2]==noData) 
+		if (data[j*2]==noData)
 		{
 			data[j*2] = max_val;
 			data[j*2+1] = 0;
@@ -162,7 +168,7 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	else
 		return false;
 
-	// correct raster position by half a pixel for correct visualisation 
+	// correct raster position by half a pixel for correct visualisation
 	// argh! wrong! correction has to happen in visualisation object, otherwise the actual data is wrong
 	//header.x = header.x + (header.cellsize / 2);
 	//header.y = header.y + (header.cellsize / 2);

@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file VisPrefsDialog.h
- * 14/06/2010 KR Initial implementation
+ *
+ * Created on 2010-06-14 by Karsten Rink
  */
 
 #ifndef VISPREFSDIALOG_H

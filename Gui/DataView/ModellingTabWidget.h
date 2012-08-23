@@ -1,7 +1,12 @@
 /**
- * \file ModellingTabWidget.h
- * 2010/12/14 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file ModellingTabWidget.h
+ *
+ * Created on 2010-12-14 by Karsten Rink
  */
 
 #ifndef MODELLINGTABWIDGET_H

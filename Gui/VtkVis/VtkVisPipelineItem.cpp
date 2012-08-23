@@ -1,8 +1,12 @@
 /**
- * \file VtkVisPipelineItem.cpp
- * 17/2/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkVisPipelineItem
+ * \file VtkVisPipelineItem.cpp
+ *
+ * Created on 2010-02-17 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -114,7 +118,7 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			else
 				QMessageBox::warning(NULL, "Conversion to OpenSG not possible",
 					"It is not possible to convert an vtkImageData based object\nto OpenSG. If you want to convert raster data import it via \" File / Import / Raster Files as PolyData\"!");
-#else       	
+#else
 			QMessageBox::warning(
 				NULL,
 				"Functionality not implemented",

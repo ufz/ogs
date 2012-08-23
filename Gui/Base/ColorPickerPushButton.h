@@ -1,7 +1,12 @@
 /**
- * \file ColorPickerPushButton.h
- * 17/5/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file ColorPickerPushButton.h
+ *
+ * Created on 2010-05-17 by Lars Bilke
  */
 
 #ifndef COLORPICKERPUSHBUTTON_H

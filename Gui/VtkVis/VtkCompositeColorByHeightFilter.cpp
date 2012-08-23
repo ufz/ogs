@@ -1,8 +1,12 @@
 /**
- * \file VtkCompositeColorByHeightFilter.cpp
- * 01/11/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkCompositePointToGlyphFilter class
+ * \file VtkCompositeColorByHeightFilter.cpp
+ *
+ * Created on 2010-11-01 by Karsten Rink
  */
 
 // ** INCLUDES **

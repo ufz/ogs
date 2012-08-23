@@ -1,7 +1,12 @@
 /**
- * \file VtkMeshSource.cpp
- * 19/03/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkMeshSource.cpp
+ *
+ * Created on 2010-03-19 by Karsten Rink
  */
 
 #include "VtkColorLookupTable.h"
@@ -75,7 +80,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 	{
 		os << indent << "Element " << i << ": ";
 		for (size_t t = 0; t < (*it)->getNNodes(); t++)
-			os << (*it)->getNode(t)->getID() << " "; 
+			os << (*it)->getNode(t)->getID() << " ";
 		os << std::endl;
 	}
 }

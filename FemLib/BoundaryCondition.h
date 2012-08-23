@@ -1,7 +1,12 @@
 /**
- * \file BoundaryCondition.h
- * 2011/08/30 KR inital implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file BoundaryCondition.h
+ *
+ * Created on 2011-08-30 by Karsten Rink
  */
 
 #ifndef BOUNDARYCONDITION_H

@@ -1,8 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file VtkAlgorithmProperties.cpp
- * 14/02/2012 LB Initial implementation
- * 
- * Implementation of the VtkAlgorithmProperties class
+ *
+ * Created on 2012-02-14 by Lars Bilke
  */
 
 // ** INCLUDES **

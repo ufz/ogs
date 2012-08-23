@@ -1,7 +1,12 @@
 /**
- * \file VtkVisPipelineView.h
- * 18/2/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkVisPipelineView.h
+ *
+ * Created on 2010-02-18 by Lars Bilke
  */
 
 #ifndef VTKVISPIPELINEVIEW_H
@@ -65,7 +70,7 @@ private slots:
 	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
 	void constructMeshFromImage(QString msh_name, MshElemType::type element_type, UseIntensityAs::type intensity_type);
 
-	/// Calls the dialog to 
+	/// Calls the dialog to
 	void showImageToMeshConversionDialog();
 
 	/// Calls the conversion method for making a vtk grid an ogs mesh.

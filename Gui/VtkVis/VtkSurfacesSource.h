@@ -1,8 +1,12 @@
 /**
- * \file VtkSurfacesSource.h
- * 3/2/2010 LB Initial implementation
- * 23/04/2010 KR Surface visualisation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file VtkSurfacesSource.h
+ *
+ * Created on 2010-02-03 by Lars Bilke
  */
 
 #ifndef VTKSURFACESSOURCE_H

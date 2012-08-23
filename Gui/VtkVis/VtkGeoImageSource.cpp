@@ -1,8 +1,12 @@
 /**
- * \file VtkGeoImageSource.cpp
- * 28/09/2010 LB Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- * Implementation of VtkGeoImageSource class
+ * \file VtkGeoImageSource.cpp
+ *
+ * Created on 2010-09-28 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -98,7 +102,7 @@ double VtkGeoImageSource::getSpacing() const
 
 void VtkGeoImageSource::getRange(double range[2])
 {
-	this->_imageSource->Update();	
+	this->_imageSource->Update();
 	_imageSource->GetOutput()->GetPointData()->GetArray(0)->GetRange(range);
 }
 

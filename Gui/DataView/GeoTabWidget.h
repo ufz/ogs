@@ -1,7 +1,12 @@
 /**
- * \file GeoTabWidget.h
- * 2011/02/07 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file GeoTabWidget.h
+ *
+ * Created on 2011-02-07 by Karsten Rink
  */
 
 #ifndef GEOTABWIDGET_H

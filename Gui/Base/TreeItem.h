@@ -1,6 +1,12 @@
 /**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
+ *
  * \file TreeItem.h
- * KR Initial implementation
+ *
+ * Created on by Karsten Rink
  */
 
 #ifndef QTREEITEM_H

@@ -1,8 +1,12 @@
 /**
- * \file MshModel.h
- * 19/10/2009 LB Initial implementation
- * 12/05/2010 KR re-implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file MshModel.h
+ *
+ * Created on 2009-10-19 by Lars Bilke
  */
 
 #ifndef MSHMODEL_H

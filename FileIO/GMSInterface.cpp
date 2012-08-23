@@ -1,7 +1,12 @@
 /**
- * \file GMSInterface.cpp
- * 08/06/2010 KR Initial implementation
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
+ * \file GMSInterface.cpp
+ *
+ * Created on 2010-06-08 by Karsten Rink
  */
 
 #include "GMSInterface.h"
@@ -57,7 +62,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 					depth = (*pnt)[2];
 				}
 				else
-					std::cout << "Warning: Skipped layer \"" << sName << "\" in borehole \"" 
+					std::cout << "Warning: Skipped layer \"" << sName << "\" in borehole \""
 					          << cName << "\" because of thickness 0.0." << std::endl;
 			}
 			else // add new borehole
@@ -281,25 +286,25 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 
 		if (element_id.compare("E6W") == 0)	// Prism
 		{
-			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] 
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3]
 			    >> node_idx[4] >> node_idx[5] >> mat_id;
-			elem = new MeshLib::Prism(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second], 
-									  nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], 
+			elem = new MeshLib::Prism(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second],
+									  nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second],
 									  nodes[id_map.find(node_idx[4])->second], nodes[id_map.find(node_idx[5])->second], mat_id);
 			elements.push_back(elem);
 		}
 		else if (element_id.compare("E4T") == 0) // Tet
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> mat_id;
-			elem = new MeshLib::Tet(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second], 
+			elem = new MeshLib::Tet(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second],
 				                    nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], mat_id);
 			elements.push_back(elem);
 		}
 		else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> node_idx[4] >> mat_id;
-			elem = new MeshLib::Pyramid(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second], 
-				                        nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], 
+			elem = new MeshLib::Pyramid(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second],
+				                        nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second],
 										nodes[id_map.find(node_idx[4])->second], mat_id);
 			elements.push_back(elem);
 		}
