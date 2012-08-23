@@ -145,10 +145,11 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 				}
 				Element* revised_elem(elem->reviseElement());
 				elements[cnt] = revised_elem;
+				delete elem;
 				cnt++;
 			}
 		} else {
-			elements[cnt] = kth_orig_elem.clone();
+			elements[cnt] = kth_orig_elem->clone();
 			for (size_t i(0); i<n_nodes_element; i++) {
 				elements[cnt]->setNode(i, nodes[mapped_node_ids_of_element[i]]);
 			}
