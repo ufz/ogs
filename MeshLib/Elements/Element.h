@@ -136,7 +136,7 @@ protected:
 	Element(unsigned value = 0);
 
 	/// Return a specific edge node.
-	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
+	virtual Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
 	Node** _nodes;
 	unsigned _value;

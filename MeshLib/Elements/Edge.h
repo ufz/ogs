@@ -88,7 +88,7 @@ protected:
 	double computeLength();
 
 	/// 1D elements have no edges.
-	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { (void)edge_id; (void)node_id; return NULL; };
+	Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { (void)edge_id; (void)node_id; return NULL; };
 
 	/// 1D elements have no faces.
 	Node* getFaceNode(unsigned face_id, unsigned node_id) const { (void)face_id; (void)node_id; return NULL; };

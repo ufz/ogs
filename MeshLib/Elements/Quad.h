@@ -84,7 +84,7 @@ protected:
 	double computeArea();
 
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	static const unsigned _edge_nodes[4][2];
 

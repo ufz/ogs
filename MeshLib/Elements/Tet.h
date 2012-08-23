@@ -104,7 +104,7 @@ protected:
 	 * @param node_id the id of the node within the edge (either 0 or 1)
 	 * @return a pointer to the internal Node
 	 */
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	static const unsigned _face_nodes[4][3];
 	static const unsigned _edge_nodes[6][2];
