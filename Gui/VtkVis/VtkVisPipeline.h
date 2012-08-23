@@ -9,7 +9,6 @@
 
 // ** INCLUDES **
 #include "Color.h"
-//TODO6 #include "Configure.h"
 #include "FEMCondition.h"
 #include "GeoType.h"
 #include "MSHEnums.h"

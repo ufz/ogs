@@ -8,7 +8,7 @@
 #define VTKVISPIPELINEITEM_H
 
 // ** INCLUDES **
-//TODO6 #include "Configure.h"
+#include "BuildInfo.h"
 #include "TreeItem.h"
 
 #include <QList>

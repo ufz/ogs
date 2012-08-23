@@ -57,7 +57,6 @@
 #include "MeshIO/GMSHInterface.h"
 // TODO6 #include "MeshIO/TetGenInterface.h"
 #include "PetrelInterface.h"
-// TODO6 #include "StationIO.h"
 #include "XmlIO/XmlCndInterface.h"
 #include "XmlIO/XmlGmlInterface.h"
 #include "XmlIO/XmlGspInterface.h"
@@ -69,7 +68,6 @@
 #include "Mesh.h"
 #include "Node.h"
 #include "MshEditor.h"
-//TODO6 #include "ExtractMeshNodes.h"
 
 // Qt includes
 #include <QDesktopWidget>
@@ -326,6 +324,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 
 MainWindow::~MainWindow()
 {
+	delete _signal_mapper;
 	delete _import_files_menu;
 	delete _vtkVisPipeline;
 	delete _meshModels;
@@ -532,6 +531,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::FEFLOW)
 	{
+		OGSError::box("Interface not yet integrated");
 		/* TODO6
 		FEFLOWInterface feflowIO(_geoModels);
 		MeshLib::Mesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
@@ -572,6 +572,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::GMSH)
 	{
+		OGSError::box("Interface not yet integrated");
 		// TODO6
 	}
 	else if (t == ImportFileType::NETCDF)
@@ -630,6 +631,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 						                                     "TetGen element files (*.ele);;");
 
 		if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+			OGSError::box("Interface not yet integrated");
 			/* TODO6
 			FileIO::TetGenInterface tetgen;
 			MeshLib::Mesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
