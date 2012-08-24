@@ -44,7 +44,7 @@ IF (COMPILER_IS_INTEL)
 				MESSAGE(STATUS "Set Intel release flags")
 				SET(CMAKE_CXX_FLAGS "-O3 -DNDEBUG")
 		ENDIF()
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHOST -O3 -no-prec-div -static -DNDEBUG")
 ENDIF() # COMPILER_IS_INTEL
 
 # Profiling

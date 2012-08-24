@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 	TCLAP::ValueArg<std::string> output_arg("o", "output", "output file", false, "", "string");
 	cmd.add( output_arg );
 
-	TCLAP::ValueArg<unsigned> verbosity_arg("v", "verbose", "level of verbosity [0 very low information, 1 much information]", false, 0, "string");
+	TCLAP::ValueArg<bool> verbosity_arg("v", "verbose", "level of verbosity [0 very low information, 1 much information]", false, 0, "string");
 	cmd.add( verbosity_arg );
 
 	cmd.parse( argc, argv );
