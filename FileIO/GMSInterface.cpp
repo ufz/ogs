@@ -16,7 +16,7 @@
 #include "Elements/Tet.h"
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
-#include "MSHEnums.h"
+#include "MshEnums.h"
 #include "StringTools.h"
 #include <fstream>
 
