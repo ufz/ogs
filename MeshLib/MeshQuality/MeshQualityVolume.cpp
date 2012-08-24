@@ -12,6 +12,7 @@
 #include "MeshQualityVolume.h"
 
 #include <iostream>
+#include <limits>
 
 namespace MeshLib
 {
