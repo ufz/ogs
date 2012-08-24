@@ -229,7 +229,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	out << n_elements << std::endl;
 	for (size_t i(0), k(0); i < ele_vector_size; i++) {
 		if (non_line_element[i] && non_null_element[i]) {
-			out << k << " 0 " << MshElemType2String(ele_vec[i]->getType()) << " ";
+			out << k << " " << ele_vec[i]->getValue() << " " << MshElemType2String(ele_vec[i]->getType()) << " ";
 			for(size_t j = 0; j < ele_vec[i]->getNNodes()-1; j++)
 				out << ele_vec[i]->getNode(j)->getID() << " ";
 			out << ele_vec[i]->getNode(ele_vec[i]->getNNodes()-1)->getID() << std::endl;
