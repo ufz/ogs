@@ -76,7 +76,7 @@ public:
 	/**
 	 * reads a mesh created by GMSH - this implementation is based on the former function GMSH2MSH
 	 * @param fname the file name of the mesh (including the path)
-	 * @param mesh the new mesh
+	 * @param mesh on input: the parameter have to be NULL on output: the new mesh
 	 * @return
 	 */
 	static void readGMSHMesh (std::string const& fname, MeshLib::Mesh* mesh);

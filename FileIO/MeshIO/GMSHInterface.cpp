@@ -12,8 +12,9 @@
 #include <fstream>
 #include <vector>
 
-// Base
+// BaseLib
 #include "swap.h"
+#include "StringTools.h"
 #include "Configure.h"
 #include "BuildInfo.h"
 
@@ -202,6 +203,9 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 		} /*End while*/
 	}
 	in.close();
+	if (mesh == NULL) {
+		mesh = new MeshLib::Mesh(BaseLib::getFileNameFromPath(fname) ,nodes, elements);
+	}
 }
 
 void GMSHInterface::readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids)
