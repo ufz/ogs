@@ -12,6 +12,7 @@
 
 #include "Quad.h"
 #include "Node.h"
+#include "Tri.h"
 
 #include "MathTools.h"
 
@@ -22,7 +23,7 @@ const unsigned Quad::_edge_nodes[4][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
-	{0, 2}, // Edge 2
+	{2, 3}, // Edge 2
 	{0, 3}  // Edge 3
 };
 
@@ -79,6 +80,19 @@ Element* Quad::clone() const
 	return new Quad(*this);
 }
 
+Element* Quad::reviseElement() const
+{
+	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
+		return new Tri(_nodes[0], _nodes[2], _nodes[3], _value);
+	}
+
+	if (_nodes[2] == _nodes[3] || _nodes[3] == _nodes[0]) {
+		return new Tri(_nodes[0], _nodes[1], _nodes[2], _value);
+	}
+
+	// this should not happen
+	return NULL;
+}
 
 }
 

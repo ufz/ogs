@@ -121,7 +121,7 @@ double sqrDist(const double* p0, const double* p1);
 float normalize(float min, float max, float val);
 
 /**
- * Let \f$p_0, p_1, p_2 \in \mathbb{R}^3\f$. The function getAngle
+ * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
  * computes the angle between the edges \f$(p_0,p_1)\f$ and \f$(p_1,p_2)\f$
  * @param p0 start point of edge 0
  * @param p1 end point of edge 0 and start point of edge 1

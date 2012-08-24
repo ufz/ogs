@@ -13,6 +13,7 @@
 #include "Prism.h"
 #include "Node.h"
 #include "Tri.h"
+#include "Pyramid.h"
 #include "Quad.h"
 
 #include "MathTools.h"
@@ -122,6 +123,24 @@ unsigned Prism::getNFaceNodes(unsigned i) const
 Element* Prism::clone() const
 {
 	return new Prism(*this);
+}
+
+Element* Prism::reviseElement() const
+{
+	// try to create Pyramid
+	if (_nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
+		return new Pyramid(_nodes[1], _nodes[4], _nodes[5], _nodes[2], _nodes[0], _value);
+	}
+
+	if (_nodes[_edge_nodes[4][0]] == _nodes[_edge_nodes[4][1]]) {
+		return new Pyramid(_nodes[0], _nodes[2], _nodes[5], _nodes[3], _nodes[1], _value);
+	}
+
+	if (_nodes[_edge_nodes[5][0]] == _nodes[_edge_nodes[5][1]]) {
+		return new Pyramid(_nodes[0], _nodes[1], _nodes[4], _nodes[3], _nodes[2], _value);
+	}
+
+	return NULL;
 }
 
 } // end namespace MeshLib

@@ -12,6 +12,7 @@ include_directories(
 	../BaseLib
 	../GeoLib
 	../MathLib
+	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
 )
 
 
@@ -19,5 +20,6 @@ target_link_libraries (MeshLib
 	BaseLib
 	GeoLib
 	MathLib
+	logog
 )
 

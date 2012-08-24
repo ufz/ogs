@@ -18,19 +18,18 @@
 namespace MeshLib {
 
 /**
- * A 2d Quadliteral Element.
+ * This class represents a 2d quadliteral element. The following sketch shows the node and edge numbering.
+ * @anchor QuadNodeAndEdgeNumbering
  * @code
- *
- *        3           2
- *  Quad: o-----------o
+ *              2
+ *        3-----------2
  *        |           |
  *        |           |
+ *       3|           |1
  *        |           |
  *        |           |
- *        |           |
- *        o-----------o
- *        0           1
- *
+ *        0-----------1
+ *              0
  * @endcode
  */
 class Quad : public Face
@@ -69,12 +68,23 @@ public:
 	 */
 	virtual Element* clone() const;
 
+	/**
+	 * This method should be called after at least two nodes of the quad
+	 * element are collapsed. As a consequence of the node collapsing an edge
+	 * of the quad will be collapsed. If one of the edges (see
+	 * sketch @ref PyramidNodeAndEdgeNumbering) is collapsed we obtain a
+	 * triangle. In this case the method will create the appropriate
+	 * object of class Tri.
+	 * @return a Tri object or NULL
+	 */
+	virtual Element* reviseElement() const;
+
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.
 	double computeArea();
 
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	static const unsigned _edge_nodes[4][2];
 

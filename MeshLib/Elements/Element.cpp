@@ -72,8 +72,8 @@ const Element* Element::getEdge(unsigned i) const
 	if (i < getNEdges())
 	{
 		Node** nodes = new Node*[2];
-		nodes[0] = getEdgeNode(i,0);
-		nodes[1] = getEdgeNode(i,1);
+		nodes[0] = const_cast<Node*>(getEdgeNode(i,0));
+		nodes[1] = const_cast<Node*>(getEdgeNode(i,1));
 		return new Edge(nodes);
 	}
 	std::cerr << "Error in MeshLib::Element::getEdge() - Index does not exist." << std::endl;
@@ -87,7 +87,7 @@ void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 	unsigned nEdges (this->getNEdges());
 	for (unsigned i=0; i<nEdges; i++)
 	{
-		double dist (MathLib::sqrDist(getEdgeNode(i,0)->getCoords(), getEdgeNode(i,1)->getCoords()));
+		double dist (MathLib::sqrDist(getEdgeNode(i,0), getEdgeNode(i,1)));
 		min = (dist<min) ? dist : min;
 		max = (dist>max) ? dist : max;
 	}

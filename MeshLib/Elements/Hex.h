@@ -21,18 +21,24 @@ namespace MeshLib {
  * A 3d Hexahedron Element.
  * @code
  *
- *  Hex:  7        6
- *        o--------o
- *       /:       /|
- *      / :      / |
- *   4 /  :   5 /  |
- *    o--------o   |
- *    |   o....|...o 2
- *    |  .3    |  /
- *    | .      | /
- *    |.       |/
- *    o--------o
- *    0        1
+ *  Hex:
+ *                10
+ *          7-----------6
+ *         /:          /|
+ *        / :         / |
+ *     11/  :        /9 |
+ *      /  7:       /   | 6
+ *     /    : 8    /    |
+ *    4-----------5     |
+ *    |     :     | 2   |
+ *    |     3.....|.....2
+ *    |    .      |    /
+ *  4 |   .       |5  /
+ *    | 3.        |  / 1
+ *    | .         | /
+ *    |.          |/
+ *    0-----------1
+ *          0
  *
  * @endcode
  */
@@ -81,12 +87,18 @@ public:
 	 */
 	virtual Element* clone() const;
 
+	/**
+	 * Change the element type from hexahedron to a prism if two appropriate edges of the hexahedron are collapsed.
+	 * @return a prism element with nice properties or NULL
+	 */
+	virtual Element* reviseElement() const;
+
 protected:
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
 	double computeVolume();
 
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	static const unsigned _face_nodes[6][4];
 	static const unsigned _edge_nodes[12][2];

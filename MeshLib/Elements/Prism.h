@@ -18,19 +18,25 @@
 namespace MeshLib {
 
 /**
- * A 3d Prism Element.
+ * This class represents a 3d prism element. The following sketch shows the node and edge numbering.
+ * @anchor PrismNodeAndEdgeNumbering
  * @code
- *
- *  Prism:   5
- *           o
- *          /:\
- *         / : \
- *        /  o  \
- *     3 o-------o 4
- *       | . 2 . |
- *       |.     .|
- *       o-------o
- *       0       1
+ *            5
+ *           / \
+ *          / : \
+ *        8/  :  \7
+ *        /   :5  \
+ *       /    :  6 \
+ *      3-----------4
+ *      |     :     |
+ *      |     2     |
+ *      |    . .    |
+ *     3|   .   .   |4
+ *      | 2.     .1 |
+ *      | .       . |
+ *      |.         .|
+ *      0-----------1
+ *            0
  *
  * @endcode
  */
@@ -80,12 +86,23 @@ public:
 	 */
 	virtual Element* clone() const;
 
+	/**
+	 * This method should be called after at least two nodes of the prism
+	 * element are collapsed. As a consequence of the node collapsing an edge
+	 * of the prism will be collapsed. If one of the edges 3, 4 or 5 (see
+	 * sketch @ref PrismNodeAndEdgeNumbering) is collapsed we obtain a
+	 * pyramid. In this case the method will create the appropriate
+	 * object of class Pyramid.
+	 * @return a pyramid object or NULL
+	 */
+	virtual Element* reviseElement() const;
+
 protected:
 	/// Calculates the volume of a prism by subdividing it into three tetrahedra.
 	double computeVolume();
 
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	static const unsigned _face_nodes[5][4];
 	static const unsigned _edge_nodes[9][2];

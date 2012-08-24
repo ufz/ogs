@@ -57,5 +57,14 @@ Element* Edge::clone() const
 	return new Edge(*this);
 }
 
+Element* Edge::reviseElement() const
+{
+	if (_nodes[0] == _nodes[1]) {
+		return NULL;
+	}
+
+	return NULL;
+}
+
 }
 
