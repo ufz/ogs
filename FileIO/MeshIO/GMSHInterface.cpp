@@ -1,8 +1,12 @@
-/*
- * GMSHInterface.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Apr 29, 2010
- *      Author: TF
+ * \file GMSHInterface.cpp
+ *
+ *  Created on 2010-04-29 by Thomas Fischer
  */
 
 #include <fstream>
@@ -89,7 +93,7 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
 
-	if (line.find("$MeshFormat") != std::string::npos) 
+	if (line.find("$MeshFormat") != std::string::npos)
 	{
 		getline(in, line); // version-number file-type data-size
 		getline(in, line); //$EndMeshFormat
@@ -97,7 +101,7 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 
 		size_t n_nodes(0);
 		size_t n_elements(0);
-		while (line.find("$EndElements") == std::string::npos) 
+		while (line.find("$EndElements") == std::string::npos)
 		{
 			// Node data
 			long id;
@@ -144,7 +148,7 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 						break;
 					case 5:
 						readNodeIDs(in, 8, node_ids);
-						elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], 
+						elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]],
 							                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], mat_id);
 						break;
 					case 6:

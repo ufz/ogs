@@ -1,8 +1,12 @@
-/*
- * generateBCandGLI.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Mar 1, 2011
- *      Author: TF
+ * \file generateBCandGLI.cpp
+ *
+ *  Created on 2011-03-01 by Thomas Fischer
  */
 
 // GEO

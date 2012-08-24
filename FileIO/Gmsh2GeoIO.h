@@ -1,8 +1,12 @@
-/*
- * Gmsh2GeoIO.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Aug 18, 2011
- *      Author: TF
+ * \file Gmsh2GeoIO.h
+ *
+ *  Created on 2011-08-18 by Thomas Fischer
  */
 
 #ifndef GMSH2GEOIO_H_

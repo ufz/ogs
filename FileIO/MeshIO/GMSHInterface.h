@@ -1,8 +1,12 @@
-/*
- * GMSHInterface.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Apr 29, 2010
- *      Author: TF
+ * \file GMSHInterface.h
+ *
+ *  Created on 2010-04-29 by Thomas Fischer
  */
 
 #ifndef GMSHINTERFACE_H_

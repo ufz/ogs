@@ -1,8 +1,12 @@
-/*
- * MeshQualityEquiAngleSkew.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Mar 17, 2011
- *      Author: TF
+ * \file MeshQualityEquiAngleSkew.h
+ *
+ *  Created on 2011-03-17 by Thomas Fischer
  */
 
 #ifndef MESHQUALITYEQUIANGLESKEW_H_

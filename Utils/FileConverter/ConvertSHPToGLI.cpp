@@ -1,8 +1,12 @@
-/*
- * ConvertSHPToGLI.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: May 3, 2010
- *      Author: TF
+ * \file ConvertSHPToGLI.cpp
+ *
+ *  Created on 2010-05-03 by Thomas Fischer
  */
 
 //ShapeLib includes

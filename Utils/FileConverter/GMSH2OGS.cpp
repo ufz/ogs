@@ -1,15 +1,12 @@
-/*
- * GMSH2OGS.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Dec 13, 2011
- *      Author: TF
- */
-
-/*
- * mainExtractSurface.cpp
+ * \file GMSH2OGS.cpp
  *
- *  Created on: Jan 26, 2011
- *      Author: TF
+ *  Created on 2011-12-13 by Thomas Fischer
  */
 
 // STL

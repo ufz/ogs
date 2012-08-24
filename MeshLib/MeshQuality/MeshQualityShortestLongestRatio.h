@@ -1,8 +1,12 @@
-/*
- * MeshQualityShortestLongestRatio.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Mar 3, 2011
- *      Author: TF
+ * \file MeshQualityShortestLongestRatio.h
+ *
+ *  Created on 2011-03-03 by Thomas Fischer
  */
 
 #ifndef MESHQUALITYSHORTESTLONGESTRATIO_H_

@@ -1,8 +1,12 @@
-/*
- * OGSIOVer4.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jan 14, 2010
- *      Author: TF
+ * \file OGSIOVer4.cpp
+ *
+ *  Created on 2010-01-14 by Thomas Fischer
  */
 
 #include <iomanip>

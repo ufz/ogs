@@ -1,8 +1,12 @@
-/*
- * GMSHFixedMeshDensity.cpp
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Mar 5, 2012
- *      Author: TF
+ * \file GMSHFixedMeshDensity.cpp
+ *
+ *  Created on 2012-03-05 by Thomas Fischer
  */
 
 #include "MeshIO/GMSHFixedMeshDensity.h"

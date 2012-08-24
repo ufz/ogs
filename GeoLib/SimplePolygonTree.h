@@ -1,8 +1,12 @@
-/*
- * SimplePolygonTree.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Jun 22, 2010
- *      Author: TF
+ * \file SimplePolygonTree.h
+ *
+ *  Created on 2010-06-22 by Thomas Fischer
  */
 
 #ifndef SIMPLEPOLYGONTREE_H_

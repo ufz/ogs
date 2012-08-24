@@ -1,8 +1,12 @@
-/*
- * readNonBlankLineFromInputStream.h
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.net/LICENSE.txt
  *
- *  Created on: Apr 19, 2011
- *      Author: TF
+ * \file readNonBlankLineFromInputStream.h
+ *
+ *  Created on 2011-04-19 by Thomas Fischer
  */
 
 #ifndef READNONBLANKLINEFROMINPUTSTREAM_H_
