@@ -73,7 +73,9 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 					if (MathLib::sqrDist(node->getCoords(), test_node->getCoords()) < sqr_min_distance) {
 						// two nodes are very close to each other
 						id_map[test_node_id] = node_id_k;
+#ifndef NDEBUG
 						INFO ("distance of nodes with ids %d and %d is %f", node_id_k, test_node_id, sqrt(MathLib::sqrDist(node->getCoords(), test_node->getCoords())));
+#endif
 					}
 				}
 			}
@@ -92,10 +94,12 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 	}
 
 	// delete unused nodes
-	for (size_t k(0); k < n_nodes; k++) {
-		if (id_map[k] != k) {
+	for (size_t k(0), cnt(0); k < n_nodes; k++) {
+		if (id_map[k] != cnt) {
 			delete nodes[k];
 			nodes[k] = NULL;
+		} else {
+			cnt++;
 		}
 	}
 
@@ -106,6 +110,12 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 		} else {
 			it++;
 		}
+	}
+
+	// reset mesh node ids
+	const size_t new_n_nodes(nodes.size());
+	for (size_t k(0); k < new_n_nodes; k++) {
+		nodes[k]->setID(k);
 	}
 
 	// copy mesh elements, reset the node pointers
@@ -165,7 +175,7 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 		}
 	}
 
-	return new Mesh ("test", nodes, elements);
+	return new Mesh (_orig_mesh->getName() + "Collapsed", nodes, elements);
 }
 
 } // end namespace MeshLib
