@@ -477,19 +477,12 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	{
 		if (fi.suffix().toLower() == "gli")
 		{
-#ifndef NDEBUG
-			QTime myTimer0;
-			myTimer0.start();
-#endif
 			std::string unique_name;
 			std::vector<std::string> errors;
 			if (! readGLIFileV4(fileName.toStdString(), _geoModels, unique_name, errors)) {
 				for (size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
-#ifndef NDEBUG
-			std::cout << myTimer0.elapsed() << " ms" << std::endl;
-#endif
 		}
 		else if (fi.suffix().toLower() == "gsp")
 		{
@@ -515,16 +508,19 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		// OpenGeoSys mesh files
 		else if (fi.suffix().toLower() == "msh")
 		{
+#ifndef NDEBUG
 			QTime myTimer0;
 			myTimer0.start();
-
+#endif
 			FileIO::MeshIO meshIO;
 			std::string name = fileName.toStdString();
 			MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
 			if (msh)
 			{
 				_meshModels->addMesh(msh);
+#ifndef NDEBUG
 				std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
+#endif
 			}
 			else
 				OGSError::box("Failed to load a mesh file.");
@@ -555,8 +551,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::GMS)
 	{
-		// GMS borehole files
-		if (fi.suffix().toLower() == "txt")
+		if (fi.suffix().toLower() == "txt") // GMS borehole files
 		{
 			std::vector<GeoLib::Point*>* boreholes = new std::vector<GeoLib::Point*>();
 			std::string name = fi.baseName().toStdString();
@@ -566,8 +561,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			else
 				OGSError::box("Error reading GMS file.");
 		}
-		// GMS mesh files
-		else if (fi.suffix().toLower() == "3dm")
+		else if (fi.suffix().toLower() == "3dm") // GMS mesh files
 		{
 			std::string name = fileName.toStdString();
 			MeshLib::Mesh* mesh = GMSInterface::readGMS3DMMesh(name);
@@ -577,17 +571,20 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::GMSH)
 	{
-		OGSError::box("Interface not yet integrated");
-		// TODO6
+		std::string msh_name (fileName.toStdString());
+		if (FileIO::GMSHInterface::isGMSHMeshFile (msh_name))
+		{
+			MeshLib::Mesh* mesh = FileIO::GMSHInterface::readGMSHMesh(msh_name);
+			if (mesh)
+				_meshModels->addMesh(mesh);
+			return;
+		}
 	}
-	else if (t == ImportFileType::NETCDF)
+	else if (t == ImportFileType::NETCDF)	// CH  01.2012
 	{
-		// NetCDF files
-		// CH  01.2012
-		std::string name = fileName.toStdString();
 		MeshLib::Mesh* mesh (NULL);
 
-		NetCdfConfigureDialog dlg(name);
+		NetCdfConfigureDialog dlg(fileName.toStdString());
 		dlg.exec();
 		if (dlg.getMesh() != NULL)
 		{

@@ -12,6 +12,7 @@
 #include "swap.h"
 #include "Configure.h"
 #include "BuildInfo.h"
+#include "StringTools.h"
 
 // FileIO
 #include "GMSHInterface.h"
@@ -81,7 +82,7 @@ bool GMSHInterface::isGMSHMeshFile(const std::string& fname)
 	return false;
 }
 
-void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
+MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 {
 	std::string line;
 	std::ifstream in(fname.c_str(), std::ios::in);
@@ -103,9 +104,12 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 			long id;
 			double x, y, z;
 			in >> n_nodes >> std::ws;
+			nodes.resize(n_nodes);
+			std::map<unsigned, unsigned> id_map;
 			for (size_t i = 0; i < n_nodes; i++) {
 				in >> id >> x >> y >> z >> std::ws;
-				nodes.push_back(new MeshLib::Node(x,y,z,id));
+				id_map.insert(std::map<unsigned, unsigned>::value_type(id, i));
+				nodes[i] = new MeshLib::Node(x,y,z,id);
 			}
 			getline(in, line); // End Node keyword $EndNodes
 
@@ -127,38 +131,41 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 				switch (type)
 				{
 					case 1:
-						readNodeIDs(in, 2, node_ids);
+						readNodeIDs(in, 2, node_ids, id_map);
 						elem = new MeshLib::Edge(nodes[node_ids[0]], nodes[node_ids[1]], 0);
 						break;
 					case 2:
-						readNodeIDs(in, 3, node_ids);
+						readNodeIDs(in, 3, node_ids, id_map);
 						elem = new MeshLib::Tri(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], mat_id);
 						break;
 					case 3:
-						readNodeIDs(in, 4, node_ids);
+						readNodeIDs(in, 4, node_ids, id_map);
 						elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], mat_id);
 						break;
 					case 4:
-						readNodeIDs(in, 4, node_ids);
+						readNodeIDs(in, 4, node_ids, id_map);
 						elem = new MeshLib::Tet(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], mat_id);
 						break;
 					case 5:
-						readNodeIDs(in, 8, node_ids);
+						readNodeIDs(in, 8, node_ids, id_map);
 						elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], 
 							                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], mat_id);
 						break;
 					case 6:
-						readNodeIDs(in, 6, node_ids);
+						readNodeIDs(in, 6, node_ids, id_map);
 						elem = new MeshLib::Prism(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
 							                      nodes[node_ids[3]], nodes[node_ids[4]], nodes[node_ids[5]], mat_id);
 						break;
 					case 7:
-						readNodeIDs(in, 5, node_ids);
+						readNodeIDs(in, 5, node_ids, id_map);
 						elem = new MeshLib::Pyramid(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
 							                        nodes[node_ids[3]], nodes[node_ids[4]], mat_id);
 						break;
+					case 15:
+						in >> dummy; // skip rest of line
+						continue;
+						break;
 					default:
-						in >> dummy; // skip rest of line (e.g. for type "15" ... whatever that is ...
 						std::cout << "Error in GMSHInterface::readGMSHMesh() - Unknown element type " << type << "." << std::endl;
 				}
 				in >> std::ws;
@@ -168,45 +175,19 @@ void GMSHInterface::readGMSHMesh(std::string const& fname, MeshLib::Mesh* mesh)
 			}
 
 			getline(in, line); // END keyword
-/* TODO6: testen ob es auch so funktioniert
-			// ordering nodes and closing gaps TK
-			std::vector<size_t> gmsh_id;
-			size_t counter(0);
-			for (size_t i = 0; i < mesh->nod_vector.size(); i++) {
-				const size_t diff = mesh->nod_vector[i]->GetIndex() - counter;
-				if (diff == 0) {
-					gmsh_id.push_back(i);
-					counter++;
-				} else {
-					for (size_t j = 0; j < diff; j++) {
-						gmsh_id.push_back(i);
-						counter++;
-					}
-					i--;
-				}
-			}
-
-			for (size_t i = 0; i < mesh->ele_vector.size(); i++)
-				for (long j = 0; j < mesh->ele_vector[i]->GetVertexNumber(); j++)
-					mesh->ele_vector[i]->getNodeIndices()[j]
-									= gmsh_id[mesh->ele_vector[i]->GetNodeIndex(j) + 1];
-
-			for (size_t i = 0; i < mesh->nod_vector.size(); i++)
-				mesh->nod_vector[i]->SetIndex(i);
-			// END OF: ordering nodes and closing gaps TK
-*/
-		} /*End while*/
+		}
 	}
 	in.close();
+	return new MeshLib::Mesh(BaseLib::getFileNameFromPath(fname), nodes, elements);
 }
 
-void GMSHInterface::readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids)
+void GMSHInterface::readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> &id_map)
 {
 	unsigned idx;
 	for (unsigned i=0; i<n_nodes; i++)
 	{
 		in >> idx;
-		node_ids.push_back(--idx);
+		node_ids.push_back(id_map[idx]);
 	}
 }
 

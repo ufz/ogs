@@ -30,9 +30,7 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-	friend class Mesh;//void Mesh::setElementInformationForNodes();
-	//friend void Mesh::addElement(Element*);
-
+	friend class Mesh;
 
 public:
 	/// Constructor using a coordinate array
