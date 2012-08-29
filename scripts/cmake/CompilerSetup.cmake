@@ -29,7 +29,7 @@ IF(COMPILER_IS_GCC)
 				ENDIF()
 		ENDIF()
 		# -g
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra -std=c++0x")
 		IF(COMPILER_IS_CLANG)
 			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 		ELSE()
