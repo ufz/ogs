@@ -475,7 +475,7 @@ template <typename POINT>
 class Grid<POINT*> : public GeoLib::AABB
 {
 public:
-	Grid(std::vector<POINT> const& pnts, size_t max_num_per_grid_cell = 512) :
+	Grid(std::vector<POINT*> const& pnts, size_t max_num_per_grid_cell = 512) :
 		GeoLib::AABB(), _grid_quad_to_node_map(NULL)
 	{
 		// compute axis aligned bounding box
@@ -542,7 +542,7 @@ public:
 		}
 
 		const size_t n_plane(_n_steps[0] * _n_steps[1]);
-		_grid_quad_to_node_map = new std::vector<POINT>[n_plane * _n_steps[2]];
+		_grid_quad_to_node_map = new std::vector<POINT*>[n_plane * _n_steps[2]];
 
 		// some frequently used expressions to fill the grid vectors
 		for (size_t k(0); k < 3; k++) {
@@ -794,7 +794,7 @@ private:
 	double _step_sizes[3];
 	double _inverse_step_sizes[3];
 	size_t _n_steps[3];
-	std::vector<POINT>* _grid_quad_to_node_map;
+	std::vector<POINT*>* _grid_quad_to_node_map;
 };
 
 } // end namespace GeoLib
