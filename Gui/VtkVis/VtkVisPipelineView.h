@@ -22,9 +22,8 @@ class VtkVisPipelineItem;
 class vtkProp3D;
 class vtkDataObject;
 
-namespace MeshLib
-{
-class CFEMesh;
+namespace MeshLib {
+	class Mesh;
 }
 
 /**

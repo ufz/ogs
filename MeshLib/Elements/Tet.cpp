@@ -37,7 +37,6 @@ const unsigned Tet::_edge_nodes[6][2] =
 	{2, 3}  // Edge 5
 };
 
-
 Tet::Tet(Node* nodes[4], unsigned value)
 	: Cell(value)
 {
@@ -111,6 +110,20 @@ Element* Tet::clone() const
 	return new Tet(*this);
 }
 
+unsigned Tet::identifyFace(Node* nodes[3]) const
+{
+	for (unsigned i=0; i<4; i++)
+	{
+		unsigned flag(0);
+		for (unsigned j=0; j<3; j++)
+			for (unsigned k=0; k<3; k++)
+				if (_nodes[_face_nodes[i][j]] == nodes[k]) 
+					flag++;
+		if (flag==3)
+			return i;
+	}
+	return std::numeric_limits<unsigned>::max();
+}
 Element* Tet::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {

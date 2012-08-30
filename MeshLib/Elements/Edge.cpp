@@ -21,7 +21,7 @@ Edge::Edge(Node* nodes[2], unsigned value)
 	: Element(value)
 {
 	_nodes = nodes;
-	this->_length = this->computeLength();
+	this->_length = this->computeVolume();
 }
 
 Edge::Edge(Node* n0, Node* n1, unsigned value)
@@ -31,7 +31,7 @@ Edge::Edge(Node* n0, Node* n1, unsigned value)
 	_nodes[0] = n0;
 	_nodes[1] = n1;
 
-	this->_length = this->computeLength();
+	this->_length = this->computeVolume();
 }
 
 Edge::Edge(const Edge &edge)
@@ -47,7 +47,7 @@ Edge::~Edge()
 {
 }
 
-double Edge::computeLength()
+double Edge::computeVolume()
 {
 	return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
 }

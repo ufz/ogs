@@ -15,13 +15,11 @@
 #include "GeoType.h"
 #include <QTreeView>
 
-class GridAdapter;
 class MshModel;
 class VtkMeshSource;
 
-namespace MeshLib
-{
-class CFEMesh;
+namespace MeshLib {
+	class Mesh;
 }
 /*
    namespace GeoLib {

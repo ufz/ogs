@@ -41,7 +41,7 @@ public:
 	 * @param pcs a pointer to the process
 	 * @return
 	 */
-	ProcessInfo (FiniteElement::ProcessType pcs_type, FiniteElement::PrimaryVariable pcs_pv/*, CRFProcess* pcs*/);
+	ProcessInfo (FiniteElement::ProcessType pcs_type, FiniteElement::PrimaryVariable pcs_pv/* TODO6 , CRFProcess* pcs*/);
 
 	/**
 	 * Sets the process type.
