@@ -18,9 +18,9 @@
 namespace FileIO
 {
 
-std::vector<GEOLIB::Point*> *RapidXMLInterface::readStationFile(const std::string &fileName)
+std::vector<GeoLib::Point*> *RapidXMLInterface::readStationFile(const std::string &fileName)
 {
-	std::vector<GEOLIB::Point*> *stations = new std::vector<GEOLIB::Point*>;
+	std::vector<GeoLib::Point*> *stations = new std::vector<GeoLib::Point*>;
 	std::ifstream in(fileName.c_str());
 	if (in.fail())
 	{
@@ -129,7 +129,7 @@ int RapidXMLInterface::rapidReadFile(const std::string &fileName)
 	return 1;
 }
 */
-void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, std::vector<GEOLIB::Point*> *stations, const std::string &file_name)
+void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name)
 {
 	for (rapidxml::xml_node<>* station_node = station_root->first_node(); station_node; station_node = station_node->next_sibling())
 	{
@@ -151,7 +151,7 @@ void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, s
 
 			if (std::string(station_node->name()).compare("station") == 0)
 			{
-				GEOLIB::Station* s = new GEOLIB::Station(
+				GeoLib::Station* s = new GeoLib::Station(
 							strtod(station_node->first_attribute("x")->value(), 0),
 				            strtod(station_node->first_attribute("y")->value(), 0),
 				            zVal,
@@ -169,7 +169,7 @@ void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, s
 					bdate_str = station_node->first_node("bdate")->value();
 				/* add other borehole features here */
 
-				GEOLIB::StationBorehole* s = GEOLIB::StationBorehole::createStation(
+				GeoLib::StationBorehole* s = GeoLib::StationBorehole::createStation(
 				        station_name,
 				        strtod(station_node->first_attribute("x")->value(), 0),
 				        strtod(station_node->first_attribute("y")->value(), 0),
@@ -190,7 +190,7 @@ void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, s
 	}
 }
 
-void RapidXMLInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root, GEOLIB::StationBorehole* borehole )
+void RapidXMLInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole )
 {
 	double depth_check((*borehole)[2]);
 
