@@ -16,7 +16,8 @@
 #include "XmlStnInterface.h"
 #include "XmlCndInterface.h"
 
-#include "MeshIO.h"
+#include "Legacy/MeshIO.h"
+#include "Mesh.h"
 
 #include <QFileInfo>
 #include <QFile>
@@ -96,11 +97,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 			                       fileList.at(i).toElement().text().toStdString();
 			FileIO::MeshIO meshIO;
 			MeshLib::Mesh* msh = meshIO.loadMeshFromFile(msh_name);
-			QFileInfo fi(QString::fromStdString(msh_name));
-			std::string name = fi.fileName().toStdString();
-			_project->addMesh(msh, name);
-			//GridAdapter msh(fileList.at(i).toElement().text().toStdString());
-			// TODO gridadapter to mesh-models
+			_project->addMesh(msh);
 		}
 	}
 
@@ -154,14 +151,13 @@ int XmlGspInterface::write(std::ostream& stream)
 	}
 
 	// MSH
-	const std::map<std::string, MeshLib::Mesh*> msh_vec = _project->getMeshObjects();
-	for (std::map<std::string, MeshLib::Mesh*>::const_iterator it(msh_vec.begin());
-	     it != msh_vec.end(); ++it)
+	const std::vector<MeshLib::Mesh*> msh_vec = _project->getMeshObjects();
+	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
 	{
 		// write mesh file
-		std::string fileName(path + it->first);
 		FileIO::MeshIO meshIO;
-		meshIO.setMesh(it->second);
+		meshIO.setMesh(*it);
+		std::string fileName(path + (*it)->getName());
 		meshIO.writeToFile(fileName);
 
 		// write entry in project file
@@ -169,7 +165,7 @@ int XmlGspInterface::write(std::ostream& stream)
 		root.appendChild(mshTag);
 		QDomElement fileNameTag = doc.createElement("file");
 		mshTag.appendChild(fileNameTag);
-		QDomText fileNameText = doc.createTextNode(QString::fromStdString(it->first));
+		QDomText fileNameText = doc.createTextNode(QString::fromStdString((*it)->getName()));
 		fileNameTag.appendChild(fileNameText);
 	}
 

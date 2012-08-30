@@ -72,10 +72,13 @@ public:
 	const std::string getName() const { return _name; };
 
 	/// Get the nodes-vector for the mesh.
-	const std::vector<Node*> getNodes() const { return _nodes; };
+	std::vector<Node*> const& getNodes() const { return _nodes; };
 
 	/// Get the element-vector for the mesh.
-	const std::vector<Element*> getElements() const { return _elements; };
+	std::vector<Element*> const& getElements() const { return _elements; };
+
+	/// Resets the IDs of all mesh-nodes to their position in the node vector
+	void resetNodeIDs();
 
 	/**
 	 * Set the minimum and maximum length over the edges of the mesh.
@@ -83,6 +86,9 @@ public:
 	 * function or by some other means.
 	 */
 	void setEdgeLengthRange(const double &min_length, const double &max_length);
+
+	/// Changes the name of the mesh.
+	void setName(const std::string &name) { this->_name = name; };
 
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.

@@ -111,6 +111,23 @@ Element* Tet::clone() const
 	return new Tet(*this);
 }
 
+Element* Tet::reviseElement() const
+{
+	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
+		return new Tri(_nodes[0], _nodes[2], _nodes[3], _value);
+	}
 
+	if (_nodes[2] == _nodes[0]) {
+		return new Tri(_nodes[0], _nodes[1], _nodes[3], _value);
+	}
+
+	if (_nodes[0] == _nodes[3] || _nodes[1] == _nodes[3] || _nodes[2] == _nodes[3]) {
+		return new Tri(_nodes[0], _nodes[1], _nodes[2], _value);
+	}
+
+	// this should not happen
+	return NULL;
 }
+
+} // end namespace MeshLib
 

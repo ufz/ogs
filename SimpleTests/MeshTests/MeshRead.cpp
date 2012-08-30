@@ -17,7 +17,7 @@
 #include "Node.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
-#include "MeshIO.h"
+#include "Legacy/MeshIO.h"
 
 int main(int argc, char *argv[])
 {

@@ -237,17 +237,5 @@ std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<size_t> &subs
 	return new_points;
 }
 
-std::vector<GeoLib::Point*>* PointVec::deepcopy(const std::vector<GeoLib::Point*> *pnt_vec)
-{
-	std::vector<GeoLib::Point*>* new_points (new std::vector<GeoLib::Point*>);
-
-	const size_t nPoints(pnt_vec->size());
-	for (size_t i = 0; i < nPoints; i++)
-		new_points->push_back(new GeoLib::Point((*pnt_vec)[i]->getCoords()));
-	return new_points;
-}
-
-
-
 
 } // end namespace

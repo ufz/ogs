@@ -25,6 +25,7 @@ namespace MeshLib {
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
 	: _name(name), _nodes(nodes), _elements(elements)
 {
+	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
 	_edge_length[0] = 0;
 	_edge_length[1] = 0;
 	this->makeNodesUnique();
@@ -81,6 +82,13 @@ void Mesh::addElement(Element* elem)
 	unsigned nNodes (elem->getNNodes());
 	for (unsigned i=0; i<nNodes; i++)
 		elem->_nodes[i]->addElement(elem);
+}
+
+void Mesh::resetNodeIDs()
+{
+	const size_t nNodes (this->_nodes.size());
+	for (unsigned i=0; i<nNodes; i++)
+		_nodes[i]->setID(i);
 }
 
 void Mesh::setElementInformationForNodes()

@@ -29,8 +29,9 @@ class Element;
  */
 class Node : public GeoLib::PointWithID
 {
-	/* friend functions: */
+	/* friend classes: */
 	friend class Mesh;//void Mesh::setElementInformationForNodes();
+	friend class MeshCoarsener;
 	//friend void Mesh::addElement(Element*);
 
 
@@ -62,6 +63,9 @@ protected:
 	 * This method is called by Mesh::addElement(Element*), see friend definition.
 	 */
 	void addElement(Element* elem) { _elements.push_back(elem); };
+
+	/// Sets the ID of a node to the given value.
+	void setID(unsigned id) { this->_id = id; };
 
 	std::vector<Element*> _elements;
 

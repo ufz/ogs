@@ -13,6 +13,11 @@
 #ifndef FILEFINDER_H
 #define FILEFINDER_H
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <list>
+
 namespace BaseLib {
 /**
  * FileFinder stores a list of directories and will return the complete path
@@ -40,10 +45,10 @@ public:
 	 * If the file is located in more than one of the directories in the search list, only the
 	 * first location will be returned.
 	 */
-	std::string getPath(std::string filename)
+	std::string getPath(std::string filename) const
 	{
 		if (_directories.empty()) std::cout << "Error: FileFinder::getPath() -- directory list is empty." << std::endl;
-		for (std::list<std::string>::iterator it = _directories.begin(); it != _directories.end(); ++it)
+		for (std::list<std::string>::const_iterator it = _directories.begin(); it != _directories.end(); ++it)
 		{
 			std::string testDir(*it);
 			std::ifstream is(testDir.append(filename).c_str());

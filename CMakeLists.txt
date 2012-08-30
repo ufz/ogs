@@ -18,6 +18,16 @@ ENDIF() # NOT OGS_NO_EXTERNAL_LIBS
 INCLUDE(scripts/cmake/ProjectSetup.cmake)
 INCLUDE(scripts/cmake/DocumentationSetup.cmake)
 
+###########################################################################
+### OGS version information. Adjust these if you release a new version. ###
+###########################################################################
+SET (OGS_VERSION_MAJOR 0)
+SET (OGS_VERSION_MINOR 0)
+SET (OGS_VERSION_PATCH 1)
+SET (OGS_RELEASE_PERSONS "LB/TF/KR")
+SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}(${OGS_RELEASE_PERSONS})")
+SET (OGS_DATE "2012-08-20")
+
 ###############
 ### Options ###
 ###############
@@ -41,6 +51,8 @@ IF (OGS_BUILD_INFO)
 	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
 ENDIF (OGS_BUILD_INFO)
 
+OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
+
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 ######################
@@ -60,5 +72,10 @@ ADD_SUBDIRECTORY( SimpleTests/MeshTests )
 IF(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
 	ADD_SUBDIRECTORY( SimpleTests/SolverTests )
 ENDIF()
+IF(OGS_BUILD_GUI)
+	ADD_DEFINITIONS(-DOGS_BUILD_GUI)
+	ADD_SUBDIRECTORY(Gui)
+ENDIF()
 
 CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)
+CONFIGURE_FILE (BaseLib/Configure.h.in ${PROJECT_BINARY_DIR}/BaseLib/Configure.h)

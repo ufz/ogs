@@ -572,7 +572,9 @@ INPUT                  = ${CMAKE_SOURCE_DIR}/BaseLib \
                          ${CMAKE_SOURCE_DIR}/FileIO \
                          ${CMAKE_SOURCE_DIR}/GeoLib \
                          ${CMAKE_SOURCE_DIR}/MathLib \
-                         ${CMAKE_SOURCE_DIR}/MeshLib
+                         ${CMAKE_SOURCE_DIR}/MeshLib \
+                         ${CMAKE_SOURCE_DIR}/Gui \
+                         ${CMAKE_SOURCE_DIR}/README.md
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

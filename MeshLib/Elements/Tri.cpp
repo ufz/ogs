@@ -11,6 +11,7 @@
  */
 
 #include "Tri.h"
+#include "Edge.h"
 #include "Node.h"
 
 #include "MathTools.h"
@@ -74,6 +75,20 @@ Element* Tri::clone() const
 double Tri::computeArea()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords());
+}
+
+Element* Tri::reviseElement() const
+{
+	// try to create an edge
+	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
+		return new Edge(_nodes[0], _nodes[2], _value);
+	}
+
+	if (_nodes[0] == _nodes[2]) {
+		return new Edge(_nodes[0], _nodes[1], _value);
+	}
+
+	return NULL;
 }
 
 }

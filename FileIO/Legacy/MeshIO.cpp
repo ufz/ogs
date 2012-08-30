@@ -21,6 +21,8 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+#include "StringTools.h"
+
 #include <iomanip>
 #include <sstream>
 
@@ -34,12 +36,12 @@ MeshIO::MeshIO()
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
-	std::cout << "Read mesh ... " << std::endl;
+	std::cout << "Reading OGS legacy mesh ... ";
 
 	std::ifstream in (file_name.c_str(),std::ios::in);
 	if (!in.is_open())
 	{
-		std::cout << "CFEMesh::FEMRead() - Could not open file...\n";
+		std::cout << std::endl << "CFEMesh::FEMRead() - Could not open file...\n";
 		return NULL;
 	}
 
@@ -99,9 +101,11 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 			}
 		}
 
-		MeshLib::Mesh* mesh (new MeshLib::Mesh(file_name, nodes, elements));
+
+		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name), nodes, elements));
 		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
 
+		std::cout << "finished." << std::endl;
 		std::cout << "Nr. Nodes: " << nodes.size() << std::endl;
 		std::cout << "Nr. Elements: " << elements.size() << std::endl;
 
@@ -132,37 +136,37 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::EDGE:
 		for (int i = 0; i < 2; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Edge(nodes[idx[0]], nodes[idx[1]], patch_index);
+		elem = new MeshLib::Edge(nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	case MshElemType::TRIANGLE:
 		for (int i = 0; i < 3; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Tri(nodes[idx[0]], nodes[idx[1]], nodes[idx[2]], patch_index);
+		elem = new MeshLib::Tri(nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	case MshElemType::QUAD:
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Quad(nodes[idx[0]], nodes[idx[1]], nodes[idx[2]], nodes[idx[3]], patch_index);
+		elem = new MeshLib::Quad(nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	case MshElemType::TETRAHEDRON:
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Tet(nodes[idx[0]], nodes[idx[1]], nodes[idx[2]], nodes[idx[3]], patch_index);
+		elem = new MeshLib::Tet(nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	case MshElemType::HEXAHEDRON:
 		for (int i = 0; i < 8; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Hex(nodes[idx[0]], nodes[idx[1]], nodes[idx[2]], nodes[idx[3]], nodes[idx[4]], nodes[idx[5]], nodes[idx[6]], nodes[idx[7]], patch_index);
+		elem = new MeshLib::Hex(nodes[idx[7]], nodes[idx[6]], nodes[idx[5]], nodes[idx[4]], nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	case MshElemType::PYRAMID:
 		for (int i = 0; i < 5; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Pyramid(nodes[idx[0]], nodes[idx[1]], nodes[idx[2]], nodes[idx[3]], nodes[idx[4]], patch_index);
+		elem = new MeshLib::Pyramid(nodes[idx[4]], nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	case MshElemType::PRISM:
 		for (int i = 0; i < 6; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Prism(nodes[idx[0]], nodes[idx[1]], nodes[idx[2]], nodes[idx[3]], nodes[idx[4]], nodes[idx[5]], patch_index);
+		elem = new MeshLib::Prism(nodes[idx[5]], nodes[idx[4]], nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
 		break;
 	default:
 		elem = NULL;
@@ -229,7 +233,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	out << n_elements << std::endl;
 	for (size_t i(0), k(0); i < ele_vector_size; i++) {
 		if (non_line_element[i] && non_null_element[i]) {
-			out << k << " 0 " << MshElemType2String(ele_vec[i]->getType()) << " ";
+			out << k << " " << ele_vec[i]->getValue() << " " << MshElemType2String(ele_vec[i]->getType()) << " ";
 			for(size_t j = 0; j < ele_vec[i]->getNNodes()-1; j++)
 				out << ele_vec[i]->getNode(j)->getID() << " ";
 			out << ele_vec[i]->getNode(ele_vec[i]->getNNodes()-1)->getID() << std::endl;
