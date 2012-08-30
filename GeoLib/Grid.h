@@ -282,9 +282,81 @@ public:
 	 * POINT object a NULL pointer is returned.
 	 *
 	 * @param pnt a field that holds the coordinates of the point
-	 * @return a point with the smallest distance within the grid cells that are outlined above or NULL
+	 * @return a pointer to the point with the smallest distance within the grid cells that are
+	 * outlined above or NULL
 	 */
-	POINT const* getNearestPoint(double const*const pnt) const;
+	const typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type
+	getNearestPoint(double const*const pnt) const
+	{
+		size_t coords[3];
+		getGridCoords(pnt, coords);
+
+		double sqr_min_dist (MathLib::sqrDist(&_min_pnt, &_max_pnt));
+		typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type nearest_pnt(NULL);
+
+		double dists[6];
+		getPointCellBorderDistances(pnt, dists, coords);
+
+		if (calcNearestPointInGridCell(pnt, coords, sqr_min_dist, nearest_pnt)) {
+			double min_dist(sqrt(sqr_min_dist));
+			if (dists[0] >= min_dist
+							&& dists[1] >= min_dist
+							&& dists[2] >= min_dist
+							&& dists[3] >= min_dist
+							&& dists[4] >= min_dist
+							&& dists[5] >= min_dist) {
+				return nearest_pnt;
+			}
+		} else {
+			// search in all border cells for at least one neighbor
+					double sqr_min_dist_tmp;
+					typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type nearest_pnt_tmp(NULL);
+					size_t offset(1);
+
+					while (nearest_pnt == NULL) {
+						size_t tmp_coords[3];
+						for (tmp_coords[0] = coords[0]-offset; tmp_coords[0]<coords[0]+offset; tmp_coords[0]++) {
+						for (tmp_coords[1] = coords[1]-offset; tmp_coords[1]<coords[1]+offset; tmp_coords[1]++) {
+							for (tmp_coords[2] = coords[2]-offset; tmp_coords[2]<coords[2]+offset; tmp_coords[2]++) {
+								// do not check the origin grid cell twice
+								if (!(tmp_coords[0] == coords[0] && tmp_coords[1] == coords[1] && tmp_coords[2] == coords[2])) {
+									// check if temporary grid cell coordinates are valid
+									if (tmp_coords[0] < _n_steps[0] && tmp_coords[1] < _n_steps[1] && tmp_coords[2] < _n_steps[2]) {
+										if (calcNearestPointInGridCell(pnt, tmp_coords, sqr_min_dist_tmp, nearest_pnt_tmp)) {
+											if (sqr_min_dist_tmp < sqr_min_dist) {
+												sqr_min_dist = sqr_min_dist_tmp;
+												nearest_pnt = nearest_pnt_tmp;
+											}
+										}
+									} // valid grid cell coordinates
+								} // same element
+							}  // end k
+						} // end j
+					} // end i
+					offset++;
+				} // end while
+			} // end else
+
+			double len (sqrt(MathLib::sqrDist(pnt, nearest_pnt->getCoords())));
+			// search all other grid cells within the cube with the edge nodes
+			std::vector<std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const*> vecs_of_pnts;
+			getVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
+
+			const size_t n_vecs(vecs_of_pnts.size());
+			for (size_t j(0); j<n_vecs; j++) {
+				std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(*(vecs_of_pnts[j]));
+				const size_t n_pnts(pnts.size());
+				for (size_t k(0); k<n_pnts; k++) {
+					const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
+					if (sqr_dist < sqr_min_dist) {
+						sqr_min_dist = sqr_dist;
+						nearest_pnt = pnts[k];
+					}
+				}
+			}
+
+			return nearest_pnt;
+	}
 
 	/**
 	 * Method fetches the vectors of all grid cells intersecting the axis aligned cube
@@ -349,7 +421,25 @@ private:
 	void getPointCellBorderDistances(double const*const pnt, double dists[6], size_t const* const coords) const;
 
 	bool calcNearestPointInGridCell(double const* const pnt, size_t const* const coords,
-					double &sqr_min_dist, POINT* &nearest_pnt) const;
+					double &sqr_min_dist,
+					typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type &nearest_pnt) const
+	{
+		const size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
+		std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
+		if (pnts.empty()) return false;
+
+		const size_t n_pnts(pnts.size());
+		sqr_min_dist = MathLib::sqrDist(pnts[0]->getCoords(), pnt);
+		nearest_pnt = pnts[0];
+		for (size_t i(1); i < n_pnts; i++) {
+			const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt));
+			if (sqr_dist < sqr_min_dist) {
+				sqr_min_dist = sqr_dist;
+				nearest_pnt = pnts[i];
+			}
+		}
+		return true;
+	}
 	double _step_sizes[3];
 	double _inverse_step_sizes[3];
 	size_t _n_steps[3];
@@ -360,80 +450,6 @@ private:
 	 */
 	std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type>* _grid_cell_nodes_map;
 };
-
-template <typename POINT>
-POINT const* Grid<POINT>::getNearestPoint(double const*const pnt) const
-{
-	size_t coords[3];
-	getGridCoords(pnt, coords);
-
-	double sqr_min_dist (MathLib::sqrDist(&_min_pnt, &_max_pnt));
-	POINT* nearest_pnt(NULL);
-
-	double dists[6];
-	getPointCellBorderDistances(pnt, dists, coords);
-
-	if (calcNearestPointInGridCell(pnt, coords, sqr_min_dist, nearest_pnt)) {
-		double min_dist(sqrt(sqr_min_dist));
-		if (dists[0] >= min_dist
-			&& dists[1] >= min_dist
-			&& dists[2] >= min_dist
-			&& dists[3] >= min_dist
-			&& dists[4] >= min_dist
-			&& dists[5] >= min_dist) {
-			return nearest_pnt;
-		}
-	} else {
-		// search in all border cells for at least one neighbor
-		double sqr_min_dist_tmp;
-		POINT* nearest_pnt_tmp(NULL);
-		size_t offset(1);
-
-		while (nearest_pnt == NULL) {
-			size_t tmp_coords[3];
-			for (tmp_coords[0] = coords[0]-offset; tmp_coords[0]<coords[0]+offset; tmp_coords[0]++) {
-				for (tmp_coords[1] = coords[1]-offset; tmp_coords[1]<coords[1]+offset; tmp_coords[1]++) {
-					for (tmp_coords[2] = coords[2]-offset; tmp_coords[2]<coords[2]+offset; tmp_coords[2]++) {
-						// do not check the origin grid cell twice
-						if (!(tmp_coords[0] == coords[0] && tmp_coords[1] == coords[1] && tmp_coords[2] == coords[2])) {
-							// check if temporary grid cell coordinates are valid
-							if (tmp_coords[0] < _n_steps[0] && tmp_coords[1] < _n_steps[1] && tmp_coords[2] < _n_steps[2]) {
-								if (calcNearestPointInGridCell(pnt, tmp_coords, sqr_min_dist_tmp, nearest_pnt_tmp)) {
-									if (sqr_min_dist_tmp < sqr_min_dist) {
-										sqr_min_dist = sqr_min_dist_tmp;
-										nearest_pnt = nearest_pnt_tmp;
-									}
-								}
-							} // valid grid cell coordinates
-						} // same element
-					}  // end k
-				} // end j
-			} // end i
-			offset++;
-		} // end while
-	} // end else
-
-	double len (sqrt(MathLib::sqrDist(pnt, nearest_pnt->getCoords())));
-	// search all other grid cells within the cube with the edge nodes
-	std::vector<std::vector<POINT*> const*> vecs_of_pnts;
-	getVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
-
-	const size_t n_vecs(vecs_of_pnts.size());
-	for (size_t j(0); j<n_vecs; j++) {
-		std::vector<POINT*> const& pnts(vecs_of_pnts[j]);
-		const size_t n_pnts(pnts.size());
-		for (size_t k(0); k<n_pnts; k++) {
-			const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
-			if (sqr_dist < sqr_min_dist) {
-				sqr_min_dist = sqr_dist;
-				nearest_pnt = pnts[k];
-			}
-		}
-	}
-
-	return nearest_pnt;
-}
-
 
 template<typename POINT>
 void Grid<POINT>::getVecsOfGridCellsIntersectingCube(double const* const pnt, double half_len,
@@ -557,27 +573,6 @@ void Grid<POINT>::getGridCoords(double const*const pnt, size_t* coords) const
 			}
 		}
 	}
-}
-
-template <typename POINT>
-bool Grid<POINT>::calcNearestPointInGridCell(double const* const pnt, size_t const* const coords,
-					double &sqr_min_dist, POINT*& nearest_pnt) const
-{
-	const size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
-	std::vector<POINT*> const& pnts(_grid_cell_nodes_map[grid_idx]);
-	if (pnts.empty()) return false;
-
-	const size_t n_pnts(pnts.size());
-	sqr_min_dist = MathLib::sqrDist(pnts[0]->getCoords(), pnt);
-	nearest_pnt = pnts[0];
-	for (size_t i(1); i < n_pnts; i++) {
-		const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt));
-		if (sqr_dist < sqr_min_dist) {
-			sqr_min_dist = sqr_dist;
-			nearest_pnt = pnts[i];
-		}
-	}
-	return true;
 }
 
 template <typename POINT>
