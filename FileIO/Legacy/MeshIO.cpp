@@ -41,7 +41,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 	std::ifstream in (file_name.c_str(),std::ios::in);
 	if (!in.is_open())
 	{
-		std::cout << std::endl << "CFEMesh::FEMRead() - Could not open file...\n";
+		std::cout << std::endl << "MeshIO::loadMeshFromFile() - Could not open file...\n";
 		return NULL;
 	}
 

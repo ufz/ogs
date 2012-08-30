@@ -34,7 +34,7 @@ Quad::Quad(Node* nodes[4], unsigned value)
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->computeArea();
+	this->_area = this->computeVolume();
 }
 
 Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
@@ -48,7 +48,7 @@ Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->computeArea();
+	this->_area = this->computeVolume();
 }
 
 Quad::Quad(const Quad &quad)
@@ -68,7 +68,7 @@ Quad::~Quad()
 {
 }
 
-double Quad::computeArea()
+double Quad::computeVolume()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords())
          + MathLib::calcTriangleArea(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords());
@@ -79,6 +79,20 @@ Element* Quad::clone() const
 	return new Quad(*this);
 }
 
+unsigned Quad::identifyFace(Node* nodes[3]) const
+{
+	for (unsigned i=0; i<4; i++)
+	{
+		unsigned flag(0);
+		for (unsigned j=0; j<2; j++)
+			for (unsigned k=0; k<2; k++)
+				if (_nodes[_edge_nodes[i][j]] == nodes[k]) 
+					flag++;
+		if (flag==2)
+			return i;
+	}
+	return std::numeric_limits<unsigned>::max();
+}
 
 }
 

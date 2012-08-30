@@ -116,6 +116,7 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 			// Element data
 			getline(in, line); // Element keyword $Elements
 			in >> n_elements >> std::ws; // number-of-elements
+			elements.reserve(n_elements);
 			unsigned idx, type, n_tags, dummy, mat_id;
 			for (size_t i = 0; i < n_elements; i++)
 			{

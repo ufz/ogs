@@ -15,16 +15,16 @@
 #include <cstddef>
 #include <vector>
 
+#include "Point.h"
+
 namespace GeoLib {
 	class PointWithID;
 }
 
-namespace MeshLib
-{
-class Mesh;
+namespace MeshLib {
+	class Mesh;
+	class Element;
 }
-
-class GridAdapter;
 
 /**
  * \brief A set of tools for manipulating existing meshes
@@ -35,12 +35,17 @@ public:
 	MshEditor() {}
 	~MshEditor() {}
 
-	static MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh,
-	                                         const std::vector<size_t> &nodes);
+	/// Returns the area assigned to each node on a surface mesh.
+	static void getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec);
 
+	/// Removes the mesh nodes (and connected elements) given in the nodes-list from the mesh.
+	static MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
+
+	/// Returns the surface nodes of a layered mesh.
 	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh);
 
-	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh);
+	/// Returns the 2d-element mesh representing the surface of the given layered mesh. 
+	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const double* dir);
 
 private:
 };

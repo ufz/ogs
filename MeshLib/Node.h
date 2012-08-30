@@ -31,6 +31,8 @@ class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
 	friend class Mesh;
+	friend class MshEditor;
+	friend class MshLayerMapper;
 
 public:
 	/// Constructor using a coordinate array
@@ -64,6 +66,10 @@ protected:
 	/// Sets the ID of a node to the given value.
 	void setID(unsigned id) { this->_id = id; };
 
+	/// Update coordinates of a node.
+	/// This method automatically also updates the areas/volumes of all connected elements.
+	virtual void updateCoordinates(double x, double y, double z);
+	
 	std::vector<Element*> _elements;
 
 }; /* class */

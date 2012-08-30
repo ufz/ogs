@@ -63,9 +63,6 @@ protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Face(unsigned value = 0);
 
-	/// Calculate the area of this 2d element.
-	virtual double computeArea() = 0;
-
 	double _area;
 
 private:

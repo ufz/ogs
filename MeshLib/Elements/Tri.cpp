@@ -33,7 +33,7 @@ Tri::Tri(Node* nodes[3], unsigned value)
 	_neighbors = new Element*[3];
 	for (unsigned i=0; i<3; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->computeArea();
+	this->_area = this->computeVolume();
 }
 
 Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
@@ -46,7 +46,7 @@ Tri::Tri(Node* n0, Node* n1, Node* n2, unsigned value)
 	_neighbors = new Element*[3];
 	for (unsigned i=0; i<3; i++)
 		_neighbors[i] = NULL;
-	this->_area = this->computeArea();
+	this->_area = this->computeVolume();
 }
 
 Tri::Tri(const Tri &tri)
@@ -71,9 +71,24 @@ Element* Tri::clone() const
 	return new Tri(*this);
 }
 
-double Tri::computeArea()
+double Tri::computeVolume()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords());
+}
+
+unsigned Tri::identifyFace(Node* nodes[3]) const
+{
+	for (unsigned i=0; i<3; i++)
+	{
+		unsigned flag(0);
+		for (unsigned j=0; j<2; j++)
+			for (unsigned k=0; k<2; k++)
+				if (_nodes[_edge_nodes[i][j]] == nodes[k]) 
+					flag++;
+		if (flag==2)
+			return i;
+	}
+	return std::numeric_limits<unsigned>::max();
 }
 
 }

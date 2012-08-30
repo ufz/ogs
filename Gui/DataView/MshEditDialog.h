@@ -44,8 +44,15 @@ private:
 	QVector<QPushButton*> _buttons;
 	QCheckBox* _noDataDeleteBox;
 
+	QLabel* _nLayerLabel;
+	QLabel* _selectLabel;
+	QLineEdit* _layerEdit;
+	QPushButton* _nextButton;
+
 private slots:
 	void getFileName();
+
+	void nextButtonPressed();
 
 	/// Instructions if the OK-Button has been pressed.
 	void accept();
@@ -54,7 +61,7 @@ private slots:
 	void reject();
 
 signals:
-	void mshEditFinished(MeshLib::Mesh*, std::string&);
+	void mshEditFinished(MeshLib::Mesh*);
 };
 
 #endif //MSHEDITDIALOG_H

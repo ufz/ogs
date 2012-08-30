@@ -110,8 +110,8 @@ void DataView::openMshEditDialog()
 	        static_cast<MshModel*>(this->model())->getMesh(index);
 
 	MshEditDialog meshEdit(mesh);
-	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::CFEMesh*, std::string &)),
-		    model, SLOT(addMesh(MeshLib::CFEMesh*, std::string &)));
+	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
+		    model, SLOT(addMesh(MeshLib::Mesh*)));
 	meshEdit.exec();
 }
 

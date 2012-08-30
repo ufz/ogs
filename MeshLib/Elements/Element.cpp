@@ -36,9 +36,8 @@ Element::~Element()
 
 bool Element::addNeighbor(Element* e)
 {
-	unsigned n(0);
 	unsigned nNeighbors (this->getNNeighbors());
-	for (n=0; n<nNeighbors; n++)
+	for (unsigned n=0; n<nNeighbors; n++)
 	{
 		if (this->_neighbors[n] == e)
 			return false;
@@ -46,24 +45,26 @@ bool Element::addNeighbor(Element* e)
 			break;
 	}
 
-	if (n<nNeighbors)
-	{
-		const unsigned nNodes (this->getNNodes());
-		const unsigned eNodes (e->getNNodes());
-		const Node* const* e_nodes = e->getNodes();
-		unsigned count(0);
-		const unsigned dim (this->getDimension());
-		for (unsigned i(0); i<nNodes; i++)
-			for (unsigned j(0); j<eNodes; j++)
-				if (_nodes[i] == e_nodes[j])
-					//std::cout << _nodes[i]->getID() << " == " << e_nodes[j]->getID() << std::endl;
-					// increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
-					if ((++count)>=dim)
-					{
-						_neighbors[n]=e;
-						return true;
-					}
-	}
+	Node* face_nodes[3];
+	const unsigned nNodes (this->getNNodes());
+	const unsigned eNodes (e->getNNodes());
+	const Node* const* e_nodes = e->getNodes();
+	unsigned count(0);
+	const unsigned dim (this->getDimension());
+	for (unsigned i(0); i<nNodes; i++)
+		for (unsigned j(0); j<eNodes; j++)
+			if (_nodes[i] == e_nodes[j])
+			{
+				face_nodes[count] = _nodes[i];
+				//std::cout << _nodes[i]->getID() << " == " << e_nodes[j]->getID() << std::endl;
+				// increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
+				if ((++count)>=dim)
+				{
+					_neighbors[ this->identifyFace(face_nodes) ] = e;
+					return true;
+				}
+			}
+
 	return false;
 }
 

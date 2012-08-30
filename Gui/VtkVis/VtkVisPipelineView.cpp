@@ -94,11 +94,11 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 			connect(addLUTAction, SIGNAL(triggered()), this, SLOT(addColorTable()));
 		}
 
-		QAction* addConvertToCFEMeshAction(NULL);
+		QAction* addConvertToMeshAction(NULL);
 		if (objectType == VTK_UNSTRUCTURED_GRID)
 		{
-			addConvertToCFEMeshAction = menu.addAction("Convert to Mesh...");
-			connect(addConvertToCFEMeshAction, SIGNAL(triggered()), this,
+			addConvertToMeshAction = menu.addAction("Convert to Mesh...");
+			connect(addConvertToMeshAction, SIGNAL(triggered()), this,
 			        SLOT(convertVTKToOGSMesh()));
 		}
 		menu.addSeparator();

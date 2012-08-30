@@ -62,7 +62,7 @@ public:
 										  MshElemType::type elem_type,
 										  UseIntensityAs::type intensity_type);
 
-	/// Converts a vtkUnstructuredGrid object to a CFEMesh
+	/// Converts a vtkUnstructuredGrid object to a Mesh
 	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
 
 private:

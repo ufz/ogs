@@ -106,12 +106,21 @@ public:
 	 */
 	virtual Element* clone() const = 0;
 
+	/** 
+	 * Computes the length / area / volumen of this element. This is automatically
+	 * done at initalisation time but can be repeated by calling this function at any time.
+	 */
+	virtual double computeVolume() = 0;
+
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Element(unsigned value = 0);
 
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
+
+	/// Returns the ID of a face given an array of nodes.
+	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
 
 	Node** _nodes;
 	unsigned _value;

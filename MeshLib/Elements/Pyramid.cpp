@@ -123,4 +123,19 @@ Element* Pyramid::clone() const
 	return new Pyramid(*this);
 }
 
+unsigned Pyramid::identifyFace(Node* nodes[3]) const
+{
+	for (unsigned i=0; i<5; i++)
+	{
+		unsigned flag(0);
+		for (unsigned j=0; j<4; j++)
+			for (unsigned k=0; k<3; k++)
+				if (_face_nodes[i][j] != 99 && _nodes[_face_nodes[i][j]] == nodes[k]) 
+					flag++;
+		if (flag==3)
+			return i;
+	}
+	return std::numeric_limits<unsigned>::max();
+}
+
 } // end namespace MeshLib
