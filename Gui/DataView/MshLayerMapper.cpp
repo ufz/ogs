@@ -249,7 +249,7 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
 
 MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const size_t nLayers, const std::string &dem_raster)
 {
-	/*
+/*
 	// construct surface mesh from DEM
 	MeshLib::Mesh* dem = MshEditor::getMeshSurface(*mesh);
 	MshLayerMapper::LayerMapping(dem, dem_raster, 0, 0);
@@ -401,7 +401,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 	grid.setElements(elements);
 	MeshLib::CFEMesh* struct_mesh = new MeshLib::CFEMesh(*grid.getCFEMesh());
 	return struct_mesh;
-	*/
+*/
 	return new MeshLib::Mesh(*mesh);
 }
 

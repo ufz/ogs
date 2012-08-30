@@ -61,6 +61,7 @@
 #include "Legacy/OGSIOVer4.h"
 #include "MeshIO/GMSHInterface.h"
 // TODO6 #include "MeshIO/TetGenInterface.h"
+#include "MeshIO/VTKInterface.h"
 #include "PetrelInterface.h"
 #include "XmlIO/XmlCndInterface.h"
 #include "XmlIO/XmlGmlInterface.h"
@@ -522,6 +523,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
 #endif
 			}
+			else
+				OGSError::box("Failed to load a mesh file.");
+		}
+		else if (fi.suffix().toLower() == "vtu")
+		{
+			MeshLib::Mesh* msh = FileIO::VTKInterface::readVTUFile(fileName.toStdString());
+			if (msh)
+				_meshModels->addMesh(msh);
 			else
 				OGSError::box("Failed to load a mesh file.");
 		}

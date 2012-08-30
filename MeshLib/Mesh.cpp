@@ -141,7 +141,6 @@ void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length
 void Mesh::setNeighborInformationForElements()
 {
 	const size_t nElements = _elements.size();
-
 #ifdef _OPENMP
 	OPENMP_LOOP_TYPE m;
 	#pragma omp parallel for
@@ -150,20 +149,23 @@ void Mesh::setNeighborInformationForElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		const size_t nNodes (element->getNNodes());
-		for (unsigned n(0); n<nNodes; n++)
+		if (element->getType() != MshElemType::EDGE)
 		{
-			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
-			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
-		}
-
-		const unsigned nNeighbors ( neighbors.size() );
-
-		for (unsigned i(0); i<nNeighbors; i++)
-		{
-			if (element->addNeighbor(neighbors[i]))
+			const size_t nNodes (element->getNNodes());
+			for (unsigned n(0); n<nNodes; n++)
 			{
-				neighbors[i]->addNeighbor(element);
+				std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
+				neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+			}
+
+			const unsigned nNeighbors ( neighbors.size() );
+
+			for (unsigned i(0); i<nNeighbors; i++)
+			{
+				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getType() != MshElemType::EDGE)
+				{
+					neighbors[i]->addNeighbor(element);
+				}
 			}
 		}
 	}
@@ -173,26 +175,27 @@ void Mesh::setNeighborInformationForElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		const size_t nNodes (element->getNNodes());
-		for (unsigned n(0); n<nNodes; n++)
+		if (element->getType() != MshElemType::EDGE)
 		{
-			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
-			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
-		}
-
-		const unsigned nNeighbors ( neighbors.size() );
-
-		for (unsigned i(0); i<nNeighbors; i++)
-		{
-			if (element->addNeighbor(neighbors[i]))
+			const size_t nNodes (element->getNNodes());
+			for (unsigned n(0); n<nNodes; n++)
 			{
-				neighbors[i]->addNeighbor(element);
+				std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
+				neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+			}
+
+			const unsigned nNeighbors ( neighbors.size() );
+
+			for (unsigned i(0); i<nNeighbors; i++)
+			{
+				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getType() != MshElemType::EDGE)
+				{
+					neighbors[i]->addNeighbor(element);
+				}
 			}
 		}
 	}
-
 #endif
-
 }
 
 }
