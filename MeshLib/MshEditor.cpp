@@ -21,6 +21,7 @@
 
 #include "MathTools.h"
 
+namespace MeshLib {
 
 void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
 {
@@ -153,7 +154,7 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 	const std::vector<MeshLib::Element*> elements = mesh.getElements();
 	std::vector<MeshLib::Element*> new_elements;
 	const size_t nElements (mesh.getNElements());
-	
+
 	bool complete_surface = ((dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]) == 0) ? true : false;
 
 	// 2D meshes
@@ -173,7 +174,7 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 		}
 	}
 	// 3D meshes
-	else if (mesh.getDimension() == 3)	// 
+	else if (mesh.getDimension() == 3)	//
 	{
 		for (unsigned i=0; i<nElements; i++)
 		{
@@ -227,4 +228,4 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 
 }
 
-
+} // end namespace MeshLib
