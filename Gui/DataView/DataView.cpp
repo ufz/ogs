@@ -26,6 +26,7 @@
 #include <QSettings>
 
 #include "Legacy/MeshIO.h"
+#include "XmlIO/VTKInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 
 DataView::DataView( QWidget* parent /*= 0*/ )
@@ -128,13 +129,19 @@ int DataView::writeMeshToFile() const
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
 		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
 		                                    settings.value("lastOpenedMeshFileDirectory").toString(),
-											"GeoSys mesh file (*.msh)");
+											//"GeoSys mesh file (*.msh)");
+											"VTK Unstructured Grid (*.vtu)");
 
 		if (!fileName.isEmpty())
 		{
+			/*
 			FileIO::MeshIO meshIO;
 			meshIO.setMesh(mesh);
 			meshIO.writeToFile(fileName.toStdString().c_str());
+			*/
+			FileIO::VTKInterface vtkIO;
+			vtkIO.setMesh(mesh);
+			vtkIO.writeToFile(fileName.toStdString().c_str());
 			QDir dir = QDir(fileName);
 			settings.setValue("lastOpenedMeshFileDirectory", dir.absolutePath());
 			return 1;
