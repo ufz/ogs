@@ -26,6 +26,17 @@
 #include "Mesh.h"
 #include "Legacy/MeshIO.h"
 
+/**
+ * new formatter for logog
+ */
+class FormatterCustom : public logog::FormatterGCC
+{
+    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+    {
+        return ( Formatter::GetTopicFlags( topic ) &
+                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
+    }
+};
 
 void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 				std::vector<GeoLib::Point*>& pnts_for_search,
@@ -33,11 +44,20 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 {
 	// constructing Grid
 	INFO ("[MeshGridAlgorithm] constructing mesh grid object ...");
+#ifndef WIN32
+	BaseLib::MemWatch mem_watch;
+	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+#endif
 	clock_t start_grid_construction = clock();
-	GeoLib::Grid<MeshLib::Node*> mesh_grid(mesh->getNodes(), 512);
+	GeoLib::Grid<MeshLib::Node*> mesh_grid(mesh->getNodes(), 511);
 	clock_t end_grid_construction = clock();
+#ifndef WIN32
+	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
+#endif
 	INFO("\tdone, %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
-
+#ifndef WIN32
+	INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+#endif
 	const size_t n_pnts_for_search(pnts_for_search.size());
 	INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 	clock_t start = clock();
@@ -52,7 +72,9 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 int main(int argc, char *argv[])
 {
 	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
+	logog::Cout* logog_cout (new logog::Cout);
+	FormatterCustom *custom_format (new FormatterCustom);
+	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Simple mesh search test", ' ', "0.1");
 
@@ -95,7 +117,11 @@ int main(int argc, char *argv[])
 		pnts_for_search.push_back(new GeoLib::Point(nodes[k]->getCoords()));
 	}
 
+	std::vector<size_t> idx_found_nodes;
+	testMeshGridAlgorithm(mesh, pnts_for_search, idx_found_nodes);
+
 	delete mesh;
-	delete logogCout;
+	delete custom_format;
+	delete logog_cout;
 	LOGOG_SHUTDOWN();
 }
