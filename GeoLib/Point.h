@@ -47,11 +47,11 @@ bool lessY (Point const & p0, Point const & p1);
  */
 bool lessZ (Point const & p0, Point const & p1);
 
-}
-
 /**
  * lexicographic comparison of points
  */
 bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
+}
+
 
 #endif /* POINT_H_ */
