@@ -145,7 +145,7 @@ void Mesh::setNeighborInformationForElements()
 	OPENMP_LOOP_TYPE m;
 	#pragma omp parallel for
 #else
-	unsigned m();
+	unsigned m(0);
 #endif
 	for (m=0; m<nElements; m++)
 	{
