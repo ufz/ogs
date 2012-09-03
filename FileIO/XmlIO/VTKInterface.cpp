@@ -53,7 +53,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 	}
 
 	in.seekg(0, std::ios::end);
-	size_t length = in.tellg();
+	const size_t length = in.tellg();
 	in.seekg(0, std::ios::beg);
 	char* buffer = new char[length+1];
 	in.read(buffer, length);
