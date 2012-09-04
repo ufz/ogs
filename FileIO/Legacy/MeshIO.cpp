@@ -64,28 +64,28 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 			else if (line_string.find("$NODES") != std::string::npos)
 			{
 				double x, y, z, double_dummy;
-				unsigned nNodes, idx;
-				in >> nNodes >> std::ws;
+				unsigned idx;
+				getline(in, line_string);
+				trim(line_string);
+				unsigned nNodes = atoi(line_string.c_str());
 				std::string s;
-				std::ios::pos_type position = in.tellg();
 				for (unsigned i = 0; i < nNodes; i++)
 				{
-					in >> idx >> x >> y >> z;
-					MeshLib::Node* node(new MeshLib::Node(x, y, z, nodes.size()));
+					getline(in, line_string);
+					std::stringstream iss(line_string);
+					iss >> idx >> x >> y >> z;
+					MeshLib::Node* node(new MeshLib::Node(x, y, z, idx));
 					nodes.push_back(node);
-					position = in.tellg();
-					in >> s;
+					iss >> s;
 					if (s.find("$AREA") != std::string::npos)
-						in >> double_dummy;
-					else
-						in.seekg(position, std::ios::beg);
-					in >> std::ws;
+						iss >> double_dummy;
 				}
 			}
 			else if (line_string.find("$ELEMENTS") != std::string::npos)
 			{
-				unsigned nElements;
-				in >> nElements >> std::ws;
+				getline(in, line_string);
+				trim(line_string);
+				unsigned nElements = atoi(line_string.c_str());
 				for (unsigned i = 0; i < nElements; i++)
 				{
 					getline(in, line_string);

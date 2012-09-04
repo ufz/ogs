@@ -125,6 +125,13 @@ void Mesh::setElementInformationForNodes()
 		for (unsigned j=0; j<nNodes; j++)
 			_elements[i]->_nodes[j]->addElement(_elements[i]);
 	}
+#ifdef NDEBUG
+	// search for nodes that are not part of any element
+	const size_t nNodes (_nodes.size());
+	for (unsigned i=0; i<nNodes; i++)
+		if (_nodes[i]->getNElements() == 0)
+			std::cout << "Warning: Node " << i << " is not part of any element." << std::endl;
+#endif
 }
 
 void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length)
