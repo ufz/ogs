@@ -270,6 +270,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
 					_mapper->SetScalarModeToUsePointData();
 					pointData->GetArray(_activeArrayName.c_str())->GetRange(range);
+					pointData->GetArray(charName)->GetRange(range);
 				}
 				else
 				{
@@ -290,6 +291,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
 					_mapper->SetScalarModeToUseCellData();
 					cellData->GetArray(_activeArrayName.c_str())->GetRange(range);
+					cellData->GetArray(charName)->GetRange(range);
 				}
 				else
 				{
@@ -340,6 +342,11 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
 	{
 		data->SetActiveAttribute(name.c_str(), vtkDataSetAttributes::SCALARS);
 		return true;
+		int i = data->SetActiveAttribute(name.c_str(), vtkDataSetAttributes::SCALARS);
+		if (i < 0)
+			return false;
+		else
+			return true;
 	}
 	else
 		return false;

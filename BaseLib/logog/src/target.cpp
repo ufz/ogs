@@ -1,4 +1,4 @@
- /* 
+ /*
  * \file target.cpp
  */
 
@@ -74,6 +74,8 @@ namespace logog {
 #else
 		OutputDebugStringA( (const LOGOG_CHAR *)data );
 #endif // LOGOG_UNICODE
+#else
+		(void)data;
 #endif // LOGOG_FLAVOR_WINDOWS
 		return 0;
 	}
@@ -125,6 +127,7 @@ namespace logog {
 #ifdef LOGOG_FLAVOR_WINDOWS
 		nError = fopen_s( &fpTest, m_pFileName, "r"); // ignore the error code
 #else // LOGOG_FLAVOR_WINDOWS
+		(void)nError; // Unused
 		fpTest = fopen( m_pFileName, "r");
 #endif // LOGOG_FLAVOR_WINDOWS
 
