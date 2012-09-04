@@ -19,6 +19,7 @@
 
 #include "PointWithID.h"
 #include "Mesh.h"
+#include "MshEditor.h"
 
 namespace MeshLib {
 
@@ -30,9 +31,9 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
+	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
 	/* friend classes: */
 	friend class Mesh;
-	friend class MshEditor;
 	friend class MeshCoarsener;
 	friend class MshLayerMapper;
 

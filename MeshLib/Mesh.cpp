@@ -119,7 +119,13 @@ void Mesh::setDimension()
 void Mesh::setElementInformationForNodes()
 {
 	const size_t nElements (_elements.size());
-	for (unsigned i=0; i<nElements; i++)
+#ifdef _OPENMP
+	OPENMP_LOOP_TYPE i;
+	#pragma omp parallel for
+#else
+	unsigned i(0)
+#endif
+	for (i=0; i<nElements; i++)
 	{
 		const unsigned nNodes (_elements[i]->getNNodes());
 		for (unsigned j=0; j<nNodes; j++)
