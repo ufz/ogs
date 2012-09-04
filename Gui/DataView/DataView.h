@@ -36,6 +36,7 @@ class DataView : public QTreeView
 
 public:
 	DataView(QWidget* parent = 0);
+	~DataView();
 
 public slots:
 	void updateView();
