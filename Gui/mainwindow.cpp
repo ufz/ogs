@@ -393,7 +393,7 @@ void MainWindow::open(int file_type)
 	ImportFileType::type t = static_cast<ImportFileType::type>(file_type);
 	QString type_str = QString::fromStdString((ImportFileType::convertImportFileTypeToString(t)));
 	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select " + type_str + " file to import", 
+	                                                "Select " + type_str + " file to import",
 													settings.value("lastOpenedFileDirectory").toString(),
 	                                                QString::fromStdString(ImportFileType::getFileSuffixString(t)));
 	if (!fileName.isEmpty())
@@ -555,7 +555,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			updateDataViews();
 		}
 		else
-			OGSError::box("Failed to load a FEFLOW file.");	
+			OGSError::box("Failed to load a FEFLOW file.");
 		*/
 	}
 	else if (t == ImportFileType::GMS)
@@ -654,7 +654,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				OGSError::box("Failed to load a TetGen mesh.");
 			settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
 			*/
-		}	
+		}
 	}
 	else if (t == ImportFileType::VTK)
 	{
@@ -754,9 +754,9 @@ QMenu* MainWindow::createImportFilesMenu()
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
 	connect( vtkFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
 	_signal_mapper->setMapping(vtkFiles, ImportFileType::VTK);
-	
+
 	connect(_signal_mapper, SIGNAL(mapped(int)), this, SLOT(open(int)));
-	
+
 	return importFiles;
 }
 
