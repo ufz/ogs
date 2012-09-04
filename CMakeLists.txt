@@ -37,8 +37,14 @@ IF((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 	OPTION(OGS_PROFILE "Enables compiling with flags set for profiling with gprof." OFF)
 ENDIF() # GCC AND GPROF_PATH
 
-# Disable Qt
+# Enable / Disable parts
 OPTION(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
+
+OPTION(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
+OPTION(OGS_BUILD_TESTS "Should the test executables be built?" ON)
+OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
+
+OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Print CMake variable values
 IF (OGS_CMAKE_DEBUG)
@@ -51,10 +57,6 @@ IF (OGS_BUILD_INFO)
 	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
 ENDIF (OGS_BUILD_INFO)
 
-OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-
-OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
-
 ######################
 ### Subdirectories ###
 ######################
@@ -66,16 +68,20 @@ ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )
 ADD_SUBDIRECTORY( MeshLib )
-ADD_SUBDIRECTORY( OGS )
-ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
-ADD_SUBDIRECTORY( SimpleTests/MeshTests )
-IF(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
-	ADD_SUBDIRECTORY( SimpleTests/SolverTests )
-ENDIF()
+IF( OGS_BUILD_CLI )
+	ADD_SUBDIRECTORY( OGS )
+ENDIF() # OGS_BUILD_CLI
+IF( OGS_BUILD_TESTS )
+	ADD_SUBDIRECTORY( SimpleTests/MatrixTests )
+	ADD_SUBDIRECTORY( SimpleTests/MeshTests )
+	IF(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
+		ADD_SUBDIRECTORY( SimpleTests/SolverTests )
+	ENDIF()
+ENDIF() # OGS_BUILD_TESTS
 IF(OGS_BUILD_GUI)
 	ADD_DEFINITIONS(-DOGS_BUILD_GUI)
 	ADD_SUBDIRECTORY(Gui)
-ENDIF()
+ENDIF() # OGS_BUILD_GUI
 
 CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)
 CONFIGURE_FILE (BaseLib/Configure.h.in ${PROJECT_BINARY_DIR}/BaseLib/Configure.h)
