@@ -42,14 +42,16 @@ set_target_properties(logog PROPERTIES DEBUG_POSTFIX "d")
 add_executable( test-logog test/test.cpp )
 target_link_libraries( test-logog logog ${CMAKE_THREAD_LIBS_INIT})
 add_test( NAME test-harness COMMAND test-logog )
-install(TARGETS logog ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/logog"
+if (CMAKE_PROJECT_NAME STREQUAL logog)
+	install(TARGETS logog ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+	install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/logog"
           FILES_MATCHING PATTERN "*.hpp")
 
-# Docs generation with Doxygen
-find_package( Doxygen )
-if( DOXYGEN_FOUND )
-	add_custom_target (logog-doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doxyfile
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-		COMMENT "Generating source code documentation with Doxygen." VERBATIM)
-endif() # DOXYGEN_FOUND
+	# Docs generation with Doxygen
+	find_package( Doxygen )
+	if( DOXYGEN_FOUND )
+		add_custom_target (logog-doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doxyfile
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			COMMENT "Generating source code documentation with Doxygen." VERBATIM)
+	endif() # DOXYGEN_FOUND
+endif () # CMAKE_PROJECT_NAME = logog
