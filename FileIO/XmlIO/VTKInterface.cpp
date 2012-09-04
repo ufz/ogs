@@ -82,7 +82,9 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			std::vector<unsigned> cell_types(nElems);
 
 			const rapidxml::xml_node<>* mat_id_node (piece_node->first_node("CellData")->first_node("DataArray"));
-			if (mat_id_node && (std::string(mat_id_node->first_attribute("Name")->value()).compare("MaterialIDs") == 0))
+			if (mat_id_node && 
+				((std::string(mat_id_node->first_attribute("Name")->value()).compare("MaterialIDs") == 0) ||
+				 (std::string(mat_id_node->first_attribute("Name")->value()).compare("MatGroup") == 0)))
 			{
 				if (std::string(mat_id_node->first_attribute("format")->value()).compare("ascii") == 0)
 				{
@@ -96,7 +98,9 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 
 
 			const rapidxml::xml_node<>* points_node (piece_node->first_node("Points")->first_node("DataArray"));
-			if (points_node && (std::string(points_node->first_attribute("Name")->value()).compare("Points") == 0))
+			// This _may_ have an attribute "Name" with the value "Points" but you cannot count on it. 
+			// However, there shouldn't be any other DataArray nodes so most likely not checking the name isn't a problem.
+			if (points_node) 
 			{
 				if (std::string(points_node->first_attribute("format")->value()).compare("ascii") == 0)
 				{

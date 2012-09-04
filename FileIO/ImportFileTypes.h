@@ -62,7 +62,7 @@ public:
 		else if (t==ImportFileType::NETCDF) 
 			return "NetCDF files (*.nc)";
 		else if (t==ImportFileType::OGS) 
-			return "Geosys files (*.gsp *.gli *.gml *.msh *.stn);;Project files (*.gsp);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;GLI files (*.gli);;MSH files (*.msh);;STN files (*.stn);;All files (* *.*)";
+			return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy files (*.gli *.msh);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;All files (* *.*)";
 		else if (t==ImportFileType::PETREL) 
 			return "Petrel files (*)";
 		else if (t==ImportFileType::RASTER) 
