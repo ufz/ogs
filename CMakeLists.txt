@@ -57,6 +57,13 @@ IF (OGS_BUILD_INFO)
 	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
 ENDIF (OGS_BUILD_INFO)
 
+# Packaging
+OPTION(OGS_PACKAGING "Creating installers / packages" OFF)
+OPTION_REQUIRES(OGS_PACKAGING_ZIP "Do you want to package as zip?" OGS_PACKAGING)
+IF(OGS_PACKAGING)
+	INCLUDE( scripts/cmake/Pack.cmake)
+ENDIF() #OGS_PACKAGING
+
 ######################
 ### Subdirectories ###
 ######################
