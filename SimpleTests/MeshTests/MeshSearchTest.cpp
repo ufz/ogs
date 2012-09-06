@@ -49,7 +49,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 #endif
 	clock_t start_grid_construction = clock();
-	GeoLib::Grid<MeshLib::Node*> mesh_grid(mesh->getNodes(), 511);
+	GeoLib::Grid<MeshLib::Node> mesh_grid(mesh->getNodes().begin(), mesh->getNodes().end(), 511);
 	clock_t end_grid_construction = clock();
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());

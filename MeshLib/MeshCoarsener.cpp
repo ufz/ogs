@@ -45,7 +45,7 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 	}
 
 	// init grid
-	GeoLib::Grid<Node*>* grid(new GeoLib::Grid<Node*>(nodes, 64));
+	GeoLib::Grid<Node>* grid(new GeoLib::Grid<Node>(nodes.begin(), nodes.end(), 64));
 
 	// init id map
 	std::vector<size_t> id_map(n_nodes);
