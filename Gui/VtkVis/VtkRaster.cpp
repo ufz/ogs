@@ -402,7 +402,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 					_TIFFfree(pixVal);
 					GTIFFree(geoTiff);
 					XTIFFClose(tiff);
-					return false;
+					return NULL;
 				}
 
 			// check for colormap

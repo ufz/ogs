@@ -12,74 +12,104 @@
 #include "MshEditor.h"
 #include "PointWithID.h"
 #include "Mesh.h"
+#include "Node.h"
+#include "Elements/Element.h"
+#include "Elements/Face.h"
+#include "Elements/Cell.h"
+#include "Elements/Tri.h"
+#include "Elements/Quad.h"
 
+#include "MathTools.h"
+
+namespace MeshLib {
+
+void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
+{
+	if (mesh->getDimension() == 2)
+	{
+		double total_area (0);
+
+		// for each node, a vector containing all the element idget every element
+		std::vector<MeshLib::Node*> nodes = mesh->getNodes();
+		const size_t nNodes ( mesh->getNNodes() );
+		for (size_t n=0; n<nNodes; n++)
+		{
+			double node_area (0);
+
+			std::vector<MeshLib::Element*> conn_elems = nodes[n]->getElements();
+			const size_t nConnElems (conn_elems.size());
+
+			for (size_t i=0; i<nConnElems;i++)
+			{
+				const MeshLib::Element* elem (conn_elems[i]);
+				const unsigned nElemParts = (elem->getType() == MshElemType::TRIANGLE) ? 3 : 4;
+				const double area = conn_elems[i]->getContent() / nElemParts;
+				node_area += area;
+				total_area += area;
+			}
+
+			node_area_vec.push_back(node_area);
+		}
+
+		std::cout<< "Total surface Area: " << total_area << std::endl;
+	}
+	else
+		std::cout << "Error in MshEditor::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2)." << std::endl;
+}
 
 MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh,
                                              const std::vector<size_t> &nodes)
 {
 	MeshLib::Mesh* new_mesh (new MeshLib::Mesh(*mesh));
 
-	/* TODO6
 	// delete nodes and their connected elements and replace them with null pointers
-	size_t delNodes = nodes.size();
+	const size_t delNodes = nodes.size();
+	std::vector<MeshLib::Node*> mesh_nodes = new_mesh->getNodes();
 	for (size_t i = 0; i < delNodes; i++)
 	{
 		const MeshLib::Node* node = new_mesh->getNode(i);
-		std::vector<size_t> conn_elems = node->getConnectedElementIDs();
+		std::vector<MeshLib::Element*> conn_elems = node->getElements();
+
 		for (size_t j = 0; j < conn_elems.size(); j++)
 		{
-			delete new_mesh->ele_vector[conn_elems[j]];
-			new_mesh->ele_vector[conn_elems[j]] = NULL;
+			delete conn_elems[j];
+			conn_elems[j] = NULL;
 		}
-		delete new_mesh->nod_vector[nodes[i]];
-		new_mesh->nod_vector[nodes[i]] = NULL;
+		delete mesh_nodes[i];
+		mesh_nodes[i] = NULL;
 	}
 
 	// create map to adjust node indices in element vector
-	size_t nNodes = new_mesh->nod_vector.size();
-	std::vector<int> id_map;
-	size_t count = 0;
+	const size_t nNodes = new_mesh->getNNodes();
+	std::vector<int> id_map(nNodes, -1);
+	size_t count(0);
 	for (size_t i = 0; i < nNodes; i++)
 	{
-		if (new_mesh->nod_vector[i])
+		if (mesh_nodes[i])
 		{
-			new_mesh->nod_vector[i]->SetIndex(count);
-			id_map.push_back(count);
-			count++;
+			mesh_nodes[i]->setID(count);
+			id_map.push_back(count++);
 		}
-		else
-			id_map.push_back(-1);
 	}
 
 	// erase null pointers from node- and element vectors
-	for (std::vector<MeshLib::CElem*>::iterator it = new_mesh->ele_vector.begin();
-	     it != new_mesh->ele_vector.end(); )
+	std::vector<MeshLib::Element*> elements = new_mesh->getElements();
+	for (std::vector<MeshLib::Element*>::iterator it = elements.begin(); it != elements.end(); )
 	{
 		if (*it)
 			++it;
 		else
-			it = new_mesh->ele_vector.erase(it);
+			it = elements.erase(it);
 	}
 
-	for (std::vector<MeshLib::CNode*>::iterator it = new_mesh->nod_vector.begin();
-	     it != new_mesh->nod_vector.end(); )
+	for (std::vector<MeshLib::Node*>::iterator it = mesh_nodes.begin(); it != mesh_nodes.end(); )
 	{
 		if (*it)
 			++it;
 		else
-			it = new_mesh->nod_vector.erase(it);
+			it = mesh_nodes.erase(it);
 	}
 
-	// re-adjust node indices
-	size_t nElems = new_mesh->ele_vector.size();
-	for (size_t i = 0; i < nElems; i++)
-	{
-		MeshLib::CElem* elem = new_mesh->ele_vector[i];
-		size_t nElemNodes = elem->GetNodesNumber(false);
-		for (size_t j = 0; j < nElemNodes; j++)
-			elem->SetNodeIndex(j, id_map[elem->GetNodeIndex(j)]);
-	}
-	*/
 	return new_mesh;
 }
 
@@ -117,67 +147,85 @@ std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh
 	return surface_pnts;
 }
 
-MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh)
+MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double* dir)
 {
-	/* TODO6
 	std::cout << "Extracting mesh surface..." << std::endl;
-	GridAdapter surface;
-	const std::vector<GeoLib::PointWithID*> sfc_points = MshEditor::getSurfaceNodes(mesh);
-	const size_t nSurfacePoints (sfc_points.size());
 
-	std::vector<GridAdapter::Element*> *elements = new std::vector<GridAdapter::Element*>;
+	const std::vector<MeshLib::Element*> elements = mesh.getElements();
+	std::vector<MeshLib::Element*> new_elements;
+	const size_t nElements (mesh.getNElements());
 
-	const size_t nElements = mesh.ele_vector.size();
-	for (size_t j=0; j<nElements; j++)
+	bool complete_surface = ((dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]) == 0) ? true : false;
+
+	// 2D meshes
+	if (mesh.getDimension() == 2 )
 	{
-		MeshLib::CElem* elem (mesh.ele_vector[j]);
-		std::vector<size_t> elem_nodes;
-		bool is_surface (true);
-		for (size_t i=0; i<4; i++)
+		if (complete_surface) return new MeshLib::Mesh(mesh); // simply copy the mesh
+		else	// check only surface normal directions of all elements
 		{
-			size_t node_index = elem->GetNodeIndex(i);
-			bool node_found(false), one_node(true);
-			for (size_t k=0; k<nSurfacePoints; k++)
+			for (unsigned i=0; i<nElements; i++)
 			{
-				if (sfc_points[k]->getID() == node_index)
-				{
-					node_found=true;
-					elem_nodes.push_back(k);
-					break;
-				}
+				MeshLib::Face* face = dynamic_cast<MeshLib::Face*>(elements[i]);
+				double normal[3];
+				face->getSurfaceNormal(normal);
+				if (MathLib::scpr(normal, dir, 3) > 0)
+					new_elements.push_back(static_cast<MeshLib::Element*>(face));
 			}
-			if (!node_found)
-			{
-				if (one_node == true)
-					one_node = false;
-				else
-				{
-					is_surface = false;
-					break;
-				}
-			}
-		}
-		if (is_surface)
-		{
-			GridAdapter::Element* element = new GridAdapter::Element;
-			element->material = 0;
-			element->type = MshElemType::TRIANGLE;
-			element->nodes = elem_nodes;
-			elements->push_back(element);
 		}
 	}
+	// 3D meshes
+	else if (mesh.getDimension() == 3)	//
+	{
+		for (unsigned i=0; i<nElements; i++)
+		{
+			if (const MeshLib::Cell* cell = dynamic_cast<MeshLib::Cell*>(elements[i]))
+			{
+				if (cell->isOnSurface())
+				{
+					const unsigned nFaces (cell->getNFaces());
+					for (unsigned j=0; j<nFaces; j++)
+					{
+						if (cell->getNeighbor(i) == NULL)
+						{
+							const MeshLib::Face* face = static_cast<const MeshLib::Face*>(cell->getFace(i));
+							if (!complete_surface)
+							{
+								double normal[3];
+								face->getSurfaceNormal(normal);
+								if (MathLib::scpr<double,3>(normal, dir) <= 0)
+									continue;
+							}
 
-	std::vector<GeoLib::Point*> *nodes = new std::vector<GeoLib::Point*>(nSurfacePoints);
-	for (size_t j=0; j<nSurfacePoints; j++)
-		//(*nodes)[sfc_points[j]->getID()]=sfc_points[j];
-		(*nodes)[j] = sfc_points[j];
+							if (face->getType() == MshElemType::TRIANGLE)
+								new_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
+							else
+								new_elements.push_back(new MeshLib::Quad(*static_cast<const MeshLib::Quad*>(face)));
+						}
+					}
+				}
+			}
+		}
 
-	surface.setNodeVector(nodes);
-	surface.setElements(elements);
+		// now copy nodes
+		const size_t nNewElements (new_elements.size());
+		std::vector<const MeshLib::Node*> tmp_nodes(mesh.getNNodes(), NULL);
+		const size_t nNodes (tmp_nodes.size());
+		for (unsigned i=0; i<nNewElements; i++)
+		{
+			const MeshLib::Element* elem (new_elements[i]);
+			for (unsigned j=0; j<elem->getNNodes(); j++)
+			{
+				const MeshLib::Node* node (elem->getNode(i));
+				tmp_nodes[node->getID()] = node;
+			}
+		}
+		std::vector<MeshLib::Node*> new_nodes;
+		for (unsigned i=0; i<nNodes; i++)
+			if (tmp_nodes[i])
+				new_nodes.push_back(new MeshLib::Node(tmp_nodes[i]->getCoords()));
+	}
 
-	MeshLib::Mesh* sfc_mesh = new MeshLib::Mesh(*surface.getMesh());
-	return sfc_mesh;
-	*/
-	return new MeshLib::Mesh(mesh);
+
 }
 
+} // end namespace MeshLib

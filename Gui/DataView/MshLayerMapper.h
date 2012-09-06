@@ -16,9 +16,8 @@
 
 class QImage;
 
-namespace MeshLib
-{
-class CFEMesh;
+namespace MeshLib {
+	class Mesh;
 }
 
 /**
@@ -37,23 +36,18 @@ public:
 	 * \param thickness The thickness of each of these newly added layers
 	 * \return A mesh with the requested number of layers of prism/hex elements
 	 */
-	static MeshLib::CFEMesh* CreateLayers(const MeshLib::CFEMesh* mesh,
-	                                      size_t nLayers,
-	                                      double thickness);
+	static MeshLib::Mesh* CreateLayers(const MeshLib::Mesh* mesh, size_t nLayers, double thickness);
 
 	/// Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-	static int LayerMapping(MeshLib::CFEMesh* msh,
-	                                      const std::string &rasterfile,
-	                                      const size_t nLayers,
-	                                      const size_t layer_id,
-	                                      bool removeNoDataValues = false);
+	static int LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, 
+                            const size_t nLayers, const size_t layer_id, bool removeNoDataValues = false);
 
 	/// Blends a mesh with the surface given by dem_raster. Nodes and elements above the surface are either removed or adapted to fit the surface.
-	static MeshLib::CFEMesh* blendLayersWithSurface(MeshLib::CFEMesh* mesh, const size_t nLayers, const std::string &dem_raster);
+	static MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh* mesh, const size_t nLayers, const std::string &dem_raster);
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
-	static bool meshFitsImage(const MeshLib::CFEMesh* msh,
+	static bool meshFitsImage(const MeshLib::Mesh* msh,
 	                          const std::pair<double, double> &xDim,
 	                          const std::pair<double, double> &yDim);
 };

@@ -12,8 +12,6 @@
 #include <iomanip>
 #include <sstream>
 
-//TODO6 #include "Configure.h"
-
 // FileIO
 #include "MeshIO/GMSHInterface.h"
 #include "OGSIOVer4.h"

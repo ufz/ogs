@@ -23,19 +23,36 @@
 namespace MeshLib {
 
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
-	: _name(name), _nodes(nodes), _elements(elements)
+	: _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
 {
 	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
 	_edge_length[0] = 0;
 	_edge_length[1] = 0;
 	this->makeNodesUnique();
+	this->setDimension();
 	this->setElementInformationForNodes();
 	this->setNeighborInformationForElements();
 }
 
 Mesh::Mesh(const Mesh &mesh)
-	: _name(mesh.getName()), _nodes(mesh.getNodes()), _elements(mesh.getElements())
+	: _mesh_dimension(mesh.getDimension()), _name(mesh.getName()), _nodes(mesh.getNodes()), _elements(mesh.getElements())
 {
+	const std::vector<Node*> nodes (mesh.getNodes());
+	const size_t nNodes (nodes.size());
+	for (unsigned i=0; i<nNodes; i++)
+		_nodes[i] = new Node(*nodes[i]);
+
+	const std::vector<Element*> elements (mesh.getElements());
+	const size_t nElements (elements.size());
+	for (unsigned i=0; i<nElements; i++)
+	{
+		const size_t nElemNodes = elements[i]->getNNodes();
+		_elements[i] = elements[i]->clone();
+		for (unsigned j=0; j<nElemNodes; j++)
+			_elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
+	}
+
+	if (_mesh_dimension==0) this->setDimension();
 	this->setElementInformationForNodes();
 	this->setNeighborInformationForElements();
 }
@@ -91,6 +108,14 @@ void Mesh::resetNodeIDs()
 		_nodes[i]->setID(i);
 }
 
+void Mesh::setDimension()
+{
+	const size_t nElements (_elements.size());
+	for (unsigned i=0; i<nElements; i++)
+		if (_elements[i]->getDimension() > _mesh_dimension)
+			_mesh_dimension = _elements[i]->getDimension();
+}
+
 void Mesh::setElementInformationForNodes()
 {
 	const size_t nElements (_elements.size());
@@ -100,6 +125,13 @@ void Mesh::setElementInformationForNodes()
 		for (unsigned j=0; j<nNodes; j++)
 			_elements[i]->_nodes[j]->addElement(_elements[i]);
 	}
+#ifdef NDEBUG
+	// search for nodes that are not part of any element
+	const size_t nNodes (_nodes.size());
+	for (unsigned i=0; i<nNodes; i++)
+		if (_nodes[i]->getNElements() == 0)
+			std::cout << "Warning: Node " << i << " is not part of any element." << std::endl;
+#endif
 }
 
 void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length)
@@ -110,32 +142,40 @@ void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length
 		_edge_length[1] = max_length;
 	}
 	else
-		std::cerr << "Error in MeshLib::Mesh::setEdgeLengthRange() - min length < max length." << std::endl;
+		std::cerr << "Error in MeshLib::Mesh::setEdgeLengthRange() - min length > max length." << std::endl;
 }
 
 void Mesh::setNeighborInformationForElements()
 {
 	const size_t nElements = _elements.size();
-	for (unsigned m(0); m<nElements; m++)
+#ifdef _OPENMP
+	OPENMP_LOOP_TYPE m;
+	#pragma omp parallel for
+#else
+	unsigned m(0);
+#endif
+	for (m=0; m<nElements; m++)
 	{
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		const size_t nNodes (element->getNNodes());
-		for (unsigned n(0); n<nNodes; n++)
+		if (element->getType() != MshElemType::EDGE)
 		{
-			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
-			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
-		}
-
-		const unsigned nNeighbors ( neighbors.size() );
-
-		// check if connected element is indeed a neighbour and mark all doubles of that element as 'done'
-		for (unsigned i(0); i<nNeighbors; i++)
-		{
-			if (element->addNeighbor(neighbors[i]))
+			const size_t nNodes (element->getNNodes());
+			for (unsigned n(0); n<nNodes; n++)
 			{
-				neighbors[i]->addNeighbor(element);
+				std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
+				neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+			}
+
+			const unsigned nNeighbors ( neighbors.size() );
+
+			for (unsigned i(0); i<nNeighbors; i++)
+			{
+				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getType() != MshElemType::EDGE)
+				{
+					neighbors[i]->addNeighbor(element);
+				}
 			}
 		}
 	}

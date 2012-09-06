@@ -13,9 +13,8 @@
 #include <QMenu>
 #include <iostream>
 
-//TODO6 #include "GMSInterface.h"
+#include "GMSInterface.h"
 #include "Station.h"
-//TODO6 #include "StationIO.h"
 
 #include "DiagramPrefsDialog.h"
 #include "ModelTreeItem.h"
@@ -178,14 +177,12 @@ void StationTreeView::exportStation()
 		QString temp_name;
 		std::vector<std::string> temp_soil_names;
 		temp_soil_names.push_back(""); // soil name vector needs to be initialised
-		/* TODO6
 		GMSInterface::writeBoreholeToGMS(static_cast<GeoLib::StationBorehole*>(static_cast<
 		                                                                               StationTreeModel
 		                                                                               *>(
 		                                                                               model())->stationFromIndex(index,
 		                                                                                                          temp_name)),
 		                                 fileName.toStdString(), temp_soil_names);
-		*/
 	}
 }
 

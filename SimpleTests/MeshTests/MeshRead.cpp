@@ -56,17 +56,17 @@ int main(int argc, char *argv[])
 //	std::cout << "time for reading: " << run_time.elapsed() << " s" << std::endl;
 	INFO ("time for reading: %f s", run_time.elapsed());
 
-/*
-	unsigned elem_id = 1;
+
+	unsigned elem_id = 25000;
 	const MeshLib::Element* e = mesh->getElement(elem_id);
 	const size_t nElems = mesh->getNElements();
 	for (unsigned i=0; i< e->getNNeighbors(); i++)
 	{
 		for (unsigned j=0; j< nElems; j++)
 			if (mesh->getElement(j) == e->getNeighbor(i))
-				std::cout << "neighbour of " << elem_id << " : " << j << std::endl;
+				std::cout << "neighbour of element " << elem_id << elem_id << " : " << j << std::endl;
 	}
-*/
+
 	delete mesh;
 	delete logogCout;
 	LOGOG_SHUTDOWN();

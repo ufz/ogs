@@ -15,13 +15,11 @@
 #include "GeoType.h"
 #include <QTreeView>
 
-class GridAdapter;
 class MshModel;
 class VtkMeshSource;
 
-namespace MeshLib
-{
-class CFEMesh;
+namespace MeshLib {
+	class Mesh;
 }
 /*
    namespace GeoLib {
@@ -38,6 +36,7 @@ class DataView : public QTreeView
 
 public:
 	DataView(QWidget* parent = 0);
+	~DataView();
 
 public slots:
 	void updateView();

@@ -44,6 +44,9 @@ public:
 	/// Add an element to the mesh.
 	void addElement(Element* elem);
 
+	/// Returns the dimension of the mesh (determinded by the maximum dimension over all elements).
+	unsigned getDimension() const { return _mesh_dimension; };
+
 	/// Get the minimum edge length over all elements of the mesh.
 	double getMinEdgeLength() { return _edge_length[0]; };
 
@@ -94,12 +97,16 @@ protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();
 
+	/// Sets the dimension of the mesh.
+	void setDimension();
+
 	/// Fills in the neighbor-information for nodes (i.e. which element each node belongs to).
 	void setElementInformationForNodes();
 
 	/// Fills in the neighbor-information for elements.
 	void setNeighborInformationForElements();
 
+	unsigned _mesh_dimension;
 	double _edge_length[2];
 	std::string _name;
 	std::vector<Node*> _nodes;

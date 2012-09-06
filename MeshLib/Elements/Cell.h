@@ -54,9 +54,6 @@ protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Cell(unsigned value = 0);
 
-	/// Calculate the volume of this 3d element.
-	virtual double computeVolume() = 0;
-
 	double _volume;
 
 }; /* class */

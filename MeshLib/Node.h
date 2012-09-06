@@ -19,6 +19,7 @@
 
 #include "PointWithID.h"
 #include "Mesh.h"
+#include "MshEditor.h"
 
 namespace MeshLib {
 
@@ -29,11 +30,12 @@ class Element;
  */
 class Node : public GeoLib::PointWithID
 {
+	/* friend functions: */
+	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
 	/* friend classes: */
-	friend class Mesh;//void Mesh::setElementInformationForNodes();
+	friend class Mesh;
 	friend class MeshCoarsener;
-	//friend void Mesh::addElement(Element*);
-
+	friend class MshLayerMapper;
 
 public:
 	/// Constructor using a coordinate array
@@ -67,6 +69,10 @@ protected:
 	/// Sets the ID of a node to the given value.
 	void setID(unsigned id) { this->_id = id; };
 
+	/// Update coordinates of a node.
+	/// This method automatically also updates the areas/volumes of all connected elements.
+	virtual void updateCoordinates(double x, double y, double z);
+	
 	std::vector<Element*> _elements;
 
 }; /* class */
