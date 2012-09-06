@@ -56,6 +56,7 @@ public:
 		while (it != last) {
 			n_pnts++;
 			this->update(copyOrAddress(*it)->getCoords());
+			it++;
 		}
 
 		double delta[3] = { 0.0, 0.0, 0.0 };
@@ -137,6 +138,7 @@ public:
 			}
 
 			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(copyOrAddress(*it));
+			it++;
 		}
 
 #ifndef NDEBUG
