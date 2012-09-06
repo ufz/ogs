@@ -45,17 +45,17 @@ public:
 	 * @param pnts (input) the points that are managed with the Grid
 	 * @param max_num_per_grid_cell (input) max number per grid cell in the average (default 512)
 	 *
-	 * @note the somewhat wired template syntax chooses this constructor for non-pointer types
-	 * at compile time
 	 */
-	template <typename T, typename = typename std::enable_if<std::is_same<T, POINT>::value && !std::is_pointer<T>::value>::type>
-	Grid(std::vector<T> const& pnts, size_t max_num_per_grid_cell = 512) :
+	template <typename InputIterator>
+	Grid(InputIterator first, InputIterator last, size_t max_num_per_grid_cell = 512) :
 		GeoLib::AABB(), _grid_cell_nodes_map(NULL)
 	{
 		// compute axis aligned bounding box
-		const size_t n_pnts(pnts.size());
-		for (size_t k(0); k < n_pnts; k++) {
-			this->update(pnts[k].getCoords());
+		InputIterator it(first);
+		size_t n_pnts(0);
+		while (it != last) {
+			n_pnts++;
+			this->update(copyOrAddress(*it)->getCoords());
 		}
 
 		double delta[3] = { 0.0, 0.0, 0.0 };
@@ -125,8 +125,9 @@ public:
 		}
 
 		// fill the grid vectors
-		for (size_t l(0); l < n_pnts; l++) {
-			double const* const pnt(pnts[l].getCoords());
+		it = first;
+		while (it != last) {
+			double const* const pnt(copyOrAddress(*it)->getCoords());
 			const size_t i(static_cast<size_t> ((pnt[0] - _min_pnt[0]) * _inverse_step_sizes[0]));
 			const size_t j(static_cast<size_t> ((pnt[1] - _min_pnt[1]) * _inverse_step_sizes[1]));
 			const size_t k(static_cast<size_t> ((pnt[2] - _min_pnt[2]) * _inverse_step_sizes[2]));
@@ -135,123 +136,7 @@ public:
 				std::cout << "error computing indices " << std::endl;
 			}
 
-			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(&pnts[l]);
-		}
-
-#ifndef NDEBUG
-		size_t pnts_cnt(0);
-		for (size_t k(0); k < n_plane * _n_steps[2]; k++)
-			pnts_cnt += _grid_cell_nodes_map[k].size();
-
-		assert(n_pnts==pnts_cnt);
-#endif
-	}
-
-	/**
-	 * @brief The constructor of the grid object takes a vector of pointers to points or nodes. This is
-	 * the main difference to the previous constructor. Furthermore the
-	 * user can specify the *average* maximum number of points per grid cell.
-	 *
-	 * The number of grid cells are computed with the following formula
-	 * \f$\frac{n_{points}}{n_{cells}} \le n_{max\_per\_cell}\f$
-	 *
-	 * In order to limit the memory wasting the maximum number of points per grid cell
-	 * (in the average) should be a power of two (since std::vector objects resize itself
-	 * with this step size).
-	 *
-	 * @param pnts (input) a vector holding pointers to the points that are managed with the Grid
-	 * @param max_num_per_grid_cell (input) max number per grid cell in the average (default 512)
-	 *
-	 * @note the somewhat wired template syntax chooses this constructor for pointer types at compile time
-	 */
-	template <typename T, bool dummy = true, typename std::enable_if<std::is_same<T, POINT>::value && std::is_pointer<T>::value, int>::type = 0>
-	Grid(std::vector<T> const& pnts, size_t max_num_per_grid_cell = 512) :
-		GeoLib::AABB(), _grid_cell_nodes_map(NULL)
-	{
-		// compute axis aligned bounding box
-		const size_t n_pnts(pnts.size());
-		for (size_t k(0); k < n_pnts; k++) {
-			this->update(pnts[k]->getCoords());
-		}
-
-		double delta[3] = { 0.0, 0.0, 0.0 };
-		for (size_t k(0); k < 3; k++) {
-			// make the bounding box a little bit bigger,
-			// such that the node with maximal coordinates fits into the grid
-			_max_pnt[k] *= (1.0 + 1e-6);
-			if (fabs(_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
-				_max_pnt[k] = (_max_pnt[k] - _min_pnt[k]) * (1.0 + 1e-6);
-			}
-			delta[k] = _max_pnt[k] - _min_pnt[k];
-		}
-
-		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
-		// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-		if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() ||
-						fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-			// 1d case y = z = 0
-			if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() &&
-							fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-				_n_steps[0] = static_cast<size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-				_n_steps[1] = 1;
-				_n_steps[2] = 1;
-			} else {
-				// 1d case x = z = 0
-				if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() &&
-								fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-					_n_steps[2] = 1;
-				} else {
-					// 1d case x = y = 0
-					if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() && fabs(delta[1])
-									< std::numeric_limits<double>::epsilon()) {
-						_n_steps[0] = 1;
-						_n_steps[1] = 1;
-						_n_steps[2] = static_cast<size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-					} else {
-						// 2d case
-						if (fabs(delta[1]) < std::numeric_limits<double>::epsilon()) {
-							_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
-							_n_steps[1] = 1;
-							_n_steps[2] = static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
-						} else {
-							_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
-							_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-							_n_steps[2] = 1;
-						}
-					}
-				}
-			}
-		} else {
-			// 3d case
-			_n_steps[0] = static_cast<size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
-							/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
-			_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-			_n_steps[2] = static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
-		}
-
-		const size_t n_plane(_n_steps[0] * _n_steps[1]);
-		_grid_cell_nodes_map = new std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type>[n_plane * _n_steps[2]];
-
-		// some frequently used expressions to fill the grid vectors
-		for (size_t k(0); k < 3; k++) {
-			_step_sizes[k] = delta[k] / _n_steps[k];
-			_inverse_step_sizes[k] = 1.0 / _step_sizes[k];
-		}
-
-		// fill the grid vectors
-		for (size_t l(0); l < n_pnts; l++) {
-			double const* const pnt(pnts[l]->getCoords());
-			const size_t i(static_cast<size_t> ((pnt[0] - _min_pnt[0]) * _inverse_step_sizes[0]));
-			const size_t j(static_cast<size_t> ((pnt[1] - _min_pnt[1]) * _inverse_step_sizes[1]));
-			const size_t k(static_cast<size_t> ((pnt[2] - _min_pnt[2]) * _inverse_step_sizes[2]));
-
-			if (i >= _n_steps[0] || j >= _n_steps[1] || k >= _n_steps[2]) {
-				std::cout << "error computing indices " << std::endl;
-			}
-
-			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(pnts[l]);
+			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(copyOrAddress(*it));
 		}
 
 #ifndef NDEBUG
@@ -285,14 +170,13 @@ public:
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
 	 * outlined above or NULL
 	 */
-	const typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type
-	getNearestPoint(double const*const pnt) const
+	POINT* getNearestPoint(double const*const pnt) const
 	{
 		size_t coords[3];
 		getGridCoords(pnt, coords);
 
 		double sqr_min_dist (MathLib::sqrDist(&_min_pnt, &_max_pnt));
-		typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type nearest_pnt(NULL);
+		POINT* nearest_pnt(NULL);
 
 		double dists[6];
 		getPointCellBorderDistances(pnt, dists, coords);
@@ -310,7 +194,7 @@ public:
 		} else {
 			// search in all border cells for at least one neighbor
 					double sqr_min_dist_tmp;
-					typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type nearest_pnt_tmp(NULL);
+					POINT* nearest_pnt_tmp(NULL);
 					size_t offset(1);
 
 					while (nearest_pnt == NULL) {
@@ -339,12 +223,12 @@ public:
 
 			double len (sqrt(MathLib::sqrDist(pnt, nearest_pnt->getCoords())));
 			// search all other grid cells within the cube with the edge nodes
-			std::vector<std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const*> vecs_of_pnts;
+			std::vector<std::vector<POINT*> const*> vecs_of_pnts;
 			getVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
 
 			const size_t n_vecs(vecs_of_pnts.size());
 			for (size_t j(0); j<n_vecs; j++) {
-				std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(*(vecs_of_pnts[j]));
+				std::vector<POINT*> const& pnts(*(vecs_of_pnts[j]));
 				const size_t n_pnts(pnts.size());
 				for (size_t k(0); k<n_pnts; k++) {
 					const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
@@ -367,7 +251,7 @@ public:
 	 * @param pnts (output) vector of vectors of points within grid cells that intersects
 	 * the axis aligned cube
 	 */
-	void getVecsOfGridCellsIntersectingCube(double const*const pnt, double half_len, std::vector<std::vector<POINT> const*>& pnts) const;
+	void getVecsOfGridCellsIntersectingCube(double const*const pnt, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const;
 
 #ifndef NDEBUG
 	/**
@@ -422,7 +306,7 @@ private:
 
 	bool calcNearestPointInGridCell(double const* const pnt, size_t const* const coords,
 					double &sqr_min_dist,
-					typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type &nearest_pnt) const
+					POINT* &nearest_pnt) const
 	{
 		const size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
 		std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
@@ -440,20 +324,22 @@ private:
 		}
 		return true;
 	}
+
+	static POINT* copyOrAddress(POINT& p) { return &p; }
+	static POINT* copyOrAddress(POINT* p) { return p; }
+
 	double _step_sizes[3];
 	double _inverse_step_sizes[3];
 	size_t _n_steps[3];
 	/**
-	 * This is an array that stores pointers to POINT objects. If POINT is a pointer type,
-	 * std::remove_pointer returns the "base" type, else the POINT type is returned. Then,
-	 * the base type is converted to a pointer type emploing std::add_pointer.
+	 * This is an array that stores pointers to POINT objects.
 	 */
-	std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type>* _grid_cell_nodes_map;
+	std::vector<POINT*>* _grid_cell_nodes_map;
 };
 
 template<typename POINT>
 void Grid<POINT>::getVecsOfGridCellsIntersectingCube(double const* const pnt, double half_len,
-				std::vector<std::vector<POINT> const*>& pnts) const
+				std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	double tmp_pnt[3] = { pnt[0] - half_len, pnt[1] - half_len, pnt[2] - half_len }; // min
 	size_t min_coords[3];
