@@ -137,7 +137,7 @@ public:
 				std::cout << "error computing indices " << std::endl;
 			}
 
-			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(copyOrAddress(*it));
+			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(const_cast<POINT*>(copyOrAddress(*it)));
 			it++;
 		}
 
@@ -328,6 +328,7 @@ private:
 	}
 
 	static POINT* copyOrAddress(POINT& p) { return &p; }
+	static POINT const* copyOrAddress(POINT const& p) { return &p; }
 	static POINT* copyOrAddress(POINT* p) { return p; }
 
 	double _step_sizes[3];
