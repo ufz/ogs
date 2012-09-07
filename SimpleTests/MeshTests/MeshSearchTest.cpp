@@ -44,12 +44,20 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 {
 	// constructing Grid
 	INFO ("[MeshGridAlgorithm] constructing mesh grid object ...");
+
+	std::vector<MeshLib::Node> mesh_nodes;
+	size_t n_nodes(mesh->getNodes().size());
+	mesh_nodes.reserve(n_nodes);
+	for (size_t k(0); k<n_nodes; k++) {
+		mesh_nodes.push_back(MeshLib::Node(*(mesh->getNodes()[k])));
+	}
+
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 #endif
 	clock_t start_grid_construction = clock();
-	GeoLib::Grid<MeshLib::Node> mesh_grid(mesh->getNodes().begin(), mesh->getNodes().end(), 511);
+	GeoLib::Grid<MeshLib::Node> mesh_grid(mesh_nodes.begin(), mesh_nodes.end(), 511);
 	clock_t end_grid_construction = clock();
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
