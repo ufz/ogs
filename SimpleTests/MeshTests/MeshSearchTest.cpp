@@ -120,6 +120,10 @@ int main(int argc, char *argv[])
 	std::vector<size_t> idx_found_nodes;
 	testMeshGridAlgorithm(mesh, pnts_for_search, idx_found_nodes);
 
+	for (size_t k(0); k<n; k++) {
+		delete pnts_for_search[k];
+	}
+
 	delete mesh;
 	delete custom_format;
 	delete logog_cout;
