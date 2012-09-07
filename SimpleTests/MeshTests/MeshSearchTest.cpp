@@ -40,41 +40,66 @@ class FormatterCustom : public logog::FormatterGCC
 
 void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 				std::vector<GeoLib::Point*>& pnts_for_search,
-				std::vector<size_t> &idx_found_nodes)
+				std::vector<size_t> &idx_found_nodes, bool contiguous)
 {
 	// constructing Grid
 	INFO ("[MeshGridAlgorithm] constructing mesh grid object ...");
 
-	std::vector<MeshLib::Node> mesh_nodes;
-	size_t n_nodes(mesh->getNodes().size());
-	mesh_nodes.reserve(n_nodes);
-	for (size_t k(0); k<n_nodes; k++) {
-		mesh_nodes.push_back(MeshLib::Node(*(mesh->getNodes()[k])));
+	if (contiguous) {
+		std::vector<MeshLib::Node> mesh_nodes;
+		size_t n_nodes(mesh->getNodes().size());
+		mesh_nodes.reserve(n_nodes);
+		for (size_t k(0); k<n_nodes; k++) {
+			mesh_nodes.push_back(MeshLib::Node(*(mesh->getNodes()[k])));
+		}
+#ifndef WIN32
+		BaseLib::MemWatch mem_watch;
+		unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+#endif
+		clock_t start_grid_construction = clock();
+		GeoLib::Grid<MeshLib::Node> mesh_grid(mesh_nodes.begin(), mesh_nodes.end(), 511);
+		clock_t end_grid_construction = clock();
+#ifndef WIN32
+		unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
+#endif
+		INFO("\tdone, %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
+	#ifndef WIN32
+		INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+	#endif
+		const size_t n_pnts_for_search(pnts_for_search.size());
+		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
+		clock_t start = clock();
+		for (size_t k(0); k<n_pnts_for_search; k++) {
+			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]->getCoords()));
+			idx_found_nodes.push_back(node->getID());
+		}
+		clock_t stop = clock();
+		INFO("\tdone, %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
+	} else {
+#ifndef WIN32
+		BaseLib::MemWatch mem_watch;
+		unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+#endif
+		clock_t start_grid_construction = clock();
+		GeoLib::Grid<MeshLib::Node> mesh_grid(mesh->getNodes().begin(), mesh->getNodes().end(), 511);
+		clock_t end_grid_construction = clock();
+#ifndef WIN32
+		unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
+#endif
+		INFO("\tdone, %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
+#ifndef WIN32
+		INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+#endif
+		const size_t n_pnts_for_search(pnts_for_search.size());
+		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
+		clock_t start = clock();
+		for (size_t k(0); k<n_pnts_for_search; k++) {
+			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]->getCoords()));
+			idx_found_nodes.push_back(node->getID());
+		}
+		clock_t stop = clock();
+		INFO("\tdone, %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
 	}
-
-#ifndef WIN32
-	BaseLib::MemWatch mem_watch;
-	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
-#endif
-	clock_t start_grid_construction = clock();
-	GeoLib::Grid<MeshLib::Node> mesh_grid(mesh_nodes.begin(), mesh_nodes.end(), 511);
-	clock_t end_grid_construction = clock();
-#ifndef WIN32
-	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-#endif
-	INFO("\tdone, %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
-#ifndef WIN32
-	INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
-#endif
-	const size_t n_pnts_for_search(pnts_for_search.size());
-	INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
-	clock_t start = clock();
-	for (size_t k(0); k<n_pnts_for_search; k++) {
-		MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]->getCoords()));
-		idx_found_nodes.push_back(node->getID());
-	}
-	clock_t stop = clock();
-	INFO("\tdone, %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
 }
 
 int main(int argc, char *argv[])
@@ -98,6 +123,9 @@ int main(int argc, char *argv[])
 	TCLAP::ValueArg<unsigned> number_arg("n","number-of-test-points","the number of test points",true,10000,"positive number");
 	cmd.add( number_arg );
 
+	TCLAP::ValueArg<bool> contiguous_arg("c","use-contiguous-memory","use a contiguous memory for the test",false,true,"yes or no | 1 or 0");
+	cmd.add( contiguous_arg );
+
 	cmd.parse( argc, argv );
 
 	std::string fname (mesh_arg.getValue());
@@ -120,13 +148,13 @@ int main(int argc, char *argv[])
 	// *** preparing test data
 	std::vector<MeshLib::Node*> const& nodes(mesh->getNodes());
 	std::vector<GeoLib::Point*> pnts_for_search;
-	unsigned n(number_arg.getValue());
+	unsigned n(std::min(static_cast<unsigned>(nodes.size()), number_arg.getValue()));
 	for (size_t k(0); k<n; k++) {
 		pnts_for_search.push_back(new GeoLib::Point(nodes[k]->getCoords()));
 	}
 
 	std::vector<size_t> idx_found_nodes;
-	testMeshGridAlgorithm(mesh, pnts_for_search, idx_found_nodes);
+	testMeshGridAlgorithm(mesh, pnts_for_search, idx_found_nodes, contiguous_arg.getValue());
 
 	for (size_t k(0); k<n; k++) {
 		delete pnts_for_search[k];
