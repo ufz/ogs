@@ -62,7 +62,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 #ifndef WIN32
 		unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 #endif
-		INFO("\tdone, %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
+		INFO("\tdone, construction time: %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
 	#ifndef WIN32
 		INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 	#endif
@@ -74,7 +74,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 			idx_found_nodes.push_back(node->getID());
 		}
 		clock_t stop = clock();
-		INFO("\tdone, %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
+		INFO("\tdone, search time: %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
 	} else {
 #ifndef WIN32
 		BaseLib::MemWatch mem_watch;
@@ -86,7 +86,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 #ifndef WIN32
 		unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 #endif
-		INFO("\tdone, %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
+		INFO("\tdone, construction time: %f seconds", (end_grid_construction-start_grid_construction)/(double)(CLOCKS_PER_SEC));
 #ifndef WIN32
 		INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
@@ -98,7 +98,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 			idx_found_nodes.push_back(node->getID());
 		}
 		clock_t stop = clock();
-		INFO("\tdone, %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
+		INFO("\tdone, search time: %f seconds", (stop-start)/(double)(CLOCKS_PER_SEC));
 	}
 }
 
