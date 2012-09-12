@@ -12,8 +12,6 @@
 
 #include "Mesh.h"
 
-#include <set>
-
 #include "Node.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
