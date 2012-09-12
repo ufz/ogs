@@ -39,7 +39,7 @@ public:
 	/**
 	 * adds three indices describing a triangle and updates the bounding box
 	 * */
-	void addTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c);
+	void addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
 	/// Triangulates a new surface based on closed polyline.
 	static Surface* createSurface(const Polyline &ply);
@@ -47,11 +47,11 @@ public:
 	/**
 	 * returns the number of triangles describing the Surface
 	 * */
-	size_t getNTriangles () const;
+	std::size_t getNTriangles () const;
 
 	/** \brief const access operator for the access to the i-th Triangle of the surface.
 	*/
-	const Triangle* operator[] (size_t i) const;
+	const Triangle* operator[] (std::size_t i) const;
 
 	/**
 	 * is the given point in the bounding volume of the surface

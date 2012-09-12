@@ -37,7 +37,7 @@ private:
 	inline void rotate ();
 	inline void ensureCWOrientation ();
 
-	inline bool isEar(size_t v0, size_t v1, size_t v2) const;
+	inline bool isEar(std::size_t v0, std::size_t v1, std::size_t v2) const;
 
 	inline void initVertexList ();
 	inline void initLists ();
@@ -47,9 +47,9 @@ private:
 	 * a copy of the polygon points
 	 */
 	std::vector<GeoLib::Point*> _pnts;
-	std::list<size_t> _vertex_list;
-	std::list<size_t> _convex_vertex_list;
-	std::list<size_t> _ear_list;
+	std::list<std::size_t> _vertex_list;
+	std::list<std::size_t> _convex_vertex_list;
+	std::list<std::size_t> _ear_list;
 
 	/**
 	 * triangles of the triangulation (maybe in the wrong orientation)

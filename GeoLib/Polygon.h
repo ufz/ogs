@@ -104,7 +104,7 @@ public:
 	bool getNextIntersectionPointPolygonLine(GeoLib::Point const & a,
 									GeoLib::Point const & b,
 									GeoLib::Point* intersection_pnt,
-									size_t& seg_num) const;
+									std::size_t& seg_num) const;
 
 
 	void computeListOfSimplePolygons ();
@@ -119,7 +119,7 @@ private:
 	 * @param pnt point that is edge type computed for
 	 * @return a value of enum EdgeType
 	 */
-	EdgeType::value getEdgeType (size_t k, GeoLib::Point const & pnt) const;
+	EdgeType::value getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
 
 	void calculateAxisAlignedBoundingBox ();
 	void ensureCWOrientation ();
@@ -141,7 +141,7 @@ private:
 GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt,
                                           double radius,
                                           std::vector<GeoLib::Point*> & pnts,
-                                          size_t resolution = 12);
+                                          std::size_t resolution = 12);
 
 /**
  * comparison operator for polygons

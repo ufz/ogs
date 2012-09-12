@@ -71,7 +71,7 @@ public:
 	 * @return an object of type PointVec
 	 */
 	PointVec (const std::string& name, std::vector<Point*>* points,
-	          std::map<std::string, size_t>* name_id_map = NULL,
+	          std::map<std::string, std::size_t>* name_id_map = NULL,
 	          PointType type = PointVec::POINT, double rel_eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** Destructor deletes all Points of this PointVec. */
@@ -84,7 +84,7 @@ public:
 	 * @param pnt the pointer to the Point
 	 * @return the id of the point within the internal vector
 	 */
-	size_t push_back (Point* pnt);
+	std::size_t push_back (Point* pnt);
 
 	/**
 	 * push_back adds new elements at the end of the vector _data_vec.
@@ -101,16 +101,16 @@ public:
 
 	std::vector<Point*>* filterStations(const std::vector<PropertyBounds> &bounds) const;
 
-	const std::vector<size_t>& getIDMap () const { return _pnt_id_map; }
+	const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
 
 	double getShortestPointDistance () const;
 	const GeoLib::AABB& getAxisAlignedBoundingBox () const;
 
 	/// Returns a subset of this point vector containing only the points specified in "subset" as PointWithID-objects
-	std::vector<GeoLib::Point*>* getSubset(const std::vector<size_t> &subset);
+	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset);
 
 private:
-	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
+	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
@@ -123,7 +123,7 @@ private:
 	// this way the compiler does not create a (possible unwanted) assignment operator
 	PointVec& operator= (const PointVec& rhs);
 
-	size_t uniqueInsert (Point* pnt);
+	std::size_t uniqueInsert (Point* pnt);
 
 	/** the type of the point (\sa enum PointType) */
 	PointType _type;
@@ -132,7 +132,7 @@ private:
 	 * permutation of the geometric elements according
 	 * to their lexicographical order
 	 */
-	std::vector<size_t> _pnt_id_map;
+	std::vector<std::size_t> _pnt_id_map;
 
 	/**
 	 * method calculates the shortest distance of points inside the _pnt_vec

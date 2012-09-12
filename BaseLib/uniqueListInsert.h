@@ -17,10 +17,10 @@
 
 namespace BaseLib {
 
-void uniqueListInsert (std::list<size_t>& list, size_t element)
+void uniqueListInsert (std::list<std::size_t>& list, std::size_t element)
 {
 	// search element
-	std::list<size_t>::const_iterator it;
+	std::list<std::size_t>::const_iterator it;
 	for (it = list.begin (); it != list.end(); it++) {
 		if (*it == element) return;
 	}

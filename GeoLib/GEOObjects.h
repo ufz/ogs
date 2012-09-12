@@ -71,7 +71,7 @@ public:
 	 */
 	virtual void addPointVec(std::vector<Point*>* points,
 	                         std::string &name,
-	                         std::map<std::string, size_t>* pnt_names = NULL,
+	                         std::map<std::string, std::size_t>* pnt_names = NULL,
 	                         double eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** copies the pointers to the points in the given vector to the PointVec of the provided name.
@@ -85,7 +85,7 @@ public:
 	 * corresponding name does not exist
 	 * */
 	virtual bool appendPointVec(const std::vector<Point*> &points,
-	                            std::string const &name, std::vector<size_t>* ids = NULL);
+	                            std::string const &name, std::vector<std::size_t>* ids = NULL);
 
 	/**
 	 * Method appends the point the the PointVec object with the name name. The PointVec
@@ -97,7 +97,7 @@ public:
 	 * @return true, if the point could be inserted (i.e. was not already contained in the vector)
 	 * else false (the user have to delete the point itself)
 	 */
-	bool appendPoint(Point* point, std::string const &name, size_t& id);
+	bool appendPoint(Point* point, std::string const &name, std::size_t& id);
 
 	/**
 	 * Returns the point vector with the given name.
@@ -148,7 +148,7 @@ public:
 	 */
 	virtual void addPolylineVec(std::vector<Polyline*>* lines,
 	                            const std::string &name,
-	                            std::map<std::string,size_t>* ply_names = NULL);
+	                            std::map<std::string,std::size_t>* ply_names = NULL);
 
 	/** copies the pointers to the polylines in the vector to the PolylineVec with provided name.
 	 * the pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Polylines at the
@@ -190,7 +190,7 @@ public:
 	/** Adds a vector of surfaces with the given name to GEOObjects. */
 	virtual void addSurfaceVec(std::vector<Surface*>* surfaces,
 	                           const std::string &name,
-	                           std::map<std::string, size_t>* sfc_names = NULL);
+	                           std::map<std::string, std::size_t>* sfc_names = NULL);
 
 	/**
 	 * Copies the surfaces in the vector to the SurfaceVec with the given name.
@@ -228,7 +228,7 @@ public:
 	/// Returns the names of all geometry vectors.
 	void getGeometryNames (std::vector<std::string>& names) const;
 
-	const std::string getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, size_t id) const;
+	const std::string getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const;
 
 	/// Returns the names of all station vectors.
 	void getStationVectorNames(std::vector<std::string>& names) const;

@@ -33,7 +33,7 @@ private:
 	std::vector<GeoLib::Point*>* pnt_vec;
 	std::vector<GeoLib::Point*>* well_vec;
 	std::vector<GeoLib::Polyline*>* ply_vec;
-	static const size_t MAX_COLS_PER_ROW = 256;
+	static const std::size_t MAX_COLS_PER_ROW = 256;
 };
 } // end namespace FileIO
 

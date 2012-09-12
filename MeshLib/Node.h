@@ -31,7 +31,7 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
+	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;
@@ -54,7 +54,7 @@ public:
 	const std::vector<Element*>& getElements() const { return _elements; };
 
 	/// Get number of elements the node is part of.
-	size_t getNElements() const { return _elements.size(); };
+	std::size_t getNElements() const { return _elements.size(); };
 
 	/// Destructor
 	virtual ~Node();
@@ -72,7 +72,7 @@ protected:
 	/// Update coordinates of a node.
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
-	
+
 	std::vector<Element*> _elements;
 
 }; /* class */

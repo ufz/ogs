@@ -62,11 +62,11 @@ template <class T> void read ( std::istream &in, unsigned N, T *a )
 	while (!in.eof () and k <= N) {
 		std::string t;
 		 getline (in, t);
-		size_t i1;
+		std::size_t i1;
 		if (t.length () != 0) {
 			i1 = t.find_first_not_of (ws, 0);
 			if (i1 != std::string::npos) {
-				size_t i2 = t.find_first_of (ws, i1);
+				std::size_t i2 = t.find_first_of (ws, i1);
 				if (i2 != std::string::npos) {
 					a[k++] = lexical_cast<T> ( t.substr(i1, i2-i1) );
 				} else {
@@ -77,8 +77,8 @@ template <class T> void read ( std::istream &in, unsigned N, T *a )
 	}
 }
 
-template <class T> int readArrays ( const std::string &fname, size_t &s,
-	size_t n, T* &arr )
+template <class T> int readArrays ( const std::string &fname, std::size_t &s,
+	std::size_t n, T* &arr )
 {
 	// open stream
 	std::ifstream in (fname.c_str());
@@ -92,7 +92,7 @@ template <class T> int readArrays ( const std::string &fname, size_t &s,
 	}
 	if (s > 0) {
 		arr = new T[s * n];
-		size_t j(0), l(0);
+		std::size_t j(0), l(0);
 		// read values
 		in.open (fname.c_str(), std::ios::in);
 		for (j=0; j<s; ++j) {

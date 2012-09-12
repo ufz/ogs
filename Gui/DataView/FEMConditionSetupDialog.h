@@ -80,7 +80,7 @@ private slots:
 
 	void directButton_pressed();
 
-	void addDisValues(std::vector< std::pair<size_t,double> > direct_values);
+	void addDisValues(std::vector< std::pair<std::size_t,double> > direct_values);
 
 	void copyCondOnPoints();
 

@@ -19,7 +19,7 @@ namespace GeoLib {
 
 class BruteForceClosestPair : public ClosestPair {
 public:
-	BruteForceClosestPair(std::vector<GeoLib::Point*> const & pnts, size_t& id0, size_t& id1);
+	BruteForceClosestPair(std::vector<GeoLib::Point*> const & pnts, std::size_t& id0, std::size_t& id1);
 };
 
 } // end namespace GeoLib

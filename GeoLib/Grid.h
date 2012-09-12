@@ -46,12 +46,12 @@ public:
 	 *
 	 */
 	template <typename InputIterator>
-	Grid(InputIterator first, InputIterator last, size_t max_num_per_grid_cell = 512) :
+	Grid(InputIterator first, InputIterator last, std::size_t max_num_per_grid_cell = 512) :
 		GeoLib::AABB(), _grid_cell_nodes_map(NULL)
 	{
 		// compute axis aligned bounding box
 		InputIterator it(first);
-		size_t n_pnts(0);
+		std::size_t n_pnts(0);
 		while (it != last) {
 			n_pnts++;
 			this->update(copyOrAddress(*it)->getCoords());
@@ -59,7 +59,7 @@ public:
 		}
 
 		double delta[3] = { 0.0, 0.0, 0.0 };
-		for (size_t k(0); k < 3; k++) {
+		for (std::size_t k(0); k < 3; k++) {
 			// make the bounding box a little bit bigger,
 			// such that the node with maximal coordinates fits into the grid
 			_max_pnt[k] *= (1.0 + 1e-6);
@@ -76,7 +76,7 @@ public:
 			// 1d case y = z = 0
 			if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() &&
 							fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-				_n_steps[0] = static_cast<size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+				_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
 				_n_steps[1] = 1;
 				_n_steps[2] = 1;
 			} else {
@@ -84,7 +84,7 @@ public:
 				if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() &&
 								fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
 					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
 					_n_steps[2] = 1;
 				} else {
 					// 1d case x = y = 0
@@ -92,16 +92,16 @@ public:
 									< std::numeric_limits<double>::epsilon()) {
 						_n_steps[0] = 1;
 						_n_steps[1] = 1;
-						_n_steps[2] = static_cast<size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+						_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
 					} else {
 						// 2d case
 						if (fabs(delta[1]) < std::numeric_limits<double>::epsilon()) {
-							_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
+							_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
 							_n_steps[1] = 1;
-							_n_steps[2] = static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
+							_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
 						} else {
-							_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
-							_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
+							_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
+							_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
 							_n_steps[2] = 1;
 						}
 					}
@@ -109,17 +109,17 @@ public:
 			}
 		} else {
 			// 3d case
-			_n_steps[0] = static_cast<size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
+			_n_steps[0] = static_cast<std::size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
 							/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
-			_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-			_n_steps[2] = static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
+			_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
+			_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
 		}
 
-		const size_t n_plane(_n_steps[0] * _n_steps[1]);
+		const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
 		_grid_cell_nodes_map = new std::vector<POINT*>[n_plane * _n_steps[2]];
 
 		// some frequently used expressions to fill the grid vectors
-		for (size_t k(0); k < 3; k++) {
+		for (std::size_t k(0); k < 3; k++) {
 			_step_sizes[k] = delta[k] / _n_steps[k];
 			_inverse_step_sizes[k] = 1.0 / _step_sizes[k];
 		}
@@ -128,9 +128,9 @@ public:
 		it = first;
 		while (it != last) {
 			double const* const pnt(copyOrAddress(*it)->getCoords());
-			const size_t i(static_cast<size_t> ((pnt[0] - _min_pnt[0]) * _inverse_step_sizes[0]));
-			const size_t j(static_cast<size_t> ((pnt[1] - _min_pnt[1]) * _inverse_step_sizes[1]));
-			const size_t k(static_cast<size_t> ((pnt[2] - _min_pnt[2]) * _inverse_step_sizes[2]));
+			const std::size_t i(static_cast<std::size_t> ((pnt[0] - _min_pnt[0]) * _inverse_step_sizes[0]));
+			const std::size_t j(static_cast<std::size_t> ((pnt[1] - _min_pnt[1]) * _inverse_step_sizes[1]));
+			const std::size_t k(static_cast<std::size_t> ((pnt[2] - _min_pnt[2]) * _inverse_step_sizes[2]));
 
 			if (i >= _n_steps[0] || j >= _n_steps[1] || k >= _n_steps[2]) {
 				std::cout << "error computing indices " << std::endl;
@@ -141,8 +141,8 @@ public:
 		}
 
 #ifndef NDEBUG
-		size_t pnts_cnt(0);
-		for (size_t k(0); k < n_plane * _n_steps[2]; k++)
+		std::size_t pnts_cnt(0);
+		for (std::size_t k(0); k < n_plane * _n_steps[2]; k++)
 			pnts_cnt += _grid_cell_nodes_map[k].size();
 
 		assert(n_pnts==pnts_cnt);
@@ -173,7 +173,7 @@ public:
 	 */
 	POINT* getNearestPoint(double const*const pnt) const
 	{
-		size_t coords[3];
+		std::size_t coords[3];
 		getGridCoords(pnt, coords);
 
 		double sqr_min_dist (MathLib::sqrDist(&_min_pnt, &_max_pnt));
@@ -196,10 +196,10 @@ public:
 			// search in all border cells for at least one neighbor
 					double sqr_min_dist_tmp;
 					POINT* nearest_pnt_tmp(NULL);
-					size_t offset(1);
+					std::size_t offset(1);
 
 					while (nearest_pnt == NULL) {
-						size_t tmp_coords[3];
+						std::size_t tmp_coords[3];
 						for (tmp_coords[0] = coords[0]-offset; tmp_coords[0]<coords[0]+offset; tmp_coords[0]++) {
 						for (tmp_coords[1] = coords[1]-offset; tmp_coords[1]<coords[1]+offset; tmp_coords[1]++) {
 							for (tmp_coords[2] = coords[2]-offset; tmp_coords[2]<coords[2]+offset; tmp_coords[2]++) {
@@ -227,11 +227,11 @@ public:
 			std::vector<std::vector<POINT*> const*> vecs_of_pnts;
 			getVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
 
-			const size_t n_vecs(vecs_of_pnts.size());
-			for (size_t j(0); j<n_vecs; j++) {
+			const std::size_t n_vecs(vecs_of_pnts.size());
+			for (std::size_t j(0); j<n_vecs; j++) {
 				std::vector<POINT*> const& pnts(*(vecs_of_pnts[j]));
-				const size_t n_pnts(pnts.size());
-				for (size_t k(0); k<n_pnts; k++) {
+				const std::size_t n_pnts(pnts.size());
+				for (std::size_t k(0); k<n_pnts; k++) {
 					const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
 					if (sqr_dist < sqr_min_dist) {
 						sqr_min_dist = sqr_dist;
@@ -271,7 +271,7 @@ private:
 	 * @param pnt (input) the coordinates of the point
 	 * @param coords (output) the coordinates of the grid cell
 	 */
-	inline void getGridCoords(double const*const pnt, size_t* coords) const;
+	inline void getGridCoords(double const*const pnt, std::size_t* coords) const;
 
 	/**
 	 *
@@ -303,20 +303,20 @@ private:
 	 * ordered in the same sequence as above described
 	 * @param coords coordinates of the grid cell
 	 */
-	void getPointCellBorderDistances(double const*const pnt, double dists[6], size_t const* const coords) const;
+	void getPointCellBorderDistances(double const*const pnt, double dists[6], std::size_t const* const coords) const;
 
-	bool calcNearestPointInGridCell(double const* const pnt, size_t const* const coords,
+	bool calcNearestPointInGridCell(double const* const pnt, std::size_t const* const coords,
 					double &sqr_min_dist,
 					POINT* &nearest_pnt) const
 	{
-		const size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
+		const std::size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
 		std::vector<typename std::tr1::add_pointer<typename std::tr1::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
 		if (pnts.empty()) return false;
 
-		const size_t n_pnts(pnts.size());
+		const std::size_t n_pnts(pnts.size());
 		sqr_min_dist = MathLib::sqrDist(pnts[0]->getCoords(), pnt);
 		nearest_pnt = pnts[0];
-		for (size_t i(1); i < n_pnts; i++) {
+		for (std::size_t i(1); i < n_pnts; i++) {
 			const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt));
 			if (sqr_dist < sqr_min_dist) {
 				sqr_min_dist = sqr_dist;
@@ -332,7 +332,7 @@ private:
 
 	double _step_sizes[3];
 	double _inverse_step_sizes[3];
-	size_t _n_steps[3];
+	std::size_t _n_steps[3];
 	/**
 	 * This is an array that stores pointers to POINT objects.
 	 */
@@ -344,19 +344,19 @@ void Grid<POINT>::getVecsOfGridCellsIntersectingCube(double const* const pnt, do
 				std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	double tmp_pnt[3] = { pnt[0] - half_len, pnt[1] - half_len, pnt[2] - half_len }; // min
-	size_t min_coords[3];
+	std::size_t min_coords[3];
 	getGridCoords(tmp_pnt, min_coords);
 
 	tmp_pnt[0] = pnt[0] + half_len;
 	tmp_pnt[1] = pnt[1] + half_len;
 	tmp_pnt[2] = pnt[2] + half_len;
-	size_t max_coords[3];
+	std::size_t max_coords[3];
 	getGridCoords(tmp_pnt, max_coords);
 
-	size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
+	std::size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
 	for (coords[0] = min_coords[0]; coords[0] < max_coords[0] + 1; coords[0]++) {
 		for (coords[1] = min_coords[1]; coords[1] < max_coords[1] + 1; coords[1]++) {
-			const size_t coords0_p_coords1_x_steps0(coords[0] + coords[1] * _n_steps[0]);
+			const std::size_t coords0_p_coords1_x_steps0(coords[0] + coords[1] * _n_steps[0]);
 			for (coords[2] = min_coords[2]; coords[2] < max_coords[2] + 1; coords[2]++) {
 				pnts.push_back(&(_grid_cell_nodes_map[coords0_p_coords1_x_steps0 + coords[2]
 								* steps0_x_steps1]));
@@ -379,16 +379,16 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 	const double dz ((urb[2]-llf[2])/_n_steps[2]);
 
 	// create grid names and grid boxes as geometry
-	for (size_t i(0); i<_n_steps[0]; i++) {
-		for (size_t j(0); j<_n_steps[1]; j++) {
-			for (size_t k(0); k<_n_steps[2]; k++) {
+	for (std::size_t i(0); i<_n_steps[0]; i++) {
+		for (std::size_t j(0); j<_n_steps[1]; j++) {
+			for (std::size_t k(0); k<_n_steps[2]; k++) {
 
 				std::string name("Grid-");
-				name += number2str<size_t>(i);
+				name += number2str<std::size_t>(i);
 				name +="-";
-				name += number2str<size_t>(j);
+				name += number2str<std::size_t>(j);
 				name += "-";
-				name += number2str<size_t> (k);
+				name += number2str<std::size_t> (k);
 				grid_names.push_back(name);
 
 				std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);
@@ -404,14 +404,14 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 
 				std::vector<GeoLib::Polyline*>* plys (new std::vector<GeoLib::Polyline*>);
 				GeoLib::Polyline* ply0 (new GeoLib::Polyline(*points));
-				for (size_t l(0); l<4; l++) {
+				for (std::size_t l(0); l<4; l++) {
 					ply0->addPoint(l);
 				}
 				ply0->addPoint(0);
 				plys->push_back(ply0);
 
 				GeoLib::Polyline* ply1 (new GeoLib::Polyline(*points));
-				for (size_t l(4); l<8; l++) {
+				for (std::size_t l(4); l<8; l++) {
 					ply1->addPoint(l);
 				}
 				ply1->addPoint(4);
@@ -448,23 +448,23 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 #endif
 
 template <typename POINT>
-void Grid<POINT>::getGridCoords(double const*const pnt, size_t* coords) const
+void Grid<POINT>::getGridCoords(double const*const pnt, std::size_t* coords) const
 {
-	for (size_t k(0); k<3; k++) {
+	for (std::size_t k(0); k<3; k++) {
 		if (pnt[k] < _min_pnt[k]) {
 			coords[k] = 0;
 		} else {
 			if (pnt[k] > _max_pnt[k]) {
 				coords[k] = _n_steps[k]-1;
 			} else {
-				coords[k] = static_cast<size_t>((pnt[k]-_min_pnt[k]) * _inverse_step_sizes[k]);
+				coords[k] = static_cast<std::size_t>((pnt[k]-_min_pnt[k]) * _inverse_step_sizes[k]);
 			}
 		}
 	}
 }
 
 template <typename POINT>
-void Grid<POINT>::getPointCellBorderDistances(double const*const pnt, double dists[6], size_t const* const coords) const
+void Grid<POINT>::getPointCellBorderDistances(double const*const pnt, double dists[6], std::size_t const* const coords) const
 {
 
 	dists[0] = (pnt[2] - _min_pnt[2] + coords[2]*_step_sizes[2]); // bottom

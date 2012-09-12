@@ -58,7 +58,7 @@ protected:
 	                       vtkInformationVector* outputVector);
 
 private:
-	//size_t getIndex(size_t idx, vtkSmartPointer<vtkPoints> newPoints, vtkSmartPointer<vtkDoubleArray> scalars, std::map<size_t, size_t> &idx_map);
+	//std::size_t getIndex(std::size_t idx, vtkSmartPointer<vtkPoints> newPoints, vtkSmartPointer<vtkDoubleArray> scalars, std::map<std::size_t, std::size_t> &idx_map);
 
 	const std::vector<GeoLib::Point*>* _points;
 	const std::vector<FEMCondition*>* _cond_vec;

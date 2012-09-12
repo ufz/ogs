@@ -26,14 +26,14 @@ namespace MathLib {
 template <class T> class Matrix
 {
 public:
-   Matrix (size_t rows, size_t cols);
-   Matrix (size_t rows, size_t cols, const T& val);
+   Matrix (std::size_t rows, std::size_t cols);
+   Matrix (std::size_t rows, std::size_t cols, const T& val);
    Matrix (const Matrix &src);
 
    ~Matrix ();
 
-   size_t getNRows () const { return nrows; }
-   size_t getNCols () const { return ncols; }
+   std::size_t getNRows () const { return nrows; }
+   std::size_t getNCols () const { return ncols; }
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
     */
@@ -71,7 +71,7 @@ public:
     */
    Matrix<T>* transpose() const; // HB & ZC
 
-   Matrix<T>* getSubMatrix (size_t b_row, size_t b_col, size_t e_row, size_t e_col) const throw (std::range_error);
+   Matrix<T>* getSubMatrix (std::size_t b_row, std::size_t b_col, std::size_t e_row, std::size_t e_col) const throw (std::range_error);
 
    /**
     * overwrites values of the matrix with the given sub matrix
@@ -79,10 +79,10 @@ public:
     * @param b_col the first column
     * @param sub_mat the sub matrix
     */
-   void setSubMatrix (size_t b_row, size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error);
+   void setSubMatrix (std::size_t b_row, std::size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error);
 
-   inline T & operator() (size_t row, size_t col) throw (std::range_error);
-   inline T & operator() (size_t row, size_t col) const throw (std::range_error);
+   inline T & operator() (std::size_t row, std::size_t col) throw (std::range_error);
+   inline T & operator() (std::size_t row, std::size_t col) const throw (std::range_error);
 
    /**
     * writes the matrix entries into the output stream
@@ -94,24 +94,24 @@ public:
 
 private:
    // zero based addressing, but Fortran storage layout
-   //inline size_t address(size_t i, size_t j) const { return j*rows+i; };
+   //inline std::size_t address(std::size_t i, std::size_t j) const { return j*rows+i; };
    // zero based addressing, C storage layout
-   inline size_t address(size_t i, size_t j) const { return i*ncols+j; };
+   inline std::size_t address(std::size_t i, std::size_t j) const { return i*ncols+j; };
 
-   size_t nrows;
-   size_t ncols;
+   std::size_t nrows;
+   std::size_t ncols;
    T *data;
 };
 
-template<class T> Matrix<T>::Matrix (size_t rows, size_t cols)
+template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
       : nrows (rows), ncols (cols), data (new T[nrows*ncols])
 {}
 
 template<class T> Matrix<T>::Matrix (const Matrix& src) :
 	nrows (src.getNRows ()), ncols (src.getNCols ()), data (new T[nrows * ncols])
 {
-   for (size_t i = 0; i < nrows; i++)
-      for (size_t j = 0; j < ncols; j++)
+   for (std::size_t i = 0; i < nrows; i++)
+      for (std::size_t j = 0; j < ncols; j++)
          data[address(i,j)] = src (i, j);
 }
 
@@ -122,9 +122,9 @@ template <class T> Matrix<T>::~Matrix ()
 
 template<class T> void Matrix<T>::axpy ( T alpha, const T* x, T beta, T* y) const
 {
-   for (size_t i(0); i<nrows; i++) {
+   for (std::size_t i(0); i<nrows; i++) {
       y[i] += beta * y[i];
-      for (size_t j(0); j<ncols; j++) {
+      for (std::size_t j(0); j<ncols; j++) {
          y[i] += alpha * data[address(i,j)] * x[j];
       }
    }
@@ -133,9 +133,9 @@ template<class T> void Matrix<T>::axpy ( T alpha, const T* x, T beta, T* y) cons
 template<class T> T* Matrix<T>::operator* (const T *x) const
 {
 	T *y (new T[nrows]);
-	for (size_t i(0); i < nrows; i++) {
+	for (std::size_t i(0); i < nrows; i++) {
 		y[i] = 0.0;
-		for (size_t j(0); j < ncols; j++) {
+		for (std::size_t j(0); j < ncols; j++) {
 			y[i] += data[address(i, j)] * x[j];
 		}
 	}
@@ -151,8 +151,8 @@ template<class T> Matrix<T>* Matrix<T>::operator+ (const Matrix<T>& mat) const t
 		throw std::range_error("Matrix::operator+, illegal matrix size!");
 
 	Matrix<T>* y(new Matrix<T> (nrows, ncols));
-	for (size_t i = 0; i < nrows; i++) {
-		for (size_t j = 0; j < ncols; j++) {
+	for (std::size_t i = 0; i < nrows; i++) {
+		for (std::size_t j = 0; j < ncols; j++) {
 			(*y)(i, j) = data[address(i, j)] + mat(i, j);
 		}
 	}
@@ -168,8 +168,8 @@ template<class T> Matrix<T>* Matrix<T>::operator- (const Matrix<T>& mat) const t
 		throw std::range_error("Matrix::operator-, illegal matrix size!");
 
 	Matrix<T>* y(new Matrix<T> (nrows, ncols));
-	for (size_t i = 0; i < nrows; i++) {
-		for (size_t j = 0; j < ncols; j++) {
+	for (std::size_t i = 0; i < nrows; i++) {
+		for (std::size_t j = 0; j < ncols; j++) {
 			(*y)(i, j) = data[address(i, j)] - mat(i, j);
 		}
 	}
@@ -185,12 +185,12 @@ template<class T> Matrix<T>* Matrix<T>::operator* (const Matrix<T>& mat) const t
 		throw std::range_error(
 				"Matrix::operator*, number of rows and cols should be the same!");
 
-	size_t y_cols(mat.getNCols());
+	std::size_t y_cols(mat.getNCols());
 	Matrix<T>* y(new Matrix<T> (nrows, y_cols, T(0)));
 
-	for (size_t i = 0; i < nrows; i++) {
-		for (size_t j = 0; j < y_cols; j++) {
-			for (size_t k = 0; k < ncols; k++)
+	for (std::size_t i = 0; i < nrows; i++) {
+		for (std::size_t j = 0; j < y_cols; j++) {
+			for (std::size_t k = 0; k < ncols; k++)
 				(*y)(i, j) += data[address(i, k)] * mat(k, j);
 		}
 	}
@@ -203,8 +203,8 @@ template<class T> Matrix<T>* Matrix<T>::transpose() const
 {
 	Matrix<T>* y(new Matrix<T> (ncols, nrows));
 
-	for (size_t i = 0; i < nrows; i++) {
-		for (size_t j = 0; j < ncols; j++) {
+	for (std::size_t i = 0; i < nrows; i++) {
+		for (std::size_t j = 0; j < ncols; j++) {
 //			y->data[y->address(j, i)] = data[address(i, j)];
 			(*y)(j,i) = data[address(i, j)];
 		}
@@ -213,8 +213,8 @@ template<class T> Matrix<T>* Matrix<T>::transpose() const
 }
 
 template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
-		size_t b_row, size_t b_col,
-		size_t e_row, size_t e_col) const throw (std::range_error)
+		std::size_t b_row, std::size_t b_col,
+		std::size_t e_row, std::size_t e_col) const throw (std::range_error)
 {
 	if (b_row >= e_row | b_col >= e_col)
 		throw std::range_error ("Matrix::getSubMatrix() illegal sub matrix");
@@ -222,8 +222,8 @@ template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
 		throw std::range_error ("Matrix::getSubMatrix() illegal sub matrix");
 
 	Matrix<T>* y(new Matrix<T> (e_row-b_row, e_col-b_col));
-	for (size_t i=b_row; i<e_row; i++) {
-		for (size_t j=b_col; j<e_col; j++) {
+	for (std::size_t i=b_row; i<e_row; i++) {
+		for (std::size_t j=b_col; j<e_col; j++) {
 			(*y)(i-b_row, j-b_col) = data[address(i, j)];
 		}
 	}
@@ -231,19 +231,19 @@ template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
 }
 
 template<class T> void Matrix<T>::setSubMatrix(
-		size_t b_row, size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error)
+		std::size_t b_row, std::size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error)
 {
 	if (b_row + sub_mat.getNRows() > nrows | b_col + sub_mat.getNCols() > ncols)
 		throw std::range_error ("Matrix::setSubMatrix() sub matrix to big");
 
-	for (size_t i=0; i<sub_mat.getNRows(); i++) {
-		for (size_t j=0; j<sub_mat.getNCols(); j++) {
+	for (std::size_t i=0; i<sub_mat.getNRows(); i++) {
+		for (std::size_t j=0; j<sub_mat.getNCols(); j++) {
 			data[address(i+b_row, j+b_col)] = sub_mat(i,j);
 		}
 	}
 }
 
-template<class T> T& Matrix<T>::operator() (size_t row, size_t col)
+template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col)
 	throw (std::range_error)
 {
    if ( (row >= nrows) | ( col >= ncols) )
@@ -252,7 +252,7 @@ template<class T> T& Matrix<T>::operator() (size_t row, size_t col)
 }
 
 
-template<class T> T& Matrix<T>::operator() (size_t row, size_t col) const
+template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col) const
 	throw (std::range_error)
 {
    if ( (row >= nrows) | ( col >= ncols) )
@@ -262,8 +262,8 @@ template<class T> T& Matrix<T>::operator() (size_t row, size_t col) const
 
 template <class T> void Matrix<T>::write (std::ostream &out) const
 {
-	for (size_t i = 0; i < nrows; i++) {
-		for (size_t j = 0; j < ncols; j++) {
+	for (std::size_t i = 0; i < nrows; i++) {
+		for (std::size_t j = 0; j < ncols; j++) {
 			out << data[address(i, j)] << "\t";
 		}
 		out << std::endl;
@@ -273,7 +273,7 @@ template <class T> void Matrix<T>::write (std::ostream &out) const
 template <class T> T sqrFrobNrm (const Matrix<T> &mat)
 {
 	T nrm ((T)(0));
-	size_t i,j;
+	std::size_t i,j;
 	for (j=0; j<mat.getNCols(); j++)
 		for (i=0; i<mat.getNRows(); i++)
 			nrm += mat(i,j) * mat(i,j);

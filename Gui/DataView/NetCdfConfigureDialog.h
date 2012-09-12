@@ -45,7 +45,7 @@ private slots:
 private:
 	void setVariableSelect();
 	void setDimensionSelect();
-	void getDimEdges(int dimId,size_t &size, double &firstValue, double &lastValue);
+	void getDimEdges(int dimId,std::size_t &size, double &firstValue, double &lastValue);
 	void getDaysTime(double minSince, QTime &time, int &days);
 	long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
 	void createDataObject();
@@ -54,7 +54,7 @@ private:
 	int getDim4();
 	double getResolution();
 	QString setName();
-	void reverseNorthSouth(double* data, size_t width, size_t height);
+	void reverseNorthSouth(double* data, std::size_t width, std::size_t height);
 
 	NcFile *_currentFile;
 	NcVar *_currentVar;

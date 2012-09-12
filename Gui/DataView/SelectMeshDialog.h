@@ -57,7 +57,7 @@ private slots:
 	void reject();
 
 signals:
-	//void requestNameChange(const std::string&, const GeoLib::GEOTYPE, size_t, std::string);
+	//void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);
 };
 
 #endif //SELECTMESHDIALOG_H

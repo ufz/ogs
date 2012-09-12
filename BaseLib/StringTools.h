@@ -52,7 +52,7 @@ template<typename T> std::string number2str(T d)
 
 /**
  *   Converts a string into a number (double, float, int, ...)
- *  Example: size_t number (str2number<size_t> (str));
+ *  Example: std::size_t number (str2number<std::size_t> (str));
  *  \param str string to be converted
  *  \return the number
  */
@@ -92,7 +92,7 @@ void extractPath (std::string const& fname, std::string& path);
 } // end namespace BaseLib
 
 #ifdef MSVC
-void correctScientificNotation(std::string filename, size_t precision = 0);
+void correctScientificNotation(std::string filename, std::size_t precision = 0);
 #endif
 
 #endif //STRINGTOOLS_H

@@ -56,14 +56,14 @@ public:
 	 * double sqrNrm2 = point[0] * point[0] + point[1] * point[1] + point[2] + point[2];
 	 * \endcode
 	*/
-	const T& operator[] (size_t idx) const {
+	const T& operator[] (std::size_t idx) const {
 		assert (idx <= 2);
 		return _x[idx];
 	}
 	/** \brief access operator (see book Effektiv C++ programmieren - subsection 1.3.2 ).
-	 * \sa const T& operator[] (size_t idx) const
+	 * \sa const T& operator[] (std::size_t idx) const
 	 */
-	T& operator[] (size_t idx) {
+	T& operator[] (std::size_t idx) {
 		return const_cast<T&> (static_cast<const TemplatePoint&> (*this)[idx]);
 	}
 
@@ -105,7 +105,7 @@ template <class T> TemplatePoint<T>::TemplatePoint(T x1, T x2, T x3) :
 template <class T> TemplatePoint<T>::TemplatePoint (T const* x) :
 	GeoObject()
 {
-	for (size_t k(0); k<3; k++) _x[k] = x[k];
+	for (std::size_t k(0); k<3; k++) _x[k] = x[k];
 }
 
 /** overload the output operator for class Point */

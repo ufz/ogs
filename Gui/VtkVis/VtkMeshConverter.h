@@ -56,8 +56,8 @@ public:
 	 */
 	static MeshLib::Mesh* convertImgToMesh(const double* img,
 	                                      const double origin[3],
-										  const size_t imgHeight,
-										  const size_t imgWidth,
+										  const std::size_t imgHeight,
+										  const std::size_t imgWidth,
 	                                      const double &scalingFactor,
 										  MshElemType::type elem_type,
 										  UseIntensityAs::type intensity_type);
@@ -71,13 +71,13 @@ private:
 									   int* node_idx_map,
 									   const bool* visNodes,
 									   const double origin[3],
-									   const size_t &imgHeight,
-									   const size_t &imgWidth,
+									   const std::size_t &imgHeight,
+									   const std::size_t &imgWidth,
 									   const double &scalingFactor,
 									   MshElemType::type elem_type,
 									   UseIntensityAs::type intensity_type);
 
-	static double getExistingValue(const double* img, size_t length);
+	static double getExistingValue(const double* img, std::size_t length);
 };
 
 #endif // VTKMESHCONVERTER_H

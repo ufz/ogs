@@ -68,7 +68,7 @@ protected:
 	std::map<std::string, GeoLib::Color*> _colorLookupTable;
 
 private:
-	size_t GetIndexByName( std::string name );
+	std::size_t GetIndexByName( std::string name );
 
 	std::map<std::string, vtkIdType> _id_map;
 };

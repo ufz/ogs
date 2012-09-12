@@ -61,7 +61,7 @@ protected slots:
 	void save();
 	/// Function calls for generating GMSH files from the GUI
 	void callGMSH(std::vector<std::string> & selectedGeometries,
-	              size_t param1,
+	              std::size_t param1,
 	              double param2,
 	              double param3,
 	              double param4,
@@ -77,9 +77,9 @@ protected slots:
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
 	void showConditionWriterDialog();
 	/// Call dialog for creating or modifying FEM conditions.
-	void showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, bool on_points = false);
+	void showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, bool on_points = false);
 	/// Allows setting the name for a geometric object
-	void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id);
+	void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id);
 	/// Calls the diagram prefs dialog from the Tools menu.
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).

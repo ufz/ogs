@@ -37,17 +37,17 @@ public:
 	 * construction of object, initialization of reference to point vector,
 	 * saves the three indices describing a triangle
 	 */
-	Triangle (std::vector<Point *> const &pnt_vec, size_t pnt_a, size_t pnt_b, size_t pnt_c);
+	Triangle (std::vector<Point *> const &pnt_vec, std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
 	/**
 	 * saves three indices describing a triangle
 	 * */
-	void setTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c);
+	void setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
 	/** \brief const access operator to access the index
 	 * of the i-th triangle point
 	*/
-	const size_t& operator[] (size_t i) const {
+	const std::size_t& operator[] (std::size_t i) const {
 		assert (i < 3);
 		return _pnt_ids[i];
 	}
@@ -55,7 +55,7 @@ public:
 //	/** \brief access operator to access the index
 //	 * of the i-th triangle point
 //	 * */
-//	size_t& operator[] (size_t i) {
+//	std::size_t& operator[] (std::size_t i) {
 //		assert (i < 3);
 //		return _pnt_ids[i];
 //	}
@@ -63,7 +63,7 @@ public:
 	/**
 	 * \brief const access operator to access the i-th triangle Point
 	 */
-	const Point* getPoint (size_t i) const {
+	const Point* getPoint (std::size_t i) const {
 		assert (i < 3);
 		return _pnts[_pnt_ids[i]];
 	}
@@ -92,7 +92,7 @@ protected:
 	/** a vector of pointers to points */
 	const std::vector<Point*> &_pnts;
 	/** position of pointers to the geometric points */
-	size_t _pnt_ids[3];
+	std::size_t _pnt_ids[3];
 	bool _initialized;
 	double _longest_edge;
 };

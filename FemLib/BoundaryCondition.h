@@ -28,11 +28,11 @@ public:
 		: FEMCondition(cond, FEMCondition::BOUNDARY_CONDITION) {};
 	~BoundaryCondition() {}
 
-	size_t getTimType() const {return _tim_type; }
-	void setTimType(size_t value) { _tim_type = value; }
+	std::size_t getTimType() const {return _tim_type; }
+	void setTimType(std::size_t value) { _tim_type = value; }
 
 private:
-	size_t _tim_type;
+	std::size_t _tim_type;
 };
 
 #endif //BOUNDARYCONDITION_H

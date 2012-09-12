@@ -50,7 +50,7 @@ private slots:
 
 signals:
 	void directNodesWritten(std::string);
-	void transmitDisValues(std::vector< std::pair<size_t,double> >);
+	void transmitDisValues(std::vector< std::pair<std::size_t,double> >);
 };
 
 #endif //CONDFROMRASTERDIALOG_H

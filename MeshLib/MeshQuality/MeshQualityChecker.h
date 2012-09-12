@@ -34,10 +34,10 @@ public:
 	std::vector<double> const& getMeshQuality () const;
 	double getMinValue() const;
 	double getMaxValue() const;
-	virtual BASELIB::Histogram<double> getHistogram (size_t nclasses = 0) const;
+	virtual BASELIB::Histogram<double> getHistogram (std::size_t nclasses = 0) const;
 
 protected:
-	void errorMsg (const Element* elem, size_t idx) const;
+	void errorMsg (const Element* elem, std::size_t idx) const;
 
 	double _min;
 	double _max;

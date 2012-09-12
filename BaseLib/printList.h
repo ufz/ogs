@@ -20,10 +20,10 @@
 
 namespace BaseLib {
 
-void printList (std::list<size_t> const& mylist, std::string const& title)
+void printList (std::list<std::size_t> const& mylist, std::string const& title)
 {
 	std::cout << title << std::endl;
-	for (std::list<size_t>::const_iterator my_it (mylist.begin());
+	for (std::list<std::size_t>::const_iterator my_it (mylist.begin());
 		my_it != mylist.end(); my_it++) {
 		std::cout << *my_it << " ";
 	}
