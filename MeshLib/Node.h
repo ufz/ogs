@@ -20,6 +20,7 @@
 #include "PointWithID.h"
 #include "Mesh.h"
 #include "MshEditor.h"
+#include "../Gui/DataView/MshLayerMapper.h" // TODO: Move MshLayerMapper to MeshLib
 
 namespace MeshLib {
 
@@ -32,10 +33,13 @@ class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
 	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
+	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile,
+                            const std::size_t nLayers, const std::size_t layer_id,
+                            bool removeNoDataValues);
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;
-	friend class MshLayerMapper;
+
 
 public:
 	/// Constructor using a coordinate array
