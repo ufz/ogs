@@ -62,7 +62,7 @@ void MeshQualityShortestLongestRatio::check()
 		}
 		default:
 			ERR ("MeshQualityShortestLongestRatio::check () check for element type %s not implemented.",
-			     MshElemType2String(elem->getType()));
+			     MshElemType2String(elem->getType()).c_str());
 		}
 	}
 }

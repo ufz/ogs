@@ -18,11 +18,11 @@
 
 namespace BaseLib {
 
-template<class T>
+template<typename T>
 void uniqueListInsert (std::list<T>& list, T element)
 {
 	// search element
-	std::list<T>::const_iterator it;
+	typename std::list<T>::const_iterator it;
 	for (it = list.begin (); it != list.end(); it++) {
 		if (*it == element) return;
 	}
@@ -30,11 +30,11 @@ void uniqueListInsert (std::list<T>& list, T element)
 	list.push_back (element);
 }
 
-template<class T>
+template<typename T>
 void uniqueVectorInsert (std::vector<T>& vec, T element)
 {
 	// search element
-	std::vector<T>::const_iterator it;
+	typename std::vector<T>::const_iterator it;
 	for (it = vec.begin (); it != vec.end(); ++it)
 		if (*it == element) return;
 	// element not found -> insert
