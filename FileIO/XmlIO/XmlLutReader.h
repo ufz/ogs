@@ -72,10 +72,10 @@ public:
 				&& point.hasAttribute("b"))
 			{
 				double value = strtod((point.attribute("x")).toStdString().c_str(),0);
-				char r = static_cast<int>(255 * strtod((point.attribute("r")).toStdString().c_str(),0));
-				char g = static_cast<int>(255 * strtod((point.attribute("g")).toStdString().c_str(),0));
-				char b = static_cast<int>(255 * strtod((point.attribute("b")).toStdString().c_str(),0));
-				char o = static_cast<int>(255 * (point.hasAttribute("o") ? strtod((point.attribute("o")).toStdString().c_str(),0) : 1));
+				unsigned char r = static_cast<int>(255 * strtod((point.attribute("r")).toStdString().c_str(),0));
+				unsigned char g = static_cast<int>(255 * strtod((point.attribute("g")).toStdString().c_str(),0));
+				unsigned char b = static_cast<int>(255 * strtod((point.attribute("b")).toStdString().c_str(),0));
+				unsigned char o = static_cast<int>(255 * (point.hasAttribute("o") ? strtod((point.attribute("o")).toStdString().c_str(),0) : 1));
 
 				if (value<range[0]) range[0] = value;
 				if (value>range[1]) range[1] = value;

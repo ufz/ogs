@@ -271,7 +271,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				//idx_map.insert( std::pair<size_t,size_t>(pnt_idx+i, nPoints+i));
 			}
 
-			for (size_t i = 0; i < 4; i++)
+			for (vtkIdType i = 0; i < 4; i++)
 			{
 				vtkIdType a[2] = {nPoints + i, nPoints + i + 4};
 				vtkIdType b[2] = {nPoints + (i * 2), nPoints + (i * 2 + 1)};
