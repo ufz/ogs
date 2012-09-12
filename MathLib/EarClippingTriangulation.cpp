@@ -227,11 +227,11 @@ void EarClippingTriangulation::clipEars()
 				MathLib::Orientation orientation = getOrientation(_pnts[*prevprev], _pnts[*prev],
 						_pnts[*next]);
 				if (orientation == CW) {
-					BaseLib::uniqueListInsert(_convex_vertex_list, *prev);
+					BaseLib::uniqueListInsert<size_t>(_convex_vertex_list, *prev);
 					// prev is convex
 					if (isEar(*prevprev, *prev, *next)) {
 						// prev is an ear tip
-						BaseLib::uniqueListInsert(_ear_list, *prev);
+						BaseLib::uniqueListInsert<size_t>(_ear_list, *prev);
 					} else {
 						// if necessary remove prev
 						_ear_list.remove(*prev);
@@ -266,11 +266,11 @@ void EarClippingTriangulation::clipEars()
 				orientation = getOrientation(_pnts[*prev], _pnts[*next],
 						_pnts[*nextnext]);
 				if (orientation == CW) {
-					BaseLib::uniqueListInsert(_convex_vertex_list, *next);
+					BaseLib::uniqueListInsert<size_t>(_convex_vertex_list, *next);
 					// next is convex
 					if (isEar(*prev, *next, *nextnext)) {
 						// next is an ear tip
-						BaseLib::uniqueListInsert(_ear_list, *next);
+						BaseLib::uniqueListInsert<size_t>(_ear_list, *next);
 					} else {
 						// if necessary remove *next
 						_ear_list.remove(*next);
