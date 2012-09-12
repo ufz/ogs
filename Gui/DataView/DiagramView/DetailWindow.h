@@ -39,7 +39,7 @@ public:
 	 */
 	DetailWindow(DiagramList* list, QWidget* parent = 0);
 
-	DetailWindow(std::vector<size_t> data, QWidget* parent = 0);
+	DetailWindow(std::vector<std::size_t> data, QWidget* parent = 0);
 
 	~DetailWindow(void);
 

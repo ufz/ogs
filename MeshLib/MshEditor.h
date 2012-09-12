@@ -39,7 +39,7 @@ public:
 	static void getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec);
 
 	/// Removes the mesh nodes (and connected elements) given in the nodes-list from the mesh.
-	static MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
+	static MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
 
 	/// Returns the surface nodes of a layered mesh.
 	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh);

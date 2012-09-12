@@ -35,7 +35,7 @@ public slots:
 	void clearView();
 
 	/// Extracts information of the element with the given index from the given grid.
-	void setElement(const MeshLib::Mesh* grid, const size_t elem_index);
+	void setElement(const MeshLib::Mesh* grid, const std::size_t elem_index);
 
 private:
 };

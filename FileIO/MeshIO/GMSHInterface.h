@@ -64,7 +64,7 @@ public:
 	GMSHInterface (GeoLib::GEOObjects & geo_objs,
 					bool include_stations_as_constraints,
 					GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-					double param1, double param2, size_t param3,
+					double param1, double param2, std::size_t param3,
 					std::vector<std::string> & selected_geometries);
 
 	/**
@@ -95,8 +95,8 @@ private:
 
 	void writePoints(std::ostream& out) const;
 
-	size_t _n_lines;
-	size_t _n_plane_sfc;
+	std::size_t _n_lines;
+	std::size_t _n_plane_sfc;
 
 	GeoLib::GEOObjects & _geo_objs;
 	std::vector<std::string>& _selected_geometries;

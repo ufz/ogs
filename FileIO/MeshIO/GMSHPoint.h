@@ -19,7 +19,7 @@ namespace FileIO {
 
 class GMSHPoint : public GeoLib::PointWithID {
 public:
-	GMSHPoint(GeoLib::Point const& pnt, size_t id, double mesh_density);
+	GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density);
 	virtual ~GMSHPoint();
 	void write(std::ostream &os) const;
 private:

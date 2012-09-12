@@ -17,6 +17,7 @@
 #include "Mesh.h"
 
 #include <cmath>
+#include <limits>
 
 const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
 {

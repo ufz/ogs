@@ -42,7 +42,7 @@ T scpr(T const * const v0, T const * const v1)
 		res += v0[k] * v1[k];
 	}
 #else
-	for (size_t k(1); k < N; k++)
+	for (std::size_t k(1); k < N; k++)
 		res += v0[k] * v1[k];
 #endif
 	return res;
@@ -52,7 +52,7 @@ template <> inline
 double scpr<double,3>(double const * const v0, double const * const v1)
 {
 	double res (v0[0]*v1[0]);
-	for (size_t k(1); k < 3; k++)
+	for (std::size_t k(1); k < 3; k++)
 		res += v0[k] * v1[k];
 	return res;
 }
@@ -69,7 +69,7 @@ T scpr(T const * const v0, T const * const v1, unsigned n)
 		res += v0[k] * v1[k];
 	}
 #else
-	for (size_t k(1); k < n; k++)
+	for (std::size_t k(1); k < n; k++)
 		res += v0[k] * v1[k];
 #endif
 	return res;
@@ -149,11 +149,11 @@ double calcTetrahedronVolume(const double* x1, const double* x2, const double* x
  * @return base^exp
  */
 template <typename T> inline
-T fastpow (T base, size_t exp)
+T fastpow (T base, std::size_t exp)
 {
 	T result (base);
 	if (exp == 0) result = static_cast<T>(1);
-	for (size_t k(1); k<exp; k++) {
+	for (std::size_t k(1); k<exp; k++) {
 		result *= base;
 	}
 	return result;

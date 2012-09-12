@@ -59,7 +59,7 @@ public:
 	CondType getCondType() const { return _type; }
 
 	/// Returns the value(s) for the distribution
-	const std::vector<size_t> getDisNodes() const { return _disNodes; }
+	const std::vector<std::size_t> getDisNodes() const { return _disNodes; }
 
 	/// Returns the value(s) for the distribution
 	const std::vector<double> getDisValues() const { return _disValues; }
@@ -74,7 +74,7 @@ public:
 	void setConstantDisValue(double disValue) {_disValues.clear(); _disValues.push_back(disValue); }
 
 	/// Sets a vector of values specifying the distribution.
-	void setDisValues(const std::vector<size_t> &disNodes, const std::vector<double> &disValues)
+	void setDisValues(const std::vector<std::size_t> &disNodes, const std::vector<double> &disValues)
 	{
 		_disNodes = disNodes;
 		_disValues = disValues;
@@ -82,7 +82,7 @@ public:
 
 	/// Sets a vector of values specifying the distribution.
 	/// The first value specifies the point id, the second the value for that point.
-	void setDisValues(const std::vector< std::pair<size_t, double> > &dis_values);
+	void setDisValues(const std::vector< std::pair<std::size_t, double> > &dis_values);
 
 	/// Removes all distribution values
 	void clearDisValues() { _disValues.resize(0); };
@@ -96,7 +96,7 @@ public:
 protected:
 	CondType _type;
 	std::string _geoName;
-	std::vector<size_t> _disNodes;
+	std::vector<std::size_t> _disNodes;
 	std::vector<double> _disValues;
 	std::string _associated_geometry;
 };

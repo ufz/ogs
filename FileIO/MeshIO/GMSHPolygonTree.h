@@ -65,11 +65,11 @@ public:
 	 */
 	void createGMSHPoints(std::vector<FileIO::GMSHPoint*> & gmsh_pnts) const;
 
-	virtual void writeLineLoop(size_t &line_offset, size_t &sfc_offset, std::ostream& out) const;
-	void writeSubPolygonsAsLineConstraints(size_t &line_offset, size_t sfc_number, std::ostream& out) const;
-	virtual void writeLineConstraints(size_t &line_offset, size_t sfc_number, std::ostream& out) const;
-	void writeStations(size_t & pnt_id_offset, size_t sfc_number, std::ostream& out) const;
-	void writeAdditionalPointData(size_t & pnt_id_offset, size_t sfc_number, std::ostream& out) const;
+	virtual void writeLineLoop(std::size_t &line_offset, std::size_t &sfc_offset, std::ostream& out) const;
+	void writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const;
+	virtual void writeLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const;
+	void writeStations(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const;
+	void writeAdditionalPointData(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const;
 
 private:
 	void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);

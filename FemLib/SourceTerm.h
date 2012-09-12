@@ -28,15 +28,15 @@ public:
 		: FEMCondition(cond, FEMCondition::SOURCE_TERM) {};
 	~SourceTerm() {}
 
-	size_t getTimType() const {return _tim_type; }
-	void setTimType(size_t value) { _tim_type = value; }
+	std::size_t getTimType() const {return _tim_type; }
+	void setTimType(std::size_t value) { _tim_type = value; }
 
 	// Legacy function (only required for ascii st-files): reads values for 'direct' source terms
 	static void getDirectNodeValues(const std::string &filename,
-	                                std::vector< std::pair<size_t, double> > &nodes_values);
+	                                std::vector< std::pair<std::size_t, double> > &nodes_values);
 
 private:
-	size_t _tim_type;
+	std::size_t _tim_type;
 };
 
 #endif //SOURCETERM_H

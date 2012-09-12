@@ -66,10 +66,10 @@ public:
 	double getMaxEdgeLength() const { return _edge_length[1]; };
 
 	/// Get the number of elements
-	size_t getNElements() const { return _elements.size(); };
+	std::size_t getNElements() const { return _elements.size(); };
 
 	/// Get the number of nodes
-	size_t getNNodes() const { return _nodes.size(); };
+	std::size_t getNNodes() const { return _nodes.size(); };
 
 	/// Get name of the mesh.
 	const std::string getName() const { return _name; };

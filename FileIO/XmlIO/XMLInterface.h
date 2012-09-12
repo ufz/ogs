@@ -73,7 +73,7 @@ protected:
 
 	std::string _exportName;
 	std::string _schemaName;
-	std::map<size_t, size_t> _idx_map;
+	std::map<std::size_t, std::size_t> _idx_map;
 };
 
 }

@@ -109,7 +109,7 @@ class Histogram
     void setMaximum(const T& maximum) { _max = maximum; _dirty = true; }
 
     const Data& getSortedData() const { return _data; }
-    const std::vector<size_t>& getBinCounts() const { return _histogram; }
+    const std::vector<std::size_t>& getBinCounts() const { return _histogram; }
     const unsigned int& getNrBins() const { return _nr_bins; }
     const T& getMinimum() const { return _min; }
     const T& getMaximum() const { return _max; }
@@ -118,7 +118,7 @@ class Histogram
     void
     prettyPrint(std::ostream& os, const unsigned int line_width = 16) const
     {
-        const size_t count_max = *std::max_element(_histogram.begin(), _histogram.end());
+        const std::size_t count_max = *std::max_element(_histogram.begin(), _histogram.end());
         for (unsigned int bin = 0; bin < _nr_bins; ++bin) {
             os << "[" << _min + bin * _bin_width << ", " << _min + (bin + 1) * _bin_width << ")\t";
             os << _histogram[bin] << "\t";
@@ -133,7 +133,7 @@ class Histogram
     protected:
     Data _data;
     const unsigned int _nr_bins;
-    std::vector<size_t> _histogram;
+    std::vector<std::size_t> _histogram;
     T _min, _max;   ///< Minimum and maximum input data values.
     T _bin_width;
 

@@ -21,6 +21,7 @@
 #include "PointWithID.h"
 #include "Mesh.h"
 #include "MshEditor.h"
+#include "../Gui/DataView/MshLayerMapper.h" // TODO: Move MshLayerMapper to MeshLib
 
 namespace MeshLib {
 
@@ -32,11 +33,14 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
+	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
+	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile,
+                            const std::size_t nLayers, const std::size_t layer_id,
+                            bool removeNoDataValues);
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;
-	friend class MshLayerMapper;
+
 
 public:
 	/// Constructor using a coordinate array
@@ -55,7 +59,7 @@ public:
 	const std::vector<Element*>& getElements() const { return _elements; };
 
 	/// Get number of elements the node is part of.
-	size_t getNElements() const { return _elements.size(); };
+	std::size_t getNElements() const { return _elements.size(); };
 
 	/// Destructor
 	virtual ~Node();
@@ -75,7 +79,7 @@ protected:
 	/// Update coordinates of a node.
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
-	
+
 	std::vector<Node*> _connected_nodes;
 	std::vector<Element*> _elements;
 

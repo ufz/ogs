@@ -70,7 +70,7 @@ public:
 	 * \param i Number of the point to be returned.
 	 * \return true if everything is alright. false if the point does not exist.
 	 */
-	bool getPoint(QPointF &p, size_t i);
+	bool getPoint(QPointF &p, std::size_t i);
 
 	/// Returns the label associated with the x-axis
 	QString getXLabel() const { return _xLabel; }
@@ -136,7 +136,7 @@ public:
 	void setYUnit(QString unit) { _yUnit = unit; }
 
 	/// Returns the number of data points.
-	size_t size();
+	std::size_t size();
 
 	/// Returns the width of the bounding box of all data points within the list.
 	double width() const { return _maxX - _minX; }

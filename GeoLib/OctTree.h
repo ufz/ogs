@@ -18,7 +18,7 @@ namespace GeoLib {
 template <typename POINT> class OctTree {
 public:
 
-	static OctTree<POINT>* createOctTree(POINT & ll, POINT & ur, size_t max_points_per_node)
+	static OctTree<POINT>* createOctTree(POINT & ll, POINT & ur, std::size_t max_points_per_node)
 	{
 		const double dx(ur[0] - ll[0]);
 		const double dy(ur[1] - ll[1]);
@@ -49,7 +49,7 @@ public:
 
 	virtual ~OctTree()
 	{
-		for (size_t k(0); k < 8; k++)
+		for (std::size_t k(0); k < 8; k++)
 			delete _childs[k];
 	}
 
@@ -69,7 +69,7 @@ public:
 		if ((*pnt)[2] > _ur[2]) return false;
 
 		if (!_is_leaf) {
-			for (size_t k(0); k < 8; k++) {
+			for (std::size_t k(0); k < 8; k++) {
 				if (_childs[k]->addPoint (pnt)) {
 					return true;
 				}
@@ -78,7 +78,7 @@ public:
 
 		// check if point is already in OctTree
 		bool pnt_in_tree (false);
-		for (size_t k(0); k < _pnts.size() && !pnt_in_tree; k++) {
+		for (std::size_t k(0); k < _pnts.size() && !pnt_in_tree; k++) {
 			const double sqr_dist (MathLib::sqrDist( (_pnts[k])->getCoords(), pnt->getCoords() ));
 			if (sqr_dist < std::numeric_limits<double>::epsilon())
 				pnt_in_tree = true;
@@ -115,7 +115,7 @@ public:
 				pnts.push_back(*it);
 			}
 		} else {
-			for (size_t k(0); k<8; k++) {
+			for (std::size_t k(0); k<8; k++) {
 				_childs[k]->getPointsInRange(min, max, pnts);
 			}
 		}
@@ -143,7 +143,7 @@ private:
 		_ll (ll), _ur (ur), _is_leaf (true)
 	{
 		// init childs
-		for (size_t k(0); k < 8; k++)
+		for (std::size_t k(0); k < 8; k++)
 			_childs[k] = NULL;
 	}
 
@@ -197,10 +197,10 @@ private:
 		_childs[SEU] = new OctTree<POINT> (p0, p1);
 
 		// distribute points to sub quadtrees
-		const size_t n_pnts(_pnts.size());
-		for (size_t j(0); j < n_pnts; j++) {
+		const std::size_t n_pnts(_pnts.size());
+		for (std::size_t j(0); j < n_pnts; j++) {
 			bool nfound(true);
-			for (size_t k(0); k < 8 && nfound; k++) {
+			for (std::size_t k(0); k < 8 && nfound; k++) {
 				if (_childs[k]->addPoint(_pnts[j])) {
 					nfound = false;
 				}
@@ -236,10 +236,10 @@ private:
 	/**
 	 * maximum number of points per leaf
 	 */
-	static size_t _max_points_per_node;
+	static std::size_t _max_points_per_node;
 };
 
-template <typename POINT> size_t OctTree<POINT>::_max_points_per_node = 0;
+template <typename POINT> std::size_t OctTree<POINT>::_max_points_per_node = 0;
 
 } // end namespace GeoLib
 
