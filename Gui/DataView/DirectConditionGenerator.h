@@ -13,6 +13,7 @@
 #define DIRECTCONDITIONGENERATOR_H
 
 #include <vector>
+#include <string>
 
 namespace MeshLib {
 	class Mesh;
