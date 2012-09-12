@@ -93,6 +93,9 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const = 0;
 
+	/// Returns the position of the given node in the node array of this element.
+	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;
+
 	/**
 	 * Get the global index for the Node with local index i.
 	 * The index i should be at most the number of nodes of the element.
@@ -109,10 +112,14 @@ public:
 	/// Get the value for this element.
 	unsigned getValue() const { return _value; };
 
+	/// Returns true if elem is a neighbour of this element and false otherwise.
 	bool hasNeighbor(Element* elem) const;
 
 	/// Destructor
 	virtual ~Element();
+
+	/// Returns true if these two indeces form an edge and false otherwise
+	virtual bool isEdge(unsigned i, unsigned j) const = 0;
 
 	/**
 	 * Method clone is a pure virtual method in the abstract base class Element.
@@ -143,10 +150,11 @@ protected:
 	Element(unsigned value = 0);
 
 	/// Return a specific edge node.
-	virtual Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
+	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
 	/// Returns the ID of a face given an array of nodes.
 	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
+
 
 	Node** _nodes;
 	unsigned _value;

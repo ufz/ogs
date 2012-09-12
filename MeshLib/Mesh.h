@@ -101,10 +101,14 @@ protected:
 	void setDimension();
 
 	/// Fills in the neighbor-information for nodes (i.e. which element each node belongs to).
-	void setElementInformationForNodes();
+	void setElementsConnectedToNodes();
 
 	/// Fills in the neighbor-information for elements.
-	void setNeighborInformationForElements();
+	void setElementsConnectedToElements();
+
+	void setNodesConnectedByEdges();
+
+	void setNodesConnectedByElements();
 
 	unsigned _mesh_dimension;
 	double _edge_length[2];

@@ -36,11 +36,10 @@ BASELIB::Histogram<double> MeshQualityChecker::getHistogram (size_t nclasses) co
 
 void MeshQualityChecker::errorMsg (const Element* elem, size_t idx) const
 {
-	std::cout << "Error in MeshQualityChecker::check() - "
-			  << "Calculated value of element is below double precision minimum." << std::endl;
-	std::cout << "Points of " << MshElemType2String(elem->getType()) << "-Element " << idx << ": " << std::endl;
+	ERR ("Error in MeshQualityChecker::check() - Calculated value of element is below double precision minimum.");
+	ERR ("Points of %s-Element %d: ", MshElemType2String(elem->getType()), idx);
 	for (size_t i(0); i < elem->getNNodes(); i++)
-		std::cout << "\t Node " << i << " " << GeoLib::Point((elem->getNode(i))->getCoords()) << std::endl;
+		ERR ("\t Node %d: %f", i, GeoLib::Point((elem->getNode(i))->getCoords()));
 }
 
 std::vector<double> const&

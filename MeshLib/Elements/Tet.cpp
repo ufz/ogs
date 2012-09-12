@@ -105,6 +105,16 @@ const Element* Tet::getFace(unsigned i) const
 	return NULL;
 }
 
+bool Tet::isEdge(unsigned idx1, unsigned idx2) const
+{
+	for (unsigned i(0); i<6; i++)
+	{
+		if (_edge_nodes[i][0]==idx1 && _edge_nodes[i][1]==idx2) return true;
+		if (_edge_nodes[i][1]==idx1 && _edge_nodes[i][0]==idx2) return true;
+	}
+	return false;
+}
+
 Element* Tet::clone() const
 {
 	return new Tet(*this);

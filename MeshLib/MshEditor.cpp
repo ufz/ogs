@@ -21,6 +21,8 @@
 
 #include "MathTools.h"
 
+#include "logog.hpp"
+
 namespace MeshLib {
 
 void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
@@ -51,10 +53,10 @@ void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<do
 			node_area_vec.push_back(node_area);
 		}
 
-		std::cout<< "Total surface Area: " << total_area << std::endl;
+		INFO ("Total surface Area: %f", total_area);
 	}
 	else
-		std::cout << "Error in MshEditor::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2)." << std::endl;
+		ERR ("Error in MshEditor::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
 }
 
 MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh,
@@ -116,7 +118,7 @@ MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh,
 std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh &mesh)
 {
 	/* TODO6
-	std::cout << "Extracting surface nodes..." << std::endl;
+	INFO ("Extracting surface nodes...");
 	// Sort points lexicographically
 	size_t nNodes (mesh.nod_vector.size());
 	std::vector<GeoLib::PointWithID*> nodes;
@@ -149,7 +151,7 @@ std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh
 
 MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double* dir)
 {
-	std::cout << "Extracting mesh surface..." << std::endl;
+	INFO ("Extracting mesh surface...");
 
 	const std::vector<MeshLib::Element*> elements = mesh.getElements();
 	std::vector<MeshLib::Element*> new_elements;

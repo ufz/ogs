@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <limits>
 #include <vector>
+#include <set>
 
 #include "PointWithID.h"
 #include "Mesh.h"
@@ -66,6 +67,8 @@ protected:
 	 */
 	void addElement(Element* elem) { _elements.push_back(elem); };
 
+	void setConnectedNodes(std::vector<Node*> &connected_nodes) { this->_connected_nodes = connected_nodes; };
+
 	/// Sets the ID of a node to the given value.
 	void setID(unsigned id) { this->_id = id; };
 
@@ -73,6 +76,7 @@ protected:
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
 	
+	std::vector<Node*> _connected_nodes;
 	std::vector<Element*> _elements;
 
 }; /* class */

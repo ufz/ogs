@@ -75,7 +75,14 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const { return 2; };
 
+	/**
+	 * Method returns the type of the element. In this case EDGE will be returned.
+	 * @return MshElemType::EDGE
+	 */
 	virtual MshElemType::type getType() const { return MshElemType::EDGE; }
+
+	/// Returns true if these two indeces form an edge and false otherwise
+	bool isEdge(unsigned i, unsigned j) const;
 
 	virtual Element* clone() const;
 
@@ -88,7 +95,7 @@ public:
 protected:
 	double computeVolume();
 	/// 1D elements have no edges.
-	Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { (void)edge_id; (void)node_id; return NULL; };
+	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { (void)edge_id; (void)node_id; return NULL; };
 
 	/// 1D elements have no faces.
 	Node* getFaceNode(unsigned face_id, unsigned node_id) const { (void)face_id; (void)node_id; return NULL; };

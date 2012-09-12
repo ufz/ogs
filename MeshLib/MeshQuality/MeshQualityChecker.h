@@ -21,6 +21,8 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 
+#include "logog.hpp"
+
 namespace MeshLib
 {
 class MeshQualityChecker

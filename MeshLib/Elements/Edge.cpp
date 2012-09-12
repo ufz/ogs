@@ -52,6 +52,13 @@ double Edge::computeVolume()
 	return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
 }
 
+bool Edge::isEdge(unsigned idx1, unsigned idx2) const
+{
+	if (0==idx1 && 1==idx2) return true;
+	if (1==idx1 && 0==idx2) return true;
+	return false;
+}
+
 Element* Edge::clone() const
 {
 	return new Edge(*this);

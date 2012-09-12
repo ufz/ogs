@@ -119,6 +119,16 @@ unsigned Pyramid::getNFaceNodes(unsigned i) const
 	return 0;
 }
 
+bool Pyramid::isEdge(unsigned idx1, unsigned idx2) const
+{
+	for (unsigned i(0); i<8; i++)
+	{
+		if (_edge_nodes[i][0]==idx1 && _edge_nodes[i][1]==idx2) return true;
+		if (_edge_nodes[i][1]==idx1 && _edge_nodes[i][0]==idx2) return true;
+	}
+	return false;
+}
+
 Element* Pyramid::clone() const
 {
 	return new Pyramid(*this);

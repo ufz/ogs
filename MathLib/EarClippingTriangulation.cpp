@@ -16,7 +16,7 @@
 // BaseLib
 #include "swap.h"
 #include "printList.h"
-#include "uniqueListInsert.h"
+#include "uniqueInsert.h"
 
 // MathLib
 #include "EarClippingTriangulation.h"

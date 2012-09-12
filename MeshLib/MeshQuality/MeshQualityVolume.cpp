@@ -52,11 +52,9 @@ void MeshQualityVolume::check()
         _mesh_quality_measure[k] = volume;
 	}
 
-	std::cout << "MeshQualityVolume::check() minimum: " << _min
-	          << ", max_volume: " << _max << std::endl;
+	INFO ("MeshQualityVolume::check() minimum: %f, max_volume: %f", _min, _max);
 	if (error_count > 0)
-		std::cout << "Warning: " << error_count << " elements with zero volume found." <<
-		std::endl;
+		WARN ("Warning: %d elements with zero volume found.", error_count);
 }
 
 } // end namespace MeshLib
