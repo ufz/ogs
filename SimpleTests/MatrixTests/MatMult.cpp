@@ -100,11 +100,11 @@ int main(int argc, char *argv[])
 
 #ifdef OGS_BUILD_INFO
 	INFO("%s was build with compiler %s", argv[0], CMAKE_CXX_COMPILER);
-	if (std::string(CMAKE_BUILD_TYPE).compare("Release") == 0) {
+	#ifdef NDEBUG
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
-	} else {
+	#else
 		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
-	}
+	#endif
 #endif
 
 #ifdef UNIX
