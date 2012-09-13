@@ -24,3 +24,6 @@ INCLUDE_DIRECTORIES (
 
 # Enable Visual Studio project folder grouping
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# Testing
+ENABLE_TESTING()
