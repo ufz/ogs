@@ -5,6 +5,7 @@
 #include <OpenSG/OSGBaseFunctions.h>
 #endif
 #include "logog.hpp"
+#include "LogogSimpleFormatter.h"
 
 int main(int argc, char* argv[])
 {
@@ -13,6 +14,8 @@ int main(int argc, char* argv[])
 #endif
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
+	BaseLib::LogogSimpleFormatter formatter;
+	logogCout->SetFormatter(formatter);
 	QApplication a(argc, argv);
 	setlocale(LC_NUMERIC,"C");
 	MainWindow* w = new MainWindow();
