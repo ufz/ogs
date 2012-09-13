@@ -147,10 +147,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
 	connect(geoTabWidget->treeView, SIGNAL(requestLineEditDialog(const std::string &)),
 	        this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
-	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, size_t)),
-			this, SLOT(showGeoNameDialog(const std::string&, const GeoLib::GEOTYPE, size_t)));
-	connect(geoTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, size_t, bool)),
-			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, size_t, bool)));
+	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)),
+			this, SLOT(showGeoNameDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)));
+	connect(geoTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)),
+			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)));
 	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
 	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
 	//connect(geoTabWidget->treeView, SIGNAL(saveFEMConditionsRequested(QString, QString)),
@@ -172,8 +172,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _elementModel, SLOT(clearView()));
 	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
-	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, size_t, bool)),
-			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, size_t, bool)));
+	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)),
+			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)));
 
 	// Setup connections for process model to GUI
 	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)),
@@ -238,10 +238,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SIGNAL(actorPicked(vtkProp3D*)),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-	        SIGNAL(elementPicked(const MeshLib::Mesh *, const size_t)),
-	        this->_elementModel, SLOT(setElement(const MeshLib::Mesh *, const size_t)));
+	        SIGNAL(elementPicked(const MeshLib::Mesh *, const std::size_t)),
+	        this->_elementModel, SLOT(setElement(const MeshLib::Mesh *, const std::size_t)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-	        SIGNAL(elementPicked(const MeshLib::Mesh *, const size_t)),
+	        SIGNAL(elementPicked(const MeshLib::Mesh *, const std::size_t)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 
 	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
