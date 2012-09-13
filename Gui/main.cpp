@@ -14,8 +14,8 @@ int main(int argc, char* argv[])
 #endif
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter formatter;
-	logogCout->SetFormatter(formatter);
+	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
+	logogCout->SetFormatter(*formatter);
 	QApplication a(argc, argv);
 	setlocale(LC_NUMERIC,"C");
 	MainWindow* w = new MainWindow();
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 	w->show();
 	int returncode = a.exec();
 	delete w;
-
+	delete formatter;
 	delete logogCout;
 	LOGOG_SHUTDOWN();
 #ifdef OGS_USE_OPENSG

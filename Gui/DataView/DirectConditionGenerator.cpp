@@ -74,8 +74,13 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 
 	if (_direct_values.empty())
 	{
-		mesh.MarkInterface_mHM_Hydro_3D(); // mark element faces on the surface
-
+		//mesh.MarkInterface_mHM_Hydro_3D(); // mark element faces on the surface
+		//----
+		const double dir[3] = {0,0,1};
+		MeshLib::Mesh* sfc_mesh (MeshLib::MshEditor::getMeshSurface(mesh, dir));
+		std::vector<double> node_area_vec (sfc_mesh->getNNodes());
+		MeshLib::MshEditor::getSurfaceAreaForNodes(sfc_mesh, node_area_vec);
+		//----
 		double origin_x(0), origin_y(0), delta(0);
 		size_t imgwidth(0), imgheight(0);
 		double node_val[8] = {0,0,0,0,0,0,0,0}; // maximum possible number of nodes per face (just in case ...)
