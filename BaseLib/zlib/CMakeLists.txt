@@ -105,6 +105,10 @@ string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([-0-9A-Za-z.]+)\".*"
 
 add_library(zlib STATIC ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 
+# Workaround for a Visual Studio bug:
+if(MSVC AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set_target_properties(zlib PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
+endif()
 
 #============================================================================
 # Example binaries
