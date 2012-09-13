@@ -48,6 +48,9 @@ OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
+# Logging
+OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
+
 # Print CMake variable values
 IF (OGS_CMAKE_DEBUG)
 	INCLUDE(ListAllCMakeVariableValues)
