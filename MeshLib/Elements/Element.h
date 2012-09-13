@@ -26,10 +26,8 @@ class Node;
  */
 class Element
 {
-	/* friend functions: */
+	/* friend classes */
 	friend class Mesh;//void Mesh::setElementInformationForNodes();
-	//friend void Mesh::addElement(Element*);
-
 
 public:
 	/// Compute the minimum and maximum squared edge length for this element

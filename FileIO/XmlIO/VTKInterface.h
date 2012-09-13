@@ -76,6 +76,8 @@ private:
 	/// Construct an Element-object from the data given to the method and the data at the current stream position.
 	static MeshLib::Element* readElement(std::stringstream &iss, const std::vector<MeshLib::Node*> &nodes, unsigned material, unsigned type);
 
+	static unsigned char* uncompressData(const rapidxml::xml_node<>* node);
+
 	bool _use_compressor;
 };
 }

@@ -67,8 +67,22 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 	rapidxml::xml_node<>* root_node (doc.first_node());
 	if (isVTKUnstructuredGrid(root_node))
 	{
+		bool is_compressed(false);
 		//check if content is compressed
 		const rapidxml::xml_attribute<>* compressor (root_node->first_attribute("compressor"));
+		if (compressor )
+		{
+			if (std::string(compressor->value()).compare("vtkZLibDataCompressor") == 0)
+			{
+				is_compressed = true;
+				uncompressData(root_node);
+			}
+			else
+			{
+				std::cout << "VTKInterface::readVTUFile() - Unknown compression method." << std::endl;
+				return NULL;
+			}
+		}
 
 		//skip to <Piece>-tag and start parsing content
 		const rapidxml::xml_node<>* piece_node (doc.first_node()->first_node()->first_node("Piece"));
@@ -132,7 +146,14 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 
 			if (connectivity_node && celltype_node)
 			{
-				if (std::string(celltype_node->first_attribute("format")->value()).compare("ascii") == 0)
+				const std::string format = std::string(celltype_node->first_attribute("format")->value());
+				if (format.compare("ascii") == 0)
+				{
+					std::stringstream iss (celltype_node->value());
+					for(unsigned i=0; i<nElems; i++)
+						iss >> cell_types[i];
+				}
+				else if (format.compare("appended") == 0)
 				{
 					std::stringstream iss (celltype_node->value());
 					for(unsigned i=0; i<nElems; i++)
@@ -241,6 +262,18 @@ bool VTKInterface::isVTKUnstructuredGrid(const rapidxml::xml_node<>* vtk_root)
 	}
 	return false;
 }
+
+unsigned char* VTKInterface::uncompressData(const rapidxml::xml_node<>* node)
+{
+	rapidxml::xml_node<>* data_node = node->first_node("AppendedData");
+	char* compressed_data (NULL);
+	if (data_node)
+		compressed_data = data_node->value();
+
+	return NULL;
+}
+
+
 
 int VTKInterface::write(std::ostream& stream)
 {

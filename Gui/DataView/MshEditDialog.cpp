@@ -115,7 +115,7 @@ void MshEditDialog::accept()
 			all_paths_set = false;
 		else
 		{
-			for (unsigned i=1; i<_labels.size(); i++)
+			for (int i=1; i<_labels.size(); i++)
 				if (_edits[i]->text().length()==0)
 					all_paths_set = false;
 		}

@@ -97,6 +97,9 @@ protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();
 
+	/// Removes nodes that are not part of any element.
+	void removeUnusedMeshNodes();
+
 	/// Sets the dimension of the mesh.
 	void setDimension();
 

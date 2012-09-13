@@ -33,7 +33,8 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 			return _direct_values;
 			}
 
-		const std::vector<GeoLib::PointWithID*> surface_nodes ( MeshLib::MshEditor::getSurfaceNodes(mesh) );
+		const double dir[3] = {0,0,1};
+		const std::vector<GeoLib::PointWithID*> surface_nodes ( MeshLib::MshEditor::getSurfaceNodes(mesh, dir) );
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
 		const size_t nNodes(surface_nodes.size());
 		_direct_values.reserve(nNodes);

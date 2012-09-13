@@ -187,8 +187,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			{
 				std::cout << "Warning: Removing " << noData_nodes.size() 
 					      << " mesh nodes at NoData values ... " << std::endl;
-				MeshLib::MshEditor msh_editor;
-				MeshLib::Mesh* red_mesh = msh_editor.removeMeshNodes(new_mesh, noData_nodes);
+				MeshLib::Mesh* red_mesh = MeshLib::MshEditor::removeMeshNodes(new_mesh, noData_nodes);
 				if (new_mesh->getNElements() == 0)
 				{
 					delete new_mesh;

@@ -1111,7 +1111,16 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	//std::string name ("Test");
+	const double dir[3] = {0, 0, 1};
+	const MeshLib::Mesh* mesh = this->_project.getMesh("Ammer-Homogen100m-Final");
+	//_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
+	std::vector<GeoLib::PointWithID*> pnts (MeshLib::MshEditor::getSurfaceNodes(*mesh, dir));
+	std::vector<GeoLib::Point*> *sfcpnts = new std::vector<GeoLib::Point*>(pnts.size());
+	for (unsigned i=0; i<pnts.size(); ++i)
+		(*sfcpnts)[i] = pnts[i];
+	std::string name("SurfacePoints");
+	this->_geoModels->addPointVec(sfcpnts, name);
+	//std::string name ("test");
 	//_meshModels->addMesh(MshEditor::getMeshSurface(*_project.getMesh("Ammer-Homogen100m-Final")), name);
 
 /*

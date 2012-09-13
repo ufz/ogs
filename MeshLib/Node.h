@@ -34,9 +34,8 @@ class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
 	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
-	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile,
-                            const std::size_t nLayers, const std::size_t layer_id,
-                            bool removeNoDataValues);
+	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, const std::size_t nLayers, 
+		                                    const std::size_t layer_id, bool removeNoDataValues);
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;
