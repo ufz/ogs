@@ -51,6 +51,9 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
+# Search paths
+SET(OGS_LIBS_DIR "" CACHE PATH "The path to the compiled third party libs (mainly used for Windows).")
+
 # Print CMake variable values
 IF (OGS_CMAKE_DEBUG)
 	INCLUDE(ListAllCMakeVariableValues)

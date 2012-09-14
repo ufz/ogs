@@ -1,3 +1,12 @@
+############################
+### Find OGS directories ###
+############################
+
+# Compiled libraries (for Windows)
+FIND_PATH(OGS_LIBS_DIR_FOUND geotiff.lib
+	PATHS $ENV{OGS_LIBS} ${OGS_LIBS_DIR} ${PROJECT_SOURCE_DIR}/../Libs C:/OGS_Libs
+	PATH_SUFFIXES libgeotiff)
+
 ######################
 ### Find tools     ###
 ######################
@@ -100,3 +109,9 @@ FIND_PACKAGE( LibGeoTiff )
 IF(libgeotiff_FOUND)
 	ADD_DEFINITIONS(-Dlibgeotiff_FOUND)
 ENDIF() # libgeotiff_FOUND
+
+## shapelib ##
+FIND_PACKAGE( Shapelib )
+IF(Shapelib_FOUND)
+	ADD_DEFINITIONS(-DShapelib_FOUND)
+ENDIF() # Shapelib_FOUND
