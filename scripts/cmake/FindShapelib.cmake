@@ -9,50 +9,28 @@ if (NOT Shapelib_FOUND)
 
 	include(LibFindMacros)
 
+	set(SEARCH_DIRS
+		${CMAKE_SOURCE_DIR}/../Libs/shapelib
+		C:/OGS_Libs/shapelib
+		$ENV{OGS_LIBS}/shapelib
+		${OGS_LIBS_DIR_FOUND}/shapelib
+	)
+
 	find_path( Shapelib_INCLUDE_DIR
 		NAMES shapefil.h
 		PATHS
 			/usr/include/libshp
-			/usr/include
-			${CMAKE_SOURCE_DIR}/../Libs/shapelib
-			C:/OGS_Libs/shapelib
-			$ENV{OGS_LIBS}/shapelib
-			${OGS_LIBS_DIR_FOUND}/shapelib
+			${SEARCH_DIRS}
 		)
 
-	if ( UNIX )
-		find_library(Shapelib_LIBRARIES
-			NAMES shp
-			PATHS
-				/usr/lib64
-				/usr/lib
-				${CMAKE_SOURCE_DIR}/../Libs/shapelib
-				${OGS_LIBS_DIR_FOUND}/shapelib
-			)
-		find_library(Shapelib_LIBRARIES
-			NAMES shapelib.a
-			PATHS
-				/usr/lib64
-				/usr/lib
-				${CMAKE_SOURCE_DIR}/../Libs/shapelib/
-				${OGS_LIBS_DIR_FOUND}/shapelib
-			)
-		find_library(Shapelib_LIBRARIES
-			NAMES shapelib
-			PATHS
-				/usr/lib64
-				/usr/lib
-				${CMAKE_SOURCE_DIR}/../Libs/shapelib/
-				${OGS_LIBS_DIR_FOUND}/shapelib
-			)
-	else ( UNIX )
-		find_library(Shapelib_LIBRARIES
-			NAMES shapelib
-			PATHS
-				${CMAKE_SOURCE_DIR}/../Libs/shapelib
-				${OGS_LIBS_DIR_FOUND}/shapelib
-			)
-	endif ( UNIX )
+	find_library(Shapelib_LIBRARIES
+		NAMES shp
+		PATHS ${SEARCH_DIRS}
+	)
+	find_library(Shapelib_LIBRARIES
+		NAMES shapelib
+		PATHS ${SEARCH_DIRS}
+	)
 
 	# Set the include dir variables and the libraries and let libfind_process do the rest.
 	# NOTE: Singular variables for this library, plural for libraries this this lib depends on.
