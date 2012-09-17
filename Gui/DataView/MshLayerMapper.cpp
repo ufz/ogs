@@ -15,14 +15,16 @@
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
+#include "Elements/Tet.h"
 #include "Elements/Hex.h"
+#include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 #include "MshEditor.h"
 #include "MathTools.h"
 
 #include <QImage>
 
-MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, size_t nLayers, double thickness)
+MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned nLayers, double thickness)
 {
 	if (nLayers < 1 || thickness <= 0 || mesh->getDimension() != 2)
 	{
@@ -37,15 +39,16 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, size_t nL
 	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
 	std::vector<MeshLib::Element*> new_elems(nElems * nLayers);
 
-	for (size_t layer_id = 0; layer_id <= nLayers; layer_id++)
+	for (unsigned layer_id = 0; layer_id <= nLayers; ++layer_id)
 	{
 		// add nodes for new layer
 		unsigned node_offset (nNodes * layer_id);
+		unsigned elem_offset (nElems * (layer_id-1));
 		const double z_offset (layer_id * thickness);
-		for (size_t i = 0; i < nNodes; i++)
+		for (unsigned i = 0; i < nNodes; ++i)
 		{
 			const double* coords = nodes[i]->getCoords();
-			new_nodes[i] = new MeshLib::Node(coords[0], coords[1], coords[2]-z_offset, node_offset+i);
+			new_nodes[node_offset+i] = new MeshLib::Node(coords[0], coords[1], coords[2]-z_offset, node_offset+i);
 		}
 
 		// starting with 2nd layer create prism or hex elements connecting the last layer with the current one
@@ -54,7 +57,7 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, size_t nL
 			node_offset -= nNodes;
 			const unsigned mat_id (nLayers - layer_id);
 
-			for (size_t i = 0; i < nElems; i++)
+			for (unsigned i = 0; i < nElems; ++i)
 			{
 				const MeshLib::Element* sfc_elem( elems[i] );
 				if (sfc_elem->getDimension() == 2)
@@ -62,18 +65,16 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, size_t nL
 					const unsigned nElemNodes(sfc_elem->getNNodes());
 					MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
 					
-					for (size_t j=0; j<nElemNodes; j++)
+					for (unsigned j=0; j<nElemNodes; ++j)
 					{
 						const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
-						e_nodes[j] = new_nodes[node_id];
-						e_nodes[j+nElemNodes] = new_nodes[node_id+nNodes];
+						e_nodes[j] = new_nodes[node_id+nNodes];
+						e_nodes[j+nElemNodes] = new_nodes[node_id];
 					}
 					if (sfc_elem->getType() == MshElemType::TRIANGLE)	// extrude triangles to prism
-						new_elems.push_back(new MeshLib::Prism(e_nodes, mat_id));
+						new_elems[elem_offset+i] = new MeshLib::Prism(e_nodes, mat_id);
 					else if (sfc_elem->getType() == MshElemType::QUAD)	// extrude quads to hexes
-						new_elems.push_back(new MeshLib::Hex(e_nodes, mat_id));
-
-					delete e_nodes;
+						new_elems[elem_offset+i] = new MeshLib::Hex(e_nodes, mat_id);
 				}
 				else
 				{
@@ -83,12 +84,11 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, size_t nL
 			}
 		}
 	}
-
 	return new MeshLib::Mesh("NewMesh", new_nodes, new_elems);
 }
 
 int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &rasterfile,
-                                 const size_t nLayers, const size_t layer_id, bool removeNoDataValues)
+                                 const unsigned nLayers, const unsigned layer_id, bool removeNoDataValues)
 {
 	if (new_mesh == NULL)
 	{
@@ -128,7 +128,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 		std::vector<size_t> noData_nodes;
 		const double half_delta = 0.5*delta;
 		const std::vector<MeshLib::Node*> nodes = new_mesh->getNodes();
-		for(size_t i = firstNode; i < lastNode; i++)
+		for (unsigned i = firstNode; i < lastNode; ++i)
 		{
 			const double* coords = nodes[i]->getCoords();
 			// position in raster
@@ -153,7 +153,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			locZ[0] = elevation[2*(yIdx*width + xIdx)];
 			if (fabs(locZ[0] + 9999) > std::numeric_limits<double>::min())
 			{
-				for (size_t j=1; j<4; j++)
+				for (unsigned j=1; j<4; ++j)
 				{
 					locZ[j] = elevation[2*((yIdx+y_nb[j])*width + (xIdx+x_nb[j]))];
 					if (fabs(locZ[j] + 9999) < std::numeric_limits<double>::min())
@@ -166,17 +166,15 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 				MathLib::MPhi2D(ome, xi, eta);
 
 				double z(0.0);
-				for(size_t j = 0; j < 4; j++)
+				for(unsigned j = 0; j < 4; ++j)
 					z += ome[j] * locZ[j];
 				const double* coords (nodes[i]->getCoords());
 				nodes[i]->updateCoordinates(coords[0], coords[1], z);
-				//nodes[i]->SetMark(true);
 			}
 			else
 			{
 				const double* coords (nodes[i]->getCoords());
 				nodes[i]->updateCoordinates(coords[0], coords[1], 0);
-				//nodes[i]->SetMark(false);
 				noData_nodes.push_back(i);
 			}
 		}
@@ -225,7 +223,7 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
 	double xMax(std::numeric_limits<double>::min());
 	double yMax(std::numeric_limits<double>::min());
 		
-	for (size_t i = 1; i < nNodes; i++)
+	for (unsigned i = 1; i < nNodes; ++i)
 	{
 		pnt = nodes[i]->getCoords();
 		if (xMin > pnt[0])
@@ -247,26 +245,28 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
 	return true;
 }
 
-MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const size_t nLayers, const std::string &dem_raster)
+MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster)
 {
-/*
 	// construct surface mesh from DEM
-	MeshLib::Mesh* dem = MshEditor::getMeshSurface(*mesh);
+	const double dir[3] = {0,0,1};
+	MeshLib::Mesh* dem = MeshLib::MshEditor::getMeshSurface(*mesh, dir);
 	MshLayerMapper::LayerMapping(dem, dem_raster, 0, 0);
+	const std::vector<MeshLib::Node*> dem_nodes (dem->getNodes());
 
-	const size_t nNodes = mesh->nod_vector.size();
+	const std::vector<MeshLib::Node*> mdl_nodes (mesh->getNodes());
+	const size_t nNodes = mesh->getNNodes();
 	const size_t nNodesPerLayer = nNodes / (nLayers+1);
 	std::vector<bool> is_surface_node(nNodes, false);
 	std::vector<bool> nodes_below_surface(nNodes, false);
 
 	// check if bottom layer nodes are below DEM
-	const size_t bottom_firstNode = nLayers * nNodesPerLayer;
-	const size_t bottom_lastNode  = bottom_firstNode + nNodesPerLayer;
-	for(size_t i = bottom_firstNode; i < bottom_lastNode; i++)
+	const unsigned bottom_firstNode = nLayers * nNodesPerLayer;
+	const unsigned bottom_lastNode  = bottom_firstNode + nNodesPerLayer;
+	for (unsigned i = bottom_firstNode; i < bottom_lastNode; ++i)
 	{
 		nodes_below_surface[i]=true;
-		const double* coords = mesh->nod_vector[i]->getData();
-		const double* dem_coords = dem->nod_vector[i-bottom_firstNode]->getData();
+		const double* coords = mdl_nodes[i]->getCoords();
+		const double* dem_coords = dem_nodes[i-bottom_firstNode]->getCoords();
 		if (coords[2] >= dem_coords[2])
 		{
 			std::cout << "Warning: Node " << i << " (in bottom-layer) is above surface node " << (i-bottom_firstNode) << ". (" << coords[2] << " > " << dem_coords[2] << ")" << std::endl;
@@ -278,131 +278,114 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 	// if node < dem-node: do nothing
 	// if node > dem-node:
 	//		if first node above surface: map to dem and mark as surface node
-	//		else remove node
-	for (int layer_id=nLayers-1; layer_id>=0; layer_id--)
+	//		else remove node (i.e. don't copy them)
+	for (int layer_id=nLayers-1; layer_id>=0; --layer_id)
 	{
 		const size_t firstNode = layer_id * nNodesPerLayer;
 		const size_t lastNode  = firstNode + nNodesPerLayer;
 
-		for(size_t i = firstNode; i < lastNode; i++)
+		for(unsigned i = firstNode; i < lastNode; ++i)
 		{
 			if (is_surface_node[i+nNodesPerLayer])
 				is_surface_node[i]=true;
 			else
 			{
 				nodes_below_surface[i]=true;
-				MeshLib::CNode* node (mesh->nod_vector[i]);
-				const double* coords = node->getData();
-				const double* dem_coords = dem->nod_vector[i-firstNode]->getData();
+				MeshLib::Node* node (mdl_nodes[i]);
+				const double* coords = node->getCoords();
+				const double* dem_coords = dem_nodes[i-firstNode]->getCoords();
 				if (coords[2] > dem_coords[2])
 				{
-					const double new_coords[3] = { dem_coords[0], dem_coords[1], dem_coords[2] };
-					node->SetCoordinates(new_coords);
+					node->updateCoordinates(dem_coords[0], dem_coords[1], dem_coords[2]);
 					is_surface_node[i] = true;
 				}
 			}
 		}
 	}
-
-	std::vector<GeoLib::Point*> *nodes = new std::vector<GeoLib::Point*>;
+	// copy valid nodes to new node vector
+	std::vector<MeshLib::Node*> new_nodes;
 	std::vector<int> node_index_map(nNodes, -1);
 	size_t node_count(0);
-	for (size_t j=0; j<nNodes; j++)
-	{
+	for (unsigned j=0; j<nNodes; ++j)
 		if (nodes_below_surface[j])
 		{
-			nodes->push_back(new GeoLib::Point(mesh->nod_vector[j]->getData()));
+			new_nodes.push_back(new MeshLib::Node(mdl_nodes[j]->getCoords(), mdl_nodes[j]->getID()));
 			node_index_map[j]=node_count++;
 		}
-	}
 
-	const size_t nElems = mesh->ele_vector.size();
-	std::vector<GridAdapter::Element*> *elements = new std::vector<GridAdapter::Element*>;
-	for (size_t j=0; j<nElems; j++)
+	// copy elements (old elements need to have at least 4 nodes remaining and form a 3d element
+	const std::vector<MeshLib::Element*> mdl_elements (mesh->getElements());
+	const size_t nElems = mesh->getNElements();
+	std::vector<MeshLib::Element*> new_elements;
+	for (unsigned j=0; j<nElems; ++j)
 	{
-		const MeshLib::CElem* elem = mesh->ele_vector[j];
+		const MeshLib::Element* elem = mdl_elements[j];
 
 		size_t count(0);
-		for (size_t i=0; i<6; i++) // check top surface of prism
-			if (nodes_below_surface[elem->GetNodeIndex(i)]) count++;
+		for (unsigned i=0; i<6; ++i) // check top surface of prism
+			if (nodes_below_surface[elem->getNode(i)->getID()]) ++count;
 
 		if (count==6) // copy prism elements if all six nodes are valid
 		{
-			GridAdapter::Element* prism = new GridAdapter::Element;
-			std::vector<size_t> elem_nodes;
-			for (size_t i=0; i<6; i++)
-				elem_nodes.push_back( node_index_map[elem->GetNodeIndex(i)] );
-			prism->material = elem->GetPatchIndex();
-			prism->type = MshElemType::PRISM;
-			prism->nodes = elem_nodes;
-			elements->push_back(prism);
+			MeshLib::Node** e_nodes = new MeshLib::Node*[count];
+			for (unsigned i=0; i<6; ++i)
+				e_nodes[i] = new_nodes[node_index_map[elem->getNode(i)->getID()]];
+			
+			MeshLib::Element* prism (new MeshLib::Prism(e_nodes, elem->getValue()));
+			new_elements.push_back(prism);
 		}
 		else if (count==5) // change the current element to two tetrahedra if only five nodes are valid
 		{
-			GridAdapter::Element* tet1 = new GridAdapter::Element;
-			std::vector<size_t> elem_nodes;
-			if (nodes_below_surface[elem->GetNodeIndex(0)])
-				elem_nodes.push_back( node_index_map[elem->GetNodeIndex(0)] );
-			else
-				elem_nodes.push_back( node_index_map[elem->GetNodeIndex(1)] );
-			for (size_t i=3; i<6; i++)
-				elem_nodes.push_back( node_index_map[elem->GetNodeIndex(i)] );
-			tet1->material = elem->GetPatchIndex();
-			tet1->type = MshElemType::TETRAHEDRON;
-			tet1->nodes = elem_nodes;
-			elements->push_back(tet1);
+			MeshLib::Node** e_nodes = new MeshLib::Node*[count];
+			unsigned top_idx(6);
+			for (unsigned i=3; i<6; ++i) // find node that has been cut
+				if (!nodes_below_surface[elem->getNode(i)->getID()])
+					top_idx = i-3;
 
-			GridAdapter::Element* tet2 = new GridAdapter::Element;
-			std::vector<size_t> elem_nodes2;
-			if (nodes_below_surface[elem->GetNodeIndex(0)])
-			{
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(0)] );
-				if (nodes_below_surface[elem->GetNodeIndex(1)])
-					elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(1)] );
-				else
-					elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(2)] );
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(5)] );
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(4)] );
-			}
-			else
-			{
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(1)] );
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(2)] );
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(3)] );
-				elem_nodes2.push_back( node_index_map[elem->GetNodeIndex(5)] );
-			}
-			tet2->material = elem->GetPatchIndex();
-			tet2->type = MshElemType::TETRAHEDRON;
-			tet2->nodes = elem_nodes2;
-			elements->push_back(tet2);
+			// construct pyrmid element based on missing node
+			unsigned idx1 ((top_idx+1)%3);
+			unsigned idx2 ((top_idx+2)%3);
+			e_nodes[0] = new_nodes[node_index_map[elem->getNode(idx1)->getID()]];
+			e_nodes[1] = new_nodes[node_index_map[elem->getNode(idx1+3)->getID()]];
+			e_nodes[2] = new_nodes[node_index_map[elem->getNode(idx2+3)->getID()]];
+			e_nodes[3] = new_nodes[node_index_map[elem->getNode(idx2)->getID()]];
+			e_nodes[4] = new_nodes[node_index_map[elem->getNode(top_idx)->getID()]];
+
+			MeshLib::Element* pyr (new MeshLib::Pyramid(e_nodes, elem->getValue()));
+			new_elements.push_back(pyr);
 		}
 		else if (count==4) // change the current element to a tetrahedron if only four nodes are valid
 		{
-			std::vector<size_t> elem_nodes;
-			for (size_t i=0; i<3; i++)
-				if (nodes_below_surface[elem->GetNodeIndex(i)])
-					elem_nodes.push_back( node_index_map[elem->GetNodeIndex(i)] );
-
-			if (elem_nodes.size()==1) // make sure than only one node is from the upper layer and three from the lower
+			MeshLib::Node** e_nodes = new MeshLib::Node*[count];
+			for (unsigned i=0; i<3; ++i) // first three nodes are the bottom-face
 			{
-				for (size_t i=3; i<6; i++)
-					elem_nodes.push_back( node_index_map[elem->GetNodeIndex(i)] );
-				GridAdapter::Element* tet = new GridAdapter::Element;
-				tet->material = elem->GetPatchIndex();
-				tet->type = MshElemType::TETRAHEDRON;
-				tet->nodes = elem_nodes;
-				elements->push_back(tet);
+				unsigned idx (elem->getNode(i)->getID());
+				if (nodes_below_surface[idx])
+					e_nodes[i] = new_nodes[node_index_map[idx]];
+				else
+					e_nodes[i] = NULL;
 			}
+
+			if (e_nodes[0] && e_nodes[1] && e_nodes[2]) //make sure that the 4 remaining nodes don't form a quad
+			{
+				for (unsigned i=3; i<6; ++i) // last node
+				{
+					unsigned idx (elem->getNode(i)->getID());
+					if (nodes_below_surface[idx])
+					{
+						e_nodes[3] = new_nodes[node_index_map[idx]];
+						break;
+					}
+				}
+
+				MeshLib::Element* tet (new MeshLib::Tet(e_nodes, elem->getValue()));
+				new_elements.push_back(tet);
+			}
+			else delete e_nodes;
 		}
 		// else remove element, if less than four nodes are valid
 	}
-	GridAdapter grid;
-	grid.setNodeVector(nodes);
-	grid.setElements(elements);
-	MeshLib::CFEMesh* struct_mesh = new MeshLib::CFEMesh(*grid.getCFEMesh());
-	return struct_mesh;
-*/
-	return new MeshLib::Mesh(*mesh);
+	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elements);
 }
 
 
