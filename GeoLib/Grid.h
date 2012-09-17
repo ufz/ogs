@@ -97,13 +97,22 @@ public:
 					} else {
 						// 2d case
 						if (fabs(delta[1]) < std::numeric_limits<double>::epsilon()) {
+							// y = const
 							_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
 							_n_steps[1] = 1;
 							_n_steps[2] = static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
 						} else {
-							_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
-							_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-							_n_steps[2] = 1;
+							if (fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
+								// z = const
+								_n_steps[0] = static_cast<size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
+								_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
+								_n_steps[2] = 1;
+							} else {
+								// x = const
+								_n_steps[0] = 1;
+								_n_steps[1] = static_cast<size_t> (ceil(n_pnts * delta[1] / (max_num_per_grid_cell * delta[2])));
+								_n_steps[2] = static_cast<size_t> (ceil(_n_steps[1] * delta[2] / delta[1]));
+							}
 						}
 					}
 				}
@@ -111,9 +120,9 @@ public:
 		} else {
 			// 3d case
 			_n_steps[0] = static_cast<size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
-							/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
-			_n_steps[1] = static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-			_n_steps[2] = static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
+									/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
+			_n_steps[1] = std::max(static_cast<size_t>(1), std::min(static_cast<size_t> (ceil(_n_steps[0] * delta[1] / delta[0])), static_cast<size_t>(100)));
+			_n_steps[2] = std::max(static_cast<size_t>(1), std::min(static_cast<size_t> (ceil(_n_steps[0] * delta[2] / delta[0])), static_cast<size_t>(100)));
 		}
 
 		const size_t n_plane(_n_steps[0] * _n_steps[1]);
