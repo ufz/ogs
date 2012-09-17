@@ -46,7 +46,7 @@ MshEditDialog::~MshEditDialog()
 	delete _nextButton;
 	delete _noDataDeleteBox;
 
-	for (int i = 0; i < _labels.size(); i++)
+	for (int i = 0; i < _labels.size(); ++i)
 	{
 		delete _labels[i];
 		delete _edits[i];
@@ -59,7 +59,7 @@ void MshEditDialog::nextButtonPressed()
 {
 	_layerEdit->setEnabled(false);
 	_nextButton->setEnabled(false);
-	const size_t nLayers = _layerEdit->text().toInt();
+	const unsigned nLayers = _layerEdit->text().toInt();
 	const QString selectText = (nLayers>0) ?
 		"Please specify a raster file for mapping each layer:" :
 		"Please specify which rasterfile surface mapping:";
@@ -73,7 +73,7 @@ void MshEditDialog::nextButtonPressed()
 	this->gridLayoutLayerMapping->setColumnStretch(1, 200);
 	this->gridLayoutLayerMapping->setColumnStretch(2, 10);
 	
-	for (size_t i = 0; i <= nLayers+1; i++)
+	for (unsigned i = 0; i <= nLayers+1; ++i)
 	{
 		QString text("");
 		if (i==0) text="Surface";
@@ -115,14 +115,14 @@ void MshEditDialog::accept()
 			all_paths_set = false;
 		else
 		{
-			for (int i=1; i<_labels.size(); i++)
+			for (int i=1; i<_labels.size(); ++i)
 				if (_edits[i]->text().length()==0)
 					all_paths_set = false;
 		}
 
 		if (all_paths_set)
 		{
-			const size_t nLayers = _layerEdit->text().toInt();
+			const unsigned nLayers = _layerEdit->text().toInt();
 			MeshLib::Mesh* new_mesh (NULL);
 
 			if (nLayers==0)
@@ -136,16 +136,15 @@ void MshEditDialog::accept()
 			{
 				new_mesh = MshLayerMapper::CreateLayers(_msh, nLayers, 100);
 
-				for (size_t i = 0; i <= nLayers; i++)
+				for (unsigned i = 0; i <= nLayers; ++i)
 				{
-					const std::string imgPath ( this->_edits[i]->text().toStdString() );
+					const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
 					if (!imgPath.empty())
 					{
 						int result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
 						if (result==0) break;
 					}
 				}
-
 				if (this->_edits[0]->text().length()>0)
 				{
 					MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
@@ -155,10 +154,7 @@ void MshEditDialog::accept()
 			}
 
 			if (new_mesh)
-			{
-				new_mesh->setName("NewMesh");
 				emit mshEditFinished(new_mesh);
-			}
 			else
 				OGSError::box("Error creating mesh");
 

@@ -21,7 +21,9 @@
 #include "PointWithID.h"
 #include "Mesh.h"
 #include "MshEditor.h"
-#include "../Gui/DataView/MshLayerMapper.h" // TODO: Move MshLayerMapper to MeshLib
+#ifdef OGS_BUILD_GUI
+	#include "../Gui/DataView/MshLayerMapper.h"
+#endif
 
 namespace MeshLib {
 
@@ -34,8 +36,11 @@ class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
 	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
-	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, const std::size_t nLayers, 
-		                                    const std::size_t layer_id, bool removeNoDataValues);
+#ifdef OGS_BUILD_GUI
+	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, const unsigned nLayers, 
+		                                    const unsigned layer_id, bool removeNoDataValues);
+	friend MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster);
+#endif
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;

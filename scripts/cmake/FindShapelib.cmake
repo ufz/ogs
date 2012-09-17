@@ -13,7 +13,7 @@ if (NOT Shapelib_FOUND)
 		${CMAKE_SOURCE_DIR}/../Libs/shapelib
 		C:/OGS_Libs/shapelib
 		$ENV{OGS_LIBS}/shapelib
-		${OGS_LIBS_DIR_FOUND}/shapelib
+		${OGS_LIBS_DIR}/shapelib
 	)
 
 	find_path( Shapelib_INCLUDE_DIR

@@ -15,7 +15,7 @@ if (NOT libtiff_FOUND)
 			/usr/include
 			${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
 			$ENV{OGS_LIBS}/libtiff
-			${OGS_LIBS_DIR_FOUND}/libtiff/libtiff
+			${OGS_LIBS_DIR}/libtiff/libtiff
 		)
 
 	if ( UNIX )
@@ -25,7 +25,7 @@ if (NOT libtiff_FOUND)
 				/usr/lib64
 				/usr/lib
 				${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
-				${OGS_LIBS_DIR_FOUND}/libtiff/libtiff
+				${OGS_LIBS_DIR}/libtiff/libtiff
 			)
 	else ( UNIX )
 		find_library(libtiff_LIBRARIES
@@ -33,7 +33,7 @@ if (NOT libtiff_FOUND)
 			PATHS
 				${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
 				$ENV{OGS_LIBS}/libtiff
-				${OGS_LIBS_DIR_FOUND}/libtiff
+				${OGS_LIBS_DIR}/libtiff
 			)
 	endif ( UNIX )
 

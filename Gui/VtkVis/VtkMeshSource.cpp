@@ -79,7 +79,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 	for (std::vector<MeshLib::Element*>::const_iterator it = elems.begin(); it != elems.end(); ++it)
 	{
 		os << indent << "Element " << i << ": ";
-		for (size_t t = 0; t < (*it)->getNNodes(); t++)
+		for (unsigned t = 0; t < (*it)->getNNodes(); ++t)
 			os << (*it)->getNode(t)->getID() << " ";
 		os << std::endl;
 	}
@@ -114,7 +114,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	vtkSmartPointer<vtkPoints> gridPoints = vtkSmartPointer<vtkPoints>::New();
 	gridPoints->Allocate(nPoints);
 	// Generate mesh nodes
-	for (size_t i = 0; i < nPoints; i++)
+	for (unsigned i = 0; i < nPoints; ++i)
 		gridPoints->InsertPoint(i, (*nodes[i])[0], (*nodes[i])[1], (*nodes[i])[2]);
 
 	// Generate attribute vector for material groups
@@ -124,10 +124,10 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	materialIDs->SetNumberOfTuples(nElems);
 
 	// Generate mesh elements
-	for (size_t i = 0; i < nElems; i++)
+	for (unsigned i = 0; i < nElems; ++i)
 	{
 		int type(0);
-		const MeshLib::Element* elem = elems[i];
+		const MeshLib::Element* elem (elems[i]);
 
 		switch (elem->getType())
 		{
@@ -157,11 +157,11 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			return 0;
 		}
 
-		materialIDs->InsertValue(i,(elem->getValue()));
+		materialIDs->InsertValue(i, elem->getValue());
 		vtkIdList* point_ids = vtkIdList::New();
 
-		const size_t nElemNodes (elem->getNNodes());
-		for (size_t j = 0; j < nElemNodes; j++)
+		const unsigned nElemNodes (elem->getNNodes());
+		for (unsigned j = 0; j < nElemNodes; ++j)
 			point_ids->InsertNextId(elem->getNode(j)->getID());
 
 		output->InsertNextCell(type, point_ids);

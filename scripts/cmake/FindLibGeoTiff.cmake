@@ -17,7 +17,7 @@ if (NOT libgeotiff_FOUND)
 				/usr/include/geotiff
 				${CMAKE_SOURCE_DIR}/../Libs/libgeotiff
 				$ENV{OGS_LIBS}/libgeotiff
-				${OGS_LIBS_DIR_FOUND}/libgeotiff
+				${OGS_LIBS_DIR}/libgeotiff
 			)
 
 	find_library(libgeotiff_LIBRARIES
@@ -27,7 +27,7 @@ if (NOT libgeotiff_FOUND)
 			/usr/lib
 			${CMAKE_SOURCE_DIR}/../Libs/libgeotiff
 			$ENV{OGS_LIBS}/libgeotiff
-			${OGS_LIBS_DIR_FOUND}/libgeotiff
+			${OGS_LIBS_DIR}/libgeotiff
 		)
 
 
