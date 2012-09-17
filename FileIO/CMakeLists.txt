@@ -24,7 +24,7 @@ ENDIF (Shapelib_FOUND)
 # Create the library
 ADD_LIBRARY(FileIO STATIC ${SOURCES})
 
-include_directories(
+INCLUDE_DIRECTORIES(
 	.
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/FemLib
@@ -35,8 +35,11 @@ include_directories(
 	${CMAKE_BINARY_DIR}/BaseLib
 )
 
-target_link_libraries (FileIO
+TARGET_LINK_LIBRARIES (FileIO
 	GeoLib
 	MeshLib
 )
 
+IF (Shapelib_FOUND)
+	TARGET_LINK_LIBRARIES (FileIO ${Shapelib_LIBRARIES})
+ENDIF (Shapelib_FOUND)
