@@ -26,6 +26,6 @@ publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.com
 [devguide]: http://ufz.github.com/devguide
-[jenkins-ci]: https://svn.ufz.de/hudson/view/OGS-6/
+[jenkins-ci]: https://svn.ufz.de/hudson/job/OGS-6/
 [docs]: https://svn.ufz.de/hudson/view/OGS-6/job/OGS-6-Docs/lastSuccessfulBuild/artifact/build/docs/index.html
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
