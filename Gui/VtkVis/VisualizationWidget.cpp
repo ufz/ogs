@@ -273,7 +273,7 @@ void VisualizationWidget::on_screenshotPushButton_pressed()
 void VisualizationWidget::screenshot(QString filename, int magnification)
 {
 	vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
-	        vtkSmartPointer<vtkWindowToImageFilter>::New();
+		vtkSmartPointer<vtkWindowToImageFilter>::New();
 	windowToImageFilter->SetInput(vtkWidget->GetRenderWindow());
 	// Set the resolution of the output image
 	// magnification times the current resolution of vtk render window
