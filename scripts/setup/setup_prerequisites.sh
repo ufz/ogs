@@ -14,6 +14,7 @@ source $SOURCE_LOCATION/scripts/base/configure_compiler.sh
 if [ "$OSTYPE" == 'msys' ]; then
 
 	mkdir -vp ~/bin
+	export PATH=$PATH:~/bin
 
 	# 7-zip
 	SEVENZIP_LOCATION=`which 7za`

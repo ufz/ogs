@@ -4,11 +4,8 @@
 #ifndef NETCDFCONFIGUREDIALOG_H
 #define NETCDFCONFIGUREDIALOG_H
 
-#ifdef VTK_NETCDF_FOUND
-#include <vtknetcdf/netcdfcpp.h>
-#else
 #include <netcdfcpp.h>
-#endif
+
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
 

@@ -1,20 +1,28 @@
 # Check Visual Studio version and setup CMake generator
-if [ -z "$VS100COMNTOOLS" ]; then
-	if [ -z "$VS90COMNTOOLS" ]; then
-		if [ -z "$VS80COMNTOOLS" ]; then
-			echo "Error: Visual Studio not found"
-			exit 1
+if [ -z "$VS110COMNTOOLS" ]; then
+	if [ -z "$VS100COMNTOOLS" ]; then
+		if [ -z "$VS90COMNTOOLS" ]; then
+			if [ -z "$VS80COMNTOOLS" ]; then
+				echo "Error: Visual Studio not found"
+				exit 1
+			else
+				WIN_DEVENV_PATH="$VS80COMNTOOLS..\\IDE"
+				CMAKE_GENERATOR="Visual Studio 8 2005"
+			fi
 		else
-			WIN_DEVENV_PATH="$VS80COMNTOOLS..\\IDE"
-			CMAKE_GENERATOR="Visual Studio 8 2005"
+			WIN_DEVENV_PATH="$VS90COMNTOOLS..\\IDE"
+			CMAKE_GENERATOR="Visual Studio 9 2008"
 		fi
 	else
-		WIN_DEVENV_PATH="$VS90COMNTOOLS..\\IDE"
-		CMAKE_GENERATOR="Visual Studio 9 2008"
+		WIN_DEVENV_PATH="$VS100COMNTOOLS..\\IDE\\"
+		CMAKE_GENERATOR="Visual Studio 10"
 	fi
 else
-	WIN_DEVENV_PATH="$VS100COMNTOOLS..\\IDE\\"
-	CMAKE_GENERATOR="Visual Studio 10"
+	WIN_DEVENV_PATH="$VS110COMNTOOLS..\\IDE\\"
+	CMAKE_GENERATOR="Visual Studio 11"
+	if [ "$ARCHITECTURE" == "x64" ]; then
+		WIN_ARCHITECTURE="x86_amd64"
+	fi
 fi
 
 if [ "$ARCHITECTURE" == "x64" ]; then
