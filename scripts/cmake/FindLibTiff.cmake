@@ -11,21 +11,30 @@ if (NOT libtiff_FOUND)
 
 	find_path( libtiff_INCLUDE_DIR
 		NAMES tiff.h
-		PATHS	/usr/include
+		PATHS
+			/usr/include
 			${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
-			C:/OGS_Libs/libtiff
-			$ENV{OGS_LIBS}/libtiff)
+			$ENV{OGS_LIBS}/libtiff
+			${OGS_LIBS_DIR_FOUND}/libtiff/libtiff
+		)
 
 	if ( UNIX )
 		find_library(libtiff_LIBRARIES
 			NAMES tiff
-			PATHS /usr/lib64 /usr/lib ${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff)
+			PATHS
+				/usr/lib64
+				/usr/lib
+				${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
+				${OGS_LIBS_DIR_FOUND}/libtiff/libtiff
+			)
 	else ( UNIX )
 		find_library(libtiff_LIBRARIES
 			NAMES libtiff
-			PATHS	${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
-				C:/OGS_Libs/libtiff
-				$ENV{OGS_LIBS}/libtiff)
+			PATHS
+				${CMAKE_SOURCE_DIR}/../Libs/libtiff/libtiff
+				$ENV{OGS_LIBS}/libtiff
+				${OGS_LIBS_DIR_FOUND}/libtiff
+			)
 	endif ( UNIX )
 
 
