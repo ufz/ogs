@@ -25,6 +25,7 @@
 MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL), 
 	  _nLayerLabel (new QLabel("Please specify the number of layers to add:")),  
+	  _nLayerExplanation (new QLabel("(select \"0\" for surface mapping)")),
 	  _selectLabel(NULL),
 	  _layerEdit (new QLineEdit("0")),
 	  _nextButton (new QPushButton("Next"))
@@ -32,6 +33,7 @@ MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	setupUi(this);
 
 	this->gridLayoutLayerMapping->addWidget(_nLayerLabel, 0, 0, 1, 2);
+	this->gridLayoutLayerMapping->addWidget(_nLayerExplanation, 1, 0, 1, 2);
 	this->gridLayoutLayerMapping->addWidget(_layerEdit, 0, 2);
 	this->gridLayoutLayerMapping->addWidget(_nextButton, 0, 3);
 	connect(_nextButton, SIGNAL(pressed()), this, SLOT(nextButtonPressed()));
@@ -41,6 +43,7 @@ MshEditDialog::~MshEditDialog()
 {
 	
 	delete _nLayerLabel;
+	delete _nLayerExplanation;
 	delete _selectLabel;
 	delete _layerEdit;
 	delete _nextButton;
@@ -59,10 +62,11 @@ void MshEditDialog::nextButtonPressed()
 {
 	_layerEdit->setEnabled(false);
 	_nextButton->setEnabled(false);
+	_nLayerExplanation->setText("");
 	const unsigned nLayers = _layerEdit->text().toInt();
 	const QString selectText = (nLayers>0) ?
 		"Please specify a raster file for mapping each layer:" :
-		"Please specify which rasterfile surface mapping:";
+		"Please specify rasterfile for surface mapping:";
 	_selectLabel = new QLabel(selectText);
 	_selectLabel->setMargin(20);
 	this->gridLayoutLayerMapping->addWidget(_selectLabel, 1, 0, 1, 4);
@@ -122,6 +126,7 @@ void MshEditDialog::accept()
 
 		if (all_paths_set)
 		{
+			int result(0);
 			const unsigned nLayers = _layerEdit->text().toInt();
 			MeshLib::Mesh* new_mesh (NULL);
 
@@ -130,7 +135,7 @@ void MshEditDialog::accept()
 				new_mesh = new MeshLib::Mesh(*_msh);
 				const std::string imgPath ( this->_edits[0]->text().toStdString() );
 				if (!imgPath.empty())
-					MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, _noDataDeleteBox->isChecked());
+					result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, _noDataDeleteBox->isChecked());
 			}
 			else
 			{
@@ -141,7 +146,7 @@ void MshEditDialog::accept()
 					const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
 					if (!imgPath.empty())
 					{
-						int result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
+						result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
 						if (result==0) break;
 					}
 				}
@@ -155,7 +160,8 @@ void MshEditDialog::accept()
 
 			if (new_mesh)
 				emit mshEditFinished(new_mesh);
-			else
+			
+			if (!new_mesh || result==0)
 				OGSError::box("Error creating mesh");
 
 			this->done(QDialog::Accepted);

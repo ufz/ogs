@@ -904,7 +904,7 @@ void MainWindow::exportBoreholesToGMS(std::string listName,
 }
 
 void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
-                          size_t param1, double param2, double param3, double param4,
+                          unsigned param1, double param2, double param3, double param4,
                           bool delete_geo_file)
 {
 	if (!selectedGeometries.empty())
@@ -1088,8 +1088,8 @@ void MainWindow::showLineEditDialog(const std::string &geoName)
 void MainWindow::showGMSHPrefsDialog()
 {
 	GMSHPrefsDialog dlg(_geoModels);
-	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> &, size_t, double, double, double, bool)),
-	        this, SLOT(callGMSH(std::vector<std::string> &, size_t, double, double, double, bool)));
+	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool)),
+	        this, SLOT(callGMSH(std::vector<std::string> &, unsigned, double, double, double, bool)));
 	dlg.exec();
 }
 

@@ -239,7 +239,9 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
 
 	if (xMin < xDim.first || xMax > xDim.second || yMin < yDim.first || yMax > yDim.second)
 	{
-		std::cout << "Warning: Mesh does not fit into given raster file." << std::endl;
+		std::cout << "Warning: Extension of mesh is larger than extension of given raster file." << std::endl;
+		std::cout << "Mesh Extend: (" << xMin << ", " << yMin << "):(" << xMax << ", " << yMax << ")" << std::endl;
+		std::cout << "Raster Extend: (" << xDim.first << ", " << yDim.first << "):(" << xDim.second << ", " << yDim.second << ")" << std::endl;
 		return false;
 	}
 	return true;

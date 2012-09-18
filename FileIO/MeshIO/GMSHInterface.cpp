@@ -142,7 +142,7 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 						break;
 					case 2:
 						readNodeIDs(in, 3, node_ids, id_map);
-						elem = new MeshLib::Tri(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], mat_id);
+						elem = new MeshLib::Tri(nodes[node_ids[2]], nodes[node_ids[1]], nodes[node_ids[0]], mat_id);
 						break;
 					case 3:
 						readNodeIDs(in, 4, node_ids, id_map);

@@ -45,6 +45,7 @@ private:
 	QCheckBox* _noDataDeleteBox;
 
 	QLabel* _nLayerLabel;
+	QLabel* _nLayerExplanation;
 	QLabel* _selectLabel;
 	QLineEdit* _layerEdit;
 	QPushButton* _nextButton;
