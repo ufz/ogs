@@ -12,9 +12,13 @@
 #ifndef TETGENINTERFACE_H_
 #define TETGENINTERFACE_H_
 
-// forward declaration of mesh class
+#include <vector>
+
+// forward declaration of class Node and Element
 namespace MeshLib
 {
+	class Node;
+	class Element;
 	class Mesh;
 }
 
@@ -28,14 +32,6 @@ class TetGenInterface
 public:
 	TetGenInterface();
 	virtual ~TetGenInterface();
-
-	/**
-	 * write a mesh into TetGen mesh file format
-	 * @param nodes_fname
-	 * @param ele_fname
-	 * @param mesh
-	 */
-	void writeTetGenMesh (std::string const& nodes_fname, std::string const& ele_fname, MeshLib::Mesh const*const mesh) const;
 
 	/**
 	 * Method reads the TetGen mesh from node file and element file.
@@ -52,8 +48,6 @@ public:
 	friend class MeshLib::Mesh;
 
 private:
-	void writeTetGenNodes(std::string const& nodes_fname, MeshLib::Mesh const*const mesh) const;
-	void writeTetGenElements(std::string const& ele_fname, MeshLib::Mesh const*const mesh) const;
 	/**
 	 * Method reads the nodes from stream and stores them in the node vector of the mesh class.
 	 * For this purpose it uses methods parseNodesFileHeader() and parseNodes().
@@ -110,9 +104,13 @@ private:
 	                   bool region_attribute);
 
 	/**
-	 * the mesh that is returned if all data is read
+	 * the nodes later on handed over to the mesh are stored in this vector
 	 */
-	MeshLib::Mesh* _mesh;
+	std::vector<MeshLib::Node*> _nodes;
+	/**
+	 * the elements (tetrahedrons) later on handed over to the mesh are stored in this vector
+	 */
+	std::vector<MeshLib::Element*> _elements;
 	/**
 	 * the value is true if the indexing is zero based, else false
 	 */
