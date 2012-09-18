@@ -32,7 +32,7 @@ public:
 	/// Constructor
 	SetNameDialog(const std::string &parent_name,
 				  const std::string &object_type_name,
-				  size_t id,
+				  std::size_t id,
 				  const std::string &old_name,
 				  QDialog* parent = 0);
 	~SetNameDialog();
@@ -49,7 +49,7 @@ private:
 
 	std::string _parent_name;
 	std::string _object_type_name;
-	size_t _id;
+	std::size_t _id;
 
 private slots:
 	/// Instructions if the OK-Button has been pressed.
@@ -59,7 +59,7 @@ private slots:
 	void reject();
 
 signals:
-	void requestNameChange(const std::string&, const GeoLib::GEOTYPE, size_t, std::string);
+	void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);
 };
 
 #endif //SETNAMEDIALOG_H

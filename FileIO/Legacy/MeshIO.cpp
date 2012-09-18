@@ -36,7 +36,7 @@ MeshIO::MeshIO()
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
-	std::cout << "Reading OGS legacy mesh ... ";
+	std::cout << "Reading OGS legacy mesh ... " << std::endl;
 
 	std::ifstream in (file_name.c_str(),std::ios::in);
 	if (!in.is_open())

@@ -33,7 +33,7 @@ public:
 		Q_UNUSED(value);
 	}
 
-	void SetIndex(size_t idx);
+	void SetIndex(std::size_t idx);
 
 private:
 	float GetInitialRadius() const;

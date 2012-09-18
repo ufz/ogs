@@ -34,7 +34,6 @@ Node::~Node()
 {
 }
 
-
 void Node::updateCoordinates(double x, double y, double z)
 {
 	_x[0] = x;

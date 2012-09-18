@@ -83,7 +83,7 @@ private slots:
 
 signals:
 	void qualityCheckRequested(VtkMeshSource*);
-	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const size_t, bool on_points);
+	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
 	void requestDIRECTSourceTerms(const std::string, const std::vector<GeoLib::Point*>*);
 	void saveMeshAction();

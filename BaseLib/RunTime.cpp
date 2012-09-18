@@ -37,7 +37,7 @@ double RunTime::elapsed()
 #ifndef _WIN32
 	return (_stop.tv_sec + _stop.tv_usec/1000000.0 - (_start.tv_sec + _start.tv_usec/1000000.0));
 #else
-	return (_stop - _start) / 1000;
+	return (_stop - _start) / 1000.0;
 #endif
 }
 

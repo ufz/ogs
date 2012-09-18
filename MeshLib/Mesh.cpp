@@ -20,6 +20,11 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+#include "logog.hpp"
+
+#include "RunTime.h"
+#include "uniqueInsert.h"
+
 namespace MeshLib {
 
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
@@ -30,8 +35,11 @@ Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::
 	_edge_length[1] = 0;
 	this->makeNodesUnique();
 	this->setDimension();
-	this->setElementInformationForNodes();
-	this->setNeighborInformationForElements();
+	this->setElementsConnectedToNodes();
+	//this->setNodesConnectedByEdges();
+	//this->setNodesConnectedByElements();
+	this->setElementsConnectedToElements();
+	this->removeUnusedMeshNodes();
 }
 
 Mesh::Mesh(const Mesh &mesh)
@@ -39,32 +47,34 @@ Mesh::Mesh(const Mesh &mesh)
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
-	for (unsigned i=0; i<nNodes; i++)
+	for (unsigned i=0; i<nNodes; ++i)
 		_nodes[i] = new Node(*nodes[i]);
 
 	const std::vector<Element*> elements (mesh.getElements());
 	const size_t nElements (elements.size());
-	for (unsigned i=0; i<nElements; i++)
+	for (unsigned i=0; i<nElements; ++i)
 	{
 		const size_t nElemNodes = elements[i]->getNNodes();
 		_elements[i] = elements[i]->clone();
-		for (unsigned j=0; j<nElemNodes; j++)
+		for (unsigned j=0; j<nElemNodes; ++j)
 			_elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
 	}
 
 	if (_mesh_dimension==0) this->setDimension();
-	this->setElementInformationForNodes();
-	this->setNeighborInformationForElements();
+	this->setElementsConnectedToNodes();
+	//this->setNodesConnectedByEdges();
+	//this->setNodesConnectedByElements();
+	this->setElementsConnectedToElements();
 }
 
 Mesh::~Mesh()
 {
 	const size_t nElements (_elements.size());
-	for (size_t i=0; i<nElements; i++)
+	for (size_t i=0; i<nElements; ++i)
 		delete _elements[i];
 
 	const size_t nNodes (_nodes.size());
-	for (size_t i=0; i<nNodes; i++)
+	for (size_t i=0; i<nNodes; ++i)
 		delete _nodes[i];
 }
 
@@ -75,10 +85,10 @@ void Mesh::makeNodesUnique()
 
 	//replace node pointers in elements
 	unsigned nElements (_elements.size());
-	for (unsigned i=0; i<nElements; i++)
+	for (unsigned i=0; i<nElements; ++i)
 	{
 		unsigned nNodes (_elements[i]->getNNodes());
-		for (unsigned j=0; j<nNodes; j++)
+		for (unsigned j=0; j<nNodes; ++j)
 			_elements[i]->getNodeIndex(j);
 	}
 
@@ -97,40 +107,47 @@ void Mesh::addElement(Element* elem)
 
 	// add element information to nodes
 	unsigned nNodes (elem->getNNodes());
-	for (unsigned i=0; i<nNodes; i++)
+	for (unsigned i=0; i<nNodes; ++i)
 		elem->_nodes[i]->addElement(elem);
 }
 
 void Mesh::resetNodeIDs()
 {
 	const size_t nNodes (this->_nodes.size());
-	for (unsigned i=0; i<nNodes; i++)
+	for (unsigned i=0; i<nNodes; ++i)
 		_nodes[i]->setID(i);
 }
 
 void Mesh::setDimension()
 {
 	const size_t nElements (_elements.size());
-	for (unsigned i=0; i<nElements; i++)
+	for (unsigned i=0; i<nElements; ++i)
 		if (_elements[i]->getDimension() > _mesh_dimension)
 			_mesh_dimension = _elements[i]->getDimension();
 }
 
-void Mesh::setElementInformationForNodes()
+void Mesh::setElementsConnectedToNodes()
 {
 	const size_t nElements (_elements.size());
-	for (unsigned i=0; i<nElements; i++)
+	for (unsigned i=0; i<nElements; ++i)
 	{
-		const unsigned nNodes (_elements[i]->getNNodes());
-		for (unsigned j=0; j<nNodes; j++)
-			_elements[i]->_nodes[j]->addElement(_elements[i]);
+		MeshLib::Element* element = _elements[i];
+		const unsigned nNodes (element->getNNodes());
+		for (unsigned j=0; j<nNodes; ++j)
+			element->_nodes[j]->addElement(element);
 	}
-#ifdef NDEBUG
+#ifndef NDEBUG
 	// search for nodes that are not part of any element
+	unsigned count(0);
 	const size_t nNodes (_nodes.size());
-	for (unsigned i=0; i<nNodes; i++)
+	for (unsigned i=0; i<nNodes; ++i)
 		if (_nodes[i]->getNElements() == 0)
-			std::cout << "Warning: Node " << i << " is not part of any element." << std::endl;
+		{
+			WARN ("Node %d is not part of any element.", i);
+			++count;
+		}
+	if (count)
+		WARN ("%d unused mesh nodes found.", count);
 #endif
 }
 
@@ -142,10 +159,10 @@ void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length
 		_edge_length[1] = max_length;
 	}
 	else
-		std::cerr << "Error in MeshLib::Mesh::setEdgeLengthRange() - min length > max length." << std::endl;
+		ERR ("Error in MeshLib::Mesh::setEdgeLengthRange() - min length > max length.");
 }
 
-void Mesh::setNeighborInformationForElements()
+void Mesh::setElementsConnectedToElements()
 {
 	const size_t nElements = _elements.size();
 #ifdef _OPENMP
@@ -154,7 +171,7 @@ void Mesh::setNeighborInformationForElements()
 #else
 	unsigned m(0);
 #endif
-	for (m=0; m<nElements; m++)
+	for (m=0; m<nElements; ++m)
 	{
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
@@ -162,7 +179,7 @@ void Mesh::setNeighborInformationForElements()
 		if (element->getType() != MshElemType::EDGE)
 		{
 			const size_t nNodes (element->getNNodes());
-			for (unsigned n(0); n<nNodes; n++)
+			for (unsigned n(0); n<nNodes; ++n)
 			{
 				std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
 				neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
@@ -170,7 +187,7 @@ void Mesh::setNeighborInformationForElements()
 
 			const unsigned nNeighbors ( neighbors.size() );
 
-			for (unsigned i(0); i<nNeighbors; i++)
+			for (unsigned i(0); i<nNeighbors; ++i)
 			{
 				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getType() != MshElemType::EDGE)
 				{
@@ -178,6 +195,84 @@ void Mesh::setNeighborInformationForElements()
 				}
 			}
 		}
+	}
+}
+
+void Mesh::setNodesConnectedByEdges()
+{
+	const size_t nNodes (this->_nodes.size());
+	for (unsigned i=0; i<nNodes; ++i)
+	{
+		MeshLib::Node* node (_nodes[i]);
+		std::vector<MeshLib::Node*> conn_set;
+		const std::vector<MeshLib::Element*> &conn_elems (node->getElements());
+		const size_t nConnElems (conn_elems.size());
+		for (unsigned j=0; j<nConnElems; ++j)
+		{
+			const unsigned idx (conn_elems[j]->getNodeIDinElement(node));
+			const unsigned nElemNodes (conn_elems[j]->getNNodes());
+			for (unsigned k(0); k<nElemNodes; ++k)
+			{
+				bool is_in_vector (false);
+				const size_t nConnNodes (conn_set.size());
+				for (unsigned l(0); l<nConnNodes; ++l)
+					if (conn_elems[j]->getNode(k) == conn_set[l])
+						is_in_vector = true;
+				if (is_in_vector) continue;
+				if (conn_elems[j]->isEdge(idx, k))
+					conn_set.push_back(_nodes[conn_elems[j]->getNode(k)->getID()]);
+			}
+		}
+		node->setConnectedNodes(conn_set);
+	}
+}
+
+void Mesh::setNodesConnectedByElements()
+{
+	const size_t nNodes (this->_nodes.size());
+	for (unsigned i=0; i<nNodes; ++i)
+	{
+		MeshLib::Node* node (_nodes[i]);
+		std::vector<MeshLib::Node*> conn_vec;
+		const std::vector<MeshLib::Element*> &conn_elems (node->getElements());
+		const size_t nConnElems (conn_elems.size());
+		for (unsigned j=0; j<nConnElems; ++j)
+		{
+			const unsigned nElemNodes (conn_elems[j]->getNNodes());
+			for (unsigned k(0); k<nElemNodes; ++k)
+			{
+				bool is_in_vector (false);
+				const MeshLib::Node* c_node (conn_elems[j]->getNode(k));
+				if (c_node == node) continue;
+				const size_t nConnNodes (conn_vec.size());
+				for (unsigned l(0); l<nConnNodes; ++l)
+					if (c_node == conn_vec[l])
+						is_in_vector = true;
+				if (!is_in_vector) 
+					conn_vec.push_back(_nodes[c_node->getID()]);
+			}
+		}
+		node->setConnectedNodes(conn_vec);
+	}
+}
+
+void Mesh::removeUnusedMeshNodes()
+{
+	unsigned count(0);
+	std::vector<MeshLib::Node*>::iterator it (this->_nodes.begin());
+	for (it; it != this->_nodes.end();)
+	{
+		if ((*it)->getNElements() == 0)
+		{
+			it = this->_nodes.erase(it);
+			++count;
+		}
+		else ++it;
+	}
+	if (count)
+	{
+		std::cout << "Removed " << count << " unused mesh nodes." << std::endl;
+		this->resetNodeIDs();
 	}
 }
 

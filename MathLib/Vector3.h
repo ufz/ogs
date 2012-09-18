@@ -61,19 +61,19 @@ public:
 	{ return TemplateVector (-this->x[0], -this->x[1], -this->x[2]); }
 
 	TemplateVector& operator+=(const TemplateVector & pV) {
-		for (size_t i(0); i<3; i++) this->x[i]+=pV[i];
+		for (std::size_t i(0); i<3; i++) this->x[i]+=pV[i];
 		return *this;
 	}
 
 	TemplateVector& operator+=(const GeoLib::TemplatePoint<T>& pnt)
 	{
-		for (size_t i(0); i<3; i++) this->_x[i] += pnt[i];
+		for (std::size_t i(0); i<3; i++) this->_x[i] += pnt[i];
 		return *this;
 	}
 
 	TemplateVector& operator-=(const TemplateVector & pV)
 	{
-		for (size_t i(0); i<3; i++) this->_x[i] -= pV[i];
+		for (std::size_t i(0); i<3; i++) this->_x[i] -= pV[i];
 		return *this;
 	}
 
@@ -121,7 +121,7 @@ public:
 
 	TemplateVector& operator*=(double pR)
 	{
-		for (size_t i(0); i<3; i++) this->_x[i]*=pR;
+		for (std::size_t i(0); i<3; i++) this->_x[i]*=pR;
 		return *this;
 	}
 

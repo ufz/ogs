@@ -48,11 +48,11 @@ public slots:
 
 	virtual void addPointVec(std::vector<GeoLib::Point*>* points,
 	                         std::string &name,
-	                         std::map<std::string, size_t>* name_pnt_id_map = NULL,
+	                         std::map<std::string, std::size_t>* name_pnt_id_map = NULL,
 	                         double eps = sqrt(std::numeric_limits<double>::min()));
 	virtual bool appendPointVec(const std::vector<GeoLib::Point*> &points,
 	                            const std::string &name,
-	                            std::vector<size_t>* ids = NULL);
+	                            std::vector<std::size_t>* ids = NULL);
 	virtual bool removePointVec(const std::string &name);
 
 	virtual void addStationVec(std::vector<GeoLib::Point*>* stations,
@@ -62,14 +62,14 @@ public slots:
 
 	virtual void addPolylineVec(std::vector<GeoLib::Polyline*>* lines,
 	                            const std::string &name,
-	                            std::map<std::string,size_t>* ply_names = NULL);
+	                            std::map<std::string,std::size_t>* ply_names = NULL);
 	virtual bool appendPolylineVec(const std::vector<GeoLib::Polyline*> &polylines,
 	                               const std::string &name);
 	virtual bool removePolylineVec(const std::string &name);
 
 	virtual void addSurfaceVec(std::vector<GeoLib::Surface*>* surfaces,
 	                           const std::string &name,
-	                           std::map<std::string,size_t>* sfc_names = NULL);
+	                           std::map<std::string,std::size_t>* sfc_names = NULL);
 
 	/// @brief
 	/// @param surfaces The surface vector.
@@ -78,14 +78,14 @@ public slots:
 	virtual bool removeSurfaceVec(const std::string &name);
 
 	/// Adds the name 'new_name' for the geo-object specified by the parameters
-	void addNameForElement(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, std::string new_name);
+	void addNameForElement(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, std::string new_name);
 
 	/// Adds a generic name to all points that are part of the specified geo-object
 	void addNameForObjectPoints(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, const std::string &geo_object_name, const std::string &new_name);
 
 	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
 	void connectPolylineSegments(const std::string &geoName,
-	                             std::vector<size_t> indexlist,
+	                             std::vector<std::size_t> indexlist,
 	                             double proximity,
 	                             std::string ply_name,
 	                             bool closePly,

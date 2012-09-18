@@ -59,7 +59,6 @@ bool Element::addNeighbor(Element* e)
 			if (_nodes[i] == e_nodes[j])
 			{
 				face_nodes[count] = _nodes[i];
-				//std::cout << _nodes[i]->getID() << " == " << e_nodes[j]->getID() << std::endl;
 				// increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
 				if ((++count)>=dim)
 				{
@@ -105,6 +104,15 @@ const Element* Element::getNeighbor(unsigned i) const
 	return NULL;
 }
 
+unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
+{
+	const unsigned nNodes (this->getNNodes());
+	for (unsigned i(0); i<nNodes; i++)
+		if (node == _nodes[i]) 
+			return i;
+	return std::numeric_limits<unsigned>::max();
+}
+
 const Node* Element::getNode(unsigned i) const
 {
 	if (i < getNNodes())
@@ -135,6 +143,7 @@ bool Element::hasNeighbor(Element* elem) const
 			return true;
 	return false;
 }
+
 
 }
 

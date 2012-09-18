@@ -69,10 +69,10 @@ public:
 	SensorData(const std::string &file_name);
 
 	/// Constructor using a time step vector valid for all time series that will be added later
-	SensorData(std::vector<size_t> time_steps);
+	SensorData(std::vector<std::size_t> time_steps);
 
 	/// Constructor using time step bounds for all time series that will be added later
-	SensorData(size_t first_timestep, size_t last_timestep, size_t step_size);
+	SensorData(std::size_t first_timestep, std::size_t last_timestep, std::size_t step_size);
 
 	~SensorData();
 
@@ -92,16 +92,16 @@ public:
 	const std::vector<SensorDataType::type>& getTimeSeriesNames() const { return _vec_names; };
 
 	/// Returns the time step vector (if it exists)
-	const std::vector<size_t>& getTimeSteps() const { return _time_steps; };
+	const std::vector<std::size_t>& getTimeSteps() const { return _time_steps; };
 
 	/// Returns the first time step
-	size_t getStartTime() const { return _start; };
+	std::size_t getStartTime() const { return _start; };
 
 	/// Returns the last time step
-	size_t getEndTime() const { return _end; };
+	std::size_t getEndTime() const { return _end; };
 
 	/// Returns the interval between time steps (Returns "0" if a vector is given!)
-	size_t getStepSize() const { return _step_size; };
+	std::size_t getStepSize() const { return _step_size; };
 
 	/// Allows to set a unit for the time steps
 	void setTimeUnit(TimeStepType::type t) { _time_unit = t; };
@@ -122,12 +122,12 @@ private:
 	/// Reads a CSV-file with time series data and fills the container.
 	int readDataFromFile(const std::string &file_name);
 
-	size_t _start;
-	size_t _end;
-	size_t _step_size;
+	std::size_t _start;
+	std::size_t _end;
+	std::size_t _step_size;
 	TimeStepType::type _time_unit;
 	std::vector<std::string> _data_unit_string;
-	std::vector<size_t> _time_steps;
+	std::vector<std::size_t> _time_steps;
 	std::vector<SensorDataType::type> _vec_names;
 	std::vector< std::vector<float>* > _data_vecs;
 

@@ -30,13 +30,13 @@ namespace FileIO {
 
 class GMSHAdaptiveMeshDensity: public GMSHMeshDensityStrategy {
 public:
-	GMSHAdaptiveMeshDensity(double pnt_density, double station_density, size_t max_pnts_per_leaf);
+	GMSHAdaptiveMeshDensity(double pnt_density, double station_density, std::size_t max_pnts_per_leaf);
 	virtual ~GMSHAdaptiveMeshDensity();
 	void init(std::vector<GeoLib::Point const*> const& pnts);
 	double getMeshDensityAtPoint(GeoLib::Point const*const pnt) const;
 	void addPoints(std::vector<GeoLib::Point const*> const& pnts);
 	double getMeshDensityAtStation(GeoLib::Point const*const) const;
-	void getSteinerPoints (std::vector<GeoLib::Point*> & pnts, size_t additional_levels = 0) const;
+	void getSteinerPoints (std::vector<GeoLib::Point*> & pnts, std::size_t additional_levels = 0) const;
 #ifndef NDEBUG
 	void getQuadTreeGeometry(std::vector<GeoLib::Point*> &pnts, std::vector<GeoLib::Polyline*> &plys) const;
 #endif
@@ -44,7 +44,7 @@ public:
 private:
 	double _pnt_density;
 	double _station_density;
-	size_t _max_pnts_per_leaf;
+	std::size_t _max_pnts_per_leaf;
 	GeoLib::QuadTree<GeoLib::Point> *_quad_tree;
 };
 

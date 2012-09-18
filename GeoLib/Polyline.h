@@ -70,7 +70,7 @@ public:
 	 * the (internal) _ply_pnts vector the polyline is based on.
 	 * @param pnt_id
 	 */
-	virtual void addPoint(size_t pnt_id);
+	virtual void addPoint(std::size_t pnt_id);
 
 	/**
 	 * Method inserts a new point (that have to be inside the _ply_pnts vector)
@@ -78,7 +78,7 @@ public:
 	 * @param pos the position in the polyline, pos have to be a value into the interval [0, number of points)
 	 * @param pnt_id the id of the new point in the vector of points the polyline is based on
 	 */
-	virtual void insertPoint(size_t pos, size_t pnt_id);
+	virtual void insertPoint(std::size_t pos, std::size_t pnt_id);
 
 	/**
 	 * Closes a polyline by adding a line segment that connects start- and end-point.
@@ -96,7 +96,7 @@ public:
 	 * returns the number of points,
 	 * the number of segments is about one smaller
 	 * */
-	size_t getNumberOfPoints() const;
+	std::size_t getNumberOfPoints() const;
 
 	/** returns true if the polyline is closed */
 	bool isClosed() const;
@@ -107,29 +107,29 @@ public:
 	 * @param pnt_id the id of the point
 	 * @return true if the point is part of the polyline, else false
 	 */
-	bool isPointIDInPolyline(size_t pnt_id) const;
+	bool isPointIDInPolyline(std::size_t pnt_id) const;
 
 	/**
 	 * returns the index of the i-th polyline point
 	 * in the point vector
 	 */
-	size_t getPointID(size_t i) const;
+	std::size_t getPointID(std::size_t i) const;
 
 	/**
 	 * Changes a point index for one point in a line
 	 * @param idx Index of point in line
 	 * @param id ID of point in PointVec object
 	 */
-	void setPointID(size_t idx, size_t id);
+	void setPointID(std::size_t idx, std::size_t id);
 
 	/** \brief const access operator for the access to the i-th point of the polyline.
 	 */
-	const Point* operator[](size_t i) const;
+	const Point* operator[](std::size_t i) const;
 
 	/**
 	 * \brief returns the i-th point contained in the polyline
 	 * */
-	const Point* getPoint(size_t i) const;
+	const Point* getPoint(std::size_t i) const;
 
 	std::vector<Point*> const& getPointsVec () const;
 
@@ -138,7 +138,7 @@ public:
 	 * @param k the k-th line segment
 	 * @return the length of the polyline until the k-th line segment
 	 */
-	double getLength (size_t k) const;
+	double getLength (std::size_t k) const;
 
 	/**
 	 * get the complete length vector
@@ -157,17 +157,17 @@ protected:
 	 * @param pnt the point
 	 * @return a value of enum LOCATION
 	 */
-	Location::type getLocationOfPoint (size_t k, GeoLib::Point const & pnt) const;
+	Location::type getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
 
 	static bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
-	                               size_t i,
-	                               size_t j,
+	                               std::size_t i,
+	                               std::size_t j,
 	                               double prox);
 
 	/** a reference to the vector of pointers to the geometric points */
 	const std::vector<Point*> &_ply_pnts;
 	/** position of pointers to the geometric points */
-	std::vector<size_t> _ply_pnt_ids;
+	std::vector<std::size_t> _ply_pnt_ids;
 	/**
 	 * the k-th element of the vector contains the length of the polyline until the k-th segment
 	 */
@@ -177,7 +177,7 @@ protected:
 /** overload the output operator for class Polyline */
 std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
-bool containsEdge (const Polyline& ply, size_t id0, size_t id1);
+bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 
 bool isLineSegmentIntersecting (const Polyline& ply, GeoLib::Point const& s0, GeoLib::Point const& s1);
 

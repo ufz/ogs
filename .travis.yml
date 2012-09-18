@@ -1,0 +1,13 @@
+language: cpp
+compiler:
+  - gcc
+branches:
+  only:
+    - master
+before_install:
+  - sudo apt-get install qt4-dev-tools libvtk5-dev libvtk5-qt4-dev libnetcdf-dev libshp-dev libgeotiff-dev
+script: "mkdir build && cd build && cmake -DOGS_BUILD_GUI=ON .. && cmake .. && make"
+notifications:
+  email:
+    - lars.bilke@ufz.de
+  campfire: ogs:43a83c669536b2fa948caf643650b6b46d50f809@531799

@@ -70,8 +70,8 @@ private:
 	 * @param boundary_markers have the nodes boundary information (output)
 	 * @return true, if the file header is read, false if the method detects an error
 	 */
-	bool parseNodesFileHeader(std::string &line, size_t& n_nodes, size_t& dim,
-	                          size_t& n_attributes, bool& boundary_markers) const;
+	bool parseNodesFileHeader(std::string &line, std::size_t& n_nodes, std::size_t& dim,
+	                          std::size_t& n_attributes, bool& boundary_markers) const;
 	/**
 	 * method parses the lines reading the nodes from TetGen nodes file
 	 * @param ins the input stream (input)
@@ -79,7 +79,7 @@ private:
 	 * @param dim the spatial dimension of the node (input)
 	 * @return true, if the nodes are read, false if the method detects an error
 	 */
-	bool parseNodes(std::ifstream& ins, size_t n_nodes, size_t dim);
+	bool parseNodes(std::ifstream& ins, std::size_t n_nodes, std::size_t dim);
 
 	/**
 	 * Method reads the elements from stream and stores them in the element vector of the mesh class.
@@ -96,7 +96,7 @@ private:
 	 * @param region_attribute is on output true, if there
 	 * @return
 	 */
-	bool parseElementsFileHeader(std::string &line, size_t& n_tets, size_t& n_nodes_per_tet,
+	bool parseElementsFileHeader(std::string &line, std::size_t& n_tets, std::size_t& n_nodes_per_tet,
 	                             bool& region_attribute) const;
 	/**
 	 * Method parses the tetrahedras and put them in the element vector of the mesh class.
@@ -106,7 +106,7 @@ private:
 	 * @param region_attribute if region attribute is true, region information is read
 	 * @return true, if the tetrahedras are read, false if the method detects an error
 	 */
-	bool parseElements(std::ifstream& ins, size_t n_tets, size_t n_nodes_per_tet,
+	bool parseElements(std::ifstream& ins, std::size_t n_tets, std::size_t n_nodes_per_tet,
 	                   bool region_attribute);
 
 	/**

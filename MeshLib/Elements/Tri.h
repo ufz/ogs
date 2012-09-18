@@ -64,6 +64,9 @@ public:
 	 */
 	virtual MshElemType::type getType() const { return MshElemType::TRIANGLE; }
 
+	/// Returns true if these two indeces form an edge and false otherwise
+	bool isEdge(unsigned i, unsigned j) const;
+
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the Tri instance.
 	 * @return an exact copy of the object
@@ -86,7 +89,7 @@ protected:
 
 protected:
 	/// Return a specific edge node.
-	inline Node const* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
 	/// Returns the ID of a face given an array of nodes.
 	unsigned identifyFace(Node* nodes[3]) const;

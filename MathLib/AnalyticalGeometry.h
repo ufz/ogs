@@ -72,7 +72,7 @@ bool isPointInTriangle (const GeoLib::Point* p,
  * @param intersection_pnt the intersection point if the line segments intersect
  * @return true, if the polyline contains intersections
  */
-bool lineSegmentsIntersect (const GeoLib::Polyline* ply, size_t &idx0, size_t &idx1, GeoLib::Point& intersection_pnt);
+bool lineSegmentsIntersect (const GeoLib::Polyline* ply, std::size_t &idx0, std::size_t &idx1, GeoLib::Point& intersection_pnt);
 
 /**
  * A line segment is given by its two end-points. The function checks,

@@ -3,12 +3,14 @@
 #####################
 
 # Specify minimum CMake version
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.3)
 
 # Project name
 project( OGS-6 )
 
 ### CMake includes ###
+INCLUDE(scripts/cmake/CheckTypeSizes.cmake)
+INCLUDE(scripts/cmake/FindIncludeHeader.cmake)
 INCLUDE(scripts/cmake/Functions.cmake)
 INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
@@ -45,6 +47,12 @@ OPTION(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
+
+# Logging
+OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
+
+# Search paths
+SET(OGS_LIBS_DIR "" CACHE PATH "The path to the compiled third party libs (mainly used for Windows).")
 
 # Print CMake variable values
 IF (OGS_CMAKE_DEBUG)

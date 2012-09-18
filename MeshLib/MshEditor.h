@@ -25,6 +25,7 @@ namespace MeshLib {
 // forward declarations
 class Mesh;
 class Element;
+class Node;
 
 /**
  * \brief A set of tools for manipulating existing meshes
@@ -32,22 +33,24 @@ class Element;
 class MshEditor
 {
 public:
-	MshEditor() {}
-	~MshEditor() {}
-
 	/// Returns the area assigned to each node on a surface mesh.
 	static void getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec);
 
 	/// Removes the mesh nodes (and connected elements) given in the nodes-list from the mesh.
-	static MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
+	static MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
 
 	/// Returns the surface nodes of a layered mesh.
-	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh);
+	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh, const double* dir = NULL);
 
 	/// Returns the 2d-element mesh representing the surface of the given layered mesh.
-	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const double* dir);
+	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const double* dir = NULL);
 
 private:
+	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
+	static void get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension);
+
+	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
+	static void get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map);
 };
 
 } // end namespace MeshLib

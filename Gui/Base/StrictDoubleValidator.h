@@ -21,7 +21,7 @@
 class StrictDoubleValidator : public QDoubleValidator
 {
 public:
-	StrictDoubleValidator ( double min, double max, size_t decimals, QObject* parent = 0) :
+	StrictDoubleValidator ( double min, double max, std::size_t decimals, QObject* parent = 0) :
 		QDoubleValidator( min, max, decimals, parent)
 	{}
 

@@ -16,7 +16,7 @@
 // BaseLib
 #include "swap.h"
 #include "printList.h"
-#include "uniqueListInsert.h"
+#include "uniqueInsert.h"
 
 // MathLib
 #include "EarClippingTriangulation.h"
@@ -41,18 +41,18 @@ EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygo
 	std::list<GeoLib::Triangle>::const_iterator it (_triangles.begin());
 	if (_original_orient == MathLib::CW) {
 		while (it != _triangles.end()) {
-			const size_t i0 (polygon->getPointID ((*it)[0]));
-			const size_t i1 (polygon->getPointID ((*it)[1]));
-			const size_t i2 (polygon->getPointID ((*it)[2]));
+			const std::size_t i0 (polygon->getPointID ((*it)[0]));
+			const std::size_t i1 (polygon->getPointID ((*it)[1]));
+			const std::size_t i2 (polygon->getPointID ((*it)[2]));
 			triangles.push_back (GeoLib::Triangle (ref_pnts_vec, i0, i1, i2));
 			it++;
 		}
 	} else {
-		size_t n_pnts (_pnts.size()-1);
+		std::size_t n_pnts (_pnts.size()-1);
 		while (it != _triangles.end()) {
-			const size_t i0 (polygon->getPointID (n_pnts-(*it)[0]));
-			const size_t i1 (polygon->getPointID (n_pnts-(*it)[1]));
-			const size_t i2 (polygon->getPointID (n_pnts-(*it)[2]));
+			const std::size_t i0 (polygon->getPointID (n_pnts-(*it)[0]));
+			const std::size_t i1 (polygon->getPointID (n_pnts-(*it)[1]));
+			const std::size_t i2 (polygon->getPointID (n_pnts-(*it)[2]));
 			triangles.push_back (GeoLib::Triangle (ref_pnts_vec, i0, i1, i2));
 			it++;
 		}
@@ -61,8 +61,8 @@ EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygo
 
 EarClippingTriangulation::~EarClippingTriangulation()
 {
-	const size_t n_pnts (_pnts.size());
-	for (size_t k(0); k<n_pnts; k++) {
+	const std::size_t n_pnts (_pnts.size());
+	for (std::size_t k(0); k<n_pnts; k++) {
 		delete _pnts[k];
 	}
 }
@@ -70,8 +70,8 @@ EarClippingTriangulation::~EarClippingTriangulation()
 void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon)
 {
 	// copy points - last point is identical to the first
-	size_t n_pnts (polygon->getNumberOfPoints()-1);
-	for (size_t k(0); k < n_pnts; k++) {
+	std::size_t n_pnts (polygon->getNumberOfPoints()-1);
+	for (std::size_t k(0); k < n_pnts; k++) {
 		_pnts.push_back (new GeoLib::Point (*(polygon->getPoint(k))));
 	}
 }
@@ -90,16 +90,16 @@ void EarClippingTriangulation::rotate ()
 		rotatePointsToXY(plane_normal, _pnts);
 	}
 
-	for (size_t k(0); k<_pnts.size(); k++)
+	for (std::size_t k(0); k<_pnts.size(); k++)
 		(*(_pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
 }
 
 void EarClippingTriangulation::ensureCWOrientation ()
 {
-	size_t n_pnts (_pnts.size());
+	std::size_t n_pnts (_pnts.size());
 	// get the left most upper point
-	size_t min_x_max_y_idx (0);	// for orientation check
-	for (size_t k(0); k<n_pnts; k++) {
+	std::size_t min_x_max_y_idx (0);	// for orientation check
+	for (std::size_t k(0); k<n_pnts; k++) {
 		if ((*(_pnts[k]))[0] <= (*(_pnts[min_x_max_y_idx]))[0]) {
 			if ((*(_pnts[k]))[0] < (*(_pnts[min_x_max_y_idx]))[0]) {
 				min_x_max_y_idx = k;
@@ -123,15 +123,15 @@ void EarClippingTriangulation::ensureCWOrientation ()
 	}
 	if (_original_orient == MathLib::CCW) {
 		// switch orientation
-		for (size_t k(0); k<n_pnts/2; k++) {
+		for (std::size_t k(0); k<n_pnts/2; k++) {
 			BaseLib::swap (_pnts[k], _pnts[n_pnts-1-k]);
 		}
 	}
 }
 
-bool EarClippingTriangulation::isEar(size_t v0, size_t v1, size_t v2) const
+bool EarClippingTriangulation::isEar(std::size_t v0, std::size_t v1, std::size_t v2) const
 {
-	for (std::list<size_t>::const_iterator it (_vertex_list.begin ());
+	for (std::list<std::size_t>::const_iterator it (_vertex_list.begin ());
 		it != _vertex_list.end(); ++it) {
 		if (*it != v0 && *it != v1 && *it != v2) {
 			if (isPointInTriangle (_pnts[*it], _pnts[v0], _pnts[v1], _pnts[v2])) {
@@ -144,14 +144,14 @@ bool EarClippingTriangulation::isEar(size_t v0, size_t v1, size_t v2) const
 
 void EarClippingTriangulation::initVertexList ()
 {
-	size_t n_pnts (_pnts.size());
-	for (size_t k(0); k<n_pnts; k++) _vertex_list.push_back (k);
+	std::size_t n_pnts (_pnts.size());
+	for (std::size_t k(0); k<n_pnts; k++) _vertex_list.push_back (k);
 }
 
 void EarClippingTriangulation::initLists ()
 {
 	// go through points checking ccw, cw or collinear order and identifying ears
-	std::list<size_t>::iterator it (_vertex_list.begin()), prev(_vertex_list.end()), next;
+	std::list<std::size_t>::iterator it (_vertex_list.begin()), prev(_vertex_list.end()), next;
 	prev--;
 	next = it;
 	next++;
@@ -187,11 +187,11 @@ void EarClippingTriangulation::initLists ()
 
 void EarClippingTriangulation::clipEars()
 {
-	std::list<size_t>::iterator it, prev, next;
+	std::list<std::size_t>::iterator it, prev, next;
 	// *** clip an ear
 	while (_vertex_list.size() > 3) {
 		// pop ear from list
-		size_t ear = _ear_list.front();
+		std::size_t ear = _ear_list.front();
 		_ear_list.pop_front();
 		// remove ear tip from _convex_vertex_list
 		_convex_vertex_list.remove(ear);
@@ -215,7 +215,7 @@ void EarClippingTriangulation::clipEars()
 				_triangles.push_back(GeoLib::Triangle(_pnts, *prev, ear, *next));
 
 				// check the orientation of prevprev, prev, next
-				std::list<size_t>::iterator prevprev;
+				std::list<std::size_t>::iterator prevprev;
 				if (prev == _vertex_list.begin()) {
 					prevprev = _vertex_list.end();
 				} else {
@@ -227,11 +227,11 @@ void EarClippingTriangulation::clipEars()
 				MathLib::Orientation orientation = getOrientation(_pnts[*prevprev], _pnts[*prev],
 						_pnts[*next]);
 				if (orientation == CW) {
-					BaseLib::uniqueListInsert(_convex_vertex_list, *prev);
+					BaseLib::uniqueListInsert<std::size_t>(_convex_vertex_list, *prev);
 					// prev is convex
 					if (isEar(*prevprev, *prev, *next)) {
 						// prev is an ear tip
-						BaseLib::uniqueListInsert(_ear_list, *prev);
+						BaseLib::uniqueListInsert<std::size_t>(_ear_list, *prev);
 					} else {
 						// if necessary remove prev
 						_ear_list.remove(*prev);
@@ -252,7 +252,7 @@ void EarClippingTriangulation::clipEars()
 				}
 
 				// check the orientation of prev, next, nextnext
-				std::list<size_t>::iterator nextnext,
+				std::list<std::size_t>::iterator nextnext,
 						help_it(_vertex_list.end());
 				help_it--;
 				if (next == help_it) {
@@ -266,11 +266,11 @@ void EarClippingTriangulation::clipEars()
 				orientation = getOrientation(_pnts[*prev], _pnts[*next],
 						_pnts[*nextnext]);
 				if (orientation == CW) {
-					BaseLib::uniqueListInsert(_convex_vertex_list, *next);
+					BaseLib::uniqueListInsert<std::size_t>(_convex_vertex_list, *next);
 					// next is convex
 					if (isEar(*prev, *next, *nextnext)) {
 						// next is an ear tip
-						BaseLib::uniqueListInsert(_ear_list, *next);
+						BaseLib::uniqueListInsert<std::size_t>(_ear_list, *next);
 					} else {
 						// if necessary remove *next
 						_ear_list.remove(*next);

@@ -16,10 +16,14 @@
 #include <cstdlib>
 #include <limits>
 #include <vector>
+#include <set>
 
 #include "PointWithID.h"
 #include "Mesh.h"
 #include "MshEditor.h"
+#ifdef OGS_BUILD_GUI
+	#include "../Gui/DataView/MshLayerMapper.h"
+#endif
 
 namespace MeshLib {
 
@@ -31,11 +35,16 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes);
+	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
+#ifdef OGS_BUILD_GUI
+	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, const unsigned nLayers, 
+		                                    const unsigned layer_id, bool removeNoDataValues);
+	friend MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster);
+#endif
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;
-	friend class MshLayerMapper;
+
 
 public:
 	/// Constructor using a coordinate array
@@ -54,7 +63,7 @@ public:
 	const std::vector<Element*>& getElements() const { return _elements; };
 
 	/// Get number of elements the node is part of.
-	size_t getNElements() const { return _elements.size(); };
+	std::size_t getNElements() const { return _elements.size(); };
 
 	/// Destructor
 	virtual ~Node();
@@ -66,13 +75,16 @@ protected:
 	 */
 	void addElement(Element* elem) { _elements.push_back(elem); };
 
+	void setConnectedNodes(std::vector<Node*> &connected_nodes) { this->_connected_nodes = connected_nodes; };
+
 	/// Sets the ID of a node to the given value.
 	void setID(unsigned id) { this->_id = id; };
 
 	/// Update coordinates of a node.
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
-	
+
+	std::vector<Node*> _connected_nodes;
 	std::vector<Element*> _elements;
 
 }; /* class */

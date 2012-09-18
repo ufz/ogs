@@ -12,7 +12,7 @@
 #ifndef MSHQUALITYSELECTIONDIALOG_H
 #define MSHQUALITYSELECTIONDIALOG_H
 
-#include "MSHEnums.h"
+#include "MshEnums.h"
 #include "ui_MshQualitySelection.h"
 #include <QDialog>
 

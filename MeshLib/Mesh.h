@@ -66,10 +66,10 @@ public:
 	double getMaxEdgeLength() const { return _edge_length[1]; };
 
 	/// Get the number of elements
-	size_t getNElements() const { return _elements.size(); };
+	std::size_t getNElements() const { return _elements.size(); };
 
 	/// Get the number of nodes
-	size_t getNNodes() const { return _nodes.size(); };
+	std::size_t getNNodes() const { return _nodes.size(); };
 
 	/// Get name of the mesh.
 	const std::string getName() const { return _name; };
@@ -97,14 +97,21 @@ protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();
 
+	/// Removes nodes that are not part of any element.
+	void removeUnusedMeshNodes();
+
 	/// Sets the dimension of the mesh.
 	void setDimension();
 
 	/// Fills in the neighbor-information for nodes (i.e. which element each node belongs to).
-	void setElementInformationForNodes();
+	void setElementsConnectedToNodes();
 
 	/// Fills in the neighbor-information for elements.
-	void setNeighborInformationForElements();
+	void setElementsConnectedToElements();
+
+	void setNodesConnectedByEdges();
+
+	void setNodesConnectedByElements();
 
 	unsigned _mesh_dimension;
 	double _edge_length[2];

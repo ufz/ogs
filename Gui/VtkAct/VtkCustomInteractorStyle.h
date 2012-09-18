@@ -88,7 +88,7 @@ signals:
 	void cursorChanged(Qt::CursorShape);
 
 	/// @brief Emitted when a mesh element has been picked
-	void elementPicked(const MeshLib::Mesh*, const size_t);
+	void elementPicked(const MeshLib::Mesh*, const std::size_t);
 };
 
 #endif // VTKINTERACTORSTYLE_H

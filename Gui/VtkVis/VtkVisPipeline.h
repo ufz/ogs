@@ -16,7 +16,7 @@
 #include "Color.h"
 #include "FEMCondition.h"
 #include "GeoType.h"
-#include "MSHEnums.h"
+#include "MshEnums.h"
 #include "Point.h"
 #include "TreeModel.h"
 

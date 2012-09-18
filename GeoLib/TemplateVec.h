@@ -32,13 +32,13 @@ public:
 	 * In order to access the data elements a unique name is required.
 	 * @param data_vec vector of data elements
 	 * @param elem_name_map Names of data elements can be given by a
-	 * std::map<std::string, size_t>. Here the std::string is the name
-	 * of the element and the value for size_t stands for an index in
+	 * std::map<std::string, std::size_t>. Here the std::string is the name
+	 * of the element and the value for std::size_t stands for an index in
 	 * the data_vec.
 
 	 */
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
-	             std::map<std::string, size_t>* elem_name_map = NULL) :
+	             std::map<std::string, std::size_t>* elem_name_map = NULL) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{}
 
@@ -47,7 +47,7 @@ public:
 	 */
 	virtual ~TemplateVec ()
 	{
-		for (size_t k(0); k < size(); k++) delete (*_data_vec)[k];
+		for (std::size_t k(0); k < size(); k++) delete (*_data_vec)[k];
 		delete _data_vec;
 		delete _name_id_map;
 	}
@@ -65,7 +65,7 @@ public:
 	/**
 	 * @return the number of data elements
 	 */
-	size_t size () const { return _data_vec->size(); }
+	std::size_t size () const { return _data_vec->size(); }
 
 	/**
 	 * get a pointer to a standard vector containing the data elements
@@ -79,9 +79,9 @@ public:
 	 * @param id the id of the geometric element
 	 * @return
 	 */
-	bool getElementIDByName (const std::string& name, size_t &id) const
+	bool getElementIDByName (const std::string& name, std::size_t &id) const
 	{
-		std::map<std::string,size_t>::const_iterator it (_name_id_map->find (name));
+		std::map<std::string,std::size_t>::const_iterator it (_name_id_map->find (name));
 
 		if (it != _name_id_map->end())
 		{
@@ -94,7 +94,7 @@ public:
 	/// Returns an element with the given name.
 	const T* getElementByName (const std::string& name) const
 	{
-		size_t id;
+		std::size_t id;
 		bool ret (getElementIDByName (name, id));
 		if (ret)
 			return (*_data_vec)[id];
@@ -111,11 +111,11 @@ public:
 	 * @return if there is name associated with the given id:
 	 * true, else false
 	 */
-	bool getNameOfElementByID (size_t id, std::string& element_name) const
+	bool getNameOfElementByID (std::size_t id, std::string& element_name) const
 	{
 		if (!_name_id_map) return false;
 		// search in map for id
-		std::map<std::string,size_t>::const_iterator it (_name_id_map->begin());
+		std::map<std::string,std::size_t>::const_iterator it (_name_id_map->begin());
 		while (it != _name_id_map->end())
 		{
 			if (it->second == id)
@@ -129,10 +129,10 @@ public:
 	}
 
 	/// Return the name of an element based on its ID.
-	void setNameOfElementByID (size_t id, std::string& element_name)
+	void setNameOfElementByID (std::size_t id, std::string& element_name)
 	{
 		if (!_name_id_map) return;
-		_name_id_map->insert( std::pair<std::string, size_t>(element_name, id) );
+		_name_id_map->insert( std::pair<std::string, std::size_t>(element_name, id) );
 	}
 
 	/**
@@ -145,7 +145,7 @@ public:
 	 */
 	bool getNameOfElement (const T* data, std::string& name) const
 	{
-		for (size_t k(0); k < _data_vec->size(); k++)
+		for (std::size_t k(0); k < _data_vec->size(); k++)
 			if ((*_data_vec)[k] == data)
 				return getNameOfElementByID (k, name);
 
@@ -160,20 +160,20 @@ public:
 		if (!name->empty())
 		{
 			if (_name_id_map == NULL)
-				_name_id_map = new std::map <std::string, size_t>;
-			_name_id_map->insert (std::pair<std::string,size_t>(*name, _data_vec->size() - 1));
+				_name_id_map = new std::map <std::string, std::size_t>;
+			_name_id_map->insert (std::pair<std::string,std::size_t>(*name, _data_vec->size() - 1));
 		}
 	}
 
 	/// Sets the given name for the element of the given ID.
-	void setNameForElement(size_t id, std::string const& name)
+	void setNameForElement(std::size_t id, std::string const& name)
 	{
 		if (_name_id_map == NULL)
-			_name_id_map = new std::map<std::string, size_t>;
+			_name_id_map = new std::map<std::string, std::size_t>;
 
 		if ( !_name_id_map->empty())
 		{
-			for (std::map<std::string, size_t>::iterator it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
+			for (std::map<std::string, std::size_t>::iterator it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
 				if (it->second == id)
 				{
 					_name_id_map->erase(it); //check if old name already exists and delete it
@@ -182,7 +182,7 @@ public:
 		}
 		if (!name.empty()) {
 			//insert new or revised name
-			_name_id_map->insert(std::pair<std::string, size_t>(name, id));
+			_name_id_map->insert(std::pair<std::string, std::size_t>(name, id));
 		}
 	}
 
@@ -204,7 +204,7 @@ protected:
 	/**
 	 * store names associated with the element ids
 	 */
-	std::map<std::string, size_t>* _name_id_map;
+	std::map<std::string, std::size_t>* _name_id_map;
 };
 } // end namespace GeoLib
 

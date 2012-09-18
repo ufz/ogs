@@ -17,10 +17,9 @@
 
 #include <QCryptographicHash>
 #include <QFileInfo>
-#ifdef QT_USE_QTXMLPATTERNS
 #include <QtXmlPatterns/QXmlSchema>
 #include <QtXmlPatterns/QXmlSchemaValidator>
-#endif // QT_USE_QTXMLPATTERNS
+
 
 namespace FileIO
 {
@@ -32,7 +31,6 @@ XMLInterface::XMLInterface(ProjectData* project, const std::string &schemaFile)
 
 int XMLInterface::isValid(const QString &fileName) const
 {
-#ifdef QT_USE_QTXMLPATTERNS
 	QXmlSchema schema;
 	schema.load( QUrl::fromLocalFile((QString::fromStdString(_schemaName))) );
 
@@ -55,13 +53,6 @@ int XMLInterface::isValid(const QString &fileName) const
 		" is invalid." << std::endl;
 		return 0;
 	}
-#else // ifdef QT_USE_QTXMLPATTERNS
-	Q_UNUSED (fileName);
-	std::cout <<
-	"XMLInterface: XML schema validation skipped. Qt 4.6 is required for validation." <<
-	std::endl;
-	return 1;
-#endif // QT_USE_QTXMLPATTERNS
 }
 
 void XMLInterface::setSchema(const std::string &schemaName)

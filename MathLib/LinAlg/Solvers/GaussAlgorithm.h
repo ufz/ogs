@@ -67,11 +67,11 @@ private:
 	/**
 	 * the size of the matrix
 	 */
-	size_t _n;
+	std::size_t _n;
 	/**
 	 * the permutation of the rows
 	 */
-	size_t* _perm;
+	std::size_t* _perm;
 };
 
 } // end namespace MathLib

@@ -33,7 +33,7 @@ public:
 	~LineEditDialog(void);
 
 private:
-	std::vector<size_t> getSelectedIndeces(QStringList list);
+	std::vector<std::size_t> getSelectedIndeces(QStringList list);
 
 	QStringListModel* _allPly;
 	QStringListModel* _selPly;
@@ -54,7 +54,7 @@ private slots:
 
 signals:
 	void connectPolylines(const std::string&,
-	                      std::vector<size_t>,
+	                      std::vector<std::size_t>,
 	                      double,
 	                      std::string,
 	                      bool,

@@ -71,9 +71,9 @@ signals:
 	void listRemoved(std::string name, GeoLib::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
 	void saveToFileRequested(QString, QString) const;
-	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const size_t, bool on_points);
+	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestLineEditDialog(const std::string&);
-	void requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, const size_t);
+	void requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t);
 	//void saveFEMConditionsRequested(QString, QString);
 };
 

@@ -46,7 +46,7 @@ TARGET_LINK_LIBRARIES ( CollapseMeshNodes
 )
 
 # Create MeshSearchTest executable
-ADD_EXECUTABLE( MeshSearchTest 
+ADD_EXECUTABLE( MeshSearchTest
         MeshSearchTest.cpp
         ${SOURCES}
         ${HEADERS}
@@ -59,5 +59,6 @@ TARGET_LINK_LIBRARIES ( MeshSearchTest
 	BaseLib
 	GeoLib
 	logog
+	${ADDITIONAL_LIBS}
 )
 
