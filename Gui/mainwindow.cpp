@@ -60,7 +60,7 @@
 #include "Legacy/MeshIO.h"
 #include "Legacy/OGSIOVer4.h"
 #include "MeshIO/GMSHInterface.h"
-// TODO6 #include "MeshIO/TetGenInterface.h"
+#include "MeshIO/TetGenInterface.h"
 #include "PetrelInterface.h"
 #include "XmlIO/VTKInterface.h"
 #include "XmlIO/XmlCndInterface.h"
@@ -642,18 +642,15 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 						                                     "TetGen element files (*.ele);;");
 
 		if (!fileName.isEmpty() && !element_fname.isEmpty()) {
-			OGSError::box("Interface not yet integrated");
-			/* TODO6
 			FileIO::TetGenInterface tetgen;
-			MeshLib::Mesh* msh (tetgen.readTetGenMesh(node_fname.toStdString(), element_fname.toStdString()));
+			MeshLib::Mesh* msh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
 			if (msh) {
-				std::string name(node_fname.toStdString());
+				std::string name(fileName.toStdString());
 				msh->setName(name);
 				_meshModels->addMesh(msh);
 			} else
 				OGSError::box("Failed to load a TetGen mesh.");
-			settings.setValue("lastOpenedTetgenFileDirectory", QDir(node_fname).absolutePath());
-			*/
+			settings.setValue("lastOpenedTetgenFileDirectory", QDir(fileName).absolutePath());
 		}
 	}
 	else if (t == ImportFileType::VTK)
