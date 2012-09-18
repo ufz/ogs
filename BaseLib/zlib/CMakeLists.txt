@@ -114,9 +114,11 @@ endif()
 # Example binaries
 #============================================================================
 
-add_executable(zlib-example test/example.c)
-target_link_libraries(zlib-example zlib)
-add_test(zlib-example ${EXECUTABLE_OUTPUT_PATH}/zlib-example)
+if(NOT COMPILER_IS_CLANG)
+	add_executable(zlib-example test/example.c)
+	target_link_libraries(zlib-example zlib)
+	add_test(zlib-example ${EXECUTABLE_OUTPUT_PATH}/zlib-example)
+endif()
 #
 #add_executable(minigzip test/minigzip.c)
 #target_link_libraries(minigzip zlib)
