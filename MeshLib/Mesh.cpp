@@ -248,7 +248,7 @@ void Mesh::setNodesConnectedByElements()
 				for (unsigned l(0); l<nConnNodes; ++l)
 					if (c_node == conn_vec[l])
 						is_in_vector = true;
-				if (!is_in_vector) 
+				if (!is_in_vector)
 					conn_vec.push_back(_nodes[c_node->getID()]);
 			}
 		}
@@ -260,7 +260,7 @@ void Mesh::removeUnusedMeshNodes()
 {
 	unsigned count(0);
 	std::vector<MeshLib::Node*>::iterator it (this->_nodes.begin());
-	for (it; it != this->_nodes.end();)
+	while(it != this->_nodes.end())
 	{
 		if ((*it)->getNElements() == 0)
 		{
