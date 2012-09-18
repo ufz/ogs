@@ -107,6 +107,13 @@ template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
       : nrows (rows), ncols (cols), data (new T[nrows*ncols])
 {}
 
+template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const& initial_value)
+	: nrows (rows), ncols (cols), data (new T[nrows * ncols])
+{
+	const std::size_t n(nrows*ncols);
+	for (std::size_t k(0); k<n; k++) data[k] = initial_value;
+}
+
 template<class T> Matrix<T>::Matrix (const Matrix& src) :
 	nrows (src.getNRows ()), ncols (src.getNCols ()), data (new T[nrows * ncols])
 {
