@@ -13,7 +13,6 @@
 #ifndef GRID_H_
 #define GRID_H_
 
-#include <type_traits>
 #include <vector>
 
 // GeoLib
