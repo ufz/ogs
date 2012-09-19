@@ -63,13 +63,13 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* 
 	std::vector<std::string> geo_station_names;
 	geoObjects->getStationVectorNames(geo_station_names);
 
-	for (size_t k(0); k < geo_station_names.size(); k++)
+	for (unsigned k(0); k < geo_station_names.size(); ++k)
 		geoNames.push_back (geo_station_names[k]);
 
 	size_t nGeoObjects(geoNames.size());
 
 	QStringList list;
-	for (size_t i = 0; i < nGeoObjects; i++)
+	for (unsigned i = 0; i < nGeoObjects; ++i)
 		list.append(QString::fromStdString(geoNames[i]));
 
 	if (list.empty())
@@ -146,14 +146,14 @@ void GMSHPrefsDialog::accept()
 	}
 
 	std::vector<std::string> selectedObjects = this->getSelectedObjects(_selGeo->stringList());
-	size_t max_number_of_points_in_quadtree_leaf (10);
+	unsigned max_number_of_points_in_quadtree_leaf (10);
 	double mesh_density_scaling_pnts(0.5);
 	double mesh_density_scaling_stations (0.05);
 	double val4(-1);
 
 	if (this->radioAdaptive->isChecked())
 	{
-		max_number_of_points_in_quadtree_leaf = str2number<size_t> (
+		max_number_of_points_in_quadtree_leaf = str2number<unsigned> (
 		        param1->text().toStdString().c_str());
 		if (max_number_of_points_in_quadtree_leaf == 0)
 			max_number_of_points_in_quadtree_leaf = 10;

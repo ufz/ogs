@@ -100,7 +100,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 
 			const GeoLib::Triangle* triangle = (**it)[i];
 			for (size_t j = 0; j < 3; j++)
-				aPolygon->GetPointIds()->SetId(j, ((*triangle)[2 - j]));
+				aPolygon->GetPointIds()->SetId(j, ((*triangle)[j]));
 			newPolygons->InsertNextCell(aPolygon);
 			sfcIDs->InsertNextValue(count);
 			aPolygon->Delete();
