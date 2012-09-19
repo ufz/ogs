@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.com/LICENSE.txt
@@ -31,8 +31,8 @@ namespace GeoLib
  *
  * \brief A Station (observation site) is basically a Point with some additional information.
  *
- * Additional information is largely optional (except for a name, but even this may be empty). 
- * It may include a name, a stratigraphy (only for the derived class StationBore), 
+ * Additional information is largely optional (except for a name, but even this may be empty).
+ * It may include a name, a stratigraphy (only for the derived class StationBore),
  * time series data from data loggers (as a SensorData-object), etc.
  *
  * Notes concerning the property-system used in this class:

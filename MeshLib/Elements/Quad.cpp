@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.com/LICENSE.txt
@@ -97,7 +97,7 @@ unsigned Quad::identifyFace(Node* nodes[3]) const
 		unsigned flag(0);
 		for (unsigned j=0; j<2; j++)
 			for (unsigned k=0; k<2; k++)
-				if (_nodes[_edge_nodes[i][j]] == nodes[k]) 
+				if (_nodes[_edge_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==2)
 			return i;

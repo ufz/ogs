@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.com/LICENSE.txt
@@ -108,7 +108,7 @@ unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 {
 	const unsigned nNodes (this->getNNodes());
 	for (unsigned i(0); i<nNodes; i++)
-		if (node == _nodes[i]) 
+		if (node == _nodes[i])
 			return i;
 	return std::numeric_limits<unsigned>::max();
 }

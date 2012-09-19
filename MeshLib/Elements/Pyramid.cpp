@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.com/LICENSE.txt
@@ -141,7 +141,7 @@ unsigned Pyramid::identifyFace(Node* nodes[3]) const
 		unsigned flag(0);
 		for (unsigned j=0; j<4; j++)
 			for (unsigned k=0; k<3; k++)
-				if (_face_nodes[i][j] != 99 && _nodes[_face_nodes[i][j]] == nodes[k]) 
+				if (_face_nodes[i][j] != 99 && _nodes[_face_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==3)
 			return i;
