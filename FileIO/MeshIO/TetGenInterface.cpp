@@ -15,6 +15,9 @@
 // BaseLib
 #include "StringTools.h"
 
+// BaseLib/logog
+#include "logog.hpp"
+
 // FileIO
 #include "TetGenInterface.h"
 
@@ -44,11 +47,9 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
 	if (!ins_nodes || !ins_ele)
 	{
 		if (!ins_nodes)
-			std::cout << "TetGenInterface::readTetGenMesh failed to open " <<
-			nodes_fname << std::endl;
+			ERR ("TetGenInterface::readTetGenMesh failed to open %s", nodes_fname.c_str());
 		if (!ins_ele)
-			std::cout << "TetGenInterface::readTetGenMesh failed to open " <<
-			ele_fname << std::endl;
+			ERR ("TetGenInterface::readTetGenMesh failed to open %s", ele_fname.c_str());
 		return NULL;
 	}
 
@@ -124,8 +125,7 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 		n_nodes = str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
 	else
 	{
-		std::cout << "TetGenInterface::parseNodesFileHeader could not correct read TetGen mesh header - number of nodes"
-		          << std::endl;
+		ERR("TetGenInterface::parseNodesFileHeader(): could not correct read TetGen mesh header - number of nodes");
 		return false;
 	}
 	// dimension
@@ -169,8 +169,7 @@ bool TetGenInterface::parseNodes(std::ifstream& ins, size_t n_nodes, size_t dim)
 					if (k == 0 && id == 0)
 						_zero_based_idx = true;
 				} else {
-					std::cout << "error reading id of node " << k
-									<< " in TetGenInterface::parseNodes" << std::endl;
+					ERR("TetGenInterface::parseNodes(): error reading id of node %d", k);
 					return false;
 				}
 				// read coordinates
@@ -182,8 +181,7 @@ bool TetGenInterface::parseNodes(std::ifstream& ins, size_t n_nodes, size_t dim)
 						coordinates[i] = str2number<double> (
 										line.substr(pos_beg, pos_end - pos_beg));
 					else {
-						std::cout << "error reading coordinate " << i << " of node " << k
-										<< " in TetGenInterface::parseNodes" << std::endl;
+						ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d", i, k);
 						return false;
 					}
 				}
@@ -193,7 +191,7 @@ bool TetGenInterface::parseNodes(std::ifstream& ins, size_t n_nodes, size_t dim)
 				// read attributes and boundary markers ... - at the moment we do not use this information
 			}
 		} else {
-			std::cout << "error reading node " << k << " in TetGenInterface::parseNodes" << std::endl;
+			ERR("TetGenInterface::parseNodes(): error reading node %d, stream error", k);
 			return false;
 		}
 	}
@@ -246,11 +244,8 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
 	pos_end = line.find_first_of(" ", pos_beg);
 	if (pos_beg != std::string::npos && pos_end != std::string::npos)
 		n_tets = str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
-	else
-	{
-		std::cout <<
-		"TetGenInterface::parseElementsFileHeader could not correct read TetGen mesh header - number of tetrahedras"
-		          << std::endl;
+	else {
+		ERR("TetGenInterface::parseElementsFileHeader(): could not correct read TetGen mesh header - number of tetrahedras");
 		return false;
 	}
 	// nodes per tet - either 4 or 10
@@ -292,8 +287,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins, size_t n_tets, size_t n_
 				if (pos_beg != std::string::npos && pos_end != std::string::npos)
 					id = str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg));
 				else {
-					std::cout << "error reading id of tetrahedra " << k <<
-					" in TetGenInterface::parseElements" << std::endl;
+					ERR("TetGenInterface::parseElements(): error reading id of tetrahedra %d", k);
 					return false;
 				}
 				// read node ids
@@ -308,8 +302,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins, size_t n_tets, size_t n_
 						ids[i] = str2number<std::size_t>(line.substr(pos_beg, pos_end - pos_beg));
 					else
 					{
-						std::cout << "error reading node " << i << " of tetrahedra " << k <<
-							" in TetGenInterface::parseElements" << std::endl;
+						ERR("TetGenInterface::parseElements(): error reading node %d of tetrahedra %d", i, k);
 						return false;
 					}
 				}
@@ -328,8 +321,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins, size_t n_tets, size_t n_
 					if (pos_beg != std::string::npos && pos_end != std::string::npos)
 						region = str2number<unsigned> (line.substr(pos_beg, pos_end - pos_beg));
 					else {
-						std::cout << "error reading region attribute of tetrahedra " << k
-										<< " in TetGenInterface::parseElements" << std::endl;
+						ERR("TetGenInterface::parseElements(): error reading region attribute of tetrahedra %d", k);
 						return false;
 					}
 				}
@@ -340,7 +332,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins, size_t n_tets, size_t n_
 		}
 		else
 		{
-			std::cout << "error reading node " << k << " in TetGenInterface::parseElements" << std::endl;
+			ERR("TetGenInterface::parseElements(): error reading node %d", k);
 			return false;
 		}
 	}
