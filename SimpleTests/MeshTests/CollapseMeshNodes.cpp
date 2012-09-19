@@ -13,6 +13,7 @@
 #include "MemWatch.h"
 #include "RunTime.h"
 #include "tclap/CmdLine.h"
+#include "LogogSimpleFormatter.h"
 
 // BaseLib/logog
 #include "logog.hpp"
@@ -24,23 +25,10 @@
 #include "Legacy/MeshIO.h"
 #include "MeshCoarsener.h"
 
-
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
-
 int main(int argc, char *argv[])
 {
 	LOGOG_INITIALIZE();
-	FormatterCustom *custom_format (new FormatterCustom);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 
