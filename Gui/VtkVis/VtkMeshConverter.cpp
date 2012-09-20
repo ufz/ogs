@@ -45,9 +45,14 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		return NULL;
 	}
 
-	vtkSmartPointer<vtkFloatArray> pixelData = vtkSmartPointer<vtkFloatArray>(
-	        vtkFloatArray::SafeDownCast(img->GetPointData()->GetScalars()));
+	vtkSmartPointer<vtkDataArray> pixelData = vtkSmartPointer<vtkDataArray>(img->GetPointData()->GetScalars());
 	int* dims = img->GetDimensions();
+	int nTuple = pixelData->GetNumberOfComponents();
+	if (nTuple < 1 || nTuple > 4)
+	{
+		std::cout << "Unsupported pixel composition!" << std::endl;
+		return NULL;
+	}
 
 	const size_t imgHeight = dims[0];
 	const size_t imgWidth  = dims[1];
@@ -56,7 +61,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	double* pixVal (new double[incHeight * incWidth]);
 	bool* visNodes(new bool[incWidth * incHeight]);
 	int* node_idx_map(new int[incWidth * incHeight]);
-
+	
 	for (size_t j = 0; j < incHeight; j++)
 	{
 		pixVal[j]=0;
@@ -69,26 +74,18 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		{
 			const size_t img_idx = i * imgHeight + j;
 			const size_t index = (i+1) * incHeight + j;
-			int nTuple = pixelData->GetNumberOfComponents();
-			double* colour;
-			if (nTuple == 2)	//Grey+Alpha
-			{
-				colour = pixelData->GetTuple2(img_idx);
+			double* colour = pixelData->GetTuple(img_idx);
+			if (nTuple < 3)	// Grey (+ Alpha)
 				pixVal[index] = colour[0];
-
-			}
-			else if (nTuple == 4)	//RGBA
-			{
-				colour = pixelData->GetTuple4(img_idx);
+			else			// RGB(A)
 				pixVal[index] = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
-			}
-			else
-			{
-				std::cout << "Unsupported pixel composition!" << std::endl;
-				return NULL;
-			}
 
-			visNodes[index] = (colour[nTuple-1] > 0);
+			// is current pixel visible
+			if (nTuple == 2 || nTuple == 4)
+				visNodes[index] = (colour[nTuple-1] > 0);
+			else 
+				visNodes[index] = true;
+
 			node_idx_map[index]=-1;
 		}
 		pixVal[(i+2)*incHeight-1]=0;
