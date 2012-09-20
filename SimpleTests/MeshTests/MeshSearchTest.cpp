@@ -13,6 +13,7 @@
 #include "MemWatch.h"
 #include "RunTime.h"
 #include "tclap/CmdLine.h"
+#include "LogogSimpleFormatter.h"
 
 // BaseLib/logog
 #include "logog.hpp"
@@ -25,18 +26,6 @@
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "Legacy/MeshIO.h"
-
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
 
 void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 				std::vector<GeoLib::Point*>& pnts_for_search,
@@ -106,7 +95,7 @@ int main(int argc, char *argv[])
 {
 	LOGOG_INITIALIZE();
 	logog::Cout* logog_cout (new logog::Cout);
-	FormatterCustom *custom_format (new FormatterCustom);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Simple mesh search test", ' ', "0.1");

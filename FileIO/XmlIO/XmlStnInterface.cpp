@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  *
  * \file XmlStnInterface.cpp
@@ -130,7 +130,7 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				        new GeoLib::Station(
 							strtod((station.attribute("x")).toStdString().c_str(), 0),
 				            strtod((station.attribute("y")).toStdString().c_str(), 0),
-				            zVal, 
+				            zVal,
 							stationName);
 				s->setStationValue(stationValue);
 				if (!sensor_data_file_name.empty())

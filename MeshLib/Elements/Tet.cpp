@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  *
  * \file Tet.cpp
@@ -127,7 +127,7 @@ unsigned Tet::identifyFace(Node* nodes[3]) const
 		unsigned flag(0);
 		for (unsigned j=0; j<3; j++)
 			for (unsigned k=0; k<3; k++)
-				if (_nodes[_face_nodes[i][j]] == nodes[k]) 
+				if (_nodes[_face_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==3)
 			return i;

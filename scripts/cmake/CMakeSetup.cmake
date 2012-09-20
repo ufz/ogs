@@ -12,10 +12,5 @@ INCLUDE(GetCompilerInfoString)
 # Suppress warning on setting policies
 CMAKE_POLICY(SET CMP0011 OLD)
 
-# Suppress warning on add_subdirectory(dir) where dir contains no CMakeLists.txt
-IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.7)
-	CMAKE_POLICY(SET CMP0014 OLD)
-ENDIF ()
-
 # Get the hostname
 SITE_NAME(HOSTNAME)

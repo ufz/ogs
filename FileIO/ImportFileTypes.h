@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  *
  * \file ImportFileTypes.h
@@ -55,23 +55,23 @@ public:
 	{
 		if (t==ImportFileType::FEFLOW)
 			return "FEFLOW files (*.fem)";
-		else if (t==ImportFileType::GMS) 
+		else if (t==ImportFileType::GMS)
 			return "GMS files (*.txt *.3dm)";
-		else if (t==ImportFileType::GMSH) 
+		else if (t==ImportFileType::GMSH)
 			return "GMSH mesh files (*.msh)";
-		else if (t==ImportFileType::NETCDF) 
+		else if (t==ImportFileType::NETCDF)
 			return "NetCDF files (*.nc)";
-		else if (t==ImportFileType::OGS) 
+		else if (t==ImportFileType::OGS)
 			return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy files (*.gli *.msh);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;All files (* *.*)";
-		else if (t==ImportFileType::PETREL) 
+		else if (t==ImportFileType::PETREL)
 			return "Petrel files (*)";
-		else if (t==ImportFileType::RASTER) 
+		else if (t==ImportFileType::RASTER)
 			return "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif)";
-		else if (t==ImportFileType::SHAPE) 
+		else if (t==ImportFileType::SHAPE)
 			return "ESRI Shape files (*.shp)";
-		else if (t==ImportFileType::TETGEN) 
+		else if (t==ImportFileType::TETGEN)
 			return "TetGen node files (*.node)";
-		else if (t==ImportFileType::VTK) 
+		else if (t==ImportFileType::VTK)
 			return "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu)";
 		else return "All files (*.*)";
 }

@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  *
  * \file Element.h
@@ -136,7 +136,7 @@ public:
 	 */
 	virtual Element* reviseElement() const = 0;
 
-	/** 
+	/**
 	 * Computes the length / area / volumen of this element. This is automatically
 	 * done at initalisation time but can be repeated by calling this function at any time.
 	 */
