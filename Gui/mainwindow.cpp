@@ -75,6 +75,9 @@
 #include "Node.h"
 #include "MshEditor.h"
 
+//test
+#include "VtkMeshConverter.h"
+
 // Qt includes
 #include <QDesktopWidget>
 #include <QFileDialog>
@@ -1108,17 +1111,18 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	unsigned height(100), width(100), edge_length(1);
+	unsigned length (height*width);
+	double* values (new double[length]);
+	const double origin[3] = {0,0,0};
+	for (unsigned i=0; i<length; ++i) values[i]=0;
+	_meshModels->addMesh( VtkMeshConverter::convertImgToMesh(values, origin, height, width, edge_length, MshElemType::QUAD, UseIntensityAs::MATERIAL) );
+
+/*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("tb_wo_mat");
 	_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
-	/*
-	std::vector<GeoLib::PointWithID*> pnts (MeshLib::MshEditor::getSurfaceNodes(*mesh, dir));
-	std::vector<GeoLib::Point*> *sfcpnts = new std::vector<GeoLib::Point*>(pnts.size());
-	for (unsigned i=0; i<pnts.size(); ++i)
-		(*sfcpnts)[i] = pnts[i];
-	std::string name("SurfacePoints");
-	this->_geoModels->addPointVec(sfcpnts, name);
-	*/
+*/
 /*
 	const std::vector<GeoLib::Polyline*> *lines = this->_geoModels->getPolylineVec("WESS Rivers");	MeshLib::CFEMesh* mesh = const_cast<MeshLib::CFEMesh*>(_project.getMesh("Ammer-Homogen100m-Final"));
 	std::vector<size_t> nodes;
