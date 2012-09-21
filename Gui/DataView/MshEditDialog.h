@@ -21,6 +21,8 @@ class QPushButton;
 class QCheckBox;
 class QGroupBox;
 class QGridLayout;
+class QVBoxLayout;
+class QRadioButton;
 
 namespace MeshLib
 {
@@ -51,7 +53,11 @@ private:
 	QLineEdit* _layerEdit;
 	QPushButton* _nextButton;
 	QGroupBox* _layerBox;
+	QGroupBox* _radioButtonBox;
 	QGridLayout* _layerSelectionLayout;
+	QVBoxLayout* _radiobuttonLayout;
+	QRadioButton* _selectButton1;
+	QRadioButton* _selectButton2;
 	unsigned _n_layers;	
 	bool _use_rasters;
 

@@ -23,6 +23,7 @@
 #include <QLineEdit>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QVBoxLayout>
 
 MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL), 
@@ -31,7 +32,11 @@ MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	  _layerEdit (new QLineEdit("0")),
 	  _nextButton (new QPushButton("Next")),
 	  _layerBox (NULL),
+	  _radioButtonBox (NULL),
 	  _layerSelectionLayout (new QGridLayout),
+	  _radiobuttonLayout (new QVBoxLayout),
+	  _selectButton1 (new QRadioButton("Add layers based on raster files")),
+	  _selectButton2 (new QRadioButton("Add layers with static thickness")),
 	  _n_layers(0),
 	  _use_rasters(true)
 {
@@ -59,8 +64,11 @@ MshEditDialog::~MshEditDialog()
 	delete _layerEdit;
 	delete _nextButton;
 	delete _noDataDeleteBox;
+	delete _radiobuttonLayout;
 	delete _layerSelectionLayout;
 	delete _layerBox;
+	delete _selectButton1;
+	delete _selectButton2;
 }
 
 void MshEditDialog::nextButtonPressed()
@@ -69,12 +77,9 @@ void MshEditDialog::nextButtonPressed()
 	_nextButton->setEnabled(false);
 	_nLayerExplanation->setText("");
 	_n_layers = _layerEdit->text().toInt();
-	const QString selectText = (_n_layers>0) ?
-		"Please specify a raster file for mapping each layer:" :
-		"Please specify rasterfile for surface mapping:";
 
 	// configure group box + layout (will be needed in the next step)
-	_layerBox = new QGroupBox(selectText);
+	_layerBox = new QGroupBox;
 	this->_layerSelectionLayout->setMargin(10);
 	this->_layerSelectionLayout->setColumnMinimumWidth(2,10);
 	this->_layerSelectionLayout->setColumnStretch(0, 80);
@@ -83,12 +88,13 @@ void MshEditDialog::nextButtonPressed()
 
 	if (_n_layers > 0)
 	{
-		QRadioButton* _selectButton1 = new QRadioButton("Add layers based on raster files");
-		QRadioButton* _selectButton2 = new QRadioButton("Add layers with static thickness");
-		gridLayoutLayerMapping->addWidget(_selectButton1, 2, 0, 1, 2);
-		gridLayoutLayerMapping->addWidget(_selectButton2, 3, 0, 1, 2);
+		_radioButtonBox = new QGroupBox;
+		_radiobuttonLayout->addWidget(_selectButton1);
+		_radiobuttonLayout->addWidget(_selectButton2);
+		_radioButtonBox->setLayout(_radiobuttonLayout);
+		gridLayoutLayerMapping->addWidget(_radioButtonBox, 2, 0, 1, 3);
 		// add an empty line to better arrange the following information
-		gridLayoutLayerMapping->addWidget(_nLayerExplanation, 4, 0); 
+		gridLayoutLayerMapping->addWidget(_nLayerExplanation, 3, 0); 
 		connect(_selectButton1, SIGNAL(pressed()), this, SLOT(createWithRasters()));
 		connect(_selectButton2, SIGNAL(pressed()), this, SLOT(createStatic()));
 	}
@@ -101,6 +107,12 @@ void MshEditDialog::nextButtonPressed()
 void MshEditDialog::createWithRasters()
 {
 	// _use_rasters=true is needed for this, this is the default setting however
+	this->_radioButtonBox->setEnabled(false);
+	const QString selectText = (_n_layers>0) ?
+			"Please specify a raster file for mapping each layer:" :
+			"Please specify rasterfile for surface mapping:";
+	this->_layerBox->setTitle(selectText);
+
 	for (unsigned i = 0; i <= _n_layers+1; ++i)
 	{
 		QString text("");
@@ -110,34 +122,38 @@ void MshEditDialog::createWithRasters()
 		QLineEdit* edit (new QLineEdit());
 		QPushButton* button (new QPushButton("..."));
 
-		_labels.push_back(new QLabel(text));
-		_edits.push_back(edit);
-		_buttons.push_back(button);
-		_fileButtonMap.insert(button, edit);
+		this->_labels.push_back(new QLabel(text));
+		this->_edits.push_back(edit);
+		this->_buttons.push_back(button);
+		this->_fileButtonMap.insert(button, edit);
 		connect(button, SIGNAL(clicked()), this, SLOT(getFileName()));
 
 		this->_layerSelectionLayout->addWidget(_labels[i],  i, 0);
 		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
 		this->_layerSelectionLayout->addWidget(_buttons[i], i, 2);
 
-		if (_n_layers==0) break; // don't add bottom layer if mesh contains only surface
+		// don't add bottom layer if mesh contains only surface
+		if (this->_n_layers==0) break; 
 	}
-	_layerBox->setLayout(this->_layerSelectionLayout);
-	_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
-	_noDataDeleteBox->setChecked(false);
-	_noDataDeleteBox->setEnabled(false);
-	if (_n_layers == 0)
+	this->_layerBox->setLayout(this->_layerSelectionLayout);
+	this->_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
+	this->_noDataDeleteBox->setChecked(false);
+	this->_noDataDeleteBox->setEnabled(false);
+	if (this->_n_layers == 0)
 	{
-		_noDataDeleteBox->setEnabled(true);
+		this->_noDataDeleteBox->setEnabled(true);
 		this->_layerSelectionLayout->addWidget(_noDataDeleteBox, 1, 1);
 	}
-	gridLayoutLayerMapping->addWidget(_layerBox, 5, 0, 1, 3);
+	this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
 }
 
 void MshEditDialog::createStatic()
 {
-	_use_rasters = false;
-	for (unsigned i = 0; i < _n_layers; ++i)
+	this->_use_rasters = false;
+	this->_radioButtonBox->setEnabled(false);
+	this->_layerBox->setTitle("Please specify a thickness or each layer");
+
+	for (unsigned i = 0; i < this->_n_layers; ++i)
 	{
 		QString text("Layer" + QString::number(i) + "-Thickness");
 		_labels.push_back(new QLabel(text));
@@ -145,13 +161,13 @@ void MshEditDialog::createStatic()
 		this->_layerSelectionLayout->addWidget(_labels[i],  i, 0);
 		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
 	}
-	_layerBox->setLayout(this->_layerSelectionLayout);
-	gridLayoutLayerMapping->addWidget(_layerBox, 5, 0, 1, 3);
+	this->_layerBox->setLayout(this->_layerSelectionLayout);
+	this->gridLayoutLayerMapping->addWidget(_layerBox, 5, 0, 1, 3);
 }
 
 void MshEditDialog::accept()
 {
-	if (_labels.size()>0)
+	if (this->_labels.size()>0)
 	{
 		bool all_paths_set (true);
 		if ((_n_layers==0) && _use_rasters && (_edits[0]->text().length()==0))
