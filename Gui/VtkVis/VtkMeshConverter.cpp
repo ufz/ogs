@@ -61,7 +61,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	double* pixVal (new double[incHeight * incWidth]);
 	bool* visNodes(new bool[incWidth * incHeight]);
 	int* node_idx_map(new int[incWidth * incHeight]);
-	
+
 	for (size_t j = 0; j < incHeight; j++)
 	{
 		pixVal[j]=0;
@@ -83,7 +83,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			// is current pixel visible
 			if (nTuple == 2 || nTuple == 4)
 				visNodes[index] = (colour[nTuple-1] > 0);
-			else 
+			else
 				visNodes[index] = true;
 
 			node_idx_map[index]=-1;
@@ -189,7 +189,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 
 			if (set_node)
 			{
-				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : 0.0;
+				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : origin[2];
 				MeshLib::Node* node (new MeshLib::Node(x_offset + (scalingFactor * j), y_offset + (scalingFactor * i), zValue));
 				nodes.push_back(node);
 				node_idx_map[index] = node_idx_count;
