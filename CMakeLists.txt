@@ -45,6 +45,7 @@ OPTION(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
 OPTION(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 OPTION(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
+OPTION(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
@@ -97,6 +98,9 @@ IF(OGS_BUILD_GUI)
 	ADD_DEFINITIONS(-DOGS_BUILD_GUI)
 	ADD_SUBDIRECTORY(Gui)
 ENDIF() # OGS_BUILD_GUI
+IF(OGS_BUILD_UTILS)
+	ADD_SUBDIRECTORY( Utils/SimpleMeshCreation )
+ENDIF() # OGS_BUILD_UTILS
 
 CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)
 CONFIGURE_FILE (BaseLib/Configure.h.in ${PROJECT_BINARY_DIR}/BaseLib/Configure.h)
