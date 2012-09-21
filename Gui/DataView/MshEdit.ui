@@ -42,7 +42,7 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Create mesh layers by raster</string>
+        <string>Creation and mapping of mesh layers</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>

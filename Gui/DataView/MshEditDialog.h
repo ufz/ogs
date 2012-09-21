@@ -19,6 +19,8 @@
 
 class QPushButton;
 class QCheckBox;
+class QGroupBox;
+class QGridLayout;
 
 namespace MeshLib
 {
@@ -46,14 +48,21 @@ private:
 
 	QLabel* _nLayerLabel;
 	QLabel* _nLayerExplanation;
-	QLabel* _selectLabel;
 	QLineEdit* _layerEdit;
 	QPushButton* _nextButton;
+	QGroupBox* _layerBox;
+	QGridLayout* _layerSelectionLayout;
+	unsigned _n_layers;	
+	bool _use_rasters;
 
 private slots:
 	void getFileName();
 
 	void nextButtonPressed();
+
+	void createWithRasters();
+
+	void createStatic();
 
 	/// Instructions if the OK-Button has been pressed.
 	void accept();

@@ -36,7 +36,7 @@ public:
 	 * \param thickness The thickness of each of these newly added layers
 	 * \return A mesh with the requested number of layers of prism/hex elements
 	 */
-	static MeshLib::Mesh* CreateLayers(const MeshLib::Mesh* mesh, unsigned nLayers, double thickness);
+	static MeshLib::Mesh* CreateLayers(const MeshLib::Mesh* mesh, unsigned nLayers, float* thickness);
 
 	/**
 	 * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.

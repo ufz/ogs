@@ -24,11 +24,11 @@
 
 #include <QImage>
 
-MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned nLayers, double thickness)
+MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned nLayers, float* thickness)
 {
 	if (nLayers < 1 || thickness <= 0 || mesh->getDimension() != 2)
 	{
-		std::cout << "Error in MshLayerMapper::CreateLayers() - A 2D mesh with nLayers>0 and thickness>0 is required as input." << std::endl;
+		std::cout << "Error in MshLayerMapper::CreateLayers() - A 2D mesh with nLayers > 0 is required as input." << std::endl;
 		return NULL;
 	}
 
@@ -38,13 +38,14 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned 
 	const std::vector<MeshLib::Element*> elems = mesh->getElements();
 	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
 	std::vector<MeshLib::Element*> new_elems(nElems * nLayers);
+	double z_offset(0.0);
 
 	for (unsigned layer_id = 0; layer_id <= nLayers; ++layer_id)
 	{
 		// add nodes for new layer
 		unsigned node_offset (nNodes * layer_id);
 		unsigned elem_offset (nElems * (layer_id-1));
-		const double z_offset (layer_id * thickness);
+		if (layer_id>0) z_offset += thickness[layer_id-1];
 		for (unsigned i = 0; i < nNodes; ++i)
 		{
 			const double* coords = nodes[i]->getCoords();
@@ -54,37 +55,46 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned 
 		// starting with 2nd layer create prism or hex elements connecting the last layer with the current one
 		if (layer_id > 0)
 		{
-			node_offset -= nNodes;
-			const unsigned mat_id (nLayers - layer_id);
-
-			for (unsigned i = 0; i < nElems; ++i)
+			if (thickness[layer_id-1] > 0)
 			{
-				const MeshLib::Element* sfc_elem( elems[i] );
-				if (sfc_elem->getDimension() == 2)
+				node_offset -= nNodes;
+				const unsigned mat_id (nLayers - layer_id);
+
+				for (unsigned i = 0; i < nElems; ++i)
 				{
-					const unsigned nElemNodes(sfc_elem->getNNodes());
-					MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
-					
-					for (unsigned j=0; j<nElemNodes; ++j)
+					const MeshLib::Element* sfc_elem( elems[i] );
+					if (sfc_elem->getDimension() == 2)
 					{
-						const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
-						e_nodes[j] = new_nodes[node_id+nNodes];
-						e_nodes[j+nElemNodes] = new_nodes[node_id];
+						const unsigned nElemNodes(sfc_elem->getNNodes());
+						MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
+					
+						for (unsigned j=0; j<nElemNodes; ++j)
+						{
+							const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
+							e_nodes[j] = new_nodes[node_id+nNodes];
+							e_nodes[j+nElemNodes] = new_nodes[node_id];
+						}
+						if (sfc_elem->getType() == MshElemType::TRIANGLE)	// extrude triangles to prism
+							new_elems[elem_offset+i] = new MeshLib::Prism(e_nodes, mat_id);
+						else if (sfc_elem->getType() == MshElemType::QUAD)	// extrude quads to hexes
+							new_elems[elem_offset+i] = new MeshLib::Hex(e_nodes, mat_id);
 					}
-					if (sfc_elem->getType() == MshElemType::TRIANGLE)	// extrude triangles to prism
-						new_elems[elem_offset+i] = new MeshLib::Prism(e_nodes, mat_id);
-					else if (sfc_elem->getType() == MshElemType::QUAD)	// extrude quads to hexes
-						new_elems[elem_offset+i] = new MeshLib::Hex(e_nodes, mat_id);
+					else
+					{
+						std::cout << "Warning in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
+						std::cout << "Skipping Element " << i << " of type \"" << MshElemType2String(sfc_elem->getType()) << "\"." << std::endl;
+					}
 				}
-				else
-				{
-					std::cout << "Warning in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
-					std::cout << "Skipping Element " << i << " of type \"" << MshElemType2String(sfc_elem->getType()) << "\"." << std::endl;
-				}
+			}
+			else
+			{
+				std::cout << "Error in MshLayerMapper::CreateLayers() - Layer thickness for layer " 
+					      << (layer_id-1) << " is " << thickness[layer_id-1] << " (needs to be >0)." << std::endl;
+				return NULL;
 			}
 		}
 	}
-	return new MeshLib::Mesh("NewMesh", new_nodes, new_elems);
+	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elems);
 }
 
 int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &rasterfile,

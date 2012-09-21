@@ -21,41 +21,46 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QLineEdit>
+#include <QGroupBox>
+#include <QRadioButton>
 
 MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL), 
 	  _nLayerLabel (new QLabel("Please specify the number of layers to add:")),  
 	  _nLayerExplanation (new QLabel("(select \"0\" for surface mapping)")),
-	  _selectLabel(NULL),
 	  _layerEdit (new QLineEdit("0")),
-	  _nextButton (new QPushButton("Next"))
+	  _nextButton (new QPushButton("Next")),
+	  _layerBox (NULL),
+	  _layerSelectionLayout (new QGridLayout),
+	  _n_layers(0),
+	  _use_rasters(true)
 {
 	setupUi(this);
 
-	this->gridLayoutLayerMapping->addWidget(_nLayerLabel, 0, 0, 1, 2);
-	this->gridLayoutLayerMapping->addWidget(_nLayerExplanation, 1, 0, 1, 2);
-	this->gridLayoutLayerMapping->addWidget(_layerEdit, 0, 2);
-	this->gridLayoutLayerMapping->addWidget(_nextButton, 0, 3);
+	this->gridLayoutLayerMapping->addWidget(_nLayerLabel, 0, 0);
+	this->gridLayoutLayerMapping->addWidget(_nLayerExplanation, 1, 0);
+	this->gridLayoutLayerMapping->addWidget(_layerEdit, 0, 1);
+	this->gridLayoutLayerMapping->addWidget(_nextButton, 0, 2);
 	connect(_nextButton, SIGNAL(pressed()), this, SLOT(nextButtonPressed()));
 }
 
 MshEditDialog::~MshEditDialog()
 {
-	
-	delete _nLayerLabel;
-	delete _nLayerExplanation;
-	delete _selectLabel;
-	delete _layerEdit;
-	delete _nextButton;
-	delete _noDataDeleteBox;
-
 	for (int i = 0; i < _labels.size(); ++i)
 	{
 		delete _labels[i];
 		delete _edits[i];
-		delete _buttons[i];
 	}
+	for (int i = 0; i < _buttons.size(); ++i)
+		delete _buttons[i];
 	
+	delete _nLayerLabel;
+	delete _nLayerExplanation;
+	delete _layerEdit;
+	delete _nextButton;
+	delete _noDataDeleteBox;
+	delete _layerSelectionLayout;
+	delete _layerBox;
 }
 
 void MshEditDialog::nextButtonPressed()
@@ -63,51 +68,85 @@ void MshEditDialog::nextButtonPressed()
 	_layerEdit->setEnabled(false);
 	_nextButton->setEnabled(false);
 	_nLayerExplanation->setText("");
-	const unsigned nLayers = _layerEdit->text().toInt();
-	const QString selectText = (nLayers>0) ?
+	_n_layers = _layerEdit->text().toInt();
+	const QString selectText = (_n_layers>0) ?
 		"Please specify a raster file for mapping each layer:" :
 		"Please specify rasterfile for surface mapping:";
-	_selectLabel = new QLabel(selectText);
-	_selectLabel->setMargin(20);
-	this->gridLayoutLayerMapping->addWidget(_selectLabel, 1, 0, 1, 4);
 
-	this->gridLayoutLayerMapping->setMargin(10);
-	this->gridLayoutLayerMapping->setColumnMinimumWidth(2,10);
-	this->gridLayoutLayerMapping->setColumnStretch(0, 80);
-	this->gridLayoutLayerMapping->setColumnStretch(1, 200);
-	this->gridLayoutLayerMapping->setColumnStretch(2, 10);
-	
-	for (unsigned i = 0; i <= nLayers+1; ++i)
+	// configure group box + layout (will be needed in the next step)
+	_layerBox = new QGroupBox(selectText);
+	this->_layerSelectionLayout->setMargin(10);
+	this->_layerSelectionLayout->setColumnMinimumWidth(2,10);
+	this->_layerSelectionLayout->setColumnStretch(0, 80);
+	this->_layerSelectionLayout->setColumnStretch(1, 200);
+	this->_layerSelectionLayout->setColumnStretch(2, 10);
+
+	if (_n_layers > 0)
+	{
+		QRadioButton* _selectButton1 = new QRadioButton("Add layers based on raster files");
+		QRadioButton* _selectButton2 = new QRadioButton("Add layers with static thickness");
+		gridLayoutLayerMapping->addWidget(_selectButton1, 2, 0, 1, 2);
+		gridLayoutLayerMapping->addWidget(_selectButton2, 3, 0, 1, 2);
+		// add an empty line to better arrange the following information
+		gridLayoutLayerMapping->addWidget(_nLayerExplanation, 4, 0); 
+		connect(_selectButton1, SIGNAL(pressed()), this, SLOT(createWithRasters()));
+		connect(_selectButton2, SIGNAL(pressed()), this, SLOT(createStatic()));
+	}
+	else
+		this->createWithRasters();
+			
+
+}
+
+void MshEditDialog::createWithRasters()
+{
+	// _use_rasters=true is needed for this, this is the default setting however
+	for (unsigned i = 0; i <= _n_layers+1; ++i)
 	{
 		QString text("");
-		if (i==0) text="Surface";
-		else if (i>nLayers) text="Layer" + QString::number(nLayers) + "-Bottom";
+		if (i==0) text = "Surface";
+		else if (i>_n_layers) text = "Layer" + QString::number(_n_layers) + "-Bottom";
 		else text="Layer" + QString::number(i) + "-Top";
-		QLabel* label = new QLabel(text);
-		QLineEdit* edit = new QLineEdit();
-		QPushButton* button = new QPushButton("...");
+		QLineEdit* edit (new QLineEdit());
+		QPushButton* button (new QPushButton("..."));
 
-		_labels.push_back(label);
+		_labels.push_back(new QLabel(text));
 		_edits.push_back(edit);
 		_buttons.push_back(button);
 		_fileButtonMap.insert(button, edit);
 		connect(button, SIGNAL(clicked()), this, SLOT(getFileName()));
 
-		this->gridLayoutLayerMapping->addWidget(_labels[i],   i+2, 0);
-		this->gridLayoutLayerMapping->addWidget(_edits[i],    i+2, 1, 1, 2);
-		this->gridLayoutLayerMapping->addWidget(_buttons[i],  i+2, 3);
+		this->_layerSelectionLayout->addWidget(_labels[i],  i, 0);
+		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
+		this->_layerSelectionLayout->addWidget(_buttons[i], i, 2);
 
-		if (nLayers==0) break; // don't add bottom layer if mesh contains only surface
+		if (_n_layers==0) break; // don't add bottom layer if mesh contains only surface
 	}
-
+	_layerBox->setLayout(this->_layerSelectionLayout);
 	_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
 	_noDataDeleteBox->setChecked(false);
 	_noDataDeleteBox->setEnabled(false);
-	if (nLayers == 0)
+	if (_n_layers == 0)
 	{
 		_noDataDeleteBox->setEnabled(true);
-		this->gridLayoutLayerMapping->addWidget(_noDataDeleteBox, 4, 1);
+		this->_layerSelectionLayout->addWidget(_noDataDeleteBox, 1, 1);
 	}
+	gridLayoutLayerMapping->addWidget(_layerBox, 5, 0, 1, 3);
+}
+
+void MshEditDialog::createStatic()
+{
+	_use_rasters = false;
+	for (unsigned i = 0; i < _n_layers; ++i)
+	{
+		QString text("Layer" + QString::number(i) + "-Thickness");
+		_labels.push_back(new QLabel(text));
+		_edits.push_back(new QLineEdit());
+		this->_layerSelectionLayout->addWidget(_labels[i],  i, 0);
+		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
+	}
+	_layerBox->setLayout(this->_layerSelectionLayout);
+	gridLayoutLayerMapping->addWidget(_layerBox, 5, 0, 1, 3);
 }
 
 void MshEditDialog::accept()
@@ -115,18 +154,19 @@ void MshEditDialog::accept()
 	if (_labels.size()>0)
 	{
 		bool all_paths_set (true);
-		if ((_labels.size()==1) && (_edits[0]->text().length()==0))
+		if ((_n_layers==0) && _use_rasters && (_edits[0]->text().length()==0))
 			all_paths_set = false;
 		else
 		{
-			for (int i=1; i<_labels.size(); ++i)
+			int start_idx = (_use_rasters) ? 1:0;
+			for (int i=start_idx; i<_labels.size(); ++i)
 				if (_edits[i]->text().length()==0)
 					all_paths_set = false;
 		}
 
 		if (all_paths_set)
 		{
-			int result(0);
+			int result(1);
 			const unsigned nLayers = _layerEdit->text().toInt();
 			MeshLib::Mesh* new_mesh (NULL);
 
@@ -139,22 +179,30 @@ void MshEditDialog::accept()
 			}
 			else
 			{
-				new_mesh = MshLayerMapper::CreateLayers(_msh, nLayers, 100);
+				float* layer_thickness = new float[_n_layers];
+				for (unsigned i=0; i<nLayers; ++i)
+					layer_thickness[i] = (_use_rasters) ? 100 : this->_edits[i]->text().toFloat();
 
-				for (unsigned i = 0; i <= nLayers; ++i)
+				new_mesh = MshLayerMapper::CreateLayers(_msh, nLayers, layer_thickness);
+				delete [] layer_thickness;
+
+				if (_use_rasters)
 				{
-					const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
-					if (!imgPath.empty())
+					for (unsigned i=0; i<=nLayers; ++i)
 					{
-						result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
-						if (result==0) break;
+						const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
+						if (!imgPath.empty())
+						{
+							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
+							if (result==0) break;
+						}
 					}
-				}
-				if (this->_edits[0]->text().length()>0)
-				{
-					MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
-					delete new_mesh;
-					new_mesh = final_mesh;
+					if (this->_edits[0]->text().length()>0)
+					{
+						MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
+						delete new_mesh;
+						new_mesh = final_mesh;
+					}
 				}
 			}
 
@@ -170,7 +218,7 @@ void MshEditDialog::accept()
 			OGSError::box("Please specifiy raster files for all layers.");
 	}
 	else
-		OGSError::box("Please specifiy the number of\n layers and press \"Next\"");
+		OGSError::box("Please specifiy the number and\n type of layers and press \"Next\"");
 }
 
 void MshEditDialog::reject()
