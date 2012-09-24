@@ -25,6 +25,8 @@ FIND_PROGRAM(GPROF_PATH gprof DOC "GNU profiler gprof")
 
 FIND_PACKAGE(cppcheck)
 
+FIND_PACKAGE(PythonInterp)
+
 ######################
 ### Find libraries ###
 ######################
