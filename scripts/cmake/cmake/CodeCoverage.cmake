@@ -6,7 +6,7 @@
 # 1. Copy this file into your cmake modules path
 # 2. Add the following line to your CMakeLists.txt:
 #      INCLUDE(CodeCoverage)
-# 
+#
 # 3. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
 #    which runs your test executable and produces a lcov code coverage report.
 #
@@ -15,7 +15,7 @@
 FIND_PROGRAM( GCOV_PATH gcov )
 FIND_PROGRAM( LCOV_PATH lcov )
 FIND_PROGRAM( GENHTML_PATH genhtml )
-FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
+FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/scripts/test)
 
 IF(NOT GCOV_PATH)
 	MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
@@ -53,23 +53,23 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
-		
+
 		# Cleanup lcov
 		${LCOV_PATH} --directory . --zerocounters
-		
+
 		# Run tests
 		COMMAND ${_testrunner} ${ARGV3}
-		
+
 		# Capturing lcov counters and generating report
 		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info
-		COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
+		COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' 'BaseLib/zlib/*' 'BaseLib/logog/*' 'BaseLib/RapidXML/*' --output-file ${_outputname}.info.cleaned
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info.cleaned
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned
-		
+
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
 	)
-	
+
 	# Show info where to find the report
 	ADD_CUSTOM_COMMAND(TARGET ${_targetname} POST_BUILD
 		COMMAND ;

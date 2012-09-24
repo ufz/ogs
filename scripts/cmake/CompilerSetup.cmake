@@ -88,3 +88,8 @@ IF(MSVC)
 ELSE()
 	ADD_DEFINITIONS(-DOPENMP_LOOP_TYPE=unsigned)
 ENDIF()
+
+# Enable code coverage
+IF(OGS_COVERAGE)
+	INCLUDE(CodeCoverage)
+ENDIF()
