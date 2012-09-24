@@ -20,6 +20,9 @@ ENDIF() # NOT OGS_NO_EXTERNAL_LIBS
 INCLUDE(scripts/cmake/ProjectSetup.cmake)
 INCLUDE(scripts/cmake/DocumentationSetup.cmake)
 INCLUDE(scripts/cmake/Test.cmake)
+IF(OGS_COVERAGE)
+	INCLUDE(scripts/cmake/Coverage.cmake)
+ENDIF()
 
 ###########################################################################
 ### OGS version information. Adjust these if you release a new version. ###
