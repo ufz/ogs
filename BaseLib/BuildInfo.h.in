@@ -36,4 +36,8 @@
 #define CMAKE_CXX_FLAGS ""
 #endif // CMAKE_CXX_FLAGS
 
+#ifndef CMAKE_CXX_FLAGS_DEBUG
+#define CMAKE_CXX_FLAGS_DEBUG ""
+#endif // CMAKE_CXX_FLAGS_DEBUG
+
 #endif // BUILDINFO_H
