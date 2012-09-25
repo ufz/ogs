@@ -16,10 +16,12 @@
 #include <limits>
 
 #include "Element.h"
+#include "Node.h"
+
+#include "MathTools.h"
+
 
 namespace MeshLib {
-
-class Node;
 
 /**
  * A 1d Edge or Line Element.
@@ -27,20 +29,30 @@ class Node;
  *  0--------1
  * @endcode
  */
-class Edge : public Element
+template <unsigned ORDER, unsigned NNODES>
+class TemplateEdge : public Element
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Edge(Node* nodes[2], unsigned value = 0);
-
-	/// Constructor using single nodes
-	Edge(Node* n1, Node* n2, unsigned value = 0);
+	TemplateEdge(Node* nodes[NNODES], unsigned value = 0) :
+		Element(value)
+	{
+		_nodes = nodes;
+		this->_length = this->computeVolume();
+	}
 
 	/// Copy constructor
-	Edge(const Edge &edge);
+	TemplateEdge(const TemplateEdge<ORDER, NNODES> &edge) :
+		Element(edge.getValue())
+	{
+		_nodes = new Node*[NNODES];
+		for (unsigned k(0); k<NNODES; k++)
+			_nodes[k] = edge._nodes[k];
+		_length = edge.getLength();
+	}
 
 	/// Destructor
-	virtual ~Edge();
+	virtual ~TemplateEdge() {};
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	double getContent() const { return _length; };
@@ -73,7 +85,10 @@ public:
 	unsigned getNNeighbors() const { return 0; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes() const { return 2; };
+	virtual unsigned getNNodes(unsigned order) const
+	{
+		return order == ORDER ? NNODES : 2;
+	}
 
 	/**
 	 * Method returns the type of the element. In this case EDGE will be returned.
@@ -81,19 +96,38 @@ public:
 	 */
 	virtual MshElemType::type getType() const { return MshElemType::EDGE; }
 
-	/// Returns true if these two indeces form an edge and false otherwise
-	bool isEdge(unsigned i, unsigned j) const;
+	/// Returns true if these two indices form an edge and false otherwise
+	bool isEdge(unsigned idx1, unsigned idx2) const
+	{
+		if (0==idx1 && 1==idx2) return true;
+		if (1==idx1 && 0==idx2) return true;
+		return false;
+	}
 
-	virtual Element* clone() const;
+	virtual Element* clone() const
+	{
+		return new TemplateEdge<ORDER,NNODES>(*this);
+	}
 
 	/**
 	 * If for instance two nodes of the element are collapsed the Edge element disappears.
 	 * @return NULL
 	 */
-	virtual Element* reviseElement() const;
+	virtual Element* reviseElement() const
+	{
+		if (_nodes[0] == _nodes[1]) {
+			return NULL;
+		}
+
+		return NULL;
+	}
 
 protected:
-	double computeVolume();
+	double computeVolume()
+	{
+		return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
+	}
+
 	/// 1D elements have no edges.
 	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { (void)edge_id; (void)node_id; return NULL; };
 
@@ -106,6 +140,8 @@ protected:
 	double _length;
 
 }; /* class */
+
+typedef TemplateEdge<1,2> Edge;
 
 } /* namespace */
 

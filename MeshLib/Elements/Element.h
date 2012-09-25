@@ -88,8 +88,12 @@ public:
 	/// Get the number of neighbors for this element.
 	virtual unsigned getNNeighbors() const = 0;
 
-	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes() const = 0;
+	/**
+	 * Get the number of nodes for this element with respect to the order.
+	 * @param order (default = 1)
+	 * @return the number of nodes with respect to the order.
+	 */
+	virtual unsigned getNNodes(unsigned order = 1) const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;

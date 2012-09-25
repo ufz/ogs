@@ -59,7 +59,7 @@ public:
 	virtual ~Tet10();
 
 	/// Get the number of nodes for this element.
-	unsigned getNNodes() const { return 10; };
+	unsigned getNNodes(unsigned order = 1) const { return 10; };
 
 	/**
 	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.

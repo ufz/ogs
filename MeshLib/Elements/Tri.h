@@ -56,7 +56,7 @@ public:
 	unsigned getNNeighbors() const { return 3; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes() const { return 3; };
+	virtual unsigned getNNodes(unsigned order = 1) const { return 3; };
 
 	/**
 	 * Method returns the type of the element. In this case TRIANGLE will be returned.
@@ -64,7 +64,7 @@ public:
 	 */
 	virtual MshElemType::type getType() const { return MshElemType::TRIANGLE; }
 
-	/// Returns true if these two indeces form an edge and false otherwise
+	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**

@@ -71,7 +71,7 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes() const { return 6; };
+	virtual unsigned getNNodes(unsigned order) const { return 6; };
 
 	/**
 	 * Method returns the type of the element. In this case PRISM will be returned.

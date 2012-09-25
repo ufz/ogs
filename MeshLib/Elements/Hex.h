@@ -73,7 +73,7 @@ public:
 	unsigned getNNeighbors() const { return 6; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes() const { return 8; };
+	virtual unsigned getNNodes(unsigned order = 1) const { return 8; };
 
 	/**
 	 * Method returns the type of the element. In this case HEXAHEDRON will be returned.

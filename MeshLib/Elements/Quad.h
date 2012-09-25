@@ -54,7 +54,7 @@ public:
 	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes() const { return 4; };
+	virtual unsigned getNNodes(unsigned order = 1) const { return 4; };
 
 	/**
 	 * Method returns the type of the element. In this case QUAD will be returned.
