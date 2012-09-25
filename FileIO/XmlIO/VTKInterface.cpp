@@ -32,7 +32,7 @@
 namespace FileIO {
 
 using namespace rapidxml;
-	
+
 VTKInterface::VTKInterface()
 : _export_name(""), _mesh(NULL), _doc(new xml_document<>), _use_compressor(false)
 {
@@ -96,7 +96,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			std::vector<unsigned> cell_types(nElems);
 
 			const rapidxml::xml_node<>* mat_id_node (piece_node->first_node("CellData")->first_node("DataArray"));
-			if (mat_id_node && 
+			if (mat_id_node &&
 				((std::string(mat_id_node->first_attribute("Name")->value()).compare("MaterialIDs") == 0) ||
 				 (std::string(mat_id_node->first_attribute("Name")->value()).compare("MatGroup") == 0)))
 			{
@@ -112,9 +112,9 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 
 
 			const rapidxml::xml_node<>* points_node (piece_node->first_node("Points")->first_node("DataArray"));
-			// This _may_ have an attribute "Name" with the value "Points" but you cannot count on it. 
+			// This _may_ have an attribute "Name" with the value "Points" but you cannot count on it.
 			// However, there shouldn't be any other DataArray nodes so most likely not checking the name isn't a problem.
-			if (points_node) 
+			if (points_node)
 			{
 				if (std::string(points_node->first_attribute("format")->value()).compare("ascii") == 0)
 				{
@@ -185,10 +185,14 @@ MeshLib::Element* VTKInterface::readElement(std::stringstream &iss, const std::v
 	unsigned node_ids[8];
 	switch (type)
 	{
-	case 3: //line
+	case 3: { //line
 		for (unsigned i(0); i<2; i++) iss >> node_ids[i];
-		return new MeshLib::Edge(nodes[node_ids[0]], nodes[node_ids[1]], material);
+		MeshLib::Node** edge_nodes(new MeshLib::Node*[2]);
+		edge_nodes[0] = nodes[node_ids[0]];
+		edge_nodes[1] = nodes[node_ids[1]];
+		return new MeshLib::Edge(edge_nodes, material);
 		break;
+	}
 	case 5: //triangle
 		for (unsigned i(0); i<3; i++) iss >> node_ids[i];
 		return new MeshLib::Tri(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], material);

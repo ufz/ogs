@@ -136,10 +136,15 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 
 				switch (type)
 				{
-					case 1:
+					case 1: {
 						readNodeIDs(in, 2, node_ids, id_map);
-						elem = new MeshLib::Edge(nodes[node_ids[0]], nodes[node_ids[1]], 0);
+						// edge_nodes array will be deleted from Edge object
+						MeshLib::Node** edge_nodes(new MeshLib::Node*[2]);
+						edge_nodes[0] = nodes[node_ids[0]];
+						edge_nodes[1] = nodes[node_ids[1]];
+						elem = new MeshLib::Edge(edge_nodes, 0);
 						break;
+					}
 					case 2:
 						readNodeIDs(in, 3, node_ids, id_map);
 						elem = new MeshLib::Tri(nodes[node_ids[2]], nodes[node_ids[1]], nodes[node_ids[0]], mat_id);

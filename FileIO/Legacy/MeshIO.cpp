@@ -133,11 +133,16 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 
 	switch(elem_type)
 	{
-	case MshElemType::EDGE:
+	case MshElemType::EDGE: {
 		for (int i = 0; i < 2; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Edge(nodes[idx[1]], nodes[idx[0]], patch_index);
+		// edge_nodes array will be deleted from Edge object
+		MeshLib::Node** edge_nodes(new MeshLib::Node*[2]);
+		edge_nodes[0] = nodes[idx[1]];
+		edge_nodes[1] = nodes[idx[0]];
+		elem = new MeshLib::Edge(edge_nodes, patch_index);
 		break;
+	}
 	case MshElemType::TRIANGLE:
 		for (int i = 0; i < 3; i++)
 			ss >> idx[i];
