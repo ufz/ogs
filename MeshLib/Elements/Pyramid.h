@@ -38,20 +38,18 @@ namespace MeshLib {
  *        0
  * @endcode
  */
-class Pyramid : public Cell
+template <unsigned ORDER, unsigned NNODES>
+class TemplatePyramid : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Pyramid(Node* nodes[5], unsigned value = 0);
-
-	/// Constructor using single mesh nodes.
-	Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned value = 0);
+	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	Pyramid(const Pyramid &pyramid);
+	TemplatePyramid(const TemplatePyramid<ORDER,NNODES> &pyramid);
 
 	/// Destructor
-	virtual ~Pyramid();
+	virtual ~TemplatePyramid();
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const;
@@ -69,7 +67,10 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const { return 5; };
+	virtual unsigned getNNodes(unsigned order = 1) const
+	{
+		return order == ORDER ? NNODES : 5;
+	}
 
 	/**
 	 * Method returns the type of the element. In this case PYRAMID will be returned.
@@ -82,7 +83,7 @@ public:
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the
-	 * Pyramid instance employing the copy constructor of class Pyramid.
+	 * TemplatePyramid instance employing the copy constructor of class TemplatePyramid.
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
@@ -114,7 +115,11 @@ protected:
 
 }; /* class */
 
+typedef TemplatePyramid<1,5> Pyramid;
+
 } /* namespace */
+
+#include "Pyramid.hpp"
 
 #endif /* PYRAMID_H_ */
 
