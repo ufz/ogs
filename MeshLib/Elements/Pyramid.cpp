@@ -154,12 +154,17 @@ Element* Pyramid::reviseElement() const
 	// try to create tetrahedron
 	if (_nodes[_edge_nodes[0][0]] == _nodes[_edge_nodes[0][1]]
 		|| _nodes[_edge_nodes[1][0]] == _nodes[_edge_nodes[1][1]]) {
-		return new Tet(_nodes[0], _nodes[2], _nodes[3], _nodes[4], _value);
+		Node** tet_nodes(new Node*[4]);
+		for (unsigned k(0); k<4; k++) tet_nodes[k] = _nodes[k];
+		return new Tet(tet_nodes, _value);
 	}
 
 	if (_nodes[_edge_nodes[2][0]] == _nodes[_edge_nodes[2][1]]
 	|| _nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
-		return new Tet(_nodes[0], _nodes[1], _nodes[2], _nodes[4], _value);
+		Node** tet_nodes(new Node*[4]);
+		for (unsigned k(0); k<3; k++) tet_nodes[k] = _nodes[k];
+		tet_nodes[3] = _nodes[4];
+		return new Tet(tet_nodes, _value);
 	}
 
 	return NULL;
