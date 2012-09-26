@@ -37,20 +37,18 @@ namespace MeshLib {
  *
  * @endcode
  */
-class Tet : public Cell
+template <unsigned ORDER, unsigned NNODES>
+class TemplateTet : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Tet(Node* nodes[4], unsigned value = 0);
-
-	/// Constructor using single mesh nodes.
-	Tet(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value = 0);
+	TemplateTet(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	Tet(const Tet &tet);
+	TemplateTet(const TemplateTet<ORDER,NNODES> &tet);
 
 	/// Destructor
-	virtual ~Tet();
+	virtual ~TemplateTet();
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const;
@@ -68,7 +66,10 @@ public:
 	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const { return 4; };
+	virtual unsigned getNNodes(unsigned order = 1) const
+	{
+		return order == ORDER ? NNODES : 4;
+	};
 
 	/**
 	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.
@@ -80,7 +81,7 @@ public:
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
-	 * Method clone is inherited from class Element. It makes a deep copy of the Tet instance.
+	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateTet instance.
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
@@ -95,9 +96,6 @@ public:
 	virtual Element* reviseElement() const;
 
 protected:
-	/// Constructor without nodes (for use of derived classes)
-	Tet(unsigned value = 0);
-
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
 	double computeVolume();
 
@@ -107,7 +105,9 @@ protected:
 	 * @param node_id the id of the node within the edge (either 0 or 1)
 	 * @return a pointer to the internal Node
 	 */
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const {
+		return _nodes[_edge_nodes[edge_id][node_id]];
+	}
 
 	/// Returns the ID of a face given an array of nodes.
 	unsigned identifyFace(Node* nodes[3]) const;
@@ -118,7 +118,10 @@ protected:
 
 }; /* class */
 
+typedef TemplateTet<1,4> Tet;
 } /* namespace */
+
+#include "Tet.hpp"
 
 #endif /* TET_H_ */
 
