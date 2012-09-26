@@ -695,7 +695,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::about()
 {
-	QString ogsVersion = QString(OGS_VERSION);
+	QString ogsVersion = QString(OGS_VERSION_AND_PERSONS);
 
 	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
 		QDate::currentDate().toString(Qt::ISODate)).arg(ogsVersion);

@@ -17,9 +17,13 @@ int main(int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
 	logogCout->SetFormatter(*formatter);
 	QApplication a(argc, argv);
+	QApplication::setApplicationName("OpenGeoSys - Data Explorer");
+	QApplication::setApplicationVersion(QString(OGS_VERSION));
+	QApplication::setOrganizationName("OpenGeoSys Community");
+	QApplication::setOrganizationDomain("opengeosys.org");
 	setlocale(LC_NUMERIC,"C");
 	MainWindow* w = new MainWindow();
-	w->setWindowTitle( w->windowTitle() + " - " + QString(OGS_VERSION) + " - FirstFloor");
+	w->setWindowTitle( w->windowTitle() + " - " + QString(OGS_VERSION_AND_PERSONS) + " - FirstFloor");
 	w->show();
 	int returncode = a.exec();
 	delete w;
