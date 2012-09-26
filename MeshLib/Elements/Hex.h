@@ -42,20 +42,18 @@ namespace MeshLib {
  *
  * @endcode
  */
-class Hex : public Cell
+template <unsigned ORDER, unsigned NNODES>
+class TemplateHex : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Hex(Node* nodes[8], unsigned value = 0);
-
-	/// Constructor using single mesh nodes.
-	Hex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7, unsigned value);
+	TemplateHex(Node* nodes[8], unsigned value = 0);
 
 	/// Copy constructor
-	Hex(const Hex &hex);
+	TemplateHex(const TemplateHex<ORDER,NNODES> &hex);
 
 	/// Destructor
-	virtual ~Hex();
+	virtual ~TemplateHex();
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const;
@@ -73,7 +71,10 @@ public:
 	unsigned getNNeighbors() const { return 6; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const { return 8; };
+	virtual unsigned getNNodes(unsigned order = 1) const
+	{
+		return order == ORDER ? NNODES : 8;
+	}
 
 	/**
 	 * Method returns the type of the element. In this case HEXAHEDRON will be returned.
@@ -81,7 +82,7 @@ public:
 	 */
 	virtual MshElemType::type getType() const { return MshElemType::HEXAHEDRON; }
 
-	/// Returns true if these two indeces form an edge and false otherwise
+	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
@@ -111,7 +112,11 @@ protected:
 
 }; /* class */
 
+typedef TemplateHex<1,8> Hex;
+
 } /* namespace */
+
+#include "Hex.hpp"
 
 #endif /* HEX_H_ */
 
