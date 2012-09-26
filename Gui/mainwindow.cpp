@@ -392,7 +392,7 @@ void MainWindow::showVisDockWidget(bool show)
 
 void MainWindow::open(int file_type)
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	ImportFileType::type t = static_cast<ImportFileType::type>(file_type);
 	QString type_str = QString::fromStdString((ImportFileType::convertImportFileTypeToString(t)));
 	QString fileName = QFileDialog::getOpenFileName(this,
@@ -639,7 +639,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 #endif
 	else if (t == ImportFileType::TETGEN)
 	{
-		QSettings settings("UFZ", "OpenGeoSys-5");
+		QSettings settings;
 		QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
 						                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
 						                                     "TetGen element files (*.ele);;");
@@ -679,7 +679,7 @@ void MainWindow::updateDataViews()
 
 void MainWindow::readSettings()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 
 	restoreGeometry(settings.value("windowGeometry").toByteArray());
 	restoreState(settings.value("windowState").toByteArray());
@@ -687,7 +687,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 
 	settings.setValue("windowGeometry", saveGeometry());
 	settings.setValue("windowState", saveState());
@@ -695,7 +695,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::about()
 {
-	QString ogsVersion = QString(OGS_VERSION);
+	QString ogsVersion = QString(OGS_VERSION_AND_PERSONS);
 
 	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
 		QDate::currentDate().toString(Qt::ISODate)).arg(ogsVersion);
@@ -762,7 +762,7 @@ QMenu* MainWindow::createImportFilesMenu()
 
 void MainWindow::loadPetrelFiles()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QStringList sfc_file_names = QFileDialog::getOpenFileNames(
 	        this, "Select surface data file(s) to import", "", "Petrel files (*)");
 	QStringList well_path_file_names = QFileDialog::getOpenFileNames(
@@ -814,7 +814,7 @@ void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 
 void MainWindow::loadFEMConditions(std::string geoName)
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 														settings.value("lastOpenedFileDirectory").toString(),
 														"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
@@ -1001,7 +1001,7 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 
 void MainWindow::showDiagramPrefsDialog()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 	                                                 settings.value(
 	                                                         "lastOpenedFileDirectory").
@@ -1162,7 +1162,7 @@ void MainWindow::HideWindow()
 void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	int count = 0;
 	QString filename = QFileDialog::getSaveFileName(this,
 	                                                "Export object to vtk-files",
@@ -1192,7 +1192,7 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getSaveFileName(this,
 	                                                "Save scene to VRML file", settings.value(
 	                                                        "lastExportedFileDirectory").
@@ -1215,7 +1215,7 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getSaveFileName(this,
 	                                                "Save scene to Wavefront OBJ files",
 	                                                settings.value(
@@ -1240,7 +1240,7 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
 #ifdef OGS_USE_OPENSG
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString filename = QFileDialog::getSaveFileName(
 	        this, "Export scene to OpenSG binary file", settings.value(
 	                "lastExportedFileDirectory").toString(), "OpenSG files (*.osb);;");
@@ -1352,7 +1352,7 @@ void MainWindow::quitPresentationMode()
 
 QString MainWindow::getLastUsedDir()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName("");
 	QStringList files = settings.value("recentFileList").toStringList();
 	if (files.size() != 0)

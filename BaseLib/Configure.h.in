@@ -36,6 +36,7 @@
 #define SOURCEPATH "${CMAKE_SOURCE_DIR}"
 
 #cmakedefine OGS_VERSION "${OGS_VERSION}"
+#cmakedefine OGS_VERSION_AND_PERSONS "${OGS_VERSION_AND_PERSONS}"
 #cmakedefine OGS_DATE "${OGS_DATE}"
 
 // for tests

@@ -136,7 +136,7 @@ void DetailWindow::addList(DiagramList* list, QColor c)
 
 void DetailWindow::on_addDataButton_clicked()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 	                                                 settings.value(
 	                                                         "lastOpenedFileDirectory").

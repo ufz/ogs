@@ -72,7 +72,7 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	_interactorStyle->SetDefaultRenderer(_vtkRender);
 #endif // OGS_VRED_PLUGIN
 
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 
 #ifdef OGS_USE_VRPN
 	VtkTrackedCamera* cam = new VtkTrackedCamera(this);
@@ -145,7 +145,7 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 VisualizationWidget::~VisualizationWidget()
 {
 	// Write settings
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	settings.setValue("stereoEnabled", stereoToolButton->isChecked());
 	settings.setValue("stereoEyeAngle", _vtkRender->GetActiveCamera()->GetEyeAngle());
 
@@ -249,7 +249,7 @@ void VisualizationWidget::on_orthogonalProjectionToolButton_toggled( bool checke
 
 void VisualizationWidget::on_screenshotPushButton_pressed()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString filename = QFileDialog::getSaveFileName(this, tr("Save screenshot"),
 	                                                settings.value(
 	                                                        "lastScreenshotDir").toString(),

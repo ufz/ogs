@@ -55,7 +55,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 		surface->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
 	QWidget* parent = 0;
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName(parent,
 	                                                "Select raster file to apply as texture",
 	                                                settings.value("lastOpenedTextureFileDirectory").

@@ -71,7 +71,7 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	delete _rootItem;
 	_rootItem = new TreeItem(rootData, NULL);
 
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
 	if (backgroundColorVariant != QVariant())
 		this->setBGColor(backgroundColorVariant.value<QColor>());
@@ -141,7 +141,7 @@ const QColor VtkVisPipeline::getBGColor() const
 
 void VtkVisPipeline::setBGColor(const QColor &color)
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	settings.setValue("VtkBackgroundColor", color);
 	_renderer->SetBackground(color.redF(), color.greenF(), color.blueF());
 }
