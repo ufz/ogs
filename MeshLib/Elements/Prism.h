@@ -40,20 +40,18 @@ namespace MeshLib {
  *
  * @endcode
  */
-class Prism : public Cell
+template <unsigned ORDER, unsigned NNODES>
+class TemplatePrism : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Prism(Node* nodes[6], unsigned value = 0);
-
-	/// Constructor using single mesh nodes.
-	Prism(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, unsigned value = 0);
+	TemplatePrism(Node* nodes[6], unsigned value = 0);
 
 	/// Copy constructor
-	Prism(const Prism &prism);
+	TemplatePrism(const TemplatePrism<ORDER,NNODES> &prism);
 
 	/// Destructor
-	virtual ~Prism();
+	virtual ~TemplatePrism();
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const;
@@ -71,7 +69,10 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order) const { return 6; };
+	virtual unsigned getNNodes(unsigned order) const
+	{
+		return order == ORDER ? NNODES : 6;
+	}
 
 	/**
 	 * Method returns the type of the element. In this case PRISM will be returned.
@@ -84,7 +85,7 @@ public:
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the
-	 * Hex instance employing the copy constructor of class Prism.
+	 * Hex instance employing the copy constructor of class TemplatePrism.
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
@@ -116,7 +117,11 @@ protected:
 
 }; /* class */
 
+typedef TemplatePrism<1,6> Prism;
+
 } /* namespace */
+
+#include "Prism.hpp"
 
 #endif /* PRISM_H_ */
 
