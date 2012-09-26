@@ -202,38 +202,70 @@ MeshLib::Element* VTKInterface::readElement(std::stringstream &iss, const std::v
 		return new MeshLib::Tri(tri_nodes, material);
 		break;
 	}
-	case 9: //quad
+	case 9: { //quad
 		for (unsigned i(0); i<4; i++) iss >> node_ids[i];
-		return new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
+		MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+		for (unsigned k(0); k<4; k++)
+			quad_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Quad(quad_nodes, material);
 		break;
-	case 8: //pixel
+	}
+	case 8: { //pixel
 		for (unsigned i(0); i<4; i++) iss >> node_ids[i];
-		return new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]], material);
+		MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+		quad_nodes[0] = nodes[node_ids[0]];
+		quad_nodes[1] = nodes[node_ids[1]];
+		quad_nodes[2] = nodes[node_ids[3]];
+		quad_nodes[3] = nodes[node_ids[2]];
+		return new MeshLib::Quad(quad_nodes, material);
 		break;
-	case 10:
+	}
+	case 10: {
 		for (unsigned i(0); i<4; i++) iss >> node_ids[i];
-		return new MeshLib::Tet(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
+		MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+		for (unsigned k(0); k<4; k++)
+			tet_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Tet(tet_nodes, material);
 		break;
-	case 12: //hexahedron
+	}
+	case 12: { //hexahedron
 		for (unsigned i(0); i<8; i++) iss >> node_ids[i];
-		return new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]],
-				                nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], material);
+		MeshLib::Node** hex_nodes(new MeshLib::Node*[8]);
+		for (unsigned k(0); k<8; k++)
+			hex_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Hex(hex_nodes, material);
 		break;
-	case 11: //voxel
+	}
+	case 11: { //voxel
 		for (unsigned i(0); i<8; i++) iss >> node_ids[i];
-		return new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[3]], nodes[node_ids[2]],
-				                nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[7]], nodes[node_ids[6]], material);
+		MeshLib::Node** voxel_nodes(new MeshLib::Node*[8]);
+		voxel_nodes[0] = nodes[node_ids[0]];
+		voxel_nodes[1] = nodes[node_ids[1]];
+		voxel_nodes[2] = nodes[node_ids[3]];
+		voxel_nodes[3] = nodes[node_ids[2]];
+		voxel_nodes[4] = nodes[node_ids[4]];
+		voxel_nodes[5] = nodes[node_ids[5]];
+		voxel_nodes[6] = nodes[node_ids[7]];
+		voxel_nodes[7] = nodes[node_ids[6]];
+		return new MeshLib::Hex(voxel_nodes, material);
 		break;
-	case 14: //pyramid
+	}
+	case 14: { //pyramid
 		for (unsigned i(0); i<5; i++) iss >> node_ids[i];
-		return new MeshLib::Pyramid(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
-				                    nodes[node_ids[3]], nodes[node_ids[4]], material);
+		MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+		for (unsigned k(0); k<5; k++)
+			pyramid_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Pyramid(pyramid_nodes, material);
 		break;
-	case 13: //wedge
+	}
+	case 13: { //wedge
 		for (unsigned i(0); i<6; i++) iss >> node_ids[i];
-		return new MeshLib::Prism(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
-				                    nodes[node_ids[3]], nodes[node_ids[4]], nodes[node_ids[5]], material);
+		MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+		for (unsigned k(0); k<6; k++)
+			prism_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Prism(prism_nodes, material);
 		break;
+	}
 	default:
 		std::cout << "Error in VTKInterface::readElement() - Unknown mesh element type \"" << type << "\" ..." << std::endl;
 		return NULL;

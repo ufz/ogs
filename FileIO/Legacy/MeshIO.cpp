@@ -153,31 +153,51 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
-	case MshElemType::QUAD:
+	case MshElemType::QUAD: {
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Quad(nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
+		MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+		for (unsigned k(0); k<4; k++)
+			quad_nodes[k] = nodes[idx[4-(k+1)]];
+		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
-	case MshElemType::TETRAHEDRON:
+	}
+	case MshElemType::TETRAHEDRON: {
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Tet(nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
+		MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+		for (unsigned k(0); k<4; k++)
+			tet_nodes[k] = nodes[idx[4-(k+1)]];
+		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
-	case MshElemType::HEXAHEDRON:
+	}
+	case MshElemType::HEXAHEDRON: {
 		for (int i = 0; i < 8; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Hex(nodes[idx[7]], nodes[idx[6]], nodes[idx[5]], nodes[idx[4]], nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
+		MeshLib::Node** hex_nodes(new MeshLib::Node*[8]);
+		for (unsigned k(0); k<8; k++)
+			hex_nodes[k] = nodes[idx[8-(k+1)]];
+		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
-	case MshElemType::PYRAMID:
+	}
+	case MshElemType::PYRAMID: {
 		for (int i = 0; i < 5; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Pyramid(nodes[idx[4]], nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
+		MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+		for (unsigned k(0); k<5; k++)
+			pyramid_nodes[k] = nodes[idx[5-(k+1)]];
+		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
-	case MshElemType::PRISM:
+	}
+	case MshElemType::PRISM: {
 		for (int i = 0; i < 6; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Prism(nodes[idx[5]], nodes[idx[4]], nodes[idx[3]], nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
+		MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+		for (unsigned k(0); k<6; k++)
+			prism_nodes[k] = nodes[idx[6-(k+1)]];
+		elem = new MeshLib::Prism(prism_nodes, patch_index);
 		break;
+	}
 	default:
 		elem = NULL;
 	}
