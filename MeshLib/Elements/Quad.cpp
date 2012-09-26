@@ -107,11 +107,19 @@ unsigned Quad::identifyFace(Node* nodes[3]) const
 Element* Quad::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		return new Tri(_nodes[0], _nodes[2], _nodes[3], _value);
+		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		tri_nodes[0] = _nodes[0];
+		tri_nodes[1] = _nodes[2];
+		tri_nodes[2] = _nodes[3];
+		return new Tri(tri_nodes, _value);
 	}
 
 	if (_nodes[2] == _nodes[3] || _nodes[3] == _nodes[0]) {
-		return new Tri(_nodes[0], _nodes[1], _nodes[2], _value);
+		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		tri_nodes[0] = _nodes[0];
+		tri_nodes[1] = _nodes[1];
+		tri_nodes[2] = _nodes[2];
+		return new Tri(tri_nodes, _value);
 	}
 
 	// this should not happen

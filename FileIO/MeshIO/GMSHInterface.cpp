@@ -145,10 +145,15 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 						elem = new MeshLib::Edge(edge_nodes, 0);
 						break;
 					}
-					case 2:
+					case 2: {
 						readNodeIDs(in, 3, node_ids, id_map);
-						elem = new MeshLib::Tri(nodes[node_ids[2]], nodes[node_ids[1]], nodes[node_ids[0]], mat_id);
+						MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+						tri_nodes[0] = nodes[node_ids[2]];
+						tri_nodes[1] = nodes[node_ids[1]];
+						tri_nodes[2] = nodes[node_ids[0]];
+						elem = new MeshLib::Tri(tri_nodes, mat_id);
 						break;
+					}
 					case 3:
 						readNodeIDs(in, 4, node_ids, id_map);
 						elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], mat_id);

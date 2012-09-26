@@ -143,11 +143,16 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		elem = new MeshLib::Edge(edge_nodes, patch_index);
 		break;
 	}
-	case MshElemType::TRIANGLE:
+	case MshElemType::TRIANGLE: {
 		for (int i = 0; i < 3; i++)
 			ss >> idx[i];
-		elem = new MeshLib::Tri(nodes[idx[2]], nodes[idx[1]], nodes[idx[0]], patch_index);
+		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		tri_nodes[0] = nodes[idx[2]];
+		tri_nodes[1] = nodes[idx[1]];
+		tri_nodes[2] = nodes[idx[0]];
+		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
+	}
 	case MshElemType::QUAD:
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];

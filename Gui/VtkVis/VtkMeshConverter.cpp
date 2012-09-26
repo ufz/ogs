@@ -207,12 +207,18 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
 				if (elem_type == MshElemType::TRIANGLE)
 				{
-					MeshLib::Tri* tri1 (new MeshLib::Tri(nodes[node_idx_map[index]], nodes[node_idx_map[index + 1]],
-						                                 nodes[node_idx_map[index + incHeight]], mat));	// upper left triangle
-					MeshLib::Tri* tri2 (new MeshLib::Tri(nodes[node_idx_map[index + 1]], nodes[node_idx_map[index + incHeight + 1]],
-						                                 nodes[node_idx_map[index + incHeight]], mat));	// lower right triangle
-					elements.push_back(tri1);
-					elements.push_back(tri2);
+					MeshLib::Node** tri1_nodes (new MeshLib::Node*[3]);
+					tri1_nodes[0] = nodes[node_idx_map[index]];
+					tri1_nodes[1] = nodes[node_idx_map[index+1]];
+					tri1_nodes[2] = nodes[node_idx_map[index+incHeight]];
+
+					MeshLib::Node** tri2_nodes (new MeshLib::Node*[3]);
+					tri2_nodes[0] = nodes[node_idx_map[index+1]];
+					tri2_nodes[1] = nodes[node_idx_map[index+incHeight+1]];
+					tri2_nodes[2] = nodes[node_idx_map[index+incHeight]];
+
+					elements.push_back(new MeshLib::Tri(tri1_nodes, mat)); // upper left triangle
+					elements.push_back(new MeshLib::Tri(tri2_nodes, mat)); // lower right triangle
 				}
 				if (elem_type == MshElemType::QUAD)
 				{
@@ -257,9 +263,13 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		int cell_type = grid->GetCellType(i);
 		switch (cell_type)
 		{
-		case VTK_TRIANGLE:
-			elem = new MeshLib::Tri(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], material);
+		case VTK_TRIANGLE: {
+			MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+			for (unsigned k(0); k<3; k++)
+				tri_nodes[k] = nodes[node_ids[k]];
+			elem = new MeshLib::Tri(tri_nodes, material);
 			break;
+		}
 		case VTK_QUAD:
 			elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
 			break;

@@ -193,10 +193,15 @@ MeshLib::Element* VTKInterface::readElement(std::stringstream &iss, const std::v
 		return new MeshLib::Edge(edge_nodes, material);
 		break;
 	}
-	case 5: //triangle
+	case 5: { //triangle
 		for (unsigned i(0); i<3; i++) iss >> node_ids[i];
-		return new MeshLib::Tri(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], material);
+		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		tri_nodes[0] = nodes[node_ids[0]];
+		tri_nodes[1] = nodes[node_ids[1]];
+		tri_nodes[2] = nodes[node_ids[2]];
+		return new MeshLib::Tri(tri_nodes, material);
 		break;
+	}
 	case 9: //quad
 		for (unsigned i(0); i<4; i++) iss >> node_ids[i];
 		return new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], material);
