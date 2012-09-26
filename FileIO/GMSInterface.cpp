@@ -280,7 +280,6 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 	unsigned node_idx[6], mat_id;
 	while ( getline(in, line) )
 	{
-		MeshLib::Element* elem (NULL);
 		std::string element_id(line.substr(0,3));
 		std::stringstream str(line);
 
