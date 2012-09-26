@@ -32,7 +32,7 @@ QVrpnArtTrackingClient::~QVrpnArtTrackingClient()
 {
 	QStringList list = _deviceName.split("@");
 
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	settings.beginGroup("Tracking");
 	settings.setValue("artDeviceName", list.at(0));
 	settings.setValue("artDeviceNameAt", list.at(1));

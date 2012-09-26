@@ -51,7 +51,7 @@ void DataView::updateView()
 
 void DataView::addMeshAction()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName =
 	        QFileDialog::getOpenFileName(this, "Select mesh file", settings.value(
 	                                             "lastOpenedFileDirectory").toString(),
@@ -128,7 +128,7 @@ int DataView::writeMeshToFile() const
 
 	if (mesh)
 	{
-		QSettings settings("UFZ", "OpenGeoSys-5");
+		QSettings settings;
 		QString mshName = QString::fromStdString(
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
 		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",

@@ -26,8 +26,8 @@
 #include <QVBoxLayout>
 
 MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
-	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL), 
-	  _nLayerLabel (new QLabel("Please specify the number of layers to add:")),  
+	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL),
+	  _nLayerLabel (new QLabel("Please specify the number of layers to add:")),
 	  _nLayerExplanation (new QLabel("(select \"0\" for surface mapping)")),
 	  _layerEdit (new QLineEdit("0")),
 	  _nextButton (new QPushButton("Next")),
@@ -58,7 +58,7 @@ MshEditDialog::~MshEditDialog()
 	}
 	for (int i = 0; i < _buttons.size(); ++i)
 		delete _buttons[i];
-	
+
 	delete _nLayerLabel;
 	delete _nLayerExplanation;
 	delete _layerEdit;
@@ -94,13 +94,13 @@ void MshEditDialog::nextButtonPressed()
 		_radioButtonBox->setLayout(_radiobuttonLayout);
 		gridLayoutLayerMapping->addWidget(_radioButtonBox, 2, 0, 1, 3);
 		// add an empty line to better arrange the following information
-		gridLayoutLayerMapping->addWidget(_nLayerExplanation, 3, 0); 
+		gridLayoutLayerMapping->addWidget(_nLayerExplanation, 3, 0);
 		connect(_selectButton1, SIGNAL(pressed()), this, SLOT(createWithRasters()));
 		connect(_selectButton2, SIGNAL(pressed()), this, SLOT(createStatic()));
 	}
 	else
 		this->createWithRasters();
-			
+
 
 }
 
@@ -133,7 +133,7 @@ void MshEditDialog::createWithRasters()
 		this->_layerSelectionLayout->addWidget(_buttons[i], i, 2);
 
 		// don't add bottom layer if mesh contains only surface
-		if (this->_n_layers==0) break; 
+		if (this->_n_layers==0) break;
 	}
 	this->_layerBox->setLayout(this->_layerSelectionLayout);
 	this->_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
@@ -224,7 +224,7 @@ void MshEditDialog::accept()
 
 			if (new_mesh)
 				emit mshEditFinished(new_mesh);
-			
+
 			if (!new_mesh || result==0)
 				OGSError::box("Error creating mesh");
 
@@ -245,7 +245,7 @@ void MshEditDialog::reject()
 void MshEditDialog::getFileName()
 {
 	QPushButton* button = dynamic_cast<QPushButton*>(this->sender());
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString filename = QFileDialog::getOpenFileName(this, "Select raster file to open",
 	                                                settings.value("lastOpenedFileDirectory").toString(),
 	                                                "ASCII raster files (*.asc);;All files (* *.*)");

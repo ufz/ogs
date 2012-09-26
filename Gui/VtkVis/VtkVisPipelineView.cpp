@@ -124,7 +124,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 
 void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to vtk-file",
 	                                settings.value("lastExportedFileDirectory").toString(),
@@ -140,7 +140,7 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
 
 void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to OpenSG file",
 	                                                settings.value("lastExportedFileDirectory").
@@ -263,7 +263,7 @@ void VtkVisPipelineView::addColorTable()
 	                                                 this->selectionModel()->currentIndex())) );
 	const QString array_name = item->GetActiveAttribute();
 
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString filename = QFileDialog::getOpenFileName(this, "Select color table",
 	                                                settings.value("lastOpenedLutFileDirectory"). toString(),
 													"Color table files (*.xml);;");

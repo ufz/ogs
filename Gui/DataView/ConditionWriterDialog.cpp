@@ -44,7 +44,7 @@ void ConditionWriterDialog::on_fileNameButton_pressed()
 	else if ((geo_idx != 0) && (cnd_idx == 2)) filetypes = "OpenGeoSys FEM Condition file (*.cnd);;GeoSys Initial Condition (*.ic)";
 	else if ((geo_idx != 0) && (cnd_idx == 3)) filetypes = "OpenGeoSys FEM Condition file (*.cnd);;GeoSys Source Condition (*.st)";
 
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getSaveFileName(this, "Select path",
 					settings.value("lastOpenedConditionsFileDirectory").toString(), filetypes);
 

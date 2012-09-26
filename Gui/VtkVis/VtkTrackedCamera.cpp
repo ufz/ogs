@@ -20,7 +20,7 @@
 VtkTrackedCamera::VtkTrackedCamera(QObject* parent)
 	: QObject(parent), vtkOpenGLCamera()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	settings.beginGroup("Tracking");
 	// Read from settings
 	if (settings.contains("artOffsetX"))
@@ -58,7 +58,7 @@ VtkTrackedCamera::VtkTrackedCamera(QObject* parent)
 
 VtkTrackedCamera::~VtkTrackedCamera()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	settings.beginGroup("Tracking");
 	settings.setValue("artOffsetX", _trackedPositionOffset[0]);
 	settings.setValue("artOffsetY", _trackedPositionOffset[1]);
