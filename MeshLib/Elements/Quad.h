@@ -32,20 +32,18 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-class Quad : public Face
+template <unsigned ORDER, unsigned NNODES>
+class TemplateQuad : public Face
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	Quad(Node* nodes[4], unsigned value = 0);
-
-	/// Constructor using single mesh nodes.
-	Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value = 0);
+	TemplateQuad(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	Quad(const Quad &quad);
+	TemplateQuad(const TemplateQuad &quad);
 
 	/// Destructor
-	virtual ~Quad();
+	virtual ~TemplateQuad();
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 4; };
@@ -54,7 +52,10 @@ public:
 	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const { return 4; };
+	virtual unsigned getNNodes(unsigned order = 1) const
+	{
+		return order == ORDER ? NNODES : 4;
+	}
 
 	/**
 	 * Method returns the type of the element. In this case QUAD will be returned.
@@ -66,7 +67,7 @@ public:
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
-	 * Method clone is inherited from class Element. It makes a deep copy of the Quad instance.
+	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateQuad instance.
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
@@ -97,7 +98,20 @@ protected:
 
 }; /* class */
 
+template <unsigned ORDER, unsigned NNODES>
+const unsigned TemplateQuad<ORDER,NNODES>::_edge_nodes[4][2] =
+{
+	{0, 1}, // Edge 0
+	{1, 2}, // Edge 1
+	{2, 3}, // Edge 2
+	{0, 3}  // Edge 3
+};
+
+typedef TemplateQuad<1,4> Quad;
+
 } /* namespace */
+
+#include "Quad.hpp"
 
 #endif /* QUAD_H_ */
 
