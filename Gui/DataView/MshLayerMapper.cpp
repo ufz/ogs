@@ -111,7 +111,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 	if (nLayers >= layer_id)
 	{
 		double x0(0), y0(0), delta(1);
-		size_t width(1), height(1);
+		unsigned width(1), height(1);
 		float* elevation = VtkRaster::loadDataFromASC(rasterfile, x0, y0, width,height, delta);
 
 		if (elevation == NULL)

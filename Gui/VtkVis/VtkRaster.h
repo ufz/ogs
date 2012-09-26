@@ -69,8 +69,8 @@ public:
 	static float* loadDataFromASC(const std::string &fileName,
 	                              double &x0,
 	                              double &y0,
-	                              std::size_t &width,
-	                              std::size_t &height,
+	                              unsigned &width,
+	                              unsigned &height,
 	                              double &delta);
 
 	/**
@@ -80,8 +80,8 @@ public:
 	static float* loadDataFromSurfer(const std::string &fileName,
 	                              double &x0,
 	                              double &y0,
-	                              std::size_t &width,
-	                              std::size_t &height,
+	                              unsigned &width,
+	                              unsigned &height,
 	                              double &delta);
 
 	/**
@@ -90,8 +90,8 @@ public:
     static vtkImageImport* loadImageFromArray(double* data_array,
 											  double &x0,
 											  double &y0,
-											  std::size_t &width,
-											  std::size_t &height,
+											  unsigned &width,
+											  unsigned &height,
 											  double &delta,
 											  double noData);
 

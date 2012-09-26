@@ -19,6 +19,7 @@
 #include "GeoTreeView.h"
 #include "OGSError.h"
 
+
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 {
 }
@@ -121,11 +122,13 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
 			{
 				QAction* saveAction = menu.addAction("Save geometry...");
+				QAction* mapAction = menu.addAction("Map geometry...");
 				QAction* addCNDAction = menu.addAction("Load FEM Conditions...");
 				//QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
 				menu.addSeparator();
 				QAction* removeAction = menu.addAction("Remove geometry");
 				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
+				connect(mapAction, SIGNAL(triggered()), this, SLOT(mapGeometry()));
 				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
 				//connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
 				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
@@ -174,6 +177,14 @@ void GeoTreeView::setNameForElement()
 	const GeoLib::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
 	emit requestNameChangeDialog(geometry_name, type, id);
+}
+
+void GeoTreeView::mapGeometry()
+{
+	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
+	        this->selectionModel()->currentIndex());
+	std::string geo_name (item->data(0).toString().toStdString());
+	emit geometryMappingRequested(geo_name);
 }
 
 void GeoTreeView::writeToFile() const

@@ -42,7 +42,7 @@ private slots:
 private:
 	void setVariableSelect();
 	void setDimensionSelect();
-	void getDimEdges(int dimId,std::size_t &size, double &firstValue, double &lastValue);
+	void getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue);
 	void getDaysTime(double minSince, QTime &time, int &days);
 	long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
 	void createDataObject();

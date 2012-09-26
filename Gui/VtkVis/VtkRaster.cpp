@@ -54,7 +54,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
                                             double& x0, double& y0, double& delta)
 {
-	size_t width(0), height(0);
+	unsigned width(0), height(0);
 	float* data;
 
 	if (fileName.substr(fileName.length()-3, 3).compare("asc") == 0)
@@ -76,17 +76,17 @@ vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
 	return image;
 }
 
-vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, size_t &width, size_t &height, double &delta, double noData)
+vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, unsigned &width, unsigned &height, double &delta, double noData)
 {
-	const size_t length = height*width;
+	const unsigned length = height*width;
 	float* data = new float[length*2];
 	float max_val=noData;
-	for (size_t j=0; j<length; j++)
+	for (unsigned j=0; j<length; ++j)
 	{
 		data[j*2] = static_cast<float>(data_array[j]);
 		max_val = (data[j*2]>max_val) ? data[j*2] : max_val;
 	}
-	for (size_t j=0; j<length; j++)
+	for (unsigned j=0; j<length; ++j)
 	{
 		if (data[j*2]==noData)
 		{
@@ -179,8 +179,8 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 float* VtkRaster::loadDataFromASC(const std::string &fileName,
                                    double &x0,
                                    double &y0,
-                                   size_t &width,
-                                   size_t &height,
+                                   unsigned &width,
+                                   unsigned &height,
                                    double &delta)
 {
 	std::ifstream in( fileName.c_str() );
@@ -208,13 +208,13 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 		float max_val = noData;
 		std::string s("");
 		// read the file into a double-array
-		for (int j = 0; j < header.nrows; j++)
+		for (int j = 0; j < header.nrows; ++j)
 		{
 			col_index = (header.nrows - j - 1) * header.ncols;
-			for (int i = 0; i < header.ncols; i++)
+			for (int i = 0; i < header.ncols; ++i)
 			{
 				in >> s;
-				size_t index = 2*(col_index+i);
+				unsigned index = 2*(col_index+i);
 				values[index] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
 				if (values[index] > max_val)
 					max_val = values[index];
@@ -222,8 +222,8 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 		}
 
 		// shift noData values into normal pixel-range and set transparancy values for all pixels
-		size_t nPixels = header.ncols * header.nrows;
-		for (size_t j = 0; j < nPixels; j++)
+		unsigned nPixels = header.ncols * header.nrows;
+		for (unsigned j = 0; j < nPixels; ++j)
 		{
 			if (values[j*2] == noData)
 			{
@@ -280,8 +280,8 @@ bool VtkRaster::readSurferHeader(ascHeader &header, std::ifstream &in)
 float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
                                    double &x0,
                                    double &y0,
-                                   size_t &width,
-                                   size_t &height,
+                                   unsigned &width,
+                                   unsigned &height,
                                    double &delta)
 {
 	std::ifstream in( fileName.c_str() );
@@ -309,15 +309,15 @@ float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
 		float max_val = noData;
 		std::string s("");
 		// read the file into a double-array
-		for (int j = 0; j < header.nrows; j++)
+		for (int j = 0; j < header.nrows; ++j)
 		{
 			col_index = j * header.ncols;
-			for (int i = 0; i < header.ncols; i++)
+			for (int i = 0; i < header.ncols; ++i)
 			{
 				in >> s;
 				if (s.compare(header.noData) == 0)
 					s = "-9999";
-				size_t index = 2*(col_index+i);
+				unsigned index = 2*(col_index+i);
 				values[index] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
 				if (values[index] > max_val)
 					max_val = values[index];
@@ -325,8 +325,8 @@ float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
 		}
 
 		// shift noData values into normal pixel-range and set transparancy values for all pixels
-		size_t nPixels = header.ncols * header.nrows;
-		for (size_t j = 0; j < nPixels; j++)
+		unsigned nPixels = header.ncols * header.nrows;
+		for (unsigned j = 0; j < nPixels; ++j)
 		{
 			if (values[j*2] == noData)
 			{
@@ -361,7 +361,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 
 			// get actual number of images in the tiff file
 			do {
-				nImages++;
+				++nImages;
 			} while (TIFFReadDirectory(tiff));
 			if (nImages > 1)
 				std::cout << "VtkRaster::loadImageFromTIFF() - File contains " <<
@@ -418,13 +418,13 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 
 			float* data = new float[imgWidth * imgHeight * 4];
 			int* pxl (new int[4]);
-			for (int j = 0; j < imgHeight; j++)
+			for (int j = 0; j < imgHeight; ++j)
 			{
 				int lineindex = j * imgWidth;
-				for (int i = 0; i < imgWidth; i++)
+				for (int i = 0; i < imgWidth; ++i)
 				{ // scale intensities and set nodata values to white (i.e. the background colour)
-					size_t pxl_idx(lineindex+i);
-					size_t pos  = 4 * (pxl_idx);
+					unsigned pxl_idx(lineindex+i);
+					unsigned pos  = 4 * (pxl_idx);
 					if (photometric==1)
 					{
 						int idx = TIFFGetR(pixVal[pxl_idx]);
@@ -448,12 +448,12 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			if (photometric==1)
 			{
 				float max_val(0);
-				size_t nPixels = 4*imgWidth*imgHeight;
-				for (size_t j = 0; j < nPixels; j++)
+				unsigned nPixels = 4*imgWidth*imgHeight;
+				for (unsigned j = 0; j < nPixels; ++j)
 					if (data[j]>max_val)
 						max_val = data[j];
 
-				for (size_t j = 0; j < nPixels; j+=4)
+				for (unsigned j = 0; j < nPixels; j+=4)
 					data[j+3] = max_val;
 			}
 

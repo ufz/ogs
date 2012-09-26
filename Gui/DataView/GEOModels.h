@@ -43,6 +43,13 @@ public:
 	StationTreeModel* getStationModel() { return _stationModel; }
 
 public slots:
+	/**
+	 * Updates the tree model if the underlying data in GEOObjects has changed.
+	 * Technically it removes the geometry from the tree model (but not from GeoObjects)
+	 * and re-adds the (modified) geometry.
+	 */
+	void updateGeometry(const std::string &geo_name);
+
 	/// Removes all parts (points, lines, surfaces) of the geometry with the given name.
 	virtual void removeGeometry(std::string geo_name, GeoLib::GEOTYPE type);
 

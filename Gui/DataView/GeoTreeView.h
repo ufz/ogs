@@ -53,6 +53,7 @@ private slots:
 	void on_Clicked(QModelIndex idx);
 	/// Calls a LineEditDialog.
 	void connectPolylines();
+	void mapGeometry();
 	/// Calls a SetNameDialog.
 	void setNameForElement();
 	void setObjectAsCondition() { setElementAsCondition(false); };
@@ -66,6 +67,7 @@ private slots:
 
 signals:
 	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
+	void geometryMappingRequested(const std::string&);
 	void removeGeoItemSelection();
 	//void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void listRemoved(std::string name, GeoLib::GEOTYPE);

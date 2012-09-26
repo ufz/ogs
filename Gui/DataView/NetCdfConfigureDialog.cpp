@@ -84,7 +84,7 @@ void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int id)
 {
 	if (id == -1) id = 0;
 	double firstValue=0, lastValue=0;
-	size_t size = 0;
+	unsigned size = 0;
 	getDimEdges(id,size,firstValue,lastValue);
 	doubleSpinBoxDim1Start->setValue(firstValue);
 	doubleSpinBoxDim1End->setValue(lastValue);
@@ -98,7 +98,7 @@ void NetCdfConfigureDialog::on_comboBoxDim2_currentIndexChanged(int id)
 	{
 		if (id == -1) id = 0;
 		double firstValue=0, lastValue=0;
-		size_t size = 0;
+		unsigned size = 0;
 		getDimEdges(id,size,firstValue,lastValue);
 		doubleSpinBoxDim2Start->setValue(firstValue);
 		doubleSpinBoxDim2End->setValue(lastValue);
@@ -112,7 +112,7 @@ void NetCdfConfigureDialog::on_comboBoxDim3_currentIndexChanged(int id)
 	{
 		if (id == -1) id = 0;
 		double firstValue=0, lastValue=0;
-		size_t size = 0;
+		unsigned size = 0;
 		getDimEdges(id,size,firstValue,lastValue);
 	
 		QTime firstTime(0,0,0), lastTime(0,0,0);
@@ -150,7 +150,7 @@ void NetCdfConfigureDialog::on_comboBoxDim4_currentIndexChanged(int id)
 	{
 		if (id == -1) id = 0;
 		double firstValue=0, lastValue=0;
-		size_t size = 0;
+		unsigned size = 0;
 		getDimEdges(id,size,firstValue,lastValue);
 		// WARNING: Implicit conversion to int in spinBoxDim4->set*()
 		spinBoxDim4->setValue(firstValue);
@@ -218,7 +218,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 
 }
 
-void NetCdfConfigureDialog::getDimEdges(int dimId, size_t &size, double &firstValue, double &lastValue)
+void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue)
 {
 	if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != NULL) 
 	{
@@ -295,7 +295,7 @@ double NetCdfConfigureDialog::getResolution()
 	{
 		NcVar *latVar = _currentFile->get_var(comboBoxDim1->currentIndex());
 		double firstValue=0, lastValue=0;
-		size_t size=0;
+		unsigned size=0;
 		getDimEdges(latVar->id(),size,firstValue,lastValue);
 		if (size < 2)
 		{
@@ -323,7 +323,7 @@ void NetCdfConfigureDialog::createDataObject()
 #endif
 	double originLon = 0, originLat = 0;
 	double lastLon = 0, lastLat = 0;
-	size_t sizeLon = 0, sizeLat = 0;
+	unsigned sizeLon = 0, sizeLat = 0;
 	getDimEdges(comboBoxDim1->currentIndex(), sizeLat, originLat, lastLat);
 	getDimEdges(comboBoxDim2->currentIndex(), sizeLon, originLon, lastLon);
 

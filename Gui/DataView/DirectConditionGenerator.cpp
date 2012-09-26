@@ -24,7 +24,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 	if (_direct_values.empty())
 	{
 		double origin_x(0), origin_y(0), delta(0);
-		size_t imgwidth(0), imgheight(0);
+		unsigned imgwidth(0), imgheight(0);
 
 		float* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
 		if (img == 0)

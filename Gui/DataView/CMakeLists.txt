@@ -8,6 +8,7 @@ set( SOURCES
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	FEMConditionSetupDialog.cpp
+	GeoMapper.cpp
 	GEOModels.cpp
 	GeoTabWidget.cpp
 	GeoTreeModel.cpp
@@ -44,6 +45,7 @@ set( MOC_HEADERS
 	DataView.h
 	ElementTreeModel.h
 	FEMConditionSetupDialog.h
+	GeoMapper.h
 	GEOModels.h
 	GeoTabWidget.h
 	GeoTreeModel.h

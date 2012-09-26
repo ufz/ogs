@@ -32,6 +32,38 @@ GEOModels::~GEOModels()
 	delete _geoModel;
 }
 
+void GEOModels::updateGeometry(const std::string &geo_name)
+{
+	GeoLib::PointVec* points (this->getPointVecObj(geo_name));
+	GeoLib::PolylineVec* lines (this->getPolylineVecObj(geo_name));
+	GeoLib::SurfaceVec* surfaces (this->getSurfaceVecObj(geo_name));
+
+	if (points)
+	{
+		this->_geoModel->removeGeoList(geo_name, GeoLib::POINT);
+		_geoModel->addPointList(QString::fromStdString(geo_name), points);
+		emit geoDataAdded(_geoModel, geo_name, GeoLib::POINT);
+	
+		if (lines)
+		{
+			emit geoDataRemoved(_geoModel, geo_name, GeoLib::POLYLINE);
+			this->_geoModel->removeGeoList(geo_name, GeoLib::POLYLINE);
+			_geoModel->addPolylineList(QString::fromStdString(geo_name), lines);
+			emit geoDataAdded(_geoModel, geo_name, GeoLib::POLYLINE);
+		}
+	
+		if (surfaces)
+		{
+			emit geoDataRemoved(_geoModel, geo_name, GeoLib::SURFACE);
+			this->_geoModel->removeGeoList(geo_name, GeoLib::SURFACE);
+			_geoModel->addSurfaceList(QString::fromStdString(geo_name), surfaces);
+			emit geoDataAdded(_geoModel, geo_name, GeoLib::SURFACE);
+		}
+	}
+	else
+		std::cout << "Error in GEOModels::updateGeometry() - Geometry \"" << geo_name << "\" not found." << std::endl;
+}
+
 void GEOModels::removeGeometry(std::string geo_name, GeoLib::GEOTYPE type)
 {
 	if (type == GeoLib::INVALID || type == GeoLib::SURFACE)
