@@ -5,13 +5,13 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Hex.h
+ * \file TemplateHex.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef HEX_H_
-#define HEX_H_
+#ifndef TEMPLATEHEX_H_
+#define TEMPLATEHEX_H_
 
 #include "Cell.h"
 
@@ -112,11 +112,9 @@ protected:
 
 }; /* class */
 
-typedef TemplateHex<1,8> Hex;
-
 } /* namespace */
 
-#include "Hex.hpp"
+#include "TemplateHex.hpp"
 
-#endif /* HEX_H_ */
+#endif /* TEMPLATEHEX_H_ */
 

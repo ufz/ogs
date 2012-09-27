@@ -5,18 +5,16 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Hex.cpp
+ * \file TemplateHex.hpp
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#include "Hex.h"
 #include "Node.h"
 #include "Quad.h"
 #include "Prism.h"
 
 #include "MathTools.h"
-
 
 namespace MeshLib {
 
