@@ -5,13 +5,13 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Pyramid.h
+ * \file TemplatePyramid.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef PYRAMID_H_
-#define PYRAMID_H_
+#ifndef TEMPLATEPYRAMID_H_
+#define TEMPLATEPYRAMID_H_
 
 #include "Cell.h"
 
@@ -115,11 +115,9 @@ protected:
 
 }; /* class */
 
-typedef TemplatePyramid<1,5> Pyramid;
-
 } /* namespace */
 
-#include "Pyramid.hpp"
+#include "TemplatePyramid.hpp"
 
-#endif /* PYRAMID_H_ */
+#endif /* TEMPLATEPYRAMID_H_ */
 
