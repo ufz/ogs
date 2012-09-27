@@ -5,13 +5,13 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Tri.h
+ * \file TemplateTri.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef TRI_H_
-#define TRI_H_
+#ifndef TEMPLATETRI_H_
+#define TEMPLATETRI_H_
 
 #include "Edge.h"
 #include "Node.h"
@@ -44,34 +44,13 @@ class TemplateTri : public Face
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateTri(Node* nodes[NNODES], unsigned value = 0) : Face(value)
-	{
-		_nodes = nodes;
-		_neighbors = new Element*[3];
-		for (unsigned i=0; i<3; i++)
-			_neighbors[i] = NULL;
-		this->_area = this->computeVolume();
-	}
+	TemplateTri(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateTri(const TemplateTri<ORDER, NNODES> &tri) : Face(tri.getValue())
-	{
-		_nodes = new Node*[NNODES];
-		for (unsigned i=0; i<NNODES; i++)
-		{
-			_nodes[i] = tri._nodes[i];
-		}
-
-		_neighbors = new Element*[3];
-		for (unsigned i=0; i<3; i++) {
-			_neighbors[i] = tri._neighbors[i];
-		}
-
-		_area = tri.getArea();
-	}
+	TemplateTri(const TemplateTri<ORDER, NNODES> &tri);
 
 	/// Destructor
-	virtual ~TemplateTri() {};
+	virtual ~TemplateTri();
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 3; };
@@ -92,15 +71,7 @@ public:
 	virtual MshElemType::type getType() const { return MshElemType::TRIANGLE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
-	bool isEdge(unsigned idx1, unsigned idx2) const
-	{
-		for (unsigned i(0); i<3; i++)
-		{
-			if (_edge_nodes[i][0]==idx1 && _edge_nodes[i][1]==idx2) return true;
-			if (_edge_nodes[i][1]==idx1 && _edge_nodes[i][0]==idx2) return true;
-		}
-		return false;
-	}
+	bool isEdge(unsigned idx1, unsigned idx2) const;
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateTri instance.
@@ -120,25 +91,7 @@ public:
 	 * object of class Edge.
 	 * @return an Edge object or NULL
 	 */
-	virtual Element* reviseElement() const
-	{
-		// try to create an edge
-		if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-			Node** nodes (new Node*[2]);
-			nodes[0] = _nodes[0];
-			nodes[1] = _nodes[2];
-			return new Edge(nodes, _value);
-		}
-
-		if (_nodes[0] == _nodes[2]) {
-			Node** nodes (new Node*[2]);
-			nodes[0] = _nodes[0];
-			nodes[1] = _nodes[1];
-			return new Edge(nodes, _value);
-		}
-
-		return NULL;
-	}
+	virtual Element* reviseElement() const;
 
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
@@ -149,28 +102,16 @@ protected:
 
 protected:
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
+	{
+		return _nodes[_edge_nodes[edge_id][node_id]];
+	}
 
 	/// Returns the ID of a face given an array of nodes.
-	unsigned identifyFace(Node* nodes[3]) const
-	{
-		for (unsigned i=0; i<3; i++)
-		{
-			unsigned flag(0);
-			for (unsigned j=0; j<2; j++)
-				for (unsigned k=0; k<2; k++)
-					if (_nodes[_edge_nodes[i][j]] == nodes[k])
-						flag++;
-			if (flag==2)
-				return i;
-		}
-		return std::numeric_limits<unsigned>::max();
-	}
+	unsigned identifyFace(Node* nodes[3]) const;
 
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
-
-typedef TemplateTri<1,3> Tri;
 
 template <unsigned ORDER, unsigned NNODES>
 const unsigned TemplateTri<ORDER, NNODES>::_edge_nodes[3][2] = {
@@ -181,5 +122,7 @@ const unsigned TemplateTri<ORDER, NNODES>::_edge_nodes[3][2] = {
 
 } /* namespace */
 
-#endif /* TRI_H_ */
+#include "TemplateTri.hpp"
+
+#endif /* TEMPLATETRI_H_ */
 
