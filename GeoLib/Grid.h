@@ -319,7 +319,7 @@ private:
 					POINT* &nearest_pnt) const
 	{
 		const std::size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
-		std::vector<typename std::tr1::add_pointer<typename std::tr1::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
+		std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
 		if (pnts.empty()) return false;
 
 		const std::size_t n_pnts(pnts.size());

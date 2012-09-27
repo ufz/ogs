@@ -165,13 +165,7 @@ void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length
 void Mesh::setElementsConnectedToElements()
 {
 	const size_t nElements = _elements.size();
-#ifdef _OPENMP
-	OPENMP_LOOP_TYPE m;
-	#pragma omp parallel for
-#else
-	unsigned m(0);
-#endif
-	for (m=0; m<nElements; ++m)
+	for (unsigned m(0); m<nElements; ++m)
 	{
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
