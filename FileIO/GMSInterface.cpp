@@ -280,7 +280,6 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 	unsigned node_idx[6], mat_id;
 	while ( getline(in, line) )
 	{
-		MeshLib::Element* elem (NULL);
 		std::string element_id(line.substr(0,3));
 		std::stringstream str(line);
 
@@ -288,25 +287,29 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3]
 			    >> node_idx[4] >> node_idx[5] >> mat_id;
-			elem = new MeshLib::Prism(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second],
-									  nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second],
-									  nodes[id_map.find(node_idx[4])->second], nodes[id_map.find(node_idx[5])->second], mat_id);
-			elements.push_back(elem);
+			MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+			for (unsigned k(0); k<6; k++) {
+				prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
+			}
+			elements.push_back(new MeshLib::Prism(prism_nodes, mat_id));
 		}
 		else if (element_id.compare("E4T") == 0) // Tet
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> mat_id;
-			elem = new MeshLib::Tet(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second],
-				                    nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second], mat_id);
-			elements.push_back(elem);
+			MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+			for (unsigned k(0); k<4; k++) {
+				tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
+			}
+			elements.push_back(new MeshLib::Tet(tet_nodes, mat_id));
 		}
 		else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> node_idx[4] >> mat_id;
-			elem = new MeshLib::Pyramid(nodes[id_map.find(node_idx[0])->second], nodes[id_map.find(node_idx[1])->second],
-				                        nodes[id_map.find(node_idx[2])->second], nodes[id_map.find(node_idx[3])->second],
-										nodes[id_map.find(node_idx[4])->second], mat_id);
-			elements.push_back(elem);
+			MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+			for (unsigned k(0); k<5; k++) {
+				pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];
+			}
+			elements.push_back(new MeshLib::Pyramid(pyramid_nodes, mat_id));
 		}
 		else if (element_id.compare("ND ") == 0) // Node
 		{

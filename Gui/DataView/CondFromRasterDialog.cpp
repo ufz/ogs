@@ -42,7 +42,7 @@ CondFromRasterDialog::~CondFromRasterDialog()
 
 void CondFromRasterDialog::on_selectButton_pressed()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 #ifdef libgeotiff_FOUND
 	QString geotiffExtension(" *.tif");
 #else

@@ -42,7 +42,7 @@ void VtkCompositeColormapToImageFilter::init()
 	vtkSmartPointer<VtkColorLookupTable> colormap;
 
 	QWidget* parent = 0;
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName(parent,
 	                                                "Select color lookup table",
 	                                                settings.value("lastOpenedLookupTableFileDirectory").

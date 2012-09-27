@@ -5,57 +5,59 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Pyramid.h
+ * \file TemplatePrism.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef PYRAMID_H_
-#define PYRAMID_H_
+#ifndef TEMPLATEPRISM_H_
+#define TEMPLATEPRISM_H_
 
 #include "Cell.h"
 
 namespace MeshLib {
 
 /**
- * This class represents a 3d pyramid element. The following sketch shows the node and edge numbering.
- * @anchor PyramidNodeAndEdgeNumbering
+ * This class represents a 3d prism element. The following sketch shows the node and edge numbering.
+ * @anchor PrismNodeAndEdgeNumbering
  * @code
+ *            5
+ *           / \
+ *          / : \
+ *        8/  :  \7
+ *        /   :5  \
+ *       /    :  6 \
+ *      3-----------4
+ *      |     :     |
+ *      |     2     |
+ *      |    . .    |
+ *     3|   .   .   |4
+ *      | 2.     .1 |
+ *      | .       . |
+ *      |.         .|
+ *      0-----------1
+ *            0
  *
- *               4
- *             //|\
- *            // | \
- *          7//  |  \6
- *          //   |5  \
- *         //    |    \
- *        3/.... |.....2
- *       ./      |  2 /
- *      ./4      |   /
- *    3./        |  /1
- *    ./         | /
- *   ./          |/
- *  0------------1
- *        0
  * @endcode
  */
 template <unsigned ORDER, unsigned NNODES>
-class TemplatePyramid : public Cell
+class TemplatePrism : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0);
+	TemplatePrism(Node* nodes[6], unsigned value = 0);
 
 	/// Copy constructor
-	TemplatePyramid(const TemplatePyramid<ORDER,NNODES> &pyramid);
+	TemplatePrism(const TemplatePrism<ORDER,NNODES> &prism);
 
 	/// Destructor
-	virtual ~TemplatePyramid();
+	virtual ~TemplatePrism();
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const;
 
 	/// Get the number of edges for this element.
-	unsigned getNEdges() const { return 8; };
+	unsigned getNEdges() const { return 9; };
 
 	/// Get the number of nodes for face i.
 	unsigned getNFaceNodes(unsigned i) const;
@@ -67,40 +69,40 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const
+	virtual unsigned getNNodes(unsigned order) const
 	{
-		return order == ORDER ? NNODES : 5;
+		return order == ORDER ? NNODES : 6;
 	}
 
 	/**
-	 * Method returns the type of the element. In this case PYRAMID will be returned.
-	 * @return MshElemType::PYRAMID
+	 * Method returns the type of the element. In this case PRISM will be returned.
+	 * @return MshElemType::PRISM
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::PYRAMID; }
+	virtual MshElemType::type getType() const { return MshElemType::PRISM; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the
-	 * TemplatePyramid instance employing the copy constructor of class TemplatePyramid.
+	 * Hex instance employing the copy constructor of class TemplatePrism.
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
 
 	/**
-	 * This method should be called after at least two nodes of the pyramid
+	 * This method should be called after at least two nodes of the prism
 	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the pyramid will be collapsed. If one of the edges 0, 1, 2 or 3 (see
-	 * sketch @ref PyramidNodeAndEdgeNumbering) is collapsed we obtain a
-	 * tetrahedron. In this case the method will create the appropriate
-	 * object of class Tetrahedron.
-	 * @return a Tetrahedron object or NULL
+	 * of the prism will be collapsed. If one of the edges 3, 4 or 5 (see
+	 * sketch @ref PrismNodeAndEdgeNumbering) is collapsed we obtain a
+	 * pyramid. In this case the method will create the appropriate
+	 * object of class Pyramid.
+	 * @return a pyramid object or NULL
 	 */
 	virtual Element* reviseElement() const;
 
 protected:
-	/// Calculates the volume of a prism by subdividing it into two tetrahedra.
+	/// Calculates the volume of a prism by subdividing it into three tetrahedra.
 	double computeVolume();
 
 	/// Return a specific edge node.
@@ -110,16 +112,14 @@ protected:
 	unsigned identifyFace(Node* nodes[3]) const;
 
 	static const unsigned _face_nodes[5][4];
-	static const unsigned _edge_nodes[8][2];
+	static const unsigned _edge_nodes[9][2];
 	static const unsigned _n_face_nodes[5];
 
 }; /* class */
 
-typedef TemplatePyramid<1,5> Pyramid;
-
 } /* namespace */
 
-#include "Pyramid.hpp"
+#include "TemplatePrism.hpp"
 
-#endif /* PYRAMID_H_ */
+#endif /* TEMPLATEPRISM_H_ */
 

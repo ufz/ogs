@@ -134,15 +134,17 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 	for (unsigned i=0; i<nNewElements; ++i)
 	{
 		MeshLib::Element* elem (sfc_elements[i]);
-		if (elem->getType() == MshElemType::TRIANGLE)
-			new_elements[i] = new MeshLib::Tri(sfc_nodes[node_id_map[elem->getNode(0)->getID()]],
-				                               sfc_nodes[node_id_map[elem->getNode(1)->getID()]],
-											   sfc_nodes[node_id_map[elem->getNode(2)->getID()]]);
-		else
-			new_elements[i] = new MeshLib::Quad(sfc_nodes[node_id_map[elem->getNode(0)->getID()]],
-				                                sfc_nodes[node_id_map[elem->getNode(1)->getID()]],
-												sfc_nodes[node_id_map[elem->getNode(2)->getID()]],
-												sfc_nodes[node_id_map[elem->getNode(3)->getID()]]);
+		if (elem->getType() == MshElemType::TRIANGLE) {
+			MeshLib::Node** tri_nodes (new MeshLib::Node*[3]);
+			for (unsigned k(0); k<3; k++)
+				tri_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
+			new_elements[i] = new MeshLib::Tri(tri_nodes);
+		} else {
+			MeshLib::Node** quad_nodes (new MeshLib::Node*[4]);
+			for (unsigned k(0); k<3; k++)
+				quad_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
+			new_elements[i] = new MeshLib::Quad(quad_nodes);
+		}
 		delete sfc_elements[i];
 	}
 
@@ -161,7 +163,7 @@ void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_e
 	{
 		for (unsigned i=0; i<nElements; ++i)
 		{
-			if (complete_surface) 
+			if (complete_surface)
 				sfc_elements.push_back(all_elements[i]);
 			else
 			{
@@ -244,7 +246,7 @@ std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh
 	std::vector<MeshLib::Node*> sfc_nodes;
 	std::vector<unsigned> node_id_map(mesh.getNNodes());
 	get2DSurfaceNodes(all_nodes, sfc_nodes, sfc_elements, node_id_map);
-	
+
 	const unsigned nElements (sfc_elements.size());
 	for (unsigned i=0; i<nElements; ++i)
 		delete sfc_elements[i];

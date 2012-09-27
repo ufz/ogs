@@ -5,12 +5,11 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Pyramid.cpp
+ * \file Pyramid.hpp
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#include "Pyramid.h"
 #include "Node.h"
 #include "Tri.h"
 #include "Tet.h"
@@ -20,7 +19,8 @@
 
 namespace MeshLib {
 
-const unsigned Pyramid::_face_nodes[5][4] =
+template <unsigned ORDER, unsigned NNODES>
+const unsigned TemplatePyramid<ORDER,NNODES>::_face_nodes[5][4] =
 {
 	{0, 1, 4, 99}, // Face 0
 	{1, 2, 4, 99}, // Face 1
@@ -29,7 +29,8 @@ const unsigned Pyramid::_face_nodes[5][4] =
 	{0, 3, 2,  1}  // Face 4
 };
 
-const unsigned Pyramid::_edge_nodes[8][2] =
+template <unsigned ORDER, unsigned NNODES>
+const unsigned TemplatePyramid<ORDER,NNODES>::_edge_nodes[8][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -41,28 +42,15 @@ const unsigned Pyramid::_edge_nodes[8][2] =
 	{3, 4}  // Edge 7
 };
 
-const unsigned Pyramid::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
+template <unsigned ORDER, unsigned NNODES>
+const unsigned TemplatePyramid<ORDER,NNODES>::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
 
-
-Pyramid::Pyramid(Node* nodes[5], unsigned value)
+template <unsigned ORDER, unsigned NNODES>
+TemplatePyramid<ORDER,NNODES>::TemplatePyramid(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;
-	_neighbors = new Element*[5];
-	for (unsigned i=0; i<5; i++)
-		_neighbors[i] = NULL;
-	this->_volume = this->computeVolume();
-}
 
-Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned value)
-	: Cell(value)
-{
-	_nodes = new Node*[5];
-	_nodes[0] = n0;
-	_nodes[1] = n1;
-	_nodes[2] = n2;
-	_nodes[3] = n3;
-	_nodes[4] = n4;
 	_neighbors = new Element*[5];
 	for (unsigned i=0; i<5; i++)
 		_neighbors[i] = NULL;
@@ -70,30 +58,37 @@ Pyramid::Pyramid(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, unsigned valu
 	this->_volume = this->computeVolume();
 }
 
-Pyramid::Pyramid(const Pyramid &pyramid)
+template <unsigned ORDER, unsigned NNODES>
+TemplatePyramid<ORDER,NNODES>::TemplatePyramid(const TemplatePyramid<ORDER,NNODES> &pyramid)
 	: Cell(pyramid.getValue())
 {
-	_nodes = new Node*[5];
-	_neighbors = new Element*[5];
-	for (unsigned i=0; i<5; i++)
-	{
+	_nodes = new Node*[NNODES];
+	for (unsigned i=0; i<NNODES; i++) {
 		_nodes[i] = pyramid._nodes[i];
+	}
+
+	_neighbors = new Element*[5];
+	for (unsigned i=0; i<5; i++) {
 		_neighbors[i] = pyramid._neighbors[i];
 	}
+
 	_volume = pyramid.getVolume();
 }
 
-Pyramid::~Pyramid()
+template <unsigned ORDER, unsigned NNODES>
+TemplatePyramid<ORDER,NNODES>::~TemplatePyramid()
 {
 }
 
-double Pyramid::computeVolume()
+template <unsigned ORDER, unsigned NNODES>
+double TemplatePyramid<ORDER,NNODES>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[4]->getCoords())
 		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords(), _nodes[4]->getCoords());
 }
 
-const Element* Pyramid::getFace(unsigned i) const
+template <unsigned ORDER, unsigned NNODES>
+const Element* TemplatePyramid<ORDER,NNODES>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
 	{
@@ -111,7 +106,8 @@ const Element* Pyramid::getFace(unsigned i) const
 	return NULL;
 }
 
-unsigned Pyramid::getNFaceNodes(unsigned i) const
+template <unsigned ORDER, unsigned NNODES>
+unsigned TemplatePyramid<ORDER,NNODES>::getNFaceNodes(unsigned i) const
 {
 	if (i<5)
 		return _n_face_nodes[i];
@@ -119,7 +115,8 @@ unsigned Pyramid::getNFaceNodes(unsigned i) const
 	return 0;
 }
 
-bool Pyramid::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned ORDER, unsigned NNODES>
+bool TemplatePyramid<ORDER,NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<8; i++)
 	{
@@ -129,12 +126,14 @@ bool Pyramid::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-Element* Pyramid::clone() const
+template <unsigned ORDER, unsigned NNODES>
+Element* TemplatePyramid<ORDER,NNODES>::clone() const
 {
-	return new Pyramid(*this);
+	return new TemplatePyramid<ORDER,NNODES>(*this);
 }
 
-unsigned Pyramid::identifyFace(Node* nodes[3]) const
+template <unsigned ORDER, unsigned NNODES>
+unsigned TemplatePyramid<ORDER,NNODES>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<5; i++)
 	{
@@ -149,17 +148,23 @@ unsigned Pyramid::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-Element* Pyramid::reviseElement() const
+template <unsigned ORDER, unsigned NNODES>
+Element* TemplatePyramid<ORDER,NNODES>::reviseElement() const
 {
 	// try to create tetrahedron
 	if (_nodes[_edge_nodes[0][0]] == _nodes[_edge_nodes[0][1]]
 		|| _nodes[_edge_nodes[1][0]] == _nodes[_edge_nodes[1][1]]) {
-		return new Tet(_nodes[0], _nodes[2], _nodes[3], _nodes[4], _value);
+		Node** tet_nodes(new Node*[4]);
+		for (unsigned k(0); k<4; k++) tet_nodes[k] = _nodes[k];
+		return new Tet(tet_nodes, _value);
 	}
 
 	if (_nodes[_edge_nodes[2][0]] == _nodes[_edge_nodes[2][1]]
 	|| _nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
-		return new Tet(_nodes[0], _nodes[1], _nodes[2], _nodes[4], _value);
+		Node** tet_nodes(new Node*[4]);
+		for (unsigned k(0); k<3; k++) tet_nodes[k] = _nodes[k];
+		tet_nodes[3] = _nodes[4];
+		return new Tet(tet_nodes, _value);
 	}
 
 	return NULL;

@@ -5,12 +5,12 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Quad.cpp
+ * \file Quad.hpp
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#include "Quad.h"
+//#include "Quad.h"
 #include "Node.h"
 #include "Tri.h"
 
@@ -18,64 +18,50 @@
 
 namespace MeshLib {
 
-
-const unsigned Quad::_edge_nodes[4][2] =
-{
-	{0, 1}, // Edge 0
-	{1, 2}, // Edge 1
-	{2, 3}, // Edge 2
-	{0, 3}  // Edge 3
-};
-
-
-Quad::Quad(Node* nodes[4], unsigned value)
+template <unsigned ORDER, unsigned NNODES>
+TemplateQuad<ORDER,NNODES>::TemplateQuad(Node* nodes[NNODES], unsigned value)
 	: Face(value)
 {
 	_nodes = nodes;
+
 	_neighbors = new Element*[4];
 	for (unsigned i=0; i<4; i++)
 		_neighbors[i] = NULL;
+
 	this->_area = this->computeVolume();
 }
 
-Quad::Quad(Node* n0, Node* n1, Node* n2, Node* n3, unsigned value)
-	: Face(value)
-{
-	_nodes = new Node*[4];
-	_nodes[0] = n0;
-	_nodes[1] = n1;
-	_nodes[2] = n2;
-	_nodes[3] = n3;
-	_neighbors = new Element*[4];
-	for (unsigned i=0; i<4; i++)
-		_neighbors[i] = NULL;
-	this->_area = this->computeVolume();
-}
-
-Quad::Quad(const Quad &quad)
+template <unsigned ORDER, unsigned NNODES>
+TemplateQuad<ORDER,NNODES>::TemplateQuad(const TemplateQuad<ORDER,NNODES> &quad)
 	: Face(quad.getValue())
 {
-	_nodes = new Node*[4];
-	_neighbors = new Element*[4];
-	for (unsigned i=0; i<4; i++)
-	{
+	_nodes = new Node*[NNODES];
+	for (unsigned i=0; i<NNODES; i++) {
 		_nodes[i] = quad._nodes[i];
+	}
+
+	_neighbors = new Element*[4];
+	for (unsigned i=0; i<4; i++) {
 		_neighbors[i] = quad._neighbors[i];
 	}
+
 	_area = quad.getArea();
 }
 
-Quad::~Quad()
+template <unsigned ORDER, unsigned NNODES>
+TemplateQuad<ORDER,NNODES>::~TemplateQuad()
 {
 }
 
-double Quad::computeVolume()
+template <unsigned ORDER, unsigned NNODES>
+double TemplateQuad<ORDER,NNODES>::computeVolume()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords())
          + MathLib::calcTriangleArea(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords());
 }
 
-bool Quad::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned ORDER, unsigned NNODES>
+bool TemplateQuad<ORDER,NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<4; i++)
 	{
@@ -85,12 +71,14 @@ bool Quad::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-Element* Quad::clone() const
+template <unsigned ORDER, unsigned NNODES>
+Element* TemplateQuad<ORDER,NNODES>::clone() const
 {
-	return new Quad(*this);
+	return new TemplateQuad(*this);
 }
 
-unsigned Quad::identifyFace(Node* nodes[3]) const
+template <unsigned ORDER, unsigned NNODES>
+unsigned TemplateQuad<ORDER,NNODES>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<4; i++)
 	{
@@ -104,14 +92,24 @@ unsigned Quad::identifyFace(Node* nodes[3]) const
 	}
 	return std::numeric_limits<unsigned>::max();
 }
-Element* Quad::reviseElement() const
+
+template <unsigned ORDER, unsigned NNODES>
+Element* TemplateQuad<ORDER,NNODES>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		return new Tri(_nodes[0], _nodes[2], _nodes[3], _value);
+		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		tri_nodes[0] = _nodes[0];
+		tri_nodes[1] = _nodes[2];
+		tri_nodes[2] = _nodes[3];
+		return new Tri(tri_nodes, _value);
 	}
 
 	if (_nodes[2] == _nodes[3] || _nodes[3] == _nodes[0]) {
-		return new Tri(_nodes[0], _nodes[1], _nodes[2], _value);
+		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		tri_nodes[0] = _nodes[0];
+		tri_nodes[1] = _nodes[1];
+		tri_nodes[2] = _nodes[2];
+		return new Tri(tri_nodes, _value);
 	}
 
 	// this should not happen

@@ -136,37 +136,64 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 
 				switch (type)
 				{
-					case 1:
+					case 1: {
 						readNodeIDs(in, 2, node_ids, id_map);
-						elem = new MeshLib::Edge(nodes[node_ids[0]], nodes[node_ids[1]], 0);
+						// edge_nodes array will be deleted from Edge object
+						MeshLib::Node** edge_nodes(new MeshLib::Node*[2]);
+						edge_nodes[0] = nodes[node_ids[0]];
+						edge_nodes[1] = nodes[node_ids[1]];
+						elem = new MeshLib::Edge(edge_nodes, 0);
 						break;
-					case 2:
+					}
+					case 2: {
 						readNodeIDs(in, 3, node_ids, id_map);
-						elem = new MeshLib::Tri(nodes[node_ids[2]], nodes[node_ids[1]], nodes[node_ids[0]], mat_id);
+						MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+						tri_nodes[0] = nodes[node_ids[2]];
+						tri_nodes[1] = nodes[node_ids[1]];
+						tri_nodes[2] = nodes[node_ids[0]];
+						elem = new MeshLib::Tri(tri_nodes, mat_id);
 						break;
-					case 3:
+					}
+					case 3: {
 						readNodeIDs(in, 4, node_ids, id_map);
-						elem = new MeshLib::Quad(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], mat_id);
+						MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+						for (unsigned k(0); k<4; k++)
+							quad_nodes[k] = nodes[node_ids[k]];
+						elem = new MeshLib::Quad(quad_nodes, mat_id);
 						break;
-					case 4:
+					}
+					case 4: {
 						readNodeIDs(in, 4, node_ids, id_map);
-						elem = new MeshLib::Tet(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]], mat_id);
+						MeshLib::Node** tet_nodes(new MeshLib::Node*[5]);
+						for (unsigned k(0); k<4; k++)
+							tet_nodes[k] = nodes[node_ids[k]];
+						elem = new MeshLib::Tet(tet_nodes, mat_id);
 						break;
-					case 5:
+					}
+					case 5: {
 						readNodeIDs(in, 8, node_ids, id_map);
-						elem = new MeshLib::Hex(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]], nodes[node_ids[3]],
-							                    nodes[node_ids[4]], nodes[node_ids[5]], nodes[node_ids[6]], nodes[node_ids[7]], mat_id);
+						MeshLib::Node** hex_nodes(new MeshLib::Node*[8]);
+						for (unsigned k(0); k<8; k++)
+							hex_nodes[k] = nodes[node_ids[k]];
+						elem = new MeshLib::Hex(hex_nodes, mat_id);
 						break;
-					case 6:
+					}
+					case 6: {
 						readNodeIDs(in, 6, node_ids, id_map);
-						elem = new MeshLib::Prism(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
-							                      nodes[node_ids[3]], nodes[node_ids[4]], nodes[node_ids[5]], mat_id);
+						MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+						for (unsigned k(0); k<6; k++)
+							prism_nodes[k] = nodes[node_ids[k]];
+						elem = new MeshLib::Prism(prism_nodes, mat_id);
 						break;
-					case 7:
+					}
+					case 7: {
 						readNodeIDs(in, 5, node_ids, id_map);
-						elem = new MeshLib::Pyramid(nodes[node_ids[0]], nodes[node_ids[1]], nodes[node_ids[2]],
-							                        nodes[node_ids[3]], nodes[node_ids[4]], mat_id);
+						MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+						for (unsigned k(0); k<5; k++)
+							pyramid_nodes[k] = nodes[node_ids[k]];
+						elem = new MeshLib::Pyramid(pyramid_nodes, mat_id);
 						break;
+					}
 					case 15:
 						in >> dummy; // skip rest of line
 						continue;
@@ -199,7 +226,7 @@ void GMSHInterface::readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector
 
 int GMSHInterface::write(std::ostream& out)
 {
-	out << "// GMSH input file created by OpenGeoSys " << OGS_VERSION << " built on ";
+	out << "// GMSH input file created by OpenGeoSys " << OGS_VERSION_AND_PERSONS << " built on ";
 #ifdef BUILD_TIMESTAMP
 	out << BUILD_TIMESTAMP;
 #endif

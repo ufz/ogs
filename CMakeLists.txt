@@ -3,10 +3,10 @@
 #####################
 
 # Specify minimum CMake version
-cmake_minimum_required(VERSION 2.8.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 # Project name
-project( OGS-6 )
+PROJECT( OGS-6 )
 
 ### CMake includes ###
 INCLUDE(scripts/cmake/CheckTypeSizes.cmake)
@@ -19,6 +19,10 @@ IF(NOT OGS_NO_EXTERNAL_LIBS)
 ENDIF() # NOT OGS_NO_EXTERNAL_LIBS
 INCLUDE(scripts/cmake/ProjectSetup.cmake)
 INCLUDE(scripts/cmake/DocumentationSetup.cmake)
+INCLUDE(scripts/cmake/Test.cmake)
+IF(OGS_COVERAGE)
+	INCLUDE(scripts/cmake/Coverage.cmake)
+ENDIF()
 
 ###########################################################################
 ### OGS version information. Adjust these if you release a new version. ###
@@ -27,7 +31,8 @@ SET (OGS_VERSION_MAJOR 0)
 SET (OGS_VERSION_MINOR 0)
 SET (OGS_VERSION_PATCH 1)
 SET (OGS_RELEASE_PERSONS "LB/TF/KR")
-SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}(${OGS_RELEASE_PERSONS})")
+SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}")
+SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} (${OGS_RELEASE_PERSONS})")
 SET (OGS_DATE "2012-08-20")
 
 ###############
@@ -65,6 +70,9 @@ OPTION(OGS_BUILD_INFO "Should build information be generated" ON)
 IF (OGS_BUILD_INFO)
 	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
 ENDIF (OGS_BUILD_INFO)
+
+# Code coverage
+OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 # Packaging
 OPTION(OGS_PACKAGING "Creating installers / packages" OFF)
