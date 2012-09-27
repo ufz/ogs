@@ -5,7 +5,7 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Pyramid.hpp
+ * \file TemplatePyramid.hpp
  *
  * Created on 2012-05-02 by Karsten Rink
  */
