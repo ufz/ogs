@@ -65,6 +65,12 @@ std::string getFileNameFromPath(const std::string &str, bool with_extension)
 	return file.substr(0,end);
 }
 
+std::string getSuffixFromPath(const std::string &str)
+{
+	std::string::size_type beg (str.find_last_of('.'));
+	return str.substr(beg+1, str.length()-beg-1);
+}
+
 std::string copyPathToFileName(const std::string &file_name, const std::string &source)
 {
 	// check if file_name already contains a full path

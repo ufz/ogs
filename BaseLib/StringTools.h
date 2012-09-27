@@ -77,6 +77,12 @@ namespace BaseLib {
 std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
 
 /**
+ * Extract the file type / suffix from a path
+ */
+std::string getSuffixFromPath(const std::string &str);
+
+
+/**
  * Checks if file_name already contains a qualified path and if not copies the path from source.
  */
 std::string copyPathToFileName(const std::string &file_name, const std::string &source);

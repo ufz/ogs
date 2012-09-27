@@ -16,12 +16,12 @@
 #include "MshEditor.h"
 #include "PointWithID.h"
 #include "VtkRaster.h"
-#include "Legacy/MeshIO.h"
+#include "readMeshFromFile.h"
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
 	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL), _mesh(NULL),
-	  _origin_x(0), _origin_y(0), _cellsize(0), _width(0), _height(0)
+	  _origin_x(0), _origin_y(0), _cellsize(0), _width(0), _height(0), _img_data(NULL)
 {
 }
 
@@ -39,9 +39,9 @@ void GeoMapper::mapOnDEM(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const std::string &file_name)
 {
-	FileIO::MeshIO mesh_io;
-	MeshLib::Mesh* mesh (mesh_io.loadMeshFromFile(file_name));
-	this->mapOnMesh(mesh);
+	_mesh = FileIO::readMeshFromFile(file_name);
+	_grid = this->getFlatGrid();
+	this->mapData();
 }
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
@@ -111,12 +111,23 @@ float GeoMapper::getMeshElevation(double x, double y) const
 
 GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid() const
 {
-	const std::vector<GeoLib::PointWithID*> sfc_points = MeshLib::MshEditor::getSurfaceNodes(*_mesh);
+	std::vector<GeoLib::PointWithID*> sfc_points;
+	if (_mesh->getDimension()<3) //much faster
+	{
+		size_t nNodes (_mesh->getNNodes());
+		sfc_points.resize(nNodes);
+		const std::vector<MeshLib::Node*> nodes (_mesh->getNodes());
+		for (unsigned i(0); i<nNodes; ++i)
+			sfc_points[i] = new GeoLib::PointWithID(nodes[i]->getCoords(), nodes[i]->getID());
+	}
+	else
+		sfc_points = MeshLib::MshEditor::getSurfaceNodes(*_mesh);
 	size_t nPoints (sfc_points.size());
 	for (unsigned i=0; i<nPoints; ++i)
 	{
 		GeoLib::PointWithID* pnt (sfc_points[i]);
 		(*pnt)[2] = 0;
 	}
+	//TODO - does Grid delete the objects in the vector or do I need to do this?
 	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_points.begin(), sfc_points.end());
 }

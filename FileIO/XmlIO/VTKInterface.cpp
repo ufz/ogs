@@ -45,10 +45,11 @@ VTKInterface::~VTKInterface()
 
 MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 {
+	std::cout << "Reading OGS legacy mesh ... " << std::endl;
 	std::ifstream in(file_name.c_str());
 	if (in.fail())
 	{
-		std::cout << "VTKInterface::readVTUFile() - Can't open xml-file." << std::endl;
+		std::cout << "\nVTKInterface::readVTUFile() - Can't open xml-file." << std::endl;
 		return NULL;
 	}
 
@@ -172,6 +173,9 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 				return NULL;
 			}
 
+			std::cout << "finished." << std::endl;
+			std::cout << "Nr. Nodes: " << nodes.size() << std::endl;
+			std::cout << "Nr. Elements: " << elements.size() << std::endl;
 			return new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name), nodes, elements);
 		}
 		else

@@ -45,7 +45,6 @@ set( MOC_HEADERS
 	DataView.h
 	ElementTreeModel.h
 	FEMConditionSetupDialog.h
-	GeoMapper.h
 	GEOModels.h
 	GeoTabWidget.h
 	GeoTreeModel.h
@@ -76,6 +75,7 @@ set( HEADERS
 	CondItem.h
 	DirectConditionGenerator.h
 	CondObjectListItem.h
+	GeoMapper.h
 	GeoObjectListItem.h
 	GeoTreeItem.h
 	ModelTreeItem.h

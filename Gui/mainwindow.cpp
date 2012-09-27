@@ -75,6 +75,7 @@
 #include "Mesh.h"
 #include "Node.h"
 #include "MshEditor.h"
+#include "readMeshFromFile.h"
 
 //test
 #include "VtkMeshConverter.h"
@@ -513,32 +514,20 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			xml.readFile(fileName);
 		}
 		// OpenGeoSys mesh files
-		else if (fi.suffix().toLower() == "msh")
+		else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
 		{
 #ifndef NDEBUG
 			QTime myTimer0;
 			myTimer0.start();
 #endif
-			FileIO::MeshIO meshIO;
-			std::string name = fileName.toStdString();
-			MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
-			if (msh)
-			{
-				_meshModels->addMesh(msh);
+			MeshLib::Mesh* mesh (FileIO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
-				std::cout << "Total mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
+			std::cout << "Mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
 #endif
-			}
+			if (mesh)
+				_meshModels->addMesh(mesh);
 			else
-				OGSError::box("Failed to load a mesh file.");
-		}
-		else if (fi.suffix().toLower() == "vtu")
-		{
-			MeshLib::Mesh* msh = FileIO::VTKInterface::readVTUFile(fileName.toStdString());
-			if (msh)
-				_meshModels->addMesh(msh);
-			else
-				OGSError::box("Failed to load a mesh file.");
+				OGSError::box("Failed to load mesh file.");
 		}
 		else if (fi.suffix().toLower() == "cnd")
 		{
@@ -905,27 +894,19 @@ void MainWindow::writeStationListToFile(QString listName, QString fileName)
 void MainWindow::mapGeometry(const std::string &geo_name)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString mesh_name = QFileDialog::getOpenFileName( this, "Select a mesh file for mapping",
+	QString file_name = QFileDialog::getOpenFileName( this, "Select file for mapping",
 													  settings.value("lastOpenedFileDirectory").toString(),
-													  "OpenGeoSys mesh files (*.msh)");
-	if (mesh_name.compare("") != 0)
-	{
-		MeshLib::Mesh* mesh (NULL);
-		QFileInfo fi(mesh_name);
-		if (fi.suffix().toLower() == "vtu")
-			mesh = VTKInterface::readVTUFile(mesh_name.toStdString());
-		else if (fi.suffix().toLower() == "msh")
-		{
-			FileIO::MeshIO mesh_io;
-			mesh = mesh_io.loadMeshFromFile(mesh_name.toStdString());
-		}
+													  "Raster files(*.asc *.grd);;OpenGeoSys mesh files (*.vtu *.msh)");
+	GeoMapper geo_mapper(*_geoModels, geo_name);
 
-		if (mesh)
-		{
-			GeoMapper geo_mapper(*_geoModels, geo_name);
-			geo_mapper.mapOnMesh(mesh);
-			this->_geoModels->updateGeometry(geo_name);
-		}
+	if (file_name.compare("") != 0)
+	{
+		QFileInfo fi(file_name);
+		if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
+			geo_mapper.mapOnDEM(file_name.toStdString());
+		else if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
+			geo_mapper.mapOnMesh(file_name.toStdString());
+		this->_geoModels->updateGeometry(geo_name);
 	}
 }
 

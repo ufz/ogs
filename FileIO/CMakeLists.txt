@@ -4,6 +4,7 @@ SET( SOURCES
 	Gmsh2GeoIO.cpp
 	GMSInterface.cpp
 	PetrelInterface.cpp
+	readMeshFromFile.cpp
 	readNonBlankLineFromInputStream.cpp
 	Writer.cpp
 )
