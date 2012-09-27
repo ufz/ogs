@@ -10,8 +10,8 @@
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef EDGE_H_
-#define EDGE_H_
+#ifndef TEMPLATEEDGE_H_
+#define TEMPLATEEDGE_H_
 
 #include <limits>
 
@@ -34,25 +34,13 @@ class TemplateEdge : public Element
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateEdge(Node* nodes[NNODES], unsigned value = 0) :
-		Element(value)
-	{
-		_nodes = nodes;
-		this->_length = this->computeVolume();
-	}
+	TemplateEdge(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateEdge(const TemplateEdge<ORDER, NNODES> &edge) :
-		Element(edge.getValue())
-	{
-		_nodes = new Node*[NNODES];
-		for (unsigned k(0); k<NNODES; k++)
-			_nodes[k] = edge._nodes[k];
-		_length = edge.getLength();
-	}
+	TemplateEdge(const TemplateEdge<ORDER, NNODES> &edge);
 
 	/// Destructor
-	virtual ~TemplateEdge() {};
+	virtual ~TemplateEdge();
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	double getContent() const { return _length; };
@@ -141,9 +129,9 @@ protected:
 
 }; /* class */
 
-typedef TemplateEdge<1,2> Edge;
-
 } /* namespace */
 
-#endif /* EDGE_H_ */
+#include "TemplateEdge.hpp"
+
+#endif /* TEMPLATEEDGE_H_ */
 
