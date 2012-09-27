@@ -287,7 +287,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3]
 			    >> node_idx[4] >> node_idx[5] >> mat_id;
-			MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+			MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 			for (unsigned k(0); k<6; k++) {
 				prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
 			}
@@ -296,7 +296,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		else if (element_id.compare("E4T") == 0) // Tet
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> mat_id;
-			MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+			MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 			for (unsigned k(0); k<4; k++) {
 				tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
 			}
@@ -305,7 +305,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
 		{
 			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> node_idx[4] >> mat_id;
-			MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+			MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 			for (unsigned k(0); k<5; k++) {
 				pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];
 			}

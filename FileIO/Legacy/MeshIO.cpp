@@ -137,7 +137,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 2; i++)
 			ss >> idx[i];
 		// edge_nodes array will be deleted from Edge object
-		MeshLib::Node** edge_nodes(new MeshLib::Node*[2]);
+		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		edge_nodes[0] = nodes[idx[1]];
 		edge_nodes[1] = nodes[idx[0]];
 		elem = new MeshLib::Edge(edge_nodes, patch_index);
@@ -146,7 +146,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::TRIANGLE: {
 		for (int i = 0; i < 3; i++)
 			ss >> idx[i];
-		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		tri_nodes[0] = nodes[idx[2]];
 		tri_nodes[1] = nodes[idx[1]];
 		tri_nodes[2] = nodes[idx[0]];
@@ -156,7 +156,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::QUAD: {
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];
-		MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k<4; k++)
 			quad_nodes[k] = nodes[idx[4-(k+1)]];
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
@@ -165,7 +165,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::TETRAHEDRON: {
 		for (int i = 0; i < 4; i++)
 			ss >> idx[i];
-		MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k<4; k++)
 			tet_nodes[k] = nodes[idx[4-(k+1)]];
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
@@ -174,7 +174,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::HEXAHEDRON: {
 		for (int i = 0; i < 8; i++)
 			ss >> idx[i];
-		MeshLib::Node** hex_nodes(new MeshLib::Node*[8]);
+		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k<8; k++)
 			hex_nodes[k] = nodes[idx[8-(k+1)]];
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
@@ -183,7 +183,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::PYRAMID: {
 		for (int i = 0; i < 5; i++)
 			ss >> idx[i];
-		MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k<5; k++)
 			pyramid_nodes[k] = nodes[idx[5-(k+1)]];
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
@@ -192,7 +192,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	case MshElemType::PRISM: {
 		for (int i = 0; i < 6; i++)
 			ss >> idx[i];
-		MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k<6; k++)
 			prism_nodes[k] = nodes[idx[6-(k+1)]];
 		elem = new MeshLib::Prism(prism_nodes, patch_index);

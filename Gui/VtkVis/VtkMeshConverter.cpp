@@ -207,12 +207,12 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
 				if (elem_type == MshElemType::TRIANGLE)
 				{
-					MeshLib::Node** tri1_nodes (new MeshLib::Node*[3]);
+					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
 					tri1_nodes[0] = nodes[node_idx_map[index]];
 					tri1_nodes[1] = nodes[node_idx_map[index+1]];
 					tri1_nodes[2] = nodes[node_idx_map[index+incHeight]];
 
-					MeshLib::Node** tri2_nodes (new MeshLib::Node*[3]);
+					MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
 					tri2_nodes[0] = nodes[node_idx_map[index+1]];
 					tri2_nodes[1] = nodes[node_idx_map[index+incHeight+1]];
 					tri2_nodes[2] = nodes[node_idx_map[index+incHeight]];
@@ -222,7 +222,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 				}
 				if (elem_type == MshElemType::QUAD)
 				{
-					MeshLib::Node** quad_nodes (new MeshLib::Node*[4]);
+					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 					quad_nodes[0] = nodes[node_idx_map[index]];
 					quad_nodes[1] = nodes[node_idx_map[index + 1]];
 					quad_nodes[2] = nodes[node_idx_map[index + incHeight + 1]];
@@ -267,21 +267,21 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		switch (cell_type)
 		{
 		case VTK_TRIANGLE: {
-			MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 			for (unsigned k(0); k<3; k++)
 				tri_nodes[k] = nodes[node_ids[k]];
 			elem = new MeshLib::Tri(tri_nodes, material);
 			break;
 		}
 		case VTK_QUAD: {
-			MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+			MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 			for (unsigned k(0); k<4; k++)
 				quad_nodes[k] = nodes[node_ids[k]];
 			elem = new MeshLib::Quad(quad_nodes, material);
 			break;
 		}
 		case VTK_PIXEL: {
-			MeshLib::Node** quad_nodes(new MeshLib::Node*[4]);
+			MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 			quad_nodes[0] = nodes[node_ids[0]];
 			quad_nodes[1] = nodes[node_ids[1]];
 			quad_nodes[2] = nodes[node_ids[3]];
@@ -290,21 +290,21 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		case VTK_TETRA: {
-			MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+			MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 			for (unsigned k(0); k<4; k++)
 				tet_nodes[k] = nodes[node_ids[k]];
 			elem = new MeshLib::Tet(tet_nodes, material);
 			break;
 		}
 		case VTK_HEXAHEDRON: {
-			MeshLib::Node** hex_nodes(new MeshLib::Node*[8]);
+			MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 			for (unsigned k(0); k<8; k++)
 				hex_nodes[k] = nodes[node_ids[k]];
 			elem = new MeshLib::Hex(hex_nodes, material);
 			break;
 		}
 		case VTK_VOXEL: {
-			MeshLib::Node** voxel_nodes(new MeshLib::Node*[8]);
+			MeshLib::Node** voxel_nodes = new MeshLib::Node*[8];
 			voxel_nodes[0] = nodes[node_ids[0]];
 			voxel_nodes[1] = nodes[node_ids[1]];
 			voxel_nodes[2] = nodes[node_ids[3]];
@@ -317,14 +317,14 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		case VTK_PYRAMID: {
-			MeshLib::Node** pyramid_nodes(new MeshLib::Node*[5]);
+			MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 			for (unsigned k(0); k<5; k++)
 				pyramid_nodes[k] = nodes[node_ids[k]];
 			elem = new MeshLib::Pyramid(pyramid_nodes, material);
 			break;
 		}
 		case VTK_WEDGE: {
-			MeshLib::Node** prism_nodes(new MeshLib::Node*[6]);
+			MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 			for (unsigned k(0); k<6; k++)
 				prism_nodes[k] = nodes[node_ids[k]];
 			elem = new MeshLib::Prism(prism_nodes, material);

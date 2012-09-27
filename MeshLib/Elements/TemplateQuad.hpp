@@ -97,7 +97,7 @@ template <unsigned ORDER, unsigned NNODES>
 Element* TemplateQuad<ORDER,NNODES>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		tri_nodes[0] = _nodes[0];
 		tri_nodes[1] = _nodes[2];
 		tri_nodes[2] = _nodes[3];
@@ -105,7 +105,7 @@ Element* TemplateQuad<ORDER,NNODES>::reviseElement() const
 	}
 
 	if (_nodes[2] == _nodes[3] || _nodes[3] == _nodes[0]) {
-		MeshLib::Node** tri_nodes(new MeshLib::Node*[3]);
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		tri_nodes[0] = _nodes[0];
 		tri_nodes[1] = _nodes[1];
 		tri_nodes[2] = _nodes[2];

@@ -151,7 +151,7 @@ Element* TemplatePrism<ORDER,NNODES>::reviseElement() const
 {
 	// try to create Pyramid
 	if (_nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
-		Node** pyramid_nodes(new Node*[5]);
+		Node** pyramid_nodes = new Node*[5];
 		pyramid_nodes[0] = _nodes[1];
 		pyramid_nodes[1] = _nodes[4];
 		pyramid_nodes[2] = _nodes[5];
@@ -161,7 +161,7 @@ Element* TemplatePrism<ORDER,NNODES>::reviseElement() const
 	}
 
 	if (_nodes[_edge_nodes[4][0]] == _nodes[_edge_nodes[4][1]]) {
-		Node** pyramid_nodes(new Node*[5]);
+		Node** pyramid_nodes = new Node*[5];
 		pyramid_nodes[0] = _nodes[0];
 		pyramid_nodes[1] = _nodes[2];
 		pyramid_nodes[2] = _nodes[5];
@@ -171,7 +171,7 @@ Element* TemplatePrism<ORDER,NNODES>::reviseElement() const
 	}
 
 	if (_nodes[_edge_nodes[5][0]] == _nodes[_edge_nodes[5][1]]) {
-		Node** pyramid_nodes(new Node*[5]);
+		Node** pyramid_nodes = new Node*[5];
 		pyramid_nodes[0] = _nodes[0];
 		pyramid_nodes[1] = _nodes[1];
 		pyramid_nodes[2] = _nodes[4];

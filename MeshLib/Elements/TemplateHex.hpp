@@ -156,7 +156,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 	if (collapsed_edges.size() == 2) {
 		// try to create a prism out of the hex
 		if (collapsed_edges[0] == 0 && collapsed_edges[1] == 2) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[4];
 			prism_nodes[2] = _nodes[5];
@@ -166,7 +166,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 1 && collapsed_edges[1] == 3) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[4];
 			prism_nodes[2] = _nodes[7];
@@ -176,7 +176,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 4 && collapsed_edges[1] == 5) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[7];
 			prism_nodes[2] = _nodes[3];
@@ -186,7 +186,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 5 && collapsed_edges[1] == 6) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[1];
 			prism_nodes[2] = _nodes[4];
@@ -196,7 +196,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 6 && collapsed_edges[1] == 7) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[3];
 			prism_nodes[2] = _nodes[4];
@@ -206,7 +206,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 7 && collapsed_edges[1] == 4) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[1];
 			prism_nodes[2] = _nodes[5];
@@ -216,7 +216,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 8 && collapsed_edges[1] == 10) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[1];
 			prism_nodes[2] = _nodes[4];
@@ -226,7 +226,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 			return new Prism(prism_nodes, _value);
 		}
 		if (collapsed_edges[0] == 9 && collapsed_edges[1] == 11) {
-			Node** prism_nodes(new Node*[6]);
+			Node** prism_nodes = new Node*[6];
 			prism_nodes[0] = _nodes[0];
 			prism_nodes[1] = _nodes[3];
 			prism_nodes[2] = _nodes[4];

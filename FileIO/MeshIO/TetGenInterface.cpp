@@ -326,7 +326,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins, size_t n_tets, size_t n_
 					}
 				}
 				// insert new element into vector
-				MeshLib::Node** tet_nodes(new MeshLib::Node*[4]);
+				MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 				for (unsigned k(0); k<4; k++) {
 					tet_nodes[k] = _nodes[ids[k]];
 				}
