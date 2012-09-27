@@ -5,12 +5,11 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Prism.hpp
+ * \file TemplatePrism.hpp
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#include "Prism.h"
 #include "Node.h"
 #include "Tri.h"
 #include "Pyramid.h"

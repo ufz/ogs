@@ -5,13 +5,13 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Prism.h
+ * \file TemplatePrism.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef PRISM_H_
-#define PRISM_H_
+#ifndef TEMPLATEPRISM_H_
+#define TEMPLATEPRISM_H_
 
 #include "Cell.h"
 
@@ -117,11 +117,9 @@ protected:
 
 }; /* class */
 
-typedef TemplatePrism<1,6> Prism;
-
 } /* namespace */
 
-#include "Prism.hpp"
+#include "TemplatePrism.hpp"
 
-#endif /* PRISM_H_ */
+#endif /* TEMPLATEPRISM_H_ */
 
