@@ -10,8 +10,8 @@
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef QUAD_H_
-#define QUAD_H_
+#ifndef TEMPLATEQUAD_H_
+#define TEMPLATEQUAD_H_
 
 #include "Face.h"
 
@@ -107,11 +107,9 @@ const unsigned TemplateQuad<ORDER,NNODES>::_edge_nodes[4][2] =
 	{0, 3}  // Edge 3
 };
 
-typedef TemplateQuad<1,4> Quad;
-
 } /* namespace */
 
-#include "Quad.hpp"
+#include "TemplateQuad.hpp"
 
-#endif /* QUAD_H_ */
+#endif /* TEMPLATEQUAD_H_ */
 
