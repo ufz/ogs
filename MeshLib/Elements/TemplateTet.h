@@ -5,13 +5,13 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Tet.h
+ * \file TemplateTet.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-#ifndef TET_H_
-#define TET_H_
+#ifndef TEMPLATETET_H_
+#define TEMPLATETET_H_
 
 #include "Cell.h"
 
@@ -118,10 +118,9 @@ protected:
 
 }; /* class */
 
-typedef TemplateTet<1,4> Tet;
 } /* namespace */
 
-#include "Tet.hpp"
+#include "TemplateTet.hpp"
 
-#endif /* TET_H_ */
+#endif /* TEMPLATETET_H_ */
 
