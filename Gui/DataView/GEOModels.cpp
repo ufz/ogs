@@ -40,6 +40,7 @@ void GEOModels::updateGeometry(const std::string &geo_name)
 
 	if (points)
 	{
+		emit geoDataRemoved(_geoModel, geo_name, GeoLib::POINT);
 		this->_geoModel->removeGeoList(geo_name, GeoLib::POINT);
 		_geoModel->addPointList(QString::fromStdString(geo_name), points);
 		emit geoDataAdded(_geoModel, geo_name, GeoLib::POINT);

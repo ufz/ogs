@@ -905,14 +905,27 @@ void MainWindow::writeStationListToFile(QString listName, QString fileName)
 void MainWindow::mapGeometry(const std::string &geo_name)
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
-	std::string mesh_name = QFileDialog::getOpenFileName( this, "Select a mesh file for mapping",
+	QString mesh_name = QFileDialog::getOpenFileName( this, "Select a mesh file for mapping",
 													  settings.value("lastOpenedFileDirectory").toString(),
-													  "OpenGeoSys mesh files (*.msh)").toStdString();
-	if (!mesh_name.empty())
+													  "OpenGeoSys mesh files (*.msh)");
+	if (mesh_name.compare("") != 0)
 	{
-		GeoMapper geo_mapper(*_geoModels, geo_name);
-		geo_mapper.mapOnMesh(mesh_name);
-		this->_geoModels->updateGeometry(geo_name);
+		MeshLib::Mesh* mesh (NULL);
+		QFileInfo fi(mesh_name);
+		if (fi.suffix().toLower() == "vtu")
+			mesh = VTKInterface::readVTUFile(mesh_name.toStdString());
+		else if (fi.suffix().toLower() == "msh")
+		{
+			FileIO::MeshIO mesh_io;
+			mesh = mesh_io.loadMeshFromFile(mesh_name.toStdString());
+		}
+
+		if (mesh)
+		{
+			GeoMapper geo_mapper(*_geoModels, geo_name);
+			geo_mapper.mapOnMesh(mesh);
+			this->_geoModels->updateGeometry(geo_name);
+		}
 	}
 }
 
