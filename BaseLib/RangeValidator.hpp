@@ -1,0 +1,48 @@
+/**
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
+ *
+ * \file RangeValidator.hpp
+ *
+ *  Created on  Sep 28, 2012 by Thomas Fischer
+ */
+
+namespace BaseLib {
+
+template <typename NUMERIC_TYPE>
+RangeValidator<NUMERIC_TYPE>::RangeValidator(NUMERIC_TYPE lower_limit, NUMERIC_TYPE upper_limit) :
+	_lower_limit(lower_limit), _upper_limit(upper_limit)
+{
+}
+
+template <typename NUMERIC_TYPE>
+RangeValidator<NUMERIC_TYPE>::~RangeValidator()
+{}
+
+template <typename NUMERIC_TYPE>
+void RangeValidator<NUMERIC_TYPE>::resetLowerLimits(NUMERIC_TYPE lower_limit)
+{
+	_lower_limit = lower_limit;
+}
+
+template <typename NUMERIC_TYPE>
+void RangeValidator<NUMERIC_TYPE>:: resetUpperLimits(NUMERIC_TYPE upper_limit)
+{
+	_upper_limit = upper_limit;
+}
+
+template <typename NUMERIC_TYPE>
+bool RangeValidator<NUMERIC_TYPE>::isValidValue (NUMERIC_TYPE test_value) const
+{
+	if (test_value < _lower_limit)
+		return false;
+
+	if (_upper_limit < test_value)
+		return false;
+
+	return true;
+}
+
+} // end namespace BaseLib
