@@ -121,7 +121,10 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid() const
 			sfc_points[i] = new GeoLib::PointWithID(nodes[i]->getCoords(), nodes[i]->getID());
 	}
 	else
-		sfc_points = MeshLib::MshEditor::getSurfaceNodes(*_mesh);
+	{
+		double dir[3] = {1,0,0};
+		sfc_points = MeshLib::MshEditor::getSurfaceNodes(*_mesh, dir);
+	}
 	size_t nPoints (sfc_points.size());
 	for (unsigned i=0; i<nPoints; ++i)
 	{
