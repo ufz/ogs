@@ -28,7 +28,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 		FileIO::MeshIO meshIO;
 		mesh = meshIO.loadMeshFromFile(file_name);
 	}
-	else if (suffix.compare("vtu") || suffix.compare("VTU") == 0)
+	else if (suffix.compare("vtu") == 0 || suffix.compare("VTU") == 0)
 		mesh = FileIO::VTKInterface::readVTUFile(file_name);
 	else
 		std::cout << "Unknown mesh file format" << std::endl;
