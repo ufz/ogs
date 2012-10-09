@@ -41,9 +41,9 @@ public:
 	void mapOnMesh(const MeshLib::Mesh* mesh);
 
 private:
-	void mapData();
-	GeoLib::Grid<GeoLib::PointWithID>* getFlatGrid() const;
-	float getMeshElevation(double x, double y) const;
+	void mapData(MeshLib::Mesh const*const mesh = NULL);
+	GeoLib::Grid<GeoLib::PointWithID>* getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const;
+	double getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const;
 	float getDemElevation(double x, double y) const;
 
 	GeoLib::GEOObjects& _geo_objects;
@@ -51,7 +51,6 @@ private:
 
 	// only necessary for mapping on mesh
 	GeoLib::Grid<GeoLib::PointWithID>* _grid;
-	MeshLib::Mesh* _mesh;
 
 	// only necessary for mapping on DEM
 	double _origin_x;

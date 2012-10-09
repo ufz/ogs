@@ -20,14 +20,13 @@
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
-	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL), _mesh(NULL),
+	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL),
 	  _origin_x(0), _origin_y(0), _cellsize(0), _width(0), _height(0), _img_data(NULL)
 {
 }
 
 GeoMapper::~GeoMapper()
 {
-	delete _grid;
 	delete _img_data;
 }
 
@@ -39,19 +38,27 @@ void GeoMapper::mapOnDEM(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const std::string &file_name)
 {
-	_mesh = FileIO::readMeshFromFile(file_name);
-	_grid = this->getFlatGrid();
-	this->mapData();
+	MeshLib::Mesh *mesh (FileIO::readMeshFromFile(file_name));
+	mapOnMesh(mesh);
+	delete mesh;
 }
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 {
-	_mesh = const_cast<MeshLib::Mesh*>(mesh);
-	_grid = this->getFlatGrid();
-	this->mapData();
+	std::vector<GeoLib::PointWithID*> sfc_pnts;
+	// init grid
+	_grid = this->getFlatGrid(mesh, sfc_pnts);
+	this->mapData(mesh);
+
+	delete _grid;
+
+	const size_t n_sfc_pnts(sfc_pnts.size());
+	for (size_t k(0); k<n_sfc_pnts; k++) {
+		delete sfc_pnts[k];
+	}
 }
 
-void GeoMapper::mapData()
+void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 {
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
@@ -65,7 +72,7 @@ void GeoMapper::mapData()
 		for (unsigned j=0; j<nPoints; ++j)
 		{
 			GeoLib::Point* pnt ((*points)[j]);
-			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1])
+			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], mesh)
 				                : this->getDemElevation((*pnt)[0],(*pnt)[1]);
 		}
 	}
@@ -74,7 +81,7 @@ void GeoMapper::mapData()
 		for (unsigned j=0; j<nPoints; ++j)
 		{
 			GeoLib::Point* pnt ((*points)[j]);
-			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1]) - (*pnt)[2])
+			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], mesh) - (*pnt)[2])
 				                    : (this->getDemElevation((*pnt)[0],(*pnt)[1]) - (*pnt)[2]);
 
 			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
@@ -102,35 +109,34 @@ float GeoMapper::getDemElevation(double x, double y) const
 	return _img_data[2*(y_index*_width+x_index)];
 }
 
-float GeoMapper::getMeshElevation(double x, double y) const
+double GeoMapper::getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const
 {
 	double coords[3] = {x,y,0};
 	const GeoLib::PointWithID* pnt (_grid->getNearestPoint(coords));
-	return static_cast<float>(_mesh->getNode(pnt->getID())->getCoords()[2]);
+	return (*(mesh->getNode(pnt->getID())))[2];
 }
 
-GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid() const
+GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const
 {
-	std::vector<GeoLib::PointWithID*> sfc_points;
-	if (_mesh->getDimension()<3) //much faster
+	if (mesh->getDimension()<3) //much faster
 	{
-		size_t nNodes (_mesh->getNNodes());
-		sfc_points.resize(nNodes);
-		const std::vector<MeshLib::Node*> nodes (_mesh->getNodes());
+		size_t nNodes (mesh->getNNodes());
+		sfc_pnts.resize(nNodes);
+		const std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 		for (unsigned i(0); i<nNodes; ++i)
-			sfc_points[i] = new GeoLib::PointWithID(nodes[i]->getCoords(), nodes[i]->getID());
+			sfc_pnts[i] = new GeoLib::PointWithID(nodes[i]->getCoords(), nodes[i]->getID());
 	}
 	else
 	{
 		double dir[3] = {1,0,0};
-		sfc_points = MeshLib::MshEditor::getSurfaceNodes(*_mesh, dir);
+		sfc_pnts = MeshLib::MshEditor::getSurfaceNodes(*mesh, dir);
 	}
-	size_t nPoints (sfc_points.size());
+	size_t nPoints (sfc_pnts.size());
 	for (unsigned i=0; i<nPoints; ++i)
 	{
-		GeoLib::PointWithID* pnt (sfc_points[i]);
+		GeoLib::PointWithID* pnt (sfc_pnts[i]);
 		(*pnt)[2] = 0;
 	}
-	//TODO - does Grid delete the objects in the vector or do I need to do this?
-	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_points.begin(), sfc_points.end());
+
+	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_pnts.begin(), sfc_pnts.end());
 }
