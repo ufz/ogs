@@ -7,17 +7,21 @@
 // BaseLib
 #include "MemWatch.h"
 #include "RunTime.h"
+#include "StringTools.h"
 #include "tclap/CmdLine.h"
 
 // BaseLib/logog
 #include "logog.hpp"
 
+// FileIO
+#include "XmlIO/VTKInterface.h"
+#include "Legacy/MeshIO.h"
 
 // MeshLib
 #include "Node.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
-#include "Legacy/MeshIO.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -46,7 +50,12 @@ int main(int argc, char *argv[])
 #endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-	MeshLib::Mesh* mesh = mesh_io.loadMeshFromFile(fname);
+	MeshLib::Mesh* mesh(NULL);
+	if (BaseLib::getSuffixFromPath(fname).compare("msh") == 0) {
+		mesh = mesh_io.loadMeshFromFile(fname);
+	} else {
+		mesh = FileIO::VTKInterface::readVTUFile(fname);
+	}
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 //	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
