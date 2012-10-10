@@ -12,22 +12,26 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/MeshLib/
 )
 
-# Create the executable
-ADD_EXECUTABLE( MeshRead
-        MeshRead.cpp
-        ${SOURCES}
-        ${HEADERS}
-)
+IF(VTK_FOUND)
+	INCLUDE( ${VTK_USE_FILE} )
 
-TARGET_LINK_LIBRARIES ( MeshRead
-	MeshLib
-	FileIO
-	MathLib
-	BaseLib
-	GeoLib
-	logog
-	${ADDITIONAL_LIBS}
-)
+	# Create the executable
+	ADD_EXECUTABLE( MeshRead
+	        MeshRead.cpp
+        	${SOURCES}
+	        ${HEADERS}
+	)
+
+	TARGET_LINK_LIBRARIES ( MeshRead
+		MeshLib
+		FileIO
+		MathLib
+		BaseLib
+		GeoLib
+		logog
+		${ADDITIONAL_LIBS}
+	)
+ENDIF()
 
 # Create CollapseMeshNodes executable
 ADD_EXECUTABLE( CollapseMeshNodes
