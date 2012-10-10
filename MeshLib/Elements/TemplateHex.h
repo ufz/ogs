@@ -80,7 +80,7 @@ public:
 	 * Method returns the type of the element. In this case HEXAHEDRON will be returned.
 	 * @return MshElemType::HEXAHEDRON
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::HEXAHEDRON; }
+	virtual MshElemType::type getGeoType() const { return MshElemType::HEXAHEDRON; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

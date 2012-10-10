@@ -170,7 +170,7 @@ void Mesh::setElementsConnectedToElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		if (element->getType() != MshElemType::EDGE)
+		if (element->getGeoType() != MshElemType::EDGE)
 		{
 			const size_t nNodes (element->getNNodes());
 			for (unsigned n(0); n<nNodes; ++n)
@@ -183,7 +183,7 @@ void Mesh::setElementsConnectedToElements()
 
 			for (unsigned i(0); i<nNeighbors; ++i)
 			{
-				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getType() != MshElemType::EDGE)
+				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeoType() != MshElemType::EDGE)
 				{
 					neighbors[i]->addNeighbor(element);
 				}

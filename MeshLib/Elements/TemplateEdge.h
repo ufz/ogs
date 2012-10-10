@@ -82,7 +82,7 @@ public:
 	 * Method returns the type of the element. In this case EDGE will be returned.
 	 * @return MshElemType::EDGE
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::EDGE; }
+	virtual MshElemType::type getGeoType() const { return MshElemType::EDGE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const

@@ -114,7 +114,7 @@ public:
 	unsigned getNodeIndex(unsigned i) const;
 
 	/// Get the type of the mesh element (as a MshElemType-enum).
-	virtual MshElemType::type getType() const = 0;
+	virtual MshElemType::type getGeoType() const = 0;
 
 	/// Get the value for this element.
 	unsigned getValue() const { return _value; };

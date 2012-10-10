@@ -75,7 +75,7 @@ public:
 	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.
 	 * @return MshElemType::TETRAHEDRON
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::TETRAHEDRON; }
+	virtual MshElemType::type getGeoType() const { return MshElemType::TETRAHEDRON; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

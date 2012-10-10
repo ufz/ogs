@@ -61,7 +61,7 @@ public:
 	 * Method returns the type of the element. In this case QUAD will be returned.
 	 * @return MshElemType::QUAD
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::QUAD; }
+	virtual MshElemType::type getGeoType() const { return MshElemType::QUAD; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

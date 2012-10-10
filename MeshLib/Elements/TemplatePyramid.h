@@ -76,7 +76,7 @@ public:
 	 * Method returns the type of the element. In this case PYRAMID will be returned.
 	 * @return MshElemType::PYRAMID
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::PYRAMID; }
+	virtual MshElemType::type getGeoType() const { return MshElemType::PYRAMID; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

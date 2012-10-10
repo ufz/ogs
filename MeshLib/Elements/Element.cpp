@@ -117,7 +117,7 @@ const Node* Element::getNode(unsigned i) const
 {
 	if (i < getNNodes())
 		return _nodes[i];
-	std::cerr << "Error in MeshLib::Element::getNode() - Index " << i << " in " << MshElemType2String(getType()) <<  " does not exist." << std::endl;
+	std::cerr << "Error in MeshLib::Element::getNode() - Index " << i << " in " << MshElemType2String(getGeoType()) <<  " does not exist." << std::endl;
 	return NULL;
 }
 

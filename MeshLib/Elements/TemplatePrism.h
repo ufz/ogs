@@ -78,7 +78,7 @@ public:
 	 * Method returns the type of the element. In this case PRISM will be returned.
 	 * @return MshElemType::PRISM
 	 */
-	virtual MshElemType::type getType() const { return MshElemType::PRISM; }
+	virtual MshElemType::type getGeoType() const { return MshElemType::PRISM; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

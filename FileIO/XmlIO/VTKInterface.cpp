@@ -408,7 +408,7 @@ int VTKInterface::write(std::ostream& stream)
 		oss << std::endl;
 		offset_count += nElemNodes;
 		offstream << offset_count << " ";
-		typestream << this->getVTKElementID(element->getType()) << " ";
+		typestream << this->getVTKElementID(element->getGeoType()) << " ";
 	}
 	oss << data_array_close;
 	offstream << std::endl << data_array_close;
