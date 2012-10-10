@@ -89,11 +89,16 @@ public:
 	virtual unsigned getNNeighbors() const = 0;
 
 	/**
-	 * Get the number of nodes for this element with respect to the order.
-	 * @param order (default = 1)
-	 * @return the number of nodes with respect to the order.
+	 * Returns the number of nodes. In dependency of the parameter
+	 * the number of nodes for the geometric element is returned or
+	 * the total number of nodes associated with this element
+	 * is returned. The numbers can be different for instance if the
+	 * element is used for higher order elements in finite element
+	 * method.
+	 * @param all (default = false)
+	 * @return the number of nodes with respect to the parameter.
 	 */
-	virtual unsigned getNNodes(unsigned order = 1) const = 0;
+	virtual unsigned getNNodes(bool all = false) const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;

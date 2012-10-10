@@ -16,7 +16,7 @@
 
 namespace MeshLib {
 
-typedef TemplateQuad<1,4> Quad;
+typedef TemplateQuad<4> Quad;
 
 }
 

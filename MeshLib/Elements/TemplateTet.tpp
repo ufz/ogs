@@ -17,8 +17,8 @@
 
 namespace MeshLib {
 
-template <unsigned ORDER, unsigned NNODES>
-const unsigned TemplateTet<ORDER,NNODES>::_face_nodes[4][3] =
+template <unsigned NNODES>
+const unsigned TemplateTet<NNODES>::_face_nodes[4][3] =
 {
 	{0, 2, 1}, // Face 0
 	{0, 1, 3}, // Face 1
@@ -26,8 +26,8 @@ const unsigned TemplateTet<ORDER,NNODES>::_face_nodes[4][3] =
 	{2, 0, 3}  // Face 3
 };
 
-template <unsigned ORDER, unsigned NNODES>
-const unsigned TemplateTet<ORDER, NNODES>::_edge_nodes[6][2] =
+template <unsigned NNODES>
+const unsigned TemplateTet<NNODES>::_edge_nodes[6][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -37,8 +37,8 @@ const unsigned TemplateTet<ORDER, NNODES>::_edge_nodes[6][2] =
 	{2, 3}  // Edge 5
 };
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateTet<ORDER, NNODES>::TemplateTet(Node* nodes[NNODES], unsigned value)
+template <unsigned NNODES>
+TemplateTet<NNODES>::TemplateTet(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;
@@ -50,8 +50,8 @@ TemplateTet<ORDER, NNODES>::TemplateTet(Node* nodes[NNODES], unsigned value)
 	this->_volume = this->computeVolume();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateTet<ORDER, NNODES>::TemplateTet(const TemplateTet<ORDER, NNODES> &tet)
+template <unsigned NNODES>
+TemplateTet<NNODES>::TemplateTet(const TemplateTet<NNODES> &tet)
 	: Cell(tet.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -68,19 +68,19 @@ TemplateTet<ORDER, NNODES>::TemplateTet(const TemplateTet<ORDER, NNODES> &tet)
 	_volume = tet.getVolume();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateTet<ORDER, NNODES>::~TemplateTet()
+template <unsigned NNODES>
+TemplateTet<NNODES>::~TemplateTet()
 {
 }
 
-template <unsigned ORDER, unsigned NNODES>
-double TemplateTet<ORDER, NNODES>::computeVolume()
+template <unsigned NNODES>
+double TemplateTet<NNODES>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords());
 }
 
-template <unsigned ORDER, unsigned NNODES>
-const Element* TemplateTet<ORDER, NNODES>::getFace(unsigned i) const
+template <unsigned NNODES>
+const Element* TemplateTet<NNODES>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
 	{
@@ -94,8 +94,8 @@ const Element* TemplateTet<ORDER, NNODES>::getFace(unsigned i) const
 	return NULL;
 }
 
-template <unsigned ORDER, unsigned NNODES>
-bool TemplateTet<ORDER, NNODES>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES>
+bool TemplateTet<NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<6; i++)
 	{
@@ -105,14 +105,14 @@ bool TemplateTet<ORDER, NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned ORDER, unsigned NNODES>
-Element* TemplateTet<ORDER, NNODES>::clone() const
+template <unsigned NNODES>
+Element* TemplateTet<NNODES>::clone() const
 {
-	return new TemplateTet<ORDER,NNODES>(*this);
+	return new TemplateTet<NNODES>(*this);
 }
 
-template <unsigned ORDER, unsigned NNODES>
-unsigned TemplateTet<ORDER, NNODES>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES>
+unsigned TemplateTet<NNODES>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<4; i++)
 	{
@@ -127,8 +127,8 @@ unsigned TemplateTet<ORDER, NNODES>::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-Element* TemplateTet<ORDER, NNODES>::reviseElement() const
+template <unsigned NNODES>
+Element* TemplateTet<NNODES>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];

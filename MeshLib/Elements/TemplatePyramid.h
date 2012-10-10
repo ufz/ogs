@@ -38,7 +38,7 @@ namespace MeshLib {
  *        0
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplatePyramid : public Cell
 {
 public:
@@ -46,7 +46,7 @@ public:
 	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplatePyramid(const TemplatePyramid<ORDER,NNODES> &pyramid);
+	TemplatePyramid(const TemplatePyramid<NNODES> &pyramid);
 
 	/// Destructor
 	virtual ~TemplatePyramid();
@@ -67,9 +67,9 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 5;
+		return all ? NNODES : 5;
 	}
 
 	/**

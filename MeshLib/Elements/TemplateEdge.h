@@ -29,7 +29,7 @@ namespace MeshLib {
  *  0--------1
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplateEdge : public Element
 {
 public:
@@ -37,7 +37,7 @@ public:
 	TemplateEdge(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateEdge(const TemplateEdge<ORDER, NNODES> &edge);
+	TemplateEdge(const TemplateEdge<NNODES> &edge);
 
 	/// Destructor
 	virtual ~TemplateEdge();
@@ -73,9 +73,9 @@ public:
 	unsigned getNNeighbors() const { return 0; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 2;
+		return all ? NNODES : 2;
 	}
 
 	/**
@@ -94,7 +94,7 @@ public:
 
 	virtual Element* clone() const
 	{
-		return new TemplateEdge<ORDER,NNODES>(*this);
+		return new TemplateEdge<NNODES>(*this);
 	}
 
 	/**

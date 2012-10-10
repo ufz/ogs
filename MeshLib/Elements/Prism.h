@@ -16,7 +16,7 @@
 
 namespace MeshLib {
 
-typedef TemplatePrism<1,6> Prism;
+typedef TemplatePrism<6> Prism;
 
 }
 

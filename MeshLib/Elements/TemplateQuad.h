@@ -32,7 +32,7 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplateQuad : public Face
 {
 public:
@@ -52,9 +52,9 @@ public:
 	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 4;
+		return all ? NNODES : 4;
 	}
 
 	/**
@@ -98,8 +98,8 @@ protected:
 
 }; /* class */
 
-template <unsigned ORDER, unsigned NNODES>
-const unsigned TemplateQuad<ORDER,NNODES>::_edge_nodes[4][2] =
+template <unsigned NNODES>
+const unsigned TemplateQuad<NNODES>::_edge_nodes[4][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1

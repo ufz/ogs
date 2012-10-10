@@ -42,7 +42,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplateHex : public Cell
 {
 public:
@@ -50,7 +50,7 @@ public:
 	TemplateHex(Node* nodes[8], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateHex(const TemplateHex<ORDER,NNODES> &hex);
+	TemplateHex(const TemplateHex<NNODES> &hex);
 
 	/// Destructor
 	virtual ~TemplateHex();
@@ -71,9 +71,9 @@ public:
 	unsigned getNNeighbors() const { return 6; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 8;
+		return all ? NNODES : 8;
 	}
 
 	/**

@@ -40,7 +40,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplatePrism : public Cell
 {
 public:
@@ -48,7 +48,7 @@ public:
 	TemplatePrism(Node* nodes[6], unsigned value = 0);
 
 	/// Copy constructor
-	TemplatePrism(const TemplatePrism<ORDER,NNODES> &prism);
+	TemplatePrism(const TemplatePrism<NNODES> &prism);
 
 	/// Destructor
 	virtual ~TemplatePrism();
@@ -69,9 +69,9 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 6;
+		return all ? NNODES : 6;
 	}
 
 	/**

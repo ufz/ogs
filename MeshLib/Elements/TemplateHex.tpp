@@ -18,8 +18,8 @@
 
 namespace MeshLib {
 
-template <unsigned ORDER, unsigned NNODES>
-const unsigned TemplateHex<ORDER,NNODES>::_face_nodes[6][4] =
+template <unsigned NNODES>
+const unsigned TemplateHex<NNODES>::_face_nodes[6][4] =
 {
 	{0, 3, 2, 1}, // Face 0
 	{0, 1, 5, 4}, // Face 1
@@ -29,8 +29,8 @@ const unsigned TemplateHex<ORDER,NNODES>::_face_nodes[6][4] =
 	{4, 5, 6, 7}  // Face 5
 };
 
-template <unsigned ORDER, unsigned NNODES>
-const unsigned TemplateHex<ORDER,NNODES>::_edge_nodes[12][2] =
+template <unsigned NNODES>
+const unsigned TemplateHex<NNODES>::_edge_nodes[12][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -46,8 +46,8 @@ const unsigned TemplateHex<ORDER,NNODES>::_edge_nodes[12][2] =
 	{4, 7}  // Edge 11
 };
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateHex<ORDER,NNODES>::TemplateHex(Node* nodes[8], unsigned value)
+template <unsigned NNODES>
+TemplateHex<NNODES>::TemplateHex(Node* nodes[8], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;
@@ -59,8 +59,8 @@ TemplateHex<ORDER,NNODES>::TemplateHex(Node* nodes[8], unsigned value)
 	this->_volume = this->computeVolume();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateHex<ORDER,NNODES>::TemplateHex(const TemplateHex<ORDER,NNODES> &hex)
+template <unsigned NNODES>
+TemplateHex<NNODES>::TemplateHex(const TemplateHex<NNODES> &hex)
 	: Cell(hex.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -74,13 +74,13 @@ TemplateHex<ORDER,NNODES>::TemplateHex(const TemplateHex<ORDER,NNODES> &hex)
 	_volume = hex.getVolume();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateHex<ORDER,NNODES>::~TemplateHex()
+template <unsigned NNODES>
+TemplateHex<NNODES>::~TemplateHex()
 {
 }
 
-template <unsigned ORDER, unsigned NNODES>
-double TemplateHex<ORDER,NNODES>::computeVolume()
+template <unsigned NNODES>
+double TemplateHex<NNODES>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[4]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[0]->getCoords())
 		 + MathLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[3]->getCoords(), _nodes[1]->getCoords(), _nodes[0]->getCoords())
@@ -90,8 +90,8 @@ double TemplateHex<ORDER,NNODES>::computeVolume()
 		 + MathLib::calcTetrahedronVolume(_nodes[3]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[2]->getCoords());
 }
 
-template <unsigned ORDER, unsigned NNODES>
-const Element* TemplateHex<ORDER,NNODES>::getFace(unsigned i) const
+template <unsigned NNODES>
+const Element* TemplateHex<NNODES>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
 	{
@@ -105,8 +105,8 @@ const Element* TemplateHex<ORDER,NNODES>::getFace(unsigned i) const
 	return NULL;
 }
 
-template <unsigned ORDER, unsigned NNODES>
-bool TemplateHex<ORDER,NNODES>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES>
+bool TemplateHex<NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<12; i++)
 	{
@@ -116,14 +116,14 @@ bool TemplateHex<ORDER,NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned ORDER, unsigned NNODES>
-Element* TemplateHex<ORDER,NNODES>::clone() const
+template <unsigned NNODES>
+Element* TemplateHex<NNODES>::clone() const
 {
-	return new TemplateHex<ORDER,NNODES>(*this);
+	return new TemplateHex<NNODES>(*this);
 }
 
-template <unsigned ORDER, unsigned NNODES>
-unsigned TemplateHex<ORDER,NNODES>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES>
+unsigned TemplateHex<NNODES>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<6; i++)
 	{
@@ -138,8 +138,8 @@ unsigned TemplateHex<ORDER,NNODES>::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-Element* TemplateHex<ORDER,NNODES>::reviseElement() const
+template <unsigned NNODES>
+Element* TemplateHex<NNODES>::reviseElement() const
 {
 	std::vector<size_t> collapsed_edges;
 	for (size_t edge(0); edge<getNEdges(); edge++) {
@@ -149,7 +149,7 @@ Element* TemplateHex<ORDER,NNODES>::reviseElement() const
 	}
 
 	if (collapsed_edges.size() == 1) {
-		std::cerr << "[TemplateHex<ORDER,NNODES>::reviseElement()] collapsing of one edge in hexahedron not handled" << std::endl;
+		std::cerr << "[TemplateHex<NNODES>::reviseElement()] collapsing of one edge in hexahedron not handled" << std::endl;
 		return NULL;
 	}
 

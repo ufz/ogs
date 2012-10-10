@@ -39,7 +39,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplateTri : public Face
 {
 public:
@@ -47,7 +47,7 @@ public:
 	TemplateTri(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateTri(const TemplateTri<ORDER, NNODES> &tri);
+	TemplateTri(const TemplateTri<NNODES> &tri);
 
 	/// Destructor
 	virtual ~TemplateTri();
@@ -59,9 +59,9 @@ public:
 	unsigned getNNeighbors() const { return 3; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 3;
+		return all ? NNODES : 3;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public:
 	 */
 	virtual Element* clone() const
 	{
-		return new TemplateTri<ORDER, NNODES>(*this);
+		return new TemplateTri<NNODES>(*this);
 	}
 
 
@@ -113,8 +113,8 @@ protected:
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
 
-template <unsigned ORDER, unsigned NNODES>
-const unsigned TemplateTri<ORDER, NNODES>::_edge_nodes[3][2] = {
+template <unsigned NNODES>
+const unsigned TemplateTri<NNODES>::_edge_nodes[3][2] = {
 		{0, 1}, // Edge 0
 		{1, 2}, // Edge 1
 		{0, 2}  // Edge 2

@@ -16,7 +16,7 @@
 
 namespace MeshLib {
 
-typedef TemplateTet<1,4> Tet;
+typedef TemplateTet<4> Tet;
 
 }
 

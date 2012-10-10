@@ -16,7 +16,7 @@
 
 namespace MeshLib {
 
-typedef TemplateTri<1,3> Tri;
+typedef TemplateTri<3> Tri;
 
 }
 

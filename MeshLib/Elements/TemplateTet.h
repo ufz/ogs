@@ -37,7 +37,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned ORDER, unsigned NNODES>
+template <unsigned NNODES>
 class TemplateTet : public Cell
 {
 public:
@@ -45,7 +45,7 @@ public:
 	TemplateTet(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateTet(const TemplateTet<ORDER,NNODES> &tet);
+	TemplateTet(const TemplateTet<NNODES> &tet);
 
 	/// Destructor
 	virtual ~TemplateTet();
@@ -66,9 +66,9 @@ public:
 	unsigned getNNeighbors() const { return 4; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(unsigned order = 1) const
+	virtual unsigned getNNodes(bool all = false) const
 	{
-		return order == ORDER ? NNODES : 4;
+		return all ? NNODES : 4;
 	};
 
 	/**

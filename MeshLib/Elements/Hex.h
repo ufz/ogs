@@ -15,7 +15,7 @@
 #include "TemplateHex.h"
 
 namespace MeshLib {
-typedef TemplateHex<1,8> Hex;
+typedef TemplateHex<8> Hex;
 }
 
 #endif /* HEX_H_ */

@@ -11,8 +11,8 @@
 
 namespace MeshLib {
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateTri<ORDER,NNODES>::TemplateTri(Node* nodes[NNODES], unsigned value) :
+template <unsigned NNODES>
+TemplateTri<NNODES>::TemplateTri(Node* nodes[NNODES], unsigned value) :
 	Face(value)
 {
 	_nodes = nodes;
@@ -22,8 +22,8 @@ TemplateTri<ORDER,NNODES>::TemplateTri(Node* nodes[NNODES], unsigned value) :
 	this->_area = this->computeVolume();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateTri<ORDER,NNODES>::TemplateTri(const TemplateTri<ORDER, NNODES> &tri) :
+template <unsigned NNODES>
+TemplateTri<NNODES>::TemplateTri(const TemplateTri<NNODES> &tri) :
 	Face(tri.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -40,12 +40,12 @@ TemplateTri<ORDER,NNODES>::TemplateTri(const TemplateTri<ORDER, NNODES> &tri) :
 	_area = tri.getArea();
 }
 
-template <unsigned ORDER, unsigned NNODES>
-TemplateTri<ORDER,NNODES>::~TemplateTri()
+template <unsigned NNODES>
+TemplateTri<NNODES>::~TemplateTri()
 {}
 
-template <unsigned ORDER, unsigned NNODES>
-bool TemplateTri<ORDER,NNODES>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES>
+bool TemplateTri<NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<3; i++)
 	{
@@ -55,8 +55,8 @@ bool TemplateTri<ORDER,NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned ORDER, unsigned NNODES>
-Element* TemplateTri<ORDER,NNODES>::reviseElement() const
+template <unsigned NNODES>
+Element* TemplateTri<NNODES>::reviseElement() const
 {
 	// try to create an edge
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
@@ -76,8 +76,8 @@ Element* TemplateTri<ORDER,NNODES>::reviseElement() const
 	return NULL;
 }
 
-template <unsigned ORDER, unsigned NNODES>
-unsigned TemplateTri<ORDER,NNODES>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES>
+unsigned TemplateTri<NNODES>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<3; i++)
 	{
