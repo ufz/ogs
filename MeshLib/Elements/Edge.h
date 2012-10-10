@@ -16,7 +16,7 @@
 
 namespace MeshLib {
 
-typedef TemplateEdge<2> Edge;
+typedef TemplateEdge<2,FEMElemType::EDGE2> Edge;
 
 }
 

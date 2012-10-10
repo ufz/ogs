@@ -16,6 +16,7 @@
 #include "Edge.h"
 #include "Node.h"
 #include "Face.h"
+#include "MshEnums.h"
 
 #include "MathTools.h"
 
@@ -39,7 +40,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES>
+template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
 class TemplateTri : public Face
 {
 public:
@@ -47,7 +48,7 @@ public:
 	TemplateTri(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateTri(const TemplateTri<NNODES> &tri);
+	TemplateTri(const TemplateTri &tri);
 
 	/// Destructor
 	virtual ~TemplateTri();
@@ -70,6 +71,12 @@ public:
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::TRIANGLE; }
 
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMTRITYPE; }
+
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const;
 
@@ -79,7 +86,7 @@ public:
 	 */
 	virtual Element* clone() const
 	{
-		return new TemplateTri<NNODES>(*this);
+		return new TemplateTri<NNODES,FEMTRITYPE>(*this);
 	}
 
 
@@ -113,8 +120,8 @@ protected:
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
 
-template <unsigned NNODES>
-const unsigned TemplateTri<NNODES>::_edge_nodes[3][2] = {
+template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
+const unsigned TemplateTri<NNODES,FEMTRITYPE>::_edge_nodes[3][2] = {
 		{0, 1}, // Edge 0
 		{1, 2}, // Edge 1
 		{0, 2}  // Edge 2

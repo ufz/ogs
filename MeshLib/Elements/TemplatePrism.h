@@ -13,6 +13,7 @@
 #ifndef TEMPLATEPRISM_H_
 #define TEMPLATEPRISM_H_
 
+#include "MshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {
@@ -40,7 +41,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES>
+template <unsigned NNODES, FEMElemType::type FEMPRISMTYPE>
 class TemplatePrism : public Cell
 {
 public:
@@ -48,7 +49,7 @@ public:
 	TemplatePrism(Node* nodes[6], unsigned value = 0);
 
 	/// Copy constructor
-	TemplatePrism(const TemplatePrism<NNODES> &prism);
+	TemplatePrism(const TemplatePrism &prism);
 
 	/// Destructor
 	virtual ~TemplatePrism();
@@ -79,6 +80,12 @@ public:
 	 * @return MshElemType::PRISM
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::PRISM; }
+
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMPRISMTYPE; };
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

@@ -13,6 +13,7 @@
 #ifndef TEMPLATETET_H_
 #define TEMPLATETET_H_
 
+#include "MshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {
@@ -37,7 +38,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES>
+template <unsigned NNODES, FEMElemType::type FEMTETTYPE>
 class TemplateTet : public Cell
 {
 public:
@@ -45,7 +46,7 @@ public:
 	TemplateTet(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateTet(const TemplateTet<NNODES> &tet);
+	TemplateTet(const TemplateTet &tet);
 
 	/// Destructor
 	virtual ~TemplateTet();
@@ -76,6 +77,12 @@ public:
 	 * @return MshElemType::TETRAHEDRON
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::TETRAHEDRON; }
+
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMTETTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

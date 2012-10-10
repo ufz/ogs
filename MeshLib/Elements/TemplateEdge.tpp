@@ -11,16 +11,16 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES>
-TemplateEdge<NNODES>::TemplateEdge(Node* nodes[NNODES], unsigned value) :
+template <unsigned NNODES, FEMElemType::type FEMEDGETYPE>
+TemplateEdge<NNODES,FEMEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned value) :
 	Element(value)
 {
 	_nodes = nodes;
 	this->_length = this->computeVolume();
 }
 
-template <unsigned NNODES>
-TemplateEdge<NNODES>::TemplateEdge(const TemplateEdge<NNODES> &edge) :
+template <unsigned NNODES, FEMElemType::type FEMEDGETYPE>
+TemplateEdge<NNODES,FEMEDGETYPE>::TemplateEdge(const TemplateEdge<NNODES,FEMEDGETYPE> &edge) :
 	Element(edge.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -29,8 +29,8 @@ TemplateEdge<NNODES>::TemplateEdge(const TemplateEdge<NNODES> &edge) :
 	_length = edge.getLength();
 }
 
-template <unsigned NNODES>
-TemplateEdge<NNODES>::~TemplateEdge()
+template <unsigned NNODES, FEMElemType::type FEMEDGETYPE>
+TemplateEdge<NNODES,FEMEDGETYPE>::~TemplateEdge()
 {}
 
 } // namespace MeshLib

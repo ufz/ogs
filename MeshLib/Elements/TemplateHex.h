@@ -13,6 +13,7 @@
 #ifndef TEMPLATEHEX_H_
 #define TEMPLATEHEX_H_
 
+#include "MshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {
@@ -42,15 +43,15 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES>
+template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
 class TemplateHex : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateHex(Node* nodes[8], unsigned value = 0);
+	TemplateHex(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateHex(const TemplateHex<NNODES> &hex);
+	TemplateHex(const TemplateHex &hex);
 
 	/// Destructor
 	virtual ~TemplateHex();
@@ -81,6 +82,12 @@ public:
 	 * @return MshElemType::HEXAHEDRON
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::HEXAHEDRON; }
+
+	/**
+	 * Method returns the FEM type of the element.
+	 * @return
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMHEXTYPE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

@@ -15,6 +15,7 @@
 
 #include <limits>
 
+#include "MshEnums.h"
 #include "Element.h"
 #include "Node.h"
 
@@ -29,7 +30,7 @@ namespace MeshLib {
  *  0--------1
  * @endcode
  */
-template <unsigned NNODES>
+template<unsigned NNODES, FEMElemType::type FEMEDGETYPE>
 class TemplateEdge : public Element
 {
 public:
@@ -37,7 +38,7 @@ public:
 	TemplateEdge(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateEdge(const TemplateEdge<NNODES> &edge);
+	TemplateEdge(const TemplateEdge &edge);
 
 	/// Destructor
 	virtual ~TemplateEdge();
@@ -84,6 +85,12 @@ public:
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::EDGE; }
 
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMEDGETYPE; }
+
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const
 	{
@@ -94,7 +101,7 @@ public:
 
 	virtual Element* clone() const
 	{
-		return new TemplateEdge<NNODES>(*this);
+		return new TemplateEdge<NNODES,FEMEDGETYPE>(*this);
 	}
 
 	/**

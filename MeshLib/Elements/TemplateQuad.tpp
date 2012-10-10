@@ -17,8 +17,8 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES>
-TemplateQuad<NNODES>::TemplateQuad(Node* nodes[NNODES], unsigned value)
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+TemplateQuad<NNODES,FEMQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value)
 	: Face(value)
 {
 	_nodes = nodes;
@@ -30,8 +30,8 @@ TemplateQuad<NNODES>::TemplateQuad(Node* nodes[NNODES], unsigned value)
 	this->_area = this->computeVolume();
 }
 
-template <unsigned NNODES>
-TemplateQuad<NNODES>::TemplateQuad(const TemplateQuad<NNODES> &quad)
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+TemplateQuad<NNODES,FEMQUADTYPE>::TemplateQuad(const TemplateQuad<NNODES,FEMQUADTYPE> &quad)
 	: Face(quad.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -47,20 +47,20 @@ TemplateQuad<NNODES>::TemplateQuad(const TemplateQuad<NNODES> &quad)
 	_area = quad.getArea();
 }
 
-template <unsigned NNODES>
-TemplateQuad<NNODES>::~TemplateQuad()
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+TemplateQuad<NNODES,FEMQUADTYPE>::~TemplateQuad()
 {
 }
 
-template <unsigned NNODES>
-double TemplateQuad<NNODES>::computeVolume()
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+double TemplateQuad<NNODES,FEMQUADTYPE>::computeVolume()
 {
 	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords())
          + MathLib::calcTriangleArea(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords());
 }
 
-template <unsigned NNODES>
-bool TemplateQuad<NNODES>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+bool TemplateQuad<NNODES,FEMQUADTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<4; i++)
 	{
@@ -70,14 +70,14 @@ bool TemplateQuad<NNODES>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned NNODES>
-Element* TemplateQuad<NNODES>::clone() const
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+Element* TemplateQuad<NNODES,FEMQUADTYPE>::clone() const
 {
 	return new TemplateQuad(*this);
 }
 
-template <unsigned NNODES>
-unsigned TemplateQuad<NNODES>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+unsigned TemplateQuad<NNODES,FEMQUADTYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<4; i++)
 	{
@@ -92,8 +92,8 @@ unsigned TemplateQuad<NNODES>::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned NNODES>
-Element* TemplateQuad<NNODES>::reviseElement() const
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+Element* TemplateQuad<NNODES,FEMQUADTYPE>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];

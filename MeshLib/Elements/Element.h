@@ -113,8 +113,16 @@ public:
 	 */
 	unsigned getNodeIndex(unsigned i) const;
 
-	/// Get the type of the mesh element (as a MshElemType-enum).
+	/**
+	 * Get the type of the mesh element in geometric context (as a MshElemType-enum).
+	 */
 	virtual MshElemType::type getGeoType() const = 0;
+
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const = 0;
 
 	/// Get the value for this element.
 	unsigned getValue() const { return _value; };

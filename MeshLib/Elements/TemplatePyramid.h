@@ -13,6 +13,7 @@
 #ifndef TEMPLATEPYRAMID_H_
 #define TEMPLATEPYRAMID_H_
 
+#include "MshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {
@@ -38,7 +39,7 @@ namespace MeshLib {
  *        0
  * @endcode
  */
-template <unsigned NNODES>
+template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
 class TemplatePyramid : public Cell
 {
 public:
@@ -46,7 +47,7 @@ public:
 	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplatePyramid(const TemplatePyramid<NNODES> &pyramid);
+	TemplatePyramid(const TemplatePyramid &pyramid);
 
 	/// Destructor
 	virtual ~TemplatePyramid();
@@ -77,6 +78,12 @@ public:
 	 * @return MshElemType::PYRAMID
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::PYRAMID; }
+
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMPYRAMIDTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

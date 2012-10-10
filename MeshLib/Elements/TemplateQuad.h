@@ -5,7 +5,7 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Quad.h
+ * \file TemplateQuad.h
  *
  * Created on 2012-05-02 by Karsten Rink
  */
@@ -13,6 +13,7 @@
 #ifndef TEMPLATEQUAD_H_
 #define TEMPLATEQUAD_H_
 
+#include "MshEnums.h"
 #include "Face.h"
 
 namespace MeshLib {
@@ -32,7 +33,7 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-template <unsigned NNODES>
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
 class TemplateQuad : public Face
 {
 public:
@@ -62,6 +63,12 @@ public:
 	 * @return MshElemType::QUAD
 	 */
 	virtual MshElemType::type getGeoType() const { return MshElemType::QUAD; }
+
+	/**
+	 * Get the type of the element in context of the finite element method.
+	 * @return a value of the enum FEMElemType::type
+	 */
+	virtual FEMElemType::type getFEMType() const { return FEMQUADTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
@@ -98,8 +105,8 @@ protected:
 
 }; /* class */
 
-template <unsigned NNODES>
-const unsigned TemplateQuad<NNODES>::_edge_nodes[4][2] =
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+const unsigned TemplateQuad<NNODES, FEMQUADTYPE>::_edge_nodes[4][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1

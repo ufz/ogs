@@ -33,6 +33,32 @@ struct MshElemType
 };
 
 /**
+ * \brief Types of mesh elements supported by OpenGeoSys.
+ */
+struct FEMElemType
+{
+	enum type {
+		INVALID,
+		EDGE2,
+		EDGE3,
+		TRI3,
+		TRI6,
+		QUAD4,
+		QUAD8,
+		QUAD9,
+		TET4,
+		TET10,
+		HEX8,
+		HEX20,
+		HEX27,
+		PRISM6,
+		PRISM15,
+		PRISM18,
+		PYRAMID5
+	};
+};
+
+/**
  * \brief Describes a mesh quality criteria.
  */
 struct MshQualityType
