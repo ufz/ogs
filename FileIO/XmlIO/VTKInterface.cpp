@@ -176,11 +176,15 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			std::cout << "finished." << std::endl;
 			std::cout << "Nr. Nodes: " << nodes.size() << std::endl;
 			std::cout << "Nr. Elements: " << elements.size() << std::endl;
+			delete [] buffer;
 			return new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name), nodes, elements);
 		}
-		else
+		else {
 			std::cout << "Error in VTKInterface::readVTUFile() - Number of nodes and elements not specified." << std::endl;
+			delete [] buffer;
+		}
 	}
+	delete [] buffer;
 	return NULL;
 }
 
