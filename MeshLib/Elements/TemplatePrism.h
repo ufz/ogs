@@ -119,7 +119,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplatePrism.hpp"
+#include "TemplatePrism.tpp"
 
 #endif /* TEMPLATEPRISM_H_ */
 

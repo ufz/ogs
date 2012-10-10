@@ -120,7 +120,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateTet.hpp"
+#include "TemplateTet.tpp"
 
 #endif /* TEMPLATETET_H_ */
 

@@ -4,13 +4,10 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  *
- * \file TemplateEdge.hpp
+ * \file TemplateEdge.tpp
  *
  *  Created on  Sep 27, 2012 by Thomas Fischer
  */
-
-#ifndef TEMPLATEEDGE_HPP_
-#define TEMPLATEEDGE_HPP_
 
 namespace MeshLib {
 
@@ -38,4 +35,3 @@ TemplateEdge<ORDER,NNODES>::~TemplateEdge()
 
 } // namespace MeshLib
 
-#endif /* TEMPLATEEDGE_HPP_ */

@@ -117,7 +117,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplatePyramid.hpp"
+#include "TemplatePyramid.tpp"
 
 #endif /* TEMPLATEPYRAMID_H_ */
 

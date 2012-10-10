@@ -122,7 +122,7 @@ const unsigned TemplateTri<ORDER, NNODES>::_edge_nodes[3][2] = {
 
 } /* namespace */
 
-#include "TemplateTri.hpp"
+#include "TemplateTri.tpp"
 
 #endif /* TEMPLATETRI_H_ */
 

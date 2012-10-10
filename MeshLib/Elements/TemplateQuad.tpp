@@ -5,12 +5,11 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file Quad.hpp
+ * \file Quad.tpp
  *
  * Created on 2012-05-02 by Karsten Rink
  */
 
-//#include "Quad.h"
 #include "Node.h"
 #include "Tri.h"
 

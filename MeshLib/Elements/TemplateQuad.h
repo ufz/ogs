@@ -109,7 +109,7 @@ const unsigned TemplateQuad<ORDER,NNODES>::_edge_nodes[4][2] =
 
 } /* namespace */
 
-#include "TemplateQuad.hpp"
+#include "TemplateQuad.tpp"
 
 #endif /* TEMPLATEQUAD_H_ */
 

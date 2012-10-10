@@ -114,7 +114,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateHex.hpp"
+#include "TemplateHex.tpp"
 
 #endif /* TEMPLATEHEX_H_ */
 

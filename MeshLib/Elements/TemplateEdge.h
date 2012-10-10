@@ -131,7 +131,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateEdge.hpp"
+#include "TemplateEdge.tpp"
 
 #endif /* TEMPLATEEDGE_H_ */
 

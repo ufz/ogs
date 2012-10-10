@@ -4,13 +4,10 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  *
- * \file TemplateTri.hpp
+ * \file TemplateTri.tpp
  *
  *  Created on  Sep 27, 2012 by Thomas Fischer
  */
-
-#ifndef TEMPLATETRI_HPP_
-#define TEMPLATETRI_HPP_
 
 namespace MeshLib {
 
@@ -97,4 +94,3 @@ unsigned TemplateTri<ORDER,NNODES>::identifyFace(Node* nodes[3]) const
 
 } // namespace MeshLib
 
-#endif /* TEMPLATETRI_HPP_ */
