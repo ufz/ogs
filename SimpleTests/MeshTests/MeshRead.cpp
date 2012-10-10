@@ -9,6 +9,7 @@
 #include "RunTime.h"
 #include "StringTools.h"
 #include "tclap/CmdLine.h"
+#include "LogogSimpleFormatter.h"
 
 // BaseLib/logog
 #include "logog.hpp"
@@ -26,7 +27,9 @@
 int main(int argc, char *argv[])
 {
 	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
+	logog::Cout *logogCout(new logog::Cout);
+	logogCout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Simple mesh loading test", ' ', "0.1");
 
