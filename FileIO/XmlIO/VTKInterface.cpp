@@ -45,7 +45,7 @@ VTKInterface::~VTKInterface()
 
 MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 {
-	std::cout << "Reading OGS legacy mesh ... " << std::endl;
+	std::cout << "Reading OGS mesh ... " << std::endl;
 	std::ifstream in(file_name.c_str());
 	if (in.fail())
 	{
