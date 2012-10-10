@@ -47,7 +47,7 @@ const unsigned TemplateHex<NNODES,FEMHEXTYPE>::_edge_nodes[12][2] =
 };
 
 template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-TemplateHex<NNODES,FEMHEXTYPE>::TemplateHex(Node* nodes[8], unsigned value)
+TemplateHex<NNODES,FEMHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;

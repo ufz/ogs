@@ -51,7 +51,7 @@ public:
 	TemplateHex(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
-	TemplateHex(const TemplateHex<NNODES,FEMHEXTYPE> &hex);
+	TemplateHex(const TemplateHex &hex);
 
 	/// Destructor
 	virtual ~TemplateHex();

@@ -46,7 +46,7 @@ class TemplatePrism : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplatePrism(Node* nodes[6], unsigned value = 0);
+	TemplatePrism(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Copy constructor
 	TemplatePrism(const TemplatePrism &prism);

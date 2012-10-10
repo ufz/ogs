@@ -47,7 +47,7 @@ template <unsigned NNODES, FEMElemType::type FEMPRISMTYPE>
 const unsigned TemplatePrism<NNODES,FEMPRISMTYPE>::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
 template <unsigned NNODES, FEMElemType::type FEMPRISMTYPE>
-TemplatePrism<NNODES,FEMPRISMTYPE>::TemplatePrism(Node* nodes[6], unsigned value)
+TemplatePrism<NNODES,FEMPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;
