@@ -18,11 +18,6 @@
 
 namespace MeshLib {
 
-/*
-Element::Element(Node** nodes, MshElemType::type type, unsigned value)
-{
-}
-*/
 Element::Element(unsigned value)
 	: _nodes(NULL), _value(value), _neighbors(NULL)
 {

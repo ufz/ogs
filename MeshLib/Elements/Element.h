@@ -124,7 +124,11 @@ public:
 	 */
 	virtual FEMElemType::type getFEMType() const = 0;
 
-	/// Get the value for this element.
+	/**
+	 * Get the value for this element. The value can be used to store a link
+	 * to external information (for instance an index of a field) like material groups.
+	 * @return
+	 */
 	unsigned getValue() const { return _value; };
 
 	/// Returns true if elem is a neighbour of this element and false otherwise.
@@ -172,6 +176,9 @@ protected:
 
 
 	Node** _nodes;
+	/**
+	 * this is an index for external additional information like materials
+	 */
 	unsigned _value;
 	Element** _neighbors;
 
