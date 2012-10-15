@@ -44,7 +44,7 @@ public:
 	/// Add an element to the mesh.
 	void addElement(Element* elem);
 
-	/// Returns the dimension of the mesh (determinded by the maximum dimension over all elements).
+	/// Returns the dimension of the mesh (determined by the maximum dimension over all elements).
 	unsigned getDimension() const { return _mesh_dimension; };
 
 	/// Get the minimum edge length over all elements of the mesh.
