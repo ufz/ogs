@@ -79,8 +79,28 @@ public:
 	bool containsPoint(double x, double y, double z, double eps =
 					std::numeric_limits<double>::epsilon()) const;
 
+	/**
+	 * returns a point that coordinates are minimal for each dimension
+	 * for the given point set
+	 * @return a point
+	 */
 	GeoLib::Point const& getMinPoint () const { return _min_pnt; }
+
+	/**
+	 * returns a point that coordinates are maximal for each dimension
+	 * within the given point set
+	 * @return a point
+	 */
 	GeoLib::Point const& getMaxPoint () const { return _max_pnt; }
+
+	/**
+	 * Method checks if the given AABB object is contained within the
+	 * AABB represented by this object.
+	 * @param other the AABB to test with
+	 * @return true if the other AABB is contained in the AABB
+	 * represented by this object
+	 */
+	bool containsAABB (AABB const& other) const;
 
 protected:
 	GeoLib::Point _min_pnt;

@@ -86,4 +86,15 @@ bool AABB::containsPoint (double x, double y, double z, double eps) const
 	} else return false;
 }
 
+bool AABB::containsAABB (AABB const& other_aabb) const
+{
+	GeoLib::Point const& min_other(other_aabb.getMinPoint());
+	GeoLib::Point const& max_other(other_aabb.getMaxPoint());
+	for (unsigned k(0); k<3; k++) {
+		if (_min_pnt[k] > min_other[k] || max_other[k] > _max_pnt[k])
+			return false;
+	}
+	return true;
+}
+
 } // end namespace GeoLib
