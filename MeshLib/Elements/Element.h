@@ -131,6 +131,12 @@ public:
 	 */
 	unsigned getValue() const { return _value; };
 
+	/**
+	 * Set the index value for external information.
+	 * @param value an unsigned value for linking with external information
+	 */
+	void setValue(unsigned value) { _value = value; }
+
 	/// Returns true if elem is a neighbour of this element and false otherwise.
 	bool hasNeighbor(Element* elem) const;
 
