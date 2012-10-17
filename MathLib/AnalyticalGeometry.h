@@ -94,6 +94,10 @@ void rotatePoints(Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pn
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
 
+bool isPointInTriangle(GeoLib::Point const& p,
+				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+				double eps = std::numeric_limits<double>::epsilon());
+
 /**
  * test for intersections of the line segments of the Polyline
  * @param ply the polyline

@@ -150,6 +150,44 @@ bool isPointInTriangle (const GeoLib::Point* p,
 	return isPointInTriangle (p->getCoords(), a->getCoords(), b->getCoords(), c->getCoords());
 }
 
+double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b,
+				GeoLib::Point const& c)
+{
+	const double u[3] = {c[0]-a[0], c[1]-a[1], c[2]-a[2]};
+	const double v[3] = {b[0]-a[0], b[1]-a[1], b[2]-a[2]};
+	double w[3];
+	MathLib::crossProd(u, v, w);
+	return 0.5 * sqrt(MathLib::scpr<double,3>(w,w));
+}
+
+bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a,
+				GeoLib::Point const& b, GeoLib::Point const& c,
+				double eps)
+{
+	const unsigned dim(3);
+	MathLib::Matrix<double> m (dim,dim);
+	for (unsigned i(0); i<dim; i++) m(i,0) = b[i] - a[i];
+	for (unsigned i(0); i<dim; i++) m(i,1) = c[i] - a[i];
+	for (unsigned i(0); i<dim; i++) m(i,2) = p[i] - a[i];
+
+	// point p is in the same plane as the triangle if and only if
+	// the following determinate of the 3x3 matrix equals zero (up to an eps)
+	double det3x3(m(0,0) * (m(1,1) * m(2,2) - m(2,1) * m(1,2))
+					- m(1,0) * (m(2,1) * m(0,2) - m(0,1) * m(2,2))
+					+ m(2,0) * (m(0,1) * m(1,2) - m(1,1) * m(0,2)));
+	if (fabs(det3x3) > eps)
+		return false;
+
+	double total_area(getOrientedTriArea(a, b, c));
+	double abp_area(getOrientedTriArea(a, b, p));
+	double bcp_area(getOrientedTriArea(b, c, p));
+	double cap_area(getOrientedTriArea(c, a, p));
+
+	if (fabs(abp_area + bcp_area + cap_area - total_area) < eps)
+		return true;
+	return false;
+}
+
 // NewellPlane from book Real-Time Collision detection p. 494
 void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, Vector &plane_normal,
 		double& d)
