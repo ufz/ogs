@@ -76,6 +76,7 @@
 #include "Node.h"
 #include "MshEditor.h"
 #include "readMeshFromFile.h"
+#include "Mesh2MeshPropertyInterpolation.h"
 
 //test
 #include "VtkMeshConverter.h"
@@ -1122,12 +1123,14 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	unsigned height(100), width(100), edge_length(1);
-	unsigned length (height*width);
-	double* values (new double[length]);
-	const double origin[3] = {0,0,0};
-	for (unsigned i=0; i<length; ++i) values[i]=0;
-	_meshModels->addMesh( VtkMeshConverter::convertImgToMesh(values, origin, height, width, edge_length, MshElemType::QUAD, UseIntensityAs::MATERIAL) );
+	const std::vector<MeshLib::Mesh*>& meshes(_project.getMeshObjects());
+	// read properties
+	std::vector<double> src_properties;
+
+	// adapt interpolation
+	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(meshes[0], &src_properties);
+	std::vector<double> dest_properties(meshes[1]->getNElements());
+	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(meshes[1]), dest_properties);
 
 /*
 	const double dir[3] = {0, 0, 1};
