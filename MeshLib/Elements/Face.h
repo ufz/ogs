@@ -13,8 +13,12 @@
 #ifndef FACE_H_
 #define FACE_H_
 
+#include <limits>
+
 #include "Element.h"
 
+// GeoLib
+#include "Point.h"
 
 namespace MeshLib {
 
@@ -47,6 +51,14 @@ public:
 
 	/// Destructor
 	virtual ~Face();
+
+	/**
+	 * Check if the 3d GeoLib::Point is inside of the element.
+	 * @param pnt the 3d GeoLib::Point object
+	 * @param eps tolerance for numerical algorithm used or computing the property
+	 * @return true if the point is inside the element, false otherwise
+	 */
+	virtual bool isPntInside(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const = 0;
 
 	/**
 	 * This method is pure virtual and is inherited from class @sa Element.

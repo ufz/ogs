@@ -81,6 +81,14 @@ public:
 	bool isEdge(unsigned idx1, unsigned idx2) const;
 
 	/**
+	 * Check if the 3d GeoLib::Point is inside of the element.
+	 * @param pnt the 3d GeoLib::Point object
+	 * @param eps tolerance for numerical algorithm used or computing the property
+	 * @return true if the point is inside the element, false otherwise
+	 */
+	virtual bool isPntInside(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+
+	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateTri instance.
 	 * @return an exact copy of the object
 	 */

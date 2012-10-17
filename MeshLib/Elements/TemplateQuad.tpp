@@ -13,7 +13,9 @@
 #include "Node.h"
 #include "Tri.h"
 
+// MathLib
 #include "MathTools.h"
+#include "AnalyticalGeometry.h"
 
 namespace MeshLib {
 
@@ -68,6 +70,13 @@ bool TemplateQuad<NNODES,FEMQUADTYPE>::isEdge(unsigned idx1, unsigned idx2) cons
 		if (_edge_nodes[i][1]==idx1 && _edge_nodes[i][0]==idx2) return true;
 	}
 	return false;
+}
+
+template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+bool TemplateQuad<NNODES,FEMQUADTYPE>::isPntInside(GeoLib::Point const& pnt, double eps) const
+{
+	return (MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps) ||
+					MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[2], *_nodes[3], eps));
 }
 
 template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>

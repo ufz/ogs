@@ -9,6 +9,9 @@
  *  Created on  Sep 27, 2012 by Thomas Fischer
  */
 
+// MathLib
+#include "AnalyticalGeometry.h"
+
 namespace MeshLib {
 
 template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
@@ -53,6 +56,12 @@ bool TemplateTri<NNODES,FEMTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 		if (_edge_nodes[i][1]==idx1 && _edge_nodes[i][0]==idx2) return true;
 	}
 	return false;
+}
+
+template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
+bool TemplateTri<NNODES,FEMTRITYPE>::isPntInside(GeoLib::Point const& pnt, double eps) const
+{
+	return MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }
 
 template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
