@@ -39,7 +39,7 @@ namespace MeshLib {
  *        0
  * @endcode
  */
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
 class TemplatePyramid : public Cell
 {
 public:
@@ -81,9 +81,9 @@ public:
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum FEMElemType::type
+	 * @return a value of the enum CellType::type
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMPYRAMIDTYPE; }
+	virtual CellType::type getCellType() const { return CELLPYRAMIDTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

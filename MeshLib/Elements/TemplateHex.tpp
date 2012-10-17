@@ -18,8 +18,8 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-const unsigned TemplateHex<NNODES,FEMHEXTYPE>::_face_nodes[6][4] =
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_face_nodes[6][4] =
 {
 	{0, 3, 2, 1}, // Face 0
 	{0, 1, 5, 4}, // Face 1
@@ -29,8 +29,8 @@ const unsigned TemplateHex<NNODES,FEMHEXTYPE>::_face_nodes[6][4] =
 	{4, 5, 6, 7}  // Face 5
 };
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-const unsigned TemplateHex<NNODES,FEMHEXTYPE>::_edge_nodes[12][2] =
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_edge_nodes[12][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -46,8 +46,8 @@ const unsigned TemplateHex<NNODES,FEMHEXTYPE>::_edge_nodes[12][2] =
 	{4, 7}  // Edge 11
 };
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-TemplateHex<NNODES,FEMHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value)
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;
@@ -59,8 +59,8 @@ TemplateHex<NNODES,FEMHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value)
 	this->_volume = this->computeVolume();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-TemplateHex<NNODES,FEMHEXTYPE>::TemplateHex(const TemplateHex<NNODES,FEMHEXTYPE> &hex)
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(const TemplateHex<NNODES,CELLHEXTYPE> &hex)
 	: Cell(hex.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -74,13 +74,13 @@ TemplateHex<NNODES,FEMHEXTYPE>::TemplateHex(const TemplateHex<NNODES,FEMHEXTYPE>
 	_volume = hex.getVolume();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-TemplateHex<NNODES,FEMHEXTYPE>::~TemplateHex()
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+TemplateHex<NNODES,CELLHEXTYPE>::~TemplateHex()
 {
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-double TemplateHex<NNODES,FEMHEXTYPE>::computeVolume()
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+double TemplateHex<NNODES,CELLHEXTYPE>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[4]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[0]->getCoords())
 		 + MathLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[3]->getCoords(), _nodes[1]->getCoords(), _nodes[0]->getCoords())
@@ -90,8 +90,8 @@ double TemplateHex<NNODES,FEMHEXTYPE>::computeVolume()
 		 + MathLib::calcTetrahedronVolume(_nodes[3]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[2]->getCoords());
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-const Element* TemplateHex<NNODES,FEMHEXTYPE>::getFace(unsigned i) const
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+const Element* TemplateHex<NNODES,CELLHEXTYPE>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
 	{
@@ -105,8 +105,8 @@ const Element* TemplateHex<NNODES,FEMHEXTYPE>::getFace(unsigned i) const
 	return NULL;
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-bool TemplateHex<NNODES,FEMHEXTYPE>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+bool TemplateHex<NNODES,CELLHEXTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<12; i++)
 	{
@@ -116,14 +116,14 @@ bool TemplateHex<NNODES,FEMHEXTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-Element* TemplateHex<NNODES,FEMHEXTYPE>::clone() const
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+Element* TemplateHex<NNODES,CELLHEXTYPE>::clone() const
 {
-	return new TemplateHex<NNODES,FEMHEXTYPE>(*this);
+	return new TemplateHex<NNODES,CELLHEXTYPE>(*this);
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-unsigned TemplateHex<NNODES,FEMHEXTYPE>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+unsigned TemplateHex<NNODES,CELLHEXTYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<6; i++)
 	{
@@ -138,8 +138,8 @@ unsigned TemplateHex<NNODES,FEMHEXTYPE>::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
-Element* TemplateHex<NNODES,FEMHEXTYPE>::reviseElement() const
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
+Element* TemplateHex<NNODES,CELLHEXTYPE>::reviseElement() const
 {
 	std::vector<size_t> collapsed_edges;
 	for (size_t edge(0); edge<getNEdges(); edge++) {
@@ -149,7 +149,7 @@ Element* TemplateHex<NNODES,FEMHEXTYPE>::reviseElement() const
 	}
 
 	if (collapsed_edges.size() == 1) {
-		std::cerr << "[TemplateHex<NNODES,FEMHEXTYPE>::reviseElement()] collapsing of one edge in hexahedron not handled" << std::endl;
+		std::cerr << "[TemplateHex<NNODES,CELLHEXTYPE>::reviseElement()] collapsing of one edge in hexahedron not handled" << std::endl;
 		return NULL;
 	}
 

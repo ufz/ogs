@@ -30,7 +30,7 @@ namespace MeshLib {
  *  0--------1
  * @endcode
  */
-template<unsigned NNODES, FEMElemType::type FEMEDGETYPE>
+template<unsigned NNODES, CellType::type CELLEDGETYPE>
 class TemplateEdge : public Element
 {
 public:
@@ -89,7 +89,7 @@ public:
 	 * Get the type of the element in context of the finite element method.
 	 * @return a value of the enum FEMElemType::type
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMEDGETYPE; }
+	virtual CellType::type getCellType() const { return CELLEDGETYPE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const
@@ -101,7 +101,7 @@ public:
 
 	virtual Element* clone() const
 	{
-		return new TemplateEdge<NNODES,FEMEDGETYPE>(*this);
+		return new TemplateEdge<NNODES,CELLEDGETYPE>(*this);
 	}
 
 	/**

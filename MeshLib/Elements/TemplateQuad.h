@@ -33,7 +33,7 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
+template <unsigned NNODES, CellType::type CELLQUADTYPE>
 class TemplateQuad : public Face
 {
 public:
@@ -66,9 +66,9 @@ public:
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum FEMElemType::type
+	 * @return a value of the enum CellType::type
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMQUADTYPE; }
+	virtual CellType::type getCellType() const { return CELLQUADTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
@@ -105,8 +105,8 @@ protected:
 
 }; /* class */
 
-template <unsigned NNODES, FEMElemType::type FEMQUADTYPE>
-const unsigned TemplateQuad<NNODES, FEMQUADTYPE>::_edge_nodes[4][2] =
+template <unsigned NNODES, CellType::type CELLQUADTYPE>
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1

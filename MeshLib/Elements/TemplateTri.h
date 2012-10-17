@@ -40,7 +40,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
+template <unsigned NNODES, CellType::type CELLTRITYPE>
 class TemplateTri : public Face
 {
 public:
@@ -73,9 +73,9 @@ public:
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum FEMElemType::type
+	 * @return a value of the enum CellType::type
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMTRITYPE; }
+	virtual CellType::type getCellType() const { return CELLTRITYPE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const;
@@ -86,7 +86,7 @@ public:
 	 */
 	virtual Element* clone() const
 	{
-		return new TemplateTri<NNODES,FEMTRITYPE>(*this);
+		return new TemplateTri<NNODES,CELLTRITYPE>(*this);
 	}
 
 
@@ -120,8 +120,8 @@ protected:
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-const unsigned TemplateTri<NNODES,FEMTRITYPE>::_edge_nodes[3][2] = {
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
 		{0, 1}, // Edge 0
 		{1, 2}, // Edge 1
 		{0, 2}  // Edge 2

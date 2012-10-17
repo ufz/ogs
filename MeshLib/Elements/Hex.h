@@ -15,7 +15,7 @@
 #include "TemplateHex.h"
 
 namespace MeshLib {
-typedef TemplateHex<8, FEMElemType::HEX8> Hex;
+typedef TemplateHex<8, CellType::HEX8> Hex;
 }
 
 #endif /* HEX_H_ */

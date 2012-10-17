@@ -122,7 +122,7 @@ public:
 	 * Get the type of the element in context of the finite element method.
 	 * @return a value of the enum FEMElemType::type
 	 */
-	virtual FEMElemType::type getFEMType() const = 0;
+	virtual CellType::type getCellType() const = 0;
 
 	/**
 	 * Get the value for this element. The value can be used to store a link
