@@ -45,6 +45,17 @@ public:
 	 * */
 	AABB ( const std::vector<GeoLib::Point*>* points );
 
+	template <typename Iterator>
+	AABB(Iterator beg, Iterator end)
+	{
+		for (Iterator it(beg); it != end; it++) {
+			for (std::size_t k(0); k<3; k++) {
+				if ((*it)[k] < _min_pnt[k]) _min_pnt[k] = (*it)[k];
+				if (_max_pnt[k] < (*it)[k]) _max_pnt[k] = (*it)[k];
+			}
+		}
+	}
+
 	void update (GeoLib::Point const & pnt);
 	/**
 	 * update axis aligned bounding box
