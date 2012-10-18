@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES(
 )
 
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
+SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
 
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
