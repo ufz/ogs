@@ -7,13 +7,13 @@ ENDMACRO()
 # Returns a list of source files (*.h and *.cpp) in SOURCE_FILES and creates a Visual
 # Studio folder. A (relative) subdirectory can be passed as second parameter (optional).
 MACRO(GET_SOURCE_FILES SOURCE_FILES)
-	
+
 	IF(${ARGC} EQUAL 2)
 		SET(DIR "${ARGV1}")
 	ELSE()
 		SET(DIR ".")
 	ENDIF()
-	
+
 	# Get all files in the directory
 	FILE(GLOB GET_SOURCE_FILES_HEADERS ${DIR}/*.h)
 	FILE(GLOB GET_SOURCE_FILES_SOURCES ${DIR}/*.cpp)
@@ -27,10 +27,24 @@ MACRO(GET_SOURCE_FILES SOURCE_FILES)
 	ELSE()
 		SET(DIR "")
 	ENDIF()
-	
+
 	GET_CURRENT_SOURCE_SUBDIRECTORY(DIRECTORY)
 	SOURCE_GROUP( "${DIRECTORY}${DIR}" FILES
 		${GET_SOURCE_FILES_HEADERS}
 		${GET_SOURCE_FILES_SOURCES})
-	
+
+ENDMACRO()
+
+# Creates one ctest for each googletest found in source files passed as arguments
+# number two onwards. Argument one specifies the testrunner executable.
+MACRO(ADD_GOOGLE_TESTS executable)
+	FOREACH ( source ${ARGN} )
+		FILE(READ "${source}" contents)
+		STRING(REGEX MATCHALL "TEST_?F?\\(([A-Za-z_0-9 ,]+)\\)" found_tests ${contents})
+		FOREACH(hit ${found_tests})
+			STRING(REGEX REPLACE ".*\\(([A-Za-z_0-9]+)[, ]*([A-Za-z_0-9]+)\\).*" "\\1.\\2" test_name ${hit})
+			ADD_TEST(${test_name} ${executable}  --gtest_output=xml --gtest_filter=${test_name} ${MI3CTestingDir})
+			# message ("Adding test: ${test_name}")
+		ENDFOREACH(hit)
+	ENDFOREACH()
 ENDMACRO()
