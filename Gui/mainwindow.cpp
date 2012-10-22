@@ -74,12 +74,14 @@
 // MeshLib
 #include "Mesh.h"
 #include "Node.h"
+#include "Elements/Element.h"
 #include "MshEditor.h"
 #include "readMeshFromFile.h"
 #include "Mesh2MeshPropertyInterpolation.h"
 
 //test
 #include "VtkMeshConverter.h"
+#include "VtkRaster.h"
 
 // Qt includes
 #include <QDesktopWidget>
@@ -1124,13 +1126,51 @@ void MainWindow::showVisalizationPrefsDialog()
 void MainWindow::FEMTestStart()
 {
 	const std::vector<MeshLib::Mesh*>& meshes(_project.getMeshObjects());
-	// read properties
-	std::vector<double> src_properties;
 
-	// adapt interpolation
+	// read properties from asc file
+	std::string fname_asc("/mnt/visdata/tom/data/Influins/Mapping/Domain_regular_Kf.asc");
+	double x0(0.0), y0(0.0), delta(0.0);
+	unsigned n_cols(0), n_rows(0);
+	float* img_data(VtkRaster::loadDataFromASC(fname_asc, x0, y0, n_cols, n_rows, delta));
+	std::vector<double> src_properties(n_cols*n_rows);
+	for (unsigned row(0); row<n_rows; row++) {
+		for (unsigned col(0); col<n_cols; col++) {
+			src_properties[row*n_cols+col] = img_data[2*(row*n_cols+col)];
+		}
+	}
+	delete [] img_data;
+
+	std::vector<size_t> src_perm(n_cols*n_rows);
+	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
+	BaseLib::Quicksort<double>(src_properties, 0, n_cols*n_rows, src_perm);
+
+	// reset materials in source mesh
+	const size_t n_mesh_elements(meshes[0]->getNElements());
+	for (size_t k(0); k<n_mesh_elements; k++) {
+		const_cast<MeshLib::Element*>(meshes[0]->getElement(src_perm[k]))->setValue(k);
+	}
+
+	// do the interpolation
 	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(meshes[0], &src_properties);
 	std::vector<double> dest_properties(meshes[1]->getNElements());
 	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(meshes[1]), dest_properties);
+
+	std::vector<size_t> dest_perm(meshes[1]->getNElements());
+	for (size_t k(0); k<meshes[1]->getNElements(); k++) dest_perm[k] = k;
+	BaseLib::Quicksort<double>(dest_properties, 0, meshes[1]->getNElements(), dest_perm);
+
+	// reset materials in destination mesh
+	const size_t n_dest_mesh_elements(meshes[1]->getNElements());
+	for (size_t k(0); k<n_dest_mesh_elements; k++) {
+		const_cast<MeshLib::Element*>(meshes[1]->getElement(dest_perm[k]))->setValue(k);
+	}
+
+	FileIO::MeshIO mesh_writer;
+	mesh_writer.setPrecision(12);
+	mesh_writer.setMesh(meshes[0]);
+	mesh_writer.writeToFile("/mnt/visdata/tom/data/Influins/Mapping/SourceMeshWithMat.msh");
+	mesh_writer.setMesh(meshes[1]);
+	mesh_writer.writeToFile("/mnt/visdata/tom/data/Influins/Mapping/DestMeshWithMat.msh");
 
 /*
 	const double dir[3] = {0, 0, 1};

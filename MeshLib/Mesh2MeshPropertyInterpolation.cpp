@@ -10,6 +10,7 @@
  */
 
 #include <vector>
+#include <fstream>
 
 #include "Mesh2MeshPropertyInterpolation.h"
 
@@ -21,6 +22,7 @@
 
 // MeshLib
 #include "Mesh.h"
+#include "Node.h"
 #include "Elements/Face.h"
 
 namespace MeshLib {
@@ -85,7 +87,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 	// looping over the destination elements and interpolate properties
 	// from dest_node_properties
 	std::vector<MeshLib::Element*> const& dest_elements(dest_mesh->getElements());
-	const size_t n_dest_elements(dest_elements->size());
+	const size_t n_dest_elements(dest_elements.size());
 	for (size_t k(0); k<n_dest_elements; k++) {
 		const size_t n_nodes_dest_element(dest_elements[k]->getNNodes());
 		dest_properties[k] = dest_node_properties[dest_elements[k]->getNode(0)->getID()];
@@ -97,16 +99,16 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 	}
 }
 
-void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties)
+void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const
 {
 	std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
 	const size_t n_src_nodes(src_nodes.size());
 
 	for (size_t k(0); k<n_src_nodes; k++) {
 		const size_t n_con_elems (src_nodes[k]->getNElements());
-		interpolated_node_properties[k] = _src_properties[(src_nodes[k]->getElement(0))->getValue()];
+		interpolated_node_properties[k] = (*_src_properties)[(src_nodes[k]->getElement(0))->getValue()];
 		for (size_t j(1); j<n_con_elems; j++) {
-			interpolated_node_properties[k] += _src_properties[(src_nodes[k]->getElement(j))->getValue()];
+			interpolated_node_properties[k] += (*_src_properties)[(src_nodes[k]->getElement(j))->getValue()];
 		}
 		interpolated_node_properties[k] /= n_con_elems;
 	}

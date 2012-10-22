@@ -37,12 +37,12 @@ public:
 	virtual ~Mesh2MeshPropertyInterpolation();
 
 	/**
-	 * Calculates entries of property vector and sets appropriate indices in the
+	 * Calculates entries for the property vector and sets appropriate indices in the
 	 * mesh elements.
 	 * @param mesh the mesh the property information will be calculated and set via
 	 * weighted interpolation
-	 * @param properties at input an empty vector, at output interpolated property
-	 * values
+	 * @param properties at input a vector of length equal to the number of elements,
+	 * 	at output interpolated property values
 	 * @return true if the operation was successful, false on error
 	 */
 	bool setPropertiesForMesh(Mesh *mesh, std::vector<double>& properties) const;
