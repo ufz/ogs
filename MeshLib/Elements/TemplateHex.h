@@ -43,7 +43,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, FEMElemType::type FEMHEXTYPE>
+template <unsigned NNODES, CellType::type CELLHEXTYPE>
 class TemplateHex : public Cell
 {
 public:
@@ -87,7 +87,7 @@ public:
 	 * Method returns the FEM type of the element.
 	 * @return
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMHEXTYPE; }
+	virtual CellType::type getCellType() const { return CELLHEXTYPE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

@@ -41,7 +41,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, FEMElemType::type FEMPRISMTYPE>
+template <unsigned NNODES, CellType::type CELLPRISMTYPE>
 class TemplatePrism : public Cell
 {
 public:
@@ -83,9 +83,9 @@ public:
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum FEMElemType::type
+	 * @return a value of the enum CellType::type
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMPRISMTYPE; };
+	virtual CellType::type getCellType() const { return CELLPRISMTYPE; };
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

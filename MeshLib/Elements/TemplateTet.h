@@ -38,7 +38,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, FEMElemType::type FEMTETTYPE>
+template <unsigned NNODES, CellType::type CELLTETTYPE>
 class TemplateTet : public Cell
 {
 public:
@@ -80,9 +80,9 @@ public:
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum FEMElemType::type
+	 * @return a value of the enum CellType::type
 	 */
-	virtual FEMElemType::type getFEMType() const { return FEMTETTYPE; }
+	virtual CellType::type getCellType() const { return CELLTETTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;

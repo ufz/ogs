@@ -19,8 +19,8 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-const unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::_face_nodes[5][4] =
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_face_nodes[5][4] =
 {
 	{0, 1, 4, 99}, // Face 0
 	{1, 2, 4, 99}, // Face 1
@@ -29,8 +29,8 @@ const unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::_face_nodes[5][4] =
 	{0, 3, 2,  1}  // Face 4
 };
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-const unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::_edge_nodes[8][2] =
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_edge_nodes[8][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -42,11 +42,11 @@ const unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::_edge_nodes[8][2] =
 	{3, 4}  // Edge 7
 };
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-const unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], unsigned value)
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
 	_nodes = nodes;
@@ -58,8 +58,8 @@ TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], uns
 	this->_volume = this->computeVolume();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::TemplatePyramid(const TemplatePyramid<NNODES,FEMPYRAMIDTYPE> &pyramid)
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(const TemplatePyramid<NNODES,CELLPYRAMIDTYPE> &pyramid)
 	: Cell(pyramid.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -75,20 +75,20 @@ TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::TemplatePyramid(const TemplatePyramid<NN
 	_volume = pyramid.getVolume();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::~TemplatePyramid()
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::~TemplatePyramid()
 {
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-double TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::computeVolume()
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+double TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[4]->getCoords())
 		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords(), _nodes[4]->getCoords());
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-const Element* TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::getFace(unsigned i) const
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+const Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
 	{
@@ -106,8 +106,8 @@ const Element* TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::getFace(unsigned i) const
 	return NULL;
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::getNFaceNodes(unsigned i) const
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::getNFaceNodes(unsigned i) const
 {
 	if (i<5)
 		return _n_face_nodes[i];
@@ -115,8 +115,8 @@ unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::getNFaceNodes(unsigned i) const
 	return 0;
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-bool TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+bool TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<8; i++)
 	{
@@ -126,14 +126,14 @@ bool TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::isEdge(unsigned idx1, unsigned idx2
 	return false;
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-Element* TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::clone() const
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::clone() const
 {
-	return new TemplatePyramid<NNODES,FEMPYRAMIDTYPE>(*this);
+	return new TemplatePyramid<NNODES,CELLPYRAMIDTYPE>(*this);
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<5; i++)
 	{
@@ -148,8 +148,8 @@ unsigned TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::identifyFace(Node* nodes[3]) co
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMPYRAMIDTYPE>
-Element* TemplatePyramid<NNODES,FEMPYRAMIDTYPE>::reviseElement() const
+template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::reviseElement() const
 {
 	// try to create tetrahedron
 	if (_nodes[_edge_nodes[0][0]] == _nodes[_edge_nodes[0][1]]

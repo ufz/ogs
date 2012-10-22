@@ -14,8 +14,8 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-TemplateTri<NNODES,FEMTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value) :
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value) :
 	Face(value)
 {
 	_nodes = nodes;
@@ -25,8 +25,8 @@ TemplateTri<NNODES,FEMTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value)
 	this->_area = this->computeVolume();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-TemplateTri<NNODES,FEMTRITYPE>::TemplateTri(const TemplateTri<NNODES,FEMTRITYPE> &tri) :
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE> &tri) :
 	Face(tri.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -43,12 +43,12 @@ TemplateTri<NNODES,FEMTRITYPE>::TemplateTri(const TemplateTri<NNODES,FEMTRITYPE>
 	_area = tri.getArea();
 }
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-TemplateTri<NNODES,FEMTRITYPE>::~TemplateTri()
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+TemplateTri<NNODES,CELLTRITYPE>::~TemplateTri()
 {}
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-bool TemplateTri<NNODES,FEMTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<3; i++)
 	{
@@ -64,8 +64,8 @@ bool TemplateTri<NNODES,FEMTRITYPE>::isPntInside(GeoLib::Point const& pnt, doubl
 	return MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-Element* TemplateTri<NNODES,FEMTRITYPE>::reviseElement() const
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
 {
 	// try to create an edge
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
@@ -85,8 +85,8 @@ Element* TemplateTri<NNODES,FEMTRITYPE>::reviseElement() const
 	return NULL;
 }
 
-template <unsigned NNODES, FEMElemType::type FEMTRITYPE>
-unsigned TemplateTri<NNODES,FEMTRITYPE>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES, CellType::type CELLTRITYPE>
+unsigned TemplateTri<NNODES,CELLTRITYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<3; i++)
 	{

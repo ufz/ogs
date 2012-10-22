@@ -35,7 +35,7 @@ struct MshElemType
 /**
  * \brief Types of mesh elements supported by OpenGeoSys.
  */
-struct FEMElemType
+struct CellType
 {
 	enum type {
 		INVALID,

@@ -16,7 +16,7 @@
 
 namespace MeshLib {
 
-typedef TemplateTri<3,FEMElemType::TRI3> Tri;
+typedef TemplateTri<3,CellType::TRI3> Tri;
 
 }
 
