@@ -72,7 +72,7 @@ public:
 	 */
 	PointVec (const std::string& name, std::vector<Point*>* points,
 	          std::map<std::string, std::size_t>* name_id_map = NULL,
-	          PointType type = PointVec::POINT, double rel_eps = sqrt(std::numeric_limits<double>::min()));
+	          PointType type = PointVec::POINT, double rel_eps = sqrt(std::numeric_limits<double>::epsilon()));
 
 	/** Destructor deletes all Points of this PointVec. */
 	virtual ~PointVec ();

@@ -72,7 +72,7 @@ public:
 	virtual void addPointVec(std::vector<Point*>* points,
 	                         std::string &name,
 	                         std::map<std::string, std::size_t>* pnt_names = NULL,
-	                         double eps = sqrt(std::numeric_limits<double>::min()));
+	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
 	/** copies the pointers to the points in the given vector to the PointVec of the provided name.
 	 * The pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Points at the
