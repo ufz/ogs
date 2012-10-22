@@ -17,29 +17,26 @@
 
 namespace GeoLib
 {
-AABB::AABB ()
+AABB::AABB()
 {
-	for (std::size_t k(0); k < 3; k++)
-	{
+	for (std::size_t k(0); k < 3; k++) {
 		_min_pnt[k] = std::numeric_limits<double>::max();
 		_max_pnt[k] = std::numeric_limits<double>::min();
 	}
 }
 
 AABB::AABB(AABB const& src) :
-	_min_pnt(src._min_pnt.getCoords()), _max_pnt(src._max_pnt.getCoords())
+	_min_pnt(src._min_pnt), _max_pnt(src._max_pnt)
 {}
 
-AABB::AABB ( const std::vector<GeoLib::Point*>* points )
+void AABB::update(GeoLib::Point const& pnt)
 {
-	size_t nPoints (points->size());
-	for (size_t i = 0; i < nPoints; i++)
-		this->update((*(*points)[i])[0], (*(*points)[i])[1], (*(*points)[i])[2]);
-}
-
-void AABB::update (GeoLib::Point const & pnt)
-{
-	update (pnt[0], pnt[1], pnt[2]);
+	for (size_t k(0); k<3; k++) {
+		if (pnt[k] < _min_pnt[k])
+			_min_pnt[k] = pnt[k];
+		if (_max_pnt[k] < pnt[k])
+			_max_pnt[k] = pnt[k];
+	}
 }
 
 void AABB::update (double x, double y, double z)
