@@ -151,7 +151,7 @@ protected:
 	/**
 	 * 2D method - ignores z coordinate. It calculates the location
 	 * of the point relative to the k-th line segment of the polyline.
-	 * (literatur reference:
+	 * (literature reference:
 	 * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
 	 * @param k the number of line segment
 	 * @param pnt the point
