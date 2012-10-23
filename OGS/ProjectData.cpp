@@ -122,7 +122,7 @@ const FEMCondition* ProjectData::getCondition(const std::string &geo_name,
 	for (std::vector<FEMCondition*>::const_iterator it = _cond_vec.begin(); it != _cond_vec.end(); ++it)
 		if ((*it)->getAssociatedGeometryName().compare(geo_name) == 0)
 			if ( ((*it)->getGeoName().compare(cond_name) == 0) &&
-			     ((*it)->getGeoType() == type) )
+			     ((*it)->getGeomType() == type) )
 				return *it;
 
 	std::cout << "Error in ProjectData::getCondition() - No condition found with name \"" <<
@@ -183,7 +183,7 @@ bool ProjectData::removeCondition(const std::string &geo_name,
 	{
 		if ((*it)->getAssociatedGeometryName().compare(geo_name) == 0)
 			if ( ((*it)->getGeoName().compare(cond_name) == 0) &&
-			     ((*it)->getGeoType() == type) )
+			     ((*it)->getGeomType() == type) )
 			{
 				delete *it;
 				_cond_vec.erase(it);

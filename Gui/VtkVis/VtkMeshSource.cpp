@@ -129,7 +129,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		int type(0);
 		const MeshLib::Element* elem (elems[i]);
 
-		switch (elem->getGeoType())
+		switch (elem->getGeomType())
 		{
 		case MshElemType::EDGE:
 			type = 3;
@@ -153,7 +153,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			type = 14;
 			break;
 		default: // if none of the above can be applied
-			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->getGeoType()) << "." << std::endl;
+			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->getGeomType()) << "." << std::endl;
 			return 0;
 		}
 

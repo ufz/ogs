@@ -259,7 +259,7 @@ void XmlCndInterface::writeCondition( QDomDocument doc, QDomElement &listTag, co
 	QDomElement geoTypeTag ( doc.createElement("Type") );
 	geoTag.appendChild(geoTypeTag);
 	QDomText geoTypeText ( doc.createTextNode(
-		QString::fromStdString(GeoLib::convertGeoTypeToString(cond->getGeoType()))) );
+		QString::fromStdString(GeoLib::convertGeoTypeToString(cond->getGeomType()))) );
 	geoTypeTag.appendChild(geoTypeText);
 	QDomElement geoNameTag ( doc.createElement("Name") );
 	geoTag.appendChild(geoNameTag);

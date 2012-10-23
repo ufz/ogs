@@ -76,7 +76,7 @@ public:
 	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.
 	 * @return MshElemType::TETRAHEDRON
 	 */
-	virtual MshElemType::type getGeoType() const { return MshElemType::TETRAHEDRON; }
+	virtual MshElemType::type getGeomType() const { return MshElemType::TETRAHEDRON; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.

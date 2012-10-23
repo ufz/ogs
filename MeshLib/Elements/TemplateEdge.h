@@ -83,7 +83,7 @@ public:
 	 * Method returns the type of the element. In this case EDGE will be returned.
 	 * @return MshElemType::EDGE
 	 */
-	virtual MshElemType::type getGeoType() const { return MshElemType::EDGE; }
+	virtual MshElemType::type getGeomType() const { return MshElemType::EDGE; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.

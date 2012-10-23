@@ -16,7 +16,7 @@
 
 BoundaryCondition::BoundaryCondition(const CBoundaryCondition &bc, const std::string &geometry_name)
 	: FEMCondition(geometry_name, bc.getProcessType(), bc.getProcessPrimaryVariable(),
-	               bc.getGeoType(), bc.getGeoName(),
+	               bc.getGeomType(), bc.getGeoName(),
 	               bc.getProcessDistributionType(), FEMCondition::BOUNDARY_CONDITION)
 {
 	if (this->getProcessDistributionType() == FiniteElement::CONSTANT ||

@@ -15,7 +15,7 @@
 
 SourceTerm::SourceTerm(const CSourceTerm &st, const std::string &geometry_name)
 	: FEMCondition(geometry_name, st.getProcessType(), st.getProcessPrimaryVariable(),
-	               st.getGeoType(), st.getGeoName(),
+	               st.getGeomType(), st.getGeoName(),
 	               st.getProcessDistributionType(), FEMCondition::SOURCE_TERM)
 {
 	if (this->getProcessDistributionType() == FiniteElement::CONSTANT ||

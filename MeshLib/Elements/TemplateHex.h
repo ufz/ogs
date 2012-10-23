@@ -81,7 +81,7 @@ public:
 	 * Method returns the type of the element. In this case HEXAHEDRON will be returned.
 	 * @return MshElemType::HEXAHEDRON
 	 */
-	virtual MshElemType::type getGeoType() const { return MshElemType::HEXAHEDRON; }
+	virtual MshElemType::type getGeomType() const { return MshElemType::HEXAHEDRON; }
 
 	/**
 	 * Method returns the FEM type of the element.

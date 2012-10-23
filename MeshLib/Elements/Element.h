@@ -116,7 +116,7 @@ public:
 	/**
 	 * Get the type of the mesh element in geometric context (as a MshElemType-enum).
 	 */
-	virtual MshElemType::type getGeoType() const = 0;
+	virtual MshElemType::type getGeomType() const = 0;
 
 	/**
 	 * Get the type of the element in context of the finite element method.

@@ -43,7 +43,7 @@ void ElementTreeModel::setElement(const MeshLib::Mesh* grid, const size_t elem_i
 	_rootItem->appendChild(elemItem);
 
 	QList<QVariant> typeData;
-	typeData << "Element Type: " << QString::fromStdString(MshElemType2String(elem->getGeoType()));
+	typeData << "Element Type: " << QString::fromStdString(MshElemType2String(elem->getGeomType()));
 	TreeItem* typeItem = new TreeItem(typeData, elemItem);
 	elemItem->appendChild(typeItem);
 

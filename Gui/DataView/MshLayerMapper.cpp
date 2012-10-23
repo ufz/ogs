@@ -74,15 +74,15 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned 
 							e_nodes[j] = new_nodes[node_id+nNodes];
 							e_nodes[j+nElemNodes] = new_nodes[node_id];
 						}
-						if (sfc_elem->getGeoType() == MshElemType::TRIANGLE)	// extrude triangles to prism
+						if (sfc_elem->getGeomType() == MshElemType::TRIANGLE)	// extrude triangles to prism
 							new_elems[elem_offset+i] = new MeshLib::Prism(e_nodes, mat_id);
-						else if (sfc_elem->getGeoType() == MshElemType::QUAD)	// extrude quads to hexes
+						else if (sfc_elem->getGeomType() == MshElemType::QUAD)	// extrude quads to hexes
 							new_elems[elem_offset+i] = new MeshLib::Hex(e_nodes, mat_id);
 					}
 					else
 					{
 						std::cout << "Warning in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
-						std::cout << "Skipping Element " << i << " of type \"" << MshElemType2String(sfc_elem->getGeoType()) << "\"." << std::endl;
+						std::cout << "Skipping Element " << i << " of type \"" << MshElemType2String(sfc_elem->getGeomType()) << "\"." << std::endl;
 					}
 				}
 			}

@@ -79,7 +79,7 @@ public:
 	 * Method returns the type of the element. In this case PRISM will be returned.
 	 * @return MshElemType::PRISM
 	 */
-	virtual MshElemType::type getGeoType() const { return MshElemType::PRISM; }
+	virtual MshElemType::type getGeomType() const { return MshElemType::PRISM; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.
