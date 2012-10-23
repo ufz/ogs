@@ -105,6 +105,38 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 	}
 }
 
+void Polyline::removePoint(std::size_t pos)
+{
+	if (pos >= _ply_pnt_ids.size())
+		return;
+
+	_ply_pnt_ids.erase(_ply_pnt_ids.begin()+pos);
+
+	if (pos == _ply_pnt_ids.size()-1) {
+		_length.erase(_length.begin()+pos);
+		return;
+	}
+
+	const size_t n_ply_pnt_ids(_ply_pnt_ids.size());
+	if (pos == 0) {
+		double seg_length(_length[0]);
+		for (unsigned k(0); k<n_ply_pnt_ids; k++) {
+			_length[k] = _length[k+1] - seg_length;
+		}
+		_length.pop_back();
+	} else {
+		const double len_seg0(_length[pos] - _length[pos-1]);
+		const double len_seg1(_length[pos+1] - _length[pos]);
+		_length.erase(_length.begin()+pos);
+		const double len_new_seg(sqrt(MathLib::sqrDist(_ply_pnts[_ply_pnt_ids[pos-1]], _ply_pnts[pos])));
+		double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
+
+		for (unsigned k(pos); k<n_ply_pnt_ids; k++) {
+			_length[k] += seg_length_diff;
+		}
+	}
+}
+
 size_t Polyline::getNumberOfPoints() const
 {
 	return _ply_pnt_ids.size();

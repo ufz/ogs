@@ -49,13 +49,13 @@ public:
 	 * @sa enum GeoType
 	 * @return the geo type
 	 */
-	GeoLib::GEOTYPE getGeoType () const;
+	GeoLib::GEOTYPE getGeomType () const;
 
 	/**
 	 * get the type as a string for log output
 	 * @return
 	 */
-	std::string getGeoTypeAsString () const;
+	std::string getGeomTypeAsString () const;
 
 	/**
 	 * getter for the pointer to the object

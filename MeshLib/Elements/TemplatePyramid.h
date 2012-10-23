@@ -77,7 +77,7 @@ public:
 	 * Method returns the type of the element. In this case PYRAMID will be returned.
 	 * @return MshElemType::PYRAMID
 	 */
-	virtual MshElemType::type getGeoType() const { return MshElemType::PYRAMID; }
+	virtual MshElemType::type getGeomType() const { return MshElemType::PYRAMID; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.

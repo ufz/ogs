@@ -42,7 +42,7 @@ void MeshQualityEquiAngleSkew::check ()
 	for (size_t k(0); k < nElements; k++)
 	{
 		const Element* elem (elements[k]);
-		switch (elem->getGeoType())
+		switch (elem->getGeomType())
 		{
 		case MshElemType::EDGE:
 			_mesh_quality_measure[k] = -1.0;

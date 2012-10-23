@@ -127,7 +127,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		}
 		else dis_type_value = it->second;
 
-		if ((*_cond_vec)[n]->getGeoType() == GeoLib::POINT)
+		if ((*_cond_vec)[n]->getGeomType() == GeoLib::POINT)
 		{
 			/*
 			size_t nPoints = _points->size();
@@ -158,7 +158,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				          << std::endl;
 			*/
 		}
-		else if ((*_cond_vec)[n]->getGeoType() == GeoLib::POLYLINE)
+		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::POLYLINE)
 		{
 			const GeoLib::Polyline* ply = static_cast<const GeoLib::Polyline*>((*_cond_vec)[n]->getGeoObj());
 			const int nPoints = ply->getNumberOfPoints();
@@ -188,7 +188,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 				pnt_id++;
 			}
 		}
-		else if ((*_cond_vec)[n]->getGeoType() == GeoLib::SURFACE)
+		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::SURFACE)
 		{
 			std::vector<int> point_idx_map(_points->size(), -1);
 
@@ -237,7 +237,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			}
 		}
 		// HACK: this is currently used when applying DIRECT conditions
-		else if ((*_cond_vec)[n]->getGeoType() == GeoLib::INVALID)
+		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::INVALID)
 		{
 			size_t nValues = dis_values.size();
 			for (size_t i=0; i<nValues; i++)
@@ -251,7 +251,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			}
 		}
 		// draw a bounding box in case of of the conditions is "domain"
-		else if ((*_cond_vec)[n]->getGeoType() == GeoLib::GEODOMAIN)
+		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::GEODOMAIN)
 		{
 			GeoLib::AABB bounding_box (_points->begin(), _points->end());
 			std::vector<GeoLib::Point> box;

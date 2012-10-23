@@ -1,0 +1,20 @@
+ADD_SUBDIRECTORY( gtest )
+
+GET_SOURCE_FILES(TEST_SOURCES)
+GET_SOURCE_FILES(TEST_SOURCES BaseLib)
+
+INCLUDE_DIRECTORIES(
+	${CMAKE_SOURCE_DIR}/Tests/gtest
+	${CMAKE_SOURCE_DIR}/BaseLib
+)
+
+ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
+SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
+
+TARGET_LINK_LIBRARIES(testrunner
+	GTest
+	BaseLib
+)
+
+# Creates one ctest entry for every googletest
+ADD_GOOGLE_TESTS ( ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner ${TEST_SOURCES})

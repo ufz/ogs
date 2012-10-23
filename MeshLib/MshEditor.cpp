@@ -44,7 +44,7 @@ void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<do
 			for (size_t i=0; i<nConnElems; ++i)
 			{
 				const MeshLib::Element* elem (conn_elems[i]);
-				const unsigned nElemParts = (elem->getGeoType() == MshElemType::TRIANGLE) ? 3 : 4;
+				const unsigned nElemParts = (elem->getGeomType() == MshElemType::TRIANGLE) ? 3 : 4;
 				const double area = conn_elems[i]->getContent() / nElemParts;
 				node_area += area;
 				total_area += area;
@@ -134,7 +134,7 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 	for (unsigned i=0; i<nNewElements; ++i)
 	{
 		MeshLib::Element* elem (sfc_elements[i]);
-		if (elem->getGeoType() == MshElemType::TRIANGLE) {
+		if (elem->getGeomType() == MshElemType::TRIANGLE) {
 			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 			for (unsigned k(0); k<3; k++)
 				tri_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
@@ -198,7 +198,7 @@ void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_e
 									continue;
 							}
 
-							if (face->getGeoType() == MshElemType::TRIANGLE)
+							if (face->getGeomType() == MshElemType::TRIANGLE)
 								sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
 							else
 								sfc_elements.push_back(new MeshLib::Quad(*static_cast<const MeshLib::Quad*>(face)));

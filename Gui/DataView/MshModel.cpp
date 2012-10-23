@@ -68,7 +68,7 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 	for (size_t i = 0; i < nElems; i++)
 	{
 		const MeshLib::Element* current_element (elems[i]);
-		MshElemType::type t (current_element->getGeoType());
+		MshElemType::type t (current_element->getGeomType());
 		QList<QVariant> elemData;
 		if (t != elem_type)
 		{

@@ -35,7 +35,7 @@ FEMCondition::FEMCondition(const std::string &geometry_name, FiniteElement::Proc
 
 FEMCondition::FEMCondition(const FEMCondition &cond, CondType t)
 	: ProcessInfo(cond.getProcessType(), cond.getProcessPrimaryVariable()/*, NULL*/),
-	  GeoInfo(cond.getGeoType(), cond.getGeoObj()),
+	  GeoInfo(cond.getGeomType(), cond.getGeoObj()),
 	  DistributionInfo(cond.getProcessDistributionType()),
 	  _type(t),
 	  _geoName(cond.getGeoName()),

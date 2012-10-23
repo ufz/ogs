@@ -27,12 +27,12 @@ GeoInfo::GeoInfo(GeoLib::GEOTYPE geo_type, const GeoLib::GeoObject* geo_obj) :
 GeoInfo::~GeoInfo()
 {}
 
-GeoLib::GEOTYPE GeoInfo::getGeoType () const
+GeoLib::GEOTYPE GeoInfo::getGeomType () const
 {
 	return _geo_type;
 }
 
-std::string GeoInfo::getGeoTypeAsString () const
+std::string GeoInfo::getGeomTypeAsString () const
 {
 	switch (_geo_type)
 	{

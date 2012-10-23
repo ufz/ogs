@@ -29,7 +29,7 @@ void MeshQualityShortestLongestRatio::check()
 	for (size_t k(0); k < nElements; k++)
 	{
 		const Element* elem (elements[k]);
-		switch (elem->getGeoType())
+		switch (elem->getGeomType())
 		{
 		case MshElemType::EDGE:
 			_mesh_quality_measure[k] = 1.0;
@@ -62,7 +62,7 @@ void MeshQualityShortestLongestRatio::check()
 		}
 		default:
 			ERR ("MeshQualityShortestLongestRatio::check () check for element type %s not implemented.",
-			     MshElemType2String(elem->getGeoType()).c_str());
+			     MshElemType2String(elem->getGeomType()).c_str());
 		}
 	}
 }

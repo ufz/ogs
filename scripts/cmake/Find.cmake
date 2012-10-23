@@ -123,3 +123,13 @@ FIND_PACKAGE( Shapelib )
 IF(Shapelib_FOUND)
 	ADD_DEFINITIONS(-DShapelib_FOUND)
 ENDIF() # Shapelib_FOUND
+
+########################
+### Find other stuff ###
+########################
+
+# Check if on Jenkins
+IF(NOT $ENV{JENKINS_URL} STREQUAL "")
+	SET(JENKINS_URL $ENV{JENKINS_URL})
+	SET(JENKINS_JOB_NAME $ENV{JOB_NAME})
+ENDIF()

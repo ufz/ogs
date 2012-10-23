@@ -60,7 +60,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 	QList<QVariant> condData;
 	condData << QString::fromStdString(c->getGeoName())
-			    << QString::fromStdString(c->getGeoTypeAsString());
+			    << QString::fromStdString(c->getGeomTypeAsString());
 	CondItem* condItem = new CondItem(condData, condParent, c);
 	condParent->appendChild(condItem);
 	// add information on primary variable
@@ -102,7 +102,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 void ProcessModel::addCondition(FEMCondition* condition)
 {
-	bool is_domain = (condition->getGeoType() == GeoLib::GEODOMAIN) ? true : false;
+	bool is_domain = (condition->getGeomType() == GeoLib::GEODOMAIN) ? true : false;
 	// HACK: direct source terms are not domain conditions but they also don't contain geo-object-names
 	if (condition->getProcessDistributionType() == FiniteElement::DIRECT) is_domain = true;
 
@@ -111,7 +111,7 @@ void ProcessModel::addCondition(FEMCondition* condition)
 	{
 		object = _project.getGEOObjects()->getGEOObject(
 						 condition->getAssociatedGeometryName(),
-						 condition->getGeoType(),
+						 condition->getGeomType(),
 						 condition->getGeoName());
 		condition->setGeoObj(object);
 	}
