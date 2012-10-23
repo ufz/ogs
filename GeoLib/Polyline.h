@@ -81,6 +81,13 @@ public:
 	virtual void insertPoint(std::size_t pos, std::size_t pnt_id);
 
 	/**
+	 * Method removes a point from the polyline. The connecting line segments will
+	 * be removed and the length of the polyline will be changed.
+	 * @param pos a valid position within the polyline
+	 */
+	virtual void removePoint(std::size_t pos);
+
+	/**
 	 * Closes a polyline by adding a line segment that connects start- and end-point.
 	 * \param ply A Polyline containing at least three points.
 	 * \return A polygon.
