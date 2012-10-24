@@ -19,7 +19,7 @@
 #include "Point.h"
 #include "Polyline.h"
 #include "Triangle.h"
-#include "AxisAlignedBoundingBox.h"
+#include "AABB.h"
 
 namespace GeoLib {
 

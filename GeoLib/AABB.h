@@ -5,13 +5,13 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file AxisAlignedBoundingBox.h
+ * \file AABB.h
  *
  * Created on 2010-04-22 by Thomas Fischer
  */
 
-#ifndef AXISALIGNEDBOUNDINGBOX_H_
-#define AXISALIGNEDBOUNDINGBOX_H_
+#ifndef AABB_H_
+#define AABB_H_
 
 #include "Point.h"
 #include <limits>
@@ -129,4 +129,4 @@ private:
 };
 } // end namespace
 
-#endif /* AXISALIGNEDBOUNDINGBOX_H_ */
+#endif /* AABB_H_ */

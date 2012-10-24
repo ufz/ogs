@@ -53,7 +53,7 @@ Polygon::~Polygon()
 bool Polygon::initialise ()
 {
 	if (this->isClosed()) {
-		calculateAxisAlignedBoundingBox();
+		calculateAABB();
 		ensureCWOrientation();
 		return true;
 	} else {
@@ -235,7 +235,7 @@ EdgeType::value Polygon::getEdgeType (size_t k, GeoLib::Point const & pnt) const
 	}
 }
 
-void Polygon::calculateAxisAlignedBoundingBox ()
+void Polygon::calculateAABB ()
 {
 	size_t n_nodes (getNumberOfPoints());
 	for (size_t k(0); k < n_nodes; k++)

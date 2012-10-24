@@ -18,7 +18,7 @@
 #include "logog.hpp"
 
 // GeoLib
-#include "AxisAlignedBoundingBox.h"
+#include "AABB.h"
 
 // MeshLib
 #include "Mesh.h"

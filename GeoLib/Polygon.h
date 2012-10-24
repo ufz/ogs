@@ -16,7 +16,7 @@
 #include <list>
 
 // GeoLib
-#include "AxisAlignedBoundingBox.h"
+#include "AABB.h"
 #include "Polyline.h"
 
 namespace GeoLib
@@ -121,7 +121,7 @@ private:
 	 */
 	EdgeType::value getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
 
-	void calculateAxisAlignedBoundingBox ();
+	void calculateAABB ();
 	void ensureCWOrientation ();
 
 	void splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_it);

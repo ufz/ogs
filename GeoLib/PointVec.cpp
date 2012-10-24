@@ -28,7 +28,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	assert (_data_vec);
 	size_t number_of_all_input_pnts (_data_vec->size());
 
-	calculateAxisAlignedBoundingBox ();
+	calculateAABB ();
 	rel_eps *= sqrt(MathLib::sqrDist (&(_aabb.getMinPoint()),&(_aabb.getMaxPoint())));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
@@ -219,7 +219,7 @@ void PointVec::calculateShortestDistance ()
 	_sqr_shortest_dist = MathLib::sqrDist ((*_data_vec)[i], (*_data_vec)[j]);
 }
 
-void PointVec::calculateAxisAlignedBoundingBox ()
+void PointVec::calculateAABB ()
 {
 	const size_t n_pnts (_data_vec->size());
 	for (size_t i(0); i < n_pnts; i++)

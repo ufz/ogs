@@ -14,7 +14,7 @@
 
 // GeoLib
 #include "Surface.h"
-#include "AxisAlignedBoundingBox.h"
+#include "AABB.h"
 #include "Polygon.h"
 
 // MathLib

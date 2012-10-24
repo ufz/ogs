@@ -16,7 +16,7 @@
 #include <vector>
 
 // GeoLib
-#include "AxisAlignedBoundingBox.h"
+#include "AABB.h"
 #include "GEOObjects.h"
 
 #ifndef NDEBUG

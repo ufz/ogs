@@ -10,7 +10,7 @@
  */
 
 // ** INCLUDES **
-#include "AxisAlignedBoundingBox.h"
+#include "AABB.h"
 #include "FEMCondition.h"
 #include "VtkConditionSource.h"
 
