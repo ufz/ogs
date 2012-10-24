@@ -27,7 +27,7 @@
 namespace GeoLib {
 
 template <typename POINT>
-class Grid : public GeoLib::AABB
+class Grid : public GeoLib::AABB<POINT>
 {
 public:
 	/**
@@ -47,26 +47,19 @@ public:
 	 */
 	template <typename InputIterator>
 	Grid(InputIterator first, InputIterator last, std::size_t max_num_per_grid_cell = 512) :
-		GeoLib::AABB(), _grid_cell_nodes_map(NULL)
+		GeoLib::AABB<POINT>(first, last), _grid_cell_nodes_map(NULL)
 	{
-		// compute axis aligned bounding box
-		InputIterator it(first);
-		std::size_t n_pnts(0);
-		while (it != last) {
-			n_pnts++;
-			this->update(copyOrAddress(*it)->getCoords());
-			it++;
-		}
+		std::size_t n_pnts(std::distance(first, last));
 
 		double delta[3] = { 0.0, 0.0, 0.0 };
 		for (std::size_t k(0); k < 3; k++) {
 			// make the bounding box a little bit bigger,
 			// such that the node with maximal coordinates fits into the grid
-			_max_pnt[k] *= (1.0 + 1e-6);
-			if (fabs(_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
-				_max_pnt[k] = (_max_pnt[k] - _min_pnt[k]) * (1.0 + 1e-6);
+			this->_max_pnt[k] *= (1.0 + 1e-6);
+			if (fabs(this->_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
+				this->_max_pnt[k] = (this->_max_pnt[k] - this->_min_pnt[k]) * (1.0 + 1e-6);
 			}
-			delta[k] = _max_pnt[k] - _min_pnt[k];
+			delta[k] = this->_max_pnt[k] - this->_min_pnt[k];
 		}
 
 		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
@@ -134,12 +127,12 @@ public:
 		}
 
 		// fill the grid vectors
-		it = first;
+		InputIterator it(first);
 		while (it != last) {
 			double const* const pnt(copyOrAddress(*it)->getCoords());
-			const std::size_t i(static_cast<std::size_t> ((pnt[0] - _min_pnt[0]) * _inverse_step_sizes[0]));
-			const std::size_t j(static_cast<std::size_t> ((pnt[1] - _min_pnt[1]) * _inverse_step_sizes[1]));
-			const std::size_t k(static_cast<std::size_t> ((pnt[2] - _min_pnt[2]) * _inverse_step_sizes[2]));
+			const std::size_t i(static_cast<std::size_t> ((pnt[0] - this->_min_pnt[0]) * _inverse_step_sizes[0]));
+			const std::size_t j(static_cast<std::size_t> ((pnt[1] - this->_min_pnt[1]) * _inverse_step_sizes[1]));
+			const std::size_t k(static_cast<std::size_t> ((pnt[2] - this->_min_pnt[2]) * _inverse_step_sizes[2]));
 
 			if (i >= _n_steps[0] || j >= _n_steps[1] || k >= _n_steps[2]) {
 				std::cout << "error computing indices " << std::endl;
@@ -185,7 +178,7 @@ public:
 		std::size_t coords[3];
 		getGridCoords(pnt, coords);
 
-		double sqr_min_dist (MathLib::sqrDist(&_min_pnt, &_max_pnt));
+		double sqr_min_dist (MathLib::sqrDist(&this->_min_pnt, &this->_max_pnt));
 		POINT* nearest_pnt(NULL);
 
 		double dists[6];
@@ -380,8 +373,8 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 {
 	std::vector<std::string> grid_names;
 
-	GeoLib::Point const& llf (getMinPoint());
-	GeoLib::Point const& urb (getMaxPoint());
+	GeoLib::Point const& llf (this->getMinPoint());
+	GeoLib::Point const& urb (this->getMaxPoint());
 
 	const double dx ((urb[0]-llf[0])/_n_steps[0]);
 	const double dy ((urb[1]-llf[1])/_n_steps[1]);
@@ -460,13 +453,13 @@ template <typename POINT>
 void Grid<POINT>::getGridCoords(double const*const pnt, std::size_t* coords) const
 {
 	for (std::size_t k(0); k<3; k++) {
-		if (pnt[k] < _min_pnt[k]) {
+		if (pnt[k] < this->_min_pnt[k]) {
 			coords[k] = 0;
 		} else {
-			if (pnt[k] > _max_pnt[k]) {
+			if (pnt[k] > this->_max_pnt[k]) {
 				coords[k] = _n_steps[k]-1;
 			} else {
-				coords[k] = static_cast<std::size_t>((pnt[k]-_min_pnt[k]) * _inverse_step_sizes[k]);
+				coords[k] = static_cast<std::size_t>((pnt[k]-this->_min_pnt[k]) * _inverse_step_sizes[k]);
 			}
 		}
 	}
@@ -476,13 +469,13 @@ template <typename POINT>
 void Grid<POINT>::getPointCellBorderDistances(double const*const pnt, double dists[6], std::size_t const* const coords) const
 {
 
-	dists[0] = (pnt[2] - _min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
+	dists[0] = (pnt[2] - this->_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
 	dists[5] = (_step_sizes[2] - dists[0]); // top
 
-	dists[1] = (pnt[1] - _min_pnt[1] + coords[1]*_step_sizes[1]); // front
+	dists[1] = (pnt[1] - this->_min_pnt[1] + coords[1]*_step_sizes[1]); // front
 	dists[3] = (_step_sizes[1] - dists[1]); // back
 
-	dists[4] = (pnt[0] - _min_pnt[0] + coords[0]*_step_sizes[0]); // left
+	dists[4] = (pnt[0] - this->_min_pnt[0] + coords[0]*_step_sizes[0]); // left
 	dists[2] = (_step_sizes[0] - dists[4]); // right
 }
 

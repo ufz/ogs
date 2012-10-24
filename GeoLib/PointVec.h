@@ -104,7 +104,7 @@ public:
 	const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
 
 	double getShortestPointDistance () const;
-	const GeoLib::AABB& getAxisAlignedBoundingBox () const;
+	const GeoLib::AABB<GeoLib::Point>& getAxisAlignedBoundingBox () const;
 
 	/// Returns a subset of this point vector containing only the points specified in "subset" as PointWithID-objects
 	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset);
@@ -144,7 +144,7 @@ private:
 	double _sqr_shortest_dist;
 
 	void calculateAxisAlignedBoundingBox ();
-	AABB _aabb;
+	AABB<GeoLib::Point> _aabb;
 };
 } // end namespace
 

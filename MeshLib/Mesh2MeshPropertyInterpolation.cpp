@@ -46,8 +46,8 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh, std::
 		return false;
 	}
 
-	GeoLib::AABB src_aabb(_src_mesh->getNodes().begin(), _src_mesh->getNodes().end());
-	GeoLib::AABB dest_aabb(dest_mesh->getNodes().begin(), dest_mesh->getNodes().end());
+	GeoLib::AABB<MeshLib::Node> src_aabb(_src_mesh->getNodes().begin(), _src_mesh->getNodes().end());
+	GeoLib::AABB<MeshLib::Node> dest_aabb(dest_mesh->getNodes().begin(), dest_mesh->getNodes().end());
 	if (!src_aabb.containsAABB(dest_aabb)) {
 		ERR ("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() source mesh to small.");
 		return false;

@@ -93,9 +93,9 @@ const Triangle* Surface::operator[] (size_t i) const
 	return _sfc_triangles[i];
 }
 
-bool Surface::isPntInBV (const double *pnt, double eps) const
+bool Surface::isPntInBV (const double *pnt) const
 {
-	return _bv.containsPoint (pnt, eps);
+	return _bv.containsPoint (pnt);
 }
 
 bool Surface::isPntInSfc (const double *pnt) const

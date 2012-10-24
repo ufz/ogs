@@ -56,7 +56,7 @@ public:
 	/**
 	 * is the given point in the bounding volume of the surface
 	 */
-	bool isPntInBV (const double *pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+	bool isPntInBV (const double *pnt) const;
 
 	/**
 	 * is the given point pnt located in the surface
@@ -71,7 +71,7 @@ public:
 	 * method allows access to the internal axis aligned bounding box
 	 * @return axis aligned bounding box
 	 */
-	AABB const & getAABB () const { return _bv; }
+	AABB<GeoLib::Point> const & getAABB () const { return _bv; }
 
 protected:
 	/** a vector of pointers to Points */
@@ -79,7 +79,7 @@ protected:
 	/** position of pointers to the geometric points */
 	std::vector<Triangle*> _sfc_triangles;
 	/** bounding volume is an axis aligned bounding box */
-	AABB _bv;
+	AABB<GeoLib::Point> _bv;
 };
 
 }

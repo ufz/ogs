@@ -15,7 +15,7 @@
 
 #include "Point.h"
 #include <limits>
-#include <vector>
+#include <cstddef>
 
 namespace GeoLib
 {
@@ -24,21 +24,27 @@ namespace GeoLib
  * \ingroup GeoLib
  *
  * \brief Class AABB is an axis aligned bounding box around a given
- * set of geometric points.
+ * set of geometric points of (template) type PNT_TYPE.
  * */
+template <typename PNT_TYPE = GeoLib::Point>
 class AABB
 {
 public:
 	/**
 	 * construction of object, initialization the axis aligned bounding box
 	 * */
-	AABB();
+	AABB() :
+		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
+		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
+	{}
 
 	/**
 	 * copy constructor.
 	 * @param src an axis aligned bounding box
 	 */
-	AABB(AABB const& src);
+	AABB(AABB<PNT_TYPE> const& src) :
+		_min_pnt(src._min_pnt), _max_pnt(src._max_pnt)
+	{}
 
 	/**
 	 * Construction of object using input iterators. In contrast to give a vector
@@ -53,40 +59,32 @@ public:
 	{
 		InputIterator it(first);
 		while (it != last) {
-			this->update(*(reinterpret_cast<GeoLib::Point *const>(*it)));
+			update(*it);
 			it++;
 		}
 	}
 
-	void update(GeoLib::Point const & pnt);
-
-	/**
-	 * update axis aligned bounding box
-	 */
-	void update(const double* pnt)
+	void update(PNT_TYPE const & pnt)
 	{
-		update(pnt[0], pnt[1], pnt[2]);
+		for (size_t k(0); k<3; k++) {
+			if (pnt[k] < _min_pnt[k])
+				_min_pnt[k] = pnt[k];
+			if (_max_pnt[k] < pnt[k])
+				_max_pnt[k] = pnt[k];
+		}
 	}
 
 	/**
 	 * check if point is in the axis aligned bounding box
 	 * (employing containsPoint (double x, double y, double z))
 	 */
-	bool containsPoint(GeoLib::Point const & pnt,
-	                   double eps = std::numeric_limits<double>::epsilon()) const;
-
-	/**
-	 * wrapper for GeoLib::Point
-	 */
-	bool containsPoint(const double* pnt, double eps =
-	                            std::numeric_limits<double>::epsilon()) const;
-
-	/**
-	 * check if point described by its coordinates x, y, z is in
-	 * the axis aligned bounding box
-	 */
-	bool containsPoint(double x, double y, double z, double eps =
-					std::numeric_limits<double>::epsilon()) const;
+	bool containsPoint(PNT_TYPE const & pnt) const
+	{
+		if (pnt[0] < _min_pnt[0] || _max_pnt[0] < pnt[0]) return false;
+		if (pnt[1] < _min_pnt[1] || _max_pnt[1] < pnt[1]) return false;
+		if (pnt[2] < _min_pnt[2] || _max_pnt[2] < pnt[2]) return false;
+		return true;
+	}
 
 	/**
 	 * returns a point that coordinates are minimal for each dimension
@@ -105,21 +103,29 @@ public:
 	/**
 	 * Method checks if the given AABB object is contained within the
 	 * AABB represented by this object.
-	 * @param other the AABB to test with
+	 * @param other_aabb the AABB to test with
 	 * @return true if the other AABB is contained in the AABB
 	 * represented by this object
 	 */
-	bool containsAABB(AABB const& other) const;
+	bool containsAABB(AABB<PNT_TYPE> const& other_aabb) const
+	{
+		GeoLib::Point const& min_other(other_aabb.getMinPoint());
+		GeoLib::Point const& max_other(other_aabb.getMaxPoint());
+		for (unsigned k(0); k<3; k++) {
+			if (_min_pnt[k] > min_other[k] || max_other[k] > _max_pnt[k])
+				return false;
+		}
+		return true;
+	}
 
 protected:
 	GeoLib::Point _min_pnt;
 	GeoLib::Point _max_pnt;
-
 private:
-	/**
-	 * update axis aligned bounding box
-	 */
-	void update(double x, double y, double z);
+	void update(PNT_TYPE const * pnt)
+	{
+		update (*pnt);
+	}
 };
 } // end namespace
 

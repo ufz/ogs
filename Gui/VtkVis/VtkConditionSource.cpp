@@ -253,7 +253,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		// draw a bounding box in case of of the conditions is "domain"
 		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::GEODOMAIN)
 		{
-			GeoLib::AABB bounding_box (_points->begin(), _points->end());
+			GeoLib::AABB<GeoLib::Point> bounding_box (_points->begin(), _points->end());
 			std::vector<GeoLib::Point> box;
 			box.push_back(bounding_box.getMinPoint());
 			box.push_back(bounding_box.getMaxPoint());
