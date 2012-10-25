@@ -13,7 +13,7 @@
 #ifndef MEMWATCH_H_
 #define MEMWATCH_H_
 
-#ifndef WIN32
+#ifndef _MSC_VER
 
 #include <sys/types.h>
 #include <unistd.h>

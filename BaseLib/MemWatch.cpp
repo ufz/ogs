@@ -12,7 +12,7 @@
 
 #include "MemWatch.h"
 
-#ifndef WIN32
+#ifndef _MSC_VER
 
 namespace BaseLib {
 
@@ -71,4 +71,4 @@ unsigned long MemWatch::getCodeMemUsage () {
 
 } // end namespace BaseLib
 
-#endif // WIN
+#endif // _MSC_VER
