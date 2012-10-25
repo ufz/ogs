@@ -2,10 +2,12 @@ ADD_SUBDIRECTORY( gtest )
 
 GET_SOURCE_FILES(TEST_SOURCES)
 GET_SOURCE_FILES(TEST_SOURCES BaseLib)
+GET_SOURCE_FILES(TEST_SOURCES GeoLib)
 
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/Tests/gtest
 	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/GeoLib
 )
 
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
@@ -14,6 +16,7 @@ SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
 	BaseLib
+	GeoLib
 )
 
 # Creates one ctest entry for every googletest
