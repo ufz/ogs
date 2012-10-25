@@ -14,6 +14,7 @@
 
 # Check prereqs
 FIND_PROGRAM( GCOV_PATH gcov )
+FIND_LIBRARY( GCOV_LIBRARY gcov )
 FIND_PROGRAM( LCOV_PATH lcov )
 FIND_PROGRAM( GENHTML_PATH genhtml )
 FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/scripts/test)
@@ -33,7 +34,6 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 # Setup compiler options
 ADD_DEFINITIONS(-fprofile-arcs -ftest-coverage)
-LINK_LIBRARIES(gcov)
 
 
 # Param _targetname     The name of new the custom make target
