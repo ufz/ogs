@@ -13,7 +13,7 @@
 #include "readMeshFromFile.h"
 #include "StringTools.h"
 #include "Mesh.h"
-#include "XmlIO/VTKInterface.h"
+#include "RapidXmlIO/RapidVtuInterface.h"
 #include "Legacy/MeshIO.h"
 
 namespace FileIO {
@@ -29,7 +29,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 		mesh = meshIO.loadMeshFromFile(file_name);
 	}
 	else if (suffix.compare("vtu") == 0 || suffix.compare("VTU") == 0)
-		mesh = FileIO::VTKInterface::readVTUFile(file_name);
+		mesh = FileIO::RapidVtuInterface::readVTUFile(file_name);
 	else
 		std::cout << "Unknown mesh file format" << std::endl;
 

@@ -4,12 +4,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file RapidXMLInterface.cpp
+ * \file RapidStnInterface.cpp
  *
  *  Created on 2012-08-16 by Karsten Rink
  */
 //RapidXML
-#include "RapidXMLInterface.h"
+#include "RapidStnInterface.h"
 #include <iostream>
 
 #include "StringTools.h"
@@ -18,7 +18,7 @@
 namespace FileIO
 {
 
-std::vector<GeoLib::Point*> *RapidXMLInterface::readStationFile(const std::string &fileName)
+std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::string &fileName)
 {
 	std::vector<GeoLib::Point*> *stations = new std::vector<GeoLib::Point*>;
 	std::ifstream in(fileName.c_str());
@@ -58,9 +58,9 @@ std::vector<GeoLib::Point*> *RapidXMLInterface::readStationFile(const std::strin
 		{
 			std::string b(list_item->name());
 			if (std::string(list_item->name()).compare("stations") == 0)
-				RapidXMLInterface::readStations(list_item, stations, fileName);
+				RapidStnInterface::readStations(list_item, stations, fileName);
 			if (std::string(list_item->name()).compare("boreholes") == 0)
-				RapidXMLInterface::readStations(list_item, stations, fileName);
+				RapidStnInterface::readStations(list_item, stations, fileName);
 		}
 	}
 
@@ -70,7 +70,7 @@ std::vector<GeoLib::Point*> *RapidXMLInterface::readStationFile(const std::strin
 	return stations;
 }
 /*
-int RapidXMLInterface::rapidReadFile(const std::string &fileName)
+int RapidStnInterface::rapidReadFile(const std::string &fileName)
 {
 	GEOLIB::GEOObjects* geoObjects = _project->getGEOObjects();
 
@@ -129,7 +129,7 @@ int RapidXMLInterface::rapidReadFile(const std::string &fileName)
 	return 1;
 }
 */
-void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name)
+void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name)
 {
 	for (rapidxml::xml_node<>* station_node = station_root->first_node(); station_node; station_node = station_node->next_sibling())
 	{
@@ -179,7 +179,7 @@ void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, s
 				s->setStationValue(station_value);
 
 				if (station_node->first_node("strat"))
-					RapidXMLInterface::readStratigraphy(station_node->first_node("strat"), s);
+					RapidStnInterface::readStratigraphy(station_node->first_node("strat"), s);
 
 				stations->push_back(s);
 
@@ -190,7 +190,7 @@ void RapidXMLInterface::readStations(const rapidxml::xml_node<>* station_root, s
 	}
 }
 
-void RapidXMLInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole )
+void RapidStnInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole )
 {
 	double depth_check((*borehole)[2]);
 

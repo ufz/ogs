@@ -26,7 +26,7 @@
 #include <QSettings>
 
 #include "Legacy/MeshIO.h"
-#include "XmlIO/VTKInterface.h"
+#include "RapidXmlIO/RapidVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 
 DataView::DataView( QWidget* parent /*= 0*/ )
@@ -140,7 +140,7 @@ int DataView::writeMeshToFile() const
 			QFileInfo fi(fileName);
 			if (fi.suffix().toLower() == "vtu")
 			{
-				FileIO::VTKInterface vtkIO;
+				FileIO::RapidVtuInterface vtkIO;
 				vtkIO.setMesh(mesh);
 				vtkIO.writeToFile(fileName.toStdString().c_str());
 			}
