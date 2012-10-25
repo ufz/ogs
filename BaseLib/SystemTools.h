@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  *
  * \file SystemTools.h
@@ -10,8 +10,8 @@
  * Created on 2012-07-16 by Norihiro Watanabe
  */
 
-#pragma once
-
+#ifndef SYSTEMTOOLS_H
+#define SYSTEMTOOLS_H
 
 namespace BaseLib
 {
@@ -27,3 +27,5 @@ inline bool IsLittleEndian()
 }
 
 }
+
+#endif
