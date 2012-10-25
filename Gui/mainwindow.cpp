@@ -1127,8 +1127,9 @@ void MainWindow::FEMTestStart()
 {
 	const std::vector<MeshLib::Mesh*>& meshes(_project.getMeshObjects());
 
+	std::string path("/mnt/visdata/tom/data/Influins/Mapping/TestCase-100x100/");
 	// read properties from asc file
-	std::string fname_asc("/mnt/visdata/tom/data/Influins/Mapping/Domain_regular_Kf.asc");
+	std::string fname_asc(path+"Kf-Raster-100x100.asc");
 	double x0(0.0), y0(0.0), delta(0.0);
 	unsigned n_cols(0), n_rows(0);
 	float* img_data(VtkRaster::loadDataFromASC(fname_asc, x0, y0, n_cols, n_rows, delta));
@@ -1168,11 +1169,30 @@ void MainWindow::FEMTestStart()
 	FileIO::MeshIO mesh_writer;
 	mesh_writer.setPrecision(12);
 	mesh_writer.setMesh(meshes[0]);
-	mesh_writer.writeToFile("/mnt/visdata/tom/data/Influins/Mapping/SourceMeshWithMat.msh");
+	mesh_writer.writeToFile(path+"SourceMeshWithMat.msh");
 	mesh_writer.setMesh(meshes[1]);
-	mesh_writer.writeToFile("/mnt/visdata/tom/data/Influins/Mapping/DestMeshWithMat.msh");
+	mesh_writer.writeToFile(path+"DestMeshWithMat.msh");
 
-/*
+	{ // write property file
+		std::ofstream property_out(path+"PropertyMapping");
+		if (! property_out) {
+			std::cerr << "could not open file " << path << "PropertyMapping" << std::endl;
+			return;
+		}
+
+		property_out << "#MEDIUM_PROPERTIES_DISTRIBUTED" << std::endl;
+		property_out << " $MSH_TYPE" << std::endl << "  GROUNDWATER_FLOW" << std::endl;
+		property_out << " $MMP_TYPE" << std::endl << "  PERMEABILITY" << std::endl;
+		property_out << " $DIS_TYPE" << std::endl << "  ELEMENT" << std::endl;
+		property_out << " $DATA" << std::endl;
+		for (size_t k(0); k<n_dest_mesh_elements; k++) {
+			property_out << k << " " << dest_properties[dest_perm[k]] << std::endl;
+		}
+		property_out << "#STOP" << std::endl;
+		property_out.close();
+	}
+
+	/*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("tb_wo_mat");
 	_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
