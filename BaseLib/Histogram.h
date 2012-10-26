@@ -14,7 +14,7 @@
 #include <ostream>
 #include <vector>
 
-namespace BASELIB
+namespace BaseLib
 {
 
 /** Basic Histogram implementation.
@@ -159,6 +159,6 @@ operator<<(std::ostream& os, const Histogram<T>& h)
     return os << std::endl;
 }
 
-}   // namespace BASELIB
+}   // namespace BaseLib
 
 #endif  // BASELIB_HISTOGRAM_H
