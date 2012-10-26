@@ -1127,9 +1127,9 @@ void MainWindow::FEMTestStart()
 {
 	const std::vector<MeshLib::Mesh*>& meshes(_project.getMeshObjects());
 
-	std::string path("/mnt/visdata/tom/data/Influins/Mapping/TestCase-100x100/");
+	std::string path("/mnt/visdata/tom/data/Influins/Mapping/TestCase-10x10-100x100/");
 	// read properties from asc file
-	std::string fname_asc(path+"Kf-Raster-100x100.asc");
+	std::string fname_asc(path+"Kf-Raster-10x10-100x100.asc");
 	double x0(0.0), y0(0.0), delta(0.0);
 	unsigned n_cols(0), n_rows(0);
 	float* img_data(VtkRaster::loadDataFromASC(fname_asc, x0, y0, n_cols, n_rows, delta));
@@ -1140,6 +1140,54 @@ void MainWindow::FEMTestStart()
 		}
 	}
 	delete [] img_data;
+
+	{
+		double src_mean_value(src_properties[0]);
+		for (size_t k(1); k<n_cols*n_rows; k++) {
+			src_mean_value += src_properties[k];
+		}
+		src_mean_value /= n_cols*n_rows;
+		std::cout << "mean value of source: " << src_mean_value << std::endl;
+
+		double src_varianz(MathLib::fastpow(src_properties[0] - src_mean_value, 2));
+		for (size_t k(1); k<n_cols*n_rows; k++) {
+			src_varianz += MathLib::fastpow(src_properties[k] - src_mean_value, 2);
+		}
+		src_varianz /= n_cols*n_rows;
+		std::cout << "variance of source: " << src_varianz << std::endl;
+	}
+
+//	unsigned new_n_rows(100), new_n_cols(100);
+//	unsigned row_blk_size(new_n_rows / n_rows);
+//	unsigned col_blk_size(new_n_cols / n_cols);
+//	std::vector<double> new_src_properties(new_n_cols*new_n_rows);
+//	for (unsigned row(0); row<n_rows; row++) {
+//		for (unsigned col(0); col<n_cols; col++) {
+//			for (unsigned new_row(row*row_blk_size); new_row<(row+1)*row_blk_size; new_row++) {
+//				for (unsigned new_col(col*row_blk_size); new_col<(col+1)*col_blk_size; new_col++) {
+//					new_src_properties[new_row*new_n_cols+new_col] = src_properties[row*n_cols+col];
+//				}
+//			}
+//		}
+//	}
+//
+//	// write new asc file
+//	std::ofstream out(path+"Kf-Raster-10x10-100x100.asc");
+//	// write header
+//	out << "ncols " << new_n_rows << std::endl;
+//	out << "nrows " << new_n_cols << std::endl;
+//	out << "xllcorner " << x0 << std::endl;
+//	out << "yllcorner " << y0 << std::endl;
+//	out << "cellsize " <<  delta / row_blk_size << std::endl;
+//	out << "NODATA_value -9999" << std::endl;
+//	// write data
+//	for (unsigned new_row(0); new_row<new_n_rows; new_row++) {
+//		for (unsigned new_col(0); new_col<new_n_cols; new_col++) {
+//			out << new_src_properties[new_row*new_n_cols+new_col] << " ";
+//		}
+//		out << std::endl;
+//	}
+//	out.close();
 
 	std::vector<size_t> src_perm(n_cols*n_rows);
 	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
@@ -1156,22 +1204,7 @@ void MainWindow::FEMTestStart()
 	std::vector<double> dest_properties(meshes[1]->getNElements());
 	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(meshes[1]), dest_properties);
 
-	std::vector<size_t> dest_perm(meshes[1]->getNElements());
-	for (size_t k(0); k<meshes[1]->getNElements(); k++) dest_perm[k] = k;
-	BaseLib::Quicksort<double>(dest_properties, 0, meshes[1]->getNElements(), dest_perm);
-
-	// reset materials in destination mesh
 	const size_t n_dest_mesh_elements(meshes[1]->getNElements());
-	for (size_t k(0); k<n_dest_mesh_elements; k++) {
-		const_cast<MeshLib::Element*>(meshes[1]->getElement(dest_perm[k]))->setValue(k);
-	}
-
-	FileIO::MeshIO mesh_writer;
-	mesh_writer.setPrecision(12);
-	mesh_writer.setMesh(meshes[0]);
-	mesh_writer.writeToFile(path+"SourceMeshWithMat.msh");
-	mesh_writer.setMesh(meshes[1]);
-	mesh_writer.writeToFile(path+"DestMeshWithMat.msh");
 
 	{ // write property file
 		std::ofstream property_out(path+"PropertyMapping");
@@ -1186,11 +1219,43 @@ void MainWindow::FEMTestStart()
 		property_out << " $DIS_TYPE" << std::endl << "  ELEMENT" << std::endl;
 		property_out << " $DATA" << std::endl;
 		for (size_t k(0); k<n_dest_mesh_elements; k++) {
-			property_out << k << " " << dest_properties[dest_perm[k]] << std::endl;
+			property_out << k << " " << dest_properties[k] << std::endl;
 		}
 		property_out << "#STOP" << std::endl;
 		property_out.close();
 	}
+
+	{
+		double mu(dest_properties[0]);
+		for (size_t k(1); k<n_dest_mesh_elements; k++) {
+			mu += dest_properties[k];
+		}
+		mu /= n_dest_mesh_elements;
+		std::cout << "mean value of destination: " << mu << std::endl;
+
+		double sigma_q(MathLib::fastpow(dest_properties[0] - mu, 2));
+		for (size_t k(1); k<n_dest_mesh_elements; k++) {
+			sigma_q += MathLib::fastpow(dest_properties[k] - mu, 2);
+		}
+		sigma_q /= n_dest_mesh_elements;
+		std::cout << "variance of destination: " << sigma_q << std::endl;
+	}
+
+	std::vector<size_t> dest_perm(n_dest_mesh_elements);
+	for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
+	BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
+
+	// reset materials in destination mesh
+	for (size_t k(0); k<n_dest_mesh_elements; k++) {
+		const_cast<MeshLib::Element*>(meshes[1]->getElement(dest_perm[k]))->setValue(k);
+	}
+
+	FileIO::MeshIO mesh_writer;
+	mesh_writer.setPrecision(12);
+	mesh_writer.setMesh(meshes[0]);
+	mesh_writer.writeToFile(path+"SourceMeshWithMat.msh");
+	mesh_writer.setMesh(meshes[1]);
+	mesh_writer.writeToFile(path+"DestMeshWithMat.msh");
 
 	/*
 	const double dir[3] = {0, 0, 1};
