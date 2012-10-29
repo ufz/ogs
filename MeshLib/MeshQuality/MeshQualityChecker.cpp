@@ -24,14 +24,14 @@ MeshQualityChecker::MeshQualityChecker(Mesh const* const mesh) :
 		_mesh_quality_measure.resize (_mesh->getNElements(), -1.0);
 }
 
-BASELIB::Histogram<double> MeshQualityChecker::getHistogram (size_t nclasses) const
+BaseLib::Histogram<double> MeshQualityChecker::getHistogram (size_t nclasses) const
 {
 	if (nclasses == 0) {
 		// simple suggestion: number of classes with Sturges criterion
 		nclasses = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh->getNElements()))));
 	}
 
-	return BASELIB::Histogram<double>(getMeshQuality(), nclasses, true);
+	return BaseLib::Histogram<double>(getMeshQuality(), nclasses, true);
 }
 
 void MeshQualityChecker::errorMsg (const Element* elem, size_t idx) const

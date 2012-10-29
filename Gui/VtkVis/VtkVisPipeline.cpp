@@ -526,7 +526,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 //			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogram", "number of histogram classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
 //			if (ok) ...
 
-		BASELIB::Histogram<double> histogram (checker->getHistogram(nclasses));
+		BaseLib::Histogram<double> histogram (checker->getHistogram(nclasses));
 		std::ofstream out ("mesh_histogram.txt");
 		if (out) {
 			out << "# histogram depicts mesh quality criterion " << MshQualityType2String(t)
