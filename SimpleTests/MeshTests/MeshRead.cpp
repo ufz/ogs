@@ -15,7 +15,7 @@
 #include "logog.hpp"
 
 // FileIO
-#include "XmlIO/VTKInterface.h"
+#include "RapidXmlIO/RapidVtuInterface.h"
 #include "Legacy/MeshIO.h"
 
 // MeshLib
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	if (BaseLib::getSuffixFromPath(fname).compare("msh") == 0) {
 		mesh = mesh_io.loadMeshFromFile(fname);
 	} else {
-		mesh = FileIO::VTKInterface::readVTUFile(fname);
+		mesh = FileIO::RapidVtuInterface::readVTUFile(fname);
 	}
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());

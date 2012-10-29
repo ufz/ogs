@@ -36,7 +36,7 @@ public:
 	std::vector<double> const& getMeshQuality () const;
 	double getMinValue() const;
 	double getMaxValue() const;
-	virtual BASELIB::Histogram<double> getHistogram (std::size_t nclasses = 0) const;
+	virtual BaseLib::Histogram<double> getHistogram (std::size_t nclasses = 0) const;
 
 protected:
 	void errorMsg (const Element* elem, std::size_t idx) const;

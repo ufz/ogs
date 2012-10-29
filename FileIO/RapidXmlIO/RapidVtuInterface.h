@@ -38,11 +38,11 @@ namespace FileIO
  * of copies of strings, i.e. strings used in the DOM tree need to be available as long the DOM tree
  * is needed.
  */
-class VTKInterface : public Writer
+class RapidVtuInterface : public Writer
 {
 public:
-	VTKInterface();
-	~VTKInterface();
+	RapidVtuInterface();
+	~RapidVtuInterface();
 
 	/// Read an unstructured grid from a VTU file
 	static MeshLib::Mesh* readVTUFile(const std::string &file_name);
@@ -58,7 +58,7 @@ protected:
 	rapidxml::xml_node<>* addDataArray(const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
 	int write(std::ostream& stream);
-	
+
 	std::string _export_name;
 	MeshLib::Mesh* _mesh;
 	rapidxml::xml_document<> *_doc;

@@ -4,12 +4,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file VTKInterface.cpp
+ * \file RapidVtuInterface.cpp
  *
  *  Created on 2012-08-30 by Karsten Rink
  */
 
-#include "VTKInterface.h"
+#include "RapidVtuInterface.h"
 #include <iostream>
 #include <fstream>
 
@@ -33,23 +33,23 @@ namespace FileIO {
 
 using namespace rapidxml;
 
-VTKInterface::VTKInterface()
+RapidVtuInterface::RapidVtuInterface()
 : _export_name(""), _mesh(NULL), _doc(new xml_document<>), _use_compressor(false)
 {
 }
 
-VTKInterface::~VTKInterface()
+RapidVtuInterface::~RapidVtuInterface()
 {
 	delete _doc;
 }
 
-MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
+MeshLib::Mesh* RapidVtuInterface::readVTUFile(const std::string &file_name)
 {
 	std::cout << "Reading OGS mesh ... " << std::endl;
 	std::ifstream in(file_name.c_str());
 	if (in.fail())
 	{
-		std::cout << "\nVTKInterface::readVTUFile() - Can't open xml-file." << std::endl;
+		std::cout << "\nRapidVtuInterface::readVTUFile() - Can't open xml-file." << std::endl;
 		return NULL;
 	}
 
@@ -80,7 +80,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			}
 			else
 			{
-				std::cout << "VTKInterface::readVTUFile() - Unknown compression method." << std::endl;
+				std::cout << "RapidVtuInterface::readVTUFile() - Unknown compression method." << std::endl;
 				return NULL;
 			}
 		}
@@ -109,7 +109,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 				}
 			}
 			else
-				std::cout << "Warning in VTKInterface::readVTUFile() - MaterialID array not found." << std::endl;
+				std::cout << "Warning in RapidVtuInterface::readVTUFile() - MaterialID array not found." << std::endl;
 
 
 			const rapidxml::xml_node<>* points_node (piece_node->first_node("Points")->first_node("DataArray"));
@@ -130,7 +130,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			}
 			else
 			{
-				std::cout << "Error in VTKInterface::readVTUFile() - Points array not found." << std::endl;
+				std::cout << "Error in RapidVtuInterface::readVTUFile() - Points array not found." << std::endl;
 				return NULL;
 			}
 
@@ -169,7 +169,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			}
 			else
 			{
-				std::cout << "Error in VTKInterface::readVTUFile() - Cell data not found." << std::endl;
+				std::cout << "Error in RapidVtuInterface::readVTUFile() - Cell data not found." << std::endl;
 				return NULL;
 			}
 
@@ -180,7 +180,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 			return new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name), nodes, elements);
 		}
 		else {
-			std::cout << "Error in VTKInterface::readVTUFile() - Number of nodes and elements not specified." << std::endl;
+			std::cout << "Error in RapidVtuInterface::readVTUFile() - Number of nodes and elements not specified." << std::endl;
 			delete [] buffer;
 		}
 	}
@@ -188,7 +188,7 @@ MeshLib::Mesh* VTKInterface::readVTUFile(const std::string &file_name)
 	return NULL;
 }
 
-MeshLib::Element* VTKInterface::readElement(std::stringstream &iss, const std::vector<MeshLib::Node*> &nodes, unsigned material, unsigned type)
+MeshLib::Element* RapidVtuInterface::readElement(std::stringstream &iss, const std::vector<MeshLib::Node*> &nodes, unsigned material, unsigned type)
 {
 	unsigned node_ids[8];
 	switch (type)
@@ -275,44 +275,44 @@ MeshLib::Element* VTKInterface::readElement(std::stringstream &iss, const std::v
 		break;
 	}
 	default:
-		std::cout << "Error in VTKInterface::readElement() - Unknown mesh element type \"" << type << "\" ..." << std::endl;
+		std::cout << "Error in RapidVtuInterface::readElement() - Unknown mesh element type \"" << type << "\" ..." << std::endl;
 		return NULL;
 	}
 
 }
 
-bool VTKInterface::isVTKFile(const rapidxml::xml_node<>* vtk_root)
+bool RapidVtuInterface::isVTKFile(const rapidxml::xml_node<>* vtk_root)
 {
 	if (vtk_root == NULL || std::string(vtk_root->name()).compare("VTKFile"))
 	{
-		std::cout << "Error in VTKInterface::readVTUFile() - Not a VTK File." << std::endl;
+		std::cout << "Error in RapidVtuInterface::readVTUFile() - Not a VTK File." << std::endl;
 		return false;
 	}
 	if (std::string(vtk_root->first_attribute("version")->value()).compare("0.1"))
 	{
-		std::cout << "Error in VTKInterface::readVTUFile() - Unsupported file format version." << std::endl;
+		std::cout << "Error in RapidVtuInterface::readVTUFile() - Unsupported file format version." << std::endl;
 		return false;
 	}
 	if (std::string(vtk_root->first_attribute("byte_order")->value()).compare("LittleEndian"))
 	{
-		std::cout << "Error in VTKInterface::readVTUFile() - Only little endian files are supported." << std::endl;
+		std::cout << "Error in RapidVtuInterface::readVTUFile() - Only little endian files are supported." << std::endl;
 		return false;
 	}
 	return true;
 }
 
-bool VTKInterface::isVTKUnstructuredGrid(const rapidxml::xml_node<>* vtk_root)
+bool RapidVtuInterface::isVTKUnstructuredGrid(const rapidxml::xml_node<>* vtk_root)
 {
 	if (isVTKFile(vtk_root))
 	{
 		if (std::string(vtk_root->first_node()->name()).compare("UnstructuredGrid") == 0)
 			return true;
-		std::cout << "Error in VTKInterface::readVTUFile() - Not an unstructured grid." << std::endl;
+		std::cout << "Error in RapidVtuInterface::readVTUFile() - Not an unstructured grid." << std::endl;
 	}
 	return false;
 }
 
-unsigned char* VTKInterface::uncompressData(const rapidxml::xml_node<>* node)
+unsigned char* RapidVtuInterface::uncompressData(const rapidxml::xml_node<>* node)
 {
 	rapidxml::xml_node<>* data_node = node->first_node("AppendedData");
 	char* compressed_data (NULL);
@@ -324,7 +324,7 @@ unsigned char* VTKInterface::uncompressData(const rapidxml::xml_node<>* node)
 
 
 
-int VTKInterface::write(std::ostream& stream)
+int RapidVtuInterface::write(std::ostream& stream)
 {
 	//if (this->_export_name.empty())
 	if (!_mesh)
@@ -423,7 +423,7 @@ int VTKInterface::write(std::ostream& stream)
 	return 1;
 }
 
-unsigned VTKInterface::getVTKElementID(MshElemType::type type) const
+unsigned RapidVtuInterface::getVTKElementID(MshElemType::type type) const
 {
 	switch (type)
 	{
@@ -446,7 +446,7 @@ unsigned VTKInterface::getVTKElementID(MshElemType::type type) const
 	}
 }
 
-xml_node<>* VTKInterface::addDataArray(const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents)
+xml_node<>* RapidVtuInterface::addDataArray(const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents)
 {
 
 	xml_attribute<> *attr (NULL);

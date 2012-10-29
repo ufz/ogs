@@ -4,7 +4,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file RapidXMLInterface.h
+ * \file RapidStnInterface.h
  *
  *  Created on 2012-08-16 by Karsten Rink
  */
@@ -27,7 +27,7 @@ namespace FileIO
 /**
  * \brief Base class for writing any information to and from XML files.
  */
-class RapidXMLInterface
+class RapidStnInterface
 {
 public:
 	/// Reads an xml-file using the RapidXML parser integrated in the source code (i.e. this function is usable without Qt)
