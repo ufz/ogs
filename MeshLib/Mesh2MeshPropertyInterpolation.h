@@ -61,8 +61,6 @@ private:
 	 */
 	void interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const;
 
-//	void interpolatePropertiesForMeshUsingArea(Mesh *dest_mesh, std::vector<double>& dest_properties) const;
-//	double getIntersectingContent(Element const*const element0, Element const*const element1) const;
 	Mesh const*const _src_mesh;
 	std::vector<double> const*const _src_properties;
 };
