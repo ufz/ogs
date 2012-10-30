@@ -19,11 +19,11 @@ namespace BaseLib
 /// return if this system supports little endian or not
 inline bool IsLittleEndian()
 {
-    int x = 0x00000001;
-    if (*(char*)&x)
-        return true;              //am little
-    else
-        return false;             //am big
+#ifdef ENDIAN_IS_BIG
+    return false;
+#elif ENDIAN_IS_LITTLE
+    return true;
+#endif
 }
 
 }
