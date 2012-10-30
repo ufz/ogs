@@ -15,3 +15,15 @@ ELSE()
 	ADD_DEFINITIONS(-DHAVE_64_BIT)
 	SET( BITS 64)
 ENDIF()
+
+# Check endian of the system
+INCLUDE (TestBigEndian)
+TEST_BIG_ENDIAN (IS_BIG_ENDIAN)
+IF (IS_BIG_ENDIAN)
+    ADD_DEFINITIONS(-DENDIAN_IS_BIG)
+   # cannot use BIG_ENDIAN because it's reserved in Linux
+ELSE ()
+    ADD_DEFINITIONS(-DENDIAN_IS_LITTLE)
+   # cannot use LITTLE_ENDIAN because it's reserved in Linux
+ENDIF () # IS_BIG_ENDIAN
+

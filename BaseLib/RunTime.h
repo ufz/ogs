@@ -15,7 +15,7 @@
 
 #include "TimeMeasurementBase.h"
 
-#ifndef _WIN32
+#ifndef _MSC_VER
 #include <sys/time.h>
 #else
 #include <windows.h>
@@ -33,7 +33,7 @@ public:
 	virtual double elapsed();
 	~RunTime() {};
 private:
-#ifndef _WIN32
+#ifndef _MSC_VER
 	timeval _start;
 	timeval _stop;
 #else
