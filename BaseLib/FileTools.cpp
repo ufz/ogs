@@ -59,6 +59,11 @@ void truncateFile( std::string const& filename)
     ofs.close();
 }
 
+size_t findLastPathSeparator(std::string const& path)
+{
+	return path.find_last_of("/\\");
+}
+
 std::string getFileNameFromPath(const std::string &str, bool with_extension)
 {
 	std::string::size_type beg1 = str.find_last_of('/');
