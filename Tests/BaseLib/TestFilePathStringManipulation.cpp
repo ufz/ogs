@@ -9,6 +9,30 @@
 
 #include "FileTools.h"
 
+TEST(BaseLib, FindLastPathSeparatorWin)
+{
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("file"), std::string::npos );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("\\file"), 0 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("path\\"), 4 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\"), 5 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("path\\file"), 4 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\file"), 5 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\path\\file"), 10 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\path\\path\\"), 15 );
+}
+
+TEST(BaseLib, FindLastPathSeparatorUnix)
+{
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("file"), std::string::npos );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("/file"), 0 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("path/"), 4 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/"), 5 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("path/file"), 4 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/file"), 5 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/file"), 10 );
+	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/path/"), 15 );
+}
+
 TEST(BaseLib, GetFileNameFromPathWin)
 {
 	ASSERT_EQ ( BaseLib::getFileNameFromPath("file", true), "file" );
