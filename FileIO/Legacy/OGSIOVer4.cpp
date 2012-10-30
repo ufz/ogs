@@ -556,8 +556,7 @@ bool readGLIFileV4(const std::string& fname, GEOObjects* geo, std::string& uniqu
 		geo->addPointVec(pnt_vec, unique_name, pnt_id_names_map);  // KR: insert into GEOObjects if not empty
 
 	// extract path for reading external files
-	std::string path;
-	BaseLib::extractPath(fname, path);
+	const std::string path = BaseLib::extractPath(fname);
 
 	// read names of plys into temporary string-vec
 	std::map<std::string,size_t>* ply_names (new std::map<std::string,size_t>);
@@ -669,8 +668,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 	geo.getGeometryNames (geo_names);
 
 	// extract path for reading external files
-	std::string path;
-	BaseLib::extractPath(fname, path);
+	const std::string path = BaseLib::extractPath(fname);
 
 	std::ofstream os (fname.c_str());
 

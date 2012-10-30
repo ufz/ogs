@@ -64,11 +64,9 @@ std::string getSuffixFromPath(const std::string &str);
 std::string copyPathToFileName(const std::string &file_name, const std::string &source);
 
 /**
- * extracts the path of a fully qualified path name of the file
- * @param fname [input] the fully qualified path name of the file
- * @param path [output] the path of the fully qualified path name of the file
+ * Extracts the path of a pathname.
  */
-void extractPath(std::string const& fname, std::string& path);
+std::string extractPath(std::string const& pathname);
 } // end namespace BaseLib
 
 #endif // FILETOOLS_H
