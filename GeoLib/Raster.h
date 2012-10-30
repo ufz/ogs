@@ -19,14 +19,31 @@ namespace GeoLib {
 
 class Raster {
 public:
-	Raster(double cell_size=1, double no_data_val=9999);
+	Raster(std::size_t n_cols, std::size_t n_rows, double xllcorner, double yllcorner,
+					double cell_size = 1, double no_data_val = -9999, double* raster_data = NULL);
+	std::size_t getNCols() const { return _n_cols; }
+	std::size_t getNRows() const { return _n_rows; }
+	void refineRaster(std::size_t n_cols, std::size_t n_rows);
+	double const* getRasterData() const { return _raster_data; }
+	virtual ~Raster();
+
+	void writeRasterAsASC(std::ostream &os) const;
+
+	static Raster* getRasterFromASCFile(std::string const& fname);
+	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
+
+private:
+	static bool readASCHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+					double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
 	void setCellSize(double cell_size);
 	void setNoDataVal (double no_data_val);
-	double* getRasterFromSurface (Surface const& sfc, std::size_t &n_x_pnts, std::size_t &n_y_pnts) const;
-	virtual ~Raster();
-private:
+
+	std::size_t _n_cols;
+	std::size_t _n_rows;
+	GeoLib::Point _ll_pnt;
 	double _cell_size;
 	double _no_data_val;
+	double* _raster_data;
 };
 
 }

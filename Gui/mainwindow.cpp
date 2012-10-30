@@ -19,6 +19,9 @@
 #include "MshModel.h"
 #include "StationTreeModel.h"
 
+// GeoLib
+#include "Raster.h"
+
 //dialogs
 #include "CondFromRasterDialog.h"
 #include "ConditionWriterDialog.h"
@@ -1130,16 +1133,23 @@ void MainWindow::FEMTestStart()
 	std::string path("/mnt/visdata/tom/data/Influins/Mapping/TestCase-10x10-100x100/");
 	// read properties from asc file
 	std::string fname_asc(path+"Kf-Raster-10x10-100x100.asc");
-	double x0(0.0), y0(0.0), delta(0.0);
-	unsigned n_cols(0), n_rows(0);
-	float* img_data(VtkRaster::loadDataFromASC(fname_asc, x0, y0, n_cols, n_rows, delta));
+	GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(fname_asc));
+
+//	// write new asc file
+//	std::ofstream out(path+"Kf-Raster-10x10-100x100.asc");
+//	raster->refine(raster->getNCols() * 10, raster->getNRows() * 10);
+//  raster->writeRasterAsASC(out);
+//	out.close();
+
+	double const*const raster_data(raster->getRasterData());
+	unsigned n_cols(raster->getNCols()), n_rows(raster->getNRows());
 	std::vector<double> src_properties(n_cols*n_rows);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
-			src_properties[row*n_cols+col] = img_data[2*(row*n_cols+col)];
+			src_properties[row*n_cols+col] = raster_data[2*(row*n_cols+col)];
 		}
 	}
-	delete [] img_data;
+	delete raster;
 
 	{
 		double src_mean_value(src_properties[0]);
@@ -1156,38 +1166,6 @@ void MainWindow::FEMTestStart()
 		src_varianz /= n_cols*n_rows;
 		std::cout << "variance of source: " << src_varianz << std::endl;
 	}
-
-//	unsigned new_n_rows(100), new_n_cols(100);
-//	unsigned row_blk_size(new_n_rows / n_rows);
-//	unsigned col_blk_size(new_n_cols / n_cols);
-//	std::vector<double> new_src_properties(new_n_cols*new_n_rows);
-//	for (unsigned row(0); row<n_rows; row++) {
-//		for (unsigned col(0); col<n_cols; col++) {
-//			for (unsigned new_row(row*row_blk_size); new_row<(row+1)*row_blk_size; new_row++) {
-//				for (unsigned new_col(col*row_blk_size); new_col<(col+1)*col_blk_size; new_col++) {
-//					new_src_properties[new_row*new_n_cols+new_col] = src_properties[row*n_cols+col];
-//				}
-//			}
-//		}
-//	}
-//
-//	// write new asc file
-//	std::ofstream out(path+"Kf-Raster-10x10-100x100.asc");
-//	// write header
-//	out << "ncols " << new_n_rows << std::endl;
-//	out << "nrows " << new_n_cols << std::endl;
-//	out << "xllcorner " << x0 << std::endl;
-//	out << "yllcorner " << y0 << std::endl;
-//	out << "cellsize " <<  delta / row_blk_size << std::endl;
-//	out << "NODATA_value -9999" << std::endl;
-//	// write data
-//	for (unsigned new_row(0); new_row<new_n_rows; new_row++) {
-//		for (unsigned new_col(0); new_col<new_n_cols; new_col++) {
-//			out << new_src_properties[(new_n_rows-new_row-1)*new_n_cols+new_col] << " ";
-//		}
-//		out << std::endl;
-//	}
-//	out.close();
 
 	std::vector<size_t> src_perm(n_cols*n_rows);
 	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
