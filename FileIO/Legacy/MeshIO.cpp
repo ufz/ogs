@@ -10,7 +10,13 @@
  * Created on 2012-05-08 by Karsten Rink
  */
 
+#include <iomanip>
+#include <sstream>
+
+// GeoLib
 #include "GEOObjects.h"
+
+// MeshLib
 #include "MeshIO.h"
 #include "Node.h"
 #include "Elements/Edge.h"
@@ -21,10 +27,9 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+// BaseLib
 #include "StringTools.h"
-
-#include <iomanip>
-#include <sstream>
+#include "FileTools.h"
 
 namespace FileIO
 {
@@ -66,7 +71,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 				double x, y, z, double_dummy;
 				unsigned idx;
 				getline(in, line_string);
-				trim(line_string);
+				BaseLib::trim(line_string);
 				unsigned nNodes = atoi(line_string.c_str());
 				std::string s;
 				for (unsigned i = 0; i < nNodes; i++)
@@ -84,7 +89,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 			else if (line_string.find("$ELEMENTS") != std::string::npos)
 			{
 				getline(in, line_string);
-				trim(line_string);
+				BaseLib::trim(line_string);
 				unsigned nElements = atoi(line_string.c_str());
 				for (unsigned i = 0; i < nElements; i++)
 				{

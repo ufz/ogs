@@ -79,7 +79,7 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
 		{
 			hSHPObject = SHPReadObject(hSHP,i);
 			GeoLib::Station* stn =
-			        GeoLib::Station::createStation( number2str(i), *(hSHPObject->padfX),
+			        GeoLib::Station::createStation( BaseLib::number2str(i), *(hSHPObject->padfX),
 			                                        *(hSHPObject->padfY),
 			                                        *(hSHPObject->padfZ) );
 			stations->push_back(stn);

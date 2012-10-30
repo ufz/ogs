@@ -71,13 +71,13 @@ std::string date2string(double ddate)
 	if (d < 1 || d > 31)
 		std::cout << "Warning: date2String() -- day not in [1:31]" << std::endl;
 
-	std::string day = number2str(d);
+	std::string day = BaseLib::number2str(d);
 	if (d < 10)
 		day = "0" + day;
-	std::string month = number2str(m);
+	std::string month = BaseLib::number2str(m);
 	if (m < 10)
 		month = "0" + month;
-	std::string s =  number2str(y) + "-" + month + "-" + day;
+	std::string s =  BaseLib::number2str(y) + "-" + month + "-" + day;
 	return s;
 }
 

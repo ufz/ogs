@@ -1322,7 +1322,7 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 		{
 			count++;
 			static_cast<VtkVisPipelineItem*> (*it)->writeToFile(basename
-			                                                    + number2str(count));
+			                                                    + BaseLib::number2str(count));
 			++it;
 		}
 	}

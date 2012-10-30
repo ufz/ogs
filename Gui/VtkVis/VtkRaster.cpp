@@ -139,7 +139,7 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	if (tag.compare("xllcorner") == 0)
 	{
 		in >> value;
-		header.x = strtod(replaceString(",", ".", value).c_str(),0);
+		header.x = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
 	}
 	else
 		return false;
@@ -147,7 +147,7 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	if (tag.compare("yllcorner") == 0)
 	{
 		in >> value;
-		header.y = strtod(replaceString(",", ".", value).c_str(),0);
+		header.y = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
 	}
 	else
 		return false;
@@ -155,7 +155,7 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	if (tag.compare("cellsize") == 0)
 	{
 		in >> value;
-		header.cellsize = strtod(replaceString(",", ".", value).c_str(),0);
+		header.cellsize = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
 	}
 	else
 		return false;
@@ -215,7 +215,7 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 			{
 				in >> s;
 				unsigned index = 2*(col_index+i);
-				values[index] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
+				values[index] = static_cast<float>(strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
 				if (values[index] > max_val)
 					max_val = values[index];
 			}
@@ -318,7 +318,7 @@ float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
 				if (s.compare(header.noData) == 0)
 					s = "-9999";
 				unsigned index = 2*(col_index+i);
-				values[index] = static_cast<float>(strtod(replaceString(",", ".", s).c_str(),0));
+				values[index] = static_cast<float>(strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
 				if (values[index] > max_val)
 					max_val = values[index];
 			}

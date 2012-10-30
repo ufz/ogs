@@ -160,7 +160,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 		{
 			DiagramList* l = new DiagramList;
 			l->setName(fields.takeFirst());
-			//value = strtod(replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
+			//value = strtod(BaseLib::replaceStringreplaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
 			//l->setStartDate(startDate);
 			//l->addNextPoint(0,value);
 			lists.push_back(l);
@@ -192,7 +192,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 
 				for (int i = 0; i < nLists; i++)
 				{
-					value = strtod(replaceString(",", ".",fields.takeFirst().toStdString()).c_str(),0);
+					value = strtod(BaseLib::replaceString(",", ".",fields.takeFirst().toStdString()).c_str(),0);
 					lists[i]->addNextPoint(numberOfSecs,value);
 				}
 			}

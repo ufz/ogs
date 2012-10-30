@@ -44,7 +44,7 @@ void GEOModels::updateGeometry(const std::string &geo_name)
 		this->_geoModel->removeGeoList(geo_name, GeoLib::POINT);
 		_geoModel->addPointList(QString::fromStdString(geo_name), points);
 		emit geoDataAdded(_geoModel, geo_name, GeoLib::POINT);
-	
+
 		if (lines)
 		{
 			emit geoDataRemoved(_geoModel, geo_name, GeoLib::POLYLINE);
@@ -52,7 +52,7 @@ void GEOModels::updateGeometry(const std::string &geo_name)
 			_geoModel->addPolylineList(QString::fromStdString(geo_name), lines);
 			emit geoDataAdded(_geoModel, geo_name, GeoLib::POLYLINE);
 		}
-	
+
 		if (surfaces)
 		{
 			emit geoDataRemoved(_geoModel, geo_name, GeoLib::SURFACE);
@@ -268,7 +268,7 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name, const G
 		const GeoLib::Polyline* ply = dynamic_cast<const GeoLib::Polyline*>(obj);
 		size_t nPoints = ply->getNumberOfPoints();
 		for (size_t i=0; i<nPoints; i++)
-			pnt_vec->setNameForElement(ply->getPointID(i), new_name + "_Point" + number2str(ply->getPointID(i)));
+			pnt_vec->setNameForElement(ply->getPointID(i), new_name + "_Point" + BaseLib::number2str(ply->getPointID(i)));
 	}
 	else if (object_type == GeoLib::SURFACE)
 	{
@@ -277,9 +277,9 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name, const G
 		for (size_t i=0; i<nTriangles; i++)
 		{
 			const GeoLib::Triangle* tri = (*sfc)[i];
-			pnt_vec->setNameForElement((*tri)[0], new_name + "_Point" + number2str((*tri)[0]));
-			pnt_vec->setNameForElement((*tri)[1], new_name + "_Point" + number2str((*tri)[1]));
-			pnt_vec->setNameForElement((*tri)[2], new_name + "_Point" + number2str((*tri)[2]));
+			pnt_vec->setNameForElement((*tri)[0], new_name + "_Point" + BaseLib::number2str((*tri)[0]));
+			pnt_vec->setNameForElement((*tri)[1], new_name + "_Point" + BaseLib::number2str((*tri)[1]));
+			pnt_vec->setNameForElement((*tri)[2], new_name + "_Point" + BaseLib::number2str((*tri)[2]));
 		}
 	}
 	else

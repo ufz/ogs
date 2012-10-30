@@ -118,7 +118,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		// read well name
 		in.getline(buffer, MAX_COLS_PER_ROW);
 		line = buffer;
-		std::list<std::string> str_list(splitString(line, ' '));
+		std::list<std::string> str_list(BaseLib::splitString(line, ' '));
 		std::list<std::string>::const_iterator it(str_list.begin());
 		while (it != str_list.end())
 			std::cout << *it++ << " " << std::flush;
@@ -127,7 +127,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		// read well head x coordinate
 		in.getline(buffer, MAX_COLS_PER_ROW);
 		line = buffer;
-		str_list = splitString(line, ' ');
+		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
 		while (it != str_list.end())
 			std::cout << *it++ << " " << std::flush;
@@ -140,7 +140,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		// read well head y coordinate
 		in.getline(buffer, MAX_COLS_PER_ROW);
 		line = buffer;
-		str_list = splitString(line, ' ');
+		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
 		while (it != str_list.end())
 			std::cout << *it++ << " " << std::flush;
@@ -152,7 +152,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		// read well KB
 		in.getline(buffer, MAX_COLS_PER_ROW);
 		line = buffer;
-		str_list = splitString(line, ' ');
+		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
 		while (it != str_list.end())
 			std::cout << *it++ << " " << std::flush;
@@ -171,7 +171,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		// read well type
 		in.getline(buffer, MAX_COLS_PER_ROW);
 		line = buffer;
-		str_list = splitString(line, ' ');
+		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
 		while (it != str_list.end())
 			std::cout << *it++ << " " << std::flush;
@@ -200,7 +200,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 	}
 
 	// read column information
-	str_list = splitString(line, ' ');
+	str_list = BaseLib::splitString(line, ' ');
 	it = str_list.begin();
 	while (it != str_list.end())
 		std::cout << *it++ << " " << std::flush;

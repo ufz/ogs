@@ -87,7 +87,7 @@ void convertPoints (DBFHandle dbf_handle,
 					name += DBFReadStringAttribute(dbf_handle, k, name_component_ids[j]);
 					name += " ";
 				}
-		} else name = number2str(k);
+		} else name = BaseLib::number2str(k);
 
 		if (station) {
 			GeoLib::Station* pnt(GeoLib::Station::createStation(name, x, y, z));

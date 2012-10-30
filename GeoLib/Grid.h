@@ -386,11 +386,11 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 			for (std::size_t k(0); k<_n_steps[2]; k++) {
 
 				std::string name("Grid-");
-				name += number2str<std::size_t>(i);
+				name += BaseLib::number2str<std::size_t>(i);
 				name +="-";
-				name += number2str<std::size_t>(j);
+				name += BaseLib::number2str<std::size_t>(j);
 				name += "-";
-				name += number2str<std::size_t> (k);
+				name += BaseLib::number2str<std::size_t> (k);
 				grid_names.push_back(name);
 
 				std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);
