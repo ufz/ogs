@@ -40,7 +40,7 @@ void Gmsh2GeoIO::loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* ge
 	getline (ins, line);
 	// read number of nodes
 	getline (ins, line);
-	const size_t n_pnts (str2number<size_t>(line));
+	const size_t n_pnts (BaseLib::str2number<size_t>(line));
 	std::vector<GeoLib::Point*>* pnts (new std::vector<GeoLib::Point*>);
 	for (size_t k(0); k < n_pnts; k++)
 	{
@@ -52,15 +52,15 @@ void Gmsh2GeoIO::loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* ge
 		// parse x coordinate
 		pos_beg = pos_end + 1;
 		pos_end = line.find(" ", pos_beg);
-		double x (str2number<double>(line.substr(pos_beg, pos_end - pos_beg)));
+		double x (BaseLib::str2number<double>(line.substr(pos_beg, pos_end - pos_beg)));
 		// parse y coordinate
 		pos_beg = pos_end + 1;
 		pos_end = line.find(" ", pos_beg);
-		double y (str2number<double>(line.substr(pos_beg, pos_end - pos_beg)));
+		double y (BaseLib::str2number<double>(line.substr(pos_beg, pos_end - pos_beg)));
 		// parse z coordinate
 		pos_beg = pos_end + 1;
 		pos_end = line.find("\n", pos_beg);
-		double z (str2number<double>(line.substr(pos_beg, pos_end - pos_beg)));
+		double z (BaseLib::str2number<double>(line.substr(pos_beg, pos_end - pos_beg)));
 
 		pnts->push_back (new GeoLib::Point (x,y,z));
 	}
@@ -74,7 +74,7 @@ void Gmsh2GeoIO::loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* ge
 	getline (ins, line);
 	// read number of elements
 	getline (ins, line);
-	const size_t n_elements (str2number<size_t>(line));
+	const size_t n_elements (BaseLib::str2number<size_t>(line));
 	GeoLib::Surface* sfc (new GeoLib::Surface (*pnts));
 	for (size_t k(0); k < n_elements; k++)
 	{
@@ -86,12 +86,12 @@ void Gmsh2GeoIO::loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* ge
 		// parse element type
 		pos_beg = pos_end + 1;
 		pos_end = line.find(" ", pos_beg);
-		size_t ele_type (str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg)));
+		size_t ele_type (BaseLib::str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg)));
 		if (ele_type == 2) // read 3 node triangle
 		{ // parse number of tags
 			pos_beg = pos_end + 1;
 			pos_end = line.find(" ", pos_beg);
-			const size_t n_tags (str2number<size_t>(line.substr(pos_beg,
+			const size_t n_tags (BaseLib::str2number<size_t>(line.substr(pos_beg,
 			                                                    pos_end - pos_beg)));
 			// (over) read tags
 			for (size_t j(0); j < n_tags; j++)
@@ -102,17 +102,17 @@ void Gmsh2GeoIO::loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* ge
 			// parse first id of triangle
 			pos_beg = pos_end + 1;
 			pos_end = line.find(" ", pos_beg);
-			const size_t id0 (str2number<size_t>(line.substr(pos_beg,
+			const size_t id0 (BaseLib::str2number<size_t>(line.substr(pos_beg,
 			                                                 pos_end - pos_beg)) - 1); // shift -1!
 			// parse second id of triangle
 			pos_beg = pos_end + 1;
 			pos_end = line.find(" ", pos_beg);
-			const size_t id1 (str2number<size_t>(line.substr(pos_beg,
+			const size_t id1 (BaseLib::str2number<size_t>(line.substr(pos_beg,
 			                                                 pos_end - pos_beg)) - 1); // shift -1!
 			// parse third id of triangle
 			pos_beg = pos_end + 1;
 			pos_end = line.find(" ", pos_beg);
-			const size_t id2 (str2number<size_t>(line.substr(pos_beg,
+			const size_t id2 (BaseLib::str2number<size_t>(line.substr(pos_beg,
 			                                                 pos_end - pos_beg)) - 1); // shift -1!
 			sfc->addTriangle (pnt_id_map[id0], pnt_id_map[id1], pnt_id_map[id2]);
 		}

@@ -307,7 +307,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 			FEMCondition* cond = new FEMCondition(_cond);
 			cond->setGeoObj(NULL);
 			cond->setGeoType(GeoLib::POINT);
-			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str(ply->getPointID(i)));
+			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + BaseLib::number2str(ply->getPointID(i)));
 			cond->clearDisValues();
 			cond->setConstantDisValue((*ply->getPoint(i))[2]);
 			conditions.push_back(this->typeCast(*cond));
@@ -326,7 +326,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				FEMCondition* cond = new FEMCondition(_cond);
 				cond->setGeoObj(NULL);
 				cond->setGeoType(GeoLib::POINT);
-				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + number2str((*tri)[j]));
+				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + BaseLib::number2str((*tri)[j]));
 				cond->clearDisValues();
 				cond->setConstantDisValue((*tri->getPoint(j))[2]);
 				conditions.push_back(this->typeCast(*cond));

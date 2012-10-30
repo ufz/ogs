@@ -136,11 +136,10 @@ void ListPropertiesDialog::accept()
 		}
 		else
 		{
-			minVal = strtod(replaceString(",", ".",
+			minVal = strtod(BaseLib::replaceString(",", ".",
 			                              _minValue[i]->text().toStdString()).c_str(),0);
-			maxVal = strtod(replaceString(",", ".",
-			                              _maxValue[i]->text().toStdString()).c_str(),
-			                0);
+			maxVal = strtod(BaseLib::replaceString(",", ".",
+			                              _maxValue[i]->text().toStdString()).c_str(),0);
 		}
 		PropertyBounds b(_propLabel[i]->text().toStdString(), minVal, maxVal);
 		bounds.push_back(b);

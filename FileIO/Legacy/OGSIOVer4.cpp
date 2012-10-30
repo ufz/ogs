@@ -193,7 +193,7 @@ std::string readPolyline(std::istream &in,
 				        ==
 				        std::string::npos))
 				{
-					size_t pnt_id(str2number<size_t> (line));
+					size_t pnt_id(BaseLib::str2number<size_t> (line));
 					if (!zero_based_indexing)
 						pnt_id--;  // one based indexing
 					size_t ply_size (ply->getNumberOfPoints());
@@ -757,7 +757,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 						os << "\t$NAME " << std::endl << "\t\t" << sfc_name << std::endl;
 					} else {
 						os << "\t$NAME " << std::endl << "\t\t" << sfcs_cnt << std::endl;
-						sfc_name += number2str (sfcs_cnt);
+						sfc_name += BaseLib::number2str (sfcs_cnt);
 					}
 					sfc_name += ".tin";
 					os << "\t$TIN" << std::endl;

@@ -12,6 +12,8 @@
 
 #include "StringTools.h"
 
+namespace BaseLib {
+
 std::list<std::string> splitString(const std::string &str, char delim)
 {
 	std::list<std::string> strList;
@@ -46,8 +48,6 @@ void trim(std::string &str, char ch)
   }
   else str.erase(str.begin(), str.end());
 }
-
-namespace BaseLib {
 
 std::string getFileNameFromPath(const std::string &str, bool with_extension)
 {

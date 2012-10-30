@@ -210,7 +210,7 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 		// If the original name already exists we start to add numbers to name for
 		// as long as it takes to make the name unique.
 		if (count > 1)
-			cpName = cpName + "-" + number2str(count);
+			cpName = cpName + "-" + BaseLib::number2str(count);
 
 		for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
 			if ( cpName.compare((*it)->getName()) == 0 )

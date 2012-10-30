@@ -102,7 +102,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
 
 	/* first line contains field names */
 	getline(in, line);
-	std::list<std::string> fields = splitString(line, '\t');
+	std::list<std::string> fields = BaseLib::splitString(line, '\t');
 	std::list<std::string>::const_iterator it (fields.begin());
 	size_t nFields = fields.size();
 
@@ -122,7 +122,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
 
 	while ( getline(in, line) )
 	{
-		fields = splitString(line, '\t');
+		fields = BaseLib::splitString(line, '\t');
 
 		if (nFields == fields.size())
 		{

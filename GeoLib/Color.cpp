@@ -37,7 +37,7 @@ int readColorLookupTable(std::map<std::string, Color*> &colors, const std::strin
 
 	while ( getline(in, line) )
 	{
-		std::list<std::string> fields = splitString(line, '\t');
+		std::list<std::string> fields = BaseLib::splitString(line, '\t');
 		Color *c = new Color();
 
 		if (fields.size()>=4)

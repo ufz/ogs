@@ -355,9 +355,9 @@ int RapidVtuInterface::write(std::ostream& stream)
 	root_node->append_node(grid_node);
 	xml_node<> *piece_node (_doc->allocate_node(node_element, "Piece"));
 	grid_node->append_node(piece_node);
-	const std::string str_nNodes (number2str(nNodes));
+	const std::string str_nNodes (BaseLib::number2str(nNodes));
 	piece_node->append_attribute (_doc->allocate_attribute("NumberOfPoints", str_nNodes.c_str()));
-	const std::string str_nElems (number2str(nElems));
+	const std::string str_nElems (BaseLib::number2str(nElems));
 	piece_node->append_attribute(_doc->allocate_attribute("NumberOfCells", str_nElems.c_str()));
 
 	// scalar arrays for point- and cell-data
@@ -457,7 +457,7 @@ xml_node<>* RapidVtuInterface::addDataArray(const std::string &name, const std::
 	dataarray_node->append_attribute(attr);
 	if (nComponents > 1)
 	{
-		attr = _doc->allocate_attribute(_doc->allocate_string("NumberOfComponents"), _doc->allocate_string(number2str(nComponents).c_str()));
+		attr = _doc->allocate_attribute(_doc->allocate_string("NumberOfComponents"), _doc->allocate_string(BaseLib::number2str(nComponents).c_str()));
 		dataarray_node->append_attribute(attr);
 	}
 	std::string comp_type = (_use_compressor) ? "appended" : "ascii";

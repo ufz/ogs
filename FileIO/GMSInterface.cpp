@@ -42,7 +42,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 	/* read all stations */
 	while ( getline(in, line) )
 	{
-		std::list<std::string> fields = splitString(line, '\t');
+		std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
 		if (fields.size() >= 5)
 		{
@@ -222,7 +222,7 @@ std::vector<std::string> GMSInterface::readSoilIDfromFile(const std::string &fil
 	if (in.is_open())
 		while ( getline(in, line) )
 		{
-			trim(line);
+			BaseLib::trim(line);
 			soilID.push_back(line);
 		}
 	in.close();

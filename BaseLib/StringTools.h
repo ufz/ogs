@@ -20,6 +20,7 @@
 #include <iostream>
 #include <ctype.h>
 
+namespace BaseLib {
 
 /**
  *   Splits a string into a list of strings.
@@ -68,8 +69,6 @@ template<typename T> T str2number (const std::string &str)
  * Strip whitespace (or other characters) from the beginning and end of a string.
  */
 void trim(std::string &str, char ch=' ');
-
-namespace BaseLib {
 
 /**
  * Extract the filename from a path
