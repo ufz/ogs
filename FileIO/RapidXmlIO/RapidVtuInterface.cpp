@@ -15,6 +15,7 @@
 
 #include "RapidXML/rapidxml_print.hpp"
 #include "StringTools.h"
+#include "FileTools.h"
 #include "ProjectData.h"
 
 // MSH

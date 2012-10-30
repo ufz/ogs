@@ -8,11 +8,17 @@
  *
  *  Created on 2012-08-16 by Karsten Rink
  */
-//RapidXML
-#include "RapidStnInterface.h"
+
 #include <iostream>
 
+//RapidXML
+#include "RapidStnInterface.h"
+
+// BaseLib
 #include "StringTools.h"
+#include "FileTools.h"
+
+// GeoLib
 #include "Station.h"
 
 namespace FileIO

@@ -47,6 +47,28 @@ template <typename T> void writeValueBinary(std::ostream &out, T const& val)
  */
 void truncateFile( std::string const& file_path);
 
+/**
+ * Extract the filename from a path
+ */
+std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
+
+/**
+ * Extract the file type / suffix from a path
+ */
+std::string getSuffixFromPath(const std::string &str);
+
+
+/**
+ * Checks if file_name already contains a qualified path and if not copies the path from source.
+ */
+std::string copyPathToFileName(const std::string &file_name, const std::string &source);
+
+/**
+ * extracts the path of a fully qualified path name of the file
+ * @param fname [input] the fully qualified path name of the file
+ * @param path [output] the path of the fully qualified path name of the file
+ */
+void extractPath(std::string const& fname, std::string& path);
 } // end namespace BaseLib
 
 #endif // FILETOOLS_H

@@ -8,6 +8,7 @@
 #include "MemWatch.h"
 #include "RunTime.h"
 #include "StringTools.h"
+#include "FileTools.h"
 #include "tclap/CmdLine.h"
 #include "LogogSimpleFormatter.h"
 

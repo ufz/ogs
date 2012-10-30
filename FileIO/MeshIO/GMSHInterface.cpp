@@ -17,7 +17,7 @@
 #include "StringTools.h"
 #include "Configure.h"
 #include "BuildInfo.h"
-#include "StringTools.h"
+#include "FileTools.h"
 
 // FileIO
 #include "GMSHInterface.h"

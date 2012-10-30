@@ -11,10 +11,13 @@
  */
 
 #include "readMeshFromFile.h"
-#include "StringTools.h"
 #include "Mesh.h"
 #include "RapidXmlIO/RapidVtuInterface.h"
 #include "Legacy/MeshIO.h"
+
+// BaseLib
+#include "StringTools.h"
+#include "FileTools.h"
 
 namespace FileIO {
 

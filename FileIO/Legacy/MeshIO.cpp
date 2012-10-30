@@ -10,7 +10,13 @@
  * Created on 2012-05-08 by Karsten Rink
  */
 
+#include <iomanip>
+#include <sstream>
+
+// GeoLib
 #include "GEOObjects.h"
+
+// MeshLib
 #include "MeshIO.h"
 #include "Node.h"
 #include "Elements/Edge.h"
@@ -21,10 +27,9 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+// BaseLib
 #include "StringTools.h"
-
-#include <iomanip>
-#include <sstream>
+#include "FileTools.h"
 
 namespace FileIO
 {

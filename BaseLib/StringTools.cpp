@@ -49,59 +49,6 @@ void trim(std::string &str, char ch)
   else str.erase(str.begin(), str.end());
 }
 
-std::string getFileNameFromPath(const std::string &str, bool with_extension)
-{
-	std::string::size_type beg1 = str.find_last_of('/');
-	std::string::size_type beg2 = str.find_last_of('\\');
-	std::string::size_type beg;
-	if (beg1 == std::string::npos && beg2 == std::string::npos) beg = -1;
-	else if (beg1 == std::string::npos) beg = beg2;
-	else if (beg2 == std::string::npos) beg = beg1;
-	else beg = (beg1<beg2) ? beg2 : beg1;
-	std::string file ( str.substr(beg+1) );
-	if (with_extension) return file;
-	// cut extension
-	std::string::size_type end  = file.find_last_of('.');
-	return file.substr(0,end);
-}
-
-std::string getSuffixFromPath(const std::string &str)
-{
-	std::string::size_type beg (str.find_last_of('.'));
-	return str.substr(beg+1, str.length()-beg-1);
-}
-
-std::string copyPathToFileName(const std::string &file_name, const std::string &source)
-{
-	// check if file_name already contains a full path
-	size_t pos(file_name.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos)
-	{
-		pos = file_name.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-		{
-			std::string path;
-			BaseLib::extractPath(source, path);
-			return path.append(file_name);
-		}
-		else return std::string(file_name);
-	}
-	else return std::string(file_name);
-}
-
-
-void extractPath (std::string const& fname, std::string& path)
-{
-	// extract path for reading external files
-	size_t pos(fname.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos) {
-		pos = fname.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-			pos = 0;
-	}
-	path = fname.substr(0, pos==0 ? pos : pos + 1);
-}
-
 } // end namespace BaseLib
 
 

@@ -9,6 +9,8 @@
  * Created on 2010-06-08 by Karsten Rink
  */
 
+#include <fstream>
+
 #include "GMSInterface.h"
 #include "Station.h"
 #include "Mesh.h"
@@ -17,8 +19,9 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 #include "MshEnums.h"
+// BaseLib
 #include "StringTools.h"
-#include <fstream>
+#include "FileTools.h"
 
 int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                                        const std::string &filename)
