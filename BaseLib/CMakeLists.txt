@@ -9,6 +9,7 @@ SET_TARGET_PROPERTIES(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
 
 INCLUDE_DIRECTORIES(
 	.
+	zlib
 )
 
 # Add logog subdirectory and group its targets in a Visual Studio folder
