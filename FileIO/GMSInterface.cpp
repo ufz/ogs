@@ -328,6 +328,6 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 	in.close();
 	std::cout << "finished" << std::endl;
 
-	std::string mesh_name (BaseLib::getFileNameFromPath(filename));
+	std::string mesh_name (BaseLib::getFileNameFromPath(filename, false));
 	return new MeshLib::Mesh(mesh_name, nodes, elements);
 }
