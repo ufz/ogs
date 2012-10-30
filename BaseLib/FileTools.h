@@ -22,7 +22,7 @@ namespace BaseLib {
 /**
  * Returns true if given file exists. From http://www.techbytes.ca/techbyte103.html
  */
-static bool IsFileExisting(std::string strFilename)
+bool IsFileExisting(std::string strFilename)
 {
 	struct stat stFileInfo;
 	bool blnReturn;
