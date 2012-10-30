@@ -1183,7 +1183,7 @@ void MainWindow::FEMTestStart()
 //	// write data
 //	for (unsigned new_row(0); new_row<new_n_rows; new_row++) {
 //		for (unsigned new_col(0); new_col<new_n_cols; new_col++) {
-//			out << new_src_properties[new_row*new_n_cols+new_col] << " ";
+//			out << new_src_properties[(new_n_rows-new_row-1)*new_n_cols+new_col] << " ";
 //		}
 //		out << std::endl;
 //	}
