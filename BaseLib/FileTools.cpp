@@ -80,9 +80,12 @@ std::string getFileNameFromPath(const std::string &str, bool with_extension)
 	return file.substr(0,end);
 }
 
-std::string getSuffixFromPath(const std::string &str)
+std::string getSuffixFromPath(const std::string &path)
 {
+	const std::string str = getFileNameFromPath(path, true);
 	std::string::size_type beg(str.find_last_of('.'));
+	if (beg == std::string::npos)
+		return std::string();
 	return str.substr(beg+1, str.length()-beg-1);
 }
 
