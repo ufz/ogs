@@ -108,14 +108,8 @@ std::string copyPathToFileName(const std::string &file_name, const std::string &
 
 std::string extractPath(std::string const& pathname)
 {
-	// extract path for reading external files
-	size_t pos(pathname.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos) {
-		pos = pathname.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-			pos = 0;
-	}
-	return pathname.substr(0, pos==0 ? pos : pos + 1);
+	const size_t pos = findLastPathSeparator(pathname);
+	return pathname.substr(0, pos + 1);
 }
 
 } // end namespace BaseLib
