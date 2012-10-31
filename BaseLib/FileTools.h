@@ -55,11 +55,6 @@ template <typename T> void writeValueBinary(std::ostream &out, T const& val)
 void truncateFile( std::string const& file_path);
 
 /**
- * Extract the filename from a path
- */
-std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
-
-/**
  * Extracts basename from given pathname with extension.
  */
 std::string extractBaseName(std::string const& pathname);
