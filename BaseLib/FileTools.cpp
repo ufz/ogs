@@ -14,6 +14,8 @@
 #include "FileTools.h"
 
 #include <sys/stat.h>
+#include <algorithm>
+#include <cctype>
 
 namespace BaseLib
 {
@@ -97,6 +99,19 @@ std::string getFileExtension(const std::string &path)
 	if (p == std::string::npos)
 		return std::string();
 	return str.substr(p + 1);
+}
+
+bool hasFileExtension(std::string const& extension, std::string const& filename)
+{
+	std::string ext = extension;	// Copy for modification.
+	std::transform(ext.begin(), ext.end(), ext.begin(),
+		(int(*)(int)) std::toupper);
+
+	std::string file_ext = getFileExtension(filename);
+	std::transform(file_ext.begin(), file_ext.end(), file_ext.begin(),
+		(int(*)(int)) std::toupper);
+
+	return ext == file_ext;
 }
 
 std::string copyPathToFileName(const std::string &file_name, const std::string &source)

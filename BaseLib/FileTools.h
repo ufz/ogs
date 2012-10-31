@@ -69,6 +69,12 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname);
  */
 std::string getFileExtension(std::string const& filename);
 
+/**
+ * Compares filename's extension with query extension. The comparison is case
+ * insensitive done by converting to upper case with the std::toupper()
+ * function.
+ */
+bool hasFileExtension(std::string const& extension, std::string const& filename);
 
 /**
  * Checks if file_name already contains a qualified path and if not copies the path from source.

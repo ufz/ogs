@@ -208,6 +208,78 @@ TEST(BaseLib, ExtractBaseNameWin)
 	ASSERT_EQ ( BaseLib::extractBaseName("\\path.wrong0\\path.wrong\\path.ext\\"), "" );
 }
 
+TEST(BaseLib, HasFileExtensionWin)
+{
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "path\\"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path\\"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "path\\file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path\\file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path\\path\\file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path\\path\\path\\"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "path.ext\\"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path.ext\\"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "path\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "\\path\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "\\path\\path\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path\\path\\path.ext\\"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "path.wrong\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "\\path.wrong\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "\\path.wrong0\\path.wrong\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "\\path.wrong0\\path.wrong\\path.ext\\"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("Ext", "file.exT"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "path\\file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "path\\file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "path\\file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("Ext", "path\\file.exT"));
+}
+
+TEST(BaseLib, HasFileExtensionUnix)
+{
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "path/"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path/"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "path/file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path/file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path/path/file"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path/path/path/"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "path.ext/"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path.ext/"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "path/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "/path/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "/path/path/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path/path/path.ext/"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "path.wrong/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "/path.wrong/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "/path.wrong0/path.wrong/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("", "/path.wrong0/path.wrong/path.ext/"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("Ext", "file.exT"));
+
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "path/file.ext"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("EXT", "path/file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("ext", "path/file.EXT"));
+	ASSERT_TRUE ( BaseLib::hasFileExtension("Ext", "path/file.exT"));
+}
+
 TEST(BaseLib, ExtractBaseNameUnix)
 {
 	ASSERT_EQ ( BaseLib::extractBaseName("file"), "file" );
