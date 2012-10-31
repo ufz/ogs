@@ -23,20 +23,19 @@ namespace FileIO {
 
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
-	MeshLib::Mesh* mesh (NULL);
-	std::string suffix (BaseLib::getFileExtension(file_name));
-
-	if (suffix.compare("msh") == 0 || suffix.compare("MSH") == 0)
+	if (BaseLib::hasFileExtension("msh", file_name))
 	{
 		FileIO::MeshIO meshIO;
-		mesh = meshIO.loadMeshFromFile(file_name);
+		return meshIO.loadMeshFromFile(file_name);
 	}
-	else if (suffix.compare("vtu") == 0 || suffix.compare("VTU") == 0)
-		mesh = FileIO::RapidVtuInterface::readVTUFile(file_name);
-	else
-		std::cout << "Unknown mesh file format" << std::endl;
 
-	return mesh;
+	if (BaseLib::hasFileExtension("vtu", file_name))
+	{
+		return FileIO::RapidVtuInterface::readVTUFile(file_name);
+	}
+
+	std::cout << "Unknown mesh file format" << std::endl;
+	return 0;
 }
 
 }
