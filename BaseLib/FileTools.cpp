@@ -71,11 +71,17 @@ size_t findLastPathSeparator(std::string const& path)
 	return path.find_last_of("/\\");
 }
 
+/** Finds the position of last dot.
+ * This could be used to extract file extension.
+ */
 size_t findLastDot(std::string const& path)
 {
 	return path.find_last_of(".");
 }
 
+/** Returns a string with file extension as found by getFileExtension()
+ * dropped.
+ */
 std::string dropFileExtension(std::string const& filename)
 {
 	const size_t p = findLastDot(filename);

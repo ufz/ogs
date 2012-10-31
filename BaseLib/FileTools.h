@@ -49,11 +49,17 @@ void truncateFile( std::string const& file_path);
 
 /**
  * Extracts basename from given pathname with extension.
+ *
+ * Returns a string containing everything after the last path separator.
+ * If the the pathname does not contain a path separator original pathname is
+ * returned.
  */
 std::string extractBaseName(std::string const& pathname);
 
 /**
  * Extracts basename from given pathname without its extension.
+ *
+ *  Same as extractBaseName(), but drops the file extension too.
  */
 std::string extractBaseNameWithoutExtension(std::string const& pathname);
 
@@ -70,12 +76,15 @@ std::string getFileExtension(std::string const& filename);
 bool hasFileExtension(std::string const& extension, std::string const& filename);
 
 /**
- * Checks if file_name already contains a qualified path and if not copies the path from source.
+ * Checks if file_name already contains a qualified path and if not copies the
+ * path from source.
  */
 std::string copyPathToFileName(const std::string &file_name, const std::string &source);
 
 /**
  * Extracts the path of a pathname.
+ *
+ * Returns a string up to the last path separator not including it.
  */
 std::string extractPath(std::string const& pathname);
 } // end namespace BaseLib
