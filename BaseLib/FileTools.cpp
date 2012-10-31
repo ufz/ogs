@@ -64,6 +64,20 @@ size_t findLastPathSeparator(std::string const& path)
 	return path.find_last_of("/\\");
 }
 
+size_t findLastDot(std::string const& path)
+{
+	return path.find_last_of(".");
+}
+
+std::string dropFileExtension(std::string const& filename)
+{
+	const size_t p = findLastDot(filename);
+	if (p == std::string::npos)
+		return filename;
+
+	return filename.substr(0, filename.length() - p);
+}
+
 std::string getFileNameFromPath(const std::string &str, bool with_extension)
 {
 	std::string::size_type beg1 = str.find_last_of('/');
