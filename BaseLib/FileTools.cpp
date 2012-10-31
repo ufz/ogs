@@ -78,25 +78,10 @@ std::string dropFileExtension(std::string const& filename)
 	return filename.substr(0, filename.length() - p);
 }
 
-std::string getFileNameFromPath(const std::string &str, bool with_extension)
-{
-	std::string::size_type beg1 = str.find_last_of('/');
-	std::string::size_type beg2 = str.find_last_of('\\');
-	std::string::size_type beg;
-	if (beg1 == std::string::npos && beg2 == std::string::npos) beg = -1;
-	else if (beg1 == std::string::npos) beg = beg2;
-	else if (beg2 == std::string::npos) beg = beg1;
-	else beg = (beg1<beg2) ? beg2 : beg1;
-	std::string file ( str.substr(beg+1) );
-	if (with_extension) return file;
-	// cut extension
-	std::string::size_type end  = file.find_last_of('.');
-	return file.substr(0,end);
-}
-
 std::string extractBaseName(std::string const& pathname)
 {
-	return getFileNameFromPath(pathname, true);
+	const size_t p = findLastPathSeparator(pathname);
+	return pathname.substr(p+1);
 }
 
 std::string extractBaseNameWithoutExtension(std::string const& pathname)
