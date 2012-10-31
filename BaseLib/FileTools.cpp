@@ -80,6 +80,16 @@ std::string getFileNameFromPath(const std::string &str, bool with_extension)
 	return file.substr(0,end);
 }
 
+std::string extractBaseName(std::string const& pathname)
+{
+	return getFileNameFromPath(pathname, true);
+}
+
+std::string extractBaseNameWithoutExtension(std::string const& pathname)
+{
+	return getFileNameFromPath(pathname, false);
+}
+
 std::string getSuffixFromPath(const std::string &path)
 {
 	const std::string str = getFileNameFromPath(path, true);

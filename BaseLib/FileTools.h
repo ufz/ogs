@@ -60,6 +60,16 @@ void truncateFile( std::string const& file_path);
 std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
 
 /**
+ * Extracts basename from given pathname with extension.
+ */
+std::string extractBaseName(std::string const& pathname);
+
+/**
+ * Extracts basename from given pathname without its extension.
+ */
+std::string extractBaseNameWithoutExtension(std::string const& pathname);
+
+/**
  * Extract the file type / suffix from a path
  */
 std::string getSuffixFromPath(const std::string &str);
