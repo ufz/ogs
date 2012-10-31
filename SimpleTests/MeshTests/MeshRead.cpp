@@ -16,8 +16,7 @@
 #include "logog.hpp"
 
 // FileIO
-#include "RapidXmlIO/RapidVtuInterface.h"
-#include "Legacy/MeshIO.h"
+#include "readMeshFromFile.h"
 
 // MeshLib
 #include "Node.h"
@@ -47,19 +46,13 @@ int main(int argc, char *argv[])
 
 	std::string fname (mesh_arg.getValue());
 
-	FileIO::MeshIO mesh_io;
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 #endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-	MeshLib::Mesh* mesh(NULL);
-	if (BaseLib::getFileExtension(fname).compare("msh") == 0) {
-		mesh = mesh_io.loadMeshFromFile(fname);
-	} else {
-		mesh = FileIO::RapidVtuInterface::readVTUFile(fname);
-	}
+	MeshLib::Mesh* mesh = FileIO::readMeshFromFile(fname);
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 //	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
