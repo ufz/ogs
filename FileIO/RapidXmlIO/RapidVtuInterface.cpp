@@ -178,7 +178,7 @@ MeshLib::Mesh* RapidVtuInterface::readVTUFile(const std::string &file_name)
 			std::cout << "Nr. Nodes: " << nodes.size() << std::endl;
 			std::cout << "Nr. Elements: " << elements.size() << std::endl;
 			delete [] buffer;
-			return new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name, false), nodes, elements);
+			return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(file_name), nodes, elements);
 		}
 		else {
 			std::cout << "Error in RapidVtuInterface::readVTUFile() - Number of nodes and elements not specified." << std::endl;
