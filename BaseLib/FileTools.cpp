@@ -93,10 +93,10 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
 std::string getSuffixFromPath(const std::string &path)
 {
 	const std::string str = extractBaseName(path);
-	std::string::size_type beg(str.find_last_of('.'));
-	if (beg == std::string::npos)
+	const size_t p = findLastDot(str);
+	if (p == std::string::npos)
 		return std::string();
-	return str.substr(beg+1, str.length()-beg-1);
+	return str.substr(p + 1);
 }
 
 std::string copyPathToFileName(const std::string &file_name, const std::string &source)
