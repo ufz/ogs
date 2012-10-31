@@ -33,56 +33,56 @@ TEST(BaseLib, FindLastPathSeparatorUnix)
 	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/path/"), 15 );
 }
 
-TEST(BaseLib, GetSuffixFromPathWin)
+TEST(BaseLib, GetFileExtensionWin)
 {
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path\\"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path\\file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\path\\file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\path\\path\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path\\file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\path\\file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\path\\path\\"), "" );
 
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path.ext\\"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path.ext\\"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\path\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path\\path\\path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\path\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path\\path\\path.ext\\"), "" );
 
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path.wrong\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path.wrong\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path.wrong0\\path.wrong\\file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("\\path.wrong0\\path.wrong\\path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path.wrong\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path.wrong\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path.wrong0\\path.wrong\\file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("\\path.wrong0\\path.wrong\\path.ext\\"), "" );
 }
 
-TEST(BaseLib, GetSuffixFromPathUnix)
+TEST(BaseLib, getFileExtensionUnix)
 {
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path/"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path/file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/path/file"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/path/path/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path/file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/path/file"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/path/path/"), "" );
 
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path.ext/"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path.ext/"), "" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/path/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path/path/path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/path/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path/path/path.ext/"), "" );
 
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("path.wrong/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path.wrong/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path.wrong0/path.wrong/file.ext"), "ext" );
-	ASSERT_EQ ( BaseLib::getSuffixFromPath("/path.wrong0/path.wrong/path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::getFileExtension("path.wrong/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path.wrong/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path.wrong0/path.wrong/file.ext"), "ext" );
+	ASSERT_EQ ( BaseLib::getFileExtension("/path.wrong0/path.wrong/path.ext/"), "" );
 }
 
 TEST(BaseLib, CopyPathToFileNameWin)

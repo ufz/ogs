@@ -65,9 +65,9 @@ std::string extractBaseName(std::string const& pathname);
 std::string extractBaseNameWithoutExtension(std::string const& pathname);
 
 /**
- * Extract the file type / suffix from a path
+ * Extract extension from filename
  */
-std::string getSuffixFromPath(const std::string &str);
+std::string getFileExtension(std::string const& filename);
 
 
 /**

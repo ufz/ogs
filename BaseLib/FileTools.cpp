@@ -90,7 +90,7 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
 	return dropFileExtension(basename);
 }
 
-std::string getSuffixFromPath(const std::string &path)
+std::string getFileExtension(const std::string &path)
 {
 	const std::string str = extractBaseName(path);
 	const size_t p = findLastDot(str);

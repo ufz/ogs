@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	BaseLib::RunTime run_time;
 	run_time.start();
 	MeshLib::Mesh* mesh(NULL);
-	if (BaseLib::getSuffixFromPath(fname).compare("msh") == 0) {
+	if (BaseLib::getFileExtension(fname).compare("msh") == 0) {
 		mesh = mesh_io.loadMeshFromFile(fname);
 	} else {
 		mesh = FileIO::RapidVtuInterface::readVTUFile(fname);

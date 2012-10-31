@@ -24,7 +24,7 @@ namespace FileIO {
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
 	MeshLib::Mesh* mesh (NULL);
-	std::string suffix (BaseLib::getSuffixFromPath(file_name));
+	std::string suffix (BaseLib::getFileExtension(file_name));
 
 	if (suffix.compare("msh") == 0 || suffix.compare("MSH") == 0)
 	{
