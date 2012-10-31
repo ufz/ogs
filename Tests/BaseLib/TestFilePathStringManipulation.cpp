@@ -8,6 +8,7 @@
 #include "gtest.h"
 
 #include "FileTools.h"
+#include "FileTools.cpp"
 
 TEST(BaseLib, FindLastPathSeparatorWin)
 {
