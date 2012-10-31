@@ -114,21 +114,15 @@ bool hasFileExtension(std::string const& extension, std::string const& filename)
 	return ext == file_ext;
 }
 
-std::string copyPathToFileName(const std::string &file_name, const std::string &source)
+std::string copyPathToFileName(const std::string &file_name,
+    const std::string &source)
 {
 	// check if file_name already contains a full path
-	size_t pos(file_name.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos)
-	{
-		pos = file_name.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-		{
-			std::string path = BaseLib::extractPath(source);
-			return path.append(file_name);
-		}
-		else return std::string(file_name);
-	}
-	else return std::string(file_name);
+	const size_t pos = findLastPathSeparator(file_name);
+	if (pos != std::string::npos)
+		return file_name;
+
+	return BaseLib::extractPath(source).append(file_name);
 }
 
 std::string extractPath(std::string const& pathname)
