@@ -33,58 +33,6 @@ TEST(BaseLib, FindLastPathSeparatorUnix)
 	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/path/"), 15 );
 }
 
-TEST(BaseLib, GetFileNameFromPathWin)
-{
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path\\", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path\\file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\path\\file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\path\\path\\", true), "" );
-
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path.ext\\", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path.ext\\", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\path\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path\\path\\path.ext\\", true), "" );
-
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path.wrong\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path.wrong\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path.wrong0\\path.wrong\\file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("\\path.wrong0\\path.wrong\\path.ext\\", true), "" );
-}
-
-TEST(BaseLib, GetFileNameFromPathUnix)
-{
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path/", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path/file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/path/file", true), "file" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/path/path/", true), "" );
-
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path.ext/", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path.ext/", true), "" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/path/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path/path/path.ext/", true), "" );
-
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("path.wrong/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path.wrong/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path.wrong0/path.wrong/file.ext", true), "file.ext" );
-	ASSERT_EQ ( BaseLib::getFileNameFromPath("/path.wrong0/path.wrong/path.ext/", true), "" );
-}
-
 TEST(BaseLib, GetSuffixFromPathWin)
 {
 	ASSERT_EQ ( BaseLib::getSuffixFromPath("file"), "" );
@@ -180,6 +128,110 @@ TEST(BaseLib, ExtractPathWin)
 	ASSERT_EQ ( BaseLib::extractPath("/path/file.ext"), "/path/" );
 	ASSERT_EQ ( BaseLib::extractPath("/path/path/file.ext"), "/path/path/" );
 	ASSERT_EQ ( BaseLib::extractPath("/path/path/path.ext/"), "/path/path/path.ext/" );
+}
+
+TEST(BaseLib, ExtractBaseNameWithoutExtensionWin)
+{
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\path\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\path\\path\\"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\path\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path\\path\\path.ext\\"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path.wrong\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path.wrong\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path.wrong0\\path.wrong\\file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("\\path.wrong0\\path.wrong\\path.ext\\"), "" );
+}
+
+TEST(BaseLib, ExtractBaseNameWithoutExtensionUnix)
+{
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/path/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/path/path/"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/path/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path/path/path.ext/"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("path.wrong/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path.wrong/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path.wrong0/path.wrong/file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseNameWithoutExtension("/path.wrong0/path.wrong/path.ext/"), "" );
+}
+
+TEST(BaseLib, ExtractBaseNameWin)
+{
+	ASSERT_EQ ( BaseLib::extractBaseName("file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\path\\file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\path\\path\\"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseName("file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path.ext\\"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\path\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path\\path\\path.ext\\"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseName("path.wrong\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path.wrong\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path.wrong0\\path.wrong\\file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("\\path.wrong0\\path.wrong\\path.ext\\"), "" );
+}
+
+TEST(BaseLib, ExtractBaseNameUnix)
+{
+	ASSERT_EQ ( BaseLib::extractBaseName("file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/path/file"), "file" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/path/path/"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseName("file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path.ext/"), "" );
+	ASSERT_EQ ( BaseLib::extractBaseName("path/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/path/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path/path/path.ext/"), "" );
+
+	ASSERT_EQ ( BaseLib::extractBaseName("path.wrong/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path.wrong/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path.wrong0/path.wrong/file.ext"), "file.ext" );
+	ASSERT_EQ ( BaseLib::extractBaseName("/path.wrong0/path.wrong/path.ext/"), "" );
 }
 
 TEST(BaseLib, ExtractPathUnix)
