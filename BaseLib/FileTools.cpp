@@ -101,7 +101,8 @@ std::string extractBaseName(std::string const& pathname)
 
 std::string extractBaseNameWithoutExtension(std::string const& pathname)
 {
-	return getFileNameFromPath(pathname, false);
+	std::string basename = extractBaseName(pathname);
+	return dropFileExtension(basename);
 }
 
 std::string getSuffixFromPath(const std::string &path)
