@@ -12,10 +12,9 @@
  */
 
 #include "FileTools.h"
+#include "StringTools.h"
 
 #include <sys/stat.h>
-#include <algorithm>
-#include <cctype>
 
 namespace BaseLib
 {
@@ -114,13 +113,8 @@ std::string getFileExtension(const std::string &path)
 
 bool hasFileExtension(std::string const& extension, std::string const& filename)
 {
-	std::string ext = extension;	// Copy for modification.
-	std::transform(ext.begin(), ext.end(), ext.begin(),
-		(int(*)(int)) std::toupper);
-
-	std::string file_ext = getFileExtension(filename);
-	std::transform(file_ext.begin(), file_ext.end(), file_ext.begin(),
-		(int(*)(int)) std::toupper);
+	std::string ext = stringToUpper(extension);	// Copy for modification.
+	std::string file_ext = stringToUpper(getFileExtension(filename));
 
 	return ext == file_ext;
 }
