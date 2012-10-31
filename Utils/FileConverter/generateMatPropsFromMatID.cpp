@@ -28,7 +28,7 @@ int main (int argc, char* argv[])
 
 	// create file
 	std::string filename(argv[1]);
-	std::string name(BaseLib::getFileNameFromPath(filename));
+	std::string name = BaseLib::extractBaseNameWithoutExtension(filename);
 
 	std::string new_matname(name + "_prop");
 	std::ofstream out_prop( new_matname.c_str(), std::ios::out );

@@ -48,27 +48,45 @@ template <typename T> void writeValueBinary(std::ostream &out, T const& val)
 void truncateFile( std::string const& file_path);
 
 /**
- * Extract the filename from a path
+ * Extracts basename from given pathname with extension.
+ *
+ * Returns a string containing everything after the last path separator.
+ * If the the pathname does not contain a path separator original pathname is
+ * returned.
  */
-std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
+std::string extractBaseName(std::string const& pathname);
 
 /**
- * Extract the file type / suffix from a path
+ * Extracts basename from given pathname without its extension.
+ *
+ *  Same as extractBaseName(), but drops the file extension too.
  */
-std::string getSuffixFromPath(const std::string &str);
-
+std::string extractBaseNameWithoutExtension(std::string const& pathname);
 
 /**
- * Checks if file_name already contains a qualified path and if not copies the path from source.
+ * Extract extension from filename
+ */
+std::string getFileExtension(std::string const& filename);
+
+/**
+ * Compares filename's extension with query extension. The comparison is case
+ * insensitive done by converting to upper case with the std::toupper()
+ * function.
+ */
+bool hasFileExtension(std::string const& extension, std::string const& filename);
+
+/**
+ * Checks if file_name already contains a qualified path and if not copies the
+ * path from source.
  */
 std::string copyPathToFileName(const std::string &file_name, const std::string &source);
 
 /**
- * extracts the path of a fully qualified path name of the file
- * @param fname [input] the fully qualified path name of the file
- * @param path [output] the path of the fully qualified path name of the file
+ * Extracts the path of a pathname.
+ *
+ * Returns a string up to the last path separator not including it.
  */
-void extractPath(std::string const& fname, std::string& path);
+std::string extractPath(std::string const& pathname);
 } // end namespace BaseLib
 
 #endif // FILETOOLS_H
