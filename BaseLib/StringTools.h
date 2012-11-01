@@ -70,6 +70,13 @@ template<typename T> T str2number (const std::string &str)
  */
 void trim(std::string &str, char ch=' ');
 
+/**
+ * Returns same string with all characters in upper case.
+ *
+ * This uses std::toupper() function, and does not care about unicode.
+ */
+std::string stringToUpper(std::string const& str);
+
 } // end namespace BaseLib
 
 #ifdef MSVC

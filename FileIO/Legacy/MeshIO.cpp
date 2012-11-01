@@ -107,7 +107,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 		}
 
 
-		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::getFileNameFromPath(file_name), nodes, elements));
+		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(file_name), nodes, elements));
 		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
 
 		std::cout << "finished." << std::endl;

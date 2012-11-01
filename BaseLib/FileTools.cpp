@@ -12,6 +12,7 @@
  */
 
 #include "FileTools.h"
+#include "StringTools.h"
 
 #include <sys/stat.h>
 
@@ -59,56 +60,80 @@ void truncateFile( std::string const& filename)
     ofs.close();
 }
 
-std::string getFileNameFromPath(const std::string &str, bool with_extension)
+/** Finds the position of last file path separator.
+ * Checks for unix or windows file path separators in given path and returns the
+ * position of the last one or std::string::npos if no file path separator was
+ * found.
+ */
+size_t findLastPathSeparator(std::string const& path)
 {
-	std::string::size_type beg1 = str.find_last_of('/');
-	std::string::size_type beg2 = str.find_last_of('\\');
-	std::string::size_type beg;
-	if (beg1 == std::string::npos && beg2 == std::string::npos) beg = -1;
-	else if (beg1 == std::string::npos) beg = beg2;
-	else if (beg2 == std::string::npos) beg = beg1;
-	else beg = (beg1<beg2) ? beg2 : beg1;
-	std::string file ( str.substr(beg+1) );
-	if (with_extension) return file;
-	// cut extension
-	std::string::size_type end  = file.find_last_of('.');
-	return file.substr(0,end);
+	return path.find_last_of("/\\");
 }
 
-std::string getSuffixFromPath(const std::string &str)
+/** Finds the position of last dot.
+ * This could be used to extract file extension.
+ */
+size_t findLastDot(std::string const& path)
 {
-	std::string::size_type beg(str.find_last_of('.'));
-	return str.substr(beg+1, str.length()-beg-1);
+	return path.find_last_of(".");
 }
 
-std::string copyPathToFileName(const std::string &file_name, const std::string &source)
+/** Returns a string with file extension as found by getFileExtension()
+ * dropped.
+ */
+std::string dropFileExtension(std::string const& filename)
+{
+	const size_t p = findLastDot(filename);
+	if (p == std::string::npos)
+		return filename;
+
+	return filename.substr(0, filename.length() - p);
+}
+
+std::string extractBaseName(std::string const& pathname)
+{
+	const size_t p = findLastPathSeparator(pathname);
+	return pathname.substr(p+1);
+}
+
+std::string extractBaseNameWithoutExtension(std::string const& pathname)
+{
+	std::string basename = extractBaseName(pathname);
+	return dropFileExtension(basename);
+}
+
+std::string getFileExtension(const std::string &path)
+{
+	const std::string str = extractBaseName(path);
+	const size_t p = findLastDot(str);
+	if (p == std::string::npos)
+		return std::string();
+	return str.substr(p + 1);
+}
+
+bool hasFileExtension(std::string const& extension, std::string const& filename)
+{
+	std::string ext = stringToUpper(extension);	// Copy for modification.
+	std::string file_ext = stringToUpper(getFileExtension(filename));
+
+	return ext == file_ext;
+}
+
+std::string copyPathToFileName(const std::string &file_name,
+    const std::string &source)
 {
 	// check if file_name already contains a full path
-	size_t pos(file_name.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos)
-	{
-		pos = file_name.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-		{
-			std::string path;
-			BaseLib::extractPath(source, path);
-			return path.append(file_name);
-		}
-		else return std::string(file_name);
-	}
-	else return std::string(file_name);
+	const size_t pos = findLastPathSeparator(file_name);
+	if (pos != std::string::npos)
+		return file_name;
+
+	return BaseLib::extractPath(source).append(file_name);
 }
 
-void extractPath(std::string const& fname, std::string& path)
+std::string extractPath(std::string const& pathname)
 {
-	// extract path for reading external files
-	size_t pos(fname.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos) {
-		pos = fname.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-			pos = 0;
-	}
-	path = fname.substr(0, pos==0 ? pos : pos + 1);
+	const size_t pos = findLastPathSeparator(pathname);
+	return pathname.substr(0, pos + 1);
 }
 
 } // end namespace BaseLib
