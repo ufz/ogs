@@ -12,6 +12,9 @@
 
 #include "StringTools.h"
 
+#include <algorithm>
+#include <cctype>
+
 namespace BaseLib {
 
 std::list<std::string> splitString(const std::string &str, char delim)
@@ -47,6 +50,13 @@ void trim(std::string &str, char ch)
     if(pos != std::string::npos) str.erase(0, pos);
   }
   else str.erase(str.begin(), str.end());
+}
+
+std::string stringToUpper(std::string const& str)
+{
+    std::string s = str;
+	std::transform(s.begin(), s.end(), s.begin(), (int(*)(int)) std::toupper);
+    return s;
 }
 
 } // end namespace BaseLib

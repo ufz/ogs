@@ -211,7 +211,7 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		}
 	}
 	in.close();
-	return new MeshLib::Mesh(BaseLib::getFileNameFromPath(fname), nodes, elements);
+	return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements);
 }
 
 void GMSHInterface::readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> &id_map)
