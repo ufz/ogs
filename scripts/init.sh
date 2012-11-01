@@ -28,15 +28,18 @@ fi
 
 cd $DIR
 # Enable git hooks
-cd .git/hooks
-git init
-cd ../..
-git fetch origin
-cd .git/hooks
-git pull .. remotes/origin/hooks
-cd $DIR
+# Does not work on Windows at the moment
+if [ ! "$OSTYPE" == 'msys' ]; then
+	cd .git/hooks
+	git init
+	cd ../..
+	git fetch origin
+	cd .git/hooks
+	git pull .. remotes/origin/hooks
+	cd $DIR
 
-# Set git configs for running uncrustify
-git config --bool hooks.uncrustify
-git config hooks.uncrustify.path $UNCRUSTIFY_LOCATION
-git config hooks.uncrustify.conf $SCRIPT_DIR/style/uncrustify.cfg
+	# Set git configs for running uncrustify
+	git config --bool hooks.uncrustify
+	git config hooks.uncrustify.path $UNCRUSTIFY_LOCATION
+	git config hooks.uncrustify.conf $SCRIPT_DIR/style/uncrustify.cfg
+fi
