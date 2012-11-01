@@ -48,15 +48,7 @@ class Histogram
         const bool computeHistogram = true )
         : _data(first, last), _nr_bins(nr_bins)
     {
-        std::sort(_data.begin(), _data.end());
-        _histogram.resize(_nr_bins);
-        _min = _data.front();
-        _max = _data.back();
-        _bin_width = (_max - _min)/_nr_bins;
-
-        _dirty = true;
-        if (computeHistogram)
-            update();
+        init(computeHistogram);
     }
 
     /** Creates histogram from \c std::vector.
@@ -69,15 +61,7 @@ class Histogram
         const bool computeHistogram = true)
         : _data(data), _nr_bins(nr_bins)
     {
-        std::sort(_data.begin(), _data.end());
-        _histogram.resize(_nr_bins);
-        _min = _data.front();
-        _max = _data.back();
-        _bin_width = (_max - _min)/_nr_bins;
-
-        _dirty = true;
-        if (computeHistogram)
-            update();
+        init(computeHistogram);
     }
 
     /** Updates histogram using sorted \c _data vector.
@@ -133,6 +117,22 @@ class Histogram
                 os << "*";
             os << "\n";
         }
+    }
+
+    protected:
+    /** Initialize class members after constructor call.
+     */
+    void init(const bool computeHistogram = true)
+    {
+        std::sort(_data.begin(), _data.end());
+        _histogram.resize(_nr_bins);
+        _min = _data.front();
+        _max = _data.back();
+        _bin_width = (_max - _min)/_nr_bins;
+
+        _dirty = true;
+        if (computeHistogram)
+            update();
     }
 
     protected:
