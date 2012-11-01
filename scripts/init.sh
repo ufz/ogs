@@ -17,6 +17,8 @@ if [ -z "$UNCRUSTIFY_LOCATION" ]; then
 		rm -r uncrustify-0.59-win32*
 		if [ ! -f ~/bin/uncrustify.exe ]; then
 			echo "Error downloading uncrustify! Git hooks not set."
+		else
+			UNCRUSTIFY_LOCATION=~/bin/uncrustify.exe
 		fi
 	else
 		echo "Please install uncrustify (http://uncrustify.sourceforge.net) to setup git hooks."
@@ -36,4 +38,5 @@ cd $DIR
 
 # Set git configs for running uncrustify
 git config --bool hooks.uncrustify
+git config hooks.uncrustify.path $UNCRUSTIFY_LOCATION
 git config hooks.uncrustify.conf $SCRIPT_DIR/style/uncrustify.cfg
