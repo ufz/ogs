@@ -39,7 +39,7 @@ if [ ! "$OSTYPE" == 'msys' ]; then
 	cd $DIR
 
 	# Set git configs for running uncrustify
-	git config --bool hooks.uncrustify
+	git config --add --bool hooks.uncrustify true
 	git config hooks.uncrustify.path $UNCRUSTIFY_LOCATION
 	git config hooks.uncrustify.conf $SCRIPT_DIR/style/uncrustify.cfg
 fi
