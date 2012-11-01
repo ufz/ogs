@@ -71,7 +71,7 @@ template<typename T> T str2number (const std::string &str)
 void trim(std::string &str, char ch=' ');
 
 /**
- * Returs same string with all characters in upper case.
+ * Returns same string with all characters in upper case.
  *
  * This uses std::toupper() function, and does not care about unicode.
  */
