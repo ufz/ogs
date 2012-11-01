@@ -1,8 +1,8 @@
 ADD_SUBDIRECTORY( gtest )
 
-GET_SOURCE_FILES(TEST_SOURCES)
-GET_SOURCE_FILES(TEST_SOURCES BaseLib)
-GET_SOURCE_FILES(TEST_SOURCES GeoLib)
+APPEND_SOURCE_FILES(TEST_SOURCES)
+APPEND_SOURCE_FILES(TEST_SOURCES BaseLib)
+APPEND_SOURCE_FILES(TEST_SOURCES GeoLib)
 
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/Tests/gtest
@@ -19,5 +19,15 @@ TARGET_LINK_LIBRARIES(testrunner
 	GeoLib
 )
 
+# Add make-target test which runs the testrunner
+# This should override CTest's predefined test-target but it does not
+ADD_CUSTOM_TARGET(test
+	${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner
+	DEPENDS testrunner
+)
+
+# Testing
+#ENABLE_TESTING()
+
 # Creates one ctest entry for every googletest
-ADD_GOOGLE_TESTS ( ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner ${TEST_SOURCES})
+#ADD_GOOGLE_TESTS ( ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner ${TEST_SOURCES})

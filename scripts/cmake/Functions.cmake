@@ -35,6 +35,13 @@ MACRO(GET_SOURCE_FILES SOURCE_FILES)
 
 ENDMACRO()
 
+# Appends a list of source files (*.h and *.cpp) to SOURCE_FILES and creates a Visual
+# Studio folder. A (relative) subdirectory can be passed as second parameter (optional).
+MACRO(APPEND_SOURCE_FILES SOURCE_FILES)
+	GET_SOURCE_FILES(TMP_SOURCES "${ARGV}")
+	SET(${SOURCE_FILES} ${${SOURCE_FILES}} ${TMP_SOURCES})
+ENDMACRO()
+
 # Creates one ctest for each googletest found in source files passed as arguments
 # number two onwards. Argument one specifies the testrunner executable.
 MACRO(ADD_GOOGLE_TESTS executable)
