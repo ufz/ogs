@@ -11,7 +11,7 @@ if [ -z "$UNCRUSTIFY_LOCATION" ]; then
 	if [ "$OSTYPE" == 'msys' ]; then
 		mkdir -vp ~/bin
 		export PATH=$PATH:~/bin
-		download_file http://sourceforge.net/projects/uncrustify/files/uncrustify/uncrustify-0.59/uncrustify-0.59-win32.zip/download uncrustify-0.59-win32.zip
+		download_file http://sourceforge.net/projects/uncrustify/files/uncrustify/uncrustify-0.59/uncrustify-0.59-win32.zip/download ./uncrustify-0.59-win32.zip
 		7za x uncrustify-0.59-win32.zip
 		mv uncrustify-0.59-win32/uncrustify.exe ~/bin
 		rm -r uncrustify-0.59-win32*
