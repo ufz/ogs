@@ -21,8 +21,16 @@ class Raster {
 public:
 	Raster(std::size_t n_cols, std::size_t n_rows, double xllcorner, double yllcorner,
 					double cell_size = 1, double no_data_val = -9999, double* raster_data = NULL);
+
 	std::size_t getNCols() const { return _n_cols; }
 	std::size_t getNRows() const { return _n_rows; }
+
+	/**
+	 * get the origin of lower left raster cell
+	 * @return the origin of the raster
+	 */
+	GeoLib::Point const& getOrigin() const;
+
 	void refineRaster(std::size_t n_cols, std::size_t n_rows);
 	double const* getRasterData() const { return _raster_data; }
 	virtual ~Raster();

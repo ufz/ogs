@@ -63,6 +63,11 @@ void Raster::setNoDataVal (double no_data_val)
 	_no_data_val = no_data_val;
 }
 
+GeoLib::Point const& Raster::getOrigin() const
+{
+	return _ll_pnt;
+}
+
 void Raster::writeRasterAsASC(std::ostream &os) const
 {
 	// write header
