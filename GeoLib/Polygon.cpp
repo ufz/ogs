@@ -25,7 +25,6 @@
 
 // Base
 #include "quicksort.h"
-#include "swap.h"
 
 namespace GeoLib
 {
@@ -304,7 +303,7 @@ void Polygon::ensureCWOrientation ()
 		size_t tmp_n_pnts (n_pnts);
 		tmp_n_pnts++; // include last point of polygon (which is identical to the first)
 		for (size_t k(0); k < tmp_n_pnts / 2; k++)
-			BaseLib::swap (_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts - 1 - k]);
+			std::swap (_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts - 1 - k]);
 	}
 
 	for (size_t k(0); k < n_pnts; k++)
@@ -329,7 +328,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 
 			// split Polygon
 			if (idx0 > idx1)
-				BaseLib::swap (idx0, idx1);
+				std::swap (idx0, idx1);
 
 			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(
 			                                   (*polygon_it)->getPointsVec(), false));
@@ -396,7 +395,7 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 			delete [] id_vec;
 
 			if (idx0 > idx1)
-				BaseLib::swap (idx0, idx1);
+				std::swap (idx0, idx1);
 
 			// create two closed polylines
 			GeoLib::Polygon* polygon0 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
