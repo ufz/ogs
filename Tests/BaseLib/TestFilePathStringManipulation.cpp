@@ -34,6 +34,58 @@ TEST(BaseLib, FindLastPathSeparatorUnix)
 	ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/path/"), 15 );
 }
 
+TEST(BaseLib, DropFileExtensionWin)
+{
+	ASSERT_EQ ( BaseLib::dropFileExtension("file"), "file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\file"), "\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path\\"), "path\\" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\"), "\\path\\" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path\\file"), "path\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\file"), "\\path\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\path\\file"), "\\path\\path\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\path\\path\\"), "\\path\\path\\path\\" );
+
+	ASSERT_EQ ( BaseLib::dropFileExtension("file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\file.ext"), "\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path.ext\\"), "path.ext\\" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path.ext\\"), "\\path.ext\\" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path\\file.ext"), "path\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\file.ext"), "\\path\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\path\\file.ext"), "\\path\\path\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path\\path\\path.ext\\"), "\\path\\path\\path.ext\\" );
+
+	ASSERT_EQ ( BaseLib::dropFileExtension("path.wrong\\file.ext"), "path.wrong\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path.wrong\\file.ext"), "\\path.wrong\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path.wrong0\\path.wrong\\file.ext"), "\\path.wrong0\\path.wrong\\file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("\\path.wrong0\\path.wrong\\path.ext\\"), "\\path.wrong0\\path.wrong\\path.ext\\" );
+}
+
+TEST(BaseLib, DropFileExtensionUnix)
+{
+	ASSERT_EQ ( BaseLib::dropFileExtension("file"), "file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/file"), "/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path/"), "path/" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/"), "/path/" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path/file"), "path/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/file"), "/path/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/path/file"), "/path/path/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/path/path/"), "/path/path/path/" );
+
+	ASSERT_EQ ( BaseLib::dropFileExtension("file.ext"), "file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/file.ext"), "/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path.ext/"), "path.ext/" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path.ext/"), "/path.ext/" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("path/file.ext"), "path/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/file.ext"), "/path/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/path/file.ext"), "/path/path/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path/path/path.ext/"), "/path/path/path.ext/" );
+
+	ASSERT_EQ ( BaseLib::dropFileExtension("path.wrong/file.ext"), "path.wrong/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path.wrong/file.ext"), "/path.wrong/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path.wrong0/path.wrong/file.ext"), "/path.wrong0/path.wrong/file" );
+	ASSERT_EQ ( BaseLib::dropFileExtension("/path.wrong0/path.wrong/path.ext/"), "/path.wrong0/path.wrong/path.ext/" );
+}
+
 TEST(BaseLib, GetFileExtensionWin)
 {
 	ASSERT_EQ ( BaseLib::getFileExtension("file"), "" );
