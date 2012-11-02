@@ -51,7 +51,7 @@ public:
 	/// @brief Returns the scalar data range.
 	void getRange(double range[2]);
 
-	/// @brief Returns the spacing betweeen two pixels.
+	/// @brief Returns the spacing between two pixels.
 	double getSpacing() const;
 
 	virtual void SetUserProperty(QString name, QVariant value);
