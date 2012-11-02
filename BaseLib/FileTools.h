@@ -75,6 +75,11 @@ std::string getFileExtension(std::string const& filename);
  */
 bool hasFileExtension(std::string const& extension, std::string const& filename);
 
+/** Returns a string with file extension as found by getFileExtension()
+ * dropped.
+ */
+std::string dropFileExtension(std::string const& filename);
+
 /**
  * Checks if file_name already contains a qualified path and if not copies the
  * path from source.

@@ -87,7 +87,7 @@ std::string dropFileExtension(std::string const& filename)
 	if (p == std::string::npos)
 		return filename;
 
-	return filename.substr(0, filename.length() - p);
+	return filename.substr(0, p);
 }
 
 std::string extractBaseName(std::string const& pathname)
