@@ -36,7 +36,7 @@ void Raster::refineRaster(std::size_t n_cols, std::size_t n_rows)
 	for (std::size_t row(0); row<_n_rows; row++) {
 		for (std::size_t col(0); col<_n_cols; col++) {
 			for (std::size_t new_row(row*row_blk_size); new_row<(row+1)*row_blk_size; new_row++) {
-				for (std::size_t new_col(col*row_blk_size); new_col<(col+1)*col_blk_size; new_col++) {
+				for (std::size_t new_col(col*col_blk_size); new_col<(col+1)*col_blk_size; new_col++) {
 					new_raster_data[new_row*n_cols+new_col] = _raster_data[row*_n_cols+col];
 				}
 			}
