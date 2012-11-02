@@ -26,6 +26,12 @@ public:
 	std::size_t getNRows() const { return _n_rows; }
 
 	/**
+	 * get the distance between raster pixels
+	 * @return
+	 */
+	double getRasterPixelDistance() const { return _cell_size; }
+
+	/**
 	 * get the origin of lower left raster cell
 	 * @return the origin of the raster
 	 */

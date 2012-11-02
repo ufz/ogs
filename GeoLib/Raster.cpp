@@ -44,6 +44,10 @@ void Raster::refineRaster(std::size_t n_cols, std::size_t n_rows)
 	}
 
 	std::swap(_raster_data, new_raster_data);
+	_cell_size /= row_blk_size;
+	_n_cols = n_cols;
+	_n_rows = n_rows;
+
 	delete [] new_raster_data;
 }
 
