@@ -101,8 +101,14 @@ int main (int argc, char* argv[])
 	}
 
 	double spacing(raster->getRasterPixelDistance());
+	double *raster_with_alpha(new double[2 * raster->getNRows() * raster->getNCols()]);
+	for (std::size_t k(0); k<raster->getNRows() * raster->getNCols(); k++) {
+		raster_with_alpha[2*k] = 1.0;
+		raster_with_alpha[2*k+1] = raster->getRasterData()[k];
+	}
+
 	double origin[3] = {raster->getOrigin()[0] + spacing/2.0, raster->getOrigin()[1] + spacing/2.0, raster->getOrigin()[2]};
-	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster->getRasterData(), origin, raster->getNRows(), raster->getNCols(),
+	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster_with_alpha, origin, raster->getNRows(), raster->getNCols(),
 					spacing, MshElemType::QUAD, UseIntensityAs::MATERIAL));
 
 	std::vector<size_t> src_perm(n_cols*n_rows);
