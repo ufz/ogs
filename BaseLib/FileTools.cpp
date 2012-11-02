@@ -74,9 +74,6 @@ size_t findLastDot(std::string const& path)
 	return path.find_last_of(".");
 }
 
-/** Returns a string with file extension as found by getFileExtension()
- * dropped.
- */
 std::string dropFileExtension(std::string const& filename)
 {
 	const size_t p = findLastDot(filename);
