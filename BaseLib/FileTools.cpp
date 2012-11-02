@@ -76,8 +76,14 @@ size_t findLastDot(std::string const& path)
 
 std::string dropFileExtension(std::string const& filename)
 {
+    // Look for dots in filename.
 	const size_t p = findLastDot(filename);
 	if (p == std::string::npos)
+		return filename;
+
+    // Check position of the last path separator.
+	const size_t s = findLastPathSeparator(filename);
+	if (s != std::string::npos && p < s)
 		return filename;
 
 	return filename.substr(0, p);
