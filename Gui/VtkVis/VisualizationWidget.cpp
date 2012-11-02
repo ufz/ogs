@@ -62,15 +62,12 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	picker->AddObserver(vtkCommand::EndPickEvent, _vtkPickCallback);
 	vtkWidget->GetRenderWindow()->GetInteractor()->SetPicker(picker);
 
-	// BUG Render Window conflicts with VREDs render window
-#ifndef OGS_VRED_PLUGIN
 	vtkRenderWindow* renderWindow = vtkWidget->GetRenderWindow();
 	renderWindow->StereoCapableWindowOn();
 	renderWindow->SetStereoTypeToCrystalEyes();
 	_vtkRender = vtkRenderer::New();
 	renderWindow->AddRenderer(_vtkRender);
 	_interactorStyle->SetDefaultRenderer(_vtkRender);
-#endif // OGS_VRED_PLUGIN
 
 	QSettings settings;
 
@@ -111,21 +108,6 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 	_vtkRender->SetBackground(0.0,0.0,0.0);
 
-	// Restore settings
-	stereoToolButton->setChecked(settings.value("stereoEnabled").toBool());
-	//if (settings.contains("stereoEyeAngle"))
-	//	cam->SetEyeAngle(settings.value("stereoEyeAngle").toDouble());
-	//else
-	//	cam->SetEyeAngle(2.0);
-/*
-    if (!stereoToolButton->isChecked())
-    {
-        eyeAngleLabel->setEnabled(false);
-        eyeAngleSlider->setEnabled(false);
-    }
- */
-	//eyeAngleSlider->setValue((int)(_vtkRender->GetActiveCamera()->GetEyeAngle() * 10));
-
 	// Create an orientation marker using vtkAxesActor
 	vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
 	vtkOrientationMarkerWidget* markerWidget = vtkOrientationMarkerWidget::New();
@@ -144,11 +126,6 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 VisualizationWidget::~VisualizationWidget()
 {
-	// Write settings
-	QSettings settings;
-	settings.setValue("stereoEnabled", stereoToolButton->isChecked());
-	settings.setValue("stereoEyeAngle", _vtkRender->GetActiveCamera()->GetEyeAngle());
-
 	_interactorStyle->deleteLater();
 	_vtkPickCallback->deleteLater();
 #ifdef OGS_USE_VRPN
@@ -190,27 +167,6 @@ void VisualizationWidget::updateViewOnLoad()
 		updateView();
 }
 
-void VisualizationWidget::on_stereoToolButton_toggled( bool checked )
-{
-	if (checked)
-		vtkWidget->GetRenderWindow()->StereoRenderOn();
-		//eyeAngleLabel->setEnabled(true);
-		//eyeAngleSlider->setEnabled(true);
-	else
-		vtkWidget->GetRenderWindow()->StereoRenderOff();
-		//eyeAngleLabel->setEnabled(false);
-		//eyeAngleSlider->setEnabled(false);
-
-	this->updateView();
-}
-/*
-   void VisualizationWidget::on_eyeAngleSlider_valueChanged( int value )
-   {
-    Q_UNUSED(value);
-    //_vtkRender->GetActiveCamera()->SetEyeAngle(value / 10.0);
-    //updateView();
-   }
- */
 void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
 {
 	if (checked)
