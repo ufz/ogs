@@ -1,3 +1,9 @@
+# VS2012 doesn't support correctly the tuples yet
+# See http://code.google.com/p/googletest/issues/detail?id=412
+IF( MSVC )
+	ADD_DEFINITIONS( /D_VARIADIC_MAX=10 )
+ENDIF()
+
 ADD_SUBDIRECTORY( gtest )
 
 APPEND_SOURCE_FILES(TEST_SOURCES)
@@ -22,7 +28,7 @@ TARGET_LINK_LIBRARIES(testrunner
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
 ADD_CUSTOM_TARGET(test
-	${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner
+	$<TARGET_FILE:testrunner>
 	DEPENDS testrunner
 )
 
