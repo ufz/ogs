@@ -75,12 +75,13 @@ int main (int argc, char* argv[])
 	}
 
 	// put raster data in a std::vector
-	double const*const raster_data(raster->getRasterData());
+	GeoLib::Raster::iterator raster_it(raster->begin());
 	unsigned n_cols(raster->getNCols()), n_rows(raster->getNRows());
 	std::vector<double> src_properties(n_cols*n_rows);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
-			src_properties[row*n_cols+col] = raster_data[row*n_cols+col];
+			src_properties[row*n_cols+col] = *raster_it;
+			++raster_it;
 		}
 	}
 
@@ -102,9 +103,11 @@ int main (int argc, char* argv[])
 
 	double spacing(raster->getRasterPixelDistance());
 	double *raster_with_alpha(new double[2 * raster->getNRows() * raster->getNCols()]);
+	raster_it = raster->begin();
 	for (std::size_t k(0); k<raster->getNRows() * raster->getNCols(); k++) {
 		raster_with_alpha[2*k] = 1.0;
-		raster_with_alpha[2*k+1] = raster->getRasterData()[k];
+		raster_with_alpha[2*k+1] = *raster_it;
+		++raster_it;
 	}
 
 	double origin[3] = {raster->getOrigin()[0] + spacing/2.0, raster->getOrigin()[1] + spacing/2.0, raster->getOrigin()[2]};

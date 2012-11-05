@@ -19,6 +19,8 @@ namespace GeoLib {
 
 class Raster {
 public:
+	typedef double const* iterator;
+
 	Raster(std::size_t n_cols, std::size_t n_rows, double xllcorner, double yllcorner,
 					double cell_size = 1, double no_data_val = -9999, double* raster_data = NULL);
 
@@ -38,8 +40,11 @@ public:
 	GeoLib::Point const& getOrigin() const;
 
 	void refineRaster(std::size_t n_cols, std::size_t n_rows);
-	double const* getRasterData() const { return _raster_data; }
-	virtual ~Raster();
+
+	iterator begin() const { return _raster_data; }
+	iterator end() const { return _raster_data + _n_rows*_n_cols; }
+
+	~Raster();
 
 	void writeRasterAsASC(std::ostream &os) const;
 
