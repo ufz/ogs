@@ -63,7 +63,7 @@ int main (int argc, char* argv[])
 	// read raster and if required manipulate it
 	Raster* raster(Raster::getRasterFromASCFile(raster_arg.getValue()));
 	if (refinement_arg.getValue() > 1) {
-		raster->refineRaster(raster->getNCols() * refinement_arg.getValue(), raster->getNRows() * refinement_arg.getValue());
+		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
 			// write new asc file
 			std::string new_raster_fname (BaseLib::dropFileExtension(raster_arg.getValue()));
@@ -75,12 +75,13 @@ int main (int argc, char* argv[])
 	}
 
 	// put raster data in a std::vector
-	double const*const raster_data(raster->getRasterData());
+	GeoLib::Raster::const_iterator raster_it(raster->begin());
 	unsigned n_cols(raster->getNCols()), n_rows(raster->getNRows());
 	std::vector<double> src_properties(n_cols*n_rows);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
-			src_properties[row*n_cols+col] = raster_data[row*n_cols+col];
+			src_properties[row*n_cols+col] = *raster_it;
+			++raster_it;
 		}
 	}
 
@@ -101,28 +102,53 @@ int main (int argc, char* argv[])
 	}
 
 	double spacing(raster->getRasterPixelDistance());
-	double *raster_with_alpha(new double[2 * raster->getNRows() * raster->getNCols()]);
+	double *raster_with_alpha(new double[raster->getNRows() * raster->getNCols()]);
+	raster_it = raster->begin();
 	for (std::size_t k(0); k<raster->getNRows() * raster->getNCols(); k++) {
-		raster_with_alpha[2*k] = 1.0;
-		raster_with_alpha[2*k+1] = raster->getRasterData()[k];
+		raster_with_alpha[k] = *raster_it;
+		++raster_it;
 	}
 
 	double origin[3] = {raster->getOrigin()[0] + spacing/2.0, raster->getOrigin()[1] + spacing/2.0, raster->getOrigin()[2]};
 	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster_with_alpha, origin, raster->getNRows(), raster->getNCols(),
 					spacing, MshElemType::QUAD, UseIntensityAs::MATERIAL));
 
+	delete [] raster_with_alpha;
+
 	std::vector<size_t> src_perm(n_cols*n_rows);
 	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
 	BaseLib::Quicksort<double>(src_properties, 0, n_cols*n_rows, src_perm);
 
+	// compress the property data structure
+	const size_t mat_map_size(src_properties.size());
+	std::vector<size_t> mat_map(mat_map_size);
+	mat_map[0] = 0;
+	size_t n_mat(1);
+	for (size_t k(1); k<mat_map_size; ++k) {
+		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
+			mat_map[k] = mat_map[k-1]+1;
+			n_mat++;
+		} else
+			mat_map[k] = mat_map[k-1];
+	}
+	std::vector<double> compressed_src_properties(n_mat);
+	compressed_src_properties[0] = src_properties[0];
+	for (size_t k(1), id(1); k<mat_map_size; ++k) {
+		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
+			compressed_src_properties[id] = src_properties[k];
+			id++;
+		}
+	}
+	compressed_src_properties[n_mat-1] = src_properties[mat_map_size-1];
+
 	// reset materials in source mesh
 	const size_t n_mesh_elements(src_mesh->getNElements());
 	for (size_t k(0); k<n_mesh_elements; k++) {
-		const_cast<MeshLib::Element*>(src_mesh->getElement(src_perm[k]))->setValue(k);
+		const_cast<MeshLib::Element*>(src_mesh->getElement(src_perm[k]))->setValue(mat_map[k]);
 	}
 
 	// do the interpolation
-	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh, &src_properties);
+	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh, &compressed_src_properties);
 	std::vector<double> dest_properties(dest_mesh->getNElements());
 	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(dest_mesh), dest_properties);
 
