@@ -64,9 +64,9 @@ void CRSMatrixReordered::reorderMatrix(unsigned const*const op_perm, unsigned co
 	for (i = 0; i < size; ++i)
 		BaseLib::quicksort(jAn, static_cast<size_t>(iAn[i]), static_cast<size_t>(iAn[i + 1]), An);
 
-	BaseLib::swap(iAn, _row_ptr);
-	BaseLib::swap(jAn, _col_idx);
-	BaseLib::swap(An, _data);
+	std::swap(iAn, _row_ptr);
+	std::swap(jAn, _col_idx);
+	std::swap(An, _data);
 
 	delete [] iAn;
 	delete [] jAn;

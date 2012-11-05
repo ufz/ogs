@@ -12,12 +12,10 @@
 // ** INCLUDES **
 #include "gtest.h"
 
-#include "swap.h"
-
 TEST(BaseLib, SwapInt) {
 	int arg0 = 5;
 	int arg1 = 10;
-	BaseLib::swap(arg0, arg1);
+	std::swap(arg0, arg1);
 	ASSERT_EQ ( arg0, 10 );
 	ASSERT_EQ ( arg1, 5 );
 }
@@ -25,7 +23,7 @@ TEST(BaseLib, SwapInt) {
 TEST(BaseLib, SwapDouble) {
 	double arg0 = 5.0;
 	double arg1 = 10.0;
-	BaseLib::swap(arg0, arg1);
+	std::swap(arg0, arg1);
 	ASSERT_EQ ( arg0, 10.0 );
 	ASSERT_EQ ( arg1, 5.0 );
 }
@@ -33,7 +31,7 @@ TEST(BaseLib, SwapDouble) {
 TEST(BaseLib, SwapString) {
 	std::string arg0 = "5";
 	std::string arg1 = "10";
-	BaseLib::swap(arg0, arg1);
+	std::swap(arg0, arg1);
 	ASSERT_EQ ( arg0, std::string("10") );
 	ASSERT_EQ ( arg1, std::string("5") );
 }

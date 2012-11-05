@@ -13,7 +13,6 @@
 #include <vector>
 
 // BaseLib
-#include "swap.h"
 #include "StringTools.h"
 #include "Configure.h"
 #include "BuildInfo.h"

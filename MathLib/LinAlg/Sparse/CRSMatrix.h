@@ -19,7 +19,6 @@
 #include <cassert>
 
 // Base
-#include "swap.h"
 
 // MathLib
 #include "SparseMatrixBase.h"
@@ -333,9 +332,9 @@ protected:
 		}
 
 		MatrixBase::_n_rows -= n_rows_cols;
-		BaseLib::swap (row_ptr_new, _row_ptr);
-		BaseLib::swap (col_idx_new, _col_idx);
-		BaseLib::swap (data_new, _data);
+		std::swap (row_ptr_new, _row_ptr);
+		std::swap (col_idx_new, _col_idx);
+		std::swap (data_new, _data);
 
 		delete [] row_ptr_new_tmp;
 		delete [] row_ptr_new;
@@ -385,10 +384,10 @@ protected:
 			}
 		}
 
-		BaseLib::swap(MatrixBase::_n_rows, MatrixBase::_n_cols);
-		BaseLib::swap(row_ptr_trans, _row_ptr);
-		BaseLib::swap(col_idx_trans, _col_idx);
-		BaseLib::swap(data_trans, _data);
+		std::swap(MatrixBase::_n_rows, MatrixBase::_n_cols);
+		std::swap(row_ptr_trans, _row_ptr);
+		std::swap(col_idx_trans, _col_idx);
+		std::swap(data_trans, _data);
 
 		delete[] row_ptr_nnz;
 		delete[] row_ptr_trans;

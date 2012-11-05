@@ -11,7 +11,6 @@
  */
 
 // Base
-#include "swap.h"
 #include "quicksort.h"
 
 #include "LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
@@ -142,8 +141,8 @@ void genAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 			if (i < jA[k])
 				jAn[con[i]++] = jA[k];
 
-	BaseLib::swap(jA, jAn);
-	BaseLib::swap(iA, iAn);
+	std::swap(jA, jAn);
+	std::swap(iA, iAn);
 
 	delete[] jAn;
 	delete[] con;
@@ -189,8 +188,8 @@ void genFullAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 		}
 	}
 
-	BaseLib::swap(jA, jAn);
-	BaseLib::swap(iA, iAn);
+	std::swap(jA, jAn);
+	std::swap(iA, iAn);
 
 	delete[] jAn;
 	delete[] iAn;
