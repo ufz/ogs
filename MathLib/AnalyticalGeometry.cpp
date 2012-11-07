@@ -17,7 +17,6 @@
 #include <fstream>
 
 // Base
-#include "swap.h"
 #include "quicksort.h"
 
 // GEO
