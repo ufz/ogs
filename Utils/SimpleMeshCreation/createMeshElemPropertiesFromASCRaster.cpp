@@ -110,7 +110,7 @@ int main (int argc, char* argv[])
 	}
 
 	double origin[3] = {raster->getOrigin()[0] + spacing/2.0, raster->getOrigin()[1] + spacing/2.0, raster->getOrigin()[2]};
-	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster_with_alpha, origin, raster->getNRows(), raster->getNCols(),
+	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster_with_alpha, origin, raster->getNCols(), raster->getNRows(),
 					spacing, MshElemType::QUAD, UseIntensityAs::MATERIAL));
 
 	delete [] raster_with_alpha;
