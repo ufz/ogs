@@ -8,7 +8,7 @@ FOREACH(SUBMODULE ${REQUIRED_SUBMODULES})
 	# Check if submodule is already initialized
 	# MESSAGE(STATUS "Checking module ${SUBMODULE}")
 	EXECUTE_PROCESS(
-		COMMAND bash ${CMAKE_SOURCE_DIR}/scripts/cmake/SubmoduleCheck.sh ${SUBMODULE}
+		COMMAND ${BASH_TOOL_PATH} ${CMAKE_SOURCE_DIR}/scripts/cmake/SubmoduleCheck.sh ${SUBMODULE}
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		RESULT_VARIABLE SUBMODULE_IS_NOT_INITIALIZED
 	)
