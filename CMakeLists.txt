@@ -25,6 +25,7 @@ INCLUDE(scripts/cmake/FindIncludeHeader.cmake)
 INCLUDE(scripts/cmake/Functions.cmake)
 INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
+INCLUDE(scripts/cmake/SubmoduleSetup.cmake)
 IF(NOT OGS_NO_EXTERNAL_LIBS)
 	INCLUDE(scripts/cmake/Find.cmake)
 ENDIF() # NOT OGS_NO_EXTERNAL_LIBS

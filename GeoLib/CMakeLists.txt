@@ -7,8 +7,8 @@ ADD_LIBRARY(GeoLib STATIC ${SOURCES_GeoLib})
 
 include_directories(
 	.
-	../BaseLib
-	../MathLib
+	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/MathLib
 )
 
 
