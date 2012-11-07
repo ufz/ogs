@@ -27,6 +27,11 @@ FIND_PACKAGE(cppcheck)
 
 FIND_PACKAGE(PythonInterp)
 
+FIND_PACKAGE(GitHub)
+
+# Find bash itself ...
+FIND_PROGRAM(BASH_TOOL_PATH bash
+	HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
 ######################
 ### Find libraries ###
 ######################
