@@ -36,6 +36,10 @@ Surface::~Surface ()
 void Surface::addTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 {
 	assert (pnt_a < _sfc_pnts.size() && pnt_b < _sfc_pnts.size() && pnt_c < _sfc_pnts.size());
+
+	// Check if two points of the triangle have identical IDs
+	if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c) return;
+
 	_sfc_triangles.push_back (new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
 	_bv.update (*_sfc_pnts[pnt_a]);
 	_bv.update (*_sfc_pnts[pnt_b]);

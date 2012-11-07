@@ -49,6 +49,10 @@ void Polyline::addPoint(size_t pnt_id)
 {
 	assert(pnt_id < _ply_pnts.size());
 	size_t n_pnts (_ply_pnt_ids.size());
+
+	// don't insert point if ID if this would result in identical IDs for two adjacent points
+	if (n_pnts>0 && _ply_pnt_ids[n_pnts-1] == pnt_id) return;
+
 	_ply_pnt_ids.push_back(pnt_id);
 
 	if (n_pnts > 0) {
@@ -66,6 +70,11 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 {
 	assert(pnt_id < _ply_pnts.size());
 	assert(pos < _ply_pnt_ids.size());
+
+	// check if inserting pnt_id would result in two identical IDs for adjacent points
+	if (pos == 0 && pnt_id == _ply_pnt_ids[0]) return;
+	else if (pos == (_ply_pnt_ids.size()-1) && pnt_id == _ply_pnt_ids[pos]) return;
+	else if (pnt_id == _ply_pnt_ids[pos-1] || pnt_id == _ply_pnt_ids[pos]) return;
 
 	std::vector<size_t>::iterator it(_ply_pnt_ids.begin() + pos);
 	_ply_pnt_ids.insert(it, pnt_id);
