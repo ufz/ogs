@@ -127,13 +127,18 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes)
 {
 	std::stringstream ss (line);
-	std::string elem_type_str;
+	std::string elem_type_str("");
+	MshElemType::type elem_type (MshElemType::INVALID);
 	unsigned index, patch_index;
-	ss >> index >> patch_index >> elem_type_str;
+	ss >> index >> patch_index;
 
-	MshElemType::type elem_type (String2MshElemType(elem_type_str));
+	do {
+		ss >> elem_type_str;
+		if (ss.fail()) return NULL;
+		elem_type = String2MshElemType(elem_type_str);
+	} while (elem_type == MshElemType::INVALID);
+
 	unsigned* idx = new unsigned[8];
-
 	MeshLib::Element* elem;
 
 	switch(elem_type)
