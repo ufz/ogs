@@ -152,9 +152,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 3; i++)
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		tri_nodes[0] = nodes[idx[2]];
-		tri_nodes[1] = nodes[idx[1]];
-		tri_nodes[2] = nodes[idx[0]];
+		for (unsigned k(0); k<3; k++)
+			tri_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
