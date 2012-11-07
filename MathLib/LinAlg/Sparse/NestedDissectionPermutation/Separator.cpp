@@ -12,6 +12,7 @@
 
 // BaseLib
 
+#include <algorithm>
 #include "LinAlg/Sparse/NestedDissectionPermutation/Separator.h"
 
 namespace MathLib {
