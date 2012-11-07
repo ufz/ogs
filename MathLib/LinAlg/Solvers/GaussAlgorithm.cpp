@@ -12,7 +12,6 @@
 
 #include <cmath>
 #include "GaussAlgorithm.h"
-#include "swap.h"
 
 namespace MathLib {
 
@@ -35,7 +34,7 @@ GaussAlgorithm::GaussAlgorithm (Matrix <double> &A) :
 
 		// exchange rows
 		if (_perm[k] != k) {
-			for (j=0; j<nc; j++) BaseLib::swap (_mat(_perm[k],j), _mat(k,j));
+			for (j=0; j<nc; j++) std::swap (_mat(_perm[k],j), _mat(k,j));
 		}
 
 		// eliminate
@@ -64,7 +63,7 @@ void GaussAlgorithm::execute (double *b) const
 void GaussAlgorithm::permuteRHS (double* b) const
 {
 	for (size_t i=0; i<_n; i++) {
-		if (_perm[i] != i) BaseLib::swap(b[i], b[_perm[i]]);
+		if (_perm[i] != i) std::swap(b[i], b[_perm[i]]);
 	}
 }
 
