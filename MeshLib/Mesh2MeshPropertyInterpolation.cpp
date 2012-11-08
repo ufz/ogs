@@ -19,6 +19,7 @@
 
 // GeoLib
 #include "AABB.h"
+#include "Grid.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -69,16 +70,40 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 	// looping over the destination elements and calculate properties
 	// from interpolated_src_node_properties
 	std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
-	const size_t n_src_nodes(src_nodes.size());
+
+	GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
+
 	std::vector<MeshLib::Element*> const& dest_elements(dest_mesh->getElements());
 	const size_t n_dest_elements(dest_elements.size());
 	for (size_t k(0); k<n_dest_elements; k++) {
+		// compute axis aligned bounding box around the current element
+		const GeoLib::AABB<MeshLib::Node> elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNNodes());
+
+		// compute parameters for requesting "interesting" nodes from the grid
+		double center[3] = {(elem_aabb.getMaxPoint()[0] + elem_aabb.getMinPoint()[0]) / 2,
+						(elem_aabb.getMaxPoint()[1] + elem_aabb.getMinPoint()[1]) / 2,
+						(elem_aabb.getMaxPoint()[2] + elem_aabb.getMinPoint()[2]) / 2};
+		double half_len(std::max(elem_aabb.getMaxPoint()[0] - elem_aabb.getMinPoint()[0],
+						elem_aabb.getMaxPoint()[1] - elem_aabb.getMinPoint()[1]));
+		half_len = std::max(half_len, elem_aabb.getMaxPoint()[2] - elem_aabb.getMinPoint()[2]);
+		half_len /= 2;
+
+		// request "interesting" nodes from grid
+		std::vector<std::vector<MeshLib::Node*> const*> nodes;
+		src_grid.getVecsOfGridCellsIntersectingCube(center, half_len, nodes);
+
 		size_t cnt(0);
 		dest_properties[k] = 0.0;
-		for (size_t j(0); j<n_src_nodes; j++) {
-			if (dynamic_cast<MeshLib::Face*>(dest_elements[k])->isPntInside(* dynamic_cast<GeoLib::Point const*>(src_nodes[j]))) {
-				dest_properties[k] += interpolated_src_node_properties[j];
-				cnt++;
+
+		for (size_t i(0); i<nodes.size(); ++i) {
+			std::vector<MeshLib::Node*> const* i_th_vec(nodes[i]);
+			const size_t n_nodes_in_vec(i_th_vec->size());
+			for (size_t j(0); j<n_nodes_in_vec; j++) {
+				MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
+				if (dynamic_cast<MeshLib::Face*>(dest_elements[k])->isPntInside(* dynamic_cast<GeoLib::Point const*>(j_th_node))) {
+					dest_properties[k] += interpolated_src_node_properties[(*i_th_vec)[j]->getID()];
+					cnt++;
+				}
 			}
 		}
 
