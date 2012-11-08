@@ -10,7 +10,6 @@
  */
 
 // Base
-#include "swap.h"
 
 // GeoLib
 #include "Polyline.h"
@@ -49,6 +48,10 @@ void Polyline::addPoint(size_t pnt_id)
 {
 	assert(pnt_id < _ply_pnts.size());
 	size_t n_pnts (_ply_pnt_ids.size());
+
+	// don't insert point if ID if this would result in identical IDs for two adjacent points
+	if (n_pnts>0 && _ply_pnt_ids[n_pnts-1] == pnt_id) return;
+
 	_ply_pnt_ids.push_back(pnt_id);
 
 	if (n_pnts > 0) {
@@ -66,6 +69,11 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 {
 	assert(pnt_id < _ply_pnts.size());
 	assert(pos < _ply_pnt_ids.size());
+
+	// check if inserting pnt_id would result in two identical IDs for adjacent points
+	if (pos == 0 && pnt_id == _ply_pnt_ids[0]) return;
+	else if (pos == (_ply_pnt_ids.size()-1) && pnt_id == _ply_pnt_ids[pos]) return;
+	else if (pnt_id == _ply_pnt_ids[pos-1] || pnt_id == _ply_pnt_ids[pos]) return;
 
 	std::vector<size_t>::iterator it(_ply_pnt_ids.begin() + pos);
 	_ply_pnt_ids.insert(it, pnt_id);
@@ -368,14 +376,14 @@ bool containsEdge (const Polyline& ply, size_t id0, size_t id1)
 		return false;
 	}
 	if (id0 > id1)
-		BaseLib::swap (id0,id1);
+		std::swap (id0,id1);
 	const size_t n (ply.getNumberOfPoints() - 1);
 	for (size_t k(0); k < n; k++)
 	{
 		size_t ply_pnt0 (ply.getPointID (k));
 		size_t ply_pnt1 (ply.getPointID (k + 1));
 		if (ply_pnt0 > ply_pnt1)
-			BaseLib::swap (ply_pnt0, ply_pnt1);
+			std::swap (ply_pnt0, ply_pnt1);
 		if (ply_pnt0 == id0 && ply_pnt1 == id1)
 			return true;
 	}

@@ -11,8 +11,8 @@
  */
 
 // BaseLib
-#include "swap.h"
 
+#include <algorithm>
 #include "LinAlg/Sparse/NestedDissectionPermutation/Separator.h"
 
 namespace MathLib {
@@ -39,8 +39,8 @@ unsigned Separator::updatePerm(unsigned* reordering, unsigned* l_op_perm, unsign
       --end;
       while (beg < end && reordering[end] == 1) --end;
       // local permutation
-      BaseLib::swap(l_op_perm [beg], l_op_perm[end]);
-      BaseLib::swap(l_po_perm[l_op_perm [beg]], l_po_perm[l_op_perm[end]]);
+      std::swap(l_op_perm [beg], l_op_perm[end]);
+      std::swap(l_po_perm[l_op_perm [beg]], l_po_perm[l_op_perm[end]]);
     }
     ++beg;
   }

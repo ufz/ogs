@@ -107,7 +107,7 @@ void MshEditDialog::nextButtonPressed()
 void MshEditDialog::createWithRasters()
 {
 	// _use_rasters=true is needed for this, this is the default setting however
-	this->_radioButtonBox->setEnabled(false);
+	//this->_radioButtonBox->setEnabled(false);
 	const QString selectText = (_n_layers>0) ?
 			"Please specify a raster file for mapping each layer:" :
 			"Please specify rasterfile for surface mapping:";

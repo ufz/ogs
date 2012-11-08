@@ -13,7 +13,6 @@
 #include "metis.h"
 
 // BaseLib
-#include "swap.h"
 
 #include "LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
 //#include "blas.h"
@@ -162,9 +161,9 @@ void Cluster::updatePerm(unsigned* reordering, unsigned &isep0,
 			while (beg < end && reordering[end] >= 1)
 				--end;
 			// local permutation
-			BaseLib::swap(l_op_perm[beg], l_op_perm[end]);
-			BaseLib::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
-			BaseLib::swap(reordering[beg], reordering[end]);
+			std::swap(l_op_perm[beg], l_op_perm[end]);
+			std::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
+			std::swap(reordering[beg], reordering[end]);
 		}
 		++beg;
 	}
@@ -180,9 +179,9 @@ void Cluster::updatePerm(unsigned* reordering, unsigned &isep0,
 			while (beg < end && reordering[end] == 2)
 				--end;
 			// local permutation
-			BaseLib::swap(l_op_perm[beg], l_op_perm[end]);
-			BaseLib::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
-			BaseLib::swap(reordering[beg], reordering[end]);
+			std::swap(l_op_perm[beg], l_op_perm[end]);
+			std::swap(l_po_perm[l_op_perm[beg]], l_po_perm[l_op_perm[end]]);
+			std::swap(reordering[beg], reordering[end]);
 		}
 		++beg;
 	}

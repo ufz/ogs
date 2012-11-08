@@ -1,0 +1,3 @@
+[submodule "Tests/quickcheck"]
+	path = Tests/quickcheck
+	url = http://software.legiasoft.com/git/quickcheck.git
