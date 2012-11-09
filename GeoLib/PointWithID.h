@@ -12,6 +12,8 @@
 #ifndef POINTWITHID_H_
 #define POINTWITHID_H_
 
+#include <limits>
+
 #include "Point.h"
 
 namespace GeoLib
@@ -22,7 +24,7 @@ namespace GeoLib
  */
 class PointWithID: public Point {
 public:
-	PointWithID(double x0, double x1, double x2, std::size_t id) :
+	PointWithID(double x0, double x1, double x2, std::size_t id = std::numeric_limits<std::size_t>::max()) :
 		Point(x0, x1, x2), _id(id)
 	{}
 
