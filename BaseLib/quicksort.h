@@ -15,8 +15,7 @@
 
 // STL
 #include <cstddef>
-
-// Base
+#include <algorithm>
 
 namespace BaseLib {
 
