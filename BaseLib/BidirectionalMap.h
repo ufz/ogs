@@ -14,6 +14,7 @@
 #define BIDIRECTIONAL_MAP_H_
 
 #include <map>
+#include <stdexcept>
 
 namespace BaseLib
 {
