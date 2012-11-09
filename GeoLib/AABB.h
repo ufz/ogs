@@ -79,7 +79,6 @@ public:
 
 	/**
 	 * check if point is in the axis aligned bounding box
-	 * (employing containsPoint (double x, double y, double z))
 	 */
 	bool containsPoint(PNT_TYPE const & pnt) const
 	{
@@ -94,14 +93,14 @@ public:
 	 * for the given point set
 	 * @return a point
 	 */
-	GeoLib::Point const& getMinPoint() const { return _min_pnt; }
+	PNT_TYPE const& getMinPoint() const { return _min_pnt; }
 
 	/**
 	 * returns a point that coordinates are maximal for each dimension
 	 * within the given point set
 	 * @return a point
 	 */
-	GeoLib::Point const& getMaxPoint() const { return _max_pnt; }
+	PNT_TYPE const& getMaxPoint() const { return _max_pnt; }
 
 	/**
 	 * Method checks if the given AABB object is contained within the
@@ -112,18 +111,12 @@ public:
 	 */
 	bool containsAABB(AABB<PNT_TYPE> const& other_aabb) const
 	{
-		GeoLib::Point const& min_other(other_aabb.getMinPoint());
-		GeoLib::Point const& max_other(other_aabb.getMaxPoint());
-		for (unsigned k(0); k<3; k++) {
-			if (_min_pnt[k] > min_other[k] || max_other[k] > _max_pnt[k])
-				return false;
-		}
-		return true;
+		return containsPoint(other_aabb.getMinPoint()) && containsPoint(other_aabb.getMaxPoint());
 	}
 
 protected:
-	GeoLib::Point _min_pnt;
-	GeoLib::Point _max_pnt;
+	PNT_TYPE _min_pnt;
+	PNT_TYPE _max_pnt;
 private:
 	void update(PNT_TYPE const * pnt)
 	{
