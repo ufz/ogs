@@ -28,7 +28,7 @@ public:
 		Point(x0, x1, x2), _id(id)
 	{}
 
-	PointWithID(double const* const coords, std::size_t id) :
+	PointWithID(double const* const coords, std::size_t id = std::numeric_limits<std::size_t>::max()) :
 		Point(coords), _id(id)
 	{}
 
