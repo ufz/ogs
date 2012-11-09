@@ -60,7 +60,7 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 		std::vector<std::vector<Node*> const*> node_vecs_intersecting_cube;
 		Node const*const node(nodes[k]);
 		const size_t node_id_k(node->getID());
-		grid->getVecsOfGridCellsIntersectingCube(node->getCoords(), min_distance, node_vecs_intersecting_cube);
+		grid->getPntVecsOfGridCellsIntersectingCube(node->getCoords(), min_distance, node_vecs_intersecting_cube);
 
 		const size_t n_vecs (node_vecs_intersecting_cube.size());
 		for (size_t i(0); i<n_vecs; i++) {
