@@ -22,7 +22,7 @@ static void checkOutOfRange(const BaseLib::OrderedMap<T1, T2> &map, const size_t
 {
     bool isExceptionThrowed = false;
     try {
-        T2 n = map[i]->second;
+        map[i]->second;
     } catch (std::exception &) {
         isExceptionThrowed = true;
     }
