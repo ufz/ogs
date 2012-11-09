@@ -61,13 +61,22 @@ public:
     /**
      * insert a set of keys
      *
+     * If the container already stores any elements with the given keys (either of them), 
+     * the new element is not inserted and stored values are not changed.
+     * 
      * \param v1    Key1
      * \param v2    Key2
      */
     void insert(const T1 &v1, const T2 &v2)
     {
-        _map1[v1] = v2;
-        _map2[v2] = v1;
+        const bool already_exist = (countInA(v1)>0 || countInB(v2)>0);
+#ifndef NDEBUG
+        assert(!already_exist);
+#endif
+        if (!already_exist) {
+            _map1[v1] = v2;
+            _map2[v2] = v1;
+        }
     }
 
     /**
