@@ -1,7 +1,7 @@
 # This file initializes the required submodules
 
 SET(REQUIRED_SUBMODULES
-	Tests/quickcheck
+	ThirdParty/quickcheck
 )
 
 FOREACH(SUBMODULE ${REQUIRED_SUBMODULES})
