@@ -10,7 +10,7 @@
  */
 
 // ** INCLUDES **
-#include "gtest.h"
+#include "gtest/gtest.h"
 
 #include "OrderedMap.h"
 
@@ -33,8 +33,8 @@ static void checkOutOfRange(const BaseLib::OrderedMap<T1, T2> &map, const size_t
 static void checkIntIntState(const BaseLib::OrderedMap<int, int> &map, int i)
 {
     const int j = -i;
-    ASSERT_EQ(1, map.count(i));
-    ASSERT_EQ(0, map.count(-i));
+    ASSERT_EQ(1U, map.count(i));
+    ASSERT_EQ(0U, map.count(-i));
     ASSERT_EQ(j, map.find(i)->second);
 };
 
@@ -46,8 +46,8 @@ TEST(BaseLib, OrderedMap_IntInt_Normal)
     BaseLib::OrderedMap<int, int> map1;
     
     // check initial
-    ASSERT_EQ(0, map1.size());
-    ASSERT_EQ(0, map1.count(1));
+    ASSERT_EQ(0U, map1.size());
+    ASSERT_EQ(0U, map1.count(1));
     ASSERT_EQ(map1.end(), map1.find(1));
     checkOutOfRange(map1, 1);
 
@@ -56,14 +56,14 @@ TEST(BaseLib, OrderedMap_IntInt_Normal)
 
     // check insert
     map1.insert(2, -2);
-    ASSERT_EQ(1, map1.size());
+    ASSERT_EQ(1U, map1.size());
     checkIntIntState(map1, 2);
     ASSERT_EQ(2, map1[0]->first);
 
     // check append
     map1.insert(3, -3);
     map1.insert(1, -1);
-    ASSERT_EQ(3, map1.size());
+    ASSERT_EQ(3U, map1.size());
     checkIntIntState(map1, 2);
     checkIntIntState(map1, 3);
     checkIntIntState(map1, 1);
@@ -73,11 +73,11 @@ TEST(BaseLib, OrderedMap_IntInt_Normal)
 
     // should work with entries
     map1.clear();
-    ASSERT_EQ(0, map1.size());
+    ASSERT_EQ(0U, map1.size());
 
     // check re-insert
     map1.insert(1, -1);
-    ASSERT_EQ(1, map1.size());
+    ASSERT_EQ(1U, map1.size());
     checkIntIntState(map1, 1);
     ASSERT_EQ(1, map1[0]->first);
 
