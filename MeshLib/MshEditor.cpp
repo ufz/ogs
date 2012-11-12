@@ -21,7 +21,7 @@
 
 #include "MathTools.h"
 
-#include "logog.hpp"
+#include "logog/include/logog.hpp"
 
 namespace MeshLib {
 

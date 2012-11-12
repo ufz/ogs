@@ -10,7 +10,7 @@
  */
 
 // ** INCLUDES **
-#include "gtest.h"
+#include "gtest/gtest.h"
 
 TEST(BaseLib, SwapInt) {
 	int arg0 = 5;

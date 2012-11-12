@@ -20,7 +20,7 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
-#include "logog.hpp"
+#include "logog/include/logog.hpp"
 
 #include "RunTime.h"
 #include "uniqueInsert.h"

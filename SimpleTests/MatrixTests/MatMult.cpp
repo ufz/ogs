@@ -22,9 +22,9 @@
 // BaseLib
 #include "RunTime.h"
 #include "CPUTime.h"
-// BaseLib/logog
-#include "logog.hpp"
-#include "formatter.hpp"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+#include "logog/include/formatter.hpp"
 // BaseLib/tclap
 #include "tclap/CmdLine.h"
 

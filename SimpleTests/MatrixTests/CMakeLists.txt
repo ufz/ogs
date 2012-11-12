@@ -11,7 +11,6 @@ INCLUDE_DIRECTORIES(
         .
 	${CMAKE_SOURCE_DIR}/BaseLib/
 	${CMAKE_BINARY_DIR}/BaseLib/
-	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
 	${CMAKE_SOURCE_DIR}/MathLib/
 )
 

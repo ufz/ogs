@@ -11,8 +11,8 @@
 
 // BaseLib
 #include "tclap/CmdLine.h"
-// BaseLib/logog
-#include "logog.hpp"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 // BaseLib
 #include "StringTools.h"
 #include "quicksort.h"

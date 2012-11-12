@@ -10,7 +10,7 @@
  */
 
 // ** INCLUDES **
-#include "gtest.h"
+#include "gtest/gtest.h"
 
 // std lib
 #include <cstdlib>
