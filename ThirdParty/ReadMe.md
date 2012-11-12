@@ -23,3 +23,7 @@ Command line option parser. Is integrated directly.
 ## zlib ##
 
 Compression algorithms. Is integrated directly.
+
+## gtest ##
+
+Google testing framework for unit tests. Is integrated directly.
