@@ -14,7 +14,7 @@
 #define LOGOGSIMPLEFORMATTER_H
 
 // ** INCLUDES **
-#include "logog.hpp"
+#include "logog/include/logog.hpp"
 
 namespace BaseLib {
 /**

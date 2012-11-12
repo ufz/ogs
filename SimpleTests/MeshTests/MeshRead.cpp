@@ -12,8 +12,8 @@
 #include "tclap/CmdLine.h"
 #include "LogogSimpleFormatter.h"
 
-// BaseLib/logog
-#include "logog.hpp"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 // FileIO
 #include "readMeshFromFile.h"

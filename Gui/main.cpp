@@ -4,7 +4,7 @@
 #ifdef OGS_USE_OPENSG
 #include <OpenSG/OSGBaseFunctions.h>
 #endif
-#include "logog.hpp"
+#include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
 
 int main(int argc, char* argv[])
