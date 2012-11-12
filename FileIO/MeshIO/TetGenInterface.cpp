@@ -15,8 +15,8 @@
 // BaseLib
 #include "StringTools.h"
 
-// BaseLib/logog
-#include "logog.hpp"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 // FileIO
 #include "TetGenInterface.h"

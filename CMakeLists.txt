@@ -87,6 +87,10 @@ ENDIF() #OGS_PACKAGING
 ######################
 
 # Add subdirectories with the projects
+ADD_SUBDIRECTORY( ThirdParty )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/quickcheck )
+
 ADD_SUBDIRECTORY( BaseLib )
 ADD_SUBDIRECTORY( FemLib )
 ADD_SUBDIRECTORY( FileIO )
