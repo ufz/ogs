@@ -46,6 +46,24 @@ public:
 		}
 	}
 
+
+    CRSMatrix* clone()
+    {
+        CRSMatrix<FP_TYPE, IDX_TYPE> *obj = new CRSMatrix<FP_TYPE, IDX_TYPE>(MatrixBase::_n_rows);
+        const IDX_TYPE n_nz = getNNZ();
+        obj->_row_ptr = new IDX_TYPE[MatrixBase::_n_rows+1];
+        obj->_col_idx = new IDX_TYPE[n_nz];
+        obj->_data = new FP_TYPE[n_nz];
+        for (IDX_TYPE i=0; i<MatrixBase::_n_rows+1; i++)
+            obj->_row_ptr[i] = _row_ptr[i];
+        for (IDX_TYPE i=0; i<n_nz; i++)
+            obj->_col_idx[i] = _col_idx[i];
+        for (IDX_TYPE i=0; i<n_nz; i++)
+            obj->_data[i] = _data[i];
+
+        return obj;
+    }
+	
 	CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n),
 		_row_ptr(iA), _col_idx(jA), _data(A)
@@ -241,6 +259,21 @@ public:
 		return transposed_mat;
 	}
 
+#ifndef NDEBUG
+    void printMat() const
+    {
+        for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+            std::cout << k << ": " << std::flush;
+            const IDX_TYPE row_end(_row_ptr[k+1]);
+            for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {
+                std::cout << _col_idx[j] << " " << std::flush;
+            }
+            std::cout << std::endl;
+        }
+    }
+#endif
+
+
 protected:
 	CRSMatrix(CRSMatrix const& rhs) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE> (rhs.getNRows(), rhs.getNCols()),
@@ -394,20 +427,6 @@ protected:
 		delete[] col_idx_trans;
 		delete[] data_trans;
 	}
-
-#ifndef NDEBUG
-	void printMat() const
-	{
-		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
-			std::cout << k << ": " << std::flush;
-			const IDX_TYPE row_end(_row_ptr[k+1]);
-			for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {
-				std::cout << _col_idx[j] << " " << std::flush;
-			}
-			std::cout << std::endl;
-		}
-	}
-#endif
 
 	IDX_TYPE *_row_ptr;
 	IDX_TYPE *_col_idx;
