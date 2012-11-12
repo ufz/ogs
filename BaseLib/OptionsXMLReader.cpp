@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 
-#include "logog.hpp"
+#include "logog/include/logog.hpp"
 #include "RapidXML/rapidxml.hpp"
 
 #include "StringTools.h"
