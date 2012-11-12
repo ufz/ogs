@@ -17,7 +17,7 @@ waste deposition. OGS is comprised of the THMC-simulator (simply referred to as
 - To get started checkout the [developer guide][devguide]
 - For the actual build status see the [Jenkins-CI server][jenkins-ci]
 - Have a look at the [Doxygen documentation][docs]
-- Actual build status: [![Build Status](https://travis-ci.org/[ufz]/[ogs].png)](https://travis-ci.org/[ufz]/[ogs])
+- Actual build status: [![Build Status](https://travis-ci.org/ufz/ogs.png)](https://travis-ci.org/ufz/ogs)
 
 ## License ##
 
