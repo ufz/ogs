@@ -201,7 +201,7 @@ int main (int argc, char* argv[])
 		FileIO::MeshIO mesh_writer;
 		mesh_writer.setPrecision(12);
 		mesh_writer.setMesh(dest_mesh);
-		mesh_writer.writeToFile(BaseLib::extractPath(out_mesh_arg.getValue()));
+		mesh_writer.writeToFile(out_mesh_arg.getValue());
 	}
 
 	delete raster;
