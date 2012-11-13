@@ -43,17 +43,21 @@ int main (int argc, char* argv[])
 	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Generates properties for mesh elements of an input mesh deploying a ASC raster file", ' ', "0.1");
-	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is stored to this file", true, "test.msh", "filename");
-	cmd.add( mesh_arg );
 
-	TCLAP::ValueArg<std::string> raster_arg("","raster-file","the ASC raster file", true, "", "the raster file");
-	cmd.add( raster_arg );
+	TCLAP::ValueArg<std::string> out_mesh_arg("o", "out-mesh", "the mesh is stored to a file of this name", false, "", "filename for mesh output");
+	cmd.add( out_mesh_arg );
 
-	TCLAP::ValueArg<unsigned> refinement_arg("r","refine","refinement factor that raises the resolution of the raster data", false, 1, "multiply the number of columns and rows of the raster by this factor");
+	TCLAP::ValueArg<bool> refinement_raster_output_arg("","output-refined-raster", "write refined raster to a new ASC file", false, false, "0");
+	cmd.add( refinement_raster_output_arg );
+
+	TCLAP::ValueArg<unsigned> refinement_arg("r","refine","refinement factor that raises the resolution of the raster data", false, 1, "factor (default = 1)");
 	cmd.add( refinement_arg );
 
-	TCLAP::ValueArg<bool> refinement_raster_output_arg("","refined-raster-output", "write refined raster to a new ASC file", false, false, "");
-	cmd.add( refinement_raster_output_arg );
+	TCLAP::ValueArg<std::string> raster_arg("","raster-file","the name of the ASC raster file", true, "", "file name");
+	cmd.add( raster_arg );
+
+	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is read from this file", true, "test.msh", "filename");
+	cmd.add( mesh_arg );
 
 	cmd.parse( argc, argv );
 
@@ -155,21 +159,16 @@ int main (int argc, char* argv[])
 	const size_t n_dest_mesh_elements(dest_mesh->getNElements());
 
 	{ // write property file
-		std::ofstream property_out(BaseLib::extractPath(mesh_arg.getValue())+"PropertyMapping");
+		std::string property_fname(BaseLib::dropFileExtension(BaseLib::extractPath(raster_arg.getValue()))+".hd");
+		std::ofstream property_out(property_fname.c_str());
 		if (! property_out) {
-			std::cerr << "could not open file " << BaseLib::extractPath(mesh_arg.getValue()) << "PropertyMapping" << std::endl;
+			std::cerr << "could not open file " << property_fname << "PropertyMapping" << std::endl;
 			return -1;
 		}
 
-		property_out << "#MEDIUM_PROPERTIES_DISTRIBUTED" << std::endl;
-		property_out << " $MSH_TYPE" << std::endl << "  GROUNDWATER_FLOW" << std::endl;
-		property_out << " $MMP_TYPE" << std::endl << "  PERMEABILITY" << std::endl;
-		property_out << " $DIS_TYPE" << std::endl << "  ELEMENT" << std::endl;
-		property_out << " $DATA" << std::endl;
 		for (size_t k(0); k<n_dest_mesh_elements; k++) {
 			property_out << k << " " << dest_properties[k] << std::endl;
 		}
-		property_out << "#STOP" << std::endl;
 		property_out.close();
 	}
 
@@ -189,21 +188,21 @@ int main (int argc, char* argv[])
 		std::cout << "variance of destination: " << sigma_q << std::endl;
 	}
 
-	std::vector<size_t> dest_perm(n_dest_mesh_elements);
-	for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
-	BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
+	if (! out_mesh_arg.getValue().empty()) {
+		std::vector<size_t> dest_perm(n_dest_mesh_elements);
+		for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
+		BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
 
-	// reset materials in destination mesh
-	for (size_t k(0); k<n_dest_mesh_elements; k++) {
-		const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
+		// reset materials in destination mesh
+		for (size_t k(0); k<n_dest_mesh_elements; k++) {
+			const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
+		}
+
+		FileIO::MeshIO mesh_writer;
+		mesh_writer.setPrecision(12);
+		mesh_writer.setMesh(dest_mesh);
+		mesh_writer.writeToFile(out_mesh_arg.getValue());
 	}
-
-	FileIO::MeshIO mesh_writer;
-	mesh_writer.setPrecision(12);
-	mesh_writer.setMesh(src_mesh);
-	mesh_writer.writeToFile(BaseLib::extractPath(mesh_arg.getValue()) +"SourceMeshWithMat.msh");
-	mesh_writer.setMesh(dest_mesh);
-	mesh_writer.writeToFile(BaseLib::extractPath(mesh_arg.getValue())+"DestMeshWithMat.msh");
 
 	delete raster;
 	delete src_mesh;
