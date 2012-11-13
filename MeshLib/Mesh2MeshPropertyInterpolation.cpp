@@ -16,6 +16,7 @@
 
 // BaseLib
 #include "logog.hpp"
+#include "StringTools.h"
 
 // GeoLib
 #include "AABB.h"
