@@ -1,0 +1,161 @@
+/**
+ * @file ConvertRasterToMesh.cpp
+ * @author Thomas Fischer
+ * @date Nov 14, 2012
+ *
+ * @copyright
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
+ */
+
+#include "ConvertRasterToMesh.h"
+
+// MeshLib
+#include "Node.h"
+#include "Elements/Tri.h"
+#include "Elements/Quad.h"
+
+namespace MeshLib {
+
+ConvertRasterToMesh::ConvertRasterToMesh(GeoLib::Raster const& raster, MshElemType::type elem_type,
+				UseIntensityAs::type intensity_type) :
+	_raster(raster), _elem_type(elem_type), _intensity_type(intensity_type)
+{}
+
+ConvertRasterToMesh::~ConvertRasterToMesh()
+{}
+
+MeshLib::Mesh* ConvertRasterToMesh::execute() const
+{
+	const size_t height(_raster.getNRows()+1);
+	const size_t width(_raster.getNCols()+1);
+	const size_t size(height*width);
+	double* pix_vals(new double[size]);
+	bool* vis_nodes(new bool[size]);
+	int* node_idx_map(new int[size]);
+
+	// determine a valid value for substitution of no data values
+	double substitution (getExistingValue(_raster.begin(), _raster.end()));
+
+	for (size_t j = 0; j < _raster.getNRows(); j++) {
+		pix_vals[j] = 0;
+		vis_nodes[j] = false;
+		node_idx_map[j] = -1;
+	}
+
+	GeoLib::Raster::const_iterator raster_it(_raster.begin());
+	for (size_t i = 0; i < _raster.getNCols(); i++) {
+		for (size_t j = 0; j < _raster.getNRows(); ++j) {
+			const size_t index = (i + 1) * height + j;
+			if (*raster_it == _raster.getNoDataValue()) {
+				vis_nodes[index] = false;
+				pix_vals[index] = substitution;
+			} else {
+				pix_vals[index] = *raster_it; // img[img_idx];
+				vis_nodes[index] = true;
+			}
+			++raster_it;
+			node_idx_map[index] = -1;
+		}
+		pix_vals[(i + 2) * height - 1] = 0;
+		vis_nodes[(i + 2) * height - 1] = false;
+		node_idx_map[(i + 2) * height - 1] = -1;
+	}
+
+	MeshLib::Mesh* mesh = constructMesh(pix_vals, node_idx_map, vis_nodes);
+
+	delete [] pix_vals;
+	delete [] vis_nodes;
+	delete [] node_idx_map;
+
+	return mesh;
+}
+
+MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, int* node_idx_map, const bool* vis_nodes) const
+{
+	const size_t height = _raster.getNRows()+1;
+	const size_t width = _raster.getNCols()+1;
+	size_t node_idx_count(0);
+	const double distance(_raster.getRasterPixelDistance());
+	const double x_offset(_raster.getOrigin()[0]); // - distance / 2.0);
+	const double y_offset(_raster.getOrigin()[1]); // - distance / 2.0);
+
+	std::vector<MeshLib::Node*> nodes;
+	std::vector<MeshLib::Element*> elements;
+
+	for (size_t i = 0; i < width; i++) {
+		for (size_t j = 0; j < height; j++) {
+			const size_t index = i * height + j;
+
+			bool set_node(false);
+			if (j == 0 && i == width)
+				set_node = vis_nodes[index];
+			else if (j == 0)
+				set_node = (vis_nodes[index] || vis_nodes[index + height]);
+			else if (i == width)
+				set_node = (vis_nodes[index] || vis_nodes[index - 1]);
+			else set_node = (vis_nodes[index] || vis_nodes[index - 1] || vis_nodes[index + height]
+							|| vis_nodes[index + height - 1]);
+
+			if (set_node) {
+				double zValue = (_intensity_type == UseIntensityAs::ELEVATION) ? pix_vals[index]
+								: _raster.getOrigin()[2];
+				MeshLib::Node* node(new MeshLib::Node(x_offset + (distance * j), y_offset
+								+ (distance * i), zValue));
+				nodes.push_back(node);
+				node_idx_map[index] = node_idx_count;
+				node_idx_count++;
+			}
+		}
+	}
+
+	// set mesh elements
+	for (size_t i = 0; i < _raster.getNCols(); i++) {
+		for (size_t j = 0; j < _raster.getNRows(); j++) {
+			const int index = i * height + j;
+			if ((node_idx_map[index] != -1) && (node_idx_map[index + 1] != -1)
+							&& (node_idx_map[index + height] != -1) && (node_idx_map[index
+							+ height + 1] != -1) && (vis_nodes[index + height])) {
+				const int mat = (_intensity_type != UseIntensityAs::MATERIAL) ? 0
+								: static_cast<int> (pix_vals[index + height]);
+				if (_elem_type == MshElemType::TRIANGLE) {
+					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
+					tri1_nodes[0] = nodes[node_idx_map[index]];
+					tri1_nodes[1] = nodes[node_idx_map[index + 1]];
+					tri1_nodes[2] = nodes[node_idx_map[index + height]];
+
+					MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
+					tri2_nodes[0] = nodes[node_idx_map[index + 1]];
+					tri2_nodes[1] = nodes[node_idx_map[index + height + 1]];
+					tri2_nodes[2] = nodes[node_idx_map[index + height]];
+
+					elements.push_back(new MeshLib::Tri(tri1_nodes, mat)); // upper left triangle
+					elements.push_back(new MeshLib::Tri(tri2_nodes, mat)); // lower right triangle
+				}
+				if (_elem_type == MshElemType::QUAD) {
+					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+					quad_nodes[0] = nodes[node_idx_map[index]];
+					quad_nodes[1] = nodes[node_idx_map[index + 1]];
+					quad_nodes[2] = nodes[node_idx_map[index + height + 1]];
+					quad_nodes[3] = nodes[node_idx_map[index + height]];
+					elements.push_back(new MeshLib::Quad(quad_nodes, mat));
+				}
+			}
+		}
+	}
+
+	return new MeshLib::Mesh("RasterDataMesh", nodes, elements); // the name is only a temp-name, the name given in the dialog is set later
+}
+
+
+double ConvertRasterToMesh::getExistingValue(GeoLib::Raster::const_iterator first, GeoLib::Raster::const_iterator last) const
+{
+	for (GeoLib::Raster::const_iterator it(first); it != last; ++it) {
+		if (*it != _raster.getNoDataValue())
+			return *it;
+	}
+	return _raster.getNoDataValue();
+}
+} // end namespace MeshLib
