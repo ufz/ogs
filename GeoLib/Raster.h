@@ -86,6 +86,8 @@ public:
 	 */
 	void refineRaster(std::size_t scaling);
 
+	double getNoDataValue() const { return _no_data_val; }
+
 	/**
 	 * Constant iterator that is pointing to the first raster pixel value.
 	 * @return constant iterator

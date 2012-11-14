@@ -146,8 +146,10 @@ Raster* Raster::getRasterFromASCFile(std::string const& fname)
 			}
 		}
 		in.close();
-		return new Raster(n_cols, n_rows, xllcorner, yllcorner,
-						cell_size, values, values+n_cols*n_rows, no_data_val);
+		Raster *raster(new Raster(n_cols, n_rows, xllcorner, yllcorner,
+						cell_size, values, values+n_cols*n_rows, no_data_val));
+		delete [] values;
+		return raster;
 	} else {
 		std::cout << "Raster::getRasterFromASCFile() - could not read header of file " << fname << std::endl;
 		return NULL;
