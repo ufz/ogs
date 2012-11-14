@@ -55,6 +55,11 @@ OPTION(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
+# Linear solvers
+OPTION(USE_LIS "Use Lis" ON)
+OPTION(USE_EXTERNAL_LIS "Use external Lis" ON)
+OPTION(USE_BLAS_LAPACK "Use BLAS&LAPACK" OFF)
+
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
@@ -82,14 +87,43 @@ IF(OGS_PACKAGING)
 	INCLUDE( scripts/cmake/Pack.cmake)
 ENDIF() #OGS_PACKAGING
 
+#########################
+### Pre-configuration ###
+#########################
+IF(USE_LIS)
+    IF (USE_EXTERNAL_LIS)
+        FIND_PACKAGE ( LIS REQUIRED )
+    ENDIF()
+    ADD_DEFINITIONS(-DUSE_LIS)
+ENDIF(USE_LIS)
+
+IF(USE_BLAS_LAPACK)
+    ADD_DEFINITIONS(-DUSE_BLAS_LAPACK)
+    IF(NOT MSVC)
+        FIND_PACKAGE ( BLAS REQUIRED )
+        FIND_PACKAGE ( LAPACK REQUIRED )
+    ELSE(NOT MSVC)
+        find_library(BLAS_LIBRARIES
+            NAMES libf2cblas.lib
+            PATHS ${CMAKE_SOURCE_DIR}/../ ) 
+        find_library(LAPACK_LIBRARIES
+            NAMES libf2clapack.lib
+            PATHS ${CMAKE_SOURCE_DIR}/../ ) 
+    ENDIF(NOT MSVC)
+
+ENDIF(USE_BLAS_LAPACK)
+
 ######################
 ### Subdirectories ###
 ######################
 
 # Add subdirectories with the projects
+INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR}/BaseLib ) # lis needs to refer Configure.h
 ADD_SUBDIRECTORY( ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty )
+#INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/Eigen )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/quickcheck )
+#INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/lis/include )
 
 ADD_SUBDIRECTORY( BaseLib )
 ADD_SUBDIRECTORY( FemLib )
