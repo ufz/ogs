@@ -9,3 +9,10 @@ SET_PROPERTY(TARGET test-logog PROPERTY FOLDER "logog")
 ADD_SUBDIRECTORY(zlib)
 
 ADD_SUBDIRECTORY(gtest)
+
+# VtkFbxConverter
+#SET(VtkFbxConverter_DIR ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter)
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt)
+	ADD_SUBDIRECTORY(VtkFbxConverter)
+	SET(VTKFBXCONVERTER_FOUND ON CACHE BOOL "Is the VtkFbxConverter submodule checked out?")
+ENDIF()

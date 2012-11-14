@@ -735,7 +735,7 @@ QMenu* MainWindow::createImportFilesMenu()
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
-#ifdef OGS_USE_OPENSG
+#if defined OGS_USE_OPENSG || defined VTKFBXCONVERTER_FOUND
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
 	_signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);

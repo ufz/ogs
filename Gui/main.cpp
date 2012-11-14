@@ -6,11 +6,20 @@
 #endif
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
+#ifdef VTKFBXCONVERTER_FOUND
+#include <fbxsdk.h>
+#include "Common.h"
+FbxManager* lSdkManager = NULL;
+FbxScene* lScene = NULL;
+#endif
 
 int main(int argc, char* argv[])
 {
 #ifdef OGS_USE_OPENSG
 	OSG::osgInit(argc, argv);
+#endif
+#ifdef VTKFBXCONVERTER_FOUND
+	InitializeSdkObjects(lSdkManager, lScene);
 #endif
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
@@ -30,6 +39,9 @@ int main(int argc, char* argv[])
 	delete formatter;
 	delete logogCout;
 	LOGOG_SHUTDOWN();
+#ifdef VTKFBXCONVERTER_FOUND
+	DestroySdkObjects(lSdkManager);
+#endif
 #ifdef OGS_USE_OPENSG
 	OSG::osgExit();
 #endif // OGS_USE_OPENSG
