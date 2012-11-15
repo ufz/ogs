@@ -1,17 +1,20 @@
 /**
+ * @copyright
  * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file TemplateVec.h
- *
- * Created on 2010-02-26 by Thomas Fischer
+ * @file TemplateVec.h
+ * @date 2010-02-26
+ * @author Thomas Fischer
  */
 
 #ifndef TEMPLATEVEC_H_
 #define TEMPLATEVEC_H_
+
+#include <algorithm>
 
 namespace GeoLib
 {
@@ -115,17 +118,12 @@ public:
 	{
 		if (!_name_id_map) return false;
 		// search in map for id
-		std::map<std::string,std::size_t>::const_iterator it (_name_id_map->begin());
-		while (it != _name_id_map->end())
-		{
-			if (it->second == id)
-			{
-				element_name = it->first;
-				return true;
-			}
-			it++;
+		std::map<std::string,std::size_t>::const_iterator it(std::find_if(_name_id_map->begin(), _name_id_map->end(), PairSecondIsEqual(id)));
+		if (it == _name_id_map->end()) {
+			return false;
 		}
-		return false;
+		element_name = it->first;
+		return true;
 	}
 
 	/// Return the name of an element based on its ID.
@@ -205,6 +203,15 @@ protected:
 	 * store names associated with the element ids
 	 */
 	std::map<std::string, std::size_t>* _name_id_map;
+private:
+	struct PairSecondIsEqual {
+		PairSecondIsEqual(std::size_t const& id) : _id (id) {}
+		bool operator() (std::pair<std::string, std::size_t> const& pair)
+		{
+			return pair.second == _id;
+		}
+		std::size_t const& _id;
+	}; // end struct PairSecondIsEqual
 };
 } // end namespace GeoLib
 
