@@ -15,6 +15,9 @@
 #include "PointVec.h"
 #include "PointWithID.h"
 
+// BaseLib
+#include "quicksort.h"
+
 // MathLib
 #include "MathTools.h"
 
