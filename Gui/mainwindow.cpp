@@ -99,7 +99,7 @@
 #include <vtkRenderer.h>
 #include <vtkVRMLExporter.h>
 
-#ifdef OGS_USE_OPENSG
+#ifdef VTKOSGCONVERTER_FOUND
 #include "vtkOsgConverter.h"
 #include <OpenSG/OSGCoredNodePtr.h>
 #include <OpenSG/OSGGroup.h>
@@ -735,7 +735,7 @@ QMenu* MainWindow::createImportFilesMenu()
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
 	connect(rasterFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
-#if defined OGS_USE_OPENSG || defined VTKFBXCONVERTER_FOUND
+#if defined VTKOSGCONVERTER_FOUND || defined VTKFBXCONVERTER_FOUND
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
 	_signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);
@@ -1249,7 +1249,7 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
-#ifdef OGS_USE_OPENSG
+#ifdef VTKOSGCONVERTER_FOUND
 	QSettings settings;
 	QString filename = QFileDialog::getSaveFileName(
 	        this, "Export scene to OpenSG binary file", settings.value(
@@ -1266,10 +1266,10 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 		{
 			VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(*it);
 			vtkOsgConverter converter(static_cast<vtkActor*>(item->actor()));
-			if(converter.WriteAnActor())
+			if(converter.convert())
 			{
 				beginEditCP(root);
-				root->addChild(converter.GetOsgNode());
+				root->addChild(converter.getNode());
 				endEditCP(root);
 			}
 			++it;
@@ -1277,7 +1277,7 @@ void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
 
 		OSG::SceneFileHandler::the().write(root, filename.toStdString().c_str());
 	}
-#else // ifdef OGS_USE_OPENSG
+#else // ifdef VTKOSGCONVERTER_FOUND
 	QMessageBox::warning(this, "Functionality not implemented",
 	                     "Sorry but this progam was not compiled with OpenSG support.");
 #endif

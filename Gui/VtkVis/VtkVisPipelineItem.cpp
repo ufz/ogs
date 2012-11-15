@@ -30,7 +30,7 @@
 
 #include <QMessageBox>
 
-#ifdef OGS_USE_OPENSG
+#ifdef VTKOSGCONVERTER_FOUND
 #include "vtkOsgConverter.h"
 #include <OpenSG/OSGSceneFileHandler.h>
 #endif
@@ -117,13 +117,13 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 	{
 		if (filename.substr(filename.size() - 4).find("os") != std::string::npos)
 		{
-#ifdef OGS_USE_OPENSG
+#ifdef VTKOSGCONVERTER_FOUND
 			if(!dynamic_cast<vtkImageActor*>(_actor))
 			{
 				vtkOsgConverter osgConverter(static_cast<vtkActor*>(_actor));
-				if(osgConverter.WriteAnActor())
+				if(osgConverter.convert())
 					OSG::SceneFileHandler::the().write(
-					        osgConverter.GetOsgNode(), filename.c_str());
+					        osgConverter.getNode(), filename.c_str());
 			}
 			else
 				QMessageBox::warning(NULL, "Conversion to OpenSG not possible",
