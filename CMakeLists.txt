@@ -86,12 +86,17 @@ ENDIF() #OGS_PACKAGING
 ### Subdirectories ###
 ######################
 
+# External projects
+INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
+
 # Add subdirectories with the projects
 ADD_SUBDIRECTORY( ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/quickcheck )
 
 ADD_SUBDIRECTORY( BaseLib )
+# TODO This is a hack but we have to make sure that Boost is built first
+ADD_DEPENDENCIES(BaseLib Boost)
 ADD_SUBDIRECTORY( FemLib )
 ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )

@@ -21,6 +21,7 @@ TARGET_LINK_LIBRARIES(testrunner
 	GTest
 	BaseLib
 	GeoLib
+	${Boost_LIBRARIES}
 )
 
 # Add make-target test which runs the testrunner
