@@ -9,8 +9,8 @@
  *  Created on  Aug 3, 2012 by Thomas Fischer
  */
 
-// BaseLib/logog
-#include "logog.hpp"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 #include "MeshCoarsener.h"
 

@@ -16,9 +16,9 @@
 #include "CPUTime.h"
 // BaseLib/tclap
 #include "tclap/CmdLine.h"
-// BaseLib/logog
-#include "logog.hpp"
-#include "formatter.hpp"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+#include "logog/include/formatter.hpp"
 
 // MathLib
 #include "sparse.h"

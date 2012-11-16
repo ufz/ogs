@@ -10,6 +10,7 @@
  * Created on 2010-03-17 by Thomas Fischer
  */
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib> // for exit
 #include <list>
@@ -28,7 +29,6 @@
 #include "AnalyticalGeometry.h"
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "LinAlg/Dense/Matrix.h" // for transformation matrix
-#include "max.h"
 
 namespace MathLib {
 
@@ -40,7 +40,7 @@ Orientation getOrientation (const double& p0_x, const double& p0_y,
 	double h2 ((p2_x-p0_x)*(p1_y-p0_y));
 
 	double tol (sqrt(std::numeric_limits<double>::min()));
-	if (fabs (h1-h2) <= tol * max (fabs(h1), fabs(h2)))
+	if (fabs (h1-h2) <= tol * std::max (fabs(h1), fabs(h2)))
 		return COLLINEAR;
 	if (h1-h2 > 0.0) return CCW;
 

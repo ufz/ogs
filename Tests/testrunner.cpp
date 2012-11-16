@@ -11,7 +11,7 @@
  */
 
 // ** INCLUDES **
-#include "gtest.h"
+#include "gtest/gtest.h"
 
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])

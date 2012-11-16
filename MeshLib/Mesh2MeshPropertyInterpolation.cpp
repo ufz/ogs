@@ -15,7 +15,7 @@
 #include "Mesh2MeshPropertyInterpolation.h"
 
 // BaseLib
-#include "logog.hpp"
+#include "logog/include/logog.hpp"
 #include "StringTools.h"
 
 // GeoLib

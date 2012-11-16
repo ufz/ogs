@@ -5,7 +5,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest.h"
+#include "gtest/gtest.h"
 
 #include "FileTools.h"
 #include "FileTools.cpp"

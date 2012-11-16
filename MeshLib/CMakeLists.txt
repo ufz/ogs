@@ -12,7 +12,6 @@ include_directories(
 	../BaseLib
 	../GeoLib
 	../MathLib
-	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
 )
 
 

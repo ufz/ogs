@@ -12,7 +12,7 @@
  *
  */
 
-#include "gtest.h"
+#include "gtest/gtest.h"
 #include "quickcheck/quickcheck.hh"
 #include "quicksort.h"
 
