@@ -18,5 +18,7 @@ MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
 	setupUi(this);
 
 	connect(this->addMeshPushButton, SIGNAL(clicked()), this->treeView, SLOT(addMeshAction()));
-	connect(this->clearAllPushButton, SIGNAL(clicked()), this->treeView, SLOT(removeAllMeshes()));
+	connect(this->saveMeshPushButton, SIGNAL(clicked()), this->treeView, SLOT(writeMeshToFile()));
+	connect(this->removeMeshPushButton, SIGNAL(clicked()), this->treeView, SLOT(removeMesh()));
+	//connect(this->clearAllPushButton, SIGNAL(clicked()), this->treeView, SLOT(removeAllMeshes()));
 }

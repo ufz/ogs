@@ -4,12 +4,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file DataView.h
+ * \file MshView.h
  *
  * Created on 2009-09-24 by Lars Bilke
  */
-#ifndef DATAVIEW_H
-#define DATAVIEW_H
+#ifndef MSHVIEW_H
+#define MSHVIEW_H
 
 #include "Point.h"
 #include "GeoType.h"
@@ -30,13 +30,13 @@ namespace MeshLib {
  *	The DataView is table view which acts as a base class for displaying
  *  several OSG data formats.
  */
-class DataView : public QTreeView
+class MshView : public QTreeView
 {
 	Q_OBJECT
 
 public:
-	DataView(QWidget* parent = 0);
-	~DataView();
+	MshView(QWidget* parent = 0);
+	~MshView();
 
 public slots:
 	void updateView();
@@ -71,7 +71,7 @@ private slots:
 	void removeMesh();
 
 	/// Remove all currently loaded meshes.
-	void removeAllMeshes();
+	//void removeAllMeshes();
 
 	/// Calls the FileDialog to save a mesh to a file.
 	int writeMeshToFile() const;
@@ -95,4 +95,4 @@ signals:
         const QItemSelection &deselected);
  */
 };
-#endif // DATAVIEW_H
+#endif // MSHVIEW_H

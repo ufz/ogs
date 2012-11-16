@@ -4,12 +4,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file DataView.cpp
+ * \file MshView.cpp
  *
  * Created on 2009-09-24 by Lars Bilke
  */
 
-#include "DataView.h"
+#include "MshView.h"
 #include "Mesh.h"
 #include "MshEditDialog.h"
 #include "MshItem.h"
@@ -29,18 +29,18 @@
 #include "RapidXmlIO/RapidVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 
-DataView::DataView( QWidget* parent /*= 0*/ )
+MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
 {
 	//resizeColumnsToContents();
 	//resizeRowsToContents();
 }
 
-DataView::~DataView()
+MshView::~MshView()
 {
 }
 
-void DataView::updateView()
+void MshView::updateView()
 {
 	setAlternatingRowColors(true);
 	setColumnWidth(0,125);
@@ -49,37 +49,48 @@ void DataView::updateView()
 		resizeColumnToContents(i);
 }
 
-void DataView::addMeshAction()
+void MshView::addMeshAction()
 {
 	QSettings settings;
 	QString fileName =
 	        QFileDialog::getOpenFileName(this, "Select mesh file", settings.value(
 	                                             "lastOpenedFileDirectory").toString(),
-	                                     "OpenGeosys mesh files (*.msh);;All files (* *.*)");
+	                                     "OpenGeosys mesh files (*.vtu *.msh);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
 		std::string name = fileName.toStdString();
 		FileIO::MeshIO meshIO;
 		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
 		if (msh)
+		{
 			static_cast<MshModel*>(this->model())->addMesh(msh);
+			QDir dir = QDir(fileName);
+			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+		}
 	}
 }
 
-void DataView::removeMesh()
+void MshView::removeMesh()
 {
-	emit requestMeshRemoval(this->selectionModel()->currentIndex());
+	QModelIndex index (this->selectionModel()->currentIndex());
+	if (!index.isValid())
+		OGSError::box("No mesh selected.");
+	else
+		emit requestMeshRemoval(index);
 }
 
-void DataView::removeAllMeshes()
+/*
+// Removed functionality. Do we still need this?
+void MshView::removeAllMeshes()
 {
 	TreeItem* root = static_cast<MshModel*>(this->model())->getItem(QModelIndex());
 	int nChildren = root->childCount() - 1;
 	for (int i = nChildren; i >= 0; i--)
 		emit requestMeshRemoval(this->model()->index(i, 0, QModelIndex()));
 }
+*/
 
-void DataView::contextMenuEvent( QContextMenuEvent* event )
+void MshView::contextMenuEvent( QContextMenuEvent* event )
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
@@ -89,25 +100,25 @@ void DataView::contextMenuEvent( QContextMenuEvent* event )
 		QMenu menu;
 		QAction* editMeshAction   = menu.addAction("Edit mesh...");
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
-		QAction* saveMeshAction   = menu.addAction("Save mesh...");
+		//QAction* saveMeshAction   = menu.addAction("Save mesh...");
 		menu.addSeparator();
 		QMenu direct_cond_menu("DIRECT Conditions");
 		menu.addMenu(&direct_cond_menu);
 		QAction* addDirectAction  = direct_cond_menu.addAction("Add...");
 		QAction* loadDirectAction = direct_cond_menu.addAction("Load...");
 		menu.addSeparator();
-		QAction* removeMeshAction = menu.addAction("Remove mesh");
+		//QAction* removeMeshAction = menu.addAction("Remove mesh");
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
-		connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
+		//connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
 		connect(addDirectAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
 		connect(loadDirectAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
-		connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
+		//connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 		menu.exec(event->globalPos());
 	}
 }
 
-void DataView::openMshEditDialog()
+void MshView::openMshEditDialog()
 {
 	MshModel* model = static_cast<MshModel*>(this->model());
 	QModelIndex index = this->selectionModel()->currentIndex();
@@ -120,11 +131,17 @@ void DataView::openMshEditDialog()
 	meshEdit.exec();
 }
 
-int DataView::writeMeshToFile() const
+int MshView::writeMeshToFile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	const MeshLib::Mesh* mesh =
-	        static_cast<MshModel*>(this->model())->getMesh(index);
+
+	if (!index.isValid())
+	{
+		OGSError::box("No mesh selected.");
+		return 0;
+	}
+
+	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 
 	if (mesh)
 	{
@@ -160,7 +177,7 @@ int DataView::writeMeshToFile() const
 	return 0;
 }
 
-void DataView::addDIRECTSourceTerms()
+void MshView::addDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
@@ -168,7 +185,7 @@ void DataView::addDIRECTSourceTerms()
 }
 
 
-void DataView::loadDIRECTSourceTerms()
+void MshView::loadDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
@@ -176,7 +193,7 @@ void DataView::loadDIRECTSourceTerms()
 	// TODO6 emit requestDIRECTSourceTerms(grid->getName(), nodes);
 }
 
-void DataView::checkMeshQuality ()
+void MshView::checkMeshQuality ()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = static_cast<MshItem*>(static_cast<MshModel*>(this->model())->getItem(index));

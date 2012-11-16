@@ -18,25 +18,81 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="DataView" name="treeView"/>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="addMeshPushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Add mesh...</string>
+        <string>Add</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="clearAllPushButton">
+      <widget class="QPushButton" name="saveMeshPushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Remove All</string>
+        <string>Save</string>
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="removeMeshPushButton">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="MshView" name="treeView"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -69,15 +125,15 @@
     </layout>
    </item>
    <item>
-    <widget class="DataView" name="elementView"/>
+    <widget class="MshView" name="elementView"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DataView</class>
+   <class>MshView</class>
    <extends>QTreeView</extends>
-   <header>DataView.h</header>
+   <header>MshView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

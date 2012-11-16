@@ -4,7 +4,6 @@ set( SOURCES
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
 	ConditionWriterDialog.cpp
-	DataView.cpp
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	FEMConditionSetupDialog.cpp
@@ -25,6 +24,7 @@ set( SOURCES
 	MshModel.cpp
 	MshQualitySelectionDialog.cpp
 	MshTabWidget.cpp
+	MshView.cpp
 	NetCdfConfigureDialog.cpp
 	NewProcessDialog.cpp
 	ProcessModel.cpp
@@ -42,7 +42,6 @@ set( MOC_HEADERS
 	ColorTableView.h
 	CondFromRasterDialog.h
 	ConditionWriterDialog.h
-	DataView.h
 	ElementTreeModel.h
 	FEMConditionSetupDialog.h
 	GEOModels.h
@@ -58,6 +57,7 @@ set( MOC_HEADERS
 	MshModel.h
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
+	MshView.h
 	NetCdfConfigureDialog.h
 	NewProcessDialog.h
 	ProcessModel.h
