@@ -38,24 +38,6 @@ IF (Shapelib_FOUND)
 
 ENDIF (Shapelib_FOUND)
 
-## VTK to OpenSG file converter ##
-IF (OGS_USE_OPENSG AND VTK_FOUND AND Boost_FOUND)
-
-	INCLUDE( ${VTK_USE_FILE} )
-
-	ADD_EXECUTABLE (ConvertVtkToOsg ConvertVtkToOsg.cpp)
-	SET_TARGET_PROPERTIES(ConvertVtkToOsg PROPERTIES FOLDER Utilities)
-
-	USE_OPENSG ( ConvertVtkToOsg )
-	INCLUDE_DIRECTORIES ( ${CMAKE_SOURCE_DIR}/Gui/OpenSG ${Boost_INCLUDE_DIRS} )
-	TARGET_LINK_LIBRARIES ( ConvertVtkToOsg OgsOpenSG vtkRendering vtkIO ${Boost_LIBRARIES} )
-
-	IF (OGS_PACKAGING)
-		INSTALL ( TARGETS ConvertVtkToOsg RUNTIME DESTINATION bin COMPONENT ConvertVtkToOsg )
-	ENDIF (OGS_PACKAGING)
-
-ENDIF () # OGS_USE_OPENSG AND VTK_FOUND AND Boost_FOUND
-
 ## Gli to VTK file converter ##
 IF(VTK_FOUND AND Boost_FOUND)
 

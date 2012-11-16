@@ -1,3 +1,9 @@
 [submodule "ThirdParty/quickcheck"]
 	path = ThirdParty/quickcheck
 	url = http://software.legiasoft.com/git/quickcheck.git
+[submodule "ThirdParty/VtkFbxConverter"]
+	path = ThirdParty/VtkFbxConverter
+	url = https://github.com/bilke/VtkFbxConverter.git
+[submodule "ThirdParty/VtkOsgConverter"]
+	path = ThirdParty/VtkOsgConverter
+	url = https://github.com/bilke/VtkOsgConverter.git
