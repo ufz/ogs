@@ -24,7 +24,9 @@ namespace MeshLib {
 // forward declaration
 class Mesh;
 
-/// Selection of possible interpretations for intensities
+/**
+ * Struct gives a selection of possible interpretations for intensities
+ */
 struct UseIntensityAs
 {
 	enum type {
@@ -35,7 +37,7 @@ struct UseIntensityAs
 };
 
 /**
- * Class to convert raster data into meshes.
+ * Class to convert raster data into meshes. Based on Karsten Rinks algorithm.
  */
 class ConvertRasterToMesh {
 public:
@@ -45,7 +47,7 @@ public:
 	MeshLib::Mesh* execute() const;
 private:
 	double getExistingValue(GeoLib::Raster::const_iterator beg, GeoLib::Raster::const_iterator last) const;
-	MeshLib::Mesh* constructMesh(const double* pix_vals, int* node_idx_map, const bool* vis_nodes) const;
+	MeshLib::Mesh* constructMesh(const double* pix_vals, const bool* vis_nodes) const;
 	GeoLib::Raster const& _raster;
 	MshElemType::type _elem_type;
 	UseIntensityAs::type _intensity_type;

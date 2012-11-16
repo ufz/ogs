@@ -106,22 +106,8 @@ int main (int argc, char* argv[])
 		std::cout << "variance of source: " << src_varianz << std::endl;
 	}
 
-//	double spacing(raster->getRasterPixelDistance());
-//	double *raster_with_alpha(new double[raster->getNRows() * raster->getNCols()]);
-//	raster_it = raster->begin();
-//	for (std::size_t k(0); k<raster->getNRows() * raster->getNCols(); k++) {
-//		raster_with_alpha[k] = *raster_it;
-//		++raster_it;
-//	}
-
-//	double origin[3] = {raster->getOrigin()[0] + spacing/2.0, raster->getOrigin()[1] + spacing/2.0, raster->getOrigin()[2]};
-//	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster_with_alpha, origin, raster->getNCols(), raster->getNRows(),
-//					spacing, MshElemType::QUAD, UseIntensityAs::MATERIAL));
-
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
-
-//	delete [] raster_with_alpha;
 
 	std::vector<size_t> src_perm(n_cols*n_rows);
 	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
