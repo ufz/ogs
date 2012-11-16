@@ -67,8 +67,8 @@ GeoLib::Point const& Raster::getOrigin() const
 void Raster::writeRasterAsASC(std::ostream &os) const
 {
 	// write header
-	os << "ncols " << _n_rows << std::endl;
-	os << "nrows " << _n_cols << std::endl;
+	os << "ncols " << _n_cols << std::endl;
+	os << "nrows " << _n_rows << std::endl;
 	os << "xllcorner " << _ll_pnt[0] << std::endl;
 	os << "yllcorner " << _ll_pnt[1] << std::endl;
 	os << "cellsize " <<  _cell_size << std::endl;

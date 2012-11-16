@@ -106,7 +106,7 @@ public:
 	~Raster();
 
 	/**
-	 * Write meta data and raw raster data as asci file into the ouput stream.
+	 * Write meta data and raw raster data as asci file into the output stream.
 	 * @param os the output stream
 	 */
 	void writeRasterAsASC(std::ostream &os) const;
