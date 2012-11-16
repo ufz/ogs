@@ -1,16 +1,25 @@
 #include "Configure.h"
 #include "mainwindow.h"
 #include <QtGui/QApplication>
-#ifdef OGS_USE_OPENSG
+#ifdef VTKOSGCONVERTER_FOUND
 #include <OpenSG/OSGBaseFunctions.h>
 #endif
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
+#ifdef VTKFBXCONVERTER_FOUND
+#include <fbxsdk.h>
+#include "Common.h"
+FbxManager* lSdkManager = NULL;
+FbxScene* lScene = NULL;
+#endif
 
 int main(int argc, char* argv[])
 {
-#ifdef OGS_USE_OPENSG
+#ifdef VTKOSGCONVERTER_FOUND
 	OSG::osgInit(argc, argv);
+#endif
+#ifdef VTKFBXCONVERTER_FOUND
+	InitializeSdkObjects(lSdkManager, lScene);
 #endif
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
@@ -30,9 +39,12 @@ int main(int argc, char* argv[])
 	delete formatter;
 	delete logogCout;
 	LOGOG_SHUTDOWN();
-#ifdef OGS_USE_OPENSG
+#ifdef VTKFBXCONVERTER_FOUND
+	DestroySdkObjects(lSdkManager);
+#endif
+#ifdef VTKOSGCONVERTER_FOUND
 	OSG::osgExit();
-#endif // OGS_USE_OPENSG
+#endif
 
 	return returncode;
 }

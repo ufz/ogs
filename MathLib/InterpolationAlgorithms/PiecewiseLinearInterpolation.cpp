@@ -11,7 +11,6 @@
  */
 
 #include "PiecewiseLinearInterpolation.h"
-#include "binarySearch.h"
 
 #include <iostream>
 

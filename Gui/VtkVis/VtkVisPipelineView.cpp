@@ -104,6 +104,9 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		menu.addSeparator();
 		QAction* exportVtkAction = menu.addAction("Export as VTK");
 		QAction* exportOsgAction = menu.addAction("Export as OpenSG");
+#ifdef VTKFBXCONVERTER_FOUND
+		QAction* exportFbxAction = menu.addAction("Export as Fbx");
+#endif
 		QAction* removeAction = NULL;
 		if (!isSourceItem || vtkProps->IsRemovable())
 		{
@@ -117,6 +120,10 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		        SLOT(exportSelectedPipelineItemAsVtk()));
 		connect(exportOsgAction, SIGNAL(triggered()), this,
 		        SLOT(exportSelectedPipelineItemAsOsg()));
+#ifdef VTKFBXCONVERTER_FOUND
+		connect(exportFbxAction, SIGNAL(triggered()), this,
+		        SLOT(exportSelectedPipelineItemAsFbx()));
+#endif
 
 		menu.exec(event->globalPos());
 	}
@@ -153,6 +160,24 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 	}
 }
+
+#ifdef VTKFBXCONVERTER_FOUND
+void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
+{
+	QSettings settings("UFZ", "OpenGeoSys-5");
+	QModelIndex idx = this->selectionModel()->currentIndex();
+	QString filename = QFileDialog::getSaveFileName(this, "Export object to Fbx file",
+	                                                settings.value("lastExportedFileDirectory").
+	                                                toString(), "Fbx file (*.fbx)");
+	if (!filename.isEmpty())
+	{
+		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
+		                                 getItem(idx))->writeToFile(filename.toStdString());
+		QDir dir = QDir(filename);
+		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
+	}
+}
+#endif // VTKFBXCONVERTER_FOUND
 
 void VtkVisPipelineView::removeSelectedPipelineItem()
 {

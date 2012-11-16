@@ -59,6 +59,11 @@ private slots:
 	/// Exports the currently selected item as an OpenSG file
 	void exportSelectedPipelineItemAsOsg();
 
+#ifdef VTKFBXCONVERTER_FOUND
+	/// Exports the currently selected item as a Fbx file.
+	void exportSelectedPipelineItemAsFbx();
+#endif // VTKFBXCONVERTER_FOUND
+
 	/// Sends an requestRemovePipelineItem() signal to remove
 	/// the currently selected item.
 	void removeSelectedPipelineItem();

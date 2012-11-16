@@ -13,34 +13,16 @@
 #ifndef UNIQUELISTINSERT_H_
 #define UNIQUELISTINSERT_H_
 
-#include <list>
-#include <vector>
+#include <algorithm>
 
 namespace BaseLib {
 
-template<typename T>
-void uniqueListInsert (std::list<T>& list, T element)
+template<typename Container>
+void uniquePushBack(Container& container, typename Container::value_type const& element)
 {
-	// search element
-	typename std::list<T>::const_iterator it;
-	for (it = list.begin (); it != list.end(); it++) {
-		if (*it == element) return;
-	}
-	// element not found -> insert
-	list.push_back (element);
+    if (std::find(container.begin(), container.end(), element) == container.end())
+        container.push_back(element);
 }
-
-template<typename T>
-void uniqueVectorInsert (std::vector<T>& vec, T element)
-{
-	// search element
-	typename std::vector<T>::const_iterator it;
-	for (it = vec.begin (); it != vec.end(); ++it)
-		if (*it == element) return;
-	// element not found -> insert
-	vec.push_back (element);
-}
-
 
 } // end namespace BaseLib
 
