@@ -22,6 +22,8 @@ SET( UIS
 # Run Qts user interface compiler uic on .ui files
 QT4_WRAP_UI( UI_HEADERS ${UIS} )
 
+QT4_ADD_RESOURCES( QTRESOURCES ./Img/icons.qrc )
+
 # Run Qts meta object compiler moc on header files
 QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
@@ -70,6 +72,7 @@ ADD_EXECUTABLE( ogs-gui
 	${MOC_HEADERS}
 	${MOC_SOURCES}
 	${UIS}
+	${QTRESOURCES}
 )
 
 TARGET_LINK_LIBRARIES( ogs-gui

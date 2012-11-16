@@ -1,0 +1,18 @@
+<RCC>
+  <qresource prefix="Images">
+    <file>icon_glass_active.png</file>
+    <file>icon_hlight_active.png</file>
+    <file>icon_persp_active.png</file>
+    <file>icon_xminus.png</file>
+    <file>icon_xplus.png</file>
+    <file>icon_yminus.png</file>
+    <file>icon_yplus.png</file>
+    <file>icon_zminus.png</file>
+    <file>icon_zplus.png</file>
+    <file>icon_glass.png</file>
+    <file>icon_global.png</file>
+    <file>icon_hlight.png</file>
+    <file>icon_persp.png</file>
+    <file>icon_screen.png</file>
+  </qresource>
+</RCC>

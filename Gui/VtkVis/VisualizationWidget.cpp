@@ -10,6 +10,8 @@
  */
 
 // ** INCLUDES **
+#include <cmath>
+
 #include "Point.h"
 #include "VisualizationWidget.h"
 #include "VtkCustomInteractorStyle.h"
@@ -147,22 +149,26 @@ void VisualizationWidget::updateView()
 	vtkWidget->GetRenderWindow()->Render();
 }
 
-void VisualizationWidget::showAll()
+void VisualizationWidget::showAll(int x, int y, int z)
 {
 	_vtkRender->ResetCamera();
 	vtkCamera* cam = _vtkRender->GetActiveCamera();
 	double* fp = cam->GetFocalPoint();
 	double* p = cam->GetPosition();
 	double dist = sqrt(vtkMath::Distance2BetweenPoints(p, fp));
-	cam->SetPosition(fp[0], fp[1], fp[2] + dist);
-	cam->SetViewUp(0.0, 1.0, 0.0);
+	cam->SetPosition(fp[0]+(x*dist), fp[1]+(y*dist), fp[2]+(z*dist));
+	
+	if (x!=0 || y!=0)
+		cam->SetViewUp(0.0, 0.0, 1.0);
+	else
+		cam->SetViewUp(0.0, 1.0, 0.0);
 	this->updateView();
 }
 
 void VisualizationWidget::updateViewOnLoad()
 {
 	if (_isShowAllOnLoad)
-		this->showAll();
+		this->showAll(0, 0, 1);
 	else
 		updateView();
 }
@@ -185,11 +191,6 @@ void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
 		cursor.setShape(Qt::ArrowCursor);
 		vtkWidget->setCursor(cursor);
 	}
-}
-
-void VisualizationWidget::on_showAllPushButton_pressed()
-{
-	this->showAll();
 }
 
 void VisualizationWidget::on_highlightToolButton_toggled(bool checked)

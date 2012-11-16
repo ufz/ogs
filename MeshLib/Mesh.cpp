@@ -43,7 +43,7 @@ Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::
 }
 
 Mesh::Mesh(const Mesh &mesh)
-	: _mesh_dimension(mesh.getDimension()), _name(mesh.getName()), _nodes(mesh.getNodes()), _elements(mesh.getElements())
+	: _mesh_dimension(mesh.getDimension()), _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());

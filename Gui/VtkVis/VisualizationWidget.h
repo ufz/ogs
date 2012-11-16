@@ -51,7 +51,8 @@ public slots:
 	void updateView();
 
 	/// @brief Shows the entire scene on the views.
-	void showAll();
+	/// x,y,z are in {-1, 0, 1} and specify from which direction the scene is displayed.
+	void showAll(int x, int y, int z);
 
 	/// @brief Updates the view only or additionally shows the entire scene.
 	void updateViewOnLoad();
@@ -68,11 +69,29 @@ public slots:
 
 protected slots:
 
+	/// @brief Resets the camera to view the entire scene.
+	void on_showAllPushButton_pressed() { this->showAll(0,0,1); };
+
+	/// @brief Reset camera to view entire scene from +x perspective.
+	void on_rotateXPosPushButton_pressed() { this->showAll(1,0,0); };
+
+	/// @brief Reset camera to view entire scene from -x perspective.
+	void on_rotateXNegPushButton_pressed() { this->showAll(-1,0,0); };
+
+	/// @brief Reset camera to view entire scene from +y perspective.
+	void on_rotateYPosPushButton_pressed() { this->showAll(0,1,0); };
+
+	/// @brief Reset camera to view entire scene from -y perspective.
+	void on_rotateYNegPushButton_pressed() { this->showAll(0,-1,0); };
+
+	/// @brief Reset camera to view entire scene from +z perspective.
+	void on_rotateZPosPushButton_pressed() { this->showAll(0,0,1); };
+
+	/// @brief Reset camera to view entire scene from -z perspective.
+	void on_rotateZNegPushButton_pressed() { this->showAll(0,0,-1); };
+
 	/// @brief Toggles rectangular zooming mode.
 	void on_zoomToolButton_toggled(bool checked);
-
-	/// @brief Resets the camera to view the entire scene.
-	void on_showAllPushButton_pressed();
 
 	/// @brief Toggles the display of bounding boxes around.
 	void on_highlightToolButton_toggled(bool checked);

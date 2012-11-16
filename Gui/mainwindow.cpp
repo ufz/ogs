@@ -1128,9 +1128,9 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	/*
+/*	
 	const double dir[3] = {0, 0, 1};
-	const MeshLib::Mesh* mesh = this->_project.getMesh("tb_wo_mat");
+	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");
 	_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
 */
 /*
