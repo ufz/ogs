@@ -10,12 +10,17 @@ ADD_SUBDIRECTORY(zlib)
 
 ADD_SUBDIRECTORY(gtest)
 
+# This is a workaround for Travis builds.
+OPTION(OGS_DONT_USE_OPTIONAL_SUBMODULES "Option for disabling optional submodules" OFF)
+
 # VtkFbxConverter
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt)
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
+	AND NOT OGS_DONT_USE_OPTIONAL_SUBMODULES)
 	ADD_SUBDIRECTORY(VtkFbxConverter)
 ENDIF()
 
 # VtkOsgConverter
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkOsgConverter/CMakeLists.txt)
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkOsgConverter/CMakeLists.txt
+	AND NOT OGS_DONT_USE_OPTIONAL_SUBMODULES)
 	ADD_SUBDIRECTORY(VtkOsgConverter)
 ENDIF()
