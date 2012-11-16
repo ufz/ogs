@@ -18,18 +18,23 @@ ENDIF ()
 ### GNU C/CXX compiler
 IF(COMPILER_IS_GCC)
 		get_gcc_version(GCC_VERSION)
+		IF(GCC_VERSION VERSION_LESS "4.7")
+				SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+		ELSE()
+				SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+		ENDIF()
 		IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
 				MESSAGE(STATUS "Set GCC release flags")
 				IF(APPLE AND GCC_VERSION VERSION_LESS "4.3" AND NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode" )
 					# -march=native does not work here when on normal gcc compiler
 					# see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=33144
-					SET(CMAKE_CXX_FLAGS "-O3 -mtune=native -msse4.2 -DNDEBUG")
+					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
 				ELSE()
-					SET(CMAKE_CXX_FLAGS "-O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
+					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
 				ENDIF()
 		ENDIF()
 		# -g
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra -std=c++0x")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra")
 		IF(COMPILER_IS_CLANG)
 			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 		ELSE()
@@ -40,9 +45,10 @@ ENDIF() # COMPILER_IS_GCC
 
 ### Intel compiler
 IF (COMPILER_IS_INTEL)
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 		IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
 				MESSAGE(STATUS "Set Intel release flags")
-				SET(CMAKE_CXX_FLAGS "-O3 -DNDEBUG")
+				SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
 		ENDIF()
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHOST -O3 -no-prec-div -static -DNDEBUG")
 ENDIF() # COMPILER_IS_INTEL
