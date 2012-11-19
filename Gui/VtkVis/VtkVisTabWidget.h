@@ -34,6 +34,7 @@ protected slots:
 	/// Updates the property panels to show informations on the given VtkVisPipelineItem.
 	void setActiveItem(VtkVisPipelineItem* item);
 
+	void on_arrayResetPushButton_clicked();
 	void on_diffuseColorPickerButton_colorPicked(QColor color);
 	void on_visibleEdgesCheckBox_stateChanged(int state);
 	void on_edgeColorPickerButton_colorPicked(QColor color);

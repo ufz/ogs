@@ -154,6 +154,9 @@ public:
 	/// @brief Returns the colour lookup table (if one has been assigned).
 	vtkLookupTable* GetLookupTable(const QString& array_name);
 
+	/// @brief Removes the lookup table for the given scalar.
+	void RemoveLookupTable(const QString& array_name);
+
 	/// @brief Sets a colour lookup table for the given scalar array of the VtkVisPipelineItem.
 	void SetLookUpTable(const QString &array_name, vtkLookupTable* lut);
 

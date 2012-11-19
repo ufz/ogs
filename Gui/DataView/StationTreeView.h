@@ -52,18 +52,21 @@ private:
 	void writeStratigraphiesAsImages(QString listName);
 
 private slots:
-	void on_Clicked(QModelIndex idx);
+	void addStationList();
 	void displayStratigraphy();
 	void exportList();
 	void exportStation();
 	void removeStationList();
-	void saveList();
+	void writeToFile();
 	void showPropertiesDialog();
 	void showDiagramPrefsDialog();
 
 signals:
+	void enableSaveButton(bool);
+	void enableRemoveButton(bool);
 	void itemSelectionChanged(const QItemSelection & selected,
 	                          const QItemSelection & deselected);
+	void openStationListFile(int);
 	void propertiesDialogRequested(std::string name);
 	void stationListExportRequested(std::string listName, std::string fileName);
 	void stationListRemoved(std::string name);

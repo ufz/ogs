@@ -42,9 +42,8 @@ public slots:
 	void updateView();
 
 protected slots:
-	/// Is called when the selection of this view changes. Emits a the signal
-	/// itemSelectionChanged()
-	//void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+	/// Is called when the selection of this view changes. 
+	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 	/// Selects items without sending signals.
 	//void selectionChangedFromOutside(const QItemSelection &selected,
@@ -61,7 +60,7 @@ private slots:
 	void openMshEditDialog();
 
 	/// Adds a new mesh.
-	void addMeshAction();
+	void addMesh();
 
 	void addDIRECTSourceTerms();
 
@@ -74,7 +73,7 @@ private slots:
 	//void removeAllMeshes();
 
 	/// Calls the FileDialog to save a mesh to a file.
-	int writeMeshToFile() const;
+	int writeToFile() const;
 
 	/**
 	 * checks the mesh quality
@@ -82,6 +81,9 @@ private slots:
 	void checkMeshQuality();
 
 signals:
+	void enableSaveButton(bool);
+	void enableRemoveButton(bool);
+	void openMeshFile(int);
 	void qualityCheckRequested(VtkMeshSource*);
 	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
@@ -91,7 +93,7 @@ signals:
 /*
     void itemSelectionChanged(const QItemSelection &selected,
         const QItemSelection &deselected);
-    void itemSelectionChangedFromOutside(const QItemSelection &selected,
+    //void itemSelectionChangedFromOutside(const QItemSelection &selected,
         const QItemSelection &deselected);
  */
 };

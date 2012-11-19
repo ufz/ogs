@@ -18,6 +18,7 @@
 
 #include <vtkActor.h>
 #include <vtkImageChangeInformation.h>
+#include <vtkLookupTable.h>
 #include <vtkProperty.h>
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
@@ -53,6 +54,14 @@ VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 
 	connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(const QString &)),
 	        this, SLOT(SetActiveAttributeOnItem(const QString &)));
+}
+
+void VtkVisTabWidget::on_arrayResetPushButton_clicked()
+{
+	VtkAlgorithmProperties* props = _item->getVtkProperties();
+	const QString selected_array_name = this->activeScalarComboBox->currentText();
+	props->RemoveLookupTable(selected_array_name);
+	_item->SetActiveAttribute(selected_array_name);
 }
 
 void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
@@ -130,25 +139,6 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 		}
 
 		this->buildProportiesDialog(item);
-
-		//
-		///* Integrating colour tables into property-window (test!) */
-		//VtkStationSource* test = dynamic_cast<VtkStationSource*>(_item->algorithm());
-		//if (test)
-		//{
-		//	std::map<std::string, GeoLib::Color> colors = test->getColorLookupTable();
-		//	if (!colors.empty())
-		//	{
-		//		ColorTableModel* ctm = new ColorTableModel(colors);
-		//		ColorTableView* ctv = new ColorTableView();
-		//		ctv->setModel(ctm);
-		//		ctv->setItemDelegate(new ColorTableViewDelegate);
-		//		vbox->addWidget(ctv);
-		//		ctv->resizeRowsToContents();
-		//	}
-		//}
-
-		/**/
 
 		emit requestViewUpdate();
 	}
@@ -335,8 +325,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 				foreach (QVariant variant, values)
 				valuesAsString.push_back(variant.toString());
 
-				vectorEdit = new VtkAlgorithmPropertyVectorEdit(valuesAsString,
-				                                                key,
+				vectorEdit = new VtkAlgorithmPropertyVectorEdit(valuesAsString, key,
 				                                                values.front().type(),
 				                                                algProps);
 				connect(vectorEdit, SIGNAL(editingFinished()), this,
@@ -355,9 +344,22 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 	this->activeScalarComboBox->clear();
 	this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
 	this->activeScalarComboBox->blockSignals(false);
+	QString active_array_name = item->GetActiveAttribute();
 	QList<QString>::iterator it = dataSetAttributesList.begin();
-	if (item->GetActiveAttribute().count() == 0)
+	if (active_array_name.length() == 0)
 		item->SetActiveAttribute(*it);
+	else
+	{
+		unsigned nArrays (dataSetAttributesList.size());
+		int idx(0);
+		for (it=dataSetAttributesList.begin(); it!=dataSetAttributesList.end(); ++it)
+			if (active_array_name.compare((*it).right((*it).length()-2))==0) 
+			{
+				this->activeScalarComboBox->setCurrentIndex(idx);
+				break;
+			}
+			else idx++;
+	}
 }
 
 void VtkVisTabWidget::SetActiveAttributeOnItem( const QString &name )

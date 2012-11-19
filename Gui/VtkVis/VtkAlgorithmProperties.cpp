@@ -51,18 +51,23 @@ vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name
 		return NULL;
 }
 
+void VtkAlgorithmProperties::RemoveLookupTable(const QString& array_name)
+{
+	std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
+	if (it != _lut.end())
+	{
+		it->second->Delete();
+		_lut.erase(it);
+	}
+}
+
 void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, vtkLookupTable* lut)
 {
 	lut->Build();
 
 	if (array_name.length() > 0)
 	{
-		std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
-		if (it != _lut.end())
-		{
-			it->second->Delete();
-			_lut.erase(it);
-		}
+		this->RemoveLookupTable(array_name);
 		_lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
 		_activeAttributeName = array_name;
 	}

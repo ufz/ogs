@@ -26,6 +26,11 @@ public:
 	GeoTabWidget(QWidget* parent = 0);
 
 private:
+
+private slots:
+	void enableSaveButton(bool enable) { this->saveGeoPushButton->setEnabled(enable); };
+	void enableRemoveButton(bool enable) { this->removeGeoPushButton->setEnabled(enable); };
+
 };
 
 #endif // GEOTABWIDGET_H

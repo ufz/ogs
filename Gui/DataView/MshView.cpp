@@ -15,6 +15,7 @@
 #include "MshItem.h"
 #include "MshModel.h"
 #include "OGSError.h"
+#include "ImportFileTypes.h"
 #include <QHeaderView>
 
 #include "VtkMeshSource.h"
@@ -49,25 +50,32 @@ void MshView::updateView()
 		resizeColumnToContents(i);
 }
 
-void MshView::addMeshAction()
+void MshView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
 {
-	QSettings settings;
-	QString fileName =
-	        QFileDialog::getOpenFileName(this, "Select mesh file", settings.value(
-	                                             "lastOpenedFileDirectory").toString(),
-	                                     "OpenGeosys mesh files (*.vtu *.msh);;All files (* *.*)");
-	if (!fileName.isEmpty())
+	Q_UNUSED(deselected);
+	if (!selected.isEmpty())
 	{
-		std::string name = fileName.toStdString();
-		FileIO::MeshIO meshIO;
-		MeshLib::Mesh* msh = meshIO.loadMeshFromFile(name);
-		if (msh)
+		const QModelIndex idx = *(selected.indexes().begin());
+		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+
+		const MshItem* list_item = dynamic_cast<const MshItem*>(tree_item);
+		if (list_item)
 		{
-			static_cast<MshModel*>(this->model())->addMesh(msh);
-			QDir dir = QDir(fileName);
-			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+			emit enableSaveButton(true);
+			emit enableRemoveButton(true);
+		}
+		else
+		{
+			emit enableSaveButton(false);
+			emit enableRemoveButton(false);
 		}
 	}
+	//emit itemSelectionChanged(selected, deselected);
+	//return QTreeView::selectionChanged(selected, deselected);
+}
+void MshView::addMesh()
+{
+	emit openMeshFile(ImportFileType::OGS_MSH);
 }
 
 void MshView::removeMesh()
@@ -131,7 +139,7 @@ void MshView::openMshEditDialog()
 	meshEdit.exec();
 }
 
-int MshView::writeMeshToFile() const
+int MshView::writeToFile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 
@@ -201,12 +209,6 @@ void MshView::checkMeshQuality ()
 }
 
 /*
-   void DataView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
-   {
-    emit itemSelectionChanged(selected, deselected);
-    return QTreeView::selectionChanged(selected, deselected);
-   }
-
    void DataView::selectionChangedFromOutside( const QItemSelection &selected, const QItemSelection &deselected )
    {
     QItemSelectionModel* selModel = this->selectionModel();

@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="Images">
+    <file>refresh-icon.png</file>
+    <file>delete-icon.png</file>
+    <file>open-icon.png</file>
+    <file>save-icon.png</file>
     <file>icon_glass_active.png</file>
     <file>icon_hlight_active.png</file>
     <file>icon_persp_active.png</file>
