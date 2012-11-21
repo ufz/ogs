@@ -1,13 +1,13 @@
 /**
+ * @file Raster.cpp
+ * @author Thomas Fischer
+ * @date 2011-09-07
+ *
+ * @copyright
  * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- *
- * \file Raster.cpp
- *
- * Created on 2011-09-07 by Thomas Fischer
  */
 
 #include <fstream>
@@ -19,34 +19,26 @@
 
 namespace GeoLib {
 
-Raster::Raster(std::size_t n_cols, std::size_t n_rows, double xllcorner, double yllcorner,
-				double cell_size, double no_data_val, double* raster_data) :
-	_n_cols(n_cols), _n_rows(n_rows), _ll_pnt(xllcorner, yllcorner, 0.0),
-	_cell_size(cell_size), _no_data_val(no_data_val), _raster_data(raster_data)
-{}
-
-void Raster::refineRaster(std::size_t n_cols, std::size_t n_rows)
+void Raster::refineRaster(std::size_t scaling)
 {
-	if (n_rows <= _n_rows || n_cols <= _n_cols) return;
-
-	std::size_t row_blk_size(n_rows / _n_rows);
-	std::size_t col_blk_size(n_cols / _n_cols);
-	double *new_raster_data(new double[n_rows*n_cols]);
+	double *new_raster_data(new double[_n_rows*_n_cols*scaling*scaling]);
 
 	for (std::size_t row(0); row<_n_rows; row++) {
 		for (std::size_t col(0); col<_n_cols; col++) {
-			for (std::size_t new_row(row*row_blk_size); new_row<(row+1)*row_blk_size; new_row++) {
-				for (std::size_t new_col(col*col_blk_size); new_col<(col+1)*col_blk_size; new_col++) {
-					new_raster_data[new_row*n_cols+new_col] = _raster_data[row*_n_cols+col];
+			const size_t idx(row*_n_cols+col);
+			for (std::size_t new_row(row*scaling); new_row<(row+1)*scaling; new_row++) {
+				const size_t idx0(new_row*_n_cols*scaling);
+				for (std::size_t new_col(col*scaling); new_col<(col+1)*scaling; new_col++) {
+					new_raster_data[idx0+new_col] = _raster_data[idx];
 				}
 			}
 		}
 	}
 
 	std::swap(_raster_data, new_raster_data);
-	_cell_size /= row_blk_size;
-	_n_cols = n_cols;
-	_n_rows = n_rows;
+	_cell_size /= scaling;
+	_n_cols *= scaling;
+	_n_rows *= scaling;
 
 	delete [] new_raster_data;
 }
@@ -125,7 +117,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 		}
 	}
 
-	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, -9999, z_vals);
+	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, z_vals, z_vals+n_cols*n_rows ,-9999);
 }
 
 Raster* Raster::getRasterFromASCFile(std::string const& fname)
@@ -154,8 +146,10 @@ Raster* Raster::getRasterFromASCFile(std::string const& fname)
 			}
 		}
 		in.close();
-		return new Raster(n_cols, n_rows, xllcorner, yllcorner,
-						cell_size, no_data_val, values);
+		Raster *raster(new Raster(n_cols, n_rows, xllcorner, yllcorner,
+						cell_size, values, values+n_cols*n_rows, no_data_val));
+		delete [] values;
+		return raster;
 	} else {
 		std::cout << "Raster::getRasterFromASCFile() - could not read header of file " << fname << std::endl;
 		return NULL;
