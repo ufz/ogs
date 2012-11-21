@@ -84,7 +84,7 @@ public:
 	 */
 	bool getElementIDByName (const std::string& name, std::size_t &id) const
 	{
-		std::map<std::string,std::size_t>::const_iterator it (_name_id_map->find (name));
+		auto it (_name_id_map->find (name));
 
 		if (it != _name_id_map->end())
 		{
@@ -118,7 +118,7 @@ public:
 	{
 		if (!_name_id_map) return false;
 		// search in map for id
-		std::map<std::string,std::size_t>::const_iterator it(std::find_if(_name_id_map->begin(), _name_id_map->end(), PairSecondIsEqual(id)));
+		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(), PairSecondIsEqual(id)));
 		if (it == _name_id_map->end()) {
 			return false;
 		}
@@ -171,7 +171,7 @@ public:
 
 		if ( !_name_id_map->empty())
 		{
-			for (std::map<std::string, std::size_t>::iterator it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
+			for (auto it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
 				if (it->second == id)
 				{
 					_name_id_map->erase(it); //check if old name already exists and delete it
