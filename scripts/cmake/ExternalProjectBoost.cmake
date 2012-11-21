@@ -36,11 +36,21 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
+# Set archive sources
+SET(BOOST_ARCHIVE_EXT "tar.bz2")
+SET(BOOST_ARCHIVE_MD5 0d202cb811f934282dea64856a175698)
+#.gz SET(BOOST_ARCHIVE_EXT "tar.gz")
+#.gz SET(BOOST_ARCHIVE_MD5 e0defc8c818e4f1c5bbb29d0292b76ca)
+IF(WIN32)
+	SET(BOOST_ARCHIVE_EXT "zip")
+	SET(BOOST_ARCHIVE_MD5 854dcbbff31b896c85c38247060b7713)
+ENDIF()
+SET(BOOST_URL "http://downloads.sourceforge.net/project/boost/boost/${Boost_Version}/boost_${Boost_Version_Underscore}.${BOOST_ARCHIVE_EXT}")
 
 ExternalProject_Add(Boost
 	PREFIX ${CMAKE_BINARY_DIR}/External/boost
-	URL http://downloads.sourceforge.net/project/boost/boost/${Boost_Version}/boost_${Boost_Version_Underscore}.zip
-	URL_MD5 854dcbbff31b896c85c38247060b7713
+	URL ${BOOST_URL}
+	URL_MD5 ${BOOST_ARCHIVE_MD5}
 	UPDATE_COMMAND "${BOOST_UPDATE_COMMAND}"
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ./b2 ${BOOST_LIBS_TO_BUILD} toolset=${BOOST_TOOLSET} link=static stage ${BOOST_CONFIG_OPTIONS}
