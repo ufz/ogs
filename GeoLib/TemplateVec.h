@@ -44,7 +44,7 @@ public:
 
 	 */
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
-	             NameIndexMap* elem_name_map = NULL) :
+	             NameIndexMap* elem_name_map = nullptr) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{}
 
@@ -105,7 +105,7 @@ public:
 		if (ret)
 			return (*_data_vec)[id];
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	/**
@@ -154,13 +154,13 @@ public:
 	}
 
 	/// Adds a new element to the vector.
-	virtual void push_back (T* data_element, std::string const* const name = NULL)
+	virtual void push_back (T* data_element, std::string const* const name = nullptr)
 	{
 		_data_vec->push_back (data_element);
-		if (name == NULL) return;
+		if (!name) return;
 		if (!name->empty())
 		{
-			if (_name_id_map == NULL)
+			if (!_name_id_map)
 				_name_id_map = new NameIndexMap;
 			_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
 		}
@@ -169,7 +169,7 @@ public:
 	/// Sets the given name for the element of the given ID.
 	void setNameForElement(std::size_t id, std::string const& name)
 	{
-		if (_name_id_map == NULL)
+		if (!_name_id_map)
 			_name_id_map = new NameIndexMap;
 
 		if ( !_name_id_map->empty())
