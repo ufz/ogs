@@ -28,6 +28,9 @@ namespace GeoLib
  * */
 template <class T> class TemplateVec
 {
+protected:
+	typedef std::pair<std::string, std::size_t> NameIndexType;
+	typedef std::map<std::string, std::size_t> NameIndexMap;
 public:
 	/**
 	 * Constructor of class TemlateVec.
@@ -41,7 +44,7 @@ public:
 
 	 */
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
-	             std::map<std::string, std::size_t>* elem_name_map = NULL) :
+	             NameIndexMap* elem_name_map = NULL) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{}
 
@@ -130,7 +133,7 @@ public:
 	void setNameOfElementByID (std::size_t id, std::string& element_name)
 	{
 		if (!_name_id_map) return;
-		_name_id_map->insert( std::pair<std::string, std::size_t>(element_name, id) );
+		_name_id_map->insert( NameIndexType(element_name, id) );
 	}
 
 	/**
@@ -158,8 +161,8 @@ public:
 		if (!name->empty())
 		{
 			if (_name_id_map == NULL)
-				_name_id_map = new std::map <std::string, std::size_t>;
-			_name_id_map->insert (std::pair<std::string,std::size_t>(*name, _data_vec->size() - 1));
+				_name_id_map = new NameIndexMap;
+			_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
 		}
 	}
 
@@ -167,7 +170,7 @@ public:
 	void setNameForElement(std::size_t id, std::string const& name)
 	{
 		if (_name_id_map == NULL)
-			_name_id_map = new std::map<std::string, std::size_t>;
+			_name_id_map = new NameIndexMap;
 
 		if ( !_name_id_map->empty())
 		{
@@ -180,7 +183,7 @@ public:
 		}
 		if (!name.empty()) {
 			//insert new or revised name
-			_name_id_map->insert(std::pair<std::string, std::size_t>(name, id));
+			_name_id_map->insert(NameIndexType(name, id));
 		}
 	}
 
@@ -202,7 +205,7 @@ protected:
 	/**
 	 * store names associated with the element ids
 	 */
-	std::map<std::string, std::size_t>* _name_id_map;
+	NameIndexMap* _name_id_map;
 private:
 	struct PairSecondIsEqual {
 		PairSecondIsEqual(std::size_t const& id) : _id (id) {}
