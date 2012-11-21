@@ -168,15 +168,12 @@ public:
 	/// Sets the given name for the element of the given ID.
 	void setNameForElement(std::size_t id, std::string const& name)
 	{
-		if ( !_name_id_map->empty())
-		{
-			for (auto it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
-				if (it->second == id)
-				{
-					_name_id_map->erase(it); //check if old name already exists and delete it
-					break;
-				}
-		}
+		// Erase id if found in map.
+		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(),
+			[id](NameIndexType const& elem) { return elem.second == id; }));
+		if (it != _name_id_map->end())
+			_name_id_map->erase(it);
+
 		if (!name.empty()) {
 			//insert new or revised name
 			_name_id_map->insert(NameIndexType(name, id));
