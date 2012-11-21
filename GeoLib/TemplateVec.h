@@ -123,7 +123,8 @@ public:
 	bool getNameOfElementByID (std::size_t id, std::string& element_name) const
 	{
 		// search in map for id
-		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(), PairSecondIsEqual(id)));
+		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(),
+			[id](NameIndexType const& elem) { return elem.second == id; }));
 		if (it == _name_id_map->end()) {
 			return false;
 		}
@@ -201,15 +202,6 @@ protected:
 	 * store names associated with the element ids
 	 */
 	NameIndexMap* _name_id_map;
-private:
-	struct PairSecondIsEqual {
-		PairSecondIsEqual(std::size_t const& id) : _id (id) {}
-		bool operator() (std::pair<std::string, std::size_t> const& pair)
-		{
-			return pair.second == _id;
-		}
-		std::size_t const& _id;
-	}; // end struct PairSecondIsEqual
 };
 } // end namespace GeoLib
 
