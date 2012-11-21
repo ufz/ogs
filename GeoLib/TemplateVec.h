@@ -46,7 +46,10 @@ public:
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
 	             NameIndexMap* elem_name_map = nullptr) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
-	{}
+	{
+		if (!_name_id_map)
+			_name_id_map = new NameIndexMap;
+	}
 
 	/**
 	 * destructor, deletes all data elements
@@ -119,7 +122,6 @@ public:
 	 */
 	bool getNameOfElementByID (std::size_t id, std::string& element_name) const
 	{
-		if (!_name_id_map) return false;
 		// search in map for id
 		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(), PairSecondIsEqual(id)));
 		if (it == _name_id_map->end()) {
@@ -132,7 +134,6 @@ public:
 	/// Return the name of an element based on its ID.
 	void setNameOfElementByID (std::size_t id, std::string& element_name)
 	{
-		if (!_name_id_map) return;
 		_name_id_map->insert( NameIndexType(element_name, id) );
 	}
 
@@ -160,8 +161,6 @@ public:
 		if (!name) return;
 		if (!name->empty())
 		{
-			if (!_name_id_map)
-				_name_id_map = new NameIndexMap;
 			_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
 		}
 	}
@@ -169,9 +168,6 @@ public:
 	/// Sets the given name for the element of the given ID.
 	void setNameForElement(std::size_t id, std::string const& name)
 	{
-		if (!_name_id_map)
-			_name_id_map = new NameIndexMap;
-
 		if ( !_name_id_map->empty())
 		{
 			for (auto it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
