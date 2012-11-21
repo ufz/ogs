@@ -158,11 +158,10 @@ public:
 	virtual void push_back (T* data_element, std::string const* const name = nullptr)
 	{
 		_data_vec->push_back (data_element);
-		if (!name) return;
-		if (!name->empty())
-		{
-			_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
-		}
+		if (!name || name->empty())
+			return;
+
+		_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
 	}
 
 	/// Sets the given name for the element of the given ID.
