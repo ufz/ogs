@@ -123,8 +123,7 @@ public:
 	bool getNameOfElementByID (std::size_t id, std::string& element_name) const
 	{
 		// search in map for id
-		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(),
-			[id](NameIndexType const& elem) { return elem.second == id; }));
+		auto it = findFirstElementByID(id);
 		if (it == _name_id_map->end()) {
 			return false;
 		}
@@ -169,8 +168,7 @@ public:
 	void setNameForElement(std::size_t id, std::string const& name)
 	{
 		// Erase id if found in map.
-		auto it(std::find_if(_name_id_map->begin(), _name_id_map->end(),
-			[id](NameIndexType const& elem) { return elem.second == id; }));
+		auto it = findFirstElementByID(id);
 		if (it != _name_id_map->end())
 			_name_id_map->erase(it);
 
@@ -178,6 +176,15 @@ public:
 			//insert new or revised name
 			_name_id_map->insert(NameIndexType(name, id));
 		}
+	}
+
+private:
+
+	NameIndexMap::const_iterator
+	findFirstElementByID(std::size_t const& id) const
+	{
+		return std::find_if(_name_id_map->begin(), _name_id_map->end(),
+			[id](NameIndexType const& elem) { return elem.second == id; });
 	}
 
 protected:
