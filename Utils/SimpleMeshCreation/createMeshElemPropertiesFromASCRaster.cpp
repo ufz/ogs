@@ -54,10 +54,13 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<unsigned> refinement_arg("r","refine","refinement factor that raises the resolution of the raster data", false, 1, "factor (default = 1)");
 	cmd.add( refinement_arg );
 
+	TCLAP::ValueArg<std::string> mapping_arg("","mapping-name","file name of mapping", true, "", "file name");
+	cmd.add( mapping_arg );
+
 	TCLAP::ValueArg<std::string> raster_arg("","raster-file","the name of the ASC raster file", true, "", "file name");
 	cmd.add( raster_arg );
 
-	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is read from this file", true, "test.msh", "filename");
+	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is read from this file", true, "test.msh", "file name");
 	cmd.add( mesh_arg );
 
 	cmd.parse( argc, argv );
@@ -149,7 +152,7 @@ int main (int argc, char* argv[])
 	const size_t n_dest_mesh_elements(dest_mesh->getNElements());
 
 	{ // write property file
-		std::string property_fname(BaseLib::dropFileExtension(raster_arg.getValue())+".hd");
+		std::string property_fname(mapping_arg.getValue());
 		std::ofstream property_out(property_fname.c_str());
 		if (! property_out) {
 			std::cerr << "could not open file " << property_fname << "PropertyMapping" << std::endl;
