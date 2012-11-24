@@ -20,6 +20,20 @@ SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_SOLVERS})
 GET_SOURCE_FILES(SOURCES_LINALG_PRECOND LinAlg/Preconditioner)
 SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_PRECOND})
 
+GET_SOURCE_FILES(SOURCES_LINALG_LEQS LinAlg/LinearEquation)
+IF (NOT USE_BLAS_LAPACK)
+    LIST(REMOVE_ITEM SOURCES_LINALG_LEQS 
+        LinAlg/LinearEquation/SparseLinearEquation.h
+        LinAlg/LinearEquation/SparseLinearEquation.cpp
+    )
+ENDIF ()
+IF (NOT USE_LIS)
+    LIST(REMOVE_ITEM SOURCES_LINALG_LEQS 
+        LinAlg/LinearEquation/LisLinearEquation.h
+        LinAlg/LinearEquation/LisLinearEquation.cpp
+    )
+ENDIF ()
+SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_LEQS})
 
 IF (METIS_FOUND)
 	GET_SOURCE_FILES(SOURCES_LINALG_SPARSE_NESTEDDISSECTION LinAlg/Sparse/NestedDissectionPermutation)
@@ -28,6 +42,7 @@ ENDIF ()
 
 INCLUDE_DIRECTORIES (
 	.
+	..
 	../BaseLib
 	../GeoLib
 )
