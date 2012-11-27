@@ -92,6 +92,7 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	vtkRendering
 	vtkWidgets
 	QVTK
+	${Boost_LIBRARIES}
 )
 
 IF(VTK_NETCDF_FOUND)
