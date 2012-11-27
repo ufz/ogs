@@ -45,7 +45,7 @@ IF(WIN32)
 	SET(BOOST_ARCHIVE_EXT "zip")
 	SET(BOOST_ARCHIVE_MD5 854dcbbff31b896c85c38247060b7713)
 ENDIF()
-SET(BOOST_URL "http://downloads.sourceforge.net/project/boost/boost/${Boost_Version}/boost_${Boost_Version_Underscore}.${BOOST_ARCHIVE_EXT}")
+SET(BOOST_URL "http://switch.dl.sourceforge.net/project/boost/boost/${Boost_Version}/boost_${Boost_Version_Underscore}.${BOOST_ARCHIVE_EXT}")
 
 ExternalProject_Add(Boost
 	PREFIX ${CMAKE_BINARY_DIR}/External/boost
@@ -53,7 +53,7 @@ ExternalProject_Add(Boost
 	URL_MD5 ${BOOST_ARCHIVE_MD5}
 	UPDATE_COMMAND "${BOOST_UPDATE_COMMAND}"
 	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ./b2 ${BOOST_LIBS_TO_BUILD} toolset=${BOOST_TOOLSET} link=static stage ${BOOST_CONFIG_OPTIONS}
+	BUILD_COMMAND ./b2 ${BOOST_LIBS_TO_BUILD} -j ${NUM_PROCESSORS} toolset=${BOOST_TOOLSET} link=static stage ${BOOST_CONFIG_OPTIONS}
 	BUILD_IN_SOURCE 1
 	INSTALL_COMMAND ""
 )
