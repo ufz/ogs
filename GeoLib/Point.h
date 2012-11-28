@@ -51,6 +51,11 @@ bool lessZ (Point const & p0, Point const & p1);
  * lexicographic comparison of points
  */
 bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
+
+/**
+ * lexicographic comparison of points taking an epsilon into account
+ */
+bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1);
 }
 
 
