@@ -33,8 +33,8 @@ Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::
 	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
 	_edge_length[0] = 0;
 	_edge_length[1] = 0;
-	this->makeNodesUnique();
 	this->setDimension();
+	this->makeNodesUnique();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
@@ -93,6 +93,9 @@ void Mesh::makeNodesUnique()
 	}
 
 	//set correct id for each node
+	
+	//if (this->getDimension() > 1)
+	//	this->removeMeshElements(MshElemType::EDGE);
 
 }
 
@@ -136,7 +139,7 @@ void Mesh::setElementsConnectedToNodes()
 		for (unsigned j=0; j<nNodes; ++j)
 			element->_nodes[j]->addElement(element);
 	}
-#ifndef NDEBUG
+//#ifndef NDEBUG
 	// search for nodes that are not part of any element
 	unsigned count(0);
 	const size_t nNodes (_nodes.size());
@@ -148,7 +151,7 @@ void Mesh::setElementsConnectedToNodes()
 		}
 	if (count)
 		WARN ("%d unused mesh nodes found.", count);
-#endif
+//#endif
 }
 
 void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length)
@@ -268,6 +271,24 @@ void Mesh::removeUnusedMeshNodes()
 		std::cout << "Removed " << count << " unused mesh nodes." << std::endl;
 		this->resetNodeIDs();
 	}
+}
+
+void Mesh::removeMeshElements(MshElemType::type t)
+{
+	unsigned count(0);
+	std::vector<MeshLib::Element*>::iterator it = this->_elements.begin();
+	for (it; it != this->_elements.end();)
+	{
+		if ((*it)->getCellType() == t)
+		{
+			delete *it;
+			it = this->_elements.erase(it);
+			++count;
+		}
+		else 
+			++it;
+	}
+	std::cout << "Removed " << count << " elements of type " << MshElemType2String(t) << " from mesh." << std::endl;
 }
 
 }
