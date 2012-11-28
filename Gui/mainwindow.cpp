@@ -1050,8 +1050,8 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 {
 	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
 	SetNameDialog dlg(geometry_name, GeoLib::convertGeoTypeToString(object_type), id, old_name);
-	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GeoLib::GEOTYPE, size_t, std::string)),
-		this->_geoModels, SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, size_t, std::string)));
+	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)),
+		this->_geoModels, SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)));
 	dlg.exec();
 
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
@@ -1134,7 +1134,7 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-/*	
+/*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");
 	_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
