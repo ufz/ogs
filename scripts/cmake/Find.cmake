@@ -29,6 +29,8 @@ FIND_PACKAGE(PythonInterp)
 
 FIND_PACKAGE(GitHub)
 
+FIND_PROGRAM(GIT_TOOL_PATH git HINTS ${GITHUB_BIN_DIR} DOC "The git command line interface")
+
 # Find bash itself ...
 FIND_PROGRAM(BASH_TOOL_PATH bash
 	HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
