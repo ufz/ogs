@@ -26,6 +26,13 @@ SET(BOOST_LIBS_TO_BUILD
 	# wave
 )
 
+# First check for system boost
+SET(Boost_USE_STATIC_LIBS ON)
+FIND_PACKAGE(Boost COMPONENTS ${BOOST_LIBS_TO_BUILD})
+IF(Boost_FOUND)
+	RETURN()
+ENDIF()
+
 # Prefix with --with- for bjam (b2) build command
 FOREACH(LIB_TO_BUILD ${BOOST_LIBS_TO_BUILD})
 	SET(BOOST_LIBS_TO_BUILD_CMD ${BOOST_LIBS_TO_BUILD_CMD} --with-${LIB_TO_BUILD})
