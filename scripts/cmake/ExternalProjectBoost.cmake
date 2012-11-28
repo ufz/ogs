@@ -2,10 +2,28 @@ INCLUDE(ExternalProject)
 # Set Boost version and which libraries to compile
 SET(Boost_Version 1.52.0)
 SET(BOOST_LIBS_TO_BUILD
-	program_options
-	filesystem
-	system
+	# chrono
+	# context
 	date_time
+	# exception
+	filesystem
+	# graph
+	# graph_parallel
+	# iostreams
+	# locale
+	# math
+	# mpi
+	program_options
+	# python
+	# random
+	# regex
+	# serialization
+	# signals
+	system
+	# test
+	# thread
+	# timer
+	# wave
 )
 
 # Prefix with --with- for bjam (b2) build command
