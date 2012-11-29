@@ -2,7 +2,7 @@
  * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
+ *              http://www.opengeosys.org/LICENSE.txt
  *
  * \file VisPrefsDialog.cpp
  *

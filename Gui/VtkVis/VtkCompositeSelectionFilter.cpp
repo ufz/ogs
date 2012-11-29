@@ -2,7 +2,7 @@
  * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
+ *              http://www.opengeosys.org/LICENSE.txt
  *
  * \file VtkCompositeSelectionFilter.cpp
  *
@@ -17,6 +17,7 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkThreshold.h>
+#include <vtkIdFilter.h>
 #include <vtkUnstructuredGrid.h>
 
 VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlgorithm )
@@ -38,7 +39,12 @@ void VtkCompositeSelectionFilter::init()
 	selFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 	selFilter->SetSelectionArray(_selection, thresholdLower, thresholdUpper);
 	selFilter->Update();
-
+/*
+	vtkIdFilter* idFilter = vtkIdFilter::New();
+		idFilter->SetInputConnection(selFilter->GetOutputPort());
+		idFilter->SetPointIds(0);
+		idFilter->SetCellIds(1);
+*/
 	vtkThreshold* threshold = vtkThreshold::New();
 	threshold->SetInputConnection(selFilter->GetOutputPort());
 	threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, filter_name);
