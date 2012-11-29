@@ -69,7 +69,7 @@ public:
 
 	void update(PNT_TYPE const & pnt)
 	{
-		for (size_t k(0); k<3; k++) {
+		for (int k(0); k<3; k++) {
 			if (pnt[k] < _min_pnt[k])
 				_min_pnt[k] = pnt[k];
 			if (_max_pnt[k] < pnt[k])
