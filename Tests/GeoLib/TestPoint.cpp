@@ -4,12 +4,13 @@
  * @date Nov 8, 2012
  *
  * @copyright
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <ctime>
 #include "gtest/gtest.h"
 
 #include "Point.h"
@@ -99,4 +100,58 @@ TEST(GeoLib, PointComparisonLessEq)
 	ASSERT_TRUE(lessEq(Point(10.0,10.0,10.0),Point(10.0+half_eps,10.0,10.0)));
 	ASSERT_TRUE(lessEq(Point(10.0,10.0,10.0),Point(10.0,10.0+half_eps,10.0)));
 	ASSERT_TRUE(lessEq(Point(10.0,10.0,10.0),Point(10.0,10.0,10.0+half_eps)));
+}
+
+TEST(GeoLib, PointComparisonOperatorLessEq)
+{
+	const double my_eps(std::numeric_limits<double>::epsilon());
+	ASSERT_FALSE(Point(1.0+my_eps,1.0,1.0) <= Point(1.0,1.0,1.0));
+	ASSERT_FALSE(Point(1.0,1.0+my_eps,1.0) <= Point(1.0,1.0,1.0));
+	ASSERT_FALSE(Point(1.0,1.0,1.0+my_eps) <= Point(1.0,1.0,1.0));
+	ASSERT_TRUE(Point(1.0,1.0,1.0) <= Point(1.0+my_eps,1.0,1.0));
+	ASSERT_TRUE(Point(1.0,1.0,1.0) <= Point(1.0,1.0+my_eps,1.0));
+	ASSERT_TRUE(Point(1.0,1.0,1.0) <= Point(1.0,1.0,1.0+my_eps));
+
+	ASSERT_TRUE(Point(1.0-my_eps,1.0,1.0) <= Point(1.0,1.0,1.0));
+	ASSERT_TRUE(Point(1.0,1.0-my_eps,1.0) <= Point(1.0,1.0,1.0));
+	ASSERT_TRUE(Point(1.0,1.0,1.0-my_eps) <= Point(1.0,1.0,1.0));
+	ASSERT_FALSE(Point(1.0,1.0,1.0) <= Point(1.0-my_eps,1.0,1.0));
+	ASSERT_FALSE(Point(1.0,1.0,1.0) <= Point(1.0,1.0-my_eps,1.0));
+	ASSERT_FALSE(Point(1.0,1.0,1.0) <= Point(1.0,1.0,1.0-my_eps));
+
+	std::size_t n(10000);
+	srand ( time(NULL) );
+	for (std::size_t k(0); k<n; ++k) {
+		double random_val_x(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
+		double random_val_y(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
+		double random_val_z(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
+
+		double big_x(random_val_x * std::numeric_limits<double>::max());
+		double big_y(random_val_y * std::numeric_limits<double>::max());
+		double big_z(random_val_z * std::numeric_limits<double>::max());
+
+		ASSERT_TRUE(Point(big_x-my_eps,big_y,big_z) <= Point(big_x,big_y,big_z));
+		ASSERT_TRUE(Point(big_x,big_y-my_eps,big_z) <= Point(big_x,big_y,big_z));
+		ASSERT_TRUE(Point(big_x,big_y,big_z-my_eps) <= Point(big_x,big_y,big_z));
+
+		ASSERT_TRUE(Point(big_x-my_eps,big_y-my_eps,big_z) <= Point(big_x,big_y,big_z));
+		ASSERT_TRUE(Point(big_x-my_eps,big_y,big_z-my_eps) <= Point(big_x,big_y,big_z));
+		ASSERT_TRUE(Point(big_x,big_y-my_eps,big_z-my_eps) <= Point(big_x,big_y,big_z));
+
+		ASSERT_TRUE(Point(big_x-my_eps,big_y-my_eps,big_z-my_eps) <= Point(big_x,big_y,big_z));
+
+		double small_x(random_val_x * std::numeric_limits<double>::epsilon());
+		double small_y(random_val_y * std::numeric_limits<double>::epsilon());
+		double small_z(random_val_z * std::numeric_limits<double>::epsilon());
+
+		ASSERT_TRUE(Point(small_x-my_eps,small_y,small_z) <= Point(small_x,small_y,small_z));
+		ASSERT_TRUE(Point(small_x,small_y-my_eps,small_z) <= Point(small_x,small_y,small_z));
+		ASSERT_TRUE(Point(small_x,small_y,small_z-my_eps) <= Point(small_x,small_y,small_z));
+
+		ASSERT_TRUE(Point(small_x-my_eps,small_y-my_eps,small_z) <= Point(small_x,small_y,small_z));
+		ASSERT_TRUE(Point(small_x-my_eps,small_y,small_z-my_eps) <= Point(small_x,small_y,small_z));
+		ASSERT_TRUE(Point(small_x,small_y-my_eps,small_z-my_eps) <= Point(small_x,small_y,small_z));
+
+		ASSERT_TRUE(Point(small_x-my_eps,small_y-my_eps,small_z-my_eps) <= Point(small_x,small_y,small_z));
+	}
 }
