@@ -133,6 +133,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionLicense"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menu_File"/>
@@ -400,6 +401,11 @@
     <string>File Converter...</string>
    </property>
   </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>License</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -586,6 +592,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLicense</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showLicense()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -597,5 +619,6 @@
   <slot>FEMTestStart()</slot>
   <slot>showDiagramPrefsDialog()</slot>
   <slot>about()</slot>
+  <slot>showLicense()</slot>
  </slots>
 </ui>

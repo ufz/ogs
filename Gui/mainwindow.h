@@ -86,6 +86,7 @@ protected slots:
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
 	//TODO6 void showFileConverterDialog();
+	void showLicense();
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);

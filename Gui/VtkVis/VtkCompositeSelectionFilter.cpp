@@ -39,14 +39,16 @@ void VtkCompositeSelectionFilter::init()
 	selFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 	selFilter->SetSelectionArray(_selection, thresholdLower, thresholdUpper);
 	selFilter->Update();
-/*
+
 	vtkIdFilter* idFilter = vtkIdFilter::New();
 		idFilter->SetInputConnection(selFilter->GetOutputPort());
-		idFilter->SetPointIds(0);
-		idFilter->SetCellIds(1);
-*/
+		idFilter->PointIdsOn();
+		idFilter->CellIdsOn();
+		idFilter->FieldDataOn();
+		idFilter->Update();
+
 	vtkThreshold* threshold = vtkThreshold::New();
-	threshold->SetInputConnection(selFilter->GetOutputPort());
+	threshold->SetInputConnection(idFilter->GetOutputPort());
 	threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, filter_name);
 	threshold->SetSelectedComponent(0);
 	threshold->ThresholdBetween(thresholdLower, thresholdUpper);

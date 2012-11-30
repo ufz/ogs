@@ -29,6 +29,7 @@
 #include "FEMConditionSetupDialog.h"
 //TODO6 #include "OGSFileConverter.h"
 #include "GMSHPrefsDialog.h"
+#include "LicenseDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MshQualitySelectionDialog.h"
@@ -697,6 +698,12 @@ void MainWindow::writeSettings()
 	settings.setValue("windowState", saveState());
 }
 
+void MainWindow::showLicense()
+{
+	LicenseDialog dlg;
+	dlg.exec();
+}
+
 void MainWindow::about()
 {
 	QString ogsVersion = QString(OGS_VERSION_AND_PERSONS);
@@ -716,7 +723,7 @@ void MainWindow::about()
 	about.append(QString("Git branch: %1\n").arg(gitBranch.mid(2)));
 #endif // GIT_BRANCH_INFO
 #endif // OGS_BUILD_INFO
-	QMessageBox::about(this, "About OpenGeoSys-5", about);
+	QMessageBox::about(this, "About OpenGeoSys 6", about);
 }
 
 QMenu* MainWindow::createImportFilesMenu()

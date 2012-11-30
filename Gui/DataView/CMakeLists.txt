@@ -13,6 +13,7 @@ set( SOURCES
 	GeoTreeModel.cpp
 	GeoTreeView.cpp
 	GMSHPrefsDialog.cpp
+	LicenseDialog.cpp
 	LinearEditDialog.cpp
 	LineEditDialog.cpp
 	ListPropertiesDialog.cpp
@@ -49,6 +50,7 @@ set( MOC_HEADERS
 	GeoTreeModel.h
 	GeoTreeView.h
 	GMSHPrefsDialog.h
+	LicenseDialog.h
 	LinearEditDialog.h
 	LineEditDialog.h
 	ListPropertiesDialog.h
@@ -91,6 +93,7 @@ set( UIS
 	FEMConditionSetup.ui
 	GeoTabWidgetBase.ui
 	GMSHPrefs.ui
+	License.ui
 	LinearEdit.ui
 	LineEdit.ui
 	ModellingTabWidgetBase.ui
