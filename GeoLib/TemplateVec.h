@@ -1,17 +1,20 @@
 /**
+ * @copyright
  * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file TemplateVec.h
- *
- * Created on 2010-02-26 by Thomas Fischer
+ * @file TemplateVec.h
+ * @date 2010-02-26
+ * @author Thomas Fischer
  */
 
 #ifndef TEMPLATEVEC_H_
 #define TEMPLATEVEC_H_
+
+#include <algorithm>
 
 namespace GeoLib
 {
@@ -25,6 +28,9 @@ namespace GeoLib
  * */
 template <class T> class TemplateVec
 {
+protected:
+	typedef std::pair<std::string, std::size_t> NameIndexType;
+	typedef std::map<std::string, std::size_t> NameIndexMap;
 public:
 	/**
 	 * Constructor of class TemlateVec.
@@ -38,9 +44,12 @@ public:
 
 	 */
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
-	             std::map<std::string, std::size_t>* elem_name_map = NULL) :
+	             NameIndexMap* elem_name_map = nullptr) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
-	{}
+	{
+		if (!_name_id_map)
+			_name_id_map = new NameIndexMap;
+	}
 
 	/**
 	 * destructor, deletes all data elements
@@ -81,7 +90,7 @@ public:
 	 */
 	bool getElementIDByName (const std::string& name, std::size_t &id) const
 	{
-		std::map<std::string,std::size_t>::const_iterator it (_name_id_map->find (name));
+		auto it (_name_id_map->find (name));
 
 		if (it != _name_id_map->end())
 		{
@@ -99,7 +108,7 @@ public:
 		if (ret)
 			return (*_data_vec)[id];
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	/**
@@ -113,26 +122,19 @@ public:
 	 */
 	bool getNameOfElementByID (std::size_t id, std::string& element_name) const
 	{
-		if (!_name_id_map) return false;
 		// search in map for id
-		std::map<std::string,std::size_t>::const_iterator it (_name_id_map->begin());
-		while (it != _name_id_map->end())
-		{
-			if (it->second == id)
-			{
-				element_name = it->first;
-				return true;
-			}
-			it++;
+		auto it = findFirstElementByID(id);
+		if (it == _name_id_map->end()) {
+			return false;
 		}
-		return false;
+		element_name = it->first;
+		return true;
 	}
 
 	/// Return the name of an element based on its ID.
 	void setNameOfElementByID (std::size_t id, std::string& element_name)
 	{
-		if (!_name_id_map) return;
-		_name_id_map->insert( std::pair<std::string, std::size_t>(element_name, id) );
+		_name_id_map->insert( NameIndexType(element_name, id) );
 	}
 
 	/**
@@ -153,37 +155,36 @@ public:
 	}
 
 	/// Adds a new element to the vector.
-	virtual void push_back (T* data_element, std::string const* const name = NULL)
+	virtual void push_back (T* data_element, std::string const* const name = nullptr)
 	{
 		_data_vec->push_back (data_element);
-		if (name == NULL) return;
-		if (!name->empty())
-		{
-			if (_name_id_map == NULL)
-				_name_id_map = new std::map <std::string, std::size_t>;
-			_name_id_map->insert (std::pair<std::string,std::size_t>(*name, _data_vec->size() - 1));
-		}
+		if (!name || name->empty())
+			return;
+
+		_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
 	}
 
 	/// Sets the given name for the element of the given ID.
 	void setNameForElement(std::size_t id, std::string const& name)
 	{
-		if (_name_id_map == NULL)
-			_name_id_map = new std::map<std::string, std::size_t>;
+		// Erase id if found in map.
+		auto it = findFirstElementByID(id);
+		if (it != _name_id_map->end())
+			_name_id_map->erase(it);
 
-		if ( !_name_id_map->empty())
-		{
-			for (std::map<std::string, std::size_t>::iterator it = _name_id_map->begin(); it != _name_id_map->end(); ++it)
-				if (it->second == id)
-				{
-					_name_id_map->erase(it); //check if old name already exists and delete it
-					break;
-				}
-		}
 		if (!name.empty()) {
 			//insert new or revised name
-			_name_id_map->insert(std::pair<std::string, std::size_t>(name, id));
+			_name_id_map->insert(NameIndexType(name, id));
 		}
+	}
+
+private:
+
+	NameIndexMap::const_iterator
+	findFirstElementByID(std::size_t const& id) const
+	{
+		return std::find_if(_name_id_map->begin(), _name_id_map->end(),
+			[id](NameIndexType const& elem) { return elem.second == id; });
 	}
 
 protected:
@@ -204,7 +205,7 @@ protected:
 	/**
 	 * store names associated with the element ids
 	 */
-	std::map<std::string, std::size_t>* _name_id_map;
+	NameIndexMap* _name_id_map;
 };
 } // end namespace GeoLib
 
