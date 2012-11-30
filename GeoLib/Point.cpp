@@ -45,10 +45,8 @@ bool operator<= (const GeoLib::Point& p0, const GeoLib::Point& p1)
 	}
 }
 
-bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1)
+bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol)
 {
-	const double tol(std::numeric_limits<double>::epsilon());
-
 	// test a relative and an absolute criterion
 	if (fabs(p0[0]-p1[0]) > tol * std::min(fabs(p1[0]), fabs(p0[0])) && fabs(p0[0]-p1[0]) > tol) {
 		if (p0[0] <= p1[0])

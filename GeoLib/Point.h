@@ -29,9 +29,14 @@ typedef TemplatePoint<double> Point;
 bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
 
 /**
- * lexicographic comparison of points taking an epsilon into account
+ * lexicographical comparison of points taking an epsilon into account
+ * @param p0 first input Point
+ * @param p1 first input Point
+ * @param tol tolerance (if in the comparison operation the property fabs(p0[k] - p1[k]) < tol
+ * 	holds for the k-th coordinate the points are assumed the be equal in this coordinate)
+ * @return true, if p0 is lexicographically smaller than p1
  */
-bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1);
+bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol = std::numeric_limits<double>::epsilon());
 }
 
 
