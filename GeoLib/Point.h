@@ -13,6 +13,8 @@
 #ifndef POINT_H_
 #define POINT_H_
 
+#include <limits>
+
 #include "TemplatePoint.h"
 
 namespace GeoLib {
@@ -24,33 +26,19 @@ namespace GeoLib {
 typedef TemplatePoint<double> Point;
 
 /**
- * comparison based on the x coordinate
- * @param p0 first point
- * @param p1 second point
- * @return true if the x coordinate of p0 is smaller equal the x coordinate of p1, else false
- */
-bool lessX (Point const & p0, Point const & p1);
-
-/**
- * comparison based on the y coordinate
- * @param p0 first point
- * @param p1 second point
- * @return true if the y coordinate of p0 is smaller equal the y coordinate of p1, else false
- */
-bool lessY (Point const & p0, Point const & p1);
-
-/**
- * comparison based on the z coordinate
- * @param p0 first point
- * @param p1 second point
- * @return true if the z coordinate of p0 is smaller equal the z coordinate of p1, else false
- */
-bool lessZ (Point const & p0, Point const & p1);
-
-/**
  * lexicographic comparison of points
  */
 bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
+
+/**
+ * lexicographical comparison of points taking an epsilon into account
+ * @param p0 first input Point
+ * @param p1 first input Point
+ * @param tol tolerance (if in the comparison operation the property fabs(p0[k] - p1[k]) < tol
+ * 	holds for the k-th coordinate the points are assumed the be equal in this coordinate)
+ * @return true, if p0 is lexicographically smaller than p1
+ */
+bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol = std::numeric_limits<double>::epsilon());
 }
 
 
