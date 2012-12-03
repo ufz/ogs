@@ -46,24 +46,6 @@ public:
 		}
 	}
 
-
-    CRSMatrix* clone()
-    {
-        CRSMatrix<FP_TYPE, IDX_TYPE> *obj = new CRSMatrix<FP_TYPE, IDX_TYPE>(MatrixBase::_n_rows);
-        const IDX_TYPE n_nz = getNNZ();
-        obj->_row_ptr = new IDX_TYPE[MatrixBase::_n_rows+1];
-        obj->_col_idx = new IDX_TYPE[n_nz];
-        obj->_data = new FP_TYPE[n_nz];
-        for (IDX_TYPE i=0; i<MatrixBase::_n_rows+1; i++)
-            obj->_row_ptr[i] = _row_ptr[i];
-        for (IDX_TYPE i=0; i<n_nz; i++)
-            obj->_col_idx[i] = _col_idx[i];
-        for (IDX_TYPE i=0; i<n_nz; i++)
-            obj->_data[i] = _data[i];
-
-        return obj;
-    }
-	
 	CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n),
 		_row_ptr(iA), _col_idx(jA), _data(A)
@@ -73,6 +55,29 @@ public:
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n1, n1),
 		_row_ptr(NULL), _col_idx(NULL), _data(NULL)
 	{}
+
+    CRSMatrix(CRSMatrix const& rhs) :
+        SparseMatrixBase<FP_TYPE, IDX_TYPE> (rhs.getNRows(), rhs.getNCols()),
+        _row_ptr(new IDX_TYPE[rhs.getNRows() + 1]), _col_idx(new IDX_TYPE[rhs.getNNZ()]),
+        _data(new FP_TYPE[rhs.getNNZ()])
+    {
+        // copy the data
+        IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
+        for (IDX_TYPE k(0); k<=MatrixBase::_n_rows; k++) {
+            _row_ptr[k] = row_ptr[k];
+        }
+
+        IDX_TYPE nnz(rhs.getNNZ());
+        IDX_TYPE const*const col_idx(rhs.getColIdxArray());
+        for (IDX_TYPE k(0); k<nnz; k++) {
+            _col_idx[k] = col_idx[k];
+        }
+
+        FP_TYPE const*const data(rhs.getEntryArray());
+        for (IDX_TYPE k(0); k<nnz; k++) {
+            _data[k] = data[k];
+        }
+    }
 
 	virtual ~CRSMatrix()
 	{
@@ -260,44 +265,21 @@ public:
 	}
 
 #ifndef NDEBUG
-    void printMat() const
+    void printMat(std::ostream &os = std::cout) const
     {
         for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
-            std::cout << k << ": " << std::flush;
+            os << k << ": " << std::flush;
             const IDX_TYPE row_end(_row_ptr[k+1]);
             for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {
-                std::cout << _col_idx[j] << " " << std::flush;
+                os << _col_idx[j] << " " << std::flush;
             }
-            std::cout << std::endl;
+            os << std::endl;
         }
     }
 #endif
 
 
 protected:
-	CRSMatrix(CRSMatrix const& rhs) :
-		SparseMatrixBase<FP_TYPE, IDX_TYPE> (rhs.getNRows(), rhs.getNCols()),
-		_row_ptr(new IDX_TYPE[rhs.getNRows() + 1]), _col_idx(new IDX_TYPE[rhs.getNNZ()]),
-		_data(new FP_TYPE[rhs.getNNZ()])
-	{
-		// copy the data
-		IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
-		for	(IDX_TYPE k(0); k<=MatrixBase::_n_rows; k++) {
-			_row_ptr[k] = row_ptr[k];
-		}
-
-		IDX_TYPE nnz(rhs.getNNZ());
-		IDX_TYPE const*const col_idx(rhs.getColIdxArray());
-		for	(IDX_TYPE k(0); k<nnz; k++) {
-			_col_idx[k] = col_idx[k];
-		}
-
-		FP_TYPE const*const data(rhs.getEntryArray());
-		for	(IDX_TYPE k(0); k<nnz; k++) {
-			_data[k] = data[k];
-		}
-	}
-
 	void removeRows (IDX_TYPE n_rows_cols, IDX_TYPE const*const rows)
 	{
 		//*** determine the number of new rows and the number of entries without the rows
