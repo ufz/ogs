@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <vector>
-#include "Eigen"
 #include "BaseLib/Options.h"
 #include "BaseLib/CodingTools.h"
 #include "MathLib/LinAlg/Sparse/Sparsity.h"
@@ -33,11 +32,6 @@ namespace MathLib
 class ILinearEquation
 {
 public:
-    /// Local matrix type
-    typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
-            Eigen::RowMajor> LocalMatrix;
-    /// Local vector type
-    typedef Eigen::VectorXd LocalVector;
     /// Index representing invalid
     const static std::size_t index_npos = -1;
 
@@ -110,9 +104,10 @@ public:
      * @param sub_matrix    A sub-matrix
      * @param fkt           scaling parameter
      */
-    virtual void addAsub(const std::vector<size_t> &vec_row_pos,
+    template <class T_DENSE_MATRIX>
+    void addAsub(const std::vector<size_t> &vec_row_pos,
             const std::vector<size_t> &vec_col_pos,
-            const LocalMatrix &sub_matrix, double fkt = 1.0);
+            const T_DENSE_MATRIX &sub_matrix, double fkt = 1.0);
 
     /**
      * add a sub-matrix into a matrix
@@ -120,8 +115,9 @@ public:
      * @param sub_matrix        A sub-matrix
      * @param fkt               scaling parameter
      */
-    virtual void addAsub(const std::vector<size_t> &vec_row_col_pos,
-            const LocalMatrix &sub_matrix, double fkt = 1.0);
+    template <class T_DENSE_MATRIX>
+    void addAsub(const std::vector<size_t> &vec_row_col_pos,
+            const T_DENSE_MATRIX &sub_matrix, double fkt = 1.0);
 
     /**
      * get RHS entry
@@ -160,7 +156,7 @@ public:
      * @param sub_vector    Pointer to a sub-vector
      * @param fkt           Scaling parameter
      */
-    virtual void addRHSsub(const std::vector<size_t> &vec_row_pos,
+    inline virtual void addRHSsub(const std::vector<size_t> &vec_row_pos,
             const double* sub_vector, double fkt = 1.0);
 
     /**
@@ -170,8 +166,9 @@ public:
      * @param sub_vector    A sub-vector
      * @param fkt           Scaling parameter
      */
-    virtual void addRHSsub(const std::vector<size_t> &vec_row_pos,
-            const LocalVector &sub_vector, double fkt = 1.0);
+    template <class T_DENSE_VECTOR>
+    void addRHSsub(const std::vector<size_t> &vec_row_pos,
+            const T_DENSE_VECTOR &sub_vector, double fkt = 1.0);
 
     /**
      * get a solution vector
@@ -217,4 +214,7 @@ public:
 };
 
 }
+
+#include "ILinearEquation.tpp"
+
 #endif //ILINEAREQUATION_H_

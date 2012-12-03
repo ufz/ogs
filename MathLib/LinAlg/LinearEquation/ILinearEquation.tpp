@@ -5,17 +5,16 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file ILinearEquation.cpp
+ * \file ILinearEquation.tpp
  *
  * Created on 2012-06-25 by Norihiro Watanabe
  */
 
-#include "ILinearEquation.h"
-
 namespace MathLib
 {
 
-void ILinearEquation::addAsub(const std::vector<size_t> &vec_row_pos, const std::vector<size_t> &vec_col_pos, const LocalMatrix &sub_matrix, double fkt)
+template <class T_DENSE_MATRIX>
+void ILinearEquation::addAsub(const std::vector<size_t> &vec_row_pos, const std::vector<size_t> &vec_col_pos, const T_DENSE_MATRIX &sub_matrix, double fkt)
 {
     const size_t n_rows = vec_row_pos.size();
     const size_t n_cols = vec_col_pos.size();
@@ -30,12 +29,13 @@ void ILinearEquation::addAsub(const std::vector<size_t> &vec_row_pos, const std:
     }
 }
 
-void ILinearEquation::addAsub(const std::vector<size_t> &vec_pos, const LocalMatrix &sub_matrix, double fkt)
+template <class T_DENSE_MATRIX>
+void ILinearEquation::addAsub(const std::vector<size_t> &vec_pos, const T_DENSE_MATRIX &sub_matrix, double fkt)
 {
     addAsub(vec_pos, vec_pos, sub_matrix, fkt);
 }
 
-void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const double *sub_vector, double fkt)
+inline void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const double *sub_vector, double fkt)
 {
     for (size_t i=0; i<vec_row_pos.size(); i++) {
         const size_t rowId = vec_row_pos[i];
@@ -44,7 +44,8 @@ void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const do
     }
 }
 
-void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const LocalVector &sub_vector, double fkt)
+template <class T_DENSE_VECTOR>
+void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const T_DENSE_VECTOR &sub_vector, double fkt)
 {
     for (size_t i=0; i<vec_row_pos.size(); i++) {
         const size_t rowId = vec_row_pos[i];
