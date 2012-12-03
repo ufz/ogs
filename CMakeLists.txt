@@ -55,6 +55,9 @@ OPTION(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
+# Eigen
+OPTION(USE_EIGEN "Use Eigen" OFF)
+
 # Linear solvers
 OPTION(USE_LIS "Use Lis" ON)
 OPTION(USE_EXTERNAL_LIS "Use external Lis" ON)
@@ -90,6 +93,11 @@ ENDIF() #OGS_PACKAGING
 #########################
 ### Pre-configuration ###
 #########################
+IF(USE_EIGEN)
+	FIND_PACKAGE ( Eigen REQUIRED )
+	ADD_DEFINITIONS(-DUSE_EIGEN)
+ENDIF(USE_EIGEN)
+
 IF(USE_LIS)
     IF (USE_EXTERNAL_LIS)
         FIND_PACKAGE ( LIS REQUIRED )
