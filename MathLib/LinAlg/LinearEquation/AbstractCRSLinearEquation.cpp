@@ -13,7 +13,6 @@
 #include "AbstractCRSLinearEquation.h"
 
 #include <algorithm>
-#include "MathLib/LinAlg/Sparse/SparseTableCRS.h"
 
 namespace MathLib
 {
@@ -22,9 +21,14 @@ template class AbstractCRSLinearEquation<unsigned>;
 
 template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::create(size_t length, RowMajorSparsity *sparsity)
 {
-    SparseTableCRS<IDX_TYPE> *crs = convertRowMajorSparsityToCRS<IDX_TYPE>(*sparsity);
-    assert (length == crs->dimension);
-    _A = new CRSMatrix<double, IDX_TYPE>(crs->dimension, crs->row_ptr, crs->col_idx, crs->data);
+    std::size_t dim = 0;
+    std::size_t nonzero = 0;
+    IDX_TYPE* row_ptr = nullptr;
+    IDX_TYPE* col_idx = nullptr;
+    double* data = nullptr;
+    convertRowMajorSparsityToCRS<IDX_TYPE>(*sparsity, dim, row_ptr, col_idx, nonzero, data);
+    assert (length == dim);
+    _A = new CRSMatrix<double, IDX_TYPE>(dim, row_ptr, col_idx, data);
     _b.resize(length);
     _x.resize(length);
 }
