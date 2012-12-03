@@ -140,6 +140,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
 
 	// station model connects
+	connect(stationTabWidget->treeView, SIGNAL(openStationListFile(int)),
+	        this, SLOT(open(int)));
 	connect(stationTabWidget->treeView, SIGNAL(stationListExportRequested(std::string, std::string)),
 	        this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
 	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geoModels,
@@ -152,6 +154,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
 
 	// geo model connects
+	connect(geoTabWidget->treeView, SIGNAL(openGeometryFile(int)),
+        this, SLOT(open(int)));
 	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GeoLib::GEOTYPE)),
 	        _geoModels, SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
 	connect(geoTabWidget->treeView, SIGNAL(geometryMappingRequested(const std::string&)),
@@ -179,6 +183,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 
 
 	// Setup connections for mesh models to GUI
+	connect(mshTabWidget->treeView, SIGNAL(openMeshFile(int)),
+        this, SLOT(open(int)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
 	        _meshModels, SLOT(removeMesh(const QModelIndex &)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
@@ -487,7 +493,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	QFileInfo fi(fileName);
 	std::string base = fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
 
-	if (t == ImportFileType::OGS)
+	if (t == ImportFileType::OGS || t == ImportFileType::OGS_GEO || t == ImportFileType::OGS_STN || t == ImportFileType::OGS_MSH)
 	{
 		if (fi.suffix().toLower() == "gli")
 		{
@@ -1044,8 +1050,8 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 {
 	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
 	SetNameDialog dlg(geometry_name, GeoLib::convertGeoTypeToString(object_type), id, old_name);
-	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GeoLib::GEOTYPE, size_t, std::string)),
-		this->_geoModels, SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, size_t, std::string)));
+	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)),
+		this->_geoModels, SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)));
 	dlg.exec();
 
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
@@ -1128,7 +1134,7 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-/*	
+/*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");
 	_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );

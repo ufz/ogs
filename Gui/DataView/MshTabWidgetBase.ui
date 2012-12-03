@@ -18,25 +18,126 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="DataView" name="treeView"/>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="addMeshPushButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Open mesh...</string>
+       </property>
        <property name="text">
-        <string>Add mesh...</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../Img/icons.qrc">
+         <normaloff>:/Images/open-icon.png</normaloff>:/Images/open-icon.png</iconset>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="clearAllPushButton">
+      <widget class="QPushButton" name="saveMeshPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Save mesh...</string>
+       </property>
        <property name="text">
-        <string>Remove All</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../Img/icons.qrc">
+         <normaloff>:/Images/save-icon.png</normaloff>:/Images/save-icon.png</iconset>
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="removeMeshPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Remove mesh</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../Img/icons.qrc">
+         <normaloff>:/Images/delete-icon.png</normaloff>:/Images/delete-icon.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="MshView" name="treeView"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -69,17 +170,19 @@
     </layout>
    </item>
    <item>
-    <widget class="DataView" name="elementView"/>
+    <widget class="MshView" name="elementView"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DataView</class>
+   <class>MshView</class>
    <extends>QTreeView</extends>
-   <header>DataView.h</header>
+   <header>MshView.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../Img/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

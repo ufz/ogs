@@ -93,6 +93,7 @@ INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
 ADD_SUBDIRECTORY( ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/quickcheck )
+INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR}/ThirdParty/zlib )
 
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first

@@ -4,12 +4,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file DataView.h
+ * \file MshView.h
  *
  * Created on 2009-09-24 by Lars Bilke
  */
-#ifndef DATAVIEW_H
-#define DATAVIEW_H
+#ifndef MSHVIEW_H
+#define MSHVIEW_H
 
 #include "Point.h"
 #include "GeoType.h"
@@ -30,21 +30,20 @@ namespace MeshLib {
  *	The DataView is table view which acts as a base class for displaying
  *  several OSG data formats.
  */
-class DataView : public QTreeView
+class MshView : public QTreeView
 {
 	Q_OBJECT
 
 public:
-	DataView(QWidget* parent = 0);
-	~DataView();
+	MshView(QWidget* parent = 0);
+	~MshView();
 
 public slots:
 	void updateView();
 
 protected slots:
-	/// Is called when the selection of this view changes. Emits a the signal
-	/// itemSelectionChanged()
-	//void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+	/// Is called when the selection of this view changes. 
+	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 	/// Selects items without sending signals.
 	//void selectionChangedFromOutside(const QItemSelection &selected,
@@ -61,7 +60,7 @@ private slots:
 	void openMshEditDialog();
 
 	/// Adds a new mesh.
-	void addMeshAction();
+	void addMesh();
 
 	void addDIRECTSourceTerms();
 
@@ -71,10 +70,10 @@ private slots:
 	void removeMesh();
 
 	/// Remove all currently loaded meshes.
-	void removeAllMeshes();
+	//void removeAllMeshes();
 
 	/// Calls the FileDialog to save a mesh to a file.
-	int writeMeshToFile() const;
+	int writeToFile() const;
 
 	/**
 	 * checks the mesh quality
@@ -82,6 +81,9 @@ private slots:
 	void checkMeshQuality();
 
 signals:
+	void enableSaveButton(bool);
+	void enableRemoveButton(bool);
+	void openMeshFile(int);
 	void qualityCheckRequested(VtkMeshSource*);
 	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
@@ -91,8 +93,8 @@ signals:
 /*
     void itemSelectionChanged(const QItemSelection &selected,
         const QItemSelection &deselected);
-    void itemSelectionChangedFromOutside(const QItemSelection &selected,
+    //void itemSelectionChangedFromOutside(const QItemSelection &selected,
         const QItemSelection &deselected);
  */
 };
-#endif // DATAVIEW_H
+#endif // MSHVIEW_H

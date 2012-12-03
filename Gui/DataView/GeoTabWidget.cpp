@@ -16,4 +16,10 @@ GeoTabWidget::GeoTabWidget( QWidget* parent /*= 0*/ )
 	: QWidget(parent)
 {
 	setupUi(this);
+
+	connect(this->openGeoPushButton, SIGNAL(clicked()), this->treeView, SLOT(addGeometry()));
+	connect(this->saveGeoPushButton, SIGNAL(clicked()), this->treeView, SLOT(writeToFile()));
+	connect(this->removeGeoPushButton, SIGNAL(clicked()), this->treeView, SLOT(removeGeometry()));
+	connect(this->treeView, SIGNAL(enableSaveButton(bool)), this, SLOT(enableSaveButton(bool)));
+	connect(this->treeView, SIGNAL(enableRemoveButton(bool)), this, SLOT(enableRemoveButton(bool)));
 }

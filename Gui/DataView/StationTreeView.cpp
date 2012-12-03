@@ -22,6 +22,7 @@
 #include "StationTreeModel.h"
 #include "StationTreeView.h"
 #include "StratWindow.h"
+#include "ImportFileTypes.h"
 
 StationTreeView::StationTreeView(QWidget* parent) : QTreeView(parent)
 {
@@ -37,16 +38,29 @@ void StationTreeView::updateView()
 	setColumnWidth(2,50);
 }
 
-void StationTreeView::on_Clicked(QModelIndex idx)
-{
-	qDebug("%d, %d",idx.parent().row(), idx.row());
-}
-
 void StationTreeView::selectionChanged( const QItemSelection &selected,
                                         const QItemSelection &deselected )
 {
-	emit itemSelectionChanged(selected, deselected);
-	return QTreeView::selectionChanged(selected, deselected);
+	Q_UNUSED(deselected);
+	if (!selected.isEmpty())
+	{
+		const QModelIndex idx = *(selected.indexes().begin());
+		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+
+		const ModelTreeItem* list_item = dynamic_cast<const ModelTreeItem*>(tree_item);
+		if (list_item->getItem())
+		{
+			emit enableSaveButton(true);
+			emit enableRemoveButton(true);
+		}
+		else
+		{
+			emit enableRemoveButton(false);
+			emit enableSaveButton(false);
+		}
+	}
+	//emit itemSelectionChanged(selected, deselected);
+	//return QTreeView::selectionChanged(selected, deselected);
 }
 
 void StationTreeView::selectionChangedFromOutside( const QItemSelection &selected,
@@ -76,14 +90,14 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 		QMenu menu;
 		QAction* propertyAction = menu.addAction("Display list properties...");
 		QAction* exportAction   = menu.addAction("Export to GMS...");
-		QAction* saveAction   = menu.addAction("Save to file...");
+		//QAction* saveAction   = menu.addAction("Save to file...");
 		menu.addSeparator();
-		QAction* removeAction   = menu.addAction("Remove station list");
+		//QAction* removeAction   = menu.addAction("Remove station list");
 
 		connect(propertyAction, SIGNAL(triggered()), this, SLOT(showPropertiesDialog()));
 		connect(exportAction,   SIGNAL(triggered()), this, SLOT(exportList()));
-		connect(saveAction,   SIGNAL(triggered()), this, SLOT(saveList()));
-		connect(removeAction,   SIGNAL(triggered()), this, SLOT(removeStationList()));
+		//connect(saveAction,   SIGNAL(triggered()), this, SLOT(saveList()));
+		//connect(removeAction,   SIGNAL(triggered()), this, SLOT(removeStationList()));
 		menu.exec(event->globalPos());
 	}
 	// The current index refers to a station object
@@ -138,14 +152,24 @@ void StationTreeView::displayStratigraphy()
 	stratView->show();
 }
 
-void StationTreeView::saveList()
+void StationTreeView::addStationList()
 {
-	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
-	QString listName = item->data(0).toString();
-	QString fileName = QFileDialog::getSaveFileName(this, "Save station list", "","*.stn");
-	if (!fileName.isEmpty())
-		emit stationListSaved(listName, fileName);
+	emit openStationListFile(ImportFileType::OGS_STN);
+}
+
+void StationTreeView::writeToFile()
+{
+	QModelIndex index (this->selectionModel()->currentIndex());
+	if (!index.isValid())
+		OGSError::box("No station list selected.");
+	else
+	{
+		TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
+		QString listName = item->data(0).toString();
+		QString fileName = QFileDialog::getSaveFileName(this, "Save station list", "","*.stn");
+		if (!fileName.isEmpty())
+			emit stationListSaved(listName, fileName);
+	}
 }
 
 void StationTreeView::exportList()
@@ -188,9 +212,14 @@ void StationTreeView::exportStation()
 
 void StationTreeView::removeStationList()
 {
-	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
-	emit stationListRemoved((item->data(0).toString()).toStdString());
+	QModelIndex index (this->selectionModel()->currentIndex());
+	if (!index.isValid())
+		OGSError::box("No station list selected.");
+	else
+	{
+		TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
+		emit stationListRemoved((item->data(0).toString()).toStdString());
+	}
 }
 
 void StationTreeView::showPropertiesDialog()

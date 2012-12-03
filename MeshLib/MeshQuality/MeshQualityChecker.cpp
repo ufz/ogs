@@ -18,7 +18,7 @@
 namespace MeshLib
 {
 MeshQualityChecker::MeshQualityChecker(Mesh const* const mesh) :
-	_min (-1.0), _max (-1.0), _mesh (mesh)
+	_min (std::numeric_limits<double>::max()), _max (std::numeric_limits<double>::min()), _mesh (mesh)
 {
 	if (_mesh)
 		_mesh_quality_measure.resize (_mesh->getNElements(), -1.0);

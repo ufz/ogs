@@ -13,6 +13,7 @@
 #define GEOTREEVIEW_H
 
 #include "GeoType.h"
+
 #include <QContextMenuEvent>
 #include <QTreeView>
 
@@ -48,6 +49,7 @@ private:
 	void setElementAsCondition(bool set_on_points = false);
 
 private slots:
+	void addGeometry();
 	/// Allows to add FEM Conditions to a process
 	void loadFEMConditions();
 	void on_Clicked(QModelIndex idx);
@@ -61,17 +63,20 @@ private slots:
 	/// Saves a geometry in a file.
 	void writeToFile() const;
 	/// Removes a whole geometry or parts of it.
-	void removeList();
+	void removeGeometry();
 	/// Saves FEM Conditions associated with the given geometry
 	//void saveFEMConditions();
 
 signals:
+	void enableSaveButton(bool);
+	void enableRemoveButton(bool);
 	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
 	void geometryMappingRequested(const std::string&);
 	void removeGeoItemSelection();
 	//void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 	void listRemoved(std::string name, GeoLib::GEOTYPE);
 	void loadFEMCondFileRequested(std::string);
+	void openGeometryFile(int);
 	void saveToFileRequested(QString, QString) const;
 	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestLineEditDialog(const std::string&);

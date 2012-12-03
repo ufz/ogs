@@ -65,7 +65,7 @@
           <property name="margin">
            <number>3</number>
           </property>
-          <item row="0" column="1">
+          <item row="0" column="1" colspan="2">
            <widget class="ColorPickerPushButton" name="diffuseColorPickerButton">
             <property name="text">
              <string>(255,255,255)</string>
@@ -86,7 +86,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="3" column="1" colspan="2">
            <widget class="ColorPickerPushButton" name="edgeColorPickerButton">
             <property name="text">
              <string>(255, 255, 255)</string>
@@ -100,7 +100,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="4" column="1" colspan="2">
            <widget class="QValueTooltipSlider" name="opacitySlider">
             <property name="maximum">
              <number>100</number>
@@ -120,6 +120,35 @@
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Active Scalar</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="arrayResetPushButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>24</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../Img/icons.qrc">
+              <normaloff>:/Images/refresh-icon.png</normaloff>:/Images/refresh-icon.png</iconset>
             </property>
            </widget>
           </item>
@@ -375,6 +404,8 @@
    <header>QValueTooltipSlider.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../Img/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -34,6 +34,14 @@ FIND_PROGRAM(GIT_TOOL_PATH git HINTS ${GITHUB_BIN_DIR} DOC "The git command line
 # Find bash itself ...
 FIND_PROGRAM(BASH_TOOL_PATH bash
 	HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
+
+# Dumpbin is a windows dependency analaysis tool required for packaging
+IF(WIN32 AND OGS_PACKAGING)
+	FIND_PROGRAM(DUMPBIN_TOOL_PATH dumpbin DOC "Windows dependency analysis tool")
+	IF(NOT DUMPBIN_TOOL_PATH)
+		MESSAGE(FATAL_ERROR "Dumpbin was not found but is required for packaging!")
+	ENDIF()
+ENDIF()
 ######################
 ### Find libraries ###
 ######################

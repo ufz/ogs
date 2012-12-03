@@ -24,6 +24,9 @@ public:
 
 	enum type {
 		OGS = 0,
+		OGS_GEO,
+		OGS_STN,
+		OGS_MSH,
 		FEFLOW,
 		GMS,
 		GMSH,
@@ -43,6 +46,9 @@ public:
 		else if (t==ImportFileType::GMSH) return "GMSH";
 		else if (t==ImportFileType::NETCDF) return "NetCDF";
 		else if (t==ImportFileType::OGS) return "OGS";
+		else if (t==ImportFileType::OGS_GEO) return "OGS geometry";
+		else if (t==ImportFileType::OGS_STN) return "OGS station list";
+		else if (t==ImportFileType::OGS_MSH) return "OGS mesh";
 		else if (t==ImportFileType::PETREL) return "Petrel";
 		else if((t==ImportFileType::RASTER) || (t==ImportFileType::POLYRASTER)) return "Raster";
 		else if (t==ImportFileType::SHAPE) return "Shape";
@@ -63,6 +69,12 @@ public:
 			return "NetCDF files (*.nc)";
 		else if (t==ImportFileType::OGS)
 			return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy files (*.gli *.msh);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;All files (* *.*)";
+		else if (t==ImportFileType::OGS_GEO)
+			return "OpenGeosys files (*.gml *.gli)";
+		else if (t==ImportFileType::OGS_STN)
+			return "OpenGeosys files (*.stn)";
+		else if (t==ImportFileType::OGS_MSH)
+			return "OpenGeosys files (*.vtu *.msh)";
 		else if (t==ImportFileType::PETREL)
 			return "Petrel files (*)";
 		else if (t==ImportFileType::RASTER)

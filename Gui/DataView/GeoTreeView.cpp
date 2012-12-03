@@ -11,6 +11,7 @@
 
 #include <QFileDialog>
 #include <QMenu>
+#include <QSettings>
 #include <iostream>
 
 #include "GeoObjectListItem.h"
@@ -18,7 +19,7 @@
 #include "GeoTreeModel.h"
 #include "GeoTreeView.h"
 #include "OGSError.h"
-
+#include "ImportFileTypes.h"
 
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 {
@@ -49,9 +50,20 @@ void GeoTreeView::selectionChanged( const QItemSelection &selected,
 
 		const GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem());
 		if (list_item)
+		{
+			emit enableSaveButton(false);
+			emit enableRemoveButton(false);
 			emit geoItemSelected(list_item->vtkSource(), tree_item->row());
+		}
 		else
+		{
+			emit enableRemoveButton(true);
 			emit removeGeoItemSelection();
+			if (!idx.parent().isValid())
+				emit enableSaveButton(true);
+			else
+				emit enableSaveButton(false);
+		}
 	}
 	//emit itemSelectionChanged(selected, deselected);
 	//return QTreeView::selectionChanged(selected, deselected);
@@ -121,17 +133,17 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		{
 			if (item->child(0)->data(0).toString().compare("Points") == 0) // clumsy way to find out
 			{
-				QAction* saveAction = menu.addAction("Save geometry...");
+				//QAction* saveAction = menu.addAction("Save geometry...");
 				QAction* mapAction = menu.addAction("Map geometry...");
 				QAction* addCNDAction = menu.addAction("Load FEM Conditions...");
 				//QAction* saveCondAction    = menu.addAction("Save FEM conditions...");
 				menu.addSeparator();
-				QAction* removeAction = menu.addAction("Remove geometry");
-				connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
+				//QAction* removeAction = menu.addAction("Remove geometry");
+				//connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 				connect(mapAction, SIGNAL(triggered()), this, SLOT(mapGeometry()));
 				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
 				//connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
-				connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
+				//connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
 		}
 	}
@@ -146,17 +158,26 @@ void GeoTreeView::connectPolylines()
 	emit requestLineEditDialog(item->data(0).toString().toStdString());
 }
 
-void GeoTreeView::removeList()
+void GeoTreeView::addGeometry()
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
+	emit openGeometryFile(ImportFileType::OGS_GEO);
+}
 
-	GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
-	if (list)
-		emit listRemoved((item->parentItem()->data(
-		                          0).toString()).toStdString(), list->getType());
+void GeoTreeView::removeGeometry()
+{
+	QModelIndex index (this->selectionModel()->currentIndex());
+	if (!index.isValid())
+		OGSError::box("No geometry selected.");
 	else
-		emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::INVALID);
+	{
+		TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
+		GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
+		if (list)
+			emit listRemoved((item->parentItem()->data(
+									  0).toString()).toStdString(), list->getType());
+		else
+			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::INVALID);
+	}
 }
 
 void GeoTreeView::setElementAsCondition(bool set_on_points)
@@ -189,13 +210,18 @@ void GeoTreeView::mapGeometry()
 
 void GeoTreeView::writeToFile() const
 {
-	TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
-	        this->selectionModel()->currentIndex());
-	QString gliName = item->data(0).toString();
-	QString fileName = QFileDialog::getSaveFileName(NULL,
-						"Save geometry as", gliName, "GeoSys geometry file (*.gml)");
-	if (!fileName.isEmpty())
-		emit saveToFileRequested(gliName, fileName);
+	QModelIndex index (this->selectionModel()->currentIndex());
+	if (!index.isValid())
+		OGSError::box("No geometry selected.");
+	else
+	{
+		TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
+		QString geoName = item->data(0).toString();
+		QString fileName = QFileDialog::getSaveFileName(NULL,
+							"Save geometry as", geoName, "GeoSys geometry file (*.gml)");
+		if (!fileName.isEmpty())
+			emit saveToFileRequested(geoName, fileName);
+	}
 }
 
 void GeoTreeView::loadFEMConditions()

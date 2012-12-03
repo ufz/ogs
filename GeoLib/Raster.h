@@ -47,7 +47,7 @@ public:
 	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
 
 private:
-	static bool readASCHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+	static bool readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
 					double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
 	void setCellSize(double cell_size);
 	void setNoDataVal (double no_data_val);

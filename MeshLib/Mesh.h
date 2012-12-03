@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 
+#include "MshEnums.h"
+
 namespace MeshLib
 {
 	class Node;
@@ -99,6 +101,9 @@ protected:
 
 	/// Removes nodes that are not part of any element.
 	void removeUnusedMeshNodes();
+
+	/// Removes elements of the given type t from a mesh
+	void removeMeshElements(MshElemType::type t);
 
 	/// Sets the dimension of the mesh.
 	void setDimension();

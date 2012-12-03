@@ -24,6 +24,10 @@ class MshTabWidget : public QWidget, public Ui_MshTabWidgetBase
 
 public:
 	MshTabWidget(QWidget* parent = 0);
+
+private slots:
+	void enableSaveButton(bool enable) { this->saveMeshPushButton->setEnabled(enable); };
+	void enableRemoveButton(bool enable) { this->removeMeshPushButton->setEnabled(enable); };
 };
 
 #endif // MSHTABWIDGET_H
