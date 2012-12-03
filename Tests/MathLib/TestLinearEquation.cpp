@@ -11,6 +11,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <Eigen>
 
 #include "MathLib/LinAlg/LinearEquation/EigenDenseLinearEquation.h"
 #include "MathLib/LinAlg/LinearEquation/SparseLinearEquation.h"
@@ -82,14 +83,14 @@ TEST(Math, LinearSolverDirect)
     for (size_t i=0; i<ex1.dim_eqs; i++) {
         for (size_t j=0; j<ex1.dim_eqs; j++) {
             double v = ex1.mat[i*ex1.dim_eqs+j];
-            eqs.addA(i, j, v);
+            eqs.addMatEntry(i, j, v);
         }
     }
-    eqs.setKnownX(ex1.list_dirichlet_bc_id, ex1.list_dirichlet_bc_value);
+    eqs.setKnownSolution(ex1.list_dirichlet_bc_id, ex1.list_dirichlet_bc_value);
 
     eqs.solve();
 
-    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exH[0], eqs.getX(), ex1.dim_eqs, 1.e-5);
+    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exH[0], eqs.getSolVec()->data(), ex1.dim_eqs, 1.e-5);
 }
 
 #ifdef USE_BLAS_LAPACK
@@ -201,15 +202,15 @@ TEST(Math, LinearSolverLis1)
         for (size_t j=0; j<ex1.dim_eqs; j++) {
             double v = ex1.mat[i*ex1.dim_eqs+j];
             if (v!=.0)
-                eqs.addA(i, j, v);
+                eqs.addMatEntry(i, j, v);
         }
     }
 
-    eqs.setKnownX(ex1.list_dirichlet_bc_id, ex1.list_dirichlet_bc_value);
+    eqs.setKnownSolution(ex1.list_dirichlet_bc_id, ex1.list_dirichlet_bc_value);
 
     eqs.solve();
 
-    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exH[0], eqs.getX(), ex1.dim_eqs, 1.e-5);
+    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exH[0], eqs.getSolVec(), ex1.dim_eqs, 1.e-5);
 }
 
 #endif
