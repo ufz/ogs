@@ -46,7 +46,7 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::reset()
 template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::solve()
 {
     if (_vec_knownX_id.size()>0) {
-        CRSMatrix<double, IDX_TYPE>* tmp_A = getA()->clone();
+        CRSMatrix<double, IDX_TYPE>* tmp_A = new CRSMatrix<double, IDX_TYPE>(*getA());
         double *org_eqsRHS = getRHS();
         double *org_eqsX = getX();
         std::vector<double> _tmp_b;
