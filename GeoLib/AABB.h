@@ -13,9 +13,12 @@
 #ifndef AABB_H_
 #define AABB_H_
 
-#include "Point.h"
 #include <limits>
 #include <cstddef>
+#include <iterator>
+#include <cassert>
+
+#include "Point.h"
 
 namespace GeoLib
 {
@@ -60,6 +63,8 @@ public:
 		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
 		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
 	{
+		assert(std::distance(first,last) > 0);
+		init(*first);
 		InputIterator it(first);
 		while (it != last) {
 			update(*it);
@@ -118,6 +123,16 @@ protected:
 	PNT_TYPE _min_pnt;
 	PNT_TYPE _max_pnt;
 private:
+	void init(PNT_TYPE const & pnt)
+	{
+		_min_pnt[0] = _max_pnt[0] = pnt[0];
+		_min_pnt[1] = _max_pnt[1] = pnt[1];
+		_min_pnt[2] = _max_pnt[2] = pnt[2];
+	}
+	void init(PNT_TYPE const * pnt)
+	{
+		init(*pnt);
+	}
 	void update(PNT_TYPE const * pnt)
 	{
 		update (*pnt);
