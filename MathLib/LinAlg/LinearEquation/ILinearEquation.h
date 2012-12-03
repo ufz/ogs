@@ -16,7 +16,6 @@
 #include <iostream>
 #include <vector>
 #include "BaseLib/Options.h"
-#include "BaseLib/CodingTools.h"
 #include "MathLib/LinAlg/Sparse/Sparsity.h"
 
 namespace MathLib
