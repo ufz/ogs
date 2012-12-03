@@ -40,9 +40,9 @@ public:
     }
 
     /**
-     * create a linear equation 
+     * create a system of linear equations
      *
-     * \param dimension    dimension of the equation
+     * \param dimension    system dimension
      * \param sparsity     sparse pattern
      */
     virtual void create(size_t dimension,
