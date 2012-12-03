@@ -33,7 +33,7 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::create(siz
     _x.resize(length);
 }
 
-template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::reset()
+template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::setZero()
 {
     (*_A) = .0;
     _b.assign(_b.size(), .0);
@@ -46,9 +46,9 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::reset()
 template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::solve()
 {
     if (_vec_knownX_id.size()>0) {
-        CRSMatrix<double, IDX_TYPE>* tmp_A = new CRSMatrix<double, IDX_TYPE>(*getA());
-        double *org_eqsRHS = getRHS();
-        double *org_eqsX = getX();
+        CRSMatrix<double, IDX_TYPE>* tmp_A = new CRSMatrix<double, IDX_TYPE>(*getMatEntry());
+        double *org_eqsRHS = getRHSVec();
+        double *org_eqsX = getSolVec();
         std::vector<double> _tmp_b;
         std::vector<double> _tmp_x;
         std::map<size_t,size_t> _map_solved_orgEqs;
@@ -63,12 +63,12 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::solve()
 
         const size_t dim = tmp_A->getNRows();
         for (size_t i=0; i<dim; i++) {
-            setX(_map_solved_orgEqs[i], _tmp_x[i]);
+            setSolVec(_map_solved_orgEqs[i], _tmp_x[i]);
         }
 
         delete tmp_A;
     } else {
-        solveEqs(getA(), getRHS(), getX());
+        solveEqs(getMatEntry(), getRHSVec(), getSolVec());
     }
 }
 

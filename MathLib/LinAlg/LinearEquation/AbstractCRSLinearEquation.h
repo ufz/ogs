@@ -72,68 +72,59 @@ public:
     virtual size_t getDimension() const { return _x.size(); };
 
     /// reset this equation
-    virtual void reset();
+    virtual void setZero();
 
     /// get entry in A
-    virtual double getA(size_t rowId, size_t colId) const
+    virtual double getMatEntry(size_t rowId, size_t colId) const
     {
         return _A->getValue(rowId, colId);
     }
 
     /// set entry in A
-    virtual void setA(size_t rowId, size_t colId, double v)
+    virtual void setMatEntry(size_t rowId, size_t colId, double v)
     {
         _A->setValue(rowId, colId, v);
     }
 
     /// add value into A
-    virtual void addA(size_t rowId, size_t colId, double v)
+    virtual void addMatEntry(size_t rowId, size_t colId, double v)
     {
         _A->addValue(rowId, colId, v);
     }
 
     /// get RHS entry
-    virtual double getRHS(size_t rowId) const { return _b[rowId]; }
-
-    /// get RHS vector
-    virtual double* getRHS() { return &_b[0]; }
+    virtual double getRHSVec(size_t rowId) const { return _b[rowId]; }
 
     /// set RHS entry
-    virtual void setRHS(size_t rowId, double v) { _b[rowId] = v; }
+    virtual void setRHSVec(size_t rowId, double v) { _b[rowId] = v; }
 
     /// add RHS entry
-    virtual void addRHS(size_t rowId, double v)
+    virtual void addRHSVec(size_t rowId, double v)
     {
         _b[rowId] += v;
     }
 
     /// get an entry in a solution vector
-    virtual double getX(size_t rowId)
+    virtual double getSolVec(size_t rowId)
     {
         return _x[rowId];
     }
 
-    /// get a solution vector
-    virtual double* getX()
-    {
-        return &_x[0];
-    }
-
     /// set a solution vector
-    virtual void setX(size_t i, double v)
+    virtual void setSolVec(size_t i, double v)
     {
         _x[i] = v;
     }
 
     /// set prescribed value
-    virtual void setKnownX(size_t id, double x)
+    virtual void setKnownSolution(size_t id, double x)
     {
         _vec_knownX_id.push_back(id);
         _vec_knownX_x.push_back(x);
     }
 
     /// set prescribed values
-    virtual void setKnownX(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x)
+    virtual void setKnownSolution(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x)
     {
         _vec_knownX_id.insert(_vec_knownX_id.end(), vec_id.begin(), vec_id.end());
         _vec_knownX_x.insert(_vec_knownX_x.end(), vec_x.begin(), vec_x.end());
@@ -157,9 +148,14 @@ public:
     // Equation specific functions
     //---------------------------------------------------------------
     /// return A matrix object
-    MatrixType* getA() { return _A;};
+    MatrixType* getMatEntry() { return _A;};
 
+    /// get RHS vector
+    double* getRHSVec() { return &_b[0]; }
 
+    /// get a solution vector
+    double* getSolVec() { return &_x[0]; }
+    
 protected:
     virtual void solveEqs(MatrixType *A, double *rhs, double *x) = 0;
 
