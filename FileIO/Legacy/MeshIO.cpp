@@ -74,7 +74,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 				BaseLib::trim(line_string);
 				unsigned nNodes = atoi(line_string.c_str());
 				std::string s;
-				for (unsigned i = 0; i < nNodes; i++)
+				for (unsigned i = 0; i < nNodes; ++i)
 				{
 					getline(in, line_string);
 					std::stringstream iss(line_string);
@@ -91,7 +91,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 				getline(in, line_string);
 				BaseLib::trim(line_string);
 				unsigned nElements = atoi(line_string.c_str());
-				for (unsigned i = 0; i < nElements; i++)
+				for (unsigned i = 0; i < nElements; ++i)
 				{
 					getline(in, line_string);
 
@@ -144,7 +144,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 	switch(elem_type)
 	{
 	case MshElemType::EDGE: {
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 2; ++i)
 			ss >> idx[i];
 		// edge_nodes array will be deleted from Edge object
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
@@ -154,55 +154,55 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		break;
 	}
 	case MshElemType::TRIANGLE: {
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; ++i)
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		for (unsigned k(0); k<3; k++)
+		for (unsigned k(0); k<3; ++k)
 			tri_nodes[k] = nodes[idx[2-k]];
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
 	case MshElemType::QUAD: {
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; ++i)
 			ss >> idx[i];
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-		for (unsigned k(0); k<4; k++)
+		for (unsigned k(0); k<4; ++k)
 			quad_nodes[k] = nodes[idx[3-k]];
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
 	}
 	case MshElemType::TETRAHEDRON: {
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; ++i)
 			ss >> idx[i];
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
-		for (unsigned k(0); k<4; k++)
+		for (unsigned k(0); k<4; ++k)
 			tet_nodes[k] = nodes[idx[3-k]];
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
 	}
 	case MshElemType::HEXAHEDRON: {
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; ++i)
 			ss >> idx[i];
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
-		for (unsigned k(0); k<8; k++)
+		for (unsigned k(0); k<8; ++k)
 			hex_nodes[k] = nodes[idx[7-k]];
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
 	}
 	case MshElemType::PYRAMID: {
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; ++i)
 			ss >> idx[i];
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
-		for (unsigned k(0); k<5; k++)
+		for (unsigned k(0); k<5; ++k)
 			pyramid_nodes[k] = nodes[idx[4-k]];
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
 	}
 	case MshElemType::PRISM: {
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; ++i)
 			ss >> idx[i];
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
-		for (unsigned k(0); k<6; k++)
+		for (unsigned k(0); k<6; ++k)
 			prism_nodes[k] = nodes[idx[5-k]];
 		elem = new MeshLib::Prism(prism_nodes, patch_index);
 		break;
@@ -232,7 +232,7 @@ int MeshIO::write(std::ostream &out)
 	out << "$NODES" << std::endl << "  ";
 	const size_t n_nodes(_mesh->getNNodes());
 	out << n_nodes << std::endl;
-	for (size_t i(0); i < n_nodes; i++) {
+	for (size_t i(0); i < n_nodes; ++i) {
 		out << i << " " << *(_mesh->getNode(i)) << std::endl;
 	}
 
@@ -259,7 +259,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	std::vector<bool> non_null_element (ele_vector_size, true);
 	size_t n_elements(0);
 
-	for (size_t i(0); i < ele_vector_size; i++) {
+	for (size_t i(0); i < ele_vector_size; ++i) {
 		if ((ele_vec[i])->getGeomType() == MshElemType::EDGE) {
 			non_line_element[i] = false;
 			non_null_element[i] = false;
@@ -267,18 +267,19 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 			if (ele_vec[i]->getContent() < epsilon) {
 				non_null_element[i] = false;
 			} else {
-				n_elements++;
+				++n_elements;
 			}
 		}
 	}
 	out << n_elements << std::endl;
-	for (size_t i(0), k(0); i < ele_vector_size; i++) {
+	for (size_t i(0), k(0); i < ele_vector_size; ++i) {
 		if (non_line_element[i] && non_null_element[i]) {
 			out << k << " " << ele_vec[i]->getValue() << " " << MshElemType2String(ele_vec[i]->getGeomType()) << " ";
-			for(size_t j = 0; j < ele_vec[i]->getNNodes()-1; j++)
-				out << ele_vec[i]->getNode(j)->getID() << " ";
-			out << ele_vec[i]->getNode(ele_vec[i]->getNNodes()-1)->getID() << std::endl;
-			k++;
+			unsigned nElemNodes (ele_vec[i]->getNNodes());
+			for(size_t j = 0; j < nElemNodes; ++j)
+				out << ele_vec[i]->getNode(nElemNodes-j-1)->getID() << " ";
+			out << std::endl;
+			++k;
 		}
 	}
 }
