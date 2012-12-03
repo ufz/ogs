@@ -124,31 +124,35 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 	std::vector<MeshLib::Element*> sfc_elements;
 	get2DSurfaceElements(all_elements, sfc_elements, dir, mesh.getDimension());
 
-	std::vector<MeshLib::Node*> sfc_nodes;
-	std::vector<unsigned> node_id_map(mesh.getNNodes());
-	get2DSurfaceNodes(all_nodes, sfc_nodes, sfc_elements, node_id_map);
-
-	// create new elements vector with newly created nodes
-	const size_t nNewElements (sfc_elements.size());
-	std::vector<MeshLib::Element*> new_elements(sfc_elements.size());
-	for (unsigned i=0; i<nNewElements; ++i)
+	if (!sfc_elements.empty())
 	{
-		MeshLib::Element* elem (sfc_elements[i]);
-		if (elem->getGeomType() == MshElemType::TRIANGLE) {
-			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-			for (unsigned k(0); k<3; k++)
-				tri_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
-			new_elements[i] = new MeshLib::Tri(tri_nodes);
-		} else {
-			MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-			for (unsigned k(0); k<3; k++)
-				quad_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
-			new_elements[i] = new MeshLib::Quad(quad_nodes);
-		}
-		delete sfc_elements[i];
-	}
+		std::vector<MeshLib::Node*> sfc_nodes;
+		std::vector<unsigned> node_id_map(mesh.getNNodes());
+		get2DSurfaceNodes(all_nodes, sfc_nodes, sfc_elements, node_id_map);
 
-	return new Mesh("SurfaceMesh", sfc_nodes, new_elements);
+		// create new elements vector with newly created nodes
+		const size_t nNewElements (sfc_elements.size());
+		std::vector<MeshLib::Element*> new_elements(sfc_elements.size());
+		for (unsigned i=0; i<nNewElements; ++i)
+		{
+			MeshLib::Element* elem (sfc_elements[i]);
+			if (elem->getGeomType() == MshElemType::TRIANGLE) {
+				MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+				for (unsigned k(0); k<3; k++)
+					tri_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
+				new_elements[i] = new MeshLib::Tri(tri_nodes);
+			} else {
+				MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+				for (unsigned k(0); k<3; k++)
+					quad_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
+				new_elements[i] = new MeshLib::Quad(quad_nodes);
+			}
+			delete sfc_elements[i];
+		}
+
+		return new Mesh("SurfaceMesh", sfc_nodes, new_elements);
+	}
+	return NULL;
 }
 
 void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension)
@@ -159,11 +163,11 @@ void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_e
 
 	const size_t nElements (all_elements.size());
 
-	if (mesh_dimension == 2 )
+	if (mesh_dimension > 0 && mesh_dimension < 3 ) // mesh_dimension 1 or 2
 	{
 		for (unsigned i=0; i<nElements; ++i)
 		{
-			if (complete_surface)
+			if (complete_surface || mesh_dimension == 1) // if dim==1 just copy
 				sfc_elements.push_back(all_elements[i]);
 			else
 			{
@@ -208,6 +212,8 @@ void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_e
 			}
 		}
 	}
+	else
+		ERROR ("Cannot handle meshes of dimension %i", mesh_dimension);
 }
 
 void MshEditor::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map)
