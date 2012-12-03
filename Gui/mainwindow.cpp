@@ -706,21 +706,21 @@ void MainWindow::showLicense()
 
 void MainWindow::about()
 {
+	QString about("<a href='http://www.opengeosys.org'>http://www.opengeosys.org</a><br /><br />");
 	QString ogsVersion = QString(OGS_VERSION_AND_PERSONS);
-
-	QString about = tr("Built on %1\nOGS Version: %2\n\n").arg(
-		QDate::currentDate().toString(Qt::ISODate)).arg(ogsVersion);
+	about.append(tr("Built on %1<br />OGS Version: %2<br /><br />").arg(
+		QDate::currentDate().toString(Qt::ISODate)).arg(ogsVersion));
 #ifdef OGS_BUILD_INFO
 #ifdef SVN_REVISION
-	about.append(QString("Svn commit: %1\n").arg(SVN_REVISION));
+	about.append(QString("Svn commit: %1<br />").arg(SVN_REVISION));
 #endif
 #ifdef GIT_COMMIT_INFO
 	QString gitCommit = QString(GIT_COMMIT_INFO);
-	about.append(QString("Git commit: %1\n").arg(gitCommit.mid(7)));
+	about.append(QString("Git commit: %1<br />").arg(gitCommit.mid(7)));
 #endif // GIT_COMMIT_INFO
 #ifdef GIT_BRANCH_INFO
 	QString gitBranch = QString(GIT_BRANCH_INFO);
-	about.append(QString("Git branch: %1\n").arg(gitBranch.mid(2)));
+	about.append(QString("Git branch: %1<br />").arg(gitBranch.mid(2)));
 #endif // GIT_BRANCH_INFO
 #endif // OGS_BUILD_INFO
 	QMessageBox::about(this, "About OpenGeoSys 6", about);
