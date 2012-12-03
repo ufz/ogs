@@ -158,7 +158,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		for (unsigned k(0); k<3; k++)
-			tri_nodes[k] = nodes[idx[k]];
+			tri_nodes[k] = nodes[idx[2-k]];
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
@@ -167,7 +167,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 			ss >> idx[i];
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k<4; k++)
-			quad_nodes[k] = nodes[idx[4-(k+1)]];
+			quad_nodes[k] = nodes[idx[3-k]];
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
 	}
@@ -176,7 +176,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 			ss >> idx[i];
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k<4; k++)
-			tet_nodes[k] = nodes[idx[4-(k+1)]];
+			tet_nodes[k] = nodes[idx[3-k]];
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
 	}
@@ -185,7 +185,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 			ss >> idx[i];
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k<8; k++)
-			hex_nodes[k] = nodes[idx[8-(k+1)]];
+			hex_nodes[k] = nodes[idx[7-k]];
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
 	}
@@ -194,7 +194,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 			ss >> idx[i];
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k<5; k++)
-			pyramid_nodes[k] = nodes[idx[5-(k+1)]];
+			pyramid_nodes[k] = nodes[idx[4-k]];
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
 	}
@@ -203,7 +203,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 			ss >> idx[i];
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k<6; k++)
-			prism_nodes[k] = nodes[idx[6-(k+1)]];
+			prism_nodes[k] = nodes[idx[5-k]];
 		elem = new MeshLib::Prism(prism_nodes, patch_index);
 		break;
 	}
