@@ -24,6 +24,22 @@ namespace MathLib
  */
 typedef std::vector<std::set<std::size_t> > RowMajorSparsity;
 
+/**
+ * convert a row-major sparsity to CRS data
+ *
+ * @tparam INTTYPE              index type
+ * @param row_major_entries     Row-major sparse pattern
+ * @param n_rows                The number of rows
+ * @param row_ptr               Pointer to row index
+ * @param col_idx               Pointer to column index
+ * @param nonzero               The number of non-zero entries
+ * @param data                  Pointer to non-zero values
+ */
+template<class INTTYPE>
+void convertRowMajorSparsityToCRS(const RowMajorSparsity &row_major_entries, std::size_t &n_rows, INTTYPE* &row_ptr, INTTYPE* &col_idx, std::size_t &nonzero, double* &data);
+
 } // end namespace MathLib
+
+#include "Sparsity.tpp"
 
 #endif // SPARSITY_H_
