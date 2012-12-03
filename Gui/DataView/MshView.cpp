@@ -15,6 +15,8 @@
 #include "MshItem.h"
 #include "MshModel.h"
 #include "OGSError.h"
+#include "MshEditor.h"
+
 #include "ImportFileTypes.h"
 #include <QHeaderView>
 
@@ -87,41 +89,33 @@ void MshView::removeMesh()
 		emit requestMeshRemoval(index);
 }
 
-/*
-// Removed functionality. Do we still need this?
-void MshView::removeAllMeshes()
-{
-	TreeItem* root = static_cast<MshModel*>(this->model())->getItem(QModelIndex());
-	int nChildren = root->childCount() - 1;
-	for (int i = nChildren; i >= 0; i--)
-		emit requestMeshRemoval(this->model()->index(i, 0, QModelIndex()));
-}
-*/
-
 void MshView::contextMenuEvent( QContextMenuEvent* event )
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
-
+	bool is_3D_mesh (item->getMesh()->getDimension() == 3);
+	
 	if (item)
 	{
 		QMenu menu;
 		QAction* editMeshAction   = menu.addAction("Edit mesh...");
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
-		//QAction* saveMeshAction   = menu.addAction("Save mesh...");
+		QAction* surfaceMeshAction (NULL);
+		if (is_3D_mesh) 
+			surfaceMeshAction = menu.addAction("Extract surface");		
+		
 		menu.addSeparator();
 		QMenu direct_cond_menu("DIRECT Conditions");
 		menu.addMenu(&direct_cond_menu);
 		QAction* addDirectAction  = direct_cond_menu.addAction("Add...");
 		QAction* loadDirectAction = direct_cond_menu.addAction("Load...");
-		menu.addSeparator();
-		//QAction* removeMeshAction = menu.addAction("Remove mesh");
+		//menu.addSeparator();
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
-		//connect(saveMeshAction, SIGNAL(triggered()), this, SLOT(writeMeshToFile()));
+		if (is_3D_mesh) 
+			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
 		connect(addDirectAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
 		connect(loadDirectAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
-		//connect(removeMeshAction, SIGNAL(triggered()), this, SLOT(removeMesh()));
 		menu.exec(event->globalPos());
 	}
 }
@@ -137,6 +131,17 @@ void MshView::openMshEditDialog()
 	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
 		    model, SLOT(addMesh(MeshLib::Mesh*)));
 	meshEdit.exec();
+}
+
+void MshView::extractSurfaceMesh()
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+	if (!index.isValid())
+		return;
+	
+	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	const double dir[3] = {0, 0, 1};
+	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
 }
 
 int MshView::writeToFile() const

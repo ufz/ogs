@@ -64,13 +64,12 @@ private slots:
 
 	void addDIRECTSourceTerms();
 
+	void extractSurfaceMesh();
+
 	void loadDIRECTSourceTerms();
 
 	/// Remove the currently selected mesh.
 	void removeMesh();
-
-	/// Remove all currently loaded meshes.
-	//void removeAllMeshes();
 
 	/// Calls the FileDialog to save a mesh to a file.
 	int writeToFile() const;
