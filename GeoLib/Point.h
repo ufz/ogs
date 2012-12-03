@@ -13,6 +13,8 @@
 #ifndef POINT_H_
 #define POINT_H_
 
+#include <limits>
+
 #include "TemplatePoint.h"
 
 namespace GeoLib {

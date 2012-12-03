@@ -12,7 +12,6 @@
 
 
 #include <cmath>
-#include <limits>
 
 #include "Point.h"
 
