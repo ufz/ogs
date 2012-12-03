@@ -29,14 +29,14 @@ void EigenDenseLinearEquation::resize(size_t length)
     //reset();
 }
 
-void EigenDenseLinearEquation::reset()
+void EigenDenseLinearEquation::setZero()
 {
     _A *= .0;
     _b *= .0;
     _x *= .0;
 }
 
-void EigenDenseLinearEquation::setKnownX(size_t row_id, double x)
+void EigenDenseLinearEquation::setKnownSolution(size_t row_id, double x)
 {
     const size_t n_cols = _A.cols();
     //A(k, j) = 0.
@@ -54,10 +54,10 @@ void EigenDenseLinearEquation::setKnownX(size_t row_id, double x)
     _A(row_id, row_id) = 1.0; //=x
 }
 
-void EigenDenseLinearEquation::setKnownX(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x)
+void EigenDenseLinearEquation::setKnownSolution(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x)
 {
     for (size_t i=0; i<vec_id.size(); ++i)
-        setKnownX(vec_id[i], vec_x[i]);
+        setKnownSolution(vec_id[i], vec_x[i]);
 }
 
 void EigenDenseLinearEquation::printout(std::ostream &os) const

@@ -56,63 +56,53 @@ public:
 
     virtual bool isCreated() const { return true; };
 
-    virtual void reset();
+    virtual void setZero();
 
     virtual size_t getDimension() const { return _A.rows(); }
 
-    virtual double getA(size_t rowId, size_t colId) const
+    virtual double getMatEntry(size_t rowId, size_t colId) const
     {
         return _A(rowId, colId);
     }
 
-    virtual void setA(size_t rowId, size_t colId, double v)
+    virtual void setMatEntry(size_t rowId, size_t colId, double v)
     {
         _A(rowId, colId) = v;
     }
 
-    virtual void addA(size_t rowId, size_t colId, double v)
+    virtual void addMatEntry(size_t rowId, size_t colId, double v)
     {
         _A(rowId, colId) += v;
     }
 
-    virtual  double getRHS(size_t rowId) const
+    virtual  double getRHSVec(size_t rowId) const
     {
         return _b[rowId];
     }
 
-    virtual double* getRHS()
-    {
-        return &_b[0];
-    }
-
-    virtual void setRHS(size_t rowId, double v)
+    virtual void setRHSVec(size_t rowId, double v)
     {
         _b[rowId] = v;
     }
 
-    virtual void addRHS(size_t rowId, double v)
+    virtual void addRHSVec(size_t rowId, double v)
     {
         _b[rowId] += v;
     }
 
-    virtual double* getX()
-    {
-        return &_x[0];
-    }
-
-    virtual double getX(size_t rowId)
+    virtual double getSolVec(size_t rowId)
     {
         return _x[rowId];
     }
 
-    virtual void setX(size_t rowId, double v)
+    virtual void setSolVec(size_t rowId, double v)
     {
         _x[rowId] = v;
     }
 
-    virtual void setKnownX(size_t row_id, double x);
+    virtual void setKnownSolution(size_t row_id, double x);
 
-    virtual void setKnownX(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x);
+    virtual void setKnownSolution(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x);
 
     virtual void printout(std::ostream &os=std::cout) const;
 
@@ -135,20 +125,19 @@ public:
      * get a LHS matrix
      * @return
      */
-    MatrixType* getA() { return &_A; }
+    MatrixType* getMatEntry() { return &_A; }
 
     /**
      * get a solution vector
      * @return
      */
-    VectorType* getXAsVec() {return &_x;};
+    VectorType* getSolVec() {return &_x;};
 
     /**
      * get a RHS vector
      * @return
      */
-    VectorType* getRHSAsVec() {return &_b;};
-
+    VectorType* getRHSVec() {return &_b;};
 
 private:
     MatrixType _A;
