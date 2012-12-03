@@ -61,9 +61,13 @@ public:
     virtual void setOption(const BaseLib::Options &option) = 0;
 
     /**
-     * reset the equation
+     * initialize this system with zero
+     *
+     * This function initialize the system by setting zero to all entries in
+     * a matrix, a RHS vector and solution vector. Dimension of the system is
+     * not changed.
      */
-    virtual void reset() = 0;
+    virtual void setZero() = 0;
 
     /// return dimension of this equation
     virtual size_t getDimension() const = 0;
@@ -75,7 +79,7 @@ public:
      * @param colId
      * @return value
      */
-    virtual double getA(size_t rowId, size_t colId) const = 0;
+    virtual double getMatEntry(size_t rowId, size_t colId) const = 0;
 
     /**
      * set an entry in a matrix
@@ -84,15 +88,16 @@ public:
      * @param colId
      * @param v
      */
-    virtual void setA(size_t rowId, size_t colId, double v) = 0;
+    virtual void setMatEntry(size_t rowId, size_t colId, double v) = 0;
 
     /**
      * add a value into a matrix
+     *
      * @param rowId
      * @param colId
      * @param v
      */
-    virtual void addA(size_t rowId, size_t colId, double v) = 0;
+    virtual void addMatEntry(size_t rowId, size_t colId, double v) = 0;
 
     /**
      * add a sub-matrix into a matrix at given row and column positions
@@ -107,7 +112,7 @@ public:
      * @param fac           scaling parameter
      */
     template <class T_DENSE_MATRIX>
-    void addAsub(const std::vector<size_t> &vec_row_pos,
+    void addSubMat(const std::vector<size_t> &vec_row_pos,
             const std::vector<size_t> &vec_col_pos,
             const T_DENSE_MATRIX &sub_matrix, double fac = 1.0);
 
@@ -122,7 +127,7 @@ public:
      * @param fac               scaling parameter
      */
     template <class T_DENSE_MATRIX>
-    void addAsub(const std::vector<size_t> &vec_row_col_pos,
+    void addSubMat(const std::vector<size_t> &vec_row_col_pos,
             const T_DENSE_MATRIX &sub_matrix, double fac = 1.0);
 
     /**
@@ -131,13 +136,13 @@ public:
      * @param rowId
      * @return
      */
-    virtual double getRHS(size_t rowId) const = 0;
+    virtual double getRHSVec(size_t rowId) const = 0;
 
     /**
      * get RHS vector
      * @return
      */
-    virtual double* getRHS() = 0;
+    virtual double* getRHSVec() = 0;
 
     /**
      * set RHS entry
@@ -145,7 +150,7 @@ public:
      * @param rowId
      * @param v
      */
-    virtual void setRHS(size_t rowId, double v) = 0;
+    virtual void setRHSVec(size_t rowId, double v) = 0;
 
     /**
      * add RHS entry
@@ -153,7 +158,7 @@ public:
      * @param rowId
      * @param v
      */
-    virtual void addRHS(size_t rowId, double v) = 0;
+    virtual void addRHSVec(size_t rowId, double v) = 0;
 
     /**
      * add a sub vector to RHS
@@ -164,7 +169,7 @@ public:
      * @param sub_vector    Pointer to a sub-vector
      * @param fac           Scaling parameter
      */
-    inline virtual void addRHSsub(const std::vector<size_t> &vec_row_pos,
+    inline virtual void addSubRHS(const std::vector<size_t> &vec_row_pos,
             const double* sub_vector, double fac = 1.0);
 
     /**
@@ -177,7 +182,7 @@ public:
      * @param fac           Scaling parameter
      */
     template <class T_DENSE_VECTOR>
-    void addRHSsub(const std::vector<size_t> &vec_row_pos,
+    void addSubRHS(const std::vector<size_t> &vec_row_pos,
             const T_DENSE_VECTOR &sub_vector, double fac = 1.0);
 
     /**
@@ -185,35 +190,35 @@ public:
      *
      * @return a pointer to the vector
      */
-    virtual double* getX() = 0;
+    virtual double* getSolVec() = 0;
 
     /**
      * get an entry in a solution vector
      * @param rowId
      * @return
      */
-    virtual double getX(size_t rowId) = 0;
+    virtual double getSolVec(size_t rowId) = 0;
 
     /**
      * set an entry in a solution vector
      * @param rowId
      * @param v
      */
-    virtual void setX(size_t rowId, double v) = 0;
+    virtual void setSolVec(size_t rowId, double v) = 0;
 
     /**
      * set prescribed value
      * @param row_id
      * @param x
      */
-    virtual void setKnownX(size_t row_id, double x) = 0;
+    virtual void setKnownSolution(size_t row_id, double x) = 0;
 
     /**
      * set prescribed value
      * @param vec_id    A vector of global row index
      * @param vec_x     A vector of prescribed values
      */
-    virtual void setKnownX(const std::vector<size_t> &vec_id,
+    virtual void setKnownSolution(const std::vector<size_t> &vec_id,
             const std::vector<double> &vec_x) = 0;
 
     /// solve the linear system

@@ -14,7 +14,7 @@ namespace MathLib
 {
 
 template <class T_DENSE_MATRIX>
-void ILinearEquation::addAsub(const std::vector<size_t> &vec_row_pos, const std::vector<size_t> &vec_col_pos, const T_DENSE_MATRIX &sub_matrix, double fkt)
+void ILinearEquation::addSubMat(const std::vector<size_t> &vec_row_pos, const std::vector<size_t> &vec_col_pos, const T_DENSE_MATRIX &sub_matrix, double fkt)
 {
     const size_t n_rows = vec_row_pos.size();
     const size_t n_cols = vec_col_pos.size();
@@ -24,33 +24,33 @@ void ILinearEquation::addAsub(const std::vector<size_t> &vec_row_pos, const std:
         for (size_t j=0; j<n_cols; j++) {
             const size_t colId = vec_col_pos[j];
             if (colId==index_npos) continue;
-            addA(rowId, colId, fkt*sub_matrix(i,j));
+            addMatEntry(rowId, colId, fkt*sub_matrix(i,j));
         }
     }
 }
 
 template <class T_DENSE_MATRIX>
-void ILinearEquation::addAsub(const std::vector<size_t> &vec_pos, const T_DENSE_MATRIX &sub_matrix, double fkt)
+void ILinearEquation::addSubMat(const std::vector<size_t> &vec_pos, const T_DENSE_MATRIX &sub_matrix, double fkt)
 {
-    addAsub(vec_pos, vec_pos, sub_matrix, fkt);
+    addSubMat(vec_pos, vec_pos, sub_matrix, fkt);
 }
 
-inline void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const double *sub_vector, double fkt)
+inline void ILinearEquation::addSubRHS(const std::vector<size_t> &vec_row_pos, const double *sub_vector, double fkt)
 {
     for (size_t i=0; i<vec_row_pos.size(); i++) {
         const size_t rowId = vec_row_pos[i];
         if (rowId==index_npos) continue;
-        addRHS(rowId, sub_vector[i]*fkt);
+        addRHSVec(rowId, sub_vector[i]*fkt);
     }
 }
 
 template <class T_DENSE_VECTOR>
-void ILinearEquation::addRHSsub(const std::vector<size_t> &vec_row_pos, const T_DENSE_VECTOR &sub_vector, double fkt)
+void ILinearEquation::addSubRHS(const std::vector<size_t> &vec_row_pos, const T_DENSE_VECTOR &sub_vector, double fkt)
 {
     for (size_t i=0; i<vec_row_pos.size(); i++) {
         const size_t rowId = vec_row_pos[i];
         if (rowId==index_npos) continue;
-        addRHS(rowId, sub_vector(i)*fkt);
+        addRHSVec(rowId, sub_vector(i)*fkt);
     }
 }
 
