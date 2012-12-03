@@ -139,12 +139,6 @@ public:
     virtual double getRHSVec(size_t rowId) const = 0;
 
     /**
-     * get RHS vector
-     * @return
-     */
-    virtual double* getRHSVec() = 0;
-
-    /**
      * set RHS entry
      *
      * @param rowId
@@ -184,13 +178,6 @@ public:
     template <class T_DENSE_VECTOR>
     void addSubRHS(const std::vector<size_t> &vec_row_pos,
             const T_DENSE_VECTOR &sub_vector, double fac = 1.0);
-
-    /**
-     * get a solution vector
-     *
-     * @return a pointer to the vector
-     */
-    virtual double* getSolVec() = 0;
 
     /**
      * get an entry in a solution vector
