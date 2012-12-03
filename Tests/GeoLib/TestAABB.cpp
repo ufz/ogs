@@ -21,7 +21,7 @@
 #include "Point.h"
 #include "AABB.h"
 
-TEST(GeoLibAABB, RandomNumberOfPointsPointersToRandomPointsInAList)
+TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 {
 	/* initialize random seed: */
 	 srand ( time(NULL) );
@@ -35,8 +35,6 @@ TEST(GeoLibAABB, RandomNumberOfPointsPointersToRandomPointsInAList)
 	 for (int k(0); k<n; k++) {
 		 pnts_list.push_back(new GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
 	 }
-
-	 std::cout << "testing with " << n << " points" << std::endl;
 
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts_list.begin(), pnts_list.end());
@@ -71,8 +69,6 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 		 pnts_list.push_back(GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
 	 }
 
-	 std::cout << "testing with " << n << " points" << std::endl;
-
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts_list.begin(), pnts_list.end());
 
@@ -87,7 +83,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 	 ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 }
 
-TEST(GeoLibAABB, RandomNumberOfPointsPointersToRandomPointsInAVector)
+TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 {
 	/* initialize random seed: */
 	 srand ( time(NULL) );
@@ -101,8 +97,6 @@ TEST(GeoLibAABB, RandomNumberOfPointsPointersToRandomPointsInAVector)
 	 for (int k(0); k<n; k++) {
 		 pnts.push_back(new GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
 	 }
-
-	 std::cout << "testing with " << n << " points" << std::endl;
 
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
@@ -137,8 +131,6 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 		 pnts.push_back(GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
 	 }
 
-	 std::cout << "testing with " << n << " points" << std::endl;
-
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
@@ -153,3 +145,37 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 	 ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 }
 
+TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
+{
+	/* initialize random seed: */
+	 srand (time(NULL));
+	 int n (rand() % 1000000);
+	 int box_size_x (rand());
+	 int box_size_y (rand());
+	 int box_size_z (rand());
+	 int half_box_size_x(box_size_x/2);
+	 int half_box_size_y(box_size_y/2);
+	 int half_box_size_z(box_size_z/2);
+	 int minus_half_box_size_x(-1.0 * half_box_size_x);
+	 int minus_half_box_size_y(-1.0 * half_box_size_y);
+	 int minus_half_box_size_z(-1.0 * half_box_size_z);
+
+	 // fill list with points
+	 std::list<GeoLib::Point> pnts;
+	 for (int k(0); k<n; k++) {
+		 pnts.push_back(GeoLib::Point(rand() % box_size_x - half_box_size_x, rand() % box_size_y - half_box_size_y, rand() % box_size_z - half_box_size_z));
+	 }
+
+	 // construct from list points a axis algined bounding box
+	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+
+	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
+	 GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+
+	 ASSERT_LE(minus_half_box_size_x, min_pnt[0]) << "coordinate 0 of min_pnt is smaller than " << minus_half_box_size_x;
+	 ASSERT_LE(minus_half_box_size_y, min_pnt[1]) << "coordinate 1 of min_pnt is smaller than " << minus_half_box_size_y;
+	 ASSERT_LE(minus_half_box_size_z, min_pnt[2]) << "coordinate 2 of min_pnt is smaller than " << minus_half_box_size_z;
+	 ASSERT_GE(half_box_size_x, max_pnt[0]) << "coordinate 0 of max_pnt is greater than " << half_box_size_x;
+	 ASSERT_GE(half_box_size_y, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size_y;
+	 ASSERT_GE(half_box_size_z, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size_z;
+}
