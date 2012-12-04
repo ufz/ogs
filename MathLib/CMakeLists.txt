@@ -20,17 +20,17 @@ SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_SOLVERS})
 GET_SOURCE_FILES(SOURCES_LINALG_PRECOND LinAlg/Preconditioner)
 SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_PRECOND})
 
-GET_SOURCE_FILES(SOURCES_LINALG_LEQS LinAlg/LinearEquation)
+GET_SOURCE_FILES(SOURCES_LINALG_LEQS LinAlg/SystemOfLinearEquations)
 IF (NOT USE_BLAS_LAPACK)
     LIST(REMOVE_ITEM SOURCES_LINALG_LEQS 
-        LinAlg/LinearEquation/SparseLinearEquation.h
-        LinAlg/LinearEquation/SparseLinearEquation.cpp
+        LinAlg/SystemOfLinearEquations/SparseLinearEquation.h
+        LinAlg/SystemOfLinearEquations/SparseLinearEquation.cpp
     )
 ENDIF ()
 IF (NOT USE_LIS)
     LIST(REMOVE_ITEM SOURCES_LINALG_LEQS 
-        LinAlg/LinearEquation/LisLinearEquation.h
-        LinAlg/LinearEquation/LisLinearEquation.cpp
+        LinAlg/SystemOfLinearEquations/LisLinearEquation.h
+        LinAlg/SystemOfLinearEquations/LisLinearEquation.cpp
     )
 ENDIF ()
 SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_LEQS})

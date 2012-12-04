@@ -13,10 +13,10 @@
 #include <gtest/gtest.h>
 #include <Eigen>
 
-#include "MathLib/LinAlg/LinearEquation/EigenDenseLinearEquation.h"
-#include "MathLib/LinAlg/LinearEquation/SparseLinearEquation.h"
+#include "MathLib/LinAlg/SystemOfLinearEquations/EigenDenseLinearEquation.h"
+#include "MathLib/LinAlg/SystemOfLinearEquations/SparseLinearEquation.h"
 #ifdef USE_LIS
-#include "MathLib/LinAlg/LinearEquation/LisLinearEquation.h"
+#include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearEquation.h"
 #endif
 
 inline void ASSERT_DOUBLE_ARRAY_EQ(const double* Expected, const double* Actual, size_t N, double epsilon=1.0e-8) {
