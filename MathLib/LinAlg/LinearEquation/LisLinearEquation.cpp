@@ -32,7 +32,7 @@ void LisLinearEquation::finalize()
     lis_finalize();
 }
 
-LisLinearEquation::LisLinearEquation(size_t length, RowMajorSparsity* sp)
+LisLinearEquation::LisLinearEquation(std::size_t length, RowMajorSparsity* sp)
 : AbstractCRSLinearEquation<signed>(length, sp)
 {
     initialize();
@@ -91,7 +91,7 @@ void LisLinearEquation::solveEqs(CRSMatrix<double, signed> *A, double *b, double
 #endif
 
     // Matrix solver and Precondition can be handled better way.
-    const size_t MAX_ZEILE = 512;
+    const std::size_t MAX_ZEILE = 512;
     char solver_options[MAX_ZEILE], tol_option[MAX_ZEILE];
 
 #ifdef _OPENMP

@@ -43,7 +43,7 @@ void SparseLinearEquation::setOption(const BaseLib::Options &option)
 void SparseLinearEquation::solveEqs(CRSMatrix<double, unsigned> *A, double *rhs, double *x)
 {
     double eps = _option.error_tolerance;
-    size_t steps =  _option.max_iteration_step;
+    std::size_t steps =  _option.max_iteration_step;
     switch (_option.solver_type)
     {
     case SolverCG:

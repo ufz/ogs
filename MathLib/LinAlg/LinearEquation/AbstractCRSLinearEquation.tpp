@@ -15,7 +15,7 @@
 namespace MathLib
 {
 template<typename IDX_TYPE>
-AbstractCRSLinearEquation<IDX_TYPE>::AbstractCRSLinearEquation(size_t length, RowMajorSparsity* sp)
+AbstractCRSLinearEquation<IDX_TYPE>::AbstractCRSLinearEquation(std::size_t length, RowMajorSparsity* sp)
 : ISystemOfLinearEquations(length, sp)
 {
     std::size_t dim = 0;
@@ -48,7 +48,7 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::solve()
         double *org_eqsX = getSolVec();
         std::vector<double> _tmp_b;
         std::vector<double> _tmp_x;
-        std::map<size_t,size_t> _map_solved_orgEqs;
+        std::map<std::size_t,std::size_t> _map_solved_orgEqs;
 
         //std::cout << "#before\n";
         //this->printout();
@@ -58,8 +58,8 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::solve()
 
         solveEqs(tmp_A, &_tmp_b[0], &_tmp_x[0]);
 
-        const size_t dim = tmp_A->getNRows();
-        for (size_t i=0; i<dim; i++) {
+        const std::size_t dim = tmp_A->getNRows();
+        for (std::size_t i=0; i<dim; i++) {
             setSolVec(_map_solved_orgEqs[i], _tmp_x[i]);
         }
 
@@ -69,15 +69,15 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::solve()
     }
 }
 
-template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::setKnownXi_ReduceSizeOfEQS(CRSMatrix<double, IDX_TYPE> *A, double *org_eqsRHS, double *org_eqsX, const std::vector<size_t> &vec_id, const std::vector<double> &vec_x, std::vector<double> &out_b, std::vector<double> &out_x, std::map<size_t,size_t> &map_solved_orgEqs)
+template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::setKnownXi_ReduceSizeOfEQS(CRSMatrix<double, IDX_TYPE> *A, double *org_eqsRHS, double *org_eqsX, const std::vector<std::size_t> &vec_id, const std::vector<double> &vec_x, std::vector<double> &out_b, std::vector<double> &out_x, std::map<std::size_t,std::size_t> &map_solved_orgEqs)
 {
     assert(vec_id.size()==vec_x.size());
 
-    const size_t n_org_rows = A->getNRows();
+    const std::size_t n_org_rows = A->getNRows();
 
     std::vector<IDX_TYPE> removed_rows(vec_id.size());
-    for (size_t i=0; i<vec_id.size(); i++) {
-        const size_t id = vec_id[i];
+    for (std::size_t i=0; i<vec_id.size(); i++) {
+        const std::size_t id = vec_id[i];
         const double val = vec_x[i];
         removed_rows[i] = id;
 
@@ -92,13 +92,13 @@ template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::setKnownXi
     //remove rows and columns
     std::sort(removed_rows.begin(), removed_rows.end());
     A->eraseEntries(removed_rows.size(), &removed_rows[0]);
-    const size_t n_new_rows = n_org_rows-removed_rows.size();
+    const std::size_t n_new_rows = n_org_rows-removed_rows.size();
 
     //remove X,RHS
     out_b.resize(n_new_rows);
     out_x.resize(n_new_rows);
-    size_t new_id = 0;
-    for (size_t i=0; i<n_org_rows; i++) {
+    std::size_t new_id = 0;
+    for (std::size_t i=0; i<n_org_rows; i++) {
         if (std::find(removed_rows.begin(), removed_rows.end(), i)!=removed_rows.end()) continue;
         out_b[new_id] = org_eqsRHS[i];
         out_x[new_id] = org_eqsX[i];

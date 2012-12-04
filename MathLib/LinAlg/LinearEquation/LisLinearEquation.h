@@ -45,7 +45,7 @@ public:
     /**
      *
      */
-    LisLinearEquation(size_t length, RowMajorSparsity* sp);
+    LisLinearEquation(std::size_t length, RowMajorSparsity* sp);
 
     /**
      *

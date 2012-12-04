@@ -42,7 +42,7 @@ public:
     /**
      *
      */
-    EigenDenseLinearEquation(size_t length, RowMajorSparsity* sp=NULL);
+    EigenDenseLinearEquation(std::size_t length, RowMajorSparsity* sp=NULL);
 
     /**
      *
@@ -54,51 +54,51 @@ public:
     //---------------------------------------------------------------
     virtual void setZero();
 
-    virtual size_t getDimension() const { return _A.rows(); }
+    virtual std::size_t getDimension() const { return _A.rows(); }
 
-    virtual double getMatEntry(size_t rowId, size_t colId) const
+    virtual double getMatEntry(std::size_t rowId, std::size_t colId) const
     {
         return _A(rowId, colId);
     }
 
-    virtual void setMatEntry(size_t rowId, size_t colId, double v)
+    virtual void setMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
         _A(rowId, colId) = v;
     }
 
-    virtual void addMatEntry(size_t rowId, size_t colId, double v)
+    virtual void addMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
         _A(rowId, colId) += v;
     }
 
-    virtual  double getRHSVec(size_t rowId) const
+    virtual  double getRHSVec(std::size_t rowId) const
     {
         return _b[rowId];
     }
 
-    virtual void setRHSVec(size_t rowId, double v)
+    virtual void setRHSVec(std::size_t rowId, double v)
     {
         _b[rowId] = v;
     }
 
-    virtual void addRHSVec(size_t rowId, double v)
+    virtual void addRHSVec(std::size_t rowId, double v)
     {
         _b[rowId] += v;
     }
 
-    virtual double getSolVec(size_t rowId)
+    virtual double getSolVec(std::size_t rowId)
     {
         return _x[rowId];
     }
 
-    virtual void setSolVec(size_t rowId, double v)
+    virtual void setSolVec(std::size_t rowId, double v)
     {
         _x[rowId] = v;
     }
 
-    virtual void setKnownSolution(size_t row_id, double x);
+    virtual void setKnownSolution(std::size_t row_id, double x);
 
-    virtual void setKnownSolution(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x);
+    virtual void setKnownSolution(const std::vector<std::size_t> &vec_id, const std::vector<double> &vec_x);
 
     virtual void printout(std::ostream &os=std::cout) const;
 
@@ -115,7 +115,7 @@ public:
      *
      * @param length
      */
-    void resize(size_t length);
+    void resize(std::size_t length);
 
     /**
      * get a LHS matrix

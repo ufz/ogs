@@ -48,7 +48,7 @@ public:
      * \param dim       dimension of the system
      * \param sp        sparse pattern
      */
-    AbstractCRSLinearEquation(size_t length, RowMajorSparsity* sp);
+    AbstractCRSLinearEquation(std::size_t length, RowMajorSparsity* sp);
 
     /// 
     virtual ~AbstractCRSLinearEquation()
@@ -63,62 +63,62 @@ public:
     // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
     /// return the dimension
-    virtual size_t getDimension() const { return _x.size(); };
+    virtual std::size_t getDimension() const { return _x.size(); };
 
     /// reset this equation
     virtual void setZero();
 
     /// get entry in A
-    virtual double getMatEntry(size_t rowId, size_t colId) const
+    virtual double getMatEntry(std::size_t rowId, std::size_t colId) const
     {
         return _A->getValue(rowId, colId);
     }
 
     /// set entry in A
-    virtual void setMatEntry(size_t rowId, size_t colId, double v)
+    virtual void setMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
         _A->setValue(rowId, colId, v);
     }
 
     /// add value into A
-    virtual void addMatEntry(size_t rowId, size_t colId, double v)
+    virtual void addMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
         _A->addValue(rowId, colId, v);
     }
 
     /// get RHS entry
-    virtual double getRHSVec(size_t rowId) const { return _b[rowId]; }
+    virtual double getRHSVec(std::size_t rowId) const { return _b[rowId]; }
 
     /// set RHS entry
-    virtual void setRHSVec(size_t rowId, double v) { _b[rowId] = v; }
+    virtual void setRHSVec(std::size_t rowId, double v) { _b[rowId] = v; }
 
     /// add RHS entry
-    virtual void addRHSVec(size_t rowId, double v)
+    virtual void addRHSVec(std::size_t rowId, double v)
     {
         _b[rowId] += v;
     }
 
     /// get an entry in a solution vector
-    virtual double getSolVec(size_t rowId)
+    virtual double getSolVec(std::size_t rowId)
     {
         return _x[rowId];
     }
 
     /// set a solution vector
-    virtual void setSolVec(size_t i, double v)
+    virtual void setSolVec(std::size_t i, double v)
     {
         _x[i] = v;
     }
 
     /// set prescribed value
-    virtual void setKnownSolution(size_t id, double x)
+    virtual void setKnownSolution(std::size_t id, double x)
     {
         _vec_knownX_id.push_back(id);
         _vec_knownX_x.push_back(x);
     }
 
     /// set prescribed values
-    virtual void setKnownSolution(const std::vector<size_t> &vec_id, const std::vector<double> &vec_x)
+    virtual void setKnownSolution(const std::vector<std::size_t> &vec_id, const std::vector<double> &vec_x)
     {
         _vec_knownX_id.insert(_vec_knownX_id.end(), vec_id.begin(), vec_id.end());
         _vec_knownX_x.insert(_vec_knownX_x.end(), vec_x.begin(), vec_x.end());
@@ -133,9 +133,9 @@ public:
         os << "#A=" << std::endl;
         _A->printMat();
         os << "#x=" << std::endl;
-        for (size_t i=0; i<_x.size(); i++) os << _x[i] << " "; os << std::endl;
+        for (std::size_t i=0; i<_x.size(); i++) os << _x[i] << " "; os << std::endl;
         os << "#b=" << std::endl;
-        for (size_t i=0; i<_b.size(); i++) os << _b[i] << " "; os << std::endl;
+        for (std::size_t i=0; i<_b.size(); i++) os << _b[i] << " "; os << std::endl;
     }
 
     //---------------------------------------------------------------
@@ -154,7 +154,7 @@ protected:
     virtual void solveEqs(MatrixType *A, double *rhs, double *x) = 0;
 
 private:
-    void setKnownXi_ReduceSizeOfEQS(MatrixType *A, double *org_eqsRHS, double *org_eqsX, const std::vector<size_t> &vec_id, const std::vector<double> &vec_x, std::vector<double> &out_b, std::vector<double> &out_x, std::map<size_t,size_t> &map_solved_orgEqs);
+    void setKnownXi_ReduceSizeOfEQS(MatrixType *A, double *org_eqsRHS, double *org_eqsX, const std::vector<std::size_t> &vec_id, const std::vector<double> &vec_x, std::vector<double> &out_b, std::vector<double> &out_x, std::map<std::size_t,std::size_t> &map_solved_orgEqs);
 
     DISALLOW_COPY_AND_ASSIGN(AbstractCRSLinearEquation);
 
@@ -162,7 +162,7 @@ private:
     MatrixType* _A;
     VectorType _b;
     VectorType _x;
-    std::vector<size_t> _vec_knownX_id;
+    std::vector<std::size_t> _vec_knownX_id;
     std::vector<double> _vec_knownX_x;
 };
 
