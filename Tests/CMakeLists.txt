@@ -22,6 +22,7 @@ TARGET_LINK_LIBRARIES(testrunner
 	BaseLib
 	GeoLib
 	${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 # Add make-target test which runs the testrunner
