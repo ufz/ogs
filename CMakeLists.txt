@@ -3,7 +3,7 @@
 #####################
 
 # Specify minimum CMake version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.7)
 
 # Project name
 PROJECT( OGS-6 )
@@ -25,10 +25,10 @@ INCLUDE(scripts/cmake/FindIncludeHeader.cmake)
 INCLUDE(scripts/cmake/Functions.cmake)
 INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
-INCLUDE(scripts/cmake/SubmoduleSetup.cmake)
 IF(NOT OGS_NO_EXTERNAL_LIBS)
 	INCLUDE(scripts/cmake/Find.cmake)
 ENDIF() # NOT OGS_NO_EXTERNAL_LIBS
+INCLUDE(scripts/cmake/SubmoduleSetup.cmake)
 INCLUDE(scripts/cmake/ProjectSetup.cmake)
 INCLUDE(scripts/cmake/DocumentationSetup.cmake)
 INCLUDE(scripts/cmake/Test.cmake)
@@ -58,6 +58,9 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
+# Compiler flags
+SET(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
+
 # Search paths
 SET(OGS_LIBS_DIR "" CACHE PATH "The path to the compiled third party libs (mainly used for Windows).")
 
@@ -86,6 +89,9 @@ ENDIF() #OGS_PACKAGING
 ### Subdirectories ###
 ######################
 
+# External projects
+INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
+
 # Add subdirectories with the projects
 ADD_SUBDIRECTORY( ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty )
@@ -93,6 +99,8 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/quickcheck )
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR}/ThirdParty/zlib )
 
 ADD_SUBDIRECTORY( BaseLib )
+# TODO This is a hack but we have to make sure that Boost is built first
+ADD_DEPENDENCIES(BaseLib Boost)
 ADD_SUBDIRECTORY( FemLib )
 ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
