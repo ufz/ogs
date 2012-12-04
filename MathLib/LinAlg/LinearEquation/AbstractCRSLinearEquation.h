@@ -42,8 +42,13 @@ public:
     //---------------------------------------------------------------
     // Constructor
     //---------------------------------------------------------------
-    /// 
-    AbstractCRSLinearEquation() : _A(NULL) {};
+    /**
+     * create a linear equation
+     *
+     * \param dim       dimension of the system
+     * \param sp        sparse pattern
+     */
+    AbstractCRSLinearEquation(size_t length, RowMajorSparsity* sp);
 
     /// 
     virtual ~AbstractCRSLinearEquation()
@@ -57,17 +62,6 @@ public:
     //---------------------------------------------------------------
     // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
-    /**
-     * create a linear equation 
-     *
-     * \param dim        dimension of the system
-     * \param sparsity   sparsity pattern
-     */
-    virtual void create(size_t dim, RowMajorSparsity *sparsity);
-
-    /// return if this equation is already created
-    virtual bool isCreated() const { return _A!=NULL; };
-
     /// return the dimension
     virtual size_t getDimension() const { return _x.size(); };
 
@@ -172,7 +166,8 @@ private:
     std::vector<double> _vec_knownX_x;
 };
 
-
 } //end
+
+#include "AbstractCRSLinearEquation.tpp"
 
 #endif //ABSTRACTCRSLINEAREQUATION_H_

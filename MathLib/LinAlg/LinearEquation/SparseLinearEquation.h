@@ -86,7 +86,7 @@ public:
         }
     };
 
-    SparseLinearEquation() {};
+    SparseLinearEquation(size_t length, RowMajorSparsity* sp) : AbstractCRSLinearEquation<unsigned>(length, sp) {};
 
     virtual ~SparseLinearEquation()
     {

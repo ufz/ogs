@@ -42,7 +42,7 @@ public:
     /**
      *
      */
-    EigenDenseLinearEquation() {};
+    EigenDenseLinearEquation(size_t length, RowMajorSparsity* sp=NULL);
 
     /**
      *
@@ -52,10 +52,6 @@ public:
     //---------------------------------------------------------------
     // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
-    virtual void create(size_t length, RowMajorSparsity* /*sp*/=NULL);
-
-    virtual bool isCreated() const { return true; };
-
     virtual void setZero();
 
     virtual size_t getDimension() const { return _A.rows(); }

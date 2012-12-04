@@ -32,7 +32,8 @@ void LisLinearEquation::finalize()
     lis_finalize();
 }
 
-LisLinearEquation::LisLinearEquation()
+LisLinearEquation::LisLinearEquation(size_t length, RowMajorSparsity* sp)
+: AbstractCRSLinearEquation<signed>(length, sp)
 {
     initialize();
 }

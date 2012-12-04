@@ -16,7 +16,8 @@
 namespace MathLib
 {
 
-void EigenDenseLinearEquation::create(size_t length, RowMajorSparsity* /*sp*/)
+EigenDenseLinearEquation::EigenDenseLinearEquation(size_t length, RowMajorSparsity* sp)
+: ISystemOfLinearEquations(length, sp)
 {
     resize(length);
 }

@@ -76,8 +76,7 @@ TEST(Math, LinearSolverDirect)
     Example1 ex1;
 
     // construct discrete eqs
-    MathLib::EigenDenseLinearEquation eqs;
-    eqs.create(ex1.sparse.size(), &ex1.sparse);
+    MathLib::EigenDenseLinearEquation eqs(ex1.sparse.size(), &ex1.sparse);
 
     //
     for (size_t i=0; i<ex1.dim_eqs; i++) {
@@ -191,9 +190,8 @@ TEST(Math, LinearSolverLis1)
 #endif
 
     // construct discrete eqs
-    MathLib::LisLinearEquation eqs;
-    eqs.initialize();
-    eqs.create(ex1.sparse.size(), &ex1.sparse);
+    MathLib::LisLinearEquation::initialize();
+    MathLib::LisLinearEquation eqs(ex1.sparse.size(), &ex1.sparse);
     eqs.getOption().ls_method = MathLib::LIS_option::CG;
     eqs.getOption().ls_precond = MathLib::LIS_option::NONE;
 
