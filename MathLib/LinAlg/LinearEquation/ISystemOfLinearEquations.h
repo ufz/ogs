@@ -28,14 +28,14 @@ namespace MathLib
  * including linear solvers.
  *
  */
-class ILinearEquation
+class ISystemOfLinearEquations
 {
 public:
     /// Index representing invalid
     const static std::size_t index_npos = -1;
 
     /// 
-    virtual ~ILinearEquation()
+    virtual ~ISystemOfLinearEquations()
     {
     }
 
@@ -216,7 +216,7 @@ public:
 
 protected:
     /// constructor
-    ILinearEquation() {};
+    ISystemOfLinearEquations() {};
 };
 
 }
