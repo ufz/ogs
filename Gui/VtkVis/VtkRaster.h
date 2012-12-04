@@ -66,23 +66,25 @@ public:
 	 * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
 	 * \return A float-array of pixel values incl. opacity (noData values are transparent)
 	 */
-	static float* loadDataFromASC(const std::string &fileName,
+	static double* loadDataFromASC(const std::string &fileName,
 	                              double &x0,
 	                              double &y0,
 	                              unsigned &width,
 	                              unsigned &height,
-	                              double &delta);
+	                              double &delta,
+								  double &no_data);
 
 	/**
-	 * \brief Loads an ASC file into a double array.
+	 * \brief Loads a Surfer file into a double array.
 	 * Works exactly like loadDataFromASC().
 	 */
-	static float* loadDataFromSurfer(const std::string &fileName,
+	static double* loadDataFromSurfer(const std::string &fileName,
 	                              double &x0,
 	                              double &y0,
 	                              unsigned &width,
 	                              unsigned &height,
-	                              double &delta);
+	                              double &delta,
+								  double &no_data);
 
 	/**
 	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
@@ -93,20 +95,9 @@ public:
 											  unsigned &width,
 											  unsigned &height,
 											  double &delta,
-											  double noData);
+											  double no_data = -9999);
 
 private:
-	/**
-	 * Loads ArcGIS asc-files to a vtkImageImport object.
-	 * \param fileName Filename of the file that should be loaded.
-	 * \param x0 The x-coordinate of the origin.
-	 * \param y0 The y-coordinate of the origin.
-	 * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
-	 * \return A vtkImageImport-object (derived from vtkImageAlgorithm).
-	 */
-    static vtkImageImport* loadImageFromASC(const std::string &fileName,
-                                            double& x0, double& y0, double& delta);
-
 	/**
 	 * Loads ArcGIS asc-files to a QPixmap object and automatically does a contrast stretching to adjust values to 8 bit greyscale images.
 	 * \param fileName Filename of the file that should be loaded.

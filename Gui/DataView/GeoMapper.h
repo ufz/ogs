@@ -58,7 +58,7 @@ private:
 	double _cellsize;
 	unsigned _width;
 	unsigned _height;
-	float* _img_data;
+	double* _img_data;
 };
 
 #endif //GEOMAPPER_H

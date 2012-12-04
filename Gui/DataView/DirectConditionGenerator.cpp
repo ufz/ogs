@@ -23,10 +23,10 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 {
 	if (_direct_values.empty())
 	{
-		double origin_x(0), origin_y(0), delta(0);
+		double origin_x(0), origin_y(0), delta(0), no_data(-9999);
 		unsigned imgwidth(0), imgheight(0);
 
-		float* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta);
+		double* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta, no_data);
 		if (img == 0)
 		{
 			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;
@@ -52,8 +52,8 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 				cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(imgheight)) ? (imgheight-1) : cell_y);
 
 				size_t index = cell_y*imgwidth+cell_x;
-				if (fabs(img[index] + 9999) > std::numeric_limits<float>::min())
-					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index*2]) );
+				if (fabs(img[index] + no_data) > std::numeric_limits<float>::min())
+					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index]) );
 			}
 		}
 

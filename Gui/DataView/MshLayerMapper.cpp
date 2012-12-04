@@ -110,9 +110,9 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 
 	if (nLayers >= layer_id)
 	{
-		double x0(0), y0(0), delta(1);
+		double x0(0), y0(0), delta(1), no_data(-9999);
 		unsigned width(1), height(1);
-		float* elevation = VtkRaster::loadDataFromASC(rasterfile, x0, y0, width,height, delta);
+		double* elevation = VtkRaster::loadDataFromASC(rasterfile, x0, y0, width,height, delta, no_data);
 
 		if (elevation == NULL)
 		{
@@ -160,13 +160,13 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			const size_t y_nb[4] = {0, 0, yShiftIdx, yShiftIdx};
 
 			double locZ[4];
-			locZ[0] = elevation[2*(yIdx*width + xIdx)];
-			if (fabs(locZ[0] + 9999) > std::numeric_limits<double>::min())
+			locZ[0] = elevation[yIdx*width + xIdx];
+			if (fabs(locZ[0] + no_data) > std::numeric_limits<double>::min())
 			{
 				for (unsigned j=1; j<4; ++j)
 				{
-					locZ[j] = elevation[2*((yIdx+y_nb[j])*width + (xIdx+x_nb[j]))];
-					if (fabs(locZ[j] + 9999) < std::numeric_limits<double>::min())
+					locZ[j] = elevation[(yIdx+y_nb[j])*width + (xIdx+x_nb[j])];
+					if (fabs(locZ[j] + no_data) < std::numeric_limits<double>::min())
 						locZ[j]=locZ[0];
 				}
 

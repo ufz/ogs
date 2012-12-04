@@ -32,7 +32,8 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	_img_data = VtkRaster::loadDataFromASC(file_name, _origin_x, _origin_y, _width, _height, _cellsize);
+	double no_data(-9999);
+	_img_data = VtkRaster::loadDataFromASC(file_name, _origin_x, _origin_y, _width, _height, _cellsize, no_data);
 	this->mapData();
 }
 
@@ -106,7 +107,7 @@ float GeoMapper::getDemElevation(double x, double y) const
 	unsigned x_index = static_cast<unsigned>((x-_origin_x)/_cellsize);
 	unsigned y_index = static_cast<unsigned>((y-_origin_y)/_cellsize);
 
-	return _img_data[2*(y_index*_width+x_index)];
+	return static_cast<float>(_img_data[y_index*_width+x_index]);
 }
 
 double GeoMapper::getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const

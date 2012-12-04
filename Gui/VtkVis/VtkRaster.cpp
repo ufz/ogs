@@ -40,40 +40,26 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
                                         double& x0, double& y0, double& delta)
 {
 	QFileInfo fileInfo(QString::fromStdString(fileName));
+	unsigned width(0), height(0);
+	double* data;
+	double no_data(-9999);
 
-	if (fileInfo.suffix().toLower() == "asc" || fileInfo.suffix().toLower() == "grd")
-        return loadImageFromASC(fileName, x0, y0, delta);
+	if (fileInfo.suffix().toLower() == "asc")
+	{
+		data = loadDataFromASC(fileName, x0, y0, width, height, delta, no_data);
+		return loadImageFromArray(data, x0, y0, width, height, delta);		
+	}
+	else if (fileInfo.suffix().toLower() == "grd")
+	{
+		data = loadDataFromSurfer(fileName, x0, y0, width, height, delta, no_data);
+        return loadImageFromArray(data, x0, y0, width, height, delta);
+	}
 #ifdef libgeotiff_FOUND
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
 		return loadImageFromTIFF(fileName, x0, y0, delta);
 #endif
 	else
 		return loadImageFromFile(fileName);
-}
-
-vtkImageImport* VtkRaster::loadImageFromASC(const std::string &fileName,
-                                            double& x0, double& y0, double& delta)
-{
-	unsigned width(0), height(0);
-	float* data;
-
-	if (fileName.substr(fileName.length()-3, 3).compare("asc") == 0)
-		data = loadDataFromASC(fileName, x0, y0, width, height, delta);
-	else
-		data = loadDataFromSurfer(fileName, x0, y0, width, height, delta);
-
-	vtkImageImport* image = vtkImageImport::New();
-		image->SetDataSpacing(delta, delta,delta);
-		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
-		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
-		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
-		image->SetDataExtentToWholeExtent();
-		image->SetDataScalarTypeToFloat();
-		image->SetNumberOfScalarComponents(2);
-		image->SetImportVoidPointer(data, 0);
-		image->Update();
-
-	return image;
 }
 
 vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, unsigned &width, unsigned &height, double &delta, double noData)
@@ -176,12 +162,13 @@ bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
 	return true;
 }
 
-float* VtkRaster::loadDataFromASC(const std::string &fileName,
+double* VtkRaster::loadDataFromASC(const std::string &fileName,
                                    double &x0,
                                    double &y0,
                                    unsigned &width,
                                    unsigned &height,
-                                   double &delta)
+                                   double &delta,
+								   double &no_data)
 {
 	std::ifstream in( fileName.c_str() );
 
@@ -201,11 +188,10 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 		height = header.nrows;
 		delta  = header.cellsize;
 
-		float* values = new float[header.ncols * header.nrows * 2];
+		double* values = new double[header.ncols * header.nrows];
 
 		int col_index(0);
 		int noData = atoi(header.noData.c_str());
-		float max_val = noData;
 		std::string s("");
 		// read the file into a double-array
 		for (int j = 0; j < header.nrows; ++j)
@@ -214,24 +200,9 @@ float* VtkRaster::loadDataFromASC(const std::string &fileName,
 			for (int i = 0; i < header.ncols; ++i)
 			{
 				in >> s;
-				unsigned index = 2*(col_index+i);
-				values[index] = static_cast<float>(strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
-				if (values[index] > max_val)
-					max_val = values[index];
+				unsigned index = col_index+i;
+				values[index] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
 			}
-		}
-
-		// shift noData values into normal pixel-range and set transparancy values for all pixels
-		unsigned nPixels = header.ncols * header.nrows;
-		for (unsigned j = 0; j < nPixels; ++j)
-		{
-			if (values[j*2] == noData)
-			{
-				values[j*2] = max_val;
-				values[j*2+1] = 0;
-			}
-			else
-				values[j*2+1] = max_val;
 		}
 
 		in.close();
@@ -277,12 +248,13 @@ bool VtkRaster::readSurferHeader(ascHeader &header, std::ifstream &in)
 	return true;
 }
 
-float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
+double* VtkRaster::loadDataFromSurfer(const std::string &fileName,
                                    double &x0,
                                    double &y0,
                                    unsigned &width,
                                    unsigned &height,
-                                   double &delta)
+                                   double &delta,
+								   double &no_data)
 {
 	std::ifstream in( fileName.c_str() );
 
@@ -302,11 +274,10 @@ float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
 		height = header.nrows;
 		delta  = header.cellsize;
 
-		float* values = new float[header.ncols * header.nrows * 2];
+		double* values = new double[header.ncols * header.nrows];
 
 		int col_index(0);
 		int noData = -9999;
-		float max_val = noData;
 		std::string s("");
 		// read the file into a double-array
 		for (int j = 0; j < header.nrows; ++j)
@@ -317,24 +288,9 @@ float* VtkRaster::loadDataFromSurfer(const std::string &fileName,
 				in >> s;
 				if (s.compare(header.noData) == 0)
 					s = "-9999";
-				unsigned index = 2*(col_index+i);
-				values[index] = static_cast<float>(strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
-				if (values[index] > max_val)
-					max_val = values[index];
+				unsigned index = col_index+i;
+				values[index] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
 			}
-		}
-
-		// shift noData values into normal pixel-range and set transparancy values for all pixels
-		unsigned nPixels = header.ncols * header.nrows;
-		for (unsigned j = 0; j < nPixels; ++j)
-		{
-			if (values[j*2] == noData)
-			{
-				values[j*2] = max_val;
-				values[j*2+1] = 0;
-			}
-			else
-				values[j*2+1] = max_val;
 		}
 
 		in.close();
