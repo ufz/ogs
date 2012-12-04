@@ -34,24 +34,19 @@ public:
     /// Index representing invalid
     const static std::size_t index_npos = -1;
 
-    /// 
-    virtual ~ISystemOfLinearEquations()
-    {
-    }
-
     /**
-     * create a system of linear equations
+     * Constructor
      *
      * \param dimension    system dimension
      * \param sparsity     sparse pattern
      */
-    virtual void create(size_t dimension,
-            RowMajorSparsity* sparsity = NULL) = 0;
+    ISystemOfLinearEquations(size_t /*dimension*/,
+            RowMajorSparsity* /*sparsity*/ = NULL) {};
 
-    /**
-     * return if this equation is already created
-     */
-    virtual bool isCreated() const = 0;
+    /// 
+    virtual ~ISystemOfLinearEquations()
+    {
+    }
 
     /**
      * set properties
@@ -214,9 +209,6 @@ public:
     /// print out the equation for debugging
     virtual void printout(std::ostream &os = std::cout) const = 0;
 
-protected:
-    /// constructor
-    ISystemOfLinearEquations() {};
 };
 
 }
