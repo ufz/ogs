@@ -55,6 +55,9 @@ OPTION(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
+# Linear solvers
+OPTION(OGS_USE_LIS "Use Lis" OFF)
+
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
