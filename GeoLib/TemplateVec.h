@@ -29,8 +29,8 @@ namespace GeoLib
 template <class T> class TemplateVec
 {
 protected:
-	typedef std::pair<std::string, std::size_t> NameIndexType;
-	typedef std::map<std::string, std::size_t> NameIndexMap;
+	typedef std::pair<std::string, std::size_t> NameIdPair;
+	typedef std::map<std::string, std::size_t> NameIdMap;
 public:
 	/**
 	 * Constructor of class TemlateVec.
@@ -44,11 +44,11 @@ public:
 
 	 */
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
-	             NameIndexMap* elem_name_map = nullptr) :
+	             NameIdMap* elem_name_map = nullptr) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{
 		if (!_name_id_map)
-			_name_id_map = new NameIndexMap;
+			_name_id_map = new NameIdMap;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public:
 	/// Return the name of an element based on its ID.
 	void setNameOfElementByID (std::size_t id, std::string& element_name)
 	{
-		_name_id_map->insert( NameIndexType(element_name, id) );
+		_name_id_map->insert(NameIdPair(element_name, id));
 	}
 
 	/**
@@ -161,7 +161,7 @@ public:
 		if (!name || name->empty())
 			return;
 
-		_name_id_map->insert (NameIndexType(*name, _data_vec->size() - 1));
+		_name_id_map->insert(NameIdPair(*name, _data_vec->size() - 1));
 	}
 
 	/// Sets the given name for the element of the given ID.
@@ -174,17 +174,17 @@ public:
 
 		if (!name.empty()) {
 			//insert new or revised name
-			_name_id_map->insert(NameIndexType(name, id));
+			_name_id_map->insert(NameIdPair(name, id));
 		}
 	}
 
 private:
 
-	NameIndexMap::const_iterator
+	NameIdMap::const_iterator
 	findFirstElementByID(std::size_t const& id) const
 	{
 		return std::find_if(_name_id_map->begin(), _name_id_map->end(),
-			[id](NameIndexType const& elem) { return elem.second == id; });
+			[id](NameIdPair const& elem) { return elem.second == id; });
 	}
 
 protected:
@@ -205,7 +205,7 @@ protected:
 	/**
 	 * store names associated with the element ids
 	 */
-	NameIndexMap* _name_id_map;
+	NameIdMap* _name_id_map;
 };
 } // end namespace GeoLib
 
