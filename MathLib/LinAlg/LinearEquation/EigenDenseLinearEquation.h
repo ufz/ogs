@@ -16,7 +16,7 @@
 #include <vector>
 #include <Eigen>
 
-#include "ILinearEquation.h"
+#include "ISystemOfLinearEquations.h"
 
 
 namespace MathLib
@@ -25,7 +25,7 @@ namespace MathLib
 /**
  * \brief Dense linear equation using Eigen library
  */
-class EigenDenseLinearEquation : public ILinearEquation
+class EigenDenseLinearEquation : public ISystemOfLinearEquations
 {
 public:
     //---------------------------------------------------------------
@@ -50,7 +50,7 @@ public:
     virtual ~EigenDenseLinearEquation() {};
 
     //---------------------------------------------------------------
-    // realization of ILinearEquation
+    // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
     virtual void create(size_t length, RowMajorSparsity* /*sp*/=NULL);
 

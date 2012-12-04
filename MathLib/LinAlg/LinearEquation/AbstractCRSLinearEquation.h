@@ -19,7 +19,7 @@
 #include "BaseLib/CodingTools.h"
 
 #include "MathLib/LinAlg/Sparse/CRSMatrix.h"
-#include "ILinearEquation.h"
+#include "ISystemOfLinearEquations.h"
 
 namespace MathLib
 {
@@ -30,7 +30,7 @@ namespace MathLib
  * \tparam IDX_TYPE     Index data type, i.e. signed or unsigned
  */
 template<typename IDX_TYPE>
-class AbstractCRSLinearEquation : public ILinearEquation
+class AbstractCRSLinearEquation : public ISystemOfLinearEquations
 {
 public:
     //---------------------------------------------------------------
@@ -55,7 +55,7 @@ public:
     }
 
     //---------------------------------------------------------------
-    // realization of ILinearEquation
+    // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
     /**
      * create a linear equation 
