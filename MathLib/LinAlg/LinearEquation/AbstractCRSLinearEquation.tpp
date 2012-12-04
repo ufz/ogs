@@ -5,28 +5,25 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file AbstractCRSLinearEquation.cpp
+ * \file AbstractCRSLinearEquation.tpp
  *
  * Created on 2012-06-25 by Norihiro Watanabe
  */
-
-#include "AbstractCRSLinearEquation.h"
 
 #include <algorithm>
 
 namespace MathLib
 {
-template class AbstractCRSLinearEquation<signed>;
-template class AbstractCRSLinearEquation<unsigned>;
-
-template<typename IDX_TYPE> void AbstractCRSLinearEquation<IDX_TYPE>::create(size_t length, RowMajorSparsity *sparsity)
+template<typename IDX_TYPE>
+AbstractCRSLinearEquation<IDX_TYPE>::AbstractCRSLinearEquation(size_t length, RowMajorSparsity* sp)
+: ISystemOfLinearEquations(length, sp)
 {
     std::size_t dim = 0;
     std::size_t nonzero = 0;
     IDX_TYPE* row_ptr = nullptr;
     IDX_TYPE* col_idx = nullptr;
     double* data = nullptr;
-    convertRowMajorSparsityToCRS<IDX_TYPE>(*sparsity, dim, row_ptr, col_idx, nonzero, data);
+    convertRowMajorSparsityToCRS<IDX_TYPE>(*sp, dim, row_ptr, col_idx, nonzero, data);
     assert (length == dim);
     _A = new CRSMatrix<double, IDX_TYPE>(dim, row_ptr, col_idx, data);
     _b.resize(length);
