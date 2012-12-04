@@ -13,9 +13,9 @@ INCLUDE_DIRECTORIES(
 
 # Create the executable
 ADD_EXECUTABLE( MeshRead
-        MeshRead.cpp
-        ${SOURCES}
-        ${HEADERS}
+	MeshRead.cpp
+	${SOURCES}
+	${HEADERS}
 )
 
 TARGET_LINK_LIBRARIES ( MeshRead
@@ -26,13 +26,14 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	GeoLib
 	logog
 	${ADDITIONAL_LIBS}
+	${Boost_LIBRARIES}
 )
 
 # Create CollapseMeshNodes executable
 ADD_EXECUTABLE( CollapseMeshNodes
-        CollapseMeshNodes.cpp
-        ${SOURCES}
-        ${HEADERS}
+	CollapseMeshNodes.cpp
+	${SOURCES}
+	${HEADERS}
 )
 
 TARGET_LINK_LIBRARIES ( CollapseMeshNodes
@@ -42,13 +43,14 @@ TARGET_LINK_LIBRARIES ( CollapseMeshNodes
 	BaseLib
 	GeoLib
 	logog
+	${Boost_LIBRARIES}
 )
 
 # Create MeshSearchTest executable
 ADD_EXECUTABLE( MeshSearchTest
-        MeshSearchTest.cpp
-        ${SOURCES}
-        ${HEADERS}
+	MeshSearchTest.cpp
+	${SOURCES}
+	${HEADERS}
 )
 
 TARGET_LINK_LIBRARIES ( MeshSearchTest
@@ -59,5 +61,5 @@ TARGET_LINK_LIBRARIES ( MeshSearchTest
 	GeoLib
 	logog
 	${ADDITIONAL_LIBS}
+	${Boost_LIBRARIES}
 )
-
