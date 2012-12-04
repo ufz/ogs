@@ -25,31 +25,29 @@ void convertRowMajorSparsityToCRS(const RowMajorSparsity &row_major_entries, std
     assert(n_rows > 0);
     if (n_rows==0) return;
 
-    //get number of nonzero
+    // get the number of nonzero entries and store the locations in the nonzero
+    // vector that start a row
+    nonzero = 0;
     row_ptr = new INTTYPE[n_rows+1];
-    std::vector<INTTYPE> vec_col_idx;
-    size_t counter_ptr = 0;
-    size_t cnt_row = 0;
+    for (std::size_t i=0; i<n_rows; i++) {
+        row_ptr[i] = nonzero;         // starting point of the row
+        nonzero += row_major_entries[i].size(); // entries at the i th row
+    }
+    row_ptr[n_rows] = nonzero;
 
-    for (size_t i=0; i<n_rows; i++) {
-        row_ptr[cnt_row++] = counter_ptr;         // starting point of the row
-
-        // entries at the i th row
-        const std::set<size_t> &setConnection = row_major_entries[i];
-        //
-        for (std::set<size_t>::iterator it=setConnection.begin(); it!=setConnection.end(); it++) {
-            vec_col_idx.push_back(*it);
-            ++counter_ptr;
+    // store column indexes of nonzero entries
+    col_idx = new INTTYPE[nonzero];
+    size_t cnt_entries = 0;
+    for (std::size_t i=0; i<n_rows; i++) {
+        const std::set<std::size_t> &setConnection = row_major_entries[i];
+        for (std::set<std::size_t>::iterator it=setConnection.begin(); it!=setConnection.end(); ++it) {
+            col_idx[cnt_entries++] = *it;
         }
     }
 
-    row_ptr[n_rows] = counter_ptr;
-    nonzero = vec_col_idx.size();
-    col_idx = new INTTYPE[vec_col_idx.size()];
-    for (size_t i=0; i<nonzero; i++)
-        col_idx[i] = vec_col_idx[i];
+    // allocate memory for nonzero entries
     data = new double[nonzero];
-    for (size_t i=0; i<nonzero; i++)
+    for (std::size_t i=0; i<nonzero; i++)
         data[i] = .0;
 }
 
