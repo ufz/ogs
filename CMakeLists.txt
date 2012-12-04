@@ -58,6 +58,9 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
+# Compiler flags
+SET(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
+
 # Search paths
 SET(OGS_LIBS_DIR "" CACHE PATH "The path to the compiled third party libs (mainly used for Windows).")
 

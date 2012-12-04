@@ -15,6 +15,9 @@ ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     SET(COMPILER_IS_MSVC TRUE)
 ENDIF () # CMAKE_CXX_COMPILER_ID
 
+# Set additional user-given compiler flags
+SET(CMAKE_CXX_FLAGS ${OGS_CXX_FLAGS})
+
 ### GNU C/CXX compiler
 IF(COMPILER_IS_GCC)
 		get_gcc_version(GCC_VERSION)
