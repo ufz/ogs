@@ -5,7 +5,7 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file ILinearEquation.h
+ * \file ISystemOfLinearEquations.h
  *
  * Created on 2012-06-25 by Norihiro Watanabe
  */
@@ -221,6 +221,6 @@ protected:
 
 }
 
-#include "ILinearEquation.tpp"
+#include "ISystemOfLinearEquations.tpp"
 
 #endif //ILINEAREQUATION_H_
