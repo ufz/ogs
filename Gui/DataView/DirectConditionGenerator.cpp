@@ -11,12 +11,13 @@
 
 #include "DirectConditionGenerator.h"
 
-#include "VtkRaster.h"
+#include "Raster.h"
 #include "MshEditor.h"
 #include "PointWithID.h"
 #include "Mesh.h"
 
 #include <cmath>
+#include <fstream>
 #include <limits>
 
 const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
@@ -26,7 +27,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		double origin_x(0), origin_y(0), delta(0), no_data(-9999);
 		unsigned imgwidth(0), imgheight(0);
 
-		double* img = VtkRaster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta, no_data);
+		double* img = Raster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta, no_data);
 		if (img == 0)
 		{
 			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;

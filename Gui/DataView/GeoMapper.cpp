@@ -15,7 +15,7 @@
 #include "Node.h"
 #include "MshEditor.h"
 #include "PointWithID.h"
-#include "VtkRaster.h"
+#include "Raster.h"
 #include "readMeshFromFile.h"
 
 
@@ -33,7 +33,7 @@ GeoMapper::~GeoMapper()
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
 	double no_data(-9999);
-	_img_data = VtkRaster::loadDataFromASC(file_name, _origin_x, _origin_y, _width, _height, _cellsize, no_data);
+	_img_data = Raster::loadDataFromASC(file_name, _origin_x, _origin_y, _width, _height, _cellsize, no_data);
 	this->mapData();
 }
 

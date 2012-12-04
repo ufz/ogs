@@ -10,7 +10,7 @@
  */
 
 #include "MshLayerMapper.h"
-#include "VtkRaster.h"
+#include "Raster.h"
 
 #include "Mesh.h"
 #include "Node.h"
@@ -112,7 +112,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 	{
 		double x0(0), y0(0), delta(1), no_data(-9999);
 		unsigned width(1), height(1);
-		double* elevation = VtkRaster::loadDataFromASC(rasterfile, x0, y0, width,height, delta, no_data);
+		double* elevation = Raster::loadDataFromASC(rasterfile, x0, y0, width,height, delta, no_data);
 
 		if (elevation == NULL)
 		{

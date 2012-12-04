@@ -213,7 +213,7 @@ void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_e
 		}
 	}
 	else
-		ERROR ("Cannot handle meshes of dimension %i", mesh_dimension);
+		ERR ("Cannot handle meshes of dimension %i", mesh_dimension);
 }
 
 void MshEditor::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map)
