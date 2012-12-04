@@ -7,11 +7,13 @@ ENDIF()
 APPEND_SOURCE_FILES(TEST_SOURCES)
 APPEND_SOURCE_FILES(TEST_SOURCES BaseLib)
 APPEND_SOURCE_FILES(TEST_SOURCES GeoLib)
+APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/Tests/gtest
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/GeoLib
+	${CMAKE_SOURCE_DIR}/MathLib
 )
 
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
@@ -21,9 +23,14 @@ TARGET_LINK_LIBRARIES(testrunner
 	GTest
 	BaseLib
 	GeoLib
+	MathLib
+	logog
 	${Boost_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 )
+IF(OGS_USE_LIS)
+    TARGET_LINK_LIBRARIES( testrunner ${LIS_LIBRARIES} )
+ENDIF()
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
