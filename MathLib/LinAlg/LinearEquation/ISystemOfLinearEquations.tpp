@@ -10,6 +10,9 @@
  * Created on 2012-06-25 by Norihiro Watanabe
  */
 
+#ifndef ISYSTEMOFLINEAREQUATIONS_TPP_
+#define ISYSTEMOFLINEAREQUATIONS_TPP_
+
 namespace MathLib
 {
 
@@ -55,3 +58,6 @@ void ISystemOfLinearEquations::addSubRHS(const std::vector<std::size_t> &vec_row
 }
 
 }
+
+#endif //ISYSTEMOFLINEAREQUATIONS_TPP_
+

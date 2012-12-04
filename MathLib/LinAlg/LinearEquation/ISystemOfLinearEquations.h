@@ -10,8 +10,8 @@
  * Created on 2012-06-25 by Norihiro Watanabe
  */
 
-#ifndef ILINEAREQUATION_H_
-#define ILINEAREQUATION_H_
+#ifndef ISYSTEMOFLINEAREQUATIONS_H_
+#define ISYSTEMOFLINEAREQUATIONS_H_
 
 #include <iostream>
 #include <vector>
@@ -215,4 +215,4 @@ public:
 
 #include "ISystemOfLinearEquations.tpp"
 
-#endif //ILINEAREQUATION_H_
+#endif //ISYSTEMOFLINEAREQUATIONS_H_
