@@ -29,15 +29,11 @@
 namespace GeoLib
 {
 Polygon::Polygon(const Polyline &ply, bool init) :
-	Polyline (ply)
+	Polyline(ply), _aabb(ply.getPointsVec(), ply.getIDVec())
 {
 	if (init)
 		initialise ();
 }
-
-Polygon::Polygon (const std::vector<Point*>& pnt_vec) :
-	Polyline (pnt_vec)
-{}
 
 Polygon::~Polygon()
 {
@@ -52,7 +48,6 @@ Polygon::~Polygon()
 bool Polygon::initialise ()
 {
 	if (this->isClosed()) {
-		calculateAABB();
 		ensureCWOrientation();
 		return true;
 	} else {
@@ -232,13 +227,6 @@ EdgeType::value Polygon::getEdgeType (size_t k, GeoLib::Point const & pnt) const
 	default:
 		return EdgeType::INESSENTIAL;
 	}
-}
-
-void Polygon::calculateAABB ()
-{
-	size_t n_nodes (getNumberOfPoints());
-	for (size_t k(0); k < n_nodes; k++)
-		_aabb.update ((*(getPoint(k))));
 }
 
 void Polygon::ensureCWOrientation ()

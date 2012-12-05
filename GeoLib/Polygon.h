@@ -121,7 +121,6 @@ private:
 	 */
 	EdgeType::value getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
 
-	void calculateAABB ();
 	void ensureCWOrientation ();
 
 	void splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_it);
