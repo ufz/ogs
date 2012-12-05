@@ -28,7 +28,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 	 int n (rand() % 100000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
-	 int minus_half_box_size(-1.0 * half_box_size);
+	 int minus_half_box_size(-half_box_size);
 
 	 // fill list with points
 	 std::list<GeoLib::Point*> pnts_list;
@@ -61,7 +61,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 	 int n (rand() % 1000000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
-	 int minus_half_box_size(-1.0 * half_box_size);
+	 int minus_half_box_size(-half_box_size);
 
 	 // fill list with points
 	 std::list<GeoLib::Point> pnts_list;
@@ -90,7 +90,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 	 int n (rand() % 100000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
-	 int minus_half_box_size(-1.0 * half_box_size);
+	 int minus_half_box_size(-half_box_size);
 
 	 // fill list with points
 	 std::vector<GeoLib::Point*> pnts;
@@ -123,7 +123,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 	 int n (rand() % 1000000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
-	 int minus_half_box_size(-1.0 * half_box_size);
+	 int minus_half_box_size(-half_box_size);
 
 	 // fill list with points
 	 std::list<GeoLib::Point> pnts;
@@ -156,9 +156,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
 	 int half_box_size_x(box_size_x/2);
 	 int half_box_size_y(box_size_y/2);
 	 int half_box_size_z(box_size_z/2);
-	 int minus_half_box_size_x(-1.0 * half_box_size_x);
-	 int minus_half_box_size_y(-1.0 * half_box_size_y);
-	 int minus_half_box_size_z(-1.0 * half_box_size_z);
+	 int minus_half_box_size_x(-half_box_size_x);
+	 int minus_half_box_size_y(-half_box_size_y);
+	 int minus_half_box_size_z(-half_box_size_z);
 
 	 // fill list with points
 	 std::list<GeoLib::Point> pnts;
