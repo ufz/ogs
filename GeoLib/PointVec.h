@@ -139,7 +139,6 @@ private:
 	 */
 	double _sqr_shortest_dist;
 
-	void calculateAABB ();
 	AABB<GeoLib::Point> _aabb;
 };
 } // end namespace
