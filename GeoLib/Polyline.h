@@ -153,6 +153,8 @@ public:
 	 */
 	const std::vector<double>& getLengthVec () const;
 
+	std::vector<std::size_t> const& getIDVec() const { return _ply_pnt_ids; }
+
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
 	/**
