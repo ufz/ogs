@@ -50,6 +50,7 @@ public:
 class Polyline : public GeoObject
 {
 public:
+	friend class Polygon;
 	/** constructor
 	 * \param pnt_vec a reference to the point vector
 	 */
@@ -58,7 +59,7 @@ public:
 	 * Copy constructor
 	 * @param ply Polyline
 	 */
-	Polyline (const Polyline& ply);
+	Polyline(const Polyline& ply);
 
 	virtual ~Polyline() {}
 
@@ -152,8 +153,6 @@ public:
 	 * @return the length vector of the polyline
 	 */
 	const std::vector<double>& getLengthVec () const;
-
-	std::vector<std::size_t> const& getIDVec() const { return _ply_pnt_ids; }
 
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:

@@ -29,7 +29,7 @@
 namespace GeoLib
 {
 Polygon::Polygon(const Polyline &ply, bool init) :
-	Polyline(ply), _aabb(ply.getPointsVec(), ply.getIDVec())
+	Polyline(ply), _aabb(ply.getPointsVec(), ply._ply_pnt_ids)
 {
 	if (init)
 		initialise ();
