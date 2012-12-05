@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <iterator>
 #include <cassert>
+#include <vector>
 
 #include "Point.h"
 
@@ -36,10 +37,15 @@ public:
 	/**
 	 * construction of object, initialization the axis aligned bounding box
 	 * */
-	AABB() :
+	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids) :
 		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
 		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
-	{}
+	{
+		assert(! ids.empty());
+		for (auto i : ids) {
+			update(*(pnts[i]));
+		}
+	}
 
 	/**
 	 * copy constructor.
