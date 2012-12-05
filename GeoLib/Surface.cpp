@@ -24,7 +24,7 @@
 namespace GeoLib {
 
 Surface::Surface (const std::vector<Point*> &pnt_vec) :
-	GeoObject(), _sfc_pnts(pnt_vec), _bv()
+	GeoObject(), _sfc_pnts(pnt_vec), _bv(nullptr)
 {}
 
 Surface::~Surface ()
@@ -41,9 +41,16 @@ void Surface::addTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 	if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c) return;
 
 	_sfc_triangles.push_back (new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
-	_bv.update (*_sfc_pnts[pnt_a]);
-	_bv.update (*_sfc_pnts[pnt_b]);
-	_bv.update (*_sfc_pnts[pnt_c]);
+	if (_bv == nullptr) {
+		std::vector<std::size_t> ids(3);
+		ids.push_back(pnt_a);
+		ids.push_back(pnt_b);
+		ids.push_back(pnt_c);
+		_bv = new AABB<Point>(_sfc_pnts, ids);
+	}
+	_bv->update (*_sfc_pnts[pnt_a]);
+	_bv->update (*_sfc_pnts[pnt_b]);
+	_bv->update (*_sfc_pnts[pnt_c]);
 }
 
 Surface* Surface::createSurface(const Polyline &ply)
@@ -99,7 +106,7 @@ const Triangle* Surface::operator[] (size_t i) const
 
 bool Surface::isPntInBV (const double *pnt) const
 {
-	return _bv.containsPoint (pnt);
+	return _bv->containsPoint (pnt);
 }
 
 bool Surface::isPntInSfc (const double *pnt) const
