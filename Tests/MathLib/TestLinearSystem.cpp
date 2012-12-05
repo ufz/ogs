@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 #include <boost/property_tree/ptree.hpp>
 
+#include "MathLib/LinAlg/Sparse/Sparsity.h"
 #ifdef USE_LIS
 #include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearSystem.h"
 #endif
