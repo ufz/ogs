@@ -35,25 +35,25 @@ int main(int argc, char* argv[])
 {
     int ret = 0;
     LOGOG_INITIALIZE();
-    try {
-        logog::Cout out;
-        FormatterCustom custom_format;
-        out.SetFormatter(custom_format);
+    logog::Cout out;
+    FormatterCustom custom_format;
+    out.SetFormatter(custom_format);
 
+    try {
 #ifdef USE_LIS
         lis_initialize(&argc, &argv);
 #endif
         testing::InitGoogleTest ( &argc, argv );
         ret = RUN_ALL_TESTS();
     } catch (char* e) {
-        std::cerr << e << std::endl;
+        ERR(e);
     } catch (std::exception& e) {
-        std::cerr << e.what() << std::endl;
+        ERR(e.what());
     } catch (...) {
-        std::cerr << "Unknown exception occurred!" << std::endl;
+        ERR("Unknown exception occurred!");
     }
 #ifdef USE_LIS
-        lis_finalize();
+    lis_finalize();
 #endif
     LOGOG_SHUTDOWN();
 
