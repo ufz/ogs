@@ -68,15 +68,6 @@ public:
     virtual std::size_t getDimension() const = 0;
 
     /**
-     * get an entry in a matrix
-     *
-     * @param rowId
-     * @param colId
-     * @return value
-     */
-    virtual double getMatEntry(std::size_t rowId, std::size_t colId) const = 0;
-
-    /**
      * set an entry in a matrix
      *
      * @param rowId
