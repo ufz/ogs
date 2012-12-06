@@ -13,33 +13,21 @@
 // ** INCLUDES **
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
-#include "logog/include/formatter.hpp"
 #ifdef USE_LIS
 #include "lis.h"
 #endif
-
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
+#include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])
 {
     int ret = 0;
     LOGOG_INITIALIZE();
-    logog::Cout out;
-    FormatterCustom custom_format;
-    out.SetFormatter(custom_format);
 
     try {
+        logog::Cout out;
+        BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
+        out.SetFormatter(custom_format);
 #ifdef USE_LIS
         lis_initialize(&argc, &argv);
 #endif
