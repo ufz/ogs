@@ -57,19 +57,11 @@ public:
      */
     virtual void setOption(const boost::property_tree::ptree &option);
 
-
     /// return the system dimension
     virtual std::size_t getDimension() const { return _dim; };
 
     /// reset this equation
     virtual void setZero();
-
-    /// get entry in A
-    virtual double getMatEntry(std::size_t rowId, std::size_t colId) const
-    {
-        //TODO
-        return .0;
-    }
 
     /// set entry in A
     virtual void setMatEntry(std::size_t rowId, std::size_t colId, double v)
