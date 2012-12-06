@@ -67,7 +67,6 @@
 #include "MeshIO/GMSHInterface.h"
 #include "MeshIO/TetGenInterface.h"
 #include "PetrelInterface.h"
-#include "RapidXmlIO/RapidVtuInterface.h"
 #include "XmlIO/XmlCndInterface.h"
 #include "XmlIO/XmlGmlInterface.h"
 #include "XmlIO/XmlGspInterface.h"
