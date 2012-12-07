@@ -47,30 +47,28 @@ void LisLinearSystem::setOption(const boost::property_tree::ptree &option)
     using boost::property_tree::ptree;
 
     boost::optional<ptree> ptSolver = option.get_child("LinearSolver");
-    if (!ptSolver.is_initialized())
+    if (!ptSolver)
         return;
 
-    ptree op = ptSolver.get();
-
-    boost::optional<std::string> solver_type = op.get_optional<std::string>("solver_type");
-    if (solver_type.is_initialized()) {
-        _option.solver_type = _option.getSolverType(solver_type.get());
+    boost::optional<std::string> solver_type = ptSolver->get_optional<std::string>("solver_type");
+    if (solver_type) {
+        _option.solver_type = _option.getSolverType(*solver_type);
     }
-    boost::optional<std::string> precon_type = op.get_optional<std::string>("precon_type");
-    if (precon_type.is_initialized()) {
-        _option.precon_type = _option.getPreconType(precon_type.get());
+    boost::optional<std::string> precon_type = ptSolver->get_optional<std::string>("precon_type");
+    if (precon_type) {
+        _option.precon_type = _option.getPreconType(*precon_type);
     }
-    boost::optional<std::string> matrix_type = op.get_optional<std::string>("matrix_type");
+    boost::optional<std::string> matrix_type = ptSolver->get_optional<std::string>("matrix_type");
     if (matrix_type) {
-        _option.matrix_type = _option.getMatrixType(matrix_type.get());
+        _option.matrix_type = _option.getMatrixType(*matrix_type);
     }
-    boost::optional<double> error_tolerance = op.get_optional<double>("error_tolerance");
-    if (error_tolerance.is_initialized()) {
-        _option.error_tolerance = error_tolerance.get();
+    boost::optional<double> error_tolerance = ptSolver->get_optional<double>("error_tolerance");
+    if (error_tolerance) {
+        _option.error_tolerance = *error_tolerance;
     }
-    boost::optional<int> max_iteration_step = op.get_optional<int>("max_iteration_step");
-    if (max_iteration_step.is_initialized()) {
-        _option.max_iterations = max_iteration_step.get();
+    boost::optional<int> max_iteration_step = ptSolver->get_optional<int>("max_iteration_step");
+    if (max_iteration_step) {
+        _option.max_iterations = *max_iteration_step;
     }
 }
 
