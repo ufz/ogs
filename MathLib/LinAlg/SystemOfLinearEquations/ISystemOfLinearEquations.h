@@ -37,11 +37,14 @@ public:
     /**
      * Constructor
      *
-     * \param dimension    system dimension
-     * \param sparsity     sparse pattern
+     * @param dimension
+     *  A dimension of the linear system, i.e. the number of linear equations.
+     * @param sparsity
+     *  A pointer to a row-major sparse pattern. The sparse pattern can be
+     *  used in linear systems based on sparse matrices.
      */
     ISystemOfLinearEquations(std::size_t /*dimension*/,
-            RowMajorSparsity* /*sparsity*/ = NULL) {};
+            RowMajorSparsity* /*sparsity*/ = nullptr) {};
 
     /// 
     virtual ~ISystemOfLinearEquations()
@@ -146,8 +149,10 @@ public:
      * @param vec_row_pos
      *  A vector of global row index. The number of entries of vec_row_pos
      *  have to be identical to the number of rows of the sub vector.
-     * @param sub_vector    Pointer to a sub-vector
-     * @param fac           Scaling parameter
+     * @param sub_vector
+     *  Pointer to a sub-vector. Its length must be the same as the length of vec_row_pos.
+     * @param fac
+     *  Scaling parameter. Default value is 1.
      */
     inline virtual void addSubRHS(const std::vector<std::size_t> &vec_row_pos,
             const double* sub_vector, double fac = 1.0);
