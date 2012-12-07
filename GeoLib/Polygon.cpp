@@ -386,14 +386,14 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 				std::swap (idx0, idx1);
 
 			// create two closed polylines
-			GeoLib::Polygon* polygon0 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
+			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(*(*polygon_it)));
 			for (size_t k(0); k <= idx0; k++)
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			for (size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			polygon0->initialise();
 
-			GeoLib::Polygon* polygon1 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
+			GeoLib::Polygon* polygon1 (new GeoLib::Polygon(*(*polygon_it)));
 			for (size_t k(idx0); k <= idx1; k++)
 				polygon1->addPoint ((*polygon_it)->getPointID (k));
 			polygon1->initialise();
