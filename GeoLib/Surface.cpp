@@ -49,7 +49,7 @@ void Surface::addTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 Surface* Surface::createSurface(const Polyline &ply)
 {
 	if (!ply.isClosed()) {
-		std::cout << "Error in Surface::createSurface() - Polyline is not closed..." << std::cout;
+		std::cout << "Error in Surface::createSurface() - Polyline is not closed..." << std::endl;
 		return NULL;
 	}
 
@@ -80,7 +80,7 @@ Surface* Surface::createSurface(const Polyline &ply)
 		delete polygon;
 		return sfc;
 	} else {
-		std::cout << "Error in Surface::createSurface() - Polyline consists of less than three points and therefore cannot be triangulated..." << std::cout;
+		std::cout << "Error in Surface::createSurface() - Polyline consists of less than three points and therefore cannot be triangulated..." << std::endl;
 		return NULL;
 	}
 
