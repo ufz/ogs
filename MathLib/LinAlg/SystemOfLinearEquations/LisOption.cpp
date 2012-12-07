@@ -27,7 +27,7 @@ LisOption::LisOption()
 LisOption::SolverType LisOption::getSolverType(const std::string &solver_name)
 {
 #define RETURN_SOLVER_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (str.compare(#TypeName)==0) return SolverType::TypeName;
+    if (#TypeName==str) return SolverType::TypeName;
 
     RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CG);
     RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCG);
@@ -59,7 +59,7 @@ LisOption::SolverType LisOption::getSolverType(const std::string &solver_name)
 LisOption::PreconType LisOption::getPreconType(const std::string &precon_name)
 {
 #define RETURN_PRECOM_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (str.compare(#TypeName)==0) return PreconType::TypeName;
+    if (#TypeName==str) return PreconType::TypeName;
 
     RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, NONE);
     RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, JACOBI);
@@ -79,7 +79,7 @@ LisOption::PreconType LisOption::getPreconType(const std::string &precon_name)
 LisOption::MatrixType LisOption::getMatrixType(const std::string &matrix_name)
 {
 #define RETURN_MATRIX_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (str.compare(#TypeName)==0) return MatrixType::TypeName;
+    if (#TypeName==str) return MatrixType::TypeName;
 
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, CRS);
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, CCS);
