@@ -12,6 +12,8 @@
 
 #include "LisLinearSystem.h"
 
+#include <string>
+#include <sstream>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -30,16 +32,21 @@ bool LisLinearSystem::checkError(int err)
 }
 
 LisLinearSystem::LisLinearSystem(std::size_t dimension, RowMajorSparsity* /*sp*/)
-: _dim(dimension), _is_initialized(false), _max_diag_coeff(0)
+: _dim(dimension), _max_diag_coeff(.0)
 {
-    setZero();
+    int ierr = 0;
+    ierr = lis_matrix_create(0, &_AA); checkError(ierr);
+    ierr = lis_matrix_set_size(_AA, 0, dimension); checkError(ierr);
+    ierr = lis_vector_duplicate(_AA, &_bb); checkError(ierr);
+    ierr = lis_vector_duplicate(_AA, &_xx); checkError(ierr);
 }
 
 LisLinearSystem::~LisLinearSystem()
 {
-    lis_matrix_destroy(_AA);
-    lis_vector_destroy(_bb);
-    lis_vector_destroy(_xx);
+    int ierr = 0;
+    ierr = lis_matrix_destroy(_AA); checkError(ierr);
+    ierr = lis_vector_destroy(_bb); checkError(ierr);
+    ierr = lis_vector_destroy(_xx); checkError(ierr);
 }
 
 void LisLinearSystem::setOption(const boost::property_tree::ptree &option)
@@ -75,32 +82,14 @@ void LisLinearSystem::setOption(const boost::property_tree::ptree &option)
 void LisLinearSystem::setZero()
 {
     int ierr = 0;
-    // create a matrix
-    if (_is_initialized) {
-        // Matrix has to be removed and created every time because Lis doesn't provide a
-        // function to set matrix entries to zero
-        ierr = lis_matrix_destroy(_AA);
-    }
-#ifndef USE_MPI
-    ierr = lis_matrix_create(0, &_AA);
-    ierr = lis_matrix_set_size(_AA, 0, getDimension());
-#else
-    lis_matrix_create(MPI_COMM_WORLD, &_AA);
-    lis_matrix_set_size(_AA, dimension, 0);
-//    lis_matrix_get_range(A,&is,&ie);
-#endif
-    checkError(ierr);
-
-    // crate or zero RHS, x
-    if (!_is_initialized) {
-        ierr = lis_vector_duplicate(_AA, &_bb);
-        ierr = lis_vector_duplicate(_AA, &_xx);
-        _is_initialized = true;
-    } else {
-        ierr = lis_vector_set_all(0.0, _bb);
-        ierr = lis_vector_set_all(0.0, _xx);
-    }
-    checkError(ierr);
+    // A matrix has to be removed and created every time because Lis doesn't provide a
+    // function to set matrix entries to zero
+    ierr = lis_matrix_destroy(_AA); checkError(ierr);
+    ierr = lis_matrix_create(0, &_AA); checkError(ierr);
+    ierr = lis_matrix_set_size(_AA, 0, getDimension()); checkError(ierr);
+    // set zero RHS, x
+    ierr = lis_vector_set_all(0.0, _bb); checkError(ierr);
+    ierr = lis_vector_set_all(0.0, _xx); checkError(ierr);
 
     _max_diag_coeff = .0;
 }
@@ -116,10 +105,9 @@ void LisLinearSystem::applyKnownSolution()
     for (std::size_t i_bc=0; i_bc<n_bc; i_bc++) {
         const std::size_t rowId = _vec_knownX_id[i_bc];
         const double x = _vec_knownX_x[i_bc];
-
-        //A(k, k) = epsilon
+        //A(k, k) = penalty
         setMatEntry(rowId, rowId, penalty);
-        //b(k) = x*epsilon
+        //b(k) = x*penalty
         setRHSVec(rowId, x*penalty);
     }
 }
@@ -131,52 +119,62 @@ void LisLinearSystem::solve()
 #ifdef _OPENMP
     INFO("-> max number of threads = %d", omp_get_num_procs());
     INFO("-> number of threads = %d", omp_get_max_threads());
-    const int nthreads = omp_get_max_threads();
-#else
-    const int nthreads = 1;
 #endif
-
-    int ierr = 0;
 
     applyKnownSolution();
     // assemble a matrix
-    ierr = lis_matrix_set_type(_AA, static_cast<int>(_option.matrix_type));
-    ierr = lis_matrix_assemble(_AA);
-    checkError(ierr);
+    int ierr = 0;
+    ierr = lis_matrix_set_type(_AA, static_cast<int>(_option.matrix_type)); checkError(ierr);
+    ierr = lis_matrix_assemble(_AA); checkError(ierr);
 
     // configure option
-    const std::size_t MAX_ZEILE = 512;
-    char solver_options[MAX_ZEILE], tol_option[MAX_ZEILE];
-    if (_option.solver_precon_arg.length()==0) {
-        sprintf(solver_options, "-i %d -p %d %s ", static_cast<int>(_option.solver_type), static_cast<int>(_option.precon_type), _option.extra_arg.c_str());
+    std::string solver_options;
+    if (_option.solver_precon_arg.empty()) {
+        std::stringstream ss;
+        ss << "-i " << static_cast<int>(_option.solver_type);
+        ss << " -p " << static_cast<int>(_option.precon_type);
+        if (!_option.extra_arg.empty())
+            ss << " " << _option.extra_arg;
+        solver_options = ss.str();
     } else {
-        sprintf(solver_options, "%s ", _option.solver_precon_arg.c_str());
+        solver_options = _option.solver_precon_arg;
     }
-    sprintf(tol_option, "-tol %e -maxiter %ld -omp_num_threads %d -initx_zeros 0", _option.error_tolerance, _option.max_iterations, nthreads);
+    std::string tol_option;
+    {
+        std::stringstream ss;
+        ss << "-tol " << _option.error_tolerance;
+        ss << " -maxiter " << _option.max_iterations;
+        ss << " -initx_zeros 0"; //0: use given x as initial guess, 1: x0=0
+#ifdef _OPENMP
+        const int nthreads = omp_get_max_threads();
+        ss << " -omp_num_threads " << nthreads;
+#endif
+        tol_option = ss.str();
+    }
 
     // Create solver
     LIS_SOLVER solver;
-    ierr = lis_solver_create(&solver);
-    ierr = lis_solver_set_option(solver_options, solver);
-    ierr = lis_solver_set_option(tol_option, solver);
-    ierr = lis_solver_set_option((char*)"-print mem", solver);
+    ierr = lis_solver_create(&solver); checkError(ierr);
+    ierr = lis_solver_set_option(const_cast<char*>(solver_options.c_str()), solver); checkError(ierr);
+    ierr = lis_solver_set_option(const_cast<char*>(tol_option.c_str()), solver); checkError(ierr);
+    ierr = lis_solver_set_option(const_cast<char*>("-print mem"), solver); checkError(ierr);
     
     // solve
     INFO("-> solve");
-    ierr = lis_solve(_AA, _bb, _xx, solver);
+    ierr = lis_solve(_AA, _bb, _xx, solver); checkError(ierr);
     checkError(ierr);
     //lis_output(_AA, _bb, _xx, LIS_FMT_MM, "/home/localadmin/tasks/20120814_ogs6test/matrix1.txt");
 
     int iter = 0;
     double resid = 0.0;
-    ierr = lis_solver_get_iters(solver, &iter);
-    ierr = lis_solver_get_residualnorm(solver, &resid);
-    printf("\t iteration: %d/%ld\n", iter, _option.max_iterations);
-    printf("\t residuals: %e\n", resid);
+    ierr = lis_solver_get_iters(solver, &iter); checkError(ierr);
+    ierr = lis_solver_get_residualnorm(solver, &resid); checkError(ierr);
+    INFO("\t iteration: %d/%ld\n", iter, _option.max_iterations);
+    INFO("\t residuals: %e\n", resid);
 
     // Clear solver
-    lis_solver_destroy(solver);
-    std::cout << "------------------------------------------------------------------" << std::endl;
+    ierr = lis_solver_destroy(solver); checkError(ierr);
+    INFO("------------------------------------------------------------------");
 }
 
 void LisLinearSystem::printout(std::ostream &os) const

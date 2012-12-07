@@ -168,8 +168,7 @@ private:
     void applyKnownSolution();
 
 private:
-    std::size_t _dim;
-    bool _is_initialized;
+    const std::size_t _dim;
     double _max_diag_coeff;
     LisOption _option;
     LIS_MATRIX _AA;
