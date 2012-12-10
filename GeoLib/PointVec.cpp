@@ -26,12 +26,11 @@ namespace GeoLib
 PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
                     std::map<std::string, size_t>* name_id_map, PointType type, double rel_eps) :
                     	TemplateVec<Point> (name, points, name_id_map),
-	_type(type), _sqr_shortest_dist (std::numeric_limits<double>::max())
+	_type(type), _sqr_shortest_dist (std::numeric_limits<double>::max()), _aabb(points->begin(), points->end())
 {
 	assert (_data_vec);
 	size_t number_of_all_input_pnts (_data_vec->size());
 
-	calculateAABB ();
 	rel_eps *= sqrt(MathLib::sqrDist (&(_aabb.getMinPoint()),&(_aabb.getMaxPoint())));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
@@ -220,13 +219,6 @@ void PointVec::calculateShortestDistance ()
 	size_t i, j;
 	BruteForceClosestPair (*_data_vec, i, j);
 	_sqr_shortest_dist = MathLib::sqrDist ((*_data_vec)[i], (*_data_vec)[j]);
-}
-
-void PointVec::calculateAABB ()
-{
-	const size_t n_pnts (_data_vec->size());
-	for (size_t i(0); i < n_pnts; i++)
-		_aabb.update (*(*_data_vec)[i]);
 }
 
 std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<size_t> &subset)

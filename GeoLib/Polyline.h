@@ -50,6 +50,7 @@ public:
 class Polyline : public GeoObject
 {
 public:
+	friend class Polygon;
 	/** constructor
 	 * \param pnt_vec a reference to the point vector
 	 */
@@ -58,7 +59,7 @@ public:
 	 * Copy constructor
 	 * @param ply Polyline
 	 */
-	Polyline (const Polyline& ply);
+	Polyline(const Polyline& ply);
 
 	virtual ~Polyline() {}
 
