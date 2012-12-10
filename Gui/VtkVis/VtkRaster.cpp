@@ -10,12 +10,19 @@
  */
 
 #include "VtkRaster.h"
-#include "Raster.h"
+
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 #include <QFileInfo>
 
+#include "StringTools.h"
+
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
+
 #include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
@@ -39,12 +46,12 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 
 	if (fileInfo.suffix().toLower() == "asc")
 	{
-		data = Raster::loadDataFromASC(fileName, x0, y0, width, height, delta, no_data);
+		data = loadDataFromASC(fileName, x0, y0, width, height, delta, no_data);
 		return loadImageFromArray(data, x0, y0, width, height, delta);		
 	}
 	else if (fileInfo.suffix().toLower() == "grd")
 	{
-		data = Raster::loadDataFromSurfer(fileName, x0, y0, width, height, delta, no_data);
+		data = loadDataFromSurfer(fileName, x0, y0, width, height, delta, no_data);
         return loadImageFromArray(data, x0, y0, width, height, delta);
 	}
 #ifdef libgeotiff_FOUND
@@ -91,6 +98,205 @@ vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, do
 		image->Update();
 
 	return image;
+}
+
+
+bool VtkRaster::readASCHeader(ascHeader &header, std::ifstream &in)
+{
+	std::string line, tag, value;
+
+	in >> tag;
+	if (tag.compare("ncols") == 0)
+	{
+		in >> value;
+		header.ncols = atoi(value.c_str());
+	}
+	else
+		return false;
+	in >> tag;
+	if (tag.compare("nrows") == 0)
+	{
+		in >> value;
+		header.nrows = atoi(value.c_str());
+	}
+	else
+		return false;
+	in >> tag;
+	if (tag.compare("xllcorner") == 0)
+	{
+		in >> value;
+		header.x = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
+	}
+	else
+		return false;
+	in >> tag;
+	if (tag.compare("yllcorner") == 0)
+	{
+		in >> value;
+		header.y = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
+	}
+	else
+		return false;
+	in >> tag;
+	if (tag.compare("cellsize") == 0)
+	{
+		in >> value;
+		header.cellsize = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
+	}
+	else
+		return false;
+	in >> tag;
+	if (tag.compare("NODATA_value") == 0)
+	{
+		in >> value;
+		header.noData = value.c_str();
+	}
+	else
+		return false;
+
+	// correct raster position by half a pixel for correct visualisation
+	// argh! wrong! correction has to happen in visualisation object, otherwise the actual data is wrong
+	//header.x = header.x + (header.cellsize / 2);
+	//header.y = header.y + (header.cellsize / 2);
+
+	return true;
+}
+
+double* VtkRaster::loadDataFromASC(const std::string &fileName,
+                                   double &x0,
+                                   double &y0,
+                                   unsigned &width,
+                                   unsigned &height,
+                                   double &delta,
+								   double &no_data)
+{
+	std::ifstream in( fileName.c_str() );
+
+	if (!in.is_open())
+	{
+		std::cout << "VtkRaster::loadImageFromASC() - Could not open file..." << std::endl;
+		return NULL;
+	}
+
+	ascHeader header;
+
+	if (readASCHeader(header, in))
+	{
+		x0     = header.x;
+		y0     = header.y;
+		width  = header.ncols;
+		height = header.nrows;
+		delta  = header.cellsize;
+
+		double* values = new double[header.ncols * header.nrows];
+
+		int col_index(0);
+		int noData = atoi(header.noData.c_str());
+		std::string s("");
+		// read the file into a double-array
+		for (int j = 0; j < header.nrows; ++j)
+		{
+			col_index = (header.nrows - j - 1) * header.ncols;
+			for (int i = 0; i < header.ncols; ++i)
+			{
+				in >> s;
+				unsigned index = col_index+i;
+				values[index] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
+			}
+		}
+
+		in.close();
+		return values;
+	}
+	return NULL;
+}
+
+bool VtkRaster::readSurferHeader(ascHeader &header, std::ifstream &in)
+{
+	std::string line, tag, value;
+	double min, max;
+
+	in >> tag;
+
+	if (tag.compare("DSAA") != 0)
+	{
+		std::cout << "Error in readSurferHeader() - No Surfer file..." << std::endl;
+		return false;
+	}
+	else
+	{
+		in >> header.ncols >> header.nrows;
+		in >> min >> max;
+		header.x = min;
+		header.cellsize = (max-min)/(double)header.ncols;
+
+		in >> min >> max;
+		header.y = min;
+
+		if (ceil((max-min)/(double)header.nrows) == ceil(header.cellsize))
+			header.cellsize = ceil(header.cellsize);
+		else
+		{
+			std::cout << "Error in readSurferHeader() - Anisotropic cellsize detected..." << std::endl;
+			return 0;
+		}
+		in >> min >> max; // ignore min- and max-values
+
+		header.noData = "1.70141E+038";
+	}
+
+	return true;
+}
+
+double* VtkRaster::loadDataFromSurfer(const std::string &fileName,
+                                   double &x0,
+                                   double &y0,
+                                   unsigned &width,
+                                   unsigned &height,
+                                   double &delta,
+								   double &no_data)
+{
+	std::ifstream in( fileName.c_str() );
+
+	if (!in.is_open())
+	{
+		std::cout << "VtkRaster::loadImageFromSurfer() - Could not open file..." << std::endl;
+		return NULL;
+	}
+
+	ascHeader header;
+
+	if (readSurferHeader(header, in))
+	{
+		x0     = header.x;
+		y0     = header.y;
+		width  = header.ncols;
+		height = header.nrows;
+		delta  = header.cellsize;
+
+		double* values = new double[header.ncols * header.nrows];
+
+		int col_index(0);
+		int noData = -9999;
+		std::string s("");
+		// read the file into a double-array
+		for (int j = 0; j < header.nrows; ++j)
+		{
+			col_index = j * header.ncols;
+			for (int i = 0; i < header.ncols; ++i)
+			{
+				in >> s;
+				if (s.compare(header.noData) == 0)
+					s = "-9999";
+				unsigned index = col_index+i;
+				values[index] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
+			}
+		}
+
+		in.close();
+		return values;
+	}
+	return NULL;
 }
 
 #ifdef libgeotiff_FOUND

@@ -17,6 +17,7 @@
 // BaseLib
 #include "StringTools.h"
 
+namespace GeoLib {
 
 Raster::Raster(std::size_t n_cols, std::size_t n_rows, double xllcorner, double yllcorner,
 				double cell_size, double no_data_val, double* raster_data) :
@@ -90,10 +91,10 @@ void Raster::writeRasterAsASC(std::ostream &os) const
 	}
 }
 
-Raster* Raster::getRasterFromSurface(GeoLib::Surface const& sfc, double cell_size, double no_data_val)
+Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val)
 {
-	GeoLib::Point const& ll (sfc.getAABB().getMinPoint());
-	GeoLib::Point const& ur (sfc.getAABB().getMaxPoint());
+	Point const& ll (sfc.getAABB().getMinPoint());
+	Point const& ur (sfc.getAABB().getMaxPoint());
 
 	std::size_t n_cols = static_cast<size_t>(fabs(ur[0]-ll[0]) / cell_size)+1;
 	std::size_t n_rows = static_cast<size_t>(fabs(ur[1]-ll[1]) / cell_size)+1;
@@ -110,7 +111,7 @@ Raster* Raster::getRasterFromSurface(GeoLib::Surface const& sfc, double cell_siz
 			const double test_pnt[3] = { ll[0] + r*cell_size, ll[1] + c*cell_size, 0};
 			for (k=0; k<n_triangles; k++) {
 				if (sfc[k]->containsPoint2D(test_pnt)) {
-					GeoLib::Triangle const * const tri (sfc[k]);
+					Triangle const * const tri (sfc[k]);
 					// compute coefficients c0, c1, c2 for the plane f(x,y) = c0 x + c1 y + c2
 					double coeff[3] = {0.0, 0.0, 0.0};
 					GeoLib::getPlaneCoefficients(*tri, coeff);
@@ -129,213 +130,80 @@ Raster* Raster::getRasterFromSurface(GeoLib::Surface const& sfc, double cell_siz
 
 Raster* Raster::getRasterFromASCFile(std::string const& fname)
 {
-	unsigned width(0), height(0);
-	double x0(0), y0(0), delta(1);
-	double no_data(-9999);
+	std::ifstream in(fname.c_str());
 
-	double* data = loadDataFromASC(fname, x0, y0, height, width, delta, no_data);
+	if (!in.is_open()) {
+		std::cout << "Raster::getRasterFromASCFile() - Could not open file..." << fname << std::endl;
+		return NULL;
+	}
 
-	if (data)
-		return new Raster(width, height, x0, y0, delta, no_data, data);
-	else
-		return nullptr;
+	// header information
+	std::size_t n_cols(0), n_rows(0);
+	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), no_data_val(-9999);
+
+	if (readASCHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, no_data_val)) {
+		double* values = new double[n_cols*n_rows];
+		std::string s;
+		// read the data into the double-array
+		for (size_t j(0); j < n_rows; ++j) {
+			size_t idx ((n_rows - j - 1) * n_cols);
+			for (size_t i(0); i < n_cols; ++i) {
+				in >> s;
+				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
+
+			}
+		}
+		in.close();
+		return new Raster(n_cols, n_rows, xllcorner, yllcorner,
+						cell_size, no_data_val, values);
+	} else {
+		std::cout << "Raster::getRasterFromASCFile() - could not read header of file " << fname << std::endl;
+		return NULL;
+	}
 }
 
-bool Raster::readASCHeader(ascHeader &header, std::ifstream &in)
+bool Raster::readASCHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+				double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val)
 {
-	std::string line, tag, value;
+	std::string tag, value;
 
 	in >> tag;
-	if (tag.compare("ncols") == 0)
-	{
+	if (tag.compare("ncols") == 0) {
 		in >> value;
-		header.ncols = atoi(value.c_str());
-	}
-	else
-		return false;
-	in >> tag;
-	if (tag.compare("nrows") == 0)
-	{
-		in >> value;
-		header.nrows = atoi(value.c_str());
-	}
-	else
-		return false;
-	in >> tag;
-	if (tag.compare("xllcorner") == 0)
-	{
-		in >> value;
-		header.x = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
-	}
-	else
-		return false;
-	in >> tag;
-	if (tag.compare("yllcorner") == 0)
-	{
-		in >> value;
-		header.y = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
-	}
-	else
-		return false;
-	in >> tag;
-	if (tag.compare("cellsize") == 0)
-	{
-		in >> value;
-		header.cellsize = strtod(BaseLib::replaceString(",", ".", value).c_str(),0);
-	}
-	else
-		return false;
-	in >> tag;
-	if (tag.compare("NODATA_value") == 0)
-	{
-		in >> value;
-		header.noData = value.c_str();
-	}
-	else
-		return false;
+		n_cols = atoi(value.c_str());
+	} else return false;
 
-	// correct raster position by half a pixel for correct visualisation
-	// argh! wrong! correction has to happen in visualisation object, otherwise the actual data is wrong
-	//header.x = header.x + (header.cellsize / 2);
-	//header.y = header.y + (header.cellsize / 2);
+	in >> tag;
+	if (tag.compare("nrows") == 0) {
+		in >> value;
+		n_rows = atoi(value.c_str());
+	} else return false;
+
+	in >> tag;
+	if (tag.compare("xllcorner") == 0) {
+		in >> value;
+		xllcorner = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+	} else return false;
+
+	in >> tag;
+	if (tag.compare("yllcorner") == 0) {
+		in >> value;
+		yllcorner = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+	} else return false;
+
+	in >> tag;
+	if (tag.compare("cellsize") == 0) {
+		in >> value;
+		cell_size = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+	} else return false;
+
+	in >> tag;
+	if (tag.compare("NODATA_value") == 0) {
+		in >> value;
+		no_data_val = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+	} else return false;
 
 	return true;
 }
 
-double* Raster::loadDataFromASC(const std::string &fileName,
-                                   double &x0,
-                                   double &y0,
-                                   unsigned &width,
-                                   unsigned &height,
-                                   double &delta,
-								   double &no_data)
-{
-	std::ifstream in( fileName.c_str() );
-
-	if (!in.is_open())
-	{
-		std::cout << "VtkRaster::loadImageFromASC() - Could not open file..." << std::endl;
-		return NULL;
-	}
-
-	ascHeader header;
-
-	if (readASCHeader(header, in))
-	{
-		x0     = header.x;
-		y0     = header.y;
-		width  = header.ncols;
-		height = header.nrows;
-		delta  = header.cellsize;
-
-		double* values = new double[header.ncols * header.nrows];
-
-		int col_index(0);
-		int noData = atoi(header.noData.c_str());
-		std::string s("");
-		// read the file into a double-array
-		for (int j = 0; j < header.nrows; ++j)
-		{
-			col_index = (header.nrows - j - 1) * header.ncols;
-			for (int i = 0; i < header.ncols; ++i)
-			{
-				in >> s;
-				unsigned index = col_index+i;
-				values[index] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
-			}
-		}
-
-		in.close();
-		return values;
-	}
-	return nullptr;
-}
-
-bool Raster::readSurferHeader(ascHeader &header, std::ifstream &in)
-{
-	std::string line, tag, value;
-	double min, max;
-
-	in >> tag;
-
-	if (tag.compare("DSAA") != 0)
-	{
-		std::cout << "Error in readSurferHeader() - No Surfer file..." << std::endl;
-		return false;
-	}
-	else
-	{
-		in >> header.ncols >> header.nrows;
-		in >> min >> max;
-		header.x = min;
-		header.cellsize = (max-min)/(double)header.ncols;
-
-		in >> min >> max;
-		header.y = min;
-
-		if (ceil((max-min)/(double)header.nrows) == ceil(header.cellsize))
-			header.cellsize = ceil(header.cellsize);
-		else
-		{
-			std::cout << "Error in readSurferHeader() - Anisotropic cellsize detected..." << std::endl;
-			return 0;
-		}
-		in >> min >> max; // ignore min- and max-values
-
-		header.noData = "1.70141E+038";
-	}
-
-	return true;
-}
-
-double* Raster::loadDataFromSurfer(const std::string &fileName,
-                                   double &x0,
-                                   double &y0,
-                                   unsigned &width,
-                                   unsigned &height,
-                                   double &delta,
-								   double &no_data)
-{
-	std::ifstream in( fileName.c_str() );
-
-	if (!in.is_open())
-	{
-		std::cout << "VtkRaster::loadImageFromSurfer() - Could not open file..." << std::endl;
-		return NULL;
-	}
-
-	ascHeader header;
-
-	if (readSurferHeader(header, in))
-	{
-		x0     = header.x;
-		y0     = header.y;
-		width  = header.ncols;
-		height = header.nrows;
-		delta  = header.cellsize;
-
-		double* values = new double[header.ncols * header.nrows];
-
-		int col_index(0);
-		int noData = -9999;
-		std::string s("");
-		// read the file into a double-array
-		for (int j = 0; j < header.nrows; ++j)
-		{
-			col_index = j * header.ncols;
-			for (int i = 0; i < header.ncols; ++i)
-			{
-				in >> s;
-				if (s.compare(header.noData) == 0)
-					s = "-9999";
-				unsigned index = col_index+i;
-				values[index] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
-			}
-		}
-
-		in.close();
-		return values;
-	}
-	return nullptr;
-}
-
+} // end namespace GeoLib
