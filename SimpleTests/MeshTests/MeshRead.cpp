@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 
 	delete mesh;
 	delete logogCout;
+	delete custom_format;
 	LOGOG_SHUTDOWN();
 }
 
