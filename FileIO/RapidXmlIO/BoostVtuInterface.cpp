@@ -14,6 +14,7 @@
 #include <fstream>
 
 #include <boost/foreach.hpp>
+#include <boost/optional.hpp>
 
 #include "StringTools.h"
 #include "FileTools.h"
@@ -30,6 +31,49 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+//
+// Boost ptree helper functions
+//
+
+typedef boost::optional<std::string> OptionalString;
+typedef boost::optional<boost::property_tree::ptree> OptionalPtree;
+
+/// Get an XML attribute value corresponding to given string from a tree.
+OptionalString
+getXMLAttribute(std::string const& key, boost::property_tree::ptree const& tree)
+{
+	for (boost::property_tree::ptree::value_type const& v : tree.get_child("<xmlattr>"))
+	{
+		if (v.first == key)
+			return v.second.data();
+	}
+
+	return OptionalString();
+}
+
+/// Find first child of a tree, which is a DataArray and has requested name.
+OptionalPtree
+findDataArray(std::string const& name, boost::property_tree::ptree const& tree)
+{
+    // Loop over all "DataArray" children.
+    typedef boost::property_tree::ptree::const_iterator CI;
+    for (CI i = tree.begin(); i != tree.end(); ++i)
+    {
+        if (i->first != "DataArray")
+        {
+            std::cerr << "Unknown DataArray without a name attribute.\n";
+            continue;
+        }
+
+        OptionalString const& value = getXMLAttribute("Name", i->second);
+        if (value && *value == name)
+            return i->second;
+    }
+
+    return OptionalPtree();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 namespace FileIO {
 
@@ -142,41 +186,51 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 
 				if (v.first == "Cells")
 				{
-					std::string conn_string ("");
-					BOOST_FOREACH( ptree::value_type const& c, doc.get_child("VTKFile.UnstructuredGrid.Piece.Cells") ) 
-					{
-						std::string attr_name (c.second.get<std::string>("<xmlattr>.Name"));
-						if (attr_name.compare("connectivity") == 0)
+					ptree const& cells = v.second;
+
+					OptionalPtree const& types = findDataArray("types", cells);
+					if (!types)
+						std::cerr << "Cannot find \"types\" data array.\n";
+
+					{	// Read types data array.
+						std::stringstream iss (types->data());
+						OptionalString format = getXMLAttribute("format", *types);
+						if (*format == "ascii")
 						{
-							conn_string = c.second.get<std::string>("DataArray");
-							std::string format (c.second.get("DataArray.<xmlattr>.format", ""));
-							if (format.compare("appended") == 0)
-							{
-								//uncompress
-							}
+							for(unsigned i=0; i<nElems; i++)
+								iss >> cell_types[i];
 						}
-						if (attr_name.compare("types") == 0)
+						else if (*format == "appended")
 						{
-							std::stringstream iss (c.second.get<std::string>("DataArray"));
-							std::string format (c.second.get("DataArray.<xmlattr>.format", ""));
-							if (format.compare("ascii") == 0)
-							{
-								for(unsigned i=0; i<nElems; i++)
-									iss >> cell_types[i];
-							}
-							else if (format.compare("appended") == 0)
-							{
-								//uncompress
-							}
+							//uncompress
 						}
 					}
-					for(unsigned i=0; i<nElems; i++)
-					{
-						if (!conn_string.empty())
+
+					OptionalPtree const& connectivity = findDataArray("connectivity", cells);
+					if (!connectivity)
+						std::cerr << "Cannot find \"connectivity\" data array.\n";
+
+					{	// Read connectivity data array.
+						std::string conn_string;
+
+						OptionalString format = getXMLAttribute("format", *connectivity);
+						if (*format == "ascii")
 						{
-							std::stringstream iss (conn_string);
-							for(unsigned i=0; i<nElems; i++)
-								elements[i] = readElement(iss, nodes, mat_ids[i], cell_types[i]);
+							conn_string = connectivity->data();
+						}
+						else if (*format == "appended")
+						{
+							//uncompress
+						}
+
+						for(unsigned i=0; i<nElems; i++)
+						{
+							if (conn_string.empty())
+                                continue;
+
+                            std::stringstream iss (conn_string);
+                            for(unsigned i=0; i<nElems; i++)
+                                elements[i] = readElement(iss, nodes, mat_ids[i], cell_types[i]);
 						}
 					}
 				}
