@@ -29,15 +29,11 @@
 namespace GeoLib
 {
 Polygon::Polygon(const Polyline &ply, bool init) :
-	Polyline (ply)
+	Polyline(ply), _aabb(ply.getPointsVec(), ply._ply_pnt_ids)
 {
 	if (init)
 		initialise ();
 }
-
-Polygon::Polygon (const std::vector<Point*>& pnt_vec) :
-	Polyline (pnt_vec)
-{}
 
 Polygon::~Polygon()
 {
@@ -52,7 +48,6 @@ Polygon::~Polygon()
 bool Polygon::initialise ()
 {
 	if (this->isClosed()) {
-		calculateAABB();
 		ensureCWOrientation();
 		return true;
 	} else {
@@ -234,13 +229,6 @@ EdgeType::value Polygon::getEdgeType (size_t k, GeoLib::Point const & pnt) const
 	}
 }
 
-void Polygon::calculateAABB ()
-{
-	size_t n_nodes (getNumberOfPoints());
-	for (size_t k(0); k < n_nodes; k++)
-		_aabb.update ((*(getPoint(k))));
-}
-
 void Polygon::ensureCWOrientation ()
 {
 	// *** pre processing: rotate points to xy-plan
@@ -398,14 +386,14 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 				std::swap (idx0, idx1);
 
 			// create two closed polylines
-			GeoLib::Polygon* polygon0 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
+			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(*(*polygon_it)));
 			for (size_t k(0); k <= idx0; k++)
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			for (size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			polygon0->initialise();
 
-			GeoLib::Polygon* polygon1 (new GeoLib::Polygon((*polygon_it)->getPointsVec()));
+			GeoLib::Polygon* polygon1 (new GeoLib::Polygon(*(*polygon_it)));
 			for (size_t k(idx0); k <= idx1; k++)
 				polygon1->addPoint ((*polygon_it)->getPointID (k));
 			polygon1->initialise();
