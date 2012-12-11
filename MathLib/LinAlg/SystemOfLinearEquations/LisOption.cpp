@@ -88,9 +88,10 @@ LisOption::MatrixType LisOption::getMatrixType(const std::string &matrix_name)
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, ELL);
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, JDS);
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, BSR);
+    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, BSC);
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, VBR);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, DNS);
     RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, COO);
+    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, DNS);
 
     return MatrixType::CRS;
 #undef RETURN_MATRIX_ENUM_IF_SAME_STRING

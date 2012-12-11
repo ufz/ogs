@@ -14,7 +14,6 @@
 #define LIS_OPTION_H_
 
 #include <string>
-#include "lis.h"
 
 namespace MathLib
 {
@@ -70,16 +69,17 @@ struct LisOption
     /// Matrix type
     enum class MatrixType : int
     {
-        CRS = LIS_MATRIX_CRS,
-        CCS = LIS_MATRIX_CCS,
-        MSR = LIS_MATRIX_MSR,
-        DIA = LIS_MATRIX_DIA,
-        ELL = LIS_MATRIX_ELL,
-        JDS = LIS_MATRIX_JDS,
-        BSR = LIS_MATRIX_BSR,
-        VBR = LIS_MATRIX_VBR,
-        DNS = LIS_MATRIX_DNS,
-        COO = LIS_MATRIX_COO
+        CRS = 1,
+        CCS = 2,
+        MSR = 3,
+        DIA = 4,
+        ELL = 5,
+        JDS = 6,
+        BSR = 7,
+        BSC = 8,
+        VBR = 9,
+        COO = 10,
+        DNS = 11
     };
 
     /// Linear solver type
