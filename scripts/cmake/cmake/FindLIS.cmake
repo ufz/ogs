@@ -5,44 +5,30 @@
 #  LIS_INCLUDE_DIRS
 #  LIS_LIBRARIES
 
-if (NOT LIS_FOUND)
-
-	include(LibFindMacros)
+set(LIS_ROOT_DIR
+    "${LIS_ROOT_DIR}"
+    CACHE
+    PATH
+    "Directory to search for Lis library")
 	
-	find_path( LIS_INCLUDE_DIR
-		NAMES lis.h
-		PATHS ${CMAKE_SOURCE_DIR}/../Libs/precompiled)
+find_path( LIS_INCLUDE_DIR
+	NAMES lis.h
+	HINTS
+	${LIS_ROOT_DIR}/include
+    /usr/include/lis
+    $ENV{HOME}/include/
+	)
 
-	if ( UNIX )
-		# Tell if the unix system is on 64-bit base
-		if(CMAKE_SIZEOF_VOID_P MATCHES "8")
-			find_library(LIS_LIBRARIES
-				NAMES lis-64
-				PATHS ${CMAKE_SOURCE_DIR}/../Libs/precompiled )	
-		else (CMAKE_SIZEOF_VOID_P MATCHES "8")
-			find_library(LIS_LIBRARIES
-				NAMES lis-32
-				PATHS ${CMAKE_SOURCE_DIR}/../Libs/precompiled )	
-		endif (CMAKE_SIZEOF_VOID_P MATCHES "8")
-	else ( UNIX )			
-		find_library(LIS_LIBRARIES
-			NAMES lisomp
-			PATHS ${CMAKE_SOURCE_DIR}/../Libs/precompiled )	
-	endif ( UNIX )
+find_library(LIS_LIBRARY
+    NAMES lis
+    HINTS 
+    ${LIS_ROOT_DIR}/lib
+    /usr/lib
+    $ENV{HOME}/lib/
+    ) 
 
-	# Set the include dir variables and the libraries and let libfind_process do the rest.
-	# NOTE: Singular variables for this library, plural for libraries this this lib depends on.
-	if (NOT LIS_LIBRARIES STREQUAL "LIS_LIBRARIES-NOTFOUND" AND NOT LIS_INCLUDE_DIR STREQUAL "LIS_INCLUDE_DIR-NOTFOUND")
-		set(LIS_PROCESS_INCLUDES LIS_INCLUDE_DIR)
-		set(LIS_PROCESS_LIBS LIS_LIBRARIES)
-		libfind_process(LIS)
-	else (NOT LIS_LIBRARIES STREQUAL "LIS_LIBRARIES-NOTFOUND" AND NOT LIS_INCLUDE_DIR STREQUAL "LIS_INCLUDE_DIR-NOTFOUND")
-		message (STATUS "Warning: LIS not found!")
-	endif (NOT LIS_LIBRARIES STREQUAL "LIS_LIBRARIES-NOTFOUND" AND NOT LIS_INCLUDE_DIR STREQUAL "LIS_INCLUDE_DIR-NOTFOUND")
-	
-endif (NOT LIS_FOUND)
+SET(LIS_LIBRARIES ${LIS_LIBRARY})
 
-if(LIS_FOUND)
-	INCLUDE_DIRECTORIES( ${LIS_INCLUDE_DIR} )
-	message(STATUS "LIS found (include: ${LIS_INCLUDE_DIR})")
-endif(LIS_FOUND)
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIS DEFAULT_MSG LIS_LIBRARY LIS_INCLUDE_DIR)
+
