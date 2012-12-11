@@ -34,18 +34,6 @@ public:
     /// Index representing invalid
     const static std::size_t index_npos = -1;
 
-    /**
-     * Constructor
-     *
-     * @param dimension
-     *  A dimension of the linear system, i.e. the number of linear equations.
-     * @param sparsity
-     *  A pointer to a row-major sparse pattern. The sparse pattern can be
-     *  used in linear systems based on sparse matrices.
-     */
-    ISystemOfLinearEquations(std::size_t /*dimension*/,
-            RowMajorSparsity* /*sparsity*/ = nullptr) {};
-
     /// 
     virtual ~ISystemOfLinearEquations()
     {
