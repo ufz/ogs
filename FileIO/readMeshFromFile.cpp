@@ -13,6 +13,7 @@
 #include "readMeshFromFile.h"
 #include "Mesh.h"
 #include "RapidXmlIO/RapidVtuInterface.h"
+#include "RapidXmlIO/BoostVtuInterface.h"
 #include "Legacy/MeshIO.h"
 
 // BaseLib
@@ -31,7 +32,8 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
 	{
-		return FileIO::RapidVtuInterface::readVTUFile(file_name);
+		//return FileIO::RapidVtuInterface::readVTUFile(file_name);
+		return FileIO::BoostVtuInterface::readVTUFile(file_name);
 	}
 
 	std::cout << "Unknown mesh file format" << std::endl;

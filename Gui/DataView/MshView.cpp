@@ -29,7 +29,8 @@
 #include <QSettings>
 
 #include "Legacy/MeshIO.h"
-#include "RapidXmlIO/RapidVtuInterface.h"
+//#include "RapidXmlIO/RapidVtuInterface.h"
+#include "RapidXmlIO/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 
 MshView::MshView( QWidget* parent /*= 0*/ )
@@ -170,7 +171,8 @@ int MshView::writeToFile() const
 			QFileInfo fi(fileName);
 			if (fi.suffix().toLower() == "vtu")
 			{
-				FileIO::RapidVtuInterface vtkIO;
+				//FileIO::RapidVtuInterface vtkIO;
+				FileIO::BoostVtuInterface vtkIO;
 				vtkIO.setMesh(mesh);
 				vtkIO.writeToFile(fileName.toStdString().c_str());
 			}

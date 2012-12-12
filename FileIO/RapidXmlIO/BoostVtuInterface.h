@@ -4,13 +4,13 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  *
- * \file RapidVtuInterface.h
+ * \file BoostVtuInterface.h
  *
- *  Created on 2012-08-30 by Karsten Rink
+ *  Created on 2012-12-05 by Karsten Rink
  */
 
-#ifndef RAPIDVTUINTERFACE_H_
-#define RAPIDVTUINTERFACE_H_
+#ifndef BOOSTVTUINTERFACE_H_
+#define BOOSTVTUINTERFACE_H_
 
 #include "Writer.h"
 
@@ -18,9 +18,14 @@
 #include <vector>
 
 #include "MshEnums.h"
-#include "RapidXML/rapidxml.hpp"
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/optional.hpp>
 
 class ProjectData;
+
+typedef boost::optional<const boost::property_tree::ptree&> OptionalPtree;
 
 namespace MeshLib {
 	class Mesh;
@@ -30,7 +35,7 @@ namespace MeshLib {
 
 namespace FileIO
 {
-
+	
 /**
  * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
  *
@@ -38,11 +43,11 @@ namespace FileIO
  * of copies of strings, i.e. strings used in the DOM tree need to be available as long the DOM tree
  * is needed.
  */
-class RapidVtuInterface : public Writer
+class BoostVtuInterface : public Writer
 {
 public:
-	RapidVtuInterface();
-	~RapidVtuInterface();
+	BoostVtuInterface();
+	~BoostVtuInterface();
 
 	/// Read an unstructured grid from a VTU file
 	static MeshLib::Mesh* readVTUFile(const std::string &file_name);
@@ -55,31 +60,38 @@ public:
 
 protected:
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node
-	rapidxml::xml_node<>* addDataArray(const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
+	void addDataArray(boost::property_tree::ptree &parent_node, const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
 	int write(std::ostream& stream);
 
 	std::string _export_name;
 	MeshLib::Mesh* _mesh;
-	rapidxml::xml_document<> *_doc;
 
 private:
+
 	/// Returns the ID used by VTK for a given cell type (e.g. "5" for a triangle, etc.)
 	unsigned getVTKElementID(MshElemType::type type) const;
 
 	/// Check if the root node really specifies an XML file
-	static bool isVTKFile(const rapidxml::xml_node<>* node);
+	static bool isVTKFile(const boost::property_tree::ptree &vtk_root);
 
 	/// Check if the file really specifies a VTK Unstructured Grid
-	static bool isVTKUnstructuredGrid(const rapidxml::xml_node<>* node);
+	static bool isVTKUnstructuredGrid(const boost::property_tree::ptree &vtk_root);
 
 	/// Construct an Element-object from the data given to the method and the data at the current stream position.
 	static MeshLib::Element* readElement(std::stringstream &iss, const std::vector<MeshLib::Node*> &nodes, unsigned material, unsigned type);
 
-	static unsigned char* uncompressData(const rapidxml::xml_node<>* node);
+	static unsigned char* uncompressData(boost::property_tree::ptree const& compressed_data_node);
+
+	/// Get an XML attribute value corresponding to given string from a property tree.
+	static const boost::optional<std::string> getXmlAttribute(std::string const& key, boost::property_tree::ptree const& tree);
+
+	/// Find first child of a tree, which is a DataArray and has requested name.
+	static const OptionalPtree findDataArray(std::string const& array_name, boost::property_tree::ptree const& tree);
 
 	bool _use_compressor;
 };
+
 }
 
-#endif /* RAPIDVTUINTERFACE_H_ */
+#endif /* BOOSTVTUINTERFACE_H_ */
