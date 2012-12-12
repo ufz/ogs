@@ -14,7 +14,6 @@
 #include <fstream>
 
 #include <boost/foreach.hpp>
-#include <boost/optional.hpp>
 
 #include "StringTools.h"
 #include "FileTools.h"
@@ -30,50 +29,6 @@
 #include "Elements/Hex.h"
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
-
-//
-// Boost ptree helper functions
-//
-
-typedef boost::optional<std::string> OptionalString;
-typedef boost::optional<boost::property_tree::ptree> OptionalPtree;
-
-/// Get an XML attribute value corresponding to given string from a tree.
-OptionalString
-getXMLAttribute(std::string const& key, boost::property_tree::ptree const& tree)
-{
-	for (boost::property_tree::ptree::value_type const& v : tree.get_child("<xmlattr>"))
-	{
-		if (v.first == key)
-			return v.second.data();
-	}
-
-	return OptionalString();
-}
-
-/// Find first child of a tree, which is a DataArray and has requested name.
-OptionalPtree
-findDataArray(std::string const& name, boost::property_tree::ptree const& tree)
-{
-    // Loop over all "DataArray" children.
-    typedef boost::property_tree::ptree::const_iterator CI;
-    for (CI i = tree.begin(); i != tree.end(); ++i)
-    {
-        if (i->first != "DataArray")
-        {
-            std::cerr << "Unknown DataArray without a name attribute.\n";
-            continue;
-        }
-
-        OptionalString const& value = getXMLAttribute("Name", i->second);
-        if (value && *value == name)
-            return i->second;
-    }
-
-    return OptionalPtree();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 
 namespace FileIO {
 
@@ -103,19 +58,15 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 	using boost::property_tree::ptree;
 	ptree doc;
 	read_xml(in, doc);
-
-	//const ptree& v = doc.get_child("VTKFile");
-
+	
 	if (isVTKUnstructuredGrid(doc))
 	{
-		bool is_compressed = doc.get("VTKFile.<xmlattr>.compressor", false);
+		ptree const& root_node = doc.get_child("VTKFile");
+		optional<std::string> const& compressor (getXmlAttribute("compressor", root_node));
+		bool is_compressed = static_cast<bool>(compressor);
 		if (is_compressed)
 		{
-			if (doc.get("VTKFile.<xmlattr>.compressor", "missing") == "vtkZLibDataCompressor")
-			{
-				//uncompressData(root_node);
-			}
-			else
+			if (*compressor != "vtkZLibDataCompressor")
 			{
 				std::cout << "BoostVtuInterface::readVTUFile() - Unknown compression method." << std::endl;
 				return nullptr;
@@ -123,12 +74,12 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 		}
 
 		//skip to <Piece>-tag and start parsing content
-		optional<property_tree::ptree&> piece_node = doc.get_child_optional("VTKFile.UnstructuredGrid.Piece");
+		OptionalPtree const& piece_node = root_node.get_child_optional("UnstructuredGrid.Piece");
 		if (piece_node)
 		{
 				
-			const unsigned nNodes = static_cast<unsigned>(doc.get("VTKFile.UnstructuredGrid.Piece.<xmlattr>.NumberOfPoints", 0));
-			const unsigned nElems = static_cast<unsigned>(doc.get("VTKFile.UnstructuredGrid.Piece.<xmlattr>.NumberOfCells", 0));
+			const unsigned nNodes = static_cast<unsigned>(piece_node->get("<xmlattr>.NumberOfPoints", 0));
+			const unsigned nElems = static_cast<unsigned>(piece_node->get("<xmlattr>.NumberOfCells", 0));
 
 			if ((nNodes == 0) || (nElems == 0))
 			{
@@ -142,96 +93,96 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 			std::vector<unsigned> mat_ids(nElems, 0);
 			std::vector<unsigned> cell_types(nElems);
 
-			BOOST_FOREACH( ptree::value_type const& v, doc.get_child("VTKFile.UnstructuredGrid.Piece") ) 
+			BOOST_FOREACH( ptree::value_type const& grid_piece, *piece_node ) 
 			{
-				if (v.first == "CellData")
+				if (grid_piece.first == "CellData")
 				{
-					std::string name (v.second.get("DataArray.<xmlattr>.Name", ""));
-					std::string format (v.second.get("DataArray.<xmlattr>.format", "ascii"));
-					if ((name.compare("MaterialIDs") == 0) || (name.compare("MatGroups") == 0))
+					const OptionalPtree& cell_data_node = findDataArray("MaterialIDs", grid_piece.second);
+					if (cell_data_node)
 					{
-						std::stringstream iss (v.second.get<std::string>("DataArray"));
-						if (format.compare("ascii") == 0)
+						optional<std::string> const& format = getXmlAttribute("format", *cell_data_node);
+						std::stringstream iss (cell_data_node->data());//v.second.get<std::string>("DataArray"));
+						if (format) 
 						{
-							for(unsigned i=0; i<nElems; i++)
-								iss >> mat_ids[i];
+							if (*format == "ascii")
+								for(unsigned i=0; i<nElems; i++)
+									iss >> mat_ids[i];
+								else if (*format == "appended")
+								{
+									//uncompress
+								}
 						}
-						else if (format.compare("appended") == 0)
+					}
+					else
+						std::cerr << "MaterialIDs not found, setting every cell to 0." << std::endl;
+				}
+				
+				if (grid_piece.first == "Points")
+				{
+					// This node may or may not have an attribute "Name" with the value "Points".
+					// However, there shouldn't be any other DataArray nodes so most likely not checking the name isn't a problem.
+					ptree const& data_array_node = grid_piece.second.get_child("DataArray");
+					optional<std::string> const& format = getXmlAttribute("format", data_array_node);
+
+					if (format)
+					{
+						if (*format == "ascii")
+						{
+							std::stringstream iss (data_array_node.data());
+							double x,y,z;
+							for(unsigned i=0; i<nNodes; i++)
+							{
+								iss >> x >> y >> z;
+								nodes[i] = new MeshLib::Node(x,y,z,i);
+							}
+						}
+						else if (*format == "appended")
 						{
 							//uncompress
 						}
 					}
 				}
-				
-				if (v.first == "Points")
-				{
-					// This node may or may not have an attribute "Name" with the value "Points".
-					// However, there shouldn't be any other DataArray nodes so most likely not checking the name isn't a problem.
-					std::string format (v.second.get("DataArray.<xmlattr>.format", ""));
-					if (format.compare("ascii") == 0)
-					{
-						std::stringstream iss (v.second.get<std::string>("DataArray"));
-						double x,y,z;
-						for(unsigned i=0; i<nNodes; i++)
-						{
-							iss >> x >> y >> z;
-							nodes[i] = new MeshLib::Node(x,y,z,i);
-						}
-					}
-					else if (format.compare("appended") == 0)
-					{
-						//uncompress
-					}
-				}
 
-				if (v.first == "Cells")
+				if (grid_piece.first == "Cells")
 				{
-					ptree const& cells = v.second;
+					ptree const& cells = grid_piece.second;
 
+					// cell types
 					OptionalPtree const& types = findDataArray("types", cells);
 					if (!types)
 						std::cerr << "Cannot find \"types\" data array.\n";
 
-					{	// Read types data array.
-						std::stringstream iss (types->data());
-						OptionalString format = getXMLAttribute("format", *types);
-						if (*format == "ascii")
-						{
-							for(unsigned i=0; i<nElems; i++)
-								iss >> cell_types[i];
-						}
-						else if (*format == "appended")
-						{
-							//uncompress
-						}
+					std::stringstream iss (types->data());
+					optional<std::string> const& format = getXmlAttribute("format", *types);
+					if (*format == "ascii")
+					{
+						for(unsigned i=0; i<nElems; i++)
+							iss >> cell_types[i];
+					}
+					else if (*format == "appended")
+					{
+						//uncompress
 					}
 
+
+					// connectivity / element nodes
 					OptionalPtree const& connectivity = findDataArray("connectivity", cells);
 					if (!connectivity)
 						std::cerr << "Cannot find \"connectivity\" data array.\n";
 
-					{	// Read connectivity data array.
-						std::string conn_string;
+					std::string conn_string = connectivity->data();
 
-						OptionalString format = getXMLAttribute("format", *connectivity);
-						if (*format == "ascii")
-						{
-							conn_string = connectivity->data();
-						}
-						else if (*format == "appended")
+					if (!conn_string.empty())
+					{
+						optional<std::string> const& format = getXmlAttribute("format", *connectivity);
+						if (*format == "appended")
 						{
 							//uncompress
 						}
 
-						for(unsigned i=0; i<nElems; i++)
-						{
-							if (conn_string.empty())
-                                continue;
-
-                            std::stringstream iss (conn_string);
-                            for(unsigned i=0; i<nElems; i++)
-                                elements[i] = readElement(iss, nodes, mat_ids[i], cell_types[i]);
-						}
+						std::stringstream iss (conn_string);
+                        for(unsigned i=0; i<nElems; i++)
+                            elements[i] = readElement(iss, nodes, mat_ids[i], cell_types[i]);
 					}
 				}
 
@@ -349,12 +300,14 @@ bool BoostVtuInterface::isVTKFile(const property_tree::ptree &vtk_root)
 		std::cout << "Error in BoostVtuInterface::readVTUFile() - Not a VTK File." << std::endl;
 		return false;
 	}
-	if (vtk_root.get("VTKFile.<xmlattr>.version", "missing") != "0.1")
+	optional<std::string> const& att_version (getXmlAttribute("version", vtk_root));
+	if (att_version && *att_version == "0.1")
 	{
 		std::cout << "Error in BoostVtuInterface::readVTUFile() - Unsupported file format version." << std::endl;
 		return false;
 	}
-	if (vtk_root.get("VTKFile.<xmlattr>.byte_order", "missing") != "LittleEndian")
+	optional<std::string> const& att_order (getXmlAttribute("byte_order", vtk_root));
+	if (att_order && *att_order == "LittleEndian")
 	{
 		std::cout << "Error in BoostVtuInterface::readVTUFile() - Only little endian files are supported." << std::endl;
 		return false;
@@ -366,24 +319,50 @@ bool BoostVtuInterface::isVTKUnstructuredGrid(const property_tree::ptree &vtk_ro
 {
 	if (isVTKFile(vtk_root))
 	{
-		optional<const property_tree::ptree&> u_grid_node = vtk_root.get_child_optional("VTKFile.UnstructuredGrid");
+		const OptionalPtree &u_grid_node = vtk_root.get_child_optional("VTKFile.UnstructuredGrid");
 		if (u_grid_node)
 			return true;
 		std::cout << "Error in BoostVtuInterface::readVTUFile() - Not an unstructured grid." << std::endl;
 	}
 	return false;
 }
-/*
-unsigned char* BoostVtuInterface::uncompressData(const rapidxml::xml_node<>* node)
+
+unsigned char* BoostVtuInterface::uncompressData(property_tree::ptree const& compressed_data_node)
 {
-	rapidxml::xml_node<>* data_node = node->first_node("AppendedData");
-	char* compressed_data (NULL);
-	if (data_node)
-		compressed_data = data_node->value();
+	//rapidxml::xml_node<>* data_node = node->first_node("AppendedData");
+	const char* compressed_data = compressed_data_node.data().c_str();
 
 	return NULL;
 }
 
+const optional<std::string> BoostVtuInterface::getXmlAttribute(std::string const& key, property_tree::ptree const& tree)
+{
+    for (property_tree::ptree::const_iterator it = tree.begin(); it != tree.end(); ++it)
+    {
+        if (it->first != "<xmlattr>")
+			continue;
+		if (it->second.get_child_optional(key))
+			return it->second.get_child(key).data();
+	}
+
+	return optional<std::string>();
+}
+
+const OptionalPtree BoostVtuInterface::findDataArray(std::string const& array_name, property_tree::ptree const& tree)
+{
+    // Loop over all "DataArray" children.
+    for (property_tree::ptree::const_iterator it = tree.begin(); it != tree.end(); ++it)
+    {
+        if (it->first == "DataArray")
+        {
+	        optional<std::string> const& value = getXmlAttribute("Name", it->second);
+		    if (value && *value == array_name)
+			    return it->second;
+		}
+    }
+
+    return OptionalPtree();
+}
 
 
 int BoostVtuInterface::write(std::ostream& stream)
@@ -403,56 +382,50 @@ int BoostVtuInterface::write(std::ostream& stream)
 	const std::string data_array_close("\t\t\t\t");
 	const std::string data_array_indent("\t\t\t\t  ");
 
-	stream << "<?xml version=\"1.0\"?>" << std::endl;
+	using boost::property_tree::ptree; 
+	ptree doc;
 
-	xml_node<> *root_node (_doc->allocate_node(node_element, "VTKFile"));
-	_doc->append_node(root_node);
-	root_node->append_attribute(_doc->allocate_attribute("type", "UnstructuredGrid"));
-	root_node->append_attribute(_doc->allocate_attribute("version", "0.1"));
-	root_node->append_attribute(_doc->allocate_attribute("byte_order", "LittleEndian"));
+	ptree &root_node = doc.put("VTKFile", "");
+	root_node.put("<xmlattr>.type", "UnstructuredGrid");
+	root_node.put("<xmlattr>.version", "0.1");
+	root_node.put("<xmlattr>.byte_order", "LittleEndian");
+
 	if (_use_compressor)
-		root_node->append_attribute(_doc->allocate_attribute("compressor", "vtkZLibDataCompressor"));
+		root_node.put("<xmlattr>.compressor", "vtkZLibDataCompressor");
 
-	xml_node<> *grid_node (_doc->allocate_node(node_element, "UnstructuredGrid"));
-	root_node->append_node(grid_node);
-	xml_node<> *piece_node (_doc->allocate_node(node_element, "Piece"));
-	grid_node->append_node(piece_node);
+	ptree &piece_node = root_node.put("UnstructuredGrid.Piece", "");
 	const std::string str_nNodes (BaseLib::number2str(nNodes));
-	piece_node->append_attribute (_doc->allocate_attribute("NumberOfPoints", str_nNodes.c_str()));
 	const std::string str_nElems (BaseLib::number2str(nElems));
-	piece_node->append_attribute(_doc->allocate_attribute("NumberOfCells", str_nElems.c_str()));
+	piece_node.put("<xmlattr>.NumberOfPoints", str_nNodes.c_str());
+	piece_node.put("<xmlattr>.NumberOfCells", str_nElems.c_str());
 
 	// scalar arrays for point- and cell-data
-	xml_node<> *pointdata_node (_doc->allocate_node(node_element, "PointData", "\n\t\t\t"));
-	piece_node->append_node(pointdata_node);
+	piece_node.add("PointData", "\n\t\t\t");
 	// add node_area array here if necessary!
-	xml_node<> *celldata_node (_doc->allocate_node(node_element, "CellData"));
-	piece_node->append_node(celldata_node);
-	celldata_node->append_attribute(_doc->allocate_attribute("Scalars", "MaterialIDs"));
+	ptree &celldata_node = piece_node.add("CellData", "");
+	celldata_node.put("<xmlattr>.Scalars", "MaterialIDs");
 
 	std::stringstream oss(std::stringstream::out);
 	oss << std::endl << data_array_indent;
 	for (unsigned i=0; i<nElems; i++)
 		oss << elements[i]->getValue() << " ";
 	oss << std::endl << data_array_close;
-	celldata_node->append_node(this->addDataArray("MaterialIDs", "Int32", oss.str()));
+	this->addDataArray(celldata_node, "MaterialIDs", "Int32", oss.str());
 	oss.str(std::string());
 	oss.clear();
 
 	// point coordinates
-	xml_node<> *points_node (_doc->allocate_node(node_element, "Points"));
-	piece_node->append_node(points_node);
+	ptree &points_node = piece_node.add("Points", "");
 	oss << std::endl;
 	for (unsigned i=0; i<nNodes; i++)
 		oss << data_array_indent << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << std::endl;
 	oss << data_array_close;
-	points_node->append_node(this->addDataArray("Points", "Float32", oss.str(), 3));
+	this->addDataArray(points_node, "Points", "Float32", oss.str(), 3);
 	oss.str(std::string());
 	oss.clear();
 
 	// cells with node ids
-	xml_node<> *cells_node (_doc->allocate_node(node_element, "Cells"));
-	piece_node->append_node(cells_node);
+	ptree &cells_node = piece_node.add("Cells", "");
 	std::stringstream offstream(std::stringstream::out);
 	std::stringstream typestream(std::stringstream::out);
 	oss << std::endl;
@@ -477,11 +450,12 @@ int BoostVtuInterface::write(std::ostream& stream)
 	typestream << std::endl << data_array_close;
 
 	// connectivity attributes
-	cells_node->append_node(this->addDataArray("connectivity", "Int32", oss.str()));
-	cells_node->append_node(this->addDataArray("offsets", "Int32", offstream.str()));
-	cells_node->append_node(this->addDataArray("types", "UInt8", typestream.str()));
+	this->addDataArray(cells_node, "connectivity", "Int32", oss.str());
+	this->addDataArray(cells_node, "offsets", "Int32", offstream.str());
+	this->addDataArray(cells_node, "types", "UInt8", typestream.str());
 
-	stream << *_doc;
+	property_tree::xml_writer_settings<char> settings('\t', 1);
+    write_xml(stream, doc, settings);
 	return 1;
 }
 
@@ -508,27 +482,18 @@ unsigned BoostVtuInterface::getVTKElementID(MshElemType::type type) const
 	}
 }
 
-xml_node<>* BoostVtuInterface::addDataArray(const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents)
+void BoostVtuInterface::addDataArray(property_tree::ptree &parent_node, const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents)
 {
-
-	xml_attribute<> *attr (NULL);
-	xml_node<> *dataarray_node (_doc->allocate_node(node_element, _doc->allocate_string("DataArray"), _doc->allocate_string(data.c_str())));
-	attr = _doc->allocate_attribute(_doc->allocate_string("type"), _doc->allocate_string(data_type.c_str()));
-	dataarray_node->append_attribute(attr);
-	attr = _doc->allocate_attribute(_doc->allocate_string("Name"), _doc->allocate_string(name.c_str()));
-	dataarray_node->append_attribute(attr);
+	property_tree::ptree &dataarray_node = parent_node.add("DataArray", data.c_str());
+	dataarray_node.put("<xmlattr>.type", data_type.c_str());
+	dataarray_node.put("<xmlattr>.Name", name.c_str());
 	if (nComponents > 1)
-	{
-		attr = _doc->allocate_attribute(_doc->allocate_string("NumberOfComponents"), _doc->allocate_string(BaseLib::number2str(nComponents).c_str()));
-		dataarray_node->append_attribute(attr);
-	}
+		dataarray_node.put("<xmlattr>.NumberOfComponents", BaseLib::number2str(nComponents).c_str());
 	std::string comp_type = (_use_compressor) ? "appended" : "ascii";
-	attr = _doc->allocate_attribute(_doc->allocate_string("format"), _doc->allocate_string(comp_type.c_str()));
-	dataarray_node->append_attribute(attr);
+	dataarray_node.put("<xmlattr>.format", comp_type.c_str());
 	// ---- offset attribute for compressed data! ----
-	return dataarray_node;
 }
-*/
+
 
 } // end namespace FileIO
 
