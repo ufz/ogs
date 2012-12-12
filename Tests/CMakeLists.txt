@@ -16,6 +16,10 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/MathLib
 )
 
+IF (LIS_FOUND)
+    INCLUDE_DIRECTORIES(${LIS_INCLUDE_DIR})
+ENDIF()
+
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
 SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
 
@@ -28,9 +32,6 @@ TARGET_LINK_LIBRARIES(testrunner
 	${Boost_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 )
-IF(OGS_USE_LIS)
-    TARGET_LINK_LIBRARIES( testrunner ${LIS_LIBRARIES} )
-ENDIF()
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
