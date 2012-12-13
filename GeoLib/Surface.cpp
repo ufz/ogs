@@ -42,7 +42,11 @@ void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt
 
 	_sfc_triangles.push_back (new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
 	if (!_bv) {
-		_bv = new AABB<Point>(_sfc_pnts, {pnt_a, pnt_b, pnt_c});
+		std::vector<size_t> ids(3);
+		ids[0] = pnt_a;
+		ids[1] = pnt_b;
+		ids[2] = pnt_c;
+		_bv = new AABB<Point>(_sfc_pnts, ids);
 	} else {
 		_bv->update (*_sfc_pnts[pnt_a]);
 		_bv->update (*_sfc_pnts[pnt_b]);
