@@ -1,7 +1,8 @@
 # This file initializes the required submodules
-
+OPTION(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "User given submodules which should be checked out by CMake." "")
 SET(REQUIRED_SUBMODULES
 	ThirdParty/quickcheck
+	${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
 
 FOREACH(SUBMODULE ${REQUIRED_SUBMODULES})
