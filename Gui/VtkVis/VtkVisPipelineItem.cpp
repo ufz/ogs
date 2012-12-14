@@ -146,7 +146,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 
 				VtkFbxConverter fbxConverter(static_cast<vtkActor*>(_actor), lScene);
 				fbxConverter.convert(filename.c_str());
-				fbxConverter.convertZUpAxis();
 				FbxNode* node = fbxConverter.getNode();
 				if(node)
 				{
