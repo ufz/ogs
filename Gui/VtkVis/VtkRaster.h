@@ -25,18 +25,17 @@ class vtkImageReader2;
  */
 class VtkRaster
 {
-	/// Data structure for the asc-file header.
-	struct ascHeader
-	{
-		int ncols;
-		int nrows;
-		double x;
-		double y;
-		double cellsize;
-		std::string noData;
-	};
-
 public:
+	/**
+	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
+	 */
+    static vtkImageImport* loadImageFromArray(double const*const data_array,
+											  double x0,
+											  double y0,
+											  std::size_t width,
+											  std::size_t height,
+											  double delta,
+											  double no_data = -9999);
 	/**
 	 * \brief Loads an image- or raster-file into an vtkImageAlgorithm-Object.
 	 *
@@ -52,51 +51,6 @@ public:
                                         double& x0,
                                         double& y0,
                                         double& delta);
-
-	/**
-	 * \brief Loads an ASC file into a double array.
-	 * The array alternates between pixel values and their respective alpha-values, i.e.
-	 * result = { pixel0-value; pixel0-alpha, pixel1-value; pixel1-alpha; ... }
-	 *
-	 * \param fileName Filename of the file that should be loaded.
-	 * \param x0 The x-coordinate of the origin.
-	 * \param y0 The y-coordinate of the origin.
-	 * \param width The width of the image.
-	 * \param height The height of the image
-	 * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
-	 * \return A float-array of pixel values incl. opacity (noData values are transparent)
-	 */
-	static double* loadDataFromASC(const std::string &fileName,
-	                              double &x0,
-	                              double &y0,
-	                              unsigned &width,
-	                              unsigned &height,
-	                              double &delta,
-								  double &no_data);
-
-	/**
-	 * \brief Loads a Surfer file into a double array.
-	 * Works exactly like loadDataFromASC().
-	 */
-	static double* loadDataFromSurfer(const std::string &fileName,
-	                              double &x0,
-	                              double &y0,
-	                              unsigned &width,
-	                              unsigned &height,
-	                              double &delta,
-								  double &no_data);
-
-	/**
-	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
-	 */
-    static vtkImageImport* loadImageFromArray(double* data_array,
-											  double &x0,
-											  double &y0,
-											  unsigned &width,
-											  unsigned &height,
-											  double &delta,
-											  double no_data = -9999);
-
 private:
 	/**
 	 * Loads ArcGIS asc-files to a QPixmap object and automatically does a contrast stretching to adjust values to 8 bit greyscale images.
@@ -117,22 +71,6 @@ private:
 	 * \return vtkImageReader2-object containing the image data.
 	 */
 	static vtkImageReader2* loadImageFromFile(const std::string &fileName);
-
-	/**
-	 * Reads the header of an ArcGIS asc-file.
-	 * \param header The ascHeader-object into which all the information will be written.
-	 * \param in FileInputStream used for reading the data.
-	 * \return True if the header could be read correctly, false otherwise.
-	 */
-	static bool readASCHeader(ascHeader &header, std::ifstream &in);
-
-	/**
-	 * Reads the header of a Surfer grd-file.
-	 * \param header The ascHeader-object into which all the information will be written.
-	 * \param in FileInputStream used for reading the data.
-	 * \return True if the header could be read correctly, false otherwise.
-	 */
-	static bool readSurferHeader(ascHeader &header, std::ifstream &in);
 
 	/// Converts an uint32-number into a quadruple representing RGBA-colours for a pixel.
 	static void uint32toRGBA(const unsigned int s, int* p);
