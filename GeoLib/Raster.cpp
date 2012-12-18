@@ -12,6 +12,9 @@
 
 #include <fstream>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "Raster.h"
 
 // BaseLib
@@ -64,25 +67,6 @@ GeoLib::Point const& Raster::getOrigin() const
 	return _ll_pnt;
 }
 
-void Raster::writeRasterAsASC(std::ostream &os) const
-{
-	// write header
-	os << "ncols " << _n_cols << std::endl;
-	os << "nrows " << _n_rows << std::endl;
-	os << "xllcorner " << _ll_pnt[0] << std::endl;
-	os << "yllcorner " << _ll_pnt[1] << std::endl;
-	os << "cellsize " <<  _cell_size << std::endl;
-	os << "NODATA_value " << _no_data_val << std::endl;
-
-	// write data
-	for (unsigned row(0); row<_n_rows; row++) {
-		for (unsigned col(0); col<_n_cols; col++) {
-			os << _raster_data[(_n_rows-row-1)*_n_cols+col] << " ";
-		}
-		os << std::endl;
-	}
-}
-
 Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val)
 {
 	Point const& ll (sfc.getAABB().getMinPoint());
@@ -118,6 +102,25 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	}
 
 	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, z_vals, z_vals+n_cols*n_rows ,-9999);
+}
+
+void Raster::writeRasterAsASC(std::ostream &os) const
+{
+	// write header
+	os << "ncols " << _n_cols << std::endl;
+	os << "nrows " << _n_rows << std::endl;
+	os << "xllcorner " << _ll_pnt[0] << std::endl;
+	os << "yllcorner " << _ll_pnt[1] << std::endl;
+	os << "cellsize " <<  _cell_size << std::endl;
+	os << "NODATA_value " << _no_data_val << std::endl;
+
+	// write data
+	for (unsigned row(0); row<_n_rows; row++) {
+		for (unsigned col(0); col<_n_cols; col++) {
+			os << _raster_data[(_n_rows-row-1)*_n_cols+col] << " ";
+		}
+		os << std::endl;
+	}
 }
 
 Raster* Raster::getRasterFromASCFile(std::string const& fname)
@@ -196,6 +199,80 @@ bool Raster::readASCHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_row
 		in >> value;
 		no_data_val = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
+
+	return true;
+}
+
+Raster* Raster::getRasterFromSurferFile(std::string const& fname)
+{
+	std::ifstream in(fname.c_str());
+
+	if (!in.is_open()) {
+		ERR("Raster::getRasterFromSurferFile() - Could not open file %s", fname.c_str());
+		return NULL;
+	}
+
+	// header information
+	std::size_t n_cols(0), n_rows(0);
+	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), no_data_val(-9999);
+
+	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, no_data_val)) {
+		double* values = new double[n_cols*n_rows];
+		std::string s;
+		// read the data into the double-array
+		for (size_t j(0); j < n_rows; ++j) {
+			size_t idx ((n_rows - j - 1) * n_cols);
+			for (size_t i(0); i < n_cols; ++i) {
+				in >> s;
+				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
+
+			}
+		}
+		in.close();
+		Raster *raster(new Raster(n_cols, n_rows, xllcorner, yllcorner,
+						cell_size, values, values+n_cols*n_rows, no_data_val));
+		delete [] values;
+		return raster;
+	} else {
+		ERR("Raster::getRasterFromASCFile() - could not read header of file %s", fname.c_str());
+		return NULL;
+	}
+}
+
+bool Raster::readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+				double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val)
+{
+	std::string tag;
+	double min, max;
+
+	in >> tag;
+
+	if (tag.compare("DSAA") != 0)
+	{
+		ERR("Error in readSurferHeader() - No Surfer file.");
+		return false;
+	}
+	else
+	{
+		in >> n_cols >> n_rows;
+		in >> min >> max;
+		xllcorner = min;
+		cell_size = (max-min)/(double)n_cols;
+
+		in >> min >> max;
+		yllcorner = min;
+
+		if (ceil((max-min)/(double)n_rows) == ceil(cell_size))
+			cell_size = ceil(cell_size);
+		else
+		{
+			ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
+			return 0;
+		}
+		in >> min >> max; // ignore min- and max-values
+
+		no_data_val = 1.70141E+038;
+	}
 
 	return true;
 }

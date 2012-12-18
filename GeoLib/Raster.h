@@ -111,12 +111,21 @@ public:
 	 */
 	void writeRasterAsASC(std::ostream &os) const;
 
-	static Raster* getRasterFromASCFile(std::string const& fname);
 	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
-
+	static Raster* getRasterFromASCFile(std::string const& fname);
+	static Raster* getRasterFromSurferFile(std::string const& fname);
 private:
 	static bool readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
+						double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
+	/**
+	 * Reads the header of a Surfer grd-file.
+	 * \param header The ascHeader-object into which all the information will be written.
+	 * \param in FileInputStream used for reading the data.
+	 * \return True if the header could be read correctly, false otherwise.
+	 */
+	static bool readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
 					double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
+
 	void setCellSize(double cell_size);
 	void setNoDataVal (double no_data_val);
 
