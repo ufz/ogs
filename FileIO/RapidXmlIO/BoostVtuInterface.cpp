@@ -71,6 +71,10 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 				std::cout << "BoostVtuInterface::readVTUFile() - Unknown compression method." << std::endl;
 				return nullptr;
 			}
+
+			// TODO: remove this once compressed data can be handled!!
+			std::cout << "Handling of compressed meshes not yet implemented." << std::endl;
+			return nullptr;
 		}
 
 		//skip to <Piece>-tag and start parsing content
