@@ -31,7 +31,7 @@ bool LisLinearSystem::checkError(int err)
     return ok;
 }
 
-LisLinearSystem::LisLinearSystem(std::size_t dimension, RowMajorSparsity*)
+LisLinearSystem::LisLinearSystem(std::size_t dimension)
 : _dim(dimension), _max_diag_coeff(.0)
 {
     int ierr = 0;

@@ -20,7 +20,6 @@
 
 #include "lis.h"
 
-#include "MathLib/LinAlg/Sparse/Sparsity.h"
 #include "LisOption.h"
 
 namespace MathLib
@@ -42,9 +41,8 @@ public:
      * Create a linear system using Lis
      *
      * @param length    System dimension
-     * @param sp        Sparsity
      */
-    LisLinearSystem(std::size_t length, RowMajorSparsity* sp);
+    LisLinearSystem(std::size_t length);
 
     /**
      *
