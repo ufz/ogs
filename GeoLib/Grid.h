@@ -122,6 +122,9 @@ public:
 
 		// some frequently used expressions to fill the grid vectors
 		for (std::size_t k(0); k < 3; k++) {
+			if (fabs(delta[k]) < std::numeric_limits<double>::epsilon()) {
+				delta[k] = std::numeric_limits<double>::epsilon();
+			}
 			_step_sizes[k] = delta[k] / _n_steps[k];
 			_inverse_step_sizes[k] = 1.0 / _step_sizes[k];
 		}
