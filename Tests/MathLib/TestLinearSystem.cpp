@@ -79,7 +79,7 @@ TEST(Math, LinearSystemLis)
     Example1 ex1;
 
     // create a linear system
-    MathLib::LisLinearSystem eqs(ex1.sparse.size(), &ex1.sparse);
+    MathLib::LisLinearSystem eqs(ex1.dim_eqs);
 
     // construct
     for (size_t i=0; i<ex1.dim_eqs; i++) {
