@@ -138,6 +138,11 @@ IF(Shapelib_FOUND)
 	ADD_DEFINITIONS(-DShapelib_FOUND)
 ENDIF() # Shapelib_FOUND
 
+## lis ##
+IF(OGS_USE_LIS)
+    FIND_PACKAGE( LIS REQUIRED )
+ENDIF()
+
 ########################
 ### Find other stuff ###
 ########################

@@ -55,6 +55,9 @@ OPTION(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
+# Linear solvers
+OPTION(OGS_USE_LIS "Use Lis" OFF)
+
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
@@ -97,6 +100,10 @@ ADD_SUBDIRECTORY( ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/ThirdParty/quickcheck )
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR}/ThirdParty/zlib )
+
+IF(OGS_USE_LIS)
+    ADD_DEFINITIONS(-DUSE_LIS)
+ENDIF()
 
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
