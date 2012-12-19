@@ -69,7 +69,7 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 
 	// read raster and if required manipulate it
-	Raster* raster(Raster::getRasterFromASCFile(raster_arg.getValue()));
+	GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(raster_arg.getValue()));
 	if (refinement_arg.getValue() > 1) {
 		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
