@@ -10,6 +10,8 @@
  * Created on 2012-05-02 by Karsten Rink
  */
 
+#include "logog/include/logog.hpp"
+
 #include "Node.h"
 #include "Quad.h"
 #include "Prism.h"
@@ -101,7 +103,7 @@ const Element* TemplateHex<NNODES,CELLHEXTYPE>::getFace(unsigned i) const
 			nodes[j] = _nodes[_face_nodes[i][j]];
 		return new Quad(nodes);
 	}
-	std::cerr << "Error in MeshLib::Element::getFace() - Index does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
 	return NULL;
 }
 
@@ -149,7 +151,7 @@ Element* TemplateHex<NNODES,CELLHEXTYPE>::reviseElement() const
 	}
 
 	if (collapsed_edges.size() == 1) {
-		std::cerr << "[TemplateHex<NNODES,CELLHEXTYPE>::reviseElement()] collapsing of one edge in hexahedron not handled" << std::endl;
+		ERR("[TemplateHex<NNODES,CELLHEXTYPE>::reviseElement()] collapsing of one edge in hexahedron not handled.");
 		return NULL;
 	}
 
