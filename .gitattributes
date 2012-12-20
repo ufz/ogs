@@ -1,0 +1,4 @@
+# Enable style checks on source files
+*.h   hooks.style=uncrustify
+*.cpp hooks.style=uncrustify
+*.hpp hooks.style=uncrustify
