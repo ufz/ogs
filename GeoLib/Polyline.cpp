@@ -9,7 +9,8 @@
  *  Created on 2010-06-21 by Thomas Fischer
  */
 
-// Base
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 // GeoLib
 #include "Polyline.h"
@@ -291,18 +292,12 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
 				}
 			}
 			else
-				std::cout
-				<<
-				"Error in Polyline::contructPolylineFromSegments() - Line segments use different point vectors..."
-				<< std::endl;
+				ERR("Error in Polyline::contructPolylineFromSegments() - Line segments use different point vectors.");
 		}
 
 		if (!ply_found)
 		{
-			std::cout
-			<<
-			"Error in Polyline::contructPolylineFromSegments() - Not all segments are connected..."
-			<< std::endl;
+			ERR("Error in Polyline::contructPolylineFromSegments() - Not all segments are connected.");
 			new_ply = NULL;
 			break;
 		}
@@ -330,9 +325,7 @@ Polyline* Polyline::closePolyline(const Polyline& ply)
 		new_ply->addPoint(new_ply->getPointID(0));
 		return new_ply;
 	}
-	std::cout <<
-	"Error in Polyline::closePolyline() - Input polyline needs to be composed of at least three points..."
-	          << std::endl;
+	ERR("Error in Polyline::closePolyline() - Input polyline needs to be composed of at least three points.");
 	return NULL;
 }
 
@@ -372,7 +365,7 @@ bool containsEdge (const Polyline& ply, size_t id0, size_t id1)
 {
 	if (id0 == id1)
 	{
-		std::cerr << "no valid edge id0 == id1 == " << id0 << std::endl;
+		ERR("no valid edge id0 == id1 == %d.", id0);
 		return false;
 	}
 	if (id0 > id1)
