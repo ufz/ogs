@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -158,7 +158,7 @@ void LisLinearSystem::solve()
     ierr = lis_solver_set_option(const_cast<char*>(solver_options.c_str()), solver); checkError(ierr);
     ierr = lis_solver_set_option(const_cast<char*>(tol_option.c_str()), solver); checkError(ierr);
     ierr = lis_solver_set_option(const_cast<char*>("-print mem"), solver); checkError(ierr);
-    
+
     // solve
     INFO("-> solve");
     ierr = lis_solve(_AA, _bb, _xx, solver); checkError(ierr);

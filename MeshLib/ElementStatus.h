@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -16,7 +16,7 @@
 #include "Mesh.h"
 
 namespace MeshLib {
-	
+
 /**
  * An object to store which elements of the mesh are active and which are inactive
  */
@@ -28,7 +28,7 @@ public:
 	ElementStatus(Mesh const*const mesh);
 
 	bool getElementStatus(unsigned i) { return _status[i]; };
-	
+
 	bool isActive(unsigned i) { return _status[i]; };
 
 	void setActive(unsigned i) { _status[i] = true; };
