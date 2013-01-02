@@ -15,7 +15,11 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
-// Base
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+// BaseLib
 #include "DateTools.h"
 #include "StringTools.h"
 // GeoLib
@@ -79,7 +83,7 @@ Station* Station::createStation(const std::string & line)
 	}
 	else
 	{
-		std::cout << "Station::createStation() - Unexpected file format..." << std::endl;
+		INFO("Station::createStation() - Unexpected file format.");
 		delete station;
 		return NULL;
 	}
@@ -168,8 +172,7 @@ int StationBorehole::readStratigraphyFile(const std::string &path,
 
 	if (!in.is_open())
 	{
-		std::cout << "StationBorehole::readStratigraphyFile() - Could not open file..." <<
-		std::endl;
+		WARN("StationBorehole::readStratigraphyFile() - Could not open file %s.", path.c_str());
 		return 0;
 	}
 
@@ -195,7 +198,7 @@ int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* b
 
 		// check if a layer is missing
 		size = borehole->_soilName.size();
-		std::cout << "StationBorehole::addStratigraphy ToDo" << std::endl;
+		INFO("StationBorehole::addStratigraphy ToDo");
 		//	for (size_t i=0; i<size; i++)
 		//	{
 		//		if ((borehole->_soilLayerThickness[i] == -1) ||(borehole->_soilName[i].compare("") == 0))
@@ -203,7 +206,7 @@ int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* b
 		//			borehole->_soilLayerThickness.clear();
 		//			borehole->_soilName.clear();
 		//
-		//			cout << "StationBorehole::addStratigraphy() - Profile incomplete (Borehole " << borehole->_name << ", Layer " << (i+1) << " missing).\n";
+		//			WARN("StationBorehole::addStratigraphy() - Profile incomplete (Borehole %s, Layer %d missing)", borehole->_name.c_str(), i+1);
 		//
 		//			return 0;
 		//		}
@@ -226,8 +229,7 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 			// int layer = atoi(fields.front().c_str());
 			fields.pop_front();
 
-			std::cerr << "StationBorehole::addLayer - assuming correct order" <<
-			std::endl;
+			ERR("StationBorehole::addLayer - assuming correct order");
 			double thickness(strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), 0));
 			fields.pop_front();
 			borehole->addSoilLayer(thickness, fields.front());
@@ -235,9 +237,7 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 	}
 	else
 	{
-		std::cout
-		<< "StationBorehole::addLayer() - Unexpected file format (Borehole "
-		<< borehole->_name << ")..." << std::endl;
+		WARN("StationBorehole::addLayer() - Unexpected file format (Borehole %s).", borehole->_name.c_str());
 		return 0;
 	}
 	return 1;
@@ -257,7 +257,7 @@ int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const s
 		return 1;
 	}
 
-	std::cout << "Error in StationBorehole::addStratigraphy() - Length of parameter vectors does not match." << std::endl;
+	ERR("Error in StationBorehole::addStratigraphy() - Length of parameter vectors does not match.");
 	return 0;
 }
 
@@ -295,9 +295,7 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
 				        soil_name);
 			}
 			else
-				std::cout <<
-				"StationBorehole::addStratigraphies() - Unexpected file format..."
-				          << std::endl;
+				ERR("Error in StationBorehole::addStratigraphies() - Unexpected file format.");
 				//return 0;
 		}
 	}
@@ -334,7 +332,7 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
 	}
 	else
 	{
-		std::cout << "Station::createStation() - Unexpected file format..." << std::endl;
+		WARN("Station::createStation() - Unexpected file format.");
 		delete borehole;
 		return NULL;
 	}
