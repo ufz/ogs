@@ -16,7 +16,8 @@
 #include "VtkAlgorithmProperties.h"
 #include <vtkPolyDataAlgorithm.h>
 
-#include "GEOObjects.h"
+// GeoLib
+#include "Point.h"
 
 /**
  * \brief VtkPointsSource is a VTK source object for the visualization
