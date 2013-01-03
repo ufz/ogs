@@ -42,9 +42,25 @@ IF(WIN32 AND OGS_PACKAGING)
 		MESSAGE(FATAL_ERROR "Dumpbin was not found but is required for packaging!")
 	ENDIF()
 ENDIF()
+
+########################
+### Find other stuff ###
+########################
+
+# Check if on Jenkins
+IF(NOT $ENV{JENKINS_URL} STREQUAL "")
+	SET(JENKINS_URL $ENV{JENKINS_URL})
+	SET(JENKINS_JOB_NAME $ENV{JOB_NAME})
+ENDIF()
+
 ######################
 ### Find libraries ###
 ######################
+
+# Do not search for libs if this option is set
+IF(OGS_NO_EXTERNAL_LIBS)
+	RETURN()
+ENDIF() # OGS_NO_EXTERNAL_LIBS
 
 # Clang does not have OpenMP support atm, see https://github.com/ufz/ogs/issues/8
 IF(NOT COMPILER_IS_CLANG)
@@ -138,12 +154,7 @@ IF(Shapelib_FOUND)
 	ADD_DEFINITIONS(-DShapelib_FOUND)
 ENDIF() # Shapelib_FOUND
 
-########################
-### Find other stuff ###
-########################
-
-# Check if on Jenkins
-IF(NOT $ENV{JENKINS_URL} STREQUAL "")
-	SET(JENKINS_URL $ENV{JENKINS_URL})
-	SET(JENKINS_JOB_NAME $ENV{JOB_NAME})
+## lis ##
+IF(OGS_USE_LIS)
+    FIND_PACKAGE( LIS REQUIRED )
 ENDIF()

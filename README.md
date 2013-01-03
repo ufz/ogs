@@ -26,7 +26,7 @@ attribute the work of the OpenGeoSys Community especially in scientific
 publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.com
-[devguide]: http://ufz.github.com/devguide
+[devguide]: http://devguide.opengeosys.org
 [jenkins-ci]: https://svn.ufz.de/hudson/job/OGS-6/
 [docs]: https://svn.ufz.de/hudson/job/OGS-6/job/Docs/lastSuccessfulBuild/artifact/build/docs/index.html
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt

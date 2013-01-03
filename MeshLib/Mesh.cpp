@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -93,7 +93,7 @@ void Mesh::makeNodesUnique()
 	}
 
 	//set correct id for each node
-	
+
 	//if (this->getDimension() > 1)
 	//	this->removeMeshElements(MshElemType::EDGE);
 
@@ -268,7 +268,7 @@ void Mesh::removeUnusedMeshNodes()
 	}
 	if (count)
 	{
-		std::cout << "Removed " << count << " unused mesh nodes." << std::endl;
+		INFO("Removed %d unused mesh nodes.", count );
 		this->resetNodeIDs();
 	}
 }
@@ -276,8 +276,7 @@ void Mesh::removeUnusedMeshNodes()
 void Mesh::removeMeshElements(MshElemType::type t)
 {
 	unsigned count(0);
-	std::vector<MeshLib::Element*>::iterator it = this->_elements.begin();
-	for (it; it != this->_elements.end();)
+	for (std::vector<MeshLib::Element*>::iterator it = this->_elements.begin(); it != this->_elements.end();)
 	{
 		if ((*it)->getCellType() == t)
 		{
@@ -285,10 +284,10 @@ void Mesh::removeMeshElements(MshElemType::type t)
 			it = this->_elements.erase(it);
 			++count;
 		}
-		else 
+		else
 			++it;
 	}
-	std::cout << "Removed " << count << " elements of type " << MshElemType2String(t) << " from mesh." << std::endl;
+	INFO("Removed %d  elements of type %s from mesh.", count, MshElemType2String(t).c_str());
 }
 
 }

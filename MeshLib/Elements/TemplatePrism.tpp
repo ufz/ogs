@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -9,6 +9,9 @@
  *
  * Created on 2012-05-02 by Karsten Rink
  */
+
+// Thirdparty
+#include "logog/include/logog.hpp"
 
 #include "Node.h"
 #include "Tri.h"
@@ -100,7 +103,7 @@ const Element* TemplatePrism<NNODES,CELLPRISMTYPE>::getFace(unsigned i) const
 		else
 			return new Quad(nodes);
 	}
-	std::cerr << "Error in MeshLib::Element::getFace() - Index does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
 	return NULL;
 }
 
@@ -109,7 +112,7 @@ unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::getNFaceNodes(unsigned i) const
 {
 	if (i<5)
 		return _n_face_nodes[i];
-	std::cerr << "Error in MeshLib::Element::getNFaceNodes() - Index does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getNFaceNodes() - Index %d does not exist.", i);
 	return 0;
 }
 

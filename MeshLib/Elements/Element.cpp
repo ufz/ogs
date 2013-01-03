@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -9,6 +9,8 @@
  *
  * Created on 2012-05-02 by Karsten Rink
  */
+
+#include "logog/include/logog.hpp"
 
 #include "Element.h"
 #include "Node.h"
@@ -74,7 +76,7 @@ const Element* Element::getEdge(unsigned i) const
 		nodes[1] = const_cast<Node*>(getEdgeNode(i,1));
 		return new Edge(nodes);
 	}
-	std::cerr << "Error in MeshLib::Element::getEdge() - Index does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
 	return NULL;
 }
 
@@ -95,7 +97,7 @@ const Element* Element::getNeighbor(unsigned i) const
 {
 	if (i < getNNeighbors())
 		return _neighbors[i];
-	std::cerr << "Error in MeshLib::Element::getNeighbor() - Index does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getNeighbor() - Index does not exist.");
 	return NULL;
 }
 
@@ -112,7 +114,7 @@ const Node* Element::getNode(unsigned i) const
 {
 	if (i < getNNodes())
 		return _nodes[i];
-	std::cerr << "Error in MeshLib::Element::getNode() - Index " << i << " in " << MshElemType2String(getGeomType()) <<  " does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MshElemType2String(getGeomType()).c_str());
 	return NULL;
 }
 
@@ -126,7 +128,7 @@ unsigned Element::getNodeIndex(unsigned i) const
 {
 	if (i<getNNodes())
 		return _nodes[i]->getID();
-	std::cerr << "Error in MeshLib::Element::getNodeIndex() - Index does not exist." << std::endl;
+	ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
 	return std::numeric_limits<unsigned>::max();
 }
 

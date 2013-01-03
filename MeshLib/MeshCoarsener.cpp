@@ -74,7 +74,7 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 						// two nodes are very close to each other
 						id_map[test_node_id] = node_id_k;
 #ifndef NDEBUG
-						INFO ("distance of nodes with ids %d and %d is %f", node_id_k, test_node_id, sqrt(MathLib::sqrDist(node->getCoords(), test_node->getCoords())));
+						INFO("distance of nodes with ids %d and %d is %f", node_id_k, test_node_id, sqrt(MathLib::sqrDist(node->getCoords(), test_node->getCoords())));
 #endif
 					}
 				}
@@ -131,7 +131,7 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 			const size_t orig_node_id (kth_orig_elem->getNode(i)->getID());
 			std::map<size_t, size_t>::const_iterator it(orig_ids_map.find(orig_node_id));
 			if (it == orig_ids_map.end()) {
-				std::cerr << "[MeshCoarsener::operator()] could not found mesh node id" << std::endl;
+				ERR("[MeshCoarsener::operator()] could not found mesh node id.");
 			} else {
 				mapped_node_ids_of_element.push_back(id_map[it->second]);
 			}
