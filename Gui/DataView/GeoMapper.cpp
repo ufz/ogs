@@ -9,6 +9,9 @@
  * Created on 2012-09-25 by Karsten Rink
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "GeoMapper.h"
 
 #include "Mesh.h"
@@ -20,20 +23,22 @@
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
-	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL),
-	  _origin_x(0), _origin_y(0), _cellsize(0), _width(0), _height(0), _img_data(NULL)
+	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL), _raster(nullptr)
 {
 }
 
 GeoMapper::~GeoMapper()
 {
-	delete _img_data;
+	delete _raster;
 }
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	double no_data(-9999);
-	_img_data = Raster::loadDataFromASC(file_name, _origin_x, _origin_y, _width, _height, _cellsize, no_data);
+	GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(file_name));
+	if (! raster) {
+		ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
+		return;
+	}
 	this->mapData();
 }
 
@@ -101,13 +106,19 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 
 float GeoMapper::getDemElevation(double x, double y) const
 {
-	if ((x<_origin_x) || (x>_origin_x+(_width*_cellsize)) || (y<_origin_y) || (y>_origin_y+(_height*_cellsize)))
+	const double origin_x(_raster->getOrigin()[0]);
+	const double origin_y(_raster->getOrigin()[1]);
+	const double cellsize(_raster->getRasterPixelDistance());
+	const std::size_t width(_raster->getNCols());
+	const std::size_t height(_raster->getNRows());
+
+	if ((x<origin_x) || (x>origin_x+(width*cellsize)) || (y<origin_y) || (y>origin_y+(height*cellsize)))
 		return 0;
 
-	unsigned x_index = static_cast<unsigned>((x-_origin_x)/_cellsize);
-	unsigned y_index = static_cast<unsigned>((y-_origin_y)/_cellsize);
+	const unsigned x_index = static_cast<unsigned>((x-origin_x)/cellsize);
+	const unsigned y_index = static_cast<unsigned>((y-origin_y)/cellsize);
 
-	return static_cast<float>(_img_data[y_index*_width+x_index]);
+	return static_cast<float>(*(_raster->begin() + (y_index*width+x_index)));
 }
 
 double GeoMapper::getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const

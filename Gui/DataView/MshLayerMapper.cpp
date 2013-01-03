@@ -9,7 +9,11 @@
  * Created on 2010-11-01 by Karsten Rink
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "MshLayerMapper.h"
+// GeoLib
 #include "Raster.h"
 
 #include "Mesh.h"
@@ -67,7 +71,7 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned 
 					{
 						const unsigned nElemNodes(sfc_elem->getNNodes());
 						MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
-					
+
 						for (unsigned j=0; j<nElemNodes; ++j)
 						{
 							const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
@@ -88,7 +92,7 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned 
 			}
 			else
 			{
-				std::cout << "Error in MshLayerMapper::CreateLayers() - Layer thickness for layer " 
+				std::cout << "Error in MshLayerMapper::CreateLayers() - Layer thickness for layer "
 					      << (layer_id-1) << " is " << thickness[layer_id-1] << " (needs to be >0)." << std::endl;
 				return NULL;
 			}
@@ -110,15 +114,18 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 
 	if (nLayers >= layer_id)
 	{
-		double x0(0), y0(0), delta(1), no_data(-9999);
-		unsigned width(1), height(1);
-		double* elevation = Raster::loadDataFromASC(rasterfile, x0, y0, width,height, delta, no_data);
-
-		if (elevation == NULL)
-		{
-			delete [] elevation;
+		GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
+		if (! raster) {
+			ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
 			return 0;
 		}
+		const double x0(raster->getOrigin()[0]);
+		const double y0(raster->getOrigin()[1]);
+		const double delta(raster->getRasterPixelDistance());
+		const double no_data(raster->getNoDataValue());
+		const std::size_t width(raster->getNCols());
+		const std::size_t height(raster->getNRows());
+		double const*const elevation(raster->begin());
 
 		const std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
 		const std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
@@ -193,7 +200,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 		{
 			if (noData_nodes.size() < (nNodes - 2))
 			{
-				std::cout << "Warning: Removing " << noData_nodes.size() 
+				std::cout << "Warning: Removing " << noData_nodes.size()
 					      << " mesh nodes at NoData values ... " << std::endl;
 				MeshLib::Mesh* red_mesh = MeshLib::MshEditor::removeMeshNodes(new_mesh, noData_nodes);
 				if (new_mesh->getNElements() == 0)
@@ -211,12 +218,12 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 				std::cout << "Too many NoData values..." << std::endl;
 		}
 
-		delete [] elevation;
+		delete raster;
 		return 1;
 	}
 	else
-		std::cout << "Error in MshLayerMapper::LayerMapping() - Mesh has only " 
-		          << nLayers << " Layers, cannot assign layer " << layer_id 
+		std::cout << "Error in MshLayerMapper::LayerMapping() - Mesh has only "
+		          << nLayers << " Layers, cannot assign layer " << layer_id
 				  << "..." << std::endl;
 	return 0;
 }
@@ -232,7 +239,7 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
 	double yMin(std::numeric_limits<double>::max());
 	double xMax(std::numeric_limits<double>::min());
 	double yMax(std::numeric_limits<double>::min());
-		
+
 	for (unsigned i = 1; i < nNodes; ++i)
 	{
 		pnt = nodes[i]->getCoords();
@@ -342,7 +349,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 			MeshLib::Node** e_nodes = new MeshLib::Node*[count];
 			for (unsigned i=0; i<6; ++i)
 				e_nodes[i] = new_nodes[node_index_map[elem->getNode(i)->getID()]];
-			
+
 			MeshLib::Element* prism (new MeshLib::Prism(e_nodes, elem->getValue()));
 			new_elements.push_back(prism);
 		}

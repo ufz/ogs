@@ -9,6 +9,11 @@
  * Created on 2012-01-04 by Karsten Rink
  */
 
+#include <fstream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "DirectConditionGenerator.h"
 
 #include "Raster.h"
@@ -17,25 +22,27 @@
 #include "Mesh.h"
 
 #include <cmath>
-#include <fstream>
 #include <limits>
 
 const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
 {
 	if (_direct_values.empty())
 	{
-		double origin_x(0), origin_y(0), delta(0), no_data(-9999);
-		unsigned imgwidth(0), imgheight(0);
-
-		double* img = Raster::loadDataFromASC(filename, origin_x, origin_y, imgwidth, imgheight, delta, no_data);
-		if (img == 0)
-		{
-			std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster." << std::endl;
+		GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(filename));
+		if (! raster) {
+			ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster.");
 			return _direct_values;
-			}
+		}
+
+		double origin_x(raster->getOrigin()[0]);
+		double origin_y(raster->getOrigin()[1]);
+		double delta(raster->getRasterPixelDistance());
+		double no_data(raster->getNoDataValue());
+		unsigned imgwidth(raster->getNCols()), imgheight(raster->getNRows());
+		double const*const img(raster->begin());
 
 		const double dir[3] = {0,0,1};
-		const std::vector<GeoLib::PointWithID*> surface_nodes ( MeshLib::MshEditor::getSurfaceNodes(mesh, dir) );
+		const std::vector<GeoLib::PointWithID*> surface_nodes(MeshLib::MshEditor::getSurfaceNodes(mesh, dir) );
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
 		const size_t nNodes(surface_nodes.size());
 		_direct_values.reserve(nNodes);
@@ -58,11 +65,10 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 			}
 		}
 
-		delete[] img;
-
+		delete raster;
 	}
 	else
-		std::cout << "Error in DirectConditionGenerator::directToSurfaceNodes() - Data vector contains outdated values..." << std::endl;
+		ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - Data vector contains outdated values.");
 
 	return _direct_values;
 }

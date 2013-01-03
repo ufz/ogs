@@ -25,6 +25,7 @@ namespace MeshLib {
 
 namespace GeoLib {
 	class PointWithID;
+	class Raster;
 }
 
 /**
@@ -53,12 +54,7 @@ private:
 	GeoLib::Grid<GeoLib::PointWithID>* _grid;
 
 	// only necessary for mapping on DEM
-	double _origin_x;
-	double _origin_y;
-	double _cellsize;
-	unsigned _width;
-	unsigned _height;
-	double* _img_data;
+	GeoLib::Raster *_raster;
 };
 
 #endif //GEOMAPPER_H

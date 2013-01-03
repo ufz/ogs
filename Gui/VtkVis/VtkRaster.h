@@ -11,7 +11,7 @@
 #ifndef VTKRASTER_H
 #define VTKRASTER_H
 
-#include <string>
+#include <fstream>
 
 class vtkImageAlgorithm;
 class vtkImageImport;
@@ -25,8 +25,17 @@ class vtkImageReader2;
  */
 class VtkRaster
 {
-
 public:
+	/**
+	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
+	 */
+    static vtkImageImport* loadImageFromArray(double const*const data_array,
+											  double x0,
+											  double y0,
+											  std::size_t width,
+											  std::size_t height,
+											  double delta,
+											  double no_data = -9999);
 	/**
 	 * \brief Loads an image- or raster-file into an vtkImageAlgorithm-Object.
 	 *
@@ -42,18 +51,6 @@ public:
                                         double& x0,
                                         double& y0,
                                         double& delta);
-
-	/**
-	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
-	 */
-    static vtkImageImport* loadImageFromArray(double* data_array,
-											  double &x0,
-											  double &y0,
-											  unsigned &width,
-											  unsigned &height,
-											  double &delta,
-											  double no_data = -9999);
-
 private:
 	/**
 	 * Loads ArcGIS asc-files to a QPixmap object and automatically does a contrast stretching to adjust values to 8 bit greyscale images.
