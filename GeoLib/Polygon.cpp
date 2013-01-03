@@ -12,6 +12,9 @@
 #include <cmath>
 #include <cstdlib> // for exit
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -23,7 +26,7 @@
 #include "MathTools.h"
 #include "Vector3.h"
 
-// Base
+// BaseLib
 #include "quicksort.h"
 
 namespace GeoLib
@@ -51,8 +54,7 @@ bool Polygon::initialise ()
 		ensureCWOrientation();
 		return true;
 	} else {
-		std::cerr << "ERROR in Polygon::initialise() - base polyline is not closed" <<
-		std::endl;
+		WARN("Polygon::initialise(): base polyline is not closed.");
 		return false;
 	}
 }
@@ -327,9 +329,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 				polygon0->addPoint ((*polygon_it)->getPointID (k));
 			if (!polygon0->initialise())
 			{
-				std::cerr <<
-				"ERROR in Polygon::splitPolygonAtIntersection polygon0" <<
-				std::endl;
+				ERR("Polygon::splitPolygonAtIntersection(): Initialization of polygon0 failed.");
 				exit (1);
 			}
 
@@ -341,9 +341,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 			polygon1->addPoint (intersection_pnt_id);
 			if (!polygon1->initialise())
 			{
-				std::cerr <<
-				"ERROR in Polygon::splitPolygonAtIntersection polygon1" <<
-				std::endl;
+				ERR("Polygon::splitPolygonAtIntersection(): Initialization of polygon1 failed.");
 				exit (1);
 			}
 
@@ -487,7 +485,7 @@ bool operator==(Polygon const& lhs, Polygon const& rhs)
 	} else {
 		// opposite direction with start point of first polygon at arbitrary position
 		// *** ATTENTION
-		std::cerr << "operator==(Polygon const& lhs, Polygon const& rhs) - not tested case (implementation is probably buggy) - please contact thomas.fischer@ufz.de mentioning the problem" << std::endl;
+		WARN("operator==(Polygon const& lhs, Polygon const& rhs) - not tested case (implementation is probably buggy) - please contact thomas.fischer@ufz.de mentioning the problem.");
 		// in second polygon
 		if (lhs.getPointID(1) == rhs.getPointID(k-1)) {
 			size_t j(k-2);
