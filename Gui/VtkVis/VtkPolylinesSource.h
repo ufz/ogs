@@ -16,7 +16,11 @@
 #include "VtkAlgorithmProperties.h"
 #include <vtkPolyDataAlgorithm.h>
 
-#include "GEOObjects.h"
+// forward declaration
+namespace GeoLib {
+class Polyline;
+}
+
 
 /**
  * \brief VtkPolylinesSource is a VTK source object for the visualisation of
