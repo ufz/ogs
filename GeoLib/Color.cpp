@@ -13,6 +13,9 @@
 #include <iostream>
 #include <sstream>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "Color.h"
 #include "StringTools.h"
 
@@ -31,17 +34,17 @@ int readColorLookupTable(std::map<std::string, Color*> &colors, const std::strin
 
 	if (!in.is_open())
 	{
-		std::cout << "Color::readLookupTable() - Could not open file..."  << std::endl;
+		WARN("Color::readLookupTable() - Could not open file %s.", filename.c_str());
 		return 0;
 	}
 
 	while ( getline(in, line) )
 	{
 		std::list<std::string> fields = BaseLib::splitString(line, '\t');
-		Color *c = new Color();
 
 		if (fields.size()>=4)
 		{
+			Color *c = new Color();
 			id = fields.front();
 			fields.pop_front();
 			(*c)[0] = atoi(fields.front().c_str());
@@ -51,7 +54,6 @@ int readColorLookupTable(std::map<std::string, Color*> &colors, const std::strin
 			(*c)[2] = atoi(fields.front().c_str());
 			colors.insert(std::pair<std::string, Color*>(id, c));
 		}
-		else delete c;
 	}
 
 	return 1;
@@ -64,7 +66,7 @@ const Color* getColor(const std::string &id, std::map<std::string, Color*> &colo
 		if (id.compare(it->first) == 0)
 			return it->second;
 	}
-	std::cout << "Key \"" << id << "\" not found in color lookup table..." << std::endl;
+	WARN("Key \"%s\" not found in color lookup table.", id.c_str());
 	Color* c = getRandomColor();
 	colors.insert(std::pair<std::string, Color*>(id, c));
 	return c;
