@@ -10,6 +10,9 @@
  * Created on 2010-06-11 by Thomas Fischer
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // GeoLib
 #include "BruteForceClosestPair.h"
 #include "PointVec.h"
@@ -35,8 +38,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
 	if (number_of_all_input_pnts - _data_vec->size() > 0)
-		std::cerr << "WARNING: there are " << number_of_all_input_pnts -
-		_data_vec->size() << " double points" << std::endl;
+		WARN("PointVec::PointVec(): there are %d double points.", number_of_all_input_pnts - _data_vec->size());
 }
 
 PointVec::~PointVec ()
@@ -57,7 +59,7 @@ void PointVec::push_back (Point* pnt, std::string const*const name)
 
 	std::map<std::string,size_t>::const_iterator it (_name_id_map->find (*name));
 	if (it != _name_id_map->end()) {
-		std::cerr << "ERROR: PointVec::push_back (): two points with the same name" << std::endl;
+		WARN("PointVec::push_back(): two points share the name %s.", name->c_str());
 		return;
 	}
 
