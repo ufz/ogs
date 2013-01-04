@@ -122,6 +122,9 @@ public:
 
 		// some frequently used expressions to fill the grid vectors
 		for (std::size_t k(0); k < 3; k++) {
+			if (fabs(delta[k]) < std::numeric_limits<double>::epsilon()) {
+				delta[k] = std::numeric_limits<double>::epsilon();
+			}
 			_step_sizes[k] = delta[k] / _n_steps[k];
 			_inverse_step_sizes[k] = 1.0 / _step_sizes[k];
 		}
@@ -176,7 +179,7 @@ public:
 	POINT* getNearestPoint(double const*const pnt) const
 	{
 		std::size_t coords[3];
-		getGridCoords(pnt, coords);
+		getGridCoords(POINT(pnt), coords);
 
 		double sqr_min_dist (MathLib::sqrDist(&this->_min_pnt, &this->_max_pnt));
 		POINT* nearest_pnt(NULL);
@@ -227,7 +230,7 @@ public:
 			double len (sqrt(MathLib::sqrDist(pnt, nearest_pnt->getCoords())));
 			// search all other grid cells within the cube with the edge nodes
 			std::vector<std::vector<POINT*> const*> vecs_of_pnts;
-			getVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
+			getPntVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
 
 			const std::size_t n_vecs(vecs_of_pnts.size());
 			for (std::size_t j(0); j<n_vecs; j++) {
@@ -246,15 +249,19 @@ public:
 	}
 
 	/**
-	 * Method fetches the vectors of all grid cells intersecting the axis aligned cube
-	 * defined by its center and half edge length.
+	 * Method fetches the vectors of all grid cells intersecting the axis aligned cuboid
+	 * defined by two points. The first point with minimal coordinates in all directions.
+	 * The second point with maximal coordinates in all directions.
 	 *
-	 * @param pnt (input) the center point of the axis aligned cube
+	 * @param center (input) the center point of the axis aligned cube
 	 * @param half_len (input) half of the edge length of the axis aligned cube
 	 * @param pnts (output) vector of vectors of points within grid cells that intersects
 	 * the axis aligned cube
 	 */
-	void getVecsOfGridCellsIntersectingCube(double const*const pnt, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const;
+	void getPntVecsOfGridCellsIntersectingCube(POINT const& center, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const;
+
+	void getPntVecsOfGridCellsIntersectingCuboid(POINT const& min_pnt, POINT const& max_pnt, std::vector<std::vector<POINT*> const*>& pnts) const;
+
 
 #ifndef NDEBUG
 	/**
@@ -273,7 +280,7 @@ private:
 	 * @param pnt (input) the coordinates of the point
 	 * @param coords (output) the coordinates of the grid cell
 	 */
-	inline void getGridCoords(double const*const pnt, std::size_t* coords) const;
+	inline void getGridCoords(POINT const&, std::size_t* coords) const;
 
 	/**
 	 *
@@ -341,19 +348,42 @@ private:
 	std::vector<POINT*>* _grid_cell_nodes_map;
 };
 
+
 template<typename POINT>
-void Grid<POINT>::getVecsOfGridCellsIntersectingCube(double const* const pnt, double half_len,
-				std::vector<std::vector<POINT*> const*>& pnts) const
+void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(POINT const& center,
+				double half_len, std::vector<std::vector<POINT*> const*>& pnts) const
 {
-	double tmp_pnt[3] = { pnt[0] - half_len, pnt[1] - half_len, pnt[2] - half_len }; // min
+	double tmp_pnt[3] = { center[0] - half_len, center[1] - half_len, center[2] - half_len }; // min
 	std::size_t min_coords[3];
 	getGridCoords(tmp_pnt, min_coords);
 
-	tmp_pnt[0] = pnt[0] + half_len;
-	tmp_pnt[1] = pnt[1] + half_len;
-	tmp_pnt[2] = pnt[2] + half_len;
+	tmp_pnt[0] = center[0] + half_len;
+	tmp_pnt[1] = center[1] + half_len;
+	tmp_pnt[2] = center[2] + half_len;
 	std::size_t max_coords[3];
 	getGridCoords(tmp_pnt, max_coords);
+
+	std::size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
+	for (coords[0] = min_coords[0]; coords[0] < max_coords[0] + 1; coords[0]++) {
+		for (coords[1] = min_coords[1]; coords[1] < max_coords[1] + 1; coords[1]++) {
+			const std::size_t coords0_p_coords1_x_steps0(coords[0] + coords[1] * _n_steps[0]);
+			for (coords[2] = min_coords[2]; coords[2] < max_coords[2] + 1; coords[2]++) {
+				pnts.push_back(&(_grid_cell_nodes_map[coords0_p_coords1_x_steps0 + coords[2]
+								* steps0_x_steps1]));
+			}
+		}
+	}
+}
+
+template<typename POINT>
+void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(POINT const& min_pnt,
+				POINT const& max_pnt, std::vector<std::vector<POINT*> const*>& pnts) const
+{
+	std::size_t min_coords[3];
+	getGridCoords(min_pnt, min_coords);
+
+	std::size_t max_coords[3];
+	getGridCoords(max_pnt, max_coords);
 
 	std::size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
 	for (coords[0] = min_coords[0]; coords[0] < max_coords[0] + 1; coords[0]++) {
@@ -450,7 +480,7 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 #endif
 
 template <typename POINT>
-void Grid<POINT>::getGridCoords(double const*const pnt, std::size_t* coords) const
+void Grid<POINT>::getGridCoords(POINT const& pnt, std::size_t* coords) const
 {
 	for (std::size_t k(0); k<3; k++) {
 		if (pnt[k] < this->_min_pnt[k]) {

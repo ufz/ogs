@@ -34,6 +34,7 @@
 #include "Elements/Element.h"
 #include "MshEnums.h"
 #include "Mesh2MeshPropertyInterpolation.h"
+#include "ConvertRasterToMesh.h"
 
 int main (int argc, char* argv[])
 {
@@ -43,17 +44,24 @@ int main (int argc, char* argv[])
 	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Generates properties for mesh elements of an input mesh deploying a ASC raster file", ' ', "0.1");
-	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is stored to this file", true, "test.msh", "filename");
-	cmd.add( mesh_arg );
 
-	TCLAP::ValueArg<std::string> raster_arg("","raster-file","the ASC raster file", true, "", "the raster file");
-	cmd.add( raster_arg );
+	TCLAP::ValueArg<std::string> out_mesh_arg("o", "out-mesh", "the mesh is stored to a file of this name", false, "", "filename for mesh output");
+	cmd.add( out_mesh_arg );
 
-	TCLAP::ValueArg<unsigned> refinement_arg("r","refine","refinement factor that raises the resolution of the raster data", false, 1, "multiply the number of columns and rows of the raster by this factor");
+	TCLAP::ValueArg<bool> refinement_raster_output_arg("","output-refined-raster", "write refined raster to a new ASC file", false, false, "0");
+	cmd.add( refinement_raster_output_arg );
+
+	TCLAP::ValueArg<unsigned> refinement_arg("r","refine","refinement factor that raises the resolution of the raster data", false, 1, "factor (default = 1)");
 	cmd.add( refinement_arg );
 
-	TCLAP::ValueArg<bool> refinement_raster_output_arg("","refined-raster-output", "write refined raster to a new ASC file", false, false, "");
-	cmd.add( refinement_raster_output_arg );
+	TCLAP::ValueArg<std::string> mapping_arg("","mapping-name","file name of mapping", true, "", "file name");
+	cmd.add( mapping_arg );
+
+	TCLAP::ValueArg<std::string> raster_arg("","raster-file","the name of the ASC raster file", true, "", "file name");
+	cmd.add( raster_arg );
+
+	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is read from this file", true, "test.msh", "file name");
+	cmd.add( mesh_arg );
 
 	cmd.parse( argc, argv );
 
@@ -61,9 +69,9 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 
 	// read raster and if required manipulate it
-	Raster* raster(Raster::getRasterFromASCFile(raster_arg.getValue()));
+	GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(raster_arg.getValue()));
 	if (refinement_arg.getValue() > 1) {
-		raster->refineRaster(raster->getNCols() * refinement_arg.getValue(), raster->getNRows() * refinement_arg.getValue());
+		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
 			// write new asc file
 			std::string new_raster_fname (BaseLib::dropFileExtension(raster_arg.getValue()));
@@ -75,12 +83,13 @@ int main (int argc, char* argv[])
 	}
 
 	// put raster data in a std::vector
-	double const*const raster_data(raster->getRasterData());
+	GeoLib::Raster::const_iterator raster_it(raster->begin());
 	unsigned n_cols(raster->getNCols()), n_rows(raster->getNRows());
 	std::vector<double> src_properties(n_cols*n_rows);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
-			src_properties[row*n_cols+col] = raster_data[row*n_cols+col];
+			src_properties[row*n_cols+col] = *raster_it;
+			++raster_it;
 		}
 	}
 
@@ -100,50 +109,59 @@ int main (int argc, char* argv[])
 		std::cout << "variance of source: " << src_varianz << std::endl;
 	}
 
-	double spacing(raster->getRasterPixelDistance());
-	double *raster_with_alpha(new double[2 * raster->getNRows() * raster->getNCols()]);
-	for (std::size_t k(0); k<raster->getNRows() * raster->getNCols(); k++) {
-		raster_with_alpha[2*k] = 1.0;
-		raster_with_alpha[2*k+1] = raster->getRasterData()[k];
-	}
-
-	double origin[3] = {raster->getOrigin()[0] + spacing/2.0, raster->getOrigin()[1] + spacing/2.0, raster->getOrigin()[2]};
-	MeshLib::Mesh* src_mesh (VtkMeshConverter::convertImgToMesh(raster_with_alpha, origin, raster->getNRows(), raster->getNCols(),
-					spacing, MshElemType::QUAD, UseIntensityAs::MATERIAL));
+	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
+					MeshLib::UseIntensityAs::MATERIAL).execute());
 
 	std::vector<size_t> src_perm(n_cols*n_rows);
 	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
 	BaseLib::Quicksort<double>(src_properties, 0, n_cols*n_rows, src_perm);
 
+	// compress the property data structure
+	const size_t mat_map_size(src_properties.size());
+	std::vector<size_t> mat_map(mat_map_size);
+	mat_map[0] = 0;
+	size_t n_mat(1);
+	for (size_t k(1); k<mat_map_size; ++k) {
+		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
+			mat_map[k] = mat_map[k-1]+1;
+			n_mat++;
+		} else
+			mat_map[k] = mat_map[k-1];
+	}
+	std::vector<double> compressed_src_properties(n_mat);
+	compressed_src_properties[0] = src_properties[0];
+	for (size_t k(1), id(1); k<mat_map_size; ++k) {
+		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
+			compressed_src_properties[id] = src_properties[k];
+			id++;
+		}
+	}
+	compressed_src_properties[n_mat-1] = src_properties[mat_map_size-1];
+
 	// reset materials in source mesh
 	const size_t n_mesh_elements(src_mesh->getNElements());
 	for (size_t k(0); k<n_mesh_elements; k++) {
-		const_cast<MeshLib::Element*>(src_mesh->getElement(src_perm[k]))->setValue(k);
+		const_cast<MeshLib::Element*>(src_mesh->getElement(src_perm[k]))->setValue(mat_map[k]);
 	}
 
 	// do the interpolation
-	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh, &src_properties);
+	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh, &compressed_src_properties);
 	std::vector<double> dest_properties(dest_mesh->getNElements());
 	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(dest_mesh), dest_properties);
 
 	const size_t n_dest_mesh_elements(dest_mesh->getNElements());
 
 	{ // write property file
-		std::ofstream property_out(BaseLib::extractPath(mesh_arg.getValue())+"PropertyMapping");
+		std::string property_fname(mapping_arg.getValue());
+		std::ofstream property_out(property_fname.c_str());
 		if (! property_out) {
-			std::cerr << "could not open file " << BaseLib::extractPath(mesh_arg.getValue()) << "PropertyMapping" << std::endl;
+			std::cerr << "could not open file " << property_fname << "PropertyMapping" << std::endl;
 			return -1;
 		}
 
-		property_out << "#MEDIUM_PROPERTIES_DISTRIBUTED" << std::endl;
-		property_out << " $MSH_TYPE" << std::endl << "  GROUNDWATER_FLOW" << std::endl;
-		property_out << " $MMP_TYPE" << std::endl << "  PERMEABILITY" << std::endl;
-		property_out << " $DIS_TYPE" << std::endl << "  ELEMENT" << std::endl;
-		property_out << " $DATA" << std::endl;
 		for (size_t k(0); k<n_dest_mesh_elements; k++) {
 			property_out << k << " " << dest_properties[k] << std::endl;
 		}
-		property_out << "#STOP" << std::endl;
 		property_out.close();
 	}
 
@@ -163,21 +181,21 @@ int main (int argc, char* argv[])
 		std::cout << "variance of destination: " << sigma_q << std::endl;
 	}
 
-	std::vector<size_t> dest_perm(n_dest_mesh_elements);
-	for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
-	BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
+	if (! out_mesh_arg.getValue().empty()) {
+		std::vector<size_t> dest_perm(n_dest_mesh_elements);
+		for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
+		BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
 
-	// reset materials in destination mesh
-	for (size_t k(0); k<n_dest_mesh_elements; k++) {
-		const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
+		// reset materials in destination mesh
+		for (size_t k(0); k<n_dest_mesh_elements; k++) {
+			const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
+		}
+
+		FileIO::MeshIO mesh_writer;
+		mesh_writer.setPrecision(12);
+		mesh_writer.setMesh(dest_mesh);
+		mesh_writer.writeToFile(out_mesh_arg.getValue());
 	}
-
-	FileIO::MeshIO mesh_writer;
-	mesh_writer.setPrecision(12);
-	mesh_writer.setMesh(src_mesh);
-	mesh_writer.writeToFile(BaseLib::extractPath(mesh_arg.getValue()) +"SourceMeshWithMat.msh");
-	mesh_writer.setMesh(dest_mesh);
-	mesh_writer.writeToFile(BaseLib::extractPath(mesh_arg.getValue())+"DestMeshWithMat.msh");
 
 	delete raster;
 	delete src_mesh;

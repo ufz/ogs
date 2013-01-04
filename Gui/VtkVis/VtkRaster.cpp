@@ -10,12 +10,22 @@
  */
 
 #include "VtkRaster.h"
-#include "Raster.h"
+
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 #include <QFileInfo>
 
+#include "StringTools.h"
+
+// GeoLib
+#include "Raster.h"
+
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
+
 #include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
@@ -33,19 +43,23 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
                                         double& x0, double& y0, double& delta)
 {
 	QFileInfo fileInfo(QString::fromStdString(fileName));
-	unsigned width(0), height(0);
-	double* data;
-	double no_data(-9999);
 
-	if (fileInfo.suffix().toLower() == "asc")
-	{
-		data = Raster::loadDataFromASC(fileName, x0, y0, width, height, delta, no_data);
-		return loadImageFromArray(data, x0, y0, width, height, delta);		
+
+	GeoLib::Raster *raster(nullptr);
+	if (fileInfo.suffix().toLower() == "asc") {
+		raster = GeoLib::Raster::getRasterFromASCFile(fileName);
 	}
 	else if (fileInfo.suffix().toLower() == "grd")
 	{
-		data = Raster::loadDataFromSurfer(fileName, x0, y0, width, height, delta, no_data);
-        return loadImageFromArray(data, x0, y0, width, height, delta);
+		raster = GeoLib::Raster::getRasterFromSurferFile(fileName);
+	}
+	if (raster) {
+		x0 = raster->getOrigin()[0];
+		y0 = raster->getOrigin()[1];
+		double const*const data (raster->begin());
+		return VtkRaster::loadImageFromArray(data, x0, y0,
+						raster->getNCols(), raster->getNRows(), raster->getRasterPixelDistance(),
+						raster->getNoDataValue());
 	}
 #ifdef libgeotiff_FOUND
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
@@ -55,7 +69,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 		return loadImageFromFile(fileName);
 }
 
-vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, double &y0, unsigned &width, unsigned &height, double &delta, double noData)
+vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, double x0, double y0, std::size_t width, std::size_t height, double delta, double noData)
 {
 	const unsigned length = height*width;
 	float* data = new float[length*2];
@@ -92,6 +106,9 @@ vtkImageImport* VtkRaster::loadImageFromArray(double* data_array, double &x0, do
 
 	return image;
 }
+
+
+
 
 #ifdef libgeotiff_FOUND
 vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
