@@ -10,6 +10,9 @@
  */
 
 // ** INCLUDES **
+// GeoLib
+#include "Color.h"
+
 #include "VtkPointsSource.h"
 
 #include <vtkCellArray.h>
@@ -35,6 +38,7 @@ VtkPointsSource::VtkPointsSource()
 
 	const GeoLib::Color* c = GeoLib::getRandomColor();
 	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
+	delete c;
 }
 
 void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )

@@ -10,7 +10,10 @@
  */
 
 // ** INCLUDES **
+// GeoLib
 #include "AABB.h"
+#include "Color.h"
+
 #include "FEMCondition.h"
 #include "VtkConditionSource.h"
 

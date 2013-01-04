@@ -77,7 +77,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	const size_t n_triangles (sfc.getNTriangles());
 	double *z_vals (new double[n_cols*n_rows]);
 	if (!z_vals) {
-		std::cout << "DEBUG: CreateRaster::getRaster " << n_cols << " x " << n_rows << " to big" << std::endl;
+		WARN("CreateRaster::getRaster not enough memory for %d x %d raster", n_cols, n_rows);
 		return NULL;
 	}
 	size_t k(0);
@@ -128,7 +128,7 @@ Raster* Raster::getRasterFromASCFile(std::string const& fname)
 	std::ifstream in(fname.c_str());
 
 	if (!in.is_open()) {
-		std::cout << "Raster::getRasterFromASCFile() - Could not open file..." << fname << std::endl;
+		WARN("Raster::getRasterFromASCFile(): Could not open file %s.", fname.c_str());
 		return NULL;
 	}
 
@@ -154,7 +154,7 @@ Raster* Raster::getRasterFromASCFile(std::string const& fname)
 		delete [] values;
 		return raster;
 	} else {
-		std::cout << "Raster::getRasterFromASCFile() - could not read header of file " << fname << std::endl;
+		WARN("Raster::getRasterFromASCFile(): Could not read header of file %s", fname.c_str());
 		return NULL;
 	}
 }

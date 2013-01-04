@@ -10,6 +10,8 @@
  * Created on 2010-18-02 by Karsten Rink
  */
 
+#include <fstream>
+
 #include "ProjectData.h"
 #include "XMLInterface.h"
 

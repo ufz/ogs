@@ -10,6 +10,10 @@
  */
 
 // ** INCLUDES **
+// GeoLib
+#include "Color.h"
+#include "Polyline.h"
+
 #include "VtkPolylinesSource.h"
 
 #include <vtkCellArray.h>

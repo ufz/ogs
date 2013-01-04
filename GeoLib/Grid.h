@@ -15,6 +15,9 @@
 
 #include <vector>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // GeoLib
 #include "AABB.h"
 #include "GEOObjects.h"
@@ -137,11 +140,11 @@ public:
 			const std::size_t j(static_cast<std::size_t> ((pnt[1] - this->_min_pnt[1]) * _inverse_step_sizes[1]));
 			const std::size_t k(static_cast<std::size_t> ((pnt[2] - this->_min_pnt[2]) * _inverse_step_sizes[2]));
 
-			if (i >= _n_steps[0] || j >= _n_steps[1] || k >= _n_steps[2]) {
-				std::cout << "error computing indices " << std::endl;
+			if (i < _n_steps[0] && j < _n_steps[1] && k < _n_steps[2]) {
+				_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(const_cast<POINT*>(copyOrAddress(*it)));
+			} else {
+				ERR("Grid constructor: error computing indices [%d, %d, %d], max indices [%d, %d, %d].", i, j, k, _n_steps[0], _n_steps[1], _n_steps[2]);
 			}
-
-			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(const_cast<POINT*>(copyOrAddress(*it)));
 			it++;
 		}
 

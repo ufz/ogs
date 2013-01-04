@@ -16,7 +16,9 @@
 #include "VtkAlgorithmProperties.h"
 #include <vtkPolyDataAlgorithm.h>
 
-#include "GEOObjects.h"
+// GeoLib
+#include "Point.h"
+
 //#include <vtkSmartPointer.h>
 
 class FEMCondition;
