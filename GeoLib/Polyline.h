@@ -93,10 +93,9 @@ public:
 
 	/**
 	 * Closes a polyline by adding a line segment that connects start- and end-point.
-	 * \param ply A Polyline containing at least three points.
-	 * \return A polygon.
+	 * \return
 	 */
-	static Polyline* closePolyline(const Polyline& ply);
+	void closePolyline();
 
 	/// Constructs one polyline from a vector of connected polylines.
 	/// All polylines in this vector need to reference the same point vector.
@@ -190,7 +189,9 @@ std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 
-bool isLineSegmentIntersecting (const Polyline& ply, GeoLib::Point const& s0, GeoLib::Point const& s1);
+bool isLineSegmentIntersecting (const Polyline& ply,
+                                GeoLib::Point const& s0,
+                                GeoLib::Point const& s1);
 
 /**
  * comparison operator
@@ -199,7 +200,6 @@ bool isLineSegmentIntersecting (const Polyline& ply, GeoLib::Point const& s0, Ge
  * @return true, if the polylines consists of the same sequence of line segments
  */
 bool operator==(Polyline const& lhs, Polyline const& rhs);
-
 } // end namespace
 
 #endif /* POLYLINE_H_ */
