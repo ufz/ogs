@@ -14,6 +14,9 @@
 
 #include <limits>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 namespace GeoLib
 {
 /**
@@ -56,9 +59,8 @@ public:
 			_ur[1] = _ll[1] + _ur[0] - _ll[0];
 		else
 			_ur[0] = _ll[0] + _ur[1] - _ll[1];
-		//#ifndef NDEBUG
-//		std::cerr << "lower left: " << _ll << ", upper right: " << _ur << ", depth " << _depth << std::endl;
-//#endif
+
+		DBUG("QuadTree(): lower left: (%f,%f,%f), upper right: (%f,%f,%f), depth: %d", _ll[0], _ll[1], _ll[2], _ur[0], _ur[1], _ur[2], _depth);
 	}
 
 	/**

@@ -24,7 +24,6 @@
 #include "Surface.h"
 #include "SurfaceVec.h"
 
-#include "Color.h"
 #include "Station.h"
 
 #include "GeoType.h"

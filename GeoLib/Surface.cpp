@@ -12,6 +12,9 @@
 
 #include <list>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // GeoLib
 #include "Surface.h"
 #include "AABB.h"
@@ -57,7 +60,7 @@ void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt
 Surface* Surface::createSurface(const Polyline &ply)
 {
 	if (!ply.isClosed()) {
-		std::cout << "Error in Surface::createSurface() - Polyline is not closed..." << std::endl;
+		WARN("Error in Surface::createSurface() - Polyline is not closed.");
 		return NULL;
 	}
 
@@ -74,9 +77,9 @@ Surface* Surface::createSurface(const Polyline &ply)
 			simple_polygon_it != list_of_simple_polygons.end(); ++simple_polygon_it) {
 
 			std::list<GeoLib::Triangle> triangles;
-			std::cout << "triangulation of surface: ... " << std::flush;
+			INFO("triangulation of surface: ... ");
 			MathLib::EarClippingTriangulation(*simple_polygon_it, triangles);
-			std::cout << "done - " << triangles.size () << " triangles " << std::endl;
+			INFO("\tdone - %d triangles", triangles.size());
 
 			// add Triangles to Surface
 			std::list<GeoLib::Triangle>::const_iterator it (triangles.begin());
@@ -88,7 +91,7 @@ Surface* Surface::createSurface(const Polyline &ply)
 		delete polygon;
 		return sfc;
 	} else {
-		std::cout << "Error in Surface::createSurface() - Polyline consists of less than three points and therefore cannot be triangulated..." << std::endl;
+		WARN("Error in Surface::createSurface() - Polyline consists of less than three points and therefore cannot be triangulated.");
 		return NULL;
 	}
 

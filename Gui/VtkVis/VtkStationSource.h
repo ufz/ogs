@@ -16,7 +16,8 @@
 #include "VtkAlgorithmProperties.h"
 #include <vtkPolyDataAlgorithm.h>
 
-#include "GEOObjects.h"
+// GeoLib
+#include "Color.h"
 
 /**
  * \brief VTK source object for the visualisation of station data (including boreholes)

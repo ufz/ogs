@@ -10,12 +10,16 @@
  * Created on 2012-08-01 by Karsten Rink
  */
 
+#include <cstdlib>
+#include <fstream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "SensorData.h"
 
 #include "StringTools.h"
 #include "DateTools.h"
-#include <cstdlib>
-#include <fstream>
 
 
 SensorData::SensorData(const std::string &file_name)
@@ -30,7 +34,7 @@ SensorData::SensorData(std::vector<size_t> time_steps)
 	for (size_t i=1; i<time_steps.size(); i++)
 	{
 		if (time_steps[i-1]>=time_steps[i])
-			std::cout << "Error in SensorData() - Time series has no order!" << std::endl;
+			ERR("Error in SensorData() - Time series has no order!");
 	}
 }
 
@@ -51,19 +55,21 @@ void SensorData::addTimeSeries( const std::string &data_name, std::vector<float>
 
 void SensorData::addTimeSeries( SensorDataType::type data_name, std::vector<float> *data, const std::string &data_unit_string )
 {
-	if (_step_size>0)
-	{
-		if (((_end-_start)/_step_size) != data->size())
-			std::cout << "Warning in SensorData::addTimeSeries() - Lengths of time series does not match number of time steps." << std::endl;
+	if (_step_size>0) {
+		if (((_end-_start)/_step_size) != data->size()) {
+			WARN("Warning in SensorData::addTimeSeries() - Lengths of time series does not match number of time steps.");
+			return;
+		}
+	} else {
+		if  (data->size() != _time_steps.size()) {
+			WARN("Warning in SensorData::addTimeSeries() - Lengths of time series does not match number of time steps.");
+			return;
+		}
 	}
-	else if  (data->size() != _time_steps.size())
-		std::cout << "Warning in SensorData::addTimeSeries() - Lengths of time series does not match number of time steps." << std::endl;
-	else
-	{
-		_vec_names.push_back(data_name);
-		_data_vecs.push_back(data);
-		_data_unit_string.push_back(data_unit_string);
-	}
+
+	_vec_names.push_back(data_name);
+	_data_vecs.push_back(data);
+	_data_unit_string.push_back(data_unit_string);
 }
 
 const std::vector<float>* SensorData::getTimeSeries(SensorDataType::type time_series_name) const
@@ -73,18 +79,18 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType::type time_se
 		if (time_series_name == _vec_names[i])
 			return _data_vecs[i];
 	}
-	std::cout << "Error in SensorData::getTimeSeries() - Time series \"" << time_series_name << "\" not found." << std::endl;
+	ERR("Error in SensorData::getTimeSeries() - Time series \"%d\" not found.", time_series_name);
 	return NULL;
 }
 
-const std::string SensorData::getDataUnit(SensorDataType::type time_series_name) const
+std::string SensorData::getDataUnit(SensorDataType::type time_series_name) const
 {
 	for (size_t i=0; i<_vec_names.size(); i++)
 	{
 		if (time_series_name == _vec_names[i])
 			return _data_unit_string[i];
 	}
-	std::cout << "Error in SensorData::getDataUnit() - Time series \"" << time_series_name << "\" not found." << std::endl;
+	ERR("Error in SensorData::getDataUnit() - Time series \"%d\" not found.", time_series_name);
 	return "";
 }
 
@@ -94,7 +100,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
 
 	if (!in.is_open())
 	{
-		std::cout << "SensorData::readDataFromFile() - Could not open file...\n";
+		INFO("SensorData::readDataFromFile() - Could not open file %s.", file_name.c_str());
 		return 0;
 	}
 
