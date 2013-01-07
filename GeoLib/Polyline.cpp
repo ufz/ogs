@@ -321,16 +321,6 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
 	return new_ply;
 }
 
-bool Polyline::pointsAreIdentical(const std::vector<Point*> &pnt_vec,
-                                  size_t i,
-                                  size_t j,
-                                  double prox)
-{
-	if (i == j)
-		return true;
-	return MathLib::checkDistance( *pnt_vec[i], *pnt_vec[j], prox );
-}
-
 void Polyline::closePolyline()
 {
 	if (getNumberOfPoints() < 2) {
@@ -423,5 +413,15 @@ bool operator==(Polyline const& lhs, Polyline const& rhs)
 			return false;
 
 	return true;
+}
+
+bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
+                        size_t i,
+                        size_t j,
+                        double prox)
+{
+	if (i == j)
+		return true;
+	return MathLib::checkDistance( *pnt_vec[i], *pnt_vec[j], prox );
 }
 } // end namespace GeoLib

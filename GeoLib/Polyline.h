@@ -169,11 +169,6 @@ protected:
 	 */
 	Location::type getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
 
-	static bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
-	                               std::size_t i,
-	                               std::size_t j,
-	                               double prox);
-
 	/** a reference to the vector of pointers to the geometric points */
 	const std::vector<Point*> &_ply_pnts;
 	/** position of pointers to the geometric points */
@@ -200,6 +195,9 @@ bool isLineSegmentIntersecting (const Polyline& ply,
  * @return true, if the polylines consists of the same sequence of line segments
  */
 bool operator==(Polyline const& lhs, Polyline const& rhs);
+
+bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::size_t j,
+                        double prox);
 } // end namespace
 
 #endif /* POLYLINE_H_ */
