@@ -12,6 +12,9 @@
  *
  */
 
+// STL
+#include <algorithm>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -38,7 +41,6 @@ Polyline::Polyline(const Polyline& ply) :
 	if (ply.getNumberOfPoints() > 0)
 		for (size_t k(0); k < ply.getNumberOfPoints(); ++k)
 			_length.push_back (ply.getLength (k));
-
 }
 
 void Polyline::write(std::ostream &os) const
@@ -53,8 +55,9 @@ void Polyline::addPoint(size_t pnt_id)
 	assert(pnt_id < _ply_pnts.size());
 	size_t n_pnts (_ply_pnt_ids.size());
 
-	// don't insert point if ID if this would result in identical IDs for two adjacent points
-	if (n_pnts>0 && _ply_pnt_ids[n_pnts-1] == pnt_id) return;
+	// don't insert point if this would result in identical IDs for two adjacent points
+	if (n_pnts > 0 && _ply_pnt_ids[n_pnts - 1] == pnt_id)
+		return;
 
 	_ply_pnt_ids.push_back(pnt_id);
 
@@ -102,7 +105,10 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 			if (pos == _ply_pnt_ids.size() - 1)
 			{
 				// insert at last position
-				double act_dist(sqrt(MathLib::sqrDist(_ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size()-2]], _ply_pnts[pnt_id])));
+				double act_dist(sqrt(MathLib::sqrDist(
+				                             _ply_pnts[_ply_pnt_ids[_ply_pnt_ids.
+				                                                    size() - 2]],
+				                             _ply_pnts[pnt_id])));
 				double dist_until_now (0.0);
 				if (_ply_pnt_ids.size() > 2)
 					dist_until_now = _length[_ply_pnt_ids.size() - 2];
@@ -166,6 +172,9 @@ size_t Polyline::getNumberOfPoints() const
 
 bool Polyline::isClosed() const
 {
+	if (_ply_pnt_ids.empty())
+		return false;
+
 	if (_ply_pnt_ids.front() == _ply_pnt_ids.back())
 		return true;
 	else
@@ -174,12 +183,7 @@ bool Polyline::isClosed() const
 
 bool Polyline::isPointIDInPolyline(size_t pnt_id) const
 {
-	const size_t n_ply_pnt_ids(_ply_pnt_ids.size());
-	size_t k(0);
-	while (k < n_ply_pnt_ids && _ply_pnt_ids[k] != pnt_id)
-		k++;
-
-	if (k == n_ply_pnt_ids) {
+	if (_ply_pnt_ids.end() == std::find(_ply_pnt_ids.begin(), _ply_pnt_ids.end(), pnt_id)) {
 		return false;
 	}
 	return true;
@@ -401,9 +405,10 @@ bool isLineSegmentIntersecting (const Polyline& ply,
 	const size_t n (ply.getNumberOfPoints() - 1);
 	bool intersect(false);
 	GeoLib::Point intersection_pnt;
-	for (size_t k(0); k < n && !intersect; k++) {
-		intersect = MathLib::lineSegmentIntersect (*(ply.getPoint(k)), *(ply.getPoint(k+1)), s0, s1, intersection_pnt);
-	}
+	for (size_t k(0); k < n && !intersect; k++)
+		intersect = MathLib::lineSegmentIntersect (*(ply.getPoint(k)), *(ply.getPoint(
+		                                                                         k + 1)),
+		                                           s0, s1, intersection_pnt);
 	return intersect;
 }
 
@@ -413,12 +418,10 @@ bool operator==(Polyline const& lhs, Polyline const& rhs)
 		return false;
 
 	const size_t n(lhs.getNumberOfPoints());
-	for (size_t k(0); k<n; k++) {
+	for (size_t k(0); k < n; k++)
 		if (lhs.getPointID(k) != rhs.getPointID(k))
 			return false;
-	}
 
 	return true;
 }
-
 } // end namespace GeoLib
