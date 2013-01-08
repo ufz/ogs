@@ -172,7 +172,7 @@ size_t Polyline::getNumberOfPoints() const
 
 bool Polyline::isClosed() const
 {
-	if (_ply_pnt_ids.empty())
+	if (_ply_pnt_ids.size() < 3)
 		return false;
 
 	if (_ply_pnt_ids.front() == _ply_pnt_ids.back())
