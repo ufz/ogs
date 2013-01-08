@@ -12,7 +12,10 @@
 #include <fstream>
 #include <vector>
 
-// Base
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+// BaseLib
 #include "StringTools.h"
 
 #include "GEOObjects.h"
@@ -26,7 +29,7 @@ void Gmsh2GeoIO::loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* ge
 	std::ifstream ins (fname.c_str());
 	if (!ins)
 	{
-		std::cout << "could not open file " << fname << std::endl;
+		WARN("Gmsh2GeoIO::loadMeshAsGeometry(): could not open file %s", fname.c_str());
 		return;
 	}
 
