@@ -1,13 +1,14 @@
 /**
+ * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file MeshIO.cpp
- *
- * Created on 2012-05-08 by Karsten Rink
+ * @file MeshIO.cpp
+ * @date 2012-05-08
+ * @author Karsten Rink
  */
 
 #include <iomanip>
