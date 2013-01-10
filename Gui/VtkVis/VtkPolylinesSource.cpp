@@ -27,9 +27,9 @@
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkPolylinesSource);
 vtkCxxRevisionMacro(VtkPolylinesSource, "$Revision$");
@@ -62,7 +62,7 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 		int numPoints = (*it)->getNumberOfPoints();
 		for (int i = 0; i < numPoints; i++)
 		{
-			const GeoLib::Point* point = (**it)[i];
+			const GeoLib::Point* point = (*it)->getPoint(i);
 			const double* coords = point->getCoords();
 			os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
 			", " << coords[2] << ")\n";
@@ -115,7 +115,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		// Generate points
 		for (int i = 0; i < numPoints; i++)
 		{
-			const GeoLib::Point* point = (*(*_polylines)[j])[i];
+			const GeoLib::Point* point = (*_polylines)[j]->getPoint(i);
 			const double* coords = point->getCoords();
 			newPoints->InsertNextPoint(coords);
 		}

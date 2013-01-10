@@ -117,7 +117,7 @@ bool Polygon::isPolylineInPolygon(const Polyline& ply) const
 {
 	size_t ply_size (ply.getNumberOfPoints()), cnt (0);
 	for (size_t k(0); k < ply_size; k++) {
-		if (isPntInPolygon (*(ply[k]))) {
+		if (isPntInPolygon (*(ply.getPoint(k)))) {
 			cnt++;
 		}
 	}
@@ -132,7 +132,7 @@ bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
 	const size_t ply_size (ply.getNumberOfPoints());
 	// check points
 	for (size_t k(0); k < ply_size; k++) {
-		if (isPntInPolygon (*(ply[k]))) {
+		if (isPntInPolygon (*(ply.getPoint(k)))) {
 			return true;
 		}
 	}
