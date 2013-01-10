@@ -10,24 +10,26 @@
  * Created on 2011-11-23 by Karsten Rink
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "XmlGspInterface.h"
 
+#include "XmlCndInterface.h"
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
-#include "XmlCndInterface.h"
 
 #include "Legacy/MeshIO.h"
 #include "Mesh.h"
 
-#include <QFileInfo>
 #include <QFile>
+#include <QFileInfo>
 #include <QtXml/QDomDocument>
 
 namespace FileIO
 {
-
-XmlGspInterface::XmlGspInterface(ProjectData* project, const std::string &schemaFile)
-: XMLInterface(project, schemaFile)
+XmlGspInterface::XmlGspInterface(ProjectData* project, const std::string &schemaFile) :
+	XMLInterface(project, schemaFile)
 {
 }
 
@@ -42,8 +44,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		std::cout << "XmlGspInterface::readFile() - Can't open xml-file " <<
-		fileName.toStdString() << "." << std::endl;
+		ERR("XmlGspInterface::readFile(): Can't open xml-file %s.", fileName.data());
 		delete file;
 		return 0;
 	}
@@ -58,7 +59,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 	QDomElement docElement = doc.documentElement(); //OpenGeoSysProject
 	if (docElement.nodeName().compare("OpenGeoSysProject"))
 	{
-		std::cout << "XmlGspInterface::readFile() - Unexpected XML root." << std::endl;
+		ERR("XmlGspInterface::readFile(): Unexpected XML root.");
 		delete file;
 		return 0;
 	}
@@ -70,31 +71,36 @@ int XmlGspInterface::readFile(const QString &fileName)
 		const QString file_node(fileList.at(i).nodeName());
 		if (file_node.compare("geo") == 0)
 		{
-			XmlGmlInterface gml(_project, schemaPath.toStdString() + "OpenGeoSysGLI.xsd");
+			XmlGmlInterface gml(_project,
+			                    schemaPath.toStdString() + "OpenGeoSysGLI.xsd");
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 			{
 				const QDomNode child_node (childList.at(j));
 				if (child_node.nodeName().compare("file") == 0)
 				{
-					std::cout << "path: " << path.toStdString() << "#" << std::endl;
-					std::cout << "file name: " << (child_node.toElement().text()).toStdString() << "#" << std::endl;
+					DBUG("XmlGspInterface::readFile(): path: \"%s\".",
+					     path.data());
+					DBUG("XmlGspInterface::readFile(): file name: \"%s\".",
+					     (child_node.toElement().text()).data());
 					gml.readFile(QString(path + child_node.toElement().text()));
 				}
 			}
 		}
 		else if (file_node.compare("stn") == 0)
 		{
-			XmlStnInterface stn(_project, schemaPath.toStdString() + "OpenGeoSysSTN.xsd");
+			XmlStnInterface stn(_project,
+			                    schemaPath.toStdString() + "OpenGeoSysSTN.xsd");
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
-					stn.readFile(QString(path + childList.at(j).toElement().text()));
+					stn.readFile(QString(path +
+					                     childList.at(j).toElement().text()));
 		}
 		else if (file_node.compare("msh") == 0)
 		{
 			const std::string msh_name = path.toStdString() +
-			                       fileList.at(i).toElement().text().toStdString();
+			                             fileList.at(i).toElement().text().toStdString();
 			FileIO::MeshIO meshIO;
 			MeshLib::Mesh* msh = meshIO.loadMeshFromFile(msh_name);
 			_project->addMesh(msh);
@@ -145,14 +151,16 @@ int XmlGspInterface::write(std::ostream& stream)
 			root.appendChild(geoTag);
 			QDomElement fileNameTag = doc.createElement("file");
 			geoTag.appendChild(fileNameTag);
-			QDomText fileNameText = doc.createTextNode(QString::fromStdString(name + ".gml"));
+			QDomText fileNameText =
+			        doc.createTextNode(QString::fromStdString(name + ".gml"));
 			fileNameTag.appendChild(fileNameText);
 		}
 	}
 
 	// MSH
 	const std::vector<MeshLib::Mesh*> msh_vec = _project->getMeshObjects();
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
+	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end();
+	     ++it)
 	{
 		// write mesh file
 		FileIO::MeshIO meshIO;
@@ -187,16 +195,16 @@ int XmlGspInterface::write(std::ostream& stream)
 			root.appendChild(geoTag);
 			QDomElement fileNameTag = doc.createElement("file");
 			geoTag.appendChild(fileNameTag);
-			QDomText fileNameText = doc.createTextNode(QString::fromStdString(name + ".stn"));
+			QDomText fileNameText =
+			        doc.createTextNode(QString::fromStdString(name + ".stn"));
 			fileNameTag.appendChild(fileNameText);
 		}
 		else
-			std::cout << "XmlGspInterface::writeFile() -  Error writing file: " << name << std::endl;
+			ERR("XmlGspInterface::writeFile(): Error writing file \"%s\".", name.c_str());
 	}
 
 	std::string xml = doc.toString().toStdString();
 	stream << xml;
 	return 1;
 }
-
 }

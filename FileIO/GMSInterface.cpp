@@ -1,27 +1,31 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * @copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  *
- * \file GMSInterface.cpp
- *
- * Created on 2010-06-08 by Karsten Rink
+ * @file GMSInterface.cpp
+ * @date 2010-06-08
+ * @author Karsten Rink
  */
 
 #include <fstream>
 
-#include "GMSInterface.h"
-#include "Station.h"
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Tet.h"
-#include "Elements/Pyramid.h"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "Elements/Prism.h"
+#include "Elements/Pyramid.h"
+#include "Elements/Tet.h"
+#include "GMSInterface.h"
+#include "Mesh.h"
 #include "MshEnums.h"
+#include "Node.h"
+#include "Station.h"
 // BaseLib
-#include "StringTools.h"
 #include "FileTools.h"
+#include "StringTools.h"
 
 int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                                        const std::string &filename)
@@ -35,7 +39,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 
 	if (!in.is_open())
 	{
-		std::cout << "GMSInterface::readBoreholeFromGMS() - Could not open file...\n";
+		ERR("GMSInterface::readBoreholeFromGMS(): Could not open file %s.", filename.c_str());
 		return 0;
 	}
 
@@ -60,13 +64,16 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 				// if so skip it since it will mess with the vtk-visualisation later on!
 				if ((*pnt)[2] != depth)
 				{
-					newBorehole->addSoilLayer((*pnt)[0], (*pnt)[1], (*pnt)[2], sName);
+					newBorehole->addSoilLayer((*pnt)[0],
+					                          (*pnt)[1],
+					                          (*pnt)[2],
+					                          sName);
 					sName = (*(++it));
 					depth = (*pnt)[2];
 				}
 				else
-					std::cout << "Warning: Skipped layer \"" << sName << "\" in borehole \""
-					          << cName << "\" because of thickness 0.0." << std::endl;
+					WARN("GMSInterface::readBoreholeFromGMS(): Skipped layer \"%s\" in borehole \"%s\" because of thickness 0.0.",
+				         sName.c_str(), cName.c_str());
 			}
 			else // add new borehole
 			{
@@ -81,14 +88,15 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 				(*pnt)[1] = strtod((++it)->c_str(), 0);
 				(*pnt)[2] = strtod((++it)->c_str(), 0);
 				sName = (*(++it));
-				newBorehole = GeoLib::StationBorehole::createStation(cName, (*pnt)[0], (*pnt)[1], (*pnt)[2], 0);
+				newBorehole =
+				        GeoLib::StationBorehole::createStation(cName, (*pnt)[0],
+				                                               (*pnt)[1],
+				                                               (*pnt)[2], 0);
 				depth = (*pnt)[2];
 			}
 		}
 		else
-			std::cout <<
-			"GMSInterface::readBoreholeFromGMS() - Error reading format..." <<
-			std::endl;
+			ERR("GMSInterface::readBoreholeFromGMS(): Error reading format.");
 	}
 	// write the last borehole from the file
 	if (newBorehole != NULL)
@@ -109,7 +117,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
    {
     //std::vector<std::string> soilID(1);
     std::vector<std::string> soilID = readSoilIDfromFile("d:/BodeTimeline.txt");
-    for (size_t i=0; i<stations->size(); i++)
+    for (std::size_t i=0; i<stations->size(); i++)
         StationIO::writeBoreholeToGMS(static_cast<GeoLib::StationBorehole*>((*stations)[i]), std::string("Borehole-" + static_cast<GeoLib::StationBorehole*>((*stations)[i])->getName() + ".txt"), soilID);
     StationIO::writeSoilIDTable(soilID, "SoilIDReference.txt");
    }
@@ -118,22 +126,22 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
                                        const std::string &filename)
 {
 	std::ofstream out( filename.c_str(), std::ios::out );
-	size_t idx = 0;
+	std::size_t idx = 0;
 	std::vector<std::string> soilID = readSoilIDfromFile("d:/BodeTimeline.txt");
 
 	// write header
 	out << "name" << "\t" << std::fixed << "X" << "\t" << "Y"  << "\t" << "Z" <<  "\t" <<
 	"soilID" << std::endl;
 
-	for (size_t j = 0; j < stations->size(); j++)
+	for (std::size_t j = 0; j < stations->size(); j++)
 	{
 		GeoLib::StationBorehole* station =
 		        static_cast<GeoLib::StationBorehole*>((*stations)[j]);
 		std::vector<GeoLib::Point*> profile = station->getProfile();
 		std::vector<std::string> soilNames  = station->getSoilNames();
 
-		size_t nLayers = profile.size();
-		for (size_t i = 1; i < nLayers; i++)
+		std::size_t nLayers = profile.size();
+		for (std::size_t i = 1; i < nLayers; i++)
 		{
 			if ( (i > 1) && (soilNames[i].compare(soilNames[i - 1]) == 0) )
 				continue;
@@ -160,7 +168,7 @@ int GMSInterface::writeBoreholeToGMS(const GeoLib::StationBorehole* station,
                                      std::vector<std::string> &soilID)
 {
 	std::ofstream out( filename.c_str(), std::ios::out );
-	size_t idx = 0;
+	std::size_t idx = 0;
 
 	// write header
 	out << "name" << "\t" << std::fixed << "X" << "\t" << "Y"  << "\t" << "Z" <<  "\t" <<
@@ -170,8 +178,8 @@ int GMSInterface::writeBoreholeToGMS(const GeoLib::StationBorehole* station,
 	std::vector<std::string> soilNames  = station->getSoilNames();
 
 	// write table
-	size_t nLayers = profile.size();
-	for (size_t i = 1; i < nLayers; i++)
+	std::size_t nLayers = profile.size();
+	for (std::size_t i = 1; i < nLayers; i++)
 	{
 		if ( (i > 1) && (soilNames[i].compare(soilNames[i - 1]) == 0) )
 			continue;
@@ -183,15 +191,15 @@ int GMSInterface::writeBoreholeToGMS(const GeoLib::StationBorehole* station,
 	}
 	out << station->getName() << "\t" << std::fixed << (*(profile[nLayers - 1]))[0] << "\t"
 	    << (*(profile[nLayers - 1]))[1]  << "\t" << (*(profile[nLayers - 1]))[2] <<  "\t"
-	    << idx << std::endl;        // this line marks the end of the borehole
+	    << idx << std::endl;    // this line marks the end of the borehole
 	out.close();
 
 	return 1;
 }
 
-size_t GMSInterface::getSoilID(std::vector<std::string> &soilID, std::string &soilName)
+std::size_t GMSInterface::getSoilID(std::vector<std::string> &soilID, std::string &soilName)
 {
-	for (size_t j = 0; j < soilID.size(); j++)
+	for (std::size_t j = 0; j < soilID.size(); j++)
 		if (soilID[j].compare(soilName) == 0)
 			return j;
 	soilID.push_back(soilName);
@@ -207,8 +215,8 @@ int GMSInterface::writeSoilIDTable(const std::vector<std::string> &soilID,
 	out << "ID" << "\t" << std::fixed << "Soil name" << std::endl;
 
 	// write table
-	size_t nIDs = soilID.size();
-	for (size_t i = 0; i < nIDs; i++)
+	std::size_t nIDs = soilID.size();
+	for (std::size_t i = 0; i < nIDs; i++)
 		out << i << "\t" << std::fixed << soilID[i] << "\t" << std::endl;
 	out.close();
 
@@ -240,7 +248,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 	std::ifstream in(filename.c_str());
 	if (!in.is_open())
 	{
-		std::cout << "GMSInterface::readGMS3DMMesh() - Could not open file..." << std::endl;
+		ERR("GMSInterface::readGMS3DMMesh(): Could not open file %s.", filename.c_str());
 		return NULL;
 	}
 
@@ -248,11 +256,11 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 	getline(in, line); // "MESH3D"
 	if (line.compare("MESH3D") != 0)
 	{
-		std::cout << "GMSInterface::readGMS3DMMesh() - Could not read expected file header..." << std::endl;
+		ERR("GMSInterface::readGMS3DMMesh(): Could not read expected file header.");
 		return NULL;
 	}
 
-	std::cout << "Read GMS-3DM mesh ... ";
+	INFO("GMSInterface::readGMS3DMMesh(): Read GMS-3DM mesh.");
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
 	std::map<unsigned, unsigned> id_map;
@@ -286,10 +294,11 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		std::string element_id(line.substr(0,3));
 		std::stringstream str(line);
 
-		if (element_id.compare("E6W") == 0)	// Prism
+		if (element_id.compare("E6W") == 0) // Prism
 		{
-			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3]
-			    >> node_idx[4] >> node_idx[5] >> mat_id;
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
+			node_idx[3]
+			>> node_idx[4] >> node_idx[5] >> mat_id;
 			MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 			for (unsigned k(0); k<6; k++) {
 				prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -298,7 +307,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		}
 		else if (element_id.compare("E4T") == 0) // Tet
 		{
-			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> mat_id;
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
+			node_idx[3] >> mat_id;
 			MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 			for (unsigned k(0); k<4; k++) {
 				tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -307,7 +317,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 		}
 		else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
 		{
-			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >> node_idx[3] >> node_idx[4] >> mat_id;
+			str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
+			node_idx[3] >> node_idx[4] >> mat_id;
 			MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 			for (unsigned k(0); k<5; k++) {
 				pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -315,18 +326,18 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 			elements.push_back(new MeshLib::Pyramid(pyramid_nodes, mat_id));
 		}
 		else if (element_id.compare("ND ") == 0) // Node
-		{
-			continue;	// skip because nodes have already been read
-		}
+
+			continue; // skip because nodes have already been read
 		else //default
 		{
-			std::cout << std::endl << "GMSInterface::readGMS3DMMesh() - Element type \"" << element_id << "\"not recognised ..." << std::endl;
+			WARN("GMSInterface::readGMS3DMMesh() - Element type \"%s\" not recognised.",
+			     element_id.c_str());
 			return NULL;
 		}
 	}
 
 	in.close();
-	std::cout << "finished" << std::endl;
+	INFO("GMSInterface::readGMS3DMMesh(): \tfinished.");
 
 	const std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
 	return new MeshLib::Mesh(mesh_name, nodes, elements);

@@ -1,7 +1,15 @@
 /**
- * \file SHPInterface.cpp
- * 25/01/2010 KR Initial implementation
+ * @copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ * @file SHPInterface.h
+ * @date 25/01/2010
+ * @author Karsten Rink
  */
+
 #ifndef SHPINTERFACE_H
 #define SHPINTERFACE_H
 
@@ -10,6 +18,7 @@
 //ShapeLib includes
 #include "shapefil.h"
 
+// GeoLib
 #include "GEOObjects.h"
 
 /**
@@ -50,7 +59,8 @@ private:
 	/// Reads lines into a vector of Polyline and Surface objects.
 	void readPolygons  (const SHPHandle &hSHP, int numberOfElements, std::string listName);
 
-	void adjustPolylines (std::vector<GeoLib::Polyline*>* lines, std::vector<std::size_t>  id_map);
+	void adjustPolylines (std::vector<GeoLib::Polyline*>* lines,
+	                      std::vector<std::size_t>  id_map);
 
 	GeoLib::GEOObjects* _geoObjects;
 };
