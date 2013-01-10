@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -10,16 +10,20 @@
  * Based on the vtkZLibDataCompressor-class in VTK 5.6
  */
 
-#include "zLibDataCompressor.h"
 #include <cstddef>
 #include <iostream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "zlib/zlib.h"
 
+#include "zLibDataCompressor.h"
 
 unsigned long zLibDataCompressor::CompressBuffer(const unsigned char* uncompressedData,
-                                      unsigned long uncompressedSize,
-                                      unsigned char* compressedData,
-                                      unsigned long compressionSpace)
+                                                 unsigned long uncompressedSize,
+                                                 unsigned char* compressedData,
+                                                 unsigned long compressionSpace)
 {
 	int CompressionLevel = Z_DEFAULT_COMPRESSION;
 	unsigned long compressedSize = compressionSpace;
@@ -29,7 +33,7 @@ unsigned long zLibDataCompressor::CompressBuffer(const unsigned char* uncompress
 	// Call zlib's compress function.
 	if(compress2(cd, &compressedSize, ud, uncompressedSize, CompressionLevel) != Z_OK)
 	{
-		std::cout << "Zlib error while compressing data." << std::endl;
+		ERR("zLibDataCompressor::CompressBuffer(): Zlib error while compressing data.");
 		return 0;
 	}
 
@@ -37,9 +41,9 @@ unsigned long zLibDataCompressor::CompressBuffer(const unsigned char* uncompress
 }
 
 unsigned long zLibDataCompressor::UncompressBuffer(const unsigned char* compressedData,
-                                        unsigned long compressedSize,
-                                        unsigned char* uncompressedData,
-                                        unsigned long uncompressedSize)
+                                                   unsigned long compressedSize,
+                                                   unsigned char* uncompressedData,
+                                                   unsigned long uncompressedSize)
 {
 	unsigned long decSize = uncompressedSize;
 	Bytef* ud = reinterpret_cast<Bytef*>(uncompressedData);
@@ -48,15 +52,15 @@ unsigned long zLibDataCompressor::UncompressBuffer(const unsigned char* compress
 	// Call zlib's uncompress function.
 	if(uncompress(ud, &decSize, cd, compressedSize) != Z_OK)
 	{
-		std::cout << "Zlib error while uncompressing data." << std::endl;
+		ERR("zLibDataCompressor::CompressBuffer(): Zlib error while uncompressing data.");
 		return 0;
 	}
 
 	// Make sure the output size matched that expected.
 	if(decSize != uncompressedSize)
 	{
-		std::cout << "Decompression produced incorrect size. Expected " 
-			      << uncompressedSize << " and got " << decSize << std::endl;
+		WARN("Decompression produced incorrect size. Expected %d and got %d.",
+		     uncompressedSize, decSize);
 		return 0;
 	}
 
