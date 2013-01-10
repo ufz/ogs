@@ -18,7 +18,8 @@
 #include <QFile>
 #include <QtXml/QDomDocument>
 
-#include <iostream>
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 /**
  * \brief Reader for vtk-Lookup-Tables (in XML / ParaView Format)
@@ -33,7 +34,7 @@ public:
 		QFile* file = new QFile(fileName);
 		if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 		{
-			std::cout << "XmlLutReader::readFromFile() - Can't open xml-file." << std::endl;
+			ERR("XmlLutReader::readFromFile(): Can't open xml-file %s.", fileName.data());
 			delete file;
 			return NULL;
 		}
@@ -43,7 +44,7 @@ public:
 		QDomElement docElement = doc.documentElement();
 		if (docElement.nodeName().compare("ColorMap"))
 		{
-			std::cout << "XmlLutReader::readFromFile() - Unexpected XML root." << std::endl;
+			ERR("XmlLutReader::readFromFile(): Unexpected XML root.");
 			delete file;
 			return NULL;
 		}
@@ -66,10 +67,10 @@ public:
 		while (!point.isNull())
 		{
 			if ((point.nodeName().compare("Point") == 0 )
-				&& point.hasAttribute("x")
-				&& point.hasAttribute("r")
-				&& point.hasAttribute("g")
-				&& point.hasAttribute("b"))
+			    && point.hasAttribute("x")
+			    && point.hasAttribute("r")
+			    && point.hasAttribute("g")
+			    && point.hasAttribute("b"))
 			{
 				double value = strtod((point.attribute("x")).toStdString().c_str(),0);
 				unsigned char r = static_cast<int>(255 * strtod((point.attribute("r")).toStdString().c_str(),0));
@@ -77,8 +78,10 @@ public:
 				unsigned char b = static_cast<int>(255 * strtod((point.attribute("b")).toStdString().c_str(),0));
 				unsigned char o = static_cast<int>(255 * (point.hasAttribute("o") ? strtod((point.attribute("o")).toStdString().c_str(),0) : 1));
 
-				if (value<range[0]) range[0] = value;
-				if (value>range[1]) range[1] = value;
+				if (value < range[0])
+					range[0] = value;
+				if (value > range[1])
+					range[1] = value;
 
 				unsigned char a[4] = { r, g, b, o };
 				lut->setColor(value, a);
