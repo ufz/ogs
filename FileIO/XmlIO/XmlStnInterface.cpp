@@ -11,7 +11,9 @@
  */
 
 #include <limits>
-#include <iostream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 #include <QFile>
 #include <QtXml/QDomDocument>
@@ -24,9 +26,8 @@
 
 namespace FileIO
 {
-
-XmlStnInterface::XmlStnInterface(ProjectData* project, const std::string &schemaFile)
-: XMLInterface(project, schemaFile)
+XmlStnInterface::XmlStnInterface(ProjectData* project, const std::string &schemaFile) :
+	XMLInterface(project, schemaFile)
 {
 }
 
@@ -36,7 +37,7 @@ int XmlStnInterface::readFile(const QString &fileName)
 	QFile* file = new QFile(fileName);
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		std::cout << "XmlStnInterface::readFile() - Can't open xml-file." << std::endl;
+		ERR("XmlStnInterface::readFile(): Can't open xml-file %s.", fileName.data());
 		delete file;
 		return 0;
 	}
@@ -51,7 +52,7 @@ int XmlStnInterface::readFile(const QString &fileName)
 	QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
 	if (docElement.nodeName().compare("OpenGeoSysSTN"))
 	{
-		std::cout << "XmlStnInterface::readFile() - Unexpected XML root." << std::endl;
+		ERR("XmlStnInterface::readFile(): Unexpected XML root.");
 		delete file;
 		return 0;
 	}
@@ -89,7 +90,7 @@ int XmlStnInterface::readFile(const QString &fileName)
 
 void XmlStnInterface::readStations( const QDomNode &stationsRoot,
                                     std::vector<GeoLib::Point*>* stations,
-									const std::string &station_file_name )
+                                    const std::string &station_file_name )
 {
 	QDomElement station = stationsRoot.firstChildElement();
 	while (!station.isNull())
@@ -108,11 +109,13 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				// check for general station features
 				const QDomNode feature_node (stationFeatures.at(i));
 				const QString feature_name (feature_node.nodeName());
-				const std::string element_text (feature_node.toElement().text().toStdString());
+				const std::string element_text (
+				        feature_node.toElement().text().toStdString());
 				if (feature_name.compare("name") == 0)
 					stationName = feature_node.toElement().text().toStdString();
 				if (feature_name.compare("sensordata") == 0)
-					sensor_data_file_name = feature_node.toElement().text().toStdString();
+					sensor_data_file_name =
+					        feature_node.toElement().text().toStdString();
 				/* add other station features here */
 
 				// check for general borehole features
@@ -133,11 +136,13 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				        new GeoLib::Station(
 							strtod((station.attribute("x")).toStdString().c_str(), 0),
 				            strtod((station.attribute("y")).toStdString().c_str(), 0),
-				            zVal,
-							stationName);
+				                zVal,
+				                stationName);
 				s->setStationValue(stationValue);
 				if (!sensor_data_file_name.empty())
-						s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name, station_file_name));
+					s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
+					                                sensor_data_file_name,
+					                                station_file_name));
 				stations->push_back(s);
 			}
 			else if (station.nodeName().compare("borehole") == 0)
@@ -159,12 +164,13 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 			}
 		}
 		else
-			std::cout << "XmlStnInterface::readStations() - Attribute missing in <station> tag ..." << std::endl;
+			WARN("XmlStnInterface::readStations(): Attribute missing in <station> tag.");
 		station = station.nextSiblingElement();
 	}
 }
 
-void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot, GeoLib::StationBorehole* borehole )
+void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
+                                        GeoLib::StationBorehole* borehole )
 {
 	//borehole->addSoilLayer((*borehole)[0], (*borehole)[1], (*borehole)[2], "");
 	double depth_check((*borehole)[2]);
@@ -180,7 +186,7 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot, GeoLib::Stati
 			for(int i = 0; i < horizonFeatures.count(); i++)
 				if (horizonFeatures.at(i).nodeName().compare("name") == 0)
 					horizonName = horizonFeatures.at(i).toElement().text().toStdString();
-				/* add other horizon features here */
+			/* add other horizon features here */
 
 			double depth (strtod((horizon.attribute("z")).toStdString().c_str(), 0));
 			if (fabs(depth - depth_check) < std::numeric_limits<double>::min()) // skip soil-layer if its thickness is zero
@@ -192,13 +198,11 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot, GeoLib::Stati
 				depth_check = depth;
 			}
 			else
-				std::cout << "Warning: Skipped layer \"" << horizonName << "\" in borehole \""
-					      << borehole->getName() << "\" because of thickness 0.0." << std::endl;
+				WARN("XmlStnInterface::readStratigraphy(): Skipped layer \"%s\" in borehole \"%s\" because of thickness 0.0.",
+				     horizonName.c_str(), borehole->getName().c_str());
 		}
 		else
-			std::cout <<
-			"XmlStnInterface::readStratigraphy() - Attribute missing in <horizon> tag ..."
-			          << std::endl;
+			WARN("XmlStnInterface::readStratigraphy(): Attribute missing in <horizon> tag.");
 		horizon = horizon.nextSiblingElement();
 	}
 }
@@ -207,7 +211,7 @@ int XmlStnInterface::write(std::ostream& stream)
 {
 	if (this->_exportName.empty())
 	{
-		std::cout << "Error in XmlStnInterface::write() - No station list specified..." << std::endl;
+		ERR("XmlStnInterface::write(): No station list specified.");
 		return 0;
 	}
 
@@ -240,10 +244,11 @@ int XmlStnInterface::write(std::ostream& stream)
 	stationListTag.appendChild(stationsTag);
 
 	bool useStationValue(false);
-	double sValue=static_cast<GeoLib::Station*>((*stations)[0])->getStationValue();
+	double sValue = static_cast<GeoLib::Station*>((*stations)[0])->getStationValue();
 	size_t nStations(stations->size());
 	for (size_t i = 1; i < nStations; i++)
-		if ((static_cast<GeoLib::Station*>((*stations)[i])->getStationValue() - sValue) < std::numeric_limits<double>::min())
+		if ((static_cast<GeoLib::Station*>((*stations)[i])->getStationValue() - sValue) <
+		    std::numeric_limits<double>::min())
 		{
 			useStationValue = true;
 			break;
@@ -285,8 +290,8 @@ int XmlStnInterface::write(std::ostream& stream)
 }
 
 void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
-                                     QDomElement &boreholeTag,
-                                     GeoLib::StationBorehole* borehole) const
+                                        QDomElement &boreholeTag,
+                                        GeoLib::StationBorehole* borehole) const
 {
 	QDomElement stationDepthTag = doc.createElement("bdepth");
 	boreholeTag.appendChild(stationDepthTag);
@@ -297,7 +302,8 @@ void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
 		QDomElement stationDateTag = doc.createElement("bdate");
 		boreholeTag.appendChild(stationDateTag);
 		QDomText stationDateText =
-		        doc.createTextNode(QString::fromStdString(BaseLib::date2string(borehole->getDate())));
+		        doc.createTextNode(QString::fromStdString(BaseLib::date2string(borehole->
+		                                                                       getDate())));
 		stationDateTag.appendChild(stationDateText);
 	}
 
@@ -327,7 +333,6 @@ void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
 	}
 }
 
-
 int XmlStnInterface::rapidReadFile(const std::string &fileName)
 {
 	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
@@ -335,7 +340,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	std::ifstream in(fileName.c_str());
 	if (in.fail())
 	{
-		std::cout << "XmlStnInterface::rapidReadFile() - Can't open xml-file." << std::endl;
+		ERR("XmlStnInterface::rapidReadFile(): Can't open xml-file %s.", fileName.c_str());
 		return 0;
 	}
 
@@ -343,7 +348,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	in.seekg(0, std::ios::end);
 	size_t length = in.tellg();
 	in.seekg(0, std::ios::beg);
-	char* buffer = new char[length+1];
+	char* buffer = new char[length + 1];
 	in.read(buffer, length);
 	buffer[in.gcount()] = '\0';
 	in.close();
@@ -355,18 +360,20 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	// parse content
 	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN"))
 	{
-		std::cout << "XmlStnInterface::readFile() - Unexpected XML root." << std::endl;
+		ERR("XmlStnInterface::readFile() - Unexpected XML root.");
 		return 0;
 	}
 
 	// iterate over all station lists
-	for (rapidxml::xml_node<>* station_list = doc.first_node()->first_node(); station_list; station_list = station_list->next_sibling())
+	for (rapidxml::xml_node<>* station_list = doc.first_node()->first_node(); station_list;
+	     station_list = station_list->next_sibling())
 	{
 		std::vector<GeoLib::Point*>* stations = new std::vector<GeoLib::Point*>;
 		std::string stnName("[NN]");
 
 		stnName = station_list->first_node("name")->value();
-		for (rapidxml::xml_node<>* list_item = station_list->first_node(); list_item; list_item = list_item->next_sibling())
+		for (rapidxml::xml_node<>* list_item = station_list->first_node(); list_item;
+		     list_item = list_item->next_sibling())
 		{
 			std::string b(list_item->name());
 			if (std::string(list_item->name()).compare("stations") == 0)
@@ -387,11 +394,15 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	return 1;
 }
 
-void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name)
+void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root,
+                                        std::vector<GeoLib::Point*>* stations,
+                                        const std::string &file_name)
 {
-	for (rapidxml::xml_node<>* station_node = station_root->first_node(); station_node; station_node = station_node->next_sibling())
+	for (rapidxml::xml_node<>* station_node = station_root->first_node(); station_node;
+	     station_node = station_node->next_sibling())
 	{
-		if (station_node->first_attribute("id") && station_node->first_attribute("x") && station_node->first_attribute("y"))
+		if (station_node->first_attribute("id") && station_node->first_attribute("x") &&
+		    station_node->first_attribute("y"))
 		{
 			double zVal(0.0);
 			if (station_node->first_attribute("z"))
@@ -402,7 +413,8 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
 			if (station_node->first_node("name"))
 				station_name = station_node->first_node("name")->value();
 			if (station_node->first_node("sensordata"))
-				sensor_data_file_name = station_node->first_node("sensordata")->value();
+				sensor_data_file_name =
+				        station_node->first_node("sensordata")->value();
 			if (station_node->first_node("value"))
 				station_value = strtod(station_node->first_node("value")->value(), 0);
 			/* add other station features here */
@@ -410,13 +422,15 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
 			if (std::string(station_node->name()).compare("station") == 0)
 			{
 				GeoLib::Station* s = new GeoLib::Station(
-							strtod(station_node->first_attribute("x")->value(), 0),
-				            strtod(station_node->first_attribute("y")->value(), 0),
-				            zVal,
-							station_name);
+				        strtod(station_node->first_attribute("x")->value(), 0),
+				        strtod(station_node->first_attribute("y")->value(), 0),
+				        zVal,
+				        station_name);
 				s->setStationValue(station_value);
 				if (!sensor_data_file_name.empty())
-					s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name, file_name));
+					s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
+					                                sensor_data_file_name,
+					                                file_name));
 				stations->push_back(s);
 			}
 			else if (std::string(station_node->name()).compare("borehole") == 0)
@@ -440,19 +454,20 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
 					this->rapidReadStratigraphy(station_node->first_node("strat"), s);
 
 				stations->push_back(s);
-
 			}
 		}
 		else
-			std::cout << "XmlStnInterface::rapidReadStations() - Attribute missing in <station> tag ..." << std::endl;
+			WARN("XmlStnInterface::rapidReadStations(): Attribute missing in <station> tag.");
 	}
 }
 
-void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole )
+void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_root,
+                                             GeoLib::StationBorehole* borehole )
 {
 	double depth_check((*borehole)[2]);
 
-	for (rapidxml::xml_node<>* horizon_node = strat_root->first_node("horizon"); horizon_node; horizon_node = horizon_node->next_sibling())
+	for (rapidxml::xml_node<>* horizon_node = strat_root->first_node("horizon"); horizon_node;
+	     horizon_node = horizon_node->next_sibling())
 	{
 		if (horizon_node->first_attribute("id") && horizon_node->first_attribute("x") &&
 		    horizon_node->first_attribute("y")  && horizon_node->first_attribute("z"))
@@ -472,13 +487,13 @@ void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_r
 				depth_check = depth;
 			}
 			else
-				std::cout << "Warning: Skipped layer \"" << horizon_name << "\" in borehole \""
-					      << borehole->getName() << "\" because of thickness 0.0." << std::endl;
+				WARN(
+				        "XmlStnInterface::rapidReadStratigraphy(): Skipped layer \"%s\" in borehole \"%s\" because of thickness 0.0.",
+				        horizon_name.c_str(),
+				        borehole->getName().c_str());
 		}
 		else
-			std::cout <<
-			"XmlStnInterface::rapidReadStratigraphy() - Attribute missing in <horizon> tag ..." << std::endl;
+			WARN("XmlStnInterface::rapidReadStratigraphy(): Attribute missing in <horizon> tag.");
 	}
 }
-
 }
