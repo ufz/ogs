@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2012-01-03
+ * \brief  Implementation of the CRSMatrixReordered class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file CRSMatrixReordered.cpp
- *
- * Created on 2012-01-03 by Thomas Fischer
  */
 
 // BaseLib

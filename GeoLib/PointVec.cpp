@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischeror
+ * \date   2010-06-11
+ * \brief  Implementation of the PointVec class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file PointVec.cpp
- *
- * Created on 2010-06-11 by Thomas Fischer
  */
 
 // ThirdParty/logog

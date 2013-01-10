@@ -1,15 +1,17 @@
 /**
+ * \file
+ * \author Lars Bilke
+ * \date   2009-10-27
+ * \brief  Definition of the Vector3 class.
+ *         From: http://www.strout.net/info/coding/classlib/intro.html
+ *         with modifications to derive from TemplatePoint
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file Vector3.h
- *
- * Created on 2009-10-27 by Lars Bilke
- * From: http://www.strout.net/info/coding/classlib/intro.html
- * with modifications to derive from TemplatePoint
  */
 
 #ifndef VECTOR3_H

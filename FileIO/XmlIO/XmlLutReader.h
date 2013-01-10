@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2011-01-30
+ * \brief  Definition of the XmlLutReader class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file XmlLutReader.h
- *
- * Created on 2011-01-30 by Karsten Rink
  */
 
 #ifndef XMLLUTREADER_H

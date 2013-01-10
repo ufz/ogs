@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-05-24
+ * \brief  Definition of the Matrix class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file Matrix.h
- *
- * Created on 2011-05-24 by Thomas Fischer
  */
 
 #ifndef MATRIX_H

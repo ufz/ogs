@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-08-27
+ * \brief  Definition of the GeoObject class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file GeoObject.h
- *
- * Created on 2010-08-27 by Thomas Fischer
  */
 
 #ifndef GEOOBJECT_H_

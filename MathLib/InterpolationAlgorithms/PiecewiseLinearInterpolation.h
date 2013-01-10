@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-09-07
+ * \brief  Definition of the PiecewiseLinearInterpolation class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file PiecewiseLinearInterpolation.h
- *
- * Created on 2010-09-07 by Thomas Fischer
  */
 
 #ifndef PIECEWISELINEARINTERPOLATION_H_

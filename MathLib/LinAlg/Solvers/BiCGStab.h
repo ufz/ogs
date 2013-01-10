@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-10-04
+ * \brief  Definition of the BiCGStab function.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file BiCGStab.h
- *
- * Created on 2011-10-04 by Thomas Fischer
  */
 
 #ifndef BICGSTAB_H_

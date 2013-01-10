@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2010-01-22
+ * \brief  Definition of date helper functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file DateTools.h
- *
- * Created on 2010-01-22 by Karsten Rink
  */
 
 #ifndef DATETOOLS_H

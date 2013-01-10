@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-02-09
+ * \brief  Definition of the PolylineVec class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file PolylineVec.h
- *
- * Created on 2010-02-09 by Thomas Fischer
  */
 
 #ifndef POLYLINEVEC_H_
