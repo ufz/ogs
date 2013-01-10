@@ -132,10 +132,6 @@ public:
 	 */
 	void setPointID(std::size_t idx, std::size_t id);
 
-	/** \brief const access operator for the access to the i-th point of the polyline.
-	 */
-	const Point* operator[](std::size_t i) const;
-
 	/**
 	 * \brief returns the i-th point contained in the polyline
 	 * */
