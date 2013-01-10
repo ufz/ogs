@@ -1,52 +1,55 @@
 /**
+ * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  *
- * \file MeshIO.cpp
- *
- * Created on 2012-05-08 by Karsten Rink
+ * @file MeshIO.cpp
+ * @date 2012-05-08
+ * @author Karsten Rink
  */
 
 #include <iomanip>
 #include <sstream>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // GeoLib
 #include "GEOObjects.h"
 
 // MeshLib
-#include "MeshIO.h"
-#include "Node.h"
 #include "Elements/Edge.h"
-#include "Elements/Tri.h"
+#include "Elements/Hex.h"
+#include "Elements/Prism.h"
+#include "Elements/Pyramid.h"
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
+#include "Elements/Tri.h"
+#include "MeshIO.h"
+#include "Node.h"
 
 // BaseLib
-#include "StringTools.h"
 #include "FileTools.h"
+#include "StringTools.h"
 
 namespace FileIO
 {
-
 MeshIO::MeshIO()
-: _mesh(NULL)
+	: _mesh(NULL)
 {
 }
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
-	std::cout << "Reading OGS legacy mesh ... " << std::endl;
+	INFO("MeshIO::loadMeshFromFile(): Reading OGS legacy mesh ... ");
 
 	std::ifstream in (file_name.c_str(),std::ios::in);
 	if (!in.is_open())
 	{
-		std::cout << std::endl << "MeshIO::loadMeshFromFile() - Could not open file...\n";
+		WARN("MeshIO::loadMeshFromFile() - Could not open file %s.", file_name.c_str());
 		return NULL;
 	}
 
@@ -58,7 +61,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
 	if(line_string.find("#FEM_MSH") != std::string::npos) // OGS mesh file
 	{
-		double edge_length[2] = { std::numeric_limits<double>::max(), std::numeric_limits<double>::min() };
+		double edge_length[2] =
+		{ std::numeric_limits<double>::max(), std::numeric_limits<double>::min() };
 		while (!in.eof())
 		{
 			getline(in, line_string);
@@ -99,20 +103,26 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 					elements.push_back(readElement(line_string, nodes));
 
 					double elem_min_length, elem_max_length;
-					elements[elem_idx]->computeSqrEdgeLengthRange(elem_min_length, elem_max_length);
-					edge_length[0] = (elem_min_length<edge_length[0]) ? elem_min_length : edge_length[0];
-					edge_length[1] = (elem_max_length>edge_length[1]) ? elem_max_length : edge_length[1];
+					elements[elem_idx]->computeSqrEdgeLengthRange(
+					        elem_min_length,
+					        elem_max_length);
+					edge_length[0] =
+					        (elem_min_length <
+					        edge_length[0]) ? elem_min_length : edge_length[0];
+					edge_length[1] =
+					        (elem_max_length >
+					        edge_length[1]) ? elem_max_length : edge_length[1];
 				}
 			}
 		}
 
-
-		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(file_name), nodes, elements));
+		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(
+		                                               file_name), nodes, elements));
 		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
 
-		std::cout << "finished." << std::endl;
-		std::cout << "Nr. Nodes: " << nodes.size() << std::endl;
-		std::cout << "Nr. Elements: " << elements.size() << std::endl;
+		INFO("\tMeshIO::loadMeshFromFile(): finished.");
+		INFO("Nr. Nodes: %d.", nodes.size());
+		INFO("Nr. Elements: %d.", elements.size());
 
 		in.close();
 		return mesh;
@@ -124,7 +134,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 	}
 }
 
-MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes)
+MeshLib::Element* MeshIO::readElement(const std::string& line,
+                                      const std::vector<MeshLib::Node*> &nodes)
 {
 	std::stringstream ss (line);
 	std::string elem_type_str("");
@@ -134,7 +145,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 
 	do {
 		ss >> elem_type_str;
-		if (ss.fail()) return NULL;
+		if (ss.fail())
+			return NULL;
 		elem_type = String2MshElemType(elem_type_str);
 	} while (elem_type == MshElemType::INVALID);
 
@@ -157,8 +169,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 3; ++i)
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		for (unsigned k(0); k<3; ++k)
-			tri_nodes[k] = nodes[idx[2-k]];
+		for (unsigned k(0); k < 3; ++k)
+			tri_nodes[k] = nodes[idx[2 - k]];
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
@@ -166,8 +178,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 4; ++i)
 			ss >> idx[i];
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-		for (unsigned k(0); k<4; ++k)
-			quad_nodes[k] = nodes[idx[3-k]];
+		for (unsigned k(0); k < 4; ++k)
+			quad_nodes[k] = nodes[idx[3 - k]];
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
 	}
@@ -175,8 +187,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 4; ++i)
 			ss >> idx[i];
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
-		for (unsigned k(0); k<4; ++k)
-			tet_nodes[k] = nodes[idx[3-k]];
+		for (unsigned k(0); k < 4; ++k)
+			tet_nodes[k] = nodes[idx[3 - k]];
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
 	}
@@ -184,8 +196,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 8; ++i)
 			ss >> idx[i];
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
-		for (unsigned k(0); k<8; ++k)
-			hex_nodes[k] = nodes[idx[7-k]];
+		for (unsigned k(0); k < 8; ++k)
+			hex_nodes[k] = nodes[idx[7 - k]];
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
 	}
@@ -193,8 +205,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 5; ++i)
 			ss >> idx[i];
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
-		for (unsigned k(0); k<5; ++k)
-			pyramid_nodes[k] = nodes[idx[4-k]];
+		for (unsigned k(0); k < 5; ++k)
+			pyramid_nodes[k] = nodes[idx[4 - k]];
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
 	}
@@ -202,8 +214,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 		for (int i = 0; i < 6; ++i)
 			ss >> idx[i];
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
-		for (unsigned k(0); k<6; ++k)
-			prism_nodes[k] = nodes[idx[5-k]];
+		for (unsigned k(0); k < 6; ++k)
+			prism_nodes[k] = nodes[idx[5 - k]];
 		elem = new MeshLib::Prism(prism_nodes, patch_index);
 		break;
 	}
@@ -219,7 +231,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line, const std::vector
 int MeshIO::write(std::ostream &out)
 {
 	if(!_mesh) {
-		std::cout << "OGSMeshIO cannot write: no mesh set!" << std::endl;
+		WARN("MeshIO::write(): Cannot write: no mesh set!");
 		return 0;
 	}
 
@@ -251,7 +263,8 @@ void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 	_mesh = mesh;
 }
 
-void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out)
+void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_vec,
+                                      std::ostream &out)
 {
 	const size_t ele_vector_size (ele_vec.size());
 	const double epsilon (std::numeric_limits<double>::epsilon());
@@ -277,7 +290,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 			out << k << " " << ele_vec[i]->getValue() << " " << MshElemType2String(ele_vec[i]->getGeomType()) << " ";
 			unsigned nElemNodes (ele_vec[i]->getNNodes());
 			for(size_t j = 0; j < nElemNodes; ++j)
-				out << ele_vec[i]->getNode(nElemNodes-j-1)->getID() << " ";
+				out << ele_vec[i]->getNode(nElemNodes - j - 1)->getID() << " ";
 			out << std::endl;
 			++k;
 		}

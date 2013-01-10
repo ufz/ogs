@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -13,26 +13,20 @@
 #ifndef ZLIBDATACOMPRESSOR_H
 #define ZLIBDATACOMPRESSOR_H
 
-
-
 class zLibDataCompressor
 {
 public:
-	unsigned long GetMaximumCompressionSpace(unsigned long size);
-
 	// Compression method required by vtkDataCompressor.
 	static unsigned long CompressBuffer(const unsigned char* uncompressedData,
-	                             unsigned long uncompressedSize,
-	                             unsigned char* compressedData,
-	                             unsigned long compressionSpace);
+	                                    unsigned long uncompressedSize,
+	                                    unsigned char* compressedData,
+	                                    unsigned long compressionSpace);
 
 	// Decompression method required by vtkDataCompressor.
 	static unsigned long UncompressBuffer(const unsigned char* compressedData,
-                                   unsigned long compressedSize,
-                                   unsigned char* uncompressedData,
-                                   unsigned long uncompressedSize);
-private:
-
+	                                      unsigned long compressedSize,
+	                                      unsigned char* uncompressedData,
+	                                      unsigned long uncompressedSize);
 };
 
 #endif //ZLIBDATACOMPRESSOR_H

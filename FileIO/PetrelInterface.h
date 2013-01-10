@@ -1,8 +1,13 @@
-/*
- * PetrelInterface.h
+/**
+ * @copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
  *
- *  Created on: Feb 16, 2010
- *      Author: fischeth
+ * @file PetrelInterface.h
+ * @date 2010-02-16
+ * @author Thomas Fischer
  */
 
 #ifndef PETRELIO_H_

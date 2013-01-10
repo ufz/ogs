@@ -1,12 +1,13 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * @copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file GMSInterface.h
- *
- * Created on 2010-06-08 by Lars Bilke
+ * @file GMSInterface.h
+ * @date 2010-06-08
+ * @author Lars Bilke
  */
 
 #ifndef GMSINTERFACE_H_
@@ -17,13 +18,15 @@
 
 #include "Point.h"
 
-namespace GeoLib {
-	class Station;
-	class StationBorehole;
+namespace GeoLib
+{
+class Station;
+class StationBorehole;
 }
 
-namespace MeshLib {
-	class Mesh;
+namespace MeshLib
+{
+class Mesh;
 }
 
 /**

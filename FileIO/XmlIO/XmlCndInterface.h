@@ -15,11 +15,13 @@
 
 #include "XMLInterface.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 class FEMCondition;
 
 namespace FileIO
 {
-
 /**
  * \brief Reads and writes FEM Conditions to and from XML files.
  */
@@ -33,13 +35,13 @@ public:
 	 */
 	XmlCndInterface(ProjectData* project, const std::string &schemaFile);
 
-	~XmlCndInterface() {};
+	~XmlCndInterface() {}
 
 	/// Dummy function so class hierarchy works. This needs to be implemented later.
 	int readFile(const QString &fileName)
 	{
 		Q_UNUSED(fileName)
-		std::cout << "There is currently no implementation for XmlCndInterface::readFile(const QString&)." << std::endl;
+		INFO("There is currently no implementation for XmlCndInterface::readFile(const QString&).");
 		return 0;
 	}
 
@@ -54,16 +56,16 @@ protected:
 
 private:
 	/// Read the details of various FEM Conditions from an xml-file
-	void readConditions( const QDomNode &condRoot,
-	                     std::vector<FEMCondition*> &conditions,
-	                     FEMCondition::CondType type);
+	void readConditions(const QDomNode &condRoot, std::vector<FEMCondition*> &conditions,
+	                    FEMCondition::CondType type);
 
-	QDomElement getCondListElement( QDomDocument doc, QDomElement &root, const QString &condText ) const;
-	void writeCondition( QDomDocument doc, QDomElement &listTag, const FEMCondition* cond, const QString &condText, const QString &geoName ) const;
+	QDomElement getCondListElement(QDomDocument doc, QDomElement &root,
+	                               const QString &condText) const;
+	void writeCondition(QDomDocument doc, QDomElement &listTag, const FEMCondition* cond,
+	                    const QString &condText, const QString &geoName) const;
 
 	FEMCondition::CondType _type;
 };
-
 }
 
 #endif // XMLCNDINTERFACE_H

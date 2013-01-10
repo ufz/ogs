@@ -1,13 +1,24 @@
-/*
- * PetrelInterface.cpp
+/**
+ * @copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
  *
- *  Created on: Feb 16, 2010
- *      Author: fischeth
+ * @file PetrelInterface.cpp
+ * @date 2010-02-16
+ * @author Thomas Fischer
  */
 
-#include "PetrelInterface.h"
-#include "StringTools.h"
 #include <fstream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+#include "PetrelInterface.h"
+
+// BaseLib
+#include "StringTools.h"
 
 namespace FileIO
 {
@@ -20,44 +31,38 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
 	for (std::list<std::string>::const_iterator it(sfc_fnames.begin()); it
 	     != sfc_fnames.end(); ++it)
 	{
-		std::cout << "PetrelInterface::PetrelInterface open surface stream from file " <<
-		*it
-		          << " ... " << std::flush;
+		INFO("PetrelInterface::PetrelInterface(): open surface file.");
 		std::ifstream in((*it).c_str());
 		if (in)
 		{
-			std::cout << "done" << std::endl;
+			INFO("PetrelInterface::PetrelInterface(): \tdone.");
 			readPetrelSurface(in);
 			in.close();
 		}
 		else
-			std::cerr << "error opening stream " << std::endl;
+			WARN("PetrelInterface::PetrelInterface(): \tCould not open file %s.",
+			     it->c_str());
 	}
 
 	for (std::list<std::string>::const_iterator it(well_path_fnames.begin()); it
 	     != well_path_fnames.end(); ++it)
 	{
-		std::cout << "PetrelInterface::PetrelInterface open well path stream from file "
-		          << *it << " ... " << std::flush;
+		INFO("PetrelInterface::PetrelInterface(): open well path file.");
 		std::ifstream in((*it).c_str());
 		if (in)
 		{
-			std::cout << "done" << std::endl;
+			INFO("PetrelInterface::PetrelInterface(): \tdone.");
 			readPetrelWellTrace(in);
 			in.close();
 		}
 		else
-			std::cerr << "error opening stream " << std::endl;
+			WARN("PetrelInterface::PetrelInterface(): \tCould not open well path file %s.", it->c_str());
 	}
 
 	// store data in GEOObject
 	geo_obj->addPointVec(pnt_vec, _unique_name);
-	if (well_vec->size() > 0)
-		geo_obj->addStationVec(
-		        well_vec,
-		        _unique_name);
-	if (ply_vec->size () > 0)
-		geo_obj->addPolylineVec(ply_vec, _unique_name);
+	if (well_vec->size() > 0) geo_obj->addStationVec(well_vec, _unique_name);
+	if (ply_vec->size() > 0) geo_obj->addPolylineVec(ply_vec, _unique_name);
 }
 
 PetrelInterface::~PetrelInterface()
@@ -101,9 +106,9 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
 			else
 				idx++;
 		}
-	}
-	else
-		std::cerr << "error reading petrel points: " << line << std::endl;
+	} else
+		WARN("PetrelInterface::readPetrelSurface(): problem reading petrel points from line\n\"%s\".",
+						line.c_str());
 }
 
 void PetrelInterface::readPetrelWellTrace(std::istream &in)
@@ -120,18 +125,20 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		line = buffer;
 		std::list<std::string> str_list(BaseLib::splitString(line, ' '));
 		std::list<std::string>::const_iterator it(str_list.begin());
-		while (it != str_list.end())
-			std::cout << *it++ << " " << std::flush;
-		std::cout << std::endl;
+		while (it != str_list.end()) {
+			INFO("PetrelInterface::readPetrelWellTrace(): well name: %s.", it->c_str());
+			it++;
+		}
 
 		// read well head x coordinate
 		in.getline(buffer, MAX_COLS_PER_ROW);
 		line = buffer;
 		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
-		while (it != str_list.end())
-			std::cout << *it++ << " " << std::flush;
-		std::cout << std::endl;
+		while (it != str_list.end()) {
+			INFO("PetrelInterface::readPetrelWellTrace(): well head x coord: %s.", it->c_str());
+			it++;
+		}
 		it = (str_list.end())--;
 		it--;
 		char* buf;
@@ -142,9 +149,10 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		line = buffer;
 		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
-		while (it != str_list.end())
-			std::cout << *it++ << " " << std::flush;
-		std::cout << std::endl;
+		while (it != str_list.end()) {
+			INFO("PetrelInterface::readPetrelWellTrace(): well head y coord: %s.", it->c_str());
+			it++;
+		}
 		it = (str_list.end())--;
 		it--;
 		double well_head_y(strtod((*it).c_str(), &buf));
@@ -154,15 +162,18 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		line = buffer;
 		str_list = BaseLib::splitString(line, ' ');
 		it = str_list.begin();
-		while (it != str_list.end())
-			std::cout << *it++ << " " << std::flush;
-		std::cout << std::endl;
+		while (it != str_list.end()) {
+			INFO("PetrelInterface::readPetrelWellTrace(): well kb entry: %s.", it->c_str());
+			it++;
+		}
 		it = (str_list.end())--;
 		it--;
 		double well_kb(strtod((*it).c_str(), &buf));
 
-		std::cout << "PetrelInterface::readPetrelWellTrace: " << well_head_x << "," <<
-		well_head_y << "," << well_kb << std::endl;
+		INFO("PetrelInterface::readPetrelWellTrace(): %f, %f, %f.",
+		     well_head_x,
+		     well_head_y,
+		     well_kb);
 		well_vec->push_back(
 		        static_cast<GeoLib::StationBorehole*> (new GeoLib::StationBorehole(
 		                                                       well_head_x, well_head_y,
@@ -170,13 +181,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 
 		// read well type
 		in.getline(buffer, MAX_COLS_PER_ROW);
-		line = buffer;
-		str_list = BaseLib::splitString(line, ' ');
-		it = str_list.begin();
-		while (it != str_list.end())
-			std::cout << *it++ << " " << std::flush;
-		std::cout << std::endl;
-		std::string type(*((str_list.end())--));
+//		std::string type(*((str_list.end())--));
 
 		readPetrelWellTraceData(in);
 	}
@@ -187,10 +192,8 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 	char buffer[MAX_COLS_PER_ROW];
 	in.getline(buffer, MAX_COLS_PER_ROW);
 	std::string line(buffer);
-	std::list<std::string> str_list;
-	std::list<std::string>::const_iterator it;
 
-	// read yet another header lines
+	// read yet another header line
 	in.getline(buffer, MAX_COLS_PER_ROW);
 	line = buffer;
 	while (line.substr(0, 1).compare("#") == 0)
@@ -200,11 +203,12 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 	}
 
 	// read column information
-	str_list = BaseLib::splitString(line, ' ');
-	it = str_list.begin();
-	while (it != str_list.end())
-		std::cout << *it++ << " " << std::flush;
-	std::cout << std::endl;
+	std::list<std::string> str_list = BaseLib::splitString(line, ' ');
+	std::list<std::string>::const_iterator it = str_list.begin();
+	while (it != str_list.end()) {
+		INFO("PetrelInterface::readPetrelWellTraceData(): column information: %s.", it->c_str());
+		it++;
+	}
 
 	// read points
 	double md, x, y, z, tvd, dx, dy, azim, incl, dls;
@@ -218,7 +222,8 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 			stream >> md;
 			stream >> x >> y >> z;
 			//			pnt_vec->push_back (new GeoLib::Point (x,y,z));
-			static_cast<GeoLib::StationBorehole*> ((*well_vec)[well_vec->size()- 1])->addSoilLayer(x,y,z,"unknown");
+			static_cast<GeoLib::StationBorehole*> ((*well_vec)[well_vec->size() - 1])->addSoilLayer(
+							x, y, z, "unknown");
 			stream >> tvd >> dx >> dy >> azim >> incl >> dls;
 		}
 		in.getline(buffer, MAX_COLS_PER_ROW);
