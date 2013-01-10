@@ -12,6 +12,9 @@
 
 #include <fstream>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "ProjectData.h"
 #include "XMLInterface.h"
 
@@ -22,12 +25,10 @@
 #include <QtXmlPatterns/QXmlSchema>
 #include <QtXmlPatterns/QXmlSchemaValidator>
 
-
 namespace FileIO
 {
-
-XMLInterface::XMLInterface(ProjectData* project, const std::string &schemaFile)
-: _project(project), _exportName(""), _schemaName(schemaFile)
+XMLInterface::XMLInterface(ProjectData* project, const std::string &schemaFile) :
+	_project(project), _exportName(""), _schemaName(schemaFile)
 {
 }
 
@@ -43,16 +44,14 @@ int XMLInterface::isValid(const QString &fileName) const
 			return 1;
 		else
 		{
-			std::cout <<
-			"XMLInterface::isValid() - XML File is invalid (in reference to schema " <<
-			_schemaName << ")." << std::endl;
+			INFO("XMLInterface::isValid(): XML file %s is invalid (in reference to schema %s).",
+			     fileName.data(), _schemaName.c_str());
 			return 0;
 		}
 	}
 	else
 	{
-		std::cout << "XMLInterface::isValid() - Schema " << _schemaName <<
-		" is invalid." << std::endl;
+		INFO("XMLInterface::isValid(): Schema %s is invalid.", _schemaName.c_str());
 		return 0;
 	}
 }
@@ -61,7 +60,6 @@ void XMLInterface::setSchema(const std::string &schemaName)
 {
 	_schemaName = schemaName;
 }
-
 
 int XMLInterface::insertStyleFileDefinition(const QString &fileName) const
 {
@@ -72,7 +70,8 @@ int XMLInterface::insertStyleFileDefinition(const QString &fileName) const
 
 	if (!stream.is_open())
 	{
-		std::cout << "XMLInterface::insertStyleFileDefinition() - Could not open file...\n";
+		WARN("XMLInterface::insertStyleFileDefinition(): Could not open file %s.",
+		     path.c_str());
 		return 0;
 	}
 
@@ -101,7 +100,7 @@ bool XMLInterface::checkHash(const QString &fileName) const
 	if (!this->isValid(fileName))
 		return false;
 
-	std::cout << "File is valid, writing hashfile..." << std::endl;
+	INFO("File is valid, writing hashfile.");
 	QByteArray hash = calcHash(fileName);
 	std::ofstream out( md5FileName.toStdString().c_str(), std::ios::out );
 	out.write(hash.data(), 16);
@@ -118,8 +117,7 @@ bool XMLInterface::hashIsGood(const QString &fileName, const QByteArray &hash) c
 	for (int i = 0; i < hashLength; i++)
 		if (fileHash[i] != hash[i])
 		{
-			std::cout << "Hashfile does not match data ... checking file ..." <<
-			std::endl;
+			INFO("Hashfile does not match data ... checking file ...");
 			return false;
 		}
 	return true;
@@ -139,5 +137,4 @@ QByteArray XMLInterface::calcHash(const QString &fileName) const
 	delete [] buffer;
 	return hash;
 }
-
 }
