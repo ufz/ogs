@@ -199,14 +199,11 @@ void StationTreeView::exportStation()
 	if (!fileName.isEmpty())
 	{
 		QString temp_name;
-		std::vector<std::string> temp_soil_names;
-		temp_soil_names.push_back(""); // soil name vector needs to be initialised
-		GMSInterface::writeBoreholeToGMS(static_cast<GeoLib::StationBorehole*>(static_cast<
-		                                                                               StationTreeModel
-		                                                                               *>(
-		                                                                               model())->stationFromIndex(index,
-		                                                                                                          temp_name)),
-		                                 fileName.toStdString(), temp_soil_names);
+		std::vector<GeoLib::Point*> stations;
+		stations.push_back(static_cast<GeoLib::StationBorehole*>(
+					static_cast<StationTreeModel*>(model())->stationFromIndex(index,temp_name)));
+		GMSInterface::writeBoreholesToGMS(&stations, fileName.toStdString());
+
 	}
 }
 

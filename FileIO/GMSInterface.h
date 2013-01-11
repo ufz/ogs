@@ -50,11 +50,6 @@ public:
 	static int readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 	                                const std::string &filename);
 
-	/// Exports borehole data from one borehole to a file in GMS-format.
-	static int writeBoreholeToGMS(const GeoLib::StationBorehole* station,
-	                              const std::string &filename,
-	                              std::vector<std::string> &soilID);
-
 	/// Writes a file that assigns each soilID-index in the GMS export file a name.
 	static int writeSoilIDTable(const std::vector<std::string> &soilID,
 	                            const std::string &filename);
