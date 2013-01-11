@@ -12,6 +12,9 @@
  *
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "XmlGmlInterface.h"
 
 #include <QFile>
@@ -20,9 +23,8 @@
 
 namespace FileIO
 {
-
-XmlGmlInterface::XmlGmlInterface(ProjectData* project, const std::string &schemaFile)
-: XMLInterface(project, schemaFile)
+XmlGmlInterface::XmlGmlInterface(ProjectData* project, const std::string &schemaFile) :
+	XMLInterface(project, schemaFile)
 {
 }
 
@@ -34,8 +36,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	QFile* file = new QFile(fileName);
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		std::cout << "XmlGmlInterface::readFile() - Can't open xml-file " <<
-		fileName.toStdString() << "." << std::endl;
+		ERR("XmlGmlInterface::readFile(): Can't open xml-file %s.", fileName.data());
 		delete file;
 		return 0;
 	}
@@ -45,20 +46,20 @@ int XmlGmlInterface::readFile(const QString &fileName)
 		return 0;
 	}
 
-	std::vector<GeoLib::Point*>* points    = new std::vector<GeoLib::Point*>;
+	std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>;
 	std::vector<GeoLib::Polyline*>* polylines = new std::vector<GeoLib::Polyline*>;
-	std::vector<GeoLib::Surface*>* surfaces  = new std::vector<GeoLib::Surface*>;
+	std::vector<GeoLib::Surface*>* surfaces = new std::vector<GeoLib::Surface*>;
 
-	std::map<std::string, size_t>* pnt_names  = new std::map<std::string, size_t>;
-	std::map<std::string, size_t>* ply_names  = new std::map<std::string, size_t>;
-	std::map<std::string, size_t>* sfc_names  = new std::map<std::string, size_t>;
+	std::map<std::string, std::size_t>* pnt_names = new std::map<std::string, std::size_t>;
+	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
+	std::map<std::string, std::size_t>* sfc_names  = new std::map<std::string, std::size_t>;
 
 	QDomDocument doc("OGS-GLI-DOM");
 	doc.setContent(file);
 	QDomElement docElement = doc.documentElement(); //OpenGeoSysGLI
 	if (docElement.nodeName().compare("OpenGeoSysGLI"))
 	{
-		std::cout << "XmlGmlInterface::readFile() - Unexpected XML root." << std::endl;
+		ERR("XmlGmlInterface::readFile() - Unexpected XML root.");
 		delete file;
 		return 0;
 	}
@@ -82,7 +83,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 			readSurfaces(type_node, surfaces, points,
 			             geoObjects->getPointVecObj(gliName)->getIDMap(), sfc_names);
 		else
-			std::cout << "Unknown XML-Node found in file." << std::endl;
+			WARN("Unknown XML-Node found in file.");
 	}
 	delete file;
 
@@ -93,9 +94,8 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	return 1;
 }
 
-void XmlGmlInterface::readPoints( const QDomNode &pointsRoot,
-                               std::vector<GeoLib::Point*>* points,
-                               std::map<std::string, size_t>* pnt_names )
+void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib::Point*>* points,
+                                 std::map<std::string, std::size_t>* pnt_names )
 {
 	char* pEnd;
 	QDomElement point = pointsRoot.firstChildElement();
@@ -103,10 +103,10 @@ void XmlGmlInterface::readPoints( const QDomNode &pointsRoot,
 	{
 		if (point.hasAttribute("id") && point.hasAttribute("x") && point.hasAttribute("y"))
 		{
-			_idx_map.insert (std::pair<size_t,
-			                           size_t>(strtol((point.attribute("id")).
-			                                          toStdString().c_str(), &pEnd,
-			                                          10), points->size()));
+			_idx_map.insert (std::pair<std::size_t,
+			                           std::size_t>(strtol((point.attribute("id")).
+			                                               toStdString().c_str(), &pEnd,
+			                                               10), points->size()));
 			double zVal = (point.hasAttribute("z")) ? strtod((point.attribute(
 			                                                          "z")).toStdString(
 			                                                         ).c_str(),
@@ -118,28 +118,27 @@ void XmlGmlInterface::readPoints( const QDomNode &pointsRoot,
 			                          zVal);
 			if (point.hasAttribute("name"))
 				pnt_names->insert( std::pair<std::string,
-				                             size_t>(point.attribute("name").
-				                                     toStdString(), points->size()) );
+				                             std::size_t>(point.attribute("name").
+				                                          toStdString(),
+				                                          points->size()) );
 			points->push_back(p);
 		}
 		else
-			std::cout <<
-			"XmlGmlInterface::readPoints() - Attribute missing in <point> tag ..." <<
-			std::endl;
+			WARN("XmlGmlInterface::readPoints(): Attribute missing in <point> tag.");
 
 		point = point.nextSiblingElement();
 	}
 	if (pnt_names->empty())
-		pnt_names = NULL;             // if names-map is empty, set it to NULL because it is not needed
+		pnt_names = NULL; // if names-map is empty, set it to NULL because it is not needed
 }
 
-void XmlGmlInterface::readPolylines( const QDomNode &polylinesRoot,
-                                  std::vector<GeoLib::Polyline*>* polylines,
-                                  std::vector<GeoLib::Point*>* points,
-                                  const std::vector<size_t> &pnt_id_map,
-                                  std::map<std::string, size_t>* ply_names )
+void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
+                                    std::vector<GeoLib::Polyline*>* polylines,
+                                    std::vector<GeoLib::Point*>* points,
+                                    const std::vector<std::size_t> &pnt_id_map,
+                                    std::map<std::string, std::size_t>* ply_names)
 {
-	size_t idx(0);
+	std::size_t idx(0);
 	QDomElement polyline = polylinesRoot.firstChildElement();
 	while (!polyline.isNull())
 	{
@@ -150,7 +149,7 @@ void XmlGmlInterface::readPolylines( const QDomNode &polylinesRoot,
 
 			if (polyline.hasAttribute("name"))
 				ply_names->insert( std::pair<std::string,
-				                             size_t>(polyline.attribute("name").
+				                             std::size_t>(polyline.attribute("name").
 				                                     toStdString(), idx) );
 
 			QDomElement point = polyline.firstChildElement();
@@ -163,22 +162,19 @@ void XmlGmlInterface::readPolylines( const QDomNode &polylinesRoot,
 			}
 		}
 		else
-			std::cout <<
-			"XmlGmlInterface::readPolylines() - Attribute missing in <polyline> tag ..."
-			          <<
-			std::endl;
+			WARN("XmlGmlInterface::readPolylines(): Attribute missing in <polyline> tag.");
 
 		polyline = polyline.nextSiblingElement();
 	}
 	if (ply_names->empty())
-		ply_names = NULL;             // if names-map is empty, set it to NULL because it is not needed
+		ply_names = NULL; // if names-map is empty, set it to NULL because it is not needed
 }
 
-void XmlGmlInterface::readSurfaces( const QDomNode &surfacesRoot,
-                                 std::vector<GeoLib::Surface*>* surfaces,
-                                 std::vector<GeoLib::Point*>* points,
-                                 const std::vector<size_t> &pnt_id_map,
-                                 std::map<std::string, size_t>* sfc_names )
+void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
+                                   std::vector<GeoLib::Surface*>* surfaces,
+                                   std::vector<GeoLib::Point*>* points,
+                                   const std::vector<std::size_t> &pnt_id_map,
+                                   std::map<std::string,std::size_t>* sfc_names)
 {
 	QDomElement surface = surfacesRoot.firstChildElement();
 	while (!surface.isNull())
@@ -189,7 +185,7 @@ void XmlGmlInterface::readSurfaces( const QDomNode &surfacesRoot,
 
 			if (surface.hasAttribute("name"))
 				sfc_names->insert( std::pair<std::string,
-				                             size_t>(surface.attribute("name").
+				                             std::size_t>(surface.attribute("name").
 				                                     toStdString(),
 				                                     surfaces->size() -
 				                                     1) );
@@ -200,45 +196,41 @@ void XmlGmlInterface::readSurfaces( const QDomNode &surfacesRoot,
 				if (element.hasAttribute("p1") && element.hasAttribute("p2") &&
 				    element.hasAttribute("p3"))
 				{
-					size_t p1 =
+					std::size_t p1 =
 					        pnt_id_map[_idx_map[atoi((element.attribute("p1")).
 					                                 toStdString().c_str())]];
-					size_t p2 =
+					std::size_t p2 =
 					        pnt_id_map[_idx_map[atoi((element.attribute("p2")).
 					                                 toStdString().c_str())]];
-					size_t p3 =
+					std::size_t p3 =
 					        pnt_id_map[_idx_map[atoi((element.attribute("p3")).
 					                                 toStdString().c_str())]];
 					surfaces->back()->addTriangle(p1,p2,p3);
 				}
 				else
-					std::cout <<
-					"XmlGmlInterface::readSurfaces() - Attribute missing in <element> tag ..."
-					          << std::endl;
+					WARN("XmlGmlInterface::readSurfaces(): Attribute missing in <element> tag.");
 				element = element.nextSiblingElement();
 			}
 		}
 		else
-			std::cout <<
-			"XmlGmlInterface::readSurfaces() - Attribute missing in <surface> tag ..." <<
-			std::endl;
+			WARN("XmlGmlInterface::readSurfaces(): Attribute missing in <surface> tag.");
 
 		surface = surface.nextSiblingElement();
 	}
 	if (sfc_names->empty())
-		sfc_names = NULL;             // if names-map is empty, set it to NULL because it is not needed
+		sfc_names = NULL; // if names-map is empty, set it to NULL because it is not needed
 }
 
 int XmlGmlInterface::write(std::ostream& stream)
 {
 	if (this->_exportName.empty())
 	{
-		std::cout << "Error in XmlGmlInterface::write() - No geometry specified..." << std::endl;
+		ERR("XmlGmlInterface::write(): No geometry specified.");
 		return 0;
 	}
 
 	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
-	size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
+	std::size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
 
 	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
 	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
@@ -268,7 +260,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 		if (!points->empty())
 		{
 			nPoints = points->size();
-			for (size_t i = 0; i < nPoints; i++)
+			for (std::size_t i = 0; i < nPoints; i++)
 			{
 				QDomElement pointTag = doc.createElement("point");
 				pointTag.setAttribute("id", QString::number(i));
@@ -278,20 +270,21 @@ int XmlGmlInterface::write(std::ostream& stream)
 
 				std::string point_name;
 				if (pnt_vec->getNameOfElementByID(i, point_name))
-					pointTag.setAttribute("name", QString::fromStdString(point_name));
+					pointTag.setAttribute("name",
+					                      QString::fromStdString(point_name));
 
 				pointsListTag.appendChild(pointTag);
 			}
 		}
 		else
 		{
-			std::cout << "Point vector empty, abort writing geometry." << std::endl;
+			ERR("XmlGmlInterface::write(): Point vector empty, abort writing geometry.");
 			return 0;
 		}
 	}
 	else
 	{
-		std::cout << "Point vector empty, abort writing geometry." << std::endl;
+		ERR("XmlGmlInterface::write(): Did not found any point vector, abort writing geometry.");
 		return 0;
 	}
 
@@ -308,7 +301,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 				QDomElement plyListTag = doc.createElement("polylines");
 				root.appendChild(plyListTag);
 				nPolylines = polylines->size();
-				for (size_t i = 0; i < nPolylines; i++)
+				for (std::size_t i = 0; i < nPolylines; i++)
 				{
 					QDomElement polylineTag = doc.createElement("polyline");
 					polylineTag.setAttribute("id", QString::number(i));
@@ -320,7 +313,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 					plyListTag.appendChild(polylineTag);
 
 					nPoints = (*polylines)[i]->getNumberOfPoints();
-					for (size_t j = 0; j < nPoints; j++)
+					for (std::size_t j = 0; j < nPoints; j++)
 					{
 						QDomElement plyPointTag = doc.createElement("pnt");
 						polylineTag.appendChild(plyPointTag);
@@ -330,11 +323,11 @@ int XmlGmlInterface::write(std::ostream& stream)
 				}
 			}
 			else
-				std::cout << "Polyline vector empty, no polylines written to file." << std::endl;
+				INFO("XmlGmlInterface::write(): Polyline vector empty, no polylines written to file.");
 		}
 	}
 	else
-		std::cout << "Polyline vector empty, no polylines written to file." << std::endl;
+		INFO("XmlGmlInterface::write(): Did not found any polyline vector, no polylines written to file.");
 
 
 	// SURFACES
@@ -345,25 +338,27 @@ int XmlGmlInterface::write(std::ostream& stream)
 
 		if (surfaces)
 		{
-			if (! surfaces->empty())
+			if (!surfaces->empty())
 			{
 				QDomElement sfcListTag = doc.createElement("surfaces");
 				root.appendChild(sfcListTag);
 				nSurfaces = surfaces->size();
-				for (size_t i = 0; i < nSurfaces; i++)
+				for (std::size_t i = 0; i < nSurfaces; i++)
 				{
 					QDomElement surfaceTag = doc.createElement("surface");
 					surfaceTag.setAttribute("id", QString::number(i));
 
 					std::string sfc_name("");
 					if (sfc_vec->getNameOfElementByID(i, sfc_name))
-						surfaceTag.setAttribute("name", QString::fromStdString(sfc_name));
+						surfaceTag.setAttribute("name",
+						                        QString::fromStdString(
+						                                sfc_name));
 
 					sfcListTag.appendChild(surfaceTag);
 
 					// writing the elements compromising the surface
-					size_t nElements = ((*surfaces)[i])->getNTriangles();
-					for (size_t j = 0; j < nElements; j++)
+					std::size_t nElements = ((*surfaces)[i])->getNTriangles();
+					for (std::size_t j = 0; j < nElements; j++)
 					{
 						QDomElement elementTag = doc.createElement("element");
 						elementTag.setAttribute("p1", QString::number((*(*(*surfaces)[i])[j])[0]));
@@ -374,11 +369,11 @@ int XmlGmlInterface::write(std::ostream& stream)
 				}
 			}
 			else
-				std::cout << "Surface vector empty, no surfaces written to file." << std::endl;
+				INFO("XmlGmlInterface::write(): Surface vector empty, no surfaces written to file.");
 		}
 	}
 	else
-		std::cout << "Surface vector empty, no surfaces written to file." << std::endl;
+		INFO("XmlGmlInterface::write(): Did not found any surface vector, no surfaces written to file.");
 
 
 	//insertStyleFileDefinition(filename);
@@ -387,5 +382,4 @@ int XmlGmlInterface::write(std::ostream& stream)
 
 	return 1;
 }
-
 }

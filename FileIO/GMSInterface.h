@@ -10,6 +10,9 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
+ * @file GMSInterface.h
+ * @date 2010-06-08
+ * @author Lars Bilke
  */
 
 #ifndef GMSINTERFACE_H_
@@ -20,13 +23,15 @@
 
 #include "Point.h"
 
-namespace GeoLib {
-	class Station;
-	class StationBorehole;
+namespace GeoLib
+{
+class Station;
+class StationBorehole;
 }
 
-namespace MeshLib {
-	class Mesh;
+namespace MeshLib
+{
+class Mesh;
 }
 
 /**

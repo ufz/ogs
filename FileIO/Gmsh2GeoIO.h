@@ -10,6 +10,9 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
+ * \file Gmsh2GeoIO.h
+ *
+ *  Created on 2011-08-18 by Thomas Fischer
  */
 
 #ifndef GMSH2GEOIO_H_

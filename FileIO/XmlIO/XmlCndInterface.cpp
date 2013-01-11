@@ -12,8 +12,8 @@
  *
  */
 
-#include "XmlCndInterface.h"
 #include "FEMCondition.h"
+#include "XmlCndInterface.h"
 
 #include <QFile>
 #include <QTextCodec>
@@ -22,9 +22,8 @@
 #include <QStringList>
 namespace FileIO
 {
-
 XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schemaFile)
-: XMLInterface(project, schemaFile), _type(FEMCondition::UNSPECIFIED)
+	: XMLInterface(project, schemaFile), _type(FEMCondition::UNSPECIFIED)
 {
 }
 
@@ -33,7 +32,7 @@ int XmlCndInterface::readFile(std::vector<FEMCondition*> &conditions, const QStr
 	QFile* file = new QFile(fileName);
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		std::cout << "XMLInterface::readFEMCondFile() - Can't open xml-file." << std::endl;
+		ERR("XMLInterface::readFEMCondFile(): Can't open xml-file %s.", fileName.data());
 		delete file;
 		return 0;
 	}
@@ -48,7 +47,7 @@ int XmlCndInterface::readFile(std::vector<FEMCondition*> &conditions, const QStr
 	QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
 	if (docElement.nodeName().compare("OpenGeoSysCond"))
 	{
-		std::cout << "XMLInterface::readFEMCondFile() - Unexpected XML root." << std::endl;
+		ERR("XMLInterface::readFEMCondFile(): Unexpected XML root.");
 		delete file;
 		return 0;
 	}
@@ -66,11 +65,10 @@ int XmlCndInterface::readFile(std::vector<FEMCondition*> &conditions, const QStr
 			readConditions(list_node, conditions, FEMCondition::SOURCE_TERM);
 	}
 	if (!conditions.empty())
-		return 1;             //do something like _geoObjects->addStationVec(stations, stnName, color);
+		return 1;     //do something like _geoObjects->addStationVec(stations, stnName, color);
 	else
 	{
-		std::cout << "XMLInterface::readFEMCondFile() - No FEM Conditions found..." <<
-		std::endl;
+		WARN("XMLInterface::readFEMCondFile(): No FEM Conditions found.");
 		return 0;
 	}
 
@@ -79,18 +77,17 @@ int XmlCndInterface::readFile(std::vector<FEMCondition*> &conditions, const QStr
 	return 1;
 }
 
-void XmlCndInterface::readConditions( const QDomNode &listRoot,
-                                   std::vector<FEMCondition*> &conditions,
-                                   FEMCondition::CondType type)
+void XmlCndInterface::readConditions(const QDomNode &listRoot,
+                                     std::vector<FEMCondition*> &conditions,
+                                     FEMCondition::CondType type)
 {
 	QDomElement cond = listRoot.firstChildElement();
 	while (!cond.isNull())
 	{
 		std::string geometry_name ( cond.attribute("geometry").toStdString() );
 		if (this->_project->getGEOObjects()->exists(geometry_name) >= 0 ||
-			this->_project->meshExists(geometry_name))
+		    this->_project->meshExists(geometry_name))
 		{
-
 			FEMCondition* c ( new FEMCondition(geometry_name, type) );
 
 			QDomNodeList condProperties = cond.childNodes();
@@ -157,7 +154,7 @@ void XmlCndInterface::readConditions( const QDomNode &listRoot,
 								}
 							}
 							else
-								std::cout << "Error in XmlCndInterface::readConditions() - Distribution type not supported." << std::endl;
+								ERR("XmlCndInterface::readConditions(): Distribution type not supported.");
 							c->setDisValues(disNodes, disValues);
 						}
 					}
@@ -167,7 +164,7 @@ void XmlCndInterface::readConditions( const QDomNode &listRoot,
 		}
 		else
 		{
-			std::cout << "Error loading FEM Conditions: No geometry \"" << geometry_name << "\" found." << std::endl;
+			ERR("XmlCndInterface::readConditions(): No geometry \"%s\" found.", geometry_name.c_str());
 		}
 		cond = cond.nextSiblingElement();
 	}
@@ -184,15 +181,18 @@ int XmlCndInterface::write(std::ostream& stream)
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysCND.xsd" );
 
-	const std::vector<FEMCondition*> conditions (_project->getConditions(FiniteElement::INVALID_PROCESS, _exportName, _type) );
+	const std::vector<FEMCondition*> conditions (_project->getConditions(
+	                                                     FiniteElement::INVALID_PROCESS,
+	                                                     _exportName,
+	                                                     _type) );
 
-	if (conditions.empty()) return 1;
+	if (conditions.empty())
+		return 1;
 
 	doc.appendChild(root);
 
-
 	size_t nConditions (conditions.size());
-	for (size_t i=0; i<nConditions; i++)
+	for (size_t i = 0; i < nConditions; i++)
 	{
 		FEMCondition::CondType current_type = conditions[i]->getCondType();
 		if (current_type == _type || _type == FEMCondition::UNSPECIFIED)
@@ -217,10 +217,14 @@ int XmlCndInterface::write(std::ostream& stream)
 			}
 			else
 			{
-				std::cout << "Error in XmlCndInterface::writeFile() - Unspecified FEMConditions found ... Abort writing." << std::endl;
+				ERR("XmlCndInterface::writeFile(): Unspecified FEMConditions found ... Abort writing.");
 				return 0;
 			}
-			this->writeCondition(doc, listTag, conditions[i], condText, QString::fromStdString(_exportName));
+			this->writeCondition(doc,
+			                     listTag,
+			                     conditions[i],
+			                     condText,
+			                     QString::fromStdString(_exportName));
 		}
 	}
 	std::string xml = doc.toString().toStdString();
@@ -229,13 +233,16 @@ int XmlCndInterface::write(std::ostream& stream)
 	return 1;
 }
 
-void XmlCndInterface::writeCondition( QDomDocument doc, QDomElement &listTag, const FEMCondition* cond, const QString &condText, const QString &geometryName) const
+void XmlCndInterface::writeCondition(QDomDocument doc, QDomElement &listTag,
+                                     const FEMCondition* cond, const QString &condText,
+                                     const QString &geometryName) const
 {
 	QString geoName (QString::fromStdString(cond->getAssociatedGeometryName()));
 
-	if ((geometryName.length()>0) && (geoName.compare(geometryName) != 0))
+	if ((geometryName.length() > 0) && (geoName.compare(geometryName) != 0))
 	{
-		std::cout << "Geometry name not matching, skipping condition \"" << cond->getGeoName() << "\"..." << std::endl;
+		WARN("XmlCndInterface::writeCondition(): Geometry name not matching, skipping condition \"%s\".",
+		     cond->getGeoName().c_str());
 		return;
 	}
 
@@ -279,30 +286,30 @@ void XmlCndInterface::writeCondition( QDomDocument doc, QDomElement &listTag, co
 	QDomElement disValueTag ( doc.createElement("Value") );
 	disTag.appendChild(disValueTag);
 	/*
-	if (cond->getProcessDistributionType() != FiniteElement::DIRECT)
-	{
-		double dis_value (cond->getDisValue()[0]); //TODO: do this correctly!
-		disValueText = doc.createTextNode(QString::number(dis_value));
-	}
-	else
-		disValueText = doc.createTextNode(QString::fromStdString(cond->getDirectFileName()));
-	*/
+	   if (cond->getProcessDistributionType() != FiniteElement::DIRECT)
+	   {
+	    double dis_value (cond->getDisValue()[0]); //TODO: do this correctly!
+	    disValueText = doc.createTextNode(QString::number(dis_value));
+	   }
+	   else
+	    disValueText = doc.createTextNode(QString::fromStdString(cond->getDirectFileName()));
+	 */
 	const std::vector<size_t> dis_nodes = cond->getDisNodes();
 	const std::vector<double> dis_values = cond->getDisValues();
 	const size_t nNodes = dis_nodes.size();
 	const size_t nValues = dis_values.size();
 	std::stringstream ss;
-	if (nNodes==0 && nValues==1)				// CONSTANT
+	if (nNodes == 0 && nValues == 1)        // CONSTANT
 		ss << dis_values[0];
-	else if ((nValues>0) && (nValues==nNodes))	// LINEAR && DIRECT
+	else if ((nValues > 0) && (nValues == nNodes)) // LINEAR && DIRECT
 	{
 		ss << "\n\t";
-		for (size_t i=0; i<nValues; i++)
+		for (size_t i = 0; i < nValues; i++)
 			ss << dis_nodes[i] << "\t" << dis_values[i] << "\n\t";
 	}
 	else
 	{
-		std::cout << "Error in XmlCndInterface::writeCondition() - Inconsistent length of distribution value array." << std::endl;
+		ERR("XmlCndInterface::writeCondition(): Inconsistent length of distribution value array.");
 		ss << "-9999";
 	}
 	std::string dv  = ss.str();
@@ -310,16 +317,15 @@ void XmlCndInterface::writeCondition( QDomDocument doc, QDomElement &listTag, co
 	disValueTag.appendChild(disValueText);
 }
 
-QDomElement XmlCndInterface::getCondListElement( QDomDocument doc, QDomElement &root, const QString &text ) const
+QDomElement XmlCndInterface::getCondListElement(QDomDocument doc, QDomElement &root,
+                                                const QString &text) const
 {
 	QDomNodeList list = root.elementsByTagName(text);
-	if (list.isEmpty())
-	{
-		QDomElement newListTag ( doc.createElement(text) );
+	if (list.isEmpty()) {
+		QDomElement newListTag(doc.createElement(text));
 		root.appendChild(newListTag);
 		return newListTag;
 	}
 	return list.at(0).toElement();
 }
-
 }

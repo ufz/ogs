@@ -21,27 +21,33 @@
 // GeoLib
 #include "Point.h"
 #include "QuadTree.h"
-#ifndef NDEBUG
-#include "Polyline.h"
-#endif
 
-namespace GeoLib {
+namespace GeoLib
+{
 class Polygon;
+#ifndef NDEBUG
+class Polyline;
+#endif
 }
 
-namespace FileIO {
-
-class GMSHAdaptiveMeshDensity: public GMSHMeshDensityStrategy {
+namespace FileIO
+{
+class GMSHAdaptiveMeshDensity : public GMSHMeshDensityStrategy
+{
 public:
-	GMSHAdaptiveMeshDensity(double pnt_density, double station_density, std::size_t max_pnts_per_leaf);
+	GMSHAdaptiveMeshDensity(double pnt_density,
+	                        double station_density,
+	                        std::size_t max_pnts_per_leaf);
 	virtual ~GMSHAdaptiveMeshDensity();
 	void init(std::vector<GeoLib::Point const*> const& pnts);
-	double getMeshDensityAtPoint(GeoLib::Point const*const pnt) const;
+	double getMeshDensityAtPoint(GeoLib::Point const* const pnt) const;
 	void addPoints(std::vector<GeoLib::Point const*> const& pnts);
-	double getMeshDensityAtStation(GeoLib::Point const*const) const;
-	void getSteinerPoints (std::vector<GeoLib::Point*> & pnts, std::size_t additional_levels = 0) const;
+	double getMeshDensityAtStation(GeoLib::Point const* const) const;
+	void getSteinerPoints (std::vector<GeoLib::Point*> & pnts,
+	                       std::size_t additional_levels = 0) const;
 #ifndef NDEBUG
-	void getQuadTreeGeometry(std::vector<GeoLib::Point*> &pnts, std::vector<GeoLib::Polyline*> &plys) const;
+	void getQuadTreeGeometry(std::vector<GeoLib::Point*> &pnts,
+	                         std::vector<GeoLib::Polyline*> &plys) const;
 #endif
 
 private:
@@ -50,7 +56,6 @@ private:
 	std::size_t _max_pnts_per_leaf;
 	GeoLib::QuadTree<GeoLib::Point> *_quad_tree;
 };
-
 } // end namespace FileIO
 
 #endif /* GMSHADAPTIVEMESHDENSITY_H_ */
