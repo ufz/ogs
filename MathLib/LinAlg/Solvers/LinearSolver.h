@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-01-07
+ * \brief  Definition of the LinearSolver class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file LinearSolver.h
- *
- * Created on 2011-01-07 by Thomas Fischer
  */
 
 #ifndef LINEARSOLVER_H_

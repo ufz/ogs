@@ -1,14 +1,17 @@
 /**
+ * \file
+ * \author Lars Bilke
+ * \date   no date
+ * \brief  #defines which gets set through CMake
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file Configure.h.in
- *
- * #defines which gets set through CMake
  */
+
  #ifndef CONFIGURE_H
  #define CONFIGURE_H
 

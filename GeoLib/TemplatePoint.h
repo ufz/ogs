@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-01-28
+ * \brief  Definition of the TemplatePoint class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file TemplatePoint.h
- *
- * Created on 2010-01-28 by Thomas Fischer
  */
 
 #ifndef TEMPLATEPOINT_H_

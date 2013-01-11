@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2012-08-01
+ * \brief  Implementation of the SensorData class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file SensorData.cpp
- *
- * Created on 2012-08-01 by Karsten Rink
  */
 
 #include <cstdlib>

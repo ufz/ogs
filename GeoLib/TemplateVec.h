@@ -1,4 +1,9 @@
 /**
+ * @file TemplateVec.h
+ * @date 2010-02-26
+ * @author Thomas Fischer
+ * @brief Definition of the GeoLib::TemplateVec class.
+ *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -6,9 +11,6 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * @file TemplateVec.h
- * @date 2010-02-26
- * @author Thomas Fischer
  */
 
 #ifndef TEMPLATEVEC_H_

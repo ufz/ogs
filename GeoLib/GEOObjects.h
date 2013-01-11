@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer / Karsten Rink
+ * \date   2010-01-21
+ * \brief  Definition of the GeoObjects class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file GEOObjects.h
- *
- * Created on 2010-01-21 by Thomas Fischer / Karsten Rink
  */
 
 #ifndef GEOOBJECTS_H_

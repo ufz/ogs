@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2012-01-03
+ * \brief  Definition of the CRSMatrixReordered class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file CRSMatrixReordered.h
- *
- * Created on 2012-01-03 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXREORDERED_H_

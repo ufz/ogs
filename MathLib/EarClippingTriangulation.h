@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-02-23
+ * \brief  Definition of the EarClippingTriangulation class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file EarClippingTriangulation.h
- *
- * Created on 2011-02-23 by Thomas Fischer
  */
 
 #ifndef EARCLIPPINGTRIANGULATION_H_

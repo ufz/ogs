@@ -2,12 +2,14 @@
  * @file ConvertRasterToMesh.h
  * @author Thomas Fischer
  * @date Nov 14, 2012
+ * @brief Definition of the ConvertRasterToMesh class.
  *
  * @copyright
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #ifndef CONVERTRASTERTOMESH_H_

@@ -1,8 +1,14 @@
 /**
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2012-11-26
+ * \brief  Implementation of the zLibDataCompressor class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  * \file zLibDataCompressor.cpp
  *

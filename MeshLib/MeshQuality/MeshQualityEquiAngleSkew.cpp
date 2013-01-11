@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-03-17
+ * \brief  Implementation of the MeshQualityEquiAngleSkew class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file MeshQualityEquiAngleSkew.cpp
- *
- *  Created on 2011-03-17 by Thomas Fischer
  */
 
 #include "MeshQualityEquiAngleSkew.h"

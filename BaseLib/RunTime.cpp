@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2012-05-10
+ * \brief  Implementation of the RunTime class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file RunTime.cpp
- *
- * Created on 2012-05-10 by Thomas Fischer
  */
 
 #include "RunTime.h"

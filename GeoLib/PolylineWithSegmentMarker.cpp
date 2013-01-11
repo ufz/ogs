@@ -1,8 +1,15 @@
-/*
- * PolylineWithSegmentMarker.cpp
+/**
+ * \file
+ * \author Thomas Fischer
+ * \date   Apr 3, 2012
+ * \brief  Implementation of the PolylineWithSegmentMarker class.
  *
- *  Created on: Apr 3, 2012
- *      Author: fischeth
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #include "PolylineWithSegmentMarker.h"

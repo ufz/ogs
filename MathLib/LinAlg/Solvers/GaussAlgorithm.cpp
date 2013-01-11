@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-05-06
+ * \brief  Implementation of the GaussAlgorithm class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file GaussAlgorithm.cpp
- *
- * Created on 2011-05-06 by Thomas Fischer
  */
 
 #include <cmath>

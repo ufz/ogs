@@ -1,12 +1,15 @@
 /**
+ * \file
+ * \author Lars Bilke
+ * \date   2010-04-29
+ * \brief
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file TestSwap.cpp
- *
- * Created on 2010-04-29 by Lars Bilke
  */
 
 // ** INCLUDES **

@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2012-08-20
+ * \brief  Definition of the ImportFileTypes enumeration.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file ImportFileTypes.h
- *
- * Created on 2012-08-20 by Karsten Rink
  */
 
 #ifndef IMPORTFILETYPES_H

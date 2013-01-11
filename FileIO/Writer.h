@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Lars Bilke
+ * \date   2012-02-13
+ * \brief  Definition of the Writer class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file Writer.h
- *
- * Created on 2012-02-13 by Lars Bilke
  */
 
 #ifndef WRITER_H

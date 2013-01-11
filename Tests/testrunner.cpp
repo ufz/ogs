@@ -1,12 +1,14 @@
 /**
+ * \file
+ * \author Lars Bilke
+ * \date   2012-04-29
+ * \brief  GTest test executables main function.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- *
- * \file testrunner.cpp
- * Created on 2012-04-29 by Lars Bilke
  *
  */
 

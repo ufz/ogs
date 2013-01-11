@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-09-28
+ * \brief  Definition of the generateDiagPrecond functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file generateDiagPrecond.h
- *
- * Created on 2011-09-28 by Thomas Fischer
  */
 
 #ifndef GENERATEDIAGPRECOND_H_
