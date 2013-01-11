@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-08-18
+ * \brief  Definition of the Gmsh2GeoIO class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file Gmsh2GeoIO.h
- *
- *  Created on 2011-08-18 by Thomas Fischer
  */
 
 #ifndef GMSH2GEOIO_H_

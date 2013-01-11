@@ -1,8 +1,15 @@
-/*
- * GMSHPolygonTree.cpp
+/**
+ * \file
+ * \author Thomas Fischer
+ * \date   Mar 27, 2012
+ * \brief  Implementation of the GMSHPolygonTree class.
  *
- *  Created on: Mar 27, 2012
- *      Author: fischeth
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #include "MeshIO/GMSHPolygonTree.h"
