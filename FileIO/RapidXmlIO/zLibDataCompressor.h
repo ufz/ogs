@@ -1,13 +1,16 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2012-11-26
+ * \brief  Definition of the zLibDataCompressor class.
+ *         Based on the vtkZLibDataCompressor-class in VTK 5.6
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file zLibDataCompressor.h
- *
- * Created on 2012-11-26 by Karsten Rink
- * Based on the vtkZLibDataCompressor-class in VTK 5.6
  */
 
 #ifndef ZLIBDATACOMPRESSOR_H

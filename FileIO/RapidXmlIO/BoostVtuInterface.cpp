@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2012-12-05
+ * \brief  Implementation of the BoostVtuInterface class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file BoostVtuInterface.cpp
- *
- *  Created on 2012-12-05 by Karsten Rink
  */
 
 #include "BoostVtuInterface.h"
@@ -58,7 +61,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 	using boost::property_tree::ptree;
 	ptree doc;
 	read_xml(in, doc);
-	
+
 	if (isVTKUnstructuredGrid(doc))
 	{
 		ptree const& root_node = doc.get_child("VTKFile");
@@ -81,13 +84,13 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 		OptionalPtree const& piece_node = root_node.get_child_optional("UnstructuredGrid.Piece");
 		if (piece_node)
 		{
-				
+
 			const unsigned nNodes = static_cast<unsigned>(piece_node->get("<xmlattr>.NumberOfPoints", 0));
 			const unsigned nElems = static_cast<unsigned>(piece_node->get("<xmlattr>.NumberOfCells", 0));
 
 			if ((nNodes == 0) || (nElems == 0))
 			{
-				std::cout << "BoostVtuInterface::readVTUFile() - Number of nodes is " << nNodes 
+				std::cout << "BoostVtuInterface::readVTUFile() - Number of nodes is " << nNodes
 					      << ", number of elements is " << nElems << "." << std::endl;
 				return nullptr;
 			}
@@ -97,7 +100,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 			std::vector<unsigned> mat_ids(nElems, 0);
 			std::vector<unsigned> cell_types(nElems);
 
-			BOOST_FOREACH( ptree::value_type const& grid_piece, *piece_node ) 
+			BOOST_FOREACH( ptree::value_type const& grid_piece, *piece_node )
 			{
 				if (grid_piece.first == "CellData")
 				{
@@ -106,7 +109,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 					{
 						optional<std::string> const& format = getXmlAttribute("format", *cell_data_node);
 						std::stringstream iss (cell_data_node->data());//v.second.get<std::string>("DataArray"));
-						if (format) 
+						if (format)
 						{
 							if (*format == "ascii")
 								for(unsigned i=0; i<nElems; i++)
@@ -120,7 +123,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 					else
 						std::cerr << "MaterialIDs not found, setting every cell to 0." << std::endl;
 				}
-				
+
 				if (grid_piece.first == "Points")
 				{
 					// This node may or may not have an attribute "Name" with the value "Points".
@@ -386,7 +389,7 @@ int BoostVtuInterface::write(std::ostream& stream)
 	const std::string data_array_close("\t\t\t\t");
 	const std::string data_array_indent("\t\t\t\t  ");
 
-	using boost::property_tree::ptree; 
+	using boost::property_tree::ptree;
 	ptree doc;
 
 	ptree &root_node = doc.put("VTKFile", "");
