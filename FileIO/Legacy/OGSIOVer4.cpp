@@ -113,7 +113,7 @@ std::string readPoints(std::istream &in, std::vector<Point*>* pnt_vec,
 /** reads points from a vector */
 void readPolylinePointVector(const std::string &fname,
                              std::vector<Point*>& pnt_vec,
-                             Polyline* ply,
+                             GeoLib::Polyline* ply,
                              const std::string &path,
                              std::vector<std::string> &errors)
 {
@@ -148,7 +148,7 @@ void readPolylinePointVector(const std::string &fname,
 **************************************************************************/
 /** read a single Polyline from stream in into the ply_vec-vector */
 std::string readPolyline(std::istream &in,
-                         std::vector<Polyline*>* ply_vec,
+                         std::vector<GeoLib::Polyline*>* ply_vec,
                          std::map<std::string,size_t>& ply_vec_names,
                          std::vector<Point*>& pnt_vec,
                          bool zero_based_indexing,
@@ -157,7 +157,7 @@ std::string readPolyline(std::istream &in,
                          std::vector<std::string> &errors)
 {
 	std::string line, name_of_ply;
-	Polyline* ply(new Polyline(pnt_vec));
+	GeoLib::Polyline* ply(new GeoLib::Polyline(pnt_vec));
 	size_t type = 2; // need an initial value
 
 	// Schleife ueber alle Phasen bzw. Komponenten
@@ -243,7 +243,7 @@ std::string readPolyline(std::istream &in,
    01/2010 TF changed signature of function
 **************************************************************************/
 /** reads polylines */
-std::string readPolylines(std::istream &in, std::vector<Polyline*>* ply_vec,
+std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_vec,
                           std::map<std::string,size_t>& ply_vec_names, std::vector<Point*>& pnt_vec,
                           bool zero_based_indexing, const std::vector<size_t>& pnt_id_map,
                           const std::string &path, std::vector<std::string>& errors)
@@ -305,10 +305,10 @@ void readTINFile(const std::string &fname, Surface* sfc,
 **************************************************************************/
 /** read a single Surface */
 std::string readSurface(std::istream &in,
-                        std::vector<Polygon*> &polygon_vec,
+                        std::vector<GeoLib::Polygon*> &polygon_vec,
                         std::vector<Surface*> &sfc_vec,
                         std::map<std::string,size_t>& sfc_names,
-                        const std::vector<Polyline*> &ply_vec,
+                        const std::vector<GeoLib::Polyline*> &ply_vec,
                         const std::map<std::string, size_t>& ply_vec_names,
                         std::vector<Point*> &pnt_vec,
                         std::string const& path, std::vector<std::string>& errors)
@@ -404,7 +404,7 @@ std::string readSurface(std::istream &in,
         {
             if (ply_vec[ply_id]->isClosed())
             {
-                polygon_vec.push_back (new Polygon (*(ply_vec[ply_id]), true));
+                polygon_vec.push_back (new GeoLib::Polygon (*(ply_vec[ply_id]), true));
             }
             else
             {
@@ -427,7 +427,7 @@ std::string readSurface(std::istream &in,
 std::string readSurfaces(std::istream &in,
                          std::vector<Surface*> &sfc_vec,
                          std::map<std::string, size_t>& sfc_names,
-                         const std::vector<Polyline*> &ply_vec,
+                         const std::vector<GeoLib::Polyline*> &ply_vec,
                          const std::map<std::string,size_t>& ply_vec_names,
                          std::vector<Point*> &pnt_vec,
                          const std::string &path, std::vector<std::string>& errors)
@@ -439,7 +439,7 @@ std::string readSurfaces(std::istream &in,
 	}
 	std::string tag("#SURFACE");
 
-	std::vector<Polygon*> polygon_vec;
+	std::vector<GeoLib::Polygon*> polygon_vec;
 
 	while (!in.eof() && tag.find("#SURFACE") != std::string::npos)
 	{
@@ -506,7 +506,7 @@ bool readGLIFileV4(const std::string& fname,
 
 	// read names of plys into temporary string-vec
 	std::map<std::string,size_t>* ply_names (new std::map<std::string,size_t>);
-	std::vector<Polyline*>* ply_vec(new std::vector<Polyline*>);
+	std::vector<GeoLib::Polyline*>* ply_vec(new std::vector<GeoLib::Polyline*>);
 	if (tag.find("#POLYLINE") != std::string::npos && in)
 	{
 		INFO("GeoLib::readGLIFile(): read polylines from stream.");
