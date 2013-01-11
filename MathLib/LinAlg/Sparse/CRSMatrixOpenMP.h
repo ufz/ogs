@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-08-08
+ * \brief  Definition of the CRSMatrixOpenMP class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file CRSMatrixOpenMP.h
- *
- * Created on 2011-08-08 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXOPENMP_H_

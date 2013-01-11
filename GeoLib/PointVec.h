@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer / Karsten Rink
+ * \date   2010-02-02
+ * \brief  Definition of the PointVec class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file PointVec.h
- *
- * Created on 2010-02-02 by Thomas Fischer / Karsten Rink
  */
 
 // GeoLib

@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-09-20
+ * \brief  Definition of amuxCRS functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file amuxCRS.h
- *
- * Created on 2011-09-20 by Thomas Fischer
  */
 
 #ifndef AMUXCRS_H

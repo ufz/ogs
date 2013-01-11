@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2010-10-26
+ * \brief  Definition of the FileFinder class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file FileFinder.h
- *
- * Created on 2010-10-26 by Karsten Rink
  */
 
 #ifndef FILEFINDER_H

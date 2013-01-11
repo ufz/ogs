@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2012-05-03
+ * \brief  Definition of the FemElem class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file FemElem.h
- *
- * Created on 2012-05-03 by Karsten Rink
  */
 
 #ifndef FEMELEM_H_

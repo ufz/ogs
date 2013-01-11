@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-06-06
+ * \brief  Definition of vector norm functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file VectorNorms.h
- *
- * Created on 2011-06-06 by Thomas Fischer
  */
 
 #ifndef VECTORNORMS_H_

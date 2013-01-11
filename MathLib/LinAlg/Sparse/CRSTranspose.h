@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-09-27
+ * \brief  Definition of the CRSTranspose class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file CRSTranspose.h
- *
- * Created on 2011-09-27 by Thomas Fischer
  */
 
 #ifndef CRSTRANSPOSE_H_

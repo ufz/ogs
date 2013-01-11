@@ -1,9 +1,14 @@
 /**
- * @copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-02-16
+ * \brief  Definition of the PetrelInterface class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
  * @file PetrelInterface.h
  * @date 2010-02-16

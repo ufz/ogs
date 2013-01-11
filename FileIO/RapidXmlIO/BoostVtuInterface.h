@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2012-12-05
+ * \brief  Implementation of the BoostVtuInterface class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file BoostVtuInterface.h
- *
- *  Created on 2012-12-05 by Karsten Rink
  */
 
 #ifndef BOOSTVTUINTERFACE_H_
@@ -35,7 +38,7 @@ namespace MeshLib {
 
 namespace FileIO
 {
-	
+
 /**
  * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
  *

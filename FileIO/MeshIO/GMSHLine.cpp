@@ -1,8 +1,15 @@
-/*
- * GMSHLine.cpp
+/**
+ * \file
+ * \author Thomas Fischer
+ * \date   Mar 22, 2012
+ * \brief  Implementation of the GMSHLine class.
  *
- *  Created on: Mar 22, 2012
- *      Author: fischeth
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #include <MeshIO/GMSHLine.h>

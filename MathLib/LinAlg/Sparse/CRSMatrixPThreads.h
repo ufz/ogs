@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-08-02
+ * \brief  Definition of the CRSMatrixPThreads class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file CRSMatrixPThreads.h
- *
- * Created on 2011-08-02 by Thomas Fischer
  */
 
 #ifndef CRSMATRIXPTHREADS_H

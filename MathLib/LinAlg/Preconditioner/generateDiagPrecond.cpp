@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   no date
+ * \brief  Implementation of the generateDiagPrecond functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file generateDiagPrecond.cpp
- *
- * Created on xxxx-xx-xx by Thomas Fischer
  */
 
 #include "sparse.h"

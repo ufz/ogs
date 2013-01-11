@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2012-02-27
+ * \brief  Implementation of the OctTree class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file  OctTree.h
- *
- * Created on 2012-02-27 by Thomas Fischer
  */
 
 #ifndef OCTTREE_H_

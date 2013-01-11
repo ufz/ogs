@@ -1,13 +1,14 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2010-08-31
+ * \brief  Definition of fem enumerations.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- *
- * \file FEMEnums.h
- *
- * Created on 2010-08-31 by Karsten Rink
  *
  */
 
