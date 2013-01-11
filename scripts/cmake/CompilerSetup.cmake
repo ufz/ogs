@@ -36,7 +36,11 @@ IF(COMPILER_IS_GCC)
 					# see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=33144
 					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
 				ELSE()
-					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -mtune=native -msse4.2 -DNDEBUG")
+					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
+					# Disable -march=native on Ninja generator
+					IF(NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
+						SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+					ENDIF()
 				ENDIF()
 		ENDIF()
 		# -g
