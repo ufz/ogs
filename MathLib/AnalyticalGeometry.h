@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-03-17
+ * \brief  Definition of analytical geometry functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file AnalyticalGeometry.h
- *
- * Created on 2010-03-17 by Thomas Fischer
  */
 
 #ifndef ANALYTICAL_GEOMETRY_H_

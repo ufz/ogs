@@ -1,13 +1,14 @@
 /**
+ * \file
+ * \author Karsten Rink
+ * \date   2010-11-25
+ * \brief  Implementation of the FEMCondition class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- *
- * \file FEMCondition.cpp
- *
- * Created on 2010-11-25 by Karsten Rink
  *
  */
 

@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2012-01-02
+ * \brief  Definition of the Cluster class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file Cluster.h
- *
- * Created on 2012-01-02 by Thomas Fischer
  */
 
 #ifndef CLUSTER_H_

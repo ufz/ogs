@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-02-23
+ * \brief  Definition of the printList function.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file printList.h
- *
- * Created on 2011-02-23 by Thomas Fischer
  */
 
 #ifndef PRINTLIST_H_

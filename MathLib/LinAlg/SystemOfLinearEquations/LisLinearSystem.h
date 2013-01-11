@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Norihiro Watanabe
+ * \date   2012-06-25
+ * \brief  Definition of the LisLinearSystem class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file LisLinearSystem.h
- *
- * Created on 2012-06-25 by Norihiro Watanabe
  */
 
 #ifndef LISLINEARSYSTEM_H_

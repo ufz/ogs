@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author Thomas Fischer
+ * \date   2012-05-22
+ * \brief  Definition of the LinearIntervalInterpolation class.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file  LinearIntervalInterpolation.h
- *
- * Created on 2012-05-22 by Thomas Fischer
  */
 
 #ifndef LINEARINTERVALINTERPOLATION_H_

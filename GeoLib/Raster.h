@@ -2,6 +2,7 @@
  * @file Raster.h
  * @author Thomas Fischer
  * @date 2011-09-07
+ * @brief Definition of the GeoLib::Raster class.
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)

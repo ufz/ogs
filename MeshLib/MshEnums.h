@@ -1,13 +1,15 @@
 /**
+ * \file
+ * \author  Karsten Rink
+ * \date    2012-05-02
+ * \brief   Definition of mesh-related Enumerations.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file MshEnums.h
- *
- * Created on 2012-05-02 by Karsten Rink
  */
 
 #ifndef MSHENUMS_H

@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-03-05
+ * \brief  Definition of the GMSHMeshDensityStrategy class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file GMSHMeshDensityStrategy.h
- *
- *  Created on 2010-03-05 by Thomas Fischer
  */
 
 #ifndef GMSHMESHDENSITYSTRATEGY_H_

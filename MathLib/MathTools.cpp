@@ -1,13 +1,15 @@
-	/**
+/**
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-01-13
+ * \brief  Implementation of math helper functions.
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file MathTools.cpp
- *
- * Created on 2010-01-13 by Thomas Fischer
  */
 
 #include "MathTools.h"
