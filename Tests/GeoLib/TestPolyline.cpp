@@ -10,14 +10,14 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <ctime>
 #include "gtest/gtest.h"
+#include <ctime>
 
 #include "Polyline.h"
 
 using namespace GeoLib;
 
-TEST(GeoLib, PolylineConstructorTest)
+TEST(GeoLib, PolylineTest)
 {
 	std::vector<Point*> ply_pnts;
 	Polyline ply(ply_pnts);
@@ -44,10 +44,52 @@ TEST(GeoLib, PolylineConstructorTest)
 	ASSERT_TRUE(ply.isPointIDInPolyline(1));
 	ASSERT_EQ(ply.getLength(1), 1);
 
+	// checking properties of polyline with two points
 	ply_pnts.push_back(new Point(0.5, 0.5, 0.0));
 	ply.addPoint(2);
 	ASSERT_EQ(ply.getNumberOfPoints(), 3);
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_TRUE(ply.isPointIDInPolyline(2));
 	ASSERT_TRUE(fabs(ply.getLength(2) - (1.0 + sqrt(0.5))) < std::numeric_limits<double>::min());
+
+	// checking remove
+	ply.removePoint(1);
+	ASSERT_EQ(ply.getNumberOfPoints(), 2);
+	ASSERT_FALSE(ply.isClosed());
+	ASSERT_FALSE(ply.isPointIDInPolyline(1));
+	ASSERT_TRUE(fabs(ply.getLength(1) - sqrt(0.5)) < std::numeric_limits<double>::min());
+
+	// inserting point in the middle
+	ply.insertPoint(1,1);
+	ASSERT_EQ(ply.getNumberOfPoints(), 3);
+	ASSERT_FALSE(ply.isClosed());
+	ASSERT_TRUE(ply.isPointIDInPolyline(2));
+	ASSERT_TRUE(fabs(ply.getLength(2) - (1.0 + sqrt(0.5))) < std::numeric_limits<double>::epsilon());
+
+	// inserting point at the end
+	ply_pnts.push_back(new GeoLib::Point(1.0, 0.5, 0.0));
+	ply.insertPoint(3,3);
+	ASSERT_EQ(ply.getNumberOfPoints(), 4);
+	ASSERT_FALSE(ply.isClosed());
+	ASSERT_TRUE(ply.isPointIDInPolyline(3));
+	ASSERT_TRUE(fabs(ply.getLength(3) - (1.0 + sqrt(0.5) + 0.5)) < std::numeric_limits<double>::epsilon());
+
+	// inserting point at the beginning
+	ply_pnts.push_back(new GeoLib::Point(-1.0, 0.0, 0.0));
+	ply.insertPoint(0,4);
+	ASSERT_EQ(ply.getNumberOfPoints(), 5);
+	ASSERT_FALSE(ply.isClosed());
+	ASSERT_TRUE(ply.isPointIDInPolyline(4));
+	ASSERT_TRUE(fabs(ply.getLength(4) - (1.0 + 1.0 + sqrt(0.5) + 0.5)) < std::numeric_limits<double>::epsilon());
+
+	// inserting point in the middle
+	ply_pnts.push_back(new GeoLib::Point(0.0, 0.5, 0.0));
+	ply.insertPoint(2,5);
+	ASSERT_EQ(ply.getNumberOfPoints(), 6);
+	ASSERT_FALSE(ply.isClosed());
+	ASSERT_TRUE(ply.isPointIDInPolyline(5));
+	ASSERT_TRUE(fabs(ply.getLength(5) - (1.0 + 0.5 + sqrt(1.25) + sqrt(0.5) + 0.5)) < std::numeric_limits<double>::epsilon());
+
+	for (std::size_t k(0); k < ply_pnts.size(); ++k)
+		delete ply_pnts[k];
 }
