@@ -4,7 +4,7 @@
  * @date Jan 7, 2013
  *
  * @copyright
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -80,7 +80,8 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(ply.getNumberOfPoints(), 5);
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_TRUE(ply.isPointIDInPolyline(4));
-	ASSERT_TRUE(fabs(ply.getLength(4) - (1.0 + 1.0 + sqrt(0.5) + 0.5)) < std::numeric_limits<double>::epsilon());
+	ASSERT_TRUE(fabs(ply.getLength(4) - (1.0 + 1.0 + sqrt(0.5) + 0.5)) <
+	            std::numeric_limits<double>::epsilon());
 
 	// inserting point in the middle
 	ply_pnts.push_back(new GeoLib::Point(0.0, 0.5, 0.0));

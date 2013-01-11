@@ -76,7 +76,12 @@ void Polyline::addPoint(size_t pnt_id)
 void Polyline::insertPoint(size_t pos, size_t pnt_id)
 {
 	assert(pnt_id < _ply_pnts.size());
-	assert(pos < _ply_pnt_ids.size());
+	assert(pos <= _ply_pnt_ids.size());
+
+	if (pos == _ply_pnt_ids.size()) {
+		addPoint(pnt_id);
+		return;
+	}
 
 	// check if inserting pnt_id would result in two identical IDs for adjacent points
 	if (pos == 0 && pnt_id == _ply_pnt_ids[0])
@@ -95,10 +100,10 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 			// insert at first position
 			double act_dist(sqrt(MathLib::sqrDist(_ply_pnts[_ply_pnt_ids[1]],
 			                                      _ply_pnts[pnt_id])));
-			_length.insert(_length.begin(), act_dist);
+			_length.insert(_length.begin() + 1, act_dist);
 			const size_t s(_length.size());
-			for (size_t k(1); k < s; k++)
-				_length[k] += _length[0];
+			for (size_t k(2); k < s; k++)
+				_length[k] += _length[1];
 		}
 		else
 		{
@@ -118,16 +123,20 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 				// insert at arbitrary position within the vector
 				double dist_until_now (0.0);
 				if (pos > 1)
-					dist_until_now = _length[pos - 2];
+					dist_until_now = _length[pos - 1];
 				double len_seg0(sqrt(MathLib::sqrDist(
 				                             _ply_pnts[_ply_pnt_ids[pos - 1]],
 				                             _ply_pnts[pnt_id])));
 				double len_seg1(sqrt(MathLib::sqrDist(
 				                             _ply_pnts[_ply_pnt_ids[pos + 1]],
 				                             _ply_pnts[pnt_id])));
-				_length[pos - 1] = dist_until_now + len_seg0;
-				std::vector<double>::iterator it(_length.begin() + pos);
-				_length.insert(it, _length[pos - 1] + len_seg1);
+				double update_dist(
+				        len_seg0 + len_seg1 - (_length[pos] - dist_until_now));
+				_length[pos] = dist_until_now + len_seg0;
+				std::vector<double>::iterator it(_length.begin() + pos + 1);
+				_length.insert(it, _length[pos] + len_seg1);
+				for (it = _length.begin() + pos + 2; it != _length.end(); ++it)
+					*it += update_dist;
 			}
 		}
 	}
@@ -140,7 +149,7 @@ void Polyline::removePoint(std::size_t pos)
 
 	_ply_pnt_ids.erase(_ply_pnt_ids.begin() + pos);
 
-	if (pos == _ply_pnt_ids.size() - 1)
+	if (pos == _ply_pnt_ids.size())
 	{
 		_length.erase(_length.begin() + pos);
 		return;
@@ -157,7 +166,7 @@ void Polyline::removePoint(std::size_t pos)
 		const double len_seg1(_length[pos + 1] - _length[pos]);
 		_length.erase(_length.begin() + pos);
 		const double len_new_seg(sqrt(MathLib::sqrDist(_ply_pnts[_ply_pnt_ids[pos - 1]],
-		                                               _ply_pnts[pos])));
+		                                               _ply_pnts[_ply_pnt_ids[pos]])));
 		double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
 
 		for (unsigned k(pos); k < n_ply_pnt_ids; k++)
@@ -200,7 +209,6 @@ void Polyline::setPointID(size_t idx, size_t id)
 	assert(idx < _ply_pnt_ids.size());
 	_ply_pnt_ids[idx] = id;
 }
-
 
 const Point* Polyline::getPoint(size_t i) const
 {
