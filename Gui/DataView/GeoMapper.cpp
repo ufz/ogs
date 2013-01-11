@@ -140,7 +140,7 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*co
 	}
 	else
 	{
-		double dir[3] = {1,0,0};
+		double dir[3] = {0,0,1};
 		sfc_pnts = MeshLib::MshEditor::getSurfaceNodes(*mesh, dir);
 	}
 	size_t nPoints (sfc_pnts.size());

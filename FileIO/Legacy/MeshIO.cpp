@@ -44,7 +44,7 @@ MeshIO::MeshIO()
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
-	INFO("MeshIO::loadMeshFromFile(): Reading OGS legacy mesh ... ");
+	INFO("Reading OGS legacy mesh ... ");
 
 	std::ifstream in (file_name.c_str(),std::ios::in);
 	if (!in.is_open())
@@ -120,7 +120,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 		                                               file_name), nodes, elements));
 		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
 
-		INFO("\tMeshIO::loadMeshFromFile(): finished.");
+		INFO("\t... finished.");
 		INFO("Nr. Nodes: %d.", nodes.size());
 		INFO("Nr. Elements: %d.", elements.size());
 
@@ -231,7 +231,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 int MeshIO::write(std::ostream &out)
 {
 	if(!_mesh) {
-		WARN("MeshIO::write(): Cannot write: no mesh set!");
+		WARN("MeshIO::write(): Cannot write: no mesh object specified.");
 		return 0;
 	}
 

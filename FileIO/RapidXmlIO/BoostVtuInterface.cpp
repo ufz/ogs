@@ -12,6 +12,7 @@
  */
 
 #include "BoostVtuInterface.h"
+#include "zLibDataCompressor.h"
 #include <fstream>
 
 #include <boost/foreach.hpp>
@@ -359,8 +360,12 @@ bool BoostVtuInterface::isVTKUnstructuredGrid(const property_tree::ptree &vtk_ro
 
 unsigned char* BoostVtuInterface::uncompressData(property_tree::ptree const& compressed_data_node)
 {
-	const char* compressed_data = compressed_data_node.data().c_str();
-	return nullptr;
+	const unsigned char* compressed_data = reinterpret_cast<const unsigned char*>(compressed_data_node.data().c_str());
+	unsigned long compressed_size = strlen(compressed_data_node.data().c_str());
+	unsigned char* uncompressed_data;
+	unsigned long uncompressed_size = 0;
+	unsigned long result = zLibDataCompressor::UncompressBuffer(compressed_data, compressed_size, uncompressed_data, uncompressed_size);
+	return uncompressed_data;
 }
 
 const optional<std::string> BoostVtuInterface::getXmlAttribute(std::string const& key,
