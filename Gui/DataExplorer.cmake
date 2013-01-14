@@ -93,6 +93,7 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	vtkWidgets
 	QVTK
 	${Boost_LIBRARIES}
+	zlib
 )
 
 IF(VTK_NETCDF_FOUND)
