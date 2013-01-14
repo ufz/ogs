@@ -91,6 +91,11 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_TRUE(ply.isPointIDInPolyline(5));
 	ASSERT_TRUE(fabs(ply.getLength(5) - (1.0 + 0.5 + sqrt(1.25) + sqrt(0.5) + 0.5)) < std::numeric_limits<double>::epsilon());
 
+	// close polyline
+	ply.closePolyline();
+	ASSERT_EQ(ply.getNumberOfPoints(), 7);
+	ASSERT_TRUE(ply.isClosed());
+
 	for (std::size_t k(0); k < ply_pnts.size(); ++k)
 		delete ply_pnts[k];
 }
