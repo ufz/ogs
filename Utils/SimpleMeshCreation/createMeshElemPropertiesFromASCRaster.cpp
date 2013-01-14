@@ -32,6 +32,9 @@
 // Gui/VtkVis
 #include "VtkMeshConverter.h"
 
+// MathLib
+#include "MathTools.h"
+
 // MeshLib
 #include "ConvertRasterToMesh.h"
 #include "Elements/Element.h"
@@ -111,8 +114,10 @@ int main (int argc, char* argv[])
 		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
 			// write new asc file
-			std::string new_raster_fname (BaseLib::dropFileExtension(raster_arg.getValue()));
-			new_raster_fname += "-" + BaseLib::number2str(raster->getNRows()) + "x" + BaseLib::number2str(raster->getNCols()) + ".asc";
+			std::string new_raster_fname (BaseLib::dropFileExtension(
+			                                      raster_arg.getValue()));
+			new_raster_fname += "-" + BaseLib::number2str(raster->getNRows()) + "x" +
+			                    BaseLib::number2str(raster->getNCols()) + ".asc";
 			std::ofstream out(new_raster_fname);
 			raster->writeRasterAsASC(out);
 			out.close();
@@ -125,16 +130,23 @@ int main (int argc, char* argv[])
 	std::vector<double> src_properties(n_cols * n_rows);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
-			src_properties[row*n_cols+col] = *raster_it;
+			src_properties[row * n_cols + col] = *raster_it;
 			++raster_it;
 		}
 	}
 
 	{
 		double src_mean_value(src_properties[0]);
+<<<<<<< HEAD
 		for (size_t k(1); k < n_cols * n_rows; k++)
 			src_mean_value += src_properties[k];
 		src_mean_value /= n_cols*n_rows;
+=======
+		for (size_t k(1); k < n_cols * n_rows; k++) {
+			src_mean_value += src_properties[k];
+		}
+		src_mean_value /= n_cols * n_rows;
+>>>>>>> Added include MathTools.h.
 		std::cout << "mean value of source: " << src_mean_value << std::endl;
 
 		double src_varianz(MathLib::fastpow(src_properties[0] - src_mean_value, 2));
@@ -151,7 +163,11 @@ int main (int argc, char* argv[])
 	std::vector<size_t> src_perm(n_cols * n_rows);
 	for (size_t k(0); k < n_cols * n_rows; k++)
 		src_perm[k] = k;
+<<<<<<< HEAD
 	BaseLib::Quicksort<double, std::size_t>(src_properties, 0, n_cols * n_rows, src_perm);
+=======
+	BaseLib::Quicksort<double>(src_properties, 0, n_cols * n_rows, src_perm);
+>>>>>>> Added include MathTools.h.
 
 	// compress the property data structure
 	const size_t mat_map_size(src_properties.size());
@@ -160,10 +176,10 @@ int main (int argc, char* argv[])
 	size_t n_mat(1);
 	for (size_t k(1); k<mat_map_size; ++k) {
 		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
-			mat_map[k] = mat_map[k-1]+1;
+			mat_map[k] = mat_map[k - 1] + 1;
 			n_mat++;
 		} else
-			mat_map[k] = mat_map[k-1];
+			mat_map[k] = mat_map[k - 1];
 	}
 	std::vector<double> compressed_src_properties(n_mat);
 	compressed_src_properties[0] = src_properties[0];
@@ -182,46 +198,53 @@ int main (int argc, char* argv[])
 	}
 
 	// do the interpolation
-	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh, &compressed_src_properties);
+	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh,
+	                                                           &compressed_src_properties);
 	std::vector<double> dest_properties(dest_mesh->getNElements());
-	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(dest_mesh), dest_properties);
+	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(dest_mesh),
+	                                        dest_properties);
 
 	const size_t n_dest_mesh_elements(dest_mesh->getNElements());
 
 	{ // write property file
 		std::string property_fname(mapping_arg.getValue());
 		std::ofstream property_out(property_fname.c_str());
-		if (! property_out) {
-			std::cerr << "could not open file " << property_fname << "PropertyMapping" << std::endl;
+		if (!property_out)
+		{
+			std::cerr << "could not open file " << property_fname <<
+			"PropertyMapping" << std::endl;
 			return -1;
 		}
 
-		for (size_t k(0); k<n_dest_mesh_elements; k++) {
+		for (size_t k(0); k < n_dest_mesh_elements; k++)
 			property_out << k << " " << dest_properties[k] << "\n";
-		}
 		property_out.close();
 	}
 
 	{
 		double mu(dest_properties[0]);
-		for (size_t k(1); k<n_dest_mesh_elements; k++) {
+		for (size_t k(1); k < n_dest_mesh_elements; k++)
 			mu += dest_properties[k];
-		}
 		mu /= n_dest_mesh_elements;
 		std::cout << "mean value of destination: " << mu << std::endl;
 
 		double sigma_q(MathLib::fastpow(dest_properties[0] - mu, 2));
-		for (size_t k(1); k<n_dest_mesh_elements; k++) {
+		for (size_t k(1); k < n_dest_mesh_elements; k++)
 			sigma_q += MathLib::fastpow(dest_properties[k] - mu, 2);
-		}
 		sigma_q /= n_dest_mesh_elements;
 		std::cout << "variance of destination: " << sigma_q << std::endl;
 	}
 
 	if (! out_mesh_arg.getValue().empty()) {
 		std::vector<size_t> dest_perm(n_dest_mesh_elements);
+<<<<<<< HEAD
 		for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
 		BaseLib::Quicksort<double, std::size_t>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
+=======
+		for (size_t k(0); k < n_dest_mesh_elements; k++)
+			dest_perm[k] = k;
+		BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
+>>>>>>> Added include MathTools.h.
 
 		// reset materials in destination mesh
 		for (size_t k(0); k<n_dest_mesh_elements; k++) {
