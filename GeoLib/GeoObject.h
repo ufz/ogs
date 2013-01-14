@@ -2,7 +2,8 @@
  * \file
  * \author Thomas Fischer
  * \date   2010-08-27
- * \brief  Definition of the GeoObject class.
+ * \brief  Base class for classes Point, Polyline, Surface.
+ * \ingroup GeoLib
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,20 +16,14 @@
 #ifndef GEOOBJECT_H_
 #define GEOOBJECT_H_
 
-namespace GeoLib {
-
-/**
- * \ingroup GeoLib
- *
- * \brief Base class for classes Point, Polyline, Surface.
- */
-
-class GeoObject {
+namespace GeoLib
+{
+class GeoObject
+{
 public:
-	GeoObject() {};
-	virtual ~GeoObject() {};
+	GeoObject() {}
+	virtual ~GeoObject() {}
 };
-
 } // end namespace GeoLib
 
 #endif /* GEOOBJECT_H_ */
