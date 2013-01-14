@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2012-01-04
+ * \brief  Implementation of the CondFromRasterDialog class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file CondFromRasterDialog.cpp
- *
- * Created on 2012-01-04 by Karsten Rink
  */
 
 #include "CondFromRasterDialog.h"

@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2010-04-23
+ * \brief  Definition of the VtkColorLookupTable class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file VtkColorLookupTable.h
- *
- * Created on 2010-04-23 by Karsten Rink
  */
 
 #ifndef VTKCOLORLOOKUPTABLE_H

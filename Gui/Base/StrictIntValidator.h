@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-01-24
+ * \brief  Definition of the StrictIntValidator class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
- *
- * \file StrictIntValidator.h
- *
- *  Created on 2011-01-24 by Thomas Fischer
+ *              http://www.opengeosys.org/project/license
+
  */
 
 #ifndef STRICTINTVALIDATOR_H_

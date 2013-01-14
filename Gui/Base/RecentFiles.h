@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2009-11-05
+ * \brief  Definition of the RecentFiles class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
- *
- * \file RecentFiles.h
- *
- * Created on 2009-11-05 by Lars Bilke
+ *              http://www.opengeosys.org/project/license
  */
 
 #ifndef RECENTFILES_H

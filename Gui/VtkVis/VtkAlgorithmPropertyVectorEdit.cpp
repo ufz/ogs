@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2010-10-22
+ * \brief  Implementation of the VtkAlgorithmPropertyVectorEdit class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file VtkAlgorithmPropertyVectorEdit.cpp
- *
- * Created on 2010-10-22 by Lars Bilke
  */
 
 // ** INCLUDES **

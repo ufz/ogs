@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-01-24
+ * \brief  Implementation of the StrictDoubleValidator class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
- *
- * \file StrictDoubleValidator.h
- *
- *  Created on 2011-01-24 by Thomas Fischer
+ *              http://www.opengeosys.org/project/license
  */
 
 #ifndef STRICTDOUBLEVALIDATOR_H_
