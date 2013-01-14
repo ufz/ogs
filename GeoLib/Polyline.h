@@ -15,15 +15,12 @@
 #ifndef POLYLINE_H_
 #define POLYLINE_H_
 
+#include <cmath>
+#include <vector>
+
 // GeoLib
 #include "GeoObject.h"
 #include "Point.h"
-
-// MathLib
-#include "MathTools.h"
-
-#include <cmath>
-#include <vector>
 
 namespace GeoLib
 {
