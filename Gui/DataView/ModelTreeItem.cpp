@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   no date
+ * \brief  Implementation of the ModelTreeItem class.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file ModelTreeItem.cpp
- *
- * Created on by Karsten Rink
  */
 
 #include "ModelTreeItem.h"

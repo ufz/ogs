@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-12-13
+ * \brief  Implementation of the GMSH2OGS converter.
+ *
+ * \copyright
+ * Copyright (c)  2013, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file GMSH2OGS.cpp
- *
- *  Created on 2011-12-13 by Thomas Fischer
  */
 
 // STL
