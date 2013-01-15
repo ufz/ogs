@@ -96,6 +96,13 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(ply.getNumberOfPoints(), 7);
 	ASSERT_TRUE(ply.isClosed());
 
+	// remove last point -> polyline is not closed!
+	ply.removePoint(6);
+	ASSERT_EQ(ply.getNumberOfPoints(), 6);
+	ASSERT_FALSE(ply.isClosed());
+	ply.closePolyline();
+	ASSERT_TRUE(ply.isClosed());
+
 	for (std::size_t k(0); k < ply_pnts.size(); ++k)
 		delete ply_pnts[k];
 }
