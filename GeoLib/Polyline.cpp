@@ -104,15 +104,11 @@ void Polyline::insertPoint(size_t pos, size_t pnt_id)
 			const size_t s(_length.size());
 			for (size_t k(2); k < s; k++)
 				_length[k] += _length[1];
-		}
-		else
-		{
-			if (pos == _ply_pnt_ids.size() - 1)
-			{
+		} else {
+			if (pos == _ply_pnt_ids.size() - 1) {
 				// insert at last position
 				double act_dist(sqrt(MathLib::sqrDist(
-				                             _ply_pnts[_ply_pnt_ids[_ply_pnt_ids.
-				                                                    size() - 2]],
+				                             _ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
 				                             _ply_pnts[pnt_id])));
 				double dist_until_now (0.0);
 				if (_ply_pnt_ids.size() > 2)
@@ -225,11 +221,6 @@ double Polyline::getLength (size_t k) const
 {
 	assert(k < _length.size());
 	return _length[k];
-}
-
-const std::vector<double>& Polyline::getLengthVec () const
-{
-	return _length;
 }
 
 Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &ply_vec,

@@ -143,12 +143,6 @@ public:
 	 */
 	double getLength (std::size_t k) const;
 
-	/**
-	 * get the complete length vector
-	 * @return the length vector of the polyline
-	 */
-	const std::vector<double>& getLengthVec () const;
-
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
 	/**
