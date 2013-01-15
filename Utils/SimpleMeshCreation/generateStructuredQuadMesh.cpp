@@ -1,10 +1,10 @@
 /**
- * \\file
- * \\author Thomas Fischer
- * \\date   Sep 21, 2012
- * \\brief  Implementation of the generateStructuredQuadMesh tool.
+ * \file
+ * \author Thomas Fischer
+ * \date   Sep 21, 2012
+ * \brief  Implementation of the generateStructuredQuadMesh tool.
  *
- * \\copyright
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or

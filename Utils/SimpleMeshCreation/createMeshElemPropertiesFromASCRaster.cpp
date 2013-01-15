@@ -1,10 +1,10 @@
 /**
- * \\file
- * \\author Thomas Fischer
- * \\date   Nov 1, 2012
- * \\brief  Implementation of the createMeshElemPropertiesFromASCRaster tool.
+ * \file
+ * \author Thomas Fischer
+ * \date   Nov 1, 2012
+ * \brief  Implementation of the createMeshElemPropertiesFromASCRaster tool.
  *
- * \\copyright
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
