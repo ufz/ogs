@@ -43,6 +43,16 @@ LisLinearSystem::LisLinearSystem(std::size_t dimension)
     ierr = lis_vector_duplicate(_AA, &_xx); checkError(ierr);
 }
 
+LisLinearSystem::LisLinearSystem(std::size_t dimension, const RowMajorSparsity* /*sp*/)
+: _dim(dimension), _max_diag_coeff(.0)
+{
+    int ierr = 0;
+    ierr = lis_matrix_create(0, &_AA); checkError(ierr);
+    ierr = lis_matrix_set_size(_AA, 0, dimension); checkError(ierr);
+    ierr = lis_vector_duplicate(_AA, &_bb); checkError(ierr);
+    ierr = lis_vector_duplicate(_AA, &_xx); checkError(ierr);
+}
+
 LisLinearSystem::~LisLinearSystem()
 {
     int ierr = 0;
