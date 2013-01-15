@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2010-04-30
+ * \brief  Definition of the VtkBGImageSource class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file VtkBGImageSource.h
- *
- * Created on 2010-04-30 by Karsten Rink
  */
 
 #ifndef VTKBGIMAGESOURCE_H

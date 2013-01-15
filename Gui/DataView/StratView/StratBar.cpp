@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2010-03-16
+ * \brief  Implementation of the StratBar class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file StratBar.cpp
- *
- * Created on 2010-03-16 by Karsten Rink
  */
 
 #include "StratBar.h"

@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2010-06-21
+ * \brief  Implementation of the VtkCustomInteractorStyle class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file VtkCustomInteractorStyle.cpp
- *
- * Created on 2010-06-21 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -183,10 +186,10 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			VtkMeshSource* source = dynamic_cast<VtkMeshSource*>(data_set);
 			if (source)
 				emit elementPicked(source->GetMesh(), picker->GetCellId());
-/* test for picking on selection filters 
+/* test for picking on selection filters
 			else
 			{
-/*			
+/*
 				vtkAlgorithm* data_set2 = picker->GetActor()->GetMapper()->GetInputConnection(0,0)->GetProducer()
 					                                                    ->GetInputConnection(0,0)->GetProducer()
 																		->GetInputConnection(0,0)->GetProducer()

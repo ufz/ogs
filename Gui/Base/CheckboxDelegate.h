@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2010-08-19
+ * \brief  Definition of the CheckboxDelegate class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file CheckboxDelegate.h
- *
- * Created on 2010-08-19 by Lars Bilke
  */
 
 #ifndef CHECKBOXDELEGATE_H
