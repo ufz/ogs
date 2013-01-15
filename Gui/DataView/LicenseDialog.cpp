@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Karsten Rink
+ * \date   2012-11-30
+ * \brief  Implementation of the LicenseDialog class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file LicenseDialog.cpp
- *
- * Created on 2012-11-30 by Karsten Rink
  */
 
 #include "LicenseDialog.h"
@@ -23,7 +26,7 @@ void LicenseDialog::setText()
 {
 	QString text;
 	QTextStream stream(&text);
-	stream << "<p>Copyright (c) 2012, OpenGeoSys Community "
+	stream << "<p>Copyright (c) 2013, OpenGeoSys Community "
 		   << "(<a href='http://www.opengeosys.org'>http://www.opengeosys.org</a>)<br />"
 		   << "All rights reserved.</p>"
 		   << "<p>Redistribution and use in source and binary forms, with or without"

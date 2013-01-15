@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2011-03-23
+ * \brief  Definition of the QValueTooltipSlider class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
- *
- * \file QValueTooltipSlider.h
- *
- * Created on 2011-03-23 by Lars Bilke
+ *              http://www.opengeosys.org/project/license
  */
 
 #ifndef QVALUETOOLTIPSLIDER_H

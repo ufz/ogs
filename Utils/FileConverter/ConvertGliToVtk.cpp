@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2010-05-06
+ * \brief  Implementation of the gli to vtk converter tool.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.net/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file ConvertGliToVtk.cpp
- *
- * Created on 2010-05-06 by Lars Bilke
  */
 
 // for backward compatibility, see http://www.boost.org/doc/libs/1_48_0/libs/filesystem/v2/doc/index.htm

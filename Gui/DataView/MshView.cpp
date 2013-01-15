@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2009-09-24
+ * \brief  Implementation of the MshView class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file MshView.cpp
- *
- * Created on 2009-09-24 by Lars Bilke
  */
 
 #include "MshView.h"
@@ -95,16 +98,16 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
 	bool is_3D_mesh (item->getMesh()->getDimension() == 3);
-	
+
 	if (item)
 	{
 		QMenu menu;
 		QAction* editMeshAction   = menu.addAction("Edit mesh...");
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
 		QAction* surfaceMeshAction (NULL);
-		if (is_3D_mesh) 
-			surfaceMeshAction = menu.addAction("Extract surface");		
-		
+		if (is_3D_mesh)
+			surfaceMeshAction = menu.addAction("Extract surface");
+
 		menu.addSeparator();
 		QMenu direct_cond_menu("DIRECT Conditions");
 		menu.addMenu(&direct_cond_menu);
@@ -113,7 +116,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		//menu.addSeparator();
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
-		if (is_3D_mesh) 
+		if (is_3D_mesh)
 			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
 		connect(addDirectAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
 		connect(loadDirectAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
@@ -139,7 +142,7 @@ void MshView::extractSurfaceMesh()
 	QModelIndex index = this->selectionModel()->currentIndex();
 	if (!index.isValid())
 		return;
-	
+
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	const double dir[3] = {0, 0, 1};
 	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );

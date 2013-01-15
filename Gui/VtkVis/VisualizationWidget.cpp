@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2009-11-03
+ * \brief  Implementation of the VisualizationWidget class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file VisualizationWidget.cpp
- *
- * Created on 2009-11-03 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -157,7 +160,7 @@ void VisualizationWidget::showAll(int x, int y, int z)
 	double* p = cam->GetPosition();
 	double dist = sqrt(vtkMath::Distance2BetweenPoints(p, fp));
 	cam->SetPosition(fp[0]+(x*dist), fp[1]+(y*dist), fp[2]+(z*dist));
-	
+
 	if (x!=0 || y!=0)
 		cam->SetViewUp(0.0, 0.0, 1.0);
 	else

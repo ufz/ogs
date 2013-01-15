@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Lars Bilke
+ * \date   2010-02-18
+ * \brief  Implementation of the VtkVisTabWidget class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file VtkVisTabWidget.cpp
- *
- * Created on 2010-02-18 by Lars Bilke
  */
 
 // ** INCLUDES **
@@ -353,7 +356,7 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 		unsigned nArrays (dataSetAttributesList.size());
 		int idx(0);
 		for (it=dataSetAttributesList.begin(); it!=dataSetAttributesList.end(); ++it)
-			if (active_array_name.compare((*it).right((*it).length()-2))==0) 
+			if (active_array_name.compare((*it).right((*it).length()-2))==0)
 			{
 				this->activeScalarComboBox->setCurrentIndex(idx);
 				break;
