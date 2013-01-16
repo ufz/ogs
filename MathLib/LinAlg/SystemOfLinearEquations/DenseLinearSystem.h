@@ -18,38 +18,30 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <valarray>
 #include <boost/property_tree/ptree.hpp>
+
+#include "MathLib/LinAlg/Dense/Matrix.h"
+#include "ISystemOfLinearEquations.h"
 
 namespace MathLib
 {
 
+/**
+ * \brief Linear system with a dense matrix and a Gauss elimination solver
+ */
 class DenseLinearSystem
+ : public ISystemOfLinearEquations
 {
 public:
     //---------------------------------------------------------------
     // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
-
-    /**
-     * Create a linear system
-     *
-     * @param length    System dimension
-     */
-    DenseLinearSystem(std::size_t length)
-    : _mat(length, length), _rhs(length), _x(length)
-    {
-    }
-
-    /**
-     *
-     */
-    virtual ~DenseLinearSystem();
-
     /**
      * configure linear solvers
      * @param option
      */
-    virtual void setOption(const boost::property_tree::ptree &option);
+    virtual void setOption(const boost::property_tree::ptree &/*option*/) {};
 
     /// return the system dimension
     virtual std::size_t getDimension() const { return _rhs.size(); };
@@ -60,40 +52,43 @@ public:
     /// set entry in A
     virtual void setMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
+        _mat(rowId, colId) = v;
     }
 
     /// add value into A
     virtual void addMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
+        _mat(rowId, colId) += v;
     }
 
     /// get RHS entry
     virtual double getRHSVec(std::size_t rowId) const
     {
-        double v=.0;
-        return v;
+        return _rhs[rowId];
     }
 
     /// set RHS entry
     virtual void setRHSVec(std::size_t rowId, double v)
     {
+        _rhs[rowId] = v;
     }
 
     /// add RHS entry
     virtual void addRHSVec(std::size_t rowId, double v)
     {
+        _rhs[rowId] += v;
     }
 
     /// get an entry in a solution vector
     virtual double getSolVec(std::size_t rowId)
     {
-        double v=.0;
-        return v;
+        return _x[rowId];
     }
 
     /// set a solution vector
     virtual void setSolVec(std::size_t rowId, double v)
     {
+        _x[rowId] = v;
     }
 
     /// set prescribed value
@@ -120,9 +115,30 @@ public:
     // specific to this class
     //---------------------------------------------------------------
     typedef MathLib::Matrix<double> MatrixType;
-    typedef std::vector<double> VectorType;
+    typedef std::valarray<double> VectorType;
+
+    /**
+     * Create a linear system
+     *
+     * @param length    System dimension
+     */
+    DenseLinearSystem(std::size_t length)
+    : _mat(length, length), _rhs(length), _x(length)
+    {
+    }
+
+    /**
+     *
+     */
+    virtual ~DenseLinearSystem(){};
+
+    /// get a reference to the matrix
     MatrixType& getMat() {return _mat;};
+
+    /// get a reference to the RHS vector
     VectorType& getRHSVec() {return _rhs;};
+
+    /// get a reference to the solution vector
     VectorType& getSolVec() {return _x;};
 
 private:
