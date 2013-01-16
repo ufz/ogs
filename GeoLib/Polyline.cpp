@@ -188,10 +188,7 @@ bool Polyline::isClosed() const
 
 bool Polyline::isPointIDInPolyline(size_t pnt_id) const
 {
-	if (_ply_pnt_ids.end() == std::find(_ply_pnt_ids.begin(), _ply_pnt_ids.end(), pnt_id)) {
-		return false;
-	}
-	return true;
+	return std::find(_ply_pnt_ids.begin(), _ply_pnt_ids.end(), pnt_id) != _ply_pnt_ids.end();
 }
 
 size_t Polyline::getPointID(size_t i) const
