@@ -359,11 +359,9 @@ private:
 };
 
 template<typename POINT>
-void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(
-        POINT const& center,
-        double half_len,
-        std::vector<std::vector<POINT*> const*>&
-        pnts) const
+void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(POINT const& center,
+                                                        double half_len,
+                                                        std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	double tmp_pnt[3] = { center[0] - half_len, center[1] - half_len, center[2] - half_len }; // min
 	std::size_t min_coords[3];
@@ -388,11 +386,9 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(
 }
 
 template<typename POINT>
-void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
-        POINT const& min_pnt,
-        POINT const& max_pnt,
-        std::vector<std::vector<POINT*> const*>&
-        pnts) const
+void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(POINT const& min_pnt,
+                                                          POINT const& max_pnt,
+                                                          std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	std::size_t min_coords[3];
 	getGridCoords(min_pnt, min_coords);
