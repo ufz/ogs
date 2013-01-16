@@ -183,6 +183,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
 	connect(geoTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
 		    _vtkVisPipeline, SLOT(removeHighlightedGeoObject()));
+	connect(stationTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
+		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+	connect(stationTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
+		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+
 
 
 	// Setup connections for mesh models to GUI

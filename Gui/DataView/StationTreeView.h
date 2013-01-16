@@ -21,6 +21,8 @@
 
 #include "Station.h"
 
+class vtkPolyDataAlgorithm;
+
 /**
  * \brief A view for the StationTreeModel with a number of properties adequate for this kind of data
  * \sa StationTreeModel, ModelTreeItem
@@ -67,6 +69,8 @@ private slots:
 signals:
 	void enableSaveButton(bool);
 	void enableRemoveButton(bool);
+	void geoItemSelected(const vtkPolyDataAlgorithm*, int);
+	void removeGeoItemSelection();
 	void itemSelectionChanged(const QItemSelection & selected,
 	                          const QItemSelection & deselected);
 	void openStationListFile(int);

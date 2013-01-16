@@ -102,7 +102,8 @@ float VtkCompositePointToGlyphFilter::GetInitialRadius() const
 	double y_diff = fabs(bounding_box[2]-bounding_box[3]);
 	double z_diff = fabs(bounding_box[4]-bounding_box[5]);
 
-	double max = (x_diff > y_diff) ? x_diff : y_diff;
+	double max = (x_diff == 0) ? 1 : x_diff;
+	max = (max > y_diff) ? max : y_diff;
 	max = (max > z_diff) ? max : z_diff;
 
 	return max/100.0;

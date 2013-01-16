@@ -38,10 +38,10 @@ VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlg
 	  {
 		vtkAlgorithm* parentAlg = ao->GetProducer();
 
-	  if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL)
-		_type = GeoLib::POLYLINE;
-	  else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL)
-		_type = GeoLib::SURFACE;
+		if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL)
+			_type = GeoLib::POLYLINE;
+		else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL)
+			_type = GeoLib::SURFACE;
 	  }
 
 	}
@@ -71,6 +71,10 @@ void VtkCompositeGeoObjectFilter::init()
 		composite = new VtkCompositePointToGlyphFilter(surface);
 		composite->SetUserProperty("Radius", this->GetInitialRadius());
 		_outputAlgorithm = composite->GetOutputAlgorithm();
+		_outputAlgorithm->Update();
+		vtkPolyData* pd = static_cast<vtkPolyData*>(_outputAlgorithm->GetOutputDataObject(0));
+		//int a = pd->GetPoints()->GetNumberOfPoints();
+		//std::cout << a << std::endl;
 	}
 	else if (_type == GeoLib::POLYLINE)
 	{

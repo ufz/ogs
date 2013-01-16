@@ -176,7 +176,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	if (!isBorehole)
 	{
 		output->SetVerts(newVerts);
-		output->GetPointData()->AddArray(station_ids);
+		output->GetCellData()->AddArray(station_ids);
+		output->GetCellData()->SetActiveAttribute("SiteIDs", vtkDataSetAttributes::SCALARS);
 	}
 	else
 	{

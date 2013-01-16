@@ -50,16 +50,19 @@ void StationTreeView::selectionChanged( const QItemSelection &selected,
 		const QModelIndex idx = *(selected.indexes().begin());
 		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
 
-		const ModelTreeItem* list_item = dynamic_cast<const ModelTreeItem*>(tree_item);
+		const ModelTreeItem* list_item = dynamic_cast<const ModelTreeItem*>(tree_item->parentItem());
 		if (list_item->getItem())
 		{
-			emit enableSaveButton(true);
-			emit enableRemoveButton(true);
+			if (list_item)
+				emit geoItemSelected(list_item->getItem()->vtkSource(), tree_item->row());
+			emit enableRemoveButton(false);
+			emit enableSaveButton(false);
 		}
 		else
 		{
-			emit enableRemoveButton(false);
-			emit enableSaveButton(false);
+			emit removeGeoItemSelection();
+			emit enableSaveButton(true);
+			emit enableRemoveButton(true);
 		}
 	}
 	//emit itemSelectionChanged(selected, deselected);
