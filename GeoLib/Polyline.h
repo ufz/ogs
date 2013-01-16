@@ -90,7 +90,6 @@ public:
 
 	/**
 	 * Closes a polyline by adding a line segment that connects start- and end-point.
-	 * \return
 	 */
 	void closePolyline();
 
