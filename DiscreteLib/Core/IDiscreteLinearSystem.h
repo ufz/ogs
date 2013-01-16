@@ -72,7 +72,7 @@ public:
      * get a DoF mapping table
      * @return
      */
-    virtual DofEquationIdTable* getDofEquationIdTable() const = 0;
+    virtual const DofEquationIdTable& getDofEquationIdTable() const = 0;
 
     /**
      * get a solution vector

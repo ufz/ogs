@@ -40,23 +40,8 @@ template<typename T>
 class SerialDiscreteVector : public IDiscreteVector<T>
 {
 public:
+    // only SerialDiscreteSystem can call constructor
     friend class SerialDiscreteSystem;
-    //---------------------------------------------------------------
-    // static function
-    //---------------------------------------------------------------
-//    /**
-//     * create a new object of discrete vector and let a discrete system own it
-//     *
-//     * @param sys   Discrete system which owns the new object
-//     * @param n     Size of vector
-//     * @return A pointer to the new vector object
-//     */
-//    static SerialDiscreteVector<T>* createInstance(IDiscreteSystem &sys, std::size_t n)
-//    {
-//        SerialDiscreteVector<T>* vec = new SerialDiscreteVector<T>(n, &sys);
-//        sys.addVector(vec);
-//        return vec;
-//    }
 
     //---------------------------------------------------------------
     // override member function
@@ -72,9 +57,8 @@ public:
      */
     virtual SerialDiscreteVector<T>* clone() const
     {
-        SerialDiscreteVector<T>* vec = _sys->createVector<T>(_data.size());
-        //SerialDiscreteVector<T>* vec = SerialDiscreteVector<T>::createInstance(*_sys, _data.size());
-        *vec = (*this);
+        SerialDiscreteVector<T>* vec = new SerialDiscreteVector<T>(*this);
+        _dis_resource->addVector(vec);
         return vec;
     }
 
@@ -148,16 +132,24 @@ public:
 protected:
     /**
      * Constructor
-     * @param n     Size of this vector
-     * @param sys   Discrete system
+     * @param n             Vector size
+     * @param msh           Mesh object
+     * @param dis_resource  Discrete data resource manager
      */
-    SerialDiscreteVector(std::size_t n, IDiscreteSystem* sys) : _data(n), _msh(&sys->getMesh()), _sys(sys) {};
+    SerialDiscreteVector(std::size_t n, const MeshLib::Mesh* msh, DiscreteResourceManager* dis_resource)
+    : _data(n), _msh(msh), _dis_resource(dis_resource) {};
+
+    /**
+     * Copy constructor
+     * @param src
+     */
+    SerialDiscreteVector(const SerialDiscreteVector &src)
+    : _data(src._data), _msh(src._msh), _dis_resource(src._dis_resource) {};
 
 protected:
     std::vector<T> _data;
     const MeshLib::Mesh* _msh;
-    IDiscreteSystem* _sys;
-//    DiscreteDataContainer* _dis_resource;
+    DiscreteResourceManager* _dis_resource;
 };
 
 } // end

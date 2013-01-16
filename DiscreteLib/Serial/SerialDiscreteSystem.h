@@ -100,7 +100,7 @@ public:
     template <class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
     typename MyLinearSystem<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type* createLinearSystem(DofEquationIdTable* dofManager)
     {
-        return MyLinearSystem<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type::createInstance(*this, _msh, dofManager);
+        return new typename MyLinearSystem<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type(_msh, dofManager, &_resource);
     }
 
     /// create a new vector
@@ -109,11 +109,7 @@ public:
     template<typename T>
     typename MyVector<T>::type* createVector(size_t n)
     {
-        //return MyVector<T>::type::createInstance(*this, n);
-        typedef typename MyVector<T>::type MyVectorType;
-        MyVectorType* vec = new MyVectorType(n, this);
-        addVector(vec);
-        return vec;
+        return new typename MyVector<T>::type(n, _msh, &_resource);
     };
 
 private:

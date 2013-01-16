@@ -18,6 +18,7 @@
 #include <vector>
 #include "MeshLib/Elements/Element.h"
 #include "DiscreteLib/DoF/DofEquationIdTable.h"
+#include "DiscreteLib/Core/IDiscreteVectorAssembler.h"
 
 namespace DiscreteLib
 {
@@ -33,14 +34,14 @@ class ElementWiseVectorUpdater
 {
 public:
     typedef T_LOCAL LocalAssemblerType;
-    typedef IDiscreteVectorAssembler<T_VALUE>::VectorType GlobalVectorType;
+    typedef typename IDiscreteVectorAssembler<T_VALUE>::VectorType GlobalVectorType;
 
     /**
      * constructor
      * @param msh
      * @param a
      */
-    ElementWiseVectorUpdater(std::size_t mesh_id, LocalAssemblerType* a)
+    ElementWiseVectorUpdater(std::size_t mesh_id, const LocalAssemblerType &a)
     : _msh_id(mesh_id), _e_assembler(a)
     {
     }
@@ -53,25 +54,26 @@ public:
      */
     void update(const MeshLib::Element &e, const DofEquationIdTable &dofManager, GlobalVectorType &globalVec)
     {
+        const std::size_t e_nnodes = e.getNNodes();
         LocalVector localVec;
-        std::vector<std::size_t> ele_node_ids, ele_node_size_order;
-        std::vector<long> local_dofmap_row;//, local_dofmap_column;
+        std::vector<std::size_t> ele_node_ids(e_nnodes);
+        std::vector<std::size_t> local_dofmap_row;
 
         std::vector<T_VALUE> local_u_n;
         // get dof map
-        e.getNodeIDList(e.getMaximumOrder(), ele_node_ids);
-        e.getListOfNumberOfNodesForAllOrders(ele_node_size_order);
-        dofManager.mapEqsID(_msh_id, ele_node_ids, local_dofmap_row); //TODO order
+        for (std::size_t i=0; i<e_nnodes; ++i)
+            ele_node_ids[i] = e.getNodeIndex(i);
+        dofManager.mapEqsID(_msh_id, ele_node_ids, local_dofmap_row);
         // local assembly
         localVec.resize(local_dofmap_row.size(), .0);
-        _e_assembler->assembly(*e, localVec);
+        _e_assembler.assembly(e, localVec);
         // update global
         globalVec.addSubvector(local_dofmap_row, &localVec[0]);
     }
 
 private:
     const std::size_t _msh_id;
-    LocalAssemblerType* _e_assembler;
+    LocalAssemblerType _e_assembler;
 };
 
 } //end

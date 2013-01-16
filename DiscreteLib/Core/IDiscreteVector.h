@@ -29,6 +29,7 @@ class DofEquationIdTable;
 /**
  * \brief Interface of discrete data with specific data type
  * 
+ * \tparam T    Data type, e.g. int, double
  */
 template <typename T>
 class IDiscreteVector : public IDiscreteVectorBase
@@ -110,24 +111,26 @@ public:
 
     /**
      * add values to given entries
-     * @param pos
+     * @param vec_pos
      * @param local_v
      */
-    virtual void addSubvector(const std::vector<std::size_t> &pos, T* local_v);
+    virtual void addSubvector(const std::vector<std::size_t> &vec_pos, T* local_v);
 
     /**
      * set values to given entries
-     * @param pos
+     * @param vec_pos
      * @param v
      */
-    virtual void setSubvector(const std::vector<std::size_t> &pos, T v);
+    virtual void setSubvector(const std::vector<std::size_t> &vec_pos, T v);
 
     /**
-     * construct
-     * @param dofEquationIdTable
-     * @param assembler
+     * construct the vector
+     *
+     * @param dofEquationIdTable    DoF mapping table
+     * @param assembler             Assembler
      */
-    virtual void construct(const DofEquationIdTable &dofEquationIdTable, IDiscreteVectorAssembler<T>& assembler) = 0;
+    virtual void construct( const DofEquationIdTable &dofEquationIdTable,
+                            IDiscreteVectorAssembler<T>& assembler) = 0;
 
 };
 

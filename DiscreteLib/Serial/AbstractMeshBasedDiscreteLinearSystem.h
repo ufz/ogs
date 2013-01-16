@@ -42,7 +42,7 @@ public:
      * @param msh
      * @param dofManager
      */
-    AbstractMeshBasedDiscreteLinearSystem(const MeshLib::Mesh* msh, DofEquationIdTable* dofManager)
+    AbstractMeshBasedDiscreteLinearSystem(const MeshLib::Mesh* msh, const DofEquationIdTable* dofManager)
     : _msh(msh), _dofManager(dofManager), _sparsity(nullptr)
     {
     }
@@ -59,13 +59,13 @@ public:
     }
 
     /// return a mesh
-    const MeshLib::Mesh* getMesh() const { return _msh; }
+    const MeshLib::Mesh& getMesh() const { return *_msh; }
 
     /// return DoF map table
-    virtual DofEquationIdTable* getDofEquationIdTable() const { return _dofManager; }
+    virtual const DofEquationIdTable& getDofEquationIdTable() const { return *_dofManager; }
 
     /// return a sparse pattern of equation matrix
-    MathLib::RowMajorSparsity* getSparsity() const { return _sparsity; };
+    const MathLib::RowMajorSparsity& getSparsity() const { return *_sparsity; };
 
 protected:
     /// set sparse pattern
@@ -76,7 +76,7 @@ private:
 
 private:
     const MeshLib::Mesh* _msh;
-    DofEquationIdTable* _dofManager;
+    const DofEquationIdTable* _dofManager;
     MathLib::RowMajorSparsity* _sparsity;
 };
 

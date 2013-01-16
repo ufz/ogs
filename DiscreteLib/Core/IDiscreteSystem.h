@@ -2,7 +2,7 @@
  * \file   IDiscreteSystem.h
  * \author Norihiro Watanabe
  * \date   2012-08-03
- * \brief  Helper macros.
+ * \brief
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,7 +15,7 @@
 #ifndef IDISCRETESYSTEM_H_
 #define IDISCRETESYSTEM_H_
 
-#include "DiscreteDataContainer.h"
+#include "DiscreteResourceManager.h"
 
 namespace MeshLib
 {
@@ -45,6 +45,7 @@ public:
     /// return a reference to a mesh object owned by this system
     virtual const MeshLib::Mesh& getMesh() const = 0;
 
+protected:
     /// add an equation object to this system
     void addLinearSystem(IDiscreteLinearSystem *eqs);
 
@@ -57,8 +58,7 @@ public:
     /// delete a vector object from this system
     void deleteVector(IDiscreteVectorBase* vec);
 
-private:
-    DiscreteDataContainer _data;
+    DiscreteResourceManager _resource;
 };
 
 } //end

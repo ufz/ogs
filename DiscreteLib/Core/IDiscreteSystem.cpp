@@ -22,26 +22,26 @@ namespace DiscreteLib
 
 void IDiscreteSystem::addLinearSystem(IDiscreteLinearSystem *eqs)
 {
-    _data.addLinearSystem(eqs);
+    _resource.addLinearSystem(eqs);
 }
 
 void IDiscreteSystem::deleteLinearSystem(IDiscreteLinearSystem* eqs)
 {
     if (eqs!=nullptr) {
-        _data.eraseLinearSystem(eqs);
+        _resource.eraseLinearSystem(eqs);
         delete eqs;
     }
 }
 
 void IDiscreteSystem::addVector(IDiscreteVectorBase *vec)
 {
-    _data.addVector(vec);
+    _resource.addVector(vec);
 }
 
 void IDiscreteSystem::deleteVector(IDiscreteVectorBase* v)
 {
     if (v!=nullptr) {
-        _data.eraseVector(v);
+        _resource.eraseVector(v);
         delete v;
     }
 };

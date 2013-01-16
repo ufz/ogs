@@ -2,7 +2,7 @@
  * \file   IDiscreteVector.tpp
  * \author Norihiro Watanabe
  * \date   2012-08-03
- * \brief  Helper macros.
+ * \brief
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)

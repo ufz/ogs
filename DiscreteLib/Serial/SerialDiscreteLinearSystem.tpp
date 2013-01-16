@@ -14,6 +14,8 @@
 #ifndef SERIALDISCRETELINEARSYSTEM_TPP_
 #define SERIALDISCRETELINEARSYSTEM_TPP_
 
+#include <cassert>
+
 #include "MathLib/LinAlg/Sparse/Sparsity.h"
 
 #include "MeshLib/Mesh.h"
@@ -27,68 +29,60 @@ namespace DiscreteLib
 {
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
-SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>* SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::createInstance(IDiscreteSystem &dis_sys, const MeshLib::Mesh* msh, DofEquationIdTable* dofManager)
-{
-    MySerialDiscreteLinearSystem *eqs = new MySerialDiscreteLinearSystem(msh, dofManager);
-    dis_sys.addLinearSystem(eqs);
-    return eqs;
-}
-
-template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
-SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::SerialDiscreteLinearSystem(const MeshLib::Mesh* msh,  DofEquationIdTable* dofMap)
-    : AbstractMeshBasedDiscreteLinearSystem(msh, dofMap)
+SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::SerialDiscreteLinearSystem(const MeshLib::Mesh* msh,  const DofEquationIdTable* dofMap, DiscreteResourceManager* dis_resource)
+: AbstractMeshBasedDiscreteLinearSystem(msh, dofMap), _dis_resource(dis_resource)
 {
     assert(dofMap->getNumberOfVariables()>0);
     MathLib::RowMajorSparsity* sparse = new MathLib::RowMajorSparsity();
-    MySparsityBuilder sp_builder(*getMesh(), *dofMap, *sparse);
+    MySparsityBuilder sp_builder(getMesh(), *dofMap, *sparse);
     AbstractMeshBasedDiscreteLinearSystem::setSparsity(sparse);
-    _eqs = new MyLinearSolverType(dofMap->getTotalNumberOfActiveDoFs(), sparse);
+    _linear_sys = new MyLinearSolverType(dofMap->getTotalNumberOfActiveDoFs(), sparse);
 };
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::setZero()
 {
-    _eqs->setZero();
-    _list_prescribed_dof_id.clear();
+    _linear_sys->setZero();
+    _list_prescribed_eqs_id.clear();
     _list_prescribed_values.clear();
 }
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::construct(IDiscreteLinearSystemAssembler& assemler)
 {
-    assert(getDofEquationIdTable()->getNumberOfVariables()>0);
+    assert(getDofEquationIdTable().getNumberOfVariables()>0);
 
-    assemler.assembly(*getMesh(), *AbstractMeshBasedDiscreteLinearSystem::getDofEquationIdTable(), *_eqs);
+    assemler.assembly(getMesh(), AbstractMeshBasedDiscreteLinearSystem::getDofEquationIdTable(), *_linear_sys);
 
     //apply 1st bc
-    _eqs->setKnownSolution(_list_prescribed_dof_id, _list_prescribed_values);
+    _linear_sys->setKnownSolution(_list_prescribed_eqs_id, _list_prescribed_values);
 }
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
-void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::setKnownSolution(size_t varId, const std::vector<size_t> &list_discrete_pt_id, const std::vector<double> &list_prescribed_values)
+void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::setKnownSolution(std::size_t varId, const std::vector<std::size_t> &list_discrete_pt_id, const std::vector<double> &list_prescribed_values)
 {
-    const size_t n = list_discrete_pt_id.size();
-    const DofEquationIdTable* dofmap = getDofEquationIdTable();
-    const size_t msh_id = getMesh()->getID();
-    for (size_t i=0; i<n; i++) {
-        size_t pt_id = list_discrete_pt_id[i];
-        if (dofmap->isActiveDoF(varId, msh_id, pt_id)) {
-            _list_prescribed_dof_id.push_back(dofmap->mapEqsID(varId, msh_id, pt_id));
+    const std::size_t n = list_discrete_pt_id.size();
+    const DofEquationIdTable &dofmap = getDofEquationIdTable();
+    const std::size_t msh_id = getMesh().getID();
+    for (std::size_t i=0; i<n; i++) {
+        const std::size_t pt_id = list_discrete_pt_id[i];
+        if (dofmap.isActiveDoF(varId, msh_id, pt_id)) {
+            _list_prescribed_eqs_id.push_back(dofmap.mapEqsID(varId, msh_id, pt_id));
             _list_prescribed_values.push_back(list_prescribed_values[i]);
         }
     }
 }
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
-void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::addRHSVec(size_t dofId, const std::vector<size_t> &list_discrete_pt_id, const std::vector<double> &list_rhs_values, double fkt)
+void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::addRHSVec(std::size_t dofId, const std::vector<std::size_t> &list_discrete_pt_id, const std::vector<double> &list_rhs_values, double fkt)
 {
-    const size_t n = list_discrete_pt_id.size();
-    const DofEquationIdTable* dofmap = getDofEquationIdTable();
-    const size_t msh_id = getMesh()->getID();
-    for (size_t i=0; i<n; i++) {
-        size_t pt_id = list_discrete_pt_id[i];
-        if (dofmap->isActiveDoF(dofId, msh_id, pt_id)) {
-            _eqs->addRHSVec(dofmap->mapEqsID(dofId, msh_id, pt_id), list_rhs_values[i]*fkt);
+    const std::size_t n = list_discrete_pt_id.size();
+    const DofEquationIdTable &dofmap = getDofEquationIdTable();
+    const std::size_t msh_id = getMesh().getID();
+    for (std::size_t i=0; i<n; i++) {
+        const std::size_t pt_id = list_discrete_pt_id[i];
+        if (dofmap.isActiveDoF(dofId, msh_id, pt_id)) {
+            _linear_sys->addRHSVec(dofmap.mapEqsID(dofId, msh_id, pt_id), list_rhs_values[i]*fkt);
         }
     }
 }
@@ -96,39 +90,39 @@ void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::addRHSVec(s
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::addRHSVec(const GlobalVectorType &v, double fkt)
 {
-    const size_t n = v.size();
-    for (size_t i=0; i<n; i++) {
-        _eqs->addRHSVec(i, v[i]*fkt);
+    const std::size_t n = v.size();
+    for (std::size_t i=0; i<n; i++) {
+        _linear_sys->addRHSVec(i, v[i]*fkt);
     }
 }
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::solve()
 {
-    _eqs->solve();
+    _linear_sys->solve();
 }
 
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::getSolVec(std::vector<double> &x)
 {
-    x.resize(_eqs->getDimension());
-    for (size_t i=0; i<x.size(); i++)
-        x[i] = _eqs->getSolVec(i);
+    x.resize(_linear_sys->getDimension());
+    for (std::size_t i=0; i<x.size(); i++)
+        x[i] = _linear_sys->getSolVec(i);
 }
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::getSolVec(GlobalVectorType &x)
 {
-    for (size_t i=x.getRangeBegin(); i<x.getRangeEnd(); i++)
-        x[i] = _eqs->getSolVec(i);
+    for (std::size_t i=x.getRangeBegin(); i<x.getRangeEnd(); i++)
+        x[i] = _linear_sys->getSolVec(i);
 };
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
 void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::setSolVec(const GlobalVectorType &x)
 {
-    for (size_t i=x.getRangeBegin(); i<x.getRangeEnd(); i++)
-        _eqs->setSolVec(i, x[i]);
+    for (std::size_t i=x.getRangeBegin(); i<x.getRangeEnd(); i++)
+        _linear_sys->setSolVec(i, x[i]);
 };
 
 } //end

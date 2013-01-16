@@ -21,8 +21,11 @@
 #include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearSystem.h"
 #include "MeshLib/MeshGenerator.h"
 #include "DiscreteLib/ElementWiseManipulator/IElemenetWiseLinearSystemLocalAssembler.h"
+#include "DiscreteLib/ElementWiseManipulator/IElemenetWiseVectorLocalAssembler.h"
 #include "DiscreteLib/ElementWiseManipulator/ElementWiseLinearSystemUpdater.h"
+#include "DiscreteLib/ElementWiseManipulator/ElementWiseVectorUpdater.h"
 #include "DiscreteLib/Serial/SerialDiscreteSystem.h"
+#include "DiscreteLib/SparsityBuilder/SparsityBuilderDummy.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -38,6 +41,18 @@ inline void ASSERT_DOUBLE_ARRAY_EQ(const double* Expected, const double* Actual,
     for (size_t i=0; i<N; i++) \
         ASSERT_NEAR(Expected[i], Actual[i], epsilon);
 }
+
+class LocalVectorAssembler1 : public DiscreteLib::IElemenetWiseVectorLocalAssembler
+{
+public:
+    virtual ~LocalVectorAssembler1() {};
+    virtual void assembly(const MeshLib::Element &/*e*/, LocalVector &local_v)
+    {
+        for (std::size_t i=0; i<4; i++)
+            local_v[i] = i;
+    }
+};
+
 
 struct SteadyDiffusion2DExample1
 {
@@ -117,6 +132,35 @@ TEST(DiscreteLib, SerialVec1)
     ASSERT_DOUBLE_ARRAY_EQ(expected, &(*v)[0], 9);
 }
 
+
+TEST(DiscreteLib, SerialVec2)
+{
+    std::unique_ptr<MeshLib::Mesh> msh(MeshGenerator::generateRegularQuadMesh(2.0, 2, .0, .0, .0));
+
+    SerialDiscreteSystem dis(msh.get());
+    SerialDiscreteVector<double> *v = dis.createVector<double>(msh->getNNodes());
+
+
+    // set up a DoF table
+    DofEquationIdTable dofMappingTable;
+    const std::size_t varId = dofMappingTable.addVariableDoFs(msh->getID(), 0, msh->getNNodes());
+    dofMappingTable.construct(DofNumberingType::BY_VARIABLE);
+
+    LocalVectorAssembler1 local_assembler;
+    typedef DiscreteLib::ElementWiseVectorUpdater<double, LocalVectorAssembler1> MyElementWiseVectorUpdater;
+    MyElementWiseVectorUpdater updater(msh->getID(), local_assembler);
+    SequentialElementWiseVectorAssembler<double, MyElementWiseVectorUpdater> e_assembler(updater);
+    v->construct(dofMappingTable, e_assembler);
+
+
+    double expected[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    for (std::size_t i=0; i<9; i++)
+        (*v)[i] = expected[i];
+
+    ASSERT_EQ(9u, v->size());
+    ASSERT_DOUBLE_ARRAY_EQ(expected, &(*v)[0], 9);
+}
+
 #ifdef USE_LIS
 TEST(DiscreteLib, Lis1)
 {
@@ -139,7 +183,8 @@ TEST(DiscreteLib, Lis1)
         //----------------------------------------------------------------------
         // the following codes should be independent of a parallelization scheme
         //----------------------------------------------------------------------
-        typedef MyDiscreteSystem::MyLinearSystem<MyLinearSolver,SparsityBuilderDummy>::type MyDiscreteLinearSystem;
+        typedef SparsityBuilderDummy MySparsityBuilderType;
+        typedef MyDiscreteSystem::MyLinearSystem<MyLinearSolver,MySparsityBuilderType>::type MyDiscreteLinearSystem;
         typedef DiscreteLib::ElementWiseLinearSystemUpdater<MyLocalAssembler,MyLinearSolver> MyElementWiseLinearSystemUpdater;
         typedef MyDiscreteSystem::MyLinearSystemAssembler<MyElementWiseLinearSystemUpdater,MyLinearSolver>::type MyGlobalAssembler;
 
@@ -149,14 +194,14 @@ TEST(DiscreteLib, Lis1)
         dofMappingTable.construct(DofNumberingType::BY_VARIABLE);
 
         // create a linear system
-        MyDiscreteLinearSystem *linear_eq = dis.createLinearSystem<MyLinearSolver, SparsityBuilderDummy>(&dofMappingTable);
+        MyDiscreteLinearSystem *linear_eq = dis.createLinearSystem<MyLinearSolver, MySparsityBuilderType>(&dofMappingTable);
         MyLinearSolver* lis = linear_eq->getLinearSolver();
         lis->getOption().solver_type = LisOption::SolverType::CG;
         lis->getOption().precon_type = LisOption::PreconType::NONE;
 
         // construct the system
-        MyElementWiseLinearSystemUpdater updater(msh->getID(), &ele_assembler);
-        MyGlobalAssembler assembler(&updater);
+        MyElementWiseLinearSystemUpdater updater(msh->getID(), ele_assembler);
+        MyGlobalAssembler assembler(updater);
         linear_eq->construct(assembler);
 
         // apply Dirichlet BC

@@ -1,5 +1,5 @@
 /**
- * \file   DiscreteDataContainer.h
+ * \file   DiscreteResourceManager.h
  * \author Norihiro Watanabe
  * \date   2012-08-03
  * \brief  Discrete data container
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef DISCRETEDATACONTAINER_H_
-#define DISCRETEDATACONTAINER_H_
+#ifndef DISCRETERESOURCEMANAGER_H_
+#define DISCRETERESOURCEMANAGER_H_
 
 
 #include <vector>
@@ -32,18 +32,18 @@ class IDiscreteLinearSystem;
  *
  * This class manages discrete vector and linear system objects.
  */
-class DiscreteDataContainer
+class DiscreteResourceManager
 {
 public:
     /**
      *
      */
-    DiscreteDataContainer(){};
+    DiscreteResourceManager(){};
 
     /**
      *
      */
-    virtual ~DiscreteDataContainer();
+    virtual ~DiscreteResourceManager();
 
     /**
      * add a vector
@@ -98,7 +98,7 @@ public:
     IDiscreteLinearSystem* getLinearSystem(std::size_t i);
 
 private:
-    DISALLOW_COPY_AND_ASSIGN(DiscreteDataContainer);
+    DISALLOW_COPY_AND_ASSIGN(DiscreteResourceManager);
 
 private:
     std::vector<IDiscreteLinearSystem*> _vec_linear_sys;

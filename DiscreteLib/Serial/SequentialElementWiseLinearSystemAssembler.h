@@ -39,7 +39,7 @@ public:
      * Constructor
      * @param updater
      */
-    explicit SequentialElementWiseLinearSystemAssembler(LocalAssembler* updater) : _e_assembler(updater) {};
+    explicit SequentialElementWiseLinearSystemAssembler(const LocalAssembler &updater) : _e_assembler(updater) {};
 
     ///
     virtual ~SequentialElementWiseLinearSystemAssembler(){};
@@ -65,7 +65,7 @@ public:
     void assembly(const MeshLib::Mesh &msh, const DofEquationIdTable &dofEquationIdTable, SolverType &eqs);
 
 private:
-    LocalAssembler* _e_assembler;
+    LocalAssembler _e_assembler;
 };
 
 template <class T1, class T2>
@@ -74,7 +74,7 @@ void SequentialElementWiseLinearSystemAssembler<T1, T2>::assembly(const MeshLib:
     const std::size_t n_ele = msh.getNElements();
     for (std::size_t i=0; i<n_ele; i++) {
         const MeshLib::Element *e = msh.getElement(i);
-        _e_assembler->update(*e, dofEquationIdTable, eqs);
+        _e_assembler.update(*e, dofEquationIdTable, eqs);
     }
 };
 

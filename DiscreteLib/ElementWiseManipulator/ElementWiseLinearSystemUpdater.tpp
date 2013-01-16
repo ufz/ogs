@@ -33,7 +33,7 @@ void ElementWiseLinearSystemUpdater<T_LOCAL, T_SOLVER>::update(const MeshLib::El
 
     // local assembly
     LocalLinearSystem localEQS(local_dofmap_row.size());
-    _e_assembler->assembly(e, localEQS);
+    _e_assembler.assembly(e, localEQS);
 
     // update global
     eqs.addSubMat(local_dofmap_row, local_dofmap_column, localEQS.getMat());

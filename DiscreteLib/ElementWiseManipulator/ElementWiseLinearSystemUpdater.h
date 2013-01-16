@@ -41,7 +41,7 @@ public:
      * @param msh_id            Mesh ID
      * @param local_assembler   Local assembler object
      */
-    ElementWiseLinearSystemUpdater(std::size_t msh_id, LocalAssemblerType* local_assembler)
+    ElementWiseLinearSystemUpdater(std::size_t msh_id, const LocalAssemblerType &local_assembler)
     : _msh_id(msh_id), _e_assembler(local_assembler)
     {};
 
@@ -54,7 +54,7 @@ public:
 
 private:
     const std::size_t _msh_id;
-    LocalAssemblerType* _e_assembler;
+    LocalAssemblerType _e_assembler;
 };
 
 } //end

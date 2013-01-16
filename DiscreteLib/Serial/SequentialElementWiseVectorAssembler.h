@@ -37,7 +37,7 @@ public:
      *
      * @param a
      */
-    explicit SequentialElementWiseVectorAssembler(LocalAssemblerType* a) : _e_assembler(a) {};
+    explicit SequentialElementWiseVectorAssembler(const LocalAssemblerType &a) : _e_assembler(a) {};
 
     /**
      *
@@ -53,7 +53,7 @@ public:
     virtual void assembly(const MeshLib::Mesh &msh, const DofEquationIdTable &dofEquationIdTable, GlobalVectorType &globalVec);
 
 private:
-    LocalAssemblerType* _e_assembler;
+    LocalAssemblerType _e_assembler;
 };
 
 
@@ -64,7 +64,7 @@ void SequentialElementWiseVectorAssembler<T1,T2>::assembly(const MeshLib::Mesh &
 
     for (std::size_t i=0; i<n_ele; i++) {
         const MeshLib::Element *e = msh.getElement(i);
-        _e_assembler->update(*e, dofEquationIdTable, globalVec);
+        _e_assembler.update(*e, dofEquationIdTable, globalVec);
     }
 };
 

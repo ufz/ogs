@@ -28,6 +28,8 @@ class DofEquationIdTable;
 
 /**
  * \brief Interface of discrete vector assembler classes
+ *
+ * \tparam T    Data type of a discrete vector, e.g. int, double
  */
 template <class T>
 class IDiscreteVectorAssembler
@@ -39,9 +41,10 @@ public:
 
     /**
      * Conduct the element by element assembly procedure
-     * @param msh
-     * @param dofEquationIdTable
-     * @param vec
+     *
+     * @param msh                   Mesh object
+     * @param dofEquationIdTable    DoF mapping table
+     * @param vec                   Discrete vector to be updated
      */
     virtual void assembly(
             const MeshLib::Mesh &msh,

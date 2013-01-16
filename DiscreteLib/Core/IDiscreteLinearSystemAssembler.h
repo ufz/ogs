@@ -2,7 +2,7 @@
  * \file   IDiscreteLinearSystemAssembler.h
  * \author Norihiro Watanabe
  * \date   2012-08-03
- * \brief  Helper macros.
+ * \brief
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -22,7 +22,7 @@ class Mesh;
 
 namespace MathLib
 {
-    class ISystemOfLinearEquations;
+class ISystemOfLinearEquations;
 }
 
 namespace DiscreteLib
