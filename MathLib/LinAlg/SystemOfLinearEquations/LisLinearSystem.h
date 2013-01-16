@@ -23,7 +23,7 @@
 #include "lis.h"
 
 #include "MathLib/LinAlg/Sparse/Sparsity.h"
-
+#include "ISystemOfLinearEquations.h"
 #include "LisOption.h"
 
 namespace MathLib
@@ -35,6 +35,7 @@ namespace MathLib
  * This class utilizes Lis solver.
  */
 class LisLinearSystem
+: public ISystemOfLinearEquations
 {
 public:
     //---------------------------------------------------------------
