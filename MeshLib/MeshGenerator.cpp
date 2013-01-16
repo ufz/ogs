@@ -15,6 +15,9 @@
 #include "MeshGenerator.h"
 
 #include <vector>
+#include "Node.h"
+#include "Elements/Edge.h"
+#include "Elements/Quad.h"
 
 namespace MeshLib
 {
