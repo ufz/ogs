@@ -15,8 +15,6 @@
 #ifndef IDISCRETELINEARSYSTEMASSEMBLER_H_
 #define IDISCRETELINEARSYSTEMASSEMBLER_H_
 
-#include "IDiscreteVector.h"
-
 namespace MeshLib 
 {
 class Mesh;

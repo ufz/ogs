@@ -1,5 +1,5 @@
 /**
- * \file   AbstractMeshBasedDiscreteLinearEquation.h
+ * \file   AbstractMeshBasedDiscreteLinearSystem.h
  * \author Norihiro Watanabe
  * \date   2012-08-03
  * \brief  Helper macros.
@@ -11,34 +11,46 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#pragma once
+#ifndef ABSTRACTMESHBASEDDISCRETELINEARSYSTEM_H_
+#define ABSTRACTMESHBASEDDISCRETELINEARSYSTEM_H_
 
 #include "BaseLib/CodingTools.h"
 #include "MathLib/LinAlg/Sparse/Sparsity.h"
-#include "MeshLib/Mesh.h"
 #include "DiscreteLib/Core/IDiscreteLinearSystem.h"
+
+namespace MeshLib
+{
+class Mesh;
+}
 
 namespace DiscreteLib
 {
+class DofEquationIdTable;
 
 /**
- * \brief Abstract class for mesh-based discrete linear equations
+ * \brief Abstract class for a single mesh-based discrete linear equations
  * 
  * - Mesh
  * - DoF manager
  * - Sparse pattern
  */
-class AbstractMeshBasedDiscreteLinearEquation : public IDiscreteLinearSystem
+class AbstractMeshBasedDiscreteLinearSystem : public IDiscreteLinearSystem
 {
 public:
-    /// \param  msh
-    /// \param  dofManager
-    AbstractMeshBasedDiscreteLinearEquation(const MeshLib::Mesh* msh, DofEquationIdTable* dofManager)
+    /**
+     * Constructor
+     * @param msh
+     * @param dofManager
+     */
+    AbstractMeshBasedDiscreteLinearSystem(const MeshLib::Mesh* msh, DofEquationIdTable* dofManager)
     : _msh(msh), _dofManager(dofManager), _sparsity(nullptr)
     {
     }
 
-    virtual ~AbstractMeshBasedDiscreteLinearEquation()
+    /**
+     *
+     */
+    virtual ~AbstractMeshBasedDiscreteLinearSystem()
     {
         if (_sparsity!=nullptr) {
             delete  _sparsity;
@@ -50,16 +62,17 @@ public:
     const MeshLib::Mesh* getMesh() const { return _msh; }
 
     /// return DoF map table
-    virtual DofEquationIdTable* getDofMapManger() const { return _dofManager; }
+    virtual DofEquationIdTable* getDofEquationIdTable() const { return _dofManager; }
 
     /// return a sparse pattern of equation matrix
     MathLib::RowMajorSparsity* getSparsity() const { return _sparsity; };
 
 protected:
+    /// set sparse pattern
     void setSparsity(MathLib::RowMajorSparsity* sp) { _sparsity = sp; }
 
 private:
-    DISALLOW_COPY_AND_ASSIGN(AbstractMeshBasedDiscreteLinearEquation);
+    DISALLOW_COPY_AND_ASSIGN(AbstractMeshBasedDiscreteLinearSystem);
 
 private:
     const MeshLib::Mesh* _msh;
@@ -69,3 +82,5 @@ private:
 
 
 } //end
+
+#endif //ABSTRACTMESHBASEDDISCRETELINEARSYSTEM_H_

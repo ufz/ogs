@@ -11,41 +11,49 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#pragma once
+#ifndef SEQUENTIALELEMENTWISEVECTORASSEMBLER_H_
+#define SEQUENTIALELEMENTWISEVECTORASSEMBLER_H_
 
 #include <vector>
 
 #include "MeshLib/Mesh.h"
-#include "DiscreteLib/DoF/DofEquationIdTable.h"
 #include "DiscreteLib/Core/IDiscreteVectorAssembler.h"
-#include "DiscreteLib/ElementWiseManipulator/IElemenetWiseVectorLocalAssembler.h"
 
 namespace DiscreteLib
 {
+class DofEquationIdTable;
 
 /**
- * \brief Element-based discrete vector assembler classes
+ * \brief Sequential element-wise discrete vector assembler
  */
-template <class T_VALUE, class T_UPDATER>
+template <class T_VALUE, class T_LOCAL_ASSEMBLER>
 class SequentialElementWiseVectorAssembler : public IDiscreteVectorAssembler<T_VALUE>
 {
 public:
     typedef typename IDiscreteVectorAssembler<T_VALUE>::VectorType GlobalVectorType;
-    typedef T_UPDATER UpdaterType;
+    typedef T_LOCAL_ASSEMBLER LocalAssemblerType;
 
-    ///
-    SequentialElementWiseVectorAssembler(UpdaterType* a) : _e_assembler(a) {};
+    /**
+     *
+     * @param a
+     */
+    explicit SequentialElementWiseVectorAssembler(LocalAssemblerType* a) : _e_assembler(a) {};
+
+    /**
+     *
+     */
     virtual ~SequentialElementWiseVectorAssembler() {};
 
-    /// Conduct the element by element assembly procedure
-    ///
-    /// @param msh Mesh
-    /// @param dofManager Dof map manager
-    /// @param vec Discrete vector
+    /**
+     * Conduct the element by element assembly procedure
+     * @param msh
+     * @param dofEquationIdTable
+     * @param globalVec
+     */
     virtual void assembly(const MeshLib::Mesh &msh, const DofEquationIdTable &dofEquationIdTable, GlobalVectorType &globalVec);
 
 private:
-    UpdaterType* _e_assembler;
+    LocalAssemblerType* _e_assembler;
 };
 
 
@@ -55,9 +63,11 @@ void SequentialElementWiseVectorAssembler<T1,T2>::assembly(const MeshLib::Mesh &
     const std::size_t n_ele = msh.getNElements();
 
     for (std::size_t i=0; i<n_ele; i++) {
-        MeshLib::Element *e = msh.getElement(i);
+        const MeshLib::Element *e = msh.getElement(i);
         _e_assembler->update(*e, dofEquationIdTable, globalVec);
     }
 };
 
 }
+
+#endif //SEQUENTIALELEMENTWISEVECTORASSEMBLER_H_

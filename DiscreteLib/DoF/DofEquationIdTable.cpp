@@ -12,7 +12,11 @@
  *
  */
 #include "DofEquationIdTable.h"
+
 #include <limits>
+
+#include "SequentialEquationIdStorage.h"
+#include "RandomEquationIdStorage.h"
 
 namespace DiscreteLib
 {
@@ -26,23 +30,26 @@ DofEquationIdTable::~DofEquationIdTable()
     _map_var2dof.clear();
 }
 
+size_t DofEquationIdTable::addVariable(std::size_t mesh_id, IEquationIdStorage* address)
+{
+    const std::size_t n_var = getNumberOfVariables();
+    const std::size_t var_id = n_var;
+    _map_var2dof.resize(n_var+1);
+    _map_var2dof[var_id][mesh_id] = address;
+    _map_msh2var[mesh_id].push_back(var_id);
+    return n_var;
+}
+
 std::size_t DofEquationIdTable::addVariableDoFs(std::size_t mesh_id, const std::vector<std::size_t> &list_dof_pt_id)
 {
     RandomEquationIdStorage* address = new RandomEquationIdStorage(list_dof_pt_id);
-    std::size_t var_id = _map_var2dof.size();
-    _map_var2dof.resize(_map_var2dof.size()+1);
-    _map_var2dof[var_id][mesh_id] = address;
-    return var_id;
+    return addVariable(mesh_id, address);
 }
 
 std::size_t DofEquationIdTable::addVariableDoFs(std::size_t mesh_id, std::size_t dof_pt_id_begin, std::size_t dof_pt_count)
 {
     RandomEquationIdStorage* address = new RandomEquationIdStorage(dof_pt_id_begin, dof_pt_count);
-    std::size_t var_id = _map_var2dof.size();
-    _map_var2dof.resize(_map_var2dof.size()+1);
-    _map_var2dof[var_id][mesh_id] = address;
-    _map_msh2var[mesh_id].push_back(var_id);
-    return var_id;
+    return addVariable(mesh_id, address);
 }
 
 void DofEquationIdTable::addVariableDoFs(std::size_t n_var, std::size_t mesh_id, std::size_t dof_pt_id_begin, std::size_t dof_pt_count)
@@ -50,10 +57,7 @@ void DofEquationIdTable::addVariableDoFs(std::size_t n_var, std::size_t mesh_id,
     _is_seq_address = true;
     for (std::size_t i=0; i<n_var; i++) {
         SequentialEquationIdStorage* address = new SequentialEquationIdStorage(dof_pt_id_begin, dof_pt_count);
-        std::size_t var_id = _map_var2dof.size();
-        _map_var2dof.resize(_map_var2dof.size()+1);
-        _map_var2dof[var_id][mesh_id] = address;
-        _map_msh2var[mesh_id].push_back(var_id);
+        addVariable(mesh_id, address);
     }
 }
 
@@ -62,7 +66,7 @@ void DofEquationIdTable::deactivateDoFs(std::size_t var_id, std::size_t mesh_id,
     getPointEquationIdTable(var_id, mesh_id)->activate(pt_id, false);
 }
 
-void DofEquationIdTable::setGhostPoints(std::size_t mesh_id, std::vector<std::size_t> &list_pt_id)
+void DofEquationIdTable::setGhostPoints(std::size_t mesh_id, const std::vector<std::size_t> &list_pt_id)
 {
     _ghost_pt[mesh_id].assign(list_pt_id.begin(), list_pt_id.end());
 }

@@ -1,5 +1,5 @@
 /**
- * \file   DiscreteSystem.h
+ * \file   SerialDiscreteSystem.h
  * \author Norihiro Watanabe
  * \date   2012-08-03
  * \brief  Helper macros.
@@ -11,15 +11,16 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#pragma once
+#ifndef SERIALDISCRETESYSTEM_H_
+#define SERIALDISCRETESYSTEM_H_
 
 #include "BaseLib/CodingTools.h"
 
 #include "DiscreteLib/Core/IDiscreteSystem.h"
 #include "DiscreteLib/DiscreteEnums.h"
-#include "DiscreteVector.h"
-#include "DiscreteLinearEquation.h"
-#include "SequentialElementWiseLinearEquationAssembler.h"
+#include "SerialDiscreteVector.h"
+#include "SerialDiscreteLinearSystem.h"
+#include "SequentialElementWiseLinearSystemAssembler.h"
 #include "SequentialElementWiseVectorAssembler.h"
 
 namespace MeshLib
@@ -33,29 +34,30 @@ namespace DiscreteLib
 class DofEquationIdTable;
 
 /**
- * \brief Discrete system based on a single mesh
+ * \brief Non-parallel version of a discrete system
  *
- * - Mesh
  */
-class DiscreteSystem : public IDiscreteSystem
+class SerialDiscreteSystem : public IDiscreteSystem
 {
 public:
+    //---------------------------------------------------------------
+    // Declaration of sub object types
+    //---------------------------------------------------------------
     template<typename T_LINEAR_SOLVER, typename T_SPARSITY_BUILDER>
-    struct MyLinearEquation
-    {
-        typedef DiscreteLinearEquation<T_LINEAR_SOLVER, T_SPARSITY_BUILDER> type;
+    struct MyLinearSystem   {
+        typedef SerialDiscreteLinearSystem<T_LINEAR_SOLVER, T_SPARSITY_BUILDER> type;
     };
 
     template<typename T>
     struct MyVector
     {
-        typedef DiscreteVector<T> type;
+        typedef SerialDiscreteVector<T> type;
     };
 
     template <typename T_UPDATER, typename T_LINEAR_SOLVER>
-    struct MyLinearEquationAssembler
+    struct MyLinearSystemAssembler
     {
-        typedef SequentialElementWiseLinearEquationAssembler<T_UPDATER, T_LINEAR_SOLVER> type;
+        typedef SequentialElementWiseLinearSystemAssembler<T_UPDATER, T_LINEAR_SOLVER> type;
     };
 
     template <typename T_VALUE, typename T_UPDATER>
@@ -64,20 +66,26 @@ public:
         typedef SequentialElementWiseVectorAssembler<T_VALUE, T_UPDATER> type;
     };
 
+    //---------------------------------------------------------------
+    //
+    //---------------------------------------------------------------
     /**
-     * 
+     * return the system type
      * @return
      */
     static DiscreteSystemType::type getSystemType() { return DiscreteSystemType::Serial;};
 
-    /// constructor
-    /// \param msh  a mesh to represent discrete systems by nodes or elements or edges
-    explicit DiscreteSystem(const MeshLib::Mesh* msh) : _msh(msh) {};
+    /**
+     * Constructor
+     * @param msh  pointer to a mesh which represents the discrete system by nodes or elements or edges
+     */
+    explicit SerialDiscreteSystem(const MeshLib::Mesh* msh) : _msh(msh) {};
 
-    ///
-    virtual ~DiscreteSystem()
+    /**
+     *
+     */
+    virtual ~SerialDiscreteSystem()
     {
-        //BaseLib::releaseObject(_msh);
     };
 
     /// return this mesh
@@ -90,9 +98,9 @@ public:
     /// @param linear_solver         Linear solver
     /// @param dofManager            Equation index table
     template <class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
-    typename MyLinearEquation<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type* createLinearEquation(T_LINEAR_SOLVER* linear_solver, DofEquationIdTable* dofManager)
+    typename MyLinearSystem<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type* createLinearSystem(DofEquationIdTable* dofManager)
     {
-        return MyLinearEquation<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type::createInstance(*this, _msh, linear_solver, dofManager);
+        return MyLinearSystem<T_LINEAR_SOLVER, T_SPARSITY_BUILDER>::type::createInstance(*this, _msh, dofManager);
     }
 
     /// create a new vector
@@ -101,14 +109,20 @@ public:
     template<typename T>
     typename MyVector<T>::type* createVector(size_t n)
     {
-        return MyVector<T>::type::createInstance(*this, n);
+        //return MyVector<T>::type::createInstance(*this, n);
+        typedef typename MyVector<T>::type MyVectorType;
+        MyVectorType* vec = new MyVectorType(n, this);
+        addVector(vec);
+        return vec;
     };
 
 private:
-    DISALLOW_COPY_AND_ASSIGN(DiscreteSystem);
+    DISALLOW_COPY_AND_ASSIGN(SerialDiscreteSystem);
 
 protected:
     const MeshLib::Mesh* _msh;
 };
 
 } //end
+
+#endif //SERIALDISCRETESYSTEM_H_

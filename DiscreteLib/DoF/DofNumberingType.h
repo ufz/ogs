@@ -24,11 +24,11 @@ struct DofNumberingType
 {
     enum type
     {
-        BY_VARIABLE,
-        BY_POINT
+        BY_VARIABLE,    ///< Ordering DoFs first by variable type
+        BY_POINT        ///< Ordering DoFs first by discrete point
     };
 };
 
-} //end
+} //DiscreteLib
 
 #endif //DOFNUMBERINGTYPE_H_

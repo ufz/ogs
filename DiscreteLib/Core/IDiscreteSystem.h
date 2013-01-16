@@ -15,8 +15,12 @@
 #ifndef IDISCRETESYSTEM_H_
 #define IDISCRETESYSTEM_H_
 
-#include "MeshLib/Mesh.h"
 #include "DiscreteDataContainer.h"
+
+namespace MeshLib
+{
+class Mesh;
+}
 
 namespace DiscreteLib
 {
@@ -26,12 +30,12 @@ class IDiscreteLinearSystem;
 class IDiscreteVectorBase;
 
 /**
- * \brief Interface for all kinds of discrete systems
+ * \brief Interface of discrete systems
  *
  *  Discrete system class contains the followings
  *  - discrete space (i.e. mesh)
  *  - discrete data (i.e. vector)
- *  - linear equations which are used to calculate discrete data
+ *  - linear systems which are used to calculate discrete data
  */
 class IDiscreteSystem
 {
@@ -57,31 +61,6 @@ private:
     DiscreteDataContainer _data;
 };
 
-void IDiscreteSystem::addLinearSystem(IDiscreteLinearSystem *eqs)
-{
-    _data.addLinearSystem(eqs);
-}
-
-void IDiscreteSystem::deleteLinearSystem(IDiscreteLinearSystem* eqs)
-{
-    if (eqs!=nullptr) {
-        _data.eraseLinearSystem(eqs);
-        delete eqs;
-    }
-}
-
-void IDiscreteSystem::addVector(IDiscreteVectorBase *vec)
-{
-    _data.addVector(vec);
-}
-
-void IDiscreteSystem::deleteVector(IDiscreteVectorBase* v)
-{
-    if (v!=nullptr) {
-        _data.eraseVector(v);
-        delete v;
-    }
-};
 } //end
 
 #endif //IDISCRETESYSTEM_H_

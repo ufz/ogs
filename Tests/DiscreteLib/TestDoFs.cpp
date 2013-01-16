@@ -12,23 +12,17 @@
  *
  */
 
-#include <gtest/gtest.h>
-
 #include <vector>
 
+#include <gtest/gtest.h>
+
 #include "BaseLib/CodingTools.h"
-
 #include "DiscreteLib/DoF/DofEquationIdTable.h"
-
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 using namespace DiscreteLib;
 
 //# DoF ###################################################################################################
-TEST(Discrete, DoF_var1)
+TEST(DiscreteLib, DoF_var1)
 {
     DofEquationIdTable dofManagerA;
     size_t varId = dofManagerA.addVariableDoFs(0, 0, 10);
@@ -41,7 +35,7 @@ TEST(Discrete, DoF_var1)
     ASSERT_EQ(9u, dofManagerA.mapEqsID(varId, 0, 9));
 };
 
-TEST(Discrete, DoF_var2_byDof)
+TEST(DiscreteLib, DoF_var2_byDof)
 {
     DofEquationIdTable dofManagerB;
     size_t dofIdB1 = dofManagerB.addVariableDoFs(0, 0, 10);
@@ -56,7 +50,7 @@ TEST(Discrete, DoF_var2_byDof)
     ASSERT_EQ(19u, dofManagerB.mapEqsID(dofIdB2, 0, 9));
 };
 
-TEST(Discrete, DoF_var2_byPoint)
+TEST(DiscreteLib, DoF_var2_byPoint)
 {
     DofEquationIdTable dofManagerB;
     size_t dofIdB1 = dofManagerB.addVariableDoFs(0, 0, 10);
@@ -71,7 +65,7 @@ TEST(Discrete, DoF_var2_byPoint)
     ASSERT_EQ(19u, dofManagerB.mapEqsID(dofIdB2, 0, 9));
 }
 
-TEST(Discrete, DoF_inactive)
+TEST(DiscreteLib, DoF_inactive)
 {
     DofEquationIdTable *dofManager = new DofEquationIdTable();
     size_t varId = dofManager->addVariableDoFs(0, 0, 9);
@@ -88,7 +82,7 @@ TEST(Discrete, DoF_inactive)
     delete dofManager;
 }
 
-TEST(Discrete, DoF_ghost_nodes)
+TEST(DiscreteLib, DoF_ghost_nodes)
 {
     {
         DofEquationIdTable *dofManager = new DofEquationIdTable();

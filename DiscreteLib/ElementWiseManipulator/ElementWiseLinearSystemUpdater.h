@@ -17,7 +17,6 @@
 
 #include <vector>
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
 #include "DiscreteLib/DoF/DofEquationIdTable.h"
 
@@ -25,60 +24,42 @@ namespace DiscreteLib
 {
 
 /**
- * \brief Element-wise global equation updater
+ * \brief Element-wise linear system updater
  *
- * \tparam T_LOCAL Local assembler
+ * \tparam T_LOCAL_ASSEMBLER    Local assembler
+ * \tparam T_SOLVER             Linear solver
  */
-template <class T_LOCAL, class T_SOLVER>
+template <class T_LOCAL_ASSEMBLER, class T_SOLVER>
 class ElementWiseLinearSystemUpdater
 {
 public:
-    typedef T_LOCAL LocalAssemblerType;
+    typedef T_LOCAL_ASSEMBLER LocalAssemblerType;
     typedef T_SOLVER SolverType;
 
     /**
-     *
-     * @param msh
-     * @param local_assembler
+     * Constructor
+     * @param msh_id            Mesh ID
+     * @param local_assembler   Local assembler object
      */
-    ElementWiseLinearSystemUpdater(MeshLib::Mesh* msh, LocalAssemblerType* local_assembler)
-    : _msh(msh), _e_assembler(local_assembler)
+    ElementWiseLinearSystemUpdater(std::size_t msh_id, LocalAssemblerType* local_assembler)
+    : _msh_id(msh_id), _e_assembler(local_assembler)
     {};
 
     /**
-     *
+     * Update a linear system for the given element
      * @param e     mesh element
-     * @param eqs   global equation
+     * @param eqs   linear system
      */
     void update(const MeshLib::Element &e, const DofEquationIdTable &dofManager, SolverType &eqs);
 
 private:
-    MeshLib::Mesh* _msh;
+    const std::size_t _msh_id;
     LocalAssemblerType* _e_assembler;
 };
 
-
-template <class T_LOCAL, class T_SOLVER>
-void ElementWiseLinearSystemUpdater<T_LOCAL, T_SOLVER>::update(const MeshLib::Element &e, const DofEquationIdTable &dofManager, SolverType &eqs)
-{
-    std::vector<size_t> ele_node_ids, ele_node_size_order;
-    std::vector<size_t> local_dofmap_row;
-    std::vector<size_t> local_dofmap_column;
-
-    // get dof map
-    for (std::size_t i=0; i<e.getNNodes(); ++i)
-        ele_node_ids.push_back(e.getNodeIndex(i));
-    dofManager.mapEqsID(_msh->getID(), ele_node_ids, local_dofmap_row, local_dofmap_column);
-
-    // local assembly
-    LocalLinearSystem localEQS(local_dofmap_row.size());
-    _e_assembler->assembly(e, localEQS);
-
-    // update global
-    eqs.addAsub(local_dofmap_row, local_dofmap_column, localEQS.getMat());
-    eqs.addRHSsub(local_dofmap_row, localEQS.getRHSVec());
-}
 } //end
+
+#include "ElementWiseLinearSystemUpdater.tpp"
 
 #endif //ELEMENTWISELINEAREQUATIONUPDATER_H_
 

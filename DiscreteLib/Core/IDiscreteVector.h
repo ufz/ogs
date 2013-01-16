@@ -127,7 +127,7 @@ public:
      * @param dofEquationIdTable
      * @param assembler
      */
-    virtual void construct(const DofEquationIdTable &dofEquationIdTable, const IDiscreteVectorAssembler<T>& assembler) = 0;
+    virtual void construct(const DofEquationIdTable &dofEquationIdTable, IDiscreteVectorAssembler<T>& assembler) = 0;
 
 };
 

@@ -15,8 +15,6 @@
 #ifndef DISCRETEENUMS_H_
 #define DISCRETEENUMS_H_
 
-#include <valarray>
-#include "MathLib/LinAlg/Dense/Matrix.h"
 #include "MathLib/LinAlg/SystemOfLinearEquations/DenseLinearSystem.h"
 
 namespace DiscreteLib

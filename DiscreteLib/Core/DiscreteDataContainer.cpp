@@ -22,20 +22,8 @@ namespace DiscreteLib
 
 DiscreteDataContainer::~DiscreteDataContainer()
 {
-    for (std::size_t i=0; i<_vec_vectors.size(); ++i) {
-        if (_vec_vectors[i] != nullptr) {
-            delete _vec_vectors[i];
-            _vec_vectors[i] = nullptr;
-        }
-    }
-    _vec_vectors.clear();
-    for (std::size_t i=0; i<_vec_linear_sys.size(); ++i) {
-        if (_vec_linear_sys[i] != nullptr) {
-            delete _vec_linear_sys[i];
-            _vec_linear_sys[i] = nullptr;
-        }
-    }
-    _vec_linear_sys.clear();
+    BaseLib::releaseObjectsInStdVector(_vec_vectors);
+    BaseLib::releaseObjectsInStdVector(_vec_linear_sys);
 }
 
 std::size_t DiscreteDataContainer::addVector(IDiscreteVectorBase* v)

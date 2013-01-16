@@ -27,17 +27,22 @@ namespace DiscreteLib
 
 /**
  * \brief Interface of all element local assembler classes
+ *
  */
-template <class T>
 class IElemenetWiseVectorLocalAssembler
 {
 public:
+    ///
     virtual ~IElemenetWiseVectorLocalAssembler() {};
 
-    /// assemble a local linear equation for the given element
+    /**
+     * assemble a local vector for the given element
+     * @param e         Mesh element
+     * @param local_v   Local vector
+     */
     virtual void assembly(const MeshLib::Element &e, LocalVector &local_v) = 0;
 };
 
-} //end
+} //DiscreteLib
 
 #endif //IELEMENETWISEVECTORLOCALASSEMBLER_H_

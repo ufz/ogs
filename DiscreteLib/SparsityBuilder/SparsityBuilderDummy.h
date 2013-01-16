@@ -1,16 +1,19 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * \file
+ * \author Norihiro Watanabe
+ * \date   2012-08-03
+ * \brief  Helper macros.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- *
- * \file SparsityBuilder.h
- *
- * Created on 2012-08-03 by Norihiro Watanabe
  */
 
-#pragma once
+#ifndef SPARSITYBUILDERDUMMY_H_
+#define SPARSITYBUILDERDUMMY_H_
 
 #include "MathLib/LinAlg/Sparse/Sparsity.h"
 
@@ -23,6 +26,9 @@ namespace DiscreteLib
 {
 class DofEquationIdTable;
 
+/**
+ *
+ */
 class SparsityBuilderDummy
 {
 public:
@@ -30,3 +36,5 @@ public:
 };
 
 }
+
+#endif //SPARSITYBUILDERDUMMY_H_

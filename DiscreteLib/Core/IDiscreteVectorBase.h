@@ -15,8 +15,6 @@
 #ifndef IDISCRETEVECTORBASE_H_
 #define IDISCRETEVECTORBASE_H_
 
-#include <vector>
-
 #include "DiscreteObjectWithID.h"
 
 namespace DiscreteLib

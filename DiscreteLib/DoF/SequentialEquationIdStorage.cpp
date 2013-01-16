@@ -14,6 +14,8 @@
 
 #include "SequentialEquationIdStorage.h"
 
+#include <algorithm>
+#include <cassert>
 
 namespace DiscreteLib
 {

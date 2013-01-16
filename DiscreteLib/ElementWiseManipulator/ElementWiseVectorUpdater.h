@@ -2,7 +2,7 @@
  * \file   ElementWiseVectorUpdater.h
  * \author Norihiro Watanabe
  * \date   2012-08-03
- * \brief  Helper macros.
+ * \brief
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -36,33 +36,32 @@ public:
     typedef IDiscreteVectorAssembler<T_VALUE>::VectorType GlobalVectorType;
 
     /**
-     *
+     * constructor
      * @param msh
-     * @param dofManager
      * @param a
      */
-    ElementWiseVectorUpdater(MeshLib::IMesh* msh, LocalAssemblerType* a)
-    : _msh(msh), _e_assembler(a)
+    ElementWiseVectorUpdater(std::size_t mesh_id, LocalAssemblerType* a)
+    : _msh_id(mesh_id), _e_assembler(a)
     {
-
     }
 
     /**
-     *
-     * @param e
-     * @param globalVec
+     * update a discrete vector for the given element
+     * @param e             Mesh element
+     * @param dofManager    DoF mapping table
+     * @param globalVec     Discrete vector to be updated
      */
     void update(const MeshLib::Element &e, const DofEquationIdTable &dofManager, GlobalVectorType &globalVec)
     {
         LocalVector localVec;
-        std::vector<size_t> ele_node_ids, ele_node_size_order;
+        std::vector<std::size_t> ele_node_ids, ele_node_size_order;
         std::vector<long> local_dofmap_row;//, local_dofmap_column;
 
         std::vector<T_VALUE> local_u_n;
         // get dof map
         e.getNodeIDList(e.getMaximumOrder(), ele_node_ids);
         e.getListOfNumberOfNodesForAllOrders(ele_node_size_order);
-        dofManager.mapEqsID(_msh->getID(), ele_node_ids, local_dofmap_row); //TODO order
+        dofManager.mapEqsID(_msh_id, ele_node_ids, local_dofmap_row); //TODO order
         // local assembly
         localVec.resize(local_dofmap_row.size(), .0);
         _e_assembler->assembly(*e, localVec);
@@ -71,7 +70,7 @@ public:
     }
 
 private:
-    MeshLib::IMesh* _msh;
+    const std::size_t _msh_id;
     LocalAssemblerType* _e_assembler;
 };
 
