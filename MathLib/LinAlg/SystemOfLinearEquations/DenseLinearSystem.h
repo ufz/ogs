@@ -121,8 +121,9 @@ public:
      * Create a linear system
      *
      * @param length    System dimension
+     * @param sp        Pointer to a Row-major sparsity object (not required)
      */
-    DenseLinearSystem(std::size_t length)
+    DenseLinearSystem(std::size_t length, const RowMajorSparsity* /*sp*/ = nullptr)
     : _mat(length, length), _rhs(length), _x(length)
     {
     }
