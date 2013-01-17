@@ -12,18 +12,22 @@
  *
  */
 
-#include "DateTools.h"
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
 
-namespace BaseLib {
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
+#include "DateTools.h"
+
+namespace BaseLib
+{
 int date2int(int y, int m, int d)
 {
 	if ( (y < 1000 || y > 9999) || (m < 1 || m > 12) || (d < 1 || d > 31) )
 	{
-		std::cout << "Error: date2double() -- input not in expected format." << std::endl;
+		WARN("date2double(): Input not in expected range.");
 		return 0;
 	}
 
@@ -37,16 +41,16 @@ int date2int(int y, int m, int d)
 
 std::string int2date(int date)
 {
-	if (date>10000000 && date<22000000)
+	if (date > 10000000 && date < 22000000)
 	{
-		int y = static_cast<int>(floor(date/10000.0));
-		int m = static_cast<int>(floor((date-(y*10000))/100.0));
-		int d = date-(y*10000)-(m*100);
+		int y = static_cast<int>(floor(date / 10000.0));
+		int m = static_cast<int>(floor((date - (y * 10000)) / 100.0));
+		int d = date - (y * 10000) - (m * 100);
 		std::stringstream ss;
-		if (d<10)
+		if (d < 10)
 			ss << "0";
 		ss << d << ".";
-		if (m<10)
+		if (m < 10)
 			ss << "0";
 		ss << m << "." << y;
 		return ss.str();
@@ -58,7 +62,7 @@ std::string date2string(double ddate)
 {
 	if (ddate < 10000101 || ddate > 99991231)
 	{
-		std::cout << "Error: date2String() -- input not in expected format." << std::endl;
+		WARN("date2String(): Input not in expected format.");
 		return "0.0.0000";
 	}
 
@@ -67,11 +71,11 @@ std::string date2string(double ddate)
 	rest = rest % (y * 10000);
 	int m = static_cast<int>(floor(rest / 100.0));
 	if (m < 1 || m > 12)
-		std::cout << "Warning: date2String() -- month not in [1:12]" << std::endl;
+		WARN("date2String(): month not in [1:12].");
 	rest = rest % (m * 100);
 	int d = rest;
 	if (d < 1 || d > 31)
-		std::cout << "Warning: date2String() -- day not in [1:31]" << std::endl;
+		WARN("date2String(): day not in [1:31].");
 
 	std::string day = BaseLib::number2str(d);
 	if (d < 10)
@@ -102,15 +106,13 @@ int xmlDate2int(const std::string &s)
 	{
 		int d = atoi(s.substr(8,2).c_str());
 		if (d < 1 || d > 31)
-			std::cout << "Warning: xmlDate2double() -- day not in [1:31]" << std::endl;
+			WARN("xmlDate2double(): day not in [1:31].");
 		int m = atoi(s.substr(5,2).c_str());
 		if (m < 1 || m > 12)
-			std::cout << "Warning: xmlDate2double() -- month not in [1:12]" <<
-			std::endl;
+			WARN("xmlDate2double(): month not in [1:12].");
 		int y = atoi(s.substr(0,4).c_str());
 		return date2int(y, m, d);
 	}
 	return 0;
 }
-
 } // end namespace BaseLib
