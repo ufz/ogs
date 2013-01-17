@@ -61,7 +61,19 @@ void DenseLinearSystem::solve()
 /// printout this equation for debugging
 void DenseLinearSystem::printout(std::ostream &os) const
 {
-    os << "not implemented yet." << std::endl;
+    os << "#A=" << std::endl;
+    for (std::size_t i=0; i<_x.size(); i++) {
+        for (std::size_t j=0; j<_x.size(); j++) {
+            os << "\t" << _mat(i,j);
+        }
+        os << std::endl;
+    }
+    os << "#x=" << std::endl;
+    for (std::size_t i=0; i<_x.size(); i++)
+        os << "\t" << _x[i] << std::endl;
+    os << "#b=" << std::endl;
+    for (std::size_t i=0; i<_rhs.size(); i++)
+        os << "\t" << _rhs[i] << std::endl;
 }
 
 } // MathLib
