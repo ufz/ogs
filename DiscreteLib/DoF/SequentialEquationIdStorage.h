@@ -26,7 +26,10 @@ namespace DiscreteLib
 {
 
 /**
- * \brief Storage assuming sequential and continuous index
+ * \brief Equation ID storage with sequential point and equation IDs
+ *
+ * This storage assumes that equation ID can be analytically determined for
+ * a given equation ID. Therefore it can save memory and work faster.
  */
 class SequentialEquationIdStorage : public IEquationIdStorage
 {
@@ -47,41 +50,94 @@ public:
     ///
     virtual bool isSequential() const {return true;};
 
-    ///
-    virtual bool hasKey(std::size_t pt_id) const
+    /**
+     *
+     * @param pt_id
+     * @return
+     */
+    virtual bool hasPoint(std::size_t pt_id) const
     {
         return (_pt_id_start<=pt_id && pt_id<_pt_id_start+_n);
     }
 
-    virtual bool hasValue(std::size_t eqs_id) const;
+    /**
+     *
+     * @param eqs_id
+     * @return
+     */
+    virtual bool hasEquationID(std::size_t eqs_id) const;
 
-    virtual void key_range(std::size_t &i_start, std::size_t &i_end) const;
+    /**
+     *
+     * @param i_start
+     * @param i_end
+     */
+    virtual void getPointRange(std::size_t &i_start, std::size_t &i_end) const;
 
+    /**
+     *
+     * @param pt_id
+     * @param b
+     */
     virtual void activate(std::size_t pt_id, bool b);
     
+    /**
+     *
+     * @param pt_id
+     * @return
+     */
     virtual bool isActive(std::size_t pt_id) const { return _deactive.count(pt_id)==0;};
 
-    virtual void set(std::size_t /*pt_id*/, long /*eqs_id*/)
+    /**
+     *
+     * @param
+     * @param
+     */
+    virtual void set(std::size_t /*pt_id*/, std::size_t /*eqs_id*/)
     {
-        //invalid
-        std::cout << "***Error: called invalid functions. SequentiallyMappedAddress::set()." << std::endl;
+        //nothing happen
     }
 
-    virtual std::size_t setAll(std::size_t address_start, std::size_t dn_pt);
+    /**
+     * renumbering all equation index
+     * @param eqs_id_start
+     * @param delta_pt
+     * @return
+     */
+    virtual std::size_t setAll(std::size_t eqs_id_start, std::size_t delta_pt);
 
+    /**
+     *
+     * @return
+     */
     virtual std::size_t size() const {return _n;};
 
-    virtual std::size_t address(std::size_t pt_id) const;
+    /**
+     *
+     * @param pt_id
+     * @return
+     */
+    virtual std::size_t equationID(std::size_t pt_id) const;
 
-    virtual std::size_t key(std::size_t /*address_id*/) const
+    /**
+     *
+     * @param
+     * @return
+     */
+    virtual std::size_t pointID(std::size_t /*address_id*/) const
     {
         //TODO
         return index_npos;
     }
 
+    /// print debug info
+    virtual void printout() const
+    {
+    }
+
 private:
-    std::size_t _pt_id_start;
-    std::size_t _n;
+    const std::size_t _pt_id_start;
+    const std::size_t _n;
     std::size_t _dof_begin;
     std::size_t _delta_per_pt;
     std::set<std::size_t> _deactive;

@@ -18,7 +18,7 @@ namespace DiscreteLib
 {
 
 /**
- * \brief Interface of mapped address
+ * \brief Interface of a mapping table between point id and equation id
  */
 class IEquationIdStorage
 {
@@ -29,25 +29,25 @@ public:
     virtual ~IEquationIdStorage() {};
 
     /**
-     * check if the given key is stored
+     * check if the given pointID is stored
      * @param pt_id Discrete point id
      * @return true/false
      */
-    virtual bool hasKey(std::size_t pt_id) const = 0;
+    virtual bool hasPoint(std::size_t pt_id) const = 0;
 
     /**
      * check if the given value is stored
      * @param eqs_id    Equation id
      * @return  true/false
      */
-    virtual bool hasValue(std::size_t eqs_id) const = 0;
+    virtual bool hasEquationID(std::size_t eqs_id) const = 0;
 
     /**
      * get a range of keys
      * @param i_start   Start index
      * @param i_end     End index
      */
-    virtual void key_range(std::size_t &i_start, std::size_t &i_end) const = 0;
+    virtual void getPointRange(std::size_t &i_start, std::size_t &i_end) const = 0;
 
     /**
      * activate a discrete point
@@ -68,41 +68,47 @@ public:
      * @param pt_id     Discrete point id
      * @param eqs_id    Equation id
      */
-    virtual void set(std::size_t pt_id, long eqs_id) = 0;
+    virtual void set(std::size_t pt_id, std::size_t eqs_id) = 0;
 
     /**
+     * renumber all equation indexes
      *
-     * @param address_start
-     * @param dn_pt
-     * @return
+     * @param address_start     The beginning of the equation id
+     * @param delta             Increment of equation id per point. Default is 1.
+     * @return the last equation ID
      */
-    virtual std::size_t setAll(std::size_t address_start, std::size_t dn_pt=1) = 0;
+    virtual std::size_t setAll(std::size_t address_start, std::size_t delta=1) = 0;
 
     /**
-     * get a size of stored values
+     * get a size of stored points
      * @return
      */
     virtual std::size_t size() const = 0;
 
     /**
-     * get an address of the given key
-     * @param key_id
+     * get an equationID of the given pointID
+     * @param pt_id
      * @return
+     *  index_npos (-1) is returned for invalid point id
      */
-    virtual std::size_t address(std::size_t key_id) const = 0;
+    virtual std::size_t equationID(std::size_t pt_id) const = 0;
 
     /**
-     * get a key from the given address
-     * @param address_id
+     * get a pointID from the given equationID
+     * @param eqs_id
      * @return
+     *  index_npos (-1) is returned for invalid equation id
      */
-    virtual std::size_t key(std::size_t address_id) const = 0;
+    virtual std::size_t pointID(std::size_t eqs_id) const = 0;
 
     /**
-     * return if this storage assumes sequential
+     * return if this storage assumes sequential numbering of equation ID
      * @return
      */
     virtual bool isSequential() const = 0;
+
+    /// print debug info
+    virtual void printout() const = 0;
 };
 
 } //end

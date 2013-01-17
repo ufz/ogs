@@ -13,12 +13,14 @@
  */
 
 #include <gtest/gtest.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include <vector>
 #include <memory>
 
 #include "BaseLib/CodingTools.h"
 #include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearSystem.h"
+#include "MathLib/LinAlg/SystemOfLinearEquations/DenseLinearSystem.h"
 #include "MeshLib/MeshGenerator.h"
 #include "DiscreteLib/ElementWiseManipulator/IElemenetWiseLinearSystemLocalAssembler.h"
 #include "DiscreteLib/ElementWiseManipulator/IElemenetWiseVectorLocalAssembler.h"
@@ -41,17 +43,6 @@ inline void ASSERT_DOUBLE_ARRAY_EQ(const double* Expected, const double* Actual,
     for (size_t i=0; i<N; i++) \
         ASSERT_NEAR(Expected[i], Actual[i], epsilon);
 }
-
-class LocalVectorAssembler1 : public DiscreteLib::IElemenetWiseVectorLocalAssembler
-{
-public:
-    virtual ~LocalVectorAssembler1() {};
-    virtual void assembly(const MeshLib::Element &/*e*/, LocalVector &local_v)
-    {
-        for (std::size_t i=0; i<4; i++)
-            local_v[i] = i;
-    }
-};
 
 
 struct SteadyDiffusion2DExample1
@@ -114,108 +105,105 @@ struct SteadyDiffusion2DExample1
     }
 }; //SteadyDiffusion2DExample1
 
-} //namespace
 
-
-TEST(DiscreteLib, SerialVec1)
+template <class MyDiscreteSystem, class MyLinearSolver, class MySparsityBuilderType, class MyLocalAssembler>
+void solveLinear(   boost::property_tree::ptree &t_root,
+                    const Mesh* msh,
+                    const MyLocalAssembler &ele_assembler,
+                    const std::vector<std::size_t> &vec_DirichletBC_id,
+                    const std::vector<double> &vec_DirichletBC_value,
+                    std::vector<double> &x)
 {
-    std::unique_ptr<MeshLib::Mesh> msh(MeshGenerator::generateRegularQuadMesh(2.0, 2, .0, .0, .0));
+    // define a discrete system
+    MyDiscreteSystem dis(msh);
 
-    SerialDiscreteSystem dis(msh.get());
-    SerialDiscreteVector<double> *v = dis.createVector<double>(msh->getNNodes());
-
-    double expected[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-    for (std::size_t i=0; i<9; i++)
-        (*v)[i] = expected[i];
-    
-    ASSERT_EQ(9u, v->size());
-    ASSERT_DOUBLE_ARRAY_EQ(expected, &(*v)[0], 9);
-}
-
-
-TEST(DiscreteLib, SerialVec2)
-{
-    std::unique_ptr<MeshLib::Mesh> msh(MeshGenerator::generateRegularQuadMesh(2.0, 2, .0, .0, .0));
-
-    SerialDiscreteSystem dis(msh.get());
-    SerialDiscreteVector<double> *v = dis.createVector<double>(msh->getNNodes());
-
+    //----------------------------------------------------------------------
+    // the following codes should be independent of a parallelization scheme
+    //----------------------------------------------------------------------
+    typedef typename MyDiscreteSystem::template MyLinearSystem<MyLinearSolver,MySparsityBuilderType>::type MyDiscreteLinearSystem;
+    typedef DiscreteLib::ElementWiseLinearSystemUpdater<MyLocalAssembler,MyLinearSolver> MyElementWiseLinearSystemUpdater;
+    typedef typename MyDiscreteSystem::template MyLinearSystemAssembler<MyElementWiseLinearSystemUpdater,MyLinearSolver>::type MyGlobalAssembler;
 
     // set up a DoF table
     DofEquationIdTable dofMappingTable;
     const std::size_t varId = dofMappingTable.addVariableDoFs(msh->getID(), 0, msh->getNNodes());
     dofMappingTable.construct(DofNumberingType::BY_VARIABLE);
 
-    LocalVectorAssembler1 local_assembler;
-    typedef DiscreteLib::ElementWiseVectorUpdater<double, LocalVectorAssembler1> MyElementWiseVectorUpdater;
-    MyElementWiseVectorUpdater updater(msh->getID(), local_assembler);
-    SequentialElementWiseVectorAssembler<double, MyElementWiseVectorUpdater> e_assembler(updater);
-    v->construct(dofMappingTable, e_assembler);
+    // create a linear system
+    MyDiscreteLinearSystem *linear_eq = dis.template createLinearSystem<MyLinearSolver, MySparsityBuilderType>(&dofMappingTable);
+    linear_eq->getLinearSolver()->setOption(t_root);
 
+    // set Dirichlet BC (this should be done before construct)
+    linear_eq->setKnownSolution(varId, vec_DirichletBC_id, vec_DirichletBC_value);
 
-    double expected[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-    for (std::size_t i=0; i<9; i++)
-        (*v)[i] = expected[i];
+    // construct the system
+    MyElementWiseLinearSystemUpdater updater(msh->getID(), ele_assembler);
+    MyGlobalAssembler assembler(updater);
+    linear_eq->construct(assembler);
 
-    ASSERT_EQ(9u, v->size());
-    ASSERT_DOUBLE_ARRAY_EQ(expected, &(*v)[0], 9);
+    // solve the linear
+    //linear_eq->getLinearSolver()->printout();
+    linear_eq->solve();
+    //linear_eq->getLinearSolver()->printout();
+
+    // check a solution
+    linear_eq->getSolVec(x);
 }
 
-#ifdef USE_LIS
-TEST(DiscreteLib, Lis1)
+} //namespace
+
+TEST(DiscreteLib, LinearSerialDense)
 {
     // example
     SteadyDiffusion2DExample1 ex1;
     typedef SteadyDiffusion2DExample1::LocalAssembler MyLocalAssembler;
     MyLocalAssembler ele_assembler;
-    const MeshLib::Mesh* msh = ex1.msh;
+
+    //----------------------------------------------------------------------
+    // select DiscreteSystem and LinearSolver
+    //----------------------------------------------------------------------
+    typedef SerialDiscreteSystem MyDiscreteSystem;
+    typedef DenseLinearSystem MyLinearSolver;
+    typedef SparsityBuilderDummy MySparsityBuilderType;
+    boost::property_tree::ptree t_root;
+
+    std::vector<double> x;
+    solveLinear<MyDiscreteSystem, MyLinearSolver, MySparsityBuilderType, MyLocalAssembler>
+        (t_root, ex1.msh, ele_assembler, ex1.vec_DirichletBC_id, ex1.vec_DirichletBC_value, x);
+
+    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], &x[0], 9, 1.e-5);
+}
+
+#ifdef USE_LIS
+TEST(DiscreteLib, LinearSerialLis1)
+{
+    // example
+    SteadyDiffusion2DExample1 ex1;
+    typedef SteadyDiffusion2DExample1::LocalAssembler MyLocalAssembler;
+    MyLocalAssembler ele_assembler;
 
     //----------------------------------------------------------------------
     // select DiscreteSystem and LinearSolver
     //----------------------------------------------------------------------
     typedef SerialDiscreteSystem MyDiscreteSystem;
     typedef LisLinearSystem MyLinearSolver;
+    typedef SparsityBuilderDummy MySparsityBuilderType;
 
-    {
-        // define a discrete system
-        MyDiscreteSystem dis(msh);
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    t_solver.put("solver_type", "CG");
+    t_solver.put("precon_type", "NONE");
+    t_solver.put("matrix_type", "CCS");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
 
-        //----------------------------------------------------------------------
-        // the following codes should be independent of a parallelization scheme
-        //----------------------------------------------------------------------
-        typedef SparsityBuilderDummy MySparsityBuilderType;
-        typedef MyDiscreteSystem::MyLinearSystem<MyLinearSolver,MySparsityBuilderType>::type MyDiscreteLinearSystem;
-        typedef DiscreteLib::ElementWiseLinearSystemUpdater<MyLocalAssembler,MyLinearSolver> MyElementWiseLinearSystemUpdater;
-        typedef MyDiscreteSystem::MyLinearSystemAssembler<MyElementWiseLinearSystemUpdater,MyLinearSolver>::type MyGlobalAssembler;
+    std::vector<double> x;
+    solveLinear<MyDiscreteSystem, MyLinearSolver, MySparsityBuilderType, MyLocalAssembler>
+        (t_root, ex1.msh, ele_assembler, ex1.vec_DirichletBC_id, ex1.vec_DirichletBC_value, x);
 
-        // set up a DoF table
-        DofEquationIdTable dofMappingTable;
-        const std::size_t varId = dofMappingTable.addVariableDoFs(msh->getID(), 0, msh->getNNodes());
-        dofMappingTable.construct(DofNumberingType::BY_VARIABLE);
-
-        // create a linear system
-        MyDiscreteLinearSystem *linear_eq = dis.createLinearSystem<MyLinearSolver, MySparsityBuilderType>(&dofMappingTable);
-        MyLinearSolver* lis = linear_eq->getLinearSolver();
-        lis->getOption().solver_type = LisOption::SolverType::CG;
-        lis->getOption().precon_type = LisOption::PreconType::NONE;
-
-        // construct the system
-        MyElementWiseLinearSystemUpdater updater(msh->getID(), ele_assembler);
-        MyGlobalAssembler assembler(updater);
-        linear_eq->construct(assembler);
-
-        // apply Dirichlet BC
-        linear_eq->setKnownSolution(varId, ex1.vec_DirichletBC_id, ex1.vec_DirichletBC_value);
-        //linear_eq->getLinearEquation()->printout();
-
-        // solve the linear
-        linear_eq->solve();
-
-        // check a solution
-        std::vector<double> x;
-        linear_eq->getSolVec(x);
-        ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], &x[0], 9, 1.e-5);
-    }
+    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], &x[0], 9, 1.e-5);
 }
 #endif
 

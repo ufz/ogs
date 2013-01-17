@@ -65,24 +65,24 @@ void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::setKnownSol
     const DofEquationIdTable &dofmap = getDofEquationIdTable();
     const std::size_t msh_id = getMesh().getID();
     for (std::size_t i=0; i<n; i++) {
-        const std::size_t pt_id = list_discrete_pt_id[i];
-        if (dofmap.isActiveDoF(varId, msh_id, pt_id)) {
-            _list_prescribed_eqs_id.push_back(dofmap.mapEqsID(varId, msh_id, pt_id));
+        const DoF dof(varId, msh_id, list_discrete_pt_id[i]);
+        if (dofmap.isActiveDoF(dof)) {
+            _list_prescribed_eqs_id.push_back(dofmap.mapEqsID(dof));
             _list_prescribed_values.push_back(list_prescribed_values[i]);
         }
     }
 }
 
 template<class T_LINEAR_SOLVER, class T_SPARSITY_BUILDER>
-void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::addRHSVec(std::size_t dofId, const std::vector<std::size_t> &list_discrete_pt_id, const std::vector<double> &list_rhs_values, double fkt)
+void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::addRHSVec(std::size_t varId, const std::vector<std::size_t> &list_discrete_pt_id, const std::vector<double> &list_rhs_values, double fkt)
 {
     const std::size_t n = list_discrete_pt_id.size();
     const DofEquationIdTable &dofmap = getDofEquationIdTable();
     const std::size_t msh_id = getMesh().getID();
     for (std::size_t i=0; i<n; i++) {
-        const std::size_t pt_id = list_discrete_pt_id[i];
-        if (dofmap.isActiveDoF(dofId, msh_id, pt_id)) {
-            _linear_sys->addRHSVec(dofmap.mapEqsID(dofId, msh_id, pt_id), list_rhs_values[i]*fkt);
+        const DoF dof(varId, msh_id, list_discrete_pt_id[i]);
+        if (dofmap.isActiveDoF(dof)) {
+            _linear_sys->addRHSVec(dofmap.mapEqsID(dof), list_rhs_values[i]*fkt);
         }
     }
 }

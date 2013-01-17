@@ -20,15 +20,15 @@
 namespace DiscreteLib
 {
 
-bool SequentialEquationIdStorage::hasValue(std::size_t eqs_id) const
+bool SequentialEquationIdStorage::hasEquationID(std::size_t eqs_id) const
 {
-    bool in_range = (address(_pt_id_start) <= eqs_id && eqs_id <= address(_pt_id_start+_n-1));
+    bool in_range = (equationID(_pt_id_start) <= eqs_id && eqs_id <= equationID(_pt_id_start+_n-1));
     if (!in_range) return false;
     if ((eqs_id - _dof_begin)%_delta_per_pt!=0) return false;
     return true;
 }
 
-void SequentialEquationIdStorage::key_range(std::size_t &i_start, std::size_t &i_end) const
+void SequentialEquationIdStorage::getPointRange(std::size_t &i_start, std::size_t &i_end) const
 {
     i_start = _pt_id_start;
     i_end = i_start + _n;
@@ -50,7 +50,7 @@ std::size_t SequentialEquationIdStorage::setAll(std::size_t address_start, std::
     return _dof_begin + (_n-_deactive.size())*_delta_per_pt;
 }
 
-std::size_t SequentialEquationIdStorage::address(std::size_t pt_id) const
+std::size_t SequentialEquationIdStorage::equationID(std::size_t pt_id) const
 {
     assert(_pt_id_start<=pt_id && pt_id<_pt_id_start+_n);
 
