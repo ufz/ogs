@@ -146,15 +146,19 @@ int main (int argc, char* argv[])
 			src_mean_value += src_properties[k];
 		}
 		src_mean_value /= n_cols * n_rows;
+<<<<<<< HEAD
 >>>>>>> Added include MathTools.h.
 		std::cout << "mean value of source: " << src_mean_value << std::endl;
+=======
+		INFO("Mean value of source: %f.", src_mean_value);
+>>>>>>> Using logog logging in createMeshElemPropertiesFromASCRaster.cpp.
 
-		double src_varianz(MathLib::fastpow(src_properties[0] - src_mean_value, 2));
+		double src_variance(MathLib::fastpow(src_properties[0] - src_mean_value, 2));
 		for (size_t k(1); k<n_cols*n_rows; k++) {
-			src_varianz += MathLib::fastpow(src_properties[k] - src_mean_value, 2);
+			src_variance += MathLib::fastpow(src_properties[k] - src_mean_value, 2);
 		}
-		src_varianz /= n_cols * n_rows;
-		std::cout << "variance of source: " << src_varianz << std::endl;
+		src_variance /= n_cols * n_rows;
+		INFO("Variance of source: %f.", src_variance);
 	}
 
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
@@ -189,7 +193,7 @@ int main (int argc, char* argv[])
 			id++;
 		}
 	}
-	compressed_src_properties[n_mat-1] = src_properties[mat_map_size-1];
+	compressed_src_properties[n_mat - 1] = src_properties[mat_map_size - 1];
 
 	// reset materials in source mesh
 	const size_t n_mesh_elements(src_mesh->getNElements());
@@ -211,8 +215,7 @@ int main (int argc, char* argv[])
 		std::ofstream property_out(property_fname.c_str());
 		if (!property_out)
 		{
-			std::cerr << "could not open file " << property_fname <<
-			"PropertyMapping" << std::endl;
+			ERR("Could not open file %s for writing the mapping.", property_fname.c_str());
 			return -1;
 		}
 
@@ -226,13 +229,13 @@ int main (int argc, char* argv[])
 		for (size_t k(1); k < n_dest_mesh_elements; k++)
 			mu += dest_properties[k];
 		mu /= n_dest_mesh_elements;
-		std::cout << "mean value of destination: " << mu << std::endl;
+		INFO("Mean value of destination: %f.", mu);
 
 		double sigma_q(MathLib::fastpow(dest_properties[0] - mu, 2));
 		for (size_t k(1); k < n_dest_mesh_elements; k++)
 			sigma_q += MathLib::fastpow(dest_properties[k] - mu, 2);
 		sigma_q /= n_dest_mesh_elements;
-		std::cout << "variance of destination: " << sigma_q << std::endl;
+		INFO("Variance of destination: %f.", sigma_q);
 	}
 
 	if (! out_mesh_arg.getValue().empty()) {
