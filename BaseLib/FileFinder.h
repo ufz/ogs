@@ -41,6 +41,9 @@ public:
 	 */
 	void addDirectory(std::string const& dir)
 	{
+		if (dir.empty())
+			return;
+
 		if (dir[dir.size() - 1] != '/')
 			_directories.push_back(std::string(dir + "/"));
 		else
@@ -57,8 +60,7 @@ public:
 		if (_directories.empty())
 			ERR("FileFinder::getPath(): No directories set.");
 
-		for (std::vector<std::string>::const_iterator it = _directories.begin(); it
-		     != _directories.end(); ++it)
+		for (auto it = _directories.begin(); it != _directories.end(); ++it)
 		{
 			std::string testDir(*it);
 			std::ifstream is(testDir.append(filename).c_str());
