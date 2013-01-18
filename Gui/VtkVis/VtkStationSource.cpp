@@ -12,9 +12,6 @@
  *
  */
 
-#include "Color.h"
-#include "Station.h"
-
 // ** VTK INCLUDES **
 #include "VtkStationSource.h"
 
@@ -157,11 +154,9 @@ int VtkStationSource::RequestData( vtkInformation* request,
 				double loc[3] = { pCoords[0], pCoords[1], pCoords[2] };
 				newStations->InsertNextPoint(loc);
 				station_ids->InsertNextValue(site_count);
-
 				newLines->InsertNextCell(2);
 				newLines->InsertCellPoint(lastMaxIndex); // start of borehole-layer
-				newLines->InsertCellPoint(lastMaxIndex + 1); //end of boreholelayer
-				lastMaxIndex++;
+				newLines->InsertCellPoint(++lastMaxIndex); //end of boreholelayer
 				strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
 				if (useStationValues)
 					station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
@@ -182,9 +177,9 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	else
 	{
 		output->SetLines(newLines);
+		//output->GetCellData()->AddArray(station_ids);
 		output->GetCellData()->AddArray(strat_ids);
-		output->GetCellData()->SetActiveAttribute("Stratigraphies",
-		                                          vtkDataSetAttributes::SCALARS);
+		output->GetCellData()->SetActiveAttribute("Stratigraphies", vtkDataSetAttributes::SCALARS);
 	}
 	if (useStationValues)
 		output->GetPointData()->AddArray(station_values);
@@ -224,7 +219,8 @@ size_t VtkStationSource::GetIndexByName( std::string name )
 	}
 
 	vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
-	std::cout << "Key \"" << name << "\" (Index " << new_index << ") not found in color lookup table..." << std::endl;
+	std::cout << "Key \"" << name << "\" has been assigned index " << new_index << std::endl;
 	_id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
 	return new_index;
 }
+

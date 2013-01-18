@@ -222,6 +222,8 @@ void StationTreeView::removeStationList()
 	{
 		TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
 		emit stationListRemoved((item->data(0).toString()).toStdString());
+		emit enableSaveButton(false);
+		emit enableRemoveButton(false);
 	}
 }
 

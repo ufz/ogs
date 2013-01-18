@@ -74,8 +74,9 @@ public:
 	/// Signals if the object is a "simple" Station or a Borehole (i.e. containing borehole-specific information).
 	enum StationType
 	{
-		STATION  = 1,
-		BOREHOLE = 2
+		INVALID = 0,
+		STATION,
+		BOREHOLE
 	};
 
 	/**
@@ -136,7 +137,7 @@ public:
 	std::string const& getName() const { return _name; }
 
 	/// Returns the GeoSys-station-type for the station.
-	int type() const { return _type; }
+	StationType type() const { return _type; }
 
 	/// Creates a Station-object from information contained in a string (assuming the string has the right format)
 	static Station* createStation(const std::string &line);

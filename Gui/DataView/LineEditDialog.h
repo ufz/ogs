@@ -66,3 +66,4 @@ signals:
 };
 
 #endif //LINEEDITDIALOG_H
+	

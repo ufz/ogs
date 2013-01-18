@@ -185,8 +185,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		    _vtkVisPipeline, SLOT(removeHighlightedGeoObject()));
 	connect(stationTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
 		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
-	connect(stationTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
-		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+	connect(stationTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
+		    _vtkVisPipeline, SLOT(removeHighlightedGeoObject()));
 
 
 
@@ -447,7 +447,8 @@ void MainWindow::save()
 	        this,
 	        "Save data as",
 	        dir_str,
-	        "GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
+	        //"GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
+			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)"); //Saving gli files is no longer possible
 
 	if (!fileName.isEmpty())
 	{
@@ -1120,8 +1121,8 @@ void MainWindow::showNewProcessDialog()
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
-	connect(&lineEdit, SIGNAL(connectPolylines(const std::string &, std::vector<size_t>, double, std::string, bool, bool)),
-	        _geoModels, SLOT(connectPolylineSegments(const std::string &, std::vector<size_t>, double, std::string, bool, bool)));
+	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<std::size_t>, double, std::string, bool, bool)),
+	        _geoModels, SLOT(connectPolylineSegments(const std::string &, std::vector<std::size_t>, double, std::string, bool, bool)));
 	lineEdit.exec();
 }
 

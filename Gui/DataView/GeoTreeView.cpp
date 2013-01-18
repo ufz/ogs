@@ -104,8 +104,8 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			        SLOT(connectPolylines()));
 		}
 		menu.addSeparator();
-		QAction* removeAction = menu.addAction("Remove " + item->data(0).toString());
-		connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
+		//QAction* removeAction = menu.addAction("Remove " + item->data(0).toString());
+		//connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 	}
 	else
 	{
@@ -180,6 +180,8 @@ void GeoTreeView::removeGeometry()
 									  0).toString()).toStdString(), list->getType());
 		else
 			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::INVALID);
+		emit enableSaveButton(false);
+		emit enableRemoveButton(false);
 	}
 }
 

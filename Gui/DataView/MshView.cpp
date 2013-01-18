@@ -90,7 +90,11 @@ void MshView::removeMesh()
 	if (!index.isValid())
 		OGSError::box("No mesh selected.");
 	else
+	{
 		emit requestMeshRemoval(index);
+		emit enableSaveButton(false);
+		emit enableRemoveButton(false);
+	}
 }
 
 void MshView::contextMenuEvent( QContextMenuEvent* event )
