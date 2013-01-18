@@ -12,6 +12,8 @@
  *
  */
 
+#include "DateTools.h"
+
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -19,15 +21,13 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "DateTools.h"
-
 namespace BaseLib
 {
 int date2int(int y, int m, int d)
 {
 	if ( (y < 1000 || y > 9999) || (m < 1 || m > 12) || (d < 1 || d > 31) )
 	{
-		WARN("date2double(): Input not in expected range.");
+		WARN("date2int(): Input not in expected range.");
 		return 0;
 	}
 
