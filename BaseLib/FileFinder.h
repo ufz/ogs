@@ -15,12 +15,15 @@
 #ifndef FILEFINDER_H
 #define FILEFINDER_H
 
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <list>
+#include <vector>
 
-namespace BaseLib {
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+namespace BaseLib
+{
 /**
  * FileFinder stores a list of directories and will return the complete path
  * for a given filename if the corresponding file is found in any of these
@@ -30,40 +33,50 @@ class FileFinder
 {
 public:
 	/// Constructor
-	FileFinder() {};
+	FileFinder() {}
 
 	/**
 	 * \brief Adds another directory to the search-space.
 	 * If the given directory does not end with a slash one will be appended.
 	 */
-	void addDirectory(std::string dir)
+	void addDirectory(std::string const& dir)
 	{
-		if (dir[dir.size()-1] != '/') dir.append("/");
-		_directories.push_back(dir);
-	};
+		if (dir.empty())
+			return;
+
+		if (dir[dir.size() - 1] != '/')
+			_directories.push_back(std::string(dir + "/"));
+		else
+			_directories.push_back(dir);
+	}
 
 	/**
 	 * Given a filename, this method will return the complete path where this file can be found.
 	 * If the file is located in more than one of the directories in the search list, only the
 	 * first location will be returned.
 	 */
-	std::string getPath(std::string filename) const
+	std::string getPath(std::string const& filename) const
 	{
-		if (_directories.empty()) std::cout << "Error: FileFinder::getPath() -- directory list is empty." << std::endl;
-		for (std::list<std::string>::const_iterator it = _directories.begin(); it != _directories.end(); ++it)
+		if (_directories.empty())
+			ERR("FileFinder::getPath(): No directories set.");
+
+		for (auto it = _directories.begin(); it != _directories.end(); ++it)
 		{
 			std::string testDir(*it);
 			std::ifstream is(testDir.append(filename).c_str());
-			if (is.good()) return testDir;
+			if (is.good())
+			{
+				is.close();
+				return testDir;
+			}
 		}
-		std::cout << "Error: FileFinder::getPath() -- file not found." << std::endl;
+		ERR("FileFinder::getPath(): File not found.");
 		return filename;
-	};
+	}
 
 private:
-	std::list<std::string> _directories;
+	std::vector<std::string> _directories;
 };
-
 } // end namespace BaseLib
 
 #endif // FILEFINDER_H
