@@ -12,26 +12,30 @@
  *
  */
 
-#include "StringTools.h"
-
 #include <algorithm>
 #include <cctype>
 
-namespace BaseLib {
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
+#include "StringTools.h"
+
+namespace BaseLib
+{
 std::list<std::string> splitString(const std::string &str, char delim)
 {
 	std::list<std::string> strList;
 	std::stringstream ss(str);
-    std::string item;
-    while(getline(ss, item, delim)) {
-        strList.push_back(item);
-    }
-    return strList;
+	std::string item;
+	while(getline(ss, item, delim))
+		strList.push_back(item);
+	return strList;
 }
 
-std::string replaceString(const std::string &searchString, const std::string &replaceString, std::string stringToReplace)
- {
+std::string replaceString(const std::string &searchString,
+                          const std::string &replaceString,
+                          std::string stringToReplace)
+{
 	std::string::size_type pos = stringToReplace.find(searchString, 0);
 	int intLengthSearch = searchString.length();
 
@@ -44,14 +48,16 @@ std::string replaceString(const std::string &searchString, const std::string &re
 
 void trim(std::string &str, char ch)
 {
-  std::string::size_type pos = str.find_last_not_of(ch);
-  if(pos != std::string::npos)
-  {
-    str.erase(pos + 1);
-    pos = str.find_first_not_of(ch);
-    if(pos != std::string::npos) str.erase(0, pos);
-  }
-  else str.erase(str.begin(), str.end());
+	std::string::size_type pos = str.find_last_not_of(ch);
+	if(pos != std::string::npos)
+	{
+		str.erase(pos + 1);
+		pos = str.find_first_not_of(ch);
+		if(pos != std::string::npos)
+			str.erase(0, pos);
+	}
+	else
+		str.erase(str.begin(), str.end());
 }
 
 std::string stringToUpper(std::string const& str)
@@ -60,9 +66,7 @@ std::string stringToUpper(std::string const& str)
 	std::transform(s.begin(), s.end(), s.begin(), (int(*)(int)) std::toupper);
     return s;
 }
-
 } // end namespace BaseLib
-
 
 #ifdef MSVC
 void correctScientificNotation(std::string filename, size_t precision)
@@ -76,7 +80,7 @@ void correctScientificNotation(std::string filename, size_t precision)
 
 	if (!stream)
 	{
-		std::cout << "correctScientificNotation: fstream is not open" << std::endl;
+		WARN("correctScientificNotation: fstream is not open.");
 		return;
 	}
 
@@ -126,5 +130,3 @@ void correctScientificNotation(std::string filename, size_t precision)
 	rename(tmpFilename.c_str(), filename.c_str());
 }
 #endif
-
-
