@@ -16,6 +16,8 @@
 // GeoLib
 #include "AABB.h"
 #include "Color.h"
+#include "Polyline.h"
+#include "Surface.h"
 
 #include "FEMCondition.h"
 #include "VtkConditionSource.h"
@@ -29,9 +31,9 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolygon.h>
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkProperty.h>
 
 #include <vtkLookupTable.h>
 
@@ -131,7 +133,8 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 			dis_type_value = static_cast<vtkIdType>(_dis_type_map.size());
 			_dis_type_map.insert(std::pair<FiniteElement::DistributionType, size_t>(type, dis_type_value));
 		}
-		else dis_type_value = it->second;
+		else
+			dis_type_value = it->second;
 
 		if ((*_cond_vec)[n]->getGeomType() == GeoLib::POINT)
 		{
@@ -166,7 +169,8 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		}
 		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::POLYLINE)
 		{
-			const GeoLib::Polyline* ply = static_cast<const GeoLib::Polyline*>((*_cond_vec)[n]->getGeoObj());
+			const GeoLib::Polyline* ply =
+			        static_cast<const GeoLib::Polyline*>((*_cond_vec)[n]->getGeoObj());
 			const int nPoints = ply->getNumberOfPoints();
 			newLines->InsertNextCell(nPoints);
 			double value (0);
@@ -182,7 +186,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					scalars->InsertNextValue(dis_values[0]);
 				else if (type == FiniteElement::LINEAR || type == FiniteElement::LINEAR_NEUMANN)
 				{
-					for (size_t j = 0; j < dis_values.size(); j ++)
+					for (size_t j = 0; j < dis_values.size(); j++)
 					{
 						if (static_cast<int>(dis_nodes[j]) == i)
 							value = dis_values[j];
@@ -216,7 +220,8 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 					if (point_idx_map[point_index] == -1)
 					{
 						point_idx_map[point_index] = pnt_id;
-						newPoints->InsertNextPoint((*_points)[point_index]->getCoords());
+						newPoints->InsertNextPoint(
+						        (*_points)[point_index]->getCoords());
 						aPolygon->GetPointIds()->SetId(j, pnt_id);
 						distypes->InsertNextValue(dis_type_value);
 
@@ -246,7 +251,7 @@ int VtkConditionSource::RequestData( vtkInformation* request,
 		else if ((*_cond_vec)[n]->getGeomType() == GeoLib::INVALID)
 		{
 			size_t nValues = dis_values.size();
-			for (size_t i=0; i<nValues; i++)
+			for (size_t i = 0; i < nValues; i++)
 			{
 				//vtkIdType pid = newPoints->InsertNextPoint((*_points)[dis_nodes[i]]->getData());
 				vtkIdType pid = newPoints->InsertNextPoint((*_points)[i]->getCoords());
