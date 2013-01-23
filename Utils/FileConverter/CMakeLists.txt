@@ -20,16 +20,12 @@ IF (Shapelib_FOUND)
   SET_TARGET_PROPERTIES(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
 
 	TARGET_LINK_LIBRARIES( ConvertSHPToGLI
-		FEM
-    MSH
-    MSHGEOTOOLS
     FileIO
-    GEO
-    MathLib
-    Base
-    OGSProject
-		${Shapelib_LIBRARIES}
-		${QT_LIBRARIES}
+    GeoLib
+    BaseLib
+    OgsLib
+	${Shapelib_LIBRARIES}
+	${QT_LIBRARIES}
 	)
 
 	IF (OGS_PACKAGING)
@@ -59,39 +55,21 @@ ENDIF() # VTK_FOUND AND Boost_FOUND
 IF (QT4_FOUND)
 	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
 	TARGET_LINK_LIBRARIES (generateBCandGLI
-		FEM
-		MSH
-		MSHGEOTOOLS
 		FileIO
-		GEO
-		MathLib
-		Base
-		OGSProject
+		GeoLib
+		OgsLib
 		${QT_LIBRARIES}
 	)
 
 	ADD_EXECUTABLE (generateBCFromPolyline generateBCFromPolyline.cpp )
 	TARGET_LINK_LIBRARIES (generateBCFromPolyline
-		FEM
-		MSH
-		MSHGEOTOOLS
 		FileIO
-		GEO
-		MathLib
-		Base
-		OGSProject
+		GeoLib
+		OgsLib
 		${QT_LIBRARIES}
 	)
 
 	ADD_EXECUTABLE (generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
-	TARGET_LINK_LIBRARIES (generateMatPropsFromMatID
-		FEM
-		MSH
-		FileIO
-		Base
-		OGSProject
-		${QT_LIBRARIES}
-	)
 
   SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline generateMatPropsFromMatID
     PROPERTIES FOLDER Utilities)
@@ -101,6 +79,7 @@ ENDIF () # QT4_FOUND
 ADD_EXECUTABLE (GMSH2OGS GMSH2OGS.cpp)
 SET_TARGET_PROPERTIES(GMSH2OGS PROPERTIES FOLDER Utilities)
 TARGET_LINK_LIBRARIES (GMSH2OGS
-	MSH
+	MeshLib
 	FileIO
 )
+
