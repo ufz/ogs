@@ -27,14 +27,12 @@
 #include "XmlIO/XmlGmlInterface.h"
 #include "XmlIO/XmlStnInterface.h"
 
-// GEO
+// GeoLib
 #include "GEOObjects.h"
 #include "Point.h"
-#include "ProjectData.h"
 #include "Station.h"
 
-#include "problem.h"
-Problem* aproblem = NULL;
+#include "OGS/ProjectData.h"
 
 void convertPoints (DBFHandle dbf_handle,
                     std::string const& out_fname,
@@ -80,8 +78,9 @@ void convertPoints (DBFHandle dbf_handle,
 		double x(DBFReadDoubleAttribute(dbf_handle, k, x_id));
 		double y(DBFReadDoubleAttribute(dbf_handle, k, y_id));
 		double z(0.0);
-		if (z_id != std::numeric_limits<size_t>::max()) z = DBFReadDoubleAttribute(dbf_handle, k,
-						z_id);
+		if (z_id != std::numeric_limits<size_t>::max())
+			z = DBFReadDoubleAttribute(dbf_handle, k,
+			                           z_id);
 
 		name = "";
 		if (!name_component_ids.empty()) {

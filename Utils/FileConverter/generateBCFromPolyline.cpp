@@ -12,18 +12,19 @@
  *
  */
 
-// GEO
+#include <fstream>
+
+#include <QString>
+
+// GeoLib
 #include "GEOObjects.h"
 #include "PolylineVec.h"
-#include "ProjectData.h"
+
+// OGS
+#include "OGS/ProjectData.h"
 
 // FileIO
 #include "XmlIO/XmlGmlInterface.h"
-
-#include "problem.h"
-Problem* aproblem = NULL;
-
-#include <QString>
 
 int main (int argc, char* argv[])
 {
@@ -112,4 +113,3 @@ int main (int argc, char* argv[])
 
 	delete project_data;
 }
-

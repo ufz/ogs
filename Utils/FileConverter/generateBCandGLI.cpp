@@ -12,19 +12,22 @@
  *
  */
 
-// GEO
+// STL
+#include <algorithm>
+#include <fstream>
+
+// Qt
+#include <QString>
+
+// GeoLib
 #include "GEOObjects.h"
-#include "ProjectData.h"
 #include "SurfaceVec.h"
+
+// OgsLib
+#include "OGS/ProjectData.h"
 
 // FileIO
 #include "XmlIO/XmlGmlInterface.h"
-
-#include "problem.h"
-Problem* aproblem = NULL;
-
-#include <algorithm>
-#include <QString>
 
 int main (int argc, char* argv[])
 {
