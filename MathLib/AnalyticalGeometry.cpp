@@ -15,48 +15,51 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib> // for exit
-#include <list>
-#include <limits>
 #include <fstream>
+#include <limits>
+#include <list>
 
 // Base
 #include "quicksort.h"
 
-// GEO
+// GeoLib
 #include "Polyline.h"
 #include "Triangle.h"
 
 // MathLib
-#include "MathTools.h"
 #include "AnalyticalGeometry.h"
-#include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "LinAlg/Dense/Matrix.h" // for transformation matrix
+#include "LinAlg/Solvers/GaussAlgorithm.h"
+#include "MathTools.h"
 
-namespace MathLib {
-
-Orientation getOrientation (const double& p0_x, const double& p0_y,
-	const double& p1_x, const double& p1_y,
-	const double& p2_x, const double& p2_y)
+namespace MathLib
 {
-	double h1 ((p1_x-p0_x)*(p2_y-p0_y));
-	double h2 ((p2_x-p0_x)*(p1_y-p0_y));
+Orientation getOrientation (const double& p0_x, const double& p0_y,
+                            const double& p1_x, const double& p1_y,
+                            const double& p2_x, const double& p2_y)
+{
+	double h1 ((p1_x - p0_x) * (p2_y - p0_y));
+	double h2 ((p2_x - p0_x) * (p1_y - p0_y));
 
 	double tol (sqrt(std::numeric_limits<double>::min()));
-	if (fabs (h1-h2) <= tol * std::max (fabs(h1), fabs(h2)))
+	if (fabs (h1 - h2) <= tol * std::max (fabs(h1), fabs(h2)))
 		return COLLINEAR;
-	if (h1-h2 > 0.0) return CCW;
+	if (h1 - h2 > 0.0)
+		return CCW;
 
 	return CW;
 }
 
-Orientation getOrientation (const GeoLib::Point* p0, const GeoLib::Point* p1, const GeoLib::Point* p2)
+Orientation getOrientation (const GeoLib::Point* p0,
+                            const GeoLib::Point* p1,
+                            const GeoLib::Point* p2)
 {
-		return getOrientation ((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
+	return getOrientation ((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
-		const GeoLib::Point& c, const GeoLib::Point& d,
-		GeoLib::Point& s)
+                           const GeoLib::Point& c, const GeoLib::Point& d,
+                           GeoLib::Point& s)
 {
 	Matrix<double> mat(2,2);
 	mat(0,0) = b[0] - a[0];
@@ -94,9 +97,9 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 		s[1] = a[1] + rhs[0] * (b[1] - a[1]);
 		s[2] = a[2] + rhs[0] * (b[2] - a[2]);
 		// check z component
-		double z0 (a[2] - d[2]), z1(rhs[0]*(b[2]-a[2]) + rhs[1]*(d[2]-c[2]));
+		double z0 (a[2] - d[2]), z1(rhs[0] * (b[2] - a[2]) + rhs[1] * (d[2] - c[2]));
 		delete [] rhs;
-		if (std::fabs (z0-z1) < eps)
+		if (std::fabs (z0 - z1) < eps)
 			return true;
 		else
 			return false;
@@ -104,7 +107,10 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 	return false;
 }
 
-bool lineSegmentsIntersect (const GeoLib::Polyline* ply, size_t &idx0, size_t &idx1, GeoLib::Point& intersection_pnt)
+bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
+                            size_t &idx0,
+                            size_t &idx1,
+                            GeoLib::Point& intersection_pnt)
 {
 	size_t n_segs (ply->getNumberOfPoints() - 1);
 	/**
@@ -114,10 +120,12 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply, size_t &idx0, size_t &i
 	 * of the polyline and segment \f$s_2 = (C,B)\f$ defined by \f$j\f$-th and
 	 * \f$j+1\f$-st point of the polyline, \f$j>k+1\f$
 	 */
-	for (size_t k(0); k<n_segs-2; k++) {
-		for (size_t j(k+2); j<n_segs; j++) {
-			if (k!=0 || j<n_segs-1) {
-				if (lineSegmentIntersect (*(*ply)[k], *(*ply)[k+1], *(*ply)[j], *(*ply)[j+1], intersection_pnt)) {
+	for (size_t k(0); k < n_segs - 2; k++) {
+		for (size_t j(k + 2); j < n_segs; j++) {
+			if (k != 0 || j < n_segs - 1) {
+				if (lineSegmentIntersect(*(ply->getPoint(k)), *(ply->getPoint(k + 1)),
+				                         *(ply->getPoint(j)), *(ply->getPoint(j + 1)),
+				                         intersection_pnt)) {
 					idx0 = k;
 					idx1 = j;
 					return true;
@@ -136,46 +144,50 @@ bool isPointInTriangle (const double p[3], const double a[3], const double b[3],
 	mat(0,1) = c[0] - b[0];
 	mat(1,0) = a[1] - b[1];
 	mat(1,1) = c[1] - b[1];
-	double rhs[2] = {p[0]-b[0], p[1]-b[1]};
+	double rhs[2] = {p[0] - b[0], p[1] - b[1]};
 
 	MathLib::GaussAlgorithm gauss (mat);
 	gauss.execute (rhs);
 
-	if (0 <= rhs[0] && rhs[0] <= 1 && 0 <= rhs[1] && rhs[1] <= 1 && rhs[0] + rhs[1] <= 1) return true;
+	if (0 <= rhs[0] && rhs[0] <= 1 && 0 <= rhs[1] && rhs[1] <= 1 && rhs[0] + rhs[1] <= 1)
+		return true;
 	return false;
 }
 
 bool isPointInTriangle (const GeoLib::Point* p,
-		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c)
+                        const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c)
 {
 	return isPointInTriangle (p->getCoords(), a->getCoords(), b->getCoords(), c->getCoords());
 }
 
 double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b,
-				GeoLib::Point const& c)
+                          GeoLib::Point const& c)
 {
-	const double u[3] = {c[0]-a[0], c[1]-a[1], c[2]-a[2]};
-	const double v[3] = {b[0]-a[0], b[1]-a[1], b[2]-a[2]};
+	const double u[3] = {c[0] - a[0], c[1] - a[1], c[2] - a[2]};
+	const double v[3] = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
 	double w[3];
 	MathLib::crossProd(u, v, w);
 	return 0.5 * sqrt(MathLib::scpr<double,3>(w,w));
 }
 
 bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a,
-				GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps)
+                       GeoLib::Point const& b, GeoLib::Point const& c,
+                       double eps)
 {
 	const unsigned dim(3);
 	MathLib::Matrix<double> m (dim,dim);
-	for (unsigned i(0); i<dim; i++) m(i,0) = b[i] - a[i];
-	for (unsigned i(0); i<dim; i++) m(i,1) = c[i] - a[i];
-	for (unsigned i(0); i<dim; i++) m(i,2) = p[i] - a[i];
+	for (unsigned i(0); i < dim; i++)
+		m(i,0) = b[i] - a[i];
+	for (unsigned i(0); i < dim; i++)
+		m(i,1) = c[i] - a[i];
+	for (unsigned i(0); i < dim; i++)
+		m(i,2) = p[i] - a[i];
 
 	// point p is in the same plane as the triangle if and only if
 	// the following determinate of the 3x3 matrix equals zero (up to an eps)
 	double det3x3(m(0,0) * (m(1,1) * m(2,2) - m(2,1) * m(1,2))
-					- m(1,0) * (m(2,1) * m(0,2) - m(0,1) * m(2,2))
-					+ m(2,0) * (m(0,1) * m(1,2) - m(1,1) * m(0,2)));
+	              - m(1,0) * (m(2,1) * m(0,2) - m(0,1) * m(2,2))
+	              + m(2,0) * (m(0,1) * m(1,2) - m(1,1) * m(0,2)));
 	if (fabs(det3x3) > eps)
 		return false;
 
@@ -191,18 +203,18 @@ bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a,
 
 // NewellPlane from book Real-Time Collision detection p. 494
 void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, Vector &plane_normal,
-		double& d)
+                    double& d)
 {
 	d = 0;
 	Vector centroid;
 	size_t n_pnts (pnts.size());
 	for (size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
 		plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
-				* ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
+		                   * ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
 		plane_normal[1] += ((*(pnts[i]))[2] - (*(pnts[j]))[2])
-				* ((*(pnts[i]))[0] + (*(pnts[j]))[0]); // projection on xz
+		                   * ((*(pnts[i]))[0] + (*(pnts[j]))[0]); // projection on xz
 		plane_normal[2] += ((*(pnts[i]))[0] - (*(pnts[j]))[0])
-				* ((*(pnts[i]))[1] + (*(pnts[j]))[1]); // projection on xy
+		                   * ((*(pnts[i]))[1] + (*(pnts[j]))[1]); // projection on xy
 
 		centroid += *(pnts[j]);
 	}
@@ -246,14 +258,14 @@ void rotatePointsToXZ(Vector &n, std::vector<GeoLib::Point*> &pnts)
 	Matrix<double> rot_mat(3, 3);
 	// calc rotation matrix
 	rot_mat(0, 0) = n[1] * h1;
-	rot_mat(0, 1) = - n[0] * h1;
+	rot_mat(0, 1) = -n[0] * h1;
 	rot_mat(0, 2) = 0.0;
 	rot_mat(1, 0) = n[0] * h2;
 	rot_mat(1, 1) = n[1] * h2;
 	rot_mat(1, 2) = n[2] * h2;
 	rot_mat(2, 0) = n[0] * n[2] * h1 * h2;
 	rot_mat(2, 1) = n[1] * n[2] * h1 * h2;
-	rot_mat(2, 2) = - sqrt(h0) * h2;
+	rot_mat(2, 2) = -sqrt(h0) * h2;
 
 	rotatePoints(rot_mat, pnts);
 
