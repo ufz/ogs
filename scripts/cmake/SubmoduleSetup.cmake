@@ -1,5 +1,6 @@
 # This file initializes the required submodules
-OPTION(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "User given submodules which should be checked out by CMake." "")
+SET(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "" CACHE STRING
+	"User given submodules which should be checked out by CMake.")
 IF(NOT OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT)
 	SET(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "")
 ENDIF()
@@ -9,13 +10,16 @@ SET(REQUIRED_SUBMODULES
 )
 
 FOREACH(SUBMODULE ${REQUIRED_SUBMODULES})
-	# Check if submodule is already initialized
-	# MESSAGE(STATUS "Checking module ${SUBMODULE}")
-	EXECUTE_PROCESS(
-		COMMAND ${BASH_TOOL_PATH} ${CMAKE_SOURCE_DIR}/scripts/cmake/SubmoduleCheck.sh ${SUBMODULE}
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-		RESULT_VARIABLE SUBMODULE_STATE
-	)
+	IF(WIN32)
+		SET(SUBMODULE_STATE 1)
+	ELSE()
+		# Check if submodule is already initialized
+		EXECUTE_PROCESS(
+			COMMAND ${BASH_TOOL_PATH} ${CMAKE_SOURCE_DIR}/scripts/cmake/SubmoduleCheck.sh ${SUBMODULE}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			RESULT_VARIABLE SUBMODULE_STATE
+		)
+	ENDIF()
 
 	IF(SUBMODULE_STATE EQUAL 1)
 		MESSAGE(STATUS "Initializing submodule ${SUBMODULE}")
