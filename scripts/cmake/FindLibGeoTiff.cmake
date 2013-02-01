@@ -1,4 +1,9 @@
 # - Try to find libgeotiff
+#
+# Search directory
+#
+#  libgeotiff_DIR
+#
 # Once done, this will define
 #
 #  libgeotiff_FOUND
@@ -9,15 +14,21 @@ if (NOT libgeotiff_FOUND)
 
 	include(LibFindMacros)
 
+	set(SEARCH_DIRS
+		${libgeotiff_DIR}
+		$ENV{libgeotiff_DIR}
+		${CMAKE_SOURCE_DIR}/../Libs/libgeotiff
+		$ENV{OGS_LIBS}/libgeotiff
+		${OGS_LIBS_DIR}/libgeotiff
+	)
+
 	find_path( libgeotiff_INCLUDE_DIR
 			NAMES geotiff.h
 			PATHS
 				/usr/include
 				/usr/include/libgeotiff
 				/usr/include/geotiff
-				${CMAKE_SOURCE_DIR}/../Libs/libgeotiff
-				$ENV{OGS_LIBS}/libgeotiff
-				${OGS_LIBS_DIR}/libgeotiff
+				${SEARCH_DIRS}
 			)
 
 	find_library(libgeotiff_LIBRARIES
@@ -25,9 +36,7 @@ if (NOT libgeotiff_FOUND)
 		PATHS
 			/usr/lib64
 			/usr/lib
-			${CMAKE_SOURCE_DIR}/../Libs/libgeotiff
-			$ENV{OGS_LIBS}/libgeotiff
-			${OGS_LIBS_DIR}/libgeotiff
+			${SEARCH_DIRS}
 		)
 
 

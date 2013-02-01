@@ -1,4 +1,9 @@
 # - Try to find Shapelib
+#
+# Search directory
+#
+#  Shapelib_DIR
+#
 # Once done, this will define
 #
 #  Shapelib_FOUND
@@ -10,6 +15,8 @@ if (NOT Shapelib_FOUND)
 	include(LibFindMacros)
 
 	set(SEARCH_DIRS
+		${Shapelib_DIR}
+		$ENV{Shapelib_DIR}
 		${CMAKE_SOURCE_DIR}/../Libs/shapelib
 		C:/OGS_Libs/shapelib
 		$ENV{OGS_LIBS}/shapelib
