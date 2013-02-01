@@ -12,11 +12,11 @@
  *
  */
 
-#include "VtkColorLookupTable.h"
-#include "VtkMeshSource.h"
+#include "Elements/Element.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "Elements/Element.h"
+#include "VtkColorLookupTable.h"
+#include "VtkMeshSource.h"
 
 #include "Color.h"
 
@@ -27,19 +27,19 @@
 #include <vtkInformationVector.h>
 #include <vtkIntArray.h>
 #include <vtkPoints.h>
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkProperty.h>
 
 // OGS Cell Types
 #include <vtkHexahedron.h>
 #include <vtkLine.h>
+#include <vtkPyramid.h>
 #include <vtkQuad.h>
 #include <vtkTetra.h>
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
-#include <vtkPyramid.h>
 
 vtkStandardNewMacro(VtkMeshSource);
 vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
@@ -52,6 +52,7 @@ VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
 	const GeoLib::Color* c = GeoLib::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
 	vtkProps->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
+	delete c;
 	vtkProps->SetEdgeVisibility(1);
 }
 
