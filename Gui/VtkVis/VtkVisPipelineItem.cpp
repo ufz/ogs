@@ -165,7 +165,7 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			else
 				QMessageBox::warning(NULL, "Conversion to FBX not possible",
 					"It is not possible to convert an vtkImageData based object \
-					to OpenSG. If you want to convert raster data import it via \" \
+					to FBX. If you want to convert raster data import it via \" \
 					File / Import / Raster Files as PolyData\"!");
 			return 0;
 		}
