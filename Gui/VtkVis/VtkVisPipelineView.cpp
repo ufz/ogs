@@ -113,6 +113,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* removeAction = NULL;
 		if (!isSourceItem || vtkProps->IsRemovable())
 		{
+			menu.addSeparator();
 			removeAction = menu.addAction("Remove");
 			connect(removeAction, SIGNAL(triggered()), this,
 			        SLOT(removeSelectedPipelineItem()));
