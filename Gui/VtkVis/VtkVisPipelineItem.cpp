@@ -152,6 +152,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 				FbxNode* node = fbxConverter.getNode();
 				if(node)
 				{
+					fbxConverter.addUserProperty(node, "ScalarVisibility",
+					                             _vtkProps->GetScalarVisibility());
 					lScene->GetRootNode()->AddChild(node);
 					// Get the file format. Use either "FBX [6.0] binary (*.fbx)" or "FBX [6.0] ascii (*.fbx)"
 					int fbxFormat = lSdkManager->GetIOPluginRegistry()
