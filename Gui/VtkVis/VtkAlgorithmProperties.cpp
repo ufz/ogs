@@ -112,7 +112,7 @@ QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) cons
 
 void VtkAlgorithmProperties::SetActiveAttribute(QString name)
 {
-	if (name.contains("Solid Color"))
+	if (name.contains("Solid Color") || name.contains("P-TextureCoordinates"))
 		SetScalarVisibility(false);
 	else
 		SetScalarVisibility(true);
