@@ -209,8 +209,13 @@ if [ "$OSTYPE" == 'msys' ]; then
 	else
 		# Compile
 		cd boost
-		$COMSPEC //c bootstrap.bat
-		$COMSPEC //c bjam.exe
+		echo " \
+			\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+			bootstrap.bat &&\
+			bjam.exe &&\
+			exit\
+			" > build.bat
+		$COMSPEC //k build.bat
 	fi
 fi
 
