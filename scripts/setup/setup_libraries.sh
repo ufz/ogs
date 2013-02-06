@@ -16,7 +16,7 @@ LIBGEOTIFF_VERSION="libgeotiff-1.3.0"
 INSTANTCLIENT_VERSION="instantclient_11_2"
 METIS_VERSION="metis-5.0.2"
 BOOST_VERSION="1.53.0"
-BOOST_VERSION_UNDERSCORE=${BOOST_VERSION/./_}
+BOOST_VERSION_UNDERSCORE=${BOOST_VERSION//./_}
 
 ## Windows specific
 if [ "$OSTYPE" == 'msys' ]; then
@@ -200,7 +200,7 @@ if [ "$OSTYPE" == 'msys' ]; then
 		7za x boost_$BOOST_VERSION_UNDERSCORE.zip
 		mv boost_$BOOST_VERSION_UNDERSCORE/ boost/
 		rm boost_$BOOST_VERSION_UNDERSCORE.zip
-	elif [ -f boost/xyz ]; then
+	elif [ -d boost/stage/lib ]; then
 		BOOST_FOUND=true
 	fi
 
