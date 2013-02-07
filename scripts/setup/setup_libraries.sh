@@ -212,7 +212,7 @@ if [ "$OSTYPE" == 'msys' ]; then
 		echo " \
 			\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
 			bootstrap.bat &&\
-			bjam.exe &&\
+			bjam.exe address-model=$BITS &&\
 			exit\
 			" > build.bat
 		$COMSPEC //k build.bat
