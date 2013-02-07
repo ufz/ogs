@@ -16,17 +16,17 @@
 #define QUICKSORT_H_
 
 // STL
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
 
-namespace BaseLib {
-
+namespace BaseLib
+{
 template <class T>
 unsigned partition_(T* array, unsigned beg, unsigned end)
 {
-  unsigned i = beg+1;
-  unsigned j = end-1;
-  T m = array[beg];
+	unsigned i = beg + 1;
+	unsigned j = end - 1;
+	T m = array[beg];
 
   for (;;) {
     while ((i<end) && (array[i] < m)) i++;
@@ -36,8 +36,8 @@ unsigned partition_(T* array, unsigned beg, unsigned end)
     std::swap(array[i], array[j]);
   }
 
-  std::swap(array[beg], array[j]);
-  return j;
+	std::swap(array[beg], array[j]);
+	return j;
 }
 
 template <class T>
@@ -96,6 +96,60 @@ std::size_t partition_(T1* array, std::size_t beg, std::size_t end, T2 *second_a
  */
 template <typename T1, typename T2>
 void quicksort(T1* array, std::size_t beg, std::size_t end, T2* second_array)
+{
+	if (beg < end) {
+		std::size_t p = partition_(array, beg, end, second_array);
+		quicksort(array, beg, p, second_array);
+		quicksort(array, p+1, end, second_array);
+	}
+}
+
+/**
+ * Permutes the entries of a part of an array such that all entries that are smaller
+ * than a certain value are at the beginning of the array and all entries that are
+ * bigger are at the end of the array. This version of partition_ permutes a second
+ * array second_array according to the sorting.
+ * @param array array to sort
+ * @param beg beginning index in array for sorting
+ * @param end end-1 is the last index in array for sorting
+ * @param second_array the second array is permuted according to the sort process of array
+ * @return
+ */
+template <typename T1, typename T2>
+std::size_t partition_(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& second_array)
+{
+	std::size_t i = beg + 1;
+	std::size_t j = end - 1;
+	T1 m = array[beg];
+
+	for (;;) {
+		while ((i < end) && (array[i] <= m))
+			i++;
+		while ((j > beg) && !(array[j] <= m))
+			j--;
+
+		if (i >= j) break;
+
+		std::swap(array[i], array[j]);
+		std::swap(second_array[i], second_array[j]);
+	}
+
+	std::swap(array[beg], array[j]);
+	std::swap(second_array[beg], second_array[j]);
+
+	return j;
+}
+
+/**
+ * version of quickSort that permutes the entries of a second array
+ * according to the permutation of the first array
+ * @param array array to sort
+ * @param beg beginning index in array for sorting
+ * @param end end-1 is the last index in array for sorting
+ * @param second_array the second array is permuted according to the sort process of array
+ */
+template <typename T1, typename T2>
+void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& second_array)
 {
 	if (beg < end) {
 		std::size_t p = partition_(array, beg, end, second_array);
