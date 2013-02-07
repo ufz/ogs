@@ -33,8 +33,8 @@ public:
 	double getValue(double pnt_to_interpolate);
 
 private:
-	const std::vector<double>& _supporting_points;
-	const std::vector<double>& _values_at_supp_pnts;
+	std::vector<double> _supp_pnts;
+	std::vector<double> _values_at_supp_pnts;
 };
 } // end namespace MathLib
 
