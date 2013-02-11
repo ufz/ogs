@@ -40,6 +40,7 @@ INCLUDE_DIRECTORIES(
 TARGET_LINK_LIBRARIES (FileIO
 	GeoLib
 	MeshLib
+	zlib
 )
 
 IF (Shapelib_FOUND)
