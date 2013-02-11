@@ -30,8 +30,9 @@ namespace GeoLib
 {
 PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
                     std::map<std::string, size_t>* name_id_map, PointType type, double rel_eps) :
-                    	TemplateVec<Point> (name, points, name_id_map),
-	_type(type), _sqr_shortest_dist (std::numeric_limits<double>::max()), _aabb(points->begin(), points->end())
+	TemplateVec<Point> (name, points, name_id_map),
+	_type(type), _sqr_shortest_dist (std::numeric_limits<double>::max()),
+	_aabb(points->begin(), points->end())
 {
 	assert (_data_vec);
 	size_t number_of_all_input_pnts (_data_vec->size());
@@ -126,7 +127,7 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	}
 
 	// sort the points
-	BaseLib::Quicksort<GeoLib::Point*> (*pnt_vec, 0, n_pnts_in_file, perm);
+	BaseLib::Quicksort<GeoLib::Point*, std::size_t> (*pnt_vec, 0, n_pnts_in_file, perm);
 
 	// unfortunately quicksort is not stable -
 	// sort identical points by id - to make sorting stable
@@ -174,7 +175,7 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 			pnt_id_map[perm[k + 1]] = pnt_id_map[perm[k]];
 
 	// reverse permutation
-	BaseLib::Quicksort<GeoLib::Point*> (perm, 0, n_pnts_in_file, *pnt_vec);
+	BaseLib::Quicksort<std::size_t, GeoLib::Point*> (perm, 0, n_pnts_in_file, *pnt_vec);
 
 	// remove the second, third, ... occurrence from vector
 	for (size_t k(0); k < n_pnts_in_file; k++)
