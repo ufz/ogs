@@ -104,60 +104,6 @@ void quicksort(T1* array, std::size_t beg, std::size_t end, T2* second_array)
 	}
 }
 
-/**
- * Permutes the entries of a part of an array such that all entries that are smaller
- * than a certain value are at the beginning of the array and all entries that are
- * bigger are at the end of the array. This version of partition_ permutes a second
- * array second_array according to the sorting.
- * @param array array to sort
- * @param beg beginning index in array for sorting
- * @param end end-1 is the last index in array for sorting
- * @param second_array the second array is permuted according to the sort process of array
- * @return
- */
-template <typename T1, typename T2>
-std::size_t partition_(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& second_array)
-{
-	std::size_t i = beg + 1;
-	std::size_t j = end - 1;
-	T1 m = array[beg];
-
-	for (;;) {
-		while ((i < end) && (array[i] <= m))
-			i++;
-		while ((j > beg) && !(array[j] <= m))
-			j--;
-
-		if (i >= j) break;
-
-		std::swap(array[i], array[j]);
-		std::swap(second_array[i], second_array[j]);
-	}
-
-	std::swap(array[beg], array[j]);
-	std::swap(second_array[beg], second_array[j]);
-
-	return j;
-}
-
-/**
- * version of quickSort that permutes the entries of a second array
- * according to the permutation of the first array
- * @param array array to sort
- * @param beg beginning index in array for sorting
- * @param end end-1 is the last index in array for sorting
- * @param second_array the second array is permuted according to the sort process of array
- */
-template <typename T1, typename T2>
-void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& second_array)
-{
-	if (beg < end) {
-		std::size_t p = partition_(array, beg, end, second_array);
-		quicksort(array, beg, p, second_array);
-		quicksort(array, p+1, end, second_array);
-	}
-}
-
 } // end namespace BaseLib
 
 // STL
@@ -165,19 +111,19 @@ void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::ve
 
 namespace BaseLib {
 
-template <typename T>
+template <typename T1, typename T2>
 class Quicksort {
 public:
-	Quicksort (std::vector<T>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
+	Quicksort (std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		quicksort (array, beg, end, perm);
 	}
 private:
-	std::size_t partition_(std::vector<T>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
+	std::size_t partition_(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		std::size_t i = beg + 1;
 		std::size_t j = end - 1;
-		T m = array[beg];
+		T1 m = array[beg];
 
 		for (;;) {
 			while ((i < end) && (array[i] <= m))
@@ -196,7 +142,7 @@ private:
 		return j;
 	}
 
-	void quicksort(std::vector<T>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
+	void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		if (beg < end) {
 			std::size_t p = partition_(array, beg, end, perm);
@@ -207,25 +153,25 @@ private:
 };
 
 // specialization for pointer types
-template <typename T>
-class Quicksort <T *> {
+template <typename T1, typename T2>
+class Quicksort <T1*, T2> {
 public:
-	Quicksort (std::vector<T*>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
+	Quicksort (std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		quicksort (array, beg, end, perm);
 	}
 
-	Quicksort (std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T*>& array)
+	Quicksort (std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T1*>& array)
 	{
 		quicksort (perm, beg, end, array);
 	}
 
 private:
-	std::size_t partition_(std::vector<T*>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
+	std::size_t partition_(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		std::size_t i = beg + 1;
 		std::size_t j = end - 1;
-		T* m = array[beg];
+		T1* m = array[beg];
 
 		for (;;) {
 			while ((i < end) && (*array[i] <= *m))
@@ -244,7 +190,7 @@ private:
 		return j;
 	}
 
-	void quicksort(std::vector<T*>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
+	void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		if (beg < end) {
 			std::size_t p = partition_(array, beg, end, perm);
@@ -253,7 +199,7 @@ private:
 		}
 	}
 
-	std::size_t partition_(std::vector<std::size_t> &perm, std::size_t beg, std::size_t end, std::vector<T*>& array)
+	std::size_t partition_(std::vector<std::size_t> &perm, std::size_t beg, std::size_t end, std::vector<T1*>& array)
 	{
 		std::size_t i = beg + 1;
 		std::size_t j = end - 1;
@@ -276,7 +222,7 @@ private:
 		return j;
 	}
 
-	void quicksort(std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T*>& array)
+	void quicksort(std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T1*>& array)
 	{
 		if (beg < end) {
 			std::size_t p = partition_(perm, beg, end, array);
