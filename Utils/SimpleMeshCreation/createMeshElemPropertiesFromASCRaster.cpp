@@ -163,7 +163,7 @@ int main (int argc, char* argv[])
 		}
 
 		for (size_t k(0); k<n_dest_mesh_elements; k++) {
-			property_out << k << " " << dest_properties[k] << std::endl;
+			property_out << k << " " << dest_properties[k] << "\n";
 		}
 		property_out.close();
 	}

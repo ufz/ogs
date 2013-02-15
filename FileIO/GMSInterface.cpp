@@ -135,7 +135,7 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
 
 	// write header
 	out << "name" << "\t" << std::fixed << "X" << "\t" << "Y"  << "\t" << "Z" <<  "\t" <<
-	"soilID" << std::endl;
+	"soilID" << "\n";
 
 	for (std::size_t j = 0; j < stations->size(); j++)
 	{
@@ -154,17 +154,17 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
 			//idx = getSoilID(soilID, soilNames[i]);
 			current_soil_name = soilNames[i];
 
-			out << station->getName() << "\t" << std::fixed 
+			out << station->getName() << "\t" << std::fixed
 				<< (*(profile[i - 1]))[0] << "\t"
-			    << (*(profile[i - 1]))[1]  << "\t" 
+			    << (*(profile[i - 1]))[1]  << "\t"
 				<< (*(profile[i - 1]))[2] <<  "\t"
-			    << current_soil_name/*idx*/ << std::endl;
+			    << current_soil_name/*idx*/ << "\n";
 		}
 		out << station->getName() << "\t" << std::fixed <<
 		(*(profile[nLayers - 1]))[0] << "\t"
-		    << (*(profile[nLayers - 1]))[1]  << "\t" 
+		    << (*(profile[nLayers - 1]))[1]  << "\t"
 			<< (*(profile[nLayers - 1]))[2] <<  "\t"
-		    << current_soil_name << std::endl; // this line marks the end of the borehole
+		    << current_soil_name << "\n"; // this line marks the end of the borehole
 	}
 
 	out.close();
@@ -186,12 +186,12 @@ int GMSInterface::writeSoilIDTable(const std::vector<std::string> &soilID,
 	std::ofstream out( filename.c_str(), std::ios::out );
 
 	// write header
-	out << "ID" << "\t" << std::fixed << "Soil name" << std::endl;
+	out << "ID" << "\t" << std::fixed << "Soil name" << "\n";
 
 	// write table
 	std::size_t nIDs = soilID.size();
 	for (std::size_t i = 0; i < nIDs; i++)
-		out << i << "\t" << std::fixed << soilID[i] << "\t" << std::endl;
+		out << i << "\t" << std::fixed << soilID[i] << "\t" << "\n";
 	out.close();
 
 	return 1;

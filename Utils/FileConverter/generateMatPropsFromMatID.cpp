@@ -38,7 +38,7 @@ int main (int argc, char* argv[])
 	if (out_prop.is_open())
 	{
 		for (size_t i=0; i<nElems; i++)
-			out_prop << i << "\t" << (*elems)[i]->material << std::endl;
+			out_prop << i << "\t" << (*elems)[i]->material << "\n";
 		out_prop.close();
 	}
 	else
