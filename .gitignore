@@ -1,5 +1,4 @@
 *.bak*
-*.orig
 build*/
 *.sw[op]
 tags
