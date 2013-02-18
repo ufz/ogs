@@ -22,23 +22,30 @@
 namespace MathLib
 {
 PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-                                                           const std::vector<double>& values_at_supp_pnts) :
+                                                           const std::vector<double>& values_at_supp_pnts,
+                                                           bool supp_pnts_sorted) :
 	_supp_pnts(supporting_points), _values_at_supp_pnts(values_at_supp_pnts)
 {
-	BaseLib::Quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
-	                                   static_cast<std::size_t>(_supp_pnts.size()), _values_at_supp_pnts);
+	if (!supp_pnts_sorted) {
+		BaseLib::Quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
+		                                   _supp_pnts.size(), _values_at_supp_pnts);
+	}
 }
 
 PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
                                                            const std::vector<double>& values_at_supp_pnts,
                                                            const std::vector<double>& points_to_interpolate,
-                                                           std::vector<double>& values_at_interpol_pnts) :
+                                                           std::vector<double>& values_at_interpol_pnts,
+                                                           bool supp_pnts_sorted) :
 	_supp_pnts(supporting_points), _values_at_supp_pnts(values_at_supp_pnts)
 {
+	if (!supp_pnts_sorted) {
+		BaseLib::Quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
+		                                   _supp_pnts.size(),
+		                                   _values_at_supp_pnts);
+	}
+
 	values_at_interpol_pnts.clear();
-	BaseLib::Quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
-	                                   static_cast<std::size_t> (_supp_pnts.size()),
-	                                   _values_at_supp_pnts);
 	for (std::size_t k(0); k < points_to_interpolate.size(); k++)
 		values_at_interpol_pnts.push_back(this->getValue(points_to_interpolate[k]));
 }
@@ -46,7 +53,7 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<dou
 PiecewiseLinearInterpolation::~PiecewiseLinearInterpolation()
 {}
 
-double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate)
+double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 {
 	// search interval that has the point inside
 	std::size_t interval_idx(std::numeric_limits<std::size_t>::max());
