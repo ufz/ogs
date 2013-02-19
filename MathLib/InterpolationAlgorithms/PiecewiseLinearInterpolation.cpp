@@ -45,9 +45,10 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<dou
 		                                   _values_at_supp_pnts);
 	}
 
-	values_at_interpol_pnts.clear();
-	for (std::size_t k(0); k < points_to_interpolate.size(); k++)
-		values_at_interpol_pnts.push_back(this->getValue(points_to_interpolate[k]));
+	values_at_interpol_pnts.resize(points_to_interpolate.size());
+	std::transform(points_to_interpolate.begin(), points_to_interpolate.end(),
+	               values_at_interpol_pnts.begin(),
+	               [&](double const& p) { return this->getValue(p); } );
 }
 
 PiecewiseLinearInterpolation::~PiecewiseLinearInterpolation()
