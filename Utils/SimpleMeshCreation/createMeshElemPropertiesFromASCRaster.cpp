@@ -17,14 +17,14 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 // BaseLib
+#include "LogogSimpleFormatter.h"
 #include "StringTools.h"
 #include "quicksort.h"
-#include "LogogSimpleFormatter.h"
 
 // FileIO/Legacy
+#include "FileTools.h"
 #include "MeshIO.h"
 #include "readMeshFromFile.h"
-#include "FileTools.h"
 
 // GeoLib
 #include "Raster.h"
@@ -33,11 +33,11 @@
 #include "VtkMeshConverter.h"
 
 // MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
-#include "MshEnums.h"
-#include "Mesh2MeshPropertyInterpolation.h"
 #include "ConvertRasterToMesh.h"
+#include "Elements/Element.h"
+#include "Mesh.h"
+#include "Mesh2MeshPropertyInterpolation.h"
+#include "MshEnums.h"
 
 int main (int argc, char* argv[])
 {
@@ -46,24 +46,58 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Generates properties for mesh elements of an input mesh deploying a ASC raster file", ' ', "0.1");
+	TCLAP::CmdLine cmd(
+	        "Generates properties for mesh elements of an input mesh deploying a ASC raster file",
+	        ' ',
+	        "0.1");
 
-	TCLAP::ValueArg<std::string> out_mesh_arg("o", "out-mesh", "the mesh is stored to a file of this name", false, "", "filename for mesh output");
+	TCLAP::ValueArg<std::string> out_mesh_arg("o",
+	                                          "out-mesh",
+	                                          "the mesh is stored to a file of this name",
+	                                          false,
+	                                          "",
+	                                          "filename for mesh output");
 	cmd.add( out_mesh_arg );
 
-	TCLAP::ValueArg<bool> refinement_raster_output_arg("","output-refined-raster", "write refined raster to a new ASC file", false, false, "0");
+	TCLAP::ValueArg<bool> refinement_raster_output_arg("",
+	                                                   "output-refined-raster",
+	                                                   "write refined raster to a new ASC file",
+	                                                   false,
+	                                                   false,
+	                                                   "0");
 	cmd.add( refinement_raster_output_arg );
 
-	TCLAP::ValueArg<unsigned> refinement_arg("r","refine","refinement factor that raises the resolution of the raster data", false, 1, "factor (default = 1)");
+	TCLAP::ValueArg<unsigned> refinement_arg(
+	        "r",
+	        "refine",
+	        "refinement factor that raises the resolution of the raster data",
+	        false,
+	        1,
+	        "factor (default = 1)");
 	cmd.add( refinement_arg );
 
-	TCLAP::ValueArg<std::string> mapping_arg("","mapping-name","file name of mapping", true, "", "file name");
+	TCLAP::ValueArg<std::string> mapping_arg("",
+	                                         "mapping-name",
+	                                         "file name of mapping",
+	                                         true,
+	                                         "",
+	                                         "file name");
 	cmd.add( mapping_arg );
 
-	TCLAP::ValueArg<std::string> raster_arg("","raster-file","the name of the ASC raster file", true, "", "file name");
+	TCLAP::ValueArg<std::string> raster_arg("",
+	                                        "raster-file",
+	                                        "the name of the ASC raster file",
+	                                        true,
+	                                        "",
+	                                        "file name");
 	cmd.add( raster_arg );
 
-	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "the mesh is read from this file", true, "test.msh", "file name");
+	TCLAP::ValueArg<std::string> mesh_arg("m",
+	                                      "mesh",
+	                                      "the mesh is read from this file",
+	                                      true,
+	                                      "test.msh",
+	                                      "file name");
 	cmd.add( mesh_arg );
 
 	cmd.parse( argc, argv );
@@ -88,7 +122,7 @@ int main (int argc, char* argv[])
 	// put raster data in a std::vector
 	GeoLib::Raster::const_iterator raster_it(raster->begin());
 	unsigned n_cols(raster->getNCols()), n_rows(raster->getNRows());
-	std::vector<double> src_properties(n_cols*n_rows);
+	std::vector<double> src_properties(n_cols * n_rows);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
 			src_properties[row*n_cols+col] = *raster_it;
@@ -98,9 +132,8 @@ int main (int argc, char* argv[])
 
 	{
 		double src_mean_value(src_properties[0]);
-		for (size_t k(1); k<n_cols*n_rows; k++) {
+		for (size_t k(1); k < n_cols * n_rows; k++)
 			src_mean_value += src_properties[k];
-		}
 		src_mean_value /= n_cols*n_rows;
 		std::cout << "mean value of source: " << src_mean_value << std::endl;
 
@@ -108,16 +141,17 @@ int main (int argc, char* argv[])
 		for (size_t k(1); k<n_cols*n_rows; k++) {
 			src_varianz += MathLib::fastpow(src_properties[k] - src_mean_value, 2);
 		}
-		src_varianz /= n_cols*n_rows;
+		src_varianz /= n_cols * n_rows;
 		std::cout << "variance of source: " << src_varianz << std::endl;
 	}
 
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
 
-	std::vector<size_t> src_perm(n_cols*n_rows);
-	for (size_t k(0); k<n_cols*n_rows; k++) src_perm[k] = k;
-	BaseLib::Quicksort<double>(src_properties, 0, n_cols*n_rows, src_perm);
+	std::vector<size_t> src_perm(n_cols * n_rows);
+	for (size_t k(0); k < n_cols * n_rows; k++)
+		src_perm[k] = k;
+	BaseLib::Quicksort<double, std::size_t>(src_properties, 0, n_cols * n_rows, src_perm);
 
 	// compress the property data structure
 	const size_t mat_map_size(src_properties.size());
@@ -187,7 +221,7 @@ int main (int argc, char* argv[])
 	if (! out_mesh_arg.getValue().empty()) {
 		std::vector<size_t> dest_perm(n_dest_mesh_elements);
 		for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
-		BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
+		BaseLib::Quicksort<double, std::size_t>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
 
 		// reset materials in destination mesh
 		for (size_t k(0); k<n_dest_mesh_elements; k++) {
