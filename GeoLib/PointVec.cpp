@@ -127,7 +127,7 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	}
 
 	// sort the points
-	BaseLib::Quicksort<GeoLib::Point*, std::size_t> (*pnt_vec, 0, n_pnts_in_file, perm);
+	BaseLib::Quicksort<GeoLib::Point*> (*pnt_vec, 0, n_pnts_in_file, perm);
 
 	// unfortunately quicksort is not stable -
 	// sort identical points by id - to make sorting stable
