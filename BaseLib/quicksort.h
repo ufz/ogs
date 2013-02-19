@@ -62,7 +62,7 @@ void quickSort(T* array, unsigned beg, unsigned end)
  * @return
  */
 template <typename T1, typename T2>
-std::size_t partition_(T1* array, std::size_t beg, std::size_t end, T2 *second_array)
+std::size_t partition_(T1 *array, std::size_t beg, std::size_t end, T2 *second_array)
 {
 	std::size_t i = beg + 1;
 	std::size_t j = end - 1;
@@ -74,7 +74,8 @@ std::size_t partition_(T1* array, std::size_t beg, std::size_t end, T2 *second_a
 		while ((j > beg) && !(array[j] <= m))
 			j--;
 
-		if (i >= j) break;
+		if (i >= j)
+			break;
 
 		std::swap(array[i], array[j]);
 		std::swap(second_array[i], second_array[j]);
@@ -100,7 +101,7 @@ void quicksort(T1* array, std::size_t beg, std::size_t end, T2* second_array)
 	if (beg < end) {
 		std::size_t p = partition_(array, beg, end, second_array);
 		quicksort(array, beg, p, second_array);
-		quicksort(array, p+1, end, second_array);
+		quicksort(array, p + 1, end, second_array);
 	}
 }
 
@@ -109,17 +110,21 @@ void quicksort(T1* array, std::size_t beg, std::size_t end, T2* second_array)
 // STL
 #include <vector>
 
-namespace BaseLib {
-
-template <typename T1, typename T2>
-class Quicksort {
+namespace BaseLib
+{
+template <typename T1, typename T2 = std::size_t>
+class Quicksort
+{
 public:
 	Quicksort (std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		quicksort (array, beg, end, perm);
 	}
 private:
-	std::size_t partition_(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+	std::size_t partition_(std::vector<T1>& array,
+	                       std::size_t beg,
+	                       std::size_t end,
+	                       std::vector<T2>& perm)
 	{
 		std::size_t i = beg + 1;
 		std::size_t j = end - 1;
@@ -142,32 +147,40 @@ private:
 		return j;
 	}
 
-	void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+	void quicksort(std::vector<T1>& array,
+	               std::size_t beg,
+	               std::size_t end,
+	               std::vector<T2>& perm)
 	{
 		if (beg < end) {
 			std::size_t p = partition_(array, beg, end, perm);
 			quicksort(array, beg, p, perm);
-			quicksort(array, p+1, end, perm);
+			quicksort(array, p + 1, end, perm);
 		}
 	}
 };
 
 // specialization for pointer types
 template <typename T1, typename T2>
-class Quicksort <T1*, T2> {
+class Quicksort <T1*, T2>
+{
 public:
 	Quicksort (std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 	{
 		quicksort (array, beg, end, perm);
 	}
 
-	Quicksort (std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T1*>& array)
+	Quicksort (std::vector<std::size_t>& perm, std::size_t beg, std::size_t end,
+	           std::vector<T1*>& array)
 	{
 		quicksort (perm, beg, end, array);
 	}
 
 private:
-	std::size_t partition_(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+	std::size_t partition_(std::vector<T1*>& array,
+	                       std::size_t beg,
+	                       std::size_t end,
+	                       std::vector<T2>& perm)
 	{
 		std::size_t i = beg + 1;
 		std::size_t j = end - 1;
@@ -190,16 +203,22 @@ private:
 		return j;
 	}
 
-	void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+	void quicksort(std::vector<T1*>& array,
+	               std::size_t beg,
+	               std::size_t end,
+	               std::vector<T2>& perm)
 	{
 		if (beg < end) {
 			std::size_t p = partition_(array, beg, end, perm);
 			quicksort(array, beg, p, perm);
-			quicksort(array, p+1, end, perm);
+			quicksort(array, p + 1, end, perm);
 		}
 	}
 
-	std::size_t partition_(std::vector<std::size_t> &perm, std::size_t beg, std::size_t end, std::vector<T1*>& array)
+	std::size_t partition_(std::vector<std::size_t> &perm,
+	                       std::size_t beg,
+	                       std::size_t end,
+	                       std::vector<T1*>& array)
 	{
 		std::size_t i = beg + 1;
 		std::size_t j = end - 1;
@@ -222,16 +241,18 @@ private:
 		return j;
 	}
 
-	void quicksort(std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T1*>& array)
+	void quicksort(std::vector<std::size_t>& perm,
+	               std::size_t beg,
+	               std::size_t end,
+	               std::vector<T1*>& array)
 	{
 		if (beg < end) {
 			std::size_t p = partition_(perm, beg, end, array);
 			quicksort(perm, beg, p, array);
-			quicksort(perm, p+1, end, array);
+			quicksort(perm, p + 1, end, array);
 		}
 	}
 };
-
 } // end namespace BaseLib
 
 #endif /* QUICKSORT_H_ */
