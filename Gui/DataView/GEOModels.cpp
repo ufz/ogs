@@ -15,6 +15,9 @@
 // ** INCLUDES **
 #include "GEOModels.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 
@@ -65,8 +68,7 @@ void GEOModels::updateGeometry(const std::string &geo_name)
 		}
 	}
 	else
-		std::cout << "Error in GEOModels::updateGeometry() - Geometry \"" << geo_name <<
-		"\" not found." << std::endl;
+		ERR("GEOModels::updateGeometry() - Geometry \"%s\" not found.", geo_name.c_str());
 }
 
 void GEOModels::removeGeometry(std::string geo_name, GeoLib::GEOTYPE type)
@@ -81,7 +83,7 @@ void GEOModels::removeGeometry(std::string geo_name, GeoLib::GEOTYPE type)
 
 void GEOModels::addPointVec( std::vector<GeoLib::Point*>* points,
                              std::string &name,
-                             std::map<std::string, size_t>* name_pnt_id_map,
+                             std::map<std::string, std::size_t>* name_pnt_id_map,
                              double eps)
 {
 	GEOObjects::addPointVec(points, name, name_pnt_id_map, eps);
@@ -90,7 +92,7 @@ void GEOModels::addPointVec( std::vector<GeoLib::Point*>* points,
 }
 
 bool GEOModels::appendPointVec(const std::vector<GeoLib::Point*> &points,
-                               const std::string &name, std::vector<size_t>* ids)
+                               const std::string &name, std::vector<std::size_t>* ids)
 {
 	bool ret (GeoLib::GEOObjects::appendPointVec (points, name, ids));
 	// TODO import new points into geo-treeview
@@ -137,7 +139,7 @@ bool GEOModels::removeStationVec( const std::string &name )
 
 void GEOModels::addPolylineVec( std::vector<GeoLib::Polyline*>* lines,
                                 const std::string &name,
-                                std::map<std::string,size_t>* ply_names )
+                                std::map<std::string,std::size_t>* ply_names )
 {
 	GEOObjects::addPolylineVec(lines, name, ply_names);
 	if (lines->empty())
@@ -165,7 +167,7 @@ bool GEOModels::removePolylineVec( const std::string &name )
 
 void GEOModels::addSurfaceVec( std::vector<GeoLib::Surface*>* surfaces,
                                const std::string &name,
-                               std::map<std::string,size_t>* sfc_names )
+                               std::map<std::string,std::size_t>* sfc_names )
 {
 	GEOObjects::addSurfaceVec(surfaces, name, sfc_names);
 	if (surfaces->empty())
@@ -185,7 +187,7 @@ bool GEOModels::appendSurfaceVec(const std::vector<GeoLib::Surface*> &surfaces,
 	else
 	{
 		std::vector<GeoLib::Surface*>* sfc = new std::vector<GeoLib::Surface*>;
-		for (size_t i = 0; i < surfaces.size(); i++)
+		for (std::size_t i = 0; i < surfaces.size(); i++)
 			sfc->push_back(surfaces[i]);
 		this->addSurfaceVec(sfc, name);
 	}
@@ -201,7 +203,7 @@ bool GEOModels::removeSurfaceVec( const std::string &name )
 }
 
 void GEOModels::connectPolylineSegments(const std::string &geoName,
-                                        std::vector<size_t> indexlist,
+                                        std::vector<std::size_t> indexlist,
                                         double proximity,
                                         std::string ply_name,
                                         bool closePly,
@@ -213,7 +215,7 @@ void GEOModels::connectPolylineSegments(const std::string &geoName,
 	{
 		const std::vector<GeoLib::Polyline*>* polylines = plyVec->getVector();
 		std::vector<GeoLib::Polyline*> ply_list;
-		for (size_t i = 0; i < indexlist.size(); i++)
+		for (std::size_t i = 0; i < indexlist.size(); i++)
 			ply_list.push_back( (*polylines)[indexlist[i]] );
 
 		// connect polylines
@@ -252,7 +254,7 @@ void GEOModels::connectPolylineSegments(const std::string &geoName,
 
 void GEOModels::addNameForElement(const std::string &geometry_name,
                                   const GeoLib::GEOTYPE object_type,
-                                  size_t id,
+                                  std::size_t id,
                                   std::string new_name)
 {
 	if (object_type == GeoLib::POINT)
@@ -262,8 +264,8 @@ void GEOModels::addNameForElement(const std::string &geometry_name,
 	else if (object_type == GeoLib::SURFACE)
 		this->getSurfaceVecObj(geometry_name)->setNameForElement(id, new_name);
 	else
-		std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." <<
-		std::endl;
+		ERR("GEOModels::addNameForElement() - Unknown GEOTYPE %s.",
+		    GeoLib::convertGeoTypeToString(object_type).c_str());
 }
 
 void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
@@ -278,8 +280,8 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
 	if (object_type == GeoLib::POLYLINE)
 	{
 		const GeoLib::Polyline* ply = dynamic_cast<const GeoLib::Polyline*>(obj);
-		size_t nPoints = ply->getNumberOfPoints();
-		for (size_t i = 0; i < nPoints; i++)
+		std::size_t nPoints = ply->getNumberOfPoints();
+		for (std::size_t i = 0; i < nPoints; i++)
 			pnt_vec->setNameForElement(ply->getPointID(
 			                                   i), new_name + "_Point" +
 			                           BaseLib::number2str(ply->getPointID(i)));
@@ -287,8 +289,8 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
 	else if (object_type == GeoLib::SURFACE)
 	{
 		const GeoLib::Surface* sfc = dynamic_cast<const GeoLib::Surface*>(obj);
-		size_t nTriangles = sfc->getNTriangles();
-		for (size_t i = 0; i < nTriangles; i++)
+		std::size_t nTriangles = sfc->getNTriangles();
+		for (std::size_t i = 0; i < nTriangles; i++)
 		{
 			const GeoLib::Triangle* tri = (*sfc)[i];
 			pnt_vec->setNameForElement((*tri)[0],
@@ -303,6 +305,6 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
 		}
 	}
 	else
-		std::cout << "Error in GEOModels::addNameForElement() - Unknown GEOTYPE..." <<
-		std::endl;
+		ERR("GEOModels::addNameForObjectPoints() - Unknown GEOTYPE %s.",
+		    GeoLib::convertGeoTypeToString(object_type).c_str());
 }
