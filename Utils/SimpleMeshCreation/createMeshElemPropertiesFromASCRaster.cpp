@@ -12,10 +12,15 @@
  *
  */
 
+// stl
+#include <numeric>
+
 // BaseLib
 #include "tclap/CmdLine.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
+
 // BaseLib
 #include "LogogSimpleFormatter.h"
 #include "StringTools.h"
@@ -126,8 +131,9 @@ int main (int argc, char* argv[])
 
 	// put raster data in a std::vector
 	GeoLib::Raster::const_iterator raster_it(raster->begin());
-	unsigned n_cols(raster->getNCols()), n_rows(raster->getNRows());
-	std::vector<double> src_properties(n_cols * n_rows);
+	std::size_t n_cols(raster->getNCols()), n_rows(raster->getNRows());
+	std::size_t size(n_cols * n_rows);
+	std::vector<double> src_properties(size);
 	for (unsigned row(0); row<n_rows; row++) {
 		for (unsigned col(0); col<n_cols; col++) {
 			src_properties[row * n_cols + col] = *raster_it;
@@ -136,6 +142,7 @@ int main (int argc, char* argv[])
 	}
 
 	{
+<<<<<<< HEAD
 		double src_mean_value(src_properties[0]);
 <<<<<<< HEAD
 		for (size_t k(1); k < n_cols * n_rows; k++)
@@ -152,18 +159,23 @@ int main (int argc, char* argv[])
 =======
 		INFO("Mean value of source: %f.", src_mean_value);
 >>>>>>> Using logog logging in createMeshElemPropertiesFromASCRaster.cpp.
+=======
+		const double mu(std::accumulate(src_properties.begin(), src_properties.end(), 0) / size);
+		INFO("Mean value of source: %f.", mu);
+>>>>>>> Using std::accumulate and std::iota to make code more compact.
 
-		double src_variance(MathLib::fastpow(src_properties[0] - src_mean_value, 2));
-		for (size_t k(1); k<n_cols*n_rows; k++) {
-			src_variance += MathLib::fastpow(src_properties[k] - src_mean_value, 2);
+		double src_variance(MathLib::fastpow(src_properties[0] - mu, 2));
+		for (std::size_t k(1); k<size; k++) {
+			src_variance += MathLib::fastpow(src_properties[k] - mu, 2);
 		}
-		src_variance /= n_cols * n_rows;
+		src_variance /= size;
 		INFO("Variance of source: %f.", src_variance);
 	}
 
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
 
+<<<<<<< HEAD
 	std::vector<size_t> src_perm(n_cols * n_rows);
 	for (size_t k(0); k < n_cols * n_rows; k++)
 		src_perm[k] = k;
@@ -172,13 +184,18 @@ int main (int argc, char* argv[])
 =======
 	BaseLib::Quicksort<double>(src_properties, 0, n_cols * n_rows, src_perm);
 >>>>>>> Added include MathTools.h.
+=======
+	std::vector<std::size_t> src_perm(size);
+	std::iota(src_perm.begin(), src_perm.end(), 0);
+	BaseLib::Quicksort<double>(src_properties, 0, size, src_perm);
+>>>>>>> Using std::accumulate and std::iota to make code more compact.
 
 	// compress the property data structure
-	const size_t mat_map_size(src_properties.size());
-	std::vector<size_t> mat_map(mat_map_size);
+	const std::size_t mat_map_size(src_properties.size());
+	std::vector<std::size_t> mat_map(mat_map_size);
 	mat_map[0] = 0;
-	size_t n_mat(1);
-	for (size_t k(1); k<mat_map_size; ++k) {
+	std::size_t n_mat(1);
+	for (std::size_t k(1); k<mat_map_size; ++k) {
 		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
 			mat_map[k] = mat_map[k - 1] + 1;
 			n_mat++;
@@ -187,7 +204,7 @@ int main (int argc, char* argv[])
 	}
 	std::vector<double> compressed_src_properties(n_mat);
 	compressed_src_properties[0] = src_properties[0];
-	for (size_t k(1), id(1); k<mat_map_size; ++k) {
+	for (std::size_t k(1), id(1); k<mat_map_size; ++k) {
 		if (std::fabs(src_properties[k] - src_properties[k-1]) > std::numeric_limits<double>::epsilon()) {
 			compressed_src_properties[id] = src_properties[k];
 			id++;
@@ -196,8 +213,8 @@ int main (int argc, char* argv[])
 	compressed_src_properties[n_mat - 1] = src_properties[mat_map_size - 1];
 
 	// reset materials in source mesh
-	const size_t n_mesh_elements(src_mesh->getNElements());
-	for (size_t k(0); k<n_mesh_elements; k++) {
+	const std::size_t n_mesh_elements(src_mesh->getNElements());
+	for (std::size_t k(0); k<n_mesh_elements; k++) {
 		const_cast<MeshLib::Element*>(src_mesh->getElement(src_perm[k]))->setValue(mat_map[k]);
 	}
 
@@ -208,7 +225,7 @@ int main (int argc, char* argv[])
 	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(dest_mesh),
 	                                        dest_properties);
 
-	const size_t n_dest_mesh_elements(dest_mesh->getNElements());
+	const std::size_t n_dest_mesh_elements(dest_mesh->getNElements());
 
 	{ // write property file
 		std::string property_fname(mapping_arg.getValue());
@@ -219,26 +236,24 @@ int main (int argc, char* argv[])
 			return -1;
 		}
 
-		for (size_t k(0); k < n_dest_mesh_elements; k++)
+		for (std::size_t k(0); k < n_dest_mesh_elements; k++)
 			property_out << k << " " << dest_properties[k] << "\n";
 		property_out.close();
 	}
 
 	{
-		double mu(dest_properties[0]);
-		for (size_t k(1); k < n_dest_mesh_elements; k++)
-			mu += dest_properties[k];
-		mu /= n_dest_mesh_elements;
+		const double mu(std::accumulate(dest_properties.begin(), dest_properties.end(), 0.0) / n_dest_mesh_elements);
 		INFO("Mean value of destination: %f.", mu);
 
 		double sigma_q(MathLib::fastpow(dest_properties[0] - mu, 2));
-		for (size_t k(1); k < n_dest_mesh_elements; k++)
+		for (std::size_t k(1); k < n_dest_mesh_elements; k++)
 			sigma_q += MathLib::fastpow(dest_properties[k] - mu, 2);
 		sigma_q /= n_dest_mesh_elements;
 		INFO("Variance of destination: %f.", sigma_q);
 	}
 
 	if (! out_mesh_arg.getValue().empty()) {
+<<<<<<< HEAD
 		std::vector<size_t> dest_perm(n_dest_mesh_elements);
 <<<<<<< HEAD
 		for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
@@ -246,11 +261,15 @@ int main (int argc, char* argv[])
 =======
 		for (size_t k(0); k < n_dest_mesh_elements; k++)
 			dest_perm[k] = k;
+=======
+		std::vector<std::size_t> dest_perm(n_dest_mesh_elements);
+		std::iota(dest_perm.begin(), dest_perm.end(), 0);
+>>>>>>> Using std::accumulate and std::iota to make code more compact.
 		BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
 >>>>>>> Added include MathTools.h.
 
 		// reset materials in destination mesh
-		for (size_t k(0); k<n_dest_mesh_elements; k++) {
+		for (std::size_t k(0); k<n_dest_mesh_elements; k++) {
 			const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
 		}
 
