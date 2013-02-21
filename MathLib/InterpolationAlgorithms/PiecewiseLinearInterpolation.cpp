@@ -58,25 +58,21 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 {
 	// search interval that has the point inside
 	std::size_t interval_idx(std::numeric_limits<std::size_t>::max());
-	for (std::size_t k(1); k < _supp_pnts.size()
-	     && interval_idx == std::numeric_limits<std::size_t>::max(); k++)
-		if (_supp_pnts[k - 1] <= pnt_to_interpolate
-		    && pnt_to_interpolate <= _supp_pnts[k])
-			interval_idx = k - 1;
-
-	if (interval_idx == std::numeric_limits<std::size_t>::max()) {
-		const double dist_first(fabs(_supp_pnts[0] - pnt_to_interpolate));
-		const double dist_last(fabs(_supp_pnts[_supp_pnts.size() - 1] - pnt_to_interpolate));
-		if (dist_first < dist_last)
-			interval_idx = 0;
-		else
+	if (pnt_to_interpolate - _supp_pnts[0] < 0) {
+		interval_idx = 0;
+	} else {
+		if (_supp_pnts[_supp_pnts.size() - 1] - pnt_to_interpolate < 0) {
 			interval_idx = _supp_pnts.size() - 2;
+		} else {
+			auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(), pnt_to_interpolate));
+			interval_idx = std::distance(_supp_pnts.begin(), it) - 1;
+		}
 	}
 
 	// compute linear interpolation polynom: y = m * x + n
-	long double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
-	              / (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]));
-	long double n(_values_at_supp_pnts[interval_idx] - m * _supp_pnts[interval_idx]);
+	const long double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
+					/ (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]));
+	const long double n(_values_at_supp_pnts[interval_idx] - m * _supp_pnts[interval_idx]);
 
 	return m * pnt_to_interpolate + n;
 }
