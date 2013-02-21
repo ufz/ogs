@@ -142,27 +142,8 @@ int main (int argc, char* argv[])
 	}
 
 	{
-<<<<<<< HEAD
-		double src_mean_value(src_properties[0]);
-<<<<<<< HEAD
-		for (size_t k(1); k < n_cols * n_rows; k++)
-			src_mean_value += src_properties[k];
-		src_mean_value /= n_cols*n_rows;
-=======
-		for (size_t k(1); k < n_cols * n_rows; k++) {
-			src_mean_value += src_properties[k];
-		}
-		src_mean_value /= n_cols * n_rows;
-<<<<<<< HEAD
->>>>>>> Added include MathTools.h.
-		std::cout << "mean value of source: " << src_mean_value << std::endl;
-=======
-		INFO("Mean value of source: %f.", src_mean_value);
->>>>>>> Using logog logging in createMeshElemPropertiesFromASCRaster.cpp.
-=======
 		const double mu(std::accumulate(src_properties.begin(), src_properties.end(), 0) / size);
 		INFO("Mean value of source: %f.", mu);
->>>>>>> Using std::accumulate and std::iota to make code more compact.
 
 		double src_variance(MathLib::fastpow(src_properties[0] - mu, 2));
 		for (std::size_t k(1); k<size; k++) {
@@ -175,20 +156,9 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
 
-<<<<<<< HEAD
-	std::vector<size_t> src_perm(n_cols * n_rows);
-	for (size_t k(0); k < n_cols * n_rows; k++)
-		src_perm[k] = k;
-<<<<<<< HEAD
-	BaseLib::Quicksort<double, std::size_t>(src_properties, 0, n_cols * n_rows, src_perm);
-=======
-	BaseLib::Quicksort<double>(src_properties, 0, n_cols * n_rows, src_perm);
->>>>>>> Added include MathTools.h.
-=======
 	std::vector<std::size_t> src_perm(size);
 	std::iota(src_perm.begin(), src_perm.end(), 0);
 	BaseLib::Quicksort<double>(src_properties, 0, size, src_perm);
->>>>>>> Using std::accumulate and std::iota to make code more compact.
 
 	// compress the property data structure
 	const std::size_t mat_map_size(src_properties.size());
@@ -253,20 +223,9 @@ int main (int argc, char* argv[])
 	}
 
 	if (! out_mesh_arg.getValue().empty()) {
-<<<<<<< HEAD
-		std::vector<size_t> dest_perm(n_dest_mesh_elements);
-<<<<<<< HEAD
-		for (size_t k(0); k<n_dest_mesh_elements; k++) dest_perm[k] = k;
-		BaseLib::Quicksort<double, std::size_t>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
-=======
-		for (size_t k(0); k < n_dest_mesh_elements; k++)
-			dest_perm[k] = k;
-=======
 		std::vector<std::size_t> dest_perm(n_dest_mesh_elements);
 		std::iota(dest_perm.begin(), dest_perm.end(), 0);
->>>>>>> Using std::accumulate and std::iota to make code more compact.
 		BaseLib::Quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
->>>>>>> Added include MathTools.h.
 
 		// reset materials in destination mesh
 		for (std::size_t k(0); k<n_dest_mesh_elements; k++) {
