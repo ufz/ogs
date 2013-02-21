@@ -29,8 +29,11 @@
 #include "StringTools.h"
 #endif
 
-namespace GeoLib {
+// MathLib
+#include "MathTools.h"
 
+namespace GeoLib
+{
 template <typename POINT>
 class Grid : public GeoLib::AABB<POINT>
 {
@@ -181,7 +184,7 @@ public:
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
 	 * outlined above or NULL
 	 */
-	POINT* getNearestPoint(double const*const pnt) const
+	POINT* getNearestPoint(double const* const pnt) const
 	{
 		std::size_t coords[3];
 		getGridCoords(POINT(pnt), coords);
@@ -317,11 +320,13 @@ private:
 	 * ordered in the same sequence as above described
 	 * @param coords coordinates of the grid cell
 	 */
-	void getPointCellBorderDistances(double const*const pnt, double dists[6], std::size_t const* const coords) const;
+	void getPointCellBorderDistances(double const* const pnt,
+	                                 double dists[6],
+	                                 std::size_t const* const coords) const;
 
 	bool calcNearestPointInGridCell(double const* const pnt, std::size_t const* const coords,
-					double &sqr_min_dist,
-					POINT* &nearest_pnt) const
+	                                double &sqr_min_dist,
+	                                POINT* &nearest_pnt) const
 	{
 		const std::size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
 		std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
@@ -353,10 +358,10 @@ private:
 	std::vector<POINT*>* _grid_cell_nodes_map;
 };
 
-
 template<typename POINT>
 void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(POINT const& center,
-				double half_len, std::vector<std::vector<POINT*> const*>& pnts) const
+                                                        double half_len,
+                                                        std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	double tmp_pnt[3] = { center[0] - half_len, center[1] - half_len, center[2] - half_len }; // min
 	std::size_t min_coords[3];
@@ -382,7 +387,8 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(POINT const& center,
 
 template<typename POINT>
 void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(POINT const& min_pnt,
-				POINT const& max_pnt, std::vector<std::vector<POINT*> const*>& pnts) const
+                                                          POINT const& max_pnt,
+                                                          std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	std::size_t min_coords[3];
 	getGridCoords(min_pnt, min_coords);
@@ -411,9 +417,9 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 	GeoLib::Point const& llf (this->getMinPoint());
 	GeoLib::Point const& urb (this->getMaxPoint());
 
-	const double dx ((urb[0]-llf[0])/_n_steps[0]);
-	const double dy ((urb[1]-llf[1])/_n_steps[1]);
-	const double dz ((urb[2]-llf[2])/_n_steps[2]);
+	const double dx ((urb[0] - llf[0]) / _n_steps[0]);
+	const double dy ((urb[1] - llf[1]) / _n_steps[1]);
+	const double dz ((urb[2] - llf[2]) / _n_steps[2]);
 
 	// create grid names and grid boxes as geometry
 	for (std::size_t i(0); i<_n_steps[0]; i++) {
@@ -422,7 +428,7 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 
 				std::string name("Grid-");
 				name += BaseLib::number2str<std::size_t>(i);
-				name +="-";
+				name += "-";
 				name += BaseLib::number2str<std::size_t>(j);
 				name += "-";
 				name += BaseLib::number2str<std::size_t> (k);
@@ -439,18 +445,17 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+j*dy, llf[2]+(k+1)*dz));
 				geo_obj->addPointVec(points, grid_names[grid_names.size()-1], NULL);
 
-				std::vector<GeoLib::Polyline*>* plys (new std::vector<GeoLib::Polyline*>);
+				std::vector<GeoLib::Polyline*>* plys (
+				        new std::vector<GeoLib::Polyline*>);
 				GeoLib::Polyline* ply0 (new GeoLib::Polyline(*points));
-				for (std::size_t l(0); l<4; l++) {
+				for (std::size_t l(0); l < 4; l++)
 					ply0->addPoint(l);
-				}
 				ply0->addPoint(0);
 				plys->push_back(ply0);
 
 				GeoLib::Polyline* ply1 (new GeoLib::Polyline(*points));
-				for (std::size_t l(4); l<8; l++) {
+				for (std::size_t l(4); l < 8; l++)
 					ply1->addPoint(l);
-				}
 				ply1->addPoint(4);
 				plys->push_back(ply1);
 
@@ -474,7 +479,8 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 				ply5->addPoint(7);
 				plys->push_back(ply5);
 
-				geo_obj->addPolylineVec(plys, grid_names[grid_names.size()-1], NULL);
+				geo_obj->addPolylineVec(plys,
+				                        grid_names[grid_names.size() - 1], NULL);
 			}
 		}
 	}
@@ -501,19 +507,19 @@ void Grid<POINT>::getGridCoords(POINT const& pnt, std::size_t* coords) const
 }
 
 template <typename POINT>
-void Grid<POINT>::getPointCellBorderDistances(double const*const pnt, double dists[6], std::size_t const* const coords) const
+void Grid<POINT>::getPointCellBorderDistances(double const* const pnt,
+                                              double dists[6],
+                                              std::size_t const* const coords) const
 {
-
-	dists[0] = (pnt[2] - this->_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
+	dists[0] = (pnt[2] - this->_min_pnt[2] + coords[2] * _step_sizes[2]); // bottom
 	dists[5] = (_step_sizes[2] - dists[0]); // top
 
-	dists[1] = (pnt[1] - this->_min_pnt[1] + coords[1]*_step_sizes[1]); // front
+	dists[1] = (pnt[1] - this->_min_pnt[1] + coords[1] * _step_sizes[1]); // front
 	dists[3] = (_step_sizes[1] - dists[1]); // back
 
-	dists[4] = (pnt[0] - this->_min_pnt[0] + coords[0]*_step_sizes[0]); // left
+	dists[4] = (pnt[0] - this->_min_pnt[0] + coords[0] * _step_sizes[0]); // left
 	dists[2] = (_step_sizes[0] - dists[4]); // right
 }
-
 } // end namespace GeoLib
 
 #endif /* MESHGRID_H_ */
