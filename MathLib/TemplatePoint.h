@@ -15,14 +15,11 @@
 #ifndef TEMPLATEPOINT_H_
 #define TEMPLATEPOINT_H_
 
+// STL
 #include <cassert>
 #include <iostream>
-#include <sstream>
-#include <string>
 
-#include "GeoObject.h"
-
-namespace GeoLib
+namespace MathLib
 {
 /**
  * \ingroup GeoLib
@@ -30,18 +27,18 @@ namespace GeoLib
  * \brief class-template for points can be instantiated by a numeric type.
  * \param T the coordinate type
  */
-template <class T> class TemplatePoint : public GeoObject
+template <class T> class TemplatePoint
 {
 public:
 	/** default constructor */
-	TemplatePoint ();
+	TemplatePoint();
 
 	/** constructor - constructs a TemplatePoint object
 	   \param x1 value for the first coordinate
 	   \param x2 value for the second coordinate
 	   \param x3 value for the third coordinate
 	 */
-	TemplatePoint (T x1, T x2, T x3);
+	TemplatePoint(T x1, T x2, T x3);
 
 	/** constructor - constructs a TemplatePoint object
 	   \param x values for three coordinates
@@ -92,24 +89,21 @@ protected:
 	T _x[3];
 };
 
-template <class T> TemplatePoint<T>::TemplatePoint() :
-	GeoObject()
+template <class T> TemplatePoint<T>::TemplatePoint()
 {
 	_x[0] = static_cast<T>(0);
 	_x[1] = static_cast<T>(0);
 	_x[2] = static_cast<T>(0);
 }
 
-template <class T> TemplatePoint<T>::TemplatePoint(T x1, T x2, T x3) :
-	GeoObject()
+template <class T> TemplatePoint<T>::TemplatePoint(T x1, T x2, T x3)
 {
 	_x[0] = x1;
 	_x[1] = x2;
 	_x[2] = x3;
 }
 
-template <class T> TemplatePoint<T>::TemplatePoint (T const* x) :
-	GeoObject()
+template <class T> TemplatePoint<T>::TemplatePoint (T const* x)
 {
 	for (std::size_t k(0); k < 3; k++)
 		_x[k] = x[k];
@@ -130,6 +124,6 @@ std::istream& operator>> (std::istream &is, TemplatePoint<T> &p)
 	p.read (is);
 	return is;
 }
-} // end namespace GEO
+} // end namespace MathLib
 
 #endif /* TEMPLATEPOINT_H_ */
