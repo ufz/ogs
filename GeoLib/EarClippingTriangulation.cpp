@@ -21,8 +21,8 @@
 // MathLib
 #include "EarClippingTriangulation.h"
 
-namespace MathLib {
-
+namespace MathLib
+{
 EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygon,
 		std::list<GeoLib::Triangle> &triangles, bool rot)
 {
@@ -48,11 +48,11 @@ EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygo
 			it++;
 		}
 	} else {
-		std::size_t n_pnts (_pnts.size()-1);
+		std::size_t n_pnts (_pnts.size() - 1);
 		while (it != _triangles.end()) {
-			const std::size_t i0 (polygon->getPointID (n_pnts-(*it)[0]));
-			const std::size_t i1 (polygon->getPointID (n_pnts-(*it)[1]));
-			const std::size_t i2 (polygon->getPointID (n_pnts-(*it)[2]));
+			const std::size_t i0 (polygon->getPointID (n_pnts - (*it)[0]));
+			const std::size_t i1 (polygon->getPointID (n_pnts - (*it)[1]));
+			const std::size_t i2 (polygon->getPointID (n_pnts - (*it)[2]));
 			triangles.push_back (GeoLib::Triangle (ref_pnts_vec, i0, i1, i2));
 			it++;
 		}
@@ -70,7 +70,7 @@ EarClippingTriangulation::~EarClippingTriangulation()
 void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon)
 {
 	// copy points - last point is identical to the first
-	std::size_t n_pnts (polygon->getNumberOfPoints()-1);
+	std::size_t n_pnts (polygon->getNumberOfPoints() - 1);
 	for (std::size_t k(0); k < n_pnts; k++) {
 		_pnts.push_back (new GeoLib::Point (*(polygon->getPoint(k))));
 	}
@@ -98,7 +98,7 @@ void EarClippingTriangulation::ensureCWOrientation ()
 {
 	std::size_t n_pnts (_pnts.size());
 	// get the left most upper point
-	std::size_t min_x_max_y_idx (0);	// for orientation check
+	std::size_t min_x_max_y_idx (0); // for orientation check
 	for (std::size_t k(0); k<n_pnts; k++) {
 		if ((*(_pnts[k]))[0] <= (*(_pnts[min_x_max_y_idx]))[0]) {
 			if ((*(_pnts[k]))[0] < (*(_pnts[min_x_max_y_idx]))[0]) {
