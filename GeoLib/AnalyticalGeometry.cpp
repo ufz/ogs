@@ -29,11 +29,10 @@
 #include "Triangle.h"
 
 // MathLib
-#include "LinAlg/Dense/Matrix.h" // for transformation matrix
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathTools.h"
 
-namespace MathLib
+namespace GeoLib
 {
 Orientation getOrientation(const double& p0_x, const double& p0_y, const double& p1_x,
                            const double& p1_y, const double& p2_x, const double& p2_y)
@@ -59,7 +58,7 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c,
                           const GeoLib::Point& d, GeoLib::Point& s)
 {
-	Matrix<double> mat(2, 2);
+	MathLib::Matrix<double> mat(2, 2);
 	mat(0, 0) = b[0] - a[0];
 	mat(1, 0) = b[1] - a[1];
 	mat(0,1) = c[0] - d[0];
@@ -88,7 +87,7 @@ bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const 
 	rhs[0] = c[0] - a[0];
 	rhs[1] = c[1] - a[1];
 
-	GaussAlgorithm lu_solver (mat);
+	MathLib::GaussAlgorithm lu_solver (mat);
 	lu_solver.execute (rhs);
 	if (0 <= rhs[0] && rhs[0] <= 1.0 && 0 <= rhs[1] && rhs[1] <= 1.0) {
 		s[0] = a[0] + rhs[0] * (b[0] - a[0]);
@@ -198,10 +197,10 @@ bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::P
 }
 
 // NewellPlane from book Real-Time Collision detection p. 494
-void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, Vector &plane_normal, double& d)
+void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector &plane_normal, double& d)
 {
 	d = 0;
-	Vector centroid;
+	MathLib::Vector centroid;
 	size_t n_pnts(pnts.size());
 	for (size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
 		plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
@@ -218,13 +217,13 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, Vector &plane_norma
 	d = centroid.Dot(plane_normal) / n_pnts;
 }
 
-void rotatePointsToXY(Vector &plane_normal, std::vector<GeoLib::Point*> &pnts)
+void rotatePointsToXY(MathLib::Vector &plane_normal, std::vector<GeoLib::Point*> &pnts)
 {
 	double small_value(sqrt( std::numeric_limits<double>::min()));
 	if (fabs(plane_normal[0]) < small_value && fabs(plane_normal[1]) < small_value)
 		return;
 
-	Matrix<double> rot_mat(3, 3);
+	MathLib::Matrix<double> rot_mat(3, 3);
 	computeRotationMatrixToXY(plane_normal, rot_mat);
 	rotatePoints(rot_mat, pnts);
 
@@ -235,7 +234,7 @@ void rotatePointsToXY(Vector &plane_normal, std::vector<GeoLib::Point*> &pnts)
 	delete[] tmp;
 }
 
-void rotatePointsToXZ(Vector &n, std::vector<GeoLib::Point*> &pnts)
+void rotatePointsToXZ(MathLib::Vector &n, std::vector<GeoLib::Point*> &pnts)
 {
 	double small_value(sqrt( std::numeric_limits<double>::min()));
 	if (fabs(n[0]) < small_value && fabs(n[1]) < small_value)
@@ -249,7 +248,7 @@ void rotatePointsToXZ(Vector &n, std::vector<GeoLib::Point*> &pnts)
 	// 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
 	const double h2(1.0 / sqrt(h0 + n[2] * n[2]));
 
-	Matrix<double> rot_mat(3, 3);
+	MathLib::Matrix<double> rot_mat(3, 3);
 	// calc rotation matrix
 	rot_mat(0, 0) = n[1] * h1;
 	rot_mat(0, 1) = -n[0] * h1;
@@ -270,7 +269,7 @@ void rotatePointsToXZ(Vector &n, std::vector<GeoLib::Point*> &pnts)
 	delete[] tmp;
 }
 
-void computeRotationMatrixToXY(Vector const& plane_normal, Matrix<double> & rot_mat)
+void computeRotationMatrixToXY(MathLib::Vector const& plane_normal, MathLib::Matrix<double> & rot_mat)
 {
 	// *** some frequently used terms ***
 	// sqrt (v_1^2 + v_2^2)
@@ -293,7 +292,7 @@ void computeRotationMatrixToXY(Vector const& plane_normal, Matrix<double> & rot_
 	rot_mat(2, 2) = plane_normal[2] * h2;
 }
 
-void rotatePoints(Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
+void rotatePoints(MathLib::Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
 	double* tmp (NULL);
 	const std::size_t n_pnts(pnts.size());
@@ -304,4 +303,4 @@ void rotatePoints(Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pn
 		delete [] tmp;
 	}
 }
-} // end namespace MathLib
+} // end namespace GeoLib
