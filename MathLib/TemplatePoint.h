@@ -17,13 +17,13 @@
 
 #include <cassert>
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "GeoObject.h"
 
-namespace GeoLib {
-
+namespace GeoLib
+{
 /**
  * \ingroup GeoLib
  *
@@ -37,19 +37,19 @@ public:
 	TemplatePoint ();
 
 	/** constructor - constructs a TemplatePoint object
-	 \param x1 value for the first coordinate
-	 \param x2 value for the second coordinate
-	 \param x3 value for the third coordinate
+	   \param x1 value for the first coordinate
+	   \param x2 value for the second coordinate
+	   \param x3 value for the third coordinate
 	 */
 	TemplatePoint (T x1, T x2, T x3);
 
 	/** constructor - constructs a TemplatePoint object
-	 \param x values for three coordinates
+	   \param x values for three coordinates
 	 */
 	TemplatePoint (T const* x);
 
 	/** virtual destructor */
-	virtual ~TemplatePoint() {};
+	virtual ~TemplatePoint() {}
 
 	/** \brief const access operator
 	 *  The access to the point coordinates is like the access to a field. Code example:
@@ -57,15 +57,17 @@ public:
 	 * Point<double> point (1.0, 2.0, 3.0);
 	 * double sqrNrm2 = point[0] * point[0] + point[1] * point[1] + point[2] + point[2];
 	 * \endcode
-	*/
-	const T& operator[] (std::size_t idx) const {
+	 */
+	const T& operator[] (std::size_t idx) const
+	{
 		assert (idx <= 2);
 		return _x[idx];
 	}
 	/** \brief access operator (see book Effektiv C++ programmieren - subsection 1.3.2 ).
 	 * \sa const T& operator[] (std::size_t idx) const
 	 */
-	T& operator[] (std::size_t idx) {
+	T& operator[] (std::size_t idx)
+	{
 		return const_cast<T&> (static_cast<const TemplatePoint&> (*this)[idx]);
 	}
 
@@ -74,13 +76,15 @@ public:
 
 	/** write point coordinates into stream (used from operator<<)
 	 * \param os a standard output stream
-	*/
-	virtual void write (std::ostream &os) const {
+	 */
+	virtual void write (std::ostream &os) const
+	{
 		os << _x[0] << " " << _x[1] << " " << _x[2] << std::flush;
 	}
 
 	/** read point coordinates into stream (used from operator>>) */
-	virtual void read (std::istream &is) {
+	virtual void read (std::istream &is)
+	{
 		is >> _x[0] >> _x[1] >> _x[2];
 	}
 
@@ -107,7 +111,8 @@ template <class T> TemplatePoint<T>::TemplatePoint(T x1, T x2, T x3) :
 template <class T> TemplatePoint<T>::TemplatePoint (T const* x) :
 	GeoObject()
 {
-	for (std::size_t k(0); k<3; k++) _x[k] = x[k];
+	for (std::size_t k(0); k < 3; k++)
+		_x[k] = x[k];
 }
 
 /** overload the output operator for class Point */
@@ -125,7 +130,6 @@ std::istream& operator>> (std::istream &is, TemplatePoint<T> &p)
 	p.read (is);
 	return is;
 }
-
 } // end namespace GEO
 
 #endif /* TEMPLATEPOINT_H_ */
