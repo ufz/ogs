@@ -12,16 +12,16 @@
  *
  */
 
+// GeoLib
+#include "EarClippingTriangulation.h"
+
 // STL
 #include <vector>
 
 // BaseLib
 #include "uniqueInsert.h"
 
-// MathLib
-#include "EarClippingTriangulation.h"
-
-namespace MathLib
+namespace GeoLib
 {
 EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygon,
 		std::list<GeoLib::Triangle> &triangles, bool rot)
@@ -79,7 +79,7 @@ void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon
 void EarClippingTriangulation::rotate ()
 {
 	// calculate supporting plane
-	Vector plane_normal;
+	MathLib::Vector plane_normal;
 	double d;
 	// compute the plane normal
 	getNewellPlane(_pnts, plane_normal, d);
@@ -304,4 +304,4 @@ void EarClippingTriangulation::clipEars()
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
 }
 
-} // end namespace MathLib
+} // end namespace GeoLib

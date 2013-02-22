@@ -25,7 +25,7 @@
 // MathLib
 #include "AnalyticalGeometry.h"
 
-namespace MathLib
+namespace GeoLib
 {
 class EarClippingTriangulation
 {
@@ -63,6 +63,6 @@ private:
 
 	GeoLib::Orientation _original_orient;
 };
-} // end namespace MathLib
+} // end namespace GeoLib
 
 #endif /* EARCLIPPINGTRIANGULATION_H_ */
