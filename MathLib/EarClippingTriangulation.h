@@ -58,7 +58,7 @@ private:
 	 */
 	std::list<GeoLib::Triangle> _triangles;
 
-	MathLib::Orientation _original_orient;
+	GeoLib::Orientation _original_orient;
 };
 
 } // end namespace MathLib
