@@ -14,8 +14,8 @@
 
 #include "MathTools.h"
 
-namespace MathLib {
-
+namespace MathLib
+{
 void crossProd(const double u[3], const double v[3], double r[3])
 {
 	r[0] = u[1] * v[2] - u[2] * v[1];
@@ -39,11 +39,6 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 	d0 = sqrt (sqrDist (proj_pnt, a));
 
 	return sqrt (sqrDist (p, proj_pnt));
-}
-
-double sqrNrm2 (const GeoLib::Point* p0)
-{
-	return scpr<double,3> (p0->getCoords(), p0->getCoords());
 }
 
 double sqrDist (const GeoLib::Point* p0, const GeoLib::Point* p1)

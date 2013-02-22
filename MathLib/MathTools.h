@@ -15,9 +15,9 @@
 #ifndef MATHTOOLS_H_
 #define MATHTOOLS_H_
 
-#include <vector>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -25,8 +25,8 @@
 
 #include "Point.h"
 
-namespace MathLib {
-
+namespace MathLib
+{
 /**
  * standard inner product in R^N
  * \param v0 array of type T representing the vector
@@ -35,7 +35,7 @@ namespace MathLib {
 template<typename T, int N> inline
 T scpr(T const * const v0, T const * const v1)
 {
-	T res (v0[0]*v1[0]);
+	T res (v0[0] * v1[0]);
 #ifdef _OPENMP
 	OPENMP_LOOP_TYPE k;
 
@@ -109,9 +109,6 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
  * @return true if p1 and p2 are within the given distance of each other, false otherwise
  */
 bool checkDistance(GeoLib::Point const &p0, GeoLib::Point const &p1, double squaredDistance);
-
-/** squared euklid norm of the vector p0 */
-double sqrNrm2(const GeoLib::Point* const p0);
 
 /** squared dist between GeoLib::Points p0 and p1 */
 double sqrDist(const GeoLib::Point* p0, const GeoLib::Point* p1);
