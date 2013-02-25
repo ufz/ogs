@@ -19,7 +19,9 @@
 #include <memory>
 
 #include "BaseLib/CodingTools.h"
-#include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearSystem.h"
+#ifdef USE_LIS
+    #include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearSystem.h"
+#endif  // USE_LIS
 #include "MathLib/LinAlg/SystemOfLinearEquations/DenseLinearSystem.h"
 #include "MeshLib/MeshGenerator.h"
 #include "DiscreteLib/ElementWiseManipulator/IElemenetWiseLinearSystemLocalAssembler.h"
