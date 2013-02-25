@@ -413,6 +413,6 @@ bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
 {
 	if (i == j)
 		return true;
-	return MathLib::checkDistance( *pnt_vec[i], *pnt_vec[j], prox );
+	return MathLib::sqrDist(pnt_vec[i], pnt_vec[j]) < prox;
 }
 } // end namespace GeoLib
