@@ -55,7 +55,7 @@ void ISystemOfLinearEquations::addSubRHS(const std::vector<std::size_t> &vec_row
     for (std::size_t i=0; i<vec_row_pos.size(); i++) {
         const std::size_t rowId = vec_row_pos[i];
         if (rowId==index_npos) continue;
-        addRHSVec(rowId, sub_vector(i)*fkt);
+        addRHSVec(rowId, sub_vector[i]*fkt);
     }
 }
 

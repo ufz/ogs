@@ -97,6 +97,12 @@ public:
 	/// Changes the name of the mesh.
 	void setName(const std::string &name) { this->_name = name; };
 
+	/// Get id of the mesh
+	unsigned getID() const {return _id;};
+
+	/// Set id of this mesh
+	void setID(const unsigned id) {this->_id = id;};
+
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();
@@ -127,6 +133,7 @@ protected:
 
 	unsigned _mesh_dimension;
 	double _edge_length[2];
+	unsigned _id;
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;

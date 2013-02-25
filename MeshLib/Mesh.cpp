@@ -30,7 +30,7 @@
 namespace MeshLib {
 
 Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
-	: _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
+	: _mesh_dimension(0), _name(name), _id(0), _nodes(nodes), _elements(elements)
 {
 	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
 	_edge_length[0] = 0;
@@ -45,7 +45,7 @@ Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::
 }
 
 Mesh::Mesh(const Mesh &mesh)
-	: _mesh_dimension(mesh.getDimension()), _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	: _mesh_dimension(mesh.getDimension()), _name(mesh.getName()), _id(mesh.getID()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());

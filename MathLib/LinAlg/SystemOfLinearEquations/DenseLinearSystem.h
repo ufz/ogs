@@ -2,7 +2,7 @@
  * \file
  * \author Norihiro Watanabe
  * \date   2012-06-25
- * \brief  Definition of the LisLinearSystem class.
+ * \brief  Definition of the DenseLinearSystem class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,63 +12,39 @@
  *
  */
 
-#ifndef LISLINEARSYSTEM_H_
-#define LISLINEARSYSTEM_H_
+#ifndef DENSELINEARSYSTEM_H_
+#define DENSELINEARSYSTEM_H_
 
 #include <iostream>
 #include <string>
 #include <vector>
+#include <valarray>
 #include <boost/property_tree/ptree.hpp>
 
-#include "lis.h"
-
-#include "MathLib/LinAlg/Sparse/Sparsity.h"
+#include "MathLib/LinAlg/Dense/Matrix.h"
 #include "ISystemOfLinearEquations.h"
-#include "LisOption.h"
 
 namespace MathLib
 {
 
 /**
- * \brief Linear system using Lis solver (http://www.ssisc.org/lis/)
- *
- * This class utilizes Lis solver.
+ * \brief Linear system with a dense matrix and a Gauss elimination solver
  */
-class LisLinearSystem
-: public ISystemOfLinearEquations
+class DenseLinearSystem
+ : public ISystemOfLinearEquations
 {
 public:
     //---------------------------------------------------------------
     // realization of ISystemOfLinearEquations
     //---------------------------------------------------------------
-
-    /**
-     * Create a linear system using Lis
-     *
-     * @param length    System dimension
-     */
-    explicit LisLinearSystem(std::size_t length);
-
-    /**
-     *
-     * @param length    System dimension
-     * @param sp        Sparsity
-     */
-    LisLinearSystem(std::size_t length, const RowMajorSparsity* sp);
-
-    /**
-     *
-     */
-    virtual ~LisLinearSystem();
-
     /**
      * configure linear solvers
      * @param option
      */
-    virtual void setOption(const boost::property_tree::ptree &option);
+    virtual void setOption(const boost::property_tree::ptree &/*option*/) {};
 
     /// return the system dimension
-    virtual std::size_t getDimension() const { return _dim; };
+    virtual std::size_t getDimension() const { return _rhs.size(); };
 
     /// reset this equation
     virtual void setZero();
@@ -76,51 +52,43 @@ public:
     /// set entry in A
     virtual void setMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
-        if (rowId==colId)
-            _max_diag_coeff = std::max(_max_diag_coeff, std::abs(v));
-        lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
+        _mat(rowId, colId) = v;
     }
 
     /// add value into A
     virtual void addMatEntry(std::size_t rowId, std::size_t colId, double v)
     {
-        if (rowId==colId)
-            _max_diag_coeff = std::max(_max_diag_coeff, std::abs(v));
-        lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
+        _mat(rowId, colId) += v;
     }
 
     /// get RHS entry
     virtual double getRHSVec(std::size_t rowId) const
     {
-        double v;
-        lis_vector_get_value(_bb, rowId, &v);
-        return v;
+        return _rhs[rowId];
     }
 
     /// set RHS entry
     virtual void setRHSVec(std::size_t rowId, double v)
     {
-        lis_vector_set_value(LIS_INS_VALUE, rowId, v, _bb);
+        _rhs[rowId] = v;
     }
 
     /// add RHS entry
     virtual void addRHSVec(std::size_t rowId, double v)
     {
-        lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _bb);
+        _rhs[rowId] += v;
     }
 
     /// get an entry in a solution vector
     virtual double getSolVec(std::size_t rowId)
     {
-        double v;
-        lis_vector_get_value(_xx, rowId, &v);
-        return v;
+        return _x[rowId];
     }
 
     /// set a solution vector
     virtual void setSolVec(std::size_t rowId, double v)
     {
-        lis_vector_set_value(LIS_INS_VALUE, rowId, v, _xx);
+        _x[rowId] = v;
     }
 
     /// set prescribed value
@@ -146,50 +114,45 @@ public:
     //---------------------------------------------------------------
     // specific to this class
     //---------------------------------------------------------------
+    typedef MathLib::Matrix<double> MatrixType;
+    typedef std::valarray<double> VectorType;
+
     /**
-     * configure linear solvers
-     * @param option
+     * Create a linear system
+     *
+     * @param length    System dimension
+     * @param sp        Pointer to a Row-major sparsity object (not required)
      */
-    void setOption(const LisOption &option)
+    DenseLinearSystem(std::size_t length, const RowMajorSparsity* /*sp*/ = nullptr)
+    : _mat(length, length), _rhs(length), _x(length)
     {
-        _option = option;
+        setZero();
     }
 
     /**
-     * get linear solver options
-     * @return
+     *
      */
-    LisOption &getOption()
-    {
-        return _option;
-    }
+    virtual ~DenseLinearSystem(){};
 
-    /**
-     * get a solution vector
-     * @param x
-     */
-    void getSolVec(double* x)
-    {
-        lis_vector_gather(_xx, x);
-    }
+    /// get a reference to the matrix
+    MatrixType& getMat() {return _mat;};
+
+    /// get a reference to the RHS vector
+    VectorType& getRHSVec() {return _rhs;};
+
+    /// get a reference to the solution vector
+    VectorType& getSolVec() {return _x;};
 
 private:
-    bool checkError(int err);
-    void applyKnownSolution();
-
-private:
-    const std::size_t _dim;
-    double _max_diag_coeff;
-    LisOption _option;
-    LIS_MATRIX _AA;
-    LIS_VECTOR _bb;
-    LIS_VECTOR _xx;
     std::vector<std::size_t> _vec_knownX_id;
     std::vector<double> _vec_knownX_x;
+    MatrixType _mat;
+    VectorType _rhs;
+    VectorType _x;
 };
 
 
 } // MathLib
 
-#endif //LISLINEARSYSTEM_H_
+#endif //DENSELINEARSYSTEM_H_
 
