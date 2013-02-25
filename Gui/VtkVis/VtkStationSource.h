@@ -36,16 +36,16 @@ public:
 
 	/// Returns the colour lookup table generated for boreholes.
 	/// This method should only be called after the colour lookup table has actually been build (via RequestData() or setColorLookupTable()).
-	const std::map<std::string, GeoLib::Color*>& getColorLookupTable() const 
+	const std::map<std::string, GeoLib::Color*>& getColorLookupTable() const
 		{ return _colorLookupTable; }
 
 	/// Returns the type of observation site represented in this source object
 	GeoLib::Station::StationType getType() const
 		{ return static_cast<GeoLib::Station*>((*_stations)[0])->type(); };
-	
+
 	/// Sets a predefined color lookup table for the colouring of borehole stratigraphies
-	int setColorLookupTable(const std::string &filename) 
-		{ return readColorLookupTable(_colorLookupTable, filename); }
+	int setColorLookupTable(const std::string &filename)
+		{ return GeoLib::readColorLookupTable(_colorLookupTable, filename); }
 
 	/// Sets the stations as a vector
 	void setStations(const std::vector<GeoLib::Point*>* stations) { _stations = stations; }

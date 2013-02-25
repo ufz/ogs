@@ -387,7 +387,7 @@ bool isLineSegmentIntersecting (const Polyline& ply,
 	bool intersect(false);
 	GeoLib::Point intersection_pnt;
 	for (std::size_t k(0); k < n && !intersect; k++)
-		intersect = MathLib::lineSegmentIntersect (*(ply.getPoint(k)), *(ply.getPoint(
+		intersect = GeoLib::lineSegmentIntersect (*(ply.getPoint(k)), *(ply.getPoint(
 		                                                                         k + 1)),
 		                                           s0, s1, intersection_pnt);
 	return intersect;
@@ -413,6 +413,6 @@ bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
 {
 	if (i == j)
 		return true;
-	return MathLib::checkDistance( *pnt_vec[i], *pnt_vec[j], prox );
+	return MathLib::sqrDist(pnt_vec[i], pnt_vec[j]) < prox;
 }
 } // end namespace GeoLib

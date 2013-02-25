@@ -13,20 +13,19 @@
  *
  */
 
-
 #ifndef COLOR_H_
 #define COLOR_H_
 
 #include "TemplatePoint.h"
 
-#include <fstream>
 #include <cstdlib>
-#include <map>
+#include <fstream>
 #include <list>
+#include <map>
 
-namespace GeoLib {
-
-typedef TemplatePoint<unsigned char> Color;
+namespace GeoLib
+{
+typedef MathLib::TemplatePoint<unsigned char> Color;
 
 /// Returns a random RGB colour.
 Color* getRandomColor();
@@ -40,8 +39,6 @@ const Color* getColor(const std::string &id, std::map<std::string, GeoLib::Color
 
 /// Convenience function to use the getColor method with numbers as identifiers.
 const Color* getColor(double id, std::map<std::string, GeoLib::Color*> &colors);
-
-
 } // namespace
 
 #endif /* COLOR_H_ */

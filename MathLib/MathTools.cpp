@@ -14,8 +14,8 @@
 
 #include "MathTools.h"
 
-namespace MathLib {
-
+namespace MathLib
+{
 void crossProd(const double u[3], const double v[3], double r[3])
 {
 	r[0] = u[1] * v[2] - u[2] * v[1];
@@ -34,22 +34,12 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 
 	// compute projected point
 	double proj_pnt[3];
-	for (size_t k(0); k<3; k++) proj_pnt[k] = a[k] + lambda * v[k];
+	for (size_t k(0); k < 3; k++)
+		proj_pnt[k] = a[k] + lambda * v[k];
 
 	d0 = sqrt (sqrDist (proj_pnt, a));
 
 	return sqrt (sqrDist (p, proj_pnt));
-}
-
-double sqrNrm2 (const GeoLib::Point* p0)
-{
-	return scpr<double,3> (p0->getCoords(), p0->getCoords());
-}
-
-double sqrDist (const GeoLib::Point* p0, const GeoLib::Point* p1)
-{
-	const double v[3] = {(*p1)[0] - (*p0)[0], (*p1)[1] - (*p0)[1], (*p1)[2] - (*p0)[2]};
-	return scpr<double,3>(v,v);
 }
 
 double sqrDist(const double* p0, const double* p1)
@@ -58,14 +48,9 @@ double sqrDist(const double* p0, const double* p1)
 	return scpr<double,3>(v,v);
 }
 
-bool checkDistance(GeoLib::Point const &p0, GeoLib::Point const &p1, double squaredDistance)
-{
-	return (sqrDist(&p0, &p1) < squaredDistance);
-}
-
 float normalize(float min, float max, float val)
 {
-	return ((val-min)/static_cast<float>(max-min));
+	return (val - min) / static_cast<float>(max - min);
 }
 
 double getAngle (const double p0[3], const double p1[3], const double p2[3])
@@ -87,11 +72,11 @@ double calcTriangleArea(const double* p0, const double* p1, const double* p2)
 	const double v1 (p1[1] - p0[1]);
 	const double v2 (p1[2] - p0[2]);
 
-	const double z0 (u1*v2 - u2*v1);
-	const double z1 (u2*v0 - u0*v2);
-	const double z2 (u0*v1 - u1*v0);
+	const double z0 (u1 * v2 - u2 * v1);
+	const double z1 (u2 * v0 - u0 * v2);
+	const double z2 (u0 * v1 - u1 * v0);
 
-	return 0.5 * sqrt(z0*z0 + z1*z1 + z2 * z2);
+	return 0.5 * sqrt(z0 * z0 + z1 * z1 + z2 * z2);
 }
 
 double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4)
@@ -107,8 +92,7 @@ void MPhi2D(double* vf, double r, double s)
 	vf[1] = (1.0 - r) * (1.0 + s);
 	vf[2] = (1.0 - r) * (1.0 - s);
 	vf[3] = (1.0 + r) * (1.0 - s);
-	for (unsigned i=0; i<4; i++)
+	for (unsigned i = 0; i < 4; i++)
 		vf[i] *= 0.25;
 }
-
 } // namespace

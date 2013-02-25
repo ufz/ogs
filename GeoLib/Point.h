@@ -15,17 +15,38 @@
 #ifndef POINT_H_
 #define POINT_H_
 
+// STL
 #include <limits>
 
+// GeoLib
+#include "GeoObject.h"
+
+// MathLib
 #include "TemplatePoint.h"
 
-namespace GeoLib {
-
+namespace GeoLib
+{
 /**
  * \ingroup GeoLib
  */
 
-typedef TemplatePoint<double> Point;
+template<typename T> class GeoPoint : public MathLib::TemplatePoint<T>, public GeoLib::GeoObject
+{
+public:
+	GeoPoint(T x1, T x2, T x3) :
+		MathLib::TemplatePoint<T>(x1, x2, x3), GeoLib::GeoObject()
+	{}
+
+	GeoPoint() :
+		MathLib::TemplatePoint<T>(), GeoLib::GeoObject()
+	{}
+
+	GeoPoint (T const* x) :
+		MathLib::TemplatePoint<T>(x), GeoObject()
+	{}
+};
+
+typedef GeoLib::GeoPoint<double> Point;
 
 /**
  * lexicographic comparison of points
@@ -40,8 +61,9 @@ bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
  * 	holds for the k-th coordinate the points are assumed the be equal in this coordinate)
  * @return true, if p0 is lexicographically smaller than p1
  */
-bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol = std::numeric_limits<double>::epsilon());
+bool lessEq(const GeoLib::Point& p0,
+            const GeoLib::Point& p1,
+            double tol = std::numeric_limits<double>::epsilon());
 }
-
 
 #endif /* POINT_H_ */
