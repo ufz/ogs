@@ -22,66 +22,67 @@
 
 namespace MeshLib
 {
-
-Mesh* MeshGenerator::generateLineMesh(const double length, const std::size_t subdivision, const double origin_x, const double origin_y, const double origin_z)
+Mesh* MeshGenerator::generateLineMesh(
+        const double length,
+        const std::size_t subdivision,
+        const GeoLib::Point& origin)
 {
-    const double unit_length = length / subdivision;
-    const std::size_t n_nodes_per_axis = subdivision+1;
-    const std::size_t n_eles = subdivision;
+	const double dx = length / subdivision;
 
-    //nodes
-    std::vector<Node*> nodes;
-    std::size_t node_id(0);
-    for (std::size_t i_z=0; i_z<n_nodes_per_axis; i_z++) {
-        const double x = unit_length*i_z;
-        nodes.push_back(new Node(x+origin_x, origin_y, origin_z, node_id++));
-    }
+	//nodes
+	const std::size_t n_nodes = subdivision + 1;
+	std::vector<Node*> nodes(n_nodes);
+	for (std::size_t i = 0; i < n_nodes; i++)
+		nodes[i] = new Node(origin[0] + dx * i, origin[1], origin[2], i);
 
-    //elements
-    std::vector<Element*> elements;
-    for (std::size_t i_z=0; i_z<n_eles; i_z++) {
-        Node** e_nodes=new Node*[2];
-        e_nodes[0] = nodes[i_z];
-        e_nodes[1] = nodes[i_z+1];
-        elements.push_back(new Edge(e_nodes));
-    }
+	//elements
+	const std::size_t n_eles = subdivision;
+	std::vector<Element*> elements(n_eles);
+	for (std::size_t i = 0; i < n_eles; i++)
+		elements[i] = new Edge({{ nodes[i], nodes[i + 1] }});
 
-    return new Mesh("mesh", nodes, elements);
+	return new Mesh("mesh", nodes, elements);
 }
 
-Mesh* MeshGenerator::generateRegularQuadMesh(const double length, const std::size_t subdivision, const double origin_x, const double origin_y, const double origin_z)
+Mesh* MeshGenerator::generateRegularQuadMesh(
+        const double length,
+        const std::size_t subdivision,
+        const GeoLib::Point& origin)
 {
-    const double unit_length = length / subdivision;
-    const std::size_t n_nodes_per_axis = subdivision+1;
+	const double dx = length / subdivision;
 
-    //nodes
-    std::vector<Node*> nodes;
-    std::size_t node_id(0);
-    const double z = origin_z;
-    for (std::size_t j_y=0; j_y<n_nodes_per_axis; j_y++) {
-        const double y = unit_length*j_y + origin_y;
-        for (std::size_t k_x=0; k_x<n_nodes_per_axis; k_x++) {
-            const double x = unit_length*k_x + origin_x;
-            nodes.push_back(new Node(x, y, z, node_id++));
-        }
-    }
+	//nodes
+	const std::size_t n_nodes = subdivision + 1;
+	std::vector<Node*> nodes(n_nodes * n_nodes);
 
-    //elements
-    std::vector<Element*> elements;
-    for (std::size_t j=0; j<subdivision; j++) {
-        const std::size_t offset_y1 = j*n_nodes_per_axis;
-        const std::size_t offset_y2 = (j+1)*n_nodes_per_axis;
-        for (std::size_t k=0; k<subdivision; k++) {
-            Node** e_nodes=new Node*[4];
-            e_nodes[0] = nodes[offset_y1+k];
-            e_nodes[1] = nodes[offset_y1+k+1];
-            e_nodes[2] = nodes[offset_y2+k+1];
-            e_nodes[3] = nodes[offset_y2+k];
-            elements.push_back(new Quad(e_nodes));
-        }
-    }
+	for (std::size_t i = 0, node_id = 0; i < n_nodes; i++)
+		for (std::size_t j = 0; j < n_nodes; j++)
+		{
+			nodes[node_id] = new Node(origin[0] + dx * j,
+			                          origin[1] + dx * i,
+			                          origin[2],
+			                          node_id);
+			node_id++;
+		}
 
-    return new Mesh("mesh", nodes, elements);
-};
+	//elements
+	std::size_t const n_eles = subdivision;
+	std::vector<Element*> elements(n_eles * n_eles);
+	std::size_t elem_id = 0;
 
+	for (std::size_t j = 0; j < subdivision; j++)
+	{
+		const std::size_t offset_y1 = j * n_nodes;
+		const std::size_t offset_y2 = (j + 1) * n_nodes;
+		for (std::size_t k = 0; k < subdivision; k++)
+		{
+			elements[elem_id++] = new Quad({{ nodes[offset_y1 + k],
+			                                  nodes[offset_y1 + k + 1],
+			                                  nodes[offset_y2 + k + 1],
+			                                  nodes[offset_y2 + k]}});
+		}
+	}
+
+	return new Mesh("mesh", nodes, elements);
+}
 }
