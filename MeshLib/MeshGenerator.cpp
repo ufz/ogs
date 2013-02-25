@@ -13,6 +13,10 @@
  */
 
 #include "MeshGenerator.h"
+#include "Node.h"
+
+#include "Elements/Edge.h"
+#include "Elements/Quad.h"
 
 #include <vector>
 
