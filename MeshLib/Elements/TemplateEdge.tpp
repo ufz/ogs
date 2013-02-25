@@ -12,7 +12,18 @@
  *
  */
 
-namespace MeshLib {
+namespace MeshLib
+{
+template<unsigned NNODES, CellType::type CELLEDGETYPE>
+TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const& nodes,
+                                                unsigned value)
+	: Element(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	this->_length = this->computeVolume();
+}
 
 template<unsigned NNODES, CellType::type CELLEDGETYPE>
 TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned value) :
