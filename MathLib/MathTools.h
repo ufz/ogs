@@ -23,7 +23,7 @@
 #include <omp.h>
 #endif
 
-#include "Point.h"
+#include "TemplatePoint.h"
 
 namespace MathLib
 {
@@ -39,7 +39,7 @@ T scpr(T const * const v0, T const * const v1)
 #ifdef _OPENMP
 	OPENMP_LOOP_TYPE k;
 
-	#pragma omp parallel for reduction (+:res)
+#pragma omp parallel for reduction (+:res)
 	for (k = 1; k<N; k++) {
 		res += v0[k] * v1[k];
 	}
@@ -53,7 +53,7 @@ T scpr(T const * const v0, T const * const v1)
 template <> inline
 double scpr<double,3>(double const * const v0, double const * const v1)
 {
-	double res (v0[0]*v1[0]);
+	double res (v0[0] * v1[0]);
 	for (std::size_t k(1); k < 3; k++)
 		res += v0[k] * v1[k];
 	return res;
@@ -62,11 +62,11 @@ double scpr<double,3>(double const * const v0, double const * const v1)
 template<typename T> inline
 T scpr(T const * const v0, T const * const v1, unsigned n)
 {
-	T res (v0[0]*v1[0]);
+	T res (v0[0] * v1[0]);
 #ifdef _OPENMP
 	OPENMP_LOOP_TYPE k;
 
-	#pragma omp parallel for reduction (+:res)
+#pragma omp parallel for reduction (+:res)
 	for (k = 1; k<n; k++) {
 		res += v0[k] * v1[k];
 	}
@@ -76,7 +76,6 @@ T scpr(T const * const v0, T const * const v1, unsigned n)
 #endif
 	return res;
 }
-
 
 /**
  * computes the cross (or vector) product of the 3d vectors u and v
@@ -99,19 +98,15 @@ void crossProd (const double u[3], const double v[3], double r[3]);
  * \returns the distance between p and the orthogonal projection of p
  */
 double calcProjPntToLineAndDists(const double p[3], const double a[3],
-		const double b[3], double &lambda, double &d0);
-
-/**
- * Checks if two points are within a given distance of each other
- * @param p0 The first point
- * @param p1 the second point
- * @param squaredDistance The square of the distance within which the two points should be
- * @return true if p1 and p2 are within the given distance of each other, false otherwise
- */
-bool checkDistance(GeoLib::Point const &p0, GeoLib::Point const &p1, double squaredDistance);
+                                 const double b[3], double &lambda, double &d0);
 
 /** squared dist between GeoLib::Points p0 and p1 */
-double sqrDist(const GeoLib::Point* p0, const GeoLib::Point* p1);
+template <typename T>
+T sqrDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
+{
+	const T v[3] = {(*p1)[0] - (*p0)[0], (*p1)[1] - (*p0)[1], (*p1)[2] - (*p0)[2]};
+	return MathLib::scpr<T,3>(v,v);
+}
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 double sqrDist(const double* p0, const double* p1);
@@ -133,7 +128,7 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3]);
  * Calculates the area of a triangle.
  * The formula is A=.5*|u x v|, i.e. half of the area of the parallelogram specified by u=p0->p1 and v=p0->p2.
  */
-double calcTriangleArea(const double* p0, const double* p1,	const double* p2);
+double calcTriangleArea(const double* p0, const double* p1, const double* p2);
 
 /**
  * Calculates the volume of a tetrahedron.
@@ -151,16 +146,15 @@ template <typename T> inline
 T fastpow (T base, std::size_t exp)
 {
 	T result (base);
-	if (exp == 0) result = static_cast<T>(1);
-	for (std::size_t k(1); k<exp; k++) {
+	if (exp == 0)
+		result = static_cast<T>(1);
+	for (std::size_t k(1); k < exp; k++)
 		result *= base;
-	}
 	return result;
 }
 
 /// 2D linear interpolation function (TODO adopted from geo_mathlib)
 void MPhi2D(double* vf, double r, double s);
-
 } // namespace
 
 #endif /* MATHTOOLS_H_ */
