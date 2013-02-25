@@ -52,7 +52,7 @@ void SerialDiscreteLinearSystem<T_LINEAR_SOLVER,T_SPARSITY_BUILDER>::construct(I
 {
     assert(getDofEquationIdTable().getNumberOfVariables()>0);
 
-    assemler.assembly(getMesh(), AbstractMeshBasedDiscreteLinearSystem::getDofEquationIdTable(), *_linear_sys);
+    assemler.assembly(getMesh(), getDofEquationIdTable(), *_linear_sys);
 
     //apply 1st bc
     _linear_sys->setKnownSolution(_list_prescribed_eqs_id, _list_prescribed_values);

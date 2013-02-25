@@ -126,6 +126,7 @@ public:
     DenseLinearSystem(std::size_t length, const RowMajorSparsity* /*sp*/ = nullptr)
     : _mat(length, length), _rhs(length), _x(length)
     {
+        setZero();
     }
 
     /**
