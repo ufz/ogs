@@ -25,11 +25,14 @@
 // MathLib
 #include "AnalyticalGeometry.h"
 
-namespace MathLib {
-
-class EarClippingTriangulation {
+namespace GeoLib
+{
+class EarClippingTriangulation
+{
 public:
-	EarClippingTriangulation(const GeoLib::Polygon* ply, std::list<GeoLib::Triangle> &triangles, bool rot = true);
+	EarClippingTriangulation(const GeoLib::Polygon* ply,
+	                         std::list<GeoLib::Triangle> &triangles,
+	                         bool rot = true);
 	virtual ~EarClippingTriangulation();
 private:
 	/**
@@ -58,9 +61,8 @@ private:
 	 */
 	std::list<GeoLib::Triangle> _triangles;
 
-	MathLib::Orientation _original_orient;
+	GeoLib::Orientation _original_orient;
 };
-
-} // end namespace MathLib
+} // end namespace GeoLib
 
 #endif /* EARCLIPPINGTRIANGULATION_H_ */

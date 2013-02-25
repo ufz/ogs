@@ -18,23 +18,23 @@
 #include "logog/include/logog.hpp"
 
 // GeoLib
-#include "Surface.h"
 #include "AABB.h"
 #include "Polygon.h"
+#include "Surface.h"
 
 // MathLib
 #include "AnalyticalGeometry.h"
 #include "EarClippingTriangulation.h"
 
-namespace GeoLib {
-
+namespace GeoLib
+{
 Surface::Surface (const std::vector<Point*> &pnt_vec) :
 	GeoObject(), _sfc_pnts(pnt_vec), _bv(nullptr)
 {}
 
 Surface::~Surface ()
 {
-	for (std::size_t k(0); k<_sfc_triangles.size(); k++)
+	for (std::size_t k(0); k < _sfc_triangles.size(); k++)
 		delete _sfc_triangles[k];
 }
 
@@ -43,7 +43,8 @@ void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt
 	assert (pnt_a < _sfc_pnts.size() && pnt_b < _sfc_pnts.size() && pnt_c < _sfc_pnts.size());
 
 	// Check if two points of the triangle have identical IDs
-	if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c) return;
+	if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c)
+		return;
 
 	_sfc_triangles.push_back (new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
 	if (!_bv) {
@@ -80,7 +81,7 @@ Surface* Surface::createSurface(const Polyline &ply)
 
 			std::list<GeoLib::Triangle> triangles;
 			INFO("triangulation of surface: ... ");
-			MathLib::EarClippingTriangulation(*simple_polygon_it, triangles);
+			GeoLib::EarClippingTriangulation(*simple_polygon_it, triangles);
 			INFO("\tdone - %d triangles", triangles.size());
 
 			// add Triangles to Surface
