@@ -48,6 +48,8 @@ public:
 
 typedef GeoLib::GeoPoint<double> Point;
 
+static const Point ORIGIN(0, 0, 0);
+
 /**
  * lexicographic comparison of points
  */
@@ -58,7 +60,7 @@ bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
  * @param p0 first input Point
  * @param p1 first input Point
  * @param tol tolerance (if in the comparison operation the property fabs(p0[k] - p1[k]) < tol
- * 	holds for the k-th coordinate the points are assumed the be equal in this coordinate)
+ *     holds for the k-th coordinate the points are assumed the be equal in this coordinate)
  * @return true, if p0 is lexicographically smaller than p1
  */
 bool lessEq(const GeoLib::Point& p0,

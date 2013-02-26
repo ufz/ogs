@@ -15,6 +15,7 @@
 #ifndef TEMPLATEEDGE_H_
 #define TEMPLATEEDGE_H_
 
+#include <array>
 #include <limits>
 
 #include "MshEnums.h"
@@ -38,6 +39,9 @@ class TemplateEdge : public Element
 public:
 	/// Constructor with an array of mesh nodes.
 	TemplateEdge(Node* nodes[NNODES], unsigned value = 0);
+
+	/// Constructs an edge from array of Node pointers.
+	TemplateEdge(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
 	TemplateEdge(const TemplateEdge &edge);
