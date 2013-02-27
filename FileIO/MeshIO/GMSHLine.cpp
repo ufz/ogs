@@ -25,7 +25,7 @@ GMSHLine::~GMSHLine()
 
 void GMSHLine::write(std::ostream &os, size_t id) const
 {
-	os << "Line(" << id << ") = {" << _start_pnt_id << "," << _end_pnt_id << "};" << std::endl;
+	os << "Line(" << id << ") = {" << _start_pnt_id << "," << _end_pnt_id << "};\n";
 }
 
 void GMSHLine::resetLineData(size_t start_point_id, size_t end_point_id)

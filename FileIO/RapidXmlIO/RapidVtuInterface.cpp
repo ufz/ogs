@@ -345,7 +345,7 @@ int RapidVtuInterface::write(std::ostream& stream)
 	const std::string data_array_close("\t\t\t\t");
 	const std::string data_array_indent("\t\t\t\t  ");
 
-	stream << "<?xml version=\"1.0\"?>" << std::endl;
+	stream << "<?xml version=\"1.0\"?>\n";
 
 	xml_node<> *root_node (_doc->allocate_node(node_element, "VTKFile"));
 	_doc->append_node(root_node);

@@ -135,7 +135,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 			}
 			out_src << "#STOP" << "\n";
 			out_src.close();
-			std::cerr << "no source nodes in dest element " << k << std::endl;
+			std::cerr << "no source nodes in dest element " << k << "\n";
 		}
 	}
 }

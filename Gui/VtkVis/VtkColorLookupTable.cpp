@@ -106,7 +106,7 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
 	{
 		unsigned char rgba[4];
 		this->GetTableValue(i, rgba);
-		out << i << "\t" << rgba[0] << "\t" << rgba[1] << "\t" << rgba[2] << std::endl;
+		out << i << "\t" << rgba[0] << "\t" << rgba[1] << "\t" << rgba[2] << "\n";
 	}
 
 	std::cout << " done." << std::endl;

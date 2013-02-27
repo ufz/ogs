@@ -48,7 +48,7 @@ void convertPoints (DBFHandle dbf_handle,
 	int n_records (DBFGetRecordCount (dbf_handle));
 	std::cout << "writing " << n_records << " records" << std::endl;
 
-//	out << "#POINTS" << std::endl;
+//	out << "#POINTS\n";
 //
 //	for (int k(0); k<n_records; k++) {
 //		double x (DBFReadDoubleAttribute( dbf_handle, k, x_id));
@@ -68,9 +68,9 @@ void convertPoints (DBFHandle dbf_handle,
 //				}
 //			}
 //		}
-//		out << std::endl;
+//		out << "\n";
 //	}
-//	out << "#STOP" << std::endl;
+//	out << "#STOP\n";
 
 	std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);
 	points->reserve (n_records);

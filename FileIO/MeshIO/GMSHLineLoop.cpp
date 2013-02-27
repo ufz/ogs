@@ -42,11 +42,11 @@ void GMSHLineLoop::write(std::ostream &os, size_t line_offset, size_t sfc_offset
 	os << "Line Loop(" << line_offset+n_lines << ") = {";
 	for (size_t k(0); k < n_lines - 1; k++)
 		os << line_offset + k << ",";
-	os << line_offset + n_lines - 1 << "};" << std::endl;
+	os << line_offset + n_lines - 1 << "};\n";
 
 	if (_is_sfc) {
 		// write plane surface
-		os << "Plane Surface (" << sfc_offset << ") = {" << line_offset+n_lines << "};" << std::endl;
+		os << "Plane Surface (" << sfc_offset << ") = {" << line_offset+n_lines << "};\n";
 	}
 
 }

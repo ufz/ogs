@@ -120,7 +120,7 @@ void correctScientificNotation(std::string filename, size_t precision)
 
 			outputStream << word << " ";
 		}
-		outputStream << std::endl;
+		outputStream << "\n";
 	}
 
 	stream.close();
