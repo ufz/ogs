@@ -21,6 +21,8 @@
 
 #include "MshEnums.h"
 
+#include "BaseLib/Counter.h"
+
 namespace MeshLib
 {
 	class Node;
@@ -29,12 +31,13 @@ namespace MeshLib
 /**
  * A basic mesh.
  */
-class Mesh
+class Mesh : BaseLib::Counter<Mesh>
 {
-
 public:
 	/// Constructor using a mesh name and an array of nodes and elements
-	Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements);
+	Mesh(const std::string &name,
+	     const std::vector<Node*> &nodes,
+	     const std::vector<Element*> &elements);
 
 	/// Copy constructor
 	Mesh(const Mesh &mesh);
@@ -97,6 +100,9 @@ public:
 	/// Changes the name of the mesh.
 	void setName(const std::string &name) { this->_name = name; };
 
+	/// Get id of the mesh
+	std::size_t getID() const {return _id; }
+
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
 	void makeNodesUnique();
@@ -125,6 +131,7 @@ protected:
 	static std::vector<Element*> deepCopyElements(Element* const*const mesh);
 
 
+	std::size_t const _id;
 	unsigned _mesh_dimension;
 	double _edge_length[2];
 	std::string _name;

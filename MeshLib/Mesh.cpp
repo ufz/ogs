@@ -27,10 +27,13 @@
 #include "RunTime.h"
 #include "uniqueInsert.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 
-Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::vector<Element*> &elements)
-	: _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
+Mesh::Mesh(const std::string &name,
+           const std::vector<Node*> &nodes,
+           const std::vector<Element*> &elements)
+	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
 {
 	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
 	_edge_length[0] = 0;
@@ -45,7 +48,8 @@ Mesh::Mesh(const std::string &name, const std::vector<Node*> &nodes, const std::
 }
 
 Mesh::Mesh(const Mesh &mesh)
-	: _mesh_dimension(mesh.getDimension()), _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
+	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
@@ -291,6 +295,4 @@ void Mesh::removeMeshElements(MshElemType::type t)
 	}
 	INFO("Removed %d  elements of type %s from mesh.", count, MshElemType2String(t).c_str());
 }
-
 }
-
