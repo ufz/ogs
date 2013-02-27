@@ -12,6 +12,8 @@
  *
  */
 
+#include <array>
+
 #include "Node.h"
 #include "Tri.h"
 
@@ -19,7 +21,21 @@
 #include "MathTools.h"
 #include "AnalyticalGeometry.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
+template<unsigned NNODES, CellType::type CELLQUADTYPE>
+TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const& nodes,
+                                                unsigned value)
+	: Face(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[4];
+	std::fill(_neighbors, _neighbors + 4, nullptr);
+
+	this->_area = this->computeVolume();
+}
 
 template <unsigned NNODES, CellType::type CELLQUADTYPE>
 TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value)

@@ -42,6 +42,13 @@ public:
 	/// Constructor with an array of mesh nodes.
 	TemplateQuad(Node* nodes[NNODES], unsigned value = 0);
 
+	/// Constructs an edge from array of Node pointers.
+	TemplateQuad(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+
+	/// Constructs a quad from NNODES of Nodes initializing Face with
+	//  value = 0.
+	TemplateQuad(Node* n0, Node* n1, Node* n2, Node* n3, ...);
+
 	/// Copy constructor
 	TemplateQuad(const TemplateQuad &quad);
 
