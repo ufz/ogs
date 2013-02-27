@@ -39,7 +39,12 @@ Mesh* MeshGenerator::generateLineMesh(
 	const std::size_t n_eles = subdivision;
 	std::vector<Element*> elements(n_eles);
 	for (std::size_t i = 0; i < n_eles; i++)
-		elements[i] = new Edge({{ nodes[i], nodes[i + 1] }});
+	{
+		std::array<Node*, 2> element_nodes;
+		element_nodes[0] = nodes[i];
+		element_nodes[1] = nodes[i + 1];
+		elements[i] = new Edge(element_nodes);
+	}
 
 	return new Mesh("mesh", nodes, elements);
 }
@@ -59,9 +64,9 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 		for (std::size_t j = 0; j < n_nodes; j++)
 		{
 			nodes[node_id] = new Node(origin[0] + dx * j,
-			                          origin[1] + dx * i,
-			                          origin[2],
-			                          node_id);
+									  origin[1] + dx * i,
+									  origin[2],
+									  node_id);
 			node_id++;
 		}
 
@@ -76,10 +81,12 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 		const std::size_t offset_y2 = (j + 1) * n_nodes;
 		for (std::size_t k = 0; k < subdivision; k++)
 		{
-			elements[elem_id++] = new Quad({{ nodes[offset_y1 + k],
-			                                  nodes[offset_y1 + k + 1],
-			                                  nodes[offset_y2 + k + 1],
-			                                  nodes[offset_y2 + k]}});
+			std::array<Node*, 4> element_nodes;
+			element_nodes[0] = nodes[offset_y1 + k];
+			element_nodes[1] = nodes[offset_y1 + k + 1];
+			element_nodes[2] = nodes[offset_y2 + k + 1];
+			element_nodes[3] = nodes[offset_y2 + k];
+			elements[elem_id++] = new Quad(element_nodes);
 		}
 	}
 
