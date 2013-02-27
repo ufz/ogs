@@ -62,6 +62,20 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned
 	this->_volume = this->computeVolume();
 }
 
+template<unsigned NNODES, CellType::type CELLPRISMTYPE>
+TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(std::array<Node*, NNODES> const& nodes,
+                                                   unsigned value)
+	: Cell(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[5];
+	std::fill(_neighbors, _neighbors + 5, nullptr);
+
+	this->_volume = this->computeVolume();
+}
+
 template <unsigned NNODES, CellType::type CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(const TemplatePrism<NNODES,CELLPRISMTYPE> &prism)
 	: Cell(prism.getValue())

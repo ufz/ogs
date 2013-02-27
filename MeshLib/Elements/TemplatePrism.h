@@ -15,6 +15,7 @@
 #ifndef TEMPLATEPRISM_H_
 #define TEMPLATEPRISM_H_
 
+#include <array>
 #include "MshEnums.h"
 #include "Cell.h"
 
@@ -49,6 +50,9 @@ class TemplatePrism : public Cell
 public:
 	/// Constructor with an array of mesh nodes.
 	TemplatePrism(Node* nodes[NNODES], unsigned value = 0);
+
+	/// Constructs a prism from array of Node pointers.
+	TemplatePrism(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
 	TemplatePrism(const TemplatePrism &prism);

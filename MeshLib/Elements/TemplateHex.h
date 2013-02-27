@@ -15,6 +15,7 @@
 #ifndef TEMPLATEHEX_H_
 #define TEMPLATEHEX_H_
 
+#include <array>
 #include "MshEnums.h"
 #include "Cell.h"
 
@@ -51,6 +52,9 @@ class TemplateHex : public Cell
 public:
 	/// Constructor with an array of mesh nodes.
 	TemplateHex(Node* nodes[NNODES], unsigned value = 0);
+
+	/// Constructs a hex from array of Node pointers.
+	TemplateHex(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
 	TemplateHex(const TemplateHex &hex);

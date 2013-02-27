@@ -15,6 +15,7 @@
 #ifndef TEMPLATEQUAD_H_
 #define TEMPLATEQUAD_H_
 
+#include <array>
 #include "MshEnums.h"
 #include "Face.h"
 
