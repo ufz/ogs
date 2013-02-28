@@ -173,7 +173,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 	QTime myTimer;
 	myTimer.start();
 	std::cout << "VTK Read: " << filename.toStdString() <<
-	std::endl << std::flush;
+	std::endl;
 #endif
 
 	if (filename.size() > 0)
@@ -533,17 +533,17 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		std::ofstream out ("mesh_histogram.txt");
 		if (out) {
 			out << "# histogram depicts mesh quality criterion " << MshQualityType2String(t)
-				<< " for mesh " << source->GetMesh()->getName() << std::endl;
+				<< " for mesh " << source->GetMesh()->getName() << "\n";
 			nclasses = histogram.getNrBins();
 			std::vector<size_t> const& bin_cnts(histogram.getBinCounts());
 			const double min (histogram.getMinimum());
 			const double bin_width (histogram.getBinWidth());
 
 			for (size_t k(0); k < nclasses; k++)
-				out << min+k*bin_width << " " << bin_cnts[k] << std::endl;
+				out << min+k*bin_width << " " << bin_cnts[k] << "\n";
 			out.close ();
 		} else {
-			std::cerr << "could not open file mesh_histgram.txt" << std::endl;
+			std::cerr << "could not open file mesh_histgram.txt\n";
 		}
 
 //		size_t size (100);
@@ -552,8 +552,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 //		std::ofstream out ("mesh_histogram.txt");
 //		const size_t histogram_size (histogram.size());
 //		for (size_t k(0); k < histogram_size; k++)
-//			out << k / static_cast<double>(histogram_size) << " " << histogram[k] <<
-//			std::endl;
+//			out << k / static_cast<double>(histogram_size) << " " << histogram[k] << "\n";
 //		out.close ();
 
 		delete checker;

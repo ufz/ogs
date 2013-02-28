@@ -247,7 +247,7 @@ int GMSHInterface::write(std::ostream& out)
 #ifdef BUILD_TIMESTAMP
 	out << " built on " << BUILD_TIMESTAMP;
 #endif
-	out << std::endl << std::endl;
+	out << "\n\n";
 
 	writeGMSHInputFile(out);
 	return 1;
@@ -357,7 +357,7 @@ void GMSHInterface::writePoints(std::ostream& out) const
 	const size_t n_gmsh_pnts(_gmsh_pnts.size());
 	for (size_t k(0); k<n_gmsh_pnts; k++) {
 		if (_gmsh_pnts[k]) {
-			out << *(_gmsh_pnts[k]) << std::endl;
+			out << *(_gmsh_pnts[k]) << "\n";
 		}
 	}
 }

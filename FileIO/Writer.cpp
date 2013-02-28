@@ -47,7 +47,7 @@ int Writer::writeToFile(std::string const& filename)
 		// check file stream
 		if (!fileStream)
 		{
-			std::cerr << "Could not open file " << filename << " !" << std::endl;
+			std::cerr << "Could not open file " << filename << " !\n";
 			return 0;
 		}
 

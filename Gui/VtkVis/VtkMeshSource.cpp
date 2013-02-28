@@ -76,7 +76,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 	int i = 0;
 	for (std::vector<MeshLib::Node*>::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
 	{
-		os << indent << "Point " << i << " (" << (*it)[0] << ", " << (*it)[1] << ", " << (*it)[2] << ")" << std::endl;
+		os << indent << "Point " << i << " (" << (*it)[0] << ", " << (*it)[1] << ", " << (*it)[2] << ")\n";
 	}
 
 	i = 0;
@@ -85,7 +85,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 		os << indent << "Element " << i << ": ";
 		for (unsigned t = 0; t < (*it)->getNNodes(); ++t)
 			os << (*it)->getNode(t)->getID() << " ";
-		os << std::endl;
+		os << "\n";
 	}
 }
 

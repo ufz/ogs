@@ -108,19 +108,19 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 void Raster::writeRasterAsASC(std::ostream &os) const
 {
 	// write header
-	os << "ncols " << _n_cols << std::endl;
-	os << "nrows " << _n_rows << std::endl;
-	os << "xllcorner " << _ll_pnt[0] << std::endl;
-	os << "yllcorner " << _ll_pnt[1] << std::endl;
-	os << "cellsize " <<  _cell_size << std::endl;
-	os << "NODATA_value " << _no_data_val << std::endl;
+	os << "ncols " << _n_cols << "\n";
+	os << "nrows " << _n_rows << "\n";
+	os << "xllcorner " << _ll_pnt[0] << "\n";
+	os << "yllcorner " << _ll_pnt[1] << "\n";
+	os << "cellsize " <<  _cell_size << "\n";
+	os << "NODATA_value " << _no_data_val << "\n";
 
 	// write data
 	for (unsigned row(0); row<_n_rows; row++) {
 		for (unsigned col(0); col<_n_cols; col++) {
 			os << _raster_data[(_n_rows-row-1)*_n_cols+col] << " ";
 		}
-		os << std::endl;
+		os << "\n";
 	}
 }
 
