@@ -51,15 +51,13 @@ template<class T> void CS_read(std::istream &is, unsigned &n, unsigned* &iA, uns
 
 #ifndef NDEBUG
 	// do simple checks
-	if (iA[0] != 0) std::cerr << std::endl << "CRS matrix: array iA doesn't start with 0"
-					<< std::endl;
+	if (iA[0] != 0) std::cerr << "\nCRS matrix: array iA doesn't start with 0\n";
 
 	unsigned i = 0;
 	while (i < iA[n] && jA[i] < n)
 		++i;
-	if (i < iA[n]) std::cerr << std::endl << "CRS matrix: the " << i
-					<< "th entry of jA has the value " << jA[i] << ", which is out of bounds."
-					<< std::endl;
+	if (i < iA[n]) std::cerr << "\nCRS matrix: the " << i
+					<< "th entry of jA has the value " << jA[i] << ", which is out of bounds.\n";
 #endif
 }
 

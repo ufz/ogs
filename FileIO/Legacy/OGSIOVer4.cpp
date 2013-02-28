@@ -605,9 +605,9 @@ void writeGLIFileV4 (const std::string& fname,
 			if ((*plys)[k]->isClosed())
 			{
 				os << "#SURFACE" << "\n";
-				os << " $NAME " << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << std::endl;
+				os << " $NAME " << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
 				os << " $TYPE " << "\n" << "  0" << "\n";
-				os << " $POLYLINES" << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << std::endl;
+				os << " $POLYLINES" << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
 			}
 	}
 

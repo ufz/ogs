@@ -183,15 +183,15 @@ void GMSHPolygonTree::writeLineLoop(size_t &line_offset, size_t &sfc_offset, std
 	size_t first_pnt_id(_node_polygon->getPointID(0)), second_pnt_id;
 	for (size_t k(1); k<n_pnts; k++) {
 		second_pnt_id = _node_polygon->getPointID(k);
-		out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};" << std::endl;
+		out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
 		first_pnt_id = second_pnt_id;
 	}
 	out << "Line Loop(" << line_offset + n_pnts-1 << ") = {";
 	for (size_t k(0); k<n_pnts - 2; k++) {
 		out << line_offset+k << ",";
 	}
-	out << line_offset+n_pnts-2 << "};" << std::endl;
-	out << "Plane Surface(" << sfc_offset << ") = {" << line_offset+n_pnts-1 << "};" << std::endl;
+	out << line_offset+n_pnts-2 << "};\n";
+	out << "Plane Surface(" << sfc_offset << ") = {" << line_offset+n_pnts-1 << "};\n";
 	line_offset += n_pnts;
 	sfc_offset++;
 }
@@ -205,8 +205,8 @@ void GMSHPolygonTree::writeLineConstraints(size_t &line_offset, size_t sfc_numbe
 		for (size_t k(1); k<n_pnts; k++) {
 			second_pnt_id = _plys[j]->getPointID(k);
 			if (_plys[j]->isSegmentMarked(k-1) && _node_polygon->isPntInPolygon(*(_plys[j]->getPoint(k)))) {
-				out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};" << std::endl;
-				out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };" << std::endl;
+				out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
+				out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };\n";
 			}
 			first_pnt_id = second_pnt_id;
 		}
@@ -225,9 +225,9 @@ void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(size_t &line_offset, siz
 		size_t first_pnt_id(_node_polygon->getPointID(0)), second_pnt_id;
 		for (size_t k(1); k<n_pnts; k++) {
 			second_pnt_id = _node_polygon->getPointID(k);
-			out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};" << std::endl;
+			out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
 			first_pnt_id = second_pnt_id;
-			out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };" << std::endl;
+			out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };\n";
 		}
 		line_offset += n_pnts;
 	}
@@ -239,8 +239,8 @@ void GMSHPolygonTree::writeStations(size_t & pnt_id_offset, size_t sfc_number, s
 	const size_t n_stations(_stations.size());
 	for (size_t k(0); k<n_stations; k++) {
 		out << "Point(" << pnt_id_offset + k << ") = {" << (*(_stations[k]))[0] << "," << (*(_stations[k]))[1] << ", 0.0, ";
-		out << _mesh_density_strategy->getMeshDensityAtPoint(_stations[k]) << "};" << std::endl;
-		out << "Point { " << pnt_id_offset + k << " } In Surface { " << sfc_number << " }; " << std::endl;
+		out << _mesh_density_strategy->getMeshDensityAtPoint(_stations[k]) << "};\n";
+		out << "Point { " << pnt_id_offset + k << " } In Surface { " << sfc_number << " };\n";
 	}
 	pnt_id_offset += n_stations;
 }
@@ -254,8 +254,8 @@ void GMSHPolygonTree::writeAdditionalPointData(size_t & pnt_id_offset, size_t sf
 		for (size_t k(0); k<n; k++) {
 			if (_node_polygon->isPntInPolygon(*(steiner_pnts[k]))) {
 				out << "Point(" << pnt_id_offset + k << ") = {" << (*(steiner_pnts[k]))[0] << "," << (*(steiner_pnts[k]))[1] << ", 0.0, ";
-				out << _mesh_density_strategy->getMeshDensityAtPoint(steiner_pnts[k]) << "};" << std::endl;
-				out << "Point { " << pnt_id_offset + k << " } In Surface { " << sfc_number << " }; " << std::endl;
+				out << _mesh_density_strategy->getMeshDensityAtPoint(steiner_pnts[k]) << "};\n";
+				out << "Point { " << pnt_id_offset + k << " } In Surface { " << sfc_number << " };\n";
 			}
 			delete steiner_pnts[k];
 		}

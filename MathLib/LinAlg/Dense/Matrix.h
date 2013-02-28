@@ -275,7 +275,7 @@ template <class T> void Matrix<T>::write (std::ostream &out) const
 		for (std::size_t j = 0; j < ncols; j++) {
 			out << data[address(i, j)] << "\t";
 		}
-		out << std::endl;
+		out << "\n";
 	}
 }
 

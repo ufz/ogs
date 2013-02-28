@@ -51,7 +51,7 @@ int main (int argc, char* argv[])
 	FEMRead(file_base_name, mesh_vec);
 	if (mesh_vec.empty())
 	{
-		std::cerr << "could not read mesh from file " << tmp << std::endl;
+		std::cerr << "could not read mesh from file " << tmp << "\n";
 		return -1;
 	}
 	MeshLib::CFEMesh* mesh (mesh_vec[mesh_vec.size() - 1]);
