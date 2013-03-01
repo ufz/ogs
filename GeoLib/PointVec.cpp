@@ -41,7 +41,8 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
 	if (number_of_all_input_pnts - _data_vec->size() > 0)
-		WARN("PointVec::PointVec(): there are %d double points.", number_of_all_input_pnts - _data_vec->size());
+		WARN("PointVec::PointVec(): there are %d double points.",
+		     number_of_all_input_pnts - _data_vec->size());
 }
 
 PointVec::~PointVec ()
@@ -114,7 +115,7 @@ double PointVec::getShortestPointDistance () const
 	return sqrt (_sqr_shortest_dist);
 }
 
-void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
+void PointVec::makePntsUnique (std::vector<GeoLib::Point*> *& pnt_vec,
                                std::vector<size_t> &pnt_id_map, double eps)
 {
 	size_t n_pnts_in_file (pnt_vec->size());
@@ -178,20 +179,23 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	BaseLib::Quicksort<std::size_t, GeoLib::Point*> (perm, 0, n_pnts_in_file, *pnt_vec);
 
 	// remove the second, third, ... occurrence from vector
-	for (size_t k(0); k < n_pnts_in_file; k++)
+	for (size_t k(0); k < n_pnts_in_file; k++) {
 		if (pnt_id_map[k] < k)
 		{
 			delete (*pnt_vec)[k];
 			(*pnt_vec)[k] = NULL;
 		}
-	// remove NULL-ptr from vector
-	for (std::vector<GeoLib::Point*>::iterator it(pnt_vec->begin()); it != pnt_vec->end(); )
-	{
-		if (*it == NULL)
-			it = pnt_vec->erase (it);
-		else
-			it++;
 	}
+
+	std::vector<GeoLib::Point*>* tmp_pnt_vec(new std::vector<GeoLib::Point*>);
+	// erasing elements from a vector is expensive, for this reason copy non nullptr to new vector
+	for (std::vector<GeoLib::Point*>::iterator it(pnt_vec->begin()); it != pnt_vec->end(); ) {
+		if (*it != nullptr)
+			tmp_pnt_vec->push_back(*it);
+		it++;
+	}
+	std::swap(tmp_pnt_vec, pnt_vec);
+	delete tmp_pnt_vec;
 
 	// renumber id-mapping
 	size_t cnt (0);
@@ -205,18 +209,6 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 		else
 			pnt_id_map[k] = pnt_id_map[pnt_id_map[k]];
 	}
-
-	// KR correct renumbering of indices
-//	size_t cnt(0);
-//	std::map<size_t, size_t> reg_ids;
-//	for (size_t k(0); k < n_pnts_in_file; k++) {
-//		if (pnt_id_map[k] == k) {
-//			reg_ids.insert(std::pair<size_t, size_t>(k, cnt));
-//			cnt++;
-//		} else reg_ids.insert(std::pair<size_t, size_t>(k, reg_ids[pnt_id_map[k]]));
-//	}
-//	for (size_t k(0); k < n_pnts_in_file; k++)
-//		pnt_id_map[k] = reg_ids[k];
 }
 
 void PointVec::calculateShortestDistance ()
@@ -236,6 +228,4 @@ std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<size_t> &subs
 
 	return new_points;
 }
-
-
 } // end namespace
