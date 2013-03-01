@@ -60,10 +60,6 @@ IF (Shapelib_FOUND)
 	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
 ENDIF () # Shapelib_FOUND
 
-IF (VTKOSGCONVERTER_FOUND)
-	INCLUDE_DIRECTORIES( ${VTKOSGCONVERTER_INCLUDE_DIRS} )
-ENDIF ()
-
 # Put moc files in a project folder
 SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 SOURCE_GROUP("Moc Files" REGULAR_EXPRESSION "moc_.*")
@@ -111,7 +107,7 @@ IF (Shapelib_FOUND)
 ENDIF () # Shapelib_FOUND
 
 IF (libgeotiff_FOUND)
-	TARGET_LINK_LIBRARIES( ogs-gui ${libtiff_LIBRARIES} ${libgeotiff_LIBRARIES} )
+	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
 
 ADD_DEPENDENCIES ( ogs-gui VtkVis OGSProject )
