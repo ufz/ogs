@@ -107,7 +107,7 @@ IF (Shapelib_FOUND)
 ENDIF () # Shapelib_FOUND
 
 IF (libgeotiff_FOUND)
-	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} )
+	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} ${libtiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
 
 ADD_DEPENDENCIES ( ogs-gui VtkVis OGSProject )
