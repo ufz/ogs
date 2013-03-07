@@ -144,7 +144,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 		{
 			if(!dynamic_cast<vtkImageActor*>(_actor))
 			{
-				bool lResult;
 				InitializeSdkObjects(lSdkManager, lScene);
 
 				VtkFbxConverter fbxConverter(static_cast<vtkActor*>(_actor), lScene);
