@@ -34,23 +34,6 @@ IF (Shapelib_FOUND)
 
 ENDIF (Shapelib_FOUND)
 
-## Gli to VTK file converter ##
-IF(VTK_FOUND AND Boost_FOUND)
-
-	INCLUDE( ${VTK_USE_FILE} )
-
-	ADD_EXECUTABLE (ConvertGliToVtk ConvertGliToVtk.cpp)
-	SET_TARGET_PROPERTIES(ConvertGliToVtk PROPERTIES FOLDER Utilities)
-
-	INCLUDE_DIRECTORIES ( ${Boost_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/Gui/VtkVis )
-	TARGET_LINK_LIBRARIES ( ConvertGliToVtk FileIO VtkVis vtkRendering vtkIO ${Boost_LIBRARIES})
-
-	IF (OGS_PACKAGING)
-		INSTALL ( TARGETS ConvertGliToVtk RUNTIME DESTINATION bin COMPONENT ConvertGliToVtk )
-	ENDIF (OGS_PACKAGING)
-
-ENDIF() # VTK_FOUND AND Boost_FOUND
-
 IF (QT4_FOUND)
 	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
 	TARGET_LINK_LIBRARIES (generateBCandGLI
