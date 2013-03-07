@@ -567,14 +567,14 @@ void writeGLIFileV4 (const std::string& fname,
 		std::string pnt_name;
 		const size_t n_pnts(pnts->size());
 		INFO("GeoLib::writeGLIFileV4(): writing %d points to file %s.", n_pnts, fname.c_str());
-		os << "#POINTS" << std::endl;
+		os << "#POINTS" << "\n";
 		os.precision (20);
 		for (size_t k(0); k < n_pnts; k++) {
-			os << k << " " << *((*pnts)[k]) << std::flush;
+			os << k << " " << *((*pnts)[k]);
 			if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
-				os << " $NAME " << pnt_name << std::flush;
+				os << " $NAME " << pnt_name;
 			}
-			os << std::endl;
+			os << "\n";
 		}
 	}
 
@@ -586,13 +586,13 @@ void writeGLIFileV4 (const std::string& fname,
 		     plys->size (), fname.c_str());
 		for (size_t k(0); k < plys->size(); k++)
 		{
-			os << "#POLYLINE" << std::endl;
+			os << "#POLYLINE" << "\n";
 			std::string polyline_name;
 			plys_vec->getNameOfElement((*plys)[k], polyline_name);
-			os << " $NAME " << std::endl << "  " << polyline_name << std::endl;
-			os << " $POINTS" << std::endl;
+			os << " $NAME " << "\n" << "  " << polyline_name << "\n";
+			os << " $POINTS" << "\n";
 			for (size_t j(0); j < (*plys)[k]->getNumberOfPoints(); j++)
-				os << "  " << ((*plys)[k])->getPointID(j) << std::endl;
+				os << "  " << ((*plys)[k])->getPointID(j) << "\n";
 		}
 	}
 
@@ -604,14 +604,14 @@ void writeGLIFileV4 (const std::string& fname,
 		for (size_t k(0); k < plys->size(); k++)
 			if ((*plys)[k]->isClosed())
 			{
-				os << "#SURFACE" << std::endl;
-				os << " $NAME " << std::endl << "  " << k << std::endl; //plys_vec->getNameOfElement ((*plys)[k]) << std::endl;
-				os << " $TYPE " << std::endl << "  0" << std::endl;
-				os << " $POLYLINES" << std::endl << "  " << k << std::endl; //plys_vec->getNameOfElement ((*plys)[k]) << std::endl;
+				os << "#SURFACE" << "\n";
+				os << " $NAME " << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
+				os << " $TYPE " << "\n" << "  0" << "\n";
+				os << " $POLYLINES" << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
 			}
 	}
 
-	os << "#STOP" << std::endl;
+	os << "#STOP" << "\n";
 	os.close ();
 }
 
@@ -630,7 +630,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 	pnts_id_offset.push_back (0);
 
 	// writing all points
-	os << "#POINTS" << std::endl;
+	os << "#POINTS" << "\n";
 	for (size_t j(0); j < geo_names.size(); j++)
 	{
 		os.precision (20);
@@ -640,11 +640,11 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			std::string pnt_name;
 			const size_t n_pnts(pnts->size());
 			for (size_t k(0); k < n_pnts; k++) {
-				os << pnts_offset + k << " " << *((*pnts)[k]) << std::flush;
+				os << pnts_offset + k << " " << *((*pnts)[k]);
 				if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
-					os << " $NAME " << pnt_name << std::flush;
+					os << " $NAME " << pnt_name;
 				}
-				os << std::endl;
+				os << "\n";
 			}
 			pnts_offset += pnts->size();
 			pnts_id_offset.push_back (pnts_offset);
@@ -664,8 +664,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 		{
 			for (size_t k(0); k < pnts->size(); k++)
 				os << k + pnts_offset << " " << *((*pnts)[k]) << " $NAME " <<
-				static_cast<GeoLib::Station*>((*pnts)[k])->getName() <<
-				std::endl;
+				static_cast<GeoLib::Station*>((*pnts)[k])->getName() << "\n";
 			pnts_offset += pnts->size();
 			pnts_id_offset.push_back (pnts_offset);
 		}
@@ -680,18 +679,18 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 		if (plys_vec) {
 			const std::vector<GeoLib::Polyline*>* plys (plys_vec->getVector());
 			for (size_t k(0); k < plys->size(); k++) {
-				os << "#POLYLINE" << std::endl;
+				os << "#POLYLINE" << "\n";
 				std::string ply_name;
 				if (plys_vec->getNameOfElementByID (plys_cnt, ply_name))
-					os << "\t$NAME " << std::endl << "\t\t" << ply_name <<
-					std::endl;
+					os << "\t$NAME " << "\n" << "\t\t" << ply_name <<
+					"\n";
 				else
-					os << "\t$NAME " << std::endl << "\t\t" << geo_names[j] <<
-					"-" << plys_cnt << std::endl;
-				os << "\t$POINTS" << std::endl;
+					os << "\t$NAME " << "\n" << "\t\t" << geo_names[j] <<
+					"-" << plys_cnt << "\n";
+				os << "\t$POINTS" << "\n";
 				for (size_t l(0); l < (*plys)[k]->getNumberOfPoints(); l++)
 					os << "\t\t" << pnts_id_offset[j] +
-					((*plys)[k])->getPointID(l) << std::endl;
+					((*plys)[k])->getPointID(l) << "\n";
 				plys_cnt++;
 			}
 		}
@@ -706,17 +705,17 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 				const std::vector<GeoLib::Surface*>* sfcs (sfcs_vec->getVector());
 				for (size_t k(0); k < sfcs->size(); k++)
 				{
-					os << "#SURFACE" << std::endl;
+					os << "#SURFACE" << "\n";
 					std::string sfc_name(path);
 					if (sfcs_vec->getNameOfElementByID (sfcs_cnt, sfc_name)) {
-						os << "\t$NAME " << std::endl << "\t\t" << sfc_name << std::endl;
+						os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
 					} else {
-						os << "\t$NAME " << std::endl << "\t\t" << sfcs_cnt << std::endl;
+						os << "\t$NAME " << "\n" << "\t\t" << sfcs_cnt << "\n";
 					sfc_name += BaseLib::number2str (sfcs_cnt);
 				}
 				sfc_name += ".tin";
-				os << "\t$TIN" << std::endl;
-				os << "\t\t" << sfc_name << std::endl;
+				os << "\t$TIN" << "\n";
+				os << "\t\t" << sfc_name << "\n";
 				// create tin file
 				std::ofstream tin_os (sfc_name.c_str());
 				GeoLib::Surface const& sfc (*(*sfcs)[k]);
@@ -725,7 +724,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 						GeoLib::Triangle const& tri (*(sfc[l]));
 					tin_os << l << " " << *(tri.getPoint(0)) << " " <<
 					*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) <<
-					std::endl;
+					"\n";
 				}
 				tin_os.close();
 
@@ -734,7 +733,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 		}
 	}
 
-	os << "#STOP" << std::endl;
+	os << "#STOP" << "\n";
 	os.close ();
 }
 } // end namespace

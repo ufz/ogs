@@ -208,7 +208,7 @@ public:
 	QList<QVariant> GetUserVectorProperty(QString name) const;
 
 	/// @brief Set the active attribute
-	void SetActiveAttribute(QString name) { _activeAttributeName = name; }
+	void SetActiveAttribute(QString name);
 
 	/// @brief Returns the desired active attribute.
 	QString GetActiveAttribute() const { return _activeAttributeName; }

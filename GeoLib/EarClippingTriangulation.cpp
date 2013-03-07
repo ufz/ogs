@@ -12,17 +12,17 @@
  *
  */
 
+// GeoLib
+#include "EarClippingTriangulation.h"
+
 // STL
 #include <vector>
 
 // BaseLib
 #include "uniqueInsert.h"
 
-// MathLib
-#include "EarClippingTriangulation.h"
-
-namespace MathLib {
-
+namespace GeoLib
+{
 EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygon,
 		std::list<GeoLib::Triangle> &triangles, bool rot)
 {
@@ -39,7 +39,7 @@ EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygo
 
 	std::vector<GeoLib::Point*> const& ref_pnts_vec (polygon->getPointsVec());
 	std::list<GeoLib::Triangle>::const_iterator it (_triangles.begin());
-	if (_original_orient == MathLib::CW) {
+	if (_original_orient == GeoLib::CW) {
 		while (it != _triangles.end()) {
 			const std::size_t i0 (polygon->getPointID ((*it)[0]));
 			const std::size_t i1 (polygon->getPointID ((*it)[1]));
@@ -48,11 +48,11 @@ EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygo
 			it++;
 		}
 	} else {
-		std::size_t n_pnts (_pnts.size()-1);
+		std::size_t n_pnts (_pnts.size() - 1);
 		while (it != _triangles.end()) {
-			const std::size_t i0 (polygon->getPointID (n_pnts-(*it)[0]));
-			const std::size_t i1 (polygon->getPointID (n_pnts-(*it)[1]));
-			const std::size_t i2 (polygon->getPointID (n_pnts-(*it)[2]));
+			const std::size_t i0 (polygon->getPointID (n_pnts - (*it)[0]));
+			const std::size_t i1 (polygon->getPointID (n_pnts - (*it)[1]));
+			const std::size_t i2 (polygon->getPointID (n_pnts - (*it)[2]));
 			triangles.push_back (GeoLib::Triangle (ref_pnts_vec, i0, i1, i2));
 			it++;
 		}
@@ -70,7 +70,7 @@ EarClippingTriangulation::~EarClippingTriangulation()
 void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon)
 {
 	// copy points - last point is identical to the first
-	std::size_t n_pnts (polygon->getNumberOfPoints()-1);
+	std::size_t n_pnts (polygon->getNumberOfPoints() - 1);
 	for (std::size_t k(0); k < n_pnts; k++) {
 		_pnts.push_back (new GeoLib::Point (*(polygon->getPoint(k))));
 	}
@@ -79,7 +79,7 @@ void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon
 void EarClippingTriangulation::rotate ()
 {
 	// calculate supporting plane
-	Vector plane_normal;
+	MathLib::Vector plane_normal;
 	double d;
 	// compute the plane normal
 	getNewellPlane(_pnts, plane_normal, d);
@@ -98,7 +98,7 @@ void EarClippingTriangulation::ensureCWOrientation ()
 {
 	std::size_t n_pnts (_pnts.size());
 	// get the left most upper point
-	std::size_t min_x_max_y_idx (0);	// for orientation check
+	std::size_t min_x_max_y_idx (0); // for orientation check
 	for (std::size_t k(0); k<n_pnts; k++) {
 		if ((*(_pnts[k]))[0] <= (*(_pnts[min_x_max_y_idx]))[0]) {
 			if ((*(_pnts[k]))[0] < (*(_pnts[min_x_max_y_idx]))[0]) {
@@ -112,16 +112,16 @@ void EarClippingTriangulation::ensureCWOrientation ()
 	}
 	// determine orientation
 	if (0 < min_x_max_y_idx && min_x_max_y_idx < n_pnts-1) {
-		_original_orient = MathLib::getOrientation (
+		_original_orient = GeoLib::getOrientation (
 			_pnts[min_x_max_y_idx-1], _pnts[min_x_max_y_idx], _pnts[min_x_max_y_idx+1]);
 	} else {
 		if (0 == min_x_max_y_idx) {
-			_original_orient = MathLib::getOrientation (_pnts[n_pnts-1], _pnts[0], _pnts[1]);
+			_original_orient = GeoLib::getOrientation (_pnts[n_pnts-1], _pnts[0], _pnts[1]);
 		} else {
-			_original_orient = MathLib::getOrientation (_pnts[n_pnts-2], _pnts[n_pnts-1], _pnts[0]);
+			_original_orient = GeoLib::getOrientation (_pnts[n_pnts-2], _pnts[n_pnts-1], _pnts[0]);
 		}
 	}
-	if (_original_orient == MathLib::CCW) {
+	if (_original_orient == GeoLib::CCW) {
 		// switch orientation
 		for (std::size_t k(0); k<n_pnts/2; k++) {
 			std::swap (_pnts[k], _pnts[n_pnts-1-k]);
@@ -155,14 +155,14 @@ void EarClippingTriangulation::initLists ()
 	prev--;
 	next = it;
 	next++;
-	MathLib::Orientation orientation;
+	GeoLib::Orientation orientation;
 	while (next != _vertex_list.end()) {
 		orientation  = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
-		if (orientation == COLLINEAR) {
+		if (orientation == GeoLib::COLLINEAR) {
 			it = _vertex_list.erase (it);
 			next++;
 		} else {
-			if (orientation == CW) {
+			if (orientation == GeoLib::CW) {
 				_convex_vertex_list.push_back (*it);
 				if (isEar (*prev, *it, *next))
 					_ear_list.push_back (*it);
@@ -175,10 +175,10 @@ void EarClippingTriangulation::initLists ()
 
 	next = _vertex_list.begin();
 	orientation = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
-	if (orientation == COLLINEAR) {
+	if (orientation == GeoLib::COLLINEAR) {
 		it = _vertex_list.erase (it);
 	}
-	if (orientation == CW) {
+	if (orientation == GeoLib::CW) {
 		_convex_vertex_list.push_back (*it);
 		if (isEar (*prev, *it, *next))
 			_ear_list.push_back (*it);
@@ -224,9 +224,9 @@ void EarClippingTriangulation::clipEars()
 				prevprev--;
 
 				// apply changes to _convex_vertex_list and _ear_list looking "backward"
-				MathLib::Orientation orientation = getOrientation(_pnts[*prevprev], _pnts[*prev],
+				GeoLib::Orientation orientation = GeoLib::getOrientation(_pnts[*prevprev], _pnts[*prev],
 						_pnts[*next]);
-				if (orientation == CW) {
+				if (orientation == GeoLib::CW) {
 					BaseLib::uniquePushBack(_convex_vertex_list, *prev);
 					// prev is convex
 					if (isEar(*prevprev, *prev, *next)) {
@@ -240,7 +240,7 @@ void EarClippingTriangulation::clipEars()
 					// prev is not convex => reflex or collinear
 					_convex_vertex_list.remove(*prev);
 					_ear_list.remove(*prev);
-					if (orientation == COLLINEAR) {
+					if (orientation == GeoLib::COLLINEAR) {
 						prev = _vertex_list.erase(prev);
 						if (prev == _vertex_list.begin()) {
 							prev = _vertex_list.end();
@@ -265,7 +265,7 @@ void EarClippingTriangulation::clipEars()
 				// apply changes to _convex_vertex_list and _ear_list looking "forward"
 				orientation = getOrientation(_pnts[*prev], _pnts[*next],
 						_pnts[*nextnext]);
-				if (orientation == CW) {
+				if (orientation == GeoLib::CW) {
 					BaseLib::uniquePushBack(_convex_vertex_list, *next);
 					// next is convex
 					if (isEar(*prev, *next, *nextnext)) {
@@ -279,7 +279,7 @@ void EarClippingTriangulation::clipEars()
 					// next is not convex => reflex or collinear
 					_convex_vertex_list.remove(*next);
 					_ear_list.remove(*next);
-					if (orientation == COLLINEAR) {
+					if (orientation == GeoLib::COLLINEAR) {
 						next = _vertex_list.erase(next);
 						if (next == _vertex_list.end())
 							next = _vertex_list.begin();
@@ -298,10 +298,10 @@ void EarClippingTriangulation::clipEars()
 	next++;
 	it = next;
 	next++;
-	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == CCW)
+	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == GeoLib::CCW)
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *next, *it));
 	else
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
 }
 
-} // end namespace MathLib
+} // end namespace GeoLib

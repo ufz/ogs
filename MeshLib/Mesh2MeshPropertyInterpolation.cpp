@@ -113,29 +113,29 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 
 			std::string aabb_fname(base_name + "-aabb.gli");
 			std::ofstream out_aabb(aabb_fname.c_str());
-			out_aabb << "#POINTS" << std::endl;
-			out_aabb << "0 " << elem_aabb.getMinPoint() << std::endl;
-			out_aabb << "1 " << elem_aabb.getMaxPoint() << std::endl;
-			out_aabb << "#STOP" << std::endl;
+			out_aabb << "#POINTS" << "\n";
+			out_aabb << "0 " << elem_aabb.getMinPoint() << "\n";
+			out_aabb << "1 " << elem_aabb.getMaxPoint() << "\n";
+			out_aabb << "#STOP" << "\n";
 			out_aabb.close();
 
 
 			std::string source_fname(base_name + "-SourceNodes.gli");
 			std::ofstream out_src(source_fname.c_str());
-			out_src << "#POINTS" << std::endl;
+			out_src << "#POINTS" << "\n";
 			size_t nodes_cnt(0);
 			for (size_t i(0); i<nodes.size(); ++i) {
 				std::vector<MeshLib::Node*> const* i_th_vec(nodes[i]);
 				const size_t n_nodes_in_vec(i_th_vec->size());
 				for (size_t j(0); j<n_nodes_in_vec; j++) {
 					MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
-					out_src << nodes_cnt << " " << *(dynamic_cast<GeoLib::Point const*>(j_th_node)) << std::endl;
+					out_src << nodes_cnt << " " << *(dynamic_cast<GeoLib::Point const*>(j_th_node)) << "\n";
 					nodes_cnt++;
 				}
 			}
-			out_src << "#STOP" << std::endl;
+			out_src << "#STOP" << "\n";
 			out_src.close();
-			std::cerr << "no source nodes in dest element " << k << std::endl;
+			std::cerr << "no source nodes in dest element " << k << "\n";
 		}
 	}
 }

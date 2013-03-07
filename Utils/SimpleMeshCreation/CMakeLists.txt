@@ -33,6 +33,7 @@ IF(QT4_FOUND)
 		FileIO
 		VtkVis	
 		vtkRendering
+		zlib
 		${QT_LIBRARIES}
 	)
 

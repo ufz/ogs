@@ -109,3 +109,12 @@ QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) cons
 		return QList<QVariant>();
 	}
 }
+
+void VtkAlgorithmProperties::SetActiveAttribute(QString name)
+{
+	if (name.contains("Solid Color") || name.contains("P-TextureCoordinates"))
+		SetScalarVisibility(false);
+	else
+		SetScalarVisibility(true);
+	_activeAttributeName = name;
+}

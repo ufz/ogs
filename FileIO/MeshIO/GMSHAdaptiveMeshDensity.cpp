@@ -29,6 +29,9 @@
 #include "Polyline.h"
 #endif
 
+// MathLib
+#include "MathTools.h"
+
 namespace FileIO
 {
 GMSHAdaptiveMeshDensity::GMSHAdaptiveMeshDensity(double pnt_density, double station_density,

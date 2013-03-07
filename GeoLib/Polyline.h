@@ -15,15 +15,12 @@
 #ifndef POLYLINE_H_
 #define POLYLINE_H_
 
+#include <cmath>
+#include <vector>
+
 // GeoLib
 #include "GeoObject.h"
 #include "Point.h"
-
-// MathLib
-#include "MathTools.h"
-
-#include <cmath>
-#include <vector>
 
 namespace GeoLib
 {
@@ -93,10 +90,8 @@ public:
 
 	/**
 	 * Closes a polyline by adding a line segment that connects start- and end-point.
-	 * \param ply A Polyline containing at least three points.
-	 * \return A polygon.
 	 */
-	static Polyline* closePolyline(const Polyline& ply);
+	void closePolyline();
 
 	/// Constructs one polyline from a vector of connected polylines.
 	/// All polylines in this vector need to reference the same point vector.
@@ -133,10 +128,6 @@ public:
 	 */
 	void setPointID(std::size_t idx, std::size_t id);
 
-	/** \brief const access operator for the access to the i-th point of the polyline.
-	 */
-	const Point* operator[](std::size_t i) const;
-
 	/**
 	 * \brief returns the i-th point contained in the polyline
 	 * */
@@ -151,12 +142,6 @@ public:
 	 */
 	double getLength (std::size_t k) const;
 
-	/**
-	 * get the complete length vector
-	 * @return the length vector of the polyline
-	 */
-	const std::vector<double>& getLengthVec () const;
-
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
 	/**
@@ -169,11 +154,6 @@ protected:
 	 * @return a value of enum LOCATION
 	 */
 	Location::type getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
-
-	static bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
-	                               std::size_t i,
-	                               std::size_t j,
-	                               double prox);
 
 	/** a reference to the vector of pointers to the geometric points */
 	const std::vector<Point*> &_ply_pnts;
@@ -190,7 +170,9 @@ std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 
-bool isLineSegmentIntersecting (const Polyline& ply, GeoLib::Point const& s0, GeoLib::Point const& s1);
+bool isLineSegmentIntersecting (const Polyline& ply,
+                                GeoLib::Point const& s0,
+                                GeoLib::Point const& s1);
 
 /**
  * comparison operator
@@ -200,6 +182,8 @@ bool isLineSegmentIntersecting (const Polyline& ply, GeoLib::Point const& s0, Ge
  */
 bool operator==(Polyline const& lhs, Polyline const& rhs);
 
+bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::size_t j,
+                        double prox);
 } // end namespace
 
 #endif /* POLYLINE_H_ */

@@ -242,23 +242,25 @@ int MeshIO::write(std::ostream &out)
 
 	setPrecision(9);
 
-	out << "#FEM_MSH" << std::endl;
-
-	out << "$PCS_TYPE" << std::endl << "  NO_PCS" << std::endl;
-
-	out << "$NODES" << std::endl << "  ";
+	out << "#FEM_MSH\n"
+		<< "$PCS_TYPE\n"
+		<< "  NO_PCS\n"
+		<< "$NODES\n"
+		<< "  ";
 	const size_t n_nodes(_mesh->getNNodes());
-	out << n_nodes << std::endl;
+	out << n_nodes << "\n";
 	for (size_t i(0); i < n_nodes; ++i) {
-		out << i << " " << *(_mesh->getNode(i)) << std::endl;
+		out << i << " " << *(_mesh->getNode(i)) << "\n";
 	}
 
-	out << "$ELEMENTS" << std::endl << "  ";
+	out << "$ELEMENTS\n"
+		<< "  ";
+
 	writeElementsExceptLines(_mesh->getElements(), out);
 
-	out << " $LAYER" << std::endl;
-	out << "  0" << std::endl;
-	out << "#STOP" << std::endl;
+	out << " $LAYER\n"
+		<< "  0\n"
+		<< "#STOP\n";
 
 	return 1;
 }
@@ -289,14 +291,14 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 			}
 		}
 	}
-	out << n_elements << std::endl;
+	out << n_elements << "\n";
 	for (size_t i(0), k(0); i < ele_vector_size; ++i) {
 		if (non_line_element[i] && non_null_element[i]) {
 			out << k << " " << ele_vec[i]->getValue() << " " << MshElemType2String(ele_vec[i]->getGeomType()) << " ";
 			unsigned nElemNodes (ele_vec[i]->getNNodes());
 			for(size_t j = 0; j < nElemNodes; ++j)
 				out << ele_vec[i]->getNode(nElemNodes - j - 1)->getID() << " ";
-			out << std::endl;
+			out << "\n";
 			++k;
 		}
 	}

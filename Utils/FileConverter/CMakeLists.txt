@@ -43,8 +43,7 @@ IF(VTK_FOUND AND Boost_FOUND)
 	SET_TARGET_PROPERTIES(ConvertGliToVtk PROPERTIES FOLDER Utilities)
 
 	INCLUDE_DIRECTORIES ( ${Boost_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/Gui/VtkVis )
-	TARGET_LINK_LIBRARIES ( ConvertGliToVtk FileIO VtkVis vtkRendering vtkIO
-boost_filesystem-mt boost_system-mt boost_regex-mt)
+	TARGET_LINK_LIBRARIES ( ConvertGliToVtk FileIO VtkVis vtkRendering vtkIO ${Boost_LIBRARIES})
 
 	IF (OGS_PACKAGING)
 		INSTALL ( TARGETS ConvertGliToVtk RUNTIME DESTINATION bin COMPONENT ConvertGliToVtk )

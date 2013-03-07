@@ -28,6 +28,20 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 	this->_area = this->computeVolume();
 }
 
+template<unsigned NNODES, CellType::type CELLTRITYPE>
+TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& nodes,
+                                             unsigned value)
+	: Face(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[3];
+	std::fill(_neighbors, _neighbors + 3, nullptr);
+
+	this->_area = this->computeVolume();
+}
+
 template <unsigned NNODES, CellType::type CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE> &tri) :
 	Face(tri.getValue())
@@ -64,7 +78,7 @@ bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 template <unsigned NNODES, CellType::type CELLTRITYPE>
 bool TemplateTri<NNODES,CELLTRITYPE>::isPntInside(GeoLib::Point const& pnt, double eps) const
 {
-	return MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
+	return GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }
 
 template <unsigned NNODES, CellType::type CELLTRITYPE>

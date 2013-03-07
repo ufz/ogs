@@ -15,6 +15,7 @@
 #ifndef TEMPLATEPYRAMID_H_
 #define TEMPLATEPYRAMID_H_
 
+#include <array>
 #include "MshEnums.h"
 #include "Cell.h"
 
@@ -47,6 +48,9 @@ class TemplatePyramid : public Cell
 public:
 	/// Constructor with an array of mesh nodes.
 	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0);
+
+	/// Constructs a pyramid from array of Node pointers.
+	TemplatePyramid(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
 	TemplatePyramid(const TemplatePyramid &pyramid);

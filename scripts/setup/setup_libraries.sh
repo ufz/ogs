@@ -15,6 +15,8 @@ SHAPELIB_VERSION="shapelib-1.3.0"
 LIBGEOTIFF_VERSION="libgeotiff-1.3.0"
 INSTANTCLIENT_VERSION="instantclient_11_2"
 METIS_VERSION="metis-5.0.2"
+BOOST_VERSION="1.53.0"
+BOOST_VERSION_UNDERSCORE=${BOOST_VERSION//./_}
 
 ## Windows specific
 if [ "$OSTYPE" == 'msys' ]; then
@@ -61,7 +63,7 @@ if [ "$OSTYPE" == 'msys' ]; then
 			exit\
 			" > build.bat
 
-			$COMSPEC \/k build.bat
+			$COMSPEC //k build.bat
 			QT_WAS_BUILT=true
 		fi
 
@@ -129,7 +131,7 @@ if [ "$OSTYPE" == 'msys' ]; then
 		exit\
 		" > build.bat
 
-		$COMSPEC \/k build.bat
+		$COMSPEC //k build.bat
 	fi
 
 	# Install libgeotiff
@@ -161,7 +163,7 @@ if [ "$OSTYPE" == 'msys' ]; then
 		exit\
 		" > build.bat
 
-		$COMSPEC \/k build.bat
+		$COMSPEC //k build.bat
 	fi
 
 	# Install Metis
@@ -182,12 +184,38 @@ if [ "$OSTYPE" == 'msys' ]; then
 	else
 		# Compile
 		cd metis
-		$COMSPEC \/c "vsgen.bat -G \"$CMAKE_GENERATOR\""
+		$COMSPEC //c "vsgen.bat -G \"$CMAKE_GENERATOR\""
 		cd build/windows
 		cmake --build . --config Release
 		cd ../..
 		cp build/windows/libmetis/Release/metis.lib ../lib/metis.lib
 		cp include/metis.h ../include/metis.h
+	fi
+
+	# Install Boost
+	cd $LIBS_LOCATION
+	if [ ! -d boost ]; then
+		# Download, extract, rename
+		download_file http://sourceforge.net/projects/boost/files/boost/$BOOST_VERSION/boost_$BOOST_VERSION_UNDERSCORE.zip/download ./boost_$BOOST_VERSION_UNDERSCORE.zip
+		7za x boost_$BOOST_VERSION_UNDERSCORE.zip
+		mv boost_$BOOST_VERSION_UNDERSCORE/ boost/
+		rm boost_$BOOST_VERSION_UNDERSCORE.zip
+	elif [ -d boost/stage/lib ]; then
+		BOOST_FOUND=true
+	fi
+
+	if [ $BOOST_FOUND ]; then
+		echo "Boost is already installed in ..."
+	else
+		# Compile
+		cd boost
+		echo " \
+			\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
+			bootstrap.bat &&\
+			bjam.exe address-model=$BITS &&\
+			exit\
+			" > build.bat
+		$COMSPEC //k build.bat
 	fi
 fi
 

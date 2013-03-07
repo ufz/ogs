@@ -15,22 +15,20 @@
 #ifndef ANALYTICAL_GEOMETRY_H_
 #define ANALYTICAL_GEOMETRY_H_
 
-// MathLib
-#include "Vector3.h"
-#include "LinAlg/Dense/Matrix.h"
 // GeoLib
 #include "Triangle.h"
 
-namespace GeoLib {
-	class Polyline;
-}
+// MathLib
+#include "LinAlg/Dense/Matrix.h"
+#include "Vector3.h"
 
-namespace MathLib {
+namespace GeoLib
+{
+class Polyline;
 
-enum Orientation {
-	CW = 1,
-	CCW = 2,
-	COLLINEAR = 3
+enum Orientation
+{
+	CW = 1, CCW = 2, COLLINEAR = 3
 };
 
 /**
@@ -45,7 +43,9 @@ Orientation getOrientation (const double& p0_x, const double& p0_y,
 /**
  * wrapper for getOrientation ()
  */
-Orientation getOrientation (const GeoLib::Point* p0, const GeoLib::Point* p1, const GeoLib::Point* p2);
+Orientation getOrientation (const GeoLib::Point* p0,
+                            const GeoLib::Point* p1,
+                            const GeoLib::Point* p2);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
@@ -55,7 +55,9 @@ Orientation getOrientation (const GeoLib::Point* p0, const GeoLib::Point* p1, co
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
  */
-void getNewellPlane (const std::vector<GeoLib::Point*>& pnts, MathLib::Vector &plane_normal, double& d);
+void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
+                     MathLib::Vector &plane_normal,
+                     double& d);
 
 /**
  * The vector plane_normal should be the surface normal of the plane surface described
@@ -84,14 +86,15 @@ void rotatePointsToXZ(MathLib::Vector &plane_normal, std::vector<GeoLib::Point*>
  * @param vec the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
  */
-void computeRotationMatrixToXY(Vector const& plane_normal, Matrix<double> & rot_mat);
+void computeRotationMatrixToXY(MathLib::Vector const& plane_normal,
+                               MathLib::Matrix<double> & rot_mat);
 
 /**
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts vector of points
  */
-void rotatePoints(Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
+void rotatePoints(MathLib::Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
 
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
@@ -108,7 +111,10 @@ bool isPointInTriangle(GeoLib::Point const& p,
  * @param intersection_pnt the intersection point if the line segments intersect
  * @return true, if the polyline contains intersections
  */
-bool lineSegmentsIntersect (const GeoLib::Polyline* ply, std::size_t &idx0, std::size_t &idx1, GeoLib::Point& intersection_pnt);
+bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
+                            std::size_t &idx0,
+                            std::size_t &idx1,
+                            GeoLib::Point& intersection_pnt);
 
 /**
  * A line segment is given by its two end-points. The function checks,
@@ -124,6 +130,6 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply, std::size_t &idx0, std:
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 		const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
 
-} // end namespace MathLib
+} // end namespace GeoLib
 
-#endif /* MATHTOOLS_H_ */
+#endif /* ANALYTICAL_GEOMETRY_H_ */

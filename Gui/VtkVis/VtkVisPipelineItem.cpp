@@ -144,7 +144,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 		{
 			if(!dynamic_cast<vtkImageActor*>(_actor))
 			{
-				bool lResult;
 				InitializeSdkObjects(lSdkManager, lScene);
 
 				VtkFbxConverter fbxConverter(static_cast<vtkActor*>(_actor), lScene);
@@ -152,6 +151,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 				FbxNode* node = fbxConverter.getNode();
 				if(node)
 				{
+					fbxConverter.addUserProperty(node, "ScalarVisibility",
+					                             _vtkProps->GetScalarVisibility());
 					lScene->GetRootNode()->AddChild(node);
 					// Get the file format. Use either "FBX [6.0] binary (*.fbx)" or "FBX [6.0] ascii (*.fbx)"
 					int fbxFormat = lSdkManager->GetIOPluginRegistry()
@@ -165,7 +166,7 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 			else
 				QMessageBox::warning(NULL, "Conversion to FBX not possible",
 					"It is not possible to convert an vtkImageData based object \
-					to OpenSG. If you want to convert raster data import it via \" \
+					to FBX. If you want to convert raster data import it via \" \
 					File / Import / Raster Files as PolyData\"!");
 			return 0;
 		}
