@@ -63,6 +63,20 @@ TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value
 	this->_volume = this->computeVolume();
 }
 
+template<unsigned NNODES, CellType::type CELLHEXTYPE>
+TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(std::array<Node*, NNODES> const& nodes,
+                                             unsigned value)
+	: Cell(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[6];
+	std::fill(_neighbors, _neighbors + 6, nullptr);
+
+	this->_volume = this->computeVolume();
+}
+
 template <unsigned NNODES, CellType::type CELLHEXTYPE>
 TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(const TemplateHex<NNODES,CELLHEXTYPE> &hex)
 	: Cell(hex.getValue())

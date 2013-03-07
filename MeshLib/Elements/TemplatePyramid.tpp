@@ -63,6 +63,20 @@ TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], un
 	this->_volume = this->computeVolume();
 }
 
+template<unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
+TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(std::array<Node*, NNODES> const& nodes,
+                                                         unsigned value)
+	: Cell(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[5];
+	std::fill(_neighbors, _neighbors + 5, nullptr);
+
+	this->_volume = this->computeVolume();
+}
+
 template <unsigned NNODES, CellType::type CELLPYRAMIDTYPE>
 TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(const TemplatePyramid<NNODES,CELLPYRAMIDTYPE> &pyramid)
 	: Cell(pyramid.getValue())

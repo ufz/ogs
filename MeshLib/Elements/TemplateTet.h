@@ -15,6 +15,7 @@
 #ifndef TEMPLATETET_H_
 #define TEMPLATETET_H_
 
+#include <array>
 #include "MshEnums.h"
 #include "Cell.h"
 
@@ -46,6 +47,9 @@ class TemplateTet : public Cell
 public:
 	/// Constructor with an array of mesh nodes.
 	TemplateTet(Node* nodes[NNODES], unsigned value = 0);
+
+	/// Constructs a tetrahedron from array of Node pointers.
+	TemplateTet(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
 	TemplateTet(const TemplateTet &tet);
