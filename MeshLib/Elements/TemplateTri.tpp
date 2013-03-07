@@ -28,6 +28,20 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 	this->_area = this->computeVolume();
 }
 
+template<unsigned NNODES, CellType::type CELLTRITYPE>
+TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& nodes,
+                                             unsigned value)
+	: Face(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[3];
+	std::fill(_neighbors, _neighbors + 3, nullptr);
+
+	this->_area = this->computeVolume();
+}
+
 template <unsigned NNODES, CellType::type CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE> &tri) :
 	Face(tri.getValue())

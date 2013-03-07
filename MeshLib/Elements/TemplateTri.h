@@ -15,6 +15,7 @@
 #ifndef TEMPLATETRI_H_
 #define TEMPLATETRI_H_
 
+#include <array>
 #include "Edge.h"
 #include "Node.h"
 #include "Face.h"
@@ -48,6 +49,9 @@ class TemplateTri : public Face
 public:
 	/// Constructor with an array of mesh nodes.
 	TemplateTri(Node* nodes[NNODES], unsigned value = 0);
+
+	/// Constructs a triangle from array of Node pointers.
+	TemplateTri(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
 	TemplateTri(const TemplateTri &tri);

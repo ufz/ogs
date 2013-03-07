@@ -54,6 +54,20 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value
 	this->_volume = this->computeVolume();
 }
 
+template<unsigned NNODES, CellType::type CELLTETTYPE>
+TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& nodes,
+                                             unsigned value)
+	: Cell(value)
+{
+	_nodes = new Node*[NNODES];
+	std::copy(nodes.begin(), nodes.end(), _nodes);
+
+	_neighbors = new Element*[4];
+	std::fill(_neighbors, _neighbors + 4, nullptr);
+
+	this->_volume = this->computeVolume();
+}
+
 template <unsigned NNODES, CellType::type CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(const TemplateTet<NNODES,CELLTETTYPE> &tet)
 	: Cell(tet.getValue())
