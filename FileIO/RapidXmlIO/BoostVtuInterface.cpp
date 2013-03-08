@@ -90,7 +90,6 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 		        "UnstructuredGrid.Piece");
 		if (piece_node)
 		{
-
 			const unsigned nNodes =
 			        static_cast<unsigned>(piece_node->get("<xmlattr>.NumberOfPoints", 0));
 			const unsigned nElems =
@@ -180,7 +179,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 					optional<std::string> const& format = getXmlAttribute("format", *types);
 					if (*format == "ascii")
 					{
-						for(unsigned i=0; i<nElems; i++)
+						for(unsigned i = 0; i < nElems; i++)
 							iss >> cell_types[i];
 					}
 					else if (*format == "appended")
@@ -216,7 +215,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 
 			INFO("BoostVtuInterface::readVTUFile(): \tfinished.");
 			INFO("BoostVtuInterface::readVTUFile(): Nr. Nodes: %d", nodes.size());
-			INFO("BoostVtuInterface::readVTUFile(): Nr. Elements: ", elements.size());
+			INFO("BoostVtuInterface::readVTUFile(): Nr. Elements: %d", elements.size());
 			return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
 			                         elements);
 

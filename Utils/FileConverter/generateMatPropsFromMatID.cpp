@@ -12,56 +12,78 @@
  *
  */
 
-#include "GridAdapter.h"
-#include "StringTools.h"
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+// BaseLib
+#include "tclap/CmdLine.h"
+#include "LogogSimpleFormatter.h"
+#include "FileTools.h"
+
+// FileIO
+#include "readMeshFromFile.h"
+#include "RapidXmlIO/BoostVtuInterface.h"
+
+// MeshLib
+#include "Mesh.h"
+#include "Elements/Element.h"
 
 int main (int argc, char* argv[])
 {
-	if (argc == 1)
-	{
-		std::cout << "Usage: " << argv[0] << " <msh-file>" << std::endl;
-		std::cout << std::endl;
-		std::cout << "Creates a new file for material properties and sets the material ids in the msh-file to 0." << std::endl;
-		return -1;
-	}
+	LOGOG_INITIALIZE();
+	logog::Cout* logog_cout (new logog::Cout);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
+	logog_cout->SetFormatter(*custom_format);
 
-	GridAdapter grid(argv[1]);
-	std::vector<GridAdapter::Element*> *elems = const_cast< std::vector<GridAdapter::Element*>* >(grid.getElements());
-	size_t nElems(elems->size());
+	TCLAP::CmdLine cmd(
+	        "Creates a new file for material properties and sets the material ids in the msh-file to 0",
+	        ' ',
+	        "0.1");
 
+	TCLAP::ValueArg<std::string> mesh_arg("m",
+	                                          "mesh",
+	                                          "the mesh to open from a file",
+	                                          false,
+	                                          "",
+	                                          "filename for mesh input");
+	cmd.add( mesh_arg );
+
+	cmd.parse( argc, argv );
+
+	// read mesh
+	MeshLib::Mesh* mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+
+	std::vector<MeshLib::Element*> &elems = *(const_cast<std::vector<MeshLib::Element*>*>(&(mesh->getElements())));
+	std::size_t nElems(elems.size());
+
+	std::string name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
 	// create file
-	std::string filename(argv[1]);
-	std::string name = BaseLib::extractBaseNameWithoutExtension(filename);
-
 	std::string new_matname(name + "_prop");
 	std::ofstream out_prop( new_matname.c_str(), std::ios::out );
 	if (out_prop.is_open())
 	{
-		for (size_t i=0; i<nElems; i++)
-			out_prop << i << "\t" << (*elems)[i]->material << "\n";
+		for (std::size_t i=0; i<nElems; i++)
+			out_prop << i << "\t" << elems[i]->getValue() << "\n";
 		out_prop.close();
 	}
 	else
 	{
-		std::cout << "Error: Could not create property file..." << std::endl;
+		ERR("Could not create property \"%s\" file.", new_matname.c_str());
 		return -1;
 	}
 
 	// set mat ids to 0 and write new msh file
-	for (size_t i=0; i<nElems; i++)
-		(*elems)[i]->material = 0;
-	const MeshLib::CFEMesh* mesh(grid.getCFEMesh());
-	std::string new_mshname(name + "_new.msh");
-	std::cout << "writing mesh to file " << new_mshname << " ... " << std::flush;
-	FileIO::OGSMeshIO mesh_io;
+	for (std::size_t i=0; i<nElems; i++)
+		elems[i]->setValue(0);
+
+	std::string new_mshname(name + "_new.vtu");
+	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
+	FileIO::BoostVtuInterface mesh_io;
 	mesh_io.setMesh(mesh);
 	mesh_io.writeToFile (new_mshname);
-	std::cout << "ok" << std::endl;
 
-	std::cout << "New files \"" << new_mshname << "\" and \"" << new_matname << "\" written." << std::endl;
+	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
 	std::cout << "Conversion finished." << std::endl;
 
 	return 1;
 }
-
-
