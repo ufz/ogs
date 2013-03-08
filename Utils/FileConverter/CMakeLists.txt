@@ -50,11 +50,21 @@ IF (QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 
-	ADD_EXECUTABLE (generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
-
-	SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline generateMatPropsFromMatID
+	SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline 
 		PROPERTIES FOLDER Utilities)
 ENDIF () # QT4_FOUND
+
+IF (Boost_FOUND)
+	ADD_EXECUTABLE (generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
+	TARGET_LINK_LIBRARIES (generateMatPropsFromMatID
+		FileIO
+		MeshLib
+		logog
+		${Boost_LIBRARIES}
+	)
+	SET_TARGET_PROPERTIES(generateMatPropsFromMatID
+		PROPERTIES FOLDER Utilities)
+ENDIF () # Boost_FOUND
 
 ADD_EXECUTABLE (GMSH2OGS GMSH2OGS.cpp)
 SET_TARGET_PROPERTIES(GMSH2OGS PROPERTIES FOLDER Utilities)
