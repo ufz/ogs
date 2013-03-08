@@ -17,21 +17,20 @@ IF (Shapelib_FOUND)
 
 	# Create executables
 	ADD_EXECUTABLE( ConvertSHPToGLI ConvertSHPToGLI.cpp )
-  SET_TARGET_PROPERTIES(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
+	SET_TARGET_PROPERTIES(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
 
 	TARGET_LINK_LIBRARIES( ConvertSHPToGLI
-    FileIO
-    GeoLib
-    BaseLib
-    OgsLib
-	${Shapelib_LIBRARIES}
-	${QT_LIBRARIES}
+		FileIO
+		GeoLib
+		BaseLib
+		OgsLib
+		${Shapelib_LIBRARIES}
+		${QT_LIBRARIES}
 	)
 
 	IF (OGS_PACKAGING)
 		INSTALL ( TARGETS ConvertSHPToGLI RUNTIME DESTINATION bin COMPONENT ConvertSHPToGLI )
 	ENDIF (OGS_PACKAGING)
-
 ENDIF (Shapelib_FOUND)
 
 IF (QT4_FOUND)
@@ -53,9 +52,8 @@ IF (QT4_FOUND)
 
 	ADD_EXECUTABLE (generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
 
-  SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline generateMatPropsFromMatID
-    PROPERTIES FOLDER Utilities)
-
+	SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline generateMatPropsFromMatID
+		PROPERTIES FOLDER Utilities)
 ENDIF () # QT4_FOUND
 
 ADD_EXECUTABLE (GMSH2OGS GMSH2OGS.cpp)
@@ -70,6 +68,6 @@ SET_TARGET_PROPERTIES(OGS2VTK PROPERTIES FOLDER Utilities)
 TARGET_LINK_LIBRARIES (OGS2VTK
 	MeshLib
 	FileIO
-    zlib
+	zlib
 )
 
