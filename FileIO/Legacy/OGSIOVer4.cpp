@@ -153,7 +153,7 @@ void readPolylinePointVector(const std::string &fname,
 std::string readPolyline(std::istream &in,
                          std::vector<GeoLib::Polyline*>* ply_vec,
                          std::map<std::string,size_t>& ply_vec_names,
-                         std::vector<Point*>& pnt_vec,
+                         std::vector<Point*> & pnt_vec,
                          bool zero_based_indexing,
                          const std::vector<size_t>& pnt_id_map,
                          const std::string &path,
@@ -247,7 +247,8 @@ std::string readPolyline(std::istream &in,
 **************************************************************************/
 /** reads polylines */
 std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_vec,
-                          std::map<std::string,size_t>& ply_vec_names, std::vector<Point*>& pnt_vec,
+                          std::map<std::string,size_t>& ply_vec_names,
+                          std::vector<Point*> & pnt_vec,
                           bool zero_based_indexing, const std::vector<size_t>& pnt_id_map,
                           const std::string &path, std::vector<std::string>& errors)
 {
@@ -510,12 +511,13 @@ bool readGLIFileV4(const std::string& fname,
 	// read names of plys into temporary string-vec
 	std::map<std::string,size_t>* ply_names (new std::map<std::string,size_t>);
 	std::vector<GeoLib::Polyline*>* ply_vec(new std::vector<GeoLib::Polyline*>);
+	std::vector<Point*>* geo_pnt_vec(const_cast<std::vector<Point*>*>(geo->getPointVec(unique_name)));
 	if (tag.find("#POLYLINE") != std::string::npos && in)
 	{
 		INFO("GeoLib::readGLIFile(): read polylines from stream.");
-		tag = readPolylines(in, ply_vec, *ply_names, *pnt_vec,
-		                    zero_based_idx, geo->getPointVecObj(
-		                            unique_name)->getIDMap(), path, errors);
+		tag = readPolylines(in, ply_vec, *ply_names, *geo_pnt_vec,
+		                    zero_based_idx,
+		                    geo->getPointVecObj(unique_name)->getIDMap(), path, errors);
 		INFO("GeoLib::readGLIFile(): \t ok, %d polylines read.", ply_vec->size());
 	}
 	else
