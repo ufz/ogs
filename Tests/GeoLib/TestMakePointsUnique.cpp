@@ -34,4 +34,12 @@ TEST(GeoLib, TestPointVecCtorSinglePoint)
 	ASSERT_NO_THROW(GeoLib::PointVec point_vec("JustAName", &ps));
 }
 
+// Testing input vector with two different points.
+TEST(GeoLib, TestPointVecCtorTwoPoints)
+{
+	std::vector<GeoLib::Point*> ps;
+	ps.push_back(new GeoLib::Point(0,0,0));
+	ps.push_back(new GeoLib::Point(1,0,0));
+
+	ASSERT_NO_THROW(GeoLib::PointVec point_vec("JustAName", &ps));
 }
