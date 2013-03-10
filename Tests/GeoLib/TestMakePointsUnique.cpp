@@ -18,3 +18,15 @@ TEST(GeoLib, TestPointVecCtorEmpty)
 	std::vector<GeoLib::Point*> ps;
 	ASSERT_ANY_THROW(GeoLib::PointVec("JustAName", &ps));
 }
+
+// Testing input vector with single point.
+TEST(GeoLib, TestPointVecCtorSinglePoint)
+{
+	std::vector<GeoLib::Point*> ps;
+	ps.push_back(new GeoLib::Point(0,0,0));
+	FAIL() << "SEGV Error in destructor TemplateVec.h:62.\n"
+		<< "Dealloction of the points vector fails.";
+	ASSERT_NO_THROW(GeoLib::PointVec point_vec("JustAName", &ps));
+}
+
+}
