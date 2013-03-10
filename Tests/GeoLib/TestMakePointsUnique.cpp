@@ -11,6 +11,11 @@
 
 #include "GeoLib/PointVec.h"
 
+// Testing nullptr input vector.
+TEST(GeoLib, TestPointVecCtorNullptr)
+{
+	ASSERT_ANY_THROW(GeoLib::PointVec("JustAName", nullptr));
+}
 
 // Testing empty input vector.
 TEST(GeoLib, TestPointVecCtorEmpty)
