@@ -33,9 +33,6 @@
 #include "ProjectData.h"
 #include "Station.h"
 
-#include "problem.h"
-Problem* aproblem = NULL;
-
 void convertPoints (DBFHandle dbf_handle,
                     std::string const& out_fname,
                     size_t x_id,
@@ -47,30 +44,6 @@ void convertPoints (DBFHandle dbf_handle,
 {
 	int n_records (DBFGetRecordCount (dbf_handle));
 	std::cout << "writing " << n_records << " records" << std::endl;
-
-//	out << "#POINTS\n";
-//
-//	for (int k(0); k<n_records; k++) {
-//		double x (DBFReadDoubleAttribute( dbf_handle, k, x_id));
-//		double y (DBFReadDoubleAttribute( dbf_handle, k, y_id));
-//		double z (0.0);
-//		if (z_id != std::numeric_limits<size_t>::max())
-//			z = DBFReadDoubleAttribute( dbf_handle, k, z_id);
-//		out.precision (10);
-//		out.flags (std::ios::fixed);
-//		out << k << " " << x << " " << y << " " << z << std::flush;
-//		if (!name_component_ids.empty()) {
-//			out << " $NAME ";
-//			for (size_t j(0); j<name_component_ids.size(); j++) {
-//				if (name_component_ids[j] != std::numeric_limits<size_t>::max()) {
-//					std::string name (DBFReadStringAttribute( dbf_handle, k, name_component_ids[j]));
-//					out << name.c_str() << " ";
-//				}
-//			}
-//		}
-//		out << "\n";
-//	}
-//	out << "#STOP\n";
 
 	std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);
 	points->reserve (n_records);
@@ -150,7 +123,7 @@ int main (int argc, char* argv[])
 	{
 		std::cout << "shape file contains " << number_of_elements << " polylines" <<
 		std::endl;
-		std::cout << "this programm only handles point-input files" << std::endl;
+		std::cout << "this programme only handles point-input files" << std::endl;
 		SHPClose(hSHP);
 		return 0;
 	}
@@ -191,6 +164,7 @@ int main (int argc, char* argv[])
 				break;
 			default:
 				std::cout << "      n_decimal " << n_decimals << std::endl;
+				break;
 			}
 		}
 		delete [] field_name;
