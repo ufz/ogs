@@ -13,9 +13,6 @@
  */
 
 #include "FEMCondition.h"
-#include "ProcessInfo.h"
-
-#include "GEOObjects.h" //for SourceTerm
 
 FEMCondition::FEMCondition(const std::string &geometry_name, CondType t)
 	: _type(t), _geoName("[unspecified]"), _associated_geometry(geometry_name)
@@ -26,16 +23,20 @@ FEMCondition::FEMCondition(const std::string &geometry_name, CondType t)
 	this->setProcessDistributionType(FiniteElement::INVALID_DIS_TYPE);
 }
 
-FEMCondition::FEMCondition(const std::string &geometry_name, FiniteElement::ProcessType pt,
-				FiniteElement::PrimaryVariable pv, GeoLib::GEOTYPE gt, const std::string &gn,
-				FiniteElement::DistributionType dt, CondType ct)
+FEMCondition::FEMCondition(const std::string &geometry_name,
+                           FiniteElement::ProcessType pt,
+                           FiniteElement::PrimaryVariable pv,
+                           GeoLib::GEOTYPE gt,
+                           const std::string &gn,
+                           FiniteElement::DistributionType dt,
+                           CondType ct)
 	: ProcessInfo(pt, pv/*, NULL*/),  GeoInfo(gt, NULL), DistributionInfo(dt), _type(ct),
 	  _geoName(gn), _associated_geometry(geometry_name)
 {
 }
 
 FEMCondition::FEMCondition(const FEMCondition &cond, CondType t)
-	: ProcessInfo(cond.getProcessType(), cond.getProcessPrimaryVariable()/*, NULL*/),
+	: ProcessInfo(cond.getProcessType(), cond.getProcessPrimaryVariable() /*, NULL*/),
 	  GeoInfo(cond.getGeomType(), cond.getGeoObj()),
 	  DistributionInfo(cond.getProcessDistributionType()),
 	  _type(t),
@@ -67,6 +68,6 @@ void FEMCondition::setDisValues(const std::vector< std::pair<size_t, double> > &
 		nodes.push_back(dis_values[i].first);
 		values.push_back(dis_values[i].second);
 	}
-	this->_disNodes=nodes;
-	this->_disValues=values;
+	this->_disNodes = nodes;
+	this->_disValues = values;
 }

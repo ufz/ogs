@@ -15,21 +15,15 @@
 #ifndef FEMCONDITION_H
 #define FEMCONDITION_H
 
+#include <vector>
+
 #include "DistributionInfo.h"
 #include "GeoInfo.h"
-#include "GeoObject.h"
-#include "Point.h"
 #include "ProcessInfo.h"
-
-#include <vector>
 
 class CBoundaryCondition;
 class CInitialCondition;
 class CSourceTerm;
-
-//class GEOObjects;
-class GridAdapter;
-#include "GEOObjects.h"
 
 /**
  * \brief Adapter class for handling FEM Conditions in the user Interface
@@ -47,11 +41,12 @@ public:
 
 	FEMCondition(const std::string &geometry_name, CondType t = UNSPECIFIED);
 	FEMCondition(const std::string &geometry_name,
-					FiniteElement::ProcessType pt = FiniteElement::INVALID_PROCESS,
-					FiniteElement::PrimaryVariable pv =	FiniteElement::INVALID_PV,
-					GeoLib::GEOTYPE gt = GeoLib::INVALID,
-					const std::string &gn = "[unspecified]",
-					FiniteElement::DistributionType dt = FiniteElement::INVALID_DIS_TYPE, CondType ct = UNSPECIFIED);
+	             FiniteElement::ProcessType pt = FiniteElement::INVALID_PROCESS,
+	             FiniteElement::PrimaryVariable pv = FiniteElement::INVALID_PV,
+	             GeoLib::GEOTYPE gt = GeoLib::INVALID,
+	             const std::string &gn = "[unspecified]",
+	             FiniteElement::DistributionType dt = FiniteElement::INVALID_DIS_TYPE,
+	             CondType ct = UNSPECIFIED);
 	FEMCondition(const FEMCondition &cond, CondType t);
 
 	~FEMCondition() {}
@@ -75,7 +70,8 @@ public:
 	void setConstantDisValue(double disValue) {_disValues.clear(); _disValues.push_back(disValue); }
 
 	/// Sets a vector of values specifying the distribution.
-	void setDisValues(const std::vector<std::size_t> &disNodes, const std::vector<double> &disValues)
+	void setDisValues(const std::vector<std::size_t> &disNodes,
+	                  const std::vector<double> &disValues)
 	{
 		_disNodes = disNodes;
 		_disValues = disValues;
@@ -86,7 +82,7 @@ public:
 	void setDisValues(const std::vector< std::pair<std::size_t, double> > &dis_values);
 
 	/// Removes all distribution values
-	void clearDisValues() { _disValues.resize(0); };
+	void clearDisValues() { _disValues.resize(0); }
 
 	/// Sets the name of the geo-object the condition is assigned to.
 	void setGeoName(std::string geoName) { _geoName = geoName; }

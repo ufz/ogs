@@ -29,6 +29,7 @@
 #include "Triangle.h"
 
 // MathLib
+#include "LinAlg/Dense/Matrix.h" // for transformation matrix
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathTools.h"
 
@@ -106,7 +107,9 @@ bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const 
 	return false;
 }
 
-bool lineSegmentsIntersect(const GeoLib::Polyline* ply, size_t &idx0, size_t &idx1,
+bool lineSegmentsIntersect(const GeoLib::Polyline* ply, 
+                            size_t &idx0,
+                            size_t &idx1,
                            GeoLib::Point& intersection_pnt)
 {
 	size_t n_segs(ply->getNumberOfPoints() - 1);
