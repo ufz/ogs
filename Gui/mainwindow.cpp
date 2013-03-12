@@ -846,6 +846,7 @@ void MainWindow::loadFEMConditions(std::string geoName)
 
 void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string geoName)
 {
+	Q_UNUSED(geoName);
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "cnd")
 	{

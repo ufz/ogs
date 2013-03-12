@@ -186,28 +186,6 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			VtkMeshSource* source = dynamic_cast<VtkMeshSource*>(data_set);
 			if (source)
 				emit elementPicked(source->GetMesh(), picker->GetCellId());
-/* test for picking on selection filters
-			else
-			{
-/*
-				vtkAlgorithm* data_set2 = picker->GetActor()->GetMapper()->GetInputConnection(0,0)->GetProducer()
-					                                                    ->GetInputConnection(0,0)->GetProducer()
-																		->GetInputConnection(0,0)->GetProducer()
-																		->GetInputConnection(0,0)->GetProducer()
-																		->GetInputConnection(0,0)->GetProducer()
-																		->GetInputConnection(0,0)->GetProducer();
-
-				VtkCompositeSelectionFilter* source = dynamic_cast<VtkCompositeSelectionFilter*>(data_set->GetInputConnection(0,0)->GetProducer()->GetInputConnection(0,0)->GetProducer()->GetInputConnection(0,0)->GetProducer());
-				if (source)
-				{
-					vtkUnstructuredGridAlgorithm* data_set = vtkUnstructuredGridAlgorithm::SafeDownCast(picker->GetActor()->GetMapper()->GetInputConnection(0,0)->GetProducer());
-					vtkUnstructuredGrid* grid = vtkUnstructuredGrid::SafeDownCast(data_set->GetOutputDataObject(0));
-					vtkDataArray* scalar_array = grid->GetCellData()->GetArray("vtkIdFilter_Ids");
-					double test = scalar_array->GetTuple1(picker->GetCellId());
-					//emit elementPicked(source->GetMesh(), test);
-				}
-			}
-*/
 			selectedMapper->SetInputConnection(selected->GetProducerPort());
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->

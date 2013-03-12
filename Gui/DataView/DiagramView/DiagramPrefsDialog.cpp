@@ -24,7 +24,7 @@
 
 DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
                                        const QString &listName,
-                                       DatabaseConnection* db,
+                                       //DatabaseConnection* db,
                                        QDialog* parent)
 	: QDialog(parent), _window(NULL)
 {

@@ -353,7 +353,6 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 		item->SetActiveAttribute(*it);
 	else
 	{
-		unsigned nArrays (dataSetAttributesList.size());
 		int idx(0);
 		for (it=dataSetAttributesList.begin(); it!=dataSetAttributesList.end(); ++it)
 			if (active_array_name.compare((*it).right((*it).length()-2))==0)

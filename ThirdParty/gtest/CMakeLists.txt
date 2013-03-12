@@ -1,5 +1,9 @@
 # This is Googletest 1.6 compressed to 2 source files
 
+IF (MSVC)
+  ADD_DEFINITIONS (/D_VARIADIC_MAX=10)
+ENDIF ()
+
 IF (HAVE_PTHREADS)
   ADD_DEFINITIONS (-DGTEST_HAS_PTHREAD=1)
 ELSE ()

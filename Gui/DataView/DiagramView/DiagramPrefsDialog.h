@@ -18,7 +18,6 @@
 #include "ui_DiagramPrefs.h"
 #include <QtGui/QMainWindow>
 
-class DatabaseConnection;
 class DetailWindow;
 class DiagramList;
 class QCheckBox;
@@ -47,12 +46,11 @@ public:
 	 * loaded from a file.
 	 * \param stn The station object associated the diagram.
 	 * \param listName The station list the station belongs to.
-	 * \param db The database connection were the diagram-related data can be found
 	 * \param parent The parent QDialog.
 	 */
 	DiagramPrefsDialog(const GeoLib::Station* stn,
 	                   const QString &listName,
-	                   DatabaseConnection* db,
+	                   //DatabaseConnection* db,
 	                   QDialog* parent = 0);
 
 	/**
@@ -98,7 +96,6 @@ private:
 
 	std::vector<DiagramList*> _list;
 	std::vector<QCheckBox*> _visability;
-	DatabaseConnection* _db;
 	int _listID;
 	int _stationID;
 	DetailWindow* _window;

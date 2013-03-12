@@ -209,8 +209,8 @@ void MshView::addDIRECTSourceTerms()
 
 void MshView::loadDIRECTSourceTerms()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	// TODO6 QModelIndex index = this->selectionModel()->currentIndex();
+	// TODO6 const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
 	// TODO6 const std::vector<MeshLib::Node*>* nodes = grid->getNodes();
 	// TODO6 emit requestDIRECTSourceTerms(grid->getName(), nodes);
 }
