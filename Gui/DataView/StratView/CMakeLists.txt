@@ -58,6 +58,7 @@ target_link_libraries( StratView
 	${QT_LIBRARIES}
 	BaseLib
 	GeoLib
+	MathLib
 )
 
 set_property(TARGET StratView PROPERTY FOLDER "DataExplorer")
