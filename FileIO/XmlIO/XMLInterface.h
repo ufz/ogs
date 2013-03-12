@@ -15,7 +15,7 @@
 #ifndef XMLINTERFACE_H
 #define XMLINTERFACE_H
 
-#include "ProjectData.h"
+#include "OGS/ProjectData.h"
 
 #include <QXmlStreamReader>
 #include "Writer.h"
@@ -29,7 +29,6 @@ class QDomElement;
 
 namespace FileIO
 {
-
 /**
  * \brief Base class for writing any information to and from XML files.
  */
@@ -43,7 +42,7 @@ public:
 	 */
 	XMLInterface(ProjectData* project, const std::string &schemaFile);
 
-	virtual ~XMLInterface() {};
+	virtual ~XMLInterface() {}
 
 	/// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.
 	int insertStyleFileDefinition(const QString &fileName) const;
@@ -51,7 +50,7 @@ public:
 	/// Check if the given xml-file is valid considering the schema-file used in the constructor
 	int isValid(const QString &fileName) const;
 
-	void setNameForExport(std::string const& name) { _exportName = name; };
+	void setNameForExport(std::string const& name) { _exportName = name; }
 
 	/// Sets the schema filename used to check if xml files are valid.
 	void setSchema(const std::string &schemaName);
@@ -77,7 +76,6 @@ protected:
 	std::string _schemaName;
 	std::map<std::size_t, std::size_t> _idx_map;
 };
-
 }
 
 #endif // XMLINTERFACE_H
