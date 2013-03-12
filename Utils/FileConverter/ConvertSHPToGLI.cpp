@@ -141,6 +141,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
 			break;
 		default:
 			out << "      n_decimal " << n_decimals << std::endl;
+			break;
 		}
 	}
 	delete[] field_name;
@@ -194,7 +195,6 @@ int main (int argc, char* argv[])
 	{
 		std::size_t n_fields(DBFGetFieldCount(dbf_handle));
 		printFieldInformationTable(dbf_handle, n_fields);
-				break;
 
 		size_t x_id, y_id, z_id;
 		INFO("Please give the field idx that should be used for reading the x coordinate: ");
