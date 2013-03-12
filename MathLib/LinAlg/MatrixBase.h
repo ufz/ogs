@@ -15,12 +15,14 @@
 #ifndef MATRIXBASE_H_
 #define MATRIXBASE_H_
 
-namespace MathLib {
+namespace MathLib
+{
 
 /**
  * class MatrixBase is the basis for all matrix classes (dense and sparse)
  */
-class MatrixBase {
+class MatrixBase
+{
 public:
 	/**
 	 * Constructor for initialization of the number of rows and columns
