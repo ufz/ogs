@@ -174,10 +174,12 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 		double value(0);
 		QString stringDate("");
 		QDateTime startDate, currentDate;
+		unsigned line_count (1);
 
 		while (!in.atEnd())
 		{
 			line = in.readLine();
+			line_count++;
 			fields = line.split('\t');
 			if (fields.size() >= (nLists + 1))
 			{
@@ -201,7 +203,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 			}
 			else
 			{
-				qDebug("Unexpected file format...");
+				std::cout << "Unexpected format in line " << line_count << "..." << std::endl;
 				file.close();
 				return 0;
 			}

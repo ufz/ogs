@@ -58,6 +58,9 @@ public:
 	/// Copy constructor
 	Node(const Node &node);
 
+	/// Return all the nodes connected to this one
+	const std::vector<MeshLib::Node*>& getConnectedNodes() const { return _connected_nodes; };
+
 	/// Get an element the node is part of.
 	const Element* getElement(unsigned idx) const { return _elements[idx]; };
 
