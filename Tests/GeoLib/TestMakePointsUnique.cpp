@@ -6,74 +6,79 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <ctime>
 #include "gtest/gtest.h"
+#include <ctime>
 
 #include "GeoLib/PointVec.h"
 
-typedef std::vector<GeoLib::Point*> VectorOfPoints;
+class PointVecTest : public testing::Test
+{
+public:
+	typedef std::vector<GeoLib::Point*> VectorOfPoints;
+
+protected:
+	VectorOfPoints* ps_ptr = new VectorOfPoints;
+	const std::string name = "JustAName";
+};
 
 // Testing nullptr input vector.
-TEST(GeoLib, TestPointVecCtorNullptr)
+TEST_F(PointVecTest, TestPointVecCtorNullptr)
 {
-	ASSERT_ANY_THROW(GeoLib::PointVec("JustAName", nullptr));
+	ASSERT_ANY_THROW(GeoLib::PointVec(name, nullptr));
+	delete ps_ptr;
 }
 
 // Testing empty input vector.
-TEST(GeoLib, TestPointVecCtorEmpty)
+TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
-	VectorOfPoints* ps_ptr = new VectorOfPoints;
-	ASSERT_ANY_THROW(GeoLib::PointVec("JustAName", ps_ptr));
+	ASSERT_ANY_THROW(GeoLib::PointVec(name, ps_ptr));
 }
 
 // Testing input vector with single point.
-TEST(GeoLib, TestPointVecCtorSinglePoint)
+TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
-	VectorOfPoints* ps_ptr = new VectorOfPoints;
 	ps_ptr->push_back(new GeoLib::Point(0,0,0));
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec("JustAName", ps_ptr));
-	ASSERT_EQ(1, point_vec->size());
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	ASSERT_EQ(std::size_t(1), point_vec->size());
 
 	delete point_vec;
 }
 
 // Testing input vector with two different points.
-TEST(GeoLib, TestPointVecCtorTwoDiffPoints)
+TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 {
-	VectorOfPoints* ps_ptr = new VectorOfPoints;
 	ps_ptr->push_back(new GeoLib::Point(0,0,0));
 	ps_ptr->push_back(new GeoLib::Point(1,0,0));
 
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec("JustAName", ps_ptr));
-	ASSERT_EQ(2, point_vec->size());
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	ASSERT_EQ(std::size_t(2), point_vec->size());
 
 	delete point_vec;
 }
 
 // Testing input vector with two equal points.
-TEST(GeoLib, TestPointVecCtorTwoEqualPoints)
+TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 {
-	VectorOfPoints* ps_ptr = new VectorOfPoints;
 	ps_ptr->push_back(new GeoLib::Point(0,0,0));
 	ps_ptr->push_back(new GeoLib::Point(0,0,0));
 
 	GeoLib::PointVec* point_vec = nullptr;
 	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
-	ASSERT_EQ(1, point_vec->size());
+	ASSERT_EQ(std::size_t(1), point_vec->size());
+
 	delete point_vec;
 }
 
 // Testing input vector with single point.
-TEST(GeoLib, TestPointVecPushBack)
+TEST_F(PointVecTest, TestPointVecPushBack)
 {
-	VectorOfPoints* ps_ptr = new VectorOfPoints;
 	ps_ptr->push_back(new GeoLib::Point(0,0,0));
 	ps_ptr->push_back(new GeoLib::Point(1,0,0));
 	ps_ptr->push_back(new GeoLib::Point(0,1,0));
 	ps_ptr->push_back(new GeoLib::Point(0,0,1));
-	GeoLib::PointVec point_vec("JustAName", ps_ptr);
+	GeoLib::PointVec point_vec(name, ps_ptr);
 
 	// Adding a new point with same coordinates changes nothing.
 	point_vec.push_back(new GeoLib::Point(0,0,0));
@@ -81,5 +86,5 @@ TEST(GeoLib, TestPointVecPushBack)
 	point_vec.push_back(new GeoLib::Point(0,1,0));
 	point_vec.push_back(new GeoLib::Point(0,0,1));
 
-	ASSERT_EQ(4, point_vec.size());
+	ASSERT_EQ(std::size_t(4), point_vec.size());
 }
