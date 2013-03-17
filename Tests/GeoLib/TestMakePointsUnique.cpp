@@ -8,6 +8,7 @@
 
 #include "gtest/gtest.h"
 #include <ctime>
+#include <random>
 
 #include "GeoLib/PointVec.h"
 
@@ -16,7 +17,26 @@ class PointVecTest : public testing::Test
 public:
 	typedef std::vector<GeoLib::Point*> VectorOfPoints;
 
+	PointVecTest()
+		: gen(std::random_device() ())
+	{
+	}
+
 protected:
+	// Generates n new points according to given random number distribution,
+	// which is uniform distribution in [-1, 1]^3.
+	template <typename RandomDistribution = std::uniform_real_distribution<double>>
+	void
+	generateRandomPoints(std::size_t const n = 1000,
+		RandomDistribution rnd = std::uniform_real_distribution<double>(-1, 1))
+	{
+		std::generate_n(std::back_inserter(*ps_ptr), n,
+			[&]() { return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen)); });
+	}
+
+protected:
+	std::mt19937 gen;
+
 	VectorOfPoints* ps_ptr = new VectorOfPoints;
 	const std::string name = "JustAName";
 };
@@ -87,4 +107,15 @@ TEST_F(PointVecTest, TestPointVecPushBack)
 	point_vec.push_back(new GeoLib::Point(0,0,1));
 
 	ASSERT_EQ(std::size_t(4), point_vec.size());
+}
+
+// Testing random input points.
+TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
+{
+	generateRandomPoints(10000);
+
+	GeoLib::PointVec* point_vec = nullptr;
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+
+	delete point_vec;
 }
