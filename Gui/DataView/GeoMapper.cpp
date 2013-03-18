@@ -23,6 +23,7 @@
 #include "PointWithID.h"
 #include "Raster.h"
 #include "readMeshFromFile.h"
+#include "StationBorehole.h"
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
