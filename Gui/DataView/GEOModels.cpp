@@ -118,7 +118,7 @@ void GEOModels::addStationVec( std::vector<GeoLib::Point*>* stations,
 {
 	GEOObjects::addStationVec(stations, name);
 
-	_stationModel->addStationList(QString::fromStdString(name), stations);
+	_stationModel->addStationList(QString::fromStdString(name), const_cast<std::vector<GeoLib::Point*>*>(GEOObjects::getStationVec(name)));
 	emit stationVectorAdded(_stationModel, name);
 }
 
