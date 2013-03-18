@@ -19,6 +19,10 @@
 
 #include "RapidXML/rapidxml.hpp"
 
+namespace GeoLib {
+	class StationBorehole;
+}
+
 namespace FileIO
 {
 

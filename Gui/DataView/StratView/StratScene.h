@@ -15,7 +15,7 @@
 #ifndef STRATSCENE_H
 #define STRATSCENE_H
 
-#include "Station.h"
+#include "StationBorehole.h"
 #include "Color.h"
 #include <QGraphicsScene>
 

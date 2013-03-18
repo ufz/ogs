@@ -25,6 +25,8 @@
 // BaseLib
 #include "StringTools.h"
 
+#include "StationBorehole.h"
+
 namespace FileIO
 {
 PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,

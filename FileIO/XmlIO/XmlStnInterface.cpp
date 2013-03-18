@@ -26,6 +26,8 @@
 #include "DateTools.h"
 #include "FileTools.h"
 
+#include "StationBorehole.h"
+
 namespace FileIO
 {
 XmlStnInterface::XmlStnInterface(ProjectData* project, const std::string &schemaFile) :
@@ -191,7 +193,8 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
 			/* add other horizon features here */
 
 			double depth (strtod((horizon.attribute("z")).toStdString().c_str(), 0));
-			if (fabs(depth - depth_check) < std::numeric_limits<double>::min()) // skip soil-layer if its thickness is zero
+			double test = fabs(depth - depth_check);
+			if (fabs(depth - depth_check) > std::numeric_limits<double>::min()) // skip soil-layer if its thickness is zero
 			{
 				borehole->addSoilLayer(strtod((horizon.attribute("x")).toStdString().c_str(), 0),
 									   strtod((horizon.attribute("y")).toStdString().c_str(), 0),

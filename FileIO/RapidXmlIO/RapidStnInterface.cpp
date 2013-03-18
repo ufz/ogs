@@ -23,6 +23,7 @@
 
 // GeoLib
 #include "Station.h"
+#include "StationBorehole.h"
 
 namespace FileIO
 {

@@ -15,7 +15,7 @@
 #ifndef STRATBAR_H
 #define STRATBAR_H
 
-#include "Station.h"
+#include "StationBorehole.h"
 #include "Color.h"
 #include <QGraphicsItem>
 #include <cmath>

@@ -15,6 +15,8 @@
 // ** VTK INCLUDES **
 #include "VtkStationSource.h"
 
+#include "StationBorehole.h"
+
 #include "vtkObjectFactory.h"
 #include <vtkDoubleArray.h>
 #include <vtkCellArray.h>

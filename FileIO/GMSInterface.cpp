@@ -27,7 +27,7 @@
 #include "Mesh.h"
 #include "MshEnums.h"
 #include "Node.h"
-#include "Station.h"
+#include "StationBorehole.h"
 // BaseLib
 #include "FileTools.h"
 #include "StringTools.h"
