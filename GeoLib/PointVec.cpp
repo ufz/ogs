@@ -115,7 +115,7 @@ double PointVec::getShortestPointDistance () const
 	return sqrt (_sqr_shortest_dist);
 }
 
-void PointVec::makePntsUnique (std::vector<GeoLib::Point*> *& pnt_vec,
+void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
                                std::vector<std::size_t> &pnt_id_map, double eps)
 {
 	std::size_t n_pnts_in_file(pnt_vec->size());

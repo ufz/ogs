@@ -110,7 +110,7 @@ public:
 	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset);
 
 private:
-	void makePntsUnique (std::vector<GeoLib::Point*>*& pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
+	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
