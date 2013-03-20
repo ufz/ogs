@@ -198,12 +198,11 @@ void MshEditDialog::accept()
 			}
 			else
 			{
-				float* layer_thickness = new float[_n_layers];
+				std::vector<float> layer_thickness(_n_layers);
 				for (unsigned i=0; i<nLayers; ++i)
 					layer_thickness[i] = (_use_rasters) ? 100 : this->_edits[i]->text().toFloat();
 
-				new_mesh = MshLayerMapper::CreateLayers(_msh, nLayers, layer_thickness);
-				delete [] layer_thickness;
+				new_mesh = MshLayerMapper::CreateLayers(_msh, layer_thickness);
 
 				if (_use_rasters)
 				{

@@ -31,9 +31,17 @@
 
 #include <QImage>
 
-MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, unsigned nLayers, float* thickness)
+MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std::vector<float> &thickness)
 {
-	if (nLayers < 1 || thickness <= 0 || mesh->getDimension() != 2)
+	std::size_t nLayers(thickness.size());
+	bool throw_error(false);
+	for (unsigned i=0; i<nLayers; ++i)
+		if (thickness[i]<=0)
+			throw_error = true;
+	if (nLayers < 1 || mesh->getDimension() != 2)
+		throw_error = true;
+
+	if (throw_error)
 	{
 		std::cout << "Error in MshLayerMapper::CreateLayers() - A 2D mesh with nLayers > 0 is required as input." << std::endl;
 		return NULL;
@@ -166,8 +174,8 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			const int yShiftIdx = (yShift>=0) ? ceil(yShift) : floor(yShift);
 
 			// determining the neighbouring pixels that add weight to the interpolation
-			const size_t x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};
-			const size_t y_nb[4] = {0, 0, yShiftIdx, yShiftIdx};
+			const int x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};
+			const int y_nb[4] = {0, 0, yShiftIdx, yShiftIdx};
 
 			double locZ[4];
 			locZ[0] = elevation[yIdx*width + xIdx];
