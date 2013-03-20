@@ -77,10 +77,10 @@ int XmlGmlInterface::readFile(const QString &fileName)
 			geoObjects->addPointVec(points, gliName, pnt_names);
 		}
 		else if (type_node.nodeName().compare("polylines") == 0)
-			readPolylines(type_node, polylines, const_cast<std::vector<GeoLib::Point*>*>(geoObjects->getPointVec(gliName)),
+			readPolylines(type_node, polylines, points,
 			              geoObjects->getPointVecObj(gliName)->getIDMap(), ply_names);
 		else if (type_node.nodeName().compare("surfaces") == 0)
-			readSurfaces(type_node, surfaces, const_cast<std::vector<GeoLib::Point*>*>(geoObjects->getPointVec(gliName)),
+			readSurfaces(type_node, surfaces, points,
 			             geoObjects->getPointVecObj(gliName)->getIDMap(), sfc_names);
 		else
 			WARN("Unknown XML-Node found in file.");
