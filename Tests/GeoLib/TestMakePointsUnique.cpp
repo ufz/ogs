@@ -119,3 +119,13 @@ TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
 
 	delete point_vec;
 }
+TEST_F(PointVecTest, TestPointVecCtorRandomPointsLargeEps)
+{
+	generateRandomPoints(10000);
+
+	GeoLib::PointVec* point_vec = nullptr;
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr,
+					nullptr, GeoLib::PointVec::POINT, 1e-2));
+
+	delete point_vec;
+}
