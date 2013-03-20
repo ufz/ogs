@@ -39,7 +39,7 @@ TEST(GeoLib, TestPointVecCtorSinglePoint)
 }
 
 // Testing input vector with two different points.
-TEST(GeoLib, TestPointVecCtorTwoPoints)
+TEST(GeoLib, TestPointVecCtorTwoDiffPoints)
 {
 	VectorOfPoints* ps_ptr = new VectorOfPoints;
 	ps_ptr->push_back(new GeoLib::Point(0,0,0));
@@ -49,5 +49,18 @@ TEST(GeoLib, TestPointVecCtorTwoPoints)
 	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec("JustAName", ps_ptr));
 	ASSERT_EQ(2, point_vec->size());
 
+	delete point_vec;
+}
+
+// Testing input vector with two equal points.
+TEST(GeoLib, TestPointVecCtorTwoEqualPoints)
+{
+	VectorOfPoints* ps_ptr = new VectorOfPoints;
+	ps_ptr->push_back(new GeoLib::Point(0,0,0));
+	ps_ptr->push_back(new GeoLib::Point(0,0,0));
+
+	GeoLib::PointVec* point_vec = nullptr;
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	ASSERT_EQ(1, point_vec->size());
 	delete point_vec;
 }
