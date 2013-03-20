@@ -64,3 +64,22 @@ TEST(GeoLib, TestPointVecCtorTwoEqualPoints)
 	ASSERT_EQ(1, point_vec->size());
 	delete point_vec;
 }
+
+// Testing input vector with single point.
+TEST(GeoLib, TestPointVecPushBack)
+{
+	VectorOfPoints* ps_ptr = new VectorOfPoints;
+	ps_ptr->push_back(new GeoLib::Point(0,0,0));
+	ps_ptr->push_back(new GeoLib::Point(1,0,0));
+	ps_ptr->push_back(new GeoLib::Point(0,1,0));
+	ps_ptr->push_back(new GeoLib::Point(0,0,1));
+	GeoLib::PointVec point_vec("JustAName", ps_ptr);
+
+	// Adding a new point with same coordinates changes nothing.
+	point_vec.push_back(new GeoLib::Point(0,0,0));
+	point_vec.push_back(new GeoLib::Point(1,0,0));
+	point_vec.push_back(new GeoLib::Point(0,1,0));
+	point_vec.push_back(new GeoLib::Point(0,0,1));
+
+	ASSERT_EQ(4, point_vec.size());
+}
