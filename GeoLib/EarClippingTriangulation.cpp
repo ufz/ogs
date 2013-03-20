@@ -212,7 +212,7 @@ void EarClippingTriangulation::clipEars()
 					prev--;
 				}
 				// add triangle
-				_triangles.push_back(GeoLib::Triangle(_pnts, *prev, ear, *next));
+				_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *next, ear));
 
 				// check the orientation of prevprev, prev, next
 				std::list<std::size_t>::iterator prevprev;
@@ -299,9 +299,9 @@ void EarClippingTriangulation::clipEars()
 	it = next;
 	next++;
 	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == GeoLib::CCW)
-		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *next, *it));
-	else
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
+	else
+		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *next, *it));
 }
 
 } // end namespace GeoLib

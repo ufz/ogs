@@ -23,7 +23,7 @@
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkPolygon.h>
+#include <vtkTriangle.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkProperty.h>
@@ -84,9 +84,9 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	sfcIDs->SetNumberOfComponents(1);
 	sfcIDs->SetName("SurfaceIDs");
 
-	for (size_t i = 0; i < nPoints; i++)
+	for (size_t i = 0; i < nPoints; ++i)
 	{
-		double* coords = const_cast<double*>((*surfacePoints)[i]->getCoords());
+		const double* coords = const_cast<double*>((*surfacePoints)[i]->getCoords());
 		newPoints->InsertNextPoint(coords);
 	}
 
@@ -96,17 +96,17 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	{
 		const size_t nTriangles = (*it)->getNTriangles();
 
-		for (size_t i = 0; i < nTriangles; i++)
+		for (size_t i = 0; i < nTriangles; ++i)
 		{
-			vtkPolygon* aPolygon = vtkPolygon::New();
-			aPolygon->GetPointIds()->SetNumberOfIds(3);
+			vtkTriangle* new_tri = vtkTriangle::New();
+			new_tri->GetPointIds()->SetNumberOfIds(3);
 
 			const GeoLib::Triangle* triangle = (**it)[i];
-			for (size_t j = 0; j < 3; j++)
-				aPolygon->GetPointIds()->SetId(j, ((*triangle)[j]));
-			newPolygons->InsertNextCell(aPolygon);
+			for (size_t j = 0; j < 3; ++j)
+				new_tri->GetPointIds()->SetId(j, ((*triangle)[j]));
+			newPolygons->InsertNextCell(new_tri);
 			sfcIDs->InsertNextValue(count);
-			aPolygon->Delete();
+			new_tri->Delete();
 		}
 		count++;
 	}
