@@ -11,6 +11,8 @@
 
 #include "GeoLib/PointVec.h"
 
+typedef std::vector<GeoLib::Point*> VectorOfPoints;
+
 // Testing nullptr input vector.
 TEST(GeoLib, TestPointVecCtorNullptr)
 {
@@ -20,26 +22,32 @@ TEST(GeoLib, TestPointVecCtorNullptr)
 // Testing empty input vector.
 TEST(GeoLib, TestPointVecCtorEmpty)
 {
-	std::vector<GeoLib::Point*> ps;
-	ASSERT_ANY_THROW(GeoLib::PointVec("JustAName", &ps));
+	VectorOfPoints* ps_ptr = new VectorOfPoints;
+	ASSERT_ANY_THROW(GeoLib::PointVec("JustAName", ps_ptr));
 }
 
 // Testing input vector with single point.
 TEST(GeoLib, TestPointVecCtorSinglePoint)
 {
-	std::vector<GeoLib::Point*> ps;
-	ps.push_back(new GeoLib::Point(0,0,0));
-	FAIL() << "SEGV Error in destructor TemplateVec.h:62.\n"
-		<< "Dealloction of the points vector fails.";
-	ASSERT_NO_THROW(GeoLib::PointVec point_vec("JustAName", &ps));
+	VectorOfPoints* ps_ptr = new VectorOfPoints;
+	ps_ptr->push_back(new GeoLib::Point(0,0,0));
+	GeoLib::PointVec* point_vec = nullptr;
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec("JustAName", ps_ptr));
+	ASSERT_EQ(1, point_vec->size());
+
+	delete point_vec;
 }
 
 // Testing input vector with two different points.
 TEST(GeoLib, TestPointVecCtorTwoPoints)
 {
-	std::vector<GeoLib::Point*> ps;
-	ps.push_back(new GeoLib::Point(0,0,0));
-	ps.push_back(new GeoLib::Point(1,0,0));
+	VectorOfPoints* ps_ptr = new VectorOfPoints;
+	ps_ptr->push_back(new GeoLib::Point(0,0,0));
+	ps_ptr->push_back(new GeoLib::Point(1,0,0));
 
-	ASSERT_NO_THROW(GeoLib::PointVec point_vec("JustAName", &ps));
+	GeoLib::PointVec* point_vec = nullptr;
+	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec("JustAName", ps_ptr));
+	ASSERT_EQ(2, point_vec->size());
+
+	delete point_vec;
 }
