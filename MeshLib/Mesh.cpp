@@ -284,7 +284,7 @@ void Mesh::removeMeshElements(MshElemType::type t)
 	unsigned count(0);
 	for (std::vector<MeshLib::Element*>::iterator it = this->_elements.begin(); it != this->_elements.end();)
 	{
-		if ((*it)->getCellType() == t)
+		if ((*it)->getGeomType() == t)
 		{
 			delete *it;
 			it = this->_elements.erase(it);

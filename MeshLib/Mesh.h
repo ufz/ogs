@@ -126,11 +126,6 @@ protected:
 
 	void setNodesConnectedByElements();
 
-	static std::vector<Node*> deepCopyNodes(Mesh* const*const mesh);
-
-	static std::vector<Element*> deepCopyElements(Element* const*const mesh);
-
-
 	std::size_t const _id;
 	unsigned _mesh_dimension;
 	double _edge_length[2];
