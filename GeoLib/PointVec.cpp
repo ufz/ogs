@@ -115,7 +115,7 @@ double PointVec::getShortestPointDistance () const
 	return sqrt (_sqr_shortest_dist);
 }
 
-void PointVec::makePntsUnique (std::vector<GeoLib::Point*> *& pnt_vec,
+void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
                                std::vector<std::size_t> &pnt_id_map, double eps)
 {
 	std::size_t n_pnts_in_file(pnt_vec->size());
@@ -184,10 +184,8 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*> *& pnt_vec,
 		}
 	}
 
-	std::vector<GeoLib::Point*>* tmp_pnt_vec(new std::vector<GeoLib::Point*>(n_pnts_in_file - cnt));
-	std::remove_copy(pnt_vec->begin(), pnt_vec->end(), tmp_pnt_vec->begin(), nullptr);
-	std::swap(tmp_pnt_vec, pnt_vec);
-	delete tmp_pnt_vec;
+	auto const pnt_vec_end = std::remove(pnt_vec->begin(), pnt_vec->end(), nullptr);
+	pnt_vec->erase(pnt_vec_end, pnt_vec->end());
 
 	// renumber id-mapping
 	cnt = 0;

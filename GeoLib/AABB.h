@@ -20,6 +20,7 @@
 #include <iterator>
 #include <cassert>
 #include <vector>
+#include <stdexcept>
 
 #include "Point.h"
 
@@ -60,18 +61,20 @@ public:
 	/**
 	 * Construction of object using input iterators. In contrast to give a vector
 	 * this approach is more generic. You can use every (stl) container and
-	 * C arrays as input for constructing the object. The constructor requires
-	 * that std::distance(first, last) > 0.
+	 * C arrays as input for constructing the object.
+	 * @attention{The constructor requires that std::distance(first, last) > 0.}
 	 * @param first the input iterator to the initial position in the sequence
 	 * @param last the input iterator to the final position in a container, i.e. [first, last).
-	 * The iterator last must be reachable from first.
+	 * @attention{The iterator last must be reachable from first.}
 	 */
 	template <typename InputIterator>
 	AABB(InputIterator first, InputIterator last) :
 		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
 		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
 	{
-		assert(std::distance(first,last) > 0);
+		if (! (std::distance(first,last) > 0)) {
+			throw std::invalid_argument("AABB::AABB(InputIterator first, InputIterator last): first == last");
+		}
 		init(*first);
 		InputIterator it(first);
 		while (it != last) {

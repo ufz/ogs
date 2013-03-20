@@ -55,12 +55,14 @@ public:
 	 * pointer the vector of names of the points
 	 * and sets the type of PointVec.
 	 * @param name the name of the point group
-	 * @param points pointer to a vector of GeoLib::Pointers -
-	 * PointVec will take the ownership of the vector,
-	 * i.e. delete the points and the vector itself
-	 * @param name_id_map the names to the points -
-	 * PointVec will take the ownership of the vector, i.e. it
-	 * deletes the names
+	 * @param points Pointer to a vector of pointers to GeoLib::Points.
+	 * @attention{PointVec will take the ownership of (the pointer to)
+	 * the vector, i.e. it deletes the vector in the destructor! The class
+	 * takes also the ownership of the GeoLib::Points the pointers within
+	 * the vector points at, i.e. it delete the points!}
+	 * @param name_id_map A std::map that stores the relation name to point.
+	 * @attention{PointVec will take the ownership of the vector, i.e. it
+	 * deletes the names.}
 	 * @param type the type of the point, \sa enum PointType
 	 * @param rel_eps This is a relative error tolerance value for the test of identical points.
 	 * The size of the axis aligned bounding box multiplied with the value of rel_eps gives the
@@ -108,7 +110,7 @@ public:
 	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset);
 
 private:
-	void makePntsUnique (std::vector<GeoLib::Point*>*& pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
+	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
 
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
