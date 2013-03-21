@@ -18,8 +18,9 @@ public:
 	typedef std::vector<GeoLib::Point*> VectorOfPoints;
 
 	PointVecTest()
-		: gen(std::random_device() ())
+		: gen(std::random_device() ()), name("JustAName")
 	{
+		ps_ptr = new VectorOfPoints;
 	}
 
 protected:
@@ -36,9 +37,9 @@ protected:
 
 protected:
 	std::mt19937 gen;
+	const std::string name;
 
-	VectorOfPoints* ps_ptr = new VectorOfPoints;
-	const std::string name = "JustAName";
+	VectorOfPoints* ps_ptr;
 };
 
 // Testing nullptr input vector.
