@@ -120,7 +120,7 @@ TEST(GeoLib, PointComparisonOperatorLessEq)
 	ASSERT_FALSE(Point(1.0,1.0,1.0) <= Point(1.0,1.0,1.0-my_eps));
 
 	std::size_t n(10000);
-	srand ( time(NULL) );
+	srand ( static_cast<unsigned>(time(NULL)) );
 	for (std::size_t k(0); k<n; ++k) {
 		double random_val_x(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
 		double random_val_y(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));

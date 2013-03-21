@@ -25,7 +25,7 @@ public:
 	CRSMatrixReorderedOpenMP(unsigned n, unsigned *iA, unsigned *jA, double* A);
 	virtual ~CRSMatrixReorderedOpenMP();
 
-	virtual void amux(double d, double const * const x, double *y) const;
+	virtual void amux(double d, double const * const __restrict__ x, double *__restrict__ y) const;
 };
 
 }

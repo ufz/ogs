@@ -53,6 +53,10 @@ void amuxCRSParallelOpenMP (FP_TYPE a, unsigned n,
     FP_TYPE t;
 	{
 #pragma omp parallel for private(i, j, t)
+#ifdef WIN32
+#pragma warning ( push )
+#pragma warning ( disable: 4018 )
+#endif
 		for (i = 0; i < n; i++) {
 			const IDX_TYPE end(iA[i + 1]);
 			t = A[iA[i]] * x[jA[iA[i]]];
@@ -62,6 +66,9 @@ void amuxCRSParallelOpenMP (FP_TYPE a, unsigned n,
             y[i] = t * a;
 		}
 	}
+#ifdef WIN32
+#pragma warning ( pop )
+#endif
 }
 #endif
 
