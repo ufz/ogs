@@ -71,12 +71,8 @@ public:
 
 	void precondApply(double* x) const
 	{
-		{
-			OPENMP_LOOP_TYPE k;
-//			#pragma omp parallel for
-			for (k=0; k<_n_rows; ++k) {
-				x[k] = _inv_diag[k]*x[k];
-			}
+		for (unsigned k=0; k<_n_rows; ++k) {
+			x[k] = _inv_diag[k]*x[k];
 		}
 	}
 

@@ -42,6 +42,10 @@ namespace MathLib {
 unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		double* const x, double& eps, unsigned& nsteps)
 {
+#ifdef WIN32
+#pragma warning ( push )
+#pragma warning ( disable: 4018 )
+#endif
 	const unsigned N(mat->getNRows());
 	double * __restrict__ p(new double[N]);
 	double * __restrict__ q(new double[N]);
@@ -85,7 +89,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		// r^ = C r
 		// rhat = r
 //		blas::copy(N, r, rhat);
-		#pragma omp parallel for
+#pragma omp parallel for
 		for (k = 0; k < N; k++) {
 			rhat[k] = r[k];
 		}
@@ -97,7 +101,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		if (l > 1) {
 			double beta = rho / rho1;
 			// p = r^ + beta * p
-			#pragma omp parallel for
+#pragma omp parallel for
 			for (k = 0; k < N; k++) {
 				p[k] = rhat[k] + beta * p[k];
 			}
@@ -152,6 +156,9 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 	delete[] r;
 	delete[] rhat;
 	return 1;
+#ifdef WIN32
+#pragma warning ( pop )
+#endif
 }
 #endif
 

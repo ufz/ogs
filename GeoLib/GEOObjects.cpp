@@ -399,6 +399,7 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 			break;
 		default:
 			INFO("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
+			break;
 	}
 	return name;
 }

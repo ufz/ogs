@@ -5,33 +5,7 @@
 #include <cstdlib>
 #include <cmath>
 
-#define SIGN(a) ((a) >= 0 ? 1.0 : -1.0)
-#define SQR(a) ((a)*(a))                             // Quadrat von a
-inline double abs2(double a) {
-  return SQR(a);
-}
-inline double abs2(float a) {
-  return SQR(a);
-}
-#ifndef WIN32
-inline double abs(double a) {
-  return fabs(a);
-}
-inline float abs(float a) {
-  return fabsf(a);
-}
-#endif
-#define MIN(a,b) ((a) <= (b) ? (a) : (b))
-#define MAX(a,b) ((a) >= (b) ? (a) : (b))
 
-inline unsigned LTR(unsigned i, unsigned j, unsigned n)
-{
-  return ((2*n-j-1)*j)/2+i;
-}
-inline unsigned UTR(unsigned i, unsigned j)
-{
-  return (j*(j+1))/2+i;
-}
 inline unsigned GE(unsigned i, unsigned j, unsigned n)
 {
   return i+j*n;
@@ -49,88 +23,6 @@ const double D_PREC = 1e-16;
 const unsigned N_ONE = 1;
 const int N_MONE = -1;
 const char JOB_STR[] = "NTOSVULCRA";
-
-/*
-  #ifdef WIN32
-  #define dcopy_ dcopy
-  #define dnrm2_ dnrm2
-  #define dgemv_ dgemv
-  #define dspmv_ dspmv
-  #define dtpmv_ dtpmv
-  #define dgemm_ dgemm
-  #define daxpy_ daxpy
-  #define ddot_ ddot
-  #define dscal_ dscal
-  #define dgesvd_ dgesvd
-  #define dgeqrf_ dgeqrf
-  #define dormqr_ dormqr
-  #define dorgqr_ dorgqr
-  #define dgetri_ dgetri
-  #define dgetrf_ dgetrf
-  #define dsptri_ dsptri
-  #define dsptrf_ dsptrf
-  #define dtptrs_ dtptrs
-  #define dpptrf_ dpptrf
-  #define scopy_ scopy
-  #define snrm2_ snrm2
-  #define sgemv_ sgemv
-  #define sspmv_ sspmv
-  #define stpmv_ stpmv
-  #define sgemm_ sgemm
-  #define saxpy_ saxpy
-  #define sdot_ sdot
-  #define sscal_ sscal
-  #define sgesvd_ sgesvd
-  #define sgeqrf_ sgeqrf
-  #define sormqr_ sormqr
-  #define sorgqr_ sorgqr
-  #define sgetri_ sgetri
-  #define sgetrf_ sgetrf
-  #define ssptri_ ssptri
-  #define ssptrf_ ssptrf
-  #define stptrs_ stptrs
-  #define spptrf_ spptrf
-  #define ccopy_ ccopy
-  #define scnrm2_ scnrm2
-  #define cgemv_ cgemv
-  #define chpmv_ chpmv
-  #define ctpmv_ ctpmv
-  #define cgemm_ cgemm
-  #define caxpy_ caxpy
-  #define cdotc_ cdotc
-  #define cscal_ cscal
-  #define cgesvd_ cgesvd
-  #define cgeqrf_ cgeqrf
-  #define cunmqr_ cunmqr
-  #define cungqr_ cungqr
-  #define cgetri_ cgetri
-  #define cgetrf_ cgetrf
-  #define csptri_ csptri
-  #define csptrf_ csptrf
-  #define ctptrs_ ctptrs
-  #define cpptrf_ cpptrf
-  #define zcopy_ zcopy
-  #define dznrm2_ dznrm2
-  #define zgemv_ zgemv
-  #define zhpmv_ zhpmv
-  #define ztpmv_ ztpmv
-  #define zgemm_ zgemm
-  #define zaxpy_ zaxpy
-  #define zdotc_ zdotc
-  #define zscal_ zscal
-  #define zgesvd_ zgesvd
-  #define zgeqrf_ zgeqrf
-  #define zunmqr_ zunmqr
-  #define zungqr_ zungqr
-  #define zgetri_ zgetri
-  #define zgetrf_ zgetrf
-  #define zsptri_ zsptri
-  #define zsptrf_ zsptrf
-  #define ztptrs_ ztptrs
-  #define zpptrf_ zpptrf
-  #endif
-*/
-
 
 extern "C"
 {
@@ -299,9 +191,6 @@ extern "C"
 
 namespace blas
 {
-//  inline void conj(unsigned n, double* v) {}
-//  inline void conj(unsigned n, float* v) {}
-
   inline void swap(const unsigned n, double* x, const unsigned incx,
 		   double* y, const unsigned incy )
   {
@@ -369,18 +258,6 @@ namespace blas
     return snrm2_(&n, v, &N_ONE);
   }
 
-  inline double diff2(const unsigned n, double* x, double* y)
-  {
-    double s = 0.0;
-    for (unsigned i=0; i<n; ++i) s += SQR(x[i]-y[i]);
-    return sqrt(s);
-  }
-  inline float diff2(const unsigned n, float* x, float* y)
-  {
-    float s = 0.0;
-    for (unsigned i=0; i<n; ++i) s += SQR(x[i]-y[i]);
-    return sqrtf(s);
-  }
   inline void copy(const unsigned n, const double*const orig, double* dest)
   {
     dcopy_(&n, orig, &N_ONE, dest, &N_ONE);
@@ -862,19 +739,7 @@ namespace blas
 	    wk, &nwk, &INF);
     return INF;
   }
-  inline int gesvd(unsigned m, unsigned n, float* A, double* S,
-		   float* VT, unsigned ldVT, unsigned nwk, float* wk)
-  {
-    int INF;
-    // workaround (needs to be improved)
-    float* Sf = new float[MIN(m,n)];
-    for(unsigned i=0;i<MIN(m,n);i++)
-      Sf[i] = (float)S[i];
-    sgesvd_(JOB_STR+2, JOB_STR+3, &m, &n, A, &m, Sf, A, &m, VT, &ldVT,
-	    wk, &nwk, &INF);
-    delete [] Sf;
-    return INF;
-  }
+
   inline int gesvd(unsigned m, unsigned n, double* A, double* S,
 		   double* U, unsigned ldU, double* VT, unsigned ldVT,
 		   unsigned nwk, double* wk)
@@ -882,20 +747,6 @@ namespace blas
     int INF;
     dgesvd_(JOB_STR+9, JOB_STR+9, &m, &n, A, &m, S, U, &ldU, VT, &ldVT,
 	    wk, &nwk, &INF);
-    return INF;
-  }
-  inline int gesvd(unsigned m, unsigned n, float* A, double* S,
-		   float* U, unsigned ldU, float* VT, unsigned ldVT,
-		   unsigned nwk, float* wk)
-  {
-    int INF;
-    // workaround (needs to be improved)
-    float* Sf = new float[MIN(m,n)];
-    for(unsigned i=0;i<MIN(m,n);i++)
-      Sf[i] = (float)S[i];
-    sgesvd_(JOB_STR+9, JOB_STR+9, &m, &n, A, &m, Sf, U, &ldU, VT, &ldVT,
-	    wk, &nwk, &INF);
-    delete [] Sf;
     return INF;
   }
 
@@ -1127,95 +978,6 @@ namespace blas
     for (unsigned i=0; i<m; ++i) scopy_(&n, A+i, &m, B+i*n, &N_ONE);
   }
 
-  // product of upper triangular and regular Matrix  M = R A, R mxp, A nxp
-  inline void utrgemmh(const unsigned m, const unsigned p, const unsigned n,
-		       const double* const R, const unsigned ldR,
-		       const double* const A, const unsigned ldA,
-		       double* const M, const unsigned ldM)
-  {
-    for (unsigned i=0; i<m; ++i) {
-      for (unsigned j=0; j<n; ++j) {
-	double d = D_ZERO;
-	for(unsigned l=i; l<p; ++l)
-	  d += R[i+l*ldR]*A[j+l*ldA];
-	M[i+j*ldM] = d;
-      }
-    }
-  }
-  inline void utrgemmh(const unsigned m, const unsigned p, const unsigned n,
-		       const float* const R, const unsigned ldR,
-		       const float* const A, const unsigned ldA,
-		       float* const M, const unsigned ldM)
-  {
-    for (unsigned i=0; i<m; ++i) {
-      for (unsigned j=0; j<n; ++j) {
-	float d = S_ZERO;
-	for(unsigned l=i; l<p; ++l)
-	  d += R[i+l*ldR]*A[j+l*ldA];
-	M[i+j*ldM] = d;
-      }
-    }
-  }
-
-  // product of two upper triangular matrices M = R1 R2^T, R1 mxp, R2 nxp
-  inline void utrmmh(const unsigned m, const unsigned p, const unsigned n,
-		     const double* const R1, const unsigned ldR1,
-		     const double* const R2, const unsigned ldR2,
-		     double* const M)
-  {
-    for (unsigned j=0; j<n; ++j) {
-      for (unsigned i=0; i<m; ++i) {
-	double d = D_ZERO;
-	unsigned ij = MAX(i,j);
-	for (unsigned l=ij; l<p; ++l)
-	  d += R1[i+l*ldR1]*R2[j+l*ldR2];
-	M[i+j*m] = d;
-      }
-    }
-  }
-  inline void utrmmh(const unsigned m, const unsigned p, const unsigned n,
-		     const float* const R1, const unsigned ldR1,
-		     const float* const R2, const unsigned ldR2,
-		     float* const M)
-  {
-    for (unsigned j=0; j<n; ++j) {
-      for (unsigned i=0; i<m; ++i) {
-	float d = S_ZERO;
-	unsigned ij = MAX(i,j);
-	for (unsigned l=ij; l<p; ++l)
-	  d += R1[i+l*ldR1]*R2[j+l*ldR2];
-	M[i+j*m] = d;
-      }
-    }
-  }
-  // product of two upper triangular matrices M += R1 R2^T, R1 mxp, R2 nxp
-  inline void utrmmha(const unsigned m, const unsigned p, const unsigned n,
-		      const double* const R1, const unsigned ldR1,
-		      const double* const R2, const unsigned ldR2,
-		      double* const M)
-  {
-    for(unsigned l=0; l<p; l++){
-      for(unsigned j=p; j<n; j++){
-	for(unsigned i=p; i<m; i++){
-	  M[i+j*m] += R1[i+l*ldR1]*R2[j+l*ldR2];
-	}
-      }
-    }
-  }
-  inline void utrmmha(const unsigned m, const unsigned p, const unsigned n,
-		      const float* const R1, const unsigned ldR1,
-		      const float* const R2, const unsigned ldR2,
-		      float* const M)
-  {
-    for(unsigned l=0; l<p; l++){
-      for(unsigned j=p; j<n; j++){
-	for(unsigned i=p; i<m; i++){
-	  M[i+j*m] += R1[i+l*ldR1]*R2[j+l*ldR2];
-	}
-      }
-    }
-  }
-
   // product of an upper triangular matrix U and a matrix A, A:=U A
   inline void utrgemm(unsigned m, unsigned n, double* U, unsigned ldU,
 		      double* A, unsigned ldA)
@@ -1224,131 +986,6 @@ namespace blas
 	   A, &ldA);
   }
 
-  // A:=A U^H
-  inline void geutrmm(unsigned m, unsigned n, double* A, unsigned ldA,
-		      double* U, unsigned ldU)
-  {
-    dtrmm_(JOB_STR+8, JOB_STR+5, JOB_STR+1, JOB_STR, &m, &n, &D_ONE, U, &ldU,
-	   A, &ldA);
-  }
-
-  // C += d A U^T, U upper triangular matrix in packed storage
-  inline void geputrmmh(double d, unsigned m, unsigned n, double* A,
-			double* U, double* C)
-  {
-    for (unsigned j=0; j<n; ++j)
-      for (unsigned l=j; l<n; ++l) {
-	double e = d*U[j+l*(l+1)/2];
-	for (unsigned i=0; i<m; ++i) C[i+j*m] += e*A[i+l*m];
-      }
-  }
-
-  inline void geputrmmh(float d, unsigned m, unsigned n, float* A,
-			float* U, float* C)
-  {
-    for (unsigned j=0; j<n; ++j)
-      for (unsigned l=j; l<n; ++l) {
-	float e = d*U[j+l*(l+1)/2];
-	for (unsigned i=0; i<m; ++i) C[i+j*m] += e*A[i+l*m];
-      }
-  }
-
-  // C += A U^T, U upper triangular matrix
-  inline void geutrTmm(unsigned m, unsigned n, double* U, unsigned ldU,
-		       double* A, unsigned ldA)
-  {
-    dtrmm_(JOB_STR+8, JOB_STR+5, JOB_STR+1, JOB_STR, &m, &n, &D_ONE, U, &ldU,
-	   A, &ldA);
-  }
-
-  // product of two upper triangular matrices M = R1 R2^T, R1 mxp, R2 nxp
-  inline void utrmmh(unsigned m, unsigned p, unsigned n, double* R1,
-		     unsigned ldR1, double* R2, unsigned ldR2, double* M)
-  {
-    for (unsigned j=0; j<n; ++j) {
-      for (unsigned i=0; i<m; ++i) {
-	double d = D_ZERO;
-	for (unsigned l=MAX(i,j); l<p; ++l) d += R1[i+l*ldR1] * R2[j+l*ldR2];
-	M[i+j*m] = d;
-      }
-    }
-  }
-  inline void utrmmh(unsigned m, unsigned p, unsigned n, float* R1,
-		     unsigned ldR1, float* R2, unsigned ldR2, float* M)
-  {
-    for (unsigned j=0; j<n; ++j) {
-      for (unsigned i=0; i<m; ++i) {
-	float d = S_ZERO;
-	for (unsigned l=MAX(i,j); l<p; ++l) d += R1[i+l*ldR1] * R2[j+l*ldR2];
-	M[i+j*m] = d;
-      }
-    }
-  }
-
-  // C += d U A, where U is upper triangular in packed storage
-  template<class T>
-    inline void putrgemm(T d, unsigned n, T* U, unsigned p, T* A, T* C)
-    {
-      for (unsigned j=0; j<p; ++j) {
-	for (unsigned l=0; l<n; ++l) {
-	  T e = d * A[l+j*n];
-	  unsigned idl = l*(l+1)/2;
-	  for (unsigned i=0; i<=l; ++i) C[i+j*n] += e * U[i+idl];
-	}
-      }
-    }
-
-  // A += d U L, where U is upper triangular in packed storage
-  // and L is lower triangular in packed storage
-  inline void putrltrmm(double d, unsigned n, double* U, double* L,
-			double* A)
-  {
-    unsigned* ip = new unsigned[n];
-    for(unsigned i=0;i<n;i++)
-      ip[i]=L[((2*n-i+1)*i)/2];
-
-    for(unsigned j=0;j<n;j++){
-      const unsigned ipj = ip[j];
-      const unsigned idUj = (ipj*(ipj+1))/2;
-      unsigned idL = ((2*n-j+1)*j)/2;
-      for(unsigned i=0;i<=ipj;i++)
-	A[i]+=d*U[idUj+i];
-      for(unsigned k=j+1;k<n;k++){
-	const unsigned ipk = ip[k];
-	const double t = d*L[++idL];
-	const unsigned idUk = (ipk*(ipk+1))/2;
-	for(unsigned i=0;i<=ipk;i++)
-	  A[i]+=U[idUk+i]*t;
-      }
-      A+=n;
-    }
-    delete [] ip;
-  }
-
-  inline void putrltrmm(float d, unsigned n, float* U, float* L,
-			float* A)
-  {
-    unsigned* ip = new unsigned[n];
-    for(unsigned i=0;i<n;i++)
-      ip[i]=L[((2*n-i+1)*i)/2];
-
-    for(unsigned j=0;j<n;j++){
-      const unsigned ipj = ip[j];
-      const unsigned idUj = (ipj*(ipj+1))/2;
-      unsigned idL = ((2*n-j+1)*j)/2;
-      for(unsigned i=0;i<=ipj;i++)
-	A[i]+=d*U[idUj+i];
-      for(unsigned k=j+1;k<n;k++){
-	const unsigned ipk = ip[k];
-	const float t = d*L[++idL];
-	const unsigned idUk = (ipk*(ipk+1))/2;
-	for(unsigned i=0;i<=ipk;i++)
-	  A[i]+=U[idUk+i]*t;
-      }
-      A+=n;
-    }
-    delete [] ip;
-  }
 
   // A += d U U^H, where U is upper triangular in packed storage
   // only the upper triangular part of A is computed
