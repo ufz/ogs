@@ -118,6 +118,17 @@ T sqrDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 double sqrDist(const double* p0, const double* p1);
 
+/** Distance between points p0 and p1 in the maximum norm. */
+template <typename T>
+T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
+{
+	const T x = fabs((*p1)[0] - (*p0)[0]);
+	const T y = fabs((*p1)[1] - (*p0)[1]);
+	const T z = fabs((*p1)[2] - (*p0)[2]);
+
+	return std::max(x, std::max(y, z));
+}
+
 /** linear normalisation of val from [min, max] into [0,1] */
 float normalize(float min, float max, float val);
 
