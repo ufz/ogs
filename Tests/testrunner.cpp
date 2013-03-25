@@ -13,16 +13,23 @@
  */
 
 // ** INCLUDES **
+#include "Configure.h"
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
 #ifdef USE_LIS
 #include "lis.h"
 #endif
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
+#ifdef QT4_FOUND
+#include <QApplication>
+#endif
 
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])
 {
+#ifdef QT4_FOUND
+	QApplication app(argc, argv, false);
+#endif
     int ret = 0;
     LOGOG_INITIALIZE();
     {
