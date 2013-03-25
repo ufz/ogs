@@ -10,11 +10,18 @@ APPEND_SOURCE_FILES(TEST_SOURCES GeoLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 
+IF (QT4_FOUND)
+	APPEND_SOURCE_FILES(TEST_SOURCES FileIO)
+ENDIF()
+
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/FemLib
+	${CMAKE_SOURCE_DIR}/FileIO
 	${CMAKE_SOURCE_DIR}/GeoLib
 	${CMAKE_SOURCE_DIR}/MathLib
 	${CMAKE_SOURCE_DIR}/MeshLib
+	${CMAKE_BINARY_DIR}/BaseLib
 )
 
 IF (LIS_FOUND)
@@ -27,13 +34,23 @@ SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
 	BaseLib
+	FemLib
+	FileIO
 	GeoLib
 	MathLib
 	MeshLib
+	OgsLib
 	logog
 	${Boost_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 )
+
+IF (QT4_FOUND)
+  TARGET_LINK_LIBRARIES(testrunner
+  	${QT_LIBRARIES}
+  )
+ENDIF()
+
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
