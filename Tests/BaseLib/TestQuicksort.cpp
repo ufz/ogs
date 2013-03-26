@@ -28,7 +28,8 @@ class QuicksortSortsAsSTLSort : public Property<std::vector<int>> {
     bool holdsFor(const std::vector<int>& xs)
     {
         std::vector<size_t> perm(xs.size());
-        //BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
+        if (! xs.empty())
+        	BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
         return std::is_sorted(xs.begin(), xs.end());
     }
 
