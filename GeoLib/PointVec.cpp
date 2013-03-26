@@ -74,30 +74,34 @@ void PointVec::push_back (Point* pnt, std::string const*const name)
 
 std::size_t PointVec::uniqueInsert (Point* pnt)
 {
-	std::size_t n (_data_vec->size()), k;
 	const double eps (std::numeric_limits<double>::epsilon());
-	for (k = 0; k < n; k++)
-		if (fabs((*((*_data_vec)[k]))[0] - (*pnt)[0]) < eps
-		    &&  fabs( (*((*_data_vec)[k]))[1] - (*pnt)[1]) < eps
-		    &&  fabs( (*((*_data_vec)[k]))[2] - (*pnt)[2]) < eps)
-			break;
+	auto const it = std::find_if(_data_vec->begin(), _data_vec->end(),
+		[&eps, &pnt](Point* const p)
+		{
+			return MathLib::maxNormDist(p, pnt) <= eps;
+		});
 
-	if(k == n) {
-		_data_vec->push_back (pnt);
-		// update bounding box
-		_aabb.update (*((*_data_vec)[n]));
-		// update shortest distance
-		for (std::size_t i(0); i < n; i++) {
-			double sqr_dist (MathLib::sqrDist((*_data_vec)[i], (*_data_vec)[n]));
-			if (sqr_dist < _sqr_shortest_dist)
-				_sqr_shortest_dist = sqr_dist;
-		}
-		return n;
+	if (it != _data_vec->end())
+	{
+		delete pnt;
+		pnt = NULL;
+		return std::distance(_data_vec->begin(), it);
 	}
 
-	delete pnt;
-	pnt = NULL;
-	return k;
+	_data_vec->push_back(pnt);
+
+	// update bounding box
+	_aabb.update (*(_data_vec->back()));
+
+	// update shortest distance
+	std::for_each(_data_vec->begin(), _data_vec->end(),
+			[this](Point* const p)
+			{
+				_sqr_shortest_dist = std::min(_sqr_shortest_dist,
+						MathLib::sqrDist(p, _data_vec->back()));
+			});
+
+	return _data_vec->size()-1;
 }
 
 std::vector<Point*>* PointVec::filterStations(const std::vector<PropertyBounds> &bounds) const
@@ -134,10 +138,10 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	// determine intervals with identical points to resort for stability of sorting
 	std::vector<std::size_t> identical_pnts_interval;
 	bool identical(false);
-	for (std::size_t k = 0; k < n_pnts_in_file - 1; k++) {
-		if (fabs((*((*pnt_vec)[k + 1]))[0] - (*((*pnt_vec)[k]))[0]) < eps
-				&& fabs((*((*pnt_vec)[k + 1]))[1] - (*((*pnt_vec)[k]))[1]) < eps
-				&& fabs((*((*pnt_vec)[k + 1]))[2] - (*((*pnt_vec)[k]))[2]) < eps) {
+	for (std::size_t k = 0; k < n_pnts_in_file - 1; k++)
+	{
+		if (MathLib::maxNormDist((*pnt_vec)[k + 1], (*pnt_vec)[k]) <= eps)
+		{
 			// points are identical, sort by id
 			if (!identical)
 				identical_pnts_interval.push_back(k);
@@ -163,13 +167,9 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	}
 
 	// check if there are identical points
-	for (std::size_t k = 0; k < n_pnts_in_file - 1; k++) {
-		if (fabs((*((*pnt_vec)[k + 1]))[0] - (*((*pnt_vec)[k]))[0]) < eps
-				&& fabs((*((*pnt_vec)[k + 1]))[1] - (*((*pnt_vec)[k]))[1]) < eps
-				&& fabs((*((*pnt_vec)[k + 1]))[2] - (*((*pnt_vec)[k]))[2]) < eps) {
+	for (std::size_t k = 0; k < n_pnts_in_file - 1; k++)
+		if (MathLib::maxNormDist((*pnt_vec)[k + 1], (*pnt_vec)[k]) <= eps)
 			pnt_id_map[perm[k + 1]] = pnt_id_map[perm[k]];
-		}
-	}
 
 	// reverse permutation
 	BaseLib::Quicksort<std::size_t, GeoLib::Point*>(perm, 0, n_pnts_in_file, *pnt_vec);

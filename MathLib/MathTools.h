@@ -67,9 +67,16 @@ T scpr(T const * const v0, T const * const v1, unsigned n)
 	OPENMP_LOOP_TYPE k;
 
 #pragma omp parallel for reduction (+:res)
+#ifdef WIN32
+#pragma warning ( push )
+#pragma warning ( disable: 4018 )
+#endif
 	for (k = 1; k<n; k++) {
 		res += v0[k] * v1[k];
 	}
+#ifdef WIN32
+#pragma warning ( pop )
+#endif
 #else
 	for (std::size_t k(1); k < n; k++)
 		res += v0[k] * v1[k];
@@ -110,6 +117,17 @@ T sqrDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* 
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 double sqrDist(const double* p0, const double* p1);
+
+/** Distance between points p0 and p1 in the maximum norm. */
+template <typename T>
+T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
+{
+	const T x = fabs((*p1)[0] - (*p0)[0]);
+	const T y = fabs((*p1)[1] - (*p0)[1]);
+	const T z = fabs((*p1)[2] - (*p0)[2]);
+
+	return std::max(x, std::max(y, z));
+}
 
 /** linear normalisation of val from [min, max] into [0,1] */
 float normalize(float min, float max, float val);
