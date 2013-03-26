@@ -29,7 +29,7 @@ public:
 
 	QValidator::State validate(QString & input, int &pos) const
 	{
-		if (input.isEmpty() || input == ".") return Intermediate;
+		if (input.isEmpty() || input == "." || input == "-") return Intermediate;
 
 		if (QDoubleValidator::validate(input, pos) != Acceptable)
 			return Invalid;
