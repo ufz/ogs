@@ -48,12 +48,23 @@ public:
 	/// Returns the 2d-element mesh representing the surface of the given layered mesh.
 	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const double* dir = NULL);
 
+	/// Reduces the values assigned the elements of mesh to the smallest possible range.
+	/// Returns the number of different values.
+	static unsigned compressElementValues(MeshLib::Mesh &mesh);
+
+	/// Replaces for all elements of mesh with the value old_value with new_value if possible.
+	/// Returns true if successful or false if the value is already taken.
+	static bool replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value);
+
 private:
 	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
 	static void get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension);
 
 	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
 	static void get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map);
+
+	/// Returns the values of elements within the mesh
+	static std::vector<unsigned> getMeshValues(const MeshLib::Mesh &mesh);
 };
 
 } // end namespace MeshLib

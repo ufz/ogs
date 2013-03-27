@@ -270,5 +270,68 @@ std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh
 	return surface_pnts;
 }
 
+std::vector<unsigned> MshEditor::getMeshValues(const MeshLib::Mesh &mesh)
+{
+	const std::size_t nElements (mesh.getNElements());
+	std::vector<unsigned> value_mapping;
+	for (unsigned i=0; i<nElements; ++i)
+	{
+		bool exists(false);
+		unsigned value (mesh.getElement(i)->getValue());
+		const unsigned nValues (value_mapping.size());
+		for (unsigned j=0; j<nValues; ++j)
+		{
+			if (value == value_mapping[j])
+			{
+				exists = true;
+				break;
+			}
+		}
+		if (!exists)
+			value_mapping.push_back(value);
+	}
+
+	std::sort(value_mapping.begin(), value_mapping.end());
+	return value_mapping;
+}
+
+bool MshEditor::replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value)
+{
+	std::vector<unsigned> value_mapping (MshEditor::getMeshValues(mesh));
+	const unsigned nValues (value_mapping.size());
+	for (unsigned j=0; j<nValues; ++j)
+	{
+		if (new_value == value_mapping[j])
+		{
+			ERR ("Error in MshEditor::replaceElementValue() - Replacement value is already take.");
+			return false;
+		}
+	}
+	const std::size_t nElements (mesh.getNElements());
+	std::vector<MeshLib::Element*> elements (mesh.getElements());
+	for (unsigned i=0; i<nElements; ++i)
+	{
+		if (elements[i]->getValue() == old_value)
+			elements[i]->setValue(new_value);
+	}
+	return true;
+}
+
+unsigned MshEditor::compressElementValues(MeshLib::Mesh &mesh)
+{
+	const std::size_t nElements (mesh.getNElements());
+	std::vector<MeshLib::Element*> elements (mesh.getElements());
+	std::vector<unsigned> value_mapping (MshEditor::getMeshValues(mesh));
+
+	std::vector<unsigned> reverse_mapping(value_mapping.back(),0);
+	const unsigned nValues (value_mapping.size());
+	for (unsigned i=0; i<nElements; ++i)
+		reverse_mapping[value_mapping[i]] = i;
+
+	for (unsigned i=0; i<nElements; ++i)
+		elements[i]->setValue(reverse_mapping[elements[i]->getValue()]);
+
+	return nValues;
+}
 
 } // end namespace MeshLib
