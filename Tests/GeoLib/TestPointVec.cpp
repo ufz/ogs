@@ -26,11 +26,10 @@ public:
 protected:
 	// Generates n new points according to given random number distribution,
 	// which is uniform distribution in [-1, 1]^3.
-	template <typename RandomDistribution = std::uniform_real_distribution<double>>
 	void
-	generateRandomPoints(std::size_t const n = 1000,
-		RandomDistribution rnd = std::uniform_real_distribution<double>(-1, 1))
+	generateRandomPoints(std::size_t const n = 1000)
 	{
+		std::uniform_real_distribution<double> rnd(-1, 1);
 		std::generate_n(std::back_inserter(*ps_ptr), n,
 			[&]() { return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen)); });
 	}
