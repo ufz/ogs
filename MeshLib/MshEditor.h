@@ -50,11 +50,11 @@ public:
 
 	/// Reduces the values assigned the elements of mesh to the smallest possible range.
 	/// Returns the number of different values.
-	static unsigned compressElementValues(MeshLib::Mesh &mesh);
+	static unsigned condenseElementValues(MeshLib::Mesh &mesh);
 
 	/// Replaces for all elements of mesh with the value old_value with new_value if possible.
 	/// Returns true if successful or false if the value is already taken.
-	static bool replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value);
+	static bool replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists = false);
 
 private:
 	/// Functionality needed for getSurfaceNodes() and getMeshSurface()

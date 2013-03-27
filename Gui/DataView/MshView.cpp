@@ -15,6 +15,7 @@
 #include "MshView.h"
 #include "Mesh.h"
 #include "MshEditDialog.h"
+#include "MeshValueEditDialog.h"
 #include "MshItem.h"
 #include "MshModel.h"
 #include "OGSError.h"
@@ -107,6 +108,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 	{
 		QMenu menu;
 		QAction* editMeshAction   = menu.addAction("Edit mesh...");
+		QAction* editValuesAction  = menu.addAction("Edit material groups...");
 		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
 		QAction* surfaceMeshAction (NULL);
 		if (is_3D_mesh)
@@ -119,6 +121,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* loadDirectAction = direct_cond_menu.addAction("Load...");
 		//menu.addSeparator();
 		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
+		connect(editValuesAction, SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
 		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		if (is_3D_mesh)
 			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
@@ -139,6 +142,18 @@ void MshView::openMshEditDialog()
 	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
 		    model, SLOT(addMesh(MeshLib::Mesh*)));
 	meshEdit.exec();
+}
+
+void MshView::openValuesEditDialog()
+{
+	MshModel* model = static_cast<MshModel*>(this->model());
+	QModelIndex index = this->selectionModel()->currentIndex();
+	MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(static_cast<MshModel*>(this->model())->getMesh(index));
+
+	MeshValueEditDialog valueEdit(mesh);
+	connect(&valueEdit, SIGNAL(valueEditFinished(MeshLib::Mesh*)),
+		    model, SLOT(updateMesh(MeshLib::Mesh*)));
+	valueEdit.exec();
 }
 
 void MshView::extractSurfaceMesh()

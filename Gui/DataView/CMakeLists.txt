@@ -17,6 +17,7 @@ set( SOURCES
 	LinearEditDialog.cpp
 	LineEditDialog.cpp
 	ListPropertiesDialog.cpp
+	MeshValueEditDialog.cpp
 	ModellingTabWidget.cpp
 	ModelTreeItem.cpp
 	MshEditDialog.cpp
@@ -54,6 +55,7 @@ set( MOC_HEADERS
 	LinearEditDialog.h
 	LineEditDialog.h
 	ListPropertiesDialog.h
+	MeshValueEditDialog.h
 	ModellingTabWidget.h
 	MshEditDialog.h
 	MshModel.h
@@ -96,6 +98,7 @@ set( UIS
 	License.ui
 	LinearEdit.ui
 	LineEdit.ui
+	MeshValueEdit.ui
 	ModellingTabWidgetBase.ui
 	MshEdit.ui
 	MshQualitySelection.ui

@@ -295,16 +295,20 @@ std::vector<unsigned> MshEditor::getMeshValues(const MeshLib::Mesh &mesh)
 	return value_mapping;
 }
 
-bool MshEditor::replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value)
+bool MshEditor::replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists)
 {
 	std::vector<unsigned> value_mapping (MshEditor::getMeshValues(mesh));
-	const unsigned nValues (value_mapping.size());
-	for (unsigned j=0; j<nValues; ++j)
+
+	if (!replace_if_exists)
 	{
-		if (new_value == value_mapping[j])
+		const unsigned nValues (value_mapping.size());
+		for (unsigned j=0; j<nValues; ++j)
 		{
-			ERR ("Error in MshEditor::replaceElementValue() - Replacement value is already take.");
-			return false;
+			if (new_value == value_mapping[j])
+			{
+				ERR ("Error in MshEditor::replaceElementValue() - Replacement value is already taken.");
+				return false;
+			}
 		}
 	}
 	const std::size_t nElements (mesh.getNElements());
@@ -317,17 +321,16 @@ bool MshEditor::replaceElementValue(MeshLib::Mesh &mesh, unsigned old_value, uns
 	return true;
 }
 
-unsigned MshEditor::compressElementValues(MeshLib::Mesh &mesh)
+unsigned MshEditor::condenseElementValues(MeshLib::Mesh &mesh)
 {
-	const std::size_t nElements (mesh.getNElements());
-	std::vector<MeshLib::Element*> elements (mesh.getElements());
 	std::vector<unsigned> value_mapping (MshEditor::getMeshValues(mesh));
-
-	std::vector<unsigned> reverse_mapping(value_mapping.back(),0);
+	std::vector<unsigned> reverse_mapping(value_mapping.back()+1, 0);
 	const unsigned nValues (value_mapping.size());
-	for (unsigned i=0; i<nElements; ++i)
+	for (unsigned i=0; i<nValues; ++i)
 		reverse_mapping[value_mapping[i]] = i;
 
+	const std::size_t nElements (mesh.getNElements());
+	std::vector<MeshLib::Element*> elements (mesh.getElements());
 	for (unsigned i=0; i<nElements; ++i)
 		elements[i]->setValue(reverse_mapping[elements[i]->getValue()]);
 
