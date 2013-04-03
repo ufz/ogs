@@ -36,6 +36,7 @@ Surface::~Surface ()
 {
 	for (std::size_t k(0); k < _sfc_triangles.size(); k++)
 		delete _sfc_triangles[k];
+	delete _bv;
 }
 
 void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
