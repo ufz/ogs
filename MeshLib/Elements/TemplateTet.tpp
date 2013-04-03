@@ -48,8 +48,7 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value
 	_nodes = nodes;
 
 	_neighbors = new Element*[4];
-	for (unsigned i=0; i<4; i++)
-		_neighbors[i] = NULL;
+	std::fill(_neighbors, _neighbors + 4, nullptr);
 
 	this->_volume = this->computeVolume();
 }

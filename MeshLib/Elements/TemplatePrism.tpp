@@ -57,8 +57,7 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned
 {
 	_nodes = nodes;
 	_neighbors = new Element*[5];
-	for (unsigned i=0; i<5; i++)
-		_neighbors[i] = NULL;
+	std::fill(_neighbors, _neighbors + 5, nullptr);
 	this->_volume = this->computeVolume();
 }
 

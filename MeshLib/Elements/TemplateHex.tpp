@@ -57,8 +57,7 @@ TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value
 	_nodes = nodes;
 
 	_neighbors = new Element*[6];
-	for (unsigned i=0; i<6; i++)
-		_neighbors[i] = NULL;
+	std::fill(_neighbors, _neighbors + 6, nullptr);
 
 	this->_volume = this->computeVolume();
 }

@@ -137,24 +137,25 @@ void Mesh::setDimension()
 
 void Mesh::setElementsConnectedToNodes()
 {
-	const size_t nElements (_elements.size());
-	for (unsigned i=0; i<nElements; ++i)
+	//const size_t nElements (_elements.size());
+	for (MeshLib::Element* element : _elements)
 	{
-		MeshLib::Element* element = _elements[i];
 		const unsigned nNodes (element->getNNodes());
 		for (unsigned j=0; j<nNodes; ++j)
 			element->_nodes[j]->addElement(element);
 	}
+
 //#ifndef NDEBUG
 	// search for nodes that are not part of any element
 	unsigned count(0);
-	const size_t nNodes (_nodes.size());
-	for (unsigned i=0; i<nNodes; ++i)
-		if (_nodes[i]->getNElements() == 0)
+	for (MeshLib::Node* node : _nodes)
+	{
+		if (node->getNElements() == 0)
 		{
-			WARN ("Node %d is not part of any element.", i);
+			WARN ("Node %d is not part of any element.", node->getID());
 			++count;
 		}
+	}
 	if (count)
 		WARN ("%d unused mesh nodes found.", count);
 //#endif

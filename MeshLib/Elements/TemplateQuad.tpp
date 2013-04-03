@@ -23,6 +23,19 @@
 
 namespace MeshLib
 {
+
+template <unsigned NNODES, CellType::type CELLQUADTYPE>
+TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value)
+	: Face(value)
+{
+	_nodes = nodes;
+
+	_neighbors = new Element*[4];
+	std::fill(_neighbors, _neighbors + 4, nullptr);
+
+	this->_area = this->computeVolume();
+}
+
 template<unsigned NNODES, CellType::type CELLQUADTYPE>
 TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const& nodes,
                                                 unsigned value)
@@ -33,19 +46,6 @@ TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const&
 
 	_neighbors = new Element*[4];
 	std::fill(_neighbors, _neighbors + 4, nullptr);
-
-	this->_area = this->computeVolume();
-}
-
-template <unsigned NNODES, CellType::type CELLQUADTYPE>
-TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value)
-	: Face(value)
-{
-	_nodes = nodes;
-
-	_neighbors = new Element*[4];
-	for (unsigned i=0; i<4; i++)
-		_neighbors[i] = NULL;
 
 	this->_area = this->computeVolume();
 }

@@ -23,8 +23,7 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 {
 	_nodes = nodes;
 	_neighbors = new Element*[3];
-	for (unsigned i=0; i<3; i++)
-		_neighbors[i] = NULL;
+	std::fill(_neighbors, _neighbors + 3, nullptr);
 	this->_area = this->computeVolume();
 }
 

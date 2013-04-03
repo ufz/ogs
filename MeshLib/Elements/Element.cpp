@@ -23,7 +23,7 @@
 namespace MeshLib {
 
 Element::Element(unsigned value)
-	: _nodes(NULL), _value(value), _neighbors(NULL)
+	: _nodes(nullptr), _value(value), _neighbors(nullptr)
 {
 }
 
@@ -43,7 +43,7 @@ bool Element::addNeighbor(Element* e)
 	{
 		if (this->_neighbors[n] == e)
 			return false;
-		if (this->_neighbors[n] == NULL)
+		if (this->_neighbors[n] == nullptr)
 			break;
 	}
 
@@ -79,7 +79,7 @@ const Element* Element::getEdge(unsigned i) const
 		return new Edge(nodes);
 	}
 	ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
-	return NULL;
+	return nullptr;
 }
 
 void Element::computeSqrEdgeLengthRange(double &min, double &max) const
@@ -100,7 +100,7 @@ const Element* Element::getNeighbor(unsigned i) const
 	if (i < getNNeighbors())
 		return _neighbors[i];
 	ERR("Error in MeshLib::Element::getNeighbor() - Index does not exist.");
-	return NULL;
+	return nullptr;
 }
 
 unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
@@ -117,7 +117,7 @@ const Node* Element::getNode(unsigned i) const
 	if (i < getNNodes())
 		return _nodes[i];
 	ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MshElemType2String(getGeomType()).c_str());
-	return NULL;
+	return nullptr;
 }
 
 void Element::setNode(unsigned idx, Node* node)
