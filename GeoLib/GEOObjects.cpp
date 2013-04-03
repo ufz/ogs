@@ -448,7 +448,11 @@ void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 			}
 		}
 	}
-	this->addPolylineVec (merged_polylines, merged_geo_name);
+	if (! merged_polylines->empty()) {
+		this->addPolylineVec (merged_polylines, merged_geo_name);
+	} else {
+		delete merged_polylines;
+	}
 
 	// *** merge surfaces
 	std::vector<GeoLib::Surface*>* merged_sfcs (new std::vector<GeoLib::Surface*>);
@@ -471,7 +475,11 @@ void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 			}
 		}
 	}
-	this->addSurfaceVec (merged_sfcs, merged_geo_name);
+	if (! merged_sfcs->empty()) {
+		this->addSurfaceVec (merged_sfcs, merged_geo_name);
+	} else {
+		delete merged_sfcs;
+	}
 }
 
 const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,
