@@ -12,6 +12,8 @@
  *
  */
 
+#include <algorithm>
+
 #include "MshEditor.h"
 #include "PointWithID.h"
 #include "Mesh.h"
