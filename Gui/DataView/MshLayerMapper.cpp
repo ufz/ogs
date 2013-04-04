@@ -26,7 +26,7 @@
 #include "Elements/Hex.h"
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
-#include "MshEditor.h"
+#include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
 #include <QImage>
@@ -213,7 +213,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			{
 				std::cout << "Warning: Removing " << noData_nodes.size()
 					      << " mesh nodes at NoData values ... " << std::endl;
-				MeshLib::Mesh* red_mesh = MeshLib::MshEditor::removeMeshNodes(new_mesh, noData_nodes);
+				MeshLib::Mesh* red_mesh = MeshLib::removeMeshNodes(new_mesh, noData_nodes);
 				if (new_mesh->getNElements() == 0)
 				{
 					delete new_mesh;
@@ -279,7 +279,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 {
 	// construct surface mesh from DEM
 	const double dir[3] = {0,0,1};
-	MeshLib::Mesh* dem = MeshLib::MshEditor::getMeshSurface(*mesh, dir);
+	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
 	MshLayerMapper::LayerMapping(dem, dem_raster, 0, 0);
 	const std::vector<MeshLib::Node*> dem_nodes (dem->getNodes());
 

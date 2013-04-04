@@ -19,7 +19,7 @@
 #include "MshItem.h"
 #include "MshModel.h"
 #include "OGSError.h"
-#include "MshEditor.h"
+#include "MeshSurfaceExtraction.h"
 
 #include "ImportFileTypes.h"
 #include <QHeaderView>
@@ -164,7 +164,7 @@ void MshView::extractSurfaceMesh()
 
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	const double dir[3] = {0, 0, 1};
-	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
+	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
 }
 
 int MshView::writeToFile() const

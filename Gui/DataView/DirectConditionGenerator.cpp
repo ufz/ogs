@@ -20,7 +20,7 @@
 #include "DirectConditionGenerator.h"
 
 #include "Raster.h"
-#include "MshEditor.h"
+#include "MeshSurfaceExtraction.h"
 #include "PointWithID.h"
 #include "Mesh.h"
 
@@ -45,7 +45,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		double const*const img(raster->begin());
 
 		const double dir[3] = {0,0,1};
-		const std::vector<GeoLib::PointWithID*> surface_nodes(MeshLib::MshEditor::getSurfaceNodes(mesh, dir) );
+		const std::vector<GeoLib::PointWithID*> surface_nodes(MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir) );
 		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
 		const size_t nNodes(surface_nodes.size());
 		_direct_values.reserve(nNodes);
@@ -90,9 +90,9 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 		//mesh.MarkInterface_mHM_Hydro_3D(); // mark element faces on the surface
 		//----
 		const double dir[3] = {0,0,1};
-		MeshLib::Mesh* sfc_mesh (MeshLib::MshEditor::getMeshSurface(mesh, dir));
+		MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir));
 		std::vector<double> node_area_vec (sfc_mesh->getNNodes());
-		MeshLib::MshEditor::getSurfaceAreaForNodes(sfc_mesh, node_area_vec);
+		MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(sfc_mesh, node_area_vec);
 		//----
 		double origin_x(0), origin_y(0), delta(0);
 		size_t imgwidth(0), imgheight(0);

@@ -22,7 +22,8 @@
 
 #include "PointWithID.h"
 #include "Mesh.h"
-#include "MshEditor.h"
+#include "MeshEditing/removeMeshNodes.h"
+#include "MeshSurfaceExtraction.h"
 #ifdef OGS_BUILD_GUI
 	#include "../Gui/DataView/MshLayerMapper.h"
 #endif
@@ -37,7 +38,7 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-	friend MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
+	friend MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
 #ifdef OGS_BUILD_GUI
 	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, const unsigned nLayers,
 		                                    const unsigned layer_id, bool removeNoDataValues);

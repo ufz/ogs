@@ -19,7 +19,7 @@
 
 #include "Mesh.h"
 #include "Node.h"
-#include "MshEditor.h"
+#include "MeshSurfaceExtraction.h"
 #include "PointWithID.h"
 #include "Raster.h"
 #include "readMeshFromFile.h"
@@ -145,7 +145,7 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*co
 	else
 	{
 		double dir[3] = {0,0,1};
-		sfc_pnts = MeshLib::MshEditor::getSurfaceNodes(*mesh, dir);
+		sfc_pnts = MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir);
 	}
 	size_t nPoints (sfc_pnts.size());
 	for (unsigned i=0; i<nPoints; ++i)

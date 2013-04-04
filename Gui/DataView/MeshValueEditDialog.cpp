@@ -13,7 +13,7 @@
  */
 
 #include "MeshValueEditDialog.h"
-#include "MshEditor.h"
+#include "MeshEditing/ElementValueModification.h"
 #include "OGSError.h"
 
 
@@ -33,7 +33,7 @@ MeshValueEditDialog::~MeshValueEditDialog(void)
 void MeshValueEditDialog::accept()
 {
 	if (this->condenseButton->isChecked())
-		MeshLib::MshEditor::condenseElementValues(*_mesh);
+		MeshLib::ElementValueModification::condense(*_mesh);
 	else
 	{
 		if (this->edit_old_value->text().isEmpty())
@@ -49,7 +49,7 @@ void MeshValueEditDialog::accept()
 		}
 		unsigned new_value = static_cast<unsigned>(atoi(this->edit_new_value->text().toStdString().c_str()));
 		bool do_not_replace = this->replaceCheckBox->isChecked();
-		bool result = MeshLib::MshEditor::replaceElementValue(*_mesh, old_value, new_value, !do_not_replace);
+		bool result = MeshLib::ElementValueModification::replace(*_mesh, old_value, new_value, !do_not_replace);
 		if (!result && do_not_replace)
 		{
 			OGSError::box("The new material group already exists.");
