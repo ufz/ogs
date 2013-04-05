@@ -11,7 +11,7 @@
 #include "AABB.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "MshEditor.h"
+#include "MeshEditing/removeMeshNodes.h"
 #include "MathTools.h"
 
 int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Node*> const& nodes, double const& max_dist)

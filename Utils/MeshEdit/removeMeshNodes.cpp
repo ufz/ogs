@@ -8,7 +8,7 @@
 #include "Legacy/MeshIO.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "MshEditor.h"
+#include "MeshEditing/removeMeshNodes.h"
 
 int main (int argc, char* argv[])
 {
@@ -82,7 +82,7 @@ int main (int argc, char* argv[])
 	/**** add other keywords here ****/
 
 	// remove nodes and write new file
-	MeshLib::Mesh* new_mesh = MeshLib::MshEditor::removeMeshNodes(mesh, del_nodes);
+	MeshLib::Mesh* new_mesh = MeshLib::removeMeshNodes(mesh, del_nodes);
 	
 	FileIO::MeshIO meshIO;
 	meshIO.setMesh(mesh);

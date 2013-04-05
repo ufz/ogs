@@ -59,8 +59,11 @@ private:
 	void contextMenuEvent( QContextMenuEvent* event );
 
 private slots:
-	/// Open a dialog for editing meshes.
+	/// Opens a dialog for editing meshes.
 	void openMshEditDialog();
+
+	/// Opens a dialog for editing material groups.
+	void openValuesEditDialog();
 
 	/// Adds a new mesh.
 	void addMesh();
