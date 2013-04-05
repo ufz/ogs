@@ -84,12 +84,19 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 	}
 
 	// check if inserting pnt_id would result in two identical IDs for adjacent points
-	if (pos == 0 && pnt_id == _ply_pnt_ids[0])
+	if (pos == 0 && pnt_id == _ply_pnt_ids[0]) {
 		return;
-	else if (pos == (_ply_pnt_ids.size() - 1) && pnt_id == _ply_pnt_ids[pos])
-		return;
-	else if (pnt_id == _ply_pnt_ids[pos - 1] || pnt_id == _ply_pnt_ids[pos])
-		return;
+	} else {
+		if (pos != 0) {
+			if (pos == (_ply_pnt_ids.size() - 1) && pnt_id == _ply_pnt_ids[pos]) {
+				return;
+			} else {
+				if (pnt_id == _ply_pnt_ids[pos - 1] || pnt_id == _ply_pnt_ids[pos]) {
+					return;
+				}
+			}
+		}
+	}
 
 	std::vector<std::size_t>::iterator it(_ply_pnt_ids.begin() + pos);
 	_ply_pnt_ids.insert(it, pnt_id);
