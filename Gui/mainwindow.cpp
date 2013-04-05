@@ -81,7 +81,7 @@
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
-#include "MshEditor.h"
+#include "MeshSurfaceExtraction.h"
 #include "readMeshFromFile.h"
 #include "Mesh2MeshPropertyInterpolation.h"
 
@@ -1153,7 +1153,7 @@ void MainWindow::FEMTestStart()
 /*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");
-	_meshModels->addMesh( MeshLib::MshEditor::getMeshSurface(*mesh, dir) );
+	_meshModels->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
 */
 /*
 	const std::vector<GeoLib::Polyline*> *lines = this->_geoModels->getPolylineVec("WESS Rivers");	MeshLib::CFEMesh* mesh = const_cast<MeshLib::CFEMesh*>(_project.getMesh("Ammer-Homogen100m-Final"));

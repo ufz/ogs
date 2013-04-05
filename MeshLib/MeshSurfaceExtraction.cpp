@@ -1,8 +1,8 @@
 /**
  * \file
  * \author Karsten Rink
- * \date   2011-06-15
- * \brief  Implementation of the MshEditor class.
+ * \date   2013-04-04
+ * \brief  Implementation of the MeshSurfaceExtraction class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,23 +12,20 @@
  *
  */
 
-#include "MshEditor.h"
+#include "MeshSurfaceExtraction.h"
 #include "PointWithID.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "Elements/Element.h"
 #include "Elements/Face.h"
 #include "Elements/Cell.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 
-#include "MathTools.h"
-
 #include "logog/include/logog.hpp"
 
 namespace MeshLib {
 
-void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
+void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
 {
 	if (mesh->getDimension() == 2)
 	{
@@ -59,66 +56,10 @@ void MshEditor::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<do
 		INFO ("Total surface Area: %f", total_area);
 	}
 	else
-		ERR ("Error in MshEditor::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
+		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
 }
 
-MeshLib::Mesh* MshEditor::removeMeshNodes(MeshLib::Mesh* mesh,
-                                             const std::vector<size_t> &nodes)
-{
-	MeshLib::Mesh* new_mesh (new MeshLib::Mesh(*mesh));
-
-	// delete nodes and their connected elements and replace them with null pointers
-	const size_t delNodes = nodes.size();
-	std::vector<MeshLib::Node*> mesh_nodes = new_mesh->getNodes();
-	for (size_t i = 0; i < delNodes; ++i)
-	{
-		const MeshLib::Node* node = new_mesh->getNode(i);
-		std::vector<MeshLib::Element*> conn_elems = node->getElements();
-
-		for (size_t j = 0; j < conn_elems.size(); ++j)
-		{
-			delete conn_elems[j];
-			conn_elems[j] = NULL;
-		}
-		delete mesh_nodes[i];
-		mesh_nodes[i] = NULL;
-	}
-
-	// create map to adjust node indices in element vector
-	const size_t nNodes = new_mesh->getNNodes();
-	std::vector<int> id_map(nNodes, -1);
-	size_t count(0);
-	for (size_t i = 0; i < nNodes; ++i)
-	{
-		if (mesh_nodes[i])
-		{
-			mesh_nodes[i]->setID(count);
-			id_map.push_back(count++);
-		}
-	}
-
-	// erase null pointers from node- and element vectors
-	std::vector<MeshLib::Element*> elements = new_mesh->getElements();
-	for (std::vector<MeshLib::Element*>::iterator it = elements.begin(); it != elements.end(); )
-	{
-		if (*it)
-			++it;
-		else
-			it = elements.erase(it);
-	}
-
-	for (std::vector<MeshLib::Node*>::iterator it = mesh_nodes.begin(); it != mesh_nodes.end(); )
-	{
-		if (*it)
-			++it;
-		else
-			it = mesh_nodes.erase(it);
-	}
-
-	return new_mesh;
-}
-
-MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double* dir)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const double* dir)
 {
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
@@ -158,7 +99,7 @@ MeshLib::Mesh* MshEditor::getMeshSurface(const MeshLib::Mesh &mesh, const double
 	return NULL;
 }
 
-void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension)
+void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension)
 {
 	bool complete_surface (true);
 	if (dir)
@@ -219,7 +160,7 @@ void MshEditor::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_e
 		ERR("Cannot handle meshes of dimension %i", mesh_dimension);
 }
 
-void MshEditor::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map)
+void MeshSurfaceExtraction::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map)
 {
 	const size_t nNewElements (sfc_elements.size());
 	std::vector<const MeshLib::Node*> tmp_nodes(all_nodes.size(), NULL);
@@ -243,7 +184,7 @@ void MshEditor::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, 
 	}
 }
 
-std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh &mesh, const double *dir)
+std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const double *dir)
 {
 	INFO ("Extracting surface nodes...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
@@ -269,6 +210,5 @@ std::vector<GeoLib::PointWithID*> MshEditor::getSurfaceNodes(const MeshLib::Mesh
 	}
 	return surface_pnts;
 }
-
 
 } // end namespace MeshLib

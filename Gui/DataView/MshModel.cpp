@@ -153,6 +153,19 @@ bool MshModel::removeMesh(const std::string &name)
 	return false;
 }
 
+void MshModel::updateMesh(MeshLib::Mesh* mesh)
+{
+	for (int i = 0; i < _rootItem->childCount(); i++)
+	{
+		if (dynamic_cast<MshItem*>(this->_rootItem->child(i))->getMesh() == mesh)
+		{
+			emit meshRemoved(this, this->index(i, 0, QModelIndex()));
+			_rootItem->removeChildren(i,1);
+		}
+	}
+	this->addMeshObject(mesh);
+}
+
 void MshModel::updateModel()
 {
 	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
