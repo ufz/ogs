@@ -545,12 +545,17 @@ bool readGLIFileV4(const std::string& fname,
 
 	if (!ply_vec->empty())
 		geo->addPolylineVec(ply_vec, unique_name, ply_names);  // KR: insert into GEOObjects if not empty
-	else
+	else {
 		delete ply_vec;
+		delete ply_names;
+	}
+
 	if (!sfc_vec->empty())
 		geo->addSurfaceVec(sfc_vec, unique_name, sfc_names);  // KR: insert into GEOObjects if not empty
-	else
+	else {
 		delete sfc_vec;
+		delete sfc_names;
+	}
 
 	if (errors.empty())
 		return true;
