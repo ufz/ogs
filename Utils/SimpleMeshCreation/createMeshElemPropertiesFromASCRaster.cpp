@@ -44,7 +44,7 @@
 #include "ConvertRasterToMesh.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
-#include "Mesh2MeshPropertyInterpolation.h"
+#include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MshEnums.h"
 
 int main (int argc, char* argv[])
