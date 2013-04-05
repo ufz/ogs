@@ -12,6 +12,8 @@
  *
  */
 
+#include <boost/filesystem.hpp>
+
 #include "gtest/gtest.h"
 #include "Configure.h"
 #include "XmlIO/XmlGmlInterface.h"
@@ -122,6 +124,10 @@ TEST(FileIO, XmlGmlReaderTest)
 	ASSERT_EQ((*tri)[0],3);
 	ASSERT_EQ((*tri)[1],8);
 	ASSERT_EQ((*tri)[2],5);
+
+	boost::filesystem::remove(test_data_file);
+	test_data_file += ".md5";
+	boost::filesystem::remove(test_data_file);
 
 	// when project goes out of scope it should delete geo_objects which in turn should delete all data within
 }
