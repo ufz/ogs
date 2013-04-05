@@ -29,13 +29,14 @@
 namespace GeoLib
 {
 Surface::Surface (const std::vector<Point*> &pnt_vec) :
-	GeoObject(), _sfc_pnts(pnt_vec), _bv(nullptr)
+	GeoObject(), _sfc_pnts(pnt_vec), _bounding_volume(nullptr)
 {}
 
 Surface::~Surface ()
 {
 	for (std::size_t k(0); k < _sfc_triangles.size(); k++)
 		delete _sfc_triangles[k];
+	delete _bounding_volume;
 }
 
 void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
@@ -47,16 +48,16 @@ void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt
 		return;
 
 	_sfc_triangles.push_back (new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
-	if (!_bv) {
+	if (!_bounding_volume) {
 		std::vector<size_t> ids(3);
 		ids[0] = pnt_a;
 		ids[1] = pnt_b;
 		ids[2] = pnt_c;
-		_bv = new AABB<Point>(_sfc_pnts, ids);
+		_bounding_volume = new AABB<Point>(_sfc_pnts, ids);
 	} else {
-		_bv->update (*_sfc_pnts[pnt_a]);
-		_bv->update (*_sfc_pnts[pnt_b]);
-		_bv->update (*_sfc_pnts[pnt_c]);
+		_bounding_volume->update (*_sfc_pnts[pnt_a]);
+		_bounding_volume->update (*_sfc_pnts[pnt_b]);
+		_bounding_volume->update (*_sfc_pnts[pnt_c]);
 	}
 }
 
@@ -111,9 +112,9 @@ const Triangle* Surface::operator[] (std::size_t i) const
 	return _sfc_triangles[i];
 }
 
-bool Surface::isPntInBV (const double *pnt) const
+bool Surface::isPntInBoundingVolume(const double *pnt) const
 {
-	return _bv->containsPoint (pnt);
+	return _bounding_volume->containsPoint (pnt);
 }
 
 bool Surface::isPntInSfc (const double *pnt) const
