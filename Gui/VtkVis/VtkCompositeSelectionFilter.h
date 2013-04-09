@@ -30,7 +30,7 @@ public:
 
 	virtual void init();
 
-	void setSelectionArray(const std::string &selection_name, const std::vector<double> &selection = std::vector<double>());
+	void setSelectionArray(const std::string &selection_name, bool is_element_array = true, const std::vector<double> &selection = std::vector<double>());
 
 	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
@@ -40,6 +40,7 @@ private:
 
 	std::string _selection_name;
 	std::vector<double> _selection;
+	bool _is_element_array;
 };
 
 #endif // VTKCOMPOSITESELECTIONFILTER_H

@@ -513,7 +513,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 				                "VtkCompositeSelectionFilter",
 				                parentItem->transformFilter());
 				static_cast<VtkCompositeSelectionFilter*>(filter)->
-				setSelectionArray("Selection", quality);
+				setSelectionArray("Selection", true, quality);
 				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter,
 				                                                  parentItem,
 				                                                  itemData);
@@ -592,7 +592,7 @@ void VtkVisPipeline::removeHighlightedGeoObject()
 	}
 }
 
-void VtkVisPipeline::highlightMeshComponent(const vtkUnstructuredGridAlgorithm* source, int index)
+void VtkVisPipeline::highlightMeshComponent(const vtkUnstructuredGridAlgorithm* source, bool is_element, int index)
 {
 	int nSources = this->_rootItem->childCount();
 	for (int i = 0; i < nSources; i++)
@@ -608,7 +608,7 @@ void VtkVisPipeline::highlightMeshComponent(const vtkUnstructuredGridAlgorithm* 
 			VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter(
 															"VtkCompositeSelectionFilter",
 															parentItem->transformFilter());
-			static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray("vtkIdFilter_Ids");
+			static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray("vtkIdFilter_Ids", is_element);
 			static_cast<VtkCompositeSelectionFilter*>(filter)->SetUserVectorProperty("Threshold Between", selected_index);
 
 			VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);

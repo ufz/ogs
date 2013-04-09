@@ -39,8 +39,6 @@ public:
 	void SetIndex(std::size_t idx);
 
 private:
-	float GetInitialRadius() const;
-
 	GeoLib::GEOTYPE _type;
 	vtkThreshold* _threshold;
 };

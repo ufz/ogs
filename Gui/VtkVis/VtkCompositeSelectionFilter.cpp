@@ -15,6 +15,7 @@
 // ** INCLUDES **
 #include "VtkCompositeSelectionFilter.h"
 #include "VtkAppendArrayFilter.h"
+#include "VtkCompositePointToGlyphFilter.h"
 #include "VtkColorLookupTable.h"
 
 #include <vtkDataSetSurfaceFilter.h>
@@ -24,7 +25,7 @@
 #include <vtkUnstructuredGrid.h>
 
 VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm), _selection_name("Selection")
+	: VtkCompositeFilter(inputAlgorithm), _selection_name("Selection"), _is_element_array(true)
 {
 	//this->init();
 }
@@ -57,23 +58,34 @@ void VtkCompositeSelectionFilter::init()
 		idFilter->Update();
 		
 	vtkThreshold* threshold = vtkThreshold::New();
-	threshold->SetInputConnection(idFilter->GetOutputPort());
-	threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
-	threshold->SetSelectedComponent(0);
-	threshold->ThresholdBetween(thresholdLower, thresholdUpper);
-	threshold->Update();
+		threshold->SetInputConnection(idFilter->GetOutputPort());
+		if (_is_element_array)
+			threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
+		else
+			threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, _selection_name.c_str());
+		threshold->SetSelectedComponent(0);
+		threshold->ThresholdBetween(thresholdLower, thresholdUpper);
+		threshold->Update();
 
 	QList<QVariant> thresholdRangeList;
 	thresholdRangeList.push_back(0.0);
 	thresholdRangeList.push_back(1.0);
 	(*_algorithmUserVectorProperties)["Threshold Between"] = thresholdRangeList;
 
-	_outputAlgorithm = threshold;
+	if (!_is_element_array)
+	{
+		VtkCompositeFilter* composite = new VtkCompositePointToGlyphFilter(threshold);
+		composite->SetUserProperty("Radius", this->GetInitialRadius());
+		_outputAlgorithm = composite->GetOutputAlgorithm();
+	}
+	else
+		_outputAlgorithm = threshold;
 }
 
-void VtkCompositeSelectionFilter::setSelectionArray(const std::string &selection_name, const std::vector<double> &selection)
+void VtkCompositeSelectionFilter::setSelectionArray(const std::string &selection_name, bool is_element_array, const std::vector<double> &selection)
 {
 	_selection_name = selection_name;
+	_is_element_array = is_element_array;
 	_selection = selection;
 	init(); 
 }

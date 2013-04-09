@@ -201,8 +201,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)));
-	connect(mshTabWidget->treeView, SIGNAL(elementSelected(const vtkUnstructuredGridAlgorithm*, int)),
-		    _vtkVisPipeline, SLOT(highlightMeshComponent(const vtkUnstructuredGridAlgorithm*, int)));
+	connect(mshTabWidget->treeView, SIGNAL(elementSelected(const vtkUnstructuredGridAlgorithm*, bool, int)),
+		    _vtkVisPipeline, SLOT(highlightMeshComponent(const vtkUnstructuredGridAlgorithm*, bool, int)));
 	connect(mshTabWidget->treeView, SIGNAL(removeSelectedMeshComponent()),
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
 
