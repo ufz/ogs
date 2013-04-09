@@ -62,6 +62,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 	Q_UNUSED(deselected);
 	if (!selected.isEmpty())
 	{
+		emit removeSelectedMeshComponent();
 		const QModelIndex idx = *(selected.indexes().begin());
 		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
 
@@ -75,6 +76,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 		{
 			emit enableSaveButton(false);
 			emit enableRemoveButton(false);
+			emit elementSelected(dynamic_cast<const MshItem*>(tree_item->parentItem())->vtkSource(), tree_item->row());
 		}
 	}
 	//emit itemSelectionChanged(selected, deselected);

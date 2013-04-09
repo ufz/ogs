@@ -20,6 +20,7 @@
 
 class MshModel;
 class VtkMeshSource;
+class vtkUnstructuredGridAlgorithm;
 
 namespace MeshLib {
 	class Mesh;
@@ -86,10 +87,12 @@ private slots:
 	void checkMeshQuality();
 
 signals:
+	void elementSelected(const vtkUnstructuredGridAlgorithm*, int);
 	void enableSaveButton(bool);
 	void enableRemoveButton(bool);
 	void openMeshFile(int);
 	void qualityCheckRequested(VtkMeshSource*);
+	void removeSelectedMeshComponent();
 	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
 	void requestDIRECTSourceTerms(const std::string, const std::vector<GeoLib::Point*>*);

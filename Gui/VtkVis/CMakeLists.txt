@@ -8,6 +8,7 @@ SET( SOURCES
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
+	VtkAppendArrayFilter.cpp
 	VtkBGImageSource.cpp
 	VtkColorByHeightFilter.cpp
 	VtkColorLookupTable.cpp
@@ -31,7 +32,6 @@ SET( SOURCES
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
 	VtkRaster.cpp
-	VtkSelectionFilter.cpp
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
 	VtkTextureOnSurfaceFilter.cpp
@@ -65,6 +65,7 @@ SET( MOC_HEADERS
 
 # Header files
 SET( HEADERS
+	VtkAppendArrayFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
 	VtkColorLookupTable.h
@@ -88,7 +89,6 @@ SET( HEADERS
 	VtkPolylinesSource.h
 	VtkPointsSource.h
 	VtkRaster.h
-	VtkSelectionFilter.h
 	VtkStationSource.h
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h

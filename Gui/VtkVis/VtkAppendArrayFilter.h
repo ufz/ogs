@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2010-02-09
- * \brief  Definition of the VtkSelectionFilter class.
+ * \brief  Definition of the VtkAppendArrayFilter class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef VTKSELECTIONFILTER_H
-#define VTKSELECTIONFILTER_H
+#ifndef VTKAPPENDARRAYFILTER_H
+#define VTKAPPENDARRAYFILTER_H
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -25,13 +25,13 @@
 /**
  * \brief
  */
-class VtkSelectionFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
+class VtkAppendArrayFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {
 public:
 	/// @brief Create new objects with New() because of VTKs object reference counting.
-	static VtkSelectionFilter* New();
+	static VtkAppendArrayFilter* New();
 
-	vtkTypeRevisionMacro(VtkSelectionFilter, vtkUnstructuredGridAlgorithm);
+	vtkTypeRevisionMacro(VtkAppendArrayFilter, vtkUnstructuredGridAlgorithm);
 
 	/// @brief Prints the mesh data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
@@ -43,13 +43,11 @@ public:
 		Q_UNUSED(value);
 	}
 
-	void SetSelectionArray(std::vector<double> selection,
-	                       double thresholdLower,
-	                       double thresholdUpper);
+	void SetArray(const std::string &array_name, const std::vector<double> &selection);
 
 protected:
-	VtkSelectionFilter();
-	~VtkSelectionFilter();
+	VtkAppendArrayFilter();
+	~VtkAppendArrayFilter();
 
 	/// @brief The filter logic.
 	int RequestData(vtkInformation* request,
@@ -57,10 +55,8 @@ protected:
 	                vtkInformationVector* outputVector);
 
 private:
-	std::vector<double> _selection;
-	double _thresholdLower;
-	double _thresholdUpper;
-	double _ifSmaller;
+	std::vector<double> _array;
+	std::string _array_name;
 };
 
-#endif // VTKSELECTIONFILTER_H
+#endif // VTKAPPENDARRAYFILTER_H

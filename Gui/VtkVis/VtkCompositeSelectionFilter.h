@@ -30,8 +30,7 @@ public:
 
 	virtual void init();
 
-	void setSelectionArray(std::vector<double> selection) { _selection = selection;
-		                                                init(); }
+	void setSelectionArray(const std::string &selection_name, const std::vector<double> &selection = std::vector<double>());
 
 	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
@@ -39,6 +38,7 @@ private:
 	/// Returns a colour lookup table optimised for quality measures
 	VtkColorLookupTable* GetLookupTable();
 
+	std::string _selection_name;
 	std::vector<double> _selection;
 };
 

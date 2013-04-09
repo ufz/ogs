@@ -67,7 +67,7 @@
 #include <QTime>
 
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
-	: TreeModel(parent), _renderer(renderer), _highlighted_geo_index(QModelIndex())
+	: TreeModel(parent), _renderer(renderer), _highlighted_geo_index(QModelIndex()), _highlighted_mesh_component(QModelIndex())
 {
 	QList<QVariant> rootData;
 	rootData << "Object name" << "Visible";
@@ -513,7 +513,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 				                "VtkCompositeSelectionFilter",
 				                parentItem->transformFilter());
 				static_cast<VtkCompositeSelectionFilter*>(filter)->
-				setSelectionArray(quality);
+				setSelectionArray("Selection", quality);
 				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter,
 				                                                  parentItem,
 				                                                  itemData);
@@ -589,5 +589,41 @@ void VtkVisPipeline::removeHighlightedGeoObject()
 	{
 		this->removePipelineItem(_highlighted_geo_index);
 		_highlighted_geo_index = QModelIndex();
+	}
+}
+
+void VtkVisPipeline::highlightMeshComponent(const vtkUnstructuredGridAlgorithm* source, int index)
+{
+	int nSources = this->_rootItem->childCount();
+	for (int i = 0; i < nSources; i++)
+	{
+		VtkVisPipelineItem* parentItem = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+		if (parentItem->algorithm() == source)
+		{
+			QList<QVariant> itemData;
+			itemData << "Selected Mesh Component" << true;
+			QList<QVariant> selected_index;
+			selected_index << index << index;
+
+			VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter(
+															"VtkCompositeSelectionFilter",
+															parentItem->transformFilter());
+			static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray("vtkIdFilter_Ids");
+			static_cast<VtkCompositeSelectionFilter*>(filter)->SetUserVectorProperty("Threshold Between", selected_index);
+
+			VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
+			QModelIndex parent_index = static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());
+			_highlighted_mesh_component = this->addPipelineItem(item, parent_index);
+			break;
+		}
+	}
+}
+
+void VtkVisPipeline::removeHighlightedMeshComponent()
+{
+	if (_highlighted_mesh_component != QModelIndex())
+	{
+		this->removePipelineItem(_highlighted_mesh_component);
+		_highlighted_mesh_component = QModelIndex();
 	}
 }
