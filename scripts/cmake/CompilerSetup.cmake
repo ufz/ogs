@@ -89,6 +89,7 @@ IF (WIN32)
 		)
 		# Sets warning level 3 and ignores some warnings
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267")
+		SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /ZI /Od /Ob0")
 
 		DisableCompilerFlag(DEBUG /RTC1)
 	# cygwin
