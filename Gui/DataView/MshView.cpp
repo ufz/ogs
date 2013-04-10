@@ -82,6 +82,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 	//emit itemSelectionChanged(selected, deselected);
 	//return QTreeView::selectionChanged(selected, deselected);
 }
+
 void MshView::addMesh()
 {
 	emit openMeshFile(ImportFileType::OGS_MSH);

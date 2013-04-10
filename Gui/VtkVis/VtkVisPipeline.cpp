@@ -592,7 +592,7 @@ void VtkVisPipeline::removeHighlightedGeoObject()
 	}
 }
 
-void VtkVisPipeline::highlightMeshComponent(const vtkUnstructuredGridAlgorithm* source, bool is_element, int index)
+void VtkVisPipeline::highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, bool is_element, int index)
 {
 	int nSources = this->_rootItem->childCount();
 	for (int i = 0; i < nSources; i++)
@@ -609,7 +609,7 @@ void VtkVisPipeline::highlightMeshComponent(const vtkUnstructuredGridAlgorithm* 
 															"VtkCompositeSelectionFilter",
 															parentItem->transformFilter());
 			static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray("vtkIdFilter_Ids", is_element);
-			static_cast<VtkCompositeSelectionFilter*>(filter)->SetUserVectorProperty("Threshold Between", selected_index);
+			//static_cast<VtkCompositeSelectionFilter*>(filter)->SetUserVectorProperty("Threshold Between", selected_index);
 
 			VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
 			QModelIndex parent_index = static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());

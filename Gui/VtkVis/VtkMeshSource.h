@@ -41,7 +41,7 @@ public:
 	const char* GetMaterialArrayName() const { return _matName; }
 
 	/// Returns the base object of this grid
-	const MeshLib::Mesh* GetMesh() { return this->_grid; }
+	const MeshLib::Mesh* GetMesh() const { return this->_grid; }
 
 	/// Sets the grid object that should be visualized
 	void SetMesh(const MeshLib::Mesh* grid) { _grid = grid; }

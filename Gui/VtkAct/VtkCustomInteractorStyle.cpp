@@ -33,10 +33,10 @@
 #include <vtkSelectionNode.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkUnstructuredGridAlgorithm.h>
 
 #include <string>
 
-#include "VtkMeshSource.h"
 #include "VtkCompositeSelectionFilter.h"
 
 vtkStandardNewMacro(VtkCustomInteractorStyle);
@@ -183,9 +183,11 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
 			// check if the underlying object is a mesh and if so, send a signal to the element model for display of information about the picked element.
 			vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
-			VtkMeshSource* source = dynamic_cast<VtkMeshSource*>(data_set);
+			vtkUnstructuredGridAlgorithm* source = dynamic_cast<vtkUnstructuredGridAlgorithm*>(data_set);
 			if (source)
-				emit elementPicked(source->GetMesh(), picker->GetCellId());
+				emit elementPicked(source, picker->GetCellId());
+			else
+				emit clearElementView();
 			selectedMapper->SetInputConnection(selected->GetProducerPort());
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->

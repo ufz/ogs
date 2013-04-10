@@ -170,7 +170,7 @@
     </layout>
    </item>
    <item>
-    <widget class="MshView" name="elementView"/>
+    <widget class="ElementTreeView" name="elementView"/>
    </item>
   </layout>
  </widget>
@@ -179,6 +179,11 @@
    <class>MshView</class>
    <extends>QTreeView</extends>
    <header>MshView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElementTreeView</class>
+   <extends>QTreeView</extends>
+   <header>ElementTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

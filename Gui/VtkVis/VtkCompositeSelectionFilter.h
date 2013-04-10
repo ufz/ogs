@@ -19,6 +19,8 @@
 
 #include <vector>
 
+class vtkThreshold;
+
 class VtkColorLookupTable;
 
 /// @brief This filter colors the input by the points z-value.
@@ -38,6 +40,7 @@ private:
 	/// Returns a colour lookup table optimised for quality measures
 	VtkColorLookupTable* GetLookupTable();
 
+	vtkThreshold* _threshold;
 	std::string _selection_name;
 	std::vector<double> _selection;
 	bool _is_element_array;

@@ -24,9 +24,7 @@ class vtkDataObject;
 class vtkDataSetMapper;
 class vtkActor;
 
-namespace MeshLib {
-	class Mesh;
-}
+class vtkUnstructuredGridAlgorithm;
 
 /**
  * VtkCustomInteractorStyle implements highlighting of an active actor and
@@ -91,7 +89,12 @@ signals:
 	void cursorChanged(Qt::CursorShape);
 
 	/// @brief Emitted when a mesh element has been picked
-	void elementPicked(const MeshLib::Mesh*, const std::size_t);
+	void elementPicked(vtkUnstructuredGridAlgorithm const*const, const std::size_t);
+
+	/// @brief Emitted when the current object type cannot be handled by the element model
+	void clearElementView();
+
 };
+
 
 #endif // VTKINTERACTORSTYLE_H

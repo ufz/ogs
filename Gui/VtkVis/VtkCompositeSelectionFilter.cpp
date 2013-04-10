@@ -24,6 +24,10 @@
 #include <vtkIdFilter.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <vtkUnstructuredGridAlgorithm.h>
+#include <vtkPointData.h>
+
+
 VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm), _selection_name("Selection"), _is_element_array(true)
 {
@@ -32,7 +36,7 @@ VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlg
 
 void VtkCompositeSelectionFilter::init()
 {
-	double thresholdLower(0.0), thresholdUpper(1.0);
+	double thresholdLower(0.0), thresholdUpper(100000.0);
 	this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
 	this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 
@@ -57,29 +61,32 @@ void VtkCompositeSelectionFilter::init()
 		idFilter->FieldDataOn();
 		idFilter->Update();
 		
-	vtkThreshold* threshold = vtkThreshold::New();
-		threshold->SetInputConnection(idFilter->GetOutputPort());
+	size_t nPoints = idFilter->GetOutput()->GetPointData()->GetNumberOfTuples();
+
+	_threshold = vtkThreshold::New();
+		_threshold->SetInputConnection(idFilter->GetOutputPort());
 		if (_is_element_array)
-			threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
+			_threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
 		else
-			threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, _selection_name.c_str());
-		threshold->SetSelectedComponent(0);
-		threshold->ThresholdBetween(thresholdLower, thresholdUpper);
-		threshold->Update();
-
+			_threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, _selection_name.c_str());
+		_threshold->SetSelectedComponent(0);
+		_threshold->ThresholdBetween(thresholdLower, thresholdUpper);
+		_threshold->Update();
+		
 	QList<QVariant> thresholdRangeList;
-	thresholdRangeList.push_back(0.0);
-	thresholdRangeList.push_back(1.0);
+	thresholdRangeList.push_back(thresholdLower);
+	thresholdRangeList.push_back(thresholdUpper);
 	(*_algorithmUserVectorProperties)["Threshold Between"] = thresholdRangeList;
-
+	
 	if (!_is_element_array)
 	{
-		VtkCompositeFilter* composite = new VtkCompositePointToGlyphFilter(threshold);
+			size_t nPoints = _threshold->GetOutput()->GetPointData()->GetNumberOfTuples();
+		VtkCompositeFilter* composite = new VtkCompositePointToGlyphFilter(_threshold);
 		composite->SetUserProperty("Radius", this->GetInitialRadius());
 		_outputAlgorithm = composite->GetOutputAlgorithm();
 	}
 	else
-		_outputAlgorithm = threshold;
+		_outputAlgorithm = _threshold;
 }
 
 void VtkCompositeSelectionFilter::setSelectionArray(const std::string &selection_name, bool is_element_array, const std::vector<double> &selection)
@@ -93,9 +100,11 @@ void VtkCompositeSelectionFilter::setSelectionArray(const std::string &selection
 void VtkCompositeSelectionFilter::SetUserVectorProperty( QString name, QList<QVariant> values)
 {
 	VtkAlgorithmProperties::SetUserVectorProperty(name, values);
+	double a = values[0].toDouble();
+	double b = values[1].toDouble();
 
 	if (name.compare("Threshold Between") == 0)
-		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
+		static_cast<vtkThreshold*>(_threshold)->ThresholdBetween(
 		        values[0].toDouble(), values[1].toDouble());
 }
 
