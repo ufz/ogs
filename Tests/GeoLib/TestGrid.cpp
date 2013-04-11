@@ -66,10 +66,11 @@ TEST(GeoLib, SearchNearestPointInGrid)
 
 TEST(GeoLib, SearchNearestPointsInDenseGrid)
 {
-	const std::size_t i_max(100), j_max(100), k_max(100);
+	const std::size_t i_max(50), j_max(50), k_max(50);
 	std::vector<GeoLib::PointWithID*> pnts(i_max*j_max*k_max);
 
-	// fill the vector with points
+	// fill the vector with equi-distant points in the
+	// cube [0,(i_max-1)/i_max] x [0,(j_max-1)/j_max] x [0,(k_max-1)/k_max]
 	for (std::size_t i(0); i < i_max; i++) {
 		std::size_t offset0(i * j_max * k_max);
 		for (std::size_t j(0); j < j_max; j++) {
@@ -81,23 +82,27 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 		}
 	}
 
+	// create the grid
 	GeoLib::Grid<GeoLib::PointWithID>* grid(nullptr);
 	ASSERT_NO_THROW(grid = new GeoLib::Grid<GeoLib::PointWithID> (pnts.begin(), pnts.end()));
 
+	// search point (1,1,1) is outside of the point set
 	GeoLib::PointWithID search_pnt(1,1,1, 0);
 	GeoLib::PointWithID* res(grid->getNearestPoint(search_pnt.getCoords()));
 	ASSERT_EQ(res->getID(), i_max*j_max*k_max-1);
-	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(3.0/10000.0), std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(3.0)/50.0, std::numeric_limits<double>::epsilon());
 
+	// search point (0,1,1) is outside of the point set
 	search_pnt[0] = 0;
 	res = grid->getNearestPoint(search_pnt.getCoords());
 	ASSERT_EQ(res->getID(), j_max*k_max - 1);
-	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(2.0/10000.0), std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(2.0)/50.0, std::numeric_limits<double>::epsilon());
 
+	// search point (0.5,1,1) is outside of the point set
 	search_pnt[0] = 0.5;
 	res = grid->getNearestPoint(search_pnt.getCoords());
 	ASSERT_EQ(res->getID(), j_max*k_max*(i_max/2 + 1) - 1);
-	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(2.0/10000.0), std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(2.0)/50.0, std::numeric_limits<double>::epsilon());
 
 	for (std::size_t i(0); i < i_max; i++) {
 		std::size_t offset0(i * j_max * k_max);
