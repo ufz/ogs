@@ -53,11 +53,6 @@ public:
 		_row_ptr(iA), _col_idx(jA), _data(A)
 	{}
 
-	CRSMatrix(IDX_TYPE n1) :
-		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n1, n1),
-		_row_ptr(NULL), _col_idx(NULL), _data(NULL)
-	{}
-
 	virtual ~CRSMatrix()
 	{
 		delete [] _row_ptr;
