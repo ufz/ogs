@@ -37,7 +37,7 @@ protected slots:
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 signals:
-	void nodeSelected(vtkUnstructuredGridAlgorithm const*const, bool, int);
+	void nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);
 	void removeSelectedMeshComponent();
 };
 

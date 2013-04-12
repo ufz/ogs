@@ -201,12 +201,14 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)));
-	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, bool, int)),
-		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, bool, int)));
+	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
+	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+		    this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));
 	connect(mshTabWidget->treeView, SIGNAL(removeSelectedMeshComponent()),
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
-	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, bool, int)),
-		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, bool, int)));
+	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
 	connect(mshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
 
@@ -273,10 +275,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SIGNAL(actorPicked(vtkProp3D*)),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const std::size_t)),
-	        this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, const std::size_t)));
+	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
+	        this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, const unsigned)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const std::size_t)),
+	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 	connect((QObject*) (visualizationWidget->interactorStyle()), SIGNAL(clearElementView()),
 	        this->_elementModel, SLOT(clearView()));

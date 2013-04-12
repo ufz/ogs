@@ -42,7 +42,7 @@ void VtkCompositeSelectionFilter::init()
 
 	this->SetLookUpTable(QString::fromStdString(_selection_name), this->GetLookupTable());
 
-	VtkAppendArrayFilter* selFilter (NULL);
+ 	VtkAppendArrayFilter* selFilter (NULL);
 	if (!_selection.empty())
 	{
 		selFilter = VtkAppendArrayFilter::New();

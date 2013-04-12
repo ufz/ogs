@@ -89,7 +89,7 @@ signals:
 	void cursorChanged(Qt::CursorShape);
 
 	/// @brief Emitted when a mesh element has been picked
-	void elementPicked(vtkUnstructuredGridAlgorithm const*const, const std::size_t);
+	void elementPicked(vtkUnstructuredGridAlgorithm const*const, unsigned);
 
 	/// @brief Emitted when the current object type cannot be handled by the element model
 	void clearElementView();

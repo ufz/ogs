@@ -37,7 +37,7 @@ ElementTreeModel::~ElementTreeModel()
 {
 }
 
-void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid, const size_t elem_index)
+void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index)
 {
 	this->_mesh_source = grid;
 	this->clearView();

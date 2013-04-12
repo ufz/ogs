@@ -87,7 +87,7 @@ private slots:
 	void checkMeshQuality();
 
 signals:
-	void elementSelected(vtkUnstructuredGridAlgorithm const*const, bool, int);
+	void elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);
 	void enableSaveButton(bool);
 	void enableRemoveButton(bool);
 	void openMeshFile(int);

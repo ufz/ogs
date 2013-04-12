@@ -185,7 +185,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
 			vtkUnstructuredGridAlgorithm* source = dynamic_cast<vtkUnstructuredGridAlgorithm*>(data_set);
 			if (source)
-				emit elementPicked(source, picker->GetCellId());
+				emit elementPicked(source, static_cast<unsigned>(picker->GetCellId()));
 			else
 				emit clearElementView();
 			selectedMapper->SetInputConnection(selected->GetProducerPort());

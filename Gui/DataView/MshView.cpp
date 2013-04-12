@@ -76,7 +76,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 		{
 			emit enableSaveButton(false);
 			emit enableRemoveButton(false);
-			emit elementSelected(dynamic_cast<const MshItem*>(tree_item->parentItem())->vtkSource(), true, tree_item->row());
+			emit elementSelected(dynamic_cast<const MshItem*>(tree_item->parentItem())->vtkSource(), static_cast<unsigned>(tree_item->row()), true);
 		}
 	}
 	//emit itemSelectionChanged(selected, deselected);

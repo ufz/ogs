@@ -38,7 +38,7 @@ public slots:
 	void clearView();
 
 	/// Extracts information of the element with the given index from the given grid.
-	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const std::size_t elem_index);
+	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
 
 private:
 	vtkUnstructuredGridAlgorithm const* _mesh_source;

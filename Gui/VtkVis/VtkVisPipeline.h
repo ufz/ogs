@@ -126,7 +126,7 @@ public slots:
 	void removeHighlightedGeoObject();
 
 	/// Applies a VtkCompositeSelectionFilter to add a specific component of the given mesh-source to the pipeline for highlighted display in the render window.
-	void highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, bool is_element, int index);
+	void highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, unsigned index, bool is_element);
 
 	/// Removes the currently highlighted mesh component
 	void removeHighlightedMeshComponent();

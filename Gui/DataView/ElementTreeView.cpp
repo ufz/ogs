@@ -47,8 +47,8 @@ void ElementTreeView::selectionChanged( const QItemSelection &selected, const QI
 			if (idx.parent().parent().isValid()) // not property node
 			{
 				const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
-				int node_index = tree_item->data(0).toString().mid(5).toInt();
-				emit nodeSelected(static_cast<ElementTreeModel*>(this->model())->getSource(), false, node_index);
+				const unsigned node_index = tree_item->data(0).toString().mid(5).toUInt();
+				emit nodeSelected(static_cast<ElementTreeModel*>(this->model())->getSource(), node_index, false);
 			}
 	}
 }
