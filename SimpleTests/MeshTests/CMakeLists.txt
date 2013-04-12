@@ -27,7 +27,8 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	logog
 	zlib
 	${ADDITIONAL_LIBS}
-	${Boost_LIBRARIES}
+	boost_system
+	boost_filesystem
 )
 
 # Create CollapseMeshNodes executable
@@ -44,7 +45,8 @@ TARGET_LINK_LIBRARIES ( CollapseMeshNodes
 	BaseLib
 	GeoLib
 	logog
-	${Boost_LIBRARIES}
+	boost_system
+	boost_filesystem
 )
 
 # Create MeshSearchTest executable
@@ -62,5 +64,6 @@ TARGET_LINK_LIBRARIES ( MeshSearchTest
 	GeoLib
 	logog
 	${ADDITIONAL_LIBS}
-	${Boost_LIBRARIES}
+	boost_system
+	boost_filesystem
 )

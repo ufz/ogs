@@ -41,7 +41,8 @@ TARGET_LINK_LIBRARIES(testrunner
 	MeshLib
 	OgsLib
 	logog
-	${Boost_LIBRARIES}
+	boost_system
+	boost_filesystem
 	${CMAKE_THREAD_LIBS_INIT}
 )
 
