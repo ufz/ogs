@@ -12,6 +12,6 @@ INCLUDE_DIRECTORIES(
 )
 
 TARGET_LINK_LIBRARIES( BaseLib
-	boost_system
-	boost_filesystem 
+	${Boost_FILESYSTEM_LIBRARY}
+	${Boost_SYSTEM_LIBRARY}
 )
