@@ -91,7 +91,9 @@ ENDIF() #OGS_PACKAGING
 ######################
 
 # External projects
+OPTION(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
 
 # Add subdirectories with the projects
 ADD_SUBDIRECTORY( ThirdParty )
