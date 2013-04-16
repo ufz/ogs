@@ -16,11 +16,12 @@ SET( SOURCES
 	VtkCompositeColorByHeightFilter.cpp
 	VtkCompositeColormapToImageFilter.cpp
 	VtkCompositeContourFilter.cpp
+	VtkCompositeElementSelectionFilter.cpp
 	VtkCompositeGeoObjectFilter.cpp
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
+	VtkCompositeNodeSelectionFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
-	VtkCompositeSelectionFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
 	VtkConditionSource.cpp
@@ -73,11 +74,12 @@ SET( HEADERS
 	VtkCompositeColorByHeightFilter.h
 	VtkCompositeColormapToImageFilter.h
 	VtkCompositeContourFilter.h
+	VtkCompositeElementSelectionFilter.h
 	VtkCompositeGeoObjectFilter.h
 	VtkCompositeImageToCylindersFilter.h
 	VtkCompositeLineToTubeFilter.h
+	VtkCompositeNodeSelectionFilter.h
 	VtkCompositePointToGlyphFilter.h
-	VtkCompositeSelectionFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
 	VtkConditionSource.h

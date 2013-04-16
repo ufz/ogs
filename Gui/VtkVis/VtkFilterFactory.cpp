@@ -18,11 +18,12 @@
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkCompositeColormapToImageFilter.h"
 #include "VtkCompositeContourFilter.h"
+#include "VtkCompositeElementSelectionFilter.h"
 #include "VtkCompositeGeoObjectFilter.h"
 #include "VtkCompositeImageToCylindersFilter.h"
 #include "VtkCompositeLineToTubeFilter.h"
+#include "VtkCompositeNodeSelectionFilter.h"
 #include "VtkCompositePointToGlyphFilter.h"
-#include "VtkCompositeSelectionFilter.h"
 #include "VtkCompositeTextureOnSurfaceFilter.h"
 #include "VtkCompositeThresholdFilter.h"
 #include "VtkImageDataToLinePolyDataFilter.h"
@@ -122,8 +123,10 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
 		return new VtkCompositeThresholdFilter(inputAlgorithm);
 	else if (type.compare(QString("VtkCompositeColorByHeightFilter")) == 0)
 		return new VtkCompositeColorByHeightFilter(inputAlgorithm);
-	else if (type.compare(QString("VtkCompositeSelectionFilter")) == 0)
-		return new VtkCompositeSelectionFilter(inputAlgorithm);
+	else if (type.compare(QString("VtkCompositeElementSelectionFilter")) == 0)
+		return new VtkCompositeElementSelectionFilter(inputAlgorithm);
+	else if (type.compare(QString("VtkCompositeNodeSelectionFilter")) == 0)
+		return new VtkCompositeNodeSelectionFilter(inputAlgorithm);
 	else if (type.compare(QString("VtkCompositeContourFilter")) == 0)
 		return new VtkCompositeContourFilter(inputAlgorithm);
 	else if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)

@@ -30,7 +30,8 @@
 #include "StationTreeModel.h"
 #include "TreeModel.h"
 #include "VtkAlgorithmProperties.h"
-#include "VtkCompositeSelectionFilter.h"
+#include "VtkCompositeNodeSelectionFilter.h"
+#include "VtkCompositeElementSelectionFilter.h"
 #include "VtkCompositeGeoObjectFilter.h"
 #include "VtkFilterFactory.h"
 #include "VtkMeshSource.h"
@@ -512,11 +513,8 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 				        VtkFilterFactory::CreateCompositeFilter(
 				                "VtkCompositeSelectionFilter",
 				                parentItem->transformFilter());
-				static_cast<VtkCompositeSelectionFilter*>(filter)->
-				setSelectionArray("Selection", true, quality);
-				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter,
-				                                                  parentItem,
-				                                                  itemData);
+				static_cast<VtkCompositeElementSelectionFilter*>(filter)->setSelectionArray("Selection", quality);
+				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
 				this->addPipelineItem(item, this->createIndex(i, 0, item));
 				break;
 			}
@@ -605,12 +603,22 @@ void VtkVisPipeline::highlightMeshComponent(vtkUnstructuredGridAlgorithm const*c
 			QList<QVariant> selected_index;
 			selected_index << index << index;
 
-			VtkCompositeFilter* filter = VtkFilterFactory::CreateCompositeFilter(
-															"VtkCompositeSelectionFilter",
-															parentItem->transformFilter());
-			static_cast<VtkCompositeSelectionFilter*>(filter)->setSelectionArray("vtkIdFilter_Ids", is_element);
-			static_cast<VtkCompositeSelectionFilter*>(filter)->SetUserVectorProperty("Threshold Between", selected_index);
-
+			VtkCompositeFilter* filter (nullptr);
+			if (is_element)
+			{
+				filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeElementSelectionFilter",
+																  parentItem->transformFilter());
+				static_cast<VtkCompositeElementSelectionFilter*>(filter)->setSelectionArray("vtkIdFilter_Ids");
+				static_cast<VtkCompositeElementSelectionFilter*>(filter)->SetUserVectorProperty("Threshold Between", selected_index);
+			}
+			else
+			{
+				filter = VtkFilterFactory::CreateCompositeFilter("VtkCompositeNodeSelectionFilter",
+																  parentItem->transformFilter());
+				std::vector<unsigned> indeces(1);
+				indeces[0] = index;
+				static_cast<VtkCompositeNodeSelectionFilter*>(filter)->setSelectionArray(indeces);
+			}
 			VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
 			QModelIndex parent_index = static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());
 			_highlighted_mesh_component = this->addPipelineItem(item, parent_index);

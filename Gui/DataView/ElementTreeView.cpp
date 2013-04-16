@@ -32,6 +32,7 @@ void ElementTreeView::updateView()
 	size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
 	for (size_t i = 1; i < nColumns; i++)
 		resizeColumnToContents(i);
+	this->expandAll();
 }
 
 void ElementTreeView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )

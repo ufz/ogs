@@ -17,6 +17,7 @@
 #include "VtkAppendArrayFilter.h"
 #include "VtkCompositePointToGlyphFilter.h"
 #include "VtkColorLookupTable.h"
+#include "VtkPointsSource.h"
 
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkSmartPointer.h>
@@ -28,20 +29,19 @@
 #include <vtkPointData.h>
 
 
-VtkCompositeSelectionFilter::VtkCompositeSelectionFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm), _selection_name("Selection"), _is_element_array(true)
+VtkCompositeElementSelectionFilter::VtkCompositeElementSelectionFilter( vtkAlgorithm* inputAlgorithm )
+	: VtkCompositeFilter(inputAlgorithm), _selection_name("Selection")
 {
 	//this->init();
 }
 
-void VtkCompositeSelectionFilter::init()
+void VtkCompositeElementSelectionFilter::init()
 {
-	double thresholdLower(0.0), thresholdUpper(100000.0);
+	double thresholdLower(0.0), thresholdUpper(1.0);
 	this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
 	this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 
 	this->SetLookUpTable(QString::fromStdString(_selection_name), this->GetLookupTable());
-
  	VtkAppendArrayFilter* selFilter (NULL);
 	if (!_selection.empty())
 	{
@@ -61,54 +61,39 @@ void VtkCompositeSelectionFilter::init()
 		idFilter->FieldDataOn();
 		idFilter->Update();
 		
-	size_t nPoints = idFilter->GetOutput()->GetPointData()->GetNumberOfTuples();
-
-	_threshold = vtkThreshold::New();
-		_threshold->SetInputConnection(idFilter->GetOutputPort());
-		if (_is_element_array)
-			_threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
-		else
-			_threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS, _selection_name.c_str());
-		_threshold->SetSelectedComponent(0);
-		_threshold->ThresholdBetween(thresholdLower, thresholdUpper);
-		_threshold->Update();
+	vtkThreshold* threshold = vtkThreshold::New();
+		threshold->SetInputConnection(idFilter->GetOutputPort());
+		threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
+		threshold->SetSelectedComponent(0);
+		threshold->ThresholdBetween(thresholdLower, thresholdUpper);
+		threshold->Update();
 		
 	QList<QVariant> thresholdRangeList;
 	thresholdRangeList.push_back(thresholdLower);
 	thresholdRangeList.push_back(thresholdUpper);
 	(*_algorithmUserVectorProperties)["Threshold Between"] = thresholdRangeList;
-	
-	if (!_is_element_array)
-	{
-			size_t nPoints = _threshold->GetOutput()->GetPointData()->GetNumberOfTuples();
-		VtkCompositeFilter* composite = new VtkCompositePointToGlyphFilter(_threshold);
-		composite->SetUserProperty("Radius", this->GetInitialRadius());
-		_outputAlgorithm = composite->GetOutputAlgorithm();
-	}
-	else
-		_outputAlgorithm = _threshold;
+	_outputAlgorithm = threshold;
 }
 
-void VtkCompositeSelectionFilter::setSelectionArray(const std::string &selection_name, bool is_element_array, const std::vector<double> &selection)
+void VtkCompositeElementSelectionFilter::setSelectionArray(const std::string &selection_name, const std::vector<double> &selection)
 {
 	_selection_name = selection_name;
-	_is_element_array = is_element_array;
 	_selection = selection;
 	init(); 
 }
 
-void VtkCompositeSelectionFilter::SetUserVectorProperty( QString name, QList<QVariant> values)
+void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QList<QVariant> values)
 {
 	VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 	double a = values[0].toDouble();
 	double b = values[1].toDouble();
 
 	if (name.compare("Threshold Between") == 0)
-		static_cast<vtkThreshold*>(_threshold)->ThresholdBetween(
+		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
 		        values[0].toDouble(), values[1].toDouble());
 }
 
-VtkColorLookupTable* VtkCompositeSelectionFilter::GetLookupTable()
+VtkColorLookupTable* VtkCompositeElementSelectionFilter::GetLookupTable()
 {
 	VtkColorLookupTable* lut = VtkColorLookupTable::New();
 	lut->SetTableRange(0,1);
