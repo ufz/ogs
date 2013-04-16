@@ -33,7 +33,7 @@ template<typename FP_TYPE, typename IDX_TYPE>
 class CRSMatrix: public SparseMatrixBase<FP_TYPE, IDX_TYPE>
 {
 public:
-	CRSMatrix(std::string const &fname) :
+	explicit CRSMatrix(std::string const &fname) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(),
 		_row_ptr(NULL), _col_idx(NULL), _data(NULL)
 	{
@@ -47,12 +47,12 @@ public:
 		}
 	}
 
-	CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
+	explicit CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n),
 		_row_ptr(iA), _col_idx(jA), _data(A)
 	{}
 
-	CRSMatrix(MatrixSparsityPattern const& mat_sparsity_pattern) :
+	explicit CRSMatrix(MatrixSparsityPattern const& mat_sparsity_pattern) :
 			SparseMatrixBase<FP_TYPE, IDX_TYPE>(mat_sparsity_pattern.getNRows(),
 					mat_sparsity_pattern.getNRows()),
 			_row_ptr(nullptr), _col_idx(nullptr), _data(nullptr)
