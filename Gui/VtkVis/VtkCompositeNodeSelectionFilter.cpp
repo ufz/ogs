@@ -13,18 +13,21 @@
  */
 
 // ** INCLUDES **
+#include <memory>
+
 #include "VtkCompositeNodeSelectionFilter.h"
-#include "VtkCompositePointToGlyphFilter.h"
+//#include "VtkCompositePointToGlyphFilter.h"
 #include "VtkPointsSource.h"
 
 #include <vtkDataSetAlgorithm.h>
 #include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkGlyph3D.h>
 
 
 VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm)
+: VtkCompositeFilter(inputAlgorithm)
 {
-	int a = 3;
 	//this->init();
 }
 
@@ -41,12 +44,17 @@ void VtkCompositeNodeSelectionFilter::init()
 
 	if (!_selection.empty())
 	{
-		VtkPointsSource* point_source = VtkPointsSource::New();
+		vtkSmartPointer<VtkPointsSource> point_source = vtkSmartPointer<VtkPointsSource>::New();
 		point_source->setPoints(&_selection);
 
-		VtkCompositeFilter* glyphs = new VtkCompositePointToGlyphFilter(point_source);
-		glyphs->SetUserProperty("Radius", this->GetInitialRadius());
-		_outputAlgorithm = glyphs->GetOutputAlgorithm();
+		vtkSmartPointer<vtkSphereSource> _glyphSource = vtkSmartPointer<vtkSphereSource>::New();
+			_glyphSource->SetRadius(this->GetInitialRadius());
+
+		vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
+			glyphFilter->SetSource(_glyphSource->GetOutput());
+			glyphFilter->SetInputConnection(point_source->GetOutputPort());
+
+		_outputAlgorithm = glyphFilter;
 	}
 	else
 		_outputAlgorithm = nullptr;

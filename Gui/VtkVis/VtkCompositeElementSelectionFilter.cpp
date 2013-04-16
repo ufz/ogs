@@ -13,7 +13,7 @@
  */
 
 // ** INCLUDES **
-#include "VtkCompositeSelectionFilter.h"
+#include "VtkCompositeElementSelectionFilter.h"
 #include "VtkAppendArrayFilter.h"
 #include "VtkCompositePointToGlyphFilter.h"
 #include "VtkColorLookupTable.h"
@@ -42,16 +42,16 @@ void VtkCompositeElementSelectionFilter::init()
 	this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 
 	this->SetLookUpTable(QString::fromStdString(_selection_name), this->GetLookupTable());
- 	VtkAppendArrayFilter* selFilter (NULL);
+ 	vtkSmartPointer<VtkAppendArrayFilter> selFilter (NULL);
 	if (!_selection.empty())
 	{
-		selFilter = VtkAppendArrayFilter::New();
+		selFilter = vtkSmartPointer<VtkAppendArrayFilter>::New();
 		selFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 		selFilter->SetArray(_selection_name, _selection);
 		selFilter->Update();
 	}
 
-	vtkIdFilter* idFilter = vtkIdFilter::New();
+	vtkSmartPointer<vtkIdFilter> idFilter = vtkSmartPointer<vtkIdFilter>::New();
 		if (_selection.empty()) // if the array is empty it is assumed that an existing array should be used
 			idFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 		else

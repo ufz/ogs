@@ -20,7 +20,6 @@
 
 #include <vector>
 
-
 /// @brief This filter displays the points/nodes given in the index field as spheres.
 class VtkCompositeNodeSelectionFilter : public VtkCompositeFilter
 {
@@ -35,7 +34,6 @@ public:
 	
 private:
 	std::vector<GeoLib::Point*> _selection;
-
 };
 
 #endif // VTKCOMPOSITENODESELECTIONFILTER_H
