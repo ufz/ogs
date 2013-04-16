@@ -37,7 +37,7 @@
 
 #include <string>
 
-#include "VtkCompositeSelectionFilter.h"
+#include "VtkCompositeElementSelectionFilter.h"
 
 vtkStandardNewMacro(VtkCustomInteractorStyle);
 
@@ -103,6 +103,12 @@ void VtkCustomInteractorStyle::highlightActor( vtkProp3D* actor )
 {
 	if (_highlightActor)
 		HighlightProp((vtkProp*)actor);
+}
+
+void VtkCustomInteractorStyle::removeHighlightActor()
+{
+	this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
+		RemoveActor(selectedActor);
 }
 
 void VtkCustomInteractorStyle::setHighlightActor(bool on)
@@ -192,6 +198,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
 			AddActor(selectedActor);
+			_highlightActor = true;
 		}
 		else
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->

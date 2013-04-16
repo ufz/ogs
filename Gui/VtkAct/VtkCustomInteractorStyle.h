@@ -58,6 +58,10 @@ public:
 
 public slots:
 	void highlightActor(vtkProp3D* prop);
+
+	/// @brief Removes the highlight actor from the visible scene.
+	void removeHighlightActor();
+
 	void setHighlightActor(bool on);
 
 	/// @brief Sets the highlightable vtk object.

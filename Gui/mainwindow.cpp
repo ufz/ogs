@@ -207,6 +207,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		    this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 	        mshTabWidget->elementView, SLOT(updateView()));
+	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
+	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
 	connect(mshTabWidget->treeView, SIGNAL(removeSelectedMeshComponent()),
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
 	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
@@ -284,7 +288,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        mshTabWidget->elementView, SLOT(updateView()));
 	connect((QObject*) (visualizationWidget->interactorStyle()), SIGNAL(clearElementView()),
 	        this->_elementModel, SLOT(clearView()));
-	connect((QObject*) (visualizationWidget->interactorStyle()), 
+	connect((QObject*) (visualizationWidget->interactorStyle()),
 			SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
 	        this->_vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
 
