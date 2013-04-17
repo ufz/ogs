@@ -11,9 +11,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file zLibDataCompressor.h
- *
- * Created on 2012-11-26 by Karsten Rink
  * Based on the vtkZLibDataCompressor-class in VTK 5.6
  */
 

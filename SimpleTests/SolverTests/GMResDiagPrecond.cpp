@@ -1,7 +1,15 @@
 /**
- * GMResDiagPrecond.cpp
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-10-05
+ * \brief  Test for GMRes preconditioner.
  *
- * Created on 2011-10-05 by Thomas Fischer
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #include <iostream>

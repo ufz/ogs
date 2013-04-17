@@ -1,12 +1,14 @@
 /**
+ * \file
+ * \author Lars Bilke
+ * \date 2010-08-31
+ *
+ * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.net/LICENSE.txt
  *
- * \file VrpnClient.cpp
- *
- * Created on 2010-08-30 by Lars Bilke
  */
 
 // ** INCLUDES **

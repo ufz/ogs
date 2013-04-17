@@ -1,7 +1,14 @@
 /**
- * MatTestRemoveRowsCols.cpp
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-11-08
+ * \brief  Test for removing entries in matrices.
  *
- * Created on 2011-11-08 by Thomas Fischer
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <fstream>
