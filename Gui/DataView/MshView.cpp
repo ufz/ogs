@@ -105,10 +105,11 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
-	bool is_3D_mesh (item->getMesh()->getDimension() == 3);
 
 	if (item)
 	{
+		bool is_3D_mesh (item->getMesh()->getDimension() == 3);
+
 		QMenu menu;
 		QAction* editMeshAction   = menu.addAction("Edit mesh...");
 		QAction* editValuesAction  = menu.addAction("Edit material groups...");
