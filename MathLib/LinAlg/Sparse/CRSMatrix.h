@@ -20,10 +20,9 @@
 #include <iostream>
 #include <cassert>
 
-// Base
-
 // MathLib
 #include "SparseMatrixBase.h"
+#include "MatrixSparsityPattern.h"
 #include "sparse.h"
 #include "amuxCRS.h"
 #include "../Preconditioner/generateDiagPrecond.h"
@@ -52,6 +51,37 @@ public:
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n),
 		_row_ptr(iA), _col_idx(jA), _data(A)
 	{}
+
+	CRSMatrix(MatrixSparsityPattern const& mat_sparsity_pattern) :
+			SparseMatrixBase<FP_TYPE, IDX_TYPE>(mat_sparsity_pattern.getNRows(),
+					mat_sparsity_pattern.getNRows()),
+			_row_ptr(nullptr), _col_idx(nullptr), _data(nullptr)
+	{
+		// reserve memory for _row_ptr
+		_row_ptr = new IDX_TYPE [MatrixBase::_n_rows + 1];
+		// initialize _row_ptr
+		_row_ptr[0] = 0;
+		for (std::size_t row(0); row < MatrixBase::_n_rows; row++) {
+			_row_ptr[row + 1] = _row_ptr[row]
+			    + std::distance(mat_sparsity_pattern.getRowBeginIterator(row),
+			        mat_sparsity_pattern.getRowEndIterator(row));
+		}
+
+		std::size_t const nnz = _row_ptr[MatrixBase::_n_rows];
+		// reserve memory for _col_idx
+		_col_idx = new IDX_TYPE [nnz];
+		// fill _col_idx
+		for (std::size_t row(0); row < MatrixBase::_n_rows; row++) {
+			std::copy(mat_sparsity_pattern.getRowBeginIterator(row),
+				mat_sparsity_pattern.getRowEndIterator(row),
+				&_col_idx[_row_ptr[row]]);
+		}
+
+		// reserve memory for _data
+		_data = new FP_TYPE [nnz];
+		// initialize entries with zero
+		std::fill_n(_data, nnz, 0.0);
+	}
 
 	virtual ~CRSMatrix()
 	{
