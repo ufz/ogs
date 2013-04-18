@@ -50,31 +50,37 @@ void GeoTreeView::selectionChanged( const QItemSelection &selected,
 	{
 		const QModelIndex idx = *(selected.indexes().begin());
 		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+		emit removeGeoItemSelection();
 
-		const GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem());
-		if (list_item)
+		const GeoObjectListItem* geo_object = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem());
+		if (geo_object) // geometry object
 		{
 			emit enableSaveButton(false);
 			emit enableRemoveButton(false);
-			emit geoItemSelected(list_item->vtkSource(), tree_item->row());
+			emit geoItemSelected(geo_object->vtkSource(), tree_item->row());
 		}
 		else
 		{
-			emit removeGeoItemSelection();
-			if (!idx.parent().isValid()) // list item
+			if (!idx.parent().isValid()) // geometry item
 			{
 				emit enableSaveButton(true);
 				emit enableRemoveButton(true);
 			}
 			else // line points or surface triangles
 			{
-				// highlight a point for an expanded polyline
-				if (dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem())->getType() == GeoLib::POLYLINE)
-					geoItemSelected(
-						dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(), 
-						tree_item->data(0).toInt());
 				emit enableSaveButton(false);
-				emit enableRemoveButton(false);
+				const GeoObjectListItem* geo_type = dynamic_cast<const GeoObjectListItem*>(tree_item);
+				if (geo_type) // geometry list item
+					emit enableRemoveButton(true);
+				else
+				{
+					// highlight a point for an expanded polyline
+					if (dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem())->getType() == GeoLib::POLYLINE)
+						geoItemSelected(
+							dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(), 
+							tree_item->data(0).toInt());
+					emit enableRemoveButton(false);
+				}
 			}
 
 		}

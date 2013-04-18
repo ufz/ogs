@@ -8,6 +8,7 @@ SET( SOURCES
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
+	VtkAppendArrayFilter.cpp
 	VtkBGImageSource.cpp
 	VtkColorByHeightFilter.cpp
 	VtkColorLookupTable.cpp
@@ -15,11 +16,12 @@ SET( SOURCES
 	VtkCompositeColorByHeightFilter.cpp
 	VtkCompositeColormapToImageFilter.cpp
 	VtkCompositeContourFilter.cpp
+	VtkCompositeElementSelectionFilter.cpp
 	VtkCompositeGeoObjectFilter.cpp
 	VtkCompositeImageToCylindersFilter.cpp
 	VtkCompositeLineToTubeFilter.cpp
+	VtkCompositeNodeSelectionFilter.cpp
 	VtkCompositePointToGlyphFilter.cpp
-	VtkCompositeSelectionFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
 	VtkConditionSource.cpp
@@ -31,7 +33,6 @@ SET( SOURCES
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
 	VtkRaster.cpp
-	VtkSelectionFilter.cpp
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
 	VtkTextureOnSurfaceFilter.cpp
@@ -65,6 +66,7 @@ SET( MOC_HEADERS
 
 # Header files
 SET( HEADERS
+	VtkAppendArrayFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
 	VtkColorLookupTable.h
@@ -72,11 +74,12 @@ SET( HEADERS
 	VtkCompositeColorByHeightFilter.h
 	VtkCompositeColormapToImageFilter.h
 	VtkCompositeContourFilter.h
+	VtkCompositeElementSelectionFilter.h
 	VtkCompositeGeoObjectFilter.h
 	VtkCompositeImageToCylindersFilter.h
 	VtkCompositeLineToTubeFilter.h
+	VtkCompositeNodeSelectionFilter.h
 	VtkCompositePointToGlyphFilter.h
-	VtkCompositeSelectionFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
 	VtkConditionSource.h
@@ -88,7 +91,6 @@ SET( HEADERS
 	VtkPolylinesSource.h
 	VtkPointsSource.h
 	VtkRaster.h
-	VtkSelectionFilter.h
 	VtkStationSource.h
 	VtkSurfacesSource.h
 	VtkTextureOnSurfaceFilter.h

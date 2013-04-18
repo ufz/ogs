@@ -6,6 +6,7 @@ set( SOURCES
 	ConditionWriterDialog.cpp
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
+	ElementTreeView.cpp
 	FEMConditionSetupDialog.cpp
 	GeoMapper.cpp
 	GEOModels.cpp
@@ -45,6 +46,7 @@ set( MOC_HEADERS
 	CondFromRasterDialog.h
 	ConditionWriterDialog.h
 	ElementTreeModel.h
+	ElementTreeView.h
 	FEMConditionSetupDialog.h
 	GEOModels.h
 	GeoTabWidget.h

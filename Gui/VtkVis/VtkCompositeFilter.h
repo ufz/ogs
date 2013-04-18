@@ -67,6 +67,9 @@ public:
 	vtkAlgorithm* GetOutputAlgorithm() const { return _outputAlgorithm; }
 
 protected:
+	/// Calculates a 1/200th of the largest extension of the bounding box (this is used as default radius for various filters)
+	float GetInitialRadius() const;
+
 	/// See [vtkSetGet.h](https://github.com/Kitware/VTK/blob/master/Common/Core/vtkSetGet.h)
 	/// for the defines
 	int _inputDataObjectType;
