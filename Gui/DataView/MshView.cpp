@@ -62,6 +62,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 	Q_UNUSED(deselected);
 	if (!selected.isEmpty())
 	{
+		emit removeSelectedMeshComponent();
 		const QModelIndex idx = *(selected.indexes().begin());
 		const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
 
@@ -75,11 +76,13 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 		{
 			emit enableSaveButton(false);
 			emit enableRemoveButton(false);
+			emit elementSelected(dynamic_cast<const MshItem*>(tree_item->parentItem())->vtkSource(), static_cast<unsigned>(tree_item->row()), true);
 		}
 	}
 	//emit itemSelectionChanged(selected, deselected);
 	//return QTreeView::selectionChanged(selected, deselected);
 }
+
 void MshView::addMesh()
 {
 	emit openMeshFile(ImportFileType::OGS_MSH);
@@ -102,10 +105,11 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
-	bool is_3D_mesh (item->getMesh()->getDimension() == 3);
 
 	if (item)
 	{
+		bool is_3D_mesh (item->getMesh()->getDimension() == 3);
+
 		QMenu menu;
 		QAction* editMeshAction   = menu.addAction("Edit mesh...");
 		QAction* editValuesAction  = menu.addAction("Edit material groups...");

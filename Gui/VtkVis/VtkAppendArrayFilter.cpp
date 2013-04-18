@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2011-02-09
- * \brief  Implementation of the VtkSelectionFilter class.
+ * \brief  Implementation of the VtkAppendArrayFilter class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -13,7 +13,7 @@
  */
 
 // ** VTK INCLUDES **
-#include "VtkSelectionFilter.h"
+#include "VtkAppendArrayFilter.h"
 
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
@@ -25,31 +25,30 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkUnstructuredGrid.h>
 
-vtkStandardNewMacro(VtkSelectionFilter);
-vtkCxxRevisionMacro(VtkSelectionFilter, "$Revision: 6995 $");
+vtkStandardNewMacro(VtkAppendArrayFilter);
+vtkCxxRevisionMacro(VtkAppendArrayFilter, "$Revision$");
 
-VtkSelectionFilter::VtkSelectionFilter()
-	: _thresholdLower(0.0), _thresholdUpper(1.0)
+VtkAppendArrayFilter::VtkAppendArrayFilter()
 {
 }
 
-VtkSelectionFilter::~VtkSelectionFilter()
+VtkAppendArrayFilter::~VtkAppendArrayFilter()
 {
 }
 
-void VtkSelectionFilter::PrintSelf( ostream& os, vtkIndent indent )
+void VtkAppendArrayFilter::PrintSelf( ostream& os, vtkIndent indent )
 {
 	this->Superclass::PrintSelf(os,indent);
-	os << indent << "== VtkSelectionFilter ==" << endl;
+	os << indent << "== VtkAppendArrayFilter ==" << endl;
 }
 
-int VtkSelectionFilter::RequestData( vtkInformation*,
+int VtkAppendArrayFilter::RequestData( vtkInformation*,
                                      vtkInformationVector** inputVector,
                                      vtkInformationVector* outputVector )
 {
-	if (this->_selection.empty())
+	if (this->_array.empty())
 	{
-		std::cout << "VtkSelectionFilter - Error: Selection array is empty..." << std::endl;
+		std::cout << "VtkAppendArrayFilter - Error: Selection array is empty..." << std::endl;
 		return 0;
 	}
 	vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
@@ -61,14 +60,14 @@ int VtkSelectionFilter::RequestData( vtkInformation*,
 	colors->SetName("Selection");
 
 	size_t nCells = input->GetNumberOfCells();
-	size_t arrayLength = this->_selection.size();
+	size_t arrayLength = this->_array.size();
 	if (nCells > arrayLength)
 		std::cout <<
-		"VtkSelectionFilter - Warning: Number of cells exceeds selection array length. Surplus cells won't be examined."
+		"VtkAppendArrayFilter - Warning: Number of cells exceeds selection array length. Surplus cells won't be examined."
 		          << std::endl;
 
 	for (size_t i = 0; i < arrayLength; i++)
-		colors->InsertNextValue(_selection[i]);
+		colors->InsertNextValue(_array[i]);
 
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
 	vtkUnstructuredGrid* output =
@@ -77,16 +76,14 @@ int VtkSelectionFilter::RequestData( vtkInformation*,
 	output->GetPointData()->PassData(input->GetPointData());
 	output->GetCellData()->PassData(input->GetCellData());
 	output->GetCellData()->AddArray(colors);
-	output->GetCellData()->SetActiveScalars("Selection");
+	output->GetCellData()->SetActiveScalars(_array_name.c_str());
 
 	return 1;
 }
 
-void VtkSelectionFilter::SetSelectionArray(std::vector<double> selection,
-                                           double thresholdLower,
-                                           double thresholdUpper)
+void VtkAppendArrayFilter::SetArray(const std::string &array_name,
+									const std::vector<double> &new_array)
 {
-	this->_selection = selection;
-	this->_thresholdLower = thresholdLower;
-	this->_thresholdUpper = thresholdUpper;
+	this->_array_name = array_name;
+	this->_array = new_array;
 }

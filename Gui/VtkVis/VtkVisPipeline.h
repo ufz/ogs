@@ -31,10 +31,13 @@ class vtkDataSet;
 class vtkLight;
 class vtkPointSet;
 class vtkPolyDataAlgorithm;
-class vtkRenderer;
 class vtkProp3D;
+class vtkRenderer;
+class vtkUnstructuredGridAlgorithm;
+
 class QModelIndex;
 class QString;
+
 class GeoTreeModel;
 class ProcessModel;
 class MshModel;
@@ -116,8 +119,18 @@ public slots:
 	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
 	void checkMeshQuality(VtkMeshSource* mesh, MshQualityType::type t);
 
+	/// Applies a VtkCompositeGeoObjectFilter to add a specific index of the given geometry-source to the pipeline for highlighted display in the render window.
 	void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);
+
+	/// Removes the currently highlighted geometry-object
 	void removeHighlightedGeoObject();
+
+	/// Applies a VtkCompositeSelectionFilter to add a specific component of the given mesh-source to the pipeline for highlighted display in the render window.
+	void highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, unsigned index, bool is_element);
+
+	/// Removes the currently highlighted mesh component
+	void removeHighlightedMeshComponent();
+
 
 private:
 	void listArrays(vtkDataSet* dataSet);
@@ -129,7 +142,7 @@ private:
 	bool _resetCameraOnAddOrRemove;
 
 	QModelIndex _highlighted_geo_index;
-
+	QModelIndex _highlighted_mesh_component;
 
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.

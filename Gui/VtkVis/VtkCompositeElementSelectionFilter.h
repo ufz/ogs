@@ -19,19 +19,20 @@
 
 #include <vector>
 
+class vtkThreshold;
+
 class VtkColorLookupTable;
 
-/// @brief This filter colors the input by the points z-value.
-class VtkCompositeSelectionFilter : public VtkCompositeFilter
+/// @brief This filter selects/thresholds elements based on the selected array.
+class VtkCompositeElementSelectionFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeSelectionFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeSelectionFilter() {}
+	VtkCompositeElementSelectionFilter(vtkAlgorithm* inputAlgorithm);
+	virtual ~VtkCompositeElementSelectionFilter() {}
 
 	virtual void init();
 
-	void setSelectionArray(std::vector<double> selection) { _selection = selection;
-		                                                init(); }
+	void setSelectionArray(const std::string &selection_name, const std::vector<double> &selection = std::vector<double>());
 
 	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
@@ -39,6 +40,7 @@ private:
 	/// Returns a colour lookup table optimised for quality measures
 	VtkColorLookupTable* GetLookupTable();
 
+	std::string _selection_name;
 	std::vector<double> _selection;
 };
 

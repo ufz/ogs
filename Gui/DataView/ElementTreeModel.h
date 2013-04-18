@@ -17,9 +17,7 @@
 
 #include "TreeModel.h"
 
-namespace MeshLib {
-	class Mesh;
-}
+class vtkUnstructuredGridAlgorithm;
 
 /**
  * \brief A model for the display of information concerning element information implemented as a TreeModel.
@@ -33,14 +31,17 @@ public:
 	ElementTreeModel( QObject* parent = 0 );
 	~ElementTreeModel();
 
+	vtkUnstructuredGridAlgorithm const*const getSource() const { return _mesh_source; };
+
 public slots:
 	/// Clears the tree.
 	void clearView();
 
 	/// Extracts information of the element with the given index from the given grid.
-	void setElement(const MeshLib::Mesh* grid, const std::size_t elem_index);
+	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
 
 private:
+	vtkUnstructuredGridAlgorithm const* _mesh_source;
 };
 
 #endif //ELEMENTTREEMODEL_H
