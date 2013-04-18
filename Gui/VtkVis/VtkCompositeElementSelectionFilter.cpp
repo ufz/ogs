@@ -85,8 +85,6 @@ void VtkCompositeElementSelectionFilter::setSelectionArray(const std::string &se
 void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QList<QVariant> values)
 {
 	VtkAlgorithmProperties::SetUserVectorProperty(name, values);
-	double a = values[0].toDouble();
-	double b = values[1].toDouble();
 
 	if (name.compare("Threshold Between") == 0)
 		static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
