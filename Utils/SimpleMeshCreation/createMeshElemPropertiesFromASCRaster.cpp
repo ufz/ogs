@@ -41,7 +41,7 @@
 #include "MathTools.h"
 
 // MeshLib
-#include "MeshEditing/ConvertRasterToMesh.h"
+#include "MeshGenerators/ConvertRasterToMesh.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
