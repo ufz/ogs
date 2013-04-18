@@ -3,7 +3,7 @@
 	url = git://github.com/ufz/quickcheck.git
 [submodule "ThirdParty/VtkFbxConverter"]
 	path = ThirdParty/VtkFbxConverter
-	url = https://github.com/bilke/VtkFbxConverter.git
+	url = https://github.com/ufz-vislab/VtkFbxConverter.git
 [submodule "ThirdParty/VtkOsgConverter"]
 	path = ThirdParty/VtkOsgConverter
-	url = https://github.com/bilke/VtkOsgConverter.git
+	url = https://github.com/ufz-vislab/VtkOsgConverter.git
