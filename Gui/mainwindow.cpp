@@ -83,7 +83,6 @@
 #include "Elements/Element.h"
 #include "MeshSurfaceExtraction.h"
 #include "readMeshFromFile.h"
-#include "Mesh2MeshPropertyInterpolation.h"
 
 //test
 #include "VtkMeshConverter.h"
