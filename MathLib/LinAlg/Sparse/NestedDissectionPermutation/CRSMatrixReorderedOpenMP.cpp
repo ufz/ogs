@@ -28,7 +28,7 @@ CRSMatrixReorderedOpenMP::~CRSMatrixReorderedOpenMP()
 
 void CRSMatrixReorderedOpenMP::amux(double d, double const * const x, double *y) const
 {
-	amuxCRSParallelOpenMP(d, MatrixBase::_n_rows, CRSMatrix<double,unsigned>::_row_ptr, CRSMatrix<double,unsigned>::_col_idx, CRSMatrix<double,unsigned>::_data, x, y);
+	amuxCRSParallelOpenMP(d, MatrixBase<double,unsigned>::_n_rows, CRSMatrix<double,unsigned>::_row_ptr, CRSMatrix<double,unsigned>::_col_idx, CRSMatrix<double,unsigned>::_data, x, y);
 }
 
 } // end namespace MathLib

@@ -201,9 +201,9 @@ void genFullAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 void AdjMat::makeSymmetric()
 {
 	// store upper triangular mat values
-	genAdjMat(MatrixBase::_n_rows, _row_ptr, _col_idx);
+	genAdjMat(MatrixBase<unsigned, unsigned>::_n_rows, _row_ptr, _col_idx);
 	// mirror the upper triangular part into lower
-	genFullAdjMat(MatrixBase::_n_rows, _row_ptr, _col_idx);
+	genFullAdjMat(MatrixBase<unsigned, unsigned>::_n_rows, _row_ptr, _col_idx);
 }
 
 } // end namespace MathLib
