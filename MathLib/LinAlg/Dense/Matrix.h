@@ -22,6 +22,7 @@
 
 // MathLib/LinAlg
 #include "../MatrixBase.h"
+#include "Vector.h"
 
 namespace MathLib {
 
