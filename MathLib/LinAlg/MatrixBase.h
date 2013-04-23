@@ -15,12 +15,18 @@
 #ifndef MATRIXBASE_H_
 #define MATRIXBASE_H_
 
+#include <vector>
+
 namespace MathLib
 {
 
 /**
  * class MatrixBase is the basis for all matrix classes (dense and sparse)
+ *
+ * @tparam FP_TYPE   value type
+ * @tparam IDX_TYPE  index type
  */
+template <typename FP_TYPE, typename IDX_TYPE>
 class MatrixBase
 {
 public:
@@ -39,7 +45,7 @@ public:
 	 * @param original the object that is copied
 	 * @return
 	 */
-	MatrixBase (MatrixBase const& original) :
+	MatrixBase (MatrixBase<FP_TYPE, IDX_TYPE> const& original) :
 		_n_rows (original._n_rows), _n_cols (original._n_cols)
 	{}
 
@@ -58,6 +64,68 @@ public:
 	 * @return the number of columns
 	 */
 	unsigned getNCols () const { return _n_cols; }
+
+    /**
+     * set all matrix entries to zero
+     */
+    virtual void setZero() = 0;
+
+    /**
+     * set a value to a matrix entry
+     *
+     * @param rowId
+     * @param colId
+     * @param v
+     * @return 0: if the given matrix entry exists, >0 : else
+     */
+    virtual int setValue(IDX_TYPE rowId, IDX_TYPE colId, FP_TYPE v) = 0;
+
+    /**
+     * add a value to a matrix entry
+     *
+     * @param rowId
+     * @param colId
+     * @param v
+     * @return 0: if the given matrix entry exists, >0 : else
+     */
+    virtual int addValue(IDX_TYPE rowId, IDX_TYPE colId, FP_TYPE v) = 0;
+
+	/**
+	 * complete the matrix assembly
+	 *
+	 * This function should be called before using the matrix because some matrix
+	 * implementations store results of setValue() and addValue() in caches.
+	 */
+	virtual void finishAssembly() {};
+
+	/**
+	 * return if this matrix is ready to use
+	 *
+	 * @return
+	 */
+	virtual bool isAssembled() const { return true; };
+
+    /**
+     * add a sub matrix
+     *
+     * @param vec_row_pos
+     * @param vec_col_pos
+     * @param sub_matrix
+     * @param fkt
+     */
+	template <class T_DENSE_MATRIX>
+	void addSubMatrix(const std::vector<IDX_TYPE> &vec_row_pos, const std::vector<IDX_TYPE> &vec_col_pos, const T_DENSE_MATRIX &sub_matrix, double fkt=1.0)
+	{
+	    const std::size_t n_rows = vec_row_pos.size();
+	    const std::size_t n_cols = vec_col_pos.size();
+	    for (std::size_t i=0; i<n_rows; i++) {
+	        const IDX_TYPE rowId = vec_row_pos[i];
+	        for (std::size_t j=0; j<n_cols; j++) {
+	            const IDX_TYPE colId = vec_col_pos[j];
+	            addValue(rowId, colId, fkt*sub_matrix(i,j));
+	        }
+	    }
+	}
 
 protected:
 	/**
