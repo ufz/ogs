@@ -54,6 +54,11 @@ template<class T> void Matrix<T>::axpy ( T alpha, const T* x, T beta, T* y) cons
    }
 }
 
+template<class T> void Matrix<T>::axpy ( T alpha, const Vector<T> &x, T beta, Vector<T> &y) const
+{
+    axpy(alpha, x.getData(), beta, y.getData());
+}
+
 template<class T> T* Matrix<T>::operator* (const T *x) const
 {
 	T *y (new T[_n_rows]);

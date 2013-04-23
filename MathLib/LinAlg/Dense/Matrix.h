@@ -45,6 +45,11 @@ public:
    void axpy ( T alpha, const T* x, T beta, T* y) const;
 
    /**
+    * \f$ y = \alpha \cdot A x + \beta y\f$
+    */
+   void axpy ( T alpha, const Vector<T> &x, T beta, Vector<T> &y) const;
+
+   /**
     * Matrix vector multiplication
     * @param x
     * @return
