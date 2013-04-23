@@ -2,7 +2,7 @@
  * \file
  * \author Thomas Fischer
  * \date   2011-05-24
- * \brief  Definition of the Matrix class.
+ * \brief  Implementation of the Matrix class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,14 +15,16 @@
 #ifndef MATRIX_TPP
 #define MATRIX_TPP
 
+#include <algorithm>
+
 namespace MathLib {
 
 template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
-      : MatrixBase(rows, cols), _data (new T[_n_rows*_n_cols])
+      : MatrixBase<T, std::size_t>(rows, cols), _data (new T[_n_rows*_n_cols])
 {}
 
 template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const& initial_value)
-		: MatrixBase(rows, cols), _data (new T[_n_rows*_n_cols])
+		: MatrixBase<T, std::size_t>(rows, cols), _data (new T[_n_rows*_n_cols])
 {
 	const std::size_t n(_n_rows*_n_cols);
 	for (std::size_t k(0); k<n; k++)
@@ -30,7 +32,7 @@ template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const
 }
 
 template<class T> Matrix<T>::Matrix (const Matrix& src) :
-	MatrixBase(src.getNRows (), src.getNCols ()), _data (new T[_n_rows * _n_cols])
+	MatrixBase<T, std::size_t>(src.getNRows (), src.getNCols ()), _data (new T[_n_rows * _n_cols])
 {
    for (std::size_t i = 0; i < _n_rows; i++)
       for (std::size_t j = 0; j < _n_cols; j++)
@@ -191,6 +193,24 @@ template <class T> void Matrix<T>::write (std::ostream &out) const
 		out << "\n";
 	}
 }
+
+template <class T> void Matrix<T>::setZero()
+{
+    std::fill(_data, _data + _n_rows*_n_cols, .0);
+};
+
+template <class T> int Matrix<T>::setValue(std::size_t row, std::size_t col, T v)
+{
+    (*this)(row,col)=v;
+    return 0;
+}
+
+template <class T> int Matrix<T>::addValue(std::size_t row, std::size_t col, T v)
+{
+    (*this)(row,col)+=v;
+    return 0;
+}
+
 
 template <class T> T sqrFrobNrm (const Matrix<T> &mat)
 {
