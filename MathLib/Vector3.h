@@ -29,53 +29,53 @@
 namespace MathLib
 {
 /**
- * The Vector class defines a three-dimensional vector, with appropriate
+ * The Vector3 class defines a three-dimensional vector, with appropriate
  *	operators.  (* is cross product.)
  */
 template <class T>
-class TemplateVector : public MathLib::TemplatePoint<T>
+class TemplateVector3 : public MathLib::TemplatePoint<T>
 {
 public:
-	TemplateVector() : MathLib::TemplatePoint<T>() {}
-	TemplateVector(T x1, T x2, T x3) : MathLib::TemplatePoint<T>(x1, x2, x3) {}
-	TemplateVector(const MathLib::TemplatePoint<T> & rhs) :
+	TemplateVector3() : MathLib::TemplatePoint<T>() {}
+	TemplateVector3(T x1, T x2, T x3) : MathLib::TemplatePoint<T>(x1, x2, x3) {}
+	TemplateVector3(const MathLib::TemplatePoint<T> & rhs) :
 		MathLib::TemplatePoint<T>(rhs[0], rhs[1], rhs[2])
 	{}
 	/** constructs a vector from the gien points */
-	TemplateVector(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
+	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
 		MathLib::TemplatePoint<T>(b[0] - a[0], b[1] - a[1], b[2] - a[2])
 	{}
-	~TemplateVector() {}
+	~TemplateVector3() {}
 
 	// vector arithmetic
 
-	TemplateVector operator+(const TemplateVector & pV) const
+	TemplateVector3 operator+(const TemplateVector3 & pV) const
 	{
-		return TemplateVector(this->x[0] + pV[0], this->x[1] + pV[1], this->x[2] + pV[2] );
+		return TemplateVector3(this->x[0] + pV[0], this->x[1] + pV[1], this->x[2] + pV[2] );
 	}
 
-	TemplateVector operator-(const TemplateVector & pV) const
+	TemplateVector3 operator-(const TemplateVector3 & pV) const
 	{
-		TemplateVector out( this->x[0] - pV[0], this->x[1] - pV[1], this->x[2] - pV[2] );
+		TemplateVector3 out( this->x[0] - pV[0], this->x[1] - pV[1], this->x[2] - pV[2] );
 		return out;
 	}
 
-	TemplateVector operator-() const
-	{ return TemplateVector (-this->x[0], -this->x[1], -this->x[2]); }
+	TemplateVector3 operator-() const
+	{ return TemplateVector3 (-this->x[0], -this->x[1], -this->x[2]); }
 
-	TemplateVector& operator+=(const TemplateVector & pV)
+	TemplateVector3& operator+=(const TemplateVector3 & pV)
 	{
 		for (std::size_t i(0); i < 3; i++) this->x[i] += pV[i];
 		return *this;
 	}
 
-	TemplateVector& operator+=(const MathLib::TemplatePoint<T>& pnt)
+	TemplateVector3& operator+=(const MathLib::TemplatePoint<T>& pnt)
 	{
 		for (std::size_t i(0); i < 3; i++) this->_x[i] += pnt[i];
 		return *this;
 	}
 
-	TemplateVector& operator-=(const TemplateVector & pV)
+	TemplateVector3& operator-=(const TemplateVector3 & pV)
 	{
 		for (std::size_t i(0); i < 3; i++) this->_x[i] -= pV[i];
 		return *this;
@@ -90,41 +90,41 @@ public:
 	void setZ(T value) { this->_x[2] = value; }
 
 	/// Dot product with another vector
-	double Dot(const TemplateVector & pV) const
+	double Dot(const TemplateVector3 & pV) const
 	{
 		return this->_x[0] * pV[0] + this->_x[1] * pV[1] + this->_x[2] * pV[2];
 	}
 
 	/// Cross product as the multiplication operator
-	TemplateVector operator*(const TemplateVector & pV) const
+	TemplateVector3 operator*(const TemplateVector3 & pV) const
 	{
-		return TemplateVector (
+		return TemplateVector3 (
 		               this->_x[1] * pV[2] - this->_x[2] * pV[1],
 		               this->_x[2] * pV[0] - this->_x[0] * pV[2],
 		               this->_x[0] * pV[1] - this->_x[1] * pV[0] );
 	}
 
 	/// Cross product with another vector
-	TemplateVector Cross( const TemplateVector & pV ) const
+	TemplateVector3 Cross( const TemplateVector3 & pV ) const
 	{ return *this * pV; }
 
-	friend double Dot( const TemplateVector & p1, const TemplateVector & p2 )
+	friend double Dot( const TemplateVector3 & p1, const TemplateVector3 & p2 )
 	{ return p1.Dot(p2); }
 
-	friend TemplateVector Cross( const TemplateVector & p1, const TemplateVector & p2 )
+	friend TemplateVector3 Cross( const TemplateVector3 & p1, const TemplateVector3 & p2 )
 	{ return p1 * p2; }
 
-	TemplateVector operator*(double pR) const   // * a scalar
+	TemplateVector3 operator*(double pR) const   // * a scalar
 	{
-		return TemplateVector(this->x[0] * pR, this->x[1] * pR, this->x[2] * pR);
+		return TemplateVector3(this->x[0] * pR, this->x[1] * pR, this->x[2] * pR);
 	}
 
-	friend TemplateVector operator*(double pR, const TemplateVector & pV)
+	friend TemplateVector3 operator*(double pR, const TemplateVector3 & pV)
 	{
-		return TemplateVector ( pV[0] * pR, pV[1] * pR, pV[2] * pR );
+		return TemplateVector3 ( pV[0] * pR, pV[1] * pR, pV[2] * pR );
 	}
 
-	TemplateVector& operator*=(double pR)
+	TemplateVector3& operator*=(double pR)
 	{
 		for (std::size_t i(0); i < 3; i++) this->_x[i] *= pR;
 		return *this;
@@ -142,15 +142,15 @@ public:
 
 	/// Projection (component of *this parallel to pV).
 	/// Note: component perpendicular to pV is:  *this - Proj(pV)
-	TemplateVector Proj(const TemplateVector & pV)
-	{ TemplateVector out( pV * (this->Dot(pV) / pV.LenSqr()) ); return out; }
+	TemplateVector3 Proj(const TemplateVector3 & pV)
+	{ TemplateVector3 out( pV * (this->Dot(pV) / pV.LenSqr()) ); return out; }
 
 	/// Cosine of the angle between two vectors:
-	double CosAng(const TemplateVector& pV)
+	double CosAng(const TemplateVector3& pV)
 	{ return this->Dot(pV) / (Length() * pV.Length()); }
 
 	/// Comparison if equal
-	bool operator==( const TemplateVector & pV) const
+	bool operator==( const TemplateVector3 & pV) const
 	{
 		return std::fabs(this->_x[0] - pV[0]) < sqrt(std::numeric_limits<double>::min()) &&
 		       std::fabs(this->_x[1] - pV[1]) < sqrt(std::numeric_limits<double>::min()) &&
@@ -158,14 +158,14 @@ public:
 	}
 
 	/// Comparison if not equal
-	bool operator!=( const TemplateVector & pV) const
+	bool operator!=( const TemplateVector3 & pV) const
 	{
 		return !(pV == this);
 //		this->_x[0]!=pV[0] || this->_x[1]!=pV[1] || this->_x[2]!=pV[2];
 	}
 };
 
-typedef TemplateVector<double> Vector;
+typedef TemplateVector3<double> Vector3;
 }
 
 #endif // VECTOR3_H

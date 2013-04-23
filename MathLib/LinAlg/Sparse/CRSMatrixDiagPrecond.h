@@ -21,6 +21,7 @@ namespace MathLib {
  */
 class CRSMatrixDiagPrecond : public CRSMatrix<double, unsigned>
 {
+    using CRSMatrix<double, unsigned>::_n_rows;
 public:
 	/**
 	 * Constructor takes a file name. The file is read in binary format

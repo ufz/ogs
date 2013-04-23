@@ -1,7 +1,7 @@
 /**
  * \file
  * \author Norihiro Watanabe
- * \date   2012-08-03
+ * \date   2013-04-16
  * \brief  Implementation tests.
  *
  * \copyright
@@ -15,17 +15,40 @@
 #include <gtest/gtest.h>
 #include <boost/property_tree/ptree.hpp>
 
-#include "MathLib/LinAlg/Sparse/Sparsity.h"
+#include "MathLib/LinAlg/Dense/Vector.h"
+#include "MathLib/LinAlg/Dense/Matrix.h"
 #ifdef USE_LIS
-#include "MathLib/LinAlg/SystemOfLinearEquations/LisLinearSystem.h"
+#include "MathLib/LinAlg/Lis/LisVector.h"
+#include "MathLib/LinAlg/Lis/LisMatrix.h"
+#include "MathLib/LinAlg/Lis/LisLinearSolver.h"
+#include "MathLib/LinAlg/Lis/LisTools.h"
 #endif
+#include "MathLib/LinAlg/Sparse/Sparsity.h"
+
+#include "../TestTools.h"
 
 namespace
 {
 
-inline void ASSERT_DOUBLE_ARRAY_EQ(const double* Expected, const double* Actual, size_t N, double epsilon=1.0e-8) {
-    for (size_t i=0; i<N; i++) \
-        ASSERT_NEAR(Expected[i], Actual[i], epsilon);
+template<class T_Mat>
+void setMatrix9(T_Mat &mat)
+{
+    double d_mat[] = {
+        6.66667e-012, -1.66667e-012, 0, -1.66667e-012, -3.33333e-012, 0, 0, 0, 0,
+        -1.66667e-012, 1.33333e-011, -1.66667e-012, -3.33333e-012, -3.33333e-012, -3.33333e-012, 0, 0, 0,
+        0, -1.66667e-012, 6.66667e-012, 0, -3.33333e-012, -1.66667e-012, 0, 0, 0,
+        -1.66667e-012, -3.33333e-012, 0, 1.33333e-011, -3.33333e-012, 0, -1.66667e-012, -3.33333e-012, 0,
+        -3.33333e-012, -3.33333e-012, -3.33333e-012, -3.33333e-012, 2.66667e-011, -3.33333e-012, -3.33333e-012, -3.33333e-012, -3.33333e-012,
+        0, -3.33333e-012, -1.66667e-012, 0, -3.33333e-012, 1.33333e-011, 0, -3.33333e-012, -1.66667e-012,
+        0, 0, 0, -1.66667e-012, -3.33333e-012, 0, 6.66667e-012, -1.66667e-012, 0,
+        0, 0, 0, -3.33333e-012, -3.33333e-012, -3.33333e-012, -1.66667e-012, 1.33333e-011, -1.66667e-012,
+        0, 0, 0, 0, -3.33333e-012, -1.66667e-012, 0, -1.66667e-012, 6.66667e-012
+    };
+    for (unsigned i=0; i<9; i++)
+        for (unsigned j=0; j<9; j++)
+            if (d_mat[i*9+j]!=.0)
+                mat.setValue(i, j, d_mat[i*9+j]);
+
 }
 
 struct Example1
@@ -72,28 +95,76 @@ struct Example1
 
     }
 };
+} // namespace
+
+
+TEST(Math, LinAlgDenseVec)
+{
+    MathLib::Vector<double> vec(10);
+    ASSERT_EQ(10u, vec.getNRows());
+}
+
+TEST(Math, LinAlgDenseMatrix)
+{
+    MathLib::Matrix<double> mat(10, 10);
+    ASSERT_EQ(10u, mat.getNRows());
 }
 
 #ifdef USE_LIS
-TEST(Math, LinearSystemLis)
+TEST(Math, LinAlgLisVec)
+{
+    MathLib::LisVector vec(10);
+    ASSERT_EQ(10u, vec.getNRows());
+}
+
+TEST(Math, LinAlgLisMatrix)
+{
+    MathLib::LisMatrix mat(9);
+    setMatrix9(mat);
+    ASSERT_EQ(9u, mat.getNRows());
+    ASSERT_EQ(2.66667e-011, mat.getMaxDiagCoeff());
+}
+
+TEST(Math, LinAlgLisLinearSolver)
+{
+    MathLib::LisMatrix A(9);
+    setMatrix9(A);
+    A.finishAssembly();
+
+    MathLib::LisVector b(A.getNRows());
+    MathLib::LisVector x(A.getNRows());
+    x = 1.0;
+    A.matvec(x, b);
+    x = 0.0;
+    MathLib::LisLinearSolver ls;
+    ls.solve(A, b, x);
+
+    std::vector<double> exp_x(9, 1.0);
+    ASSERT_DOUBLE_ARRAY_EQ(exp_x, x, 9);
+}
+
+TEST(Math, LinAlgLisLinearSolver2)
 {
     // set a problem
     Example1 ex1;
 
     // create a linear system
-    MathLib::LisLinearSystem eqs(ex1.dim_eqs);
+    MathLib::LisMatrix A(ex1.dim_eqs);
+    MathLib::LisVector b(A.getNRows());
+    MathLib::LisVector x(A.getNRows());
 
     // construct
     for (size_t i=0; i<ex1.dim_eqs; i++) {
         for (size_t j=0; j<ex1.dim_eqs; j++) {
             double v = ex1.mat[i*ex1.dim_eqs+j];
             if (v!=.0)
-                eqs.addMatEntry(i, j, v);
+                A.addValue(i, j, v);
         }
     }
 
     // apply BC
-    eqs.setKnownSolution(ex1.list_dirichlet_bc_id, ex1.list_dirichlet_bc_value);
+    MathLib::applyKnownSolution(A, b, ex1.list_dirichlet_bc_id, ex1.list_dirichlet_bc_value);
+    A.finishAssembly();
 
     // set solver options using Boost property tree
     boost::property_tree::ptree t_root;
@@ -104,10 +175,11 @@ TEST(Math, LinearSystemLis)
     t_solver.put("error_tolerance", 1e-15);
     t_solver.put("max_iteration_step", 1000);
     t_root.put_child("LinearSolver", t_solver);
-    eqs.setOption(t_root);
+    MathLib::LisLinearSolver ls;
+    ls.setOption(t_root);
 
     // check if the option was correctly parsed
-    MathLib::LisOption &lisOption = eqs.getOption();
+    MathLib::LisOption &lisOption = ls.getOption();
     ASSERT_EQ(MathLib::LisOption::SolverType::CG, lisOption.solver_type);
     ASSERT_EQ(MathLib::LisOption::PreconType::NONE, lisOption.precon_type);
     ASSERT_EQ(MathLib::LisOption::MatrixType::CCS, lisOption.matrix_type);
@@ -115,15 +187,13 @@ TEST(Math, LinearSystemLis)
     ASSERT_EQ(1000, lisOption.max_iterations);
 
     // solve
-    eqs.solve();
+    ls.solve(A, b, x);
 
 //    eqs.printout();
 
     // check solution
-    std::vector<double> vec_x(eqs.getDimension());
-    eqs.getSolVec(&vec_x[0]);
-    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exH[0], &vec_x[0], ex1.dim_eqs, 1.e-5);
+    ASSERT_DOUBLE_ARRAY_EQ(ex1.exH, x, ex1.dim_eqs, 1.e-5);
 }
-
 #endif
+
 
