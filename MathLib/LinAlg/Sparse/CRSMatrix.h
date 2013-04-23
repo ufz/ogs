@@ -58,20 +58,20 @@ public:
 			_row_ptr(nullptr), _col_idx(nullptr), _data(nullptr)
 	{
 		// reserve memory for _row_ptr
-		_row_ptr = new IDX_TYPE [MatrixBase::_n_rows + 1];
+		_row_ptr = new IDX_TYPE [this->_n_rows + 1];
 		// initialize _row_ptr
 		_row_ptr[0] = 0;
-		for (std::size_t row(0); row < MatrixBase::_n_rows; row++) {
+		for (std::size_t row(0); row < this->_n_rows; row++) {
 			_row_ptr[row + 1] = _row_ptr[row]
 			    + std::distance(mat_sparsity_pattern.getRowBeginIterator(row),
 			        mat_sparsity_pattern.getRowEndIterator(row));
 		}
 
-		std::size_t const nnz = _row_ptr[MatrixBase::_n_rows];
+		std::size_t const nnz = _row_ptr[this->_n_rows];
 		// reserve memory for _col_idx
 		_col_idx = new IDX_TYPE [nnz];
 		// fill _col_idx
-		for (std::size_t row(0); row < MatrixBase::_n_rows; row++) {
+		for (std::size_t row(0); row < this->_n_rows; row++) {
 			std::copy(mat_sparsity_pattern.getRowBeginIterator(row),
 				mat_sparsity_pattern.getRowEndIterator(row),
 				&_col_idx[_row_ptr[row]]);
@@ -102,7 +102,7 @@ public:
      * get the number of non-zero entries
      * @return number of non-zero entries
      */
-    IDX_TYPE getNNZ() const { return _row_ptr[MatrixBase::_n_rows]; }
+    IDX_TYPE getNNZ() const { return _row_ptr[this->_n_rows]; }
 
     /**
      * This method inserts/overwrites a non-zero matrix entry.
@@ -114,7 +114,7 @@ public:
      */
 	int setValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 	{
-		assert(0 <= row && row < MatrixBase::_n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
 		// linear search - for matrices with many entries per row binary search is much faster
 		const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -140,7 +140,7 @@ public:
      */
 	int addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 	{
-		assert(0 <= row && row < MatrixBase::_n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
 		// linear search - for matrices with many entries per row binary search is much faster
 		const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -166,7 +166,7 @@ public:
      */
 	double getValue(IDX_TYPE row, IDX_TYPE col)
 	{
-		assert(0 <= row && row < MatrixBase::_n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
 		// linear search - for matrices with many entries per row binary search is much faster
 		const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -190,7 +190,7 @@ public:
      */
     FP_TYPE operator() (IDX_TYPE row, IDX_TYPE col) const
     {
-    	assert(0 <= row && row < MatrixBase::_n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
     	// linear search - for matrices with many entries per row binary search is much faster
     	const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -247,7 +247,7 @@ public:
 	 */
 	void getColumn(IDX_TYPE j, FP_TYPE* column_entries) const
 	{
-		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+		for (IDX_TYPE k(0); k < this->_n_rows; k++) {
 			const IDX_TYPE end_row(_row_ptr[k+1]);
 			IDX_TYPE i(_row_ptr[k+1]);
 			while (i<end_row && _col_idx[i] != j) {
@@ -276,7 +276,7 @@ protected:
 	{
 		// copy the data
 		IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
-		for	(IDX_TYPE k(0); k<=MatrixBase::_n_rows; k++) {
+		for	(IDX_TYPE k(0); k <= this->_n_rows; k++) {
 			_row_ptr[k] = row_ptr[k];
 		}
 
@@ -295,11 +295,11 @@ protected:
 	void removeRows (IDX_TYPE n_rows_cols, IDX_TYPE const*const rows)
 	{
 		//*** determine the number of new rows and the number of entries without the rows
-		const IDX_TYPE n_new_rows(MatrixBase::_n_rows - n_rows_cols);
+		const IDX_TYPE n_new_rows(this->_n_rows - n_rows_cols);
 		IDX_TYPE *row_ptr_new(new IDX_TYPE[n_new_rows+1]);
 		row_ptr_new[0] = 0;
 		IDX_TYPE row_cnt (1), erase_row_cnt(0);
-		for (unsigned k(0); k<MatrixBase::_n_rows; k++) {
+		for (unsigned k(0); k < this->_n_rows; k++) {
 			if (erase_row_cnt < n_rows_cols) {
 				if (k != rows[erase_row_cnt]) {
 					row_ptr_new[row_cnt] = _row_ptr[k+1] - _row_ptr[k];
@@ -332,7 +332,7 @@ protected:
 		erase_row_cnt = 0;
 		row_cnt = 0;
 		// copy column index and data entries
-		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+		for (IDX_TYPE k(0); k < this->_n_rows; k++) {
 			if (erase_row_cnt < n_rows_cols) {
 				if (k != rows[erase_row_cnt]) {
 					const IDX_TYPE end (_row_ptr[k+1]);
@@ -358,7 +358,7 @@ protected:
 			}
 		}
 
-		MatrixBase::_n_rows -= n_rows_cols;
+		this->_n_rows -= n_rows_cols;
 		std::swap (row_ptr_new, _row_ptr);
 		std::swap (col_idx_new, _col_idx);
 		std::swap (data_new, _data);
@@ -372,36 +372,36 @@ protected:
 	void transpose ()
 	{
 		// create a helper array row_ptr_nnz
-		IDX_TYPE *row_ptr_nnz(new IDX_TYPE[MatrixBase::_n_cols+1]);
-		for (IDX_TYPE k(0); k <= MatrixBase::_n_cols; k++) {
+		IDX_TYPE *row_ptr_nnz(new IDX_TYPE[this->_n_cols+1]);
+		for (IDX_TYPE k(0); k <= this->_n_cols; k++) {
 			row_ptr_nnz[k] = 0;
 		}
 
 		// count entries per row in the transposed matrix
-		IDX_TYPE nnz(_row_ptr[MatrixBase::_n_rows]);
+		IDX_TYPE nnz(_row_ptr[this->_n_rows]);
 		for (IDX_TYPE k(0); k < nnz; k++) {
 			row_ptr_nnz[_col_idx[k]]++;
 		}
 
 		// create row_ptr_trans
-		IDX_TYPE *row_ptr_trans(new IDX_TYPE[MatrixBase::_n_cols + 1]);
+		IDX_TYPE *row_ptr_trans(new IDX_TYPE[this->_n_cols + 1]);
 		row_ptr_trans[0] = 0;
-		for (IDX_TYPE k(0); k < MatrixBase::_n_cols; k++) {
+		for (IDX_TYPE k(0); k < this->_n_cols; k++) {
 			row_ptr_trans[k+1] = row_ptr_trans[k] + row_ptr_nnz[k];
 		}
 
 		// make a copy of row_ptr_trans
-		for (IDX_TYPE k(0); k <= MatrixBase::_n_cols; k++) {
+		for (IDX_TYPE k(0); k <= this->_n_cols; k++) {
 			row_ptr_nnz[k] = row_ptr_trans[k];
 		}
 
 		// create arrays col_idx_trans and data_trans
-		assert(nnz == row_ptr_trans[MatrixBase::_n_cols]);
+		assert(nnz == row_ptr_trans[this->_n_cols]);
 		IDX_TYPE *col_idx_trans(new IDX_TYPE[nnz]);
 		FP_TYPE *data_trans(new FP_TYPE[nnz]);
 
 		// fill arrays col_idx_trans and data_trans
-		for (IDX_TYPE i(0); i < MatrixBase::_n_rows; i++) {
+		for (IDX_TYPE i(0); i < this->_n_rows; i++) {
 			const IDX_TYPE row_end(_row_ptr[i + 1]);
 			for (IDX_TYPE j(_row_ptr[i]); j < row_end; j++) {
 				const IDX_TYPE k(_col_idx[j]);
@@ -411,7 +411,7 @@ protected:
 			}
 		}
 
-		std::swap(MatrixBase::_n_rows, MatrixBase::_n_cols);
+		std::swap(this->_n_rows, this->_n_cols);
 		std::swap(row_ptr_trans, _row_ptr);
 		std::swap(col_idx_trans, _col_idx);
 		std::swap(data_trans, _data);
@@ -425,7 +425,7 @@ protected:
 #ifndef NDEBUG
 	void printMat() const
 	{
-		for (IDX_TYPE k(0); k<MatrixBase::_n_rows; k++) {
+		for (IDX_TYPE k(0); k < this->_n_rows; k++) {
 			std::cout << k << ": " << std::flush;
 			const IDX_TYPE row_end(_row_ptr[k+1]);
 			for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {
