@@ -28,14 +28,16 @@ namespace MathLib {
 /**
  * Matrix represents a dense matrix for a numeric data type.
  */
-template <class T> class Matrix : public MatrixBase
+template <class T> class Matrix : public MatrixBase<T, std::size_t>
 {
+    using MatrixBase<T, std::size_t>::_n_rows;
+    using MatrixBase<T, std::size_t>::_n_cols;
 public:
    Matrix (std::size_t rows, std::size_t cols);
    Matrix (std::size_t rows, std::size_t cols, const T& val);
    Matrix (const Matrix &src);
 
-   ~Matrix ();
+   virtual ~Matrix ();
 
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
@@ -86,6 +88,12 @@ public:
 
    inline T & operator() (std::size_t row, std::size_t col) throw (std::range_error);
    inline T & operator() (std::size_t row, std::size_t col) const throw (std::range_error);
+
+   virtual void setZero();
+
+   virtual int setValue(std::size_t row, std::size_t col, T v);
+
+   virtual int addValue(std::size_t row, std::size_t col, T v);
 
    /**
     * writes the matrix entries into the output stream
