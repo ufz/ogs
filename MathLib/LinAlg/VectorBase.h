@@ -73,9 +73,6 @@ public:
     /// add a value to entry
     virtual void add(unsigned rowId, double v) = 0;
 
-//    /// access entry
-//    virtual T& operator[] (unsigned idx) = 0;
-//
     /// access entry
     virtual T operator[] (unsigned idx) const = 0;
 
