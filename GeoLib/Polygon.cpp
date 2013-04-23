@@ -244,7 +244,7 @@ void Polygon::ensureCWOrientation ()
 		tmp_polygon_pnts.push_back (new GeoLib::Point (*(this->getPoint(k))));
 
 	// *** calculate supporting plane (plane normal and
-	MathLib::Vector plane_normal;
+	MathLib::Vector3 plane_normal;
 	double d;
 	GeoLib::getNewellPlane(tmp_polygon_pnts, plane_normal, d);
 
