@@ -5,11 +5,11 @@
 
 namespace MathLib {
 
-template<typename FP_TYPE, typename IDX_TYPE> class SparseMatrixBase : public MatrixBase
+template<typename FP_TYPE, typename IDX_TYPE> class SparseMatrixBase : public MatrixBase<FP_TYPE, IDX_TYPE>
 {
 public:
-	SparseMatrixBase(IDX_TYPE n1, IDX_TYPE n2) : MatrixBase (n1,n2) {}
-	SparseMatrixBase() : MatrixBase () {}
+	SparseMatrixBase(IDX_TYPE n1, IDX_TYPE n2) : MatrixBase<FP_TYPE, IDX_TYPE> (n1,n2) {}
+	SparseMatrixBase() : MatrixBase<FP_TYPE, IDX_TYPE> () {}
 	/**
 	 * y = d * A * x
 	 * @param d scalar factor
