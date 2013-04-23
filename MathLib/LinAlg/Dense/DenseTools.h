@@ -25,6 +25,9 @@ namespace MathLib
 /**
  * apply known solutions to a system of linear equations
  *
+ * This function introduces the given constrain by diagonalizing a coefficient matrix.
+ * Symmetricity of the matrix is preserved.
+ *
  * @param A                 Coefficient matrix
  * @param b                 RHS vector
  * @param _vec_knownX_id    a vector of known solution entry IDs
@@ -34,6 +37,9 @@ void applyKnownSolution(Matrix<double> &A, Vector<double> &b, const std::vector<
 
 /**
  * apply known solutions to a system of linear equations
+ *
+ * This function introduces the given constrain by diagonalizing a coefficient matrix.
+ * Symmetricity of the matrix is preserved.
  *
  * @param A         Coefficient matrix
  * @param b         RHS vector
