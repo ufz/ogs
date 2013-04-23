@@ -20,17 +20,6 @@ SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_SOLVERS})
 GET_SOURCE_FILES(SOURCES_LINALG_PRECOND LinAlg/Preconditioner)
 SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_PRECOND})
 
-GET_SOURCE_FILES(SOURCES_LINALG_LEQS LinAlg/SystemOfLinearEquations)
-IF (NOT OGS_USE_LIS)
-    LIST(REMOVE_ITEM SOURCES_LINALG_LEQS 
-        LinAlg/SystemOfLinearEquations/LisOption.h
-        LinAlg/SystemOfLinearEquations/LisOption.cpp
-        LinAlg/SystemOfLinearEquations/LisLinearSystem.h
-        LinAlg/SystemOfLinearEquations/LisLinearSystem.cpp
-    )
-ENDIF ()
-SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_LEQS})
-
 IF (METIS_FOUND)
 	GET_SOURCE_FILES(SOURCES_LINALG_SPARSE_NESTEDDISSECTION LinAlg/Sparse/NestedDissectionPermutation)
 	SET ( SOURCES ${SOURCES} ${SOURCES_LINALG_SPARSE_NESTEDDISSECTION})
