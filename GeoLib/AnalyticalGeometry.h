@@ -56,7 +56,7 @@ Orientation getOrientation (const GeoLib::Point* p0,
  * @param d parameter from the plane equation
  */
 void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
-                     MathLib::Vector &plane_normal,
+                     MathLib::Vector3 &plane_normal,
                      double& d);
 
 /**
@@ -68,7 +68,7 @@ void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
  * @param pnts pointers to points in a vector that should be rotated
  * @sa getNewellPlane()
  */
-void rotatePointsToXY(MathLib::Vector &plane_normal, std::vector<GeoLib::Point*> &pnts);
+void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
 
 /**
  * The vector plane_normal should be the surface normal of the plane surface described
@@ -79,14 +79,14 @@ void rotatePointsToXY(MathLib::Vector &plane_normal, std::vector<GeoLib::Point*>
  * @param pnts
  * @sa getNewellPlane()
  */
-void rotatePointsToXZ(MathLib::Vector &plane_normal, std::vector<GeoLib::Point*> &pnts);
+void rotatePointsToXZ(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
  * @param vec the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
  */
-void computeRotationMatrixToXY(MathLib::Vector const& plane_normal,
+void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
                                MathLib::Matrix<double> & rot_mat);
 
 /**
