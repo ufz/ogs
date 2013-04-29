@@ -30,8 +30,6 @@ namespace MathLib {
  */
 template <class T> class Matrix : public MatrixBase<T, std::size_t>
 {
-    using MatrixBase<T, std::size_t>::_n_rows;
-    using MatrixBase<T, std::size_t>::_n_cols;
 public:
    Matrix (std::size_t rows, std::size_t cols);
    Matrix (std::size_t rows, std::size_t cols, const T& val);
@@ -105,7 +103,7 @@ private:
    // zero based addressing, but Fortran storage layout
    //inline std::size_t address(std::size_t i, std::size_t j) const { return j*rows+i; };
    // zero based addressing, C storage layout
-   inline std::size_t address(std::size_t i, std::size_t j) const { return i*_n_cols+j; };
+   inline std::size_t address(std::size_t i, std::size_t j) const { return i*this->_n_cols+j; };
 
    T *_data;
 };
