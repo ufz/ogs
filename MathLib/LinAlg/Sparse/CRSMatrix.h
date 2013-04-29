@@ -34,9 +34,6 @@ namespace MathLib {
 template<typename FP_TYPE, typename IDX_TYPE>
 class CRSMatrix: public SparseMatrixBase<FP_TYPE, IDX_TYPE>
 {
-protected:
-    using MatrixBase<FP_TYPE, IDX_TYPE>::_n_rows;
-    using MatrixBase<FP_TYPE, IDX_TYPE>::_n_cols;
 public:
 	explicit CRSMatrix(std::string const &fname) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(),
@@ -44,8 +41,8 @@ public:
 	{
 		std::ifstream in(fname.c_str(), std::ios::in | std::ios::binary);
 		if (in) {
-			CS_read(in, SparseMatrixBase<FP_TYPE, IDX_TYPE>::_n_rows, _row_ptr, _col_idx, _data);
-			SparseMatrixBase<FP_TYPE, IDX_TYPE>::_n_cols = SparseMatrixBase<FP_TYPE, IDX_TYPE>::_n_rows;
+			CS_read(in, this->_n_rows, _row_ptr, _col_idx, _data);
+			this->_n_cols = this->_n_rows;
 			in.close();
 		} else {
 			std::cout << "cannot open " << fname << std::endl;
@@ -81,7 +78,7 @@ public:
      * get the number of non-zero entries
      * @return number of non-zero entries
      */
-    IDX_TYPE getNNZ() const { return _row_ptr[_n_rows]; }
+    IDX_TYPE getNNZ() const { return _row_ptr[this->_n_rows]; }
 
 
     virtual void setZero()
@@ -99,7 +96,7 @@ public:
      */
 	int setValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 	{
-		assert(0 <= row && row < _n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
 		// linear search - for matrices with many entries per row binary search is much faster
 		const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -125,7 +122,7 @@ public:
      */
 	int addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 	{
-		assert(0 <= row && row < _n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
 		// linear search - for matrices with many entries per row binary search is much faster
 		const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -151,7 +148,7 @@ public:
      */
 	double getValue(IDX_TYPE row, IDX_TYPE col)
 	{
-		assert(0 <= row && row < _n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
 		// linear search - for matrices with many entries per row binary search is much faster
 		const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -175,7 +172,7 @@ public:
      */
     FP_TYPE operator() (IDX_TYPE row, IDX_TYPE col) const
     {
-    	assert(0 <= row && row < _n_rows);
+    	assert(0 <= row && row < this->_n_rows);
 
     	// linear search - for matrices with many entries per row binary search is much faster
     	const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -232,7 +229,7 @@ public:
 	 */
 	void getColumn(IDX_TYPE j, FP_TYPE* column_entries) const
 	{
-		for (IDX_TYPE k(0); k<_n_rows; k++) {
+		for (IDX_TYPE k(0); k<this->_n_rows; k++) {
 			const IDX_TYPE end_row(_row_ptr[k+1]);
 			IDX_TYPE i(_row_ptr[k+1]);
 			while (i<end_row && _col_idx[i] != j) {
@@ -261,7 +258,7 @@ protected:
 	{
 		// copy the data
 		IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
-		for	(IDX_TYPE k(0); k<=_n_rows; k++) {
+		for	(IDX_TYPE k(0); k<=this->_n_rows; k++) {
 			_row_ptr[k] = row_ptr[k];
 		}
 
@@ -280,11 +277,11 @@ protected:
 	void removeRows (IDX_TYPE n_rows_cols, IDX_TYPE const*const rows)
 	{
 		//*** determine the number of new rows and the number of entries without the rows
-		const IDX_TYPE n_new_rows(_n_rows - n_rows_cols);
+		const IDX_TYPE n_new_rows(this->_n_rows - n_rows_cols);
 		IDX_TYPE *row_ptr_new(new IDX_TYPE[n_new_rows+1]);
 		row_ptr_new[0] = 0;
 		IDX_TYPE row_cnt (1), erase_row_cnt(0);
-		for (unsigned k(0); k<_n_rows; k++) {
+		for (unsigned k(0); k<this->_n_rows; k++) {
 			if (erase_row_cnt < n_rows_cols) {
 				if (k != rows[erase_row_cnt]) {
 					row_ptr_new[row_cnt] = _row_ptr[k+1] - _row_ptr[k];
@@ -317,7 +314,7 @@ protected:
 		erase_row_cnt = 0;
 		row_cnt = 0;
 		// copy column index and data entries
-		for (IDX_TYPE k(0); k<_n_rows; k++) {
+		for (IDX_TYPE k(0); k<this->_n_rows; k++) {
 			if (erase_row_cnt < n_rows_cols) {
 				if (k != rows[erase_row_cnt]) {
 					const IDX_TYPE end (_row_ptr[k+1]);
@@ -343,7 +340,7 @@ protected:
 			}
 		}
 
-		_n_rows -= n_rows_cols;
+		this->_n_rows -= n_rows_cols;
 		std::swap (row_ptr_new, _row_ptr);
 		std::swap (col_idx_new, _col_idx);
 		std::swap (data_new, _data);
@@ -357,36 +354,36 @@ protected:
 	void transpose ()
 	{
 		// create a helper array row_ptr_nnz
-		IDX_TYPE *row_ptr_nnz(new IDX_TYPE[_n_cols+1]);
-		for (IDX_TYPE k(0); k <= _n_cols; k++) {
+		IDX_TYPE *row_ptr_nnz(new IDX_TYPE[this->_n_cols+1]);
+		for (IDX_TYPE k(0); k <= this->_n_cols; k++) {
 			row_ptr_nnz[k] = 0;
 		}
 
 		// count entries per row in the transposed matrix
-		IDX_TYPE nnz(_row_ptr[_n_rows]);
+		IDX_TYPE nnz(_row_ptr[this->_n_rows]);
 		for (IDX_TYPE k(0); k < nnz; k++) {
 			row_ptr_nnz[_col_idx[k]]++;
 		}
 
 		// create row_ptr_trans
-		IDX_TYPE *row_ptr_trans(new IDX_TYPE[_n_cols + 1]);
+		IDX_TYPE *row_ptr_trans(new IDX_TYPE[this->_n_cols + 1]);
 		row_ptr_trans[0] = 0;
-		for (IDX_TYPE k(0); k < _n_cols; k++) {
+		for (IDX_TYPE k(0); k < this->_n_cols; k++) {
 			row_ptr_trans[k+1] = row_ptr_trans[k] + row_ptr_nnz[k];
 		}
 
 		// make a copy of row_ptr_trans
-		for (IDX_TYPE k(0); k <= _n_cols; k++) {
+		for (IDX_TYPE k(0); k <= this->_n_cols; k++) {
 			row_ptr_nnz[k] = row_ptr_trans[k];
 		}
 
 		// create arrays col_idx_trans and data_trans
-		assert(nnz == row_ptr_trans[_n_cols]);
+		assert(nnz == row_ptr_trans[this->_n_cols]);
 		IDX_TYPE *col_idx_trans(new IDX_TYPE[nnz]);
 		FP_TYPE *data_trans(new FP_TYPE[nnz]);
 
 		// fill arrays col_idx_trans and data_trans
-		for (IDX_TYPE i(0); i < _n_rows; i++) {
+		for (IDX_TYPE i(0); i < this->_n_rows; i++) {
 			const IDX_TYPE row_end(_row_ptr[i + 1]);
 			for (IDX_TYPE j(_row_ptr[i]); j < row_end; j++) {
 				const IDX_TYPE k(_col_idx[j]);
@@ -396,7 +393,7 @@ protected:
 			}
 		}
 
-		std::swap(_n_rows, _n_cols);
+		std::swap(this->_n_rows, this->_n_cols);
 		std::swap(row_ptr_trans, _row_ptr);
 		std::swap(col_idx_trans, _col_idx);
 		std::swap(data_trans, _data);
@@ -410,7 +407,7 @@ protected:
 #ifndef NDEBUG
 	void printMat() const
 	{
-		for (IDX_TYPE k(0); k<_n_rows; k++) {
+		for (IDX_TYPE k(0); k<this->_n_rows; k++) {
 			std::cout << k << ": " << std::flush;
 			const IDX_TYPE row_end(_row_ptr[k+1]);
 			for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {
