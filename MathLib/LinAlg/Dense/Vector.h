@@ -26,7 +26,7 @@ namespace MathLib
  * Dense vector class
  */
 template <typename T>
-class Vector
+class Vector : public std::valarray<T>
 {
 public:
 	/**
@@ -34,8 +34,8 @@ public:
 	 * @param nrows number of rows
 	 * @return
 	 */
-    Vector(unsigned nrows=0)
-    : _data(nrows)
+    explicit Vector(unsigned nrows=0)
+    : std::valarray<T>(nrows)
 	{}
 
 	/**
@@ -44,7 +44,7 @@ public:
 	 * @return
 	 */
     Vector (Vector const& original)
-    : _data(original._data)
+    : std::valarray<T>(static_cast<std::valarray<T> >(original))
 	{}
 
 	/**
@@ -53,26 +53,20 @@ public:
 	 */
 	virtual ~Vector() {};
 
-    /**
-     * get the size of this vector
-     * @return the size of this vector
-     */
-    unsigned size() const { return _data.size(); }
-
     /// return a start index of the active data range
     unsigned getRangeBegin() const { return 0;}
 
     /// return an end index of the active data range
-    unsigned getRangeEnd() const { return size(); }
+    unsigned getRangeEnd() const { return this->size(); }
 
     /// get entry
-    double get(unsigned i) const { return _data[i]; };
+    double get(unsigned i) const { return (*this)[i]; };
 
     /// set a value to entry
-    void set(unsigned i, double v) { _data[i] = v; };
+    void set(unsigned i, double v) { (*this)[i] = v; };
 
     /// add a value to entry
-    void add(unsigned i, double v) { _data[i] += v; };
+    void add(unsigned i, double v) { (*this)[i] += v; };
 
     /**
      * add a sub vector
@@ -87,45 +81,17 @@ public:
         }
     }
 
-    /// vector operation: set data
-    Vector<T>& operator= (const Vector<T> &src)
-    {
-        _data = src._data;
-        return *this;
-    }
-
-    /// vector operation: add
-    void operator+= (const Vector<T>& v) { _data += v._data; };
-
-    /// vector operation: subtract
-    void operator-= (const Vector<T>& v) { _data -= v._data; };
-
-    /// set all values in this vector
-    Vector<T>& operator= (T val)
-    {
-        _data = val;
-        return *this;
-    }
-
-    /// return pointer to raw data
-    T* getData() { return &_data[0]; }
-
-    /// return pointer to raw data
-    const T* getData() const { return &_data[0]; }
-
     /**
      * writes the matrix entries into the output stream
      * @param out the output stream
      */
     void write (std::ostream& out) const
     {
-        for (std::size_t i = 0; i < _data.size(); i++) {
-            out << _data[i] << "\n";
+        for (std::size_t i = 0; i < this->size(); i++) {
+            out << (*this)[i] << "\n";
         }
     }
 
-protected:
-    std::valarray<T> _data;
 };
 
 }
