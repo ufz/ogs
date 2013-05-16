@@ -28,7 +28,6 @@ namespace MathLib
 template <typename T>
 class Vector
 {
-    typedef Vector<T> _vector_type;
 public:
 	/**
 	 * Constructor for initialization of the number of rows
@@ -55,16 +54,16 @@ public:
 	virtual ~Vector() {};
 
     /**
-     * get the number of rows
-     * @return the number of rows
+     * get the size of this vector
+     * @return the size of this vector
      */
-    unsigned getNRows() const { return _data.size(); }
+    unsigned size() const { return _data.size(); }
 
     /// return a start index of the active data range
     unsigned getRangeBegin() const { return 0;}
 
     /// return an end index of the active data range
-    unsigned getRangeEnd() const { return getNRows(); }
+    unsigned getRangeEnd() const { return size(); }
 
     /// get entry
     double get(unsigned i) const { return _data[i]; };
@@ -88,27 +87,21 @@ public:
         }
     }
 
-    /// access entry
-    T& operator[] (unsigned i) { return _data[i]; }
-
-    /// access entry
-    T operator[] (unsigned i) const { return _data[i]; };
-
     /// vector operation: set data
-    _vector_type& operator= (const _vector_type &src)
+    Vector<T>& operator= (const Vector<T> &src)
     {
         _data = src._data;
         return *this;
     }
 
     /// vector operation: add
-    void operator+= (const _vector_type& v) { _data += v._data; };
+    void operator+= (const Vector<T>& v) { _data += v._data; };
 
     /// vector operation: subtract
-    void operator-= (const _vector_type& v) { _data -= v._data; };
+    void operator-= (const Vector<T>& v) { _data -= v._data; };
 
     /// set all values in this vector
-    _vector_type& operator= (T val)
+    Vector<T>& operator= (T val)
     {
         _data = val;
         return *this;
