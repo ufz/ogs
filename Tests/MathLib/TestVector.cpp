@@ -20,7 +20,7 @@ TEST(Math, CheckInterface_DenseVector)
 {
     MathLib::Vector<double> x(10);
 
-    ASSERT_EQ(10, x.getNRows());
+    ASSERT_EQ(10, x.size());
     ASSERT_EQ(0, x.getRangeBegin());
     ASSERT_EQ(10, x.getRangeEnd());
 
