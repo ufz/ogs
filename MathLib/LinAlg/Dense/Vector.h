@@ -43,7 +43,7 @@ public:
 	 * @param original the object that is copied
 	 * @return
 	 */
-    Vector (Vector const& original)
+    Vector (Vector<T> const& original)
     : std::valarray<T>(static_cast<std::valarray<T> >(original))
 	{}
 
@@ -52,6 +52,18 @@ public:
 	 * @return
 	 */
 	virtual ~Vector() {};
+
+	/**
+	 * set a given value to all entries in this vector
+	 *
+	 * @param val   value
+	 * @return a reference to this vector
+	 */
+	Vector<T> & operator=(const T& val)
+	{
+	    this->std::valarray<T>::operator =(val);
+	    return *this;
+	};
 
     /// return a start index of the active data range
     unsigned getRangeBegin() const { return 0;}
