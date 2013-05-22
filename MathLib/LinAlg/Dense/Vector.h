@@ -17,7 +17,7 @@
 
 #include <vector>
 #include <valarray>
-
+#include <fstream>
 
 namespace MathLib
 {
@@ -94,17 +94,28 @@ public:
     }
 
     /**
-     * writes the matrix entries into the output stream
-     * @param out the output stream
+     * writes the matrix entries into a file
+     * @param output file name
      */
-    void write (std::ostream& out) const
+    void write (const std::string &filename) const
     {
-        for (std::size_t i = 0; i < this->size(); i++) {
-            out << (*this)[i] << "\n";
-        }
+        std::ofstream os(filename);
+        os << *this;
+        os.close();
     }
 
 };
+
+/**
+ * writes a vector content into the output stream
+ * @param out the output stream
+ */
+template <typename T>
+std::ostream& operator<<(std::ostream& os, Vector<T> const & v)
+{
+    std::copy(v.begin(), v.end(), std::ostream_iterator<T>(os, "\n"));
+    return os;
+}
 
 }
 
