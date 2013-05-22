@@ -20,19 +20,19 @@
 namespace MathLib {
 
 template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
-      : MatrixBase<T, std::size_t>(rows, cols), _data (new T[this->_n_rows*this->_n_cols])
+      : _n_rows(rows), _n_cols(cols), _data (new T[rows*cols])
 {}
 
 template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const& initial_value)
-		: MatrixBase<T, std::size_t>(rows, cols), _data (new T[this->_n_rows*this->_n_cols])
+		: _n_rows(rows), _n_cols(cols), _data (new T[rows*cols])
 {
-	const std::size_t n(this->_n_rows*this->_n_cols);
+	const std::size_t n(rows*cols);
 	for (std::size_t k(0); k<n; k++)
 		_data[k] = initial_value;
 }
 
 template<class T> Matrix<T>::Matrix (const Matrix& src) :
-	MatrixBase<T, std::size_t>(src.getNRows (), src.getNCols ()), _data (new T[this->_n_rows * this->_n_cols])
+         _n_rows(src.getNRows()), _n_cols(src.getNCols()), _data (new T[this->_n_rows * this->_n_cols])
 {
    for (std::size_t i = 0; i < this->_n_rows; i++)
       for (std::size_t j = 0; j < this->_n_cols; j++)
