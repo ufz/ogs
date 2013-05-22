@@ -34,7 +34,7 @@ public:
 	 * @param nrows number of rows
 	 * @return
 	 */
-    explicit Vector(unsigned nrows=0)
+    explicit Vector(std::size_t nrows=0)
     : std::valarray<T>(nrows)
 	{}
 
@@ -66,19 +66,19 @@ public:
 	};
 
     /// return a start index of the active data range
-    unsigned getRangeBegin() const { return 0;}
+	std::size_t getRangeBegin() const { return 0;}
 
     /// return an end index of the active data range
-    unsigned getRangeEnd() const { return this->size(); }
+	std::size_t getRangeEnd() const { return this->size(); }
 
     /// get entry
-    double get(unsigned i) const { return (*this)[i]; };
+    double get(std::size_t i) const { return (*this)[i]; };
 
     /// set a value to entry
-    void set(unsigned i, double v) { (*this)[i] = v; };
+    void set(std::size_t i, double v) { (*this)[i] = v; };
 
     /// add a value to entry
-    void add(unsigned i, double v) { (*this)[i] += v; };
+    void add(std::size_t i, double v) { (*this)[i] += v; };
 
     /**
      * add a sub vector
