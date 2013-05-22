@@ -21,10 +21,9 @@
 #include <cassert>
 #include <algorithm>
 
-// Base
-
 // MathLib
 #include "SparseMatrixBase.h"
+#include "MatrixSparsityPattern.h"
 #include "sparse.h"
 #include "amuxCRS.h"
 #include "../Preconditioner/generateDiagPrecond.h"
@@ -49,15 +48,41 @@ public:
 		}
 	}
 
-	CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
+	explicit CRSMatrix(IDX_TYPE n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n,n),
 		_row_ptr(iA), _col_idx(jA), _data(A)
 	{}
 
-	explicit CRSMatrix(IDX_TYPE n1) :
-		SparseMatrixBase<FP_TYPE, IDX_TYPE>(n1, n1),
-		_row_ptr(NULL), _col_idx(NULL), _data(NULL)
-	{}
+	explicit CRSMatrix(MatrixSparsityPattern const& mat_sparsity_pattern) :
+			SparseMatrixBase<FP_TYPE, IDX_TYPE>(mat_sparsity_pattern.getNRows(),
+					mat_sparsity_pattern.getNRows()),
+			_row_ptr(nullptr), _col_idx(nullptr), _data(nullptr)
+	{
+		// reserve memory for _row_ptr
+		_row_ptr = new IDX_TYPE [this->_n_rows + 1];
+		// initialize _row_ptr
+		_row_ptr[0] = 0;
+		for (std::size_t row(0); row < this->_n_rows; row++) {
+			_row_ptr[row + 1] = _row_ptr[row]
+			    + std::distance(mat_sparsity_pattern.getRowBeginIterator(row),
+			        mat_sparsity_pattern.getRowEndIterator(row));
+		}
+
+		std::size_t const nnz = _row_ptr[this->_n_rows];
+		// reserve memory for _col_idx
+		_col_idx = new IDX_TYPE [nnz];
+		// fill _col_idx
+		for (std::size_t row(0); row < this->_n_rows; row++) {
+			std::copy(mat_sparsity_pattern.getRowBeginIterator(row),
+				mat_sparsity_pattern.getRowEndIterator(row),
+				&_col_idx[_row_ptr[row]]);
+		}
+
+		// reserve memory for _data
+		_data = new FP_TYPE [nnz];
+		// initialize entries with zero
+		std::fill_n(_data, nnz, 0.0);
+	}
 
 	virtual ~CRSMatrix()
 	{
@@ -172,7 +197,7 @@ public:
      */
     FP_TYPE operator() (IDX_TYPE row, IDX_TYPE col) const
     {
-    	assert(0 <= row && row < this->_n_rows);
+		assert(0 <= row && row < this->_n_rows);
 
     	// linear search - for matrices with many entries per row binary search is much faster
     	const IDX_TYPE idx_end (_row_ptr[row+1]);
@@ -229,7 +254,7 @@ public:
 	 */
 	void getColumn(IDX_TYPE j, FP_TYPE* column_entries) const
 	{
-		for (IDX_TYPE k(0); k<this->_n_rows; k++) {
+		for (IDX_TYPE k(0); k < this->_n_rows; k++) {
 			const IDX_TYPE end_row(_row_ptr[k+1]);
 			IDX_TYPE i(_row_ptr[k+1]);
 			while (i<end_row && _col_idx[i] != j) {
@@ -258,7 +283,7 @@ protected:
 	{
 		// copy the data
 		IDX_TYPE const* row_ptr(rhs.getRowPtrArray());
-		for	(IDX_TYPE k(0); k<=this->_n_rows; k++) {
+		for	(IDX_TYPE k(0); k <= this->_n_rows; k++) {
 			_row_ptr[k] = row_ptr[k];
 		}
 
@@ -281,7 +306,7 @@ protected:
 		IDX_TYPE *row_ptr_new(new IDX_TYPE[n_new_rows+1]);
 		row_ptr_new[0] = 0;
 		IDX_TYPE row_cnt (1), erase_row_cnt(0);
-		for (unsigned k(0); k<this->_n_rows; k++) {
+		for (unsigned k(0); k < this->_n_rows; k++) {
 			if (erase_row_cnt < n_rows_cols) {
 				if (k != rows[erase_row_cnt]) {
 					row_ptr_new[row_cnt] = _row_ptr[k+1] - _row_ptr[k];
@@ -314,7 +339,7 @@ protected:
 		erase_row_cnt = 0;
 		row_cnt = 0;
 		// copy column index and data entries
-		for (IDX_TYPE k(0); k<this->_n_rows; k++) {
+		for (IDX_TYPE k(0); k < this->_n_rows; k++) {
 			if (erase_row_cnt < n_rows_cols) {
 				if (k != rows[erase_row_cnt]) {
 					const IDX_TYPE end (_row_ptr[k+1]);
@@ -407,7 +432,7 @@ protected:
 #ifndef NDEBUG
 	void printMat() const
 	{
-		for (IDX_TYPE k(0); k<this->_n_rows; k++) {
+		for (IDX_TYPE k(0); k < this->_n_rows; k++) {
 			std::cout << k << ": " << std::flush;
 			const IDX_TYPE row_end(_row_ptr[k+1]);
 			for (IDX_TYPE j(_row_ptr[k]); j<row_end; j++) {

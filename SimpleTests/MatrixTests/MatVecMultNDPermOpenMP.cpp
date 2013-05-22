@@ -56,6 +56,10 @@ class FormatterCustom : public logog::FormatterGCC
 
 int main(int argc, char *argv[])
 {
+#ifndef _OPENMP
+    static_assert(false, "This code must be compiled with _OPENMP macro enabled.");
+#endif
+
 	LOGOG_INITIALIZE();
 
 	TCLAP::CmdLine cmd("The purpose of this program is the speed test of sparse matrix vector multiplication (MVM) employing OpenMP technique, where the matrix is stored in CRS format. Before executing the MVM a nested dissection reordering is performed.", ' ', "0.1");

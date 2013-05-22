@@ -31,7 +31,7 @@ public:
 	ElementTreeModel( QObject* parent = 0 );
 	~ElementTreeModel();
 
-	vtkUnstructuredGridAlgorithm const*const getSource() const { return _mesh_source; };
+	vtkUnstructuredGridAlgorithm const* getSource() const { return _mesh_source; };
 
 public slots:
 	/// Clears the tree.
