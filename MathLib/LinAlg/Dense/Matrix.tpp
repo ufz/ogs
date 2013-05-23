@@ -27,7 +27,7 @@ template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
 template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const& initial_value)
 		: _n_rows(rows), _n_cols(cols), _data (new T[rows*cols])
 {
-    std::fill_n(_data, _data + rows*cols, initial_value);
+    std::fill_n(_data, rows*cols, initial_value);
 }
 
 template<class T> Matrix<T>::Matrix (const Matrix& src) :
