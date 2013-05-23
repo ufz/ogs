@@ -43,6 +43,8 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	if (number_of_all_input_pnts - _data_vec->size() > 0)
 		WARN("PointVec::PointVec(): there are %d double points.",
 		     number_of_all_input_pnts - _data_vec->size());
+
+	correctNameIDMapping();
 }
 
 PointVec::~PointVec ()
@@ -195,6 +197,40 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 			cnt++;
 		} else {
 			pnt_id_map[k] = pnt_id_map[pnt_id_map[k]];
+		}
+	}
+}
+
+void PointVec::correctNameIDMapping()
+{
+	// create mapping id -> name using the std::vector id_names
+	std::vector<std::string> id_names(_pnt_id_map.size(), std::string(""));
+	for (auto it = _name_id_map->begin(); it != _name_id_map->end(); it++) {
+		id_names[it->second] = it->first;
+	}
+
+	for (auto it = _name_id_map->begin(); it != _name_id_map->end(); ) {
+		// extract the id associated with the name
+		const std::size_t id(it->second);
+
+		if (_pnt_id_map[id] == id) {
+			it++;
+			continue;
+		}
+
+		if (_pnt_id_map[_pnt_id_map[id]] == _pnt_id_map[id]) {
+			if (id_names[_pnt_id_map[id]].length() != 0) {
+				// point has already a name, erase the second occurrence
+				it = _name_id_map->erase(it);
+			} else {
+				// until now the point has not a name
+				// assign the second occurrence the correct id
+				it->second = _pnt_id_map[id];
+				it++;
+			}
+		} else {
+			it->second = _pnt_id_map[id]; // update id associated to the name
+			it++;
 		}
 	}
 }
