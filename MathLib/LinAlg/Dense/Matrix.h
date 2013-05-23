@@ -152,8 +152,8 @@ private:
    // zero based addressing, C storage layout
    inline std::size_t address(std::size_t i, std::size_t j) const { return i*this->_n_cols+j; };
 
-   unsigned _n_rows;
-   unsigned _n_cols;
+   std::size_t _n_rows;
+   std::size_t _n_cols;
    T *_data;
 };
 
