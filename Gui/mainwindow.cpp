@@ -665,7 +665,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 #ifdef Shapelib_FOUND
 	else if (t == ImportFileType::SHAPE)
 	{
-		SHPImportDialog dlg((fileName.toUtf8()).constData(), _geoModels);
+		SHPImportDialog dlg(fileName.toStdString(), _geoModels);
 		dlg.exec();
 		//QDir dir = QDir(fileName);
 		//settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());

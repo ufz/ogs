@@ -163,7 +163,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>(for picked elements)</string>
+        <string>(for selected elements)</string>
        </property>
       </widget>
      </item>
