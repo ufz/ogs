@@ -64,20 +64,22 @@ IF (METIS_FOUND)
 		${ADDITIONAL_LIBS}
 	)
 
-	ADD_EXECUTABLE( MatVecMultNDPermOpenMP
-        	MatVecMultNDPermOpenMP.cpp
-	        ${SOURCES}
-        	${HEADERS}
-	)
-	SET_TARGET_PROPERTIES(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
+	IF(OPENMP_FOUND)
+		ADD_EXECUTABLE( MatVecMultNDPermOpenMP
+			MatVecMultNDPermOpenMP.cpp
+			${SOURCES}
+			${HEADERS}
+		)
+		SET_TARGET_PROPERTIES(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
 
-	TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
-		BaseLib
-		MathLib
-		logog
-		${METIS_LIBRARIES}
-		${ADDITIONAL_LIBS}
-	)
+		TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
+			BaseLib
+			MathLib
+			logog
+			${METIS_LIBRARIES}
+			${ADDITIONAL_LIBS}
+		)
+	ENDIF()
 ENDIF(METIS_FOUND)
 
 

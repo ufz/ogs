@@ -1,7 +1,7 @@
 # Set additional CMake modules path
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_SOURCE_DIR}/scripts/cmake/cmake"
-  "${CMAKE_SOURCE_DIR}/scripts/cmake")
+  "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/cmake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake")
 
 # Load addional modules
 INCLUDE(UseBackportedModules)

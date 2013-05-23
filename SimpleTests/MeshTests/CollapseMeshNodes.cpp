@@ -23,7 +23,7 @@
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "Legacy/MeshIO.h"
-#include "MeshCoarsener.h"
+#include "MeshEditing/MeshCoarsener.h"
 
 int main(int argc, char *argv[])
 {

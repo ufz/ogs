@@ -27,7 +27,7 @@ Face::Face(Node** nodes, MshElemType::type type, unsigned value)
 }
 */
 Face::Face(unsigned value)
-	: Element(value)
+	: Element(value), _area(-1.0) // init with invalid value to detect errors
 {
 }
 
