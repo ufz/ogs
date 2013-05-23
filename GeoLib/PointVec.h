@@ -110,7 +110,20 @@ public:
 	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset);
 
 private:
+	/**
+	 * Removes points out of the given point set that have the (nearly) same coordinates, i.e.
+	 * the distance of two points is smaller than eps measured in the maximum norm.
+	 * @param pnt_vec the given set of points stored in a vector
+	 * @param pnt_id_map the id mapping
+	 * @param eps if the distance (measured in maximum norm) between points \f$p_i\f$ and \f$p_j\f$
+	 * is smaller than eps the points \f$p_i\f$ and \f$p_j\f$ are considered as equal.
+	 */
 	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = sqrt(std::numeric_limits<double>::min()));
+
+	/**
+	 * After the point set is modified (for example by makePntsUnique()) the mapping has to be corrected.
+	 */
+	void correctNameIDMapping();
 
 	/** copy constructor doesn't have an implementation */
 	// compiler does not create a (possible unwanted) copy constructor
