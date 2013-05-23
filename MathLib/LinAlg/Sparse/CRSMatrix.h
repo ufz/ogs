@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 
 // MathLib
 #include "SparseMatrixBase.h"
@@ -39,8 +40,8 @@ public:
 	{
 		std::ifstream in(fname.c_str(), std::ios::in | std::ios::binary);
 		if (in) {
-			CS_read(in, SparseMatrixBase<FP_TYPE, IDX_TYPE>::_n_rows, _row_ptr, _col_idx, _data);
-			SparseMatrixBase<FP_TYPE, IDX_TYPE>::_n_cols = SparseMatrixBase<FP_TYPE, IDX_TYPE>::_n_rows;
+			CS_read(in, this->_n_rows, _row_ptr, _col_idx, _data);
+			this->_n_cols = this->_n_rows;
 			in.close();
 		} else {
 			std::cout << "cannot open " << fname << std::endl;
@@ -103,6 +104,12 @@ public:
      * @return number of non-zero entries
      */
     IDX_TYPE getNNZ() const { return _row_ptr[this->_n_rows]; }
+
+
+    virtual void setZero()
+    {
+        std::fill(_data, _data + getNNZ(), 0);
+    }
 
     /**
      * This method inserts/overwrites a non-zero matrix entry.
