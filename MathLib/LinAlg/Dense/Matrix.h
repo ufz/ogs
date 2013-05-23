@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <vector>
+#include <string>
 
 namespace MathLib {
 
@@ -141,10 +142,10 @@ public:
    virtual bool isAssembled() const { return true; };
 
    /**
-    * writes the matrix entries into the output stream
-    * @param out the output stream
+    * writes the matrix entries into a file
+    * @param filename output file name
     */
-   void write (std::ostream& out) const;
+   void write (const std::string &filename) const;
 
 private:
    // zero based addressing, but Fortran storage layout

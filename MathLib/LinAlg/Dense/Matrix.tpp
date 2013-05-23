@@ -16,6 +16,7 @@
 #define MATRIX_TPP
 
 #include <algorithm>
+#include <fstream>
 
 namespace MathLib {
 
@@ -182,14 +183,11 @@ template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col) co
    return _data [address(row,col)];
 }
 
-template <class T> void Matrix<T>::write (std::ostream &out) const
+template <class T> void Matrix<T>::write (const std::string &filename) const
 {
-	for (std::size_t i = 0; i < this->_n_rows; i++) {
-		for (std::size_t j = 0; j < this->_n_cols; j++) {
-			out << _data[address(i, j)] << "\t";
-		}
-		out << "\n";
-	}
+    std::ofstream os(filename);
+    os << (*this);
+    os.close();
 }
 
 template <class T> void Matrix<T>::setZero()
@@ -225,7 +223,12 @@ template <class T> T sqrFrobNrm (const Matrix<T> &mat)
 template <class T>
 std::ostream& operator<< (std::ostream &os, const Matrix<T> &mat)
 {
-	mat.write (os);
+    for (std::size_t i = 0; i < mat.getNRows(); i++) {
+        for (std::size_t j = 0; j < mat.getNCols(); j++) {
+            os << mat(i,j) << "\t";
+        }
+        os << "\n";
+    }
 	return os;
 }
 
