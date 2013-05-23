@@ -17,21 +17,21 @@ public:
 	virtual void amux(FP_TYPE d, FP_TYPE const * const __restrict__ x, FP_TYPE * __restrict__ y) const = 0;
 	virtual ~SparseMatrixBase() {};
 
-	   /**
-	    * get the number of rows
-	    * @return the number of rows
-	    */
-	   unsigned getNRows () const { return _n_rows; }
+	/**
+	 * get the number of rows
+	 * @return the number of rows
+	 */
+	unsigned getNRows () const { return _n_rows; }
 
-	   /**
-	    * get the number of columns
-	    * @return the number of columns
-	    */
-	   unsigned getNCols () const { return _n_cols; }
+	/**
+	 * get the number of columns
+	 * @return the number of columns
+	 */
+	unsigned getNCols () const { return _n_cols; }
 
 protected:
-    unsigned _n_rows;
-    unsigned _n_cols;
+	unsigned _n_rows;
+	unsigned _n_cols;
 };
 
 } // end namespace MathLib
