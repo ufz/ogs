@@ -26,9 +26,7 @@ template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
 template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const& initial_value)
 		: _n_rows(rows), _n_cols(cols), _data (new T[rows*cols])
 {
-	const std::size_t n(rows*cols);
-	for (std::size_t k(0); k<n; k++)
-		_data[k] = initial_value;
+    std::fill_n(_data, _data + rows*cols, initial_value);
 }
 
 template<class T> Matrix<T>::Matrix (const Matrix& src) :
@@ -140,7 +138,7 @@ template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
 		std::size_t b_row, std::size_t b_col,
 		std::size_t e_row, std::size_t e_col) const throw (std::range_error)
 {
-	if (b_row >= e_row | b_col >= e_col)
+	if (b_row >= e_row || b_col >= e_col)
 		throw std::range_error ("Matrix::getSubMatrix() illegal sub matrix");
 	if (e_row > this->_n_rows | e_col > this->_n_cols)
 		throw std::range_error ("Matrix::getSubMatrix() illegal sub matrix");
@@ -157,7 +155,7 @@ template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
 template<class T> void Matrix<T>::setSubMatrix(
 		std::size_t b_row, std::size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error)
 {
-	if (b_row + sub_mat.getNRows() > this->_n_rows | b_col + sub_mat.getNCols() > this->_n_cols)
+	if (b_row + sub_mat.getNRows() > this->_n_rows || b_col + sub_mat.getNCols() > this->_n_cols)
 		throw std::range_error ("Matrix::setSubMatrix() sub matrix to big");
 
 	for (std::size_t i=0; i<sub_mat.getNRows(); i++) {
@@ -170,7 +168,7 @@ template<class T> void Matrix<T>::setSubMatrix(
 template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col)
 	throw (std::range_error)
 {
-   if ( (row >= this->_n_rows) | ( col >= this->_n_cols) )
+   if ( (row >= this->_n_rows) || ( col >= this->_n_cols) )
 	  throw std::range_error ("Matrix: op() const range error");
    return _data [address(row,col)];
 }
@@ -179,7 +177,7 @@ template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col)
 template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col) const
 	throw (std::range_error)
 {
-   if ( (row >= this->_n_rows) | ( col >= this->_n_cols) )
+   if ( (row >= this->_n_rows) || ( col >= this->_n_cols) )
       throw std::range_error ("Matrix: op() const range error");
    return _data [address(row,col)];
 }
