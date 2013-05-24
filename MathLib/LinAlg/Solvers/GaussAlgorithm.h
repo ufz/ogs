@@ -16,7 +16,7 @@
 #define GAUSSALGORITHM_H_
 
 #include <cstddef>
-#include "../Dense/Matrix.h"
+#include "../Dense/DenseMatrix.h"
 #include "DenseDirectLinearSolver.h"
 #include "TriangularSolve.h"
 
@@ -41,7 +41,7 @@ public:
 	 * Attention: the given matrix will be destroyed!
 	 * @return a object of type GaussAlgorithm
 	 */
-	GaussAlgorithm(Matrix<double> &A);
+	GaussAlgorithm(DenseMatrix<double> &A);
 	/**
 	 * destructor, deletes the permutation
 	 */
@@ -65,7 +65,7 @@ private:
 	/**
 	 * a reference to the matrix
 	 */
-	Matrix<double>& _mat;
+	DenseMatrix<double>& _mat;
 	/**
 	 * the size of the matrix
 	 */

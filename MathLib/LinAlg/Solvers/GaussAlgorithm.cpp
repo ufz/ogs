@@ -17,7 +17,7 @@
 
 namespace MathLib {
 
-GaussAlgorithm::GaussAlgorithm (Matrix <double> &A) :
+GaussAlgorithm::GaussAlgorithm (DenseMatrix <double> &A) :
 	_mat (A), _n(_mat.getNRows()), _perm (new size_t [_n])
 {
 	size_t k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
