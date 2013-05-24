@@ -85,7 +85,7 @@ public:
    void setSubMatrix (std::size_t b_row, std::size_t b_col, const DenseMatrix<T>& sub_mat) throw (std::range_error);
 
    inline T & operator() (std::size_t row, std::size_t col) throw (std::range_error);
-   inline T & operator() (std::size_t row, std::size_t col) const throw (std::range_error);
+   inline T const& operator() (std::size_t row, std::size_t col) const throw (std::range_error);
 
    /**
     * writes the matrix entries into the output stream
@@ -259,7 +259,7 @@ template<class T> T& DenseMatrix<T>::operator() (std::size_t row, std::size_t co
 }
 
 
-template<class T> T& DenseMatrix<T>::operator() (std::size_t row, std::size_t col) const
+template<class T> T const& DenseMatrix<T>::operator() (std::size_t row, std::size_t col) const
 	throw (std::range_error)
 {
    if ( (row >= _n_rows) | ( col >= _n_cols) )
