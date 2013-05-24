@@ -87,14 +87,14 @@ void rotatePointsToXZ(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*
  * @param rot_mat 3x3 rotation matrix
  */
 void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
-                               MathLib::Matrix<double> & rot_mat);
+                               MathLib::DenseMatrix<double> & rot_mat);
 
 /**
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts vector of points
  */
-void rotatePoints(MathLib::Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
+void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
 
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);

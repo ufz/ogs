@@ -2,7 +2,7 @@
  * \file
  * \author Thomas Fischer
  * \date   2011-05-24
- * \brief  Definition of the Matrix class.
+ * \brief  Definition of the DenseMatrix class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -28,14 +28,14 @@ namespace MathLib {
 /**
  * Matrix represents a dense matrix for a numeric data type.
  */
-template <class T> class Matrix : public MatrixBase
+template <class T> class DenseMatrix : public MatrixBase
 {
 public:
-   Matrix (std::size_t rows, std::size_t cols);
-   Matrix (std::size_t rows, std::size_t cols, const T& val);
-   Matrix (const Matrix &src);
+   DenseMatrix (std::size_t rows, std::size_t cols);
+   DenseMatrix (std::size_t rows, std::size_t cols, const T& val);
+   DenseMatrix (const DenseMatrix &src);
 
-   ~Matrix ();
+   ~DenseMatrix ();
 
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
@@ -43,38 +43,38 @@ public:
    void axpy ( T alpha, const T* x, T beta, T* y) const;
 
    /**
-    * Matrix vector multiplication
+    * DenseMatrix vector multiplication
     * @param x
     * @return
     */
    T* operator* (const T *x) const;
    /**
-    * Matrix matrix addition.
+    * DenseMatrix matrix addition.
     * @param mat
     * @return
     */
-   Matrix<T>* operator+ (const Matrix<T>& mat) const throw (std::range_error);
+   DenseMatrix<T>* operator+ (const DenseMatrix<T>& mat) const throw (std::range_error);
    /**
-    * Matrix matrix subtraction
+    * DenseMatrix matrix subtraction
     * @param mat
     * @return
     */
-   Matrix<T>* operator- (const Matrix<T>& mat) const throw (std::range_error);
+   DenseMatrix<T>* operator- (const DenseMatrix<T>& mat) const throw (std::range_error);
 
    /**
-    * Matrix matrix multiplication \f$ C = A \cdot B\f$
+    * DenseMatrix matrix multiplication \f$ C = A \cdot B\f$
     * @param mat the matrix \f$ B \f$
     * @return the matrix \f$ C \f$
     */
-   Matrix<T>* operator* (const Matrix<T>& mat) const throw (std::range_error);
+   DenseMatrix<T>* operator* (const DenseMatrix<T>& mat) const throw (std::range_error);
 
    /**
     * matrix transpose
     * @return the transpose of the matrix
     */
-   Matrix<T>* transpose() const; // HB & ZC
+   DenseMatrix<T>* transpose() const; // HB & ZC
 
-   Matrix<T>* getSubMatrix (std::size_t b_row, std::size_t b_col, std::size_t e_row, std::size_t e_col) const throw (std::range_error);
+   DenseMatrix<T>* getSubMatrix (std::size_t b_row, std::size_t b_col, std::size_t e_row, std::size_t e_col) const throw (std::range_error);
 
    /**
     * overwrites values of the matrix with the given sub matrix
@@ -82,7 +82,7 @@ public:
     * @param b_col the first column
     * @param sub_mat the sub matrix
     */
-   void setSubMatrix (std::size_t b_row, std::size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error);
+   void setSubMatrix (std::size_t b_row, std::size_t b_col, const DenseMatrix<T>& sub_mat) throw (std::range_error);
 
    inline T & operator() (std::size_t row, std::size_t col) throw (std::range_error);
    inline T & operator() (std::size_t row, std::size_t col) const throw (std::range_error);
@@ -102,11 +102,11 @@ private:
    T *_data;
 };
 
-template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols)
+template<class T> DenseMatrix<T>::DenseMatrix (std::size_t rows, std::size_t cols)
       : MatrixBase(rows, cols), _data (new T[_n_rows*_n_cols])
 {}
 
-template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const& initial_value)
+template<class T> DenseMatrix<T>::DenseMatrix (std::size_t rows, std::size_t cols, T const& initial_value)
 		: MatrixBase(rows, cols), _data (new T[_n_rows*_n_cols])
 {
 	const std::size_t n(_n_rows*_n_cols);
@@ -114,7 +114,7 @@ template<class T> Matrix<T>::Matrix (std::size_t rows, std::size_t cols, T const
 		_data[k] = initial_value;
 }
 
-template<class T> Matrix<T>::Matrix (const Matrix& src) :
+template<class T> DenseMatrix<T>::DenseMatrix (const DenseMatrix& src) :
 	MatrixBase(src.getNRows (), src.getNCols ()), _data (new T[_n_rows * _n_cols])
 {
    for (std::size_t i = 0; i < _n_rows; i++)
@@ -122,12 +122,12 @@ template<class T> Matrix<T>::Matrix (const Matrix& src) :
          _data[address(i,j)] = src (i, j);
 }
 
-template <class T> Matrix<T>::~Matrix ()
+template <class T> DenseMatrix<T>::~DenseMatrix ()
 {
    delete [] _data;
 }
 
-template<class T> void Matrix<T>::axpy ( T alpha, const T* x, T beta, T* y) const
+template<class T> void DenseMatrix<T>::axpy ( T alpha, const T* x, T beta, T* y) const
 {
    for (std::size_t i(0); i<_n_rows; i++) {
       y[i] += beta * y[i];
@@ -137,7 +137,7 @@ template<class T> void Matrix<T>::axpy ( T alpha, const T* x, T beta, T* y) cons
    }
 }
 
-template<class T> T* Matrix<T>::operator* (const T *x) const
+template<class T> T* DenseMatrix<T>::operator* (const T *x) const
 {
 	T *y (new T[_n_rows]);
 	for (std::size_t i(0); i < _n_rows; i++) {
@@ -151,13 +151,13 @@ template<class T> T* Matrix<T>::operator* (const T *x) const
 }
 
 // HS initial implementation
-template<class T> Matrix<T>* Matrix<T>::operator+ (const Matrix<T>& mat) const throw (std::range_error)
+template<class T> DenseMatrix<T>* DenseMatrix<T>::operator+ (const DenseMatrix<T>& mat) const throw (std::range_error)
 {
 	// make sure the two matrices have the same dimension.
 	if (_n_rows != mat.getNRows() || _n_cols != mat.getNCols())
-		throw std::range_error("Matrix::operator+, illegal matrix size!");
+		throw std::range_error("DenseMatrix::operator+, illegal matrix size!");
 
-	Matrix<T>* y(new Matrix<T> (_n_rows, _n_cols));
+	DenseMatrix<T>* y(new DenseMatrix<T> (_n_rows, _n_cols));
 	for (std::size_t i = 0; i < _n_rows; i++) {
 		for (std::size_t j = 0; j < _n_cols; j++) {
 			(*y)(i, j) = _data[address(i, j)] + mat(i, j);
@@ -168,13 +168,13 @@ template<class T> Matrix<T>* Matrix<T>::operator+ (const Matrix<T>& mat) const t
 }
 
 // HS initial implementation
-template<class T> Matrix<T>* Matrix<T>::operator- (const Matrix<T>& mat) const throw (std::range_error)
+template<class T> DenseMatrix<T>* DenseMatrix<T>::operator- (const DenseMatrix<T>& mat) const throw (std::range_error)
 {
 	// make sure the two matrices have the same dimension.
 	if (_n_rows != mat.getNRows() || _n_cols != mat.getNCols())
-		throw std::range_error("Matrix::operator-, illegal matrix size!");
+		throw std::range_error("DenseMatrix::operator-, illegal matrix size!");
 
-	Matrix<T>* y(new Matrix<T> (_n_rows, _n_cols));
+	DenseMatrix<T>* y(new DenseMatrix<T> (_n_rows, _n_cols));
 	for (std::size_t i = 0; i < _n_rows; i++) {
 		for (std::size_t j = 0; j < _n_cols; j++) {
 			(*y)(i, j) = _data[address(i, j)] - mat(i, j);
@@ -185,15 +185,15 @@ template<class T> Matrix<T>* Matrix<T>::operator- (const Matrix<T>& mat) const t
 }
 
 // HS initial implementation
-template<class T> Matrix<T>* Matrix<T>::operator* (const Matrix<T>& mat) const throw (std::range_error)
+template<class T> DenseMatrix<T>* DenseMatrix<T>::operator* (const DenseMatrix<T>& mat) const throw (std::range_error)
 {
 	// make sure the two matrices have the same dimension.
 	if (_n_cols != mat.getNRows())
 		throw std::range_error(
-				"Matrix::operator*, number of rows and cols should be the same!");
+				"DenseMatrix::operator*, number of rows and cols should be the same!");
 
 	std::size_t y_cols(mat.getNCols());
-	Matrix<T>* y(new Matrix<T> (_n_rows, y_cols, T(0)));
+	DenseMatrix<T>* y(new DenseMatrix<T> (_n_rows, y_cols, T(0)));
 
 	for (std::size_t i = 0; i < _n_rows; i++) {
 		for (std::size_t j = 0; j < y_cols; j++) {
@@ -206,9 +206,9 @@ template<class T> Matrix<T>* Matrix<T>::operator* (const Matrix<T>& mat) const t
 }
 
 // HS initial implementation
-template<class T> Matrix<T>* Matrix<T>::transpose() const
+template<class T> DenseMatrix<T>* DenseMatrix<T>::transpose() const
 {
-	Matrix<T>* y(new Matrix<T> (_n_cols, _n_rows));
+	DenseMatrix<T>* y(new DenseMatrix<T> (_n_cols, _n_rows));
 
 	for (std::size_t i = 0; i < _n_rows; i++) {
 		for (std::size_t j = 0; j < _n_cols; j++) {
@@ -219,16 +219,16 @@ template<class T> Matrix<T>* Matrix<T>::transpose() const
 	return y;
 }
 
-template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
+template<class T> DenseMatrix<T>* DenseMatrix<T>::getSubMatrix(
 		std::size_t b_row, std::size_t b_col,
 		std::size_t e_row, std::size_t e_col) const throw (std::range_error)
 {
 	if (b_row >= e_row | b_col >= e_col)
-		throw std::range_error ("Matrix::getSubMatrix() illegal sub matrix");
+		throw std::range_error ("DenseMatrix::getSubMatrix() illegal sub matrix");
 	if (e_row > _n_rows | e_col > _n_cols)
-		throw std::range_error ("Matrix::getSubMatrix() illegal sub matrix");
+		throw std::range_error ("DenseMatrix::getSubMatrix() illegal sub matrix");
 
-	Matrix<T>* y(new Matrix<T> (e_row-b_row, e_col-b_col));
+	DenseMatrix<T>* y(new DenseMatrix<T> (e_row-b_row, e_col-b_col));
 	for (std::size_t i=b_row; i<e_row; i++) {
 		for (std::size_t j=b_col; j<e_col; j++) {
 			(*y)(i-b_row, j-b_col) = _data[address(i, j)];
@@ -237,11 +237,11 @@ template<class T> Matrix<T>* Matrix<T>::getSubMatrix(
 	return y;
 }
 
-template<class T> void Matrix<T>::setSubMatrix(
-		std::size_t b_row, std::size_t b_col, const Matrix<T>& sub_mat) throw (std::range_error)
+template<class T> void DenseMatrix<T>::setSubMatrix(
+		std::size_t b_row, std::size_t b_col, const DenseMatrix<T>& sub_mat) throw (std::range_error)
 {
 	if (b_row + sub_mat.getNRows() > _n_rows | b_col + sub_mat.getNCols() > _n_cols)
-		throw std::range_error ("Matrix::setSubMatrix() sub matrix to big");
+		throw std::range_error ("DenseMatrix::setSubMatrix() sub matrix to big");
 
 	for (std::size_t i=0; i<sub_mat.getNRows(); i++) {
 		for (std::size_t j=0; j<sub_mat.getNCols(); j++) {
@@ -250,24 +250,24 @@ template<class T> void Matrix<T>::setSubMatrix(
 	}
 }
 
-template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col)
+template<class T> T& DenseMatrix<T>::operator() (std::size_t row, std::size_t col)
 	throw (std::range_error)
 {
    if ( (row >= _n_rows) | ( col >= _n_cols) )
-	  throw std::range_error ("Matrix: op() const range error");
+	  throw std::range_error ("DenseMatrix: op() const range error");
    return _data [address(row,col)];
 }
 
 
-template<class T> T& Matrix<T>::operator() (std::size_t row, std::size_t col) const
+template<class T> T& DenseMatrix<T>::operator() (std::size_t row, std::size_t col) const
 	throw (std::range_error)
 {
    if ( (row >= _n_rows) | ( col >= _n_cols) )
-      throw std::range_error ("Matrix: op() const range error");
+      throw std::range_error ("DenseMatrix: op() const range error");
    return _data [address(row,col)];
 }
 
-template <class T> void Matrix<T>::write (std::ostream &out) const
+template <class T> void DenseMatrix<T>::write (std::ostream &out) const
 {
 	for (std::size_t i = 0; i < _n_rows; i++) {
 		for (std::size_t j = 0; j < _n_cols; j++) {
@@ -277,7 +277,7 @@ template <class T> void Matrix<T>::write (std::ostream &out) const
 	}
 }
 
-template <class T> T sqrFrobNrm (const Matrix<T> &mat)
+template <class T> T sqrFrobNrm (const DenseMatrix<T> &mat)
 {
 	T nrm ((T)(0));
 	std::size_t i,j;
@@ -288,9 +288,9 @@ template <class T> T sqrFrobNrm (const Matrix<T> &mat)
 	return nrm;
 }
 
-/** overload the output operator for class Matrix */
+/** overload the output operator for class DenseMatrix */
 template <class T>
-std::ostream& operator<< (std::ostream &os, const Matrix<T> &mat)
+std::ostream& operator<< (std::ostream &os, const DenseMatrix<T> &mat)
 {
 	mat.write (os);
 	return os;

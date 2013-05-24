@@ -16,7 +16,7 @@
 
 namespace MathLib {
 
-void forwardSolve (const Matrix <double> &L, double* b)
+void forwardSolve (const DenseMatrix <double> &L, double* b)
 {
 	size_t m (L.getNRows());
 	double t;
@@ -30,7 +30,7 @@ void forwardSolve (const Matrix <double> &L, double* b)
 	}
 }
 
-void backwardSolve (const Matrix <double> &mat, double* b)
+void backwardSolve (const DenseMatrix <double> &mat, double* b)
 {
 	double t;
 	size_t m (mat.getNRows()), n(mat.getNCols());
@@ -43,7 +43,7 @@ void backwardSolve (const Matrix <double> &mat, double* b)
 	}
 }
 
-void backwardSolve ( Matrix<double> const& mat, double* x, double* b)
+void backwardSolve ( DenseMatrix<double> const& mat, double* x, double* b)
 {
 	size_t n_cols (mat.getNCols());
 	for (int r = (n_cols - 1); r >= 0; r--) {

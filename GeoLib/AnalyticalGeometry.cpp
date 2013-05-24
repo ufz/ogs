@@ -58,7 +58,7 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c,
                           const GeoLib::Point& d, GeoLib::Point& s)
 {
-	MathLib::Matrix<double> mat(2, 2);
+	MathLib::DenseMatrix<double> mat(2, 2);
 	mat(0, 0) = b[0] - a[0];
 	mat(1, 0) = b[1] - a[1];
 	mat(0,1) = c[0] - d[0];
@@ -138,7 +138,7 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 bool isPointInTriangle(const double p[3], const double a[3], const double b[3], const double c[3])
 {
 	// criterion: p-b = u0 * (b - a) + u1 * (b - c); 0 <= u0, u1 <= 1, u0+u1 <= 1
-	MathLib::Matrix<double> mat(2, 2);
+	MathLib::DenseMatrix<double> mat(2, 2);
 	mat(0, 0) = a[0] - b[0];
 	mat(0, 1) = c[0] - b[0];
 	mat(1, 0) = a[1] - b[1];
@@ -172,7 +172,7 @@ bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::P
                        GeoLib::Point const& c, double eps)
 {
 	const unsigned dim(3);
-	MathLib::Matrix<double> m(dim, dim);
+	MathLib::DenseMatrix<double> m(dim, dim);
 	for (unsigned i(0); i < dim; i++)
 		m(i, 0) = b[i] - a[i];
 	for (unsigned i(0); i < dim; i++)
@@ -225,7 +225,7 @@ void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*
 	if (fabs(plane_normal[0]) < small_value && fabs(plane_normal[1]) < small_value)
 		return;
 
-	MathLib::Matrix<double> rot_mat(3, 3);
+	MathLib::DenseMatrix<double> rot_mat(3, 3);
 	computeRotationMatrixToXY(plane_normal, rot_mat);
 	rotatePoints(rot_mat, pnts);
 
@@ -250,7 +250,7 @@ void rotatePointsToXZ(MathLib::Vector3 &n, std::vector<GeoLib::Point*> &pnts)
 	// 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
 	const double h2(1.0 / sqrt(h0 + n[2] * n[2]));
 
-	MathLib::Matrix<double> rot_mat(3, 3);
+	MathLib::DenseMatrix<double> rot_mat(3, 3);
 	// calc rotation matrix
 	rot_mat(0, 0) = n[1] * h1;
 	rot_mat(0, 1) = -n[0] * h1;
@@ -271,7 +271,7 @@ void rotatePointsToXZ(MathLib::Vector3 &n, std::vector<GeoLib::Point*> &pnts)
 	delete[] tmp;
 }
 
-void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::Matrix<double> & rot_mat)
+void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
 {
 	// *** some frequently used terms ***
 	// sqrt (v_1^2 + v_2^2)
@@ -294,7 +294,7 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::Ma
 	rot_mat(2, 2) = plane_normal[2] * h2;
 }
 
-void rotatePoints(MathLib::Matrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
+void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
 	double* tmp (NULL);
 	const std::size_t n_pnts(pnts.size());

@@ -25,7 +25,7 @@ namespace MathLib {
  * @param L the lower triangular matrix
  * @param b at beginning the right hand side vector, at the end the solution vector
  */
-void forwardSolve (const Matrix <double> &L, double* b);
+void forwardSolve (const DenseMatrix <double> &L, double* b);
 
 /**
  * solves the \f$n \times n\f$ triangular linear system \f$U \cdot x=y\f$,
@@ -33,7 +33,7 @@ void forwardSolve (const Matrix <double> &L, double* b);
  * @param U upper triangular matrix
  * @param y at beginning the right hand side, at the end the solution
  */
-void backwardSolve (const Matrix <double> &U, double* y);
+void backwardSolve (const DenseMatrix <double> &U, double* y);
 
 // backwardSolve mat * x = y, mat ... upper triangular matrix
 /**
@@ -43,7 +43,7 @@ void backwardSolve (const Matrix <double> &U, double* y);
  * @param x the solution of the system of linear equations
  * @param b the right hand side
  */
-void backwardSolve ( Matrix<double> const& mat, double* x, double* b);
+void backwardSolve ( DenseMatrix<double> const& mat, double* x, double* b);
 
 } // end namespace MathLib
 
