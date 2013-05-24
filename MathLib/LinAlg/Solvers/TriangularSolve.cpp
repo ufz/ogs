@@ -12,7 +12,7 @@
  *
  */
 
-#include "../Dense/Matrix.h"
+#include "TriangularSolve.h"
 
 namespace MathLib {
 

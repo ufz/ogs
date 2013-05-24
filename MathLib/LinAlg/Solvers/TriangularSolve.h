@@ -15,7 +15,7 @@
 #ifndef TRIANGULARSOLVE_H_
 #define TRIANGULARSOLVE_H_
 
-#include "../Dense/Matrix.h"
+#include "../Dense/DenseMatrix.h"
 
 namespace MathLib {
 

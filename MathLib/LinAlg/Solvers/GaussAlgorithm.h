@@ -16,7 +16,7 @@
 #define GAUSSALGORITHM_H_
 
 #include <cstddef>
-#include "../Dense/Matrix.h"
+#include "../Dense/DenseMatrix.h"
 #include "DenseDirectLinearSolver.h"
 #include "TriangularSolve.h"
 

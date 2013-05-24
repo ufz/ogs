@@ -29,7 +29,6 @@
 #include "Triangle.h"
 
 // MathLib
-#include "LinAlg/Dense/Matrix.h" // for transformation matrix
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathTools.h"
 

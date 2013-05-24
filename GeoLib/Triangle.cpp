@@ -17,7 +17,7 @@
 // MathLib
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathTools.h"
-#include "LinAlg/Dense/Matrix.h"
+#include "LinAlg/Dense/DenseMatrix.h"
 #include "Vector3.h"
 
 namespace GeoLib {
