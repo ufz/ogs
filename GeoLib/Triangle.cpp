@@ -17,7 +17,7 @@
 // MathLib
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathTools.h"
-#include "LinAlg/Dense/Matrix.h"
+#include "LinAlg/Dense/DenseMatrix.h"
 #include "Vector3.h"
 
 namespace GeoLib {
@@ -91,7 +91,7 @@ bool Triangle::containsPoint (const double *pnt) const
 		// all points of triangle have same x-coordinate
 		if (fabs(pnt[0]-a[0]) / _longest_edge <= 1e-3) {
 			// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-			MathLib::Matrix<double> mat (2,2);
+			MathLib::DenseMatrix<double> mat (2,2);
 			mat(0,0) = b[1] - a[1];
 			mat(0,1) = c[1] - a[1];
 			mat(1,0) = b[2] - a[2];
@@ -118,7 +118,7 @@ bool Triangle::containsPoint (const double *pnt) const
 		// all points of triangle have same y-coordinate
 		if (fabs(pnt[1]-a[1]) / _longest_edge <= 1e-3) {
 			// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-			MathLib::Matrix<double> mat (2,2);
+			MathLib::DenseMatrix<double> mat (2,2);
 			mat(0,0) = b[0] - a[0];
 			mat(0,1) = c[0] - a[0];
 			mat(1,0) = b[2] - a[2];
@@ -139,7 +139,7 @@ bool Triangle::containsPoint (const double *pnt) const
 	}
 
 	// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-	MathLib::Matrix<double> mat (2,2);
+	MathLib::DenseMatrix<double> mat (2,2);
 	mat(0,0) = b[0] - a[0];
 	mat(0,1) = c[0] - a[0];
 	mat(1,0) = b[1] - a[1];
@@ -168,7 +168,7 @@ bool Triangle::containsPoint2D (const double *pnt) const
 	GeoLib::Point const& c (*(_pnts[_pnt_ids[2]]));
 
 	// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-	MathLib::Matrix<double> mat (2,2);
+	MathLib::DenseMatrix<double> mat (2,2);
 	mat(0,0) = b[0] - a[0];
 	mat(0,1) = c[0] - a[0];
 	mat(1,0) = b[1] - a[1];
@@ -193,7 +193,7 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
 	GeoLib::Point const& p0 (*(tri.getPoint(0)));
 	GeoLib::Point const& p1 (*(tri.getPoint(1)));
 	GeoLib::Point const& p2 (*(tri.getPoint(2)));
-	MathLib::Matrix<double> mat (3,3);
+	MathLib::DenseMatrix<double> mat (3,3);
 	mat(0,0) = p0[0];
 	mat(0,1) = p0[1];
 	mat(0,2) = 1.0;
