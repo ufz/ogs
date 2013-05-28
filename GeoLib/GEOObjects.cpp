@@ -407,78 +407,109 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
                                   std::string &merged_geo_name)
 {
-	const size_t n_geo_names(geo_names.size());
-	std::vector<size_t> pnt_offsets(n_geo_names, 0);
+	const std::size_t n_geo_names(geo_names.size());
+
+	if (n_geo_names < 2)
+		return;
+
+	std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
 	// *** merge points
 	std::vector<GeoLib::Point*>* merged_points (new std::vector<GeoLib::Point*>);
-	for (size_t j(0); j < n_geo_names; j++) {
+	std::map<std::string, std::size_t>* merged_pnt_names(new std::map<std::string, std::size_t>);
+	for (std::size_t j(0); j < n_geo_names; j++) {
 		const std::vector<GeoLib::Point*>* pnts (this->getPointVec(geo_names[j]));
 		if (pnts) {
-			size_t n_pnts(0);
+			std::size_t n_pnts(0);
 			// do not consider stations
-			if (dynamic_cast<GeoLib::Station*>((*pnts)[0]) == NULL) {
+			if (! dynamic_cast<GeoLib::Station*>((*pnts)[0])) {
+				std::string tmp_name;
 				n_pnts = pnts->size();
-				for (size_t k(0); k < n_pnts; k++)
+				for (std::size_t k(0); k < n_pnts; k++) {
 					merged_points->push_back (new GeoLib::Point (((*pnts)[k])->getCoords()));
+					if (this->getPointVecObj(geo_names[j])->getNameOfElementByID(k, tmp_name)) {
+						merged_pnt_names->insert(std::pair<std::string,std::size_t>(tmp_name, pnt_offsets[j] + k));
+					}
+				}
 			}
 			if (n_geo_names - 1 > j) {
 				pnt_offsets[j + 1] = n_pnts + pnt_offsets[j];
 			}
 		}
 	}
-	addPointVec (merged_points, merged_geo_name, NULL, 1e-6);
-	std::vector<size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
+	addPointVec (merged_points, merged_geo_name, merged_pnt_names, 1e-6);
+	std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
 
 	// *** merge polylines
+	std::vector<std::size_t> ply_offsets(n_geo_names, 0);
 	std::vector<GeoLib::Polyline*>* merged_polylines (new std::vector<GeoLib::Polyline*>);
-	for (size_t j(0); j < n_geo_names; j++) {
+	std::map<std::string, std::size_t>* merged_ply_names(new std::map<std::string, std::size_t>);
+	for (std::size_t j(0); j < n_geo_names; j++) {
 		const std::vector<GeoLib::Polyline*>* plys (this->getPolylineVec(geo_names[j]));
 		if (plys) {
-			for (size_t k(0); k < plys->size(); k++) {
+			std::string tmp_name;
+			for (std::size_t k(0); k < plys->size(); k++) {
 				GeoLib::Polyline* kth_ply_new(new GeoLib::Polyline (*merged_points));
 				GeoLib::Polyline const* const kth_ply_old ((*plys)[k]);
-				const size_t size_of_kth_ply (kth_ply_old->getNumberOfPoints());
+				const std::size_t size_of_kth_ply (kth_ply_old->getNumberOfPoints());
 				// copy point ids from old ply to new ply (considering the offset)
-				for (size_t i(0); i < size_of_kth_ply; i++) {
+				for (std::size_t i(0); i < size_of_kth_ply; i++) {
 					kth_ply_new->addPoint (id_map[pnt_offsets[j] +
 					                              kth_ply_old->getPointID(i)]);
 				}
 				merged_polylines->push_back (kth_ply_new);
+				if (this->getPolylineVecObj(geo_names[j])->getNameOfElementByID(k, tmp_name)) {
+					merged_ply_names->insert(std::pair<std::string, std::size_t>(tmp_name, ply_offsets[j] + k));
+				}
+			}
+			if (n_geo_names - 1 > j) {
+				ply_offsets[j + 1] = plys->size() + ply_offsets[j];
 			}
 		}
 	}
 	if (! merged_polylines->empty()) {
-		this->addPolylineVec (merged_polylines, merged_geo_name);
+		this->addPolylineVec (merged_polylines, merged_geo_name, merged_ply_names);
 	} else {
 		delete merged_polylines;
+		delete merged_ply_names;
 	}
 
 	// *** merge surfaces
+	std::vector<std::size_t> sfc_offsets(n_geo_names, 0);
 	std::vector<GeoLib::Surface*>* merged_sfcs (new std::vector<GeoLib::Surface*>);
-	for (size_t j(0); j < n_geo_names; j++) {
+	std::map<std::string, std::size_t>* merged_sfc_names(new std::map<std::string, std::size_t>);
+	for (std::size_t j(0); j < n_geo_names; j++) {
 		const std::vector<GeoLib::Surface*>* sfcs (this->getSurfaceVec(geo_names[j]));
 		if (sfcs) {
-			for (size_t k(0); k < sfcs->size(); k++) {
+			std::string tmp_name;
+			for (std::size_t k(0); k < sfcs->size(); k++) {
 				GeoLib::Surface* kth_sfc_new(new GeoLib::Surface (*merged_points));
 				GeoLib::Surface const* const kth_sfc_old ((*sfcs)[k]);
-				const size_t size_of_kth_sfc (kth_sfc_old->getNTriangles());
-				// copy point ids from old ply to new ply (considering the offset)
-				for (size_t i(0); i < size_of_kth_sfc; i++) {
+				const std::size_t size_of_kth_sfc (kth_sfc_old->getNTriangles());
+				// clone surface elements using new ids
+				for (std::size_t i(0); i < size_of_kth_sfc; i++) {
 					const GeoLib::Triangle* tri ((*kth_sfc_old)[i]);
-					const size_t id0 (id_map[pnt_offsets[j] + (*tri)[0]]);
-					const size_t id1 (id_map[pnt_offsets[j] + (*tri)[1]]);
-					const size_t id2 (id_map[pnt_offsets[j] + (*tri)[2]]);
+					const std::size_t id0 (id_map[pnt_offsets[j] + (*tri)[0]]);
+					const std::size_t id1 (id_map[pnt_offsets[j] + (*tri)[1]]);
+					const std::size_t id2 (id_map[pnt_offsets[j] + (*tri)[2]]);
 					kth_sfc_new->addTriangle (id0, id1, id2);
 				}
 				merged_sfcs->push_back (kth_sfc_new);
+
+				if (this->getSurfaceVecObj(geo_names[j])->getNameOfElementByID(k, tmp_name)) {
+					merged_sfc_names->insert(std::pair<std::string, std::size_t>(tmp_name, sfc_offsets[j] + k));
+				}
+			}
+			if (n_geo_names - 1 > j) {
+				sfc_offsets[j + 1] = sfcs->size() + sfc_offsets[j];
 			}
 		}
 	}
 	if (! merged_sfcs->empty()) {
-		this->addSurfaceVec (merged_sfcs, merged_geo_name);
+		this->addSurfaceVec (merged_sfcs, merged_geo_name, merged_sfc_names);
 	} else {
 		delete merged_sfcs;
+		delete merged_sfc_names;
 	}
 }
 
