@@ -2,7 +2,7 @@
  * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
- * \brief  Definition of the Vector class.
+ * \brief  Definition of the DenseVector class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef VECTOR_H_
-#define VECTOR_H_
+#ifndef DENSEVECTOR_H_
+#define DENSEVECTOR_H_
 
 #include <vector>
 #include <valarray>
@@ -26,7 +26,7 @@ namespace MathLib
  * Dense vector class
  */
 template <typename T>
-class Vector : public std::valarray<T>
+class DenseVector : public std::valarray<T>
 {
 public:
 	/**
@@ -34,7 +34,7 @@ public:
 	 * @param nrows number of rows
 	 * @return
 	 */
-	explicit Vector(std::size_t nrows=0)
+	explicit DenseVector(std::size_t nrows=0)
 	: std::valarray<T>(nrows)
 	{}
 
@@ -43,7 +43,7 @@ public:
 	 * @param original the object that is copied
 	 * @return
 	 */
-	Vector (Vector<T> const& original)
+	DenseVector (DenseVector<T> const& original)
 	: std::valarray<T>(static_cast<std::valarray<T> >(original))
 	{}
 
@@ -51,7 +51,7 @@ public:
 	 * destructor of the class.
 	 * @return
 	 */
-	virtual ~Vector() {};
+	virtual ~DenseVector() {};
 
 	/**
 	 * set a given value to all entries in this vector
@@ -59,7 +59,7 @@ public:
 	 * @param val   value
 	 * @return a reference to this vector
 	 */
-	Vector<T> & operator=(const T& val)
+	DenseVector<T> & operator=(const T& val)
 	{
 		this->std::valarray<T>::operator =(val);
 		return *this;
@@ -111,7 +111,7 @@ public:
  * @param out the output stream
  */
 template <typename T>
-std::ostream& operator<<(std::ostream& os, Vector<T> const & v)
+std::ostream& operator<<(std::ostream& os, DenseVector<T> const & v)
 {
 	std::copy(v.begin(), v.end(), std::ostream_iterator<T>(os, "\n"));
 	return os;
@@ -120,4 +120,4 @@ std::ostream& operator<<(std::ostream& os, Vector<T> const & v)
 }
 
 
-#endif /* VECTOR_H_ */
+#endif /* DENSEVECTOR_H_ */
