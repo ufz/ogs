@@ -13,7 +13,7 @@ INCLUDE_DIRECTORIES(
 INCLUDE( ${VTK_USE_FILE} )
 
 # Create executables
-IF(QT4_FOUND)
+IF(TARGET VtkVis)
 	ADD_EXECUTABLE( generateStructuredQuadMesh generateStructuredQuadMesh.cpp )
 	SET_TARGET_PROPERTIES( generateStructuredQuadMesh PROPERTIES FOLDER Utils)
 	TARGET_LINK_LIBRARIES( generateStructuredQuadMesh
@@ -21,17 +21,17 @@ IF(QT4_FOUND)
 		FileIO
 		GeoLib
 		MathLib
-		VtkVis	
+		VtkVis
 		vtkRendering
 		${QT_LIBRARIES}
 	)
 
 	ADD_EXECUTABLE(  createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp )
 	SET_TARGET_PROPERTIES( createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
-	TARGET_LINK_LIBRARIES( createMeshElemPropertiesFromASCRaster 
+	TARGET_LINK_LIBRARIES( createMeshElemPropertiesFromASCRaster
 		MeshLib
 		FileIO
-		VtkVis	
+		VtkVis
 		vtkRendering
 		zlib
 		${QT_LIBRARIES}
