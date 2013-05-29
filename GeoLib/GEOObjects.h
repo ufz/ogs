@@ -235,12 +235,21 @@ public:
 	void getStationVectorNames(std::vector<std::string>& names) const;
 
 	/**
+	 * Determines if the given name is unique among all the names in point vectors and creates a
+	 * new name if this is not the case. The new name is then simply "name + x", where x>1 is
+	 * the smallest number that creates a unique name (i.e. "name-2", "name-3", etc.)
+	 * \param name Original name of the list, this name might be changed within this method if necessary.
+	 * \return true if the name was unique, false if a new name has been generated
+	 */
+	bool isUniquePointVecName(std::string &name);
+
+	/**
 	 * Method mergeGeometries merges the geometries that are given by the names in the vector.
 	 * Stations points are not included in the resulting merged geometry.
 	 * @param names the names of the geometries that are to be merged
 	 * @param merged_geo_name the name of the resulting geometry
 	 */
-	void mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
+	int mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
 
 	/// Returns the geo object for a geometric item of the given name and type for the associated geometry.
 	const GeoLib::GeoObject* getGEOObject(const std::string &geo_name,
@@ -253,15 +262,6 @@ public:
 	virtual ~GEOObjects();
 
 protected:
-	/**
-	 * Determines if the given name is unique among all the names in point vectors and creates a
-	 * new name if this is not the case. The new name is then simply "name + x", where x>1 is
-	 * the smallest number that creates a unique name (i.e. "name-2", "name-3", etc.)
-	 * \param name Original name of the list, this name might be changed within this method if necessary.
-	 * \return true if the name was unique, false if a new name has been generated
-	 */
-	bool isUniquePointVecName(std::string &name);
-
 	/// Checks if the point vector with the given name is referenced in a polyline- or surface vector.
 	bool isPntVecUsed (const std::string &name) const;
 

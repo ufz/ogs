@@ -404,13 +404,13 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 	return name;
 }
 
-void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
+int GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
                                   std::string &merged_geo_name)
 {
 	const std::size_t n_geo_names(geo_names.size());
 
 	if (n_geo_names < 2)
-		return;
+		return 0;
 
 	std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
@@ -436,6 +436,7 @@ void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 				pnt_offsets[j + 1] = n_pnts + pnt_offsets[j];
 			}
 		}
+		else return -1; //if no points for a given geometry are found, something is fundamentally wrong
 	}
 	addPointVec (merged_points, merged_geo_name, merged_pnt_names, 1e-6);
 	std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
@@ -511,6 +512,7 @@ void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 		delete merged_sfcs;
 		delete merged_sfc_names;
 	}
+	return 1;
 }
 
 const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,

@@ -125,6 +125,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionMerge_Geometries"/>
     <addaction name="actionFile_Converter"/>
     <addaction name="actionDiagram_Viewer"/>
     <addaction name="actionFEM_Test"/>
@@ -406,6 +407,11 @@
     <string>License</string>
    </property>
   </action>
+  <action name="actionMerge_Geometries">
+   <property name="text">
+    <string>Merge Geometries...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -608,6 +614,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionMerge_Geometries</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showMergeGeometriesDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -620,5 +642,6 @@
   <slot>showDiagramPrefsDialog()</slot>
   <slot>about()</slot>
   <slot>showLicense()</slot>
+  <slot>showMergeGeometriesDialog()</slot>
  </slots>
 </ui>
