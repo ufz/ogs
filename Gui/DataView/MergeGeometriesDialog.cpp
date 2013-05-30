@@ -32,8 +32,9 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects* geoObjects, QDi
 	std::vector<std::string> geo_station_names;
 	_geo_objects->getStationVectorNames(geo_station_names);
 
-	for (unsigned k(0); k < geo_station_names.size(); ++k)
-		geoNames.push_back (geo_station_names[k]);
+	// merge method does currently not merge stations, converter function needed first
+	//geoNames.reserve(geo_station_names.size());
+	//std::copy(geo_station_names.begin(), geo_station_names.end(), std::back_inserter(geoNames));
 
 	size_t nGeoObjects(geoNames.size());
 
