@@ -404,46 +404,74 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 	return name;
 }
 
-void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
+int GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
                                   std::string &merged_geo_name)
 {
 	const std::size_t n_geo_names(geo_names.size());
 
 	if (n_geo_names < 2)
-		return;
+		return 0;
 
 	std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
-	// *** merge points
+	if (mergePoints(geo_names, merged_geo_name, pnt_offsets) == -1) {
+		return -1;
+	}
+
+	mergePolylines(geo_names, merged_geo_name, pnt_offsets);
+
+	mergeSurfaces(geo_names, merged_geo_name, pnt_offsets);
+
+	return 1;
+}
+
+bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
+		std::string & merged_geo_name, std::vector<std::size_t> &pnt_offsets)
+{
+	const std::size_t n_geo_names(geo_names.size());
+
 	std::vector<GeoLib::Point*>* merged_points (new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t>* merged_pnt_names(new std::map<std::string, std::size_t>);
+
 	for (std::size_t j(0); j < n_geo_names; j++) {
-		const std::vector<GeoLib::Point*>* pnts (this->getPointVec(geo_names[j]));
+		const std::vector<GeoLib::Point*>* pnts(this->getPointVec(geo_names[j]));
 		if (pnts) {
 			std::size_t n_pnts(0);
 			// do not consider stations
-			if (! dynamic_cast<GeoLib::Station*>((*pnts)[0])) {
+			if (!dynamic_cast<GeoLib::Station*>((*pnts)[0])) {
 				std::string tmp_name;
 				n_pnts = pnts->size();
 				for (std::size_t k(0); k < n_pnts; k++) {
-					merged_points->push_back (new GeoLib::Point (((*pnts)[k])->getCoords()));
+					merged_points->push_back(new GeoLib::Point(((*pnts)[k])->getCoords()));
 					if (this->getPointVecObj(geo_names[j])->getNameOfElementByID(k, tmp_name)) {
-						merged_pnt_names->insert(std::pair<std::string,std::size_t>(tmp_name, pnt_offsets[j] + k));
+						merged_pnt_names->insert(
+								std::pair<std::string, std::size_t>(tmp_name, pnt_offsets[j] + k));
 					}
 				}
 			}
 			if (n_geo_names - 1 > j) {
 				pnt_offsets[j + 1] = n_pnts + pnt_offsets[j];
 			}
-		}
+		} else
+			return false; //if no points for a given geometry are found, something is fundamentally wrong
 	}
-	addPointVec (merged_points, merged_geo_name, merged_pnt_names, 1e-6);
-	std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
 
-	// *** merge polylines
+	addPointVec (merged_points, merged_geo_name, merged_pnt_names, 1e-6);
+	return true;
+}
+
+void GEOObjects::mergePolylines(std::vector<std::string> const & geo_names,
+		std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets)
+{
+	const std::size_t n_geo_names(geo_names.size());
 	std::vector<std::size_t> ply_offsets(n_geo_names, 0);
+
 	std::vector<GeoLib::Polyline*>* merged_polylines (new std::vector<GeoLib::Polyline*>);
 	std::map<std::string, std::size_t>* merged_ply_names(new std::map<std::string, std::size_t>);
+
+	std::vector<GeoLib::Point*> const* merged_points(this->getPointVecObj(merged_geo_name)->getVector());
+	std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
+
 	for (std::size_t j(0); j < n_geo_names; j++) {
 		const std::vector<GeoLib::Polyline*>* plys (this->getPolylineVec(geo_names[j]));
 		if (plys) {
@@ -467,14 +495,22 @@ void GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 			}
 		}
 	}
+
 	if (! merged_polylines->empty()) {
 		this->addPolylineVec (merged_polylines, merged_geo_name, merged_ply_names);
 	} else {
 		delete merged_polylines;
 		delete merged_ply_names;
 	}
+}
 
-	// *** merge surfaces
+void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
+		std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets)
+{
+	std::vector<GeoLib::Point*> const* merged_points(this->getPointVecObj(merged_geo_name)->getVector());
+	std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
+
+	const std::size_t n_geo_names(geo_names.size());
 	std::vector<std::size_t> sfc_offsets(n_geo_names, 0);
 	std::vector<GeoLib::Surface*>* merged_sfcs (new std::vector<GeoLib::Surface*>);
 	std::map<std::string, std::size_t>* merged_sfc_names(new std::map<std::string, std::size_t>);
