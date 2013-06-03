@@ -235,12 +235,22 @@ public:
 	void getStationVectorNames(std::vector<std::string>& names) const;
 
 	/**
+	 * Determines if the given name is unique among all the names in point vectors and creates a
+	 * new name if this is not the case. The new name is then simply "name + x", where x>1 is
+	 * the smallest number that creates a unique name (i.e. "name-2", "name-3", etc.)
+	 * \param name Original name of the list, this name might be changed within this method if necessary.
+	 * \return true if the name was unique, false if a new name has been generated
+	 */
+	bool isUniquePointVecName(std::string &name);
+
+	/**
 	 * Method mergeGeometries merges the geometries that are given by the names in the vector.
 	 * Stations points are not included in the resulting merged geometry.
 	 * @param names the names of the geometries that are to be merged
 	 * @param merged_geo_name the name of the resulting geometry
+	 * @return 1 if success, 0 if the mergelist only contains one geometry and -1 if no point-list is found for one of the geometries
 	 */
-	void mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
+	int mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
 
 	/// Returns the geo object for a geometric item of the given name and type for the associated geometry.
 	const GeoLib::GeoObject* getGEOObject(const std::string &geo_name,
@@ -253,15 +263,6 @@ public:
 	virtual ~GEOObjects();
 
 protected:
-	/**
-	 * Determines if the given name is unique among all the names in point vectors and creates a
-	 * new name if this is not the case. The new name is then simply "name + x", where x>1 is
-	 * the smallest number that creates a unique name (i.e. "name-2", "name-3", etc.)
-	 * \param name Original name of the list, this name might be changed within this method if necessary.
-	 * \return true if the name was unique, false if a new name has been generated
-	 */
-	bool isUniquePointVecName(std::string &name);
-
 	/// Checks if the point vector with the given name is referenced in a polyline- or surface vector.
 	bool isPntVecUsed (const std::string &name) const;
 
@@ -274,6 +275,46 @@ protected:
 	std::vector<PolylineVec*> _ply_vecs;
 	/** vector manages pointers to SurfaceVec objects */
 	std::vector<SurfaceVec*> _sfc_vecs;
+private:
+	/**
+	 * Method merges points from different geometries into one geometry. This
+	 * is a helper method for GEOObjects::mergeGeometries().
+	 * @param geo_names The vector of names of the geometries to merge.
+	 * @param merged_geo_names The (new) name of the geometry resulting from
+	 * merging.
+	 * @param pnt_offsets offsets in the merged vector storing the points
+	 * @return true, if merging the points succeeded, else false
+	 */
+	bool mergePoints(std::vector<std::string> const & geo_names, std::string & merged_geo_name,
+			std::vector<std::size_t> &pnt_offsets);
+
+	/**
+	 * Method merges GeoLib::Polylines from different geometries into one
+	 * geometry. There isn't a check if the polyline is unique within the
+	 * given data sets. If there are two polylines with the same name, the
+	 * second occurrence will lost their name. This is a helper for
+	 * GEOObjects::mergeGeometries() and should be used only after
+	 * GEOObjects::mergePoints() is executed.
+	 * @param geo_names The vector of names of the geometries to merge.
+	 * @param merged_geo_name The (new) name of the geometry resulting from
+	 * merging.
+	 * @param pnt_offsets offsets in the merged vector storing the points.
+	 */
+	void mergePolylines(std::vector<std::string> const & geo_names, std::string & merged_geo_name,
+			std::vector<std::size_t> const& pnt_offsets);
+
+	/**
+	 * Method merges GeoLib::Surfaces from different geometries into one
+	 * geometry. There isn't a check if the GeoLib::Surface is unique within
+	 * the given data sets. This is a helper for GEOObjects::mergeGeometries()
+	 * and should be used only after GEOObjects::mergePoints() is executed.
+	 * @param geo_names The vector of names of the geometries to merge.
+	 * @param merged_geo_name The (new) name of the geometry resulting from
+	 * merging.
+	 * @param pnt_offsets offsets in the merged vector storing the points.
+	 */
+	void mergeSurfaces(std::vector<std::string> const & geo_names,
+			std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets);
 };
 } // end namespace
 

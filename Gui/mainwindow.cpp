@@ -35,6 +35,7 @@
 #include "LicenseDialog.h"
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
+#include "MergeGeometriesDialog.h"
 #include "MshQualitySelectionDialog.h"
 #include "NetCdfConfigureDialog.h"
 #include "NewProcessDialog.h"
@@ -1152,6 +1153,12 @@ void MainWindow::showGMSHPrefsDialog()
 	GMSHPrefsDialog dlg(_geoModels);
 	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool)),
 	        this, SLOT(callGMSH(std::vector<std::string> &, unsigned, double, double, double, bool)));
+	dlg.exec();
+}
+
+void MainWindow::showMergeGeometriesDialog()
+{
+	MergeGeometriesDialog dlg(_geoModels);
 	dlg.exec();
 }
 
