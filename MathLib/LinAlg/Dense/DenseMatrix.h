@@ -20,22 +20,19 @@
 #include <stdexcept>
 #include <iostream>
 
-// MathLib/LinAlg
-#include "../MatrixBase.h"
-
 namespace MathLib {
 
 /**
  * Matrix represents a dense matrix for a numeric data type.
  */
-template <class T> class DenseMatrix : public MatrixBase
+template <class T> class DenseMatrix
 {
 public:
    DenseMatrix (std::size_t rows, std::size_t cols);
    DenseMatrix (std::size_t rows, std::size_t cols, const T& val);
    DenseMatrix (const DenseMatrix &src);
 
-   ~DenseMatrix ();
+   virtual ~DenseMatrix ();
 
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
@@ -93,6 +90,27 @@ public:
     */
    void write (std::ostream& out) const;
 
+	/**
+	 * get the number of rows
+	 * @return the number of rows
+	 */
+	unsigned getNRows () const { return _n_rows; }
+	/**
+	 * get the number of columns
+	 * @return the number of columns
+	 */
+	unsigned getNCols () const { return _n_cols; }
+
+protected:
+	/**
+	 * the number of rows
+	 */
+	unsigned _n_rows;
+	/**
+	 * the number of columns
+	 */
+	unsigned _n_cols;
+
 private:
    // zero based addressing, but Fortran storage layout
    //inline std::size_t address(std::size_t i, std::size_t j) const { return j*rows+i; };
@@ -103,11 +121,11 @@ private:
 };
 
 template<class T> DenseMatrix<T>::DenseMatrix (std::size_t rows, std::size_t cols)
-      : MatrixBase(rows, cols), _data (new T[_n_rows*_n_cols])
+      : _n_rows(rows), _n_cols(cols), _data (new T[_n_rows*_n_cols])
 {}
 
 template<class T> DenseMatrix<T>::DenseMatrix (std::size_t rows, std::size_t cols, T const& initial_value)
-		: MatrixBase(rows, cols), _data (new T[_n_rows*_n_cols])
+		: _n_rows(rows), _n_cols(cols), _data (new T[_n_rows*_n_cols])
 {
 	const std::size_t n(_n_rows*_n_cols);
 	for (std::size_t k(0); k<n; k++)
@@ -115,7 +133,7 @@ template<class T> DenseMatrix<T>::DenseMatrix (std::size_t rows, std::size_t col
 }
 
 template<class T> DenseMatrix<T>::DenseMatrix (const DenseMatrix& src) :
-	MatrixBase(src.getNRows (), src.getNCols ()), _data (new T[_n_rows * _n_cols])
+		_n_rows(src.getNRows ()), _n_cols(src.getNCols ()), _data (new T[_n_rows * _n_cols])
 {
    for (std::size_t i = 0; i < _n_rows; i++)
       for (std::size_t j = 0; j < _n_cols; j++)
