@@ -275,6 +275,46 @@ protected:
 	std::vector<PolylineVec*> _ply_vecs;
 	/** vector manages pointers to SurfaceVec objects */
 	std::vector<SurfaceVec*> _sfc_vecs;
+private:
+	/**
+	 * Method merges points from different geometries into one geometry. This
+	 * is a helper method for GEOObjects::mergeGeometries().
+	 * @param geo_names The vector of names of the geometries to merge.
+	 * @param merged_geo_names The (new) name of the geometry resulting from
+	 * merging.
+	 * @param pnt_offsets offsets in the merged vector storing the points
+	 * @return true, if merging the points succeeded, else false
+	 */
+	bool mergePoints(std::vector<std::string> const & geo_names, std::string & merged_geo_name,
+			std::vector<std::size_t> &pnt_offsets);
+
+	/**
+	 * Method merges GeoLib::Polylines from different geometries into one
+	 * geometry. There isn't a check if the polyline is unique within the
+	 * given data sets. If there are two polylines with the same name, the
+	 * second occurrence will lost their name. This is a helper for
+	 * GEOObjects::mergeGeometries() and should be used only after
+	 * GEOObjects::mergePoints() is executed.
+	 * @param geo_names The vector of names of the geometries to merge.
+	 * @param merged_geo_name The (new) name of the geometry resulting from
+	 * merging.
+	 * @param pnt_offsets offsets in the merged vector storing the points.
+	 */
+	void mergePolylines(std::vector<std::string> const & geo_names, std::string & merged_geo_name,
+			std::vector<std::size_t> const& pnt_offsets);
+
+	/**
+	 * Method merges GeoLib::Surfaces from different geometries into one
+	 * geometry. There isn't a check if the GeoLib::Surface is unique within
+	 * the given data sets. This is a helper for GEOObjects::mergeGeometries()
+	 * and should be used only after GEOObjects::mergePoints() is executed.
+	 * @param geo_names The vector of names of the geometries to merge.
+	 * @param merged_geo_name The (new) name of the geometry resulting from
+	 * merging.
+	 * @param pnt_offsets offsets in the merged vector storing the points.
+	 */
+	void mergeSurfaces(std::vector<std::string> const & geo_names,
+			std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets);
 };
 } // end namespace
 
