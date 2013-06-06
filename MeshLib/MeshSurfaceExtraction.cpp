@@ -87,7 +87,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 				new_elements[i] = new MeshLib::Tri(tri_nodes);
 			} else {
 				MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-				for (unsigned k(0); k<3; k++)
+				for (unsigned k(0); k<4; k++)
 					quad_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
 				new_elements[i] = new MeshLib::Quad(quad_nodes);
 			}
