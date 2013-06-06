@@ -34,16 +34,35 @@ public:
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
    DenseMatrix (const DenseMatrix &src);
+   /**
+    * Move constructor.
+    * @param src The original DenseMatrix object. After applying the
+    * move constructor the object src has no rows and columns anymore.
+    *
+    */
+   DenseMatrix (DenseMatrix &&src) :
+	   _n_rows(src.getNRows()), _n_cols(src.getNCols())
+   {
+	   src._n_rows = 0;
+	   src._n_cols = 0;
+	   _data = src._data;
+	   src._data = nullptr;
+   }
 
    virtual ~DenseMatrix ();
 
+   /**
+    * Assignment operator, makes a copy of the internal data of the object.
+    * @param rhs The DenseMatrix object to the right side of the assignment symbol.
+    * @return
+    */
    DenseMatrix& operator=(DenseMatrix const& rhs) throw (std::range_error)
    {
 	   if (this == &rhs)
 		   return *this;
 
 	   if (_n_rows != rhs.getNRows() || _n_cols != rhs.getNCols()) {
-		   std::string msg("DenseMatrix::operator=, Dimension mismatch, ");
+		   std::string msg("DenseMatrix::operator=(DenseMatrix const& rhs), Dimension mismatch, ");
 		   msg += " left hand side: "  + BaseLib::number2str(_n_rows) + " x " + BaseLib::number2str(_n_cols);
 		   msg += " right hand side: "  + BaseLib::number2str(rhs.getNRows()) + " x " + BaseLib::number2str(rhs.getNCols());
 		   throw std::range_error(msg);
@@ -54,6 +73,25 @@ public:
 
 	   return *this;
    }
+
+   /**
+    * This is the move assignment operator.
+    * @param rhs This is the right hand side of a assignment operation.
+    * After applying this operation the object src has no rows and columns anymore.
+    * @return
+    */
+   DenseMatrix& operator=(DenseMatrix && rhs)
+	{
+		_n_rows = rhs._n_rows;
+		_n_cols = rhs._n_cols;
+		_data = rhs._data;
+
+		rhs._n_rows = 0;
+		rhs._n_cols = 0;
+		rhs._data = nullptr;
+		return *this;
+	}
+
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
     */
