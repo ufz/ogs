@@ -20,6 +20,9 @@
 #include <stdexcept>
 #include <iostream>
 
+// BaseLib
+#include "StringTools.h"
+
 namespace MathLib {
 
 /**
@@ -34,6 +37,23 @@ public:
 
    virtual ~DenseMatrix ();
 
+   DenseMatrix& operator=(DenseMatrix const& rhs) throw (std::range_error)
+   {
+	   if (this == &rhs)
+		   return *this;
+
+	   if (_n_rows != rhs.getNRows() || _n_cols != rhs.getNCols()) {
+		   std::string msg("DenseMatrix::operator=, Dimension mismatch, ");
+		   msg += " left hand side: "  + BaseLib::number2str(_n_rows) + " x " + BaseLib::number2str(_n_cols);
+		   msg += " right hand side: "  + BaseLib::number2str(rhs.getNRows()) + " x " + BaseLib::number2str(rhs.getNCols());
+		   throw std::range_error(msg);
+		   return *this;
+	   }
+
+	   std::copy(rhs._data, rhs._data+_n_rows*_n_cols, _data);
+
+	   return *this;
+   }
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
     */
@@ -111,7 +131,6 @@ protected:
 	 */
 	IDX_TYPE _n_cols;
 
-private:
    // zero based addressing, but Fortran storage layout
    //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; };
    // zero based addressing, C storage layout
@@ -135,9 +154,7 @@ template<typename FP_TYPE, typename IDX_TYPE> DenseMatrix<FP_TYPE, IDX_TYPE>::De
 template<typename FP_TYPE, typename IDX_TYPE> DenseMatrix<FP_TYPE, IDX_TYPE>::DenseMatrix (const DenseMatrix& src) :
 		_n_rows(src.getNRows ()), _n_cols(src.getNCols ()), _data (new FP_TYPE[_n_rows * _n_cols])
 {
-   for (IDX_TYPE i = 0; i < _n_rows; i++)
-      for (IDX_TYPE j = 0; j < _n_cols; j++)
-         _data[address(i,j)] = src (i, j);
+	std::copy(src._data, src._data+_n_rows*_n_cols, _data);
 }
 
 template <typename FP_TYPE, typename IDX_TYPE> DenseMatrix<FP_TYPE, IDX_TYPE>::~DenseMatrix ()
