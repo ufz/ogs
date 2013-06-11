@@ -29,6 +29,9 @@ template <typename T>
 class DenseVector : public std::valarray<T>
 {
 public:
+	using std::valarray<T>::operator=;
+	using std::valarray<T>::operator[];
+
 	/**
 	 * Constructor for initialization of the number of rows
 	 * @param nrows number of rows
@@ -37,33 +40,6 @@ public:
 	explicit DenseVector(std::size_t nrows=0)
 	: std::valarray<T>(nrows)
 	{}
-
-	/**
-	 * copy constructor.
-	 * @param original the object that is copied
-	 * @return
-	 */
-	DenseVector (DenseVector<T> const& original)
-	: std::valarray<T>(static_cast<std::valarray<T> >(original))
-	{}
-
-	/**
-	 * destructor of the class.
-	 * @return
-	 */
-	virtual ~DenseVector() {};
-
-	/**
-	 * set a given value to all entries in this vector
-	 *
-	 * @param val   value
-	 * @return a reference to this vector
-	 */
-	DenseVector<T> & operator=(const T& val)
-	{
-		this->std::valarray<T>::operator =(val);
-		return *this;
-	};
 
 	/// return a start index of the active data range
 	std::size_t getRangeBegin() const { return 0;}
