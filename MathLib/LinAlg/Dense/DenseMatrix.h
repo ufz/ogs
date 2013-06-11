@@ -1,6 +1,6 @@
 /**
  * \file
- * \author Thomas Fischer
+ * \author Thomas Fischer and Haibing Shao
  * \date   2011-05-24
  * \brief  Definition of the DenseMatrix class.
  *

@@ -34,19 +34,19 @@ GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::GlobalDenseMatrix(const GlobalDenseMatrix 
 template<typename FP_TYPE, typename IDX_TYPE>
 void
 GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::setZero()
-	{
-		std::fill(this->_data, this->_data+this->_n_rows*this->_n_cols, static_cast<FP_TYPE>(0));
-	}
+{
+	std::fill(this->_data, this->_data + this->_n_rows * this->_n_cols, static_cast<FP_TYPE>(0));
+}
 
 template<typename FP_TYPE, typename IDX_TYPE>
 bool
 GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::setValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
-	{
-		if (row >= this->_n_rows || col >= this->_n_cols)
-			return false;
-		this->operator()(row,col) = val;
-		return true;
-	}
+{
+	if (row >= this->_n_rows || col >= this->_n_cols)
+		return false;
+	this->operator()(row, col) = val;
+	return true;
+}
 
 template<typename FP_TYPE, typename IDX_TYPE>
 bool

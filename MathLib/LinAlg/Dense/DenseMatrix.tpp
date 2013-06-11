@@ -1,6 +1,6 @@
 /**
  * @file DenseMatrix.tpp
- * @author Thomas Fischer
+ * @author Thomas Fischer and Haibing Shao
  * @date Jun 10, 2013
  * @brief 
  *
@@ -41,10 +41,10 @@ template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>::DenseMatrix (DenseMatrix<FP_TYPE, IDX_TYPE> &&src) :
 	   _n_rows(src.getNRows()), _n_cols(src.getNCols())
 {
-	   src._n_rows = 0;
-	   src._n_cols = 0;
-	   _data = src._data;
-	   src._data = nullptr;
+	src._n_rows = 0;
+	src._n_cols = 0;
+	_data = src._data;
+	src._data = nullptr;
 }
 
 
@@ -106,7 +106,7 @@ void DenseMatrix<FP_TYPE, IDX_TYPE>::axpy(FP_TYPE alpha, const FP_TYPE* x, FP_TY
 template<typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (const FP_TYPE *x) const
 {
-	FP_TYPE *y (new FP_TYPE[_n_rows]);
+	FP_TYPE *y(new FP_TYPE[_n_rows]);
 	for (IDX_TYPE i(0); i < _n_rows; i++) {
 		y[i] = 0.0;
 		for (IDX_TYPE j(0); j < _n_cols; j++) {
@@ -117,7 +117,6 @@ FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (const FP_TYPE *x) const
 	return y;
 }
 
-// HS initial implementation
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator+(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
@@ -137,7 +136,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator+(const DenseMatrix<FP_TYPE, IDX_TYPE>& 
 	return y;
 }
 
-// HS initial implementation
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator-(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
@@ -157,7 +155,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator-(const DenseMatrix<FP_TYPE, IDX_TYPE>& 
 	return y;
 }
 
-// HS initial implementation
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator*(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
@@ -169,7 +166,8 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator*(const DenseMatrix<FP_TYPE, IDX_TYPE>& 
 				"DenseMatrix::operator*, number of rows and cols should be the same!");
 
 	IDX_TYPE y_cols(mat.getNCols());
-	DenseMatrix<FP_TYPE, IDX_TYPE>* y(new DenseMatrix<FP_TYPE, IDX_TYPE> (_n_rows, y_cols, FP_TYPE(0)));
+	DenseMatrix<FP_TYPE, IDX_TYPE>* y(
+			new DenseMatrix<FP_TYPE, IDX_TYPE>(_n_rows, y_cols, FP_TYPE(0)));
 
 	for (IDX_TYPE i = 0; i < _n_rows; i++) {
 		for (IDX_TYPE j = 0; j < y_cols; j++) {
@@ -181,17 +179,15 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator*(const DenseMatrix<FP_TYPE, IDX_TYPE>& 
 	return y;
 }
 
-// HS initial implementation
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::transpose() const
 {
-	DenseMatrix<FP_TYPE, IDX_TYPE>* y(new DenseMatrix<FP_TYPE, IDX_TYPE> (_n_cols, _n_rows));
+	DenseMatrix<FP_TYPE, IDX_TYPE>* y(new DenseMatrix<FP_TYPE, IDX_TYPE>(_n_cols, _n_rows));
 
 	for (IDX_TYPE i = 0; i < _n_rows; i++) {
 		for (IDX_TYPE j = 0; j < _n_cols; j++) {
-//			y->_data[y->address(j, i)] = _data[address(i, j)];
-			(*y)(j,i) = _data[address(i, j)];
+			(*y)(j, i) = _data[address(i, j)];
 		}
 	}
 	return y;
@@ -205,14 +201,15 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::getSubMatrix(
 		throw (std::range_error)
 {
 	if (b_row >= e_row | b_col >= e_col)
-		throw std::range_error ("DenseMatrix::getSubMatrix() illegal sub matrix");
+		throw std::range_error("DenseMatrix::getSubMatrix() illegal sub matrix");
 	if (e_row > _n_rows | e_col > _n_cols)
-		throw std::range_error ("DenseMatrix::getSubMatrix() illegal sub matrix");
+		throw std::range_error("DenseMatrix::getSubMatrix() illegal sub matrix");
 
-	DenseMatrix<FP_TYPE, IDX_TYPE>* y(new DenseMatrix<FP_TYPE, IDX_TYPE> (e_row-b_row, e_col-b_col));
-	for (IDX_TYPE i=b_row; i<e_row; i++) {
-		for (IDX_TYPE j=b_col; j<e_col; j++) {
-			(*y)(i-b_row, j-b_col) = _data[address(i, j)];
+	DenseMatrix<FP_TYPE, IDX_TYPE>* y(
+			new DenseMatrix<FP_TYPE, IDX_TYPE>(e_row - b_row, e_col - b_col));
+	for (IDX_TYPE i = b_row; i < e_row; i++) {
+		for (IDX_TYPE j = b_col; j < e_col; j++) {
+			(*y)(i - b_row, j - b_col) = _data[address(i, j)];
 		}
 	}
 	return y;
@@ -225,11 +222,11 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::setSubMatrix(IDX_TYPE b_row, IDX_TYPE b_col,
 		throw (std::range_error)
 {
 	if (b_row + sub_mat.getNRows() > _n_rows | b_col + sub_mat.getNCols() > _n_cols)
-		throw std::range_error ("DenseMatrix::setSubMatrix() sub matrix to big");
+		throw std::range_error("DenseMatrix::setSubMatrix() sub matrix to big");
 
-	for (IDX_TYPE i=0; i<sub_mat.getNRows(); i++) {
-		for (IDX_TYPE j=0; j<sub_mat.getNCols(); j++) {
-			_data[address(i+b_row, j+b_col)] = sub_mat(i,j);
+	for (IDX_TYPE i = 0; i < sub_mat.getNRows(); i++) {
+		for (IDX_TYPE j = 0; j < sub_mat.getNCols(); j++) {
+			_data[address(i + b_row, j + b_col)] = sub_mat(i, j);
 		}
 	}
 }
@@ -239,9 +236,9 @@ FP_TYPE&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col)
 	throw (std::range_error)
 {
-   if ( (row >= _n_rows) | ( col >= _n_cols) )
-	  throw std::range_error ("DenseMatrix: op() const range error");
-   return _data [address(row,col)];
+	if ((row >= _n_rows) | (col >= _n_cols))
+		throw std::range_error("DenseMatrix: op() const range error");
+	return _data [address(row,col)];
 }
 
 
@@ -250,9 +247,9 @@ FP_TYPE const&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col) const
 	throw (std::range_error)
 {
-   if ( (row >= _n_rows) | ( col >= _n_cols) )
-      throw std::range_error ("DenseMatrix: op() const range error");
-   return _data [address(row,col)];
+	if ((row >= _n_rows) | (col >= _n_cols))
+		throw std::range_error("DenseMatrix: op() const range error");
+	return _data[address(row, col)];
 }
 
 template <typename FP_TYPE, typename IDX_TYPE>
@@ -271,11 +268,11 @@ template <typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE
 sqrFrobNrm (const DenseMatrix<FP_TYPE, IDX_TYPE> &mat)
 {
-	FP_TYPE nrm ((FP_TYPE)(0));
-	IDX_TYPE i,j;
-	for (j=0; j<mat.getNCols(); j++)
-		for (i=0; i<mat.getNRows(); i++)
-			nrm += mat(i,j) * mat(i,j);
+	FP_TYPE nrm((FP_TYPE) (0));
+	IDX_TYPE i, j;
+	for (j = 0; j < mat.getNCols(); j++)
+		for (i = 0; i < mat.getNRows(); i++)
+			nrm += mat(i, j) * mat(i, j);
 
 	return nrm;
 }

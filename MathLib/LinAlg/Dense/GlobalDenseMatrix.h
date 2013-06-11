@@ -58,20 +58,6 @@ public:
 	void addSubMatrix(std::vector<IDX_TYPE> const& row_pos,
 			std::vector<IDX_TYPE> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0));
-//	{
-//		if (row_pos.size() != sub_matrix.getNRows() || col_pos.size() != sub_matrix.getNCols())
-//			return;
-//
-//		const std::size_t n_rows = row_pos.size();
-//		const std::size_t n_cols = col_pos.size();
-//		for (std::size_t i = 0; i < n_rows; i++) {
-//			const IDX_TYPE row = row_pos[i];
-//			for (std::size_t j = 0; j < n_cols; j++) {
-//				const IDX_TYPE col = col_pos[j];
-//				addValue(row, col, fkt * sub_matrix(i, j));
-//			}
-//		}
-//	}
 };
 
 } // end namespace MathLib
