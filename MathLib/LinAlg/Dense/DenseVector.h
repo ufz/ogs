@@ -18,6 +18,7 @@
 #include <vector>
 #include <valarray>
 #include <fstream>
+#include <iterator>
 
 namespace MathLib
 {
