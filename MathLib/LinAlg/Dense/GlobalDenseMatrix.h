@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "DenseMatrix.h"
+#include "DenseVector.h"
 
 namespace MathLib
 {
@@ -64,6 +65,9 @@ public:
 	void addSubMatrix(std::vector<IDX_TYPE> const& row_pos,
 			std::vector<IDX_TYPE> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0));
+
+    /// y = mat * x
+    void matvec ( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
 };
 
 } // end namespace MathLib
