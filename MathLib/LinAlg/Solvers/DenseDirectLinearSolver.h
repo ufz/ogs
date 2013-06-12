@@ -17,12 +17,29 @@
 
 #include "DirectLinearSolver.h"
 
+#include "../Dense/DenseMatrix.h"
+#include "../Dense/DenseVector.h"
+
 namespace MathLib {
 
+/**
+ * DenseDirectLinearSolver class provide interface to solve linear equations
+ * represented with a dense matrix and vector. The class currently supports
+ * only Gauss elimination algorithm.
+ */
 class DenseDirectLinearSolver: public MathLib::DirectLinearSolver {
 public:
 	DenseDirectLinearSolver() {};
 	virtual ~DenseDirectLinearSolver() {};
+
+    /**
+     * solve a given system of linear equations
+     *
+     * @param A     Coefficient matrix
+     * @param b     RHS vector
+     * @param x     Solution vector
+     */
+    virtual void solve(DenseMatrix<double> &A, DenseVector<double> &b, DenseVector<double> &x);
 };
 
 }
