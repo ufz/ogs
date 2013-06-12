@@ -31,6 +31,12 @@ public:
 	GlobalDenseMatrix (const GlobalDenseMatrix &src);
 	virtual ~GlobalDenseMatrix() {};
 
+    /// return a start index of the active data range
+	IDX_TYPE getRangeBegin() const { return static_cast<IDX_TYPE>(0); }
+
+    /// return an end index of the active data range
+	IDX_TYPE getRangeEnd() const { return this->_n_rows; }
+
 	/**
 	 * Method setZero() set all matrix entries to zero.
 	 */
