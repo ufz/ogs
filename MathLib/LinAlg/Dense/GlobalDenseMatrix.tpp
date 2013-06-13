@@ -78,6 +78,12 @@ GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::addSubMatrix(std::vector<IDX_TYPE> const& 
 	}
 }
 
+template<typename FP_TYPE, typename IDX_TYPE>
+void
+GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::matvec ( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const
+{
+	this->axpy (1.0, &x[0], 0.0, &y[0]);
+}
 
 } // end namespace MathLib
 
