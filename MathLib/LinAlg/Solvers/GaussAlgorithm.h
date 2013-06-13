@@ -17,7 +17,6 @@
 
 #include <cstddef>
 #include "../Dense/DenseMatrix.h"
-#include "DenseDirectLinearSolver.h"
 #include "TriangularSolve.h"
 
 namespace MathLib {
@@ -30,7 +29,7 @@ namespace MathLib {
  * the entries of A change! The solution for a specific
  * right hand side is computed by the method execute().
  */
-class GaussAlgorithm : public MathLib::DenseDirectLinearSolver {
+class GaussAlgorithm {
 public:
 	/**
 	 * A direct solver for the (dense) linear system \f$A x = b\f$.
