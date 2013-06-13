@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "DenseMatrix.h"
+#include "DenseVector.h"
 
 namespace MathLib
 {
@@ -30,6 +31,12 @@ public:
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
 	GlobalDenseMatrix (const GlobalDenseMatrix &src);
 	virtual ~GlobalDenseMatrix() {};
+
+    /// return a start index of the active data range
+	IDX_TYPE getRangeBegin() const { return static_cast<IDX_TYPE>(0); }
+
+    /// return an end index of the active data range
+	IDX_TYPE getRangeEnd() const { return this->_n_rows; }
 
 	/**
 	 * Method setZero() set all matrix entries to zero.
@@ -58,6 +65,9 @@ public:
 	void addSubMatrix(std::vector<IDX_TYPE> const& row_pos,
 			std::vector<IDX_TYPE> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0));
+
+    /// y = mat * x
+    void matvec ( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
 };
 
 } // end namespace MathLib
