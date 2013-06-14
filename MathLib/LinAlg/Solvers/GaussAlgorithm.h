@@ -21,6 +21,17 @@
 
 namespace MathLib {
 
+template <typename MAT_T, typename VEC_T>
+class GaussAlgorithm
+{
+public:
+	GaussAlgorithm(MAT_T &) {}
+	~GaussAlgorithm() {}
+	void execute (VEC_T &) const {}
+};
+
+
+
 /**
  * This is a class for the direct solution of (dense) systems of
  * linear equations, \f$A x = b\f$. During the construction of
@@ -29,7 +40,9 @@ namespace MathLib {
  * the entries of A change! The solution for a specific
  * right hand side is computed by the method execute().
  */
-class GaussAlgorithm {
+template <typename MAT_T>
+class GaussAlgorithm <MAT_T, double*>
+{
 public:
 	/**
 	 * A direct solver for the (dense) linear system \f$A x = b\f$.
@@ -40,7 +53,7 @@ public:
 	 * Attention: the given matrix will be destroyed!
 	 * @return a object of type GaussAlgorithm
 	 */
-	GaussAlgorithm(DenseMatrix<double> &A);
+	GaussAlgorithm(MAT_T &A);
 	/**
 	 * destructor, deletes the permutation
 	 */
@@ -64,7 +77,7 @@ private:
 	/**
 	 * a reference to the matrix
 	 */
-	DenseMatrix<double>& _mat;
+	MAT_T& _mat;
 	/**
 	 * the size of the matrix
 	 */
@@ -76,5 +89,7 @@ private:
 };
 
 } // end namespace MathLib
+
+#include "GaussAlgorithm.tpp"
 
 #endif /* GAUSSALGORITHM_H_ */

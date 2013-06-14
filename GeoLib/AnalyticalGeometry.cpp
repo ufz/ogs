@@ -87,7 +87,7 @@ bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const 
 	rhs[0] = c[0] - a[0];
 	rhs[1] = c[1] - a[1];
 
-	MathLib::GaussAlgorithm lu_solver (mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu_solver (mat);
 	lu_solver.execute (rhs);
 	if (0 <= rhs[0] && rhs[0] <= 1.0 && 0 <= rhs[1] && rhs[1] <= 1.0) {
 		s[0] = a[0] + rhs[0] * (b[0] - a[0]);
@@ -145,7 +145,7 @@ bool isPointInTriangle(const double p[3], const double a[3], const double b[3], 
 	mat(1, 1) = c[1] - b[1];
 	double rhs[2] = { p[0] - b[0], p[1] - b[1] };
 
-	MathLib::GaussAlgorithm gauss(mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss(mat);
 	gauss.execute(rhs);
 
 	if (0 <= rhs[0] && rhs[0] <= 1 && 0 <= rhs[1] && rhs[1] <= 1 && rhs[0] + rhs[1] <= 1)
