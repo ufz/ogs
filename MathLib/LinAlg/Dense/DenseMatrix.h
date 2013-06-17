@@ -31,6 +31,9 @@ namespace MathLib {
 template <typename FP_TYPE, typename IDX_TYPE = std::size_t> class DenseMatrix
 {
 public:
+	typedef FP_TYPE FP_T;
+
+public:
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
    DenseMatrix (const DenseMatrix &src);
