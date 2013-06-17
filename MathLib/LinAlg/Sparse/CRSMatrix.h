@@ -167,7 +167,7 @@ public:
      * @param col the column number
      * @return The corresponding matrix entry or 0.0.
      */
-	double getValue(IDX_TYPE row, IDX_TYPE col)
+	FP_TYPE getValue(IDX_TYPE row, IDX_TYPE col)
 	{
 		assert(0 <= row && row < this->_n_rows);
 
