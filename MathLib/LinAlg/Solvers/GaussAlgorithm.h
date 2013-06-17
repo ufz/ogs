@@ -24,10 +24,6 @@ namespace MathLib {
 template <typename MAT_T, typename VEC_T>
 class GaussAlgorithm
 {
-public:
-	GaussAlgorithm(MAT_T &) {}
-	~GaussAlgorithm() {}
-	void execute (VEC_T &) const {}
 };
 
 
