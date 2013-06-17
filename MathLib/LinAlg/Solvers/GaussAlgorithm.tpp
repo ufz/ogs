@@ -18,15 +18,15 @@
 namespace MathLib {
 
 template <typename MAT_T>
-GaussAlgorithm<MAT_T, double*>::GaussAlgorithm (MAT_T &A) :
+GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
 	_mat (A), _n(_mat.getNRows()), _perm (new size_t [_n])
 {
 	size_t k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
-	double l;
+	FP_T l;
 
 	for (k=0; k<nc; k++) {
 		// search pivot
-		double t = fabs(_mat(k, k));
+		FP_T t = fabs(_mat(k, k));
 		_perm[k] = k;
 		for (i=k+1; i<nr; i++) {
 			if (fabs(_mat(i,k)) > t) {
@@ -52,13 +52,13 @@ GaussAlgorithm<MAT_T, double*>::GaussAlgorithm (MAT_T &A) :
 }
 
 template <typename MAT_T>
-GaussAlgorithm<MAT_T, double*>::~GaussAlgorithm()
+GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::~GaussAlgorithm()
 {
 	delete [] _perm;
 }
 
 template <typename MAT_T>
-void GaussAlgorithm<MAT_T, double*>::execute (double *b) const
+void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::execute (typename MAT_T::FP_T *b) const
 {
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
@@ -66,7 +66,7 @@ void GaussAlgorithm<MAT_T, double*>::execute (double *b) const
 }
 
 template <typename MAT_T>
-void GaussAlgorithm<MAT_T, double*>::permuteRHS (double* b) const
+void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::permuteRHS (typename MAT_T::FP_T* b) const
 {
 	for (size_t i=0; i<_n; i++) {
 		if (_perm[i] != i) std::swap(b[i], b[_perm[i]]);
