@@ -19,7 +19,7 @@ namespace MathLib {
 
 template <typename MAT_T>
 GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
-	_mat (A), _n(_mat.getNRows()), _perm (new size_t [_n])
+	_mat (A), _n(_mat.getNRows()), _perm (new IDX_T [_n])
 {
 	IDX_T k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
 	FP_T l;
