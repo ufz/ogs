@@ -26,7 +26,7 @@ GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
 
 	for (k=0; k<nc; k++) {
 		// search pivot
-		FP_T t = fabs(_mat(k, k));
+		FP_T t = std::abs(_mat(k, k));
 		_perm[k] = k;
 		for (i=k+1; i<nr; i++) {
 			if (fabs(_mat(i,k)) > t) {
