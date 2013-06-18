@@ -37,6 +37,8 @@ class GaussAlgorithm <MAT_T, typename MAT_T::FP_T*>
 {
 public:
 	typedef typename MAT_T::FP_T FP_T;
+	typedef typename MAT_T::IDX_T IDX_T;
+
 public:
 	/**
 	 * A direct solver for the (dense) linear system \f$A x = b\f$.
@@ -75,11 +77,11 @@ private:
 	/**
 	 * the size of the matrix
 	 */
-	std::size_t _n;
+	IDX_T _n;
 	/**
 	 * the permutation of the rows
 	 */
-	std::size_t* _perm;
+	IDX_T* _perm;
 };
 
 } // end namespace MathLib
