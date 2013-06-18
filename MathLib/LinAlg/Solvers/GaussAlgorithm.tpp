@@ -17,18 +17,19 @@
 
 namespace MathLib {
 
-GaussAlgorithm::GaussAlgorithm (DenseMatrix <double> &A) :
-	_mat (A), _n(_mat.getNRows()), _perm (new size_t [_n])
+template <typename MAT_T>
+GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
+	_mat (A), _n(_mat.getNRows()), _perm (new IDX_T [_n])
 {
-	size_t k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
-	double l;
+	IDX_T k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
+	FP_T l;
 
 	for (k=0; k<nc; k++) {
 		// search pivot
-		double t = fabs(_mat(k, k));
+		FP_T t = std::abs(_mat(k, k));
 		_perm[k] = k;
 		for (i=k+1; i<nr; i++) {
-			if (fabs(_mat(i,k)) > t) {
+			if (std::abs(_mat(i,k)) > t) {
 				t = _mat(i,k);
 				_perm[k] = i;
 			}
@@ -36,7 +37,8 @@ GaussAlgorithm::GaussAlgorithm (DenseMatrix <double> &A) :
 
 		// exchange rows
 		if (_perm[k] != k) {
-			for (j=0; j<nc; j++) std::swap (_mat(_perm[k],j), _mat(k,j));
+			for (j=0; j<nc; j++)
+				std::swap (_mat(_perm[k],j), _mat(k,j));
 		}
 
 		// eliminate
@@ -50,21 +52,24 @@ GaussAlgorithm::GaussAlgorithm (DenseMatrix <double> &A) :
 	}
 }
 
-GaussAlgorithm::~GaussAlgorithm()
+template <typename MAT_T>
+GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::~GaussAlgorithm()
 {
 	delete [] _perm;
 }
 
-void GaussAlgorithm::execute (double *b) const
+template <typename MAT_T>
+void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::execute (typename MAT_T::FP_T *b) const
 {
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
 	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
 }
 
-void GaussAlgorithm::permuteRHS (double* b) const
+template <typename MAT_T>
+void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::permuteRHS (typename MAT_T::FP_T* b) const
 {
-	for (size_t i=0; i<_n; i++) {
+	for (IDX_T i=0; i<_n; i++) {
 		if (_perm[i] != i) std::swap(b[i], b[_perm[i]]);
 	}
 }

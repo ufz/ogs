@@ -30,6 +30,9 @@ template <typename T>
 class DenseVector : public std::valarray<T>
 {
 public:
+	typedef T FP_T;
+
+public:
 	using std::valarray<T>::operator=;
 	using std::valarray<T>::operator[];
 

@@ -27,6 +27,9 @@ template<typename FP_TYPE, typename IDX_TYPE = std::size_t>
 class GlobalDenseMatrix: public DenseMatrix<FP_TYPE, IDX_TYPE>
 {
 public:
+	typedef FP_TYPE FP_T;
+
+public:
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
 	GlobalDenseMatrix (const GlobalDenseMatrix &src);
