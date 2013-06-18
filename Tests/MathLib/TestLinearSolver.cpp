@@ -80,23 +80,17 @@ TEST(MathLib, ApplyKnownSolutionAndSolveLinearSystem)
 {
     Example1 ex1;
 
-    MathLib::DenseVector<double> y(ex1.mat.getNRows());
+    MathLib::DenseVector<double> rhs(ex1.mat.getNRows());
     MathLib::DenseVector<double> x(ex1.mat.getNRows());
 
     // apply BC
-    MathLib::applyKnownSolution(ex1.mat, y, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
-
-    double* b(new double[y.size()]);
-    for (std::size_t i=0; i<y.size(); i++)
-    	b[i] = y[i];
+    MathLib::applyKnownSolution(ex1.mat, rhs, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
 
     // solve
-    MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, double*> ls(ex1.mat);
-    ls.execute(b);
+    MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > ls(ex1.mat);
+    ls.execute(rhs, x);
 
-    ASSERT_DOUBLE_ARRAY_EQ(ex1.exH, b, ex1.mat.getNRows(), 1e-5);
-
-    delete [] b;
+    ASSERT_DOUBLE_ARRAY_EQ(ex1.exH, x, ex1.mat.getNRows(), 1e-5);
 }
 
 
