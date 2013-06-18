@@ -12,44 +12,48 @@
  *
  */
 
-#include "TriangularSolve.h"
-
 namespace MathLib {
 
-void forwardSolve (const DenseMatrix <double> &L, double* b)
+template <typename FP_T>
+void forwardSolve (const DenseMatrix <FP_T> &L, FP_T* b)
 {
-	size_t m (L.getNRows());
-	double t;
+	typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
+	IDX_T m (L.getNRows());
+	FP_T t;
 
-	for (size_t r=0; r<m; r++) {
+	for (IDX_T r=0; r<m; r++) {
 		t = 0.0;
-		for (size_t c=0; c<r; c++) {
+		for (IDX_T c=0; c<r; c++) {
 			t += L(r,c)*b[c];
 		}
 		b[r] = b[r]-t;
 	}
 }
 
-void backwardSolve (const DenseMatrix <double> &mat, double* b)
+template <typename FP_T>
+void backwardSolve (const DenseMatrix <FP_T> &mat, FP_T* b)
 {
-	double t;
-	size_t m (mat.getNRows()), n(mat.getNCols());
+	FP_T t;
+	typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
+	IDX_T m (mat.getNRows()), n(mat.getNCols());
 	for (int r=m-1; r>=0; r--) {
 		t = 0.0;
-		for (size_t c=r+1; c<n; c++) {
+		for (IDX_T c=r+1; c<n; c++) {
 			t += mat(r,c)*b[c];
 		}
 		b[r] = (b[r]-t) / mat(r,r);
 	}
 }
 
-void backwardSolve ( DenseMatrix<double> const& mat, double* x, double* b)
+template <typename FP_T>
+void backwardSolve ( DenseMatrix<FP_T> const& mat, FP_T* x, FP_T* b)
 {
-	size_t n_cols (mat.getNCols());
+	typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
+	IDX_T n_cols (mat.getNCols());
 	for (int r = (n_cols - 1); r >= 0; r--) {
-		double t = 0.0;
+		FP_T t = 0.0;
 
-		for (size_t c = r+1; c < n_cols; c++) {
+		for (IDX_T c = r+1; c < n_cols; c++) {
 			t += mat(r,c) * b[c];
 		}
 		x[r] = (b[r] - t) / mat(r, r);

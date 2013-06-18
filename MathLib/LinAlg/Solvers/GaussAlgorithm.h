@@ -17,10 +17,12 @@
 
 #include <cstddef>
 #include "../Dense/DenseMatrix.h"
-#include "DenseDirectLinearSolver.h"
 #include "TriangularSolve.h"
 
 namespace MathLib {
+
+template <typename MAT_T, typename VEC_T>
+class GaussAlgorithm;
 
 /**
  * This is a class for the direct solution of (dense) systems of
@@ -30,7 +32,13 @@ namespace MathLib {
  * the entries of A change! The solution for a specific
  * right hand side is computed by the method execute().
  */
-class GaussAlgorithm : public MathLib::DenseDirectLinearSolver {
+template <typename MAT_T>
+class GaussAlgorithm <MAT_T, typename MAT_T::FP_T*>
+{
+public:
+	typedef typename MAT_T::FP_T FP_T;
+	typedef typename MAT_T::IDX_T IDX_T;
+
 public:
 	/**
 	 * A direct solver for the (dense) linear system \f$A x = b\f$.
@@ -41,7 +49,7 @@ public:
 	 * Attention: the given matrix will be destroyed!
 	 * @return a object of type GaussAlgorithm
 	 */
-	GaussAlgorithm(DenseMatrix<double> &A);
+	GaussAlgorithm(MAT_T &A);
 	/**
 	 * destructor, deletes the permutation
 	 */
@@ -52,7 +60,7 @@ public:
 	 * using forward solve and backward solve
 	 * @param b at the beginning the right hand side, at the end the solution
 	 */
-	void execute (double *b) const;
+	void execute (FP_T* b) const;
 
 private:
 	/**
@@ -60,22 +68,24 @@ private:
 	 * row permutations of the LU factorization
 	 * @param b the entries of the vector b are permuted
 	 */
-	void permuteRHS (double* b) const;
+	void permuteRHS (FP_T* b) const;
 
 	/**
 	 * a reference to the matrix
 	 */
-	DenseMatrix<double>& _mat;
+	MAT_T& _mat;
 	/**
 	 * the size of the matrix
 	 */
-	std::size_t _n;
+	IDX_T _n;
 	/**
 	 * the permutation of the rows
 	 */
-	std::size_t* _perm;
+	IDX_T* _perm;
 };
 
 } // end namespace MathLib
+
+#include "GaussAlgorithm.tpp"
 
 #endif /* GAUSSALGORITHM_H_ */

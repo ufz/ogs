@@ -98,7 +98,7 @@ bool Triangle::containsPoint (const double *pnt) const
 			mat(1,1) = c[2] - a[2];
 			double y[2] = {pnt[1]-a[1], pnt[2]-a[2]};
 
-			MathLib::GaussAlgorithm gauss (mat);
+			MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
 			gauss.execute (y);
 
 			if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper
@@ -125,7 +125,7 @@ bool Triangle::containsPoint (const double *pnt) const
 			mat(1,1) = c[2] - a[2];
 			double y[2] = {pnt[0]-a[0], pnt[2]-a[2]};
 
-			MathLib::GaussAlgorithm gauss (mat);
+			MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
 			gauss.execute (y);
 
 			if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper && y[0] + y[1] <= upper) {
@@ -146,7 +146,7 @@ bool Triangle::containsPoint (const double *pnt) const
 	mat(1,1) = c[1] - a[1];
 	double y[2] = {pnt[0]-a[0], pnt[1]-a[1]};
 
-	MathLib::GaussAlgorithm gauss (mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
 	gauss.execute (y);
 
 	// check if the solution fulfills the third equation
@@ -175,7 +175,7 @@ bool Triangle::containsPoint2D (const double *pnt) const
 	mat(1,1) = c[1] - a[1];
 	double y[2] = {pnt[0]-a[0], pnt[1]-a[1]};
 
-	MathLib::GaussAlgorithm gauss (mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
 	gauss.execute (y);
 
 	const double delta (std::numeric_limits<double>::epsilon());
@@ -207,7 +207,7 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
 	c[1] = p1[2];
 	c[2] = p2[2];
 
-	MathLib::GaussAlgorithm gauss (mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
 	gauss.execute (c);
 }
 
