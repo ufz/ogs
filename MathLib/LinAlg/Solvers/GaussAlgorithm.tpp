@@ -37,7 +37,8 @@ GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
 
 		// exchange rows
 		if (_perm[k] != k) {
-			for (j=0; j<nc; j++) std::swap (_mat(_perm[k],j), _mat(k,j));
+			for (j=0; j<nc; j++)
+				std::swap (_mat(_perm[k],j), _mat(k,j));
 		}
 
 		// eliminate

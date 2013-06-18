@@ -60,7 +60,7 @@ public:
 	 * using forward solve and backward solve
 	 * @param b at the beginning the right hand side, at the end the solution
 	 */
-	void execute (FP_T *b) const;
+	void execute (FP_T* b) const;
 
 private:
 	/**
