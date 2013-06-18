@@ -43,15 +43,12 @@ IF(COMPILER_IS_GCC)
 					ENDIF()
 				ENDIF()
 		ENDIF()
-		# -g
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wextra")
-		IF(COMPILER_IS_CLANG)
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
-		ELSE()
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-nonansi-builtins")
-		ENDIF() # COMPILER_IS_CLANG
-		ADD_DEFINITIONS( -DGCC -Wfatal-errors)
 ENDIF() # COMPILER_IS_GCC
+
+IF(COMPILER_IS_CLANG)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -isystem ${CMAKE_SOURCE_DIR}/ThirdParty/ -Weverything -Wno-c++98-compat-pedantic")
+ENDIF() # COMPILER_IS_CLANG
 
 ### Intel compiler
 IF (COMPILER_IS_INTEL)
