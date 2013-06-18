@@ -22,11 +22,7 @@
 namespace MathLib {
 
 template <typename MAT_T, typename VEC_T>
-class GaussAlgorithm
-{
-};
-
-
+class GaussAlgorithm;
 
 /**
  * This is a class for the direct solution of (dense) systems of
