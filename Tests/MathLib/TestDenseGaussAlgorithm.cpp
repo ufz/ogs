@@ -54,19 +54,19 @@ TEST(MathLib, DenseGaussAlgorithm)
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, double*> gauss(mat);
 
 	// solve with b0 as right hand side
-	gauss.execute(b0);
+	gauss.solve(b0);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(b0[i], 0.0, 1e5 * std::numeric_limits<double>::epsilon());
 	}
 
 	// solve with b1 as right hand side
-	gauss.execute(b1);
+	gauss.solve(b1);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(b1[i], 1.0, 1e5 * std::numeric_limits<double>::epsilon());
 	}
 
 	// solve with b2 as right hand side
-	gauss.execute(b2);
+	gauss.solve(b2);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
 	}

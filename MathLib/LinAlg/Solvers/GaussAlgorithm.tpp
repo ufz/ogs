@@ -59,6 +59,7 @@ GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::~GaussAlgorithm()
 }
 
 template <typename MAT_T>
+void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::solve (typename MAT_T::FP_T *b) const
 void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::execute (typename MAT_T::FP_T *b) const
 {
 	permuteRHS (b);
