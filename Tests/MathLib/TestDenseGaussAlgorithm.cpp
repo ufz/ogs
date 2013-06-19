@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #include "LinAlg/Dense/DenseMatrix.h"
+#include "LinAlg/Dense/DenseVector.h"
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 
 TEST(MathLib, DenseGaussAlgorithm)
@@ -95,4 +96,55 @@ TEST(MathLib, DenseGaussAlgorithm)
 	delete [] b3;
 	delete [] x3;
 	delete [] b3_copy;
+}
+
+TEST(MathLib, DenseGaussAlgorithmDenseVector)
+{
+	std::size_t n_rows(50);
+	std::size_t n_cols(n_rows);
+
+	MathLib::DenseMatrix<double,std::size_t> mat(n_rows, n_cols);
+
+	// *** fill matrix with arbitrary values
+	// ** initialize random seed
+	srand ( static_cast<unsigned>(time(NULL)) );
+	// ** loop over rows and columns
+	for (std::size_t i(0); i<n_rows; i++) {
+		for (std::size_t j(0); j<n_cols; j++) {
+			mat(i,j) = rand()/static_cast<double>(RAND_MAX);
+		}
+	}
+
+	// *** create solution vector, set all entries to 0.0
+	MathLib::DenseVector<double> x(n_cols);
+	std::fill(std::begin(x), std::end(x), 0.0);
+	MathLib::DenseVector<double> b0(mat * x);
+
+	// *** create other right hand sides,
+	// set all entries of the solution vector to 1.0
+	std::fill(std::begin(x), std::end(x), 1.0);
+	MathLib::DenseVector<double> b1(mat * x);
+
+	std::generate(std::begin(x), std::end(x), std::rand);
+	MathLib::DenseVector<double> b2(mat * x);
+
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, MathLib::DenseVector<double>> gauss(mat);
+
+	// solve with b0 as right hand side
+	gauss.execute(b0);
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(b0[i], 0.0, 1e5 * std::numeric_limits<double>::epsilon());
+	}
+
+	// solve with b1 as right hand side
+	gauss.execute(b1);
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(b1[i], 1.0, 1e5 * std::numeric_limits<double>::epsilon());
+	}
+
+	// solve with b2 as right hand side
+	gauss.execute(b2);
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
+	}
 }
