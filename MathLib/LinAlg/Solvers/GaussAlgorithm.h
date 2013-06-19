@@ -61,7 +61,16 @@ public:
 	 * @param b at the beginning the right hand side, at the end the solution
 	 */
 	void solve (FP_T* b) const;
-	void execute (FP_T* b) const;
+
+	/**
+	 * Method solves the linear system of equations \f$A x = b\f$. It is
+	 * based on the LU factorization, that is computed in the constructor
+	 * already. For the solution forward solve and backward solve will be
+	 * employed.
+	 * @param x The solution vector of \f$A x = b\f$ that will be computed.
+	 * @param b The right hand side of \f$A x = b\f$.
+	 */
+	void solve (FP_T* x, FP_T const*const b) const;
 
 private:
 	/**

@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <algorithm>
 #include "GaussAlgorithm.h"
 
 namespace MathLib {
@@ -60,11 +61,18 @@ GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::~GaussAlgorithm()
 
 template <typename MAT_T>
 void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::solve (typename MAT_T::FP_T *b) const
-void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::execute (typename MAT_T::FP_T *b) const
 {
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
 	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
+}
+
+template <typename MAT_T>
+void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::solve(typename MAT_T::FP_T *x,
+		typename MAT_T::FP_T const* const b) const
+{
+	std::copy(b, b+_mat.getNRows(), x);
+	solve(x);
 }
 
 template <typename MAT_T>

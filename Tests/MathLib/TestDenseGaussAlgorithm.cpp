@@ -23,7 +23,7 @@
 
 TEST(MathLib, DenseGaussAlgorithm)
 {
-	std::size_t n_rows(50);
+	std::size_t n_rows(100);
 	std::size_t n_cols(n_rows);
 
 	MathLib::DenseMatrix<double,std::size_t> mat(n_rows, n_cols);
@@ -51,6 +51,12 @@ TEST(MathLib, DenseGaussAlgorithm)
 	std::generate(x,x+n_cols, std::rand);
 	double *b2(mat * x);
 
+	// right hand side and solution vector with random entries
+	double *b3(mat * x);
+	double *b3_copy(mat * x);
+	double *x3 (new double[n_cols]);
+	std::generate(x3,x3+n_cols, std::rand);
+
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, double*> gauss(mat);
 
 	// solve with b0 as right hand side
@@ -71,8 +77,22 @@ TEST(MathLib, DenseGaussAlgorithm)
 		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
 	}
 
+	// solve with b3 as right hand side and x3 as solution vector
+	gauss.solve(x3, b3);
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
+	}
+	// assure entries of vector b3 are not changed
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(fabs(b3[i]-b3_copy[i])/fabs(b3[i]), 0.0, std::numeric_limits<double>::epsilon());
+	}
+
+
 	delete [] x;
 	delete [] b0;
 	delete [] b1;
 	delete [] b2;
+	delete [] b3;
+	delete [] x3;
+	delete [] b3_copy;
 }
