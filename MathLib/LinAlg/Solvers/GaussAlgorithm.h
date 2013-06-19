@@ -21,9 +21,6 @@
 
 namespace MathLib {
 
-template <typename MAT_T, typename VEC_T>
-class GaussAlgorithm;
-
 /**
  * This is a class for the direct solution of (dense) systems of
  * linear equations, \f$A x = b\f$. During the construction of
@@ -32,8 +29,8 @@ class GaussAlgorithm;
  * the entries of A change! The solution for a specific
  * right hand side is computed by the method execute().
  */
-template <typename MAT_T>
-class GaussAlgorithm <MAT_T, typename MAT_T::FP_T*>
+template <typename MAT_T, typename VEC_T = typename MAT_T::FP_T*>
+class GaussAlgorithm
 {
 public:
 	typedef typename MAT_T::FP_T FP_T;
@@ -60,17 +57,7 @@ public:
 	 * using forward solve and backward solve
 	 * @param b at the beginning the right hand side, at the end the solution
 	 */
-	void solve (FP_T* b) const;
-
-	/**
-	 * Method solves the linear system of equations \f$A x = b\f$. It is
-	 * based on the LU factorization, that is computed in the constructor
-	 * already. For the solution forward solve and backward solve will be
-	 * employed.
-	 * @param x The solution vector of \f$A x = b\f$ that will be computed.
-	 * @param b The right hand side of \f$A x = b\f$.
-	 */
-	void solve (FP_T* x, FP_T const*const b) const;
+	void solve (VEC_T b) const;
 
 private:
 	/**
@@ -78,7 +65,7 @@ private:
 	 * row permutations of the LU factorization
 	 * @param b the entries of the vector b are permuted
 	 */
-	void permuteRHS (FP_T* b) const;
+	void permuteRHS (VEC_T& b) const;
 
 	/**
 	 * a reference to the matrix
