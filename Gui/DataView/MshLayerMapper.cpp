@@ -12,6 +12,9 @@
  *
  */
 
+// stl
+#include <algorithm>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
