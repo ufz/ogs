@@ -34,7 +34,14 @@ namespace MathLib
 class LisLinearSolver
 {
 public:
-    LisLinearSolver() {};
+    /**
+     * Constructor
+     * @param A         Coefficient matrix object
+     * @param option    A pointer to a linear solver option. In case you omit
+     *                  this argument, default settings follow those of
+     *                  LisOption struct.
+     */
+    LisLinearSolver(LisMatrix &A, boost::property_tree::ptree const*const option = nullptr);
 
     virtual ~LisLinearSolver() {};
 
@@ -43,9 +50,6 @@ public:
      * @param option
      */
     void setOption(const boost::property_tree::ptree &option);
-
-    /// solve a given linear equations
-    void solve(LisMatrix &A, LisVector &b, LisVector &x);
 
     /**
      * configure linear solvers
@@ -59,7 +63,17 @@ public:
      */
     LisOption &getOption() { return _option; }
 
+    /**
+     * solve a given linear equations
+     *
+     * @param b     RHS vector
+     * @param x     Solution vector
+     */
+    void solve(LisVector &b, LisVector &x);
+
+
 private:
+    LisMatrix& _A;
     LisOption _option;
 };
 

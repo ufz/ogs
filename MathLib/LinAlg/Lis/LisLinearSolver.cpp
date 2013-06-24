@@ -26,6 +26,13 @@
 namespace MathLib
 {
 
+LisLinearSolver::LisLinearSolver(LisMatrix &A, boost::property_tree::ptree const*const option)
+: _A(A)
+{
+    if (option)
+        setOption(*option);
+}
+
 void LisLinearSolver::setOption(const boost::property_tree::ptree &option)
 {
     using boost::property_tree::ptree;
@@ -56,9 +63,9 @@ void LisLinearSolver::setOption(const boost::property_tree::ptree &option)
     }
 }
 
-void LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
+void LisLinearSolver::solve(LisVector &b, LisVector &x)
 {
-    if (!isMatrixAssembled(A)) {
+    if (!finalizeMatrixAssembly(_A)) {
         ERR("-> LisMatrix has not been assembled. LisLinearSolver::solve() is skipped.");
         return;
     }
@@ -106,7 +113,7 @@ void LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
 
     // solve
     INFO("-> solve");
-    ierr = lis_solve(A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver); checkLisError(ierr);
+    ierr = lis_solve(_A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver); checkLisError(ierr);
 
     int iter = 0;
     double resid = 0.0;
