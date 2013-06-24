@@ -19,8 +19,9 @@
 namespace MathLib {
 
 template <typename MAT_T, typename VEC_T>
-GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm (MAT_T &A) :
-	_mat (A), _n(_mat.getNRows()), _perm (new IDX_T [_n])
+GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
+		boost::property_tree::ptree const* const) :
+		_mat(A), _n(_mat.getNRows()), _perm(new IDX_T[_n])
 {
 	IDX_T k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
 	FP_T l;

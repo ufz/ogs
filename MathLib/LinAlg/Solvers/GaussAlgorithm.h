@@ -16,6 +16,7 @@
 #define GAUSSALGORITHM_H_
 
 #include <cstddef>
+#include <boost/property_tree/ptree.hpp>
 #include "../Dense/DenseMatrix.h"
 #include "TriangularSolve.h"
 
@@ -43,10 +44,13 @@ public:
 	 * of the object the matrix contains the factor L (without the diagonal)
 	 * in the strictly lower part and the factor U in the upper part.
 	 * The diagonal entries of L are all 1.0 and are not explicitly stored.
-	 * Attention: the given matrix will be destroyed!
-	 * @return a object of type GaussAlgorithm
+	 * @attention: the given matrix will be destroyed!
+	 * @param option For some solvers the user can give parameters to the
+	 * algorithm. GaussAlgorithm has to fulfill the common interface
+	 * of all solvers of systems of linear equations. For this reason the
+	 * second argument was introduced.
 	 */
-	GaussAlgorithm(MAT_T &A);
+	GaussAlgorithm(MAT_T &A, boost::property_tree::ptree const*const option = nullptr);
 	/**
 	 * destructor, deletes the permutation
 	 */
