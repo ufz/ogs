@@ -31,7 +31,7 @@ TEST(MathLib, DenseGaussAlgorithm)
 
 	// *** fill matrix with arbitrary values
 	// ** initialize random seed
-	srand ( static_cast<unsigned>(time(NULL)) );
+	srand ( static_cast<unsigned>(time(nullptr)) );
 	// ** loop over rows and columns
 	for (std::size_t i(0); i<n_rows; i++) {
 		for (std::size_t j(0); j<n_cols; j++) {
@@ -107,7 +107,7 @@ TEST(MathLib, DenseGaussAlgorithmDenseVector)
 
 	// *** fill matrix with arbitrary values
 	// ** initialize random seed
-	srand ( static_cast<unsigned>(time(NULL)) );
+	srand ( static_cast<unsigned>(time(nullptr)) );
 	// ** loop over rows and columns
 	for (std::size_t i(0); i<n_rows; i++) {
 		for (std::size_t j(0); j<n_cols; j++) {
