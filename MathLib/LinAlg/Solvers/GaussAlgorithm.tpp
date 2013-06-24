@@ -86,7 +86,7 @@ void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b) const
 }
 
 template <typename MAT_T, typename VEC_T>
-void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T & x, VEC_T const& b) const
+void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T const& b, VEC_T & x) const
 {
 	for (std::size_t k(0); k<_mat.getNRows(); k++)
 		x[k] = b[k];

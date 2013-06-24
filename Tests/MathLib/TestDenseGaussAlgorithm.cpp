@@ -79,7 +79,7 @@ TEST(MathLib, DenseGaussAlgorithm)
 	}
 
 	// solve with b3 as right hand side and x3 as solution vector
-	gauss.solve(x3, b3);
+	gauss.solve(b3, x3);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
@@ -154,7 +154,7 @@ TEST(MathLib, DenseGaussAlgorithmDenseVector)
 		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 
-	gauss.solve(x3, b3);
+	gauss.solve(b3, x3);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}

@@ -16,7 +16,9 @@
 #define GAUSSALGORITHM_H_
 
 #include <cstddef>
+
 #include <boost/property_tree/ptree.hpp>
+
 #include "../Dense/DenseMatrix.h"
 #include "TriangularSolve.h"
 
@@ -69,10 +71,10 @@ public:
 	/**
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
 	 * using forward solve and backward solve.
-	 * @param x (output) the solution
 	 * @param b (input) the right hand side
+	 * @param x (output) the solution
 	 */
-	void solve(VEC_T & x, VEC_T const& b) const;
+	void solve(VEC_T const& b, VEC_T & x) const;
 
 private:
 	/**
