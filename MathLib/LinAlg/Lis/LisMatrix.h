@@ -102,13 +102,20 @@ public:
     /// get this matrix type
     LisOption::MatrixType getMatrixType() const { return _mat_type; };
 
+    /// return if this matrix is already assembled or not
+    bool isAssembled() const { return _is_assembled; };
+
 private:
     std::size_t _n_rows;
     double _max_diag_coeff;
     LisOption::MatrixType _mat_type;
     LIS_MATRIX _AA;
+    bool _is_assembled;
     int _is;
     int _ie;
+
+    // friend function
+    friend bool finalizeMatrixAssembly(LisMatrix &mat);
 };
 
 template<class T_DENSE_MATRIX>

@@ -21,7 +21,7 @@ namespace MathLib
 {
 
 LisMatrix::LisMatrix(std::size_t dimension, LisOption::MatrixType mat_type)
-: _n_rows(dimension), _max_diag_coeff(.0), _mat_type(mat_type)
+: _n_rows(dimension), _max_diag_coeff(.0), _mat_type(mat_type), _is_assembled(false)
 {
     int ierr = 0;
     ierr = lis_matrix_create(0, &_AA); checkLisError(ierr);
@@ -59,10 +59,14 @@ void LisMatrix::matvec (const LisVector &x, LisVector &y) const
 
 bool finalizeMatrixAssembly(LisMatrix &mat)
 {
-    if (!lis_matrix_is_assembled(mat.getRawMatrix())) {
-        int ierr = lis_matrix_set_type(mat.getRawMatrix(), static_cast<int>(mat.getMatrixType())); checkLisError(ierr);
-        ierr = lis_matrix_assemble(mat.getRawMatrix()); checkLisError(ierr);
-    }
+    LIS_MATRIX &A = mat.getRawMatrix();
+    // commented out below because lis_matrix_is_assembled() always returns the same value.
+    //    if (LIS_SUCCESS!=lis_matrix_is_assembled(A)) {
+    if (!mat.isAssembled()) {
+        int ierr = lis_matrix_set_type(A, static_cast<int>(mat.getMatrixType())); checkLisError(ierr);
+        ierr = lis_matrix_assemble(A); //checkLisError(ierr);
+        mat._is_assembled = true;
+   }
     return true;
 };
 
