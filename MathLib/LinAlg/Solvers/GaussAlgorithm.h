@@ -54,10 +54,14 @@ public:
 
 	/**
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
-	 * using forward solve and backward solve
+	 * using forward solve and backward solve.
 	 * @param b at the beginning the right hand side, at the end the solution
 	 */
-	void solve (VEC_T b) const;
+	template <typename V> void solve(V & b) const;
+	void solve(FP_T* & b) const;
+	void solve(FP_T const* & b) const;
+
+
 
 private:
 	/**
@@ -65,6 +69,7 @@ private:
 	 * row permutations of the LU factorization
 	 * @param b the entries of the vector b are permuted
 	 */
+	template <typename V> void permuteRHS(V & b) const;
 	void permuteRHS (VEC_T& b) const;
 
 	/**

@@ -60,7 +60,8 @@ GaussAlgorithm<MAT_T, VEC_T>::~GaussAlgorithm()
 }
 
 template <typename MAT_T, typename VEC_T>
-void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T b) const
+template <typename V>
+void GaussAlgorithm<MAT_T, VEC_T>::solve (V & b) const
 {
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
@@ -68,10 +69,37 @@ void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T b) const
 }
 
 template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>:: solve(FP_T const* & b) const
+{
+	permuteRHS (b);
+	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
+	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
+}
+
+template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b) const
+{
+	permuteRHS (b);
+	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
+	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
+}
+
+template <typename MAT_T, typename VEC_T>
+template <typename V>
+void GaussAlgorithm<MAT_T, VEC_T>::permuteRHS (V & b) const
+{
+	for (IDX_T i=0; i<_n; i++) {
+		if (_perm[i] != i)
+			std::swap(b[i], b[_perm[i]]);
+	}
+}
+
+template <typename MAT_T, typename VEC_T>
 void GaussAlgorithm<MAT_T, VEC_T>::permuteRHS (VEC_T& b) const
 {
 	for (IDX_T i=0; i<_n; i++) {
-		if (_perm[i] != i) std::swap(b[i], b[_perm[i]]);
+		if (_perm[i] != i)
+			std::swap(b[i], b[_perm[i]]);
 	}
 }
 
