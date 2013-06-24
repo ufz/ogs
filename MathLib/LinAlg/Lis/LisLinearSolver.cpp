@@ -65,10 +65,7 @@ void LisLinearSolver::setOption(const boost::property_tree::ptree &option)
 
 void LisLinearSolver::solve(LisVector &b, LisVector &x)
 {
-    if (!finalizeMatrixAssembly(_A)) {
-        ERR("-> LisMatrix has not been assembled. LisLinearSolver::solve() is skipped.");
-        return;
-    }
+    finalizeMatrixAssembly(_A);
 
     INFO("------------------------------------------------------------------");
     INFO("*** LIS solver computation");
