@@ -62,6 +62,13 @@ public:
 	void solve(FP_T const* & b) const;
 
 
+	/**
+	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
+	 * using forward solve and backward solve.
+	 * @param x (output) the solution
+	 * @param b (input) the right hand side
+	 */
+	void solve(VEC_T & x, VEC_T const& b) const;
 
 private:
 	/**

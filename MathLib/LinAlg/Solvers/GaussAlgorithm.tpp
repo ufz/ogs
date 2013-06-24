@@ -85,6 +85,14 @@ void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b) const
 }
 
 template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T & x, VEC_T const& b) const
+{
+	for (std::size_t k(0); k<_mat.getNRows(); k++)
+		x[k] = b[k];
+	solve(x);
+}
+
+template <typename MAT_T, typename VEC_T>
 template <typename V>
 void GaussAlgorithm<MAT_T, VEC_T>::permuteRHS (V & b) const
 {
