@@ -13,11 +13,13 @@
  */
 
 #include <gtest/gtest.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 #include "MathLib/LinAlg/Dense/DenseTools.h"
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 #include "../TestTools.h"
@@ -74,23 +76,48 @@ struct Example1
     }
 };
 
-} // end namespace
-
-TEST(MathLib, ApplyKnownSolutionAndSolveLinearSystem)
+template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
+void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_option)
 {
     Example1 ex1;
 
-    MathLib::DenseVector<double> rhs(ex1.mat.getNRows());
-    MathLib::DenseVector<double> x(ex1.mat.getNRows());
+    // set a coefficient matrix
+    for (size_t i=0; i<ex1.dim_eqs; i++) {
+        for (size_t j=0; j<ex1.dim_eqs; j++) {
+            double v = ex1.mat(i, j);
+            if (v!=.0)
+                A.addValue(i, j, v);
+        }
+    }
+
+    // set RHS and solution vectors
+    T_VECTOR rhs(ex1.dim_eqs);
+    T_VECTOR x(ex1.dim_eqs);
 
     // apply BC
-    MathLib::applyKnownSolution(ex1.mat, rhs, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
+    MathLib::applyKnownSolution(A, rhs, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
+
+    MathLib::finalizeMatrixAssembly(A);
 
     // solve
-    MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > ls(ex1.mat);
-    ls.execute(rhs, x);
+    T_LINEAR_SOVLER ls(A, &ls_option);
+    ls.solve(rhs, x);
 
-    ASSERT_DOUBLE_ARRAY_EQ(ex1.exH, x, ex1.mat.getNRows(), 1e-5);
+    ASSERT_DOUBLE_ARRAY_EQ(ex1.exH, x, ex1.dim_eqs, 1e-5);
+
+}
+
+} // end namespace
+
+TEST(MathLib, CheckInterface_GaussAlgorithm)
+{
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    t_root.put_child("LinearSolver", t_solver);
+
+    typedef MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > LinearSolverType;
+    MathLib::GlobalDenseMatrix<double> A(Example1::dim_eqs, Example1::dim_eqs);
+    checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>, LinearSolverType>(A, t_root);
 }
 
 
