@@ -63,29 +63,29 @@ TEST(MathLib, DenseGaussAlgorithm)
 	// solve with b0 as right hand side
 	gauss.solve(b0);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(b0[i], 0.0, 1e5 * std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(b0[i], 0.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b1 as right hand side
 	gauss.solve(b1);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(b1[i], 1.0, 1e5 * std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(b1[i], 1.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b2 as right hand side
 	gauss.solve(b2);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b3 as right hand side and x3 as solution vector
 	gauss.solve(x3, b3);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 	// assure entries of vector b3 are not changed
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(fabs(b3[i]-b3_copy[i])/fabs(b3[i]), 0.0, std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(fabs(b3[i]-b3_copy[i])/fabs(b3[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 
 
@@ -128,23 +128,38 @@ TEST(MathLib, DenseGaussAlgorithmDenseVector)
 	std::generate(std::begin(x), std::end(x), std::rand);
 	MathLib::DenseVector<double> b2(mat * x);
 
+	// right hand side and solution vector with random entries
+	MathLib::DenseVector<double> b3(mat * x);
+	MathLib::DenseVector<double> b3_copy(mat * x);
+	MathLib::DenseVector<double> x3 (n_cols);
+	std::generate(std::begin(x3),std::end(x3), std::rand);
+
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, MathLib::DenseVector<double>> gauss(mat);
 
 	// solve with b0 as right hand side
-	gauss.execute(b0);
+	gauss.solve(b0);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(b0[i], 0.0, 1e5 * std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(b0[i], 0.0, 1e5 * std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b1 as right hand side
-	gauss.execute(b1);
+	gauss.solve(b1);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(b1[i], 1.0, 1e5 * std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(b1[i], 1.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b2 as right hand side
-	gauss.execute(b2);
+	gauss.solve(b2);
 	for (std::size_t i(0); i<n_rows; i++) {
-		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, 1e5*std::numeric_limits<double>::epsilon());
+		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
+	}
+
+	gauss.solve(x3, b3);
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
+	}
+	// assure entries of vector b3 are not changed
+	for (std::size_t i(0); i<n_rows; i++) {
+		ASSERT_NEAR(fabs(b3[i]-b3_copy[i])/fabs(b3[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 }
