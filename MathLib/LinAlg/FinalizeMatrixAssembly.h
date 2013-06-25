@@ -14,10 +14,15 @@
 #ifndef FINALIZEMATRIXASSEMBLY_H_
 #define FINALIZEMATRIXASSEMBLY_H_
 
+namespace MathLib
+{
+
 template <typename MAT_T>
 bool finalizeMatrixAssembly(MAT_T &)
 {
 	return true;
 }
+
+} // MathLib
 
 #endif /* FINALIZEMATRIXASSEMBLY_H_ */
