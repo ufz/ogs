@@ -2,7 +2,7 @@
  * \file
  * \author Norihiro Watanabe
  * \date   2013-05-15
- * \brief  Implementation tests of Vector classes.
+ * \brief  Interface tests of global vector classes
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -16,9 +16,13 @@
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 
-TEST(Math, CheckInterface_DenseVector)
+namespace
 {
-    MathLib::DenseVector<double> x(10);
+
+template <class T_VECTOR>
+void checkGlobalVectorInterface()
+{
+    T_VECTOR x(10);
 
     ASSERT_EQ(10u, x.size());
     ASSERT_EQ(0u, x.getRangeBegin());
@@ -27,11 +31,13 @@ TEST(Math, CheckInterface_DenseVector)
     ASSERT_EQ(.0, x.get(0));
     x.set(0, 1.0);
     ASSERT_EQ(1.0, x.get(0));
+    ASSERT_EQ(0.0, x.get(1));
     x.add(0, 1.0);
     ASSERT_EQ(2.0, x.get(0));
 
-    MathLib::DenseVector<double> y(x);
+    T_VECTOR y(x);
     ASSERT_EQ(2.0, y.get(0));
+    ASSERT_EQ(0.0, y.get(1));
     y += x;
     ASSERT_EQ(4.0, y.get(0));
     y -= x;
@@ -41,6 +47,21 @@ TEST(Math, CheckInterface_DenseVector)
     y = x;
     ASSERT_EQ(2.0, y.get(0));
 
+    std::vector<double> local_vec(2, 1.0);
+    std::vector<std::size_t> vec_pos(2);
+    vec_pos[0] = 0;
+    vec_pos[1] = 3;
+    y.addSubVector(vec_pos, local_vec);
+    ASSERT_EQ(3.0, y.get(0));
+    ASSERT_EQ(0.0, y.get(1));
+    ASSERT_EQ(1.0, y.get(3));
+}
+
+} // end namespace
+
+TEST(Math, CheckInterface_DenseVector)
+{
+    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 
 
