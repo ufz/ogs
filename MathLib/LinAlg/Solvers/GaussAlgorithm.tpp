@@ -13,13 +13,15 @@
  */
 
 #include <cmath>
+#include <algorithm>
 #include "GaussAlgorithm.h"
 
 namespace MathLib {
 
-template <typename MAT_T>
-GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
-	_mat (A), _n(_mat.getNRows()), _perm (new IDX_T [_n])
+template <typename MAT_T, typename VEC_T>
+GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
+		boost::property_tree::ptree const* const) :
+		_mat(A), _n(_mat.getNRows()), _perm(new IDX_T[_n])
 {
 	IDX_T k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
 	FP_T l;
@@ -52,25 +54,61 @@ GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::GaussAlgorithm (MAT_T &A) :
 	}
 }
 
-template <typename MAT_T>
-GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::~GaussAlgorithm()
+template <typename MAT_T, typename VEC_T>
+GaussAlgorithm<MAT_T, VEC_T>::~GaussAlgorithm()
 {
 	delete [] _perm;
 }
 
-template <typename MAT_T>
-void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::execute (typename MAT_T::FP_T *b) const
+template <typename MAT_T, typename VEC_T>
+template <typename V>
+void GaussAlgorithm<MAT_T, VEC_T>::solve (V & b) const
 {
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
 	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
 }
 
-template <typename MAT_T>
-void GaussAlgorithm<MAT_T, typename MAT_T::FP_T*>::permuteRHS (typename MAT_T::FP_T* b) const
+template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>:: solve(FP_T const* & b) const
+{
+	permuteRHS (b);
+	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
+	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
+}
+
+template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b) const
+{
+	permuteRHS (b);
+	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
+	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
+}
+
+template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T const& b, VEC_T & x) const
+{
+	for (std::size_t k(0); k<_mat.getNRows(); k++)
+		x[k] = b[k];
+	solve(x);
+}
+
+template <typename MAT_T, typename VEC_T>
+template <typename V>
+void GaussAlgorithm<MAT_T, VEC_T>::permuteRHS (V & b) const
 {
 	for (IDX_T i=0; i<_n; i++) {
-		if (_perm[i] != i) std::swap(b[i], b[_perm[i]]);
+		if (_perm[i] != i)
+			std::swap(b[i], b[_perm[i]]);
+	}
+}
+
+template <typename MAT_T, typename VEC_T>
+void GaussAlgorithm<MAT_T, VEC_T>::permuteRHS (VEC_T& b) const
+{
+	for (IDX_T i=0; i<_n; i++) {
+		if (_perm[i] != i)
+			std::swap(b[i], b[_perm[i]]);
 	}
 }
 
