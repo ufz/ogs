@@ -104,9 +104,30 @@ void DenseMatrix<FP_TYPE, IDX_TYPE>::axpy(FP_TYPE alpha, const FP_TYPE* x, FP_TY
 }
 
 template<typename FP_TYPE, typename IDX_TYPE>
-FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (const FP_TYPE *x) const
+FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (FP_TYPE* const& x) const
+{
+	return this->operator*(static_cast<FP_TYPE const*>(x));
+}
+
+template<typename FP_TYPE, typename IDX_TYPE>
+FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (FP_TYPE const* const& x) const
 {
 	FP_TYPE *y(new FP_TYPE[_n_rows]);
+	for (IDX_TYPE i(0); i < _n_rows; i++) {
+		y[i] = 0.0;
+		for (IDX_TYPE j(0); j < _n_cols; j++) {
+			y[i] += _data[address(i, j)] * x[j];
+		}
+	}
+
+	return y;
+}
+
+template<typename FP_TYPE, typename IDX_TYPE>
+template <typename V>
+V DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (V const& x) const
+{
+	V y(_n_rows);
 	for (IDX_TYPE i(0); i < _n_rows; i++) {
 		y[i] = 0.0;
 		for (IDX_TYPE j(0); j < _n_cols; j++) {

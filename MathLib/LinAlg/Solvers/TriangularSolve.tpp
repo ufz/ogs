@@ -14,8 +14,8 @@
 
 namespace MathLib {
 
-template <typename FP_T>
-void forwardSolve (const DenseMatrix <FP_T> &L, FP_T* b)
+template <typename FP_T, typename VEC_T>
+void forwardSolve (const DenseMatrix <FP_T> &L, VEC_T& b)
 {
 	typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
 	IDX_T m (L.getNRows());
@@ -30,8 +30,8 @@ void forwardSolve (const DenseMatrix <FP_T> &L, FP_T* b)
 	}
 }
 
-template <typename FP_T>
-void backwardSolve (const DenseMatrix <FP_T> &mat, FP_T* b)
+template <typename FP_T, typename VEC_T>
+void backwardSolve (const DenseMatrix <FP_T> &mat, VEC_T& b)
 {
 	FP_T t;
 	typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
@@ -45,8 +45,8 @@ void backwardSolve (const DenseMatrix <FP_T> &mat, FP_T* b)
 	}
 }
 
-template <typename FP_T>
-void backwardSolve ( DenseMatrix<FP_T> const& mat, FP_T* x, FP_T* b)
+template <typename FP_T, typename VEC_T>
+void backwardSolve ( DenseMatrix<FP_T> const& mat, VEC_T& x, VEC_T const& b)
 {
 	typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
 	IDX_T n_cols (mat.getNCols());

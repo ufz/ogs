@@ -73,7 +73,10 @@ public:
     * @param x
     * @return
     */
-   FP_TYPE* operator* (const FP_TYPE *x) const;
+   FP_TYPE* operator* (FP_TYPE* const& x) const;
+   FP_TYPE* operator* (FP_TYPE const* const& x) const;
+   template <typename V> V operator* (V const& x) const;
+
    /**
     * DenseMatrix matrix addition.
     * @param mat

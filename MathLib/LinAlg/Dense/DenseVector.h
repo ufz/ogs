@@ -93,7 +93,7 @@ public:
 template <typename T>
 std::ostream& operator<<(std::ostream& os, DenseVector<T> const & v)
 {
-	std::copy(v.begin(), v.end(), std::ostream_iterator<T>(os, "\n"));
+	std::copy(std::begin(v), std::end(v), std::ostream_iterator<T>(os, "\n"));
 	return os;
 }
 
