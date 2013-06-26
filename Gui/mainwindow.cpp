@@ -1033,6 +1033,8 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 	}
 	else
 		std::cout << "No geometry information selected..." << std::endl;
+
+	QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::showConditionWriterDialog()
