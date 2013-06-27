@@ -115,15 +115,18 @@ IF (OGS_LIBS_DIR_FOUND AND NOT VTK_DIR)
 	SET (VTK_DIR ${OGS_LIBS_DIR}/VTK/build)
 ENDIF () # OGS_LIBS_DIR_FOUND
 IF(NOT OGS_DONT_USE_VTK)
-	FIND_PACKAGE( VTK 6.0 NO_MODULE)
+	FIND_PACKAGE( VTK 6.0 COMPONENTS
+		vtkRenderingCore
+		vtkGUISupportQt
+		vtkInteractionWidgets
+		vtkFiltersTexture
+		vtkIONetCDF
+		vtkIOLegacy
+		vtkIOXML
+		vtkIOExport
+		NO_MODULE
+	)
 ENDIF()
-#IF(VTK_FOUND)
-#	ADD_DEFINITIONS(-DVTK_FOUND)
-#	FIND_PACKAGE(QVTK)
-#	IF(NOT QVTK_FOUND AND OGS_BUILD_GUI)
-#		MESSAGE(FATAL_ERROR "QVTK was not found but is required for OGS_BUILD_GUI! On Ubuntu it can be installed via 'sudo apt-get install libvtk5-qt4-dev'")
-#	ENDIF()
-#ENDIF()
 
 ## NetCDF ##
 IF("${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_PATCH_VERSION}" VERSION_GREATER 5.6)
