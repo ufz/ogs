@@ -28,4 +28,14 @@ inline void ASSERT_DOUBLE_ARRAY_EQ(const T1 &Expected, const T2 &Actual, std::si
         ASSERT_NEAR(Expected[i], Actual[i], epsilon);
 }
 
+template <typename T>
+class series
+{
+public:
+    series(T v0=0, T by=1) : v(v0), dv(by) {};
+    T operator()() { v+=dv; return (v-dv);}
+private:
+    T v;
+    T dv;
+};
 #endif // TESTTOOLS_H_
