@@ -12,12 +12,16 @@
  *
  */
 
+#include "ProcessModel.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // ** INCLUDES **
 #include "ProcessItem.h"
 #include "CondObjectListItem.h"
 #include "CondItem.h"
 #include "ProcessItem.h"
-#include "ProcessModel.h"
 #include "FEMCondition.h"
 #include "GEOObjects.h"
 #include "GeoObject.h"
@@ -26,20 +30,20 @@
 #include <QFileInfo>
 #include <vtkPolyDataAlgorithm.h>
 
-ProcessModel::ProcessModel( ProjectData &project, QObject* parent /*= 0*/ )
-	: TreeModel(parent), _project(project)
+ProcessModel::ProcessModel(ProjectData &project, QObject* parent /*= 0*/) :
+		TreeModel(parent), _project(project)
 {
 	QList<QVariant> rootData;
 	delete _rootItem;
 	rootData << "Name" << "Value" << "" << "" << "";
-	_rootItem = new TreeItem(rootData, NULL);
+	_rootItem = new TreeItem(rootData, nullptr);
 }
 
 ProcessModel::~ProcessModel()
 {
 }
 
-int ProcessModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
+int ProcessModel::columnCount(const QModelIndex &parent /*= QModelIndex()*/) const
 {
 	Q_UNUSED(parent)
 
@@ -49,35 +53,38 @@ int ProcessModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) c
 void ProcessModel::addConditionItem(FEMCondition* c)
 {
 	ProcessItem* processParent = this->getProcessParent(c->getProcessType());
-	if (processParent == NULL)
+	if (processParent == nullptr)
 	{
-		ProcessInfo* pcs = new ProcessInfo(c->getProcessType(), c->getProcessPrimaryVariable()/* TODO6, NULL*/);
+		ProcessInfo* pcs = new ProcessInfo(c->getProcessType(),
+				c->getProcessPrimaryVariable()/* TODO6, nullptr*/);
 		processParent = this->addProcess(pcs);
 	}
 
 	CondObjectListItem* condParent = this->getCondParent(processParent, c->getCondType());
-	if (condParent == NULL)
+	if (condParent == nullptr)
 		condParent = this->createCondParent(processParent, c);
 	else
 		condParent->addCondition(c);
 
 	QList<QVariant> condData;
 	condData << QString::fromStdString(c->getGeoName())
-			    << QString::fromStdString(c->getGeomTypeAsString());
+			<< QString::fromStdString(c->getGeomTypeAsString());
 	CondItem* condItem = new CondItem(condData, condParent, c);
 	condParent->appendChild(condItem);
 	// add information on primary variable
 	QList<QVariant> pvData;
-	pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
+	pvData
+			<< QString::fromStdString(
+					convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
 	TreeItem* pvInfo = new TreeItem(pvData, condItem);
 	// add distribution information
 	QList<QVariant> disData;
 	disData << QString::fromStdString(convertDisTypeToString(c->getProcessDistributionType()));
-	std::vector<size_t> dis_nodes  = c->getDisNodes();
+	std::vector<size_t> dis_nodes = c->getDisNodes();
 	std::vector<double> dis_values = c->getDisValues();
 	TreeItem* disInfo;
-	if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
-		c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
+	if (c->getProcessDistributionType() == FiniteElement::CONSTANT
+			|| c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
 	{
 		disData << dis_values[0];
 		disInfo = new TreeItem(disData, condItem);
@@ -107,15 +114,14 @@ void ProcessModel::addCondition(FEMCondition* condition)
 {
 	bool is_domain = (condition->getGeomType() == GeoLib::GEODOMAIN) ? true : false;
 	// HACK: direct source terms are not domain conditions but they also don't contain geo-object-names
-	if (condition->getProcessDistributionType() == FiniteElement::DIRECT) is_domain = true;
+	if (condition->getProcessDistributionType() == FiniteElement::DIRECT)
+		is_domain = true;
 
 	const GeoLib::GeoObject* object = condition->getGeoObj();
-	if (object == NULL)
+	if (object == nullptr)
 	{
-		object = _project.getGEOObjects()->getGEOObject(
-						 condition->getAssociatedGeometryName(),
-						 condition->getGeomType(),
-						 condition->getGeoName());
+		object = _project.getGEOObjects()->getGEOObject(condition->getAssociatedGeometryName(),
+				condition->getGeomType(), condition->getGeoName());
 		condition->setGeoObj(object);
 	}
 	if (object || is_domain)
@@ -124,9 +130,8 @@ void ProcessModel::addCondition(FEMCondition* condition)
 		this->addConditionItem(condition);
 	}
 	else
-		std::cout << "Error in ProcessModel::addConditions() - Specified geometrical object \""
-		          << condition->getGeoName() << "\" not found in associated geometry..."
-				  << std::endl;
+		ERR("ProcessModel::addConditions(): Specified geometrical object \"%s\" not found in associated geometry.",
+				condition->getGeoName().c_str());
 }
 
 void ProcessModel::addConditions(std::vector<FEMCondition*> &conditions)
@@ -137,11 +142,15 @@ void ProcessModel::addConditions(std::vector<FEMCondition*> &conditions)
 
 ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 {
-	if (this->getProcessParent(pcs->getProcessType()) == NULL)
+	if (this->getProcessParent(pcs->getProcessType()) == nullptr)
 	{
 		this->_project.addProcess(pcs);
 		QList<QVariant> processData;
-		processData << QVariant(QString::fromStdString(FiniteElement::convertProcessTypeToString(pcs->getProcessType()))) << "";
+		processData
+				<< QVariant(
+						QString::fromStdString(
+								FiniteElement::convertProcessTypeToString(pcs->getProcessType())))
+				<< "";
 		ProcessItem* process = new ProcessItem(processData, _rootItem, pcs);
 		_rootItem->appendChild(process);
 		reset();
@@ -149,31 +158,33 @@ ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 	}
 	else
 	{
-		std::cout << "Warning in ProcessModel::addProcess() - "
-			      << FiniteElement::convertProcessTypeToString(pcs->getProcessType())
-				  << " already exists." << std::endl;
-		return NULL;
+		WARN("ProcessModel::addProcess(): %s  already exists.",
+				FiniteElement::convertProcessTypeToString(pcs->getProcessType()).c_str());
+		return nullptr;
 	}
 }
 
-void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type, const std::string &geometry_name, const FEMCondition::CondType cond_type)
+void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type,
+		const std::string &geometry_name, const FEMCondition::CondType cond_type)
 {
 	_project.removeConditions(pcs_type, geometry_name, cond_type);
 
-	while (_rootItem->childCount()>0)
+	while (_rootItem->childCount() > 0)
 	{
 		ProcessItem* pcs = static_cast<ProcessItem*>(_rootItem->child(0));
-		for (int j=0; j<pcs->childCount(); j++)
-			emit conditionsRemoved(this, pcs->getItem()->getProcessType(), (static_cast<CondObjectListItem*>(pcs->child(j)))->getType());
+		for (int j = 0; j < pcs->childCount(); j++)
+			emit conditionsRemoved(this, pcs->getItem()->getProcessType(),
+					(static_cast<CondObjectListItem*>(pcs->child(j)))->getType());
 
 		_rootItem->removeChildren(0, 1);
 	}
 
-	const std::vector<FEMCondition*> conds = _project.getConditions(FiniteElement::INVALID_PROCESS, "", FEMCondition::UNSPECIFIED);
+	const std::vector<FEMCondition*> conds = _project.getConditions(FiniteElement::INVALID_PROCESS,
+			"", FEMCondition::UNSPECIFIED);
 	if (!conds.empty())
 	{
-		size_t nConds (conds.size());
-		for (size_t i=0; i<nConds; i++)
+		size_t nConds(conds.size());
+		for (size_t i = 0; i < nConds; i++)
 			this->addConditionItem(conds[i]);
 	}
 	reset();
@@ -195,25 +206,27 @@ void ProcessModel::removeProcess(const FiniteElement::ProcessType type)
 void ProcessModel::removeAllProcesses()
 {
 	int nProcesses = _rootItem->childCount();
-	for (int i=0; i<nProcesses; i++)
+	for (int i = 0; i < nProcesses; i++)
 	{
 		ProcessItem* item = static_cast<ProcessItem*>(_rootItem->child(i));
 		removeProcess(item->getItem()->getProcessType());
 	}
 }
 
-int ProcessModel::getGEOIndex(const std::string &geo_name,
-                                GeoLib::GEOTYPE type,
-                                const std::string &obj_name) const
+int ProcessModel::getGEOIndex(const std::string &geo_name, GeoLib::GEOTYPE type,
+		const std::string &obj_name) const
 {
 	bool exists(false);
 	size_t idx(0);
 	if (type == GeoLib::POINT)
-		exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(obj_name, idx);
+		exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(
+				obj_name, idx);
 	else if (type == GeoLib::POLYLINE)
-		exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(obj_name,idx);
+		exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(
+				obj_name, idx);
 	else if (type == GeoLib::SURFACE)
-		exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(obj_name,idx);
+		exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(
+				obj_name, idx);
 
 	if (exists)
 		return static_cast<int>(idx);
@@ -227,7 +240,7 @@ ProcessItem* ProcessModel::getProcessParent(const FiniteElement::ProcessType typ
 		if (static_cast<ProcessItem*>(_rootItem->child(i))->getItem()->getProcessType() == type)
 			return static_cast<ProcessItem*>(_rootItem->child(i));
 
-	return NULL;
+	return nullptr;
 }
 
 CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, const FEMCondition::CondType type)
@@ -236,7 +249,7 @@ CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, const FEMCondi
 	for (int i = 0; i < nLists; i++)
 		if (dynamic_cast<CondObjectListItem*>(parent->child(i))->getType() == type)
 			return dynamic_cast<CondObjectListItem*>(parent->child(i));
-	return NULL;
+	return nullptr;
 }
 
 CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, FEMCondition* cond)
@@ -245,7 +258,8 @@ CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, FEMCondi
 	QList<QVariant> condData;
 	condData << condType << "";
 
-	const std::vector<GeoLib::Point*>* pnts = _project.getGEOObjects()->getPointVec(cond->getAssociatedGeometryName());
+	const std::vector<GeoLib::Point*>* pnts = _project.getGEOObjects()->getPointVec(
+			cond->getAssociatedGeometryName());
 	if (pnts)
 	{
 		CondObjectListItem* cond_list = new CondObjectListItem(condData, parent, cond, pnts);
@@ -254,10 +268,11 @@ CondObjectListItem* ProcessModel::createCondParent(ProcessItem* parent, FEMCondi
 		return cond_list;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
+vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType pcs_type,
+		const FEMCondition::CondType cond_type)
 {
 	ProcessItem* processParent = this->getProcessParent(pcs_type);
 	if (processParent)
@@ -266,13 +281,13 @@ vtkPolyDataAlgorithm* ProcessModel::vtkSource(const FiniteElement::ProcessType p
 		if (condParent)
 			return condParent->vtkSource();
 	}
-	return NULL;
+	return nullptr;
 }
 
 void ProcessModel::replaceCondition(const QModelIndex &idx, FEMCondition* condition)
 {
 	// remove old condition
-	this->getItem(idx)->parentItem()->removeChildren(this->getItem(idx)->row(),1);
+	this->getItem(idx)->parentItem()->removeChildren(this->getItem(idx)->row(), 1);
 	//add new condition
 	this->addCondition(condition);
 }

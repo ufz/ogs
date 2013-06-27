@@ -12,9 +12,13 @@
  *
  */
 
+#include "MshModel.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // ** INCLUDES **
 #include "MshItem.h"
-#include "MshModel.h"
 #include "StringTools.h"
 #include "TreeItem.h"
 #include "VtkMeshSource.h"
@@ -35,7 +39,7 @@ MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
 	delete _rootItem;
 	QList<QVariant> rootData;
 	rootData << "Mesh Name" << "Type" << "Node IDs";
-	_rootItem = new TreeItem(rootData, NULL);
+	_rootItem = new TreeItem(rootData, nullptr);
 }
 
 int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
@@ -53,7 +57,7 @@ void MshModel::addMesh(MeshLib::Mesh* mesh)
 
 void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 {
-	std::cout << "name: " << mesh->getName() << std::endl;
+	INFO("name: %s", mesh->getName().c_str());
 	QString display_name (QString::fromStdString(mesh->getName()));
 	QList<QVariant> meshData;
 	meshData << display_name << "";
@@ -103,10 +107,10 @@ const MeshLib::Mesh* MshModel::getMesh(const QModelIndex &idx) const
 		if (item)
 			return item->getMesh();
 		else
-			return NULL;
+			return nullptr;
 	}
-	std::cout << "MshModel::getMesh() - Specified index does not exist." << std::endl;
-	return NULL;
+	WARN("MshModel::getMesh(): Specified index does not exist.");
+	return nullptr;
 }
 
 const MeshLib::Mesh* MshModel::getMesh(const std::string &name) const
@@ -118,9 +122,8 @@ const MeshLib::Mesh* MshModel::getMesh(const std::string &name) const
 			return item->getMesh();
 	}
 
-	std::cout << "MshModel::getMesh() - No entry found with name \"" << name << "\"." <<
-	std::endl;
-	return NULL;
+	INFO("MshModel::getMesh(): No entry found with name \"%s\".", name.c_str());
+	return nullptr;
 }
 
 bool MshModel::removeMesh(const QModelIndex &idx)
@@ -149,7 +152,7 @@ bool MshModel::removeMesh(const std::string &name)
 		}
 	}
 
-	std::cout << "MshModel::removeMesh() - No entry found with name \"" << name << "." << std::endl;
+	INFO("MshModel::removeMesh(): No entry found with name \"%s\".", name.c_str());
 	return false;
 }
 
@@ -182,8 +185,8 @@ VtkMeshSource* MshModel::vtkSource(const QModelIndex &idx) const
 		return item->vtkSource();
 	}
 
-	std::cout << "MshModel::removeMesh() - Specified index does not exist." << std::endl;
-	return NULL;
+	INFO("MshModel::vtkSource(): Specified index does not exist.");
+	return nullptr;
 }
 
 VtkMeshSource* MshModel::vtkSource(const std::string &name) const
@@ -195,9 +198,8 @@ VtkMeshSource* MshModel::vtkSource(const std::string &name) const
 			return item->vtkSource();
 	}
 
-	std::cout << "MshModel::getMesh() - No entry found with name \"" << name << "\"." <<
-	std::endl;
-	return NULL;
+	INFO("MshModel::vtkSource(): No entry found with name \"%s\".", name.c_str());
+	return nullptr;
 }
 
 

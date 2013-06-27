@@ -13,6 +13,10 @@
  */
 
 #include "DiagramList.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "DateTools.h"
 #include "StringTools.h"
 #include "SensorData.h"
@@ -203,7 +207,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 			}
 			else
 			{
-				std::cout << "Unexpected format in line " << line_count << "..." << std::endl;
+				WARN("DiagramList::readList(): Unexpected format in line %d.", line_count);
 				file.close();
 				return 0;
 			}
