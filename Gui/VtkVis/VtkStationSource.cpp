@@ -15,6 +15,9 @@
 // ** VTK INCLUDES **
 #include "VtkStationSource.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "StationBorehole.h"
 
 #include "vtkObjectFactory.h"
@@ -208,7 +211,7 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 	Q_UNUSED(value);
 }
 
-size_t VtkStationSource::GetIndexByName( std::string name )
+size_t VtkStationSource::GetIndexByName( std::string const& name )
 {
 	vtkIdType max_key(0);
 	for (std::map<std::string, vtkIdType>::const_iterator it = _id_map.begin();
@@ -221,7 +224,7 @@ size_t VtkStationSource::GetIndexByName( std::string name )
 	}
 
 	vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
-	std::cout << "Key \"" << name << "\" has been assigned index " << new_index << std::endl;
+	INFO("Key \"%s\" has been assigned index %d.", name.c_str(), new_index);
 	_id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
 	return new_index;
 }

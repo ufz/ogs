@@ -13,8 +13,12 @@
  */
 
 // ** INCLUDES **
-#include "VtkAlgorithmProperties.h"
 #include "VtkVisImageItem.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+#include "VtkAlgorithmProperties.h"
 #include "VtkGeoImageSource.h"
 
 #include <vtkActor.h>
@@ -146,7 +150,7 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
 		iWriter->SetFileName(filenameWithExt.c_str());
 		return iWriter->Write();
 	}
-	std::cout << "VtkVisPipelineItem::writeToFile() - Unknown data type..." << std::endl;
+	ERR("VtkVisPipelineItem::writeToFile() - Unknown data type.");
 	return 0;
 }
 

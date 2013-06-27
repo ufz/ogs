@@ -1,7 +1,9 @@
 #include "VrpnArtTrackingClient.h"
 
 #include <assert.h>
-#include <iostream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 VrpnArtTrackingClient* VrpnArtTrackingClient::m_pInstance = NULL;
 
@@ -134,9 +136,7 @@ void VrpnArtTrackingClient::MainLoop()
 		m_pvrpnButtons->mainloop();
 	}
 	else
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::MainLoop() has been called but tracking ist not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::MainLoop() has been called but tracking ist not been started!");
 }
 
 void VrpnArtTrackingClient::GetBodyTranslation(double &x, double &y, double &z)
@@ -146,9 +146,7 @@ void VrpnArtTrackingClient::GetBodyTranslation(double &x, double &y, double &z)
 	z = m_dBodyTranslation[2];
 
 	if (!m_bTrackingStarted)
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::GetBodyTranslation() has been called but tracking has not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::GetBodyTranslation() has been called but tracking has not been started!");
 }
 
 void VrpnArtTrackingClient::GetBodyQuaternion(double &v0, double &v1, double &v2, double &v3)
@@ -159,9 +157,7 @@ void VrpnArtTrackingClient::GetBodyQuaternion(double &v0, double &v1, double &v2
 	v3 = m_dBodyQuaternion[3];
 
 	if (!m_bTrackingStarted)
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::GetBodyQuaternion() has been called but tracking has not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::GetBodyQuaternion() has been called but tracking has not been started!");
 }
 
 void VrpnArtTrackingClient::GetFlyTranslation(double &x, double &y, double &z)
@@ -171,9 +167,7 @@ void VrpnArtTrackingClient::GetFlyTranslation(double &x, double &y, double &z)
 	z = m_dFlyTranslation[2];
 
 	if (!m_bTrackingStarted)
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::GetFlyTranslation() has been called but tracking has not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::GetFlyTranslation() has been called but tracking has not been started!");
 }
 
 void VrpnArtTrackingClient::GetFlyQuaternion(double &v0, double &v1, double &v2, double &v3)
@@ -184,9 +178,7 @@ void VrpnArtTrackingClient::GetFlyQuaternion(double &v0, double &v1, double &v2,
 	v3 = m_dFlyQuaternion[3];
 
 	if (!m_bTrackingStarted)
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::GetFlyQuaternion() has been called but tracking has not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::GetFlyQuaternion() has been called but tracking has not been started!");
 }
 
 double VrpnArtTrackingClient::GetAnalogData(int index)
@@ -197,9 +189,7 @@ double VrpnArtTrackingClient::GetAnalogData(int index)
 		return 0.0;
 
 	if (!m_bTrackingStarted)
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::GetAnalogData() has been called but tracking has not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::GetAnalogData() has been called but tracking has not been started!");
 }
 
 bool VrpnArtTrackingClient::GetButtonData(int index)
@@ -210,9 +200,7 @@ bool VrpnArtTrackingClient::GetButtonData(int index)
 		return false;
 
 	if (!m_bTrackingStarted)
-		std::cout <<
-		"WARNING: VrpnArtTrackingClient::GetButtonData() has been called but tracking has not been started!"
-		          << std::endl;
+		WARN("VrpnArtTrackingClient::GetButtonData() has been called but tracking has not been started!");
 }
 
 void VRPN_CALLBACK VrpnArtTrackingClient::CBHandleTracker(void* userdata, const vrpn_TRACKERCB t)

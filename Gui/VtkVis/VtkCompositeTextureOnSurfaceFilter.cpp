@@ -14,6 +14,10 @@
 
 // ** INCLUDES **
 #include "VtkCompositeTextureOnSurfaceFilter.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "VtkTextureOnSurfaceFilter.h"
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkSmartPointer.h>
@@ -99,9 +103,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 		}
 	}
 	else
-		std::cout <<
-		"VtkCompositeTextureOnSurfaceFilter.init() - Error reading texture file..." <<
-		std::endl;
+		ERR("VtkCompositeTextureOnSurfaceFilter::init(): Error reading texture file.");
 
 	_outputAlgorithm = surface;
 }

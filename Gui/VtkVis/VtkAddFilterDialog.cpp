@@ -14,6 +14,10 @@
 
 // ** INCLUDES **
 #include "VtkAddFilterDialog.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "VtkCompositeFilter.h"
 #include "VtkFilterFactory.h"
 #include "VtkVisImageItem.h"
@@ -98,8 +102,7 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
 			item = new VtkVisPointSetItem(algorithm, parentItem, itemData);
 		else
 		{
-			std::cout << "Error: VtkFilterFavctory cannot create " <<
-			filterName.toStdString() << std::endl;
+			ERR("VtkFilterFactory cannot create %s.", filterName.toStdString().c_str());
 			return;
 		}
 	}

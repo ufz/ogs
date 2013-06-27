@@ -14,7 +14,8 @@
 // ** INCLUDES **
 #include "QVrpnArtTrackingClient.h"
 
-#include <iostream>
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 #include <QSettings>
 #include <QString>
@@ -57,7 +58,7 @@ void QVrpnArtTrackingClient::StartTracking(const char* deviceName,
 	_deviceName = QString(deviceName);
 	_updateInterval = updateInterval;
 	VrpnArtTrackingClient::StartTracking(deviceName);
-	std::cout << "Tracking started." << std::endl;
+	INFO("Tracking started.");
 	if (updateInterval > 0)
 		_timer->start(updateInterval);
 }

@@ -15,6 +15,9 @@
 // ** INCLUDES **
 #include "VtkCustomInteractorStyle.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include <vtkActor.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCamera.h>
@@ -50,7 +53,7 @@ VtkCustomInteractorStyle::VtkCustomInteractorStyle()
 	selectedActor->GetProperty()->EdgeVisibilityOn();
 	selectedActor->GetProperty()->SetEdgeColor(1,0,0);
 	selectedActor->GetProperty()->SetLineWidth(3);
-	Data = NULL;
+	Data = nullptr;
 }
 
 VtkCustomInteractorStyle::~VtkCustomInteractorStyle()
@@ -64,7 +67,7 @@ void VtkCustomInteractorStyle::OnChar()
 	switch (Interactor->GetKeyCode())
 	{
 	case '3':
-		std::cout << "The 3 key was pressed." << std::endl;
+		INFO("The 3 key was pressed.");
 		break;
 	case 'a':
 		break;
@@ -115,7 +118,7 @@ void VtkCustomInteractorStyle::setHighlightActor(bool on)
 {
 	_highlightActor = on;
 	if (!on)
-		HighlightProp((vtkProp*)NULL);
+		HighlightProp((vtkProp*)nullptr);
 }
 
 void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
@@ -125,7 +128,7 @@ void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
 	{
 		this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
 		RemoveActor(selectedActor);
-		selectedMapper->SetInputConnection(NULL);
+		selectedMapper->SetInputConnection(nullptr);
 	}
 }
 
@@ -148,13 +151,11 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 		picker->Pick(pos[0], pos[1], 0, this->GetDefaultRenderer());
 
 		double* worldPosition = picker->GetPickPosition();
-		std::cout << "Cell id is: " << picker->GetCellId() << std::endl;
+		INFO("Cell id is: %d", picker->GetCellId());
 
 		if(picker->GetCellId() != -1)
 		{
-			std::cout << "Pick position is: " << worldPosition[0] << " " <<
-			worldPosition[1]
-			          << " " << worldPosition[2] << endl;
+			INFO("Pick position is: %f %f %f", worldPosition[0], worldPosition[1], worldPosition[2]);
 
 			vtkSmartPointer<vtkIdTypeArray> ids =
 			        vtkSmartPointer<vtkIdTypeArray>::New();
@@ -182,10 +183,8 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 			        vtkSmartPointer<vtkUnstructuredGrid>::New();
 			selected->ShallowCopy(extractSelection->GetOutput());
 
-			std::cout << "There are " << selected->GetNumberOfPoints()
-			          << " points in the selection." << std::endl;
-			std::cout << "There are " << selected->GetNumberOfCells()
-			          << " cells in the selection." << std::endl;
+			INFO("There are %d points in the selection.", selected->GetNumberOfPoints());
+			INFO("There are %d cells in the selection.", selected->GetNumberOfCells());
 
 			// check if the underlying object is a mesh and if so, send a signal to the element model for display of information about the picked element.
 			vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
@@ -228,7 +227,7 @@ void VtkCustomInteractorStyle::OnRightButtonDown()
 		picker->Pick(pos[0], pos[1], 0, this->GetDefaultRenderer());
 
 		double* worldPosition = picker->GetPickPosition();
-		std::cout << "Cell id is: " << picker->GetCellId() << std::endl;
+		INFO("Cell id is: %d", picker->GetCellId());
 
 		if(picker->GetCellId() != -1)
 		{
