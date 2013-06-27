@@ -511,7 +511,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 
 				VtkCompositeFilter* filter =
 				        VtkFilterFactory::CreateCompositeFilter(
-				                "VtkCompositeSelectionFilter",
+				                "VtkCompositeElementSelectionFilter",
 				                parentItem->transformFilter());
 				static_cast<VtkCompositeElementSelectionFilter*>(filter)->setSelectionArray("Selection", quality);
 				VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
