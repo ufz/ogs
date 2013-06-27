@@ -48,7 +48,8 @@
 vtkStandardNewMacro(VtkMeshSource);
 vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
-VtkMeshSource::VtkMeshSource() : _matName("MaterialIDs")
+VtkMeshSource::VtkMeshSource() :
+		_grid(nullptr), _matName("MaterialIDs")
 {
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
