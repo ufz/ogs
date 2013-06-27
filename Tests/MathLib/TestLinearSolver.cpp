@@ -82,6 +82,7 @@ void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_opt
     Example1 ex1;
 
     // set a coefficient matrix
+    A.setZero();
     for (size_t i=0; i<ex1.dim_eqs; i++) {
         for (size_t j=0; j<ex1.dim_eqs; j++) {
             double v = ex1.mat(i, j);
