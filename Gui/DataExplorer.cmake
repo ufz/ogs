@@ -92,8 +92,8 @@ TARGET_LINK_LIBRARIES( ogs-gui
 IF(VTK_NETCDF_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui vtkNetCDF vtkNetCDF_cxx )
 ELSE()
-	TARGET_LINK_LIBRARIES( ogs-gui ${NETCDF_LIBRARIES} )
-ENDIF()
+	TARGET_LINK_LIBRARIES( ogs-gui ${Shapelib_LIBRARIES} )
+ENDIF () # Shapelib_FOUND
 
 IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} ${libtiff_LIBRARIES} )
