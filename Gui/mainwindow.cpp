@@ -14,6 +14,9 @@
 #include "Configure.h"
 #include "mainwindow.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // models
 #include "ProcessModel.h"
 #include "ElementTreeModel.h"
@@ -539,7 +542,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 			XmlGspInterface xml(&_project, schemaName);
 			xml.readFile(fileName);
-			std::cout << "Adding missing meshes to GUI..." << std::endl;
+			INFO("Adding missing meshes to GUI.");
 			_meshModels->updateModel();
 		}
 		else if (fi.suffix().toLower() == "gml")
@@ -564,7 +567,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 #endif
 			MeshLib::Mesh* mesh (FileIO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
-			std::cout << "Mesh loading time: " << myTimer0.elapsed() << " ms" << std::endl;
+			INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
 #endif
 			if (mesh)
 				_meshModels->addMesh(mesh);
@@ -972,7 +975,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 {
 	if (!selectedGeometries.empty())
 	{
-		std::cout << "Start meshing..." << std::endl;
+		INFO("Start meshing ...");
 
 		QString fileName("");
 		QString dir_str = this->getLastUsedDir();
@@ -1026,13 +1029,13 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 				remove_command = "del ";
 #endif
 				remove_command += fileName.toStdString();
-				std::cout << "remove command: " << remove_command << std::endl;
+				INFO("remove command: %s", remove_command.c_str());
 				system(remove_command.c_str());
 			}
 		}
 	}
 	else
-		std::cout << "No geometry information selected..." << std::endl;
+		INFO("No geometry information selected.");
 
 	QApplication::restoreOverrideCursor();
 }
