@@ -18,6 +18,9 @@
 #include <vtkActor.h>
 #include <vtkCellPicker.h>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 VtkPickCallback* VtkPickCallback::New()
 {
 	return new VtkPickCallback();
@@ -38,9 +41,8 @@ void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
 			emit actorPicked (actor);
 
 		double* pos = picker->GetPickPosition();
-		std::cout << "Picked cell id is: " << picker->GetCellId() << std::endl;
-		std::cout << "Picked position is: " << pos[0] << " " << pos[1] << " " << pos[2] <<
-		std::endl;
+		INFO("Picked cell id is: %d", picker->GetCellId());
+		INFO("Picked position is: %f %f %f", pos[0], pos[1], pos[2]);
 	}
 }
 
