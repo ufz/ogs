@@ -211,7 +211,7 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 	Q_UNUSED(value);
 }
 
-size_t VtkStationSource::GetIndexByName( std::string name )
+size_t VtkStationSource::GetIndexByName( std::string const& name )
 {
 	vtkIdType max_key(0);
 	for (std::map<std::string, vtkIdType>::const_iterator it = _id_map.begin();
