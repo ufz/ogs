@@ -174,8 +174,8 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
 			vtkSmartPointer<vtkExtractSelection> extractSelection =
 			        vtkSmartPointer<vtkExtractSelection>::New();
-			extractSelection->SetInput(0, this->Data);
-			extractSelection->SetInput(1, selection);
+			extractSelection->SetInputData(0, this->Data);
+			extractSelection->SetInputData(1, selection);
 			extractSelection->Update();
 
 			// In selection
@@ -193,7 +193,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 				emit elementPicked(source, static_cast<unsigned>(picker->GetCellId()));
 			else
 				emit clearElementView();
-			selectedMapper->SetInputConnection(selected->GetProducerPort());
+			selectedMapper->SetInputData(selected);
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
 			AddActor(selectedActor);

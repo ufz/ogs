@@ -83,10 +83,8 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	StratView
 	VtkVis
 	VtkAct
-	vtkRendering
-	vtkWidgets
-	QVTK
 	${Boost_LIBRARIES}
+	${VTK_LIBRARIES}
 	zlib
 	shp
 )

@@ -58,7 +58,7 @@ void VtkBGImageSource::SetRaster(vtkImageAlgorithm *img, double x0, double y0, d
 	texture->InterpolateOff();
 	texture->RepeatOff();
 	// texture->EdgeClampOn(); // does not work
-	texture->SetInput(imageData);
+	texture->SetInputData(imageData);
 	this->SetTexture(texture);
 
 	_origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));

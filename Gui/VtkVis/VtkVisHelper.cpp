@@ -44,7 +44,7 @@ vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
 	vtkImageData* imgData = vtkImageData::New();
 	imgData->SetExtent(0, imgWidth - 1, 0, imgHeight - 1, 0, 0);
 	imgData->SetOrigin(0, 0, 0);
-	imgData->SetNumberOfScalarComponents(3);
+	//imgData->SetNumberOfScalarComponents(3); // TODO: was removed
 	imgData->GetPointData()->SetScalars(data);
 
 	return imgData;
@@ -59,7 +59,7 @@ vtkTexture* VtkVisHelper::QImageToVtkTexture(QImage &img)
 	texture->RepeatOff();
 	//texture->EdgeClampOff();
 	//texture->SetBlendingMode(0);
-	texture->SetInput(imgData);
+	texture->SetInputData(imgData);
 
 	return texture;
 }
