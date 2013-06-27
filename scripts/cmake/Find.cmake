@@ -1,15 +1,3 @@
-############################
-### Find OGS directories ###
-############################
-
-# Compiled libraries (for Windows)
-FIND_PATH(OGS_LIBS_DIR_FOUND geotiff.lib
-	PATHS $ENV{OGS_LIBS} ${OGS_LIBS_DIR} ${PROJECT_SOURCE_DIR}/../libs C:/OGS_Libs
-	PATH_SUFFIXES libgeotiff)
-IF(OGS_LIBS_DIR_FOUND)
-	SET(OGS_LIBS_DIR ${OGS_LIBS_DIR_FOUND}/.. CACHE STRING "")
-ENDIF()
-
 ######################
 ### Find tools     ###
 ######################
@@ -111,11 +99,8 @@ ENDIF (CMAKE_USE_PTHREADS_INIT )
 FIND_PACKAGE ( LAPACK QUIET )
 
 ## VTK ##
-IF (OGS_LIBS_DIR_FOUND AND NOT VTK_DIR)
-	SET (VTK_DIR ${OGS_LIBS_DIR}/VTK/build)
-ENDIF () # OGS_LIBS_DIR_FOUND
-IF(NOT OGS_DONT_USE_VTK)
-	FIND_PACKAGE( VTK 6.0 COMPONENTS
+IF(OGS_BUILD_GUI)
+	FIND_PACKAGE( VTK 6.0 REQUIRED COMPONENTS
 		vtkRenderingCore
 		vtkGUISupportQt
 		vtkInteractionWidgets
