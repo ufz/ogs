@@ -13,13 +13,22 @@
  */
 
 // ** INCLUDES **
-#include "VtkAlgorithmProperties.h"
 #include "VtkVisPointSetItem.h"
+
+#include <limits>
+
+#include <QObject>
+#include <QRegExp>
+#include <QSettings>
+#include <QStringList>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+#include "VtkAlgorithmProperties.h"
 #include "VtkCompositeFilter.h"
 #include "VtkCompositeContourFilter.h"
 #include "VtkCompositeThresholdFilter.h"
-
-#include <limits>
 
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
@@ -34,11 +43,6 @@
 #include <vtkProperty.h>
 #include <vtkLookupTable.h>
 
-#include <QObject>
-#include <QRegExp>
-#include <QSettings>
-#include <QStringList>
-
 // export test
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkTriangleFilter.h>
@@ -52,8 +56,8 @@
 VtkVisPointSetItem::VtkVisPointSetItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: VtkVisPipelineItem(algorithm, parentItem, data), _mapper(NULL),
-	_transformFilter(NULL), _onPointData(true), _activeArrayName("")
+	: VtkVisPipelineItem(algorithm, parentItem, data), _mapper(nullptr),
+	_transformFilter(nullptr), _onPointData(true), _activeArrayName("")
 {
 	VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
 	if (parentItem->parentItem())
@@ -75,8 +79,8 @@ VtkVisPointSetItem::VtkVisPointSetItem(
 VtkVisPointSetItem::VtkVisPointSetItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-	: VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(NULL),
-	_transformFilter(NULL), _onPointData(true), _activeArrayName("")
+	: VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(nullptr),
+	_transformFilter(nullptr), _onPointData(true), _activeArrayName("")
 {
 }
 
@@ -123,7 +127,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 			VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
 			while (parentItem)
 			{
-				VtkAlgorithmProperties* parentProps = NULL;
+				VtkAlgorithmProperties* parentProps = nullptr;
 				if(dynamic_cast<VtkVisPointSetItem*>(parentItem))
 					parentProps = dynamic_cast<VtkVisPointSetItem*>(parentItem)->getVtkProperties();
 				if (parentProps)
@@ -132,7 +136,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 					vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
 					vtkProps->SetTexture(parentProps->GetTexture());
 					vtkProps->SetActiveAttribute(parentProps->GetActiveAttribute());
-					parentItem = NULL;
+					parentItem = nullptr;
 				}
 				else
 					parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
@@ -189,7 +193,7 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 	vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
 	if (actor)
 	{
-		if (vtkProps->GetTexture() != NULL)
+		if (vtkProps->GetTexture() != nullptr)
 		{
 			vtkProps->SetScalarVisibility(false);
 			actor->GetProperty()->SetColor(1,1,1); // don't colorise textures
@@ -235,7 +239,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 		ugWriter->SetFileName(filenameWithExt.c_str());
 		return ugWriter->Write();
 	}
-	std::cout << "VtkVisPipelineItem::writeToFile() - Unknown data type..." << std::endl;
+	WARN("VtkVisPipelineItem::writeToFile(): Unknown data type.");
 	return 0;
 }
 
@@ -312,7 +316,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 		{
 			// Create a default color table when there is no lookup table for this attribute
 			vtkLookupTable* lut = _vtkProps->GetLookupTable(name);
-			if (lut == NULL)
+			if (lut == nullptr)
 			{
 				//std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
 				lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties

@@ -13,8 +13,9 @@
  */
 
 #include "FEMEnums.h"
+
+// STL
 #include <cstdlib>
-#include <iostream>
 
 namespace FiniteElement
 {
@@ -60,9 +61,6 @@ ProcessType convertProcessType ( const std::string& pcs_type_string )
 		return NO_PCS;
 	if (pcs_type_string.compare ("PTC_FLOW") == 0)
 		return PTC_FLOW;
-	//else
-		//std::cout << "WARNING in convertProcessType: process type #" << pcs_type_string <<
-		//"# unknown" << std::endl;
 	return INVALID_PROCESS;
 }
 
@@ -224,11 +222,6 @@ PrimaryVariable convertPrimaryVariable ( const std::string& pcs_pv_string )
 		return STRAIN_ZZ;
 	if (pcs_pv_string.compare ("STRAIN_PLS") == 0)
 		return STRAIN_PLS;
-	//else
-	//{
-		//std::cout << "convertPrimaryVariable #" << pcs_pv_string << "# not found" << std::endl;
-		//exit (1);
-	//}
 	return INVALID_PV;
 }
 
@@ -346,12 +339,7 @@ DistributionType convertDisType(const std::string& dis_type_string)
 		return DIRECT;
 	if (dis_type_string.compare("FUNCTION") == 0)
 		return FUNCTION;                              //24.08.2011. WW
-	else
-	{
-		std::cout << "convertDisType #" << dis_type_string << "# not found"
-		          << std::endl;
-		exit(1);
-	}
+
 	return INVALID_DIS_TYPE;
 }
 
@@ -419,11 +407,7 @@ ErrorMethod convertErrorMethod(const std::string& error_method_string)
 		return ERNORM;
 	if (error_method_string.compare("BNORM") == 0)
 		return BNORM;
-	else
-	{
-		std::cout << "convertErrorMethod #" << error_method_string << "# not found"<< std::endl;
-		exit(1);
-	}
+
 	return INVALID_ERROR_METHOD;
 }
 

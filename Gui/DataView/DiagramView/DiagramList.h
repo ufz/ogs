@@ -88,7 +88,7 @@ public:
 	QString getYUnit() const { return _yUnit; }
 
 	/**
-	 * Reads information from a file. The reader assumes that values in the file are seperated
+	 * Reads information from a file. The reader assumes that values in the file are separated
 	 * by tabstops. Also, the first row should contain identifiers for the values and the first
 	 * column should contain timestamps. Currently accepted timestamps are of the following
 	 * formats:

@@ -12,10 +12,14 @@
  *
  */
 
+#include "StationTreeModel.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "BaseItem.h"
 #include "OGSError.h"
 #include "Station.h"
-#include "StationTreeModel.h"
 
 #include <QDebug>
 
@@ -28,7 +32,7 @@ StationTreeModel::StationTreeModel( QObject* parent )
 	QList<QVariant> rootData;
 	delete _rootItem;
 	rootData << "Station Name" << "x" << "y" << "z";
-	_rootItem = new ModelTreeItem(rootData, NULL, NULL);
+	_rootItem = new ModelTreeItem(rootData, nullptr, nullptr);
 }
 
 StationTreeModel::~StationTreeModel()
@@ -61,7 +65,7 @@ QModelIndex StationTreeModel::index( int row, int column,
 		QModelIndex newIndex = createIndex(row, column, childItem);
 		// assign ModelIndex to BaseItem so it can communicate with the model
 		BaseItem* item = childItem->getItem();
-		if ( item != NULL )
+		if ( item != nullptr )
 			item->setModelIndex(newIndex);
 		return newIndex;
 	}
@@ -84,7 +88,7 @@ QModelIndex StationTreeModel::index( int row, int column,
         return baseItem;
     }
     else
-        return NULL;
+        return nullptr;
    }
  */
 
@@ -105,7 +109,7 @@ GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
 		return treeItem->getStation();
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
@@ -114,7 +118,7 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
 	for (size_t i = 0; i < nLists; i++)
 		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
 			return dynamic_cast<BaseItem*>(_lists[i]->getItem())->vtkSource();
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -244,7 +248,7 @@ void StationTreeModel::filterStations(const std::string &listName,
 	{
 		removeStationList(listName);
 		this->addStationList(QString::fromStdString(listName), filteredStations);
-		std::cout << "Filter applied to List \"" << listName << "\", " <<
-		filteredStations->size() << " items added.";
+		INFO("Filter applied to List \"%s\", %d items added.", listName.c_str(),
+				filteredStations->size());
 	}
 }

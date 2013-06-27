@@ -18,6 +18,9 @@
 
 #include "VtkPointsSource.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include <vtkCellArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
@@ -76,8 +79,7 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 	int numPoints = _points->size();
 	if (numPoints == 0)
 	{
-		std::cout << "ERROR in VtkPointsSource::RequestData : Size of point vector is 0" <<
-		std::endl;
+		ERR("VtkPointsSource::RequestData(): Size of point vector is 0");
 		return 0;
 	}
 

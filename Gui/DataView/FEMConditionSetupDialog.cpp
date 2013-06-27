@@ -13,6 +13,10 @@
  */
 
 #include "FEMConditionSetupDialog.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "OGSError.h"
 #include "FEMEnums.h"
 #include "ProjectData.h"
@@ -33,7 +37,7 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 												 bool  on_points,
 												 QDialog* parent)
 : QDialog(parent), _cond(associated_geometry, FEMCondition::UNSPECIFIED), _set_on_points(on_points),
-  _combobox(NULL), directButton(NULL), _mesh(NULL), _first_value_validator(NULL)
+  _combobox(nullptr), directButton(nullptr), _mesh(nullptr), _first_value_validator(nullptr)
 {
 	_cond.setGeoType(type);
 	_cond.setGeoName(geo_name);
@@ -44,8 +48,8 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &associated_g
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const FEMCondition &cond, QDialog* parent)
-	: QDialog(parent), _cond(cond), _set_on_points(false), _combobox(NULL), directButton(NULL),
-	_mesh(NULL), _first_value_validator(NULL)
+	: QDialog(parent), _cond(cond), _set_on_points(false), _combobox(nullptr), directButton(nullptr),
+	_mesh(nullptr), _first_value_validator(nullptr)
 {
 	setupUi(this);
 	setupDialog();
@@ -53,12 +57,12 @@ FEMConditionSetupDialog::FEMConditionSetupDialog(const FEMCondition &cond, QDial
 }
 
 FEMConditionSetupDialog::FEMConditionSetupDialog(const std::string &name, const MeshLib::Mesh* mesh, QDialog* parent)
-: QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false),  _combobox(NULL), directButton(NULL),
-  _mesh(mesh), _first_value_validator(NULL)
+: QDialog(parent), _cond(name, FEMCondition::UNSPECIFIED), _set_on_points(false),  _combobox(nullptr), directButton(nullptr),
+  _mesh(mesh), _first_value_validator(nullptr)
 {
 	_cond.setGeoType(GeoLib::INVALID);
 	_cond.setGeoName(name);
-	_cond.setGeoObj(NULL);
+	_cond.setGeoObj(nullptr);
 
 	setupUi(this);
 	setupDialog();
@@ -245,7 +249,7 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 	{
 		static_cast<QGridLayout*>(this->layout())->removeWidget(this->directButton);
 		delete directButton;
-		directButton = NULL;
+		directButton = nullptr;
 		static_cast<QGridLayout*>(this->layout())->addWidget(this->firstValueEdit,5,1);
 	}
 
@@ -253,7 +257,7 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 
 void FEMConditionSetupDialog::directButton_pressed()
 {
-	if (this->_mesh == NULL)
+	if (this->_mesh == nullptr)
 	{
 		const GeoLib::Polyline* line = dynamic_cast<const GeoLib::Polyline*>(_cond.getGeoObj());
 		const std::vector<size_t> nodes = _cond.getDisNodes();
@@ -284,7 +288,7 @@ void FEMConditionSetupDialog::addDisValues(std::vector< std::pair<size_t,double>
 
 FEMCondition* FEMConditionSetupDialog::typeCast(const FEMCondition &cond)
 {
-	FEMCondition* new_cond(NULL);
+	FEMCondition* new_cond(nullptr);
 	switch(this->condTypeBox->currentIndex())
 	{
 		case 0:
@@ -309,7 +313,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 		for (size_t i=0; i<nPoints; i++)
 		{
 			FEMCondition* cond = new FEMCondition(_cond);
-			cond->setGeoObj(NULL);
+			cond->setGeoObj(nullptr);
 			cond->setGeoType(GeoLib::POINT);
 			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + BaseLib::number2str(ply->getPointID(i)));
 			cond->clearDisValues();
@@ -328,7 +332,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 			for (size_t j=0; j<3; j++)
 			{
 				FEMCondition* cond = new FEMCondition(_cond);
-				cond->setGeoObj(NULL);
+				cond->setGeoObj(nullptr);
 				cond->setGeoType(GeoLib::POINT);
 				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + BaseLib::number2str((*tri)[j]));
 				cond->clearDisValues();
@@ -339,5 +343,5 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 		emit createFEMCondition(conditions);
 	}
 	else
-		std::cout << "Error discerning GeoType ..." << std::endl;
+		ERR("FEMConditionSetupDialog::copyCondOnPoints(): discerning GeoType.");
 }

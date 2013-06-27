@@ -13,6 +13,10 @@
  */
 
 #include "ConditionWriterDialog.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "FEMCondition.h"
 #include "OGSError.h"
 
@@ -30,7 +34,6 @@ ConditionWriterDialog::ConditionWriterDialog(const GeoLib::GEOObjects *geo_objec
 
 	for (size_t i=0; i<geo_names.size(); i++)
 		this->geoBox->addItem(QString::fromStdString(geo_names[i]));
-
 }
 
 ConditionWriterDialog::~ConditionWriterDialog()
@@ -60,7 +63,6 @@ void ConditionWriterDialog::on_fileNameButton_pressed()
 	}
 }
 
-
 void ConditionWriterDialog::accept()
 {
 	const QString file_name = this->fileNameEdit->text();
@@ -88,7 +90,7 @@ void ConditionWriterDialog::accept()
 			case 3:
 				cond_type = FEMCondition::SOURCE_TERM; break;
 			default:
-				std::cout << "Error in ConditionWriterDialog..." << std::endl;
+				ERR("ConditionWriterDialog::accept(): case %d not handled.", this->condTypeBox->currentIndex());
 		}
 
 		emit saveFEMConditionsRequested(geo_name, cond_type, file_name);

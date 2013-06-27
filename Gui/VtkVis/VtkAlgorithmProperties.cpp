@@ -15,17 +15,20 @@
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include <vtkProperty.h>
 #include <vtkTexture.h>
 
 #include "VtkColorLookupTable.h"
 #include "XmlIO/XmlLutReader.h"
 
-VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= NULL*/)
+VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= nullptr*/)
 	: QObject(parent)
 {
 	_property = vtkProperty::New();
-	_texture  = NULL;
+	_texture  = nullptr;
 	_scalarVisibility = true;
 	_algorithmUserProperties = new QMap<QString, QVariant>;
 	_algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
@@ -36,7 +39,7 @@ VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= NULL*/)
 VtkAlgorithmProperties::~VtkAlgorithmProperties()
 {
 	_property->Delete();
-	if (_texture != NULL) _texture->Delete();
+	if (_texture != nullptr) _texture->Delete();
 
 	for (std::map<QString, vtkLookupTable*>::iterator it = _lut.begin();
 		it != _lut.end(); ++it)
@@ -51,7 +54,7 @@ vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name
 	if (it != _lut.end())
 		return it->second;
 	else
-		return NULL;
+		return nullptr;
 }
 
 void VtkAlgorithmProperties::RemoveLookupTable(const QString& array_name)
@@ -94,7 +97,7 @@ QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
 		return this->_algorithmUserProperties->value(name);
 	else
 	{
-		std::cout << "Not a valid property: " << name.toStdString() << std::endl;
+		ERR("Not a valid property: %s", name.toStdString().c_str());
 		return QVariant();
 	}
 }
@@ -105,7 +108,7 @@ QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) cons
 		return this->_algorithmUserVectorProperties->value(name);
 	else
 	{
-		std::cout << "Not a valid property: " << name.toStdString() << std::endl;
+		ERR("Not a valid property: %s", name.toStdString().c_str());
 		return QList<QVariant>();
 	}
 }

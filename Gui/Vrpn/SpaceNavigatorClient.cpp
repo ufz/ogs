@@ -5,7 +5,9 @@
 
 // ** INCLUDES **
 #include "SpaceNavigatorClient.h"
-#include <iostream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
 
 SpaceNavigatorClient* SpaceNavigatorClient::_spacenavigator = 0;
 
@@ -152,11 +154,11 @@ void SpaceNavigatorClient::setDomination(bool dominating)
 	this->_dominating = dominating;
 
 #ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-	std::cout << "SpaceNavigator: Axis domination mode: ";
+	DBUG("SpaceNavigator: Axis domination mode: ");
 	if(dominating)
-		std::cout << "ON" << std::endl;
+		DBUG("ON");
 	else
-		std::cout << "OFF" << std::endl;
+		DBUG("OFF");
 #endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
@@ -165,11 +167,11 @@ void SpaceNavigatorClient::switchDomination()
 	this->_dominating = !this->_dominating;
 
 #ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-	std::cout << "SpaceNavigator: Axis domination mode: ";
+	DBUG("SpaceNavigator: Axis domination mode: ";
 	if(_dominating)
-		std::cout << "ON" << std::endl;
+		DBUG("ON");
 	else
-		std::cout << "OFF" << std::endl;
+		DBUG("OFF");
 #endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
@@ -178,13 +180,13 @@ void SpaceNavigatorClient::setMode(SpaceNavigatorClient::SpaceNavigatorMode mode
 	this->_mode = mode;
 
 #ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-	std::cout << "SpaceNavigator: Transformation mode: ";
+	DBUG("SpaceNavigator: Transformation mode: ");
 	if(mode == TRANSROT)
-		std::cout << "TRANSLATION and ROTATION" << std::endl;
+		DBUG("TRANSLATION and ROTATION");
 	else if(mode == TRANS)
-		std::cout << "TRANSLATION only" << std::endl;
+		DBUG("TRANSLATION only");
 	else if(mode == ROT)
-		std::cout << "ROTATION only" << std::endl;
+		DBUG("ROTATION only");
 #endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
@@ -193,13 +195,13 @@ void SpaceNavigatorClient::switchMode()
 	this->_mode = (SpaceNavigatorClient::SpaceNavigatorMode)((this->_mode + 1) % 3);
 
 #ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-	std::cout << "SpaceNavigator: Transformation mode: ";
+	DBUG("SpaceNavigator: Transformation mode: ");
 	if(_mode == TRANSROT)
-		std::cout << "TRANSLATION and ROTATION" << std::endl;
+		DBUG("TRANSLATION and ROTATION");
 	else if(_mode == TRANS)
-		std::cout << "TRANSLATION only" << std::endl;
+		DBUG("TRANSLATION only");
 	else if(_mode == ROT)
-		std::cout << "ROTATION only" << std::endl;
+		DBUG("ROTATION only");
 #endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 
@@ -385,10 +387,8 @@ void VRPN_CALLBACK SpaceNavigatorClient::_handleAnalogs(void*, vrpn_ANALOGCB ana
 	_spacenavigator->_unconsumedData = true;
 
 #ifdef SPACENAVIGATOR_DEBUG_OUTPUT
-	std::cout << "Translation: { " << _spacenavigator->x << ", " << _spacenavigator->y <<
-	", " << _spacenavigator->z << " }" << std::endl;
-	std::cout << "Rotation: { " << _spacenavigator->rx << ", " << _spacenavigator->ry <<
-	", " << _spacenavigator->rz << " }" << std::endl;
+	DBUG("Translation: { %f, %f, %f }", _spacenavigator->x, _spacenavigator->y, _spacenavigator->z);
+	DBUG("Rotation: { %f, %f, %f }", _spacenavigator->rx, _spacenavigator->ry, _spacenavigator->rz);
 #endif     // SPACENAVIGATOR_DEBUG_OUTPUT
 }
 

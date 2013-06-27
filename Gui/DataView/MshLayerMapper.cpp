@@ -46,8 +46,8 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 
 	if (throw_error)
 	{
-		std::cout << "Error in MshLayerMapper::CreateLayers() - A 2D mesh with nLayers > 0 is required as input." << std::endl;
-		return NULL;
+		ERR("MshLayerMapper::CreateLayers(): A 2D mesh with nLayers > 0 is required as input.");
+		return nullptr;
 	}
 
 	const size_t nNodes = mesh->getNNodes();
@@ -106,16 +106,15 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 					}
 					else
 					{
-						std::cout << "Warning in MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements ..." << std::endl;
-						std::cout << "Skipping Element " << i << " of type \"" << MshElemType2String(sfc_elem->getGeomType()) << "\"." << std::endl;
+						WARN("MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements.");
+						WARN("Skipping Element %d of type \"%s\".", i, MshElemType2String(sfc_elem->getGeomType()).c_str());
 					}
 				}
 			}
 			else
 			{
-				std::cout << "Error in MshLayerMapper::CreateLayers() - Layer thickness for layer "
-					      << (layer_id-1) << " is " << thickness[layer_id-1] << " (needs to be >0)." << std::endl;
-				return NULL;
+				ERR("Error in MshLayerMapper::CreateLayers() - Layer thickness for layer %d is %f (needs to be >0).", (layer_id-1), thickness[layer_id-1]);
+				return nullptr;
 			}
 		}
 	}
@@ -125,11 +124,9 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &rasterfile,
                                  const unsigned nLayers, const unsigned layer_id, bool removeNoDataValues)
 {
-	if (new_mesh == NULL)
+	if (new_mesh == nullptr)
 	{
-		std::cout <<
-		"Error in MshLayerMapper::LayerMapping() - Passed Mesh is NULL..." <<
-		std::endl;
+		ERR("MshLayerMapper::LayerMapping() - Passed Mesh is NULL.");
 		return 0;
 	}
 
@@ -221,8 +218,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 		{
 			if (noData_nodes.size() < (nNodes - 2))
 			{
-				std::cout << "Warning: Removing " << noData_nodes.size()
-					      << " mesh nodes at NoData values ... " << std::endl;
+				WARN("MshLayerMapper::LayerMapping(): Removing %d mesh nodes at NoData values.", noData_nodes.size());
 				MeshLib::Mesh* red_mesh = MeshLib::removeMeshNodes(new_mesh, noData_nodes);
 				if (new_mesh->getNElements() == 0)
 				{
@@ -232,20 +228,18 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 				else
 				{
 					delete red_mesh;
-					std::cout << "Too many NoData values..." << std::endl;
+					WARN("MshLayerMapper::LayerMapping(): Too many NoData values.");
 				}
 			}
 			else
-				std::cout << "Too many NoData values..." << std::endl;
+				WARN("MshLayerMapper::LayerMapping(): Too many NoData values.");
 		}
 
 		delete raster;
 		return 1;
 	}
 	else
-		std::cout << "Error in MshLayerMapper::LayerMapping() - Mesh has only "
-		          << nLayers << " Layers, cannot assign layer " << layer_id
-				  << "..." << std::endl;
+		ERR("MshLayerMapper::LayerMapping() - Mesh has only %d Layers, cannot assign layer %d.", nLayers, layer_id);
 	return 0;
 }
 
@@ -277,9 +271,9 @@ bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
 
 	if (xMin < xDim.first || xMax > xDim.second || yMin < yDim.first || yMax > yDim.second)
 	{
-		std::cout << "Warning: Extension of mesh is larger than extension of given raster file." << std::endl;
-		std::cout << "Mesh Extend: (" << xMin << ", " << yMin << "):(" << xMax << ", " << yMax << ")" << std::endl;
-		std::cout << "Raster Extend: (" << xDim.first << ", " << yDim.first << "):(" << xDim.second << ", " << yDim.second << ")" << std::endl;
+		WARN("Extension of mesh is larger than extension of given raster file.");
+		INFO("Mesh Extend: (%f,%f):(%f,%f).", xMin, yMin, xMax, yMax);
+		INFO("Raster Extend: (%f,%f):(%f,%f).", xDim.first, yDim.first, xDim.second, yDim.second);
 		return false;
 	}
 	return true;
@@ -309,7 +303,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 		const double* dem_coords = dem_nodes[i-bottom_firstNode]->getCoords();
 		if (coords[2] >= dem_coords[2])
 		{
-			std::cout << "Warning: Node " << i << " (in bottom-layer) is above surface node " << (i-bottom_firstNode) << ". (" << coords[2] << " > " << dem_coords[2] << ")" << std::endl;
+			WARN("Node %d (in bottom-layer) is above surface node %d. (%f, %f)", i, (i-bottom_firstNode), coords[2], dem_coords[2]);
 			is_surface_node[i] = true;
 		}
 	}

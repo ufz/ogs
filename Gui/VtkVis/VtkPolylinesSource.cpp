@@ -13,11 +13,14 @@
  */
 
 // ** INCLUDES **
+#include "VtkPolylinesSource.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // GeoLib
 #include "Color.h"
 #include "Polyline.h"
-
-#include "VtkPolylinesSource.h"
 
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
@@ -81,9 +84,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		return 0;
 	if (_polylines->size() == 0)
 	{
-		std::cout <<
-		"ERROR in VtkPolylineSource::RequestData : Size of polyline vector is 0" <<
-		std::endl;
+		ERR("VtkPolylineSource::RequestData(): Size of polyline vector is 0");
 		return 0;
 	}
 

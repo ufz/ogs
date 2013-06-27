@@ -107,9 +107,7 @@ bool GEOModels::removePointVec( const std::string &name )
 		this->_geoModel->removeGeoList(name, GeoLib::POINT);
 		return GEOObjects::removePointVec(name);
 	}
-	std::cout <<
-	"GEOModels::removePointVec() - There are still Polylines or Surfaces depending on these points."
-	          << std::endl;
+	INFO("GEOModels::removePointVec() - There are still Polylines or Surfaces depending on these points.");
 	return false;
 }
 

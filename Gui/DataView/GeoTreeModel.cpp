@@ -12,6 +12,9 @@
  *
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "GeoObjectListItem.h"
 #include "GeoTreeItem.h"
 #include "GeoTreeModel.h"
@@ -67,8 +70,7 @@ void GeoTreeModel::addPointList(QString geoName, const GeoLib::PointVec* pointVe
 		pointList->appendChild(point);
 	}
 
-	std::cout << "Geometry \"" << geoName.toStdString() << "\" built." << std::endl;
-	std::cout << nPoints << " points added." << std::endl;
+	INFO("Geometry \"%s\" built. %d points added.", geoName.toStdString().c_str(), nPoints);
 
 	reset();
 }
@@ -85,8 +87,7 @@ void GeoTreeModel::addPolylineList(QString geoName, const GeoLib::PolylineVec* p
 
 	if (geo == NULL)
 	{
-		std::cout << "GeoTreeModel::addPolylineList() - Error: No corresponding geometry found..."
-				  << std::endl;
+		ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for \"%s\" found.", geoName.toStdString().c_str());
 		return;
 	}
 
@@ -155,7 +156,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 			lineItem->appendChild(child);
 		}
 	}
-	std::cout << end_index - start_index << " polylines added." << std::endl;
+	INFO("%d polylines added.", end_index - start_index);
 }
 
 void GeoTreeModel::addSurfaceList(QString geoName, const GeoLib::SurfaceVec* surfaceVec)
@@ -168,11 +169,9 @@ void GeoTreeModel::addSurfaceList(QString geoName, const GeoLib::SurfaceVec* sur
 			geo = _rootItem->child(i);
 	}
 
-	if (geo == NULL)
+	if (geo == nullptr)
 	{
-		std::cout <<
-		"GeoTreeModel::addSurfaceList() - Error: No corresponding geometry found..."
-		          << std::endl;
+		ERR("GeoTreeModel::addSurfaceList(): No corresponding geometry for \"%s\" found.", geoName.toStdString().c_str());
 		return;
 	}
 
@@ -257,7 +256,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 			}
 		}
 	}
-	std::cout << end_index - start_index << " surfaces added." << std::endl;
+	INFO("%d surfaces added.", end_index - start_index);
 }
 
 /**
