@@ -33,6 +33,9 @@ template<typename FP_TYPE, typename IDX_TYPE>
 class CRSMatrix: public SparseMatrixBase<FP_TYPE, IDX_TYPE>
 {
 public:
+	typedef FP_TYPE FP_T;
+
+public:
 	explicit CRSMatrix(std::string const &fname) :
 		SparseMatrixBase<FP_TYPE, IDX_TYPE>(),
 		_row_ptr(NULL), _col_idx(NULL), _data(NULL)
@@ -110,9 +113,9 @@ public:
      * @param row the row number
      * @param col the column number
      * @param val the value that should be set at pos row,col
-     * @return a value > 0, if the entry is not contained in the sparsity pattern
+     * @return true, if the entry is contained in the sparsity pattern, else false
      */
-	int setValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
+	bool setValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 	{
 		assert(0 <= row && row < this->_n_rows);
 
@@ -123,11 +126,11 @@ public:
 		while (j<idx_end && (k=_col_idx[j]) <= col) {
 			if (k == col) {
 				_data[j] = val;
-				return 0;
+				return true;
 			}
 			j++;
 		}
-		return 1;
+		return false;
 	}
 
     /**
@@ -136,9 +139,9 @@ public:
      * @param row the row number
      * @param col the column number
      * @param val the value that should be set at pos row,col
-     * @return a value > 0, if the entry is not contained in the sparsity pattern
+     * @return true, if the entry is contained in the sparsity pattern, else false
      */
-	int addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
+	bool addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 	{
 		assert(0 <= row && row < this->_n_rows);
 
@@ -150,11 +153,11 @@ public:
 			if (k == col) {
 				#pragma omp atomic
 				_data[j] += val;
-				return 0;
+				return true;
 			}
 			j++;
 		}
-		return 1;
+		return false;
 	}
 
     /**
@@ -164,7 +167,7 @@ public:
      * @param col the column number
      * @return The corresponding matrix entry or 0.0.
      */
-	double getValue(IDX_TYPE row, IDX_TYPE col)
+	FP_TYPE getValue(IDX_TYPE row, IDX_TYPE col)
 	{
 		assert(0 <= row && row < this->_n_rows);
 

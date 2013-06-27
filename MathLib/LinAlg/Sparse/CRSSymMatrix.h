@@ -20,6 +20,9 @@
 template<class T> class CRSSymMatrix : public CRSMatrix<T>
 {
 public:
+	typedef T FP_T;
+
+public:
 	CRSSymMatrix(std::string const &fname)
 	: CRSMatrix<T> (fname)
 	{

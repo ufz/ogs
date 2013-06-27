@@ -257,9 +257,19 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 {
 	DBUG("GMSHInterface::writeGMSHInputFile(): get data from GEOObjects.");
 
+	if (_selected_geometries.empty())
+		return;
+
+	bool remove_geometry(false);
 	// *** get and merge data from _geo_objs
-	_gmsh_geo_name = "GMSHGeometry";
-	_geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name);
+	if (_selected_geometries.size() > 1) {
+		_gmsh_geo_name = "GMSHGeometry";
+		remove_geometry = true;
+		_geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name);
+	} else {
+		_gmsh_geo_name = _selected_geometries[0];
+		remove_geometry = false;
+	}
 	std::vector<GeoLib::Point*> * merged_pnts(const_cast<std::vector<GeoLib::Point*> *>(_geo_objs.getPointVec(_gmsh_geo_name)));
 	if (! merged_pnts) {
 		ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
@@ -347,9 +357,11 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 		(*it)->writeAdditionalPointData(pnt_id_offset, _n_plane_sfc-1, out);
 	}
 
-	_geo_objs.removeSurfaceVec(_gmsh_geo_name);
-	_geo_objs.removePolylineVec(_gmsh_geo_name);
-	_geo_objs.removePointVec(_gmsh_geo_name);
+	if (remove_geometry) {
+		_geo_objs.removeSurfaceVec(_gmsh_geo_name);
+		_geo_objs.removePolylineVec(_gmsh_geo_name);
+		_geo_objs.removePointVec(_gmsh_geo_name);
+	}
 }
 
 void GMSHInterface::writePoints(std::ostream& out) const

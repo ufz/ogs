@@ -12,6 +12,9 @@
  *
  */
 
+// stl
+#include <algorithm>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -48,7 +51,10 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 	}
 
 	const size_t nNodes = mesh->getNNodes();
-	const size_t nElems = mesh->getNElements();
+	// count number of 2d elements in the original mesh
+	const std::size_t nElems (std::count_if(mesh->getElements().begin(), mesh->getElements().end(),
+			[](MeshLib::Element const* elem) { return (elem->getDimension() == 2);}));
+
 	const std::vector<MeshLib::Node*> nodes = mesh->getNodes();
 	const std::vector<MeshLib::Element*> elems = mesh->getElements();
 	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
@@ -75,7 +81,10 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 				node_offset -= nNodes;
 				const unsigned mat_id (nLayers - layer_id);
 
-				for (unsigned i = 0; i < nElems; ++i)
+				// counts the 2d elements (within the layer),
+				// used as a part of index computation in new_elems
+				std::size_t cnt(0);
+				for (unsigned i = 0; i < mesh->getNElements(); ++i)
 				{
 					const MeshLib::Element* sfc_elem( elems[i] );
 					if (sfc_elem->getDimension() == 2)
@@ -90,9 +99,10 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 							e_nodes[j+nElemNodes] = new_nodes[node_id];
 						}
 						if (sfc_elem->getGeomType() == MshElemType::TRIANGLE)	// extrude triangles to prism
-							new_elems[elem_offset+i] = new MeshLib::Prism(e_nodes, mat_id);
+							new_elems[elem_offset+cnt] = new MeshLib::Prism(e_nodes, mat_id);
 						else if (sfc_elem->getGeomType() == MshElemType::QUAD)	// extrude quads to hexes
-							new_elems[elem_offset+i] = new MeshLib::Hex(e_nodes, mat_id);
+							new_elems[elem_offset+cnt] = new MeshLib::Hex(e_nodes, mat_id);
+						cnt++;
 					}
 					else
 					{
