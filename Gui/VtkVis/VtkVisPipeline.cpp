@@ -15,6 +15,9 @@
 // ** INCLUDES **
 #include "VtkVisPipeline.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // MathLib
 #include "InterpolationAlgorithms/LinearIntervalInterpolation.h"
 
@@ -173,8 +176,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 #ifndef NDEBUG
 	QTime myTimer;
 	myTimer.start();
-	std::cout << "VTK Read: " << filename.toStdString() <<
-	std::endl;
+	INFO("VTK Read: %s.", filename.toStdString().c_str());
 #endif
 
 	if (filename.size() > 0)
@@ -205,9 +207,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 				addPipelineItem(oldStyleReader);
 			}
 			else
-				std::cout << "Error loading vtk file: not a valid vtkDataSet." <<
-				std::endl;
-
+				ERR("VtkVisPipeline::loadFromFile(): not a valid vtkDataSet.");
 			return;
 		}
 		else
@@ -226,13 +226,13 @@ void VtkVisPipeline::loadFromFile(QString filename)
 			addPipelineItem(reader);
 		}
 		else
-			std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
+			ERR("VtkVisPipeline::loadFromFile(): not a valid vtkDataSet.");
 
 		//reader->Delete();
 	}
 
 #ifndef NDEBUG
-	std::cout << myTimer.elapsed() << " ms" << std::endl;
+	INFO("%d ms", myTimer.elapsed());
 #endif
 }
 
@@ -448,18 +448,17 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 	if (dataSet)
 	{
 		vtkPointData* pointData = dataSet->GetPointData();
-		std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() <<
-		std::endl;
+		INFO("  #point data arrays: %d", pointData->GetNumberOfArrays());
 		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
-			std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+			INFO("    Name: %s", pointData->GetArrayName(i));
 
 		vtkCellData* cellData = dataSet->GetCellData();
-		std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+		INFO("  #cell data arrays: %d", cellData->GetNumberOfArrays());
 		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-			std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+			INFO("    Name: %s", cellData->GetArrayName(i));
 	}
 	else
-		std::cout << "Error loading vtk file: not a valid vtkDataSet." << std::endl;
+		ERR("VtkVisPipeline::listArrays(): not a valid vtkDataSet.");
 }
 
 void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
@@ -478,8 +477,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
 		else
 		{
-			std::cout << "Error in VtkVisPipeline::checkMeshQuality() - Unknown MshQualityType..."
-							<< std::endl;
+			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MshQualityType.");
 			delete checker;
 			return;
 		}
@@ -494,7 +492,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 				for (size_t k(0); k<n_quality; k++)
 					quality[k] = lin_intpol(quality[k]);
 			} catch (std::runtime_error& exception) {
-				std::cout << "run time error: " << exception.what() << std::endl;
+				ERR("VtkVisPipeline::checkMeshQuality(): %s", exception.what());
 			}
 		}
 

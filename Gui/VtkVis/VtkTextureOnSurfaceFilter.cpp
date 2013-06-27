@@ -13,6 +13,11 @@
  */
 
 // ** INCLUDES **
+#include "VtkTextureOnSurfaceFilter.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include <vtkCellData.h>
 #include <vtkFloatArray.h>
 #include <vtkInformation.h>
@@ -27,7 +32,6 @@
 #include <vtkTexture.h>
 
 #include "MathTools.h"
-#include "VtkTextureOnSurfaceFilter.h"
 #include "VtkVisHelper.h"
 
 vtkStandardNewMacro(VtkTextureOnSurfaceFilter);
@@ -52,11 +56,9 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 {
 	(void)request;
 
-	if (this->GetTexture() == NULL)
+	if (this->GetTexture() == nullptr)
 	{
-		std::cout <<
-		"Error in VtkTextureOnSurfaceFilter::RequestData() - No texture specified ..." <<
-		std::endl;
+		ERR("VtkTextureOnSurfaceFilter::RequestData() - No texture specified.");
 		return 0;
 	}
 

@@ -13,6 +13,10 @@
  */
 
 #include "VtkMeshConverter.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Edge.h"
@@ -44,8 +48,8 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 {
 	if ((elem_type != MshElemType::TRIANGLE) && (elem_type != MshElemType::QUAD))
 	{
-		std::cout << "Error in VtkMeshConverter::convertImgToMesh() - Invalid Mesh Element Type..." << std::endl;
-		return NULL;
+		ERR("VtkMeshConverter::convertImgToMesh(): Invalid Mesh Element Type.");
+		return nullptr;
 	}
 
 	vtkSmartPointer<vtkDataArray> pixelData = vtkSmartPointer<vtkDataArray>(img->GetPointData()->GetScalars());
@@ -53,8 +57,8 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	int nTuple = pixelData->GetNumberOfComponents();
 	if (nTuple < 1 || nTuple > 4)
 	{
-		std::cout << "Unsupported pixel composition!" << std::endl;
-		return NULL;
+		ERR("VtkMeshConverter::convertImgToMesh(): Unsupported pixel composition!");
+		return nullptr;
 	}
 
 	const size_t imgHeight = dims[0];
@@ -241,12 +245,12 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
 {
 	if (!grid)
-		return NULL;
+		return nullptr;
 
 	// set mesh nodes
 	const size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
 	std::vector<MeshLib::Node*> nodes(nNodes);
-	double* coords = NULL;
+	double* coords = nullptr;
 	for (size_t i = 0; i < nNodes; i++)
 	{
 		coords = grid->GetPoints()->GetPoint(i);
@@ -334,8 +338,8 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		default:
-			std::cout << "Error in GridAdapter::convertUnstructuredGrid() - Unknown mesh element type \"" << cell_type << "\" ..." << std::endl;
-			return NULL;
+			ERR("GridAdapter::convertUnstructuredGrid(): Unknown mesh element type \"%d\".");
+			return nullptr;
 		}
 
 		elements[i] = elem;

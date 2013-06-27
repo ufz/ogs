@@ -12,11 +12,15 @@
  *
  */
 
+#include "VtkMeshSource.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "Node.h"
 #include "VtkColorLookupTable.h"
-#include "VtkMeshSource.h"
 
 #include "Color.h"
 
@@ -64,7 +68,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 {
 	this->Superclass::PrintSelf(os,indent);
 
-	if (_grid == NULL)
+	if (_grid == nullptr)
 		return;
 	const std::vector<MeshLib::Node*> nodes = _grid->getNodes();
 	const std::vector<MeshLib::Element*> elems = _grid->getElements();
@@ -96,7 +100,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	(void)request;
 	(void)inputVector;
 
-	if (_grid == NULL)
+	if (_grid == nullptr)
 		return 0;
 	const std::vector<MeshLib::Node*> nodes = _grid->getNodes();
 	const std::vector<MeshLib::Element*> elems = _grid->getElements();
@@ -157,7 +161,8 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			type = 14;
 			break;
 		default: // if none of the above can be applied
-			std::cout << "Error in VtkMeshSource::RequestData() - Unknown element type " << MshElemType2String(elem->getGeomType()) << "." << std::endl;
+			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
+					MshElemType2String(elem->getGeomType()).c_str());
 			return 0;
 		}
 

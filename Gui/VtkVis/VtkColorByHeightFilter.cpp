@@ -14,6 +14,10 @@
 
 // ** VTK INCLUDES **
 #include "VtkColorByHeightFilter.h"
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "VtkColorLookupTable.h"
 
 #include <vtkCellData.h>
@@ -103,9 +107,7 @@ void VtkColorByHeightFilter::SetTableRange(double min, double max)
 		this->ColorLookupTable->SetTableRange(min, max);
 	}
 	else
-		vtkstd::cout <<
-		"VtkColorByHeightFilter::SetLimits(min, max) - Limits not changed because min value > max value."
-		             << vtkstd::endl;
+		ERR("VtkColorByHeightFilter::SetLimits(min, max) - Limits not changed because min value > max value.");
 }
 
 void VtkColorByHeightFilter::SetTableRangeScaling( double scale )

@@ -14,8 +14,13 @@
 
 #include "VtkColorLookupTable.h"
 
-#include <Color.h>
 #include <cmath>
+#include <sstream>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+#include <Color.h>
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro(VtkColorLookupTable);
@@ -98,7 +103,8 @@ void VtkColorLookupTable::Build()
 
 void VtkColorLookupTable::writeToFile(const std::string &filename)
 {
-	std::cout << "Writing color table to " << filename << "....";
+	std::stringstream strout;
+	strout << "Writing color table to " << filename << " ... ";
 	std::ofstream out( filename.c_str(), std::ios::out );
 
 	size_t nColors = this->GetNumberOfTableValues();
@@ -109,7 +115,8 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
 		out << i << "\t" << rgba[0] << "\t" << rgba[1] << "\t" << rgba[2] << "\n";
 	}
 
-	std::cout << " done." << std::endl;
+	strout << " done." << std::endl;
+	INFO("%s", strout.str().c_str());
 	out.close();
 }
 

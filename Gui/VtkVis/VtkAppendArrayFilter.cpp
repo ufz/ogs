@@ -15,6 +15,9 @@
 // ** VTK INCLUDES **
 #include "VtkAppendArrayFilter.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
 #include <vtkInformation.h>
@@ -48,7 +51,7 @@ int VtkAppendArrayFilter::RequestData( vtkInformation*,
 {
 	if (this->_array.empty())
 	{
-		std::cout << "VtkAppendArrayFilter - Error: Selection array is empty..." << std::endl;
+		ERR("VtkAppendArrayFilter::RequestData(): Selection array is empty.");
 		return 0;
 	}
 	vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
@@ -62,9 +65,7 @@ int VtkAppendArrayFilter::RequestData( vtkInformation*,
 	size_t nCells = input->GetNumberOfCells();
 	size_t arrayLength = this->_array.size();
 	if (nCells > arrayLength)
-		std::cout <<
-		"VtkAppendArrayFilter - Warning: Number of cells exceeds selection array length. Surplus cells won't be examined."
-		          << std::endl;
+		WARN("VtkAppendArrayFilter::RequestData(): Number of cells exceeds selection array length. Surplus cells won't be examined.");
 
 	for (size_t i = 0; i < arrayLength; i++)
 		colors->InsertNextValue(_array[i]);

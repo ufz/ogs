@@ -21,6 +21,9 @@
 
 #include <QFileInfo>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "StringTools.h"
 
 // GeoLib
@@ -134,9 +137,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 				++nImages;
 			} while (TIFFReadDirectory(tiff));
 			if (nImages > 1)
-				std::cout << "VtkRaster::loadImageFromTIFF() - File contains " <<
-				nImages << " images. This method is not tested for this case." <<
-				std::endl;
+				INFO("VtkRaster::loadImageFromTIFF() - File contains %d images. This method is not tested for this case.", nImages);
 
 			// get image size
 			TIFFGetField(tiff, TIFFTAG_IMAGEWIDTH,  &imgWidth);
@@ -147,9 +148,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			if (TIFFGetField(tiff, GTIFF_PIXELSCALE, &pntCount, &pnts))
 			{
 				if (pnts[0] != pnts[1])
-					std::cout <<
-					"VtkRaster::loadImageFromTIFF() - Warning: Original raster data has anisotrop pixel size!"
-					          << std::endl;
+					WARN("VtkRaster::loadImageFromTIFF(): Original raster data has anisotrop pixel size!");
 				cellsize = pnts[0];
 			}
 
@@ -166,20 +165,18 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 			if ((imgWidth > 0) && (imgHeight > 0))
 				if (!TIFFReadRGBAImage(tiff, imgWidth, imgHeight, pixVal, 0))
 				{
-					std::cout <<
-					"VtkRaster::loadImageFromTIFF() - Error reading GeoTIFF file."
-					          << std::endl;
+					ERR("VtkRaster::loadImageFromTIFF(): reading GeoTIFF file.");
 					_TIFFfree(pixVal);
 					GTIFFree(geoTiff);
 					XTIFFClose(tiff);
-					return NULL;
+					return nullptr;
 				}
 
 			// check for colormap
 			uint16 photometric;
 			TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &photometric);
 			// read colormap
-			uint16* cmap_red = NULL, * cmap_green = NULL, * cmap_blue = NULL;
+			uint16* cmap_red = nullptr, * cmap_green = nullptr, * cmap_blue = nullptr;
 			/*int colormap_used = */TIFFGetField(tiff,
 											TIFFTAG_COLORMAP,
 											&cmap_red,
@@ -245,15 +242,12 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
 		}
 
 		XTIFFClose(tiff);
-		std::cout <<
-		"VtkRaster::loadImageFromTIFF() - File not recognised as GeoTIFF-Image." <<
-		std::endl;
-		return NULL;
+		ERR("VtkRaster::loadImageFromTIFF() - File not recognised as GeoTIFF-Image.")
+		return nullptr;
 	}
 
-	std::cout << "VtkRaster::loadImageFromTIFF() - File not recognised as TIFF-Image." <<
-	std::endl;
-	return NULL;
+	ERR("VtkRaster::loadImageFromTIFF() - File not recognised as TIFF-Image.");
+	return nullptr;
 }
 #endif
 
@@ -261,7 +255,7 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 {
 	QString file_name (QString::fromStdString(fileName));
 	QFileInfo fi(file_name);
-	vtkImageReader2* image(NULL);
+	vtkImageReader2* image(nullptr);
 
 	if (fi.suffix().toLower() == "png")
 		image = vtkPNGReader::New();
@@ -271,8 +265,8 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 		image = vtkBMPReader::New();
 	else
 	{
-		std::cout << "VtkRaster::readImageFromFile() - File format not support, please convert to BMP, JPG, PNG or TIFF..." << std::endl;
-		return NULL;
+		ERR("VtkRaster::readImageFromFile(): File format not support, please convert to BMP, JPG, PNG or TIFF.");
+		return nullptr;
 	}
 
 	image->SetFileName(fileName.c_str());
