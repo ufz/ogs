@@ -74,8 +74,6 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
     INFO("-> number of threads = %d", omp_get_max_threads());
 #endif
 
-    int ierr = 0;
-
     // configure option
     std::string solver_options;
     if (_option.solver_precon_arg.empty()) {
@@ -103,24 +101,32 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
 
     // Create solver
     LIS_SOLVER solver;
-    ierr = lis_solver_create(&solver); checkLisError(ierr);
-    ierr = lis_solver_set_option(const_cast<char*>(solver_options.c_str()), solver); checkLisError(ierr);
-    ierr = lis_solver_set_option(const_cast<char*>(tol_option.c_str()), solver); checkLisError(ierr);
-    ierr = lis_solver_set_option(const_cast<char*>("-print mem"), solver); checkLisError(ierr);
+    int ierr = lis_solver_create(&solver);
+    checkLisError(ierr);
+    ierr = lis_solver_set_option(const_cast<char*>(solver_options.c_str()), solver);
+    checkLisError(ierr);
+    ierr = lis_solver_set_option(const_cast<char*>(tol_option.c_str()), solver);
+    checkLisError(ierr);
+    ierr = lis_solver_set_option(const_cast<char*>("-print mem"), solver);
+    checkLisError(ierr);
 
     // solve
     INFO("-> solve");
-    ierr = lis_solve(_A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver); checkLisError(ierr);
+    ierr = lis_solve(_A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
+    checkLisError(ierr);
 
     int iter = 0;
     double resid = 0.0;
-    ierr = lis_solver_get_iters(solver, &iter); checkLisError(ierr);
-    ierr = lis_solver_get_residualnorm(solver, &resid); checkLisError(ierr);
+    ierr = lis_solver_get_iters(solver, &iter);
+    checkLisError(ierr);
+    ierr = lis_solver_get_residualnorm(solver, &resid);
+    checkLisError(ierr);
     INFO("\t iteration: %d/%ld\n", iter, _option.max_iterations);
-    INFO("\t residuals: %e\n", resid);
+    INFO("\t residual: %e\n", resid);
 
     // Clear solver
-    ierr = lis_solver_destroy(solver); checkLisError(ierr);
+    ierr = lis_solver_destroy(solver);
+    checkLisError(ierr);
     INFO("------------------------------------------------------------------");
 }
 
