@@ -28,20 +28,21 @@ namespace MathLib
 class LisVector;
 
 /**
- * \brief Lis matrix wrapper class
+ * \brief LisMatrix is a wrapper class for matrix types of the
+ * linear iterative solvers library.
  *
- * Lis matrix only supports a regular matrix, i.e. the number of
- * rows should equal to the number of columns.
+ * LisMatrix only supports square matrices, i.e. the number of
+ * rows have to be equal to the number of columns.
  */
 class LisMatrix
 {
 public:
     /**
      * constructor
-     * @param length
+     * @param n_rows the number of rows (that is equal to the number of columns)
      * @param mat_type default 1 CRS
      */
-    LisMatrix(std::size_t length, LisOption::MatrixType mat_type = LisOption::MatrixType::CRS);
+    LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type = LisOption::MatrixType::CRS);
 
     /**
      *
@@ -64,22 +65,10 @@ public:
     void setZero();
 
     /// set entry
-    int setValue(std::size_t rowId, std::size_t colId, double v)
-    {
-        if (rowId==colId)
-            _max_diag_coeff = std::max(_max_diag_coeff, std::abs(v));
-        lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
-        return 0;
-    }
+    int setValue(std::size_t rowId, std::size_t colId, double v);
 
     /// add value
-    int addValue(std::size_t rowId, std::size_t colId, double v)
-    {
-        if (rowId==colId)
-            _max_diag_coeff = std::max(_max_diag_coeff, std::abs(v));
-        lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
-        return 0;
-    }
+    int addValue(std::size_t rowId, std::size_t colId, double v);
 
     /// printout this equation for debugging
     void write(const std::string &filename) const;
@@ -91,7 +80,7 @@ public:
     LIS_MATRIX& getRawMatrix() { return _AA; };
 
     /// y = mat * x
-    void matvec ( const LisVector &x, LisVector &y) const;
+    void matvec(const LisVector &x, LisVector &y) const;
 
     ///
     template <class T_DENSE_MATRIX>
