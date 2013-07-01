@@ -88,10 +88,6 @@
 #include "MeshSurfaceExtraction.h"
 #include "readMeshFromFile.h"
 
-//test
-#include "VtkMeshConverter.h"
-#include "VtkRaster.h"
-
 // Qt includes
 #include <QDesktopWidget>
 #include <QFileDialog>
@@ -121,6 +117,8 @@
 #include "BuildInfo.h"
 #endif // OGS_BUILD_INFO
 
+// test
+#include "SHPInterface.h"
 
 using namespace FileIO;
 
@@ -1036,7 +1034,6 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 	}
 	else
 		INFO("No geometry information selected.");
-
 	QApplication::restoreOverrideCursor();
 }
 
@@ -1182,6 +1179,7 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	SHPInterface::write2dMeshToSHP("d:\\testshape", *_project.getMesh("TestExample"));
 /*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");
