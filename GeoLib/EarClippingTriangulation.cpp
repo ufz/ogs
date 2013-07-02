@@ -148,7 +148,8 @@ bool EarClippingTriangulation::isEar(std::size_t v0, std::size_t v1, std::size_t
 void EarClippingTriangulation::initVertexList ()
 {
 	std::size_t n_pnts (_pnts.size());
-	for (std::size_t k(0); k<n_pnts; k++) _vertex_list.push_back (k);
+	for (std::size_t k(0); k<n_pnts; k++)
+		_vertex_list.push_back (k);
 }
 
 void EarClippingTriangulation::initLists ()
@@ -293,6 +294,7 @@ void EarClippingTriangulation::clipEars()
 		}
 
 	}
+
 	// add last triangle
 	next = _vertex_list.begin();
 	prev = next;
@@ -303,6 +305,7 @@ void EarClippingTriangulation::clipEars()
 	next++;
 	if (next == _vertex_list.end())
 		return;
+
 	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == GeoLib::CCW)
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
 	else
