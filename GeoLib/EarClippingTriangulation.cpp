@@ -18,6 +18,9 @@
 // STL
 #include <vector>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // BaseLib
 #include "uniqueInsert.h"
 
@@ -159,6 +162,10 @@ void EarClippingTriangulation::initLists ()
 	while (next != _vertex_list.end()) {
 		orientation  = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
 		if (orientation == GeoLib::COLLINEAR) {
+			WARN("EarClippingTriangulation::initLists(): collinear points (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)",
+					(*_pnts[*prev])[0], (*_pnts[*prev])[1], (*_pnts[*prev])[2],
+					(*_pnts[*it])[0], (*_pnts[*it])[1], (*_pnts[*it])[2],
+					(*_pnts[*next])[0], (*_pnts[*next])[1], (*_pnts[*next])[2]);
 			it = _vertex_list.erase (it);
 			next++;
 		} else {
