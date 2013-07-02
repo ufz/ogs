@@ -93,10 +93,14 @@ Surface* Surface::createSurface(const Polyline &ply)
 			}
 		}
 		delete polygon;
+		if (sfc->getNTriangles() == 0) {
+			delete sfc;
+			return nullptr;
+		}
 		return sfc;
 	} else {
 		WARN("Error in Surface::createSurface() - Polyline consists of less than three points and therefore cannot be triangulated.");
-		return NULL;
+		return nullptr;
 	}
 
 }
