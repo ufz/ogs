@@ -159,7 +159,12 @@ void EarClippingTriangulation::initLists ()
 	next = it;
 	next++;
 	GeoLib::Orientation orientation;
-	while (next != _vertex_list.end()) {
+	bool first_run(true); // saves special handling of the last case with identical code
+	while (_vertex_list.size() >= 3 && first_run) {
+		if (next == _vertex_list.end()) {
+			first_run = false;
+			next = _vertex_list.begin();
+		}
 		orientation  = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
 		if (orientation == GeoLib::COLLINEAR) {
 			WARN("EarClippingTriangulation::initLists(): collinear points (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)",
@@ -178,17 +183,6 @@ void EarClippingTriangulation::initLists ()
 			it = next;
 			next++;
 		}
-	}
-
-	next = _vertex_list.begin();
-	orientation = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
-	if (orientation == GeoLib::COLLINEAR) {
-		it = _vertex_list.erase (it);
-	}
-	if (orientation == GeoLib::CW) {
-		_convex_vertex_list.push_back (*it);
-		if (isEar (*prev, *it, *next))
-			_ear_list.push_back (*it);
 	}
 }
 
@@ -303,8 +297,12 @@ void EarClippingTriangulation::clipEars()
 	next = _vertex_list.begin();
 	prev = next;
 	next++;
+	if (next == _vertex_list.end())
+		return;
 	it = next;
 	next++;
+	if (next == _vertex_list.end())
+		return;
 	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == GeoLib::CCW)
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
 	else
