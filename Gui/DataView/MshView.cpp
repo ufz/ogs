@@ -36,6 +36,7 @@
 //#include "RapidXmlIO/RapidVtuInterface.h"
 #include "RapidXmlIO/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
+#include "SHPInterface.h"
 
 MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -108,29 +109,33 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 
 	if (item)
 	{
-		bool is_3D_mesh (item->getMesh()->getDimension() == 3);
+		unsigned mesh_dim (item->getMesh()->getDimension());
 
 		QMenu menu;
-		QAction* editMeshAction   = menu.addAction("Edit mesh...");
-		QAction* editValuesAction  = menu.addAction("Edit material groups...");
-		QAction* checkMeshAction  = menu.addAction("Check mesh quality...");
-		QAction* surfaceMeshAction (NULL);
-		if (is_3D_mesh)
-			surfaceMeshAction = menu.addAction("Extract surface");
-
-		menu.addSeparator();
 		QMenu direct_cond_menu("DIRECT Conditions");
+		QAction*    editMeshAction = menu.addAction("Edit mesh...");
+		QAction*  editValuesAction = menu.addAction("Edit material groups...");
+		QAction*   checkMeshAction = menu.addAction("Check mesh quality...");
+		QAction* surfaceMeshAction (NULL);
+		if (mesh_dim==3)
+			     surfaceMeshAction = menu.addAction("Extract surface");
+		QAction* shapeExportAction (NULL);
+		if (mesh_dim==2)
+				 shapeExportAction = menu.addAction("Export to Shapefile...");
+		menu.addSeparator();
 		menu.addMenu(&direct_cond_menu);
-		QAction* addDirectAction  = direct_cond_menu.addAction("Add...");
-		QAction* loadDirectAction = direct_cond_menu.addAction("Load...");
+		QAction*   addDirectAction = direct_cond_menu.addAction("Add...");
+		QAction*  loadDirectAction = direct_cond_menu.addAction("Load...");
 		//menu.addSeparator();
-		connect(editMeshAction, SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
-		connect(editValuesAction, SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
-		connect(checkMeshAction, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
-		if (is_3D_mesh)
+		connect(editMeshAction,        SIGNAL(triggered()), this, SLOT(openMshEditDialog()));
+		connect(editValuesAction,      SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
+		connect(checkMeshAction,       SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
+		if (mesh_dim==3)
 			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
-		connect(addDirectAction, SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
-		connect(loadDirectAction, SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
+		connect(addDirectAction,	   SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
+		connect(loadDirectAction,      SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
+		if (mesh_dim==2)
+			connect(shapeExportAction, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
 		menu.exec(event->globalPos());
 	}
 }
@@ -171,6 +176,23 @@ void MshView::extractSurfaceMesh()
 	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
 }
 
+void MshView::exportToShapefile() const
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+	if (!index.isValid())
+		return;
+
+	QSettings settings;
+	QFileInfo fi (settings.value("lastOpenedMeshFileDirectory").toString());
+	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	QString fileName = QFileDialog::getSaveFileName(NULL, "Convert mesh to shapefile...",
+		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()),
+											"ESRI Shapefile (*.shp)");
+	if (!fileName.isEmpty())
+		if (!SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
+			OGSError::box("Error exporting mesh\n to shapefile");
+}
+
 int MshView::writeToFile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
@@ -186,10 +208,11 @@ int MshView::writeToFile() const
 	if (mesh)
 	{
 		QSettings settings;
+		QFileInfo fi (settings.value("lastOpenedMeshFileDirectory").toString());
 		QString mshName = QString::fromStdString(
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
 		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
-		                                    settings.value("lastOpenedMeshFileDirectory").toString(),
+		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()), 
 											"VTK Unstructured Grid (*.vtu);;GeoSys legacy mesh file (*.msh)");
 
 		if (!fileName.isEmpty())

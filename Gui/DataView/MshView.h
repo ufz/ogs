@@ -75,6 +75,8 @@ private slots:
 
 	void loadDIRECTSourceTerms();
 
+	void exportToShapefile() const;
+
 	/// Remove the currently selected mesh.
 	void removeMesh();
 

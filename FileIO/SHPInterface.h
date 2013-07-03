@@ -26,6 +26,11 @@
 // GeoLib
 #include "GEOObjects.h"
 
+
+namespace MeshLib {
+	class Mesh;
+}
+
 /**
  * \brief Manages the import of ESRI shape files into GeoLib.
  */
@@ -50,6 +55,11 @@ public:
 
 	/// Reads data from the shape file.
 	void readSHPFile(const std::string &filename, OGSType choice, std::string listName);
+
+	/// Writes a 2D mesh into a shapefile using one polygon for every element
+	/// (based on request by AS, open for discussion)
+	static bool write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh);
+
 
 private:
 	/// Reads points into a vector of Point objects.
