@@ -189,7 +189,8 @@ void MshView::exportToShapefile() const
 		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()),
 											"ESRI Shapefile (*.shp)");
 	if (!fileName.isEmpty())
-		SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh);
+		if (!SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
+			OGSError::box("Error exporting mesh\n to shapefile");
 }
 
 int MshView::writeToFile() const

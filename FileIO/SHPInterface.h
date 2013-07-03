@@ -57,7 +57,7 @@ public:
 	void readSHPFile(const std::string &filename, OGSType choice, std::string listName);
 
 	/// Writes a 2D mesh into a shapefile using one polygon for every element
-	/// (based on request by AG, open for discussion)
+	/// (based on request by AS, open for discussion)
 	static bool write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh);
 
 
