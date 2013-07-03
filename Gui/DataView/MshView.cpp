@@ -36,7 +36,10 @@
 //#include "RapidXmlIO/RapidVtuInterface.h"
 #include "RapidXmlIO/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
-#include "SHPInterface.h"
+
+#ifdef Shapelib_FOUND
+	#include "SHPInterface.h"
+#endif
 
 MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -120,8 +123,10 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		if (mesh_dim==3)
 			     surfaceMeshAction = menu.addAction("Extract surface");
 		QAction* shapeExportAction (NULL);
+#ifdef Shapelib_FOUND
 		if (mesh_dim==2)
 				 shapeExportAction = menu.addAction("Export to Shapefile...");
+#endif
 		menu.addSeparator();
 		menu.addMenu(&direct_cond_menu);
 		QAction*   addDirectAction = direct_cond_menu.addAction("Add...");
@@ -134,8 +139,10 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
 		connect(addDirectAction,	   SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
 		connect(loadDirectAction,      SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
+#ifdef Shapelib_FOUND		
 		if (mesh_dim==2)
 			connect(shapeExportAction, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
+#endif
 		menu.exec(event->globalPos());
 	}
 }
@@ -176,6 +183,7 @@ void MshView::extractSurfaceMesh()
 	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
 }
 
+#ifdef Shapelib_FOUND
 void MshView::exportToShapefile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
@@ -192,6 +200,7 @@ void MshView::exportToShapefile() const
 		if (!SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
 			OGSError::box("Error exporting mesh\n to shapefile");
 }
+#endif
 
 int MshView::writeToFile() const
 {
