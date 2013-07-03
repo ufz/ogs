@@ -54,7 +54,6 @@ BoostVtuInterface::~BoostVtuInterface()
 
 MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 {
-	INFO("BoostVtuInterface::readVTUFile(): Reading OGS mesh.");
 	std::ifstream in(file_name.c_str());
 	if (in.fail())
 	{
@@ -213,9 +212,9 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 				}
 			}
 
-			INFO("BoostVtuInterface::readVTUFile(): \tfinished.");
-			INFO("BoostVtuInterface::readVTUFile(): Nr. Nodes: %d", nodes.size());
-			INFO("BoostVtuInterface::readVTUFile(): Nr. Elements: %d", elements.size());
+			INFO("Reading OGS mesh finished.");
+			INFO("Nr. Nodes: %d", nodes.size());
+			INFO("Nr. Elements: %d", elements.size());
 			return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
 			                         elements);
 

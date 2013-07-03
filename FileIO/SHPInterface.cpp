@@ -26,6 +26,15 @@
 // MathLib
 #include "AnalyticalGeometry.h"
 
+// MeshLib
+#include "Mesh.h"
+#include "Node.h"
+#include "Elements/Element.h"
+#include "Elements/Tri.h"
+#include "Elements/Quad.h"
+
+
+
 bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities)
 {
 	SHPHandle hSHP = SHPOpen(filename.c_str(), "rb");
@@ -185,4 +194,83 @@ void SHPInterface::adjustPolylines(std::vector<GeoLib::Polyline*>* lines,
 			previous_pnt_id = jth_pnt_id;
 		}
 	}
+}
+
+
+bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh)
+{
+	if (mesh.getDimension()!=2)
+	{
+		ERR ("SHPInterface::write2dMeshToSHP(): Mesh to Shape conversion is only working for 2D Meshes.");
+		return false;
+	}
+
+	unsigned nElements (mesh.getNElements());
+	if (nElements<1)
+	{
+		ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains no elements.");
+		return false;
+	}		
+		
+	if (nElements>10E+7) // DBF-export requires a limit, 10 mio seems good for now
+	{
+		ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains too many elements for currently implemented DBF-boundaries.");
+		return false;
+	}
+	
+	SHPHandle hSHP = SHPCreate(file_name.c_str(), SHPT_POLYGON);
+	DBFHandle hDBF = DBFCreate(file_name.c_str());
+	int elem_id_field = DBFAddField(hDBF, "Elem_ID", FTInteger, 7, 0); // allows integers of length "7", i.e. 10mio-1 elements
+	int mat_field = DBFAddField(hDBF, "Material", FTInteger, 7, 0);
+	int node0_field = DBFAddField(hDBF, "Node0", FTInteger, 7, 0);
+	int node1_field = DBFAddField(hDBF, "Node1", FTInteger, 7, 0);
+	int node2_field = DBFAddField(hDBF, "Node2", FTInteger, 7, 0);
+
+	unsigned polygon_id (0);
+	double* padfX;
+	double* padfY;
+	double* padfZ;
+	for (unsigned i=0; i<nElements; ++i)
+	{
+		const MeshLib::Element* e (mesh.getElement(i));
+
+		// ignore all elements except triangles and quads
+		if ((e->getGeomType() == MshElemType::TRIANGLE) || (e->getGeomType() == MshElemType::QUAD))
+		{
+			// write element ID and material group to DBF-file
+			DBFWriteIntegerAttribute(hDBF, polygon_id, elem_id_field, i);
+			DBFWriteIntegerAttribute(hDBF, polygon_id, mat_field, e->getValue());
+
+			unsigned nNodes (e->getNNodes());
+			padfX = new double(nNodes+1);
+			padfY = new double(nNodes+1);
+			padfZ = new double(nNodes+1);
+			for (unsigned j=0; j<nNodes; ++j)
+			{
+				padfX[j]=(*e->getNode(j))[0];
+				padfY[j]=(*e->getNode(j))[1];
+				padfZ[j]=(*e->getNode(j))[2];
+			}
+			// Last node == first node to close the polygon
+			padfX[nNodes]=(*e->getNode(0))[0];
+			padfY[nNodes]=(*e->getNode(0))[1];
+			padfZ[nNodes]=(*e->getNode(0))[2];
+			// write the first three node ids to the dbf-file (this also specifies a QUAD uniquely)
+			DBFWriteIntegerAttribute(hDBF, polygon_id, node0_field, e->getNode(0)->getID());
+			DBFWriteIntegerAttribute(hDBF, polygon_id, node1_field, e->getNode(1)->getID());
+			DBFWriteIntegerAttribute(hDBF, polygon_id, node2_field, e->getNode(2)->getID());
+
+			SHPObject *object = SHPCreateObject(SHPT_POLYGON, polygon_id++, 0, 0, NULL, ++nNodes, padfX, padfY, padfZ, NULL);
+			SHPWriteObject(hSHP, -1, object);
+		
+			// Note: cleaning up the coordinate arrays padfX, -Y, -Z results in a crash, I assume that shapelib removes them
+			delete object;
+		}
+	}
+
+	SHPClose(hSHP);
+	DBFClose(hDBF);
+	INFO ("Shape export of 2D mesh \"%s\" successful.", mesh.getName().c_str());
+
+	return true;
 }
