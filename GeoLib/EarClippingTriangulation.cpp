@@ -18,6 +18,9 @@
 // STL
 #include <vector>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // BaseLib
 #include "uniqueInsert.h"
 
@@ -145,7 +148,8 @@ bool EarClippingTriangulation::isEar(std::size_t v0, std::size_t v1, std::size_t
 void EarClippingTriangulation::initVertexList ()
 {
 	std::size_t n_pnts (_pnts.size());
-	for (std::size_t k(0); k<n_pnts; k++) _vertex_list.push_back (k);
+	for (std::size_t k(0); k<n_pnts; k++)
+		_vertex_list.push_back (k);
 }
 
 void EarClippingTriangulation::initLists ()
@@ -156,9 +160,18 @@ void EarClippingTriangulation::initLists ()
 	next = it;
 	next++;
 	GeoLib::Orientation orientation;
-	while (next != _vertex_list.end()) {
+	bool first_run(true); // saves special handling of the last case with identical code
+	while (_vertex_list.size() >= 3 && first_run) {
+		if (next == _vertex_list.end()) {
+			first_run = false;
+			next = _vertex_list.begin();
+		}
 		orientation  = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
 		if (orientation == GeoLib::COLLINEAR) {
+			WARN("EarClippingTriangulation::initLists(): collinear points (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)",
+					(*_pnts[*prev])[0], (*_pnts[*prev])[1], (*_pnts[*prev])[2],
+					(*_pnts[*it])[0], (*_pnts[*it])[1], (*_pnts[*it])[2],
+					(*_pnts[*next])[0], (*_pnts[*next])[1], (*_pnts[*next])[2]);
 			it = _vertex_list.erase (it);
 			next++;
 		} else {
@@ -171,17 +184,6 @@ void EarClippingTriangulation::initLists ()
 			it = next;
 			next++;
 		}
-	}
-
-	next = _vertex_list.begin();
-	orientation = getOrientation (_pnts[*prev], _pnts[*it], _pnts[*next]);
-	if (orientation == GeoLib::COLLINEAR) {
-		it = _vertex_list.erase (it);
-	}
-	if (orientation == GeoLib::CW) {
-		_convex_vertex_list.push_back (*it);
-		if (isEar (*prev, *it, *next))
-			_ear_list.push_back (*it);
 	}
 }
 
@@ -292,12 +294,18 @@ void EarClippingTriangulation::clipEars()
 		}
 
 	}
+
 	// add last triangle
 	next = _vertex_list.begin();
 	prev = next;
 	next++;
+	if (next == _vertex_list.end())
+		return;
 	it = next;
 	next++;
+	if (next == _vertex_list.end())
+		return;
+
 	if (getOrientation(_pnts[*prev], _pnts[*it], _pnts[*next]) == GeoLib::CCW)
 		_triangles.push_back(GeoLib::Triangle(_pnts, *prev, *it, *next));
 	else

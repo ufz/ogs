@@ -166,9 +166,12 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std
 
 	for (std::vector<GeoLib::Polyline*>::const_iterator poly_it(polylines->begin()); poly_it
 	                != polylines->end(); poly_it++) {
-		INFO("SHPInterface::readPolygons(): Triangulation of Polygon with %d points.",
-		     (*poly_it)->getNumberOfPoints());
-		sfc_vec->push_back(GeoLib::Surface::createSurface(*(*poly_it)));
+		GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*(*poly_it)));
+		if (sfc)
+			sfc_vec->push_back(sfc);
+		else {
+			WARN("SHPInterface::readPolygons(): Could not triangulate polygon.")
+		}
 	}
 
 	if (!sfc_vec->empty())
