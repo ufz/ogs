@@ -1,13 +1,20 @@
 # Source files
 # GET_SOURCE_FILES(SOURCES_FILEIO)
 SET( SOURCES
+	Gmsh2GeoIO.h
 	Gmsh2GeoIO.cpp
+	GMSInterface.h
 	GMSInterface.cpp
+	PetrelInterface.h
 	PetrelInterface.cpp
+	readMeshFromFile.h
 	readMeshFromFile.cpp
+	readNonBlankLineFromInputStream.h
 	readNonBlankLineFromInputStream.cpp
+	Writer.h
 	Writer.cpp
 )
+
 GET_SOURCE_FILES(SOURCES_LEGACY Legacy)
 GET_SOURCE_FILES(SOURCES_MESHIO MeshIO)
 GET_SOURCE_FILES(SOURCES_RAPID_XML RapidXmlIO)

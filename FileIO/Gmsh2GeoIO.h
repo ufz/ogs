@@ -25,6 +25,12 @@ namespace GeoLib
 class GEOObjects;
 }
 
+namespace MeshLib
+{
+	class Mesh;
+}
+
+
 namespace FileIO
 {
 class Gmsh2GeoIO
@@ -37,6 +43,16 @@ public:
 	 * new surface will be put into this container
 	 */
 	static void loadMeshAsGeometry (std::string & fname, GeoLib::GEOObjects* geo);
+
+	/**
+	 * Converts a 2D mesh into a geometry.
+	 * A new geometry with the name of the mesh will be inserted into geo_objects, consisting
+	 * of points identical with mesh nodes and one surface representing the mesh. Triangles are
+	 * converted to geometric triangles, quads are split into two triangles, all other elements
+	 * are ignored.
+	 */
+	static bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects* geo_objects);
+
 };
 } // end namespace FileIO
 
