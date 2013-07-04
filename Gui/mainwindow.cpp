@@ -197,6 +197,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _elementModel, SLOT(clearView()));
 	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
 	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+	connect(mshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
+			this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
@@ -207,10 +209,10 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        mshTabWidget->elementView, SLOT(updateView()));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
-	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
 	connect(mshTabWidget->treeView, SIGNAL(removeSelectedMeshComponent()),
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
+	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
 	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
 	connect(mshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
@@ -955,6 +957,11 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 			geo_mapper.mapOnMesh(file_name.toStdString());
 		this->_geoModels->updateGeometry(geo_name);
 	}
+}
+
+void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
+{
+	FileIO::Gmsh2GeoIO::convertMeshToGeo(*mesh, this->_geoModels);
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
