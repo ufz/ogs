@@ -1,8 +1,6 @@
 # Source files
 # GET_SOURCE_FILES(SOURCES_FILEIO)
 SET( SOURCES
-	Gmsh2GeoIO.h
-	Gmsh2GeoIO.cpp
 	GMSInterface.h
 	GMSInterface.cpp
 	PetrelInterface.h

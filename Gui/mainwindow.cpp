@@ -68,7 +68,6 @@
 // FileIO includes
 // TODO6 #include "FEFLOWInterface.h"
 #include "GMSInterface.h"
-#include "Gmsh2GeoIO.h"
 #include "Legacy/MeshIO.h"
 #include "Legacy/OGSIOVer4.h"
 #include "MeshIO/GMSHInterface.h"
@@ -87,6 +86,7 @@
 #include "Elements/Element.h"
 #include "MeshSurfaceExtraction.h"
 #include "readMeshFromFile.h"
+#include "convertMeshToGeo.h"
 
 // Qt includes
 #include <QDesktopWidget>
@@ -961,7 +961,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-	FileIO::Gmsh2GeoIO::convertMeshToGeo(*mesh, this->_geoModels);
+	MeshLib::convertMeshToGeo(*mesh, this->_geoModels);
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
