@@ -36,18 +36,17 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects* geo_objects
 	}
 	
 	// nodes to points conversion
-	const unsigned nNodes (mesh.getNNodes());
+	const std::size_t nNodes (mesh.getNNodes());
 	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>(nNodes);
-	const std::vector<MeshLib::Node*> nodes = mesh.getNodes();
+	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
 
 	for (unsigned i=0; i<nNodes; ++i)
 		(*points)[i] = new GeoLib::Point(static_cast<GeoLib::Point>(*nodes[i]));
 
-
 	// elements to surface triangles conversion
-	const std::vector<MeshLib::Element*> elements = mesh.getElements();
+	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
 	GeoLib::Surface* sfc = new GeoLib::Surface(*points);
-	const unsigned nElems (mesh.getNElements());
+	const std::size_t nElems (mesh.getNElements());
 
 	for (unsigned i=0; i<nElems; ++i)
 	{
@@ -61,7 +60,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects* geo_objects
 		}
 		// all other element types are ignored (i.e. lines)
 	}
-	
+
 	std::vector<GeoLib::Surface*> *sfcs = new std::vector<GeoLib::Surface*>(1);
 	(*sfcs)[0] = sfc;
 
