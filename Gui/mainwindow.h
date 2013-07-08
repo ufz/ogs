@@ -76,6 +76,7 @@ protected slots:
 	void loadPetrelFiles();
 	void loadFEMConditions(std::string geoName);
 	void mapGeometry(const std::string &geo_name);
+	void convertMeshToGeometry(const MeshLib::Mesh* mesh);
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
