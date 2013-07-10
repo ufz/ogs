@@ -122,11 +122,16 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* surfaceMeshAction (NULL);
 		if (mesh_dim==3)
 			     surfaceMeshAction = menu.addAction("Extract surface");
+		QAction* mesh2geoAction (NULL);
 		QAction* shapeExportAction (NULL);
-#ifdef Shapelib_FOUND
 		if (mesh_dim==2)
+		{
+			        mesh2geoAction = menu.addAction("Convert to geometry");
+#ifdef Shapelib_FOUND
 				 shapeExportAction = menu.addAction("Export to Shapefile...");
 #endif
+		}
+
 		menu.addSeparator();
 		menu.addMenu(&direct_cond_menu);
 		QAction*   addDirectAction = direct_cond_menu.addAction("Add...");
@@ -139,10 +144,13 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
 		connect(addDirectAction,	   SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
 		connect(loadDirectAction,      SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
-#ifdef Shapelib_FOUND		
 		if (mesh_dim==2)
+		{
+			connect(mesh2geoAction,    SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
+#ifdef Shapelib_FOUND		
 			connect(shapeExportAction, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
 #endif
+		}
 		menu.exec(event->globalPos());
 	}
 }
@@ -181,6 +189,13 @@ void MshView::extractSurfaceMesh()
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	const double dir[3] = {0, 0, 1};
 	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
+}
+
+void MshView::convertMeshToGeometry()
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	emit requestMeshToGeometryConversion(mesh);
 }
 
 #ifdef Shapelib_FOUND
