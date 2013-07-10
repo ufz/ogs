@@ -55,7 +55,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 	if (!in.is_open())
 	{
 		WARN("MeshIO::loadMeshFromFile() - Could not open file %s.", file_name.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	std::string line_string ("");
@@ -121,6 +121,14 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 			}
 		}
 
+		if (elements.empty())
+		{
+			ERR ("MeshIO::loadMeshFromFile() - File did not contain element information.");
+			for (auto it = nodes.begin(); it!=nodes.end(); ++it)
+				delete *it;
+			return nullptr;
+		}
+
 		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(
 		                                               file_name), nodes, elements));
 		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
@@ -135,7 +143,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 	else
 	{
 		in.close();
-		return NULL;
+		return nullptr;
 	}
 }
 
