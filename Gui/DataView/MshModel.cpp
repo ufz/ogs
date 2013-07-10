@@ -31,7 +31,8 @@
 // Qt
 #include <QFileInfo>
 #include <QString>
-#include <QTime>
+
+#include "StringTools.h"
 
 MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
 	: TreeModel(parent), _project(project)
@@ -67,7 +68,7 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 	_rootItem->appendChild(newMesh);
 
 	// display elements
-	const std::vector<MeshLib::Element*> elems = mesh->getElements();
+	const std::vector<MeshLib::Element*> &elems = mesh->getElements();
 	const size_t nElems (elems.size());
 	QString elem_type_string("");
 	MshElemType::type elem_type(MshElemType::INVALID);
@@ -77,25 +78,23 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 		const MeshLib::Element* current_element (elems[i]);
 		MshElemType::type t (current_element->getGeomType());
 		QList<QVariant> elemData;
+		elemData.reserve(3);
 		if (t != elem_type)
 		{
 			elem_type = t;
 			elem_type_string = QString::fromStdString(MshElemType2String(t));
 		}
 
-		QString nodestxt("");
+		QString nodestxt(QString::number(current_element->getNode(0)->getID()));
 		const size_t nNodes(current_element->getNNodes());
-		for (size_t j = 0; j < nNodes; j++)
-			nodestxt.append(QString::number(current_element->getNode(j)->getID()) + ", ");
+		for (size_t j = 1; j < nNodes; j++)
+			nodestxt.append(", " + QString::number(current_element->getNode(j)->getID()));
 
-		elemData << "Element " + QString::number(i) << elem_type_string << nodestxt.left(nodestxt.length() - 2);
-
-		TreeItem* elem = new TreeItem(elemData, newMesh);
-		newMesh->appendChild(elem);
+		elemData << "Element " + QString::number(i) << elem_type_string << nodestxt;
+		newMesh->appendChild(new TreeItem(elemData, newMesh));
 	}
 
 	reset();
-
 	emit meshAdded(this, this->index(_rootItem->childCount() - 1, 0, QModelIndex()));
 }
 
@@ -201,5 +200,4 @@ VtkMeshSource* MshModel::vtkSource(const std::string &name) const
 	INFO("MshModel::vtkSource(): No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
-
 

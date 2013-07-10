@@ -59,15 +59,15 @@ void GeoTreeModel::addPointList(QString geoName, const GeoLib::PointVec* pointVe
 		std::string pnt_name("");
 		pointVec->getNameOfElementByID(j, pnt_name);
 		QList<QVariant> pnt_data;
+		pnt_data.reserve(5);
 		pnt_data << static_cast<unsigned>(j)
 		         << QString::number(pnt[0], 'f')
 		         << QString::number(pnt[1], 'f')
 		         << QString::number(pnt[2], 'f')
 		         << QString::fromStdString(pnt_name);
-		GeoTreeItem* point(new GeoTreeItem(pnt_data,
-		                                   pointList,
-		                                   static_cast<const GeoLib::Point*>(&pnt)));
-		pointList->appendChild(point);
+		pointList->appendChild(new GeoTreeItem(pnt_data,
+		                                       pointList,
+		                                       static_cast<const GeoLib::Point*>(&pnt)));
 	}
 
 	INFO("Geometry \"%s\" built. %d points added.", geoName.toStdString().c_str(), nPoints);
@@ -134,6 +134,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 	for (size_t i = start_index; i < end_index; i++)
 	{
 		QList<QVariant> line_data;
+		line_data.reserve(4);
 		std::string ply_name("");
 		if (polyline_vec->getNameOfElementByID(i, ply_name))
 			line_data << "Line " + QString::number(i) << QString::fromStdString(ply_name) << "" << "";
@@ -148,12 +149,13 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 		{
 			const GeoLib::Point pnt(*(line.getPoint(j)));
 			QList<QVariant> pnt_data;
+			pnt_data.reserve(4);
 			pnt_data << static_cast<int>(line.getPointID(j))
 			         << QString::number(pnt[0], 'f')
 			         << QString::number(pnt[1], 'f')
 			         << QString::number(pnt[2], 'f');
-			TreeItem* child(new TreeItem(pnt_data, lineItem));
-			lineItem->appendChild(child);
+
+			lineItem->appendChild(new TreeItem(pnt_data, lineItem));
 		}
 	}
 	INFO("%d polylines added.", end_index - start_index);
@@ -223,6 +225,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 	for (size_t i = start_index; i < end_index; i++)
 	{
 		QList<QVariant> surface;
+		surface.reserve(4);
 		std::string sfc_name("");
 		surface_vec->getNameOfElementByID(i, sfc_name);
 		surface << "Surface " + QString::number(i) << QString::fromStdString(sfc_name) <<
@@ -236,6 +239,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 		for (int j = 0; j < nElems; j++)
 		{
 			QList<QVariant> elem;
+			elem.reserve(4);
 			const GeoLib::Triangle &triangle(*sfc[j]);
 			elem << j << static_cast<int>(triangle[0])
 			     << static_cast<int>(triangle[1])
@@ -246,13 +250,13 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 			for (int k = 0; k < 3; k++)
 			{
 				QList<QVariant> node;
+				node.reserve(4);
 				const GeoLib::Point &pnt(*(nodesVec[triangle[k]]));
 				node << static_cast<int>(triangle[k])
 				     << QString::number(pnt[0], 'f')
 				     << QString::number(pnt[1], 'f')
 				     << QString::number(pnt[2], 'f');
-				TreeItem* nchild(new TreeItem(node, child));
-				child->appendChild(nchild);
+				child->appendChild(new TreeItem(node, child));
 			}
 		}
 	}
