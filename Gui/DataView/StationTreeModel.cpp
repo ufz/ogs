@@ -73,25 +73,6 @@ QModelIndex StationTreeModel::index( int row, int column,
 		return QModelIndex();
 }
 
-/*
- * Returns the model item associated with a tree item. This is a re-implementation of
- * QOgsModelBase::itemFromIndex to deal with TreeItems with an optionally attached BaseItem
- * \param index Index of the requested item
- * \return The BaseItem associated with the tree item
- *
-   BaseItem* StationTreeModel::itemFromIndex( const QModelIndex& index ) const
-   {
-    if (index.isValid())
-    {
-        ModelTreeItem* treeItem = static_cast<ModelTreeItem*>(index.internalPointer());
-        BaseItem* baseItem = treeItem->getItem();
-        return baseItem;
-    }
-    else
-        return nullptr;
-   }
- */
-
 /**
  * Returns the Station-Object of the ModelTreeItem with the given index and the name of the list this station belongs to.
  * \param index Index of the requested item
@@ -134,12 +115,8 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
 		listName = "List";
 		listName.append(QString::number(rowCount() + 1));
 	}
-	grpName.push_back(QVariant(listName));
-	grpName.push_back(QVariant(""));
-	grpName.push_back(QVariant(""));
-	grpName.push_back(QVariant(""));
-	BaseItem* grpItem = new BaseItem(listName, stations);
-	ModelTreeItem* group = new ModelTreeItem(grpName, _rootItem, grpItem);
+	grpName << listName << "" << "" << "";
+	ModelTreeItem* group = new ModelTreeItem(grpName, _rootItem, new BaseItem(listName, stations));
 	_lists.push_back(group);
 	_rootItem->appendChild(group);
 	int vectorSize = stations->size();
@@ -147,17 +124,14 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
 	for (int i = 0; i < vectorSize; i++)
 	{
 		QList<QVariant> stn;
-		stn.push_back(QVariant(QString::fromStdString(static_cast<GeoLib::Station*>((*
-		                                                                             stations)
-		                                                                            [i])->
-		                                              getName())));
-		stn.push_back(QVariant(QString::number((*(*stations)[i])[0],'f')));
-		stn.push_back(QVariant(QString::number((*(*stations)[i])[1],'f')));
-		stn.push_back(QVariant(QString::number((*(*stations)[i])[2],'f')));
+		stn << QString::fromStdString(static_cast<GeoLib::Station*>((*stations)[i])->getName())
+			<< QString::number((*(*stations)[i])[0],'f')
+			<< QString::number((*(*stations)[i])[1],'f')
+			<< QString::number((*(*stations)[i])[2],'f');
 
 		ModelTreeItem* child = new ModelTreeItem(stn, group);
 		child->setStation(static_cast<GeoLib::Station*>((*stations)[i]));
-		group->appendChild(child);
+		group->appendChild(child);	
 	}
 
 	qDebug() << "List" << listName << "loaded, " << stations->size() << "items added.";
@@ -193,38 +167,6 @@ void StationTreeModel::removeStationList(const std::string &name)
 		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
 			removeStationList(createIndex(_lists[i]->row(), 0, _lists[i]));
 }
-
-/*
- * Traverses the (sub-)tree of the TreeItem with the given index and looks for an item in that subtree
- * with the given name. Using this method is probably rather slow and not recommended.
- * If this method is called with an empty QModelIndex, the TreeModel will assign the rootItem to that
- * index.
- * \param index The TreeItem whose subtree will be searched.
- * \param name The name of the item that should be found
- * \return The QModelIndex of the desired item (or an empty index if no such item exists).
- *
-   QModelIndex StationTreeModel::getItemByName(const QModelIndex &idx, const std::string &name) const
-   {
-    QModelIndex didx;
-    TreeItem* item = getItem(idx);
-
-    int nChildren = item->childCount();
-    for (int i=0; i<nChildren; i++)
-    {
-        TreeItem* child = item->child(i);
-        QString test = child->data(0).toString();
-
-        if ( name.compare(child->data(0).toString().toStdString()) != 0 )
-            didx = getItemByName( index(i, 0, idx), name );
-        else didx = index(i, 0, idx);
-        if (didx.isValid())
-            return didx;
-
-    }
-
-    return QModelIndex(); // this is no valid QModelIndex and signifies that no item by the given name could be found.
-   }
- */
 
 /**
  * Filters the station list based on the property boundaries given in bounds.
