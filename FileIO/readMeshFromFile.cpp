@@ -44,6 +44,6 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 		return FileIO::BoostVtuInterface::readVTUFile(file_name);
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
-	return 0;
+	return nullptr;
 }
 } // end namespace FileIO
