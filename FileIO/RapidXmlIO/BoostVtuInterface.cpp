@@ -457,7 +457,7 @@ int BoostVtuInterface::write(std::ostream& stream)
 		oss << data_array_indent << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " <<
 		(*nodes[i])[2] << std::endl;
 	oss << data_array_close;
-	this->addDataArray(points_node, "Points", "Float32", oss.str(), 3);
+	this->addDataArray(points_node, "Points", "Float64", oss.str(), 3);
 	oss.str(std::string());
 	oss.clear();
 
