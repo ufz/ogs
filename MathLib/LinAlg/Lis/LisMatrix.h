@@ -74,7 +74,7 @@ public:
     void write(const std::string &filename) const;
 
     /// get a maximum value in diagonal entries
-    double getMaxDiagCoeff() const { return _max_diag_coeff; };
+    double getMaxDiagCoeff();
 
     /// return a raw Lis matrix object
     LIS_MATRIX& getRawMatrix() { return _AA; };
@@ -96,7 +96,6 @@ public:
 
 private:
     std::size_t _n_rows;
-    double _max_diag_coeff;
     LisOption::MatrixType _mat_type;
     LIS_MATRIX _AA;
     bool _is_assembled;
