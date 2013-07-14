@@ -26,17 +26,17 @@
 namespace MathLib
 {
 
-LisLinearSolver::LisLinearSolver(LisMatrix &A, boost::property_tree::ptree const*const option)
+using boost::property_tree::ptree;
+
+LisLinearSolver::LisLinearSolver(LisMatrix &A, ptree const*const option)
 : _A(A)
 {
     if (option)
         setOption(*option);
 }
 
-void LisLinearSolver::setOption(const boost::property_tree::ptree &option)
+void LisLinearSolver::setOption(const ptree &option)
 {
-    using boost::property_tree::ptree;
-
     boost::optional<ptree> ptSolver = option.get_child("LinearSolver");
     if (!ptSolver)
         return;
