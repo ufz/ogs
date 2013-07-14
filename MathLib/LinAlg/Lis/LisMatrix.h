@@ -95,8 +95,8 @@ public:
     bool isAssembled() const { return _is_assembled; };
 
 private:
-    std::size_t _n_rows;
-    LisOption::MatrixType _mat_type;
+    std::size_t const _n_rows;
+    LisOption::MatrixType const _mat_type;
     LIS_MATRIX _AA;
     bool _is_assembled;
     int _is;
