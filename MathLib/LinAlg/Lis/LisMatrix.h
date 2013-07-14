@@ -99,8 +99,8 @@ private:
     LisOption::MatrixType const _mat_type;
     LIS_MATRIX _AA;
     bool _is_assembled;
-    int _is;
-    int _ie;
+    int _is;	///< location where the partial matrix _AA starts in global matrix.
+    int _ie;	///< location where the partial matrix _AA ends in global matrix.
 
     // friend function
     friend bool finalizeMatrixAssembly(LisMatrix &mat);
