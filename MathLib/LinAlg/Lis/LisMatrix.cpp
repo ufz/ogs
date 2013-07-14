@@ -86,7 +86,7 @@ double LisMatrix::getMaxDiagCoeff()
 	abs_max_entry = std::abs(abs_max_entry);
 	for (std::size_t k(0); k<_n_rows; ++k) {
 		double tmp;
-		ierr = lis_vector_get_value(diag, 0, &tmp);
+		ierr = lis_vector_get_value(diag, k, &tmp);
 		checkLisError(ierr);
 		if (abs_max_entry < std::abs(tmp)) {
 			abs_max_entry = std::abs(tmp);
