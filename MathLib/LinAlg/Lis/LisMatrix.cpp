@@ -46,17 +46,21 @@ void LisMatrix::setZero()
     checkLisError(ierr);
     ierr = lis_matrix_set_size(_AA, 0, _n_rows);
     checkLisError(ierr);
+
+	_is_assembled = false;
 }
 
 int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
 {
     lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
+	_is_assembled = false;
     return 0;
 }
 
 int LisMatrix::addValue(std::size_t rowId, std::size_t colId, double v)
 {
     lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
+	_is_assembled = false;
     return 0;
 }
 
