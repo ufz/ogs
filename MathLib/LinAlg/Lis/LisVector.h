@@ -103,7 +103,7 @@ public:
         }
     }
 private:
-    std::size_t _length;
+    std::size_t const _length;
     LIS_VECTOR _vec;
 };
 
