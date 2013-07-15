@@ -37,17 +37,17 @@ class MeshItems
 {
 public:
     /// construct from nodes
-    MeshItems(const MeshLib::Mesh* msh, std::vector<MeshLib::Node*> const& vec_items)
+    MeshItems(const MeshLib::Mesh& msh, std::vector<MeshLib::Node*> const& vec_items)
     : _msh(msh), _nodes(&vec_items), _eles(nullptr)
     {}
 
     /// construct from elements
-    MeshItems(const MeshLib::Mesh* msh, std::vector<MeshLib::Element*> const& vec_items)
+    MeshItems(const MeshLib::Mesh& msh, std::vector<MeshLib::Element*> const& vec_items)
     : _msh(msh), _nodes(nullptr), _eles(&vec_items)
     {}
 
     /// construct from both nodes and elements
-    MeshItems(const MeshLib::Mesh* msh,
+    MeshItems(const MeshLib::Mesh& msh,
                 std::vector<MeshLib::Node*> const& vec_nodes, std::vector<MeshLib::Element*> const& vec_eles)
     : _msh(msh), _nodes(&vec_nodes), _eles(&vec_eles)
     {}
@@ -58,7 +58,7 @@ public:
     std::size_t getNTotalItems() const { return getNNodes() + getNElements(); }
 
     /// return this mesh ID
-    std::size_t getMeshID() const { return _msh->getID(); }
+    std::size_t getMeshID() const { return _msh.getID(); }
 
     /// return the number of registered nodes
     std::size_t getNNodes() const { return (_nodes==nullptr) ? 0 : _nodes->size(); }
@@ -77,7 +77,7 @@ public:
 
 
 private:
-    const MeshLib::Mesh* _msh;
+    const MeshLib::Mesh& _msh;
     std::vector<MeshLib::Node*> const* _nodes;
     std::vector<MeshLib::Element*> const* _eles;
 
