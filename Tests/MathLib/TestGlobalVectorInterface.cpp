@@ -15,6 +15,9 @@
 #include <gtest/gtest.h>
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
+#ifdef USE_LIS
+#include "MathLib/LinAlg/Lis/LisVector.h"
+#endif
 
 namespace
 {
@@ -64,4 +67,10 @@ TEST(Math, CheckInterface_DenseVector)
     checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 
+#ifdef USE_LIS
+TEST(Math, CheckInterface_LisVector)
+{
+    checkGlobalVectorInterface<MathLib::LisVector >();
+}
+#endif
 

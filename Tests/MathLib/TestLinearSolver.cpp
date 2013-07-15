@@ -21,6 +21,10 @@
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
+#ifdef USE_LIS
+#include "MathLib/LinAlg/Lis/LisLinearSolver.h"
+#include "MathLib/LinAlg/Lis/LisTools.h"
+#endif
 
 #include "../TestTools.h"
 
@@ -72,7 +76,7 @@ struct Example1
 
     ~Example1()
     {
-    	delete [] exH;
+        delete [] exH;
     }
 };
 
@@ -121,4 +125,20 @@ TEST(MathLib, CheckInterface_GaussAlgorithm)
     checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>, LinearSolverType>(A, t_root);
 }
 
+#ifdef USE_LIS
+TEST(Math, CheckInterface_Lis)
+{
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    t_solver.put("solver_type", "CG");
+    t_solver.put("precon_type", "NONE");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
+
+    MathLib::LisMatrix A(Example1::dim_eqs);
+    checkLinearSolverInterface<MathLib::LisMatrix, MathLib::LisVector, MathLib::LisLinearSolver>(A, t_root);
+}
+#endif
 
