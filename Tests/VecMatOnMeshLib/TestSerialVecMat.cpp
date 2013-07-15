@@ -100,7 +100,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
         for (std::size_t i=0; i<vec_selected_nodes.size(); i++)
             vec_selected_nodes[i] = vec_all_nodes[i];
     }
-    const VecMatOnMeshLib::MeshItems mesh_items_left_nodes(msh.get(), vec_selected_nodes);
+    const VecMatOnMeshLib::MeshItems mesh_items_left_nodes(*msh, vec_selected_nodes);
 
     //extract elements having those nodes (corresponding to first five elements)
     std::vector<MeshLib::Element*> vec_selected_eles(5);

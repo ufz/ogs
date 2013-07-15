@@ -55,7 +55,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
     //--------------------------------------------------------------------------
     // Prepare mesh items where data are assigned
     //--------------------------------------------------------------------------
-    const VecMatOnMeshLib::MeshItems mesh_items_all_nodes(ex1.msh, ex1.msh->getNodes());
+    const VecMatOnMeshLib::MeshItems mesh_items_all_nodes(*ex1.msh, ex1.msh->getNodes());
 
     //--------------------------------------------------------------------------
     // Allocate a coefficient matrix, RHS and solution vectors
