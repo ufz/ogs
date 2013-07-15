@@ -17,6 +17,9 @@
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#ifdef USE_LIS
+#include "MathLib/LinAlg/Lis/LisMatrix.h"
+#endif
 
 namespace
 {
@@ -50,4 +53,10 @@ TEST(Math, CheckInterface_GlobalDenseMatrix)
     checkGlobalMatrixInterface(m);
 }
 
-
+#ifdef USE_LIS
+TEST(Math, CheckInterface_LisMatrix)
+{
+    MathLib::LisMatrix m(10);
+    checkGlobalMatrixInterface(m);
+}
+#endif
