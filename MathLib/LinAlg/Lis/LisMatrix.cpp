@@ -38,30 +38,30 @@ LisMatrix::~LisMatrix()
 
 void LisMatrix::setZero()
 {
-    // A matrix has to be destroyed and created again because Lis doesn't provide a
-    // function to set matrix entries to zero
-    int ierr = lis_matrix_destroy(_AA);
-    checkLisError(ierr);
-    ierr = lis_matrix_create(0, &_AA);
-    checkLisError(ierr);
-    ierr = lis_matrix_set_size(_AA, 0, _n_rows);
-    checkLisError(ierr);
+	// A matrix has to be destroyed and created again because Lis doesn't provide a
+	// function to set matrix entries to zero
+	int ierr = lis_matrix_destroy(_AA);
+	checkLisError(ierr);
+	ierr = lis_matrix_create(0, &_AA);
+	checkLisError(ierr);
+	ierr = lis_matrix_set_size(_AA, 0, _n_rows);
+	checkLisError(ierr);
 
 	_is_assembled = false;
 }
 
 int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
 {
-    lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
+	lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
 	_is_assembled = false;
-    return 0;
+	return 0;
 }
 
 int LisMatrix::addValue(std::size_t rowId, std::size_t colId, double v)
 {
-    lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
+	lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
 	_is_assembled = false;
-    return 0;
+	return 0;
 }
 
 void LisMatrix::write(const std::string &filename) const
@@ -104,17 +104,17 @@ void LisMatrix::matvec (const LisVector &x, LisVector &y) const
 
 bool finalizeMatrixAssembly(LisMatrix &mat)
 {
-    LIS_MATRIX &A = mat.getRawMatrix();
-    // commented out below because lis_matrix_is_assembled() always returns the same value.
-    //    if (LIS_SUCCESS!=lis_matrix_is_assembled(A)) {
-    if (!mat.isAssembled()) {
-        int ierr = lis_matrix_set_type(A, static_cast<int>(mat.getMatrixType()));
-        checkLisError(ierr);
-        ierr = lis_matrix_assemble(A); //checkLisError(ierr);
-        mat._is_assembled = true;
-   }
-    return true;
-};
+	LIS_MATRIX &A = mat.getRawMatrix();
+	// commented out below because lis_matrix_is_assembled() always returns the same value.
+	//    if (LIS_SUCCESS!=lis_matrix_is_assembled(A)) {
+	if (!mat.isAssembled()) {
+		int ierr = lis_matrix_set_type(A, static_cast<int>(mat.getMatrixType()));
+		checkLisError(ierr);
+		ierr = lis_matrix_assemble(A); //checkLisError(ierr);
+		mat._is_assembled = true;
+	}
+	return true;
+}
 
 
 } //MathLib
