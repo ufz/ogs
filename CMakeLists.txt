@@ -104,6 +104,7 @@ ENDIF() #OGS_PACKAGING
 # External projects
 OPTION(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
+INCLUDE(scripts/cmake/ExternalProjectVtk.cmake)
 INCLUDE_DIRECTORIES( SYSTEM ${Boost_INCLUDE_DIRS} )
 IF(OGS_USE_EIGEN)
 	INCLUDE(scripts/cmake/ExternalProjectEigen.cmake)

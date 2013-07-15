@@ -1,7 +1,7 @@
-IF (NOT VTK_FOUND)
-	MESSAGE(FATAL_ERROR "Error: VTK was not found but is needed for the GUI. Aborting...")
-ENDIF (NOT VTK_FOUND)
-INCLUDE( ${VTK_USE_FILE} )
+#IF (NOT VTK_FOUND)
+#	MESSAGE(FATAL_ERROR "Error: VTK was not found but is needed for the GUI. Aborting...")
+#ENDIF (NOT VTK_FOUND)
+# INCLUDE( ${VTK_USE_FILE} )
 
 IF(VTKFBXCONVERTER_FOUND)
 	ADD_DEFINITIONS(-DVTKFBXCONVERTER_FOUND)
