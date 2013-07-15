@@ -14,6 +14,8 @@
 
 #include "LisMatrix.h"
 
+#include <stdexcept>
+
 #include "LisVector.h"
 #include "LisCheck.h"
 
@@ -66,11 +68,15 @@ int LisMatrix::addValue(std::size_t rowId, std::size_t colId, double v)
 
 void LisMatrix::write(const std::string &filename) const
 {
+	if (!_is_assembled)
+		throw std::logic_error("LisMatrix::write(): matrix not assembled.");
     lis_output_matrix(_AA, LIS_FMT_MM, const_cast<char*>(filename.c_str()));
 }
 
 double LisMatrix::getMaxDiagCoeff()
 {
+	if (!_is_assembled)
+		throw std::logic_error("LisMatrix::getMaxDiagCoeff(): matrix not assembled.");
 	LIS_VECTOR diag;
 	int ierr = lis_vector_create(0, &diag);
 	checkLisError(ierr);
@@ -84,7 +90,7 @@ double LisMatrix::getMaxDiagCoeff()
 	ierr = lis_vector_get_value(diag, 0, &abs_max_entry);
 	checkLisError(ierr);
 	abs_max_entry = std::abs(abs_max_entry);
-	for (std::size_t k(0); k<_n_rows; ++k) {
+	for (std::size_t k(1); k<_n_rows; ++k) {
 		double tmp;
 		ierr = lis_vector_get_value(diag, k, &tmp);
 		checkLisError(ierr);
@@ -98,6 +104,8 @@ double LisMatrix::getMaxDiagCoeff()
 
 void LisMatrix::matvec (const LisVector &x, LisVector &y) const
 {
+	if (!_is_assembled)
+		throw std::logic_error("LisMatrix::matvec(): matrix not assembled.");
     int ierr = lis_matvec(_AA, const_cast<LisVector*>(&x)->getRawVector(), y.getRawVector());
     checkLisError(ierr);
 }
@@ -105,12 +113,12 @@ void LisMatrix::matvec (const LisVector &x, LisVector &y) const
 bool finalizeMatrixAssembly(LisMatrix &mat)
 {
 	LIS_MATRIX &A = mat.getRawMatrix();
-	// commented out below because lis_matrix_is_assembled() always returns the same value.
-	//    if (LIS_SUCCESS!=lis_matrix_is_assembled(A)) {
+
 	if (!mat.isAssembled()) {
 		int ierr = lis_matrix_set_type(A, static_cast<int>(mat.getMatrixType()));
 		checkLisError(ierr);
-		ierr = lis_matrix_assemble(A); //checkLisError(ierr);
+		ierr = lis_matrix_assemble(A);
+		checkLisError(ierr);
 		mat._is_assembled = true;
 	}
 	return true;
