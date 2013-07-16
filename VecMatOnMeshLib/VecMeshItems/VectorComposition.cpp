@@ -82,7 +82,7 @@ void VectorComposition::numberingByMeshItems(std::size_t offset)
 {
     std::size_t global_index = offset;
 
-    auto &m = _dict.get<mesh_item_ID>(); // view as sorted by mesh item
+    auto &m = _dict.get<ByLocation>(); // view as sorted by mesh item
     for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
         MeshitemDataPosition pos = *itr_mesh_item;
         pos.global_index = global_index++;
@@ -100,7 +100,7 @@ std::size_t VectorComposition::getDataID(const MeshItem &pos, unsigned compID) c
 
 std::vector<std::size_t> VectorComposition::getComponentIDs(const MeshItem &pos) const
 {
-    auto &m = _dict.get<mesh_item_ID>();
+    auto &m = _dict.get<ByLocation>();
     auto p = m.equal_range(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id));
     std::vector<std::size_t> vec_compID;
     for (auto itr=p.first; itr!=p.second; ++itr)
@@ -110,7 +110,7 @@ std::vector<std::size_t> VectorComposition::getComponentIDs(const MeshItem &pos)
 
 std::vector<std::size_t> VectorComposition::getDataIDList(const MeshItem &pos) const
 {
-    auto &m = _dict.get<mesh_item_ID>();
+    auto &m = _dict.get<ByLocation>();
     auto p = m.equal_range(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id));
     std::vector<std::size_t> vec_dataID;
     for (auto itr=p.first; itr!=p.second; ++itr)
@@ -122,7 +122,7 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<Mesh
 {
     MeshitemDataPositionDictionary sub_dict;
     {
-        auto &m = _dict.get<mesh_item_ID>();
+        auto &m = _dict.get<ByLocation>();
         for (auto &item : vec_pos) {
             auto p = m.equal_range(boost::make_tuple(item.mesh_id, item.item_type, item.item_id));
             for (auto itr=p.first; itr!=p.second; ++itr)
@@ -132,7 +132,7 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<Mesh
 
     std::vector<std::size_t> vec_dataID;
     if (list_numbering==OrderingType::BY_MESH_ITEM_ID) {
-        auto &m = sub_dict.get<mesh_item_ID>();
+        auto &m = sub_dict.get<ByLocation>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
             vec_dataID.push_back(itr_mesh_item->global_index);
         }

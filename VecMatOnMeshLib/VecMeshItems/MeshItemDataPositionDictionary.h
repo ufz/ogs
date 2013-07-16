@@ -49,12 +49,12 @@ struct MeshitemDataPosition
     }
 };
 
-struct mesh_item_ID {};
+struct ByLocation {};
 struct mesh_item_comp_ID {};
 struct comp_ID {};
 struct ByGlobalIndex {};
 
-struct mesh_item_key : public boost::multi_index::composite_key<
+struct LocationKey : public boost::multi_index::composite_key<
     MeshitemDataPosition,
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_id),
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,MeshItemType::type,item_type),
@@ -79,7 +79,7 @@ typedef boost::multi_index::multi_index_container<
             >,
             boost::multi_index::ordered_non_unique
             <
-                boost::multi_index::tag<mesh_item_ID>, mesh_item_key
+                boost::multi_index::tag<ByLocation>, LocationKey
             >,
             boost::multi_index::ordered_non_unique
             <
