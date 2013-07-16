@@ -21,10 +21,10 @@
 namespace VecMatOnMeshLib
 {
 
-/**
- * Mesh item data
+/** Spatial location description.
  *
- * This data are used in VectorComposition
+ * The spatial location is given by a mesh by its \c mesh_id, item's type (face,
+ * cell, etc. see MeshItemType), and item's number by its \c item_id.
  */
 struct Location
 {
@@ -36,6 +36,8 @@ struct Location
     : mesh_id(meshid), item_type(itemtype), item_id(itemid){};
 };
 
+/** Lexicographic order of Location.
+ */
 inline bool operator<(const Location& left, const Location& right)
 {
     if (left.mesh_id != right.mesh_id) return left.mesh_id < right.mesh_id;
