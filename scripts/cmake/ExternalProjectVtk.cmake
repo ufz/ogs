@@ -21,13 +21,13 @@ IF(VTK_FOUND)
 	RETURN()
 ENDIF()
 
-# First check for system boost
-IF(NOT Boost_INCLUDE_DIRS)
-	FIND_PACKAGE(VTK ${OGS_VTK_VERSION} REQUIRED COMPONENTS ${OGS_VTK_REQUIRED_LIBS} NO_MODULE)
-	IF(VTK_FOUND)
-		INCLUDE( ${VTK_USE_FILE} )
-		RETURN()
-	ENDIF()
+IF(NOT DEFINED VTK_DIR)
+	SET(VTK_DIR ${CMAKE_BINARY_DIR}/External/vtk/src/Vtk-build)
+ENDIF()
+FIND_PACKAGE(VTK ${OGS_VTK_VERSION} COMPONENTS ${OGS_VTK_REQUIRED_LIBS} NO_MODULE)
+IF(VTK_FOUND)
+	INCLUDE( ${VTK_USE_FILE} )
+	RETURN()
 ENDIF()
 
 # Set archive sources
@@ -38,7 +38,7 @@ IF(OGS_BUILD_GUI)
 	SET(OGS_VTK_CMAKE_ARGS "-DVTK_Group_Qt:BOOL=ON")
 ENDIF()
 
-ExternalProject_Add(Vtk
+ExternalProject_Add(VTK
 	PREFIX ${CMAKE_BINARY_DIR}/External/vtk
 	URL /Users/bilke/tmp/vtk-6.0.0.tar.gz #${VTK_URL}
 	URL_MD5 ${VTK_ARCHIVE_MD5}
@@ -50,8 +50,10 @@ ExternalProject_Add(Vtk
 	INSTALL_COMMAND ""
 )
 
-set(VTK_DIR ${CMAKE_BINARY_DIR}/External/vtk/src/Vtk-build)
-#ExternalProject_Get_Property( Vtk CMAKE_BUILD_TYPE )
-#MESSAGE("${VTK_DEFINITIONS}")
-#INCLUDE( ${CMAKE_BINARY_DIR}/External/vtk/src/Vtk/CMake/UseVTK.cmake )
-#SET(VTK_USE_FILE "${CMAKE_BINARY_DIR}/External/vtk/src/Vtk/CMake/UseVTK.cmake")
+
+IF(NOT ${VTK_FOUND})
+	# Rerun cmake in initial build
+	ADD_CUSTOM_TARGET(VtkRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS VTK)
+ELSE()
+	ADD_CUSTOM_TARGET(VtkRescan) # dummy target for caching
+ENDIF()
