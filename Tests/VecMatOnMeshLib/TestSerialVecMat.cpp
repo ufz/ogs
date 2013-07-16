@@ -127,7 +127,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
     // prepare a mapping table from DoFs to positions in the vector
     std::vector<std::vector<std::size_t> > map_node2vec_entry(vec_selected_nodes.size()); // node id, comp id <-> vector entry id
     for (std::size_t i=0; i<map_node2vec_entry.size(); i++)
-        map_node2vec_entry[i] = vec1_composition.getDataIDList(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, vec_selected_nodes[i]->getID()));
+        map_node2vec_entry[i] = vec1_composition.getDataIDList(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, vec_selected_nodes[i]->getID()));
     // create a vector assembler
     LocalVecAssemblerExtractNodeX extractX;
     typedef VecMatOnMeshLib::VectorAssembler<TVec, MeshLib::Node, LocalVecAssemblerExtractNodeX> SetNodeXToVec;
@@ -146,9 +146,9 @@ TEST(VecMatOnMeshLib, SerialVecMat)
     std::vector<std::vector<std::size_t> > mat_data_pos(vec_selected_eles.size()); // element id, node id, comp id <-> vector entry id
     for (std::size_t i=0; i<mat_data_pos.size(); i++) {
         auto* e = vec_selected_eles[i];
-        std::vector<VecMatOnMeshLib::MeshItem> vec_items;
+        std::vector<VecMatOnMeshLib::Location> vec_items;
         for (std::size_t j=0; j<e->getNNodes(); j++)
-            vec_items.push_back(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
+            vec_items.push_back(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
         mat_data_pos[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
         //std::cout << i << ": "; std::for_each(vec_data_pos[i].begin(), vec_data_pos[i].end(), [](std::size_t id){std::cout << id << " ";}); std::cout << "\n";
     }

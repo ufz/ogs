@@ -51,23 +51,23 @@ public:
     unsigned getNMeshes() const { return _vec_meshIDs.size(); }
 
     /// return a vector of component IDs on a given mesh item
-    std::vector<std::size_t> getComponentIDs(const MeshItem &item) const;
+    std::vector<std::size_t> getComponentIDs(const Location &item) const;
 
     /// find a mesh item on which a given data position is assigned
-    MeshItem getMeshItem(unsigned dataID) const;
+    Location getMeshItem(unsigned dataID) const;
 
     /// find a data position from a given mesh item and component ID
-    std::size_t getDataID(const MeshItem &item, unsigned compID) const;
+    std::size_t getDataID(const Location &item, unsigned compID) const;
 
     /**
      * return a vector of data positions related to a given mesh item
      *
-     * @param item   MeshItem
+     * @param item   Location
      * @return a vector of data positions
      * If there is more than one component on a given mesh item, the function returns
      * a vector containing data positions for each component.
      */
-    std::vector<std::size_t> getDataIDList(const MeshItem &item) const;
+    std::vector<std::size_t> getDataIDList(const Location &item) const;
 
     /**
      * return a vector of data positions corresponding to give items
@@ -76,7 +76,7 @@ public:
      * @param list_ordering   ordering type of data positions in a resulted vector
      * @return
      */
-    std::vector<std::size_t> getDataIDList(const std::vector<MeshItem> &vec_items, OrderingType::type list_ordering) const;
+    std::vector<std::size_t> getDataIDList(const std::vector<Location> &vec_items, OrderingType::type list_ordering) const;
 
 //for debugging
     const MeshitemDataPositionDictionary& getDictionary() const {return _dict; }

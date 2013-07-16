@@ -51,20 +51,20 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
     ASSERT_EQ(20u, da.size());
     ASSERT_EQ(2u, da.getNComponents());
     ASSERT_EQ(1u, da.getNMeshes());
-    ASSERT_EQ(0u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
-    ASSERT_EQ(1u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp0_id));
-    ASSERT_EQ(10u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp1_id));
-    ASSERT_EQ(11u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp1_id));
-    auto vecCompIDs = da.getComponentIDs(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0));
+    ASSERT_EQ(0u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
+    ASSERT_EQ(1u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp0_id));
+    ASSERT_EQ(10u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp1_id));
+    ASSERT_EQ(11u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp1_id));
+    auto vecCompIDs = da.getComponentIDs(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0));
     ASSERT_EQ(2u, vecCompIDs.size());
     ASSERT_EQ(0u, vecCompIDs[0]);
     ASSERT_EQ(1u, vecCompIDs[1]);
 
     //check out of range
-    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 10), comp0_id));
-    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID()+1, VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
-    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Cell, 0), comp0_id));
-    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), 10));
+    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 10), comp0_id));
+    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::Location(msh->getID()+1, VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
+    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Cell, 0), comp0_id));
+    ASSERT_EQ(std::numeric_limits<std::size_t>::max(), da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), 10));
 }
 
 TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
@@ -98,9 +98,9 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
     ASSERT_EQ(20u, da.size());
     ASSERT_EQ(2u, da.getNComponents());
     ASSERT_EQ(1u, da.getNMeshes());
-    ASSERT_EQ(0u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
-    ASSERT_EQ(1u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp1_id));
-    ASSERT_EQ(2u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp0_id));
-    ASSERT_EQ(3u, da.getDataID(VecMatOnMeshLib::MeshItem(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp1_id));
+    ASSERT_EQ(0u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
+    ASSERT_EQ(1u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp1_id));
+    ASSERT_EQ(2u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp0_id));
+    ASSERT_EQ(3u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp1_id));
 }
 

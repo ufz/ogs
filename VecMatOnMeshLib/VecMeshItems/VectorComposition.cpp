@@ -91,14 +91,14 @@ void VectorComposition::numberingByMeshItems(std::size_t offset)
 }
 
 
-std::size_t VectorComposition::getDataID(const MeshItem &pos, unsigned compID) const
+std::size_t VectorComposition::getDataID(const Location &pos, unsigned compID) const
 {
     auto &m = _dict.get<mesh_item_comp_ID>();
     auto itr = m.find(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id, compID));
     return itr!=m.end() ? itr->global_index : -1;
 }
 
-std::vector<std::size_t> VectorComposition::getComponentIDs(const MeshItem &pos) const
+std::vector<std::size_t> VectorComposition::getComponentIDs(const Location &pos) const
 {
     auto &m = _dict.get<ByLocation>();
     auto p = m.equal_range(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id));
@@ -108,7 +108,7 @@ std::vector<std::size_t> VectorComposition::getComponentIDs(const MeshItem &pos)
     return vec_compID;
 }
 
-std::vector<std::size_t> VectorComposition::getDataIDList(const MeshItem &pos) const
+std::vector<std::size_t> VectorComposition::getDataIDList(const Location &pos) const
 {
     auto &m = _dict.get<ByLocation>();
     auto p = m.equal_range(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id));
@@ -118,7 +118,7 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const MeshItem &pos) c
     return vec_dataID;
 }
 
-std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<MeshItem> &vec_pos, OrderingType::type list_numbering) const
+std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<Location> &vec_pos, OrderingType::type list_numbering) const
 {
     MeshitemDataPositionDictionary sub_dict;
     {

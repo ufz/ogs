@@ -26,17 +26,17 @@ namespace VecMatOnMeshLib
  *
  * This data are used in VectorComposition
  */
-struct MeshItem
+struct Location
 {
     std::size_t          mesh_id;
     MeshItemType::type   item_type;
     std::size_t          item_id;
 
-    MeshItem(std::size_t meshid, MeshItemType::type itemtype, std::size_t itemid)
+    Location(std::size_t meshid, MeshItemType::type itemtype, std::size_t itemid)
     : mesh_id(meshid), item_type(itemtype), item_id(itemid){};
 };
 
-inline bool operator<(const MeshItem& left, const MeshItem& right)
+inline bool operator<(const Location& left, const Location& right)
 {
     if (left.mesh_id != right.mesh_id) return left.mesh_id < right.mesh_id;
     if (left.item_type != right.item_type) return left.item_type < right.item_type;

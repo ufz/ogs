@@ -78,9 +78,9 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
     std::vector<std::vector<std::size_t> > map_ele_nodes2vec_entries(all_eles.size());
     for (std::size_t i=0; i<map_ele_nodes2vec_entries.size(); i++) {
         auto* e = all_eles[i];
-        std::vector<VecMatOnMeshLib::MeshItem> vec_items;
+        std::vector<VecMatOnMeshLib::Location> vec_items;
         for (std::size_t j=0; j<e->getNNodes(); j++)
-            vec_items.push_back(VecMatOnMeshLib::MeshItem(ex1.msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
+            vec_items.push_back(VecMatOnMeshLib::Location(ex1.msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
         map_ele_nodes2vec_entries[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
         //std::cout << i << ": "; std::for_each(map_ele_nodes2vec_entries[i].begin(), map_ele_nodes2vec_entries[i].end(), [](std::size_t id){std::cout << id << " ";}); std::cout << "\n";
     }
