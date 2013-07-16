@@ -33,8 +33,8 @@ VectorComposition::VectorComposition(const std::vector<ComponentDistribution*> &
                                         }
                                        );
 
-    // construct dict (and here we number data_id by component type)
-    std::size_t data_id = 0;
+    // construct dict (and here we number global_index by component type)
+    std::size_t global_index = 0;
     for (auto itrComp = _vec_comp_dis.begin(); itrComp!=_vec_comp_dis.end(); ++itrComp) {
         auto comp_id = distance(_vec_comp_dis.begin(),itrComp);
         for (unsigned i=0; i<(*itrComp)->getNMeshes(); i++) {
@@ -43,10 +43,10 @@ VectorComposition::VectorComposition(const std::vector<ComponentDistribution*> &
             _vec_meshIDs.insert(mesh_id);
             // mesh items are ordered first by node, cell, ....
             for (std::size_t j=0; j<mesh_items.getNNodes(); j++) {
-                _dict.insert(MeshitemDataPosition(mesh_id, MeshItemType::Node, j, comp_id, data_id++));
+                _dict.insert(MeshitemDataPosition(mesh_id, MeshItemType::Node, j, comp_id, global_index++));
             }
             for (std::size_t j=0; j<mesh_items.getNElements(); j++) {
-                _dict.insert(MeshitemDataPosition(mesh_id, MeshItemType::Cell, j, comp_id, data_id++));
+                _dict.insert(MeshitemDataPosition(mesh_id, MeshItemType::Cell, j, comp_id, global_index++));
             }
         }
     }
@@ -58,21 +58,21 @@ VectorComposition::VectorComposition(const std::vector<ComponentDistribution*> &
 
 void VectorComposition::numberingByComponent(std::size_t offset)
 {
-    std::size_t data_id = offset;
+    std::size_t global_index = offset;
 
     auto &m = _dict.get<comp_ID>(); // view as sorted by comp ID
     for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
         MeshitemDataPosition pos = *itr_mesh_item;
-        pos.data_id = data_id++;
+        pos.global_index = global_index++;
         m.replace(itr_mesh_item, pos);
     }
-//    std::size_t data_id = offset;
+//    std::size_t global_index = offset;
 //    for (auto itrComp = _vec_comp_dis.begin(); itrComp!=_vec_comp_dis.end(); ++itrComp) {
 //        for (unsigned i=0; i<(*itrComp)->getNMeshes(); i++) {
 //            auto mesh_items = (*itrComp)->getMeshItems(i);
 //            for (std::size_t j=0; j<mesh_items.getNTotalItems(); j++) {
-//                _dict.insert(MeshitemDataPosition(mesh_items.getMeshID(), j, (*itrComp)->getComponentID(), data_id));
-//                data_id++;
+//                _dict.insert(MeshitemDataPosition(mesh_items.getMeshID(), j, (*itrComp)->getComponentID(), global_index));
+//                global_index++;
 //            }
 //        }
 //    }
@@ -80,12 +80,12 @@ void VectorComposition::numberingByComponent(std::size_t offset)
 
 void VectorComposition::numberingByMeshItems(std::size_t offset)
 {
-    std::size_t data_id = offset;
+    std::size_t global_index = offset;
 
     auto &m = _dict.get<mesh_item_ID>(); // view as sorted by mesh item
     for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
         MeshitemDataPosition pos = *itr_mesh_item;
-        pos.data_id = data_id++;
+        pos.global_index = global_index++;
         m.replace(itr_mesh_item, pos);
     }
 }
@@ -95,7 +95,7 @@ std::size_t VectorComposition::getDataID(const MeshItem &pos, unsigned compID) c
 {
     auto &m = _dict.get<mesh_item_comp_ID>();
     auto itr = m.find(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id, compID));
-    return itr!=m.end() ? itr->data_id : -1;
+    return itr!=m.end() ? itr->global_index : -1;
 }
 
 std::vector<std::size_t> VectorComposition::getComponentIDs(const MeshItem &pos) const
@@ -114,7 +114,7 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const MeshItem &pos) c
     auto p = m.equal_range(boost::make_tuple(pos.mesh_id, pos.item_type, pos.item_id));
     std::vector<std::size_t> vec_dataID;
     for (auto itr=p.first; itr!=p.second; ++itr)
-        vec_dataID.push_back(itr->data_id);
+        vec_dataID.push_back(itr->global_index);
     return vec_dataID;
 }
 
@@ -134,12 +134,12 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<Mesh
     if (list_numbering==OrderingType::BY_MESH_ITEM_ID) {
         auto &m = sub_dict.get<mesh_item_ID>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
-            vec_dataID.push_back(itr_mesh_item->data_id);
+            vec_dataID.push_back(itr_mesh_item->global_index);
         }
     } else {
         auto &m = sub_dict.get<comp_ID>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
-            vec_dataID.push_back(itr_mesh_item->data_id);
+            vec_dataID.push_back(itr_mesh_item->global_index);
         }
     }
     return vec_dataID;

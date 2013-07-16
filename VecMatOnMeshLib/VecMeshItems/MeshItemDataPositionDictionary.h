@@ -37,22 +37,22 @@ struct MeshitemDataPosition
     std::size_t comp_id;
 
     // Position in global matrix or vector
-    std::size_t data_id;
+    std::size_t global_index;
 
-    MeshitemDataPosition(std::size_t mesh_id, MeshItemType::type item_type, std::size_t mesh_item_id, std::size_t comp_id, std::size_t data_id)
-    : mesh_id(mesh_id), item_type(item_type), mesh_item_id(mesh_item_id), comp_id(comp_id), data_id(data_id)
+    MeshitemDataPosition(std::size_t mesh_id, MeshItemType::type item_type, std::size_t mesh_item_id, std::size_t comp_id, std::size_t global_index)
+    : mesh_id(mesh_id), item_type(item_type), mesh_item_id(mesh_item_id), comp_id(comp_id), global_index(global_index)
     {}
 
     void print() const
     {
-        std::cout << mesh_id << ", " << item_type << ", " << mesh_item_id << ", " << comp_id << ", " << data_id << "\n";
+        std::cout << mesh_id << ", " << item_type << ", " << mesh_item_id << ", " << comp_id << ", " << global_index << "\n";
     }
 };
 
 struct mesh_item_ID {};
 struct mesh_item_comp_ID {};
 struct comp_ID {};
-struct data_ID {};
+struct ByGlobalIndex {};
 
 struct mesh_item_key : public boost::multi_index::composite_key<
     MeshitemDataPosition,
@@ -88,8 +88,8 @@ typedef boost::multi_index::multi_index_container<
             >,
             boost::multi_index::ordered_non_unique
             <
-                boost::multi_index::tag<data_ID>,
-                boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::data_id>
+                boost::multi_index::tag<ByGlobalIndex>,
+                boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::global_index>
             >
         >
     > MeshitemDataPositionDictionary;
