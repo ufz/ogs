@@ -28,10 +28,15 @@ namespace VecMatOnMeshLib
 
 struct MeshitemDataPosition
 {
+    // Three ids for a location in a mesh
     std::size_t mesh_id;
     MeshItemType::type item_type;
     std::size_t mesh_item_id;
+
+    // Physical component
     std::size_t comp_id;
+
+    // Position in global matrix or vector
     std::size_t data_id;
 
     MeshitemDataPosition(std::size_t mesh_id, MeshItemType::type item_type, std::size_t mesh_item_id, std::size_t comp_id, std::size_t data_id)
@@ -66,11 +71,26 @@ struct mesh_item_comp_key: public boost::multi_index::composite_key<
 
 typedef boost::multi_index::multi_index_container<
         MeshitemDataPosition,
-        boost::multi_index::indexed_by<
-            boost::multi_index::ordered_unique<boost::multi_index::tag<mesh_item_comp_ID>, mesh_item_comp_key>,
-            boost::multi_index::ordered_non_unique<boost::multi_index::tag<mesh_item_ID>, mesh_item_key>,
-            boost::multi_index::ordered_non_unique<boost::multi_index::tag<comp_ID>, boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::comp_id> >,
-            boost::multi_index::ordered_non_unique<boost::multi_index::tag<data_ID>, boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::data_id> >
+        boost::multi_index::indexed_by
+        <
+            boost::multi_index::ordered_unique
+            <
+                boost::multi_index::tag<mesh_item_comp_ID>, mesh_item_comp_key
+            >,
+            boost::multi_index::ordered_non_unique
+            <
+                boost::multi_index::tag<mesh_item_ID>, mesh_item_key
+            >,
+            boost::multi_index::ordered_non_unique
+            <
+                boost::multi_index::tag<comp_ID>,
+                boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::comp_id>
+            >,
+            boost::multi_index::ordered_non_unique
+            <
+                boost::multi_index::tag<data_ID>,
+                boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::data_id>
+            >
         >
     > MeshitemDataPositionDictionary;
 
