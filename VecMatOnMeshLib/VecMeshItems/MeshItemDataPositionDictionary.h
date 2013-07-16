@@ -49,14 +49,14 @@ struct mesh_item_comp_ID {};
 struct comp_ID {};
 struct data_ID {};
 
-struct mesh_item_key:boost::multi_index::composite_key<
+struct mesh_item_key : public boost::multi_index::composite_key<
     MeshitemDataPosition,
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_id),
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,MeshItemType::type,item_type),
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_item_id)
     >{};
 
-struct mesh_item_comp_key:boost::multi_index::composite_key<
+struct mesh_item_comp_key: public boost::multi_index::composite_key<
     MeshitemDataPosition,
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_id),
     BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,MeshItemType::type,item_type),
