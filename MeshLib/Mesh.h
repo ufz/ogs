@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/optional.hpp>
+
 #include "MshEnums.h"
 
 #include "BaseLib/Counter.h"
@@ -134,7 +136,8 @@ public:
 	 * @param prop_name The name of the property.
 	 * @return Vector containing the properties.
 	 */
-	std::vector<double> const& getDoublePropertyVec(std::string const& prop_name) const;
+	boost::optional<std::vector<double> const&>
+	getDoublePropertyVec(std::string const& prop_name) const;
 
 	/**
 	 * Get the vector of properties associated with the name prop_name.
@@ -143,7 +146,8 @@ public:
 	 * @param prop_name The name of the property.
 	 * @return Vector containing the properties.
 	 */
-	std::vector<unsigned> const& getUnsignedPropertyVec(std::string const& prop_name) const;
+	boost::optional<std::vector<unsigned> const&>
+	getUnsignedPropertyVec(std::string const& prop_name) const;
 
 protected:
 	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.

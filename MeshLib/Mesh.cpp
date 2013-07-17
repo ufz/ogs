@@ -269,28 +269,30 @@ void Mesh::addUnsignedPropertyVec(std::string const& prop_name, std::vector<unsi
 	_unsigned_prop_vecs.push_back(std::pair<std::string,std::vector<unsigned> >(prop_name, elem_props));
 }
 
-std::vector<double> const& Mesh::getDoublePropertyVec(std::string const& prop_name) const
+boost::optional<std::vector<double> const&>
+Mesh::getDoublePropertyVec(std::string const& prop_name) const
 {
 	auto it = _double_prop_vecs.begin();
 	while (it != _double_prop_vecs.end() && it->first.compare(prop_name) != 0)
 		++it;
 
 	if (it == _double_prop_vecs.end())
-		throw std::invalid_argument("Mesh::getDoublePropertyVec(): Could not found property " + prop_name);
+		return boost::optional<std::vector<double> const&>();
 
-	return it->second;
+	return boost::optional<std::vector<double> const&>(it->second);
 }
 
-std::vector<unsigned> const& Mesh::getUnsignedPropertyVec(std::string const& prop_name) const
+boost::optional<std::vector<unsigned> const&>
+Mesh::getUnsignedPropertyVec(std::string const& prop_name) const
 {
 	auto it = _unsigned_prop_vecs.begin();
 	while (it != _unsigned_prop_vecs.end() && it->first.compare(prop_name) != 0)
 		++it;
 
 	if (it == _unsigned_prop_vecs.end())
-		throw std::invalid_argument("Mesh::getUnsignedPropertyVec(): Could not found property " + prop_name);
+		return boost::optional<std::vector<unsigned> const&>();
 
-	return it->second;
+	return boost::optional<std::vector<unsigned> const&>(it->second);
 }
 
 void Mesh::removeUnusedMeshNodes()
