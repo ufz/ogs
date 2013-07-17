@@ -76,8 +76,7 @@ public:
     void print();
 
 private:
-    void numberingByComponent(std::size_t offset=0);
-    void numberingByMeshItems(std::size_t offset=0);
+    void renumberByLocation(std::size_t offset=0);
 
 private:
     MeshitemDataPositionDictionary _dict;

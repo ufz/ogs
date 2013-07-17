@@ -43,32 +43,10 @@ VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &domains, O
 
     if (numbering!=OrderingType::BY_COMPONENT_TYPE)
         numberingByMeshItems();
+        renumberByLocation();
 }
 
-
-void VectorComposition::numberingByComponent(std::size_t offset)
-{
-    std::size_t global_index = offset;
-
-    auto &m = _dict.get<comp_ID>(); // view as sorted by comp ID
-    for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
-        MeshitemDataPosition pos = *itr_mesh_item;
-        pos.global_index = global_index++;
-        m.replace(itr_mesh_item, pos);
-    }
-//    std::size_t global_index = offset;
-//    for (auto itrComp = _vec_comp_dis.begin(); itrComp!=_vec_comp_dis.end(); ++itrComp) {
-//        for (unsigned i=0; i<(*itrComp)->getNMeshes(); i++) {
-//            auto mesh_items = (*itrComp)->getMeshItems(i);
-//            for (std::size_t j=0; j<mesh_items.getNTotalItems(); j++) {
-//                _dict.insert(MeshitemDataPosition(mesh_items.getMeshID(), j, (*itrComp)->getComponentID(), global_index));
-//                global_index++;
-//            }
-//        }
-//    }
-}
-
-void VectorComposition::numberingByMeshItems(std::size_t offset)
+void VectorComposition::renumberByLocation(std::size_t offset)
 {
     std::size_t global_index = offset;
 
