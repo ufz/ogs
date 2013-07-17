@@ -32,7 +32,6 @@ VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &vec_comp_d
         for (unsigned i=0; i<(*itrComp)->getNMeshes(); i++) {
             auto mesh_items = (*itrComp)->getMeshItems(i);
             std::size_t mesh_id = mesh_items.getMeshID();
-            _vec_meshIDs.insert(mesh_id);
             // mesh items are ordered first by node, cell, ....
             for (std::size_t j=0; j<mesh_items.getNNodes(); j++) {
                 _dict.insert(MeshitemDataPosition(Location(mesh_id, MeshItemType::Node, j), comp_id, global_index++));

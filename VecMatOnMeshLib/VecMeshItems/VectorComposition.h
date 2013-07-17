@@ -16,7 +16,6 @@
 #ifndef DATAARRANGEMENT_H_
 #define DATAARRANGEMENT_H_
 
-#include <set>
 #include <vector>
 
 #include "MeshSubsets.h"
@@ -46,9 +45,6 @@ public:
 
     /// return the number of components in the vector
     unsigned getNComponents() const { return _vec_comp_dis.size(); }
-
-    /// return the number of meshes related to the vector
-    unsigned getNMeshes() const { return _vec_meshIDs.size(); }
 
     /// return a vector of component IDs on a given mesh item
     std::vector<std::size_t> getComponentIDs(const Location &item) const;
@@ -87,7 +83,6 @@ private:
     void numberingByMeshItems(std::size_t offset=0);
 
 private:
-    std::set<std::size_t> _vec_meshIDs;
     const std::vector<MeshSubsets*> &_vec_comp_dis;
     const OrderingType::type _ordering_type;
     MeshitemDataPositionDictionary _dict;
