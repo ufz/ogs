@@ -25,12 +25,6 @@ namespace VecMatOnMeshLib
 VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &vec_comp_dis, OrderingType::type numbering)
 : _vec_comp_dis(vec_comp_dis), _ordering_type(numbering)
 {
-    _n_data = std::accumulate(vec_comp_dis.begin(), vec_comp_dis.end(), 0u,
-        [](std::size_t const& sum, ComponentDistribution const * const comp_dis)
-        {
-            return sum + comp_dis->getNMeshItems();
-        });
-
     // construct dict (and here we number global_index by component type)
     std::size_t global_index = 0;
     for (auto itrComp = _vec_comp_dis.begin(); itrComp!=_vec_comp_dis.end(); ++itrComp) {

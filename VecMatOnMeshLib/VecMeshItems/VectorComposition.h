@@ -42,7 +42,7 @@ public:
     VectorComposition(const std::vector<MeshSubsets*> &vec_comp_dis, OrderingType::type numbering);
 
     /// return the size of the vector
-    std::size_t size() const { return _n_data; }
+    std::size_t size() const { return _dict.size(); }
 
     /// return the number of components in the vector
     unsigned getNComponents() const { return _vec_comp_dis.size(); }
@@ -87,7 +87,6 @@ private:
     void numberingByMeshItems(std::size_t offset=0);
 
 private:
-    std::size_t _n_data;
     std::set<std::size_t> _vec_meshIDs;
     const std::vector<MeshSubsets*> &_vec_comp_dis;
     const OrderingType::type _ordering_type;
