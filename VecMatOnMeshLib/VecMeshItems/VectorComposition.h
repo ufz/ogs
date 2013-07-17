@@ -43,9 +43,6 @@ public:
     /// return the size of the vector
     std::size_t size() const { return _dict.size(); }
 
-    /// return the number of components in the vector
-    unsigned getNComponents() const { return _vec_comp_dis.size(); }
-
     /// return a vector of component IDs on a given mesh item
     std::vector<std::size_t> getComponentIDs(const Location &item) const;
 
@@ -83,7 +80,6 @@ private:
     void numberingByMeshItems(std::size_t offset=0);
 
 private:
-    const std::vector<MeshSubsets*> &_vec_comp_dis;
     const OrderingType::type _ordering_type;
     MeshitemDataPositionDictionary _dict;
 };

@@ -49,7 +49,6 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
 
     //check
     ASSERT_EQ(20u, da.size());
-    ASSERT_EQ(2u, da.getNComponents());
     ASSERT_EQ(0u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
     ASSERT_EQ(1u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp0_id));
     ASSERT_EQ(10u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp1_id));
@@ -95,7 +94,6 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
 
     //check
     ASSERT_EQ(20u, da.size());
-    ASSERT_EQ(2u, da.getNComponents());
     ASSERT_EQ(0u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp0_id));
     ASSERT_EQ(1u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 0), comp1_id));
     ASSERT_EQ(2u, da.getDataID(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, 1), comp0_id));

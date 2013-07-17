@@ -22,13 +22,13 @@
 namespace VecMatOnMeshLib
 {
 
-VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &vec_comp_dis, OrderingType::type numbering)
-: _vec_comp_dis(vec_comp_dis), _ordering_type(numbering)
+VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &domains, OrderingType::type numbering)
+: _ordering_type(numbering)
 {
     // construct dict (and here we number global_index by component type)
     std::size_t global_index = 0;
-    for (auto itrComp = _vec_comp_dis.begin(); itrComp!=_vec_comp_dis.end(); ++itrComp) {
-        auto comp_id = distance(_vec_comp_dis.begin(),itrComp);
+    for (auto itrComp = domains.begin(); itrComp!=domains.end(); ++itrComp) {
+        auto comp_id = distance(domains.begin(),itrComp);
         for (unsigned i=0; i<(*itrComp)->getNMeshes(); i++) {
             auto mesh_items = (*itrComp)->getMeshItems(i);
             std::size_t mesh_id = mesh_items.getMeshID();
