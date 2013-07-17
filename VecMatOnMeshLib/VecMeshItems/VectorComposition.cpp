@@ -41,8 +41,7 @@ VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &domains, O
         }
     }
 
-    if (numbering!=OrderingType::BY_COMPONENT_TYPE)
-        numberingByMeshItems();
+    if (numbering == OrderingType::BY_LOCATION)
         renumberByLocation();
 }
 
@@ -99,12 +98,12 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<Loca
     }
 
     std::vector<std::size_t> vec_dataID;
-    if (list_numbering==OrderingType::BY_MESH_ITEM_ID) {
+    if (list_numbering == OrderingType::BY_LOCATION) {
         auto &m = sub_dict.get<ByLocation>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
             vec_dataID.push_back(itr_mesh_item->global_index);
         }
-    } else {
+    } else if (list_numbering == OrderingType::BY_COMPONENT) {
         auto &m = sub_dict.get<comp_ID>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
             vec_dataID.push_back(itr_mesh_item->global_index);

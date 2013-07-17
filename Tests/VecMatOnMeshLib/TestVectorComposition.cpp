@@ -42,7 +42,7 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
     std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(&comp0);
     vec_comp_dis.push_back(&comp1);
-    VecMatOnMeshLib::VectorComposition da(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
+    VecMatOnMeshLib::VectorComposition da(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
     //std::cout << "# database \n";
     //da.print();
     std::cout << std::endl;
@@ -87,7 +87,7 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
     std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(&comp0);
     vec_comp_dis.push_back(&comp1);
-    VecMatOnMeshLib::VectorComposition da(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_MESH_ITEM_ID);
+    VecMatOnMeshLib::VectorComposition da(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_LOCATION);
     //std::cout << "# database \n";
     //da.print();
     std::cout << std::endl;

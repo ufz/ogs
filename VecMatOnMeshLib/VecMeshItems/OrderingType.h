@@ -25,8 +25,8 @@ struct OrderingType
 {
     enum type
     {
-        BY_COMPONENT_TYPE, ///< Ordering data first by component type
-        BY_MESH_ITEM_ID ///< Ordering data first by mesh item ID
+        BY_COMPONENT,	///< Ordering data first by component type
+        BY_LOCATION   	///< Ordering data first by spatial location
     };
 };
 

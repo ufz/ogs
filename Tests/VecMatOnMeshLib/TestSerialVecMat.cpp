@@ -114,7 +114,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
     // define a mesh item composition in a vector
     std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_left_nodes));
-    VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
+    VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
     //vec1_composition.print();
 
     // allocate a vector and matrix
@@ -149,7 +149,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
         std::vector<VecMatOnMeshLib::Location> vec_items;
         for (std::size_t j=0; j<e->getNNodes(); j++)
             vec_items.push_back(VecMatOnMeshLib::Location(msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
-        mat_data_pos[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
+        mat_data_pos[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
         //std::cout << i << ": "; std::for_each(vec_data_pos[i].begin(), vec_data_pos[i].end(), [](std::size_t id){std::cout << id << " ";}); std::cout << "\n";
     }
     // create a matrix assembler

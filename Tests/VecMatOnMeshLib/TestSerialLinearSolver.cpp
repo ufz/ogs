@@ -63,7 +63,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
     // define a mesh item composition in a vector
     std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
-    VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
+    VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
 
     // allocate a vector and matrix
     std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));
@@ -81,7 +81,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
         std::vector<VecMatOnMeshLib::Location> vec_items;
         for (std::size_t j=0; j<e->getNNodes(); j++)
             vec_items.push_back(VecMatOnMeshLib::Location(ex1.msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
-        map_ele_nodes2vec_entries[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
+        map_ele_nodes2vec_entries[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
         //std::cout << i << ": "; std::for_each(map_ele_nodes2vec_entries[i].begin(), map_ele_nodes2vec_entries[i].end(), [](std::size_t id){std::cout << id << " ";}); std::cout << "\n";
     }
 
