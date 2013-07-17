@@ -173,18 +173,20 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	output->SetPoints(gridPoints);
 
 	// Generate attribute vector for material groups
-	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
-	materialIDs->SetName(_matName);
-	std::vector<unsigned> const& grid_material_ids = _grid->getUnsignedPropertyVec("MaterialIDs");
-	materialIDs->SetNumberOfComponents(grid_material_ids.size() / nElems);
-	materialIDs->SetNumberOfTuples(nElems);
+	boost::optional<std::vector<unsigned> const&> grid_material_ids(_grid->getUnsignedPropertyVec("MaterialIDs"));
+	if (grid_material_ids) {
+		vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
+		materialIDs->SetName(_matName);
+		materialIDs->SetNumberOfComponents((*grid_material_ids).size() / nElems);
+		materialIDs->SetNumberOfTuples(nElems);
 
-	for (unsigned i = 0; i < nElems; ++i) {
-		materialIDs->InsertValue(i, grid_material_ids[i]);
+		for (unsigned i = 0; i < nElems; ++i) {
+			materialIDs->InsertValue(i, (*grid_material_ids)[i]);
+		}
+
+		output->GetCellData()->AddArray(materialIDs);
+		output->GetCellData()->SetActiveAttribute(_matName, vtkDataSetAttributes::SCALARS);
 	}
-
-	output->GetCellData()->AddArray(materialIDs);
-	output->GetCellData()->SetActiveAttribute(_matName, vtkDataSetAttributes::SCALARS);
 
 	return 1;
 }
