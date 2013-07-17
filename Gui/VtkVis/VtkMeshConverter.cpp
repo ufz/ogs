@@ -260,7 +260,6 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 	// set mesh elements
 	const size_t nElems = grid->GetNumberOfCells();
 	std::vector<MeshLib::Element*> elements(nElems);
-	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
 	for (size_t i = 0; i < nElems; i++)
 	{
 		MeshLib::Element* elem;
@@ -268,7 +267,6 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		std::vector<unsigned> node_ids(nElemNodes);
 		for (size_t j=0; j<nElemNodes; j++)
 			node_ids[j] = grid->GetCell(i)->GetPointId(j);
-		const unsigned material = (scalars) ? static_cast<int>(scalars->GetComponent(i,0)) : 0;
 
 		int cell_type = grid->GetCellType(i);
 		switch (cell_type)
@@ -277,14 +275,14 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 			for (unsigned k(0); k<3; k++)
 				tri_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Tri(tri_nodes, material);
+			elem = new MeshLib::Tri(tri_nodes, i);
 			break;
 		}
 		case VTK_QUAD: {
 			MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 			for (unsigned k(0); k<4; k++)
 				quad_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Quad(quad_nodes, material);
+			elem = new MeshLib::Quad(quad_nodes, i);
 			break;
 		}
 		case VTK_PIXEL: {
@@ -293,21 +291,21 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			quad_nodes[1] = nodes[node_ids[1]];
 			quad_nodes[2] = nodes[node_ids[3]];
 			quad_nodes[3] = nodes[node_ids[2]];
-			elem = new MeshLib::Quad(quad_nodes, material);
+			elem = new MeshLib::Quad(quad_nodes, i);
 			break;
 		}
 		case VTK_TETRA: {
 			MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 			for (unsigned k(0); k<4; k++)
 				tet_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Tet(tet_nodes, material);
+			elem = new MeshLib::Tet(tet_nodes, i);
 			break;
 		}
 		case VTK_HEXAHEDRON: {
 			MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 			for (unsigned k(0); k<8; k++)
 				hex_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Hex(hex_nodes, material);
+			elem = new MeshLib::Hex(hex_nodes, i);
 			break;
 		}
 		case VTK_VOXEL: {
@@ -320,21 +318,21 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			voxel_nodes[5] = nodes[node_ids[5]];
 			voxel_nodes[6] = nodes[node_ids[7]];
 			voxel_nodes[7] = nodes[node_ids[6]];
-			elem = new MeshLib::Hex(voxel_nodes, material);
+			elem = new MeshLib::Hex(voxel_nodes, i);
 			break;
 		}
 		case VTK_PYRAMID: {
 			MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 			for (unsigned k(0); k<5; k++)
 				pyramid_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Pyramid(pyramid_nodes, material);
+			elem = new MeshLib::Pyramid(pyramid_nodes, i);
 			break;
 		}
 		case VTK_WEDGE: {
 			MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 			for (unsigned k(0); k<6; k++)
 				prism_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Prism(prism_nodes, material);
+			elem = new MeshLib::Prism(prism_nodes, i);
 			break;
 		}
 		default:
@@ -345,7 +343,20 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		elements[i] = elem;
 	}
 
-	return new MeshLib::Mesh("vtkUnstructuredGrid", nodes, elements);
+	MeshLib::Mesh *mesh(new MeshLib::Mesh("vtkUnstructuredGrid", nodes, elements));
+
+	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
+	std::vector<unsigned> material_ids(nElems);
+	if (scalars) {
+		for (std::size_t i(0); i<nElems; ++i) {
+			material_ids[i] = static_cast<unsigned>(scalars->GetComponent(i,0));
+		}
+	} else {
+		std::fill(material_ids.begin(), material_ids.end(), 0);
+	}
+	mesh->addUnsignedPropertyVec("MaterialIDs", material_ids);
+
+	return mesh;
 
 }
 
