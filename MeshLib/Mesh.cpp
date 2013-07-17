@@ -259,6 +259,40 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
+void Mesh::addDoublePropertyVec(std::string const& prop_name, std::vector<double> const& elem_props)
+{
+	_double_prop_vecs.push_back(std::pair<std::string,std::vector<double> >(prop_name, elem_props));
+}
+
+void Mesh::addUnsignedPropertyVec(std::string const& prop_name, std::vector<unsigned> const& elem_props)
+{
+	_unsigned_prop_vecs.push_back(std::pair<std::string,std::vector<unsigned> >(prop_name, elem_props));
+}
+
+std::vector<double> const& Mesh::getDoublePropertyVec(std::string const& prop_name) const
+{
+	auto it = _double_prop_vecs.begin();
+	while (it != _double_prop_vecs.end() && it->first.compare(prop_name) != 0)
+		++it;
+
+	if (it == _double_prop_vecs.end())
+		throw std::invalid_argument("Mesh::getDoublePropertyVec(): Could not found property " + prop_name);
+
+	return it->second;
+}
+
+std::vector<unsigned> const& Mesh::getUnsignedPropertyVec(std::string const& prop_name) const
+{
+	auto it = _unsigned_prop_vecs.begin();
+	while (it != _unsigned_prop_vecs.end() && it->first.compare(prop_name) != 0)
+		++it;
+
+	if (it == _unsigned_prop_vecs.end())
+		throw std::invalid_argument("Mesh::getUnsignedPropertyVec(): Could not found property " + prop_name);
+
+	return it->second;
+}
+
 void Mesh::removeUnusedMeshNodes()
 {
 	unsigned count(0);
