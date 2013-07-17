@@ -42,10 +42,11 @@ public:
 	 * */
 	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids) :
 		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
-		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
+		_max_pnt(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest())
 	{
 		assert(! ids.empty());
-		for (unsigned i=0; i<ids.size(); ++i) {
+		init(pnts[ids[0]]);
+		for (std::size_t i=1; i<ids.size(); ++i) {
 			update(*(pnts[ids[i]]));
 		}
 	}
@@ -70,7 +71,7 @@ public:
 	template <typename InputIterator>
 	AABB(InputIterator first, InputIterator last) :
 		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
-		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
+		_max_pnt(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest())
 	{
 		if (! (std::distance(first,last) > 0)) {
 			throw std::invalid_argument("AABB::AABB(InputIterator first, InputIterator last): first == last");

@@ -169,7 +169,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
 		 pnts.push_back(GeoLib::Point(rand() % box_size_x - half_box_size_x, rand() % box_size_y - half_box_size_y, rand() % box_size_z - half_box_size_z));
 	 }
 
-	 // construct from list points a axis algined bounding box
+	 // construct from list points a axis aligned bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
 	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
@@ -182,3 +182,39 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
 	 ASSERT_GE(half_box_size_y, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size_y;
 	 ASSERT_GE(half_box_size_z, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size_z;
 }
+
+TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesI)
+{
+	std::vector<GeoLib::Point*> pnts;
+	pnts.push_back(new GeoLib::Point(-1, -1, -1));
+	pnts.push_back(new GeoLib::Point(-10, -10, -10));
+
+	std::vector<std::size_t> ids;
+	ids.push_back(0);
+	ids.push_back(1);
+	GeoLib::AABB<GeoLib::Point> aabb(pnts, ids);
+
+	GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+
+	ASSERT_NEAR(-1.0, max_pnt[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-1.0, max_pnt[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-1.0, max_pnt[2], std::numeric_limits<double>::epsilon());
+}
+
+TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
+{
+	std::vector<GeoLib::Point> pnts;
+
+	pnts.push_back(GeoLib::Point(-1, -1, -1));
+	pnts.push_back(GeoLib::Point(-10, -10, -10));
+
+	// construct from points of the vector a axis aligned bounding box
+	GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+
+	GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+
+	ASSERT_NEAR(-1.0, max_pnt[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-1.0, max_pnt[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-1.0, max_pnt[2], std::numeric_limits<double>::epsilon());
+}
+
