@@ -267,11 +267,16 @@ void Mesh::removeUnusedMeshNodes()
 	{
 		if ((*it)->getNElements() == 0)
 		{
-			it = this->_nodes.erase(it);
+			delete *it;
+			*it = nullptr;
+			++it;
 			++count;
 		}
 		else ++it;
 	}
+	auto node_vec_end = std::remove(_nodes.begin(), _nodes.end(), nullptr);
+	_nodes.erase(node_vec_end, _nodes.end());
+
 	if (count)
 	{
 		INFO("Removed %d unused mesh nodes.", count );
