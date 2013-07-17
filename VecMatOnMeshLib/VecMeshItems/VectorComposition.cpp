@@ -23,7 +23,6 @@ namespace VecMatOnMeshLib
 {
 
 VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &domains, OrderingType::type numbering)
-: _ordering_type(numbering)
 {
     // construct dict (and here we number global_index by component type)
     std::size_t global_index = 0;

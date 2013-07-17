@@ -80,7 +80,6 @@ private:
     void numberingByMeshItems(std::size_t offset=0);
 
 private:
-    const OrderingType::type _ordering_type;
     MeshitemDataPositionDictionary _dict;
 };
 
