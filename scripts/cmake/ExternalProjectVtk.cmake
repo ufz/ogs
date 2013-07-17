@@ -52,7 +52,7 @@ IF(WIN32)
 		IF(NOT DEFINED VTK_COMMAND)
 			SET(VTK_MAKE_COMMAND
 				cmake --build . --config Release --target ${VTK_LIB} &&
-				cmake --build . --config Debug --target)
+				cmake --build . --config Debug --target ${VTK_LIB})
 		ELSE()
 			SET(VTK_MAKE_COMMAND
 				${VTK_MAKE_COMMAND} &&
