@@ -28,10 +28,7 @@ namespace VecMatOnMeshLib
 
 struct MeshitemDataPosition
 {
-    // Three ids for a location in a mesh
-    std::size_t mesh_id;
-    MeshItemType::type item_type;
-    std::size_t mesh_item_id;
+    Location location;
 
     // Physical component
     std::size_t comp_id;
@@ -39,13 +36,39 @@ struct MeshitemDataPosition
     // Position in global matrix or vector
     std::size_t global_index;
 
-    MeshitemDataPosition(std::size_t mesh_id, MeshItemType::type item_type, std::size_t mesh_item_id, std::size_t comp_id, std::size_t global_index)
-    : mesh_id(mesh_id), item_type(item_type), mesh_item_id(mesh_item_id), comp_id(comp_id), global_index(global_index)
+    MeshitemDataPosition(Location const& location,
+                         std::size_t comp_id,
+                         std::size_t global_index)
+    : location(location),
+      comp_id(comp_id),
+      global_index(global_index)
     {}
 
     void print() const
     {
-        std::cout << mesh_id << ", " << item_type << ", " << mesh_item_id << ", " << comp_id << ", " << global_index << "\n";
+        std::cout << location.mesh_id << ", " << location.item_type << ", " << location.item_id << ", " << comp_id << ", " << global_index << "\n";
+    }
+};
+
+struct MeshitemDataPositionByLocationComparator
+{
+    bool operator()(MeshitemDataPosition const& a, MeshitemDataPosition const& b) const
+    {
+        return a.location < b.location;
+    }
+};
+
+struct MeshitemDataPositionByLocationAndComponentComparator
+{
+    bool operator()(MeshitemDataPosition const& a, MeshitemDataPosition const& b) const
+    {
+        if (a.location < b.location)
+            return true;
+        if (b.location < a.location)
+            return false;
+
+        // a.loc == b.loc
+        return a.comp_id < b.comp_id;
     }
 };
 
@@ -54,32 +77,21 @@ struct mesh_item_comp_ID {};
 struct comp_ID {};
 struct ByGlobalIndex {};
 
-struct LocationKey : public boost::multi_index::composite_key<
-    MeshitemDataPosition,
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_id),
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,MeshItemType::type,item_type),
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_item_id)
-    >{};
-
-struct mesh_item_comp_key: public boost::multi_index::composite_key<
-    MeshitemDataPosition,
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_id),
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,MeshItemType::type,item_type),
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,mesh_item_id),
-    BOOST_MULTI_INDEX_MEMBER(MeshitemDataPosition,std::size_t,comp_id)
-    >{};
-
 typedef boost::multi_index::multi_index_container<
         MeshitemDataPosition,
         boost::multi_index::indexed_by
         <
             boost::multi_index::ordered_unique
             <
-                boost::multi_index::tag<mesh_item_comp_ID>, mesh_item_comp_key
+                boost::multi_index::tag<mesh_item_comp_ID>,
+                boost::multi_index::identity<MeshitemDataPosition>,
+                MeshitemDataPositionByLocationAndComponentComparator
             >,
             boost::multi_index::ordered_non_unique
             <
-                boost::multi_index::tag<ByLocation>, LocationKey
+                boost::multi_index::tag<ByLocation>,
+                boost::multi_index::identity<MeshitemDataPosition>,
+                MeshitemDataPositionByLocationComparator
             >,
             boost::multi_index::ordered_non_unique
             <
