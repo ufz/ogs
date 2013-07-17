@@ -18,7 +18,7 @@
 #include <vector>
 #include <numeric>
 
-#include "MeshItems.h"
+#include "MeshSubset.h"
 
 namespace VecMatOnMeshLib
 {
@@ -39,7 +39,7 @@ public:
      * This data component is distributed over the given mesh items in a single mesh
      * @param mesh_items
      */
-    explicit ComponentDistribution(const MeshItems* mesh_items)
+    explicit ComponentDistribution(const MeshSubset* mesh_items)
     {
         _mesh_items.push_back(mesh_items);
         _n_total_items = mesh_items->getNTotalItems();
@@ -49,14 +49,14 @@ public:
      * constructor for multiple-mesh use
      *
      * This data component is distributed over the given mesh items in multiple meshes
-     * @param vec_mesh_items   a vector of MeshItems
+     * @param vec_mesh_items   a vector of MeshSubset
      */
-    explicit ComponentDistribution(const std::vector<MeshItems*> &vec_mesh_items)
+    explicit ComponentDistribution(const std::vector<MeshSubset*> &vec_mesh_items)
     : _mesh_items(vec_mesh_items.begin(), vec_mesh_items.end())
     {
         _n_total_items = std::accumulate(vec_mesh_items.begin(), vec_mesh_items.end(),
                                             0u,
-                                            [](std::size_t sum, const MeshItems* items)
+                                            [](std::size_t sum, const MeshSubset* items)
                                             {
                                                 return sum+items->getNTotalItems();
                                             }
@@ -69,11 +69,11 @@ public:
     /// return the number of related meshes
     unsigned getNMeshes() const { return _mesh_items.size(); }
 
-    /// return MeshItems
-    const MeshItems& getMeshItems(std::size_t mesh_index) const { return *_mesh_items[mesh_index]; }
+    /// return MeshSubset
+    const MeshSubset& getMeshItems(std::size_t mesh_index) const { return *_mesh_items[mesh_index]; }
 
 private:
-    std::vector<const MeshItems*> _mesh_items;
+    std::vector<const MeshSubset*> _mesh_items;
     std::size_t _n_total_items;
 };
 

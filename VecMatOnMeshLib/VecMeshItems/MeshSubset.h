@@ -13,8 +13,8 @@
  */
 
 
-#ifndef MESHITEMS_H_
-#define MESHITEMS_H_
+#ifndef MESHSUBSET_H_
+#define MESHSUBSET_H_
 
 #include <vector>
 #include <algorithm>
@@ -28,31 +28,28 @@ namespace VecMatOnMeshLib
 {
 
 /**
- * Collection of mesh items from a single mesh (nodes and elements are currently supported)
- *
- * Remark: At the moment, this class is only used to return the total number of mesh items
- *         on which data are assigned.
+ * A subset of nodes or elements on a single mesh.
  */
-class MeshItems
+class MeshSubset
 {
 public:
     /// construct from nodes
-    MeshItems(const MeshLib::Mesh& msh, std::vector<MeshLib::Node*> const& vec_items)
+    MeshSubset(const MeshLib::Mesh& msh, std::vector<MeshLib::Node*> const& vec_items)
     : _msh(msh), _nodes(&vec_items), _eles(nullptr)
     {}
 
     /// construct from elements
-    MeshItems(const MeshLib::Mesh& msh, std::vector<MeshLib::Element*> const& vec_items)
+    MeshSubset(const MeshLib::Mesh& msh, std::vector<MeshLib::Element*> const& vec_items)
     : _msh(msh), _nodes(nullptr), _eles(&vec_items)
     {}
 
     /// construct from both nodes and elements
-    MeshItems(const MeshLib::Mesh& msh,
+    MeshSubset(const MeshLib::Mesh& msh,
                 std::vector<MeshLib::Node*> const& vec_nodes, std::vector<MeshLib::Element*> const& vec_eles)
     : _msh(msh), _nodes(&vec_nodes), _eles(&vec_eles)
     {}
 
-    ~MeshItems() {};
+    ~MeshSubset() {};
 
     /// return the total number of mesh items
     std::size_t getNTotalItems() const { return getNNodes() + getNElements(); }
@@ -85,4 +82,4 @@ private:
 
 }
 
-#endif /* MESHITEMS_H_ */
+#endif /* MESHSUBSET_H_ */

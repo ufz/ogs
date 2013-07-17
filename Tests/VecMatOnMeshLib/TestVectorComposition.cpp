@@ -34,7 +34,7 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
     //data component 0 and 1 are assigned to all nodes in the mesh
     const std::size_t comp0_id = 0;
     const std::size_t comp1_id = 1;
-    const VecMatOnMeshLib::MeshItems mesh_items(*msh, msh->getNodes());
+    const VecMatOnMeshLib::MeshSubset mesh_items(*msh, msh->getNodes());
     VecMatOnMeshLib::ComponentDistribution comp0(&mesh_items);
     VecMatOnMeshLib::ComponentDistribution comp1(&mesh_items);
 
@@ -81,7 +81,7 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
     //data component 0 and 1 are assigned to all nodes in the mesh
     const std::size_t comp0_id = 0;
     const std::size_t comp1_id = 1;
-    const VecMatOnMeshLib::MeshItems mesh_items(*msh, msh->getNodes());
+    const VecMatOnMeshLib::MeshSubset mesh_items(*msh, msh->getNodes());
     VecMatOnMeshLib::ComponentDistribution comp0(&mesh_items);
     VecMatOnMeshLib::ComponentDistribution comp1(&mesh_items);
 
