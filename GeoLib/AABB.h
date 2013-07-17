@@ -45,7 +45,8 @@ public:
 		_max_pnt(std::numeric_limits<double>::min(), std::numeric_limits<double>::min(), std::numeric_limits<double>::min())
 	{
 		assert(! ids.empty());
-		for (unsigned i=0; i<ids.size(); ++i) {
+		init(pnts[ids[0]]);
+		for (std::size_t i=1; i<ids.size(); ++i) {
 			update(*(pnts[ids[i]]));
 		}
 	}
