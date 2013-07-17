@@ -31,7 +31,7 @@ void VectorAssembler<T_VEC, T_MESH_ITEM, T_LOCAL_ASSEMBLY>::operator()(const T_M
 {
     assert(_data_pos.size() > id);
 
-    auto vec_pos = _data_pos[id];
+    std::vector<std::size_t> const& vec_pos = _data_pos[id];
 
     MathLib::DenseVector<double> local_vec(vec_pos.size());
     _local_assembler(*item, local_vec);

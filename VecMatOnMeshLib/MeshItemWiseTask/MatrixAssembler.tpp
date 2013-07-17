@@ -25,7 +25,7 @@ void MatrixAssembler<T_MAT,T_MESH_ITEM,T_LOCAL_ASSEMBLY>::operator()(const T_MES
 {
     assert(_data_pos.size() > id);
 
-    auto pos = _data_pos[id];
+    std::vector<std::size_t> const& pos = _data_pos[id];
     MathLib::DenseMatrix<double> local_mat(pos.size(), pos.size());
     _local_assembler(*item, local_mat);
     _mat.addSubMatrix(pos, pos, local_mat);

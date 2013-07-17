@@ -26,7 +26,7 @@ void LinearSystemAssembler<T_MAT, T_VEC, T_MESH_ITEM, T_LOCAL_ASSEMBLY>::operato
 {
     assert(_data_pos.size() > id);
 
-    auto pos = _data_pos[id];
+    std::vector<std::size_t> const& pos = _data_pos[id];
     MathLib::DenseMatrix<double> local_A(pos.size(), pos.size());
     MathLib::DenseVector<double> local_rhs(pos.size());
     _local_assembler(*item, local_A, local_rhs);
