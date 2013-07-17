@@ -22,7 +22,7 @@
 namespace VecMatOnMeshLib
 {
 
-VectorComposition::VectorComposition(const std::vector<ComponentDistribution*> &vec_comp_dis, OrderingType::type numbering)
+VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &vec_comp_dis, OrderingType::type numbering)
 : _vec_comp_dis(vec_comp_dis), _ordering_type(numbering)
 {
     _n_data = std::accumulate(vec_comp_dis.begin(), vec_comp_dis.end(), 0u,

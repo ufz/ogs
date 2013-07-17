@@ -18,7 +18,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "VecMatOnMeshLib/VecMeshItems/VectorComposition.h"
-#include "VecMatOnMeshLib/VecMeshItems/ComponentDistribution.h"
+#include "VecMatOnMeshLib/VecMeshItems/MeshSubsets.h"
 
 TEST(VecMatOnMeshLib, DataArrangementByComponentType)
 {
@@ -35,11 +35,11 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
     const std::size_t comp0_id = 0;
     const std::size_t comp1_id = 1;
     const VecMatOnMeshLib::MeshSubset mesh_items(*msh, msh->getNodes());
-    VecMatOnMeshLib::ComponentDistribution comp0(&mesh_items);
-    VecMatOnMeshLib::ComponentDistribution comp1(&mesh_items);
+    VecMatOnMeshLib::MeshSubsets comp0(&mesh_items);
+    VecMatOnMeshLib::MeshSubsets comp1(&mesh_items);
 
     //set up data arrangement
-    std::vector<VecMatOnMeshLib::ComponentDistribution*> vec_comp_dis;
+    std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(&comp0);
     vec_comp_dis.push_back(&comp1);
     VecMatOnMeshLib::VectorComposition da(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
@@ -82,11 +82,11 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
     const std::size_t comp0_id = 0;
     const std::size_t comp1_id = 1;
     const VecMatOnMeshLib::MeshSubset mesh_items(*msh, msh->getNodes());
-    VecMatOnMeshLib::ComponentDistribution comp0(&mesh_items);
-    VecMatOnMeshLib::ComponentDistribution comp1(&mesh_items);
+    VecMatOnMeshLib::MeshSubsets comp0(&mesh_items);
+    VecMatOnMeshLib::MeshSubsets comp1(&mesh_items);
 
     //set up data arrangement
-    std::vector<VecMatOnMeshLib::ComponentDistribution*> vec_comp_dis;
+    std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(&comp0);
     vec_comp_dis.push_back(&comp1);
     VecMatOnMeshLib::VectorComposition da(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_MESH_ITEM_ID);

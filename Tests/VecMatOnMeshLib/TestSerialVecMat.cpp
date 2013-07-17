@@ -112,8 +112,8 @@ TEST(VecMatOnMeshLib, SerialVecMat)
     // Allocate a vector and a linear operator (i.e. matrix)
     //--------------------------------------------------------------------------
     // define a mesh item composition in a vector
-    std::vector<VecMatOnMeshLib::ComponentDistribution*> vec_comp_dis;
-    vec_comp_dis.push_back(new VecMatOnMeshLib::ComponentDistribution(&mesh_items_left_nodes));
+    std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+    vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_left_nodes));
     VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
     //vec1_composition.print();
 

@@ -61,8 +61,8 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
     // Allocate a coefficient matrix, RHS and solution vectors
     //--------------------------------------------------------------------------
     // define a mesh item composition in a vector
-    std::vector<VecMatOnMeshLib::ComponentDistribution*> vec_comp_dis;
-    vec_comp_dis.push_back(new VecMatOnMeshLib::ComponentDistribution(&mesh_items_all_nodes));
+    std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+    vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
     VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT_TYPE);
 
     // allocate a vector and matrix

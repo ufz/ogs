@@ -19,7 +19,7 @@
 #include <set>
 #include <vector>
 
-#include "ComponentDistribution.h"
+#include "MeshSubsets.h"
 #include "OrderingType.h"
 #include "MeshItem.h"
 #include "MeshItemDataPositionDictionary.h"
@@ -39,7 +39,7 @@ public:
 	 * The size of the vector means the number of components in the vector.
 	 * @param ordering        type of ordering values in a vector
 	 */
-    VectorComposition(const std::vector<ComponentDistribution*> &vec_comp_dis, OrderingType::type numbering);
+    VectorComposition(const std::vector<MeshSubsets*> &vec_comp_dis, OrderingType::type numbering);
 
     /// return the size of the vector
     std::size_t size() const { return _n_data; }
@@ -89,7 +89,7 @@ private:
 private:
     std::size_t _n_data;
     std::set<std::size_t> _vec_meshIDs;
-    const std::vector<ComponentDistribution*> &_vec_comp_dis;
+    const std::vector<MeshSubsets*> &_vec_comp_dis;
     const OrderingType::type _ordering_type;
     MeshitemDataPositionDictionary _dict;
 };
