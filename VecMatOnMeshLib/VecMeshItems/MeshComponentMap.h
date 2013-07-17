@@ -69,9 +69,10 @@ public:
      */
     std::vector<std::size_t> getDataIDList(const std::vector<Location> &vec_items, OrderingType::type list_ordering) const;
 
-//for debugging
+#ifndef NDEBUG
     const MeshitemDataPositionDictionary& getDictionary() const {return _dict; }
     void print();
+#endif	// NDEBUG
 
 private:
     void renumberByLocation(std::size_t offset=0);

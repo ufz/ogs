@@ -112,6 +112,7 @@ std::vector<std::size_t> MeshComponentMap::getDataIDList(const std::vector<Locat
     return vec_dataID;
 }
 
+#ifndef NDEBUG
 void disp(const MeshitemDataPosition &dat)
 {
     dat.print();
@@ -122,6 +123,7 @@ void MeshComponentMap::print()
 
     boost::for_each(_dict, disp);
 }
+#endif	// NDEBUG
 
 } // VecMatOnMeshLib
 
