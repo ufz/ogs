@@ -115,7 +115,7 @@ public:
 	 * @param prop_name The name of the property, for instance permeability.
 	 * @param elem_props The vector containing the property values.
 	 */
-	void addDoublePropertyVec(std::string const& prop_name, std::vector<double> const& elem_props);
+	void addPropertyVec(std::string const& prop_name, std::vector<double> const& elem_props);
 
 	/**
 	 * Adds for each element a property associated with prop_name. The
@@ -127,7 +127,7 @@ public:
 	 * @param prop_name The name of the property, for instance MateriaID.
 	 * @param elem_props The vector containing the property values.
 	 */
-	void addUnsignedPropertyVec(std::string const& prop_name, std::vector<unsigned> const& elem_props);
+	void addPropertyVec(std::string const& prop_name, std::vector<unsigned> const& elem_props);
 
 	/**
 	 * Get the vector of properties associated with the name prop_name.

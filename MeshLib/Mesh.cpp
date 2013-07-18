@@ -259,12 +259,12 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
-void Mesh::addDoublePropertyVec(std::string const& prop_name, std::vector<double> const& elem_props)
+void Mesh::addPropertyVec(std::string const& prop_name, std::vector<double> const& elem_props)
 {
 	_double_prop_vecs.push_back(std::pair<std::string,std::vector<double> >(prop_name, elem_props));
 }
 
-void Mesh::addUnsignedPropertyVec(std::string const& prop_name, std::vector<unsigned> const& elem_props)
+void Mesh::addPropertyVec(std::string const& prop_name, std::vector<unsigned> const& elem_props)
 {
 	_unsigned_prop_vecs.push_back(std::pair<std::string,std::vector<unsigned> >(prop_name, elem_props));
 }
