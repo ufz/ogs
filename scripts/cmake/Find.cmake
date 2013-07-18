@@ -110,21 +110,6 @@ ENDIF (CMAKE_USE_PTHREADS_INIT )
 # lapack
 FIND_PACKAGE ( LAPACK QUIET )
 
-## VTK ##
-#IF(OGS_BUILD_GUI)
-#	FIND_PACKAGE( VTK 6.0 REQUIRED COMPONENTS
-#		vtkRenderingCore
-#		vtkGUISupportQt
-#		vtkInteractionWidgets
-#		vtkFiltersTexture
-#		vtkIONetCDF
-#		vtkIOLegacy
-#		vtkIOXML
-#		vtkIOExport
-#		NO_MODULE
-#	)
-#ENDIF()
-
 ## geotiff ##
 IF(NOT MSVC)
 	FIND_PACKAGE( LibTiff )
