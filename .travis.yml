@@ -4,9 +4,12 @@ compiler:
 branches:
   only:
     - master
+env:
+  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+  - CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libvtk5-dev libvtk5-qt4-dev libnetcdf-dev libshp-dev libgeotiff-dev libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev
-script: "mkdir build && cd build && cmake -DOGS_BUILD_GUI=ON .. && cmake .. && make && make test"
+script: "mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make && make test"
 notifications:
   email:
     - lars.bilke@ufz.de
