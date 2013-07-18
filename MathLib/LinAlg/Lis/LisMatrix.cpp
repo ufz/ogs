@@ -30,11 +30,15 @@ LisMatrix::LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type)
     ierr = lis_matrix_set_size(_AA, 0, n_rows);
     checkLisError(ierr);
     lis_matrix_get_range(_AA, &_is, &_ie);
+	ierr = lis_vector_duplicate(_AA, &_diag);
+	checkLisError(ierr);
 }
 
 LisMatrix::~LisMatrix()
 {
     int ierr = lis_matrix_destroy(_AA);
+    checkLisError(ierr);
+    ierr = lis_vector_destroy(_diag);
     checkLisError(ierr);
 }
 
@@ -48,6 +52,8 @@ void LisMatrix::setZero()
 	checkLisError(ierr);
 	ierr = lis_matrix_set_size(_AA, 0, _n_rows);
 	checkLisError(ierr);
+	ierr = lis_vector_set_all(0.0, _diag);
+	checkLisError(ierr);
 
 	_is_assembled = false;
 }
@@ -55,6 +61,8 @@ void LisMatrix::setZero()
 int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
 {
 	lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
+	if (rowId==colId)
+		lis_vector_set_value(LIS_INS_VALUE, rowId, v, _diag);
 	_is_assembled = false;
 	return 0;
 }
@@ -62,6 +70,8 @@ int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
 int LisMatrix::addValue(std::size_t rowId, std::size_t colId, double v)
 {
 	lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
+	if (rowId==colId)
+		lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _diag);
 	_is_assembled = false;
 	return 0;
 }
@@ -75,24 +85,13 @@ void LisMatrix::write(const std::string &filename) const
 
 double LisMatrix::getMaxDiagCoeff()
 {
-	if (!_is_assembled)
-		throw std::logic_error("LisMatrix::getMaxDiagCoeff(): matrix not assembled.");
-	LIS_VECTOR diag;
-	int ierr = lis_vector_create(0, &diag);
-	checkLisError(ierr);
-	ierr = lis_vector_set_size(diag, 0, _n_rows);
-	checkLisError(ierr);
-
-	ierr = lis_matrix_get_diagonal(_AA, diag);
-	checkLisError(ierr);
-
 	double abs_max_entry;
-	ierr = lis_vector_get_value(diag, 0, &abs_max_entry);
+	int ierr = lis_vector_get_value(_diag, 0, &abs_max_entry);
 	checkLisError(ierr);
 	abs_max_entry = std::abs(abs_max_entry);
 	for (std::size_t k(1); k<_n_rows; ++k) {
 		double tmp;
-		ierr = lis_vector_get_value(diag, k, &tmp);
+		ierr = lis_vector_get_value(_diag, k, &tmp);
 		checkLisError(ierr);
 		if (abs_max_entry < std::abs(tmp)) {
 			abs_max_entry = std::abs(tmp);
