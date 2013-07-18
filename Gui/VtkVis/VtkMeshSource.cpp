@@ -30,6 +30,7 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkIntArray.h>
+#include <vtkDoubleArray.h>
 #include <vtkPoints.h>
 #include <vtkProperty.h>
 #include <vtkSmartPointer.h>
@@ -49,7 +50,7 @@ vtkStandardNewMacro(VtkMeshSource);
 vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
 VtkMeshSource::VtkMeshSource() :
-		_grid(nullptr), _matName("MaterialIDs")
+		_grid(nullptr)
 {
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
@@ -172,20 +173,40 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	output->SetPoints(gridPoints);
 
-	// Generate attribute vector for material groups
-	boost::optional<std::vector<unsigned> const&> grid_material_ids(_grid->getUnsignedPropertyVec("MaterialIDs"));
-	if (grid_material_ids) {
-		vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
-		materialIDs->SetName(_matName);
-		materialIDs->SetNumberOfComponents((*grid_material_ids).size() / nElems);
-		materialIDs->SetNumberOfTuples(nElems);
+	std::vector<std::string> prop_names(_grid->getPropertyVecNames(false));
+	for (auto it = prop_names.begin(); it != prop_names.end(); it++) {
+		boost::optional<std::vector<unsigned> const&> grid_prop(_grid->getUnsignedPropertyVec(*it));
+		if (grid_prop) {
+			vtkSmartPointer<vtkIntArray> prop = vtkSmartPointer<vtkIntArray>::New();
+			prop->SetName(it->c_str());
+			const std::size_t tuple_size((*grid_prop).size() / nElems);
+			prop->SetNumberOfComponents(tuple_size);
+			prop->SetNumberOfTuples(nElems);
 
-		for (unsigned i = 0; i < nElems; ++i) {
-			materialIDs->InsertValue(i, (*grid_material_ids)[i]);
+			for (unsigned i = 0; i < nElems*tuple_size; ++i) {
+				prop->InsertValue(i, (*grid_prop)[i]);
+			}
+
+			output->GetCellData()->AddArray(prop);
+			output->GetCellData()->SetActiveAttribute(it->c_str(), vtkDataSetAttributes::SCALARS);
 		}
+	}
 
-		output->GetCellData()->AddArray(materialIDs);
-		output->GetCellData()->SetActiveAttribute(_matName, vtkDataSetAttributes::SCALARS);
+	prop_names = _grid->getPropertyVecNames(true);
+	for (auto it = prop_names.begin(); it != prop_names.end(); it++) {
+		boost::optional<std::vector<double> const&> grid_prop(_grid->getDoublePropertyVec(*it));
+		if (grid_prop) {
+			vtkSmartPointer<vtkDoubleArray> prop = vtkSmartPointer<vtkDoubleArray>::New();
+			prop->SetName(it->c_str());
+			const std::size_t tuple_size((*grid_prop).size() / nElems);
+			prop->SetNumberOfComponents(tuple_size);
+			prop->SetNumberOfTuples(nElems);
+
+			for (unsigned i = 0; i < nElems * tuple_size; ++i) {
+				prop->InsertValue(i, (*grid_prop)[i]);
+			}
+			output->GetCellData()->AddArray(prop);
+		}
 	}
 
 	return 1;
