@@ -13,19 +13,18 @@
  */
 
 #include "LisVector.h"
+#include "LisCheck.h"
 
 namespace MathLib
 {
 
 LisVector::LisVector(std::size_t length)
-: _length(length)
 {
     lis_vector_create(0, &_vec);
     lis_vector_set_size(_vec, 0, length);
 }
 
 LisVector::LisVector(LisVector const &src)
-: _length(src.size())
 {
 	lis_vector_duplicate(src._vec, &_vec);
 	lis_vector_copy(src._vec, _vec);
@@ -56,6 +55,15 @@ LisVector& LisVector::operator= (double v)
 {
     lis_vector_set_all(v, _vec);
     return *this;
+}
+
+std::size_t LisVector::size() const
+{
+	LIS_INT dummy;
+	LIS_INT size;
+	int const ierr = lis_vector_get_size(_vec, &dummy, &size);
+	checkLisError(ierr);
+	return size;
 }
 
 void LisVector::write (const std::string &filename) const
