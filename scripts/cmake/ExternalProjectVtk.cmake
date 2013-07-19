@@ -13,6 +13,7 @@ IF(OGS_BUILD_GUI)
 		vtkIONetCDF
 		vtkIOLegacy
 		vtkIOExport
+		vtkIOXML
 	)
 ENDIF()
 
