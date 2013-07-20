@@ -15,25 +15,20 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#include "TimeMeasurementBase.h"
-
 #ifndef _MSC_VER
 #include <sys/time.h>
 #else
 #include <windows.h>
 #endif
 
-#include "TimeMeasurementBase.h"
-
 namespace BaseLib {
 
-class RunTime : public TimeMeasurementBase
+class RunTime
 {
 public:
-	virtual void start();
-	virtual void stop();
-	virtual double elapsed();
-	~RunTime() {};
+	void start();
+	void stop();
+	double elapsed();
 private:
 #ifndef _MSC_VER
 	timeval _start;

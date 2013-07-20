@@ -17,17 +17,14 @@
 
 #include <ctime>
 
-#include "TimeMeasurementBase.h"
-
 namespace BaseLib {
 
 class CPUTime
 {
 public:
-	virtual void start();
-    virtual void stop();
-    virtual double elapsed();
-	~CPUTime() {};
+	void start();
+    void stop();
+    double elapsed();
 private:
 	clock_t _start;
 	clock_t _stop;
