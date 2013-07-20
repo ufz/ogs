@@ -106,7 +106,7 @@ const std::map<std::string, double> Station::getProperties()
 {
 	std::map<std::string, double> propertyMap;
 
-	for (int i = 0; i < static_cast<int>(_properties.size()); i++)
+	for (std::size_t i = 0; i < _properties.size(); i++)
 	{
 		double (* getFct)(void*) = _properties[i].get;
 		//setFct set = _properties[i].set;
@@ -119,9 +119,9 @@ const std::map<std::string, double> Station::getProperties()
 bool Station::inSelection(const std::vector<PropertyBounds> &bounds)
 {
 	double value;
-	for (size_t i = 0; i < bounds.size(); i++)
+	for (std::size_t i = 0; i < bounds.size(); i++)
 	{
-		for (size_t j = 0; j < _properties.size(); j++)
+		for (std::size_t j = 0; j < _properties.size(); j++)
 			if (_properties[j].name.compare(bounds[i].getName()) == 0)
 			{
 				double (* get)(void*) = _properties[j].get;

@@ -47,7 +47,7 @@ inline void applPlRot(double& dx, double& dy, double cs, double sn)
 static void update(const CRSMatrix<double,unsigned>& A, unsigned k, double* H,
 		unsigned ldH, double* s, double* V, double* x)
 {
-	const size_t n(A.getNRows());
+	const std::size_t n(A.getNRows());
 	double *y = new double[k];
 	double *xh = new double[n];
 	blas::copy(k, s, y);
@@ -72,7 +72,7 @@ unsigned GMRes(const CRSMatrix<double,unsigned>& A, double* const b, double* con
 	double resid;
 	unsigned j = 1;
 
-	const size_t n (A.getNRows());
+	const std::size_t n (A.getNRows());
 
 	double *r = new double[2*n + (n + m + 4) * (m + 1)]; // n
 	double *V = r + n; // n x (m+1)

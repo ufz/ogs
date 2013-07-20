@@ -37,7 +37,7 @@ std::string replaceString(const std::string &searchString,
                           std::string stringToReplace)
 {
 	std::string::size_type pos = stringToReplace.find(searchString, 0);
-	int intLengthSearch = searchString.length();
+	std::string::size_type const intLengthSearch = searchString.length();
 
 	while (std::string::npos != pos) {
 		stringToReplace.replace(pos, intLengthSearch, replaceString);
