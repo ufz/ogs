@@ -67,7 +67,7 @@ public:
 	 */
 	bool isPntInSfc (const double *pnt) const;
 
-	const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; };
+	const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; }
 
 	/**
 	 * method allows access to the internal axis aligned bounding box

@@ -136,9 +136,9 @@ protected:
 	IDX_TYPE _n_cols;
 
    // zero based addressing, but Fortran storage layout
-   //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; };
+   //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; }
    // zero based addressing, C storage layout
-   inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return i*_n_cols+j; };
+   inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return i*_n_cols+j; }
 
    FP_TYPE *_data;
 };
