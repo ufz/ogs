@@ -98,7 +98,6 @@ public:
 	/**
 	 * Constructor copies the source object
 	 * @param src the Station object that should be copied
-	 * @return
 	 */
 	Station(Station const& src);
 
@@ -120,7 +119,6 @@ public:
 	 * \param pname The name of the property.
 	 * \param get A function pointer to a static read function for the variable referred to by pname
 	 * \param set A function pointer to a static write function for the variable referred to by pname
-	 * \return
 	 */
 	void addProperty(std::string pname, double (* get)(void*), void (* set)(void*, double));
 

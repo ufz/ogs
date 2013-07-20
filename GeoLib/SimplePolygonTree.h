@@ -66,7 +66,6 @@ private:
 
 /**
  * creates from a list of simple polygons a list of trees (SimplePolygonTrees)
- * @param list_of_simple_polygon_trees
  */
 template <typename POLYGONTREETYPE>
 void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hierarchies)

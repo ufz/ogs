@@ -39,7 +39,6 @@ public:
 	/**
 	 * Constructor for initialization of the number of rows
 	 * @param nrows number of rows
-	 * @return
 	 */
 	explicit DenseVector(std::size_t nrows=0)
 	: std::valarray<T>(nrows)
@@ -75,7 +74,7 @@ public:
 
 	/**
 	 * writes the matrix entries into a file
-	 * @param output file name
+	 * @param filename output file name
 	 */
 	void write (const std::string &filename) const
 	{
@@ -88,7 +87,7 @@ public:
 
 /**
  * writes a vector content into the output stream
- * @param out the output stream
+ * @param os the output stream
  */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, DenseVector<T> const & v)

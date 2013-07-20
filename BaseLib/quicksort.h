@@ -59,7 +59,6 @@ void quickSort(T* array, unsigned beg, unsigned end)
  * @param beg beginning index in array for sorting
  * @param end end-1 is the last index in array for sorting
  * @param second_array the second array is permuted according to the sort process of array
- * @return
  */
 template <typename T1, typename T2>
 std::size_t partition_(T1 *array, std::size_t beg, std::size_t end, T2 *second_array)
