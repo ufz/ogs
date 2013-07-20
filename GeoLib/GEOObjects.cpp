@@ -414,9 +414,7 @@ int GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 
 	std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
-	if (mergePoints(geo_names, merged_geo_name, pnt_offsets) == -1) {
-		return -1;
-	}
+	mergePoints(geo_names, merged_geo_name, pnt_offsets);
 
 	mergePolylines(geo_names, merged_geo_name, pnt_offsets);
 
