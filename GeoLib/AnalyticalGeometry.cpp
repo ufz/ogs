@@ -135,6 +135,7 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 	return false;
 }
 
+static
 bool isPointInTriangle(const double p[3], const double a[3], const double b[3], const double c[3])
 {
 	// criterion: p-b = u0 * (b - a) + u1 * (b - c); 0 <= u0, u1 <= 1, u0+u1 <= 1
@@ -159,6 +160,7 @@ bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const Geo
 	return isPointInTriangle(p->getCoords(), a->getCoords(), b->getCoords(), c->getCoords());
 }
 
+static
 double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
 {
 	const double u[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2] };

@@ -71,6 +71,7 @@ AdjMat* AdjMat::getMat(unsigned beg, unsigned end,
  * @param iA array of size of the number of rows/columns + 1, array contains pointer into jA array
  * @param jA array of the length of the number of non-zero entries (edges in the matrix graph)
  */
+static
 void genAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 {
 	unsigned i;
@@ -152,6 +153,7 @@ void genAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 	delete[] iAn;
 }
 
+static
 void genFullAdjMat(unsigned n, unsigned* &iA, unsigned* &jA)
 {
 	unsigned i;
