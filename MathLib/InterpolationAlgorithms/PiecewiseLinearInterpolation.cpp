@@ -70,7 +70,7 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 	}
 
 	// compute linear interpolation polynom: y = m * (x - support[i]) + value[i]
-	const long double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
+	const double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
 					/ (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]));
 
 	return m * (pnt_to_interpolate - _supp_pnts[interval_idx]) + _values_at_supp_pnts[interval_idx];
