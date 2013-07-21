@@ -214,7 +214,6 @@ EdgeType::value Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) 
 			return EdgeType::CROSSING;
 		else
 			return EdgeType::INESSENTIAL;
-		break;
 	}
 	case Location::RIGHT: {
 		const GeoLib::Point & v (*(getPoint(k)));
@@ -223,7 +222,6 @@ EdgeType::value Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) 
 			return EdgeType::CROSSING;
 		else
 			return EdgeType::INESSENTIAL;
-		break;
 	}
 	case Location::BETWEEN:
 	case Location::SOURCE:
