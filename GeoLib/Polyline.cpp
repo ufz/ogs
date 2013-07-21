@@ -342,7 +342,7 @@ Location::type Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const 
 
 	if (det_2x2 > std::numeric_limits<double>::epsilon())
 		return Location::LEFT;
-	if (std::numeric_limits<double>::epsilon() < fabs(det_2x2))
+	if (std::numeric_limits<double>::epsilon() < std::abs(det_2x2))
 		return Location::RIGHT;
 	if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
 		return Location::BEHIND;
