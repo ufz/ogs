@@ -98,6 +98,7 @@ private:
     std::size_t const _n_rows;
     LisOption::MatrixType const _mat_type;
     LIS_MATRIX _AA;
+    LIS_VECTOR _diag;
     bool _is_assembled;
     int _is;	///< location where the partial matrix _AA starts in global matrix.
     int _ie;	///< location where the partial matrix _AA ends in global matrix.

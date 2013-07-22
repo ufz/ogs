@@ -45,13 +45,13 @@ public:
     virtual ~LisVector();
 
     /// return a vector length
-    std::size_t size() const {return _length;};
+    std::size_t size() const;
 
     /// return a start index of the active data range
     std::size_t getRangeBegin() const { return 0;}
 
     /// return an end index of the active data range
-    std::size_t getRangeEnd() const { return _length; }
+    std::size_t getRangeEnd() const { return this->size(); }
 
     /// set all values in this vector
     LisVector& operator= (double v);
@@ -103,7 +103,6 @@ public:
         }
     }
 private:
-    std::size_t const _length;
     LIS_VECTOR _vec;
 };
 
