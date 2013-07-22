@@ -30,7 +30,7 @@
 
 VtkCompositeImageToCylindersFilter::VtkCompositeImageToCylindersFilter(
         vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm)
+	: VtkCompositeFilter(inputAlgorithm), _lineFilter(nullptr)
 {
 	this->init();
 }
