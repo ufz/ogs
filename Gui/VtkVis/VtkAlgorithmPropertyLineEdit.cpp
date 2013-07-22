@@ -35,6 +35,7 @@ VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(const QString& conten
 
 	case QVariant::Int:
 		this->setValidator(new QIntValidator(this));
+		break;
 
 	default:
 		break;
