@@ -259,6 +259,66 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
+void Mesh::addPropertyVec(std::string const& prop_name, std::vector<double> const& elem_props)
+{
+	_double_prop_vecs.push_back(std::pair<std::string,std::vector<double> >(prop_name, elem_props));
+}
+
+void Mesh::addPropertyVec(std::string const& prop_name, std::vector<unsigned> const& elem_props)
+{
+	_unsigned_prop_vecs.push_back(std::pair<std::string,std::vector<unsigned> >(prop_name, elem_props));
+}
+
+boost::optional<std::vector<double> const&>
+Mesh::getDoublePropertyVec(std::string const& prop_name) const
+{
+	auto it = _double_prop_vecs.begin();
+	while (it != _double_prop_vecs.end() && it->first.compare(prop_name) != 0)
+		++it;
+
+	if (it == _double_prop_vecs.end())
+		return boost::optional<std::vector<double> const&>();
+
+	return boost::optional<std::vector<double> const&>(it->second);
+}
+
+boost::optional<std::vector<unsigned> const&>
+Mesh::getUnsignedPropertyVec(std::string const& prop_name) const
+{
+	auto it = _unsigned_prop_vecs.begin();
+	while (it != _unsigned_prop_vecs.end() && it->first.compare(prop_name) != 0)
+		++it;
+
+	if (it == _unsigned_prop_vecs.end())
+		return boost::optional<std::vector<unsigned> const&>();
+
+	return boost::optional<std::vector<unsigned> const&>(it->second);
+}
+
+std::vector<std::string> Mesh::getPropertyVecNames(bool prop_type_double) const
+{
+	std::vector<std::string> names;
+	if (prop_type_double) {
+		names.resize(_double_prop_vecs.size());
+		std::transform(_double_prop_vecs.begin(), _double_prop_vecs.end(),
+				std::back_inserter(names),
+				[](std::pair<std::string, std::vector<double> > const& p) {
+					return p.first;
+				}
+		);
+	} else {
+		names.resize(_unsigned_prop_vecs.size());
+		std::transform(_unsigned_prop_vecs.begin(), _unsigned_prop_vecs.end(),
+				std::back_inserter(names),
+				[](std::pair<std::string, std::vector<unsigned> > const&p) {
+					return p.first;
+				}
+		);
+	}
+
+	return names;
+}
+
 void Mesh::removeUnusedMeshNodes()
 {
 	unsigned count(0);

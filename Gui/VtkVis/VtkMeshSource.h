@@ -38,8 +38,6 @@ public:
 
 	vtkTypeRevisionMacro(VtkMeshSource, vtkUnstructuredGridAlgorithm);
 
-	const char* GetMaterialArrayName() const { return _matName; }
-
 	/// Returns the base object of this grid
 	const MeshLib::Mesh* GetMesh() const { return this->_grid; }
 
@@ -68,9 +66,6 @@ protected:
 	                vtkInformationVector* outputVector);
 
 	const MeshLib::Mesh* _grid;
-
-private:
-	const char* _matName;
 };
 
 #endif // VTKMESHSOURCE_H
