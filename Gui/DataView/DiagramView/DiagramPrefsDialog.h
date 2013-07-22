@@ -83,14 +83,14 @@ private:
 	/**
 	 * Loading data from a file
 	 * \param filename Name of the file containing the data
-	 * return 1 if everything is okay, 0 and an error message if there were errors
+	 * \return 1 if everything is okay, 0 and an error message if there were errors
 	 */
 	int loadFile(const QString &filename);
 
 	/**
 	 * Setting up the QDiagramList object were the time series data will be stored
 	 * \param coords List of coordinates.
-	 * return 1 if everything is okay, 0 and an error message if there were errors
+	 * \return 1 if everything is okay, 0 and an error message if there were errors
 	 */
 	int loadList(const std::vector< std::pair<QDateTime, float> > &coords);
 
