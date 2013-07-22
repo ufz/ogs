@@ -22,6 +22,7 @@ namespace FileIO {
 class GMSHNoMeshDensity: public FileIO::GMSHMeshDensityStrategy {
 public:
 	GMSHNoMeshDensity() {};
+	virtual ~GMSHNoMeshDensity() {};
 	void init(std::vector<GeoLib::Point const*> const& vec)
 	{
 		// to avoid a warning here:

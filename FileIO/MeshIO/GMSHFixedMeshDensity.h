@@ -25,6 +25,7 @@ public:
 	GMSHFixedMeshDensity(double mesh_density);
 	void init(std::vector<GeoLib::Point const*> const& vec);
 	double getMeshDensityAtPoint(GeoLib::Point const*const) const;
+	virtual ~GMSHFixedMeshDensity() {};
 
 private:
 	double _mesh_density;
