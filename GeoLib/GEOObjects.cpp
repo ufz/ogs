@@ -397,10 +397,9 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 		case GeoLib::SURFACE:
 			this->getSurfaceVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::INVALID:
 		case GeoLib::VOLUME:
 		case GeoLib::GEODOMAIN:
-		case GeoLib::COLUMN:
+		case GeoLib::INVALID:
 		default:
 			INFO("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
 			break;
