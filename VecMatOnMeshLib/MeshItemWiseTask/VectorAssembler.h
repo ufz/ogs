@@ -21,31 +21,33 @@ namespace VecMatOnMeshLib
 {
 
 /**
- * Get a local vector and assemble it into a global vector
+ * Get a local linear algebra object and assemble it into the global one.
  *
- * \tparam T_VEC				Vector class
- * \tparam T_MESH_ITEM			Mesh item type in MeshItemType.h
- * \tparam T_LOCAL_ASSEMBLY		Local assembler class
+ * \tparam LINALG_OBJ_T     Linear algebra object type
+ * \tparam T_MESH_ITEM      Mesh item type in MeshItemType.h
+ * \tparam T_LOCAL_ASSEMBLY Local assembler class
  */
-template<class T_VEC, class T_MESH_ITEM, class T_LOCAL_ASSEMBLY>
+template<class LINALG_OBJ_T, class T_MESH_ITEM, class T_LOCAL_ASSEMBLY>
 class VectorAssembler
 {
 public:
 	/**
-	 * constructor
-	 *
-	 * @param vec               Global vector object
+	 * @param vec               Global linear algebra object
 	 * @param local_assembler   Local assembler object
-	 * @param data_pos          Mapping table from DoFs to position in the global vector.
+	 * @param data_pos          Mapping table from DoFs to position in the global linear algebra object.
 	 * The number of rows should equal to the number of mesh items. The number
 	 * of columns should equal to the number of components on that mesh item.
 	 */
-    VectorAssembler(T_VEC &vec, T_LOCAL_ASSEMBLY &local_assembler, const std::vector<std::vector<std::size_t> > &data_pos );
+    VectorAssembler(LINALG_OBJ_T &linalg_obj,
+		T_LOCAL_ASSEMBLY &local_assembler,
+		const std::vector<std::vector<std::size_t> > &data_pos)
+    : _linalg_obj(linalg_obj), _local_assembler(local_assembler), _data_pos(data_pos) {}
 
     virtual ~VectorAssembler() {}
 
     /**
-     * do some task for the given mesh item and update the global vector
+     * do some task for the given mesh item and update the global linear algebra
+     * object
      *
      * @param item  Pointer to a mesh item
      * @param id    Index of the mesh item. The index is used to search a mapping in data_pos
@@ -55,14 +57,13 @@ public:
 		assert(_data_pos.size() > id);
 
 		std::vector<std::size_t> const& pos = _data_pos[id];
-
-		MathLib::DenseVector<double> local_vec(pos.size());
-		_local_assembler(*item, local_vec);
-		_global_vec.addSubVector(pos, local_vec);
+		MathLib::DenseVector<double> local_linalg_obj(pos.size());
+		_local_assembler(*item, local_linalg_obj);
+		_linalg_obj.addSubVector(pos, local_linalg_obj);
 	}
 
 protected:
-    T_VEC &_global_vec;
+    LINALG_OBJ_T &_linalg_obj;
     T_LOCAL_ASSEMBLY &_local_assembler;
     const std::vector<std::vector<std::size_t> > &_data_pos;
 };

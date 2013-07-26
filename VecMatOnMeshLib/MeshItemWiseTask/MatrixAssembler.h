@@ -20,28 +20,50 @@
 namespace VecMatOnMeshLib
 {
 
-
-template<class T_MAT, class T_MESH_ITEM, class T_LOCAL_ASSEMBLY>
+/**
+ * Get a local linear algebra object and assemble it into the global one.
+ *
+ * \tparam LINALG_OBJ_T     Linear algebra object type
+ * \tparam T_MESH_ITEM      Mesh item type in MeshItemType.h
+ * \tparam T_LOCAL_ASSEMBLY Local assembler class
+ */
+template<class LINALG_OBJ_T, class T_MESH_ITEM, class T_LOCAL_ASSEMBLY>
 class MatrixAssembler
 {
 public:
-    MatrixAssembler(T_MAT &mat, T_LOCAL_ASSEMBLY &local_assembler, const std::vector<std::vector<std::size_t> > &data_pos)
-    : _mat(mat), _local_assembler(local_assembler), _data_pos(data_pos) {}
+	/**
+	 * @param vec               Global linear algebra object
+	 * @param local_assembler   Local assembler object
+	 * @param data_pos          Mapping table from DoFs to position in the global linear algebra object.
+	 * The number of rows should equal to the number of mesh items. The number
+	 * of columns should equal to the number of components on that mesh item.
+	 */
+    MatrixAssembler(LINALG_OBJ_T &linalg_obj,
+		T_LOCAL_ASSEMBLY &local_assembler,
+		const std::vector<std::vector<std::size_t> > &data_pos)
+    : _linalg_obj(linalg_obj), _local_assembler(local_assembler), _data_pos(data_pos) {}
 
     virtual ~MatrixAssembler() {}
 
+    /**
+     * do some task for the given mesh item and update the global linear algebra
+     * object
+     *
+     * @param item  Pointer to a mesh item
+     * @param id    Index of the mesh item. The index is used to search a mapping in data_pos
+     */
     virtual void operator()(const T_MESH_ITEM* item, std::size_t id)
 	{
 		assert(_data_pos.size() > id);
 
 		std::vector<std::size_t> const& pos = _data_pos[id];
-		MathLib::DenseMatrix<double> local_mat(pos.size(), pos.size());
-		_local_assembler(*item, local_mat);
-		_mat.addSubMatrix(pos, pos, local_mat);
+		MathLib::DenseMatrix<double> local_linalg_obj(pos.size(), pos.size());
+		_local_assembler(*item, local_linalg_obj);
+		_linalg_obj.addSubMatrix(pos, pos, local_linalg_obj);
 	}
 
 protected:
-    T_MAT &_mat;
+    LINALG_OBJ_T &_linalg_obj;
     T_LOCAL_ASSEMBLY &_local_assembler;
     const std::vector<std::vector<std::size_t> > &_data_pos;
 };
