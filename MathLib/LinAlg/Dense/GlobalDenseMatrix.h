@@ -30,6 +30,12 @@ public:
 	typedef FP_TYPE FP_T;
 
 public:
+	/// Dense square matrix constructor.
+	GlobalDenseMatrix (IDX_TYPE rows)
+		: GlobalDenseMatrix(rows, rows)
+	{ };
+
+	/// Dense rectangular matrix constructor.
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
 	GlobalDenseMatrix (const GlobalDenseMatrix &src);
