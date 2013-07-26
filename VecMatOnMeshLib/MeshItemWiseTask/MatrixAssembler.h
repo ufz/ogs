@@ -30,7 +30,15 @@ public:
 
     virtual ~MatrixAssembler() {}
 
-    virtual void operator()(const T_MESH_ITEM* item, std::size_t id);
+    virtual void operator()(const T_MESH_ITEM* item, std::size_t id)
+	{
+		assert(_data_pos.size() > id);
+
+		std::vector<std::size_t> const& pos = _data_pos[id];
+		MathLib::DenseMatrix<double> local_mat(pos.size(), pos.size());
+		_local_assembler(*item, local_mat);
+		_mat.addSubMatrix(pos, pos, local_mat);
+	}
 
 protected:
     T_MAT &_mat;
@@ -38,9 +46,6 @@ protected:
     const std::vector<std::vector<std::size_t> > &_data_pos;
 };
 
-
 }
-
-#include "MatrixAssembler.tpp"
 
 #endif /* MATRIXASSEMBLER_H_ */

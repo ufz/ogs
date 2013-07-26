@@ -50,7 +50,16 @@ public:
      * @param item  Pointer to a mesh item
      * @param id    Index of the mesh item. The index is used to search a mapping in data_pos
      */
-    virtual void operator()(const T_MESH_ITEM* item, std::size_t id);
+    virtual void operator()(const T_MESH_ITEM* item, std::size_t id)
+	{
+		assert(_data_pos.size() > id);
+
+		std::vector<std::size_t> const& pos = _data_pos[id];
+
+		MathLib::DenseVector<double> local_vec(pos.size());
+		_local_assembler(*item, local_vec);
+		_global_vec.addSubVector(pos, local_vec);
+	}
 
 protected:
     T_VEC &_global_vec;
@@ -59,7 +68,5 @@ protected:
 };
 
 } // VecMatOnMeshLib
-
-#include "VectorAssembler.tpp"
 
 #endif /* VECTORASSEMBLER_H_ */
