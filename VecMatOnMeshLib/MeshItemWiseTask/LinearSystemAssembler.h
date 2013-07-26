@@ -17,13 +17,11 @@
 
 #include <vector>
 
-#include "ITask.h"
-
 namespace VecMatOnMeshLib
 {
 
 template<class T_MAT, class T_VEC, class T_MESH_ITEM, class T_LOCAL_ASSEMBLY>
-class LinearSystemAssembler : public ITask<T_MESH_ITEM>
+class LinearSystemAssembler
 {
 public:
     LinearSystemAssembler(T_MAT &A, T_VEC &rhs, T_LOCAL_ASSEMBLY &local_assembler, const std::vector<std::vector<std::size_t> > &data_pos)

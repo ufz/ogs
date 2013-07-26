@@ -16,7 +16,6 @@
 #define VECTORASSEMBLER_H_
 
 #include <vector>
-#include "ITask.h"
 
 namespace VecMatOnMeshLib
 {
@@ -29,7 +28,7 @@ namespace VecMatOnMeshLib
  * \tparam T_LOCAL_ASSEMBLY		Local assembler class
  */
 template<class T_VEC, class T_MESH_ITEM, class T_LOCAL_ASSEMBLY>
-class VectorAssembler : public ITask<T_MESH_ITEM>
+class VectorAssembler
 {
 public:
 	/**
