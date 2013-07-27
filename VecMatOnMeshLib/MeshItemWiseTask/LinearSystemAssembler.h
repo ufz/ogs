@@ -29,7 +29,17 @@ public:
 
     virtual ~LinearSystemAssembler() {}
 
-    virtual void operator()(const T_MESH_ITEM* item, std::size_t id);
+    virtual void operator()(const T_MESH_ITEM* item, std::size_t id)
+    {
+        assert(_data_pos.size() > id);
+
+        std::vector<std::size_t> const& pos = _data_pos[id];
+        MathLib::DenseMatrix<double> local_A(pos.size(), pos.size());
+        MathLib::DenseVector<double> local_rhs(pos.size());
+        _local_assembler(*item, local_A, local_rhs);
+        _A.add(pos, local_A);
+        _rhs.add(pos, local_rhs);
+    }
 
 protected:
     T_MAT &_A;
@@ -39,7 +49,5 @@ protected:
 };
 
 } // VecMatOnMeshLib
-
-#include "LinearSystemAssembler.tpp"
 
 #endif /* LINEARSYSTEMASSEMBLER_H_ */
