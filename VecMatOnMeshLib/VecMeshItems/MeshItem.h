@@ -57,6 +57,13 @@ inline bool operator<(const Location& left, const Location& right)
     return left.item_id < right.item_id;
 }
 
+inline std::ostream& operator<<(std::ostream& os, Location const& l)
+{
+	return os << "(" << l.mesh_id
+	    << ", " << l.item_type
+	    << ", " << l.item_id
+	    << ")";
+}
 
 }
 

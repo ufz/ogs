@@ -46,7 +46,7 @@ struct MeshitemDataPosition
 
     void print() const
     {
-        std::cout << location.mesh_id << ", " << location.item_type << ", " << location.item_id << ", " << comp_id << ", " << global_index << "\n";
+        std::cout << location << ", " << comp_id << ", " << global_index << "\n";
     }
 };
 
