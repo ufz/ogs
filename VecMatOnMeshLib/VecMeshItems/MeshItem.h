@@ -16,10 +16,22 @@
 #ifndef MESHITEM_H_
 #define MESHITEM_H_
 
-#include "MeshItemType.h"
-
 namespace VecMatOnMeshLib
 {
+
+enum class MeshItemType { Node, Edge, Face, Cell };
+
+inline std::ostream& operator<<(std::ostream& os, MeshItemType const& t)
+{
+	switch (t)
+	{
+	case MeshItemType::Node: return os << "N";
+	case MeshItemType::Edge: return os << "E";
+	case MeshItemType::Face: return os << "F";
+	case MeshItemType::Cell: return os << "C";
+	};
+	return os;
+}
 
 /** Spatial location description.
  *
@@ -29,10 +41,10 @@ namespace VecMatOnMeshLib
 struct Location
 {
     std::size_t          mesh_id;
-    MeshItemType::type   item_type;
+    MeshItemType         item_type;
     std::size_t          item_id;
 
-    Location(std::size_t meshid, MeshItemType::type itemtype, std::size_t itemid)
+    Location(std::size_t meshid, MeshItemType itemtype, std::size_t itemid)
     : mesh_id(meshid), item_type(itemtype), item_id(itemid){};
 };
 
