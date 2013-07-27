@@ -12,98 +12,124 @@
  *
  */
 
-#include <vector>
-#include <memory>
 #include <cmath>
+#include <memory>
+#include <vector>
 
 #include <gtest/gtest.h>
 
-#include "MathLib/MathTools.h"
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/Dense/DenseTools.h"
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
+#include "MathLib/MathTools.h"
 
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
+#include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
+#include "VecMatOnMeshLib/Serial/ForEachMeshItem.h"
+#include "VecMatOnMeshLib/Serial/SerialVecMatOnMesh.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
-#include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
-#include "VecMatOnMeshLib/Serial/SerialVecMatOnMesh.h"
-#include "VecMatOnMeshLib/Serial/ForEachMeshItem.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
 
-
 TEST(VecMatOnMeshLib, SerialLinearSolver)
 {
-    // example
-    SteadyDiffusion2DExample1 ex1;
-    typedef SteadyDiffusion2DExample1::LocalAssembler MyLocalAssembler;
-    MyLocalAssembler local_2d_diff;
+	// example
+	SteadyDiffusion2DExample1 ex1;
 
-    //--------------------------------------------------------------------------
-    // Choose implementation type
-    //--------------------------------------------------------------------------
-    typedef VecMatOnMeshLib::SerialVecMatOnMesh TVecMatOnMesh;
-    typedef TVecMatOnMesh::VectorType TVec;
-    typedef TVecMatOnMesh::MatrixType TMat;
-    TVecMatOnMesh vecMatOnMesh;
+	//--------------------------------------------------------------------------
+	// Choose implementation type
+	//--------------------------------------------------------------------------
+	typedef VecMatOnMeshLib::SerialVecMatOnMesh TVecMatOnMesh;
+	TVecMatOnMesh vecMatOnMesh;
 
-    //--------------------------------------------------------------------------
-    // Prepare mesh items where data are assigned
-    //--------------------------------------------------------------------------
-    const VecMatOnMeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh, ex1.msh->getNodes());
+	//--------------------------------------------------------------------------
+	// Prepare mesh items where data are assigned
+	//--------------------------------------------------------------------------
+	const VecMatOnMeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
+	                                                       ex1.msh->getNodes());
 
-    //--------------------------------------------------------------------------
-    // Allocate a coefficient matrix, RHS and solution vectors
-    //--------------------------------------------------------------------------
-    // define a mesh item composition in a vector
-    std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
-    vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
-    VecMatOnMeshLib::MeshComponentMap vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+	//--------------------------------------------------------------------------
+	// Allocate a coefficient matrix, RHS and solution vectors
+	//--------------------------------------------------------------------------
+	// define a mesh item composition in a vector
+	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+	vec_comp_dis.push_back(
+	    new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
+	VecMatOnMeshLib::MeshComponentMap vec1_composition(
+	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
 
-    // allocate a vector and matrix
-    std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));
-    std::unique_ptr<TVec> rhs(vecMatOnMesh.createVector(vec1_composition));
-    std::unique_ptr<TVec> x(vecMatOnMesh.createVector(vec1_composition));
+	// allocate a vector and matrix
+	typedef TVecMatOnMesh::VectorType TVec;
+	typedef TVecMatOnMesh::MatrixType TMat;
+	std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));
+	std::unique_ptr<TVec> rhs(vecMatOnMesh.createVector(vec1_composition));
+	std::unique_ptr<TVec> x(vecMatOnMesh.createVector(vec1_composition));
 
-    //--------------------------------------------------------------------------
-    // Construct a linear system
-    //--------------------------------------------------------------------------
-    // create a mapping table from element nodes to entries in the linear system
-    auto &all_eles = ex1.msh->getElements();
-    std::vector<std::vector<std::size_t> > map_ele_nodes2vec_entries(all_eles.size());
-    for (std::size_t i=0; i<map_ele_nodes2vec_entries.size(); i++) {
-        auto* e = all_eles[i];
-        std::vector<VecMatOnMeshLib::Location> vec_items;
-        for (std::size_t j=0; j<e->getNNodes(); j++)
-            vec_items.push_back(VecMatOnMeshLib::Location(ex1.msh->getID(), VecMatOnMeshLib::MeshItemType::Node, e->getNode(j)->getID()));
-        map_ele_nodes2vec_entries[i] = vec1_composition.getDataIDList(vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
-        //std::cout << i << ": "; std::for_each(map_ele_nodes2vec_entries[i].begin(), map_ele_nodes2vec_entries[i].end(), [](std::size_t id){std::cout << id << " ";}); std::cout << "\n";
-    }
+	//--------------------------------------------------------------------------
+	// Construct a linear system
+	//--------------------------------------------------------------------------
+	// create a mapping table from element nodes to entries in the linear system
+	auto &all_eles = ex1.msh->getElements();
+	std::vector<std::vector<std::size_t> > map_ele_nodes2vec_entries(
+	        all_eles.size());
+	for (std::size_t i = 0; i < map_ele_nodes2vec_entries.size(); i++)
+	{
+		auto* e = all_eles[i];
+		std::vector<VecMatOnMeshLib::Location> vec_items;
+		for (std::size_t j = 0; j < e->getNNodes(); j++)
+			vec_items.push_back(VecMatOnMeshLib::Location(
+			    ex1.msh->getID(),
+			    VecMatOnMeshLib::MeshItemType::Node,
+			    e->getNode(j)->getID()));
 
-    // create a local assembler
-    typedef VecMatOnMeshLib::LinearSystemAssembler<TMat, TVec, MeshLib::Element, MyLocalAssembler> LocalAssembler;
-    LocalAssembler assembler(*A.get(), *rhs.get(), local_2d_diff, map_ele_nodes2vec_entries);
+		map_ele_nodes2vec_entries[i] = vec1_composition.getDataIDList(
+		        vec_items,
+		        VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+		//std::cout << i << ": ";
+		//std::copy(
+		//    map_ele_nodes2vec_entries[i].begin(),
+		//    map_ele_nodes2vec_entries[i].end(),
+		//    std::ostream_iterator<std::size_t>(std::cout, " "));
+		//std::cout << "\n";
+	}
 
-    // do assembly
-    TVecMatOnMesh::ForEachType<MeshLib::Element, LocalAssembler> vec1_global_assembly;
-    vec1_global_assembly(ex1.msh->getElements(), assembler);
-    //std::cout << "A=\n"; A->write(std::cout); std::cout << "rhs=\n"; rhs->write(std::cout);
+	// create a local assembler
+	typedef SteadyDiffusion2DExample1::LocalAssembler MyLocalAssembler;
+	typedef VecMatOnMeshLib::LinearSystemAssembler<
+	    TMat, TVec, MeshLib::Element, MyLocalAssembler> LocalAssembler;
 
-    // apply Dirichlet BC
-    MathLib::applyKnownSolution(*A, *rhs, ex1.vec_DirichletBC_id, ex1.vec_DirichletBC_value);
-    //std::cout << "A=\n"; A->write(std::cout); std::cout << "rhs=\n"; rhs->write(std::cout);
+	MyLocalAssembler local_2d_diff;
+	LocalAssembler assembler(*A.get(), *rhs.get(), local_2d_diff,
+	    map_ele_nodes2vec_entries);
 
-    //--------------------------------------------------------------------------
-    // solve x=A^-1 rhs
-    //--------------------------------------------------------------------------
-    MathLib::GaussAlgorithm<TMat, TVec> ls(*A);
-    ls.solve(*rhs, *x);
+	// do assembly
+	TVecMatOnMesh::ForEachType<MeshLib::Element,
+	                           LocalAssembler> vec1_global_assembly;
+	vec1_global_assembly(ex1.msh->getElements(), assembler);
+	//std::cout << "A=\n";
+	//A->write(std::cout);
+	//std::cout << "rhs=\n";
+	//rhs->write(std::cout);
 
-    double *px = &(*x)[0];
-    ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], px, 9, 1.e-5);
+	// apply Dirichlet BC
+	MathLib::applyKnownSolution(*A, *rhs, ex1.vec_DirichletBC_id,
+	                            ex1.vec_DirichletBC_value);
+	//std::cout << "A=\n";
+	//A->write(std::cout);
+	//std::cout << "rhs=\n";
+	//rhs->write(std::cout);
+
+	//--------------------------------------------------------------------------
+	// solve x=A^-1 rhs
+	//--------------------------------------------------------------------------
+	MathLib::GaussAlgorithm<TMat, TVec> ls(*A);
+	ls.solve(*rhs, *x);
+
+	double* px = &(*x)[0];
+	ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], px, 9, 1.e-5);
 }
