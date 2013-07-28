@@ -20,7 +20,38 @@
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshSubsets.h"
 
-TEST(VecMatOnMeshLib, DataArrangementByComponentType)
+class VecMatOnMeshLibTest : public ::testing::Test
+{
+	public:
+	VecMatOnMeshLibTest()
+	    : mesh(nullptr), mesh_items(nullptr)
+	{
+		mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, 9);
+		mesh_items = new VecMatOnMeshLib::MeshSubset(*mesh, mesh->getNodes());
+
+		//set up data arrangement
+		vec_comp_dis.emplace_back(new VecMatOnMeshLib::MeshSubsets(mesh_items));
+		vec_comp_dis.emplace_back(new VecMatOnMeshLib::MeshSubsets(mesh_items));
+
+	}
+	~VecMatOnMeshLibTest()
+	{
+		std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
+		    [](VecMatOnMeshLib::MeshSubsets* p) { delete p; return true; });
+		delete mesh_items;
+		delete mesh;
+	}
+
+	MeshLib::Mesh const* mesh;
+	VecMatOnMeshLib::MeshSubset const* mesh_items;
+
+	//data component 0 and 1 are assigned to all nodes in the mesh
+	std::size_t const comp0_id = 0;
+	std::size_t const comp1_id = 1;
+	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+};
+
+TEST_F(VecMatOnMeshLibTest, DataArrangementByComponentType)
 {
 	// This test checks the following case:
 	// - Each node has two scalar values (i.e. two components per node)
@@ -28,34 +59,20 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
 	// - Entries in the vector are arranged in the order of a component type and then node ID
 	// - For example, x=[(node 0, comp 0) (node 1, comp 0) ... (node n, comp0), (node 0, comp1) ... ]
 
-	//assume the following mesh having line elements
-	std::unique_ptr<MeshLib::Mesh> msh(
-	    MeshLib::MeshGenerator::generateLineMesh(1.0, 9));
-
-	//data component 0 and 1 are assigned to all nodes in the mesh
-	const std::size_t comp0_id = 0;
-	const std::size_t comp1_id = 1;
-	const VecMatOnMeshLib::MeshSubset mesh_items(*msh, msh->getNodes());
-	VecMatOnMeshLib::MeshSubsets comp0(&mesh_items);
-	VecMatOnMeshLib::MeshSubsets comp1(&mesh_items);
-
 	//set up data arrangement
-	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
-	vec_comp_dis.push_back(&comp0);
-	vec_comp_dis.push_back(&comp1);
 	VecMatOnMeshLib::MeshComponentMap da(
 	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
 	//std::cout << "# database \n";
 	//da.print();
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	using VecMatOnMeshLib::MeshItemType;
 	typedef VecMatOnMeshLib::Location Loc;
 	//check
 	auto checkNodeAndComponent =
-	    [&da, &msh](std::size_t const n, std::size_t const c)
+	    [&da, this](std::size_t const n, std::size_t const c)
 	    {
-	        return da.getDataID(Loc(msh->getID(), MeshItemType::Node, n), c);
+	        return da.getDataID(Loc(mesh->getID(), MeshItemType::Node, n), c);
 	    };
 
 	ASSERT_EQ(20u, da.size());
@@ -65,7 +82,7 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
 	ASSERT_EQ(11u, checkNodeAndComponent(1, comp1_id));
 
 	auto vecCompIDs = da.getComponentIDs(
-	    Loc(msh->getID(), MeshItemType::Node, 0));
+	    Loc(mesh->getID(), MeshItemType::Node, 0));
 	ASSERT_EQ(2u, vecCompIDs.size());
 	ASSERT_EQ(0u, vecCompIDs[0]);
 	ASSERT_EQ(1u, vecCompIDs[1]);
@@ -74,14 +91,14 @@ TEST(VecMatOnMeshLib, DataArrangementByComponentType)
 	std::size_t const out_of_range = std::numeric_limits<std::size_t>::max();
 	ASSERT_EQ(out_of_range, checkNodeAndComponent(10, comp0_id));
 	ASSERT_EQ(out_of_range, da.getDataID(
-	    Loc(msh->getID() + 1, MeshItemType::Node, 0), comp0_id));
+	    Loc(mesh->getID() + 1, MeshItemType::Node, 0), comp0_id));
 	ASSERT_EQ(out_of_range, da.getDataID(
-	    Loc(msh->getID(), MeshItemType::Cell, 0), comp0_id));
+	    Loc(mesh->getID(), MeshItemType::Cell, 0), comp0_id));
 	ASSERT_EQ(out_of_range, da.getDataID(
-	    Loc(msh->getID(), MeshItemType::Node, 0), 10));
+	    Loc(mesh->getID(), MeshItemType::Node, 0), 10));
 }
 
-TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
+TEST_F(VecMatOnMeshLibTest, DataArrangementByLocationType)
 {
 	// This test checks the following case:
 	// - Each node has two scalar values (i.e. two components per node)
@@ -89,34 +106,20 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
 	// - Entries in the vector are arranged in the order of node ID and then a component type
 	// - For example, x=[(node 0, comp 0) (node 0, comp 1) ... (node n, comp0), (node n, comp1) ]
 
-	//assume the following mesh
-	std::unique_ptr<MeshLib::Mesh> msh(
-	    MeshLib::MeshGenerator::generateLineMesh(1.0, 9));
-
-	//data component 0 and 1 are assigned to all nodes in the mesh
-	const std::size_t comp0_id = 0;
-	const std::size_t comp1_id = 1;
-	const VecMatOnMeshLib::MeshSubset mesh_items(*msh, msh->getNodes());
-	VecMatOnMeshLib::MeshSubsets comp0(&mesh_items);
-	VecMatOnMeshLib::MeshSubsets comp1(&mesh_items);
-
 	//set up data arrangement
-	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
-	vec_comp_dis.push_back(&comp0);
-	vec_comp_dis.push_back(&comp1);
-	VecMatOnMeshLib::MeshComponentMap da(vec_comp_dis,
-	                                   VecMatOnMeshLib::OrderingType::BY_LOCATION);
+	VecMatOnMeshLib::MeshComponentMap da(
+	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_LOCATION);
 	//std::cout << "# database \n";
 	//da.print();
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	using VecMatOnMeshLib::MeshItemType;
 	typedef VecMatOnMeshLib::Location Loc;
 	//check
 	auto checkNodeAndComponent =
-	    [&da, &msh](std::size_t const n, std::size_t const c)
+	    [&da, this](std::size_t const n, std::size_t const c)
 	    {
-	        return da.getDataID(Loc(msh->getID(), MeshItemType::Node, n), c);
+	        return da.getDataID(Loc(mesh->getID(), MeshItemType::Node, n), c);
 	    };
 
 	ASSERT_EQ(20u, da.size());
@@ -124,4 +127,19 @@ TEST(VecMatOnMeshLib, DataArrangementByMeshItem)
 	ASSERT_EQ(1u, checkNodeAndComponent(0, comp1_id));
 	ASSERT_EQ(2u, checkNodeAndComponent(1, comp0_id));
 	ASSERT_EQ(3u, checkNodeAndComponent(1, comp1_id));
+	auto vecCompIDs = da.getComponentIDs(
+	    Loc(mesh->getID(), MeshItemType::Node, 0));
+	ASSERT_EQ(2u, vecCompIDs.size());
+	ASSERT_EQ(0u, vecCompIDs[0]);
+	ASSERT_EQ(1u, vecCompIDs[1]);
+
+	//check out of range
+	std::size_t const out_of_range = std::numeric_limits<std::size_t>::max();
+	ASSERT_EQ(out_of_range, checkNodeAndComponent(10, comp0_id));
+	ASSERT_EQ(out_of_range, da.getDataID(
+	    Loc(mesh->getID() + 1, MeshItemType::Node, 0), comp0_id));
+	ASSERT_EQ(out_of_range, da.getDataID(
+	    Loc(mesh->getID(), MeshItemType::Cell, 0), comp0_id));
+	ASSERT_EQ(out_of_range, da.getDataID(
+	    Loc(mesh->getID(), MeshItemType::Node, 0), 10));
 }
