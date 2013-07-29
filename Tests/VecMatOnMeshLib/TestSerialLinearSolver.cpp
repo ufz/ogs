@@ -27,7 +27,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
 
-#include "VecMatOnMeshLib/VecMeshItems/VectorComposition.h"
+#include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
 #include "VecMatOnMeshLib/Serial/SerialVecMatOnMesh.h"
@@ -63,7 +63,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
     // define a mesh item composition in a vector
     std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
-    VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+    VecMatOnMeshLib::MeshComponentMap vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
 
     // allocate a vector and matrix
     std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));

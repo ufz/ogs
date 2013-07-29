@@ -18,7 +18,7 @@
 namespace VecMatOnMeshLib
 {
 
-class VectorComposition;
+class MeshComponentMap;
 
 /**
  * \brief Interface of VecMatOnMesh functions
@@ -31,8 +31,8 @@ class IVecMatOnMesh
 public:
     virtual ~IVecMatOnMesh(){};
 
-    virtual T_VEC* createVector(const VectorComposition &dist_layout) = 0;
-    virtual T_MAT* createMatrix(const VectorComposition &dist_layout) = 0;
+    virtual T_VEC* createVector(const MeshComponentMap &dist_layout) = 0;
+    virtual T_MAT* createMatrix(const MeshComponentMap &dist_layout) = 0;
 };
 
 }

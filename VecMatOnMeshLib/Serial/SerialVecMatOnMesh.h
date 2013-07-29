@@ -21,7 +21,7 @@
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 
-#include "../VecMeshItems/VectorComposition.h"
+#include "../VecMeshItems/MeshComponentMap.h"
 #include "../Interface/IVecMatOnMesh.h"
 #include "ForEachMeshItem.h"
 
@@ -42,13 +42,13 @@ public:
 public:
     virtual ~SerialVecMatOnMesh() {};
 
-    virtual VectorType* createVector(const VectorComposition &dist_layout) override
+    virtual VectorType* createVector(const MeshComponentMap &dist_layout) override
     {
         VectorType* vec = new VectorType(dist_layout.size());
         return vec;
     }
 
-    virtual MatrixType* createMatrix(const VectorComposition &dist_layout) override
+    virtual MatrixType* createMatrix(const MeshComponentMap &dist_layout) override
     {
         MatrixType* mat = new MatrixType(dist_layout.size(),dist_layout.size()); //TODO sparse structure
         return mat;

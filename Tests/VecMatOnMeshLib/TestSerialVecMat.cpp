@@ -30,7 +30,7 @@
 #include "MeshLib/Elements/Edge.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-#include "VecMatOnMeshLib/VecMeshItems/VectorComposition.h"
+#include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
@@ -114,7 +114,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
     // define a mesh item composition in a vector
     std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(new VecMatOnMeshLib::MeshSubsets(&mesh_items_left_nodes));
-    VecMatOnMeshLib::VectorComposition vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+    VecMatOnMeshLib::MeshComponentMap vec1_composition(vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
     //vec1_composition.print();
 
     // allocate a vector and matrix

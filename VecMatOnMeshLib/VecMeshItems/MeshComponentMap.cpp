@@ -13,7 +13,7 @@
  */
 
 
-#include "VectorComposition.h"
+#include "MeshComponentMap.h"
 
 #include <numeric>
 #include <iostream>
@@ -22,7 +22,7 @@
 namespace VecMatOnMeshLib
 {
 
-VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &domains, OrderingType::type numbering)
+MeshComponentMap::MeshComponentMap(const std::vector<MeshSubsets*> &domains, OrderingType::type numbering)
 {
     // construct dict (and here we number global_index by component type)
     std::size_t global_index = 0;
@@ -45,7 +45,7 @@ VectorComposition::VectorComposition(const std::vector<MeshSubsets*> &domains, O
         renumberByLocation();
 }
 
-void VectorComposition::renumberByLocation(std::size_t offset)
+void MeshComponentMap::renumberByLocation(std::size_t offset)
 {
     std::size_t global_index = offset;
 
@@ -58,14 +58,14 @@ void VectorComposition::renumberByLocation(std::size_t offset)
 }
 
 
-std::size_t VectorComposition::getDataID(const Location &pos, unsigned compID) const
+std::size_t MeshComponentMap::getDataID(const Location &pos, unsigned compID) const
 {
     auto &m = _dict.get<mesh_item_comp_ID>();
     auto itr = m.find(MeshitemDataPosition(pos, compID, -1));
     return itr!=m.end() ? itr->global_index : -1;
 }
 
-std::vector<std::size_t> VectorComposition::getComponentIDs(const Location &pos) const
+std::vector<std::size_t> MeshComponentMap::getComponentIDs(const Location &pos) const
 {
     auto &m = _dict.get<ByLocation>();
     auto p = m.equal_range(MeshitemDataPosition(pos, -1, -1));
@@ -75,7 +75,7 @@ std::vector<std::size_t> VectorComposition::getComponentIDs(const Location &pos)
     return vec_compID;
 }
 
-std::vector<std::size_t> VectorComposition::getDataIDList(const Location &pos) const
+std::vector<std::size_t> MeshComponentMap::getDataIDList(const Location &pos) const
 {
     auto &m = _dict.get<ByLocation>();
     auto p = m.equal_range(MeshitemDataPosition(pos, -1, -1));
@@ -85,7 +85,7 @@ std::vector<std::size_t> VectorComposition::getDataIDList(const Location &pos) c
     return vec_dataID;
 }
 
-std::vector<std::size_t> VectorComposition::getDataIDList(const std::vector<Location> &vec_pos, OrderingType::type list_numbering) const
+std::vector<std::size_t> MeshComponentMap::getDataIDList(const std::vector<Location> &vec_pos, OrderingType::type list_numbering) const
 {
     MeshitemDataPositionDictionary sub_dict;
     {
@@ -117,7 +117,7 @@ void disp(const MeshitemDataPosition &dat)
     dat.print();
 }
 
-void VectorComposition::print()
+void MeshComponentMap::print()
 {
 
     boost::for_each(_dict, disp);
