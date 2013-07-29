@@ -133,4 +133,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 
 	double* px = &(*x)[0];
 	ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], px, 9, 1.e-5);
+
+	std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
+		[](VecMatOnMeshLib::MeshSubsets * p) { delete p; return true; });
 }

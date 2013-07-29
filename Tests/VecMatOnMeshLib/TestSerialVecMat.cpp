@@ -215,4 +215,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
 	ASSERT_NEAR(0.01, (*vec_out)[0], 1e-6);
 	ASSERT_NEAR(0.02, (*vec_out)[1], 1e-6);
 	ASSERT_NEAR(0.04, (*vec_out)[2], 1e-6);
+
+	std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
+		[](VecMatOnMeshLib::MeshSubsets * p) { delete p; return true; });
 }
