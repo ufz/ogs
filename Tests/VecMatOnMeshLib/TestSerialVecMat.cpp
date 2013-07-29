@@ -132,6 +132,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
 	std::unique_ptr<TVec> vec_left_nodes_x_coord(
 	    vecMatOnMesh.createVector(vec1_composition));
 	std::unique_ptr<TMat> mat(vecMatOnMesh.createMatrix(vec1_composition));
+	mat->setZero();
 
 	//--------------------------------------------------------------------------
 	// Construct the vector from the selected nodes

@@ -67,6 +67,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	typedef TVecMatOnMesh::VectorType TVec;
 	typedef TVecMatOnMesh::MatrixType TMat;
 	std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));
+	A->setZero();
 	std::unique_ptr<TVec> rhs(vecMatOnMesh.createVector(vec1_composition));
 	std::unique_ptr<TVec> x(vecMatOnMesh.createVector(vec1_composition));
 
