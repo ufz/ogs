@@ -66,7 +66,7 @@ public:
 	 * @param sub_vec   sub-vector
 	 */
 	template<class T_SUBVEC>
-	void addSubVector(const std::vector<std::size_t> &pos, const T_SUBVEC &sub_vec)
+	void add(const std::vector<std::size_t> &pos, const T_SUBVEC &sub_vec)
 	{
 		for (std::size_t i=0; i<pos.size(); ++i) {
 			this->add(pos[i], sub_vec[i]);

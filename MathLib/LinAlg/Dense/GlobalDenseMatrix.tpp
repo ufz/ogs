@@ -50,7 +50,7 @@ GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::setValue(IDX_TYPE row, IDX_TYPE col, FP_TY
 
 template<typename FP_TYPE, typename IDX_TYPE>
 bool
-GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
+GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::add(IDX_TYPE row, IDX_TYPE col, FP_TYPE val)
 {
 	if (row >= this->_n_rows || col >= this->_n_cols)
 		return false;
@@ -61,7 +61,7 @@ GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::addValue(IDX_TYPE row, IDX_TYPE col, FP_TY
 template<typename FP_TYPE, typename IDX_TYPE>
 template<class T_DENSE_MATRIX>
 void
-GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::addSubMatrix(std::vector<IDX_TYPE> const& row_pos, std::vector<IDX_TYPE> const& col_pos,
+GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::add(std::vector<IDX_TYPE> const& row_pos, std::vector<IDX_TYPE> const& col_pos,
 		const T_DENSE_MATRIX &sub_matrix, FP_TYPE fkt)
 {
 	if (row_pos.size() != sub_matrix.getNRows() || col_pos.size() != sub_matrix.getNCols())
@@ -73,7 +73,7 @@ GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::addSubMatrix(std::vector<IDX_TYPE> const& 
 		const IDX_TYPE row = row_pos[i];
 		for (std::size_t j = 0; j < n_cols; j++) {
 			const IDX_TYPE col = col_pos[j];
-			addValue(row, col, fkt * sub_matrix(i, j));
+			add(row, col, fkt * sub_matrix(i, j));
 		}
 	}
 }

@@ -67,21 +67,21 @@ public:
 	 * @param val The value that shoud be added.
 	 * @return False if row index or column index are to large, else true.
 	 */
-	virtual bool addValue(IDX_TYPE row, IDX_TYPE col, FP_TYPE val);
+	virtual bool add(IDX_TYPE row, IDX_TYPE col, FP_TYPE val);
 
 
 	/// Add sub-matrix at positions \c row_pos and same column positions as the
 	/// given row positions.
 	template<class T_DENSE_MATRIX>
-	void addSubMatrix(std::vector<IDX_TYPE> const& row_pos,
+	void add(std::vector<IDX_TYPE> const& row_pos,
 			const T_DENSE_MATRIX &sub_matrix,
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0))
 	{
-		this->addSubMatrix(row_pos, row_pos, sub_matrix, fkt);
+		this->add(row_pos, row_pos, sub_matrix, fkt);
 	}
 
 	template<class T_DENSE_MATRIX>
-	void addSubMatrix(std::vector<IDX_TYPE> const& row_pos,
+	void add(std::vector<IDX_TYPE> const& row_pos,
 			std::vector<IDX_TYPE> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0));
 

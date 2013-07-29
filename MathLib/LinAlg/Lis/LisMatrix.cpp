@@ -67,7 +67,7 @@ int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
     return 0;
 }
 
-int LisMatrix::addValue(std::size_t rowId, std::size_t colId, double v)
+int LisMatrix::add(std::size_t rowId, std::size_t colId, double v)
 {
     lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
     if (rowId==colId)
