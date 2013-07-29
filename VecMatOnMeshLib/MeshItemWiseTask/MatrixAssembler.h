@@ -57,9 +57,9 @@ public:
 		assert(_data_pos.size() > id);
 
 		std::vector<std::size_t> const& pos = _data_pos[id];
-		MathLib::DenseMatrix<double> local_linalg_obj(pos.size(), pos.size());
+		MathLib::DenseMatrix<double> local_linalg_obj(pos.size());
 		_local_assembler(*item, local_linalg_obj);
-		_linalg_obj.addSubMatrix(pos, pos, local_linalg_obj);
+		_linalg_obj.add(pos, local_linalg_obj);
 	}
 
 protected:

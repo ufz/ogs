@@ -30,8 +30,8 @@ void LinearSystemAssembler<T_MAT, T_VEC, T_MESH_ITEM, T_LOCAL_ASSEMBLY>::operato
     MathLib::DenseMatrix<double> local_A(pos.size(), pos.size());
     MathLib::DenseVector<double> local_rhs(pos.size());
     _local_assembler(*item, local_A, local_rhs);
-    _A.addSubMatrix(pos, pos, local_A);
-    _rhs.addSubVector(pos, local_rhs);
+    _A.add(pos, local_A);
+    _rhs.add(pos, local_rhs);
 }
 
 } //end VecMatOnMeshLib

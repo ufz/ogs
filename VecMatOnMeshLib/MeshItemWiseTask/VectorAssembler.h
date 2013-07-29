@@ -59,7 +59,7 @@ public:
 		std::vector<std::size_t> const& pos = _data_pos[id];
 		MathLib::DenseVector<double> local_linalg_obj(pos.size());
 		_local_assembler(*item, local_linalg_obj);
-		_linalg_obj.addSubVector(pos, local_linalg_obj);
+		_linalg_obj.add(pos, local_linalg_obj);
 	}
 
 protected:
