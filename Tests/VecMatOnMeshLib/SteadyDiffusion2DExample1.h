@@ -67,22 +67,26 @@ struct SteadyDiffusion2DExample1
 
 	SteadyDiffusion2DExample1()
 	{
-		msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, 2);
+		msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
 		for (auto* node : msh->getNodes())
 			vec_nodeIDs.push_back(node->getID());
-		std::size_t int_dirichlet_bc_id[] = {2,5,8,0,3,6};
-		vec_DirichletBC_id.assign(int_dirichlet_bc_id,
-		                          int_dirichlet_bc_id + 6);
-		vec_DirichletBC_value.resize(6);
-		std::fill_n(vec_DirichletBC_value.begin(), 3, 0);
-		std::fill_n(vec_DirichletBC_value.begin() + 3, 3, 1);
-		exact_solutions.resize(9);
-		for (std::size_t i = 0; i < 9; i++)
+		vec_DirichletBC_id.resize(2 * mesh_stride);
+		for (std::size_t i = 0; i < mesh_stride; i++)
 		{
-			if (i % 3 == 0) exact_solutions[i] = 1.0;
-			if (i % 3 == 1) exact_solutions[i] = 0.5;
-			if (i % 3 == 2) exact_solutions[i] = 0.;
+			// left side
+			vec_DirichletBC_id[i] = i * mesh_stride;
+
+			// right side
+			vec_DirichletBC_id[mesh_stride + i] = i * mesh_stride + mesh_subdivs;
 		}
+
+		vec_DirichletBC_value.resize(2 * mesh_stride);
+		std::fill_n(vec_DirichletBC_value.begin(), mesh_stride, 0);
+		std::fill_n(vec_DirichletBC_value.begin() + mesh_stride, mesh_stride, 1);
+		exact_solutions.resize(dim_eqs);
+		for (std::size_t i = 0; i < mesh_stride; i++)
+			for (std::size_t j = 0; j < mesh_stride; j++)
+				exact_solutions[i*mesh_stride + j] = j * 1./mesh_subdivs;
 	}
 
 	~SteadyDiffusion2DExample1()
@@ -90,7 +94,9 @@ struct SteadyDiffusion2DExample1
 		delete msh;
 	}
 
-	static const std::size_t dim_eqs = 9;
+	static const std::size_t mesh_subdivs = 10;
+	static const std::size_t mesh_stride = mesh_subdivs + 1;
+	static const std::size_t dim_eqs = mesh_stride * mesh_stride;
 	MeshLib::Mesh* msh;
 	std::vector<std::size_t> vec_DirichletBC_id;
 	std::vector<double> vec_DirichletBC_value;
