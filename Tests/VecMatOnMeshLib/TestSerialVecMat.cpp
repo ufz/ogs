@@ -30,6 +30,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 
+#include "VecMatOnMeshLib/MeshItemWiseTask/LocalToGlobalIndexMap.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
 #include "VecMatOnMeshLib/Serial/ForEachMeshItem.h"
@@ -166,25 +167,30 @@ TEST(VecMatOnMeshLib, SerialVecMat)
 	//--------------------------------------------------------------------------
 	// prepare a mapping table from DoFs to positions in the matrix
 	// element id, node id, comp id <-> vector entry id
-	std::vector<std::vector<std::size_t> > mat_data_pos(vec_selected_eles.size());
-	for (std::size_t i = 0; i < mat_data_pos.size(); i++)
+	std::vector<std::vector<std::size_t> > mat_row_column_positions;
 	{
-		auto* e = vec_selected_eles[i];
-		std::vector<VecMatOnMeshLib::Location> vec_items;
-		for (std::size_t j = 0; j < e->getNNodes(); j++)
-			vec_items.push_back(
-			    VecMatOnMeshLib::Location(msh->getID(),
-			    VecMatOnMeshLib::MeshItemType::Node,
-			    e->getNode(j)->getID()));
+		mat_row_column_positions.reserve(vec_selected_eles.size());
+		for (std::size_t i = 0; i < vec_selected_eles.size(); i++)
+		{
+			auto* e = vec_selected_eles[i];
+			std::vector<VecMatOnMeshLib::Location> vec_items;
+			for (std::size_t j = 0; j < e->getNNodes(); j++)
+				vec_items.push_back(
+					VecMatOnMeshLib::Location(msh->getID(),
+					VecMatOnMeshLib::MeshItemType::Node,
+					e->getNode(j)->getID()));
 
-		mat_data_pos[i] = vec1_composition.getDataIDList(
-		    vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+			mat_row_column_positions.push_back(vec1_composition.getDataIDList(
+				vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT));
 
-		//std::cout << i << ": ";
-		//std::copy(vec_data_pos[i].begin(), vec_data_pos[i].end(),
-		//    std::ostream_iterator<std::size_t>(std::cout, " "));
-		//    std::cout << "\n";
+			//std::cout << i << ": ";
+			//std::copy(vec_data_pos[i].begin(), vec_data_pos[i].end(),
+			//    std::ostream_iterator<std::size_t>(std::cout, " "));
+			//    std::cout << "\n";
+		}
 	}
+	VecMatOnMeshLib::LocalToGlobalIndexMap mat_data_pos(mat_row_column_positions);
+
 
 	// create a matrix assembler
 	LocalMatAssemblerNodeDistance nodeDist;

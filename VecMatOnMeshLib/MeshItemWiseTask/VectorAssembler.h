@@ -17,6 +17,8 @@
 
 #include <vector>
 
+#include "LocalToGlobalIndexMap.h"
+
 namespace VecMatOnMeshLib
 {
 
@@ -40,7 +42,7 @@ public:
 	 */
     VectorAssembler(LINALG_OBJ_T &linalg_obj,
 		T_LOCAL_ASSEMBLY &local_assembler,
-		const std::vector<std::vector<std::size_t> > &data_pos)
+		LocalToGlobalIndexMap const& data_pos)
     : _linalg_obj(linalg_obj), _local_assembler(local_assembler), _data_pos(data_pos) {}
 
     virtual ~VectorAssembler() {}
@@ -56,16 +58,16 @@ public:
 	{
 		assert(_data_pos.size() > id);
 
-		std::vector<std::size_t> const& pos = _data_pos[id];
-		MathLib::DenseVector<double> local_linalg_obj(pos.size());
+		LocalToGlobalIndexMap::RowColumnIndices const& indices = _data_pos[id];
+		MathLib::DenseVector<double> local_linalg_obj(indices.rows.size());
 		_local_assembler(*item, local_linalg_obj);
-		_linalg_obj.add(pos, local_linalg_obj);
+		_linalg_obj.add(indices.rows, local_linalg_obj);
 	}
 
 protected:
     LINALG_OBJ_T &_linalg_obj;
     T_LOCAL_ASSEMBLY &_local_assembler;
-    const std::vector<std::vector<std::size_t> > &_data_pos;
+    LocalToGlobalIndexMap const& _data_pos;
 };
 
 } // VecMatOnMeshLib
