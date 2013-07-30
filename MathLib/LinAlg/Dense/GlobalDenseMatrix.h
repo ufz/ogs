@@ -20,6 +20,8 @@
 #include "DenseMatrix.h"
 #include "DenseVector.h"
 
+#include "MathLib/LinAlg/RowColumnIndices.h"
+
 namespace MathLib
 {
 
@@ -78,6 +80,14 @@ public:
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0))
 	{
 		this->add(row_pos, row_pos, sub_matrix, fkt);
+	}
+
+	template<class T_DENSE_MATRIX>
+	void add(RowColumnIndices<IDX_TYPE> const& indices,
+			const T_DENSE_MATRIX &sub_matrix,
+			FP_TYPE fkt = static_cast<FP_TYPE>(1.0))
+	{
+		this->add(indices.rows, indices.columns, sub_matrix, fkt);
 	}
 
 	template<class T_DENSE_MATRIX>

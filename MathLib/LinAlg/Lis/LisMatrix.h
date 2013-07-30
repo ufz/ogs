@@ -19,6 +19,8 @@
 #include <cmath>
 #include <vector>
 
+#include "MathLib/LinAlg/RowColumnIndices.h"
+
 #include "lis.h"
 
 #include "LisOption.h"
@@ -90,6 +92,15 @@ public:
             double fkt = 1.0)
     {
         this->add(row_pos, row_pos, sub_matrix, fkt);
+    }
+
+    /// Add sub-matrix at positions given by \c indices.
+    template<class T_DENSE_MATRIX>
+    void add(RowColumnIndices<std::size_t> const& indices,
+            const T_DENSE_MATRIX &sub_matrix,
+            double fkt = 1.0)
+    {
+        this->add(indices.rows, indices.columns, sub_matrix, fkt);
     }
 
     ///
