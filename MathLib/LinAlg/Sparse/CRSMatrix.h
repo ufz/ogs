@@ -82,8 +82,13 @@ public:
 
 		// reserve memory for _data
 		_data = new FP_TYPE [nnz];
-		// initialize entries with zero
-		std::fill_n(_data, nnz, 0.0);
+		setZero();
+	}
+
+	/// Reset data entries to zero.
+	virtual void setZero()
+	{
+		std::fill_n(_data, _row_ptr[this->_n_rows], 0);
 	}
 
 	virtual ~CRSMatrix()
