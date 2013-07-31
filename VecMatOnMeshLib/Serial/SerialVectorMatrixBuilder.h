@@ -20,6 +20,7 @@
 #include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
+#include "MathLib/LinAlg/Lis/LisMatrix.h"
 
 #include "../VecMeshItems/MeshComponentMap.h"
 #include "ForEachMeshItem.h"
@@ -30,11 +31,12 @@ namespace VecMatOnMeshLib
 /**
  * Non-parallel version using default LinAlg
  */
+template <typename MatrixType_, typename VectorType_ = MathLib::DenseVector<double>>
 class SerialVectorMatrixBuilder
 {
 public:
-    typedef MathLib::DenseVector<double> VectorType;
-    typedef MathLib::GlobalDenseMatrix<double> MatrixType; //TODO this should be CRSMatrix
+    typedef VectorType_ VectorType;
+    typedef MatrixType_ MatrixType;
     template <class T_MESHITEM, class T_TASK>
     using ForEachType = ForEachMeshItem<T_MESHITEM, T_TASK>;
 
@@ -47,11 +49,20 @@ public:
 
     MatrixType* createMatrix(const MeshComponentMap &dist_layout)
     {
-        MatrixType* mat = new MatrixType(dist_layout.size(),dist_layout.size()); //TODO sparse structure
+        MatrixType* mat = new MatrixType(dist_layout.size());
         return mat;
     }
 
 };
+
+typedef SerialVectorMatrixBuilder<
+        MathLib::GlobalDenseMatrix<double>
+    > SerialDenseVectorMatrixBuilder;
+
+typedef SerialVectorMatrixBuilder<
+        MathLib::LisMatrix,
+        MathLib::LisVector
+    > SerialLisVectorMatrixBuilder;
 
 } // VecMatOnMeshLib
 
