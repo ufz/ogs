@@ -29,7 +29,7 @@
 
 #include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
 #include "VecMatOnMeshLib/Serial/ForEachMeshItem.h"
-#include "VecMatOnMeshLib/Serial/SerialVecMatOnMesh.h"
+#include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
 
@@ -44,8 +44,8 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	//--------------------------------------------------------------------------
 	// Choose implementation type
 	//--------------------------------------------------------------------------
-	typedef VecMatOnMeshLib::SerialVecMatOnMesh TVecMatOnMesh;
-	TVecMatOnMesh vecMatOnMesh;
+	typedef VecMatOnMeshLib::SerialVectorMatrixBuilder SerialBuilder;
+	SerialBuilder vecMatOnMesh;
 
 	//--------------------------------------------------------------------------
 	// Prepare mesh items where data are assigned
@@ -64,8 +64,8 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
 
 	// allocate a vector and matrix
-	typedef TVecMatOnMesh::VectorType TVec;
-	typedef TVecMatOnMesh::MatrixType TMat;
+	typedef SerialBuilder::VectorType TVec;
+	typedef SerialBuilder::MatrixType TMat;
 	std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));
 	A->setZero();
 	std::unique_ptr<TVec> rhs(vecMatOnMesh.createVector(vec1_composition));
@@ -109,7 +109,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	    map_ele_nodes2vec_entries);
 
 	// do assembly
-	TVecMatOnMesh::ForEachType<MeshLib::Element,
+	SerialBuilder::ForEachType<MeshLib::Element,
 	                           LocalAssembler> vec1_global_assembly;
 	vec1_global_assembly(ex1.msh->getElements(), assembler);
 	//std::cout << "A=\n";

@@ -34,7 +34,7 @@
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
 #include "VecMatOnMeshLib/Serial/ForEachMeshItem.h"
-#include "VecMatOnMeshLib/Serial/SerialVecMatOnMesh.h"
+#include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
 
@@ -75,7 +75,7 @@ public:
 
 } // end anonymous namespace
 
-TEST(VecMatOnMeshLib, SerialVecMat)
+TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 {
 	// This test case checks:
 	// - construct a vector "v" having x coords. of nodes in the left-half domain
@@ -85,10 +85,10 @@ TEST(VecMatOnMeshLib, SerialVecMat)
 	//--------------------------------------------------------------------------
 	// Choose implementation type
 	//--------------------------------------------------------------------------
-	typedef VecMatOnMeshLib::SerialVecMatOnMesh TVecMatOnMesh;
-	typedef TVecMatOnMesh::VectorType TVec;
-	typedef TVecMatOnMesh::MatrixType TMat;
-	TVecMatOnMesh vecMatOnMesh;
+	typedef VecMatOnMeshLib::SerialVectorMatrixBuilder SerialBuilder;
+	typedef SerialBuilder::VectorType TVec;
+	typedef SerialBuilder::MatrixType TMat;
+	SerialBuilder vecMatOnMesh;
 
 	//--------------------------------------------------------------------------
 	// Prepare a mesh having line elements
@@ -156,7 +156,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
 	    *vec_left_nodes_x_coord.get(), extractX, map_node2vec_entry);
 
 	// do assembly for each selected node
-	TVecMatOnMesh::ForEachType<MeshLib::Node, SetNodeXToVec> vec1_global_assembly;
+	SerialBuilder::ForEachType<MeshLib::Node, SetNodeXToVec> vec1_global_assembly;
 	vec1_global_assembly(vec_selected_nodes, vec1Assembler);
 
 	ASSERT_EQ(0.0, (*vec_left_nodes_x_coord)[0]);
@@ -199,7 +199,7 @@ TEST(VecMatOnMeshLib, SerialVecMat)
 	SetNodeDistXToMat matAssembler(*mat.get(), nodeDist, mat_data_pos);
 
 	// do assembly for each selected element
-	TVecMatOnMesh::ForEachType<MeshLib::Element,
+	SerialBuilder::ForEachType<MeshLib::Element,
 	                           SetNodeDistXToMat> mat_global_assembly;
 	mat_global_assembly(vec_selected_eles, matAssembler);
 
