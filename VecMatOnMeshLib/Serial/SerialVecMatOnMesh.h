@@ -22,7 +22,6 @@
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 
 #include "../VecMeshItems/MeshComponentMap.h"
-#include "../Interface/IVecMatOnMesh.h"
 #include "ForEachMeshItem.h"
 
 namespace VecMatOnMeshLib
@@ -31,7 +30,7 @@ namespace VecMatOnMeshLib
 /**
  * Non-parallel version using default LinAlg
  */
-class SerialVecMatOnMesh : public IVecMatOnMesh<MathLib::DenseVector<double>, MathLib::DenseMatrix<double> >
+class SerialVectorMatrixBuilder
 {
 public:
     typedef MathLib::DenseVector<double> VectorType;
@@ -40,15 +39,13 @@ public:
     using ForEachType = ForEachMeshItem<T_MESHITEM, T_TASK>;
 
 public:
-    virtual ~SerialVecMatOnMesh() {};
-
-    virtual VectorType* createVector(const MeshComponentMap &dist_layout) override
+    VectorType* createVector(const MeshComponentMap &dist_layout)
     {
         VectorType* vec = new VectorType(dist_layout.size());
         return vec;
     }
 
-    virtual MatrixType* createMatrix(const MeshComponentMap &dist_layout) override
+    MatrixType* createMatrix(const MeshComponentMap &dist_layout)
     {
         MatrixType* mat = new MatrixType(dist_layout.size(),dist_layout.size()); //TODO sparse structure
         return mat;
