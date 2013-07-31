@@ -21,9 +21,7 @@
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 
-#include "MeshLib/Elements/Edge.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
