@@ -60,7 +60,7 @@ void MeshComponentMap::renumberByLocation(std::size_t offset)
 
 std::size_t MeshComponentMap::getDataID(const Location &pos, unsigned compID) const
 {
-    auto &m = _dict.get<mesh_item_comp_ID>();
+    auto &m = _dict.get<ByLocationAndComponent>();
     auto itr = m.find(MeshitemDataPosition(pos, compID, -1));
     return itr!=m.end() ? itr->global_index : -1;
 }
@@ -104,7 +104,7 @@ std::vector<std::size_t> MeshComponentMap::getDataIDList(const std::vector<Locat
             vec_dataID.push_back(itr_mesh_item->global_index);
         }
     } else if (list_numbering == OrderingType::BY_COMPONENT) {
-        auto &m = sub_dict.get<comp_ID>();
+        auto &m = sub_dict.get<ByComponent>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
             vec_dataID.push_back(itr_mesh_item->global_index);
         }

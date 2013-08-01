@@ -73,8 +73,8 @@ struct MeshitemDataPositionByLocationAndComponentComparator
 };
 
 struct ByLocation {};
-struct mesh_item_comp_ID {};
-struct comp_ID {};
+struct ByLocationAndComponent {};
+struct ByComponent {};
 struct ByGlobalIndex {};
 
 typedef boost::multi_index::multi_index_container<
@@ -83,7 +83,7 @@ typedef boost::multi_index::multi_index_container<
         <
             boost::multi_index::ordered_unique
             <
-                boost::multi_index::tag<mesh_item_comp_ID>,
+                boost::multi_index::tag<ByLocationAndComponent>,
                 boost::multi_index::identity<MeshitemDataPosition>,
                 MeshitemDataPositionByLocationAndComponentComparator
             >,
@@ -95,7 +95,7 @@ typedef boost::multi_index::multi_index_container<
             >,
             boost::multi_index::ordered_non_unique
             <
-                boost::multi_index::tag<comp_ID>,
+                boost::multi_index::tag<ByComponent>,
                 boost::multi_index::member<MeshitemDataPosition, std::size_t, &MeshitemDataPosition::comp_id>
             >,
             boost::multi_index::ordered_non_unique
