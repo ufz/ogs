@@ -20,6 +20,7 @@
 
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/MathTools.h"
 
 #include "MeshLib/Elements/Element.h"
@@ -125,6 +126,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	//std::cout << "rhs=\n";
 	//rhs->write(std::cout);
 
+	MathLib::finalizeMatrixAssembly(*A);
 	//--------------------------------------------------------------------------
 	// solve x=A^-1 rhs
 	//--------------------------------------------------------------------------
