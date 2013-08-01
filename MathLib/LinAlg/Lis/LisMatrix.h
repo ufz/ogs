@@ -19,6 +19,8 @@
 #include <cmath>
 #include <vector>
 
+#include "MathLib/LinAlg/RowColumnIndices.h"
+
 #include "lis.h"
 
 #include "LisOption.h"
@@ -68,7 +70,7 @@ public:
     int setValue(std::size_t rowId, std::size_t colId, double v);
 
     /// add value
-    int addValue(std::size_t rowId, std::size_t colId, double v);
+    int add(std::size_t rowId, std::size_t colId, double v);
 
     /// printout this equation for debugging
     void write(const std::string &filename) const;
@@ -82,9 +84,28 @@ public:
     /// y = mat * x
     void matvec(const LisVector &x, LisVector &y) const;
 
+    /// Add sub-matrix at positions \c row_pos and same column positions as the
+    /// given row positions.
+    template<class T_DENSE_MATRIX>
+    void add(std::vector<std::size_t> const& row_pos,
+            const T_DENSE_MATRIX &sub_matrix,
+            double fkt = 1.0)
+    {
+        this->add(row_pos, row_pos, sub_matrix, fkt);
+    }
+
+    /// Add sub-matrix at positions given by \c indices.
+    template<class T_DENSE_MATRIX>
+    void add(RowColumnIndices<std::size_t> const& indices,
+            const T_DENSE_MATRIX &sub_matrix,
+            double fkt = 1.0)
+    {
+        this->add(indices.rows, indices.columns, sub_matrix, fkt);
+    }
+
     ///
     template <class T_DENSE_MATRIX>
-    void addSubMatrix(std::vector<std::size_t> const& row_pos,
+    void add(std::vector<std::size_t> const& row_pos,
             std::vector<std::size_t> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0);
 
@@ -109,7 +130,7 @@ private:
 
 template<class T_DENSE_MATRIX>
 void
-LisMatrix::addSubMatrix(std::vector<std::size_t> const& row_pos, std::vector<std::size_t> const& col_pos,
+LisMatrix::add(std::vector<std::size_t> const& row_pos, std::vector<std::size_t> const& col_pos,
         const T_DENSE_MATRIX &sub_matrix, double fkt)
 {
     if (row_pos.size() != sub_matrix.getNRows() || col_pos.size() != sub_matrix.getNCols())
@@ -121,7 +142,7 @@ LisMatrix::addSubMatrix(std::vector<std::size_t> const& row_pos, std::vector<std
         const std::size_t row = row_pos[i];
         for (std::size_t j = 0; j < n_cols; j++) {
             const std::size_t col = col_pos[j];
-            addValue(row, col, fkt * sub_matrix(i, j));
+            add(row, col, fkt * sub_matrix(i, j));
         }
     }
 };

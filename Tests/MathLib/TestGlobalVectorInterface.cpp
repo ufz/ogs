@@ -54,7 +54,7 @@ void checkGlobalVectorInterface()
     std::vector<std::size_t> vec_pos(2);
     vec_pos[0] = 0;
     vec_pos[1] = 3;
-    y.addSubVector(vec_pos, local_vec);
+    y.add(vec_pos, local_vec);
     ASSERT_EQ(3.0, y.get(0));
     ASSERT_EQ(0.0, y.get(1));
     ASSERT_EQ(1.0, y.get(3));

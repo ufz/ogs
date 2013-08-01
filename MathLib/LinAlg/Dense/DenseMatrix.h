@@ -35,6 +35,10 @@ public:
 	typedef IDX_TYPE IDX_T;
 
 public:
+   /// Dense square matrix constructor.
+   DenseMatrix (IDX_TYPE rows) : DenseMatrix(rows, rows) {};
+
+   /// Dense rectangular matrix constructor.
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
    DenseMatrix (const DenseMatrix &src);
