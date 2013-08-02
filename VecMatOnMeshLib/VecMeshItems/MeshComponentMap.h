@@ -19,12 +19,18 @@
 #include <vector>
 
 #include "MeshSubsets.h"
-#include "OrderingType.h"
 #include "MeshItem.h"
 #include "MeshItemDataPositionDictionary.h"
 
 namespace VecMatOnMeshLib
 {
+
+/// Ordering of components in global matrix/vector.
+enum class ComponentOrder
+{
+    BY_COMPONENT,   ///< Ordering data by component type
+    BY_LOCATION     ///< Ordering data by spatial location
+};
 
 /// Multidirectional mapping between mesh entities and degrees of freedom.
 class MeshComponentMap
@@ -36,7 +42,7 @@ public:
 	 * The size of the vector means the number of components in the vector.
 	 * @param ordering        type of ordering values in a vector
 	 */
-    MeshComponentMap(const std::vector<MeshSubsets*> &vec_comp_dis, OrderingType::type numbering);
+    MeshComponentMap(const std::vector<MeshSubsets*> &vec_comp_dis, ComponentOrder order);
 
     /// return the size of the vector
     std::size_t size() const { return _dict.size(); }
@@ -67,7 +73,7 @@ public:
      * @param list_ordering   ordering type of data positions in a resulted vector
      * @return
      */
-    std::vector<std::size_t> getDataIDList(const std::vector<Location> &vec_items, OrderingType::type list_ordering) const;
+    std::vector<std::size_t> getDataIDList(const std::vector<Location> &vec_items, ComponentOrder order) const;
 
 #ifndef NDEBUG
     const MeshitemDataPositionDictionary& getDictionary() const {return _dict; }

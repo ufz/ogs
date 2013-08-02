@@ -22,7 +22,7 @@
 namespace VecMatOnMeshLib
 {
 
-MeshComponentMap::MeshComponentMap(const std::vector<MeshSubsets*> &domains, OrderingType::type numbering)
+MeshComponentMap::MeshComponentMap(const std::vector<MeshSubsets*> &domains, ComponentOrder order)
 {
     // construct dict (and here we number global_index by component type)
     std::size_t global_index = 0;
@@ -41,7 +41,7 @@ MeshComponentMap::MeshComponentMap(const std::vector<MeshSubsets*> &domains, Ord
         }
     }
 
-    if (numbering == OrderingType::BY_LOCATION)
+    if (order == ComponentOrder::BY_LOCATION)
         renumberByLocation();
 }
 
@@ -85,7 +85,9 @@ std::vector<std::size_t> MeshComponentMap::getDataIDList(const Location &pos) co
     return vec_dataID;
 }
 
-std::vector<std::size_t> MeshComponentMap::getDataIDList(const std::vector<Location> &vec_pos, OrderingType::type list_numbering) const
+std::vector<std::size_t> MeshComponentMap::getDataIDList(
+	const std::vector<Location> &vec_pos,
+	ComponentOrder order) const
 {
     MeshitemDataPositionDictionary sub_dict;
     {
@@ -98,12 +100,12 @@ std::vector<std::size_t> MeshComponentMap::getDataIDList(const std::vector<Locat
     }
 
     std::vector<std::size_t> vec_dataID;
-    if (list_numbering == OrderingType::BY_LOCATION) {
+    if (order == ComponentOrder::BY_LOCATION) {
         auto &m = sub_dict.get<ByLocation>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
             vec_dataID.push_back(itr_mesh_item->global_index);
         }
-    } else if (list_numbering == OrderingType::BY_COMPONENT) {
+    } else if (order == ComponentOrder::BY_COMPONENT) {
         auto &m = sub_dict.get<ByComponent>();
         for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
             vec_dataID.push_back(itr_mesh_item->global_index);

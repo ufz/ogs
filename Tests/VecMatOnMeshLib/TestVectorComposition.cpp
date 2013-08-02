@@ -61,7 +61,7 @@ TEST_F(VecMatOnMeshLibTest, DataArrangementByComponentType)
 
 	//set up data arrangement
 	VecMatOnMeshLib::MeshComponentMap da(
-	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
 	//std::cout << "# database \n";
 	//da.print();
 	//std::cout << std::endl;
@@ -108,7 +108,7 @@ TEST_F(VecMatOnMeshLibTest, DataArrangementByLocationType)
 
 	//set up data arrangement
 	VecMatOnMeshLib::MeshComponentMap da(
-	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_LOCATION);
+	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_LOCATION);
 	//std::cout << "# database \n";
 	//da.print();
 	//std::cout << std::endl;

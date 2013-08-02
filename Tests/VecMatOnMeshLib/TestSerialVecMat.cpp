@@ -126,7 +126,7 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	    new VecMatOnMeshLib::MeshSubsets(&mesh_items_left_nodes));
 
 	VecMatOnMeshLib::MeshComponentMap vec1_composition(
-	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
 	//vec1_composition.print();
 
 	// allocate a vector and matrix
@@ -181,7 +181,7 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 					e->getNode(j)->getID()));
 
 			mat_row_column_positions.push_back(vec1_composition.getDataIDList(
-				vec_items, VecMatOnMeshLib::OrderingType::BY_COMPONENT));
+				vec_items, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT));
 
 			//std::cout << i << ": ";
 			//std::copy(vec_data_pos[i].begin(), vec_data_pos[i].end(),

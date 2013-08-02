@@ -62,7 +62,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	vec_comp_dis.push_back(
 	    new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
 	VecMatOnMeshLib::MeshComponentMap vec1_composition(
-	    vec_comp_dis, VecMatOnMeshLib::OrderingType::BY_COMPONENT);
+	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
 
 	// allocate a vector and matrix
 	typedef SerialBuilder::VectorType TVec;
@@ -90,7 +90,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 
 		map_ele_nodes2vec_entries.push_back(
 		    vec1_composition.getDataIDList(vec_items,
-		        VecMatOnMeshLib::OrderingType::BY_COMPONENT));
+		        VecMatOnMeshLib::ComponentOrder::BY_COMPONENT));
 	}
 
 	// create a local assembler
