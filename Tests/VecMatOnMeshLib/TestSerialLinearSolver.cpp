@@ -77,27 +77,20 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	//--------------------------------------------------------------------------
 	// create a mapping table from element nodes to entries in the linear system
 	auto &all_eles = ex1.msh->getElements();
-	std::vector<std::vector<std::size_t> > map_ele_nodes2vec_entries(
-	        all_eles.size());
-	for (std::size_t i = 0; i < map_ele_nodes2vec_entries.size(); i++)
+	std::vector<std::vector<std::size_t> > map_ele_nodes2vec_entries;
+	map_ele_nodes2vec_entries.reserve(all_eles.size());
+	for (auto e = all_eles.cbegin(); e != all_eles.cend(); ++e)
 	{
-		auto* e = all_eles[i];
 		std::vector<VecMatOnMeshLib::Location> vec_items;
-		for (std::size_t j = 0; j < e->getNNodes(); j++)
+		for (std::size_t j = 0; j < (*e)->getNNodes(); j++)
 			vec_items.push_back(VecMatOnMeshLib::Location(
 			    ex1.msh->getID(),
 			    VecMatOnMeshLib::MeshItemType::Node,
-			    e->getNode(j)->getID()));
+			    (*e)->getNode(j)->getID()));
 
-		map_ele_nodes2vec_entries[i] = vec1_composition.getDataIDList(
-		        vec_items,
-		        VecMatOnMeshLib::OrderingType::BY_COMPONENT);
-		//std::cout << i << ": ";
-		//std::copy(
-		//    map_ele_nodes2vec_entries[i].begin(),
-		//    map_ele_nodes2vec_entries[i].end(),
-		//    std::ostream_iterator<std::size_t>(std::cout, " "));
-		//std::cout << "\n";
+		map_ele_nodes2vec_entries.push_back(
+		    vec1_composition.getDataIDList(vec_items,
+		        VecMatOnMeshLib::OrderingType::BY_COMPONENT));
 	}
 
 	// create a local assembler
