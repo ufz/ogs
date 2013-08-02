@@ -69,11 +69,12 @@ public:
     /**
      * return a vector of data positions corresponding to given items
      *
-     * @param vec_items       a vector of mesh items
-     * @param list_ordering   ordering type of data positions in a resulted vector
+     * @param vec_items  a vector of mesh items
+     * @tparam ORDER     ordering of data positions in a resulted vector
      * @return
      */
-    std::vector<std::size_t> getDataIDList(const std::vector<Location> &vec_items, ComponentOrder order) const;
+    template <ComponentOrder ORDER>
+    std::vector<std::size_t> getDataIDList(const std::vector<Location> &vec_items) const;
 
 #ifndef NDEBUG
     const MeshitemDataPositionDictionary& getDictionary() const {return _dict; }

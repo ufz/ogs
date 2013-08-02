@@ -89,8 +89,8 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 			    (*e)->getNode(j)->getID()));
 
 		map_ele_nodes2vec_entries.push_back(
-		    vec1_composition.getDataIDList(vec_items,
-		        VecMatOnMeshLib::ComponentOrder::BY_COMPONENT));
+		    vec1_composition.getDataIDList
+				<VecMatOnMeshLib::ComponentOrder::BY_COMPONENT>(vec_items));
 	}
 
 	// create a local assembler

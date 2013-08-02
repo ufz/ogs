@@ -180,9 +180,8 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 					VecMatOnMeshLib::MeshItemType::Node,
 					e->getNode(j)->getID()));
 
-			mat_row_column_positions.push_back(vec1_composition.getDataIDList(
-				vec_items, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT));
-
+			mat_row_column_positions.push_back(vec1_composition.getDataIDList
+				<VecMatOnMeshLib::ComponentOrder::BY_COMPONENT>(vec_items));
 			//std::cout << i << ": ";
 			//std::copy(vec_data_pos[i].begin(), vec_data_pos[i].end(),
 			//    std::ostream_iterator<std::size_t>(std::cout, " "));

@@ -85,32 +85,60 @@ std::vector<std::size_t> MeshComponentMap::getDataIDList(const Location &pos) co
     return vec_dataID;
 }
 
-std::vector<std::size_t> MeshComponentMap::getDataIDList(
-	const std::vector<Location> &vec_pos,
-	ComponentOrder order) const
+
+template <>
+std::vector<std::size_t>
+MeshComponentMap::getDataIDList<ComponentOrder::BY_LOCATION>(
+    const std::vector<Location> &vec_pos) const
 {
-    MeshitemDataPositionDictionary sub_dict;
-    {
-        auto &m = _dict.get<ByLocation>();
-        for (auto &location : vec_pos) {
-            auto p = m.equal_range(MeshitemDataPosition(location, -1, -1));
-            for (auto itr=p.first; itr!=p.second; ++itr)
-                sub_dict.insert(*itr);
-        }
-    }
+    // Create vector of global indices sorted by location containing all
+    // locations given in vec_pos parameter.
 
     std::vector<std::size_t> vec_dataID;
-    if (order == ComponentOrder::BY_LOCATION) {
-        auto &m = sub_dict.get<ByLocation>();
-        for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
-            vec_dataID.push_back(itr_mesh_item->global_index);
-        }
-    } else if (order == ComponentOrder::BY_COMPONENT) {
-        auto &m = sub_dict.get<ByComponent>();
-        for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item) {
-            vec_dataID.push_back(itr_mesh_item->global_index);
-        }
+    vec_dataID.reserve(vec_pos.size());
+
+    auto &m = _dict.get<ByLocation>();
+    for (auto &location : vec_pos) {
+        auto p = m.equal_range(MeshitemDataPosition(location, -1, -1));
+        for (auto itr=p.first; itr!=p.second; ++itr)
+            vec_dataID.push_back(itr->global_index);
     }
+
+    return vec_dataID;
+}
+
+template <>
+std::vector<std::size_t>
+MeshComponentMap::getDataIDList<ComponentOrder::BY_COMPONENT>(
+    const std::vector<Location> &vec_pos) const
+{
+    // vector of (Component, global Index) pairs.
+    typedef std::pair<std::size_t, std::size_t> CIPair;
+    std::vector<CIPair> pairs;
+    pairs.reserve(vec_pos.size());
+
+    // Create a sub dictionary containing all lines with location from vec_pos.
+    auto const &m = _dict.get<ByLocation>();
+    for (auto const &location : vec_pos) {
+        auto const p = m.equal_range(MeshitemDataPosition(location, -1, -1));
+        for (auto itr=p.first; itr!=p.second; ++itr)
+            pairs.emplace_back(itr->comp_id, itr->global_index);
+    }
+
+    auto CIPairLess = [](CIPair const& a, CIPair const& b)
+        {
+            return (a.first < b.first);
+        };
+
+    // Create vector of global indices from sub dictionary sorting by component.
+    if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))
+        std::stable_sort(pairs.begin(), pairs.end(), CIPairLess);
+
+    std::vector<std::size_t> vec_dataID;
+    vec_dataID.reserve(pairs.size());
+    for (auto p = pairs.cbegin(); p != pairs.cend(); ++p)
+        vec_dataID.push_back(p->second);
+
     return vec_dataID;
 }
 
