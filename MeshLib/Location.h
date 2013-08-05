@@ -1,8 +1,6 @@
 /**
- * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
- * \brief
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -13,31 +11,30 @@
  */
 
 
-#ifndef MESHITEM_H_
-#define MESHITEM_H_
+#ifndef LOCATION_H_
+#define LOCATION_H_
 
-namespace VecMatOnMeshLib
+namespace MeshLib
 {
 
 enum class MeshItemType { Node, Edge, Face, Cell };
 
 inline std::ostream& operator<<(std::ostream& os, MeshItemType const& t)
 {
-	switch (t)
-	{
-	case MeshItemType::Node: return os << "N";
-	case MeshItemType::Edge: return os << "E";
-	case MeshItemType::Face: return os << "F";
-	case MeshItemType::Cell: return os << "C";
-	};
-	return os;
+    switch (t)
+    {
+    case MeshItemType::Node: return os << "N";
+    case MeshItemType::Edge: return os << "E";
+    case MeshItemType::Face: return os << "F";
+    case MeshItemType::Cell: return os << "C";
+    };
+    return os;
 }
 
-/** Spatial location description.
- *
- * The spatial location is given by a mesh by its \c mesh_id, item's type (face,
- * cell, etc. see MeshItemType), and item's number by its \c item_id.
- */
+/// Spatial location description.
+///
+/// The spatial location is given by a mesh by its \c mesh_id, item's type (face,
+/// cell, etc. see MeshItemType), and item's number by its \c item_id.
 struct Location
 {
     std::size_t          mesh_id;
@@ -48,8 +45,7 @@ struct Location
     : mesh_id(meshid), item_type(itemtype), item_id(itemid){};
 };
 
-/** Lexicographic order of Location.
- */
+/// Lexicographic order of Location.
 inline bool operator<(const Location& left, const Location& right)
 {
     if (left.mesh_id != right.mesh_id) return left.mesh_id < right.mesh_id;
@@ -59,13 +55,12 @@ inline bool operator<(const Location& left, const Location& right)
 
 inline std::ostream& operator<<(std::ostream& os, Location const& l)
 {
-	return os << "(" << l.mesh_id
-	    << ", " << l.item_type
-	    << ", " << l.item_id
-	    << ")";
+    return os << "(" << l.mesh_id
+        << ", " << l.item_type
+        << ", " << l.item_id
+        << ")";
 }
 
-}
+}   // namespace MeshLib
 
-
-#endif /* MESHITEM_H_ */
+#endif  // LOCATION_H_

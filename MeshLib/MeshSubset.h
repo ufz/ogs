@@ -1,0 +1,81 @@
+/**
+ * \author Norihiro Watanabe
+ * \date   2013-04-16
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef MESHSUBSET_H_
+#define MESHSUBSET_H_
+
+#include <vector>
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
+
+
+namespace MeshLib
+{
+
+/// A subset of nodes or elements on a single mesh.
+class MeshSubset
+{
+public:
+    /// construct from nodes
+    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items)
+        : _msh(msh), _nodes(&vec_items), _eles(nullptr)
+    {}
+
+    /// construct from elements
+    MeshSubset(const Mesh& msh, std::vector<Element*> const& vec_items)
+        : _msh(msh), _nodes(nullptr), _eles(&vec_items)
+    {}
+
+    /// construct from both nodes and elements
+    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_nodes,
+               std::vector<Element*> const& vec_eles)
+        : _msh(msh), _nodes(&vec_nodes), _eles(&vec_eles)
+    {}
+
+    ~MeshSubset() {}
+
+    /// return the total number of mesh items
+    std::size_t getNTotalItems() const
+    {
+        return getNNodes() + getNElements();
+    }
+
+    /// return this mesh ID
+    std::size_t getMeshID() const
+    {
+        return _msh.getID();
+    }
+
+    /// return the number of registered nodes
+    std::size_t getNNodes() const
+    {
+        return (_nodes==nullptr) ? 0 : _nodes->size();
+    }
+
+    /// return the number of registered elements
+    std::size_t getNElements() const
+    {
+        return (_eles==nullptr) ? 0 : _eles->size();
+    }
+
+private:
+    const Mesh& _msh;
+    std::vector<Node*> const* _nodes;
+    std::vector<Element*> const* _eles;
+
+};
+
+}   // namespace MeshLib
+
+#endif  // MESHSUBSET_H_
