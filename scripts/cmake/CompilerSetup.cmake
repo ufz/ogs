@@ -47,6 +47,9 @@ IF(COMPILER_IS_GCC)
 ENDIF() # COMPILER_IS_GCC
 
 IF(COMPILER_IS_CLANG)
+	IF(CLANG_VERSION_STRING VERSION_LESS "3.3")
+		MESSAGE(FATAL_ERROR "Aborting: Clang 3.3 is requiered! Found version ${CLANG_VERSION_STRING}")
+	ENDIF()
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -isystem ${CMAKE_SOURCE_DIR}/ThirdParty/ -Weverything -Wno-c++98-compat-pedantic")
 ENDIF() # COMPILER_IS_CLANG
 
