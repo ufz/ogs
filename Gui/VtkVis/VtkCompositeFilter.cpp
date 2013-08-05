@@ -24,7 +24,7 @@
 
 VtkCompositeFilter::VtkCompositeFilter(vtkAlgorithm* inputAlgorithm)
 	: _inputDataObjectType(0), _outputDataObjectType(1),
-	  _inputAlgorithm(inputAlgorithm)
+	  _inputAlgorithm(inputAlgorithm), _outputAlgorithm(nullptr)
 {
 }
 

@@ -39,15 +39,14 @@ public:
 	/**
 	 * Method calls @see Polyline::addPoint() and initializes the mark of the
 	 * corresponding line segment.
-	 * @param pnt_id @see Polyline::addPoint()
+	 * @see Polyline::addPoint()
 	 */
 	virtual void addPoint(std::size_t pnt_id);
 
 	/**
 	 * Method calls the @see Polyline::insertPoint() and initializes the inserted line segment with the same
 	 * value the previous line segment had.
-	 * @param pos @see Polyline::insertPoint()
-	 * @param pnt_id @see Polyline::insertPoint()
+	 * @see Polyline::insertPoint()
 	 */
 	virtual void insertPoint(std::size_t pos, std::size_t pnt_id);
 

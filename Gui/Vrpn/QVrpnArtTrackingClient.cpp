@@ -24,7 +24,7 @@
 QVrpnArtTrackingClient* QVrpnArtTrackingClient::_singleton = 0;
 
 QVrpnArtTrackingClient::QVrpnArtTrackingClient(QObject* parent /*= NULL*/)
-	: QObject(parent), VrpnArtTrackingClient()
+	: QObject(parent), VrpnArtTrackingClient(), _updateInterval(0)
 {
 	//SpaceNavigatorClient::Instance();
 	_timer = new QTimer(this);

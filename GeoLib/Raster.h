@@ -38,8 +38,8 @@ public:
 	 * container.
 	 * @param n_cols number of columns
 	 * @param n_rows number of rows
-	 * @param xllcorner \f$x\f$ coordinate of lower left point
-	 * @param yllcorner \f$y\f$ coordinate of lower left point
+	 * @param xllcorner the \f$x\f$ coordinate of lower left point
+	 * @param yllcorner the \f$y\f$ coordinate of lower left point
 	 * @param cell_size the size of a raster pixel
 	 * @param begin input iterator pointing to the first element of the data
 	 * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
@@ -60,18 +60,15 @@ public:
 
 	/**
 	 * get the number of columns for the raster
-	 * @return
 	 */
 	std::size_t getNCols() const { return _n_cols; }
 	/**
 	 * get the number of rows for the raster
-	 * @return
 	 */
 	std::size_t getNRows() const { return _n_rows; }
 
 	/**
 	 * get the distance between raster pixels
-	 * @return
 	 */
 	double getRasterPixelDistance() const { return _cell_size; }
 
@@ -83,7 +80,6 @@ public:
 
 	/**
 	 * Refine the raster using scaling as a refinement parameter.
-	 * @param scaling
 	 */
 	void refineRaster(std::size_t scaling);
 
@@ -100,10 +96,6 @@ public:
 	 */
 	const_iterator end() const { return _raster_data + _n_rows*_n_cols; }
 
-	/**
-	 * destructor
-	 * @return
-	 */
 	~Raster();
 
 	/**

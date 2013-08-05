@@ -24,7 +24,7 @@ namespace MathLib
 /// \brief Class for representation of matrix sparsity pattern, required for
 /// creation of sparse matrices.
 ///
-/// \detail Current implementation requires only number of matrix's rows,
+/// \details Current implementation requires only number of matrix's rows,
 /// allowing thus non-rectangular sparsity patterns. The class is based on
 /// std::set container which automatically check for multiple insertions.
 class MatrixSparsityPattern

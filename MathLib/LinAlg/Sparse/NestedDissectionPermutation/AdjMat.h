@@ -62,20 +62,7 @@ public:
 			unsigned const* const po_perm) const;
 
 private:
-	/**
-	 * copy constructor
-	 * @param src another AdjMat with data for initialization
-	 */
-	AdjMat(const AdjMat&);
-
-	/**
-	 * assignment operator
-	 * @param rhs a instance of AdjacencyCRSMatrix
-	 */
-	AdjMat& operator=(AdjMat&)
-	{
-		return *this;
-	}
+	DISALLOW_COPY_AND_ASSIGN(AdjMat);
 };
 
 }

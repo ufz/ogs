@@ -18,6 +18,7 @@
 
 namespace MathLib {
 
+static
 bool generateDiagPrecond (unsigned n, unsigned const*const iA, unsigned const*const jA,
 				double const*const A, double* diag)
 {
@@ -44,6 +45,7 @@ bool generateDiagPrecond (unsigned n, unsigned const*const iA, unsigned const*co
 	return true;
 }
 
+static
 bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, double const*const A, double* diag)
 {
 	unsigned idx; // first idx of next row
@@ -64,6 +66,7 @@ bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, double const
 	return true;
 }
 
+static
 bool generateDiagPrecondRowMax(unsigned n, unsigned const*const iA, double const*const A, double* diag)
 {
 	unsigned idx; // first idx of next row

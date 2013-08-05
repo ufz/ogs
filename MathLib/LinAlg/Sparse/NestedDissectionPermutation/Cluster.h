@@ -31,7 +31,6 @@ public:
 	 * @param n
 	 * @param jA
 	 * @param iA
-	 * @return
 	 */
 	Cluster(unsigned n, unsigned* iA, unsigned* jA);
 

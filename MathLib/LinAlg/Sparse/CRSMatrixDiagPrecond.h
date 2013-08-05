@@ -31,7 +31,6 @@ public:
 	 *
 	 * @param fname the name of the file that contains the matrix in
 	 * binary compressed row storage format
-	 * @return object of class CRSMatrixDiagPrecond
 	 */
 	CRSMatrixDiagPrecond(std::string const &fname) :
 		CRSMatrix<double, unsigned> (fname), _inv_diag(NULL)
@@ -45,7 +44,6 @@ public:
 	 * @param iA row pointer of matrix in compressed row storage format
 	 * @param jA column index of matrix in compressed row storage format
 	 * @param A data entries of matrix in compressed row storage format
-	 * @return
 	 */
 	CRSMatrixDiagPrecond(unsigned n, unsigned *iA, unsigned *jA, double* A) :
 		CRSMatrix<double, unsigned> (n, iA, jA, A), _inv_diag(NULL)

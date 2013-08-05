@@ -32,19 +32,19 @@ GEOObjects::GEOObjects()
 GEOObjects::~GEOObjects()
 {
 	// delete surfaces
-	for (size_t k(0); k < _sfc_vecs.size(); k++)
+	for (std::size_t k(0); k < _sfc_vecs.size(); k++)
 		delete _sfc_vecs[k];
 	// delete polylines
-	for (size_t k(0); k < _ply_vecs.size(); k++)
+	for (std::size_t k(0); k < _ply_vecs.size(); k++)
 		delete _ply_vecs[k];
 	// delete points
-	for (size_t k(0); k < _pnt_vecs.size(); k++)
+	for (std::size_t k(0); k < _pnt_vecs.size(); k++)
 		delete _pnt_vecs[k];
 }
 
 void GEOObjects::addPointVec(std::vector<Point*>* points,
                              std::string &name,
-                             std::map<std::string, size_t>* pnt_id_name_map,
+                             std::map<std::string, std::size_t>* pnt_id_name_map,
                              double eps)
 {
 	isUniquePointVecName(name);
@@ -52,19 +52,19 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
 }
 
 bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
-                                std::string const &name, std::vector<size_t>* ids)
+                                std::string const &name, std::vector<std::size_t>* ids)
 {
 	// search vector
 	int idx = this->exists(name);
 
 	if (idx>=0) {
-		size_t n_new_pnts (new_points.size());
+		std::size_t n_new_pnts (new_points.size());
 		// append points
 		if (ids)
-			for (size_t k(0); k < n_new_pnts; k++)
+			for (std::size_t k(0); k < n_new_pnts; k++)
 				ids->push_back (_pnt_vecs[idx]->push_back (new_points[k]));
 		else
-			for (size_t k(0); k < n_new_pnts; k++)
+			for (std::size_t k(0); k < n_new_pnts; k++)
 				_pnt_vecs[idx]->push_back (new_points[k]);
 
 		return true;
@@ -72,13 +72,13 @@ bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
 		return false;
 }
 
-bool GEOObjects::appendPoint(Point* point, std::string const &name, size_t& id)
+bool GEOObjects::appendPoint(Point* point, std::string const &name, std::size_t& id)
 {
 	// search vector
 	int idx = this->exists(name);
 
 	if (idx>=0) {
-		const size_t size_previous (_pnt_vecs[idx]->size());
+		const std::size_t size_previous (_pnt_vecs[idx]->size());
 		id = _pnt_vecs[idx]->push_back (point);
 		if (size_previous < _pnt_vecs[idx]->size()) {
 			return true;
@@ -95,8 +95,8 @@ const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) cons
 	int idx = this->exists(name);
 	if (idx>=0) return _pnt_vecs[idx]->getVector();
 /*
-	size_t size (_pnt_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_pnt_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_pnt_vecs[i]->getName().compare(name) == 0)
 			return _pnt_vecs[i]->getVector();
 */
@@ -109,8 +109,8 @@ const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
 	int idx = this->exists(name);
 	if (idx>=0) return _pnt_vecs[idx];
 /*
-	size_t size (_pnt_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_pnt_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_pnt_vecs[i]->getName().compare(name) == 0)
 			return _pnt_vecs[i];
 */
@@ -170,7 +170,7 @@ const std::vector<Point*>* GEOObjects::getStationVec(const std::string &name) co
 }
 
 void GEOObjects::addPolylineVec(std::vector<Polyline*>* lines,
-                                const std::string &name, std::map<std::string, size_t>* ply_names)
+                                const std::string &name, std::map<std::string, std::size_t>* ply_names)
 {
 	for (std::vector<Polyline*>::iterator it (lines->begin());
 	     it != lines->end(); )
@@ -193,7 +193,7 @@ void GEOObjects::addPolylineVec(std::vector<Polyline*>* lines,
 bool GEOObjects::appendPolylineVec(const std::vector<Polyline*> &polylines, const std::string &name)
 {
 	// search vector
-	size_t idx (0);
+	std::size_t idx (0);
 	bool nfound (true);
 	for (idx = 0; idx < _ply_vecs.size() && nfound; idx++)
 		if ( (_ply_vecs[idx]->getName()).compare (name) == 0 )
@@ -202,9 +202,9 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*> &polylines, cons
 	if (!nfound)
 	{
 		idx--;
-		size_t n_plys (polylines.size());
+		std::size_t n_plys (polylines.size());
 		// append lines
-		for (size_t k(0); k < n_plys; k++)
+		for (std::size_t k(0); k < n_plys; k++)
 			_ply_vecs[idx]->push_back (polylines[k]);
 		return true;
 	}
@@ -214,8 +214,8 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*> &polylines, cons
 
 const std::vector<Polyline*>* GEOObjects::getPolylineVec(const std::string &name) const
 {
-	size_t size (_ply_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_ply_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_ply_vecs[i]->getName().compare(name) == 0)
 			return _ply_vecs[i]->getVector();
 
@@ -225,8 +225,8 @@ const std::vector<Polyline*>* GEOObjects::getPolylineVec(const std::string &name
 
 const PolylineVec* GEOObjects::getPolylineVecObj(const std::string &name) const
 {
-	size_t size (_ply_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_ply_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_ply_vecs[i]->getName().compare(name) == 0)
 			return _ply_vecs[i];
 
@@ -250,7 +250,7 @@ bool GEOObjects::removePolylineVec(const std::string &name)
 }
 
 void GEOObjects::addSurfaceVec(std::vector<Surface*>* sfc, const std::string &name,
-                               std::map<std::string, size_t>* sfc_names)
+                               std::map<std::string, std::size_t>* sfc_names)
 {
 	_sfc_vecs.push_back(new SurfaceVec(name, sfc, sfc_names));
 }
@@ -258,7 +258,7 @@ void GEOObjects::addSurfaceVec(std::vector<Surface*>* sfc, const std::string &na
 bool GEOObjects::appendSurfaceVec(const std::vector<Surface*> &surfaces, const std::string &name)
 {
 	// search vector
-	size_t idx (0);
+	std::size_t idx (0);
 	bool nfound (true);
 	for (idx = 0; idx < _sfc_vecs.size() && nfound; idx++)
 		if ( (_sfc_vecs[idx]->getName()).compare (name) == 0 )
@@ -267,9 +267,9 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*> &surfaces, const s
 	if (!nfound)
 	{
 		idx--;
-		size_t n_sfcs (surfaces.size());
+		std::size_t n_sfcs (surfaces.size());
 		// append surfaces
-		for (size_t k(0); k < n_sfcs; k++)
+		for (std::size_t k(0); k < n_sfcs; k++)
 			_sfc_vecs[idx]->push_back (surfaces[k]);
 		return true;
 	}
@@ -279,8 +279,8 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*> &surfaces, const s
 
 const std::vector<Surface*>* GEOObjects::getSurfaceVec(const std::string &name) const
 {
-	size_t size (_sfc_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_sfc_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_sfc_vecs[i]->getName().compare(name) == 0)
 			return _sfc_vecs[i]->getVector();
 	INFO("GEOObjects::getSurfaceVec() - No entry found with name \"%s\".", name.c_str());
@@ -304,8 +304,8 @@ bool GEOObjects::removeSurfaceVec(const std::string &name)
 
 const SurfaceVec* GEOObjects::getSurfaceVecObj(const std::string &name) const
 {
-	size_t size (_sfc_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_sfc_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_sfc_vecs[i]->getName().compare(name) == 0)
 			return _sfc_vecs[i];
 	INFO("GEOObjects::getSurfaceVecObj() - No entry found with name \"%s\".", name.c_str());
@@ -329,7 +329,7 @@ bool GEOObjects::isUniquePointVecName(std::string &name)
 		if (count > 1)
 			cpName = cpName + "-" + BaseLib::number2str(count);
 
-		for (size_t i = 0; i < _pnt_vecs.size(); i++)
+		for (std::size_t i = 0; i < _pnt_vecs.size(); i++)
 			if ( cpName.compare(_pnt_vecs[i]->getName()) == 0 )
 				isUnique = false;
 	}
@@ -383,7 +383,7 @@ void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
 			names.push_back((*it)->getName());
 }
 
-const std::string GEOObjects::getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, size_t id) const
+const std::string GEOObjects::getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const
 {
 	std::string name("");
 	switch (type)
@@ -397,6 +397,9 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 		case GeoLib::SURFACE:
 			this->getSurfaceVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
+		case GeoLib::VOLUME:
+		case GeoLib::GEODOMAIN:
+		case GeoLib::INVALID:
 		default:
 			INFO("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
 			break;
@@ -414,9 +417,8 @@ int GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
 
 	std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
-	if (mergePoints(geo_names, merged_geo_name, pnt_offsets) == -1) {
+	if (mergePoints(geo_names, merged_geo_name, pnt_offsets))
 		return -1;
-	}
 
 	mergePolylines(geo_names, merged_geo_name, pnt_offsets);
 
@@ -564,8 +566,8 @@ const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,
 
 int GEOObjects::exists(const std::string &geometry_name) const
 {
-	size_t size (_pnt_vecs.size());
-	for (size_t i = 0; i < size; i++)
+	std::size_t size (_pnt_vecs.size());
+	for (std::size_t i = 0; i < size; i++)
 		if (_pnt_vecs[i]->getName().compare(geometry_name) == 0)
 			return i;
 

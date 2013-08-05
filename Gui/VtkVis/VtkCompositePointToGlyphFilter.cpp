@@ -21,7 +21,7 @@
 #include <vtkSphereSource.h>
 
 VtkCompositePointToGlyphFilter::VtkCompositePointToGlyphFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm)
+	: VtkCompositeFilter(inputAlgorithm), _glyphSource(nullptr)
 {
 	this->init();
 }

@@ -47,6 +47,7 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QStr
 
 		case QVariant::Int:
 			lineEdit->setValidator(new QIntValidator(this));
+			break;
 
 		default:
 			break;

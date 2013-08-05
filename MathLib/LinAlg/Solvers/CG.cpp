@@ -34,6 +34,7 @@
 
 namespace MathLib {
 
+extern
 unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		double* const x, double& eps, unsigned& nsteps)
 {

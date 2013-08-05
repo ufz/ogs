@@ -25,7 +25,7 @@ namespace MathLib
  * \ingroup GeoLib
  *
  * \brief class-template for points can be instantiated by a numeric type.
- * \param T the coordinate type
+ * \tparam T the coordinate type
  */
 template <class T> class TemplatePoint
 {

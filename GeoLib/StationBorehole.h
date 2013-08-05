@@ -117,7 +117,6 @@ private:
 
 	//long profile_type;
 	//std::vector<long> _soilType;
-	double _zCoord; // height at which the borehole officially begins (this might _not_ be the actual elevation)
 	double _depth; // depth of the borehole
 	int _date; // date when the borehole has been drilled
 

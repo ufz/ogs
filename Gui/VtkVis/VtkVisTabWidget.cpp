@@ -39,7 +39,7 @@
 #include <vtkPointData.h>
 
 VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
-	: QWidget(parent)
+	: QWidget(parent), _item(nullptr)
 {
 	setupUi(this);
 
