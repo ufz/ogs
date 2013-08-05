@@ -28,7 +28,7 @@ namespace BaseLib {
  *   Splits a string into a list of strings.
  *  \param str String to be splitted
  *  \param delim Character indicating that the string should be splitted
- *  \return
+ *  \return List of strings
  */
 std::list<std::string> splitString(const std::string &str, char delim);
 

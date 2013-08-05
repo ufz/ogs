@@ -45,6 +45,7 @@ void truncateFile( std::string const& filename)
  * position of the last one or std::string::npos if no file path separator was
  * found.
  */
+static
 size_t findLastPathSeparator(std::string const& path)
 {
 	return path.find_last_of("/\\");
@@ -53,6 +54,7 @@ size_t findLastPathSeparator(std::string const& path)
 /** Finds the position of last dot.
  * This could be used to extract file extension.
  */
+static
 size_t findLastDot(std::string const& path)
 {
 	return path.find_last_of(".");

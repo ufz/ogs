@@ -69,7 +69,6 @@ public:
 	/**
 	 * Adds an id of a point at the end of the polyline. The id have to be inside
 	 * the (internal) _ply_pnts vector the polyline is based on.
-	 * @param pnt_id
 	 */
 	virtual void addPoint(std::size_t pnt_id);
 

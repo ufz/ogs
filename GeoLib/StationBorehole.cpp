@@ -35,7 +35,7 @@ namespace GeoLib
 ////////////////////////
 
 StationBorehole::StationBorehole(double x, double y, double z, const std::string &name) :
-	Station (x, y, z, name), _zCoord(0), _depth(0), _date(0)
+	Station (x, y, z, name), _depth(0), _date(0)
 {
 	_type = Station::BOREHOLE;
 	addProperty("date", &StationBorehole::getDate, &StationBorehole::setDate);

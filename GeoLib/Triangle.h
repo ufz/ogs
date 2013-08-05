@@ -72,7 +72,7 @@ public:
 
 	/**
 	 * checks if point is in triangle
-	 * @param pnt
+	 * @param pnt The input point
 	 * @return true, if point is in triangle, else false
 	 */
 	bool containsPoint (const double *pnt) const;

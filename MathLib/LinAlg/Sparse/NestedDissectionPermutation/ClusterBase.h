@@ -30,7 +30,6 @@ public:
 	 * @param n number of rows/columns
 	 * @param iA row pointer array
 	 * @param jA column index array
-	 * @return
 	 */
 	ClusterBase(unsigned n, unsigned const*const iA, unsigned const*const jA);
 	/*!

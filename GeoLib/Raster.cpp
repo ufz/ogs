@@ -160,7 +160,7 @@ Raster* Raster::getRasterFromASCFile(std::string const& fname)
 	}
 }
 
-bool Raster::readASCHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+bool Raster::readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
 				double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val)
 {
 	std::string tag, value;

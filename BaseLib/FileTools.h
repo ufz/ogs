@@ -30,7 +30,7 @@ bool IsFileExisting(const std::string &strFilename);
 /**
  * \brief write value as binary into the given output stream
  *
- * \param T    data type of the value
+ * \tparam T    data type of the value
  * \param out   output stream, have to be opened in binary mode
  * \param val   value
  */

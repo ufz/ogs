@@ -227,7 +227,6 @@ public:
 
 	/**
 	 * get the matrix entries within an array of CRS matrix
-	 * @return
 	 */
 	FP_TYPE const* getEntryArray() const { return _data; }
 

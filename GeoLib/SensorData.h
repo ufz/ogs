@@ -91,25 +91,25 @@ public:
 	const std::vector<float>* getTimeSeries(SensorDataType::type time_series_name) const;
 
 	/// Returns all time series names contained in this container
-	const std::vector<SensorDataType::type>& getTimeSeriesNames() const { return _vec_names; };
+	const std::vector<SensorDataType::type>& getTimeSeriesNames() const { return _vec_names; }
 
 	/// Returns the time step vector (if it exists)
-	const std::vector<std::size_t>& getTimeSteps() const { return _time_steps; };
+	const std::vector<std::size_t>& getTimeSteps() const { return _time_steps; }
 
 	/// Returns the first time step
-	std::size_t getStartTime() const { return _start; };
+	std::size_t getStartTime() const { return _start; }
 
 	/// Returns the last time step
-	std::size_t getEndTime() const { return _end; };
+	std::size_t getEndTime() const { return _end; }
 
 	/// Returns the interval between time steps (Returns "0" if a vector is given!)
-	std::size_t getStepSize() const { return _step_size; };
+	std::size_t getStepSize() const { return _step_size; }
 
 	/// Allows to set a unit for the time steps
-	void setTimeUnit(TimeStepType::type t) { _time_unit = t; };
+	void setTimeUnit(TimeStepType::type t) { _time_unit = t; }
 
 	/// Returns the unit the time steps
-	TimeStepType::type getTimeUnit() const { return _time_unit; };
+	TimeStepType::type getTimeUnit() const { return _time_unit; }
 
 	/// Returns the data unit of the given time series
 	std::string getDataUnit(SensorDataType::type t) const;

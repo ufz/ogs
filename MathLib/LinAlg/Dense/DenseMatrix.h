@@ -55,7 +55,6 @@ public:
    /**
     * Assignment operator, makes a copy of the internal data of the object.
     * @param rhs The DenseMatrix object to the right side of the assignment symbol.
-    * @return
     */
    DenseMatrix& operator=(DenseMatrix const& rhs) throw (std::range_error);
 
@@ -63,7 +62,6 @@ public:
     * This is the move assignment operator.
     * @param rhs This is the right hand side of a assignment operation.
     * After applying this operation the object src has no rows and columns anymore.
-    * @return
     */
    DenseMatrix& operator=(DenseMatrix && rhs);
 
@@ -74,8 +72,6 @@ public:
 
    /**
     * DenseMatrix vector multiplication
-    * @param x
-    * @return
     */
    FP_TYPE* operator* (FP_TYPE* const& x) const;
    FP_TYPE* operator* (FP_TYPE const* const& x) const;
@@ -83,14 +79,10 @@ public:
 
    /**
     * DenseMatrix matrix addition.
-    * @param mat
-    * @return
     */
    DenseMatrix* operator+ (const DenseMatrix& mat) const throw (std::range_error);
    /**
     * DenseMatrix matrix subtraction
-    * @param mat
-    * @return
     */
    DenseMatrix* operator- (const DenseMatrix& mat) const throw (std::range_error);
 
@@ -148,9 +140,9 @@ protected:
 	IDX_TYPE _n_cols;
 
    // zero based addressing, but Fortran storage layout
-   //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; };
+   //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; }
    // zero based addressing, C storage layout
-   inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return i*_n_cols+j; };
+   inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return i*_n_cols+j; }
 
    FP_TYPE *_data;
 };

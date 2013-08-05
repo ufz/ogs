@@ -52,16 +52,11 @@ public:
 	 * and assures that the orientation is clock wise.
 	 * @param ply closed Polyline
 	 * @param init if true, check if polyline is closed, calculate bounding box
-	 * @return
 	 */
 	Polygon(const Polyline &ply, bool init = true);
 
 	virtual ~Polygon();
 
-	/**
-	 *
-	 * @return
-	 */
 	bool initialise ();
 
 	/**
@@ -82,7 +77,6 @@ public:
 	/**
 	 * Method checks if all points of the polyline ply are inside of the polygon.
 	 * @param ply the polyline that should be checked
-	 * @return
 	 */
 	bool isPolylineInPolygon (const Polyline& ply) const;
 	/**

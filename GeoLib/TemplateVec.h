@@ -47,7 +47,6 @@ public:
 	 * std::map<std::string, std::size_t>. Here the std::string is the name
 	 * of the element and the value for std::size_t stands for an index in
 	 * the data_vec.
-
 	 */
 	TemplateVec (const std::string &name, std::vector<T*>* data_vec,
 	             NameIdMap* elem_name_map = nullptr) :
@@ -95,7 +94,6 @@ public:
 	 * search the vector of names for the ID of the geometric element with the given name
 	 * @param name the name of the geometric element
 	 * @param id the id of the geometric element
-	 * @return
 	 */
 	bool getElementIDByName (const std::string& name, std::size_t &id) const
 	{

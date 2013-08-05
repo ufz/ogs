@@ -2,7 +2,6 @@
  * @file DenseMatrix.tpp
  * @author Thomas Fischer and Haibing Shao
  * @date Jun 10, 2013
- * @brief 
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)

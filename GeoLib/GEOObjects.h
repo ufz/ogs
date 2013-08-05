@@ -280,7 +280,7 @@ private:
 	 * Method merges points from different geometries into one geometry. This
 	 * is a helper method for GEOObjects::mergeGeometries().
 	 * @param geo_names The vector of names of the geometries to merge.
-	 * @param merged_geo_names The (new) name of the geometry resulting from
+	 * @param merged_geo_name The (new) name of the geometry resulting from
 	 * merging.
 	 * @param pnt_offsets offsets in the merged vector storing the points
 	 * @return true, if merging the points succeeded, else false

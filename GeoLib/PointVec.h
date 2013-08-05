@@ -68,7 +68,6 @@ public:
 	 * The size of the axis aligned bounding box multiplied with the value of rel_eps gives the
 	 * real tolerance \f$tol\f$. Two points \f$p_0, p_1 \f$ are identical iff
 	 * \f$|p_1 - p_0| \le tol.\f$
-	 * @return an object of type PointVec
 	 */
 	PointVec (const std::string& name, std::vector<Point*>* points,
 	          std::map<std::string, std::size_t>* name_id_map = NULL,

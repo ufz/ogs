@@ -98,7 +98,6 @@ public:
 	/**
 	 * Constructor copies the source object
 	 * @param src the Station object that should be copied
-	 * @return
 	 */
 	Station(Station const& src);
 
@@ -120,7 +119,6 @@ public:
 	 * \param pname The name of the property.
 	 * \param get A function pointer to a static read function for the variable referred to by pname
 	 * \param set A function pointer to a static write function for the variable referred to by pname
-	 * \return
 	 */
 	void addProperty(std::string pname, double (* get)(void*), void (* set)(void*, double));
 
@@ -146,16 +144,16 @@ public:
 	static Station* createStation(const std::string &name, double x, double y, double z);
 
 	/// Returns the specific value for this station
-	double getStationValue() { return this->_station_value; };
+	double getStationValue() { return this->_station_value; }
 
 	/// Allows to set a specific value for this station (e.g. for classification)
-	void setStationValue(double station_value) { this->_station_value = station_value; };
+	void setStationValue(double station_value) { this->_station_value = station_value; }
 
 	/// Allows to add sensor data from a CSV file to the observation site
-	void addSensorDataFromCSV(const std::string &file_name) { this->_sensor_data = new SensorData(file_name); };
+	void addSensorDataFromCSV(const std::string &file_name) { this->_sensor_data = new SensorData(file_name); }
 
 	/// Returns all the sensor data for this observation site
-	const SensorData* getSensorData() { return this->_sensor_data; };
+	const SensorData* getSensorData() { return this->_sensor_data; }
 
 protected:
 	/**

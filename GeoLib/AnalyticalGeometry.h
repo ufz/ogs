@@ -75,15 +75,13 @@ void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*
  * by the points within the vector pnts. See function getNewellPlane() to get the
  * "plane normal" of a point set. The method rotates both the plane normal and
  * the points. The plane normal is rotated such that it is parallel to the \f$y\f$ axis.
- * @param plane_normal
- * @param pnts
  * @sa getNewellPlane()
  */
 void rotatePointsToXZ(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
- * @param vec the (3d) vector that is rotated parallel to the \f$z\f$ axis
+ * @param plane_normal the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
  */
 void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,

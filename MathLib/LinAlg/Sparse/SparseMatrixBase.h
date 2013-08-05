@@ -19,7 +19,7 @@ public:
 	 * @param y result vector
 	 */
 	virtual void amux(FP_TYPE d, FP_TYPE const * const __restrict__ x, FP_TYPE * __restrict__ y) const = 0;
-	virtual ~SparseMatrixBase() {};
+	virtual ~SparseMatrixBase() {}
 	/**
 	 * get the number of rows
 	 * @return the number of rows
