@@ -91,7 +91,7 @@ void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_opt
         for (size_t j=0; j<ex1.dim_eqs; j++) {
             double v = ex1.mat(i, j);
             if (v!=.0)
-                A.addValue(i, j, v);
+                A.add(i, j, v);
         }
     }
 
