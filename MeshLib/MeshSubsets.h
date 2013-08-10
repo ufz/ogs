@@ -27,7 +27,7 @@ class MeshSubsets
 public:
 
     /// Single mesh subset constructor.
-    explicit MeshSubsets(const MeshSubset* mesh_subset)
+    MeshSubsets(const MeshSubset* mesh_subset)
     {
         _mesh_subsets.push_back(mesh_subset);
         _n_total_items = mesh_subset->getNTotalItems();
@@ -36,7 +36,7 @@ public:
     /// Construct MeshSubsets from a range of MeshSubset. InputIterator must
     /// dereference to MeshSubset*.
     template <typename InputIterator>
-    explicit MeshSubsets(InputIterator const& first, InputIterator const& last)
+    MeshSubsets(InputIterator const& first, InputIterator const& last)
         : _mesh_subsets(first, last)
     {
         _n_total_items = std::accumulate(first, last, 0u,
