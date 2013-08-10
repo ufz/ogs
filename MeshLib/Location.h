@@ -10,6 +10,7 @@
  *
  */
 
+#include <iostream>
 
 #ifndef LOCATION_H_
 #define LOCATION_H_
@@ -19,17 +20,7 @@ namespace MeshLib
 
 enum class MeshItemType { Node, Edge, Face, Cell };
 
-inline std::ostream& operator<<(std::ostream& os, MeshItemType const& t)
-{
-    switch (t)
-    {
-    case MeshItemType::Node: return os << "N";
-    case MeshItemType::Edge: return os << "E";
-    case MeshItemType::Face: return os << "F";
-    case MeshItemType::Cell: return os << "C";
-    };
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, MeshItemType const& t);
 
 /// Spatial location description.
 ///
@@ -46,20 +37,9 @@ struct Location
 };
 
 /// Lexicographic order of Location.
-inline bool operator<(const Location& left, const Location& right)
-{
-    if (left.mesh_id != right.mesh_id) return left.mesh_id < right.mesh_id;
-    if (left.item_type != right.item_type) return left.item_type < right.item_type;
-    return left.item_id < right.item_id;
-}
+bool operator<(const Location& left, const Location& right);
 
-inline std::ostream& operator<<(std::ostream& os, Location const& l)
-{
-    return os << "(" << l.mesh_id
-        << ", " << l.item_type
-        << ", " << l.item_id
-        << ")";
-}
+std::ostream& operator<<(std::ostream& os, Location const& l);
 
 }   // namespace MeshLib
 
