@@ -3,7 +3,7 @@
 #####################
 
 # Specify minimum CMake version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.7)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 
 # Project name
 PROJECT( OGS-6 )
