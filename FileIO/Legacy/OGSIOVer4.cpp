@@ -13,6 +13,7 @@
  */
 
 #include <iomanip>
+#include <limits>
 #include <sstream>
 
 // ThirdParty/logog
@@ -575,7 +576,7 @@ void writeGLIFileV4 (const std::string& fname,
 		const std::size_t n_pnts(pnts->size());
 		INFO("GeoLib::writeGLIFileV4(): writing %d points to file %s.", n_pnts, fname.c_str());
 		os << "#POINTS" << "\n";
-		os.precision (20);
+		os.precision(std::numeric_limits<double>::digits10);
 		for (std::size_t k(0); k < n_pnts; k++) {
 			os << k << " " << *((*pnts)[k]);
 			if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
@@ -640,7 +641,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 	os << "#POINTS" << "\n";
 	for (std::size_t j(0); j < geo_names.size(); j++)
 	{
-		os.precision (20);
+		os.precision(std::numeric_limits<double>::digits10);
 		GeoLib::PointVec const* const pnt_vec(geo.getPointVecObj(geo_names[j]));
 		std::vector<GeoLib::Point*> const* const pnts (pnt_vec->getVector());
 		if (pnts) {
@@ -665,7 +666,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 	geo.getStationVectorNames (stn_names);
 	for (std::size_t j(0); j < stn_names.size(); j++)
 	{
-		os.precision (20);
+		os.precision(std::numeric_limits<double>::digits10);
 		const std::vector<GeoLib::Point*>* pnts (geo.getStationVec(stn_names[j]));
 		if (pnts)
 		{

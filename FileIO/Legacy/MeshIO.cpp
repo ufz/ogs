@@ -248,8 +248,6 @@ int MeshIO::write(std::ostream &out)
 		return 0;
 	}
 
-	setPrecision(9);
-
 	out << "#FEM_MSH\n"
 		<< "$PCS_TYPE\n"
 		<< "  NO_PCS\n"
