@@ -141,12 +141,12 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	// prepare a mapping table from DoFs to positions in the vector
 	// node id, comp id <-> vector entry id
 	std::vector<std::vector<std::size_t> > map_node2vec_entry(
-	        vec_selected_nodes.size());
+	        mesh_items_left_nodes.getNNodes());
 	for (std::size_t i = 0; i < map_node2vec_entry.size(); i++)
 		map_node2vec_entry[i] = vec1_composition.getDataIDList(
 	        MeshLib::Location(msh->getID(),
 	                                  MeshLib::MeshItemType::Node,
-		                              vec_selected_nodes[i]->getID()));
+		                              mesh_items_left_nodes.getNodeID(i)));
 
 	// create a vector assembler
 	LocalVecAssemblerExtractNodeX extractX;
