@@ -16,9 +16,9 @@
 #include <vector>
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/MeshSubsets.h"
 
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
-#include "VecMatOnMeshLib/VecMeshItems/MeshSubsets.h"
 
 class VecMatOnMeshLibTest : public ::testing::Test
 {
@@ -27,28 +27,28 @@ class VecMatOnMeshLibTest : public ::testing::Test
 	    : mesh(nullptr), mesh_items(nullptr)
 	{
 		mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, 9);
-		mesh_items = new VecMatOnMeshLib::MeshSubset(*mesh, mesh->getNodes());
+		mesh_items = new MeshLib::MeshSubset(*mesh, mesh->getNodes());
 
 		//set up data arrangement
-		vec_comp_dis.emplace_back(new VecMatOnMeshLib::MeshSubsets(mesh_items));
-		vec_comp_dis.emplace_back(new VecMatOnMeshLib::MeshSubsets(mesh_items));
+		vec_comp_dis.emplace_back(new MeshLib::MeshSubsets(mesh_items));
+		vec_comp_dis.emplace_back(new MeshLib::MeshSubsets(mesh_items));
 
 	}
 	~VecMatOnMeshLibTest()
 	{
 		std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
-		    [](VecMatOnMeshLib::MeshSubsets* p) { delete p; return true; });
+		    [](MeshLib::MeshSubsets* p) { delete p; return true; });
 		delete mesh_items;
 		delete mesh;
 	}
 
 	MeshLib::Mesh const* mesh;
-	VecMatOnMeshLib::MeshSubset const* mesh_items;
+	MeshLib::MeshSubset const* mesh_items;
 
 	//data component 0 and 1 are assigned to all nodes in the mesh
 	std::size_t const comp0_id = 0;
 	std::size_t const comp1_id = 1;
-	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+	std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
 };
 
 TEST_F(VecMatOnMeshLibTest, DataArrangementByComponentType)
@@ -66,8 +66,8 @@ TEST_F(VecMatOnMeshLibTest, DataArrangementByComponentType)
 	//da.print();
 	//std::cout << std::endl;
 
-	using VecMatOnMeshLib::MeshItemType;
-	typedef VecMatOnMeshLib::Location Loc;
+	using MeshLib::MeshItemType;
+	typedef MeshLib::Location Loc;
 	//check
 	auto checkNodeAndComponent =
 	    [&da, this](std::size_t const n, std::size_t const c)
@@ -113,8 +113,8 @@ TEST_F(VecMatOnMeshLibTest, DataArrangementByLocationType)
 	//da.print();
 	//std::cout << std::endl;
 
-	using VecMatOnMeshLib::MeshItemType;
-	typedef VecMatOnMeshLib::Location Loc;
+	using MeshLib::MeshItemType;
+	typedef MeshLib::Location Loc;
 	//check
 	auto checkNodeAndComponent =
 	    [&da, this](std::size_t const n, std::size_t const c)

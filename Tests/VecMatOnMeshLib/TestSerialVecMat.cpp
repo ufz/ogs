@@ -26,7 +26,9 @@
 
 #include "MeshLib/Elements/Edge.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSubsets.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 
@@ -35,7 +37,6 @@
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
 #include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
-#include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
 
 #include "../TestTools.h"
 
@@ -107,7 +108,7 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 		for (std::size_t i = 0; i < vec_selected_nodes.size(); i++)
 			vec_selected_nodes[i] = vec_all_nodes[i];
 	}
-	const VecMatOnMeshLib::MeshSubset mesh_items_left_nodes(*msh,
+	const MeshLib::MeshSubset mesh_items_left_nodes(*msh,
 	                                                        vec_selected_nodes);
 
 	//extract elements having those nodes (corresponding to first five elements)
@@ -120,9 +121,9 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	// Allocate a vector and a linear operator (i.e. matrix)
 	//--------------------------------------------------------------------------
 	// define a mesh item composition in a vector
-	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+	std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
 	vec_comp_dis.push_back(
-	    new VecMatOnMeshLib::MeshSubsets(&mesh_items_left_nodes));
+	    new MeshLib::MeshSubsets(&mesh_items_left_nodes));
 
 	VecMatOnMeshLib::MeshComponentMap vec1_composition(
 	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
@@ -143,8 +144,8 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	        vec_selected_nodes.size());
 	for (std::size_t i = 0; i < map_node2vec_entry.size(); i++)
 		map_node2vec_entry[i] = vec1_composition.getDataIDList(
-	        VecMatOnMeshLib::Location(msh->getID(),
-	                                  VecMatOnMeshLib::MeshItemType::Node,
+	        MeshLib::Location(msh->getID(),
+	                                  MeshLib::MeshItemType::Node,
 		                              vec_selected_nodes[i]->getID()));
 
 	// create a vector assembler
@@ -171,11 +172,11 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 		for (std::size_t i = 0; i < vec_selected_eles.size(); i++)
 		{
 			auto* e = vec_selected_eles[i];
-			std::vector<VecMatOnMeshLib::Location> vec_items;
+			std::vector<MeshLib::Location> vec_items;
 			for (std::size_t j = 0; j < e->getNNodes(); j++)
 				vec_items.push_back(
-					VecMatOnMeshLib::Location(msh->getID(),
-					VecMatOnMeshLib::MeshItemType::Node,
+					MeshLib::Location(msh->getID(),
+					MeshLib::MeshItemType::Node,
 					e->getNode(j)->getID()));
 
 			mat_row_column_positions.push_back(vec1_composition.getDataIDList
@@ -218,5 +219,5 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	ASSERT_NEAR(0.04, (*vec_out)[2], 1e-6);
 
 	std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
-		[](VecMatOnMeshLib::MeshSubsets * p) { delete p; return true; });
+		[](MeshLib::MeshSubsets * p) { delete p; return true; });
 }

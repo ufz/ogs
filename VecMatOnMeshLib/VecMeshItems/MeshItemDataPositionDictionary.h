@@ -23,12 +23,14 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/composite_key.hpp>
 
+#include "MeshLib/Location.h"
+
 namespace VecMatOnMeshLib
 {
 
 struct MeshitemDataPosition
 {
-    Location location;
+	MeshLib::Location location;
 
     // Physical component
     std::size_t comp_id;
@@ -36,7 +38,7 @@ struct MeshitemDataPosition
     // Position in global matrix or vector
     std::size_t global_index;
 
-    MeshitemDataPosition(Location const& location,
+    MeshitemDataPosition(MeshLib::Location const& location,
                          std::size_t comp_id,
                          std::size_t global_index)
     : location(location),

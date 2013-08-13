@@ -18,9 +18,14 @@
 
 #include <vector>
 
-#include "MeshSubsets.h"
-#include "MeshItem.h"
+#include "MeshLib/Location.h"
+
 #include "MeshItemDataPositionDictionary.h"
+
+namespace MeshLib
+{
+	class MeshSubsets;
+}
 
 namespace VecMatOnMeshLib
 {
@@ -36,13 +41,15 @@ enum class ComponentOrder
 class MeshComponentMap
 {
 public:
+	using Location = MeshLib::Location;
+public:
 	/**
 	 *
 	 * @param vec_comp_dis    a vector of component distributions
 	 * The size of the vector means the number of components in the vector.
 	 * @param ordering        type of ordering values in a vector
 	 */
-    MeshComponentMap(const std::vector<MeshSubsets*> &vec_comp_dis, ComponentOrder order);
+    MeshComponentMap(const std::vector<MeshLib::MeshSubsets*> &vec_comp_dis, ComponentOrder order);
 
     /// return the size of the vector
     std::size_t size() const { return _dict.size(); }
@@ -51,7 +58,7 @@ public:
     std::vector<std::size_t> getComponentIDs(const Location &item) const;
 
     /// find a mesh item on which a given data position is assigned
-    Location getMeshItem(unsigned dataID) const;
+	Location getMeshItem(unsigned dataID) const;
 
     /// find a data position from a given mesh item and component ID
     std::size_t getDataID(const Location &item, unsigned compID) const;

@@ -25,13 +25,14 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Location.h"
+#include "MeshLib/MeshSubsets.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
 #include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
 #include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
-#include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
@@ -50,16 +51,16 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	//--------------------------------------------------------------------------
 	// Prepare mesh items where data are assigned
 	//--------------------------------------------------------------------------
-	const VecMatOnMeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
+	const MeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
 	                                                       ex1.msh->getNodes());
 
 	//--------------------------------------------------------------------------
 	// Allocate a coefficient matrix, RHS and solution vectors
 	//--------------------------------------------------------------------------
 	// define a mesh item composition in a vector
-	std::vector<VecMatOnMeshLib::MeshSubsets*> vec_comp_dis;
+	std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
 	vec_comp_dis.push_back(
-	    new VecMatOnMeshLib::MeshSubsets(&mesh_items_all_nodes));
+	    new MeshLib::MeshSubsets(&mesh_items_all_nodes));
 	VecMatOnMeshLib::MeshComponentMap vec1_composition(
 	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
 
@@ -82,12 +83,12 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	{
 		std::size_t const nnodes = (*e)->getNNodes();
 		std::size_t const mesh_id = ex1.msh->getID();
-		std::vector<VecMatOnMeshLib::Location> vec_items;
+		std::vector<MeshLib::Location> vec_items;
 		vec_items.reserve(nnodes);
 		for (std::size_t j = 0; j < nnodes; j++)
 			vec_items.emplace_back(
 			    mesh_id,
-			    VecMatOnMeshLib::MeshItemType::Node,
+			    MeshLib::MeshItemType::Node,
 			    (*e)->getNode(j)->getID());
 
 		map_ele_nodes2vec_entries.push_back(
@@ -132,5 +133,5 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	ASSERT_DOUBLE_ARRAY_EQ(&ex1.exact_solutions[0], px, ex1.dim_eqs, 1.e-5);
 
 	std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
-		[](VecMatOnMeshLib::MeshSubsets * p) { delete p; return true; });
+		[](MeshLib::MeshSubsets * p) { delete p; return true; });
 }
