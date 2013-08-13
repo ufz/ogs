@@ -55,7 +55,7 @@ void SensorData::addTimeSeries( const std::string &data_name, std::vector<float>
 	this->addTimeSeries(SensorData::convertString2SensorDataType(data_name), data, data_unit_string);
 }
 
-void SensorData::addTimeSeries( SensorDataType::type data_name, std::vector<float> *data, const std::string &data_unit_string )
+void SensorData::addTimeSeries(SensorDataType data_name, std::vector<float> *data, const std::string &data_unit_string)
 {
 	if (_step_size>0) {
 		if (((_end-_start)/_step_size) != data->size()) {
@@ -74,7 +74,7 @@ void SensorData::addTimeSeries( SensorDataType::type data_name, std::vector<floa
 	_data_unit_string.push_back(data_unit_string);
 }
 
-const std::vector<float>* SensorData::getTimeSeries(SensorDataType::type time_series_name) const
+const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_name) const
 {
 	for (size_t i=0; i<_vec_names.size(); i++)
 	{
@@ -85,7 +85,7 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType::type time_se
 	return NULL;
 }
 
-std::string SensorData::getDataUnit(SensorDataType::type time_series_name) const
+std::string SensorData::getDataUnit(SensorDataType time_series_name) const
 {
 	for (size_t i=0; i<_vec_names.size(); i++)
 	{
@@ -154,7 +154,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
 	return 1;
 }
 
-std::string SensorData::convertSensorDataType2String(SensorDataType::type t)
+std::string SensorData::convertSensorDataType2String(SensorDataType t)
 {
 	if (SensorDataType::EVAPORATION == t) return "Evaporation";
 	else if (SensorDataType::PRECIPITATION == t) return "Precipitation";
@@ -163,7 +163,7 @@ std::string SensorData::convertSensorDataType2String(SensorDataType::type t)
 	else return "Unknown";
 }
 
-SensorDataType::type SensorData::convertString2SensorDataType(const std::string &s)
+SensorDataType SensorData::convertString2SensorDataType(const std::string &s)
 {
 	if ((s.compare("Evaporation")==0) || (s.compare("EVAPORATION")==0)) return SensorDataType::EVAPORATION;
 	else if ((s.compare("Precipitation")==0) || (s.compare("PRECIPITATION")==0)) return SensorDataType::PRECIPITATION;

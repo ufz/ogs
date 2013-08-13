@@ -26,15 +26,13 @@
  *
  * \sa SensorData
  */
-struct SensorDataType
+enum class SensorDataType
 {
-	enum type {
-		OTHER = 0,
-		PRECIPITATION,
-		EVAPORATION,
-		TEMPERATURE
-		// please expand if necessary
-	};
+	OTHER = 0,
+	PRECIPITATION,
+	EVAPORATION,
+	TEMPERATURE
+	// please expand if necessary
 };
 
 /**
@@ -85,13 +83,13 @@ public:
 
 	/// Adds a time series that needs to conform to the time step vector specified in the constructor.
 	/// Optionally a unit for the time series can be given.
-	void addTimeSeries( SensorDataType::type data_name, std::vector<float> *data, const std::string &data_unit_string = "" );
+	void addTimeSeries( SensorDataType data_name, std::vector<float> *data, const std::string &data_unit_string = "" );
 
 	/// Returns the time series with the given name
-	const std::vector<float>* getTimeSeries(SensorDataType::type time_series_name) const;
+	const std::vector<float>* getTimeSeries(SensorDataType time_series_name) const;
 
 	/// Returns all time series names contained in this container
-	const std::vector<SensorDataType::type>& getTimeSeriesNames() const { return _vec_names; }
+	const std::vector<SensorDataType>& getTimeSeriesNames() const { return _vec_names; }
 
 	/// Returns the time step vector (if it exists)
 	const std::vector<std::size_t>& getTimeSteps() const { return _time_steps; }
@@ -112,13 +110,13 @@ public:
 	TimeStepType::type getTimeUnit() const { return _time_unit; }
 
 	/// Returns the data unit of the given time series
-	std::string getDataUnit(SensorDataType::type t) const;
+	std::string getDataUnit(SensorDataType t) const;
 
 	/// Converts Sensor Data Types to Strings
-	static std::string convertSensorDataType2String(SensorDataType::type t);
+	static std::string convertSensorDataType2String(SensorDataType t);
 
 	/// Converts Strings to Sensor Data Types
-	static SensorDataType::type convertString2SensorDataType(const std::string &s);
+	static SensorDataType convertString2SensorDataType(const std::string &s);
 
 private:
 	/// Reads a CSV-file with time series data and fills the container.
@@ -130,7 +128,7 @@ private:
 	TimeStepType::type _time_unit;
 	std::vector<std::string> _data_unit_string;
 	std::vector<std::size_t> _time_steps;
-	std::vector<SensorDataType::type> _vec_names;
+	std::vector<SensorDataType> _vec_names;
 	std::vector< std::vector<float>* > _data_vecs;
 
 };
