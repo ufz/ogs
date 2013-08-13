@@ -63,6 +63,18 @@ public:
         return (_nodes==nullptr) ? 0 : _nodes->size();
     }
 
+    /// Returns the global node id Node::getID() of i-th node in the mesh
+    /// subset.
+    /// Throws std::out_of_range exception if there are no nodes available.
+    std::size_t getNodeID(std::size_t const i) const
+    {
+        if (!_nodes)
+            throw std::out_of_range(
+                "In MeshSubset::getNodeID(): no nodes or nodes are empty.");
+
+        return (*_nodes)[i]->getID();
+    }
+
     /// return the number of registered elements
     std::size_t getNElements() const
     {
