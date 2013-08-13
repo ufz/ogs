@@ -93,19 +93,20 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 				<VecMatOnMeshLib::ComponentOrder::BY_COMPONENT>(vec_items));
 	}
 
-	// create a local assembler
-	typedef SteadyDiffusion2DExample1::LocalAssembler MyLocalAssembler;
-	typedef VecMatOnMeshLib::LinearSystemAssembler<
-	    TMat, TVec, MeshLib::Element, MyLocalAssembler> LocalAssembler;
+	// Local and global assemblers.
+	typedef SteadyDiffusion2DExample1::LocalAssembler LocalAssembler;
+	LocalAssembler local_assembler;
 
-	MyLocalAssembler local_2d_diff;
-	LocalAssembler assembler(*A.get(), *rhs.get(), local_2d_diff,
+	typedef VecMatOnMeshLib::LinearSystemAssembler<
+	    TMat, TVec, MeshLib::Element, LocalAssembler> GlobalAssembler;
+
+	GlobalAssembler assembler(*A.get(), *rhs.get(), local_assembler,
 	    map_ele_nodes2vec_entries);
 
-	// do assembly
-	SerialBuilder::ForEachType<MeshLib::Element,
-	                           LocalAssembler> vec1_global_assembly;
-	vec1_global_assembly(ex1.msh->getElements(), assembler);
+	// Call global assembler for each mesh element.
+	SerialBuilder::ForEachType<MeshLib::Element, GlobalAssembler>
+		(ex1.msh->getElements(), assembler);
+
 	//std::cout << "A=\n";
 	//A->write(std::cout);
 	//std::cout << "rhs=\n";
