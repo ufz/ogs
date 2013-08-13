@@ -81,12 +81,15 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	map_ele_nodes2vec_entries.reserve(all_eles.size());
 	for (auto e = all_eles.cbegin(); e != all_eles.cend(); ++e)
 	{
+		std::size_t const nnodes = (*e)->getNNodes();
+		std::size_t const mesh_id = ex1.msh->getID();
 		std::vector<VecMatOnMeshLib::Location> vec_items;
-		for (std::size_t j = 0; j < (*e)->getNNodes(); j++)
-			vec_items.push_back(VecMatOnMeshLib::Location(
-			    ex1.msh->getID(),
+		vec_items.reserve(nnodes);
+		for (std::size_t j = 0; j < nnodes; j++)
+			vec_items.emplace_back(
+			    mesh_id,
 			    VecMatOnMeshLib::MeshItemType::Node,
-			    (*e)->getNode(j)->getID()));
+			    (*e)->getNode(j)->getID());
 
 		map_ele_nodes2vec_entries.push_back(
 		    vec1_composition.getDataIDList
