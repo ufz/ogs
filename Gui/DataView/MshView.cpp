@@ -269,7 +269,7 @@ void MshView::addDIRECTSourceTerms()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
-	emit requestCondSetupDialog(grid->getName(), GeoLib::INVALID, 0, false);
+	emit requestCondSetupDialog(grid->getName(), GeoLib::GEOTYPE::INVALID, 0, false);
 }
 
 

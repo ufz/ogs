@@ -66,7 +66,7 @@ public:
 	 * Removes a geometry (points, polylines & surfaces) or just a specified subtree indicated by type.
 	 * Note that points cannot be deleted as long as other objects exist that depend on them.
 	 */
-	void removeGeoList(const std::string &name, GeoLib::GEOTYPE type = GeoLib::INVALID);
+	void removeGeoList(const std::string &name, GeoLib::GEOTYPE type = GeoLib::GEOTYPE::INVALID);
 
 	void setNameForItem(const std::string &name, GeoLib::GEOTYPE type, std::size_t id, std::string item_name);
 

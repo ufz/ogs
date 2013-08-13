@@ -23,7 +23,7 @@ namespace GeoLib {
  * \ingroup GeoLib
  */
 
-enum GEOTYPE {
+enum class GEOTYPE {
 	INVALID = 0,
 	POINT,     //!< POINT
 	POLYLINE,  //!< POLYLINE

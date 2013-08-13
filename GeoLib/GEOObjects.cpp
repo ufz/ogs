@@ -388,18 +388,18 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 	std::string name("");
 	switch (type)
 	{
-		case GeoLib::POINT:
+		case GeoLib::GEOTYPE::POINT:
 			this->getPointVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::POLYLINE:
+		case GeoLib::GEOTYPE::POLYLINE:
 			this->getPolylineVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::SURFACE:
+		case GeoLib::GEOTYPE::SURFACE:
 			this->getSurfaceVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::VOLUME:
-		case GeoLib::GEODOMAIN:
-		case GeoLib::INVALID:
+		case GeoLib::GEOTYPE::VOLUME:
+		case GeoLib::GEOTYPE::GEODOMAIN:
+		case GeoLib::GEOTYPE::INVALID:
 		default:
 			INFO("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
 			break;
@@ -555,11 +555,11 @@ const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,
                                                             GeoLib::GEOTYPE type,
                                                             const std::string &obj_name) const
 {
-	if (type == GeoLib::POINT)
+	if (type == GeoLib::GEOTYPE::POINT)
 		return this->getPointVecObj(geo_name)->getElementByName(obj_name);
-	else if (type == GeoLib::POLYLINE)
+	else if (type == GeoLib::GEOTYPE::POLYLINE)
 		return this->getPolylineVecObj(geo_name)->getElementByName(obj_name);
-	else if (type == GeoLib::SURFACE)
+	else if (type == GeoLib::GEOTYPE::SURFACE)
 		return this->getSurfaceVecObj(geo_name)->getElementByName(obj_name);
 	return NULL;
 }

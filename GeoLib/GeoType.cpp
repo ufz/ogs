@@ -18,21 +18,21 @@ namespace GeoLib {
 
 GEOTYPE convertGeoType (const std::string& geo_type_str)
 {
-	if (geo_type_str.compare ("POINT") == 0) return POINT;
-	if (geo_type_str.compare ("POLYLINE") == 0) return POLYLINE;
-	if (geo_type_str.compare ("SURFACE") == 0) return SURFACE;
-	if (geo_type_str.compare ("VOLUME") == 0) return VOLUME;
-	if (geo_type_str.compare ("GEODOMAIN") == 0) return GEODOMAIN;
-	return INVALID;
+	if (geo_type_str.compare ("POINT") == 0) return GEOTYPE::POINT;
+	if (geo_type_str.compare ("POLYLINE") == 0) return GEOTYPE::POLYLINE;
+	if (geo_type_str.compare ("SURFACE") == 0) return GEOTYPE::SURFACE;
+	if (geo_type_str.compare ("VOLUME") == 0) return GEOTYPE::VOLUME;
+	if (geo_type_str.compare ("GEODOMAIN") == 0) return GEOTYPE::GEODOMAIN;
+	return GEOTYPE::INVALID;
 }
 
 std::string convertGeoTypeToString (GEOTYPE geo_type)
 {
-	if (geo_type == POINT) return "POINT";
-	if (geo_type == POLYLINE) return "POLYLINE";
-	if (geo_type == SURFACE) return "SURFACE";
-	if (geo_type == VOLUME) return "VOLUME";
-	if (geo_type == GEODOMAIN) return "GEODOMAIN";
+	if (geo_type == GEOTYPE::POINT) return "POINT";
+	if (geo_type == GEOTYPE::POLYLINE) return "POLYLINE";
+	if (geo_type == GEOTYPE::SURFACE) return "SURFACE";
+	if (geo_type == GEOTYPE::VOLUME) return "VOLUME";
+	if (geo_type == GEOTYPE::GEODOMAIN) return "GEODOMAIN";
 	return "INVALID";
 }
 

@@ -1104,7 +1104,7 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, bool on_points)
 {
 	std::string geo_name("");
-	if (object_type != GeoLib::INVALID)
+	if (object_type != GeoLib::GEOTYPE::INVALID)
 		geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
 	else
 		geo_name = geometry_name; // in this case this is actually the mesh name
@@ -1122,7 +1122,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 		if (on_points)
 			this->_geoModels->addNameForObjectPoints(geometry_name, object_type, geo_name, geometry_name);
 
-		if (object_type != GeoLib::INVALID)
+		if (object_type != GeoLib::GEOTYPE::INVALID)
 		{
 			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
 			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));

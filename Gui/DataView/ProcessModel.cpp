@@ -112,7 +112,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 void ProcessModel::addCondition(FEMCondition* condition)
 {
-	bool is_domain = (condition->getGeomType() == GeoLib::GEODOMAIN) ? true : false;
+	bool is_domain = (condition->getGeomType() == GeoLib::GEOTYPE::GEODOMAIN) ? true : false;
 	// HACK: direct source terms are not domain conditions but they also don't contain geo-object-names
 	if (condition->getProcessDistributionType() == FiniteElement::DIRECT)
 		is_domain = true;
@@ -218,13 +218,13 @@ int ProcessModel::getGEOIndex(const std::string &geo_name, GeoLib::GEOTYPE type,
 {
 	bool exists(false);
 	size_t idx(0);
-	if (type == GeoLib::POINT)
+	if (type == GeoLib::GEOTYPE::POINT)
 		exists = this->_project.getGEOObjects()->getPointVecObj(geo_name)->getElementIDByName(
 				obj_name, idx);
-	else if (type == GeoLib::POLYLINE)
+	else if (type == GeoLib::GEOTYPE::POLYLINE)
 		exists = this->_project.getGEOObjects()->getPolylineVecObj(geo_name)->getElementIDByName(
 				obj_name, idx);
-	else if (type == GeoLib::SURFACE)
+	else if (type == GeoLib::GEOTYPE::SURFACE)
 		exists = this->_project.getGEOObjects()->getSurfaceVecObj(geo_name)->getElementIDByName(
 				obj_name, idx);
 

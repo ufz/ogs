@@ -19,7 +19,7 @@
 #include "GeoInfo.h"
 
 GeoInfo::GeoInfo() :
-	_geo_type(GeoLib::INVALID), _geo_obj(NULL)
+	_geo_type(GeoLib::GEOTYPE::INVALID), _geo_obj(NULL)
 {}
 
 GeoInfo::GeoInfo(GeoLib::GEOTYPE geo_type, const GeoLib::GeoObject* geo_obj) :
@@ -38,15 +38,15 @@ std::string GeoInfo::getGeomTypeAsString () const
 {
 	switch (_geo_type)
 	{
-	case GeoLib::POINT:
+	case GeoLib::GEOTYPE::POINT:
 		return "POINT";
-	case GeoLib::POLYLINE:
+	case GeoLib::GEOTYPE::POLYLINE:
 		return "POLYLINE";
-	case GeoLib::SURFACE:
+	case GeoLib::GEOTYPE::SURFACE:
 		return "SURFACE";
-	case GeoLib::VOLUME:
+	case GeoLib::GEOTYPE::VOLUME:
 		return "VOLUME";
-	case GeoLib::GEODOMAIN:
+	case GeoLib::GEOTYPE::GEODOMAIN:
 		return "DOMAIN";
 	default:
 		return "";
