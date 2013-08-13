@@ -59,7 +59,7 @@ public:
     }
 
     /// return the number of related meshes
-    unsigned getNMeshes() const
+    std::size_t getNMeshes() const
     {
         return _mesh_subsets.size();
     }
