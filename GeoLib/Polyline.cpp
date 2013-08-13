@@ -329,7 +329,7 @@ void Polyline::closePolyline()
 	}
 }
 
-Location::type Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const
+Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const
 {
 	assert (k < _ply_pnt_ids.size() - 1);
 
