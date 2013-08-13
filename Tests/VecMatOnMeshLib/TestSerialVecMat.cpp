@@ -33,7 +33,6 @@
 #include "VecMatOnMeshLib/MeshItemWiseTask/LocalToGlobalIndexMap.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
-#include "VecMatOnMeshLib/Serial/ForEachMeshItem.h"
 #include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 #include "VecMatOnMeshLib/VecMeshItems/MeshItem.h"
@@ -156,8 +155,7 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	    *vec_left_nodes_x_coord.get(), extractX, map_node2vec_entry);
 
 	// do assembly for each selected node
-	SerialBuilder::ForEachType<MeshLib::Node, SetNodeXToVec> vec1_global_assembly;
-	vec1_global_assembly(vec_selected_nodes, vec1Assembler);
+	SerialBuilder::forEachMeshItem(vec_selected_nodes, vec1Assembler);
 
 	ASSERT_EQ(0.0, (*vec_left_nodes_x_coord)[0]);
 	ASSERT_EQ(0.5, (*vec_left_nodes_x_coord)[5]);
@@ -198,9 +196,7 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	SetNodeDistXToMat matAssembler(*mat.get(), nodeDist, mat_data_pos);
 
 	// do assembly for each selected element
-	SerialBuilder::ForEachType<MeshLib::Element,
-	                           SetNodeDistXToMat> mat_global_assembly;
-	mat_global_assembly(vec_selected_eles, matAssembler);
+	SerialBuilder::forEachMeshItem(vec_selected_eles, matAssembler);
 
 	ASSERT_NEAR(0.0, (*mat)(0,0), 1e-6);
 	ASSERT_NEAR(0.1, (*mat)(0,1), 1e-6);

@@ -23,7 +23,6 @@
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 
 #include "../VecMeshItems/MeshComponentMap.h"
-#include "ForEachMeshItem.h"
 
 namespace VecMatOnMeshLib
 {
@@ -37,8 +36,21 @@ class SerialVectorMatrixBuilder
 public:
     typedef VectorType_ VectorType;
     typedef MatrixType_ MatrixType;
+
+    /// Executes task(item, index) for each item in input vector.
+    /// Return values of the task call are ignored.
+    ///
+    /// \param vec_items   a vector of mesh item pointers
+    /// \param task        a function that accepts a mesh item pointer
+    ///                    and an index as arguments
     template <class T_MESHITEM, class T_TASK>
-    using ForEachType = ForEachMeshItem<T_MESHITEM, T_TASK>;
+    static
+    void
+    forEachMeshItem(const std::vector<T_MESHITEM*> &vec_items, T_TASK &task)
+    {
+        for (std::size_t i=0; i<vec_items.size(); i++)
+            task(vec_items[i], i);
+    }
 
 public:
     VectorType* createVector(const MeshComponentMap &dist_layout)
