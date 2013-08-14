@@ -161,12 +161,11 @@ void Mesh::calcEdgeLengthRange()
 
 void Mesh::setElementNeighbors()
 {
-	const size_t nElements = _elements.size();
 	std::vector<Element*> neighbors;
-	for (unsigned m(0); m<nElements; ++m)
+	for (auto it = _elements.begin(); it != _elements.end(); ++it)
 	{
 		// create vector with all elements connected to current element (includes lots of doubles!)
-		Element *const element (_elements[m]);
+		Element *const element = *it;
 
 		const size_t nNodes (element->getNNodes());
 		for (unsigned n(0); n<nNodes; ++n)
