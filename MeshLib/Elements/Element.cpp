@@ -33,6 +33,14 @@ Element::~Element()
 	delete [] this->_neighbors;
 }
 
+void Element::setNeighbor(Element* neighbor, unsigned const face_id)
+{
+	if (neighbor == this)
+		return;
+
+	this->_neighbors[face_id] = neighbor;
+}
+
 unsigned Element::addNeighbor(Element* e)
 {
 	if (e == this ||

@@ -37,6 +37,8 @@ public:
 	/// Compute the minimum and maximum squared edge length for this element
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
+	void setNeighbor(Element* neighbor, unsigned const face_id);
+
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
