@@ -174,8 +174,10 @@ void Mesh::setElementNeighbors()
 			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
 			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
 		}
+			std::sort(neighbors.begin(), neighbors.end());
+			auto const neighbors_new_end = std::unique(neighbors.begin(), neighbors.end());
 
-		const unsigned nNeighbors ( neighbors.size() );
+			const unsigned nNeighbors ( std::distance(neighbors.begin(), neighbors_new_end));
 
 		for (unsigned i(0); i<nNeighbors; ++i)
 		{
