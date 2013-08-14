@@ -40,9 +40,10 @@ public:
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
-	 * neighbour-list and true is returned. Otherwise false is returned.
+	 * neighbour-list and the face id of the neighbour connected to this element
+	 * is returned. Otherwise the maximum value of the value type is returned.
 	 */
-	bool addNeighbor(Element* e);
+	unsigned addNeighbor(Element* e);
 
 	// Calculates the center of gravity for the mesh element
 	MeshLib::Node getCenterOfGravity() const;

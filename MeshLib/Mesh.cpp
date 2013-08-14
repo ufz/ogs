@@ -181,6 +181,7 @@ void Mesh::setElementNeighbors()
 
 		for (unsigned i(0); i<nNeighbors; ++i)
 		{
+			unsigned const opposite_face_id = element->addNeighbor(neighbors[i]);
 			if (element->addNeighbor(neighbors[i]))
 			{
 				neighbors[i]->addNeighbor(element);
