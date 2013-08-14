@@ -12,6 +12,8 @@
  *
  */
 
+#include "boost/optional.hpp"
+
 #include "Mesh.h"
 
 #include "Node.h"
@@ -178,10 +180,10 @@ void Mesh::setElementNeighbors()
 
 		for (auto neighbor = neighbors.begin(); neighbor != neighbors_new_end; ++neighbor)
 		{
-			unsigned const opposite_face_id = element->addNeighbor(*neighbor);
-			if (opposite_face_id != unsigned(-1))
+			boost::optional<unsigned> const opposite_face_id = element->addNeighbor(*neighbor);
+			if (opposite_face_id)
 			{
-				(*neighbor)->setNeighbor(element, opposite_face_id);
+				(*neighbor)->setNeighbor(element, *opposite_face_id);
 			}
 		}
 		neighbors.clear();

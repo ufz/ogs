@@ -17,6 +17,8 @@
 
 #include <vector>
 #include <limits>
+#include <boost/optional.hpp>
+
 #include "MeshEnums.h"
 #include "Mesh.h"
 #include "MeshQuality/ElementErrorCode.h"
@@ -45,7 +47,7 @@ public:
 	 * neighbour-list and the face id of the neighbour connected to this element
 	 * is returned. Otherwise the maximum value of the value type is returned.
 	 */
-	unsigned addNeighbor(Element* e);
+	boost::optional<unsigned> addNeighbor(Element* e);
 
 	// Calculates the center of gravity for the mesh element
 	MeshLib::Node getCenterOfGravity() const;
