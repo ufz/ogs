@@ -176,14 +176,12 @@ void Mesh::setElementNeighbors()
 		std::sort(neighbors.begin(), neighbors.end());
 		auto const neighbors_new_end = std::unique(neighbors.begin(), neighbors.end());
 
-		const unsigned nNeighbors ( std::distance(neighbors.begin(), neighbors_new_end));
-
-		for (unsigned i(0); i<nNeighbors; ++i)
+		for (auto neighbor = neighbors.begin(); neighbor != neighbors_new_end; ++neighbor)
 		{
-			unsigned const opposite_face_id = element->addNeighbor(neighbors[i]);
+			unsigned const opposite_face_id = element->addNeighbor(*neighbor);
 			if (opposite_face_id != unsigned(-1))
 			{
-				neighbors[i]->setNeighbor(element, opposite_face_id);
+				(*neighbor)->setNeighbor(element, opposite_face_id);
 			}
 		}
 		neighbors.clear();
