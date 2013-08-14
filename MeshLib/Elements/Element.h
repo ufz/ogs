@@ -179,6 +179,9 @@ public:
 	 */
 	virtual double computeVolume() = 0;
 
+	/// Returns the ID of a face given an array of nodes.
+	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
+	
 	/**
 	 * Checks if the node order of an element is correct by testing surface normals.
 	 */
@@ -192,12 +195,8 @@ protected:
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
-	/// Returns the ID of a face given an array of nodes.
-	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
-
 	/// Sets the element ID.
 	virtual void setID(std::size_t id) { this->_id = id; }
-
 
 	Node** _nodes;
 	std::size_t _id;
