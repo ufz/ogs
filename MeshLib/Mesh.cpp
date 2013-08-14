@@ -173,15 +173,15 @@ void Mesh::setElementNeighbors()
 			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
 			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
 		}
-			std::sort(neighbors.begin(), neighbors.end());
-			auto const neighbors_new_end = std::unique(neighbors.begin(), neighbors.end());
+		std::sort(neighbors.begin(), neighbors.end());
+		auto const neighbors_new_end = std::unique(neighbors.begin(), neighbors.end());
 
-			const unsigned nNeighbors ( std::distance(neighbors.begin(), neighbors_new_end));
+		const unsigned nNeighbors ( std::distance(neighbors.begin(), neighbors_new_end));
 
 		for (unsigned i(0); i<nNeighbors; ++i)
 		{
 			unsigned const opposite_face_id = element->addNeighbor(neighbors[i]);
-			if (element->addNeighbor(neighbors[i]))
+			if (opposite_face_id != unsigned(-1))
 			{
 				neighbors[i]->setNeighbor(element, opposite_face_id);
 			}
