@@ -48,14 +48,8 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 		e->getDimension() != this->getDimension())
 		return boost::optional<unsigned>();
 
-	unsigned nNeighbors (this->getNNeighbors());
-	for (unsigned n=0; n<nNeighbors; n++)
-	{
-		if (this->_neighbors[n] == e)
-			return boost::optional<unsigned>();
-		if (this->_neighbors[n] == nullptr)
-			break;
-	}
+	if (this->hasNeighbor(e))
+		return boost::optional<unsigned>();
 
 	Node* face_nodes[3];
 	const unsigned nNodes (this->getNNodes());
