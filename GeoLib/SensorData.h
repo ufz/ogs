@@ -41,19 +41,17 @@ enum class SensorDataType
  * in the format 'dd.mm.yyyy' as well as 'DATETIME' in the format
  * 'dd.mm.yyyy.hh.mm.ss'.
  */
-struct TimeStepType
+enum class TimeStepType
 {
-	enum type {
-		NONE = 0,
-		SECONDS,
-		MINUTES,
-		DAYS,
-		WEEKS,
-		MONTHS,
-		YEARS,
-		DATE,	// time series is given as a vector of dates
-		DATETIME // time series is given as a vector of date + time
-	};
+	NONE = 0,
+	SECONDS,
+	MINUTES,
+	DAYS,
+	WEEKS,
+	MONTHS,
+	YEARS,
+	DATE,	// time series is given as a vector of dates
+	DATETIME // time series is given as a vector of date + time
 };
 
 /**
@@ -104,10 +102,10 @@ public:
 	std::size_t getStepSize() const { return _step_size; }
 
 	/// Allows to set a unit for the time steps
-	void setTimeUnit(TimeStepType::type t) { _time_unit = t; }
+	void setTimeUnit(TimeStepType t) { _time_unit = t; }
 
 	/// Returns the unit the time steps
-	TimeStepType::type getTimeUnit() const { return _time_unit; }
+	TimeStepType getTimeUnit() const { return _time_unit; }
 
 	/// Returns the data unit of the given time series
 	std::string getDataUnit(SensorDataType t) const;
@@ -125,7 +123,7 @@ private:
 	std::size_t _start;
 	std::size_t _end;
 	std::size_t _step_size;
-	TimeStepType::type _time_unit;
+	TimeStepType _time_unit;
 	std::vector<std::string> _data_unit_string;
 	std::vector<std::size_t> _time_steps;
 	std::vector<SensorDataType> _vec_names;
