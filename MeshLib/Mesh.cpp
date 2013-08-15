@@ -128,13 +128,11 @@ void Mesh::setDimension()
 
 void Mesh::setElementsConnectedToNodes()
 {
-	const size_t nElements (_elements.size());
-	for (unsigned i=0; i<nElements; ++i)
+	for (auto e = _elements.begin(); e != _elements.end(); ++e)
 	{
-		MeshLib::Element* element = _elements[i];
-		const unsigned nNodes (element->getNNodes());
+		const unsigned nNodes ((*e)->getNNodes());
 		for (unsigned j=0; j<nNodes; ++j)
-			element->_nodes[j]->addElement(element);
+			(*e)->_nodes[j]->addElement(*e);
 	}
 }
 
