@@ -1171,8 +1171,8 @@ void MainWindow::showMergeGeometriesDialog()
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 {
 	MshQualitySelectionDialog dlg(mshSource);
-	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource *, MshQualityType::type)),
-	        _vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource *, MshQualityType::type)));
+	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource *, MeshQualityType)),
+	        _vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource *, MeshQualityType)));
 	dlg.exec();
 }
 

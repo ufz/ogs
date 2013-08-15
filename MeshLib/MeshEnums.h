@@ -59,15 +59,13 @@ enum class CellType
 /**
  * \brief Describes a mesh quality criteria.
  */
-struct MshQualityType
+enum class MeshQualityType
 {
-	enum type {
-		INVALID = 0,
-		AREA,
-		VOLUME,
-		EDGERATIO,
-		EQUIANGLESKEW
-	};
+	INVALID = 0,
+	AREA,
+	VOLUME,
+	EDGERATIO,
+	EQUIANGLESKEW
 };
 
 /// Given a MeshElemType this returns the appropriate string.
@@ -76,6 +74,6 @@ const std::string MeshElemType2String(const MeshElemType t);
 /// Given a string describing an element type this returns the corresponding MeshElemType.
 MeshElemType String2MeshElemType(const std::string &s);
 
-const std::string MshQualityType2String(const MshQualityType::type t);
+const std::string MeshQualityType2String(const MeshQualityType t);
 
 #endif //MESHENUMS_H

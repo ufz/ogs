@@ -40,7 +40,7 @@ private slots:
 	void reject();
 
 signals:
-	void measureSelected(VtkMeshSource*, MshQualityType::type);
+	void measureSelected(VtkMeshSource*, MeshQualityType);
 };
 
 #endif //MSHQUALITYSELECTIONDIALOG_H
