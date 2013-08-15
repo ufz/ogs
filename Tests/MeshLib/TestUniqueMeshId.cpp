@@ -15,25 +15,30 @@ using namespace MeshLib;
 
 TEST(MeshLib, UniqueMeshId)
 {
-	// Create first mesh
+	// Create first mesh and get the current counter value.
 	Mesh m0("first", std::vector<Node*>(), std::vector<Element*>());
-	ASSERT_EQ(std::size_t(1), m0.getID());
+	std::size_t const counter_value = m0.getID();
 
+	EXPECT_GT(counter_value, 0);
+
+	//
+	// Test mesh counter increments.
+	//
 	Mesh* m1 = new Mesh("second", std::vector<Node*>(), std::vector<Element*>());
-	ASSERT_EQ(std::size_t(2), m1->getID());
+	ASSERT_EQ(counter_value + std::size_t(1), m1->getID());
 
 	Mesh m2("third", std::vector<Node*>(), std::vector<Element*>());
-	ASSERT_EQ(std::size_t(3), m2.getID());
+	ASSERT_EQ(counter_value + std::size_t(2), m2.getID());
 
 	delete m1;
-	ASSERT_EQ(std::size_t(3), m2.getID());
+	ASSERT_EQ(counter_value + std::size_t(2), m2.getID());
 
 	Mesh m3("fourth", std::vector<Node*>(), std::vector<Element*>());
-	ASSERT_EQ(std::size_t(4), m3.getID());
+	ASSERT_EQ(counter_value + std::size_t(3), m3.getID());
 
 	// Copy mesh keeps also increments the counter.
 	Mesh m4(m0);
-	ASSERT_EQ(std::size_t(5), m4.getID());
+	ASSERT_EQ(counter_value + std::size_t(4), m4.getID());
 
 }
 
