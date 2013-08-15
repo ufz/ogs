@@ -59,15 +59,15 @@ void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, std:
 	SHPHandle hSHP = SHPOpen(filename.c_str(), "rb");
 	SHPGetInfo(hSHP, &numberOfElements, &shapeType, padfMinBound, padfMaxBound);
 
-	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::POINT))
+	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::OGSType::POINT))
 		readPoints(hSHP, numberOfElements, listName);
-	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::STATION))
+	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::OGSType::STATION))
 		readStations(hSHP, numberOfElements, listName);
 	if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) && (choice
-	                == SHPInterface::POLYLINE))
+	                == SHPInterface::OGSType::POLYLINE))
 		readPolylines(hSHP, numberOfElements, listName);
 	if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) && (choice
-	                == SHPInterface::POLYGON))
+	                == SHPInterface::OGSType::POLYGON))
 		readPolygons(hSHP, numberOfElements, listName);
 }
 
