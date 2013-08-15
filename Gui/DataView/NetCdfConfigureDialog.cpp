@@ -369,7 +369,7 @@ void NetCdfConfigureDialog::createDataObject()
 	if (this->radioMesh->isChecked())
 	{
 		MeshElemType meshElemType = MeshElemType::QUAD;
-		UseIntensityAs::type useIntensity = UseIntensityAs::MATERIAL;
+		UseIntensityAs useIntensity = UseIntensityAs::MATERIAL;
 		if ((comboBoxMeshElemType->currentIndex()) == 1) 
 		{
 			meshElemType = MeshElemType::TRIANGLE;

@@ -33,7 +33,7 @@ MeshFromRasterDialog::~MeshFromRasterDialog()
 
 void MeshFromRasterDialog::accept()
 {
-	UseIntensityAs::type i_type(UseIntensityAs::ELEVATION);
+	UseIntensityAs i_type(UseIntensityAs::ELEVATION);
 	if (this->materialButton->isChecked()) i_type = UseIntensityAs::MATERIAL;
 	else if (this->ignoreButton->isChecked()) i_type = UseIntensityAs::NONE;
 

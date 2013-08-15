@@ -44,7 +44,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const double origin[3],
                                                      const double scalingFactor,
 													 MeshElemType elem_type,
-													 UseIntensityAs::type intensity_type)
+													 UseIntensityAs intensity_type)
 {
 	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
@@ -115,7 +115,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
 													 const size_t imgWidth,
 													 const double &scalingFactor,
 													 MeshElemType elem_type,
-													UseIntensityAs::type intensity_type)
+													UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -172,7 +172,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 												  const size_t &imgWidth,
                                                   const double &scalingFactor,
 										 		  MeshElemType elem_type,
-												  UseIntensityAs::type intensity_type)
+												  UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;

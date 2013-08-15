@@ -42,7 +42,7 @@ private slots:
 	void reject();
 
 signals:
-	void setMeshParameters(QString, MeshElemType, UseIntensityAs::type);
+	void setMeshParameters(QString, MeshElemType, UseIntensityAs);
 
 };
 
