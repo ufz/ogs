@@ -24,20 +24,20 @@
 namespace VecMatOnMeshLib
 {
 
-MeshComponentMap::MeshComponentMap(const std::vector<MeshLib::MeshSubsets*> &domains, ComponentOrder order)
+MeshComponentMap::MeshComponentMap(const std::vector<MeshLib::MeshSubsets*> &components, ComponentOrder order)
 {
     // construct dict (and here we number global_index by component type)
     std::size_t global_index = 0;
-    for (auto itrComp = domains.begin(); itrComp!=domains.end(); ++itrComp) {
-        auto comp_id = distance(domains.begin(),itrComp);
-        for (unsigned i=0; i<(*itrComp)->getNMeshes(); i++) {
-            auto mesh_items = (*itrComp)->getMeshSubset(i);
-            std::size_t mesh_id = mesh_items.getMeshID();
+    for (auto component = components.begin(); component != components.end(); ++component) {
+        auto comp_id = std::distance(components.begin(), component);
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*component)->size(); mesh_subset_index++) {
+			MeshLib::MeshSubset const& mesh_subset = (*component)->getMeshSubset(mesh_subset_index);
+            std::size_t mesh_id = mesh_subset.getMeshID();
             // mesh items are ordered first by node, cell, ....
-            for (std::size_t j=0; j<mesh_items.getNNodes(); j++) {
+            for (std::size_t j=0; j<mesh_subset.getNNodes(); j++) {
                 _dict.insert(MeshitemDataPosition(Location(mesh_id, MeshLib::MeshItemType::Node, j), comp_id, global_index++));
             }
-            for (std::size_t j=0; j<mesh_items.getNElements(); j++) {
+            for (std::size_t j=0; j<mesh_subset.getNElements(); j++) {
                 _dict.insert(MeshitemDataPosition(Location(mesh_id, MeshLib::MeshItemType::Cell, j), comp_id, global_index++));
             }
         }
