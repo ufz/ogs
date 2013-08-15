@@ -22,7 +22,7 @@
 class OGSFilterInfo
 {
 public:
-	enum VtkTargetObject
+	enum class VtkTargetObject
 	{
 		POLYDATA         = 0,
 		UNSTRUCTUREDGRID = 1,
