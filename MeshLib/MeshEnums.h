@@ -20,18 +20,16 @@
 /**
  * \brief Types of mesh elements supported by OpenGeoSys.
  */
-struct MshElemType
+enum class MeshElemType
 {
-	enum type {
-		INVALID,
-		EDGE,
-		QUAD,
-		HEXAHEDRON,
-		TRIANGLE,
-		TETRAHEDRON,
-		PRISM,
-		PYRAMID
-	};
+	INVALID,
+	EDGE,
+	QUAD,
+	HEXAHEDRON,
+	TRIANGLE,
+	TETRAHEDRON,
+	PRISM,
+	PYRAMID
 };
 
 /**
@@ -74,11 +72,11 @@ struct MshQualityType
 	};
 };
 
-/// Given a MshElemType this returns the appropriate string.
-const std::string MshElemType2String(const MshElemType::type t);
+/// Given a MeshElemType this returns the appropriate string.
+const std::string MeshElemType2String(const MeshElemType t);
 
-/// Given a string describing an element type this returns the corresponding MshElemType.
-MshElemType::type String2MshElemType(const std::string &s);
+/// Given a string describing an element type this returns the corresponding MeshElemType.
+MeshElemType String2MeshElemType(const std::string &s);
 
 const std::string MshQualityType2String(const MshQualityType::type t);
 

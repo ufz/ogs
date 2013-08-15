@@ -70,9 +70,9 @@ public:
 
 	/**
 	 * Method returns the type of the element. In this case QUAD will be returned.
-	 * @return MshElemType::QUAD
+	 * @return MeshElemType::QUAD
 	 */
-	virtual MshElemType::type getGeomType() const { return MshElemType::QUAD; }
+	virtual MeshElemType getGeomType() const { return MeshElemType::QUAD; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.

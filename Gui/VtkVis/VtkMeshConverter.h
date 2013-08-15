@@ -49,7 +49,7 @@ public:
 	static MeshLib::Mesh* convertImgToMesh(vtkImageData* img,
 									      const double origin[3],
 	                                      const double scalingFactor,
-										  MshElemType::type elem_type,
+										  MeshElemType elem_type,
 										  UseIntensityAs::type intensity_type);
 
 	/**
@@ -62,7 +62,7 @@ public:
 										  const std::size_t imgHeight,
 										  const std::size_t imgWidth,
 	                                      const double &scalingFactor,
-										  MshElemType::type elem_type,
+										  MeshElemType elem_type,
 										  UseIntensityAs::type intensity_type);
 
 	/// Converts a vtkUnstructuredGrid object to a Mesh
@@ -77,7 +77,7 @@ private:
 									   const std::size_t &imgHeight,
 									   const std::size_t &imgWidth,
 									   const double &scalingFactor,
-									   MshElemType::type elem_type,
+									   MeshElemType elem_type,
 									   UseIntensityAs::type intensity_type);
 
 	static double getExistingValue(const double* img, std::size_t length);

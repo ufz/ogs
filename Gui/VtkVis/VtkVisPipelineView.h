@@ -75,7 +75,7 @@ private slots:
 	void addPipelineFilterItem();
 
 	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
-	void constructMeshFromImage(QString msh_name, MshElemType::type element_type, UseIntensityAs::type intensity_type);
+	void constructMeshFromImage(QString msh_name, MeshElemType element_type, UseIntensityAs::type intensity_type);
 
 	/// Calls the dialog to
 	void showImageToMeshConversionDialog();

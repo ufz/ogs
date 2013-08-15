@@ -116,9 +116,9 @@ public:
 	unsigned getNodeIndex(unsigned i) const;
 
 	/**
-	 * Get the type of the mesh element in geometric context (as a MshElemType-enum).
+	 * Get the type of the mesh element in geometric context (as a MeshElemType-enum).
 	 */
-	virtual MshElemType::type getGeomType() const = 0;
+	virtual MeshElemType getGeomType() const = 0;
 
 	/**
 	 * Get the type of the element in context of the finite element method.
@@ -161,7 +161,7 @@ public:
 	 * This method tries to create a new element of an appropriate type. The
 	 * value of the attribute _value is carried over. In contrast to this the
 	 * neighbor information is not carried over.
-	 * @return an element of a different element type (MshElemType) or NULL
+	 * @return an element of a different element type (MeshElemType) or NULL
 	 */
 	virtual Element* reviseElement() const = 0;
 

@@ -73,9 +73,9 @@ public:
 
 	/**
 	 * Method returns the type of the element. In this case TRIANGLE will be returned.
-	 * @return MshElemType::TRIANGLE
+	 * @return MeshElemType::TRIANGLE
 	 */
-	virtual MshElemType::type getGeomType() const { return MshElemType::TRIANGLE; }
+	virtual MeshElemType getGeomType() const { return MeshElemType::TRIANGLE; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.

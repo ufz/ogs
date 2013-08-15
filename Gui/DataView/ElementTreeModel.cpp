@@ -55,7 +55,7 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 		_rootItem->appendChild(elemItem);
 
 		QList<QVariant> typeData;
-		typeData << "Element Type: " << QString::fromStdString(MshElemType2String(elem->getGeomType()));
+		typeData << "Element Type: " << QString::fromStdString(MeshElemType2String(elem->getGeomType()));
 		TreeItem* typeItem = new TreeItem(typeData, elemItem);
 		elemItem->appendChild(typeItem);
 

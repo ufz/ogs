@@ -140,30 +140,30 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		switch (elem->getGeomType())
 		{
-		case MshElemType::EDGE:
+		case MeshElemType::EDGE:
 			type = 3;
 			break;
-		case MshElemType::TRIANGLE:
+		case MeshElemType::TRIANGLE:
 			type = 5;
 			break;
-		case MshElemType::QUAD:
+		case MeshElemType::QUAD:
 			type = 9;
 			break;
-		case MshElemType::HEXAHEDRON:
+		case MeshElemType::HEXAHEDRON:
 			type = 12;
 			break;
-		case MshElemType::TETRAHEDRON:
+		case MeshElemType::TETRAHEDRON:
 			type = 10;
 			break;
-		case MshElemType::PRISM:
+		case MeshElemType::PRISM:
 			type = 13;
 			break;
-		case MshElemType::PYRAMID:
+		case MeshElemType::PYRAMID:
 			type = 14;
 			break;
 		default: // if none of the above can be applied
 			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
-					MshElemType2String(elem->getGeomType()).c_str());
+					MeshElemType2String(elem->getGeomType()).c_str());
 			return 0;
 		}
 

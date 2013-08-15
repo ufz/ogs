@@ -34,29 +34,29 @@ void MeshQualityShortestLongestRatio::check()
 		const Element* elem (elements[k]);
 		switch (elem->getGeomType())
 		{
-		case MshElemType::EDGE:
+		case MeshElemType::EDGE:
 			_mesh_quality_measure[k] = 1.0;
 			break;
-		case MshElemType::TRIANGLE: {
+		case MeshElemType::TRIANGLE: {
 			_mesh_quality_measure[k] = checkTriangle(elem->getNode(0), elem->getNode(1), elem->getNode(2));
 			break;
 		}
-		case MshElemType::QUAD: {
+		case MeshElemType::QUAD: {
 			_mesh_quality_measure[k] = checkQuad(elem->getNode(0), elem->getNode(1), elem->getNode(2), elem->getNode(3));
 			break;
 		}
-		case MshElemType::TETRAHEDRON: {
+		case MeshElemType::TETRAHEDRON: {
 			_mesh_quality_measure[k] = checkTetrahedron(elem->getNode(0), elem->getNode(1), elem->getNode(2), elem->getNode(3));
 			break;
 		}
-		case MshElemType::PRISM: {
+		case MeshElemType::PRISM: {
 			std::vector<const GeoLib::Point*> pnts;
 			for (size_t j(0); j < 6; j++)
 				pnts.push_back(elem->getNode(j));
 			_mesh_quality_measure[k] = checkPrism(pnts);
 			break;
 		}
-		case MshElemType::HEXAHEDRON: {
+		case MeshElemType::HEXAHEDRON: {
 			std::vector<const GeoLib::Point*> pnts;
 			for (size_t j(0); j < 8; j++)
 				pnts.push_back(elem->getNode(j));
@@ -65,7 +65,7 @@ void MeshQualityShortestLongestRatio::check()
 		}
 		default:
 			ERR ("MeshQualityShortestLongestRatio::check () check for element type %s not implemented.",
-			     MshElemType2String(elem->getGeomType()).c_str());
+			     MeshElemType2String(elem->getGeomType()).c_str());
 		}
 	}
 }

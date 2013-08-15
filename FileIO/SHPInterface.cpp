@@ -238,7 +238,7 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 		const MeshLib::Element* e (mesh.getElement(i));
 
 		// ignore all elements except triangles and quads
-		if ((e->getGeomType() == MshElemType::TRIANGLE) || (e->getGeomType() == MshElemType::QUAD))
+		if ((e->getGeomType() == MeshElemType::TRIANGLE) || (e->getGeomType() == MeshElemType::QUAD))
 		{
 			// write element ID and material group to DBF-file
 			DBFWriteIntegerAttribute(hDBF, polygon_id, elem_id_field, i);

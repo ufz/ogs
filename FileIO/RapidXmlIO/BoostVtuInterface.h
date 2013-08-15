@@ -73,7 +73,7 @@ protected:
 private:
 
 	/// Returns the ID used by VTK for a given cell type (e.g. "5" for a triangle, etc.)
-	unsigned getVTKElementID(MshElemType::type type) const;
+	unsigned getVTKElementID(MeshElemType type) const;
 
 	/// Check if the root node really specifies an XML file
 	static bool isVTKFile(const boost::property_tree::ptree &vtk_root);

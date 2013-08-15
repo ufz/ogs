@@ -71,18 +71,18 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 	const std::vector<MeshLib::Element*> &elems = mesh->getElements();
 	const size_t nElems (elems.size());
 	QString elem_type_string("");
-	MshElemType::type elem_type(MshElemType::INVALID);
+	MeshElemType elem_type(MeshElemType::INVALID);
 
 	for (size_t i = 0; i < nElems; i++)
 	{
 		const MeshLib::Element* current_element (elems[i]);
-		MshElemType::type t (current_element->getGeomType());
+		MeshElemType t (current_element->getGeomType());
 		QList<QVariant> elemData;
 		elemData.reserve(3);
 		if (t != elem_type)
 		{
 			elem_type = t;
-			elem_type_string = QString::fromStdString(MshElemType2String(t));
+			elem_type_string = QString::fromStdString(MeshElemType2String(t));
 		}
 
 		QString nodestxt(QString::number(current_element->getNode(0)->getID()));

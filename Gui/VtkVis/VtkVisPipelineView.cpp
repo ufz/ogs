@@ -196,12 +196,12 @@ void VtkVisPipelineView::addPipelineFilterItem()
 void VtkVisPipelineView::showImageToMeshConversionDialog()
 {
 	MeshFromRasterDialog* dlg = new MeshFromRasterDialog();
-	connect(dlg, SIGNAL(setMeshParameters(QString, MshElemType::type, UseIntensityAs::type)),
-		    this, SLOT(constructMeshFromImage(QString, MshElemType::type, UseIntensityAs::type)));
+	connect(dlg, SIGNAL(setMeshParameters(QString, MeshElemType, UseIntensityAs::type)),
+		    this, SLOT(constructMeshFromImage(QString, MeshElemType, UseIntensityAs::type)));
 	dlg->exec();
 }
 
-void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MshElemType::type element_type, UseIntensityAs::type intensity_type)
+void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType element_type, UseIntensityAs::type intensity_type)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->

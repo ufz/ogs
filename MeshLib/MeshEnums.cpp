@@ -14,42 +14,42 @@
 
 #include "MeshEnums.h"
 
-const std::string MshElemType2String(const MshElemType::type t)
+const std::string MeshElemType2String(const MeshElemType t)
 {
-	if (t == MshElemType::EDGE)
+	if (t == MeshElemType::EDGE)
 		return "line";
-	if (t == MshElemType::QUAD)
+	if (t == MeshElemType::QUAD)
 		return "quad";
-	if (t == MshElemType::HEXAHEDRON)
+	if (t == MeshElemType::HEXAHEDRON)
 		return "hex";
-	if (t == MshElemType::TRIANGLE)
+	if (t == MeshElemType::TRIANGLE)
 		return "tri";
-	if (t == MshElemType::TETRAHEDRON)
+	if (t == MeshElemType::TETRAHEDRON)
 		return "tet";
-	if (t == MshElemType::PRISM)
+	if (t == MeshElemType::PRISM)
 		return "pris";
-	if (t == MshElemType::PYRAMID)
+	if (t == MeshElemType::PYRAMID)
 		return "pyra";
 	return "none";
 }
 
-MshElemType::type String2MshElemType(const std::string &s)
+MeshElemType String2MeshElemType(const std::string &s)
 {
 	if (s.compare("line") == 0)
-		return MshElemType::EDGE;
+		return MeshElemType::EDGE;
 	if (s.compare("quad") == 0)
-		return MshElemType::QUAD;
+		return MeshElemType::QUAD;
 	if (s.compare("hex")  == 0)
-		return MshElemType::HEXAHEDRON;
+		return MeshElemType::HEXAHEDRON;
 	if (s.compare("tri")  == 0)
-		return MshElemType::TRIANGLE;
+		return MeshElemType::TRIANGLE;
 	if (s.compare("tet")  == 0)
-		return MshElemType::TETRAHEDRON;
+		return MeshElemType::TETRAHEDRON;
 	if (s.compare("pris") == 0)
-		return MshElemType::PRISM;
+		return MeshElemType::PRISM;
 	if (s.compare("pyra") == 0)
-		return MshElemType::PYRAMID;
-	return MshElemType::INVALID;
+		return MeshElemType::PYRAMID;
+	return MeshElemType::INVALID;
 }
 
 const std::string MshQualityType2String(const MshQualityType::type t)

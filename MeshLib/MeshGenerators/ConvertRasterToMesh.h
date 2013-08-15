@@ -43,7 +43,7 @@ struct UseIntensityAs
  */
 class ConvertRasterToMesh {
 public:
-	ConvertRasterToMesh(GeoLib::Raster const& raster, MshElemType::type elem_type,
+	ConvertRasterToMesh(GeoLib::Raster const& raster, MeshElemType elem_type,
 					  UseIntensityAs::type intensity_type);
 	~ConvertRasterToMesh();
 	MeshLib::Mesh* execute() const;
@@ -51,7 +51,7 @@ private:
 	double getExistingValue(GeoLib::Raster::const_iterator beg, GeoLib::Raster::const_iterator last) const;
 	MeshLib::Mesh* constructMesh(const double* pix_vals, const bool* vis_nodes) const;
 	GeoLib::Raster const& _raster;
-	MshElemType::type _elem_type;
+	MeshElemType _elem_type;
 	UseIntensityAs::type _intensity_type;
 };
 
