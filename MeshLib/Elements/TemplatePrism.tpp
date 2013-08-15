@@ -24,7 +24,7 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_face_nodes[5][4] =
 {
 	{0, 2, 1, 99}, // Face 0
@@ -34,7 +34,7 @@ const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_face_nodes[5][4] =
 	{3, 4, 5, 99}  // Face 4
 };
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_edge_nodes[9][2] =
 {
 	{0, 1}, // Edge 0
@@ -48,10 +48,10 @@ const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_edge_nodes[9][2] =
 	{3, 5}  // Edge 8
 };
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
@@ -61,7 +61,7 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned
 	this->_volume = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType::type CELLPRISMTYPE>
+template<unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(std::array<Node*, NNODES> const& nodes,
                                                    unsigned value)
 	: Cell(value)
@@ -75,7 +75,7 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(std::array<Node*, NNODES> con
 	this->_volume = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(const TemplatePrism<NNODES,CELLPRISMTYPE> &prism)
 	: Cell(prism.getValue())
 {
@@ -90,12 +90,12 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(const TemplatePrism<NNODES,CE
 	_volume = prism.getVolume();
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::~TemplatePrism()
 {
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 double TemplatePrism<NNODES,CELLPRISMTYPE>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
@@ -103,7 +103,7 @@ double TemplatePrism<NNODES,CELLPRISMTYPE>::computeVolume()
 		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[4]->getCoords(), _nodes[5]->getCoords(), _nodes[3]->getCoords());
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 const Element* TemplatePrism<NNODES,CELLPRISMTYPE>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
@@ -122,7 +122,7 @@ const Element* TemplatePrism<NNODES,CELLPRISMTYPE>::getFace(unsigned i) const
 	return NULL;
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::getNFaceNodes(unsigned i) const
 {
 	if (i<5)
@@ -131,7 +131,7 @@ unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::getNFaceNodes(unsigned i) const
 	return 0;
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 bool TemplatePrism<NNODES,CELLPRISMTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<9; i++)
@@ -142,13 +142,13 @@ bool TemplatePrism<NNODES,CELLPRISMTYPE>::isEdge(unsigned idx1, unsigned idx2) c
 	return false;
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 Element* TemplatePrism<NNODES,CELLPRISMTYPE>::clone() const
 {
 	return new TemplatePrism<NNODES,CELLPRISMTYPE>(*this);
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<5; i++)
@@ -164,7 +164,7 @@ unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 Element* TemplatePrism<NNODES,CELLPRISMTYPE>::reviseElement() const
 {
 	// try to create Pyramid
