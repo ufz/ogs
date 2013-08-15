@@ -21,7 +21,7 @@
 namespace MeshLib {
 
 ConvertRasterToMesh::ConvertRasterToMesh(GeoLib::Raster const& raster, MeshElemType elem_type,
-				UseIntensityAs::type intensity_type) :
+				UseIntensityAs intensity_type) :
 	_raster(raster), _elem_type(elem_type), _intensity_type(intensity_type)
 {}
 

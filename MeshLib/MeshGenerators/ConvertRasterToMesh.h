@@ -29,13 +29,11 @@ class Mesh;
 /**
  * Struct gives a selection of possible interpretations for intensities
  */
-struct UseIntensityAs
+enum class UseIntensityAs
 {
-	enum type {
-		ELEVATION,
-		MATERIAL,
-		NONE
-	};
+	ELEVATION,
+	MATERIAL,
+	NONE
 };
 
 /**
@@ -44,7 +42,7 @@ struct UseIntensityAs
 class ConvertRasterToMesh {
 public:
 	ConvertRasterToMesh(GeoLib::Raster const& raster, MeshElemType elem_type,
-					  UseIntensityAs::type intensity_type);
+					  UseIntensityAs intensity_type);
 	~ConvertRasterToMesh();
 	MeshLib::Mesh* execute() const;
 private:
@@ -52,7 +50,7 @@ private:
 	MeshLib::Mesh* constructMesh(const double* pix_vals, const bool* vis_nodes) const;
 	GeoLib::Raster const& _raster;
 	MeshElemType _elem_type;
-	UseIntensityAs::type _intensity_type;
+	UseIntensityAs _intensity_type;
 };
 
 } // end namespace MeshLib
