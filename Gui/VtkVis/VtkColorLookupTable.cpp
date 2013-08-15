@@ -27,7 +27,7 @@ vtkStandardNewMacro(VtkColorLookupTable);
 vtkCxxRevisionMacro(VtkColorLookupTable, "$Revision$");
 
 VtkColorLookupTable::VtkColorLookupTable()
-	: _type(VtkColorLookupTable::LINEAR)
+	: _type(VtkColorLookupTable::LUTType::LINEAR)
 {
 }
 
@@ -80,10 +80,10 @@ void VtkColorLookupTable::Build()
 					unsigned char int_rgba[4];
 					double pos = (i - lastValue.first) / (static_cast<double>(nextIndex - lastValue.first));
 
-					if (_type == VtkColorLookupTable::LINEAR)
+					if (_type == VtkColorLookupTable::LUTType::LINEAR)
 						for (size_t j = 0; j < 4; j++)
 							int_rgba[j] = linInterpolation( (lastValue.second)[j], (it->second)[j], pos);
-					else if (_type == VtkColorLookupTable::EXPONENTIAL)
+					else if (_type == VtkColorLookupTable::LUTType::EXPONENTIAL)
 						for (size_t j = 0; j < 4; j++)
 							int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
 					else // no interpolation

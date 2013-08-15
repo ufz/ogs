@@ -49,7 +49,7 @@ void VtkCompositeColorByHeightFilter::init()
 	unsigned char c[4] = { 255, 255, 0, 255 }; // yellow
 	unsigned char d[4] = { 255, 0, 0, 255 }; // red
 	VtkColorLookupTable* ColorLookupTable = heightFilter->GetColorLookupTable();
-	ColorLookupTable->setInterpolationType(VtkColorLookupTable::LINEAR);
+	ColorLookupTable->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
 	ColorLookupTable->setColor(-35, a);
 	ColorLookupTable->setColor(150, b); // green at about 150m
 	ColorLookupTable->setColor(450, c); // yellow at about 450m and changing to red from then on

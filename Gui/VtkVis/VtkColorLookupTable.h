@@ -34,7 +34,7 @@ class VtkColorLookupTable : public vtkLookupTable
 {
 public:
 	/// Interpolation methods
-	enum LUTType {
+	enum class LUTType {
 		NONE = 0,
 		LINEAR = 1,
 		EXPONENTIAL = 2,
