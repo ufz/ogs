@@ -114,7 +114,7 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 
 		if (static_cast<StationTreeModel*>(model())->stationFromIndex(index,
 		                                                              temp_name)->type() ==
-		    GeoLib::Station::BOREHOLE)
+		    GeoLib::Station::StationType::BOREHOLE)
 		{
 			QAction* stratAction = menu.addAction("Display Stratigraphy...");
 			QAction* exportAction = menu.addAction("Export to GMS...");

@@ -30,7 +30,7 @@
 namespace GeoLib
 {
 Station::Station(double x, double y, double z, std::string name) :
-	Point (x,y,z), _name(name), _type(Station::STATION), _station_value(0.0), _sensor_data(NULL)
+	Point (x,y,z), _name(name), _type(Station::StationType::STATION), _station_value(0.0), _sensor_data(NULL)
 {
 	addProperty("x", &getX, &Station::setX);
 	addProperty("y", &getY, &Station::setY);
@@ -38,7 +38,7 @@ Station::Station(double x, double y, double z, std::string name) :
 }
 
 Station::Station(Point* coords, std::string name) :
-	Point (*coords), _name(name), _type(Station::STATION), _station_value(0.0), _sensor_data(NULL)
+	Point (*coords), _name(name), _type(Station::StationType::STATION), _station_value(0.0), _sensor_data(NULL)
 {
 	addProperty("x", &getX, &Station::setX);
 	addProperty("y", &getY, &Station::setY);

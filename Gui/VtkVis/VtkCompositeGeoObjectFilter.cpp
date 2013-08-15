@@ -46,7 +46,7 @@ VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlg
 		else if (dynamic_cast<VtkStationSource*>(parentAlg) != NULL)
 		{
 			/* TODO
-			if (dynamic_cast<VtkStationSource*>(parentAlg)->getType() == GeoLib::Station::BOREHOLE)
+			if (dynamic_cast<VtkStationSource*>(parentAlg)->getType() == GeoLib::Station::StationType::BOREHOLE)
 				_type = GeoLib::GEOTYPE::POLYLINE; 
 			*/
 		}
