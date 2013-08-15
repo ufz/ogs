@@ -25,7 +25,7 @@
 #include "Elements/Tet.h"
 #include "GMSInterface.h"
 #include "Mesh.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "Node.h"
 #include "StationBorehole.h"
 // BaseLib

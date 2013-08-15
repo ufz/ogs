@@ -45,7 +45,7 @@
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 int main (int argc, char* argv[])
 {

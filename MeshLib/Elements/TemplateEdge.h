@@ -18,7 +18,7 @@
 #include <array>
 #include <limits>
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "Element.h"
 #include "Node.h"
 

@@ -12,7 +12,7 @@
  *
  */
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 const std::string MshElemType2String(const MshElemType::type t)
 {

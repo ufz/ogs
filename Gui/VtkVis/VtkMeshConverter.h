@@ -20,7 +20,7 @@ namespace MeshLib {
 	class Mesh;
 }
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh

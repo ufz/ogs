@@ -26,7 +26,7 @@
 // MeshLib
 #include "Node.h"
 #include "Elements/Element.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 // Qt
 #include <QFileInfo>

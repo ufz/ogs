@@ -16,7 +16,7 @@
 #define ELEMENT_H_
 
 #include <vector>
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "Mesh.h"
 
 namespace MeshLib {

@@ -19,7 +19,7 @@
 #include "Edge.h"
 #include "Node.h"
 #include "Face.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 #include "MathTools.h"
 

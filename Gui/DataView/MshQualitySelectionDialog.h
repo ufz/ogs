@@ -15,7 +15,7 @@
 #ifndef MSHQUALITYSELECTIONDIALOG_H
 #define MSHQUALITYSELECTIONDIALOG_H
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "ui_MshQualitySelection.h"
 #include <QDialog>
 

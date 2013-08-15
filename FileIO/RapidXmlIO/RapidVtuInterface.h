@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "RapidXML/rapidxml.hpp"
 
 class ProjectData;

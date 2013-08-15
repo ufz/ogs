@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

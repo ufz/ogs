@@ -16,7 +16,7 @@
 #define TEMPLATEPYRAMID_H_
 
 #include <array>
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {

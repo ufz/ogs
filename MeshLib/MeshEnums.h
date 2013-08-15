@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef MSHENUMS_H
-#define MSHENUMS_H
+#ifndef MESHENUMS_H
+#define MESHENUMS_H
 
 #include <string>
 
@@ -82,4 +82,4 @@ MshElemType::type String2MshElemType(const std::string &s);
 
 const std::string MshQualityType2String(const MshQualityType::type t);
 
-#endif //MSHENUMS_H
+#endif //MESHENUMS_H

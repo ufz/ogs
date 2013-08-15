@@ -19,7 +19,7 @@
 #include "Raster.h"
 
 // MeshLib
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 namespace MeshLib {
 
