@@ -33,7 +33,7 @@ struct Location
     std::size_t          item_id;
 
     Location(std::size_t meshid, MeshItemType itemtype, std::size_t itemid)
-    : mesh_id(meshid), item_type(itemtype), item_id(itemid){};
+    : mesh_id(meshid), item_type(itemtype), item_id(itemid){}
 };
 
 /// Lexicographic order of Location.

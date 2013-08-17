@@ -52,40 +52,40 @@ public:
 	void addElement(Element* elem);
 
 	/// Returns the dimension of the mesh (determined by the maximum dimension over all elements).
-	unsigned getDimension() const { return _mesh_dimension; };
+	unsigned getDimension() const { return _mesh_dimension; }
 
 	/// Get the minimum edge length over all elements of the mesh.
-	double getMinEdgeLength() { return _edge_length[0]; };
+	double getMinEdgeLength() { return _edge_length[0]; }
 
 	/// Get the maximum edge length over all elements of the mesh.
-	double getMaxEdgeLength() { return _edge_length[1]; };
+	double getMaxEdgeLength() { return _edge_length[1]; }
 
 	/// Get the node with the given index.
-	const Node* getNode(unsigned idx) const { return _nodes[idx]; };
+	const Node* getNode(unsigned idx) const { return _nodes[idx]; }
 
 	/// Get the element with the given index.
-	const Element* getElement(unsigned idx) const { return _elements[idx]; };
+	const Element* getElement(unsigned idx) const { return _elements[idx]; }
 
 	/// Get the minimum edge length for the mesh
-	double getMinEdgeLength() const { return _edge_length[0]; };
+	double getMinEdgeLength() const { return _edge_length[0]; }
 
 	/// Get the maximum edge length for the mesh
-	double getMaxEdgeLength() const { return _edge_length[1]; };
+	double getMaxEdgeLength() const { return _edge_length[1]; }
 
 	/// Get the number of elements
-	std::size_t getNElements() const { return _elements.size(); };
+	std::size_t getNElements() const { return _elements.size(); }
 
 	/// Get the number of nodes
-	std::size_t getNNodes() const { return _nodes.size(); };
+	std::size_t getNNodes() const { return _nodes.size(); }
 
 	/// Get name of the mesh.
-	const std::string getName() const { return _name; };
+	const std::string getName() const { return _name; }
 
 	/// Get the nodes-vector for the mesh.
-	std::vector<Node*> const& getNodes() const { return _nodes; };
+	std::vector<Node*> const& getNodes() const { return _nodes; }
 
 	/// Get the element-vector for the mesh.
-	std::vector<Element*> const& getElements() const { return _elements; };
+	std::vector<Element*> const& getElements() const { return _elements; }
 
 	/// Resets the IDs of all mesh-nodes to their position in the node vector
 	void resetNodeIDs();
@@ -98,7 +98,7 @@ public:
 	void setEdgeLengthRange(const double &min_length, const double &max_length);
 
 	/// Changes the name of the mesh.
-	void setName(const std::string &name) { this->_name = name; };
+	void setName(const std::string &name) { this->_name = name; }
 
 	/// Get id of the mesh
 	std::size_t getID() const {return _id; }
