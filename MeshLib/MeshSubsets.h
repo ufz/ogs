@@ -58,8 +58,8 @@ public:
         return _n_total_items;
     }
 
-    /// return the number of related meshes
-    std::size_t getNMeshes() const
+    /// Number of saved mesh subsets.
+    std::size_t size() const
     {
         return _mesh_subsets.size();
     }
