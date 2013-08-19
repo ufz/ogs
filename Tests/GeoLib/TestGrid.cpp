@@ -32,6 +32,15 @@ TEST(GeoLib, InsertOnePointInGrid)
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
 }
 
+TEST(GeoLib, InsertTwoPointsInGrid)
+{
+	std::vector<GeoLib::Point*> pnts;
+	pnts.push_back(new GeoLib::Point(4.5, -400.0, 0.0));
+	pnts.push_back(new GeoLib::Point(50, -300.0, 0.0));
+	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+}
+
+
 TEST(GeoLib, InsertManyPointsInGrid)
 {
 	const std::size_t i_max(100), j_max(100), k_max(100);
