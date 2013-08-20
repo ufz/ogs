@@ -1,8 +1,6 @@
 /**
- * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
- * \brief
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +10,8 @@
  *
  */
 
-#ifndef VECMATONMESH_H_
-#define VECMATONMESH_H_
+#ifndef ASSEMBLERLIB_SERIALVECTORMATRIXBUILDER_H_
+#define ASSEMBLERLIB_SERIALVECTORMATRIXBUILDER_H_
 
 #include <vector>
 
@@ -24,7 +22,7 @@
 
 #include "AssemblerLib/MeshComponentMap.h"
 
-namespace VecMatOnMeshLib
+namespace AssemblerLib
 {
 
 using AssemblerLib::MeshComponentMap;
@@ -78,6 +76,6 @@ typedef SerialVectorMatrixBuilder<
         MathLib::LisVector
     > SerialLisVectorMatrixBuilder;
 
-} // VecMatOnMeshLib
+}   // namespace AssemblerLib
 
-#endif /* VECMATONMESH_H_ */
+#endif  // ASSEMBLERLIB_SERIALVECTORMATRIXBUILDER_H_

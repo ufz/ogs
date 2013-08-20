@@ -46,7 +46,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	//--------------------------------------------------------------------------
 	// Choose implementation type
 	//--------------------------------------------------------------------------
-	typedef VecMatOnMeshLib::SerialDenseVectorMatrixBuilder SerialBuilder;
+	typedef AssemblerLib::SerialDenseVectorMatrixBuilder SerialBuilder;
 	SerialBuilder vecMatOnMesh;
 
 	//--------------------------------------------------------------------------
