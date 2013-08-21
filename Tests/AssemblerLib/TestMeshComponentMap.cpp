@@ -32,7 +32,7 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
         mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
         nodesSubset = new MeshLib::MeshSubset(*mesh, mesh->getNodes());
 
-        // Add two components, one based on nodes and another based on elements.
+        // Add two components both based on the same nodesSubset.
         components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
         components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
     }
