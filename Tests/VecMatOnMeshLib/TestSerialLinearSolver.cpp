@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+#include "AssemblerLib/MeshComponentMap.h"
+
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
@@ -32,7 +34,6 @@
 
 #include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
 #include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
-#include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
@@ -61,8 +62,8 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
 	vec_comp_dis.push_back(
 	    new MeshLib::MeshSubsets(&mesh_items_all_nodes));
-	VecMatOnMeshLib::MeshComponentMap vec1_composition(
-	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
+	AssemblerLib::MeshComponentMap vec1_composition(
+	    vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
 
 	// allocate a vector and matrix
 	typedef SerialBuilder::VectorType TVec;
@@ -92,8 +93,8 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 			    (*e)->getNode(j)->getID());
 
 		map_ele_nodes2vec_entries.push_back(
-		    vec1_composition.getDataIDList
-				<VecMatOnMeshLib::ComponentOrder::BY_COMPONENT>(vec_items));
+		    vec1_composition.getGlobalIndices
+				<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
 	}
 
 	// Local and global assemblers.

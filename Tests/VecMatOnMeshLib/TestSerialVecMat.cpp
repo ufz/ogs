@@ -20,6 +20,8 @@
 
 #include <gtest/gtest.h>
 
+#include "AssemblerLib/MeshComponentMap.h"
+
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/MathTools.h"
@@ -36,7 +38,6 @@
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
 #include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
-#include "VecMatOnMeshLib/VecMeshItems/MeshComponentMap.h"
 
 #include "../TestTools.h"
 
@@ -125,8 +126,8 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	vec_comp_dis.push_back(
 	    new MeshLib::MeshSubsets(&mesh_items_left_nodes));
 
-	VecMatOnMeshLib::MeshComponentMap vec1_composition(
-	    vec_comp_dis, VecMatOnMeshLib::ComponentOrder::BY_COMPONENT);
+	AssemblerLib::MeshComponentMap vec1_composition(
+	    vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
 	//vec1_composition.print();
 
 	// allocate a vector and matrix
@@ -143,7 +144,7 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 	std::vector<std::vector<std::size_t> > map_node2vec_entry(
 	        mesh_items_left_nodes.getNNodes());
 	for (std::size_t i = 0; i < map_node2vec_entry.size(); i++)
-		map_node2vec_entry[i] = vec1_composition.getDataIDList(
+		map_node2vec_entry[i] = vec1_composition.getGlobalIndices(
 	        MeshLib::Location(msh->getID(),
 	                                  MeshLib::MeshItemType::Node,
 		                              mesh_items_left_nodes.getNodeID(i)));
@@ -179,8 +180,8 @@ TEST(VecMatOnMeshLib, SerialVectorMatrixBuilder)
 					MeshLib::MeshItemType::Node,
 					e->getNode(j)->getID()));
 
-			mat_row_column_positions.push_back(vec1_composition.getDataIDList
-				<VecMatOnMeshLib::ComponentOrder::BY_COMPONENT>(vec_items));
+			mat_row_column_positions.push_back(vec1_composition.getGlobalIndices
+				<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
 			//std::cout << i << ": ";
 			//std::copy(vec_data_pos[i].begin(), vec_data_pos[i].end(),
 			//    std::ostream_iterator<std::size_t>(std::cout, " "));

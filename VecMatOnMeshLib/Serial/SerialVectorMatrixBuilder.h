@@ -22,10 +22,12 @@
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 
-#include "../VecMeshItems/MeshComponentMap.h"
+#include "AssemblerLib/MeshComponentMap.h"
 
 namespace VecMatOnMeshLib
 {
+
+using AssemblerLib::MeshComponentMap;
 
 /**
  * Non-parallel version using default LinAlg
