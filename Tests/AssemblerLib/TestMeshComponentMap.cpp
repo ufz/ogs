@@ -54,7 +54,7 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
     std::vector<MeshLib::MeshSubsets*> components;
-    MeshComponentMap* cmap;
+    MeshComponentMap const* cmap;
 
     //
     // Functions used for checking.
@@ -86,7 +86,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByComponent)
         ASSERT_EQ(mesh_size + 1 + i, giAtNodeForComponent(i, comp1_id));
 
         // Test component ids of the node.
-        std::vector<std::size_t> vecCompIDs = cmap->getComponentIDs(
+        std::vector<std::size_t> const vecCompIDs = cmap->getComponentIDs(
             Location(mesh->getID(), MeshItemType::Node, i));
         ASSERT_EQ(2u, vecCompIDs.size());
         ASSERT_EQ(0u, vecCompIDs[0]);
@@ -112,7 +112,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByLocation)
         ASSERT_EQ(2 * i + 1, giAtNodeForComponent(i, comp1_id));
 
         // Test component ids of the node.
-        std::vector<std::size_t> vecCompIDs = cmap->getComponentIDs(
+        std::vector<std::size_t> const vecCompIDs = cmap->getComponentIDs(
             Location(mesh->getID(), MeshItemType::Node, i));
         ASSERT_EQ(2u, vecCompIDs.size());
         ASSERT_EQ(0u, vecCompIDs[0]);
