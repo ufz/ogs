@@ -11,7 +11,6 @@
  */
 
 #include <iostream>
-#include <numeric>
 
 #include <boost/range/algorithm/for_each.hpp>
 
@@ -79,8 +78,7 @@ std::size_t MeshComponentMap::getGlobalIndex(Location const& l,
 {
     auto const &m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, c));
-    return itr!=m.end() ? itr->global_index
-                        : std::numeric_limits<std::size_t>::max();
+    return itr!=m.end() ? itr->global_index : nop;
 }
 
 std::vector<std::size_t> MeshComponentMap::getGlobalIndices(const Location &l) const

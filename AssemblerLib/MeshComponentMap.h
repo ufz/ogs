@@ -53,11 +53,11 @@ public:
 
     /// Component ids at given location \c l.
     ///
-    /// | Location | ComponentID | GlobalIndex |
-    /// | -------- | ----------- | ----------- |
-    /// | l        | comp_id_1   | gi23        |
-    /// | l        |  ...        | ...         |
-    /// | l        | comp_id_n   | gi45        |
+    /// | Location | ComponentID |
+    /// | -------- | ----------- |
+    /// | l        | comp_id_1   |
+    /// | l        |  ...        |
+    /// | l        | comp_id_n   |
     std::vector<std::size_t> getComponentIDs(const Location &l) const;
 
     /// Global index of the given component \c c at given location \c l.
@@ -74,14 +74,9 @@ public:
     ///
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
-    /// | l_1      | comp_id_1   | gi23        |
+    /// | l        | comp_id_1   | gi23        |
     /// | ...      |  ...        | ...         |
-    /// | l_1      | comp_id_k   | gi45        |
-    /// | l_2      | comp_id_1   | gi56        |
-    /// | ...      |  ...        | ...         |
-    /// | l_2      | comp_id_m   | gi67        |
-    /// | ...      |  ...        | ...         |
-    /// | l_n      | comp_id_n   | gi78        |
+    /// | l        | comp_id_k   | gi45        |
     std::vector<std::size_t> getGlobalIndices(const Location &l) const;
 
     /// Global indices for all components at all given locations \c ls ordered
@@ -94,7 +89,7 @@ public:
     /// | l_1      | comp_id_1   | gi23        |
     /// | ...      |  ...        | ...         |
     /// | l_1      | comp_id_k   | gi45        |
-    /// | l_2      | comp_id_1   | gi56        |
+    /// | l_2      | comp_id_1   | gi46        |
     /// | ...      |  ...        | ...         |
     /// | l_2      | comp_id_m   | gi67        |
     /// | ...      |  ...        | ...         |
@@ -107,7 +102,7 @@ public:
     /// | l_1      | comp_id_1   | gi23        |
     /// | ...      |  ...        | ...         |
     /// | l_k      | comp_id_1   | gi45        |
-    /// | l_1      | comp_id_2   | gi56        |
+    /// | l_1      | comp_id_2   | gi46        |
     /// | ...      |  ...        | ...         |
     /// | l_m      | comp_id_2   | gi78        |
     /// | ...      |  ...        | ...         |
