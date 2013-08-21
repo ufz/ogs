@@ -102,3 +102,44 @@ TEST(GeoLib, GEOObjectsMergePoints)
 	test_name = "PointSet1-0-0-0";
 	ASSERT_FALSE(merged_point_vec->getElementIDByName (test_name, id));
 }
+
+TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
+{
+	GeoLib::GEOObjects geo_objs;
+	std::vector<std::string> names;
+
+	// *** insert points to vector
+	std::vector<GeoLib::Point*> *pnts(new std::vector<GeoLib::Point*>);
+	pnts->reserve(4);
+	pnts->push_back(new GeoLib::Point(0.0,0.0,0.0));
+	pnts->push_back(new GeoLib::Point(1.0,0.0,0.0));
+	pnts->push_back(new GeoLib::Point(1.0,1.0,0.0));
+	pnts->push_back(new GeoLib::Point(0.0,1.0,0.0));
+
+	std::string geometry_0("GeometryWithPntsAndPolyline");
+	geo_objs.addPointVec(pnts, geometry_0, nullptr, std::numeric_limits<double>::epsilon());
+
+	// *** insert polyline
+	GeoLib::Polyline* ply(new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0)));
+	ply->addPoint(0);
+	ply->addPoint(1);
+	ply->addPoint(2);
+	ply->addPoint(3);
+	ply->addPoint(0);
+	std::vector<GeoLib::Polyline*> *plys(new std::vector<GeoLib::Polyline*>);
+	plys->push_back(ply);
+	geo_objs.addPolylineVec(plys, geometry_0, nullptr);
+	names.push_back(geometry_0);
+
+	// *** insert set of points number
+	GeoLib::Point shift (0.0,0.0,0.0);
+	names.push_back("PointSet0");
+	createSetOfTestPointsAndAssociatedNames(geo_objs, names[1], shift);
+
+	// *** merge geometries
+	std::string merged_geometries_name("MergedQuadGeoAndPointSet");
+	geo_objs.mergeGeometries(names, merged_geometries_name);
+
+	std::size_t const n_plys (geo_objs.getPolylineVec(merged_geometries_name)->size());
+	ASSERT_EQ(n_plys, 1);
+}
