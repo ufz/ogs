@@ -49,7 +49,7 @@ struct Line
         global_index(std::numeric_limits<std::size_t>::max())
     {}
 
-    Line(MeshLib::Location const& l)
+    explicit Line(MeshLib::Location const& l)
     : location(l),
         comp_id(std::numeric_limits<std::size_t>::max()),
         global_index(std::numeric_limits<std::size_t>::max())
