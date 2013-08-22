@@ -68,6 +68,7 @@ TEST(GeoLib, GEOObjectsMergePoints)
 
 	GeoLib::PointVec const* merged_point_vec (geo_objs.getPointVecObj(merged_geometries_name));
 
+	ASSERT_TRUE(merged_point_vec != nullptr);
 	ASSERT_EQ(merged_point_vec->size(), 512);
 	std::string test_name;
 	merged_point_vec->getNameOfElementByID(0, test_name);
@@ -85,6 +86,7 @@ TEST(GeoLib, GEOObjectsMergePoints)
 	geo_objs.mergeGeometries(names, merged_geometries_name);
 	merged_point_vec = geo_objs.getPointVecObj(merged_geometries_name);
 
+	ASSERT_TRUE(merged_point_vec != nullptr);
 	ASSERT_EQ(merged_point_vec->size(), 1024);
 	merged_point_vec->getNameOfElementByID(0, test_name);
 	ASSERT_EQ(test_name, "PointSet0-0-0-0");
@@ -140,6 +142,9 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 	std::string merged_geometries_name("MergedQuadGeoAndPointSet");
 	geo_objs.mergeGeometries(names, merged_geometries_name);
 
-	std::size_t const n_plys (geo_objs.getPolylineVec(merged_geometries_name)->size());
-	ASSERT_EQ(n_plys, 1);
+	std::vector<GeoLib::Polyline*> const* const polylines =
+		geo_objs.getPolylineVec(merged_geometries_name);
+
+	ASSERT_TRUE(polylines != nullptr);
+	ASSERT_EQ(polylines->size(), 1);
 }
