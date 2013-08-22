@@ -105,6 +105,7 @@ IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
 ENDIF()
 
+ADD_SUBDIRECTORY( AssemblerLib )
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
 ADD_DEPENDENCIES(BaseLib Boost)

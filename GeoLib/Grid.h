@@ -63,7 +63,7 @@ public:
 		for (std::size_t k(0); k < 3; k++) {
 			// make the bounding box a little bit bigger,
 			// such that the node with maximal coordinates fits into the grid
-			this->_max_pnt[k] *= (1.0 + 1e-6);
+			this->_max_pnt[k] += std::abs(this->_max_pnt[k]) * 1e-6;
 			if (fabs(this->_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
 				this->_max_pnt[k] = (this->_max_pnt[k] - this->_min_pnt[k]) * (1.0 + 1e-6);
 			}
