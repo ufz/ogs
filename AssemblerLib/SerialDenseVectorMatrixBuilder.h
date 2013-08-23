@@ -13,7 +13,7 @@
 #ifndef ASSEMBLERLIB_SERIALDENSEVECTORMATRIXBUILDER_H_
 #define ASSEMBLERLIB_SERIALDENSEVECTORMATRIXBUILDER_H_
 
-#include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
+#include "AssemblerLib/SerialVectorMatrixBuilder.h"
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"

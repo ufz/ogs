@@ -13,7 +13,7 @@
 #ifndef ASSEMBLERLIB_SERIALLISVECTORMATRIXBUILDER_H_
 #define ASSEMBLERLIB_SERIALLISVECTORMATRIXBUILDER_H_
 
-#include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
+#include "AssemblerLib/SerialVectorMatrixBuilder.h"
 
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 #include "MathLib/LinAlg/Lis/LisVector.h"

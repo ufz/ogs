@@ -21,6 +21,7 @@
 #include <gtest/gtest.h>
 
 #include "AssemblerLib/MeshComponentMap.h"
+#include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
 
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/Dense/DenseTools.h"
@@ -37,7 +38,6 @@
 #include "VecMatOnMeshLib/MeshItemWiseTask/LocalToGlobalIndexMap.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
-#include "VecMatOnMeshLib/Serial/SerialDenseVectorMatrixBuilder.h"
 
 #include "../TestTools.h"
 

@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "AssemblerLib/MeshComponentMap.h"
+#include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
 
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -33,7 +34,6 @@
 #include "MeshLib/Node.h"
 
 #include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
-#include "VecMatOnMeshLib/Serial/SerialDenseVectorMatrixBuilder.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
