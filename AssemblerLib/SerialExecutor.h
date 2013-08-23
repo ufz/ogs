@@ -18,22 +18,41 @@
 namespace AssemblerLib
 {
 
-/// Executes a \c f for each element in input vector.
+/// Executes a \c f for each element from the input container.
 /// Return values of the function call are ignored.
 ///
-/// \tparam T type of input vector elements
-/// \tparam F \c f type
+/// \tparam C   input container type.
+/// \tparam F   \c f type.
 ///
-/// \param v a vector of T pointers
-/// \param f a function that accepts a pointer to T and an index as arguments
-template <typename T, typename F>
+/// \param c    a container supporting access over operator[].
+/// \param f    a function that accepts a pointer to container's elements and
+///             an index as arguments.
+template <typename C, typename F>
 void
-serialExecute(std::vector<T*> const& v, F const& f)
+serialExecute(C const& c, F const& f)
 {
-    for (std::size_t i = 0; i < v.size(); i++)
-        f(v[i], i);
+    for (std::size_t i = 0; i < c.size(); i++)
+        f(c[i], i);
 };
 
+/// Executes a \c f for each element from the input range [first, last)
+/// Return values of the function call are ignored.
+///
+/// \tparam I   input iterator type.
+/// \tparam F   \c f type.
+///
+/// \param first    iterator to the first element.
+/// \param last     iterator to one after the last element.
+/// \param f        a function accepting a pointer to container's elements and
+///                 an index as arguments.
+template <typename I, typename F>
+void
+serialExecute(I first, I last, F const& f)
+{
+    std::size_t count = 0;
+    while (first != last)
+        f(*first++, count++);
+};
 }   // namespace AssemblerLib
 
 #endif  // ASSEMBLERLIB_SERIALEXECUTOR_H_H
