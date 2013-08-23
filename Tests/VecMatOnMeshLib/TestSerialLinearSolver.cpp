@@ -20,6 +20,7 @@
 
 #include "AssemblerLib/MeshComponentMap.h"
 #include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
+#include "AssemblerLib/SerialExecutor.h"
 
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -108,7 +109,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	    map_ele_nodes2vec_entries);
 
 	// Call global assembler for each mesh element.
-	SerialBuilder::forEachMeshItem(ex1.msh->getElements(), assembler);
+	AssemblerLib::serialExecute(ex1.msh->getElements(), assembler);
 
 	//std::cout << "A=\n";
 	//A->write(std::cout);
