@@ -33,7 +33,7 @@
 #include "MeshLib/Node.h"
 
 #include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
-#include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
+#include "VecMatOnMeshLib/Serial/SerialDenseVectorMatrixBuilder.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"

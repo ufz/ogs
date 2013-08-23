@@ -15,21 +15,11 @@
 
 #include <vector>
 
-#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
-#include "MathLib/LinAlg/Dense/DenseVector.h"
-#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
-#include "MathLib/LinAlg/Lis/LisMatrix.h"
-
 #include "AssemblerLib/MeshComponentMap.h"
 
 namespace AssemblerLib
 {
 
-using AssemblerLib::MeshComponentMap;
-
-/**
- * Non-parallel version using default LinAlg
- */
 template <typename MatrixType_, typename VectorType_>
 class SerialVectorMatrixBuilder
 {
@@ -66,16 +56,6 @@ public:
     }
 
 };
-
-typedef SerialVectorMatrixBuilder<
-        MathLib::GlobalDenseMatrix<double>,
-        MathLib::DenseVector<double>
-    > SerialDenseVectorMatrixBuilder;
-
-typedef SerialVectorMatrixBuilder<
-        MathLib::LisMatrix,
-        MathLib::LisVector
-    > SerialLisVectorMatrixBuilder;
 
 }   // namespace AssemblerLib
 

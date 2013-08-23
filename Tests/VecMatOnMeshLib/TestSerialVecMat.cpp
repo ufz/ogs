@@ -37,7 +37,7 @@
 #include "VecMatOnMeshLib/MeshItemWiseTask/LocalToGlobalIndexMap.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/MatrixAssembler.h"
 #include "VecMatOnMeshLib/MeshItemWiseTask/VectorAssembler.h"
-#include "VecMatOnMeshLib/Serial/SerialVectorMatrixBuilder.h"
+#include "VecMatOnMeshLib/Serial/SerialDenseVectorMatrixBuilder.h"
 
 #include "../TestTools.h"
 
