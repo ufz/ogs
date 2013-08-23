@@ -33,7 +33,7 @@ public:
 
     virtual ~LinearSystemAssembler() {}
 
-    virtual void operator()(const T_MESH_ITEM* item, std::size_t id)
+    virtual void operator()(const T_MESH_ITEM* item, std::size_t id) const
     {
         assert(_data_pos.size() > id);
 
