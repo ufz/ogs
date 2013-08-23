@@ -30,7 +30,7 @@ using AssemblerLib::MeshComponentMap;
 /**
  * Non-parallel version using default LinAlg
  */
-template <typename MatrixType_, typename VectorType_ = MathLib::DenseVector<double>>
+template <typename MatrixType_, typename VectorType_>
 class SerialVectorMatrixBuilder
 {
 public:
@@ -68,7 +68,8 @@ public:
 };
 
 typedef SerialVectorMatrixBuilder<
-        MathLib::GlobalDenseMatrix<double>
+        MathLib::GlobalDenseMatrix<double>,
+        MathLib::DenseVector<double>
     > SerialDenseVectorMatrixBuilder;
 
 typedef SerialVectorMatrixBuilder<
