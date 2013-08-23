@@ -21,15 +21,15 @@ namespace AssemblerLib
 /// Executes a \c f for each element from the input container.
 /// Return values of the function call are ignored.
 ///
-/// \tparam C   input container type.
 /// \tparam F   \c f type.
+/// \tparam C   input container type.
 ///
-/// \param c    a container supporting access over operator[].
 /// \param f    a function that accepts a pointer to container's elements and
 ///             an index as arguments.
-template <typename C, typename F>
+/// \param c    a container supporting access over operator[].
+template <typename F, typename C>
 void
-serialExecute(C const& c, F const& f)
+serialExecute(F const& f, C const& c)
 {
     for (std::size_t i = 0; i < c.size(); i++)
         f(c[i], i);
@@ -38,16 +38,16 @@ serialExecute(C const& c, F const& f)
 /// Executes a \c f for each element from the input range [first, last)
 /// Return values of the function call are ignored.
 ///
-/// \tparam I   input iterator type.
 /// \tparam F   \c f type.
+/// \tparam I   input iterator type.
 ///
-/// \param first    iterator to the first element.
-/// \param last     iterator to one after the last element.
 /// \param f        a function accepting a pointer to container's elements and
 ///                 an index as arguments.
-template <typename I, typename F>
+/// \param first    iterator to the first element.
+/// \param last     iterator to one after the last element.
+template <typename F, typename I>
 void
-serialExecute(I first, I last, F const& f)
+serialExecute(F const& f, I first, I last)
 {
     std::size_t count = 0;
     while (first != last)

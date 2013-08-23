@@ -109,7 +109,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	    map_ele_nodes2vec_entries);
 
 	// Call global assembler for each mesh element.
-	AssemblerLib::serialExecute(ex1.msh->getElements(), assembler);
+	AssemblerLib::serialExecute(assembler, ex1.msh->getElements());
 
 	//std::cout << "A=\n";
 	//A->write(std::cout);
