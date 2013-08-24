@@ -26,12 +26,14 @@ public:
     typedef MatrixType_ MatrixType;
 
 public:
+    static
     VectorType* createVector(const MeshComponentMap &dist_layout)
     {
         VectorType* vec = new VectorType(dist_layout.size());
         return vec;
     }
 
+    static
     MatrixType* createMatrix(const MeshComponentMap &dist_layout)
     {
         MatrixType* mat = new MatrixType(dist_layout.size());
