@@ -35,24 +35,6 @@ serialExecute(F const& f, C const& c)
         f(c[i], i);
 };
 
-/// Executes a \c f for each element from the input range [first, last)
-/// Return values of the function call are ignored.
-///
-/// \tparam F   \c f type.
-/// \tparam I   input iterator type.
-///
-/// \param f        a function accepting a pointer to container's elements and
-///                 an index as arguments.
-/// \param first    iterator to the first element.
-/// \param last     iterator to one after the last element.
-template <typename F, typename I>
-void
-serialExecute(F const& f, I first, I last)
-{
-    std::size_t count = 0;
-    while (first != last)
-        f(*first++, count++);
-};
 }   // namespace AssemblerLib
 
 #endif  // ASSEMBLERLIB_SERIALEXECUTOR_H_H

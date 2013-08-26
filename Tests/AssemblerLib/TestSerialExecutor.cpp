@@ -59,16 +59,8 @@ TYPED_TEST_P(AssemblerLibSerialExecutor, ContainerArgument)
     ASSERT_TRUE(this->referenceIsZero());
 }
 
-TYPED_TEST_P(AssemblerLibSerialExecutor, IteratorArgument)
-{
-    AssemblerLib::serialExecute(
-        std::bind(&TestFixture::subtractFromReference, this, _1, _2),
-        this->container.begin(), this->container.end());
-    ASSERT_TRUE(this->referenceIsZero());
-}
-
 REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialExecutor,
-    ContainerArgument, IteratorArgument);
+    ContainerArgument);
 
 
 typedef ::testing::Types <
