@@ -43,7 +43,7 @@ public:
     }
 
     LocalToGlobalIndexMap(std::vector<LineIndex> const& rows)
-        : LocalToGlobalIndexMap(rows, rows)
+        : _rows(rows), _columns(rows)
     { }
 
     std::size_t size() const
