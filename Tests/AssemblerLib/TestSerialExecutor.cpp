@@ -53,7 +53,7 @@ using namespace std::placeholders;
 
 TYPED_TEST_P(AssemblerLibSerialExecutor, ContainerArgument)
 {
-    AssemblerLib::serialExecute(
+    AssemblerLib::SerialExecutor::execute(
         std::bind(&TestFixture::subtractFromReference, this, _1, _2),
         this->container);
     ASSERT_TRUE(this->referenceIsZero());

@@ -18,8 +18,7 @@
 
 #include "AssemblerLib/LinearSystemAssembler.h"
 #include "AssemblerLib/MeshComponentMap.h"
-#include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
-#include "AssemblerLib/SerialExecutor.h"
+#include "AssemblerLib/SerialDenseSetup.h"
 
 
 #include "MathLib/LinAlg/Dense/DenseTools.h"
@@ -45,8 +44,8 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 	//--------------------------------------------------------------------------
 	// Choose implementation type
 	//--------------------------------------------------------------------------
-	typedef AssemblerLib::SerialDenseVectorMatrixBuilder SerialBuilder;
-	SerialBuilder vecMatOnMesh;
+    typedef AssemblerLib::SerialDenseSetup GlobalSetup;
+    const GlobalSetup globalSetup;
 
 	//--------------------------------------------------------------------------
 	// Prepare mesh items where data are assigned
@@ -65,12 +64,12 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 	    vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
 
 	// allocate a vector and matrix
-	typedef SerialBuilder::VectorType GlobalVector;
-	typedef SerialBuilder::MatrixType GlobalMatrix;
-	std::unique_ptr<GlobalMatrix> A(vecMatOnMesh.createMatrix(vec1_composition));
+	typedef GlobalSetup::VectorType GlobalVector;
+	typedef GlobalSetup::MatrixType GlobalMatrix;
+	std::unique_ptr<GlobalMatrix> A(globalSetup.createMatrix(vec1_composition));
 	A->setZero();
-	std::unique_ptr<GlobalVector> rhs(vecMatOnMesh.createVector(vec1_composition));
-	std::unique_ptr<GlobalVector> x(vecMatOnMesh.createVector(vec1_composition));
+	std::unique_ptr<GlobalVector> rhs(globalSetup.createVector(vec1_composition));
+	std::unique_ptr<GlobalVector> x(globalSetup.createVector(vec1_composition));
 
 	//--------------------------------------------------------------------------
 	// Construct a linear system
@@ -111,7 +110,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         AssemblerLib::LocalToGlobalIndexMap(map_ele_nodes2vec_entries));
 
 	// Call global assembler for each mesh element.
-	AssemblerLib::serialExecute(assembler, ex1.msh->getElements());
+    globalSetup.execute(assembler, ex1.msh->getElements());
 
 	//std::cout << "A=\n";
 	//A->write(std::cout);

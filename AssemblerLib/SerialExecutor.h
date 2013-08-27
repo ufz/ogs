@@ -13,26 +13,29 @@
 #ifndef ASSEMBLERLIB_SERIALEXECUTOR_H_H
 #define ASSEMBLERLIB_SERIALEXECUTOR_H_H
 
-#include <vector>
-
 namespace AssemblerLib
 {
 
-/// Executes a \c f for each element from the input container.
-/// Return values of the function call are ignored.
-///
-/// \tparam F   \c f type.
-/// \tparam C   input container type.
-///
-/// \param f    a function that accepts a pointer to container's elements and
-///             an index as arguments.
-/// \param c    a container supporting access over operator[].
-template <typename F, typename C>
-void
-serialExecute(F const& f, C const& c)
+struct SerialExecutor
 {
-    for (std::size_t i = 0; i < c.size(); i++)
-        f(c[i], i);
+    /// Executes a \c f for each element from the input container.
+    /// Return values of the function call are ignored.
+    ///
+    /// \tparam F   \c f type.
+    /// \tparam C   input container type.
+    ///
+    /// \param f    a function that accepts a pointer to container's elements and
+    ///             an index as arguments.
+    /// \param c    a container supporting access over operator[].
+    template <typename F, typename C>
+    static
+    void
+    execute(F const& f, C const& c)
+    {
+        for (std::size_t i = 0; i < c.size(); i++)
+            f(c[i], i);
+    };
+
 };
 
 }   // namespace AssemblerLib
