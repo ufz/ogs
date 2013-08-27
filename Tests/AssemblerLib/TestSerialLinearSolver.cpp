@@ -108,7 +108,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         > GlobalAssembler;
 
 	GlobalAssembler assembler(*A.get(), *rhs.get(), local_assembler,
-	    map_ele_nodes2vec_entries);
+        AssemblerLib::LocalToGlobalIndexMap(map_ele_nodes2vec_entries));
 
 	// Call global assembler for each mesh element.
 	AssemblerLib::serialExecute(assembler, ex1.msh->getElements());

@@ -42,7 +42,7 @@ public:
         assert(!_rows.empty());
     }
 
-    LocalToGlobalIndexMap(std::vector<LineIndex> const& rows)
+    explicit LocalToGlobalIndexMap(std::vector<LineIndex> const& rows)
         : _rows(rows), _columns(rows)
     { }
 
