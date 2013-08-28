@@ -16,6 +16,8 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <functional>
+#include <numeric>
 
 #include "MeshLib/MeshSubset.h"
 
