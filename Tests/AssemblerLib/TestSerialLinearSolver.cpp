@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AssemblerLib/LinearSystemAssembler.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/MeshComponentMap.h"
 #include "AssemblerLib/SerialDenseSetup.h"
 
@@ -99,7 +99,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     typedef SteadyDiffusion2DExample1::LocalAssembler LocalAssembler;
     LocalAssembler local_assembler;
 
-    typedef AssemblerLib::LinearSystemAssembler<
+    typedef AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector,
             MeshLib::Element, LocalAssembler,
             MathLib::DenseMatrix<double>,
