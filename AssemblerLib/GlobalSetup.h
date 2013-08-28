@@ -26,19 +26,22 @@ struct GlobalSetup
     typedef typename VectorMatrixBuilder::MatrixType MatrixType;
 
     template <typename... Args>
-    VectorType* createVector(Args&& ... args) const
+    static
+    VectorType* createVector(Args&& ... args)
     {
         return VectorMatrixBuilder::createVector(std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    MatrixType* createMatrix(Args&& ... args) const
+    static
+    MatrixType* createMatrix(Args&& ... args)
     {
         return VectorMatrixBuilder::createMatrix(std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void execute(Args&& ... args) const
+    static
+    void execute(Args&& ... args)
     {
         return Executor::execute(std::forward<Args>(args)...);
     }
