@@ -30,6 +30,9 @@ namespace MeshLib {
 class Face : public Element
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned Dimension;
+
 	/// Get the area of this 2d element.
 	virtual double getArea() const { return _area; };
 
@@ -37,7 +40,7 @@ public:
 	double getContent() const { return _area; };
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return 2; };
+	unsigned getDimension() const { return Dimension; };
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const { return this->getEdge(i); };
