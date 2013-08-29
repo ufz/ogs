@@ -145,7 +145,6 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../../GeoLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../../OGS
 	${CMAKE_CURRENT_SOURCE_DIR}/../../MeshLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FemLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FileIO
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
@@ -184,7 +183,6 @@ add_library( QtDataView STATIC
 # Link Qt library
 target_link_libraries( QtDataView
 	${QT_LIBRARIES}
-	FemLib
 	FileIO
 	GeoLib
 	MeshLib
