@@ -30,6 +30,13 @@ FIND_PACKAGE(PythonInterp QUIET)
 FIND_PACKAGE(GitHub)
 
 FIND_PROGRAM(GIT_TOOL_PATH git HINTS ${GITHUB_BIN_DIR} DOC "The git command line interface")
+IF(NOT GIT_TOOL_PATH)
+	IF(WIN32)
+		MESSAGE(FATAL_ERROR "Git not found! Please install GitHub for Windows or Git!")
+	ELSE()
+		MESSAGE(FATAL_ERROR "Git not found but is required!")
+	ENDIF()
+ENDIF()
 
 # Find bash itself ...
 FIND_PROGRAM(BASH_TOOL_PATH bash
