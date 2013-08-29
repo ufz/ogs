@@ -1,8 +1,6 @@
 /**
- * \file
  * \author Norihiro Watanabe
  * \date   2013-04-18
- * \brief  Implementation tests.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -100,6 +98,6 @@ struct SteadyDiffusion2DExample1
 	std::vector<double> vec_DirichletBC_value;
 	std::vector<double> exact_solutions;
 	std::vector<std::size_t> vec_nodeIDs;
-}; //SteadyDiffusion2DExample1
+};
 
 #endif //STEADYDIFFUSION2DEXAMPLE1_H_

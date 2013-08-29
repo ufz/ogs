@@ -1,8 +1,6 @@
 /**
- * \file
  * \author Norihiro Watanabe
  * \date   2013-04-18
- * \brief  Implementation tests.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -18,9 +16,11 @@
 
 #include <gtest/gtest.h>
 
+#include "AssemblerLib/LinearSystemAssembler.h"
 #include "AssemblerLib/MeshComponentMap.h"
 #include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
 #include "AssemblerLib/SerialExecutor.h"
+
 
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -34,12 +34,10 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-#include "VecMatOnMeshLib/MeshItemWiseTask/LinearSystemAssembler.h"
-
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
 
-TEST(VecMatOnMeshLib, SerialLinearSolver)
+TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 {
 	// example
 	SteadyDiffusion2DExample1 ex1;
@@ -67,12 +65,12 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	    vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
 
 	// allocate a vector and matrix
-	typedef SerialBuilder::VectorType TVec;
-	typedef SerialBuilder::MatrixType TMat;
-	std::unique_ptr<TMat> A(vecMatOnMesh.createMatrix(vec1_composition));
+	typedef SerialBuilder::VectorType GlobalVector;
+	typedef SerialBuilder::MatrixType GlobalMatrix;
+	std::unique_ptr<GlobalMatrix> A(vecMatOnMesh.createMatrix(vec1_composition));
 	A->setZero();
-	std::unique_ptr<TVec> rhs(vecMatOnMesh.createVector(vec1_composition));
-	std::unique_ptr<TVec> x(vecMatOnMesh.createVector(vec1_composition));
+	std::unique_ptr<GlobalVector> rhs(vecMatOnMesh.createVector(vec1_composition));
+	std::unique_ptr<GlobalVector> x(vecMatOnMesh.createVector(vec1_composition));
 
 	//--------------------------------------------------------------------------
 	// Construct a linear system
@@ -102,8 +100,12 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	typedef SteadyDiffusion2DExample1::LocalAssembler LocalAssembler;
 	LocalAssembler local_assembler;
 
-	typedef VecMatOnMeshLib::LinearSystemAssembler<
-	    TMat, TVec, MeshLib::Element, LocalAssembler> GlobalAssembler;
+	typedef AssemblerLib::LinearSystemAssembler<
+            GlobalMatrix, GlobalVector,
+            MeshLib::Element, LocalAssembler,
+            MathLib::DenseMatrix<double>,
+            MathLib::DenseVector<double>
+        > GlobalAssembler;
 
 	GlobalAssembler assembler(*A.get(), *rhs.get(), local_assembler,
 	    map_ele_nodes2vec_entries);
@@ -128,7 +130,7 @@ TEST(VecMatOnMeshLib, SerialLinearSolver)
 	//--------------------------------------------------------------------------
 	// solve x=A^-1 rhs
 	//--------------------------------------------------------------------------
-	MathLib::GaussAlgorithm<TMat, TVec> ls(*A);
+	MathLib::GaussAlgorithm<GlobalMatrix, GlobalVector> ls(*A);
 	ls.solve(*rhs, *x);
 
 	double* px = &(*x)[0];
