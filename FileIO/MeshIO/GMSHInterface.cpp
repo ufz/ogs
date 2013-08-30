@@ -64,13 +64,13 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
 	_include_stations_as_constraints(include_stations_as_constraints)
 {
 	switch (mesh_density_algorithm) {
-	case GMSH::NoMeshDensity:
+	case GMSH::MeshDensityAlgorithm::NoMeshDensity:
 		_mesh_density_strategy = new GMSHNoMeshDensity;
 		break;
-	case GMSH::FixedMeshDensity:
+	case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
 		_mesh_density_strategy = new GMSHFixedMeshDensity(param1);
 		break;
-	case GMSH::AdaptiveMeshDensity:
+	case GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity:
 		_mesh_density_strategy = new GMSHAdaptiveMeshDensity(param1, param2, param3);
 		break;
 	}

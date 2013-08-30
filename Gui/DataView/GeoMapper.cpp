@@ -73,7 +73,7 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
 	bool is_borehole(false);
-	if (stn_test != NULL && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::BOREHOLE)
+	if (stn_test != NULL && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
 		is_borehole = true;
 	size_t nPoints (points->size());
 

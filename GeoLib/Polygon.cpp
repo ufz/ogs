@@ -203,7 +203,7 @@ void Polygon::computeListOfSimplePolygons ()
 		(*it)->initialise ();
 }
 
-EdgeType::value Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
+EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
 {
 	switch (getLocationOfPoint(k, pnt))
 	{

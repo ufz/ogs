@@ -45,7 +45,7 @@
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 int main (int argc, char* argv[])
 {
@@ -153,7 +153,7 @@ int main (int argc, char* argv[])
 		INFO("Variance of source: %f.", src_variance);
 	}
 
-	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MshElemType::QUAD,
+	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
 
 	std::vector<std::size_t> src_perm(size);

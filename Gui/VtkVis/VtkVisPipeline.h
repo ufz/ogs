@@ -19,7 +19,7 @@
 #include "Color.h"
 #include "FEMCondition.h"
 #include "GeoType.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "Point.h"
 #include "TreeModel.h"
 
@@ -117,7 +117,7 @@ public slots:
 	void removePipelineItem(QModelIndex index);
 
 	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
-	void checkMeshQuality(VtkMeshSource* mesh, MshQualityType::type t);
+	void checkMeshQuality(VtkMeshSource* mesh, MeshQualityType t);
 
 	/// Applies a VtkCompositeGeoObjectFilter to add a specific index of the given geometry-source to the pipeline for highlighted display in the render window.
 	void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);

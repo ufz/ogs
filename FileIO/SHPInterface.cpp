@@ -59,15 +59,15 @@ void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, std:
 	SHPHandle hSHP = SHPOpen(filename.c_str(), "rb");
 	SHPGetInfo(hSHP, &numberOfElements, &shapeType, padfMinBound, padfMaxBound);
 
-	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::POINT))
+	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::OGSType::POINT))
 		readPoints(hSHP, numberOfElements, listName);
-	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::STATION))
+	if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::OGSType::STATION))
 		readStations(hSHP, numberOfElements, listName);
 	if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) && (choice
-	                == SHPInterface::POLYLINE))
+	                == SHPInterface::OGSType::POLYLINE))
 		readPolylines(hSHP, numberOfElements, listName);
 	if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) && (choice
-	                == SHPInterface::POLYGON))
+	                == SHPInterface::OGSType::POLYGON))
 		readPolygons(hSHP, numberOfElements, listName);
 }
 
@@ -238,7 +238,7 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 		const MeshLib::Element* e (mesh.getElement(i));
 
 		// ignore all elements except triangles and quads
-		if ((e->getGeomType() == MshElemType::TRIANGLE) || (e->getGeomType() == MshElemType::QUAD))
+		if ((e->getGeomType() == MeshElemType::TRIANGLE) || (e->getGeomType() == MeshElemType::QUAD))
 		{
 			// write element ID and material group to DBF-file
 			DBFWriteIntegerAttribute(hDBF, polygon_id, elem_id_field, i);

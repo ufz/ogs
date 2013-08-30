@@ -21,7 +21,7 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 const unsigned TemplateTet<NNODES,CELLTETTYPE>::_face_nodes[4][3] =
 {
 	{0, 2, 1}, // Face 0
@@ -30,7 +30,7 @@ const unsigned TemplateTet<NNODES,CELLTETTYPE>::_face_nodes[4][3] =
 	{2, 0, 3}  // Face 3
 };
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 const unsigned TemplateTet<NNODES,CELLTETTYPE>::_edge_nodes[6][2] =
 {
 	{0, 1}, // Edge 0
@@ -41,7 +41,7 @@ const unsigned TemplateTet<NNODES,CELLTETTYPE>::_edge_nodes[6][2] =
 	{2, 3}  // Edge 5
 };
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value)
 	: Cell(value)
 {
@@ -53,7 +53,7 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value
 	this->_volume = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType::type CELLTETTYPE>
+template<unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& nodes,
                                              unsigned value)
 	: Cell(value)
@@ -67,7 +67,7 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& no
 	this->_volume = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(const TemplateTet<NNODES,CELLTETTYPE> &tet)
 	: Cell(tet.getValue())
 {
@@ -85,18 +85,18 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(const TemplateTet<NNODES,CELLTETTYP
 	_volume = tet.getVolume();
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::~TemplateTet()
 {
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 double TemplateTet<NNODES,CELLTETTYPE>::computeVolume()
 {
 	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords());
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 const Element* TemplateTet<NNODES,CELLTETTYPE>::getFace(unsigned i) const
 {
 	if (i<this->getNFaces())
@@ -111,7 +111,7 @@ const Element* TemplateTet<NNODES,CELLTETTYPE>::getFace(unsigned i) const
 	return NULL;
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 bool TemplateTet<NNODES,CELLTETTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<6; i++)
@@ -122,13 +122,13 @@ bool TemplateTet<NNODES,CELLTETTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 Element* TemplateTet<NNODES,CELLTETTYPE>::clone() const
 {
 	return new TemplateTet<NNODES,CELLTETTYPE>(*this);
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 unsigned TemplateTet<NNODES,CELLTETTYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<4; i++)
@@ -144,7 +144,7 @@ unsigned TemplateTet<NNODES,CELLTETTYPE>::identifyFace(Node* nodes[3]) const
 	return std::numeric_limits<unsigned>::max();
 }
 
-template <unsigned NNODES, CellType::type CELLTETTYPE>
+template <unsigned NNODES, CellType CELLTETTYPE>
 Element* TemplateTet<NNODES,CELLTETTYPE>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {

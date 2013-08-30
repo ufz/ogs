@@ -38,7 +38,7 @@ public:
 	GeoObjectListItem(const QList<QVariant> &data,
 	                  TreeItem* parent,
 	                  const std::vector<GeoLib::Point*>* geo_data = NULL,
-	                  GeoLib::GEOTYPE type = GeoLib::POINT)
+	                  GeoLib::GEOTYPE type = GeoLib::GEOTYPE::POINT)
 		: TreeItem(data, parent), _vtkSource(VtkPointsSource::New()), _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -50,7 +50,7 @@ public:
 	GeoObjectListItem(const QList<QVariant> &data,
 	                  TreeItem* parent,
 	                  const std::vector<GeoLib::Polyline*>* geo_data = NULL,
-	                  GeoLib::GEOTYPE type = GeoLib::POLYLINE)
+	                  GeoLib::GEOTYPE type = GeoLib::GEOTYPE::POLYLINE)
 		: TreeItem(data, parent), _vtkSource(VtkPolylinesSource::New()), _type(type)
 	{
 		QString geo_name = parent->data(0).toString();
@@ -62,7 +62,7 @@ public:
 	GeoObjectListItem(const QList<QVariant> &data,
 	                  TreeItem* parent,
 	                  const std::vector<GeoLib::Surface*>* geo_data = NULL,
-	                  GeoLib::GEOTYPE type = GeoLib::SURFACE)
+	                  GeoLib::GEOTYPE type = GeoLib::GEOTYPE::SURFACE)
 		: TreeItem(data, parent), _vtkSource(VtkSurfacesSource::New()),  _type(type)
 	{
 		QString geo_name = parent->data(0).toString();

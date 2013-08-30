@@ -43,10 +43,10 @@
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const double origin[3],
                                                      const double scalingFactor,
-													 MshElemType::type elem_type,
-													 UseIntensityAs::type intensity_type)
+													 MeshElemType elem_type,
+													 UseIntensityAs intensity_type)
 {
-	if ((elem_type != MshElemType::TRIANGLE) && (elem_type != MshElemType::QUAD))
+	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
 		ERR("VtkMeshConverter::convertImgToMesh(): Invalid Mesh Element Type.");
 		return nullptr;
@@ -114,8 +114,8 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
 													 const size_t imgHeight,
 													 const size_t imgWidth,
 													 const double &scalingFactor,
-													 MshElemType::type elem_type,
-													UseIntensityAs::type intensity_type)
+													 MeshElemType elem_type,
+													UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -171,8 +171,8 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
                                                   const size_t &imgHeight,
 												  const size_t &imgWidth,
                                                   const double &scalingFactor,
-										 		  MshElemType::type elem_type,
-												  UseIntensityAs::type intensity_type)
+										 		  MeshElemType elem_type,
+												  UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -212,7 +212,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 			if ((node_idx_map[index]!=-1) && (node_idx_map[index+1]!=-1) && (node_idx_map[index+incHeight]!=-1) && (node_idx_map[index+incHeight+1]!=-1) && (visNodes[index+incHeight]))
 			{
 				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
-				if (elem_type == MshElemType::TRIANGLE)
+				if (elem_type == MeshElemType::TRIANGLE)
 				{
 					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
 					tri1_nodes[0] = nodes[node_idx_map[index]];
@@ -227,7 +227,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 					elements.push_back(new MeshLib::Tri(tri1_nodes, mat)); // upper left triangle
 					elements.push_back(new MeshLib::Tri(tri2_nodes, mat)); // lower right triangle
 				}
-				if (elem_type == MshElemType::QUAD)
+				if (elem_type == MeshElemType::QUAD)
 				{
 					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 					quad_nodes[0] = nodes[node_idx_map[index]];

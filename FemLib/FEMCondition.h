@@ -43,7 +43,7 @@ public:
 	FEMCondition(const std::string &geometry_name,
 	             FiniteElement::ProcessType pt = FiniteElement::INVALID_PROCESS,
 	             FiniteElement::PrimaryVariable pv = FiniteElement::INVALID_PV,
-	             GeoLib::GEOTYPE gt = GeoLib::INVALID,
+	             GeoLib::GEOTYPE gt = GeoLib::GEOTYPE::INVALID,
 	             const std::string &gn = "[unspecified]",
 	             FiniteElement::DistributionType dt = FiniteElement::INVALID_DIS_TYPE,
 	             CondType ct = UNSPECIFIED);

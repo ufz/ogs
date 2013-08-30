@@ -152,7 +152,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 {
 	std::stringstream ss (line);
 	std::string elem_type_str("");
-	MshElemType::type elem_type (MshElemType::INVALID);
+	MeshElemType elem_type (MeshElemType::INVALID);
 	unsigned index, patch_index;
 	ss >> index >> patch_index;
 
@@ -160,15 +160,15 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		ss >> elem_type_str;
 		if (ss.fail())
 			return NULL;
-		elem_type = String2MshElemType(elem_type_str);
-	} while (elem_type == MshElemType::INVALID);
+		elem_type = String2MeshElemType(elem_type_str);
+	} while (elem_type == MeshElemType::INVALID);
 
 	unsigned* idx = new unsigned[8];
 	MeshLib::Element* elem;
 
 	switch(elem_type)
 	{
-	case MshElemType::EDGE: {
+	case MeshElemType::EDGE: {
 		for (int i = 0; i < 2; ++i)
 			ss >> idx[i];
 		// edge_nodes array will be deleted from Edge object
@@ -178,7 +178,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		elem = new MeshLib::Edge(edge_nodes, patch_index);
 		break;
 	}
-	case MshElemType::TRIANGLE: {
+	case MeshElemType::TRIANGLE: {
 		for (int i = 0; i < 3; ++i)
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
@@ -187,7 +187,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
-	case MshElemType::QUAD: {
+	case MeshElemType::QUAD: {
 		for (int i = 0; i < 4; ++i)
 			ss >> idx[i];
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
@@ -196,7 +196,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
 	}
-	case MshElemType::TETRAHEDRON: {
+	case MeshElemType::TETRAHEDRON: {
 		for (int i = 0; i < 4; ++i)
 			ss >> idx[i];
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
@@ -205,7 +205,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
 	}
-	case MshElemType::HEXAHEDRON: {
+	case MeshElemType::HEXAHEDRON: {
 		for (int i = 0; i < 8; ++i)
 			ss >> idx[i];
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
@@ -214,7 +214,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
 	}
-	case MshElemType::PYRAMID: {
+	case MeshElemType::PYRAMID: {
 		for (int i = 0; i < 5; ++i)
 			ss >> idx[i];
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
@@ -223,7 +223,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
 	}
-	case MshElemType::PRISM: {
+	case MeshElemType::PRISM: {
 		for (int i = 0; i < 6; ++i)
 			ss >> idx[i];
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
@@ -286,7 +286,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	size_t n_elements(0);
 
 	for (size_t i(0); i < ele_vector_size; ++i) {
-		if ((ele_vec[i])->getGeomType() == MshElemType::EDGE) {
+		if ((ele_vec[i])->getGeomType() == MeshElemType::EDGE) {
 			non_line_element[i] = false;
 			non_null_element[i] = false;
 		} else {
@@ -300,7 +300,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	out << n_elements << "\n";
 	for (size_t i(0), k(0); i < ele_vector_size; ++i) {
 		if (non_line_element[i] && non_null_element[i]) {
-			out << k << " " << ele_vec[i]->getValue() << " " << MshElemType2String(ele_vec[i]->getGeomType()) << " ";
+			out << k << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
 			unsigned nElemNodes (ele_vec[i]->getNNodes());
 			for(size_t j = 0; j < nElemNodes; ++j)
 				out << ele_vec[i]->getNode(nElemNodes - j - 1)->getID() << " ";

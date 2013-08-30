@@ -54,14 +54,14 @@ public:
 		if (docElement.hasAttribute("interpolation"))
 		{
 			if (docElement.attribute("interpolation").compare("Linear") == 0)
-				lut->setInterpolationType(VtkColorLookupTable::LINEAR);
+				lut->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
 			else if (docElement.attribute("interpolation").compare("Exponential") == 0)
-				lut->setInterpolationType(VtkColorLookupTable::EXPONENTIAL);
+				lut->setInterpolationType(VtkColorLookupTable::LUTType::EXPONENTIAL);
 			else
-				lut->setInterpolationType(VtkColorLookupTable::NONE);
+				lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
 		}
 		else // default
-			lut->setInterpolationType(VtkColorLookupTable::NONE);
+			lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
 
 		QDomElement point = docElement.firstChildElement();
 		double range[2] = { strtod((point.attribute("x")).toStdString().c_str(),0), strtod((point.attribute("x")).toStdString().c_str(),0) };

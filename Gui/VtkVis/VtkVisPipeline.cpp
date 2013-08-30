@@ -461,23 +461,23 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 		ERR("VtkVisPipeline::listArrays(): not a valid vtkDataSet.");
 }
 
-void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::type t)
+void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 {
 	if (source)
 	{
 		const MeshLib::Mesh* mesh = source->GetMesh();
 		MeshLib::MeshQualityChecker* checker (NULL);
-		if (t == MshQualityType::EDGERATIO)
+		if (t == MeshQualityType::EDGERATIO)
 			checker = new MeshLib::MeshQualityShortestLongestRatio(mesh);
-		else if (t == MshQualityType::AREA)
+		else if (t == MeshQualityType::AREA)
 			checker = new MeshLib::MeshQualityArea(mesh);
-		else if (t == MshQualityType::VOLUME)
+		else if (t == MeshQualityType::VOLUME)
 			checker = new MeshLib::MeshQualityVolume(mesh);
-		else if (t == MshQualityType::EQUIANGLESKEW)
+		else if (t == MeshQualityType::EQUIANGLESKEW)
 			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
 		else
 		{
-			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MshQualityType.");
+			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MeshQualityType.");
 			delete checker;
 			return;
 		}
@@ -485,7 +485,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 
 		std::vector<double> quality (checker->getMeshQuality());
 		// transform area and volume criterion values to [0, 1]
-		if (t == MshQualityType::AREA || t == MshQualityType::VOLUME) {
+		if (t == MeshQualityType::AREA || t == MeshQualityType::VOLUME) {
 			try {
 				MathLib::LinearIntervalInterpolation<double> lin_intpol(checker->getMinValue(), checker->getMaxValue(), 0, 1);
 				const size_t n_quality(quality.size());
@@ -505,7 +505,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 			{
 				QList<QVariant> itemData;
 				itemData << "MeshQuality: " + QString::fromStdString(
-				        MshQualityType2String(t)) << true;
+				        MeshQualityType2String(t)) << true;
 
 				VtkCompositeFilter* filter =
 				        VtkFilterFactory::CreateCompositeFilter(
@@ -528,7 +528,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MshQualityType::typ
 		BaseLib::Histogram<double> histogram (checker->getHistogram(nclasses));
 		std::ofstream out ("mesh_histogram.txt");
 		if (out) {
-			out << "# histogram depicts mesh quality criterion " << MshQualityType2String(t)
+			out << "# histogram depicts mesh quality criterion " << MeshQualityType2String(t)
 				<< " for mesh " << source->GetMesh()->getName() << "\n";
 			nclasses = histogram.getNrBins();
 			std::vector<size_t> const& bin_cnts(histogram.getBinCounts());

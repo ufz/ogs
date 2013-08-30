@@ -101,7 +101,7 @@ void Mesh::makeNodesUnique()
 	//set correct id for each node
 
 	//if (this->getDimension() > 1)
-	//	this->removeMeshElements(MshElemType::EDGE);
+	//	this->removeMeshElements(MeshElemType::EDGE);
 
 }
 
@@ -179,7 +179,7 @@ void Mesh::setElementsConnectedToElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		if (element->getGeomType() != MshElemType::EDGE)
+		if (element->getGeomType() != MeshElemType::EDGE)
 		{
 			const size_t nNodes (element->getNNodes());
 			for (unsigned n(0); n<nNodes; ++n)
@@ -192,7 +192,7 @@ void Mesh::setElementsConnectedToElements()
 
 			for (unsigned i(0); i<nNeighbors; ++i)
 			{
-				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MshElemType::EDGE)
+				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::EDGE)
 				{
 					neighbors[i]->addNeighbor(element);
 				}
@@ -284,7 +284,7 @@ void Mesh::removeUnusedMeshNodes()
 	}
 }
 
-void Mesh::removeMeshElements(MshElemType::type t)
+void Mesh::removeMeshElements(MeshElemType t)
 {
 	unsigned count(0);
 	for (std::vector<MeshLib::Element*>::iterator it = this->_elements.begin(); it != this->_elements.end();)
@@ -298,6 +298,6 @@ void Mesh::removeMeshElements(MshElemType::type t)
 		else
 			++it;
 	}
-	INFO("Removed %d  elements of type %s from mesh.", count, MshElemType2String(t).c_str());
+	INFO("Removed %d  elements of type %s from mesh.", count, MeshElemType2String(t).c_str());
 }
 }

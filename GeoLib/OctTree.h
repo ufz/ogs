@@ -124,7 +124,7 @@ public:
 	}
 
 private:
-	enum OctTreeQuadrant {
+	enum class OctTreeQuadrant {
 		NEL = 0, //!< north east lower
 		NWL, //!< north west lower
 		SWL, //!< south west lower
@@ -157,25 +157,25 @@ private:
 		POINT p0(x_mid, y_mid, _ll[2]), p1(_ur[0], _ur[1], z_mid);
 
 		// create child NEL
-		_childs[NEL] = new OctTree<POINT> (p0, p1);
+		_childs[OctTreeQuadrant::NEL] = new OctTree<POINT> (p0, p1);
 
 		// create child NWL
 		p0[0] = _ll[0];
 		p1[0] = x_mid;
-		_childs[NWL] = new OctTree<POINT> (p0, p1);
+		_childs[OctTreeQuadrant::NWL] = new OctTree<POINT> (p0, p1);
 
 		// create child SWL
 		p0[1] = _ll[1];
 		p1[1] = y_mid;
-		_childs[SWL] = new OctTree<POINT> (_ll, p1);
+		_childs[OctTreeQuadrant::SWL] = new OctTree<POINT> (_ll, p1);
 
 		// create child NEU
-		_childs[NEU] = new OctTree<POINT> (p1, _ur);
+		_childs[OctTreeQuadrant::NEU] = new OctTree<POINT> (p1, _ur);
 
 		// create child SEL
 		p0[0] = x_mid;
 		p1[0] = _ur[0];
-		_childs[SEL] = new OctTree<POINT> (p0, p1);
+		_childs[OctTreeQuadrant::SEL] = new OctTree<POINT> (p0, p1);
 
 		// create child NWU
 		p0[0] = _ll[0];
@@ -184,12 +184,12 @@ private:
 		p1[0] = x_mid;
 		p1[1] = _ur[1];
 		p1[2] = _ur[2];
-		_childs[NWU] = new OctTree<POINT> (p0, p1);
+		_childs[OctTreeQuadrant::NWU] = new OctTree<POINT> (p0, p1);
 
 		// create child SWU
 		p0[1] = _ll[1];
 		p1[1] = y_mid;
-		_childs[SWU] = new OctTree<POINT> (p0, p1);
+		_childs[OctTreeQuadrant::SWU] = new OctTree<POINT> (p0, p1);
 
 		// create child SEU
 		p0[0] = x_mid;

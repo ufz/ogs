@@ -31,14 +31,11 @@ namespace GeoLib
 /**
  * edge classification
  */
-class EdgeType
+enum class EdgeType
 {
-public:
-	enum value {
-		TOUCHING, //!< TOUCHING
-		CROSSING, //!< CROSSING
-		INESSENTIAL //!< INESSENTIAL
-	};
+	TOUCHING, //!< TOUCHING
+	CROSSING, //!< CROSSING
+	INESSENTIAL //!< INESSENTIAL
 };
 
 /**
@@ -114,7 +111,7 @@ private:
 	 * @param pnt point that is edge type computed for
 	 * @return a value of enum EdgeType
 	 */
-	EdgeType::value getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
+	EdgeType getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
 
 	void ensureCWOrientation ();
 

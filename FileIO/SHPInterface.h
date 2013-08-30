@@ -38,7 +38,7 @@ class SHPInterface
 {
 public:
 	/// Connection between ESRI type system for shape files and OGS GeoLib.
-	enum OGSType
+	enum class OGSType
 	{
 		UNDEFINED   = 0,
 		POINT       = 1,

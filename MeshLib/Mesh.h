@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 #include "BaseLib/Counter.h"
 
@@ -111,7 +111,7 @@ protected:
 	void removeUnusedMeshNodes();
 
 	/// Removes elements of the given type t from a mesh
-	void removeMeshElements(MshElemType::type t);
+	void removeMeshElements(MeshElemType t);
 
 	/// Sets the dimension of the mesh.
 	void setDimension();

@@ -131,19 +131,19 @@ void SHPImportDialog::accept()
 	{
 		if (_fileType == 1 && _choice1->isChecked())
 			_shpInterface->readSHPFile(_filename,
-			                           SHPInterface::POINT,
+			                           SHPInterface::OGSType::POINT,
 			                           list_name.toStdString());
 		if (_fileType == 1 && _choice2->isChecked())
 			_shpInterface->readSHPFile(_filename,
-			                           SHPInterface::STATION,
+			                           SHPInterface::OGSType::STATION,
 			                           list_name.toStdString());
 		if (_fileType == 2 && _choice1->isChecked())
 			_shpInterface->readSHPFile(_filename,
-			                           SHPInterface::POLYLINE,
+			                           SHPInterface::OGSType::POLYLINE,
 			                           list_name.toStdString());
 		if (_fileType == 2 && _choice2->isChecked())
 			_shpInterface->readSHPFile(_filename,
-			                           SHPInterface::POLYGON,
+			                           SHPInterface::OGSType::POLYGON,
 			                           list_name.toStdString());
 		emit shpLoaded(list_name);
 	}

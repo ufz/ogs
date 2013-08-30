@@ -72,7 +72,7 @@ protected:
 
 public:
 	/// Signals if the object is a "simple" Station or a Borehole (i.e. containing borehole-specific information).
-	enum StationType
+	enum class StationType
 	{
 		INVALID = 0,
 		STATION,

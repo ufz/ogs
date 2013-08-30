@@ -40,7 +40,7 @@ BaseLib::Histogram<double> MeshQualityChecker::getHistogram (size_t nclasses) co
 void MeshQualityChecker::errorMsg (const Element* elem, size_t idx) const
 {
 	ERR ("Error in MeshQualityChecker::check() - Calculated value of element is below double precision minimum.");
-	ERR ("Points of %s-Element %d: ", MshElemType2String(elem->getGeomType()).c_str(), idx);
+	ERR ("Points of %s-Element %d: ", MeshElemType2String(elem->getGeomType()).c_str(), idx);
 	for (size_t i(0); i < elem->getNNodes(); i++)
 	{
 		const double* coords = elem->getNode(i)->getCoords();

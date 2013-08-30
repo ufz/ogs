@@ -16,7 +16,7 @@
 #define TEMPLATEPRISM_H_
 
 #include <array>
-#include "MshEnums.h"
+#include "MeshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {
@@ -44,7 +44,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, CellType::type CELLPRISMTYPE>
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 class TemplatePrism : public Cell
 {
 public:
@@ -83,15 +83,15 @@ public:
 
 	/**
 	 * Method returns the type of the element. In this case PRISM will be returned.
-	 * @return MshElemType::PRISM
+	 * @return MeshElemType::PRISM
 	 */
-	virtual MshElemType::type getGeomType() const { return MshElemType::PRISM; }
+	virtual MeshElemType getGeomType() const { return MeshElemType::PRISM; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum CellType::type
+	 * @return a value of the enum CellType
 	 */
-	virtual CellType::type getCellType() const { return CELLPRISMTYPE; };
+	virtual CellType getCellType() const { return CELLPRISMTYPE; };
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
