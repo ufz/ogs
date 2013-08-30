@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2012-05-02
- * \brief  Definition of the Edge class.
+ * \brief  Definition of the Line class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef TEMPLATEEDGE_H_
-#define TEMPLATEEDGE_H_
+#ifndef TEMPLATELINE_H_
+#define TEMPLATELINE_H_
 
 #include <array>
 #include <limits>
@@ -34,20 +34,20 @@ namespace MeshLib {
  * @endcode
  */
 template<unsigned NNODES, CellType CELLEDGETYPE>
-class TemplateEdge : public Element
+class TemplateLine : public Element
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateEdge(Node* nodes[NNODES], unsigned value = 0);
+	TemplateLine(Node* nodes[NNODES], unsigned value = 0);
 
 	/// Constructs an edge from array of Node pointers.
-	TemplateEdge(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateLine(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
 
 	/// Copy constructor
-	TemplateEdge(const TemplateEdge &edge);
+	TemplateLine(const TemplateLine &edge);
 
 	/// Destructor
-	virtual ~TemplateEdge();
+	virtual ~TemplateLine();
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	double getContent() const { return _length; };
@@ -107,7 +107,7 @@ public:
 
 	virtual Element* clone() const
 	{
-		return new TemplateEdge<NNODES,CELLEDGETYPE>(*this);
+		return new TemplateLine<NNODES,CELLEDGETYPE>(*this);
 	}
 
 	/**
@@ -144,7 +144,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateEdge.tpp"
+#include "TemplateLine.tpp"
 
-#endif /* TEMPLATEEDGE_H_ */
+#endif /* TEMPLATELINE_H_ */
 

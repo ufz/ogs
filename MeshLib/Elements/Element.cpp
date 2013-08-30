@@ -16,7 +16,7 @@
 
 #include "Element.h"
 #include "Node.h"
-#include "Edge.h"
+#include "Line.h"
 
 #include "MathTools.h"
 
@@ -76,7 +76,7 @@ const Element* Element::getEdge(unsigned i) const
 		Node** nodes = new Node*[2];
 		nodes[0] = const_cast<Node*>(getEdgeNode(i,0));
 		nodes[1] = const_cast<Node*>(getEdgeNode(i,1));
-		return new Edge(nodes);
+		return new Line(nodes);
 	}
 	ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
 	return nullptr;

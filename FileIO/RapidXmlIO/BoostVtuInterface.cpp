@@ -30,7 +30,7 @@
 #include "StringTools.h"
 
 // MSH
-#include "Elements/Edge.h"
+#include "Elements/Line.h"
 #include "Elements/Hex.h"
 #include "Elements/Prism.h"
 #include "Elements/Pyramid.h"
@@ -237,7 +237,7 @@ MeshLib::Element* BoostVtuInterface::readElement(std::stringstream &iss,
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		edge_nodes[0] = nodes[node_ids[0]];
 		edge_nodes[1] = nodes[node_ids[1]];
-		return new MeshLib::Edge(edge_nodes, material);
+		return new MeshLib::Line(edge_nodes, material);
 		break;
 	}
 	case 5: { //triangle

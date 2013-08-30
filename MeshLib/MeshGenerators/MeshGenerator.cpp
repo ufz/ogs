@@ -15,7 +15,7 @@
 #include "MeshGenerator.h"
 #include "Node.h"
 
-#include "Elements/Edge.h"
+#include "Elements/Line.h"
 #include "Elements/Quad.h"
 
 #include <vector>
@@ -43,7 +43,7 @@ Mesh* MeshGenerator::generateLineMesh(
 		std::array<Node*, 2> element_nodes;
 		element_nodes[0] = nodes[i];
 		element_nodes[1] = nodes[i + 1];
-		elements[i] = new Edge(element_nodes);
+		elements[i] = new Line(element_nodes);
 	}
 
 	return new Mesh("mesh", nodes, elements);

@@ -2,7 +2,7 @@
  * \file
  * \author Thomas Fischer
  * \date   Sep 27, 2012
- * \brief  Definition of the Edge class.
+ * \brief  Definition of the Line class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,16 +12,16 @@
  *
  */
 
-#ifndef EDGE_H_
-#define EDGE_H_
+#ifndef LINE_H_
+#define LINE_H_
 
-#include "TemplateEdge.h"
+#include "TemplateLine.h"
 
 namespace MeshLib {
 
-typedef TemplateEdge<2,CellType::LINE2> Edge;
+typedef TemplateLine<2,CellType::LINE2> Line;
 
 }
 
 
-#endif /* EDGE_H_ */
+#endif /* LINE_H_ */

@@ -13,7 +13,7 @@
  */
 
 #include "Face.h"
-#include "Edge.h"
+#include "Line.h"
 #include "Node.h"
 
 #include "MathTools.h"

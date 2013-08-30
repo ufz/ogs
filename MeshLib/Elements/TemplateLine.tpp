@@ -2,7 +2,7 @@
  * \file
  * \author Thomas Fischer
  * \date   Sep 27, 2012
- * \brief  Implementation of the TemplateEdge class.
+ * \brief  Implementation of the TemplateLine class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,7 +15,7 @@
 namespace MeshLib
 {
 template<unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const& nodes,
+TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(std::array<Node*, NNODES> const& nodes,
                                                 unsigned value)
 	: Element(value)
 {
@@ -26,7 +26,7 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const&
 }
 
 template<unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned value) :
+TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(Node* nodes[NNODES], unsigned value) :
 	Element(value)
 {
 	_nodes = nodes;
@@ -34,7 +34,7 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned va
 }
 
 template <unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(const TemplateEdge<NNODES,CELLEDGETYPE> &edge) :
+TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(const TemplateLine<NNODES,CELLEDGETYPE> &edge) :
 	Element(edge.getValue())
 {
 	_nodes = new Node*[NNODES];
@@ -44,7 +44,7 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(const TemplateEdge<NNODES,CELLED
 }
 
 template <unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::~TemplateEdge()
+TemplateLine<NNODES,CELLEDGETYPE>::~TemplateLine()
 {}
 
 } // namespace MeshLib
