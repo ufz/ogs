@@ -11,7 +11,7 @@
 
 #include "Elements/Quad.h"
 #include "Elements/Tri.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 using namespace MeshLib;
 

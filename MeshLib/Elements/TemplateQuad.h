@@ -138,10 +138,10 @@ const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
 	{0, 3}  // Edge 3
 };
 
-template <unsigned NNODES, CellType::type CELLQUADTYPE>
+template <unsigned NNODES, CellType CELLQUADTYPE>
 const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_n_all_nodes = NNODES;
 
-template <unsigned NNODES, CellType::type CELLQUADTYPE>
+template <unsigned NNODES, CellType CELLQUADTYPE>
 const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_n_base_nodes = 4;
 
 } /* namespace */
