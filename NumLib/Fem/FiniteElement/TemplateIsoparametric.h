@@ -20,7 +20,8 @@
 #include <vector>
 #include <cassert>
 
-#include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
+#include "../CoordinatesMapping/NaturalCoordinatesMapping.h"
+#include "../FemEnums.h"
 
 namespace NumLib
 {
@@ -103,9 +104,9 @@ public:
      * @param x         point in natural coordinates
      * @param shape     evaluated shape data
      */
-    void computeShapeFunctions(const double *x, ShapeDataType &shape) const
+    void computeShapeFunctions(const double *x, ShapeDataType &shape, const ShapeFieldType fields=SHAPE_ALL) const
     {
-        _mapping.computeMappingMatrices(x, shape);
+        _mapping.computeMappingMatrices(x, shape, fields);
     }
 
     /// make interpolation from nodal values

@@ -35,16 +35,20 @@ void NaturalCoordinatesMapping<T_MESH_ELEMENT,T_SHAPE_FUNC,T_SHAPE_DATA>::reset(
 };
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_DATA>
-void NaturalCoordinatesMapping<T_MESH_ELEMENT,T_SHAPE_FUNC,T_SHAPE_DATA>::computeMappingMatrices(const double* natural_pt, ShapeDataType &prop) const
+void NaturalCoordinatesMapping<T_MESH_ELEMENT,T_SHAPE_FUNC,T_SHAPE_DATA>::computeMappingMatrices(const double* natural_pt, ShapeDataType &prop, const ShapeFieldType fields) const
 {
     //prepare
     const std::size_t dim = _ele->getDimension();
     const std::size_t nnodes = _ele->getNNodes();
-    prop.setZero();
+    prop.setZero(fields);
 
     //shape, dshape/dr
-    T_SHAPE_FUNC::computeShapeFunction(natural_pt, prop.N);
-    double* dNdr =  prop.dNdr.data();
+    if ( fields & SHAPE_N )
+        T_SHAPE_FUNC::computeShapeFunction(natural_pt, prop.N);
+
+    if ( !(fields & SHAPE_DNDX)) return;
+
+    double* dNdr = prop.dNdr.data();
     T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]

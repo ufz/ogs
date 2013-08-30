@@ -16,6 +16,8 @@
 #ifndef SHAPEDATA_H_
 #define SHAPEDATA_H_
 
+#include "../FemEnums.h"
+
 namespace NumLib
 {
 
@@ -62,9 +64,11 @@ struct ShapeData
 
     ~ShapeData() {}
 
-    void setZero()
+    void setZero(const ShapeFieldType fields = SHAPE_ALL)
     {
-        setZero(N);
+        if (fields & SHAPE_N)
+            setZero(N);
+        if (!(fields & SHAPE_DNDX)) return;
         setZero(dNdr);
         setZero(dNdx);
         setZero(J);

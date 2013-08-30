@@ -18,7 +18,7 @@
 
 
 #include "ShapeData.h"
-
+#include "../FemEnums.h"
 
 namespace NumLib
 {
@@ -52,7 +52,7 @@ public:
     ///
     /// @param natural_pt
     /// @param shape
-    void computeMappingMatrices(const double* natural_pt, ShapeDataType &shape) const;
+    void computeMappingMatrices(const double* natural_pt, ShapeDataType &shape, const ShapeFieldType fields=SHAPE_ALL) const;
 
     /// compute physical coordinates at the given natural coordinates
     /// \f[
