@@ -14,7 +14,7 @@
 
 using namespace MeshLib;
 
-TEST(MeshLib, ElementConstatns)
+TEST(MeshLib, QuadElementConstants)
 {
 	ASSERT_EQ(2u, Quad::_dimension);
 	ASSERT_EQ(4u, Quad::_n_all_nodes);
