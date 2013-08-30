@@ -86,6 +86,18 @@ TEST(NumLib, FEM_ElementIsoQuad4)
     typedef typename QUAD4Type::ShapeDataType ShapeData;
     QUAD4Type fe(e, 2);
 
+    // check flags of evaluating shape data fields
+    double x[3] = {0.5, 0.5, 0.0};
+    ShapeData shape(e.getDimension(), e.getNNodes());
+    fe.computeShapeFunctions(x, shape, SHAPE_N);
+    ASSERT_TRUE(shape.N.norm() > .0 && shape.dNdx.norm() == .0);
+    shape.setZero();
+    fe.computeShapeFunctions(x, shape, SHAPE_DNDX);
+    ASSERT_TRUE(shape.N.norm() == .0 && shape.dNdx.norm() > .0);
+    shape.setZero();
+    fe.computeShapeFunctions(x, shape, SHAPE_ALL);
+    ASSERT_TRUE(shape.N.norm() > .0 && shape.dNdx.norm() > .0);
+
     // evaluate a local matrix K = int{ dN^T D dN }
     NodalMatrix K(e.getNNodes(), e.getNNodes());
     const double conductivity = 1e-11;
@@ -94,12 +106,10 @@ TEST(NumLib, FEM_ElementIsoQuad4)
 #else
     DimMatrix D = conductivity * DimMatrix::Identity(e.getDimension(), e.getDimension());
 #endif
-    double x[3] = {};
-    ShapeData shape(e.getDimension(), e.getNNodes());
     auto q = fe.getIntegrationMethod();
     for (size_t i=0; i<q.getNPoints(); i++) {
-        double w = q.getPoint(i, x);
-        fe.computeShapeFunctions(x, shape);
+        const double w = q.getPoint(i, x);
+        fe.computeShapeFunctions(x, shape, SHAPE_DNDX);
         K.noalias() += shape.dNdx.transpose() * D * shape.dNdx * shape.detJ * w;
     }
     NodalMatrix expectedK(e.getNNodes(), e.getNNodes());
@@ -111,7 +121,7 @@ TEST(NumLib, FEM_ElementIsoQuad4)
     K.setZero(e.getNNodes(), e.getNNodes());
     for (size_t i=0; i<q.getNPoints(); i++) {
         double w = q.getPoint(i, x);
-        fe.computeShapeFunctions(x, shape);
+        fe.computeShapeFunctions(x, shape, SHAPE_DNDX);
         K.noalias() += shape.dNdx.transpose() * D * shape.dNdx * shape.detJ * w;
     }
     ASSERT_DOUBLE_ARRAY_EQ(expectedK.data(), K.data(), K.rows()*K.cols(), 1e-12);
@@ -120,13 +130,13 @@ TEST(NumLib, FEM_ElementIsoQuad4)
     NodalVector vec_nodal_values1(e.getNNodes());
     vec_nodal_values1 << 0, 1, 1, 0;
     double x_node0[2] = {1,1};
-    fe.computeShapeFunctions(x_node0, shape);
+    fe.computeShapeFunctions(x_node0, shape, SHAPE_N);
     ASSERT_NEAR(.0, fe.interpolate(shape, vec_nodal_values1), 1e-5);
     double x_node1[2] = {-1,1};
-    fe.computeShapeFunctions(x_node1, shape);
+    fe.computeShapeFunctions(x_node1, shape, SHAPE_N);
     ASSERT_NEAR(1.0, fe.interpolate(shape, vec_nodal_values1), 1e-5);
     double x_node_mid[2] = {0,0};
-    fe.computeShapeFunctions(x_node_mid, shape);
+    fe.computeShapeFunctions(x_node_mid, shape, SHAPE_N);
     ASSERT_NEAR(0.5, fe.interpolate(shape, vec_nodal_values1), 1e-5);
 
     // extrapolate
@@ -134,7 +144,7 @@ TEST(NumLib, FEM_ElementIsoQuad4)
     LocalVector vec_gp_values(q.getNPoints());
     for (std::size_t i=0; i<q.getNPoints(); i++) {
         q.getPoint(i, x);
-        fe.computeShapeFunctions(x, shape);
+        fe.computeShapeFunctions(x, shape, SHAPE_N);
         vec_gp_values(i) = fe.interpolate(shape, vec_nodal_values1);
     }
     NodalVector vec_nodal_values2;
