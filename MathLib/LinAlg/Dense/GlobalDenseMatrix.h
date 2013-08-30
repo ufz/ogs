@@ -33,9 +33,7 @@ public:
 
 public:
 	/// Dense square matrix constructor.
-	GlobalDenseMatrix (IDX_TYPE rows)
-		: GlobalDenseMatrix(rows, rows)
-	{ };
+	GlobalDenseMatrix (IDX_TYPE rows);
 
 	/// Dense rectangular matrix constructor.
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
