@@ -14,10 +14,10 @@
 
 namespace MeshLib
 {
-template<unsigned NNODES, CellType CELLEDGETYPE>
-TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(std::array<Node*, NNODES> const& nodes,
+template<unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const& nodes,
                                                 unsigned value)
-	: Element(value)
+	: Edge(value)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -25,26 +25,26 @@ TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(std::array<Node*, NNODES> const&
 	this->_length = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType CELLEDGETYPE>
-TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(Node* nodes[NNODES], unsigned value) :
-	Element(value)
+template<unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(Node* nodes[NNODES], unsigned value) :
+	Edge(value)
 {
 	_nodes = nodes;
 	this->_length = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType CELLEDGETYPE>
-TemplateLine<NNODES,CELLEDGETYPE>::TemplateLine(const TemplateLine<NNODES,CELLEDGETYPE> &edge) :
-	Element(edge.getValue())
+template <unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(const TemplateLine<NNODES,CELLLINETYPE> &line) :
+	Edge(line.getValue())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned k(0); k<NNODES; k++)
-		_nodes[k] = edge._nodes[k];
-	_length = edge.getLength();
+		_nodes[k] = line._nodes[k];
+	_length = line.getLength();
 }
 
-template <unsigned NNODES, CellType CELLEDGETYPE>
-TemplateLine<NNODES,CELLEDGETYPE>::~TemplateLine()
+template <unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
 } // namespace MeshLib
