@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 	delete logogCout;
 	LOGOG_SHUTDOWN();
 #ifdef VTKFBXCONVERTER_FOUND
-	DestroySdkObjects(lSdkManager);
+	DestroySdkObjects(lSdkManager, true);
 #endif
 #ifdef VTKOSGCONVERTER_FOUND
 	OSG::osgExit();
