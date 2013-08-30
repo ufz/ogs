@@ -31,7 +31,7 @@ class Face : public Element
 {
 public:
 	/// Constant: Dimension of this mesh element
-	static const unsigned Dimension;
+	static const unsigned _dimension;
 
 	/// Get the area of this 2d element.
 	virtual double getArea() const { return _area; };
@@ -40,7 +40,7 @@ public:
 	double getContent() const { return _area; };
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return Dimension; };
+	unsigned getDimension() const { return _dimension; };
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const { return this->getEdge(i); };
