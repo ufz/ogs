@@ -140,7 +140,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		switch (elem->getGeomType())
 		{
-		case MeshElemType::EDGE:
+		case MeshElemType::LINE:
 			type = 3;
 			break;
 		case MeshElemType::TRIANGLE:

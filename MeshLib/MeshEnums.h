@@ -23,7 +23,7 @@
 enum class MeshElemType
 {
 	INVALID,
-	EDGE,
+	LINE,
 	QUAD,
 	HEXAHEDRON,
 	TRIANGLE,
@@ -38,8 +38,8 @@ enum class MeshElemType
 enum class CellType
 {
 	INVALID,
-	EDGE2,
-	EDGE3,
+	LINE2,
+	LINE3,
 	TRI3,
 	TRI6,
 	QUAD4,

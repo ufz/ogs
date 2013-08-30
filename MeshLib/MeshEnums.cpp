@@ -16,7 +16,7 @@
 
 const std::string MeshElemType2String(const MeshElemType t)
 {
-	if (t == MeshElemType::EDGE)
+	if (t == MeshElemType::LINE)
 		return "line";
 	if (t == MeshElemType::QUAD)
 		return "quad";
@@ -36,7 +36,7 @@ const std::string MeshElemType2String(const MeshElemType t)
 MeshElemType String2MeshElemType(const std::string &s)
 {
 	if (s.compare("line") == 0)
-		return MeshElemType::EDGE;
+		return MeshElemType::LINE;
 	if (s.compare("quad") == 0)
 		return MeshElemType::QUAD;
 	if (s.compare("hex")  == 0)

@@ -19,7 +19,7 @@
 
 namespace MeshLib {
 
-typedef TemplateEdge<2,CellType::EDGE2> Edge;
+typedef TemplateEdge<2,CellType::LINE2> Edge;
 
 }
 

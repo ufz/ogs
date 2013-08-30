@@ -168,7 +168,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 
 	switch(elem_type)
 	{
-	case MeshElemType::EDGE: {
+	case MeshElemType::LINE: {
 		for (int i = 0; i < 2; ++i)
 			ss >> idx[i];
 		// edge_nodes array will be deleted from Edge object
@@ -286,7 +286,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 	size_t n_elements(0);
 
 	for (size_t i(0); i < ele_vector_size; ++i) {
-		if ((ele_vec[i])->getGeomType() == MeshElemType::EDGE) {
+		if ((ele_vec[i])->getGeomType() == MeshElemType::LINE) {
 			non_line_element[i] = false;
 			non_null_element[i] = false;
 		} else {

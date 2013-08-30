@@ -500,7 +500,7 @@ unsigned BoostVtuInterface::getVTKElementID(MeshElemType type) const
 {
 	switch (type)
 	{
-	case MeshElemType::EDGE:
+	case MeshElemType::LINE:
 		return 3;
 	case MeshElemType::TRIANGLE:
 		return 5;
