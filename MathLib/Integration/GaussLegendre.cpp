@@ -55,9 +55,8 @@ std::pair<double, double> GaussLegendre::getPoint(unsigned n_sample_points, unsi
             return std::make_pair(-0.861136311594053, 0.347854845137454);
         }
         break;
-    default:
-        return std::make_pair(0.0, 0.0);
     }
+    return std::make_pair(0.0, 0.0);
 }
 
 
