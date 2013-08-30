@@ -15,6 +15,11 @@ namespace MathLib
 {
 
 template<typename FP_TYPE, typename IDX_TYPE>
+GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::GlobalDenseMatrix(IDX_TYPE rows) :
+		DenseMatrix<FP_TYPE, IDX_TYPE>(rows, rows)
+{}
+
+template<typename FP_TYPE, typename IDX_TYPE>
 GlobalDenseMatrix<FP_TYPE, IDX_TYPE>::GlobalDenseMatrix(IDX_TYPE rows, IDX_TYPE cols) :
 		DenseMatrix<FP_TYPE, IDX_TYPE>(rows, cols)
 {}
