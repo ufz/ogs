@@ -21,7 +21,7 @@
 
 namespace MeshLib {
 
-const unsigned Face::Dimension = 2u;
+const unsigned Face::_dimension = 2u;
 
 /*
 Face::Face(Node** nodes, MeshElemType type, unsigned value)
