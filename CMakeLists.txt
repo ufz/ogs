@@ -109,7 +109,6 @@ ADD_SUBDIRECTORY( AssemblerLib )
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
 ADD_DEPENDENCIES(BaseLib Boost)
-ADD_SUBDIRECTORY( FemLib )
 ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )

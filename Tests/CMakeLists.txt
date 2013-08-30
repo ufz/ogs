@@ -18,7 +18,6 @@ ENDIF()
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/AssemblerLib
 	${CMAKE_SOURCE_DIR}/BaseLib
-	${CMAKE_SOURCE_DIR}/FemLib
 	${CMAKE_SOURCE_DIR}/FileIO
 	${CMAKE_SOURCE_DIR}/GeoLib
 	${CMAKE_SOURCE_DIR}/MathLib
@@ -37,7 +36,6 @@ TARGET_LINK_LIBRARIES(testrunner
 	GTest
 	AssemblerLib
 	BaseLib
-	FemLib
 	FileIO
 	GeoLib
 	MathLib

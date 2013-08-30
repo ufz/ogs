@@ -8,7 +8,6 @@ ADD_LIBRARY(OgsLib STATIC ${SOURCES})
 include_directories(
 	.
 	${CMAKE_CURRENT_SOURCE_DIR}/../BaseLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../FemLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../GeoLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../MathLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib
@@ -17,7 +16,6 @@ include_directories(
 
 target_link_libraries (OgsLib
 	BaseLib
-	FemLib
 	GeoLib
 	MeshLib
 )
