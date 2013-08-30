@@ -21,7 +21,7 @@
 
 namespace MeshLib {
 /*
-Face::Face(Node** nodes, MshElemType::type type, unsigned value)
+Face::Face(Node** nodes, MeshElemType type, unsigned value)
 	: Element(nodes, type, value)
 {
 }

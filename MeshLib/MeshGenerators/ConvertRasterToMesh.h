@@ -19,7 +19,7 @@
 #include "Raster.h"
 
 // MeshLib
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 namespace MeshLib {
 
@@ -29,13 +29,11 @@ class Mesh;
 /**
  * Struct gives a selection of possible interpretations for intensities
  */
-struct UseIntensityAs
+enum class UseIntensityAs
 {
-	enum type {
-		ELEVATION,
-		MATERIAL,
-		NONE
-	};
+	ELEVATION,
+	MATERIAL,
+	NONE
 };
 
 /**
@@ -43,16 +41,16 @@ struct UseIntensityAs
  */
 class ConvertRasterToMesh {
 public:
-	ConvertRasterToMesh(GeoLib::Raster const& raster, MshElemType::type elem_type,
-					  UseIntensityAs::type intensity_type);
+	ConvertRasterToMesh(GeoLib::Raster const& raster, MeshElemType elem_type,
+					  UseIntensityAs intensity_type);
 	~ConvertRasterToMesh();
 	MeshLib::Mesh* execute() const;
 private:
 	double getExistingValue(GeoLib::Raster::const_iterator beg, GeoLib::Raster::const_iterator last) const;
 	MeshLib::Mesh* constructMesh(const double* pix_vals, const bool* vis_nodes) const;
 	GeoLib::Raster const& _raster;
-	MshElemType::type _elem_type;
-	UseIntensityAs::type _intensity_type;
+	MeshElemType _elem_type;
+	UseIntensityAs _intensity_type;
 };
 
 } // end namespace MeshLib

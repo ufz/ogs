@@ -35,10 +35,10 @@ void MeshQualityVolume::check()
 	for (size_t k(0); k < nElements; k++)
 	{
 		const Element* elem (elements[k]);
-		MshElemType::type elem_type (elem->getGeomType());
-		if (elem_type == MshElemType::EDGE
-		    || elem_type == MshElemType::TRIANGLE
-		    || elem_type == MshElemType::QUAD)
+		MeshElemType elem_type (elem->getGeomType());
+		if (elem_type == MeshElemType::EDGE
+		    || elem_type == MeshElemType::TRIANGLE
+		    || elem_type == MeshElemType::QUAD)
 		{
             _mesh_quality_measure[k] = 0.0;
             continue;

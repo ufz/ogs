@@ -19,7 +19,7 @@
 InitialCondition::InitialCondition(const CInitialCondition &ic, const std::string &geometry_name)
 	: FEMCondition(geometry_name, ic.getProcessType(), ic.getProcessPrimaryVariable(),
 	               ic.getGeomType(),
-	               (ic.getGeomType() == GeoLib::GEODOMAIN) ? "Domain" : ic.getGeoName(),
+	               (ic.getGeomType() == GeoLib::GEOTYPE::GEODOMAIN) ? "Domain" : ic.getGeoName(),
 	               ic.getProcessDistributionType(), FEMCondition::INITIAL_CONDITION)
 {
 	if (this->getProcessDistributionType() == FiniteElement::CONSTANT)

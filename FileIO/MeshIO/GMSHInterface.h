@@ -37,7 +37,7 @@ namespace FileIO
 
 namespace GMSH {
 
-enum MeshDensityAlgorithm {
+enum class MeshDensityAlgorithm {
 	NoMeshDensity = 0, //!< do not set the parameter
 	FixedMeshDensity, //!< set the parameter with a fixed value
 	AdaptiveMeshDensity //!< computing the mesh density employing a QuadTree

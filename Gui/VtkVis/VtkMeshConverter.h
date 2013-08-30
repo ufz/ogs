@@ -20,20 +20,19 @@ namespace MeshLib {
 	class Mesh;
 }
 
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
 
 /// Selection of possible interpretations for intensities
-struct UseIntensityAs
+enum class UseIntensityAs
 {
-	enum type {
-		ELEVATION,
-		MATERIAL,
-		NONE
-	};
+	ELEVATION,
+	MATERIAL,
+	NONE
 };
+
 
 /**
  * \brief Adapter class to convert FEM Mesh to a representation more suited for visualisation purposes
@@ -49,8 +48,8 @@ public:
 	static MeshLib::Mesh* convertImgToMesh(vtkImageData* img,
 									      const double origin[3],
 	                                      const double scalingFactor,
-										  MshElemType::type elem_type,
-										  UseIntensityAs::type intensity_type);
+										  MeshElemType elem_type,
+										  UseIntensityAs intensity_type);
 
 	/**
 	 * Converts double array with raster values to a mesh
@@ -62,8 +61,8 @@ public:
 										  const std::size_t imgHeight,
 										  const std::size_t imgWidth,
 	                                      const double &scalingFactor,
-										  MshElemType::type elem_type,
-										  UseIntensityAs::type intensity_type);
+										  MeshElemType elem_type,
+										  UseIntensityAs intensity_type);
 
 	/// Converts a vtkUnstructuredGrid object to a Mesh
 	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
@@ -77,8 +76,8 @@ private:
 									   const std::size_t &imgHeight,
 									   const std::size_t &imgWidth,
 									   const double &scalingFactor,
-									   MshElemType::type elem_type,
-									   UseIntensityAs::type intensity_type);
+									   MeshElemType elem_type,
+									   UseIntensityAs intensity_type);
 
 	static double getExistingValue(const double* img, std::size_t length);
 };

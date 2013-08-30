@@ -51,7 +51,7 @@ public:
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
-	Cell(Node** nodes, MshElemType::type type, unsigned value = 0);
+	Cell(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Cell(unsigned value = 0);

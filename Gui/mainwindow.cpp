@@ -498,7 +498,7 @@ void MainWindow::save()
 			double param1(0.5); // mesh density scaling on normal points
 			double param2(0.05); // mesh density scaling on station points
 			size_t param3(2); // points per leaf
-			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, FileIO::GMSH::AdaptiveMeshDensity, param1, param2, param3, names);
+			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, param1, param2, param3, names);
 			gmsh_io.writeToFile(fileName.toStdString());
 
 			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
@@ -994,13 +994,13 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 		{
 			if (param4 == -1) { // adaptive meshing selected
 				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_geoModels)), true,
-								FileIO::GMSH::AdaptiveMeshDensity, param2, param3, param1,
+								FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, param2, param3, param1,
 								selectedGeometries);
 				gmsh_io.setPrecision(20);
 				gmsh_io.writeToFile(fileName.toStdString());
 			} else { // homogeneous meshing selected
 				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_geoModels)), true,
-								FileIO::GMSH::FixedMeshDensity, param4, param3, param1,
+								FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, param4, param3, param1,
 								selectedGeometries);
 				gmsh_io.setPrecision(20);
 				gmsh_io.writeToFile(fileName.toStdString());
@@ -1055,13 +1055,13 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 	GeoLib::Station* stn = _geoModels->getStationModel()->stationFromIndex(
 	        index, listName);
 
-	if ((stn->type() == GeoLib::Station::STATION) && stn->getSensorData())
+	if ((stn->type() == GeoLib::Station::StationType::STATION) && stn->getSensorData())
 	{
 		DiagramPrefsDialog* prefs ( new DiagramPrefsDialog(stn) );
 		prefs->setAttribute(Qt::WA_DeleteOnClose);
 		prefs->show();
 	}
-	if (stn->type() == GeoLib::Station::BOREHOLE)
+	if (stn->type() == GeoLib::Station::StationType::BOREHOLE)
 		OGSError::box("No time series data available for borehole.");
 }
 
@@ -1104,7 +1104,7 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, bool on_points)
 {
 	std::string geo_name("");
-	if (object_type != GeoLib::INVALID)
+	if (object_type != GeoLib::GEOTYPE::INVALID)
 		geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
 	else
 		geo_name = geometry_name; // in this case this is actually the mesh name
@@ -1122,7 +1122,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 		if (on_points)
 			this->_geoModels->addNameForObjectPoints(geometry_name, object_type, geo_name, geometry_name);
 
-		if (object_type != GeoLib::INVALID)
+		if (object_type != GeoLib::GEOTYPE::INVALID)
 		{
 			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
 			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
@@ -1171,8 +1171,8 @@ void MainWindow::showMergeGeometriesDialog()
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 {
 	MshQualitySelectionDialog dlg(mshSource);
-	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource *, MshQualityType::type)),
-	        _vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource *, MshQualityType::type)));
+	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource *, MeshQualityType)),
+	        _vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource *, MeshQualityType)));
 	dlg.exec();
 }
 

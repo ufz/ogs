@@ -24,18 +24,15 @@
 
 namespace GeoLib
 {
-class Location
+enum class Location
 {
-public:
-	enum type {
-		LEFT,
-		RIGHT,
-		BEYOND,
-		BEHIND,
-		BETWEEN,
-		SOURCE,
-		DESTINATION
-	};
+	LEFT,
+	RIGHT,
+	BEYOND,
+	BEHIND,
+	BETWEEN,
+	SOURCE,
+	DESTINATION
 };
 
 /**
@@ -152,7 +149,7 @@ protected:
 	 * @param pnt the point
 	 * @return a value of enum LOCATION
 	 */
-	Location::type getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
+	Location getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
 
 	/** a reference to the vector of pointers to the geometric points */
 	const std::vector<Point*> &_ply_pnts;

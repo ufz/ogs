@@ -48,7 +48,7 @@ void GeoTreeModel::addPointList(QString geoName, const GeoLib::PointVec* pointVe
 
 	QList<QVariant> pointData;
 	pointData << "Points" << "" << "" << "" << "";
-	GeoObjectListItem* pointList = new GeoObjectListItem(pointData, geo, points, GeoLib::POINT);
+	GeoObjectListItem* pointList = new GeoObjectListItem(pointData, geo, points, GeoLib::GEOTYPE::POINT);
 	geo->appendChild(pointList);
 
 	size_t nPoints = points->size();
@@ -95,7 +95,7 @@ void GeoTreeModel::addPolylineList(QString geoName, const GeoLib::PolylineVec* p
 
 	QList<QVariant> plyData;
 	plyData << "Polylines" << "" << "" << "";
-	GeoObjectListItem* plyList = new GeoObjectListItem(plyData, geo, lines, GeoLib::POLYLINE);
+	GeoObjectListItem* plyList = new GeoObjectListItem(plyData, geo, lines, GeoLib::GEOTYPE::POLYLINE);
 	geo->appendChild(plyList);
 	this->addChildren(plyList, polylineVec, 0, lines->size());
 	reset();
@@ -110,7 +110,7 @@ void GeoTreeModel::appendPolylines(const std::string &name, const GeoLib::Polyli
 			{
 				GeoObjectListItem* parent =
 				        static_cast<GeoObjectListItem*>(_lists[i]->child(j));
-				if (GeoLib::POLYLINE == parent->getType())
+				if (GeoLib::GEOTYPE::POLYLINE == parent->getType())
 				{
 					this->addChildren(parent, polylineVec,
 					                  parent->childCount(),
@@ -181,7 +181,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, const GeoLib::SurfaceVec* sur
 
 	QList<QVariant> sfcData;
 	sfcData << "Surfaces" << "" << "" << "";
-	GeoObjectListItem* sfcList = new GeoObjectListItem(sfcData, geo, surfaces, GeoLib::SURFACE);
+	GeoObjectListItem* sfcList = new GeoObjectListItem(sfcData, geo, surfaces, GeoLib::GEOTYPE::SURFACE);
 	geo->appendChild(sfcList);
 	this->addChildren(sfcList, surfaceVec, 0, surfaces->size());
 
@@ -199,7 +199,7 @@ void GeoTreeModel::appendSurfaces(const std::string &name, GeoLib::SurfaceVec* s
 			{
 				GeoObjectListItem* parent =
 				        static_cast<GeoObjectListItem*>(_lists[i]->child(j));
-				if (GeoLib::SURFACE == parent->getType())
+				if (GeoLib::GEOTYPE::SURFACE == parent->getType())
 				{
 					this->addChildren(parent, surfaceVec,
 					                  parent->childCount(),
@@ -315,17 +315,17 @@ void GeoTreeModel::setNameForItem(const std::string &name,
 
 	switch(type)
 	{
-	case GeoLib::POINT:
+	case GeoLib::GEOTYPE::POINT:
 		type_idx = 0;
 		col_idx = 4; // for points the name is at a different position
 		break;
-	case GeoLib::POLYLINE:
+	case GeoLib::GEOTYPE::POLYLINE:
 		type_idx = 1;
 		break;
-	case GeoLib::SURFACE:
+	case GeoLib::GEOTYPE::SURFACE:
 		type_idx = 2;
 		break;
-	case GeoLib::VOLUME:
+	case GeoLib::GEOTYPE::VOLUME:
 		type_idx = 3;
 		break;
 	default:

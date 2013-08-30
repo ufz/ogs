@@ -51,9 +51,9 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects* geo_objects
 	for (unsigned i=0; i<nElems; ++i)
 	{
 		MeshLib::Element* e (elements[i]);
-		if (e->getGeomType() == MshElemType::TRIANGLE)
+		if (e->getGeomType() == MeshElemType::TRIANGLE)
 			sfc->addTriangle(e->getNodeIndex(0), e->getNodeIndex(1), e->getNodeIndex(2));
-		if (e->getGeomType() == MshElemType::QUAD)
+		if (e->getGeomType() == MeshElemType::QUAD)
 		{
 			sfc->addTriangle(e->getNodeIndex(0), e->getNodeIndex(1), e->getNodeIndex(2));
 			sfc->addTriangle(e->getNodeIndex(0), e->getNodeIndex(2), e->getNodeIndex(3));

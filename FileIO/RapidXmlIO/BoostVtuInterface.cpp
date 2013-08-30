@@ -496,23 +496,23 @@ int BoostVtuInterface::write(std::ostream& stream)
 	return 1;
 }
 
-unsigned BoostVtuInterface::getVTKElementID(MshElemType::type type) const
+unsigned BoostVtuInterface::getVTKElementID(MeshElemType type) const
 {
 	switch (type)
 	{
-	case MshElemType::EDGE:
+	case MeshElemType::EDGE:
 		return 3;
-	case MshElemType::TRIANGLE:
+	case MeshElemType::TRIANGLE:
 		return 5;
-	case MshElemType::QUAD:
+	case MeshElemType::QUAD:
 		return 9;
-	case MshElemType::TETRAHEDRON:
+	case MeshElemType::TETRAHEDRON:
 		return 10;
-	case MshElemType::HEXAHEDRON:
+	case MeshElemType::HEXAHEDRON:
 		return 12;
-	case MshElemType::PYRAMID:
+	case MeshElemType::PYRAMID:
 		return 14;
-	case MshElemType::PRISM:
+	case MeshElemType::PRISM:
 		return 13;
 	default:
 		return std::numeric_limits<unsigned>::max();

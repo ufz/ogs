@@ -230,7 +230,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 
 int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lists)
 {
-	const std::vector<SensorDataType::type> time_series_names (data->getTimeSeriesNames());
+	std::vector<SensorDataType> const& time_series_names (data->getTimeSeriesNames());
 	int nLists(time_series_names.size());
 
 	std::vector<size_t> time_steps;

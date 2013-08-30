@@ -36,7 +36,7 @@ namespace GeoLib
 template <typename POINT> class QuadTree
 {
 public:
-	enum Quadrant {
+	enum class Quadrant {
 		NE = 0, //!< north east
 		NW, //!< north west
 		SW, //!< south west
@@ -134,10 +134,10 @@ public:
 				if (needToRefine (node))
 				{
 					node->splitNode ();
-					leaf_list.push_back (node->getChild(NE));
-					leaf_list.push_back (node->getChild(NW));
-					leaf_list.push_back (node->getChild(SW));
-					leaf_list.push_back (node->getChild(SE));
+					leaf_list.push_back (node->getChild(Quadrant::NE));
+					leaf_list.push_back (node->getChild(Quadrant::NW));
+					leaf_list.push_back (node->getChild(Quadrant::SW));
+					leaf_list.push_back (node->getChild(Quadrant::SE));
 
 					// check if north neighbor has to be refined
 					QuadTree<POINT>* north_neighbor (node->getNorthNeighbor());
@@ -205,16 +205,16 @@ public:
 			if (pnt[0] <= 0.5 * (_ur[0] + _ll[0])) // WEST
 			{
 				if (pnt[1] <= 0.5 * (_ur[1] + _ll[1])) // SOUTH
-					_childs[SW]->getLeaf (pnt, ll, ur);
+					_childs[static_cast<int>(Quadrant::SW)]->getLeaf (pnt, ll, ur);
 				else // NORTH
-					_childs[NW]->getLeaf (pnt, ll, ur);
+					_childs[static_cast<int>(Quadrant::NW)]->getLeaf (pnt, ll, ur);
 			}
 			else // EAST
 			{
 				if (pnt[1] <= 0.5 * (_ur[1] + _ll[1])) // SOUTH
-					_childs[SE]->getLeaf (pnt, ll, ur);
+					_childs[static_cast<int>(Quadrant::SE)]->getLeaf (pnt, ll, ur);
 				else // NORTH
-					_childs[NE]->getLeaf (pnt, ll, ur);
+					_childs[static_cast<int>(Quadrant::NE)]->getLeaf (pnt, ll, ur);
 			}
 		}
 	}
@@ -255,14 +255,14 @@ public:
 private:
 	QuadTree<POINT>* getChild (Quadrant quadrant)
 	{
-		return _childs[quadrant];
+		return _childs[static_cast<int>(quadrant)];
 	}
 
 	bool isLeaf () const { return _is_leaf; }
 
 	bool isChild (QuadTree<POINT> const* const tree, Quadrant quadrant) const
 	{
-		if (_childs[quadrant] == tree) return true;
+		if (_childs[static_cast<int>(quadrant)] == tree) return true;
 		return false;
 	}
 
@@ -271,10 +271,10 @@ private:
 		if (this->_father == NULL) // root of QuadTree
 			return NULL;
 
-		if (this->_father->isChild (this, SW))
-			return this->_father->getChild (NW);
-		if (this->_father->isChild (this, SE))
-			return this->_father->getChild (NE);
+		if (this->_father->isChild (this, Quadrant::SW))
+			return this->_father->getChild (Quadrant::NW);
+		if (this->_father->isChild (this, Quadrant::SE))
+			return this->_father->getChild (Quadrant::NE);
 
 		QuadTree<POINT>* north_neighbor (this->_father->getNorthNeighbor ());
 		if (north_neighbor == NULL)
@@ -282,10 +282,10 @@ private:
 		if (north_neighbor->isLeaf())
 			return north_neighbor;
 
-		if (this->_father->isChild (this, NW))
-			return north_neighbor->getChild (SW);
+		if (this->_father->isChild (this, Quadrant::NW))
+			return north_neighbor->getChild (Quadrant::SW);
 		else
-			return north_neighbor->getChild (SE);
+			return north_neighbor->getChild (Quadrant::SE);
 	}
 
 	QuadTree<POINT>* getSouthNeighbor () const
@@ -293,10 +293,10 @@ private:
 		if (this->_father == NULL) // root of QuadTree
 			return NULL;
 
-		if (this->_father->isChild (this, NW))
-			return this->_father->getChild (SW);
-		if (this->_father->isChild (this, NE))
-			return this->_father->getChild (SE);
+		if (this->_father->isChild (this, Quadrant::NW))
+			return this->_father->getChild (Quadrant::SW);
+		if (this->_father->isChild (this, Quadrant::NE))
+			return this->_father->getChild (Quadrant::SE);
 
 		QuadTree<POINT>* south_neighbor (this->_father->getSouthNeighbor ());
 		if (south_neighbor == NULL)
@@ -304,10 +304,10 @@ private:
 		if (south_neighbor->isLeaf())
 			return south_neighbor;
 
-		if (this->_father->isChild (this, SW))
-			return south_neighbor->getChild (NW);
+		if (this->_father->isChild (this, Quadrant::SW))
+			return south_neighbor->getChild (Quadrant::NW);
 		else
-			return south_neighbor->getChild (NE);
+			return south_neighbor->getChild (Quadrant::NE);
 	}
 
 	QuadTree<POINT>* getEastNeighbor () const
@@ -315,10 +315,10 @@ private:
 		if (this->_father == NULL) // root of QuadTree
 			return NULL;
 
-		if (this->_father->isChild (this, NW))
-			return this->_father->getChild (NE);
-		if (this->_father->isChild (this, SW))
-			return this->_father->getChild (SE);
+		if (this->_father->isChild (this, Quadrant::NW))
+			return this->_father->getChild (Quadrant::NE);
+		if (this->_father->isChild (this, Quadrant::SW))
+			return this->_father->getChild (Quadrant::SE);
 
 		QuadTree<POINT>* east_neighbor (this->_father->getEastNeighbor ());
 		if (east_neighbor == NULL)
@@ -326,10 +326,10 @@ private:
 		if (east_neighbor->isLeaf())
 			return east_neighbor;
 
-		if (this->_father->isChild (this, SE))
-			return east_neighbor->getChild (SW);
+		if (this->_father->isChild (this, Quadrant::SE))
+			return east_neighbor->getChild (Quadrant::SW);
 		else
-			return east_neighbor->getChild (NW);
+			return east_neighbor->getChild (Quadrant::NW);
 	}
 
 	QuadTree<POINT>* getWestNeighbor () const
@@ -337,10 +337,10 @@ private:
 		if (this->_father == NULL) // root of QuadTree
 			return NULL;
 
-		if (this->_father->isChild (this, NE))
-			return this->_father->getChild (NW);
-		if (this->_father->isChild (this, SE))
-			return this->_father->getChild (SW);
+		if (this->_father->isChild (this, Quadrant::NE))
+			return this->_father->getChild (Quadrant::NW);
+		if (this->_father->isChild (this, Quadrant::SE))
+			return this->_father->getChild (Quadrant::SW);
 
 		QuadTree<POINT>* west_neighbor (this->_father->getWestNeighbor ());
 		if (west_neighbor == NULL)
@@ -348,10 +348,10 @@ private:
 		if (west_neighbor->isLeaf())
 			return west_neighbor;
 
-		if (this->_father->isChild (this, SW))
-			return west_neighbor->getChild (SE);
+		if (this->_father->isChild (this, Quadrant::SW))
+			return west_neighbor->getChild (Quadrant::SE);
 		else
-			return west_neighbor->getChild (NE);
+			return west_neighbor->getChild (Quadrant::NE);
 	}
 
 	/**
@@ -412,9 +412,9 @@ private:
 			if (north_neighbor->getDepth() == node->getDepth())
 				if (!north_neighbor->isLeaf ())
 				{
-					if (!(north_neighbor->getChild(SW))->isLeaf())
+					if (!(north_neighbor->getChild(Quadrant::SW))->isLeaf())
 						return true;
-					if (!(north_neighbor->getChild(SE))->isLeaf())
+					if (!(north_neighbor->getChild(Quadrant::SE))->isLeaf())
 						return true;
 				}
 		}
@@ -425,9 +425,9 @@ private:
 			if (west_neighbor->getDepth() == node->getDepth())
 				if (!west_neighbor->isLeaf ())
 				{
-					if (!(west_neighbor->getChild(SE))->isLeaf())
+					if (!(west_neighbor->getChild(Quadrant::SE))->isLeaf())
 						return true;
-					if (!(west_neighbor->getChild(NE))->isLeaf())
+					if (!(west_neighbor->getChild(Quadrant::NE))->isLeaf())
 						return true;
 				}
 		}
@@ -438,9 +438,9 @@ private:
 			if (south_neighbor->getDepth() == node->getDepth())
 				if (!south_neighbor->isLeaf())
 				{
-					if (!(south_neighbor->getChild(NE))->isLeaf())
+					if (!(south_neighbor->getChild(Quadrant::NE))->isLeaf())
 						return true;
-					if (!(south_neighbor->getChild(NW))->isLeaf())
+					if (!(south_neighbor->getChild(Quadrant::NW))->isLeaf())
 						return true;
 				}
 		}
@@ -451,9 +451,9 @@ private:
 			if (east_neighbor->getDepth() == node->getDepth())
 				if (!east_neighbor->isLeaf ())
 				{
-					if (!(east_neighbor->getChild(NW))->isLeaf())
+					if (!(east_neighbor->getChild(Quadrant::NW))->isLeaf())
 						return true;
-					if (!(east_neighbor->getChild(SW))->isLeaf())
+					if (!(east_neighbor->getChild(Quadrant::SW))->isLeaf())
 						return true;
 				}
 		}

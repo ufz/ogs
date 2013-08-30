@@ -19,7 +19,7 @@
 #include "Edge.h"
 #include "Node.h"
 #include "Face.h"
-#include "MshEnums.h"
+#include "MeshEnums.h"
 
 #include "MathTools.h"
 
@@ -43,7 +43,7 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 class TemplateTri : public Face
 {
 public:
@@ -73,15 +73,15 @@ public:
 
 	/**
 	 * Method returns the type of the element. In this case TRIANGLE will be returned.
-	 * @return MshElemType::TRIANGLE
+	 * @return MeshElemType::TRIANGLE
 	 */
-	virtual MshElemType::type getGeomType() const { return MshElemType::TRIANGLE; }
+	virtual MeshElemType getGeomType() const { return MeshElemType::TRIANGLE; }
 
 	/**
 	 * Get the type of the element in context of the finite element method.
-	 * @return a value of the enum CellType::type
+	 * @return a value of the enum CellType
 	 */
-	virtual CellType::type getCellType() const { return CELLTRITYPE; }
+	virtual CellType getCellType() const { return CELLTRITYPE; }
 
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const;
@@ -134,7 +134,7 @@ protected:
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
 		{0, 1}, // Edge 0
 		{1, 2}, // Edge 1

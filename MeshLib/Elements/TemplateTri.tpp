@@ -17,7 +17,7 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value) :
 	Face(value)
 {
@@ -27,7 +27,7 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 	this->_area = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType::type CELLTRITYPE>
+template<unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& nodes,
                                              unsigned value)
 	: Face(value)
@@ -41,7 +41,7 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& no
 	this->_area = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE> &tri) :
 	Face(tri.getValue())
 {
@@ -59,11 +59,11 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYP
 	_area = tri.getArea();
 }
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::~TemplateTri()
 {}
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<3; i++)
@@ -74,13 +74,13 @@ bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 bool TemplateTri<NNODES,CELLTRITYPE>::isPntInside(GeoLib::Point const& pnt, double eps) const
 {
 	return GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
 {
 	// try to create an edge
@@ -101,7 +101,7 @@ Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
 	return NULL;
 }
 
-template <unsigned NNODES, CellType::type CELLTRITYPE>
+template <unsigned NNODES, CellType CELLTRITYPE>
 unsigned TemplateTri<NNODES,CELLTRITYPE>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<3; i++)

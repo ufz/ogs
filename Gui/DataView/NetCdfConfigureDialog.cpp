@@ -368,13 +368,13 @@ void NetCdfConfigureDialog::createDataObject()
 
 	if (this->radioMesh->isChecked())
 	{
-		MshElemType::type meshElemType = MshElemType::QUAD;
-		UseIntensityAs::type useIntensity = UseIntensityAs::MATERIAL;
+		MeshElemType meshElemType = MeshElemType::QUAD;
+		UseIntensityAs useIntensity = UseIntensityAs::MATERIAL;
 		if ((comboBoxMeshElemType->currentIndex()) == 1) 
 		{
-			meshElemType = MshElemType::TRIANGLE;
+			meshElemType = MeshElemType::TRIANGLE;
 		}else{
-			meshElemType = MshElemType::QUAD;
+			meshElemType = MeshElemType::QUAD;
 		}
 		if ((comboBoxUseIntensity->currentIndex()) == 1)
 		{

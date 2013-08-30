@@ -47,22 +47,22 @@ void MeshQualityEquiAngleSkew::check ()
 		const Element* elem (elements[k]);
 		switch (elem->getGeomType())
 		{
-		case MshElemType::EDGE:
+		case MeshElemType::EDGE:
 			_mesh_quality_measure[k] = -1.0;
 			break;
-		case MshElemType::TRIANGLE:
+		case MeshElemType::TRIANGLE:
 			_mesh_quality_measure[k] = checkTriangle (elem);
 			break;
-		case MshElemType::QUAD:
+		case MeshElemType::QUAD:
 			_mesh_quality_measure[k] = checkQuad (elem);
 			break;
-		case MshElemType::TETRAHEDRON:
+		case MeshElemType::TETRAHEDRON:
 			_mesh_quality_measure[k] = checkTetrahedron (elem);
 			break;
-		case MshElemType::HEXAHEDRON:
+		case MeshElemType::HEXAHEDRON:
 			_mesh_quality_measure[k] = checkHexahedron (elem);
 			break;
-		case MshElemType::PRISM:
+		case MeshElemType::PRISM:
 			_mesh_quality_measure[k] = checkPrism (elem);
 			break;
 		default:

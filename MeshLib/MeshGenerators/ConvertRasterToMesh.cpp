@@ -20,8 +20,8 @@
 
 namespace MeshLib {
 
-ConvertRasterToMesh::ConvertRasterToMesh(GeoLib::Raster const& raster, MshElemType::type elem_type,
-				UseIntensityAs::type intensity_type) :
+ConvertRasterToMesh::ConvertRasterToMesh(GeoLib::Raster const& raster, MeshElemType elem_type,
+				UseIntensityAs intensity_type) :
 	_raster(raster), _elem_type(elem_type), _intensity_type(intensity_type)
 {}
 
@@ -123,7 +123,7 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 					&& (vis_nodes[index + width])) {
 				const int mat = (_intensity_type != UseIntensityAs::MATERIAL) ? 0
 								: static_cast<int> (pix_vals[index + width]);
-				if (_elem_type == MshElemType::TRIANGLE) {
+				if (_elem_type == MeshElemType::TRIANGLE) {
 					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
 					tri1_nodes[0] = nodes[node_idx_map[index]];
 					tri1_nodes[1] = nodes[node_idx_map[index + 1]];
@@ -137,7 +137,7 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 					elements.push_back(new MeshLib::Tri(tri1_nodes, mat)); // upper left triangle
 					elements.push_back(new MeshLib::Tri(tri2_nodes, mat)); // lower right triangle
 				}
-				if (_elem_type == MshElemType::QUAD) {
+				if (_elem_type == MeshElemType::QUAD) {
 					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 					quad_nodes[0] = nodes[node_idx_map[index]];
 					quad_nodes[1] = nodes[node_idx_map[index + 1]];

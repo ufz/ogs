@@ -14,7 +14,7 @@
 
 namespace MeshLib
 {
-template<unsigned NNODES, CellType::type CELLEDGETYPE>
+template<unsigned NNODES, CellType CELLEDGETYPE>
 TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const& nodes,
                                                 unsigned value)
 	: Element(value)
@@ -25,7 +25,7 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const&
 	this->_length = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType::type CELLEDGETYPE>
+template<unsigned NNODES, CellType CELLEDGETYPE>
 TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned value) :
 	Element(value)
 {
@@ -33,7 +33,7 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned va
 	this->_length = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType::type CELLEDGETYPE>
+template <unsigned NNODES, CellType CELLEDGETYPE>
 TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(const TemplateEdge<NNODES,CELLEDGETYPE> &edge) :
 	Element(edge.getValue())
 {
@@ -43,7 +43,7 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(const TemplateEdge<NNODES,CELLED
 	_length = edge.getLength();
 }
 
-template <unsigned NNODES, CellType::type CELLEDGETYPE>
+template <unsigned NNODES, CellType CELLEDGETYPE>
 TemplateEdge<NNODES,CELLEDGETYPE>::~TemplateEdge()
 {}
 

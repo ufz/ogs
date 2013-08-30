@@ -116,7 +116,7 @@ const Node* Element::getNode(unsigned i) const
 {
 	if (i < getNNodes())
 		return _nodes[i];
-	ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MshElemType2String(getGeomType()).c_str());
+	ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MeshElemType2String(getGeomType()).c_str());
 	return nullptr;
 }
 

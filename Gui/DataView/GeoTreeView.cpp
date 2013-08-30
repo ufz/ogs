@@ -75,7 +75,7 @@ void GeoTreeView::selectionChanged( const QItemSelection &selected,
 				else
 				{
 					// highlight a point for an expanded polyline
-					if (dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem())->getType() == GeoLib::POLYLINE)
+					if (dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem())->getType() == GeoLib::GEOTYPE::POLYLINE)
 						geoItemSelected(
 							dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(),
 							tree_item->data(0).toInt());
@@ -115,7 +115,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 	if (list != NULL)
 	{
 		QAction* connectPlyAction(NULL);
-		if (list->getType() == GeoLib::POLYLINE)
+		if (list->getType() == GeoLib::GEOTYPE::POLYLINE)
 		{
 			connectPlyAction = menu.addAction("Connect Polylines...");
 			connect(connectPlyAction, SIGNAL(triggered()), this,
@@ -143,7 +143,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 			connect(addCondAction, SIGNAL(triggered()), this, SLOT(setObjectAsCondition()));
 			connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
 
-			if (parent->getType() == GeoLib::POINT)
+			if (parent->getType() == GeoLib::GEOTYPE::POINT)
 				addCondPointAction->setEnabled(false);
 			else
 				connect(addCondPointAction, SIGNAL(triggered()), this, SLOT(setObjectPointsAsCondition()));
@@ -197,7 +197,7 @@ void GeoTreeView::removeGeometry()
 			emit listRemoved((item->parentItem()->data(
 									  0).toString()).toStdString(), list->getType());
 		else
-			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::INVALID);
+			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::GEOTYPE::INVALID);
 
 		if(this->selectionModel()->selectedIndexes().count() == 0)
 		{

@@ -19,7 +19,7 @@ FEMCondition::FEMCondition(const std::string &geometry_name, CondType t)
 {
 	this->setProcessType(FiniteElement::INVALID_PROCESS);
 	this->setProcessPrimaryVariable(FiniteElement::INVALID_PV);
-	this->setGeoType(GeoLib::INVALID);
+	this->setGeoType(GeoLib::GEOTYPE::INVALID);
 	this->setProcessDistributionType(FiniteElement::INVALID_DIS_TYPE);
 }
 

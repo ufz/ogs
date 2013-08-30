@@ -48,7 +48,7 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
                              double eps)
 {
 	isUniquePointVecName(name);
-	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::POINT, eps));
+	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::PointType::POINT, eps));
 }
 
 bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
@@ -141,7 +141,7 @@ bool GEOObjects::removePointVec(const std::string &name)
 void GEOObjects::addStationVec(std::vector<Point*>* stations, std::string &name)
 {
 	isUniquePointVecName(name);
-	_pnt_vecs.push_back(new PointVec(name, stations, NULL, PointVec::STATION));
+	_pnt_vecs.push_back(new PointVec(name, stations, NULL, PointVec::PointType::STATION));
 }
 
 std::vector<Point*>* GEOObjects::filterStationVec(const std::string &name,
@@ -150,7 +150,7 @@ std::vector<Point*>* GEOObjects::filterStationVec(const std::string &name,
 	for (std::vector<PointVec*>::iterator it(_pnt_vecs.begin());
 	     it != _pnt_vecs.end(); it++)
 		if ((*it)->getName().compare(name) == 0 && (*it)->getType()
-		    == PointVec::STATION)
+		    == PointVec::PointType::STATION)
 			return (*it)->filterStations(bounds);
 
 	INFO("GEOObjects::filterStations() - No entry found with name \"%s\".", name.c_str());
@@ -161,7 +161,7 @@ const std::vector<Point*>* GEOObjects::getStationVec(const std::string &name) co
 {
 	for (std::vector<PointVec*>::const_iterator it(_pnt_vecs.begin());
 	     it != _pnt_vecs.end(); it++) {
-		if ((*it)->getName().compare(name) == 0 && (*it)->getType() == PointVec::STATION) {
+		if ((*it)->getName().compare(name) == 0 && (*it)->getType() == PointVec::PointType::STATION) {
 			return (*it)->getVector();
 		}
 	}
@@ -370,7 +370,7 @@ void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 {
 	for (std::vector<PointVec*>::const_iterator it(_pnt_vecs.begin()); it != _pnt_vecs.end();
 	     it++)
-		if ((*it)->getType() == PointVec::STATION)
+		if ((*it)->getType() == PointVec::PointType::STATION)
 			names.push_back((*it)->getName());
 }
 
@@ -379,7 +379,7 @@ void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
 	names.clear ();
 	for (std::vector<PointVec*>::const_iterator it(_pnt_vecs.begin()); it != _pnt_vecs.end();
 	     it++)
-		if ((*it)->getType() == PointVec::POINT)
+		if ((*it)->getType() == PointVec::PointType::POINT)
 			names.push_back((*it)->getName());
 }
 
@@ -388,18 +388,18 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 	std::string name("");
 	switch (type)
 	{
-		case GeoLib::POINT:
+		case GeoLib::GEOTYPE::POINT:
 			this->getPointVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::POLYLINE:
+		case GeoLib::GEOTYPE::POLYLINE:
 			this->getPolylineVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::SURFACE:
+		case GeoLib::GEOTYPE::SURFACE:
 			this->getSurfaceVecObj(geometry_name)->getNameOfElementByID(id, name);
 			break;
-		case GeoLib::VOLUME:
-		case GeoLib::GEODOMAIN:
-		case GeoLib::INVALID:
+		case GeoLib::GEOTYPE::VOLUME:
+		case GeoLib::GEOTYPE::GEODOMAIN:
+		case GeoLib::GEOTYPE::INVALID:
 		default:
 			INFO("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
 			break;
@@ -555,11 +555,11 @@ const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,
                                                             GeoLib::GEOTYPE type,
                                                             const std::string &obj_name) const
 {
-	if (type == GeoLib::POINT)
+	if (type == GeoLib::GEOTYPE::POINT)
 		return this->getPointVecObj(geo_name)->getElementByName(obj_name);
-	else if (type == GeoLib::POLYLINE)
+	else if (type == GeoLib::GEOTYPE::POLYLINE)
 		return this->getPolylineVecObj(geo_name)->getElementByName(obj_name);
-	else if (type == GeoLib::SURFACE)
+	else if (type == GeoLib::GEOTYPE::SURFACE)
 		return this->getSurfaceVecObj(geo_name)->getElementByName(obj_name);
 	return NULL;
 }

@@ -51,7 +51,7 @@ void VtkColorByHeightFilter::PrintSelf( ostream& os, vtkIndent indent )
 	ColorLookupTable->GetTableRange(range);
 	os << indent << "== VtkColorByHeightFilter ==" << endl;
 	os << indent << "Range: " << range[0] << "-" << range[1] << endl;
-	os << indent << "Interpolation Type:" << ColorLookupTable->getInterpolationType() << endl;
+	os << indent << "Interpolation Type:" << static_cast<int>(ColorLookupTable->getInterpolationType()) << endl;
 }
 
 unsigned long VtkColorByHeightFilter::GetMTime()
