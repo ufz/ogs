@@ -45,6 +45,8 @@ struct GlobalSetup
     {
         return Executor::execute(std::forward<Args>(args)...);
     }
+
+	GlobalSetup() { }
 };
 
 }   // namespace AssemblerLib
