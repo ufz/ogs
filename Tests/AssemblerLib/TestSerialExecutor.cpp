@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <functional>
 #include "AssemblerLib/SerialExecutor.h"
 
 template <typename Container>
