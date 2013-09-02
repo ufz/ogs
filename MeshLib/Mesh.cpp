@@ -167,23 +167,21 @@ void Mesh::setElementsConnectedToElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		if (element->getGeomType() != MeshElemType::LINE)
+
+		const size_t nNodes (element->getNNodes());
+		for (unsigned n(0); n<nNodes; ++n)
 		{
-			const size_t nNodes (element->getNNodes());
-			for (unsigned n(0); n<nNodes; ++n)
-			{
-				std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
-				neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
-			}
+			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
+			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+		}
 
-			const unsigned nNeighbors ( neighbors.size() );
+		const unsigned nNeighbors ( neighbors.size() );
 
-			for (unsigned i(0); i<nNeighbors; ++i)
+		for (unsigned i(0); i<nNeighbors; ++i)
+		{
+			if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::LINE)
 			{
-				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::LINE)
-				{
-					neighbors[i]->addNeighbor(element);
-				}
+				neighbors[i]->addNeighbor(element);
 			}
 		}
 	}

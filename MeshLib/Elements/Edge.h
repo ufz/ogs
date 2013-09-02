@@ -57,7 +57,7 @@ public:
     unsigned getNFaces() const { return 0; };
 
     /// Get the number of neighbors for this element.
-    unsigned getNNeighbors() const { return 0; };
+    unsigned getNNeighbors() const { return 2; }
 
     /// Returns true if these two indices form an edge and false otherwise
     bool isEdge(unsigned idx1, unsigned idx2) const
@@ -81,8 +81,15 @@ protected:
     /// 1D elements have no edges.
     Node* getEdgeNode(unsigned /*edge_id*/, unsigned /*node_id*/) const { return nullptr; };
 
-    /// Returns the ID of a face given an array of nodes (but is not applicable for edges!).
-    unsigned identifyFace(Node* [3]/*nodes[3]*/) const { return std::numeric_limits<unsigned>::max(); };
+    /// Returns the ID of a face given an array of nodes.
+    unsigned identifyFace(Node* nodes[1]) const
+    {
+        if (nodes[0] == _nodes[0])
+            return 0;
+        if (nodes[0] == _nodes[1])
+            return 1;
+        return std::numeric_limits<unsigned>::max();
+    }
 
     /// Constructor for a generic mesh element without an array of mesh nodes.
     Edge(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
