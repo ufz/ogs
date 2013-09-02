@@ -101,7 +101,7 @@ void Mesh::makeNodesUnique()
 	//set correct id for each node
 
 	//if (this->getDimension() > 1)
-	//	this->removeMeshElements(MeshElemType::EDGE);
+	//	this->removeMeshElements(MeshElemType::LINE);
 
 }
 
@@ -179,7 +179,7 @@ void Mesh::setElementsConnectedToElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		if (element->getGeomType() != MeshElemType::EDGE)
+		if (element->getGeomType() != MeshElemType::LINE)
 		{
 			const size_t nNodes (element->getNNodes());
 			for (unsigned n(0); n<nNodes; ++n)
@@ -192,7 +192,7 @@ void Mesh::setElementsConnectedToElements()
 
 			for (unsigned i(0); i<nNeighbors; ++i)
 			{
-				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::EDGE)
+				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::LINE)
 				{
 					neighbors[i]->addNeighbor(element);
 				}

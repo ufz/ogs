@@ -41,7 +41,7 @@
 #include "QuadTree.h"
 
 // MSH
-#include "Elements/Edge.h"
+#include "Elements/Line.h"
 #include "Elements/Hex.h"
 #include "Elements/Prism.h"
 #include "Elements/Pyramid.h"
@@ -152,11 +152,11 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 				{
 				case 1: {
 					readNodeIDs(in, 2, node_ids, id_map);
-					// edge_nodes array will be deleted from Edge object
+					// edge_nodes array will be deleted from Line object
 					MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 					edge_nodes[0] = nodes[node_ids[0]];
 					edge_nodes[1] = nodes[node_ids[1]];
-					elem = new MeshLib::Edge(edge_nodes, 0);
+					elem = new MeshLib::Line(edge_nodes, 0);
 					break;
 				}
 				case 2: {

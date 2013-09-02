@@ -16,7 +16,7 @@
 #define TEMPLATETRI_H_
 
 #include <array>
-#include "Edge.h"
+#include "Line.h"
 #include "Node.h"
 #include "Face.h"
 #include "MeshEnums.h"
