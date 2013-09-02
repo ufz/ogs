@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include <functional>
+#include <numeric>
 #include "AssemblerLib/SerialExecutor.h"
 
 template <typename Container>
