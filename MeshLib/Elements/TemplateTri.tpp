@@ -88,14 +88,14 @@ Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
 		Node** nodes = new Node*[2];
 		nodes[0] = _nodes[0];
 		nodes[1] = _nodes[2];
-		return new Edge(nodes, _value);
+		return new Line(nodes, _value);
 	}
 
 	if (_nodes[0] == _nodes[2]) {
 		Node** nodes = new Node*[2];
 		nodes[0] = _nodes[0];
 		nodes[1] = _nodes[1];
-		return new Edge(nodes, _value);
+		return new Line(nodes, _value);
 	}
 
 	return NULL;

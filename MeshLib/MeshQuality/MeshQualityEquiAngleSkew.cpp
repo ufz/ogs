@@ -47,7 +47,7 @@ void MeshQualityEquiAngleSkew::check ()
 		const Element* elem (elements[k]);
 		switch (elem->getGeomType())
 		{
-		case MeshElemType::EDGE:
+		case MeshElemType::LINE:
 			_mesh_quality_measure[k] = -1.0;
 			break;
 		case MeshElemType::TRIANGLE:

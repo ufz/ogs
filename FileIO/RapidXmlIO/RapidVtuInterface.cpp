@@ -24,7 +24,7 @@
 // MSH
 #include "Mesh.h"
 #include "Node.h"
-#include "Elements/Edge.h"
+#include "Elements/Line.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
@@ -202,7 +202,7 @@ MeshLib::Element* RapidVtuInterface::readElement(std::stringstream &iss, const s
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		edge_nodes[0] = nodes[node_ids[0]];
 		edge_nodes[1] = nodes[node_ids[1]];
-		return new MeshLib::Edge(edge_nodes, material);
+		return new MeshLib::Line(edge_nodes, material);
 		break;
 	}
 	case 5: { //triangle
@@ -431,7 +431,7 @@ unsigned RapidVtuInterface::getVTKElementID(MeshElemType type) const
 {
 	switch (type)
 	{
-	case MeshElemType::EDGE:
+	case MeshElemType::LINE:
 		return 3;
 	case MeshElemType::TRIANGLE:
 		return 5;

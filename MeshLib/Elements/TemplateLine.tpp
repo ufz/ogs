@@ -2,7 +2,7 @@
  * \file
  * \author Thomas Fischer
  * \date   Sep 27, 2012
- * \brief  Implementation of the TemplateEdge class.
+ * \brief  Implementation of the TemplateLine class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -14,10 +14,10 @@
 
 namespace MeshLib
 {
-template<unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const& nodes,
+template<unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const& nodes,
                                                 unsigned value)
-	: Element(value)
+	: Edge(value)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -25,26 +25,26 @@ TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(std::array<Node*, NNODES> const&
 	this->_length = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(Node* nodes[NNODES], unsigned value) :
-	Element(value)
+template<unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(Node* nodes[NNODES], unsigned value) :
+	Edge(value)
 {
 	_nodes = nodes;
 	this->_length = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::TemplateEdge(const TemplateEdge<NNODES,CELLEDGETYPE> &edge) :
-	Element(edge.getValue())
+template <unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(const TemplateLine<NNODES,CELLLINETYPE> &line) :
+	Edge(line.getValue())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned k(0); k<NNODES; k++)
-		_nodes[k] = edge._nodes[k];
-	_length = edge.getLength();
+		_nodes[k] = line._nodes[k];
+	_length = line.getLength();
 }
 
-template <unsigned NNODES, CellType CELLEDGETYPE>
-TemplateEdge<NNODES,CELLEDGETYPE>::~TemplateEdge()
+template <unsigned NNODES, CellType CELLLINETYPE>
+TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
 } // namespace MeshLib

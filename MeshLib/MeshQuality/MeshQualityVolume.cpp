@@ -36,7 +36,7 @@ void MeshQualityVolume::check()
 	{
 		const Element* elem (elements[k]);
 		MeshElemType elem_type (elem->getGeomType());
-		if (elem_type == MeshElemType::EDGE
+		if (elem_type == MeshElemType::LINE
 		    || elem_type == MeshElemType::TRIANGLE
 		    || elem_type == MeshElemType::QUAD)
 		{
