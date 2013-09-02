@@ -29,7 +29,7 @@ namespace AssemblerLib
 class LocalToGlobalIndexMap
 {
 public:
-    typedef typename MathLib::RowColumnIndices<std::size_t> RowColumnIndices;
+    typedef MathLib::RowColumnIndices<std::size_t> RowColumnIndices;
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:

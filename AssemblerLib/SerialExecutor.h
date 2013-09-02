@@ -30,7 +30,11 @@ struct SerialExecutor
     template <typename F, typename C>
     static
     void
+#if defined(_MSC_VER) && (_MSC_VER == 1700)
+    execute(F& f, C const& c)
+#else
     execute(F const& f, C const& c)
+#endif
     {
         for (std::size_t i = 0; i < c.size(); i++)
             f(c[i], i);
