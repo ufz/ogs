@@ -44,6 +44,7 @@
 MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
 {
+	setUniformRowHeights(true);
 	//resizeColumnsToContents();
 	//resizeRowsToContents();
 }
@@ -147,7 +148,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		if (mesh_dim==2)
 		{
 			connect(mesh2geoAction,    SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
-#ifdef Shapelib_FOUND		
+#ifdef Shapelib_FOUND
 			connect(shapeExportAction, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
 #endif
 		}
@@ -236,7 +237,7 @@ int MshView::writeToFile() const
 		QString mshName = QString::fromStdString(
 		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
 		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
-		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()), 
+		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()),
 											"VTK Unstructured Grid (*.vtu);;GeoSys legacy mesh file (*.msh)");
 
 		if (!fileName.isEmpty())
