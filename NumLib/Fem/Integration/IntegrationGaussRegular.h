@@ -66,9 +66,10 @@ public:
      * @param x        coordinates
      * @return weight
      */
-    double getPoint(std::size_t igp, double* x) const
+    std::array<double, N_DIM+1>
+    getWeightedPoint(std::size_t igp) const
     {
-        return getPoint(getSamplingLevel(), igp, x);
+        return getWeightedPoint(getSamplingLevel(), igp);
     }
 
     /**
@@ -78,7 +79,7 @@ public:
      * @param igp       The integration point index
      * @return  a tuple of position indexes
      */
-    static std::tuple<std::size_t, std::size_t, std::size_t> getPosition(std::size_t nGauss, std::size_t igp);
+    static std::array<std::size_t, N_DIM> getPosition(std::size_t nGauss, std::size_t igp);
 
     /**
      * get coordinates of a integration point
@@ -88,7 +89,7 @@ public:
      * @param x         coordinates
      * @return weight
      */
-    static double getPoint(std::size_t nGauss, std::size_t igp, double* x);
+    static std::array<double, N_DIM+1> getWeightedPoint(std::size_t nGauss, std::size_t igp);
 
 private:
     std::size_t _n_sampl_level;
