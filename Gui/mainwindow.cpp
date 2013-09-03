@@ -559,17 +559,21 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
 		{
 #ifndef NDEBUG
-			QTime myTimer0;
+			QTime myTimer0, myTimer1;
 			myTimer0.start();
 #endif
 			MeshLib::Mesh* mesh (FileIO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
 			INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
+			myTimer1.start();
 #endif
 			if (mesh)
 				_meshModels->addMesh(mesh);
 			else
 				OGSError::box("Failed to load mesh file.");
+#ifndef NDEBUG
+			INFO("Mesh model setup time: %d ms.", myTimer1.elapsed());
+#endif
 		}
 		else if (fi.suffix().toLower() == "cnd")
 		{
