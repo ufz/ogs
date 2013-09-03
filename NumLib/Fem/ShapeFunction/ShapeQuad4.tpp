@@ -16,27 +16,23 @@ namespace NumLib
 template <class T_X, class T_N>
 void ShapeQuad4::computeShapeFunction(const T_X &r, T_N &N)
 {
-    N[0] = (1.0 + r[0]) * (1.0 + r[1]);
-    N[1] = (1.0 - r[0]) * (1.0 + r[1]);
-    N[2] = (1.0 - r[0]) * (1.0 - r[1]);
-    N[3] = (1.0 + r[0]) * (1.0 - r[1]);
-    for (int i = 0; i < 4; i++)
-        N[i] *= 0.25;
+    N[0] = (1.0 + r[0]) * (1.0 + r[1]) / 4;
+    N[1] = (1.0 - r[0]) * (1.0 + r[1]) / 4;
+    N[2] = (1.0 - r[0]) * (1.0 - r[1]) / 4;
+    N[3] = (1.0 + r[0]) * (1.0 - r[1]) / 4;
 }
 
 template <class T_X, class T_N>
 void ShapeQuad4::computeGradShapeFunction(const T_X &r, T_N &dN)
 {
-    dN[0] = +(1.0 + r[1]);
-    dN[1] = -(1.0 + r[1]);
-    dN[2] = -(1.0 - r[1]);
-    dN[3] = +(1.0 - r[1]);
-    dN[4] = +(1.0 + r[0]);
-    dN[5] = +(1.0 - r[0]);
-    dN[6] = -(1.0 - r[0]);
-    dN[7] = -(1.0 + r[0]);
-    for (int i = 0; i < 8; i++)
-        dN[i] *= 0.25;
+    dN[0] = +(1.0 + r[1]) / 4;
+    dN[1] = -(1.0 + r[1]) / 4;
+    dN[2] = -(1.0 - r[1]) / 4;
+    dN[3] = +(1.0 - r[1]) / 4;
+    dN[4] = +(1.0 + r[0]) / 4;
+    dN[5] = +(1.0 - r[0]) / 4;
+    dN[6] = -(1.0 - r[0]) / 4;
+    dN[7] = -(1.0 + r[0]) / 4;
 }
 
 }
