@@ -47,7 +47,7 @@ int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 {
 	Q_UNUSED(parent)
 
-	return 3;
+	return 2;
 }
 
 void MshModel::addMesh(MeshLib::Mesh* mesh)
@@ -85,12 +85,7 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 			elem_type_string = QString::fromStdString(MeshElemType2String(t));
 		}
 
-		QString nodestxt(QString::number(current_element->getNode(0)->getID()));
-		const size_t nNodes(current_element->getNNodes());
-		for (size_t j = 1; j < nNodes; j++)
-			nodestxt.append(", " + QString::number(current_element->getNode(j)->getID()));
-
-		elemData << "Element " + QString::number(i) << elem_type_string << nodestxt;
+		elemData << "Element " + QString::number(i) << elem_type_string;
 		newMesh->appendChild(new TreeItem(elemData, newMesh));
 	}
 
