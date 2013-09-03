@@ -18,7 +18,7 @@ namespace NumLib
 
 template <>
 inline std::array<std::size_t, 1>
-IntegrationGaussRegular<1>::getPosition(std::size_t nGauss, std::size_t igp)
+IntegrationGaussRegular<1>::getPosition(std::size_t /*nGauss*/, std::size_t igp)
 {
     return {igp};
 }
@@ -27,20 +27,16 @@ template <>
 inline std::array<std::size_t, 2>
 IntegrationGaussRegular<2>::getPosition(std::size_t nGauss, std::size_t igp)
 {
-    std::size_t gp_r = igp / nGauss;
-    std::size_t gp_s = igp % nGauss;
-    return {gp_r, gp_s};
+    return {igp / nGauss, igp % nGauss};
 }
 
 template <>
 inline std::array<std::size_t, 3>
 IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
 {
-    std::size_t gp_r = igp / (nGauss * nGauss);
-    std::size_t gp_s = igp % (nGauss * nGauss);
-    std::size_t gp_t = gp_s % nGauss;
-    gp_s /= nGauss;
-    return {gp_r, gp_s, gp_t};
+    std::size_t const gp_r = igp / (nGauss * nGauss);
+    std::size_t const gp_s = igp % (nGauss * nGauss);
+    return {gp_r, gp_s / nGauss, gp_s % nGauss };
 }
 
 template <>
@@ -55,9 +51,9 @@ inline MathLib::WeightedPoint1D IntegrationGaussRegular<1>::getWeightedPoint(std
 template <>
 inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
-    auto pos = getPosition(nGauss, igp);
-    auto pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
-    auto pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
+    std::array<std::size_t, 2> const pos = getPosition(nGauss, igp);
+    std::pair<double, double> const pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
+    std::pair<double, double> const pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
 
     std::array<double, 2> coords;
     coords[0] = pt1.first;
@@ -68,11 +64,11 @@ inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std
 template <>
 inline MathLib::WeightedPoint3D IntegrationGaussRegular<3>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
-    auto pos = getPosition(nGauss, igp);
+    std::array<std::size_t, 3> const pos = getPosition(nGauss, igp);
 
-    auto pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
-    auto pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
-    auto pt3 = MathLib::GaussLegendre::getPoint(nGauss, std::get<2>(pos));
+    std::pair<double, double> const pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
+    std::pair<double, double> const pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
+    std::pair<double, double> const pt3 = MathLib::GaussLegendre::getPoint(nGauss, std::get<2>(pos));
 
     std::array<double, 3> coords;
     coords[0] = pt1.first;
