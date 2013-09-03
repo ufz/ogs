@@ -25,46 +25,67 @@ TEST(NumLib, FemIntegrationGaussRegular)
 
     // check position indices
     // dim = 1
-    ASSERT_EQ(std::make_tuple(0u, 0u, 0u), IntegrationGaussRegular<1>::getPosition(nGaussLevel, 0));
-    ASSERT_EQ(std::make_tuple(1u, 0u, 0u), IntegrationGaussRegular<1>::getPosition(nGaussLevel, 1));
+    ASSERT_EQ((std::array<std::size_t, 1>({0u})), IntegrationGaussRegular<1>::getPosition(nGaussLevel, 0));
+    ASSERT_EQ((std::array<std::size_t, 1>({1u})), IntegrationGaussRegular<1>::getPosition(nGaussLevel, 1));
     // dim = 2
-    ASSERT_EQ(std::make_tuple(0u, 0u, 0u), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 0));
-    ASSERT_EQ(std::make_tuple(0u, 1u, 0u), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 1));
-    ASSERT_EQ(std::make_tuple(1u, 0u, 0u), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 2));
-    ASSERT_EQ(std::make_tuple(1u, 1u, 0u), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 3));
+    ASSERT_EQ((std::array<std::size_t, 2>({0u, 0u})), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 0));
+    ASSERT_EQ((std::array<std::size_t, 2>({0u, 1u})), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 1));
+    ASSERT_EQ((std::array<std::size_t, 2>({1u, 0u})), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 2));
+    ASSERT_EQ((std::array<std::size_t, 2>({1u, 1u})), IntegrationGaussRegular<2>::getPosition(nGaussLevel, 3));
     // dim = 3
-    ASSERT_EQ(std::make_tuple(0u, 0u, 0u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 0));
-    ASSERT_EQ(std::make_tuple(0u, 0u, 1u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 1));
-    ASSERT_EQ(std::make_tuple(0u, 1u, 0u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 2));
-    ASSERT_EQ(std::make_tuple(0u, 1u, 1u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 3));
-    ASSERT_EQ(std::make_tuple(1u, 0u, 0u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 4));
-    ASSERT_EQ(std::make_tuple(1u, 0u, 1u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 5));
-    ASSERT_EQ(std::make_tuple(1u, 1u, 0u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 6));
-    ASSERT_EQ(std::make_tuple(1u, 1u, 1u), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 7));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 0u, 0u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 0));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 0u, 1u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 1));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 1u, 0u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 2));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 1u, 1u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 3));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 0u, 0u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 4));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 0u, 1u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 5));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 1u, 0u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 6));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 1u, 1u})), IntegrationGaussRegular<3>::getPosition(nGaussLevel, 7));
 
-    // check coordinates
-    double x[3];
-    // dim = 1
-    ASSERT_NEAR(1.0, IntegrationGaussRegular<1>::getPoint(nGaussLevel, 0, x), eps);
-    ASSERT_NEAR(0.577350269189626, x[0], eps);
-    ASSERT_NEAR(1.0, IntegrationGaussRegular<1>::getPoint(nGaussLevel, 1, x), eps);
-    ASSERT_NEAR(-0.577350269189626, x[0], eps);
-    // dim = 2
-    ASSERT_NEAR(1.0, IntegrationGaussRegular<2>::getPoint(nGaussLevel, 0, x), eps);
-    ASSERT_NEAR(0.577350269189626, x[0], eps);
-    ASSERT_NEAR(0.577350269189626, x[1], eps);
-    ASSERT_NEAR(1.0, IntegrationGaussRegular<2>::getPoint(nGaussLevel, 1, x), eps);
-    ASSERT_NEAR(0.577350269189626, x[0], eps);
-    ASSERT_NEAR(-0.577350269189626, x[1], eps);
+	// check coordinates
+	// dim = 1
+	// weight
+	ASSERT_NEAR(1.0,
+			IntegrationGaussRegular<1>::getWeightedPoint(nGaussLevel, 0)[1], eps);
+	// pos
+	ASSERT_NEAR(0.577350269189626,
+			IntegrationGaussRegular<1>::getWeightedPoint(nGaussLevel, 0)[0], eps);
+	// weight
+	ASSERT_NEAR(1.0,
+			IntegrationGaussRegular<1>::getWeightedPoint(nGaussLevel, 1)[1], eps);
+	// pos
+	ASSERT_NEAR(-0.577350269189626,
+			IntegrationGaussRegular<1>::getWeightedPoint(nGaussLevel, 1)[0], eps);
+	// dim = 2
+	ASSERT_NEAR(1.0,
+			IntegrationGaussRegular<2>::getWeightedPoint(nGaussLevel, 0)[2], eps);
+	ASSERT_NEAR(0.577350269189626,
+			IntegrationGaussRegular<2>::getWeightedPoint(nGaussLevel, 0)[0], eps);
+	ASSERT_NEAR(0.577350269189626,
+			IntegrationGaussRegular<2>::getWeightedPoint(nGaussLevel, 0)[1], eps);
+	ASSERT_NEAR(1.0,
+			IntegrationGaussRegular<2>::getWeightedPoint(nGaussLevel, 1)[2], eps);
+	ASSERT_NEAR(0.577350269189626,
+			IntegrationGaussRegular<2>::getWeightedPoint(nGaussLevel, 1)[0], eps);
+	ASSERT_NEAR(-0.577350269189626,
+			IntegrationGaussRegular<2>::getWeightedPoint(nGaussLevel, 1)[1], eps);
     // dim = 3
-    ASSERT_NEAR(1.0, IntegrationGaussRegular<3>::getPoint(nGaussLevel, 0, x), eps);
-    ASSERT_NEAR(0.577350269189626, x[0], eps);
-    ASSERT_NEAR(0.577350269189626, x[1], eps);
-    ASSERT_NEAR(0.577350269189626, x[2], eps);
-    ASSERT_NEAR(1.0, IntegrationGaussRegular<3>::getPoint(nGaussLevel, 1, x), eps);
-    ASSERT_NEAR(0.577350269189626, x[0], eps);
-    ASSERT_NEAR(0.577350269189626, x[1], eps);
-    ASSERT_NEAR(-0.577350269189626, x[2], eps);
+    ASSERT_NEAR(1.0,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 0)[3], eps);
+    ASSERT_NEAR(0.577350269189626,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 0)[0], eps);
+    ASSERT_NEAR(0.577350269189626,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 0)[1], eps);
+    ASSERT_NEAR(0.577350269189626,
+    	IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 0)[2], eps);
+    ASSERT_NEAR(1.0,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 1)[3], eps);
+    ASSERT_NEAR(0.577350269189626,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 1)[0], eps);
+    ASSERT_NEAR(0.577350269189626,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 1)[1], eps);
+    ASSERT_NEAR(-0.577350269189626,
+    		IntegrationGaussRegular<3>::getWeightedPoint(nGaussLevel, 1)[2], eps);
 
     // check other member functions
     IntegrationGaussRegular<1> q1;
