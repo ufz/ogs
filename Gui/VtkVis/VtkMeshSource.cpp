@@ -121,10 +121,10 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	// Insert grid points
 	vtkSmartPointer<vtkPoints> gridPoints = vtkSmartPointer<vtkPoints>::New();
-	gridPoints->Allocate(nPoints);
+	gridPoints->SetNumberOfPoints(nPoints);
 	// Generate mesh nodes
 	for (unsigned i = 0; i < nPoints; ++i)
-		gridPoints->InsertPoint(i, (*nodes[i])[0], (*nodes[i])[1], (*nodes[i])[2]);
+		gridPoints->SetPoint(i, (*nodes[i])[0], (*nodes[i])[1], (*nodes[i])[2]);
 
 	// Generate attribute vector for material groups
 	vtkSmartPointer<vtkIntArray> materialIDs = vtkSmartPointer<vtkIntArray>::New();
