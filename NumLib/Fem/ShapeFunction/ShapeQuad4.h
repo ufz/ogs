@@ -19,6 +19,7 @@ namespace NumLib
 /**
  *  Shape function for a quadrilateral element of four nodes in natural coordinates
  *
+ * \verbatim
  *  2 (-1,1)     1 (1,1)
  *     *--------*
  *     |        |
@@ -26,6 +27,7 @@ namespace NumLib
  *     |        |
  *     *--------*
  *  3 (-1,-1)    4 (1,-1)
+ * \endverbatim
  */
 class ShapeQuad4
 {
