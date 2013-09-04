@@ -34,7 +34,7 @@ template<typename T> class GeoPoint : public MathLib::TemplatePoint<T>, public G
 {
 public:
 	GeoPoint(T x1, T x2, T x3) :
-		MathLib::TemplatePoint<T>(x1, x2, x3), GeoLib::GeoObject()
+		MathLib::TemplatePoint<T>({x1, x2, x3}), GeoLib::GeoObject()
 	{}
 
 	GeoPoint() :

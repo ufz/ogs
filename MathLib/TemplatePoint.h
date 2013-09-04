@@ -16,6 +16,9 @@
 #define TEMPLATEPOINT_H_
 
 // STL
+#include <array>
+#include <algorithm>
+#include <iterator>
 #include <cassert>
 #include <iostream>
 
@@ -27,18 +30,17 @@ namespace MathLib
  * \brief class-template for points can be instantiated by a numeric type.
  * \tparam T the coordinate type
  */
-template <class T> class TemplatePoint
+template <typename T, std::size_t DIM = 3> class TemplatePoint
 {
 public:
 	/** default constructor */
 	TemplatePoint();
 
 	/** constructor - constructs a TemplatePoint object
-	   \param x1 value for the first coordinate
-	   \param x2 value for the second coordinate
-	   \param x3 value for the third coordinate
+	 *
+	 * @param list initializer list containing the coordinates of the point
 	 */
-	TemplatePoint(T x1, T x2, T x3);
+	TemplatePoint(std::initializer_list<T> const& list);
 
 	/** constructor - constructs a TemplatePoint object
 	   \param x values for three coordinates
@@ -57,7 +59,7 @@ public:
 	 */
 	const T& operator[] (std::size_t idx) const
 	{
-		assert (idx <= 2);
+		assert (idx < DIM);
 		return _x[idx];
 	}
 	/** \brief access operator (see book Effektiv C++ programmieren - subsection 1.3.2 ).
@@ -69,57 +71,60 @@ public:
 	}
 
 	/** returns an array containing the coordinates of the point */
-	const T* getCoords () const { return _x; }
+	const T* getCoords () const { return &_x[0]; }
 
 	/** write point coordinates into stream (used from operator<<)
 	 * \param os a standard output stream
 	 */
 	virtual void write (std::ostream &os) const
 	{
-		os << _x[0] << " " << _x[1] << " " << _x[2] << std::flush;
+		std::copy(_x.cbegin(), _x.cend(), std::ostream_iterator<T>(os, " "));
 	}
 
 	/** read point coordinates into stream (used from operator>>) */
 	virtual void read (std::istream &is)
 	{
-		is >> _x[0] >> _x[1] >> _x[2];
+		for (std::size_t k(0); k<DIM; k++)
+			is >> _x[k];
 	}
 
 protected:
-	T _x[3];
+	std::array<T, DIM> _x;
 };
 
-template <class T> TemplatePoint<T>::TemplatePoint()
+template <typename T, std::size_t DIM>
+TemplatePoint<T,DIM>::TemplatePoint()
+{}
+
+template <typename T, std::size_t DIM>
+TemplatePoint<T,DIM>::TemplatePoint(std::initializer_list<T> const& list)
 {
-	_x[0] = static_cast<T>(0);
-	_x[1] = static_cast<T>(0);
-	_x[2] = static_cast<T>(0);
+	assert(list.size() == DIM);
+	typename std::initializer_list<T>::const_iterator it(list.begin());
+	for (std::size_t k(0); k<DIM; k++) {
+		_x[k] = *it;
+		it++;
+	}
 }
 
-template <class T> TemplatePoint<T>::TemplatePoint(T x1, T x2, T x3)
+template <typename T, std::size_t DIM>
+TemplatePoint<T, DIM>::TemplatePoint (T const* x)
 {
-	_x[0] = x1;
-	_x[1] = x2;
-	_x[2] = x3;
-}
-
-template <class T> TemplatePoint<T>::TemplatePoint (T const* x)
-{
-	for (std::size_t k(0); k < 3; k++)
+	for (std::size_t k(0); k < DIM; k++)
 		_x[k] = x[k];
 }
 
 /** overload the output operator for class Point */
-template <class T>
-std::ostream& operator<< (std::ostream &os, const TemplatePoint<T> &p)
+template <typename T, std::size_t DIM>
+std::ostream& operator<< (std::ostream &os, const TemplatePoint<T,DIM> &p)
 {
 	p.write (os);
 	return os;
 }
 
 /** overload the input operator for class Point */
-template <class T>
-std::istream& operator>> (std::istream &is, TemplatePoint<T> &p)
+template <typename T, std::size_t DIM>
+std::istream& operator>> (std::istream &is, TemplatePoint<T,DIM> &p)
 {
 	p.read (is);
 	return is;
