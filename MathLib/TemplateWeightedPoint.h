@@ -32,7 +32,7 @@ public:
 	}
 
 private:
-	W_T _weight;
+	W_T const _weight;
 };
 
 typedef TemplateWeightedPoint<double, double, 1> WeightedPoint1D;
