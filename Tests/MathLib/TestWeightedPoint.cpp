@@ -1,7 +1,5 @@
 /**
- * @file WeightedPoint.cpp
- * @author Thomas Fischer
- * @date Sep 4, 2013
+ * @file TestWeightedPoint.cpp
  * @brief 
  *
  * @copyright
