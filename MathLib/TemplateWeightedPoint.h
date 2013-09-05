@@ -22,8 +22,8 @@ template <typename FP_T, typename W_T, std::size_t DIM>
 class TemplateWeightedPoint : public TemplatePoint<FP_T, DIM>
 {
 public:
-	TemplateWeightedPoint(std::initializer_list<FP_T> const& list, W_T weight) :
-		TemplatePoint<FP_T, DIM>(list), _weight(weight)
+	TemplateWeightedPoint(std::array<FP_T, DIM> const& x, W_T weight) :
+		TemplatePoint<FP_T, DIM>(x), _weight(weight)
 	{}
 
 	W_T getWeight() const

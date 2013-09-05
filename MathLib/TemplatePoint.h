@@ -38,9 +38,9 @@ public:
 
 	/** constructor - constructs a TemplatePoint object
 	 *
-	 * @param list initializer list containing the coordinates of the point
+	 * @param x std::array containing the coordinates of the point
 	 */
-	TemplatePoint(std::initializer_list<T> const& list);
+	TemplatePoint(std::array<T,DIM> const& x);
 
 	/** constructor - constructs a TemplatePoint object
 	   \param x values for three coordinates
@@ -97,15 +97,9 @@ TemplatePoint<T,DIM>::TemplatePoint()
 {}
 
 template <typename T, std::size_t DIM>
-TemplatePoint<T,DIM>::TemplatePoint(std::initializer_list<T> const& list)
-{
-	assert(list.size() == DIM);
-	typename std::initializer_list<T>::const_iterator it(list.begin());
-	for (std::size_t k(0); k<DIM; k++) {
-		_x[k] = *it;
-		it++;
-	}
-}
+TemplatePoint<T,DIM>::TemplatePoint(std::array<T,DIM> const& x) :
+	_x(x)
+{}
 
 template <typename T, std::size_t DIM>
 TemplatePoint<T, DIM>::TemplatePoint (T const* x)
