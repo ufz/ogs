@@ -71,7 +71,10 @@ public:
 	}
 
 	/** returns an array containing the coordinates of the point */
-	const T* getCoords () const { return &_x[0]; }
+	const T* getCoords () const
+	{
+		return _x.data();
+	}
 
 	/** write point coordinates into stream (used from operator<<)
 	 * \param os a standard output stream
@@ -84,8 +87,7 @@ public:
 	/** read point coordinates into stream (used from operator>>) */
 	virtual void read (std::istream &is)
 	{
-		for (std::size_t k(0); k<DIM; k++)
-			is >> _x[k];
+		std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(), _x.begin());
 	}
 
 protected:
@@ -104,8 +106,7 @@ TemplatePoint<T,DIM>::TemplatePoint(std::array<T,DIM> const& x) :
 template <typename T, std::size_t DIM>
 TemplatePoint<T, DIM>::TemplatePoint (T const* x)
 {
-	for (std::size_t k(0); k < DIM; k++)
-		_x[k] = x[k];
+	std::copy_n(x, DIM, _x.begin());
 }
 
 /** overload the output operator for class Point */
