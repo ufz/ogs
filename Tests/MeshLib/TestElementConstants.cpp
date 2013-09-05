@@ -6,12 +6,9 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <ctime>
 #include "gtest/gtest.h"
 
 #include "Elements/Quad.h"
-#include "Elements/Tri.h"
-#include "MeshEnums.h"
 
 using namespace MeshLib;
 
