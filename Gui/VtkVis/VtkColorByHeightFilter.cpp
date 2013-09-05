@@ -76,15 +76,16 @@ int VtkColorByHeightFilter::RequestData( vtkInformation*,
 
 	vtkSmartPointer<vtkFloatArray> colors = vtkSmartPointer<vtkFloatArray>::New();
 	colors->SetNumberOfComponents(1);
+	size_t nPoints = input->GetNumberOfPoints();
+	colors->SetNumberOfValues(nPoints);
 	colors->SetName("Colors");
 
 	// Inserts height values as a new scalar array
-	size_t nPoints = input->GetNumberOfPoints();
 	for (size_t i = 0; i < nPoints; i++)
 	{
 		double p[3];
 		input->GetPoint(i,p);
-		colors->InsertNextValue(p[2]);
+		colors->SetValue(i, p[2]);
 	}
 
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);

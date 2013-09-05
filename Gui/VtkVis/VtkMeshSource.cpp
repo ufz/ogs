@@ -169,10 +169,10 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		materialIDs->InsertValue(i, elem->getValue());
 		vtkIdList* point_ids = vtkIdList::New();
-
 		const unsigned nElemNodes (elem->getNNodes());
+		point_ids->SetNumberOfIds(nElemNodes);
 		for (unsigned j = 0; j < nElemNodes; ++j)
-			point_ids->InsertNextId(elem->getNode(j)->getID());
+			point_ids->SetId(j, elem->getNode(j)->getID());
 
 		output->InsertNextCell(type, point_ids);
 	}
@@ -181,6 +181,8 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 	output->GetCellData()->AddArray(materialIDs);
 	output->GetCellData()->SetActiveAttribute(_matName, vtkDataSetAttributes::SCALARS);
+
+	output->Squeeze();
 
 	return 1;
 }

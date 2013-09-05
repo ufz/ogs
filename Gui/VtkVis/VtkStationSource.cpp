@@ -189,6 +189,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	if (useStationValues)
 		output->GetPointData()->AddArray(station_values);
 
+	output->Squeeze();
+
 	return 1;
 }
 

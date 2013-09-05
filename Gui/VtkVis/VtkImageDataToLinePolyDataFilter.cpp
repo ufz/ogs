@@ -78,18 +78,12 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 		return 1;
 	}
 
-	// Allocate memory for olds and new cell point lists
-	vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
-	ptIds->Allocate(VTK_CELL_SIZE);
-	vtkSmartPointer<vtkIdList> newPtIds = vtkSmartPointer<vtkIdList>::New();
-	newPtIds->Allocate(VTK_CELL_SIZE);
-
 	// Allocate the space needed for the output cells.
 	output->Allocate(numPts);
 
 	// Allocate space for a new set of points
 	vtkSmartPointer<vtkPoints> newPts = vtkSmartPointer<vtkPoints>::New();
-	newPts->Allocate(numPts * 2, numPts);
+	newPts->SetNumberOfPoints(numPts * 2);
 
 	// Allocate space for the data associated with the new set of points
 	vtkPointData* inPD = input->GetPointData();
@@ -131,19 +125,17 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 			newPt[i] = p[i] + dir[i] * length;
 
 		// Copy the old point
-		vtkIdType newOldId = newPts->InsertNextPoint(p);
-		newPtIds->InsertId(ptId * 2, ptId);
-		outPD->CopyData(inPD, ptId, newOldId);
+		newPts->SetPoint(ptId * 2, p);
+		outPD->CopyData(inPD, ptId, ptId * 2);
 
 		// Create the new point
-		vtkIdType newId = newPts->InsertNextPoint(newPt);
-		newPtIds->InsertId(ptId * 2 + 1, newId);
-		outPD->CopyData(inPD, ptId, newId);
+		newPts->SetPoint(ptId * 2 + 1, newPt);
+		outPD->CopyData(inPD, ptId, ptId * 2 + 1);
 
 		// Create the line
 		vtkSmartPointer<vtkLine> line = vtkSmartPointer<vtkLine>::New();
-		line->GetPointIds()->SetId(0, newOldId);
-		line->GetPointIds()->SetId(1, newId);
+		line->GetPointIds()->SetId(0, ptId * 2);
+		line->GetPointIds()->SetId(1, ptId * 2 + 1);
 		output->InsertNextCell(line->GetCellType(), line->GetPointIds());
 	}
 

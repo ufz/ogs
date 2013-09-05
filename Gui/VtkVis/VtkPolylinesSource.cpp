@@ -134,6 +134,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 	output->SetLines(newLines);
 	output->GetCellData()->AddArray(plyIDs);
 	output->GetCellData()->SetActiveAttribute("PolylineIDs", vtkDataSetAttributes::SCALARS);
+	output->Squeeze();
 
 	return 1;
 }

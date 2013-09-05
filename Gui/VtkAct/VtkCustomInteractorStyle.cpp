@@ -159,8 +159,8 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
 			vtkSmartPointer<vtkIdTypeArray> ids =
 			        vtkSmartPointer<vtkIdTypeArray>::New();
-			ids->SetNumberOfComponents(1);
-			ids->InsertNextValue(picker->GetCellId());
+			ids->SetNumberOfValues(1);
+			ids->SetValue(0, picker->GetCellId());
 
 			vtkSmartPointer<vtkSelectionNode> selectionNode =
 			        vtkSmartPointer<vtkSelectionNode>::New();
