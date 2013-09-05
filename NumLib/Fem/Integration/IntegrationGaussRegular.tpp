@@ -44,37 +44,42 @@ IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
 }
 
 template <>
-inline std::array<double, 2> IntegrationGaussRegular<1>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
+inline MathLib::WeightedPoint1D IntegrationGaussRegular<1>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
-	return std::array<double, 2>({MathLib::GaussLegendre::getPoint(nGauss, igp).first,
-		MathLib::GaussLegendre::getPoint(nGauss, igp).second});
-//    auto pt = MathLib::GaussLegendre::getPoint(nGauss, igp);
-//    x[0] = pt.first;
-//    return pt.second;
+	std::array<double,1> coords;
+	coords[0] = MathLib::GaussLegendre::getPoint(nGauss, igp).first;
+	return MathLib::WeightedPoint1D (coords,
+			MathLib::GaussLegendre::getPoint(nGauss, igp).second);
 }
 
 template <>
-inline std::array<double, 3> IntegrationGaussRegular<2>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
+inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
     auto pos = getPosition(nGauss, igp);
     auto pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
     auto pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
-//    x[0] = pt1.first;
-//    x[1] = pt2.first;
-    return std::array<double, 3>({pt1.first, pt2.first, pt1.second * pt2.second});
+
+    std::array<double, 2> coords;
+    coords[0] = pt1.first;
+    coords[1] = pt2.first;
+    return MathLib::WeightedPoint2D (coords, pt1.second * pt2.second);
 }
 
 template <>
-inline std::array<double, 4> IntegrationGaussRegular<3>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
+inline MathLib::WeightedPoint3D IntegrationGaussRegular<3>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
     auto pos = getPosition(nGauss, igp);
+
     auto pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
     auto pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
     auto pt3 = MathLib::GaussLegendre::getPoint(nGauss, std::get<2>(pos));
-//    x[0] = pt1.first;
-//    x[1] = pt2.first;
-//    x[2] = pt3.first;
-    return std::array<double, 4>({pt1.first, pt2.first, pt3.first, pt1.second * pt2.second * pt3.second});
+
+    std::array<double, 3> coords;
+    coords[0] = pt1.first;
+    coords[1] = pt2.first;
+    coords[2] = pt3.first;
+
+    return MathLib::WeightedPoint3D(coords, pt1.second * pt2.second * pt3.second);
 }
 
 } //namespace
