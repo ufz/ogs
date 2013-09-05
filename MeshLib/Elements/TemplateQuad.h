@@ -41,10 +41,10 @@ class TemplateQuad : public Face
 {
 public:
 	/// Constant: The number of all nodes for this element
-	static const unsigned _n_all_nodes;
+	static const unsigned n_all_nodes;
 
 	/// Constant: The number of base nodes for this element
-	static const unsigned _n_base_nodes;
+	static const unsigned n_base_nodes;
 
 	/// Constructor with an array of mesh nodes.
 	TemplateQuad(Node* nodes[NNODES], unsigned value = 0);
@@ -71,7 +71,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? _n_all_nodes : _n_base_nodes;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
@@ -139,10 +139,10 @@ const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
 };
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_n_all_nodes = NNODES;
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_all_nodes = NNODES;
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_n_base_nodes = 4;
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_base_nodes = 4;
 
 } /* namespace */
 

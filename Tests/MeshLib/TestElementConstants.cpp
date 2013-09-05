@@ -17,9 +17,9 @@ using namespace MeshLib;
 
 TEST(MeshLib, Quad4ElementConstants)
 {
-	ASSERT_EQ(2u, Quad::_dimension);
-	ASSERT_EQ(4u, Quad::_n_all_nodes);
-	ASSERT_EQ(4u, Quad::_n_base_nodes);
+	ASSERT_EQ(2u, Quad::dimension);
+	ASSERT_EQ(4u, Quad::n_all_nodes);
+	ASSERT_EQ(4u, Quad::n_base_nodes);
 
 	std::array<Node*, 4> nodes;
 	nodes[0] = new Node(0.0, 0.0, 0.0);
@@ -36,9 +36,9 @@ TEST(MeshLib, Quad4ElementConstants)
 TEST(MeshLib, Quad8ElementConstants)
 {
 	typedef TemplateQuad<8, CellType::QUAD8> Quad8;
-	ASSERT_EQ(2u, Quad8::_dimension);
-	ASSERT_EQ(8u, Quad8::_n_all_nodes);
-	ASSERT_EQ(4u, Quad8::_n_base_nodes);
+	ASSERT_EQ(2u, Quad8::dimension);
+	ASSERT_EQ(8u, Quad8::n_all_nodes);
+	ASSERT_EQ(4u, Quad8::n_base_nodes);
 
 	std::array<Node*, 8> nodes;
 	nodes[0] = new Node(0.0, 0.0, 0.0);
@@ -61,9 +61,9 @@ TEST(MeshLib, Quad8ElementConstants)
 TEST(MeshLib, Quad9ElementConstants)
 {
 	typedef TemplateQuad<9, CellType::QUAD9> Quad9;
-	ASSERT_EQ(2u, Quad9::_dimension);
-	ASSERT_EQ(9u, Quad9::_n_all_nodes);
-	ASSERT_EQ(4u, Quad9::_n_base_nodes);
+	ASSERT_EQ(2u, Quad9::dimension);
+	ASSERT_EQ(9u, Quad9::n_all_nodes);
+	ASSERT_EQ(4u, Quad9::n_base_nodes);
 
 	std::array<Node*, 9> nodes;
 	nodes[0] = new Node(0.0, 0.0, 0.0);
