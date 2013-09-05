@@ -28,19 +28,19 @@ TEST(MathLib, IntegrationGaussLegendre)
 {
     double const eps = 10 * std::numeric_limits<double>::epsilon();
 
-    EXPECT_EQ(0.0, MathLib::GaussLegendre::integrate(square, 1));
-    EXPECT_NEAR(2./3, MathLib::GaussLegendre::integrate(square, 2),
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<1>>::add(square));
+    EXPECT_NEAR(2./3, MathLib::WeightedSum<MathLib::GaussLegendre<2>>::add(square),
             eps);
-    EXPECT_NEAR(2./3, MathLib::GaussLegendre::integrate(square, 3),
+    EXPECT_NEAR(2./3, MathLib::WeightedSum<MathLib::GaussLegendre<3>>::add(square),
             eps);
-    EXPECT_NEAR(2./3, MathLib::GaussLegendre::integrate(square, 4),
+    EXPECT_NEAR(2./3, MathLib::WeightedSum<MathLib::GaussLegendre<4>>::add(square),
             eps);
 
     auto const& cube = [](double const x){ return x*x*x; };
-    EXPECT_EQ(0.0, MathLib::GaussLegendre::integrate(cube, 1));
-    EXPECT_EQ(0.0, MathLib::GaussLegendre::integrate(cube, 2));
-    EXPECT_EQ(0.0, MathLib::GaussLegendre::integrate(cube, 3));
-    EXPECT_EQ(0.0, MathLib::GaussLegendre::integrate(cube, 4));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<1>>::add(cube));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<2>>::add(cube));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<3>>::add(cube));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<4>>::add(cube));
 }
 
 
