@@ -13,10 +13,9 @@
 #ifndef INTEGRATIONGAUSSREGULAR_H_
 #define INTEGRATIONGAUSSREGULAR_H_
 
-#include <tuple>
 #include <cmath>
 
-#include "MathLib/Integration/GaussLegendre.h"
+#include "MathLib/TemplateWeightedPoint.h"
 
 
 namespace NumLib
@@ -63,10 +62,9 @@ public:
      * get coordinates of a integration point
      *
      * @param igp      The integration point index
-     * @param x        coordinates
-     * @return weight
+     * @return a weighted point
      */
-    std::array<double, N_DIM+1>
+    MathLib::TemplateWeightedPoint<double,double,N_DIM>
     getWeightedPoint(std::size_t igp) const
     {
         return getWeightedPoint(getSamplingLevel(), igp);
@@ -89,7 +87,8 @@ public:
      * @param x         coordinates
      * @return weight
      */
-    static std::array<double, N_DIM+1> getWeightedPoint(std::size_t nGauss, std::size_t igp);
+    static MathLib::TemplateWeightedPoint<double,double,N_DIM>
+    getWeightedPoint(std::size_t nGauss, std::size_t igp);
 
 private:
     std::size_t _n_sampl_level;
