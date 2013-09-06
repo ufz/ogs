@@ -17,15 +17,12 @@
 #ifndef TESTTOOLS_H_
 #define TESTTOOLS_H_
 
-inline void ASSERT_DOUBLE_ARRAY_EQ(const double* Expected, const double* Actual, std::size_t N, double epsilon=1.0e-8) {
-    for (size_t i=0; i<N; i++) \
-        ASSERT_NEAR(Expected[i], Actual[i], epsilon);
-}
+#define ASSERT_ARRAY_NEAR(E,A,N,eps)\
+    for (size_t i=0; i<(unsigned)(N); i++) \
+        ASSERT_NEAR((E)[i], (A)[i], (eps));
 
-template <typename T1, typename T2>
-inline void ASSERT_DOUBLE_ARRAY_EQ(const T1 &Expected, const T2 &Actual, std::size_t N, double epsilon=1.0e-8) {
-    for (size_t i=0; i<N; i++) \
-        ASSERT_NEAR(Expected[i], Actual[i], epsilon);
-}
+#define ASSERT_ARRAY_EQ(E,A,N)\
+    for (size_t i=0; i<(unsigned)(N); i++) \
+        ASSERT_EQ((E)[i], (A)[i]);
 
 #endif // TESTTOOLS_H_
