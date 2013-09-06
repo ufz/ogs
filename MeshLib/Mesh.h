@@ -114,7 +114,7 @@ protected:
 	void setElementsConnectedToNodes();
 
 	/// Fills in the neighbor-information for elements.
-	void setElementsConnectedToElements();
+	void setNeighborElements();
 
 	void setNodesConnectedByEdges();
 
