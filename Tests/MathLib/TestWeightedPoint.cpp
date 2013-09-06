@@ -1,6 +1,5 @@
 /**
  * @file TestWeightedPoint.cpp
- * @brief 
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -22,7 +21,7 @@ TEST(MathLib, WeightedPoint1D)
 	MathLib::WeightedPoint1D wpnt_1d(pnt, w);
 
 	ASSERT_NEAR(pnt[0], wpnt_1d[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(wpnt_1d.getWeight(), w, std::numeric_limits<double>::min());
+	ASSERT_NEAR(w, wpnt_1d.getWeight(), std::numeric_limits<double>::min());
 }
 
 TEST(MathLib, WeightedPoint2D)
@@ -35,7 +34,7 @@ TEST(MathLib, WeightedPoint2D)
 
 	ASSERT_NEAR(pnt[0], wpnt_2d[0], std::numeric_limits<double>::min());
 	ASSERT_NEAR(pnt[1], wpnt_2d[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(wpnt_2d.getWeight(), w, std::numeric_limits<double>::min());
+	ASSERT_NEAR(w, wpnt_2d.getWeight(), std::numeric_limits<double>::min());
 }
 
 TEST(MathLib, WeightedPoint3D)
@@ -50,5 +49,5 @@ TEST(MathLib, WeightedPoint3D)
 	ASSERT_NEAR(pnt[0], wpnt_3d[0], std::numeric_limits<double>::min());
 	ASSERT_NEAR(pnt[1], wpnt_3d[1], std::numeric_limits<double>::min());
 	ASSERT_NEAR(pnt[2], wpnt_3d[2], std::numeric_limits<double>::min());
-	ASSERT_NEAR(wpnt_3d.getWeight(), w, std::numeric_limits<double>::min());
+	ASSERT_NEAR(w, wpnt_3d.getWeight(), std::numeric_limits<double>::min());
 }
