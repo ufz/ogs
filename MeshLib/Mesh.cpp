@@ -179,7 +179,7 @@ void Mesh::setNeighborElements()
 
 		for (unsigned i(0); i<nNeighbors; ++i)
 		{
-			if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::LINE)
+			if (element->addNeighbor(neighbors[i]))
 			{
 				neighbors[i]->addNeighbor(element);
 			}
