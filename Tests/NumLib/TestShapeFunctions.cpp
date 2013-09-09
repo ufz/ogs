@@ -37,8 +37,8 @@ TEST(NumLib, FemShapeQuad4)
         ShapeQuad4::computeGradShapeFunction(r, dN);
         double exp_N[]= {0.5625, 0.1875, 0.0625, 0.1875};
         double exp_dN[]= {0.375, -0.375, -0.125, 0.125, 0.375, 0.125, -0.125, -0.375};
-        ASSERT_DOUBLE_ARRAY_EQ(exp_N, N, N.size(), eps);
-        ASSERT_DOUBLE_ARRAY_EQ(exp_dN, dN, dN.size(), eps);
+        ASSERT_ARRAY_NEAR(exp_N, N, N.size(), eps);
+        ASSERT_ARRAY_NEAR(exp_dN, dN, dN.size(), eps);
     }
 
     std::valarray<double> exp_N(NNodes);
@@ -50,7 +50,7 @@ TEST(NumLib, FemShapeQuad4)
         exp_N = .0;
         exp_N[i] = 1.0;
         ShapeQuad4::computeShapeFunction(r, N);
-        ASSERT_DOUBLE_ARRAY_EQ(exp_N, N, NNodes, eps);
+        ASSERT_ARRAY_NEAR(exp_N, N, NNodes, eps);
     }
 
     // check sum_i[N_i(r)] = 1
