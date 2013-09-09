@@ -14,7 +14,7 @@
 #ifndef GAUSSLEGENDRE_H_
 #define GAUSSLEGENDRE_H_
 
-#include "Integration.h"
+#include "WeightedSum.h"
 
 namespace MathLib
 {
