@@ -56,6 +56,10 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
 
+# Eigen
+OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
+OPTION(EIGEN_NO_DEBUG "Disables Eigen's assertions" ON)
+
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
@@ -105,6 +109,14 @@ IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
 ENDIF()
 
+IF(OGS_USE_EIGEN)
+#	ADD_DEFINITIONS(-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=std::size_t)
+	ADD_DEFINITIONS(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO)
+	IF (EIGEN_NO_DEBUG)
+		ADD_DEFINITIONS(-DEIGEN_NO_DEBUG)
+	ENDIF()
+ENDIF()
+
 ADD_SUBDIRECTORY( AssemblerLib )
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
@@ -113,6 +125,7 @@ ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )
 ADD_SUBDIRECTORY( MeshLib )
+ADD_SUBDIRECTORY( NumLib )
 IF( OGS_BUILD_CLI )
 	ADD_SUBDIRECTORY( OGS )
 ENDIF() # OGS_BUILD_CLI
