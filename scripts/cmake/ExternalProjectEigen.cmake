@@ -18,8 +18,8 @@ ENDIF()
 
 ExternalProject_Add(Eigen
 	PREFIX ${CMAKE_BINARY_DIR}/External/eigen
-	URL http://bitbucket.org/eigen/eigen/get/3.2.0.tar.gz
-	URL_MD5 9559c34af203dde5f3f1d976d859c5b3
+	URL http://bitbucket.org/eigen/eigen/get/3.1.4.tar.gz
+	URL_MD5 43f03a7b90e1214195197957bb7394d1
 	UPDATE_COMMAND ""
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
