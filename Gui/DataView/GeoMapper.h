@@ -44,11 +44,18 @@ public:
 	void mapOnMesh(const std::string &file_name);
 	void mapOnMesh(const MeshLib::Mesh* mesh);
 
+	void advancedMapOnMesh(const MeshLib::Mesh* mesh);
+
 private:
 	void mapData(MeshLib::Mesh const*const mesh = NULL);
 	GeoLib::Grid<GeoLib::PointWithID>* getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const;
 	double getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const;
 	float getDemElevation(double x, double y) const;
+
+	double getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &lines) const;
+	GeoLib::Point* calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
+	bool isNodeOnLine(GeoLib::Point const*const p1, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
+	bool isPntInBoundingBox(double ax, double ay, double bx, double by, double px, double py) const;
 
 	GeoLib::GEOObjects& _geo_objects;
 	const std::string& _geo_name;
