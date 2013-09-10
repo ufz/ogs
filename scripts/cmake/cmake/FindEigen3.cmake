@@ -67,6 +67,7 @@ else (EIGEN3_INCLUDE_DIR)
       ${KDE4_INCLUDE_DIR}
       /usr/include
       /usr/local/include
+      /opt/boxen/homebrew/include
       PATH_SUFFIXES eigen3 eigen
     )
 
