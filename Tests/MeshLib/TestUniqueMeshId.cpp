@@ -19,7 +19,7 @@ TEST(MeshLib, UniqueMeshId)
 	Mesh m0("first", std::vector<Node*>(), std::vector<Element*>());
 	std::size_t const counter_value = m0.getID();
 
-	EXPECT_GT(counter_value, 0);
+	EXPECT_GT(counter_value, 0u);
 
 	//
 	// Test mesh counter increments.
