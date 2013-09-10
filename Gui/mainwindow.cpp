@@ -1189,7 +1189,7 @@ void MainWindow::FEMTestStart()
 {
 	std::string name("TestExample");
 	GeoMapper mapper(*this->_geoModels, name);
-	mapper.advancedMapOnMesh(this->_project.getMesh(name));
+	mapper.advancedMapOnMesh(this->_project.getMesh(name), std::string("new_geometry"));
 /*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");

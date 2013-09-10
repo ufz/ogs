@@ -87,7 +87,7 @@ std::vector<GeoLib::Polyline*>* copyPolylinesVector(const std::vector<GeoLib::Po
 }
 
 
-void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
+void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_geo_name)
 {
 	// copy geometry (and set z=0 for all points)
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
@@ -178,25 +178,22 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 					if (intersection) // intersection found
 					{
 						intersection_count++;
-						std::size_t pos = insertPointInLine((*new_lines)[l], intersection, node_index_in_ply+index_offset-1, line_segment_map[l]);
+						std::size_t pos = getPointPosInLine((*new_lines)[l], intersection, node_index_in_ply+index_offset-1, line_segment_map[l]);
 						if (pos)
 						{
 							const std::size_t pnt_pos (new_points->size());
-							new_points->push_back(new GeoLib::Point(intersection->getCoords()));
+							new_points->push_back(intersection);
 							(*new_lines)[l]->insertPoint(pos, pnt_pos);
 							line_segment_map[l].insert(line_segment_map[l].begin()+pos, node_index_in_ply+index_offset-1);
-
 						}
-						delete intersection;
 					}
 				}
 			}
 		}
 	}
 
-	std::string name ("new_geometry");
-	this->_geo_objects.addPointVec(new_points, name);
-	this->_geo_objects.addPolylineVec(new_lines, name);
+	this->_geo_objects.addPointVec(new_points, new_geo_name);
+	this->_geo_objects.addPolylineVec(new_lines, new_geo_name);
 }
 
 GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const
@@ -222,7 +219,7 @@ GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib:
 	return NULL;
 }
 
-std::size_t GeoMapper::insertPointInLine(GeoLib::Polyline const*const line, GeoLib::Point const*const point, unsigned line_segment, const std::vector<unsigned> &line_segment_map) const
+std::size_t GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, GeoLib::Point const*const point, unsigned line_segment, const std::vector<unsigned> &line_segment_map) const
 {
 	const std::size_t nPoints (line->getNumberOfPoints());
 	const GeoLib::Point* start (line->getPoint(line_segment));
@@ -259,11 +256,9 @@ double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &line
 	{
 		const GeoLib::Polyline* line = lines[i];
 		const std::size_t nPlyPoints = line->getNumberOfPoints();
-		double old_length (0);
 		for (size_t j=1; j<nPlyPoints; ++j)
 		{
-			double dist = (line->getLength(j)-old_length);
-			old_length = line->getLength(j);
+			const double dist (line->getLength(j)-line->getLength(j-1));
 			if (dist>max_segment_length)
 				max_segment_length=dist;
 		}	
