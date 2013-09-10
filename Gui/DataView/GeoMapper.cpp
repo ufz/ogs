@@ -77,12 +77,12 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 	const std::vector<GeoLib::Polyline*> *plys (this->_geo_objects.getPolylineVec(this->_geo_name));
 
 	const unsigned nGeoPoints ( points->size() );
-	std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nGeoPoints);
+	std::vector<GeoLib::PointWithID*> new_points(nGeoPoints);
 	for (size_t i=0; i<nGeoPoints; ++i)
-		(*new_points)[i] = new GeoLib::PointWithID((*(*points)[i])[0],(*(*points)[i])[1],0,i);
+		new_points[i] = new GeoLib::PointWithID((*(*points)[i])[0],(*(*points)[i])[1],0,i);
 
 
-	GeoLib::Grid<GeoLib::PointWithID> grid(new_points->begin(), new_points->end());
+	GeoLib::Grid<GeoLib::PointWithID> grid(new_points.begin(), new_points.end());
 	const double max_segment_length (this->getMaxSegmentLength(*plys));
 	
 	const unsigned nMeshNodes ( mesh->getNNodes() );	
@@ -103,7 +103,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 		const MeshLib::Node* node (mesh->getNode(i));
 		if (dist[i] < std::numeric_limits<float>::epsilon()) // is mesh node == geo point?
 		{
-			(*(*new_points)[closest_geo_point[i]])[2] = (*node)[2];
+			(*new_points[closest_geo_point[i]])[2] = (*node)[2];
 			continue;
 		}
 
@@ -115,7 +115,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 			GeoLib::Polyline* ply ((*plys)[l]);
 			const std::size_t nLinePoints (ply->getNumberOfPoints());
 			std::size_t node_index_in_ply (0);
-			for (std::size_t node_index_in_ply=0; node_index_in_ply<nLinePoints; ++node_index_in_ply)
+			for (node_index_in_ply=0; node_index_in_ply<nLinePoints; ++node_index_in_ply)
 				if (ply->getPoint(node_index_in_ply) == (*points)[closest_geo_point[i]])
 					break;
 
@@ -143,7 +143,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 					if (intersection) // intersection found
 					{
 						intersection_count++;
-						new_points->push_back(new GeoLib::PointWithID(intersection->getCoords(), new_points->size()));
+						new_points.push_back(new GeoLib::PointWithID(intersection->getCoords(), new_points.size()));
 						delete intersection;
 						//schnittpunkt in linie AN RICHTIGER STELLE einfügen (abstand von neuem punkt zu punkt davor und danach)
 					}
@@ -152,8 +152,12 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 		}
 	}
 
+	std::vector<GeoLib::Point*> *final_points = new std::vector<GeoLib::Point*>(new_points.size());
+	for (std::size_t i=0; i<new_points.size(); i++)
+		(*final_points)[i] = new_points[i];
+
 	std::string name ("new_points");
-	this->_geo_objects.addPointVec(new_points, name);
+	this->_geo_objects.addPointVec(final_points, name);
 }
 
 
