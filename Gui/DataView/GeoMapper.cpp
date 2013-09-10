@@ -76,13 +76,14 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	const std::vector<GeoLib::Polyline*> *plys (this->_geo_objects.getPolylineVec(this->_geo_name));
 
+	// copy points (and set z=0)
 	const unsigned nGeoPoints ( points->size() );
-	std::vector<GeoLib::PointWithID*> new_points(nGeoPoints);
+	std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nGeoPoints);
 	for (size_t i=0; i<nGeoPoints; ++i)
-		new_points[i] = new GeoLib::PointWithID((*(*points)[i])[0],(*(*points)[i])[1],0,i);
+		(*new_points)[i] = new GeoLib::Point((*(*points)[i])[0],(*(*points)[i])[1],0);
 
 
-	GeoLib::Grid<GeoLib::PointWithID> grid(new_points.begin(), new_points.end());
+	GeoLib::Grid<GeoLib::Point> grid(new_points->begin(), new_points->end());
 	const double max_segment_length (this->getMaxSegmentLength(*plys));
 	
 	const unsigned nMeshNodes ( mesh->getNNodes() );	
@@ -91,19 +92,36 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 	for (size_t i=0; i<nMeshNodes; ++i)
 	{
 		const double* coords = mesh->getNode(i)->getCoords();
-		GeoLib::PointWithID* pnt = grid.getNearestPoint(coords);
+		GeoLib::Point* pnt = grid.getNearestPoint(coords);
 		dist[i] = MathLib::sqrDist(pnt->getCoords(), coords); //mesh coords z muss noch auf 0 gesetzt werden
-		closest_geo_point[i] = (dist[i]<=max_segment_length) ? pnt->getID() : -1;
+		if (dist[i]<=max_segment_length)
+		{
+			for (size_t j=0; j<nGeoPoints; ++j)
+				if (pnt == (*new_points)[j])
+					closest_geo_point[i] = j;
+		}
+		else
+			closest_geo_point[i] = -1;
 	}
 
+	//copy lines
 	std::size_t nLines = plys->size();
+	std::vector<GeoLib::Polyline*> *new_lines = new std::vector<GeoLib::Polyline*>(nLines);
+	for (std::size_t i=0; i<nLines; ++i)
+	{
+		(*new_lines)[i] = new GeoLib::Polyline(*new_points);
+		std::size_t nLinePnts ((*plys)[i]->getNumberOfPoints());
+		for (std::size_t j=0; j<nLinePnts; ++j)
+			(*new_lines)[i]->addPoint((*plys)[i]->getPointID(j));
+	}
+
 	for (std::size_t i=0; i<nMeshNodes; ++i)
 	{
 		if (closest_geo_point[i] == -1) continue; // is mesh node theoretically close enough?
 		const MeshLib::Node* node (mesh->getNode(i));
 		if (dist[i] < std::numeric_limits<float>::epsilon()) // is mesh node == geo point?
 		{
-			(*new_points[closest_geo_point[i]])[2] = (*node)[2];
+			(*(*new_points)[closest_geo_point[i]])[2] = (*node)[2];
 			continue;
 		}
 
@@ -135,16 +153,22 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 					if (intersection_count>1) break; //already two intersections
 
 					const MeshLib::Element* line = elements[e]->getEdge(n);
+					bool add_before_geo_point (true); // default: add in first segment
 					GeoLib::Point* intersection (NULL);
 					if (node_index_in_ply>0) // test line segment before closest point
 						intersection = calcIntersection(line->getNode(0), line->getNode(1), geo_point, ply->getPoint(node_index_in_ply-1));
 					if (intersection == NULL && node_index_in_ply<(nLinePoints-1)) // test line segment after closest point
+					{
 						intersection = calcIntersection(line->getNode(0), line->getNode(1), geo_point, ply->getPoint(node_index_in_ply+1));
+						add_before_geo_point = false; // add in second segment
+					}
 					if (intersection) // intersection found
 					{
 						intersection_count++;
-						new_points.push_back(new GeoLib::PointWithID(intersection->getCoords(), new_points.size()));
+						const size_t pnt_pos (new_points->size());
+						new_points->push_back(new GeoLib::Point(intersection->getCoords()));
 						delete intersection;
+						//(*new_lines)[l]->insertPoint(x, pnt_pos);
 						//schnittpunkt in linie AN RICHTIGER STELLE einfügen (abstand von neuem punkt zu punkt davor und danach)
 					}
 				}
@@ -152,12 +176,9 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh)
 		}
 	}
 
-	std::vector<GeoLib::Point*> *final_points = new std::vector<GeoLib::Point*>(new_points.size());
-	for (std::size_t i=0; i<new_points.size(); i++)
-		(*final_points)[i] = new_points[i];
-
 	std::string name ("new_points");
-	this->_geo_objects.addPointVec(final_points, name);
+	this->_geo_objects.addPointVec(new_points, name);
+	this->_geo_objects.addPolylineVec(new_lines, name);
 }
 
 
