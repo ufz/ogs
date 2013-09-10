@@ -27,6 +27,7 @@ template <>
 inline std::array<std::size_t, 2>
 IntegrationGaussRegular<2>::getPosition(std::size_t nGauss, std::size_t igp)
 {
+    assert(igp < nGauss);
     return {igp / nGauss, igp % nGauss};
 }
 
@@ -34,6 +35,7 @@ template <>
 inline std::array<std::size_t, 3>
 IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
 {
+    assert(igp < nGauss);
     std::size_t const gp_r = igp / (nGauss * nGauss);
     std::size_t const gp_s = igp % (nGauss * nGauss);
     return {gp_r, gp_s / nGauss, gp_s % nGauss };
@@ -42,6 +44,7 @@ IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
 template <>
 inline MathLib::WeightedPoint1D IntegrationGaussRegular<1>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
+    assert(igp < nGauss);
 	std::array<double,1> coords;
 	coords[0] = MathLib::GaussLegendre::getPoint(nGauss, igp).first;
 	return MathLib::WeightedPoint1D (coords,
@@ -51,6 +54,7 @@ inline MathLib::WeightedPoint1D IntegrationGaussRegular<1>::getWeightedPoint(std
 template <>
 inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
+    assert(igp < nGauss);
     std::array<std::size_t, 2> const pos = getPosition(nGauss, igp);
     std::pair<double, double> const pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
     std::pair<double, double> const pt2 = MathLib::GaussLegendre::getPoint(nGauss, std::get<1>(pos));
@@ -64,6 +68,7 @@ inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std
 template <>
 inline MathLib::WeightedPoint3D IntegrationGaussRegular<3>::getWeightedPoint(std::size_t nGauss, std::size_t igp) //, double* x)
 {
+    assert(igp < nGauss);
     std::array<std::size_t, 3> const pos = getPosition(nGauss, igp);
 
     std::pair<double, double> const pt1 = MathLib::GaussLegendre::getPoint(nGauss, std::get<0>(pos));
