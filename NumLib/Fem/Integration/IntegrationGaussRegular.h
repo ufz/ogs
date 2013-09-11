@@ -15,6 +15,7 @@
 
 #include <cmath>
 
+#include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/TemplateWeightedPoint.h"
 
 
@@ -89,6 +90,16 @@ public:
      */
     static MathLib::TemplateWeightedPoint<double,double,N_DIM>
     getWeightedPoint(std::size_t nGauss, std::size_t igp);
+
+private:
+    /// Computes weighted point using given integration method.
+    ///
+    /// \tparam Method  Integration method to use.
+    /// \param  pos     Point indices computed by getPosition.
+    template <typename Method>
+    static
+    MathLib::TemplateWeightedPoint<double, double, N_DIM>
+    getWeightedPoint(std::array<std::size_t, N_DIM> const& pos);
 
 private:
     std::size_t _n_sampl_level;
