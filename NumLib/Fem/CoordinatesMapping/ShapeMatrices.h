@@ -10,9 +10,10 @@
  *
  */
 
-
 #ifndef SHAPEMATRICES_H_
 #define SHAPEMATRICES_H_
+
+#include <iostream>
 
 namespace NumLib
 {
