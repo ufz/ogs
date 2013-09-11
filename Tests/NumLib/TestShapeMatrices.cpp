@@ -15,7 +15,6 @@
 #include <Eigen>
 #endif
 
-#include "NumLib/Fem/FemEnums.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
 #include "../TestTools.h"

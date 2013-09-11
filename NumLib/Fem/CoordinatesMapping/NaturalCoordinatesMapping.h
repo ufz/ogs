@@ -16,7 +16,6 @@
 
 
 #include "ShapeMatrices.h"
-#include "../FemEnums.h"
 
 namespace NumLib
 {
