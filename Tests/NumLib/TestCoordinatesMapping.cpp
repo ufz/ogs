@@ -49,51 +49,20 @@ class NumLibFemNaturalCoordinatesMappingQuad4Test : public ::testing::Test
  public:
     NumLibFemNaturalCoordinatesMappingQuad4Test()
     {
-        // 0~3 natural
-        vec_nodes.push_back(new MeshLib::Node( 1.0,  1.0,  0.0));
-        vec_nodes.push_back(new MeshLib::Node(-1.0,  1.0,  0.0));
-        vec_nodes.push_back(new MeshLib::Node(-1.0, -1.0,  0.0));
-        vec_nodes.push_back(new MeshLib::Node( 1.0, -1.0,  0.0));
-        // 4~7 irregular
-        vec_nodes.push_back(new MeshLib::Node(-0.5, -0.5,  0.0));
-        vec_nodes.push_back(new MeshLib::Node( 0.6, -0.6,  0.0));
-        vec_nodes.push_back(new MeshLib::Node( 0.5,  0.4,  0.0));
-        vec_nodes.push_back(new MeshLib::Node(-0.3,  0.1,  0.0));
-        // 8~9 duplicated of node 0 and 1
-        vec_nodes.push_back(new MeshLib::Node( 1.0,  1.0,  0.0));
-        vec_nodes.push_back(new MeshLib::Node(-1.0,  1.0,  0.0));
+        // create four quad elements used for tesing
+        naturalQuad   = createNaturalShapeQuad();
+        irregularQuad = createIrregularShapeQuad();
+        clockwiseQuad = createClockWiseQuad();
+        zeroAreaQuad  = createZeroAreaQuad();
 
-        // quad having shape identical to that in natural coordiantes
-        MeshLib::Node** naturalNodes = new MeshLib::Node*[e_nnodes];
-        std::copy_n(vec_nodes.begin(), e_nnodes, naturalNodes);
-        naturalQuad = new MeshLib::Quad(naturalNodes);
+        // for destructor
         vec_eles.push_back(naturalQuad);
-
-        // irregular shape
-        MeshLib::Node** irregularNodes = new MeshLib::Node*[e_nnodes];
-        std::copy_n(vec_nodes.begin()+4, e_nnodes, irregularNodes);
-        irregularQuad = new MeshLib::Quad(irregularNodes);
         vec_eles.push_back(irregularQuad);
-
-        // invalid case: clock wise node ordering
-        MeshLib::Node** clockwiseNodes = new MeshLib::Node*[e_nnodes];
-        std::copy_n(vec_nodes.begin(), e_nnodes, naturalNodes);
-        clockwiseNodes[0] = vec_nodes[0];
-        clockwiseNodes[1] = vec_nodes[3];
-        clockwiseNodes[2] = vec_nodes[2];
-        clockwiseNodes[3] = vec_nodes[1];
-        clockwiseQuad = new MeshLib::Quad(clockwiseNodes);
         vec_eles.push_back(clockwiseQuad);
-
-        // invalid case: zero area
-        MeshLib::Node** zeroAreaNodes = new MeshLib::Node*[e_nnodes];
-        std::copy_n(vec_nodes.begin(), e_nnodes, naturalNodes);
-        zeroAreaNodes[0] = vec_nodes[0];
-        zeroAreaNodes[1] = vec_nodes[1];
-        zeroAreaNodes[2] = vec_nodes[9];
-        zeroAreaNodes[3] = vec_nodes[8];
-        zeroAreaQuad = new MeshLib::Quad(zeroAreaNodes);
         vec_eles.push_back(zeroAreaQuad);
+        for (auto e : vec_eles)
+            for (unsigned i=0; i<e->getNNodes(true); i++)
+                vec_nodes.push_back(e->getNode(i));
     }
 
     ~NumLibFemNaturalCoordinatesMappingQuad4Test()
@@ -104,13 +73,57 @@ class NumLibFemNaturalCoordinatesMappingQuad4Test : public ::testing::Test
             delete *itr;
     }
 
+    // quad having shape identical to that in natural coordinates
+    MeshLib::Quad* createNaturalShapeQuad()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
+        nodes[1] = new MeshLib::Node(-1.0,  1.0,  0.0);
+        nodes[2] = new MeshLib::Node(-1.0, -1.0,  0.0);
+        nodes[3] = new MeshLib::Node( 1.0, -1.0,  0.0);
+        return new MeshLib::Quad(nodes);
+    }
+
+    // quad having irregular or skew shape
+    MeshLib::Quad* createIrregularShapeQuad()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node(-0.5, -0.5,  0.0);
+        nodes[1] = new MeshLib::Node( 0.6, -0.6,  0.0);
+        nodes[2] = new MeshLib::Node( 0.5,  0.4,  0.0);
+        nodes[3] = new MeshLib::Node(-0.3,  0.1,  0.0);
+        return new MeshLib::Quad(nodes);
+    }
+
+    // invalid case: clock wise node ordering
+    MeshLib::Quad* createClockWiseQuad()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
+        nodes[3] = new MeshLib::Node(-1.0,  1.0,  0.0);
+        nodes[2] = new MeshLib::Node(-1.0, -1.0,  0.0);
+        nodes[1] = new MeshLib::Node( 1.0, -1.0,  0.0);
+        return new MeshLib::Quad(nodes);
+    }
+
+    // invalid case: zero area
+    MeshLib::Quad* createZeroAreaQuad()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
+        nodes[1] = new MeshLib::Node(-1.0,  1.0,  0.0);
+        nodes[2] = new MeshLib::Node(-1.0,  1.0,  0.0);
+        nodes[3] = new MeshLib::Node( 1.0,  1.0,  0.0);
+        return new MeshLib::Quad(nodes);
+    }
+
     static const double r[dim];
     static const double exp_N[e_nnodes];
     static const double exp_dNdr[e_nnodes*dim];
     static const double eps;
 
-    std::vector<MeshLib::Node*> vec_nodes;
-    std::vector<MeshLib::Quad*> vec_eles;
+    std::vector<const MeshLib::Node*> vec_nodes;
+    std::vector<const MeshLib::Quad*> vec_eles;
     MeshLib::Quad* naturalQuad;
     MeshLib::Quad* irregularQuad;
     MeshLib::Quad* clockwiseQuad;
