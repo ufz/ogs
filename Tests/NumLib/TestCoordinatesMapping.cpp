@@ -138,49 +138,91 @@ const double NumLibFemNaturalCoordinatesMappingQuad4Test::eps = std::numeric_lim
 
 } // namespace
 
-TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification)
+TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_N)
 {
-    // identical to natural coordinates
     ShapeMatricesType shape(dim, e_nnodes);
 
     //only N
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::N>(*naturalQuad, r, shape);
-    ASSERT_TRUE(shape.N.norm() > .0);
-    ASSERT_TRUE(shape.dNdr.norm() == .0);
-    ASSERT_TRUE(shape.J.norm() == .0);
+    ASSERT_FALSE(shape.N.isZero());
+    ASSERT_TRUE(shape.dNdr.isZero());
+    ASSERT_TRUE(shape.J.isZero());
     ASSERT_TRUE(shape.detJ == .0);
-    ASSERT_TRUE(shape.invJ.norm() == .0);
-    ASSERT_TRUE(shape.dNdx.norm() == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDR)
+{
+    ShapeMatricesType shape(dim, e_nnodes);
+
+    // dNdr
+    NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::DNDR>(*naturalQuad, r, shape);
+    ASSERT_TRUE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_TRUE(shape.J.isZero());
+    ASSERT_TRUE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_N_J)
+{
+    ShapeMatricesType shape(dim, e_nnodes);
 
     // N_J
     shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::N_J>(*naturalQuad, r, shape);
-    ASSERT_TRUE(shape.N.norm() > .0);
-    ASSERT_TRUE(shape.dNdr.norm() > .0);
-    ASSERT_TRUE(shape.J.norm() > .0);
-    ASSERT_TRUE(shape.detJ > .0);
-    ASSERT_TRUE(shape.invJ.norm() == .0);
-    ASSERT_TRUE(shape.dNdx.norm() == .0);
+    ASSERT_FALSE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDR_J)
+{
+    ShapeMatricesType shape(dim, e_nnodes);
+
+    // dNdr, J
+    NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::DNDR_J>(*naturalQuad, r, shape);
+    ASSERT_TRUE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDX)
+{
+    ShapeMatricesType shape(dim, e_nnodes);
 
     // DNDX
     shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::DNDX>(*naturalQuad, r, shape);
-    ASSERT_TRUE(shape.N.norm() == .0);
-    ASSERT_TRUE(shape.dNdr.norm() > .0);
-    ASSERT_TRUE(shape.J.norm() > .0);
-    ASSERT_TRUE(shape.detJ > .0);
-    ASSERT_TRUE(shape.invJ.norm() > .0);
-    ASSERT_TRUE(shape.dNdx.norm() > .0);
+    ASSERT_TRUE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_FALSE(shape.invJ.isZero());
+    ASSERT_FALSE(shape.dNdx.isZero());
+}
+
+TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_ALL)
+{
+    ShapeMatricesType shape(dim, e_nnodes);
 
     // ALL
     shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices(*naturalQuad, r, shape);
-    ASSERT_TRUE(shape.N.norm() > .0);
-    ASSERT_TRUE(shape.dNdr.norm() > .0);
-    ASSERT_TRUE(shape.J.norm() > .0);
-    ASSERT_TRUE(shape.detJ > .0);
-    ASSERT_TRUE(shape.invJ.norm() > .0);
-    ASSERT_TRUE(shape.dNdx.norm() > .0);
+    ASSERT_FALSE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_FALSE(shape.invJ.isZero());
+    ASSERT_FALSE(shape.dNdx.isZero());
 }
 
 
