@@ -13,6 +13,27 @@
 
 #include "MathLib/Integration/GaussLegendre.h"
 
+namespace detail
+{
+
+template <unsigned Dim, typename Method>
+inline
+MathLib::TemplateWeightedPoint<double, double, Dim>
+aoeu(std::array<std::size_t, Dim> const& pos)
+{
+    std::array<double, Dim> coords;
+    double weight = 1;
+    for (unsigned d = 0; d < Dim; d++)
+    {
+        coords[d] = Method::X[pos[d]];
+        weight *= Method::W[pos[d]];
+    }
+
+    return MathLib::TemplateWeightedPoint<double, double, Dim>(coords, weight);
+}
+
+}   // namespace detail
+
 namespace NumLib
 {
 
@@ -47,32 +68,15 @@ inline MathLib::WeightedPoint1D IntegrationGaussRegular<1>::getWeightedPoint(std
     assert(igp < nGauss);
     std::array<std::size_t, 1> const pos = getPosition(nGauss, igp);
 
-    std::array<double,1> coords;
-    std::array<double,1> weight;
     switch (nGauss)
     {
-        case 1:
-            coords[0] = MathLib::GaussLegendre<1>::X[pos[0]];
-            weight[0] = MathLib::GaussLegendre<1>::W[pos[0]];
-            break;
-        case 2:
-            coords[0] = MathLib::GaussLegendre<2>::X[pos[0]];
-            weight[0] = MathLib::GaussLegendre<2>::W[pos[0]];
-            break;
-        case 3:
-            coords[0] = MathLib::GaussLegendre<3>::X[pos[0]];
-            weight[0] = MathLib::GaussLegendre<3>::W[pos[0]];
-            break;
-        case 4:
-            coords[0] = MathLib::GaussLegendre<4>::X[pos[0]];
-            weight[0] = MathLib::GaussLegendre<4>::W[pos[0]];
-            break;
-        default:
-            coords[0] = 0;
-            weight[0] = 0;
+        case 1: return detail::aoeu<1, MathLib::GaussLegendre<1>>(pos);
+        case 2: return detail::aoeu<1, MathLib::GaussLegendre<2>>(pos);
+        case 3: return detail::aoeu<1, MathLib::GaussLegendre<3>>(pos);
+        case 4: return detail::aoeu<1, MathLib::GaussLegendre<4>>(pos);
     }
 
-    return MathLib::WeightedPoint1D (coords, weight[0]);
+    return MathLib::WeightedPoint1D(std::array<double, 1>(), 0);
 }
 
 template <>
@@ -81,41 +85,15 @@ inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std
     assert(igp < nGauss);
     std::array<std::size_t, 2> const pos = getPosition(nGauss, igp);
 
-    std::array<double, 2> coords;
-    std::array<double, 2> weight;
     switch (nGauss)
     {
-        case 1:
-            coords[0] = MathLib::GaussLegendre<1>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<1>::X[pos[1]];
-            weight[0] = MathLib::GaussLegendre<1>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<1>::W[pos[1]];
-            break;
-        case 2:
-            coords[0] = MathLib::GaussLegendre<2>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<2>::X[pos[1]];
-            weight[0] = MathLib::GaussLegendre<2>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<2>::W[pos[1]];
-            break;
-        case 3:
-            coords[0] = MathLib::GaussLegendre<3>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<3>::X[pos[1]];
-            weight[0] = MathLib::GaussLegendre<3>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<3>::W[pos[1]];
-            break;
-        case 4:
-            coords[0] = MathLib::GaussLegendre<4>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<4>::X[pos[1]];
-            weight[0] = MathLib::GaussLegendre<4>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<4>::W[pos[1]];
-            break;
-        default:
-            coords[0] = 0;
-            coords[1] = 0;
-            weight[0] = 0;
-            weight[1] = 0;
+        case 1: return detail::aoeu<2, MathLib::GaussLegendre<1>>(pos);
+        case 2: return detail::aoeu<2, MathLib::GaussLegendre<2>>(pos);
+        case 3: return detail::aoeu<2, MathLib::GaussLegendre<3>>(pos);
+        case 4: return detail::aoeu<2, MathLib::GaussLegendre<4>>(pos);
     }
-    return MathLib::WeightedPoint2D (coords, weight[0]*weight[1]);
+
+    return MathLib::WeightedPoint2D(std::array<double, 2>(), 0);
 }
 
 template <>
@@ -124,52 +102,15 @@ inline MathLib::WeightedPoint3D IntegrationGaussRegular<3>::getWeightedPoint(std
     assert(igp < nGauss);
     std::array<std::size_t, 3> const pos = getPosition(nGauss, igp);
 
-    std::array<double, 3> coords;
-    std::array<double, 3> weight;
     switch (nGauss)
     {
-        case 1:
-            coords[0] = MathLib::GaussLegendre<1>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<1>::X[pos[1]];
-            coords[2] = MathLib::GaussLegendre<1>::X[pos[2]];
-            weight[0] = MathLib::GaussLegendre<1>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<1>::W[pos[1]];
-            weight[2] = MathLib::GaussLegendre<1>::W[pos[2]];
-            break;
-        case 2:
-            coords[0] = MathLib::GaussLegendre<2>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<2>::X[pos[1]];
-            coords[2] = MathLib::GaussLegendre<2>::X[pos[2]];
-            weight[0] = MathLib::GaussLegendre<2>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<2>::W[pos[1]];
-            weight[2] = MathLib::GaussLegendre<2>::W[pos[2]];
-            break;
-        case 3:
-            coords[0] = MathLib::GaussLegendre<3>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<3>::X[pos[1]];
-            coords[2] = MathLib::GaussLegendre<3>::X[pos[2]];
-            weight[0] = MathLib::GaussLegendre<3>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<3>::W[pos[1]];
-            weight[2] = MathLib::GaussLegendre<3>::W[pos[2]];
-            break;
-        case 4:
-            coords[0] = MathLib::GaussLegendre<4>::X[pos[0]];
-            coords[1] = MathLib::GaussLegendre<4>::X[pos[1]];
-            coords[2] = MathLib::GaussLegendre<4>::X[pos[2]];
-            weight[0] = MathLib::GaussLegendre<4>::W[pos[0]];
-            weight[1] = MathLib::GaussLegendre<4>::W[pos[1]];
-            weight[2] = MathLib::GaussLegendre<4>::W[pos[2]];
-            break;
-        default:
-            coords[0] = 0;
-            coords[1] = 0;
-            coords[2] = 0;
-            weight[0] = 0;
-            weight[1] = 0;
-            weight[2] = 0;
+        case 1: return detail::aoeu<3, MathLib::GaussLegendre<1>>(pos);
+        case 2: return detail::aoeu<3, MathLib::GaussLegendre<2>>(pos);
+        case 3: return detail::aoeu<3, MathLib::GaussLegendre<3>>(pos);
+        case 4: return detail::aoeu<3, MathLib::GaussLegendre<4>>(pos);
     }
 
-    return MathLib::WeightedPoint3D(coords, weight[0]*weight[1]*weight[2]);
+    return MathLib::WeightedPoint3D(std::array<double, 3>(), 0);
 }
 
 } //namespace
