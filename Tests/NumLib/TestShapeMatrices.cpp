@@ -87,10 +87,30 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     EXPECT_TRUE(shape.invJ.isOnes());
     EXPECT_EQ(1.0, shape.detJ);
 
+    // check setZero() for dNdr
+    setShapeDataToOnes(shape);
+    shape.setZero<ShapeMatrixType::DNDR>();
+    EXPECT_TRUE(shape.N.isOnes());
+    EXPECT_TRUE(shape.dNdr.isZero());
+    EXPECT_TRUE(shape.dNdx.isOnes());
+    EXPECT_TRUE(shape.J.isOnes());
+    EXPECT_TRUE(shape.invJ.isOnes());
+    EXPECT_EQ(1.0, shape.detJ);
+
     // check setZero() for N, dNdr, and J
     setShapeDataToOnes(shape);
     shape.setZero<ShapeMatrixType::N_J>();
     EXPECT_TRUE(shape.N.isZero());
+    EXPECT_TRUE(shape.dNdr.isZero());
+    EXPECT_TRUE(shape.dNdx.isOnes());
+    EXPECT_TRUE(shape.J.isZero());
+    EXPECT_TRUE(shape.invJ.isOnes());
+    EXPECT_EQ(0.0, shape.detJ);
+
+    // check setZero() for dNdr, and J
+    setShapeDataToOnes(shape);
+    shape.setZero<ShapeMatrixType::DNDR_J>();
+    EXPECT_TRUE(shape.N.isOnes());
     EXPECT_TRUE(shape.dNdr.isZero());
     EXPECT_TRUE(shape.dNdx.isOnes());
     EXPECT_TRUE(shape.J.isZero());
