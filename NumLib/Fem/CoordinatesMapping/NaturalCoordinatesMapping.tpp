@@ -41,7 +41,7 @@ inline void computeMappingMatrices(
         T_SHAPE_MATRICES &shapemat,
         FieldType<ShapeMatrixType::DNDR>)
 {
-    double* dNdr = shapemat.dNdr.data();
+    double* const dNdr = shapemat.dNdr.data();
     T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
 };
 
@@ -60,7 +60,7 @@ inline void computeMappingMatrices(
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
     for (std::size_t k=0; k<nnodes; k++) {
-        const double* xyz = ele.getNode(k)->getCoords();
+        double const* const xyz = ele.getNode(k)->getCoords();
         // outer product of dNdr and xyz for a particular node
         for (std::size_t j_x=0; j_x<dim; j_x++) {
             for (std::size_t i_r=0; i_r<dim; i_r++) {
