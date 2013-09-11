@@ -25,22 +25,35 @@ namespace detail
 template <ShapeMatrixType FIELD_TYPE> struct FieldType {};
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void computeMappingMatrices(const T_MESH_ELEMENT &/*ele*/, const double* natural_pt, T_SHAPE_MATRICES &shapemat, FieldType<ShapeMatrixType::N>)
+inline void computeMappingMatrices(
+        const T_MESH_ELEMENT &/*ele*/,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat,
+        FieldType<ShapeMatrixType::N>)
 {
     T_SHAPE_FUNC::computeShapeFunction(natural_pt, shapemat.N);
 };
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void computeMappingMatrices(const T_MESH_ELEMENT &/*ele*/, const double* natural_pt, T_SHAPE_MATRICES &shapemat, FieldType<ShapeMatrixType::DNDR>)
+inline void computeMappingMatrices(
+        const T_MESH_ELEMENT &/*ele*/,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat,
+        FieldType<ShapeMatrixType::DNDR>)
 {
     double* dNdr = shapemat.dNdr.data();
     T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
 };
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void computeMappingMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat, FieldType<ShapeMatrixType::DNDR_J>)
+inline void computeMappingMatrices(
+        const T_MESH_ELEMENT &ele,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat,
+        FieldType<ShapeMatrixType::DNDR_J>)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
+        (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR>());
 
     const std::size_t dim = ele.getDimension();
     const std::size_t nnodes = ele.getNNodes();
@@ -64,16 +77,27 @@ inline void computeMappingMatrices(const T_MESH_ELEMENT &ele, const double* natu
 };
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void computeMappingMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat, FieldType<ShapeMatrixType::N_J>)
+inline void computeMappingMatrices(
+        const T_MESH_ELEMENT &ele,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat,
+        FieldType<ShapeMatrixType::N_J>)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, FieldType<ShapeMatrixType::N>());
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
+        (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::N>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
+        (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 };
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void computeMappingMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat, FieldType<ShapeMatrixType::DNDX>)
+inline void computeMappingMatrices(
+        const T_MESH_ELEMENT &ele,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat,
+        FieldType<ShapeMatrixType::DNDX>)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
+        (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 
     if (shapemat.detJ>.0) {
         //J^-1, dshape/dx
@@ -83,25 +107,59 @@ inline void computeMappingMatrices(const T_MESH_ELEMENT &ele, const double* natu
 };
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void computeMappingMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat, FieldType<ShapeMatrixType::ALL>)
+inline void computeMappingMatrices(
+        const T_MESH_ELEMENT &ele,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat,
+        FieldType<ShapeMatrixType::ALL>)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, FieldType<ShapeMatrixType::N>());
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDX>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
+        (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::N>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
+        (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDX>());
 };
 
 } // detail
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline void NaturalCoordinatesMapping<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>::computeShapeMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat)
+inline void NaturalCoordinatesMapping<
+    T_MESH_ELEMENT,
+    T_SHAPE_FUNC,
+    T_SHAPE_MATRICES>
+::computeShapeMatrices(
+        const T_MESH_ELEMENT &ele,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat)
 {
-    detail::computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, detail::FieldType<ShapeMatrixType::ALL>());
+    detail::computeMappingMatrices<
+        T_MESH_ELEMENT,
+        T_SHAPE_FUNC,
+        T_SHAPE_MATRICES>
+            (ele,
+             natural_pt,
+             shapemat,
+             detail::FieldType<ShapeMatrixType::ALL>());
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-inline void NaturalCoordinatesMapping<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>::computeShapeMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat)
+inline void NaturalCoordinatesMapping<
+    T_MESH_ELEMENT,
+    T_SHAPE_FUNC,
+    T_SHAPE_MATRICES>
+::computeShapeMatrices(
+        const T_MESH_ELEMENT &ele,
+        const double* natural_pt,
+        T_SHAPE_MATRICES &shapemat)
 {
-    detail::computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(ele, natural_pt, shapemat, detail::FieldType<T_SHAPE_MATRIX_TYPE>());
+    detail::computeMappingMatrices<
+        T_MESH_ELEMENT,
+        T_SHAPE_FUNC,
+        T_SHAPE_MATRICES>
+            (ele,
+             natural_pt,
+             shapemat,
+             detail::FieldType<T_SHAPE_MATRIX_TYPE>());
 }
 
 } // NumLib
