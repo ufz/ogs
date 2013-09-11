@@ -14,10 +14,22 @@
 #ifndef SHAPEMATRICES_H_
 #define SHAPEMATRICES_H_
 
-#include "../FemEnums.h"
-
 namespace NumLib
 {
+
+/**
+  * \brief Shape matrix type to be calculated
+  *
+  */
+enum class ShapeMatrixType
+{
+    N,      //< calculates N
+    DNDR,   //< calculates dNdr
+    N_J,    //< calculates N, dNdr, J, and detJ
+    DNDR_J, //< caluclates dNdr, J, and detJ
+    DNDX,   //< calculates dNdr, J, detJ, invJ, and dNdx
+    ALL     //< calculates all
+};
 
 /**
  * \brief Coordinates mapping matrices at particular location

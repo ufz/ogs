@@ -20,7 +20,6 @@
 #endif
 
 #include "MeshLib/Elements/Quad.h"
-#include "NumLib/Fem/FemEnums.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
