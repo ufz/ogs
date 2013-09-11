@@ -49,63 +49,63 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     ShapeMatricesType shape(dim, e_nnodes);
 
     // check dimension of shape matrices
-    ASSERT_EQ(e_nnodes, shape.N.size());
-    ASSERT_EQ(e_nnodes, shape.dNdr.cols());
-    ASSERT_EQ(dim, shape.dNdr.rows());
-    ASSERT_EQ(e_nnodes, shape.dNdx.cols());
-    ASSERT_EQ(dim, shape.dNdx.rows());
-    ASSERT_EQ(dim, shape.J.rows());
-    ASSERT_EQ(dim, shape.J.cols());
-    ASSERT_EQ(dim, shape.invJ.rows());
-    ASSERT_EQ(dim, shape.invJ.cols());
+    EXPECT_EQ(e_nnodes, shape.N.size());
+    EXPECT_EQ(e_nnodes, shape.dNdr.cols());
+    EXPECT_EQ(dim, shape.dNdr.rows());
+    EXPECT_EQ(e_nnodes, shape.dNdx.cols());
+    EXPECT_EQ(dim, shape.dNdx.rows());
+    EXPECT_EQ(dim, shape.J.rows());
+    EXPECT_EQ(dim, shape.J.cols());
+    EXPECT_EQ(dim, shape.invJ.rows());
+    EXPECT_EQ(dim, shape.invJ.cols());
 
     // check initialized with zero
-    ASSERT_EQ(NodalVector::Zero(), shape.N);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdr);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdx);
-    ASSERT_EQ(DimMatrix::Zero(), shape.J);
-    ASSERT_EQ(DimMatrix::Zero(), shape.invJ);
-    ASSERT_EQ(0.0, shape.detJ);
+    EXPECT_TRUE(shape.N.isZero());
+    EXPECT_TRUE(shape.dNdr.isZero());
+    EXPECT_TRUE(shape.dNdx.isZero());
+    EXPECT_TRUE(shape.J.isZero());
+    EXPECT_TRUE(shape.invJ.isZero());
+    EXPECT_EQ(0.0, shape.detJ);
 
     // check setZero() for all
     setShapeDataToOnes(shape);
     shape.setZero();
-    ASSERT_EQ(NodalVector::Zero(), shape.N);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdr);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdx);
-    ASSERT_EQ(DimMatrix::Zero(), shape.J);
-    ASSERT_EQ(DimMatrix::Zero(), shape.invJ);
-    ASSERT_EQ(0.0, shape.detJ);
+    EXPECT_TRUE(shape.N.isZero());
+    EXPECT_TRUE(shape.dNdr.isZero());
+    EXPECT_TRUE(shape.dNdx.isZero());
+    EXPECT_TRUE(shape.J.isZero());
+    EXPECT_TRUE(shape.invJ.isZero());
+    EXPECT_EQ(0.0, shape.detJ);
 
     // check setZero() only for N
     setShapeDataToOnes(shape);
     shape.setZero<ShapeMatrixType::N>();
-    ASSERT_EQ(NodalVector::Zero(), shape.N);
-    ASSERT_EQ(DimNodalMatrix::Ones(), shape.dNdr);
-    ASSERT_EQ(DimNodalMatrix::Ones(), shape.dNdx);
-    ASSERT_EQ(DimMatrix::Ones(), shape.J);
-    ASSERT_EQ(DimMatrix::Ones(), shape.invJ);
-    ASSERT_EQ(1.0, shape.detJ);
+    EXPECT_TRUE(shape.N.isZero());
+    EXPECT_TRUE(shape.dNdr.isOnes());
+    EXPECT_TRUE(shape.dNdx.isOnes());
+    EXPECT_TRUE(shape.J.isOnes());
+    EXPECT_TRUE(shape.invJ.isOnes());
+    EXPECT_EQ(1.0, shape.detJ);
 
     // check setZero() for N, dNdr, and J
     setShapeDataToOnes(shape);
     shape.setZero<ShapeMatrixType::N_J>();
-    ASSERT_EQ(NodalVector::Zero(), shape.N);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdr);
-    ASSERT_EQ(DimNodalMatrix::Ones(), shape.dNdx);
-    ASSERT_EQ(DimMatrix::Zero(), shape.J);
-    ASSERT_EQ(DimMatrix::Ones(), shape.invJ);
-    ASSERT_EQ(0.0, shape.detJ);
+    EXPECT_TRUE(shape.N.isZero());
+    EXPECT_TRUE(shape.dNdr.isZero());
+    EXPECT_TRUE(shape.dNdx.isOnes());
+    EXPECT_TRUE(shape.J.isZero());
+    EXPECT_TRUE(shape.invJ.isOnes());
+    EXPECT_EQ(0.0, shape.detJ);
 
     // check setZero() only for DNDX stuff
     setShapeDataToOnes(shape);
     shape.setZero<ShapeMatrixType::DNDX>();
-    ASSERT_EQ(NodalVector::Ones(), shape.N);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdr);
-    ASSERT_EQ(DimNodalMatrix::Zero(), shape.dNdx);
-    ASSERT_EQ(DimMatrix::Zero(), shape.J);
-    ASSERT_EQ(DimMatrix::Zero(), shape.invJ);
-    ASSERT_EQ(0.0, shape.detJ);
+    EXPECT_TRUE(shape.N.isOnes());
+    EXPECT_TRUE(shape.dNdr.isZero());
+    EXPECT_TRUE(shape.dNdx.isZero());
+    EXPECT_TRUE(shape.J.isZero());
+    EXPECT_TRUE(shape.invJ.isZero());
+    EXPECT_EQ(0.0, shape.detJ);
 }
 #endif
 
