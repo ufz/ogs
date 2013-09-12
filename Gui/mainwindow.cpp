@@ -1187,9 +1187,12 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::string name("TestExample");
-	GeoMapper mapper(*this->_geoModels, name);
-	mapper.advancedMapOnMesh(this->_project.getMesh(name), std::string("new_geometry"));
+	std::string geo_name("WESS Rivers");
+	std::string msh_name("Ammer-Homogen100m-2012-04-11");
+	//std::string geo_name("TestExample");
+	//std::string msh_name("TestExample");
+	GeoMapper mapper(*this->_geoModels, geo_name);
+	mapper.advancedMapOnMesh(this->_project.getMesh(msh_name), std::string("new_geometry"));
 /*
 	const double dir[3] = {0, 0, 1};
 	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");

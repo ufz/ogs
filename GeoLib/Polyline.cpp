@@ -358,6 +358,25 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
 	return Location::BETWEEN;
 }
 
+void Polyline::update(const std::vector<std::size_t> &pnt_ids)
+{
+	for (auto it = this->_ply_pnt_ids.begin(); it!=this->_ply_pnt_ids.end();)
+	{
+		if (pnt_ids[*it] != *it)
+		{
+			if (it!=this->_ply_pnt_ids.begin() && (pnt_ids[*it] == pnt_ids[*(it-1)]))
+				it = this->_ply_pnt_ids.erase(it);
+			else
+			{
+				*it = pnt_ids[*it];
+				++it;
+			}
+		}
+		else
+			++it;
+	}
+}
+
 std::ostream& operator<< (std::ostream &os, const Polyline &pl)
 {
 	pl.write (os);
