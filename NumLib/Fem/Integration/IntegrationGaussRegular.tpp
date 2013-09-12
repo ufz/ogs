@@ -10,7 +10,7 @@
  *
  */
 
-
+#include <cassert>
 
 namespace NumLib
 {
@@ -28,7 +28,7 @@ template <>
 inline std::array<std::size_t, 2>
 IntegrationGaussRegular<2>::getPositionIndices(std::size_t order, std::size_t igp)
 {
-    assert(igp < order);
+    assert(igp < order*order);
     std::array<std::size_t, 2> result;
     result[0] = igp / order;
     result[1] = igp % order;
@@ -39,7 +39,7 @@ template <>
 inline std::array<std::size_t, 3>
 IntegrationGaussRegular<3>::getPositionIndices(std::size_t order, std::size_t igp)
 {
-    assert(igp < order);
+    assert(igp < order*order*order);
     std::size_t const gp_r = igp / (order * order);
     std::size_t const gp_s = igp % (order * order);
     std::array<std::size_t, 3> result;
@@ -54,7 +54,7 @@ inline
 MathLib::TemplateWeightedPoint<double,double,N_DIM>
 IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::size_t order, std::size_t igp)
 {
-    assert(igp < order);
+    assert(igp < std::pow(order, N_DIM));
     std::array<std::size_t, N_DIM> const pos = getPositionIndices(order, igp);
 
     switch (order)
