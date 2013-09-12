@@ -48,7 +48,7 @@ template <>
 inline std::array<std::size_t, 1>
 IntegrationGaussRegular<1>::getPosition(std::size_t /*nGauss*/, std::size_t igp)
 {
-    return {igp};
+    return {{igp}};
 }
 
 template <>
@@ -56,7 +56,7 @@ inline std::array<std::size_t, 2>
 IntegrationGaussRegular<2>::getPosition(std::size_t nGauss, std::size_t igp)
 {
     assert(igp < nGauss);
-    return {igp / nGauss, igp % nGauss};
+    return {{igp / nGauss, igp % nGauss}};
 }
 
 template <>
@@ -66,7 +66,7 @@ IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
     assert(igp < nGauss);
     std::size_t const gp_r = igp / (nGauss * nGauss);
     std::size_t const gp_s = igp % (nGauss * nGauss);
-    return {gp_r, gp_s / nGauss, gp_s % nGauss };
+    return {{gp_r, gp_s / nGauss, gp_s % nGauss }};
 }
 
 template <std::size_t N_DIM>
