@@ -14,6 +14,7 @@
 #define INTEGRATIONGAUSSREGULAR_H_
 
 #include <cmath>
+#include <array>
 
 #include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/TemplateWeightedPoint.h"
