@@ -310,42 +310,39 @@ void GeoTreeModel::setNameForItem(const std::string &name,
                                   size_t id,
                                   std::string item_name)
 {
-	int type_idx(0);
+	std::string geo_type_str("");
 	int col_idx(1);
 
 	switch(type)
 	{
 	case GeoLib::GEOTYPE::POINT:
-		type_idx = 0;
+		geo_type_str = "Points";
 		col_idx = 4; // for points the name is at a different position
 		break;
 	case GeoLib::GEOTYPE::POLYLINE:
-		type_idx = 1;
+		geo_type_str = "Polylines";
 		break;
 	case GeoLib::GEOTYPE::SURFACE:
-		type_idx = 2;
+		geo_type_str = "Surfaces";
 		break;
 	case GeoLib::GEOTYPE::VOLUME:
-		type_idx = 3;
+		geo_type_str = "Volumes";
 		break;
 	default:
-		type_idx = -1;
+		geo_type_str = "";
 	}
 
-	for (size_t i = 0; i < _lists.size(); i++)
+	auto it = find_if(_lists.begin(), _lists.end(), [&name](GeoTreeItem* geo)
+	{ 
+		return (name.compare( geo->data(0).toString().toStdString() ) == 0); 
+	});
+
+	for (size_t i = 0; i < (*it)->childCount(); i++)
 	{
-		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+		if ( geo_type_str.compare( (*it)->child(i)->data(0).toString().toStdString() ) == 0 )
 		{
-			TreeItem* object_list = _lists[i]->child(type_idx);
-//			for (int j=0; j<object_list->childCount(); j++)
-//			{
-			TreeItem* item = object_list->child(/*j*/ id);
-//				if (static_cast<size_t>(item->data(0).toInt()) == id)
-//				{
-					item->setData(col_idx, QString::fromStdString(item_name));
-//					break;
-//				}
-//			}
+			TreeItem* item = (*it)->child(i)->child(id);
+			item->setData(col_idx, QString::fromStdString(item_name));
 			break;
 		}
 	}
