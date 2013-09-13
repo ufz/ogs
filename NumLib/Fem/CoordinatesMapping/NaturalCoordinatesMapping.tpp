@@ -55,8 +55,8 @@ inline void computeMappingMatrices(
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR>());
 
-    const std::size_t dim = ele.getDimension();
-    const std::size_t nnodes = ele.getNNodes();
+    const std::size_t dim = T_MESH_ELEMENT::dimension;
+    const std::size_t nnodes = T_MESH_ELEMENT::n_all_nodes;
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
     for (std::size_t k=0; k<nnodes; k++) {
