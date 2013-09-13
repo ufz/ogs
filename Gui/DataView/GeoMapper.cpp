@@ -21,8 +21,8 @@
 
 #include "AABB.h"
 #include "Mesh.h"
-#include "Elements\Element.h"
-#include "Elements\Tri.h"
+#include "Elements/Element.h"
+#include "Elements/Tri.h"
 #include "Node.h"
 #include "MeshSurfaceExtraction.h"
 #include "PointWithID.h"
@@ -117,8 +117,8 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_ge
 	max_segment_length *= max_segment_length; // squared so it can be compared to the squared distances calculated later
 	
 	const unsigned nMeshNodes ( mesh->getNNodes() );	
-	std::vector<int> closest_geo_point(nMeshNodes); 
-	std::vector<double> dist(nMeshNodes); 
+	std::vector<int> closest_geo_point(nMeshNodes); // index of closest geo point for each mesh node in (x,y)-plane
+	std::vector<double> dist(nMeshNodes);  // distance between geo points and mesh nodes in (x,y)-plane
 	for (size_t i=0; i<nMeshNodes; ++i)
 	{
 		const double zero_coords[3] = {(* mesh->getNode(i))[0], (* mesh->getNode(i))[1], 0.0};
@@ -138,29 +138,25 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_ge
 
 	for (std::size_t i=0; i<nMeshNodes; ++i)
 	{
-		if (closest_geo_point[i] == -1) continue; // is mesh node theoretically close enough?
+		// if mesh node too far away or exactly at point position
+		if (closest_geo_point[i] == -1 || dist[i] < eps) continue; 
+
 		const MeshLib::Node* node (mesh->getNode(i));
-		if (dist[i] < eps) // is mesh node == geo point?
-		{
-			(*(*new_points)[closest_geo_point[i]])[2] = (*node)[2];
-			continue;
-		}
-		
 		for (std::size_t l=0; l<nLines; ++l)
 		{
 			// find relevant polylines
 			if (!(*org_lines)[l]->isPointIDInPolyline(closest_geo_point[i])) continue;
 			
+			// find point poisition of closest geo point in polyline
 			GeoLib::Polyline* ply ((*org_lines)[l]);
 			std::size_t nLinePnts ( ply->getNumberOfPoints() );
 			std::size_t node_index_in_ply (0);
 			for (node_index_in_ply=0; node_index_in_ply<nLinePnts; ++node_index_in_ply)
 				if (ply->getPoint(node_index_in_ply) == (*points)[closest_geo_point[i]])
 					break;
-
 			const GeoLib::Point* geo_point (ply->getPoint(node_index_in_ply));
 
-			// check if line intersects connected elements of current node
+			// check if line segments connected to closest geo point intersect connected elements of current node
 			const std::vector<MeshLib::Element*> elements (node->getElements());
 			const std::size_t nElems = elements.size();
 			for (std::size_t e=0; e<nElems; ++e)
@@ -224,15 +220,9 @@ GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib:
 	const double x = ( pre * (x3 - x4) - (x1 - x2) * post ) / det;
 	const double y = ( pre * (y3 - y4) - (y1 - y2) * post ) / det;
  
-	int sign = (z1<z2) ? 1:-1;
-
 	// Check if the x and y coordinates are within both line segments
 	if (isPntInBoundingBox(x1,y1,x2,y2,x,y) && isPntInBoundingBox(x3,y3,x4,y4,x,y))
-	{
-		const double denom (fabs(x2-x1));
-		if (denom==0) return NULL;
-		return new GeoLib::Point(x, y, sign*fabs(fabs(x-x1)*fabs(z2-z1)/denom) + z1);
-	}
+		return new GeoLib::Point(x, y, 0);
 	return NULL;
 }
 
