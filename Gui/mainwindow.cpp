@@ -1187,6 +1187,8 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	//std::string geo_name("Bode_EZG_Fliessgewaesser");
+	//std::string msh_name("BodeSimple");
 	std::string geo_name("WESS Rivers");
 	std::string msh_name("Ammer-Homogen100m-2012-04-11");
 	//std::string geo_name("TestExample");

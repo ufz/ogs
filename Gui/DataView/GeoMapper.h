@@ -54,9 +54,10 @@ private:
 
 	double getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &lines) const;
 	GeoLib::Point* calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
-	bool isNodeOnLine(GeoLib::Point const*const p1, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
 	bool isPntInBoundingBox(double ax, double ay, double bx, double by, double px, double py) const;
 	std::size_t getPointPosInLine(GeoLib::Polyline const*const line, GeoLib::Point const*const point, unsigned line_segment, const std::vector<unsigned> &line_segment_map, double eps) const;
+	GeoLib::Point* triangleLineIntersection(GeoLib::Point const a, GeoLib::Point const b, GeoLib::Point const c, GeoLib::Point const p, GeoLib::Point const q) const;
+	double scalarTriple(GeoLib::Point u, GeoLib::Point v, GeoLib::Point w) const;
 
 	GeoLib::GEOObjects& _geo_objects;
 	const std::string& _geo_name;
