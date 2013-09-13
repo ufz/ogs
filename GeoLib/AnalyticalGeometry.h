@@ -128,6 +128,16 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 		const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
 
+/**
+ * Calculates the intersection points of a line PQ and a triangle ABC. 
+ * This method requires ABC to be counterclockwise and PQ to point downward.
+ * @return Intersection point or NULL if there is no intersection.
+ */
+GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q);
+
+// Calculates the scalar triple (u x v) . w
+double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w);
+
 } // end namespace GeoLib
 
 #endif /* ANALYTICAL_GEOMETRY_H_ */

@@ -18,8 +18,10 @@
 #include "GeoMapper.h"
 
 #include "Mesh.h"
+#include "Elements/Element.h"
 #include "Node.h"
 #include "MeshSurfaceExtraction.h"
+#include "AnalyticalGeometry.h"
 #include "PointWithID.h"
 #include "Raster.h"
 #include "readMeshFromFile.h"
@@ -27,7 +29,7 @@
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
-	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL), _raster(nullptr)
+	: _geo_objects(geo_objects), _geo_name(geo_name), _mesh(nullptr), _grid(nullptr), _raster(nullptr)
 {
 }
 
@@ -53,12 +55,13 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 	delete mesh;
 }
 
-void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
+void GeoMapper::mapOnMesh(MeshLib::Mesh* mesh)
 {
+	this->_mesh = mesh;
 	std::vector<GeoLib::PointWithID*> sfc_pnts;
 	// init grid
 	_grid = this->getFlatGrid(mesh, sfc_pnts);
-	this->mapData(mesh);
+	this->mapData();
 
 	delete _grid;
 
@@ -68,13 +71,21 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	}
 }
 
-void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
+void GeoMapper::mapData()
 {
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
 	bool is_borehole(false);
-	if (stn_test != NULL && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
+	if (stn_test != nullptr && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
 		is_borehole = true;
+	
+	double min_val(0), max_val(0);
+	if (_mesh)
+	{
+		GeoLib::AABB<GeoLib::Point> bounding_box (_mesh->getNodes().begin(), _mesh->getNodes().end());
+		min_val = bounding_box.getMinPoint()[2];
+		max_val = bounding_box.getMaxPoint()[2];
+	}
 	size_t nPoints (points->size());
 
 	if (!is_borehole)
@@ -82,7 +93,7 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 		for (unsigned j=0; j<nPoints; ++j)
 		{
 			GeoLib::Point* pnt ((*points)[j]);
-			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], mesh)
+			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
 				                : this->getDemElevation((*pnt)[0],(*pnt)[1]);
 		}
 	}
@@ -91,7 +102,7 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 		for (unsigned j=0; j<nPoints; ++j)
 		{
 			GeoLib::Point* pnt ((*points)[j]);
-			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], mesh) - (*pnt)[2])
+			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val) - (*pnt)[2])
 				                    : (this->getDemElevation((*pnt)[0],(*pnt)[1]) - (*pnt)[2]);
 
 			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
@@ -104,8 +115,6 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 			}
 		}
 	}
-
-
 }
 
 float GeoMapper::getDemElevation(double x, double y) const
@@ -125,11 +134,22 @@ float GeoMapper::getDemElevation(double x, double y) const
 	return static_cast<float>(*(_raster->begin() + (y_index*width+x_index)));
 }
 
-double GeoMapper::getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const
+double GeoMapper::getMeshElevation(double x, double y, double min_val, double max_val) const
 {
 	double coords[3] = {x,y,0};
-	const GeoLib::PointWithID* pnt (_grid->getNearestPoint(coords));
-	return (*(mesh->getNode(pnt->getID())))[2];
+	const GeoLib::PointWithID* pnt = _grid->getNearestPoint(coords);
+	const std::vector<MeshLib::Element*> elements (_mesh->getNode(pnt->getID())->getElements());
+	GeoLib::Point* intersection (nullptr);
+
+	for (std::size_t i=0; i<elements.size(); ++i)
+	{
+		if (intersection==nullptr && elements[i]->getGeomType() == MeshElemType::TRIANGLE)
+			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
+	}
+	// if the intersection point is not a triangle or something else goes wrong, we simply take the elevation of the nearest point	
+	if (intersection)
+		return (*intersection)[2];
+	return (*(_mesh->getNode(pnt->getID())))[2];
 }
 
 GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const
@@ -156,3 +176,7 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*co
 
 	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_pnts.begin(), sfc_pnts.end());
 }
+
+
+
+
