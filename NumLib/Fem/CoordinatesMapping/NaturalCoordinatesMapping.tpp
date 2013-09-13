@@ -62,8 +62,8 @@ inline void computeMappingMatrices(
     for (std::size_t k=0; k<nnodes; k++) {
         double const* const xyz = ele.getNode(k)->getCoords();
         // outer product of dNdr and xyz for a particular node
-        for (std::size_t j_x=0; j_x<dim; j_x++) {
-            for (std::size_t i_r=0; i_r<dim; i_r++) {
+        for (std::size_t i_r=0; i_r<dim; i_r++) {
+            for (std::size_t j_x=0; j_x<dim; j_x++) {
                 shapemat.J(i_r,j_x) += shapemat.dNdr(i_r,k) * xyz[j_x];
             }
         }
