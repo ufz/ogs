@@ -307,4 +307,36 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLi
 		delete [] tmp;
 	}
 }
+
+GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q)
+{
+	const GeoLib::Point pq(q[0]-p[0], q[1]-p[1], q[2]-p[2]);
+	const GeoLib::Point pa(a[0]-p[0], a[1]-p[1], a[2]-p[2]);
+	const GeoLib::Point pb(b[0]-p[0], b[1]-p[1], b[2]-p[2]);
+	const GeoLib::Point pc(c[0]-p[0], c[1]-p[1], c[2]-p[2]);
+	
+	double u (scalarTriple(pq, pc, pb));
+	if (u<0) return nullptr;
+	double v (scalarTriple(pq, pa, pc));
+	if (v<0) return nullptr;
+	double w (scalarTriple(pq, pb, pa));
+	if (w<0) return nullptr;
+	
+	const double denom (1.0/(u+v+w));
+	u*=denom;
+	v*=denom;
+	w*=denom;
+	return new GeoLib::Point(u*a[0]+v*b[0]+w*c[0],u*a[1]+v*b[1]+w*c[1],u*a[2]+v*b[2]+w*c[2]);
+}
+
+double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w)
+{
+	double cross[3];
+	MathLib::crossProd(u.getCoords(), v.getCoords(), cross);
+	double result(0);
+	for (unsigned i=0; i<3; ++i)
+		result+=(cross[i]*w[i]);
+	return result;
+}
+
 } // end namespace GeoLib
