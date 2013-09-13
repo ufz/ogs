@@ -42,22 +42,32 @@ public:
 
 	void mapOnDEM(const std::string &file_name);
 	void mapOnMesh(const std::string &file_name);
-	void mapOnMesh(const MeshLib::Mesh* mesh);
+	void mapOnMesh(MeshLib::Mesh* mesh);
 
 private:
-	void mapData(MeshLib::Mesh const*const mesh = NULL);
+	// Manages the mapping geometric data (points, stations, boreholes) on a raster or mesh.
+	void mapData();
+	// Returns a grid containing all mesh surface points with elevation=0
 	GeoLib::Grid<GeoLib::PointWithID>* getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const;
-	double getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const;
+	// Returns the elevation at Point (x,y) based on a mesh
+	double getMeshElevation(double x, double y, double min_val, double max_val) const;
+	// Returns the elevation at Point (x,y) based on a raster
 	float getDemElevation(double x, double y) const;
+	// Calculates the intersection points of a line and a triangle. The method returns NULL if there is no intersection.
+	GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q) const;
+	// Calculates the scalar triple (u x v) . w
+	double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w) const;
 
 	GeoLib::GEOObjects& _geo_objects;
 	const std::string& _geo_name;
 
 	// only necessary for mapping on mesh
+	MeshLib::Mesh* _mesh;
 	GeoLib::Grid<GeoLib::PointWithID>* _grid;
 
 	// only necessary for mapping on DEM
 	GeoLib::Raster *_raster;
+
 };
 
 #endif //GEOMAPPER_H
