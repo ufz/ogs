@@ -49,14 +49,10 @@ private:
 	void mapData();
 	// Returns a grid containing all mesh surface points with elevation=0
 	GeoLib::Grid<GeoLib::PointWithID>* getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const;
-	// Returns the elevation at Point (x,y) based on a mesh
+	// Returns the elevation at Point (x,y) based on a mesh. This uses collision detection for triangles and nearest neighbor for quads.
 	double getMeshElevation(double x, double y, double min_val, double max_val) const;
 	// Returns the elevation at Point (x,y) based on a raster
 	float getDemElevation(double x, double y) const;
-	// Calculates the intersection points of a line and a triangle. The method returns NULL if there is no intersection.
-	GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q) const;
-	// Calculates the scalar triple (u x v) . w
-	double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w) const;
 
 	GeoLib::GEOObjects& _geo_objects;
 	const std::string& _geo_name;

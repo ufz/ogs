@@ -18,9 +18,10 @@
 #include "GeoMapper.h"
 
 #include "Mesh.h"
-#include "Elements\Element.h"
+#include "Elements/Element.h"
 #include "Node.h"
 #include "MeshSurfaceExtraction.h"
+#include "AnalyticalGeometry.h"
 #include "PointWithID.h"
 #include "Raster.h"
 #include "readMeshFromFile.h"
@@ -28,7 +29,7 @@
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
-	: _geo_objects(geo_objects), _geo_name(geo_name), _mesh(NULL), _grid(NULL), _raster(nullptr)
+	: _geo_objects(geo_objects), _geo_name(geo_name), _mesh(nullptr), _grid(nullptr), _raster(nullptr)
 {
 }
 
@@ -75,7 +76,7 @@ void GeoMapper::mapData()
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
 	bool is_borehole(false);
-	if (stn_test != NULL && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
+	if (stn_test != nullptr && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
 		is_borehole = true;
 	
 	double min_val(0), max_val(0);
@@ -143,7 +144,7 @@ double GeoMapper::getMeshElevation(double x, double y, double min_val, double ma
 	for (std::size_t i=0; i<elements.size(); ++i)
 	{
 		if (intersection==nullptr && elements[i]->getGeomType() == MeshElemType::TRIANGLE)
-			intersection=this->triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
+			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
 	}
 	// if the intersection point is not a triangle or something else goes wrong, we simply take the elevation of the nearest point	
 	if (intersection)
@@ -176,35 +177,6 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*co
 	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_pnts.begin(), sfc_pnts.end());
 }
 
-GeoLib::Point* GeoMapper::triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q) const
-{
-	GeoLib::Point pq(q[0]-p[0], q[1]-p[1], q[2]-p[2]);
-	GeoLib::Point pa(a[0]-p[0], a[1]-p[1], a[2]-p[2]);
-	GeoLib::Point pb(b[0]-p[0], b[1]-p[1], b[2]-p[2]);
-	GeoLib::Point pc(c[0]-p[0], c[1]-p[1], c[2]-p[2]);
-	
-	double u (scalarTriple(pq, pc, pb));
-	if (u<0) return nullptr;
-	double v (scalarTriple(pq, pa, pc));
-	if (v<0) return nullptr;
-	double w (scalarTriple(pq, pb, pa));
-	if (w<0) return nullptr;
-	
-	double denom (1.0/(u+v+w));
-	u*=denom;
-	v*=denom;
-	w*=denom;
-	return new GeoLib::Point(u*a[0]+v*b[0]+w*c[0],u*a[1]+v*b[1]+w*c[1],u*a[2]+v*b[2]+w*c[2]);
-}
 
-double GeoMapper::scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w) const
-{
-	double cross[3];
-	MathLib::crossProd(u.getCoords(), v.getCoords(), cross);
-	double result(0);
-	for (unsigned i=0; i<3; ++i)
-		result+=(cross[i]*w[i]);
-	return result;
-}
 
 
