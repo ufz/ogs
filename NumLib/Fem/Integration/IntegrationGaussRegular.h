@@ -77,7 +77,7 @@ public:
      * @param igp       The integration point index
      * @return  a tuple of position indexes
      */
-    static std::array<std::size_t, N_DIM> getPosition(std::size_t order, std::size_t igp);
+    static std::array<std::size_t, N_DIM> getPositionIndices(std::size_t order, std::size_t igp);
 
     /**
      * get coordinates of a integration point
@@ -94,7 +94,7 @@ private:
     /// Computes weighted point using given integration method.
     ///
     /// \tparam Method  Integration method to use.
-    /// \param  pos     Point indices computed by getPosition.
+    /// \param  pos     Point indices computed by getPositionIndices.
     template <typename Method>
     static
     WeightedPoint

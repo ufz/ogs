@@ -24,22 +24,22 @@ TEST(NumLib, FemIntegrationGaussRegular)
 
     // check position indices
     // dim = 1
-    ASSERT_EQ((std::array<std::size_t, 1>({0u})), IntegrationGaussRegular<1>::getPosition(integrationOrder, 0));
-    ASSERT_EQ((std::array<std::size_t, 1>({1u})), IntegrationGaussRegular<1>::getPosition(integrationOrder, 1));
+    ASSERT_EQ((std::array<std::size_t, 1>({0u})), IntegrationGaussRegular<1>::getPositionIndices(integrationOrder, 0));
+    ASSERT_EQ((std::array<std::size_t, 1>({1u})), IntegrationGaussRegular<1>::getPositionIndices(integrationOrder, 1));
     // dim = 2
-    ASSERT_EQ((std::array<std::size_t, 2>({0u, 0u})), IntegrationGaussRegular<2>::getPosition(integrationOrder, 0));
-    ASSERT_EQ((std::array<std::size_t, 2>({0u, 1u})), IntegrationGaussRegular<2>::getPosition(integrationOrder, 1));
-    ASSERT_EQ((std::array<std::size_t, 2>({1u, 0u})), IntegrationGaussRegular<2>::getPosition(integrationOrder, 2));
-    ASSERT_EQ((std::array<std::size_t, 2>({1u, 1u})), IntegrationGaussRegular<2>::getPosition(integrationOrder, 3));
+    ASSERT_EQ((std::array<std::size_t, 2>({0u, 0u})), IntegrationGaussRegular<2>::getPositionIndices(integrationOrder, 0));
+    ASSERT_EQ((std::array<std::size_t, 2>({0u, 1u})), IntegrationGaussRegular<2>::getPositionIndices(integrationOrder, 1));
+    ASSERT_EQ((std::array<std::size_t, 2>({1u, 0u})), IntegrationGaussRegular<2>::getPositionIndices(integrationOrder, 2));
+    ASSERT_EQ((std::array<std::size_t, 2>({1u, 1u})), IntegrationGaussRegular<2>::getPositionIndices(integrationOrder, 3));
     // dim = 3
-    ASSERT_EQ((std::array<std::size_t, 3>({0u, 0u, 0u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 0));
-    ASSERT_EQ((std::array<std::size_t, 3>({0u, 0u, 1u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 1));
-    ASSERT_EQ((std::array<std::size_t, 3>({0u, 1u, 0u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 2));
-    ASSERT_EQ((std::array<std::size_t, 3>({0u, 1u, 1u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 3));
-    ASSERT_EQ((std::array<std::size_t, 3>({1u, 0u, 0u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 4));
-    ASSERT_EQ((std::array<std::size_t, 3>({1u, 0u, 1u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 5));
-    ASSERT_EQ((std::array<std::size_t, 3>({1u, 1u, 0u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 6));
-    ASSERT_EQ((std::array<std::size_t, 3>({1u, 1u, 1u})), IntegrationGaussRegular<3>::getPosition(integrationOrder, 7));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 0u, 0u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 0));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 0u, 1u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 1));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 1u, 0u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 2));
+    ASSERT_EQ((std::array<std::size_t, 3>({0u, 1u, 1u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 3));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 0u, 0u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 4));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 0u, 1u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 5));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 1u, 0u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 6));
+    ASSERT_EQ((std::array<std::size_t, 3>({1u, 1u, 1u})), IntegrationGaussRegular<3>::getPositionIndices(integrationOrder, 7));
 
 	// check coordinates
 	// dim = 1

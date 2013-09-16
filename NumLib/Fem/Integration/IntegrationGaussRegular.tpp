@@ -17,7 +17,7 @@ namespace NumLib
 
 template <>
 inline std::array<std::size_t, 1>
-IntegrationGaussRegular<1>::getPosition(std::size_t /*order*/, std::size_t igp)
+IntegrationGaussRegular<1>::getPositionIndices(std::size_t /*order*/, std::size_t igp)
 {
     std::array<std::size_t, 1> result;
     result[0] = igp;
@@ -26,7 +26,7 @@ IntegrationGaussRegular<1>::getPosition(std::size_t /*order*/, std::size_t igp)
 
 template <>
 inline std::array<std::size_t, 2>
-IntegrationGaussRegular<2>::getPosition(std::size_t order, std::size_t igp)
+IntegrationGaussRegular<2>::getPositionIndices(std::size_t order, std::size_t igp)
 {
     assert(igp < order);
     std::array<std::size_t, 2> result;
@@ -37,7 +37,7 @@ IntegrationGaussRegular<2>::getPosition(std::size_t order, std::size_t igp)
 
 template <>
 inline std::array<std::size_t, 3>
-IntegrationGaussRegular<3>::getPosition(std::size_t order, std::size_t igp)
+IntegrationGaussRegular<3>::getPositionIndices(std::size_t order, std::size_t igp)
 {
     assert(igp < order);
     std::size_t const gp_r = igp / (order * order);
@@ -55,7 +55,7 @@ MathLib::TemplateWeightedPoint<double,double,N_DIM>
 IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::size_t order, std::size_t igp)
 {
     assert(igp < order);
-    std::array<std::size_t, N_DIM> const pos = getPosition(order, igp);
+    std::array<std::size_t, N_DIM> const pos = getPositionIndices(order, igp);
 
     switch (order)
     {
