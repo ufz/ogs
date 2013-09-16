@@ -17,7 +17,7 @@ namespace NumLib
 
 template <>
 inline std::array<std::size_t, 1>
-IntegrationGaussRegular<1>::getPosition(std::size_t /*nGauss*/, std::size_t igp)
+IntegrationGaussRegular<1>::getPosition(std::size_t /*order*/, std::size_t igp)
 {
     std::array<std::size_t, 1> result;
     result[0] = igp;
@@ -26,38 +26,38 @@ IntegrationGaussRegular<1>::getPosition(std::size_t /*nGauss*/, std::size_t igp)
 
 template <>
 inline std::array<std::size_t, 2>
-IntegrationGaussRegular<2>::getPosition(std::size_t nGauss, std::size_t igp)
+IntegrationGaussRegular<2>::getPosition(std::size_t order, std::size_t igp)
 {
-    assert(igp < nGauss);
+    assert(igp < order);
     std::array<std::size_t, 2> result;
-    result[0] = igp / nGauss;
-    result[1] = igp % nGauss;
+    result[0] = igp / order;
+    result[1] = igp % order;
     return result;
 }
 
 template <>
 inline std::array<std::size_t, 3>
-IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
+IntegrationGaussRegular<3>::getPosition(std::size_t order, std::size_t igp)
 {
-    assert(igp < nGauss);
-    std::size_t const gp_r = igp / (nGauss * nGauss);
-    std::size_t const gp_s = igp % (nGauss * nGauss);
+    assert(igp < order);
+    std::size_t const gp_r = igp / (order * order);
+    std::size_t const gp_s = igp % (order * order);
     std::array<std::size_t, 3> result;
     result[0] = gp_r;
-    result[1] = gp_s / nGauss;
-    result[2] = gp_s % nGauss;
+    result[1] = gp_s / order;
+    result[2] = gp_s % order;
     return result;
 }
 
 template <std::size_t N_DIM>
 inline
 MathLib::TemplateWeightedPoint<double,double,N_DIM>
-IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::size_t nGauss, std::size_t igp)
+IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::size_t order, std::size_t igp)
 {
-    assert(igp < nGauss);
-    std::array<std::size_t, N_DIM> const pos = getPosition(nGauss, igp);
+    assert(igp < order);
+    std::array<std::size_t, N_DIM> const pos = getPosition(order, igp);
 
-    switch (nGauss)
+    switch (order)
     {
         case 1: return getWeightedPoint<MathLib::GaussLegendre<1>>(pos);
         case 2: return getWeightedPoint<MathLib::GaussLegendre<2>>(pos);

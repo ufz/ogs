@@ -32,29 +32,26 @@ class IntegrationGaussRegular
 {
 public:
     /**
-     * Construct this object with the given sampling level
+     * Create IntegrationGaussRegular of the given Gauss-Legendre integration
+     * order.
      *
-     * @param n_sampl_level     the sampling level (default 2)
+     * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussRegular(std::size_t n_sampl_level = 2)
-    : _n_sampl_level(n_sampl_level), _n_sampl_pt(0)
+    explicit IntegrationGaussRegular(std::size_t order = 2)
+    : _order(order), _n_sampl_pt(0)
     {
-        this->setSamplingLevel(n_sampl_level);
+        this->setIntegrationOrder(order);
     }
 
-    /**
-     * Change the sampling level
-     *
-     * @param n_sampl_level     the sampling level
-     */
-    void setSamplingLevel(std::size_t n_sampl_level)
+    /// Change the integration order.
+    void setIntegrationOrder(std::size_t order)
     {
-        this->_n_sampl_pt = std::pow(n_sampl_level, N_DIM);
-        this->_n_sampl_level = n_sampl_level;
+        this->_n_sampl_pt = std::pow(order, N_DIM);
+        this->_order = order;
     }
 
-    /// return current sampling level
-    std::size_t getSamplingLevel() const {return _n_sampl_level;}
+    /// return current integration order.
+    std::size_t getIntegrationOrder() const {return _order;}
 
     /// return the number of sampling points
     std::size_t getNPoints() const {return _n_sampl_pt;}
@@ -68,28 +65,28 @@ public:
     MathLib::TemplateWeightedPoint<double,double,N_DIM>
     getWeightedPoint(std::size_t igp) const
     {
-        return getWeightedPoint(getSamplingLevel(), igp);
+        return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
     /**
      * get position indexes in r-s-t axis
      *
-     * @param nGauss    The number of integration points
+     * @param order    The number of integration points
      * @param igp       The integration point index
      * @return  a tuple of position indexes
      */
-    static std::array<std::size_t, N_DIM> getPosition(std::size_t nGauss, std::size_t igp);
+    static std::array<std::size_t, N_DIM> getPosition(std::size_t order, std::size_t igp);
 
     /**
      * get coordinates of a integration point
      *
-     * @param nGauss    the number of integration points
+     * @param order    the number of integration points
      * @param pt_id     the sampling point id
      * @param x         coordinates
      * @return weight
      */
     static MathLib::TemplateWeightedPoint<double,double,N_DIM>
-    getWeightedPoint(std::size_t nGauss, std::size_t igp);
+    getWeightedPoint(std::size_t order, std::size_t igp);
 
 private:
     /// Computes weighted point using given integration method.
@@ -102,7 +99,7 @@ private:
     getWeightedPoint(std::array<std::size_t, N_DIM> const& pos);
 
 private:
-    std::size_t _n_sampl_level;
+    std::size_t _order;
     std::size_t _n_sampl_pt;
 };
 
