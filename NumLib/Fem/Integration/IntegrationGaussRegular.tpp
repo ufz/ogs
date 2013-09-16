@@ -11,28 +11,6 @@
  */
 
 
-#include "MathLib/Integration/GaussLegendre.h"
-
-namespace detail
-{
-
-template <unsigned Dim, typename Method>
-inline
-MathLib::TemplateWeightedPoint<double, double, Dim>
-aoeu(std::array<std::size_t, Dim> const& pos)
-{
-    std::array<double, Dim> coords;
-    double weight = 1;
-    for (unsigned d = 0; d < Dim; d++)
-    {
-        coords[d] = Method::X[pos[d]];
-        weight *= Method::W[pos[d]];
-    }
-
-    return MathLib::TemplateWeightedPoint<double, double, Dim>(coords, weight);
-}
-
-}   // namespace detail
 
 namespace NumLib
 {
@@ -71,56 +49,40 @@ IntegrationGaussRegular<3>::getPosition(std::size_t nGauss, std::size_t igp)
     return result;
 }
 
-template <>
-inline MathLib::WeightedPoint1D IntegrationGaussRegular<1>::getWeightedPoint(std::size_t nGauss, std::size_t igp)
+template <std::size_t N_DIM>
+inline
+MathLib::TemplateWeightedPoint<double,double,N_DIM>
+IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::size_t nGauss, std::size_t igp)
 {
     assert(igp < nGauss);
-    std::array<std::size_t, 1> const pos = getPosition(nGauss, igp);
+    std::array<std::size_t, N_DIM> const pos = getPosition(nGauss, igp);
 
     switch (nGauss)
     {
-        case 1: return detail::aoeu<1, MathLib::GaussLegendre<1>>(pos);
-        case 2: return detail::aoeu<1, MathLib::GaussLegendre<2>>(pos);
-        case 3: return detail::aoeu<1, MathLib::GaussLegendre<3>>(pos);
-        case 4: return detail::aoeu<1, MathLib::GaussLegendre<4>>(pos);
+        case 1: return getWeightedPoint<MathLib::GaussLegendre<1>>(pos);
+        case 2: return getWeightedPoint<MathLib::GaussLegendre<2>>(pos);
+        case 3: return getWeightedPoint<MathLib::GaussLegendre<3>>(pos);
+        case 4: return getWeightedPoint<MathLib::GaussLegendre<4>>(pos);
     }
 
-    return MathLib::WeightedPoint1D(std::array<double, 1>(), 0);
+    return MathLib::TemplateWeightedPoint<double, double, N_DIM>(std::array<double, N_DIM>(), 0);
 }
 
-template <>
-inline MathLib::WeightedPoint2D IntegrationGaussRegular<2>::getWeightedPoint(std::size_t nGauss, std::size_t igp)
+template <std::size_t N_DIM>
+template <typename Method>
+inline
+MathLib::TemplateWeightedPoint<double, double, N_DIM>
+IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::array<std::size_t, N_DIM> const& pos)
 {
-    assert(igp < nGauss);
-    std::array<std::size_t, 2> const pos = getPosition(nGauss, igp);
-
-    switch (nGauss)
+    std::array<double, N_DIM> coords;
+    double weight = 1;
+    for (unsigned d = 0; d < N_DIM; d++)
     {
-        case 1: return detail::aoeu<2, MathLib::GaussLegendre<1>>(pos);
-        case 2: return detail::aoeu<2, MathLib::GaussLegendre<2>>(pos);
-        case 3: return detail::aoeu<2, MathLib::GaussLegendre<3>>(pos);
-        case 4: return detail::aoeu<2, MathLib::GaussLegendre<4>>(pos);
+        coords[d] = Method::X[pos[d]];
+        weight *= Method::W[pos[d]];
     }
 
-    return MathLib::WeightedPoint2D(std::array<double, 2>(), 0);
+    return MathLib::TemplateWeightedPoint<double, double, N_DIM>(coords, weight);
 }
-
-template <>
-inline MathLib::WeightedPoint3D IntegrationGaussRegular<3>::getWeightedPoint(std::size_t nGauss, std::size_t igp)
-{
-    assert(igp < nGauss);
-    std::array<std::size_t, 3> const pos = getPosition(nGauss, igp);
-
-    switch (nGauss)
-    {
-        case 1: return detail::aoeu<3, MathLib::GaussLegendre<1>>(pos);
-        case 2: return detail::aoeu<3, MathLib::GaussLegendre<2>>(pos);
-        case 3: return detail::aoeu<3, MathLib::GaussLegendre<3>>(pos);
-        case 4: return detail::aoeu<3, MathLib::GaussLegendre<4>>(pos);
-    }
-
-    return MathLib::WeightedPoint3D(std::array<double, 3>(), 0);
-}
-
 } //namespace
 
