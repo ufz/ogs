@@ -52,14 +52,20 @@ class MeshLibQuadMesh : public ::testing::Test
     typedef std::list<std::size_t> Indices;
     Indices getNeighbor(std::size_t const i) const
     {
+        std::list<std::size_t> result;
         switch (i) {
         case 0:
-            return std::list<std::size_t>{i + 1};
+            result.push_back(i + 1);
+            break;
         case elements_stride:
-            return std::list<std::size_t>{i - 1};
+            result.push_back(i - 1);
+            break;
         default:
-            return std::list<std::size_t>{i - 1, i + 1};
+            result.push_back(i - 1);
+            result.push_back(i + 1);
+            break;
         }
+        return result;
     }
 
     template <typename F>
