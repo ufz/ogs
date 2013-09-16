@@ -30,6 +30,8 @@ namespace NumLib
 template <std::size_t N_DIM>
 class IntegrationGaussRegular
 {
+    typedef typename MathLib::TemplateWeightedPoint<double, double, N_DIM>
+        WeightedPoint;
 public:
     /**
      * Create IntegrationGaussRegular of the given Gauss-Legendre integration
@@ -62,7 +64,7 @@ public:
      * @param igp      The integration point index
      * @return a weighted point
      */
-    MathLib::TemplateWeightedPoint<double,double,N_DIM>
+    WeightedPoint
     getWeightedPoint(std::size_t igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
@@ -85,7 +87,7 @@ public:
      * @param x         coordinates
      * @return weight
      */
-    static MathLib::TemplateWeightedPoint<double,double,N_DIM>
+    static WeightedPoint
     getWeightedPoint(std::size_t order, std::size_t igp);
 
 private:
@@ -95,7 +97,7 @@ private:
     /// \param  pos     Point indices computed by getPosition.
     template <typename Method>
     static
-    MathLib::TemplateWeightedPoint<double, double, N_DIM>
+    WeightedPoint
     getWeightedPoint(std::array<std::size_t, N_DIM> const& pos);
 
 private:
