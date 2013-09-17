@@ -279,7 +279,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 
     // Change gauss quadrature level to 3
-    q.setSamplingLevel(3);
+    q.setIntegrationOrder(3);
     M *= .0;
     for (std::size_t i=0; i<q.getNPoints(); i++) {
         shape.setZero();

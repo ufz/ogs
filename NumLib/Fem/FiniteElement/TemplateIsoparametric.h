@@ -56,25 +56,25 @@ public:
     /**
      * Constructor without specifying a mesh element. resetMeshElement() must be called afterwards.
      *
-     * @param integration_points_level      the sampling level (default 2)
+     * @param integration_order      default 2.
      */
-    explicit TemplateIsoparametric(std::size_t integration_points_level=2)
+    explicit TemplateIsoparametric(std::size_t integration_order=2)
     : _ele(nullptr)
     {
-        this->_integration.setSamplingLevel(integration_points_level);
+        this->_integration.setIntegrationOrder(integration_order);
     }
 
     /**
      * Construct this object for the given mesh element.
      *
-     * @param e                             Mesh element object
-     * @param integration_points_level      the sampling level (default 2)
+     * @param e                      Mesh element object
+     * @param integration_order      default 2.
      */
-    TemplateIsoparametric(const MeshElementType &e, std::size_t integration_points_level=2)
+    TemplateIsoparametric(const MeshElementType &e, std::size_t integration_order=2)
     : _ele(&e)
     {
         this->resetMeshElement(e);
-        this->_integration.setSamplingLevel(integration_points_level);
+        this->_integration.setIntegrationOrder(integration_order);
     }
 
     ///
