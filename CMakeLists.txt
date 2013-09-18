@@ -97,16 +97,16 @@ ENDIF() #OGS_PACKAGING
 # External projects
 OPTION(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
+INCLUDE_DIRECTORIES( SYSTEM ${Boost_INCLUDE_DIRS} )
 IF(OGS_USE_EIGEN)
 	INCLUDE(scripts/cmake/ExternalProjectEigen.cmake)
 ENDIF()
 
 # Add subdirectories with the projects
 ADD_SUBDIRECTORY( ThirdParty )
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty )
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/quickcheck )
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
+INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty )
+INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/quickcheck )
+INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
