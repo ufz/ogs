@@ -12,7 +12,7 @@
 #include <gtest/gtest.h>
 
 #ifdef OGS_USE_EIGEN
-#include <Eigen>
+#include <Eigen/Eigen>
 #endif
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"

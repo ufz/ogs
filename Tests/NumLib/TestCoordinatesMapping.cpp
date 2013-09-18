@@ -16,7 +16,7 @@
 #include <vector>
 
 #ifdef OGS_USE_EIGEN
-#include <Eigen>
+#include <Eigen/Eigen>
 #endif
 
 #include "MeshLib/Elements/Quad.h"
