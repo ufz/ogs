@@ -39,6 +39,24 @@ template <typename T> void writeValueBinary(std::ostream &out, T const& val)
 	out.write((const char*)&val, sizeof(T));
 }
 
+template <typename T>
+T swapEndianness(T const& v)
+{
+	union
+	{
+		T v;
+		char c[sizeof(T)];
+	} a, b;
+
+	a.v = v;
+	for (unsigned short i = 0; i < sizeof(T); i++)
+		b.c[i] = a.c[sizeof(T) - i - 1];
+
+	return b.v;
+}
+
+double swapEndianness(double const& v);
+
 /**
  * \brief truncate a file
  *
