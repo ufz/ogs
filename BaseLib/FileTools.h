@@ -57,6 +57,15 @@ T swapEndianness(T const& v)
 
 double swapEndianness(double const& v);
 
+
+template <typename T>
+T readBinaryValue(std::istream& in)
+{
+	T v;
+	in.read(reinterpret_cast<char*>(&v), sizeof(T));
+	return v;
+}
+
 /**
  * \brief truncate a file
  *
