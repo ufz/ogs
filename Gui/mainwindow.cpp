@@ -1187,32 +1187,15 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	//std::string geo_name("Bode_EZG_Fliessgewaesser");
-	//std::string msh_name("BodeSimple");
-	std::string geo_name("WESS Rivers");
-	std::string msh_name("Ammer-Homogen100m-2012-04-11");
+	std::string geo_name("Bode_EZG_Fliessgewaesser");
+	std::string msh_name("BodeDemoMesh-150m");
+	//std::string geo_name("WESS Rivers");
+	//std::string msh_name("Ammer-Homogen100m-2012-04-11");
 	//std::string geo_name("TestExample");
 	//std::string msh_name("TestExample");
 	GeoMapper mapper(*this->_geoModels, geo_name);
 	mapper.advancedMapOnMesh(this->_project.getMesh(msh_name), std::string("new_geometry"));
-/*
-	const double dir[3] = {0, 0, 1};
-	const MeshLib::Mesh* mesh = this->_project.getMesh("ketzin_2012_11_11_tets");
-	_meshModels->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
-*/
-/*
-	const std::vector<GeoLib::Polyline*> *lines = this->_geoModels->getPolylineVec("WESS Rivers");	MeshLib::CFEMesh* mesh = const_cast<MeshLib::CFEMesh*>(_project.getMesh("Ammer-Homogen100m-Final"));
-	std::vector<size_t> nodes;
-	mesh->GetNODOnPLY((*lines)[0], nodes);
-
-	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>(nodes.size());
-	for (size_t i=0; i<nodes.size(); i++)
-	{
-		(*points)[i] = new GeoLib::Point(mesh->nod_vector[nodes[i]]->getData());
-	}
-	std::string testpoints_name("testpoints");
-	_geoModels->addPointVec(points, testpoints_name);
-*/
+	this->_geoModels->updateGeometry("new_geometry");
 }
 
 

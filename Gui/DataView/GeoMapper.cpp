@@ -22,9 +22,9 @@
 #include "AABB.h"
 #include "Mesh.h"
 #include "Elements/Element.h"
-#include "Elements/Tri.h"
 #include "Node.h"
 #include "MeshSurfaceExtraction.h"
+#include "AnalyticalGeometry.h"
 #include "PointWithID.h"
 #include "Raster.h"
 #include "readMeshFromFile.h"
@@ -32,13 +32,14 @@
 
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
-	: _geo_objects(geo_objects), _geo_name(geo_name), _grid(NULL), _raster(nullptr)
+	: _geo_objects(geo_objects), _geo_name(const_cast<std::string&>(geo_name)), _mesh(nullptr), _grid(nullptr), _raster(nullptr)
 {
 }
 
 GeoMapper::~GeoMapper()
 {
 	delete _raster;
+	delete _mesh;
 }
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
@@ -55,15 +56,15 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 {
 	MeshLib::Mesh *mesh (FileIO::readMeshFromFile(file_name));
 	mapOnMesh(mesh);
-	delete mesh;
 }
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 {
+	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
 	std::vector<GeoLib::PointWithID*> sfc_pnts;
 	// init grid
 	_grid = this->getFlatGrid(mesh, sfc_pnts);
-	this->mapData(mesh);
+	this->mapData();
 
 	delete _grid;
 
@@ -96,7 +97,7 @@ std::vector<GeoLib::Polyline*>* copyPolylinesVector(const std::vector<GeoLib::Po
 }
 
 
-void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_geo_name)
+void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &new_geo_name)
 {
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	const std::vector<GeoLib::Polyline*> *org_lines (this->_geo_objects.getPolylineVec(this->_geo_name));
@@ -147,7 +148,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_ge
 			// find relevant polylines
 			if (!(*org_lines)[l]->isPointIDInPolyline(closest_geo_point[i])) continue;
 			
-			// find point poisition of closest geo point in polyline
+			// find point position of closest geo point in original polyline
 			GeoLib::Polyline* ply ((*org_lines)[l]);
 			std::size_t nLinePnts ( ply->getNumberOfPoints() );
 			std::size_t node_index_in_ply (0);
@@ -182,7 +183,10 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_ge
 					if (intersection)
 					{
 						intersection_count++;
-						std::size_t pos = getPointPosInLine((*new_lines)[l], intersection, node_index_in_ply+index_offset-1, line_segment_map[l], eps);
+						unsigned start_point_idx = static_cast<unsigned>(std::distance(line_segment_map[l].begin(), std::find_if(line_segment_map[l].begin(), line_segment_map[l].end(), [&node_index_in_ply, &index_offset](unsigned a){return a==node_index_in_ply+index_offset-1;})));
+						unsigned end_point_idx   = static_cast<unsigned>(std::distance(line_segment_map[l].begin(), std::find_if(line_segment_map[l].begin(), line_segment_map[l].end(), [&node_index_in_ply, &index_offset](unsigned a){return a==node_index_in_ply+index_offset;})));
+						std::size_t pos = getPointPosInLine((*new_lines)[l], start_point_idx, end_point_idx, intersection, eps);
+
 						if (pos)
 						{
 							const std::size_t pnt_pos (new_points->size());
@@ -196,20 +200,19 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_ge
 		}
 	}
 
-	for (std::size_t i=0; i<nGeoPoints; ++i)
-		if ((*(*new_points)[i])[2]==0.0)
-			(*(*new_points)[i])[2]=this->getMeshElevation((*(*new_points)[i])[0], (*(*new_points)[i])[1], mesh);
-	
-	this->_geo_objects.addPointVec(new_points, new_geo_name);
+	this->_geo_objects.addPointVec(new_points, const_cast<std::string&>(new_geo_name));
 	std::vector<size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
 	for (std::size_t i=0; i<new_lines->size(); ++i)
 		(*new_lines)[i]->update(pnt_id_map);
 	this->_geo_objects.addPolylineVec(new_lines, new_geo_name);
+
+	this->_geo_name = new_geo_name;
+	this->mapOnMesh(mesh);
 }
 
 GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const
 {
-	const double x1 = (*p1)[0], x2 = (*p2)[0], x3 = (*q1)[0], x4 = (*q2)[0], z1 = (*p1)[2], z2 = (*p2)[2];
+	const double x1 = (*p1)[0], x2 = (*p2)[0], x3 = (*q1)[0], x4 = (*q2)[0];
 	const double y1 = (*p1)[1], y2 = (*p2)[1], y3 = (*q1)[1], y4 = (*q2)[1];
  
 	const double det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -226,32 +229,24 @@ GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib:
 	return NULL;
 }
 
-std::size_t GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, GeoLib::Point const*const point, unsigned line_segment, const std::vector<unsigned> &line_segment_map, double eps) const
+unsigned GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, unsigned start, unsigned end, GeoLib::Point const*const point, double eps) const
 {
-	const double start[3] = {(*line->getPoint(line_segment))[0], (*line->getPoint(line_segment))[1], 0.0};
-	const double end[3]   = {(*line->getPoint(line_segment+1))[0], (*line->getPoint(line_segment+1))[1], 0.0};
-	const double pnt[3]   = {(*point)[0], (*point)[1], 0.0};
-	const double max_dist = MathLib::sqrDist(start, pnt);
+	const double* first = line->getPoint(start)->getCoords();
+	const double* pnt   = point->getCoords();
+	const double max_dist = MathLib::sqrDist(first, pnt);
 
-	if (max_dist<eps) return 0;
-	if (MathLib::sqrDist(pnt, end)<eps) return 0;
+	// if point is at start or end of line segment
+	if (max_dist<eps && MathLib::sqrDist(pnt, line->getPoint(end)->getCoords())) return 0;
 
 	const std::size_t nPoints (line->getNumberOfPoints());
 	bool line_segment_found (false);
-	for (std::size_t i=0; i<nPoints; ++i)
+	for (std::size_t i=start+1; i<end; ++i)
 	{
-		if (line_segment_found && line_segment_map[i]>line_segment)
-			return i;
-		if (line_segment_map[i]==line_segment)
-		{
-			line_segment_found = true;
-			const double current[3] = {(*line->getPoint(i))[0], (*line->getPoint(i))[1], 0};
-			if (MathLib::sqrDist(pnt, current) < eps) return 0;
-			if (MathLib::sqrDist(start, current)>max_dist)
-				return i;
-		}
+		const double* current = (*line->getPoint(i)).getCoords();
+		if (MathLib::sqrDist(pnt, current) < eps) return 0;
+		if (MathLib::sqrDist(first, current) > max_dist) return i;
 	}
-	return 0; // this should never be reached
+	return end; // last point of segment
 }
 
 bool GeoMapper::isPntInBoundingBox(double ax, double ay, double bx, double by, double px, double py) const
@@ -280,13 +275,21 @@ double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &line
 	return max_segment_length;
 }
 
-void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
+void GeoMapper::mapData()
 {
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
 	bool is_borehole(false);
-	if (stn_test != NULL && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
+	if (stn_test != nullptr && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
 		is_borehole = true;
+	
+	double min_val(0), max_val(0);
+	if (_mesh)
+	{
+		GeoLib::AABB<GeoLib::Point> bounding_box (_mesh->getNodes().begin(), _mesh->getNodes().end());
+		min_val = bounding_box.getMinPoint()[2];
+		max_val = bounding_box.getMaxPoint()[2];
+	}
 	size_t nPoints (points->size());
 
 	if (!is_borehole)
@@ -294,7 +297,7 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 		for (unsigned j=0; j<nPoints; ++j)
 		{
 			GeoLib::Point* pnt ((*points)[j]);
-			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], mesh)
+			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
 				                : this->getDemElevation((*pnt)[0],(*pnt)[1]);
 		}
 	}
@@ -303,7 +306,7 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 		for (unsigned j=0; j<nPoints; ++j)
 		{
 			GeoLib::Point* pnt ((*points)[j]);
-			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], mesh) - (*pnt)[2])
+			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val) - (*pnt)[2])
 				                    : (this->getDemElevation((*pnt)[0],(*pnt)[1]) - (*pnt)[2]);
 
 			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
@@ -316,8 +319,6 @@ void GeoMapper::mapData(MeshLib::Mesh const*const mesh)
 			}
 		}
 	}
-
-
 }
 
 float GeoMapper::getDemElevation(double x, double y) const
@@ -337,11 +338,22 @@ float GeoMapper::getDemElevation(double x, double y) const
 	return static_cast<float>(*(_raster->begin() + (y_index*width+x_index)));
 }
 
-double GeoMapper::getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const
+double GeoMapper::getMeshElevation(double x, double y, double min_val, double max_val) const
 {
 	double coords[3] = {x,y,0};
-	const GeoLib::PointWithID* pnt (_grid->getNearestPoint(coords));
-	return (*(mesh->getNode(pnt->getID())))[2];
+	const GeoLib::PointWithID* pnt = _grid->getNearestPoint(coords);
+	const std::vector<MeshLib::Element*> elements (_mesh->getNode(pnt->getID())->getElements());
+	GeoLib::Point* intersection (nullptr);
+
+	for (std::size_t i=0; i<elements.size(); ++i)
+	{
+		if (intersection==nullptr && elements[i]->getGeomType() == MeshElemType::TRIANGLE)
+			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
+	}
+	// if the intersection point is not a triangle or something else goes wrong, we simply take the elevation of the nearest point	
+	if (intersection)
+		return (*intersection)[2];
+	return (*(_mesh->getNode(pnt->getID())))[2];
 }
 
 GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const
@@ -368,4 +380,7 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*co
 
 	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_pnts.begin(), sfc_pnts.end());
 }
+
+
+
 

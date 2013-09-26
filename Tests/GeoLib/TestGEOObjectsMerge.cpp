@@ -69,7 +69,7 @@ TEST(GeoLib, GEOObjectsMergePoints)
 	GeoLib::PointVec const* merged_point_vec (geo_objs.getPointVecObj(merged_geometries_name));
 
 	ASSERT_TRUE(merged_point_vec != nullptr);
-	ASSERT_EQ(merged_point_vec->size(), 512);
+	ASSERT_EQ(merged_point_vec->size(), 512u);
 	std::string test_name;
 	merged_point_vec->getNameOfElementByID(0, test_name);
 	ASSERT_EQ(test_name, "PointSet0-0-0-0");
@@ -87,7 +87,7 @@ TEST(GeoLib, GEOObjectsMergePoints)
 	merged_point_vec = geo_objs.getPointVecObj(merged_geometries_name);
 
 	ASSERT_TRUE(merged_point_vec != nullptr);
-	ASSERT_EQ(merged_point_vec->size(), 1024);
+	ASSERT_EQ(merged_point_vec->size(), 1024u);
 	merged_point_vec->getNameOfElementByID(0, test_name);
 	ASSERT_EQ(test_name, "PointSet0-0-0-0");
 	merged_point_vec->getNameOfElementByID(511, test_name);
@@ -99,7 +99,7 @@ TEST(GeoLib, GEOObjectsMergePoints)
 
 	std::size_t id;
 	ASSERT_TRUE(merged_point_vec->getElementIDByName (test_name, id));
-	ASSERT_EQ(id,1023);
+	ASSERT_EQ(id,1023u);
 
 	test_name = "PointSet1-0-0-0";
 	ASSERT_FALSE(merged_point_vec->getElementIDByName (test_name, id));
@@ -146,5 +146,5 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 		geo_objs.getPolylineVec(merged_geometries_name);
 
 	ASSERT_TRUE(polylines != nullptr);
-	ASSERT_EQ(polylines->size(), 1);
+	ASSERT_EQ(polylines->size(), 1u);
 }

@@ -25,7 +25,11 @@ namespace GeoLib {
 
 Color* getRandomColor()
 {
-	return new Color((rand()%5)*50, (rand()%5)*50, (rand()%5)*50);
+	std::array<unsigned char, 3> col;
+	col[0] = static_cast<unsigned char>((rand()%5)*50);
+	col[1] = static_cast<unsigned char>((rand()%5)*50);
+	col[2] = static_cast<unsigned char>((rand()%5)*50);
+	return new Color(col);
 }
 
 int readColorLookupTable(std::map<std::string, Color*> &colors, const std::string &filename)

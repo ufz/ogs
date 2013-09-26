@@ -43,30 +43,33 @@ public:
 	void mapOnDEM(const std::string &file_name);
 	void mapOnMesh(const std::string &file_name);
 	void mapOnMesh(const MeshLib::Mesh* mesh);
-
-	void advancedMapOnMesh(const MeshLib::Mesh* mesh, std::string &new_geo_name);
+	void advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &new_geo_name);
 
 private:
-	void mapData(MeshLib::Mesh const*const mesh = NULL);
+	// Manages the mapping geometric data (points, stations, boreholes) on a raster or mesh.
+	void mapData();
+	// Returns a grid containing all mesh surface points with elevation=0
 	GeoLib::Grid<GeoLib::PointWithID>* getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const;
-	double getMeshElevation(double x, double y, MeshLib::Mesh const*const mesh) const;
+	// Returns the elevation at Point (x,y) based on a mesh. This uses collision detection for triangles and nearest neighbor for quads.
+	double getMeshElevation(double x, double y, double min_val, double max_val) const;
+	// Returns the elevation at Point (x,y) based on a raster
 	float getDemElevation(double x, double y) const;
 
-	double getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &lines) const;
 	GeoLib::Point* calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
+	unsigned getPointPosInLine(GeoLib::Polyline const*const line, unsigned start, unsigned end, GeoLib::Point const*const point, double eps) const;
+	double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &lines) const;
 	bool isPntInBoundingBox(double ax, double ay, double bx, double by, double px, double py) const;
-	std::size_t getPointPosInLine(GeoLib::Polyline const*const line, GeoLib::Point const*const point, unsigned line_segment, const std::vector<unsigned> &line_segment_map, double eps) const;
-	GeoLib::Point* triangleLineIntersection(GeoLib::Point const a, GeoLib::Point const b, GeoLib::Point const c, GeoLib::Point const p, GeoLib::Point const q) const;
-	double scalarTriple(GeoLib::Point u, GeoLib::Point v, GeoLib::Point w) const;
 
 	GeoLib::GEOObjects& _geo_objects;
-	const std::string& _geo_name;
+	std::string& _geo_name;
 
 	// only necessary for mapping on mesh
+	MeshLib::Mesh* _mesh;
 	GeoLib::Grid<GeoLib::PointWithID>* _grid;
 
 	// only necessary for mapping on DEM
 	GeoLib::Raster *_raster;
+
 };
 
 #endif //GEOMAPPER_H

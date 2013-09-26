@@ -11,24 +11,36 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <algorithm>
+#include <cmath>
+#include <limits>
 
 #include "MathLib/Integration/GaussLegendre.h"
 
 namespace
 {
-double f1(double x) {return x*x;}
-} //namespace
+    double square(double const x)
+    {
+        return x*x;
+    }
+}
 
 TEST(MathLib, IntegrationGaussLegendre)
 {
-    const double exact = 2./3.;
+    double const eps = 10 * std::numeric_limits<double>::epsilon();
 
-    ASSERT_EQ(0.0, MathLib::GaussLegendre::integrate(f1, 1));
-    ASSERT_NEAR(exact, MathLib::GaussLegendre::integrate(f1, 2), exact*1e-5);
-    ASSERT_NEAR(exact, MathLib::GaussLegendre::integrate(f1, 3), exact*1e-5);
-    ASSERT_NEAR(exact, MathLib::GaussLegendre::integrate(f1, 4), exact*1e-5);
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<1>>::add(square));
+    EXPECT_NEAR(2./3, MathLib::WeightedSum<MathLib::GaussLegendre<2>>::add(square),
+            eps);
+    EXPECT_NEAR(2./3, MathLib::WeightedSum<MathLib::GaussLegendre<3>>::add(square),
+            eps);
+    EXPECT_NEAR(2./3, MathLib::WeightedSum<MathLib::GaussLegendre<4>>::add(square),
+            eps);
+
+    auto const& cube = [](double const x){ return x*x*x; };
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<1>>::add(cube));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<2>>::add(cube));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<3>>::add(cube));
+    EXPECT_EQ(0.0, MathLib::WeightedSum<MathLib::GaussLegendre<4>>::add(cube));
 }
 
 
