@@ -46,7 +46,7 @@ class TemplateIsoparametric
 public:
     typedef T_MESH_ELEMENT MeshElementType;
     typedef T_SHAPE ShapeFunctionType;
-    typedef T_INTEGRAL IntegrationType;
+    typedef T_INTEGRAL IntegrationMethod;
     typedef T_NODAL_VECTOR NodalVectorType;
     typedef T_DIM_NODAL_MATRIX DimNodalMatrixType;
     typedef T_DIM_MATRIX DimMatrixType;
@@ -89,7 +89,7 @@ public:
     }
 
     /// return an integration method
-    const IntegrationType& getIntegrationMethod() const {return _integration;}
+    const IntegrationMethod& getIntegrationMethod() const {return _integration;}
 
     /**
      * compute shape functions
@@ -118,7 +118,7 @@ public:
 
 private:
     const MeshElementType* _ele;
-    IntegrationType _integration;
+    IntegrationMethod _integration;
 };
 
 } // NumLib
