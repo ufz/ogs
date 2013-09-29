@@ -15,7 +15,7 @@
 
 #include <vector>
 #include <cmath>
-#include <Eigen>
+#include <Eigen/Eigen>
 
 #include "MeshLib/Elements/Quad.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
