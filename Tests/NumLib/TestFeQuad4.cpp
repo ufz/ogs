@@ -47,7 +47,10 @@ class NumLibFemIsoQuad4Test : public ::testing::Test
 
  public:
     NumLibFemIsoQuad4Test() :
-        D(dim, dim), expectedM(e_nnodes,e_nnodes), expectedK(e_nnodes,e_nnodes)
+        D(dim, dim),
+        expectedM(e_nnodes,e_nnodes),
+        expectedK(e_nnodes,e_nnodes),
+        integration_method(2)
     {
         // create a quad element used for testing
         unitSquareQuad   = createSquareQuad(1.0);
@@ -139,6 +142,7 @@ class NumLibFemIsoQuad4Test : public ::testing::Test
     DimMatrix D;
     NodalMatrix expectedM;
     NodalMatrix expectedK;
+    typename FeQUAD4Type::IntegrationMethod integration_method;
 
     std::vector<const MeshLib::Node*> vec_nodes;
     std::vector<const MeshLib::Quad*> vec_eles;
@@ -189,7 +193,6 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassMatrix)
     typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef typename FeQUAD4Type::IntegrationMethod IntegrationMethod;
 
     // create a finite element object
     FeQUAD4Type fe(*this->unitSquareQuad);
@@ -197,10 +200,9 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassMatrix)
     // evaluate a mass matrix M = int{ N^T D N }dA_e
     NodalMatrix M(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = IntegrationMethod(2);
-    for (std::size_t i=0; i<q.getNPoints(); i++) {
+    for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
-        auto wp = q.getWeightedPoint(i);
+        auto wp = this->integration_method.getWeightedPoint(i);
         fe.template computeShapeFunctions<ShapeMatrixType::N_J>(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
     }
@@ -214,7 +216,6 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckLaplaceMatrix)
     typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef typename FeQUAD4Type::IntegrationMethod IntegrationMethod;
 
     // create a finite element object
     FeQUAD4Type fe(*this->unitSquareQuad);
@@ -222,10 +223,9 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckLaplaceMatrix)
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
     NodalMatrix K(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = IntegrationMethod(2);
-    for (std::size_t i=0; i<q.getNPoints(); i++) {
+    for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
-        auto wp = q.getWeightedPoint(i);
+        auto wp = this->integration_method.getWeightedPoint(i);
         fe.template computeShapeFunctions<ShapeMatrixType::DNDX>(wp.getCoords(), shape);
         K.noalias() += shape.dNdx.transpose() * this->D * shape.dNdx * shape.detJ * wp.getWeight();
     }
@@ -238,7 +238,6 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassLaplaceMatrices)
     typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef typename FeQUAD4Type::IntegrationMethod IntegrationMethod;
 
     // create a finite element object
     FeQUAD4Type fe(*this->unitSquareQuad);
@@ -247,10 +246,9 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassLaplaceMatrices)
     NodalMatrix M(e_nnodes, e_nnodes);
     NodalMatrix K(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = IntegrationMethod(2);
-    for (std::size_t i=0; i<q.getNPoints(); i++) {
+    for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
-        auto wp = q.getWeightedPoint(i);
+        auto wp = this->integration_method.getWeightedPoint(i);
         fe.computeShapeFunctions(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
         K.noalias() += shape.dNdx.transpose() * this->D * shape.dNdx * shape.detJ * wp.getWeight();
@@ -265,7 +263,6 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef typename FeQUAD4Type::IntegrationMethod IntegrationMethod;
 
     // create a finite element object with gauss quadrature level 2
     FeQUAD4Type fe(*this->unitSquareQuad);
@@ -273,21 +270,20 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     // evaluate a mass matrix
     NodalMatrix M(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = IntegrationMethod(2);
-    for (std::size_t i=0; i<q.getNPoints(); i++) {
+    for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
-        auto wp = q.getWeightedPoint(i);
+        auto wp = this->integration_method.getWeightedPoint(i);
         fe.computeShapeFunctions(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
     }
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 
     // Change gauss quadrature level to 3
-    q.setIntegrationOrder(3);
+    this->integration_method.setIntegrationOrder(3);
     M *= .0;
-    for (std::size_t i=0; i<q.getNPoints(); i++) {
+    for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
-        auto wp = q.getWeightedPoint(i);
+        auto wp = this->integration_method.getWeightedPoint(i);
         fe.computeShapeFunctions(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
     }
