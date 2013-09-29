@@ -73,7 +73,6 @@ public:
     TemplateIsoparametric(const MeshElementType &e, std::size_t integration_order=2)
     : _ele(&e)
     {
-        this->resetMeshElement(e);
         this->_integration.setIntegrationOrder(integration_order);
     }
 
