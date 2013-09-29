@@ -55,28 +55,22 @@ public:
 
     /**
      * Constructor without specifying a mesh element. resetMeshElement() must be called afterwards.
-     *
-     * @param integration_order      default 2.
      */
-    explicit TemplateIsoparametric(std::size_t integration_order=2)
+    explicit TemplateIsoparametric()
     : _ele(nullptr)
     {
-        this->_integration.setIntegrationOrder(integration_order);
     }
 
     /**
      * Construct this object for the given mesh element.
      *
      * @param e                      Mesh element object
-     * @param integration_order      default 2.
      */
-    TemplateIsoparametric(const MeshElementType &e, std::size_t integration_order=2)
+    TemplateIsoparametric(const MeshElementType &e)
     : _ele(&e)
     {
-        this->_integration.setIntegrationOrder(integration_order);
     }
 
-    ///
     ~TemplateIsoparametric() {}
 
     /// return current mesh element
@@ -87,9 +81,6 @@ public:
     {
         this->_ele = &e;
     }
-
-    /// return an integration method
-    const IntegrationMethod& getIntegrationMethod() const {return _integration;}
 
     /**
      * compute shape functions
@@ -118,7 +109,6 @@ public:
 
 private:
     const MeshElementType* _ele;
-    IntegrationMethod _integration;
 };
 
 } // NumLib

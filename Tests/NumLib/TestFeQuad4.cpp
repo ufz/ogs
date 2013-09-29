@@ -197,7 +197,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassMatrix)
     // evaluate a mass matrix M = int{ N^T D N }dA_e
     NodalMatrix M(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = fe.getIntegrationMethod();
+    IntegrationMethod q = IntegrationMethod(2);
     for (std::size_t i=0; i<q.getNPoints(); i++) {
         shape.setZero();
         auto wp = q.getWeightedPoint(i);
@@ -222,7 +222,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckLaplaceMatrix)
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
     NodalMatrix K(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = fe.getIntegrationMethod();
+    IntegrationMethod q = IntegrationMethod(2);
     for (std::size_t i=0; i<q.getNPoints(); i++) {
         shape.setZero();
         auto wp = q.getWeightedPoint(i);
@@ -247,7 +247,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassLaplaceMatrices)
     NodalMatrix M(e_nnodes, e_nnodes);
     NodalMatrix K(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = fe.getIntegrationMethod();
+    IntegrationMethod q = IntegrationMethod(2);
     for (std::size_t i=0; i<q.getNPoints(); i++) {
         shape.setZero();
         auto wp = q.getWeightedPoint(i);
@@ -268,12 +268,12 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     typedef typename FeQUAD4Type::IntegrationMethod IntegrationMethod;
 
     // create a finite element object with gauss quadrature level 2
-    FeQUAD4Type fe(*this->unitSquareQuad, 2);
+    FeQUAD4Type fe(*this->unitSquareQuad);
 
     // evaluate a mass matrix
     NodalMatrix M(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
-    IntegrationMethod q = fe.getIntegrationMethod();
+    IntegrationMethod q = IntegrationMethod(2);
     for (std::size_t i=0; i<q.getNPoints(); i++) {
         shape.setZero();
         auto wp = q.getWeightedPoint(i);
