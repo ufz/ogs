@@ -54,7 +54,7 @@ public:
     typedef NaturalCoordinatesMapping<MeshElementType, ShapeFunctionType, ShapeMatricesType> NaturalCoordsMappingType;
 
     /**
-     * Constructor without specifying a mesh element. resetMeshElement() must be called afterwards.
+     * Constructor without specifying a mesh element. setMeshElement() must be called afterwards.
      */
     explicit TemplateIsoparametric()
     : _ele(nullptr)
@@ -76,8 +76,8 @@ public:
     /// return current mesh element
     const MeshElementType* getMeshElement() const {return _ele;}
 
-    /// reset a mesh element
-    void resetMeshElement(const MeshElementType &e)
+    /// Sets the mesh element
+    void setMeshElement(const MeshElementType &e)
     {
         this->_ele = &e;
     }
