@@ -31,6 +31,24 @@ bool IsFileExisting(const std::string &strFilename)
 		return false;
 }
 
+double swapEndianness(double const& v)
+{
+	union
+	{
+		double v;
+		char c[sizeof(double)];
+	} a, b;
+
+	a.v = v;
+	for (unsigned short i = 0; i < sizeof(double)/2; i++)
+		b.c[i] = a.c[sizeof(double)/2 - i - 1];
+
+	for (unsigned short i = sizeof(double)/2; i < sizeof(double); i++)
+		b.c[i] = a.c[sizeof(double)+sizeof(double)/2 - i - 1];
+
+	return b.v;
+}
+
 /**
  * \brief truncate a file
  */

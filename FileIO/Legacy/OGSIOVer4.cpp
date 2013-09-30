@@ -714,17 +714,18 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 				for (std::size_t k(0); k < sfcs->size(); k++)
 				{
 					os << "#SURFACE" << "\n";
-					std::string sfc_name(path);
+					std::string sfc_name;
 					if (sfcs_vec->getNameOfElementByID (sfcs_cnt, sfc_name)) {
 						os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
 					} else {
 						os << "\t$NAME " << "\n" << "\t\t" << sfcs_cnt << "\n";
-					sfc_name += BaseLib::number2str (sfcs_cnt);
+					sfc_name = BaseLib::number2str (sfcs_cnt);
 				}
 				sfc_name += ".tin";
 				os << "\t$TIN" << "\n";
 				os << "\t\t" << sfc_name << "\n";
 				// create tin file
+				sfc_name = path + sfc_name;
 				std::ofstream tin_os (sfc_name.c_str());
 				GeoLib::Surface const& sfc (*(*sfcs)[k]);
 				const std::size_t n_tris (sfc.getNTriangles());
