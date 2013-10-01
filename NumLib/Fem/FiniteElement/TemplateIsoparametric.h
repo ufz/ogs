@@ -56,7 +56,7 @@ public:
     /**
      * Constructor without specifying a mesh element. setMeshElement() must be called afterwards.
      */
-    explicit TemplateIsoparametric()
+    TemplateIsoparametric()
     : _ele(nullptr)
     {
     }
