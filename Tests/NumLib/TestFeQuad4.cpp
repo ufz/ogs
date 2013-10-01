@@ -270,6 +270,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     // evaluate a mass matrix
     NodalMatrix M(e_nnodes, e_nnodes);
     ShapeMatricesType shape(dim, e_nnodes);
+    ASSERT_EQ(4u, this->integration_method.getNPoints());
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -281,6 +282,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     // Change gauss quadrature level to 3
     this->integration_method.setIntegrationOrder(3);
     M *= .0;
+    ASSERT_EQ(9u, this->integration_method.getNPoints());
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
