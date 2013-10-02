@@ -12,6 +12,9 @@
  *
  */
 
+#include<type_traits> // for is_constructible
+
+
 #include <gtest/gtest.h>
 #include <boost/property_tree/ptree.hpp>
 
@@ -21,9 +24,14 @@
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
+
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisLinearSolver.h"
 #include "MathLib/LinAlg/Lis/LisTools.h"
+#endif
+
+#if defined(USE_PETSC)
+#include "MathLib/LinAlg/PETSc/PETScLinearEquation.h"
 #endif
 
 #include "../TestTools.h"
@@ -80,50 +88,66 @@ struct Example1
     }
 };
 
-template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
-void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_option)
+  template <class T_MATRIX, class T_VECTOR = void, 
+	    class T_LINEAR_SOVLER = void,
+            class = typename std::enable_if<not std::is_void<T_VECTOR>::value>::type
+	    //            bool isPETSC
+           >
+void checkLinearSolverInterface(T_MATRIX  &A,  boost::property_tree::ptree &ls_option)
 {
     Example1 ex1;
 
-    // set a coefficient matrix
-    A.setZero();
-    for (size_t i=0; i<ex1.dim_eqs; i++) {
-        for (size_t j=0; j<ex1.dim_eqs; j++) {
-            double v = ex1.mat(i, j);
-            if (v!=.0)
-                A.add(i, j, v);
-        }
+    //    if (!std::is_constructible<T_MATRIX_OR_EXTSOLVER, MathLib::PETScLinearEquation>::value)
+    // if (!std::is_constructible<T_VECTOR, void>::value)
+    //       if(isPETSC == false)
+
+    {
+       // set a coefficient matrix
+       A.setZero();
+       for (size_t i=0; i<ex1.dim_eqs; i++) {
+           for (size_t j=0; j<ex1.dim_eqs; j++) {
+               double v = ex1.mat(i, j);
+               if (v!=.0)
+                   A.add(i, j, v);
+           }
+       }
+
+
+      // set RHS and solution vectors
+      T_VECTOR rhs(ex1.dim_eqs);
+      T_VECTOR x(ex1.dim_eqs);
+
+      // apply BC
+      MathLib::applyKnownSolution(A, rhs, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
+
+      //Call inside solver. MathLib::finalizeMatrixAssembly(A);
+
+      // solve
+      T_LINEAR_SOVLER ls(A, &ls_option);
+      ls.solve(rhs, x);
+      ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
     }
-
-    // set RHS and solution vectors
-    T_VECTOR rhs(ex1.dim_eqs);
-    T_VECTOR x(ex1.dim_eqs);
-
-    // apply BC
-    MathLib::applyKnownSolution(A, rhs, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
-
-    MathLib::finalizeMatrixAssembly(A);
-
-    // solve
-    T_LINEAR_SOVLER ls(A, &ls_option);
-    ls.solve(rhs, x);
-
-    ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
 
 }
 
+ 
+
 } // end namespace
+
 
 TEST(MathLib, CheckInterface_GaussAlgorithm)
 {
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
+    //t_solver.put("solver_package", "Dense");
     t_root.put_child("LinearSolver", t_solver);
 
     typedef MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > LinearSolverType;
     MathLib::GlobalDenseMatrix<double> A(Example1::dim_eqs, Example1::dim_eqs);
+
     checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>, LinearSolverType>(A, t_root);
 }
+
 
 #ifdef USE_LIS
 TEST(Math, CheckInterface_Lis)
@@ -131,6 +155,7 @@ TEST(Math, CheckInterface_Lis)
     // set solver options using Boost property tree
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
+    //t_solver.put("solver_package", "LIS");
     t_solver.put("solver_type", "CG");
     t_solver.put("precon_type", "NONE");
     t_solver.put("error_tolerance", 1e-15);
@@ -140,5 +165,37 @@ TEST(Math, CheckInterface_Lis)
     MathLib::LisMatrix A(Example1::dim_eqs);
     checkLinearSolverInterface<MathLib::LisMatrix, MathLib::LisVector, MathLib::LisLinearSolver>(A, t_root);
 }
+#endif
+
+#if defined(USE_PETSC)
+
+TEST(Math, CheckInterface_PETSc)
+{
+   int mrank, msize;
+
+   MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+   MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+   PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nUse PETSc solver");
+   PetscSynchronizedPrintf(PETSC_COMM_WORLD, "Number of CPUs: %d, rank: %d\n", msize, mrank);
+   PetscSynchronizedFlush(PETSC_COMM_WORLD);
+
+
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    //t_solver.put("solver_package", "LIS");
+    t_solver.put("solver_type", "cg");
+    t_solver.put("precon_type", "none");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
+
+    MathLib::PETScLinearEquation petsc_leq;
+    petsc_leq.set_rank_size(mrank, msize);
+  
+    // checkLinearSolverInterface<MathLib::PETScLinearEquation, true>(petsc_leq, t_root);
+
+}
+
 #endif
 

@@ -95,6 +95,9 @@ public:
 
     /// y = mat * x
     void matvec ( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
+
+    /// Indicator of non-PETSc matrix
+    static bool nonPETSCMatrix() {return true; }
 };
 
 } // end namespace MathLib

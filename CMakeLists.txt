@@ -62,6 +62,7 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
+OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Eigen
 OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
@@ -118,6 +119,29 @@ INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
 ENDIF()
+
+IF(OGS_USE_PETSC)
+    MESSAGE (STATUS  "Configuring for PETSc" )
+      
+    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
+    FIND_PACKAGE(PETSc REQUIRED)
+ 
+    include_directories(
+              ${PETSC_INCLUDES} 
+     )
+
+    FIND_PACKAGE(MPI)
+    IF(MPI_FOUND)		
+       SET(CMAKE_C_COMPILER ${MPI_COMPILER})
+       SET(CMAKE_CXX_COMPILER ${MPI_COMPILER})
+    ELSE(MPI_FOUND)
+       MESSAGE (FATAL_ERROR "Aborting: MPI implementation is not found!")
+    ENDIF(MPI_FOUND)			
+
+    ADD_DEFINITIONS(-DUSE_PETSC)
+ENDIF()
+
+
 
 IF(OGS_USE_EIGEN)
 #	ADD_DEFINITIONS(-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=std::size_t)

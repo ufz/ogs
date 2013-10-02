@@ -115,6 +115,9 @@ public:
     /// return if this matrix is already assembled or not
     bool isAssembled() const { return _is_assembled; };
 
+    /// Indicator of non-PETSc matrix
+    static bool nonPETSCMatrix() {return true; }
+
 private:
     std::size_t const _n_rows;
     LisOption::MatrixType const _mat_type;

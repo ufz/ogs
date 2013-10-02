@@ -16,9 +16,15 @@
 #include "Configure.h"
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
+
 #ifdef USE_LIS
 #include "lis.h"
 #endif
+
+#ifdef USE_PETSC
+#include "petscksp.h"
+#endif
+
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef QT4_FOUND
 #include <QApplication>
@@ -37,11 +43,22 @@ int main(int argc, char* argv[])
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
+#if defined(USE_PETSC)
+	PetscLogDouble v1, v2;
+	char help[] = "OGS with PETSc \n";
+	//PetscInitialize(argc, argv, help);
+	PetscInitialize(&argc,&argv,(char *)0,help);
+	PetscGetTime(&v1);
+#endif
+
         try {
             // initialize libraries which will be used while testing
 #ifdef USE_LIS
             lis_initialize(&argc, &argv);
 #endif
+
+
+
             // start google test
             testing::InitGoogleTest ( &argc, argv );
             ret = RUN_ALL_TESTS();
@@ -56,6 +73,15 @@ int main(int argc, char* argv[])
 #ifdef USE_LIS
         lis_finalize();
 #endif
+
+#if defined(USE_PETSC)
+     PetscGetTime(&v2);
+     PetscPrintf(PETSC_COMM_WORLD,"\t\n>>Total elapsed time by using PETSC:%f s\n",v2-v1);
+
+     PetscFinalize();
+#endif
+
+
     } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.
     LOGOG_SHUTDOWN();
 
