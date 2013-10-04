@@ -88,10 +88,10 @@ struct Example1
     }
 };
 
-  template <class T_MATRIX, class T_VECTOR = void, 
-	    class T_LINEAR_SOVLER = void,
-            class = typename std::enable_if<not std::is_void<T_VECTOR>::value>::type
-	    //            bool isPETSC
+
+ 
+  template <class T_MATRIX, class T_VECTOR,   class T_LINEAR_SOVLER 
+	    //            class = typename std::enable_if<not std::is_void<T_VECTOR>::value>::type
            >
 void checkLinearSolverInterface(T_MATRIX  &A,  boost::property_tree::ptree &ls_option)
 {
@@ -127,10 +127,60 @@ void checkLinearSolverInterface(T_MATRIX  &A,  boost::property_tree::ptree &ls_o
       ls.solve(rhs, x);
       ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
     }
-
 }
 
- 
+  template <class T_LINEAR_EQUATION, typename T_VECTOR >
+void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree::ptree &ls_option)
+{
+
+    // ---------------------------------------------
+    // Test case
+    Example1 ex1;
+
+    int m_dim, n_dim;
+    double *local_matrix = nullptr;  // nullptr not support by IBM C++11
+    int *idx_r = nullptr; // 
+    int *idx_c = nullptr;
+    const int msize = l_eqs.getMPI_Size(); 
+    const int mrank = l_eqs.getMPI_Rank(); 
+
+    local_matrix = new double[msize * ex1.dim_eqs];
+    idx_c = new int[ex1.dim_eqs];
+    idx_r = new int[msize];
+  
+    for(int j=0;j<ex1.dim_eqs; j++)
+    {
+       idx_c[j] = j; 
+    }
+
+    for(int i=0; i<msize; i++)
+    {
+       idx_r[i] = mrank *  msize + i;
+       for(int j=0;j<ex1.dim_eqs; j++)
+       {
+           local_matrix[i*ex1.dim_eqs +j] =  ex1.mat(idx_r[i], j);
+       }
+    } 
+    // ---------------------------------------------
+
+
+   
+    l_eqs.Config(ls_option);
+    l_eqs.InitializeMatVec();
+    l_eqs.addMatrixEntries(msize, idx_r, ex1.dim_eqs, idx_r, local_matrix);
+    
+    
+    T_VECTOR x(ex1.dim_eqs);
+
+    ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
+
+
+    // Test
+    delete [] local_matrix;
+    delete [] idx_c;
+    delete [] idx_r;
+}
+
 
 } // end namespace
 
@@ -175,6 +225,15 @@ TEST(Math, CheckInterface_PETSc)
 
    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
    MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+
+   if(msize != 3)
+   {
+      PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc solver. The numnber of cores must be 3 exactly");
+
+     PetscFinalize();
+     exit(EXIT_FAILURE);
+   }
+
    PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nUse PETSc solver");
    PetscSynchronizedPrintf(PETSC_COMM_WORLD, "Number of CPUs: %d, rank: %d\n", msize, mrank);
    PetscSynchronizedFlush(PETSC_COMM_WORLD);
@@ -190,10 +249,15 @@ TEST(Math, CheckInterface_PETSc)
     t_solver.put("max_iteration_step", 1000);
     t_root.put_child("LinearSolver", t_solver);
 
+
+
+    int sparse_info[4] = {Example1::dim_eqs, Example1::dim_eqs, Example1::dim_eqs, Example1::dim_eqs};
+
     MathLib::PETScLinearEquation petsc_leq;
     petsc_leq.set_rank_size(mrank, msize);
+    petsc_leq.Init(Example1::dim_eqs, sparse_info);
   
-    // checkLinearSolverInterface<MathLib::PETScLinearEquation, true>(petsc_leq, t_root);
+    checkLinearSolverInterface<MathLib::PETScLinearEquation, std::vector<double>>(petsc_leq, t_root);
 
 }
 
