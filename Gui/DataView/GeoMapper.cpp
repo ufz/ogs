@@ -39,7 +39,6 @@ GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_nam
 GeoMapper::~GeoMapper()
 {
 	delete _raster;
-	delete _mesh;
 }
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
@@ -56,6 +55,7 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 {
 	MeshLib::Mesh *mesh (FileIO::readMeshFromFile(file_name));
 	mapOnMesh(mesh);
+	delete mesh;
 }
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)

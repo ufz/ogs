@@ -34,6 +34,7 @@
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
 //TODO6 #include "OGSFileConverter.h"
+#include "GeoOnMeshMappingDialog.h"
 #include "GMSHPrefsDialog.h"
 #include "LicenseDialog.h"
 #include "LineEditDialog.h"
@@ -949,17 +950,43 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	QSettings settings("UFZ", "OpenGeoSys-5");
 	QString file_name = QFileDialog::getOpenFileName( this, "Select file for mapping",
 													  settings.value("lastOpenedFileDirectory").toString(),
-													  "Raster files(*.asc *.grd);;OpenGeoSys mesh files (*.vtu *.msh)");
+													  "OpenGeoSys mesh files (*.vtu *.msh);;Raster files(*.asc *.grd)");
 	GeoMapper geo_mapper(*_geoModels, geo_name);
 
 	if (file_name.compare("") != 0)
 	{
 		QFileInfo fi(file_name);
 		if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
+		{
 			geo_mapper.mapOnDEM(file_name.toStdString());
+			this->_geoModels->updateGeometry(geo_name);
+		}
 		else if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
-			geo_mapper.mapOnMesh(file_name.toStdString());
-		this->_geoModels->updateGeometry(geo_name);
+		{
+			GeoOnMeshMappingDialog dlg;
+			if (dlg.exec() == QDialog::Accepted)
+			{
+				// just get mesh if already in memory
+				const MeshLib::Mesh* msh (this->_project.getMesh(fi.completeBaseName().toStdString()));
+
+				// read mesh otherwise
+				if (!msh)
+					msh = FileIO::readMeshFromFile(file_name.toStdString());
+
+				std::string new_geo_name = dlg.getNewGeoName();
+		
+				if (new_geo_name.empty())
+				{
+					geo_mapper.mapOnMesh(msh);
+					this->_geoModels->updateGeometry(geo_name);
+				}
+				else
+				{
+					geo_mapper.advancedMapOnMesh(msh, new_geo_name);
+					this->_geoModels->updateGeometry(new_geo_name);
+				}
+			}
+		}		
 	}
 }
 
