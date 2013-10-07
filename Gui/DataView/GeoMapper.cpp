@@ -206,6 +206,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 		(*new_lines)[i]->update(pnt_id_map);
 	this->_geo_objects.addPolylineVec(new_lines, new_geo_name);
 
+	// map new geometry incl. additional point using the normal mapping method
 	this->_geo_name = new_geo_name;
 	this->mapOnMesh(mesh);
 }
