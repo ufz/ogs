@@ -60,6 +60,12 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 {
+	if (mesh->getDimension() != 2)
+	{
+		ERR("GeoMapper::mapOnMesh(): Method only works on 2D meshes (triangle and quad elements)");
+		return;
+	}
+
 	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
 	std::vector<GeoLib::PointWithID*> sfc_pnts;
 	// init grid
@@ -348,12 +354,14 @@ double GeoMapper::getMeshElevation(double x, double y, double min_val, double ma
 
 	for (std::size_t i=0; i<elements.size(); ++i)
 	{
-		if (intersection==nullptr && elements[i]->getGeomType() == MeshElemType::TRIANGLE)
+		if (intersection==nullptr)
 			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
+		if (intersection==nullptr && elements[i]->getGeomType() == MeshElemType::QUAD)
+			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(2), *elements[i]->getNode(3), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
 	}
-	// if the intersection point is not a triangle or something else goes wrong, we simply take the elevation of the nearest point	
 	if (intersection)
 		return (*intersection)[2];
+	// if something goes wrong, simply take the elevation of the nearest mesh node
 	return (*(_mesh->getNode(pnt->getID())))[2];
 }
 
