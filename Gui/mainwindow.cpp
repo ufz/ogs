@@ -1214,15 +1214,6 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::string geo_name("Bode_EZG_Fliessgewaesser");
-	std::string msh_name("BodeDemoMesh-150m");
-	//std::string geo_name("WESS Rivers");
-	//std::string msh_name("Ammer-Homogen100m-2012-04-11");
-	//std::string geo_name("TestExample");
-	//std::string msh_name("TestExample");
-	GeoMapper mapper(*this->_geoModels, geo_name);
-	mapper.advancedMapOnMesh(this->_project.getMesh(msh_name), std::string("new_geometry"));
-	this->_geoModels->updateGeometry("new_geometry");
 }
 
 
