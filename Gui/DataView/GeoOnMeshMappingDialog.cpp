@@ -33,7 +33,14 @@ GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
 void GeoOnMeshMappingDialog::accept()
 {
 	if (this->advancedMappingButton->isEnabled())
+	{
 		_new_geo_name = this->geoNameEdit->text().toStdString();
+		if (_new_geo_name.empty())
+		{
+			OGSError::box("Please enter name for new geometry.");
+			return;
+		}
+	}
 	this->done(QDialog::Accepted);
 }
 
