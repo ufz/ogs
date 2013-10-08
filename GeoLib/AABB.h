@@ -131,6 +131,12 @@ public:
 		return containsPoint(other_aabb.getMinPoint()) && containsPoint(other_aabb.getMaxPoint());
 	}
 
+	double getEpsFromBoundingBox() const
+	{
+		double eps = sqrt(std::numeric_limits<float>::epsilon());
+		return eps * sqrt(MathLib::sqrDist (&(this->getMinPoint()),&(this->getMaxPoint())));
+	}
+
 protected:
 	PNT_TYPE _min_pnt;
 	PNT_TYPE _max_pnt;
