@@ -10,6 +10,7 @@ set( SOURCES
 	FEMConditionSetupDialog.cpp
 	GeoMapper.cpp
 	GEOModels.cpp
+	GeoOnMeshMappingDialog.cpp
 	GeoTabWidget.cpp
 	GeoTreeModel.cpp
 	GeoTreeView.cpp
@@ -50,6 +51,7 @@ set( MOC_HEADERS
 	ElementTreeView.h
 	FEMConditionSetupDialog.h
 	GEOModels.h
+	GeoOnMeshMappingDialog.h
 	GeoTabWidget.h
 	GeoTreeModel.h
 	GeoTreeView.h
@@ -97,6 +99,7 @@ set( UIS
 	CondFromRaster.ui
 	ConditionWriter.ui
 	FEMConditionSetup.ui
+	GeoOnMeshMapping.ui
 	GeoTabWidgetBase.ui
 	GMSHPrefs.ui
 	License.ui
