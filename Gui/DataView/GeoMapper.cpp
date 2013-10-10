@@ -216,7 +216,8 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	const std::vector<GeoLib::Polyline*> *org_lines (this->_geo_objects.getPolylineVec(this->_geo_name));
 
 	const GeoLib::AABB<GeoLib::Point> aabb(points->begin(), points->end());
-	const double eps (aabb.getEpsFromBoundingBox());
+	const double eps = sqrt(std::numeric_limits<float>::epsilon()) *
+		               sqrt( MathLib::sqrDist(&(aabb.getMinPoint()),&(aabb.getMaxPoint())) );
 
 	// copy geometry (and set z=0 for all points)
 	unsigned nGeoPoints ( points->size() );
@@ -315,7 +316,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	this->_geo_objects.addPointVec(new_points, const_cast<std::string&>(new_geo_name));
 	std::vector<size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
 	for (std::size_t i=0; i<new_lines->size(); ++i)
-		(*new_lines)[i]->update(pnt_id_map);
+		(*new_lines)[i]->updatePointIDs(pnt_id_map);
 	this->_geo_objects.addPolylineVec(new_lines, new_geo_name);
 
 	// map new geometry incl. additional point using the normal mapping method

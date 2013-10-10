@@ -89,8 +89,8 @@ public:
 	 */
 	void closePolyline();
 
-	/// Update a polyline after the corresponding PointVec has changed, using the pnt_id_map from said PointVec
-	void update(const std::vector<std::size_t> &pnt_ids);
+	/// Update a the PointIDs vector based on given map, e.g. after the corresponding PointVec has changed
+	void updatePointIDs(const std::vector<std::size_t> &pnt_ids);
 
 	/// Constructs one polyline from a vector of connected polylines.
 	/// All polylines in this vector need to reference the same point vector.

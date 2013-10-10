@@ -358,7 +358,7 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
 	return Location::BETWEEN;
 }
 
-void Polyline::update(const std::vector<std::size_t> &pnt_ids)
+void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
 {
 	for (auto it = this->_ply_pnt_ids.begin(); it!=this->_ply_pnt_ids.end();)
 	{
