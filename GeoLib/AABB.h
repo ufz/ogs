@@ -22,6 +22,7 @@
 #include <vector>
 #include <stdexcept>
 
+#include "MathTools.h"
 #include "Point.h"
 
 namespace GeoLib
