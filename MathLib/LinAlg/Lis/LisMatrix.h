@@ -112,9 +112,6 @@ public:
     /// get this matrix type
     LisOption::MatrixType getMatrixType() const { return _mat_type; };
 
-    /// return if this matrix is already assembled or not
-    bool isAssembled() const { return _is_assembled; };
-
 
 private:
     std::size_t const _n_rows;
