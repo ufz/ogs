@@ -633,7 +633,7 @@ void PETScLinearEquation::EQSV_Viewer(std::string file_name)
   VecView(b, viewer);
   VecView(x, viewer);  
 
-#define  EXIT_TEST 
+#define  nEXIT_TEST 
 #ifdef EXIT_TEST 
   VecDestroy(&b);
   VecDestroy(&x);
