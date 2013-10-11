@@ -181,7 +181,7 @@ int XmlCndInterface::write(std::ostream& stream)
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysCND.xsd" );
 
-	const std::vector<FEMCondition*> conditions (_project->getConditions(
+	std::vector<FEMCondition*> const& conditions (_project->getConditions(
 	                                                     FiniteElement::INVALID_PROCESS,
 	                                                     _exportName,
 	                                                     _type) );
