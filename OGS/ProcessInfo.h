@@ -17,7 +17,6 @@
 
 // FEM
 #include "FEMEnums.h"
-//class CRFProcess;
 
 /**
  * \brief Class ProcessInfo stores the process type,
@@ -58,12 +57,6 @@ public:
 	void setProcessPrimaryVariable (FiniteElement::PrimaryVariable pcs_pv);
 
 	/**
-	 * Sets the value for the pointer to an object of class CRFProcess.
-	 * @param pcs the pointer to an object of class CRFProcess
-	 */
-	//void setProcess (CRFProcess* pcs);
-
-	/**
 	 * Get the process type.
 	 * @return the process type
 	 */
@@ -74,12 +67,6 @@ public:
 	 * @return the primary variable of the process
 	 */
 	FiniteElement::PrimaryVariable getProcessPrimaryVariable () const;
-
-	/**
-	 * Get a pointer to an object of type CRFProcess.
-	 * @return a pointer to an object of type CRFProcess
-	 */
-	//CRFProcess* getProcess () const;
 
 	virtual ~ProcessInfo();
 
@@ -92,10 +79,5 @@ protected:
 	 * the primary variable of the process, see enum PrimaryVariable for valid values
 	 */
 	FiniteElement::PrimaryVariable _pcs_pv;
-
-	/**
-	 * pointer to the object of class CRFProcess
-	 */
-	//CRFProcess* _pcs;
 };
-#endif                                            /* PROCESSINFO_H_ */
+#endif /* PROCESSINFO_H_ */
