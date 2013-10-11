@@ -16,8 +16,14 @@
 
 #include "gtest/gtest.h"
 #include "Configure.h"
+
+// FileIO
 #include "XmlIO/XmlGmlInterface.h"
 
+// OgsLib
+#include "OGS/ProjectData.h"
+
+// GeoLib
 #include "Polyline.h"
 
 
