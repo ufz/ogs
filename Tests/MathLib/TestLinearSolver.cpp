@@ -31,7 +31,13 @@
 #endif
 
 #if defined(USE_PETSC)
+// Test class MathLib::PETScLinearEquation with  the overload interface
 #include "MathLib/LinAlg/PETSc/PETScLinearEquation.h"
+
+// Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #endif
 
 #include "../TestTools.h"
@@ -167,20 +173,31 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
        }
     } 
 
+    std::cout<<"Here 0"<<std::endl;
+
 
     //-------------------------------------------------------------------
     //
     // Solver configuration   
     l_eqs.Config(ls_option);
+
+
+    std::cout<<"Here 01"<<std::endl;
+
+
     l_eqs.initializeMatVec();
 
 
+    std::cout<<"Here 1"<<std::endl;
 
     // local assembly
     l_eqs.addMatrixEntries(msize, idx_r, ex1.dim_eqs, idx_c, local_matrix);
     // No need to change RHS for this example.    
-    l_eqs.finalAssembleEQS_MPI();
- 
+    l_eqs.finalAssemble();
+   
+   
+    std::cout<<"Here 2"<<std::endl;
+
   
     //-------------------------------------------------------------------
     // Apply Dirichlet BC test
@@ -194,17 +211,18 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
       if(bc_id > msize*mrank && bc_id < msize*(mrank+1))
         bc_size_rank++;  
     }
-    if(bc_size_rank == 0)
-      goto APPLY_BC; // Skip the following
 
+    std::cout<<"Here 3"<<std::endl;
 
-
-    bc_eqs_id = new int[bc_size_rank];
-    bc_eqs_value = new double[bc_size_rank];
-    bc_size_rank = 0;
-    for(size_t i=0; i<ex1.vec_dirichlet_bc_id.size(); i++)
+    if(bc_size_rank > 0)
     {
-       const int bc_id =  ex1.vec_dirichlet_bc_id[i]; 
+
+       bc_eqs_id = new int[bc_size_rank];
+       bc_eqs_value = new double[bc_size_rank];
+       bc_size_rank = 0;
+       for(size_t i=0; i<ex1.vec_dirichlet_bc_id.size(); i++)
+       {
+          const int bc_id =  ex1.vec_dirichlet_bc_id[i]; 
 
 
 
@@ -217,17 +235,26 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
 
        }  
     }
+    }
     //-------------------------------------------------------------------
 
 
-    APPLY_BC:
+    
+    std::cout<<"Here 4"<<std::endl;
+
+
     // Apply Dirichlet BC
     l_eqs.applyKnownSolutions(bc_size_rank, bc_eqs_id,  bc_eqs_value);
 
+    std::cout<<"Here 5"<<std::endl;
 
 
     // Solve the linear equation
     l_eqs.Solver();
+
+    std::cout<<"Here 6"<<std::endl;
+
+
     l_eqs.mappingSolution();
  
     double *x = l_eqs.getGlobalSolution();  //T_VECTOR x, also works, template argument T_VECTOR will be removed 
@@ -290,7 +317,9 @@ TEST(Math, CheckInterface_Lis)
 
 #if defined(USE_PETSC)
 
-TEST(Math, CheckInterface_PETSc)
+// Test class MathLib::PETScLinearEquation with  the overload interface
+#include "MathLib/LinAlg/PETSc/PETScLinearEquation.h"
+TEST(Math, CheckInterface_PETSc_1)
 {
    int mrank, msize;
 
@@ -331,6 +360,59 @@ TEST(Math, CheckInterface_PETSc)
     checkLinearSolverInterface<MathLib::PETScLinearEquation, std::vector<double>>(petsc_leq, t_root);
 
 }
+
+// Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
+TEST(Math, CheckInterface_PETSc_2)
+{
+   int mrank, msize;
+
+   MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+   MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+
+   if(msize != 3)
+   {
+      PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc solver. The numnber of cores must be 3 exactly");
+
+     PetscFinalize();
+     exit(EXIT_FAILURE);
+   }
+
+   PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nUse PETSc solver");
+   PetscSynchronizedPrintf(PETSC_COMM_WORLD, "Number of CPUs: %d, rank: %d\n", msize, mrank);
+   PetscSynchronizedFlush(PETSC_COMM_WORLD);
+
+
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    //t_solver.put("solver_package", "LIS");
+    t_solver.put("solver_type", "cg");
+    t_solver.put("precon_type", "none");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
+
+
+
+    int sparse_info[4] = {Example1::dim_eqs, Example1::dim_eqs, Example1::dim_eqs, Example1::dim_eqs};
+
+
+    MathLib::PETScMatrix A;
+    A.set_rank_size(mrank, msize);
+    A.Init(Example1::dim_eqs, sparse_info);
+
+    MathLib::PETScVector b(Example1::dim_eqs);
+    MathLib::PETScVector x;
+    b.CloneMe(x);
+
+ 
+    MathLib::PETScLinearSolver petsc_leq(A, b, x);
+
+
+    checkLinearSolverInterface<MathLib::PETScLinearSolver, std::vector<double>>(petsc_leq, t_root);
+
+}
+
 
 #endif
 

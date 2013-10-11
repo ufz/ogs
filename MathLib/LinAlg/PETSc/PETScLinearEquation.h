@@ -1,5 +1,5 @@
 /*!
-   \file  PETScLinearSolve.h
+   \file  PETScLinearEquation.h
    \brief Declaration of class PETScLinearEquation, which provides interfaces to
           matrix and solvers of PETSc routines.
 
@@ -54,7 +54,7 @@ public:
     void AssembleRHS_PETSc();
     void AssembleUnkowns_PETSc();
     void AssembleMatrixPETSc(const MatAssemblyType type = MAT_FINAL_ASSEMBLY); //MAT_FLUSH_ASSEMBLY
-    void finalAssembleEQS_MPI();
+    void finalAssemble();
     void applyKnownSolutions(PetscInt ni,const PetscInt ix[], const PetscScalar y[]); 
 
     void updateSolutions(PetscScalar *u0, PetscScalar *u1);

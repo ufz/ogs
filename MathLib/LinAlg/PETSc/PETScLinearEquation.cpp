@@ -1,5 +1,5 @@
 /*!
-   \file  PETScLinearSolve.cpp
+   \file  PETScLinearEquation.cpp
    \brief Definition of member functions of class PETScLinearEquation, which provides interfaces to
           matrix and solvers of PETSc routines.
 
@@ -356,7 +356,7 @@ void PETScLinearEquation::AssembleMatrixPETSc(const MatAssemblyType type)
 }
 
 
-void PETScLinearEquation::finalAssembleEQS_MPI()
+void PETScLinearEquation::finalAssemble()
 {
   VecAssemblyBegin(b);
   VecAssemblyEnd(b);
