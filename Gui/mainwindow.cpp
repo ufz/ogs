@@ -580,6 +580,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			this->loadFEMConditionsFromFile(fileName);
 		}
+
+		emit fileUsed(fileName);
 	}
 	else if (t == ImportFileType::FEFLOW)
 	{
@@ -702,8 +704,6 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		//settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
 	}
 	updateDataViews();
-
-	if (t == ImportFileType::OGS) emit fileUsed(fileName);
 }
 
 void MainWindow::updateDataViews()
