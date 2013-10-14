@@ -100,7 +100,7 @@ void GeoTreeView::selectionChangedFromOutside( const QItemSelection &selected,
 	selModel->select(selected, QItemSelectionModel::Select);
 	selModel->blockSignals(false);
 
-	return QTreeView::selectionChanged(selected, deselected);
+	QTreeView::selectionChanged(selected, deselected);
 }
 
 void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
