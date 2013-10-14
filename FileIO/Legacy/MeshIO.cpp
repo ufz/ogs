@@ -173,8 +173,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		// edge_nodes array will be deleted from Line object
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
-		edge_nodes[0] = nodes[idx[1]];
-		edge_nodes[1] = nodes[idx[0]];
+		for (unsigned k(0); k < 2; ++k)
+			edge_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Line(edge_nodes, patch_index);
 		break;
 	}
@@ -183,7 +183,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		for (unsigned k(0); k < 3; ++k)
-			tri_nodes[k] = nodes[idx[2 - k]];
+			tri_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
@@ -192,7 +192,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; ++k)
-			quad_nodes[k] = nodes[idx[3 - k]];
+			quad_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
 	}
@@ -201,7 +201,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; ++k)
-			tet_nodes[k] = nodes[idx[3 - k]];
+			tet_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
 	}
@@ -210,7 +210,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k < 8; ++k)
-			hex_nodes[k] = nodes[idx[7 - k]];
+			hex_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
 	}
@@ -219,7 +219,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 5; ++k)
-			pyramid_nodes[k] = nodes[idx[4 - k]];
+			pyramid_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
 	}
@@ -228,12 +228,13 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k < 6; ++k)
-			prism_nodes[k] = nodes[idx[5 - k]];
+			prism_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Prism(prism_nodes, patch_index);
 		break;
 	}
 	default:
 		elem = NULL;
+		break;
 	}
 
 	delete [] idx;
