@@ -39,7 +39,6 @@ Mesh::Mesh(const std::string &name,
 	_edge_length[0] = 0;
 	_edge_length[1] = 0;
 	this->setDimension();
-	this->makeNodesUnique();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
