@@ -263,7 +263,7 @@ int MeshIO::write(std::ostream &out)
 	out << "$ELEMENTS\n"
 		<< "  ";
 
-	writeElementsExceptLines(_mesh->getElements(), out);
+	writeElements(_mesh->getElements(), out);
 
 	out << " $LAYER\n"
 		<< "  0\n"
@@ -277,37 +277,18 @@ void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 	_mesh = mesh;
 }
 
-void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_vec,
+void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
                                       std::ostream &out)
 {
 	const size_t ele_vector_size (ele_vec.size());
-	const double epsilon (std::numeric_limits<double>::epsilon());
-	std::vector<bool> non_line_element (ele_vector_size, true);
-	std::vector<bool> non_null_element (ele_vector_size, true);
-	size_t n_elements(0);
 
+	out << ele_vector_size << "\n";
 	for (size_t i(0); i < ele_vector_size; ++i) {
-		if ((ele_vec[i])->getGeomType() == MeshElemType::LINE) {
-			non_line_element[i] = false;
-			non_null_element[i] = false;
-		} else {
-			if (ele_vec[i]->getContent() < epsilon) {
-				non_null_element[i] = false;
-			} else {
-				++n_elements;
-			}
-		}
-	}
-	out << n_elements << "\n";
-	for (size_t i(0), k(0); i < ele_vector_size; ++i) {
-		if (non_line_element[i] && non_null_element[i]) {
-			out << k << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
-			unsigned nElemNodes (ele_vec[i]->getNNodes());
-			for(size_t j = 0; j < nElemNodes; ++j)
-				out << ele_vec[i]->getNode(j)->getID() << " ";
-			out << "\n";
-			++k;
-		}
+		out << i << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
+		unsigned nElemNodes (ele_vec[i]->getNNodes());
+		for(size_t j = 0; j < nElemNodes; ++j)
+			out << ele_vec[i]->getNode(j)->getID() << " ";
+		out << "\n";
 	}
 }
 
