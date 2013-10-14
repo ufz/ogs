@@ -373,6 +373,7 @@ int RapidVtuInterface::write(std::ostream& stream)
 	celldata_node->append_attribute(_doc->allocate_attribute("Scalars", "MaterialIDs"));
 
 	std::stringstream oss(std::stringstream::out);
+	oss.precision(stream.precision());
 	oss << std::endl << data_array_indent;
 	for (unsigned i=0; i<nElems; i++)
 		oss << elements[i]->getValue() << " ";
