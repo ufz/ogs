@@ -303,7 +303,7 @@ void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_
 			out << k << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
 			unsigned nElemNodes (ele_vec[i]->getNNodes());
 			for(size_t j = 0; j < nElemNodes; ++j)
-				out << ele_vec[i]->getNode(nElemNodes - j - 1)->getID() << " ";
+				out << ele_vec[i]->getNode(j)->getID() << " ";
 			out << "\n";
 			++k;
 		}
