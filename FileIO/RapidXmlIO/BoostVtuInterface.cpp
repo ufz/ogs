@@ -442,6 +442,7 @@ int BoostVtuInterface::write(std::ostream& stream)
 	celldata_node.put("<xmlattr>.Scalars", "MaterialIDs");
 
 	std::stringstream oss(std::stringstream::out);
+	oss.precision(stream.precision());
 	oss << std::endl << data_array_indent;
 	for (unsigned i = 0; i < nElems; i++)
 		oss << elements[i]->getValue() << " ";
