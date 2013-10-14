@@ -48,7 +48,7 @@ public:
 	}
 
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
-	int readFile(std::vector<FEMCondition*> &conditions, const QString &fileName);
+	int readFile(const QString &fileName, std::vector<FEMCondition*> &conditions);
 
 	void setConditionType(FEMCondition::CondType type) { _type = type; };
 

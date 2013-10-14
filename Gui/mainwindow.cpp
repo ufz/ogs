@@ -552,7 +552,6 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
-			xml.readFile(fileName);
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
@@ -886,7 +885,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		std::vector<FEMCondition*> conditions;
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
-		if (xml.readFile(conditions, fileName))
+		if (xml.readFile(fileName, conditions))
 			this->addFEMConditions(conditions);
 		else
 			OGSError::box("Failed to load FEM conditions.\n Please see console for details.");

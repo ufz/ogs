@@ -27,7 +27,7 @@ XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schema
 {
 }
 
-int XmlCndInterface::readFile(std::vector<FEMCondition*> &conditions, const QString &fileName)
+int XmlCndInterface::readFile(const QString &fileName, std::vector<FEMCondition*> &conditions)
 {
 	QFile* file = new QFile(fileName);
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
