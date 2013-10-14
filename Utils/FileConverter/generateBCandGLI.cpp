@@ -36,26 +36,24 @@ int main (int argc, char* argv[])
 		std::cout << "Usage: " << argv[0] << " gml-file" << std::endl;
 		return -1;
 	}
-	ProjectData* project_data (new ProjectData);
-	GeoLib::GEOObjects* geo_objs(project_data->getGEOObjects ());
+	GeoLib::GEOObjects geo_objs;
 	std::string schema_name(
 	        "/home/fischeth/workspace/OGS-FirstFloor/sources/FileIO/OpenGeoSysGLI.xsd");
-	FileIO::XmlGmlInterface xml(project_data, schema_name);
+	FileIO::XmlGmlInterface xml(geo_objs, schema_name);
 	std::string fname (argv[1]);
 	xml.readFile(QString::fromStdString (fname));
 
 	std::vector<std::string> geo_names;
-	geo_objs->getGeometryNames (geo_names);
+	geo_objs.getGeometryNames (geo_names);
 	if (geo_names.empty ())
 	{
 		std::cout << "no geometries found" << std::endl;
 		return -1;
 	}
-	const GeoLib::SurfaceVec* sfc_vec (geo_objs->getSurfaceVecObj(geo_names[0]));
+	const GeoLib::SurfaceVec* sfc_vec (geo_objs.getSurfaceVecObj(geo_names[0]));
 	if (!sfc_vec)
 	{
 		std::cout << "could not found surfaces" << std::endl;
-		delete project_data;
 		return -1;
 	}
 	const size_t n_sfc (sfc_vec->size());
@@ -99,7 +97,7 @@ int main (int argc, char* argv[])
 	}
 	std::cout << "done" << std::endl;
 
-	std::vector<GeoLib::Point*> const* geo_pnts (geo_objs->getPointVec(geo_names[0]));
+	std::vector<GeoLib::Point*> const* geo_pnts (geo_objs.getPointVec(geo_names[0]));
 	// write gli file and bc file
 	std::ofstream gli_out ("TB.gli");
 	std::ofstream bc_out ("TB.bc");
@@ -124,6 +122,4 @@ int main (int argc, char* argv[])
 		gli_out.close ();
 		bc_out.close ();
 	}
-
-	delete project_data;
 }

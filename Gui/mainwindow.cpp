@@ -549,17 +549,19 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		else if (fi.suffix().toLower() == "gml")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-			XmlGmlInterface xml(&_project, schemaName);
+			XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
+			xml.readFile(fileName);
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-			XmlStnInterface xml(&_project, schemaName);
+			XmlStnInterface xml(*(_project.getGEOObjects()), schemaName);
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
+
 		}
 		// OpenGeoSys mesh files
 		else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
@@ -939,7 +941,7 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-	XmlGmlInterface xml(&_project, schemaName);
+	XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
@@ -947,7 +949,7 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-	XmlStnInterface xml(&_project, schemaName);
+	XmlStnInterface xml(*(_project.getGEOObjects()), schemaName);
 	xml.setNameForExport(listName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }

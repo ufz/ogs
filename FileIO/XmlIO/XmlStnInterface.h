@@ -37,7 +37,7 @@ public:
 	 * \param project Project data.
 	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XmlStnInterface(ProjectData* project, const std::string &schemaFile);
+	XmlStnInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile);
 
 	/// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
 	int readFile(const QString &fileName);
@@ -66,8 +66,7 @@ private:
 	/// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser
 	void rapidReadStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
 
-
-	ProjectData* _project;
+	GeoLib::GEOObjects& _geo_objs;
 };
 
 }

@@ -30,14 +30,13 @@
 
 namespace FileIO
 {
-XmlStnInterface::XmlStnInterface(ProjectData* project, const std::string &schemaFile) :
-	XMLInterface(schemaFile), _project(project)
+XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile) :
+	XMLInterface(schemaFile), _geo_objs(geo_objs)
 {
 }
 
 int XmlStnInterface::readFile(const QString &fileName)
 {
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
 	QFile* file = new QFile(fileName);
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
@@ -82,7 +81,7 @@ int XmlStnInterface::readFile(const QString &fileName)
 		}
 
 		if (!stations->empty())
-			geoObjects->addStationVec(stations, stnName);
+			_geo_objs.addStationVec(stations, stnName);
 		else
 			delete stations;
 	}
@@ -219,8 +218,6 @@ int XmlStnInterface::write(std::ostream& stream)
 		return 0;
 	}
 
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
-
 	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
 	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysSTN.xsl\"?>\n\n"; // stylefile definition
 
@@ -230,7 +227,7 @@ int XmlStnInterface::write(std::ostream& stream)
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysSTN.xsd" );
 
-	const std::vector<GeoLib::Point*>* stations (geoObjects->getStationVec(_exportName));
+	const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
 	bool isBorehole =
 	        (static_cast<GeoLib::Station*>((*stations)[0])->type() ==
 	         GeoLib::Station::StationType::BOREHOLE) ? true : false;
@@ -339,8 +336,6 @@ void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
 
 int XmlStnInterface::rapidReadFile(const std::string &fileName)
 {
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
-
 	std::ifstream in(fileName.c_str());
 	if (in.fail())
 	{
@@ -387,7 +382,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 		}
 
 		if (!stations->empty())
-			geoObjects->addStationVec(stations, stnName);
+			_geo_objs.addStationVec(stations, stnName);
 		else
 			delete stations;
 	}

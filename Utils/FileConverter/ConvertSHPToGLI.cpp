@@ -82,12 +82,11 @@ void convertPoints (DBFHandle dbf_handle,
 		}
 	}
 
-	ProjectData* project_data (new ProjectData);
-	GeoLib::GEOObjects* geo_objs (project_data->getGEOObjects());
+	GeoLib::GEOObjects geo_objs;
 	if (station)
-		geo_objs->addStationVec(points, points_group_name);
+		geo_objs.addStationVec(points, points_group_name);
 	else
-		geo_objs->addPointVec(points, points_group_name);
+		geo_objs.addPointVec(points, points_group_name);
 
 	std::string schema_name;
 	if (station)
@@ -96,16 +95,14 @@ void convertPoints (DBFHandle dbf_handle,
 		schema_name = "OpenGeoSysGLI.xsd";
 
 	if (station) {
-		FileIO::XmlStnInterface xml (project_data, schema_name);
+		FileIO::XmlStnInterface xml (geo_objs, schema_name);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	} else {
-		FileIO::XmlGmlInterface xml (project_data, schema_name);
+		FileIO::XmlGmlInterface xml (geo_objs, schema_name);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	}
-
-	delete project_data;
 }
 
 void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_fields)

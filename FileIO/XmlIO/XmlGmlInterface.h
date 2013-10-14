@@ -31,7 +31,7 @@ public:
 	 * \param project Project data.
 	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XmlGmlInterface(ProjectData* project, const std::string &schemaFile);
+	XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile);
 
 	virtual ~XmlGmlInterface() {};
 
@@ -61,7 +61,7 @@ private:
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* sfc_names );
 
-	ProjectData* _project;
+	GeoLib::GEOObjects& _geo_objs;
 };
 
 }

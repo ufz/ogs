@@ -40,24 +40,22 @@ int main (int argc, char* argv[])
 
 	std::string schema_name(
 	        "/home/fischeth/workspace/OGS-FirstFloor/sources/FileIO/OpenGeoSysGLI.xsd");
-	ProjectData* project_data (new ProjectData);
-	GeoLib::GEOObjects* geo_objs (project_data->getGEOObjects());
-	FileIO::XmlGmlInterface xml(project_data, schema_name);
+	GeoLib::GEOObjects geo_objs;
+	FileIO::XmlGmlInterface xml(geo_objs, schema_name);
 	std::string fname (argv[1]);
 	xml.readFile(QString::fromStdString (fname));
 
 	std::vector<std::string> geo_names;
-	geo_objs->getGeometryNames (geo_names);
+	geo_objs.getGeometryNames (geo_names);
 	if (geo_names.empty ())
 	{
 		std::cout << "no geometries found" << std::endl;
 		return -1;
 	}
-	const GeoLib::PolylineVec* ply_vec (geo_objs->getPolylineVecObj(geo_names[0]));
+	const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
 	if (!ply_vec)
 	{
 		std::cout << "could not found polylines" << std::endl;
-		delete project_data;
 		return -1;
 	}
 	const size_t n_ply (ply_vec->size());
@@ -84,7 +82,7 @@ int main (int argc, char* argv[])
 	if (argc == 2)
 		return 0;
 
-	std::vector<GeoLib::Point*> const* geo_pnts (geo_objs->getPointVec(geo_names[0]));
+	std::vector<GeoLib::Point*> const* geo_pnts (geo_objs.getPointVec(geo_names[0]));
 	// write gli file and bc file
 	std::ofstream gli_out ("TB.gli");
 	std::ofstream bc_out ("TB.bc");
@@ -110,6 +108,4 @@ int main (int argc, char* argv[])
 		gli_out.close ();
 		bc_out.close ();
 	}
-
-	delete project_data;
 }
