@@ -44,7 +44,7 @@ void ProcessView::selectionChanged( const QItemSelection &selected,
                                       const QItemSelection &deselected )
 {
 	emit itemSelectionChanged(selected, deselected);
-	return QTreeView::selectionChanged(selected, deselected);
+	QTreeView::selectionChanged(selected, deselected);
 }
 
 void ProcessView::contextMenuEvent( QContextMenuEvent* event )

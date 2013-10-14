@@ -80,5 +80,5 @@ void ColorPickerPushButton::setColor( QColor color )
 
 void ColorPickerPushButton::setColor( double* color )
 {
-	return setColor(QColor::fromRgbF(color[0], color[1], color[2]));
+	setColor(QColor::fromRgbF(color[0], color[1], color[2]));
 }
