@@ -349,7 +349,7 @@ PetscReal PETScLinearSolver::getNormUnknowns(NormType  nmtype)
 
 void PETScLinearSolver::initializeMatVec( )
 {
-   A.zeroMatrix();
+   A.setZero();
 
    //if(full_fill_A_b_x)
     {

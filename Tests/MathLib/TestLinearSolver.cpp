@@ -401,5 +401,64 @@ TEST(Math, CheckInterface_PETSc_2)
 }
 #endif
 
+#define test_p3
+#ifdef test_p3
+// Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
+TEST(Math, CheckInterface_PETSc_3)
+{
+   int mrank, msize;
+
+   MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+   MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+
+   if(msize != 3)
+   {
+      PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc solver. The numnber of cores must be 3 exactly");
+
+     PetscFinalize();
+     exit(EXIT_FAILURE);
+   }
+
+   PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nUse PETSc solver");
+   PetscSynchronizedPrintf(PETSC_COMM_WORLD, "Number of CPUs: %d, rank: %d\n", msize, mrank);
+   PetscSynchronizedFlush(PETSC_COMM_WORLD);
+
+
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    //t_solver.put("solver_package", "LIS");
+    t_solver.put("solver_type", "cg");
+    t_solver.put("precon_type", "none");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
+
+
+
+    int sparse_info[4] = {Example1::dim_eqs, Example1::dim_eqs, Example1::dim_eqs, Example1::dim_eqs};
+
+
+    MathLib::PETScMatrix A;
+    A.set_rank_size(mrank, msize);
+    A.Init(Example1::dim_eqs, sparse_info);
+
+    MathLib::PETScVector b(Example1::dim_eqs);
+    MathLib::PETScVector x;
+    b.CloneMe(x);
+
+ 
+    MathLib::PETScLinearSolver petsc_leq(A, b, x);
+    //petsc_leq.set_rank_size(mrank, msize);
+    //x.set_rank_size(mrank, msize);
+    //b.set_rank_size(mrank, msize);
+    petsc_leq.Init(Example1::dim_eqs);
+
+    checkLinearSolverInterface<MathLib::PETScLinearSolver, std::vector<double>>(petsc_leq, t_root);
+
+}
+#endif
+
+
 #endif
 

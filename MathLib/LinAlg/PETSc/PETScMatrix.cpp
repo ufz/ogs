@@ -77,7 +77,7 @@ void PETScMatrix::Create(const  PetscInt m, const PetscInt n)
   //MatSeqAIJSetPreallocation(A,d_nz,PETSC_NULL);
   MatGetOwnershipRange(A,&i_start,&i_end);
 
-  // std::cout<<"sub_a  "<<i_start<<";   sub_d "<<i_end<<std::endl;
+  //  std::cout<<"sub_a  "<<i_start<<";   sub_d "<<i_end<<std::endl;
 }
 
 void  PETScMatrix::getLocalRowColumnSizes(int *m, int *n)
@@ -90,9 +90,14 @@ void  PETScMatrix::getOwnerRange(int *start_r, int *end_r)
   *end_r = i_end;
 }
 
+void PETScMatrix::setValue(const PetscInt i, const PetscInt j, const PetscScalar value)
+{
+
+  MatSetValue(A, i, j, value, INSERT_VALUES);
+}
 
 
-void PETScMatrix::addEntry(const PetscInt i, const PetscInt j, const PetscScalar value)
+void PETScMatrix::add(const PetscInt i, const PetscInt j, const PetscScalar value)
 {
 
   MatSetValue(A, i, j, value, ADD_VALUES);
@@ -141,6 +146,14 @@ void PETScMatrix::Viewer(std::string file_name)
   exit(0);
 #endif 
  
+}
+
+
+
+bool finalizeMatrixAssembly(PETScMatrix &mat)
+{
+   mat.finalAssemble();
+   return true;
 }
 
 } //end of namespace
