@@ -82,7 +82,8 @@ void convertPoints (DBFHandle dbf_handle,
 		}
 	}
 
-	GeoLib::GEOObjects* geo_objs (new GeoLib::GEOObjects());
+	ProjectData* project_data (new ProjectData);
+	GeoLib::GEOObjects* geo_objs (project_data->getGEOObjects());
 	if (station)
 		geo_objs->addStationVec(points, points_group_name);
 	else
@@ -93,8 +94,7 @@ void convertPoints (DBFHandle dbf_handle,
 		schema_name = "OpenGeoSysSTN.xsd";
 	else
 		schema_name = "OpenGeoSysGLI.xsd";
-	ProjectData* project_data (new ProjectData);
-	project_data->setGEOObjects (geo_objs);
+
 	if (station) {
 		FileIO::XmlStnInterface xml (project_data, schema_name);
 		xml.setNameForExport(points_group_name);

@@ -13,13 +13,21 @@
  */
 
 #include "ProjectData.h"
+
+// BaseLib
 #include "StringTools.h"
 
 #include "Mesh.h"
 
 ProjectData::ProjectData()
-: _geoObjects (NULL)
-{}
+:
+#ifdef OGS_BUILD_GUI
+	_geoObjects(new GEOModels())
+#else
+	_geoObjects(new GeoLib::GEOObjects())
+#endif
+{
+}
 
 ProjectData::~ProjectData()
 {

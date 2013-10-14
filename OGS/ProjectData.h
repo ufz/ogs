@@ -19,6 +19,9 @@
 #include "FEMEnums.h"
 #include "GEOObjects.h"
 
+// Gui/DataView
+#include "Gui/DataView/GEOModels.h"
+
 namespace MeshLib {
 	class Mesh;
 }
@@ -43,9 +46,6 @@ public:
 
 	// Returns the GEOObjects containing all points, polylines and surfaces
 	GeoLib::GEOObjects* getGEOObjects() { return _geoObjects; }
-
-	// Returns the GEOObjects containing all points, polylines and surfaces
-	void setGEOObjects(GeoLib::GEOObjects* geo_objects) { _geoObjects = geo_objects; }
 
 	//** Mesh functionality **//
 
@@ -106,7 +106,11 @@ public:
 								  FEMCondition::CondType cond_type = FEMCondition::UNSPECIFIED);
 
 private:
-	GeoLib::GEOObjects* _geoObjects;
+#ifdef OGS_BUILD_GUI
+	GEOModels *_geoObjects;
+#else
+	GeoLib::GEOObjects *_geoObjects;
+#endif
 	std::vector<MeshLib::Mesh*> _msh_vec;
 	std::vector<ProcessInfo*> _pcs_vec;
 	std::vector<FEMCondition*> _cond_vec;

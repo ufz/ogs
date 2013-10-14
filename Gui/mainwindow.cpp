@@ -127,8 +127,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	setupUi(this);
 
 	// Setup various models
-	_geoModels = new GEOModels();
-	_project.setGEOObjects(_geoModels);
 	_meshModels = new MshModel(_project);
 	_elementModel = new ElementTreeModel();
 	_processModel = new ProcessModel(_project);

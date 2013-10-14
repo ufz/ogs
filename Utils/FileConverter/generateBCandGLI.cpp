@@ -36,9 +36,8 @@ int main (int argc, char* argv[])
 		std::cout << "Usage: " << argv[0] << " gml-file" << std::endl;
 		return -1;
 	}
-	GeoLib::GEOObjects* geo_objs (new GeoLib::GEOObjects);
 	ProjectData* project_data (new ProjectData);
-	project_data->setGEOObjects (geo_objs);
+	GeoLib::GEOObjects* geo_objs(project_data->getGEOObjects ());
 	std::string schema_name(
 	        "/home/fischeth/workspace/OGS-FirstFloor/sources/FileIO/OpenGeoSysGLI.xsd");
 	FileIO::XmlGmlInterface xml(project_data, schema_name);

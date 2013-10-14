@@ -32,8 +32,7 @@ TEST(FileIO, XmlGmlWriterTest)
 	std::string test_data_file(std::string(SOURCEPATH).append("/Tests/FileIO/xmlgmltestdata.gml"));
 
 	ProjectData project;
-	GeoLib::GEOObjects* geo_objects = new GeoLib::GEOObjects;
-	project.setGEOObjects(geo_objects);
+	GeoLib::GEOObjects* geo_objects (project.getGEOObjects());
 
 	//setup test data
 	std::string geo_name("TestData");
@@ -94,8 +93,7 @@ TEST(FileIO, XmlGmlReaderTest)
 	std::string geo_name("TestData");
 
 	ProjectData project;
-	GeoLib::GEOObjects* geo_objects = new GeoLib::GEOObjects;
-	project.setGEOObjects(geo_objects);
+	GeoLib::GEOObjects* geo_objects (project.getGEOObjects());
 	
 	const std::string schemaName(std::string(SOURCEPATH).append("/FileIO/OpenGeoSysGLI.xsd"));
 	FileIO::XmlGmlInterface xml(&project, schemaName);

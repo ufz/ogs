@@ -37,11 +37,11 @@ int main (int argc, char* argv[])
 		std::endl;
 		return -1;
 	}
-	GeoLib::GEOObjects* geo_objs (new GeoLib::GEOObjects);
+
 	std::string schema_name(
 	        "/home/fischeth/workspace/OGS-FirstFloor/sources/FileIO/OpenGeoSysGLI.xsd");
 	ProjectData* project_data (new ProjectData);
-	project_data->setGEOObjects (geo_objs);
+	GeoLib::GEOObjects* geo_objs (project_data->getGEOObjects());
 	FileIO::XmlGmlInterface xml(project_data, schema_name);
 	std::string fname (argv[1]);
 	xml.readFile(QString::fromStdString (fname));
