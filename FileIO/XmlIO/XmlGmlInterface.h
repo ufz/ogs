@@ -61,6 +61,7 @@ private:
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* sfc_names );
 
+	ProjectData* _project;
 };
 
 }

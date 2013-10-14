@@ -23,7 +23,7 @@
 namespace FileIO
 {
 XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schemaFile)
-	: XMLInterface(project, schemaFile), _type(FEMCondition::UNSPECIFIED)
+	: XMLInterface(schemaFile), _type(FEMCondition::UNSPECIFIED), _project(project)
 {
 }
 

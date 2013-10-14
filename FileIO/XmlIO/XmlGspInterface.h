@@ -46,6 +46,8 @@ protected:
 
 private:
 	std::string _filename;
+
+	ProjectData* _project;
 };
 
 }

@@ -31,7 +31,7 @@
 namespace FileIO
 {
 XmlGspInterface::XmlGspInterface(ProjectData* project, const std::string &schemaFile) :
-	XMLInterface(project, schemaFile)
+	XMLInterface(schemaFile), _project(project)
 {
 }
 

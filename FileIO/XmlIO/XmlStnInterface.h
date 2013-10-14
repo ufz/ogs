@@ -65,6 +65,9 @@ private:
 
 	/// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser
 	void rapidReadStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
+
+
+	ProjectData* _project;
 };
 
 }

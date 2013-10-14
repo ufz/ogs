@@ -67,6 +67,8 @@ private:
 	                    const QString &condText, const QString &geoName) const;
 
 	FEMCondition::CondType _type;
+
+	ProjectData* _project;
 };
 }
 

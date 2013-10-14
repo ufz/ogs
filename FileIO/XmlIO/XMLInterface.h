@@ -37,10 +37,9 @@ class XMLInterface : public Writer
 public:
 	/**
 	 * Constructor
-	 * \param project Project data.
 	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XMLInterface(ProjectData* project, const std::string &schemaFile);
+	XMLInterface(const std::string &schemaFile);
 
 	virtual ~XMLInterface() {}
 
@@ -69,8 +68,6 @@ protected:
 
 	/// Checks if the given file is conform to the given hash.
 	bool hashIsGood(const QString &fileName, const QByteArray &hash) const;
-
-	ProjectData* _project;
 
 	std::string _exportName;
 	std::string _schemaName;

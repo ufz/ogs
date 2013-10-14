@@ -29,8 +29,8 @@
 
 namespace FileIO
 {
-XMLInterface::XMLInterface(ProjectData* project, const std::string &schemaFile) :
-	_project(project), _exportName(""), _schemaName(schemaFile)
+XMLInterface::XMLInterface(const std::string &schemaFile) :
+	_exportName(""), _schemaName(schemaFile)
 {
 }
 

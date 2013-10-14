@@ -31,7 +31,7 @@
 namespace FileIO
 {
 XmlStnInterface::XmlStnInterface(ProjectData* project, const std::string &schemaFile) :
-	XMLInterface(project, schemaFile)
+	XMLInterface(schemaFile), _project(project)
 {
 }
 
