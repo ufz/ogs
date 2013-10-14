@@ -173,8 +173,8 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		// edge_nodes array will be deleted from Line object
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
-		edge_nodes[0] = nodes[idx[1]];
-		edge_nodes[1] = nodes[idx[0]];
+		for (unsigned k(0); k < 2; ++k)
+			edge_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Line(edge_nodes, patch_index);
 		break;
 	}
@@ -183,7 +183,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		for (unsigned k(0); k < 3; ++k)
-			tri_nodes[k] = nodes[idx[2 - k]];
+			tri_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Tri(tri_nodes, patch_index);
 		break;
 	}
@@ -192,7 +192,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; ++k)
-			quad_nodes[k] = nodes[idx[3 - k]];
+			quad_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Quad(quad_nodes, patch_index);
 		break;
 	}
@@ -201,7 +201,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; ++k)
-			tet_nodes[k] = nodes[idx[3 - k]];
+			tet_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Tet(tet_nodes, patch_index);
 		break;
 	}
@@ -210,7 +210,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k < 8; ++k)
-			hex_nodes[k] = nodes[idx[7 - k]];
+			hex_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Hex(hex_nodes, patch_index);
 		break;
 	}
@@ -219,7 +219,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 5; ++k)
-			pyramid_nodes[k] = nodes[idx[4 - k]];
+			pyramid_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
 		break;
 	}
@@ -228,12 +228,13 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 			ss >> idx[i];
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k < 6; ++k)
-			prism_nodes[k] = nodes[idx[5 - k]];
+			prism_nodes[k] = nodes[idx[k]];
 		elem = new MeshLib::Prism(prism_nodes, patch_index);
 		break;
 	}
 	default:
 		elem = NULL;
+		break;
 	}
 
 	delete [] idx;
@@ -262,7 +263,7 @@ int MeshIO::write(std::ostream &out)
 	out << "$ELEMENTS\n"
 		<< "  ";
 
-	writeElementsExceptLines(_mesh->getElements(), out);
+	writeElements(_mesh->getElements(), out);
 
 	out << " $LAYER\n"
 		<< "  0\n"
@@ -276,37 +277,18 @@ void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 	_mesh = mesh;
 }
 
-void MeshIO::writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_vec,
+void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
                                       std::ostream &out)
 {
 	const size_t ele_vector_size (ele_vec.size());
-	const double epsilon (std::numeric_limits<double>::epsilon());
-	std::vector<bool> non_line_element (ele_vector_size, true);
-	std::vector<bool> non_null_element (ele_vector_size, true);
-	size_t n_elements(0);
 
+	out << ele_vector_size << "\n";
 	for (size_t i(0); i < ele_vector_size; ++i) {
-		if ((ele_vec[i])->getGeomType() == MeshElemType::LINE) {
-			non_line_element[i] = false;
-			non_null_element[i] = false;
-		} else {
-			if (ele_vec[i]->getContent() < epsilon) {
-				non_null_element[i] = false;
-			} else {
-				++n_elements;
-			}
-		}
-	}
-	out << n_elements << "\n";
-	for (size_t i(0), k(0); i < ele_vector_size; ++i) {
-		if (non_line_element[i] && non_null_element[i]) {
-			out << k << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
-			unsigned nElemNodes (ele_vec[i]->getNNodes());
-			for(size_t j = 0; j < nElemNodes; ++j)
-				out << ele_vec[i]->getNode(nElemNodes - j - 1)->getID() << " ";
-			out << "\n";
-			++k;
-		}
+		out << i << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
+		unsigned nElemNodes (ele_vec[i]->getNNodes());
+		for(size_t j = 0; j < nElemNodes; ++j)
+			out << ele_vec[i]->getNode(j)->getID() << " ";
+		out << "\n";
 	}
 }
 
