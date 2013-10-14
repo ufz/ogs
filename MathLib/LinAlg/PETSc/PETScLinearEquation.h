@@ -108,11 +108,8 @@ public:
     PetscInt getMPI_Size() const {return mpi_size;} 
     PetscInt getMPI_Rank() const {return rank;} 
 
-    void EQSV_Viewer(std::string file_name);
+    void Viewer(std::string file_name);
    
-    /// Indicator of non-PETSc matrix
-    static bool nonPETSCMatrix() {return false; }
-
   private:
     PETSc_Mat  A;
     PETSc_Vec b;

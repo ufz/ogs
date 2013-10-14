@@ -67,6 +67,7 @@ public:
     /// Get the number of global unknows
     int Size() const {return m_size;}
 
+    //  PETScMatrix &getMatrix() { return A; }
  
     void initializeMatVec();
 

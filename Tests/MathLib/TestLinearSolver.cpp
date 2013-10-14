@@ -173,30 +173,17 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
        }
     } 
 
-    std::cout<<"Here 0"<<std::endl;
-
-
     //-------------------------------------------------------------------
     //
     // Solver configuration   
     l_eqs.Config(ls_option);
-
-
-    std::cout<<"Here 01"<<std::endl;
-
-
     l_eqs.initializeMatVec();
 
-
-    std::cout<<"Here 1"<<std::endl;
 
     // local assembly
     l_eqs.addMatrixEntries(msize, idx_r, ex1.dim_eqs, idx_c, local_matrix);
     // No need to change RHS for this example.    
     l_eqs.finalAssemble();
-   
-   
-    std::cout<<"Here 2"<<std::endl;
 
   
     //-------------------------------------------------------------------
@@ -212,7 +199,6 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
         bc_size_rank++;  
     }
 
-    std::cout<<"Here 3"<<std::endl;
 
     if(bc_size_rank > 0)
     {
@@ -239,29 +225,21 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
     //-------------------------------------------------------------------
 
 
-    
-    std::cout<<"Here 4"<<std::endl;
-
-
     // Apply Dirichlet BC
     l_eqs.applyKnownSolutions(bc_size_rank, bc_eqs_id,  bc_eqs_value);
-
-    std::cout<<"Here 5"<<std::endl;
 
 
     // Solve the linear equation
     l_eqs.Solver();
 
-    std::cout<<"Here 6"<<std::endl;
 
+     l_eqs.mappingSolution(); 
+     double *x = l_eqs.getGlobalSolution();  //T_VECTOR x, also works, template argument T_VECTOR will be removed 
 
-    l_eqs.mappingSolution();
- 
-    double *x = l_eqs.getGlobalSolution();  //T_VECTOR x, also works, template argument T_VECTOR will be removed 
 
     // Convergence test
-    ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
-  
+     ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
+
 
     // Test
     if(bc_eqs_id != nullptr)
@@ -317,6 +295,8 @@ TEST(Math, CheckInterface_Lis)
 
 #if defined(USE_PETSC)
 
+#define test_p1
+#ifdef test_p1
 // Test class MathLib::PETScLinearEquation with  the overload interface
 #include "MathLib/LinAlg/PETSc/PETScLinearEquation.h"
 TEST(Math, CheckInterface_PETSc_1)
@@ -361,6 +341,10 @@ TEST(Math, CheckInterface_PETSc_1)
 
 }
 
+#endif
+
+#define test_p2
+#ifdef test_p2
 // Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
 TEST(Math, CheckInterface_PETSc_2)
 {
@@ -407,12 +391,15 @@ TEST(Math, CheckInterface_PETSc_2)
 
  
     MathLib::PETScLinearSolver petsc_leq(A, b, x);
-
+    //petsc_leq.set_rank_size(mrank, msize);
+    //x.set_rank_size(mrank, msize);
+    //b.set_rank_size(mrank, msize);
+    petsc_leq.Init(Example1::dim_eqs);
 
     checkLinearSolverInterface<MathLib::PETScLinearSolver, std::vector<double>>(petsc_leq, t_root);
 
 }
-
+#endif
 
 #endif
 

@@ -64,10 +64,12 @@ public:
       @param idxm,  global row indicies of the submatrix
       @param n,     number of columns of the submatrix.
       @param idxn,  global culumn indicies of the submatrix.
+      @param v,     valuse.
    */
 
-    void addEntries(const PetscInt m,const PetscInt idxm[], const PetscInt n, 
-			  const PetscInt idxn[], const PetscScalar v[]);
+    void addEntries(const PetscInt m, const PetscInt idxm[], 
+                    const PetscInt n, const PetscInt idxn[], 
+                    const PetscScalar v[]);
 
     /// Perform MPI collection of assembled entries in buffer
     void finalAssemble(const MatAssemblyType type = MAT_FINAL_ASSEMBLY); //MAT_FLUSH_ASSEMBLY

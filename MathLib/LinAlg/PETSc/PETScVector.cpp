@@ -66,6 +66,9 @@ void  PETScVector::Create(PetscInt m)
 
 void PETScVector::CloneMe(PETScVector &new_vec)
 {
+    
+    new_vec.m_size_loc = PETSC_DECIDE; 
+    new_vec.m_size = m_size;
     VecDuplicate(v, &new_vec.v);
 }
 
@@ -85,6 +88,7 @@ void  PETScVector::getOwnerRange(int *start_r, int *end_r)
 
 void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
 {
+
 
 #ifdef TEST_MEM_PETSC
    //TEST
@@ -110,7 +114,7 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
     u1[i] = xp[i];
 
 
-  PetscScalar *global_buff = new double[m_size];
+  PetscScalar *global_buff = new PetscScalar[m_size];
 
 
   // Collect solution from processes.
@@ -142,10 +146,10 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
   }
  
 
-  delete [] global_buff;
 
   VecRestoreArray(v, &xp);
 
+  delete [] global_buff;
 
   //TEST
 #ifdef TEST_MEM_PETSC

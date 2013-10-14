@@ -40,7 +40,13 @@ PETScLinearSolver :: PETScLinearSolver (PETScMatrix &stiffness_matrix,
    ltolerance = 1.e-10;
    time_elapsed = 0.0;   
    m_size_loc = PETSC_DECIDE;
-  
+
+   mpi_size = A.getMPI_Size();
+   rank = A.getMPI_Rank();
+
+   x.set_rank_size(rank, mpi_size);
+   b.set_rank_size(rank, mpi_size);
+
 
  }
 
@@ -51,9 +57,9 @@ PETScLinearSolver:: ~PETScLinearSolver()
   if(lsolver) KSPDestroy(&lsolver);
   // if(prec) PCDestroy(&prec);
 
-  if(global_x0)
+  if(global_x0 != nullptr)
     delete []  global_x0;
-  if(global_x1)
+  if(global_x1 != nullptr)
     delete []  global_x1;
 
   
@@ -68,10 +74,10 @@ void PETScLinearSolver::Init(const PetscInt size)
 {
    m_size = size;
 
-   if(!global_x0)
+   if(global_x0 == nullptr)
      global_x0 = new PetscScalar[m_size];
    
-   if(!global_x1)
+   if(global_x1 == nullptr)
      global_x1 = new PetscScalar[m_size];
 
 }
@@ -283,13 +289,11 @@ void PETScLinearSolver::finalAssemble()
 
 }
 
-void PETScLinearSolver::addMatrixEntries(const PetscInt m,const PetscInt idxm[], const PetscInt n, 
-			  const PetscInt idxn[], const PetscScalar v[])
+void PETScLinearSolver::addMatrixEntries(const PetscInt m, const PetscInt idxm[],                                         const PetscInt n, const PetscInt idxn[],
+                                         const PetscScalar v[])
 {
-   A.addEntries(m, idxm, n, idxn, v);
 
-   //TEST
-   A.Viewer("test");
+    A.addEntries(m, idxm, n, idxn, v);
 }
 
 
@@ -297,6 +301,8 @@ void PETScLinearSolver::applyKnownSolutions(PetscInt ni,const PetscInt ix[], con
 {
     A.zeroRows_in_Matrix(ni, ix);
     A.finalAssemble();
+
+
 
     //if(full_fill_A_b_x)
     {
@@ -318,6 +324,7 @@ void PETScLinearSolver::mappingSolution()
 
 PetscScalar *PETScLinearSolver::getGlobalSolution() const
 {
+
   return global_x1;
 }
 
@@ -355,7 +362,7 @@ void PETScLinearSolver::initializeMatVec( )
 
 void PETScLinearSolver::Viewer(std::string file_name)
 {
-  std::string fname = file_name + "_eqs_dump";
+  std::string fname = file_name + "_eqs_dump_";
      A.Viewer(fname + "matrix");
 
      // if(full_fill_A_b_x)
@@ -365,7 +372,7 @@ void PETScLinearSolver::Viewer(std::string file_name)
     }
  
 
-#define  nEXIT_TEST 
+#define  EXIT_TEST 
 #ifdef EXIT_TEST 
   if(lsolver) KSPDestroy(&lsolver);
   // if(prec) PCDestroy(&prec);

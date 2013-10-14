@@ -107,7 +107,6 @@ void PETScMatrix::addEntries(const PetscInt m,const int idxm[], const PetscInt n
 
 
 
-
 void PETScMatrix::zeroRows_in_Matrix(const PetscInt nrows, const  PetscInt *rows)
 {
   PetscScalar one = 1.0;

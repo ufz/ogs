@@ -611,9 +611,7 @@ void PETScLinearEquation::zeroRows_in_Matrix(const int nrows, const  PetscInt *r
     MatZeroRows(A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
 }
 
-
-
-void PETScLinearEquation::EQSV_Viewer(std::string file_name)
+void PETScLinearEquation::Viewer(std::string file_name)
 {
   PetscViewer viewer;
   std::string fname = file_name + "_eqs_dump.txt";
