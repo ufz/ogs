@@ -12,6 +12,7 @@
  *
  */
 
+#include "FEMCondition.h"
 #include "XmlCndInterface.h"
 
 #include <QFile>

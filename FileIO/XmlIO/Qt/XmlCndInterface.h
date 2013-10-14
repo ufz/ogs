@@ -15,6 +15,8 @@
 #ifndef XMLCNDINTERFACE_H
 #define XMLCNDINTERFACE_H
 
+#include "XMLInterface.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
