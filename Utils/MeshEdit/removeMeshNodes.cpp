@@ -8,7 +8,7 @@
 #include "Legacy/MeshIO.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "MeshEditing/removeMeshEntities.h"
+#include "MeshEditing/removeMeshNodes.h"
 
 int main (int argc, char* argv[])
 {
