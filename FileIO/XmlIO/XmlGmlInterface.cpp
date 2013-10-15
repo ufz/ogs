@@ -24,7 +24,7 @@
 namespace FileIO
 {
 XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile) :
-	XMLInterface(schemaFile), _geo_objs(geo_objs)
+	XMLInterface(), XMLQtInterface(schemaFile), _geo_objs(geo_objs)
 {
 }
 

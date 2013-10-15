@@ -16,6 +16,7 @@
 #define XMLGMLINTERFACE_H
 
 #include "XMLInterface.h"
+#include "XMLQtInterface.h"
 
 namespace FileIO
 {
@@ -23,7 +24,7 @@ namespace FileIO
 /**
  * \brief Reads and writes GeoObjects to and from XML files.
  */
-class XmlGmlInterface : public XMLInterface
+class XmlGmlInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**
@@ -62,6 +63,7 @@ private:
 	                     std::map<std::string, std::size_t>* sfc_names );
 
 	GeoLib::GEOObjects& _geo_objs;
+	std::map<std::size_t, std::size_t> _idx_map;
 };
 
 }

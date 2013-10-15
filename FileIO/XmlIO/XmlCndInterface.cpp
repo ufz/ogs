@@ -12,18 +12,21 @@
  *
  */
 
-#include "FEMCondition.h"
 #include "XmlCndInterface.h"
 
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml/QDomDocument>
-
 #include <QStringList>
+
+#include "FEMCondition.h"
+#include "ProjectData.h"
+
+
 namespace FileIO
 {
 XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schemaFile)
-	: XMLInterface(schemaFile), _type(FEMCondition::UNSPECIFIED), _project(project)
+	: XMLInterface(), XMLQtInterface(schemaFile), _type(FEMCondition::UNSPECIFIED), _project(project)
 {
 }
 

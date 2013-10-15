@@ -15,9 +15,10 @@
 #ifndef XMLSTNINTERFACE_H
 #define XMLSTNINTERFACE_H
 
-#include "XMLInterface.h"
-
 #include "RapidXML/rapidxml.hpp"
+
+#include "XMLInterface.h"
+#include "XMLQtInterface.h"
 
 namespace GeoLib {
 	class StationBorehole;
@@ -29,7 +30,7 @@ namespace FileIO
 /**
  * \brief Reads and writes Observation Sites to and from XML files.
  */
-class XmlStnInterface : public XMLInterface
+class XmlStnInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**

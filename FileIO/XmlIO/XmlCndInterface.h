@@ -15,19 +15,22 @@
 #ifndef XMLCNDINTERFACE_H
 #define XMLCNDINTERFACE_H
 
-#include "XMLInterface.h"
-
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+// FileIO/XmlIO
+#include "XMLInterface.h"
+#include "XMLQtInterface.h"
+
 class FEMCondition;
+class ProjectData;
 
 namespace FileIO
 {
 /**
  * \brief Reads and writes FEM Conditions to and from XML files.
  */
-class XmlCndInterface : public XMLInterface
+class XmlCndInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**

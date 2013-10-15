@@ -16,6 +16,7 @@
 #define XMLGSPINTERFACE_H
 
 #include "XMLInterface.h"
+#include "XMLQtInterface.h"
 
 namespace FileIO
 {
@@ -23,7 +24,7 @@ namespace FileIO
 /**
  * \brief Reads and writes project information to and from XML files.
  */
-class XmlGspInterface : public XMLInterface
+class XmlGspInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**
