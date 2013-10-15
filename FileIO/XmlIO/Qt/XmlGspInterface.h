@@ -40,6 +40,8 @@ public:
 	/// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.
 	int readFile(const QString &fileName);
 
+	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+
 	int writeToFile(std::string filename);
 
 protected:

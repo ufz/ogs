@@ -31,6 +31,7 @@ public:
 	virtual ~XMLInterface() {}
 
 	void setNameForExport(std::string const& name) { _exportName = name; }
+	virtual bool readFile(std::string const& fname) = 0;
 
 protected:
 	std::string _exportName;

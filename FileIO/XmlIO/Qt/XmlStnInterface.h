@@ -43,6 +43,8 @@ public:
 	/// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
 	int readFile(const QString &fileName);
 
+	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+
 	/// Reads an xml-file using the RapidXML parser integrated in the source code (i.e. this function is usable without Qt)
 	int rapidReadFile(const std::string &fileName);
 
