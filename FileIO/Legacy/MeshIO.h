@@ -53,7 +53,7 @@ protected:
 	int write(std::ostream &out);
 
 private:
-	void writeElementsExceptLines(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out);
+	void writeElements(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out);
 	MeshLib::Element* readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes);
 
 	double* _edge_length[2];
