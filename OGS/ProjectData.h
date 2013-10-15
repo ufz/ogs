@@ -91,7 +91,7 @@ public:
 	                                 const std::string &cond_name) const;
 
 	/// Returns all FEM Conditions with the given type from a certain geometry.
-	const std::vector<FEMCondition*> getConditions(FiniteElement::ProcessType pcs_type = FiniteElement::INVALID_PROCESS,
+	std::vector<FEMCondition*> getConditions(FiniteElement::ProcessType pcs_type = FiniteElement::INVALID_PROCESS,
 												   std::string geo_name = "",
 												   FEMCondition::CondType type = FEMCondition::UNSPECIFIED) const;
 

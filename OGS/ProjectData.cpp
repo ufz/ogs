@@ -140,7 +140,7 @@ const FEMCondition* ProjectData::getCondition(const std::string &geo_name,
 	return NULL;
 }
 
-const std::vector<FEMCondition*> ProjectData::getConditions(FiniteElement::ProcessType pcs_type,
+std::vector<FEMCondition*> ProjectData::getConditions(FiniteElement::ProcessType pcs_type,
 															std::string geo_name,
                                                             FEMCondition::CondType cond_type) const
 {
