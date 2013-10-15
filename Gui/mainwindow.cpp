@@ -899,7 +899,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 	}
 }
 
-void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
+void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 {
 	if (!conditions.empty())
 	{

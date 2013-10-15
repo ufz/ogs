@@ -102,7 +102,7 @@ protected slots:
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
-	void addFEMConditions(const std::vector<FEMCondition*> conditions);
+	void addFEMConditions(std::vector<FEMCondition*> const& conditions);
 	void writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
