@@ -17,9 +17,12 @@
 #include "Node.h"
 #include "Elements/Element.h"
 
+#include "logog/include/logog.hpp"
+
 namespace MeshLib {
 
-MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &nodes)
+
+MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh const*const mesh, const std::vector<size_t> &nodes)
 {
 	MeshLib::Mesh* new_mesh (new MeshLib::Mesh(*mesh));
 
@@ -34,42 +37,43 @@ MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<size_t> &n
 		for (size_t j = 0; j < conn_elems.size(); ++j)
 		{
 			delete conn_elems[j];
-			conn_elems[j] = NULL;
+			conn_elems[j] = nullptr;
 		}
 		delete mesh_nodes[i];
-		mesh_nodes[i] = NULL;
-	}
-
-	// create map to adjust node indices in element vector
-	const size_t nNodes = new_mesh->getNNodes();
-	std::vector<int> id_map(nNodes, -1);
-	size_t count(0);
-	for (size_t i = 0; i < nNodes; ++i)
-	{
-		if (mesh_nodes[i])
-		{
-			mesh_nodes[i]->setID(count);
-			id_map.push_back(count++);
-		}
+		mesh_nodes[i] = nullptr;
 	}
 
 	// erase null pointers from node- and element vectors
 	std::vector<MeshLib::Element*> elements = new_mesh->getElements();
-	for (std::vector<MeshLib::Element*>::iterator it = elements.begin(); it != elements.end(); )
-	{
-		if (*it)
-			++it;
-		else
-			it = elements.erase(it);
-	}
+	auto elem_vec_end = std::remove(elements.begin(), elements.end(), nullptr);
+	elements.erase(elem_vec_end, elements.end());
 
-	for (std::vector<MeshLib::Node*>::iterator it = mesh_nodes.begin(); it != mesh_nodes.end(); )
+	auto node_vec_end = std::remove(mesh_nodes.begin(), mesh_nodes.end(), nullptr);
+	mesh_nodes.erase(node_vec_end, mesh_nodes.end());
+
+	new_mesh->resetNodeIDs(); // after removing nodes set new node-IDs
+
+	return new_mesh;
+}
+
+
+MeshLib::Mesh* removeMeshElements(const MeshLib::Mesh &mesh, MeshElemType t)
+{
+	MeshLib::Mesh* new_mesh = new MeshLib::Mesh(mesh);
+	unsigned count(0);
+	std::vector<MeshLib::Element*> elements (new_mesh->getElements());
+	for (auto it = elements.begin(); it != elements.end();)
 	{
-		if (*it)
-			++it;
+		if ((*it)->getGeomType() == t)
+		{
+			delete *it;
+			it = elements.erase(it);
+			++count;
+		}
 		else
-			it = mesh_nodes.erase(it);
+			++it;
 	}
+	INFO("Removed %d  elements of type %s from mesh.", count, MeshElemType2String(t).c_str());
 
 	return new_mesh;
 }

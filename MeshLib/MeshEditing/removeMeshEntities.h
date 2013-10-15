@@ -16,6 +16,7 @@
 #define REMOVEMESHENTITIES_H
 
 #include <vector>
+#include "MeshEnums.h"
 
 namespace MeshLib {
 
@@ -23,7 +24,10 @@ namespace MeshLib {
 class Mesh;
 
 	/// Removes the mesh nodes (and connected elements) given in the nodes-list from the mesh.
-	MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
+	MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh const*const mesh, const std::vector<std::size_t> &nodes);
+
+	/// Removes elements of the given type t from a mesh
+	MeshLib::Mesh* removeMeshElements(const MeshLib::Mesh &mesh, MeshElemType t);
 
 } // end namespace MeshLib
 
