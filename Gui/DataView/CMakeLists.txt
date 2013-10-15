@@ -23,7 +23,7 @@ set( SOURCES
 	MeshValueEditDialog.cpp
 	ModellingTabWidget.cpp
 	ModelTreeItem.cpp
-	MshEditDialog.cpp
+	MeshLayerEditDialog.cpp
 	MshItem.cpp
 	MshLayerMapper.cpp
 	MshModel.cpp
@@ -63,7 +63,7 @@ set( MOC_HEADERS
 	MergeGeometriesDialog.h
 	MeshValueEditDialog.h
 	ModellingTabWidget.h
-	MshEditDialog.h
+	MeshLayerEditDialog.h
 	MshModel.h
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
@@ -108,7 +108,7 @@ set( UIS
 	MergeGeometries.ui
 	MeshValueEdit.ui
 	ModellingTabWidgetBase.ui
-	MshEdit.ui
+	MeshLayerEdit.ui
 	MshQualitySelection.ui
 	MshTabWidgetBase.ui
 	NetCdfConfigure.ui
