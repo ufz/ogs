@@ -33,26 +33,23 @@ XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schema
 
 int XmlCndInterface::readFile(const QString &fileName)
 {
-	QFile* file = new QFile(fileName);
-	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
+	QFile file(fileName);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		ERR("XMLInterface::readFEMCondFile(): Can't open xml-file %s.", fileName.data());
-		delete file;
 		return 0;
 	}
 	if (!checkHash(fileName))
 	{
-		delete file;
 		return 0;
 	}
 
 	QDomDocument doc("OGS-Cond-DOM");
-	doc.setContent(file);
+	doc.setContent(&file);
 	QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
 	if (docElement.nodeName().compare("OpenGeoSysCond"))
 	{
 		ERR("XMLInterface::readFEMCondFile(): Unexpected XML root.");
-		delete file;
 		return 0;
 	}
 
@@ -76,8 +73,6 @@ int XmlCndInterface::readFile(const QString &fileName)
 		WARN("XMLInterface::readFEMCondFile(): No FEM Conditions found.");
 		return 0;
 	}
-
-	delete file;
 
 	return 1;
 }
