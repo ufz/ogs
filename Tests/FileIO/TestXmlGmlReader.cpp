@@ -18,7 +18,7 @@
 #include "Configure.h"
 
 // FileIO
-#include "XmlIO/XmlGmlInterface.h"
+#include "XmlIO/Qt/XmlGmlInterface.h"
 
 // OgsLib
 #include "OGS/ProjectData.h"

@@ -11,7 +11,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "XmlIO/XMLQtInterface.h"
+#include "XmlIO/Qt/XMLQtInterface.h"
 
 #include <fstream>
 

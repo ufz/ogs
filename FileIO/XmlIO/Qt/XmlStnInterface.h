@@ -17,7 +17,7 @@
 
 #include "RapidXML/rapidxml.hpp"
 
-#include "XMLInterface.h"
+#include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
 namespace GeoLib {

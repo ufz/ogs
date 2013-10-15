@@ -19,7 +19,7 @@
 #include "logog/include/logog.hpp"
 
 // FileIO/XmlIO
-#include "XMLInterface.h"
+#include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
 class FEMCondition;

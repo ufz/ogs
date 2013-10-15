@@ -24,7 +24,7 @@
 #include "OGS/ProjectData.h"
 
 // FileIO
-#include "XmlIO/XmlGmlInterface.h"
+#include "XmlIO/Qt/XmlGmlInterface.h"
 
 int main (int argc, char* argv[])
 {

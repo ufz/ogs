@@ -75,10 +75,10 @@
 #include "MeshIO/GMSHInterface.h"
 #include "MeshIO/TetGenInterface.h"
 #include "PetrelInterface.h"
-#include "XmlIO/XmlCndInterface.h"
-#include "XmlIO/XmlGmlInterface.h"
-#include "XmlIO/XmlGspInterface.h"
-#include "XmlIO/XmlStnInterface.h"
+#include "XmlIO/Qt/XmlCndInterface.h"
+#include "XmlIO/Qt/XmlGmlInterface.h"
+#include "XmlIO/Qt/XmlGspInterface.h"
+#include "XmlIO/Qt/XmlStnInterface.h"
 
 #include "StringTools.h"
 

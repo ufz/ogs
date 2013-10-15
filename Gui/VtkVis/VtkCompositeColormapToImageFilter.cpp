@@ -25,7 +25,7 @@
 #include <QFileDialog>
 
 #include "VtkColorLookupTable.h"
-#include "XmlIO/XmlLutReader.h"
+#include "XmlIO/Qt/XmlLutReader.h"
 
 VtkCompositeColormapToImageFilter::VtkCompositeColormapToImageFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)

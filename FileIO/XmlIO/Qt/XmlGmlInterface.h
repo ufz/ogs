@@ -15,7 +15,7 @@
 #ifndef XMLGMLINTERFACE_H
 #define XMLGMLINTERFACE_H
 
-#include "XMLInterface.h"
+#include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
 namespace FileIO
@@ -34,7 +34,7 @@ public:
 	 */
 	XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile);
 
-	virtual ~XmlGmlInterface() {};
+	virtual ~XmlGmlInterface() {}
 
 	/// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
 	int readFile(const QString &fileName);

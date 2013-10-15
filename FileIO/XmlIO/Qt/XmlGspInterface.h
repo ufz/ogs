@@ -15,7 +15,7 @@
 #ifndef XMLGSPINTERFACE_H
 #define XMLGSPINTERFACE_H
 
-#include "XMLInterface.h"
+#include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
 namespace FileIO

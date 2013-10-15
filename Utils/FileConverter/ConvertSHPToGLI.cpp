@@ -31,8 +31,8 @@
 #include "StringTools.h"
 
 // FileIO
-#include "XmlIO/XmlGmlInterface.h"
-#include "XmlIO/XmlStnInterface.h"
+#include "XmlIO/Qt/XmlGmlInterface.h"
+#include "XmlIO/Qt/XmlStnInterface.h"
 
 // GeoLib
 #include "GEOObjects.h"
