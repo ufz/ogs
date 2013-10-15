@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2013-04-04
- * \brief  Definition of the removeMeshNodes
+ * \brief  Definition of the removeMeshEntities
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef REMOVEMESHNODES_H
-#define REMOVEMESHNODES_H
+#ifndef REMOVEMESHENTITIES_H
+#define REMOVEMESHENTITIES_H
 
 #include <vector>
 
@@ -27,4 +27,4 @@ class Mesh;
 
 } // end namespace MeshLib
 
-#endif //REMOVEMESHNODES_H
+#endif //REMOVEMESHENTITIES_H

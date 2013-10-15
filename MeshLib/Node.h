@@ -22,7 +22,7 @@
 
 #include "PointWithID.h"
 #include "Mesh.h"
-#include "MeshEditing/removeMeshNodes.h"
+#include "MeshEditing/removeMeshEntities.h"
 #include "MeshSurfaceExtraction.h"
 #ifdef OGS_BUILD_GUI
 	#include "../Gui/DataView/MshLayerMapper.h"

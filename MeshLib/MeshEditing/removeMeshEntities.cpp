@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2013-04-04
- * \brief  Implementation of removeMeshNodes.
+ * \brief  Implementation of removeMeshEntities.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
  *
  */
 
-#include "removeMeshNodes.h"
+#include "removeMeshEntities.h"
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
