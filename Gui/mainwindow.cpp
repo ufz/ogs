@@ -885,9 +885,16 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		std::vector<FEMCondition*> conditions;
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
-		if (xml.readFile(fileName, conditions))
+		std::size_t const n_cond_before(this->_project.getConditions().size());
+		if (xml.readFile(fileName)) {
+			std::size_t const n_cond_after(this->_project.getConditions().size());
+			std::vector<FEMCondition*> conditions;
+			conditions.resize(n_cond_after-n_cond_before);
+			for (std::size_t k(n_cond_before); k<n_cond_after; k++) {
+				conditions[k-n_cond_before] = this->_project.getConditions()[k];
+			}
 			this->addFEMConditions(conditions);
-		else
+		} else
 			OGSError::box("Failed to load FEM conditions.\n Please see console for details.");
 	}
 }

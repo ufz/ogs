@@ -30,7 +30,7 @@ XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schema
 {
 }
 
-int XmlCndInterface::readFile(const QString &fileName, std::vector<FEMCondition*> &conditions)
+int XmlCndInterface::readFile(const QString &fileName)
 {
 	QFile* file = new QFile(fileName);
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
@@ -55,19 +55,20 @@ int XmlCndInterface::readFile(const QString &fileName, std::vector<FEMCondition*
 		return 0;
 	}
 
-	//std::vector<FEMCondition*> conditions;
+	std::size_t const n_cond_before(this->_project->getConditions().size());
 	QDomNodeList lists = docElement.childNodes();
 	for (int i = 0; i < lists.count(); i++)
 	{
 		const QDomNode list_node (lists.at(i));
 		if (list_node.nodeName().compare("BoundaryConditions") == 0)
-			readConditions(list_node, conditions, FEMCondition::BOUNDARY_CONDITION);
+			readConditions(list_node, FEMCondition::BOUNDARY_CONDITION);
 		else if (list_node.nodeName().compare("InitialConditions") == 0)
-			readConditions(list_node, conditions, FEMCondition::INITIAL_CONDITION);
+			readConditions(list_node, FEMCondition::INITIAL_CONDITION);
 		else if (list_node.nodeName().compare("SourceTerms") == 0)
-			readConditions(list_node, conditions, FEMCondition::SOURCE_TERM);
+			readConditions(list_node, FEMCondition::SOURCE_TERM);
 	}
-	if (!conditions.empty())
+	std::size_t const n_cond_after(this->_project->getConditions().size());
+	if (n_cond_after-n_cond_before > 0)
 		return 1;     //do something like _geoObjects->addStationVec(stations, stnName, color);
 	else
 	{
@@ -81,7 +82,6 @@ int XmlCndInterface::readFile(const QString &fileName, std::vector<FEMCondition*
 }
 
 void XmlCndInterface::readConditions(const QDomNode &listRoot,
-                                     std::vector<FEMCondition*> &conditions,
                                      FEMCondition::CondType type)
 {
 	QDomElement cond = listRoot.firstChildElement();
@@ -163,7 +163,8 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 					}
 				}
 			}
-			conditions.push_back(c);
+			this->_project->addCondition(c);
+//			conditions.push_back(c);
 		}
 		else
 		{

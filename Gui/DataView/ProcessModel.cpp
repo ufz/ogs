@@ -126,7 +126,6 @@ void ProcessModel::addCondition(FEMCondition* condition)
 	}
 	if (object || is_domain)
 	{
-		_project.addCondition(condition);
 		this->addConditionItem(condition);
 	}
 	else

@@ -42,16 +42,8 @@ public:
 
 	~XmlCndInterface() {}
 
-	/// Dummy function so class hierarchy works. This needs to be implemented later.
-	int readFile(const QString &fileName)
-	{
-		Q_UNUSED(fileName)
-		INFO("There is currently no implementation for XmlCndInterface::readFile(const QString&).");
-		return 0;
-	}
-
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
-	int readFile(const QString &fileName, std::vector<FEMCondition*> &conditions);
+	int readFile(const QString &fileName);
 
 	void setConditionType(FEMCondition::CondType type) { _type = type; };
 
@@ -61,8 +53,7 @@ protected:
 
 private:
 	/// Read the details of various FEM Conditions from an xml-file
-	void readConditions(const QDomNode &condRoot, std::vector<FEMCondition*> &conditions,
-	                    FEMCondition::CondType type);
+	void readConditions(const QDomNode &condRoot, FEMCondition::CondType type);
 
 	QDomElement getCondListElement(QDomDocument doc, QDomElement &root,
 	                               const QString &condText) const;
