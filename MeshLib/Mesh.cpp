@@ -39,7 +39,6 @@ Mesh::Mesh(const std::string &name,
 	_edge_length[0] = 0;
 	_edge_length[1] = 0;
 	this->setDimension();
-	this->makeNodesUnique();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
@@ -82,27 +81,6 @@ Mesh::~Mesh()
 	const size_t nNodes (_nodes.size());
 	for (size_t i=0; i<nNodes; ++i)
 		delete _nodes[i];
-}
-
-void Mesh::makeNodesUnique()
-{
-	//check for unique mesh nodes
-	//PointVec::makePntsUnique
-
-	//replace node pointers in elements
-	unsigned nElements (_elements.size());
-	for (unsigned i=0; i<nElements; ++i)
-	{
-		unsigned nNodes (_elements[i]->getNNodes());
-		for (unsigned j=0; j<nNodes; ++j)
-			_elements[i]->getNodeIndex(j);
-	}
-
-	//set correct id for each node
-
-	//if (this->getDimension() > 1)
-	//	this->removeMeshElements(MeshElemType::LINE);
-
 }
 
 void Mesh::addNode(Node* node)

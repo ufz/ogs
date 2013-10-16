@@ -104,9 +104,6 @@ public:
 	std::size_t getID() const {return _id; }
 
 protected:
-	/// Checks the coordinates of all mesh nodes and removes identical nodes. Elements are adapted accordingly.
-	void makeNodesUnique();
-
 	/// Removes nodes that are not part of any element.
 	void removeUnusedMeshNodes();
 
