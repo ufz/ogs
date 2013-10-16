@@ -40,6 +40,7 @@
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MergeGeometriesDialog.h"
+#include "MeshElementRemovalDialog.h"
 #include "MshQualitySelectionDialog.h"
 #include "NetCdfConfigureDialog.h"
 #include "NewProcessDialog.h"
@@ -1130,6 +1131,13 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
 		id,	this->_geoModels->getElementNameByID(geometry_name, object_type, id));
+}
+
+void MainWindow::showMeshElementRemovalDialog()
+{
+	MeshElementRemovalDialog dlg(this->_project);
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
+	dlg.exec();
 }
 
 void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, bool on_points)

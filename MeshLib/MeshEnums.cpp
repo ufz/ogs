@@ -33,6 +33,25 @@ const std::string MeshElemType2String(const MeshElemType t)
 	return "none";
 }
 
+MeshElemType CompleteString2MeshElemType(const std::string &s)
+{
+	if (s.compare("Line") == 0)
+		return MeshElemType::LINE;
+	if (s.compare("Quad") == 0)
+		return MeshElemType::QUAD;
+	if (s.compare("Hexahedron")  == 0)
+		return MeshElemType::HEXAHEDRON;
+	if (s.compare("Triangle")  == 0)
+		return MeshElemType::TRIANGLE;
+	if (s.compare("Tetrahedron")  == 0)
+		return MeshElemType::TETRAHEDRON;
+	if (s.compare("Prism") == 0)
+		return MeshElemType::PRISM;
+	if (s.compare("Pyramid") == 0)
+		return MeshElemType::PYRAMID;
+	return MeshElemType::INVALID;
+}
+
 MeshElemType String2MeshElemType(const std::string &s)
 {
 	if (s.compare("line") == 0)

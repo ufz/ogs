@@ -33,19 +33,19 @@ public:
 	~ElementExtraction();
 
 	/// Removes all mesh elements marked by search-methods.
-	MeshLib::Mesh* removeMeshElements() const;
+	MeshLib::Mesh* removeMeshElements(const std::string &new_mesh_name) const;
 	
 	/// Marks all elements with the given Material ID.
-	void searchByMaterialID(const std::vector<MeshLib::Element*> & ele_vec, unsigned matID);
+	void searchByMaterialID(unsigned matID);
 
 	/// Marks all elements of the given element type.
-	void searchByElementType(const std::vector<MeshLib::Element*> & ele_vec, MeshElemType eleType);
+	void searchByElementType(MeshElemType eleType);
 
 	/// Marks all elements with a volume smaller than std::numeric_limits<double>::epsilon().
-	void searchByZeroContent(const std::vector<MeshLib::Element*> & ele_vec);
+	void searchByZeroContent();
 
 	/// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
-	void searchByBoundingBox(const std::vector<MeshLib::Element*> & ele_vec, const MeshLib::Node &x1, const MeshLib::Node &x2);
+	void searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2);
 	
 
 private:

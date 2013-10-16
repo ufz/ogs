@@ -125,6 +125,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionRemove_Mesh_Elements"/>
     <addaction name="actionMerge_Geometries"/>
     <addaction name="actionFile_Converter"/>
     <addaction name="actionDiagram_Viewer"/>
@@ -412,6 +413,11 @@
     <string>Merge Geometries...</string>
    </property>
   </action>
+  <action name="actionRemove_Mesh_Elements">
+   <property name="text">
+    <string>Remove Mesh Elements...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -630,6 +636,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRemove_Mesh_Elements</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showMeshElementRemovalDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -643,5 +665,6 @@
   <slot>about()</slot>
   <slot>showLicense()</slot>
   <slot>showMergeGeometriesDialog()</slot>
+  <slot>showMeshElementRemovalDialog()</slot>
  </slots>
 </ui>

@@ -30,7 +30,7 @@ ElementExtraction::~ElementExtraction()
 {
 }
 
-MeshLib::Mesh* ElementExtraction::removeMeshElements() const
+MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh_name) const
 {
 	INFO("Removing total %d elements...", _marked_elements.size());
 	std::vector<MeshLib::Element*> tmp_elems = excludeElements(_mesh.getElements(), _marked_elements);
@@ -40,11 +40,15 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements() const
 	copyNodesElements(_mesh.getNodes(), tmp_elems, new_nodes, new_elems);
 
 	// create a new mesh object. Unsued nodes are removed during construction
-	return new MeshLib::Mesh(_mesh.getName(), new_nodes, new_elems);
+	if (!new_elems.empty())
+		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems);
+	else
+		return nullptr;
 }
 
-void ElementExtraction::searchByMaterialID(const std::vector<MeshLib::Element*> & ele_vec, unsigned matID)
+void ElementExtraction::searchByMaterialID(unsigned matID)
 {
+	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
 	for (MeshLib::Element* ele : ele_vec) {
@@ -55,8 +59,9 @@ void ElementExtraction::searchByMaterialID(const std::vector<MeshLib::Element*> 
 	this->updateUnion(matchedIDs);
 }
 
-void ElementExtraction::searchByElementType(const std::vector<MeshLib::Element*> & ele_vec, MeshElemType eleType)
+void ElementExtraction::searchByElementType(MeshElemType eleType)
 {
+	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
 	for (MeshLib::Element* ele : ele_vec) {
@@ -67,8 +72,9 @@ void ElementExtraction::searchByElementType(const std::vector<MeshLib::Element*>
 	this->updateUnion(matchedIDs);
 }
 
-void ElementExtraction::searchByZeroContent(const std::vector<MeshLib::Element*> & ele_vec)
+void ElementExtraction::searchByZeroContent()
 {
+	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
 	for (MeshLib::Element* ele : ele_vec) {
@@ -79,8 +85,9 @@ void ElementExtraction::searchByZeroContent(const std::vector<MeshLib::Element*>
 	this->updateUnion(matchedIDs);
 }
 
-void ElementExtraction::searchByBoundingBox(const std::vector<MeshLib::Element*> & ele_vec, const MeshLib::Node &x1, const MeshLib::Node &x2)
+void ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2)
 {
+	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<MeshLib::Node> extent;
 	extent.push_back(x1); extent.push_back(x2);
 	const GeoLib::AABB<MeshLib::Node> aabb(extent.begin(), extent.end());
