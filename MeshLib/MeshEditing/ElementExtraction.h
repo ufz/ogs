@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2013-04-04
- * \brief  Definition of the removeMeshEntities
+ * \brief  Definition of the ElementExtraction
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef REMOVEMESHENTITIES_H
-#define REMOVEMESHENTITIES_H
+#ifndef ELEMENTEXTRACTION_H
+#define ELEMENTEXTRACTION_H
 
 #include <vector>
 #include "MeshEnums.h"
@@ -25,12 +25,12 @@ namespace MeshLib {
 class Mesh;
 class Element;
 
-class MeshElementRemoval
+class ElementExtraction
 {
 public:
-	MeshElementRemoval::MeshElementRemoval(const MeshLib::Mesh &mesh);
+	ElementExtraction(const MeshLib::Mesh &mesh);
 
-	MeshElementRemoval::~MeshElementRemoval();
+	~ElementExtraction();
 
 	/// Removes all mesh elements marked by search-methods.
 	MeshLib::Mesh* removeMeshElements() const;
@@ -65,4 +65,4 @@ private:
 
 } // end namespace MeshLib
 
-#endif //REMOVEMESHENTITIES_H
+#endif //ELEMENTEXTRACTION_H

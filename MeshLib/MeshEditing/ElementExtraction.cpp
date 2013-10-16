@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2013-04-04
- * \brief  Implementation of removeMeshEntities.
+ * \brief  Implementation of ElementExtraction.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
  *
  */
 
-#include "removeMeshEntities.h"
+#include "ElementExtraction.h"
 #include "Mesh.h"
 #include "Elements/Element.h"
 #include "AABB.h"
@@ -21,16 +21,16 @@
 
 namespace MeshLib {
 
-MeshElementRemoval::MeshElementRemoval(const MeshLib::Mesh &mesh)
+ElementExtraction::ElementExtraction(const MeshLib::Mesh &mesh)
 	: _mesh(mesh)
 {
 }
 
-MeshElementRemoval::~MeshElementRemoval()
+ElementExtraction::~ElementExtraction()
 {
 }
 
-MeshLib::Mesh* MeshElementRemoval::removeMeshElements() const
+MeshLib::Mesh* ElementExtraction::removeMeshElements() const
 {
 	INFO("Removing total %d elements...", _marked_elements.size());
 	std::vector<MeshLib::Element*> tmp_elems = excludeElements(_mesh.getElements(), _marked_elements);
@@ -43,7 +43,7 @@ MeshLib::Mesh* MeshElementRemoval::removeMeshElements() const
 	return new MeshLib::Mesh(_mesh.getName(), new_nodes, new_elems);
 }
 
-void MeshElementRemoval::searchByMaterialID(const std::vector<MeshLib::Element*> & ele_vec, unsigned matID)
+void ElementExtraction::searchByMaterialID(const std::vector<MeshLib::Element*> & ele_vec, unsigned matID)
 {
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
@@ -55,7 +55,7 @@ void MeshElementRemoval::searchByMaterialID(const std::vector<MeshLib::Element*>
 	this->updateUnion(matchedIDs);
 }
 
-void MeshElementRemoval::searchByElementType(const std::vector<MeshLib::Element*> & ele_vec, MeshElemType eleType)
+void ElementExtraction::searchByElementType(const std::vector<MeshLib::Element*> & ele_vec, MeshElemType eleType)
 {
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
@@ -67,7 +67,7 @@ void MeshElementRemoval::searchByElementType(const std::vector<MeshLib::Element*
 	this->updateUnion(matchedIDs);
 }
 
-void MeshElementRemoval::searchByZeroContent(const std::vector<MeshLib::Element*> & ele_vec)
+void ElementExtraction::searchByZeroContent(const std::vector<MeshLib::Element*> & ele_vec)
 {
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
@@ -79,7 +79,7 @@ void MeshElementRemoval::searchByZeroContent(const std::vector<MeshLib::Element*
 	this->updateUnion(matchedIDs);
 }
 
-void MeshElementRemoval::searchByBoundingBox(const std::vector<MeshLib::Element*> & ele_vec, const MeshLib::Node &x1, const MeshLib::Node &x2)
+void ElementExtraction::searchByBoundingBox(const std::vector<MeshLib::Element*> & ele_vec, const MeshLib::Node &x1, const MeshLib::Node &x2)
 {
 	std::vector<MeshLib::Node> extent;
 	extent.push_back(x1); extent.push_back(x2);
@@ -101,7 +101,7 @@ void MeshElementRemoval::searchByBoundingBox(const std::vector<MeshLib::Element*
 	this->updateUnion(matchedIDs);
 }
 
-void MeshElementRemoval::updateUnion(const std::vector<std::size_t> &vec)
+void ElementExtraction::updateUnion(const std::vector<std::size_t> &vec)
 {
 	std::vector<std::size_t> vec_temp(vec.size() + _marked_elements.size());
 	auto it = std::set_union(vec.begin(), vec.end(), _marked_elements.begin(), _marked_elements.end(), vec_temp.begin());
@@ -109,7 +109,7 @@ void MeshElementRemoval::updateUnion(const std::vector<std::size_t> &vec)
 	_marked_elements.assign(vec_temp.begin(), vec_temp.end());
 }
 
-std::vector<MeshLib::Element*> MeshElementRemoval::excludeElements(const std::vector<MeshLib::Element*> & vec_src_eles, const std::vector<std::size_t> &vec_removed) const
+std::vector<MeshLib::Element*> ElementExtraction::excludeElements(const std::vector<MeshLib::Element*> & vec_src_eles, const std::vector<std::size_t> &vec_removed) const
 {
 	std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size() - vec_removed.size());
 	std::size_t k=0;
@@ -122,7 +122,7 @@ std::vector<MeshLib::Element*> MeshElementRemoval::excludeElements(const std::ve
 	return vec_dest_eles;
 }
 
-void MeshElementRemoval::copyNodesElements(	const std::vector<MeshLib::Node*> &src_nodes, const std::vector<MeshLib::Element*> &src_elems,
+void ElementExtraction::copyNodesElements(	const std::vector<MeshLib::Node*> &src_nodes, const std::vector<MeshLib::Element*> &src_elems,
 						std::vector<MeshLib::Node*> &dst_nodes, std::vector<MeshLib::Element*> &dst_elems) const 
 {
 	// copy nodes

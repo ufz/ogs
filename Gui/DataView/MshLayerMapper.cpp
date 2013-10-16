@@ -29,6 +29,7 @@
 #include "Elements/Hex.h"
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
+#include "MeshEditing/removeMeshNodes.h"
 #include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
@@ -219,7 +220,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			if (noData_nodes.size() < (nNodes - 2))
 			{
 				WARN("MshLayerMapper::LayerMapping(): Removing %d mesh nodes at NoData values.", noData_nodes.size());
-				MeshLib::Mesh* red_mesh = MeshLib::removeMeshNodes(new_mesh, noData_nodes);
+				MeshLib::Mesh* red_mesh = MeshLib::removeMeshNodes(*new_mesh, noData_nodes);
 				if (new_mesh->getNElements() == 0)
 				{
 					delete new_mesh;
