@@ -16,10 +16,16 @@
 
 #include <string>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/optional.hpp>
+
 #include "../XMLInterface.h"
 
 class FEMCondition;
 class Projectdata;
+
+typedef boost::optional<boost::property_tree::ptree const&> OptionalPtree;
 
 namespace FileIO
 {
@@ -39,6 +45,8 @@ protected:
 	int write(std::ostream& stream);
 
 private:
+	void readBoundaryConditions(boost::property_tree::ptree::value_type const& boundary_condition_nodes);
+
 	FEMCondition::CondType _type;
 	ProjectData* _project_data;
 };
