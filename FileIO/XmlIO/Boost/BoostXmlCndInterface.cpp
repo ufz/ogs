@@ -10,14 +10,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
-#include "BoostXmlCndInterface.h"
-
 #include <fstream>
-
 #include <boost/foreach.hpp>
 
 #include "logog/include/logog.hpp"
 
+#include "BoostXmlCndInterface.h"
 #include "BoundaryCondition.h"
 
 namespace FileIO
