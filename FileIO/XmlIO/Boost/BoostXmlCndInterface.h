@@ -45,7 +45,7 @@ protected:
 	int write(std::ostream& stream);
 
 private:
-	void readBoundaryConditions(boost::property_tree::ptree::value_type const& boundary_condition_nodes);
+	void readBoundaryConditions(boost::property_tree::ptree const& boundary_condition_nodes);
 
 	FEMCondition::CondType _type;
 	ProjectData* _project_data;

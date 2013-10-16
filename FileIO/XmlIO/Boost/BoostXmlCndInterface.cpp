@@ -44,7 +44,7 @@ bool BoostXmlCndInterface::readFile(const std::string &fname)
 
 	BOOST_FOREACH(ptree::value_type const & conditions_type, root_node) {
 		if (conditions_type.first.compare("BoundaryConditions") == 0) {
-			readBoundaryConditions(conditions_type);
+			readBoundaryConditions(conditions_type.second);
 		}
 	}
 
@@ -52,10 +52,10 @@ bool BoostXmlCndInterface::readFile(const std::string &fname)
 }
 
 void BoostXmlCndInterface::readBoundaryConditions(
-		boost::property_tree::ptree::value_type const& boundary_condition_nodes)
+		boost::property_tree::ptree const& boundary_condition_nodes)
 {
 	using boost::property_tree::ptree;
-	BOOST_FOREACH(boost::property_tree::ptree::value_type const & boundary_condition_node,
+	BOOST_FOREACH(ptree::value_type const & boundary_condition_node,
 			boundary_condition_nodes)
 	{
 //		if (boundary_condition_node.first.compare("BC") == 0) {
