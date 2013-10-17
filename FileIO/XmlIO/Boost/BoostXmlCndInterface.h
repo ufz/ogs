@@ -41,7 +41,8 @@ public:
 	bool readFile(const std::string &fname);
 
 protected:
-	int write(std::ostream& stream);
+	/// @return true on success, else false
+	bool write(std::ostream& stream);
 
 private:
 	/// Read the details of a boundary condition from an xml-file

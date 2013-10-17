@@ -84,7 +84,7 @@ public:
 	static MeshLib::Mesh* readGMSHMesh (std::string const& fname);
 
 protected:
-	int write(std::ostream& stream);
+	bool write(std::ostream& stream);
 
 private:
 	/**

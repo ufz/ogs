@@ -185,12 +185,12 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
 	}
 }
 
-int XmlGmlInterface::write(std::ostream& stream)
+bool XmlGmlInterface::write(std::ostream& stream)
 {
 	if (this->_exportName.empty())
 	{
 		ERR("XmlGmlInterface::write(): No geometry specified.");
-		return 0;
+		return false;
 	}
 
 	std::size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
@@ -343,6 +343,6 @@ int XmlGmlInterface::write(std::ostream& stream)
 	std::string xml = doc.toString().toStdString();
 	stream << xml;
 
-	return 1;
+	return true;
 }
 }

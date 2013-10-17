@@ -230,10 +230,10 @@ bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root) co
 	return true;
 }
 
-int BoostXmlGmlInterface::write(std::ostream& stream)
+bool BoostXmlGmlInterface::write(std::ostream& stream)
 {
 	INFO ("Writing XML geometry is not implemented here. Please use the Qt XML class for this functionality.");
-	return 0;
+	return false;
 }
 
 } // end namespace FileIO
