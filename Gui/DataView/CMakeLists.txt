@@ -20,10 +20,11 @@ set( SOURCES
 	LineEditDialog.cpp
 	ListPropertiesDialog.cpp
 	MergeGeometriesDialog.cpp
+	MeshElementRemovalDialog.cpp
 	MeshValueEditDialog.cpp
 	ModellingTabWidget.cpp
 	ModelTreeItem.cpp
-	MshEditDialog.cpp
+	MeshLayerEditDialog.cpp
 	MshItem.cpp
 	MshLayerMapper.cpp
 	MshModel.cpp
@@ -61,9 +62,10 @@ set( MOC_HEADERS
 	LineEditDialog.h
 	ListPropertiesDialog.h
 	MergeGeometriesDialog.h
+	MeshElementRemovalDialog.h
 	MeshValueEditDialog.h
 	ModellingTabWidget.h
-	MshEditDialog.h
+	MeshLayerEditDialog.h
 	MshModel.h
 	MshQualitySelectionDialog.h
 	MshTabWidget.h
@@ -108,7 +110,8 @@ set( UIS
 	MergeGeometries.ui
 	MeshValueEdit.ui
 	ModellingTabWidgetBase.ui
-	MshEdit.ui
+	MeshElementRemoval.ui
+	MeshLayerEdit.ui
 	MshQualitySelection.ui
 	MshTabWidgetBase.ui
 	NetCdfConfigure.ui

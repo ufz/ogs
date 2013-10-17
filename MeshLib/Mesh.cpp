@@ -262,20 +262,4 @@ void Mesh::removeUnusedMeshNodes()
 	}
 }
 
-void Mesh::removeMeshElements(MeshElemType t)
-{
-	unsigned count(0);
-	for (std::vector<MeshLib::Element*>::iterator it = this->_elements.begin(); it != this->_elements.end();)
-	{
-		if ((*it)->getGeomType() == t)
-		{
-			delete *it;
-			it = this->_elements.erase(it);
-			++count;
-		}
-		else
-			++it;
-	}
-	INFO("Removed %d  elements of type %s from mesh.", count, MeshElemType2String(t).c_str());
-}
 }

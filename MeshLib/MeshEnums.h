@@ -71,7 +71,7 @@ enum class MeshQualityType
 /// Given a MeshElemType this returns the appropriate string.
 const std::string MeshElemType2String(const MeshElemType t);
 
-/// Given a string describing an element type this returns the corresponding MeshElemType.
+/// Given a string of the shortened name of the element type, this returns the corresponding MeshElemType.
 MeshElemType String2MeshElemType(const std::string &s);
 
 const std::string MeshQualityType2String(const MeshQualityType t);

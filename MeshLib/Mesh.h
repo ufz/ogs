@@ -107,9 +107,6 @@ protected:
 	/// Removes nodes that are not part of any element.
 	void removeUnusedMeshNodes();
 
-	/// Removes elements of the given type t from a mesh
-	void removeMeshElements(MeshElemType t);
-
 	/// Sets the dimension of the mesh.
 	void setDimension();
 
