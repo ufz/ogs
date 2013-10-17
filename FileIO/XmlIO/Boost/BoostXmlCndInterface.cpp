@@ -54,32 +54,60 @@ void BoostXmlCndInterface::readBoundaryConditions(
 {
 	using boost::property_tree::ptree;
 	BOOST_FOREACH(ptree::value_type const & boundary_condition_node,
-			boundary_condition_nodes)
-	{
-//		if (boundary_condition_node.first.compare("BC") == 0) {
-//			// parse attribute of boundary condition
-//			std::string const& geometry_name = boundary_condition_node.get<std::string>("<xmlattr>.geometry");
-//
-//			// create instance
-//			BoundaryCondition *bc(new BoundaryCondition(geometry_name));
-//			// ToDo: check if geometry exists
-//
-//			// parse tags of boundary condition
-//			BOOST_FOREACH(ptree::value_type const & boundary_condition_tag, *boundary_condition_node) {
-//				if (boundary_condition_tag.first.compare("Process") == 0) {
-//					std::string type, primary_variable;
-//					readProcessInfo(boundary_condition_tag, type, primary_variable);
-//					bc->setProcessType(FiniteElement::convertProcessType(type));
-//					bc->setProcessPrimaryVariable(FiniteElement::convertPrimaryVariable(primary_variable));
-//				}
-//				if (boundary_condition_tag.first.compare("Geometry") == 0) {
-//					std::string geo_type, geo_name;
-//					readGeometryInfo(boundary_condition_tag, geo_type, geo_name);
-//					bc->setGeoName(geo_name);
-//					bc->setGeoType(GeoLib::convertGeoType(geo_type));
-//				}
-//			}
-//		}
+			boundary_condition_nodes) {
+		if (boundary_condition_node.first.compare("BC") == 0) {
+			// parse attribute of boundary condition
+			std::string const& geometry_name = boundary_condition_node.second.get<std::string>("<xmlattr>.geometry");
+
+			// create instance
+			BoundaryCondition *bc(new BoundaryCondition(geometry_name));
+			// ToDo: check if geometry exists
+
+			// parse tags of boundary condition
+			BOOST_FOREACH(ptree::value_type const & boundary_condition_tag, boundary_condition_node.second) {
+				if (boundary_condition_tag.first.compare("Process") == 0) {
+					std::string pcs_type, primary_variable;
+					readProcessTag(boundary_condition_tag.second, pcs_type, primary_variable);
+					bc->setProcessType(FiniteElement::convertProcessType(pcs_type));
+					bc->setProcessPrimaryVariable(FiniteElement::convertPrimaryVariable(primary_variable));
+				}
+				if (boundary_condition_tag.first.compare("Geometry") == 0) {
+					std::string geo_type, geo_name;
+					readGeometryTag(boundary_condition_tag.second, geo_type, geo_name);
+					bc->setGeoName(geo_name);
+					bc->setGeoType(GeoLib::convertGeoType(geo_type));
+				}
+			}
+			_project_data->addCondition(bc);
+		}
+	}
+}
+
+void BoostXmlCndInterface::readProcessTag(boost::property_tree::ptree const& pcs_tags,
+		std::string &pcs_type, std::string &primary_variable) const
+{
+	using boost::property_tree::ptree;
+	BOOST_FOREACH(ptree::value_type const & pcs_tag, pcs_tags) {
+		if (pcs_tag.first.compare("Type") == 0) {
+			pcs_type = pcs_tag.second.data();
+		}
+		if (pcs_tag.first.compare("Variable") == 0) {
+			primary_variable = pcs_tag.second.data();
+		}
+	}
+}
+
+void BoostXmlCndInterface::readGeometryTag(boost::property_tree::ptree const& geometry_tags,
+		std::string &geo_type, std::string &geo_name) const
+{
+	using boost::property_tree::ptree;
+	BOOST_FOREACH(ptree::value_type const & geo_tag, geometry_tags) {
+		if (geo_tag.first.compare("Type") == 0) {
+			geo_type = geo_tag.second.data();
+		}
+		if (geo_tag.first.compare("Name") == 0) {
+			geo_name = geo_tag.second.data();
+		}
 	}
 }
 

@@ -46,7 +46,10 @@ protected:
 
 private:
 	void readBoundaryConditions(boost::property_tree::ptree const& boundary_condition_nodes);
-
+	void readProcessTag(boost::property_tree::ptree const& pcs_tags,
+			std::string &pcs_type, std::string &primary_variable) const;
+	void readGeometryTag(boost::property_tree::ptree const& geometry_tags,
+			std::string &geo_type, std::string &geo_name) const;
 	FEMCondition::CondType _type;
 	ProjectData* _project_data;
 };
