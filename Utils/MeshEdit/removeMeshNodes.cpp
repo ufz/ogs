@@ -82,7 +82,7 @@ int main (int argc, char* argv[])
 	/**** add other keywords here ****/
 
 	// remove nodes and write new file
-	MeshLib::Mesh* new_mesh = MeshLib::removeMeshNodes(mesh, del_nodes);
+	MeshLib::Mesh* new_mesh = MeshLib::removeMeshNodes(*mesh, del_nodes);
 	
 	FileIO::MeshIO meshIO;
 	meshIO.setMesh(mesh);

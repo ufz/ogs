@@ -35,19 +35,19 @@ const std::string MeshElemType2String(const MeshElemType t)
 
 MeshElemType String2MeshElemType(const std::string &s)
 {
-	if (s.compare("line") == 0)
+	if ((s.compare("line") == 0) || (s.compare("Line") == 0))
 		return MeshElemType::LINE;
-	if (s.compare("quad") == 0)
+	if ((s.compare("quad") == 0) || (s.compare("Quad") == 0))
 		return MeshElemType::QUAD;
-	if (s.compare("hex")  == 0)
+	if ((s.compare("hex")  == 0) || (s.compare("Hexahedron") == 0))
 		return MeshElemType::HEXAHEDRON;
-	if (s.compare("tri")  == 0)
+	if ((s.compare("tri")  == 0) || (s.compare("Triangle") == 0))
 		return MeshElemType::TRIANGLE;
-	if (s.compare("tet")  == 0)
+	if ((s.compare("tet")  == 0) || (s.compare("Tetrahedron") == 0))
 		return MeshElemType::TETRAHEDRON;
-	if (s.compare("pris") == 0)
+	if ((s.compare("pris") == 0) || (s.compare("Prism") == 0))
 		return MeshElemType::PRISM;
-	if (s.compare("pyra") == 0)
+	if ((s.compare("pyra") == 0) || (s.compare("Pyramid") == 0))
 		return MeshElemType::PYRAMID;
 	return MeshElemType::INVALID;
 }

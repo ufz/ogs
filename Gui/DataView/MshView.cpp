@@ -14,7 +14,7 @@
 
 #include "MshView.h"
 #include "Mesh.h"
-#include "MshEditDialog.h"
+#include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "MshItem.h"
 #include "MshModel.h"
@@ -163,10 +163,10 @@ void MshView::openMshEditDialog()
 	const MeshLib::Mesh* mesh =
 	        static_cast<MshModel*>(this->model())->getMesh(index);
 
-	MshEditDialog meshEdit(mesh);
-	connect(&meshEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
+	MeshLayerEditDialog meshLayerEdit(mesh);
+	connect(&meshLayerEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
 		    model, SLOT(addMesh(MeshLib::Mesh*)));
-	meshEdit.exec();
+	meshLayerEdit.exec();
 }
 
 void MshView::openValuesEditDialog()

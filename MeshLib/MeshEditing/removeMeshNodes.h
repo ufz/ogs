@@ -23,7 +23,7 @@ namespace MeshLib {
 class Mesh;
 
 	/// Removes the mesh nodes (and connected elements) given in the nodes-list from the mesh.
-	MeshLib::Mesh* removeMeshNodes(MeshLib::Mesh* mesh, const std::vector<std::size_t> &nodes);
+	MeshLib::Mesh* removeMeshNodes(const MeshLib::Mesh &mesh, const std::vector<std::size_t> &nodes);
 
 } // end namespace MeshLib
 
