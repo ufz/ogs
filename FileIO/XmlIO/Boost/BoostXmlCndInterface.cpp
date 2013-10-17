@@ -30,4 +30,9 @@ bool BoostXmlCndInterface::readFile(const std::string &fname)
 	return false;
 }
 
+int BoostXmlCndInterface::write(std::ostream& stream)
+{
+	return 0;
+}
+
 } // end namespace FileIO
