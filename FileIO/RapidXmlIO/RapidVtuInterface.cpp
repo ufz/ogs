@@ -328,7 +328,7 @@ unsigned char* RapidVtuInterface::uncompressData(const rapidxml::xml_node<>* nod
 
 
 
-int RapidVtuInterface::write(std::ostream& stream)
+bool RapidVtuInterface::write(std::ostream& stream)
 {
 	//if (this->_export_name.empty())
 	if (!_mesh)
@@ -425,7 +425,7 @@ int RapidVtuInterface::write(std::ostream& stream)
 	cells_node->append_node(this->addDataArray("types", "UInt8", typestream.str()));
 
 	stream << *_doc;
-	return 1;
+	return true;
 }
 
 unsigned RapidVtuInterface::getVTKElementID(MeshElemType type) const

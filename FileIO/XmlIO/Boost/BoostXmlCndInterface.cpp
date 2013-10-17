@@ -165,7 +165,7 @@ void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const
 	}
 }
 
-int BoostXmlCndInterface::write(std::ostream& stream)
+bool BoostXmlCndInterface::write(std::ostream& stream)
 {
 	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
 	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysCND.xsl\"?>\n\n"; // stylefile definition
@@ -181,7 +181,7 @@ int BoostXmlCndInterface::write(std::ostream& stream)
 
 	write_xml(stream, pt);
 
-	return 0;
+	return true;
 }
 
 } // end namespace FileIO

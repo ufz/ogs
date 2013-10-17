@@ -48,7 +48,7 @@ public:
 	int rapidReadFile(const std::string &fileName);
 
 protected:
-	int write(std::ostream& stream);
+	bool write(std::ostream& stream);
 
 private:
 	/// Reads GeoLib::Station- or StationBorehole-objects from an xml-file
