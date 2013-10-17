@@ -39,8 +39,6 @@ public:
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
 	bool readFile(const std::string &fname);
 
-	void setConditionType(FEMCondition::CondType type) { _type = type; }
-
 protected:
 	int write(std::ostream& stream);
 
@@ -50,7 +48,6 @@ private:
 			std::string &pcs_type, std::string &primary_variable) const;
 	void readGeometryTag(boost::property_tree::ptree const& geometry_tags,
 			std::string &geo_type, std::string &geo_name) const;
-	FEMCondition::CondType _type;
 	ProjectData* _project_data;
 };
 
