@@ -12,10 +12,16 @@
  */
 #include <fstream>
 #include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
 
 #include "logog/include/logog.hpp"
 
 #include "BoostXmlCndInterface.h"
+
+// BaseLib
+#include "StringTools.h"
+
+// OGS
 #include "BoundaryCondition.h"
 
 namespace FileIO
@@ -77,6 +83,9 @@ void BoostXmlCndInterface::readBoundaryConditions(
 					bc->setGeoName(geo_name);
 					bc->setGeoType(GeoLib::convertGeoType(geo_type));
 				}
+				if (boundary_condition_tag.first.compare("Distribution") == 0) {
+					readDistributionTag(boundary_condition_tag.second, bc);
+				}
 			}
 			_project_data->addCondition(bc);
 		}
@@ -107,6 +116,46 @@ void BoostXmlCndInterface::readGeometryTag(boost::property_tree::ptree const& ge
 		}
 		if (geo_tag.first.compare("Name") == 0) {
 			geo_name = geo_tag.second.data();
+		}
+	}
+}
+
+void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const& distribution_tags,
+		FEMCondition * cond) const
+{
+	using boost::property_tree::ptree;
+	BOOST_FOREACH(ptree::value_type const & dis_tag, distribution_tags) {
+
+		if (dis_tag.first.compare("Type") == 0) {
+			cond->setProcessDistributionType(
+					FiniteElement::convertDisType(dis_tag.second.data()));
+		}
+
+		if (dis_tag.first.compare("Value") == 0) {
+			FiniteElement::DistributionType const& dt(cond->getProcessDistributionType());
+
+			if (dt == FiniteElement::CONSTANT || dt == FiniteElement::CONSTANT_NEUMANN) {
+				cond->setConstantDisValue(BaseLib::str2number<double>(dis_tag.second.data()));
+				return;
+			}
+
+			if (dt == FiniteElement::LINEAR || dt == FiniteElement::LINEAR_NEUMANN
+					|| dt == FiniteElement::DIRECT) {
+				std::vector<std::size_t> dis_node_ids;
+				std::vector<double> dis_values;
+
+				boost::tokenizer<> tok(dis_tag.second.data());
+				for (boost::tokenizer<>::iterator tok_it=tok.begin(); tok_it!=tok.end(); ) {
+					dis_node_ids.push_back(BaseLib::str2number<std::size_t>(*tok_it));
+					tok_it++;
+					dis_values.push_back(BaseLib::str2number<double>(*tok_it));
+					tok_it++;
+				}
+				cond->setDisValues(dis_node_ids, dis_values);
+				return;
+			}
+
+			ERR("BoostXmlCndInterface::readDistributionTag(): Distribution type not supported.")
 		}
 	}
 }

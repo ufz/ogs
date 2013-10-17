@@ -48,6 +48,9 @@ private:
 			std::string &pcs_type, std::string &primary_variable) const;
 	void readGeometryTag(boost::property_tree::ptree const& geometry_tags,
 			std::string &geo_type, std::string &geo_name) const;
+	void readDistributionTag(boost::property_tree::ptree const& distribution_tags,
+			FEMCondition * bc) const;
+
 	ProjectData* _project_data;
 };
 
