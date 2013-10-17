@@ -74,9 +74,6 @@ const std::string MeshElemType2String(const MeshElemType t);
 /// Given a string of the shortened name of the element type, this returns the corresponding MeshElemType.
 MeshElemType String2MeshElemType(const std::string &s);
 
-/// Given the full name of an element type this, returns the corresponding MeshElemType.
-MeshElemType CompleteString2MeshElemType(const std::string &s);
-
 const std::string MeshQualityType2String(const MeshQualityType t);
 
 #endif //MESHENUMS_H

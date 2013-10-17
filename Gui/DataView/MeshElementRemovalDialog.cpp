@@ -66,7 +66,7 @@ void MeshElementRemovalDialog::accept()
 	{
 		QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();
 		for (int i=0; i<items.size(); ++i)
-			ex.searchByElementType(CompleteString2MeshElemType(items[i]->text().toStdString()));
+			ex.searchByElementType(String2MeshElemType(items[i]->text().toStdString()));
 		anything_checked = true;
 	}
 	if (this->materialIDCheckBox->isChecked())

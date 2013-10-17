@@ -119,13 +119,16 @@ void ElementExtraction::updateUnion(const std::vector<std::size_t> &vec)
 std::vector<MeshLib::Element*> ElementExtraction::excludeElements(const std::vector<MeshLib::Element*> & vec_src_eles, const std::vector<std::size_t> &vec_removed) const
 {
 	std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size() - vec_removed.size());
-	std::size_t k=0;
-	for (std::size_t i=0; i<vec_src_eles.size(); i++) {
-		if (std::find(vec_removed.begin(), vec_removed.end(), i) == vec_removed.end()) {
-			vec_dest_eles[k] = vec_src_eles[i];
-			k++;
-		}
-	}
+
+	unsigned cnt (0);
+	for (std::size_t i=0; i<vec_removed[0]; ++i) 
+			vec_dest_eles[cnt++] = vec_src_eles[i];
+	for (std::size_t i=1; i<vec_removed.size(); ++i) 
+		for (std::size_t j=vec_removed[i-1]+1; j<vec_removed[i]; ++j) 
+			vec_dest_eles[cnt++] = vec_src_eles[j];
+	for (std::size_t i=vec_removed.back()+1; i<vec_src_eles.size(); ++i) 
+			vec_dest_eles[cnt++] = vec_src_eles[i];
+
 	return vec_dest_eles;
 }
 

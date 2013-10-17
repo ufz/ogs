@@ -15,6 +15,7 @@
 #ifndef ELEMENTEXTRACTION_H
 #define ELEMENTEXTRACTION_H
 
+#include <string>
 #include <vector>
 #include "MeshEnums.h"
 #include "Node.h"
