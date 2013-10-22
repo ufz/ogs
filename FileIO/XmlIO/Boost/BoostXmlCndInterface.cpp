@@ -65,9 +65,13 @@ void BoostXmlCndInterface::readBoundaryConditions(
 			// parse attribute of boundary condition
 			std::string const& geometry_name = boundary_condition_node.second.get<std::string>("<xmlattr>.geometry");
 
+			if (_project_data->getGEOObjects()->exists(geometry_name) == -1) {
+				ERR("BoostXmlCndInterface::readBoundaryConditions(): Associated geometry \"%s\" not found.", 
+					geometry_name.c_str());
+				return;
+			}
 			// create instance
 			BoundaryCondition *bc(new BoundaryCondition(geometry_name));
-			// ToDo: check if geometry exists
 
 			// parse tags of boundary condition
 			BOOST_FOREACH(ptree::value_type const & boundary_condition_tag, boundary_condition_node.second) {
