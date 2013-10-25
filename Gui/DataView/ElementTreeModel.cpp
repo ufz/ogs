@@ -26,7 +26,7 @@
  * Constructor.
  */
 ElementTreeModel::ElementTreeModel( QObject* parent )
-	: TreeModel(parent)
+	: TreeModel(parent), _mesh_source(nullptr)
 {
 	QList<QVariant> rootData;
 	delete _rootItem;
