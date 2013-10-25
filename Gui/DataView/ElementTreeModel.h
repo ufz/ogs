@@ -42,13 +42,17 @@ public slots:
 	/// Clears the tree.
 	void clearView();
 
-	/// Extracts information of the element with the given index from the given grid.
+	/// Displays information of the element with the given index from the given grid.
 	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
 
-	void setMesh(vtkUnstructuredGridAlgorithm const*const grid);
+	/// Displays information of the given mesh.
+	void setMesh(MeshLib::Mesh const*const mesh);
 
 private:
+	// Returns the bounding box of the mesh.
 	std::pair<unsigned, unsigned> getMatBounds(MeshLib::Mesh const*const mesh) const;
+
+	// Returns an array with the number of elements of each type in the given mesh.
 	void getNumberOfElementTypes(MeshLib::Mesh const*const mesh, std::array<unsigned, 7> &n_element_types) const;
 
 	vtkUnstructuredGridAlgorithm const* _mesh_source;

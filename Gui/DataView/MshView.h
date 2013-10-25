@@ -96,6 +96,7 @@ signals:
 	void elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);
 	void enableSaveButton(bool);
 	void enableRemoveButton(bool);
+	void meshSelected(MeshLib::Mesh const*const);
 	void openMeshFile(int);
 	void qualityCheckRequested(VtkMeshSource*);
 	void removeSelectedMeshComponent();

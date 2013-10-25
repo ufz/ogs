@@ -98,10 +98,8 @@ void ElementTreeModel::clearView()
 	reset();
 }
 
-void ElementTreeModel::setMesh(vtkUnstructuredGridAlgorithm const*const grid)
+void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 {
-	VtkMeshSource const*const source = dynamic_cast<VtkMeshSource const*const>(grid);
-	MeshLib::Mesh const*const mesh = source->GetMesh();
 	this->clearView();
 
 	if (mesh)
@@ -141,7 +139,7 @@ void ElementTreeModel::setMesh(vtkUnstructuredGridAlgorithm const*const grid)
 		const MeshLib::Node max = aabb.getMaxPoint();
 
 		QList<QVariant> bounding_box;
-		elements_number << "Bounding Box" << "" << "" << "";
+		bounding_box << "Bounding Box" << "" << "" << "";
 		TreeItem* aabb_item = new TreeItem(bounding_box, _rootItem);
 		_rootItem->appendChild(aabb_item);
 
