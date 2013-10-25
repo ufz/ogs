@@ -21,6 +21,7 @@ set( SOURCES
 	ListPropertiesDialog.cpp
 	MergeGeometriesDialog.cpp
 	MeshElementRemovalDialog.cpp
+	MeshInfoTreeModel.cpp
 	MeshValueEditDialog.cpp
 	ModellingTabWidget.cpp
 	ModelTreeItem.cpp
@@ -63,6 +64,7 @@ set( MOC_HEADERS
 	ListPropertiesDialog.h
 	MergeGeometriesDialog.h
 	MeshElementRemovalDialog.h
+	MeshInfoTreeModel.h
 	MeshValueEditDialog.h
 	ModellingTabWidget.h
 	MeshLayerEditDialog.h

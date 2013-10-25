@@ -15,9 +15,14 @@
 #ifndef ELEMENTTREEMODEL_H
 #define ELEMENTTREEMODEL_H
 
+#include <array>
 #include "TreeModel.h"
 
 class vtkUnstructuredGridAlgorithm;
+
+namespace MeshLib {
+	class Mesh;
+}
 
 /**
  * \brief A model for the display of information concerning element information implemented as a TreeModel.
@@ -40,8 +45,14 @@ public slots:
 	/// Extracts information of the element with the given index from the given grid.
 	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
 
+	void setMesh(vtkUnstructuredGridAlgorithm const*const grid);
+
 private:
+	std::pair<unsigned, unsigned> getMatBounds(MeshLib::Mesh const*const mesh) const;
+	void getNumberOfElementTypes(MeshLib::Mesh const*const mesh, std::array<unsigned, 7> &n_element_types) const;
+
 	vtkUnstructuredGridAlgorithm const* _mesh_source;
+
 };
 
 #endif //ELEMENTTREEMODEL_H
