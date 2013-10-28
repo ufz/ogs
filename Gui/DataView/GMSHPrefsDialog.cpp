@@ -79,7 +79,7 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* 
 	{
 		this->selectGeoButton->setDisabled(true);
 		this->deselectGeoButton->setDisabled(true);
-		list.append("(No geometry available.)");
+		list.append("[No geometry available.]");
 	}
 	_allGeo->setStringList(list);
 	this->allGeoView->setModel(_allGeo);
@@ -144,8 +144,8 @@ void GMSHPrefsDialog::accept()
 {
 	if (this->_selGeo->stringList().empty())
 	{
-		OGSError::box("No geometry loaded. Geometric data\n is necessary for mesh generation.");
-		this->done(QDialog::Rejected);
+		OGSError::box("No geometry selected. Geometric data\n is necessary for mesh generation.");
+		return;
 	}
 
 	std::vector<std::string> selectedObjects = this->getSelectedObjects(_selGeo->stringList());
