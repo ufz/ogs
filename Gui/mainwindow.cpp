@@ -540,22 +540,28 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
 			XmlGspInterface xml(&_project, schemaName);
-			xml.readFile(fileName);
-			INFO("Adding missing meshes to GUI.");
-			_meshModels->updateModel();
+			if (xml.readFile(fileName))
+			{
+				INFO("Adding missing meshes to GUI.");
+				_meshModels->updateModel();
+			}
+			else
+				OGSError::box("Failed to load project file.\n Please see console for details.");
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
 			XmlGmlInterface xml(&_project, schemaName);
-			xml.readFile(fileName);
+			if (!xml.readFile(fileName))
+				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
 			XmlStnInterface xml(&_project, schemaName);
-			xml.readFile(fileName);
+			if (!xml.readFile(fileName))
+				OGSError::box("Failed to load station data.\n Please see console for details.");
 		}
 		// OpenGeoSys mesh files
 		else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
@@ -880,8 +886,10 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		std::vector<FEMCondition*> conditions;
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
-		xml.readFile(conditions, fileName);
-		this->addFEMConditions(conditions);
+		if (xml.readFile(conditions, fileName))
+			this->addFEMConditions(conditions);
+		else
+			OGSError::box("Failed to load FEM conditions.\n Please see console for details.");
 	}
 }
 
