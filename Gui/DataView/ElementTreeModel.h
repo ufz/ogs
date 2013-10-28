@@ -49,12 +49,6 @@ public slots:
 	void setMesh(MeshLib::Mesh const*const mesh);
 
 private:
-	// Returns the bounding box of the mesh.
-	std::pair<unsigned, unsigned> getMatBounds(MeshLib::Mesh const*const mesh) const;
-
-	// Returns an array with the number of elements of each type in the given mesh.
-	void getNumberOfElementTypes(MeshLib::Mesh const*const mesh, std::array<unsigned, 7> &n_element_types) const;
-
 	vtkUnstructuredGridAlgorithm const* _mesh_source;
 
 };
