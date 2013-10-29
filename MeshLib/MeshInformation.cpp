@@ -17,7 +17,7 @@
 #include "Elements/Element.h"
 
 
-const std::pair<unsigned, unsigned> MeshInformation::getMatBounds(MeshLib::Mesh const*const mesh)
+const std::pair<unsigned, unsigned> MeshInformation::getValueBounds(MeshLib::Mesh const*const mesh)
 {
 	const std::vector<MeshLib::Element*> elements (mesh->getElements());
 	const auto minmax = std::minmax_element(elements.cbegin(), elements.cend(),

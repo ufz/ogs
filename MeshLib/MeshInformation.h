@@ -31,7 +31,7 @@ class MeshInformation
 {
 public:
 	/// Returns the smallest and largest MaterialID of the mesh.
-	static const std::pair<unsigned, unsigned> getMatBounds(MeshLib::Mesh const*const mesh);
+	static const std::pair<unsigned, unsigned> getValueBounds(MeshLib::Mesh const*const mesh);
 
 	/// Returns the bounding box of the mesh.
 	static const GeoLib::AABB<MeshLib::Node> getBoundingBox(MeshLib::Mesh const*const mesh);

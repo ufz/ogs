@@ -141,8 +141,8 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	_rootItem->appendChild(aabb_item);
 
 	const GeoLib::AABB<MeshLib::Node> aabb (MeshInformation::getBoundingBox(mesh));
-	const MeshLib::Node min = aabb.getMinPoint();
-	const MeshLib::Node max = aabb.getMaxPoint();
+	const MeshLib::Node& min = aabb.getMinPoint();
+	const MeshLib::Node& max = aabb.getMaxPoint();
 
 	QList<QVariant> min_aabb;
 	min_aabb << "Min:" << QString::number(min[0], 'f') << QString::number(min[1], 'f') << QString::number(min[2], 'f');
@@ -154,7 +154,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* max_item = new TreeItem(max_aabb, aabb_item);
 	aabb_item->appendChild(max_item);
 
-	std::pair<unsigned, unsigned> mat_bounds (MeshInformation::getMatBounds(mesh));
+	std::pair<unsigned, unsigned> mat_bounds (MeshInformation::getValueBounds(mesh));
 	QList<QVariant> materials;
 	materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) << QString::number(mat_bounds.second) + "]" << "";
 	TreeItem* mat_item = new TreeItem(materials, _rootItem);
