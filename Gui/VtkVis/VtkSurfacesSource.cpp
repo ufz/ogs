@@ -75,7 +75,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 		return 1;
 
 	vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
-	newPoints->Allocate(nPoints);
+	newPoints->SetNumberOfPoints(nPoints);
 
 	vtkSmartPointer<vtkCellArray> newPolygons = vtkSmartPointer<vtkCellArray>::New();
 	//newPolygons->Allocate(nSurfaces);
@@ -87,7 +87,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	for (size_t i = 0; i < nPoints; ++i)
 	{
 		const double* coords = const_cast<double*>((*surfacePoints)[i]->getCoords());
-		newPoints->InsertNextPoint(coords);
+		newPoints->SetPoint(i, coords);
 	}
 
 	vtkIdType count(0);
@@ -115,6 +115,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	output->SetPolys(newPolygons);
 	output->GetCellData()->AddArray(sfcIDs);
 	output->GetCellData()->SetActiveAttribute("SurfaceIDs", vtkDataSetAttributes::SCALARS);
+	output->Squeeze();
 
 	return 1;
 }

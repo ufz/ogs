@@ -78,8 +78,9 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	vtkPoints* points = input->GetPoints();
 	vtkSmartPointer<vtkFloatArray> textureCoordinates = vtkSmartPointer<vtkFloatArray>::New();
 	textureCoordinates->SetNumberOfComponents(2);
-	textureCoordinates->SetName("TextureCoordinates");
 	size_t nPoints = points->GetNumberOfPoints();
+	textureCoordinates->SetNumberOfTuples(nPoints);
+	textureCoordinates->SetName("TextureCoordinates");
 /*  // adaptation for netcdf-curtain for TERENO Demo
 	double dist(0.0);
 	for (size_t i = 0; i < nPoints; i++)
@@ -113,7 +114,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		points->GetPoint(i, coords);
 		float newcoords[2] = { MathLib::normalize(min.first, max.first, coords[0]),
 		                       MathLib::normalize(min.second,max.second, coords[1])};
-		textureCoordinates->InsertNextTuple(newcoords);
+		textureCoordinates->SetTuple(i, newcoords);
 	}
 
 	// put it all together
@@ -123,6 +124,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	output->GetPointData()->PassData(input->GetPointData());
 	output->GetCellData()->PassData(input->GetCellData());
 	output->GetPointData()->SetTCoords(textureCoordinates);
+	output->Squeeze();
 
 	return 1;
 }

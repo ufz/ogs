@@ -134,23 +134,29 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	size_t site_count(0);
 
 	// Generate graphic objects
-	for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
-	     it != _stations->end(); ++it)
+	size_t nPoints = _stations->size();
+	newStations->SetNumberOfPoints(nPoints);
+	if(!isBorehole)
+		newVerts->Allocate(nPoints);
+	for(size_t i = 0; i < nPoints; ++i)
 	{
-		double coords[3] = { (*(*it))[0], (*(*it))[1], (*(*it))[2] };
-		vtkIdType sid = newStations->InsertNextPoint(coords);
+		double coords[3] = { (*((*_stations)[i]))[0], (*((*_stations)[i]))[1], (*((*_stations)[i]))[2] };
+		newStations->SetPoint(i, coords);
 		station_ids->InsertNextValue(site_count);
 		if (useStationValues)
-			station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
+			station_values->InsertNextValue(static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue());
 
 		if (!isBorehole)
-			newVerts->InsertNextCell(1, &sid);
+		{
+			newVerts->InsertNextCell(1);
+			newVerts->InsertCellPoint(i);
+		}
 		else
 		{
 			std::vector<GeoLib::Point*> profile =
-			        static_cast<GeoLib::StationBorehole*>(*it)->getProfile();
+			        static_cast<GeoLib::StationBorehole*>((*_stations)[i])->getProfile();
 			std::vector<std::string> soilNames =
-			        static_cast<GeoLib::StationBorehole*>(*it)->getSoilNames();
+			        static_cast<GeoLib::StationBorehole*>((*_stations)[i])->getSoilNames();
 			const size_t nLayers = profile.size();
 
 			for (size_t i = 1; i < nLayers; i++)
@@ -164,7 +170,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
 				newLines->InsertCellPoint(++lastMaxIndex); //end of boreholelayer
 				strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
 				if (useStationValues)
-					station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
+					station_values->InsertNextValue(static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue());
 			}
 			lastMaxIndex++;
 		}
@@ -188,6 +194,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	}
 	if (useStationValues)
 		output->GetPointData()->AddArray(station_values);
+
+	output->Squeeze();
 
 	return 1;
 }

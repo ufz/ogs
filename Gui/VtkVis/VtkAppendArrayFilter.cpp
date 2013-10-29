@@ -60,15 +60,16 @@ int VtkAppendArrayFilter::RequestData( vtkInformation*,
 
 	vtkSmartPointer<vtkDoubleArray> colors = vtkSmartPointer<vtkDoubleArray>::New();
 	colors->SetNumberOfComponents(1);
+	size_t arrayLength = this->_array.size();
+	colors->SetNumberOfValues(arrayLength);
 	colors->SetName("Selection");
 
 	size_t nCells = input->GetNumberOfCells();
-	size_t arrayLength = this->_array.size();
 	if (nCells > arrayLength)
 		WARN("VtkAppendArrayFilter::RequestData(): Number of cells exceeds selection array length. Surplus cells won't be examined.");
 
 	for (size_t i = 0; i < arrayLength; i++)
-		colors->InsertNextValue(_array[i]);
+		colors->SetValue(i, _array[i]);
 
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
 	vtkUnstructuredGrid* output =

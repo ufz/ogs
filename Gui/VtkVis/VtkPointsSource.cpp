@@ -89,26 +89,28 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 
 	vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
-	newPoints->Allocate(numPoints);
+	newPoints->SetNumberOfPoints(numPoints);
 	newVerts->Allocate(numPoints);
 
 	vtkSmartPointer<vtkIntArray> pointIDs = vtkSmartPointer<vtkIntArray>::New();
 	pointIDs->SetNumberOfComponents(1);
+	pointIDs->SetNumberOfValues(numPoints);
 	pointIDs->SetName("PointIDs");
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
 	// Generate points and vertices
-	int i = 0;
+	unsigned i = 0;
 	for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
 	     it != _points->end(); ++it)
 	{
 		double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
-		vtkIdType pid = newPoints->InsertNextPoint(coords);
-		newVerts->InsertNextCell(1, &pid);
+		newPoints->SetPoint(i, coords);
+		newVerts->InsertNextCell(1);
+		newVerts->InsertCellPoint(i);
 
-		pointIDs->InsertNextValue(i);
+		pointIDs->SetValue(i, i);
 		i++;
 	}
 
