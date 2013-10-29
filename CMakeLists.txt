@@ -19,6 +19,13 @@ SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}
 SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} (${OGS_RELEASE_PERSONS})")
 SET (OGS_DATE "2012-08-20")
 
+
+###########################
+### Preliminary Options ###
+###########################
+OPTION(EXTERNAL_BOOST_DOWNLOAD "Should download boost?" OFF)
+
+
 ### CMake includes ###
 INCLUDE(scripts/cmake/CheckTypeSizes.cmake)
 INCLUDE(scripts/cmake/FindIncludeHeader.cmake)
@@ -34,9 +41,9 @@ IF(OGS_COVERAGE AND NOT IS_SUBPROJECT)
 	INCLUDE(scripts/cmake/Coverage.cmake)
 ENDIF()
 
-###############
-### Options ###
-###############
+####################
+### More Options ###
+####################
 
 # Profiling
 IF((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
@@ -55,6 +62,7 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
+OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Eigen
 OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
@@ -111,6 +119,29 @@ INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
 ENDIF()
+
+IF(OGS_USE_PETSC)
+    MESSAGE (STATUS  "Configuring for PETSc" )
+      
+    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
+    FIND_PACKAGE(PETSc REQUIRED)
+ 
+    include_directories(
+              ${PETSC_INCLUDES} 
+     )
+
+    FIND_PACKAGE(MPI)
+    IF(MPI_FOUND)		
+       SET(CMAKE_C_COMPILER ${MPI_COMPILER})
+       SET(CMAKE_CXX_COMPILER ${MPI_COMPILER})
+    ELSE(MPI_FOUND)
+       MESSAGE (FATAL_ERROR "Aborting: MPI implementation is not found!")
+    ENDIF(MPI_FOUND)			
+
+    ADD_DEFINITIONS(-DUSE_PETSC)
+ENDIF()
+
+
 
 IF(OGS_USE_EIGEN)
 #	ADD_DEFINITIONS(-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=std::size_t)
