@@ -30,7 +30,6 @@ XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string
 
 int XmlGmlInterface::readFile(const QString &fileName)
 {
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
 	std::string gliName("[NN]");
 
 	QFile* file = new QFile(fileName);
