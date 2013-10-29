@@ -34,8 +34,9 @@ const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(MeshLib::Mesh 
 	return GeoLib::AABB<MeshLib::Node>(nodes.begin(), nodes.end());
 }
 
-void MeshInformation::getNumberOfElementTypes(MeshLib::Mesh const*const mesh, std::array<unsigned, 7> &n_element_types)
+const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(MeshLib::Mesh const*const mesh)
 {
+	std::array<unsigned, 7> n_element_types;
 	const std::vector<MeshLib::Element*> elements (mesh->getElements());
 	for (auto it = elements.begin(); it != elements.end(); ++it)
 	{
@@ -48,4 +49,5 @@ void MeshInformation::getNumberOfElementTypes(MeshLib::Mesh const*const mesh, st
 		if (t == MeshElemType::PYRAMID) n_element_types[5]++;
 		if (t == MeshElemType::PRISM) n_element_types[6]++;
 	}
+	return n_element_types;
 }

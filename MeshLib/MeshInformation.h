@@ -48,7 +48,7 @@ public:
 	 *		5: #pyramids
 	 *		6: #prisms
 	 */
-	static void getNumberOfElementTypes(MeshLib::Mesh const*const mesh, std::array<unsigned, 7> &n_element_types);
+	static const std::array<unsigned, 7> getNumberOfElementTypes(MeshLib::Mesh const*const mesh);
 
 
 };
