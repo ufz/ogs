@@ -41,7 +41,8 @@ private:
 	MeshLib::Mesh const& _mesh;
 	GeoLib::Grid<MeshLib::Node> _mesh_grid;
 	double _search_length;
-	std::vector<MeshNodesAlongPolyline> _mesh_nodes_along_polylines;
+	// with newer compiler we can omit to use a pointer here
+	std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
 };
 
 } // end namespace MeshGeoTools
