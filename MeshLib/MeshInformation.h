@@ -31,10 +31,10 @@ class MeshInformation
 {
 public:
 	/// Returns the smallest and largest MaterialID of the mesh.
-	static const std::pair<unsigned, unsigned> getValueBounds(MeshLib::Mesh const*const mesh);
+	static const std::pair<unsigned, unsigned> getValueBounds(const MeshLib::Mesh &mesh);
 
 	/// Returns the bounding box of the mesh.
-	static const GeoLib::AABB<MeshLib::Node> getBoundingBox(MeshLib::Mesh const*const mesh);
+	static const GeoLib::AABB<MeshLib::Node> getBoundingBox(const MeshLib::Mesh &mesh);
 
 	/** 
 	 * Returns an array with the number of elements of each type in the given mesh.
@@ -48,7 +48,7 @@ public:
 	 *		5: #pyramids
 	 *		6: #prisms
 	 */
-	static const std::array<unsigned, 7> getNumberOfElementTypes(MeshLib::Mesh const*const mesh);
+	static const std::array<unsigned, 7> getNumberOfElementTypes(const MeshLib::Mesh &mesh);
 
 
 };

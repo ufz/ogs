@@ -17,9 +17,9 @@
 #include "Elements/Element.h"
 
 
-const std::pair<unsigned, unsigned> MeshInformation::getValueBounds(MeshLib::Mesh const*const mesh)
+const std::pair<unsigned, unsigned> MeshInformation::getValueBounds(const MeshLib::Mesh &mesh)
 {
-	const std::vector<MeshLib::Element*> elements (mesh->getElements());
+	const std::vector<MeshLib::Element*> &elements (mesh.getElements());
 	const auto minmax = std::minmax_element(elements.cbegin(), elements.cend(),
         [](MeshLib::Element const*const a, MeshLib::Element const*const b)
             {
@@ -28,16 +28,16 @@ const std::pair<unsigned, unsigned> MeshInformation::getValueBounds(MeshLib::Mes
 	return std::make_pair<unsigned, unsigned>((*minmax.first)->getValue(), (*minmax.second)->getValue());
 }
 
-const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(MeshLib::Mesh const*const mesh)
+const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(const MeshLib::Mesh &mesh)
 {
-	const std::vector<MeshLib::Node*> nodes (mesh->getNodes());
+	const std::vector<MeshLib::Node*> &nodes (mesh.getNodes());
 	return GeoLib::AABB<MeshLib::Node>(nodes.begin(), nodes.end());
 }
 
-const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(MeshLib::Mesh const*const mesh)
+const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const MeshLib::Mesh &mesh)
 {
 	std::array<unsigned, 7> n_element_types = { 0, 0, 0, 0, 0, 0, 0 };
-	const std::vector<MeshLib::Element*> elements (mesh->getElements());
+	const std::vector<MeshLib::Element*> &elements (mesh.getElements());
 	for (auto it = elements.begin(); it != elements.end(); ++it)
 	{
 		MeshElemType t = (*it)->getGeomType();
