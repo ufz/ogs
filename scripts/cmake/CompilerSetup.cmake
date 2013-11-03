@@ -37,8 +37,8 @@ IF(COMPILER_IS_GCC)
 					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
 				ELSE()
 					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
-					# Disable -march=native on Ninja generator
-					IF(NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
+					# Disable -march=native on mac or Ninja generator
+					IF(NOT APPLE AND NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 						SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 					ENDIF()
 				ENDIF()
