@@ -83,6 +83,12 @@ public:
 		os.close();
 	}
 
+    /// vector operation: add
+    void operator+= (const DenseVector<T>& v) { *this += v; }
+
+    /// vector operation: subtract
+    void operator-= (const DenseVector<T>& v) { *this -= v; }
+
 };
 
 /**
