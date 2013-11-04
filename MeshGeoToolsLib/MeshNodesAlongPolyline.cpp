@@ -1,6 +1,5 @@
 /**
  * @file
- * @author git blame MeshNodesAlongPolyline.h
  * @date Aug 9, 2010
  * @brief
  *

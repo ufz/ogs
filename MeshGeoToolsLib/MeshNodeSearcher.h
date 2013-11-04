@@ -1,6 +1,5 @@
 /**
  * @file
- * @author git blame MeshNodeSearcher.h
  * @date Oct 24, 2013
  * @brief
  *
