@@ -34,6 +34,8 @@ public:
 
 public:
 	using std::valarray<T>::operator=;
+	using std::valarray<T>::operator+=;
+	using std::valarray<T>::operator-=;
 	using std::valarray<T>::operator[];
 
 	/**
@@ -84,10 +86,16 @@ public:
 	}
 
     /// vector operation: add
-    void operator+= (const DenseVector<T>& v) { *this += v; }
+    void operator+= (const DenseVector<T>& v)
+    {
+        *this += static_cast<std::valarray<T> >(v);
+    }
 
     /// vector operation: subtract
-    void operator-= (const DenseVector<T>& v) { *this -= v; }
+    void operator-= (const DenseVector<T>& v)
+    {
+        *this -= static_cast<std::valarray<T> >(v);
+    }
 
 };
 
