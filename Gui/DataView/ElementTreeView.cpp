@@ -42,7 +42,6 @@ void ElementTreeView::selectionChanged( const QItemSelection &selected, const QI
 	{
 		emit removeSelectedMeshComponent();
 		const QModelIndex idx = *(selected.indexes().begin());
-		
 
 		if (idx.parent().isValid()) // not root node
 			if (idx.parent().parent().isValid()) // not property node

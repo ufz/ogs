@@ -76,6 +76,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 		{
 			emit enableSaveButton(true);
 			emit enableRemoveButton(true);
+			emit meshSelected(list_item->getMesh());
 		}
 		else
 		{
