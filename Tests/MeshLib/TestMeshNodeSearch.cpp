@@ -27,6 +27,11 @@ public:
 		_quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
 	{}
 
+	~MeshLibMeshNodeSearchInSimpleQuadMesh()
+	{
+		delete _quad_mesh;
+	}
+
 protected:
 	const double _geometric_size;
 	const std::size_t _number_of_subdivisions_per_direction;
@@ -150,4 +155,5 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	for (std::size_t k(0); k<found_ids_ply6.size(); k++)
 		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1)+k, found_ids_ply6[k]);
 
+	std::for_each(pnts.begin(), pnts.end(), [](GeoLib::Point* pnt) { delete pnt; });
 }
