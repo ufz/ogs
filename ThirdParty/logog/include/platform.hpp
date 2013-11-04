@@ -45,8 +45,23 @@ extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 #endif
 
 #ifdef __APPLE__
+#ifndef __clang__
 #define LOGOG_USE_TR1 1
-#endif
+#else
+#if !(__has_include(<unordered_map>))
+#define LOGOG_USE_TR1 1
+#endif // !(__has_include(<unordered_map>))
+#endif // __clang
+#endif // __APPLE__
+
+/* Detect IBM's XL C++ */
+#ifdef __IBMCPP__
+// Enable use of TR1 unorderd_map etc.
+#define __IBMCPP_TR1__ 1
+#ifdef __PPC__
+#define LOGOG_FLAVOR_POSIX 1
+#endif // __PPC__
+#endif // __IBMCPP__
 
 /* If we've recognized it already, it's a relatively modern compiler */
 #if defined( LOGOG_FLAVOR_WINDOWS ) || defined( LOGOG_FLAVOR_POSIX )
