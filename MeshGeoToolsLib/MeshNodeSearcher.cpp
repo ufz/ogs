@@ -11,6 +11,9 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 // MeshLib
@@ -59,6 +62,9 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
 	}
 
 	_search_length = (mu - c * s)/2;
+
+	DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
+			_mesh.getName().c_str(), _search_length);
 }
 
 MeshNodeSearcher::~MeshNodeSearcher()
