@@ -14,6 +14,8 @@
 #ifndef MESHNODESALONGPOLYLINE_H_
 #define MESHNODESALONGPOLYLINE_H_
 
+#include <vector>
+
 // GeoLib
 #include "Polyline.h"
 

@@ -13,8 +13,12 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
+// MeshLib
 #include "Elements/Element.h"
 #include "Elements/Line.h"
+
+// MeshGeoToolsLib
+#include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 
 namespace MeshGeoTools
 {

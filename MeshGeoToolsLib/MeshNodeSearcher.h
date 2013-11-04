@@ -13,6 +13,8 @@
 #ifndef MESHNODESEARCHER_H_
 #define MESHNODESEARCHER_H_
 
+#include <vector>
+
 // GeoLib
 #include "Point.h"
 #include "Polyline.h"
@@ -22,8 +24,11 @@
 #include "Mesh.h"
 #include "Node.h"
 
-// MeshGeoToolsLib
-#include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
+// forward declaration
+namespace MeshGeoTools
+{
+class MeshNodesAlongPolyline;
+}
 
 namespace MeshGeoTools
 {
