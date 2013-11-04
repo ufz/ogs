@@ -32,8 +32,26 @@ namespace MeshGeoTools
 class MeshNodesAlongPolyline
 {
 public:
-	MeshNodesAlongPolyline(std::vector<MeshLib::Node*> const& mesh_nodes, GeoLib::Polyline const& ply, double epsilon_radius);
-	std::vector<size_t> const& getNodeIDs () const;
+	/**
+	 * Constructor of object, that search mesh nodes along a
+	 * GeoLib::Polyline polyline within a given search radius. So the polyline
+	 * is something like a tube.
+	 * @param mesh_nodes Nodes the search will be performed on.
+	 * @param ply Along the GeoLib::Polyline ply the mesh nodes are searched.
+	 * @param epsilon_radius Search / tube radius
+	 */
+	MeshNodesAlongPolyline(std::vector<MeshLib::Node*> const& mesh_nodes,
+			GeoLib::Polyline const& ply, double epsilon_radius);
+	/**
+	 * Access the vector of mesh node ids.
+	 * @return The vector of mesh node ids calculated in the constructor
+	 */
+	std::vector<std::size_t> const& getNodeIDs () const;
+	/**
+	 * Deploying this method the user can get access to the underlying
+	 * GeoLib::Polyline.
+	 * @return the underlying GeoLib::Polyline
+	 */
 	GeoLib::Polyline const& getPolyline () const;
 	std::vector<double> const & getDistOfProjNodeFromPlyStart() const;
 
