@@ -1,11 +1,11 @@
 /*!
    \file  PETScLinearSolve.cpp
-   \brief Definition of class PETScLinearSolver, which defines a solver object 
+   \brief Definition of class PETScLinearSolver, which defines a solver object
          based on PETSc routines.
 
- 
+
    \author Wenqing Wang
-   \version 
+   \version
    \date Nov 2011 - Sep 2013
 
 
@@ -30,14 +30,14 @@ namespace MathLib
 {
 
 using boost::property_tree::ptree;
- 
+
 
 PETScLinearSolver :: PETScLinearSolver (PETScMatrix &stiffness_matrix,
                                         PETScVector &rhs, PETScVector &unknowns)
-  :A(stiffness_matrix), b(rhs), x(unknowns), lsolver(NULL), prec(NULL), global_x0(NULL),  global_x1(NULL) 
- {
+   :A(stiffness_matrix), b(rhs), x(unknowns), lsolver(NULL), prec(NULL), global_x0(NULL),  global_x1(NULL)
+{
    ltolerance = 1.e-10;
-   time_elapsed = 0.0;   
+   time_elapsed = 0.0;
    m_size_loc = PETSC_DECIDE;
 
    mpi_size = A.getMPI_Size();
@@ -47,42 +47,42 @@ PETScLinearSolver :: PETScLinearSolver (PETScMatrix &stiffness_matrix,
    b.set_rank_size(rank, mpi_size);
 
 
- }
+}
 
 
 
 PETScLinearSolver:: ~PETScLinearSolver()
 {
-  if(lsolver) KSPDestroy(&lsolver);
-  // if(prec) PCDestroy(&prec);
+   if(lsolver) KSPDestroy(&lsolver);
+   // if(prec) PCDestroy(&prec);
 
-  if(global_x0 != nullptr)
-    delete []  global_x0;
-  if(global_x1 != nullptr)
-    delete []  global_x1;
+   if(global_x0 != nullptr)
+      delete []  global_x0;
+   if(global_x1 != nullptr)
+      delete []  global_x1;
 
-  
-  global_x0 = nullptr;
-  global_x1 = nullptr;
 
-  PetscPrintf(PETSC_COMM_WORLD,"\n>>Number of Unknows: %d", m_size);
-  PetscPrintf(PETSC_COMM_WORLD,"\n>>Elapsed time in linear solver: %fs", time_elapsed);
+   global_x0 = nullptr;
+   global_x1 = nullptr;
+
+   PetscPrintf(PETSC_COMM_WORLD,"\n>>Number of Unknows: %d", m_size);
+   PetscPrintf(PETSC_COMM_WORLD,"\n>>Elapsed time in linear solver: %fs", time_elapsed);
 }
 
-    void allocateMemory4TemoraryArrays(const PetscInt size);
-    void releaseMemory4TemoraryArrays();
+void allocateMemory4TemoraryArrays(const PetscInt size);
+void releaseMemory4TemoraryArrays();
 
 
 void PETScLinearSolver:: allocateMemory4TemoraryArrays(const PetscInt size)
 {
 
-    m_size = size;
+   m_size = size;
 
    if(global_x0 == nullptr)
-     global_x0 = new PetscScalar[m_size];
-   
+      global_x0 = new PetscScalar[m_size];
+
    if(global_x1 == nullptr)
-     global_x1 = new PetscScalar[m_size];
+      global_x1 = new PetscScalar[m_size];
 
 }
 
@@ -90,14 +90,14 @@ void PETScLinearSolver:: allocateMemory4TemoraryArrays(const PetscInt size)
 void PETScLinearSolver:: releaseMemory4TemoraryArrays()
 {
 
-  if(global_x0 != nullptr)
-    delete []  global_x0;
-  if(global_x1 != nullptr)
-    delete []  global_x1;
+   if(global_x0 != nullptr)
+      delete []  global_x0;
+   if(global_x1 != nullptr)
+      delete []  global_x1;
 
-  
-  global_x0 = nullptr;
-  global_x1 = nullptr;
+
+   global_x0 = nullptr;
+   global_x1 = nullptr;
 
 }
 
@@ -114,7 +114,7 @@ void PETScLinearSolver:: releaseMemory4TemoraryArrays()
  KSPSTCG       "stcg"
  KSPGLTR       "gltr"
  KSPGMRES      "gmres"
- KSPFGMRES     "fgmres" 
+ KSPFGMRES     "fgmres"
  KSPLGMRES     "lgmres"
  KSPDGMRES     "dgmres"
  KSPTCQMR      "tcqmr"
@@ -191,28 +191,32 @@ void PETScLinearSolver::Config(boost::property_tree::ptree &option)
 
 
    boost::optional<ptree> ptSolver = option.get_child("LinearSolver");
-    if (!ptSolver)
-        return;
+   if (!ptSolver)
+      return;
 
-    boost::optional<std::string> solver_type = ptSolver->get_optional<std::string>("solver_type");
-    if (solver_type) {
+   boost::optional<std::string> solver_type = ptSolver->get_optional<std::string>("solver_type");
+   if (solver_type)
+   {
       sol_type  = *solver_type;
-    }
-    boost::optional<std::string> precon_type = ptSolver->get_optional<std::string>("precon_type");
-    if (precon_type) {
+   }
+   boost::optional<std::string> precon_type = ptSolver->get_optional<std::string>("precon_type");
+   if (precon_type)
+   {
       pc_type = *precon_type;
-    }
-    boost::optional<double> error_tolerance = ptSolver->get_optional<double>("error_tolerance");
-    if (error_tolerance) {
-        ltolerance = *error_tolerance;
-    }
-    boost::optional<int> max_iteration_step = ptSolver->get_optional<int>("max_iteration_step");
-    if (max_iteration_step) {
-        maxits = *max_iteration_step;
-    }
+   }
+   boost::optional<double> error_tolerance = ptSolver->get_optional<double>("error_tolerance");
+   if (error_tolerance)
+   {
+      ltolerance = *error_tolerance;
+   }
+   boost::optional<int> max_iteration_step = ptSolver->get_optional<int>("max_iteration_step");
+   if (max_iteration_step)
+   {
+      maxits = *max_iteration_step;
+   }
 
-    const KSPType lsol_type = sol_type.c_str();
-    const PCType prec_type = pc_type.c_str(); 
+   const KSPType lsol_type = sol_type.c_str();
+   const PCType prec_type = pc_type.c_str();
 
 
    KSPCreate(PETSC_COMM_WORLD,&lsolver);
@@ -231,45 +235,45 @@ void PETScLinearSolver::Config(boost::property_tree::ptree &option)
 
 void PETScLinearSolver::Solver()
 {
-  
+
    //TEST
 #ifdef TEST_MEM_PETSC
    PetscLogDouble mem1, mem2;
    PetscMemoryGetCurrentUsage(&mem1);
 #endif
- 
 
-   int its; 
+
+   int its;
    PetscLogDouble v1,v2;
    KSPConvergedReason reason;
 
    PetscGetTime(&v1);
 
    KSPSolve(lsolver, b.getData(), x.getData());
-  
+
    KSPGetConvergedReason(lsolver,&reason); //CHKERRQ(ierr);
    if (reason==KSP_DIVERGED_INDEFINITE_PC)
    {
-     PetscPrintf(PETSC_COMM_WORLD,"\nDivergence because of indefinite preconditioner;\n");
-     PetscPrintf(PETSC_COMM_WORLD,"Run the executable again but with -pc_factor_shift_positive_definite option.\n");
+      PetscPrintf(PETSC_COMM_WORLD,"\nDivergence because of indefinite preconditioner;\n");
+      PetscPrintf(PETSC_COMM_WORLD,"Run the executable again but with -pc_factor_shift_positive_definite option.\n");
    }
    else if (reason<0)
    {
-     PetscPrintf(PETSC_COMM_WORLD,"\nOther kind of divergence: this should not happen.\n");
+      PetscPrintf(PETSC_COMM_WORLD,"\nOther kind of divergence: this should not happen.\n");
    }
-   else 
+   else
    {
-     const char *slv_type;
-     const char *prc_type;
-     KSPGetType(lsolver, &slv_type);
-     PCGetType(prec, &prc_type);
+      const char *slv_type;
+      const char *prc_type;
+      KSPGetType(lsolver, &slv_type);
+      PCGetType(prec, &prc_type);
 
-      PetscPrintf(PETSC_COMM_WORLD,"\n================================================");         
+      PetscPrintf(PETSC_COMM_WORLD,"\n================================================");
       PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver %s with %s preconditioner",
-                                    slv_type, prc_type);         
+                  slv_type, prc_type);
       KSPGetIterationNumber(lsolver,&its); //CHKERRQ(ierr);
       PetscPrintf(PETSC_COMM_WORLD,"\nConvergence in %d iterations.\n",(int)its);
-      PetscPrintf(PETSC_COMM_WORLD,"\n================================================");           
+      PetscPrintf(PETSC_COMM_WORLD,"\n================================================");
    }
    PetscPrintf(PETSC_COMM_WORLD,"\n");
 
@@ -281,7 +285,7 @@ void PETScLinearSolver::Solver()
 
 
 #ifdef TEST_MEM_PETSC
-  //TEST
+   //TEST
    PetscMemoryGetCurrentUsage(&mem2);
    PetscPrintf(PETSC_COMM_WORLD, "###Memory usage by solver. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
@@ -291,53 +295,53 @@ void PETScLinearSolver::Solver()
 
 void PETScLinearSolver::Solver(PETScVector &rhs, PETScVector &unknowns)
 {
-  b = rhs;
-  x = unknowns;
+   b = rhs;
+   x = unknowns;
 
-  Solver();
+   Solver();
 }
 
 
 void PETScLinearSolver::finalAssemble()
 {
-  A.finalAssemble(MAT_FINAL_ASSEMBLY);
+   A.finalAssemble(MAT_FINAL_ASSEMBLY);
 
-  //if(full_fill_A_b_x)
-  {
-    b.finalAssemble();
-  }
+   //if(full_fill_A_b_x)
+   {
+      b.finalAssemble();
+   }
 
 }
 
 void PETScLinearSolver::addMatrixEntries(const PetscInt m, const PetscInt idxm[],                                         const PetscInt n, const PetscInt idxn[],
-                                         const PetscScalar v[])
+      const PetscScalar v[])
 {
 
-    A.addEntries(m, idxm, n, idxn, v);
+   A.addEntries(m, idxm, n, idxn, v);
 }
 
 
 void PETScLinearSolver::applyKnownSolutions(PetscInt ni,const PetscInt ix[], const PetscScalar y[])
 {
-    A.zeroRows_in_Matrix(ni, ix);
-    A.finalAssemble();
+   A.zeroRows_in_Matrix(ni, ix);
+   A.finalAssemble();
 
 
 
-    //if(full_fill_A_b_x)
-    {
-      x.setValues(ni, ix, y, INSERT_VALUES); 
-      b.setValues(ni, ix, y, INSERT_VALUES); 
+   //if(full_fill_A_b_x)
+   {
+      x.setValues(ni, ix, y, INSERT_VALUES);
+      b.setValues(ni, ix, y, INSERT_VALUES);
 
       x.finalAssemble();
       b.finalAssemble();
-    }  
-} 
+   }
+}
 
 
 void PETScLinearSolver::mappingSolution()
 {
-    x.getGlobalEntries(global_x0, global_x1);
+   x.getGlobalEntries(global_x0, global_x1);
 }
 
 
@@ -345,25 +349,25 @@ void PETScLinearSolver::mappingSolution()
 PetscScalar *PETScLinearSolver::getGlobalSolution() const
 {
 
-  return global_x1;
+   return global_x1;
 }
 
 PetscReal PETScLinearSolver::getNormRHS(NormType  nmtype)
 {
 
-  return b.getNorm(nmtype); 
+   return b.getNorm(nmtype);
 }
 /*!
     Get norm of x
     @param nmtype  - norm type
                      NORM_1 denotes sum_i |x_i|
                      NORM_2 denotes sqrt(sum_i (x_i)^2)
-                     NORM_INFINITY denotes max_i |x_i| 
+                     NORM_INFINITY denotes max_i |x_i|
     06.2012. WW
 */
 PetscReal PETScLinearSolver::getNormUnknowns(NormType  nmtype)
 {
-   return x.getNorm(nmtype); 
+   return x.getNorm(nmtype);
 }
 
 
@@ -372,43 +376,43 @@ void PETScLinearSolver::initializeMatVec( )
    A.setZero();
 
    //if(full_fill_A_b_x)
-    {
+   {
       b.nullize();
       x.nullize();
-    }
-} 
+   }
+}
 
 
 
 void PETScLinearSolver::Viewer(std::string file_name)
 {
-  std::string fname = file_name + "_eqs_dump_";
-     A.Viewer(fname + "matrix");
+   std::string fname = file_name + "_eqs_dump_";
+   A.Viewer(fname + "matrix");
 
-     // if(full_fill_A_b_x)
-    {
-        b.Viewer(fname + "rhs");
-        x.Viewer(fname + "unknowns");
-    }
- 
+   // if(full_fill_A_b_x)
+   {
+      b.Viewer(fname + "rhs");
+      x.Viewer(fname + "unknowns");
+   }
 
-#define  EXIT_TEST 
-#ifdef EXIT_TEST 
-  if(lsolver) KSPDestroy(&lsolver);
-  // if(prec) PCDestroy(&prec);
-  if(global_x0)
-    delete []  global_x0;
-  if(global_x1)
-    delete []  global_x1;
 
-  global_x0 = nullptr;
-  global_x1 = nullptr;
+#define  EXIT_TEST
+#ifdef EXIT_TEST
+   if(lsolver) KSPDestroy(&lsolver);
+   // if(prec) PCDestroy(&prec);
+   if(global_x0)
+      delete []  global_x0;
+   if(global_x1)
+      delete []  global_x1;
+
+   global_x0 = nullptr;
+   global_x1 = nullptr;
 
    PetscFinalize();
    exit(0);
-#endif 
- 
+#endif
+
 }
 
 } //end of namespace
- 
+
