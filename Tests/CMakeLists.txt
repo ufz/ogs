@@ -23,6 +23,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/GeoLib
 	${CMAKE_SOURCE_DIR}/MathLib
 	${CMAKE_SOURCE_DIR}/MeshLib
+	${CMAKE_SOURCE_DIR}/MeshGeoToolsLib
 	${CMAKE_SOURCE_DIR}/NumLib
 	${CMAKE_BINARY_DIR}/BaseLib
 )
@@ -46,6 +47,7 @@ TARGET_LINK_LIBRARIES(testrunner
 	GeoLib
 	MathLib
 	MeshLib
+	MeshGeoToolsLib
 	OgsLib
 	logog
 	${BOOST_LIBRARIES}
