@@ -17,10 +17,14 @@
 
 #include "FEMCondition.h"
 #include "FEMEnums.h"
-#include "GEOObjects.h"
 
 // Gui/DataView
+ #ifdef OGS_BUILD_GUI
 #include "Gui/DataView/GEOModels.h"
+#else
+#include "GEOObjects.h"
+#endif
+
 
 namespace MeshLib {
 	class Mesh;
