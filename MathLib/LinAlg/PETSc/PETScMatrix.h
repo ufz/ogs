@@ -46,7 +46,7 @@ public:
 
 
     /// Get the number of global unknows
-    PetscInt Size() const {return m_size;}
+    PetscInt size() const {return m_size;}
     /// Only for matrix test
     PetscInt getNRows() const {return m_size;}
     /// Only for matrxi test

@@ -1,15 +1,15 @@
-/**
- * @file FinalizeMatrixAssembly.h
- * @author Thomas Fischer
- * @date Jun 11, 2013
- * @brief 
- *
- * @copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
- */
+/*!
+
+  \file FinalizeVectorAssembly.h
+  \author Wenqing Wang
+  \date Oct, 2013
+
+   \copyright
+    Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+             Distributed under a Modified BSD License.
+               See accompanying file LICENSE.txt or
+               http://www.opengeosys.org/LICENSE.txt
+*/
 
 #ifndef FINALIZEMATRIXASSEMBLY_H_
 #define FINALIZEMATRIXASSEMBLY_H_

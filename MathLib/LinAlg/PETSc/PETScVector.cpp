@@ -208,7 +208,7 @@ void  PETScVector::restoreLocalVector(PetscScalar *loc_vec)
 }
 
 
-void PETScVector::setValue(const int i, const double value )
+void PETScVector::set(const int i, const double value )
 {
 
   VecSetValues(v,1,&i,&value,INSERT_VALUES);

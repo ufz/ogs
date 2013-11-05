@@ -36,6 +36,7 @@ class PETScVector;
 class PETScLinearSolver
 {
 public:    
+
    explicit PETScLinearSolver(PETScMatrix &stiffness_matrix, PETScVector &rhs, PETScVector &unknowns);
 
   ~PETScLinearSolver();
@@ -43,7 +44,8 @@ public:
     /// Set the solver properties
     void Config(boost::property_tree::ptree &option);
 
-    void Init(const PetscInt size);
+    void allocateMemory4TemoraryArrays(const PetscInt size);
+    void releaseMemory4TemoraryArrays();
 
 
     void Solver();
@@ -91,11 +93,12 @@ public:
     KSP lsolver;
     PC prec; 
 
+    /// Temporary arrays to store the global solutions 
+    PetscScalar *global_x0 = nullptr;
+    PetscScalar  *global_x1 = nullptr;
 
-    PetscScalar *global_x0;
-    PetscScalar *global_x1;
 
-    // Slover and preconditioner names, only for log
+    /// Slover and preconditioner names, only for log
     std::string sol_type;
     std::string pc_type;
 

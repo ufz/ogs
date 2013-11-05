@@ -70,9 +70,14 @@ PETScLinearSolver:: ~PETScLinearSolver()
   PetscPrintf(PETSC_COMM_WORLD,"\n>>Elapsed time in linear solver: %fs", time_elapsed);
 }
 
-void PETScLinearSolver::Init(const PetscInt size)
+    void allocateMemory4TemoraryArrays(const PetscInt size);
+    void releaseMemory4TemoraryArrays();
+
+
+void PETScLinearSolver:: allocateMemory4TemoraryArrays(const PetscInt size)
 {
-   m_size = size;
+
+    m_size = size;
 
    if(global_x0 == nullptr)
      global_x0 = new PetscScalar[m_size];
@@ -81,6 +86,22 @@ void PETScLinearSolver::Init(const PetscInt size)
      global_x1 = new PetscScalar[m_size];
 
 }
+
+
+void PETScLinearSolver:: releaseMemory4TemoraryArrays()
+{
+
+  if(global_x0 != nullptr)
+    delete []  global_x0;
+  if(global_x1 != nullptr)
+    delete []  global_x1;
+
+  
+  global_x0 = nullptr;
+  global_x1 = nullptr;
+
+}
+
 
 
 /*!

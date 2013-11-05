@@ -78,15 +78,24 @@ public:
     void getOwnerRange(int *start_r, int *end_r); 
 
     /// Get the number of global unknows
-    int Size() const {return m_size;}
+    int size() const {return m_size;}
 
-    void setValue(const PetscInt i, const double value);
+    void set(const PetscInt i, const double value);
+
     void setValues( PetscInt ni,const PetscInt ix[], 
                    const PetscScalar y[], InsertMode iora = ADD_VALUES); 
 
     void addValue(const PetscInt i, const double value, InsertMode mode);
 
- 
+    /// Add values to several entries
+    template<class T_SUBVEC>
+    void add(const std::vector<std::size_t> &pos, const T_SUBVEC &sub_vec)
+    {
+        for (std::size_t i=0; i<pos.size(); ++i) {
+	  addValue(pos[i], sub_vec[i], ADD_VALUES);
+        }
+    }
+
     void nullize();
 
 

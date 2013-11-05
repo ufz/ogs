@@ -394,9 +394,11 @@ TEST(Math, CheckInterface_PETSc_2)
     //petsc_leq.set_rank_size(mrank, msize);
     //x.set_rank_size(mrank, msize);
     //b.set_rank_size(mrank, msize);
-    petsc_leq.Init(Example1::dim_eqs);
+    petsc_leq.allocateMemory4TemoraryArrays(Example1::dim_eqs);
 
     checkLinearSolverInterface<MathLib::PETScLinearSolver, std::vector<double>>(petsc_leq, t_root);
+
+    petsc_leq.releaseMemory4TemoraryArrays();
 
 }
 #endif
@@ -406,6 +408,8 @@ TEST(Math, CheckInterface_PETSc_2)
 // Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
 TEST(Math, CheckInterface_PETSc_3)
 {
+ 
+
    int mrank, msize;
 
    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
@@ -452,9 +456,11 @@ TEST(Math, CheckInterface_PETSc_3)
     //petsc_leq.set_rank_size(mrank, msize);
     //x.set_rank_size(mrank, msize);
     //b.set_rank_size(mrank, msize);
-    petsc_leq.Init(Example1::dim_eqs);
+    petsc_leq.allocateMemory4TemoraryArrays(Example1::dim_eqs);
 
     checkLinearSolverInterface<MathLib::PETScLinearSolver, std::vector<double>>(petsc_leq, t_root);
+
+    petsc_leq.releaseMemory4TemoraryArrays();
 
 }
 #endif
