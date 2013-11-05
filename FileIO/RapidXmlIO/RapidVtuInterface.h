@@ -23,8 +23,6 @@
 #include "MeshEnums.h"
 #include "RapidXML/rapidxml.hpp"
 
-class ProjectData;
-
 namespace MeshLib {
 	class Mesh;
 	class Node;

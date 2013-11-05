@@ -15,7 +15,8 @@
 #ifndef XMLGSPINTERFACE_H
 #define XMLGSPINTERFACE_H
 
-#include "XMLInterface.h"
+#include "../XMLInterface.h"
+#include "XMLQtInterface.h"
 
 namespace FileIO
 {
@@ -23,7 +24,7 @@ namespace FileIO
 /**
  * \brief Reads and writes project information to and from XML files.
  */
-class XmlGspInterface : public XMLInterface
+class XmlGspInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**
@@ -46,6 +47,8 @@ protected:
 
 private:
 	std::string _filename;
+
+	ProjectData* _project;
 };
 
 }

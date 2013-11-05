@@ -15,9 +15,10 @@
 #ifndef XMLSTNINTERFACE_H
 #define XMLSTNINTERFACE_H
 
-#include "XMLInterface.h"
-
 #include "RapidXML/rapidxml.hpp"
+
+#include "../XMLInterface.h"
+#include "XMLQtInterface.h"
 
 namespace GeoLib {
 	class StationBorehole;
@@ -29,7 +30,7 @@ namespace FileIO
 /**
  * \brief Reads and writes Observation Sites to and from XML files.
  */
-class XmlStnInterface : public XMLInterface
+class XmlStnInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**
@@ -37,7 +38,7 @@ public:
 	 * \param project Project data.
 	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XmlStnInterface(ProjectData* project, const std::string &schemaFile);
+	XmlStnInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile);
 
 	/// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
 	int readFile(const QString &fileName);
@@ -65,6 +66,8 @@ private:
 
 	/// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser
 	void rapidReadStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
+
+	GeoLib::GEOObjects& _geo_objs;
 };
 
 }

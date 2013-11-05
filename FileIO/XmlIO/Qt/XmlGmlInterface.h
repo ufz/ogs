@@ -15,7 +15,8 @@
 #ifndef XMLGMLINTERFACE_H
 #define XMLGMLINTERFACE_H
 
-#include "XMLInterface.h"
+#include "../XMLInterface.h"
+#include "XMLQtInterface.h"
 
 namespace FileIO
 {
@@ -23,7 +24,7 @@ namespace FileIO
 /**
  * \brief Reads and writes GeoObjects to and from XML files.
  */
-class XmlGmlInterface : public XMLInterface
+class XmlGmlInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**
@@ -31,9 +32,9 @@ public:
 	 * \param project Project data.
 	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XmlGmlInterface(ProjectData* project, const std::string &schemaFile);
+	XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile);
 
-	virtual ~XmlGmlInterface() {};
+	virtual ~XmlGmlInterface() {}
 
 	/// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
 	int readFile(const QString &fileName);
@@ -61,6 +62,8 @@ private:
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* sfc_names );
 
+	GeoLib::GEOObjects& _geo_objs;
+	std::map<std::size_t, std::size_t> _idx_map;
 };
 
 }

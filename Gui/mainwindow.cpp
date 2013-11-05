@@ -75,10 +75,10 @@
 #include "MeshIO/GMSHInterface.h"
 #include "MeshIO/TetGenInterface.h"
 #include "PetrelInterface.h"
-#include "XmlIO/XmlCndInterface.h"
-#include "XmlIO/XmlGmlInterface.h"
-#include "XmlIO/XmlGspInterface.h"
-#include "XmlIO/XmlStnInterface.h"
+#include "XmlIO/Qt/XmlCndInterface.h"
+#include "XmlIO/Qt/XmlGmlInterface.h"
+#include "XmlIO/Qt/XmlGspInterface.h"
+#include "XmlIO/Qt/XmlStnInterface.h"
 
 #include "StringTools.h"
 
@@ -127,8 +127,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	setupUi(this);
 
 	// Setup various models
-	_geoModels = new GEOModels();
-	_project.setGEOObjects(_geoModels);
 	_meshModels = new MshModel(_project);
 	_elementModel = new ElementTreeModel();
 	_processModel = new ProcessModel(_project);
@@ -555,7 +553,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		else if (fi.suffix().toLower() == "gml")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-			XmlGmlInterface xml(&_project, schemaName);
+			XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
@@ -563,9 +561,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		else if (fi.suffix().toLower() == "stn")
 		{
 			std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-			XmlStnInterface xml(&_project, schemaName);
+			XmlStnInterface xml(*(_project.getGEOObjects()), schemaName);
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
+
 		}
 		// OpenGeoSys mesh files
 		else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
@@ -890,14 +889,21 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		std::vector<FEMCondition*> conditions;
 		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
 		XmlCndInterface xml(&_project, schemaName);
-		if (xml.readFile(conditions, fileName))
+		std::size_t const n_cond_before(this->_project.getConditions().size());
+		if (xml.readFile(fileName)) {
+			std::size_t const n_cond_after(this->_project.getConditions().size());
+			std::vector<FEMCondition*> conditions;
+			conditions.resize(n_cond_after-n_cond_before);
+			for (std::size_t k(n_cond_before); k<n_cond_after; k++) {
+				conditions[k-n_cond_before] = this->_project.getConditions()[k];
+			}
 			this->addFEMConditions(conditions);
-		else
+		} else
 			OGSError::box("Failed to load FEM conditions.\n Please see console for details.");
 	}
 }
 
-void MainWindow::addFEMConditions(const std::vector<FEMCondition*> conditions)
+void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 {
 	if (!conditions.empty())
 	{
@@ -945,7 +951,7 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-	XmlGmlInterface xml(&_project, schemaName);
+	XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
@@ -953,7 +959,7 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
 	std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-	XmlStnInterface xml(&_project, schemaName);
+	XmlStnInterface xml(*(_project.getGEOObjects()), schemaName);
 	xml.setNameForExport(listName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }

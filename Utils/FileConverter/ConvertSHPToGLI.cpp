@@ -31,8 +31,8 @@
 #include "StringTools.h"
 
 // FileIO
-#include "XmlIO/XmlGmlInterface.h"
-#include "XmlIO/XmlStnInterface.h"
+#include "XmlIO/Qt/XmlGmlInterface.h"
+#include "XmlIO/Qt/XmlStnInterface.h"
 
 // GeoLib
 #include "GEOObjects.h"
@@ -82,30 +82,27 @@ void convertPoints (DBFHandle dbf_handle,
 		}
 	}
 
-	GeoLib::GEOObjects* geo_objs (new GeoLib::GEOObjects());
+	GeoLib::GEOObjects geo_objs;
 	if (station)
-		geo_objs->addStationVec(points, points_group_name);
+		geo_objs.addStationVec(points, points_group_name);
 	else
-		geo_objs->addPointVec(points, points_group_name);
+		geo_objs.addPointVec(points, points_group_name);
 
 	std::string schema_name;
 	if (station)
 		schema_name = "OpenGeoSysSTN.xsd";
 	else
 		schema_name = "OpenGeoSysGLI.xsd";
-	ProjectData* project_data (new ProjectData);
-	project_data->setGEOObjects (geo_objs);
+
 	if (station) {
-		FileIO::XmlStnInterface xml (project_data, schema_name);
+		FileIO::XmlStnInterface xml (geo_objs, schema_name);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	} else {
-		FileIO::XmlGmlInterface xml (project_data, schema_name);
+		FileIO::XmlGmlInterface xml (geo_objs, schema_name);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	}
-
-	delete project_data;
 }
 
 void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_fields)

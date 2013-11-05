@@ -23,14 +23,13 @@
 
 namespace FileIO
 {
-XmlGmlInterface::XmlGmlInterface(ProjectData* project, const std::string &schemaFile) :
-	XMLInterface(project, schemaFile)
+XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile) :
+	XMLInterface(), XMLQtInterface(schemaFile), _geo_objs(geo_objs)
 {
 }
 
 int XmlGmlInterface::readFile(const QString &fileName)
 {
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
 	std::string gliName("[NN]");
 
 	QFile* file = new QFile(fileName);
@@ -74,23 +73,23 @@ int XmlGmlInterface::readFile(const QString &fileName)
 		else if (type_node.nodeName().compare("points") == 0)
 		{
 			readPoints(type_node, points, pnt_names);
-			geoObjects->addPointVec(points, gliName, pnt_names);
+			_geo_objs.addPointVec(points, gliName, pnt_names);
 		}
 		else if (type_node.nodeName().compare("polylines") == 0)
 			readPolylines(type_node, polylines, points,
-			              geoObjects->getPointVecObj(gliName)->getIDMap(), ply_names);
+			              _geo_objs.getPointVecObj(gliName)->getIDMap(), ply_names);
 		else if (type_node.nodeName().compare("surfaces") == 0)
 			readSurfaces(type_node, surfaces, points,
-			             geoObjects->getPointVecObj(gliName)->getIDMap(), sfc_names);
+			             _geo_objs.getPointVecObj(gliName)->getIDMap(), sfc_names);
 		else
 			WARN("Unknown XML-Node found in file.");
 	}
 	delete file;
 
 	if (!polylines->empty())
-		geoObjects->addPolylineVec(polylines, gliName, ply_names);
+		_geo_objs.addPolylineVec(polylines, gliName, ply_names);
 	if (!surfaces->empty())
-		geoObjects->addSurfaceVec(surfaces, gliName, sfc_names);
+		_geo_objs.addSurfaceVec(surfaces, gliName, sfc_names);
 	return 1;
 }
 
@@ -229,7 +228,6 @@ int XmlGmlInterface::write(std::ostream& stream)
 		return 0;
 	}
 
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
 	std::size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
 
 	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
@@ -252,7 +250,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 	QDomElement pointsListTag = doc.createElement("points");
 	root.appendChild(pointsListTag);
 
-	const GeoLib::PointVec* pnt_vec (geoObjects->getPointVecObj(_exportName));
+	const GeoLib::PointVec* pnt_vec (_geo_objs.getPointVecObj(_exportName));
 	if (pnt_vec)
 	{
 		const std::vector<GeoLib::Point*>* points (pnt_vec->getVector());
@@ -289,7 +287,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 	}
 
 	// POLYLINES
-	const GeoLib::PolylineVec* ply_vec (geoObjects->getPolylineVecObj(_exportName));
+	const GeoLib::PolylineVec* ply_vec (_geo_objs.getPolylineVecObj(_exportName));
 	if (ply_vec)
 	{
 		const std::vector<GeoLib::Polyline*>* polylines (ply_vec->getVector());
@@ -331,7 +329,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 
 
 	// SURFACES
-	const GeoLib::SurfaceVec* sfc_vec (geoObjects->getSurfaceVecObj(_exportName));
+	const GeoLib::SurfaceVec* sfc_vec (_geo_objs.getSurfaceVecObj(_exportName));
 	if (sfc_vec)
 	{
 		const std::vector<GeoLib::Surface*>* surfaces (sfc_vec->getVector());

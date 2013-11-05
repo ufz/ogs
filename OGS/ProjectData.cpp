@@ -13,13 +13,21 @@
  */
 
 #include "ProjectData.h"
+
+// BaseLib
 #include "StringTools.h"
 
 #include "Mesh.h"
 
 ProjectData::ProjectData()
-: _geoObjects (NULL)
-{}
+:
+#ifdef OGS_BUILD_GUI
+	_geoObjects(new GEOModels())
+#else
+	_geoObjects(new GeoLib::GEOObjects())
+#endif
+{
+}
 
 ProjectData::~ProjectData()
 {
@@ -132,7 +140,7 @@ const FEMCondition* ProjectData::getCondition(const std::string &geo_name,
 	return NULL;
 }
 
-const std::vector<FEMCondition*> ProjectData::getConditions(FiniteElement::ProcessType pcs_type,
+std::vector<FEMCondition*> ProjectData::getConditions(FiniteElement::ProcessType pcs_type,
 															std::string geo_name,
                                                             FEMCondition::CondType cond_type) const
 {
