@@ -68,11 +68,11 @@ public:
     /*!
       \brief Add a submatrix to this
     
-      @param m,     number of rows of the submatrix.
-      @param idxm,  global row indicies of the submatrix
-      @param n,     number of columns of the submatrix.
-      @param idxn,  global culumn indicies of the submatrix.
-      @param v,     valuse.
+      \param m,     number of rows of the submatrix.
+      \param idxm,  global row indicies of the submatrix
+      \param n,     number of columns of the submatrix.
+      \param idxn,  global culumn indicies of the submatrix.
+      \param v,     valuse.
    */
 
     void addEntries(const PetscInt m, const PetscInt idxm[], 

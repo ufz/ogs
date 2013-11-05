@@ -30,8 +30,7 @@ namespace MathLib
 {
 
 using boost::property_tree::ptree;
-
-
+ 
 
 PETScLinearSolver :: PETScLinearSolver (PETScMatrix &stiffness_matrix,
                                         PETScVector &rhs, PETScVector &unknowns)

@@ -30,8 +30,8 @@ void checkGlobalVectorInterface()
     T_VECTOR x(10);
 
     ASSERT_EQ(10u, x.size());
-    //ASSERT_EQ(0u, x.getRangeBegin());
-    //ASSERT_EQ(10u, x.getRangeEnd());
+    ASSERT_TRUE(x.getRangeBegin()>=0);
+    ASSERT_TRUE(x.getRangeEnd()>=0);
 
 
     finalizeVectorAssembly(x);

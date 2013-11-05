@@ -345,7 +345,7 @@ TEST(Math, CheckInterface_PETSc_1)
 
 #define test_p2
 #ifdef test_p2
-// Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
+// Test class MathLib::PETScLinearSolver, PETScMatrix and PETScVector with  the overload interface
 TEST(Math, CheckInterface_PETSc_2)
 {
    int mrank, msize;
@@ -386,9 +386,8 @@ TEST(Math, CheckInterface_PETSc_2)
     A.Init(Example1::dim_eqs, sparse_info);
 
     MathLib::PETScVector b(Example1::dim_eqs);
-    MathLib::PETScVector x;
-    b.CloneMe(x);
-
+    MathLib::PETScVector x(b);
+ 
  
     MathLib::PETScLinearSolver petsc_leq(A, b, x);
     //petsc_leq.set_rank_size(mrank, msize);
@@ -405,7 +404,9 @@ TEST(Math, CheckInterface_PETSc_2)
 
 #define test_p3
 #ifdef test_p3
-// Test class MathLib::PETScLinearEquation, PETScMatrix and PETScVector with  the overload interface
+// Test class MathLib::PETScLinearSolver, PETScMatrix and PETScVector with  the overload interface
+#include "MathLib/LinAlg/PETSc/PETScTools.h"
+
 TEST(Math, CheckInterface_PETSc_3)
 {
  
@@ -448,9 +449,8 @@ TEST(Math, CheckInterface_PETSc_3)
     A.Init(Example1::dim_eqs, sparse_info);
 
     MathLib::PETScVector b(Example1::dim_eqs);
-    MathLib::PETScVector x;
-    b.CloneMe(x);
-
+    MathLib::PETScVector x(b);
+   
  
     MathLib::PETScLinearSolver petsc_leq(A, b, x);
     //petsc_leq.set_rank_size(mrank, msize);

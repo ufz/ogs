@@ -39,6 +39,16 @@ PETScVector:: PETScVector(const PetscInt size)
    m_size_loc = PETSC_DECIDE; 
 }
 
+PETScVector:: PETScVector(PETScVector &existing_vec)
+{
+     
+   m_size = existing_vec.m_size;
+   VecDuplicate(existing_vec.v, &v);
+
+   m_size_loc = PETSC_DECIDE; 
+}
+
+
 
 
 PETScVector:: ~PETScVector()
@@ -64,13 +74,6 @@ void  PETScVector::Create(PetscInt m)
   //VecGetOwnershipRange(v, &i_start,&i_end);
 }
 
-void PETScVector::CloneMe(PETScVector &new_vec)
-{
-    
-    new_vec.m_size_loc = PETSC_DECIDE; 
-    new_vec.m_size = m_size;
-    VecDuplicate(v, &new_vec.v);
-}
 
 void  PETScVector::getOwnerRange(int *start_r, int *end_r)
 {

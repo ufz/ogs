@@ -31,8 +31,9 @@ namespace MathLib
 class PETScVector
 {
 public:    
-  PETScVector();
-  PETScVector(const PetscInt size);
+   PETScVector();
+   PETScVector(const PetscInt size);
+   PETScVector(PETScVector &existing_vec);
   ~PETScVector();
 
 
@@ -43,7 +44,6 @@ public:
 
    */
    void Init(const PetscInt size);
-   void CloneMe(PETScVector &new_vec );
     
    /// Perform MPI collection of assembled entries in buffer
     void finalAssemble();

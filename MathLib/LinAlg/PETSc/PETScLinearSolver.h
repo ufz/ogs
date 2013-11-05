@@ -36,7 +36,6 @@ class PETScVector;
 class PETScLinearSolver
 {
 public:    
-
    explicit PETScLinearSolver(PETScMatrix &stiffness_matrix, PETScVector &rhs, PETScVector &unknowns);
 
   ~PETScLinearSolver();

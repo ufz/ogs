@@ -31,8 +31,8 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     ASSERT_EQ(10u, m.getNRows());
     ASSERT_EQ(10u, m.getNCols());
     //Cannot get a fixed number with PETSc for most of memory allocation types.
-    //   ASSERT_EQ(0u,  m.getRangeBegin());
-    //   ASSERT_EQ(10u, m.getRangeEnd());
+    ASSERT_TRUE(m.getRangeBegin()>=0);
+    ASSERT_TRUE(m.getRangeEnd()>=0);
 
     
     m.setValue(0, 0, 1.0);
