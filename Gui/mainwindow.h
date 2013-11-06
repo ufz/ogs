@@ -127,7 +127,6 @@ private:
 	QString curFile;
 
 	BaseLib::FileFinder _fileFinder;
-	GEOModels* _geoModels;
 	MshModel* _meshModels;
 	ElementTreeModel* _elementModel;
 	ProcessModel* _processModel;

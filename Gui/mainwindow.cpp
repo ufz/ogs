@@ -131,8 +131,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_elementModel = new ElementTreeModel();
 	_processModel = new ProcessModel(_project);
 
-	geoTabWidget->treeView->setModel(_geoModels->getGeoModel());
-	stationTabWidget->treeView->setModel(_geoModels->getStationModel());
+	GEOModels* geo_models(dynamic_cast<GEOModels*>(_project.getGEOObjects()));
+	geoTabWidget->treeView->setModel(geo_models->getGeoModel());
+	stationTabWidget->treeView->setModel(geo_models->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
 	mshTabWidget->elementView->setModel(_elementModel);
 	modellingTabWidget->treeView->setModel(_processModel);
@@ -145,11 +146,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(open(int)));
 	connect(stationTabWidget->treeView, SIGNAL(stationListExportRequested(std::string, std::string)),
 	        this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
-	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geoModels,
+	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), geo_models,
 	        SLOT(removeStationVec(std::string))); // update model when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(stationListSaved(QString, QString)), this,
 	        SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
-	connect(_geoModels, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	connect(geo_models, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
 	        this, SLOT(updateDataViews())); // update data view when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
 	        this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
@@ -158,7 +159,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(geoTabWidget->treeView, SIGNAL(openGeometryFile(int)),
         this, SLOT(open(int)));
 	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GeoLib::GEOTYPE)),
-	        _geoModels, SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
+	        geo_models, SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
 	connect(geoTabWidget->treeView, SIGNAL(geometryMappingRequested(const std::string&)),
 	        this, SLOT(mapGeometry(const std::string&)));
 	connect(geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
@@ -173,9 +174,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
 	//connect(geoTabWidget->treeView, SIGNAL(saveFEMConditionsRequested(QString, QString)),
 	//        this, SLOT(writeFEMConditionsToFile(QString, QString)));
-	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(geo_models, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
-	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(geo_models, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(geoTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
 		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
@@ -233,9 +234,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 			this, SLOT(showConditionWriterDialog()));
 
 	// VisPipeline Connects
-	connect(_geoModels, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(geo_models, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        _vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
-	connect(_geoModels, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(geo_models, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
 
 	connect(_processModel, SIGNAL(conditionAdded(ProcessModel *,  const FiniteElement::ProcessType, const FEMCondition::CondType)),
@@ -243,9 +244,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(_processModel, SIGNAL(conditionsRemoved(ProcessModel *, const FiniteElement::ProcessType, const FEMCondition::CondType)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(ProcessModel *, const FiniteElement::ProcessType, const FEMCondition::CondType)));
 
-	connect(_geoModels, SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
+	connect(geo_models, SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
 	        _vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel *, std::string)));
-	connect(_geoModels, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	connect(geo_models, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(StationTreeModel *, std::string)));
 
 	connect(_meshModels, SIGNAL(meshAdded(MshModel *, QModelIndex)),
@@ -495,7 +496,7 @@ void MainWindow::save()
 			std::vector<std::string> names;
 			this->_project.getGEOObjects()->getGeometryNames(names);
 			std::string merge_name("MergedGeometry");
-			_geoModels->mergeGeometries (names, merge_name);
+			_project.getGEOObjects()->mergeGeometries (names, merge_name);
 			names.clear();
 			names.push_back(merge_name);
 
@@ -533,7 +534,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::string unique_name;
 			std::vector<std::string> errors;
-			if (! readGLIFileV4(fileName.toStdString(), _geoModels, unique_name, errors)) {
+			if (! readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
 				for (size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
@@ -597,7 +598,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	{
 		OGSError::box("Interface not yet integrated");
 		/* TODO6
-		FEFLOWInterface feflowIO(_geoModels);
+		FEFLOWInterface feflowIO(_project.getGEOObjects());
 		MeshLib::Mesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
 		if (msh)
 		{
@@ -620,7 +621,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			std::string name = fi.baseName().toStdString();
 
 			if (GMSInterface::readBoreholesFromGMS(boreholes, fileName.toStdString()))
-				_geoModels->addStationVec(boreholes, name);
+				_project.getGEOObjects()->addStationVec(boreholes, name);
 			else
 				OGSError::box("Error reading GMS file.");
 		}
@@ -682,7 +683,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 #ifdef Shapelib_FOUND
 	else if (t == ImportFileType::SHAPE)
 	{
-		SHPImportDialog dlg(fileName.toStdString(), _geoModels);
+		SHPImportDialog dlg(fileName.toStdString(), dynamic_cast<GEOModels*>(_project.getGEOObjects()));
 		dlg.exec();
 		//QDir dir = QDir(fileName);
 		//settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
@@ -842,7 +843,7 @@ void MainWindow::loadPetrelFiles()
 
 		std::string unique_str(*(sfc_files.begin()));
 
-		PetrelInterface(sfc_files, well_path_files, unique_str, _geoModels);
+		PetrelInterface(sfc_files, well_path_files, unique_str, _project.getGEOObjects());
 
 
 		QDir dir = QDir(sfc_file_names.at(0));
@@ -852,11 +853,11 @@ void MainWindow::loadPetrelFiles()
 
 void MainWindow::showPropertiesDialog(std::string const& name)
 {
-	ListPropertiesDialog dlg(name, _geoModels);
+	ListPropertiesDialog dlg(name, dynamic_cast<GEOModels*>(_project.getGEOObjects()));
 	connect(
 	        &dlg,
 	        SIGNAL(propertyBoundariesChanged(std::string, std::vector<PropertyBounds>)),
-	        _geoModels,
+	        dynamic_cast<GEOModels*>(_project.getGEOObjects()),
 	        SLOT(filterStationVec(std::string, std::vector<PropertyBounds>)));
 	dlg.exec();
 }
@@ -921,7 +922,7 @@ void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 					GeoLib::PointVec pnt_vec("MeshNodes", new_points);
 					std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
 					std::string geo_name = conditions[i]->getGeoName();
-					this->_geoModels->addPointVec(cond_points, geo_name);
+					this->_project.getGEOObjects()->addPointVec(cond_points, geo_name);
 					conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
 				} else {
 					OGSError::box("Please load an appropriate geometry first", "Error");
@@ -970,7 +971,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	QString file_name = QFileDialog::getOpenFileName( this, "Select file for mapping",
 													  settings.value("lastOpenedFileDirectory").toString(),
 													  "OpenGeoSys mesh files (*.vtu *.msh);;Raster files(*.asc *.grd)");
-	GeoMapper geo_mapper(*_geoModels, geo_name);
+	GeoMapper geo_mapper(*_project.getGEOObjects(), geo_name);
 
 	if (file_name.compare("") != 0)
 	{
@@ -978,7 +979,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
 		{
 			geo_mapper.mapOnDEM(file_name.toStdString());
-			this->_geoModels->updateGeometry(geo_name);
+			dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
 		}
 		else if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
 		{
@@ -997,12 +998,12 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 				if (new_geo_name.empty())
 				{
 					geo_mapper.mapOnMesh(msh);
-					this->_geoModels->updateGeometry(geo_name);
+					dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
 				}
 				else
 				{
 					geo_mapper.advancedMapOnMesh(msh, new_geo_name);
-					this->_geoModels->updateGeometry(new_geo_name);
+					dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(new_geo_name);
 				}
 			}
 		}		
@@ -1011,13 +1012,13 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-	MeshLib::convertMeshToGeo(*mesh, this->_geoModels);
+	MeshLib::convertMeshToGeo(*mesh, this->_project.getGEOObjects());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
                                       std::string fileName)
 {
-	const std::vector<GeoLib::Point*>* stations(_geoModels->getStationVec(listName));
+	const std::vector<GeoLib::Point*>* stations(_project.getGEOObjects()->getStationVec(listName));
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
@@ -1043,13 +1044,13 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 		if (!fileName.isEmpty())
 		{
 			if (param4 == -1) { // adaptive meshing selected
-				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_geoModels)), true,
+				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_project.getGEOObjects())), true,
 								FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, param2, param3, param1,
 								selectedGeometries);
 				gmsh_io.setPrecision(20);
 				gmsh_io.writeToFile(fileName.toStdString());
 			} else { // homogeneous meshing selected
-				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_geoModels)), true,
+				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_project.getGEOObjects())), true,
 								FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, param4, param3, param1,
 								selectedGeometries);
 				gmsh_io.setPrecision(20);
@@ -1093,7 +1094,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
 void MainWindow::showConditionWriterDialog()
 {
-	ConditionWriterDialog dlg(_geoModels);
+	ConditionWriterDialog dlg(_project.getGEOObjects());
 	connect(&dlg , SIGNAL(saveFEMConditionsRequested(const QString&, const FEMCondition::CondType, const QString&)),
 	        this, SLOT(writeFEMConditionsToFile(const QString&, const FEMCondition::CondType, const QString&)));
 	dlg.exec();
@@ -1102,7 +1103,7 @@ void MainWindow::showConditionWriterDialog()
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 {
 	QString listName;
-	GeoLib::Station* stn = _geoModels->getStationModel()->stationFromIndex(
+	GeoLib::Station* stn = dynamic_cast<GEOModels*>(_project.getGEOObjects())->getStationModel()->stationFromIndex(
 	        index, listName);
 
 	if ((stn->type() == GeoLib::Station::StationType::STATION) && stn->getSensorData())
@@ -1141,14 +1142,14 @@ void MainWindow::showFileConverterDialog()
 */
 void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id)
 {
-	std::string old_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+	std::string old_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
 	SetNameDialog dlg(geometry_name, GeoLib::convertGeoTypeToString(object_type), id, old_name);
 	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)),
-		this->_geoModels, SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)));
+			dynamic_cast<GEOModels*>(_project.getGEOObjects()), SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)));
 	dlg.exec();
 
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
-		id,	this->_geoModels->getElementNameByID(geometry_name, object_type, id));
+		id,	this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
 }
 
 void MainWindow::showMeshElementRemovalDialog()
@@ -1162,14 +1163,14 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 {
 	std::string geo_name("");
 	if (object_type != GeoLib::GEOTYPE::INVALID)
-		geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+		geo_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
 	else
 		geo_name = geometry_name; // in this case this is actually the mesh name
 
 	if (geo_name.empty())
 	{
 		this->showGeoNameDialog(geometry_name, object_type, id);
-		geo_name = this->_geoModels->getElementNameByID(geometry_name, object_type, id);
+		geo_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
 	}
 	// Object should now have a name ... if not, cancel the setup process
 	if (geo_name.empty())
@@ -1177,11 +1178,11 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 	else
 	{
 		if (on_points)
-			this->_geoModels->addNameForObjectPoints(geometry_name, object_type, geo_name, geometry_name);
+			dynamic_cast<GEOModels*>(_project.getGEOObjects())->addNameForObjectPoints(geometry_name, object_type, geo_name, geometry_name);
 
 		if (object_type != GeoLib::GEOTYPE::INVALID)
 		{
-			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_geoModels->getGEOObject(geometry_name, object_type, geo_name), on_points);
+			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_project.getGEOObjects()->getGEOObject(geometry_name, object_type, geo_name), on_points);
 			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}
@@ -1205,15 +1206,16 @@ void MainWindow::showNewProcessDialog()
 
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
-	LineEditDialog lineEdit(*(_geoModels->getPolylineVecObj(geoName)));
+	LineEditDialog lineEdit(*(_project.getGEOObjects()->getPolylineVecObj(geoName)));
 	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<std::size_t>, double, std::string, bool, bool)),
-	        _geoModels, SLOT(connectPolylineSegments(const std::string &, std::vector<std::size_t>, double, std::string, bool, bool)));
+			dynamic_cast<GEOModels*>(_project.getGEOObjects()),
+			SLOT(connectPolylineSegments(const std::string &, std::vector<std::size_t>, double, std::string, bool, bool)));
 	lineEdit.exec();
 }
 
 void MainWindow::showGMSHPrefsDialog()
 {
-	GMSHPrefsDialog dlg(_geoModels);
+	GMSHPrefsDialog dlg(_project.getGEOObjects());
 	connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool)),
 	        this, SLOT(callGMSH(std::vector<std::string> &, unsigned, double, double, double, bool)));
 	dlg.exec();
@@ -1221,7 +1223,7 @@ void MainWindow::showGMSHPrefsDialog()
 
 void MainWindow::showMergeGeometriesDialog()
 {
-	MergeGeometriesDialog dlg(_geoModels);
+	MergeGeometriesDialog dlg(_project.getGEOObjects());
 	dlg.exec();
 }
 
