@@ -58,9 +58,9 @@ TARGET_LINK_LIBRARIES(testrunner
 IF(OGS_BUILD_GUI)
 	INCLUDE(${VTK_USE_FILE})
 	TARGET_LINK_LIBRARIES(testrunner
+		QtDataView
 		VtkVis
 		vtkRendering
-		QtDataView
 	)
 ENDIF()
 
