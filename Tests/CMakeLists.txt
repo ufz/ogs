@@ -54,6 +54,14 @@ TARGET_LINK_LIBRARIES(testrunner
 	${CMAKE_THREAD_LIBS_INIT}
 )
 
+IF(OGS_BUILD_GUI)
+	include(${VTK_USE_FILE})
+	TARGET_LINK_LIBRARIES(testrunner
+		VtkVis
+		QtDataView
+	)
+ENDIF()
+
 IF (QT4_FOUND)
   TARGET_LINK_LIBRARIES(testrunner
   	${QT_LIBRARIES}
