@@ -38,6 +38,7 @@ ENDIF()
 
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
 SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
+ADD_DEPENDENCIES(testrunner Eigen)
 
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
@@ -53,6 +54,15 @@ TARGET_LINK_LIBRARIES(testrunner
 	${BOOST_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 )
+
+IF(OGS_BUILD_GUI)
+	INCLUDE(${VTK_USE_FILE})
+	TARGET_LINK_LIBRARIES(testrunner
+		QtDataView
+		VtkVis
+		vtkRendering
+	)
+ENDIF()
 
 IF (QT4_FOUND)
   TARGET_LINK_LIBRARIES(testrunner
