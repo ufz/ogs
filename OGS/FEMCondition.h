@@ -55,10 +55,10 @@ public:
 	CondType getCondType() const { return _type; }
 
 	/// Returns the value(s) for the distribution
-	const std::vector<std::size_t> getDisNodes() const { return _disNodes; }
+	std::vector<std::size_t> const& getDisNodes() const { return _disNodes; }
 
 	/// Returns the value(s) for the distribution
-	const std::vector<double> getDisValues() const { return _disValues; }
+	std::vector<double> const& getDisValues() const { return _disValues; }
 
 	/// Returns the name of the geo-object the condition is assigned to. This object is part of the associated geometry.
 	const std::string& getGeoName() const { return _geoName; }
