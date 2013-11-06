@@ -38,6 +38,7 @@ ENDIF()
 
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
 SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
+ADD_DEPENDENCIES(testrunner Eigen)
 
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
@@ -55,9 +56,10 @@ TARGET_LINK_LIBRARIES(testrunner
 )
 
 IF(OGS_BUILD_GUI)
-	include(${VTK_USE_FILE})
+	INCLUDE(${VTK_USE_FILE})
 	TARGET_LINK_LIBRARIES(testrunner
 		VtkVis
+		vtkRendering
 		QtDataView
 	)
 ENDIF()
