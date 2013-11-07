@@ -39,6 +39,8 @@ public:
 	/// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
 	int readFile(const QString &fileName);
 
+	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+
 protected:
 	int write(std::ostream& stream);
 
