@@ -25,8 +25,6 @@
 class FEMCondition;
 class Projectdata;
 
-typedef boost::optional<boost::property_tree::ptree const&> OptionalPtree;
-
 namespace FileIO
 {
 
