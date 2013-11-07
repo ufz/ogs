@@ -21,6 +21,7 @@
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
 
+#include "FileFinder.h"
 #include "Legacy/MeshIO.h"
 #include "Mesh.h"
 
@@ -30,8 +31,9 @@
 
 namespace FileIO
 {
-XmlGspInterface::XmlGspInterface(ProjectData* project, const std::string &schemaFile) :
-	XMLInterface(), XMLQtInterface(schemaFile), _project(project)
+XmlGspInterface::XmlGspInterface(ProjectData* project) :
+	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
+	_project(project)
 {
 }
 
@@ -73,8 +75,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		const QString file_node(fileList.at(i).nodeName());
 		if (file_node.compare("geo") == 0)
 		{
-			XmlGmlInterface gml(*(_project->getGEOObjects()),
-			                    schemaPath.toStdString() + "OpenGeoSysGLI.xsd");
+			XmlGmlInterface gml(*(_project->getGEOObjects()));
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 			{
@@ -91,8 +92,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		}
 		else if (file_node.compare("stn") == 0)
 		{
-			XmlStnInterface stn(*(_project->getGEOObjects()),
-			                    schemaPath.toStdString() + "OpenGeoSysSTN.xsd");
+			XmlStnInterface stn(*(_project->getGEOObjects()));
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
@@ -129,7 +129,7 @@ int XmlGspInterface::write(std::ostream& stream)
 
 	QDomDocument doc("OGS-PROJECT-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysProject");
-	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation",
 	                   "http://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd" );
@@ -143,7 +143,7 @@ int XmlGspInterface::write(std::ostream& stream)
 	     ++it)
 	{
 		// write GLI file
-		XmlGmlInterface gml(*geoObjects, path + "OpenGeoSysGLI.xsd");
+		XmlGmlInterface gml(*geoObjects);
 		std::string name(*it);
 		gml.setNameForExport(name);
 		if (gml.writeToFile(std::string(path + name + ".gml")))
@@ -186,7 +186,7 @@ int XmlGspInterface::write(std::ostream& stream)
 	     ++it)
 	{
 		// write STN file
-		XmlStnInterface stn(*geoObjects, path + "OpenGeoSysSTN.xsd");
+		XmlStnInterface stn(*geoObjects);
 		std::string name(*it);
 		stn.setNameForExport(name);
 

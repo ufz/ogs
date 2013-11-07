@@ -34,7 +34,8 @@ XMLQtInterface::XMLQtInterface(const std::string &schemaFile) :
 int XMLQtInterface::isValid(const QString &fileName) const
 {
 	QXmlSchema schema;
-	schema.load( QUrl::fromLocalFile((QString::fromStdString(_schemaName))) );
+	if(_schemaName.length() > 0)
+		schema.load( QUrl::fromLocalFile((QString::fromStdString(_schemaName))) );
 
 	if ( schema.isValid() )
 	{
@@ -50,8 +51,15 @@ int XMLQtInterface::isValid(const QString &fileName) const
 	}
 	else
 	{
-		INFO("XMLQtInterface::isValid(): Schema %s is invalid.", _schemaName.c_str());
-		return 0;
+		QXmlSchemaValidator validator;
+		if ( validator.validate( QUrl::fromLocalFile((fileName))) )
+			return 1;
+		else
+		{
+			INFO("XMLQtInterface::isValid(): XML file %s is invalid (in reference to its schema).",
+			     fileName.data(), _schemaName.c_str());
+			return 0;
+		}
 	}
 }
 

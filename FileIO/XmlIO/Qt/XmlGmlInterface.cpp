@@ -16,6 +16,7 @@
 #include "logog/include/logog.hpp"
 
 #include "XmlGmlInterface.h"
+#include "FileFinder.h"
 
 #include <QFile>
 #include <QTextCodec>
@@ -23,8 +24,8 @@
 
 namespace FileIO
 {
-XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile) :
-	XMLInterface(), XMLQtInterface(schemaFile), _geo_objs(geo_objs)
+XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
+	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysGLI.xsd")), _geo_objs(geo_objs)
 {
 }
 
@@ -231,13 +232,13 @@ int XmlGmlInterface::write(std::ostream& stream)
 	std::size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
 
 	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
+	//stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
 
 	QDomDocument doc("OGS-GML-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysGLI");
-	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd" );
+	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd" );
 
 	doc.appendChild(root);
 

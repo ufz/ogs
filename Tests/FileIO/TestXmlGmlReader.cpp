@@ -80,8 +80,7 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	(*sfcs)[1]->addTriangle(pnt_id_map[4],pnt_id_map[9],pnt_id_map[6]);
 	geo_objects.addSurfaceVec(sfcs, geo_name);
 
-	const std::string schemaName(std::string(SOURCEPATH).append("/FileIO/OpenGeoSysGLI.xsd"));
-	FileIO::XmlGmlInterface xml(geo_objects, schemaName);
+	FileIO::XmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
 	int result = xml.writeToFile(test_data_file);
 	ASSERT_EQ(result, 1);
