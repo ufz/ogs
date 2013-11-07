@@ -31,7 +31,7 @@ namespace FileIO
 class BoostXmlCndInterface : public XMLInterface
 {
 public:
-	BoostXmlCndInterface(ProjectData* project);
+	BoostXmlCndInterface(ProjectData & project);
 	virtual ~BoostXmlCndInterface()	{}
 
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
@@ -49,7 +49,7 @@ private:
 	void readDistributionTag(boost::property_tree::ptree const& distribution_tags,
 			FEMCondition * bc) const;
 
-	ProjectData* _project_data;
+	ProjectData & _project_data;
 };
 
 } // end namespace FileIO

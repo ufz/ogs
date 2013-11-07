@@ -27,7 +27,7 @@
 namespace FileIO
 {
 
-BoostXmlCndInterface::BoostXmlCndInterface(ProjectData* project_data) :
+BoostXmlCndInterface::BoostXmlCndInterface(ProjectData & project_data) :
 		_project_data(project_data)
 {}
 
@@ -65,7 +65,7 @@ void BoostXmlCndInterface::readBoundaryConditions(
 			// parse attribute of boundary condition
 			std::string const& geometry_name = boundary_condition_node.second.get<std::string>("<xmlattr>.geometry");
 
-			if (_project_data->getGEOObjects()->exists(geometry_name) == -1) {
+			if (_project_data.getGEOObjects()->exists(geometry_name) == -1) {
 				ERR("BoostXmlCndInterface::readBoundaryConditions(): Associated geometry \"%s\" not found.", 
 					geometry_name.c_str());
 				return;
@@ -91,7 +91,7 @@ void BoostXmlCndInterface::readBoundaryConditions(
 					readDistributionTag(boundary_condition_tag.second, bc);
 				}
 			}
-			_project_data->addCondition(bc);
+			_project_data.addCondition(bc);
 		}
 	}
 }
