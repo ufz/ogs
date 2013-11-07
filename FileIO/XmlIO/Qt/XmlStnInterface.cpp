@@ -225,7 +225,7 @@ int XmlStnInterface::write(std::ostream& stream)
 	QDomElement root = doc.createElement("OpenGeoSysSTN");
 	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysSTN.xsd" );
+	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysSTN.xsd" );
 
 	const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
 	bool isBorehole =

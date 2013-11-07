@@ -237,7 +237,7 @@ int XmlGmlInterface::write(std::ostream& stream)
 	QDomElement root = doc.createElement("OpenGeoSysGLI");
 	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysCND.xsd" );
+	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd" );
 
 	doc.appendChild(root);
 

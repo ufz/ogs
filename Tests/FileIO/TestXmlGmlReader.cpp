@@ -27,8 +27,9 @@
 #include "Polyline.h"
 
 
-TEST(FileIO, XmlGmlWriterTest)
+TEST(FileIO, XmlGmlWriterReaderTest)
 {
+	// Writer test
 	std::string test_data_file(std::string(SOURCEPATH).append("/Tests/FileIO/xmlgmltestdata.gml"));
 
 	ProjectData project;
@@ -70,12 +71,12 @@ TEST(FileIO, XmlGmlWriterTest)
 	geo_objects.addPolylineVec(lines, geo_name, ply_names);
 
 	(*sfcs)[0] = new GeoLib::Surface(*points);
-	(*sfcs)[0]->addTriangle(pnt_id_map[1],pnt_id_map[4],pnt_id_map[2]); 
-	(*sfcs)[0]->addTriangle(pnt_id_map[2],pnt_id_map[4],pnt_id_map[5]); 
-	(*sfcs)[0]->addTriangle(pnt_id_map[2],pnt_id_map[5],pnt_id_map[3]); 
+	(*sfcs)[0]->addTriangle(pnt_id_map[1],pnt_id_map[4],pnt_id_map[2]);
+	(*sfcs)[0]->addTriangle(pnt_id_map[2],pnt_id_map[4],pnt_id_map[5]);
+	(*sfcs)[0]->addTriangle(pnt_id_map[2],pnt_id_map[5],pnt_id_map[3]);
 	(*sfcs)[0]->addTriangle(pnt_id_map[3],pnt_id_map[5],pnt_id_map[6]);
 	(*sfcs)[1] = new GeoLib::Surface(*points);
-	(*sfcs)[1]->addTriangle(pnt_id_map[4],pnt_id_map[7],pnt_id_map[9]); 
+	(*sfcs)[1]->addTriangle(pnt_id_map[4],pnt_id_map[7],pnt_id_map[9]);
 	(*sfcs)[1]->addTriangle(pnt_id_map[4],pnt_id_map[9],pnt_id_map[6]);
 	geo_objects.addSurfaceVec(sfcs, geo_name);
 
@@ -84,35 +85,25 @@ TEST(FileIO, XmlGmlWriterTest)
 	xml.setNameForExport(geo_name);
 	int result = xml.writeToFile(test_data_file);
 	ASSERT_EQ(result, 1);
-}
 
-
-TEST(FileIO, XmlGmlReaderTest)
-{
-	std::string test_data_file(std::string(SOURCEPATH).append("/Tests/FileIO/xmlgmltestdata.gml"));
-	std::string geo_name("TestData");
-
-	GeoLib::GEOObjects geo_objects;
-	
-	const std::string schemaName(std::string(SOURCEPATH).append("/FileIO/OpenGeoSysGLI.xsd"));
-	FileIO::XmlGmlInterface xml(geo_objects, schemaName);
-	int result = xml.readFile(QString::fromStdString(test_data_file));
+	// Reader test
+	result = xml.readFile(QString::fromStdString(test_data_file));
 	ASSERT_EQ(result, 1);
-	
-	const std::vector<GeoLib::Point*> *points = geo_objects.getPointVec(geo_name);
-	const GeoLib::PolylineVec *line_vec = geo_objects.getPolylineVecObj(geo_name);
-	const std::vector<GeoLib::Polyline*> *lines = geo_objects.getPolylineVec(geo_name);
-	const std::vector<GeoLib::Surface*> *sfcs = geo_objects.getSurfaceVec(geo_name);
-	ASSERT_EQ(points->size(), 9);
-	ASSERT_EQ(lines->size(), 5);
-	ASSERT_EQ(sfcs->size(), 2);
 
-	GeoLib::Point* pnt = (*points)[7];
+	const std::vector<GeoLib::Point*> *readerPoints = geo_objects.getPointVec(geo_name);
+	const GeoLib::PolylineVec *line_vec = geo_objects.getPolylineVecObj(geo_name);
+	const std::vector<GeoLib::Polyline*> *readerLines = geo_objects.getPolylineVec(geo_name);
+	const std::vector<GeoLib::Surface*> *readerSfcs = geo_objects.getSurfaceVec(geo_name);
+	ASSERT_EQ(readerPoints->size(), 9);
+	ASSERT_EQ(readerLines->size(), 5);
+	ASSERT_EQ(readerSfcs->size(), 2);
+
+	GeoLib::Point* pnt = (*readerPoints)[7];
 	ASSERT_EQ((*pnt)[0],3);
 	ASSERT_EQ((*pnt)[1],2);
 	ASSERT_EQ((*pnt)[2],0);
 
-	GeoLib::Polyline* line = (*lines)[4];
+	GeoLib::Polyline* line = (*readerLines)[4];
 	ASSERT_EQ(line->getNumberOfPoints(), 3);
 	ASSERT_EQ(line->getPointID(0), 6);
 	ASSERT_EQ(line->getPointID(1), 7);
@@ -121,7 +112,7 @@ TEST(FileIO, XmlGmlReaderTest)
 	line_vec->getNameOfElementByID(4, line_name);
 	ASSERT_EQ(line_name, "right");
 
-	GeoLib::Surface* sfc = (*sfcs)[1];
+	GeoLib::Surface* sfc = (*readerSfcs)[1];
 	ASSERT_EQ(sfc->getNTriangles(), 2);
 	const GeoLib::Triangle* tri = (*sfc)[1];
 	ASSERT_EQ((*tri)[0],3);
@@ -131,6 +122,4 @@ TEST(FileIO, XmlGmlReaderTest)
 	boost::filesystem::remove(test_data_file);
 	test_data_file += ".md5";
 	boost::filesystem::remove(test_data_file);
-
-	// when project goes out of scope it should delete geo_objects which in turn should delete all data within
 }
