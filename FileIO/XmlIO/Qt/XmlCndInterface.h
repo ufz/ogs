@@ -47,7 +47,7 @@ public:
 
 	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
-	void setConditionType(FEMCondition::CondType type) { _type = type; };
+	void setConditionType(FEMCondition::CondType type) { _type = type; }
 
 protected:
 	int write(std::ostream& stream);

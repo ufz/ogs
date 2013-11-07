@@ -34,7 +34,7 @@ BoostXmlCndInterface::BoostXmlCndInterface(ProjectData & project_data) :
 bool BoostXmlCndInterface::readFile(const std::string &fname)
 {
 	std::ifstream in(fname.c_str());
-	if (in.fail()) {
+	if (!in) {
 		ERR("BoostXmlCndInterface::readFile(): Can't open xml-file %s.", fname.c_str());
 		return false;
 	}
