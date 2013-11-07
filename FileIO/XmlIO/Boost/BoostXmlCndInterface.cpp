@@ -61,38 +61,39 @@ void BoostXmlCndInterface::readBoundaryConditions(
 	using boost::property_tree::ptree;
 	BOOST_FOREACH(ptree::value_type const & boundary_condition_node,
 			boundary_condition_nodes) {
-		if (boundary_condition_node.first.compare("BC") == 0) {
-			// parse attribute of boundary condition
-			std::string const& geometry_name = boundary_condition_node.second.get<std::string>("<xmlattr>.geometry");
+		if (boundary_condition_node.first.compare("BC") != 0)
+			continue;
 
-			if (_project_data.getGEOObjects()->exists(geometry_name) == -1) {
-				ERR("BoostXmlCndInterface::readBoundaryConditions(): Associated geometry \"%s\" not found.", 
-					geometry_name.c_str());
-				return;
-			}
-			// create instance
-			BoundaryCondition *bc(new BoundaryCondition(geometry_name));
+		// parse attribute of boundary condition
+		std::string const& geometry_name = boundary_condition_node.second.get<std::string>("<xmlattr>.geometry");
 
-			// parse tags of boundary condition
-			BOOST_FOREACH(ptree::value_type const & boundary_condition_tag, boundary_condition_node.second) {
-				if (boundary_condition_tag.first.compare("Process") == 0) {
-					std::string pcs_type, primary_variable;
-					readProcessTag(boundary_condition_tag.second, pcs_type, primary_variable);
-					bc->setProcessType(FiniteElement::convertProcessType(pcs_type));
-					bc->setProcessPrimaryVariable(FiniteElement::convertPrimaryVariable(primary_variable));
-				}
-				if (boundary_condition_tag.first.compare("Geometry") == 0) {
-					std::string geo_type, geo_name;
-					readGeometryTag(boundary_condition_tag.second, geo_type, geo_name);
-					bc->setGeoName(geo_name);
-					bc->setGeoType(GeoLib::convertGeoType(geo_type));
-				}
-				if (boundary_condition_tag.first.compare("Distribution") == 0) {
-					readDistributionTag(boundary_condition_tag.second, bc);
-				}
-			}
-			_project_data.addCondition(bc);
+		if (_project_data.getGEOObjects()->exists(geometry_name) == -1) {
+			ERR("BoostXmlCndInterface::readBoundaryConditions(): Associated geometry \"%s\" not found.",
+				geometry_name.c_str());
+			return;
 		}
+		// create instance
+		BoundaryCondition *bc(new BoundaryCondition(geometry_name));
+
+		// parse tags of boundary condition
+		BOOST_FOREACH(ptree::value_type const & boundary_condition_tag, boundary_condition_node.second) {
+			if (boundary_condition_tag.first.compare("Process") == 0) {
+				std::string pcs_type, primary_variable;
+				readProcessTag(boundary_condition_tag.second, pcs_type, primary_variable);
+				bc->setProcessType(FiniteElement::convertProcessType(pcs_type));
+				bc->setProcessPrimaryVariable(FiniteElement::convertPrimaryVariable(primary_variable));
+			}
+			if (boundary_condition_tag.first.compare("Geometry") == 0) {
+				std::string geo_type, geo_name;
+				readGeometryTag(boundary_condition_tag.second, geo_type, geo_name);
+				bc->setGeoName(geo_name);
+				bc->setGeoType(GeoLib::convertGeoType(geo_type));
+			}
+			if (boundary_condition_tag.first.compare("Distribution") == 0) {
+				readDistributionTag(boundary_condition_tag.second, bc);
+			}
+		}
+		_project_data.addCondition(bc);
 	}
 }
 
