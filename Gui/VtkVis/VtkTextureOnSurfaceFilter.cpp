@@ -37,7 +37,7 @@
 vtkStandardNewMacro(VtkTextureOnSurfaceFilter);
 vtkCxxRevisionMacro(VtkTextureOnSurfaceFilter, "$Revision$");
 
-VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() : _origin(0,0), _scalingFactor(0)
+VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() : _origin(.0f,.0f), _scalingFactor(.0f)
 {
 }
 

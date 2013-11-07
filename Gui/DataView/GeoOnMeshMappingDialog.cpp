@@ -32,7 +32,7 @@ GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
 
 void GeoOnMeshMappingDialog::accept()
 {
-	if (this->advancedMappingButton->isEnabled())
+	if (this->advancedMappingButton->isChecked())
 	{
 		_new_geo_name = this->geoNameEdit->text().toStdString();
 		if (_new_geo_name.empty())
