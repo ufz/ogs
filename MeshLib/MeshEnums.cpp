@@ -37,7 +37,7 @@ MeshElemType String2MeshElemType(const std::string &s)
 {
 	if ((s.compare("line") == 0) || (s.compare("Line") == 0))
 		return MeshElemType::LINE;
-	if ((s.compare("quad") == 0) || (s.compare("Quad") == 0))
+	if ((s.compare("quad") == 0) || (s.compare("Quadrilateral") == 0))
 		return MeshElemType::QUAD;
 	if ((s.compare("hex")  == 0) || (s.compare("Hexahedron") == 0))
 		return MeshElemType::HEXAHEDRON;

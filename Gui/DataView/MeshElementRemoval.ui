@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>382</height>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -209,12 +209,12 @@
         </item>
         <item>
          <property name="text">
-          <string>Tri</string>
+          <string>Triangle</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Quad</string>
+          <string>Quadrilateral</string>
          </property>
         </item>
         <item>
