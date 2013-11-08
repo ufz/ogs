@@ -68,6 +68,8 @@ int XMLQtInterface::isValid() const
 	}
 	else
 	{
+		// The following validator (without constructor arguments) automatically
+		// searches for the xsd given in the xml file.
 		QXmlSchemaValidator validator;
 		if ( validator.validate( _fileData ) )
 			return 1;
