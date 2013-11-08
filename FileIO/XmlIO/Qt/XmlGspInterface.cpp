@@ -39,32 +39,18 @@ XmlGspInterface::XmlGspInterface(ProjectData* project) :
 
 int XmlGspInterface::readFile(const QString &fileName)
 {
-	QFile* file = new QFile(fileName);
+	if(XMLQtInterface::readFile(fileName) == 0)
+		return 0;
+
 	QFileInfo fi(fileName);
 	QString path = (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
 
-	QFileInfo si(QString::fromStdString(_schemaName));
-	QString schemaPath(si.absolutePath() + "/");
-
-	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		ERR("XmlGspInterface::readFile(): Can't open xml-file %s.", fileName.data());
-		delete file;
-		return 0;
-	}
-	if (!checkHash(fileName))
-	{
-		delete file;
-		return 0;
-	}
-
 	QDomDocument doc("OGS-PROJECT-DOM");
-	doc.setContent(file);
+	doc.setContent(_fileData);
 	QDomElement docElement = doc.documentElement(); //OpenGeoSysProject
 	if (docElement.nodeName().compare("OpenGeoSysProject"))
 	{
 		ERR("XmlGspInterface::readFile(): Unexpected XML root.");
-		delete file;
 		return 0;
 	}
 
