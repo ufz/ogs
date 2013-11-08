@@ -37,9 +37,7 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 	GeoLib::GEOObjects geo_objs;
-	std::string schema_name(
-	        "/home/fischeth/workspace/OGS-FirstFloor/sources/FileIO/OpenGeoSysGLI.xsd");
-	FileIO::XmlGmlInterface xml(geo_objs, schema_name);
+	FileIO::XmlGmlInterface xml(geo_objs);
 	std::string fname (argv[1]);
 	xml.readFile(QString::fromStdString (fname));
 
