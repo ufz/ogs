@@ -551,9 +551,9 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
 	}
 }
 
-const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,
+const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
                                                             GeoLib::GEOTYPE type,
-                                                            const std::string &obj_name) const
+                                                            const std::string &geo_obj_name) const
 {
 	if (type == GeoLib::GEOTYPE::POINT)
 		return this->getPointVecObj(geo_name)->getElementByName(obj_name);
