@@ -2,7 +2,7 @@
  * @file
  * @author git blame XMLQtInterface.h
  * @date Oct 15, 2013
- * @brief 
+ * @brief
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -29,7 +29,7 @@ namespace FileIO
 class XMLQtInterface
 {
 public:
-	XMLQtInterface(const std::string &schemaFile);
+	XMLQtInterface(const std::string &schemaFile = "");
 	virtual ~XMLQtInterface() {}
 
 	/// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.

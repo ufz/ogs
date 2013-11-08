@@ -30,9 +30,8 @@ public:
 	/**
 	 * Constructor
 	 * \param project Project data.
-	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XmlGspInterface(ProjectData* project, const std::string &schemaFile);
+	XmlGspInterface(ProjectData* project);
 
 	virtual ~XmlGspInterface() {};
 

@@ -364,9 +364,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SLOT(createPresentationMenu()));
 	menuWindows->insertMenu(showVisDockAction, presentationMenu);
 
-	_fileFinder.addDirectory(".");
-	_fileFinder.addDirectory(std::string(SOURCEPATH).append("/FileIO"));
-
 #ifdef OGS_USE_VRPN
 	VtkTrackedCamera* cam = static_cast<VtkTrackedCamera*>
 	                        (visualizationWidget->renderer()->GetActiveCamera());
@@ -482,8 +479,7 @@ void MainWindow::save()
 
 		if (fi.suffix().toLower() == "gsp")
 		{
-			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-			XmlGspInterface xml(&_project, schemaName);
+			XmlGspInterface xml(&_project);
 			xml.writeToFile(fileName.toStdString());
 		}
 		else if (fi.suffix().toLower() == "geo")
@@ -541,8 +537,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gsp")
 		{
-			std::string schemaName(_fileFinder.getPath("OpenGeoSysProject.xsd"));
-			XmlGspInterface xml(&_project, schemaName);
+			XmlGspInterface xml(&_project);
 			if (xml.readFile(fileName))
 			{
 				INFO("Adding missing meshes to GUI.");
@@ -553,16 +548,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
-			std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-			XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
+			XmlGmlInterface xml(*(_project.getGEOObjects()));
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
-			std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-			XmlStnInterface xml(*(_project.getGEOObjects()), schemaName);
+			XmlStnInterface xml(*(_project.getGEOObjects()));
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
 
@@ -888,8 +881,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 	if (fi.suffix().toLower() == "cnd")
 	{
 		std::vector<FEMCondition*> conditions;
-		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-		XmlCndInterface xml(&_project, schemaName);
+		XmlCndInterface xml(&_project);
 		std::size_t const n_cond_before(this->_project.getConditions().size());
 		if (xml.readFile(fileName)) {
 			std::size_t const n_cond_after(this->_project.getConditions().size());
@@ -941,8 +933,7 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 	QFileInfo fi(fileName);
 	if (fi.suffix().compare("cnd") == 0 )
 	{
-		std::string schemaName(_fileFinder.getPath("OpenGeoSysCond.xsd"));
-		XmlCndInterface xml(&_project, schemaName);
+		XmlCndInterface xml(&_project);
 		xml.setNameForExport(geoName.toStdString());
 		xml.setConditionType(type);
 		xml.writeToFile(fileName.toStdString());
@@ -951,16 +942,14 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
-	std::string schemaName(_fileFinder.getPath("OpenGeoSysGLI.xsd"));
-	XmlGmlInterface xml(*(_project.getGEOObjects()), schemaName);
+	XmlGmlInterface xml(*(_project.getGEOObjects()));
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
-	std::string schemaName(_fileFinder.getPath("OpenGeoSysSTN.xsd"));
-	XmlStnInterface xml(*(_project.getGEOObjects()), schemaName);
+	XmlStnInterface xml(*(_project.getGEOObjects()));
 	xml.setNameForExport(listName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
@@ -994,7 +983,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 					msh = FileIO::readMeshFromFile(file_name.toStdString());
 
 				std::string new_geo_name = dlg.getNewGeoName();
-		
+
 				if (new_geo_name.empty())
 				{
 					geo_mapper.mapOnMesh(msh);
@@ -1006,7 +995,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 					dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(new_geo_name);
 				}
 			}
-		}		
+		}
 	}
 }
 

@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-// ThirdParty/logog
+#include "Configure.h"
 #include "logog/include/logog.hpp"
 
 namespace BaseLib
@@ -33,7 +33,11 @@ class FileFinder
 {
 public:
 	/// Constructor
-	FileFinder() {}
+	FileFinder()
+	{
+		addDirectory(".");
+		addDirectory(std::string(SOURCEPATH).append("/FileIO"));
+	}
 
 	/**
 	 * \brief Adds another directory to the search-space.

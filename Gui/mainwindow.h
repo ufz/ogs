@@ -15,7 +15,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "FileFinder.h"
 #include "ProjectData.h"
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
@@ -126,7 +125,6 @@ private:
 
 	QString curFile;
 
-	BaseLib::FileFinder _fileFinder;
 	MshModel* _meshModels;
 	ElementTreeModel* _elementModel;
 	ProcessModel* _processModel;

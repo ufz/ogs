@@ -2,7 +2,7 @@
  * @file BoostXmlCndInterface.cpp
  * @author git blame BoostXmlCndInterface.cpp
  * @date Oct 14, 2013
- * @brief 
+ * @brief
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -176,7 +176,7 @@ int BoostXmlCndInterface::write(std::ostream& stream)
 
 	pt.add("OpenGeoSysCond", "OpenGeoSysCond");
 	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysCND.xsd");
+	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd");
 	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
 
 	write_xml(stream, pt);

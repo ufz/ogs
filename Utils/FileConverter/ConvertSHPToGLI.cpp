@@ -88,18 +88,12 @@ void convertPoints (DBFHandle dbf_handle,
 	else
 		geo_objs.addPointVec(points, points_group_name);
 
-	std::string schema_name;
-	if (station)
-		schema_name = "OpenGeoSysSTN.xsd";
-	else
-		schema_name = "OpenGeoSysGLI.xsd";
-
 	if (station) {
-		FileIO::XmlStnInterface xml (geo_objs, schema_name);
+		FileIO::XmlStnInterface xml (geo_objs);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	} else {
-		FileIO::XmlGmlInterface xml (geo_objs, schema_name);
+		FileIO::XmlGmlInterface xml (geo_objs);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	}

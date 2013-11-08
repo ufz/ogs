@@ -12,7 +12,6 @@
  *
  */
 
-#include "FEMCondition.h"
 #include "XmlCndInterface.h"
 
 #include <QFile>
@@ -22,12 +21,14 @@
 
 #include "FEMCondition.h"
 #include "ProjectData.h"
+#include "FileFinder.h"
 
 
 namespace FileIO
 {
-XmlCndInterface::XmlCndInterface(ProjectData* project, const std::string &schemaFile)
-	: XMLInterface(), XMLQtInterface(schemaFile), _type(FEMCondition::UNSPECIFIED), _project(project)
+XmlCndInterface::XmlCndInterface(ProjectData* project)
+	: XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysCND.xsd")),
+	  _type(FEMCondition::UNSPECIFIED), _project(project)
 {
 }
 
@@ -177,9 +178,9 @@ int XmlCndInterface::write(std::ostream& stream)
 
 	QDomDocument doc("OGS-CND-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysCond");
-	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysCND.xsd" );
+	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd" );
 
 	std::vector<FEMCondition*> const& conditions (_project->getConditions(
 	                                                     FiniteElement::INVALID_PROCESS,

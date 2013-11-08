@@ -25,13 +25,14 @@
 // BaseLib
 #include "DateTools.h"
 #include "FileTools.h"
+#include "FileFinder.h"
 
 #include "StationBorehole.h"
 
 namespace FileIO
 {
-XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile) :
-	XMLInterface(), XMLQtInterface(schemaFile), _geo_objs(geo_objs)
+XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
+	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysSTN.xsd")), _geo_objs(geo_objs)
 {
 }
 
@@ -223,9 +224,9 @@ int XmlStnInterface::write(std::ostream& stream)
 
 	QDomDocument doc("OGS-STN-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysSTN");
-	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.com" );
+	root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://141.65.34.25/OpenGeoSysSTN.xsd" );
+	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysSTN.xsd" );
 
 	const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
 	bool isBorehole =

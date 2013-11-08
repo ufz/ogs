@@ -36,9 +36,8 @@ public:
 	/**
 	 * Constructor
 	 * \param project Project data.
-	 * \param schemaFile An XML schema file (*.xsd) that defines the structure of a valid data file.
 	 */
-	XmlStnInterface(GeoLib::GEOObjects& geo_objs, const std::string &schemaFile);
+	XmlStnInterface(GeoLib::GEOObjects& geo_objs);
 
 	/// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
 	int readFile(const QString &fileName);
