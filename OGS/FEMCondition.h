@@ -21,6 +21,9 @@
 #include "GeoInfo.h"
 #include "ProcessInfo.h"
 
+// GeoLib
+#include "GEOObjects.h"
+
 class CBoundaryCondition;
 class CInitialCondition;
 class CSourceTerm;
@@ -89,6 +92,19 @@ public:
 
 	/// Returns the type of the FEM condition as a string.
 	static std::string condTypeToString(CondType type);
+
+	/**
+	 *
+	 * @param geo_name the name of the geometry
+	 * @param geo_obj_type type of geometric object (POINT, POLYLINE, ...) as string @see GeoLib::GEOTYPE
+	 * @param geo_obj_name name of the geometric object
+	 * @param geo_objs instance of class GEOObjects is employed for getting
+	 * the pointer of the geometric object (GEOObjects::getGeoObject())
+	 */
+	void initGeometricAttributes(std::string const& geo_name,
+			std::string const& geo_obj_type,
+			std::string const& geo_obj_name,
+			GeoLib::GEOObjects const& geo_objs);
 
 protected:
 	CondType _type;
