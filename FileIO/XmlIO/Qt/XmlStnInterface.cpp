@@ -38,26 +38,15 @@ XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
 
 int XmlStnInterface::readFile(const QString &fileName)
 {
-	QFile* file = new QFile(fileName);
-	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		ERR("XmlStnInterface::readFile(): Can't open xml-file %s.", fileName.data());
-		delete file;
+	if(XMLQtInterface::readFile(fileName) == 0)
 		return 0;
-	}
-	if (!checkHash(fileName))
-	{
-		delete file;
-		return 0;
-	}
 
 	QDomDocument doc("OGS-STN-DOM");
-	doc.setContent(file);
+	doc.setContent(_fileData);
 	QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
 	if (docElement.nodeName().compare("OpenGeoSysSTN"))
 	{
 		ERR("XmlStnInterface::readFile(): Unexpected XML root.");
-		delete file;
 		return 0;
 	}
 
@@ -86,8 +75,6 @@ int XmlStnInterface::readFile(const QString &fileName)
 		else
 			delete stations;
 	}
-
-	delete file;
 
 	return 1;
 }

@@ -19,6 +19,7 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QFileInfo>
+#include <QByteArray>
 #include <QCryptographicHash>
 
 // ThirdParty/logog
@@ -31,7 +32,24 @@ XMLQtInterface::XMLQtInterface(const std::string &schemaFile) :
 		_schemaName(schemaFile)
 {}
 
-int XMLQtInterface::isValid(const QString &fileName) const
+int XMLQtInterface::readFile(const QString &fileName)
+{
+	_fileName = fileName;
+	QFile file(fileName);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		ERR("XMLQtInterface::readFile(): Can't open xml-file %s.", fileName.data());
+		return 0;
+	}
+	_fileData = file.readAll();
+
+	if (!checkHash())
+		return 0;
+
+	return 1;
+}
+
+int XMLQtInterface::isValid() const
 {
 	QXmlSchema schema;
 	if(_schemaName.length() > 0)
@@ -40,32 +58,26 @@ int XMLQtInterface::isValid(const QString &fileName) const
 	if ( schema.isValid() )
 	{
 		QXmlSchemaValidator validator( schema );
-		if ( validator.validate( QUrl::fromLocalFile((fileName))) )
+		if ( validator.validate( _fileData ) )
 			return 1;
 		else
 		{
 			INFO("XMLQtInterface::isValid(): XML file %s is invalid (in reference to schema %s).",
-			     fileName.data(), _schemaName.c_str());
-			return 0;
+			     _fileName.toStdString().c_str(), _schemaName.c_str());
 		}
 	}
 	else
 	{
 		QXmlSchemaValidator validator;
-		if ( validator.validate( QUrl::fromLocalFile((fileName))) )
+		if ( validator.validate( _fileData ) )
 			return 1;
 		else
 		{
 			INFO("XMLQtInterface::isValid(): XML file %s is invalid (in reference to its schema).",
-			     fileName.data(), _schemaName.c_str());
-			return 0;
+			     _fileName.toStdString().c_str());
 		}
 	}
-}
-
-void XMLQtInterface::setSchema(const std::string &schemaName)
-{
-	_schemaName = schemaName;
+	return 0;
 }
 
 int XMLQtInterface::insertStyleFileDefinition(const QString &fileName) const
@@ -88,61 +100,43 @@ int XMLQtInterface::insertStyleFileDefinition(const QString &fileName) const
 	return 1;
 }
 
-bool XMLQtInterface::checkHash(const QString &fileName) const
+bool XMLQtInterface::checkHash() const
 {
-	QFileInfo fi(fileName);
-	QString md5FileName(fileName + ".md5");
+	QString md5FileName(_fileName + ".md5");
+	QByteArray fileHash = QCryptographicHash::hash(_fileData, QCryptographicHash::Md5);
 
-	std::ifstream md5( md5FileName.toStdString().c_str() );
-	if (md5.is_open())
+	QFile file(md5FileName);
+	if (file.open(QIODevice::ReadOnly))
 	{
-		char* md5HashStr = new char[16];
-		md5.read(md5HashStr, 16);
-		QByteArray md5Hash(md5HashStr, 16);
-		delete[] md5HashStr;
-		if (isHashGood(fileName, md5Hash))
+		if(file.readAll() == fileHash)
 			return true;
+		INFO("Hashfile does not match data ... checking file ...");
 	}
 
-	if (!this->isValid(fileName))
+	if (!this->isValid())
 		return false;
 
-	INFO("File is valid, writing hashfile.");
-	QByteArray hash = calcHash(fileName);
-	std::ofstream out( md5FileName.toStdString().c_str(), std::ios::out );
-	out.write(hash.data(), 16);
-	out.close();
+	QFile fileMD5(md5FileName);
+	if(fileMD5.open(QIODevice::WriteOnly))
+	{
+		fileMD5.write(fileHash);
+		fileMD5.close();
+		INFO("File is valid, hashfile written.");
+	}
+	else
+		WARN("File is valid but could not write hashfile!");
 	return true;
 }
 
-bool XMLQtInterface::isHashGood(const QString &fileName, const QByteArray &hash) const
+bool XMLQtInterface::isHashGood(const QByteArray &hash) const
 {
-	int hashLength = hash.length();
-	QByteArray fileHash = calcHash(fileName);
-	if (fileHash.length() != hashLength)
+	QByteArray fileHash = QCryptographicHash::hash(_fileData, QCryptographicHash::Md5);
+	if(hash != fileHash)
+	{
+		INFO("Hashfile does not match data ... checking file ...");
 		return false;
-	for (int i = 0; i < hashLength; i++)
-		if (fileHash[i] != hash[i])
-		{
-			INFO("Hashfile does not match data ... checking file ...");
-			return false;
-		}
+	}
 	return true;
-}
-
-QByteArray XMLQtInterface::calcHash(const QString &fileName) const
-{
-	std::ifstream is(fileName.toStdString().c_str(), std::ios::binary );
-	is.seekg (0, std::ios::end);
-	int length = is.tellg();
-	is.seekg (0, std::ios::beg);
-	char* buffer = new char [length];
-	is.read (buffer,length);
-	is.close();
-
-	QByteArray hash = QCryptographicHash::hash(buffer, QCryptographicHash::Md5);
-	delete [] buffer;
-	return hash;
 }
 
 } // end namespace FileIO

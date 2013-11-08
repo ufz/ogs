@@ -35,28 +35,29 @@ public:
 	/// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.
 	int insertStyleFileDefinition(const QString &fileName) const;
 
-	/// Check if the given xml-file is valid considering the schema-file used in the constructor
-	int isValid(const QString &fileName) const;
-
-	/// Sets the schema filename used to check if xml files are valid.
-	void setSchema(const std::string &schemaName);
-
-	/// Reads an xml-file.
-	virtual int readFile(const QString &fileName) = 0;
+	/// Reads the file. In an overriden function in the child class be sure to call
+	/// XMLQtInterface::readFile(fileName).
+	virtual int readFile(const QString &fileName);
 
 protected:
+	/// Check if the given xml-file is valid considering the schema-file used in the constructor
+	int isValid() const;
+
 	/// Checks if a hash for the given data file exists to skip the time-consuming validation part.
 	/// If a hash file exists _and_ the hash of the data file is the same as the content of the hash file the validation is skipped
 	/// If no hash file exists, the xml-file is validated and a hash file is written if the xml-file was valid.
-	bool checkHash(const QString &fileName) const;
-
-	/// Calculates an MD5 hash of the given file.
-	QByteArray calcHash(const QString &fileName) const;
+	bool checkHash() const;
 
 	/// Checks if the given file is conform to the given hash.
-	bool isHashGood(const QString &fileName, const QByteArray &hash) const;
+	bool isHashGood(const QByteArray &hash) const;
 
 	std::string _schemaName;
+
+	/// Caches the actual file contents when reading.
+	QByteArray _fileData;
+
+	/// The actual file name when reading.
+	QString _fileName;
 };
 
 } // end namespace FileIO

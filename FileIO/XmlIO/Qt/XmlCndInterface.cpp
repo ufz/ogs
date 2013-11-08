@@ -34,19 +34,11 @@ XmlCndInterface::XmlCndInterface(ProjectData* project)
 
 int XmlCndInterface::readFile(const QString &fileName)
 {
-	QFile file(fileName);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		ERR("XMLInterface::readFEMCondFile(): Can't open xml-file %s.", fileName.data());
+	if(XMLQtInterface::readFile(fileName) == 0)
 		return 0;
-	}
-	if (!checkHash(fileName))
-	{
-		return 0;
-	}
 
 	QDomDocument doc("OGS-Cond-DOM");
-	doc.setContent(&file);
+	doc.setContent(_fileData);
 	QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
 	if (docElement.nodeName().compare("OpenGeoSysCond"))
 	{

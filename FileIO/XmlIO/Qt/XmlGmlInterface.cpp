@@ -31,20 +31,10 @@ XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 
 int XmlGmlInterface::readFile(const QString &fileName)
 {
-	std::string gliName("[NN]");
+	if(XMLQtInterface::readFile(fileName) == 0)
+		return 0;
 
-	QFile* file = new QFile(fileName);
-	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		ERR("XmlGmlInterface::readFile(): Can't open xml-file %s.", fileName.data());
-		delete file;
-		return 0;
-	}
-	if (!checkHash(fileName))
-	{
-		delete file;
-		return 0;
-	}
+	std::string gliName("[NN]");
 
 	std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>;
 	std::vector<GeoLib::Polyline*>* polylines = new std::vector<GeoLib::Polyline*>;
@@ -55,12 +45,11 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	std::map<std::string, std::size_t>* sfc_names  = new std::map<std::string, std::size_t>;
 
 	QDomDocument doc("OGS-GLI-DOM");
-	doc.setContent(file);
+	doc.setContent(_fileData);
 	QDomElement docElement = doc.documentElement(); //OpenGeoSysGLI
 	if (docElement.nodeName().compare("OpenGeoSysGLI"))
 	{
 		ERR("XmlGmlInterface::readFile() - Unexpected XML root.");
-		delete file;
 		return 0;
 	}
 
@@ -85,7 +74,6 @@ int XmlGmlInterface::readFile(const QString &fileName)
 		else
 			WARN("Unknown XML-Node found in file.");
 	}
-	delete file;
 
 	if (!polylines->empty())
 		_geo_objs.addPolylineVec(polylines, gliName, ply_names);
