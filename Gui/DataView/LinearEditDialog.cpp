@@ -61,14 +61,14 @@ void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 
 void LinearEditDialog::accept()
 {
-	std::vector< std::pair<size_t,double> > linear_values;
+	std::vector< std::pair<std::size_t,double> > linear_values;
 
 	size_t nRows = tableWidget->rowCount();
 	for (size_t i = 0; i < nRows; i++)
 	{
 		QString row_text (tableWidget->item(i,0)->text());
 		if (row_text.length() > 0)
-			linear_values.push_back( std::pair<size_t, double>(i, row_text.toDouble()) );
+			linear_values.push_back( std::pair<std::size_t, double>(i, row_text.toDouble()) );
 	}
 
 	emit transmitDisValues(linear_values);

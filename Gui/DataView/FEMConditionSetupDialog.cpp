@@ -263,8 +263,8 @@ void FEMConditionSetupDialog::directButton_pressed()
 		const std::vector<size_t> nodes = _cond.getDisNodes();
 		const std::vector<double> values = _cond.getDisValues();
 		LinearEditDialog dlg(*line, nodes, values);
-		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)),
-				this, SLOT(addDisValues(std::vector< std::pair<size_t,double> >)));
+		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<std::size_t,double> >)),
+				this, SLOT(addDisValues(std::vector< std::pair<std::size_t,double> >)));
 		dlg.exec();
 	}
 	else
@@ -273,8 +273,8 @@ void FEMConditionSetupDialog::directButton_pressed()
 		msh_vec.push_back( const_cast<MeshLib::Mesh*>(this->_mesh) );
 		CondFromRasterDialog dlg(msh_vec);
 		//connect(&dlg, SIGNAL(directNodesWritten(std::string)), this, SLOT(direct_path_changed(std::string)));
-		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<size_t,double> >)),
-				this, SLOT(addDisValues(std::vector< std::pair<size_t,double> >)));
+		connect(&dlg, SIGNAL(transmitDisValues(std::vector< std::pair<std::size_t,double> >)),
+				this, SLOT(addDisValues(std::vector< std::pair<std::size_t,double> >)));
 		dlg.exec();
 	}
 }

@@ -111,7 +111,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 	{
 		for (unsigned i=0; i<nElements; ++i)
 		{
-			if (complete_surface || mesh_dimension == 1) // if dim==1 just copy
+			if (complete_surface || all_elements[i]->getDimension() == 1) // if dim==1 just copy
 				sfc_elements.push_back(all_elements[i]);
 			else
 			{

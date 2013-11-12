@@ -33,7 +33,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 	{
 		GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(filename));
 		if (! raster) {
-			ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load vtk raster.");
+			ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load raster file.");
 			return _direct_values;
 		}
 
@@ -46,7 +46,6 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 
 		const double dir[3] = {0,0,1};
 		const std::vector<GeoLib::PointWithID*> surface_nodes(MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir) );
-		//std::vector<MeshLib::CNode*> nodes = mesh.nod_vector;
 		const size_t nNodes(surface_nodes.size());
 		_direct_values.reserve(nNodes);
 		for (size_t i=0; i<nNodes; i++)
@@ -63,7 +62,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 				cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(imgheight)) ? (imgheight-1) : cell_y);
 
 				size_t index = cell_y*imgwidth+cell_x;
-				if (fabs(img[index] + no_data) > std::numeric_limits<float>::min())
+				if (fabs(img[index] - no_data) > std::numeric_limits<float>::min())
 					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index]) );
 			}
 		}
