@@ -100,7 +100,11 @@ void MeshElementRemovalDialog::accept()
 			emit meshAdded(new_mesh);
 		else
 		{
-			OGSError::box("The current selection removes ALL mesh elements.\nPlease change the selection.");
+			unsigned error_code (ex.getErrorCode());
+			if (error_code == 1)
+				OGSError::box("The current selection removes ALL mesh elements.\nPlease change the selection.");
+			if (error_code == 2)
+				OGSError::box("The current selection removes NO mesh elements.");
 			delete new_mesh;
 			return;
 		}

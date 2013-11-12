@@ -22,7 +22,7 @@
 namespace MeshLib {
 
 ElementExtraction::ElementExtraction(const MeshLib::Mesh &mesh)
-	: _mesh(mesh)
+	: _mesh(mesh), _error_code(0)
 {
 }
 
@@ -30,8 +30,15 @@ ElementExtraction::~ElementExtraction()
 {
 }
 
-MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh_name) const
+MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh_name)
 {
+	if (_marked_elements.empty())
+	{
+		INFO("No elements to remove");
+		_error_code = 2;
+		return nullptr;
+	}
+
 	INFO("Removing total %d elements...", _marked_elements.size());
 	std::vector<MeshLib::Element*> tmp_elems = excludeElements(_mesh.getElements(), _marked_elements);
 	INFO("%d elements remain in mesh.", tmp_elems.size());
@@ -43,7 +50,11 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 	if (!new_elems.empty())
 		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems);
 	else
+	{
+		INFO("Current selection removes all elements.");
+		_error_code = 1;
 		return nullptr;
+	}
 }
 
 void ElementExtraction::searchByMaterialID(unsigned matID)
