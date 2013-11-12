@@ -152,7 +152,7 @@ double GeoMapper::getMeshElevation(double x, double y, double min_val, double ma
 
 	for (std::size_t i=0; i<elements.size(); ++i)
 	{
-		if (intersection==nullptr)
+		if (intersection==nullptr && elements[i]->getGeomType() != MeshElemType::LINE)
 			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
 		if (intersection==nullptr && elements[i]->getGeomType() == MeshElemType::QUAD)
 			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(2), *elements[i]->getNode(3), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
