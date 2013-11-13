@@ -13,6 +13,7 @@
  */
 
 #include "GeoOnMeshMappingDialog.h"
+#include "Mesh.h"
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -20,14 +21,30 @@
 #include "OGSError.h"
 
 
-GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(QDialog* parent)
+GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent)
 	: _new_geo_name(""), QDialog(parent)
 {
 	setupUi(this);
+
+	for (std::size_t i=0; i<mesh_vec.size(); ++i)
+		this->meshNameComboBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
 }
 
 GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
 {
+}
+
+int GeoOnMeshMappingDialog::getDataSetChoice() const 
+{ 
+	return this->meshNameComboBox->currentIndex(); 
+}
+
+void GeoOnMeshMappingDialog::on_meshNameComboBox_currentIndexChanged(int idx)
+{
+	bool is_enabled(idx != 1);
+	this->normalMappingButton->setEnabled(is_enabled);
+	this->advancedMappingButton->setEnabled(is_enabled);
+	this->geoNameEdit->setEnabled(is_enabled && this->advancedMappingButton->isChecked());
 }
 
 void GeoOnMeshMappingDialog::accept()
