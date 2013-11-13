@@ -900,6 +900,8 @@ void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 {
 	if (!conditions.empty())
 	{
+		this->_project.addConditions(conditions);
+
 		for (size_t i = 0; i < conditions.size(); i++)
 		{
 			bool condition_ok(true);
@@ -931,13 +933,10 @@ void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName)
 {
 	QFileInfo fi(fileName);
-	if (fi.suffix().compare("cnd") == 0 )
-	{
-		XmlCndInterface xml(&_project);
-		xml.setNameForExport(geoName.toStdString());
-		xml.setConditionType(type);
-		xml.writeToFile(fileName.toStdString());
-	}
+	XmlCndInterface xml(&_project);
+	xml.setNameForExport(geoName.toStdString());
+	xml.setConditionType(type);
+	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)

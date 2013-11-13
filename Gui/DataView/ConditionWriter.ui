@@ -38,7 +38,7 @@
     <widget class="QComboBox" name="geoBox">
      <item>
       <property name="text">
-       <string>All (XML files only)</string>
+       <string>Save conditions on all geometries</string>
       </property>
      </item>
     </widget>
@@ -47,7 +47,7 @@
     <widget class="QComboBox" name="condTypeBox">
      <item>
       <property name="text">
-       <string>All (XML files only)</string>
+       <string>All Types of Conditions</string>
       </property>
      </item>
      <item>
