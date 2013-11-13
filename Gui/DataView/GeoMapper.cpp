@@ -38,6 +38,7 @@ GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_nam
 
 GeoMapper::~GeoMapper()
 {
+	delete _mesh;
 	delete _raster;
 }
 
@@ -60,16 +61,16 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 {
-	if (mesh->getDimension() != 2)
+	if (mesh->getDimension()<3)
+		this->_mesh = new MeshLib::Mesh(*mesh);
+	else
 	{
-		ERR("GeoMapper::mapOnMesh(): Method only works on 2D meshes (triangle and quad elements)");
-		return;
+		const double dir[3] = {0,0,1};
+		this->_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
 	}
-
-	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
 	std::vector<GeoLib::PointWithID*> sfc_pnts;
 	// init grid
-	_grid = this->getFlatGrid(mesh, sfc_pnts);
+	_grid = this->getFlatGrid(_mesh, sfc_pnts);
 	this->mapData();
 
 	delete _grid;
@@ -165,25 +166,11 @@ double GeoMapper::getMeshElevation(double x, double y, double min_val, double ma
 
 GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const
 {
-	if (mesh->getDimension()<3) //much faster
-	{
-		size_t nNodes (mesh->getNNodes());
-		sfc_pnts.resize(nNodes);
-		const std::vector<MeshLib::Node*> nodes (mesh->getNodes());
-		for (unsigned i(0); i<nNodes; ++i)
-			sfc_pnts[i] = new GeoLib::PointWithID(nodes[i]->getCoords(), nodes[i]->getID());
-	}
-	else
-	{
-		double dir[3] = {0,0,1};
-		sfc_pnts = MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir);
-	}
-	size_t nPoints (sfc_pnts.size());
-	for (unsigned i=0; i<nPoints; ++i)
-	{
-		GeoLib::PointWithID* pnt (sfc_pnts[i]);
-		(*pnt)[2] = 0;
-	}
+	size_t nNodes (mesh->getNNodes());
+	sfc_pnts.resize(nNodes);
+	const std::vector<MeshLib::Node*> nodes (mesh->getNodes());
+	for (unsigned i(0); i<nNodes; ++i)
+		sfc_pnts[i] = new GeoLib::PointWithID((*nodes[i])[0], (*nodes[i])[1], 0.0, nodes[i]->getID());
 
 	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_pnts.begin(), sfc_pnts.end());
 }
