@@ -145,7 +145,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		for (unsigned j = 0; j < nElemNodes; ++j)
 			point_ids->SetId(j, elem->getNode(j)->getID());
 
-		double prism_swap_id;
+		unsigned prism_swap_id;
 		switch (elem->getGeomType())
 		{
 		case MeshElemType::LINE:
