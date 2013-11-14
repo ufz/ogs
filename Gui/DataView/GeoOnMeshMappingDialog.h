@@ -35,7 +35,7 @@ public:
 	GeoOnMeshMappingDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent = 0);
 	~GeoOnMeshMappingDialog(void);
 
-	std::string getNewGeoName() const { return _new_geo_name; };
+	std::string const& getNewGeoName() const { return _new_geo_name; };
 	int getDataSetChoice() const;
 
 private:
