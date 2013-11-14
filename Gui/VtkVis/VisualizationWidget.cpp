@@ -122,7 +122,7 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	markerWidget->EnabledOn();
 	markerWidget->InteractiveOff();
 
-	_isShowAllOnLoad = true;
+	_isShowAllOnLoad = settings.value("resetViewOnLoad", true).toBool();
 
 	// Set alternate cursor shapes
 	connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)),

@@ -83,7 +83,7 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
 	if (backgroundColorVariant != QVariant())
 		this->setBGColor(backgroundColorVariant.value<QColor>());
 
-	_resetCameraOnAddOrRemove = true;
+	_resetCameraOnAddOrRemove = settings.value("resetViewOnLoad", true).toBool();
 }
 
 bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
