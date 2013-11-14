@@ -304,7 +304,7 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 	int parentChildCount = parentItem->childCount();
 	QModelIndex newIndex = index(parentChildCount - 1, 0, parent);
 
-	if (_resetCameraOnAddOrRemove || _rootItem->childCount() == 1)
+	if (_resetCameraOnAddOrRemove || _rootItem->childCount() == 1)
 		_renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
 	_actorMap.insert(item->actor(), newIndex);
 
