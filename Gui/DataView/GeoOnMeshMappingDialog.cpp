@@ -22,7 +22,7 @@
 
 
 GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent)
-	: _new_geo_name(""), QDialog(parent)
+	: QDialog(parent), _new_geo_name("")
 {
 	setupUi(this);
 
