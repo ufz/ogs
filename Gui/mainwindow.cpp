@@ -1002,7 +1002,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		else // use mesh from ProjectData
 			mesh = this->_project.getMeshObjects()[choice-2];
 
-		std::string new_geo_name = dlg.getNewGeoName();
+		std::string const& new_geo_name = dlg.getNewGeoName();
 
 		if (new_geo_name.empty())
 		{
