@@ -20,6 +20,10 @@
 
 #include "GeoMapper.h"
 
+namespace MeshLib {
+	class Mesh;
+}
+
 /**
  * \brief A dialog window for creating DIRECT boundary conditions from raster files
  */
@@ -28,16 +32,19 @@ class GeoOnMeshMappingDialog : public QDialog, private Ui_GeoOnMeshMapping
 	Q_OBJECT
 
 public:
-	GeoOnMeshMappingDialog(QDialog* parent = 0);
+	GeoOnMeshMappingDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent = 0);
 	~GeoOnMeshMappingDialog(void);
 
-	std::string getNewGeoName() const { return _new_geo_name; };
+	std::string const& getNewGeoName() const { return _new_geo_name; };
+	int getDataSetChoice() const;
 
 private:
 	std::string _new_geo_name;
 
 private slots:
 	void on_advancedMappingButton_toggled(bool isSelected) { this->geoNameEdit->setEnabled(isSelected); };
+
+	void on_meshNameComboBox_currentIndexChanged(int idx);
 
 	/// Instructions if the OK-Button has been pressed.
 	void accept();

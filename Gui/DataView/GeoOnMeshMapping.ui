@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Mapping Options</string>
+   <string>Geometry Mapping Options</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0" colspan="2">
@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Map original geometry points</string>
+      <string>Map original geometry points (geometry will be updated)</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -59,29 +59,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="headerLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Geometry mapping on mesh</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QRadioButton" name="advancedMappingButton">
      <property name="sizePolicy">
@@ -91,7 +68,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Copy geometry and insert additional points</string>
+      <string>Copy geometry and insert additional points (geometry will be duplicated)</string>
      </property>
     </widget>
    </item>
@@ -103,6 +80,27 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="meshNameLabel">
+     <property name="text">
+      <string>Map on data set:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="meshNameComboBox">
+     <item>
+      <property name="text">
+       <string>&lt;Load mesh from file&gt;</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>&lt;Load DEM from file&gt;</string>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>

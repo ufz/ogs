@@ -955,46 +955,64 @@ void MainWindow::writeStationListToFile(QString listName, QString fileName)
 
 void MainWindow::mapGeometry(const std::string &geo_name)
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
-	QString file_name = QFileDialog::getOpenFileName( this, "Select file for mapping",
-													  settings.value("lastOpenedFileDirectory").toString(),
-													  "OpenGeoSys mesh files (*.vtu *.msh);;Raster files(*.asc *.grd)");
-	GeoMapper geo_mapper(*_project.getGEOObjects(), geo_name);
+	GeoOnMeshMappingDialog dlg(this->_project.getMeshObjects());
+	if (dlg.exec() != QDialog::Accepted)
+		return;
 
-	if (file_name.compare("") != 0)
+	int choice (dlg.getDataSetChoice());
+
+	QString file_name("");
+	if (choice<2) // load something from a file
 	{
-		QFileInfo fi(file_name);
+		QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)", "Raster files(*.asc *.grd)" };
+		QSettings settings("UFZ", "OpenGeoSys-5");
+		file_name = QFileDialog::getOpenFileName( this, "Select file for mapping",
+														    settings.value("lastOpenedFileDirectory").toString(),
+														    file_type[choice]);
+		if (file_name.isEmpty()) return;
+		QDir dir = QDir(file_name);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	}
+
+	GeoMapper geo_mapper(*_project.getGEOObjects(), geo_name);
+	QFileInfo fi(file_name);
+	if (choice == 1) // load raster from file
+	{
 		if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
 		{
 			geo_mapper.mapOnDEM(file_name.toStdString());
 			dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
 		}
-		else if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
+		else
+			OGSError::box("The selected file is no supported raster file.");
+		return;
+	}
+
+	MeshLib::Mesh* mesh (nullptr);
+	if (choice == 0) // load mesh from file
+	{
+		if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
+			mesh = FileIO::readMeshFromFile(file_name.toStdString());
+		else
 		{
-			GeoOnMeshMappingDialog dlg;
-			if (dlg.exec() == QDialog::Accepted)
-			{
-				// just get mesh if already in memory
-				const MeshLib::Mesh* msh (this->_project.getMesh(fi.completeBaseName().toStdString()));
-
-				// read mesh otherwise
-				if (!msh)
-					msh = FileIO::readMeshFromFile(file_name.toStdString());
-
-				std::string new_geo_name = dlg.getNewGeoName();
-
-				if (new_geo_name.empty())
-				{
-					geo_mapper.mapOnMesh(msh);
-					dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
-				}
-				else
-				{
-					geo_mapper.advancedMapOnMesh(msh, new_geo_name);
-					dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(new_geo_name);
-				}
-			}
+			OGSError::box("The selected file is no supported mesh file.");
+			return;
 		}
+	}
+	else // use mesh from ProjectData
+		mesh = this->_project.getMeshObjects()[choice-2];
+
+	std::string const& new_geo_name = dlg.getNewGeoName();
+
+	if (new_geo_name.empty())
+	{
+		geo_mapper.mapOnMesh(mesh);
+		dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
+	}
+	else
+	{
+		geo_mapper.advancedMapOnMesh(mesh, new_geo_name);
+		dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(new_geo_name);
 	}
 }
 
