@@ -42,17 +42,9 @@ ConditionWriterDialog::~ConditionWriterDialog()
 
 void ConditionWriterDialog::on_fileNameButton_pressed()
 {
-	QString filetypes("");
-	int geo_idx = this->geoBox->currentIndex();
-	int cnd_idx = this->condTypeBox->currentIndex();
-	if ((geo_idx == 0) || (cnd_idx == 0)) filetypes = "OpenGeoSys FEM Condition file (*.cnd)";
-	else if ((geo_idx != 0) && (cnd_idx == 1)) filetypes = "OpenGeoSys FEM Condition file (*.cnd);;GeoSys Boundary Condition (*.bc)";
-	else if ((geo_idx != 0) && (cnd_idx == 2)) filetypes = "OpenGeoSys FEM Condition file (*.cnd);;GeoSys Initial Condition (*.ic)";
-	else if ((geo_idx != 0) && (cnd_idx == 3)) filetypes = "OpenGeoSys FEM Condition file (*.cnd);;GeoSys Source Condition (*.st)";
-
 	QSettings settings;
 	QString fileName = QFileDialog::getSaveFileName(this, "Select path",
-					settings.value("lastOpenedConditionsFileDirectory").toString(), filetypes);
+					settings.value("lastOpenedConditionsFileDirectory").toString(), "OpenGeoSys FEM Condition file (*.cnd)");
 
 	if (!fileName.isEmpty())
 	{
@@ -68,35 +60,27 @@ void ConditionWriterDialog::accept()
 	const QString file_name = this->fileNameEdit->text();
 	QFileInfo fi(file_name);
 
-	if ((fi.suffix().toLower().compare("cnd") != 0) &&
-		((this->geoBox->currentIndex()==0) || (this->condTypeBox->currentIndex()==0)))
+	QString geo_name = this->geoBox->currentText();
+	if (this->geoBox->currentIndex() == 0) geo_name = "";
+
+	FEMCondition::CondType cond_type(FEMCondition::UNSPECIFIED);;
+	switch (this->condTypeBox->currentIndex())
 	{
-		OGSError::box("Multiple geometries or multiple types of conditions\ncan only be saved to *.cnd files.","Inconsistent selection of parameters");
+		case 0:
+			cond_type = FEMCondition::UNSPECIFIED; break;
+		case 1:
+			cond_type = FEMCondition::BOUNDARY_CONDITION; break;
+		case 2:
+			cond_type = FEMCondition::INITIAL_CONDITION; break;
+		case 3:
+			cond_type = FEMCondition::SOURCE_TERM; break;
+		default:
+			ERR("ConditionWriterDialog::accept(): case %d not handled.", this->condTypeBox->currentIndex());
 	}
-	else
-	{
-		QString geo_name = this->geoBox->currentText();
-		if (this->geoBox->currentIndex() == 0) geo_name = "";
 
-		FEMCondition::CondType cond_type(FEMCondition::UNSPECIFIED);;
-		switch (this->condTypeBox->currentIndex())
-		{
-			case 0:
-				cond_type = FEMCondition::UNSPECIFIED; break;
-			case 1:
-				cond_type = FEMCondition::BOUNDARY_CONDITION; break;
-			case 2:
-				cond_type = FEMCondition::INITIAL_CONDITION; break;
-			case 3:
-				cond_type = FEMCondition::SOURCE_TERM; break;
-			default:
-				ERR("ConditionWriterDialog::accept(): case %d not handled.", this->condTypeBox->currentIndex());
-		}
+	emit saveFEMConditionsRequested(geo_name, cond_type, file_name);
 
-		emit saveFEMConditionsRequested(geo_name, cond_type, file_name);
-
-		this->done(QDialog::Accepted);
-	}
+	this->done(QDialog::Accepted);
 }
 
 void ConditionWriterDialog::reject()
