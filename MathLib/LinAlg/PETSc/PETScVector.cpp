@@ -39,13 +39,19 @@ PETScVector:: PETScVector(const PetscInt size)
    m_size_loc = PETSC_DECIDE;
 }
 
-PETScVector:: PETScVector(PETScVector &existing_vec)
+PETScVector:: PETScVector(const PETScVector &existing_vec)
 {
 
    m_size = existing_vec.m_size;
    VecDuplicate(existing_vec.v, &v);
 
-   m_size_loc = PETSC_DECIDE;
+   m_size_loc = existing_vec.m_size_loc;
+
+   VecGetOwnershipRange(v, &i_start,&i_end);
+
+   // If values of the vector are copied too:
+   //VecCopy(existing_vec.v, v);
+
 }
 
 
@@ -71,7 +77,7 @@ void  PETScVector::Create(PetscInt m)
    //VecSetSizes(v, m_size_loc, m);
    VecSetSizes(v, PETSC_DECIDE, m);
    VecSetFromOptions(v);
-   //VecGetOwnershipRange(v, &i_start,&i_end);
+   VecGetOwnershipRange(v, &i_start,&i_end);
 }
 
 
@@ -225,20 +231,46 @@ void  PETScVector::setValues( PetscInt ni, const PetscInt ix[],
 
 
 
-void PETScVector::addValue(const int i, const double value,InsertMode mode )
+void PETScVector::add(const int i, const double value,InsertMode mode )
 {
 
    VecSetValue(v, i, value, mode);
 }
 
 
-void PETScVector::nullize( )
+void PETScVector::setZero( )
 {
 
    VecSet(v, 0.0);
 }
 
+// Overloaded operator: initialize  the vector with a constant value
+void PETScVector::operator= (const double val)
+{
+//    PetscErrorCode ecode =
 
+   VecSet(v, val);
+}
+
+//Overloaded operator: assignment
+PETScVector& PETScVector::operator= (PETScVector &v_in)
+{
+   //    PetscErrorCode ecode =
+   VecCopy(v, v_in.v);
+   return *this;
+}
+//Overloaded operator:add
+void PETScVector::operator+= (const PETScVector& v_in)
+{
+   //    PetscErrorCode ecode =
+   VecAXPY(v, 1.0, v_in.v);
+}
+// Overloaded operator: subtract
+void PETScVector::operator-= (const PETScVector& v_in)
+{
+   //    PetscErrorCode ecode =
+   VecAXPY(v, -1.0, v_in.v);
+}
 
 void PETScVector::Viewer(std::string file_name)
 {

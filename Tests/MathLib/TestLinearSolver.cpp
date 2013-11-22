@@ -38,6 +38,7 @@
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
+#include "MathLib/LinAlg/PETSc/PETScTools.h"
 #endif
 
 #include "../TestTools.h"
@@ -96,26 +97,21 @@ struct Example1
 
 
  
-  template <class T_MATRIX, class T_VECTOR,   class T_LINEAR_SOVLER 
-	    //            class = typename std::enable_if<not std::is_void<T_VECTOR>::value>::type
-           >
+  template <class T_MATRIX, class T_VECTOR,   class T_LINEAR_SOVLER  >
 void checkLinearSolverInterface(T_MATRIX  &A,  boost::property_tree::ptree &ls_option)
 {
-    Example1 ex1;
+     Example1 ex1;
 
-    //    if (!std::is_constructible<T_MATRIX_OR_EXTSOLVER, MathLib::PETScLinearEquation>::value)
-    // if (!std::is_constructible<T_VECTOR, void>::value)
 
-    {
-       // set a coefficient matrix
-       A.setZero();
-       for (size_t i=0; i<ex1.dim_eqs; i++) {
-           for (size_t j=0; j<ex1.dim_eqs; j++) {
-               double v = ex1.mat(i, j);
-               if (v!=.0)
-                   A.add(i, j, v);
-           }
-       }
+      // set a coefficient matrix
+      A.setZero();
+      for (size_t i=0; i<ex1.dim_eqs; i++) {
+          for (size_t j=0; j<ex1.dim_eqs; j++) {
+             double v = ex1.mat(i, j);
+             if (v!=.0)
+                 A.add(i, j, v);
+          }
+      }
 
 
       // set RHS and solution vectors
@@ -132,8 +128,143 @@ void checkLinearSolverInterface(T_MATRIX  &A,  boost::property_tree::ptree &ls_o
       T_LINEAR_SOVLER ls(A, &ls_option);
       ls.solve(rhs, x);
       ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
-    }
+    
 }
+
+
+  // Interface for MPI related package
+template <class T_MATRIX, class T_VECTOR,   class T_LINEAR_SOVLER 
+	    //            class = typename std::enable_if<not std::is_void<T_VECTOR>::value>::type
+           >
+void checkLinearSolverInterface_MPI(T_MATRIX  &A,  boost::property_tree::ptree &ls_option)
+{
+    Example1 ex1;
+ 
+
+    //    if (!std::is_constructible<T_MATRIX_OR_EXTSOLVER, MathLib::PETScLinearEquation>::value)
+    // if (!std::is_constructible<T_VECTOR, void>::value)
+
+    // Split matrix by rank:
+    const int msize = A.getMPI_Size(); 
+    const int mrank = A.getMPI_Rank(); 
+ 
+   // Assembly test
+    double *local_matrix = nullptr;  // nullptr not support by IBM C++11
+    int *idx_r = nullptr; // 
+    int *idx_c = nullptr;
+    local_matrix = new double[msize * ex1.dim_eqs];
+    idx_c = new int[ex1.dim_eqs];
+    idx_r = new int[msize];
+
+
+    
+    for(int j=0;j<ex1.dim_eqs; j++)
+    {
+       idx_c[j] = j; 
+    }
+
+    for(int i=0; i<msize; i++)
+    {
+       idx_r[i] = mrank *  msize + i;
+       for(int j=0;j<ex1.dim_eqs; j++)
+       {
+           local_matrix[i*ex1.dim_eqs +j] =  ex1.mat(idx_r[i], j);
+       }
+    } 
+    //
+
+
+    // set RHS and solution vectors
+    T_VECTOR rhs(ex1.dim_eqs);
+    T_VECTOR x(rhs);
+
+    
+    // solve
+    T_LINEAR_SOVLER ls(A, rhs, x);
+    ls.Config(ls_option);
+    //T_LINEAR_SOVLER ls(A, &ls_option);
+ 
+    
+    // Solver configuration. It can be moved into the constructor   
+    ls.initializeMatVec();
+  
+    //  ls.Viewer("test3a");
+ 
+
+    // local assembly
+    ls.addMatrixEntries(msize, idx_r, ex1.dim_eqs, idx_c, local_matrix);
+    // No need to change RHS for this example.    
+    ls.finalAssemble();
+
+
+    //   ls.Viewer("test3b");
+ 
+     // apply BC
+     //-------------------------------------------------------------------
+    // Apply Dirichlet BC test: partition the bc entries
+    std::vector<int> bc_eqs_id;
+    std::vector<double> bc_eqs_value;
+    // the following caculation will be removed when a real function about D-BC is ready
+    int bc_size_rank = 0;  
+    for(size_t i=0; i<ex1.vec_dirichlet_bc_id.size(); i++)
+    {
+      const int bc_id =  ex1.vec_dirichlet_bc_id[i]; 
+      if(bc_id >= msize*mrank && bc_id < msize*(mrank+1))
+        bc_size_rank++;  
+    }
+
+
+    if(bc_size_rank > 0)
+    {
+
+      bc_eqs_id.resize(bc_size_rank);
+      bc_eqs_value.resize(bc_size_rank);
+       bc_size_rank = 0;
+       for(size_t i=0; i<ex1.vec_dirichlet_bc_id.size(); i++)
+       {
+          const int bc_id =  ex1.vec_dirichlet_bc_id[i]; 
+
+          if(bc_id >= msize*mrank && bc_id < msize*(mrank+1))
+          {
+             bc_eqs_id[bc_size_rank] = bc_id;  
+             bc_eqs_value[bc_size_rank] =  ex1.vec_dirichlet_bc_value[i];
+
+             bc_size_rank++;
+
+          }  
+       }
+    }
+ 
+
+    MathLib::applyKnownSolution(A, rhs, x, bc_eqs_id, bc_eqs_value);
+    //ls.applyKnownSolutions(bc_size_rank, &bc_eqs_id[0], &bc_eqs_value[0]);
+
+        
+    // Solve the linear equation
+    ls.Solver();
+    //ls.Solver(rhs, x);
+
+
+    ls.allocateMemory4TemoraryArrays(ex1.dim_eqs); 
+    ls.mappingSolution(); 
+    double *x_arr = ls.getGlobalSolution();  //T_VECTOR x, also works, template argument T_VECTOR will be removed 
+
+
+    // Convergence test
+    ASSERT_ARRAY_NEAR(ex1.exH, x_arr, ex1.dim_eqs, 1e-5);
+
+
+    ls.releaseMemory4TemoraryArrays();
+    
+
+    delete [] local_matrix;
+    delete [] idx_c;
+    delete [] idx_r;
+
+}
+
+
+
 
   //template argument T_VECTOR will be removed if it is not used anymore
  template <class T_LINEAR_EQUATION, typename T_VECTOR >
@@ -195,7 +326,7 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
     for(size_t i=0; i<ex1.vec_dirichlet_bc_id.size(); i++)
     {
       const int bc_id =  ex1.vec_dirichlet_bc_id[i]; 
-      if(bc_id > msize*mrank && bc_id < msize*(mrank+1))
+      if(bc_id >= msize*mrank && bc_id < msize*(mrank+1))
         bc_size_rank++;  
     }
 
@@ -211,23 +342,19 @@ void checkLinearSolverInterface(T_LINEAR_EQUATION &l_eqs,  boost::property_tree:
           const int bc_id =  ex1.vec_dirichlet_bc_id[i]; 
 
 
+          if(bc_id >= msize*mrank && bc_id < msize*(mrank+1))
+          {
+             bc_eqs_id[bc_size_rank] = bc_id;  
+             bc_eqs_value[bc_size_rank] =  ex1.vec_dirichlet_bc_value[i];
 
-       if(bc_id >= msize*mrank && bc_id < msize*(mrank+1))
-       {
-	  bc_eqs_id[bc_size_rank] = bc_id;  
-          bc_eqs_value[bc_size_rank] =  ex1.vec_dirichlet_bc_value[i];
-
-          bc_size_rank++;
-
-       }  
-    }
+             bc_size_rank++;
+          }  
+       }
     }
     //-------------------------------------------------------------------
-
-
+ 
     // Apply Dirichlet BC
     l_eqs.applyKnownSolutions(bc_size_rank, bc_eqs_id,  bc_eqs_value);
-
 
     // Solve the linear equation
     l_eqs.Solver();
@@ -410,7 +537,6 @@ TEST(Math, CheckInterface_PETSc_2)
 TEST(Math, CheckInterface_PETSc_3)
 {
  
-
    int mrank, msize;
 
    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
@@ -448,19 +574,11 @@ TEST(Math, CheckInterface_PETSc_3)
     A.set_rank_size(mrank, msize);
     A.Init(Example1::dim_eqs, sparse_info);
 
-    MathLib::PETScVector b(Example1::dim_eqs);
-    MathLib::PETScVector x(b);
+
+
    
- 
-    MathLib::PETScLinearSolver petsc_leq(A, b, x);
-    //petsc_leq.set_rank_size(mrank, msize);
-    //x.set_rank_size(mrank, msize);
-    //b.set_rank_size(mrank, msize);
-    petsc_leq.allocateMemory4TemoraryArrays(Example1::dim_eqs);
+    checkLinearSolverInterface_MPI<MathLib::PETScMatrix, MathLib::PETScVector, MathLib::PETScLinearSolver>(A, t_root);
 
-    checkLinearSolverInterface<MathLib::PETScLinearSolver, std::vector<double>>(petsc_leq, t_root);
-
-    petsc_leq.releaseMemory4TemoraryArrays();
 
 }
 #endif

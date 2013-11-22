@@ -22,8 +22,6 @@
 
 #include<iostream>
 
-#include "PETScMatrix.h"
-#include "PETScVector.h"
 
 
 namespace MathLib
@@ -32,13 +30,49 @@ namespace MathLib
 using boost::property_tree::ptree;
 
 
-PETScLinearSolver :: PETScLinearSolver (PETScMatrix &stiffness_matrix,
-                                        PETScVector &rhs, PETScVector &unknowns)
-   :A(stiffness_matrix), b(rhs), x(unknowns), lsolver(NULL), prec(NULL), global_x0(NULL),  global_x1(NULL)
+PETScLinearSolver::PETScLinearSolver(const PetscInt size, PETScMatrix _matrix,  PETScVector _vec)
+   :A(_matrix), b(_vec), x(_vec), lsolver(nullptr), prec(nullptr), global_x0(nullptr),  global_x1(nullptr)
 {
    ltolerance = 1.e-10;
    time_elapsed = 0.0;
    m_size_loc = PETSC_DECIDE;
+   m_size = size;
+
+
+}
+
+
+PETScLinearSolver::PETScLinearSolver(PETScMatrix &stiffness_matrix,
+                                     boost::property_tree::ptree const*const option,
+                                     PETScVector _vec)
+   :A(stiffness_matrix), b(_vec), x(_vec), lsolver(nullptr), prec(nullptr), global_x0(nullptr),  global_x1(nullptr)
+{
+   ltolerance = 1.e-10;
+   time_elapsed = 0.0;
+
+   m_size = A.size();
+
+   m_size_loc = PETSC_DECIDE;
+
+   mpi_size = A.getMPI_Size();
+   rank = A.getMPI_Rank();
+
+   if (option)
+      Config(*option);
+
+   allocateMemory4TemoraryArrays(m_size);
+
+}
+
+PETScLinearSolver :: PETScLinearSolver (PETScMatrix &stiffness_matrix,
+                                        PETScVector &rhs, PETScVector &unknowns)
+   :A(stiffness_matrix), b(rhs), x(unknowns), lsolver(nullptr), prec(nullptr), global_x0(nullptr),  global_x1(nullptr)
+{
+   ltolerance = 1.e-10;
+   time_elapsed = 0.0;
+
+   m_size_loc = PETSC_DECIDE;
+   m_size = A.size();
 
    mpi_size = A.getMPI_Size();
    rank = A.getMPI_Rank();
@@ -68,9 +102,6 @@ PETScLinearSolver:: ~PETScLinearSolver()
    PetscPrintf(PETSC_COMM_WORLD,"\n>>Number of Unknows: %d", m_size);
    PetscPrintf(PETSC_COMM_WORLD,"\n>>Elapsed time in linear solver: %fs", time_elapsed);
 }
-
-void allocateMemory4TemoraryArrays(const PetscInt size);
-void releaseMemory4TemoraryArrays();
 
 
 void PETScLinearSolver:: allocateMemory4TemoraryArrays(const PetscInt size)
@@ -183,7 +214,7 @@ void PETScLinearSolver:: releaseMemory4TemoraryArrays()
  PCGAMG            "gamg"
 
 */
-void PETScLinearSolver::Config(boost::property_tree::ptree &option)
+void PETScLinearSolver::Config(const boost::property_tree::ptree &option)
 
 {
 
@@ -298,6 +329,10 @@ void PETScLinearSolver::Solver(PETScVector &rhs, PETScVector &unknowns)
    b = rhs;
    x = unknowns;
 
+   b.set_rank_size(rank, mpi_size);
+   x.set_rank_size(rank, mpi_size);
+
+
    Solver();
 }
 
@@ -350,6 +385,7 @@ PetscScalar *PETScLinearSolver::getGlobalSolution() const
 {
 
    return global_x1;
+
 }
 
 PetscReal PETScLinearSolver::getNormRHS(NormType  nmtype)
@@ -377,8 +413,8 @@ void PETScLinearSolver::initializeMatVec( )
 
    //if(full_fill_A_b_x)
    {
-      b.nullize();
-      x.nullize();
+      b.setZero();
+      x.setZero();
    }
 }
 
@@ -396,7 +432,7 @@ void PETScLinearSolver::Viewer(std::string file_name)
    }
 
 
-#define  EXIT_TEST
+#define  nEXIT_TEST
 #ifdef EXIT_TEST
    if(lsolver) KSPDestroy(&lsolver);
    // if(prec) PCDestroy(&prec);

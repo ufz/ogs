@@ -44,6 +44,10 @@ public:
      */
     virtual ~LisVector();
 
+    /// Perform MPI collection of assembled entries in buffer
+    void finalAssemble() {}
+
+
     /// return a vector length
     std::size_t size() const;
 
@@ -102,6 +106,14 @@ public:
             this->add(pos[i], sub_vec[i]);
         }
     }
+
+    double getNorm()
+    {
+       double xnorm = 0.;
+       // to be filled.
+       return xnorm;
+    }
+ 
 private:
     LIS_VECTOR _vec;
 };

@@ -32,8 +32,10 @@ class PETScVector
 {
    public:
       PETScVector();
-      PETScVector(const PetscInt size);
-      PETScVector(PETScVector &existing_vec);
+      explicit PETScVector(const PetscInt size);
+
+      /// Copy constructor. The value of existing_vec is not copied.
+      PETScVector(const PETScVector &existing_vec);
       ~PETScVector();
 
 
@@ -68,9 +70,13 @@ class PETScVector
                          NORM_1 denotes \f$\sum_i |x_i|\f$
                          NORM_2 denotes \f$\sqrt(\sum_i (x_i)^2)\f$
                          NORM_INFINITY denotes \f$\mathrm{max}_i |x_i|\f$
-         06.2012.
+         06.2013.
       */
-      PetscReal getNorm(NormType  nmtype= NORM_2);
+      PetscReal getNorm(NormType nmtype);
+      PetscReal getNorm()
+      {
+         return  getNorm(NORM_2);
+      }
 
       void restoreLocalVector(PetscScalar *loc_vec);
 
@@ -88,7 +94,7 @@ class PETScVector
       void setValues( PetscInt ni,const PetscInt ix[],
                       const PetscScalar y[], InsertMode iora = ADD_VALUES);
 
-      void addValue(const PetscInt i, const double value, InsertMode mode);
+      void add(const PetscInt i, const double value, InsertMode mode = ADD_VALUES);
 
       /// Add values to several entries
       template<class T_SUBVEC>
@@ -96,11 +102,41 @@ class PETScVector
       {
          for (std::size_t i=0; i<pos.size(); ++i)
          {
-            addValue(pos[i], sub_vec[i], ADD_VALUES);
+            add(pos[i], sub_vec[i], ADD_VALUES);
          }
       }
 
-      void nullize();
+      void setZero();
+
+
+      /// Get an entry value. This is an expensive operation,
+      /// and it only get local value. Use it for test purpose
+      double get(const  PetscInt idx) const
+      {
+         double x[1];
+         PetscInt idxs[1];
+         idxs[0] = idx;
+         //    PetscErrorCode ecode =
+         VecGetValues(v, 1, idxs, x);
+         return x[0];
+      }
+
+
+      /// Initialize  the vector with a constant value
+      void operator = (const double val);
+
+      // Overloaded operators:
+      /// Overloaded operator: asign
+      void operator = (const PETScVector &v_in);
+
+      /// Overloaded operator: assignment
+      PETScVector& operator = (PETScVector &v_in);
+
+      ///  Overloaded operator: add
+      void operator += (const PETScVector& v_in);
+
+      ///  Overloaded operator: subtract
+      void operator -= (const PETScVector& v_in);
 
 
 
@@ -111,7 +147,7 @@ class PETScVector
       }
 
 
-      PetscInt getRangeStart() const
+      PetscInt getRangeBegin() const
       {
          return i_start;
       }
@@ -130,6 +166,7 @@ class PETScVector
       }
 
       void Viewer(std::string file_name);
+
 
    private:
       PETSc_Vec v;

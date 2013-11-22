@@ -50,6 +50,10 @@ public:
 	/// return an end index of the active data range
 	std::size_t getRangeEnd() const { return this->size(); }
 
+        /// Perform MPI collection of assembled entries in buffer
+        void finalAssemble() {} 
+
+
 	/// get entry
 	double get(std::size_t i) const { return (*this)[i]; }
 
@@ -71,6 +75,15 @@ public:
 			this->add(pos[i], sub_vec[i]);
 		}
 	}
+
+
+       double getNorm()
+       {
+         double xnorm = 0.;
+          // to be filled.
+	 return xnorm;
+       }
+
 
 	/**
 	 * writes the matrix entries into a file

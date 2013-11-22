@@ -25,23 +25,36 @@
 #include "petscmat.h"
 #include "petscksp.h"
 
+#include "PETScMatrix.h"
+#include "PETScVector.h"
 
 
 namespace MathLib
 {
 
-class PETScMatrix;
-class PETScVector;
+//class PETScMatrix;
+//class PETScVector;
 
 class PETScLinearSolver
 {
    public:
-      explicit PETScLinearSolver(PETScMatrix &stiffness_matrix, PETScVector &rhs, PETScVector &unknowns);
+
+      /// Constructor with argument of size.  _matrix and _vec are dummy class intances
+      PETScLinearSolver(const PetscInt size, PETScMatrix _matrix = PETScMatrix(),
+                        PETScVector _vec = PETScVector() );
+
+      /// Constructor with arguments of stiffness_matrix and size.  _vec is a dummy class intance
+      PETScLinearSolver(PETScMatrix &stiffness_matrix,
+                        boost::property_tree::ptree const*const option,
+                        PETScVector _vec = PETScVector()  );
+
+
+      PETScLinearSolver(PETScMatrix &stiffness_matrix, PETScVector &rhs, PETScVector &unknowns);
 
       ~PETScLinearSolver();
 
       /// Set the solver properties
-      void Config(boost::property_tree::ptree &option);
+      void Config(const boost::property_tree::ptree &option);
 
       void allocateMemory4TemoraryArrays(const PetscInt size);
       void releaseMemory4TemoraryArrays();
