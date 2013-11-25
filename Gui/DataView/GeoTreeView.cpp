@@ -75,9 +75,17 @@ void GeoTreeView::selectionChanged( const QItemSelection &selected,
 				else
 				{
 					// highlight a point for an expanded polyline
-					if (dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem())->getType() == GeoLib::GEOTYPE::POLYLINE)
+					GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem());
+					if (list_item && list_item->getType() == GeoLib::GEOTYPE::POLYLINE)
 						geoItemSelected(
 							dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(),
+							tree_item->data(0).toInt());
+
+					// highlight a point for an expanded surface
+					list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem());
+					if (list_item && list_item->getType() == GeoLib::GEOTYPE::SURFACE)
+						geoItemSelected(
+							dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(),
 							tree_item->data(0).toInt());
 					emit enableRemoveButton(false);
 				}
