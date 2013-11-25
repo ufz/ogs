@@ -86,8 +86,6 @@ public:
 private:
 	void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
 	void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
-	const std::list<SimplePolygonTree*>& getChilds() const;
-	const std::list<GeoLib::GEOObjects*>& getGeoObjects () const;
 
 	GeoLib::GEOObjects & _geo_objs;
 	std::string const& _geo_name;
