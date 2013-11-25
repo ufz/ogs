@@ -165,3 +165,19 @@ ENDIF() # Shapelib_FOUND
 IF(OGS_USE_LIS)
 	FIND_PACKAGE( LIS REQUIRED )
 ENDIF()
+
+
+IF(OGS_USE_PETSC)
+    MESSAGE (STATUS  "Configuring for PETSc" )
+      
+    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
+    FIND_PACKAGE(PETSc REQUIRED)
+ 
+    include_directories(
+              ${PETSC_INCLUDES} 
+     )
+
+    FIND_PACKAGE(MPI REQUIRED)
+
+    ADD_DEFINITIONS(-DOGS_USE_PETSC)
+ENDIF()
