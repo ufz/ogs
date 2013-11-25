@@ -9,7 +9,7 @@ env:
   - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
   - CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
 before_install:
-  - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libvtk5-dev libvtk5-qt4-dev libnetcdf-dev libshp-dev libgeotiff-dev libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libeigen3-dev
+  - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libvtk5-dev libvtk5-qt4-dev libnetcdf-dev libshp-dev libgeotiff-dev libeigen3-dev
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
   - "wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb"
   - "sudo apt-get remove cmake-data cmake"
