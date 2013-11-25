@@ -32,9 +32,9 @@ FIND_PACKAGE(GitHub)
 FIND_PROGRAM(GIT_TOOL_PATH git HINTS ${GITHUB_BIN_DIR} DOC "The git command line interface")
 IF(NOT GIT_TOOL_PATH)
 	IF(WIN32)
-		MESSAGE(STATUS "Git not found! Please install GitHub for Windows or Git!")
+		MESSAGE(FATAL_ERROR "Git not found! Please install GitHub for Windows or Git!")
 	ELSE()
-		MESSAGE(STATUS "Git not found but is required!")
+		MESSAGE(FATAL_ERROR "Git not found but is required!")
 	ENDIF()
 ENDIF()
 
@@ -164,4 +164,20 @@ ENDIF() # Shapelib_FOUND
 ## lis ##
 IF(OGS_USE_LIS)
 	FIND_PACKAGE( LIS REQUIRED )
+ENDIF()
+
+
+IF(OGS_USE_PETSC)
+    MESSAGE (STATUS  "Configuring for PETSc" )
+      
+    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
+    FIND_PACKAGE(PETSc REQUIRED)
+ 
+    include_directories(
+              ${PETSC_INCLUDES} 
+     )
+
+    FIND_PACKAGE(MPI REQUIRED)
+
+    ADD_DEFINITIONS(-DOGS_USE_PETSC)
 ENDIF()

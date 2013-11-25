@@ -23,8 +23,7 @@ SET (OGS_DATE "2012-08-20")
 ###########################
 ### Preliminary Options ###
 ###########################
-OPTION(EXTERNAL_BOOST_DOWNLOAD "Should download boost?" OFF)
-
+OPTION(OGS_NO_BOOST_DOWNLOAD "Always use the system installed Boost?" OFF)
 
 ### CMake includes ###
 INCLUDE(scripts/cmake/CheckTypeSizes.cmake)
@@ -118,27 +117,6 @@ INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
-ENDIF()
-
-IF(OGS_USE_PETSC)
-    MESSAGE (STATUS  "Configuring for PETSc" )
-      
-    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
-    FIND_PACKAGE(PETSc REQUIRED)
- 
-    include_directories(
-              ${PETSC_INCLUDES} 
-     )
-
-    FIND_PACKAGE(MPI)
-    IF(MPI_FOUND)		
-       SET(CMAKE_C_COMPILER ${MPI_COMPILER})
-       SET(CMAKE_CXX_COMPILER ${MPI_COMPILER})
-    ELSE(MPI_FOUND)
-       MESSAGE (FATAL_ERROR "Aborting: MPI implementation is not found!")
-    ENDIF(MPI_FOUND)			
-
-    ADD_DEFINITIONS(-DUSE_PETSC)
 ENDIF()
 
 
