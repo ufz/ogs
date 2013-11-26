@@ -134,7 +134,6 @@ class PETScVector
       ///  Overloaded operator: subtract
       void operator -= (const PETScVector& v_in);
 
-
       void set_rank_size(const int myrank, const int ranksize)
       {
          _size_rank = ranksize;

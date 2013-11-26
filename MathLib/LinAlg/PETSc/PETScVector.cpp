@@ -256,7 +256,6 @@ void PETScVector::Viewer(std::string file_name)
 
    finalAssemble();
 
-
    //PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
    PetscObjectSetName((PetscObject)v,file_name.c_str());
    VecView(v, viewer);
