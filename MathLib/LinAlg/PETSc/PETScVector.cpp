@@ -28,26 +28,26 @@ namespace MathLib
 
 PETScVector :: PETScVector ()
 {
-   m_size_loc = PETSC_DECIDE;
+   _size_loc = PETSC_DECIDE;
 }
 
 PETScVector:: PETScVector(const PetscInt size)
 {
-   m_size = size;
-   Create(m_size);
+   _size = size;
+   Create(_size);
 
-   m_size_loc = PETSC_DECIDE;
+   _size_loc = PETSC_DECIDE;
 }
 
 PETScVector:: PETScVector(const PETScVector &existing_vec)
 {
 
-   m_size = existing_vec.m_size;
+   _size = existing_vec._size;
    VecDuplicate(existing_vec.v, &v);
 
-   m_size_loc = existing_vec.m_size_loc;
+   _size_loc = existing_vec._size_loc;
 
-   VecGetOwnershipRange(v, &i_start,&i_end);
+   VecGetOwnershipRange(v, &_start_rank,&_end_rank);
 
    // If values of the vector are copied too:
    //VecCopy(existing_vec.v, v);
@@ -62,29 +62,29 @@ PETScVector:: ~PETScVector()
    VecDestroy(&v);
 }
 
-void PETScVector::Init(const PetscInt size)
+void PETScVector::Init(const PetscInt vec_size)
 {
-   m_size = size;
-   Create(m_size);
+   _size = vec_size;
+   Create(_size);
 }
 
 //-----------------------------------------------------------------
-void  PETScVector::Create(PetscInt m)
+void  PETScVector::Create(PetscInt vec_size)
 {
    //PetscErrorCode ierr;  // returned value from PETSc functions
    VecCreate(PETSC_COMM_WORLD, &v);
    ////VecCreateMPI(PETSC_COMM_WORLD,m_size_loc, m, &v);
    //VecSetSizes(v, m_size_loc, m);
-   VecSetSizes(v, PETSC_DECIDE, m);
+   VecSetSizes(v, PETSC_DECIDE, vec_size);
    VecSetFromOptions(v);
-   VecGetOwnershipRange(v, &i_start,&i_end);
+   VecGetOwnershipRange(v, &_start_rank,&_end_rank);
 }
 
 
 void  PETScVector::getOwnerRange(int *start_r, int *end_r)
 {
-   *start_r = i_start;
-   *end_r = i_end;
+   *start_r = _start_rank;
+   *end_r = _end_rank;
 }
 
 
@@ -123,13 +123,13 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
       u1[i] = xp[i];
 
 
-   PetscScalar *global_buff = new PetscScalar[m_size];
+   PetscScalar *global_buff = new PetscScalar[_size];
 
 
    // Collect solution from processes.
    for(j=0; j<count; j++)
       global_buff[low+j] = u1[j];
-   for(i=0; i<mpi_size; i++)
+   for(i=0; i<_size_rank; i++)
    {
       if(i != rank)
       {
@@ -148,7 +148,7 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
 
    //MPI_Barrier(PETSC_COMM_WORLD);
    // Copy the collected solution to the array for the previous solution
-   for(i=0; i<m_size; i++)
+   for(i=0; i<_size; i++)
    {
       u1[i] = global_buff[i];
       u0[i] = global_buff[i];
@@ -182,27 +182,13 @@ int PETScVector::getLocalVector(PetscScalar *loc_vec)
 
 
 
-/*!
-  Get values of the specified elements from a global vector
-
-  @param v_type - Indicator for vector: 0: x; 1: rhs
-  @param ni 	- number of elements to get
-  @param ix 	- indices where to get them from (in global 1d numbering)
-*/
 void  PETScVector::getEntries(PetscInt ni,const PetscInt ix[],
                               PetscScalar y[]) const
 {
    VecGetValues(v, ni, ix, y);
 }
 
-/*!
-    Get norm of RHS
-    @param nmtype  - norm type
-                     NORM_1 denotes sum_i |x_i|
-                     NORM_2 denotes sqrt(sum_i (x_i)^2)
-                     NORM_INFINITY denotes max_i |x_i|
-    06.2012. WW
-*/
+
 PetscReal PETScVector::getNorm(NormType  nmtype)
 {
    PetscReal norm = 0.;
@@ -238,11 +224,26 @@ void PETScVector::add(const int i, const double value,InsertMode mode )
 }
 
 
+
+
+
 void PETScVector::setZero( )
 {
 
    VecSet(v, 0.0);
 }
+
+
+double  PETScVector::get(const  PetscInt idx) const
+{
+   double x[1];
+   PetscInt idxs[1];
+   idxs[0] = idx;
+   //    PetscErrorCode ecode =
+   VecGetValues(v, 1, idxs, x);
+   return x[0];
+}
+
 
 // Overloaded operator: initialize  the vector with a constant value
 void PETScVector::operator= (const double val)

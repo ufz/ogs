@@ -42,10 +42,10 @@ class PETScVector
       /*!
           \brief Set the number of unknowns, and create vector. Iddentical to PETScVector(const PetscInt size);
 
-          @param size,  the number of unknowns.
+          \param vec_size,  the number of unknowns.
 
-       */
-      void Init(const PetscInt size);
+      */
+      void Init(const PetscInt vec_size);
 
       /// Perform MPI collection of assembled entries in buffer
       void finalAssemble();
@@ -57,8 +57,16 @@ class PETScVector
 
 
       int getLocalVector(PetscScalar *loc_vec);
-      void getEntries(PetscInt ni, const PetscInt ix[],
-                      PetscScalar y[]) const;
+
+
+      /*!
+       Get values of the specified elements from a global vector
+
+       \param v_type - Indicator for vector: 0: x; 1: rhs
+       \param ni 	- number of elements to get
+       \param ix 	- indices where to get them from (in global 1d numbering)
+      */     void getEntries(PetscInt ni, const PetscInt ix[],
+                             PetscScalar y[]) const;
 
 
       void getGlobalEntries(PetscScalar *u0, PetscScalar *u1);
@@ -66,11 +74,10 @@ class PETScVector
 
       /*!
         Get norm of vector
-        @param nmtype  - norm type
+        \param nmtype  - norm type
                          NORM_1 denotes \f$\sum_i |x_i|\f$
                          NORM_2 denotes \f$\sqrt(\sum_i (x_i)^2)\f$
                          NORM_INFINITY denotes \f$\mathrm{max}_i |x_i|\f$
-         06.2013.
       */
       PetscReal getNorm(NormType nmtype);
       PetscReal getNorm()
@@ -86,7 +93,7 @@ class PETScVector
       /// Get the number of global unknows
       int size() const
       {
-         return m_size;
+         return _size;
       }
 
       void set(const PetscInt i, const double value);
@@ -96,13 +103,19 @@ class PETScVector
 
       void add(const PetscInt i, const double value, InsertMode mode = ADD_VALUES);
 
-      /// Add values to several entries
-      template<class T_SUBVEC>
-      void add(const std::vector<std::size_t> &pos, const T_SUBVEC &sub_vec)
+
+      /*!
+         Add values to several entries
+         \e_idxs   - Indicies of entries to be added
+         \sub_vec  - entries to be added
+      */
+
+      template<class T_SUBVEC>  void add(const std::vector<std::size_t> &e_idxs,
+                                         const T_SUBVEC &sub_vec)
       {
-         for (std::size_t i=0; i<pos.size(); ++i)
+         for (std::size_t i=0; i<e_idxs.size(); ++i)
          {
-            add(pos[i], sub_vec[i], ADD_VALUES);
+            add(e_idxs[i], sub_vec[i], ADD_VALUES);
          }
       }
 
@@ -110,16 +123,8 @@ class PETScVector
 
 
       /// Get an entry value. This is an expensive operation,
-      /// and it only get local value. Use it for test purpose
-      double get(const  PetscInt idx) const
-      {
-         double x[1];
-         PetscInt idxs[1];
-         idxs[0] = idx;
-         //    PetscErrorCode ecode =
-         VecGetValues(v, 1, idxs, x);
-         return x[0];
-      }
+      /// and it only get local value. Use it for only test purpose
+      double get(const  PetscInt idx) const;
 
 
       /// Initialize  the vector with a constant value
@@ -140,25 +145,25 @@ class PETScVector
 
 
 
-      void set_rank_size(const int mrank, const int msize)
+      void set_rank_size(const int myrank, const int ranksize)
       {
-         mpi_size = msize;
-         rank = mrank;
+         _size_rank = ranksize;
+         rank = myrank;
       }
 
 
       PetscInt getRangeBegin() const
       {
-         return i_start;
+         return _start_rank;
       }
       PetscInt getRangeEnd() const
       {
-         return i_end;
+         return _end_rank;
       }
 
       PetscInt getMPI_Size() const
       {
-         return mpi_size;
+         return _size_rank;
       }
       PetscInt getMPI_Rank() const
       {
@@ -172,22 +177,22 @@ class PETScVector
       PETSc_Vec v;
 
       /// Starting index in a rank
-      PetscInt i_start;
+      PetscInt _start_rank;
       /// Ending index in a rank
-      PetscInt i_end;
+      PetscInt _end_rank;
 
       /// Dimension of the unknows
-      PetscInt m_size;
+      PetscInt _size;
       /// Dimention of the local unknowns
-      PetscInt m_size_loc;
+      PetscInt _size_loc;
 
       /// Rank size
-      int mpi_size;
+      int _size_rank;
       /// Rank
       int rank;
 
       /// Create vector
-      void Create(PetscInt m);
+      void Create(PetscInt vec_size);
 
 };
 
