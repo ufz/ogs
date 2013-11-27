@@ -107,33 +107,6 @@ if [ "$OSTYPE" == 'msys' ]; then
 		cmake --build . --config Debug --target QVTK
 	fi
 
-	# Install shapelib
-	cd $LIBS_LOCATION
-	if [ ! -d shapelib ]; then
-		# Download, extract
-		download_file http://download.osgeo.org/shapelib/$SHAPELIB_VERSION.tar.gz ./$SHAPELIB_VERSION.tar.gz
-		tar -xf $SHAPELIB_VERSION.tar.gz
-		mv $SHAPELIB_VERSION/ shapelib/
-		rm -rf $SHAPELIB_VERSION.tar.gz
-	elif [ -f shapelib/shapelib.lib ]; then
-		SHAPELIB_FOUND=true
-	fi
-
-	if [ $SHAPELIB_FOUND ]; then
-		echo "Shapelib already installed in $LIBS_LOCATION/shapelib"
-	else
-		# Compile
-		cd shapelib
-
-		echo " \
-		\"$WIN_DEVENV_PATH\\..\\..\\VC\\vcvarsall.bat\" $WIN_ARCHITECTURE &&\
-		nmake /f makefile.vc &&\
-		exit\
-		" > build.bat
-
-		$COMSPEC //k build.bat
-	fi
-
 	# Install libgeotiff
 	cd $LIBS_LOCATION
 	if [ ! -d libgeotiff ]; then

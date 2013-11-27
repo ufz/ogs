@@ -155,12 +155,6 @@ IF(libgeotiff_FOUND)
 	ADD_DEFINITIONS(-Dlibgeotiff_FOUND)
 ENDIF() # libgeotiff_FOUND
 
-## shapelib ##
-FIND_PACKAGE( Shapelib )
-IF(Shapelib_FOUND)
-	ADD_DEFINITIONS(-DShapelib_FOUND)
-ENDIF() # Shapelib_FOUND
-
 ## lis ##
 IF(OGS_USE_LIS)
 	FIND_PACKAGE( LIS REQUIRED )

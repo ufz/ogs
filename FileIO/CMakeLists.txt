@@ -9,6 +9,8 @@ SET( SOURCES
 	readMeshFromFile.cpp
 	readNonBlankLineFromInputStream.h
 	readNonBlankLineFromInputStream.cpp
+	SHPInterface.h
+	SHPInterface.cpp
 	Writer.h
 	Writer.cpp
 )
@@ -27,11 +29,6 @@ IF (QT4_FOUND)
 	SET ( SOURCES ${SOURCES} ${SOURCES_QT_XML})
 ENDIF (QT4_FOUND)
 
-IF (Shapelib_FOUND)
-	SET (SOURCES ${SOURCES} SHPInterface.h SHPInterface.cpp )
-	INCLUDE_DIRECTORIES (${Shapelib_INCLUDE_DIR})
-ENDIF (Shapelib_FOUND)
-
 # Create the library
 ADD_LIBRARY(FileIO STATIC ${SOURCES})
 
@@ -49,11 +46,8 @@ TARGET_LINK_LIBRARIES (FileIO
 	GeoLib
 	MeshLib
 	zlib
+	shp
 )
-
-IF (Shapelib_FOUND)
-	TARGET_LINK_LIBRARIES (FileIO ${Shapelib_LIBRARIES})
-ENDIF (Shapelib_FOUND)
 
 IF (OGS_PACKAGING)
 	FILE(GLOB XSD_FILES . *.xsd)

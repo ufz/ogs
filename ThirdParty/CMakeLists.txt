@@ -10,6 +10,8 @@ ADD_SUBDIRECTORY(zlib)
 
 ADD_SUBDIRECTORY(gtest)
 
+ADD_SUBDIRECTORY(shape)
+
 # This is a workaround for Travis builds.
 OPTION(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
