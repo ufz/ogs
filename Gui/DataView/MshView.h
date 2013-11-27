@@ -77,9 +77,7 @@ private slots:
 
 	void convertMeshToGeometry();
 
-#ifdef Shapelib_FOUND
 	void exportToShapefile() const;
-#endif
 
 	/// Remove the currently selected mesh.
 	void removeMesh();

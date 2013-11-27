@@ -48,9 +48,7 @@
 #include "VisPrefsDialog.h"
 #include "VtkAddFilterDialog.h"
 
-#ifdef Shapelib_FOUND
 #include "SHPImportDialog.h"
-#endif
 
 #include "GeoMapper.h"
 #include "OGSError.h"
@@ -673,7 +671,6 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		//QDir dir = QDir(fileName);
 		//settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
-#ifdef Shapelib_FOUND
 	else if (t == ImportFileType::SHAPE)
 	{
 		SHPImportDialog dlg(fileName.toStdString(), dynamic_cast<GEOModels*>(_project.getGEOObjects()));
@@ -681,7 +678,6 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		//QDir dir = QDir(fileName);
 		//settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
 	}
-#endif
 	else if (t == ImportFileType::TETGEN)
 	{
 		QSettings settings;
@@ -791,11 +787,9 @@ QMenu* MainWindow::createImportFilesMenu()
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
 	_signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);
 #endif
-#ifdef Shapelib_FOUND
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
 	connect(shapeFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(shapeFiles, ImportFileType::SHAPE);
-#endif
 	QAction* tetgenFiles = importFiles->addAction("&TetGen Files...");
 	connect( tetgenFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
 	_signal_mapper->setMapping(tetgenFiles, ImportFileType::TETGEN);

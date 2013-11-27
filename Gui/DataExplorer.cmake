@@ -55,10 +55,6 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/VtkAct
 )
 
-IF (Shapelib_FOUND)
-	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
-ENDIF () # Shapelib_FOUND
-
 # Put moc files in a project folder
 SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 SOURCE_GROUP("Moc Files" REGULAR_EXPRESSION "moc_.*")
@@ -92,6 +88,7 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	QVTK
 	${Boost_LIBRARIES}
 	zlib
+	shp
 )
 
 IF(VTK_NETCDF_FOUND)
@@ -99,10 +96,6 @@ IF(VTK_NETCDF_FOUND)
 ELSE()
 	TARGET_LINK_LIBRARIES( ogs-gui ${NETCDF_LIBRARIES} )
 ENDIF()
-
-IF (Shapelib_FOUND)
-	TARGET_LINK_LIBRARIES( ogs-gui ${Shapelib_LIBRARIES} )
-ENDIF () # Shapelib_FOUND
 
 IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${libgeotiff_LIBRARIES} ${libtiff_LIBRARIES} )
