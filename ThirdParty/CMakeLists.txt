@@ -1,3 +1,10 @@
+# Disable all warnings
+IF(COMPILER_IS_CLANG OR COMPILER_IS_GCC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+ELSEIF(MSVC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+ENDIF()
+
 # Add logog subdirectory and group its targets in a Visual Studio folder
 ADD_SUBDIRECTORY(logog)
 IF(BUILD_TESTING)
