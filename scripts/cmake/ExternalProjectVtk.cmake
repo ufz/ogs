@@ -38,7 +38,7 @@ ENDIF()
 IF(VTK_FOUND AND NOT VTK_DIR MATCHES "${CMAKE_BINARY_DIR}/External/vtk/src/VTK-build")
 	MESSAGE(STATUS "Using system vtk.")
 	INCLUDE( ${VTK_USE_FILE} )
-	INCLUDE_DIRECTORIES(SYSTEM ${VTK_INCLUDE_DIRS}/vtknetcdf/include)
+	INCLUDE_DIRECTORIES(SYSTEM ${VTK_INCLUDE_DIRS}/vtknetcdf/include ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
 	RETURN()
 ENDIF()
 
@@ -59,7 +59,7 @@ ENDIF()
 
 
 IF(OGS_BUILD_GUI)
-	SET(OGS_VTK_CMAKE_ARGS "-DVTK_Group_Qt:BOOL=ON")
+	SET(OGS_VTK_CMAKE_ARGS "-DModule_vtkGUISupportQt:BOOL=ON")
 ENDIF()
 
 IF(WIN32)
