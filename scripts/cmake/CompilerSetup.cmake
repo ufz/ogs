@@ -4,6 +4,9 @@ INCLUDE(DisableCompilerFlag)
 SET_DEFAULT_BUILD_TYPE(Debug)
 INCLUDE(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 
+# Better Clang warning suppression, see http://www.openwalnut.org/issues/230
+SET( CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem" CACHE STRING "" FORCE )
+
 # Set compiler helper variables
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     SET(COMPILER_IS_CLANG TRUE)
