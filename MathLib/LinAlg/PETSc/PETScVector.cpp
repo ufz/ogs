@@ -1,7 +1,11 @@
 /*!
    \file  PETScVector.cpp
-   \brief Definition of member functions of class PETScVector, which provides an interface
-          to PETSc vector routines.
+   \brief Definition of member functions of class PETScVector,
+          which provides an interface to PETSc vector routines.
+
+     Note: the return message of PETSc routines is ommited in
+           the source code. If it is really needed, it can be activated by
+           adding a PetscErrorCode type variable before each PETSc fucntion
 
    \author Wenqing Wang
    \version
@@ -68,10 +72,10 @@ void PETScVector::Init(const PetscInt vec_size)
 //-----------------------------------------------------------------
 void  PETScVector::Create(PetscInt vec_size)
 {
-   //PetscErrorCode ierr;  // returned value from PETSc functions
    VecCreate(PETSC_COMM_WORLD, &v);
-   ////VecCreateMPI(PETSC_COMM_WORLD,m_size_loc, m, &v);
-   //VecSetSizes(v, m_size_loc, m);
+   // The following two lines are used to test a fix size partition
+   // VecCreateMPI(PETSC_COMM_WORLD,m_size_loc, m, &v);
+   // VecSetSizes(v, m_size_loc, m);
    VecSetSizes(v, PETSC_DECIDE, vec_size);
    VecSetFromOptions(v);
    VecGetOwnershipRange(v, &_start_rank,&_end_rank);
@@ -154,7 +158,7 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
 
 }
 
-int PETScVector::getLocalVector(PetscScalar *loc_vec)
+int PETScVector::getLocalVector(PetscScalar *loc_vec) const
 {
    PetscInt count;
    VecGetLocalSize(v, &count);
@@ -170,7 +174,7 @@ void  PETScVector::getEntries(PetscInt ni,const PetscInt ix[],
    VecGetValues(v, ni, ix, y);
 }
 
-PetscReal PETScVector::getNorm(NormType  nmtype)
+PetscReal PETScVector::getNorm(NormType  nmtype) const
 {
    PetscReal norm = 0.;
    VecNorm(v, nmtype, &norm);
@@ -211,7 +215,7 @@ double  PETScVector::get(const  PetscInt idx) const
    double x[1];
    PetscInt idxs[1];
    idxs[0] = idx;
-   //    PetscErrorCode ecode =
+
    VecGetValues(v, 1, idxs, x);
    return x[0];
 }
@@ -220,7 +224,6 @@ double  PETScVector::get(const  PetscInt idx) const
 // Overloaded operator: initialize  the vector with a constant value
 void PETScVector::operator= (const double val)
 {
-//    PetscErrorCode ecode =
 
    VecSet(v, val);
 }
@@ -228,7 +231,6 @@ void PETScVector::operator= (const double val)
 //Overloaded operator: assignment
 PETScVector& PETScVector::operator= (PETScVector &v_in)
 {
-   //    PetscErrorCode ecode =
    VecCopy(v, v_in.v);
    return *this;
 }
@@ -236,27 +238,25 @@ PETScVector& PETScVector::operator= (PETScVector &v_in)
 //Overloaded operator:add
 void PETScVector::operator+= (const PETScVector& v_in)
 {
-   //    PetscErrorCode ecode =
    VecAXPY(v, 1.0, v_in.v);
 }
 
 // Overloaded operator: subtract
 void PETScVector::operator-= (const PETScVector& v_in)
 {
-   //    PetscErrorCode ecode =
    VecAXPY(v, -1.0, v_in.v);
 }
 
-void PETScVector::Viewer(std::string file_name)
+void PETScVector::Viewer(const std::string &file_name)
 {
    PetscViewer viewer;
-   std::string fname = file_name + ".txt";
+   const std::string fname = file_name + "_petsc_global_vector_entries.txt";
    PetscViewerASCIIOpen(PETSC_COMM_WORLD, fname.c_str(), &viewer);
    PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_MATLAB);
 
    finalAssemble();
 
-   //PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
+   // PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
    PetscObjectSetName((PetscObject)v,file_name.c_str());
    VecView(v, viewer);
 

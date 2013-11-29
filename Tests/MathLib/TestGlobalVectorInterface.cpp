@@ -149,6 +149,7 @@ TEST(Math, CheckInterface_PETScVector)
    if(msize != 3)
    {
       PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc vector.");
+      PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThe Number of computers cores must be three.");
 
       PetscFinalize();
       exit(EXIT_FAILURE);

@@ -54,7 +54,7 @@ class PETScVector
          return v;
       }
 
-      int getLocalVector(PetscScalar *loc_vec);
+      int getLocalVector(PetscScalar *loc_vec) const;
 
       /*!
        Get values of the specified elements from a global vector
@@ -62,8 +62,9 @@ class PETScVector
        \param v_type - Indicator for vector: 0: x; 1: rhs
        \param ni 	- number of elements to get
        \param ix 	- indices where to get them from (in global 1d numbering)
-      */     void getEntries(PetscInt ni, const PetscInt ix[],
-                             PetscScalar y[]) const;
+      */
+      void getEntries(PetscInt ni, const PetscInt ix[],
+                      PetscScalar y[]) const;
 
       void getGlobalEntries(PetscScalar *u0, PetscScalar *u1);
 
@@ -74,8 +75,8 @@ class PETScVector
                          NORM_2 denotes \f$\sqrt(\sum_i (x_i)^2)\f$
                          NORM_INFINITY denotes \f$\mathrm{max}_i |x_i|\f$
       */
-      PetscReal getNorm(NormType nmtype);
-      PetscReal getNorm()
+      PetscReal getNorm(NormType nmtype) const;
+      PetscReal getNorm() const
       {
          return  getNorm(NORM_2);
       }
@@ -159,7 +160,7 @@ class PETScVector
          return rank;
       }
 
-      void Viewer(std::string file_name);
+      void Viewer(const std::string &file_name);
 
    private:
       PETSc_Vec v;
