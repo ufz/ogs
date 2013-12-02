@@ -19,7 +19,6 @@ using namespace GeoLib;
 
 TEST(GeoLib, PolylineTest)
 {
-/*
 	std::vector<Point*> ply_pnts;
 	Polyline ply(ply_pnts);
 
@@ -106,5 +105,4 @@ TEST(GeoLib, PolylineTest)
 
 	for (std::size_t k(0); k < ply_pnts.size(); ++k)
 		delete ply_pnts[k];
-*/
 }
