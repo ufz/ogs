@@ -147,7 +147,7 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
 	texture->InterpolateOff();
 	texture->RepeatOff();
 	// texture->EdgeClampOn(); // does not work
-	texture->SetInput(scale->GetOutput());
+	texture->SetInputData(scale->GetOutput());
 	this->SetTexture(texture);
 
 	_origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));

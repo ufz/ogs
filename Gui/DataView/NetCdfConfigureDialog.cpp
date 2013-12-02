@@ -1,4 +1,4 @@
-﻿//file NetCDFConfigureDialog.cpp
+//file NetCDFConfigureDialog.cpp
 //CH Initial implementation
 
 #include "NetCdfConfigureDialog.h"
@@ -13,15 +13,15 @@
 #include <vtkImageImport.h>
 
 // Constructor
-NetCdfConfigureDialog::NetCdfConfigureDialog(const std::string &fileName, QDialog* parent) 
-	: QDialog(parent), _currentFile(new NcFile(fileName.c_str(), NcFile::ReadOnly)), 
+NetCdfConfigureDialog::NetCdfConfigureDialog(const std::string &fileName, QDialog* parent)
+	: QDialog(parent), _currentFile(new NcFile(fileName.c_str(), NcFile::ReadOnly)),
 	  _currentInitialDateTime(QDateTime()), _currentMesh(NULL), _currentRaster(NULL), _currentPath(fileName)
 {
 	setupUi(this);
 
 	setVariableSelect(); // set up variables of the file in the combobox
 	comboBoxVariable->setCurrentIndex(valueWithMaxDim()); //pre-select the variable with the biggest number of dimensions...valueWithMaxDim()
-	
+
 	_currentVar = _currentFile->get_var(comboBoxVariable->currentIndex());
 
 	setDimensionSelect();
@@ -80,7 +80,7 @@ void NetCdfConfigureDialog::on_comboBoxVariable_currentIndexChanged(int id)
 }
 
 //set up x-axis/lat
-void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int id) 
+void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int id)
 {
 	if (id == -1) id = 0;
 	double firstValue=0, lastValue=0;
@@ -114,7 +114,7 @@ void NetCdfConfigureDialog::on_comboBoxDim3_currentIndexChanged(int id)
 		double firstValue=0, lastValue=0;
 		unsigned size = 0;
 		getDimEdges(id,size,firstValue,lastValue);
-	
+
 		QTime firstTime(0,0,0), lastTime(0,0,0);
 		int firstDaysToAdd = 0, lastDaysToAdd = 0;
 
@@ -181,7 +181,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 		comboBoxDim3->addItem(_currentVar->get_dim(i)->name());
 		comboBoxDim4->addItem(_currentVar->get_dim(i)->name());
 	}
-	if (_currentVar->num_dims() < 4) 
+	if (_currentVar->num_dims() < 4)
 	{
 		comboBoxDim4->setEnabled(false);comboBoxDim4->clear();
 		spinBoxDim4->setEnabled(false);spinBoxDim4->setValue(0);
@@ -208,7 +208,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 		comboBoxDim3->setEnabled(true);
 		dateTimeEditDim3->setEnabled(true);
 	}
-	if (_currentVar->num_dims() < 2) 
+	if (_currentVar->num_dims() < 2)
 	{
 		comboBoxDim2->setEnabled(false);comboBoxDim2->clear();
 		doubleSpinBoxDim2Start->setValue(0); doubleSpinBoxDim2End->setValue(0);
@@ -220,7 +220,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 
 void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue)
 {
-	if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != NULL) 
+	if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != NULL)
 	{
 		NcVar *tmpVarOfDim = _currentFile->get_var(_currentVar->get_dim(dimId)->name());
 		if ((tmpVarOfDim->num_dims()) == 1)
@@ -228,11 +228,7 @@ void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &first
 			int sizeOfDim = tmpVarOfDim->get_dim(0)->size();
 			size = sizeOfDim;
 			double arrayOfDimStart[1] = {0};
-#ifdef VTK_NETCDF_FOUND
 			size_t edgeOfArray[1] = {1};
-#else
-			long edgeOfArray[1] = {1};
-#endif
 			long edgeOrigin[1] = {0};
 			tmpVarOfDim->set_cur(edgeOrigin);
 			tmpVarOfDim->get(arrayOfDimStart,edgeOfArray);
@@ -271,14 +267,14 @@ long NetCdfConfigureDialog::convertDateToMinutes(QDateTime initialDateTime, QDat
 int NetCdfConfigureDialog::getTimeStep()
 {
 	NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
-	
+
 	const double datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
 
 	double timeArray[1] = {datesToMinutes};
 	double currentTime = timeVar->get_index(timeArray);
 	if (currentTime < 0) currentTime=0; //if the value isn't found in the array, set it to 0 as default...
 	return currentTime;
-}	
+}
 
 int NetCdfConfigureDialog::getDim4()
 {
@@ -287,7 +283,7 @@ int NetCdfConfigureDialog::getDim4()
 	double currentValueDim3 = dim3Var->get_index(timeArray);
 	if (currentValueDim3 < 0) currentValueDim3=0; //if the value isn't found in the array, set it to 0 as default...
 	return currentValueDim3;
-}	
+}
 
 double NetCdfConfigureDialog::getResolution()
 {
@@ -316,11 +312,7 @@ double NetCdfConfigureDialog::getResolution()
 
 void NetCdfConfigureDialog::createDataObject()
 {
-#ifdef VTK_NETCDF_FOUND
 	size_t* length = new size_t[_currentVar->num_dims()];
-#else
-	long* length = new long[_currentVar->num_dims()];
-#endif
 	double originLon = 0, originLat = 0;
 	double lastLon = 0, lastLat = 0;
 	unsigned sizeLon = 0, sizeLat = 0;
@@ -345,10 +337,10 @@ void NetCdfConfigureDialog::createDataObject()
 		newOrigin[comboBoxDim3->currentIndex()] = getTimeStep(); //set origin to selected time
 		_currentVar->set_cur(newOrigin);
 		//Dimension 4:
-		if (_currentVar->num_dims() > 3) newOrigin[comboBoxDim4->currentIndex()] = getDim4(); //if there are is a 4th dimension 
+		if (_currentVar->num_dims() > 3) newOrigin[comboBoxDim4->currentIndex()] = getDim4(); //if there are is a 4th dimension
 		delete newOrigin;
 	}
-	
+
 	_currentVar->get(data_array,length); //create Array of Values
 
 	for (size_t i=0; i < (sizeLat*sizeLon); i++)
@@ -356,7 +348,7 @@ void NetCdfConfigureDialog::createDataObject()
 		//data_array[i] = data_array[i] - 273; // convert from kalvin to celsius
 		if (data_array[i] < -9999 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
 	}
-		
+
 	double origin_x = (originLon < lastLon) ? originLon : lastLon;
 	double origin_y = (originLat < lastLat) ? originLat : lastLat;
 	double originNetCdf[3] = {origin_x, origin_y, 0};
@@ -391,7 +383,7 @@ void NetCdfConfigureDialog::createDataObject()
 		_currentRaster = VtkGeoImageSource::New();
 		_currentRaster->setImage(image, QString::fromStdString(this->getName()), originNetCdf[0], originNetCdf[1], resolution);
 	}
-	
+
 	delete[] length;
 	delete[] data_array;
 }
@@ -411,7 +403,7 @@ std::string NetCdfConfigureDialog::getName()
 	std::string name = (lineEditName->text()).toStdString();
 	QString date = dateTimeEditDim3->date().toString(Qt::LocalDate);
 	name.append(" - ").append(date.toStdString());
-	return name;	
+	return name;
 }
 
 void NetCdfConfigureDialog::reverseNorthSouth(double* data, size_t width, size_t height)
