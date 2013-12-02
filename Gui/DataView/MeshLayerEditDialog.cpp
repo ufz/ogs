@@ -29,13 +29,13 @@
 #include <QVBoxLayout>
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
-	: QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL),
+	: QDialog(parent), _msh(mesh), _noDataReplacementLabel(nullptr), _noDataReplacementEdit(nullptr),
 	  _nLayerLabel (new QLabel("Please specify the number of layers to add:")),
 	  _nLayerExplanation (new QLabel("(select \"0\" for surface mapping)")),
 	  _layerEdit (new QLineEdit("0")),
 	  _nextButton (new QPushButton("Next")),
-	  _layerBox (NULL),
-	  _radioButtonBox (NULL),
+	  _layerBox (nullptr),
+	  _radioButtonBox (nullptr),
 	  _layerSelectionLayout (new QGridLayout),
 	  _radiobuttonLayout (new QVBoxLayout),
 	  _selectButton1 (new QRadioButton("Add layers based on raster files")),
@@ -66,7 +66,8 @@ MeshLayerEditDialog::~MeshLayerEditDialog()
 	delete _nLayerExplanation;
 	delete _layerEdit;
 	delete _nextButton;
-	delete _noDataDeleteBox;
+	delete _noDataReplacementLabel;
+	delete _noDataReplacementEdit;
 	delete _radiobuttonLayout;
 	delete _layerSelectionLayout;
 	delete _layerBox;
@@ -138,14 +139,15 @@ void MeshLayerEditDialog::createWithRasters()
 		// don't add bottom layer if mesh contains only surface
 		if (this->_n_layers==0) break;
 	}
-	this->_layerBox->setLayout(this->_layerSelectionLayout);
-	this->_noDataDeleteBox = new QCheckBox("Remove mesh nodes at NoData values");
-	this->_noDataDeleteBox->setChecked(false);
-	this->_noDataDeleteBox->setEnabled(false);
 	if (this->_n_layers == 0)
 	{
-		this->_noDataDeleteBox->setEnabled(true);
-		this->_layerSelectionLayout->addWidget(_noDataDeleteBox, 1, 1);
+		this->_layerBox->setLayout(this->_layerSelectionLayout);
+		this->_noDataReplacementLabel = new QLabel("Set NoData values to ");
+		this->_noDataReplacementEdit = new QLineEdit("0.0");
+		this->_noDataReplacementEdit->setValidator(new QDoubleValidator(_noDataReplacementEdit));
+
+		this->_layerSelectionLayout->addWidget(_noDataReplacementLabel, 1, 0);
+		this->_layerSelectionLayout->addWidget(_noDataReplacementEdit, 1, 1);
 	}
 	this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
 }
@@ -160,7 +162,9 @@ void MeshLayerEditDialog::createStatic()
 	{
 		QString text("Layer" + QString::number(i) + "-Thickness");
 		_labels.push_back(new QLabel(text));
-		_edits.push_back(new QLineEdit());
+		QLineEdit* staticLayerEdit = new QLineEdit(QString::number(i+10));
+		staticLayerEdit->setValidator(new QDoubleValidator(staticLayerEdit));
+		_edits.push_back(staticLayerEdit);
 		this->_layerSelectionLayout->addWidget(_labels[i],  i, 0);
 		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
 	}
@@ -193,8 +197,9 @@ void MeshLayerEditDialog::accept()
 			{
 				new_mesh = new MeshLib::Mesh(*_msh);
 				const std::string imgPath ( this->_edits[0]->text().toStdString() );
+				const double noDataReplacementValue = strtod(this->_noDataReplacementEdit->text().toStdString().c_str(),0);
 				if (!imgPath.empty())
-					result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, _noDataDeleteBox->isChecked());
+					result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
 			}
 			else
 			{
@@ -211,7 +216,7 @@ void MeshLayerEditDialog::accept()
 						const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
 						if (!imgPath.empty())
 						{
-							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, _noDataDeleteBox->isChecked());
+							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, 0.0);
 							if (result==0) break;
 						}
 					}

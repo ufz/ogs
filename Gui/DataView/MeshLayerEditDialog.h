@@ -49,7 +49,8 @@ private:
 	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
 	QVector<QLineEdit*> _edits;
 	QVector<QPushButton*> _buttons;
-	QCheckBox* _noDataDeleteBox;
+	QLabel* _noDataReplacementLabel;
+	QLineEdit* _noDataReplacementEdit;
 
 	QLabel* _nLayerLabel;
 	QLabel* _nLayerExplanation;
