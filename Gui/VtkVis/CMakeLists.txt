@@ -155,7 +155,7 @@ ADD_LIBRARY( VtkVis STATIC
 ADD_DEPENDENCIES(VtkVis VtkRescan)
 
 IF (libgeotiff_FOUND)
-	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../ThirdParty/tiff/vtktiff )
 	TARGET_LINK_LIBRARIES( VtkVis ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
 
