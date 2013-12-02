@@ -162,7 +162,7 @@ void MeshLayerEditDialog::createStatic()
 	{
 		QString text("Layer" + QString::number(i) + "-Thickness");
 		_labels.push_back(new QLabel(text));
-		QLineEdit* staticLayerEdit = new QLineEdit(QString::number(i+10));
+		QLineEdit* staticLayerEdit = new QLineEdit("10");
 		staticLayerEdit->setValidator(new QDoubleValidator(staticLayerEdit));
 		_edits.push_back(staticLayerEdit);
 		this->_layerSelectionLayout->addWidget(_labels[i],  i, 0);
@@ -203,9 +203,13 @@ void MeshLayerEditDialog::accept()
 			}
 			else
 			{
-				std::vector<float> layer_thickness(_n_layers);
+				std::vector<float> layer_thickness;
 				for (unsigned i=0; i<nLayers; ++i)
-					layer_thickness[i] = (_use_rasters) ? 100 : this->_edits[i]->text().toFloat();
+				{
+					float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
+					if (thickness > std::numeric_limits<float>::epsilon())
+						layer_thickness.push_back(thickness);
+				}
 
 				new_mesh = MshLayerMapper::CreateLayers(_msh, layer_thickness);
 
