@@ -33,8 +33,24 @@ void reverseNodeOrdering(std::vector<MeshLib::Element*> & ele_vec)
 	for (MeshLib::Element* ele : ele_vec) {
 		unsigned nElemNodes (ele->getNNodes());
 		std::vector<MeshLib::Node*> originalNodes(ele->getNodes(), ele->getNodes() + nElemNodes);
-		for(size_t j = 0; j < nElemNodes; ++j)
-			ele->setNode(j, originalNodes[nElemNodes - j - 1]);
+		if (ele->getGeomType() == MeshElemType::PRISM)
+		{
+			for(size_t j = 0; j < 3; ++j)
+			{
+				ele->setNode(j, originalNodes[j+3]);
+				ele->setNode(j+3, originalNodes[j]);
+			}
+		}
+		else if (ele->getGeomType() == MeshElemType::TETRAHEDRON)
+		{
+			for(size_t j = 0; j < 4; ++j)
+				ele->setNode(j, originalNodes[(j+1)%4]);
+		}
+		else 
+		{
+			for(size_t j = 0; j < nElemNodes; ++j)
+				ele->setNode(j, originalNodes[nElemNodes - j - 1]);
+		}
 	}
 }
 
