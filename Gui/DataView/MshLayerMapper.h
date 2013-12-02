@@ -21,6 +21,7 @@ class QImage;
 
 namespace MeshLib {
 	class Mesh;
+	class Node;
 }
 
 /**
@@ -46,7 +47,7 @@ public:
 	 * Note: This only results in a valid mesh if the layers don't intersect each other.
 	 */
 	static int LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile,
-                            const unsigned nLayers, const unsigned layer_id, bool removeNoDataValues = false);
+                            const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue);
 
 	/**
 	 * Blends a mesh with the surface given by dem_raster. Nodes and elements above the surface are either removed or adapted to fit the surface.
@@ -58,9 +59,9 @@ public:
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
-	static bool meshFitsImage(const MeshLib::Mesh* msh,
-	                          const std::pair<double, double> &xDim,
-	                          const std::pair<double, double> &yDim);
+	static bool isNodeOnRaster(const MeshLib::Node &node,
+							   const std::pair<double, double> &xDim,
+	                           const std::pair<double, double> &yDim);
 };
 
 #endif //MSHLAYERMAPPER_H
