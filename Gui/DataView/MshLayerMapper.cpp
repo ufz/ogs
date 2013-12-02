@@ -163,7 +163,10 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 
 			if (!isNodeOnRaster(*nodes[i], xDim, yDim))
 			{
-				nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+				if (layer_id == 0) // use default value
+					nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+				else // use z-value from layer above
+					nodes[i]->updateCoordinates(coords[0], coords[1], (*nodes[i-nNodesPerLayer])[2]);
 				continue;
 			}
 
@@ -208,7 +211,12 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 				nodes[i]->updateCoordinates(coords[0], coords[1], z);
 			}
 			else
-				nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+			{
+				if (layer_id == 0) // use default value
+					nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+				else // use z-value from layer above
+					nodes[i]->updateCoordinates(coords[0], coords[1], (*nodes[i-nNodesPerLayer])[2]);
+			}
 		}
 
 		delete raster;

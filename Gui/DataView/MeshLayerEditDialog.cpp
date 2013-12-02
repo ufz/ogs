@@ -218,9 +218,10 @@ void MeshLayerEditDialog::accept()
 					for (unsigned i=0; i<=nLayers; ++i)
 					{
 						const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
+						const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
 						if (!imgPath.empty())
 						{
-							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, 0.0);
+							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, noDataReplacement);
 							if (result==0) break;
 						}
 					}
