@@ -33,7 +33,6 @@
 #include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
-#include <QImage>
 
 MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std::vector<float> &thickness)
 {
@@ -181,8 +180,8 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			const double xShift = (xPos-xIdx-half_delta)/half_delta;
 			const double yShift = (yPos-yIdx-half_delta)/half_delta;
 
-			const int xShiftIdx = (xShift>=0) ? ceil(xShift) : floor(xShift);
-			const int yShiftIdx = (yShift>=0) ? ceil(yShift) : floor(yShift);
+			const int xShiftIdx = static_cast<int>((xShift>=0) ? ceil(xShift) : floor(xShift));
+			const int yShiftIdx = static_cast<int>((yShift>=0) ? ceil(yShift) : floor(yShift));
 
 			// determining the neighbouring pixels that add weight to the interpolation
 			const int x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};

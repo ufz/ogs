@@ -60,7 +60,7 @@ public:
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
 	static bool isNodeOnRaster(const MeshLib::Node &node,
-							   const std::pair<double, double> &xDim,
+	                           const std::pair<double, double> &xDim,
 	                           const std::pair<double, double> &yDim);
 };
 

@@ -195,6 +195,8 @@ void MeshLayerEditDialog::accept()
 				std::vector<float> layer_thickness;
 				for (unsigned i=0; i<nLayers; ++i)
 				{
+					// "100" is just a default size to have any value for extruding 2D elements.
+					// The actual mapping based on a raster file will be performed later.
 					float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
 					if (thickness > std::numeric_limits<float>::epsilon())
 						layer_thickness.push_back(thickness);
