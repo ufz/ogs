@@ -100,12 +100,13 @@ void ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshL
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<MeshLib::Node> extent;
-	extent.push_back(x1); extent.push_back(x2);
+	extent.push_back(x1);
+	extent.push_back(x2);
 	const GeoLib::AABB<MeshLib::Node> aabb(extent.begin(), extent.end());
 
 	std::vector<std::size_t> matchedIDs;
-	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) 
+	const std::size_t n_elems(ele_vec.size());
+	for (std::size_t i = 0; i<n_elems; i++)
 	{
 		std::size_t nElemNodes (ele_vec[i]->getNNodes());
 		for (std::size_t j=0; j<nElemNodes; ++j)
@@ -114,7 +115,6 @@ void ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshL
 				matchedIDs.push_back(i);
 				break;
 			}
-		i++;
 	}
 	this->updateUnion(matchedIDs);
 }
