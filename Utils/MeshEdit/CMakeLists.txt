@@ -51,3 +51,10 @@ TARGET_LINK_LIBRARIES( removeMeshElements
 	MeshLib
 )
 SET_TARGET_PROPERTIES(removeMeshElements PROPERTIES FOLDER Utilities)
+
+ADD_EXECUTABLE( DataExplorer5NodeReordering DataExplorer5NodeReordering.cpp )
+TARGET_LINK_LIBRARIES( DataExplorer5NodeReordering
+	FileIO
+	MeshLib
+)
+SET_TARGET_PROPERTIES(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
