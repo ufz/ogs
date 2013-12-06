@@ -244,7 +244,7 @@ void VisualizationWidget::screenshot(QString filename, int magnification)
 
 	vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
 	writer->SetFileName(filename.toStdString().c_str());
-	writer->SetInput(windowToImageFilter->GetOutput());
+	writer->SetInputData(windowToImageFilter->GetOutput());
 	writer->Write();
 
 	this->updateView();

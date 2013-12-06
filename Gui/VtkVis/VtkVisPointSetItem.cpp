@@ -219,7 +219,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 //		vtkGenericDataObjectWriter* pdWriter = vtkGenericDataObjectWriter::New();
 		vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
 		        vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-		pdWriter->SetInput(algPD->GetOutputDataObject(0));
+		pdWriter->SetInputData(algPD->GetOutputDataObject(0));
 		//pdWriter->SetDataModeToAscii();
 		//pdWriter->SetCompressorTypeToNone();
 		std::string filenameWithExt = filename;
@@ -231,7 +231,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 	{
 		vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
 		        vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-		ugWriter->SetInput(algUG->GetOutputDataObject(0));
+		ugWriter->SetInputData(algUG->GetOutputDataObject(0));
 		//ugWriter->SetDataModeToAscii();
 		//ugWriter->SetCompressorTypeToNone();
 		std::string filenameWithExt = filename;
