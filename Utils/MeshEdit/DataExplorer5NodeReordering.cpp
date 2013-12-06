@@ -48,7 +48,7 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 					elements[i]->setNode(j+3, nodes[j]);
 				}
 				break;
-			case MeshElemType::QUAD:
+			case MeshElemType::HEXAHEDRON:
 				for(size_t j = 0; j < 4; ++j)
 				{
 					elements[i]->setNode(j, nodes[j+4]);
