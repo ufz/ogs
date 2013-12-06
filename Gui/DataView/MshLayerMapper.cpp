@@ -33,7 +33,6 @@
 #include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
-#include <QImage>
 
 MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std::vector<float> &thickness)
 {
@@ -123,7 +122,7 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 }
 
 int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &rasterfile,
-                                 const unsigned nLayers, const unsigned layer_id, bool removeNoDataValues)
+                                 const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
 {
 	if (new_mesh == nullptr)
 	{
@@ -149,24 +148,27 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 		const std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
 		const std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
 
-		if (!meshFitsImage(new_mesh, xDim, yDim))
-		{
-			delete [] elevation;
-			return 0;
-		}
-
 		const size_t nNodes = new_mesh->getNNodes();
 		const size_t nNodesPerLayer = nNodes / (nLayers+1);
 
 		const size_t firstNode = layer_id * nNodesPerLayer;
 		const size_t lastNode  = firstNode + nNodesPerLayer;
 
-		std::vector<size_t> noData_nodes;
 		const double half_delta = 0.5*delta;
 		const std::vector<MeshLib::Node*> nodes = new_mesh->getNodes();
 		for (unsigned i = firstNode; i < lastNode; ++i)
 		{
 			const double* coords = nodes[i]->getCoords();
+
+			if (!isNodeOnRaster(*nodes[i], xDim, yDim))
+			{
+				if (layer_id == 0) // use default value
+					nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+				else // use z-value from layer above
+					nodes[i]->updateCoordinates(coords[0], coords[1], (*nodes[i-nNodesPerLayer])[2]);
+				continue;
+			}
+
 			// position in raster
 			const double xPos ((coords[0] - xDim.first) / delta);
 			const double yPos ((coords[1] - yDim.first) / delta);
@@ -178,8 +180,8 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 			const double xShift = (xPos-xIdx-half_delta)/half_delta;
 			const double yShift = (yPos-yIdx-half_delta)/half_delta;
 
-			const int xShiftIdx = (xShift>=0) ? ceil(xShift) : floor(xShift);
-			const int yShiftIdx = (yShift>=0) ? ceil(yShift) : floor(yShift);
+			const int xShiftIdx = static_cast<int>((xShift>=0) ? ceil(xShift) : floor(xShift));
+			const int yShiftIdx = static_cast<int>((yShift>=0) ? ceil(yShift) : floor(yShift));
 
 			// determining the neighbouring pixels that add weight to the interpolation
 			const int x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};
@@ -187,12 +189,12 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 
 			double locZ[4];
 			locZ[0] = elevation[yIdx*width + xIdx];
-			if (fabs(locZ[0] + no_data) > std::numeric_limits<double>::min())
+			if (fabs(locZ[0] - no_data) > std::numeric_limits<double>::min())
 			{
 				for (unsigned j=1; j<4; ++j)
 				{
 					locZ[j] = elevation[(yIdx+y_nb[j])*width + (xIdx+x_nb[j])];
-					if (fabs(locZ[j] + no_data) < std::numeric_limits<double>::min())
+					if (fabs(locZ[j] - no_data) < std::numeric_limits<double>::min())
 						locZ[j]=locZ[0];
 				}
 
@@ -204,36 +206,16 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 				double z(0.0);
 				for(unsigned j = 0; j < 4; ++j)
 					z += ome[j] * locZ[j];
-				const double* coords (nodes[i]->getCoords());
+
 				nodes[i]->updateCoordinates(coords[0], coords[1], z);
 			}
 			else
 			{
-				const double* coords (nodes[i]->getCoords());
-				nodes[i]->updateCoordinates(coords[0], coords[1], 0);
-				noData_nodes.push_back(i);
+				if (layer_id == 0) // use default value
+					nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+				else // use z-value from layer above
+					nodes[i]->updateCoordinates(coords[0], coords[1], (*nodes[i-nNodesPerLayer])[2]);
 			}
-		}
-
-		if ((nLayers == 0) && removeNoDataValues)
-		{
-			if (noData_nodes.size() < (nNodes - 2))
-			{
-				WARN("MshLayerMapper::LayerMapping(): Removing %d mesh nodes at NoData values.", noData_nodes.size());
-				MeshLib::Mesh* red_mesh = MeshLib::removeMeshNodes(*new_mesh, noData_nodes);
-				if (new_mesh->getNElements() == 0)
-				{
-					delete new_mesh;
-					new_mesh = red_mesh;
-				}
-				else
-				{
-					delete red_mesh;
-					WARN("MshLayerMapper::LayerMapping(): Too many NoData values.");
-				}
-			}
-			else
-				WARN("MshLayerMapper::LayerMapping(): Too many NoData values.");
 		}
 
 		delete raster;
@@ -244,39 +226,13 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 	return 0;
 }
 
-bool MshLayerMapper::meshFitsImage(const MeshLib::Mesh* msh,
-                                   const std::pair<double, double> &xDim,
-                                   const std::pair<double, double> &yDim)
+bool MshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
+                                    const std::pair<double, double> &xDim,
+                                    const std::pair<double, double> &yDim)
 {
-	const size_t nNodes = msh->getNNodes();
-	const std::vector<MeshLib::Node*> nodes = msh->getNodes();
-	const double* pnt;
-	double xMin(std::numeric_limits<double>::max());
-	double yMin(std::numeric_limits<double>::max());
-	double xMax(std::numeric_limits<double>::min());
-	double yMax(std::numeric_limits<double>::min());
-
-	for (unsigned i = 1; i < nNodes; ++i)
-	{
-		pnt = nodes[i]->getCoords();
-		if (xMin > pnt[0])
-			xMin = pnt[0];
-		else if (xMax < pnt[0])
-			xMax = pnt[0];
-
-		if (yMin > pnt[1])
-			yMin = pnt[1];
-		else if (yMax < pnt[1])
-			yMax = pnt[1];
-	}
-
-	if (xMin < xDim.first || xMax > xDim.second || yMin < yDim.first || yMax > yDim.second)
-	{
-		WARN("Extension of mesh is larger than extension of given raster file.");
-		INFO("Mesh Extend: (%f,%f):(%f,%f).", xMin, yMin, xMax, yMax);
-		INFO("Raster Extend: (%f,%f):(%f,%f).", xDim.first, yDim.first, xDim.second, yDim.second);
+	if (node[0] < xDim.first || node[0] > xDim.second || node[1] < yDim.first || node[1] > yDim.second)
 		return false;
-	}
+
 	return true;
 }
 

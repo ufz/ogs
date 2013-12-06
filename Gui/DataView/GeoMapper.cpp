@@ -177,7 +177,6 @@ GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*co
 
 unsigned getIndexInPntVec(GeoLib::Point const*const pnt, std::vector<GeoLib::Point*> const*const points)
 {
-	const unsigned nGeoPoints ( points->size() );
 	auto it (std::find(points->begin(), points->end(), pnt));
 	return static_cast<unsigned>(std::distance(points->begin(), it));
 }
@@ -262,7 +261,6 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 			const std::size_t nElems = elements.size();
 			for (std::size_t e=0; e<nElems; ++e)
 			{
-				const unsigned nNodes (elements[e]->getNNodes());
 				const unsigned nEdges (elements[e]->getNEdges());
 				unsigned intersection_count (0);
 
@@ -339,8 +337,6 @@ unsigned GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, unsigne
 	// if point is at start or end of line segment
 	if (max_dist<eps && MathLib::sqrDist(pnt, line->getPoint(end)->getCoords())) return 0;
 
-	const std::size_t nPoints (line->getNumberOfPoints());
-	bool line_segment_found (false);
 	for (std::size_t i=start+1; i<end; ++i)
 	{
 		const double* current = (*line->getPoint(i)).getCoords();

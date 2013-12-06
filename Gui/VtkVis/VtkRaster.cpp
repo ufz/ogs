@@ -270,7 +270,7 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 	}
 
 	image->SetFileName(fileName.c_str());
-	image->GetOutput()->SetScalarTypeToFloat();
+	image->GetOutput()->AllocateScalars(VTK_FLOAT, 1);
 	image->Update();
 	return image;
 }

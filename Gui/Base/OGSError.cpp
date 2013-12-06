@@ -22,21 +22,11 @@ OGSError::OGSError()
 OGSError::~OGSError()
 {}
 
-/**
- * Displays an error in a QMessageBox
- * \param e The error message.
- */
 void OGSError::box(const QString &e)
 {
 	box(e, "OpenGeoSys");
 }
 
-/**
- * Displays an error in a QMessageBox
- * \param e The error message.
- * \param t The title of the message box
- * \sa QMessageBox
- */
 void OGSError::box(const QString &e, const QString &t)
 {
 	QMessageBox msgBox;
@@ -44,3 +34,17 @@ void OGSError::box(const QString &e, const QString &t)
 	msgBox.setText(e);
 	msgBox.exec();
 }
+
+bool OGSError::question(const QString &e, const QString &t)
+{
+	QMessageBox msgBox;
+	msgBox.setWindowTitle(t);
+	msgBox.setText(e);
+	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Cancel);
+
+	if (msgBox.exec() == QMessageBox::Ok)
+		return true;
+	return false;
+}
+

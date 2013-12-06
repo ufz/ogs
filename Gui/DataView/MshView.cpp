@@ -36,10 +36,7 @@
 //#include "RapidXmlIO/RapidVtuInterface.h"
 #include "RapidXmlIO/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
-
-#ifdef Shapelib_FOUND
-	#include "SHPInterface.h"
-#endif
+#include "SHPInterface.h"
 
 MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -128,10 +125,8 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* shapeExportAction (NULL);
 		if (mesh_dim==2)
 		{
-			        mesh2geoAction = menu.addAction("Convert to geometry");
-#ifdef Shapelib_FOUND
-				 shapeExportAction = menu.addAction("Export to Shapefile...");
-#endif
+			mesh2geoAction = menu.addAction("Convert to geometry");
+			shapeExportAction = menu.addAction("Export to Shapefile...");
 		}
 
 		menu.addSeparator();
@@ -149,9 +144,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		if (mesh_dim==2)
 		{
 			connect(mesh2geoAction,    SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
-#ifdef Shapelib_FOUND
 			connect(shapeExportAction, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
-#endif
 		}
 		menu.exec(event->globalPos());
 	}
@@ -200,7 +193,6 @@ void MshView::convertMeshToGeometry()
 	emit requestMeshToGeometryConversion(mesh);
 }
 
-#ifdef Shapelib_FOUND
 void MshView::exportToShapefile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
@@ -217,7 +209,6 @@ void MshView::exportToShapefile() const
 		if (!SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
 			OGSError::box("Error exporting mesh\n to shapefile");
 }
-#endif
 
 int MshView::writeToFile() const
 {

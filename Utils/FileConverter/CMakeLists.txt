@@ -10,27 +10,21 @@ INCLUDE_DIRECTORIES(
 )
 
 ## Shape to GLI file converter ##
-IF (Shapelib_FOUND)
 
-	INCLUDE_DIRECTORIES (${Shapelib_INCLUDE_DIR})
+# Create executables
+ADD_EXECUTABLE( ConvertSHPToGLI ConvertSHPToGLI.cpp )
+SET_TARGET_PROPERTIES(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
 
-	# Create executables
-	ADD_EXECUTABLE( ConvertSHPToGLI ConvertSHPToGLI.cpp )
-	SET_TARGET_PROPERTIES(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
+TARGET_LINK_LIBRARIES( ConvertSHPToGLI
+	FileIO
+	GeoLib
+	BaseLib
+	OgsLib
+	shp
+	${QT_LIBRARIES}
+)
 
-	TARGET_LINK_LIBRARIES( ConvertSHPToGLI
-		FileIO
-		GeoLib
-		BaseLib
-		OgsLib
-		${Shapelib_LIBRARIES}
-		${QT_LIBRARIES}
-	)
-
-	IF (OGS_PACKAGING)
-		INSTALL ( TARGETS ConvertSHPToGLI RUNTIME DESTINATION bin COMPONENT ConvertSHPToGLI )
-	ENDIF (OGS_PACKAGING)
-ENDIF (Shapelib_FOUND)
+INSTALL ( TARGETS ConvertSHPToGLI RUNTIME DESTINATION bin COMPONENT ConvertSHPToGLI )
 
 IF (QT4_FOUND)
 	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
@@ -49,7 +43,7 @@ IF (QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 
-	SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline 
+	SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline
 		PROPERTIES FOLDER Utilities)
 ENDIF () # QT4_FOUND
 

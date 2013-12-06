@@ -61,7 +61,7 @@ void VtkCompositePointToGlyphFilter::init()
 	//glyphFilter->SetScaleModeToScaleByScalar();  // KR can easily obscure view when scalar values have large differences (this is also the default scaling method)
 	glyphFilter->SetScaleModeToDataScalingOff(); // KR scaling is possible but scalar values are ignored
 	glyphFilter->SetScaleFactor(1.0);
-	glyphFilter->SetSource(_glyphSource->GetOutput());
+	glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
 	glyphFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 	//(*_algorithmUserProperties)["ScaleMode"] = 0;
 	//(*_algorithmUserProperties)["ScaleFactor"] = 1.0;

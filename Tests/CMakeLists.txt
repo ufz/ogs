@@ -59,11 +59,10 @@ IF (OGS_USE_PETSC)
 ENDIF (OGS_USE_PETSC)
 
 IF(OGS_BUILD_GUI)
-	INCLUDE(${VTK_USE_FILE})
 	TARGET_LINK_LIBRARIES(testrunner
 		QtDataView
 		VtkVis
-		vtkRendering
+		${VTK_LIBRARIES}
 	)
 ENDIF()
 

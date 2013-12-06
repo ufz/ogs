@@ -45,23 +45,17 @@ public:
 
 private:
 	const MeshLib::Mesh* _msh;
-	QVector<QLabel*> _labels;
+	unsigned _n_layers;
 	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
 	QVector<QLineEdit*> _edits;
-	QVector<QPushButton*> _buttons;
-	QCheckBox* _noDataDeleteBox;
 
-	QLabel* _nLayerLabel;
 	QLabel* _nLayerExplanation;
 	QLineEdit* _layerEdit;
+	QLineEdit* _noDataReplacementEdit;
 	QPushButton* _nextButton;
 	QGroupBox* _layerBox;
 	QGroupBox* _radioButtonBox;
 	QGridLayout* _layerSelectionLayout;
-	QVBoxLayout* _radiobuttonLayout;
-	QRadioButton* _selectButton1;
-	QRadioButton* _selectButton2;
-	unsigned _n_layers;
 	bool _use_rasters;
 
 private slots:

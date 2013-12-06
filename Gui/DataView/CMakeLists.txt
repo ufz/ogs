@@ -37,6 +37,7 @@ set( SOURCES
 	ProcessView.cpp
 	SelectMeshDialog.cpp
 	SetNameDialog.cpp
+	SHPImportDialog.cpp
 	StationTabWidget.cpp
 	StationTreeModel.cpp
 	StationTreeView.cpp
@@ -76,6 +77,7 @@ set( MOC_HEADERS
 	ProcessView.h
 	SelectMeshDialog.h
 	SetNameDialog.h
+	SHPImportDialog.h
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h
@@ -118,12 +120,6 @@ set( UIS
 	NewProcess.ui
 	StationTabWidgetBase.ui
 )
-
-IF (Shapelib_FOUND)
-	SET( SOURCES ${SOURCES} SHPImportDialog.cpp)
-	SET( MOC_HEADERS ${MOC_HEADERS} SHPImportDialog.h)
-	INCLUDE_DIRECTORIES( ${Shapelib_INCLUDE_DIR} )
-ENDIF () # Shapelib_FOUND
 
 # Put filter in a folder
 SOURCE_GROUP("Dialog Header Files" REGULAR_EXPRESSION "[.]*Dialog.h")
@@ -195,11 +191,11 @@ target_link_libraries( QtDataView
 	QtBase
 	DiagramView
 	StratView
+	shp
 )
 
-IF (Shapelib_FOUND)
-	TARGET_LINK_LIBRARIES( QtDataView ${Shapelib_LIBRARIES} )
-ENDIF () # Shapelib_FOUND
+ADD_DEPENDENCIES(QtDataView VtkRescan)
+
 IF (libgeotiff_FOUND)
 	TARGET_LINK_LIBRARIES( QtDataView ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND

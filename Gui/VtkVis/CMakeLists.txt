@@ -127,8 +127,6 @@ QT4_WRAP_UI( UI_HEADERS ${UIS} )
 # Run Qts meta object compiler moc on header files
 QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
-INCLUDE( ${VTK_USE_FILE} )
-
 INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/../VtkAct
@@ -154,8 +152,10 @@ ADD_LIBRARY( VtkVis STATIC
 	${UIS}
 )
 
+ADD_DEPENDENCIES(VtkVis VtkRescan)
+
 IF (libgeotiff_FOUND)
-	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../ThirdParty/tiff/vtktiff )
 	TARGET_LINK_LIBRARIES( VtkVis ${libgeotiff_LIBRARIES} )
 ENDIF () # libgeotiff_FOUND
 
