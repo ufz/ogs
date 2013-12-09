@@ -38,7 +38,7 @@ PETScVector :: PETScVector ()
 PETScVector:: PETScVector(const PetscInt size)
 {
    _size = size;
-   Create(_size);
+   create(_size);
 
    _size_loc = PETSC_DECIDE;
 }
@@ -63,14 +63,14 @@ PETScVector:: ~PETScVector()
    VecDestroy(&v);
 }
 
-void PETScVector::Init(const PetscInt vec_size)
+void PETScVector::init(const PetscInt vec_size)
 {
    _size = vec_size;
-   Create(_size);
+   create(_size);
 }
 
 //-----------------------------------------------------------------
-void  PETScVector::Create(PetscInt vec_size)
+void  PETScVector::create(PetscInt vec_size)
 {
    VecCreate(PETSC_COMM_WORLD, &v);
    // The following two lines are used to test a fix size partition
@@ -81,19 +81,14 @@ void  PETScVector::Create(PetscInt vec_size)
    VecGetOwnershipRange(v, &_start_rank,&_end_rank);
 }
 
-void  PETScVector::getOwnerRange(int *start_r, int *end_r)
-{
-   *start_r = _start_rank;
-   *end_r = _end_rank;
-}
 
-void PETScVector::finalAssemble()
+void PETScVector::finalizeAssembly()
 {
    VecAssemblyBegin(v);
    VecAssemblyEnd(v);
 }
 
-void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
+void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
 {
 
 #ifdef TEST_MEM_PETSC
@@ -124,7 +119,7 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
       global_buff[low+j] = u1[j];
    for(i=0; i<_size_rank; i++)
    {
-      if(i != rank)
+      if(i != _rank)
       {
 
          MPI_Sendrecv( &count, 1, MPI_INT, i,tag,
@@ -158,7 +153,7 @@ void PETScVector::getGlobalEntries(PetscScalar *u0, PetscScalar *u1)
 
 }
 
-int PETScVector::getLocalVector(PetscScalar *loc_vec) const
+PetscInt PETScVector::getLocalVector(PetscScalar loc_vec[]) const
 {
    PetscInt count;
    VecGetLocalSize(v, &count);
@@ -181,24 +176,24 @@ PetscReal PETScVector::getNorm(NormType  nmtype) const
    return norm;
 }
 
-void  PETScVector::restoreLocalVector(PetscScalar *loc_vec)
+void  PETScVector::restoreLocalVector(PetscScalar loc_vec[])
 {
    VecRestoreArray(v, &loc_vec);
 }
 
-void PETScVector::set(const int i, const double value )
+void PETScVector::set(const int i, const PetscScalar value )
 {
 
    VecSetValues(v,1,&i,&value,INSERT_VALUES);
 }
 
 void  PETScVector::setValues( PetscInt ni, const PetscInt ix[],
-                              const PetscScalar y[],InsertMode iora)
+                              const PetscScalar y[],InsertMode mode)
 {
-   VecSetValues(v, ni, ix, y, iora);
+   VecSetValues(v, ni, ix, y, mode);
 }
 
-void PETScVector::add(const int i, const double value,InsertMode mode )
+void PETScVector::add(const int i, const PetscScalar value,InsertMode mode )
 {
 
    VecSetValue(v, i, value, mode);
@@ -222,7 +217,7 @@ double  PETScVector::get(const  PetscInt idx) const
 
 
 // Overloaded operator: initialize  the vector with a constant value
-void PETScVector::operator= (const double val)
+void PETScVector::operator= (const PetscScalar val)
 {
 
    VecSet(v, val);
@@ -254,7 +249,7 @@ void PETScVector::Viewer(const std::string &file_name)
    PetscViewerASCIIOpen(PETSC_COMM_WORLD, fname.c_str(), &viewer);
    PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_MATLAB);
 
-   finalAssemble();
+   finalizeAssembly();
 
    // PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
    PetscObjectSetName((PetscObject)v,file_name.c_str());
