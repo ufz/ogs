@@ -34,62 +34,57 @@
 int main(int argc, char* argv[])
 {
 #ifdef QT4_FOUND
-   QApplication app(argc, argv, false);
+    QApplication app(argc, argv, false);
 #endif
-   int ret = 0;
-   LOGOG_INITIALIZE();
-   {
-      logog::Cout out;
-      BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
-      out.SetFormatter(custom_format);
+    int ret = 0;
+    LOGOG_INITIALIZE();
+    {
+        logog::Cout out;
+        BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
+        out.SetFormatter(custom_format);
 
 #if defined(OGS_USE_PETSC)
-      PetscLogDouble v1, v2;
-      char help[] = "ogs6 with PETSc \n";
-      PetscInitialize(&argc,&argv,(char *)0,help);
-      PetscGetTime(&v1);
+        char help[] = "ogs6 with PETSc \n";
+        PetscInitialize(&argc,&argv,(char *)0,help);
 #endif
 
-      try
-      {
-         // initialize libraries which will be used while testing
+        try
+        {
+            // initialize libraries which will be used while testing
 #ifdef USE_LIS
-         lis_initialize(&argc, &argv);
+            lis_initialize(&argc, &argv);
 #endif
 
 
 
-         // start google test
-         testing::InitGoogleTest ( &argc, argv );
-         ret = RUN_ALL_TESTS();
-      }
-      catch (char* e)
-      {
-         ERR(e);
-      }
-      catch (std::exception& e)
-      {
-         ERR(e.what());
-      }
-      catch (...)
-      {
-         ERR("Unknown exception occurred!");
-      }
-      // finalize libraries
+            // start google test
+            testing::InitGoogleTest ( &argc, argv );
+            ret = RUN_ALL_TESTS();
+        }
+        catch (char* e)
+        {
+            ERR(e);
+        }
+        catch (std::exception& e)
+        {
+            ERR(e.what());
+        }
+        catch (...)
+        {
+            ERR("Unknown exception occurred!");
+        }
+        // finalize libraries
 #ifdef USE_LIS
-      lis_finalize();
+        lis_finalize();
 #endif
 
 #if defined(OGS_USE_PETSC)
-      PetscGetTime(&v2);
-      PetscPrintf(PETSC_COMM_WORLD,"\t\n>>Total elapsed time by using PETSC:%f s\n",v2-v1);
-
-      PetscFinalize();
+        PetscFinalize();
 #endif
 
 
-   } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.
-   LOGOG_SHUTDOWN();
+    } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.
+    LOGOG_SHUTDOWN();
 
-   return ret;
+    return ret;
 }

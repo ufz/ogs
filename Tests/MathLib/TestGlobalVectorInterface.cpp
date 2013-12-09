@@ -21,102 +21,106 @@
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #endif
 
+#ifdef OGS_USE_PETSC
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
+#endif
+
 namespace
 {
 
 template <class T_VECTOR>
 void checkGlobalVectorInterface()
 {
-   T_VECTOR x(10);
+    T_VECTOR x(10);
 
-   ASSERT_EQ(10u, x.size());
-   ASSERT_TRUE(x.getRangeBegin()>=0);
-   ASSERT_TRUE(x.getRangeEnd()>=0);
-
-
-   ASSERT_EQ(.0, x.get(0));
-   x.set(0, 1.0);
+    ASSERT_EQ(10u, x.size());
+    ASSERT_TRUE(x.getRangeBegin()>=0);
+    ASSERT_TRUE(x.getRangeEnd()>=0);
 
 
-   ASSERT_EQ(1.0, x.get(0));
-   ASSERT_EQ(0.0, x.get(1));
+    ASSERT_EQ(.0, x.get(0));
+    x.set(0, 1.0);
 
 
-   x.add(0, 1.0);
-   ASSERT_EQ(2.0, x.get(0));
+    ASSERT_EQ(1.0, x.get(0));
+    ASSERT_EQ(0.0, x.get(1));
 
 
-   T_VECTOR y(x);
-   ASSERT_EQ(2.0, y.get(0));
-   ASSERT_EQ(0.0, y.get(1));
-   y += x;
+    x.add(0, 1.0);
+    ASSERT_EQ(2.0, x.get(0));
 
-   ASSERT_EQ(4.0, y.get(0));
-   y -= x;
-   ASSERT_EQ(2.0, y.get(0));
-   y = 1.0;
-   ASSERT_EQ(1.0, y.get(0));
-   y = x;
-   ASSERT_EQ(2.0, y.get(0));
 
-   std::vector<double> local_vec(2, 1.0);
-   std::vector<std::size_t> vec_pos(2);
-   vec_pos[0] = 0;
-   vec_pos[1] = 3;
-   y.add(vec_pos, local_vec);
-   ASSERT_EQ(3.0, y.get(0));
-   ASSERT_EQ(0.0, y.get(1));
-   ASSERT_EQ(1.0, y.get(3));
+    T_VECTOR y(x);
+    ASSERT_EQ(2.0, y.get(0));
+    ASSERT_EQ(0.0, y.get(1));
+    y += x;
+
+    ASSERT_EQ(4.0, y.get(0));
+    y -= x;
+    ASSERT_EQ(2.0, y.get(0));
+    y = 1.0;
+    ASSERT_EQ(1.0, y.get(0));
+    y = x;
+    ASSERT_EQ(2.0, y.get(0));
+
+    std::vector<double> local_vec(2, 1.0);
+    std::vector<std::size_t> vec_pos(2);
+    vec_pos[0] = 0;
+    vec_pos[1] = 3;
+    y.add(vec_pos, local_vec);
+    ASSERT_EQ(3.0, y.get(0));
+    ASSERT_EQ(0.0, y.get(1));
+    ASSERT_EQ(1.0, y.get(3));
 
 }
 
 template <class T_VECTOR>
 void checkGlobalVectorInterfaceMPI()
 {
-   T_VECTOR x(16);
+    T_VECTOR x(16);
 
-   const int r0 = x.getRangeBegin();
+    const int r0 = x.getRangeBegin();
 
-   ASSERT_EQ(16u, x.size());
-   ASSERT_TRUE(r0 >= 0);
-   ASSERT_TRUE(x.getRangeEnd() >= 0);
-
-
-   //x.get(0) is expensive, only get local value. Use it for test purpose
-   ASSERT_EQ(.0, x.get(r0));
+    ASSERT_EQ(16u, x.size());
+    ASSERT_TRUE(r0 >= 0);
+    ASSERT_TRUE(x.getRangeEnd() >= 0);
 
 
-   x = 10.;
-
-   // Value of x is not copied to y
-   T_VECTOR y(x);
-
-   y = 10.0;
-   y += x;
-   //y.get(0) is expensive
-   ASSERT_EQ(20, y.get(r0));
-   ASSERT_EQ(80., y.getNorm());
-
-   y -= x;
-   //y.get(0) is expensive
-   ASSERT_EQ(10, y.get(r0));
-   ASSERT_EQ(40., y.getNorm());
+    //x.get(0) is expensive, only get local value. Use it for test purpose
+    ASSERT_EQ(.0, x.get(r0));
 
 
+    x = 10.;
 
-   std::vector<double> local_vec(2, 10.0);
-   std::vector<std::size_t> vec_pos(2);
+    // Value of x is not copied to y
+    T_VECTOR y(x);
 
-   vec_pos[0] = r0;   // any index in [0,15]
-   vec_pos[1] = r0+1; // any index in [0,15]
+    y = 10.0;
+    y += x;
+    //y.get(0) is expensive
+    ASSERT_EQ(20, y.get(r0));
+    ASSERT_EQ(80., y.getNorm());
 
-   y.add(vec_pos, local_vec);
+    y -= x;
+    //y.get(0) is expensive
+    ASSERT_EQ(10, y.get(r0));
+    ASSERT_EQ(40., y.getNorm());
 
-   double normy = sqrt(6.0*400+10.0*100);
 
 
-   //EXPECT_DOUBLE_EQ(normy, y.getNorm());
-   EXPECT_NEAR(normy-y.getNorm(), 0.0, 1.e-10);
+    std::vector<double> local_vec(2, 10.0);
+    std::vector<std::size_t> vec_pos(2);
+
+    vec_pos[0] = r0;   // any index in [0,15]
+    vec_pos[1] = r0+1; // any index in [0,15]
+
+    y.add(vec_pos, local_vec);
+
+    double normy = sqrt(6.0*400+10.0*100);
+
+
+    //EXPECT_DOUBLE_EQ(normy, y.getNorm());
+    EXPECT_NEAR(normy-y.getNorm(), 0.0, 1.e-10);
 
 }
 
@@ -125,36 +129,35 @@ void checkGlobalVectorInterfaceMPI()
 
 TEST(Math, CheckInterface_DenseVector)
 {
-   checkGlobalVectorInterface<MathLib::DenseVector<double> >();
+    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 
 #ifdef USE_LIS
 TEST(Math, CheckInterface_LisVector)
 {
-   checkGlobalVectorInterface<MathLib::LisVector >();
+    checkGlobalVectorInterface<MathLib::LisVector >();
 }
 #endif
 
 
 #ifdef OGS_USE_PETSC
-#include "MathLib/LinAlg/PETSc/PETScVector.h"
 TEST(Math, CheckInterface_PETScVector)
 {
 
-   int mrank, msize;
+    int mrank, msize;
 
-   MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
-   MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+    MPI_Comm_size(PETSC_COMM_WORLD, &msize);
 
-   if(msize != 3)
-   {
-      PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc vector.");
-      PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThe Number of computers cores must be three.");
+    if(msize != 3)
+    {
+        PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc vector.");
+        PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThe Number of computers cores must be three.");
 
-      PetscFinalize();
-      exit(EXIT_FAILURE);
-   }
+        PetscFinalize();
+        exit(EXIT_FAILURE);
+    }
 
-   checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
+    checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
 }
 #endif
