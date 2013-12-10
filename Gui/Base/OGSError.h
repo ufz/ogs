@@ -23,8 +23,28 @@ class QString;
 class OGSError
 {
 public:
+	/**
+	 * Displays an error in a QMessageBox
+	 * \param e The error message.
+	 */
 	static void box(const QString &e);
+
+	/**
+	 * Displays an error in a QMessageBox
+	 * \param e The error message.
+	 * \param t The title of the message box
+	 * \sa QMessageBox
+	 */
 	static void box(const QString &e, const QString &t);
+
+	/**
+	 * Displays a question in a QMessageBox (offering Ok | Cancel options)
+	 * \param e The error message.
+	 * \param t The title of the message box
+	 * \sa QMessageBox
+	 */
+	static bool question(const QString &e, const QString &t);
+
 
 protected:
 	OGSError();
