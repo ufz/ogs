@@ -1022,6 +1022,18 @@ void MainWindow::exportBoreholesToGMS(std::string listName,
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
+
+void MainWindow::callFileConverter() const
+{
+	if (system(NULL) != 0) // command processor available
+	{
+		std::string call_command("OGSFileConverter");
+		system(call_command.c_str());
+	}
+	else
+		OGSError::box("Error executing OGS File Converter", "Error");
+}
+
 void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                           unsigned param1, double param2, double param3, double param4,
                           bool delete_geo_file)

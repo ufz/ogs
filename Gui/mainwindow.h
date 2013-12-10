@@ -61,6 +61,8 @@ protected slots:
 	void open(int i = 0);
 	/// Function calls for saving files.
 	void save();
+	/// Calls the OGSFileConverter as an external tool
+	void callFileConverter() const;
 	/// Function calls for generating GMSH files from the GUI
 	void callGMSH(std::vector<std::string> & selectedGeometries,
 	              unsigned param1,
