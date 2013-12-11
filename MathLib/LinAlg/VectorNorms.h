@@ -1,7 +1,10 @@
 /**
  * \file
  * \author Thomas Fischer
- * \date   2011-06-06
+ * \author Wenqing Wang
+ *
+ * \date   2011-06-06 -- 2013-12-10
+ *  
  * \brief  Definition of vector norm functions.
  *
  * \copyright
@@ -21,7 +24,15 @@
 
 namespace MathLib {
 
-double normEuklid (double const * const vec, std::size_t n)
+/// Norm type. Not declared as class type in order to use the members as integers. 
+enum VectorNormType 
+{
+   sum_abs_entries, ///< \f$\sum_i |x_i|\f$
+   euclidean,       ///< \f$\sqrt(\sum_i (x_i)^2)\f$
+   max_abs_entry    ///< \f$\mathrm{max}_i |x_i|\f$
+};
+
+inline double normEuklid (double const * const vec, std::size_t n)
 {
 	return sqrt (scpr (vec, vec, n));
 }
