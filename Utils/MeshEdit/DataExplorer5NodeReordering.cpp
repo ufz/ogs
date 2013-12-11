@@ -16,6 +16,9 @@
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
 
+// TCLAP
+#include "tclap/CmdLine.h"
+
 // FileIO
 #include "readMeshFromFile.h"
 #include "RapidXmlIO/BoostVtuInterface.h"
@@ -65,27 +68,35 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 
 int main (int argc, char* argv[])
 {
-	if (argc != 3)
-	{
-		std::cout << "Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6." << std::endl;
-		std::cout << std::endl;
-		std::cout << "Usage: " << argv[0] << " <oldmesh.msh> <newmesh.vtu>" << std::endl;
-		return 0;
-	}
-	
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
 	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
 	logogCout->SetFormatter(*formatter);
 
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(argv[1]));
+	TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.",
+			' ', "0.1");
+	TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("OGS5_file_input_mesh",
+	                                           "the name of the mesh file used for input containing elements in OGS5 node ordering",
+	                                           true,
+	                                           "",
+	                                           "oldmesh.msh");
+	cmd.add(input_mesh_arg);
+	TCLAP::UnlabeledValueArg<std::string> output_mesh_arg("OGS6_file_output_mesh",
+	                                           "the name of the mesh file used for output with node ordering consistent to OGS-6",
+	                                           true,
+	                                           "",
+	                                           "newmesh.vtu");
+	cmd.add(output_mesh_arg);
+	cmd.parse(argc, argv);
+
+	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
 
 	INFO("Reordering nodes... ");
 	reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
 	
 	FileIO::BoostVtuInterface writer;
 	writer.setMesh(mesh);
-	writer.writeToFile(argv[2]);
+	writer.writeToFile(output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written."); 
 
