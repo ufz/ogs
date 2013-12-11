@@ -13,6 +13,7 @@
  */
 
 #include <gtest/gtest.h>
+#include "../TestTools.h"
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
@@ -23,6 +24,7 @@
 
 #ifdef OGS_USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "BaseLib/MPI/InforMPI.h"
 #endif
 
 namespace
@@ -74,8 +76,9 @@ void checkGlobalVectorInterface()
 
 }
 
+#ifdef OGS_USE_PETSC
 template <class T_VECTOR>
-void checkGlobalVectorInterfaceMPI()
+void checkGlobalVectorInterfacePETSc()
 {
     T_VECTOR x(16);
 
@@ -106,8 +109,6 @@ void checkGlobalVectorInterfaceMPI()
     ASSERT_EQ(10, y.get(r0));
     ASSERT_EQ(40., y.getNorm());
 
-
-
     std::vector<double> local_vec(2, 10.0);
     std::vector<std::size_t> vec_pos(2);
 
@@ -118,12 +119,38 @@ void checkGlobalVectorInterfaceMPI()
 
     double normy = sqrt(6.0*400+10.0*100);
 
-
     //EXPECT_DOUBLE_EQ(normy, y.getNorm());
     EXPECT_NEAR(normy-y.getNorm(), 0.0, 1.e-10);
 
-}
+    double x0[16];
+    double x1[16];
+    double z[] =
+    {
+        2.0000000000000000e+01,
+        2.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01,
+        2.0000000000000000e+01,
+        2.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01,
+        2.0000000000000000e+01,
+        2.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01,
+        1.0000000000000000e+01
+    };
 
+    y.getGlobalEntries(x0, x1);
+
+    ASSERT_ARRAY_NEAR(x0, z, 16, 1e-10);
+    ASSERT_ARRAY_NEAR(x1, z, 16, 1e-10);
+
+}
+#endif
 
 } // end namespace
 
@@ -140,6 +167,7 @@ TEST(Math, CheckInterface_LisVector)
 #endif
 
 
+//--------------------------------------------
 #ifdef OGS_USE_PETSC
 TEST(Math, CheckInterface_PETScVector)
 {
@@ -148,6 +176,8 @@ TEST(Math, CheckInterface_PETScVector)
 
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
     MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+
+    BaseLib:: InforMPI:: setSizeRank(msize, mrank);
 
     if(msize != 3)
     {
@@ -158,6 +188,6 @@ TEST(Math, CheckInterface_PETScVector)
         exit(EXIT_FAILURE);
     }
 
-    checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
+    checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
 }
 #endif

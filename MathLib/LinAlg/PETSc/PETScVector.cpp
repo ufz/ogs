@@ -24,18 +24,12 @@
 #include "PETScVector.h"
 
 #include<iostream>
-
+#include "BaseLib/MPI/InforMPI.h"
 
 namespace MathLib
 {
 
-
-PETScVector :: PETScVector ()
-{
-   _size_loc = PETSC_DECIDE;
-}
-
-PETScVector:: PETScVector(const PetscInt size)
+PETScVector::PETScVector(const PetscInt size)
 {
    _size = size;
    create(_size);
@@ -43,49 +37,42 @@ PETScVector:: PETScVector(const PetscInt size)
    _size_loc = PETSC_DECIDE;
 }
 
-PETScVector:: PETScVector(const PETScVector &existing_vec)
+PETScVector::PETScVector(const PETScVector &existing_vec)
 {
 
    _size = existing_vec._size;
-   VecDuplicate(existing_vec.v, &v);
+   VecDuplicate(existing_vec._v, &_v);
 
    _size_loc = existing_vec._size_loc;
 
-   VecGetOwnershipRange(v, &_start_rank,&_end_rank);
+   VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
 
    // If values of the vector are copied too:
-   //VecCopy(existing_vec.v, v);
+   //VecCopy(existing_vec._v, _v);
 
 }
 
-PETScVector:: ~PETScVector()
+PETScVector::~PETScVector()
 {
-   VecDestroy(&v);
-}
-
-void PETScVector::init(const PetscInt vec_size)
-{
-   _size = vec_size;
-   create(_size);
+   VecDestroy(&_v);
 }
 
 //-----------------------------------------------------------------
-void  PETScVector::create(PetscInt vec_size)
+void PETScVector::create(PetscInt vec_size)
 {
-   VecCreate(PETSC_COMM_WORLD, &v);
+   VecCreate(PETSC_COMM_WORLD, &_v);
    // The following two lines are used to test a fix size partition
    // VecCreateMPI(PETSC_COMM_WORLD,m_size_loc, m, &v);
    // VecSetSizes(v, m_size_loc, m);
-   VecSetSizes(v, PETSC_DECIDE, vec_size);
-   VecSetFromOptions(v);
-   VecGetOwnershipRange(v, &_start_rank,&_end_rank);
+   VecSetSizes(_v, PETSC_DECIDE, vec_size);
+   VecSetFromOptions(_v);
+   VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
 }
-
 
 void PETScVector::finalizeAssembly()
 {
-   VecAssemblyBegin(v);
-   VecAssemblyEnd(v);
+   VecAssemblyBegin(_v);
+   VecAssemblyEnd(_v);
 }
 
 void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
@@ -105,10 +92,14 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
    MPI_Status status;
    PetscInt count;
    int tag = 9999;
-   VecGetOwnershipRange(v, &low, &high);
-   VecGetLocalSize(v, &count);
 
-   VecGetArray(v, &xp);
+   const int _size_rank = BaseLib::InforMPI::getSize();
+   const int _rank = BaseLib::InforMPI::getRank();
+
+   VecGetOwnershipRange(_v, &low, &high);
+   VecGetLocalSize(_v, &count);
+
+   VecGetArray(_v, &xp);
    for(i=0; i<count; i++)
       u1[i] = xp[i];
 
@@ -141,7 +132,7 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
       u0[i] = global_buff[i];
    }
 
-   VecRestoreArray(v, &xp);
+   VecRestoreArray(_v, &xp);
 
    delete [] global_buff;
 
@@ -156,9 +147,9 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
 PetscInt PETScVector::getLocalVector(PetscScalar loc_vec[]) const
 {
    PetscInt count;
-   VecGetLocalSize(v, &count);
+   VecGetLocalSize(_v, &count);
 
-   VecGetArray(v, &loc_vec);
+   VecGetArray(_v, &loc_vec);
 
    return count;
 }
@@ -166,43 +157,51 @@ PetscInt PETScVector::getLocalVector(PetscScalar loc_vec[]) const
 void  PETScVector::getEntries(PetscInt ni,const PetscInt ix[],
                               PetscScalar y[]) const
 {
-   VecGetValues(v, ni, ix, y);
+   VecGetValues(_v, ni, ix, y);
 }
 
-PetscReal PETScVector::getNorm(NormType  nmtype) const
+PetscReal PETScVector::getNorm(VectorNormType  nmtype) const
 {
+   NormType nm_t[] = {NORM_1, NORM_2, NORM_INFINITY};
+
    PetscReal norm = 0.;
-   VecNorm(v, nmtype, &norm);
+   VecNorm(_v, nm_t[nmtype], &norm);
    return norm;
 }
 
 void  PETScVector::restoreLocalVector(PetscScalar loc_vec[])
 {
-   VecRestoreArray(v, &loc_vec);
+   VecRestoreArray(_v, &loc_vec);
 }
 
 void PETScVector::set(const int i, const PetscScalar value )
 {
 
-   VecSetValues(v,1,&i,&value,INSERT_VALUES);
+   VecSetValues(_v,1,&i,&value,INSERT_VALUES);
+}
+
+void PETScVector::add(const int i, const PetscScalar value)
+{
+
+   VecSetValue(_v, i, value,  ADD_VALUES);
 }
 
 void  PETScVector::setValues( PetscInt ni, const PetscInt ix[],
-                              const PetscScalar y[],InsertMode mode)
+                              const PetscScalar y[])
 {
-   VecSetValues(v, ni, ix, y, mode);
+   VecSetValues(_v, ni, ix, y, INSERT_VALUES);
 }
 
-void PETScVector::add(const int i, const PetscScalar value,InsertMode mode )
+void  PETScVector::addValues( PetscInt ni, const PetscInt ix[],
+                              const PetscScalar y[])
 {
-
-   VecSetValue(v, i, value, mode);
+   VecSetValues(_v, ni, ix, y, ADD_VALUES);
 }
 
 void PETScVector::setZero( )
 {
 
-   VecSet(v, 0.0);
+   VecSet(_v, 0.0);
 }
 
 double  PETScVector::get(const  PetscInt idx) const
@@ -211,7 +210,7 @@ double  PETScVector::get(const  PetscInt idx) const
    PetscInt idxs[1];
    idxs[0] = idx;
 
-   VecGetValues(v, 1, idxs, x);
+   VecGetValues(_v, 1, idxs, x);
    return x[0];
 }
 
@@ -220,26 +219,25 @@ double  PETScVector::get(const  PetscInt idx) const
 void PETScVector::operator= (const PetscScalar val)
 {
 
-   VecSet(v, val);
+   VecSet(_v, val);
 }
 
 //Overloaded operator: assignment
-PETScVector& PETScVector::operator= (PETScVector &v_in)
+void PETScVector::operator= (PETScVector &v_in)
 {
-   VecCopy(v, v_in.v);
-   return *this;
+   VecCopy(_v, v_in._v);
 }
 
 //Overloaded operator:add
 void PETScVector::operator+= (const PETScVector& v_in)
 {
-   VecAXPY(v, 1.0, v_in.v);
+   VecAXPY(_v, 1.0, v_in._v);
 }
 
 // Overloaded operator: subtract
 void PETScVector::operator-= (const PETScVector& v_in)
 {
-   VecAXPY(v, -1.0, v_in.v);
+   VecAXPY(_v, -1.0, v_in._v);
 }
 
 void PETScVector::Viewer(const std::string &file_name)
@@ -252,12 +250,12 @@ void PETScVector::Viewer(const std::string &file_name)
    finalizeAssembly();
 
    // PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
-   PetscObjectSetName((PetscObject)v,file_name.c_str());
-   VecView(v, viewer);
+   PetscObjectSetName((PetscObject)_v,file_name.c_str());
+   VecView(_v, viewer);
 
 #define  nEXIT_TEST
 #ifdef EXIT_TEST
-   VecDestroy(&v);
+   VecDestroy(&_v);
    PetscFinalize();
    exit(0);
 #endif

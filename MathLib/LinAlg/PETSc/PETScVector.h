@@ -23,6 +23,9 @@
 
 #include "petscvec.h"
 
+#include "LinAlg/VectorNorms.h"
+
+
 typedef Vec PETSc_Vec;
 
 namespace MathLib
@@ -36,20 +39,11 @@ class PETScVector
 {
    public:
 
-      PETScVector();
-      explicit PETScVector(const PetscInt size);
+      PETScVector(const PetscInt size);
 
       /// Copy constructor. The value of existing_vec is not copied.
       PETScVector(const PETScVector &existing_vec);
       ~PETScVector();
-
-      /*!
-          \brief Set the number of unknowns, and create vector. Iddentical to PETScVector(const PetscInt size);
-
-          \param vec_size  the number of unknowns.
-
-      */
-      void init(const PetscInt vec_size);
 
       /// Perform MPI collection of assembled entries in buffer
       void finalizeAssembly();
@@ -57,7 +51,7 @@ class PETScVector
       /// Get PETsc vector. Only used it for test purpose
       PETSc_Vec &getData()
       {
-         return v;
+         return _v;
       }
 
       /*!
@@ -77,7 +71,6 @@ class PETScVector
       */
       void getEntries(PetscInt ni, const PetscInt ix[],
                       PetscScalar y[]) const;
-
       /*!
          Get global vector
 
@@ -90,23 +83,18 @@ class PETScVector
       /*!
         Get norm of vector
         \param nmtype   norm type
-                         NORM_1 denotes \f$\sum_i |x_i|\f$
-                         NORM_2 denotes \f$\sqrt(\sum_i (x_i)^2)\f$
-                         NORM_INFINITY denotes \f$\mathrm{max}_i |x_i|\f$
+                        sum_abs_entries denotes \f$\sum_i |x_i|\f$
+                        euclidean denotes \f$\sqrt(\sum_i (x_i)^2)\f$
+                        max_abs_entry denotes \f$\mathrm{max}_i |x_i|\f$
       */
-      PetscReal getNorm(NormType nmtype) const;
+      PetscReal getNorm(const VectorNormType nmtype = euclidean) const;
 
-      /// Special case of getNorm(NormType nmtype), only for the consistency of the ogs6 vector template.
-      PetscReal getNorm() const
-      {
-         return  getNorm(NORM_2);
-      }
 
       /// Wrap the PETSc function VecRestoreArray to restore a vector after VecGetArray is called.
       void restoreLocalVector(PetscScalar loc_vec[]);
 
       /// Get the number of global unknows
-      int size() const
+      PetscInt  size() const
       {
          return _size;
       }
@@ -121,26 +109,32 @@ class PETScVector
       void set(const PetscInt i, const PetscScalar value);
 
       /*!
-         Insert multi-entries with value, or add values to multi-entries.
+         Add a value to an entry.
+
+         \param i  number of the entry
+         \param value value.
+       */
+      void add(const PetscInt i, const PetscScalar value);
+
+      /*!
+         Insert multi-entries with value.
 
          \param ni number of entries
          \param ix indicies of entries
          \param y  values of entries
-         \param iora  indicator of action: add or insert
-
        */
       void setValues(PetscInt ni,const PetscInt ix[],
-                     const PetscScalar y[], InsertMode mode = ADD_VALUES);
+                     const PetscScalar y[]);
 
       /*!
-         Insert  an entry with value, or add a value to an entry.
+         Add values to multi-entries.
 
-         \param i  number of the entry
-         \param value value.
-         \param mode indicator of action: add or insert
-
+         \param ni number of entries
+         \param ix indicies of entries
+         \param y  values of entries
        */
-      void add(const PetscInt i, const PetscScalar value, InsertMode mode = ADD_VALUES);
+      void addValues(PetscInt ni,const PetscInt ix[],
+                     const PetscScalar y[]);
 
       /*!
          Add values to several entries
@@ -153,7 +147,7 @@ class PETScVector
       {
          for (std::size_t i=0; i<e_idxs.size(); ++i)
          {
-            add(e_idxs[i], sub_vec[i], ADD_VALUES);
+            add(e_idxs[i], sub_vec[i]);
          }
       }
 
@@ -171,20 +165,13 @@ class PETScVector
       void operator = (const PETScVector &v_in);
 
       /// Overloaded operator: assignment
-      PETScVector& operator = (PETScVector &v_in);
+      void operator = (PETScVector &v_in);
 
       ///  Overloaded operator: add
       void operator += (const PETScVector& v_in);
 
       ///  Overloaded operator: subtract
       void operator -= (const PETScVector& v_in);
-
-      /// Get rank index and the number of processors
-      void set_rank_size(const int myrank, const int ranksize)
-      {
-         _size_rank = ranksize;
-         _rank = myrank;
-      }
 
       /// Get the start index of the local vector
       PetscInt getRangeBegin() const
@@ -198,23 +185,11 @@ class PETScVector
          return _end_rank;
       }
 
-      /// Get the maximum rank
-      PetscInt getSizeMPI() const
-      {
-         return _size_rank;
-      }
-
-      /// Get the current rank index
-      PetscInt getRankMPI() const
-      {
-         return _rank;
-      }
-
       /// View the global vector for test purpose. Do not use it for output a big vector.
       void Viewer(const std::string &file_name);
 
    private:
-      PETSc_Vec v;
+      PETSc_Vec _v;
 
       /// Starting index in a rank
       PetscInt _start_rank;
@@ -225,11 +200,6 @@ class PETScVector
       PetscInt _size;
       /// Dimention of the local unknowns
       PetscInt _size_loc;
-
-      /// Rank size
-      int _size_rank;
-      /// Rank
-      int _rank;
 
       /// Create vector
       void create(PetscInt vec_size);
