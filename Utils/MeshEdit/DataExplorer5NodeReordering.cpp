@@ -93,7 +93,7 @@ int main (int argc, char* argv[])
 	delete logogCout;
 	LOGOG_SHUTDOWN();
 
-	return 1;
+	return 0;
 }
 
 
