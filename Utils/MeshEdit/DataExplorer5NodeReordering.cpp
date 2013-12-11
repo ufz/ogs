@@ -11,6 +11,7 @@
 
 #include <array>
 #include <algorithm>
+#include <vector>
 
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
