@@ -30,7 +30,7 @@ class InforMPI
           set the number of processors and rank
 
           \param size number of processors
-          \rank ID of current processor
+          \param rank ID of current processor
        */
       static inline void setSizeRank(const int size, const int rank)
       {
