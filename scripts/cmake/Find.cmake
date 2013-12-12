@@ -44,7 +44,9 @@ FIND_PROGRAM(BASH_TOOL_PATH bash
 
 # Dumpbin is a windows dependency analaysis tool required for packaging
 IF(WIN32)
-	FIND_PROGRAM(DUMPBIN_TOOL_PATH dumpbin DOC "Windows dependency analysis tool")
+	INCLUDE(MSVCPaths)
+	FIND_PROGRAM(DUMPBIN_TOOL_PATH dumpbin DOC "Windows dependency analysis tool"
+		PATHS MSVC_INSTALL_PATHS PATH_SUFFIXES VC/bin)
 ENDIF()
 
 ########################
