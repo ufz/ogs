@@ -26,7 +26,6 @@ class InforMPI
    public:
       InforMPI() {}
 
-      /// get number of computers cores in use
       /*!
           set the number of processors and rank
 
