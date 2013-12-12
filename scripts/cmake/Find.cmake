@@ -42,11 +42,13 @@ ENDIF()
 FIND_PROGRAM(BASH_TOOL_PATH bash
 	HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
 
-# Dumpbin is a windows dependency analaysis tool required for packaging
+# Dumpbin is a windows dependency analaysis tool required for packaging.
+# Variable has to be named gp_cmd to override the outdated find routines
+# of the GetPrerequisites CMake-module.
 IF(WIN32)
 	INCLUDE(MSVCPaths)
-	FIND_PROGRAM(DUMPBIN_TOOL_PATH dumpbin DOC "Windows dependency analysis tool"
-		PATHS MSVC_INSTALL_PATHS PATH_SUFFIXES VC/bin)
+	FIND_PROGRAM(gp_cmd dumpbin DOC "Windows dependency analysis tool"
+		PATHS ${MSVC_INSTALL_PATHS} PATH_SUFFIXES VC/bin)
 ENDIF()
 
 ########################
