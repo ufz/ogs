@@ -18,7 +18,6 @@
                http://www.opengeosys.org/project/license
 */
 
-
 #include "PETScVector.h"
 
 #include<iostream>
