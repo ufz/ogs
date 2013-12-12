@@ -35,7 +35,7 @@ enum VectorNormType
 inline double normEuklid (double const * const vec, std::size_t n)
 {
 	return sqrt (scpr (vec, vec, n));
-}
+};
 
 } // end namespace MathLib
 
