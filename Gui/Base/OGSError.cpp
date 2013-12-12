@@ -47,3 +47,4 @@ bool OGSError::question(const QString &e, const QString &t)
 		return true;
 	return false;
 }
+
