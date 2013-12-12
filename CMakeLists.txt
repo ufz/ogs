@@ -91,7 +91,9 @@ ENDIF (OGS_BUILD_INFO)
 OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 # Packaging
-OPTION(OGS_PACKAGING_ZIP "Do you want to package as zip?")
+IF(WIN32)
+	OPTION(OGS_PACKAGING_NSIS "Do you want to package with NSIS?")
+ENDIF()
 INCLUDE(scripts/cmake/Pack.cmake)
 
 ######################
