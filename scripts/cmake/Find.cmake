@@ -43,11 +43,8 @@ FIND_PROGRAM(BASH_TOOL_PATH bash
 	HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
 
 # Dumpbin is a windows dependency analaysis tool required for packaging
-IF(WIN32 AND OGS_PACKAGING)
+IF(WIN32)
 	FIND_PROGRAM(DUMPBIN_TOOL_PATH dumpbin DOC "Windows dependency analysis tool")
-	IF(NOT DUMPBIN_TOOL_PATH)
-		MESSAGE(FATAL_ERROR "Dumpbin was not found but is required for packaging!")
-	ENDIF()
 ENDIF()
 
 ########################
@@ -127,12 +124,12 @@ ENDIF()
 
 IF(OGS_USE_PETSC)
     MESSAGE (STATUS  "Configuring for PETSc" )
-      
+
     SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
     FIND_PACKAGE(PETSc REQUIRED)
- 
+
     include_directories(
-              ${PETSC_INCLUDES} 
+              ${PETSC_INCLUDES}
      )
 
     FIND_PACKAGE(MPI REQUIRED)
