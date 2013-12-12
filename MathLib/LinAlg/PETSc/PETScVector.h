@@ -7,13 +7,11 @@
    \version
    \date Nov 2011 - Sep 2013
 
-
-  \copyright
-   Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+   \copyright
+    Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
                Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
-
 */
 #ifndef PETSCVECTOR_H_
 #define PETSCVECTOR_H_
@@ -22,9 +20,7 @@
 #include <vector>
 
 #include "petscvec.h"
-
 #include "LinAlg/VectorNorms.h"
-
 
 typedef Vec PETSc_Vec;
 
@@ -38,7 +34,6 @@ namespace MathLib
 class PETScVector
 {
    public:
-
       PETScVector(const PetscInt size);
 
       /// Copy constructor. The value of existing_vec is not copied.
@@ -87,8 +82,7 @@ class PETScVector
                         euclidean denotes \f$\sqrt(\sum_i (x_i)^2)\f$
                         max_abs_entry denotes \f$\mathrm{max}_i |x_i|\f$
       */
-      PetscReal getNorm(const VectorNormType nmtype = euclidean) const;
-
+      PetscReal getNorm(const VectorNormType nmtype = EUCLIDEAN) const;
 
       /// Wrap the PETSc function VecRestoreArray to restore a vector after VecGetArray is called.
       void restoreLocalVector(PetscScalar loc_vec[]);
@@ -141,7 +135,6 @@ class PETScVector
          \e_idxs  indicies of entries to be added
          \sub_vec entries to be added
       */
-
       template<class T_SUBVEC>  void add(const std::vector<std::size_t> &e_idxs,
                                          const T_SUBVEC &sub_vec)
       {

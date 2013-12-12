@@ -11,13 +11,11 @@
    \version
    \date Nov 2011 - Sep 2013
 
-
-  \copyright
-   Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+   \copyright
+    Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
                Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
-
 */
 
 
@@ -39,7 +37,6 @@ PETScVector::PETScVector(const PetscInt size)
 
 PETScVector::PETScVector(const PETScVector &existing_vec)
 {
-
    _size = existing_vec._size;
    VecDuplicate(existing_vec._v, &_v);
 
@@ -77,9 +74,7 @@ void PETScVector::finalizeAssembly()
 
 void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
 {
-
 #ifdef TEST_MEM_PETSC
-   //TEST
    PetscLogDouble mem1, mem2;
    PetscMemoryGetCurrentUsage(&mem1);
 #endif
@@ -91,7 +86,7 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
    PetscInt low,high,otherlow;
    MPI_Status status;
    PetscInt count;
-   int tag = 9999;
+   int tag = 89999; // sending, reveiving tag
 
    const int _size_rank = BaseLib::InforMPI::getSize();
    const int _rank = BaseLib::InforMPI::getRank();
@@ -108,11 +103,11 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
    // Collect solution from processes.
    for(j=0; j<count; j++)
       global_buff[low+j] = u1[j];
+
    for(i=0; i<_size_rank; i++)
    {
       if(i != _rank)
       {
-
          MPI_Sendrecv( &count, 1, MPI_INT, i,tag,
                        &receivecount,1,MPI_INT,i,tag, PETSC_COMM_WORLD ,&status);
          MPI_Sendrecv( &low, 1, MPI_INT, i,tag,
@@ -182,7 +177,6 @@ void PETScVector::set(const int i, const PetscScalar value )
 
 void PETScVector::add(const int i, const PetscScalar value)
 {
-
    VecSetValue(_v, i, value,  ADD_VALUES);
 }
 
@@ -200,7 +194,6 @@ void  PETScVector::addValues( PetscInt ni, const PetscInt ix[],
 
 void PETScVector::setZero( )
 {
-
    VecSet(_v, 0.0);
 }
 
@@ -214,11 +207,9 @@ double  PETScVector::get(const  PetscInt idx) const
    return x[0];
 }
 
-
 // Overloaded operator: initialize  the vector with a constant value
 void PETScVector::operator= (const PetscScalar val)
 {
-
    VecSet(_v, val);
 }
 
@@ -245,11 +236,11 @@ void PETScVector::Viewer(const std::string &file_name)
    PetscViewer viewer;
    const std::string fname = file_name + "_petsc_global_vector_entries.txt";
    PetscViewerASCIIOpen(PETSC_COMM_WORLD, fname.c_str(), &viewer);
-   PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_MATLAB);
+   // PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_MATLAB);
+   PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
 
    finalizeAssembly();
 
-   // PetscViewerPushFormat(viewer,PETSC_VIEWER_ASCII_VTK);
    PetscObjectSetName((PetscObject)_v,file_name.c_str());
    VecView(_v, viewer);
 

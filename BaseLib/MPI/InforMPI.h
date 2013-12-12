@@ -6,13 +6,11 @@
    \version
    \date Nov Dec 2013
 
-
    \copyright
    Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
                Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
-
 */
 #ifndef INFORMPI_H_
 #define INFORMPI_H_
@@ -26,35 +24,38 @@ namespace BaseLib
 class InforMPI
 {
    public:
-
       InforMPI() {}
 
       /// get number of computers cores in use
+      /*!
+          set the number of processors and rank
+
+          \param size number of processors
+          \rank ID of current processor
+       */
       static inline void setSizeRank(const int size, const int rank)
       {
          _size = size;
          _rank = rank;
       }
 
-      /// get number of computers cores in use
+      /// get number of processors in use
       static inline int getSize()
       {
          return _size;
       }
 
-      /// get rank
+      /// get rank, ID of current processors
       static inline int getRank()
       {
          return _rank;
       }
 
    private:
-
-      /// Rank size
+      /// Rank size, number of processors
       static  int _size;
-      /// Rank
+      /// Rank, ID of current prosessor
       static  int _rank;
-
 };
 
 } // end namespace
