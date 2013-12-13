@@ -19,9 +19,7 @@
 #include "InforMPI.h"
 namespace BaseLib
 {
-
 int InforMPI::_size = 0;
 
 int InforMPI::_rank = 0;
-
-};
+}

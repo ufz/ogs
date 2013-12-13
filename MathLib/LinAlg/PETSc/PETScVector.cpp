@@ -78,14 +78,13 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
    PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
-   int i, j;
    PetscScalar *xp;
 
    int receivecount;
    PetscInt low,high,otherlow;
    MPI_Status status;
    PetscInt count;
-   int tag = 89999; // sending, reveiving tag
+   int tag = 89999; // sending, receiving tag
 
    const int _size_rank = BaseLib::InforMPI::getSize();
    const int _rank = BaseLib::InforMPI::getRank();
@@ -94,16 +93,20 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
    VecGetLocalSize(_v, &count);
 
    VecGetArray(_v, &xp);
-   for(i=0; i<count; i++)
-      u1[i] = xp[i];
+   std::copy(xp, xp+count, u1);
+   // Alternative for debugging:
+   //for(int i=0; i<count; i++)
+   //   u1[i] = xp[i];
 
    PetscScalar *global_buff = new PetscScalar[_size];
 
    // Collect solution from processes.
-   for(j=0; j<count; j++)
-      global_buff[low+j] = u1[j];
+   std::copy(u1, u1+count, global_buff+low);
+   // Alternative for debugging:
+   //for(int j=0; j<count; j++)
+   //   global_buff[low+j] = u1[j];
 
-   for(i=0; i<_size_rank; i++)
+   for(int i=0; i<_size_rank; i++)
    {
       if(i != _rank)
       {
@@ -113,18 +116,21 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
                        &otherlow,1,MPI_INT,i,tag,PETSC_COMM_WORLD,&status );
          MPI_Sendrecv( u1, count, MPI_DOUBLE, i,tag,
                        u0,receivecount,MPI_DOUBLE,i,tag, PETSC_COMM_WORLD,&status  );
-         for(j=0; j<receivecount; j++)
+         for(int j=0; j<receivecount; j++)
             global_buff[otherlow+j] = u0[j];
       }
    }
 
    //MPI_Barrier(PETSC_COMM_WORLD);
    // Copy the collected solution to the array for the previous solution
-   for(i=0; i<_size; i++)
-   {
-      u1[i] = global_buff[i];
-      u0[i] = global_buff[i];
-   }
+   std::copy(global_buff, global_buff + _size, u0);
+   std::copy(global_buff, global_buff + _size, u1);
+   // Alternative for debugging:
+   //for(int i=0; i<_size; i++)
+   //{
+   //   u1[i] = global_buff[i];
+   //   u0[i] = global_buff[i];
+   // }
 
    VecRestoreArray(_v, &xp);
 
@@ -138,7 +144,7 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
 
 }
 
-PetscInt PETScVector::getLocalVector(PetscScalar loc_vec[]) const
+PetscInt PETScVector::getLocalVector(PetscScalar *loc_vec) const
 {
    PetscInt count;
    VecGetLocalSize(_v, &count);

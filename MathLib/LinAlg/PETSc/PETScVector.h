@@ -37,13 +37,13 @@ class PETScVector
       PETScVector(const PetscInt size);
 
       /// Copy constructor. The value of existing_vec is not copied.
-      PETScVector(const PETScVector &existing_vec);
+      explicit PETScVector(const PETScVector &existing_vec);
       ~PETScVector();
 
       /// Perform MPI collection of assembled entries in buffer
       void finalizeAssembly();
 
-      /// Get PETsc vector. Only used it for test purpose
+      /// Get PETsc vector. Use it only for test purpose
       PETSc_Vec &getData()
       {
          return _v;
@@ -52,10 +52,10 @@ class PETScVector
       /*!
          Get local vector, i.e. entries in the same rank
 
-         \param loc_vec  array to store the local vector
+         \param loc_vec  pinter to array where stores the local vector
          \return  the size of the local vector
        */
-      PetscInt getLocalVector(PetscScalar loc_vec[]) const;
+      PetscInt getLocalVector(PetscScalar *loc_vec) const;
 
       /*!
        Get values of the specified elements from a global vector
@@ -87,7 +87,7 @@ class PETScVector
       /// Wrap the PETSc function VecRestoreArray to restore a vector after VecGetArray is called.
       void restoreLocalVector(PetscScalar loc_vec[]);
 
-      /// Get the number of global unknows
+      /// Get the size the vector
       PetscInt  size() const
       {
          return _size;
@@ -140,7 +140,7 @@ class PETScVector
       {
          for (std::size_t i=0; i<e_idxs.size(); ++i)
          {
-            add(e_idxs[i], sub_vec[i]);
+            this->add(e_idxs[i], sub_vec[i]);
          }
       }
 
@@ -154,10 +154,10 @@ class PETScVector
       /// Initialize  the vector with a constant value
       void operator = (const PetscScalar val);
 
-      /// Overloaded operator: asign
+      /// Overloaded operator: assign
       void operator = (const PETScVector &v_in);
 
-      /// Overloaded operator: assignment
+      /// Overloaded operator: assign
       void operator = (PETScVector &v_in);
 
       ///  Overloaded operator: add
@@ -189,9 +189,9 @@ class PETScVector
       /// Ending index in a rank
       PetscInt _end_rank;
 
-      /// Dimension of the unknows
+      /// Size of the vector
       PetscInt _size;
-      /// Dimention of the local unknowns
+      /// Size of local entries
       PetscInt _size_loc;
 
       /// Create vector

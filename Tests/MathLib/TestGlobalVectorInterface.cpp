@@ -171,22 +171,7 @@ TEST(Math, CheckInterface_LisVector)
 #ifdef OGS_USE_PETSC
 TEST(Math, CheckInterface_PETScVector)
 {
-
-    int mrank, msize;
-
-    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
-    MPI_Comm_size(PETSC_COMM_WORLD, &msize);
-
-    BaseLib:: InforMPI:: setSizeRank(msize, mrank);
-
-    if(msize != 3)
-    {
-        PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThis is test of PETSc vector.");
-        PetscSynchronizedPrintf(PETSC_COMM_WORLD, "===\nThe Number of computers cores must be three.");
-
-        PetscFinalize();
-        exit(EXIT_FAILURE);
-    }
+    ASSERT_EQ(3u, BaseLib:: InforMPI::getSize());
 
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
 }

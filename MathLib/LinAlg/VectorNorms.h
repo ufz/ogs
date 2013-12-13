@@ -4,7 +4,7 @@
  * \author Wenqing Wang
  *
  * \date   2011-06-06 -- 2013-12-10
- *  
+ *
  * \brief  Definition of vector norm functions.
  *
  * \copyright
@@ -22,20 +22,21 @@
 
 #include "MathTools.h"
 
-namespace MathLib {
-
-/// Norm type. Not declared as class type in order to use the members as integers. 
-enum VectorNormType 
+namespace MathLib
 {
-   SUM_ABS_ENTRIES, ///< \f$\sum_i |x_i|\f$
-   EUCLIDEAN,       ///< \f$\sqrt(\sum_i (x_i)^2)\f$
-   MAX_ABS_ENTRY    ///< \f$\mathrm{max}_i |x_i|\f$
+
+/// Norm type. Not declared as class type in order to use the members as integers.
+enum VectorNormType
+{
+    SUM_ABS_ENTRIES, ///< \f$\sum_i |x_i|\f$
+    EUCLIDEAN,       ///< \f$\sqrt(\sum_i (x_i)^2)\f$
+    MAX_ABS_ENTRY    ///< \f$\mathrm{max}_i |x_i|\f$
 };
 
 inline double normEuklid (double const * const vec, std::size_t n)
 {
-	return sqrt (scpr (vec, vec, n));
-};
+    return sqrt (scpr (vec, vec, n));
+}
 
 } // end namespace MathLib
 
