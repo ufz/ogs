@@ -21,7 +21,7 @@
 #include "PETScVector.h"
 
 #include<iostream>
-#include "BaseLib/MPI/InfoMPI.h"
+#include "BaseLib/InfoMPI.h"
 
 namespace MathLib
 {

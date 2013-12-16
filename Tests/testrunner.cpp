@@ -23,7 +23,7 @@
 
 #ifdef OGS_USE_PETSC
 #include "petscksp.h"
-#include "BaseLib/MPI/InfoMPI.h"
+#include "BaseLib/InfoMPI.h"
 #endif
 
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
