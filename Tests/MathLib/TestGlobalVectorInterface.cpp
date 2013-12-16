@@ -24,7 +24,7 @@
 
 #ifdef OGS_USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
-#include "BaseLib/MPI/InforMPI.h"
+#include "BaseLib/MPI/InfoMPI.h"
 #endif
 
 namespace
@@ -171,7 +171,7 @@ TEST(Math, CheckInterface_LisVector)
 #ifdef OGS_USE_PETSC
 TEST(Math, CheckInterface_PETScVector)
 {
-    ASSERT_EQ(3u, BaseLib:: InforMPI::getSize());
+    ASSERT_EQ(3u, BaseLib:: InfoMPI::getSize());
 
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
 }

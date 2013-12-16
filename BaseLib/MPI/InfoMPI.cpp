@@ -1,7 +1,7 @@
 
 /*!
-   \file InforMPI.cpp
-   \brief Definition of class InforMPI, which provides basic running time data in MPI
+   \file InfoMPI.cpp
+   \brief Definition of class InfoMPI, which provides basic running time data in MPI
 
    \author Wenqing Wang
    \version
@@ -16,10 +16,10 @@
 
 */
 
-#include "InforMPI.h"
+#include "InfoMPI.h"
 namespace BaseLib
 {
-int InforMPI::_size = 0;
+int InfoMPI::_size = 0;
 
-int InforMPI::_rank = 0;
+int InfoMPI::_rank = 0;
 }

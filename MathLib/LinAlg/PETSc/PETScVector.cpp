@@ -21,7 +21,7 @@
 #include "PETScVector.h"
 
 #include<iostream>
-#include "BaseLib/MPI/InforMPI.h"
+#include "BaseLib/MPI/InfoMPI.h"
 
 namespace MathLib
 {
@@ -86,8 +86,8 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
     PetscInt count;
     int tag = 89999; // sending, receiving tag
 
-    const int _size_rank = BaseLib::InforMPI::getSize();
-    const int _rank = BaseLib::InforMPI::getRank();
+    const int _size_rank = BaseLib::InfoMPI::getSize();
+    const int _rank = BaseLib::InfoMPI::getRank();
 
     VecGetOwnershipRange(_v, &low, &high);
     VecGetLocalSize(_v, &count);

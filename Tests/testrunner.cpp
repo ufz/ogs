@@ -23,7 +23,7 @@
 
 #ifdef OGS_USE_PETSC
 #include "petscksp.h"
-#include "BaseLib/MPI/InforMPI.h"
+#include "BaseLib/MPI/InfoMPI.h"
 #endif
 
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
         int mrank, msize;
         MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
         MPI_Comm_size(PETSC_COMM_WORLD, &msize);
-        BaseLib:: InforMPI:: setSizeRank(msize, mrank);
+        BaseLib:: InfoMPI:: setSizeRank(msize, mrank);
 #endif
 
         try
