@@ -60,9 +60,6 @@ int main(int argc, char* argv[])
 #ifdef USE_LIS
             lis_initialize(&argc, &argv);
 #endif
-
-
-
             // start google test
             testing::InitGoogleTest ( &argc, argv );
             ret = RUN_ALL_TESTS();
