@@ -5,8 +5,8 @@ branches:
   only:
     - master
 env:
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
+#  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+#  - CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
   - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libeigen3-dev libxt-dev
@@ -14,8 +14,8 @@ before_install:
   - "wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb"
   - "sudo apt-get remove cmake-data cmake"
   - "sudo dpkg --install cmake-data_2.8.8-2ubuntu1_all.deb cmake_2.8.8-2ubuntu1_amd64.deb"
-  - "wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz"
-  - "tar -xf vtk-6.tar.gz"
+#  - "wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz"
+#  - "tar -xf vtk-6.tar.gz"
   - "sudo add-apt-repository --yes ppa:amcg/petsc3.3" 
   - "sudo apt-get update" 
   - "sudo apt-get install libpetsc3.3-dev" 
