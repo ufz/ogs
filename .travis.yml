@@ -28,9 +28,8 @@ before_install:
 #  - "sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev" 
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
-  - if [[ "$CASE" == "CLI" ]]; then make test; fi
+  - if [[ "$CASE" == "CLI" ]] || [[ "$CASE" == "GUI" ]]; then make test; fi
   - if [[ "$CASE" == "CLI_PETSC" ]]; then mpirun -np 3 make test; fi
-  - if [[ "$CASE" == "GUI" ]]; then make test; fi
 #"pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make && $TEST_CMD"
 #script: "pwd & mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && $TEST_CMD"
 notifications:
