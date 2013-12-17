@@ -5,21 +5,22 @@ branches:
   only:
     - master
 env:
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"  TEST_CMD="make test"
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=ON" TEST_CMD="make test"
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"  TEST_CMD="mpirun -np 3 make test"
+  - INSTALL_CMD="pwd" CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"  TEST_CMD="make test"
+  - INSTALL_CMD="wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz && tar-xf vtk-6.tar.gz&" CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/" TEST_CMD="make test"
+  - INSTALL_CMD="sudo add-apt-repository --yes ppa:amcg/petsc3.4 && sudo apt-get update && sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev" CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"  TEST_CMD="mpirun -np 3 make test"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libeigen3-dev libxt-dev
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
   - "wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb"
   - "sudo apt-get remove cmake-data cmake"
   - "sudo dpkg --install cmake-data_2.8.8-2ubuntu1_all.deb cmake_2.8.8-2ubuntu1_amd64.deb"
-  - "wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz"
-  - "tar -xf vtk-6.tar.gz"
-  - "sudo add-apt-repository --yes ppa:amcg/petsc3.4" 
-  - "sudo apt-get update" 
-  - "sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev" 
-script: "pwd && mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && $TEST_CMD"
+#  - "wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz"
+#  - "tar -xf vtk-6.tar.gz"
+#  - "sudo add-apt-repository --yes ppa:amcg/petsc3.4" 
+#  - "sudo apt-get update" 
+#  - "sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev" 
+script: "$INSTALL_CMD && pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make && $TEST_CMD"
+#script: "$INSTALL_CMD && pwd & mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && $TEST_CMD"
 notifications:
   email:
     - lars.bilke@ufz.de
