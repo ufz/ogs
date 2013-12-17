@@ -18,7 +18,7 @@ before_install:
 #  - "tar -xf vtk-6.tar.gz"
   - "sudo add-apt-repository --yes ppa:amcg/petsc3.4" 
   - "sudo apt-get update" 
-  - "sudo apt-get install libpetsc3.4.2 libpetsc3.4.2-dev" 
+  - "sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev" 
 #  - "sudo add-apt-repository --yes ppa:amcg/petsc3.3" 
 #  - "sudo apt-get update" 
 #  - "sudo apt-get install libpetsc3.3-dev" 
