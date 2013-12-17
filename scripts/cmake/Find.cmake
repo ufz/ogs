@@ -129,7 +129,7 @@ ENDIF()
 IF(OGS_USE_PETSC)
     MESSAGE (STATUS  "Configuring for PETSc" )
 
-    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
+    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
     FIND_PACKAGE(PETSc REQUIRED)
 
     include_directories(
