@@ -6,7 +6,7 @@ branches:
     - master
 env:
   - INSTALL_CMD="pwd" CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"  TEST_CMD="make test"
-  - INSTALL_CMD="wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz && tar-xf vtk-6.tar.gz" CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/" TEST_CMD="make test"
+  - INSTALL_CMD="wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz && tar -xf vtk-6.tar.gz" CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/" TEST_CMD="make test"
   - INSTALL_CMD="sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev" CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"  TEST_CMD="mpirun -np 3 make test"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libeigen3-dev libxt-dev
