@@ -14,7 +14,7 @@ before_install:
   - "wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb"
   - "sudo apt-get remove cmake-data cmake"
   - "sudo dpkg --install cmake-data_2.8.8-2ubuntu1_all.deb cmake_2.8.8-2ubuntu1_amd64.deb"
-  - $INSTALL_CMD
+  - "$INSTALL_CMD"
 #  - "wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz"
 #  - "tar -xf vtk-6.tar.gz"
 #  - "sudo add-apt-repository --yes ppa:amcg/petsc3.4" 
