@@ -7,7 +7,7 @@ branches:
 env:
 #  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
 #  - CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
+  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/" TEST_CMD="mpirun -np 3 make test"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libeigen3-dev libxt-dev
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
@@ -22,7 +22,7 @@ before_install:
 #  - "sudo add-apt-repository --yes ppa:amcg/petsc3.3" 
 #  - "sudo apt-get update" 
 #  - "sudo apt-get install libpetsc3.3-dev" 
-script: "pwd && mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && mpirun -np 3 make test"
+script: "pwd && mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && $TEST_CMD"
 notifications:
   email:
     - lars.bilke@ufz.de
