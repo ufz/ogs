@@ -16,9 +16,16 @@
 #include "Configure.h"
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
+
 #ifdef USE_LIS
 #include "lis.h"
 #endif
+
+#ifdef OGS_USE_PETSC
+#include "petscksp.h"
+#include "BaseLib/MPI/InforMPI.h"
+#endif
+
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef QT4_FOUND
 #include <QApplication>
@@ -28,7 +35,7 @@
 int main(int argc, char* argv[])
 {
 #ifdef QT4_FOUND
-	QApplication app(argc, argv, false);
+    QApplication app(argc, argv, false);
 #endif
     int ret = 0;
     LOGOG_INITIALIZE();
@@ -37,7 +44,18 @@ int main(int argc, char* argv[])
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
-        try {
+#if defined(OGS_USE_PETSC)
+        char help[] = "ogs6 with PETSc \n";
+        PetscInitialize(&argc,&argv,(char *)0,help);
+
+        int mrank, msize;
+        MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+        MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+        BaseLib:: InforMPI:: setSizeRank(msize, mrank);
+#endif
+
+        try
+        {
             // initialize libraries which will be used while testing
 #ifdef USE_LIS
             lis_initialize(&argc, &argv);
@@ -45,17 +63,29 @@ int main(int argc, char* argv[])
             // start google test
             testing::InitGoogleTest ( &argc, argv );
             ret = RUN_ALL_TESTS();
-        } catch (char* e) {
+        }
+        catch (char* e)
+        {
             ERR(e);
-        } catch (std::exception& e) {
+        }
+        catch (std::exception& e)
+        {
             ERR(e.what());
-        } catch (...) {
+        }
+        catch (...)
+        {
             ERR("Unknown exception occurred!");
         }
         // finalize libraries
 #ifdef USE_LIS
         lis_finalize();
 #endif
+
+#if defined(OGS_USE_PETSC)
+        PetscFinalize();
+#endif
+
+
     } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.
     LOGOG_SHUTDOWN();
 

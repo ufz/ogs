@@ -2,6 +2,10 @@
 
 GET_SOURCE_FILES(SOURCES)
 
+IF(OGS_USE_PETSC)
+  SET( SOURCES ${SOURCES}  MPI/InforMPI.h  MPI/InforMPI.cpp)
+ENDIF()
+ 
 # Create the library
 ADD_LIBRARY( BaseLib STATIC ${SOURCES})
 

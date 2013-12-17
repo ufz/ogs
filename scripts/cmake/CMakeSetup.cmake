@@ -3,6 +3,8 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake")
 
+MESSAGE(STATUS "CMAKE_MODULE_PATH is set to ${CMAKE_MODULE_PATH}")
+
 # Load addional modules
 INCLUDE(UseBackportedModules)
 INCLUDE(OptionRequires)
