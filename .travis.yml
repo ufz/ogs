@@ -22,7 +22,7 @@ before_install:
 #  - "sudo add-apt-repository --yes ppa:amcg/petsc3.3" 
 #  - "sudo apt-get update" 
 #  - "sudo apt-get install libpetsc3.3-dev" 
-script: "pwd && mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && make test"
+script: "pwd && mkdir build && cd build && cmake $CMAKE_ARGS -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/ .. && cmake .. && make && mpirun -np 3 make test"
 notifications:
   email:
     - lars.bilke@ufz.de
