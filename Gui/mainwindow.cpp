@@ -169,9 +169,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(geoTabWidget->treeView, SIGNAL(requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)),
 			this, SLOT(showCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t, bool)));
 	connect(geoTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
-	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions
-	//connect(geoTabWidget->treeView, SIGNAL(saveFEMConditionsRequested(QString, QString)),
-	//        this, SLOT(writeFEMConditionsToFile(QString, QString)));
+	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions to geometry
 	connect(geo_models, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(geo_models, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
@@ -220,6 +218,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
 	connect(mshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
+	connect(mshTabWidget->treeView, SIGNAL(loadFEMCondFileRequested(std::string)),
+	        this, SLOT(loadFEMConditions(std::string))); // add FEM Conditions to mesh
+
 
 	// Setup connections for process model to GUI
 	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)),
@@ -860,12 +861,18 @@ void MainWindow::loadFEMConditions(std::string geoName)
 	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
 														settings.value("lastOpenedFileDirectory").toString(),
-														"Geosys FEM condition files (*.cnd *.bc *.ic *.st);;All files (* *.*)");
+														"OpenGeosys FEM condition files (*.cnd);;All files (* *.*)");
 	QDir dir = QDir(fileName);
 	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 
 	if (!fileName.isEmpty())
 		this->loadFEMConditionsFromFile(fileName, geoName);
+}
+
+void MainWindow::createFEMConditions(std::vector<FEMCondition*> const& conditions)
+{
+	this->_project.addConditions(conditions);
+	this->addFEMConditions(conditions);
 }
 
 void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string geoName)
@@ -892,34 +899,31 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 
 void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 {
-	if (!conditions.empty())
+	if (conditions.empty())
+		return;
+	for (size_t i = 0; i < conditions.size(); i++)
 	{
-		this->_project.addConditions(conditions);
-
-		for (size_t i = 0; i < conditions.size(); i++)
+		bool condition_ok(true);
+		if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
 		{
-			bool condition_ok(true);
-			if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
-			{
-				if (_meshModels->getMesh(conditions[i]->getAssociatedGeometryName()) != NULL) {
-					std::vector<MeshLib::Node*> nodes = _meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes();
-					const size_t nPoints(nodes.size());
-					std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nPoints);
-					for (size_t j = 0; j < nPoints; j++)
-						(*new_points)[j] = new GeoLib::Point(nodes[j]->getCoords());
-					GeoLib::PointVec pnt_vec("MeshNodes", new_points);
-					std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
-					std::string geo_name = conditions[i]->getGeoName();
-					this->_project.getGEOObjects()->addPointVec(cond_points, geo_name);
-					conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
-				} else {
-					OGSError::box("Please load an appropriate geometry first", "Error");
-					condition_ok = false;
-				}
+			if (_meshModels->getMesh(conditions[i]->getAssociatedGeometryName()) != NULL) {
+				std::vector<MeshLib::Node*> nodes = _meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes();
+				const size_t nPoints(nodes.size());
+				std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nPoints);
+				for (size_t j = 0; j < nPoints; j++)
+					(*new_points)[j] = new GeoLib::Point(nodes[j]->getCoords());
+				GeoLib::PointVec pnt_vec("MeshNodes", new_points);
+				std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
+				std::string geo_name = conditions[i]->getGeoName();
+				this->_project.getGEOObjects()->addPointVec(cond_points, geo_name);
+				conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
+			} else {
+				OGSError::box("Please load an appropriate geometry first", "Error");
+				condition_ok = false;
 			}
-			if (condition_ok) {
-				this->_processModel->addCondition(conditions[i]);
-			}
+		}
+		if (condition_ok) {
+			this->_processModel->addCondition(conditions[i]);
 		}
 	}
 }
@@ -1183,14 +1187,14 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 		if (object_type != GeoLib::GEOTYPE::INVALID)
 		{
 			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_project.getGEOObjects()->getGEOObject(geometry_name, object_type, geo_name), on_points);
-			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
+			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(createFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}
 		else
 		{
 			const MeshLib::Mesh* mesh = _project.getMesh(geo_name);
 			FEMConditionSetupDialog dlg(geo_name, mesh);
-			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(addFEMConditions(std::vector<FEMCondition*>)));
+			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(createFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}
 	}
