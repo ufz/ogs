@@ -24,7 +24,7 @@
 
 #ifdef OGS_USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
-#include "BaseLib/InfoMPI.h"
+#include "MathLib/LinAlg/PETSc/InfoMPI.h"
 #endif
 
 namespace

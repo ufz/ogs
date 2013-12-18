@@ -29,7 +29,7 @@
 #include <boost/mpi/environment.hpp>
 #include <boost/mpi/communicator.hpp>
 #else
-#include "BaseLib/InfoMPI.h"
+#include "MathLib/LinAlg/PETSc/InfoMPI.h"
 #endif
 
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"

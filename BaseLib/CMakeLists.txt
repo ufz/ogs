@@ -1,10 +1,6 @@
 # Source files
 
 GET_SOURCE_FILES(SOURCES)
-
-IF(NOT OGS_USE_BOOSTMPI)
-  list(REMOVE_ITEM SOURCES InfoMPI.h InfoMPI.cpp)
-ENDIF()
  
 # Create the library
 ADD_LIBRARY( BaseLib STATIC ${SOURCES})
