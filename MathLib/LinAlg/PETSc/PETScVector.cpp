@@ -71,7 +71,7 @@ void PETScVector::finalizeAssembly()
     VecAssemblyEnd(_v);
 }
 
-void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
+void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[]) const
 {
 #ifdef TEST_MEM_PETSC
     PetscLogDouble mem1, mem2;
@@ -219,7 +219,7 @@ void PETScVector::operator= (const PetscScalar val)
 }
 
 //Overloaded operator: assignment
-void PETScVector::operator= (PETScVector &v_in)
+void PETScVector::operator= (const PETScVector &v_in)
 {
     VecCopy(_v, v_in._v);
 }
@@ -236,7 +236,7 @@ void PETScVector::operator-= (const PETScVector& v_in)
     VecAXPY(_v, -1.0, v_in._v);
 }
 
-void PETScVector::Viewer(const std::string &file_name)
+void PETScVector::viewer(const std::string &file_name)
 {
     PetscViewer viewer;
     const std::string fname = file_name + "_petsc_global_vector_entries.txt";

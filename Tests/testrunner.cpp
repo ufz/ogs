@@ -23,6 +23,12 @@
 
 #ifdef OGS_USE_PETSC
 #include "petscksp.h"
+#endif
+
+#ifdef OGS_USE_BOOSTMPI // boost must be included after petsc headers
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+#else
 #include "BaseLib/InfoMPI.h"
 #endif
 
@@ -51,7 +57,12 @@ int main(int argc, char* argv[])
         int mrank, msize;
         MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
         MPI_Comm_size(PETSC_COMM_WORLD, &msize);
-        BaseLib:: InfoMPI:: setSizeRank(msize, mrank);
+
+#ifdef OGS_USE_BOOSTMPI // demo
+        boost::mpi::communicator petsc( PETSC_COMM_WORLD, boost::mpi::comm_attach);
+#else
+        BaseLib::InfoMPI::setSizeRank(msize, mrank);
+#endif  
 #endif
 
         try

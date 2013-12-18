@@ -34,10 +34,10 @@ namespace MathLib
 class PETScVector
 {
     public:
-        PETScVector(const PetscInt size);
+        explicit PETScVector(const PetscInt size);
 
         /// Copy constructor. The value of existing_vec is not copied.
-        explicit PETScVector(const PETScVector &existing_vec);
+        PETScVector(const PETScVector &existing_vec);
         ~PETScVector();
 
         /// Perform MPI collection of assembled entries in buffer
@@ -63,9 +63,9 @@ class PETScVector
         /*!
          Get values of the specified elements from a global vector
 
-         \param v_type  indicator for vector: 0: x; 1: rhs
          \param ni  number of elements to get
          \param ix  indices where to get them from (in global 1d numbering)
+         \param y   values of the got entries
         */
         void getEntries(PetscInt ni, const PetscInt ix[],
                         PetscScalar y[]) const;
@@ -76,7 +76,7 @@ class PETScVector
            \param u1  array to store the global vector too, and it is also used as
                       a buffer array in this function.
          */
-        void getGlobalEntries(PetscScalar u0[], PetscScalar u1[]);
+        void getGlobalEntries(PetscScalar u0[], PetscScalar u1[]) const;
 
         /*!
           Get norm of vector
@@ -91,6 +91,12 @@ class PETScVector
         PetscInt  size() const
         {
             return _size;
+        }
+
+        /// Get the number of enties in the same rank
+        PetscInt  getLocalSize() const
+        {
+            return _size_loc;
         }
 
         /*!
@@ -157,9 +163,6 @@ class PETScVector
         /// Overloaded operator: assign
         void operator = (const PETScVector &v_in);
 
-        /// Overloaded operator: assign
-        void operator = (PETScVector &v_in);
-
         ///  Overloaded operator: add
         void operator += (const PETScVector& v_in);
 
@@ -179,7 +182,7 @@ class PETScVector
         }
 
         /// View the global vector for test purpose. Do not use it for output a big vector.
-        void Viewer(const std::string &file_name);
+        void viewer(const std::string &file_name);
 
     private:
         PETSc_Vec _v;
@@ -200,4 +203,5 @@ class PETScVector
 
 } // end namespace
 #endif
+
 

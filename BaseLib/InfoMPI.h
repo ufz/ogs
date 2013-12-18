@@ -1,6 +1,6 @@
 /*!
    \file InfoMPI.h
-   \brief Declaration of class InfoMPI, which provides basic running time data in MPI
+   \brief Declaration of class InfoMPI, which provides basic global running time data in MPI
 
    \author Wenqing Wang
    \version

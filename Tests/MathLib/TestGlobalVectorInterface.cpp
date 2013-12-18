@@ -39,18 +39,14 @@ void checkGlobalVectorInterface()
     ASSERT_TRUE(x.getRangeBegin()>=0);
     ASSERT_TRUE(x.getRangeEnd()>=0);
 
-
     ASSERT_EQ(.0, x.get(0));
     x.set(0, 1.0);
-
 
     ASSERT_EQ(1.0, x.get(0));
     ASSERT_EQ(0.0, x.get(1));
 
-
     x.add(0, 1.0);
     ASSERT_EQ(2.0, x.get(0));
-
 
     T_VECTOR y(x);
     ASSERT_EQ(2.0, y.get(0));
@@ -88,10 +84,8 @@ void checkGlobalVectorInterfacePETSc()
     ASSERT_TRUE(r0 >= 0);
     ASSERT_TRUE(x.getRangeEnd() >= 0);
 
-
     //x.get(0) is expensive, only get local value. Use it for test purpose
     ASSERT_EQ(.0, x.get(r0));
-
 
     x = 10.;
 
@@ -148,7 +142,6 @@ void checkGlobalVectorInterfacePETSc()
 
     ASSERT_ARRAY_NEAR(x0, z, 16, 1e-10);
     ASSERT_ARRAY_NEAR(x1, z, 16, 1e-10);
-
 }
 #endif
 
@@ -166,11 +159,10 @@ TEST(Math, CheckInterface_LisVector)
 }
 #endif
 
-
 //--------------------------------------------
 #ifdef OGS_USE_PETSC
 TEST(Math, CheckInterface_PETScVector)
-{
+{ 
     ASSERT_EQ(3u, BaseLib:: InfoMPI::getSize());
 
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();

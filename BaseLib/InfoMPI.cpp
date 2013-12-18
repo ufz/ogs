@@ -1,7 +1,7 @@
 
 /*!
    \file InfoMPI.cpp
-   \brief Definition of class InfoMPI, which provides basic running time data in MPI
+   \brief Definition of class InfoMPI, which provides basic global running time data in MPI
 
    \author Wenqing Wang
    \version
