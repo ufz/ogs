@@ -26,7 +26,7 @@
 
 /// Constructor
 MeshElementRemovalDialog::MeshElementRemovalDialog(const ProjectData &project, QDialog* parent)
-	: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(1), _matIDIndex(1)
+	: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()), _matIDIndex(std::numeric_limits<unsigned>::max())
 {
 	setupUi(this);
 	
