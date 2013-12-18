@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
         boost::mpi::communicator petsc( PETSC_COMM_WORLD, boost::mpi::comm_attach);
 #else
         BaseLib::InfoMPI::setSizeRank(msize, mrank);
-#endif  
+#endif
 #endif
 
         try

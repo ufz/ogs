@@ -162,7 +162,7 @@ TEST(Math, CheckInterface_LisVector)
 //--------------------------------------------
 #ifdef OGS_USE_PETSC
 TEST(Math, CheckInterface_PETScVector)
-{ 
+{
     ASSERT_EQ(3u, BaseLib:: InfoMPI::getSize());
 
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();

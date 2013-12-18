@@ -93,7 +93,7 @@ class PETScVector
             return _size;
         }
 
-        /// Get the number of enties in the same rank
+        /// Get the number of entries in the same rank
         PetscInt  getLocalSize() const
         {
             return _size_loc;
