@@ -49,7 +49,7 @@ class NumLibFemNaturalCoordinatesMappingQuad4Test : public ::testing::Test
  public:
     NumLibFemNaturalCoordinatesMappingQuad4Test()
     {
-        // create four quad elements used for tesing
+        // create four quad elements used for testing
         naturalQuad   = createNaturalShapeQuad();
         irregularQuad = createIrregularShapeQuad();
         clockwiseQuad = createClockWiseQuad();
