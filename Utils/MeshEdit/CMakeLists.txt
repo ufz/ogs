@@ -49,3 +49,11 @@ TARGET_LINK_LIBRARIES( DataExplorer5NodeReordering
 	MeshLib
 )
 SET_TARGET_PROPERTIES(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
+
+ADD_EXECUTABLE( MoveMeshCentroidToOrigin MoveMeshCentroidToOrigin.cpp )
+TARGET_LINK_LIBRARIES( MoveMeshCentroidToOrigin 
+	FileIO
+	MeshLib
+)
+SET_TARGET_PROPERTIES(MoveMeshCentroidToOrigin PROPERTIES FOLDER Utilities)
+
