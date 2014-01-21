@@ -85,7 +85,6 @@ public:
      *
      * @param order    the number of integration points
      * @param pt_id     the sampling point id
-     * @param x         coordinates
      * @return weight
      */
     static WeightedPoint
