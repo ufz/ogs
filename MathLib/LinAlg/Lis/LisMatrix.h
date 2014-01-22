@@ -52,10 +52,10 @@ public:
     virtual ~LisMatrix();
 
     /// return the number of rows
-    std::size_t getNRows() const { return _n_rows; };
+    std::size_t getNRows() const { return _n_rows; }
 
     /// return the number of columns
-    std::size_t getNCols() const { return getNRows(); };
+    std::size_t getNCols() const { return getNRows(); }
 
     /// return a start index of the active data range
     std::size_t getRangeBegin() const { return _is; }
@@ -79,7 +79,7 @@ public:
     double getMaxDiagCoeff();
 
     /// return a raw Lis matrix object
-    LIS_MATRIX& getRawMatrix() { return _AA; };
+    LIS_MATRIX& getRawMatrix() { return _AA; }
 
     /// y = mat * x
     void matvec(const LisVector &x, LisVector &y) const;
@@ -110,10 +110,10 @@ public:
             double fkt = 1.0);
 
     /// get this matrix type
-    LisOption::MatrixType getMatrixType() const { return _mat_type; };
+    LisOption::MatrixType getMatrixType() const { return _mat_type; }
 
     /// return if this matrix is already assembled or not
-    bool isAssembled() const { return _is_assembled; };
+    bool isAssembled() const { return _is_assembled; }
 
 private:
     std::size_t const _n_rows;
