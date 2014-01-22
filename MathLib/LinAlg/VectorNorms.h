@@ -26,11 +26,11 @@ namespace MathLib
 {
 
 /// Norm type. Not declared as class type in order to use the members as integers.
-enum OGS_NormType
+enum class OGS_NormType
 {
-    SUM_ABS_ENTRIES = 0, ///< \f$\sum_i |x_i|\f$
-    EUCLIDEAN = 1,       ///< \f$\sqrt(\sum_i (x_i)^2)\f$
-    MAX_ABS_ENTRY = 2    ///< \f$\mathrm{max}_i |x_i|\f$
+    SUM_ABS_ENTRIES, ///< \f$\sum_i |x_i|\f$
+    EUCLIDEAN ,       ///< \f$\sqrt(\sum_i (x_i)^2)\f$
+    MAX_ABS_ENTRY    ///< \f$\mathrm{max}_i |x_i|\f$
 };
 
 inline double normEuklid (double const * const vec, std::size_t n)

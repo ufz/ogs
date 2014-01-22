@@ -176,7 +176,7 @@ class PETScVector
            \param u1  array to store the global vector too, and it is also used as
                       a buffer array in this function.
          */
-        void getGlobalEntries(PetscScalar u0[], PetscScalar u1[]) const;
+        void getGlobalEntries(PetscScalar u0[], PetscScalar u1[]);
 
         /*!
           Get norm of vector
@@ -190,7 +190,7 @@ class PETScVector
                      EUCLIDEAN = 1,
                      MAX_ABS_ENTRY = 2
         */
-        PetscReal getNorm(const OGS_NormType nmtype = EUCLIDEAN) const;
+        PetscReal getNorm(const OGS_NormType nmtype = OGS_NormType::EUCLIDEAN) const;
 
         /// Set all entries to zero value
         void setZero()
@@ -255,7 +255,7 @@ class PETScVector
         PETSC_VIEWER_DRAW_LG 	- views the vector with a line graph
         PETSC_VIEWER_DRAW_CONTOUR 	- views the vector with a contour plot
 
-         */
+        */
         void viewer(const std::string &file_name,
                     const PetscViewerFormat vw_format = PETSC_VIEWER_ASCII_MATLAB );
 
@@ -263,14 +263,14 @@ class PETScVector
         PETSc_Vec _v;
 
         /// Starting index in a rank
-        mutable PetscInt _start_rank; // or remove mutable and const from getGlobalEntries
+        PetscInt _start_rank;
         /// Ending index in a rank
-        mutable PetscInt _end_rank;
+        PetscInt _end_rank;
 
         /// Size of the vector
         PetscInt _size;
         /// Size of local entries
-        mutable PetscInt _size_loc;
+        PetscInt _size_loc;
 
         /// Create vector
         void create(PetscInt vec_size);
@@ -281,6 +281,15 @@ class PETScVector
             VecRestoreArray(_v, &loc_vec);
         }
 
+        /*!
+              \brief  collect local vectors
+              \param  u_local_filled  vector already filled locally
+              \param  u_local_received  received local vector
+              \param  u_glabal the global vector
+        */
+        void collectLocalVectors( PetscScalar u_local_filled[],
+                                  PetscScalar u_local_received[],
+                                  PetscScalar u_global[]);
 };
 
 } // end namespace
