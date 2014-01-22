@@ -1,4 +1,4 @@
-IF(EIGEN3_FOUND)
+IF(EIGEN3_FOUND AND EIGEN3_INCLUDE_DIR)
 	RETURN()
 ENDIF()
 
@@ -28,6 +28,6 @@ ExternalProject_Get_Property( Eigen source_dir )
 
 IF(NOT EIGEN3_INCLUDE_DIR)
 	SET(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
-	SET( EIGEN3_INCLUDE_DIR ${source_dir} CACHE INTERNAL "Eigen include dir")
+	SET( EIGEN3_INCLUDE_DIR ${source_dir} CACHE INTERNAL "Eigen include dir" FORCE)
 	MESSAGE(STATUS "Downloading Eigen automatically.")
 ENDIF()

@@ -165,7 +165,6 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 	}
 }
 
-#ifdef VTKFBXCONVERTER_FOUND
 void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
@@ -181,7 +180,6 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
 		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 	}
 }
-#endif // VTKFBXCONVERTER_FOUND
 
 void VtkVisPipelineView::removeSelectedPipelineItem()
 {

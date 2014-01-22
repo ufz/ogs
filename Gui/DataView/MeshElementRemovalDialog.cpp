@@ -26,7 +26,7 @@
 
 /// Constructor
 MeshElementRemovalDialog::MeshElementRemovalDialog(const ProjectData &project, QDialog* parent)
-	: _project(project), _currentIndex(0), _aabbIndex(1), _matIDIndex(1), QDialog(parent)
+	: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()), _matIDIndex(std::numeric_limits<unsigned>::max())
 {
 	setupUi(this);
 	
@@ -173,6 +173,7 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
 
 void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
+	Q_UNUSED(idx);
 	this->_currentIndex = this->meshNameComboBox->currentIndex();
 	this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() + "_new");
 	this->elementTypeListWidget->clearSelection();

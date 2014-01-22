@@ -5,9 +5,8 @@ branches:
   only:
     - master
 env:
-  - CASE=CLI        CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-  - CASE=CLI_PETSC  CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
-  - CASE=GUI        CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/"
+  - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libeigen3-dev
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
@@ -17,13 +16,9 @@ before_install:
   - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
   - if [[ "$CASE" == "GUI" ]]; then wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz; fi
   - if [[ "$CASE" == "GUI" ]]; then tar -xf vtk-6.tar.gz; fi
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:amcg/petsc3.4; fi
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo apt-get update; fi
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev; fi
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
   - if [[ "$CASE" == "CLI" ]] || [[ "$CASE" == "GUI" ]]; then make test; fi
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then mpirun -np 3 make test; fi
 notifications:
   email:
     - lars.bilke@ufz.de

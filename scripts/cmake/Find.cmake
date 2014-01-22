@@ -42,12 +42,13 @@ ENDIF()
 FIND_PROGRAM(BASH_TOOL_PATH bash
 	HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
 
-# Dumpbin is a windows dependency analaysis tool required for packaging
-IF(WIN32 AND OGS_PACKAGING)
-	FIND_PROGRAM(DUMPBIN_TOOL_PATH dumpbin DOC "Windows dependency analysis tool")
-	IF(NOT DUMPBIN_TOOL_PATH)
-		MESSAGE(FATAL_ERROR "Dumpbin was not found but is required for packaging!")
-	ENDIF()
+# Dumpbin is a windows dependency analaysis tool required for packaging.
+# Variable has to be named gp_cmd to override the outdated find routines
+# of the GetPrerequisites CMake-module.
+IF(WIN32)
+	INCLUDE(MSVCPaths)
+	FIND_PROGRAM(gp_cmd dumpbin DOC "Windows dependency analysis tool"
+		PATHS ${MSVC_INSTALL_PATHS} PATH_SUFFIXES VC/bin)
 ENDIF()
 
 ########################
@@ -127,13 +128,12 @@ ENDIF()
 
 IF(OGS_USE_PETSC)
     MESSAGE (STATUS  "Configuring for PETSc" )
-   
     SET(OGS_USE_BOOSTMPI OFF)   
-    SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC)
+    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
     FIND_PACKAGE(PETSc REQUIRED)
- 
+
     include_directories(
-              ${PETSC_INCLUDES} 
+              ${PETSC_INCLUDES}
      )
 
     FIND_PACKAGE(MPI REQUIRED)
