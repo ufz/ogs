@@ -1,7 +1,7 @@
 # Source files
 
 GET_SOURCE_FILES(SOURCES)
- 
+
 # Create the library
 ADD_LIBRARY( BaseLib STATIC ${SOURCES})
 
@@ -14,4 +14,3 @@ INCLUDE_DIRECTORIES(
 TARGET_LINK_LIBRARIES( BaseLib
 	${Boost_LIBRARIES}
 )
- 
