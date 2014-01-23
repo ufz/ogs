@@ -34,6 +34,8 @@ namespace MathLib
 class PETScVector
 {
     public:
+
+        PETScVector() = default;
         /*!
              \brief  Constructor
              \param size  the global size of the vector
@@ -44,8 +46,11 @@ class PETScVector
             create(_size);
         }
 
-        /// Copy constructor. The value of existing_vec is not copied.
+        /// copy constructor
         PETScVector(const PETScVector &existing_vec);
+
+        /// Duplicate a vector. The value of existing_vec is not copied.
+        void Duplicate(const PETScVector &existing_vec);
 
         ~PETScVector()
         {

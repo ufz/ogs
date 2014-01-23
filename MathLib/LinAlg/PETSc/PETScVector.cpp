@@ -24,18 +24,19 @@
 
 namespace MathLib
 {
-
 PETScVector::PETScVector(const PETScVector &existing_vec)
+{
+    Duplicate(existing_vec);
+    VecCopy(existing_vec._v, _v);
+}
+
+void PETScVector::Duplicate(const PETScVector &existing_vec)
 {
     _size = existing_vec._size;
     VecDuplicate(existing_vec._v, &_v);
 
     VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
     VecGetLocalSize(_v, &_size_loc);
-
-    // If values of the vector are copied too:
-    //VecCopy(existing_vec._v, _v);
-
 }
 
 //-----------------------------------------------------------------

@@ -91,7 +91,8 @@ void checkGlobalVectorInterfaceMPI()
     x = 10.;
 
     // Value of x is not copied to y
-    T_VECTOR y(x);
+    T_VECTOR y;
+    y.Duplicate(x);
 
     y = 10.0;
     y += x;
