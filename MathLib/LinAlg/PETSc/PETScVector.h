@@ -71,11 +71,31 @@ class PETScVector
             return _size_loc;
         }
 
-        /// Get PETsc vector. Use it only for test purpose
-        PETSc_Vec &getData()
+        /// Get the start index of the local vector
+        PetscInt getRangeBegin() const
         {
-            return _v;
+            return _start_rank;
         }
+
+        /// Get the end index of the local vector
+        PetscInt getRangeEnd() const
+        {
+            return _end_rank;
+        }
+
+        /*!
+          Get norm of vector
+          \param nmtype   norm type
+                          sum_abs_entries denotes \f$\sum_i |x_i|\f$
+                          euclidean denotes \f$\sqrt(\sum_i (x_i)^2)\f$
+                          max_abs_entry denotes \f$\mathrm{max}_i |x_i|\f$
+
+           \var VectorNormType  an enum type has values as
+                     SUM_ABS_ENTRIES = 0,
+                     EUCLIDEAN = 1,
+                     MAX_ABS_ENTRY = 2
+        */
+        PetscScalar getNorm(const MathLib::VecNormType nmtype = MathLib::VecNormType::NORM2) const;
 
         /*!
            Insert a single entry with value.
@@ -86,7 +106,7 @@ class PETScVector
          */
         void set(const PetscInt i, const PetscScalar value)
         {
-            VecSetValues(_v,1,&i,&value,INSERT_VALUES);
+            VecSetValue(_v, i, value, INSERT_VALUES);
         }
 
         /*!
@@ -99,26 +119,6 @@ class PETScVector
         {
             VecSetValue(_v, i, value,  ADD_VALUES);
         }
-
-        /*!
-           Insert multi-entries with value.
-
-           \param ni number of entries
-           \param ix indicies of entries
-           \param y  values of entries
-         */
-        void setValues(const PetscInt ni,const PetscInt ix[],
-                       const PetscScalar y[]);
-
-        /*!
-           Add values to multi-entries.
-
-           \param ni number of entries
-           \param ix indicies of entries
-           \param y  values of entries
-         */
-        void addValues(const PetscInt ni, const PetscInt ix[],
-                       const PetscScalar y[]);
 
         /*!
            Add values to several entries
@@ -145,6 +145,18 @@ class PETScVector
         }
 
         /*!
+           get several entries
+           \param e_idxs  indicies of entries to be gotten.
+                          Note: size_t cannot be the type of e_idxs template argument
+           \param sub_vec values of entries
+        */
+        template<class T_SUBVEC>  void get(const std::vector<PetscInt> &e_idxs,
+                                           T_SUBVEC &sub_vec)
+        {
+            VecGetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
+        }
+
+        /*!
            Get local vector, i.e. entries in the same rank
 
            \param loc_vec  pinter to array where stores the local vector
@@ -157,19 +169,6 @@ class PETScVector
         }
 
         /*!
-         Get values of the specified elements from a global vector
-
-         \param ni  number of elements to get
-         \param ix  indices where to get them from (in global 1d numbering)
-         \param y   values of the got entries
-        */
-        void getEntries(PetscInt ni, const PetscInt ix[],
-                        PetscScalar y[]) const
-        {
-            VecGetValues(_v, ni, ix, y);
-        }
-
-        /*!
            Get global vector
 
            \param u0  array to store the global vector
@@ -178,29 +177,15 @@ class PETScVector
          */
         void getGlobalEntries(PetscScalar u0[], PetscScalar u1[]);
 
-        /*!
-          Get norm of vector
-          \param nmtype   norm type
-                          sum_abs_entries denotes \f$\sum_i |x_i|\f$
-                          euclidean denotes \f$\sqrt(\sum_i (x_i)^2)\f$
-                          max_abs_entry denotes \f$\mathrm{max}_i |x_i|\f$
-
-           \var VectorNormType  an enum type has values as
-                     SUM_ABS_ENTRIES = 0,
-                     EUCLIDEAN = 1,
-                     MAX_ABS_ENTRY = 2
-        */
-        PetscReal getNorm(const OGS_NormType nmtype = OGS_NormType::EUCLIDEAN) const;
-
-        /// Set all entries to zero value
-        void setZero()
-        {
-            VecSet(_v, 0.0);
-        }
-
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
-        double get(const  PetscInt idx) const;
+        PetscScalar get(const  PetscInt idx) const;
+
+        /// Get PETsc vector. Use it only for test purpose
+        PETSc_Vec &getData()
+        {
+            return _v;
+        }
 
         /// Initialize  the vector with a constant value
         void operator = (const PetscScalar val)
@@ -223,18 +208,6 @@ class PETScVector
         void operator -= (const PETScVector& v_in)
         {
             VecAXPY(_v, -1.0, v_in._v);
-        }
-
-        /// Get the start index of the local vector
-        PetscInt getRangeBegin() const
-        {
-            return _start_rank;
-        }
-
-        /// Get the end index of the local vector
-        PetscInt getRangeEnd() const
-        {
-            return _end_rank;
         }
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.

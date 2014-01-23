@@ -36,6 +36,9 @@ void checkGlobalVectorInterface()
     T_VECTOR x(10);
 
     ASSERT_EQ(10u, x.size());
+    ASSERT_EQ(0u, x.getRangeBegin());
+
+    ASSERT_EQ(10u, x.size());
 
     ASSERT_EQ(.0, x.get(0));
     x.set(0, 1.0);
@@ -80,8 +83,7 @@ void checkGlobalVectorInterfaceMPI()
     const int r0 = x.getRangeBegin();
 
     ASSERT_EQ(16u, x.size());
-    ASSERT_TRUE(r0 >= 0);
-    ASSERT_TRUE(x.getRangeEnd() >= 0);
+    ASSERT_TRUE(x.getLocalSize() > 0);
 
     //x.get(0) is expensive, only get local value. Use it for test purpose
     ASSERT_EQ(.0, x.get(r0));

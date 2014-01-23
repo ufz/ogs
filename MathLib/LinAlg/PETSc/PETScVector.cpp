@@ -61,11 +61,11 @@ void PETScVector::collectLocalVectors(  PetscScalar u_local_filled[],
     PetscInt receive_start_rank;
     MPI_Status status;
     const int tag = 89999; // sending, receiving tag
-    const int _size_rank = BaseLib::InfoMPI::getSize();
-    const int _rank = BaseLib::InfoMPI::getRank();
-    for(int i=0; i<_size_rank; i++)
+    const int size_rank = BaseLib::InfoMPI::getSize();
+    const int rank = BaseLib::InfoMPI::getRank();
+    for(int i=0; i<size_rank; i++)
     {
-        if(i != _rank)
+        if(i != rank)
         {
             // get the local size belong to other ranks
             MPI_Sendrecv( &_size_loc, 1, MPI_INT, i,tag,
@@ -125,25 +125,25 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
 #endif
 }
 
-PetscReal PETScVector::getNorm(OGS_NormType  nmtype) const
+PetscScalar PETScVector::getNorm(MathLib::VecNormType  nmtype) const
 {
     NormType petsc_norm = NORM_1;
     switch(nmtype)
     {
-        case OGS_NormType::SUM_ABS_ENTRIES:
+        case MathLib::VecNormType::NORM1:
             petsc_norm = NORM_1;
             break;
-        case OGS_NormType::EUCLIDEAN:
+        case MathLib::VecNormType::NORM2:
             petsc_norm = NORM_2;
             break;
-        case OGS_NormType::MAX_ABS_ENTRY:
+        case MathLib::VecNormType::INFINITY_N:
             petsc_norm = NORM_INFINITY;
             break;
         default:
             break;
     }
 
-    PetscReal norm = 0.;
+    PetscScalar norm = 0.;
     VecNorm(_v, petsc_norm, &norm);
     return norm;
 }
