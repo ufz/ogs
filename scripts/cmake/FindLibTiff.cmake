@@ -5,9 +5,6 @@
 #  libtiff_INCLUDE_DIRS
 #  libtiff_LIBRARIES
 
-
-include(LibFindMacros)
-
 find_path( libtiff_INCLUDE_DIR
 	NAMES tiff.h
 	PATHS

@@ -10,7 +10,6 @@
 #  GEOTIFF_INCLUDE_DIRS
 #  GEOTIFF_LIBRARIES
 
-include(LibFindMacros)
 set(SEARCH_DIRS
 	${GEOTIFF_DIR}
 	$ENV{GEOTIFF_DIR}
@@ -66,5 +65,3 @@ if(GEOTIFF_FOUND)
 	set(GEOTIFF_INCLUDE_DIRS ${libgeotiff_INCLUDE_DIR} ${_deps_includes})
 	set(GEOTIFF_LIBRARIES ${libgeotiff_LIBRARY} ${_deps_libs})
 endif()
-
-message("GEOTIFF: ${GEOTIFF_LIBRARIES}")
