@@ -166,9 +166,9 @@ IF (VTKOSGCONVERTER_FOUND)
 	INCLUDE_DIRECTORIES( ${VTKOSGCONVERTER_INCLUDE_DIRS} )
 ENDIF (VTKOSGCONVERTER_FOUND)
 
-IF (libgeotiff_FOUND)
-	INCLUDE_DIRECTORIES( ${libgeotiff_INCLUDE_DIR} ${libgeotiff_INCLUDE_DIR}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
-ENDIF () # libgeotiff_FOUND
+IF (GEOTIFF_FOUND)
+	INCLUDE_DIRECTORIES( ${GEOTIFF_INCLUDE_DIRS} ${GEOTIFF_INCLUDE_DIRS}/libxtiff ${VTK_DIR}/../Utilities/vtktiff )
+ENDIF () # GEOTIFF_FOUND
 
 # Put moc files in a project folder
 source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
@@ -199,8 +199,8 @@ target_link_libraries( QtDataView
 
 ADD_DEPENDENCIES(QtDataView VtkRescan)
 
-IF (libgeotiff_FOUND)
-	TARGET_LINK_LIBRARIES( QtDataView ${libgeotiff_LIBRARIES} )
-ENDIF () # libgeotiff_FOUND
+IF (GEOTIFF_FOUND)
+	TARGET_LINK_LIBRARIES( QtDataView ${GEOTIFF_LIBRARIES} )
+ENDIF () # GEOTIFF_FOUND
 
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")

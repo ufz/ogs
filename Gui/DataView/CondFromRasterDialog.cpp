@@ -46,7 +46,7 @@ CondFromRasterDialog::~CondFromRasterDialog()
 void CondFromRasterDialog::on_selectButton_pressed()
 {
 	QSettings settings;
-#ifdef libgeotiff_FOUND
+#ifdef GEOTIFF_FOUND
 	QString geotiffExtension(" *.tif");
 #else
 	QString geotiffExtension("");

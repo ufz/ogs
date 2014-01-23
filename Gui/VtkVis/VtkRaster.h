@@ -63,7 +63,7 @@ private:
 	 * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
 	 * \return A vtkImageImport-object (derived from vtkImageAlgorithm).
 	 */
-#ifdef libgeotiff_FOUND
+#ifdef GEOTIFF_FOUND
 	static vtkImageImport* loadImageFromTIFF(const std::string &fileName,
 											 double& x0, double& y0, double& delta);
 #endif

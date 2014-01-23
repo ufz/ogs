@@ -40,7 +40,7 @@
 #include <vtkJPEGReader.h>
 #include <vtkBMPReader.h>
 
-#ifdef libgeotiff_FOUND
+#ifdef GEOTIFF_FOUND
 #include "geo_tiffp.h"
 #include "xtiffio.h"
 #endif
@@ -67,9 +67,12 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 						raster->getNCols(), raster->getNRows(), raster->getRasterPixelDistance(),
 						raster->getNoDataValue());
 	}
-#ifdef libgeotiff_FOUND
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
+#ifdef GEOTIFF_FOUND
 		return loadImageFromTIFF(fileName, x0, y0, delta);
+#else
+		ERR("VtkRaster::loadImage(): Tiff file format not support in this version!");
+		return nullptr;
 #endif
 	else
 		return loadImageFromFile(fileName);
@@ -116,7 +119,7 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, dou
 
 
 
-#ifdef libgeotiff_FOUND
+#ifdef GEOTIFF_FOUND
 vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
                                   double &x0, double &y0,
                                   double &cellsize)
@@ -265,7 +268,7 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 		image = vtkBMPReader::New();
 	else
 	{
-		ERR("VtkRaster::readImageFromFile(): File format not support, please convert to BMP, JPG, PNG or TIFF.");
+		ERR("VtkRaster::readImageFromFile(): File format not support, please convert to BMP, JPG or PNG.");
 		return nullptr;
 	}
 
