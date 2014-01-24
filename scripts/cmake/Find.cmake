@@ -1,15 +1,3 @@
-############################
-### Find OGS directories ###
-############################
-
-# Compiled libraries (for Windows)
-FIND_PATH(OGS_LIBS_DIR_FOUND geotiff.lib
-	PATHS $ENV{OGS_LIBS} ${OGS_LIBS_DIR} ${PROJECT_SOURCE_DIR}/../libs C:/OGS_Libs
-	PATH_SUFFIXES libgeotiff)
-IF(OGS_LIBS_DIR_FOUND)
-	SET(OGS_LIBS_DIR ${OGS_LIBS_DIR_FOUND}/.. CACHE STRING "")
-ENDIF()
-
 # Add Homebrew package manager paths
 IF(APPLE)
 	LIST(APPEND CMAKE_INCLUDE_PATH $ENV{HOMEBREW_ROOT}/include)

@@ -11,19 +11,9 @@
 # http://glaros.dtc.umn.edu/gkhome/metis/metis/download
 #
 
-FIND_PATH(METIS_INCLUDE_DIR metis.h
-	/usr/include/metis
-	$ENV{HOME}/include/
-	${CMAKE_SOURCE_DIR}/../libs/include
-	${OGS_LIBS_DIR_FOUND}/include
-)
+FIND_PATH(METIS_INCLUDE_DIR metis.h)
 
-FIND_LIBRARY(METIS_LIBRARY metis
-	/usr/lib
-	$ENV{HOME}/lib/
-	${CMAKE_SOURCE_DIR}/../libs/lib
-	${OGS_LIBS_DIR_FOUND}/lib
-)
+FIND_LIBRARY(METIS_LIBRARY metis)
 
 SET(METIS_LIBRARIES ${METIS_LIBRARY})
 

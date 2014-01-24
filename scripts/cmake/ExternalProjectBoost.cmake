@@ -32,9 +32,6 @@ ENDIF()
 
 # First check for system boost
 IF(NOT Boost_INCLUDE_DIRS)
-	IF(OGS_LIBS_DIR)
-		SET(BOOST_ROOT ${OGS_LIBS_DIR}/boost)
-	ENDIF()
 	IF(APPLE)
 		SET(BOOST_ROOT $ENV{HOMEBREW_ROOT})
 	ENDIF()
