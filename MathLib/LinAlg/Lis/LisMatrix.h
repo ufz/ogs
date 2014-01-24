@@ -121,8 +121,8 @@ private:
     LIS_MATRIX _AA;
     LIS_VECTOR _diag;
     bool _is_assembled;
-    int _is;	///< location where the partial matrix _AA starts in global matrix.
-    int _ie;	///< location where the partial matrix _AA ends in global matrix.
+    LIS_INT _is;	///< location where the partial matrix _AA starts in global matrix.
+    LIS_INT _ie;	///< location where the partial matrix _AA ends in global matrix.
 
     // friend function
     friend bool finalizeMatrixAssembly(LisMatrix &mat);
