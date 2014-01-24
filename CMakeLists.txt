@@ -24,6 +24,8 @@ SET (OGS_DATE "2012-08-20")
 ### Preliminary Options ###
 ###########################
 OPTION(OGS_NO_BOOST_DOWNLOAD "Always use the system installed Boost?" OFF)
+SET(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
+	"Additional library installation path, e.g. /opt/local or C:/libs")
 
 ### CMake includes ###
 INCLUDE(scripts/cmake/CheckTypeSizes.cmake)

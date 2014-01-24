@@ -4,6 +4,14 @@ IF(APPLE)
 	LIST(APPEND CMAKE_LIBRARY_PATH $ENV{HOMEBREW_ROOT}/lib)
 ENDIF()
 
+# Add user-given library install paths, e.g. /opt/local
+LIST(APPEND CMAKE_INCLUDE_PATH
+	$ENV{CMAKE_LIBRARY_SEARCH_PATH}/include
+	${CMAKE_LIBRARY_SEARCH_PATH}/include)
+LIST(APPEND CMAKE_LIBRARY_PATH
+	$ENV{CMAKE_LIBRARY_SEARCH_PATH}/lib
+	${CMAKE_LIBRARY_SEARCH_PATH}/lib)
+
 ######################
 ### Find tools     ###
 ######################
