@@ -31,7 +31,7 @@ class Writer
 {
 public:
 	Writer();
-	virtual ~Writer() {};
+	virtual ~Writer() {}
 
 	/// @brief Writes the object to a string.
 	std::string writeToString();

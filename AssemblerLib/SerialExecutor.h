@@ -38,7 +38,7 @@ struct SerialExecutor
     {
         for (std::size_t i = 0; i < c.size(); i++)
             f(c[i], i);
-    };
+    }
 
 };
 
