@@ -10,6 +10,12 @@ IF(OGS_LIBS_DIR_FOUND)
 	SET(OGS_LIBS_DIR ${OGS_LIBS_DIR_FOUND}/.. CACHE STRING "")
 ENDIF()
 
+# Add Homebrew package manager paths
+IF(APPLE)
+	LIST(APPEND CMAKE_INCLUDE_PATH $ENV{HOMEBREW_ROOT}/include)
+	LIST(APPEND CMAKE_LIBRARY_PATH $ENV{HOMEBREW_ROOT}/lib)
+ENDIF()
+
 ######################
 ### Find tools     ###
 ######################
