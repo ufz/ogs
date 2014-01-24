@@ -53,7 +53,7 @@ IF(COMPILER_IS_CLANG)
 	IF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
 		MESSAGE(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
 	ENDIF()
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Weverything -Wno-c++98-compat-pedantic")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
 ENDIF() # COMPILER_IS_CLANG
 
 ### Intel compiler

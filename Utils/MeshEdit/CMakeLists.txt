@@ -34,15 +34,6 @@ IF(QT4_FOUND)
 
 ENDIF() # QT4_FOUND
 
-ADD_EXECUTABLE( reverseMeshNodeOrdering reverseMeshNodeOrdering.cpp )
-TARGET_LINK_LIBRARIES( reverseMeshNodeOrdering
-	BaseLib
-	FileIO
-	MathLib
-	MeshLib
-)
-SET_TARGET_PROPERTIES(reverseMeshNodeOrdering PROPERTIES FOLDER Utilities)
-
 ADD_EXECUTABLE( removeMeshElements removeMeshElements.cpp )
 TARGET_LINK_LIBRARIES( removeMeshElements
 	BaseLib
