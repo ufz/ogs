@@ -652,6 +652,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFile_Converter</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>callFileConverter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -666,5 +682,6 @@
   <slot>showLicense()</slot>
   <slot>showMergeGeometriesDialog()</slot>
   <slot>showMeshElementRemovalDialog()</slot>
+  <slot>callFileConverter()</slot>
  </slots>
 </ui>
