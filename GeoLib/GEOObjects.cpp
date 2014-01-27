@@ -559,43 +559,31 @@ const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
 	switch (type) {
 	case GeoLib::GEOTYPE::POINT: {
 		GeoLib::PointVec const* pnt_vec(getPointVecObj(geo_name));
-		if (!pnt_vec) {
-			ERR("GEOObjects::getGeoObject(): Could not fetch PointVec obj for geometry \"%s\".",
-					geo_name.c_str());
-			return geo_obj;
-		}
-		geo_obj = const_cast<GeoLib::GeoObject*>(
-				dynamic_cast<GeoLib::GeoObject const*>(
-						pnt_vec->getElementByName(geo_obj_name)));
+		if (pnt_vec)
+			geo_obj = const_cast<GeoLib::GeoObject*>(
+					dynamic_cast<GeoLib::GeoObject const*>(
+							pnt_vec->getElementByName(geo_obj_name)));
 		break;
 	}
 	case GeoLib::GEOTYPE::POLYLINE: {
 		GeoLib::PolylineVec const* ply_vec(getPolylineVecObj(geo_name));
-		if (!ply_vec) {
-			ERR("GEOObjects::getGeoObject(): Could not fetch PolylineVec obj for geometry \"%s\".",
-					geo_name.c_str());
-			return geo_obj;
-		}
-		geo_obj = const_cast<GeoLib::GeoObject*>(
-				dynamic_cast<GeoLib::GeoObject const*>(
-						ply_vec->getElementByName(geo_obj_name)));
+		if (ply_vec)
+			geo_obj = const_cast<GeoLib::GeoObject*>(
+					dynamic_cast<GeoLib::GeoObject const*>(
+							ply_vec->getElementByName(geo_obj_name)));
 		break;
 	}
 	case GeoLib::GEOTYPE::SURFACE: {
 		GeoLib::SurfaceVec const* sfc_vec(getSurfaceVecObj(geo_name));
-		if (!sfc_vec) {
-			ERR("GEOObjects::getGeoObject(): Could not fetch SurfaceVec obj for geometry \"%s\".",
-					geo_name.c_str());
-			return geo_obj;
-		}
-		geo_obj = const_cast<GeoLib::GeoObject*>(
-				dynamic_cast<GeoLib::GeoObject const*>(
-						sfc_vec->getElementByName(geo_obj_name)));
+		if (sfc_vec)
+			geo_obj = const_cast<GeoLib::GeoObject*>(
+					dynamic_cast<GeoLib::GeoObject const*>(
+							sfc_vec->getElementByName(geo_obj_name)));
 		break;
 	}
 	default:
 		ERR("GEOObjects::getGeoObject(): geometric type not handled.")
-		return geo_obj;
+		return nullptr;
 	};
 
 	if (!geo_obj) {
