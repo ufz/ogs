@@ -120,7 +120,7 @@ void ProcessModel::addCondition(FEMCondition* condition)
 	const GeoLib::GeoObject* object = condition->getGeoObj();
 	if (object == nullptr)
 	{
-		object = _project.getGEOObjects()->getGEOObject(condition->getAssociatedGeometryName(),
+		object = _project.getGEOObjects()->getGeoObject(condition->getAssociatedGeometryName(),
 				condition->getGeomType(), condition->getGeoName());
 		condition->setGeoObj(object);
 	}

@@ -21,6 +21,9 @@
 #include "GeoInfo.h"
 #include "ProcessInfo.h"
 
+// GeoLib
+#include "GEOObjects.h"
+
 class CBoundaryCondition;
 class CInitialCondition;
 class CSourceTerm;
@@ -55,10 +58,10 @@ public:
 	CondType getCondType() const { return _type; }
 
 	/// Returns the value(s) for the distribution
-	const std::vector<std::size_t> getDisNodes() const { return _disNodes; }
+	std::vector<std::size_t> const& getDisNodes() const { return _disNodes; }
 
 	/// Returns the value(s) for the distribution
-	const std::vector<double> getDisValues() const { return _disValues; }
+	std::vector<double> const& getDisValues() const { return _disValues; }
 
 	/// Returns the name of the geo-object the condition is assigned to. This object is part of the associated geometry.
 	const std::string& getGeoName() const { return _geoName; }
@@ -89,6 +92,19 @@ public:
 
 	/// Returns the type of the FEM condition as a string.
 	static std::string condTypeToString(CondType type);
+
+	/**
+	 *
+	 * @param geo_name the name of the geometry
+	 * @param geo_obj_type type of geometric object (POINT, POLYLINE, ...) as string @see GeoLib::GEOTYPE
+	 * @param geo_obj_name name of the geometric object
+	 * @param geo_objs instance of class GEOObjects is employed for getting
+	 * the pointer of the geometric object (GEOObjects::getGeoObject())
+	 */
+	void initGeometricAttributes(std::string const& geo_name,
+			std::string const& geo_obj_type,
+			std::string const& geo_obj_name,
+			GeoLib::GEOObjects const& geo_objs);
 
 protected:
 	CondType _type;

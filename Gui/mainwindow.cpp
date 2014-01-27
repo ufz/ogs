@@ -1186,7 +1186,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 
 		if (object_type != GeoLib::GEOTYPE::INVALID)
 		{
-			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_project.getGEOObjects()->getGEOObject(geometry_name, object_type, geo_name), on_points);
+			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_project.getGEOObjects()->getGeoObject(geometry_name, object_type, geo_name), on_points);
 			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(createFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}
