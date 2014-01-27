@@ -1,7 +1,5 @@
 /**
- * @file
  * @date Oct 24, 2013
- * @brief
  *
  * @copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -10,14 +8,14 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-
 // MeshLib
-#include "Elements/Element.h"
-#include "Elements/Line.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Line.h"
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"

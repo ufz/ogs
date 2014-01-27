@@ -1,7 +1,5 @@
 /**
- * @file
  * @date Oct 24, 2013
- * @brief
  *
  * @copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,13 +15,13 @@
 #include "boost/optional.hpp"
 
 // GeoLib
-#include "Point.h"
-#include "Polyline.h"
-#include "Grid.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Grid.h"
 
 // MeshLib
-#include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 // forward declaration
 namespace MeshGeoToolsLib
@@ -45,8 +43,8 @@ class MeshNodeSearcher
 public:
 	/**
 	 * Constructor for objects of class MeshNodeSearcher. It calculates
-	 * internal used search length out of the given MeshLib::Mesh.
-	 * @param mesh The mesh within the search will be performed. It is asumed
+	 * internally used search length from the given MeshLib::Mesh.
+	 * @param mesh Run search algorithm on this mesh. It is assumed
 	 * that the mesh does not change its geometry.
 	 */
 	explicit MeshNodeSearcher(MeshLib::Mesh const& mesh,
