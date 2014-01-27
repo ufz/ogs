@@ -1027,7 +1027,11 @@ void MainWindow::callFileConverter() const
 {
 	if (system(NULL) != 0) // command processor available
 	{
+#ifdef WIN32
 		std::string call_command("OGSFileConverter");
+#else
+		std::string call_command("./OGSFileConverter");
+#endif // Win32
 		system(call_command.c_str());
 	}
 	else
