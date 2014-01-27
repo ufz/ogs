@@ -1,3 +1,4 @@
+
 /**
  * \file
  * \author Karsten Rink
@@ -68,12 +69,14 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 						raster->getNoDataValue());
 	}
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
+	{
 #ifdef GEOTIFF_FOUND
 		return loadImageFromTIFF(fileName, x0, y0, delta);
 #else
 		ERR("VtkRaster::loadImage(): Tiff file format not support in this version!");
 		return nullptr;
 #endif
+	}
 	else
 		return loadImageFromFile(fileName);
 }
