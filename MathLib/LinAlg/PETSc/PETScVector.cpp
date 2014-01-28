@@ -50,7 +50,7 @@ void PETScVector::create(PetscInt vec_size)
     // VecSetSizes(v, m_size_loc, m);
     VecSetSizes(_v, PETSC_DECIDE, vec_size);
     VecSetFromOptions(_v);
-    // VecSetUp(b); // for ver.>3.3
+    // VecSetUp(_v); // for ver.>3.3
     VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
 
     VecGetLocalSize(_v, &_size_loc);
