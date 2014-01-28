@@ -20,6 +20,8 @@
 
 #include "PETScVector.h"
 
+#include "array"
+
 #include "InfoMPI.h"
 
 namespace MathLib
@@ -48,39 +50,50 @@ void PETScVector::create(PetscInt vec_size)
     // VecSetSizes(v, m_size_loc, m);
     VecSetSizes(_v, PETSC_DECIDE, vec_size);
     VecSetFromOptions(_v);
+    // VecSetUp(b); // for ver.>3.3
     VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
 
     VecGetLocalSize(_v, &_size_loc);
 }
 
-void PETScVector::collectLocalVectors(  PetscScalar u_local_filled[],
-                                        PetscScalar u_local_received[],
-                                        PetscScalar u_global[])
+void PETScVector::collectLocalVectors( PetscScalar local_array[],
+                                       PetscScalar global_array[])
 {
     // Collect solution from processes.
-    PetscInt receive_size_loc;
-    PetscInt receive_start_rank;
-    MPI_Status status;
-    const int tag = 89999; // sending, receiving tag
     const int size_rank = BaseLib::InfoMPI::getSize();
-    const int rank = BaseLib::InfoMPI::getRank();
+
+    // number of elements to be sent for each rank
+    int *i_cnt = new int[size_rank];
+    // offset in the receive vector of the data from each rank
+    int *i_disp = new int[size_rank];
+    //  each element contains the local size of vectors
+    int *gathered_local_sizes = new int[size_rank];
+
+    // collect local sizes
     for(int i=0; i<size_rank; i++)
     {
-        if(i != rank)
-        {
-            // get the local size belong to other ranks
-            MPI_Sendrecv( &_size_loc, 1, MPI_INT, i,tag,
-                          &receive_size_loc, 1, MPI_INT, i, tag, PETSC_COMM_WORLD, &status);
-            // get the start point of the local vectors belong to other ranks
-            MPI_Sendrecv( &_start_rank, 1, MPI_INT, i, tag,
-                          &receive_start_rank, 1, MPI_INT, i, tag, PETSC_COMM_WORLD, &status);
-            // get the other local vector
-            MPI_Sendrecv( u_local_filled, _size_loc, MPI_DOUBLE, i,tag,
-                          u_local_received, receive_size_loc, MPI_DOUBLE, i, tag, PETSC_COMM_WORLD, &status);
-            for(int j=0; j<receive_size_loc; j++)
-                u_global[receive_start_rank+j] = u_local_received[j];
-        }
+        i_cnt[i] = 1;
+        i_disp[i] = i;
     }
+    MPI_Allgatherv(&_size_loc, 1, MPI_INT,
+                   gathered_local_sizes, i_cnt, i_disp,
+                   MPI_INT, MPI_COMM_WORLD);
+
+    // colloect local array
+    int offset = 0;
+    for(int i=0; i<size_rank; i++)
+    {
+        i_cnt[i] = gathered_local_sizes[i];
+        i_disp[i] = offset;
+        offset += i_cnt[i];
+    }
+
+    MPI_Allgatherv(local_array, _size_loc, MPI_DOUBLE,
+                   global_array, i_cnt, i_disp, MPI_DOUBLE, MPI_COMM_WORLD);
+
+    delete [] i_cnt;
+    delete [] i_disp;
+    delete [] gathered_local_sizes;
 }
 
 void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
@@ -93,31 +106,13 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
 
     PetscScalar *xp = nullptr;
     VecGetArray(_v, &xp);
-    std::copy(xp, xp + _size_loc, u1);
-    // Alternative for debugging:
-    //for(int i=0; i<_size_loc; i++)
-    // u1[i] = xp[i];
 
-    PetscScalar *global_buff = new PetscScalar[_size];
-
-    std::copy_n(u1, _size_loc, global_buff+_start_rank);
-    // Alternative for debugging:
-    //for(int j=0; j<_size_loc; j++)
-    // global_buff[_start_rank+j] = u1[j];
-
-    collectLocalVectors(u1, u0,  global_buff);
+    collectLocalVectors(xp, u0);
 
     //MPI_Barrier(PETSC_COMM_WORLD);
-    // Copy the collected solution to the array for the previous solution
-    for(int i=0; i<_size; i++)
-    {
-        u1[i] = global_buff[i];
-        u0[i] = global_buff[i];
-    }
+    std::copy(u0, u0 + _size, u1);
 
     VecRestoreArray(_v, &xp);
-
-    delete [] global_buff;
 
     //TEST
 #ifdef TEST_MEM_PETSC

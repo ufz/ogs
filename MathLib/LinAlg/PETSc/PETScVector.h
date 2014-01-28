@@ -261,13 +261,11 @@ class PETScVector
 
         /*!
               \brief  collect local vectors
-              \param  u_local_filled  vector already filled locally
-              \param  u_local_received  received local vector
-              \param  u_glabal the global vector
+              \param  local_array  local array
+              \param  global_array global array
         */
-        void collectLocalVectors( PetscScalar u_local_filled[],
-                                  PetscScalar u_local_received[],
-                                  PetscScalar u_global[]);
+        void collectLocalVectors(PetscScalar local_array[],
+                                 PetscScalar global_array[]);
 };
 
 } // end namespace
