@@ -48,15 +48,11 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
 	// happen due to numerics).
 	_search_length = mean/2;
 
-	if (variance > 0.0) {
-		const double std_deviation (sqrt(variance));
-		// heuristic to prevent negative search lengths
-		// in the case of a big standard deviation
-		double c(2.0);
-		while (mean < c * std_deviation) {
-			c *= 0.9;
-		}
-		_search_length = (mean - c * std_deviation)/2;
+	if (variance > 0) {
+		if (variance < mean*mean/4)
+			_search_length -= std::sqrt(variance);
+		else
+			_search_length = std::numeric_limits<double>::epsilon();
 	}
 
 	DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
