@@ -84,7 +84,7 @@ void PETScVector::collectLocalVectors( PetscScalar local_array[],
     delete [] i_disp;
 }
 
-void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
+void PETScVector::getGlobalEntries(PetscScalar u[])
 {
 
 #ifdef TEST_MEM_PETSC
@@ -95,10 +95,9 @@ void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
     PetscScalar *xp = nullptr;
     VecGetArray(_v, &xp);
 
-    collectLocalVectors(xp, u0);
+    collectLocalVectors(xp, u);
 
     //MPI_Barrier(PETSC_COMM_WORLD);
-    std::copy(u0, u0 + _size, u1);
 
     VecRestoreArray(_v, &xp);
 

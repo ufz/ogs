@@ -180,7 +180,7 @@ class PETScVector
            \param u1  array to store the global vector too, and it is also used as
                       a buffer array in this function.
          */
-        void getGlobalEntries(PetscScalar u0[], PetscScalar u1[]);
+        void getGlobalEntries(PetscScalar u[]);
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose

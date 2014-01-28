@@ -118,7 +118,6 @@ void checkGlobalVectorInterfaceMPI()
     ASSERT_NEAR(normy-y.getNorm(), 0.0, 1.e-10);
 
     double x0[16];
-    double x1[16];
     double z[] =
     {
         2.0000000000000000e+01,
@@ -139,10 +138,9 @@ void checkGlobalVectorInterfaceMPI()
         1.0000000000000000e+01
     };
 
-    y.getGlobalEntries(x0, x1);
+    y.getGlobalEntries(x0);
 
     ASSERT_ARRAY_NEAR(x0, z, 16, 1e-10);
-    ASSERT_ARRAY_NEAR(x1, z, 16, 1e-10);
 }
 #endif
 
