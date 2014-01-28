@@ -66,24 +66,13 @@ void PETScVector::collectLocalVectors( PetscScalar local_array[],
     int *i_cnt = new int[size_rank];
     // offset in the receive vector of the data from each rank
     int *i_disp = new int[size_rank];
-    //  each element contains the local size of vectors
-    int *gathered_local_sizes = new int[size_rank];
 
-    // collect local sizes
-    for(int i=0; i<size_rank; i++)
-    {
-        i_cnt[i] = 1;
-        i_disp[i] = i;
-    }
-    MPI_Allgatherv(&_size_loc, 1, MPI_INT,
-                   gathered_local_sizes, i_cnt, i_disp,
-                   MPI_INT, MPI_COMM_WORLD);
+    MPI_Allgather(&_size_loc, 1, MPI_INT, i_cnt, 1, MPI_INT, MPI_COMM_WORLD);
 
     // colloect local array
     int offset = 0;
     for(int i=0; i<size_rank; i++)
     {
-        i_cnt[i] = gathered_local_sizes[i];
         i_disp[i] = offset;
         offset += i_cnt[i];
     }
@@ -93,7 +82,6 @@ void PETScVector::collectLocalVectors( PetscScalar local_array[],
 
     delete [] i_cnt;
     delete [] i_disp;
-    delete [] gathered_local_sizes;
 }
 
 void PETScVector::getGlobalEntries(PetscScalar u0[], PetscScalar u1[])
