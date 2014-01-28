@@ -314,12 +314,12 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 
 	reset();
 	emit vtkVisPipelineChanged();
+	emit itemSelected(newIndex);
 
 	return newIndex;
 }
 
-QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
-                                      QModelIndex parent /* = QModelindex() */)
+QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex parent /* = QModelindex() */)
 {
 	TreeItem* parentItem = getItem(parent);
 

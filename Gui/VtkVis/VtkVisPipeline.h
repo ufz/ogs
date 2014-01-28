@@ -147,6 +147,7 @@ private:
 signals:
 	/// \brief Is emitted when a pipeline item was added or removed.
 	void vtkVisPipelineChanged() const;
+	void itemSelected(const QModelIndex&) const;
 };
 
 #endif // VTKVISPIPELINE_H

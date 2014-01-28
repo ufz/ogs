@@ -45,7 +45,7 @@
 vtkStandardNewMacro(VtkCustomInteractorStyle);
 
 VtkCustomInteractorStyle::VtkCustomInteractorStyle()
-	: _highlightActor(true), _alternateMouseActions(false)
+	: _highlightActor(false), _alternateMouseActions(false)
 {
 	selectedMapper = vtkDataSetMapper::New();
 	selectedActor = vtkActor::New();
@@ -197,7 +197,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
 			AddActor(selectedActor);
-			_highlightActor = true;
+			//_highlightActor = true;
 		}
 		else
 			this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
