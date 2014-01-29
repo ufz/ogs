@@ -551,17 +551,46 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
 	}
 }
 
-const GeoLib::GeoObject* GEOObjects::getGEOObject(const std::string &geo_name,
+const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
                                                             GeoLib::GEOTYPE type,
-                                                            const std::string &obj_name) const
+                                                            const std::string &geo_obj_name) const
 {
-	if (type == GeoLib::GEOTYPE::POINT)
-		return this->getPointVecObj(geo_name)->getElementByName(obj_name);
-	else if (type == GeoLib::GEOTYPE::POLYLINE)
-		return this->getPolylineVecObj(geo_name)->getElementByName(obj_name);
-	else if (type == GeoLib::GEOTYPE::SURFACE)
-		return this->getSurfaceVecObj(geo_name)->getElementByName(obj_name);
-	return NULL;
+	GeoLib::GeoObject *geo_obj(nullptr);
+	switch (type) {
+	case GeoLib::GEOTYPE::POINT: {
+		GeoLib::PointVec const* pnt_vec(getPointVecObj(geo_name));
+		if (pnt_vec)
+			geo_obj = const_cast<GeoLib::GeoObject*>(
+					dynamic_cast<GeoLib::GeoObject const*>(
+							pnt_vec->getElementByName(geo_obj_name)));
+		break;
+	}
+	case GeoLib::GEOTYPE::POLYLINE: {
+		GeoLib::PolylineVec const* ply_vec(getPolylineVecObj(geo_name));
+		if (ply_vec)
+			geo_obj = const_cast<GeoLib::GeoObject*>(
+					dynamic_cast<GeoLib::GeoObject const*>(
+							ply_vec->getElementByName(geo_obj_name)));
+		break;
+	}
+	case GeoLib::GEOTYPE::SURFACE: {
+		GeoLib::SurfaceVec const* sfc_vec(getSurfaceVecObj(geo_name));
+		if (sfc_vec)
+			geo_obj = const_cast<GeoLib::GeoObject*>(
+					dynamic_cast<GeoLib::GeoObject const*>(
+							sfc_vec->getElementByName(geo_obj_name)));
+		break;
+	}
+	default:
+		ERR("GEOObjects::getGeoObject(): geometric type not handled.")
+		return nullptr;
+	};
+
+	if (!geo_obj) {
+		ERR("GEOObjects::getGeoObject(): Could not find %s \"%s\" in geometry.",
+				GeoLib::convertGeoTypeToString(type).c_str(), geo_obj_name.c_str());
+	}
+	return geo_obj;
 }
 
 int GEOObjects::exists(const std::string &geometry_name) const

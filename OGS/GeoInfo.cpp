@@ -36,21 +36,7 @@ GeoLib::GEOTYPE GeoInfo::getGeomType () const
 
 std::string GeoInfo::getGeomTypeAsString () const
 {
-	switch (_geo_type)
-	{
-	case GeoLib::GEOTYPE::POINT:
-		return "POINT";
-	case GeoLib::GEOTYPE::POLYLINE:
-		return "POLYLINE";
-	case GeoLib::GEOTYPE::SURFACE:
-		return "SURFACE";
-	case GeoLib::GEOTYPE::VOLUME:
-		return "VOLUME";
-	case GeoLib::GEOTYPE::GEODOMAIN:
-		return "DOMAIN";
-	default:
-		return "";
-	}
+	return GeoLib::convertGeoTypeToString(_geo_type);
 }
 
 void GeoInfo::setGeoType (GeoLib::GEOTYPE geo_type)
