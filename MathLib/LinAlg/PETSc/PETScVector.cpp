@@ -136,13 +136,12 @@ PetscScalar  PETScVector::get(const  PetscInt idx) const
 void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat vw_format)
 {
     PetscViewer viewer;
-    const std::string fname = file_name + "_petsc_global_vector_entries.txt";
-    PetscViewerASCIIOpen(PETSC_COMM_WORLD, fname.c_str(), &viewer);
+    PetscViewerASCIIOpen(PETSC_COMM_WORLD, file_name.c_str(), &viewer);
     PetscViewerPushFormat(viewer, vw_format);
 
     finalizeAssembly();
 
-    PetscObjectSetName((PetscObject)_v,file_name.c_str());
+    PetscObjectSetName(static_cast<PetscObject>(_v),file_name.c_str());
     VecView(_v, viewer);
 
 #define  nEXIT_TEST

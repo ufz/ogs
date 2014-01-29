@@ -67,9 +67,6 @@ OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
 OPTION(EIGEN_NO_DEBUG "Disables Eigen's assertions" ON)
  
-#boostMPI
-#OPTION(OGS_USE_BOOSTMPI "Use boostMPI" OFF)
-
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
