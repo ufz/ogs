@@ -141,7 +141,7 @@ void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat v
 
     finalizeAssembly();
 
-    PetscObjectSetName(static_cast<PetscObject>(_v),file_name.c_str());
+    PetscObjectSetName(dynamic_cast<PetscObject>(_v), file_name.c_str());
     VecView(_v, viewer);
 
 #define  nEXIT_TEST
