@@ -257,6 +257,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        visualizationWidget->vtkWidget, SLOT(update()));
 	connect(_vtkVisPipeline, SIGNAL(vtkVisPipelineChanged()),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(expandAll()));
+	connect(_vtkVisPipeline, SIGNAL(itemSelected(const QModelIndex&)),
+	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(const QModelIndex&)));
+
 
 	vtkVisTabWidget->vtkVisPipelineView->setModel(_vtkVisPipeline);
 	connect(vtkVisTabWidget->vtkVisPipelineView,
