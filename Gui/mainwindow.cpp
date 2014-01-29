@@ -257,6 +257,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        visualizationWidget->vtkWidget, SLOT(update()));
 	connect(_vtkVisPipeline, SIGNAL(vtkVisPipelineChanged()),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(expandAll()));
+	connect(_vtkVisPipeline, SIGNAL(itemSelected(const QModelIndex&)),
+	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(const QModelIndex&)));
+
 
 	vtkVisTabWidget->vtkVisPipelineView->setModel(_vtkVisPipeline);
 	connect(vtkVisTabWidget->vtkVisPipelineView,
@@ -1026,6 +1029,22 @@ void MainWindow::exportBoreholesToGMS(std::string listName,
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
+
+void MainWindow::callFileConverter() const
+{
+	if (system(NULL) != 0) // command processor available
+	{
+#ifdef WIN32
+		std::string call_command("OGSFileConverter");
+#else
+		std::string call_command("./OGSFileConverter");
+#endif // Win32
+		system(call_command.c_str());
+	}
+	else
+		OGSError::box("Error executing OGS File Converter", "Error");
+}
+
 void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                           unsigned param1, double param2, double param3, double param4,
                           bool delete_geo_file)
@@ -1186,7 +1205,7 @@ void MainWindow::showCondSetupDialog(const std::string &geometry_name, const Geo
 
 		if (object_type != GeoLib::GEOTYPE::INVALID)
 		{
-			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_project.getGEOObjects()->getGEOObject(geometry_name, object_type, geo_name), on_points);
+			FEMConditionSetupDialog dlg(geometry_name, object_type, geo_name, this->_project.getGEOObjects()->getGeoObject(geometry_name, object_type, geo_name), on_points);
 			connect(&dlg, SIGNAL(createFEMCondition(std::vector<FEMCondition*>)), this, SLOT(createFEMConditions(std::vector<FEMCondition*>)));
 			dlg.exec();
 		}

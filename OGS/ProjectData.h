@@ -18,8 +18,7 @@
 #include "FEMCondition.h"
 #include "FEMEnums.h"
 
-// Gui/DataView
- #ifdef OGS_BUILD_GUI
+#ifdef OGS_BUILD_GUI
 #include "Gui/DataView/GEOModels.h"
 #else
 #include "GEOObjects.h"

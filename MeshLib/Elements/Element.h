@@ -64,7 +64,7 @@ public:
 	void setNode(unsigned idx, Node* node);
 
 	/// Get array of element nodes.
-	Node* const* getNodes() const { return _nodes; };
+	Node* const* getNodes() const { return _nodes; }
 
 	/// Get dimension of the mesh element.
 	virtual unsigned getDimension() const = 0;
@@ -129,9 +129,8 @@ public:
 	/**
 	 * Get the value for this element. The value can be used to store a link
 	 * to external information (for instance an index of a field) like material groups.
-	 * @return
 	 */
-	unsigned getValue() const { return _value; };
+	unsigned getValue() const { return _value; }
 
 	/**
 	 * Set the index value for external information.

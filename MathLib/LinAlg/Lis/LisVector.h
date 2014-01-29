@@ -32,7 +32,6 @@ public:
 	/**
 	 * Constructor for initialization of the number of rows
 	 * @param length number of rows
-	 * @return
 	 */
     explicit LisVector(std::size_t length);
 
@@ -80,10 +79,10 @@ public:
     }
 
     /// printout this equation for debugging
-	void write (const std::string &filename) const;
+    void write (const std::string &filename) const;
 
     /// return a raw Lis vector object
-    LIS_VECTOR& getRawVector() {return _vec; };
+    LIS_VECTOR& getRawVector() {return _vec; }
 
     /// vector operation: set data
     LisVector& operator= (const LisVector &src);

@@ -47,6 +47,7 @@ protected slots:
 	/// Emits itemSelected() signals when an items was selected.
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 	void selectItem(vtkProp3D* actor);
+	void selectItem(const QModelIndex &index);
 
 private:
 	/// Creates a menu on right-clicking on an item.

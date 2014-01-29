@@ -314,51 +314,45 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 
 	reset();
 	emit vtkVisPipelineChanged();
+	emit itemSelected(newIndex);
 
 	return newIndex;
 }
 
-QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source,
-                                      QModelIndex parent /* = QModelindex() */)
+QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex parent /* = QModelindex() */)
 {
-	TreeItem* parentItem = getItem(parent);
+	QString itemName("");
 
-	QList<QVariant> itemData;
-	QString itemName;
 	if (!parent.isValid()) // if source object
 	{
-		vtkGenericDataObjectReader* reader =
-		        dynamic_cast<vtkGenericDataObjectReader*>(source);
-		vtkImageReader2* imageReader = dynamic_cast<vtkImageReader2*>(source);
+		QFileInfo fi;
+		vtkGenericDataObjectReader* old_reader = dynamic_cast<vtkGenericDataObjectReader*>(source);
+		vtkXMLReader* new_reader = dynamic_cast<vtkXMLReader*>(source);
+		vtkImageReader2* image_reader = dynamic_cast<vtkImageReader2*>(source);
 		VtkAlgorithmProperties* props = dynamic_cast<VtkAlgorithmProperties*>(source);
-		if (reader)
-		{
-			QFileInfo fi(QString(reader->GetFileName()));
-			itemName = fi.fileName();
-		}
-		else if (imageReader)
-		{
-			QFileInfo fi(QString(imageReader->GetFileName()));
-			itemName = fi.fileName();
-		}
+		if (old_reader)
+			fi.setFile(QString(old_reader->GetFileName()));
+		else if (new_reader)
+			fi.setFile(QString(new_reader->GetFileName()));		
+		else if (image_reader)
+			fi.setFile(QString(image_reader->GetFileName()));
 		else if (props)
-		{
-			QFileInfo fi(props->GetName());
-			itemName = fi.fileName();
-		}
-		else
-			itemName = QString(source->GetClassName());
+			fi.setFile(props->GetName());
+
+		itemName = fi.fileName();
 	}
-	else
+
+	if (itemName.isEmpty())	// not sure if this may be true at any time
 		itemName = QString(source->GetClassName());
+
+	QList<QVariant> itemData;
 	itemData << itemName << true;
 
 	VtkVisPipelineItem* item(NULL);
-	vtkImageAlgorithm* alg = dynamic_cast<vtkImageAlgorithm*>(source);
-	if (alg)
-		item = new VtkVisImageItem(source, parentItem, itemData);
+	if (dynamic_cast<vtkImageAlgorithm*>(source))
+		item = new VtkVisImageItem(source, getItem(parent), itemData);
 	else
-		item = new VtkVisPointSetItem(source, parentItem, itemData);
+		item = new VtkVisPointSetItem(source, getItem(parent), itemData);
 	return this->addPipelineItem(item, parent);
 }
 

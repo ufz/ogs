@@ -271,7 +271,7 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
                                        const std::string &geo_object_name,
                                        const std::string &new_name)
 {
-	const GeoLib::GeoObject* obj = this->getGEOObject(geometry_name,
+	const GeoLib::GeoObject* obj = this->getGeoObject(geometry_name,
 	                                                  object_type,
 	                                                  geo_object_name);
 	GeoLib::PointVec* pnt_vec = this->getPointVecObj(geometry_name);
