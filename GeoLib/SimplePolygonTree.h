@@ -42,6 +42,8 @@ public:
 	 */
 	const Polygon* getPolygon () const;
 
+	std::size_t getNChilds() const { return _childs.size(); }
+
 protected:
 	/**
 	 * the polygon this node stands for
