@@ -24,7 +24,6 @@
 
 #ifdef OGS_USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
-#include "MathLib/LinAlg/PETSc/InfoMPI.h"
 #endif
 
 namespace
@@ -76,7 +75,10 @@ void checkGlobalVectorInterface()
 template <class T_VECTOR>
 void checkGlobalVectorInterfaceMPI()
 {
-    ASSERT_EQ(3u, BaseLib:: InfoMPI::getSize());
+    int msize;
+    MPI_Comm_size(PETSC_COMM_WORLD, &msize);
+
+    ASSERT_EQ(3u, msize);
 
     T_VECTOR x(16);
 

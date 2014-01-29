@@ -20,10 +20,6 @@
 
 #include "PETScVector.h"
 
-#include "array"
-
-#include "InfoMPI.h"
-
 namespace MathLib
 {
 PETScVector::PETScVector(const PETScVector &existing_vec)
@@ -60,14 +56,15 @@ void PETScVector::collectLocalVectors( PetscScalar local_array[],
                                        PetscScalar global_array[])
 {
     // Collect solution from processes.
-    const int size_rank = BaseLib::InfoMPI::getSize();
+    int size_rank;
+    MPI_Comm_size(PETSC_COMM_WORLD, &size_rank);
 
     // number of elements to be sent for each rank
-    int *i_cnt = new int[size_rank];
+    std::vector<int>  i_cnt(size_rank);
     // offset in the receive vector of the data from each rank
-    int *i_disp = new int[size_rank];
+    std::vector<int>  i_disp(size_rank);
 
-    MPI_Allgather(&_size_loc, 1, MPI_INT, i_cnt, 1, MPI_INT, PETSC_COMM_WORLD);
+    MPI_Allgather(&_size_loc, 1, MPI_INT, &i_cnt[0], 1, MPI_INT, PETSC_COMM_WORLD);
 
     // colloect local array
     int offset = 0;
@@ -78,10 +75,8 @@ void PETScVector::collectLocalVectors( PetscScalar local_array[],
     }
 
     MPI_Allgatherv(local_array, _size_loc, MPI_DOUBLE,
-                   global_array, i_cnt, i_disp, MPI_DOUBLE, PETSC_COMM_WORLD);
+                   global_array, &i_cnt[0], &i_disp[0], MPI_DOUBLE, PETSC_COMM_WORLD);
 
-    delete [] i_cnt;
-    delete [] i_disp;
 }
 
 void PETScVector::getGlobalEntries(PetscScalar u[])
