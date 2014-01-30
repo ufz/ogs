@@ -51,23 +51,39 @@ int main(int argc, char *argv[])
 	// uses this Arg to parse the command line.
 	cmd.add( mesh_arg );
 
+	TCLAP::ValueArg<double> x_arg("x","x","movement in x direction", false, 0.0,"floating point number");
+	cmd.add(x_arg);
+	TCLAP::ValueArg<double> y_arg("y","y","movement in y direction", false, 0.0,"floating point number");
+	cmd.add(y_arg);
+	TCLAP::ValueArg<double> z_arg("z","z","movement in z direction", false, 0.0,"floating point number");
+	cmd.add(z_arg);
+
 	cmd.parse( argc, argv );
 
 	std::string fname (mesh_arg.getValue());
 
 	MeshLib::Mesh* mesh = FileIO::readMeshFromFile(fname);
 
-	GeoLib::AABB<MeshLib::Node> aabb(mesh->getNodes().begin(), mesh->getNodes().end());
-	MeshLib::Node center(
-			(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0])/2.0,
-			(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1])/2.0,
-			0.0);
-	INFO("translate model (-%f, -%f, -%f).", center[0], center[1], center[2]);
+	MeshLib::Node center(0.0, 0.0, 0.0);
+	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()
+		&& fabs(y_arg.getValue()) < std::numeric_limits<double>::epsilon()
+		&& fabs(z_arg.getValue()) < std::numeric_limits<double>::epsilon()) {
+		GeoLib::AABB<MeshLib::Node> aabb(mesh->getNodes().begin(), mesh->getNodes().end());
+		center[0] = -(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0])/2.0;
+		center[1] = -(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1])/2.0;
+		center[2] = 0.0;
+	} else {
+		center[0] = x_arg.getValue();
+		center[1] = y_arg.getValue();
+		center[2] = z_arg.getValue();
+	}
+
+	INFO("translate model (%f, %f, %f).", center[0], center[1], center[2]);
 	std::for_each(mesh->getNodes().begin(), mesh->getNodes().end(),
 					[&center](MeshLib::Node* node)
 					{
-							(*node)[0] -= center[0];
-							(*node)[1] -= center[1];
+							(*node)[0] += center[0];
+							(*node)[1] += center[1];
 					}
 	);
 
