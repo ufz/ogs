@@ -31,7 +31,6 @@ public:
 	 * pcs_pv with PrimaryVariable::INVALID_PV and
 	 * the pointer to the process with NULL. The user should set the values
 	 * with the appropriate set methods.
-	 * @return
 	 */
 	ProcessInfo();
 
@@ -40,7 +39,6 @@ public:
 	 * @param pcs_type process type (\sa enum ProcessType)
 	 * @param pcs_pv type of primary variable (\sa enum PrimaryVariable)
 	 * @param pcs a pointer to the process
-	 * @return
 	 */
 	ProcessInfo (FiniteElement::ProcessType pcs_type, FiniteElement::PrimaryVariable pcs_pv/* TODO6 , CRFProcess* pcs*/);
 

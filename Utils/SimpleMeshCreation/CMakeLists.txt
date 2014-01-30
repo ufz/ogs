@@ -11,8 +11,6 @@ IF(TARGET VtkVis)
 		${CMAKE_SOURCE_DIR}/Gui/VtkVis
 	)
 
-	INCLUDE( ${VTK_USE_FILE} )
-
 	ADD_EXECUTABLE( generateStructuredQuadMesh generateStructuredQuadMesh.cpp )
 	SET_TARGET_PROPERTIES( generateStructuredQuadMesh PROPERTIES FOLDER Utils)
 	TARGET_LINK_LIBRARIES( generateStructuredQuadMesh

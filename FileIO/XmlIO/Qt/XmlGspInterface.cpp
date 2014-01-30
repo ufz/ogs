@@ -22,7 +22,8 @@
 #include "XmlStnInterface.h"
 
 #include "FileFinder.h"
-#include "Legacy/MeshIO.h"
+#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/readMeshFromFile.h"
 #include "Mesh.h"
 
 #include <QFile>
@@ -89,9 +90,9 @@ int XmlGspInterface::readFile(const QString &fileName)
 		{
 			const std::string msh_name = path.toStdString() +
 			                             fileList.at(i).toElement().text().toStdString();
-			FileIO::MeshIO meshIO;
-			MeshLib::Mesh* msh = meshIO.loadMeshFromFile(msh_name);
-			_project->addMesh(msh);
+			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
+			if (msh)
+				_project->addMesh(msh);
 		}
 	}
 

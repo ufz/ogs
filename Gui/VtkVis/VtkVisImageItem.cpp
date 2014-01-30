@@ -30,6 +30,7 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkImageShiftScale.h>
+#include <vtkDataArray.h>
 
 // export
 #include <vtkImageActor.h>
@@ -86,7 +87,7 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 
 	// Use a special vtkImageActor instead of vtkActor
 	vtkImageActor* imageActor = vtkImageActor::New();
-	imageActor->SetInput(_transformFilter->GetOutput());
+	imageActor->SetInputData(_transformFilter->GetOutput());
 	_actor = imageActor;
 	_renderer->AddActor(_actor);
 
@@ -144,7 +145,7 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
 	{
 		vtkSmartPointer<vtkXMLImageDataWriter> iWriter =
 		        vtkSmartPointer<vtkXMLImageDataWriter>::New();
-		iWriter->SetInput(algID->GetOutputDataObject(0));
+		iWriter->SetInputData(algID->GetOutputDataObject(0));
 		std::string filenameWithExt = filename;
 		filenameWithExt.append(".vti");
 		iWriter->SetFileName(filenameWithExt.c_str());

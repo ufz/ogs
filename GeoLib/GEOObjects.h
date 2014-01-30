@@ -144,8 +144,8 @@ public:
 	/**
 	 * Adds a vector of polylines with the given name to GEOObjects.
 	 * @param lines The lines vector.
-	 * @param name The given name.
-	 * @param ply_names vector of the names corresponding to the polylines
+	 * @param name The geometry to which the given Polyline objects should be added.
+	 * @param ply_names map of names and ids that are corresponding to the polylines
 	 */
 	virtual void addPolylineVec(std::vector<Polyline*>* lines,
 	                            const std::string &name,
@@ -253,9 +253,9 @@ public:
 	int mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
 
 	/// Returns the geo object for a geometric item of the given name and type for the associated geometry.
-	const GeoLib::GeoObject* getGEOObject(const std::string &geo_name,
+	const GeoLib::GeoObject* getGeoObject(const std::string &geo_name,
 	                                      GeoLib::GEOTYPE type,
-	                                      const std::string &obj_name) const;
+	                                      const std::string &geo_obj_name) const;
 
 	/** constructor */
 	GEOObjects();

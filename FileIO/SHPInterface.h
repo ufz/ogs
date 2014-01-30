@@ -21,7 +21,7 @@
 #include <string>
 
 //ShapeLib includes
-#include "shapefil.h"
+#include "shape/shapefil.h"
 
 // GeoLib
 #include "GEOObjects.h"

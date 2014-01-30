@@ -6,15 +6,21 @@ branches:
   only:
     - master
 env:
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-  - CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
+  - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/"
 before_install:
-  - travis_retry sudo apt-get update; travis_retry sudo apt-get install qt4-dev-tools libvtk5-dev libvtk5-qt4-dev libnetcdf-dev libshp-dev libgeotiff-dev libeigen3-dev
+  - travis_retry sudo apt-get update; travis_retry sudo apt-get install libeigen3-dev
+  - if [[ "$CXX" =~ "g++" ]]; then travis_retry sudo apt-get install libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev; fi
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
   - "wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb"
   - "sudo apt-get remove cmake-data cmake"
   - "sudo dpkg --install cmake-data_2.8.8-2ubuntu1_all.deb cmake_2.8.8-2ubuntu1_amd64.deb"
-script: "mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make && make test"
+  - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
+  - if [[ "$CASE" == "GUI" ]]; then wget http://www.opengeosys.org/images/dev/vtk-6.tar.gz; fi
+  - if [[ "$CASE" == "GUI" ]]; then tar -xf vtk-6.tar.gz; fi
+script:
+  - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
+  - if [[ "$CASE" == "CLI" ]] || [[ "$CASE" == "GUI" ]]; then make test; fi
 notifications:
   email:
     - lars.bilke@ufz.de

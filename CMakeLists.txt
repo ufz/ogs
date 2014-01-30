@@ -19,6 +19,12 @@ SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}
 SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} (${OGS_RELEASE_PERSONS})")
 SET (OGS_DATE "2012-08-20")
 
+
+###########################
+### Preliminary Options ###
+###########################
+OPTION(OGS_NO_BOOST_DOWNLOAD "Always use the system installed Boost?" OFF)
+
 ### CMake includes ###
 INCLUDE(scripts/cmake/CheckTypeSizes.cmake)
 INCLUDE(scripts/cmake/FindIncludeHeader.cmake)
@@ -34,9 +40,9 @@ IF(OGS_COVERAGE AND NOT IS_SUBPROJECT)
 	INCLUDE(scripts/cmake/Coverage.cmake)
 ENDIF()
 
-###############
-### Options ###
-###############
+####################
+### More Options ###
+####################
 
 # Profiling
 IF((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
@@ -55,6 +61,7 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
+OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Eigen
 OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
@@ -84,11 +91,10 @@ ENDIF (OGS_BUILD_INFO)
 OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 # Packaging
-OPTION(OGS_PACKAGING "Creating installers / packages" OFF)
-OPTION_REQUIRES(OGS_PACKAGING_ZIP "Do you want to package as zip?" OGS_PACKAGING)
-IF(OGS_PACKAGING)
-	INCLUDE( scripts/cmake/Pack.cmake)
-ENDIF() #OGS_PACKAGING
+IF(WIN32)
+	OPTION(OGS_PACKAGING_NSIS "Do you want to package with NSIS?")
+ENDIF()
+INCLUDE(scripts/cmake/Pack.cmake)
 
 ######################
 ### Subdirectories ###
@@ -97,6 +103,8 @@ ENDIF() #OGS_PACKAGING
 # External projects
 OPTION(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
+OPTION(OGS_SYSTEM_VTK_ONLY "If On VTK will be searched if installed and will not be build locally." OFF)
+INCLUDE(scripts/cmake/ExternalProjectVtk.cmake)
 INCLUDE_DIRECTORIES( SYSTEM ${Boost_INCLUDE_DIRS} )
 IF(OGS_USE_EIGEN)
 	INCLUDE(scripts/cmake/ExternalProjectEigen.cmake)
@@ -111,6 +119,8 @@ INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
 ENDIF()
+
+
 
 IF(OGS_USE_EIGEN)
 #	ADD_DEFINITIONS(-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=std::size_t)

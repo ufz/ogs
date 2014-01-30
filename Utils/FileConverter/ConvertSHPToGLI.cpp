@@ -24,7 +24,7 @@
 #include "logog/include/logog.hpp"
 
 // ShapeLib
-#include "shapefil.h"
+#include "shape/shapefil.h"
 
 // BaseLib
 #include "LogogSimpleFormatter.h"

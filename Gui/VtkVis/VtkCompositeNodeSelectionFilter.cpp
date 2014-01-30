@@ -51,7 +51,7 @@ void VtkCompositeNodeSelectionFilter::init()
 			_glyphSource->SetRadius(this->GetInitialRadius());
 
 		vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-			glyphFilter->SetSource(_glyphSource->GetOutput());
+			glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
 			glyphFilter->SetInputConnection(point_source->GetOutputPort());
 
 		_outputAlgorithm = glyphFilter;

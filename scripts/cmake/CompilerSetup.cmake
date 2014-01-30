@@ -4,6 +4,9 @@ INCLUDE(DisableCompilerFlag)
 SET_DEFAULT_BUILD_TYPE(Debug)
 INCLUDE(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 
+# Better Clang warning suppression, see http://www.openwalnut.org/issues/230
+SET( CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem" CACHE STRING "" FORCE )
+
 # Set compiler helper variables
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     SET(COMPILER_IS_CLANG TRUE)
@@ -50,7 +53,7 @@ IF(COMPILER_IS_CLANG)
 	IF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
 		MESSAGE(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
 	ENDIF()
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -isystem ${CMAKE_SOURCE_DIR}/ThirdParty/ -Weverything -Wno-c++98-compat-pedantic")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
 ENDIF() # COMPILER_IS_CLANG
 
 ### Intel compiler

@@ -55,13 +55,11 @@ public:
 
 	/**
 	 * get the type as a string for log output
-	 * @return
 	 */
 	std::string getGeomTypeAsString () const;
 
 	/**
 	 * getter for the pointer to the object
-	 * @return
 	 */
 	const GeoLib::GeoObject* getGeoObj () const;
 

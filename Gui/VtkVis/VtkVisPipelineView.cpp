@@ -49,7 +49,6 @@ VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
 {
 	this->setItemsExpandable(false);
-	//setEditTriggers(QAbstractItemView::AllEditTriggers);
 	CheckboxDelegate* checkboxDelegate = new CheckboxDelegate(this);
 	this->setItemDelegateForColumn(1, checkboxDelegate);
 	this->header()->setStretchLastSection(false);
@@ -165,7 +164,6 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 	}
 }
 
-#ifdef VTKFBXCONVERTER_FOUND
 void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
 {
 	QSettings settings("UFZ", "OpenGeoSys-5");
@@ -181,7 +179,6 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
 		settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 	}
 }
-#endif // VTKFBXCONVERTER_FOUND
 
 void VtkVisPipelineView::removeSelectedPipelineItem()
 {
@@ -252,7 +249,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
 {
 	QTreeView::selectionChanged(selected, deselected);
 
-	QModelIndex index = this->selectionModel()->currentIndex();
+	QModelIndex index = *selected.indexes().begin();
 	if (index.isValid())
 	{
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
@@ -271,17 +268,19 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
 	}
 }
 
-void VtkVisPipelineView::selectItem( vtkProp3D* actor )
+void VtkVisPipelineView::selectItem(vtkProp3D* actor)
 {
-	QModelIndex index = ((VtkVisPipeline*)(this->model()))->getIndex(actor);
+	this->selectItem(static_cast<VtkVisPipeline*>(this->model())->getIndex(actor));	
+}
+
+void VtkVisPipelineView::selectItem(const QModelIndex &index)
+{
 	if (!index.isValid())
 		return;
 
-	blockSignals(true);
 	QItemSelectionModel* selectionModel = this->selectionModel();
 	selectionModel->clearSelection();
 	selectionModel->select(index, QItemSelectionModel::Select);
-	blockSignals(false);
 }
 
 void VtkVisPipelineView::addColorTable()

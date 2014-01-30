@@ -32,13 +32,16 @@ GMSHPolygonTree::~GMSHPolygonTree()
 
 bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
 {
-
 	if (_node_polygon->isPntInPolygon(*station)) {
 		// try to insert station into the child nodes
 		for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
 			 it != _childs.end(); it++) {
 			if (((*it)->getPolygon())->isPntInPolygon (*station)) {
-				return dynamic_cast<GMSHPolygonTree*>((*it))->insertStation (station);
+				bool rval(dynamic_cast<GMSHPolygonTree*>((*it))->insertStation (station));
+				// stop recursion if sub SimplePolygonTree is a leaf
+				if (rval && (*it)->getNChilds() == 0)
+					_stations.push_back (station);
+				return rval;
 			}
 		}
 		// station did not fit into child nodes -> insert the station into this node

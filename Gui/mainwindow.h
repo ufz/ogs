@@ -49,6 +49,7 @@ public:
 
 protected:
 	void closeEvent( QCloseEvent* event );
+	void addFEMConditions(std::vector<FEMCondition*> const& conditions);
 
 protected slots:
 	void showGeoDockWidget( bool show );
@@ -61,6 +62,8 @@ protected slots:
 	void open(int i = 0);
 	/// Function calls for saving files.
 	void save();
+	/// Calls the OGSFileConverter as an external tool
+	void callFileConverter() const;
 	/// Function calls for generating GMSH files from the GUI
 	void callGMSH(std::vector<std::string> & selectedGeometries,
 	              unsigned param1,
@@ -101,7 +104,7 @@ protected slots:
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
-	void addFEMConditions(std::vector<FEMCondition*> const& conditions);
+	void createFEMConditions(std::vector<FEMCondition*> const& conditions);
 	void writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);

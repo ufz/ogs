@@ -77,9 +77,7 @@ private slots:
 
 	void convertMeshToGeometry();
 
-#ifdef Shapelib_FOUND
 	void exportToShapefile() const;
-#endif
 
 	/// Remove the currently selected mesh.
 	void removeMesh();
@@ -103,7 +101,7 @@ signals:
 	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);
 	void requestMeshToGeometryConversion(const MeshLib::Mesh*);
-	void requestDIRECTSourceTerms(const std::string, const std::vector<GeoLib::Point*>*);
+	void loadFEMCondFileRequested(const std::string);
 	void saveMeshAction();
 
 /*

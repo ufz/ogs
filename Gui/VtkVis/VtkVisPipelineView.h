@@ -47,6 +47,7 @@ protected slots:
 	/// Emits itemSelected() signals when an items was selected.
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 	void selectItem(vtkProp3D* actor);
+	void selectItem(const QModelIndex &index);
 
 private:
 	/// Creates a menu on right-clicking on an item.
@@ -62,10 +63,8 @@ private slots:
 	/// Exports the currently selected item as an OpenSG file
 	void exportSelectedPipelineItemAsOsg();
 
-#ifdef VTKFBXCONVERTER_FOUND
 	/// Exports the currently selected item as a Fbx file.
 	void exportSelectedPipelineItemAsFbx();
-#endif // VTKFBXCONVERTER_FOUND
 
 	/// Sends an requestRemovePipelineItem() signal to remove
 	/// the currently selected item.

@@ -153,7 +153,6 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 				}
 			}
 			this->_project->addCondition(c);
-//			conditions.push_back(c);
 		}
 		else
 		{

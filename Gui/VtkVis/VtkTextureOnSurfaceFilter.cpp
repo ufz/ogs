@@ -80,7 +80,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	textureCoordinates->SetNumberOfComponents(2);
 	size_t nPoints = points->GetNumberOfPoints();
 	textureCoordinates->SetNumberOfTuples(nPoints);
-	textureCoordinates->SetName("TextureCoordinates");
+	textureCoordinates->SetName("textureCoords");
 /*  // adaptation for netcdf-curtain for TERENO Demo
 	double dist(0.0);
 	for (size_t i = 0; i < nPoints; i++)
@@ -147,7 +147,7 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
 	texture->InterpolateOff();
 	texture->RepeatOff();
 	// texture->EdgeClampOn(); // does not work
-	texture->SetInput(scale->GetOutput());
+	texture->SetInputData(scale->GetOutput());
 	this->SetTexture(texture);
 
 	_origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));
