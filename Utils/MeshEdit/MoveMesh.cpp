@@ -1,5 +1,5 @@
 /**
- * @file MoveMeshCentroidToOrigin.cpp
+ * @file MoveMesh.cpp
  * @date Jan 17, 2014
  * @brief 
  *
@@ -40,22 +40,21 @@ int main(int argc, char *argv[])
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Moves the centroid of the mesh to the origin", ' ', "0.1");
-
+	TCLAP::CmdLine cmd("Moves the mesh nodes using the given displacement vector or if no displacement vector is given, moves the mesh nodes such that the centroid of the given mesh is in the origin.", ' ', "0.1"); 
 	// Define a value argument and add it to the command line.
 	// A value arg defines a flag and a type of value that it expects,
 	// such as "-m meshfile".
-	TCLAP::ValueArg<std::string> mesh_arg("m","mesh","input mesh file",true,"homer","string");
+	TCLAP::ValueArg<std::string> mesh_arg("m","mesh","input mesh file",true,"","string");
 
 	// Add the argument mesh_arg to the CmdLine object. The CmdLine object
 	// uses this Arg to parse the command line.
 	cmd.add( mesh_arg );
 
-	TCLAP::ValueArg<double> x_arg("x","x","movement in x direction", false, 0.0,"floating point number");
+	TCLAP::ValueArg<double> x_arg("x","x","displacement in x direction", false, 0.0,"floating point number");
 	cmd.add(x_arg);
-	TCLAP::ValueArg<double> y_arg("y","y","movement in y direction", false, 0.0,"floating point number");
+	TCLAP::ValueArg<double> y_arg("y","y","displacement in y direction", false, 0.0,"floating point number");
 	cmd.add(y_arg);
-	TCLAP::ValueArg<double> z_arg("z","z","movement in z direction", false, 0.0,"floating point number");
+	TCLAP::ValueArg<double> z_arg("z","z","displacement in z direction", false, 0.0,"floating point number");
 	cmd.add(z_arg);
 
 	cmd.parse( argc, argv );
