@@ -24,10 +24,6 @@
 // GeoLib
 #include "GEOObjects.h"
 
-class CBoundaryCondition;
-class CInitialCondition;
-class CSourceTerm;
-
 /**
  * \brief Adapter class for handling FEM Conditions in the user Interface
  */
