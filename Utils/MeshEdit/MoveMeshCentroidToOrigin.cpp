@@ -64,31 +64,31 @@ int main(int argc, char *argv[])
 
 	MeshLib::Mesh* mesh = FileIO::readMeshFromFile(fname);
 
-	MeshLib::Node center(0.0, 0.0, 0.0);
+	MeshLib::Node displacement(0.0, 0.0, 0.0);
 	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()
 		&& fabs(y_arg.getValue()) < std::numeric_limits<double>::epsilon()
 		&& fabs(z_arg.getValue()) < std::numeric_limits<double>::epsilon()) {
 		GeoLib::AABB<MeshLib::Node> aabb(mesh->getNodes().begin(), mesh->getNodes().end());
-		center[0] = -(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0])/2.0;
-		center[1] = -(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1])/2.0;
-		center[2] = 0.0;
+		displacement[0] = -(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0])/2.0;
+		displacement[1] = -(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1])/2.0;
+		displacement[2] = 0.0;
 	} else {
-		center[0] = x_arg.getValue();
-		center[1] = y_arg.getValue();
-		center[2] = z_arg.getValue();
+		displacement[0] = x_arg.getValue();
+		displacement[1] = y_arg.getValue();
+		displacement[2] = z_arg.getValue();
 	}
 
-	INFO("translate model (%f, %f, %f).", center[0], center[1], center[2]);
+	INFO("translate model (%f, %f, %f).", displacement[0], displacement[1], displacement[2]);
 	std::for_each(mesh->getNodes().begin(), mesh->getNodes().end(),
-					[&center](MeshLib::Node* node)
+					[&displacement](MeshLib::Node* node)
 					{
-							(*node)[0] += center[0];
-							(*node)[1] += center[1];
+							(*node)[0] += displacement[0];
+							(*node)[1] += displacement[1];
 					}
 	);
 
 	std::string out_fname(BaseLib::dropFileExtension(mesh_arg.getValue()));
-	out_fname += "_transformed.vtu";
+	out_fname += "_displaced.vtu";
 	FileIO::BoostVtuInterface mesh_io;
 	mesh_io.setMesh(mesh);
 	mesh_io.writeToFile(out_fname);
