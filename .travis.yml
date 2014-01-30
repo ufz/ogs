@@ -10,7 +10,7 @@ env:
   - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.0/"
 before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install libeigen3-dev
-  - if [[ "$CXX" =~ "g++" ]]; then travis_retry sudo apt-get install libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev; fi
+  - if [[ "$CC" =~ "gcc" ]]; then travis_retry sudo apt-get install libboost-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev; fi
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
   - "wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb"
   - "sudo apt-get remove cmake-data cmake"
