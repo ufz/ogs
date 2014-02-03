@@ -95,9 +95,9 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
 	{
 		_idx_map.insert (std::pair<std::size_t, std::size_t>(
 			strtol((point.attribute("id")).toStdString().c_str(), &pEnd, 10), points->size()));
-		GeoLib::Point* p = new GeoLib::Point(strtod((point.attribute("x")).toStdString().c_str(), 0),
-		                                     strtod((point.attribute("y")).toStdString().c_str(), 0),
-		                                     strtod((point.attribute("z")).toStdString().c_str(), 0));
+		GeoLib::Point* p = new GeoLib::Point(point.attribute("x").toDouble(),
+		                                     point.attribute("y").toDouble(),
+		                                     point.attribute("z").toDouble());
 		if (point.hasAttribute("name"))
 			pnt_names->insert( std::pair<std::string, std::size_t>(
 										point.attribute("name").toStdString(), points->size()) );
@@ -134,7 +134,7 @@ void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
 		QDomElement point = polyline.firstChildElement();
 		while (!point.isNull())
 		{
-			(*polylines)[idx]->addPoint(pnt_id_map[_idx_map[atoi(point.text().toStdString().c_str())]]);
+			(*polylines)[idx]->addPoint(pnt_id_map[_idx_map[point.text().toInt()]]);
 			point = point.nextSiblingElement();
 		}
 
@@ -167,9 +167,9 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
 		QDomElement element = surface.firstChildElement();
 		while (!element.isNull())
 		{
-			std::size_t p1 = pnt_id_map[_idx_map[atoi((element.attribute("p1")).toStdString().c_str())]];
-			std::size_t p2 = pnt_id_map[_idx_map[atoi((element.attribute("p2")).toStdString().c_str())]];
-			std::size_t p3 = pnt_id_map[_idx_map[atoi((element.attribute("p3")).toStdString().c_str())]];
+			std::size_t p1 = pnt_id_map[_idx_map[element.attribute("p1").toInt()]];
+			std::size_t p2 = pnt_id_map[_idx_map[element.attribute("p2").toInt()]];
+			std::size_t p3 = pnt_id_map[_idx_map[element.attribute("p3").toInt()]];
 			surfaces->back()->addTriangle(p1,p2,p3);
 			element = element.nextSiblingElement();
 		}
