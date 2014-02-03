@@ -23,7 +23,7 @@
 
 // FileIO
 #include "readMeshFromFile.h"
-#include "FileIO/RapidXmlIO/BoostVtuInterface.h"
+#include "RapidXmlIO/BoostVtuInterface.h"
 
 // GeoLib
 #include "AABB.h"
