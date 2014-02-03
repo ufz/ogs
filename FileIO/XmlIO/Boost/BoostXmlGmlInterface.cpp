@@ -12,13 +12,14 @@
  *
  */
 
-#include <fstream>
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 
-#include "logog/include/logog.hpp"
-
 #include "BoostXmlGmlInterface.h"
+
+#include <fstream>
+
+#include "logog/include/logog.hpp"
 
 #include "ProjectData.h"
 #include "GEOObjects.h"
@@ -212,7 +213,7 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 	}
 }
 
-bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root)
+bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root) const
 {
 	if (!root.get_child_optional("OpenGeoSysGLI"))
 	{

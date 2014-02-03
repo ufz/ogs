@@ -67,7 +67,7 @@ private:
 	                     std::map<std::string, std::size_t>* &sfc_names );
 
 	/// Check if the root node really specifies an GML file
-	static bool isGmlFile( boost::property_tree::ptree const& root);
+	bool isGmlFile( boost::property_tree::ptree const& root) const;
 
 	std::map<std::size_t, std::size_t> _idx_map;
 	ProjectData & _project_data;
