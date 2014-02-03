@@ -79,11 +79,11 @@ void MeshElementRemovalDialog::accept()
 	if (this->boundingBoxCheckBox->isChecked())
 	{
 		const MeshLib::Node min(this->xMinEdit->text().toDouble(),
-			                    this->yMinEdit->text().toDouble(),
-								this->zMinEdit->text().toDouble(),0);
+		                        this->yMinEdit->text().toDouble(),
+		                        this->zMinEdit->text().toDouble(),0);
 		const MeshLib::Node max(this->xMaxEdit->text().toDouble(),
-			                    this->yMaxEdit->text().toDouble(),
-								this->zMaxEdit->text().toDouble(),0);
+		                        this->yMaxEdit->text().toDouble(),
+		                        this->zMaxEdit->text().toDouble(),0);
 		ex.searchByBoundingBox(min, max);
 		anything_checked = true;
 	}

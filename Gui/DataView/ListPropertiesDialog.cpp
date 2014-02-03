@@ -20,6 +20,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QLocale>
 
 /**
  * Creates a new dialog.
@@ -126,6 +127,7 @@ int ListPropertiesDialog::getPropertyBounds(const std::vector<GeoLib::Point*>* s
 /// Instructions if the OK-Button has been pressed.
 void ListPropertiesDialog::accept()
 {
+	QLocale::setDefault(QLocale::German); // handles points in commas in numbers
 	std::vector<PropertyBounds> bounds;
 	int noProp = _propLabel.size();
 	double minVal, maxVal;

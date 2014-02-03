@@ -178,9 +178,9 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
 			if (fabs(depth - depth_check) > std::numeric_limits<double>::min()) // skip soil-layer if its thickness is zero
 			{
 				borehole->addSoilLayer(horizon.attribute("x").toDouble(),
-									   horizon.attribute("y").toDouble(),
-									   depth,
-									   horizonName);
+				                       horizon.attribute("y").toDouble(),
+				                       depth,
+				                       horizonName);
 				depth_check = depth;
 			}
 			else
