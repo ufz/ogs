@@ -31,6 +31,7 @@
 // MeshLib
 #include "Node.h"
 #include "Elements/Element.h"
+#include "MeshEditing/moveMeshNodes.h"
 #include "Mesh.h"
 
 int main(int argc, char *argv[])
@@ -78,13 +79,10 @@ int main(int argc, char *argv[])
 	}
 
 	INFO("translate model (%f, %f, %f).", displacement[0], displacement[1], displacement[2]);
-	std::for_each(mesh->getNodes().begin(), mesh->getNodes().end(),
-					[&displacement](MeshLib::Node* node)
-					{
-							(*node)[0] += displacement[0];
-							(*node)[1] += displacement[1];
-					}
-	);
+	MeshLib::moveMeshNodes(
+		mesh->getNodes().begin(),
+		mesh->getNodes().end(),
+		displacement);
 
 	std::string out_fname(BaseLib::dropFileExtension(mesh_arg.getValue()));
 	out_fname += "_displaced.vtu";
