@@ -1,5 +1,5 @@
 /**
- * \file
+ * \file   BoostXmlGmlInterface.cpp
  * \author Karsten Rink
  * \date   2014-01-31
  * \brief  Implementation of the BoostXmlGmlInterface class.
@@ -58,37 +58,35 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	read_xml(in, doc);
 
 	
-	if (isGmlFile(doc))
-	{
-		ptree const & root_node = doc.get_child("OpenGeoSysGLI");
-		BOOST_FOREACH( ptree::value_type const & node, root_node )
-		{
-			if (node.first.compare("name") == 0)
-				geo_name = node.second.data();
-			else if (node.first.compare("points") == 0)
-			{
-				readPoints(node.second, points, pnt_names);
-			    geo_objects->addPointVec(points, geo_name, pnt_names);
-			}
-			else if (node.first.compare("polylines") == 0)
-				readPolylines(node.second, polylines, points, geo_objects->getPointVecObj(geo_name)->getIDMap(), ply_names);
-			else if (node.first.compare("surfaces") == 0)
-				readSurfaces(node.second, surfaces, points, geo_objects->getPointVecObj(geo_name)->getIDMap(), sfc_names);
-		}
+	if (!isGmlFile(doc))
+		return false;
 
-		if (!polylines->empty())
-			geo_objects->addPolylineVec(polylines, geo_name, ply_names);
-		if (!surfaces->empty())
-			geo_objects->addSurfaceVec(surfaces, geo_name, sfc_names);
-		return true;
+	ptree const & root_node = doc.get_child("OpenGeoSysGLI");
+	BOOST_FOREACH( ptree::value_type const & node, root_node )
+	{
+		if (node.first.compare("name") == 0 && !node.second.data().empty())
+			geo_name = node.second.data();
+		else if (node.first.compare("points") == 0)
+		{
+			readPoints(node.second, points, pnt_names);
+			geo_objects->addPointVec(points, geo_name, pnt_names);
+		}
+		else if (node.first.compare("polylines") == 0)
+			readPolylines(node.second, polylines, points, geo_objects->getPointVecObj(geo_name)->getIDMap(), ply_names);
+		else if (node.first.compare("surfaces") == 0)
+			readSurfaces(node.second, surfaces, points, geo_objects->getPointVecObj(geo_name)->getIDMap(), sfc_names);
 	}
 
-	return false;
+	if (!polylines->empty())
+		geo_objects->addPolylineVec(polylines, geo_name, ply_names);
+	if (!surfaces->empty())
+		geo_objects->addSurfaceVec(surfaces, geo_name, sfc_names);
+	return true;
 }
 
 void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & pointsRoot,
 	                                  std::vector<GeoLib::Point*>* points,
-	                                  std::map<std::string, std::size_t>* pnt_names )
+	                                  std::map<std::string, std::size_t>* &pnt_names )
 {
 	using boost::property_tree::ptree;
 	BOOST_FOREACH( ptree::value_type const & point, pointsRoot )
@@ -99,10 +97,11 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 		unsigned      p_id = static_cast<unsigned>(point.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()));
 		double        p_x  = static_cast<double>  (point.second.get("<xmlattr>.x",  std::numeric_limits<double>::max()));
 		double        p_y  = static_cast<double>  (point.second.get("<xmlattr>.y",  std::numeric_limits<double>::max()));
-		double        p_z  = static_cast<double>  (point.second.get("<xmlattr>.z",  0.0));
+		double        p_z  = static_cast<double>  (point.second.get("<xmlattr>.z",  std::numeric_limits<double>::max()));
 		std::string p_name = point.second.get("<xmlattr>.name", "");
 
-		if (p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() || p_y == std::numeric_limits<double>::max())
+		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() || 
+			 p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() ) 
 			WARN("BoostXmlGmlInterface::readPoints(): Attribute missing in <point> tag.")
 		else
 		{
@@ -113,8 +112,13 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 			points->push_back(p);
 		}
 	}
+
+	// if names-map is empty, set it to nullptr because it is not needed
 	if (pnt_names->empty())
-		pnt_names = NULL; // if names-map is empty, set it to NULL because it is not needed
+	{
+		delete pnt_names;
+		pnt_names = nullptr; 
+	}
 }
 
 
@@ -122,7 +126,7 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 	                                     std::vector<GeoLib::Polyline*>* polylines,
 	                                     std::vector<GeoLib::Point*>* points,
 	                                     const std::vector<std::size_t> &pnt_id_map,
-	                                     std::map<std::string, std::size_t>* ply_names )
+	                                     std::map<std::string, std::size_t>* &ply_names )
 {
 	using boost::property_tree::ptree;
 	BOOST_FOREACH( ptree::value_type const & polyline, polylinesRoot )
@@ -131,7 +135,7 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 			continue;
 
 		if (static_cast<unsigned>(polyline.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
-			WARN("BoostXmlGmlInterface::readPolylines(): Attribute missing in <polyline> tag.")
+			WARN("BoostXmlGmlInterface::readPolylines(): Attribute \"id\" missing in <polyline> tag.")
 		else
 		{
 			polylines->push_back(new GeoLib::Polyline(*points));
@@ -148,15 +152,19 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 		}
 	}
 
+	// if names-map is empty, set it to nullptr because it is not needed
 	if (ply_names->empty())
-		ply_names = NULL; // if names-map is empty, set it to NULL because it is not needed
+	{
+		delete ply_names;
+		ply_names = nullptr; 
+	}
 }
 
 void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfacesRoot,
 	                                    std::vector<GeoLib::Surface*>* surfaces,
 	                                    std::vector<GeoLib::Point*>* points,
 	                                    const std::vector<std::size_t> &pnt_id_map,
-	                                    std::map<std::string, std::size_t>* sfc_names )
+	                                    std::map<std::string, std::size_t>* &sfc_names )
 {
 	using boost::property_tree::ptree;
 	BOOST_FOREACH( ptree::value_type const & surface, surfacesRoot )
@@ -165,38 +173,43 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 			continue;
 
 		if (static_cast<unsigned>(surface.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
-			WARN("BoostXmlGmlInterface::readSurfaces(): Attribute missing in <surface> tag.")
-		else
 		{
-			surfaces->push_back(new GeoLib::Surface(*points));
+			WARN("BoostXmlGmlInterface::readSurfaces(): Attribute \"id\" missing in <surface> tag.")
+			continue;
+		}
 
-			std::string s_name = surface.second.get("<xmlattr>.name", "");
-			if (!s_name.empty())
-				sfc_names->insert(std::pair<std::string, std::size_t>(s_name, surfaces->size()-1));
+		surfaces->push_back(new GeoLib::Surface(*points));
 
-			BOOST_FOREACH( ptree::value_type const & element, surface.second )
+		std::string s_name = surface.second.get("<xmlattr>.name", "");
+		if (!s_name.empty())
+			sfc_names->insert(std::pair<std::string, std::size_t>(s_name, surfaces->size()-1));
+
+		BOOST_FOREACH( ptree::value_type const & element, surface.second )
+		{
+			if (element.first.compare("element") != 0)
+				continue;
+
+			unsigned p1_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p1", std::numeric_limits<unsigned>::max()));
+			unsigned p2_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p2", std::numeric_limits<unsigned>::max()));
+			unsigned p3_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p3", std::numeric_limits<unsigned>::max()));
+
+			if (p1_attr == std::numeric_limits<unsigned>::max() || p2_attr == std::numeric_limits<unsigned>::max() || p3_attr == std::numeric_limits<unsigned>::max())
+				WARN("BoostXmlGmlInterface::readSurfaces(): Attribute missing in <element> tag.");
 			{
-				if (element.first.compare("element") != 0)
-					continue;
-
-				unsigned p1_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p1", std::numeric_limits<unsigned>::max()));
-				unsigned p2_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p2", std::numeric_limits<unsigned>::max()));
-				unsigned p3_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p3", std::numeric_limits<unsigned>::max()));
-
-				if (p1_attr == std::numeric_limits<unsigned>::max() || p2_attr == std::numeric_limits<unsigned>::max() || p3_attr == std::numeric_limits<unsigned>::max())
-					WARN("BoostXmlGmlInterface::readSurfaces(): Attribute missing in <element> tag.");
-				{
-					std::size_t p1 = pnt_id_map[_idx_map[p1_attr]];
-					std::size_t p2 = pnt_id_map[_idx_map[p2_attr]];
-					std::size_t p3 = pnt_id_map[_idx_map[p3_attr]];
-					surfaces->back()->addTriangle(p1,p2,p3);
-				}
+				std::size_t p1 = pnt_id_map[_idx_map[p1_attr]];
+				std::size_t p2 = pnt_id_map[_idx_map[p2_attr]];
+				std::size_t p3 = pnt_id_map[_idx_map[p3_attr]];
+				surfaces->back()->addTriangle(p1,p2,p3);
 			}
 		}
 	}
 
+	// if names-map is empty, set it to nullptr because it is not needed
 	if (sfc_names->empty())
-		sfc_names = NULL; // if names-map is empty, set it to NULL because it is not needed
+	{
+		delete sfc_names;
+		sfc_names = nullptr; 
+	}
 }
 
 bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root)

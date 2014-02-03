@@ -14,6 +14,8 @@
 #include "Configure.h"
 #include "mainwindow.h"
 
+#include "XmlIO/Boost/BoostXmlGmlInterface.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -1265,6 +1267,9 @@ void MainWindow::showVisalizationPrefsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	BoostXmlGmlInterface bi(_project);
+	bi.readFile("c://Projects//q_hex.gml");
+
 }
 
 
