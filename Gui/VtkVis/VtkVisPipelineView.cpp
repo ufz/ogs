@@ -249,6 +249,9 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
 {
 	QTreeView::selectionChanged(selected, deselected);
 
+	if (selected.empty())
+		return;
+
 	QModelIndex index = *selected.indexes().begin();
 	if (index.isValid())
 	{

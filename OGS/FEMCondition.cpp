@@ -71,3 +71,14 @@ void FEMCondition::setDisValues(const std::vector< std::pair<size_t, double> > &
 	this->_disNodes = nodes;
 	this->_disValues = values;
 }
+
+void FEMCondition::initGeometricAttributes(std::string const& geo_name,
+		GeoLib::GEOTYPE geo_obj_type,
+		std::string const& geo_obj_name,
+		GeoLib::GEOObjects const& geo_objs)
+{
+	_associated_geometry = geo_name;
+	setGeoType(geo_obj_type);
+	_geoName = geo_obj_name;
+	setGeoObj(geo_objs.getGeoObject(_associated_geometry, _geo_type, _geoName));
+}
