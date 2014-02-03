@@ -65,8 +65,14 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	ptree const & root_node = doc.get_child("OpenGeoSysGLI");
 	BOOST_FOREACH( ptree::value_type const & node, root_node )
 	{
-		if (node.first.compare("name") == 0 && !node.second.data().empty())
-			geo_name = node.second.data();
+		if (node.first.compare("name"))
+			if (node.second.data().empty())
+			{
+				ERR("BoostXmlGmlInterface::readFile(): <name>-tag is empty.")
+				return false;
+			}
+			else
+				geo_name = node.second.data();
 		else if (node.first.compare("points") == 0)
 		{
 			readPoints(node.second, points, pnt_names);
@@ -103,7 +109,7 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 
 		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() || 
 			 p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() ) 
-			WARN("BoostXmlGmlInterface::readPoints(): Attribute missing in <point> tag.")
+			WARN("BoostXmlGmlInterface::readPoints(): Attribute missing in <point> tag. Skipping point...")
 		else
 		{
 			_idx_map.insert (std::pair<std::size_t, std::size_t>(p_id, points->size()));
@@ -136,7 +142,7 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 			continue;
 
 		if (static_cast<unsigned>(polyline.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
-			WARN("BoostXmlGmlInterface::readPolylines(): Attribute \"id\" missing in <polyline> tag.")
+			WARN("BoostXmlGmlInterface::readPolylines(): Attribute \"id\" missing in <polyline> tag. Skipping polyline...")
 		else
 		{
 			polylines->push_back(new GeoLib::Polyline(*points));
@@ -175,7 +181,7 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 
 		if (static_cast<unsigned>(surface.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
 		{
-			WARN("BoostXmlGmlInterface::readSurfaces(): Attribute \"id\" missing in <surface> tag.")
+			WARN("BoostXmlGmlInterface::readSurfaces(): Attribute \"id\" missing in <surface> tag. Skipping surface...")
 			continue;
 		}
 
@@ -195,7 +201,7 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 			unsigned p3_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p3", std::numeric_limits<unsigned>::max()));
 
 			if (p1_attr == std::numeric_limits<unsigned>::max() || p2_attr == std::numeric_limits<unsigned>::max() || p3_attr == std::numeric_limits<unsigned>::max())
-				WARN("BoostXmlGmlInterface::readSurfaces(): Attribute missing in <element> tag.");
+				WARN("BoostXmlGmlInterface::readSurfaces(): Attribute missing in <element> tag. Skipping triangle...");
 			{
 				std::size_t p1 = pnt_id_map[_idx_map[p1_attr]];
 				std::size_t p2 = pnt_id_map[_idx_map[p2_attr]];
