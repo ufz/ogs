@@ -58,6 +58,9 @@ int main(int argc, char *argv[])
 	TCLAP::ValueArg<double> z_arg("z","z","displacement in z direction", false, 0.0,"floating point number");
 	cmd.add(z_arg);
 
+	TCLAP::ValueArg<std::string> mesh_out_arg("o","output-mesh","output mesh file", false, "", "string");
+	cmd.add(mesh_out_arg);
+
 	cmd.parse( argc, argv );
 
 	std::string fname (mesh_arg.getValue());
@@ -84,8 +87,12 @@ int main(int argc, char *argv[])
 		mesh->getNodes().end(),
 		displacement);
 
-	std::string out_fname(BaseLib::dropFileExtension(mesh_arg.getValue()));
-	out_fname += "_displaced.vtu";
+	std::string out_fname(mesh_out_arg.getValue());
+	if (out_fname.empty()) {
+		out_fname = BaseLib::dropFileExtension(mesh_out_arg.getValue());
+		out_fname += "_displaced.vtu";
+	}
+
 	FileIO::BoostVtuInterface mesh_io;
 	mesh_io.setMesh(mesh);
 	mesh_io.writeToFile(out_fname);
