@@ -52,23 +52,23 @@ void PETScVector::create(PetscInt vec_size)
     VecGetLocalSize(_v, &_size_loc);
 }
 
-void PETScVector::collectLocalVectors( PetscScalar local_array[],
-                                       PetscScalar global_array[])
+void PETScVector::gatherLocalVectors( PetscScalar local_array[],
+                                      PetscScalar global_array[])
 {
-    // Collect solution from processes.
+    // Collect vectors from processors.
     int size_rank;
     MPI_Comm_size(PETSC_COMM_WORLD, &size_rank);
 
     // number of elements to be sent for each rank
-    std::vector<int>  i_cnt(size_rank);
+    std::vector<PetscInt>  i_cnt(size_rank);
     // offset in the receive vector of the data from each rank
-    std::vector<int>  i_disp(size_rank);
+    std::vector<PetscInt>  i_disp(size_rank);
 
     MPI_Allgather(&_size_loc, 1, MPI_INT, &i_cnt[0], 1, MPI_INT, PETSC_COMM_WORLD);
 
     // colloect local array
-    int offset = 0;
-    for(int i=0; i<size_rank; i++)
+    PetscInt offset = 0;
+    for(PetscInt i=0; i<size_rank; i++)
     {
         i_disp[i] = offset;
         offset += i_cnt[i];
@@ -90,8 +90,10 @@ void PETScVector::getGlobalEntries(PetscScalar u[])
     PetscScalar *xp = nullptr;
     VecGetArray(_v, &xp);
 
-    collectLocalVectors(xp, u);
+    gatherLocalVectors(xp, u);
 
+    //This following line may be needed late on
+    //  for a communication load balance:
     //MPI_Barrier(PETSC_COMM_WORLD);
 
     VecRestoreArray(_v, &xp);
@@ -126,13 +128,6 @@ PetscScalar PETScVector::getNorm(MathLib::VecNormType  nmtype) const
     return norm;
 }
 
-PetscScalar  PETScVector::get(const  PetscInt idx) const
-{
-    double x;
-    VecGetValues(_v, 1, &idx, &x);
-    return x;
-}
-
 void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat vw_format)
 {
     PetscViewer viewer;
@@ -141,7 +136,7 @@ void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat v
 
     finalizeAssembly();
 
-    PetscObjectSetName(dynamic_cast<PetscObject>(_v), file_name.c_str());
+    PetscObjectSetName((PetscObject)_v, file_name.c_str());
     VecView(_v, viewer);
 
 #define  nEXIT_TEST

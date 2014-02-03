@@ -36,8 +36,7 @@ void checkGlobalVectorInterface()
 
     ASSERT_EQ(10u, x.size());
     ASSERT_EQ(0u, x.getRangeBegin());
-
-    ASSERT_EQ(10u, x.size());
+    ASSERT_EQ(10u, x.getRangeEnd());
 
     ASSERT_EQ(.0, x.get(0));
     x.set(0, 1.0);

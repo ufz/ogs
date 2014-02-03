@@ -25,14 +25,6 @@
 #include "petscksp.h"
 #endif
 
-/*
-// for future testing
-#ifdef OGS_USE_BOOSTMPI // boost must be included after petsc headers
-#include <boost/mpi/environment.hpp>
-#include <boost/mpi/communicator.hpp>
-#endif
-*/
-
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef QT4_FOUND
 #include <QApplication>
@@ -54,13 +46,6 @@ int main(int argc, char* argv[])
 #if defined(OGS_USE_PETSC)
         char help[] = "ogs6 with PETSc \n";
         PetscInitialize(&argc,&argv,(char *)0,help);
-
-/*
-// for future testing
-#ifdef OGS_USE_BOOSTMPI // demo
-        boost::mpi::communicator petsc( PETSC_COMM_WORLD, boost::mpi::comm_attach);
-*/
-
 #endif
 
         try
@@ -100,3 +85,4 @@ int main(int argc, char* argv[])
 
     return ret;
 }
+

@@ -90,15 +90,7 @@ class PETScVector
 
         /*!
           Get norm of vector
-          \param nmtype   norm type
-                          sum_abs_entries denotes \f$\sum_i |x_i|\f$
-                          euclidean denotes \f$\sqrt(\sum_i (x_i)^2)\f$
-                          max_abs_entry denotes \f$\mathrm{max}_i |x_i|\f$
-
-           \var VectorNormType  an enum type has values as
-                     SUM_ABS_ENTRIES = 0,
-                     EUCLIDEAN = 1,
-                     MAX_ABS_ENTRY = 2
+          \param nmtype   norm type, default Euclidean norm
         */
         PetscScalar getNorm(const MathLib::VecNormType nmtype = MathLib::VecNormType::NORM2) const;
 
@@ -184,7 +176,12 @@ class PETScVector
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
-        PetscScalar get(const  PetscInt idx) const;
+        PetscScalar get(const  PetscInt idx) const
+        {
+            double x;
+            VecGetValues(_v, 1, &idx, &x);
+            return x;
+        }
 
         /// Get PETsc vector. Use it only for test purpose
         PETSc_Vec &getData()
@@ -264,8 +261,8 @@ class PETScVector
               \param  local_array  local array
               \param  global_array global array
         */
-        void collectLocalVectors(PetscScalar local_array[],
-                                 PetscScalar global_array[]);
+        void gatherLocalVectors(PetscScalar local_array[],
+                                PetscScalar global_array[]);
 };
 
 } // end namespace
