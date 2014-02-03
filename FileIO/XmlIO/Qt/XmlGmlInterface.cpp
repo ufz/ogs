@@ -58,7 +58,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	for (int i = 0; i < geoTypes.count(); i++)
 	{
 		const QDomNode type_node(geoTypes.at(i));
-		if (type_node.nodeName().compare("name") == 0)
+		if (type_node.nodeName().compare("name") == 0 && !type_node.toElement().text().isEmpty())
 			gliName = type_node.toElement().text().toStdString();
 		else if (type_node.nodeName().compare("points") == 0)
 		{
@@ -83,7 +83,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 }
 
 void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib::Point*>* points,
-                                 std::map<std::string, std::size_t>* pnt_names )
+                                 std::map<std::string, std::size_t>* &pnt_names )
 {
 	char* pEnd;
 	QDomElement point = pointsRoot.firstChildElement();
@@ -116,15 +116,20 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
 
 		point = point.nextSiblingElement();
 	}
+
+	// if names-map is empty, set it to NULL because it is not needed
 	if (pnt_names->empty())
-		pnt_names = NULL; // if names-map is empty, set it to NULL because it is not needed
+	{
+		delete pnt_names;
+		pnt_names = NULL;
+	}
 }
 
 void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
                                     std::vector<GeoLib::Polyline*>* polylines,
                                     std::vector<GeoLib::Point*>* points,
                                     const std::vector<std::size_t> &pnt_id_map,
-                                    std::map<std::string, std::size_t>* ply_names)
+                                    std::map<std::string, std::size_t>* &ply_names)
 {
 	std::size_t idx(0);
 	QDomElement polyline = polylinesRoot.firstChildElement();
@@ -154,15 +159,20 @@ void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
 
 		polyline = polyline.nextSiblingElement();
 	}
+
+	// if names-map is empty, set it to NULL because it is not needed
 	if (ply_names->empty())
-		ply_names = NULL; // if names-map is empty, set it to NULL because it is not needed
+	{
+		delete ply_names;
+		ply_names = NULL; 
+	}
 }
 
 void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
                                    std::vector<GeoLib::Surface*>* surfaces,
                                    std::vector<GeoLib::Point*>* points,
                                    const std::vector<std::size_t> &pnt_id_map,
-                                   std::map<std::string,std::size_t>* sfc_names)
+                                   std::map<std::string,std::size_t>* &sfc_names)
 {
 	QDomElement surface = surfacesRoot.firstChildElement();
 	while (!surface.isNull())
@@ -205,8 +215,13 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
 
 		surface = surface.nextSiblingElement();
 	}
+
+	// if names-map is empty, set it to NULL because it is not needed
 	if (sfc_names->empty())
-		sfc_names = NULL; // if names-map is empty, set it to NULL because it is not needed
+	{
+		delete sfc_names;
+		sfc_names = NULL; 
+	}
 }
 
 int XmlGmlInterface::write(std::ostream& stream)

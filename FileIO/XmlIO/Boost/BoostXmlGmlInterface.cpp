@@ -94,10 +94,10 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 		if (point.first.compare("point") != 0)
 			continue;
 
-		unsigned      p_id = static_cast<unsigned>(point.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()));
-		double        p_x  = static_cast<double>  (point.second.get("<xmlattr>.x",  std::numeric_limits<double>::max()));
-		double        p_y  = static_cast<double>  (point.second.get("<xmlattr>.y",  std::numeric_limits<double>::max()));
-		double        p_z  = static_cast<double>  (point.second.get("<xmlattr>.z",  std::numeric_limits<double>::max()));
+		unsigned p_id = static_cast<unsigned>(point.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()));
+		double   p_x  = static_cast<double>  (point.second.get("<xmlattr>.x",  std::numeric_limits<double>::max()));
+		double   p_y  = static_cast<double>  (point.second.get("<xmlattr>.y",  std::numeric_limits<double>::max()));
+		double   p_z  = static_cast<double>  (point.second.get("<xmlattr>.z",  std::numeric_limits<double>::max()));
 		std::string p_name = point.second.get("<xmlattr>.name", "");
 
 		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() || 
