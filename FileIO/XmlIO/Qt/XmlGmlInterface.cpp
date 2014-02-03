@@ -93,11 +93,11 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
 	QDomElement point = pointsRoot.firstChildElement();
 	while (!point.isNull())
 	{
-		_idx_map.insert (std::pair<std::size_t, std::size_t>(strtol((point.attribute("id")).toStdString().c_str(), &pEnd, 10), points->size()));
-		GeoLib::Point* p = new GeoLib::Point(
-										strtod((point.attribute("x")).toStdString().c_str(), 0),
-										strtod((point.attribute("y")).toStdString().c_str(), 0),
-										strtod((point.attribute("z")).toStdString().c_str(), 0));
+		_idx_map.insert (std::pair<std::size_t, std::size_t>(
+			strtol((point.attribute("id")).toStdString().c_str(), &pEnd, 10), points->size()));
+		GeoLib::Point* p = new GeoLib::Point(strtod((point.attribute("x")).toStdString().c_str(), 0),
+		                                     strtod((point.attribute("y")).toStdString().c_str(), 0),
+		                                     strtod((point.attribute("z")).toStdString().c_str(), 0));
 		if (point.hasAttribute("name"))
 			pnt_names->insert( std::pair<std::string, std::size_t>(
 										point.attribute("name").toStdString(), points->size()) );
@@ -161,11 +161,8 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
 		surfaces->push_back(new GeoLib::Surface(*points));
 
 		if (surface.hasAttribute("name"))
-			sfc_names->insert( std::pair<std::string,
-				                            std::size_t>(surface.attribute("name").
-				                                    toStdString(),
-				                                    surfaces->size() -
-				                                    1) );
+			sfc_names->insert( std::pair<std::string, std::size_t>( surface.attribute("name").toStdString(),
+				                                                    surfaces->size()-1) );
 
 		QDomElement element = surface.firstChildElement();
 		while (!element.isNull())
