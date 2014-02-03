@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		GeoLib::AABB<MeshLib::Node> aabb(mesh->getNodes().begin(), mesh->getNodes().end());
 		displacement[0] = -(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0])/2.0;
 		displacement[1] = -(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1])/2.0;
-		displacement[2] = 0.0;
+		displacement[2] = -(aabb.getMaxPoint()[2] + aabb.getMinPoint()[2])/2.0;
 	} else {
 		displacement[0] = x_arg.getValue();
 		displacement[1] = y_arg.getValue();
