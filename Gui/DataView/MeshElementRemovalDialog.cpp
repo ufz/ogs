@@ -73,17 +73,17 @@ void MeshElementRemovalDialog::accept()
 	{
 		QList<QListWidgetItem*> items = this->materialListWidget->selectedItems();
 		for (int i=0; i<items.size(); ++i)
-			ex.searchByMaterialID(atoi(items[i]->text().toStdString().c_str()));
+			ex.searchByMaterialID(items[i]->text().toInt());
 		anything_checked = true;
 	}
 	if (this->boundingBoxCheckBox->isChecked())
 	{
-		const MeshLib::Node min(strtod(this->xMinEdit->text().toStdString().c_str(), 0),
-			                    strtod(this->yMinEdit->text().toStdString().c_str(), 0),
-								strtod(this->zMinEdit->text().toStdString().c_str(), 0),0);
-		const MeshLib::Node max(strtod(this->xMaxEdit->text().toStdString().c_str(), 0),
-			                    strtod(this->yMaxEdit->text().toStdString().c_str(), 0),
-								strtod(this->zMaxEdit->text().toStdString().c_str(), 0),0);
+		const MeshLib::Node min(this->xMinEdit->text().toDouble(),
+			                    this->yMinEdit->text().toDouble(),
+								this->zMinEdit->text().toDouble(),0);
+		const MeshLib::Node max(this->xMaxEdit->text().toDouble(),
+			                    this->yMaxEdit->text().toDouble(),
+								this->zMaxEdit->text().toDouble(),0);
 		ex.searchByBoundingBox(min, max);
 		anything_checked = true;
 	}

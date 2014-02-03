@@ -100,48 +100,43 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
 				// check for general station features
 				const QDomNode feature_node (stationFeatures.at(i));
 				const QString feature_name (feature_node.nodeName());
-				const std::string element_text (
-				        feature_node.toElement().text().toStdString());
+				const QString element_text (feature_node.toElement().text());
 				if (feature_name.compare("name") == 0)
-					stationName = feature_node.toElement().text().toStdString();
+					stationName = element_text.toStdString();
 				if (feature_name.compare("sensordata") == 0)
-					sensor_data_file_name =
-					        feature_node.toElement().text().toStdString();
+					sensor_data_file_name = element_text.toStdString();
 				/* add other station features here */
 
 				// check for general borehole features
 				else if (feature_name.compare("value") == 0)
-					stationValue = strtod(element_text.c_str(), 0);
+					stationValue = element_text.toDouble();
 				else if (feature_name.compare("bdepth") == 0)
-					boreholeDepth = strtod(element_text.c_str(), 0);
+					boreholeDepth = element_text.toDouble();
 				else if (feature_name.compare("bdate") == 0)
-					boreholeDate  = element_text;
+					boreholeDate  = element_text.toStdString();
 				/* add other borehole features here */
 			}
 
-			double zVal = (station.hasAttribute("z")) ? strtod((station.attribute("z")).toStdString().c_str(), 0) : 0.0;
+			double zVal = (station.hasAttribute("z")) ? station.attribute("z").toDouble() : 0.0;
 
 			if (station.nodeName().compare("station") == 0)
 			{
-				GeoLib::Station* s =
-				        new GeoLib::Station(
-							strtod((station.attribute("x")).toStdString().c_str(), 0),
-				            strtod((station.attribute("y")).toStdString().c_str(), 0),
-				                zVal,
-				                stationName);
+				GeoLib::Station* s = new GeoLib::Station(station.attribute("x").toDouble(),
+				                                         station.attribute("y").toDouble(),
+				                                         zVal,
+				                                         stationName);
 				s->setStationValue(stationValue);
 				if (!sensor_data_file_name.empty())
-					s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
-					                                sensor_data_file_name,
-					                                station_file_name));
+					s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name,
+					                                                    station_file_name));
 				stations->push_back(s);
 			}
 			else if (station.nodeName().compare("borehole") == 0)
 			{
 				GeoLib::StationBorehole* s = GeoLib::StationBorehole::createStation(
 				        stationName,
-				        strtod((station.attribute("x")).toStdString().c_str(), 0),
-				        strtod((station.attribute("y")).toStdString().c_str(), 0),
+				        station.attribute("x").toDouble(),
+				        station.attribute("y").toDouble(),
 				        zVal,
 				        boreholeDepth,
 				        boreholeDate);
@@ -179,11 +174,11 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
 					horizonName = horizonFeatures.at(i).toElement().text().toStdString();
 			/* add other horizon features here */
 
-			double depth (strtod((horizon.attribute("z")).toStdString().c_str(), 0));
+			double depth (horizon.attribute("z").toDouble());
 			if (fabs(depth - depth_check) > std::numeric_limits<double>::min()) // skip soil-layer if its thickness is zero
 			{
-				borehole->addSoilLayer(strtod((horizon.attribute("x")).toStdString().c_str(), 0),
-									   strtod((horizon.attribute("y")).toStdString().c_str(), 0),
+				borehole->addSoilLayer(horizon.attribute("x").toDouble(),
+									   horizon.attribute("y").toDouble(),
 									   depth,
 									   horizonName);
 				depth_check = depth;
