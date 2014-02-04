@@ -2,7 +2,7 @@
  * @file moveMeshNodes.h
  * @author Thomas Fischer
  * @date Feb 03, 2014
- * @brief
+ * @brief Functionality to move mesh nodes using a given displacement vec.
  *
  * @copyright
  * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
