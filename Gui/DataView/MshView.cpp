@@ -34,7 +34,7 @@
 
 #include "Legacy/MeshIO.h"
 //#include "RapidXmlIO/RapidVtuInterface.h"
-#include "RapidXmlIO/BoostVtuInterface.h"
+#include "XmlIO/Boost/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 #include "SHPInterface.h"
 

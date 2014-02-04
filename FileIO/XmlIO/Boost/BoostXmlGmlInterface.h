@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   BoostXmlGmlInterface.h
  * \author Karsten Rink
- * \date   2011-11-23
- * \brief  Definition of the XmlGmlInterface class.
+ * \date   2014-01-31
+ * \brief  Definition of the BoostXmlGmlInterface class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,61 +12,67 @@
  *
  */
 
-#ifndef XMLGMLINTERFACE_H
-#define XMLGMLINTERFACE_H
+#ifndef BOOSTXMLGMLINTERFACE_H_
+#define BOOSTXMLGMLINTERFACE_H_
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/optional.hpp>
 
 #include "../XMLInterface.h"
-#include "XMLQtInterface.h"
+
+class ProjectData;
+class Point;
+class Polyline;
+class Surface;
 
 namespace FileIO
 {
 
-/**
- * \brief Reads and writes GeoObjects to and from XML files.
- */
-class XmlGmlInterface : public XMLInterface, public XMLQtInterface
+class BoostXmlGmlInterface : public XMLInterface
 {
 public:
-	/**
-	 * Constructor
-	 * \param project Project data.
-	 */
-	XmlGmlInterface(GeoLib::GEOObjects& geo_objs);
+	BoostXmlGmlInterface(ProjectData & project);
+	virtual ~BoostXmlGmlInterface()	{}
 
-	virtual ~XmlGmlInterface() {}
-
-	/// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
-	int readFile(const QString &fileName);
-
-	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+	/// Reads an xml-file containing OGS geometry
+	bool readFile(const std::string &fname);
 
 protected:
+	/// Required method for writing geometry. This is not implemented here, use the Qt class for writing.
 	int write(std::ostream& stream);
 
 private:
 	/// Reads GeoLib::Point-objects from an xml-file
-	void readPoints    ( const QDomNode &pointsRoot,
+	void readPoints    ( boost::property_tree::ptree const& pointsRoot,
 	                     std::vector<GeoLib::Point*>* points,
 	                     std::map<std::string, std::size_t>* &pnt_names );
 
 	/// Reads GeoLib::Polyline-objects from an xml-file
-	void readPolylines ( const QDomNode &polylinesRoot,
+	void readPolylines ( boost::property_tree::ptree const& polylinesRoot,
 	                     std::vector<GeoLib::Polyline*>* polylines,
 	                     std::vector<GeoLib::Point*>* points,
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* &ply_names );
 
 	/// Reads GeoLib::Surface-objects from an xml-file
-	void readSurfaces  ( const QDomNode &surfacesRoot,
+	void readSurfaces  ( boost::property_tree::ptree const& surfacesRoot,
 	                     std::vector<GeoLib::Surface*>* surfaces,
 	                     std::vector<GeoLib::Point*>* points,
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* &sfc_names );
 
-	GeoLib::GEOObjects& _geo_objs;
+	/// Check if the root node really specifies an GML file
+	bool isGmlFile( boost::property_tree::ptree const& root) const;
+
 	std::map<std::size_t, std::size_t> _idx_map;
+	ProjectData & _project_data;
 };
 
-}
+} // end namespace FileIO
 
-#endif // XMLGMLINTERFACE_H
+#endif /* BOOSTXMLGMLINTERFACE_H_ */
