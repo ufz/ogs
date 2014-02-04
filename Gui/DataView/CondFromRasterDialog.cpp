@@ -69,7 +69,7 @@ void CondFromRasterDialog::accept()
 {
 	std::string mesh_name (this->meshBox->currentText().toStdString());
 	std::string raster_name (this->rasterEdit->text().toStdString());
-	double scaling_factor = strtod(this->scalingEdit->text().toStdString().c_str(), 0);
+	double scaling_factor = this->scalingEdit->text().toDouble();
 	std::vector< std::pair<size_t,double> > direct_values;
 
 	if (mesh_name.empty())

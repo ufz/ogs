@@ -186,7 +186,7 @@ void MeshLayerEditDialog::accept()
 			{
 				new_mesh = new MeshLib::Mesh(*_msh);
 				const std::string imgPath ( this->_edits[0]->text().toStdString() );
-				const double noDataReplacementValue = strtod(this->_noDataReplacementEdit->text().toStdString().c_str(),0);
+				const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
 				if (!imgPath.empty())
 					result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
 			}
