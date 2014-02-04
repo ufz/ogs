@@ -49,3 +49,11 @@ TARGET_LINK_LIBRARIES( DataExplorer5NodeReordering
 	MeshLib
 )
 SET_TARGET_PROPERTIES(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
+
+ADD_EXECUTABLE( MoveMesh MoveMesh.cpp )
+TARGET_LINK_LIBRARIES( MoveMesh
+	FileIO
+	MeshLib
+)
+SET_TARGET_PROPERTIES(MoveMesh PROPERTIES FOLDER Utilities)
+
