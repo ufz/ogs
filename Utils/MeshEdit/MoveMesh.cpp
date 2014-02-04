@@ -1,7 +1,7 @@
 /**
  * @file MoveMesh.cpp
  * @date Jan 17, 2014
- * @brief 
+ * @brief
  *
  * @copyright
  * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -23,7 +23,7 @@
 
 // FileIO
 #include "readMeshFromFile.h"
-#include "RapidXmlIO/BoostVtuInterface.h"
+#include "XmlIO/Boost/BoostVtuInterface.h"
 
 // GeoLib
 #include "AABB.h"
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Moves the mesh nodes using the given displacement vector or if no displacement vector is given, moves the mesh nodes such that the centroid of the given mesh is in the origin.", ' ', "0.1"); 
+	TCLAP::CmdLine cmd("Moves the mesh nodes using the given displacement vector or if no displacement vector is given, moves the mesh nodes such that the centroid of the given mesh is in the origin.", ' ', "0.1");
 	// Define a value argument and add it to the command line.
 	// A value arg defines a flag and a type of value that it expects,
 	// such as "-m meshfile".
