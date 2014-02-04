@@ -65,14 +65,15 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	ptree const & root_node = doc.get_child("OpenGeoSysGLI");
 	BOOST_FOREACH( ptree::value_type const & node, root_node )
 	{
-		if (node.first.compare("name"))
+		if (node.first.compare("name") == 0)
+		{
 			if (node.second.data().empty())
 			{
 				ERR("BoostXmlGmlInterface::readFile(): <name>-tag is empty.")
 				return false;
 			}
-			else
-				geo_name = node.second.data();
+			geo_name = node.second.data();
+		}
 		else if (node.first.compare("points") == 0)
 		{
 			readPoints(node.second, points, pnt_names);
