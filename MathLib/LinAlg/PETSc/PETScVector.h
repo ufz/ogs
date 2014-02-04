@@ -35,22 +35,21 @@ class PETScVector
 {
     public:
 
-        PETScVector() = default;
         /*!
              \brief  Constructor
              \param size  the global size of the vector
-         */
-        explicit PETScVector(const PetscInt size)
+             \param local_size the local size of the vector.
+                    If this value is given, it can be associated with some
+                    specific memory allocation types of matrix.
+        */
+        explicit PETScVector(const PetscInt size, const PetscInt loc_size = PETSC_DECIDE)
         {
             _size = size;
-            create(_size);
+            create(_size, loc_size);
         }
 
         /// copy constructor
         PETScVector(const PETScVector &existing_vec);
-
-        /// Duplicate a vector. The value of existing_vec is not copied.
-        void Duplicate(const PETScVector &existing_vec);
 
         ~PETScVector()
         {
@@ -65,13 +64,13 @@ class PETScVector
         }
 
         /// Get the global size the vector
-        PetscInt  size() const
+        PetscInt size() const
         {
             return _size;
         }
 
         /// Get the number of entries in the same rank
-        PetscInt  getLocalSize() const
+        PetscInt getLocalSize() const
         {
             return _size_loc;
         }
@@ -100,7 +99,7 @@ class PETScVector
            \param i  entry index
            \param value  entry value
 
-         */
+        */
         void set(const PetscInt i, const PetscScalar value)
         {
             VecSetValue(_v, i, value, INSERT_VALUES);
@@ -111,7 +110,7 @@ class PETScVector
 
            \param i  number of the entry
            \param value value.
-         */
+        */
         void add(const PetscInt i, const PetscScalar value)
         {
             VecSetValue(_v, i, value,  ADD_VALUES);
@@ -123,8 +122,8 @@ class PETScVector
                           Note: size_t cannot be the type of e_idxs template argument
            \param sub_vec entries to be added
         */
-        template<class T_SUBVEC>  void add(const std::vector<PetscInt> &e_idxs,
-                                           const T_SUBVEC &sub_vec)
+        template<class T_SUBVEC> void add(const std::vector<PetscInt> &e_idxs,
+                                          const T_SUBVEC &sub_vec)
         {
             VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], ADD_VALUES);
         }
@@ -135,20 +134,20 @@ class PETScVector
                           Note: size_t cannot be the type of e_idxs template argument
            \param sub_vec entries to be added
         */
-        template<class T_SUBVEC>  void set(const std::vector<PetscInt> &e_idxs,
-                                           const T_SUBVEC &sub_vec)
+        template<class T_SUBVEC> void set(const std::vector<PetscInt> &e_idxs,
+                                          const T_SUBVEC &sub_vec)
         {
             VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
         }
 
         /*!
-           get several entries
+           Get several entries
            \param e_idxs  indicies of entries to be gotten.
                           Note: size_t cannot be the type of e_idxs template argument
            \param sub_vec values of entries
         */
-        template<class T_SUBVEC>  void get(const std::vector<PetscInt> &e_idxs,
-                                           T_SUBVEC &sub_vec)
+        template<class T_SUBVEC> void get(const std::vector<PetscInt> &e_idxs,
+                                          T_SUBVEC &sub_vec)
         {
             VecGetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
         }
@@ -156,8 +155,9 @@ class PETScVector
         /*!
            Get local vector, i.e. entries in the same rank
 
-           \param loc_vec  pinter to array where stores the local vector
-         */
+           \param loc_vec  pointer to array where stores the local vector,
+                           memory allocation is not needed
+        */
         void getLocalVector(PetscScalar *loc_vec) const
         {
             PetscInt count;
@@ -168,15 +168,13 @@ class PETScVector
         /*!
            Get global vector
 
-           \param u0  array to store the global vector
-           \param u1  array to store the global vector too, and it is also used as
-                      a buffer array in this function.
-         */
-        void getGlobalEntries(PetscScalar u[]);
+           \param u  array to store the global vector. Memory allocated is needed in advance
+        */
+        void getGlobalVector(PetscScalar u[]);
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
-        PetscScalar get(const  PetscInt idx) const
+        PetscScalar get(const PetscInt idx) const
         {
             double x;
             VecGetValues(_v, 1, &idx, &x);
@@ -247,8 +245,12 @@ class PETScVector
         /// Size of local entries
         PetscInt _size_loc;
 
-        /// Create vector
-        void create(PetscInt vec_size);
+        /*!
+             \brief Create vector
+             \param size  the global size of the vector
+             \param local_size the local size of the vector
+        */
+        void create(const PetscInt size,  const PetscInt loc_size = PETSC_DECIDE);
 
         /// Wrap the PETSc function VecRestoreArray to restore a vector after VecGetArray is called.
         void restoreLocalVector(PetscScalar *loc_vec)

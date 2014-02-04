@@ -79,6 +79,8 @@ void checkGlobalVectorInterfaceMPI()
 
     ASSERT_EQ(3u, msize);
 
+    // -------------------------------------------------------------------
+    // PETSc determined partitioning
     T_VECTOR x(16);
 
     const int r0 = x.getRangeBegin();
@@ -92,8 +94,7 @@ void checkGlobalVectorInterfaceMPI()
     x = 10.;
 
     // Value of x is not copied to y
-    T_VECTOR y;
-    y.Duplicate(x);
+    T_VECTOR y(x);
 
     y = 10.0;
     y += x;
@@ -139,9 +140,31 @@ void checkGlobalVectorInterfaceMPI()
         1.0000000000000000e+01
     };
 
-    y.getGlobalEntries(x0);
+    y.getGlobalVector(x0);
 
     ASSERT_ARRAY_NEAR(x0, z, 16, 1e-10);
+
+    // -------------------------------------------------------------------
+    // User determined partitioning
+    T_VECTOR x_fixed_p(6, 2);
+
+    int mrank;
+    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+
+    vec_pos[0] = 2 * mrank;
+    vec_pos[1] = vec_pos[0] + 1;
+    local_vec[0] = 1.;
+    local_vec[1] = 2.;
+    for(unsigned i=0; i<3; i++)
+    {
+        const unsigned j = 2 * i;
+        z[j] = 1.0;
+        z[j+1] = 2.0;
+    }
+    x_fixed_p.set(vec_pos, local_vec);
+    x_fixed_p.getGlobalVector(x0);
+
+    ASSERT_ARRAY_NEAR(x0, z, 6, 1e-10);
 }
 #endif
 

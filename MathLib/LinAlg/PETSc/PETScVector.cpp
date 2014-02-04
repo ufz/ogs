@@ -24,12 +24,6 @@ namespace MathLib
 {
 PETScVector::PETScVector(const PETScVector &existing_vec)
 {
-    Duplicate(existing_vec);
-    VecCopy(existing_vec._v, _v);
-}
-
-void PETScVector::Duplicate(const PETScVector &existing_vec)
-{
     _size = existing_vec._size;
     VecDuplicate(existing_vec._v, &_v);
 
@@ -38,13 +32,19 @@ void PETScVector::Duplicate(const PETScVector &existing_vec)
 }
 
 //-----------------------------------------------------------------
-void PETScVector::create(PetscInt vec_size)
+void PETScVector::create(PetscInt size, const PetscInt loc_size)
 {
-    VecCreate(PETSC_COMM_WORLD, &_v);
-    // The following two lines are used to test a fix size partition
-    // VecCreateMPI(PETSC_COMM_WORLD,m_size_loc, m, &v);
-    // VecSetSizes(v, m_size_loc, m);
-    VecSetSizes(_v, PETSC_DECIDE, vec_size);
+    if(loc_size == PETSC_DECIDE)
+    {
+        VecCreate(PETSC_COMM_WORLD, &_v);
+        VecSetSizes(_v, loc_size, size);
+    }
+    else
+    {
+        // Fix size partitioning
+        // the size can be associated to specific memory allocation of a matrix
+        VecCreateMPI(PETSC_COMM_WORLD, loc_size, size, &_v);
+    }
     VecSetFromOptions(_v);
     // VecSetUp(_v); // for ver.>3.3
     VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
@@ -79,7 +79,7 @@ void PETScVector::gatherLocalVectors( PetscScalar local_array[],
 
 }
 
-void PETScVector::getGlobalEntries(PetscScalar u[])
+void PETScVector::getGlobalVector(PetscScalar u[])
 {
 
 #ifdef TEST_MEM_PETSC
@@ -105,7 +105,7 @@ void PETScVector::getGlobalEntries(PetscScalar u[])
 #endif
 }
 
-PetscScalar PETScVector::getNorm(MathLib::VecNormType  nmtype) const
+PetscScalar PETScVector::getNorm(MathLib::VecNormType nmtype) const
 {
     NormType petsc_norm = NORM_1;
     switch(nmtype)
