@@ -8,7 +8,6 @@
            adding a PetscErrorCode type variable before each PETSc fucntion
 
    \author Wenqing Wang
-   \version
    \date Nov 2011 - Sep 2013
 
    \copyright
@@ -22,18 +21,9 @@
 
 namespace MathLib
 {
-PETScVector::PETScVector(const PETScVector &existing_vec)
+PETScVector::PETScVector(PetscInt size, const PetscInt loc_size)
 {
-    _size = existing_vec._size;
-    VecDuplicate(existing_vec._v, &_v);
-
-    VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
-    VecGetLocalSize(_v, &_size_loc);
-}
-
-//-----------------------------------------------------------------
-void PETScVector::create(PetscInt size, const PetscInt loc_size)
-{
+    _size = size;
     if(loc_size == PETSC_DECIDE)
     {
         VecCreate(PETSC_COMM_WORLD, &_v);
@@ -46,12 +36,22 @@ void PETScVector::create(PetscInt size, const PetscInt loc_size)
         VecCreateMPI(PETSC_COMM_WORLD, loc_size, size, &_v);
     }
     VecSetFromOptions(_v);
-    // VecSetUp(_v); // for ver.>3.3
+    // VecSetUp(_v); // for petsc ver.>3.3
     VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
 
     VecGetLocalSize(_v, &_size_loc);
 }
 
+PETScVector::PETScVector(const PETScVector &existing_vec)
+{
+    _size = existing_vec._size;
+    VecDuplicate(existing_vec._v, &_v);
+
+    VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
+    VecGetLocalSize(_v, &_size_loc);
+}
+
+//-----------------------------------------------------------------
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
                                       PetscScalar global_array[])
 {
@@ -61,13 +61,13 @@ void PETScVector::gatherLocalVectors( PetscScalar local_array[],
 
     // number of elements to be sent for each rank
     std::vector<PetscInt>  i_cnt(size_rank);
-    // offset in the receive vector of the data from each rank
-    std::vector<PetscInt>  i_disp(size_rank);
 
     MPI_Allgather(&_size_loc, 1, MPI_INT, &i_cnt[0], 1, MPI_INT, PETSC_COMM_WORLD);
 
-    // colloect local array
+    // collect local array
     PetscInt offset = 0;
+    // offset in the receive vector of the data from each rank
+    std::vector<PetscInt>  i_disp(size_rank);
     for(PetscInt i=0; i<size_rank; i++)
     {
         i_disp[i] = offset;

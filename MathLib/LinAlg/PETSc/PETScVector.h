@@ -4,7 +4,6 @@
           PETSc vector routines.
 
    \author Wenqing Wang
-   \version
    \date Nov 2011 - Sep 2013
 
    \copyright
@@ -42,11 +41,7 @@ class PETScVector
                     If this value is given, it can be associated with some
                     specific memory allocation types of matrix.
         */
-        explicit PETScVector(const PetscInt size, const PetscInt loc_size = PETSC_DECIDE)
-        {
-            _size = size;
-            create(_size, loc_size);
-        }
+        explicit PETScVector(const PetscInt size, const PetscInt loc_size = PETSC_DECIDE);
 
         /// copy constructor
         PETScVector(const PETScVector &existing_vec);
@@ -244,13 +239,6 @@ class PETScVector
         PetscInt _size;
         /// Size of local entries
         PetscInt _size_loc;
-
-        /*!
-             \brief Create vector
-             \param size  the global size of the vector
-             \param local_size the local size of the vector
-        */
-        void create(const PetscInt size,  const PetscInt loc_size = PETSC_DECIDE);
 
         /// Wrap the PETSc function VecRestoreArray to restore a vector after VecGetArray is called.
         void restoreLocalVector(PetscScalar *loc_vec)
