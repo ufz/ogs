@@ -1035,15 +1035,15 @@ void MainWindow::callFileConverter() const
 {
 	if (system(NULL) != 0) // command processor available
 	{
-#ifdef WIN32
-		std::string call_command("OGSFileConverter");
-#else
-		std::string call_command("./OGSFileConverter");
-#endif // Win32
-		system(call_command.c_str());
+		QSettings settings;
+		QString converter_path = settings.value("DataExplorerConverterPath").toString();
+		if (!converter_path.isEmpty())
+			system(converter_path.toAscii());
+		else
+			OGSError::box("Location of OGS File Converter not specified", "Error");
 	}
 	else
-		OGSError::box("Error executing OGS File Converter", "Error");
+		OGSError::box("Error executing OGSFileConverter - no command processor available", "Error");
 }
 
 void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
@@ -1084,20 +1084,25 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
 			if (system(NULL) != 0) // command processor available
 			{
-				std::string gmsh_command("gmsh -2 -algo meshadapt ");
+				QSettings settings;
+				std::string gmsh_path = settings.value("DataExplorerGmshPath").toString().toStdString();
+
+				if (!gmsh_path.empty())
+				{
 				std::string fname (fileName.toStdString());
-				gmsh_command += fname;
-				size_t pos (fname.rfind ("."));
-				if (pos != std::string::npos)
-					fname = fname.substr (0, pos);
-				gmsh_command += " -o " + fname + ".msh";
-				system(gmsh_command.c_str());
-				this->loadFile(ImportFileType::GMSH, fileName.left(fileName.length() - 3).append("msh"));
+					std::string gmsh_command = gmsh_path + " -2 -algo meshadapt " + fname;
+					size_t pos (fname.rfind ("."));
+					if (pos != std::string::npos)
+						fname = fname.substr (0, pos);
+					gmsh_command += " -o " + fname + ".msh";
+					system(gmsh_command.c_str());
+					this->loadFile(ImportFileType::GMSH, fileName.left(fileName.length() - 3).append("msh"));
+				}
+				else
+					OGSError::box("Location of GMSH not specified.", "Error");
 			}
 			else
-				OGSError::box(
-				        "Error executing command gmsh - no command processor available",
-				        "Error");
+					OGSError::box("Error executing command gmsh - no command processor available", "Error");
 
 			if (delete_geo_file) // delete file
 			{

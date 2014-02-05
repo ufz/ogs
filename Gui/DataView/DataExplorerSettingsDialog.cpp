@@ -27,9 +27,9 @@ DataExplorerSettingsDialog::DataExplorerSettingsDialog(QDialog* parent) : QDialo
 {
 	setupUi(this);
 
-	QSettings settings("UFZ", "OpenGeoSys");
+	QSettings settings;
 	this->fcPathEdit->setText(settings.value("DataExplorerConverterPath").toString());
-	this->gmshPathEdit->setText(settings.value("DataExplorerGMSHPath").toString());
+	this->gmshPathEdit->setText(settings.value("DataExplorerGmshPath").toString());
 }
 
 DataExplorerSettingsDialog::~DataExplorerSettingsDialog()
@@ -38,31 +38,29 @@ DataExplorerSettingsDialog::~DataExplorerSettingsDialog()
 
 void DataExplorerSettingsDialog::on_fcPathButton_clicked()
 {
-	QSettings settings("UFZ", "OpenGeoSys");
+	QSettings settings;
 	QString file_name = QFileDialog::getOpenFileName(this, "Select path for OGS File Converter...",
 						                                   settings.value("DataExplorerConverterPath").toString(),
 						                                   "OGSFileConverter.exe;;");
-
 	if (!file_name.isEmpty())
 		this->fcPathEdit->setText(file_name);
 }
 
 void DataExplorerSettingsDialog::on_gmshPathButton_clicked()
 {
-	QSettings settings("UFZ", "OpenGeoSys");
+	QSettings settings;
 	QString file_name = QFileDialog::getOpenFileName(this, "Select path for GMSH...",
-						                                   settings.value("DataExplorerGMSHPath").toString(),
+						                                   settings.value("DataExplorerGmshPath").toString(),
 						                                   "gmsh*;;");
-
 	if (!file_name.isEmpty())
 		this->gmshPathEdit->setText(file_name);
 }
 
 void DataExplorerSettingsDialog::accept()
 {
-	QSettings settings("UFZ", "OpenGeoSys");
+	QSettings settings;
 	settings.setValue("DataExplorerConverterPath", this->fcPathEdit->text());
-	settings.setValue("DataExplorerGMSHPath", this->gmshPathEdit->text());
+	settings.setValue("DataExplorerGmshPath", this->gmshPathEdit->text());
 	this->done(QDialog::Accepted);
 }
 
