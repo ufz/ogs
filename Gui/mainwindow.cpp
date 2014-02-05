@@ -31,6 +31,7 @@
 //dialogs
 #include "CondFromRasterDialog.h"
 #include "ConditionWriterDialog.h"
+#include "DataExplorerSettingsDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
 //TODO6 #include "OGSFileConverter.h"
@@ -1261,6 +1262,12 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 void MainWindow::showVisalizationPrefsDialog()
 {
 	_visPrefsDialog->show();
+}
+
+void MainWindow::showDataExplorerSettingsDialog()
+{
+	DataExplorerSettingsDialog dlg;
+	dlg.exec();
 }
 
 void MainWindow::FEMTestStart()

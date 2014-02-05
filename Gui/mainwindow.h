@@ -85,6 +85,7 @@ protected slots:
 	void showConditionWriterDialog();
 	/// Call dialog for creating or modifying FEM conditions.
 	void showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, bool on_points = false);
+	void showDataExplorerSettingsDialog();
 	/// Allows setting the name for a geometric object
 	void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id);
 	/// Removal of mesh elements based on a number of criteria.

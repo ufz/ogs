@@ -1,0 +1,46 @@
+/**
+ * \file   DataExplorerSettingsDialog.h
+ * \author Karsten Rink
+ * \date   2014-02-05
+ * \brief  Definition of the DataExplorerSettingsDialog class.
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef DATAEXPLORERSETTINGSDIALOG_H
+#define DATAEXPLORERSETTINGSDIALOG_H
+
+#include "ui_DataExplorerSettings.h"
+#include <QDialog>
+
+/**
+ * \brief A dialog window for managing general Data Explorer settings
+ */
+class DataExplorerSettingsDialog : public QDialog, private Ui_DataExplorerSettings
+{
+	Q_OBJECT
+
+public:
+	DataExplorerSettingsDialog(QDialog* parent = 0);
+	~DataExplorerSettingsDialog(void);
+
+
+private slots:
+	void on_fcPathButton_clicked();
+
+	void on_gmshPathButton_clicked();
+
+	/// Instructions if the OK-Button has been pressed.
+	void accept();
+
+	/// Instructions if the Cancel-Button has been pressed.
+	void reject() { this->done(QDialog::Rejected); };
+
+};
+
+#endif //DATAEXPLORERSETTINGSDIALOG_H

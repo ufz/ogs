@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DataExplorerSettings</class>
+ <widget class="QDialog" name="DataExplorerSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>408</width>
+    <height>255</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>OGS Data Explorer Settings</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="fcExplLabel">
+     <property name="text">
+      <string>Path to OGS File Converter:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="gmshExplLabel">
+     <property name="text">
+      <string>Path to GMSH:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="gmshPathEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="gmshLabel">
+     <property name="text">
+      <string>GMSH:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="fcPathEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="fcLabel">
+     <property name="text">
+      <string>File Converter:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="gmshPathButton">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="fcPathButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Data View Tabs:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Geometry</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBox_4">
+        <property name="text">
+         <string>Modelling</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox_3">
+        <property name="text">
+         <string>Meshes</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="checkBox_2">
+        <property name="text">
+         <string>Stations</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBox_5">
+        <property name="text">
+         <string>Visualization</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>fcPathButton</tabstop>
+  <tabstop>gmshPathButton</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>checkBox_2</tabstop>
+  <tabstop>checkBox_3</tabstop>
+  <tabstop>checkBox_4</tabstop>
+  <tabstop>checkBox_5</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>fcPathEdit</tabstop>
+  <tabstop>gmshPathEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DataExplorerSettings</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DataExplorerSettings</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
