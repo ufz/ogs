@@ -18,9 +18,8 @@
 #include <QFileInfo>
 #include <QSettings>
 
-RecentFiles::RecentFiles(  QObject* parent, const char* slot,
-                           QString settingsName, QString programName )
-	: QObject(parent), _settingsName(settingsName), _programName(programName)
+RecentFiles::RecentFiles(  QObject* parent, const char* slot, QString settingsName)
+	: QObject(parent), _settingsName(settingsName)
 {
 	_filesMenu = new QMenu(tr("Recent files"));
 	for (int i = 0; i < _maxFiles; i++)
@@ -46,7 +45,7 @@ void RecentFiles::setCurrentFile( const QString& filename )
 {
 	_currentFile = filename;
 
-	QSettings settings("UFZ", _programName);
+	QSettings settings;
 	QStringList files = settings.value(_settingsName).toStringList();
 	files.removeAll(filename);
 	files.prepend(filename);
@@ -59,7 +58,7 @@ void RecentFiles::setCurrentFile( const QString& filename )
 }
 void RecentFiles::updateRecentFileActions()
 {
-	QSettings settings("UFZ", _programName);
+	QSettings settings;
 	QStringList files = settings.value(_settingsName).toStringList();
 
 	int numFiles = qMin(files.size(), (int)_maxFiles);

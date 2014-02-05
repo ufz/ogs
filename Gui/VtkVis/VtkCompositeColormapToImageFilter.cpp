@@ -46,10 +46,8 @@ void VtkCompositeColormapToImageFilter::init()
 
 	QWidget* parent = 0;
 	QSettings settings;
-	QString fileName = QFileDialog::getOpenFileName(parent,
-	                                                "Select color lookup table",
-	                                                settings.value("lastOpenedLookupTableFileDirectory").
-	                                                toString(),
+	QString fileName = QFileDialog::getOpenFileName(parent, "Select color lookup table",
+	                                                settings.value("lastOpenedLookupTableFileDirectory").toString(),
 	                                                "Lookup table XML files (*.xml);;");
 	double range[2];
 	dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);

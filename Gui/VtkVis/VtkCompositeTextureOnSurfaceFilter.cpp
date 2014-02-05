@@ -63,10 +63,8 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 
 	QWidget* parent = 0;
 	QSettings settings;
-	QString fileName = QFileDialog::getOpenFileName(parent,
-	                                                "Select raster file to apply as texture",
-	                                                settings.value("lastOpenedTextureFileDirectory").
-	                                                toString(),
+	QString fileName = QFileDialog::getOpenFileName(parent, "Select raster file to apply as texture",
+	                                                settings.value("lastOpenedTextureFileDirectory").toString(),
 	                                                "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif);;NetCDF files (*.nc);;");
 	QFileInfo fi(fileName);
 

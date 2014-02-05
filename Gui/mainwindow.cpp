@@ -324,8 +324,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	menu_File->insertMenu(action_Exit, _import_files_menu);
 
 	// Setup recent files menu
-	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()),
-	                                           "recentFileList", "OpenGeoSys-5");
+	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList");
 	connect(this, SIGNAL(fileUsed(QString)), recentFiles,
 	        SLOT(setCurrentFile(QString)));
 	menu_File->insertMenu(action_Exit, recentFiles->menu());
@@ -689,7 +688,6 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::TETGEN)
 	{
-		QSettings settings;
 		QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
 						                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
 						                                     "TetGen element files (*.ele);;");
@@ -703,7 +701,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				_meshModels->addMesh(msh);
 			} else
 				OGSError::box("Failed to load a TetGen mesh.");
-			settings.setValue("lastOpenedTetgenFileDirectory", QDir(fileName).absolutePath());
+			settings.setValue("lastOpenedFileDirectory", QDir(fileName).absolutePath());
 		}
 	}
 	else if (t == ImportFileType::VTK)
@@ -973,7 +971,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	if (choice<2) // load something from a file
 	{
 		QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)", "Raster files(*.asc *.grd)" };
-		QSettings settings("UFZ", "OpenGeoSys-5");
+		QSettings settings;
 		file_name = QFileDialog::getOpenFileName( this, 
 		                                          "Select file for mapping",
 		                                          settings.value("lastOpenedFileDirectory").toString(),
@@ -1154,9 +1152,7 @@ void MainWindow::showDiagramPrefsDialog()
 {
 	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
+	                                                 settings.value("lastOpenedFileDirectory").toString(),
 	                                                 "Text files (*.txt);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
@@ -1337,10 +1333,8 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
 	QSettings settings;
-	QString fileName = QFileDialog::getSaveFileName(this,
-	                                                "Save scene to VRML file", settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),
+	QString fileName = QFileDialog::getSaveFileName(this, "Save scene to VRML file", 
+	                                                settings.value("lastExportedFileDirectory").toString(),
 	                                                "VRML files (*.wrl);;");
 	if (!fileName.isEmpty())
 	{
@@ -1360,11 +1354,8 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
 	QSettings settings;
-	QString fileName = QFileDialog::getSaveFileName(this,
-	                                                "Save scene to Wavefront OBJ files",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),
+	QString fileName = QFileDialog::getSaveFileName(this, "Save scene to Wavefront OBJ files",
+	                                                settings.value("lastExportedFileDirectory").toString(),
 	                                                ";;");
 	if (!fileName.isEmpty())
 	{
