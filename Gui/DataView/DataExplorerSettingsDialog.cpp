@@ -41,7 +41,7 @@ void DataExplorerSettingsDialog::on_fcPathButton_clicked()
 	QSettings settings;
 	QString file_name = QFileDialog::getOpenFileName(this, "Select path for OGS File Converter...",
 						                                   settings.value("DataExplorerConverterPath").toString(),
-						                                   "OGSFileConverter.exe;;");
+						                                   "OGSFileConverter*;;");
 	if (!file_name.isEmpty())
 		this->fcPathEdit->setText(file_name);
 }
