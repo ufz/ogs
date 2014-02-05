@@ -117,6 +117,7 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionData_Explorer_Settings"/>
     <addaction name="action_VisualisationSettings"/>
     <addaction name="action_TrackingSettings"/>
    </widget>
@@ -418,6 +419,11 @@
     <string>Remove Mesh Elements...</string>
    </property>
   </action>
+  <action name="actionData_Explorer_Settings">
+   <property name="text">
+    <string>Data Explorer Settings...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -668,6 +674,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionData_Explorer_Settings</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showDataExplorerSettingsDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -683,5 +705,6 @@
   <slot>showMergeGeometriesDialog()</slot>
   <slot>showMeshElementRemovalDialog()</slot>
   <slot>callFileConverter()</slot>
+  <slot>showDataExplorerSettingsDialog()</slot>
  </slots>
 </ui>
