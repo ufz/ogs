@@ -80,6 +80,7 @@
 #include "XmlIO/Qt/XmlStnInterface.h"
 
 #include "StringTools.h"
+#include "LastSavedFileDirectory.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -323,8 +324,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	menu_File->insertMenu(action_Exit, _import_files_menu);
 
 	// Setup recent files menu
-	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()),
-	                                           "recentFileList", "OpenGeoSys-5");
+	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList");
 	connect(this, SIGNAL(fileUsed(QString)), recentFiles,
 	        SLOT(setCurrentFile(QString)));
 	menu_File->insertMenu(action_Exit, recentFiles->menu());
@@ -467,18 +467,16 @@ void MainWindow::openRecentFile()
 
 void MainWindow::save()
 {
-	QString dir_str = this->getLastUsedDir();
-
 	QString fileName = QFileDialog::getSaveFileName(
 	        this,
 	        "Save data as",
-	        dir_str,
-	        //"GeoSys project (*.gsp);;GeoSys4 geometry files (*.gli);;GMSH geometry files (*.geo)");
+	        LastSavedFileDirectory::getDir(),
 			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)"); //Saving gli files is no longer possible
 
 	if (!fileName.isEmpty())
 	{
 		QFileInfo fi(fileName);
+		LastSavedFileDirectory::setDir(fileName);
 
 		if (fi.suffix().toLower() == "gsp")
 		{
@@ -525,6 +523,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QFileInfo fi(fileName);
+	QSettings settings;
+	QDir dir = QDir(fileName);
 	std::string base = fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
 
 	if (t == ImportFileType::OGS || t == ImportFileType::OGS_GEO || t == ImportFileType::OGS_STN || t == ImportFileType::OGS_MSH)
@@ -588,6 +588,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			this->loadFEMConditionsFromFile(fileName);
 		}
 
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		emit fileUsed(fileName);
 	}
 	else if (t == ImportFileType::FEFLOW)
@@ -628,6 +629,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			if (mesh)
 				_meshModels->addMesh(mesh);
 		}
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::GMSH)
 	{
@@ -639,29 +641,31 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				_meshModels->addMesh(mesh);
 			return;
 		}
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::NETCDF)	// CH  01.2012
 	{
-		MeshLib::Mesh* mesh (NULL);
+		MeshLib::Mesh* mesh (nullptr);
 
 		NetCdfConfigureDialog dlg(fileName.toStdString());
 		dlg.exec();
-		if (dlg.getMesh() != NULL)
+		if (dlg.getMesh())
 		{
 			mesh = dlg.getMesh();
 			mesh->setName(dlg.getName());
 			_meshModels->addMesh(mesh);
 		}
-		if (dlg.getRaster() != NULL)
-		{
+		if (dlg.getRaster())
 			_vtkVisPipeline->addPipelineItem(dlg.getRaster());
-		}
+
+		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::RASTER)
 	{
 		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
 		geoImage->readImage(fileName);
 		_vtkVisPipeline->addPipelineItem(geoImage);
+		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::POLYRASTER)
 	{
@@ -673,19 +677,17 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		bg->SetRaster(imageAlgorithm, origin[0], origin[1], cellSize);
 		bg->SetName(fileName);
 		_vtkVisPipeline->addPipelineItem(bg);
-		//QDir dir = QDir(fileName);
-		//settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::SHAPE)
 	{
 		SHPImportDialog dlg(fileName.toStdString(), dynamic_cast<GEOModels*>(_project.getGEOObjects()));
 		dlg.exec();
-		//QDir dir = QDir(fileName);
-		//settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::TETGEN)
 	{
-		QSettings settings;
 		QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
 						                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
 						                                     "TetGen element files (*.ele);;");
@@ -699,14 +701,13 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				_meshModels->addMesh(msh);
 			} else
 				OGSError::box("Failed to load a TetGen mesh.");
-			settings.setValue("lastOpenedTetgenFileDirectory", QDir(fileName).absolutePath());
+			settings.setValue("lastOpenedFileDirectory", QDir(fileName).absolutePath());
 		}
 	}
 	else if (t == ImportFileType::VTK)
 	{
 		_vtkVisPipeline->loadFromFile(fileName);
-		//QDir dir = QDir(fileName);
-		//settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
+		settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
 	}
 	updateDataViews();
 }
@@ -885,6 +886,9 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "cnd")
 	{
+		QSettings settings;
+		QDir dir = QDir(fileName);
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		std::vector<FEMCondition*> conditions;
 		XmlCndInterface xml(&_project);
 		std::size_t const n_cond_before(this->_project.getConditions().size());
@@ -967,10 +971,11 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	if (choice<2) // load something from a file
 	{
 		QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)", "Raster files(*.asc *.grd)" };
-		QSettings settings("UFZ", "OpenGeoSys-5");
-		file_name = QFileDialog::getOpenFileName( this, "Select file for mapping",
-														    settings.value("lastOpenedFileDirectory").toString(),
-														    file_type[choice]);
+		QSettings settings;
+		file_name = QFileDialog::getOpenFileName( this, 
+		                                          "Select file for mapping",
+		                                          settings.value("lastOpenedFileDirectory").toString(),
+		                                          file_type[choice]);
 		if (file_name.isEmpty()) return;
 		QDir dir = QDir(file_name);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -1023,8 +1028,7 @@ void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 	MeshLib::convertMeshToGeo(*mesh, this->_project.getGEOObjects());
 }
 
-void MainWindow::exportBoreholesToGMS(std::string listName,
-                                      std::string fileName)
+void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName)
 {
 	const std::vector<GeoLib::Point*>* stations(_project.getGEOObjects()->getStationVec(listName));
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
@@ -1058,10 +1062,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 		QString dir_str = this->getLastUsedDir();
 
 		if (!delete_geo_file)
-			fileName = QFileDialog::getSaveFileName(this,
-			                                        "Save GMSH-file as",
-			                                        dir_str,
-			                                        "GMSH geometry files (*.geo)");
+			fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as",
+			                                        LastSavedFileDirectory::getDir() + "tmp_gmsh.geo", 
+													"GMSH geometry files (*.geo)");
 		else
 			fileName = "tmp_gmsh.geo";
 
@@ -1149,9 +1152,7 @@ void MainWindow::showDiagramPrefsDialog()
 {
 	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
+	                                                 settings.value("lastOpenedFileDirectory").toString(),
 	                                                 "Text files (*.txt);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{
@@ -1307,9 +1308,7 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 	int count = 0;
 	QString filename = QFileDialog::getSaveFileName(this,
 	                                                "Export object to vtk-files",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),
+	                                                settings.value("lastExportedFileDirectory").toString(),
 	                                                "VTK files (*.vtp *.vtu)");
 	if (!filename.isEmpty())
 	{
@@ -1334,10 +1333,8 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
 	QSettings settings;
-	QString fileName = QFileDialog::getSaveFileName(this,
-	                                                "Save scene to VRML file", settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),
+	QString fileName = QFileDialog::getSaveFileName(this, "Save scene to VRML file", 
+	                                                settings.value("lastExportedFileDirectory").toString(),
 	                                                "VRML files (*.wrl);;");
 	if (!fileName.isEmpty())
 	{
@@ -1357,11 +1354,8 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
 	QSettings settings;
-	QString fileName = QFileDialog::getSaveFileName(this,
-	                                                "Save scene to Wavefront OBJ files",
-	                                                settings.value(
-	                                                        "lastExportedFileDirectory").
-	                                                toString(),
+	QString fileName = QFileDialog::getSaveFileName(this, "Save scene to Wavefront OBJ files",
+	                                                settings.value("lastExportedFileDirectory").toString(),
 	                                                ";;");
 	if (!fileName.isEmpty())
 	{

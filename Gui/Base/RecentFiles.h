@@ -25,7 +25,7 @@ class QString;
  * The RecentFiles class provides functionality to store informations about
  * recently used files (e.g. loaded or saved files).
  * Example Usage:
- * \code RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList", "OpenGeoSys-5");
+ * \code RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList", "OpenGeoSys");
  * connect(this, SIGNAL(fileUsed(QString)), recentFiles, SLOT(setCurrentFile(QString)));
  * menu_File->addMenu( recentFiles->menu() ); \endcode
  * with:
@@ -51,7 +51,7 @@ public:
 	 * \param programName The name of the program. QSettings of one program
 	 * should be stored with the same keys: QSettings("UFZ", programName)
 	 */
-	RecentFiles(QObject* parent, const char* slot, QString settingsName, QString programName);
+	RecentFiles(QObject* parent, const char* slot, QString settingsName);
 	~RecentFiles();
 
 	/// Returns the created menu. Add this menu to your QMainWindow menu.
@@ -71,7 +71,6 @@ private:
 	QMenu* _filesMenu;
 	QString _currentFile;
 	QString _settingsName;
-	QString _programName;
 	enum { _maxFiles = 5 };
 	QAction* _fileActions[_maxFiles];
 };

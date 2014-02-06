@@ -19,6 +19,7 @@
 
 #include "FEMCondition.h"
 #include "OGSError.h"
+#include "LastSavedFileDirectory.h"
 
 #include <QFileDialog>
 #include <QFileInfo>
@@ -44,15 +45,10 @@ void ConditionWriterDialog::on_fileNameButton_pressed()
 {
 	QSettings settings;
 	QString fileName = QFileDialog::getSaveFileName(this, "Select path",
-					settings.value("lastOpenedConditionsFileDirectory").toString(), "OpenGeoSys FEM Condition file (*.cnd)");
+					LastSavedFileDirectory::getDir(), "OpenGeoSys FEM Condition file (*.cnd)");
 
 	if (!fileName.isEmpty())
-	{
 		this->fileNameEdit->setText(fileName);
-
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedConditionsFileDirectory", dir.absolutePath());
-	}
 }
 
 void ConditionWriterDialog::accept()
@@ -78,6 +74,7 @@ void ConditionWriterDialog::accept()
 			ERR("ConditionWriterDialog::accept(): case %d not handled.", this->condTypeBox->currentIndex());
 	}
 
+	LastSavedFileDirectory::setDir(file_name);
 	emit saveFEMConditionsRequested(geo_name, cond_type, file_name);
 
 	this->done(QDialog::Accepted);

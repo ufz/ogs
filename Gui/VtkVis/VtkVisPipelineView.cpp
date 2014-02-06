@@ -166,7 +166,7 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsOsg()
 
 void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
 {
-	QSettings settings("UFZ", "OpenGeoSys-5");
+	QSettings settings;
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to Fbx file",
 	                                                settings.value("lastExportedFileDirectory").

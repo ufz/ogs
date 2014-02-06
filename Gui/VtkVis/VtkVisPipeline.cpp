@@ -296,7 +296,7 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 
 	if (!parent.isValid()) // Set global superelevation on source objects
 	{
-		QSettings settings("UFZ, OpenGeoSys-5");
+		QSettings settings;
 		if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
 			item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
 	}

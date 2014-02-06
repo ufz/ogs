@@ -26,6 +26,7 @@
 #include "StationTreeView.h"
 #include "StratWindow.h"
 #include "ImportFileTypes.h"
+#include "LastSavedFileDirectory.h"
 
 StationTreeView::StationTreeView(QWidget* parent) : QTreeView(parent)
 {
@@ -172,9 +173,13 @@ void StationTreeView::writeToFile()
 	{
 		TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
 		QString listName = item->data(0).toString();
-		QString fileName = QFileDialog::getSaveFileName(this, "Save station list", "","*.stn");
+		QString fileName = QFileDialog::getSaveFileName(this, "Save station list", 
+			LastSavedFileDirectory::getDir() + listName, "*.stn");
 		if (!fileName.isEmpty())
+		{
+			LastSavedFileDirectory::setDir(fileName);
 			emit stationListSaved(listName, fileName);
+		}
 	}
 }
 
@@ -186,22 +191,21 @@ void StationTreeView::exportList()
 
 	TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
-	std::string listName = item->data(0).toString().toStdString();
-	QString fileName = QFileDialog::getSaveFileName(this,
-	                                                "Export Boreholes to GMS-Format",
-	                                                "",
-	                                                "*.txt");
+	QString listName = item->data(0).toString();
+	QString fileName = QFileDialog::getSaveFileName(this, "Export Boreholes to GMS-Format",
+		LastSavedFileDirectory::getDir() + listName, "*.txt");
 	if (!fileName.isEmpty())
-		emit stationListExportRequested(listName, fileName.toStdString());
+	{
+		LastSavedFileDirectory::setDir(fileName);
+		emit stationListExportRequested(listName.toStdString(), fileName.toStdString());
+	}
 }
 
 void StationTreeView::exportStation()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
-	QString fileName = QFileDialog::getSaveFileName(this,
-	                                                "Export Borehole to GMS-Format",
-	                                                "",
-	                                                "*.txt");
+	QString fileName = QFileDialog::getSaveFileName(this, "Export Borehole to GMS-Format",
+		LastSavedFileDirectory::getDir(), "*.txt");
 	if (!fileName.isEmpty())
 	{
 		QString temp_name;
@@ -209,7 +213,7 @@ void StationTreeView::exportStation()
 		stations.push_back(static_cast<GeoLib::StationBorehole*>(
 					static_cast<StationTreeModel*>(model())->stationFromIndex(index,temp_name)));
 		GMSInterface::writeBoreholesToGMS(&stations, fileName.toStdString());
-
+		LastSavedFileDirectory::setDir(fileName);
 	}
 }
 
