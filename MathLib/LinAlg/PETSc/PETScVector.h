@@ -39,7 +39,7 @@ class PETScVector
             \param vec_size       The size of the vector, either global or local
             \param is_global_size The flag of the global size
         */
-        explicit PETScVector(const PetscInt vec_size, const bool is_global_size = true);
+        PETScVector(const PetscInt vec_size, const bool is_global_size = true);
 
         /*!
              \brief Copy constructor
