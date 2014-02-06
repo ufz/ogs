@@ -639,7 +639,6 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			MeshLib::Mesh* mesh = FileIO::GMSHInterface::readGMSHMesh(msh_name);
 			if (mesh)
 				_meshModels->addMesh(mesh);
-			return;
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
@@ -709,6 +708,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		_vtkVisPipeline->loadFromFile(fileName);
 		settings.setValue("lastOpenedVtkFileDirectory", dir.absolutePath());
 	}
+
+	QApplication::restoreOverrideCursor();
 	updateDataViews();
 }
 
@@ -718,8 +719,6 @@ void MainWindow::updateDataViews()
 	geoTabWidget->treeView->updateView();
 	stationTabWidget->treeView->updateView();
 	mshTabWidget->treeView->updateView();
-
-	QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::readSettings()
@@ -972,7 +971,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	{
 		QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)", "Raster files(*.asc *.grd)" };
 		QSettings settings;
-		file_name = QFileDialog::getOpenFileName( this, 
+		file_name = QFileDialog::getOpenFileName( this,
 		                                          "Select file for mapping",
 		                                          settings.value("lastOpenedFileDirectory").toString(),
 		                                          file_type[choice]);
@@ -1063,7 +1062,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
 		if (!delete_geo_file)
 			fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as",
-			                                        LastSavedFileDirectory::getDir() + "tmp_gmsh.geo", 
+			                                        LastSavedFileDirectory::getDir() + "tmp_gmsh.geo",
 													"GMSH geometry files (*.geo)");
 		else
 			fileName = "tmp_gmsh.geo";
@@ -1333,7 +1332,7 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)
 	QSettings settings;
-	QString fileName = QFileDialog::getSaveFileName(this, "Save scene to VRML file", 
+	QString fileName = QFileDialog::getSaveFileName(this, "Save scene to VRML file",
 	                                                settings.value("lastExportedFileDirectory").toString(),
 	                                                "VRML files (*.wrl);;");
 	if (!fileName.isEmpty())
