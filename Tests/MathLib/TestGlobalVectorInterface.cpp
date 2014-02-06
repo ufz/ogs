@@ -22,7 +22,7 @@
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #endif
 
-#ifdef OGS_USE_PETSC
+#ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #endif
 
@@ -70,7 +70,7 @@ void checkGlobalVectorInterface()
     ASSERT_EQ(1.0, y.get(3));
 }
 
-#ifdef OGS_USE_PETSC // or MPI
+#ifdef USE_PETSC // or MPI
 template <class T_VECTOR>
 void checkGlobalVectorInterfaceMPI()
 {
@@ -83,11 +83,10 @@ void checkGlobalVectorInterfaceMPI()
     // PETSc determined partitioning
     T_VECTOR x(16);
 
-    const int r0 = x.getRangeBegin();
-
     ASSERT_EQ(16u, x.size());
     ASSERT_TRUE(x.getLocalSize() > 0);
 
+    const int r0 = x.getRangeBegin();
     //x.get(0) is expensive, only get local value. Use it for test purpose
     ASSERT_EQ(.0, x.get(r0));
 
@@ -97,6 +96,8 @@ void checkGlobalVectorInterfaceMPI()
     T_VECTOR y(x);
 
     y = 10.0;
+    ASSERT_EQ(10, y.get(r0));
+
     y += x;
     //y.get(0) is expensive
     ASSERT_EQ(20, y.get(r0));
@@ -146,10 +147,16 @@ void checkGlobalVectorInterfaceMPI()
 
     // -------------------------------------------------------------------
     // User determined partitioning
-    T_VECTOR x_fixed_p(6, 2);
+    bool is_gloabal_size = false;
+    T_VECTOR x_fixed_p(2, is_gloabal_size);
+
+    ASSERT_EQ(6u, x_fixed_p.size());
 
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+
+    ASSERT_EQ(2*mrank, x_fixed_p.getRangeBegin());
+    ASSERT_EQ(2*mrank+2, x_fixed_p.getRangeEnd());
 
     vec_pos[0] = 2 * mrank;
     vec_pos[1] = vec_pos[0] + 1;
@@ -183,7 +190,7 @@ TEST(Math, CheckInterface_LisVector)
 #endif
 
 //--------------------------------------------
-#ifdef OGS_USE_PETSC
+#ifdef USE_PETSC
 TEST(Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();

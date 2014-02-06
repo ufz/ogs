@@ -66,7 +66,7 @@ OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 # Eigen
 OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
 OPTION(EIGEN_NO_DEBUG "Disables Eigen's assertions" ON)
- 
+
 # Logging
 OPTION(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
@@ -118,6 +118,10 @@ INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
+ENDIF()
+
+IF(OGS_USE_PETSC)
+    ADD_DEFINITIONS(-DUSE_PETSC)
 ENDIF()
 
 IF(OGS_USE_EIGEN)

@@ -21,7 +21,7 @@
 #include "lis.h"
 #endif
 
-#ifdef OGS_USE_PETSC
+#ifdef USE_PETSC
 #include "petscksp.h"
 #endif
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
-#if defined(OGS_USE_PETSC)
+#if defined(USE_PETSC)
         char help[] = "ogs6 with PETSc \n";
         PetscInitialize(&argc,&argv,(char *)0,help);
 #endif
@@ -75,10 +75,9 @@ int main(int argc, char* argv[])
         lis_finalize();
 #endif
 
-#if defined(OGS_USE_PETSC)
+#if defined(USE_PETSC)
         PetscFinalize();
 #endif
-
 
     } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.
     LOGOG_SHUTDOWN();

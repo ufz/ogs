@@ -21,34 +21,40 @@
 
 namespace MathLib
 {
-PETScVector::PETScVector(PetscInt size, const PetscInt loc_size)
+PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 {
-    _size = size;
-    if(loc_size == PETSC_DECIDE)
+    if( is_global_size )
     {
         VecCreate(PETSC_COMM_WORLD, &_v);
-        VecSetSizes(_v, loc_size, size);
+        VecSetSizes(_v, PETSC_DECIDE, vec_size);
     }
     else
     {
         // Fix size partitioning
         // the size can be associated to specific memory allocation of a matrix
-        VecCreateMPI(PETSC_COMM_WORLD, loc_size, size, &_v);
+        VecCreateMPI(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, &_v);
     }
     VecSetFromOptions(_v);
     // VecSetUp(_v); // for petsc ver.>3.3
     VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
 
     VecGetLocalSize(_v, &_size_loc);
+    VecGetSize(_v, &_size);
 }
 
-PETScVector::PETScVector(const PETScVector &existing_vec)
+PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
 {
-    _size = existing_vec._size;
     VecDuplicate(existing_vec._v, &_v);
 
     VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
     VecGetLocalSize(_v, &_size_loc);
+    VecGetSize(_v, &_size);
+
+    // Copy values
+    if(deep_copy)
+    {
+        VecCopy(existing_vec._v, _v);
+    }
 }
 
 //-----------------------------------------------------------------
