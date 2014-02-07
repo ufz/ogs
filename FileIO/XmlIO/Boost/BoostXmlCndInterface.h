@@ -34,7 +34,7 @@ namespace FileIO
 class BoostXmlCndInterface : public XMLInterface
 {
 public:
-	BoostXmlCndInterface(ProjectData & project);
+	explicit BoostXmlCndInterface(ProjectData & project);
 	virtual ~BoostXmlCndInterface()	{}
 
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
