@@ -166,22 +166,9 @@ void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const
 	}
 }
 
-bool BoostXmlCndInterface::write(std::ostream& stream)
+bool BoostXmlCndInterface::write(std::ostream& )
 {
-	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysCND.xsl\"?>\n\n"; // stylefile definition
-
-	// create a DOM tree for writing it to file
-	using boost::property_tree::ptree;
-	ptree pt;
-
-	pt.add("OpenGeoSysCond", "OpenGeoSysCond");
-	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd");
-	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
-
-	write_xml(stream, pt);
-
+	// no implementation - please use the Qt Xml writer for writing
 	return true;
 }
 
