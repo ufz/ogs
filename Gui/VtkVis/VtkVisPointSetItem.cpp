@@ -163,7 +163,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 
 
 	// Set global backface culling
-	QSettings settings("UFZ, OpenGeoSys-5");
+	QSettings settings;
 	bool backfaceCulling = settings.value("globalCullBackfaces", 0).toBool();
 	this->setBackfaceCulling(backfaceCulling);
 

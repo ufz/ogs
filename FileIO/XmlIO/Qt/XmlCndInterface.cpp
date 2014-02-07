@@ -124,7 +124,7 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 							std::vector<double> disValues;
 							if (c->getProcessDistributionType()==FiniteElement::CONSTANT ||
 								c->getProcessDistributionType()==FiniteElement::CONSTANT_NEUMANN)
-								disValues.push_back( strtod(distProps.at(j).toElement().text().toStdString().c_str(), 0) );
+								disValues.push_back( distProps.at(j).toElement().text().toDouble() );
 							else if (c->getProcessDistributionType()==FiniteElement::LINEAR ||
 								     c->getProcessDistributionType()==FiniteElement::LINEAR_NEUMANN ||
 									 c->getProcessDistributionType()==FiniteElement::DIRECT)
@@ -134,13 +134,13 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 								size_t count(0);
 								for (QStringList::iterator it=list.begin(); it!=list.end(); ++it)
 								{
-									std::string val (it->trimmed().toStdString());
-									if (!val.empty())
+									QString val (it->trimmed());
+									if (!val.isEmpty())
 									{
 										if (count%2==0)
-											disNodes.push_back(atoi(val.c_str()));
+											disNodes.push_back(val.toInt());
 										else
-											disValues.push_back(strtod(val.c_str(), 0));
+											disValues.push_back(val.toDouble());
 										count++;
 									}
 								}

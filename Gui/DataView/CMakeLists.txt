@@ -4,6 +4,7 @@ set( SOURCES
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
 	ConditionWriterDialog.cpp
+	DataExplorerSettingsDialog.cpp
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	ElementTreeView.cpp
@@ -49,6 +50,7 @@ set( MOC_HEADERS
 	ColorTableView.h
 	CondFromRasterDialog.h
 	ConditionWriterDialog.h
+	DataExplorerSettingsDialog.h
 	ElementTreeModel.h
 	ElementTreeView.h
 	FEMConditionSetupDialog.h
@@ -102,6 +104,7 @@ set( HEADERS
 set( UIS
 	CondFromRaster.ui
 	ConditionWriter.ui
+	DataExplorerSettings.ui
 	FEMConditionSetup.ui
 	GeoOnMeshMapping.ui
 	GeoTabWidgetBase.ui

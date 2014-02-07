@@ -141,9 +141,7 @@ void DetailWindow::on_addDataButton_clicked()
 {
 	QSettings settings;
 	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value(
-	                                                         "lastOpenedFileDirectory").
-	                                                 toString(),
+	                                                 settings.value("lastOpenedFileDirectory").toString(),
 	                                                 "Text files (*.txt);;All files (* *.*)");
 	if (!fileName.isEmpty())
 	{

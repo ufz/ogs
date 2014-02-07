@@ -43,7 +43,6 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QSettings>
-#include <QSettings>
 #include <QString>
 
 #ifdef OGS_USE_VRPN

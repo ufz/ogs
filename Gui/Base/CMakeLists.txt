@@ -24,6 +24,7 @@ set( MOC_HEADERS
 
 # Header files
 set( HEADERS
+	LastSavedFileDirectory.h
 	OGSError.h
 	QNonScalableGraphicsTextItem.h
 	TreeItem.h

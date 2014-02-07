@@ -23,6 +23,8 @@
 #include "GeoTreeView.h"
 #include "OGSError.h"
 #include "ImportFileTypes.h"
+#include "LastSavedFileDirectory.h"
+
 
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 {
@@ -252,10 +254,13 @@ void GeoTreeView::writeToFile() const
 	{
 		TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
 		QString geoName = item->data(0).toString();
-		QString fileName = QFileDialog::getSaveFileName(NULL,
-							"Save geometry as", geoName, "GeoSys geometry file (*.gml)");
+		QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as", 
+			LastSavedFileDirectory::getDir() + geoName, "GeoSys geometry file (*.gml)");
 		if (!fileName.isEmpty())
+		{
+			LastSavedFileDirectory::setDir(fileName);
 			emit saveToFileRequested(geoName, fileName);
+		}
 	}
 }
 

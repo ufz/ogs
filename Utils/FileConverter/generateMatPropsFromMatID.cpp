@@ -22,7 +22,7 @@
 
 // FileIO
 #include "readMeshFromFile.h"
-#include "RapidXmlIO/BoostVtuInterface.h"
+#include "XmlIO/Boost/BoostVtuInterface.h"
 
 // MeshLib
 #include "Mesh.h"

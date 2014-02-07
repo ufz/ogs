@@ -38,7 +38,7 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline* pipeline,
 
 	QValidator* validator = new QDoubleValidator(0, 100000, 2, this);
 	superelevationLineEdit->setValidator(validator);
-	QSettings settings("UFZ, OpenGeoSys-5");
+	QSettings settings;
 	superelevationLineEdit->setText(settings.value("globalSuperelevation", 1.0).toString());
 	cullBackfacesCheckBox->setCheckState(Qt::CheckState(settings.value("globalCullBackfaces", 0).toInt()));
 	loadShowAllCheckBox->setCheckState(Qt::CheckState(settings.value("resetViewOnLoad", 2).toInt()));
@@ -71,7 +71,7 @@ void VisPrefsDialog::on_superelevationPushButton_pressed()
 	double factor = superelevationLineEdit->text().toDouble();
 	_vtkVisPipeline->setGlobalSuperelevation(factor);
 
-	QSettings settings("UFZ, OpenGeoSys-5");
+	QSettings settings;
 	settings.setValue("globalSuperelevation", factor);
 }
 
@@ -80,7 +80,7 @@ void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 	_visWidget->setShowAllOnLoad((bool)state);
 	_vtkVisPipeline->resetCameraOnAddOrRemove((bool)state);
 
-	QSettings settings("UFZ, OpenGeoSys-5");
+	QSettings settings;
 	settings.setValue("resetViewOnLoad", state);
 }
 
@@ -88,7 +88,7 @@ void VisPrefsDialog::on_cullBackfacesCheckBox_stateChanged(int state)
 {
 	_vtkVisPipeline->setGlobalBackfaceCulling((bool)state);
 
-	QSettings settings("UFZ, OpenGeoSys-5");
+	QSettings settings;
 	settings.setValue("globalCullBackfaces", state);
 }
 

@@ -49,6 +49,10 @@ IF(WIN32)
 	INCLUDE(MSVCPaths)
 	FIND_PROGRAM(gp_cmd dumpbin DOC "Windows dependency analysis tool"
 		PATHS ${MSVC_INSTALL_PATHS} PATH_SUFFIXES VC/bin)
+	IF(gp_cmd)
+		GET_FILENAME_COMPONENT(dir ${gp_cmd} PATH)
+		SET(ENV{PATH} "${dir}/../../../Common7/IDE;$ENV{PATH}")
+	ENDIF()
 ENDIF()
 
 ########################

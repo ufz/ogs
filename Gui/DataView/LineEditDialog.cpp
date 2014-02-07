@@ -107,7 +107,7 @@ std::vector<size_t> LineEditDialog::getSelectedIndeces(QStringList list)
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
 		QString s = it->mid(5, it->indexOf("  ") - 5);
-		indexList.push_back(atoi(s.toStdString().c_str()));
+		indexList.push_back(s.toInt());
 	}
 	return indexList;
 }

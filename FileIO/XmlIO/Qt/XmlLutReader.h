@@ -64,7 +64,7 @@ public:
 			lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
 
 		QDomElement point = docElement.firstChildElement();
-		double range[2] = { strtod((point.attribute("x")).toStdString().c_str(),0), strtod((point.attribute("x")).toStdString().c_str(),0) };
+		double range[2] = { point.attribute("x").toDouble(), point.attribute("x").toDouble() };
 
 		while (!point.isNull())
 		{
@@ -74,11 +74,11 @@ public:
 			    && point.hasAttribute("g")
 			    && point.hasAttribute("b"))
 			{
-				double value = strtod((point.attribute("x")).toStdString().c_str(),0);
-				unsigned char r = static_cast<int>(255 * strtod((point.attribute("r")).toStdString().c_str(),0));
-				unsigned char g = static_cast<int>(255 * strtod((point.attribute("g")).toStdString().c_str(),0));
-				unsigned char b = static_cast<int>(255 * strtod((point.attribute("b")).toStdString().c_str(),0));
-				unsigned char o = static_cast<int>(255 * (point.hasAttribute("o") ? strtod((point.attribute("o")).toStdString().c_str(),0) : 1));
+				double value = point.attribute("x").toDouble();
+				unsigned char r = static_cast<int>(255 * point.attribute("r").toDouble());
+				unsigned char g = static_cast<int>(255 * point.attribute("g").toDouble());
+				unsigned char b = static_cast<int>(255 * point.attribute("b").toDouble());
+				unsigned char o = static_cast<int>(255 * (point.hasAttribute("o") ? point.attribute("o").toDouble() : 1));
 
 				if (value < range[0])
 					range[0] = value;

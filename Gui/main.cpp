@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
 	QApplication::setOrganizationName("OpenGeoSys Community");
 	QApplication::setOrganizationDomain("opengeosys.org");
 	setlocale(LC_NUMERIC,"C");
+	QLocale::setDefault(QLocale::German);
 	MainWindow* w = new MainWindow();
 	w->setWindowTitle( w->windowTitle() + " - " + QString(OGS_VERSION_AND_PERSONS) + " - FirstFloor");
 	w->show();

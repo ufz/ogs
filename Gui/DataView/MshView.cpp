@@ -13,6 +13,14 @@
  */
 
 #include "MshView.h"
+
+#include <QHeaderView>
+#include <QContextMenuEvent>
+#include <QFileDialog>
+#include <QMenu>
+#include <QObject>
+#include <QSettings>
+
 #include "Mesh.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
@@ -22,19 +30,13 @@
 #include "MeshSurfaceExtraction.h"
 
 #include "ImportFileTypes.h"
-#include <QHeaderView>
+#include "LastSavedFileDirectory.h"
 
 #include "VtkMeshSource.h"
 
-#include <QContextMenuEvent>
-#include <QFileDialog>
-#include <QMenu>
-#include <QObject>
-#include <QSettings>
-
 #include "Legacy/MeshIO.h"
 //#include "RapidXmlIO/RapidVtuInterface.h"
-#include "RapidXmlIO/BoostVtuInterface.h"
+#include "XmlIO/Boost/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 #include "SHPInterface.h"
 
@@ -224,13 +226,11 @@ int MshView::writeToFile() const
 
 	if (mesh)
 	{
-		QSettings settings;
-		QFileInfo fi (settings.value("lastOpenedMeshFileDirectory").toString());
 		QString mshName = QString::fromStdString(
-		        static_cast<MshModel*>(this->model())->getMesh(index)->getName());
+			static_cast<MshModel*>(this->model())->getMesh(index)->getName());
 		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
-		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()),
-											"VTK Unstructured Grid (*.vtu);;GeoSys legacy mesh file (*.msh)");
+			LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
+			"VTK Unstructured Grid (*.vtu);;GeoSys legacy mesh file (*.msh)");
 
 		if (!fileName.isEmpty())
 		{
@@ -248,8 +248,7 @@ int MshView::writeToFile() const
 				meshIO.setMesh(mesh);
 				meshIO.writeToFile(fileName.toStdString().c_str());
 			}
-			QDir dir = QDir(fileName);
-			settings.setValue("lastOpenedMeshFileDirectory", dir.absolutePath());
+			LastSavedFileDirectory::setDir(fileName);
 			return 1;
 		}
 		else
