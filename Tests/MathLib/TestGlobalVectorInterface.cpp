@@ -84,7 +84,7 @@ void checkGlobalVectorInterfaceMPI()
     T_VECTOR x(16);
 
     ASSERT_EQ(16u, x.size());
-    ASSERT_TRUE(x.getLocalSize() > 0);
+    ASSERT_EQ(x.getRangeEnd()-x.getRangeBegin(), x.getLocalSize());
 
     const int r0 = x.getRangeBegin();
     //x.get(0) is expensive, only get local value. Use it for test purpose
@@ -94,17 +94,16 @@ void checkGlobalVectorInterfaceMPI()
 
     // Value of x is not copied to y
     T_VECTOR y(x);
+    ASSERT_EQ(0, y.get(r0));
 
     y = 10.0;
     ASSERT_EQ(10, y.get(r0));
 
     y += x;
-    //y.get(0) is expensive
     ASSERT_EQ(20, y.get(r0));
     ASSERT_EQ(80., y.getNorm());
 
     y -= x;
-    //y.get(0) is expensive
     ASSERT_EQ(10, y.get(r0));
     ASSERT_EQ(40., y.getNorm());
 
@@ -115,6 +114,7 @@ void checkGlobalVectorInterfaceMPI()
     vec_pos[1] = r0+1; // any index in [0,15]
 
     y.add(vec_pos, local_vec);
+    y.finalizeAssembly(); // unnessory to call this fucntion here but for the test of it solely.
 
     double normy = std::sqrt(6.0*400+10.0*100);
 
@@ -172,6 +172,13 @@ void checkGlobalVectorInterfaceMPI()
     x_fixed_p.getGlobalVector(x0);
 
     ASSERT_ARRAY_NEAR(x0, z, 6, 1e-10);
+
+    // check local array
+    double *loc_v = x_fixed_p.getLocalVector();
+    z[0] = 1.0;
+    z[1] = 2.0;
+
+    ASSERT_ARRAY_NEAR(loc_v, z, 2, 1e-10);
 }
 #endif
 

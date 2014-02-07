@@ -42,7 +42,7 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
     VecGetSize(_v, &_size);
 }
 
-PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
+PETScVector::PETScVector(const PETScVector &existing_vec, const bool shallow_copy)
 {
     VecDuplicate(existing_vec._v, &_v);
 
@@ -51,7 +51,7 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
     VecGetSize(_v, &_size);
 
     // Copy values
-    if(deep_copy)
+    if(!shallow_copy)
     {
         VecCopy(existing_vec._v, _v);
     }

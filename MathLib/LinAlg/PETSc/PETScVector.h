@@ -37,16 +37,17 @@ class PETScVector
         /*!
             \brief Constructor
             \param vec_size       The size of the vector, either global or local
-            \param is_global_size The flag of the global size
+            \param is_global_size The flag of the global size, default is true
         */
         PETScVector(const PetscInt vec_size, const bool is_global_size = true);
 
         /*!
              \brief Copy constructor
              \param existing_vec The vector to be copied
-             \param deep_copy    The flag for a deep copy, which copys the values as well
+             \param shallow_copy The flag for a shallow copy, which means not to copy the values,
+                                 the default is true
         */
-        PETScVector(const PETScVector &existing_vec, const bool deep_copy = false);
+        PETScVector(const PETScVector &existing_vec, const bool shallow_copy = true);
 
         ~PETScVector()
         {
@@ -60,7 +61,7 @@ class PETScVector
             VecAssemblyEnd(_v);
         }
 
-        /// Get the global size the vector
+        /// Get the global size of the vector
         PetscInt size() const
         {
             return _size;
@@ -155,11 +156,11 @@ class PETScVector
            \param loc_vec  Pointer to array where stores the local vector,
                            memory allocation is not needed
         */
-        void getLocalVector(PetscScalar *loc_vec) const
+        PetscScalar *getLocalVector() const
         {
-            PetscInt count;
-            VecGetLocalSize(_v, &count);
+            PetscScalar *loc_vec;
             VecGetArray(_v, &loc_vec);
+            return loc_vec;
         }
 
         /*!
