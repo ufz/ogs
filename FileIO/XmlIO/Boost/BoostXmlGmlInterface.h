@@ -44,7 +44,7 @@ public:
 
 protected:
 	/// Required method for writing geometry. This is not implemented here, use the Qt class for writing.
-	bool write(std::ostream& stream);
+	bool write(std::ostream&);
 
 private:
 	/// Reads GeoLib::Point-objects from an xml-file
