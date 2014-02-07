@@ -37,17 +37,17 @@ class PETScVector
         /*!
             \brief Constructor
             \param vec_size       The size of the vector, either global or local
-            \param is_global_size The flag of the global size, default is true
+            \param is_global_size The flag of the global size, the default is true
         */
         PETScVector(const PetscInt vec_size, const bool is_global_size = true);
 
         /*!
              \brief Copy constructor
              \param existing_vec The vector to be copied
-             \param shallow_copy The flag for a shallow copy, which means not to copy the values,
+             \param deep_copy    The flag for a deep copy, which means to copy the values as well,
                                  the default is true
         */
-        PETScVector(const PETScVector &existing_vec, const bool shallow_copy = true);
+        PETScVector(const PETScVector &existing_vec, const bool deep_copy = true);
 
         ~PETScVector()
         {

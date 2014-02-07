@@ -94,7 +94,8 @@ void checkGlobalVectorInterfaceMPI()
     x = 10.;
 
     // Value of x is not copied to y
-    T_VECTOR y(x);
+    const bool deep_copy = false;
+    T_VECTOR y(x, deep_copy);
     ASSERT_EQ(0, y.get(r0));
 
     y = 10.0;
@@ -148,7 +149,7 @@ void checkGlobalVectorInterfaceMPI()
 
     // -------------------------------------------------------------------
     // User determined partitioning
-    bool is_gloabal_size = false;
+    const bool is_gloabal_size = false;
     T_VECTOR x_fixed_p(2, is_gloabal_size);
 
     ASSERT_EQ(6u, x_fixed_p.size());
