@@ -1,7 +1,8 @@
 /**
  * \file
  * \author Norihiro Watanabe
- * \date   2013-05-15
+ * \author Wenqing Wang
+ * \date   2013-05-15 -- 2014-01
  * \brief  Interface tests of global vector classes
  *
  * \copyright
