@@ -23,6 +23,10 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+
+namespace FileIO
+{
+
 /**
  * \brief Reader for vtk-Lookup-Tables (in XML / ParaView Format)
  */
@@ -100,5 +104,7 @@ public:
 
 
 };
+
+ }
 
 #endif // XMLLUTREADER_H

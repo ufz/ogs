@@ -33,15 +33,17 @@ class GEOObjects;
 
 namespace FileIO
 {
-/** I/O - routines for the OGS-4 gli file format */
+/** Interface for handling geometry from OGS-5 and below (*.gli files) */
 
-/** method reads geometric objects from file in gli format */
+/** Reads geometric objects from file in gli format */
 bool readGLIFileV4 (const std::string& fname, GeoLib::GEOObjects* geo, std::string& unique_name, std::vector<std::string>& errors);
 
+/** Writes geometric objects from a specific geometry to a gli-file */
 void writeGLIFileV4 (const std::string& fname,
                      const std::string& proj_name,
                      const GeoLib::GEOObjects& geo);
 
+/** Writes all geometric information to a gli-file */
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo);
 
 } // end namespace

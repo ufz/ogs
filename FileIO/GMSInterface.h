@@ -34,6 +34,9 @@ namespace MeshLib
 class Mesh;
 }
 
+namespace FileIO
+{
+
 /**
  * \brief Manages the import and export of Aquaveo GMS files into and out of GeoLib.
  *
@@ -75,5 +78,7 @@ private:
 	/// Finds the ID assigned to soilName or creates a new one ( this method is called from writeBoreholeToGMS() )
 	static std::size_t getSoilID(std::vector<std::string> &soilID, std::string &soilName);
 };
+
+}
 
 #endif /* GMSINTERFACE_H_ */
