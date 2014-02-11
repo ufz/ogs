@@ -14,7 +14,9 @@
 
 #include <MeshIO/GMSHLine.h>
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 GMSHLine::GMSHLine(size_t start_point_id, size_t end_point_id) :
 	_start_pnt_id(start_point_id), _end_pnt_id(end_point_id)
@@ -34,4 +36,5 @@ void GMSHLine::resetLineData(size_t start_point_id, size_t end_point_id)
 	_end_pnt_id = end_point_id;
 }
 
+}
 } // end namespace FileIO

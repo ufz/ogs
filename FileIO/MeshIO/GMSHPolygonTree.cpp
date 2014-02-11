@@ -18,7 +18,9 @@
 #include "GMSHFixedMeshDensity.h"
 #include "GMSHAdaptiveMeshDensity.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 GMSHPolygonTree::GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree* parent,
 				GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
@@ -153,7 +155,7 @@ void GMSHPolygonTree::initMeshDensityStrategy()
 	}
 }
 
-void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSHPoint*> & gmsh_pnts) const
+void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & gmsh_pnts) const
 {
 	const size_t n_pnts_polygon (_node_polygon->getNumberOfPoints());
 	for (size_t k(0); k<n_pnts_polygon; k++) {
@@ -308,4 +310,5 @@ void GMSHPolygonTree::getStationsInsideSubPolygons(std::vector<GeoLib::Point con
 	}
 }
 
+}
 } // end namespace FileIO

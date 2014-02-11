@@ -14,7 +14,9 @@
 
 #include "MeshIO/GMSHFixedMeshDensity.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 GMSHFixedMeshDensity::GMSHFixedMeshDensity(double mesh_density) :
 	_mesh_density(mesh_density)
@@ -34,4 +36,5 @@ double GMSHFixedMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const pnt
 	return _mesh_density;
 }
 
+}
 } // end namespace FileIO

@@ -17,9 +17,11 @@
 
 #include "GMSHMeshDensityStrategy.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
-class GMSHNoMeshDensity: public FileIO::GMSHMeshDensityStrategy {
+class GMSHNoMeshDensity: public FileIO::GMSH::GMSHMeshDensityStrategy {
 public:
 	GMSHNoMeshDensity() {};
 	virtual ~GMSHNoMeshDensity() {};
@@ -37,6 +39,7 @@ public:
 	}
 };
 
+}
 }
 
 #endif /* GMSHNOMESHDENSITY_H_ */

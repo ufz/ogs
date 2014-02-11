@@ -104,13 +104,13 @@ private:
 	GeoLib::GEOObjects & _geo_objs;
 	std::vector<std::string>& _selected_geometries;
 	std::string _gmsh_geo_name;
-	std::list<GMSHPolygonTree*> _polygon_tree_list;
+	std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
 
 	bool _include_stations_as_constraints;
 
-	std::vector<FileIO::GMSHPoint*> _gmsh_pnts;
+	std::vector<FileIO::GMSH::GMSHPoint*> _gmsh_pnts;
 
-	GMSHMeshDensityStrategy *_mesh_density_strategy;
+	GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
 };
 }
 

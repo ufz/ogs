@@ -34,6 +34,8 @@
 
 namespace FileIO
 {
+namespace GMSH {
+
 GMSHAdaptiveMeshDensity::GMSHAdaptiveMeshDensity(double pnt_density, double station_density,
                                                  std::size_t max_pnts_per_leaf) :
 	_pnt_density(pnt_density), _station_density(station_density),
@@ -156,5 +158,6 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
 	}
 }
 #endif
+}
 
 } // end namespace FileIO

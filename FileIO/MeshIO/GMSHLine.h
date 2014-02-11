@@ -17,7 +17,9 @@
 
 #include <ostream>
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 class GMSHLine {
 public:
@@ -31,6 +33,7 @@ private:
 	std::size_t _end_pnt_id;
 };
 
+}
 }
 
 #endif /* GMSHLINE_H_ */
