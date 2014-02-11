@@ -7,8 +7,6 @@ SET( SOURCES
 	PetrelInterface.cpp
 	readMeshFromFile.h
 	readMeshFromFile.cpp
-	readNonBlankLineFromInputStream.h
-	readNonBlankLineFromInputStream.cpp
 	SHPInterface.h
 	SHPInterface.cpp
 	Writer.h
