@@ -33,6 +33,8 @@ namespace MeshLib
 /// Interface for handling mesh files from OGS-5 and below. (*.msh files)
 namespace FileIO
 {
+namespace Legacy {
+
 class MeshIO : public Writer
 {
 public:
@@ -60,7 +62,8 @@ private:
 
 };  /* class */
 
-} /* namespace */
+}
+} /* namespace FileIO */
 
 #endif /* MESHIO_H_ */
 

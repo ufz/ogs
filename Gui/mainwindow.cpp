@@ -533,7 +533,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::string unique_name;
 			std::vector<std::string> errors;
-			if (! readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
+			if (! Legacy::readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
 				for (size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}

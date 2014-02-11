@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
 	std::string fname (input_mesh_arg.getValue());
 
-	FileIO::MeshIO mesh_io;
+	FileIO::Legacy::MeshIO mesh_io;
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());

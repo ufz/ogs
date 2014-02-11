@@ -177,7 +177,7 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* new_mesh(new MeshLib::Mesh(mesh->getName(), new_nodes, new_eles));
 
 	// write into a file
-	FileIO::MeshIO meshIO;
+	FileIO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(new_mesh);
 	meshIO.writeToFile(mesh_out.getValue());
 

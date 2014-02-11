@@ -84,7 +84,7 @@ int main (int argc, char* argv[])
 	// remove nodes and write new file
 	MeshLib::Mesh* new_mesh = MeshLib::removeMeshNodes(*mesh, del_nodes);
 	
-	FileIO::MeshIO meshIO;
+	FileIO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(mesh);
 	meshIO.setPrecision(9);
 	meshIO.writeToFile(msh_name.substr(0, msh_name.length()-4) + "_new.msh");

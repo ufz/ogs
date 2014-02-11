@@ -185,7 +185,7 @@ int main (int argc, char* argv[])
 	}
 	/**** add other keywords here ****/
 
-	FileIO::MeshIO meshIO;
+	FileIO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(mesh);
 	meshIO.setPrecision(9);
 	meshIO.writeToFile(msh_name.substr(0, msh_name.length()-4) + "_new.msh");

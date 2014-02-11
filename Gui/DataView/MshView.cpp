@@ -237,14 +237,13 @@ int MshView::writeToFile() const
 			QFileInfo fi(fileName);
 			if (fi.suffix().toLower() == "vtu")
 			{
-				//FileIO::RapidVtuInterface vtkIO;
 				FileIO::BoostVtuInterface vtkIO;
 				vtkIO.setMesh(mesh);
 				vtkIO.writeToFile(fileName.toStdString().c_str());
 			}
 			if (fi.suffix().toLower() == "msh")
 			{
-				FileIO::MeshIO meshIO;
+				FileIO::Legacy::MeshIO meshIO;
 				meshIO.setMesh(mesh);
 				meshIO.writeToFile(fileName.toStdString().c_str());
 			}

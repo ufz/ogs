@@ -33,6 +33,8 @@ class GEOObjects;
 
 namespace FileIO
 {
+namespace Legacy {
+
 /** Interface for handling geometry from OGS-5 and below (*.gli files) */
 
 /** Reads geometric objects from file in gli format */
@@ -46,6 +48,7 @@ void writeGLIFileV4 (const std::string& fname,
 /** Writes all geometric information to a gli-file */
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo);
 
-} // end namespace
+}
+} // end namespace FileIO
 
 #endif /* OGSIOVER4_H_ */
