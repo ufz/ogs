@@ -20,7 +20,7 @@
 #include "logog/include/logog.hpp"
 
 // FileIO
-#include "MeshIO/GMSHInterface.h"
+#include "GMSHInterface.h"
 #include "OGSIOVer4.h"
 
 // BaseLib

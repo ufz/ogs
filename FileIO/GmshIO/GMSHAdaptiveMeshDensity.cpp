@@ -21,7 +21,7 @@
 #include "logog/include/logog.hpp"
 
 // FileIO
-#include "MeshIO/GMSHAdaptiveMeshDensity.h"
+#include "GmshIO/GMSHAdaptiveMeshDensity.h"
 
 // GeoLib
 #include "Polygon.h"
