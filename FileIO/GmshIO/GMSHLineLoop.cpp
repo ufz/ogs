@@ -12,9 +12,11 @@
  *
  */
 
-#include "MeshIO/GMSHLineLoop.h"
+#include "GmshIO/GMSHLineLoop.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 GMSHLineLoop::GMSHLineLoop(bool is_sfc) :
 	_is_sfc(is_sfc)
@@ -51,4 +53,5 @@ void GMSHLineLoop::write(std::ostream &os, size_t line_offset, size_t sfc_offset
 
 }
 
+}
 } // end namespace FileIO

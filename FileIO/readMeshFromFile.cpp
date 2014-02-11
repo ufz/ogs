@@ -36,12 +36,12 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
 	if (BaseLib::hasFileExtension("msh", file_name))
 	{
-		FileIO::MeshIO meshIO;
+		Legacy::MeshIO meshIO;
 		return meshIO.loadMeshFromFile(file_name);
 	}
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
-		return FileIO::BoostVtuInterface::readVTUFile(file_name);
+		return BoostVtuInterface::readVTUFile(file_name);
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;

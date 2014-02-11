@@ -23,6 +23,8 @@
 
 namespace FileIO
 {
+namespace GMSH {
+
 /**
  * virtual base class GMSHMeshDensityStrategy for classes
  * GMSHAdaptiveMeshDensity, GMSHFixedMeshDensity and GMSHNoMeshDensity
@@ -35,6 +37,7 @@ public:
 	virtual double getMeshDensityAtPoint(GeoLib::Point const*const) const = 0;
 };
 
+}
 } // end namespace
 
 

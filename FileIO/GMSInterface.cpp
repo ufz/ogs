@@ -32,6 +32,9 @@
 #include "FileTools.h"
 #include "StringTools.h"
 
+namespace FileIO
+{
+
 int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                                        const std::string &filename)
 {
@@ -315,4 +318,6 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
 
 	const std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
 	return new MeshLib::Mesh(mesh_name, nodes, elements);
+}
+
 }

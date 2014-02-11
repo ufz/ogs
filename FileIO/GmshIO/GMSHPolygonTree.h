@@ -28,7 +28,9 @@
 #include "GEOObjects.h"
 #include "PolylineWithSegmentMarker.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 class GMSHPolygonTree: public GeoLib::SimplePolygonTree {
 public:
@@ -70,7 +72,7 @@ public:
 	 * Method creates the gmsh point data structures - including the mesh density.
 	 * @param gmsh_pnts a vector of pointers to instances of class GMSHPoint
 	 */
-	void createGMSHPoints(std::vector<FileIO::GMSHPoint*> & gmsh_pnts) const;
+	void createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & gmsh_pnts) const;
 
 	virtual void writeLineLoop(std::size_t &line_offset, std::size_t &sfc_offset, std::ostream& out) const;
 	void writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const;
@@ -88,11 +90,12 @@ private:
 	std::string const& _geo_name;
 	std::vector<GeoLib::Point const*> _stations;
 	std::vector<GeoLib::PolylineWithSegmentMarker*> _plys;
-	std::vector<FileIO::GMSHLine*> _gmsh_lines_for_constraints;
+	std::vector<FileIO::GMSH::GMSHLine*> _gmsh_lines_for_constraints;
 
 	GMSHMeshDensityStrategy * _mesh_density_strategy;
 };
 
+}
 }
 
 #endif /* GMSHPOLYGONTREE_H_ */

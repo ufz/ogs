@@ -20,7 +20,7 @@
 #include "logog/include/logog.hpp"
 
 // FileIO
-#include "MeshIO/GMSHInterface.h"
+#include "GMSHInterface.h"
 #include "OGSIOVer4.h"
 
 // BaseLib
@@ -48,6 +48,8 @@ using namespace GeoLib;
 
 namespace FileIO
 {
+namespace Legacy {
+
 /**************************************************************************
    GeoLib- Funktion: readPoints
    Aufgabe: Lesen der GLI Points und schreiben in einen Vector
@@ -745,4 +747,6 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 	os << "#STOP" << "\n";
 	os.close ();
 }
-} // end namespace
+
+}
+} // end namespace FileIO

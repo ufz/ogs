@@ -17,7 +17,7 @@
 
 // FileIO
 #include "Legacy/MeshIO.h"
-#include "MeshIO/GMSHInterface.h"
+#include "GMSHInterface.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -40,7 +40,7 @@ int main (int argc, char* argv[])
 	}
 
 	tmp = argv[2];
-	MeshLib::Mesh* mesh (FileIO::MeshIO().loadMeshFromFile(tmp));
+	MeshLib::Mesh* mesh (FileIO::Legacy::MeshIO().loadMeshFromFile(tmp));
 
 	// *** create new mesh
 	tmp = argv[3];
@@ -52,7 +52,7 @@ int main (int argc, char* argv[])
 
 	tmp = argv[4];
 	std::cout << "writing mesh to file " << tmp << " ... " << std::flush;
-	FileIO::MeshIO mesh_io;
+	FileIO::Legacy::MeshIO mesh_io;
 	mesh_io.setMesh(mesh);
 	mesh_io.writeToFile (tmp);
 	std::cout << "ok" << std::endl;

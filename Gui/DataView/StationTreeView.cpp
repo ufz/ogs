@@ -212,7 +212,7 @@ void StationTreeView::exportStation()
 		std::vector<GeoLib::Point*> stations;
 		stations.push_back(static_cast<GeoLib::StationBorehole*>(
 					static_cast<StationTreeModel*>(model())->stationFromIndex(index,temp_name)));
-		GMSInterface::writeBoreholesToGMS(&stations, fileName.toStdString());
+		FileIO::GMSInterface::writeBoreholesToGMS(&stations, fileName.toStdString());
 		LastSavedFileDirectory::setDir(fileName);
 	}
 }

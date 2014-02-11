@@ -42,6 +42,8 @@
 
 namespace FileIO
 {
+namespace Legacy {
+
 MeshIO::MeshIO()
 	: _mesh(NULL)
 {
@@ -292,5 +294,5 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
 	}
 }
 
-
+}
 } // end namespace FileIO

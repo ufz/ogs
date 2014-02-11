@@ -33,7 +33,8 @@
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 
-
+namespace FileIO
+{
 
 bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities)
 {
@@ -276,4 +277,6 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 	INFO ("Shape export of 2D mesh \"%s\" successful.", mesh.getName().c_str());
 
 	return true;
+}
+
 }

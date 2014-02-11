@@ -232,7 +232,7 @@ int main (int argc, char* argv[])
 			const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
 		}
 
-		FileIO::MeshIO mesh_writer;
+		FileIO::Legacy::MeshIO mesh_writer;
 		mesh_writer.setPrecision(12);
 		mesh_writer.setMesh(dest_mesh);
 		mesh_writer.writeToFile(out_mesh_arg.getValue());

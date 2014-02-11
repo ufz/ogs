@@ -28,10 +28,10 @@
 #include "StringTools.h"
 
 // FileIO
-#include "GMSHAdaptiveMeshDensity.h"
-#include "GMSHFixedMeshDensity.h"
 #include "GMSHInterface.h"
-#include "GMSHNoMeshDensity.h"
+#include "GmshIO/GMSHAdaptiveMeshDensity.h"
+#include "GmshIO/GMSHFixedMeshDensity.h"
+#include "GmshIO/GMSHNoMeshDensity.h"
 
 // GeoLib
 #include "Point.h"
@@ -65,13 +65,13 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
 {
 	switch (mesh_density_algorithm) {
 	case GMSH::MeshDensityAlgorithm::NoMeshDensity:
-		_mesh_density_strategy = new GMSHNoMeshDensity;
+		_mesh_density_strategy = new GMSH::GMSHNoMeshDensity;
 		break;
 	case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
-		_mesh_density_strategy = new GMSHFixedMeshDensity(param1);
+		_mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(param1);
 		break;
 	case GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity:
-		_mesh_density_strategy = new GMSHAdaptiveMeshDensity(param1, param2, param3);
+		_mesh_density_strategy = new GMSH::GMSHAdaptiveMeshDensity(param1, param2, param3);
 		break;
 	}
 }
@@ -288,11 +288,11 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 		for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
 			it!=merged_plys->end(); it++) {
 			if ((*it)->isClosed()) {
-				_polygon_tree_list.push_back(new GMSHPolygonTree(new GeoLib::Polygon(*(*it), true), NULL, _geo_objs, _gmsh_geo_name, _mesh_density_strategy));
+				_polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(new GeoLib::Polygon(*(*it), true), NULL, _geo_objs, _gmsh_geo_name, _mesh_density_strategy));
 			}
 		}
 		DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - detected %d polygons.", _polygon_tree_list.size());
-		GeoLib::createPolygonTrees<FileIO::GMSHPolygonTree>(_polygon_tree_list);
+		GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
 		DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - calculated %d polygon trees.", _polygon_tree_list.size());
 	} else {
 		return;
@@ -308,7 +308,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 			const size_t n_stations(stations->size());
 			for (size_t k(0); k < n_stations; k++) {
 				bool found(false);
-				for (std::list<GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+				for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 					it != _polygon_tree_list.end() && !found; it++) {
 					if ((*it)->insertStation((*stations)[k])) {
 						found = true;
@@ -321,7 +321,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	const size_t n_plys(merged_plys->size());
 	for (size_t k(0); k<n_plys; k++) {
 		if (! (*merged_plys)[k]->isClosed()) {
-			for (std::list<GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+			for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 				it != _polygon_tree_list.end(); it++) {
 				(*it)->insertPolyline(new GeoLib::PolylineWithSegmentMarker(*(*merged_plys)[k]));
 			}
@@ -329,7 +329,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	}
 
 	// *** init mesh density strategies
-	for (std::list<GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 		it != _polygon_tree_list.end(); it++) {
 		(*it)->initMeshDensityStrategy();
 	}
@@ -340,7 +340,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	for (size_t k(0); k<n_merged_pnts; k++) {
 		_gmsh_pnts[k] = NULL;
 	}
-	for (std::list<GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 		it != _polygon_tree_list.end(); it++) {
 		(*it)->createGMSHPoints(_gmsh_pnts);
 	}
@@ -348,7 +348,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	// *** finally write data :-)
 	writePoints(out);
 	size_t pnt_id_offset(_gmsh_pnts.size());
-	for (std::list<GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 		it != _polygon_tree_list.end(); it++) {
 		(*it)->writeLineLoop(_n_lines, _n_plane_sfc, out);
 		(*it)->writeSubPolygonsAsLineConstraints(_n_lines, _n_plane_sfc-1, out);

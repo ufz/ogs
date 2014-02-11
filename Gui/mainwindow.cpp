@@ -34,7 +34,6 @@
 #include "DataExplorerSettingsDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "FEMConditionSetupDialog.h"
-//TODO6 #include "OGSFileConverter.h"
 #include "GeoOnMeshMappingDialog.h"
 #include "GMSHPrefsDialog.h"
 #include "LicenseDialog.h"
@@ -71,8 +70,8 @@
 #include "GMSInterface.h"
 #include "Legacy/MeshIO.h"
 #include "Legacy/OGSIOVer4.h"
-#include "MeshIO/GMSHInterface.h"
-#include "MeshIO/TetGenInterface.h"
+#include "GMSHInterface.h"
+#include "TetGenInterface.h"
 #include "PetrelInterface.h"
 #include "XmlIO/Qt/XmlCndInterface.h"
 #include "XmlIO/Qt/XmlGmlInterface.h"
@@ -533,7 +532,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::string unique_name;
 			std::vector<std::string> errors;
-			if (! readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
+			if (! Legacy::readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
 				for (size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
