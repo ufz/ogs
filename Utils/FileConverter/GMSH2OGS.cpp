@@ -17,7 +17,7 @@
 
 // FileIO
 #include "Legacy/MeshIO.h"
-#include "MeshIO/GMSHInterface.h"
+#include "GMSHInterface.h"
 
 // MeshLib
 #include "Mesh.h"

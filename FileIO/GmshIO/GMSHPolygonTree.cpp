@@ -12,7 +12,7 @@
  *
  */
 
-#include "MeshIO/GMSHPolygonTree.h"
+#include "GmshIO/GMSHPolygonTree.h"
 
 #include "GMSHNoMeshDensity.h"
 #include "GMSHFixedMeshDensity.h"

@@ -15,7 +15,7 @@
 #include <cmath>
 #include <limits>
 
-#include "MeshIO/GMSHPoint.h"
+#include "GmshIO/GMSHPoint.h"
 
 namespace FileIO 
 {

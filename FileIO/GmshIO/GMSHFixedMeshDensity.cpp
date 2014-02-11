@@ -12,7 +12,7 @@
  *
  */
 
-#include "MeshIO/GMSHFixedMeshDensity.h"
+#include "GmshIO/GMSHFixedMeshDensity.h"
 
 namespace FileIO 
 {

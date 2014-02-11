@@ -20,9 +20,9 @@
 
 // FileIO
 #include "Writer.h"
-#include "GMSHPoint.h"
-#include "GMSHPolygonTree.h"
-#include "GMSHMeshDensityStrategy.h"
+#include "GmshIO/GMSHPoint.h"
+#include "GmshIO/GMSHPolygonTree.h"
+#include "GmshIO/GMSHMeshDensityStrategy.h"
 
 // GeoLib
 #include "GEOObjects.h"

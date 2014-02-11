@@ -3,20 +3,24 @@
 SET( SOURCES
 	GMSInterface.h
 	GMSInterface.cpp
+	GMSHInterface.h
+	GMSHInterface.cpp
 	PetrelInterface.h
 	PetrelInterface.cpp
 	readMeshFromFile.h
 	readMeshFromFile.cpp
 	SHPInterface.h
 	SHPInterface.cpp
+	TetGenInterface.h
+	TetGenInterface.cpp
 	Writer.h
 	Writer.cpp
 )
 
 GET_SOURCE_FILES(SOURCES_LEGACY Legacy)
-GET_SOURCE_FILES(SOURCES_MESHIO MeshIO)
+GET_SOURCE_FILES(SOURCES_GMSHIO GmshIO)
 GET_SOURCE_FILES(SOURCES_RAPID_XML RapidXmlIO)
-SET ( SOURCES ${SOURCES} ${SOURCES_LEGACY} ${SOURCES_MESHIO} ${SOURCES_RAPID_XML})
+SET ( SOURCES ${SOURCES} ${SOURCES_LEGACY} ${SOURCES_GMSHIO} ${SOURCES_RAPID_XML})
 
 GET_SOURCE_FILES(SOURCES_BASE_XML XmlIO)
 SET (SOURCES ${SOURCES} ${SOURCES_BASE_XML})

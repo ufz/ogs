@@ -28,10 +28,10 @@
 #include "StringTools.h"
 
 // FileIO
-#include "GMSHAdaptiveMeshDensity.h"
-#include "GMSHFixedMeshDensity.h"
 #include "GMSHInterface.h"
-#include "GMSHNoMeshDensity.h"
+#include "GmshIO/GMSHAdaptiveMeshDensity.h"
+#include "GmshIO/GMSHFixedMeshDensity.h"
+#include "GmshIO/GMSHNoMeshDensity.h"
 
 // GeoLib
 #include "Point.h"

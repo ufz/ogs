@@ -12,7 +12,7 @@
  *
  */
 
-#include <MeshIO/GMSHLine.h>
+#include <GmshIO/GMSHLine.h>
 
 namespace FileIO 
 {
