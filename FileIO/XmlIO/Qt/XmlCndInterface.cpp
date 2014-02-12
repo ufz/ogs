@@ -101,14 +101,17 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 				else if (prop_node.nodeName().compare("Geometry") == 0)
 				{
 					QDomNodeList geoProps = prop_node.childNodes();
+					GeoLib::GEOTYPE geo_type;
+					std::string geo_obj_name;
 					for (int j = 0; j < geoProps.count(); j++)
 					{
 						const QString prop_name(geoProps.at(j).nodeName());
 						if (prop_name.compare("Type") == 0)
-							c->setGeoType(GeoLib::convertGeoType(geoProps.at(j).toElement().text().toStdString()));
+							geo_type = GeoLib::convertGeoType(geoProps.at(j).toElement().text().toStdString());
 						else if (prop_name.compare("Name") == 0)
-							c->setGeoName(geoProps.at(j).toElement().text().toStdString());
+							geo_obj_name = geoProps.at(j).toElement().text().toStdString();
 					}
+					c->initGeometricAttributes(geometry_name, geo_type, geo_obj_name, *(_project->getGEOObjects()));
 				}
 				else if (prop_node.nodeName().compare("Distribution") == 0)
 				{
