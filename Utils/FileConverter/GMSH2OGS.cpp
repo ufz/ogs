@@ -51,7 +51,7 @@ int main (int argc, char* argv[])
 	}
 
 	tmp = argv[2];
-	MeshLib::Mesh* mesh (FileIO::Legacy::MeshIO().loadMeshFromFile(tmp));
+	MeshLib::Mesh* mesh (FileIO::GMSHInterface::readGMSHMesh(tmp));
 
 	// *** create new mesh
 	tmp = argv[3];
