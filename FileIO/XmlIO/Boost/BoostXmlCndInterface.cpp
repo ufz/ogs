@@ -28,7 +28,7 @@ namespace FileIO
 {
 
 BoostXmlCndInterface::BoostXmlCndInterface(ProjectData & project_data) :
-		_type(FEMCondition::UNSPECIFIED), _project_data(project_data)
+		_project_data(project_data)
 {}
 
 bool BoostXmlCndInterface::readFile(const std::string &fname)
