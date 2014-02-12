@@ -23,6 +23,13 @@ namespace AssemblerLib {
 }
 
 /**
+ * @namespace BaseLib
+ * Basic algorithms and helper functions provided for all other libraries.
+ */
+namespace BaseLib {
+}
+
+/**
  * @namespace FileIO
  * Contains the interfaces for all file types that can be read and/or written using
  * OpenGeoSys.

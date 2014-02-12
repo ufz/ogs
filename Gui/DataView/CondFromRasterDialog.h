@@ -20,7 +20,7 @@
 
 #include "ProjectData.h"
 
-namespace {
+namespace MeshLib {
 	class Mesh;
 }
 
