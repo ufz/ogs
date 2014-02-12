@@ -250,9 +250,12 @@ class PETScVector
         */
         void gatherLocalVectors(PetscScalar local_array[],
                                 PetscScalar global_array[]);
+
+        friend void finalizeVectorAssembly(PETScVector &vec);
 };
+
+void finalizeVectorAssembly(PETScVector &vec);
 
 } // end namespace
 #endif
-
 

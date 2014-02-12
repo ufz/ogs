@@ -153,6 +153,11 @@ void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat v
 #endif
 
 }
+ 
+void finalizeVectorAssembly(PETScVector &vec)
+{
+    vec.finalizeAssembly();
+}
 
 } //end of namespace
 

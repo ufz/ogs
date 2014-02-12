@@ -16,13 +16,13 @@
 
 namespace MathLib
 {
-
+ 
 template <typename VEC_T>
-void  finalizeVectorAssembly(VEC_T & vec)
+void finalizeVectorAssembly(VEC_T &)
 {
-    vec.finalizeAssembly();
 }
-
+ 
 } // MathLib
 
 #endif
+
