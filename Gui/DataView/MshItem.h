@@ -35,7 +35,7 @@ public:
 	MshItem(const QList<QVariant> &data, TreeItem* parent, const MeshLib::Mesh* grid);
 	~MshItem();
 
-	/// Returns the mesh as a GridAdapter.
+	/// Returns the mesh.
 	const MeshLib::Mesh* getMesh() const { return this->_meshSource->GetMesh(); }
 	/// Returns the VTK object.
 	VtkMeshSource* vtkSource() const { return _meshSource; }
