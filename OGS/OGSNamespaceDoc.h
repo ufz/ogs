@@ -24,7 +24,7 @@ namespace AssemblerLib {
 
 /**
  * @namespace FileIO
- * Contains the interfaces for all filetype that can be read and/or written using
+ * Contains the interfaces for all file types that can be read and/or written using
  * OpenGeoSys.
  *
  * \sa GMSH
@@ -33,8 +33,8 @@ namespace AssemblerLib {
 namespace FileIO {
 
 	/**
-	 * @namespace GMSH
-	 * Sub-namespace containing all functionality needed for reading GMSH files.
+	 * @namespace FileIO::GMSH
+	 * Sub-namespace containing all functionality needed for reading and writing GMSH files.
 	 *
 	 * \sa GMSHInterface
 	 */
@@ -42,7 +42,7 @@ namespace FileIO {
 	}
 	
 	/**
-	 * @namespace Legacy
+	 * @namespace FileIO::Legacy
 	 * Includes the interfaces to OGS legacy file formats (OGS-5 and below).
 	 */
 	namespace Legacy {
@@ -73,7 +73,7 @@ namespace GeoLib {
  */ 
 namespace MathLib {
 	/**
-	 * @namespace detail
+	 * @namespace MathLib::detail
 	 */
 	namespace detail {
 	}
@@ -89,7 +89,7 @@ namespace MathLib {
  */ 
 namespace MeshLib {
 	/**
-	 * @namespace MeshGenerator
+	 * @namespace MeshLib::MeshGenerator
 	 * Functionality for generating meshing.
 	 */
 	namespace MeshGenerator {
@@ -102,7 +102,7 @@ namespace MeshLib {
  */
 namespace NumLib {
 	/**
-	 * @namespace detail
+	 * @namespace NumLib::detail
 	 */	
 	namespace detail {
 	}
