@@ -15,6 +15,12 @@
 // STL
 #include <string>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+// BaseLib
+#include "LogogSimpleFormatter.h"
+
 // FileIO
 #include "Legacy/MeshIO.h"
 #include "GMSHInterface.h"
@@ -24,6 +30,11 @@
 
 int main (int argc, char* argv[])
 {
+	LOGOG_INITIALIZE();
+	logog::Cout* logog_cout (new logog::Cout);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
+	logog_cout->SetFormatter(*custom_format);
+
 	if (argc < 5)
 	{
 		std::cout << "Usage: " << argv[0] <<
