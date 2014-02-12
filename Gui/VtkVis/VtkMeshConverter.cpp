@@ -345,7 +345,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		default:
-			ERR("VtkMeshConverter::convertUnstructuredGrid(): Unknown mesh element type \"%d\".");
+			ERR("VtkMeshConverter::convertUnstructuredGrid(): Unknown mesh element type \"%d\".", cell_type);
 			return nullptr;
 		}
 
