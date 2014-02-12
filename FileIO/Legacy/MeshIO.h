@@ -30,11 +30,11 @@ namespace MeshLib
 }
 
 
-/// Interface for handling mesh files from OGS-5 and below. (*.msh files)
 namespace FileIO
 {
 namespace Legacy {
 
+/// Interface for handling mesh files from OGS-5 and below. (*.msh files)
 class MeshIO : public Writer
 {
 public:
