@@ -280,18 +280,37 @@ void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 }
 
 void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
-                                      std::ostream &out)
+                                      std::ostream &out) const
 {
 	const size_t ele_vector_size (ele_vec.size());
 
 	out << ele_vector_size << "\n";
 	for (size_t i(0); i < ele_vector_size; ++i) {
-		out << i << " " << ele_vec[i]->getValue() << " " << MeshElemType2String(ele_vec[i]->getGeomType()) << " ";
+		out << i << " " << ele_vec[i]->getValue() << " " << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
 		unsigned nElemNodes (ele_vec[i]->getNNodes());
 		for(size_t j = 0; j < nElemNodes; ++j)
 			out << ele_vec[i]->getNode(j)->getID() << " ";
 		out << "\n";
 	}
+}
+
+const std::string MeshIO::ElemType2StringOutput(const MeshElemType t) const
+{
+	if (t == MeshElemType::LINE)
+		return "line";
+	if (t == MeshElemType::QUAD)
+		return "quad";
+	if (t == MeshElemType::HEXAHEDRON)
+		return "hex";
+	if (t == MeshElemType::TRIANGLE)
+		return "tri";
+	if (t == MeshElemType::TETRAHEDRON)
+		return "tet";
+	if (t == MeshElemType::PRISM)
+		return "pris";
+	if (t == MeshElemType::PYRAMID)
+		return "pyra";
+	return "none";
 }
 
 }

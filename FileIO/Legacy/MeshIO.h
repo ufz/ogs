@@ -17,9 +17,11 @@
 #define MESHIO_H_
 
 #include "Writer.h"
+#include "MeshEnums.h"
 
 #include <sstream>
 #include <iostream>
+#include <string>
 #include <vector>
 
 namespace MeshLib
@@ -54,8 +56,9 @@ protected:
 	int write(std::ostream &out);
 
 private:
-	void writeElements(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out);
+	void writeElements(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out) const;
 	MeshLib::Element* readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes);
+	const std::string ElemType2StringOutput(const MeshElemType t) const;
 
 	double* _edge_length[2];
 	const MeshLib::Mesh* _mesh;

@@ -17,19 +17,19 @@
 const std::string MeshElemType2String(const MeshElemType t)
 {
 	if (t == MeshElemType::LINE)
-		return "line";
+		return "Line";
 	if (t == MeshElemType::QUAD)
-		return "quad";
+		return "Quad";
 	if (t == MeshElemType::HEXAHEDRON)
-		return "hex";
+		return "Hexahedron";
 	if (t == MeshElemType::TRIANGLE)
-		return "tri";
+		return "Triangle";
 	if (t == MeshElemType::TETRAHEDRON)
-		return "tet";
+		return "Tetrahedron";
 	if (t == MeshElemType::PRISM)
-		return "pris";
+		return "Prism";
 	if (t == MeshElemType::PYRAMID)
-		return "pyra";
+		return "Pyramid";
 	return "none";
 }
 
