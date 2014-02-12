@@ -151,10 +151,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 							for(unsigned i = 0; i < nNodes; i++)
 							{
 								iss >> x >> y >> z;
-								nodes[i] = new MeshLib::Node(x,
-								                             y,
-								                             z,
-								                             i);
+								nodes[i] = new MeshLib::Node(x, y, z, i);
 							}
 						}
 						else if (*format == "appended")
@@ -203,10 +200,7 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 
 						std::stringstream iss (conn_string);
 						for(unsigned i = 0; i < nElems; i++)
-							elements[i] = readElement(iss,
-							                          nodes,
-							                          mat_ids[i],
-							                          cell_types[i]);
+							elements[i] = readElement(iss, nodes, mat_ids[i],cell_types[i]);
 					}
 				}
 			}

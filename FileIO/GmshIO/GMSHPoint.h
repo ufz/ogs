@@ -18,7 +18,9 @@
 // GeoLib
 #include "PointWithID.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 class GMSHPoint : public GeoLib::PointWithID {
 public:
@@ -32,6 +34,7 @@ private:
 /** overload the output operator for class GMSHPoint */
 std::ostream& operator<< (std::ostream &os, GMSHPoint const& p);
 
+}
 }
 
 #endif /* GMSHPOINT_H_ */

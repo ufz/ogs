@@ -17,7 +17,9 @@
 
 #include "GMSHMeshDensityStrategy.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 class GMSHFixedMeshDensity : public GMSHMeshDensityStrategy
 {
@@ -31,6 +33,7 @@ private:
 	double _mesh_density;
 };
 
+}
 }
 
 #endif /* GMSHFIXEDMESHDENSITY_H_ */

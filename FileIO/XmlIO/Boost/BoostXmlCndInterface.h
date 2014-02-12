@@ -28,6 +28,9 @@ class Projectdata;
 namespace FileIO
 {
 
+/**
+ * \brief Reads and writes FEM Conditions to and from XML files using the boost XML parser.
+ */
 class BoostXmlCndInterface : public XMLInterface
 {
 public:
@@ -41,11 +44,18 @@ protected:
 	int write(std::ostream& stream);
 
 private:
+	/// Read the details of a boundary condition from an xml-file
 	void readBoundaryConditions(boost::property_tree::ptree const& boundary_condition_nodes);
+
+	/// Read details on process parameters
 	void readProcessTag(boost::property_tree::ptree const& pcs_tags,
 			std::string &pcs_type, std::string &primary_variable) const;
+
+	/// Read details on geometric parameters
 	void readGeometryTag(boost::property_tree::ptree const& geometry_tags,
 			std::string &geo_type, std::string &geo_name) const;
+
+	/// Read details on distribution parameters
 	void readDistributionTag(boost::property_tree::ptree const& distribution_tags,
 			FEMCondition * bc) const;
 

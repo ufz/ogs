@@ -31,6 +31,10 @@ namespace MeshLib {
 	class Mesh;
 }
 
+
+namespace FileIO
+{
+
 /**
  * \brief Manages the import of ESRI shape files into GeoLib.
  */
@@ -79,5 +83,7 @@ private:
 
 	GeoLib::GEOObjects* _geoObjects;
 };
+
+}
 
 #endif //SHPINTERFACE_H

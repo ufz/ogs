@@ -55,7 +55,7 @@ int main (int argc, char* argv[])
 
 	delete [] values;
 
-	FileIO::MeshIO mesh_writer;
+	FileIO::Legacy::MeshIO mesh_writer;
 	mesh_writer.setMesh(mesh);
 	mesh_writer.setPrecision(12);
 	mesh_writer.writeToFile(mesh_arg.getValue());

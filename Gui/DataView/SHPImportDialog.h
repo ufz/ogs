@@ -17,7 +17,10 @@
 
 #include <QDialog>
 
-class SHPInterface;
+namespace FileIO {
+	class SHPInterface;
+}
+
 class GEOModels;
 
 class QDialogButtonBox;
@@ -53,7 +56,7 @@ private:
 	QRadioButton* _choice1, * _choice2;
 	std::string _filename;
 	short _fileType;
-	SHPInterface* _shpInterface;
+	FileIO::SHPInterface* _shpInterface;
 
 private slots:
 	/// Instructions if the OK-Button has been pressed.

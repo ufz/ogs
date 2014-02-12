@@ -20,7 +20,9 @@
 
 #include "GMSHLine.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 class GMSHLineLoop {
 public:
@@ -36,6 +38,7 @@ private:
 	bool _is_sfc;
 };
 
+}
 }
 
 #endif /* GMSHLINELOOP_H_ */

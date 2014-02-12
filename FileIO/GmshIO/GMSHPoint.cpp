@@ -15,9 +15,11 @@
 #include <cmath>
 #include <limits>
 
-#include "MeshIO/GMSHPoint.h"
+#include "GmshIO/GMSHPoint.h"
 
-namespace FileIO {
+namespace FileIO 
+{
+namespace GMSH {
 
 GMSHPoint::GMSHPoint(GeoLib::Point const& pnt, size_t id, double mesh_density) :
 	GeoLib::PointWithID(pnt, id), _mesh_density(mesh_density)
@@ -42,4 +44,5 @@ std::ostream& operator<< (std::ostream &os, GMSHPoint const& p)
 	return os;
 }
 
+}
 } // end namespace FileIO

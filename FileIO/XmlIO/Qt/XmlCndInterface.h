@@ -28,7 +28,7 @@ class ProjectData;
 namespace FileIO
 {
 /**
- * \brief Reads and writes FEM Conditions to and from XML files.
+ * \brief Reads and writes FEM Conditions to and from XML files using the Qt XML parser and validator.
  */
 class XmlCndInterface : public XMLInterface, public XMLQtInterface
 {
@@ -44,8 +44,10 @@ public:
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
 	int readFile(const QString &fileName);
 
+	/// Reads an xml-file containing FEM Conditions (convenience function for using std::strings)
 	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
+	/// Sets the type of condition to be written to a file.
 	void setConditionType(FEMCondition::CondType type) { _type = type; }
 
 protected:
@@ -55,8 +57,11 @@ private:
 	/// Read the details of various FEM Conditions from an xml-file
 	void readConditions(const QDomNode &condRoot, FEMCondition::CondType type);
 
+	/// Returns a list of a certain kind of FEM Condition specified by condText
 	QDomElement getCondListElement(QDomDocument doc, QDomElement &root,
 	                               const QString &condText) const;
+	
+	/// Writes a FEM condition to an xml-file using the write() method
 	void writeCondition(QDomDocument doc, QDomElement &listTag, const FEMCondition* cond,
 	                    const QString &condText, const QString &geoName) const;
 

@@ -152,7 +152,7 @@ int XmlGspInterface::write(std::ostream& stream)
 	     ++it)
 	{
 		// write mesh file
-		FileIO::MeshIO meshIO;
+		Legacy::MeshIO meshIO;
 		meshIO.setMesh(*it);
 		std::string fileName(path + (*it)->getName());
 		meshIO.writeToFile(fileName);

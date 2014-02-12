@@ -54,7 +54,7 @@ void VtkCompositeColormapToImageFilter::init()
 
 	if (!fileName.length()==0)
 	{
-		colormap = XmlLutReader::readFromFile(fileName);
+		colormap = FileIO::XmlLutReader::readFromFile(fileName);
 		settings.setValue("lastOpenedLookupTableFileDirectory", fileName);
 	}
 	else

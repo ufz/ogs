@@ -81,7 +81,7 @@ void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, vtkLookup
 
 void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, const QString &filename)
 {
-	VtkColorLookupTable* colorLookupTable = XmlLutReader::readFromFile(filename);
+	VtkColorLookupTable* colorLookupTable = FileIO::XmlLutReader::readFromFile(filename);
 	SetLookUpTable(array_name, colorLookupTable);
 }
 

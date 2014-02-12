@@ -32,6 +32,8 @@ class Polyline;
 
 namespace FileIO
 {
+namespace GMSH {
+
 class GMSHAdaptiveMeshDensity : public GMSHMeshDensityStrategy
 {
 public:
@@ -56,6 +58,8 @@ private:
 	std::size_t _max_pnts_per_leaf;
 	GeoLib::QuadTree<GeoLib::Point> *_quad_tree;
 };
+
+}
 } // end namespace FileIO
 
 #endif /* GMSHADAPTIVEMESHDENSITY_H_ */

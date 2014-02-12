@@ -51,7 +51,7 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* mesh (FileIO::BoostVtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	FileIO::MeshIO meshIO;
+	FileIO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(mesh);
 	meshIO.writeToFile(mesh_out.getValue());
 
