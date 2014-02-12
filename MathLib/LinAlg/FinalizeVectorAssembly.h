@@ -18,11 +18,11 @@ namespace MathLib
 {
 
 template <typename VEC_T>
-bool finalizeVectorAssembly(VEC_T &)
+void  finalizeVectorAssembly(VEC_T & vec)
 {
-	return true;
+    vec.finalizeAssembly();
 }
 
 } // MathLib
 
-#endif 
+#endif

@@ -116,11 +116,11 @@ void checkGlobalVectorInterfaceMPI()
     vec_pos[1] = r0+1; // any index in [0,15]
 
     y.add(vec_pos, local_vec);
-    y.finalizeAssembly(); // unnessory to call this fucntion here but for the test of it solely.
+    MathLib::finalizeVectorAssembly(y); // unnessory to call this fucntion here but for the test of it solely.
 
     double normy = std::sqrt(6.0*400+10.0*100);
 
-    ASSERT_NEAR(normy-y.getNorm(), 0.0, 1.e-10);
+    ASSERT_NEAR(0.0, normy-y.getNorm(), 1.e-10);
 
     double x0[16];
     double z[] =
@@ -145,7 +145,7 @@ void checkGlobalVectorInterfaceMPI()
 
     y.getGlobalVector(x0);
 
-    ASSERT_ARRAY_NEAR(x0, z, 16, 1e-10);
+    ASSERT_ARRAY_NEAR(z, x0, 16, 1e-10);
 
     // -------------------------------------------------------------------
     // User determined partitioning
@@ -173,14 +173,19 @@ void checkGlobalVectorInterfaceMPI()
     x_fixed_p.set(vec_pos, local_vec);
     x_fixed_p.getGlobalVector(x0);
 
-    ASSERT_ARRAY_NEAR(x0, z, 6, 1e-10);
+    ASSERT_ARRAY_NEAR(z, x0, 6, 1e-10);
 
     // check local array
     double *loc_v = x_fixed_p.getLocalVector();
     z[0] = 1.0;
     z[1] = 2.0;
 
-    ASSERT_ARRAY_NEAR(loc_v, z, 2, 1e-10);
+    ASSERT_ARRAY_NEAR(z, loc_v, 2, 1e-10);
+
+    // Deep copy
+    MathLib::finalizeVectorAssembly(x_fixed_p);
+    T_VECTOR x_deep_copied(x_fixed_p);
+    ASSERT_NEAR(sqrt(3.0*5), x_deep_copied.getNorm(), 1.e-10);
 }
 #endif
 
