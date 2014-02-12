@@ -273,6 +273,13 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		int cell_type = grid->GetCellType(i);
 		switch (cell_type)
 		{
+		case VTK_LINE: {
+			MeshLib::Node** line_nodes = new MeshLib::Node*[2];
+			line_nodes[0] = nodes[node_ids[0]];
+			line_nodes[1] = nodes[node_ids[1]];
+			elem = new MeshLib::Line(line_nodes, material);
+			break;
+		}
 		case VTK_TRIANGLE: {
 			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 			for (unsigned k(0); k<3; k++)
@@ -338,7 +345,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		default:
-			ERR("GridAdapter::convertUnstructuredGrid(): Unknown mesh element type \"%d\".");
+			ERR("VtkMeshConverter::convertUnstructuredGrid(): Unknown mesh element type \"%d\".");
 			return nullptr;
 		}
 
