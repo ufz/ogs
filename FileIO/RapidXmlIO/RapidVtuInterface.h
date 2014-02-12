@@ -58,7 +58,7 @@ protected:
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node
 	rapidxml::xml_node<>* addDataArray(const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
-	int write(std::ostream& stream);
+	bool write(std::ostream& stream);
 
 	std::string _export_name;
 	MeshLib::Mesh* _mesh;
