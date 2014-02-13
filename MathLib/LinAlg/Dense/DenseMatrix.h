@@ -53,6 +53,11 @@ public:
    virtual ~DenseMatrix ();
 
    /**
+    * Get the raw data directly
+   */
+   FP_TYPE *getData () const;
+
+   /**
     * Assignment operator, makes a copy of the internal data of the object.
     * @param rhs The DenseMatrix object to the right side of the assignment symbol.
     */
