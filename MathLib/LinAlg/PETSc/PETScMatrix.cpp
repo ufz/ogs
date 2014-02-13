@@ -49,8 +49,8 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     // Each process indicates only rows it owns that are to be zeroed.
     // If it is called, it must be called by all ranks of cores.
 
-    PetscScalar one = 1.0;
-    PetscInt nrows = static_cast<PetscInt> (row_pos.size());
+    const PetscScalar one = 1.0;
+    const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
 
     if(nrows>0)
         MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);

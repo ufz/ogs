@@ -140,7 +140,6 @@ class PETScMatrix
 
         /*!
           \brief Add a submatrix to this
-
           \param row_pos The global row indicies of the entries of the submatrix
           \param col_pos The global column indicies of the entries of the submatrix
           \param sub_mat A dense matrix to be added on
