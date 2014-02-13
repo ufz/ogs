@@ -68,97 +68,94 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	std::vector<MeshLib::Element*> sfc_elements;
 	get2DSurfaceElements(all_elements, sfc_elements, dir, mesh.getDimension());
 
-	if (!sfc_elements.empty())
+	if (sfc_elements.empty())
+		return nullptr;
+	
+	std::vector<MeshLib::Node*> sfc_nodes;
+	std::vector<unsigned> node_id_map(mesh.getNNodes());
+	get2DSurfaceNodes(all_nodes, sfc_nodes, sfc_elements, node_id_map);
+
+	// create new elements vector with newly created nodes
+	const size_t nNewElements (sfc_elements.size());
+	std::vector<MeshLib::Element*> new_elements(sfc_elements.size());
+	for (unsigned i=0; i<nNewElements; ++i)
 	{
-		std::vector<MeshLib::Node*> sfc_nodes;
-		std::vector<unsigned> node_id_map(mesh.getNNodes());
-		get2DSurfaceNodes(all_nodes, sfc_nodes, sfc_elements, node_id_map);
-
-		// create new elements vector with newly created nodes
-		const size_t nNewElements (sfc_elements.size());
-		std::vector<MeshLib::Element*> new_elements(sfc_elements.size());
-		for (unsigned i=0; i<nNewElements; ++i)
-		{
-			MeshLib::Element* elem (sfc_elements[i]);
-			if (elem->getGeomType() == MeshElemType::TRIANGLE) {
-				MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-				for (unsigned k(0); k<3; k++)
-					tri_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
-				new_elements[i] = new MeshLib::Tri(tri_nodes);
-			} else {
-				MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-				for (unsigned k(0); k<4; k++)
-					quad_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
-				new_elements[i] = new MeshLib::Quad(quad_nodes);
-			}
-			delete sfc_elements[i];
+		MeshLib::Element* elem (sfc_elements[i]);
+		if (elem->getGeomType() == MeshElemType::TRIANGLE) {
+			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+			for (unsigned k(0); k<3; k++)
+				tri_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
+			new_elements[i] = new MeshLib::Tri(tri_nodes);
+		} else {
+			MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+			for (unsigned k(0); k<4; k++)
+				quad_nodes[k] = sfc_nodes[node_id_map[elem->getNode(k)->getID()]];
+			new_elements[i] = new MeshLib::Quad(quad_nodes);
 		}
-
-		return new Mesh("SurfaceMesh", sfc_nodes, new_elements);
+		delete sfc_elements[i];
 	}
-	return NULL;
+
+	return new Mesh("SurfaceMesh", sfc_nodes, new_elements);
 }
 
 void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension)
 {
+	if (mesh_dimension<2 || mesh_dimension>3)
+		ERR("Cannot handle meshes of dimension %i", mesh_dimension);
+
 	bool complete_surface (true);
-	if (dir)
-		complete_surface = ((dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]) == 0) ? true : false;
+	if ((dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]) != 0)
+		complete_surface = false;
 
 	const size_t nElements (all_elements.size());
-
-	if (mesh_dimension > 0 && mesh_dimension < 3 ) // mesh_dimension 1 or 2
+	
+	for (unsigned i=0; i<nElements; ++i)
 	{
-		for (unsigned i=0; i<nElements; ++i)
+		const unsigned element_dimension (all_elements[i]->getDimension());
+		if (element_dimension < mesh_dimension)
+			continue;
+
+		if (element_dimension == 2)
 		{
-			if (complete_surface || all_elements[i]->getDimension() == 1) // if dim==1 just copy
-				sfc_elements.push_back(all_elements[i]);
-			else
+			if (!complete_surface)
 			{
 				MeshLib::Face* face = dynamic_cast<MeshLib::Face*>(all_elements[i]);
 				double normal[3];
 				face->getSurfaceNormal(normal);
-				if (MathLib::scpr(normal, dir, 3) > 0)
-					sfc_elements.push_back(static_cast<MeshLib::Element*>(face));
+				if (MathLib::scpr(normal, dir, 3) <= 0)
+					continue;	
 			}
+			sfc_elements.push_back(all_elements[i]);
 		}
-	}
-	else if (mesh_dimension == 3)
-	{
-		for (unsigned i=0; i<nElements; ++i)
+		else
 		{
-			if (all_elements[i]->getDimension()==3)
+			const MeshLib::Cell* cell = static_cast<MeshLib::Cell*>(all_elements[i]);
+			if (!cell->isOnSurface())
+				continue;
+			const unsigned nFaces (cell->getNFaces());
+			for (unsigned j=0; j<nFaces; ++j)
 			{
-				const MeshLib::Cell* cell = static_cast<MeshLib::Cell*>(all_elements[i]);
-				if (cell->isOnSurface())
-				{
-					const unsigned nFaces (cell->getNFaces());
-					for (unsigned j=0; j<nFaces; ++j)
-					{
-						if (cell->getNeighbor(j) == NULL)
-						{
-							const MeshLib::Face* face = static_cast<const MeshLib::Face*>(cell->getFace(j));
-							if (!complete_surface)
-							{
-								double normal[3];
-								face->getSurfaceNormal(normal);
-								if (MathLib::scpr<double,3>(normal, dir) <= 0)
-									continue;
-							}
+				if (cell->getNeighbor(j) != nullptr)
+					continue;
 
-							if (face->getGeomType() == MeshElemType::TRIANGLE)
-								sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
-							else
-								sfc_elements.push_back(new MeshLib::Quad(*static_cast<const MeshLib::Quad*>(face)));
-						}
-					}
+				const MeshLib::Face* face = static_cast<const MeshLib::Face*>(cell->getFace(j));
+				if (!complete_surface)
+				{
+					double normal[3];
+					face->getSurfaceNormal(normal);
+					if (MathLib::scpr<double,3>(normal, dir) <= 0)
+						continue;
 				}
+
+				if (face->getGeomType() == MeshElemType::TRIANGLE)
+					sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
+				else
+					sfc_elements.push_back(new MeshLib::Quad(*static_cast<const MeshLib::Quad*>(face)));
 			}
 		}
 	}
-	else
-		ERR("Cannot handle meshes of dimension %i", mesh_dimension);
 }
+
 
 void MeshSurfaceExtraction::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map)
 {
