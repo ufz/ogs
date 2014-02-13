@@ -48,7 +48,8 @@ public:
 protected:
 	/// @brief Writes the object to the given stream.
 	/// This method must be implemented by a subclass.
-	virtual int write(std::ostream& stream) = 0;
+	/// The implementation should return true on success, else false
+	virtual bool write(std::ostream& stream) = 0;
 
 	/// @brief The stream to write to.
 	std::stringstream _out;
