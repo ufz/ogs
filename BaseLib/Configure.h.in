@@ -45,7 +45,7 @@
 
 // for tests
 #cmakedefine OGS_EXECUTABLE "${OGS_EXECUTABLE}"
-#define PUT_TMP_DIR_IN "${PROJECT_BINARY_DIR}/tests/"
+#define PUT_TMP_DIR_IN "${PROJECT_BINARY_DIR}/Tests/"
 
 #cmakedefine PROCESSOR_COUNT ${PROCESSOR_COUNT}
 

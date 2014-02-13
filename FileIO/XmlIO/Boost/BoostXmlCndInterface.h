@@ -34,14 +34,15 @@ namespace FileIO
 class BoostXmlCndInterface : public XMLInterface
 {
 public:
-	BoostXmlCndInterface(ProjectData & project);
+	explicit BoostXmlCndInterface(ProjectData & project);
 	virtual ~BoostXmlCndInterface()	{}
 
 	/// Reads an xml-file containing FEM Conditions such as Boundary- or Initial Conditions
 	bool readFile(const std::string &fname);
 
 protected:
-	int write(std::ostream& stream);
+	/// @return true on success, else false
+	bool write(std::ostream& );
 
 private:
 	/// Read the details of a boundary condition from an xml-file
