@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
-#if defined(USE_PETSC)
+#ifdef USE_PETSC
         char help[] = "ogs6 with PETSc \n";
         PetscInitialize(&argc,&argv,(char *)0,help);
 #endif
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
         lis_finalize();
 #endif
 
-#if defined(USE_PETSC)
+#ifdef USE_PETSC
         PetscFinalize();
 #endif
 
