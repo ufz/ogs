@@ -57,13 +57,6 @@ class PETScMatrix
             MatAssemblyEnd(_A, asm_type);
         }
 
-        /// Set the matrix being symmetric
-        void enableSymmetric()
-        {
-            finalizeAssembly();
-            MatSetOption(_A, MAT_SYMMETRIC, PETSC_TRUE);
-        }
-
         /// Get the dimension
         PetscInt size() const
         {
@@ -92,12 +85,6 @@ class PETScMatrix
         PetscInt getLocalColumns() const
         {
             return _loc_cols;
-        }
-
-        /// Is the matrix symmetric
-        bool isSymmetric() const
-        {
-            return _is_symmetric;
         }
 
         /// Get matrix reference
@@ -200,9 +187,6 @@ class PETScMatrix
         PetscInt _start_rank;
         /// Ending index in a rank
         PetscInt _end_rank;
-
-        /// Flag for symmetric or unsymmetric matrix. The default is false.
-        bool _is_symmetric;
 
         friend bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type);
 };

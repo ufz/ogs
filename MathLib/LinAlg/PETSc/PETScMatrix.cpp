@@ -23,7 +23,6 @@ PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption mat_opt)
     _size = size;
     _loc_rows = PETSC_DECIDE;
     _loc_cols = mat_opt._local_cols;
-    _is_symmetric = mat_opt._is_symmetric;
 
     if(mat_opt._is_size_local_rows)
     {
@@ -53,20 +52,10 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     PetscScalar one = 1.0;
     PetscInt nrows = static_cast<PetscInt> (row_pos.size());
 
-    if(isSymmetric())
-    {
-        if(nrows>0)
-            MatZeroRowsColumns(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
-        else
-            MatZeroRowsColumns(_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
-    }
+    if(nrows>0)
+        MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
     else
-    {
-        if(nrows>0)
-            MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
-        else
-            MatZeroRows(_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
-    }
+        MatZeroRows(_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
 }
 
 void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat vw_format)

@@ -101,7 +101,6 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
         m.set(0, 0, 5.0);
         m.add(1, 1, 5.0);
     }
-    m.enableSymmetric();
     MathLib::finalizeMatrixAssembly(m);
     m.multVector(v, y);
 
