@@ -84,10 +84,12 @@ void BoostXmlCndInterface::readBoundaryConditions(
 				bc->setProcessPrimaryVariable(FiniteElement::convertPrimaryVariable(primary_variable));
 			}
 			if (boundary_condition_tag.first.compare("Geometry") == 0) {
-				std::string geo_type, geo_name;
-				readGeometryTag(boundary_condition_tag.second, geo_type, geo_name);
-				bc->setGeoName(geo_name);
-				bc->setGeoType(GeoLib::convertGeoType(geo_type));
+				std::string geo_obj_type, geo_obj_name;
+				readGeometryTag(boundary_condition_tag.second, geo_obj_type, geo_obj_name);
+				bc->initGeometricAttributes(geometry_name,
+					GeoLib::convertGeoType(geo_obj_type),
+					geo_obj_name,
+					*(_project_data.getGEOObjects()));
 			}
 			if (boundary_condition_tag.first.compare("Distribution") == 0) {
 				readDistributionTag(boundary_condition_tag.second, bc);
@@ -135,8 +137,7 @@ void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const
 			cond->setProcessDistributionType(
 					FiniteElement::convertDisType(dis_tag.second.data()));
 		}
-
-		if (dis_tag.first.compare("Value") == 0) {
+		else if (dis_tag.first.compare("Value") == 0) {
 			FiniteElement::DistributionType const& dt(cond->getProcessDistributionType());
 
 			if (dt == FiniteElement::CONSTANT || dt == FiniteElement::CONSTANT_NEUMANN) {
@@ -165,23 +166,10 @@ void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const
 	}
 }
 
-int BoostXmlCndInterface::write(std::ostream& stream)
+bool BoostXmlCndInterface::write(std::ostream& )
 {
-	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysCND.xsl\"?>\n\n"; // stylefile definition
-
-	// create a DOM tree for writing it to file
-	using boost::property_tree::ptree;
-	ptree pt;
-
-	pt.add("OpenGeoSysCond", "OpenGeoSysCond");
-	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd");
-	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
-
-	write_xml(stream, pt);
-
-	return 0;
+	// no implementation - please use the Qt Xml writer for writing
+	return true;
 }
 
 } // end namespace FileIO

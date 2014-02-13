@@ -241,7 +241,7 @@ void GMSHInterface::readNodeIDs(std::ifstream &in,
 	}
 }
 
-int GMSHInterface::write(std::ostream& out)
+bool GMSHInterface::write(std::ostream& out)
 {
 	out << "// GMSH input file created by OpenGeoSys " << OGS_VERSION_AND_PERSONS;
 #ifdef BUILD_TIMESTAMP
@@ -250,7 +250,7 @@ int GMSHInterface::write(std::ostream& out)
 	out << "\n\n";
 
 	writeGMSHInputFile(out);
-	return 1;
+	return true;
 }
 
 void GMSHInterface::writeGMSHInputFile(std::ostream& out)

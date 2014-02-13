@@ -244,11 +244,11 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 	return elem;
 }
 
-int MeshIO::write(std::ostream &out)
+bool MeshIO::write(std::ostream &out)
 {
 	if(!_mesh) {
 		WARN("MeshIO::write(): Cannot write: no mesh object specified.");
-		return 0;
+		return false;
 	}
 
 	out << "#FEM_MSH\n"
@@ -271,7 +271,7 @@ int MeshIO::write(std::ostream &out)
 		<< "  0\n"
 		<< "#STOP\n";
 
-	return 1;
+	return true;
 }
 
 void MeshIO::setMesh(const MeshLib::Mesh* mesh)
