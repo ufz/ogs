@@ -41,7 +41,7 @@ public:
 	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
 protected:
-	int write(std::ostream& stream);
+	bool write(std::ostream& stream);
 
 private:
 	/// Reads GeoLib::Point-objects from an xml-file

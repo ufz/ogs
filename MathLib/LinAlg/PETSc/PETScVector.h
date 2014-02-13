@@ -166,7 +166,7 @@ class PETScVector
         /*!
            Get global vector
 
-           \param u Array to store the global vector. Memory allocated is needed in advance
+           \param u Array to store the global vector. Memory allocation is needed in advance
         */
         void getGlobalVector(PetscScalar u[]);
 
@@ -245,8 +245,8 @@ class PETScVector
 
         /*!
               \brief  Collect local vectors
-              \param  Local_array  local array
-              \param  Global_array global array
+              \param  local_array Local array
+              \param  global_array Global array
         */
         void gatherLocalVectors(PetscScalar local_array[],
                                 PetscScalar global_array[]);

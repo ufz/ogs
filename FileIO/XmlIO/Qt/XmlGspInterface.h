@@ -44,7 +44,7 @@ public:
 	int writeToFile(std::string filename);
 
 protected:
-	int write(std::ostream& stream);
+	bool write(std::ostream& stream);
 
 private:
 	std::string _filename;

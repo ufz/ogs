@@ -116,7 +116,6 @@ void checkGlobalVectorInterfaceMPI()
     vec_pos[1] = r0+1; // any index in [0,15]
 
     y.add(vec_pos, local_vec);
-    MathLib::finalizeVectorAssembly(y); // unnessory to call this fucntion here but for the test of it solely.
 
     double normy = std::sqrt(6.0*400+10.0*100);
 
