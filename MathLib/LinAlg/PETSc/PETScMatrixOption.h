@@ -25,12 +25,9 @@ namespace MathLib
 */
 struct PETScMatrixOption
 {
-    PETScMatrixOption() :  _is_symmetric(false), _is_size_local_rows(false),
-        _local_cols(PETSC_DECIDE), _d_nz(10), _o_nz(10)
+    PETScMatrixOption() :  _is_size_local_rows(false), _local_cols(PETSC_DECIDE),
+        _d_nz(10), _o_nz(10)
     { }
-
-    /// Flag for symmetric or unsymmetric matrix. The default is false.
-    bool _is_symmetric;
 
     /*!
      \brief Flag for the type of the first argument of
@@ -59,4 +56,4 @@ struct PETScMatrixOption
 
 } // end namespace
 #endif
-
+ 
