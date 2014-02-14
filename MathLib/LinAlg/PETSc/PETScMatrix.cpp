@@ -69,7 +69,7 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
     PetscObjectSetName((PetscObject)_A,"Stiffness_matrix");
     MatView(_A,viewer);
 
-#define  nEXIT_TEST
+#define nEXIT_TEST
 #ifdef EXIT_TEST
     MatDestroy(&_A);
     PetscFinalize();
