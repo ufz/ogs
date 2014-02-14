@@ -54,22 +54,16 @@ public:
 	/// Returns the dimension of the mesh (determined by the maximum dimension over all elements).
 	unsigned getDimension() const { return _mesh_dimension; }
 
-	/// Get the minimum edge length over all elements of the mesh.
-	double getMinEdgeLength() { return _edge_length[0]; }
-
-	/// Get the maximum edge length over all elements of the mesh.
-	double getMaxEdgeLength() { return _edge_length[1]; }
-
 	/// Get the node with the given index.
 	const Node* getNode(unsigned idx) const { return _nodes[idx]; }
 
 	/// Get the element with the given index.
 	const Element* getElement(unsigned idx) const { return _elements[idx]; }
 
-	/// Get the minimum edge length for the mesh
+	/// Get the minimum edge length over all elements of the mesh.
 	double getMinEdgeLength() const { return _edge_length[0]; }
 
-	/// Get the maximum edge length for the mesh
+	/// Get the maximum edge length over all elements of the mesh.
 	double getMaxEdgeLength() const { return _edge_length[1]; }
 
 	/// Get the number of elements
