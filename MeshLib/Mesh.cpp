@@ -36,14 +36,16 @@ Mesh::Mesh(const std::string &name,
 	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
 {
 	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
-	_edge_length[0] = 0;
-	_edge_length[1] = 0;
 	this->setDimension();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
 	this->setElementsConnectedToElements();
 	this->removeUnusedMeshNodes();
+
+	_edge_length[0] = std::numeric_limits<double>::max();
+	_edge_length[1] = std::numeric_limits<double>::min();
+	this->calcEdgeLengthRange();
 }
 
 Mesh::Mesh(const Mesh &mesh)
@@ -66,6 +68,8 @@ Mesh::Mesh(const Mesh &mesh)
 	}
 
 	if (_mesh_dimension==0) this->setDimension();
+	this->_edge_length[0] = mesh.getMinEdgeLength();
+	this->_edge_length[1] = mesh.getMaxEdgeLength();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
@@ -138,15 +142,21 @@ void Mesh::setElementsConnectedToNodes()
 //#endif
 }
 
-void Mesh::setEdgeLengthRange(const double &min_length, const double &max_length)
+void Mesh::calcEdgeLengthRange()
 {
-	if (min_length <= max_length)
+	double min_length(0);
+	double max_length(0);
+	const std::size_t nElems (this->getNElements());
+	for (std::size_t i=0; i<nElems; ++i)
 	{
-		_edge_length[0] = min_length;
-		_edge_length[1] = max_length;
+		_elements[i]->computeSqrEdgeLengthRange(min_length, max_length);
+		if (min_length < this->_edge_length[0])
+			this->_edge_length[0] = min_length;
+		if (max_length > this->_edge_length[1])
+			this->_edge_length[1] = max_length;
 	}
-	else
-		ERR ("Error in MeshLib::Mesh::setEdgeLengthRange() - min length > max length.");
+	this->_edge_length[0] = sqrt(this->_edge_length[0]);
+	this->_edge_length[1] = sqrt(this->_edge_length[1]);
 }
 
 void Mesh::setElementsConnectedToElements()

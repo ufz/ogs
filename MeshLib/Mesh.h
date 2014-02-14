@@ -84,13 +84,6 @@ public:
 	/// Resets the IDs of all mesh-nodes to their position in the node vector
 	void resetNodeIDs();
 
-	/**
-	 * Set the minimum and maximum length over the edges of the mesh.
-	 * This should have been previously calcumlated using the Element::computeSqrEdgeLengthRange(min, max)
-	 * function or by some other means.
-	 */
-	void setEdgeLengthRange(const double &min_length, const double &max_length);
-
 	/// Changes the name of the mesh.
 	void setName(const std::string &name) { this->_name = name; }
 
@@ -98,6 +91,9 @@ public:
 	std::size_t getID() const {return _id; }
 
 protected:
+	// Set the minimum and maximum length over the edges of the mesh.
+	void calcEdgeLengthRange();
+
 	/// Removes nodes that are not part of any element.
 	void removeUnusedMeshNodes();
 
