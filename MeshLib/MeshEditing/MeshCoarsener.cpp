@@ -181,4 +181,90 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 	return new Mesh (_orig_mesh->getName() + "Collapsed", nodes, elements);
 }
 
+Mesh* MeshCoarsener::simplifyMesh()
+{
+	double eps(0);
+	std::vector<unsigned> idx_map;
+
+	std::vector<MeshLib::Node*> new_nodes = this->collapseNodes(idx_map, eps);
+	std::vector<MeshLib::Element*> new_elements;
+
+	const std::size_t nElems (this->_orig_mesh->getNElements());
+	const std::vector<MeshLib::Element*> elements (this->_orig_mesh->getElements());
+	for (std::size_t i=0; i<nElems; ++i)
+	{
+		unsigned unique_nodes (this->getNUniqueNodes(elements[i]));
+		if (unique_nodes < elements[i]->getNNodes() && unique_nodes>1)
+		{
+			MeshLib::Element* org_elem (elements[i]);
+			MeshLib::Element* new_elem (nullptr);
+			if (org_elem->getGeomType() == MeshElemType::TRIANGLE)
+				new_elem = this->reduceTri(org_elem, unique_nodes);
+			else if (org_elem->getGeomType() == MeshElemType::QUAD)
+				new_elem = this->reduceQuad(org_elem, unique_nodes);
+			else if (org_elem->getGeomType() == MeshElemType::TETRAHEDRON)
+				new_elem = this->reduceTet(org_elem, unique_nodes);
+			else if (org_elem->getGeomType() == MeshElemType::HEXAHEDRON)
+				new_elem = this->reduceHex(org_elem, unique_nodes);
+			else if (org_elem->getGeomType() == MeshElemType::PYRAMID)
+				new_elem = this->reducePyramid(org_elem, unique_nodes);
+			else if (org_elem->getGeomType() == MeshElemType::PRISM)
+				new_elem = this->reducePrism(org_elem, unique_nodes);
+			else
+				std::cout << "Error: Unknown element type." << std::endl;
+
+			if (new_elem)
+				new_elements.push_back(new_elem);
+			
+		}
+	}
+	if (new_elements.size()>0)
+		return new MeshLib::Mesh("new mesh", new_nodes, new_elements);
+	return nullptr;
+}
+
+std::vector<MeshLib::Node*> MeshCoarsener::collapseNodes(std::vector<unsigned> &idx_map, double eps)
+{
+	this->_orig_mesh->getNodes();
+	std::vector<MeshLib::Node*> new_nodes;
+
+	return new_nodes;
+}
+
+unsigned MeshCoarsener::getNUniqueNodes(const MeshLib::Element* element)
+{
+	unsigned i(0);
+	return i;
+}
+
+MeshLib::Element* reduceTri(MeshLib::Element* tri, unsigned unique_nodes)
+{
+	return tri;
+}
+
+MeshLib::Element* reduceQuad(MeshLib::Element* quad, unsigned unique_nodes)
+{
+	return quad;
+}
+
+MeshLib::Element* reduceTet(MeshLib::Element* tet, unsigned unique_nodes)
+{
+	return tet;
+}
+
+MeshLib::Element* reduceHex(MeshLib::Element* hex, unsigned unique_nodes)
+{
+	return hex;
+}
+
+MeshLib::Element* reducePyramid(MeshLib::Element* pyramid, unsigned unique_nodes)
+{
+	return pyramid;
+}
+
+MeshLib::Element* reducePrism(MeshLib::Element* prism, unsigned unique_nodes)
+{
+	return prism;
+}
+
 } // end namespace MeshLib
