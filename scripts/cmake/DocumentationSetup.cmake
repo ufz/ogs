@@ -9,7 +9,6 @@ IF(DOXYGEN_FOUND)
 		SET(DOT_FOUND "YES")
 	ENDIF()
 
-	CONFIGURE_FILE(scripts/docs/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 	ADD_CUSTOM_TARGET(doc ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
 		WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 		COMMENT "Generating source code documentation with Doxygen." VERBATIM)
@@ -24,5 +23,7 @@ IF(DOXYGEN_FOUND)
 			COMMAND make WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docs
 			COMMENT "Generating docset ...")
 	ENDIF() # DOCS_GENERATE_DOCSET
+
+	CONFIGURE_FILE(scripts/docs/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
 ENDIF() # DOXYGEN_FOUND
