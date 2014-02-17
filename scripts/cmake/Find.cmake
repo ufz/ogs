@@ -14,9 +14,6 @@ ENDIF()
 ### Find tools     ###
 ######################
 
-# Find dot tool from graphviz
-FIND_PROGRAM(DOT_TOOL_PATH dot DOC "Dot tool from graphviz")
-
 # Find doxygen
 FIND_PACKAGE(Doxygen QUIET)
 
