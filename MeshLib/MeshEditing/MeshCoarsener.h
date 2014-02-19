@@ -21,14 +21,6 @@
 // forward declaration
 namespace MeshLib {
 	class Mesh;
-	class Node;
-	class Element;
-	class Tri;
-	class Quad;
-	class Tet;
-	class Hex;
-	class Pyramid;
-	class Prism;
 }
 
 namespace MeshLib {
@@ -56,21 +48,8 @@ public:
 	 */
 	Mesh* operator() (double min_distance);
 
-	Mesh* simplifyMesh();
 
 private:
-
-	std::vector<MeshLib::Node*> collapseNodes(std::vector<unsigned> &idx_map, double eps);
-
-	unsigned getNUniqueNodes(const MeshLib::Element* element);
-
-	MeshLib::Element* reduceTri(MeshLib::Element* tri, unsigned unique_nodes);
-	MeshLib::Element* reduceQuad(MeshLib::Element* quad, unsigned unique_nodes);
-	MeshLib::Element* reduceTet(MeshLib::Element* tet, unsigned unique_nodes);
-	MeshLib::Element* reduceHex(MeshLib::Element* hex, unsigned unique_nodes);
-	MeshLib::Element* reducePyramid(MeshLib::Element* pyramid, unsigned unique_nodes);
-	MeshLib::Element* reducePrism(MeshLib::Element* prism, unsigned unique_nodes);
-
 	Mesh const*const _orig_mesh;
 };
 

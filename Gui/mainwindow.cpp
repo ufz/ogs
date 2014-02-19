@@ -15,6 +15,8 @@
 #include "Configure.h"
 #include "mainwindow.h"
 
+#include "MeshEditing\MeshRevision.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -1284,6 +1286,11 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	const MeshLib::Mesh* mesh (_project.getMesh("testmesh"));
+	MeshLib::MeshRevision rev(mesh);
+	//MeshLib::Mesh* result = rev.collapseNodes("new_mesh", 0.2);
+	MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
+	this->_meshModels->addMesh(result);
 }
 
 
