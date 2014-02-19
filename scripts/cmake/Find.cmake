@@ -15,7 +15,14 @@ ENDIF()
 ######################
 
 # Find doxygen
-FIND_PACKAGE(Doxygen QUIET)
+IF(WIN32)
+	FIND_PROGRAM(DOXYGEN_DOT_EXECUTABLE NAMES dot PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
+	FIND_PACKAGE(Doxygen QUIET)
+	FILE(TO_NATIVE_PATH ${DOXYGEN_DOT_PATH} DOXYGEN_DOT_PATH)
+	SET(DOXYGEN_DOT_PATH "\"${DOXYGEN_DOT_PATH}\"")
+ELSE()
+	FIND_PACKAGE(Doxygen QUIET)
+ENDIF()
 
 # Find gnu profiler gprof
 FIND_PROGRAM(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
