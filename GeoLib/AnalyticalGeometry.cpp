@@ -339,4 +339,20 @@ double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Poin
 	return result;
 }
 
+bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+{
+	double abc(0), abd(0);
+	for (unsigned x=0; x<3; ++x)
+	{
+		const unsigned y=(x+1)%3;
+		abc = (b[x] - a[x])*(c[y] - a[y]) - (b[y] - a[y])*(c[x] - a[x]);
+		abd = (b[x] - a[x])*(d[y] - a[y]) - (b[y] - a[y])*(d[x] - a[x]);
+
+		if ((abc>0 && abd<0) || (abc<0 && abd>0))
+			return true;		
+		continue;
+	}
+	return false;
+}
+
 } // end namespace GeoLib

@@ -73,6 +73,11 @@ public:
 	virtual CellType getCellType() const { return CELLLINETYPE; }
 
 	/**
+	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 */
+	virtual bool isValid() const { return (this->_length) > std::numeric_limits<double>::epsilon(); }
+
+	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateLine instance.
 	 * @return an exact copy of the object
 	 */

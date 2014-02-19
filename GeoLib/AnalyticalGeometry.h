@@ -135,8 +135,21 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
  */
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q);
 
-// Calculates the scalar triple (u x v) . w
+/// Calculates the scalar triple (u x v) . w
 double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w);
+
+/** 
+ * Checks if a und b can be placed on a plane such that c and d lie on different sides of said plane.
+ * (In 2D space this checks if c and d are on different sides of a line through a and b.)
+ * @param a first point on plane
+ * @param b second point on plane
+ * @param c first point to test
+ * @param d second point to test
+ * @return true, if such a plane can be found, false otherwise 
+ */
+ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
+	 const GeoLib::Point& c, const GeoLib::Point& d);
+
 
 } // end namespace GeoLib
 

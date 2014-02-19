@@ -97,6 +97,11 @@ public:
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
+	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 */
+	virtual bool isValid() const;
+
+	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the
 	 * Hex instance employing the copy constructor of class TemplatePrism.
 	 * @return an exact copy of the object

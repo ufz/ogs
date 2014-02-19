@@ -97,6 +97,10 @@ public:
 	 */
 	virtual bool isPntInside(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
+	/**
+	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 */
+	virtual bool isValid() const;
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateQuad instance.

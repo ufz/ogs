@@ -120,6 +120,32 @@ unsigned TemplateQuad<NNODES,CELLQUADTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
+bool TemplateQuad<NNODES,CELLQUADTYPE>::isValid() const
+{
+	if (this->_area <= std::numeric_limits<double>::epsilon())
+		return false;
+
+	const GeoLib::Point AB((*_nodes[1])[0]-(*_nodes[0])[0], (*_nodes[1])[1]-(*_nodes[0])[1], (*_nodes[1])[2]-(*_nodes[0])[2]);
+	const GeoLib::Point AC((*_nodes[2])[0]-(*_nodes[0])[0], (*_nodes[2])[1]-(*_nodes[0])[1], (*_nodes[2])[2]-(*_nodes[0])[2]);
+	const GeoLib::Point AD((*_nodes[3])[0]-(*_nodes[0])[0], (*_nodes[3])[1]-(*_nodes[0])[1], (*_nodes[3])[2]-(*_nodes[0])[2]);
+
+	// check if all points lie on the same plane
+	double squared_scalar_triple = pow(GeoLib::scalarTriple(AC, AD, AB), 2);
+	double normalisation_factor  = (AB[0]*AB[0]+AB[1]*AB[1]+AB[2]*AB[2]) * 
+			                        (AC[0]*AC[0]+AC[1]*AC[1]+AC[2]*AC[2]) * 
+									(AD[0]*AD[0]+AD[1]*AD[1]+AD[2]*AD[2]);
+
+	if (squared_scalar_triple/normalisation_factor < std::numeric_limits<double>::epsilon())
+	{
+		// check if quad is convex
+		if (GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
+			GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2]))
+			return true;
+	}
+	return false;
+}
+
+template <unsigned NNODES, CellType CELLQUADTYPE>
 Element* TemplateQuad<NNODES,CELLQUADTYPE>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {

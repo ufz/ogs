@@ -156,6 +156,20 @@ unsigned TemplateHex<NNODES,CELLHEXTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
+bool TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
+{
+	for (unsigned i=0; i<6; ++i)
+	{
+		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
+		const bool quad_is_valid (quad->isValid());
+		delete quad;
+		if (!quad_is_valid)
+			return false;
+	}
+	return true;
+}
+
+template <unsigned NNODES, CellType CELLHEXTYPE>
 Element* TemplateHex<NNODES,CELLHEXTYPE>::reviseElement() const
 {
 	std::vector<size_t> collapsed_edges;

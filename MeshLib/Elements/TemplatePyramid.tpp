@@ -167,6 +167,16 @@ unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::identifyFace(Node* nodes[3]) c
 }
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
+bool TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isValid() const
+{
+	const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(this->getFace(4)));
+	const bool base_is_valid (base->isValid());
+	delete base;
+	return base_is_valid;
+}
+
+
+template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::reviseElement() const
 {
 	// try to create tetrahedron
