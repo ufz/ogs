@@ -139,7 +139,7 @@ GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point co
 double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w);
 
 /** 
- * Checks if a und b can be placed on a plane such that c and d lie on different sides of said plane.
+ * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
  * (In 2D space this checks if c and d are on different sides of a line through a and b.)
  * @param a first point on plane
  * @param b second point on plane
