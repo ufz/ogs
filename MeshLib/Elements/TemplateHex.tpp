@@ -156,8 +156,11 @@ unsigned TemplateHex<NNODES,CELLHEXTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
-bool TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
+bool TemplateHex<NNODES,CELLHEXTYPE>::isValid(bool check_zero_volume) const
 {
+	if (check_zero_volume && this->_volume <= std::numeric_limits<double>::epsilon())
+		return false;
+
 	for (unsigned i=0; i<6; ++i)
 	{
 		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));

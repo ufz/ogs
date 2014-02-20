@@ -165,8 +165,11 @@ unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
-bool TemplatePrism<NNODES,CELLPRISMTYPE>::isValid() const
+bool TemplatePrism<NNODES,CELLPRISMTYPE>::isValid(bool check_zero_volume) const
 {
+	if (check_zero_volume && this->_volume <= std::numeric_limits<double>::epsilon())
+		return false;
+
 	for (unsigned i=1; i<4; ++i)
 	{
 		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));

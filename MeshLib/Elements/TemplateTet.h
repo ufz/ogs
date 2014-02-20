@@ -94,9 +94,10 @@ public:
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
-	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 * Tests if the element is geometrically valid.
+	 * @param check_zero_volume indicates if volume == 0 should be checked
 	 */
-	virtual bool isValid() const { return (this->_volume > std::numeric_limits<double>::epsilon()); }
+	virtual bool isValid(bool check_zero_volume = true) const;
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateTet instance.

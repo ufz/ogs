@@ -95,9 +95,10 @@ public:
 	virtual bool isPntInside(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/**
-	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 * Tests if the element is geometrically valid
+	 * @param check_zero_volume indicates if area == 0 should be checked
 	 */
-	virtual bool isValid() const { return (this->_area > std::numeric_limits<double>::epsilon()); }
+	virtual bool isValid(bool check_zero_volume = true) const;
 
 
 	/**

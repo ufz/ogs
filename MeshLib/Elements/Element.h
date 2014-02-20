@@ -135,8 +135,9 @@ public:
 
 	/**
 	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 * @param check_zero_volume indicates if length/area/volume == 0 should be checked
 	 */
-	virtual bool isValid() const = 0;
+	virtual bool isValid(bool check_zero_volume = true) const = 0;
 
 	/**
 	 * Set the index value for external information.
