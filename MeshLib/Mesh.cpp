@@ -150,10 +150,8 @@ void Mesh::calcEdgeLengthRange()
 	for (std::size_t i=0; i<nElems; ++i)
 	{
 		_elements[i]->computeSqrEdgeLengthRange(min_length, max_length);
-		if (min_length < this->_edge_length[0])
-			this->_edge_length[0] = min_length;
-		if (max_length > this->_edge_length[1])
-			this->_edge_length[1] = max_length;
+		this->_edge_length[0] = std::min(this->_edge_length[0], min_length);
+		this->_edge_length[1] = std::max(this->_edge_length[1], max_length);
 	}
 	this->_edge_length[0] = sqrt(this->_edge_length[0]);
 	this->_edge_length[1] = sqrt(this->_edge_length[1]);
