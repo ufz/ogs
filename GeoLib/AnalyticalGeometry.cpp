@@ -355,4 +355,18 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	return false;
 }
 
+bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+{
+	const GeoLib::Point AB(b[0]-a[0], b[1]-a[1], b[2]-a[2]);
+	const GeoLib::Point AC(c[0]-a[0], c[1]-a[1], c[2]-a[2]);
+	const GeoLib::Point AD(d[0]-a[0], d[1]-a[1], d[2]-a[2]);
+
+	double squared_scalar_triple = pow(GeoLib::scalarTriple(AC, AD, AB), 2);
+	double normalisation_factor  = (AB[0]*AB[0]+AB[1]*AB[1]+AB[2]*AB[2]) * 
+			                        (AC[0]*AC[0]+AC[1]*AC[1]+AC[2]*AC[2]) * 
+									(AD[0]*AD[0]+AD[1]*AD[1]+AD[2]*AD[2]);
+
+	return (squared_scalar_triple/normalisation_factor < std::numeric_limits<double>::epsilon());
+}
+
 } // end namespace GeoLib

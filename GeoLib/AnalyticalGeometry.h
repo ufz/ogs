@@ -150,6 +150,10 @@ double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Poin
  bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
+ /// Checks if the four given points are located on a plane.
+ bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
+	 const GeoLib::Point& c, const GeoLib::Point& d);
+
 
 } // end namespace GeoLib
 
