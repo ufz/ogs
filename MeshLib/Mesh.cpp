@@ -43,8 +43,8 @@ Mesh::Mesh(const std::string &name,
 	this->setElementsConnectedToElements();
 	this->removeUnusedMeshNodes();
 
-	_edge_length[0] = std::numeric_limits<double>::max();
-	_edge_length[1] = std::numeric_limits<double>::min();
+	_edge_length[0] =  std::numeric_limits<double>::max();
+	_edge_length[1] = -std::numeric_limits<double>::max();
 	this->calcEdgeLengthRange();
 }
 
