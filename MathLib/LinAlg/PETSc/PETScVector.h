@@ -211,21 +211,25 @@ class PETScVector
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output
             \vw_format        File format listed as:
-        PETSC_VIEWER_DEFAULT 	- default format
-        PETSC_VIEWER_ASCII_MATLAB 	- MATLAB format
-        PETSC_VIEWER_ASCII_DENSE 	- print matrix as dense
-        PETSC_VIEWER_ASCII_IMPL 	- implementation-specific format (which is in many cases the same as the default)
-        PETSC_VIEWER_ASCII_INFO 	- basic information about object
-        PETSC_VIEWER_ASCII_INFO_DETAIL 	- more detailed info about object
-        PETSC_VIEWER_ASCII_COMMON 	- identical output format for all objects of a particular type
-        PETSC_VIEWER_ASCII_INDEX 	- (for vectors) prints the vector element number next to each vector entry
-        PETSC_VIEWER_ASCII_SYMMODU 	- print parallel vectors without indicating the processor ranges
-        PETSC_VIEWER_ASCII_VTK 	- outputs the object to a VTK file
-        PETSC_VIEWER_NATIVE 	- store the object to the binary file in its native format (for example, dense matrices are stored as dense), DMDA vectors are dumped directly to the file instead of being first put in the natural ordering
-        PETSC_VIEWER_DRAW_BASIC 	- views the vector with a simple 1d plot
-        PETSC_VIEWER_DRAW_LG 	- views the vector with a line graph
-        PETSC_VIEWER_DRAW_CONTOUR 	- views the vector with a contour plot
-
+             PETSC_VIEWER_DEFAULT            Default format
+             PETSC_VIEWER_ASCII_MATLAB       MATLAB format
+             PETSC_VIEWER_ASCII_DENSE        Pprint matrix as dense
+             PETSC_VIEWER_ASCII_IMPL         Implementation-specific format
+                                               (which is in many cases the same as the default)
+             PETSC_VIEWER_ASCII_INFO         Basic information about object
+             PETSC_VIEWER_ASCII_INFO_DETAIL  More detailed info about object
+             PETSC_VIEWER_ASCII_COMMON       Identical output format for all objects of a particular type
+             PETSC_VIEWER_ASCII_INDEX        (for vectors) Prints the vector element number next to
+                                                each vector entry
+             PETSC_VIEWER_ASCII_SYMMODU      Print parallel vectors without indicating the processor ranges
+             PETSC_VIEWER_ASCII_VTK          Outputs the object to a VTK file
+             PETSC_VIEWER_NATIVE             Store the object to the binary file in its native format
+                                              (for example, dense matrices are stored as dense),
+                                              DMDA vectors are dumped directly to the file instead of
+                                              being first put in the natural ordering
+             PETSC_VIEWER_DRAW_BASIC         Views the vector with a simple 1d plot
+             PETSC_VIEWER_DRAW_LG            Views the vector with a line graph
+             PETSC_VIEWER_DRAW_CONTOUR       Views the vector with a contour plot
         */
         void viewer(const std::string &file_name,
                     const PetscViewerFormat vw_format = PETSC_VIEWER_ASCII_MATLAB );
