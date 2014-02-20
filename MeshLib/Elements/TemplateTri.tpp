@@ -81,6 +81,15 @@ bool TemplateTri<NNODES,CELLTRITYPE>::isPntInside(GeoLib::Point const& pnt, doub
 }
 
 template <unsigned NNODES, CellType CELLTRITYPE>
+bool TemplateTri<NNODES,CELLTRITYPE>::isValid(bool check_zero_volume) const 
+{ 
+	if (check_zero_volume)
+		return (this->_area > std::numeric_limits<double>::epsilon()); 
+	return true;
+}
+
+
+template <unsigned NNODES, CellType CELLTRITYPE>
 Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
 {
 	// try to create an edge
