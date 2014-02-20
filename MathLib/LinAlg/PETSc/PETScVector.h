@@ -213,7 +213,7 @@ class PETScVector
             \vw_format        File format listed as:
              PETSC_VIEWER_DEFAULT            Default format
              PETSC_VIEWER_ASCII_MATLAB       MATLAB format
-             PETSC_VIEWER_ASCII_DENSE        Pprint matrix as dense
+             PETSC_VIEWER_ASCII_DENSE        Print matrix as dense
              PETSC_VIEWER_ASCII_IMPL         Implementation-specific format
                                                (which is in many cases the same as the default)
              PETSC_VIEWER_ASCII_INFO         Basic information about object
