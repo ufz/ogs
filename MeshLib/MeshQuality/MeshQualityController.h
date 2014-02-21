@@ -21,7 +21,7 @@ namespace MeshLib {
 	class Mesh;
 
 /**
- * \brief A set of methods for manipulating mesh element values
+ * \brief A collection of methods for testing mesh quality and correctness
  */
 class MeshQualityController
 {

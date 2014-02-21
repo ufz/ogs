@@ -133,11 +133,14 @@ public:
 	 */
 	unsigned getValue() const { return _value; }
 
+	/// Returns true if these two indeces form an edge and false otherwise
+	virtual bool isEdge(unsigned i, unsigned j) const = 0;
+
 	/**
-	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
+	 * Tests if the element is geometrically valid.
 	 * @param check_zero_volume indicates if length/area/volume == 0 should be checked
 	 */
-	virtual bool isValid(bool check_zero_volume = true) const = 0;
+	virtual ElementErrorCode isValid() const = 0;
 
 	/**
 	 * Set the index value for external information.
@@ -150,9 +153,6 @@ public:
 
 	/// Destructor
 	virtual ~Element();
-
-	/// Returns true if these two indeces form an edge and false otherwise
-	virtual bool isEdge(unsigned i, unsigned j) const = 0;
 
 	/**
 	 * Method clone is a pure virtual method in the abstract base class Element.

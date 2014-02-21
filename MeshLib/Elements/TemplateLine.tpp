@@ -48,11 +48,12 @@ TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-bool TemplateLine<NNODES,CELLLINETYPE>::isValid(bool check_zero_volume) const
+ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::isValid() const
 { 
-	if (check_zero_volume)
-		return (this->_length > std::numeric_limits<double>::epsilon());
-	return true;
+	ElementErrorCode error_code (ElementErrorCode::NoError);
+	if (this->_length < std::numeric_limits<double>::epsilon())
+		error_code =  error_code | ElementErrorCode::ZeroVolume;
+	return error_code;
 }
 
 } // namespace MeshLib

@@ -145,11 +145,12 @@ unsigned TemplateTet<NNODES,CELLTETTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-bool TemplateTet<NNODES,CELLTETTYPE>::isValid(bool check_zero_volume) const
+ElementErrorCode TemplateTet<NNODES,CELLTETTYPE>::isValid() const
 { 
-	if (check_zero_volume)
-		return (this->_volume > std::numeric_limits<double>::epsilon()); 
-	return true;
+	ElementErrorCode error_code(ElementErrorCode::NoError);
+	if (this->_volume < std::numeric_limits<double>::epsilon())
+		error_code = error_code | ElementErrorCode::ZeroVolume;
+	return error_code;
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
