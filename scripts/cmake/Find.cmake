@@ -1,7 +1,7 @@
 # Add custom library install prefixes
 LIST(APPEND CMAKE_PREFIX_PATH
 	$ENV{HOMEBREW_ROOT}             # Homebrew package manager on Mac OS
-	$ENV{CMAKE_LIBRARY_SEARCH_PATH}  # Environment variable, Windows
+	$ENV{CMAKE_LIBRARY_SEARCH_PATH} # Environment variable, Windows
 	${CMAKE_LIBRARY_SEARCH_PATH})   # CMake option, Windows
 
 ######################
