@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   EdgeRatioMetric.h
  * \author Thomas Fischer
  * \date   2011-03-03
- * \brief  Definition of the MeshQualityShortestLongestRatio class.
+ * \brief  Definition of the AreaMetric class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,21 +12,25 @@
  *
  */
 
-#ifndef MESHQUALITYSHORTESTLONGESTRATIO_H_
-#define MESHQUALITYSHORTESTLONGESTRATIO_H_
+#ifndef EDGERATIOMETRIC_H_
+#define EDGERATIOMETRIC_H_
 
-#include "MeshQualityChecker.h"
+#include "ElementQualityMetric.h"
 #include "Point.h"
 
 namespace MeshLib
 {
-class MeshQualityShortestLongestRatio : public MeshQualityChecker
+
+/** 
+ * Calculates the quality of mesh elements based on the ratio between shortest and longest edge of an element
+ */
+class EdgeRatioMetric : public ElementQualityMetric
 {
 public:
-	MeshQualityShortestLongestRatio(Mesh const* const mesh);
-	virtual ~MeshQualityShortestLongestRatio () {}
+	EdgeRatioMetric(Mesh const* const mesh);
+	virtual ~EdgeRatioMetric () {}
 
-	virtual void check ();
+	virtual void calculateQuality ();
 
 private:
 	double checkTriangle (GeoLib::Point const* const a,
@@ -45,4 +49,4 @@ private:
 };
 }
 
-#endif /* MESHQUALITYSHORTESTLONGESTRATIO_H_ */
+#endif /* EDGERATIOMETRIC_H_ */
