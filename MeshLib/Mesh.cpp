@@ -41,7 +41,6 @@ Mesh::Mesh(const std::string &name,
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
 	this->setElementsConnectedToElements();
-	this->removeUnusedMeshNodes();
 
 	_edge_length[0] =  std::numeric_limits<double>::max();
 	_edge_length[1] = -std::numeric_limits<double>::max();
@@ -245,29 +244,5 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
-void Mesh::removeUnusedMeshNodes()
-{
-	unsigned count(0);
-	std::vector<MeshLib::Node*>::iterator it (this->_nodes.begin());
-	while(it != this->_nodes.end())
-	{
-		if ((*it)->getNElements() == 0)
-		{
-			delete *it;
-			*it = nullptr;
-			++it;
-			++count;
-		}
-		else ++it;
-	}
-	auto node_vec_end = std::remove(_nodes.begin(), _nodes.end(), nullptr);
-	_nodes.erase(node_vec_end, _nodes.end());
-
-	if (count)
-	{
-		INFO("Removed %d unused mesh nodes.", count );
-		this->resetNodeIDs();
-	}
-}
 
 }

@@ -11,6 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+
 #include "Configure.h"
 #include "mainwindow.h"
 
@@ -88,6 +89,7 @@
 #include "MeshSurfaceExtraction.h"
 #include "readMeshFromFile.h"
 #include "convertMeshToGeo.h"
+#include "MeshQuality/MeshQualityController.h"
 
 // Qt includes
 #include <QDesktopWidget>
@@ -1276,6 +1278,9 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	
+	MeshLib::MeshQualityController mqc(*(const_cast<MeshLib::Mesh*>(this->_meshModels->getMesh("mshtest"))));
+
 }
 
 

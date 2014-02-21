@@ -29,7 +29,6 @@
 #include "Elements/Hex.h"
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
-#include "MeshEditing/removeMeshNodes.h"
 #include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
