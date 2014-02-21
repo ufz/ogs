@@ -1,21 +1,29 @@
-/*
- * MeshQualityArea.cpp
+/**
+ * \file   AreaMetric.cpp
+ * \author Karsten Rink
+ * \date   2011-03-17
+ * \brief  Implementation of the AreaMetric class.
  *
- * 2011/03/17 KR Initial Implementation
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
-#include "MeshQualityArea.h"
+
+#include "AreaMetric.h"
 #include "MathTools.h"
 
 namespace MeshLib
 {
-MeshQualityArea::MeshQualityArea(Mesh const* const mesh)
-	: MeshQualityChecker(mesh)
+AreaMetric::AreaMetric(Mesh const* const mesh)
+	: ElementQualityMetric(mesh)
 {}
 
-void MeshQualityArea::check()
+void AreaMetric::calculateQuality()
 {
-	// get all elements of mesh
 	const std::vector<MeshLib::Element*> &elements(_mesh->getElements());
 
 	const size_t nElems(elements.size());
@@ -26,7 +34,7 @@ void MeshQualityArea::check()
 
 		if (elem->getDimension() == 1)
 		{
-			_mesh_quality_measure[k] = -1.0;
+			_element_quality_metric[k] = -1.0;
 			continue;
 		}
 		else if (elem->getDimension() == 2)
@@ -49,7 +57,7 @@ void MeshQualityArea::check()
 		// update _min and _max values
 		if (_min > area) _min = area;
 		if (_max < area) _max = area;
-		_mesh_quality_measure[k] = area;
+		_element_quality_metric[k] = area;
 	}
 }
 

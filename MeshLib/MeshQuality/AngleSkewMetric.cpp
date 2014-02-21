@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   AngleSkewMetric.cpp
  * \author Thomas Fischer
  * \date   2011-03-17
- * \brief  Implementation of the MeshQualityEquiAngleSkew class.
+ * \brief  Implementation of the AngleSkewMetric class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
  *
  */
 
-#include "MeshQualityEquiAngleSkew.h"
+#include "AngleSkewMetric.h"
 #include "Node.h"
 
 #include "MathTools.h"
@@ -29,16 +29,15 @@
 
 namespace MeshLib
 {
-MeshQualityEquiAngleSkew::MeshQualityEquiAngleSkew(Mesh const* const mesh) :
-	MeshQualityChecker(mesh), M_PI_THIRD (M_PI / 3.0), TWICE_M_PI (2 * M_PI)
+AngleSkewMetric::AngleSkewMetric(Mesh const* const mesh) :
+	ElementQualityMetric(mesh), M_PI_THIRD (M_PI / 3.0), TWICE_M_PI (2 * M_PI)
 {}
 
-MeshQualityEquiAngleSkew::~MeshQualityEquiAngleSkew()
+AngleSkewMetric::~AngleSkewMetric()
 {}
 
-void MeshQualityEquiAngleSkew::check ()
+void AngleSkewMetric::calculateQuality ()
 {
-	// get all elements of mesh
 	const std::vector<MeshLib::Element*>& elements(_mesh->getElements());
 	const size_t nElements (_mesh->getNElements());
 
@@ -48,22 +47,22 @@ void MeshQualityEquiAngleSkew::check ()
 		switch (elem->getGeomType())
 		{
 		case MeshElemType::LINE:
-			_mesh_quality_measure[k] = -1.0;
+			_element_quality_metric[k] = -1.0;
 			break;
 		case MeshElemType::TRIANGLE:
-			_mesh_quality_measure[k] = checkTriangle (elem);
+			_element_quality_metric[k] = checkTriangle (elem);
 			break;
 		case MeshElemType::QUAD:
-			_mesh_quality_measure[k] = checkQuad (elem);
+			_element_quality_metric[k] = checkQuad (elem);
 			break;
 		case MeshElemType::TETRAHEDRON:
-			_mesh_quality_measure[k] = checkTetrahedron (elem);
+			_element_quality_metric[k] = checkTetrahedron (elem);
 			break;
 		case MeshElemType::HEXAHEDRON:
-			_mesh_quality_measure[k] = checkHexahedron (elem);
+			_element_quality_metric[k] = checkHexahedron (elem);
 			break;
 		case MeshElemType::PRISM:
-			_mesh_quality_measure[k] = checkPrism (elem);
+			_element_quality_metric[k] = checkPrism (elem);
 			break;
 		default:
 			break;
@@ -71,7 +70,7 @@ void MeshQualityEquiAngleSkew::check ()
 	}
 }
 
-double MeshQualityEquiAngleSkew::checkTriangle (Element const* const elem) const
+double AngleSkewMetric::checkTriangle (Element const* const elem) const
 {
 	double const* const node0 (elem->getNode(0)->getCoords());
 	double const* const node1 (elem->getNode(1)->getCoords());
@@ -85,7 +84,7 @@ double MeshQualityEquiAngleSkew::checkTriangle (Element const* const elem) const
 	                (M_PI_THIRD - min_angle) / (M_PI_THIRD));
 }
 
-double MeshQualityEquiAngleSkew::checkQuad (Element const* const elem) const
+double AngleSkewMetric::checkQuad (Element const* const elem) const
 {
 	double const* const node0 (elem->getNode(0)->getCoords());
 	double const* const node1 (elem->getNode(1)->getCoords());
@@ -101,7 +100,7 @@ double MeshQualityEquiAngleSkew::checkQuad (Element const* const elem) const
 	       std::max((max_angle - M_PI_2) / (M_PI - M_PI_2), (M_PI_2 - min_angle) / (M_PI_2));
 }
 
-double MeshQualityEquiAngleSkew::checkTetrahedron (Element const* const elem) const
+double AngleSkewMetric::checkTetrahedron (Element const* const elem) const
 {
 	double const* const node0 (elem->getNode(0)->getCoords());
 	double const* const node1 (elem->getNode(1)->getCoords());
@@ -124,7 +123,7 @@ double MeshQualityEquiAngleSkew::checkTetrahedron (Element const* const elem) co
 	                      (M_PI_THIRD - min_angle) / (M_PI_THIRD));
 }
 
-double MeshQualityEquiAngleSkew::checkHexahedron (Element const* const elem) const
+double AngleSkewMetric::checkHexahedron (Element const* const elem) const
 {
 	double const* const node0 (elem->getNode(0)->getCoords());
 	double const* const node1 (elem->getNode(1)->getCoords());
@@ -155,7 +154,7 @@ double MeshQualityEquiAngleSkew::checkHexahedron (Element const* const elem) con
 	       std::max((max_angle - M_PI_2) / (M_PI - M_PI_2), (M_PI_2 - min_angle) / (M_PI_2));
 }
 
-double MeshQualityEquiAngleSkew::checkPrism (Element const* const elem) const
+double AngleSkewMetric::checkPrism (Element const* const elem) const
 {
 	double const* const node0 (elem->getNode(0)->getCoords());
 	double const* const node1 (elem->getNode(1)->getCoords());
@@ -190,58 +189,33 @@ double MeshQualityEquiAngleSkew::checkPrism (Element const* const elem) const
 	return std::min (tri_criterion, quad_criterion);
 }
 
-void MeshQualityEquiAngleSkew::getMinMaxAngleFromQuad (
+void AngleSkewMetric::getMinMaxAngleFromQuad (
         double const* const n0, double const* const n1,
         double const* const n2, double const* const n3,
         double &min_angle, double &max_angle) const
 {
-	double angle (MathLib::getAngle (n3, n0, n1));
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
-
-	angle = MathLib::getAngle (n0, n1, n2);
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
-
-	angle = MathLib::getAngle (n1, n2, n3);
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
-
-	angle = MathLib::getAngle (n2, n3, n0);
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
+	const double* nodes[4] = {n0, n1, n2, n3};
+	for (unsigned i=0; i<4; ++i)
+	{
+		const double angle (MathLib::getAngle (nodes[i], nodes[(i+1)%4], nodes[(i+2)%4]));
+		min_angle = std::min(angle, min_angle);
+		max_angle = std::max(angle, max_angle);
+	}
 }
 
-void MeshQualityEquiAngleSkew::getMinMaxAngleFromTriangle(double const* const n0,
+void AngleSkewMetric::getMinMaxAngleFromTriangle(double const* const n0,
                                                           double const* const n1,
                                                           double const* const n2,
                                                           double &min_angle,
                                                           double &max_angle) const
 {
-	double angle (MathLib::getAngle (n2, n0, n1));
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
-
-	angle = MathLib::getAngle (n0, n1, n2);
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
-
-	angle = MathLib::getAngle (n1, n2, n0);
-	if (angle < min_angle)
-		min_angle = angle;
-	if (angle > max_angle)
-		max_angle = angle;
+	const double* nodes[3] = {n0, n1, n2};
+	for (unsigned i=0; i<3; ++i)
+	{
+		const double angle (MathLib::getAngle (nodes[i], nodes[(i+1)%3], nodes[(i+2)%3]));
+		min_angle = std::min(angle, min_angle);
+		max_angle = std::max(angle, max_angle);
+	}
 }
+
 } // end namespace MeshLib

@@ -24,10 +24,10 @@
 //#include "Model.h"
 #include "ProcessModel.h"
 #include "GeoTreeModel.h"
-#include "MeshQuality/MeshQualityEquiAngleSkew.h"
-#include "MeshQuality/MeshQualityArea.h"
-#include "MeshQuality/MeshQualityVolume.h"
-#include "MeshQuality/MeshQualityShortestLongestRatio.h"
+#include "MeshQuality/AngleSkewMetric.h"
+#include "MeshQuality/AreaMetric.h"
+#include "MeshQuality/VolumeMetric.h"
+#include "MeshQuality/EdgeRatioMetric.h"
 #include "MshItem.h"
 #include "MshModel.h"
 #include "StationTreeModel.h"
@@ -460,28 +460,28 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 	if (source)
 	{
 		const MeshLib::Mesh* mesh = source->GetMesh();
-		MeshLib::MeshQualityChecker* checker (NULL);
+		MeshLib::ElementQualityMetric* quality_tester (nullptr);
 		if (t == MeshQualityType::EDGERATIO)
-			checker = new MeshLib::MeshQualityShortestLongestRatio(mesh);
+			quality_tester = new MeshLib::EdgeRatioMetric(mesh);
 		else if (t == MeshQualityType::AREA)
-			checker = new MeshLib::MeshQualityArea(mesh);
+			quality_tester = new MeshLib::AreaMetric(mesh);
 		else if (t == MeshQualityType::VOLUME)
-			checker = new MeshLib::MeshQualityVolume(mesh);
+			quality_tester = new MeshLib::VolumeMetric(mesh);
 		else if (t == MeshQualityType::EQUIANGLESKEW)
-			checker = new MeshLib::MeshQualityEquiAngleSkew(mesh);
+			quality_tester = new MeshLib::AngleSkewMetric(mesh);
 		else
 		{
 			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MeshQualityType.");
-			delete checker;
+			delete quality_tester;
 			return;
 		}
-		checker->check ();
+		quality_tester->calculateQuality();
 
-		std::vector<double> quality (checker->getMeshQuality());
+		std::vector<double> quality (quality_tester->getElementQuality());
 		// transform area and volume criterion values to [0, 1]
 		if (t == MeshQualityType::AREA || t == MeshQualityType::VOLUME) {
 			try {
-				MathLib::LinearIntervalInterpolation<double> lin_intpol(checker->getMinValue(), checker->getMaxValue(), 0, 1);
+				MathLib::LinearIntervalInterpolation<double> lin_intpol(quality_tester->getMinValue(), quality_tester->getMaxValue(), 0, 1);
 				const size_t n_quality(quality.size());
 				for (size_t k(0); k<n_quality; k++)
 					quality[k] = lin_intpol(quality[k]);
@@ -519,7 +519,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 //			size_t size (static_cast<size_t>(QInputDialog::getInt(NULL, "OGS-Histogram", "number of histogram classes/spins (min: 1, max: 10000)", static_cast<int>(nclasses), 1, 10000, 1, &ok)));
 //			if (ok) ...
 
-		BaseLib::Histogram<double> histogram (checker->getHistogram(nclasses));
+		BaseLib::Histogram<double> histogram (quality_tester->getHistogram(nclasses));
 		std::ofstream out ("mesh_histogram.txt");
 		if (out) {
 			out << "# histogram depicts mesh quality criterion " << MeshQualityType2String(t)
@@ -545,7 +545,7 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 //			out << k / static_cast<double>(histogram_size) << " " << histogram[k] << "\n";
 //		out.close ();
 
-		delete checker;
+		delete quality_tester;
 	}
 }
 

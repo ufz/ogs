@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   EdgeRatioMetric.cpp
  * \author Thomas Fischer
  * \date   2011-03-03
- * \brief  Implementation of the MeshQualityShortestLongestRatio class.
+ * \brief  Implementation of the EdgeRatioMetric class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,19 +12,18 @@
  *
  */
 
-#include "MeshQualityShortestLongestRatio.h"
+#include "EdgeRatioMetric.h"
 #include "Node.h"
 #include "MathTools.h"
 
 namespace MeshLib
 {
-MeshQualityShortestLongestRatio::MeshQualityShortestLongestRatio(
-        Mesh const* const mesh) :
-	MeshQualityChecker(mesh)
+EdgeRatioMetric::EdgeRatioMetric(Mesh const* const mesh) :
+	ElementQualityMetric(mesh)
 {
 }
 
-void MeshQualityShortestLongestRatio::check()
+void EdgeRatioMetric::calculateQuality()
 {
 	// get all elements of mesh
 	const std::vector<MeshLib::Element*>& elements(_mesh->getElements());
@@ -35,32 +34,32 @@ void MeshQualityShortestLongestRatio::check()
 		switch (elem->getGeomType())
 		{
 		case MeshElemType::LINE:
-			_mesh_quality_measure[k] = 1.0;
+			_element_quality_metric[k] = 1.0;
 			break;
 		case MeshElemType::TRIANGLE: {
-			_mesh_quality_measure[k] = checkTriangle(elem->getNode(0), elem->getNode(1), elem->getNode(2));
+			_element_quality_metric[k] = checkTriangle(elem->getNode(0), elem->getNode(1), elem->getNode(2));
 			break;
 		}
 		case MeshElemType::QUAD: {
-			_mesh_quality_measure[k] = checkQuad(elem->getNode(0), elem->getNode(1), elem->getNode(2), elem->getNode(3));
+			_element_quality_metric[k] = checkQuad(elem->getNode(0), elem->getNode(1), elem->getNode(2), elem->getNode(3));
 			break;
 		}
 		case MeshElemType::TETRAHEDRON: {
-			_mesh_quality_measure[k] = checkTetrahedron(elem->getNode(0), elem->getNode(1), elem->getNode(2), elem->getNode(3));
+			_element_quality_metric[k] = checkTetrahedron(elem->getNode(0), elem->getNode(1), elem->getNode(2), elem->getNode(3));
 			break;
 		}
 		case MeshElemType::PRISM: {
 			std::vector<const GeoLib::Point*> pnts;
 			for (size_t j(0); j < 6; j++)
 				pnts.push_back(elem->getNode(j));
-			_mesh_quality_measure[k] = checkPrism(pnts);
+			_element_quality_metric[k] = checkPrism(pnts);
 			break;
 		}
 		case MeshElemType::HEXAHEDRON: {
 			std::vector<const GeoLib::Point*> pnts;
 			for (size_t j(0); j < 8; j++)
 				pnts.push_back(elem->getNode(j));
-			_mesh_quality_measure[k] = checkHexahedron(pnts);
+			_element_quality_metric[k] = checkHexahedron(pnts);
 			break;
 		}
 		default:
@@ -70,7 +69,7 @@ void MeshQualityShortestLongestRatio::check()
 	}
 }
 
-double MeshQualityShortestLongestRatio::checkTriangle (GeoLib::Point const* const a,
+double EdgeRatioMetric::checkTriangle (GeoLib::Point const* const a,
                                                        GeoLib::Point const* const b,
                                                        GeoLib::Point const* const c) const
 {
@@ -104,7 +103,7 @@ double MeshQualityShortestLongestRatio::checkTriangle (GeoLib::Point const* cons
 	}
 }
 
-double MeshQualityShortestLongestRatio::checkQuad (GeoLib::Point const* const a,
+double EdgeRatioMetric::checkQuad (GeoLib::Point const* const a,
                                                    GeoLib::Point const* const b,
                                                    GeoLib::Point const* const c,
                                                    GeoLib::Point const* const d) const
@@ -123,7 +122,7 @@ double MeshQualityShortestLongestRatio::checkQuad (GeoLib::Point const* const a,
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[3]);
 }
 
-double MeshQualityShortestLongestRatio::checkTetrahedron (GeoLib::Point const* const a,
+double EdgeRatioMetric::checkTetrahedron (GeoLib::Point const* const a,
                                                           GeoLib::Point const* const b,
                                                           GeoLib::Point const* const c,
                                                           GeoLib::Point const* const d) const
@@ -141,7 +140,7 @@ double MeshQualityShortestLongestRatio::checkTetrahedron (GeoLib::Point const* c
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[5]);
 }
 
-double MeshQualityShortestLongestRatio::checkPrism (std::vector<const GeoLib::Point*> const & pnts) const
+double EdgeRatioMetric::checkPrism (std::vector<const GeoLib::Point*> const & pnts) const
 {
 	double sqr_lengths[9] = {MathLib::sqrDist (pnts[0],pnts[1]),
 		                 MathLib::sqrDist (pnts[1],pnts[2]),
@@ -162,8 +161,7 @@ double MeshQualityShortestLongestRatio::checkPrism (std::vector<const GeoLib::Po
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[8]);
 }
 
-double MeshQualityShortestLongestRatio::checkHexahedron (std::vector<const GeoLib::Point*> const & pnts)
-const
+double EdgeRatioMetric::checkHexahedron (std::vector<const GeoLib::Point*> const & pnts) const
 {
 	double sqr_lengths[12] = {MathLib::sqrDist (pnts[0],pnts[1]),
 		                  MathLib::sqrDist (pnts[1],pnts[2]),
