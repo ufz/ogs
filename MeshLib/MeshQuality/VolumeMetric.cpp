@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   VolumeMetric.cpp
  * \author Thomas Fischer
  * \date   2011-03-03
- * \brief  Implementation of the MeshQualityVolume class.
+ * \brief  Implementation of the VolumeMetric class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
  *
  */
 
-#include "MeshQualityVolume.h"
+#include "VolumeMetric.h"
 
 #include <iostream>
 #include <limits>
@@ -20,11 +20,11 @@
 namespace MeshLib
 {
 
-MeshQualityVolume::MeshQualityVolume(Mesh const* const mesh) :
-	MeshQualityChecker(mesh)
+VolumeMetric::VolumeMetric(Mesh const* const mesh) :
+	ElementQualityMetric(mesh)
 { }
 
-void MeshQualityVolume::check()
+void VolumeMetric::calculateQuality()
 {
 	// get all elements of mesh
 	const std::vector<MeshLib::Element*>& elements(_mesh->getElements());
@@ -35,12 +35,9 @@ void MeshQualityVolume::check()
 	for (size_t k(0); k < nElements; k++)
 	{
 		const Element* elem (elements[k]);
-		MeshElemType elem_type (elem->getGeomType());
-		if (elem_type == MeshElemType::LINE
-		    || elem_type == MeshElemType::TRIANGLE
-		    || elem_type == MeshElemType::QUAD)
+		if (elem->getDimension()<3)
 		{
-            _mesh_quality_measure[k] = 0.0;
+            _element_quality_metric[k] = 0.0;
             continue;
         }
 
@@ -52,7 +49,7 @@ void MeshQualityVolume::check()
 			error_count++;
 		} else if (volume < _min)
             _min = volume;
-        _mesh_quality_measure[k] = volume;
+        _element_quality_metric[k] = volume;
 	}
 
 	INFO ("MeshQualityVolume::check() minimum: %f, max_volume: %f", _min, _max);

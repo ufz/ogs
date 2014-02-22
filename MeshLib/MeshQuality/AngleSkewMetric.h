@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   AngleSkewMetric.h
  * \author Thomas Fischer
  * \date   2011-03-17
- * \brief  Definition of the MeshQualityEquiAngleSkew class.
+ * \brief  Definition of the AngleSkewMetric class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,20 +12,24 @@
  *
  */
 
-#ifndef MESHQUALITYEQUIANGLESKEW_H_
-#define MESHQUALITYEQUIANGLESKEW_H_
+#ifndef ANGLESKEWMETRIC_H_
+#define ANGLESKEWMETRIC_H_
 
-#include "MeshQualityChecker.h"
+#include "ElementQualityMetric.h"
 
 namespace MeshLib
 {
-class MeshQualityEquiAngleSkew : public MeshLib::MeshQualityChecker
+
+/** 
+ * Calculates the quality of mesh elements based on the EquiAngleSkew measure
+ */
+class AngleSkewMetric : public ElementQualityMetric
 {
 public:
-	MeshQualityEquiAngleSkew(Mesh const* const mesh);
-	virtual ~MeshQualityEquiAngleSkew();
+	AngleSkewMetric(Mesh const* const mesh);
+	virtual ~AngleSkewMetric();
 
-	virtual void check ();
+	virtual void calculateQuality ();
 
 private:
 	double checkTriangle(Element const* const elem) const;
@@ -46,4 +50,4 @@ private:
 };
 }
 
-#endif /* MESHQUALITYEQUIANGLESKEW_H_ */
+#endif /* ANGLESKEWMETRIC_H_ */
