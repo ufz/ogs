@@ -19,6 +19,7 @@
 #include <limits>
 #include "MeshEnums.h"
 #include "Mesh.h"
+#include "MeshQuality/ElementErrorCode.h"
 
 namespace MeshLib {
 

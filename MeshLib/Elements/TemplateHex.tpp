@@ -158,15 +158,18 @@ unsigned TemplateHex<NNODES,CELLHEXTYPE>::identifyFace(Node* nodes[3]) const
 template <unsigned NNODES, CellType CELLHEXTYPE>
 ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
 {
-	ElementErrorCode error_code(ElementErrorCode::NoError);
+	ElementErrorCode error_code;
 	if (this->_volume < std::numeric_limits<double>::epsilon())
-		error_code = error_code | ElementErrorCode::ZeroVolume;
-
+		error_code.set(ElementErrorFlag::ZeroVolume);	
+		
 	for (unsigned i=0; i<6; ++i)
 	{
-		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
-		error_code = error_code | quad->isValid();
-		delete quad;
+		if (!error_code.all())
+		{
+			const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
+			error_code |= quad->isValid();
+			delete quad;
+		}
 	}
 	return error_code;
 }

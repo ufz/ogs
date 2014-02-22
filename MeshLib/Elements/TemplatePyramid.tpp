@@ -169,20 +169,19 @@ unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::identifyFace(Node* nodes[3]) c
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 ElementErrorCode TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isValid() const
 {
-	ElementErrorCode error_code(ElementErrorCode::NoError);
+	ElementErrorCode error_code;
 	if (this->_volume < std::numeric_limits<double>::epsilon())
-		error_code = error_code | ElementErrorCode::ZeroVolume;
+		error_code.set(ElementErrorFlag::ZeroVolume);	
 
 	const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(this->getFace(4)));
 	if (base)
-		error_code = error_code | base->isValid();
+		error_code |= base->isValid();
 	else
-		error_code = error_code | ElementErrorCode::NodeOrder;
+		error_code.set(ElementErrorFlag::NodeOrder);
 	delete base;
 
 	return error_code;
 }
-
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::reviseElement() const

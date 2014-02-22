@@ -167,17 +167,17 @@ unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::identifyFace(Node* nodes[3]) const
 template <unsigned NNODES, CellType CELLPRISMTYPE>
 ElementErrorCode TemplatePrism<NNODES,CELLPRISMTYPE>::isValid() const
 {
-	ElementErrorCode error_code(ElementErrorCode::NoError);
+	ElementErrorCode error_code;
 	if (this->_volume < std::numeric_limits<double>::epsilon())
-		error_code = error_code | ElementErrorCode::ZeroVolume;
+		error_code.set(ElementErrorFlag::ZeroVolume);	
 
 	for (unsigned i=1; i<4; ++i)
 	{
 		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
 		if (quad)
-			error_code = error_code | quad->isValid();
+			error_code |= quad->isValid();
 		else 
-			error_code = error_code | ElementErrorCode::NodeOrder;
+			error_code.set(ElementErrorFlag::NodeOrder);
 		delete quad;
 	}
 	return error_code;

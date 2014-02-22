@@ -64,3 +64,4 @@ const std::string MeshQualityType2String(const MeshQualityType t)
 		return "Volume";
 	return "none";
 }
+

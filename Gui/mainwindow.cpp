@@ -1278,9 +1278,6 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	
-	MeshLib::MeshQualityController mqc(*(const_cast<MeshLib::Mesh*>(this->_meshModels->getMesh("mshtest"))));
-
 }
 
 

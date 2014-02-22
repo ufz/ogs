@@ -83,9 +83,9 @@ bool TemplateTri<NNODES,CELLTRITYPE>::isPntInside(GeoLib::Point const& pnt, doub
 template <unsigned NNODES, CellType CELLTRITYPE>
 ElementErrorCode TemplateTri<NNODES,CELLTRITYPE>::isValid() const 
 { 
-	ElementErrorCode error_code (ElementErrorCode::NoError);
+	ElementErrorCode error_code;
 	if (this->_area < std::numeric_limits<double>::epsilon())
-		error_code = error_code | ElementErrorCode::ZeroVolume;
+		error_code.set(ElementErrorFlag::ZeroVolume);
 	return error_code;
 }
 

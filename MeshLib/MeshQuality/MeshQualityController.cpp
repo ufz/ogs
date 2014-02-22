@@ -13,9 +13,12 @@
  */
 
 
+#include <numeric>
+
 #include "MeshQualityController.h"
 #include "Mesh.h"
 #include "Node.h"
+#include "Elements/Element.h"
 #include "MeshEditing/removeMeshNodes.h"
 
 
@@ -26,6 +29,7 @@ namespace MeshLib {
 MeshQualityController::MeshQualityController(MeshLib::Mesh &mesh)
 {
 	this->removeUnusedMeshNodes(mesh);
+	this->testElementGeometry(mesh);
 }
 
 void MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
@@ -44,14 +48,36 @@ void MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
 		INFO("Removed %d unused mesh nodes.", del_node_idx.size());
 }
 
-void MeshQualityController::testElementGeometry(MeshLib::Mesh &mesh)
+void MeshQualityController::testElementGeometry(const MeshLib::Mesh &mesh)
 {
-	unsigned count(0);
+	const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
+	unsigned error_count[nErrorCodes] = {{0}};
 	const std::size_t nElements (mesh.getNElements());
-	for (std::size_t i=0; i<nElements; ++i)
-	{
+	const std::vector<MeshLib::Element*> &elements (mesh.getElements());
 
+	unsigned count(0);
+	for (unsigned i=0; i<nElements; ++i)
+	{
+		const ElementErrorCode e = elements[i]->isValid();
+		if (e.none())
+			continue;
+
+		const std::bitset<nErrorCodes> flags (e.bitset());
+		for (unsigned i=0; i<nErrorCodes; ++i)
+			error_count[i] += flags[i];
 	}
+
+	const unsigned error_sum (static_cast<unsigned>(std::accumulate(error_count, error_count+nErrorCodes, 0.0)));
+	if (error_sum != 0)
+	{
+		ElementErrorFlag flags[nErrorCodes] = {ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
+											   ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
+		for (std::size_t i=0; i<nErrorCodes; ++i)
+			if (error_count[i])
+				INFO ("%d elements found with %s.", error_count[i], ElementErrorCode::toString(flags[i]));
+	}
+	else
+		INFO ("No errors found.");
 }
 
 } // end namespace MeshLib

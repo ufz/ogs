@@ -61,7 +61,7 @@ private:
 
 private slots:
 	/// Opens a dialog for editing meshes.
-	void openMshEditDialog();
+	void openMeshEditDialog();
 
 	/// Opens a dialog for editing material groups.
 	void openValuesEditDialog();
@@ -85,9 +85,10 @@ private slots:
 	/// Calls the FileDialog to save a mesh to a file.
 	int writeToFile() const;
 
-	/**
-	 * checks the mesh quality
-	 */
+	/// Calls a MeshQualityController
+	void testMesh();
+
+	/// Calls the dialog for calculating an element quality metric
 	void checkMeshQuality();
 
 signals:

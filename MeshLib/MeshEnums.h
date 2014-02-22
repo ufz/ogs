@@ -57,7 +57,7 @@ enum class CellType
 };
 
 /**
- * \brief Describes a mesh quality criteria.
+ * \brief Describes a mesh quality metric.
  */
 enum class MeshQualityType
 {
@@ -68,15 +68,6 @@ enum class MeshQualityType
 	EQUIANGLESKEW
 };
 
-enum ElementErrorCode 
-{
-	NoError     = 0x00,
-	ZeroVolume  = 0x01,
-	NonCoplanar = 0x02,
-	NonConvex   = 0x04,
-	NodeOrder   = 0x08
-};
-
 /// Given a MeshElemType this returns the appropriate string.
 const std::string MeshElemType2String(const MeshElemType t);
 
@@ -84,9 +75,5 @@ const std::string MeshElemType2String(const MeshElemType t);
 MeshElemType String2MeshElemType(const std::string &s);
 
 const std::string MeshQualityType2String(const MeshQualityType t);
-
-inline ElementErrorCode operator|(ElementErrorCode a, ElementErrorCode b)
-{return static_cast<ElementErrorCode>(static_cast<int>(a) | static_cast<int>(b));}
-
 
 #endif //MESHENUMS_H

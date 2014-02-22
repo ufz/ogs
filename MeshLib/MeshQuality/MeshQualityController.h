@@ -33,7 +33,7 @@ public:
 	static void removeUnusedMeshNodes(MeshLib::Mesh &mesh);
 
 	/// Tests if elements are geometrically correct
-	static void testElementGeometry(MeshLib::Mesh &mesh);
+	static void testElementGeometry(const MeshLib::Mesh &mesh);
 
 private:
 
