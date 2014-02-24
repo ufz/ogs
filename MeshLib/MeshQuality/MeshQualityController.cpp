@@ -15,7 +15,7 @@
 
 #include <numeric>
 
-#include "MeshQualityController.h"
+#include "StringTools.h"
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
@@ -28,56 +28,110 @@ namespace MeshLib {
 
 MeshQualityController::MeshQualityController(MeshLib::Mesh &mesh)
 {
+	INFO ("Mesh Quality Control:");
 	this->removeUnusedMeshNodes(mesh);
-	this->testElementGeometry(mesh);
+	const std::vector<ElementErrorCode> codes (this->testElementGeometry(mesh));
+	this->ElementErrorCodeOutput(codes);
+}
+
+std::vector<std::size_t> MeshQualityController::findUnusedMeshNodes(const MeshLib::Mesh &mesh)
+{
+	INFO ("Looking for unused mesh nodes...");
+	unsigned count(0);
+	const size_t nNodes (mesh.getNNodes());
+	const std::vector<MeshLib::Node*> &nodes (mesh.getNodes());
+	std::vector<std::size_t> del_node_idx;
+
+	for (unsigned i=0; i<nNodes; ++i)
+		if (nodes[i]->getNElements() == 0)
+		{
+			del_node_idx.push_back(i);
+			INFO ("\tNode %d is not part of any element.", i);
+			++count;
+		}
+
+	std::string nUnusedNodesStr = (count) ? BaseLib::number2str(count) : "No";
+	INFO ("%s unused mesh nodes found.", nUnusedNodesStr.c_str());
+	return del_node_idx;
 }
 
 void MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
 {
-	std::vector<MeshLib::Node*> nodes (mesh.getNodes());
-	std::vector<std::size_t> del_node_idx;
-	std::size_t nNodes (mesh.getNNodes());
-	for (std::size_t i=0; i<nNodes; ++i)
-	{
-		if (nodes[i]->getNElements() == 0)
-			del_node_idx.push_back(i);
-	}
+	std::vector<std::size_t> del_node_idx = MeshQualityController::findUnusedMeshNodes(mesh);
 	MeshLib::removeMeshNodes(mesh, del_node_idx);
 
 	if (!del_node_idx.empty())
 		INFO("Removed %d unused mesh nodes.", del_node_idx.size());
 }
 
-void MeshQualityController::testElementGeometry(const MeshLib::Mesh &mesh)
+ std::vector<ElementErrorCode> MeshQualityController::testElementGeometry(const MeshLib::Mesh &mesh)
 {
+	INFO ("Testing mesh element geometry:");
 	const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
-	unsigned error_count[nErrorCodes] = {{0}};
+	unsigned error_count[nErrorCodes];
+	std::fill_n(error_count, 4, 0);
 	const std::size_t nElements (mesh.getNElements());
 	const std::vector<MeshLib::Element*> &elements (mesh.getElements());
+	std::vector<ElementErrorCode> error_code_vector;
+	error_code_vector.reserve(nElements);
 
-	unsigned count(0);
-	for (unsigned i=0; i<nElements; ++i)
+	for (std::size_t i=0; i<nElements; ++i)
 	{
 		const ElementErrorCode e = elements[i]->isValid();
+		error_code_vector.push_back(e);
 		if (e.none())
 			continue;
 
-		const std::bitset<nErrorCodes> flags (e.bitset());
-		for (unsigned i=0; i<nErrorCodes; ++i)
-			error_count[i] += flags[i];
+		// increment error statistics
+		const std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > flags (static_cast< std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)> >(e));
+		for (unsigned j=0; j<nErrorCodes; ++j)
+			error_count[j] += flags[j];
 	}
 
+	// output
 	const unsigned error_sum (static_cast<unsigned>(std::accumulate(error_count, error_count+nErrorCodes, 0.0)));
 	if (error_sum != 0)
 	{
-		ElementErrorFlag flags[nErrorCodes] = {ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
-											   ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
+		ElementErrorFlag flags[nErrorCodes] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
+											    ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
 		for (std::size_t i=0; i<nErrorCodes; ++i)
 			if (error_count[i])
-				INFO ("%d elements found with %s.", error_count[i], ElementErrorCode::toString(flags[i]));
+				INFO ("%d elements found with %s.", error_count[i], ElementErrorCode::toString(flags[i]).c_str());
 	}
 	else
 		INFO ("No errors found.");
+	return error_code_vector;
 }
+
+void MeshQualityController::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
+{
+	const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue)); 
+	ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
+		                                    ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
+	const std::size_t nElements (error_codes.size());
+
+	for (std::size_t i=0; i<nErrorFlags; ++i)
+	{
+		unsigned count(0);
+		std::string elementIdStr("");
+		
+		for (std::size_t j=0; j<nElements; ++j)
+		{
+			if (error_codes[j][flags[i]])
+			{
+				elementIdStr += (BaseLib::number2str(j) + ", ");
+				count++;
+			}
+		
+		}
+		const std::string nErrorsStr = (count) ? BaseLib::number2str(count) : "No";
+		INFO ("%s elements found with %s.", nErrorsStr.c_str(), ElementErrorCode::toString(flags[i]).c_str());
+
+		if (count)
+			INFO ("ElementIDs: %s", elementIdStr.c_str());
+	}
+}
+
+
 
 } // end namespace MeshLib

@@ -123,13 +123,10 @@ template <unsigned NNODES, CellType CELLQUADTYPE>
 ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::isValid() const
 {
 	ElementErrorCode error_code;
-	if (this->_area < std::numeric_limits<double>::epsilon())
-		error_code.set(ElementErrorFlag::ZeroVolume);	
-	if (!GeoLib::pointsOnAPlane(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]))
-		error_code.set(ElementErrorFlag::NonCoplanar); 
-	if (!(GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
-		  GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])))
-		error_code.set(ElementErrorFlag::NonConvex);
+	error_code[ElementErrorFlag::ZeroVolume]  = (this->_area < std::numeric_limits<double>::epsilon());
+	error_code[ElementErrorFlag::NonCoplanar] = (!GeoLib::pointsOnAPlane(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
+	error_code[ElementErrorFlag::NonConvex]   = (!(GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
+		                                           GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])));
 	return error_code;
 }
 

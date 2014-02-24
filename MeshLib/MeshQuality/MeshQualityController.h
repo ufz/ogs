@@ -17,6 +17,8 @@
 
 #include <vector>
 
+#include "ElementErrorCode.h"
+
 namespace MeshLib {
 	class Mesh;
 
@@ -29,11 +31,18 @@ public:
 	MeshQualityController(MeshLib::Mesh &mesh);
 	~MeshQualityController() {}
 
+	/// Find mesh nodes that are not part of any element
+	static std::vector<std::size_t> findUnusedMeshNodes(const MeshLib::Mesh &mesh);
+
 	/// Removes nodes from the mesh that are not part of any element.
+	/// Note: This method calls MeshQualityConroller::findUnusedMeshNodes() internally.
 	static void removeUnusedMeshNodes(MeshLib::Mesh &mesh);
 
 	/// Tests if elements are geometrically correct
-	static void testElementGeometry(const MeshLib::Mesh &mesh);
+	static std::vector<ElementErrorCode> testElementGeometry(const MeshLib::Mesh &mesh);
+
+	/// Detailed output which ElementID is associated with which error(s)
+	static void ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes);
 
 private:
 

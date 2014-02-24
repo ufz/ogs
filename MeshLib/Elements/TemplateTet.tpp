@@ -148,8 +148,7 @@ template <unsigned NNODES, CellType CELLTETTYPE>
 ElementErrorCode TemplateTet<NNODES,CELLTETTYPE>::isValid() const
 { 
 	ElementErrorCode error_code;
-	if (this->_volume < std::numeric_limits<double>::epsilon())
-		error_code.set(ElementErrorFlag::ZeroVolume);	
+	error_code[ElementErrorFlag::ZeroVolume] = (this->_volume < std::numeric_limits<double>::epsilon());
 	return error_code;
 }
 

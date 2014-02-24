@@ -159,8 +159,7 @@ template <unsigned NNODES, CellType CELLHEXTYPE>
 ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
 {
 	ElementErrorCode error_code;
-	if (this->_volume < std::numeric_limits<double>::epsilon())
-		error_code.set(ElementErrorFlag::ZeroVolume);	
+	error_code[ElementErrorFlag::ZeroVolume] = (this->_volume < std::numeric_limits<double>::epsilon());
 		
 	for (unsigned i=0; i<6; ++i)
 	{

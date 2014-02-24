@@ -84,8 +84,7 @@ template <unsigned NNODES, CellType CELLTRITYPE>
 ElementErrorCode TemplateTri<NNODES,CELLTRITYPE>::isValid() const 
 { 
 	ElementErrorCode error_code;
-	if (this->_area < std::numeric_limits<double>::epsilon())
-		error_code.set(ElementErrorFlag::ZeroVolume);
+	error_code[ElementErrorFlag::ZeroVolume] = (this->_area < std::numeric_limits<double>::epsilon());
 	return error_code;
 }
 

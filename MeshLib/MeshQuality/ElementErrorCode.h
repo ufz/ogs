@@ -31,39 +31,24 @@ enum class ElementErrorFlag
 };
 
 /// Collects error flags for mesh elements
-class ElementErrorCode
+class ElementErrorCode : public std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
 {
 public:
 	ElementErrorCode() {}
-	ElementErrorCode(std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > error_flags) 
-		: _errors(error_flags) {}
+	//ElementErrorCode(std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > error_flags) 
+	//	: _errors(error_flags) {}
 
 	~ElementErrorCode() {}
 
 	/// Get value for a specific flag
-	bool get(ElementErrorFlag e) const { return _errors[static_cast<std::size_t>(e)]; }
+	bool get(ElementErrorFlag e) const { return test(static_cast<std::size_t>(e)); }
 	/// Set a specific flag
-	void set(ElementErrorFlag e) { _errors[static_cast<std::size_t>(e)] = true; }
+	void set(ElementErrorFlag e) { std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::set(static_cast<std::size_t>(e), true); }
 	/// Reset a specific flag
-	void reset(ElementErrorFlag e) { _errors[static_cast<std::size_t>(e)] = false; }
+	void reset(ElementErrorFlag e) { std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::set(static_cast<std::size_t>(e), false); }
 	
-	/// Returns true if ANY flag is set, false otherwise
-	bool any() const { return _errors.any(); }
-	/// Returns true if ALL flag is set, false otherwise
-	bool all() const { return _errors.all(); }
-	/// Returns true if NO flags are set, false otherwise
-	bool none() const { return _errors.none(); }
-
-	/// Returns the size of the error flag set	
-	std::size_t size() const { return _errors.size(); }
-
-	/// Returns the underlying bitset
-	const std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) >& bitset() const { return _errors; }
-
-	//inline bool operator[](const ElementErrorFlag e) { return _errors[static_cast<std::size_t>(e)]; }
-	//inline const bool operator[](const ElementErrorFlag e) const { return _errors[static_cast<std::size_t>(e)]; }
-
-	inline ElementErrorCode operator|=(ElementErrorCode e) { return _errors |= e.bitset(); }
+	inline reference operator[](const ElementErrorFlag e) { return std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::operator[](static_cast<std::size_t>(e)); }
+	inline bool operator[](const ElementErrorFlag e) const { return std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::operator[](static_cast<std::size_t>(e)); }
 
 	/// Returns a string output for a specific error flag
 	static std::string toString(const ElementErrorFlag e)
@@ -80,8 +65,7 @@ public:
 	}
 
 private:
-	/// The bit set collecting the error flags
-    std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > _errors;
+
 };
 
 

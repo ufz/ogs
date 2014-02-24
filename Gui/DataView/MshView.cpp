@@ -270,7 +270,8 @@ void MshView::testMesh()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(static_cast<MshModel*>(this->model())->getMesh(index));
-	MeshLib::MeshQualityController::testElementGeometry(*mesh);
+	MeshLib::MeshQualityController qc(*mesh);
+
 }
 
 void MshView::loadDIRECTSourceTerms()
