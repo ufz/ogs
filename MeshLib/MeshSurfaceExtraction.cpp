@@ -77,7 +77,6 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	get2DSurfaceNodes(all_nodes, sfc_nodes, sfc_elements, node_id_map);
 
 	// create new elements vector with newly created nodes
-	const size_t nNewElements (sfc_elements.size());
 	std::vector<MeshLib::Element*> new_elements;
 	new_elements.reserve(sfc_elements.size());
 	for (auto elem = sfc_elements.begin(); elem != sfc_elements.end(); ++elem)
@@ -109,7 +108,6 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 	if (MathLib::scpr<double, 3>(dir, dir) != 0)
 		complete_surface = false;
 
-	const size_t nElements (all_elements.size());
 	for (auto elem = all_elements.begin(); elem != all_elements.end(); ++elem)
 	{
 		const unsigned element_dimension ((*elem)->getDimension());

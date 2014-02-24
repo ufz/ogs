@@ -68,8 +68,6 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
 	if(line_string.find("#FEM_MSH") != std::string::npos) // OGS mesh file
 	{
-		double edge_length[2] =
-		{ std::numeric_limits<double>::max(), std::numeric_limits<double>::min() };
 		while (!in.eof())
 		{
 			getline(in, line_string);
@@ -105,7 +103,6 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 				for (unsigned i = 0; i < nElements; ++i)
 				{
 					getline(in, line_string);
-					size_t elem_idx (elements.size());
 					elements.push_back(readElement(line_string, nodes));
 				}
 			}
