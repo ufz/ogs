@@ -126,6 +126,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionAnalyze_Mesh"/>
     <addaction name="actionRemove_Mesh_Elements"/>
     <addaction name="actionMerge_Geometries"/>
     <addaction name="actionFile_Converter"/>
@@ -424,6 +425,11 @@
     <string>Data Explorer Settings...</string>
    </property>
   </action>
+  <action name="actionAnalyze_Mesh">
+   <property name="text">
+    <string>Analyze Mesh...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -690,6 +696,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAnalyze_Mesh</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showMeshAnalysisDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -706,5 +728,6 @@
   <slot>showMeshElementRemovalDialog()</slot>
   <slot>callFileConverter()</slot>
   <slot>showDataExplorerSettingsDialog()</slot>
+  <slot>showMeshAnalysisDialog()</slot>
  </slots>
 </ui>

@@ -120,7 +120,6 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QMenu direct_cond_menu("DIRECT Conditions");
 		QAction*    editMeshAction = menu.addAction("Edit mesh...");
 		QAction*  editValuesAction = menu.addAction("Edit material groups...");
-		QAction*    testMeshAction = menu.addAction("Test mesh");
 		QAction* meshQualityAction = menu.addAction("Calculate element quality...");
 		QAction* surfaceMeshAction (NULL);
 		if (mesh_dim==3)
@@ -140,7 +139,6 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		//menu.addSeparator();
 		connect(editMeshAction,        SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
 		connect(editValuesAction,      SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
-		connect(testMeshAction,        SIGNAL(triggered()), this, SLOT(testMesh()));
 		connect(meshQualityAction,     SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		if (mesh_dim==3)
 			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
@@ -264,14 +262,6 @@ void MshView::addDIRECTSourceTerms()
 	QModelIndex index = this->selectionModel()->currentIndex();
 	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
 	emit requestCondSetupDialog(grid->getName(), GeoLib::GEOTYPE::INVALID, 0, false);
-}
-
-void MshView::testMesh()
-{
-	QModelIndex index = this->selectionModel()->currentIndex();
-	MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(static_cast<MshModel*>(this->model())->getMesh(index));
-	MeshLib::MeshQualityController qc(*mesh);
-
 }
 
 void MshView::loadDIRECTSourceTerms()

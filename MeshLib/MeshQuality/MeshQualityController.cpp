@@ -55,13 +55,15 @@ std::vector<std::size_t> MeshQualityController::findUnusedMeshNodes(const MeshLi
 	return del_node_idx;
 }
 
-void MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
+std::vector<std::size_t> MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
 {
 	std::vector<std::size_t> del_node_idx = MeshQualityController::findUnusedMeshNodes(mesh);
 	MeshLib::removeMeshNodes(mesh, del_node_idx);
 
 	if (!del_node_idx.empty())
 		INFO("Removed %d unused mesh nodes.", del_node_idx.size());
+
+	return del_node_idx;
 }
 
  std::vector<ElementErrorCode> MeshQualityController::testElementGeometry(const MeshLib::Mesh &mesh)
@@ -103,12 +105,13 @@ void MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
 	return error_code_vector;
 }
 
-void MeshQualityController::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
+std::string MeshQualityController::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
 {
 	const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue)); 
 	ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
 		                                    ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
 	const std::size_t nElements (error_codes.size());
+	std::string output("");
 
 	for (std::size_t i=0; i<nErrorFlags; ++i)
 	{
@@ -125,11 +128,12 @@ void MeshQualityController::ElementErrorCodeOutput(const std::vector<ElementErro
 		
 		}
 		const std::string nErrorsStr = (count) ? BaseLib::number2str(count) : "No";
-		INFO ("%s elements found with %s.", nErrorsStr.c_str(), ElementErrorCode::toString(flags[i]).c_str());
+		output += (nErrorsStr + " elements found with " + ElementErrorCode::toString(flags[i]) + "\n");
 
 		if (count)
-			INFO ("ElementIDs: %s", elementIdStr.c_str());
+			output += ("ElementIDs: " + elementIdStr + "\n");
 	}
+	return output;
 }
 
 

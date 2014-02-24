@@ -85,9 +85,6 @@ private slots:
 	/// Calls the FileDialog to save a mesh to a file.
 	int writeToFile() const;
 
-	/// Calls a MeshQualityController
-	void testMesh();
-
 	/// Calls the dialog for calculating an element quality metric
 	void checkMeshQuality();
 

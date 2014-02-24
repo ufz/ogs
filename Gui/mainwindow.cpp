@@ -41,6 +41,7 @@
 #include "LineEditDialog.h"
 #include "ListPropertiesDialog.h"
 #include "MergeGeometriesDialog.h"
+#include "MeshAnalysisDialog.h"
 #include "MeshElementRemovalDialog.h"
 #include "MshQualitySelectionDialog.h"
 #include "NetCdfConfigureDialog.h"
@@ -1187,6 +1188,12 @@ void MainWindow::showMeshElementRemovalDialog()
 	MeshElementRemovalDialog dlg(this->_project);
 	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
+}
+
+void MainWindow::showMeshAnalysisDialog()
+{
+	MeshAnalysisDialog* dlg = new MeshAnalysisDialog(this->_project.getMeshObjects());
+	dlg->exec();
 }
 
 void MainWindow::showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id, bool on_points)
