@@ -1,4 +1,3 @@
-
 /**
  * \file
  * \author Karsten Rink
