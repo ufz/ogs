@@ -1,7 +1,10 @@
 /**
  * \file
  * \author Thomas Fischer
- * \date   2011-06-06
+ * \author Wenqing Wang
+ *
+ * \date   2011-06-06 -- 2013-12-10
+ *
  * \brief  Definition of vector norm functions.
  *
  * \copyright
@@ -19,11 +22,20 @@
 
 #include "MathTools.h"
 
-namespace MathLib {
-
-double normEuklid (double const * const vec, std::size_t n)
+namespace MathLib
 {
-	return sqrt (scpr (vec, vec, n));
+
+/// Norm type. Not declared as class type in order to use the members as integers.
+enum class VecNormType
+{
+    NORM1,        ///< \f$\sum_i |x_i|\f$
+    NORM2,        ///< \f$\sqrt(\sum_i (x_i)^2)\f$
+    INFINITY_N    ///< \f$\mathrm{max}_i |x_i|\f$
+};
+
+inline double normEuklid (double const * const vec, std::size_t n)
+{
+    return sqrt (scpr (vec, vec, n));
 }
 
 } // end namespace MathLib
