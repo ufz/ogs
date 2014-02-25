@@ -23,7 +23,7 @@ namespace MeshLib {
 class Mesh;
 
 	/// Removes the mesh nodes (and connected elements) given in the nodes-list from the mesh.
-	/// Warning: this function actually modifies the mesh, it might make sense to copy the mesh before using this function.
+	/// \warning This function actually modifies the mesh, it might make sense to copy the mesh before using this function.
 	void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &nodes);
 
 } // end namespace MeshLib

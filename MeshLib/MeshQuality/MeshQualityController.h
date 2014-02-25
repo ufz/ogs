@@ -28,6 +28,8 @@ namespace MeshLib {
 class MeshQualityController
 {
 public:
+	/// Constructor
+	/// \warning This might change the mesh when removing unused mesh nodes.
 	MeshQualityController(MeshLib::Mesh &mesh);
 	~MeshQualityController() {}
 

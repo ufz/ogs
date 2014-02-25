@@ -12,8 +12,11 @@
  *
  */
 
+#include "MeshQualityController.h"
 
 #include <numeric>
+
+#include "logog/include/logog.hpp"
 
 #include "StringTools.h"
 #include "Mesh.h"
@@ -21,8 +24,6 @@
 #include "Elements/Element.h"
 #include "MeshEditing/removeMeshNodes.h"
 
-
-#include "logog/include/logog.hpp"
 
 namespace MeshLib {
 

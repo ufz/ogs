@@ -98,9 +98,6 @@ protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
 
-	/// Returns an editable reference of the node vector
-	std::vector<Node*>& getNodesVector() { return _nodes; }
-
 	/// Sets the dimension of the mesh.
 	void setDimension();
 

@@ -165,7 +165,7 @@ ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
 	{
 		if (!error_code.all())
 		{
-			const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
+			const MeshLib::Element* quad (this->getFace(i));
 			error_code |= quad->isValid();
 			delete quad;
 		}

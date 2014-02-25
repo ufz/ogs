@@ -32,7 +32,7 @@ class MeshAnalysisDialog : public QDialog, private Ui_MeshAnalysis
 	Q_OBJECT
 
 public:
-	MeshAnalysisDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent = 0);
+	MeshAnalysisDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent = nullptr);
 	~MeshAnalysisDialog(void);
 
 private:
