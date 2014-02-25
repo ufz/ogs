@@ -159,12 +159,12 @@ template <unsigned NNODES, CellType CELLHEXTYPE>
 ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
 {
 	ElementErrorCode error_code;
-	error_code[ElementErrorFlag::ZeroVolume] = (this->_volume < std::numeric_limits<double>::epsilon());
+	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 		
 	for (unsigned i=0; i<6; ++i)
 	{
 		if (error_code.all())
-			break
+			break;
 
 		const MeshLib::Element* quad (this->getFace(i));
 		error_code |= quad->isValid();

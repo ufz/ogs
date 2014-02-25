@@ -168,7 +168,7 @@ template <unsigned NNODES, CellType CELLPRISMTYPE>
 ElementErrorCode TemplatePrism<NNODES,CELLPRISMTYPE>::isValid() const
 {
 	ElementErrorCode error_code;
-	error_code[ElementErrorFlag::ZeroVolume] = (this->_volume < std::numeric_limits<double>::epsilon());
+	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 
 	for (unsigned i=1; i<4; ++i)
 	{

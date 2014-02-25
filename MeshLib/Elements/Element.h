@@ -134,6 +134,12 @@ public:
 	 */
 	unsigned getValue() const { return _value; }
 
+	/**
+	 * Returns true if the element has zero length/area/volume.
+	 */
+	bool hasZeroVolume() const { return this->getContent() < std::numeric_limits<double>::epsilon(); }
+
+
 	/// Returns true if these two indeces form an edge and false otherwise
 	virtual bool isEdge(unsigned i, unsigned j) const = 0;
 

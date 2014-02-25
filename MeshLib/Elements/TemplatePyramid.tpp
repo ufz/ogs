@@ -170,7 +170,7 @@ template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 ElementErrorCode TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isValid() const
 {
 	ElementErrorCode error_code;
-	error_code[ElementErrorFlag::ZeroVolume] = (this->_volume < std::numeric_limits<double>::epsilon());
+	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 
 	const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(this->getFace(4)));
 	if (base)

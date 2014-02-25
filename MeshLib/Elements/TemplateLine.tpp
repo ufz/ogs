@@ -51,7 +51,7 @@ template <unsigned NNODES, CellType CELLLINETYPE>
 ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::isValid() const
 { 
 	ElementErrorCode error_code;
-	error_code[ElementErrorFlag::ZeroVolume] = (this->_length < std::numeric_limits<double>::epsilon());
+	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 	return error_code;
 }
 
