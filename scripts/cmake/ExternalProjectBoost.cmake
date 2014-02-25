@@ -1,6 +1,6 @@
+INCLUDE(ThirdPartyLibVersions)
 INCLUDE(ExternalProject)
 # Set Boost version and which libraries to compile
-SET(Boost_Version 1.52.0)
 SET(BOOST_LIBS_TO_BUILD
 	# chrono
 	# context
@@ -67,8 +67,6 @@ FOREACH(LIB_TO_BUILD ${BOOST_LIBS_TO_BUILD})
 	SET(BOOST_LIBS_TO_BUILD_NAMES ${BOOST_LIBS_TO_BUILD_NAMES} boost_${LIB_TO_BUILD})
 ENDFOREACH()
 
-STRING(REPLACE "." "_" Boost_Version_Underscore ${Boost_Version})
-
 # Set boost toolset
 IF(MSVC10)
 	SET(BOOST_TOOLSET msvc-10.0)
@@ -101,17 +99,10 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
-if(NOT OGS_NO_BOOST_DOWNLOAD)
-# Set archive sources
-SET(BOOST_ARCHIVE_EXT "tar.bz2")
-SET(BOOST_ARCHIVE_MD5 3a855e0f919107e0ca4de4d84ad3f750)
-
-SET(BOOST_URL "http://switch.dl.sourceforge.net/project/boost/boost/${Boost_Version}/boost_${Boost_Version_Underscore}.${BOOST_ARCHIVE_EXT}")
-
 ExternalProject_Add(Boost
 	PREFIX ${CMAKE_BINARY_DIR}/External/boost
-	URL ${BOOST_URL}
-	URL_MD5 ${BOOST_ARCHIVE_MD5}
+	URL ${OGS_BOOST_URL}
+	URL_MD5 ${OGS_BOOST_MD5}
 	UPDATE_COMMAND "${BOOST_UPDATE_COMMAND}"
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ./b2 ${BOOST_LIBS_TO_BUILD_CMD} -j ${NUM_PROCESSORS} toolset=${BOOST_TOOLSET} link=static stage ${BOOST_CONFIG_OPTIONS}
@@ -132,4 +123,3 @@ IF(NOT Boost_INCLUDE_DIRS)
 ENDIF()
 
 LINK_DIRECTORIES( ${source_dir}/stage/lib/ )
-endif(NOT OGS_NO_BOOST_DOWNLOAD)
