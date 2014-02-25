@@ -163,12 +163,12 @@ ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
 		
 	for (unsigned i=0; i<6; ++i)
 	{
-		if (!error_code.all())
-		{
-			const MeshLib::Element* quad (this->getFace(i));
-			error_code |= quad->isValid();
-			delete quad;
-		}
+		if (error_code.all())
+			break
+
+		const MeshLib::Element* quad (this->getFace(i));
+		error_code |= quad->isValid();
+		delete quad;
 	}
 	return error_code;
 }
