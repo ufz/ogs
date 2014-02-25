@@ -90,7 +90,6 @@
 #include "MeshSurfaceExtraction.h"
 #include "readMeshFromFile.h"
 #include "convertMeshToGeo.h"
-#include "MeshQuality/MeshQualityController.h"
 
 // Qt includes
 #include <QDesktopWidget>

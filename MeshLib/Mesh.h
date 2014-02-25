@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "MeshEnums.h"
-#include "MeshQuality/MeshQualityController.h"
 
 #include "BaseLib/Counter.h"
 

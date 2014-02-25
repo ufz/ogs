@@ -28,7 +28,6 @@
 #include "MshModel.h"
 #include "OGSError.h"
 #include "MeshSurfaceExtraction.h"
-#include "MeshQuality/MeshQualityController.h"
 
 #include "ImportFileTypes.h"
 #include "LastSavedFileDirectory.h"

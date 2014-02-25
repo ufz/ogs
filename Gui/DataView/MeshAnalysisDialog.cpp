@@ -14,7 +14,7 @@
 
 #include "MeshAnalysisDialog.h"
 #include "Mesh.h"
-#include "MeshQuality/MeshQualityController.h"
+#include "MeshQuality/MeshValidation.h"
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -40,12 +40,12 @@ void MeshAnalysisDialog::on_startButton_pressed()
 {
 	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()]);
 
-	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshQualityController::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
+	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
 	this->nodesMsgOutput(unusedNodesIdx);
 
-	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshQualityController::testElementGeometry(*mesh));
+	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshValidation::testElementGeometry(*mesh));
 	//this->elementMsgOutput(element_error_codes);
-	QString elementMsgOutput = QString::fromStdString(MeshLib::MeshQualityController::ElementErrorCodeOutput(element_error_codes));
+	QString elementMsgOutput = QString::fromStdString(MeshLib::MeshValidation::ElementErrorCodeOutput(element_error_codes));
 	this->elementsMsg->setText(elementMsgOutput);
 }
 

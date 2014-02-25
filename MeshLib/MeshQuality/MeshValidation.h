@@ -2,7 +2,7 @@
  * \file   MeshQualityController.h
  * \author Karsten Rink
  * \date   2013-04-04
- * \brief  Definition of the MeshQualityController class
+ * \brief  Definition of the MeshValidation class
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef MESHQUALITYCONTROLLER_H
-#define MESHQUALITYCONTROLLER_H
+#ifndef MESHVALIDATION_H
+#define MESHVALIDATION_H
 
 #include <vector>
 
@@ -25,13 +25,13 @@ namespace MeshLib {
 /**
  * \brief A collection of methods for testing mesh quality and correctness
  */
-class MeshQualityController
+class MeshValidation
 {
 public:
 	/// Constructor
 	/// \warning This might change the mesh when removing unused mesh nodes.
-	MeshQualityController(MeshLib::Mesh &mesh);
-	~MeshQualityController() {}
+	MeshValidation(MeshLib::Mesh &mesh);
+	~MeshValidation() {}
 
 	/** 
 	 * Find mesh nodes that are not part of any element
@@ -64,4 +64,4 @@ private:
 
 } // end namespace MeshLib
 
-#endif //MESHQUALITYCONTROLLER_H
+#endif //MESHVALIDATION_H

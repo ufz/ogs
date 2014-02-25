@@ -1,8 +1,8 @@
 /**
- * \file   MeshQualityController.cpp
+ * \file   MeshValidation.cpp
  * \author Karsten Rink
  * \date   2013-04-04
- * \brief  Implementation of the MeshQualityController class.
+ * \brief  Implementation of the MeshValidation class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
  *
  */
 
-#include "MeshQualityController.h"
+#include "MeshValidation.h"
 
 #include <numeric>
 
@@ -27,7 +27,7 @@
 
 namespace MeshLib {
 
-MeshQualityController::MeshQualityController(MeshLib::Mesh &mesh)
+MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 {
 	INFO ("Mesh Quality Control:");
 	this->removeUnusedMeshNodes(mesh);
@@ -35,7 +35,7 @@ MeshQualityController::MeshQualityController(MeshLib::Mesh &mesh)
 	this->ElementErrorCodeOutput(codes);
 }
 
-std::vector<std::size_t> MeshQualityController::findUnusedMeshNodes(const MeshLib::Mesh &mesh)
+std::vector<std::size_t> MeshValidation::findUnusedMeshNodes(const MeshLib::Mesh &mesh)
 {
 	INFO ("Looking for unused mesh nodes...");
 	unsigned count(0);
@@ -56,9 +56,9 @@ std::vector<std::size_t> MeshQualityController::findUnusedMeshNodes(const MeshLi
 	return del_node_idx;
 }
 
-std::vector<std::size_t> MeshQualityController::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
+std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
 {
-	std::vector<std::size_t> del_node_idx = MeshQualityController::findUnusedMeshNodes(mesh);
+	std::vector<std::size_t> del_node_idx = MeshValidation::findUnusedMeshNodes(mesh);
 	MeshLib::removeMeshNodes(mesh, del_node_idx);
 
 	if (!del_node_idx.empty())
@@ -67,7 +67,7 @@ std::vector<std::size_t> MeshQualityController::removeUnusedMeshNodes(MeshLib::M
 	return del_node_idx;
 }
 
- std::vector<ElementErrorCode> MeshQualityController::testElementGeometry(const MeshLib::Mesh &mesh)
+ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh)
 {
 	INFO ("Testing mesh element geometry:");
 	const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
@@ -106,7 +106,7 @@ std::vector<std::size_t> MeshQualityController::removeUnusedMeshNodes(MeshLib::M
 	return error_code_vector;
 }
 
-std::string MeshQualityController::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
+std::string MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
 {
 	const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue)); 
 	ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
