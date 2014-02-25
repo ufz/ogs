@@ -80,7 +80,7 @@ EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} ${VTK_SOURCE_DIR} -G "${GENERATOR}"
 EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} --build . --config Release --target install ${MAKE_PARALLEL_ARGS}
 	WORKING_DIRECTORY tmp/build-vtk)
 IF(WIN32)
-	EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} --build . --config Release --target install
+	EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} --build . --config Debug --target install
 		WORKING_DIRECTORY tmp/build-vtk)
 ENDIF()
 
@@ -114,6 +114,7 @@ FILE(REMOVE_RECURSE tmp)
 
 MESSAGE(STATUS "Finished!")
 IF(WIN32)
+	FILE(TO_NATIVE_PATH ${INSTALL_PREFIX} INSTALL_PREFIX)
 	MESSAGE(STATUS "Now make sure to create an environment variable CMAKE_LIBRARY_SEARCH_PATH which points to ${INSTALL_PREFIX}!")
 	MESSAGE(STATUS "Make also sure to append %CMAKE_LIBRARY_SEARCH_PATH%\\bin to your PATH environment variable!")
 ENDIF()
