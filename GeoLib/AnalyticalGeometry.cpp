@@ -103,7 +103,7 @@ bool lineSegmentIntersect(
 	mat(0,0) = sqr_len_v;
 	mat(0,1) = -1.0 * MathLib::scpr<double,3>(v.getCoords(),w.getCoords());
 	mat(1,1) = sqr_len_w;
-	mat(1,0) = -1.0 * MathLib::scpr<double,3>(v.getCoords(),w.getCoords());
+	mat(1,0) = mat(0,1);
 
 	double rhs[2] = {
 		MathLib::scpr<double,3>(v.getCoords(),qp.getCoords()),
