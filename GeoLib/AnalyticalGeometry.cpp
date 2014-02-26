@@ -55,6 +55,24 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 	return getOrientation((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
+bool checkParallelism(double const*const v, double const*const w)
+{
+	// normalise
+	const double len_v(sqrt(MathLib::scpr<double,3>(v,v)));
+	const double len_w(sqrt(MathLib::scpr<double,3>(w,w)));
+
+	double coeff[3] = {
+		(v[0]*len_w) / (w[0]*len_v),
+		(v[1]*len_w) / (w[1]*len_v),
+		(v[2]*len_w) / (w[2]*len_v)
+	};
+
+	if (abs(coeff[0]-coeff[1]) < std::numeric_limits<double>::epsilon() &&
+		abs(coeff[0]-coeff[2]) < std::numeric_limits<double>::epsilon())
+		return true;
+	return false;
+}
+
 bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c,
                           const GeoLib::Point& d, GeoLib::Point& s)
 {
