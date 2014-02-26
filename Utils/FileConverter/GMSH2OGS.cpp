@@ -44,7 +44,7 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Converting meshes in gmsh file format to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
+	TCLAP::CmdLine cmd("Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
 
 	TCLAP::ValueArg<std::string> ogs_mesh_arg(
 		"o",
