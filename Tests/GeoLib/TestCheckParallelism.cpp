@@ -18,27 +18,27 @@ TEST(GeoLib, TestCheckParallelism)
 	// parallel vectors
 	double v[3] = {0.0, 1.0, 2.0};
 	double w[3] = {0.0, 2.0, 4.0};
-	EXPECT_TRUE(GeoLib::checkParallelism(v,w));
+	EXPECT_TRUE(GeoLib::parallel(v,w));
 
 	v[1] = 0.0;
 	w[1] = 0.0;
-	EXPECT_TRUE(GeoLib::checkParallelism(v,w));
+	EXPECT_TRUE(GeoLib::parallel(v,w));
 
 	// degenerate cases
 	v[2] = 0.0;
 	w[2] = 0.0;
-	EXPECT_FALSE(GeoLib::checkParallelism(v,w));
+	EXPECT_FALSE(GeoLib::parallel(v,w));
 
 	w[2] = 0.1;
-	EXPECT_FALSE(GeoLib::checkParallelism(v,w));
+	EXPECT_FALSE(GeoLib::parallel(v,w));
 
 	// non-parallel case
 	v[1] = 0.1;
-	EXPECT_FALSE(GeoLib::checkParallelism(v,w));
+	EXPECT_FALSE(GeoLib::parallel(v,w));
 
 	// parallel vectors, opposite sense of direction
 	v[0] = 0.0; v[1] = 1.0; v[2] = 2.0;
 	w[0] = 0.0; w[1] = -2.0; w[2] = -4.0;
-	EXPECT_TRUE(GeoLib::checkParallelism(v,w));
+	EXPECT_TRUE(GeoLib::parallel(v,w));
 }
 

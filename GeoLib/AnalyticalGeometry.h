@@ -120,7 +120,7 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
  * @param w double array of length 3
  * @return true if the vectors are in parallel, else false
 */
-bool checkParallelism(double const*const v, double const*const w);
+bool parallel(double const*const v, double const*const w);
 
 /**
  * A line segment is given by its two end-points. The function checks,

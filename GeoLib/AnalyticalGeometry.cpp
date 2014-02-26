@@ -55,7 +55,7 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 	return getOrientation((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
-bool checkParallelism(double const*const v, double const*const w)
+bool parallel(double const*const v, double const*const w)
 {
 	// normalise
 	const double len_v(sqrt(MathLib::scpr<double,3>(v,v)));
@@ -82,7 +82,7 @@ bool checkParallelism(double const*const v, double const*const w)
 
 	if (! parallel) {
 		parallel = true;
-		// change sense of direction of w_normalised
+		// change sense of direction of v_normalised
 		v_normalised[0] *= -1.0;
 		v_normalised[1] *= -1.0;
 		v_normalised[2] *= -1.0;
@@ -113,8 +113,8 @@ bool lineSegmentIntersect(
 	const double sqr_len_v(MathLib::scpr<double,3>(v.getCoords(),v.getCoords()));
 	const double sqr_len_w(MathLib::scpr<double,3>(w.getCoords(),w.getCoords()));
 
-	if (checkParallelism(v.getCoords(),w.getCoords())) {
-		if (checkParallelism(pq.getCoords(),v.getCoords())) {
+	if (parallel(v.getCoords(),w.getCoords())) {
+		if (parallel(pq.getCoords(),v.getCoords())) {
 			const double sqr_dist_pq(MathLib::scpr<double,3>(
 				pq.getCoords(),
 				pq.getCoords()
