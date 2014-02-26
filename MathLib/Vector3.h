@@ -37,10 +37,6 @@ class TemplateVector3 : public MathLib::TemplatePoint<T>
 {
 public:
 	TemplateVector3() : MathLib::TemplatePoint<T>() {}
-	TemplateVector3(T x1, T x2, T x3) : MathLib::TemplatePoint<T>(x1, x2, x3) {}
-	TemplateVector3(const MathLib::TemplatePoint<T> & rhs) :
-		MathLib::TemplatePoint<T>(rhs[0], rhs[1], rhs[2])
-	{}
 
 	/** constructs the vector v=(b-a) from the given points */
 	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
@@ -86,14 +82,6 @@ public:
 		for (std::size_t i(0); i < 3; i++) this->_x[i] -= pV[i];
 		return *this;
 	}
-
-	// Accessors
-	T X() const { return this->_x[0]; }
-	T Y() const { return this->_x[1]; }
-	T Z() const { return this->_x[2]; }
-	void setX(T value) { this->_x[0] = value; }
-	void setY(T value) { this->_x[1] = value; }
-	void setZ(T value) { this->_x[2] = value; }
 
 	/// Dot product with another vector
 	double Dot(const TemplateVector3 & pV) const
@@ -167,7 +155,6 @@ public:
 	bool operator!=( const TemplateVector3 & pV) const
 	{
 		return !(pV == this);
-//		this->_x[0]!=pV[0] || this->_x[1]!=pV[1] || this->_x[2]!=pV[2];
 	}
 };
 
