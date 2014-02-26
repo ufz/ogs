@@ -112,6 +112,14 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 	if (line.find("$MeshFormat") != std::string::npos)
 	{
 		getline(in, line); // version-number file-type data-size
+		if (line.substr(0,3).compare("2.2") != 0) {
+			WARN("Wrong gmsh file format version.");
+			return nullptr;
+		}
+		if (line.substr(4,1).compare("0") != 0) {
+			WARN("Currently reading gmsh binary file type is not supported.");
+			return nullptr;
+		}
 		getline(in, line); //$EndMeshFormat
 		getline(in, line); //$Nodes Keywords
 
@@ -225,6 +233,12 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		}
 	}
 	in.close();
+	if (elements.empty()) {
+		for (auto it(nodes.begin()); it != nodes.end(); it++) {
+			delete *it;
+		}
+		return nullptr;
+	}
 	return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements);
 }
 
