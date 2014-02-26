@@ -75,6 +75,11 @@ int main (int argc, char* argv[])
 	BaseLib::RunTime run_time;
 	run_time.start();
 	MeshLib::Mesh const*const mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
+
+	if (mesh == nullptr) {
+		INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());
+		return -1;
+	}
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 	INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
