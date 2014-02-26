@@ -73,54 +73,67 @@ bool checkParallelism(double const*const v, double const*const w)
 	return false;
 }
 
-bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c,
-                          const GeoLib::Point& d, GeoLib::Point& s)
+bool lineSegmentIntersect(
+	GeoLib::Point const& a,
+	GeoLib::Point const& b,
+	GeoLib::Point const& c,
+	GeoLib::Point const& d,
+	GeoLib::Point& s)
 {
-	MathLib::DenseMatrix<double> mat(2, 2);
-	mat(0, 0) = b[0] - a[0];
-	mat(1, 0) = b[1] - a[1];
-	mat(0,1) = c[0] - d[0];
-	mat(1,1) = c[1] - d[1];
+	MathLib::Vector3 const v(a, b);
+	MathLib::Vector3 const w(c, d);
+	MathLib::Vector3 const qp(a, c);
+	MathLib::Vector3 const pq(c, a);
 
-	// check if vectors are parallel
-	double eps (sqrt(std::numeric_limits<double>::min()));
-	if (fabs(mat(1,1)) < eps) {
-		// vector (D-C) is parallel to x-axis
-		if (fabs(mat(0,1)) < eps) {
-			// vector (B-A) is parallel to x-axis
-			return false;
-		}
-	} else {
-		// vector (D-C) is not parallel to x-axis
-		if (fabs(mat(0,1)) >= eps) {
-			// vector (B-A) is not parallel to x-axis
-			// \f$(B-A)\f$ and \f$(D-C)\f$ are parallel iff there exists
-			// a constant \f$c\f$ such that \f$(B-A) = c (D-C)\f$
-			if (fabs (mat(0,0) / mat(0,1) - mat(1,0) / mat(1,1)) < eps * fabs (mat(0,0) / mat(0,1)))
-				return false;
+	const double sqr_len_v(MathLib::scpr<double,3>(v.getCoords(),v.getCoords()));
+	const double sqr_len_w(MathLib::scpr<double,3>(w.getCoords(),w.getCoords()));
+
+	if (checkParallelism(v.getCoords(),w.getCoords())) {
+		if (checkParallelism(pq.getCoords(),v.getCoords())) {
+			const double sqr_dist_pq(MathLib::scpr<double,3>(
+				pq.getCoords(),
+				pq.getCoords()
+			));
+			if (sqr_dist_pq < sqr_len_v || sqr_dist_pq < sqr_len_w)
+				return true;
 		}
 	}
 
-	double *rhs (new double[2]);
-	rhs[0] = c[0] - a[0];
-	rhs[1] = c[1] - a[1];
+	MathLib::DenseMatrix<double> mat(2,2);
+	mat(0,0) = sqr_len_v;
+	mat(0,1) = -1.0 * MathLib::scpr<double,3>(v.getCoords(),w.getCoords());
+	mat(1,1) = sqr_len_w;
+	mat(1,0) = -1.0 * MathLib::scpr<double,3>(v.getCoords(),w.getCoords());
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu_solver (mat);
-	lu_solver.solve (rhs);
-	if (0 <= rhs[0] && rhs[0] <= 1.0 && 0 <= rhs[1] && rhs[1] <= 1.0) {
-		s[0] = a[0] + rhs[0] * (b[0] - a[0]);
-		s[1] = a[1] + rhs[0] * (b[1] - a[1]);
-		s[2] = a[2] + rhs[0] * (b[2] - a[2]);
-		// check z component
-		double z0 (a[2] - d[2]), z1(rhs[0] * (b[2] - a[2]) + rhs[1] * (d[2] - c[2]));
-		delete [] rhs;
-		if (std::fabs (z0 - z1) < eps)
-			return true;
-		else
-			return false;
+	double rhs[2] = {
+		MathLib::scpr<double,3>(v.getCoords(),qp.getCoords()),
+		MathLib::scpr<double,3>(w.getCoords(),pq.getCoords())
+	};
+
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
+	lu.solve (rhs);
+
+	// lower tolerance a little bit smaller than zero
+	const double l(-1.0*std::numeric_limits<float>::epsilon());
+	// upper tolerance a little bit greater than one
+	const double u(1.0+std::numeric_limits<float>::epsilon());
+	if (rhs[0] < l || u < rhs[0] || rhs[1] < l || u < rhs[1]) {
+		return false;
 	}
-	else
-		delete [] rhs;
+
+	// compute point along line segment with minimal distance
+	GeoLib::Point p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
+	GeoLib::Point p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
+
+	double const min_dist(sqrt( MathLib::sqrDist(&p0, &p1)));
+	double const min_seg_len(std::min(sqrt(sqr_len_v), sqrt(sqr_len_w)));
+	if (min_dist < min_seg_len * 1e-6) {
+		s[0] = 0.5 * (p0[0] + p1[0]);
+		s[1] = 0.5 * (p0[1] + p1[1]);
+		s[2] = 0.5 * (p0[2] + p1[2]);
+		return true;
+	}
+
 	return false;
 }
 
