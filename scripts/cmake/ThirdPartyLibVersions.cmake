@@ -2,7 +2,7 @@ SET(OGS_BOOST_URL "http://switch.dl.sourceforge.net/project/boost/boost/1.52.0/b
 SET(OGS_BOOST_MD5 "3a855e0f919107e0ca4de4d84ad3f750")
 
 SET(OGS_EIGEN_URL "http://opengeosys.org/images/dev/eigen-3.1.4.tar.gz")
-SET(OGS_EIGEN_MD5 "43f03a7b90e1214195197957bb7394d1")
+SET(OGS_EIGEN_MD5 "e0fcbff1a486f0a305df67c36236b637")
 
 SET(OGS_VTK_VERSION 6.1.0)
 SET(OGS_VTK_URL "http://www.vtk.org/files/release/6.1/VTK-6.1.0.tar.gz")
