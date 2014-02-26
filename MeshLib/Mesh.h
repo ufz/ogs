@@ -97,6 +97,13 @@ protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
 
+	/**
+	 * Resets the connected elements for the node vector, i.e. removes the old information and
+	 * calls setElementsConnectedToNodes to set the new information.
+	 * \attention This needs to be called if node neighbourhoods are reset.
+	 */
+	void resetElementsConnectedToNodes();	
+
 	/// Sets the dimension of the mesh.
 	void setDimension();
 

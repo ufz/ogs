@@ -128,6 +128,14 @@ void Mesh::setElementsConnectedToNodes()
 	}
 }
 
+void Mesh::resetElementsConnectedToNodes()
+{
+	for (auto node = _nodes.begin(); node != _nodes.end(); ++node)
+		if (*node)
+			(*node)->_elements.clear();
+	this->setElementsConnectedToNodes();
+}
+
 void Mesh::calcEdgeLengthRange()
 {
 	double min_length(0);
