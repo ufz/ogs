@@ -294,7 +294,7 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
 	}
 }
 
-const std::string MeshIO::ElemType2StringOutput(const MeshElemType t) const
+std::string MeshIO::ElemType2StringOutput(const MeshElemType t) const
 {
 	if (t == MeshElemType::LINE)
 		return "line";
