@@ -43,7 +43,7 @@ public:
 	{}
 	/** constructs a vector from the gien points */
 	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
-		MathLib::TemplatePoint<T>(b[0] - a[0], b[1] - a[1], b[2] - a[2])
+		MathLib::TemplatePoint<T>({b[0] - a[0], b[1] - a[1], b[2] - a[2]})
 	{}
 	~TemplateVector3() {}
 
