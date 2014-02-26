@@ -41,7 +41,7 @@ int main (int argc, char* argv[])
 {
 	LOGOG_INITIALIZE();
 	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
+	BaseLib::LogogSimpleFormatter *const custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
@@ -74,7 +74,7 @@ int main (int argc, char* argv[])
 #endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-	MeshLib::Mesh* mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
+	MeshLib::Mesh const*const mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 	INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
