@@ -57,7 +57,7 @@ enum class CellType
 };
 
 /**
- * \brief Describes a mesh quality criteria.
+ * \brief Describes a mesh quality metric.
  */
 enum class MeshQualityType
 {

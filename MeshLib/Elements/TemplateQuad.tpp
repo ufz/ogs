@@ -120,19 +120,14 @@ unsigned TemplateQuad<NNODES,CELLQUADTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-bool TemplateQuad<NNODES,CELLQUADTYPE>::isValid(bool check_zero_volume) const
+ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::validate() const
 {
-	if (check_zero_volume && this->_area <= std::numeric_limits<double>::epsilon())
-		return false;
-
-	if (GeoLib::pointsOnAPlane(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]))
-	{
-		// check if quad is convex
-		if (GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
-			GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2]))
-			return true;
-	}
-	return false;
+	ElementErrorCode error_code;
+	error_code[ElementErrorFlag::ZeroVolume]  = this->hasZeroVolume();
+	error_code[ElementErrorFlag::NonCoplanar] = (!GeoLib::pointsOnAPlane(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
+	error_code[ElementErrorFlag::NonConvex]   = (!(GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
+		                                           GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])));
+	return error_code;
 }
 
 template <unsigned NNODES, CellType CELLQUADTYPE>

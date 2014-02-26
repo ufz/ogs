@@ -101,7 +101,7 @@ public:
 	 * Tests if the element is geometrically valid.
 	 * @param check_zero_volume indicates if area == 0 should be checked
 	 */
-	virtual bool isValid(bool check_zero_volume = true) const;
+	virtual ElementErrorCode validate() const;
 
 	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateQuad instance.

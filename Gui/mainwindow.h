@@ -99,6 +99,7 @@ protected slots:
 	void showLineEditDialog(const std::string &geoName);
 	void showGMSHPrefsDialog();
 	void showMergeGeometriesDialog();
+	void showMeshAnalysisDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
 	void showNewProcessDialog();
 	void showPropertiesDialog(std::string const& name);

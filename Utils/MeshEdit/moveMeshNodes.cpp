@@ -1,5 +1,5 @@
 /**
- * \file removeMeshNodes.cpp
+ * \file moveMeshNodes.cpp
  * 2012/03/07 KR Initial implementation
  */
 
@@ -11,7 +11,6 @@
 #include "AABB.h"
 #include "Mesh.h"
 #include "Node.h"
-#include "MeshEditing/removeMeshNodes.h"
 #include "MathTools.h"
 
 int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Node*> const& nodes, double const& max_dist)

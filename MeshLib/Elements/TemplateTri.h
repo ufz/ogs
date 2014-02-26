@@ -97,8 +97,9 @@ public:
 	/**
 	 * Tests if the element is geometrically valid
 	 * @param check_zero_volume indicates if area == 0 should be checked
+	 * @return error code (0 = okay, 1 = zero volume)
 	 */
-	virtual bool isValid(bool check_zero_volume = true) const;
+	virtual ElementErrorCode validate() const;
 
 
 	/**

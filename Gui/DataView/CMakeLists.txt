@@ -21,6 +21,7 @@ set( SOURCES
 	LineEditDialog.cpp
 	ListPropertiesDialog.cpp
 	MergeGeometriesDialog.cpp
+	MeshAnalysisDialog.cpp
 	MeshElementRemovalDialog.cpp
 	MeshValueEditDialog.cpp
 	ModellingTabWidget.cpp
@@ -65,6 +66,7 @@ set( MOC_HEADERS
 	LineEditDialog.h
 	ListPropertiesDialog.h
 	MergeGeometriesDialog.h
+	MeshAnalysisDialog.h
 	MeshElementRemovalDialog.h
 	MeshValueEditDialog.h
 	ModellingTabWidget.h
@@ -113,6 +115,7 @@ set( UIS
 	LinearEdit.ui
 	LineEdit.ui
 	MergeGeometries.ui
+	MeshAnalysis.ui
 	MeshValueEdit.ui
 	ModellingTabWidgetBase.ui
 	MeshElementRemoval.ui

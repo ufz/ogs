@@ -41,7 +41,6 @@ Mesh::Mesh(const std::string &name,
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
 	this->setElementsConnectedToElements();
-	this->removeUnusedMeshNodes();
 
 	_edge_length[0] =  std::numeric_limits<double>::max();
 	_edge_length[1] = -std::numeric_limits<double>::max();
@@ -127,19 +126,14 @@ void Mesh::setElementsConnectedToNodes()
 		for (unsigned j=0; j<nNodes; ++j)
 			element->_nodes[j]->addElement(element);
 	}
-//#ifndef NDEBUG
-	// search for nodes that are not part of any element
-	unsigned count(0);
-	const size_t nNodes (_nodes.size());
-	for (unsigned i=0; i<nNodes; ++i)
-		if (_nodes[i]->getNElements() == 0)
-		{
-			WARN ("Node %d is not part of any element.", i);
-			++count;
-		}
-	if (count)
-		WARN ("%d unused mesh nodes found.", count);
-//#endif
+}
+
+void Mesh::resetElementsConnectedToNodes()
+{
+	for (auto node = _nodes.begin(); node != _nodes.end(); ++node)
+		if (*node)
+			(*node)->_elements.clear();
+	this->setElementsConnectedToNodes();
 }
 
 void Mesh::calcEdgeLengthRange()
@@ -245,29 +239,5 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
-void Mesh::removeUnusedMeshNodes()
-{
-	unsigned count(0);
-	std::vector<MeshLib::Node*>::iterator it (this->_nodes.begin());
-	while(it != this->_nodes.end())
-	{
-		if ((*it)->getNElements() == 0)
-		{
-			delete *it;
-			*it = nullptr;
-			++it;
-			++count;
-		}
-		else ++it;
-	}
-	auto node_vec_end = std::remove(_nodes.begin(), _nodes.end(), nullptr);
-	_nodes.erase(node_vec_end, _nodes.end());
-
-	if (count)
-	{
-		INFO("Removed %d unused mesh nodes.", count );
-		this->resetNodeIDs();
-	}
-}
 
 }

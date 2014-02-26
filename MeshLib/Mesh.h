@@ -33,6 +33,9 @@ namespace MeshLib
  */
 class Mesh : BaseLib::Counter<Mesh>
 {
+	/* friend functions: */
+	friend void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &nodes);
+
 public:
 	/// Constructor using a mesh name and an array of nodes and elements
 	Mesh(const std::string &name,
@@ -91,11 +94,15 @@ public:
 	std::size_t getID() const {return _id; }
 
 protected:
-	// Set the minimum and maximum length over the edges of the mesh.
+	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
 
-	/// Removes nodes that are not part of any element.
-	void removeUnusedMeshNodes();
+	/**
+	 * Resets the connected elements for the node vector, i.e. removes the old information and
+	 * calls setElementsConnectedToNodes to set the new information.
+	 * \attention This needs to be called if node neighbourhoods are reset.
+	 */
+	void resetElementsConnectedToNodes();	
 
 	/// Sets the dimension of the mesh.
 	void setDimension();

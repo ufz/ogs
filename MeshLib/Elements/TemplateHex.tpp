@@ -156,20 +156,21 @@ unsigned TemplateHex<NNODES,CELLHEXTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
-bool TemplateHex<NNODES,CELLHEXTYPE>::isValid(bool check_zero_volume) const
+ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::validate() const
 {
-	if (check_zero_volume && this->_volume <= std::numeric_limits<double>::epsilon())
-		return false;
-
+	ElementErrorCode error_code;
+	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
+		
 	for (unsigned i=0; i<6; ++i)
 	{
-		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
-		const bool quad_is_valid (quad->isValid());
+		if (error_code.all())
+			break;
+
+		const MeshLib::Element* quad (this->getFace(i));
+		error_code |= quad->validate();
 		delete quad;
-		if (!quad_is_valid)
-			return false;
 	}
-	return true;
+	return error_code;
 }
 
 template <unsigned NNODES, CellType CELLHEXTYPE>

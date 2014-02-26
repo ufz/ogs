@@ -19,6 +19,7 @@
 #include <limits>
 #include "MeshEnums.h"
 #include "Mesh.h"
+#include "MeshQuality/ElementErrorCode.h"
 
 namespace MeshLib {
 
@@ -134,10 +135,18 @@ public:
 	unsigned getValue() const { return _value; }
 
 	/**
-	 * Tests if the element is geometrically valid, i.e. convex with volume > 0.
-	 * @param check_zero_volume indicates if length/area/volume == 0 should be checked
+	 * Returns true if the element has zero length/area/volume.
 	 */
-	virtual bool isValid(bool check_zero_volume = true) const = 0;
+	bool hasZeroVolume() const { return this->getContent() < std::numeric_limits<double>::epsilon(); }
+
+
+	/// Returns true if these two indeces form an edge and false otherwise
+	virtual bool isEdge(unsigned i, unsigned j) const = 0;
+
+	/**
+	 * Tests if the element is geometrically valid.
+	 */
+	virtual ElementErrorCode validate() const = 0;
 
 	/**
 	 * Set the index value for external information.
@@ -150,9 +159,6 @@ public:
 
 	/// Destructor
 	virtual ~Element();
-
-	/// Returns true if these two indeces form an edge and false otherwise
-	virtual bool isEdge(unsigned i, unsigned j) const = 0;
 
 	/**
 	 * Method clone is a pure virtual method in the abstract base class Element.

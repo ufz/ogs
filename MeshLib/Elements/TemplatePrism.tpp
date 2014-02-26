@@ -165,20 +165,21 @@ unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
-bool TemplatePrism<NNODES,CELLPRISMTYPE>::isValid(bool check_zero_volume) const
+ElementErrorCode TemplatePrism<NNODES,CELLPRISMTYPE>::validate() const
 {
-	if (check_zero_volume && this->_volume <= std::numeric_limits<double>::epsilon())
-		return false;
+	ElementErrorCode error_code;
+	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 
 	for (unsigned i=1; i<4; ++i)
 	{
 		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
-		const bool quad_is_valid (quad->isValid());
+		if (quad)
+			error_code |= quad->validate();
+		else 
+			error_code.set(ElementErrorFlag::NodeOrder);
 		delete quad;
-		if (!quad_is_valid)
-			return false;
 	}
-	return true;
+	return error_code;
 }
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
