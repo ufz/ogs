@@ -61,16 +61,41 @@ bool checkParallelism(double const*const v, double const*const w)
 	const double len_v(sqrt(MathLib::scpr<double,3>(v,v)));
 	const double len_w(sqrt(MathLib::scpr<double,3>(w,w)));
 
-	double coeff[3] = {
-		(v[0]*len_w) / (w[0]*len_v),
-		(v[1]*len_w) / (w[1]*len_v),
-		(v[2]*len_w) / (w[2]*len_v)
-	};
+	if (len_v < std::numeric_limits<double>::min())
+		return false;
 
-	if (abs(coeff[0]-coeff[1]) < std::numeric_limits<double>::epsilon() &&
-		abs(coeff[0]-coeff[2]) < std::numeric_limits<double>::epsilon())
-		return true;
-	return false;
+	if (len_w < std::numeric_limits<double>::min())
+		return false;
+
+	double v_normalised[3] = {v[0]/len_v, v[1]/len_v, v[2]/len_v};
+	double w_normalised[3] = {w[0]/len_w, w[1]/len_w, w[2]/len_w};
+
+	const double eps(std::numeric_limits<double>::epsilon());
+
+	bool parallel(true);
+	if (abs(v_normalised[0]-w_normalised[0]) > eps)
+		parallel = false;
+	if (abs(v_normalised[1]-w_normalised[1]) > eps)
+		parallel = false;
+	if (abs(v_normalised[2]-w_normalised[2]) > eps)
+		parallel = false;
+
+	if (! parallel) {
+		parallel = true;
+		// change sense of direction of w_normalised
+		v_normalised[0] *= -1.0;
+		v_normalised[1] *= -1.0;
+		v_normalised[2] *= -1.0;
+		// check again
+		if (abs(v_normalised[0]-w_normalised[0]) > eps)
+			parallel = false;
+		if (abs(v_normalised[1]-w_normalised[1]) > eps)
+			parallel = false;
+		if (abs(v_normalised[2]-w_normalised[2]) > eps)
+			parallel = false;
+	}
+
+	return parallel;
 }
 
 bool lineSegmentIntersect(
