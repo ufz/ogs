@@ -48,7 +48,7 @@ int main (int argc, char* argv[])
 
 	TCLAP::ValueArg<std::string> ogs_mesh_arg(
 		"o",
-		"mesh-out",
+		"out",
 		"filename for output mesh (if extension is msh, old OGS fileformat is written)",
 		true,
 		"",
@@ -56,9 +56,9 @@ int main (int argc, char* argv[])
 	cmd.add(ogs_mesh_arg);
 
 	TCLAP::ValueArg<std::string> gmsh_mesh_arg(
-		"m",
-		"mesh-in",
-		"filename for file containing the gmsh mesh",
+		"i",
+		"in",
+		"gmsh input file",
 		true,
 		"",
 		"filename as string");
