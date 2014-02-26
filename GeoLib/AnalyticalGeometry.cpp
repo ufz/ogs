@@ -147,8 +147,8 @@ bool lineSegmentIntersect(
 	}
 
 	// compute point along line segment with minimal distance
-	GeoLib::Point p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
-	GeoLib::Point p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
+	GeoLib::Point const p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
+	GeoLib::Point const p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
 
 	double const min_dist(sqrt( MathLib::sqrDist(&p0, &p1)));
 	double const min_seg_len(std::min(sqrt(sqr_len_v), sqrt(sqr_len_w)));
