@@ -225,6 +225,12 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		}
 	}
 	in.close();
+	if (elements.empty()) {
+		for (auto it(nodes.begin()); it != nodes.end(); it++) {
+			delete *it;
+		}
+		return nullptr;
+	}
 	return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements);
 }
 
