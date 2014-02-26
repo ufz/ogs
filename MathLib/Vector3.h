@@ -41,10 +41,16 @@ public:
 	TemplateVector3(const MathLib::TemplatePoint<T> & rhs) :
 		MathLib::TemplatePoint<T>(rhs[0], rhs[1], rhs[2])
 	{}
-	/** constructs a vector from the gien points */
+
+	/** constructs the vector v=(b-a) from the given points */
 	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
-		MathLib::TemplatePoint<T>({b[0] - a[0], b[1] - a[1], b[2] - a[2]})
-	{}
+		MathLib::TemplatePoint<T>()
+	{
+		this->_x[0] = b[0] - a[0];
+		this->_x[1] = b[1] - a[1];
+		this->_x[2] = b[2] - a[2];
+	}
+
 	~TemplateVector3() {}
 
 	// vector arithmetic
