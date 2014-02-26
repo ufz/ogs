@@ -99,7 +99,7 @@ public:
 	 * @param check_zero_volume indicates if area == 0 should be checked
 	 * @return error code (0 = okay, 1 = zero volume)
 	 */
-	virtual ElementErrorCode isValid() const;
+	virtual ElementErrorCode validate() const;
 
 
 	/**

@@ -120,7 +120,7 @@ unsigned TemplateQuad<NNODES,CELLQUADTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::isValid() const
+ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume]  = this->hasZeroVolume();

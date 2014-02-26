@@ -48,7 +48,7 @@ TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::isValid() const
+ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::validate() const
 { 
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();

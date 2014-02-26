@@ -156,7 +156,7 @@ unsigned TemplateHex<NNODES,CELLHEXTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
-ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
+ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
@@ -167,7 +167,7 @@ ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::isValid() const
 			break;
 
 		const MeshLib::Element* quad (this->getFace(i));
-		error_code |= quad->isValid();
+		error_code |= quad->validate();
 		delete quad;
 	}
 	return error_code;

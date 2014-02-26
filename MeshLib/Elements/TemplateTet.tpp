@@ -145,8 +145,8 @@ unsigned TemplateTet<NNODES,CELLTETTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-ElementErrorCode TemplateTet<NNODES,CELLTETTYPE>::isValid() const
-{ 
+ElementErrorCode TemplateTet<NNODES,CELLTETTYPE>::validate() const
+{
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 	return error_code;

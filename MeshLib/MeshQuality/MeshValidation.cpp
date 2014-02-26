@@ -80,7 +80,7 @@ std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &me
 
 	for (std::size_t i=0; i<nElements; ++i)
 	{
-		const ElementErrorCode e = elements[i]->isValid();
+		const ElementErrorCode e = elements[i]->validate();
 		error_code_vector.push_back(e);
 		if (e.none())
 			continue;

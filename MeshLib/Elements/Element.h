@@ -145,9 +145,8 @@ public:
 
 	/**
 	 * Tests if the element is geometrically valid.
-	 * @param check_zero_volume indicates if length/area/volume == 0 should be checked
 	 */
-	virtual ElementErrorCode isValid() const = 0;
+	virtual ElementErrorCode validate() const = 0;
 
 	/**
 	 * Set the index value for external information.

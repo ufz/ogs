@@ -167,14 +167,14 @@ unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::identifyFace(Node* nodes[3]) c
 }
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
-ElementErrorCode TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isValid() const
+ElementErrorCode TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 
 	const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(this->getFace(4)));
 	if (base)
-		error_code |= base->isValid();
+		error_code |= base->validate();
 	else
 		error_code.set(ElementErrorFlag::NodeOrder);
 	delete base;
