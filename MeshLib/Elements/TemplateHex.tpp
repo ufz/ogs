@@ -43,11 +43,11 @@ const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_edge_nodes[12][2] =
 	{4, 5}, // Edge 4
 	{5, 6}, // Edge 5
 	{6, 7}, // Edge 6
-	{4, 7}  // Edge 7
+	{4, 7}, // Edge 7
 	{0, 4}, // Edge 8
 	{1, 5}, // Edge 9
 	{2, 6}, // Edge 10
-	{3, 7}, // Edge 11
+	{3, 7}  // Edge 11
 };
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
