@@ -55,15 +55,15 @@ public:
 	MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim = 1);
 
 private:
-	// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
+	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
 	std::vector<MeshLib::Node*> collapseNodeIndeces(double eps);
-	// Constructs a new node vector for the result mesh by removing all elements whose ID indicates they need to be merged/removed.
+	/// Constructs a new node vector for the result mesh by removing all elements whose ID indicates they need to be merged/removed.
 	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map);
 
-	// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
+	/// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
 	unsigned getNUniqueNodes(MeshLib::Element const*const element) const;
 
-	// Copies an element without change, using the nodes vector from the result mesh.
+	/// Copies an element without change, using the nodes vector from the result mesh.
 	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
 		                          const std::vector<MeshLib::Node*> &nodes) const;
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
@@ -73,46 +73,48 @@ private:
 					   std::vector<MeshLib::Element*> &elements,
 					   unsigned min_elem_dim) const;
 
-	// Creates a new line element identical with "line" but using the new nodes vector.
+	/// Creates a new line element identical with "line" but using the new nodes vector.
 	MeshLib::Element* copyLine(MeshLib::Element const*const line, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a new triangle element identical with "tri" but using the new nodes vector.
+	/// Creates a new triangle element identical with "tri" but using the new nodes vector.
 	MeshLib::Element* copyTri(MeshLib::Element const*const tri, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a new quad element identical with "quad" but using the new nodes vector.
+	/// Creates a new quad element identical with "quad" but using the new nodes vector.
 	MeshLib::Element* copyQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a new tetrahedron element identical with "tet" but using the new nodes vector.
+	/// Creates a new tetrahedron element identical with "tet" but using the new nodes vector.
 	MeshLib::Element* copyTet(MeshLib::Element const*const tet, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a new hexahedron element identical with "hex" but using the new nodes vector.
+	/// Creates a new hexahedron element identical with "hex" but using the new nodes vector.
 	MeshLib::Element* copyHex(MeshLib::Element const*const hex, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a new pyramid element identical with "pyramid" but using the new nodes vector.
+	/// Creates a new pyramid element identical with "pyramid" but using the new nodes vector.
 	MeshLib::Element* copyPyramid(MeshLib::Element const*const pyramid, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a new prism element identical with "prism" but using the new nodes vector.
+	/// Creates a new prism element identical with "prism" but using the new nodes vector.
 	MeshLib::Element* copyPrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes) const;
 
-	// Creates a line element from the first two unique nodes found in the element (element *should* have only two unique nodes!)
+	/// Creates a line element from the first two unique nodes found in the element (element *should* have exactly two unique nodes!)
 	MeshLib::Element* constructLine(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const;
-	// Creates a triangle element from the first three unique nodes found in the element (element *should* have only three unique nodes!)
+	/// Creates a triangle element from the first three unique nodes found in the element (element *should* have exactly three unique nodes!)
 	MeshLib::Element* constructTri(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const;
+	/// Creates a quad or a tet, depending if the four nodes being coplanar or not (element *should* have exactly four unique nodes!)
+	MeshLib::Element* constructFourNodeElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, unsigned min_elem_dim = 1) const;
 
-	// Reduces a hexahedron element by splitting it into two prisms and using reducePrism()
-	void reduceHex(MeshLib::Element const*const hex, 
+	/// Reduces a hexahedron element by splitting it into two prisms and using reducePrism()
+	bool reduceHex(MeshLib::Element const*const hex, 
 		           unsigned n_unique_nodes, 
 				   const std::vector<MeshLib::Node*> &nodes, 
 				   std::vector<MeshLib::Element*> &new_elements,
 				   unsigned min_elem_dim) const;
-	// Reduces a pyramid element by removing collapsed nodes and constructing a new elements from the remaining nodes.
+	/// Reduces a pyramid element by removing collapsed nodes and constructing a new elements from the remaining nodes.
 	void reducePyramid(MeshLib::Element const*const pyramid, 
 		               unsigned n_unique_nodes,
 					   const std::vector<MeshLib::Node*> &nodes,
 					   std::vector<MeshLib::Element*> &new_elements,
 					   unsigned min_elem_dim) const;
-	// Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
-	void reducePrism(MeshLib::Element const*const prism,
+	/// Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
+	bool reducePrism(MeshLib::Element const*const prism,
 		             unsigned n_unique_nodes,
 					 const std::vector<MeshLib::Node*> &nodes,
 					 std::vector<MeshLib::Element*> &new_elements,
 					 unsigned min_elem_dim) const;
 
-	// The original mesh used for constructing the class
+	/// The original mesh used for constructing the class
 	Mesh const*const _mesh;
 };
 

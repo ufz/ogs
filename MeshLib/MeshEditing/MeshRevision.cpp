@@ -178,6 +178,10 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 								 std::vector<MeshLib::Element*> &elements,
 								 unsigned min_elem_dim) const
 {
+	/***************
+	 * für prisms & hexes kann es passieren dass das element in MEHRERE neue elemente zerlegt wird.
+	 * dann müssen nachbarelemente angepasst werden, um keine "freien" kanten zu erzeugen.
+	 */
 	MeshLib::Element* new_elem (nullptr);
 	if (element->getGeomType() == MeshElemType::TRIANGLE && min_elem_dim == 1)
 		elements.push_back (this->constructLine(element, nodes));
@@ -262,12 +266,15 @@ MeshLib::Element* MeshRevision::copyPrism(MeshLib::Element const*const org_elem,
 	return new MeshLib::Prism(new_nodes, org_elem->getValue());
 }
 
-void MeshRevision::reduceHex(MeshLib::Element const*const org_elem, 
+bool MeshRevision::reduceHex(MeshLib::Element const*const org_elem, 
 							 unsigned n_unique_nodes, 
 							 const std::vector<MeshLib::Node*> &nodes,
 							 std::vector<MeshLib::Element*> &new_elements,
 							 unsigned min_elem_dim) const
 {
+	/***** 
+	 * return false if more than one element is created
+	 */
 	if (n_unique_nodes == 7)
 	{
 		for (unsigned i=0; i<6; ++i)
@@ -283,24 +290,27 @@ void MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 				}
 	// n=7 - hex can be reduced to a prism and a pyramid 
 	//  find the prism where no node such that the two collapsed nodes are seperate (they will form the top of the pyramid)
+		return false;
 	}
 	if (n_unique_nodes == 6)
 	{
-	// n=6 - reduce to a prism or two pyramids? are there more possibilities without degenerate faces?
+	// n=6 - reduce to a prism OR two pyramids OR three tets
 	}
 	if (n_unique_nodes == 5)
 	{
-	// n=5 - reduce to a pyramid (or two tets? degenerate?)
+	// n=5 - reduce to a pyramid OR two tets
 	}
 	if (n_unique_nodes == 4)
 	{
-	// n=4 - reduce to a quad or a tet
+		MeshLib::Element* elem (this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
+		if (elem)
+			new_elements.push_back (elem);
 	}
 	if (n_unique_nodes == 3 && min_elem_dim < 3)
 		new_elements.push_back (this->constructTri(org_elem, nodes));
 	else if (min_elem_dim == 1)
 		new_elements.push_back (this->constructLine(org_elem, nodes));
-	return;
+	return true;
 }
 
 void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem, 
@@ -330,22 +340,23 @@ void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem,
 			           nodes[org_elem->getNode(2)->getID()] : nodes[org_elem->getNode(3)->getID()];
 		new_nodes[3] = nodes[org_elem->getNode(4)->getID()];
 		new_elements.push_back (new MeshLib::Tet(new_nodes, org_elem->getValue()));
-		return;
 	}
-
-	if (n_unique_nodes == 3 && min_elem_dim < 3)
+	else if (n_unique_nodes == 3 && min_elem_dim < 3)
 		new_elements.push_back (this->constructTri(org_elem, nodes));
-	else if (min_elem_dim == 1)
+	else if (n_unique_nodes == 2 && min_elem_dim == 1)
 		new_elements.push_back (this->constructLine(org_elem, nodes));
 	return;
 }
 
-void MeshRevision::reducePrism(MeshLib::Element const*const org_elem, 
+bool MeshRevision::reducePrism(MeshLib::Element const*const org_elem, 
 							   unsigned n_unique_nodes, 
 							   const std::vector<MeshLib::Node*> &nodes, 
 							   std::vector<MeshLib::Element*> &new_elements,
 							   unsigned min_elem_dim) const
 {
+	/***** 
+	 * return false if more than one element is created
+	 */
 	// if one of the non-triangle edges collapsed, elem can be reduced to a pyramid, otherwise it will be two tets
 	if (n_unique_nodes == 5)
 	{
@@ -363,7 +374,7 @@ void MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 						pyramid_nodes[3] = nodes[org_elem->getNode((i+2)%3+3)->getID()];
 						pyramid_nodes[4] = nodes[org_elem->getNode(i)->getID()];
 						new_elements.push_back (new MeshLib::Pyramid(pyramid_nodes, org_elem->getValue()));
-						return;
+						return true;
 					}
 
 					// triangle edge collapsed 
@@ -383,46 +394,20 @@ void MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					tet2_nodes[2] = nodes[org_elem->getNode(k+offset)->getID()];
 					tet2_nodes[3] = nodes[org_elem->getNode(k)->getID()];
 					new_elements.push_back (new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
-					return;
+					return false;
 				}
 	}
-	// if one node in each top and bottom triangle is collapsed, elem will be reduced to a quad, otherwise to a tet.
-	if (n_unique_nodes == 4)
+	else if (n_unique_nodes == 4)
 	{
-		unsigned count(1);
-		bool new_node (true);
-
-		MeshLib::Node** new_nodes = new MeshLib::Node*[4];
-		new_nodes[0] = nodes[org_elem->getNode(0)->getID()];
-		// fill the new_nodes array with four unique nodes
-		for (unsigned i=1; i<6; ++i)
-		{
-			for (unsigned j=0; j<count; ++j)
-				if (org_elem->getNode(i)->getID() == new_nodes[j]->getID())
-					new_node = false;
-			if (new_node)
-				new_nodes[count++] = nodes[org_elem->getNode(i)->getID()];
-		}
-		count = 0;
-		for (unsigned i=0; i<4; ++i)
-			count += static_cast<unsigned>(floor(org_elem->getNodeIDinElement(new_nodes[i])/3));
-		if (count==2) // i.e. exactly two unique nodes are located on the top
-		{
-			if (min_elem_dim < 3)
-				new_elements.push_back (new MeshLib::Quad(new_nodes, org_elem->getValue()));
-			else
-				delete[] new_nodes;
-		}
-		else
-			new_elements.push_back (new MeshLib::Tet(new_nodes, org_elem->getValue()));
-		return;
+		MeshLib::Element* elem (this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
+		if (elem)
+			new_elements.push_back (elem);
 	}
-
-	if (n_unique_nodes == 3)
+	else if (n_unique_nodes == 3 && min_elem_dim < 3)
 		new_elements.push_back (this->constructTri(org_elem, nodes));
-	else
+	else if (n_unique_nodes == 2 && min_elem_dim == 1)
 		new_elements.push_back (this->constructLine(org_elem, nodes));
-	return;
+	return true;
 }
 
 MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const element, 
@@ -461,5 +446,35 @@ MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const elemen
 	// this should never be reached
 	return nullptr;
 }
+
+MeshLib::Element* MeshRevision::constructFourNodeElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, unsigned min_elem_dim) const
+{
+	MeshLib::Node** new_nodes = new MeshLib::Node*[4];
+	unsigned count(0);
+	new_nodes[count++] = nodes[element->getNode(0)->getID()];
+	for (unsigned i=1; i<element->getNNodes(); ++i)
+	{
+		bool unique_node (true);
+		for (unsigned j=0; i<i; ++j)
+		{
+			if (element->getNode(i)->getID() == element->getNode(j)->getID())
+			{
+				unique_node = false;
+				break;
+			}
+			if (unique_node)
+				new_nodes[count++] = nodes[element->getNode(i)->getID()];; 
+		}
+	}
+	
+	bool isQuad (GeoLib::coplanar(*new_nodes[0], *new_nodes[1], *new_nodes[2], *new_nodes[3]));
+	if (isQuad && min_elem_dim < 3)
+		return new MeshLib::Quad(new_nodes, element->getValue());
+	else if (!isQuad)
+		return new MeshLib::Tet(new_nodes, element->getValue());
+	else // is quad but min elem dim == 3
+		return nullptr;
+}
+
 
 } // end namespace MeshLib
