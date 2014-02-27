@@ -217,9 +217,6 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 								 std::vector<MeshLib::Element*> &elements,
 								 unsigned min_elem_dim) const
 {
-	/***************
-	 * TODO: modify neighbouring elements if one elements has been subdivided
-	 ***************/
 	MeshLib::Element* new_elem (nullptr);
 	if (element->getGeomType() == MeshElemType::TRIANGLE && min_elem_dim == 1)
 		elements.push_back (this->constructLine(element, nodes));
