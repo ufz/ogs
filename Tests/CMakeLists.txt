@@ -49,6 +49,7 @@ TARGET_LINK_LIBRARIES(testrunner
 	MathLib
 	MeshLib
 	MeshGeoToolsLib
+	NumLib
 	OgsLib
 	logog
 	${BOOST_LIBRARIES}
