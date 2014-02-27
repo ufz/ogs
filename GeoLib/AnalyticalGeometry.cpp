@@ -353,7 +353,7 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	return false;
 }
 
-bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+bool coplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
 {
 	const GeoLib::Point AB(b[0]-a[0], b[1]-a[1], b[2]-a[2]);
 	const GeoLib::Point AC(c[0]-a[0], c[1]-a[1], c[2]-a[2]);
