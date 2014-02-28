@@ -24,9 +24,22 @@
 #include <QApplication>
 #endif
 
+#include "OGS/ProjectData.h"
+
+class B
+{
+	ProjectData &_proj;
+public:
+	B(ProjectData &p):_proj(p){}
+};
+
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])
 {
+	ProjectData pj;
+	B b = pj;
+	pj.meshExists("test");
+
 #ifdef QT4_FOUND
 	QApplication app(argc, argv, false);
 #endif
