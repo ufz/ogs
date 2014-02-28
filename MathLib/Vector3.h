@@ -41,6 +41,27 @@ public:
 	 */
 	TemplateVector3() : TemplatePoint<T>() {}
 
+	TemplateVector3(T x0, T x1, T x2)
+	{
+		this->_x[0] = x0;
+		this->_x[1] = x1;
+		this->_x[2] = x2;
+	}
+
+	/**
+	 * Copy constructor.
+	 */
+	TemplateVector3(TemplateVector3<T> const& v) :
+		TemplatePoint<T>(v)
+	{}
+
+	/**
+	 * Construct Vector3 from TemplatePoint.
+	 */
+	TemplateVector3(TemplatePoint<T,3> const& p) :
+		TemplatePoint<T>(p)
+	{}
+
 	/** constructs the vector v=(b-a) from the given points */
 	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
 		MathLib::TemplatePoint<T>()
