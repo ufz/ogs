@@ -100,6 +100,6 @@ private:
 	double *TempDoubleArray;
 };
 
-#include "VtkMeshNodalCoordinatesTemplate.txx"
+#include "VtkMeshNodalCoordinatesTemplate-impl.h"
 
 #endif // VTKMESHNODALCOORDINATES_H_
