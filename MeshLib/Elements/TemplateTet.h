@@ -139,7 +139,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateTet.tpp"
+#include "TemplateTet-impl.h"
 
 #endif /* TEMPLATETET_H_ */
 

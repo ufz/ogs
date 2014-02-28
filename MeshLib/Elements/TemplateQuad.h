@@ -151,7 +151,7 @@ const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_base_nodes = 4;
 
 } /* namespace */
 
-#include "TemplateQuad.tpp"
+#include "TemplateQuad-impl.h"
 
 #endif /* TEMPLATEQUAD_H_ */
 

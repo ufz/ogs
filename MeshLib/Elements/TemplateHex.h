@@ -133,7 +133,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateHex.tpp"
+#include "TemplateHex-impl.h"
 
 #endif /* TEMPLATEHEX_H_ */
 
