@@ -21,6 +21,8 @@
 #include <vtkVariant.h>
 #include <vtkVariantCast.h>
 
+namespace InSituLib {
+
 // Can't use vtkStandardNewMacro with a template.
 template <class Scalar> VtkMeshNodalCoordinatesTemplate<Scalar> *
 VtkMeshNodalCoordinatesTemplate<Scalar>::New()
@@ -428,3 +430,5 @@ template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 	}
 	return -1;
 }
+
+} // end namespace

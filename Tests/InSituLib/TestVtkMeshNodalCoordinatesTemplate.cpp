@@ -28,7 +28,7 @@ TEST(InSituLibNodalCoordinates, Init)
 
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(length, subdivisions);
 
-	vtkNew<VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
+	vtkNew<InSituLib::VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
 	nodeCoords->SetNodes(mesh->getNodes());
 	//nodeCoords->PrintSelf(std::cout, vtkIndent());
 

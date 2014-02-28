@@ -19,6 +19,9 @@
 #include <vtkTypeTemplate.h>    // For templated vtkObject API
 #include <vtkObjectFactory.h>   // for vtkStandardNewMacro
 
+namespace InSituLib
+{
+
 template <class Scalar>
 class VtkMeshNodalCoordinatesTemplate:
 	public vtkTypeTemplate<VtkMeshNodalCoordinatesTemplate<Scalar>,
@@ -99,6 +102,8 @@ private:
 	vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
 	double *TempDoubleArray;
 };
+
+} // end namespace
 
 #include "VtkMeshNodalCoordinatesTemplate-impl.h"
 
