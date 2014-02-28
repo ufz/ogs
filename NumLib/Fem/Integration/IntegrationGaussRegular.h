@@ -108,6 +108,6 @@ private:
 
 } // NumLib
 
-#include "IntegrationGaussRegular.tpp"
+#include "IntegrationGaussRegular-impl.h"
 
 #endif //INTEGRATIONGAUSSREGULAR_H_

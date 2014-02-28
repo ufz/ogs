@@ -53,6 +53,6 @@ public:
 
 }
 
-#include "ShapeQuad4.tpp"
+#include "ShapeQuad4-impl.h"
 
 #endif //SHAPEQUAD4_H_
