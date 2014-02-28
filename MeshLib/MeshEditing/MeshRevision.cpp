@@ -281,8 +281,24 @@ bool MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 			for (unsigned j=1; j<7; ++j)
 				if (org_elem->getNode(i)->getID() == org_elem->getNode(j)->getID())
 				{
-					if (i == j-1 || i == j+3) //top or bottom edge, prism is "lying" on a quad side
+					if (i == j-1 || i == j-3) //top or bottom edge, prism is "lying" on a quad side
 					{
+						unsigned offset = (i<4) ? -4 : 4;
+						MeshLib::Node** pyr_nodes = new MeshLib::Node*[5];
+						pyr_nodes[0] = nodes[(i+offset-1)%8];//stimmt nicht
+						pyr_nodes[1] = nodes[(i+4)%8];
+						pyr_nodes[2] = nodes[(j+4)%8];
+						pyr_nodes[3] = nodes[(j+1)%8];	// stimmt nicht
+						pyr_nodes[4] = nodes[org_elem->getNode(i)->getID()];
+						new_elements.push_back (new MeshLib::Tet(tet1_nodes, org_elem->getValue()));
+
+						MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
+						tet2_nodes[0] = nodes[org_elem->getNode(i+offset)->getID()];
+						tet2_nodes[1] = nodes[org_elem->getNode(j+offset)->getID()];
+						tet2_nodes[2] = nodes[org_elem->getNode(k+offset)->getID()];
+						tet2_nodes[3] = nodes[org_elem->getNode(k)->getID()];
+						new_elements.push_back (new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
+						return false;
 					}
 					else // vertical edge, prism is "standing upright"
 					{
@@ -467,7 +483,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(MeshLib::Element const*
 		}
 	}
 	
-	bool isQuad (GeoLib::coplanar(*new_nodes[0], *new_nodes[1], *new_nodes[2], *new_nodes[3]));
+	bool isQuad (GeoLib::isCoplanar(*new_nodes[0], *new_nodes[1], *new_nodes[2], *new_nodes[3]));
 	if (isQuad && min_elem_dim < 3)
 		return new MeshLib::Quad(new_nodes, element->getValue());
 	else if (!isQuad)
