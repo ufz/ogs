@@ -1,6 +1,6 @@
+INCLUDE(ThirdPartyLibVersions)
 INCLUDE(ExternalProject)
 # Set Boost version and which libraries to compile
-SET(Boost_Version 1.52.0)
 SET(BOOST_LIBS_TO_BUILD
 	# chrono
 	# context
@@ -32,11 +32,8 @@ ENDIF()
 
 # First check for system boost
 IF(NOT Boost_INCLUDE_DIRS)
-	IF(OGS_LIBS_DIR)
-		SET(BOOST_ROOT ${OGS_LIBS_DIR}/boost)
-	ENDIF()
-	IF(IS_DIRECTORY /opt/boxen)
-		SET(BOOST_ROOT /opt/boxen/homebrew)
+	IF(APPLE)
+		SET(BOOST_ROOT $ENV{HOMEBREW_ROOT})
 	ENDIF()
 	IF(WIN32)
 		SET(Boost_USE_STATIC_LIBS ON)
@@ -44,7 +41,7 @@ IF(NOT Boost_INCLUDE_DIRS)
 			SET(BOOST_LIBRARYDIR C:/boost/lib32-msvc-11.0;C:/boost/lib32-msvc-12.0)
 		ENDIF()
 	ENDIF()
-	FIND_PACKAGE(Boost 1.46.0 COMPONENTS ${BOOST_LIBS_TO_BUILD})
+	FIND_PACKAGE(Boost 1.48.0 COMPONENTS ${BOOST_LIBS_TO_BUILD})
 	IF(Boost_FOUND)
 		SET(Boost_FOUND TRUE CACHE BOOL "Was Boost found?" FORCE)
 		SET(Boost_INCLUDE_DIRS "${Boost_INCLUDE_DIRS}" CACHE STRING "Boost include dirs" FORCE)
@@ -69,8 +66,6 @@ ENDFOREACH()
 FOREACH(LIB_TO_BUILD ${BOOST_LIBS_TO_BUILD})
 	SET(BOOST_LIBS_TO_BUILD_NAMES ${BOOST_LIBS_TO_BUILD_NAMES} boost_${LIB_TO_BUILD})
 ENDFOREACH()
-
-STRING(REPLACE "." "_" Boost_Version_Underscore ${Boost_Version})
 
 # Set boost toolset
 IF(MSVC10)
@@ -104,17 +99,10 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
-if(NOT OGS_NO_BOOST_DOWNLOAD)
-# Set archive sources
-SET(BOOST_ARCHIVE_EXT "tar.bz2")
-SET(BOOST_ARCHIVE_MD5 3a855e0f919107e0ca4de4d84ad3f750)
-
-SET(BOOST_URL "http://switch.dl.sourceforge.net/project/boost/boost/${Boost_Version}/boost_${Boost_Version_Underscore}.${BOOST_ARCHIVE_EXT}")
-
 ExternalProject_Add(Boost
 	PREFIX ${CMAKE_BINARY_DIR}/External/boost
-	URL ${BOOST_URL}
-	URL_MD5 ${BOOST_ARCHIVE_MD5}
+	URL ${OGS_BOOST_URL}
+	URL_MD5 ${OGS_BOOST_MD5}
 	UPDATE_COMMAND "${BOOST_UPDATE_COMMAND}"
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ./b2 ${BOOST_LIBS_TO_BUILD_CMD} -j ${NUM_PROCESSORS} toolset=${BOOST_TOOLSET} link=static stage ${BOOST_CONFIG_OPTIONS}
@@ -135,4 +123,3 @@ IF(NOT Boost_INCLUDE_DIRS)
 ENDIF()
 
 LINK_DIRECTORIES( ${source_dir}/stage/lib/ )
-endif(NOT OGS_NO_BOOST_DOWNLOAD)

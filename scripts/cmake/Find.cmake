@@ -1,14 +1,8 @@
-############################
-### Find OGS directories ###
-############################
-
-# Compiled libraries (for Windows)
-FIND_PATH(OGS_LIBS_DIR_FOUND geotiff.lib
-	PATHS $ENV{OGS_LIBS} ${OGS_LIBS_DIR} ${PROJECT_SOURCE_DIR}/../libs C:/OGS_Libs
-	PATH_SUFFIXES libgeotiff)
-IF(OGS_LIBS_DIR_FOUND)
-	SET(OGS_LIBS_DIR ${OGS_LIBS_DIR_FOUND}/.. CACHE STRING "")
-ENDIF()
+# Add custom library install prefixes
+LIST(APPEND CMAKE_PREFIX_PATH
+	$ENV{HOMEBREW_ROOT}             # Homebrew package manager on Mac OS
+	$ENV{CMAKE_LIBRARY_SEARCH_PATH} # Environment variable, Windows
+	${CMAKE_LIBRARY_SEARCH_PATH})   # CMake option, Windows
 
 ######################
 ### Find tools     ###
@@ -122,13 +116,10 @@ ENDIF (CMAKE_USE_PTHREADS_INIT )
 FIND_PACKAGE ( LAPACK QUIET )
 
 ## geotiff ##
-IF(NOT MSVC)
-	FIND_PACKAGE( LibTiff )
-ENDIF() # NOT MSVC
 FIND_PACKAGE( LibGeoTiff )
-IF(libgeotiff_FOUND)
-	ADD_DEFINITIONS(-Dlibgeotiff_FOUND)
-ENDIF() # libgeotiff_FOUND
+IF(GEOTIFF_FOUND)
+	ADD_DEFINITIONS(-DGEOTIFF_FOUND)
+ENDIF() # GEOTIFF_FOUND
 
 ## lis ##
 IF(OGS_USE_LIS)
