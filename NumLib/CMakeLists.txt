@@ -1,0 +1,26 @@
+#Source files grouped by a directory
+GET_SOURCE_FILES(SOURCES_NUMLIB)
+SET ( SOURCES ${SOURCES_NUMLIB})
+
+GET_SOURCE_FILES(SOURCES_FEM Fem)
+SET ( SOURCES ${SOURCES} ${SOURCES_FEM})
+
+INCLUDE_DIRECTORIES (
+	.
+	../BaseLib
+	../MathLib
+	../MeshLib
+)
+
+
+# Create the library
+ADD_LIBRARY( NumLib STATIC ${SOURCES} )
+
+SET_TARGET_PROPERTIES(NumLib PROPERTIES LINKER_LANGUAGE CXX)
+
+TARGET_LINK_LIBRARIES ( NumLib 
+	BaseLib
+	GeoLib
+	MathLib
+)
+
