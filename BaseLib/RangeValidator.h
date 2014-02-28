@@ -32,6 +32,6 @@ private:
 
 }
 
-#include "RangeValidator.hpp"
+#include "RangeValidator-impl.h"
 
 #endif /* RANGEVALIDATOR_H_ */
