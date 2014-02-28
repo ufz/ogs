@@ -101,6 +101,6 @@ private:
 
 } // end namespace MathLib
 
-#include "GaussAlgorithm.tpp"
+#include "GaussAlgorithm-impl.h"
 
 #endif /* GAUSSALGORITHM_H_ */

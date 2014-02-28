@@ -99,6 +99,6 @@ public:
 
 } // end namespace MathLib
 
-#include "GlobalDenseMatrix.tpp"
+#include "GlobalDenseMatrix-impl.h"
 
 #endif /* GLOBALDENSEMATRIX_H_ */

@@ -50,6 +50,6 @@ void backwardSolve ( DenseMatrix<FP_T> const& mat, VEC_T& x, VEC_T const& b);
 
 } // end namespace MathLib
 
-#include "TriangularSolve.tpp"
+#include "TriangularSolve-impl.h"
 
 #endif /* TRIANGULARSOLVE_H_ */
