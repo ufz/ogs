@@ -36,7 +36,10 @@ template <class T>
 class TemplateVector3 : public MathLib::TemplatePoint<T>
 {
 public:
-	TemplateVector3() : MathLib::TemplatePoint<T>() {}
+	/**
+	 * Default constructor. All coordinates are set to zero.
+	 */
+	TemplateVector3() : TemplatePoint<T>() {}
 
 	/** constructs the vector v=(b-a) from the given points */
 	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
