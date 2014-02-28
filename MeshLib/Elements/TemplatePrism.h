@@ -138,7 +138,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplatePrism.tpp"
+#include "TemplatePrism-impl.h"
 
 #endif /* TEMPLATEPRISM_H_ */
 

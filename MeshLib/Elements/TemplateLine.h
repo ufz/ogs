@@ -111,7 +111,7 @@ protected:
 
 } /* namespace */
 
-#include "TemplateLine.tpp"
+#include "TemplateLine-impl.h"
 
 #endif /* TEMPLATELINE_H_ */
 

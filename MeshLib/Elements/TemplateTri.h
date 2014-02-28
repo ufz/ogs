@@ -151,7 +151,7 @@ const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
 
 } /* namespace */
 
-#include "TemplateTri.tpp"
+#include "TemplateTri-impl.h"
 
 #endif /* TEMPLATETRI_H_ */
 
