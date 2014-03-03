@@ -120,9 +120,10 @@ public:
 		double s,
 		TemplateVector3<T1> const& v);
 
-	TemplateVector3& operator*=(double pR)
+	TemplateVector3& operator*=(double s)
 	{
-		for (std::size_t i(0); i < 3; i++) this->_x[i] *= pR;
+		for (std::size_t i(0); i < 3; i++)
+			this->_x[i] *= s;
 		return *this;
 	}
 

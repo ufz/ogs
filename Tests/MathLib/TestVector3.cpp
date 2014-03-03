@@ -83,6 +83,13 @@ TEST(MathLib, TestVector3Operators)
 	ASSERT_NEAR(-4.0, res[0], std::numeric_limits<double>::min());
 	ASSERT_NEAR( 0.0, res[1], std::numeric_limits<double>::min());
 	ASSERT_NEAR( 4.0, res[2], std::numeric_limits<double>::min());
+
+	// test operator*=
+	v *= 2.0;
+	ASSERT_NEAR(2.0, v[0], std::numeric_limits<double>::min());
+	ASSERT_NEAR(6.0, v[1], std::numeric_limits<double>::min());
+	ASSERT_NEAR(10.0, v[2], std::numeric_limits<double>::min());
+
 }
 
 TEST(MathLib, TestVector3Multiplications)
