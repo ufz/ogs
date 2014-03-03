@@ -110,11 +110,15 @@ public:
 		TemplateVector3<T1> const& v,
 		TemplateVector3<T1> const& w);
 
-	TemplateVector3 operator*(double pR) const   // * a scalar
-	{
-		return TemplateVector3(this->x[0] * pR, this->x[1] * pR, this->x[2] * pR);
-	}
-
+	/**  multiplication with a scalar s */
+	template <typename T1>
+	friend 	TemplateVector3<T1> operator*(
+		TemplateVector3<T1> const& v,
+		double s);
+	template <typename T1>
+	friend 	TemplateVector3<T1> operator*(
+		double s,
+		TemplateVector3<T1> const& v);
 
 	TemplateVector3& operator*=(double pR)
 	{
@@ -171,6 +175,20 @@ TemplateVector3<T1> crossProduct(
 			v._x[1] * w._x[2] - v._x[2] * w._x[1],
 			v._x[2] * w._x[0] - v._x[0] * w._x[2],
 			v._x[0] * w._x[1] - v._x[1] * w._x[0]);
+}
+
+template <typename T1> TemplateVector3<T1> operator*(
+		TemplateVector3<T1> const& v,
+		double s)
+{
+	return TemplateVector3<T1>(v[0] * s, v[1] * s, v[2] * s);
+}
+
+template <typename T1> TemplateVector3<T1> operator*(
+		double s,
+		TemplateVector3<T1> const& v)
+{
+	return v * s;
 }
 
 typedef TemplateVector3<double> Vector3;
