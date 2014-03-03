@@ -133,15 +133,6 @@ public:
 		return sqrt(sqrLength());
 	}
 
-	/// Projection (component of *this parallel to pV).
-	/// Note: component perpendicular to pV is:  *this - Proj(pV)
-	TemplateVector3 Proj(const TemplateVector3 & pV)
-	{ TemplateVector3 out( pV * (this->Dot(pV) / pV.LenSqr()) ); return out; }
-
-	/// Cosine of the angle between two vectors:
-	double CosAng(const TemplateVector3& pV)
-	{ return this->Dot(pV) / (Length() * pV.Length()); }
-
 	/// Comparison if equal
 	bool operator==(TemplateVector3 const& v) const
 	{
