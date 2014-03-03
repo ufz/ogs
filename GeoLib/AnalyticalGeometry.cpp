@@ -55,43 +55,38 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 	return getOrientation((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
-bool parallel(double const*const v, double const*const w)
+bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
-	// normalise
-	const double len_v(sqrt(MathLib::scalarProduct<double,3>(v,v)));
-	const double len_w(sqrt(MathLib::scalarProduct<double,3>(w,w)));
-
-	if (len_v < std::numeric_limits<double>::min())
+	// check degenerated cases
+	if (v.length() < std::numeric_limits<double>::min())
 		return false;
 
-	if (len_w < std::numeric_limits<double>::min())
+	if (w.length() < std::numeric_limits<double>::min())
 		return false;
 
-	double v_normalised[3] = {v[0]/len_v, v[1]/len_v, v[2]/len_v};
-	double w_normalised[3] = {w[0]/len_w, w[1]/len_w, w[2]/len_w};
+	v.normalize();
+	w.normalize();
 
 	const double eps(std::numeric_limits<double>::epsilon());
 
 	bool parallel(true);
-	if (abs(v_normalised[0]-w_normalised[0]) > eps)
+	if (abs(v[0]-w[0]) > eps)
 		parallel = false;
-	if (abs(v_normalised[1]-w_normalised[1]) > eps)
+	if (abs(v[1]-w[1]) > eps)
 		parallel = false;
-	if (abs(v_normalised[2]-w_normalised[2]) > eps)
+	if (abs(v[2]-w[2]) > eps)
 		parallel = false;
 
 	if (! parallel) {
 		parallel = true;
 		// change sense of direction of v_normalised
-		v_normalised[0] *= -1.0;
-		v_normalised[1] *= -1.0;
-		v_normalised[2] *= -1.0;
+		v *= -1.0;
 		// check again
-		if (abs(v_normalised[0]-w_normalised[0]) > eps)
+		if (abs(v[0]-w[0]) > eps)
 			parallel = false;
-		if (abs(v_normalised[1]-w_normalised[1]) > eps)
+		if (abs(v[1]-w[1]) > eps)
 			parallel = false;
-		if (abs(v_normalised[2]-w_normalised[2]) > eps)
+		if (abs(v[2]-w[2]) > eps)
 			parallel = false;
 	}
 
@@ -113,8 +108,8 @@ bool lineSegmentIntersect(
 	const double sqr_len_v(MathLib::scalarProduct<double,3>(v.getCoords(),v.getCoords()));
 	const double sqr_len_w(MathLib::scalarProduct<double,3>(w.getCoords(),w.getCoords()));
 
-	if (parallel(v.getCoords(),w.getCoords())) {
-		if (parallel(pq.getCoords(),v.getCoords())) {
+	if (parallel(v,w)) {
+		if (parallel(pq,v)) {
 			const double sqr_dist_pq(MathLib::scalarProduct<double,3>(
 				pq.getCoords(),
 				pq.getCoords()

@@ -13,11 +13,14 @@
 
 #include "AnalyticalGeometry.h"
 
+// MathLib
+#include "Vector3.h"
+
 TEST(GeoLib, TestCheckParallelism)
 {
 	// parallel vectors
-	double v[3] = {0.0, 1.0, 2.0};
-	double w[3] = {0.0, 2.0, 4.0};
+	MathLib::Vector3 v(0.0, 1.0, 2.0);
+	MathLib::Vector3 w(0.0, 2.0, 4.0);
 	EXPECT_TRUE(GeoLib::parallel(v,w));
 	EXPECT_TRUE(GeoLib::parallel(w,v));
 
