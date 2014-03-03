@@ -138,7 +138,8 @@ bool lineSegmentIntersect(
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
 	lu.solve (rhs);
 
-	// lower tolerance a little bit smaller than zero
+	// no theory for the following tolerances, determined by testing
+	// lower tolerance: little bit smaller than zero
 	const double l(-1.0*std::numeric_limits<float>::epsilon());
 	// upper tolerance a little bit greater than one
 	const double u(1.0+std::numeric_limits<float>::epsilon());
