@@ -217,7 +217,7 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 		centroid += *(pnts[j]);
 	}
 
-	plane_normal *= 1.0 / plane_normal.Length();
+	plane_normal *= 1.0 / plane_normal.length();
 	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
