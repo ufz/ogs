@@ -53,7 +53,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 	double * __restrict__ rhat(new double[N]);
 	double rho, rho1 = 0.0;
 
-	double nrmb = sqrt(scpr(b, b, N));
+	double nrmb = sqrt(scalarProduct(b, b, N));
 
 	if (nrmb < std::numeric_limits<double>::epsilon()) {
 		blas::setzero(N, x);
@@ -96,7 +96,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		mat->precondApply(rhat);
 
 		// rho = r * r^;
-		rho = scpr(r, rhat, N);
+		rho = scalarProduct(r, rhat, N);
 
 		if (l > 1) {
 			double beta = rho / rho1;
@@ -117,7 +117,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 		mat->amux(D_ONE, p, q);
 
 		// alpha = rho / p*q
-		double alpha = rho / scpr(p, q, N);
+		double alpha = rho / scalarProduct(p, q, N);
 
 		#pragma omp parallel
 		{
@@ -136,7 +136,7 @@ unsigned CGParallel(CRSMatrix<double,unsigned> const * mat, double const * const
 			#pragma omp barrier
 		} // end #pragma omp parallel
 
-		resid = sqrt(scpr(r, r, N));
+		resid = sqrt(scalarProduct(r, r, N));
 
 		if (resid <= eps * nrmb) {
 			eps = resid / nrmb;

@@ -105,7 +105,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 		ERR("Cannot handle meshes of dimension %i", mesh_dimension);
 
 	bool complete_surface (true);
-	if (MathLib::scpr<double, 3>(dir, dir) != 0)
+	if (MathLib::scalarProduct<double, 3>(dir, dir) != 0)
 		complete_surface = false;
 
 	for (auto elem = all_elements.begin(); elem != all_elements.end(); ++elem)
@@ -121,7 +121,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 				MeshLib::Face* face = dynamic_cast<MeshLib::Face*>(*elem);
 				double normal[3];
 				face->getSurfaceNormal(normal);
-				if (MathLib::scpr(normal, dir, 3) <= 0)
+				if (MathLib::scalarProduct(normal, dir, 3) <= 0)
 					continue;	
 			}
 			sfc_elements.push_back(*elem);
@@ -142,7 +142,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 				{
 					double normal[3];
 					face->getSurfaceNormal(normal);
-					if (MathLib::scpr<double,3>(normal, dir) <= 0)
+					if (MathLib::scalarProduct<double,3>(normal, dir) <= 0)
 						continue;
 				}
 

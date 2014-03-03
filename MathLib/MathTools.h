@@ -33,7 +33,7 @@ namespace MathLib
  * \param v1 array of type T representing the vector
  * */
 template<typename T, int N> inline
-T scpr(T const * const v0, T const * const v1)
+T scalarProduct(T const * const v0, T const * const v1)
 {
 	T res (v0[0] * v1[0]);
 #ifdef _OPENMP
@@ -51,7 +51,7 @@ T scpr(T const * const v0, T const * const v1)
 }
 
 template <> inline
-double scpr<double,3>(double const * const v0, double const * const v1)
+double scalarProduct<double,3>(double const * const v0, double const * const v1)
 {
 	double res (v0[0] * v1[0]);
 	for (std::size_t k(1); k < 3; k++)
@@ -60,7 +60,7 @@ double scpr<double,3>(double const * const v0, double const * const v1)
 }
 
 template<typename T> inline
-T scpr(T const * const v0, T const * const v1, unsigned n)
+T scalarProduct(T const * const v0, T const * const v1, unsigned n)
 {
 	T res (v0[0] * v1[0]);
 #ifdef _OPENMP
@@ -112,7 +112,7 @@ template <typename T>
 T sqrDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
 {
 	const T v[3] = {(*p1)[0] - (*p0)[0], (*p1)[1] - (*p0)[1], (*p1)[2] - (*p0)[2]};
-	return MathLib::scpr<T,3>(v,v);
+	return MathLib::scalarProduct<T,3>(v,v);
 }
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */

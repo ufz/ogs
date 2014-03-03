@@ -30,7 +30,7 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 	double v[3] = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
 	// orthogonal projection: (g(lambda)-p) * v = 0 => in order to compute lambda we define a help vector u
 	double u[3] = {p[0] - a[0], p[1] - a[1], p[2] - a[2]};
-	lambda = scpr<double,3> (u, v) / scpr<double,3> (v, v);
+	lambda = scalarProduct<double,3> (u, v) / scalarProduct<double,3> (v, v);
 
 	// compute projected point
 	double proj_pnt[3];
@@ -45,7 +45,7 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 double sqrDist(const double* p0, const double* p1)
 {
 	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-	return scpr<double,3>(v,v);
+	return scalarProduct<double,3>(v,v);
 }
 
 float normalize(float min, float max, float val)
@@ -59,7 +59,7 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	const double v1[3] = {p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2]};
 
 	// apply Cauchy Schwarz inequality
-	return acos (scpr<double,3> (v0,v1) / (sqrt(scpr<double,3>(v0,v0)) * sqrt(scpr<double,3>(v1,v1))));
+	return acos (scalarProduct<double,3> (v0,v1) / (sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
 double calcTriangleArea(const double* p0, const double* p1, const double* p2)

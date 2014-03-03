@@ -167,7 +167,7 @@ double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib
 	const double v[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
 	double w[3];
 	MathLib::crossProd(u, v, w);
-	return 0.5 * sqrt(MathLib::scpr<double, 3>(w, w));
+	return 0.5 * sqrt(MathLib::scalarProduct<double, 3>(w, w));
 }
 
 bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b,
