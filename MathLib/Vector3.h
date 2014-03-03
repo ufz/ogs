@@ -143,17 +143,17 @@ public:
 	{ return this->Dot(pV) / (Length() * pV.Length()); }
 
 	/// Comparison if equal
-	bool operator==( const TemplateVector3 & pV) const
+	bool operator==(TemplateVector3 const& v) const
 	{
-		return std::fabs(this->_x[0] - pV[0]) < sqrt(std::numeric_limits<double>::min()) &&
-		       std::fabs(this->_x[1] - pV[1]) < sqrt(std::numeric_limits<double>::min()) &&
-		       std::fabs(this->_x[2] - pV[2]) < sqrt(std::numeric_limits<double>::min());
+		return std::fabs(this->_x[0] - v[0]) < sqrt(std::numeric_limits<double>::min()) &&
+			std::fabs(this->_x[1] - v[1]) < sqrt(std::numeric_limits<double>::min()) &&
+			std::fabs(this->_x[2] - v[2]) < sqrt(std::numeric_limits<double>::min());
 	}
 
 	/// Comparison if not equal
-	bool operator!=( const TemplateVector3 & pV) const
+	bool operator!=(const TemplateVector3 & v) const
 	{
-		return !(pV == this);
+		return !(v == this);
 	}
 
 private:
