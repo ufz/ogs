@@ -84,3 +84,49 @@ TEST(MathLib, TestVector3Operators)
 	ASSERT_NEAR( 0.0, res[1], std::numeric_limits<double>::min());
 	ASSERT_NEAR( 4.0, res[2], std::numeric_limits<double>::min());
 }
+
+TEST(MathLib, TestVector3Multiplications)
+{
+	// test scalar product
+	Vector3 v(1.0, 3.0, 5.0);
+	Vector3 w(3.0, -2.0, 1.0);
+
+	ASSERT_NEAR(2.0, scalarProduct(v,w), std::numeric_limits<double>::epsilon());
+
+	// test cross product
+	Vector3 e1(1.0, 0.0, 0.0);
+	Vector3 e2(0.0, 1.0, 0.0);
+	Vector3 e3(0.0, 0.0, 1.0);
+
+	Vector3 res_e1e2(crossProduct(e1, e2)); // should be e3
+	ASSERT_NEAR(e3[0], res_e1e2[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(e3[1], res_e1e2[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(e3[2], res_e1e2[2], std::numeric_limits<double>::epsilon());
+
+	Vector3 res_e2e3(crossProduct(e2, e3)); // should be e1
+	ASSERT_NEAR(e1[0], res_e2e3[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(e1[1], res_e2e3[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(e1[2], res_e2e3[2], std::numeric_limits<double>::epsilon());
+
+	Vector3 res_e3e1(crossProduct(e3, e1)); // should be e2
+	ASSERT_NEAR(e2[0], res_e3e1[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(e2[1], res_e3e1[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(e2[2], res_e3e1[2], std::numeric_limits<double>::epsilon());
+
+	Vector3 res_e2e1(crossProduct(e2, e1)); // should be -e3
+	ASSERT_NEAR(-e3[0], res_e2e1[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-e3[1], res_e2e1[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-e3[2], res_e2e1[2], std::numeric_limits<double>::epsilon());
+
+	Vector3 res_e3e2(crossProduct(e3, e2)); // should be -e1
+	ASSERT_NEAR(-e1[0], res_e3e2[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-e1[1], res_e3e2[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-e1[2], res_e3e2[2], std::numeric_limits<double>::epsilon());
+
+	Vector3 res_e1e3(crossProduct(e1, e3)); // should be -e2
+	ASSERT_NEAR(-e2[0], res_e1e3[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-e2[1], res_e1e3[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-e2[2], res_e1e3[2], std::numeric_limits<double>::epsilon());
+
+}
+
