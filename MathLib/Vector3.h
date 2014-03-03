@@ -115,9 +115,6 @@ public:
 	TemplateVector3 Cross( const TemplateVector3 & pV ) const
 	{ return *this * pV; }
 
-	friend double Dot( const TemplateVector3 & p1, const TemplateVector3 & p2 )
-	{ return p1.Dot(p2); }
-
 	friend TemplateVector3 Cross( const TemplateVector3 & p1, const TemplateVector3 & p2 )
 	{ return p1 * p2; }
 
