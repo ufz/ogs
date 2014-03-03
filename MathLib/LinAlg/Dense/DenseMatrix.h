@@ -157,6 +157,6 @@ std::ostream& operator<< (std::ostream &os, const DenseMatrix<FP_TYPE, IDX_TYPE>
 
 } // end namespace MathLib
 
-#include "DenseMatrix.tpp"
+#include "DenseMatrix-impl.h"
 
 #endif

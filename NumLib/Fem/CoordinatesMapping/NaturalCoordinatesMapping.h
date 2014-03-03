@@ -53,7 +53,7 @@ struct NaturalCoordinatesMapping
 
 } // NumLib
 
-#include "NaturalCoordinatesMapping.tpp"
+#include "NaturalCoordinatesMapping-impl.h"
 
 
 #endif //NATURALCOORDINATESMAPPING_H_

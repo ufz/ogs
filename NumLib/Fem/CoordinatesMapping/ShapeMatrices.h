@@ -86,6 +86,6 @@ struct ShapeMatrices
 
 } // NumLib
 
-#include "ShapeMatrices.tpp"
+#include "ShapeMatrices-impl.h"
 
 #endif //SHAPEMATRICES_H_
