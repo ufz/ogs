@@ -58,8 +58,8 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 bool parallel(double const*const v, double const*const w)
 {
 	// normalise
-	const double len_v(sqrt(MathLib::scpr<double,3>(v,v)));
-	const double len_w(sqrt(MathLib::scpr<double,3>(w,w)));
+	const double len_v(sqrt(MathLib::scalarProduct<double,3>(v,v)));
+	const double len_w(sqrt(MathLib::scalarProduct<double,3>(w,w)));
 
 	if (len_v < std::numeric_limits<double>::min())
 		return false;
@@ -110,12 +110,12 @@ bool lineSegmentIntersect(
 	MathLib::Vector3 const qp(a, c);
 	MathLib::Vector3 const pq(c, a);
 
-	const double sqr_len_v(MathLib::scpr<double,3>(v.getCoords(),v.getCoords()));
-	const double sqr_len_w(MathLib::scpr<double,3>(w.getCoords(),w.getCoords()));
+	const double sqr_len_v(MathLib::scalarProduct<double,3>(v.getCoords(),v.getCoords()));
+	const double sqr_len_w(MathLib::scalarProduct<double,3>(w.getCoords(),w.getCoords()));
 
 	if (parallel(v.getCoords(),w.getCoords())) {
 		if (parallel(pq.getCoords(),v.getCoords())) {
-			const double sqr_dist_pq(MathLib::scpr<double,3>(
+			const double sqr_dist_pq(MathLib::scalarProduct<double,3>(
 				pq.getCoords(),
 				pq.getCoords()
 			));
@@ -126,13 +126,13 @@ bool lineSegmentIntersect(
 
 	MathLib::DenseMatrix<double> mat(2,2);
 	mat(0,0) = sqr_len_v;
-	mat(0,1) = -1.0 * MathLib::scpr<double,3>(v.getCoords(),w.getCoords());
+	mat(0,1) = -1.0 * MathLib::scalarProduct<double,3>(v.getCoords(),w.getCoords());
 	mat(1,1) = sqr_len_w;
 	mat(1,0) = mat(0,1);
 
 	double rhs[2] = {
-		MathLib::scpr<double,3>(v.getCoords(),qp.getCoords()),
-		MathLib::scpr<double,3>(w.getCoords(),pq.getCoords())
+		MathLib::scalarProduct<double,3>(v.getCoords(),qp.getCoords()),
+		MathLib::scalarProduct<double,3>(w.getCoords(),pq.getCoords())
 	};
 
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
