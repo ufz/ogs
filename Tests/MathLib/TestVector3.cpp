@@ -128,5 +128,14 @@ TEST(MathLib, TestVector3Multiplications)
 	ASSERT_NEAR(-e2[1], res_e1e3[1], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-e2[2], res_e1e3[2], std::numeric_limits<double>::epsilon());
 
+	// test multplication with scalar
+	v = -1.0 * v;
+	ASSERT_NEAR(-1.0, v[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-3.0, v[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(-5.0, v[2], std::numeric_limits<double>::epsilon());
+	v = v * -1.0;
+	ASSERT_NEAR(1.0, v[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(3.0, v[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(5.0, v[2], std::numeric_limits<double>::epsilon());
 }
 
