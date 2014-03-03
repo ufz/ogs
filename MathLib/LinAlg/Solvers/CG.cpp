@@ -46,7 +46,7 @@ unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 	r = q + N;
 	rhat = r + N;
 
-	double nrmb = sqrt(scpr(b, b, N));
+	double nrmb = sqrt(scalarProduct(b, b, N));
 	if (nrmb < std::numeric_limits<double>::epsilon()) {
 		blas::setzero(N, x);
 		eps = 0.0;
@@ -78,7 +78,7 @@ unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		mat->precondApply(rhat);
 
 		// rho = r * r^;
-		rho = scpr(r, rhat, N); // num_threads);
+		rho = scalarProduct(r, rhat, N); // num_threads);
 
 		if (l > 1) {
 			double beta = rho / rho1;
@@ -94,7 +94,7 @@ unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		mat->amux(D_ONE, p, q);
 
 		// alpha = rho / p*q
-		double alpha = rho / scpr(p, q, N);
+		double alpha = rho / scalarProduct(p, q, N);
 
 		// x += alpha * p
 		blas::axpy(N, alpha, p, x);
@@ -102,7 +102,7 @@ unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
 		// r -= alpha * q
 		blas::axpy(N, -alpha, q, r);
 
-		resid = sqrt(scpr(r, r, N));
+		resid = sqrt(scalarProduct(r, r, N));
 
 		if (resid <= eps * nrmb) {
 			eps = resid / nrmb;

@@ -133,7 +133,7 @@ public:
 	/// Returns the squared length
 	double LenSqr(void) const
 	{
-		return scpr<double,3> (this->getCoords (), this->getCoords ());
+		return scalarProduct<double,3> (this->getCoords (), this->getCoords ());
 	}
 
 	/// Returns the length
