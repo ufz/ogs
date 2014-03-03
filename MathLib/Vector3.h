@@ -127,15 +127,11 @@ public:
 		return *this;
 	}
 
-	/// Returns the squared length
-	double LenSqr(void) const
-	{
-		return scalarProduct<double,3> (this->getCoords (), this->getCoords ());
-	}
-
 	/// Returns the length
-	double Length(void) const
-	{ return sqrt(LenSqr()); }
+	double length(void) const
+	{
+		return sqrt(sqrLength());
+	}
 
 	/// Projection (component of *this parallel to pV).
 	/// Note: component perpendicular to pV is:  *this - Proj(pV)
@@ -158,6 +154,13 @@ public:
 	bool operator!=( const TemplateVector3 & pV) const
 	{
 		return !(pV == this);
+	}
+
+private:
+	/// Returns the squared length
+	double sqrLength(void) const
+	{
+		return this->_x[0]*this->_x[0] + this->_x[1]*this->_x[1] + this->_x[2]*this->_x[2];
 	}
 };
 
