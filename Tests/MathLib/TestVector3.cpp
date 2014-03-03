@@ -155,5 +155,10 @@ TEST(MathLib, TestVector3Multiplications)
 	ASSERT_NEAR(1.0, v[0], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(3.0, v[1], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(5.0, v[2], std::numeric_limits<double>::epsilon());
+
+	// test normalisation
+	v.normalize();
+	ASSERT_NEAR(1.0, v.length(), std::numeric_limits<double>::epsilon());
+
 }
 

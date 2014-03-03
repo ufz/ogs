@@ -127,6 +127,16 @@ public:
 		return *this;
 	}
 
+	/**
+	 * After applying the normalize operator to the vector its length is 1.0.
+	 */
+	void normalize()
+	{
+		const double s(1/length());
+		for (std::size_t i(0); i < 3; i++)
+			this->_x[i] *= s;
+	}
+
 	/// Returns the length
 	double length(void) const
 	{
