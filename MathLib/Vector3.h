@@ -110,13 +110,6 @@ public:
 		TemplateVector3<T1> const& v,
 		TemplateVector3<T1> const& w);
 
-	/// Cross product with another vector
-	TemplateVector3 Cross( const TemplateVector3 & pV ) const
-	{ return *this * pV; }
-
-	friend TemplateVector3 Cross( const TemplateVector3 & p1, const TemplateVector3 & p2 )
-	{ return p1 * p2; }
-
 	TemplateVector3 operator*(double pR) const   // * a scalar
 	{
 		return TemplateVector3(this->x[0] * pR, this->x[1] * pR, this->x[2] * pR);
