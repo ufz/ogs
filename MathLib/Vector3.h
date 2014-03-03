@@ -74,7 +74,6 @@ public:
 	~TemplateVector3() {}
 
 	// vector arithmetic
-
 	TemplateVector3 operator+(TemplateVector3 const& v) const
 	{
 		return TemplateVector3(this->_x[0]+v[0], this->_x[1]+v[1], this->_x[2]+v[2]);
@@ -97,11 +96,11 @@ public:
 		return *this;
 	}
 
-	/// Dot product with another vector
-	double Dot(const TemplateVector3 & pV) const
-	{
-		return this->_x[0] * pV[0] + this->_x[1] * pV[1] + this->_x[2] * pV[2];
-	}
+	/** scalarProduct, implementation of scalar product,
+	 * sometimes called dot or inner product.
+	 */
+	template <typename T1>
+	friend T1 scalarProduct(TemplateVector3<T1> const& v, TemplateVector3<T1> const& w);
 
 	/// Cross product as the multiplication operator
 	TemplateVector3 operator*(const TemplateVector3 & pV) const
@@ -171,6 +170,12 @@ public:
 		return !(pV == this);
 	}
 };
+
+template <typename T>
+T scalarProduct(TemplateVector3<T> const& v, TemplateVector3<T> const& w)
+{
+	return v._x[0] * w._x[0] + v._x[1] * w._x[1] + v._x[2] * w._x[2];
+}
 
 typedef TemplateVector3<double> Vector3;
 }
