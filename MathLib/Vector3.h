@@ -30,7 +30,7 @@ namespace MathLib
 {
 /**
  * The Vector3 class defines a three-dimensional vector, with appropriate
- *	operators.  (* is cross product.)
+ * operators.
  */
 template <class T>
 class TemplateVector3 : public MathLib::TemplatePoint<T>
@@ -75,15 +75,14 @@ public:
 
 	// vector arithmetic
 
-	TemplateVector3 operator+(const TemplateVector3 & pV) const
+	TemplateVector3 operator+(TemplateVector3 const& v) const
 	{
-		return TemplateVector3(this->x[0] + pV[0], this->x[1] + pV[1], this->x[2] + pV[2] );
+		return TemplateVector3(this->_x[0]+v[0], this->_x[1]+v[1], this->_x[2]+v[2]);
 	}
 
-	TemplateVector3 operator-(const TemplateVector3 & pV) const
+	TemplateVector3 operator-(TemplateVector3 const& v) const
 	{
-		TemplateVector3 out( this->x[0] - pV[0], this->x[1] - pV[1], this->x[2] - pV[2] );
-		return out;
+		return TemplateVector3(this->_x[0]-v[0], this->_x[1]-v[1], this->_x[2]-v[2]);
 	}
 
 	TemplateVector3 operator-() const
