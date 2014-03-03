@@ -1,5 +1,5 @@
 /**
- * @file TestCheckParallelism.cpp
+ * @file TestParall.cpp
  * @date Feb 26, 2014
  *
  * @copyright
@@ -16,7 +16,7 @@
 // MathLib
 #include "Vector3.h"
 
-TEST(GeoLib, TestCheckParallelism)
+TEST(GeoLib, TestParallel)
 {
 	// parallel vectors
 	MathLib::Vector3 v(0.0, 1.0, 2.0);
