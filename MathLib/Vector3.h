@@ -102,14 +102,13 @@ public:
 	template <typename T1>
 	friend T1 scalarProduct(TemplateVector3<T1> const& v, TemplateVector3<T1> const& w);
 
-	/// Cross product as the multiplication operator
-	TemplateVector3 operator*(const TemplateVector3 & pV) const
-	{
-		return TemplateVector3 (
-		               this->_x[1] * pV[2] - this->_x[2] * pV[1],
-		               this->_x[2] * pV[0] - this->_x[0] * pV[2],
-		               this->_x[0] * pV[1] - this->_x[1] * pV[0] );
-	}
+	/** crossProduct: implementation of cross product,
+	 * sometimes called outer product.
+	 */
+	template <typename T1>
+	friend TemplateVector3<T1> crossProduct(
+		TemplateVector3<T1> const& v,
+		TemplateVector3<T1> const& w);
 
 	/// Cross product with another vector
 	TemplateVector3 Cross( const TemplateVector3 & pV ) const
@@ -172,6 +171,17 @@ template <typename T>
 T scalarProduct(TemplateVector3<T> const& v, TemplateVector3<T> const& w)
 {
 	return v._x[0] * w._x[0] + v._x[1] * w._x[1] + v._x[2] * w._x[2];
+}
+
+template <typename T1>
+TemplateVector3<T1> crossProduct(
+		TemplateVector3<T1> const& v,
+		TemplateVector3<T1> const& w)
+{
+	return TemplateVector3<T1>(
+			v._x[1] * w._x[2] - v._x[2] * w._x[1],
+			v._x[2] * w._x[0] - v._x[0] * w._x[2],
+			v._x[0] * w._x[1] - v._x[1] * w._x[0]);
 }
 
 typedef TemplateVector3<double> Vector3;
