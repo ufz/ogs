@@ -75,10 +75,17 @@ ENDIF()
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
-ADD_CUSTOM_TARGET(test
-	$<TARGET_FILE:testrunner>
-	DEPENDS testrunner
-)
+IF (OGS_USE_PETSC)
+	ADD_CUSTOM_TARGET(test
+		mpirun -np 3 $<TARGET_FILE:testrunner>
+		DEPENDS testrunner
+	)		
+ELSE ()
+	ADD_CUSTOM_TARGET(test
+		$<TARGET_FILE:testrunner>
+		DEPENDS testrunner
+	)		
+ENDIF ()
 
 # Testing
 #ENABLE_TESTING()
