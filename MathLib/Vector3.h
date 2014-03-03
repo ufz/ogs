@@ -85,9 +85,9 @@ public:
 		return TemplateVector3(this->_x[0]-v[0], this->_x[1]-v[1], this->_x[2]-v[2]);
 	}
 
-	TemplateVector3& operator+=(const MathLib::TemplatePoint<T>& pnt)
+	TemplateVector3& operator+=(TemplateVector3 const& v)
 	{
-		for (std::size_t i(0); i < 3; i++) this->_x[i] += pnt[i];
+		for (std::size_t i(0); i < 3; i++) this->_x[i] += v[i];
 		return *this;
 	}
 
