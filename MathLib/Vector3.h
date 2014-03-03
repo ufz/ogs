@@ -115,10 +115,6 @@ public:
 		return TemplateVector3(this->x[0] * pR, this->x[1] * pR, this->x[2] * pR);
 	}
 
-	friend TemplateVector3 operator*(double pR, const TemplateVector3 & pV)
-	{
-		return TemplateVector3 ( pV[0] * pR, pV[1] * pR, pV[2] * pR );
-	}
 
 	TemplateVector3& operator*=(double pR)
 	{
