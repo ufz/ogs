@@ -1,10 +1,7 @@
 INCLUDE(CodeCoverage)
 
 SET(COVERAGE_EXCLUDES
-	'/usr/*'
-	'${CMAKE_BINARY_DIR}/*'
-	'${CMAKE_SOURCE_DIR}/Tests/*'
-	'${CMAKE_SOURCE_DIR}/ThirdParty/*'
+	'/gpfs0/*;/usr/*;${CMAKE_BINARY_DIR}/*;${CMAKE_SOURCE_DIR}/Tests/*;${CMAKE_SOURCE_DIR}/ThirdParty/*'
 )
 
 IF(JENKINS_URL)
