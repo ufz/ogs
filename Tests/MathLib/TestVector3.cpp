@@ -74,33 +74,33 @@ TEST(MathLib, TestVector3Operators)
 	Vector3 w(5.0, 3.0, 1.0);
 	// operator+
 	Vector3 res(v+w);
-	ASSERT_NEAR(6.0, res[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(6.0, res[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(6.0, res[2], std::numeric_limits<double>::min());
+	ASSERT_NEAR(6.0, res[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(6.0, res[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(6.0, res[2], std::numeric_limits<double>::epsilon());
 
 	// operator-
 	res = v-w;
-	ASSERT_NEAR(-4.0, res[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR( 0.0, res[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR( 4.0, res[2], std::numeric_limits<double>::min());
+	ASSERT_NEAR(-4.0, res[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR( 0.0, res[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR( 4.0, res[2], std::numeric_limits<double>::epsilon());
 
 	// test operator*=
 	v *= 2.0;
-	ASSERT_NEAR(2.0, v[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(6.0, v[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(10.0, v[2], std::numeric_limits<double>::min());
+	ASSERT_NEAR(2.0, v[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(6.0, v[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(10.0, v[2], std::numeric_limits<double>::epsilon());
 
 	// test operator+=
 	v += w;
-	ASSERT_NEAR(7.0, v[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(9.0, v[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(11.0, v[2], std::numeric_limits<double>::min());
+	ASSERT_NEAR(7.0, v[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(9.0, v[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(11.0, v[2], std::numeric_limits<double>::epsilon());
 
 	// test operator-=
 	v -= w;
-	ASSERT_NEAR(2.0, v[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(6.0, v[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(10.0, v[2], std::numeric_limits<double>::min());
+	ASSERT_NEAR(2.0, v[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(6.0, v[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(10.0, v[2], std::numeric_limits<double>::epsilon());
 }
 
 TEST(MathLib, TestVector3Multiplications)
