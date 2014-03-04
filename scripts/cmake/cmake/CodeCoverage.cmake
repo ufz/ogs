@@ -22,7 +22,7 @@ IF(NOT GCOV_PATH)
 	MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
 ENDIF() # NOT GCOV_PATH
 
-IF(NOT CMAKE_COMPILER_IS_GNUCXX)
+IF(NOT CMAKE_COMPILER_IS_GNUCXX AND NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	MESSAGE(FATAL_ERROR "Compiler is not GNU gcc! Aborting...")
 ENDIF() # NOT CMAKE_COMPILER_IS_GNUCXX
 
@@ -33,8 +33,12 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 # Setup compiler options
 ADD_DEFINITIONS(-fprofile-arcs -ftest-coverage)
-LINK_LIBRARIES(gcov)
 
+IF(CMAKE_COMPILER_IS_GNUCXX)
+	LINK_LIBRARIES(gcov)
+ELSE()
+	SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+ENDIF()
 
 # Param _targetname     The name of new the custom make target
 # Param _testrunner     The name of the target which runs the tests
@@ -68,6 +72,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+		DEPENDS ${_testrunner}
 		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
 	)
 
