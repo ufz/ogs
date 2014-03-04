@@ -124,7 +124,7 @@ ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume]  = this->hasZeroVolume();
-	error_code[ElementErrorFlag::NonCoplanar] = (!GeoLib::pointsOnAPlane(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
+	error_code[ElementErrorFlag::NonCoplanar] = (!GeoLib::isCoplanar(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
 	// for collapsed quads (i.e. reduced to a line) this test might result "false" as all four points are actually located on a line.
 	if (!error_code[ElementErrorFlag::ZeroVolume]) 
 		error_code[ElementErrorFlag::NonConvex]   = (!(GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
