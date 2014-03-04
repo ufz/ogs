@@ -58,10 +58,10 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
 	// check degenerated cases
-	if (v.length() < std::numeric_limits<double>::min())
+	if (v.getLength() < std::numeric_limits<double>::min())
 		return false;
 
-	if (w.length() < std::numeric_limits<double>::min())
+	if (w.getLength() < std::numeric_limits<double>::min())
 		return false;
 
 	v.normalize();
@@ -269,7 +269,7 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 		centroid += *(pnts[j]);
 	}
 
-	plane_normal *= 1.0 / plane_normal.length();
+	plane_normal *= 1.0 / plane_normal.getLength();
 	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 

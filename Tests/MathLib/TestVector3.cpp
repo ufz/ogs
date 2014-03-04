@@ -158,7 +158,7 @@ TEST(MathLib, TestVector3Multiplications)
 
 	// test normalisation
 	v.normalize();
-	ASSERT_NEAR(1.0, v.length(), std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(1.0, v.getLength(), std::numeric_limits<double>::epsilon());
 
 }
 

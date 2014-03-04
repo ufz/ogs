@@ -124,15 +124,21 @@ public:
 	 */
 	void normalize()
 	{
-		const double s(1/length());
+		const double s(1/getLength());
 		for (std::size_t i(0); i < 3; i++)
 			this->_x[i] *= s;
 	}
 
-	/// Returns the length
-	double length(void) const
+	/// Returns the squared length
+	double getSqrLength(void) const
 	{
-		return sqrt(sqrLength());
+		return this->_x[0]*this->_x[0] + this->_x[1]*this->_x[1] + this->_x[2]*this->_x[2];
+	}
+
+	/// Returns the length
+	double getLength(void) const
+	{
+		return sqrt(getSqrLength());
 	}
 
 	/** scalarProduct, implementation of scalar product,
@@ -158,13 +164,6 @@ public:
 	friend 	TemplateVector3<T1> operator*(
 		double s,
 		TemplateVector3<T1> const& v);
-
-private:
-	/// Returns the squared length
-	double sqrLength(void) const
-	{
-		return this->_x[0]*this->_x[0] + this->_x[1]*this->_x[1] + this->_x[2]*this->_x[2];
-	}
 };
 
 template <typename T>
