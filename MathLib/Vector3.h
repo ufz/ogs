@@ -98,6 +98,43 @@ public:
 		return *this;
 	}
 
+	TemplateVector3& operator*=(double s)
+	{
+		for (std::size_t i(0); i < 3; i++)
+			this->_x[i] *= s;
+		return *this;
+	}
+
+	/// Comparison if equal
+	bool operator==(TemplateVector3 const& v) const
+	{
+		return std::fabs(this->_x[0] - v[0]) < sqrt(std::numeric_limits<double>::min()) &&
+			std::fabs(this->_x[1] - v[1]) < sqrt(std::numeric_limits<double>::min()) &&
+			std::fabs(this->_x[2] - v[2]) < sqrt(std::numeric_limits<double>::min());
+	}
+
+	/// Comparison if not equal
+	bool operator!=(const TemplateVector3 & v) const
+	{
+		return !(v == this);
+	}
+
+	/**
+	 * After applying the normalize operator to the vector its length is 1.0.
+	 */
+	void normalize()
+	{
+		const double s(1/length());
+		for (std::size_t i(0); i < 3; i++)
+			this->_x[i] *= s;
+	}
+
+	/// Returns the length
+	double length(void) const
+	{
+		return sqrt(sqrLength());
+	}
+
 	/** scalarProduct, implementation of scalar product,
 	 * sometimes called dot or inner product.
 	 */
@@ -121,43 +158,6 @@ public:
 	friend 	TemplateVector3<T1> operator*(
 		double s,
 		TemplateVector3<T1> const& v);
-
-	TemplateVector3& operator*=(double s)
-	{
-		for (std::size_t i(0); i < 3; i++)
-			this->_x[i] *= s;
-		return *this;
-	}
-
-	/**
-	 * After applying the normalize operator to the vector its length is 1.0.
-	 */
-	void normalize()
-	{
-		const double s(1/length());
-		for (std::size_t i(0); i < 3; i++)
-			this->_x[i] *= s;
-	}
-
-	/// Returns the length
-	double length(void) const
-	{
-		return sqrt(sqrLength());
-	}
-
-	/// Comparison if equal
-	bool operator==(TemplateVector3 const& v) const
-	{
-		return std::fabs(this->_x[0] - v[0]) < sqrt(std::numeric_limits<double>::min()) &&
-			std::fabs(this->_x[1] - v[1]) < sqrt(std::numeric_limits<double>::min()) &&
-			std::fabs(this->_x[2] - v[2]) < sqrt(std::numeric_limits<double>::min());
-	}
-
-	/// Comparison if not equal
-	bool operator!=(const TemplateVector3 & v) const
-	{
-		return !(v == this);
-	}
 
 private:
 	/// Returns the squared length
