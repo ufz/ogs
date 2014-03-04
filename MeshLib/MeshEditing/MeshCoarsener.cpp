@@ -25,7 +25,6 @@
 #include "Node.h"
 #include "Elements/Element.h"
 
-
 namespace MeshLib {
 
 MeshCoarsener::MeshCoarsener(Mesh const*const mesh) :
