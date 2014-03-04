@@ -105,8 +105,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE_COBERTURA _targetname _testrunner _outputname
 		${_testrunner} ${ARGV3}
 
 		# Running gcovr
-		COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} -e ${COVERAGE_EXCLUDES} -o ${_outputname}.xml
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+		COMMAND ${GCOVR_PATH} -x -r . --object-directory=${CMAKE_BINARY_DIR} -e 'Tests/*' -o ${_outputname}.xml
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		DEPENDS ${_testrunner}
 		COMMENT "Running gcovr to produce Cobertura code coverage report."
 	)
