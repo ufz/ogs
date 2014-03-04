@@ -362,10 +362,10 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLi
 
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q)
 {
-	const GeoLib::Point pq(q[0]-p[0], q[1]-p[1], q[2]-p[2]);
-	const GeoLib::Point pa(a[0]-p[0], a[1]-p[1], a[2]-p[2]);
-	const GeoLib::Point pb(b[0]-p[0], b[1]-p[1], b[2]-p[2]);
-	const GeoLib::Point pc(c[0]-p[0], c[1]-p[1], c[2]-p[2]);
+	const MathLib::Vector3 pq(p, q);
+	const MathLib::Vector3 pa(p, a);
+	const MathLib::Vector3 pb(p, b);
+	const MathLib::Vector3 pc(p, c);
 	
 	double u (scalarTriple(pq, pc, pb));
 	if (u<0) return nullptr;
@@ -381,14 +381,10 @@ GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point co
 	return new GeoLib::Point(u*a[0]+v*b[0]+w*c[0],u*a[1]+v*b[1]+w*c[1],u*a[2]+v*b[2]+w*c[2]);
 }
 
-double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w)
+double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w)
 {
-	double cross[3];
-	MathLib::crossProd(u.getCoords(), v.getCoords(), cross);
-	double result(0);
-	for (unsigned i=0; i<3; ++i)
-		result+=(cross[i]*w[i]);
-	return result;
+	MathLib::Vector3 const cross(MathLib::crossProduct(u, v));
+	return MathLib::scalarProduct(cross,w);
 }
 
 bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
@@ -407,16 +403,15 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 
 bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
 {
-	const GeoLib::Point AB(b[0]-a[0], b[1]-a[1], b[2]-a[2]);
-	const GeoLib::Point AC(c[0]-a[0], c[1]-a[1], c[2]-a[2]);
-	const GeoLib::Point AD(d[0]-a[0], d[1]-a[1], d[2]-a[2]);
+	const MathLib::Vector3 ab(a,b);
+	const MathLib::Vector3 ac(a,c);
+	const MathLib::Vector3 ad(a,d);
 
-	double squared_scalar_triple = pow(GeoLib::scalarTriple(AC, AD, AB), 2);
-	double normalisation_factor  = (AB[0]*AB[0]+AB[1]*AB[1]+AB[2]*AB[2]) * 
-			                        (AC[0]*AC[0]+AC[1]*AC[1]+AC[2]*AC[2]) * 
-									(AD[0]*AD[0]+AD[1]*AD[1]+AD[2]*AD[2]);
+	const double sqr_scalar_triple(pow(MathLib::scalarProduct(MathLib::crossProduct(ac,ad), ab),2));
+	const double normalisation_factor =
+		(ab.getSqrLength() * ac.getSqrLength() * ad.getSqrLength());
 
-	return (squared_scalar_triple/normalisation_factor < std::numeric_limits<double>::epsilon());
+	return (sqr_scalar_triple/normalisation_factor < std::numeric_limits<double>::epsilon());
 }
 
 } // end namespace GeoLib

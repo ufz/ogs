@@ -143,7 +143,7 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q);
 
 /// Calculates the scalar triple (u x v) . w
-double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w);
+double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
 
 /** 
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
