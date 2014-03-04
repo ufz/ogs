@@ -181,5 +181,4 @@ Mesh* MeshCoarsener::operator()(double min_distance)
 	return new Mesh (_orig_mesh->getName() + "Collapsed", nodes, elements);
 }
 
-
 } // end namespace MeshLib
