@@ -1295,22 +1295,21 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
-	std::vector<MeshLib::Node*> nodes;
-	nodes.push_back(new MeshLib::Node(1,0,0));
-	nodes.push_back(new MeshLib::Node(1,1,0));
-	nodes.push_back(new MeshLib::Node(0,0,0));
-	nodes.push_back(new MeshLib::Node(1,0,1));
-	nodes.push_back(new MeshLib::Node(1,1,0.1));
-	nodes.push_back(new MeshLib::Node(0,0,1));
+// hex -> pyramid + prism
+std::vector<MeshLib::Node*> nodes;
+nodes.push_back(new MeshLib::Node(0,0,0));
+nodes.push_back(new MeshLib::Node(0,1,0));
+nodes.push_back(new MeshLib::Node(1,1,0.1));
+nodes.push_back(new MeshLib::Node(1,0,0));
 
-	MeshLib::Node* nodes_array[6] = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5] };
-	std::vector<MeshLib::Element*> elements;
-	MeshLib::Element* elem (new MeshLib::Prism(nodes_array));
-	elements.push_back(elem);
-	MeshLib::Mesh* mesh (new MeshLib::Mesh("testmesh", nodes, elements));
+MeshLib::Node* nodes_array[4] = { nodes[0], nodes[1], nodes[2], nodes[3] };
+std::vector<MeshLib::Element*> elements;
+MeshLib::Element* elem (new MeshLib::Quad(nodes_array));
+elements.push_back(elem);
+MeshLib::Mesh* mesh (new MeshLib::Mesh("testmesh", nodes, elements));
+MeshLib::MeshRevision rev(mesh);
+MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
-	MeshLib::MeshRevision rev(mesh);
-	MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 	if (result)
 		this->_meshModels->addMesh(result);
 }

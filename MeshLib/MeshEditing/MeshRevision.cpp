@@ -62,7 +62,13 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 	{
 		unsigned n_unique_nodes (this->getNUniqueNodes(elements[i]));
 		if (n_unique_nodes == elements[i]->getNNodes() && elements[i]->getDimension() >= min_elem_dim)
-			new_elements.push_back(copyElement(elements[i], new_nodes));
+		{
+			ElementErrorCode e (elements[i]->validate());
+			if (e[ElementErrorFlag::NonCoplanar])
+				this->subdivideElement(elements[i], new_nodes, new_elements);
+			else
+				new_elements.push_back(copyElement(elements[i], new_nodes));
+		}
 		else if (n_unique_nodes < elements[i]->getNNodes() && n_unique_nodes>1)
 			reduceElement(elements[i], n_unique_nodes, new_nodes, new_elements, min_elem_dim);
 		else
@@ -180,6 +186,20 @@ MeshLib::Element* MeshRevision::copyElement(MeshLib::Element const*const element
 	return nullptr;
 }
 
+void MeshRevision::subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const
+{
+	if (element->getGeomType() == MeshElemType::QUAD)
+		this->subdivideQuad(element, nodes, elements);
+	else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+		this->subdivideHex(element, nodes, elements);
+	else if (element->getGeomType() == MeshElemType::PYRAMID)
+		this->subdividePyramid(element, nodes, elements);
+	else if (element->getGeomType() == MeshElemType::PRISM)
+		this->subdividePrism(element, nodes, elements);
+	else
+		ERR ("Error: Unknown element type.");
+}
+
 void MeshRevision::reduceElement(MeshLib::Element const*const element, 
 								 unsigned n_unique_nodes, 
 								 const std::vector<MeshLib::Node*> &nodes,
@@ -265,6 +285,95 @@ MeshLib::Element* MeshRevision::copyPrism(MeshLib::Element const*const org_elem,
 	for (unsigned i=0; i<6; ++i)
 		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
 	return new MeshLib::Prism(new_nodes, org_elem->getValue());
+}
+
+unsigned MeshRevision::subdivideQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const
+{
+	MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
+	tri1_nodes[0] = nodes[quad->getNode(0)->getID()];
+	tri1_nodes[1] = nodes[quad->getNode(1)->getID()];
+	tri1_nodes[2] = nodes[quad->getNode(2)->getID()];
+	new_elements.push_back(new MeshLib::Tri(tri1_nodes, quad->getValue()));
+
+	MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
+	tri2_nodes[0] = nodes[quad->getNode(0)->getID()];
+	tri2_nodes[1] = nodes[quad->getNode(2)->getID()];
+	tri2_nodes[2] = nodes[quad->getNode(3)->getID()];
+	new_elements.push_back(new MeshLib::Tri(tri2_nodes, quad->getValue()));
+
+	return 2;
+}
+
+unsigned MeshRevision::subdivideHex(MeshLib::Element const*const hex, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const
+{
+	MeshLib::Node** prism1_nodes = new MeshLib::Node*[6];
+	prism1_nodes[0] = nodes[hex->getNode(0)->getID()];
+	prism1_nodes[1] = nodes[hex->getNode(1)->getID()];
+	prism1_nodes[2] = nodes[hex->getNode(2)->getID()];
+	prism1_nodes[3] = nodes[hex->getNode(4)->getID()];
+	prism1_nodes[4] = nodes[hex->getNode(5)->getID()];
+	prism1_nodes[5] = nodes[hex->getNode(6)->getID()];
+	MeshLib::Prism* prism1 (new MeshLib::Prism(prism1_nodes, hex->getValue()));
+	this->subdividePrism(prism1, nodes, new_elements);
+	delete prism1;
+
+	MeshLib::Node** prism2_nodes = new MeshLib::Node*[6];
+	prism2_nodes[0] = nodes[hex->getNode(0)->getID()];
+	prism2_nodes[1] = nodes[hex->getNode(2)->getID()];
+	prism2_nodes[2] = nodes[hex->getNode(3)->getID()];
+	prism2_nodes[3] = nodes[hex->getNode(4)->getID()];
+	prism2_nodes[4] = nodes[hex->getNode(6)->getID()];
+	prism2_nodes[5] = nodes[hex->getNode(7)->getID()];
+	MeshLib::Prism* prism2 (new MeshLib::Prism(prism2_nodes, hex->getValue()));
+	this->subdividePrism(prism2, nodes, new_elements);
+	delete prism2;
+
+	return 6;
+}
+
+unsigned MeshRevision::subdividePyramid(MeshLib::Element const*const pyramid, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const
+{
+	MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
+	tet1_nodes[0] = nodes[pyramid->getNode(0)->getID()];
+	tet1_nodes[1] = nodes[pyramid->getNode(1)->getID()];
+	tet1_nodes[2] = nodes[pyramid->getNode(2)->getID()];
+	tet1_nodes[3] = nodes[pyramid->getNode(4)->getID()];
+	new_elements.push_back(new MeshLib::Tet(tet1_nodes, pyramid->getValue()));
+
+	MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
+	tet2_nodes[0] = nodes[pyramid->getNode(0)->getID()];
+	tet2_nodes[1] = nodes[pyramid->getNode(2)->getID()];
+	tet2_nodes[2] = nodes[pyramid->getNode(3)->getID()];
+	tet2_nodes[3] = nodes[pyramid->getNode(4)->getID()];
+	new_elements.push_back(new MeshLib::Tet(tet2_nodes, pyramid->getValue()));
+
+	return 2;
+}
+
+unsigned MeshRevision::subdividePrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const
+{
+	MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
+	tet1_nodes[0] = nodes[prism->getNode(0)->getID()];
+	tet1_nodes[1] = nodes[prism->getNode(1)->getID()];
+	tet1_nodes[2] = nodes[prism->getNode(2)->getID()];
+	tet1_nodes[3] = nodes[prism->getNode(3)->getID()];
+	new_elements.push_back(new MeshLib::Tet(tet1_nodes, prism->getValue()));
+
+	MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
+	tet2_nodes[0] = nodes[prism->getNode(3)->getID()];
+	tet2_nodes[1] = nodes[prism->getNode(2)->getID()];
+	tet2_nodes[2] = nodes[prism->getNode(4)->getID()];
+	tet2_nodes[3] = nodes[prism->getNode(5)->getID()];
+	new_elements.push_back(new MeshLib::Tet(tet2_nodes, prism->getValue()));
+
+	MeshLib::Node** tet3_nodes = new MeshLib::Node*[4];
+	tet3_nodes[0] = nodes[prism->getNode(2)->getID()];
+	tet3_nodes[1] = nodes[prism->getNode(1)->getID()];
+	tet3_nodes[2] = nodes[prism->getNode(3)->getID()];
+	tet3_nodes[3] = nodes[prism->getNode(4)->getID()];
+	new_elements.push_back(new MeshLib::Tet(tet3_nodes, prism->getValue()));
+
+	return 3;
 }
 
 unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem, 
@@ -363,6 +472,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 							pris1_nodes[5] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[2]));
 							MeshLib::Prism* prism1 (new MeshLib::Prism(pris1_nodes, org_elem->getValue()));
 							unsigned nNewElements = this->reducePrism(prism1, 5, nodes, new_elements, min_elem_dim);
+							delete prism1;
 
 							MeshLib::Node** pris2_nodes = new MeshLib::Node*[6];
 							pris2_nodes[0] = const_cast<MeshLib::Node*>(org_elem->getNode(this->lutHexDiametralNode(back.first)));
@@ -373,6 +483,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 							pris2_nodes[5] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[2]));
 							MeshLib::Prism* prism2 (new MeshLib::Prism(pris2_nodes, org_elem->getValue()));
 							nNewElements += this->reducePrism(prism2, 5, nodes, new_elements, min_elem_dim);
+							delete prism2;
 							return nNewElements;
 						}
 			}
