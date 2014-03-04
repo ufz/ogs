@@ -217,8 +217,8 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 		centroid += *(pnts[j]);
 	}
 
-	plane_normal *= 1.0 / plane_normal.Length();
-	d = centroid.Dot(plane_normal) / n_pnts;
+	plane_normal *= 1.0 / plane_normal.length();
+	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
 void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts)
