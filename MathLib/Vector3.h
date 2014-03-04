@@ -62,7 +62,9 @@ public:
 		TemplatePoint<T>(p)
 	{}
 
-	/** constructs the vector v=(b-a) from the given points */
+	/** Constructs the vector \f$v=(b-a)\f$ from the given points,
+	 * which starts in point \f$a\f$ and ends in point \f$b\f$
+	 */
 	TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
 		MathLib::TemplatePoint<T>()
 	{
