@@ -15,6 +15,7 @@
 #ifndef MESHREVISION_H_
 #define MESHREVISION_H_
 
+#include <array>
 #include <vector>
 #include <cstddef>
 
@@ -57,7 +58,7 @@ public:
 private:
 	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
 	std::vector<MeshLib::Node*> collapseNodeIndeces(double eps);
-	/// Constructs a new node vector for the result mesh by removing all elements whose ID indicates they need to be merged/removed.
+	/// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.
 	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map);
 
 	/// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
@@ -95,8 +96,11 @@ private:
 	/// Creates a quad or a tet, depending if the four nodes being coplanar or not (element *should* have exactly four unique nodes!)
 	MeshLib::Element* constructFourNodeElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, unsigned min_elem_dim = 1) const;
 
-	/// Reduces a hexahedron element by splitting it into two prisms and using reducePrism()
-	bool reduceHex(MeshLib::Element const*const hex, 
+	/** 
+	 * Reduces a hexahedron element by removing collapsed nodes and constructing one or more new elements from the remaining nodes.
+	 * @return The number of newly created elements
+	 */
+	unsigned reduceHex(MeshLib::Element const*const hex, 
 		           unsigned n_unique_nodes, 
 				   const std::vector<MeshLib::Node*> &nodes, 
 				   std::vector<MeshLib::Element*> &new_elements,
@@ -107,12 +111,30 @@ private:
 					   const std::vector<MeshLib::Node*> &nodes,
 					   std::vector<MeshLib::Element*> &new_elements,
 					   unsigned min_elem_dim) const;
-	/// Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
-	bool reducePrism(MeshLib::Element const*const prism,
+	/**
+	 * Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
+	 * @return The number of newly created elements
+	 */
+	unsigned reducePrism(MeshLib::Element const*const prism,
 		             unsigned n_unique_nodes,
 					 const std::vector<MeshLib::Node*> &nodes,
 					 std::vector<MeshLib::Element*> &new_elements,
 					 unsigned min_elem_dim) const;
+	
+	// In an element with 5 unique nodes, return the node that will be the top of the resulting pyramid
+	unsigned findPyramidTopNode(const MeshLib::Element &element, const std::array<unsigned,4> &base_node_ids) const;
+
+	/// Lookup-table for returning the diametral node id of the given node id in a Hex
+	unsigned lutHexDiametralNode(unsigned id) const;
+
+	/// Lookup-table for returning four nodes connected to the two nodes (id1, id2) forming an edge in a Hex
+	const std::array<unsigned,4> lutHexCuttingQuadNodes(unsigned id1, unsigned id2) const;
+
+	/// When a hex is subdivided into two prisms, this returns the nodes of the hex edge that will serve as the back of one of the prisms.
+	const std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j, unsigned k, unsigned l) const;
+
+	/// Lookup-table for returning the third node of bottom or top triangle given the other two
+	unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;
 
 	/// The original mesh used for constructing the class
 	Mesh const*const _mesh;
