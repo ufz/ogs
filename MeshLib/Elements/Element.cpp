@@ -35,7 +35,7 @@ Element::~Element()
 
 bool Element::addNeighbor(Element* e)
 {
-	if (e == this)
+	if (e == this || e==nullptr)
 		return false;
 
 	unsigned nNeighbors (this->getNNeighbors());
@@ -86,10 +86,10 @@ void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 {
 	min = std::numeric_limits<double>::max();
 	max = std::numeric_limits<double>::min();
-	unsigned nEdges (this->getNEdges());
+	const unsigned nEdges (this->getNEdges());
 	for (unsigned i=0; i<nEdges; i++)
 	{
-		double dist (MathLib::sqrDist(getEdgeNode(i,0), getEdgeNode(i,1)));
+		const double dist (MathLib::sqrDist(getEdgeNode(i,0), getEdgeNode(i,1)));
 		min = (dist<min) ? dist : min;
 		max = (dist>max) ? dist : max;
 	}

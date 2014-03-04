@@ -153,9 +153,14 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* max_item = new TreeItem(max_aabb, aabb_item);
 	aabb_item->appendChild(max_item);
 
+	QList<QVariant> edges;
+	edges << "Edge Length: " << "[" + QString::number(mesh->getMinEdgeLength(), 'f') + "," << QString::number(mesh->getMaxEdgeLength(), 'f') + "]" << "";
+	TreeItem* edge_item = new TreeItem(edges, _rootItem);
+	_rootItem->appendChild(edge_item);
+
 	std::pair<unsigned, unsigned> mat_bounds (MeshInformation::getValueBounds(*mesh));
 	QList<QVariant> materials;
-	materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) << QString::number(mat_bounds.second) + "]" << "";
+	materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) + "," << QString::number(mat_bounds.second) + "]" << "";
 	TreeItem* mat_item = new TreeItem(materials, _rootItem);
 	_rootItem->appendChild(mat_item);
 

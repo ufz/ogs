@@ -54,22 +54,16 @@ public:
 	/// Returns the dimension of the mesh (determined by the maximum dimension over all elements).
 	unsigned getDimension() const { return _mesh_dimension; }
 
-	/// Get the minimum edge length over all elements of the mesh.
-	double getMinEdgeLength() { return _edge_length[0]; }
-
-	/// Get the maximum edge length over all elements of the mesh.
-	double getMaxEdgeLength() { return _edge_length[1]; }
-
 	/// Get the node with the given index.
 	const Node* getNode(unsigned idx) const { return _nodes[idx]; }
 
 	/// Get the element with the given index.
 	const Element* getElement(unsigned idx) const { return _elements[idx]; }
 
-	/// Get the minimum edge length for the mesh
+	/// Get the minimum edge length over all elements of the mesh.
 	double getMinEdgeLength() const { return _edge_length[0]; }
 
-	/// Get the maximum edge length for the mesh
+	/// Get the maximum edge length over all elements of the mesh.
 	double getMaxEdgeLength() const { return _edge_length[1]; }
 
 	/// Get the number of elements
@@ -90,13 +84,6 @@ public:
 	/// Resets the IDs of all mesh-nodes to their position in the node vector
 	void resetNodeIDs();
 
-	/**
-	 * Set the minimum and maximum length over the edges of the mesh.
-	 * This should have been previously calcumlated using the Element::computeSqrEdgeLengthRange(min, max)
-	 * function or by some other means.
-	 */
-	void setEdgeLengthRange(const double &min_length, const double &max_length);
-
 	/// Changes the name of the mesh.
 	void setName(const std::string &name) { this->_name = name; }
 
@@ -104,6 +91,9 @@ public:
 	std::size_t getID() const {return _id; }
 
 protected:
+	// Set the minimum and maximum length over the edges of the mesh.
+	void calcEdgeLengthRange();
+
 	/// Removes nodes that are not part of any element.
 	void removeUnusedMeshNodes();
 

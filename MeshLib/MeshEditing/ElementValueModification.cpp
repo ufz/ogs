@@ -58,7 +58,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh, unsigned old_value, 
 		{
 			if (new_value == value_mapping[j])
 			{
-				ERR ("Error in ElementValueModification::replaceElementValue() - Replacement value is already taken.");
+				WARN ("ElementValueModification::replaceElementValue() - Replacement value is already taken, no changes have been made.");
 				return false;
 			}
 		}

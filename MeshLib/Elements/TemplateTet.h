@@ -94,6 +94,12 @@ public:
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
+	 * Tests if the element is geometrically valid.
+	 * @param check_zero_volume indicates if volume == 0 should be checked
+	 */
+	virtual bool isValid(bool check_zero_volume = true) const;
+
+	/**
 	 * Method clone is inherited from class Element. It makes a deep copy of the TemplateTet instance.
 	 * @return an exact copy of the object
 	 */

@@ -105,20 +105,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 				for (unsigned i = 0; i < nElements; ++i)
 				{
 					getline(in, line_string);
-
 					size_t elem_idx (elements.size());
 					elements.push_back(readElement(line_string, nodes));
-
-					double elem_min_length, elem_max_length;
-					elements[elem_idx]->computeSqrEdgeLengthRange(
-					        elem_min_length,
-					        elem_max_length);
-					edge_length[0] =
-					        (elem_min_length <
-					        edge_length[0]) ? elem_min_length : edge_length[0];
-					edge_length[1] =
-					        (elem_max_length >
-					        edge_length[1]) ? elem_max_length : edge_length[1];
 				}
 			}
 		}
@@ -133,7 +121,6 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
 		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(
 		                                               file_name), nodes, elements));
-		mesh->setEdgeLengthRange(sqrt(edge_length[0]), sqrt(edge_length[1]));
 
 		INFO("\t... finished.");
 		INFO("Nr. Nodes: %d.", nodes.size());

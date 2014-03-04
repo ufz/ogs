@@ -145,6 +145,14 @@ unsigned TemplateTet<NNODES,CELLTETTYPE>::identifyFace(Node* nodes[3]) const
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
+bool TemplateTet<NNODES,CELLTETTYPE>::isValid(bool check_zero_volume) const
+{ 
+	if (check_zero_volume)
+		return (this->_volume > std::numeric_limits<double>::epsilon()); 
+	return true;
+}
+
+template <unsigned NNODES, CellType CELLTETTYPE>
 Element* TemplateTet<NNODES,CELLTETTYPE>::reviseElement() const
 {
 	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {

@@ -47,5 +47,13 @@ template <unsigned NNODES, CellType CELLLINETYPE>
 TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
+template <unsigned NNODES, CellType CELLLINETYPE>
+bool TemplateLine<NNODES,CELLLINETYPE>::isValid(bool check_zero_volume) const
+{ 
+	if (check_zero_volume)
+		return (this->_length > std::numeric_limits<double>::epsilon());
+	return true;
+}
+
 } // namespace MeshLib
 
