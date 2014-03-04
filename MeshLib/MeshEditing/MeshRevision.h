@@ -67,6 +67,10 @@ private:
 	/// Copies an element without change, using the nodes vector from the result mesh.
 	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
 		                          const std::vector<MeshLib::Node*> &nodes) const;
+
+	/// Subdivides an element if it has a face that is not coplanar
+	void subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const;
+
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
 	void reduceElement(MeshLib::Element const*const element, 
 		               unsigned n_unique_nodes, 
@@ -88,6 +92,18 @@ private:
 	MeshLib::Element* copyPyramid(MeshLib::Element const*const pyramid, const std::vector<MeshLib::Node*> &nodes) const;
 	/// Creates a new prism element identical with "prism" but using the new nodes vector.
 	MeshLib::Element* copyPrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes) const;
+
+	/// Subdivides a nonplanar quad into two triangles
+	unsigned subdivideQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+
+	/// Subdivides a Hex with nonplanar faces into tets
+	unsigned subdivideHex(MeshLib::Element const*const hex, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+
+	/// Subdivides a pyramid with a nonplanar base into two tets
+	unsigned subdividePyramid(MeshLib::Element const*const pyramid, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+
+	/// Subdivides a prism with nonplanar quad faces into two tets
+	unsigned subdividePrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Creates a line element from the first two unique nodes found in the element (element *should* have exactly two unique nodes!)
 	MeshLib::Element* constructLine(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const;

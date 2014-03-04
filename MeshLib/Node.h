@@ -46,7 +46,7 @@ class Node : public GeoLib::PointWithID
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshCoarsener;
-	friend class MeshRevision; // todo: reduce to friend method, whole class as friend is not needed
+	friend class MeshRevision;
 
 
 public:

@@ -20,7 +20,7 @@
 
 // forward declaration
 namespace MeshLib {
-	class Mesh;
+class Mesh;
 }
 
 namespace MeshLib {
@@ -47,7 +47,6 @@ public:
 	 * @param min_distance
 	 */
 	Mesh* operator() (double min_distance);
-
 
 private:
 	Mesh const*const _orig_mesh;
