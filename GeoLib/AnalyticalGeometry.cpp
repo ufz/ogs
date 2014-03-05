@@ -100,6 +100,9 @@ bool lineSegmentIntersect(
 	GeoLib::Point const& d,
 	GeoLib::Point& s)
 {
+	if (! pointsOnAPlane(a, b, c, d))
+		return false;
+
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(c, d);
 	MathLib::Vector3 const qp(a, c);
