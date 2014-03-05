@@ -413,11 +413,18 @@ bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 		return true;
 	}
 
+	// In exact arithmetic <ac*ad^T, ab> should be zero
+	// if all four points are coplanar.
 	const double sqr_scalar_triple(pow(MathLib::scalarProduct(MathLib::crossProduct(ac,ad), ab),2));
+	// Due to evaluating the above numerically some cancellation or rounding
+	// can occur. For this reason a normalisation factor is introduced.
 	const double normalisation_factor =
 		(ab.getSqrLength() * ac.getSqrLength() * ad.getSqrLength());
 
-	return (sqr_scalar_triple/normalisation_factor < std::numeric_limits<double>::epsilon());
+	// tolerance 1e-11 is choosen such that
+	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as coplanar
+	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-5) are considered as not coplanar
+	return (sqr_scalar_triple/normalisation_factor < 1e-11);
 }
 
 } // end namespace GeoLib
