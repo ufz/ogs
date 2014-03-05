@@ -80,6 +80,10 @@ TEST(GeoLib, TestIntersectingLineSegments3d)
 	double const eps(std::numeric_limits<float>::epsilon());
 	d[2] += eps;
 	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	d[2] = 1.0+1e-9;
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	d[2] = 1.0+1e-8;
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
 	d[2] = 1.0 + 5e-6;
 	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
 }
