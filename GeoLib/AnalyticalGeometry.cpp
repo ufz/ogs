@@ -108,15 +108,12 @@ bool lineSegmentIntersect(
 	MathLib::Vector3 const qp(a, c);
 	MathLib::Vector3 const pq(c, a);
 
-	const double sqr_len_v(MathLib::scalarProduct<double,3>(v.getCoords(),v.getCoords()));
-	const double sqr_len_w(MathLib::scalarProduct<double,3>(w.getCoords(),w.getCoords()));
+	const double sqr_len_v(v.getSqrLength());
+	const double sqr_len_w(w.getSqrLength());
 
 	if (parallel(v,w)) {
 		if (parallel(pq,v)) {
-			const double sqr_dist_pq(MathLib::scalarProduct<double,3>(
-				pq.getCoords(),
-				pq.getCoords()
-			));
+			const double sqr_dist_pq(pq.getSqrLength());
 			if (sqr_dist_pq < sqr_len_v || sqr_dist_pq < sqr_len_w)
 				return true;
 		}
@@ -124,14 +121,11 @@ bool lineSegmentIntersect(
 
 	MathLib::DenseMatrix<double> mat(2,2);
 	mat(0,0) = sqr_len_v;
-	mat(0,1) = -1.0 * MathLib::scalarProduct<double,3>(v.getCoords(),w.getCoords());
+	mat(0,1) = -1.0 * MathLib::scalarProduct(v,w);
 	mat(1,1) = sqr_len_w;
 	mat(1,0) = mat(0,1);
 
-	double rhs[2] = {
-		MathLib::scalarProduct<double,3>(v.getCoords(),qp.getCoords()),
-		MathLib::scalarProduct<double,3>(w.getCoords(),pq.getCoords())
-	};
+	double rhs[2] = {MathLib::scalarProduct(v,qp), MathLib::scalarProduct(w,pq)};
 
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
 	lu.solve (rhs);
@@ -145,7 +139,7 @@ bool lineSegmentIntersect(
 		return false;
 	}
 
-	// compute point along line segment with minimal distance
+	// compute points along line segments with minimal distance
 	GeoLib::Point const p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
 	GeoLib::Point const p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
 
@@ -218,11 +212,10 @@ bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const Geo
 static
 double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
 {
-	const double u[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2] };
-	const double v[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
-	double w[3];
-	MathLib::crossProd(u, v, w);
-	return 0.5 * sqrt(MathLib::scalarProduct<double, 3>(w, w));
+	const MathLib::Vector3 u(a,c);
+	const MathLib::Vector3 v(a,b);
+	const MathLib::Vector3 w(MathLib::crossProduct(u, v));
+	return 0.5 * sqrt(MathLib::scalarProduct(w, w));
 }
 
 bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b,
