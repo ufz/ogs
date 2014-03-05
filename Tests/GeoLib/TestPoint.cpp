@@ -59,7 +59,7 @@ TEST(GeoLib, PointComparisonLessEq)
 	ASSERT_TRUE(lessEq(Point(1,1,1),Point(1,1-half_eps,1)));
 	ASSERT_TRUE(lessEq(Point(1,1,1),Point(1,1,1-half_eps)));
 
-	const double m(std::numeric_limits<double>::min());
+	const double m(std::numeric_limits<double>::epsilon());
 	ASSERT_TRUE(lessEq(Point(m+half_eps,m,m),Point(m,m,m)));
 	ASSERT_TRUE(lessEq(Point(m,m+half_eps,m),Point(m,m,m)));
 	ASSERT_TRUE(lessEq(Point(m,m,m+half_eps),Point(m,m,m)));

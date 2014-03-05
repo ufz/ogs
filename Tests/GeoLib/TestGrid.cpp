@@ -120,7 +120,7 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 			for (std::size_t k(0); k < k_max; k++) {
 				res = grid->getNearestPoint(pnts[offset1+k]->getCoords());
 				ASSERT_EQ(res->getID(), offset1+k);
-				ASSERT_NEAR(sqrt(MathLib::sqrDist(res, pnts[offset1+k])), 0.0, std::numeric_limits<double>::min());
+				ASSERT_NEAR(sqrt(MathLib::sqrDist(res, pnts[offset1+k])), 0.0, std::numeric_limits<double>::epsilon());
 			}
 		}
 	}
