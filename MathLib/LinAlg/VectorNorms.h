@@ -23,7 +23,7 @@ namespace MathLib {
 
 double normEuklid (double const * const vec, std::size_t n)
 {
-	return sqrt (scpr (vec, vec, n));
+	return sqrt (scalarProduct (vec, vec, n));
 }
 
 } // end namespace MathLib
