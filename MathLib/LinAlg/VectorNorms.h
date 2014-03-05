@@ -19,7 +19,6 @@
 #define VECTORNORMS_H_
 
 #include <cmath>
-#include <string>
 
 #include "MathTools.h"
 #include "LinAlgEnums.h"
@@ -133,7 +132,6 @@ inline double norm(const T_VEC &v, VecNormType normType = VecNormType::NORM2)
     }
     return norm;
 }
-
 
 } // end namespace MathLib
 

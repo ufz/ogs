@@ -12,10 +12,7 @@
 #ifndef LINALGENUMS_H_
 #define LINALGENUMS_H_
 
-#include <cmath>
 #include <string>
-
-#include "MathTools.h"
 
 namespace MathLib
 {
