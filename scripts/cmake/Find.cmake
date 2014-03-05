@@ -55,16 +55,6 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
-########################
-### Find other stuff ###
-########################
-
-# Check if on Jenkins
-IF(NOT $ENV{JENKINS_URL} STREQUAL "")
-	SET(JENKINS_URL $ENV{JENKINS_URL})
-	SET(JENKINS_JOB_NAME $ENV{JOB_NAME})
-ENDIF()
-
 ######################
 ### Find libraries ###
 ######################
