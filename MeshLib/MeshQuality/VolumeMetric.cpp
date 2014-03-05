@@ -44,7 +44,7 @@ void VolumeMetric::calculateQuality()
         double volume (elem->getContent());
         if (volume > _max)
             _max = volume;
-        if (volume < sqrt(fabs(std::numeric_limits<double>::min()))) {
+        if (volume < sqrt(fabs(std::numeric_limits<double>::epsilon()))) {
 			errorMsg(elem, k);
 			error_count++;
 		} else if (volume < _min)
