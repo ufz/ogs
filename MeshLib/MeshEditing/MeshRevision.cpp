@@ -43,11 +43,11 @@ MeshRevision::MeshRevision(const MeshLib::Mesh &mesh) :
 MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, double eps)
 {
 	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
-	const std::size_t nElems (this->_mesh.getNElements());
-	std::vector<MeshLib::Element*> new_elements (nElems);
+	std::vector<MeshLib::Element*> new_elements;
+	new_elements.reserve(this->_mesh.getNElements());
 	const std::vector<MeshLib::Element*> elements (this->_mesh.getElements());
-	for (std::size_t i=0; i<nElems; ++i)
-		new_elements[i] = copyElement(elements[i], new_nodes);
+	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
+		new_elements.push_back(copyElement(*elem, new_nodes));
 	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 }
 
@@ -64,38 +64,36 @@ unsigned MeshRevision::getNCollapsableNodes(double eps) const
 
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim)
 {
-	const std::size_t nElems (this->_mesh.getNElements());
-	if (nElems == 0)
+	if (this->_mesh.getNElements() == 0)
 		return nullptr;
 
 	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
 	std::vector<MeshLib::Element*> new_elements;
 
 	const std::vector<MeshLib::Element*> elements (this->_mesh.getElements());
-	for (std::size_t i=0; i<nElems; ++i)
+	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 	{
-		unsigned n_unique_nodes (this->getNUniqueNodes(elements[i]));
-		if (n_unique_nodes == elements[i]->getNNodes() && elements[i]->getDimension() >= min_elem_dim)
+		unsigned n_unique_nodes (this->getNUniqueNodes(*elem));
+		if (n_unique_nodes == (*elem)->getNNodes() && (*elem)->getDimension() >= min_elem_dim)
 		{
-			ElementErrorCode e (elements[i]->validate());
+			ElementErrorCode e ((*elem)->validate());
 			if (e[ElementErrorFlag::NonCoplanar])
-				this->subdivideElement(elements[i], new_nodes, new_elements);
+				this->subdivideElement(*elem, new_nodes, new_elements);
 			else
-				new_elements.push_back(copyElement(elements[i], new_nodes));
+				new_elements.push_back(copyElement(*elem, new_nodes));
 		}
-		else if (n_unique_nodes < elements[i]->getNNodes() && n_unique_nodes>1)
-			reduceElement(elements[i], n_unique_nodes, new_nodes, new_elements, min_elem_dim);
+		else if (n_unique_nodes < (*elem)->getNNodes() && n_unique_nodes>1)
+			reduceElement(*elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim);
 		else
 			std::cout << "Error: Something is wrong, more unique nodes than actual nodes" << std::endl;
 
 	}
-	if (new_elements.size()>0)
+	if (!new_elements.empty())
 		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 
 	// clean up
-	const std::size_t nNewNodes (new_nodes.size());
-	for (std::size_t i=0; i<nNewNodes; ++i)
-		delete new_nodes[i];
+	for (auto node = new_nodes.begin(); node != new_nodes.end(); ++node)
+		delete *node;
 	return nullptr;
 }
 
@@ -793,10 +791,10 @@ const std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(unsigned i, un
 	else if (this->lutHexDiametralNode(j) == k) { back.first = j; back.second = this->lutHexDiametralNode(l); }
 	else if (this->lutHexDiametralNode(j) == l) { back.first = j; back.second = this->lutHexDiametralNode(k); }
 	// collapsed edges *are* connected
-	else if (i==k)                              { back.first = this->lutHexDiametralNode(l); back.second = j; }
-	else if (i==l)                              { back.first = this->lutHexDiametralNode(k); back.second = j; }
-	else if (j==k)                              { back.first = this->lutHexDiametralNode(l); back.second = i; }
-	else if (j==l)                              { back.first = this->lutHexDiametralNode(k); back.second = i; }
+	else if (i==k) { back.first = this->lutHexDiametralNode(l); back.second = j; }
+	else if (i==l) { back.first = this->lutHexDiametralNode(k); back.second = j; }
+	else if (j==k) { back.first = this->lutHexDiametralNode(l); back.second = i; }
+	else if (j==l) { back.first = this->lutHexDiametralNode(k); back.second = i; }
 	return back;
 }
 
