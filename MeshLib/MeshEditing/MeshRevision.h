@@ -35,7 +35,7 @@ namespace MeshLib {
 class MeshRevision {
 public:
 	/// Constructor
-	MeshRevision(Mesh const*const mesh);
+	MeshRevision(const MeshLib::Mesh &mesh);
 
 	virtual ~MeshRevision() {};
 
@@ -47,17 +47,23 @@ public:
 	 */
 	MeshLib::Mesh* collapseNodes(const std::string &new_mesh_name, double eps);
 
+	/// Returns the number of potentially collapsable nodes
+	unsigned getNCollapsableNodes(double eps = std::numeric_limits<double>::epsilon()) const;
+
 	/**
 	 * Create a new mesh where all nodes with a distance < eps from each other are collapsed.
-	 * Elements are adjusted accordingly.
+	 * Elements are adjusted accordingly and elements with nonplanar faces are subdivided into 
+	 * geometrically correct elements.
 	 * @param eps Minimum distance for nodes not to be collapsed
-	 * @param min_elem_dim Minimum dimension of elements to be inserted into new mesh (i.e. min_elem_dim=3 will prevent the new mesh to contain 2D elements)
+	 * @param min_elem_dim Minimum dimension of elements to be inserted into new mesh (i.e. 
+	 *                     min_elem_dim=3 will prevent the new mesh to contain 2D elements)
 	 */
 	MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim = 1);
 
+
 private:
-	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
-	std::vector<MeshLib::Node*> collapseNodeIndeces(double eps);
+	/// Designates nodes to be collapsed by setting their ID to the index of the node they will sget merged with.
+	std::vector<std::size_t> collapseNodeIndeces(double eps) const;
 	/// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.
 	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map);
 
@@ -153,7 +159,7 @@ private:
 	unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;
 
 	/// The original mesh used for constructing the class
-	Mesh const*const _mesh;
+	const Mesh& _mesh;
 };
 
 }

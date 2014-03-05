@@ -35,29 +35,43 @@
 
 namespace MeshLib {
 
-MeshRevision::MeshRevision(Mesh const*const mesh) :
+MeshRevision::MeshRevision(const MeshLib::Mesh &mesh) :
 	_mesh (mesh)
 {}
 
 
 MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, double eps)
 {
-	std::vector<MeshLib::Node*> new_nodes = this->collapseNodeIndeces(eps);
-	const std::size_t nElems (this->_mesh->getNElements());
+	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
+	const std::size_t nElems (this->_mesh.getNElements());
 	std::vector<MeshLib::Element*> new_elements (nElems);
-	const std::vector<MeshLib::Element*> elements (this->_mesh->getElements());
+	const std::vector<MeshLib::Element*> elements (this->_mesh.getElements());
 	for (std::size_t i=0; i<nElems; ++i)
 		new_elements[i] = copyElement(elements[i], new_nodes);
 	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 }
 
+unsigned MeshRevision::getNCollapsableNodes(double eps) const
+{
+	std::vector<std::size_t> id_map (this->collapseNodeIndeces(eps));
+	std::size_t nNodes (id_map.size());
+	unsigned count (0);
+	for (std::size_t i=0; i<nNodes; ++i)
+		if (i != id_map[i])
+			count++;
+	return count;
+}
+
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim)
 {
-	std::vector<MeshLib::Node*> new_nodes = this->collapseNodeIndeces(eps);
+	const std::size_t nElems (this->_mesh.getNElements());
+	if (nElems == 0)
+		return nullptr;
+
+	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
 	std::vector<MeshLib::Element*> new_elements;
 
-	const std::size_t nElems (this->_mesh->getNElements());
-	const std::vector<MeshLib::Element*> elements (this->_mesh->getElements());
+	const std::vector<MeshLib::Element*> elements (this->_mesh.getElements());
 	for (std::size_t i=0; i<nElems; ++i)
 	{
 		unsigned n_unique_nodes (this->getNUniqueNodes(elements[i]));
@@ -85,10 +99,10 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 	return nullptr;
 }
 
-std::vector<MeshLib::Node*> MeshRevision::collapseNodeIndeces(double eps)
+std::vector<std::size_t> MeshRevision::collapseNodeIndeces(double eps) const
 {
-	const std::vector<MeshLib::Node*> nodes (_mesh->getNodes());
-	const std::size_t nNodes (_mesh->getNNodes());
+	const std::vector<MeshLib::Node*> nodes (_mesh.getNodes());
+	const std::size_t nNodes (_mesh.getNNodes());
 	std::vector<std::size_t> id_map(nNodes);
 	for (std::size_t k=0; k<nNodes; ++k)
 		id_map[k]=k;
@@ -124,13 +138,12 @@ std::vector<MeshLib::Node*> MeshRevision::collapseNodeIndeces(double eps)
 			}
 		}
 	}
-
-	return this->constructNewNodesArray(id_map);
+	return id_map;
 }
 
 std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vector<std::size_t> &id_map)
 {
-	std::vector<MeshLib::Node*> nodes (_mesh->getNodes());
+	std::vector<MeshLib::Node*> nodes (_mesh.getNodes());
 	const std::size_t nNodes (nodes.size());
 	std::vector<MeshLib::Node*> new_nodes;
 	for (std::size_t k=0; k<nNodes; ++k)
@@ -308,22 +321,22 @@ unsigned MeshRevision::subdivideHex(MeshLib::Element const*const hex, const std:
 {
 	MeshLib::Node** prism1_nodes = new MeshLib::Node*[6];
 	prism1_nodes[0] = nodes[hex->getNode(0)->getID()];
-	prism1_nodes[1] = nodes[hex->getNode(1)->getID()];
-	prism1_nodes[2] = nodes[hex->getNode(2)->getID()];
+	prism1_nodes[1] = nodes[hex->getNode(2)->getID()];
+	prism1_nodes[2] = nodes[hex->getNode(1)->getID()];
 	prism1_nodes[3] = nodes[hex->getNode(4)->getID()];
-	prism1_nodes[4] = nodes[hex->getNode(5)->getID()];
-	prism1_nodes[5] = nodes[hex->getNode(6)->getID()];
+	prism1_nodes[4] = nodes[hex->getNode(6)->getID()];
+	prism1_nodes[5] = nodes[hex->getNode(5)->getID()];
 	MeshLib::Prism* prism1 (new MeshLib::Prism(prism1_nodes, hex->getValue()));
 	this->subdividePrism(prism1, nodes, new_elements);
 	delete prism1;
 
 	MeshLib::Node** prism2_nodes = new MeshLib::Node*[6];
-	prism2_nodes[0] = nodes[hex->getNode(0)->getID()];
-	prism2_nodes[1] = nodes[hex->getNode(2)->getID()];
-	prism2_nodes[2] = nodes[hex->getNode(3)->getID()];
-	prism2_nodes[3] = nodes[hex->getNode(4)->getID()];
-	prism2_nodes[4] = nodes[hex->getNode(6)->getID()];
-	prism2_nodes[5] = nodes[hex->getNode(7)->getID()];
+	prism2_nodes[0] = nodes[hex->getNode(4)->getID()];
+	prism2_nodes[1] = nodes[hex->getNode(6)->getID()];
+	prism2_nodes[2] = nodes[hex->getNode(7)->getID()];
+	prism2_nodes[3] = nodes[hex->getNode(0)->getID()];
+	prism2_nodes[4] = nodes[hex->getNode(2)->getID()];
+	prism2_nodes[5] = nodes[hex->getNode(3)->getID()];
 	MeshLib::Prism* prism2 (new MeshLib::Prism(prism2_nodes, hex->getValue()));
 	this->subdividePrism(prism2, nodes, new_elements);
 	delete prism2;
