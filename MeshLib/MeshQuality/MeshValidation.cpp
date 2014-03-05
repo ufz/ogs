@@ -23,7 +23,7 @@
 #include "Node.h"
 #include "Elements/Element.h"
 #include "MeshEditing/removeMeshNodes.h"
-
+#include "MeshEditing/MeshRevision.h"
 
 namespace MeshLib {
 
@@ -31,6 +31,9 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 {
 	INFO ("Mesh Quality Control:");
 	this->removeUnusedMeshNodes(mesh);
+	MeshRevision rev(mesh);
+	INFO ("Found %d potentially collapsable nodes.", rev.getNCollapsableNodes());
+
 	const std::vector<ElementErrorCode> codes (this->testElementGeometry(mesh));
 	this->ElementErrorCodeOutput(codes);
 }
