@@ -56,7 +56,7 @@ void VtkCompositeContourFilter::init()
 	{
 		// Setting the range to min / max values, this will result in a "bad table range"
 		// vtk warning.
-		range[0] = std::numeric_limits<double>::min();
+		range[0] = std::numeric_limits<double>::lowest();
 		range[1] = std::numeric_limits<double>::max();
 	}
 
