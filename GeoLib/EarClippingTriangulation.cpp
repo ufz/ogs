@@ -87,7 +87,7 @@ void EarClippingTriangulation::rotate ()
 	// compute the plane normal
 	getNewellPlane(_pnts, plane_normal, d);
 
-	double tol (sqrt(std::numeric_limits<double>::min()));
+	double tol (sqrt(std::numeric_limits<double>::epsilon()));
 	if (fabs(plane_normal[0]) > tol || fabs(plane_normal[1]) > tol) {
 		// rotate copied points into x-y-plane
 		rotatePointsToXY(plane_normal, _pnts);

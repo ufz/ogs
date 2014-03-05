@@ -247,7 +247,7 @@ void Polygon::ensureCWOrientation ()
 	GeoLib::getNewellPlane(tmp_polygon_pnts, plane_normal, d);
 
 	// *** rotate if necessary
-	double tol (sqrt(std::numeric_limits<double>::min()));
+	double tol (sqrt(std::numeric_limits<double>::epsilon()));
 	if (fabs(plane_normal[0]) > tol || fabs(plane_normal[1]) > tol)
 		// rotate copied points into x-y-plane
 		GeoLib::rotatePointsToXY(plane_normal, tmp_polygon_pnts);
