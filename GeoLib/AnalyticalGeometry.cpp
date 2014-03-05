@@ -407,6 +407,12 @@ bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	const MathLib::Vector3 ac(a,c);
 	const MathLib::Vector3 ad(a,d);
 
+	if (ab.getSqrLength() < std::numeric_limits<double>::min() ||
+		ac.getSqrLength() < std::numeric_limits<double>::min() ||
+		ad.getSqrLength() < std::numeric_limits<double>::min()) {
+		return true;
+	}
+
 	const double sqr_scalar_triple(pow(MathLib::scalarProduct(MathLib::crossProduct(ac,ad), ab),2));
 	const double normalisation_factor =
 		(ab.getSqrLength() * ac.getSqrLength() * ad.getSqrLength());
