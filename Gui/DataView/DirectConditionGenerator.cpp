@@ -62,7 +62,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 				cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(imgheight)) ? (imgheight-1) : cell_y);
 
 				size_t index = cell_y*imgwidth+cell_x;
-				if (fabs(img[index] - no_data) > std::numeric_limits<float>::min())
+				if (fabs(img[index] - no_data) > std::numeric_limits<float>::epsilon())
 					_direct_values.push_back( std::pair<size_t, double>(surface_nodes[i]->getID(),img[index]) );
 			}
 		}
@@ -141,7 +141,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 				cell_y = (cell_y < 0) ?  0 : ((static_cast<size_t>(cell_y) > imgheight) ? (imgheight-1) : cell_y);
 
 				node_val[k] = img[ 2 * (cell_y * imgwidth + cell_x) ];
-				if (fabs(node_val[k] - no_data_value) < std::numeric_limits<double>::min())
+				if (fabs(node_val[k] - no_data_value) < std::numeric_limits<double>::epsilon())
 					node_val[k] = 0.;
 			}
 
