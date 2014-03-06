@@ -85,7 +85,7 @@ const Element* Element::getEdge(unsigned i) const
 void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 {
 	min = std::numeric_limits<double>::max();
-	max = std::numeric_limits<double>::lowest();
+	max = 0;
 	const unsigned nEdges (this->getNEdges());
 	for (unsigned i=0; i<nEdges; i++)
 	{

@@ -21,7 +21,7 @@
 namespace MeshLib
 {
 ElementQualityMetric::ElementQualityMetric(Mesh const* const mesh) :
-	_min (std::numeric_limits<double>::max()), _max (std::numeric_limits<double>::lowest()), _mesh (mesh)
+	_min (std::numeric_limits<double>::max()), _max (0), _mesh (mesh)
 {
 	if (_mesh)
 		_element_quality_metric.resize (_mesh->getNElements(), -1.0);
