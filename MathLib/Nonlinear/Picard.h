@@ -73,14 +73,21 @@ private:
     inline void printout(std::ostream& os, std::size_t i, T_VALUE& x_new, T_VALUE& dx);
 #endif
 
-private:
+    /// vector norm type used to evaluate errors
     VecNormType _normType;
+    /// absolute tolerance for dx
     double _abs_tol;
+    /// relative tolerance for dx
     double _rel_tol;
+    /// the maximum allowed iteration number
     std::size_t _max_itr;
+    /// print iteration errors or not
     bool _printErrors;
+    /// the number of iterations in the last calculation
     std::size_t _n_iterations;
+    /// absolute error in the last calculation
     double _abs_error;
+    /// relative error in the last calculation
     double _rel_error;
 };
 
