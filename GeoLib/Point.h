@@ -70,6 +70,9 @@ bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
 bool lessEq(const GeoLib::Point& p0,
             const GeoLib::Point& p1,
             double tol = std::numeric_limits<double>::epsilon());
+
+bool operator==(GeoLib::Point const& a, GeoLib::Point const& b);
+
 }
 
 #endif /* POINT_H_ */
