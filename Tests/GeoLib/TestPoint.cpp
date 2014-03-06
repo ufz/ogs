@@ -15,6 +15,8 @@
 
 #include "Point.h"
 
+#include "MathTools.h"
+
 using namespace GeoLib;
 
 TEST(GeoLib, PointComparisonLessEq)
@@ -155,3 +157,50 @@ TEST(GeoLib, PointComparisonOperatorLessEq)
 		ASSERT_TRUE(Point(small_x-my_eps,small_y-my_eps,small_z-my_eps) <= Point(small_x,small_y,small_z));
 	}
 }
+
+// test for operator==
+TEST(GeoLib, PointComparisonOperatorEqual)
+{
+	srand(static_cast<unsigned>(time(nullptr)));
+	double x0(((double)(rand()) / RAND_MAX - 0.5));
+	double x1(((double)(rand()) / RAND_MAX - 0.5));
+	double x2(((double)(rand()) / RAND_MAX - 0.5));
+
+	GeoLib::Point a({x0, x1, x2});
+	GeoLib::Point b({x0, x1, x2});
+	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+	ASSERT_TRUE(a == b);
+	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
+
+	double tol(std::numeric_limits<double>::min());
+	b[2] += tol;
+	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+	b[1] = 0.0;
+	b[2] = 0.0;
+	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+
+	tol = std::numeric_limits<double>::epsilon();
+	ASSERT_FALSE(Point({tol,1.0,1.0}) == Point({1.0,1.0,1.0}));
+	ASSERT_FALSE(Point({1.0,tol,1.0}) == Point({1.0,1.0,1.0}));
+	ASSERT_FALSE(Point({1.0,1.0,tol}) == Point({1.0,1.0,1.0}));
+
+	ASSERT_FALSE(Point({1.0,1.0,1.0}) == Point({1.0+tol,1.0,1.0}));
+	ASSERT_FALSE(Point({1.0,1.0,1.0}) == Point({1.0,1.0+tol,1.0}));
+	ASSERT_FALSE(Point({1.0,1.0,1.0}) == Point({1.0,1.0,1.0+tol}));
+
+	// very small difference in one coordinate
+	tol = std::numeric_limits<double>::min();
+	ASSERT_TRUE(Point({tol,0.0,0.0}) == Point({0.0,0.0,0.0}));
+	ASSERT_TRUE(Point({0.0,tol,0.0}) == Point({0.0,0.0,0.0}));
+	ASSERT_TRUE(Point({0.0,0.0,tol}) == Point({0.0,0.0,0.0}));
+
+	ASSERT_TRUE(Point({0.0,0.0,0.0}) == Point({tol,0.0,0.0}));
+	ASSERT_TRUE(Point({0.0,0.0,0.0}) == Point({0.0,tol,0.0}));
+	ASSERT_TRUE(Point({0.0,0.0,0.0}) == Point({0.0,0.0,tol}));
+
+	a = Point({0.0,0.0,0.0});
+	b = Point({0.0,0.0,0.0});
+	a[0] = pow(std::numeric_limits<double>::epsilon(),5);
+	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
+}
+
