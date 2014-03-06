@@ -16,6 +16,8 @@
 #define MESHREVISION_H_
 
 #include <array>
+#include <limits>
+#include <string>
 #include <vector>
 #include <cstddef>
 
@@ -37,7 +39,7 @@ public:
 	/// Constructor
 	MeshRevision(const MeshLib::Mesh &mesh);
 
-	virtual ~MeshRevision() {};
+	virtual ~MeshRevision() {}
 
 	/**
 	 * Collapsed all nodes with distance < eps but ignores elements 
