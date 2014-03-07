@@ -349,7 +349,7 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
 	if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
 		return Location::BEYOND;
 	if (MathLib::sqrDist (&pnt,
-	                      _ply_pnts[_ply_pnt_ids[k]]) < sqrt(std::numeric_limits<double>::epsilon()))
+	                      _ply_pnts[_ply_pnt_ids[k]]) < pow(std::numeric_limits<double>::epsilon(),2))
 		return Location::SOURCE;
 	if (MathLib::sqrDist (&pnt,
 	                      _ply_pnts[_ply_pnt_ids[k + 1]]) <
