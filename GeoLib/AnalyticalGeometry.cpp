@@ -57,17 +57,17 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 
 bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
+	const double eps(std::numeric_limits<double>::epsilon());
+
 	// check degenerated cases
-	if (v.getLength() < std::numeric_limits<double>::min())
+	if (v.getLength() < eps)
 		return false;
 
-	if (w.getLength() < std::numeric_limits<double>::min())
+	if (w.getLength() < eps)
 		return false;
 
 	v.normalize();
 	w.normalize();
-
-	const double eps(std::numeric_limits<double>::epsilon());
 
 	bool parallel(true);
 	if (std::abs(v[0]-w[0]) > eps)
