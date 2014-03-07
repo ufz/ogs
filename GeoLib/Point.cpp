@@ -75,5 +75,4 @@ bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol)
 	}
 }
 
-
 } // end namespace GeoLib

@@ -115,14 +115,21 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
                             GeoLib::Point& intersection_pnt);
 
 /**
+ * Check if the two vectors \f$v, w \in R^3\f$ are in parallel
+ * @param v first vector
+ * @param w second vector
+ * @return true if the vectors are in parallel, else false
+*/
+bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
+
+/**
  * A line segment is given by its two end-points. The function checks,
- * if the two line segments (ab) and (cd) intersects. Up to now only
- * 2D line segments are handled!
+ * if the two line segments (ab) and (cd) intersects.
  * @param a first end-point of the first line segment
  * @param b second end-point of the first line segment
  * @param c first end-point of the second line segment
  * @param d second end-point of the second line segment
- * @param s the intersection point
+ * @param s the intersection point if the segments do intersect
  * @return true, if the line segments intersect, else false
  */
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
@@ -136,7 +143,7 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q);
 
 /// Calculates the scalar triple (u x v) . w
-double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w);
+double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
 
 /** 
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.

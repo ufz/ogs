@@ -158,8 +158,8 @@ bool Polygon::getNextIntersectionPointPolygonLine (GeoLib::Point const & a,
                 std::size_t& seg_num) const
 {
 	if (_simple_polygon_list.empty()) {
-		const std::size_t n_nodes(getNumberOfPoints() - 1);
-		for (std::size_t k(seg_num); k < n_nodes; k++) {
+		const std::size_t n_segments(getNumberOfPoints() - 1);
+		for (std::size_t k(seg_num); k < n_segments; k++) {
 			if (GeoLib::lineSegmentIntersect(*(getPoint(k)), *(getPoint(k + 1)), a, b, *intersection_pnt)) {
 				seg_num = k;
 				return true;

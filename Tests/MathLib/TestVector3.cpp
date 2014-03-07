@@ -41,7 +41,7 @@ TEST(MathLib, TestVector3Constructor)
 	ASSERT_NEAR(v[2], v_copy[2], std::numeric_limits<double>::min());
 
 	// *** test constructor taking TemplatePoint
-	std::array<double,3> ap = {0, 1, 2};
+	std::array<double,3> ap = {{0, 1, 2}};
 	TemplatePoint<double> p(ap);
 	Vector3 vp(p);
 	ASSERT_NEAR(0.0, vp[0], std::numeric_limits<double>::min());
@@ -49,8 +49,8 @@ TEST(MathLib, TestVector3Constructor)
 	ASSERT_NEAR(2.0, vp[2], std::numeric_limits<double>::min());
 
 	// *** test constructing Vector from two TemplatePoints
-	std::array<double,3> aa = {1, 2, 3}; // necessary for old compilers
-	std::array<double,3> ab = {6, 5, 4}; // necessary for old compilers
+	std::array<double,3> aa = {{1, 2, 3}}; // necessary for old compilers
+	std::array<double,3> ab = {{6, 5, 4}}; // necessary for old compilers
 	TemplatePoint<double,3> a(aa);
 	TemplatePoint<double,3> b(ab);
 	Vector3 w(a,b);
@@ -158,7 +158,7 @@ TEST(MathLib, TestVector3Multiplications)
 
 	// test normalisation
 	v.normalize();
-	ASSERT_NEAR(1.0, v.length(), std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(1.0, v.getLength(), std::numeric_limits<double>::epsilon());
 
 }
 
