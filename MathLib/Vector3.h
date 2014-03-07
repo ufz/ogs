@@ -105,20 +105,6 @@ public:
 		return *this;
 	}
 
-	/// Comparison if equal
-	bool operator==(TemplateVector3 const& v) const
-	{
-		return std::fabs(this->_x[0] - v[0]) < sqrt(std::numeric_limits<double>::min()) &&
-			std::fabs(this->_x[1] - v[1]) < sqrt(std::numeric_limits<double>::min()) &&
-			std::fabs(this->_x[2] - v[2]) < sqrt(std::numeric_limits<double>::min());
-	}
-
-	/// Comparison if not equal
-	bool operator!=(const TemplateVector3 & v) const
-	{
-		return !(v == this);
-	}
-
 	/**
 	 * After applying the normalize operator to the vector its length is 1.0.
 	 */
