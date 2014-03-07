@@ -27,8 +27,8 @@ Picard::Picard()
 {
 }
 
-template<class F_PROBLEM, class T_VALUE>
-bool Picard::solve(F_PROBLEM &g,  const T_VALUE &x0, T_VALUE &x_new)
+template<class T_FUNCTOR, class T_VALUE>
+bool Picard::solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new)
 {
     T_VALUE x_old(x0);
     T_VALUE dx(x0);
@@ -45,7 +45,7 @@ bool Picard::solve(F_PROBLEM &g,  const T_VALUE &x0, T_VALUE &x_new)
     double abs_error = -1.;
     double rel_error = -1.;
     for (itr_cnt=0; itr_cnt<_max_itr; itr_cnt++) {
-        g(x_old, x_new);
+        functor(x_old, x_new);
         dx = x_new;
         dx -= x_old;
 

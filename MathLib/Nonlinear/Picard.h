@@ -49,13 +49,21 @@ public:
     /**
      * solve a nonlinear problem
      *
-     * \param g                 Fixed point function object (x=g(x))
+     * \tparam T_FUNCTOR        Function object type which supports an
+     * operator ()(\f$x_k\f$, \f$x_{k+1}\f$). \f$x_k\f$ is a previous iteration
+     * step value. \f$x_{k+1}\f$ is a new solution.
+     * \tparam T_VALUE          Data type of \f$x_k\f$ and \f$x_{k+1}\f$.
+     * Both scalar and vector types are available as far as the following conditions
+     * are satisfied
+     * - T_VALUE has a copy constructor (for non-primitive data types)
+     * - MathLib::norm(T_VALUE) exists
+     * \param functor           Fixed point function object (\f$x_{k+1}=g(x_k)\f$)
      * \param x0                Initial guess
      * \param x_new             Solution
      * \return true if converged
      */
-    template<class F_PROBLEM, class T_VALUE>
-    bool solve(F_PROBLEM &g,  const T_VALUE &x0, T_VALUE &x_new);
+    template<class T_FUNCTOR, class T_VALUE>
+    bool solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new);
 
     /// return the number of iterations
     std::size_t getNIterations() const {return _n_iterations; }
