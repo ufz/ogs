@@ -111,8 +111,14 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 template <typename T>
 T sqrDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
 {
-	const T v[3] = {(*p1)[0] - (*p0)[0], (*p1)[1] - (*p0)[1], (*p1)[2] - (*p0)[2]};
-	return MathLib::scalarProduct<T,3>(v,v);
+	return sqrDist(*p0,*p1);
+}
+
+template <typename POINT_T>
+typename POINT_T::FP_T sqrDist(POINT_T const& p0, POINT_T const& p1)
+{
+	typename POINT_T::FP_T const v[3] = {p1[0]-p0[0], p1[1]-p0[1], p1[2]-p0[2]};
+	return MathLib::scalarProduct<typename POINT_T::FP_T,3>(v,v);
 }
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */

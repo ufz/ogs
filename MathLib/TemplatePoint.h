@@ -33,6 +33,8 @@ namespace MathLib
 template <typename T, std::size_t DIM = 3> class TemplatePoint
 {
 public:
+	typedef T FP_T;
+
 	/** default constructor */
 	TemplatePoint();
 
