@@ -188,12 +188,12 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &ras
 
 			double locZ[4];
 			locZ[0] = elevation[yIdx*width + xIdx];
-			if (fabs(locZ[0] - no_data) > std::numeric_limits<double>::min())
+			if (fabs(locZ[0] - no_data) > std::numeric_limits<double>::epsilon())
 			{
 				for (unsigned j=1; j<4; ++j)
 				{
 					locZ[j] = elevation[(yIdx+y_nb[j])*width + (xIdx+x_nb[j])];
-					if (fabs(locZ[j] - no_data) < std::numeric_limits<double>::min())
+					if (fabs(locZ[j] - no_data) < std::numeric_limits<double>::epsilon())
 						locZ[j]=locZ[0];
 				}
 

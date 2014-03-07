@@ -161,10 +161,10 @@ void GMSHPrefsDialog::accept()
 		if (max_number_of_points_in_quadtree_leaf == 0)
 			max_number_of_points_in_quadtree_leaf = 10;
 		mesh_density_scaling_pnts = fabs (param2->text().toDouble());
-		if (mesh_density_scaling_pnts < sqrt(std::numeric_limits<double>::min()))
+		if (mesh_density_scaling_pnts < sqrt(std::numeric_limits<double>::epsilon()))
 			mesh_density_scaling_pnts = 0.5;
 		mesh_density_scaling_stations = param3->text().toDouble();
-		if (mesh_density_scaling_stations < sqrt(std::numeric_limits<double>::min()))
+		if (mesh_density_scaling_stations < sqrt(std::numeric_limits<double>::epsilon()))
 			mesh_density_scaling_stations = 0.05;
 	}
 	else

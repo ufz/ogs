@@ -50,14 +50,14 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(std::size_t(3), ply.getNumberOfPoints());
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_TRUE(ply.isPointIDInPolyline(2));
-	ASSERT_TRUE(fabs(ply.getLength(2) - (1.0 + sqrt(0.5))) < std::numeric_limits<double>::min());
+	ASSERT_TRUE(fabs(ply.getLength(2) - (1.0 + sqrt(0.5))) < std::numeric_limits<double>::epsilon());
 
 	// checking remove
 	ply.removePoint(1);
 	ASSERT_EQ(std::size_t(2), ply.getNumberOfPoints());
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_FALSE(ply.isPointIDInPolyline(1));
-	ASSERT_TRUE(fabs(ply.getLength(1) - sqrt(0.5)) < std::numeric_limits<double>::min());
+	ASSERT_TRUE(fabs(ply.getLength(1) - sqrt(0.5)) < std::numeric_limits<double>::epsilon());
 
 	// inserting point in the middle
 	ply.insertPoint(1,1);

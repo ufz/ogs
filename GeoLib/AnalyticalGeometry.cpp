@@ -40,7 +40,7 @@ Orientation getOrientation(const double& p0_x, const double& p0_y, const double&
 	double h1((p1_x - p0_x) * (p2_y - p0_y));
 	double h2((p2_x - p0_x) * (p1_y - p0_y));
 
-	double tol(sqrt( std::numeric_limits<double>::min()));
+	double tol(std::numeric_limits<double>::epsilon());
 	if (fabs(h1 - h2) <= tol * std::max(fabs(h1), fabs(h2)))
 		return COLLINEAR;
 	if (h1 - h2 > 0.0)
@@ -57,17 +57,17 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 
 bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
+	const double eps(std::numeric_limits<double>::epsilon());
+
 	// check degenerated cases
-	if (v.getLength() < std::numeric_limits<double>::min())
+	if (v.getLength() < eps)
 		return false;
 
-	if (w.getLength() < std::numeric_limits<double>::min())
+	if (w.getLength() < eps)
 		return false;
 
 	v.normalize();
 	w.normalize();
-
-	const double eps(std::numeric_limits<double>::epsilon());
 
 	bool parallel(true);
 	if (std::abs(v[0]-w[0]) > eps)
@@ -143,7 +143,7 @@ bool lineSegmentIntersect(
 	GeoLib::Point const p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
 	GeoLib::Point const p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
 
-	double const min_dist(sqrt( MathLib::sqrDist(&p0, &p1)));
+	double const min_dist(sqrt(MathLib::sqrDist(&p0, &p1)));
 	double const min_seg_len(std::min(sqrt(sqr_len_v), sqrt(sqr_len_w)));
 	if (min_dist < min_seg_len * 1e-6) {
 		s[0] = 0.5 * (p0[0] + p1[0]);
@@ -271,7 +271,7 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 
 void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts)
 {
-	double small_value(sqrt( std::numeric_limits<double>::min()));
+	double small_value(std::numeric_limits<double>::epsilon());
 	if (fabs(plane_normal[0]) < small_value && fabs(plane_normal[1]) < small_value)
 		return;
 
@@ -288,7 +288,7 @@ void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*
 
 void rotatePointsToXZ(MathLib::Vector3 &n, std::vector<GeoLib::Point*> &pnts)
 {
-	double small_value(sqrt( std::numeric_limits<double>::min()));
+	double small_value(std::numeric_limits<double>::epsilon());
 	if (fabs(n[0]) < small_value && fabs(n[1]) < small_value)
 		return;
 
@@ -403,9 +403,9 @@ bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	const MathLib::Vector3 ac(a,c);
 	const MathLib::Vector3 ad(a,d);
 
-	if (ab.getSqrLength() < std::numeric_limits<double>::min() ||
-		ac.getSqrLength() < std::numeric_limits<double>::min() ||
-		ad.getSqrLength() < std::numeric_limits<double>::min()) {
+	if (ab.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2) ||
+		ac.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2) ||
+		ad.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2)) {
 		return true;
 	}
 
