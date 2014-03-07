@@ -57,17 +57,17 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 
 bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
+	const double eps(std::numeric_limits<double>::epsilon());
+
 	// check degenerated cases
-	if (v.getLength() < std::numeric_limits<double>::min())
+	if (v.getLength() < eps)
 		return false;
 
-	if (w.getLength() < std::numeric_limits<double>::min())
+	if (w.getLength() < eps)
 		return false;
 
 	v.normalize();
 	w.normalize();
-
-	const double eps(std::numeric_limits<double>::epsilon());
 
 	bool parallel(true);
 	if (std::abs(v[0]-w[0]) > eps)
@@ -143,7 +143,7 @@ bool lineSegmentIntersect(
 	GeoLib::Point const p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
 	GeoLib::Point const p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
 
-	double const min_dist(sqrt( MathLib::sqrDist(&p0, &p1)));
+	double const min_dist(sqrt(MathLib::sqrDist(&p0, &p1)));
 	double const min_seg_len(std::min(sqrt(sqr_len_v), sqrt(sqr_len_w)));
 	if (min_dist < min_seg_len * 1e-6) {
 		s[0] = 0.5 * (p0[0] + p1[0]);
@@ -403,9 +403,9 @@ bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	const MathLib::Vector3 ac(a,c);
 	const MathLib::Vector3 ad(a,d);
 
-	if (ab.getSqrLength() < std::numeric_limits<double>::min() ||
-		ac.getSqrLength() < std::numeric_limits<double>::min() ||
-		ad.getSqrLength() < std::numeric_limits<double>::min()) {
+	if (ab.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2) ||
+		ac.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2) ||
+		ad.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2)) {
 		return true;
 	}
 
