@@ -70,11 +70,11 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 	const double eps(std::numeric_limits<double>::epsilon());
 
 	bool parallel(true);
-	if (abs(v[0]-w[0]) > eps)
+	if (std::abs(v[0]-w[0]) > eps)
 		parallel = false;
-	if (abs(v[1]-w[1]) > eps)
+	if (std::abs(v[1]-w[1]) > eps)
 		parallel = false;
-	if (abs(v[2]-w[2]) > eps)
+	if (std::abs(v[2]-w[2]) > eps)
 		parallel = false;
 
 	if (! parallel) {
@@ -82,11 +82,11 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 		// change sense of direction of v_normalised
 		v *= -1.0;
 		// check again
-		if (abs(v[0]-w[0]) > eps)
+		if (std::abs(v[0]-w[0]) > eps)
 			parallel = false;
-		if (abs(v[1]-w[1]) > eps)
+		if (std::abs(v[1]-w[1]) > eps)
 			parallel = false;
-		if (abs(v[2]-w[2]) > eps)
+		if (std::abs(v[2]-w[2]) > eps)
 			parallel = false;
 	}
 
