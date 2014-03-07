@@ -170,5 +170,3 @@ TEST(MathLib, NonlinearPicard_vector_norms)
     ASSERT_ARRAY_NEAR(my_expect1, x, 2, 1e-5);
 
 }
-
-

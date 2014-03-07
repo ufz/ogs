@@ -116,4 +116,3 @@ inline void Picard::printout(std::ostream& os, std::size_t i, double& x_new, dou
 }
 
 } //end
-
