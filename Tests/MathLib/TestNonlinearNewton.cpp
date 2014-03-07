@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * \author Norihiro Watanabe
+ * \date   2012-06-25
+ *
+ * \copyright
+ * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
- *
- *
- * Created on 2012-08-03 by Norihiro Watanabe
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <gtest/gtest.h>
@@ -119,10 +120,7 @@ public:
 
 
 //##############################################################################
-// Example problem 3 (two variables)
-// 3x-y=-2
-// 2x^2-y=0
-// (x,y) = (-1/2, 1/2) and (2, 8)
+// Example problem 3 (10 variables)
 //##############################################################################
 
 namespace Example3
@@ -270,26 +268,3 @@ TEST(MathLib, NonlinearNR_dense2)
     ASSERT_ARRAY_NEAR(my_expect, x, n, 1e-5);
 }
 
-#if 0
-TEST(MathLib, NonlinearNR_sparse)
-{
-    typedef std::valarray<double> MyVector;
-    typedef MathLib::CRSMatrix<double, signed> MyMatrix;
-    typedef NRCheckConvergence<MyVector,NRErrorAbsResMNormOrRelDxMNorm > MyConverge;
-    typedef NewtonFunctionDXVector<NL3_NR_D1, MathLib::LisLinearEquation> MyDxFunction;
-
-    NL3_NR f;
-    NL3_NR_D1 df(f.getLinearSolver());
-    MyVector x0(6.0, 2);
-    MyVector x(0.0, 2);
-    MyVector r(2), dx(2);
-    //MyMatrix* j = f.getLinearSolver()->getA();
-    MyDxFunction f_dx(df, *f.getLinearSolver());
-
-    NewtonRaphsonMethod nr;
-    nr.solve<NL3_NR,MyDxFunction,MyVector,MyConverge, NRIterationStepInitializerDummy>(f, f_dx, x0, x, r, dx);
-
-    double my_expect[] = {2., 8.};
-    ASSERT_DOUBLE_ARRAY_EQ(my_expect, x, 2, 1e-5);
-}
-#endif
