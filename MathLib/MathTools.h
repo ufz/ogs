@@ -121,6 +121,13 @@ typename POINT_T::FP_T sqrDist(POINT_T const& p0, POINT_T const& p1)
 	return MathLib::scalarProduct<typename POINT_T::FP_T,3>(v,v);
 }
 
+template <typename POINT_T>
+bool operator==(POINT_T const& a, POINT_T const& b)
+{
+	typename POINT_T::FP_T const sqr_dist(sqrDist(a,b));
+	return (sqr_dist < pow(std::numeric_limits<typename POINT_T::FP_T>::epsilon(),2));
+}
+
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 double sqrDist(const double* p0, const double* p1);
 

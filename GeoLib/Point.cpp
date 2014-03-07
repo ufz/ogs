@@ -17,8 +17,6 @@
 
 #include "Point.h"
 
-#include "MathTools.h"
-
 namespace GeoLib {
 
 bool operator<= (const GeoLib::Point& p0, const GeoLib::Point& p1)
@@ -76,12 +74,5 @@ bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol)
 		}
 	}
 }
-
-bool operator==(GeoLib::Point const& a, GeoLib::Point const& b)
-{
-	double sqr_dist(MathLib::sqrDist(a,b));
-	return (sqr_dist < sqrt(std::numeric_limits<double>::min()));
-}
-
 
 } // end namespace GeoLib
