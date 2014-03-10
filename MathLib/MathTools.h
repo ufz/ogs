@@ -107,13 +107,6 @@ void crossProd (const double u[3], const double v[3], double r[3]);
 double calcProjPntToLineAndDists(const double p[3], const double a[3],
                                  const double b[3], double &lambda, double &d0);
 
-/** squared dist between GeoLib::Points p0 and p1 */
-template <typename T>
-T sqrDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
-{
-	return sqrDist(*p0,*p1);
-}
-
 template <typename POINT_T>
 typename POINT_T::FP_T sqrDist(POINT_T const& p0, POINT_T const& p1)
 {

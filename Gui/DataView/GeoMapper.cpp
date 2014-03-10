@@ -203,7 +203,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 
 	const GeoLib::AABB<GeoLib::Point> aabb(points->begin(), points->end());
 	const double eps = sqrt(std::numeric_limits<float>::epsilon()) *
-		               sqrt( MathLib::sqrDist(&(aabb.getMinPoint()),&(aabb.getMaxPoint())) );
+		               sqrt( MathLib::sqrDist(aabb.getMinPoint(),aabb.getMaxPoint())) ;
 
 	// copy geometry (and set z=0 for all points)
 	unsigned nGeoPoints ( points->size() );

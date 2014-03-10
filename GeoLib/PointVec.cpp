@@ -37,7 +37,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	assert (_data_vec);
 	std::size_t number_of_all_input_pnts (_data_vec->size());
 
-	rel_eps *= sqrt(MathLib::sqrDist (&(_aabb.getMinPoint()),&(_aabb.getMaxPoint())));
+	rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
 	if (number_of_all_input_pnts - _data_vec->size() > 0)
@@ -100,7 +100,7 @@ std::size_t PointVec::uniqueInsert (Point* pnt)
 			[this](Point* const p)
 			{
 				_sqr_shortest_dist = std::min(_sqr_shortest_dist,
-						MathLib::sqrDist(p, _data_vec->back()));
+						MathLib::sqrDist(*p, *(_data_vec->back())));
 			});
 
 	return _data_vec->size()-1;
@@ -239,7 +239,7 @@ void PointVec::calculateShortestDistance ()
 {
 	std::size_t i, j;
 	BruteForceClosestPair (*_data_vec, i, j);
-	_sqr_shortest_dist = MathLib::sqrDist ((*_data_vec)[i], (*_data_vec)[j]);
+	_sqr_shortest_dist = MathLib::sqrDist (*(*_data_vec)[i], *(*_data_vec)[j]);
 }
 
 std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> &subset)

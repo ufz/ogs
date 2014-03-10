@@ -70,7 +70,7 @@ TEST(GeoLib, SearchNearestPointInGrid)
 
 	GeoLib::Point p0(0,10,10);
 	GeoLib::Point* res(grid->getNearestPoint(p0.getCoords()));
-	ASSERT_EQ(sqrt(MathLib::sqrDist(res, pnts[0])), 0.0);
+	ASSERT_EQ(sqrt(MathLib::sqrDist(*res, *pnts[0])), 0.0);
 }
 
 TEST(GeoLib, SearchNearestPointsInDenseGrid)
@@ -99,19 +99,19 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 	GeoLib::PointWithID search_pnt(1,1,1, 0);
 	GeoLib::PointWithID* res(grid->getNearestPoint(search_pnt.getCoords()));
 	ASSERT_EQ(res->getID(), i_max*j_max*k_max-1);
-	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(3.0)/50.0, std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(sqrt(MathLib::sqrDist(*res, search_pnt)), sqrt(3.0)/50.0, std::numeric_limits<double>::epsilon());
 
 	// search point (0,1,1) is outside of the point set
 	search_pnt[0] = 0;
 	res = grid->getNearestPoint(search_pnt.getCoords());
 	ASSERT_EQ(res->getID(), j_max*k_max - 1);
-	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(2.0)/50.0, std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(sqrt(MathLib::sqrDist(*res, search_pnt)), sqrt(2.0)/50.0, std::numeric_limits<double>::epsilon());
 
 	// search point (0.5,1,1) is outside of the point set
 	search_pnt[0] = 0.5;
 	res = grid->getNearestPoint(search_pnt.getCoords());
 	ASSERT_EQ(res->getID(), j_max*k_max*(i_max/2 + 1) - 1);
-	ASSERT_NEAR(sqrt(MathLib::sqrDist(res, &search_pnt)), sqrt(2.0)/50.0, std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(sqrt(MathLib::sqrDist(*res, search_pnt)), sqrt(2.0)/50.0, std::numeric_limits<double>::epsilon());
 
 	for (std::size_t i(0); i < i_max; i++) {
 		std::size_t offset0(i * j_max * k_max);
@@ -120,7 +120,7 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 			for (std::size_t k(0); k < k_max; k++) {
 				res = grid->getNearestPoint(pnts[offset1+k]->getCoords());
 				ASSERT_EQ(res->getID(), offset1+k);
-				ASSERT_NEAR(sqrt(MathLib::sqrDist(res, pnts[offset1+k])), 0.0, std::numeric_limits<double>::epsilon());
+				ASSERT_NEAR(sqrt(MathLib::sqrDist(*res, *pnts[offset1+k])), 0.0, std::numeric_limits<double>::epsilon());
 			}
 		}
 	}

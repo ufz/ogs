@@ -32,7 +32,7 @@ MeshNodesAlongPolyline::MeshNodesAlongPolyline(
 	// loop over all line segments of the polyline
 	for (size_t k = 0; k < _ply.getNumberOfPoints() - 1; k++) {
 		double act_length_of_ply(_ply.getLength(k));
-		double seg_length (sqrt(MathLib::sqrDist(_ply.getPoint(k), _ply.getPoint(k + 1))));
+		double seg_length (sqrt(MathLib::sqrDist(*_ply.getPoint(k), *_ply.getPoint(k + 1))));
 		double lower_lambda (- epsilon_radius / seg_length);
 		double upper_lambda (1 + epsilon_radius / seg_length);
 
