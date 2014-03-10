@@ -100,7 +100,7 @@ bool lineSegmentIntersect(
 	GeoLib::Point const& d,
 	GeoLib::Point& s)
 {
-	if (! pointsOnAPlane(a, b, c, d))
+	if (!isCoplanar(a, b, c, d))
 		return false;
 
 	MathLib::Vector3 const v(a, b);
