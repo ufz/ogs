@@ -64,10 +64,10 @@ public:
 
 
 private:
-	/// Designates nodes to be collapsed by setting their ID to the index of the node they will sget merged with.
+	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
 	std::vector<std::size_t> collapseNodeIndeces(double eps) const;
 	/// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.
-	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map);
+	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map) const;
 
 	/// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
 	unsigned getNUniqueNodes(MeshLib::Element const*const element) const;

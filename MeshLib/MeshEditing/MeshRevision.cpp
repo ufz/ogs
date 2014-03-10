@@ -45,7 +45,7 @@ MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, dou
 	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
 	std::vector<MeshLib::Element*> new_elements;
 	new_elements.reserve(this->_mesh.getNElements());
-	const std::vector<MeshLib::Element*> elements (this->_mesh.getElements());
+	std::vector<MeshLib::Element*> const& elements (this->_mesh.getElements());
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 		new_elements.push_back(copyElement(*elem, new_nodes));
 	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
@@ -139,7 +139,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndeces(double eps) const
 	return id_map;
 }
 
-std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vector<std::size_t> &id_map)
+std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vector<std::size_t> &id_map) const
 {
 	std::vector<MeshLib::Node*> nodes (_mesh.getNodes());
 	const std::size_t nNodes (nodes.size());
