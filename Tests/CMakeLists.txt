@@ -80,12 +80,12 @@ IF (OGS_USE_PETSC)
 	ADD_CUSTOM_TARGET(test
 		mpirun -np 3 $<TARGET_FILE:testrunner>
 		DEPENDS testrunner
-	)		
+	)
 ELSE ()
 	ADD_CUSTOM_TARGET(test
 		$<TARGET_FILE:testrunner>
 		DEPENDS testrunner
-	)		
+	)
 ENDIF ()
 
 # Testing
