@@ -36,10 +36,10 @@ Triangle::Triangle (std::vector<Point *> const &pnt_vec, size_t pnt_a, size_t pn
 	_pnt_ids[0] = pnt_a;
 	_pnt_ids[1] = pnt_b;
 	_pnt_ids[2] = pnt_c;
-	_longest_edge = MathLib::sqrDist (_pnts[_pnt_ids[0]], _pnts[_pnt_ids[1]]);
-	double tmp (MathLib::sqrDist (_pnts[_pnt_ids[1]], _pnts[_pnt_ids[2]]));
+	_longest_edge = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[1]]);
+	double tmp (MathLib::sqrDist (*_pnts[_pnt_ids[1]], *_pnts[_pnt_ids[2]]));
 	if (tmp > _longest_edge) _longest_edge = tmp;
-	tmp = MathLib::sqrDist (_pnts[_pnt_ids[0]], _pnts[_pnt_ids[2]]);
+	tmp = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[2]]);
 	if (tmp > _longest_edge) _longest_edge = tmp;
 	_longest_edge = sqrt (_longest_edge);
 }
@@ -51,10 +51,10 @@ void Triangle::setTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 	_pnt_ids[1] = pnt_b;
 	_pnt_ids[2] = pnt_c;
 
-	_longest_edge = MathLib::sqrDist (_pnts[_pnt_ids[0]], _pnts[_pnt_ids[1]]);
-	double tmp (MathLib::sqrDist (_pnts[_pnt_ids[1]], _pnts[_pnt_ids[2]]));
+	_longest_edge = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[1]]);
+	double tmp (MathLib::sqrDist (*_pnts[_pnt_ids[1]], *_pnts[_pnt_ids[2]]));
 	if (tmp > _longest_edge) _longest_edge = tmp;
-	tmp = MathLib::sqrDist (_pnts[_pnt_ids[0]], _pnts[_pnt_ids[2]]);
+	tmp = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[2]]);
 	if (tmp > _longest_edge) _longest_edge = tmp;
 	_longest_edge = sqrt (_longest_edge);
 }

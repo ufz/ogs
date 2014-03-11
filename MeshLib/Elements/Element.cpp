@@ -89,7 +89,7 @@ void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 	const unsigned nEdges (this->getNEdges());
 	for (unsigned i=0; i<nEdges; i++)
 	{
-		const double dist (MathLib::sqrDist(getEdgeNode(i,0), getEdgeNode(i,1)));
+		const double dist (MathLib::sqrDist(*getEdgeNode(i,0), *getEdgeNode(i,1)));
 		min = (dist<min) ? dist : min;
 		max = (dist>max) ? dist : max;
 	}

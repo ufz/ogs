@@ -189,7 +189,7 @@ public:
 		std::size_t coords[3];
 		getGridCoords(POINT(pnt), coords);
 
-		double sqr_min_dist (MathLib::sqrDist(&this->_min_pnt, &this->_max_pnt));
+		double sqr_min_dist (MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
 		POINT* nearest_pnt(NULL);
 
 		double dists[6];

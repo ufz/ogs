@@ -63,8 +63,8 @@ void Polyline::addPoint(std::size_t pnt_id)
 
 	if (n_pnts > 0)
 	{
-		double act_dist (sqrt(MathLib::sqrDist (_ply_pnts[_ply_pnt_ids[n_pnts - 1]],
-		                                        _ply_pnts[pnt_id])));
+		double act_dist (sqrt(MathLib::sqrDist (*_ply_pnts[_ply_pnt_ids[n_pnts - 1]],
+		                                        *_ply_pnts[pnt_id])));
 		double dist_until_now (0.0);
 		if (n_pnts > 1)
 			dist_until_now = _length[n_pnts - 1];
@@ -105,8 +105,8 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 		// update the _length vector
 		if (pos == 0) {
 			// insert at first position
-			double act_dist(sqrt(MathLib::sqrDist(_ply_pnts[_ply_pnt_ids[1]],
-			                                      _ply_pnts[pnt_id])));
+			double act_dist(sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[1]],
+			                                      *_ply_pnts[pnt_id])));
 			_length.insert(_length.begin() + 1, act_dist);
 			const std::size_t s(_length.size());
 			for (std::size_t k(2); k < s; k++)
@@ -115,8 +115,8 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 			if (pos == _ply_pnt_ids.size() - 1) {
 				// insert at last position
 				double act_dist(sqrt(MathLib::sqrDist(
-				                             _ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
-				                             _ply_pnts[pnt_id])));
+				                             *_ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
+				                             *_ply_pnts[pnt_id])));
 				double dist_until_now (0.0);
 				if (_ply_pnt_ids.size() > 2)
 					dist_until_now = _length[_ply_pnt_ids.size() - 2];
@@ -128,11 +128,11 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 				if (pos > 1)
 					dist_until_now = _length[pos - 1];
 				double len_seg0(sqrt(MathLib::sqrDist(
-				                             _ply_pnts[_ply_pnt_ids[pos - 1]],
-				                             _ply_pnts[pnt_id])));
+				                             *_ply_pnts[_ply_pnt_ids[pos - 1]],
+				                             *_ply_pnts[pnt_id])));
 				double len_seg1(sqrt(MathLib::sqrDist(
-				                             _ply_pnts[_ply_pnt_ids[pos + 1]],
-				                             _ply_pnts[pnt_id])));
+				                             *_ply_pnts[_ply_pnt_ids[pos + 1]],
+				                             *_ply_pnts[pnt_id])));
 				double update_dist(
 				        len_seg0 + len_seg1 - (_length[pos] - dist_until_now));
 				_length[pos] = dist_until_now + len_seg0;
@@ -168,8 +168,8 @@ void Polyline::removePoint(std::size_t pos)
 		const double len_seg0(_length[pos] - _length[pos - 1]);
 		const double len_seg1(_length[pos + 1] - _length[pos]);
 		_length.erase(_length.begin() + pos);
-		const double len_new_seg(sqrt(MathLib::sqrDist(_ply_pnts[_ply_pnt_ids[pos - 1]],
-		                                               _ply_pnts[_ply_pnt_ids[pos]])));
+		const double len_new_seg(sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[pos - 1]],
+		                                               *_ply_pnts[_ply_pnt_ids[pos]])));
 		double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
 
 		for (std::size_t k(pos); k < n_ply_pnt_ids; k++)
@@ -348,11 +348,11 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
 		return Location::BEHIND;
 	if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
 		return Location::BEYOND;
-	if (MathLib::sqrDist (&pnt,
-	                      _ply_pnts[_ply_pnt_ids[k]]) < pow(std::numeric_limits<double>::epsilon(),2))
+	if (MathLib::sqrDist (pnt,
+	                      *_ply_pnts[_ply_pnt_ids[k]]) < pow(std::numeric_limits<double>::epsilon(),2))
 		return Location::SOURCE;
-	if (MathLib::sqrDist (&pnt,
-	                      _ply_pnts[_ply_pnt_ids[k + 1]]) <
+	if (MathLib::sqrDist (pnt,
+	                      *_ply_pnts[_ply_pnt_ids[k + 1]]) <
 	    sqrt(std::numeric_limits<double>::epsilon()))
 		return Location::DESTINATION;
 	return Location::BETWEEN;
@@ -439,6 +439,6 @@ bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
 {
 	if (i == j)
 		return true;
-	return MathLib::sqrDist(pnt_vec[i], pnt_vec[j]) < prox;
+	return MathLib::sqrDist(*pnt_vec[i], *pnt_vec[j]) < prox;
 }
 } // end namespace GeoLib
