@@ -15,6 +15,8 @@
 #include "Configure.h"
 #include "mainwindow.h"
 
+#include "MeshEditing\MeshRevision.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
