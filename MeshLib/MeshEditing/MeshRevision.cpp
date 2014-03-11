@@ -12,10 +12,10 @@
  *
  */
 
+#include "MeshRevision.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
-
-#include "MeshRevision.h"
 
 // GeoLib
 #include "Grid.h"
@@ -36,7 +36,7 @@
 namespace MeshLib {
 
 MeshRevision::MeshRevision(const MeshLib::Mesh &mesh) :
-	_mesh (mesh)
+	_mesh(mesh)
 {}
 
 
@@ -45,20 +45,21 @@ MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, dou
 	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
 	std::vector<MeshLib::Element*> new_elements;
 	new_elements.reserve(this->_mesh.getNElements());
-	std::vector<MeshLib::Element*> const& elements (this->_mesh.getElements());
+	std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 		new_elements.push_back(copyElement(*elem, new_nodes));
+	this->resetNodeIDs();
 	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 }
 
 unsigned MeshRevision::getNCollapsableNodes(double eps) const
 {
-	std::vector<std::size_t> id_map (this->collapseNodeIndeces(eps));
-	std::size_t nNodes (id_map.size());
-	unsigned count (0);
-	for (std::size_t i=0; i<nNodes; ++i)
-		if (i != id_map[i])
-			count++;
+	std::vector<std::size_t> id_map(this->collapseNodeIndeces(eps));
+	std::size_t nNodes(id_map.size());
+	unsigned count(0);
+	for (std::size_t i = 0; i < nNodes; ++i)
+	if (i != id_map[i])
+		count++;
 	return count;
 }
 
@@ -70,15 +71,23 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 	std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndeces(eps));
 	std::vector<MeshLib::Element*> new_elements;
 
-	const std::vector<MeshLib::Element*> elements (this->_mesh.getElements());
+	const std::vector<MeshLib::Element*> &elements(this->_mesh.getElements());
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 	{
-		unsigned n_unique_nodes (this->getNUniqueNodes(*elem));
+		unsigned n_unique_nodes(this->getNUniqueNodes(*elem));
 		if (n_unique_nodes == (*elem)->getNNodes() && (*elem)->getDimension() >= min_elem_dim)
 		{
-			ElementErrorCode e ((*elem)->validate());
+			ElementErrorCode e((*elem)->validate());
 			if (e[ElementErrorFlag::NonCoplanar])
-				this->subdivideElement(*elem, new_nodes, new_elements);
+			{
+				if (!this->subdivideElement(*elem, new_nodes, new_elements))
+				{
+					ERR("Error: Element %d has unknown element type.", std::distance(elements.begin(), elem));
+					this->resetNodeIDs();
+					this->cleanUp(new_nodes, new_elements);
+					return nullptr;
+				}
+			}
 			else
 				new_elements.push_back(copyElement(*elem, new_nodes));
 		}
@@ -88,37 +97,41 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 			std::cout << "Error: Something is wrong, more unique nodes than actual nodes" << std::endl;
 
 	}
+		
+	this->resetNodeIDs();
 	if (!new_elements.empty())
 		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 
-	// clean up
-	for (auto node = new_nodes.begin(); node != new_nodes.end(); ++node)
-		delete *node;
+	this->cleanUp(new_nodes, new_elements);
 	return nullptr;
 }
 
 std::vector<std::size_t> MeshRevision::collapseNodeIndeces(double eps) const
 {
-	const std::vector<MeshLib::Node*> nodes (_mesh.getNodes());
-	const std::size_t nNodes (_mesh.getNNodes());
+	const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
+	const std::size_t nNodes(_mesh.getNNodes());
 	std::vector<std::size_t> id_map(nNodes);
-	for (std::size_t k=0; k<nNodes; ++k)
-		id_map[k]=k;
+	const double half_eps(eps / 2.0);
+	const double sqr_eps(eps*eps);
+	for (std::size_t k = 0; k < nNodes; ++k)
+		id_map[k] = k;
 
-	GeoLib::Grid<MeshLib::Node>* grid(new GeoLib::Grid<MeshLib::Node>(nodes.begin(), nodes.end(), 64));
+	GeoLib::Grid<MeshLib::Node> grid(nodes.begin(), nodes.end(), 64);
 
-	for (size_t k=0; k<nNodes; ++k)
+	for (size_t k = 0; k < nNodes; ++k)
 	{
 		std::vector<std::vector<MeshLib::Node*> const*> node_vectors;
 		MeshLib::Node const*const node(nodes[k]);
-		grid->getPntVecsOfGridCellsIntersectingCube(node->getCoords(), eps, node_vectors);
+		if (node->getID() != k)
+			continue;
+		grid.getPntVecsOfGridCellsIntersectingCube(node->getCoords(), half_eps, node_vectors);
 
-		const size_t nVectors (node_vectors.size());
-		for (size_t i=0; i<nVectors; ++i)
+		const size_t nVectors(node_vectors.size());
+		for (size_t i = 0; i < nVectors; ++i)
 		{
-			std::vector<MeshLib::Node*> cell_vector (*node_vectors[i]);
-			const size_t nGridCellNodes (cell_vector.size());
-			for (size_t j=0; j<nGridCellNodes; ++j)
+			const std::vector<MeshLib::Node*> &cell_vector(*node_vectors[i]);
+			const size_t nGridCellNodes(cell_vector.size());
+			for (size_t j = 0; j < nGridCellNodes; ++j)
 			{
 				MeshLib::Node* test_node(cell_vector[j]);
 				// are node indices already identical (i.e. nodes will be collapsed)
@@ -131,8 +144,11 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndeces(double eps) const
 					continue;
 
 				// calc distance
-				if (MathLib::sqrDist(node->getCoords(), test_node->getCoords()) < eps)
+				if (MathLib::sqrDist(node->getCoords(), test_node->getCoords()) < sqr_eps)
+				{
+					std::cout << MathLib::sqrDist(node->getCoords(), test_node->getCoords()) << ", " << sqr_eps << std::endl;
 					id_map[test_node->getID()] = node->getID();
+				}
 			}
 		}
 	}
@@ -141,16 +157,17 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndeces(double eps) const
 
 std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vector<std::size_t> &id_map) const
 {
-	std::vector<MeshLib::Node*> nodes (_mesh.getNodes());
-	const std::size_t nNodes (nodes.size());
+	const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
+	const std::size_t nNodes(nodes.size());
 	std::vector<MeshLib::Node*> new_nodes;
-	for (std::size_t k=0; k<nNodes; ++k)
+	new_nodes.reserve(nNodes);
+	for (std::size_t k = 0; k < nNodes; ++k)
 	{
 		// all nodes that have not been collapsed with other nodes are copied into new array
 		if (nodes[k]->getID() == id_map[k])
 		{
-			unsigned id = static_cast<unsigned>(new_nodes.size());
-			new_nodes.push_back (new MeshLib::Node( (*nodes[k])[0], (*nodes[k])[1], (*nodes[k])[2], id) );
+			std::size_t id(new_nodes.size());
+			new_nodes.push_back(new MeshLib::Node((*nodes[k])[0], (*nodes[k])[1], (*nodes[k])[2], id));
 			nodes[k]->setID(id); // the node in the old array gets the index of the same node in the new array
 		}
 		// the other nodes are not copied and get the index of the nodes they will have been collapsed with
@@ -162,17 +179,25 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
 
 unsigned MeshRevision::getNUniqueNodes(MeshLib::Element const*const element) const
 {
-	unsigned nNodes (element->getNNodes());
-	unsigned count (nNodes);
+	unsigned nNodes(element->getNNodes());
+	unsigned count(nNodes);
 
-	for (unsigned i=0; i<nNodes-1; ++i)
-		for (unsigned j=i+1; j<nNodes; ++j)
-			if (element->getNode(i)->getID()==element->getNode(j)->getID())
-			{
-				count--;
-				break;
-			}
+	for (unsigned i = 0; i < nNodes - 1; ++i)
+	for (unsigned j = i + 1; j < nNodes; ++j)
+	if (element->getNode(i)->getID() == element->getNode(j)->getID())
+	{
+		count--;
+		break;
+	}
 	return count;
+}
+
+void MeshRevision::resetNodeIDs()
+{
+	const std::size_t nNodes(this->_mesh.getNNodes());
+	const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
+	for (std::size_t i = 0; i < nNodes; ++i)
+		nodes[i]->setID(i);
 }
 
 MeshLib::Element* MeshRevision::copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const
@@ -197,18 +222,18 @@ MeshLib::Element* MeshRevision::copyElement(MeshLib::Element const*const element
 	return nullptr;
 }
 
-void MeshRevision::subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const
+bool MeshRevision::subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const
 {
+	unsigned n_new_elems (0);
 	if (element->getGeomType() == MeshElemType::QUAD)
-		this->subdivideQuad(element, nodes, elements);
+		n_new_elems = this->subdivideQuad(element, nodes, elements);
 	else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
-		this->subdivideHex(element, nodes, elements);
+		n_new_elems = this->subdivideHex(element, nodes, elements);
 	else if (element->getGeomType() == MeshElemType::PYRAMID)
-		this->subdividePyramid(element, nodes, elements);
+		n_new_elems = this->subdividePyramid(element, nodes, elements);
 	else if (element->getGeomType() == MeshElemType::PRISM)
-		this->subdividePrism(element, nodes, elements);
-	else
-		ERR ("Error: Unknown element type.");
+		n_new_elems = this->subdividePrism(element, nodes, elements);
+	return (n_new_elems > 0);
 }
 
 void MeshRevision::reduceElement(MeshLib::Element const*const element, 
@@ -239,7 +264,6 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 		this->reducePrism(element, n_unique_nodes, nodes, elements, min_elem_dim);
 	else
 		ERR ("Error: Unknown element type.");
-	return;
 }
 
 MeshLib::Element* MeshRevision::copyLine(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
@@ -635,7 +659,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 }
 
 MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const element, 
-											  const std::vector<MeshLib::Node*> &nodes) const
+	                                          const std::vector<MeshLib::Node*> &nodes) const
 {
 	MeshLib::Node** line_nodes = new MeshLib::Node*[2];
 	line_nodes[0] = nodes[element->getNode(0)->getID()];
@@ -651,7 +675,7 @@ MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const eleme
 }
 
 MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const element, 
-											 const std::vector<MeshLib::Node*> &nodes) const
+	                                         const std::vector<MeshLib::Node*> &nodes) const
 {
 	MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 	tri_nodes[0] = nodes[element->getNode(0)->getID()];
@@ -807,6 +831,15 @@ unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
 	else if ((id1==4 && id2==5) || (id1==5 && id2==4)) return 3;
 	else if ((id1==3 && id2==5) || (id1==5 && id2==3)) return 4;
 	else return std::numeric_limits<unsigned>::max();
+}
+
+void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements)
+{
+	for (auto elem = new_elements.begin(); elem != new_elements.end(); ++elem)
+		delete *elem;
+
+	for (auto node = new_nodes.begin(); node != new_nodes.end(); ++node)
+		delete *node;
 }
 
 } // end namespace MeshLib

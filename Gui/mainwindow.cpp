@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include "MeshEditing\MeshRevision.h"
+#include "Elements\Tri.h"
 
 #include "Configure.h"
 #include "mainwindow.h"
@@ -1284,6 +1286,24 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	std::vector<MeshLib::Node*> nodes;
+	nodes.push_back(new MeshLib::Node(1, 0, 0));
+	nodes.push_back(new MeshLib::Node(0, 0, 0));
+	nodes.push_back(new MeshLib::Node(0, 0, 0.1));
+
+	std::array<MeshLib::Node*, 3> nodes_array = { nodes[0], nodes[1], nodes[2] };
+	std::vector<MeshLib::Element*> elements;
+	MeshLib::Element* elem(new MeshLib::Tri(nodes_array));
+	elements.push_back(elem);
+	MeshLib::Mesh mesh("testmesh", nodes, elements);
+
+	MeshLib::MeshRevision rev(mesh);
+	MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
+	delete result;
+
+	result = rev.simplifyMesh("new_mesh", 0.0999);
+	std::cout << MeshElemType2String(result->getElement(0)->getGeomType()) << std::endl;
+	this->_meshModels->addMesh(result);
 }
 
 

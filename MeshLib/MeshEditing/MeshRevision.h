@@ -72,12 +72,15 @@ private:
 	/// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
 	unsigned getNUniqueNodes(MeshLib::Element const*const element) const;
 
+	/// Resets the node IDs of the source mesh (needs to be called after everything is done).
+	void resetNodeIDs();
+	
 	/// Copies an element without change, using the nodes vector from the result mesh.
 	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
 		                          const std::vector<MeshLib::Node*> &nodes) const;
 
 	/// Subdivides an element if it has a face that is not coplanar
-	void subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const;
+	bool subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const;
 
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
 	void reduceElement(MeshLib::Element const*const element, 
@@ -85,6 +88,9 @@ private:
 					   const std::vector<MeshLib::Node*> &nodes,
 					   std::vector<MeshLib::Element*> &elements,
 					   unsigned min_elem_dim) const;
+
+	/// Cleans up all nodes and elements if something went wrong
+	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements);
 
 	/// Creates a new line element identical with "line" but using the new nodes vector.
 	MeshLib::Element* copyLine(MeshLib::Element const*const line, const std::vector<MeshLib::Node*> &nodes) const;
