@@ -100,7 +100,7 @@ bool lineSegmentIntersect(
 	GeoLib::Point const& d,
 	GeoLib::Point& s)
 {
-	if (! pointsOnAPlane(a, b, c, d))
+	if (!isCoplanar(a, b, c, d))
 		return false;
 
 	MathLib::Vector3 const v(a, b);
@@ -397,7 +397,7 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	return false;
 }
 
-bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
 {
 	const MathLib::Vector3 ab(a,b);
 	const MathLib::Vector3 ac(a,c);

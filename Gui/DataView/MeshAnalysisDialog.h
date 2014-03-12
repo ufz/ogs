@@ -37,7 +37,7 @@ public:
 
 private:
 	/// Prepares the output for the node message window
-	void nodesMsgOutput(const std::vector<std::size_t> &node_ids);
+	void nodesMsgOutput(const std::vector<std::size_t> &node_ids, unsigned nCollapsableNodes);
 
 	const std::vector<MeshLib::Mesh*>& _mesh_vec;
 

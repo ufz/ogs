@@ -158,7 +158,7 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
  /// Checks if the four given points are located on a plane.
- bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
+ bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
 

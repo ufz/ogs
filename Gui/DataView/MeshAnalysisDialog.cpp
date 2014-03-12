@@ -15,6 +15,7 @@
 #include "MeshAnalysisDialog.h"
 #include "Mesh.h"
 #include "MeshQuality/MeshValidation.h"
+#include "MeshEditing/MeshRevision.h"
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -41,7 +42,9 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()]);
 
 	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
-	this->nodesMsgOutput(unusedNodesIdx);
+	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
+	const unsigned nCollapsableNodes (rev.getNCollapsableNodes());
+	this->nodesMsgOutput(unusedNodesIdx, nCollapsableNodes);
 
 	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshValidation::testElementGeometry(*mesh));
 	//this->elementMsgOutput(element_error_codes);
@@ -49,18 +52,20 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	this->elementsMsg->setText(elementMsgOutput);
 }
 
-void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids)
+void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids, unsigned nCollapsableNodes)
 {
 	const std::size_t nNodeIds (node_ids.size());
 	QString nodes_output("");
 	if (node_ids.empty())
-		nodes_output += "Nothing to report.";
+		nodes_output += "No unused nodes found.";
 	else
 	{
 		(QString::number(nNodeIds) + " nodes are not part of any element:\n");
 		for (std::size_t i=0; i<nNodeIds; ++i)
 			nodes_output += (QString::number(node_ids[i]) + ", ");
 	}
+	
+	nodes_output += "\nFound " + QString::number(nCollapsableNodes) + " potentially collapsable nodes.";
 	this->nodesMsg->setText(nodes_output);
 }
 
