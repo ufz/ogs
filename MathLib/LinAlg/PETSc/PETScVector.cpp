@@ -59,7 +59,6 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
     }
 }
 
-//-----------------------------------------------------------------
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
                                       PetscScalar global_array[])
 {

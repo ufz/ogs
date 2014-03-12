@@ -39,7 +39,8 @@ class PETScVector
         /*!
             \brief Constructor
             \param vec_size       The size of the vector, either global or local
-            \param is_global_size The flag of the global size, the default is true
+            \param is_global_size The flag of the type of vec_size, i.e. whether it is a global size 
+                                  or local size. The default is true.
         */
         PETScVector(const PetscInt vec_size, const bool is_global_size = true);
 
@@ -95,7 +96,6 @@ class PETScVector
 
         /*!
            Insert a single entry with value.
-
            \param i     Entry index
            \param value Entry value
 
@@ -107,7 +107,6 @@ class PETScVector
 
         /*!
            Add a value to an entry.
-
            \param i     Number of the entry
            \param value Value.
         */
@@ -154,7 +153,6 @@ class PETScVector
 
         /*!
            Get local vector, i.e. entries in the same rank
-
            \param loc_vec  Pointer to array where stores the local vector,
                            memory allocation is not needed
         */
@@ -167,7 +165,6 @@ class PETScVector
 
         /*!
            Get global vector
-
            \param u Array to store the global vector. Memory allocation is needed in advance
         */
         void getGlobalVector(PetscScalar u[]);
@@ -176,7 +173,7 @@ class PETScVector
         /// and it only get local value. Use it for only test purpose
         PetscScalar get(const PetscInt idx) const
         {
-            double x;
+            PetscScalar x;
             VecGetValues(_v, 1, &idx, &x);
             return x;
         }
