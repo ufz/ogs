@@ -14,6 +14,7 @@
 #include <limits>
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 namespace NumLib
 {
