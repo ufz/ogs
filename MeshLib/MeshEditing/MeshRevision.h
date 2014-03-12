@@ -36,8 +36,11 @@ namespace MeshLib {
  */
 class MeshRevision {
 public:
-	/// Constructor
-	MeshRevision(const MeshLib::Mesh &mesh);
+	/** 
+	 * Constructor
+	 * @param mesh The mesh which is being revised. Note that node IDs in mesh are changed during computation but are resetted after the algorithms implemented here are finished
+	 */
+	MeshRevision(MeshLib::Mesh &mesh);
 
 	virtual ~MeshRevision() {}
 
@@ -84,10 +87,10 @@ private:
 
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
 	void reduceElement(MeshLib::Element const*const element, 
-		               unsigned n_unique_nodes, 
-					   const std::vector<MeshLib::Node*> &nodes,
-					   std::vector<MeshLib::Element*> &elements,
-					   unsigned min_elem_dim) const;
+	                   unsigned n_unique_nodes, 
+	    			   const std::vector<MeshLib::Node*> &nodes,
+	    			   std::vector<MeshLib::Element*> &elements,
+	    			   unsigned min_elem_dim) const;
 
 	/// Cleans up all nodes and elements if something went wrong
 	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements);
@@ -131,16 +134,16 @@ private:
 	 * @return The number of newly created elements
 	 */
 	unsigned reduceHex(MeshLib::Element const*const hex, 
-		           unsigned n_unique_nodes, 
-				   const std::vector<MeshLib::Node*> &nodes, 
-				   std::vector<MeshLib::Element*> &new_elements,
-				   unsigned min_elem_dim) const;
+	                   unsigned n_unique_nodes, 
+	                   const std::vector<MeshLib::Node*> &nodes, 
+	                   std::vector<MeshLib::Element*> &new_elements,
+	                   unsigned min_elem_dim) const;
 	/// Reduces a pyramid element by removing collapsed nodes and constructing a new elements from the remaining nodes.
 	void reducePyramid(MeshLib::Element const*const pyramid, 
-		               unsigned n_unique_nodes,
-					   const std::vector<MeshLib::Node*> &nodes,
-					   std::vector<MeshLib::Element*> &new_elements,
-					   unsigned min_elem_dim) const;
+	                   unsigned n_unique_nodes,
+	                   const std::vector<MeshLib::Node*> &nodes,
+	                   std::vector<MeshLib::Element*> &new_elements,
+	                   unsigned min_elem_dim) const;
 	/**
 	 * Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
 	 * @return The number of newly created elements
@@ -167,7 +170,9 @@ private:
 	unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;
 
 	/// The original mesh used for constructing the class
-	const Mesh& _mesh;
+	Mesh& _mesh;
+
+	static const std::array<unsigned,8> _hex_diametral_nodes;
 };
 
 }

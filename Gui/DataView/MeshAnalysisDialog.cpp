@@ -42,7 +42,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()]);
 
 	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
-	MeshLib::MeshRevision rev(*mesh);
+	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
 	const unsigned nCollapsableNodes (rev.getNCollapsableNodes());
 	this->nodesMsgOutput(unusedNodesIdx, nCollapsableNodes);
 
