@@ -90,7 +90,7 @@ if (PETSC_DIR AND NOT PETSC_ARCH)
     if (NOT PETSC_ARCH)
       find_path (petscconf petscconf.h
   HINTS ${PETSC_DIR}
-  PATH_SUFFIXES ${arch}/include bmake/${arch}
+  PATH_SUFFIXES ${arch}/include bmake/${arch} /opt/petsc/${PETSC_ARCH}/include
   NO_DEFAULT_PATH)
       if (petscconf)
   set (PETSC_ARCH "${arch}" CACHE STRING "PETSc build architecture")
@@ -115,6 +115,9 @@ if (EXISTS "${PETSC_DIR}/${PETSC_ARCH}/include/petscconf.h")   # > 2.3.3
 elseif (EXISTS "${PETSC_DIR}/bmake/${PETSC_ARCH}/petscconf.h") # <= 2.3.3
   set (petsc_conf_rules "${PETSC_DIR}/bmake/common/rules")
   set (petsc_conf_variables "${PETSC_DIR}/bmake/common/variables")
+elseif (EXISTS "${PETSC_DIR}/opt/petsc/include/petscconf.h") # Mac OS X with Homebrew
+  set (petsc_conf_rules "${PETSC_DIR}/opt/petsc/${PETSC_ARCH}/conf/rules")
+  set (petsc_conf_variables "${PETSC_DIR}/opt/petsc/${PETSC_ARCH}/conf/variables")
 elseif (PETSC_DIR)
   message (SEND_ERROR "The pair PETSC_DIR=${PETSC_DIR} PETSC_ARCH=${PETSC_ARCH} do not specify a valid PETSc installation")
 endif ()
@@ -136,7 +139,7 @@ if (petsc_conf_rules AND petsc_conf_variables AND NOT petsc_config_current)
 include ${petsc_conf_rules}
 include ${petsc_conf_variables}
 show :
-  -@echo -n \${\${VARIABLE}}
+	-@echo -n \${\${VARIABLE}}
 ")
 
   macro (PETSC_GET_VARIABLE name var)
