@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "petscvec.h"
+#include <petscvec.h>
 #include "LinAlg/VectorNorms.h"
 
 typedef Vec PETSc_Vec;
