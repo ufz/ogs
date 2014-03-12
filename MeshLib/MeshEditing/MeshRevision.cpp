@@ -35,8 +35,7 @@
 
 namespace MeshLib {
 
-const std::array<unsigned, 8> MeshRevision::_hex_diametral_nodes = { 6, 7, 4, 5, 2, 3, 0, 1 };
-
+const std::array<unsigned, 8> MeshRevision::_hex_diametral_nodes = {{ 6, 7, 4, 5, 2, 3, 0, 1 }};
 
 MeshRevision::MeshRevision(MeshLib::Mesh &mesh) :
 	_mesh(mesh)
@@ -202,7 +201,6 @@ void MeshRevision::resetNodeIDs()
 
 MeshLib::Element* MeshRevision::copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const
 {
-	MeshLib::Element* new_elem (nullptr);
 	if (element->getGeomType() == MeshElemType::LINE)
 		return this->copyLine(element, nodes);
 	else if (element->getGeomType() == MeshElemType::TRIANGLE)
@@ -245,7 +243,6 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 	/***************
 	 * TODO: modify neighbouring elements if one elements has been subdivided
 	 ***************/
-	MeshLib::Element* new_elem (nullptr);
 	if (element->getGeomType() == MeshElemType::TRIANGLE && min_elem_dim == 1)
 		elements.push_back (this->constructLine(element, nodes));
 	else if ((element->getGeomType() == MeshElemType::QUAD) || 
@@ -528,7 +525,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 	else if (n_unique_nodes == 5)
 	{
 		MeshLib::Element* tet1 (this->constructFourNodeElement(org_elem, nodes));
-		std::array<unsigned, 4> first_four_nodes = { tet1->getNode(0)->getID(), tet1->getNode(1)->getID(), tet1->getNode(2)->getID(), tet1->getNode(3)->getID() };
+		std::array<std::size_t, 4> first_four_nodes = {{ tet1->getNode(0)->getID(), tet1->getNode(1)->getID(), tet1->getNode(2)->getID(), tet1->getNode(3)->getID() }};
 		unsigned fifth_node (this->findPyramidTopNode(*org_elem, first_four_nodes));
 
 		bool tet_changed (false);
@@ -763,7 +760,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(MeshLib::Element const*
 		return nullptr;
 }
 
-unsigned MeshRevision::findPyramidTopNode(const MeshLib::Element &element, const std::array<unsigned,4> &base_node_ids) const
+unsigned MeshRevision::findPyramidTopNode(const MeshLib::Element &element, const std::array<std::size_t,4> &base_node_ids) const
 {
 	const std::size_t nNodes (element.getNNodes());
 	for (std::size_t i=0; i<nNodes; ++i)

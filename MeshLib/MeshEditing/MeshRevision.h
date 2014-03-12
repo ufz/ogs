@@ -155,7 +155,7 @@ private:
 					 unsigned min_elem_dim) const;
 	
 	// In an element with 5 unique nodes, return the node that will be the top of the resulting pyramid
-	unsigned findPyramidTopNode(const MeshLib::Element &element, const std::array<unsigned,4> &base_node_ids) const;
+	unsigned findPyramidTopNode(const MeshLib::Element &element, const std::array<std::size_t,4> &base_node_ids) const;
 
 	/// Lookup-table for returning the diametral node id of the given node id in a Hex
 	unsigned lutHexDiametralNode(unsigned id) const;
