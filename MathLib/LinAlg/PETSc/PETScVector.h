@@ -260,6 +260,7 @@ class PETScVector
         friend void finalizeVectorAssembly(PETScVector &vec);
 };
 
+/// Function to finalize the vector assembly
 void finalizeVectorAssembly(PETScVector &vec);
 
 } // end namespace
