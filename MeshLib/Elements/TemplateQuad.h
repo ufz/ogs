@@ -109,17 +109,6 @@ public:
 	 */
 	virtual Element* clone() const;
 
-	/**
-	 * This method should be called after at least two nodes of the quad
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the quad will be collapsed. If one of the edges (see
-	 * sketch @ref PyramidNodeAndEdgeNumbering) is collapsed we obtain a
-	 * triangle. In this case the method will create the appropriate
-	 * object of class Tri.
-	 * @return a Tri object or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.
 	double computeVolume();

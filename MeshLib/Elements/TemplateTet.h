@@ -105,15 +105,6 @@ public:
 	 */
 	virtual Element* clone() const;
 
-	/**
-	 * This method should be called after at least two nodes of the tetrahedron
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the tetrahedron will be collapsed. If one edge is collapsed we obtain
-	 * a triangle.
-	 * @return a Triangle object or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
 	double computeVolume();

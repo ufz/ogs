@@ -168,16 +168,6 @@ public:
 	virtual Element* clone() const = 0;
 
 	/**
-	 * This method should be called after at least two nodes of an element
-	 * are collapsed. The node collapsing can/have to lead to an edge collapse.
-	 * This method tries to create a new element of an appropriate type. The
-	 * value of the attribute _value is carried over. In contrast to this the
-	 * neighbor information is not carried over.
-	 * @return an element of a different element type (MeshElemType) or NULL
-	 */
-	virtual Element* reviseElement() const = 0;
-
-	/**
 	 * Computes the length / area / volumen of this element. This is automatically
 	 * done at initalisation time but can be repeated by calling this function at any time.
 	 */

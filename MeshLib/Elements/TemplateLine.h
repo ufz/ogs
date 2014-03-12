@@ -88,19 +88,6 @@ public:
 		return new TemplateLine<NNODES,CELLLINETYPE>(*this);
 	}
 
-	/**
-	 * If for instance two nodes of the element are collapsed the Edge element disappears.
-	 * @return NULL
-	 */
-	virtual Element* reviseElement() const
-	{
-		if (_nodes[0] == _nodes[1]) {
-			return NULL;
-		}
-
-		return NULL;
-	}
-
 protected:
 	double computeVolume()
 	{
