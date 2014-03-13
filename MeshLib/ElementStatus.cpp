@@ -51,6 +51,34 @@ std::vector<unsigned> ElementStatus::getActiveNodes() const
 	return active_nodes;
 }
 
+std::vector<MeshLib::Element*> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
+{
+	const unsigned nElems (_mesh->getNode(node_id)->getNElements());
+	const unsigned nActiveElements (_active_nodes[node_id]);
+	const std::vector<Element*> &elements (_mesh->getNode(node_id)->getElements());
+	std::vector<MeshLib::Element*> active_elements;
+	active_elements.reserve(nActiveElements);
+	for (unsigned i=0; i<nElems; ++i)
+	{
+		// if all active elements are found, the test can be cancelled for the rest of the connected elements
+		if (active_elements.size() == nActiveElements)
+			return active_elements;
+
+		const unsigned nElemNodes (elements[i]->getNNodes());
+		MeshLib::Node const*const*const nodes = elements[i]->getNodes();
+		bool isActive (true);
+		for (unsigned j=0; j<nElemNodes; ++j)
+			if (_active_nodes[nodes[j]->getID()]==0)
+			{
+				isActive = false;
+				break;
+			}
+		if (isActive)
+			active_elements.push_back(elements[i]);
+	}
+	return active_elements;
+}
+
 unsigned ElementStatus::getNActiveNodes() const 
 {
 	return _active_nodes.size() - std::count(_active_nodes.begin(), _active_nodes.end(), 0);
@@ -72,6 +100,14 @@ void ElementStatus::setElementStatus(unsigned i, bool status)
 		for (unsigned i=0; i<nElemNodes; ++i)
 			_active_nodes[nodes[i]->getID()] += change;
 	}
+}
+
+void ElementStatus::setMaterialStatus(unsigned material_id, bool status)
+{
+	const std::size_t nElems (_mesh->getNElements());
+	for (std::size_t i=0; i<nElems; ++i)
+		if (_mesh->getElement(i)->getValue() == material_id)
+			this->setElementStatus(i, status);
 }
 
 }

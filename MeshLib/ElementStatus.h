@@ -41,7 +41,7 @@ public:
 	bool getElementStatus(unsigned i) const { return _element_status[i]; }
 
 	/// Returns a vector of active elements connected to a node
-	std::vector<MeshLib::Element*> getActiveElements(unsigned node_id) const {};
+	std::vector<MeshLib::Element*> getActiveElementsAtNode(unsigned node_id) const;
 	
 	/// Returns the total number of active nodes
 	unsigned getNActiveNodes() const;
@@ -56,7 +56,7 @@ public:
 	void setElementStatus(unsigned i, bool status);
 
 	/// Sets the status of material group i
-	void setMaterialStatus(unsigned i, bool status) {};
+	void setMaterialStatus(unsigned material_id, bool status);
 
 	~ElementStatus() {};
 
