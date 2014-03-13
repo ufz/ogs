@@ -36,7 +36,7 @@ const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(const MeshLib:
 
 const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const MeshLib::Mesh &mesh)
 {
-	std::array<unsigned, 7> n_element_types = { 0, 0, 0, 0, 0, 0, 0 };
+	std::array<unsigned, 7> n_element_types = {{0, 0, 0, 0, 0, 0, 0}};
 	const std::vector<MeshLib::Element*> &elements (mesh.getElements());
 	for (auto it = elements.begin(); it != elements.end(); ++it)
 	{

@@ -182,42 +182,5 @@ ElementErrorCode TemplatePrism<NNODES,CELLPRISMTYPE>::validate() const
 	return error_code;
 }
 
-template <unsigned NNODES, CellType CELLPRISMTYPE>
-Element* TemplatePrism<NNODES,CELLPRISMTYPE>::reviseElement() const
-{
-	// try to create Pyramid
-	if (_nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
-		Node** pyramid_nodes = new Node*[5];
-		pyramid_nodes[0] = _nodes[1];
-		pyramid_nodes[1] = _nodes[4];
-		pyramid_nodes[2] = _nodes[5];
-		pyramid_nodes[3] = _nodes[2];
-		pyramid_nodes[4] = _nodes[0];
-		return new Pyramid(pyramid_nodes, _value);
-	}
-
-	if (_nodes[_edge_nodes[4][0]] == _nodes[_edge_nodes[4][1]]) {
-		Node** pyramid_nodes = new Node*[5];
-		pyramid_nodes[0] = _nodes[0];
-		pyramid_nodes[1] = _nodes[2];
-		pyramid_nodes[2] = _nodes[5];
-		pyramid_nodes[3] = _nodes[3];
-		pyramid_nodes[4] = _nodes[1];
-		return new Pyramid(pyramid_nodes, _value);
-	}
-
-	if (_nodes[_edge_nodes[5][0]] == _nodes[_edge_nodes[5][1]]) {
-		Node** pyramid_nodes = new Node*[5];
-		pyramid_nodes[0] = _nodes[0];
-		pyramid_nodes[1] = _nodes[1];
-		pyramid_nodes[2] = _nodes[4];
-		pyramid_nodes[3] = _nodes[3];
-		pyramid_nodes[4] = _nodes[2];
-		return new Pyramid(pyramid_nodes, _value);
-	}
-
-	return NULL;
-}
-
 } // end namespace MeshLib
 

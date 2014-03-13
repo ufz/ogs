@@ -111,17 +111,6 @@ public:
 		return new TemplateTri<NNODES,CELLTRITYPE>(*this);
 	}
 
-
-	/**
-	 * This method should be called after at least two nodes of the triangle
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the triangle will be collapsed. If one of the edges is collapsed we
-	 * obtain an edge. In this case the method will create the appropriate
-	 * object of class Edge.
-	 * @return an Edge object or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
 	double computeVolume()

@@ -88,28 +88,6 @@ ElementErrorCode TemplateTri<NNODES,CELLTRITYPE>::validate() const
 	return error_code;
 }
 
-
-template <unsigned NNODES, CellType CELLTRITYPE>
-Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
-{
-	// try to create an edge
-	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		Node** nodes = new Node*[2];
-		nodes[0] = _nodes[0];
-		nodes[1] = _nodes[2];
-		return new Line(nodes, _value);
-	}
-
-	if (_nodes[0] == _nodes[2]) {
-		Node** nodes = new Node*[2];
-		nodes[0] = _nodes[0];
-		nodes[1] = _nodes[1];
-		return new Line(nodes, _value);
-	}
-
-	return NULL;
-}
-
 template <unsigned NNODES, CellType CELLTRITYPE>
 unsigned TemplateTri<NNODES,CELLTRITYPE>::identifyFace(Node* nodes[3]) const
 {

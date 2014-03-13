@@ -30,23 +30,6 @@ TARGET_LINK_LIBRARIES ( MeshRead
 	${BOOST_LIBRARIES}
 )
 
-# Create CollapseMeshNodes executable
-ADD_EXECUTABLE( CollapseMeshNodes
-	CollapseMeshNodes.cpp
-	${SOURCES}
-	${HEADERS}
-)
-
-TARGET_LINK_LIBRARIES ( CollapseMeshNodes
-	MeshLib
-	FileIO
-	MathLib
-	BaseLib
-	GeoLib
-	logog
-	${BOOST_LIBRARIES}
-)
-
 # Create MeshSearchTest executable
 ADD_EXECUTABLE( MeshSearchTest
 	MeshSearchTest.cpp

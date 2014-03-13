@@ -109,17 +109,6 @@ public:
 	 */
 	virtual Element* clone() const;
 
-	/**
-	 * This method should be called after at least two nodes of the prism
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the prism will be collapsed. If one of the edges 3, 4 or 5 (see
-	 * sketch @ref PrismNodeAndEdgeNumbering) is collapsed we obtain a
-	 * pyramid. In this case the method will create the appropriate
-	 * object of class Pyramid.
-	 * @return a pyramid object or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the volume of a prism by subdividing it into three tetrahedra.
 	double computeVolume();

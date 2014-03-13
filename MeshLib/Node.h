@@ -45,7 +45,6 @@ class Node : public GeoLib::PointWithID
 #endif
 	/* friend classes: */
 	friend class Mesh;
-	friend class MeshCoarsener;
 	friend class MeshRevision;
 
 

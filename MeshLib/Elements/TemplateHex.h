@@ -110,12 +110,6 @@ public:
 	 */
 	virtual Element* clone() const;
 
-	/**
-	 * Change the element type from hexahedron to a prism if two appropriate edges of the hexahedron are collapsed.
-	 * @return a prism element with nice properties or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
 	double computeVolume();
