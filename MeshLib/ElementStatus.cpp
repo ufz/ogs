@@ -1,5 +1,5 @@
 /**
- * \file
+ * \file   ElementStatus.cpp
  * \author Karsten Rink
  * \date   2012-12-18
  * \brief  Implementation of the ElementStatus class.
@@ -17,7 +17,7 @@
 namespace MeshLib {
 
 ElementStatus::ElementStatus(Mesh const*const mesh)
-: _mesh(mesh), _status(mesh->getNElements(), true)
+: _mesh(mesh), _element_status(mesh->getNElements(), true)
 {
 }
 

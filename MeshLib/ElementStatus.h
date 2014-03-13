@@ -1,5 +1,5 @@
 /**
- * \file
+ * \file   ElementStatus.h
  * \author Karsten Rink
  * \date   2012-12-18
  * \brief  Definition of the ElementStatus class.
@@ -20,30 +20,47 @@
 namespace MeshLib {
 
 /**
- * An object to store which elements of the mesh are active and which are inactive
+ * Manages active/inactive mesh elements and their nodes
  */
 class ElementStatus
 {
 
 public:
-	/// Constructor using mesh
+	/// Constructor
 	ElementStatus(Mesh const*const mesh);
 
-	bool getElementStatus(unsigned i) { return _status[i]; };
+	/// Returns a vector of active element IDs
+	std::vector<unsigned> getActiveElements() const {};
 
-	bool isActive(unsigned i) { return _status[i]; };
+	/// Returns a vector of active node IDs
+	std::vector<unsigned> getActiveNodes() const {};
+	
+	/// Returns the status of element i
+	bool getElementStatus(unsigned i) const { return _element_status[i]; }
 
-	void setActive(unsigned i) { _status[i] = true; };
+	/// Returns a vector of active elements connected to a node
+	std::vector<MeshLib::Element*> getActiveElements(unsigned node_id) const {};
+	
+	/// Returns the total number of active nodes
+	unsigned getNActiveNodes() const {};
 
-	void setInactive(unsigned i) { _status[i] = false; };
+	/// Returns the total number of active elements
+	unsigned getNActiveElements() const {};
 
-	void setElementStatus(unsigned i, bool status) { _status[i] = status; };
+	/// Returns the status of element 
+	bool isActive(unsigned i) const { return _element_status[i]; } 
+
+	/// Sets the status of element i
+	void setElementStatus(unsigned i, bool status) { _element_status[i] = status; }
+
+	/// Sets the status of material group i
+	void setMaterialStatus(unsigned i, bool status) {};
 
 	~ElementStatus() {};
 
 protected:
 	Mesh const*const _mesh;
-	std::vector<bool> _status;
+	std::vector<bool> _element_status;
 
 }; /* class */
 
