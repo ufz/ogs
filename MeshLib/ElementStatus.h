@@ -22,7 +22,7 @@ namespace MeshLib {
 	class Element;
 
 /**
- * Manages active/inactive mesh elements and their nodes
+ * Manages the active/inactive flags for mesh elements and their nodes
  */
 class ElementStatus
 {
@@ -61,8 +61,11 @@ public:
 	~ElementStatus() {};
 
 protected:
+	/// The mesh for which the element status is administrated
 	MeshLib::Mesh const*const _mesh;
+	/// Element status for each mesh element (active/inactive = true/false)
 	std::vector<bool> _element_status;
+	/// Node status for each mesh node (value = number of active elements connected to node, 0 means inactive)
 	std::vector<char> _active_nodes;
 
 }; /* class */
