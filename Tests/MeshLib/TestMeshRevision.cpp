@@ -32,7 +32,7 @@ TEST(MeshEditing, Tri)
 	nodes.push_back(new MeshLib::Node(0,0,0));
 	nodes.push_back(new MeshLib::Node(0,0,0.1));
 
-	std::array<MeshLib::Node*, 3> nodes_array = { nodes[0], nodes[1], nodes[2] };
+	std::array<MeshLib::Node*, 3> nodes_array = {{nodes[0], nodes[1], nodes[2]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem(new MeshLib::Tri(nodes_array));
 	elements.push_back(elem);
@@ -61,7 +61,7 @@ TEST(MeshEditing, NonPlanarQuad)
 	nodes.push_back(new MeshLib::Node(1,1,0.1));
 	nodes.push_back(new MeshLib::Node(1,0,0));
 
-	std::array<MeshLib::Node*, 4> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3] };
+	std::array<MeshLib::Node*, 4> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Quad(nodes_array));
 	elements.push_back(elem);
@@ -83,7 +83,7 @@ TEST(MeshEditing, Quad2Line)
 	nodes.push_back(new MeshLib::Node(0,1,0.1));
 	nodes.push_back(new MeshLib::Node(1,0,0.1));
 
-	std::array<MeshLib::Node*, 4> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3] };
+	std::array<MeshLib::Node*, 4> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Quad(nodes_array));
 	elements.push_back(elem);
@@ -107,7 +107,7 @@ TEST(MeshEditing, Quad2Tri)
 	nodes.push_back(new MeshLib::Node(0,1,0.1));
 	nodes.push_back(new MeshLib::Node(1,1,0.1));
 
-	std::array<MeshLib::Node*, 4> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3] };
+	std::array<MeshLib::Node*, 4> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Quad(nodes_array));
 	elements.push_back(elem);
@@ -135,7 +135,7 @@ TEST(MeshEditing, NonPlanarHex)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,1,1));
 
-	std::array<MeshLib::Node*, 8> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7] };
+	std::array<MeshLib::Node*, 8> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Hex(nodes_array));
 	elements.push_back(elem);
@@ -164,7 +164,7 @@ TEST(MeshEditing, Hex2PyramidPrism)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,1,1));
 
-	std::array<MeshLib::Node*, 8> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7] };
+	std::array<MeshLib::Node*, 8> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Hex(nodes_array));
 	elements.push_back(elem);
@@ -173,7 +173,7 @@ TEST(MeshEditing, Hex2PyramidPrism)
 	MeshLib::MeshRevision rev(mesh);
 	MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
-	ASSERT_EQ(result->getNElements(), 2);
+	ASSERT_EQ(2u, result->getNElements());
 	ASSERT_EQ(MeshElemType::PYRAMID, result->getElement(0)->getGeomType());
 	ASSERT_EQ(MeshElemType::PRISM, result->getElement(1)->getGeomType());
 	ASSERT_NEAR(0.3333333333333333, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
@@ -194,7 +194,7 @@ TEST(MeshEditing, Hex2FourTets)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,1,1));
 
-	std::array<MeshLib::Node*, 8> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7] };
+	std::array<MeshLib::Node*, 8> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Hex(nodes_array));
 	elements.push_back(elem);
@@ -225,7 +225,7 @@ TEST(MeshEditing, Hex2TwoTets)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(1,1,1));
 
-	std::array<MeshLib::Node*, 8> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7] };
+	std::array<MeshLib::Node*, 8> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5], nodes[6], nodes[7]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Hex(nodes_array));
 	elements.push_back(elem);
@@ -251,7 +251,7 @@ TEST(MeshEditing, NonPlanarPyramid)
 	nodes.push_back(new MeshLib::Node(0,1,0));
 	nodes.push_back(new MeshLib::Node(1,0,1));
 
-	std::array<MeshLib::Node*, 5> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4] };
+	std::array<MeshLib::Node*, 5> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Pyramid(nodes_array));
 	elements.push_back(elem);
@@ -277,7 +277,7 @@ TEST(MeshEditing, Pyramid2Tet)
 	nodes.push_back(new MeshLib::Node(1,0,0));
 	nodes.push_back(new MeshLib::Node(1,0,1));
 
-	std::array<MeshLib::Node*, 5> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4] };
+	std::array<MeshLib::Node*, 5> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Pyramid(nodes_array));
 	elements.push_back(elem);
@@ -302,7 +302,7 @@ TEST(MeshEditing, Pyramid2Quad)
 	nodes.push_back(new MeshLib::Node(0,0,0));
 	nodes.push_back(new MeshLib::Node(1,0,0.1));
 
-	std::array<MeshLib::Node*, 5> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4] };
+	std::array<MeshLib::Node*, 5> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Pyramid(nodes_array));
 	elements.push_back(elem);
@@ -327,7 +327,7 @@ TEST(MeshEditing, Pyramid2Tri)
 	nodes.push_back(new MeshLib::Node(0,0,0));
 	nodes.push_back(new MeshLib::Node(1,0,0.1));
 
-	std::array<MeshLib::Node*, 5> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4] };
+	std::array<MeshLib::Node*, 5> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Pyramid(nodes_array));
 	elements.push_back(elem);
@@ -354,7 +354,7 @@ TEST(MeshEditing, NonPlanarPrism)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,-0.5,2));
 
-	std::array<MeshLib::Node*, 6> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5] };
+	std::array<MeshLib::Node*, 6> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Prism(nodes_array));
 	elements.push_back(elem);
@@ -380,7 +380,7 @@ TEST(MeshEditing, Prism2TwoTets)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,0,1));
 
-	std::array<MeshLib::Node*, 6> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5] };
+	std::array<MeshLib::Node*, 6> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Prism(nodes_array));
 	elements.push_back(elem);
@@ -408,7 +408,7 @@ TEST(MeshEditing, Prism2Quad)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,0,1));
 
-	std::array<MeshLib::Node*, 6> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5] };
+	std::array<MeshLib::Node*, 6> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Prism(nodes_array));
 	elements.push_back(elem);
@@ -434,7 +434,7 @@ TEST(MeshEditing, Prism2Tet)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0,0,1));
 
-	std::array<MeshLib::Node*, 6> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5] };
+	std::array<MeshLib::Node*, 6> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Prism(nodes_array));
 	elements.push_back(elem);
@@ -460,7 +460,7 @@ TEST(MeshEditing, Prism2Tri)
 	nodes.push_back(new MeshLib::Node(1,1,1));
 	nodes.push_back(new MeshLib::Node(0.9,0.9,1));
 
-	std::array<MeshLib::Node*, 6> nodes_array = { nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5] };
+	std::array<MeshLib::Node*, 6> nodes_array = {{nodes[0], nodes[1], nodes[2], nodes[3], nodes[4], nodes[5]}};
 	std::vector<MeshLib::Element*> elements;
 	MeshLib::Element* elem (new MeshLib::Prism(nodes_array));
 	elements.push_back(elem);
