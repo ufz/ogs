@@ -47,7 +47,6 @@ TEST(MeshEditing, Tri)
 	delete result;
 
 	result = rev.simplifyMesh("new_mesh", 0.0999);
-	std::cout << MeshElemType2String(result->getElement(0)->getGeomType()) << std::endl;
 	ASSERT_EQ(MeshElemType::TRIANGLE, result->getElement(0)->getGeomType());
 	ASSERT_EQ(0.05, result->getElement(0)->getContent());
 	ASSERT_EQ(3, result->getNNodes());
