@@ -97,7 +97,8 @@ protected:
 };
 
 template <typename T, std::size_t DIM>
-TemplatePoint<T,DIM>::TemplatePoint()
+TemplatePoint<T,DIM>::TemplatePoint() :
+	_x()
 {}
 
 template <typename T, std::size_t DIM>
