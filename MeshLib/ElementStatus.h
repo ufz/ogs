@@ -32,10 +32,10 @@ public:
 	ElementStatus(MeshLib::Mesh const*const mesh);
 
 	/// Returns a vector of active element IDs
-	std::vector<unsigned> getActiveElements() const {};
+	std::vector<unsigned> getActiveElements() const;
 
 	/// Returns a vector of active node IDs
-	std::vector<unsigned> getActiveNodes() const {};
+	std::vector<unsigned> getActiveNodes() const;
 	
 	/// Returns the status of element i
 	bool getElementStatus(unsigned i) const { return _element_status[i]; }

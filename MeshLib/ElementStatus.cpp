@@ -28,6 +28,29 @@ ElementStatus::ElementStatus(Mesh const*const mesh)
 		_active_nodes.push_back((*node)->getNElements());
 }
 
+
+std::vector<unsigned> ElementStatus::getActiveElements() const
+{
+	std::vector<unsigned> active_elements;
+	active_elements.reserve(this->getNActiveElements());
+	const std::size_t nElems (_mesh->getNElements());
+	for (std::size_t i=0; i<nElems; ++i)
+		if (_element_status[i])
+			active_elements.push_back(i);
+	return active_elements;
+}
+
+std::vector<unsigned> ElementStatus::getActiveNodes() const 
+{
+	std::vector<unsigned> active_nodes;
+	active_nodes.reserve(this->getNActiveNodes());
+	const std::size_t nNodes (_mesh->getNNodes());
+	for (std::size_t i=0; i<nNodes; ++i)
+		if (_active_nodes[i]>0)
+			active_nodes.push_back(i);
+	return active_nodes;
+}
+
 unsigned ElementStatus::getNActiveNodes() const 
 {
 	return _active_nodes.size() - std::count(_active_nodes.begin(), _active_nodes.end(), 0);
