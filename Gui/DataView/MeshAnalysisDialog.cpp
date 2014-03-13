@@ -47,9 +47,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	this->nodesMsgOutput(unusedNodesIdx, nCollapsableNodes);
 
 	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshValidation::testElementGeometry(*mesh));
-	//this->elementMsgOutput(element_error_codes);
-	QString elementMsgOutput = QString::fromStdString(MeshLib::MeshValidation::ElementErrorCodeOutput(element_error_codes));
-	this->elementsMsg->setText(elementMsgOutput);
+	this->elementsMsgOutput(element_error_codes);
 }
 
 void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids, unsigned nCollapsableNodes)
@@ -64,8 +62,17 @@ void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids
 		for (std::size_t i=0; i<nNodeIds; ++i)
 			nodes_output += (QString::number(node_ids[i]) + ", ");
 	}
-	
-	nodes_output += "\nFound " + QString::number(nCollapsableNodes) + " potentially collapsable nodes.";
-	this->nodesMsg->setText(nodes_output);
+	this->unusedNodesText->setText(nodes_output);
+
+	nodes_output = QString::number(nCollapsableNodes) + " nodes found.";
+	this->collapsableNodesText->setText(nodes_output);
 }
 
+void MeshAnalysisDialog::elementsMsgOutput(const std::vector<ElementErrorCode> &element_error_codes)
+{
+	std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output_str(MeshLib::MeshValidation::ElementErrorCodeOutput(element_error_codes));
+
+	this->zeroVolumeText->setText(QString::fromStdString(output_str[0]));
+	this-> nonPlanarText->setText(QString::fromStdString(output_str[1]));
+	this-> nonConvexText->setText(QString::fromStdString(output_str[2]));
+}
