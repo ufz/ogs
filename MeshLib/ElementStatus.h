@@ -15,9 +15,11 @@
 #ifndef ELEMENTSTATUS_H_
 #define ELEMENTSTATUS_H_
 
-#include "Mesh.h"
+#include <vector>
 
 namespace MeshLib {
+	class Mesh;
+	class Element;
 
 /**
  * Manages active/inactive mesh elements and their nodes
@@ -27,7 +29,7 @@ class ElementStatus
 
 public:
 	/// Constructor
-	ElementStatus(Mesh const*const mesh);
+	ElementStatus(MeshLib::Mesh const*const mesh);
 
 	/// Returns a vector of active element IDs
 	std::vector<unsigned> getActiveElements() const {};
@@ -42,16 +44,16 @@ public:
 	std::vector<MeshLib::Element*> getActiveElements(unsigned node_id) const {};
 	
 	/// Returns the total number of active nodes
-	unsigned getNActiveNodes() const {};
+	unsigned getNActiveNodes() const;
 
 	/// Returns the total number of active elements
-	unsigned getNActiveElements() const {};
+	unsigned getNActiveElements() const;
 
 	/// Returns the status of element 
 	bool isActive(unsigned i) const { return _element_status[i]; } 
 
 	/// Sets the status of element i
-	void setElementStatus(unsigned i, bool status) { _element_status[i] = status; }
+	void setElementStatus(unsigned i, bool status);
 
 	/// Sets the status of material group i
 	void setMaterialStatus(unsigned i, bool status) {};
@@ -59,8 +61,9 @@ public:
 	~ElementStatus() {};
 
 protected:
-	Mesh const*const _mesh;
+	MeshLib::Mesh const*const _mesh;
 	std::vector<bool> _element_status;
+	std::vector<char> _active_nodes;
 
 }; /* class */
 
