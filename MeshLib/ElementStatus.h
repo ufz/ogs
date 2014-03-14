@@ -52,6 +52,9 @@ public:
 	/// Returns the status of element 
 	bool isActive(unsigned i) const { return _element_status[i]; } 
 
+	/// Activates/Deactives all mesh elements
+	void setAll(bool status);
+
 	/// Sets the status of element i
 	void setElementStatus(unsigned i, bool status);
 

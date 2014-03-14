@@ -78,6 +78,21 @@ unsigned ElementStatus::getNActiveElements() const
 	return static_cast<unsigned>(std::count(_element_status.begin(), _element_status.end(), true));
 }
 
+void ElementStatus::setAll(bool status)
+{
+	std::fill(_element_status.begin(), _element_status.end(), status);
+
+	if (status)
+	{
+		const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
+		const std::size_t nNodes (_mesh->getNNodes());
+		for (std::size_t i=0; i<nNodes; ++i)
+			_active_nodes[i] = nodes[i]->getNElements();
+	}
+	else
+		std::fill(_active_nodes.begin(), _active_nodes.end(), 0);
+}
+
 void ElementStatus::setElementStatus(unsigned i, bool status)
 {
 	if (_element_status[i] != status)
