@@ -62,9 +62,10 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 	if (raster) {
 		x0 = raster->getOrigin()[0];
 		y0 = raster->getOrigin()[1];
+		delta = raster->getRasterPixelDistance();
 		double const*const data (raster->begin());
 		return VtkRaster::loadImageFromArray(data, x0, y0,
-						raster->getNCols(), raster->getNRows(), raster->getRasterPixelDistance(),
+						raster->getNCols(), raster->getNRows(), delta,
 						raster->getNoDataValue());
 	}
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
