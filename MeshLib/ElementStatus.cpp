@@ -51,30 +51,23 @@ std::vector<unsigned> ElementStatus::getActiveNodes() const
 	return active_nodes;
 }
 
-std::vector<MeshLib::Element*> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
+std::vector<unsigned> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
 {
+	const auto mesh_elements_start (_mesh->getElements().begin());
+	const auto mesh_elements_end   (_mesh->getElements().end());
 	const unsigned nElems (_mesh->getNode(node_id)->getNElements());
 	const unsigned nActiveElements (_active_nodes[node_id]);
-	const std::vector<Element*> &elements (_mesh->getNode(node_id)->getElements());
-	std::vector<MeshLib::Element*> active_elements;
+	const std::vector<Element*> &node_elements (_mesh->getNode(node_id)->getElements());
+	std::vector<unsigned> active_elements;
 	active_elements.reserve(nActiveElements);
 	for (unsigned i=0; i<nElems; ++i)
 	{
-		// if all active elements are found, the test can be cancelled for the rest of the connected elements
 		if (active_elements.size() == nActiveElements)
 			return active_elements;
-
-		const unsigned nElemNodes (elements[i]->getNNodes());
-		MeshLib::Node const*const*const nodes = elements[i]->getNodes();
-		bool isActive (true);
-		for (unsigned j=0; j<nElemNodes; ++j)
-			if (_active_nodes[nodes[j]->getID()]==0)
-			{
-				isActive = false;
-				break;
-			}
-		if (isActive)
-			active_elements.push_back(elements[i]);
+		auto it = std::find(mesh_elements_start, mesh_elements_end, node_elements[i]);
+		const unsigned idx (static_cast<unsigned>(it - mesh_elements_start));
+		if (_element_status[idx])
+			active_elements.push_back(idx);
 	}
 	return active_elements;
 }
@@ -98,7 +91,10 @@ void ElementStatus::setElementStatus(unsigned i, bool status)
 		const unsigned nElemNodes (_mesh->getElement(i)->getNNodes());
 		MeshLib::Node const*const*const nodes = _mesh->getElement(i)->getNodes();
 		for (unsigned i=0; i<nElemNodes; ++i)
+		{
+			assert(_active_nodes[i]<255); // if one node has >255 connected elements the data type is too small
 			_active_nodes[nodes[i]->getID()] += change;
+		}
 	}
 }
 

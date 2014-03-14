@@ -41,7 +41,7 @@ public:
 	bool getElementStatus(unsigned i) const { return _element_status[i]; }
 
 	/// Returns a vector of active elements connected to a node
-	std::vector<MeshLib::Element*> getActiveElementsAtNode(unsigned node_id) const;
+	std::vector<unsigned> getActiveElementsAtNode(unsigned node_id) const;
 	
 	/// Returns the total number of active nodes
 	unsigned getNActiveNodes() const;
@@ -66,7 +66,7 @@ protected:
 	/// Element status for each mesh element (active/inactive = true/false)
 	std::vector<bool> _element_status;
 	/// Node status for each mesh node (value = number of active elements connected to node, 0 means inactive)
-	std::vector<char> _active_nodes;
+	std::vector<unsigned char> _active_nodes;
 
 }; /* class */
 
