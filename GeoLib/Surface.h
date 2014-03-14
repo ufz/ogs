@@ -38,6 +38,9 @@ public:
 	Surface	(const std::vector<Point*> &pnt_vec);
 	virtual ~Surface ();
 
+	/// return a geometry type
+	virtual GEOTYPE getGeoType() const {return GEOTYPE::SURFACE;}
+
 	/**
 	 * adds three indices describing a triangle and updates the bounding box
 	 * */

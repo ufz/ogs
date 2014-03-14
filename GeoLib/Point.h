@@ -48,6 +48,9 @@ public:
 	GeoPoint (T const* x) :
 		MathLib::TemplatePoint<T>(x), GeoObject()
 	{}
+
+	/// return a geometry type
+	virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
 };
 
 typedef GeoLib::GeoPoint<double> Point;
