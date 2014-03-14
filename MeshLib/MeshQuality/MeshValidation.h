@@ -15,6 +15,7 @@
 #ifndef MESHVALIDATION_H
 #define MESHVALIDATION_H
 
+#include <array>
 #include <vector>
 
 #include "ElementErrorCode.h"
@@ -56,7 +57,8 @@ public:
 	 * Detailed output which ElementID is associated with which error(s)
 	 * @return String containing the report
 	 */
-	static std::string ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes);
+	static std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
+		ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes);
 
 private:
 

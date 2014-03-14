@@ -35,7 +35,9 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 	INFO ("Found %d potentially collapsable nodes.", rev.getNCollapsableNodes());
 
 	const std::vector<ElementErrorCode> codes (this->testElementGeometry(mesh));
-	this->ElementErrorCodeOutput(codes);
+	std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output_str (this->ElementErrorCodeOutput(codes));
+	for (std::size_t i = 0; i < output_str.size(); ++i)
+		INFO (output_str[i].c_str());
 }
 
 std::vector<std::size_t> MeshValidation::findUnusedMeshNodes(const MeshLib::Mesh &mesh)
@@ -109,13 +111,14 @@ std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &me
 	return error_code_vector;
 }
 
-std::string MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
+std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
+MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
 {
 	const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue)); 
 	ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
 		                                    ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
 	const std::size_t nElements (error_codes.size());
-	std::string output("");
+	std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output;
 
 	for (std::size_t i=0; i<nErrorFlags; ++i)
 	{
@@ -132,10 +135,10 @@ std::string MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErro
 		
 		}
 		const std::string nErrorsStr = (count) ? BaseLib::number2str(count) : "No";
-		output += (nErrorsStr + " elements found with " + ElementErrorCode::toString(flags[i]) + "\n");
+		output[i] = (nErrorsStr + " elements found with " + ElementErrorCode::toString(flags[i]) + ".\n");
 
 		if (count)
-			output += ("ElementIDs: " + elementIdStr + "\n");
+			output[i] += ("ElementIDs: " + elementIdStr + "\n");
 	}
 	return output;
 }
