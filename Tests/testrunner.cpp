@@ -18,11 +18,11 @@
 #include "logog/include/logog.hpp"
 
 #ifdef USE_LIS
-#include "lis.h"
+#include <lis.h>
 #endif
 
 #ifdef USE_PETSC
-#include "petscksp.h"
+#include <petscksp.h>
 #endif
 
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
