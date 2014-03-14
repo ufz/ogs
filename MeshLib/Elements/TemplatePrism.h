@@ -49,10 +49,10 @@ class TemplatePrism : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplatePrism(Node* nodes[NNODES], unsigned value = 0);
+	TemplatePrism(Node* nodes[NNODES], unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Constructs a prism from array of Node pointers.
-	TemplatePrism(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplatePrism(std::array<Node*, NNODES> const& nodes, unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Copy constructor
 	TemplatePrism(const TemplatePrism &prism);

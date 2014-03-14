@@ -35,7 +35,8 @@ Mesh::Mesh(const std::string &name,
            const std::vector<Element*> &elements)
 	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
 {
-	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
+	this->resetNodeIDs();
+	this->resetElementIDs();
 	this->setDimension();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
@@ -106,6 +107,13 @@ void Mesh::resetNodeIDs()
 	const size_t nNodes (this->_nodes.size());
 	for (unsigned i=0; i<nNodes; ++i)
 		_nodes[i]->setID(i);
+}
+
+void Mesh::resetElementIDs()
+{
+	const size_t nElements (this->_elements.size());
+	for (unsigned i=0; i<nElements; ++i)
+		_elements[i]->setID(i);
 }
 
 void Mesh::setDimension()

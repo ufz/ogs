@@ -53,21 +53,17 @@ std::vector<unsigned> ElementStatus::getActiveNodes() const
 
 std::vector<unsigned> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
 {
-	const auto mesh_elements_start (_mesh->getElements().begin());
-	const auto mesh_elements_end   (_mesh->getElements().end());
-	const unsigned nElems (_mesh->getNode(node_id)->getNElements());
 	const unsigned nActiveElements (_active_nodes[node_id]);
-	const std::vector<Element*> &node_elements (_mesh->getNode(node_id)->getElements());
+	const std::vector<Element*> &elements (_mesh->getNode(node_id)->getElements());
 	std::vector<unsigned> active_elements;
 	active_elements.reserve(nActiveElements);
-	for (unsigned i=0; i<nElems; ++i)
+	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 	{
 		if (active_elements.size() == nActiveElements)
 			return active_elements;
-		auto it = std::find(mesh_elements_start, mesh_elements_end, node_elements[i]);
-		const unsigned idx (static_cast<unsigned>(it - mesh_elements_start));
-		if (_element_status[idx])
-			active_elements.push_back(idx);
+		const unsigned id ((*elem)->getID());
+		if (_element_status[id])
+			active_elements.push_back(id);
 	}
 	return active_elements;
 }

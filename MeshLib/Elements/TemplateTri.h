@@ -48,10 +48,10 @@ class TemplateTri : public Face
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateTri(Node* nodes[NNODES], unsigned value = 0);
+	TemplateTri(Node* nodes[NNODES], unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Constructs a triangle from array of Node pointers.
-	TemplateTri(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateTri(std::array<Node*, NNODES> const& nodes, unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Copy constructor
 	TemplateTri(const TemplateTri &tri);

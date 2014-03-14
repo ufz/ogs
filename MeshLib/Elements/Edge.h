@@ -85,7 +85,7 @@ protected:
     unsigned identifyFace(Node* [3]/*nodes[3]*/) const { return std::numeric_limits<unsigned>::max(); };
 
     /// Constructor for a generic mesh element without an array of mesh nodes.
-    Edge(unsigned value = 0);
+    Edge(unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
     double _length;
 

@@ -78,7 +78,7 @@ protected:
 	Face(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Face(unsigned value = 0);
+	Face(unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	double _area;
 

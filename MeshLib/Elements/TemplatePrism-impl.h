@@ -52,8 +52,8 @@ template <unsigned NNODES, CellType CELLPRISMTYPE>
 const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
-TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned value)
-	: Cell(value)
+TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned value, unsigned id)
+	: Cell(value, id)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[5];
@@ -63,8 +63,8 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned
 
 template<unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(std::array<Node*, NNODES> const& nodes,
-                                                   unsigned value)
-	: Cell(value)
+                                                   unsigned value, unsigned id)
+	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -77,7 +77,7 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(std::array<Node*, NNODES> con
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(const TemplatePrism<NNODES,CELLPRISMTYPE> &prism)
-	: Cell(prism.getValue())
+	: Cell(prism.getValue(), prism.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++)

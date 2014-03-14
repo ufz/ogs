@@ -40,10 +40,10 @@ class TemplateLine : public Edge
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateLine(Node* nodes[NNODES], unsigned value = 0);
+	TemplateLine(Node* nodes[NNODES], unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Constructs a line from array of Node pointers.
-	TemplateLine(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateLine(std::array<Node*, NNODES> const& nodes, unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Copy constructor
 	TemplateLine(const TemplateLine &line);

@@ -54,7 +54,7 @@ protected:
 	Cell(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Cell(unsigned value = 0);
+	Cell(unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	double _volume;
 

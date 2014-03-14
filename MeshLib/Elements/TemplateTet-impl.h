@@ -42,8 +42,8 @@ const unsigned TemplateTet<NNODES,CELLTETTYPE>::_edge_nodes[6][2] =
 };
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value)
-	: Cell(value)
+TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value, unsigned id)
+	: Cell(value, id)
 {
 	_nodes = nodes;
 
@@ -55,8 +55,8 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value
 
 template<unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& nodes,
-                                             unsigned value)
-	: Cell(value)
+                                             unsigned value, unsigned id)
+	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -69,7 +69,7 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& no
 
 template <unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(const TemplateTet<NNODES,CELLTETTYPE> &tet)
-	: Cell(tet.getValue())
+	: Cell(tet.getValue(), tet.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++) {

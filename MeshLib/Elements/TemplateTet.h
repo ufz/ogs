@@ -46,10 +46,10 @@ class TemplateTet : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateTet(Node* nodes[NNODES], unsigned value = 0);
+	TemplateTet(Node* nodes[NNODES], unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Constructs a tetrahedron from array of Node pointers.
-	TemplateTet(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateTet(std::array<Node*, NNODES> const& nodes, unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Copy constructor
 	TemplateTet(const TemplateTet &tet);

@@ -29,8 +29,8 @@ Face::Face(Node** nodes, MeshElemType type, unsigned value)
 {
 }
 */
-Face::Face(unsigned value)
-	: Element(value), _area(-1.0) // init with invalid value to detect errors
+Face::Face(unsigned value, unsigned id)
+	: Element(value, id), _area(-1.0) // init with invalid value to detect errors
 {
 }
 

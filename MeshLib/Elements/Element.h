@@ -77,6 +77,9 @@ public:
 	/// Returns the i-th face of the element.
 	virtual const Element* getFace(unsigned i) const = 0;
 
+	/// Returns the ID of the element.
+	virtual unsigned getID() const { return this->_id; }
+
 	/// Get the number of edges for this element.
 	virtual unsigned getNEdges() const = 0;
 
@@ -176,7 +179,7 @@ public:
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Element(unsigned value = 0);
+	Element(unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
 
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
@@ -184,8 +187,12 @@ protected:
 	/// Returns the ID of a face given an array of nodes.
 	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
 
+	/// Sets the element ID.
+	virtual void setID(unsigned id) { this->_id = id; }
+
 
 	Node** _nodes;
+	unsigned _id;
 	/**
 	 * this is an index for external additional information like materials
 	 */

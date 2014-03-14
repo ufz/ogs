@@ -84,6 +84,9 @@ public:
 	/// Get the element-vector for the mesh.
 	std::vector<Element*> const& getElements() const { return _elements; }
 
+	/// Resets the IDs of all mesh-elements to their position in the element vector
+	void resetElementIDs();
+	
 	/// Resets the IDs of all mesh-nodes to their position in the node vector
 	void resetNodeIDs();
 
