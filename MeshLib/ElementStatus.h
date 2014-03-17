@@ -41,7 +41,7 @@ public:
 	bool getElementStatus(std::size_t i) const { return _element_status[i]; }
 
 	/// Returns a vector of active elements connected to a node
-	std::vector<std::size_t> getActiveElementsAtNode(unsigned node_id) const;
+	std::vector<std::size_t> getActiveElementsAtNode(std::size_t node_id) const;
 	
 	/// Returns the total number of active nodes
 	std::size_t getNActiveNodes() const;

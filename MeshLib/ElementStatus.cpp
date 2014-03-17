@@ -24,7 +24,7 @@ ElementStatus::ElementStatus(Mesh const*const mesh)
 : _mesh(mesh), _element_status(mesh->getNElements(), true)
 {
 	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
-	for (auto node = nodes.begin(); node != nodes.end(); ++node)
+	for (auto node = nodes.cbegin(); node != nodes.cend(); ++node)
 		_active_nodes.push_back((*node)->getNElements());
 }
 
@@ -51,17 +51,17 @@ std::vector<std::size_t> ElementStatus::getActiveNodes() const
 	return active_nodes;
 }
 
-std::vector<std::size_t> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
+std::vector<std::size_t> ElementStatus::getActiveElementsAtNode(std::size_t node_id) const
 {
-	const unsigned nActiveElements (_active_nodes[node_id]);
+	const std::size_t nActiveElements (_active_nodes[node_id]);
 	const std::vector<Element*> &elements (_mesh->getNode(node_id)->getElements());
 	std::vector<std::size_t> active_elements;
 	active_elements.reserve(nActiveElements);
-	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
+	for (auto elem = elements.cbegin(); elem != elements.cend(); ++elem)
 	{
 		if (active_elements.size() == nActiveElements)
 			return active_elements;
-		const unsigned id ((*elem)->getID());
+		const std::size_t id ((*elem)->getID());
 		if (_element_status[id])
 			active_elements.push_back(id);
 	}
@@ -70,12 +70,12 @@ std::vector<std::size_t> ElementStatus::getActiveElementsAtNode(unsigned node_id
 
 std::size_t ElementStatus::getNActiveNodes() const 
 {
-	return _active_nodes.size() - std::count(_active_nodes.begin(), _active_nodes.end(), 0);
+	return _active_nodes.size() - std::count(_active_nodes.cbegin(), _active_nodes.cend(), 0);
 }
 
 std::size_t ElementStatus::getNActiveElements() const 
 {
-	return static_cast<unsigned>(std::count(_element_status.begin(), _element_status.end(), true));
+	return static_cast<std::size_t>(std::count(_element_status.cbegin(), _element_status.cend(), true));
 }
 
 void ElementStatus::setAll(bool status)
