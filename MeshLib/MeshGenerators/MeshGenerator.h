@@ -26,7 +26,7 @@ namespace MeshGenerator
  *
  * \param length Mesh's length in x-direction.
  * \param subdivision Number of subdivisions.
- * \param origin Optional mesh's origin with GeoLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the most left point) with GeoLib::ORIGIN default.
  */
 Mesh* generateLineMesh(const double length,
                        const std::size_t subdivision,
@@ -38,7 +38,7 @@ Mesh* generateLineMesh(const double length,
  *
  * \param length Mesh's dimensions in x- and y-directions.
  * \param subdivision Number of subdivisions.
- * \param origin Optional mesh's origin with GeoLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
  */
 Mesh* generateRegularQuadMesh(const double length,
                               const std::size_t subdivision,
@@ -49,7 +49,7 @@ Mesh* generateRegularQuadMesh(const double length,
  *
  * \param length Mesh's dimensions in x- and y- and z-directions.
  * \param subdivision Number of subdivisions.
- * \param origin Optional mesh's origin with GeoLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
  */
 Mesh* generateRegularHexMesh(const double length,
                               const std::size_t subdivision,
