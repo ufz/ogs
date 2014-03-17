@@ -78,7 +78,7 @@ public:
 	virtual const Element* getFace(unsigned i) const = 0;
 
 	/// Returns the ID of the element.
-	virtual unsigned getID() const { return this->_id; }
+	virtual std::size_t getID() const { return this->_id; }
 
 	/// Get the number of edges for this element.
 	virtual unsigned getNEdges() const = 0;

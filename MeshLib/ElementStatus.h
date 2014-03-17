@@ -29,34 +29,31 @@ class ElementStatus
 
 public:
 	/// Constructor
-	ElementStatus(MeshLib::Mesh const*const mesh);
+	explicit ElementStatus(MeshLib::Mesh const*const mesh);
 
 	/// Returns a vector of active element IDs
-	std::vector<unsigned> getActiveElements() const;
+	std::vector<std::size_t> getActiveElements() const;
 
 	/// Returns a vector of active node IDs
-	std::vector<unsigned> getActiveNodes() const;
+	std::vector<std::size_t> getActiveNodes() const;
 	
 	/// Returns the status of element i
-	bool getElementStatus(unsigned i) const { return _element_status[i]; }
+	bool getElementStatus(std::size_t i) const { return _element_status[i]; }
 
 	/// Returns a vector of active elements connected to a node
-	std::vector<unsigned> getActiveElementsAtNode(unsigned node_id) const;
+	std::vector<std::size_t> getActiveElementsAtNode(unsigned node_id) const;
 	
 	/// Returns the total number of active nodes
-	unsigned getNActiveNodes() const;
+	std::size_t getNActiveNodes() const;
 
 	/// Returns the total number of active elements
-	unsigned getNActiveElements() const;
-
-	/// Returns the status of element 
-	bool isActive(unsigned i) const { return _element_status[i]; } 
+	std::size_t getNActiveElements() const;
 
 	/// Activates/Deactives all mesh elements
 	void setAll(bool status);
 
 	/// Sets the status of element i
-	void setElementStatus(unsigned i, bool status);
+	void setElementStatus(std::size_t i, bool status);
 
 	/// Sets the status of material group i
 	void setMaterialStatus(unsigned material_id, bool status);

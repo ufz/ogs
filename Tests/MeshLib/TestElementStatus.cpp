@@ -52,16 +52,16 @@ const unsigned width (100);
 	ASSERT_EQ (status.getNActiveElements(), elements.size()-(2*elements_per_side));
 
 	// active elements
-	std::vector<unsigned> active_elements (status.getActiveElements());
+	std::vector<std::size_t> active_elements (status.getActiveElements());
 	ASSERT_EQ (active_elements.size(), status.getNActiveElements());
 
 	// active nodes
-	std::vector<unsigned> active_nodes (status.getActiveNodes());
+	std::vector<std::size_t> active_nodes (status.getActiveNodes());
 	ASSERT_EQ (active_nodes.size(), status.getNActiveNodes());
 
 	// set element 1 to false (yet again)
 	status.setElementStatus(1, false);
-	status.isActive(1);
+	status.getElementStatus(1);
 	ASSERT_EQ (status.getNActiveElements(), elements.size()-(2*elements_per_side));
 	ASSERT_EQ (status.getNActiveNodes(), mesh->getNNodes()-(2*(elements_per_side+1)));
 
@@ -69,12 +69,14 @@ const unsigned width (100);
 	status.setElementStatus(1, true);
 	ASSERT_EQ (status.getNActiveElements(), elements.size()-(2*elements_per_side)+1);
 	ASSERT_EQ (status.getNActiveNodes(), mesh->getNNodes()-(2*(elements_per_side+1))+4);
-	ASSERT_EQ(status.isActive(1), true);
+	ASSERT_EQ(status.getElementStatus(1), true);
 
-	std::vector<unsigned> active_elements_at_node (status.getActiveElementsAtNode(2));
+	std::vector<std::size_t> active_elements_at_node (status.getActiveElementsAtNode(2));
 	ASSERT_EQ(active_elements_at_node.size(), 1);
 	active_elements_at_node = status.getActiveElementsAtNode(22);
 	ASSERT_EQ(active_elements_at_node.size(), 1);
+	active_elements_at_node = status.getActiveElementsAtNode(44);
+	ASSERT_EQ(active_elements_at_node.size(), 2);
 	active_elements_at_node = status.getActiveElementsAtNode(102);
 	ASSERT_EQ(active_elements_at_node.size(), 4);
 

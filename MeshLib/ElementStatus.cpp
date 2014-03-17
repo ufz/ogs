@@ -29,9 +29,9 @@ ElementStatus::ElementStatus(Mesh const*const mesh)
 }
 
 
-std::vector<unsigned> ElementStatus::getActiveElements() const
+std::vector<std::size_t> ElementStatus::getActiveElements() const
 {
-	std::vector<unsigned> active_elements;
+	std::vector<std::size_t> active_elements;
 	active_elements.reserve(this->getNActiveElements());
 	const std::size_t nElems (_mesh->getNElements());
 	for (std::size_t i=0; i<nElems; ++i)
@@ -40,9 +40,9 @@ std::vector<unsigned> ElementStatus::getActiveElements() const
 	return active_elements;
 }
 
-std::vector<unsigned> ElementStatus::getActiveNodes() const 
+std::vector<std::size_t> ElementStatus::getActiveNodes() const 
 {
-	std::vector<unsigned> active_nodes;
+	std::vector<std::size_t> active_nodes;
 	active_nodes.reserve(this->getNActiveNodes());
 	const std::size_t nNodes (_mesh->getNNodes());
 	for (std::size_t i=0; i<nNodes; ++i)
@@ -51,11 +51,11 @@ std::vector<unsigned> ElementStatus::getActiveNodes() const
 	return active_nodes;
 }
 
-std::vector<unsigned> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
+std::vector<std::size_t> ElementStatus::getActiveElementsAtNode(unsigned node_id) const
 {
 	const unsigned nActiveElements (_active_nodes[node_id]);
 	const std::vector<Element*> &elements (_mesh->getNode(node_id)->getElements());
-	std::vector<unsigned> active_elements;
+	std::vector<std::size_t> active_elements;
 	active_elements.reserve(nActiveElements);
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 	{
@@ -68,12 +68,12 @@ std::vector<unsigned> ElementStatus::getActiveElementsAtNode(unsigned node_id) c
 	return active_elements;
 }
 
-unsigned ElementStatus::getNActiveNodes() const 
+std::size_t ElementStatus::getNActiveNodes() const 
 {
 	return _active_nodes.size() - std::count(_active_nodes.begin(), _active_nodes.end(), 0);
 }
 
-unsigned ElementStatus::getNActiveElements() const 
+std::size_t ElementStatus::getNActiveElements() const 
 {
 	return static_cast<unsigned>(std::count(_element_status.begin(), _element_status.end(), true));
 }
@@ -93,7 +93,7 @@ void ElementStatus::setAll(bool status)
 		std::fill(_active_nodes.begin(), _active_nodes.end(), 0);
 }
 
-void ElementStatus::setElementStatus(unsigned i, bool status)
+void ElementStatus::setElementStatus(std::size_t i, bool status)
 {
 	if (_element_status[i] != status)
 	{
