@@ -96,7 +96,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
 	std::vector<double> points;
 	std::vector<MeshNodesAlongPolyline*>::const_iterator it(_mesh_nodes_along_polylines.begin());
 	for (; it != _mesh_nodes_along_polylines.end(); it++) {
-		if ((*it)->getPolyline() == ply) {
+		if (&(*it)->getPolyline() == &ply) {
 			// we calculated mesh nodes for this polyline already
 			return *(*it);
 		}
@@ -113,7 +113,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
 	std::vector<double> points;
 	std::vector<MeshNodesAlongSurface*>::const_iterator it(_mesh_nodes_along_surfaces.begin());
 	for (; it != _mesh_nodes_along_surfaces.end(); it++) {
-		if ((*it)->getSurface() == sfc) {
+		if (&(*it)->getSurface() == &sfc) {
 			// we calculated mesh nodes for this polyline already
 			return *(*it);
 		}
