@@ -101,6 +101,22 @@ protected:
 
 void getPlaneCoefficients(Triangle const& tri, double c[3]);
 
+/**
+ * comparison operator
+ * @param lhs first triangle
+ * @param rhs second triangle
+ * @return true, if the triangles are the same
+ */
+bool operator==(Triangle const& lhs, Triangle const& rhs);
+
+/**
+ * comparison operator
+ * @param lhs first triangle
+ * @param rhs second triangle
+ * @return true, if the triangles are different
+ */
+bool operator!=(Triangle const& lhs, Triangle const& rhs);
+
 } // end namespace GeoLib
 
 #endif /* TRIANGLE_H_ */

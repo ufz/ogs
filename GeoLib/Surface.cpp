@@ -131,4 +131,17 @@ bool Surface::isPntInSfc (const double *pnt) const
 	return !nfound;
 }
 
+bool operator==(Surface const& lhs, Surface const& rhs)
+{
+	if (lhs.getNTriangles() != rhs.getNTriangles())
+		return false;
+
+	const std::size_t n(lhs.getNTriangles());
+	for (std::size_t k(0); k < n; k++)
+		if (*static_cast<const Triangle*>(lhs[k]) != *static_cast<const Triangle*>(rhs[k]))
+			return false;
+
+	return true;
+}
+
 } // end namespace
