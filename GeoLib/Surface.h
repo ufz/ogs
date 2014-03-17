@@ -87,14 +87,6 @@ protected:
 	AABB<GeoLib::Point> *_bounding_volume;
 };
 
-/**
- * comparison operator
- * @param lhs first surface
- * @param rhs second surface
- * @return true, if the surfaces consists of the same triangles
- */
-bool operator==(Surface const& lhs, Surface const& rhs);
-
 }
 
 #endif /* SURFACE_H_ */

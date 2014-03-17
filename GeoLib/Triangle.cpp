@@ -211,17 +211,4 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
 	gauss.solve (c);
 }
 
-bool operator==(Triangle const& lhs, Triangle const& rhs)
-{
-	for (unsigned i=0; i<3; i++)
-		if (lhs.getPoint(i)!=rhs.getPoint(i)) return false;
-
-	return true;
-}
-
-bool operator!=(Triangle const& lhs, Triangle const& rhs)
-{
-	return !(lhs==rhs);
-}
-
 } // end namespace GeoLib
