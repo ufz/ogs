@@ -43,6 +43,17 @@ Mesh* generateLineMesh(const double length,
 Mesh* generateRegularQuadMesh(const double length,
                               const std::size_t subdivision,
                               GeoLib::Point const& origin = GeoLib::ORIGIN);
+
+/**
+ * Generate a regular 3D Hex-Element mesh.
+ *
+ * \param length Mesh's dimensions in x- and y- and z-directions.
+ * \param subdivision Number of subdivisions.
+ * \param origin Optional mesh's origin with GeoLib::ORIGIN default.
+ */
+Mesh* generateRegularHexMesh(const double length,
+                              const std::size_t subdivision,
+                              GeoLib::Point const& origin = GeoLib::ORIGIN);
 }  //MeshGenerator
 } //MeshLib
 
