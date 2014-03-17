@@ -21,6 +21,7 @@
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
+#include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 
 namespace MeshGeoTools
 {
@@ -82,18 +83,46 @@ std::size_t MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) co
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
 		GeoLib::Polyline const& ply)
 {
+	return getMeshNodesAlongPolyline(ply).getNodeIDs();
+}
+
+std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc)
+{
+	return getMeshNodesAlongSurface(sfc).getNodeIDs();
+}
+
+MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Polyline const& ply)
+{
+	std::vector<double> points;
 	std::vector<MeshNodesAlongPolyline*>::const_iterator it(_mesh_nodes_along_polylines.begin());
 	for (; it != _mesh_nodes_along_polylines.end(); it++) {
 		if ((*it)->getPolyline() == ply) {
 			// we calculated mesh nodes for this polyline already
-			return (*it)->getNodeIDs();
+			return *(*it);
 		}
 	}
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_polylines.push_back(
 			new MeshNodesAlongPolyline(_mesh.getNodes(), ply, _search_length));
-	return _mesh_nodes_along_polylines[_mesh_nodes_along_polylines.size() - 1]->getNodeIDs();
+	return *_mesh_nodes_along_polylines.back();
+}
+
+MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surface const& sfc)
+{
+	std::vector<double> points;
+	std::vector<MeshNodesAlongSurface*>::const_iterator it(_mesh_nodes_along_surfaces.begin());
+	for (; it != _mesh_nodes_along_surfaces.end(); it++) {
+		if ((*it)->getSurface() == sfc) {
+			// we calculated mesh nodes for this polyline already
+			return *(*it);
+		}
+	}
+
+	// compute nodes (and supporting points) along polyline
+	_mesh_nodes_along_surfaces.push_back(
+			new MeshNodesAlongSurface(_mesh.getNodes(), sfc));
+	return *_mesh_nodes_along_surfaces.back();
 }
 
 } // end namespace MeshGeoTools
