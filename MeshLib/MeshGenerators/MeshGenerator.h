@@ -35,6 +35,19 @@ Mesh* generateLineMesh(const double length,
                        GeoLib::Point const& origin = GeoLib::ORIGIN);
 
 /**
+ * Generate an 1D Line-Element mesh. The mesh is generated in x-direction.
+ *
+ * \param n_cells Number of cells.
+ * \param cell_size Length of Line elements
+ * \param origin Optional mesh's origin (the left-most point) with GeoLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
+ */
+Mesh* generateLineMesh(const unsigned n_cells,
+                       const double   cell_size,
+                       GeoLib::Point const& origin = GeoLib::ORIGIN,
+					   std::string   const& mesh_name = "mesh");
+
+/**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
  * x-y-plane.
  *
@@ -54,12 +67,13 @@ Mesh* generateRegularQuadMesh(const double length,
  * \param n_y_cells Number of cells in y-direction.
  * \param cell_size Edge length of Quad elements
  * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
 	                          const unsigned n_y_cells,
-                              const double   cell_size,
-                              GeoLib::Point const& origin = GeoLib::ORIGIN,
-							  std::string   const& mesh_name = "mesh");
+	                          const double   cell_size,
+	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
+	                          std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -69,8 +83,8 @@ Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
  * \param origin Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
  */
 Mesh* generateRegularHexMesh(const double length,
-                              const std::size_t subdivision,
-                              GeoLib::Point const& origin = GeoLib::ORIGIN);
+                             const std::size_t subdivision,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN);
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -80,13 +94,14 @@ Mesh* generateRegularHexMesh(const double length,
  * \param n_z_cells Number of cells in z-direction.
  * \param cell_size Edge length of Hex elements
  * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-							  const unsigned n_z_cells,
-                              const double   cell_size,
-                              GeoLib::Point const& origin = GeoLib::ORIGIN);
-
+Mesh* generateRegularHexMesh(const unsigned n_x_cells,
+	                         const unsigned n_y_cells,
+	                         const unsigned n_z_cells,
+	                         const double   cell_size,
+	                         GeoLib::Point const& origin = GeoLib::ORIGIN,
+	                         std::string   const& mesh_name = "mesh");
 
 }  //MeshGenerator
 } //MeshLib
