@@ -11,6 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include "MeshGenerators\MeshGenerator.h"
 
 #include "Configure.h"
 #include "mainwindow.h"
@@ -1284,6 +1285,8 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	_meshModels->addMesh( MeshLib::MeshGenerator::generateRegularQuadMesh(10, 10) );
+
 }
 
 

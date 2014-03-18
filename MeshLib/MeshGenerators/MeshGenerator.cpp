@@ -55,43 +55,49 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
         const std::size_t subdivision,
         const GeoLib::Point& origin)
 {
-	const double dx = length / subdivision;
+	return generateRegularQuadMesh(subdivision, subdivision, length/subdivision, origin);
+}
 
+Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
+	                          const unsigned n_y_cells,
+                              const double   cell_size,
+                              GeoLib::Point const& origin,
+							  std::string   const& mesh_name)
+{
 	//nodes
-	const std::size_t n_nodes = subdivision + 1;
-	std::vector<Node*> nodes(n_nodes * n_nodes);
+	const unsigned n_x_nodes (n_x_cells+1);
+	const unsigned n_y_nodes (n_y_cells+1);
+	std::vector<Node*> nodes;
+	nodes.reserve(n_x_nodes * n_y_nodes);
+	
 
-	for (std::size_t i = 0, node_id = 0; i < n_nodes; i++)
-		for (std::size_t j = 0; j < n_nodes; j++)
-		{
-			nodes[node_id] = new Node(origin[0] + dx * j,
-									  origin[1] + dx * i,
-									  origin[2],
-									  node_id);
-			node_id++;
-		}
+	for (std::size_t i = 0, node_id = 0; i < n_y_nodes; i++)
+	{
+		const double x_offset (origin[0] + cell_size * i);
+		for (std::size_t j = 0; j < n_x_nodes; j++)
+			nodes.push_back (new Node(origin[1] + cell_size * j, x_offset, origin[2]));
+	}
 
 	//elements
-	std::size_t const n_eles = subdivision;
-	std::vector<Element*> elements(n_eles * n_eles);
-	std::size_t elem_id = 0;
+	std::vector<Element*> elements;
+	elements.reserve(n_x_cells * n_y_cells);
 
-	for (std::size_t j = 0; j < subdivision; j++)
+	for (std::size_t j = 0; j < n_y_cells; j++)
 	{
-		const std::size_t offset_y1 = j * n_nodes;
-		const std::size_t offset_y2 = (j + 1) * n_nodes;
-		for (std::size_t k = 0; k < subdivision; k++)
+		const std::size_t offset_y1 = j * n_x_nodes;
+		const std::size_t offset_y2 = (j + 1) * n_x_nodes;
+		for (std::size_t k = 0; k < n_x_cells; k++)
 		{
 			std::array<Node*, 4> element_nodes;
 			element_nodes[0] = nodes[offset_y1 + k];
 			element_nodes[1] = nodes[offset_y1 + k + 1];
 			element_nodes[2] = nodes[offset_y2 + k + 1];
 			element_nodes[3] = nodes[offset_y2 + k];
-			elements[elem_id++] = new Quad(element_nodes);
+			elements.push_back (new Quad(element_nodes));
 		}
 	}
 
-	return new Mesh("mesh", nodes, elements);
+	return new Mesh(mesh_name, nodes, elements);
 }
 
 Mesh* MeshGenerator::generateRegularHexMesh(
