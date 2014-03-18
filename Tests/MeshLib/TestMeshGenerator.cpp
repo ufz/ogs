@@ -76,7 +76,7 @@ TEST(MeshLib, MeshGeneratorRegularHex)
 
 	std::unique_ptr<Mesh> msh2 (MeshGenerator::generateRegularHexMesh(n_subdivisions, n_subdivisions, n_subdivisions, L/n_subdivisions));
 	ASSERT_EQ(msh->getNNodes(), msh2->getNNodes());
-	ASSERT_EQ(0, MathLib::sqrDist(*(msh->getNode(msh->getNNodes()-1)), *(msh2->getNode(msh->getNNodes()-1))));
+	ASSERT_DOUBLE_EQ(0, MathLib::sqrDist(*(msh->getNode(msh->getNNodes()-1)), *(msh2->getNode(msh->getNNodes()-1))));
 
 	unsigned n_x (10);
 	unsigned n_y (5);
@@ -86,9 +86,9 @@ TEST(MeshLib, MeshGeneratorRegularHex)
 	ASSERT_EQ(n_x * n_y * n_z, hex_mesh->getNElements());
 	ASSERT_EQ((n_x+1) * (n_y+1) * (n_z+1), hex_mesh->getNNodes());
 	const MeshLib::Node* node (hex_mesh->getNode(hex_mesh->getNNodes()-1));
-	ASSERT_EQ(n_x*delta, (*node)[0]);
-	ASSERT_EQ(n_y*delta, (*node)[1]);
-	ASSERT_EQ(n_z*delta, (*node)[2]);
+	ASSERT_DOUBLE_EQ(n_x*delta, (*node)[0]);
+	ASSERT_DOUBLE_EQ(n_y*delta, (*node)[1]);
+	ASSERT_DOUBLE_EQ(n_z*delta, (*node)[2]);
 }
 
 TEST(MeshLib, MeshGeneratorRegularQuad)
@@ -96,19 +96,19 @@ TEST(MeshLib, MeshGeneratorRegularQuad)
 	unsigned n_x (10);
 	unsigned n_y (5);
 	double delta (1.2);
-	std::unique_ptr<Mesh> hex_mesh (MeshGenerator::generateRegularQuadMesh(n_x, n_y,delta));
-	ASSERT_EQ(n_x * n_y, hex_mesh->getNElements());
-	ASSERT_EQ((n_x+1) * (n_y+1), hex_mesh->getNNodes());
-	const MeshLib::Node* node (hex_mesh->getNode(hex_mesh->getNNodes()-1));
-	ASSERT_EQ(n_x*delta, (*node)[0]);
-	ASSERT_EQ(n_y*delta, (*node)[1]);
-	ASSERT_EQ(0, (*node)[2]);
+	std::unique_ptr<Mesh> quad_mesh (MeshGenerator::generateRegularQuadMesh(n_x, n_y,delta));
+	ASSERT_EQ(n_x * n_y, quad_mesh->getNElements());
+	ASSERT_EQ((n_x+1) * (n_y+1), quad_mesh->getNNodes());
+	const MeshLib::Node* node (quad_mesh->getNode(quad_mesh->getNNodes()-1));
+	ASSERT_DOUBLE_EQ(n_x*delta, (*node)[0]);
+	ASSERT_DOUBLE_EQ(n_y*delta, (*node)[1]);
+	ASSERT_DOUBLE_EQ(0, (*node)[2]);
 
 	const double L = 10.0;
 	const std::size_t n_subdivisions = 9;
-	std::unique_ptr<Mesh> mesh(MeshGenerator::generateRegularQuadMesh(L, n_subdivisions));
-	ASSERT_EQ(n_subdivisions * n_subdivisions, mesh->getNElements());
-	node = mesh->getNode(mesh->getNNodes()-1);
-	ASSERT_EQ(L, (*node)[0]);
-	ASSERT_EQ(L, (*node)[1]);
+	std::unique_ptr<Mesh> quad_mesh2(MeshGenerator::generateRegularQuadMesh(L, n_subdivisions));
+	ASSERT_EQ(n_subdivisions * n_subdivisions, quad_mesh2->getNElements());
+	node = quad_mesh2->getNode(quad_mesh2->getNNodes()-1);
+	ASSERT_DOUBLE_EQ(L, (*node)[0]);
+	ASSERT_DOUBLE_EQ(L, (*node)[1]);
 }
