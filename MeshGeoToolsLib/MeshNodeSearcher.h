@@ -27,6 +27,7 @@
 namespace MeshGeoTools
 {
 class MeshNodesAlongPolyline;
+class MeshNodesAlongSurface;
 }
 
 namespace MeshGeoTools
@@ -45,11 +46,11 @@ public:
 	 * @param mesh The mesh within the search will be performed. It is asumed
 	 * that the mesh does not change its geometry.
 	 */
-	MeshNodeSearcher(MeshLib::Mesh const& mesh);
+	explicit MeshNodeSearcher(MeshLib::Mesh const& mesh);
 	virtual ~MeshNodeSearcher();
 
 	/**
-	 * Searchs for the node nearest by the given point. If there are two nodes
+	 * Searches for the node nearest by the given point. If there are two nodes
 	 * with the same distance the id of the one that was first found will be
 	 * returned. The algorithm for the search is using GeoLib::Grid data
 	 * structure.
@@ -59,7 +60,7 @@ public:
 	std::size_t getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
 
 	/**
-	 * Searchs for the nearest mesh nodes along a GeoLib::Polyline.
+	 * Searches for the nearest mesh nodes along a GeoLib::Polyline.
 	 * The search for mesh nodes along a specific polyline will be performed
 	 * only once. The result ids will be stored inside an object
 	 * (@see class MeshGeoTools::MeshNodesAlongPolyline).
@@ -68,12 +69,37 @@ public:
 	 */
 	std::vector<std::size_t> const& getMeshNodeIDsAlongPolyline(GeoLib::Polyline const& ply);
 
+	/**
+	 * Searches for the nearest mesh nodes along a GeoLib::Surface.
+	 * The search for mesh nodes along a specific surface will be performed
+	 * only once. The result ids will be stored inside an object
+	 * (@see class MeshGeoTools::MeshNodesAlongSurface).
+	 * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
+	 * @return a vector of mesh node ids
+	 */
+	std::vector<std::size_t> const& getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc);
+
+	/**
+	 * Return a MeshNodesAlongPolyline object for the given GeoLib::Polyline object.
+	 * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
+	 * @return a reference to a MeshNodesAlongPolyline object
+	 */
+	MeshNodesAlongPolyline& getMeshNodesAlongPolyline(GeoLib::Polyline const& ply);
+
+	/**
+	 * Return a MeshNodesAlongSurface object for the given GeoLib::Surface object.
+	 * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
+	 * @return a reference to a MeshNodesAlongSurface object
+	 */
+	MeshNodesAlongSurface& getMeshNodesAlongSurface(GeoLib::Surface const& sfc);
+
 private:
 	MeshLib::Mesh const& _mesh;
 	GeoLib::Grid<MeshLib::Node> _mesh_grid;
 	double _search_length;
 	// with newer compiler we can omit to use a pointer here
 	std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
+	std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
 };
 
 } // end namespace MeshGeoTools
