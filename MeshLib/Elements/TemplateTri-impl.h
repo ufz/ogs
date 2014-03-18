@@ -18,7 +18,7 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTRITYPE>
-TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value, unsigned id) :
+TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value, std::size_t id) :
 	Face(value, id)
 {
 	_nodes = nodes;
@@ -29,7 +29,7 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 
 template<unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& nodes,
-                                             unsigned value, unsigned id)
+                                             unsigned value, std::size_t id)
 	: Face(value, id)
 {
 	_nodes = new Node*[NNODES];

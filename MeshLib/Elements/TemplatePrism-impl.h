@@ -52,7 +52,7 @@ template <unsigned NNODES, CellType CELLPRISMTYPE>
 const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
-TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned value, unsigned id)
+TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned value, std::size_t id)
 	: Cell(value, id)
 {
 	_nodes = nodes;
@@ -63,7 +63,7 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(Node* nodes[NNODES], unsigned
 
 template<unsigned NNODES, CellType CELLPRISMTYPE>
 TemplatePrism<NNODES,CELLPRISMTYPE>::TemplatePrism(std::array<Node*, NNODES> const& nodes,
-                                                   unsigned value, unsigned id)
+                                                   unsigned value, std::size_t id)
 	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];

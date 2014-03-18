@@ -22,7 +22,7 @@
 
 namespace MeshLib {
 
-Element::Element(unsigned value, unsigned id)
+Element::Element(unsigned value, std::size_t id)
 	: _nodes(nullptr), _id(id), _value(value), _neighbors(nullptr)
 {
 }

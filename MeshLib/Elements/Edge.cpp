@@ -20,7 +20,7 @@
 
 namespace MeshLib
 {
-Edge::Edge(unsigned value, unsigned id)
+Edge::Edge(unsigned value, std::size_t id)
     : Element(value, id), _length(-1.0) // init with invalid value to detect errors
 {
 }

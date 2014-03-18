@@ -179,7 +179,7 @@ public:
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Element(unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
+	Element(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
@@ -188,11 +188,11 @@ protected:
 	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
 
 	/// Sets the element ID.
-	virtual void setID(unsigned id) { this->_id = id; }
+	virtual void setID(std::size_t id) { this->_id = id; }
 
 
 	Node** _nodes;
-	unsigned _id;
+	std::size_t _id;
 	/**
 	 * this is an index for external additional information like materials
 	 */

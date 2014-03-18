@@ -16,7 +16,7 @@ namespace MeshLib
 {
 template<unsigned NNODES, CellType CELLLINETYPE>
 TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const& nodes,
-                                                unsigned value, unsigned id)
+                                                unsigned value, std::size_t id)
 	: Edge(value, id)
 {
 	_nodes = new Node*[NNODES];
@@ -26,7 +26,7 @@ TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const&
 }
 
 template<unsigned NNODES, CellType CELLLINETYPE>
-TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(Node* nodes[NNODES], unsigned value, unsigned id) :
+TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(Node* nodes[NNODES], unsigned value, std::size_t id) :
 	Edge(value, id)
 {
 	_nodes = nodes;

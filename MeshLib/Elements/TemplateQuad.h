@@ -47,10 +47,10 @@ public:
 	static const unsigned n_base_nodes;
 
 	/// Constructor with an array of mesh nodes.
-	TemplateQuad(Node* nodes[NNODES], unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
+	TemplateQuad(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs an edge from array of Node pointers.
-	TemplateQuad(std::array<Node*, NNODES> const& nodes, unsigned value = 0, unsigned id = std::numeric_limits<unsigned>::max());
+	TemplateQuad(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a quad from NNODES of Nodes initializing Face with
 	//  value = 0.

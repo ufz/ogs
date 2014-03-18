@@ -51,7 +51,7 @@ const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_edge_nodes[12][2] =
 };
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
-TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value, unsigned id)
+TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value, std::size_t id)
 	: Cell(value, id)
 {
 	_nodes = nodes;
@@ -64,7 +64,7 @@ TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value
 
 template<unsigned NNODES, CellType CELLHEXTYPE>
 TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(std::array<Node*, NNODES> const& nodes,
-                                             unsigned value, unsigned id)
+                                             unsigned value, std::size_t id)
 	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];

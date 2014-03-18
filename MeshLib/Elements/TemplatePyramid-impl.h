@@ -51,7 +51,7 @@ template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
-TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], unsigned value, unsigned id)
+TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], unsigned value, std::size_t id)
 	: Cell(value, id)
 {
 	_nodes = nodes;
@@ -64,7 +64,7 @@ TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], un
 
 template<unsigned NNODES, CellType CELLPYRAMIDTYPE>
 TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(std::array<Node*, NNODES> const& nodes,
-                                                         unsigned value, unsigned id)
+                                                         unsigned value, std::size_t id)
 	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];

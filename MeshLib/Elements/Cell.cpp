@@ -21,7 +21,7 @@ Cell::Cell(Node** nodes, MeshElemType type, unsigned value)
 {
 }
 */
-Cell::Cell(unsigned value, unsigned id)
+Cell::Cell(unsigned value, std::size_t id)
 	: Element(value, id), _volume(-1.0) // init with invalid value to detect errors
 {
 }
