@@ -67,9 +67,11 @@ class NumLibFemIsoQuad4Test : public ::testing::Test
 
         // for destructor
         vec_eles.push_back(unitSquareQuad);
-        for (auto e : vec_eles)
+        for (auto itr=vec_eles.cbegin(); itr!=vec_eles.cend(); ++itr) {
+            auto e = *itr;
             for (unsigned i=0; i<e->getNNodes(true); i++)
                 vec_nodes.push_back(e->getNode(i));
+        }
     }
 
     ~NumLibFemIsoQuad4Test()

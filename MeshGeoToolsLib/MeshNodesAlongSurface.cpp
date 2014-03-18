@@ -26,7 +26,8 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(
 		GeoLib::Surface const& sfc) :
 	_sfc(sfc)
 {
-	for (auto* node : mesh_nodes) {
+	for (auto itr=mesh_nodes.cbegin(); itr!=mesh_nodes.cend(); ++itr) {
+		auto node = *itr;
 		if (!sfc.isPntInBoundingVolume(node->getCoords()))
 			continue;
 		if (sfc.isPntInSfc(node->getCoords())) {
