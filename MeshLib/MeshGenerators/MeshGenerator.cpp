@@ -28,26 +28,35 @@ Mesh* MeshGenerator::generateLineMesh(
         const std::size_t subdivision,
         const GeoLib::Point& origin)
 {
-	const double dx = length / subdivision;
+	return MeshGenerator::generateLineMesh(subdivision, length/subdivision, origin);
+}
 
+Mesh* MeshGenerator::generateLineMesh(const unsigned n_cells,
+                       const double   cell_size,
+                       GeoLib::Point const& origin,
+					   std::string   const& mesh_name)
+{
 	//nodes
-	const std::size_t n_nodes = subdivision + 1;
-	std::vector<Node*> nodes(n_nodes);
+	const std::size_t n_nodes (n_cells + 1);
+	std::vector<Node*> nodes;
+	nodes.reserve(n_nodes);
+
 	for (std::size_t i = 0; i < n_nodes; i++)
-		nodes[i] = new Node(origin[0] + dx * i, origin[1], origin[2], i);
+		nodes.push_back (new Node(origin[0] + cell_size * i, origin[1], origin[2], i));
 
 	//elements
-	const std::size_t n_eles = subdivision;
-	std::vector<Element*> elements(n_eles);
-	for (std::size_t i = 0; i < n_eles; i++)
+	std::vector<Element*> elements;
+	elements.reserve(n_cells);
+
+	for (std::size_t i = 0; i < n_cells; i++)
 	{
 		std::array<Node*, 2> element_nodes;
 		element_nodes[0] = nodes[i];
 		element_nodes[1] = nodes[i + 1];
-		elements[i] = new Line(element_nodes);
+		elements.push_back (new Line(element_nodes));
 	}
 
-	return new Mesh("mesh", nodes, elements);
+	return new Mesh(mesh_name, nodes, elements);
 }
 
 Mesh* MeshGenerator::generateRegularQuadMesh(
@@ -55,43 +64,48 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
         const std::size_t subdivision,
         const GeoLib::Point& origin)
 {
-	const double dx = length / subdivision;
+	return generateRegularQuadMesh(subdivision, subdivision, length/subdivision, origin);
+}
 
+Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
+	                          const unsigned n_y_cells,
+                              const double   cell_size,
+                              GeoLib::Point const& origin,
+							  std::string   const& mesh_name)
+{
 	//nodes
-	const std::size_t n_nodes = subdivision + 1;
-	std::vector<Node*> nodes(n_nodes * n_nodes);
+	const unsigned n_x_nodes (n_x_cells+1);
+	const unsigned n_y_nodes (n_y_cells+1);
+	std::vector<Node*> nodes;
+	nodes.reserve(n_x_nodes * n_y_nodes);	
 
-	for (std::size_t i = 0, node_id = 0; i < n_nodes; i++)
-		for (std::size_t j = 0; j < n_nodes; j++)
-		{
-			nodes[node_id] = new Node(origin[0] + dx * j,
-									  origin[1] + dx * i,
-									  origin[2],
-									  node_id);
-			node_id++;
-		}
+	for (std::size_t i = 0, node_id = 0; i < n_y_nodes; i++)
+	{
+		const double y_offset (origin[1] + cell_size * i);
+		for (std::size_t j = 0; j < n_x_nodes; j++)
+			nodes.push_back (new Node(origin[0] + cell_size * j, y_offset, origin[2]));
+	}
 
 	//elements
-	std::size_t const n_eles = subdivision;
-	std::vector<Element*> elements(n_eles * n_eles);
-	std::size_t elem_id = 0;
+	std::vector<Element*> elements;
+	elements.reserve(n_x_cells * n_y_cells);
 
-	for (std::size_t j = 0; j < subdivision; j++)
+	for (std::size_t j = 0; j < n_y_cells; j++)
 	{
-		const std::size_t offset_y1 = j * n_nodes;
-		const std::size_t offset_y2 = (j + 1) * n_nodes;
-		for (std::size_t k = 0; k < subdivision; k++)
+		const std::size_t offset_y1 = j * n_x_nodes;
+		const std::size_t offset_y2 = (j + 1) * n_x_nodes;
+		for (std::size_t k = 0; k < n_x_cells; k++)
 		{
 			std::array<Node*, 4> element_nodes;
 			element_nodes[0] = nodes[offset_y1 + k];
 			element_nodes[1] = nodes[offset_y1 + k + 1];
 			element_nodes[2] = nodes[offset_y2 + k + 1];
 			element_nodes[3] = nodes[offset_y2 + k];
-			elements[elem_id++] = new Quad(element_nodes);
+			elements.push_back (new Quad(element_nodes));
 		}
 	}
 
-	return new Mesh("mesh", nodes, elements);
+	return new Mesh(mesh_name, nodes, elements);
 }
 
 Mesh* MeshGenerator::generateRegularHexMesh(
@@ -99,41 +113,47 @@ Mesh* MeshGenerator::generateRegularHexMesh(
         const std::size_t subdivision,
         const GeoLib::Point& origin)
 {
-	const double dx = length / subdivision;
+	return MeshGenerator::generateRegularHexMesh(subdivision, subdivision, subdivision, length/subdivision, origin);
+}
 
+Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
+	                         const unsigned n_y_cells,
+	                         const unsigned n_z_cells,
+	                         const double   cell_size,
+	                         GeoLib::Point const& origin,
+	                         std::string   const& mesh_name)
+{
 	//nodes
-	const std::size_t n_nodes_per_dim = subdivision + 1;
-	std::vector<Node*> nodes(n_nodes_per_dim * n_nodes_per_dim * n_nodes_per_dim);
+	const unsigned n_x_nodes (n_x_cells+1);
+	const unsigned n_y_nodes (n_y_cells+1);
+	const unsigned n_z_nodes (n_z_cells+1);
+	std::vector<Node*> nodes;
+	nodes.reserve(n_x_nodes * n_y_nodes * n_z_nodes);
 
-	for (std::size_t i = 0, node_id = 0; i < n_nodes_per_dim; i++)
+	for (std::size_t i = 0, node_id = 0; i < n_z_nodes; i++)
 	{
-		for (std::size_t j = 0; j < n_nodes_per_dim; j++)
+		const double z_offset (origin[2] + cell_size * i);
+		for (std::size_t j = 0; j < n_y_nodes; j++)
 		{
-			for (std::size_t k = 0; k < n_nodes_per_dim; k++)
-			{
-				nodes[node_id] = new Node(origin[0] + dx * k,
-										  origin[1] + dx * j,
-										  origin[2] + dx * i,
-										  node_id);
-				node_id++;
-			}
+			const double y_offset (origin[1] + cell_size * j);
+			for (std::size_t k = 0; k < n_x_nodes; k++)
+				nodes.push_back (new Node(origin[0] + cell_size * k, y_offset, z_offset));
 		}
 	}
 
 	//elements
-	const std::size_t n_eles_per_dim = subdivision;
-	std::vector<Element*> elements(n_eles_per_dim * n_eles_per_dim * n_eles_per_dim);
-	std::size_t elem_id = 0;
+	std::vector<Element*> elements;
+	elements.reserve(n_x_cells * n_y_cells * n_z_cells);
 
-	for (std::size_t i = 0; i < n_eles_per_dim; i++)
+	for (std::size_t i = 0; i < n_z_cells; i++)
 	{
-		const std::size_t offset_z1 = i * n_nodes_per_dim * n_nodes_per_dim; // bottom
-		const std::size_t offset_z2 = (i + 1) * n_nodes_per_dim * n_nodes_per_dim; // top
-		for (std::size_t j = 0; j < n_eles_per_dim; j++)
+		const std::size_t offset_z1 = i * n_x_nodes * n_y_nodes; // bottom
+		const std::size_t offset_z2 = (i + 1) * n_x_nodes * n_y_nodes; // top
+		for (std::size_t j = 0; j < n_y_cells; j++)
 		{
-			const std::size_t offset_y1 = j * n_nodes_per_dim;
-			const std::size_t offset_y2 = (j + 1) * n_nodes_per_dim;
-			for (std::size_t k = 0; k < n_eles_per_dim; k++)
+			const std::size_t offset_y1 = j * n_x_nodes;
+			const std::size_t offset_y2 = (j + 1) * n_x_nodes;
+			for (std::size_t k = 0; k < n_x_cells; k++)
 			{
 				std::array<Node*, 8> element_nodes;
 				// bottom
@@ -146,12 +166,12 @@ Mesh* MeshGenerator::generateRegularHexMesh(
 				element_nodes[5] = nodes[offset_z2 + offset_y1 + k + 1];
 				element_nodes[6] = nodes[offset_z2 + offset_y2 + k + 1];
 				element_nodes[7] = nodes[offset_z2 + offset_y2 + k];
-				elements[elem_id++] = new Hex(element_nodes);
+				elements.push_back (new Hex(element_nodes));
 			}
 		}
 	}
 
-	return new Mesh("mesh", nodes, elements);
+	return new Mesh(mesh_name, nodes, elements);
 }
 
 }
