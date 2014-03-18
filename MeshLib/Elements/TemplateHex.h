@@ -51,10 +51,10 @@ class TemplateHex : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplateHex(Node* nodes[NNODES], unsigned value = 0);
+	TemplateHex(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a hex from array of Node pointers.
-	TemplateHex(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateHex(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplateHex(const TemplateHex &hex);

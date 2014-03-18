@@ -11,6 +11,7 @@
 
 #include "FixedTimeStepping.h"
 
+#include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <limits>

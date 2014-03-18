@@ -25,8 +25,8 @@ namespace MeshLib
 {
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value)
-	: Face(value)
+TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value, std::size_t id)
+	: Face(value, id)
 {
 	_nodes = nodes;
 
@@ -38,8 +38,8 @@ TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned va
 
 template<unsigned NNODES, CellType CELLQUADTYPE>
 TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const& nodes,
-                                                unsigned value)
-	: Face(value)
+                                                unsigned value, std::size_t id)
+	: Face(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -52,7 +52,7 @@ TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const&
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
 TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(const TemplateQuad<NNODES,CELLQUADTYPE> &quad)
-	: Face(quad.getValue())
+	: Face(quad.getValue(), quad.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++) {

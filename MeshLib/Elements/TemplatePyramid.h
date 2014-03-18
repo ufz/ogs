@@ -47,10 +47,10 @@ class TemplatePyramid : public Cell
 {
 public:
 	/// Constructor with an array of mesh nodes.
-	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0);
+	TemplatePyramid(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a pyramid from array of Node pointers.
-	TemplatePyramid(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplatePyramid(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplatePyramid(const TemplatePyramid &pyramid);
