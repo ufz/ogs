@@ -70,6 +70,8 @@ public:
 	 */
 	bool isPntInSfc (Point const& pnt) const;
 
+	const Triangle* findTriangle (const double *pnt) const;
+
 	const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; }
 
 	/**
