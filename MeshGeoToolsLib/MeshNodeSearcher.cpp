@@ -104,7 +104,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_polylines.push_back(
-			new MeshNodesAlongPolyline(_mesh.getNodes(), ply, _search_length));
+			new MeshNodesAlongPolyline(_mesh, ply, _search_length));
 	return *_mesh_nodes_along_polylines.back();
 }
 
@@ -121,7 +121,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_surfaces.push_back(
-			new MeshNodesAlongSurface(_mesh.getNodes(), sfc));
+			new MeshNodesAlongSurface(_mesh, sfc));
 	return *_mesh_nodes_along_surfaces.back();
 }
 

@@ -35,13 +35,17 @@ public:
 	 * @param mesh_nodes Nodes the search will be performed on.
 	 * @param sfc Along the GeoLib::Surface sfc the mesh nodes are searched.
 	 */
-	MeshNodesAlongSurface(std::vector<MeshLib::Node*> const& mesh_nodes,
-			GeoLib::Surface const& sfc);
+	MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc);
+
+	/// return the mesh object
+	MeshLib::Mesh const& getMesh() const;
+
 	/**
 	 * Access the vector of mesh node ids.
 	 * @return The vector of mesh node ids calculated in the constructor
 	 */
 	std::vector<std::size_t> const& getNodeIDs () const;
+
 	/**
 	 * Deploying this method the user can get access to the underlying
 	 * GeoLib::Surface.
@@ -50,6 +54,7 @@ public:
 	GeoLib::Surface const& getSurface () const;
 
 private:
+	MeshLib::Mesh const& _mesh;
 	GeoLib::Surface const& _sfc;
 	std::vector<std::size_t> _msh_node_ids;
 };
