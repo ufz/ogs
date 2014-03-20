@@ -25,7 +25,9 @@ before_install:
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
   - if [[ "$CASE" == "CLI" ]] || [[ "$CASE" == "GUI" ]]; then make test; fi
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then mpirun -np 3 make test; fi
 notifications:
   email:
     - lars.bilke@ufz.de
   campfire: ogs:43a83c669536b2fa948caf643650b6b46d50f809@531799
+
