@@ -66,7 +66,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 	GeoLib::Point pnt(0.0, 0.0, 0.0);
 
 	// 2 perform search and compare results with expected vals
-	MeshGeoTools::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
 
 	// find ORIGIN
 	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
@@ -111,7 +111,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	ply0.addPoint(1);
 
 	// perform search and compare results with expected vals
-	MeshGeoTools::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
 	std::vector<std::size_t> const& found_ids_ply0(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply0));
 
 	ASSERT_EQ(100, found_ids_ply0.size());
@@ -191,7 +191,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 	pnts.push_back(new GeoLib::Point(_geometric_size, 0.5*_geometric_size, 0.0));
 	pnts.push_back(new GeoLib::Point(0.0, 0.5*_geometric_size, 0.0));
 
-	MeshGeoTools::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
 
 	// entire domain
 	GeoLib::Polyline ply0(pnts);
@@ -240,7 +240,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
 	pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
 	pnts.push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
 
-	MeshGeoTools::MeshNodeSearcher mesh_node_searcher(*_hex_mesh);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh);
 
 	const std::size_t n_nodes_1d = _number_of_subdivisions_per_direction + 1;
 	const std::size_t n_nodes_2d = n_nodes_1d * n_nodes_1d;

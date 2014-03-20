@@ -20,7 +20,7 @@
 
 #include <algorithm>
 
-namespace MeshGeoTools
+namespace MeshGeoToolsLib
 {
 MeshNodesAlongPolyline::MeshNodesAlongPolyline(
 		std::vector<MeshLib::Node*> const& mesh_nodes,

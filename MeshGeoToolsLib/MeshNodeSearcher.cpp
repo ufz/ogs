@@ -23,7 +23,7 @@
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 
-namespace MeshGeoTools
+namespace MeshGeoToolsLib
 {
 
 MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :

@@ -18,7 +18,7 @@
 #include "MathTools.h"
 
 
-namespace MeshGeoTools
+namespace MeshGeoToolsLib
 {
 
 MeshNodesAlongSurface::MeshNodesAlongSurface(
