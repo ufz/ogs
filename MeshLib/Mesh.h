@@ -114,7 +114,8 @@ protected:
 	void setElementsConnectedToNodes();
 
 	/// Fills in the neighbor-information for elements.
-	void setNeighborElements();
+	/// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
+	void setElementNeighbors();
 
 	void setNodesConnectedByEdges();
 

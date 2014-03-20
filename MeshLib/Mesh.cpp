@@ -41,7 +41,7 @@ Mesh::Mesh(const std::string &name,
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
-	this->setNeighborElements();
+	this->setElementNeighbors();
 
 	_edge_length[0] =  std::numeric_limits<double>::max();
 	_edge_length[1] = -std::numeric_limits<double>::max();
@@ -73,7 +73,7 @@ Mesh::Mesh(const Mesh &mesh)
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
-	this->setNeighborElements();
+	this->setElementNeighbors();
 }
 
 Mesh::~Mesh()
@@ -159,7 +159,7 @@ void Mesh::calcEdgeLengthRange()
 	this->_edge_length[1] = sqrt(this->_edge_length[1]);
 }
 
-void Mesh::setNeighborElements()
+void Mesh::setElementNeighbors()
 {
 	const size_t nElements = _elements.size();
 	for (unsigned m(0); m<nElements; ++m)
