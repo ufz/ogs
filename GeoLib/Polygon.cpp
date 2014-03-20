@@ -241,16 +241,8 @@ void Polygon::ensureCWOrientation ()
 	for (std::size_t k(0); k < n_pnts; k++)
 		tmp_polygon_pnts.push_back (new GeoLib::Point (*(this->getPoint(k))));
 
-	// *** calculate supporting plane (plane normal and
-	MathLib::Vector3 plane_normal;
-	double d;
-	GeoLib::getNewellPlane(tmp_polygon_pnts, plane_normal, d);
-
-	// *** rotate if necessary
-	double tol (std::numeric_limits<double>::epsilon());
-	if (fabs(plane_normal[0]) > tol || fabs(plane_normal[1]) > tol)
-		// rotate copied points into x-y-plane
-		GeoLib::rotatePointsToXY(plane_normal, tmp_polygon_pnts);
+	// rotate copied points into x-y-plane
+	GeoLib::rotatePointsToXY(tmp_polygon_pnts);
 
 	for (std::size_t k(0); k < tmp_polygon_pnts.size(); k++)
 		(*(tmp_polygon_pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
