@@ -21,7 +21,7 @@
 // MeshLib
 #include "Node.h"
 
-namespace MeshGeoTools
+namespace MeshGeoToolsLib
 {
 /**
  * This class computes the ids of the mesh nodes along a surface.

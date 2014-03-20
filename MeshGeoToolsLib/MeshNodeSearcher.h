@@ -24,13 +24,13 @@
 #include "Node.h"
 
 // forward declaration
-namespace MeshGeoTools
+namespace MeshGeoToolsLib
 {
 class MeshNodesAlongPolyline;
 class MeshNodesAlongSurface;
 }
 
-namespace MeshGeoTools
+namespace MeshGeoToolsLib
 {
 /**
  * Class for searching mesh node ids along polylines or points. This ids
