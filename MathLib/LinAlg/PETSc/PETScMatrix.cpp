@@ -43,7 +43,6 @@ PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption mat_opt)
     MatGetLocalSize(_A, &_loc_rows, &_loc_cols);
 }
 
-//-----------------------------------------------------------------
 void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
 {
     // Each process indicates only rows it owns that are to be zeroed.

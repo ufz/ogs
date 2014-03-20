@@ -14,8 +14,7 @@
 #ifndef PETSCMATRIXOPTION_H_
 #define PETSCMATRIXOPTION_H_
 
-#include "petscmat.h"
-#include "petscksp.h"
+#include <petscmat.h>
 
 namespace MathLib
 {
@@ -34,7 +33,7 @@ struct PETScMatrixOption
             the constructor of class PETScMatrix, size.
             true:  the size is the number of local rows,
             false: the size is the number of global rows.
-           The default is false.
+            The default is false.
      */
     bool _is_size_local_rows;
 
@@ -42,7 +41,7 @@ struct PETScMatrixOption
     PetscInt _local_cols;
 
     /*!
-     \brief Nnumber of nonzeros per row in DIAGONAL portion of local submatrix
+     \brief Number of nonzeros per row in DIAGONAL portion of local submatrix
            (same value is used for all local rows), the default is 10
     */
     PetscInt _d_nz;
@@ -56,4 +55,4 @@ struct PETScMatrixOption
 
 } // end namespace
 #endif
- 
+

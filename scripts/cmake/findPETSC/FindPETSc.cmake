@@ -320,6 +320,12 @@ int main(int argc,char *argv[]) {
   mark_as_advanced (PETSC_INCLUDES PETSC_LIBRARIES PETSC_COMPILER PETSC_DEFINITIONS PETSC_MPIEXEC PETSC_EXECUTABLE_RUNS)
 endif ()
 
+# message (STATUS "dddd---${PETSC_INCLUDES}--${PETSC_LIBRARIES}-- ${petsc_includes_minimal}  ")
+# message (STATUS "dddd---${PETSC_EXECUTABLE_RUNS} ggggg  ${PETSC_DEFINITIONS}")
+
+ set (PETSC_EXECUTABLE_RUNS "YES" CACHE BOOL
+"Can the system successfully run a PETSc executable? This variable can be manually set to \"YES\" to force CMake to accept a given PETSc configuration, but this will almost always result in a broken build. If you change PETSC_DIR, PETSC_ARCH, or PETSC_CURRENT you would have to reset this variable." FORCE)
+
 include (FindPackageHandleStandardArgs)
 find_package_handle_standard_args (PETSc
   "PETSc could not be found.  Be sure to set PETSC_DIR and PETSC_ARCH."

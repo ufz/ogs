@@ -35,7 +35,7 @@ class PETScMatrix
 {
     public:
         /*!
-          \brief Constructor for the PETSc determined partitioning.
+          \brief        Constructor for the PETSc determined partitioning.
           \param size   The dimension of the matrix.
           \param mat_op The configuration information for creating a matrix
         */
@@ -47,7 +47,7 @@ class PETScMatrix
         }
 
         /*!
-           \brief Perform MPI collection of assembled entries in buffer
+           \brief          Perform MPI collection of assembled entries in buffer
            \param asm_type Assmebly type, either MAT_FLUSH_ASSEMBLY
                            or MAT_FINAL_ASSEMBLY
         */
@@ -81,7 +81,7 @@ class PETScMatrix
             return _loc_rows;
         }
 
-        /// Get the number of local rows
+        /// Get the number of local columns
         PetscInt getLocalColumns() const
         {
             return _loc_cols;
@@ -100,13 +100,13 @@ class PETScMatrix
         }
 
         /*
-           \brief Set the specified rows and columns to zero except off-diagonal entries
+           \brief         Set the specified rows and columns to zero except off-diagonal entries
            \param row_pos The row indicies of the specified rows.
         */
         void setRowsColumnsZero(std::vector<PetscInt> const& row_pos);
 
         /*
-           \brief Perform operation \f$ y = A x \f$
+           \brief       Perform operation \f$ y = A x \f$
            \param vec   The given vector, e.g. \f$ x \f$
            \param vec_r The result vector, e.g. \f$ y \f$
             Both of the two arguments must be created prior to be used.
@@ -117,7 +117,7 @@ class PETScMatrix
         }
 
         /*!
-           \brief Insert a single entry with value.
+           \brief       Insert a single entry with value.
            \param i     The row index
            \param j     The column index
            \param value The entry value
@@ -139,7 +139,7 @@ class PETScMatrix
         }
 
         /*!
-          \brief Add a submatrix to this
+          \brief         Add a submatrix to this
           \param row_pos The global row indicies of the entries of the submatrix
           \param col_pos The global column indicies of the entries of the submatrix
           \param sub_mat A dense matrix to be added on
@@ -152,21 +152,25 @@ class PETScMatrix
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output
             \vw_format        File format listed as:
-        PETSC_VIEWER_DEFAULT 	- default format
-        PETSC_VIEWER_ASCII_MATLAB 	- MATLAB format
-        PETSC_VIEWER_ASCII_DENSE 	- print matrix as dense
-        PETSC_VIEWER_ASCII_IMPL 	- implementation-specific format (which is in many cases the same as the default)
-        PETSC_VIEWER_ASCII_INFO 	- basic information about object
-        PETSC_VIEWER_ASCII_INFO_DETAIL 	- more detailed info about object
-        PETSC_VIEWER_ASCII_COMMON 	- identical output format for all objects of a particular type
-        PETSC_VIEWER_ASCII_INDEX 	- (for vectors) prints the vector element number next to each vector entry
-        PETSC_VIEWER_ASCII_SYMMODU 	- print parallel vectors without indicating the processor ranges
-        PETSC_VIEWER_ASCII_VTK 	- outputs the object to a VTK file
-        PETSC_VIEWER_NATIVE 	- store the object to the binary file in its native format (for example, dense matrices are stored as dense), DMDA vectors are dumped directly to the file instead of being first put in the natural ordering
-        PETSC_VIEWER_DRAW_BASIC 	- views the vector with a simple 1d plot
-        PETSC_VIEWER_DRAW_LG 	- views the vector with a line graph
-        PETSC_VIEWER_DRAW_CONTOUR 	- views the vector with a contour plot
-
+             PETSC_VIEWER_DEFAULT            Default format
+             PETSC_VIEWER_ASCII_MATLAB       MATLAB format
+             PETSC_VIEWER_ASCII_DENSE        Print matrix as dense
+             PETSC_VIEWER_ASCII_IMPL         Implementation-specific format
+                                               (which is in many cases the same as the default)
+             PETSC_VIEWER_ASCII_INFO         Basic information about object
+             PETSC_VIEWER_ASCII_INFO_DETAIL  More detailed info about object
+             PETSC_VIEWER_ASCII_COMMON       Identical output format for all objects of a particular type
+             PETSC_VIEWER_ASCII_INDEX        (for vectors) Prints the vector element number next to
+                                                each vector entry
+             PETSC_VIEWER_ASCII_SYMMODU      Print parallel vectors without indicating the processor ranges
+             PETSC_VIEWER_ASCII_VTK          Outputs the object to a VTK file
+             PETSC_VIEWER_NATIVE             Store the object to the binary file in its native format
+                                              (for example, dense matrices are stored as dense),
+                                              DMDA vectors are dumped directly to the file instead of
+                                              being first put in the natural ordering
+             PETSC_VIEWER_DRAW_BASIC         Views the vector with a simple 1d plot
+             PETSC_VIEWER_DRAW_LG            Views the vector with a line graph
+             PETSC_VIEWER_DRAW_CONTOUR       Views the vector with a contour plot
         */
         void viewer(const std::string &file_name,
                     const PetscViewerFormat vw_format = PETSC_VIEWER_ASCII_MATLAB );
@@ -190,6 +194,12 @@ class PETScMatrix
         friend bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type);
 };
 
+/*!
+    \brief          Add a dense sub-matrix to a PETSc matrix
+    \param row_pos  The global indices of the rows of the dense sub-matrix
+    \param col_pos  The global indices of the colums of the dense sub-matrix
+    \param sub_mat  A dense sub-matrix to be added.
+*/
 template<class T_DENSE_MATRIX>
 void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
                       std::vector<PetscInt> const& col_pos,
@@ -202,7 +212,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
 };
 
 /*!
-    \brief General interface for the matrix assembly
+    \brief          General interface for the matrix assembly
     \param mat      The matrix to be finalized
     \param asm_type Assmebly type, either MAT_FLUSH_ASSEMBLY
                      or MAT_FINAL_ASSEMBLY
