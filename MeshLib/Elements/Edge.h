@@ -57,7 +57,7 @@ public:
     unsigned getNFaces() const { return 0; };
 
     /// Get the number of neighbors for this element.
-    unsigned getNNeighbors() const { return 0; };
+    unsigned getNNeighbors() const { return 2; };
 
     /// Returns true if these two indices form an edge and false otherwise
     bool isEdge(unsigned idx1, unsigned idx2) const
