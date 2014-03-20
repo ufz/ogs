@@ -184,10 +184,10 @@ public:
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
 	 * outlined above or NULL
 	 */
-	POINT* getNearestPoint(double const* const pnt) const
+	POINT* getNearestPoint(POINT const& pnt) const
 	{
 		std::size_t coords[3];
-		getGridCoords(POINT(pnt), coords);
+		getGridCoords(pnt, coords);
 
 		double sqr_min_dist (MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
 		POINT* nearest_pnt(NULL);
@@ -254,7 +254,7 @@ public:
 			} // end while
 		} // end else
 
-		double len (sqrt(MathLib::sqrDist(pnt, nearest_pnt->getCoords())));
+		double len (sqrt(MathLib::sqrDist(pnt.getCoords(), nearest_pnt->getCoords())));
 		// search all other grid cells within the cube with the edge nodes
 		std::vector<std::vector<POINT*> const*> vecs_of_pnts;
 		getPntVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
@@ -264,7 +264,7 @@ public:
 			std::vector<POINT*> const& pnts(*(vecs_of_pnts[j]));
 			const std::size_t n_pnts(pnts.size());
 			for (std::size_t k(0); k<n_pnts; k++) {
-				const double sqr_dist (MathLib::sqrDist(pnt, pnts[k]->getCoords()));
+				const double sqr_dist (MathLib::sqrDist(pnt.getCoords(), pnts[k]->getCoords()));
 				if (sqr_dist < sqr_min_dist) {
 					sqr_min_dist = sqr_dist;
 					nearest_pnt = pnts[k];
@@ -307,7 +307,7 @@ private:
 	 * @param pnt (input) the coordinates of the point
 	 * @param coords (output) the coordinates of the grid cell
 	 */
-	inline void getGridCoords(POINT const&, std::size_t* coords) const;
+	inline void getGridCoords(POINT const& pnt, std::size_t* coords) const;
 
 	/**
 	 *
@@ -339,11 +339,11 @@ private:
 	 * ordered in the same sequence as above described
 	 * @param coords coordinates of the grid cell
 	 */
-	void getPointCellBorderDistances(double const* const pnt,
+	void getPointCellBorderDistances(POINT const& pnt,
 	                                 double dists[6],
 	                                 std::size_t const* const coords) const;
 
-	bool calcNearestPointInGridCell(double const* const pnt, std::size_t const* const coords,
+	bool calcNearestPointInGridCell(POINT const& pnt, std::size_t const* const coords,
 	                                double &sqr_min_dist,
 	                                POINT* &nearest_pnt) const
 	{
@@ -352,10 +352,10 @@ private:
 		if (pnts.empty()) return false;
 
 		const std::size_t n_pnts(pnts.size());
-		sqr_min_dist = MathLib::sqrDist(pnts[0]->getCoords(), pnt);
+		sqr_min_dist = MathLib::sqrDist(pnts[0]->getCoords(), pnt.getCoords());
 		nearest_pnt = pnts[0];
 		for (std::size_t i(1); i < n_pnts; i++) {
-			const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt));
+			const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt.getCoords()));
 			if (sqr_dist < sqr_min_dist) {
 				sqr_min_dist = sqr_dist;
 				nearest_pnt = pnts[i];
@@ -526,7 +526,7 @@ void Grid<POINT>::getGridCoords(POINT const& pnt, std::size_t* coords) const
 }
 
 template <typename POINT>
-void Grid<POINT>::getPointCellBorderDistances(double const* const pnt,
+void Grid<POINT>::getPointCellBorderDistances(POINT const& pnt,
                                               double dists[6],
                                               std::size_t const* const coords) const
 {
