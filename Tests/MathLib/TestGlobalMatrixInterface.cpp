@@ -42,7 +42,7 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     m.add(0, 0, 1.0);
     m.setZero();
 
-    MathLib::DenseMatrix<double, short> local_m(2,2, 1.0);
+    MathLib::DenseMatrix<double, short> local_m(2, 2, 1.0);
     std::vector<std::size_t> vec_pos(2);
     vec_pos[0] = 1;
     vec_pos[1] = 3;
@@ -70,7 +70,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     ASSERT_EQ(6u, gathered_cols);
 
     // Add entries
-    MathLib::DenseMatrix<double> loc_m(2);
+    MathLib::DenseMatrix<double, short> loc_m(2);
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
     loc_m(1, 0) = 3.;
