@@ -34,7 +34,7 @@
 int main(int argc, char* argv[])
 {
 #ifdef QT4_FOUND
-	QApplication app(argc, argv, false);
+    QApplication app(argc, argv, false);
 #endif
     int ret = 0;
     LOGOG_INITIALIZE();
@@ -84,3 +84,4 @@ int main(int argc, char* argv[])
 
     return ret;
 }
+

@@ -46,11 +46,16 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::DenseMatrix (DenseMatrix<FP_TYPE, IDX_TYPE> &&sr
 	src._data = nullptr;
 }
 
-
 template <typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>::~DenseMatrix ()
 {
    delete [] _data;
+}
+
+template <typename FP_TYPE, typename IDX_TYPE>
+FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::getData() const
+{
+    return _data;
 }
 
 template <typename FP_TYPE, typename IDX_TYPE>
