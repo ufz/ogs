@@ -95,7 +95,7 @@ protected:
 	}
 
 	/// Returns the ID of a face given an array of nodes.
-    unsigned identifyFace(Node* nodes[3]) const;
+	unsigned identifyFace(Node* nodes[3]) const;
 
 }; /* class */
 
