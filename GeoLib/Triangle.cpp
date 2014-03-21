@@ -59,7 +59,7 @@ void Triangle::setTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 	_longest_edge = sqrt (_longest_edge);
 }
 
-bool Triangle::containsPoint (const double *pnt) const
+bool Triangle::containsPoint (Point const& pnt) const
 {
 	GeoLib::Point const& a_tmp (*(_pnts[_pnt_ids[0]]));
 	GeoLib::Point const& b_tmp (*(_pnts[_pnt_ids[1]]));
@@ -161,7 +161,7 @@ bool Triangle::containsPoint (const double *pnt) const
 	}
 }
 
-bool Triangle::containsPoint2D (const double *pnt) const
+bool Triangle::containsPoint2D (Point const& pnt) const
 {
 	GeoLib::Point const& a (*(_pnts[_pnt_ids[0]]));
 	GeoLib::Point const& b (*(_pnts[_pnt_ids[1]]));
