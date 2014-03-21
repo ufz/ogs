@@ -54,7 +54,7 @@ public:
 			const GeoLib::Polyline& ply,
 			const std::vector<std::size_t>& vec_interpolate_point_ids,
 			const std::vector<double>& vec_interpolate_point_values,
-			const double search_length, const double default_value = 0.0);
+			const double search_length, const double default_value);
 
 	/**
 	 * interpolate a value at the given point
