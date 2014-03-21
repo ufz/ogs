@@ -269,58 +269,6 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
-void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts)
-{
-	double small_value(std::numeric_limits<double>::epsilon());
-	if (fabs(plane_normal[0]) < small_value && fabs(plane_normal[1]) < small_value)
-		return;
-
-	MathLib::DenseMatrix<double> rot_mat(3, 3);
-	computeRotationMatrixToXY(plane_normal, rot_mat);
-	rotatePoints(rot_mat, pnts);
-
-	double* tmp(rot_mat * plane_normal.getCoords());
-	for (std::size_t j(0); j < 3; j++)
-		plane_normal[j] = tmp[j];
-
-	delete[] tmp;
-}
-
-void rotatePointsToXZ(MathLib::Vector3 &n, std::vector<GeoLib::Point*> &pnts)
-{
-	double small_value(std::numeric_limits<double>::epsilon());
-	if (fabs(n[0]) < small_value && fabs(n[1]) < small_value)
-		return;
-
-	// *** some frequently used terms ***
-	// n_1^2 + n_2^2
-	const double h0(n[0] * n[0] + n[1] * n[1]);
-	// 1 / sqrt (n_1^2 + n_2^2)
-	const double h1(1.0 / sqrt(h0));
-	// 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
-	const double h2(1.0 / sqrt(h0 + n[2] * n[2]));
-
-	MathLib::DenseMatrix<double> rot_mat(3, 3);
-	// calc rotation matrix
-	rot_mat(0, 0) = n[1] * h1;
-	rot_mat(0, 1) = -n[0] * h1;
-	rot_mat(0, 2) = 0.0;
-	rot_mat(1, 0) = n[0] * h2;
-	rot_mat(1, 1) = n[1] * h2;
-	rot_mat(1, 2) = n[2] * h2;
-	rot_mat(2, 0) = n[0] * n[2] * h1 * h2;
-	rot_mat(2, 1) = n[1] * n[2] * h1 * h2;
-	rot_mat(2, 2) = -sqrt(h0) * h2;
-
-	rotatePoints(rot_mat, pnts);
-
-	double *tmp(rot_mat * n.getCoords());
-	for (std::size_t j(0); j < 3; j++)
-		n[j] = tmp[j];
-
-	delete[] tmp;
-}
-
 void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
 {
 	// *** some frequently used terms ***
@@ -344,6 +292,28 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::De
 	rot_mat(2, 2) = plane_normal[2] * h2;
 }
 
+void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
+{
+	// *** some frequently used terms ***
+	// n_1^2 + n_2^2
+	const double h0(plane_normal[0] * plane_normal[0] + plane_normal[1] * plane_normal[1]);
+	// 1 / sqrt (n_1^2 + n_2^2)
+	const double h1(1.0 / sqrt(h0));
+	// 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
+	const double h2(1.0 / sqrt(h0 + plane_normal[2] * plane_normal[2]));
+
+	// calc rotation matrix
+	rot_mat(0, 0) = plane_normal[1] * h1;
+	rot_mat(0, 1) = -plane_normal[0] * h1;
+	rot_mat(0, 2) = 0.0;
+	rot_mat(1, 0) = plane_normal[0] * h2;
+	rot_mat(1, 1) = plane_normal[1] * h2;
+	rot_mat(1, 2) = plane_normal[2] * h2;
+	rot_mat(2, 0) = plane_normal[0] * plane_normal[2] * h1 * h2;
+	rot_mat(2, 1) = plane_normal[1] * plane_normal[2] * h1 * h2;
+	rot_mat(2, 2) = -sqrt(h0) * h2;
+}
+
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
 	double* tmp (NULL);
@@ -354,6 +324,48 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLi
 			(*(pnts[k]))[j] = tmp[j];
 		delete [] tmp;
 	}
+}
+
+void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
+{
+	assert(pnts.size()>2);
+	// calculate supporting plane
+	MathLib::Vector3 plane_normal;
+	double d;
+	// compute the plane normal
+	GeoLib::getNewellPlane(pnts, plane_normal, d);
+
+	const double tol (std::numeric_limits<double>::epsilon());
+	if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
+		// rotate copied points into x-y-plane
+		MathLib::DenseMatrix<double> rot_mat(3, 3);
+		computeRotationMatrixToXY(plane_normal, rot_mat);
+		rotatePoints(rot_mat, pnts);
+	}
+
+	for (std::size_t k(0); k<pnts.size(); k++)
+		(*(pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
+}
+
+void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
+{
+	assert(pnts.size()>2);
+	// calculate supporting plane
+	MathLib::Vector3 plane_normal;
+	double d;
+	// compute the plane normal
+	GeoLib::getNewellPlane(pnts, plane_normal, d);
+
+	const double tol (std::numeric_limits<double>::epsilon());
+	if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
+		// rotate copied points into x-z-plane
+		MathLib::DenseMatrix<double> rot_mat(3, 3);
+		computeRotationMatrixToXZ(plane_normal, rot_mat);
+		rotatePoints(rot_mat, pnts);
+	}
+
+	for (std::size_t k(0); k<pnts.size(); k++)
+		(*(pnts[k]))[1] = 0.0; // should be -= d but there are numerical errors
 }
 
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q)

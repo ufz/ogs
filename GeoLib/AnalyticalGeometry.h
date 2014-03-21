@@ -60,26 +60,6 @@ void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
                      double& d);
 
 /**
- * The vector plane_normal should be the surface normal of the plane surface described
- * by the points within the vector pnts. See function getNewellPlane() to get the
- * "plane normal" of a point set. The method rotates both the plane normal and
- * the points. The plane normal is rotated such that it is parallel to the \f$z\f$ axis.
- * @param plane_normal the normal of the plane
- * @param pnts pointers to points in a vector that should be rotated
- * @sa getNewellPlane()
- */
-void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
-
-/**
- * The vector plane_normal should be the surface normal of the plane surface described
- * by the points within the vector pnts. See function getNewellPlane() to get the
- * "plane normal" of a point set. The method rotates both the plane normal and
- * the points. The plane normal is rotated such that it is parallel to the \f$y\f$ axis.
- * @sa getNewellPlane()
- */
-void rotatePointsToXZ(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
-
-/**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
  * @param plane_normal the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
@@ -88,11 +68,35 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
                                MathLib::DenseMatrix<double> & rot_mat);
 
 /**
+ * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
+ * @param plane_normal the (3d) vector that is rotated parallel to the \f$y\f$ axis
+ * @param rot_mat 3x3 rotation matrix
+ */
+void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal,
+                               MathLib::DenseMatrix<double> & rot_mat);
+
+/**
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts vector of points
  */
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
+
+/**
+ * rotate points to X-Y plane
+ * @param pnts a vector of points with a minimum length of three.
+ * Points are rotated using a rotation matrix computed from the first three points
+ * in the vector. Point coordinates are modified as a result of the rotation.
+ */
+void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
+
+/**
+ * rotate points to X-Z plane
+ * @param pnts a vector of points with a minimum length of three.
+ * Points are rotated using a rotation matrix computed from the first three points
+ * in the vector. Point coordinates are modified as a result of the rotation.
+ */
+void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
 
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
