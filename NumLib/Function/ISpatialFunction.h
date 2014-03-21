@@ -22,7 +22,7 @@ namespace NumLib
 {
 
 /**
- * \brief Interface of spatial function classes
+ * \brief Interface class for any functions of spatial coordinates \f$f(x,y,z)\f$
  */
 class ISpatialFunction
 {
