@@ -10,7 +10,7 @@
  *
  */
 
-#include "LinearInterpolationAlongSurface.h"
+#include "LinearInterpolationOnSurface.h"
 
 #include <limits>
 #include <array>
@@ -27,7 +27,7 @@
 namespace NumLib
 {
 
-LinearInterpolationAlongSurface::LinearInterpolationAlongSurface(
+LinearInterpolationOnSurface::LinearInterpolationOnSurface(
 		const GeoLib::Surface& sfc,
 		const std::vector<std::size_t>& vec_interpolate_point_ids,
 		const std::vector<double>& vec_interpolate_point_values,
@@ -38,7 +38,7 @@ LinearInterpolationAlongSurface::LinearInterpolationAlongSurface(
 	assert(vec_interpolate_point_ids.size()==vec_interpolate_point_values.size());
 }
 
-double LinearInterpolationAlongSurface::operator()(const GeoLib::Point& pnt) const
+double LinearInterpolationOnSurface::operator()(const GeoLib::Point& pnt) const
 {
 	const double* coords = pnt.getCoords();
 	if (!_sfc.isPntInBoundingVolume(coords))
@@ -61,13 +61,13 @@ double LinearInterpolationAlongSurface::operator()(const GeoLib::Point& pnt) con
 	return val;
 }
 
-double LinearInterpolationAlongSurface::interpolateInTri(const GeoLib::Triangle &tri, double const* const vertex_values, double const* const pnt) const
+double LinearInterpolationOnSurface::interpolateInTri(const GeoLib::Triangle &tri, double const* const vertex_values, double const* const pnt) const
 {
 	std::vector<GeoLib::Point> pnts;
 	for (unsigned i=0; i<3; i++)
 		pnts.emplace_back(*tri.getPoint(i));
 	std::vector<GeoLib::Point*> p_pnts = {{&pnts[0], &pnts[1], &pnts[2]}};
-	GeoLib::rotatePolygonToXY(p_pnts);
+	GeoLib::rotatePointsToXY(p_pnts);
 
 	const double* v1 = pnts[0].getCoords();
 	const double* v2 = pnts[1].getCoords();
@@ -76,11 +76,12 @@ double LinearInterpolationAlongSurface::interpolateInTri(const GeoLib::Triangle 
 
 	if (area==.0) {
 		// take average if all points have the same coordinates
-		double sum = .0;
-		for (unsigned i=0; i<3; i++)
-			sum += vertex_values[i];
-		return sum / static_cast<double>(3);
+		return std::accumulate(vertex_values, vertex_values+3, 0.0) / 3;
 	}
+
+	// interpolate as
+	//   u(x,y) = sum_i[N_i(x,y)*u_i]  (i=1,2,3)
+	//   N_i(x,y) = 1/(2A)*(a_i + b_i*x + c_i*y)
 
 	double a[3], b[3], c[3];
 	// 1st vertex

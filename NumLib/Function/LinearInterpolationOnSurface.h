@@ -39,7 +39,7 @@ namespace NumLib
 /**
  * Class for linearly interpolating values along a GeoLib::Surface object
  */
-class LinearInterpolationAlongSurface : public ISpatialFunction
+class LinearInterpolationOnSurface : public ISpatialFunction
 {
 public:
 	/**
@@ -49,11 +49,11 @@ public:
 	 * @param vec_interpolate_point_values  a vector of values at points
 	 * @param default_value  default value when a given point is not located on a surface
 	 */
-	LinearInterpolationAlongSurface(
+	LinearInterpolationOnSurface(
 			const GeoLib::Surface& sfc,
 			const std::vector<std::size_t>& vec_interpolate_point_ids,
 			const std::vector<double>& vec_interpolate_point_values,
-			const double default_value = 0.0);
+			const double default_value);
 
 	/**
 	 * interpolate a value at the given point
@@ -67,7 +67,25 @@ private:
 	/// rotate a triangle to XY plane
 	void rotate(std::vector<GeoLib::Point> &_pnts) const;
 
-	/// do an interpolation within a triangle
+	/**
+	 * do an interpolation within a triangle. Interpolation is done by shape functions
+	 * for triangle elements based on areal coordinates as
+	 * \f[
+	 *   u(x,y) = sum_i[N_i(x,y)*u_i]  (i=1,2,3)
+	 * \f]
+	 * where \f$N_i\f$ is a shape function for node i, \f$u_i\f$ is a value at node i.
+	 * The shape function is given by
+	 * \f[
+	 *   N_i(x,y) = 1/(2A)*(a_i + b_i*x + c_i*y)
+	 * \f]
+	 * with an element area \f$A\f$ and geometric parameters \f$a_i\f$, \f$b_i\f$ and \f$c_i\f$.
+	 * reference: http://kratos-wiki.cimne.upc.edu/index.php/Two-dimensional_Shape_Functions
+	 *
+	 * @param tri
+	 * @param vertex_values
+	 * @param pnt
+	 * @return
+	 */
 	double interpolateInTri(const GeoLib::Triangle &tri, double const* const vertex_values, double const* const pnt) const;
 
 	/// a surface object
