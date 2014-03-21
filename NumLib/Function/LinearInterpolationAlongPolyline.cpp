@@ -60,7 +60,7 @@ MathLib::PiecewiseLinearInterpolation LinearInterpolationAlongPolyline::createIn
 double LinearInterpolationAlongPolyline::operator()(const GeoLib::Point& pnt) const
 {
 	const double dist = _ply.getDistanceAlongPolyline(pnt, _search_length);
-	return dist>0 ? _interpolation.getValue(dist) : _default_value;
+	return dist>=0 ? _interpolation.getValue(dist) : _default_value;
 }
 
 } // NumLib
