@@ -125,7 +125,7 @@ bool Surface::isPntInSfc (Point const& pnt) const
 	return (findTriangle(pnt)!=nullptr);
 }
 
-const Triangle* Surface::findTriangle (const double *pnt) const
+const Triangle* Surface::findTriangle (Point const& pnt) const
 {
 	for (std::size_t k(0); k<_sfc_triangles.size(); k++) {
 		if (_sfc_triangles[k]->containsPoint (pnt)) {
