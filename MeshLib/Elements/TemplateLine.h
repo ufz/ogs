@@ -95,6 +95,8 @@ protected:
 	}
 
 	/// Returns the ID of a face given an array of nodes.
+	/// As element faces are always element->getDimensionality() - 1, the "face" of a line is just a node
+	/// and the method returns if another line is connected to node[0] or node[1] of the line.
 	unsigned identifyFace(Node* nodes[3]) const;
 
 }; /* class */
