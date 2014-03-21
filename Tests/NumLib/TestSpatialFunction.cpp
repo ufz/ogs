@@ -20,7 +20,7 @@
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 #include "NumLib/Function/LinearInterpolationAlongPolyline.h"
-#include "NumLib/Function/LinearInterpolationAlongSurface.h"
+#include "NumLib/Function/LinearInterpolationOnSurface.h"
 #include "NumLib/Function/SpatialFunctionLinear.h"
 
 #include "../TestTools.h"
@@ -69,7 +69,7 @@ protected:
 	std::unique_ptr<MeshLib::Mesh> _msh;
 	GeoLib::GEOObjects _geo_objs;
 	std::string _project_name;
-	MeshGeoTools::MeshNodeSearcher _mshNodesSearcher;
+	MeshGeoToolsLib::MeshNodeSearcher _mshNodesSearcher;
 	GeoLib::Polyline* _ply0;
 	GeoLib::Surface* _sfc1;
 };
@@ -121,7 +121,7 @@ protected:
 	std::unique_ptr<MeshLib::Mesh> _msh;
 	GeoLib::GEOObjects _geo_objs;
 	std::string _project_name;
-	MeshGeoTools::MeshNodeSearcher _mshNodesSearcher;
+	MeshGeoToolsLib::MeshNodeSearcher _mshNodesSearcher;
 	GeoLib::Polyline* _ply0;
 	GeoLib::Surface* _sfc1;
 };
@@ -147,14 +147,14 @@ TEST_F(NumLibSpatialFunctionQuad, Linear)
 {
 	// f(x,y,z) = 1 + 2x + 3y + 4z
 	std::array<double,4> f_coeff = {{1, 2, 3, 4}};
-	MathLib::LinearFunction<double,3> linear_f(f_coeff.data());
+	MathLib::LinearFunction<double,3> linear_f(f_coeff);
 	std::vector<double> expected = {{1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21}};
 
 	NumLib::SpatialFunctionLinear f(linear_f);
 	const std::vector<std::size_t>& vec_node_ids = _mshNodesSearcher.getMeshNodesAlongPolyline(*_ply0).getNodeIDs();
 	std::vector<double> interpolated_values(vec_node_ids.size());
 	NodeIDtoNodeObject<NumLib::SpatialFunctionLinear> task(*_msh, f);
-	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task );
+	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task);
 
 	ASSERT_ARRAY_NEAR(expected, interpolated_values, expected.size(), std::numeric_limits<double>::epsilon());
 }
@@ -163,7 +163,7 @@ TEST_F(NumLibSpatialFunctionHex, Linear)
 {
 	// f(x,y,z) = 1 + 2x + 3y + 4z
 	std::array<double,4> f_coeff = {{1, 2, 3, 4}};
-	MathLib::LinearFunction<double,3> linear_f(f_coeff.data());
+	MathLib::LinearFunction<double,3> linear_f(f_coeff);
 	std::vector<double> expected(std::pow(_number_of_subdivisions_per_direction+1, 2));
 	const double dL = _geometric_size / _number_of_subdivisions_per_direction;
 	for (std::size_t i=0; i<expected.size(); i++) {
@@ -177,7 +177,7 @@ TEST_F(NumLibSpatialFunctionHex, Linear)
 	const std::vector<std::size_t>& vec_node_ids = _mshNodesSearcher.getMeshNodesAlongSurface(*_sfc1).getNodeIDs();
 	std::vector<double> interpolated_values(vec_node_ids.size());
 	NodeIDtoNodeObject<NumLib::SpatialFunctionLinear> task(*_msh, f);
-	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task );
+	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task);
 
 	ASSERT_ARRAY_NEAR(expected, interpolated_values, expected.size(), std::numeric_limits<double>::epsilon());
 }
@@ -189,12 +189,11 @@ TEST_F(NumLibSpatialFunctionQuad, InterpolationPolyline)
 	std::vector<double> expected = {{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100}};
 
 	NumLib::LinearInterpolationAlongPolyline interpolate(
-			*_ply0, vec_point_ids, vec_point_values, std::numeric_limits<double>::epsilon());
-	//	std::vector<double> interpolated_values = interpolate(_mshNodesSearcher.getMeshNodesAlongPolyline(*_ply0));
+			*_ply0, vec_point_ids, vec_point_values, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::max());
 	const std::vector<std::size_t>& vec_node_ids = _mshNodesSearcher.getMeshNodesAlongPolyline(*_ply0).getNodeIDs();
 	std::vector<double> interpolated_values(vec_node_ids.size());
 	NodeIDtoNodeObject<NumLib::LinearInterpolationAlongPolyline> task(*_msh, interpolate);
-	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task );
+	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task);
 
 	ASSERT_ARRAY_NEAR(expected, interpolated_values, expected.size(), std::numeric_limits<double>::epsilon());
 }
@@ -206,12 +205,11 @@ TEST_F(NumLibSpatialFunctionHex, InterpolationPolyline)
 	std::vector<double> expected = {{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100}};
 
 	NumLib::LinearInterpolationAlongPolyline interpolate(
-			*_ply0, vec_point_ids, vec_point_values, std::numeric_limits<double>::epsilon());
-//	std::vector<double> interpolated_values = interpolate(_mshNodesSearcher.getMeshNodesAlongPolyline(*_ply0));
+			*_ply0, vec_point_ids, vec_point_values, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::max());
 	const std::vector<std::size_t>& vec_node_ids = _mshNodesSearcher.getMeshNodesAlongPolyline(*_ply0).getNodeIDs();
 	std::vector<double> interpolated_values(vec_node_ids.size());
 	NodeIDtoNodeObject<NumLib::LinearInterpolationAlongPolyline> task(*_msh, interpolate);
-	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task );
+	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task);
 
 	ASSERT_ARRAY_NEAR(expected, interpolated_values, expected.size(), std::numeric_limits<double>::epsilon());
 }
@@ -225,12 +223,11 @@ TEST_F(NumLibSpatialFunctionQuad, InterpolationSurface)
 		expected[i] = (i%(_number_of_subdivisions_per_direction+1)) * 10;
 	}
 
-	NumLib::LinearInterpolationAlongSurface interpolate(*_sfc1, vec_point_ids, vec_point_values);
-//	std::vector<double> interpolated_values = interpolate(_mshNodesSearcher.getMeshNodesAlongSurface(*_sfc1));
+	NumLib::LinearInterpolationOnSurface interpolate(*_sfc1, vec_point_ids, vec_point_values, std::numeric_limits<double>::max());
 	const std::vector<std::size_t>& vec_node_ids = _mshNodesSearcher.getMeshNodesAlongSurface(*_sfc1).getNodeIDs();
 	std::vector<double> interpolated_values(vec_node_ids.size());
-	NodeIDtoNodeObject<NumLib::LinearInterpolationAlongSurface> task(*_msh, interpolate);
-	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task );
+	NodeIDtoNodeObject<NumLib::LinearInterpolationOnSurface> task(*_msh, interpolate);
+	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task);
 
 	// the machine epsilon for double is too small for this test
 	ASSERT_ARRAY_NEAR(expected, interpolated_values, expected.size(), std::numeric_limits<float>::epsilon());
@@ -245,12 +242,11 @@ TEST_F(NumLibSpatialFunctionHex, InterpolationSurface)
 		expected[i] = (i%(_number_of_subdivisions_per_direction+1)) * 10;
 	}
 
-	NumLib::LinearInterpolationAlongSurface interpolate(*_sfc1, vec_point_ids, vec_point_values);
-//	std::vector<double> interpolated_values = interpolate(_mshNodesSearcher.getMeshNodesAlongSurface(*_sfc1));
+	NumLib::LinearInterpolationOnSurface interpolate(*_sfc1, vec_point_ids, vec_point_values, std::numeric_limits<double>::max());
 	const std::vector<std::size_t>& vec_node_ids = _mshNodesSearcher.getMeshNodesAlongSurface(*_sfc1).getNodeIDs();
 	std::vector<double> interpolated_values(vec_node_ids.size());
-	NodeIDtoNodeObject<NumLib::LinearInterpolationAlongSurface> task(*_msh, interpolate);
-	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task );
+	NodeIDtoNodeObject<NumLib::LinearInterpolationOnSurface> task(*_msh, interpolate);
+	std::transform(vec_node_ids.begin(), vec_node_ids.end(), interpolated_values.begin(), task);
 
 	ASSERT_ARRAY_NEAR(expected, interpolated_values, expected.size(), std::numeric_limits<float>::epsilon());
 }
