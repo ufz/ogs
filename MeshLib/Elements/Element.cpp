@@ -36,8 +36,8 @@ Element::~Element()
 bool Element::addNeighbor(Element* e)
 {
 	if (e == this || 
-		e == nullptr ||
-		e->getDimension() != this->getDimension())
+	    e == nullptr ||
+	    e->getDimension() != this->getDimension())
 		return false;
 
 	unsigned nNeighbors (this->getNNeighbors());
