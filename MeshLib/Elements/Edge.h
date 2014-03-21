@@ -81,9 +81,6 @@ protected:
     /// 1D elements have no edges.
     Node* getEdgeNode(unsigned /*edge_id*/, unsigned /*node_id*/) const { return nullptr; };
 
-    /// Returns the ID of a face given an array of nodes (but is not applicable for edges!).
-    unsigned identifyFace(Node* [3]/*nodes[3]*/) const { return std::numeric_limits<unsigned>::max(); };
-
     /// Constructor for a generic mesh element without an array of mesh nodes.
     Edge(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 

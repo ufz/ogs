@@ -58,5 +58,18 @@ ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::validate() const
 	return error_code;
 }
 
+template <unsigned NNODES, CellType CELLLINETYPE>
+unsigned TemplateLine<NNODES,CELLLINETYPE>::identifyFace(Node* nodes[3]) const
+{
+	for (unsigned i=0; i<3; i++)
+	{
+		unsigned flag(0);
+		for (unsigned j=0; j<2; j++)
+			if (_nodes[j] == nodes[i])
+				return j;
+	}
+	return std::numeric_limits<unsigned>::max();
+}
+
 } // namespace MeshLib
 

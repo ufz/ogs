@@ -167,8 +167,6 @@ void Mesh::setElementNeighbors()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		if (element->getGeomType() != MeshElemType::LINE)
-		{
 			const size_t nNodes (element->getNNodes());
 			for (unsigned n(0); n<nNodes; ++n)
 			{
@@ -185,7 +183,7 @@ void Mesh::setElementNeighbors()
 					neighbors[i]->addNeighbor(element);
 				}
 			}
-		}
+
 	}
 }
 

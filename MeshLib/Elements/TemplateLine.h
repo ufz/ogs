@@ -94,6 +94,9 @@ protected:
 		return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
 	}
 
+	/// Returns the ID of a face given an array of nodes.
+    unsigned identifyFace(Node* nodes[3]) const;
+
 }; /* class */
 
 } /* namespace */
