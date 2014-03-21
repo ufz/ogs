@@ -113,7 +113,7 @@ TEST_F(MeshLibTriLineMesh, NodeToElementConnectivity)
 
 TEST_F(MeshLibTriLineMesh, ElementToElementConnectivity)
 {
-    // Triangles have themselves as neighbors only.
+    // Triangles have other triangles as neighbors only.
     EXPECT_TRUE(elements[0]->hasNeighbor(elements[1]));
     EXPECT_TRUE(elements[1]->hasNeighbor(elements[0]));
 
