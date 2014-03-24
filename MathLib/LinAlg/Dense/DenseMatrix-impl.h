@@ -1,5 +1,5 @@
 /**
- * @file DenseMatrix.tpp
+ * @file DenseMatrix-imp.h
  * @author Thomas Fischer and Haibing Shao
  * @date Jun 10, 2013
  *
@@ -54,7 +54,7 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::~DenseMatrix ()
 }
 
 template <typename FP_TYPE, typename IDX_TYPE>
-FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::getData() const
+const FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::getEntries() const
 {
     return _data;
 }

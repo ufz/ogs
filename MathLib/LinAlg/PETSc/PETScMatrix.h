@@ -27,8 +27,6 @@ namespace MathLib
 {
 
 /*!
-   \class PETScVector
-
    \brief Wrapper class for PETSc matrix routines
 */
 class PETScMatrix
@@ -39,7 +37,7 @@ class PETScMatrix
           \param size   The dimension of the matrix.
           \param mat_op The configuration information for creating a matrix
         */
-        PETScMatrix(const PetscInt size, const PETScMatrixOption mat_op = PETScMatrixOption() );
+        PETScMatrix(const PetscInt size, const PETScMatrixOption &mat_op = PETScMatrixOption() );
 
         ~PETScMatrix()
         {
@@ -58,7 +56,7 @@ class PETScMatrix
         }
 
         /// Get the dimension
-        PetscInt size() const
+        PetscInt getDimension() const
         {
             return _size;
         }
@@ -69,26 +67,26 @@ class PETScMatrix
             return _start_rank;
         }
 
-        /// Get the last global index of the row in the same rank
+        /// Get the end global index of the rows in the same rank
         PetscInt getRangeEnd() const
         {
             return _end_rank;
         }
 
         /// Get the number of local rows
-        PetscInt getLocalRows() const
+        PetscInt getNLocalRows() const
         {
-            return _loc_rows;
+            return _n_loc_rows;
         }
 
         /// Get the number of local columns
-        PetscInt getLocalColumns() const
+        PetscInt getNLocalColumns() const
         {
-            return _loc_cols;
+            return _n_loc_cols;
         }
 
         /// Get matrix reference
-        PETSc_Mat &getData()
+        PETSc_Mat &getRawMatrix()
         {
             return _A;
         }
@@ -100,7 +98,9 @@ class PETScMatrix
         }
 
         /*
-           \brief         Set the specified rows and columns to zero except off-diagonal entries
+           \brief Set the specified rows to zero except off-diagonal entries, i.e.
+                  \f$A(k, j) = 0, j!=k, j=1,2,\cdots, n\f$, where \f$k \in \mbox{row\_pos}\f$
+                  This fucntion must be called by all rank.
            \param row_pos The row indicies of the specified rows.
         */
         void setRowsColumnsZero(std::vector<PetscInt> const& row_pos);
@@ -111,13 +111,13 @@ class PETScMatrix
            \param vec_r The result vector, e.g. \f$ y \f$
             Both of the two arguments must be created prior to be used.
         */
-        void multVector(PETScVector &vec, PETScVector &vec_r)
+        void multiVector(const PETScVector &vec, PETScVector &vec_r)
         {
             MatMult(_A, vec.getData(), vec_r.getData() );
         }
 
         /*!
-           \brief       Insert a single entry with value.
+           \brief       Set a single entry with a value.
            \param i     The row index
            \param j     The column index
            \param value The entry value
@@ -179,12 +179,12 @@ class PETScMatrix
         /// PETSc matrix
         PETSc_Mat _A;
 
-        /// Dimension
+        /// Dimension of matrix
         PetscInt _size;
         /// Number of the local rows
-        PetscInt _loc_rows;
+        PetscInt _n_loc_rows;
         /// Number of the local columns
-        PetscInt _loc_cols;
+        PetscInt _n_loc_cols;
 
         /// Starting index in a rank
         PetscInt _start_rank;
@@ -208,7 +208,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
     const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
     const PetscInt ncols = static_cast<PetscInt> (col_pos.size());
 
-    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], sub_mat.getData(), ADD_VALUES);
+    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], sub_mat.getEntries(), ADD_VALUES);
 };
 
 /*!

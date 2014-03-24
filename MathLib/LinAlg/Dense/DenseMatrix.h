@@ -55,7 +55,7 @@ public:
    /**
     * Get the raw data directly
    */
-   FP_TYPE *getData () const;
+   const FP_TYPE *getEntries() const;
 
    /**
     * Assignment operator, makes a copy of the internal data of the object.

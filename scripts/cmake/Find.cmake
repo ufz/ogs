@@ -120,6 +120,10 @@ ENDIF()
 IF(OGS_USE_PETSC)
     MESSAGE (STATUS  "Configuring for PETSc" )
 
+    ##Force CMake to accept a given PETSc configuration in case the failure of MPI tests
+    ##This may cause the compilation broken.
+    SET(PETSC_EXECUTABLE_RUNS YES)
+
     SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
     FIND_PACKAGE(PETSc REQUIRED)
 

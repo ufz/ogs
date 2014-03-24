@@ -19,38 +19,37 @@
 namespace MathLib
 {
 /*!
-   \struct  PETScMatrixOption
    \brief This a struct data containing the configuration information to create a PETSc type matrix
 */
 struct PETScMatrixOption
 {
-    PETScMatrixOption() :  _is_size_local_rows(false), _local_cols(PETSC_DECIDE),
-        _d_nz(10), _o_nz(10)
+    PETScMatrixOption() :  _is_global_size(true), _n_local_cols(PETSC_DECIDE),
+        _d_nnz(PETSC_DECIDE), _o_nnz(PETSC_DECIDE)
     { }
 
     /*!
-     \brief Flag for the type of the first argument of
-            the constructor of class PETScMatrix, size.
-            true:  the size is the number of local rows,
-            false: the size is the number of global rows.
+     \brief Flag for the type of size, which is one of arguments of
+            the constructor of class PETScMatrix
+              true:  the size is the number of local rows,
+              false: the size is the number of global rows.
             The default is false.
      */
-    bool _is_size_local_rows;
+    bool _is_global_size;
 
     /// Number of local columns. The default is PETSC_DECIDE.
-    PetscInt _local_cols;
+    PetscInt _n_local_cols;
 
     /*!
      \brief Number of nonzeros per row in DIAGONAL portion of local submatrix
-           (same value is used for all local rows), the default is 10
+           (same value is used for all local rows), the default is PETSC_DECIDE
     */
-    PetscInt _d_nz;
+    PetscInt _d_nnz;
 
     /*!
      \brief Number of nonzeros per row in the OFF-DIAGONAL portion of local submatrix
-            (same value is used for all local rows), the default is 10
+            (same value is used for all local rows), the default is PETSC_DECIDE
     */
-    PetscInt _o_nz;
+    PetscInt _o_nnz;
 };
 
 } // end namespace

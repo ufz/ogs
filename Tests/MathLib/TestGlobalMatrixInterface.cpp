@@ -42,7 +42,7 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     m.add(0, 0, 1.0);
     m.setZero();
 
-    MathLib::DenseMatrix<double, short> local_m(2, 2, 1.0);
+    MathLib::DenseMatrix<double> local_m(2, 2, 1.0);
     std::vector<std::size_t> vec_pos(2);
     vec_pos[0] = 1;
     vec_pos[1] = 3;
@@ -61,16 +61,16 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
 
     ASSERT_EQ(3u, msize);
-    ASSERT_EQ(6u, m.size());
-    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getLocalRows());
+    ASSERT_EQ(6u, m.getDimension());
+    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNLocalRows());
 
     int gathered_cols;
-    int local_cols = m.getLocalColumns();
+    int local_cols = m.getNLocalColumns();
     MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
     ASSERT_EQ(6u, gathered_cols);
 
     // Add entries
-    MathLib::DenseMatrix<double, short> loc_m(2);
+    MathLib::DenseMatrix<double> loc_m(2, 2);
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
     loc_m(1, 0) = 3.;
@@ -91,7 +91,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     v = 1.;
     const bool deep_copy = false;
     T_VECTOR y(v, deep_copy);
-    m.multVector(v, y);
+    m.multiVector(v, y);
 
     ASSERT_EQ(sqrt(3*(3*3 + 7*7)), y.getNorm());
 
@@ -102,7 +102,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
         m.add(1, 1, 5.0);
     }
     MathLib::finalizeMatrixAssembly(m);
-    m.multVector(v, y);
+    m.multiVector(v, y);
 
     ASSERT_EQ(sqrt((2*3*3 + 8*8 + 3*7*7)), y.getNorm());
 }
@@ -128,10 +128,10 @@ TEST(Math, CheckInterface_LisMatrix)
 TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
-    opt._is_size_local_rows = true;
-    opt._local_cols = 2;
+    opt._d_nnz = 2;
+    opt._o_nnz = 0;
+    opt._is_global_size = false;
+    opt._n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
     const bool is_gloabal_size = false;
@@ -142,8 +142,8 @@ TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
+    opt._d_nnz = 2;
+    opt._o_nnz = 0;
     MathLib::PETScMatrix A(6, opt);
 
     MathLib::PETScVector x(6);

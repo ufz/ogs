@@ -18,36 +18,31 @@
 namespace MathLib
 {
 
-PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption mat_opt)
+PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption &mat_opt)
+    :_size(size), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(mat_opt._n_local_cols)
 {
-    _size = size;
-    _loc_rows = PETSC_DECIDE;
-    _loc_cols = mat_opt._local_cols;
-
-    if(mat_opt._is_size_local_rows)
+    if(!mat_opt._is_global_size)
     {
         _size = PETSC_DECIDE;
-        _loc_rows = size;
+        _n_loc_rows = size;
     }
 
     MatCreate(PETSC_COMM_WORLD, &_A);
-    MatSetSizes(_A, _loc_rows, _loc_cols, _size, _size);
+    MatSetSizes(_A, _n_loc_rows, _n_loc_cols, _size, _size);
 
     MatSetFromOptions(_A);
 
     // for a dense matrix: MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
-    MatMPIAIJSetPreallocation(_A, mat_opt._d_nz, PETSC_NULL, mat_opt._o_nz, PETSC_NULL);
+    MatMPIAIJSetPreallocation(_A, mat_opt._d_nnz, PETSC_NULL, mat_opt._o_nnz, PETSC_NULL);
 
     MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
     MatGetSize(_A, &_size,  PETSC_NULL);
-    MatGetLocalSize(_A, &_loc_rows, &_loc_cols);
+    MatGetLocalSize(_A, &_n_loc_rows, &_n_loc_cols);
 }
 
 void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
 {
-    // Each process indicates only rows it owns that are to be zeroed.
-    // If it is called, it must be called by all ranks of cores.
-
+    // Each rank (compute core) processes only the rows that belong to the rank itself.
     const PetscScalar one = 1.0;
     const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
 
