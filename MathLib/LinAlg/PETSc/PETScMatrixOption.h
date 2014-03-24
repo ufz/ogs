@@ -40,13 +40,13 @@ struct PETScMatrixOption
     PetscInt _n_local_cols;
 
     /*!
-     \brief Number of nonzeros per row in DIAGONAL portion of local submatrix
+     \brief Number of nonzeros per row in the diagonal portion of local submatrix
            (same value is used for all local rows), the default is PETSC_DECIDE
     */
     PetscInt _d_nz;
 
     /*!
-     \brief Number of nonzeros per row in the OFF-DIAGONAL portion of local submatrix
+     \brief Number of nonzeros per row in the off-diagonal portion of local submatrix
             (same value is used for all local rows), the default is PETSC_DECIDE
     */
     PetscInt _o_nz;
