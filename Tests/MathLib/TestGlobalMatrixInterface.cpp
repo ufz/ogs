@@ -128,8 +128,8 @@ TEST(Math, CheckInterface_LisMatrix)
 TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nnz = 2;
-    opt._o_nnz = 0;
+    opt._d_nz = 2;
+    opt._o_nz = 0;
     opt._is_global_size = false;
     opt._n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
@@ -142,8 +142,8 @@ TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nnz = 2;
-    opt._o_nnz = 0;
+    opt._d_nz = 2;
+    opt._o_nz = 0;
     MathLib::PETScMatrix A(6, opt);
 
     MathLib::PETScVector x(6);

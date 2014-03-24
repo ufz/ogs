@@ -24,7 +24,7 @@ namespace MathLib
 struct PETScMatrixOption
 {
     PETScMatrixOption() :  _is_global_size(true), _n_local_cols(PETSC_DECIDE),
-        _d_nnz(PETSC_DECIDE), _o_nnz(PETSC_DECIDE)
+        _d_nz(PETSC_DECIDE), _o_nz(PETSC_DECIDE)
     { }
 
     /*!
@@ -43,13 +43,13 @@ struct PETScMatrixOption
      \brief Number of nonzeros per row in DIAGONAL portion of local submatrix
            (same value is used for all local rows), the default is PETSC_DECIDE
     */
-    PetscInt _d_nnz;
+    PetscInt _d_nz;
 
     /*!
      \brief Number of nonzeros per row in the OFF-DIAGONAL portion of local submatrix
             (same value is used for all local rows), the default is PETSC_DECIDE
     */
-    PetscInt _o_nnz;
+    PetscInt _o_nz;
 };
 
 } // end namespace

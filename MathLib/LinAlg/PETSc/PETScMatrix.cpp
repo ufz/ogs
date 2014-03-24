@@ -33,7 +33,7 @@ PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption &mat_opt)
     MatSetFromOptions(_A);
 
     // for a dense matrix: MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
-    MatMPIAIJSetPreallocation(_A, mat_opt._d_nnz, PETSC_NULL, mat_opt._o_nnz, PETSC_NULL);
+    MatMPIAIJSetPreallocation(_A, mat_opt._d_nz, PETSC_NULL, mat_opt._o_nz, PETSC_NULL);
 
     MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
     MatGetSize(_A, &_size,  PETSC_NULL);
