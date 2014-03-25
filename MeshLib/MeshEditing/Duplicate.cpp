@@ -41,7 +41,7 @@ std::vector<MeshLib::Node*> NodeVector(const std::vector<MeshLib::Node*> &nodes)
 	return new_nodes;
 }
 
-std::vector<MeshLib::Element*> NodeVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes)
+std::vector<MeshLib::Element*> ElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes)
 {
 	const std::size_t nElements(elements.size());
 	std::vector<MeshLib::Element*> new_elements;

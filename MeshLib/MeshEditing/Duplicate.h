@@ -31,7 +31,7 @@ namespace Duplicate
 	std::vector<MeshLib::Node*> NodeVector(const std::vector<MeshLib::Node*> &nodes);
 
 	/// Creates a deep copy of an element vector using the given Node vector
-	std::vector<MeshLib::Element*> NodeVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes);
+	std::vector<MeshLib::Element*> ElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes);
 
 	/// Copies an element without change, using the nodes vector from the result mesh.
 	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
