@@ -22,6 +22,9 @@ TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const&
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
 
+	_neighbors = new Element*[2];
+	std::fill(_neighbors, _neighbors + 2, nullptr);
+
 	this->_length = this->computeVolume();
 }
 
@@ -53,6 +56,14 @@ ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::validate() const
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
 	return error_code;
+}
+
+template <unsigned NNODES, CellType CELLLINETYPE>
+unsigned TemplateLine<NNODES,CELLLINETYPE>::identifyFace(Node* nodes[3]) const
+{
+	if (_nodes[0] == nodes[0]) return 0;
+	if (_nodes[1] == nodes[0]) return 1;
+	return std::numeric_limits<unsigned>::max();
 }
 
 } // namespace MeshLib
