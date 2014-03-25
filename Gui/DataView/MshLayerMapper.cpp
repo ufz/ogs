@@ -238,7 +238,7 @@ bool MshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
 MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster)
 {
 	// construct surface mesh from DEM
-	const double dir[3] = {0,0,1};
+	const MathLib::Vector3 dir(0,0,1);
 	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
 	MshLayerMapper::LayerMapping(dem, dem_raster, 0, 0);
 	const std::vector<MeshLib::Node*> dem_nodes (dem->getNodes());
