@@ -11,6 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include "MeshEditing\MeshRevision.h"
 
 #include "Configure.h"
 #include "mainwindow.h"
@@ -1284,6 +1285,8 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
+	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*_meshModels->getMesh("PETREL-CO2-FLOW2")));
+	_meshModels->addMesh(rev.subdivideMesh("new"));
 }
 
 

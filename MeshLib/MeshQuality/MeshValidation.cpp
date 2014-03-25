@@ -52,7 +52,6 @@ std::vector<std::size_t> MeshValidation::findUnusedMeshNodes(const MeshLib::Mesh
 		if (nodes[i]->getNElements() == 0)
 		{
 			del_node_idx.push_back(i);
-			INFO ("\tNode %d is not part of any element.", i);
 			++count;
 		}
 

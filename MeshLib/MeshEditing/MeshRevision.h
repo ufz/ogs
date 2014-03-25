@@ -65,6 +65,12 @@ public:
 	 */
 	MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim = 1);
 
+	/**
+	 * Create a new mesh where all all elements with nonplanar faces are subdivided into simpler 
+	 * element types. This method does not collapse or remove any nodes.
+	 */
+	MeshLib::Mesh* subdivideMesh(const std::string &new_mesh_name) const;
+
 private:
 	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
 	std::vector<std::size_t> collapseNodeIndeces(double eps) const;
@@ -88,7 +94,7 @@ private:
 	    			   unsigned min_elem_dim) const;
 
 	/// Cleans up all nodes and elements if something went wrong
-	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements);
+	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Subdivides a nonplanar quad into two triangles
 	unsigned subdivideQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;

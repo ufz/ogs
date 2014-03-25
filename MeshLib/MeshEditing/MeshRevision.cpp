@@ -109,6 +109,38 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 	return nullptr;
 }
 
+MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) const
+{
+	if (this->_mesh.getNElements() == 0)
+		return nullptr;
+
+	std::vector<MeshLib::Node*> new_nodes = Duplicate::NodeVector(_mesh.getNodes());
+	std::vector<MeshLib::Element*> new_elements;
+
+	const std::vector<MeshLib::Element*> &elements(this->_mesh.getElements());
+	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
+	{
+		ElementErrorCode e((*elem)->validate());
+		if (e[ElementErrorFlag::NonCoplanar])
+		{
+			if (!this->subdivideElement(*elem, new_nodes, new_elements))
+			{
+				ERR("Error: Element %d has unknown element type.", std::distance(elements.begin(), elem));
+				this->cleanUp(new_nodes, new_elements);
+				return nullptr;
+			}
+		}
+		else
+			new_elements.push_back(Duplicate::copyElement(*elem, new_nodes));
+	}
+
+	if (!new_elements.empty())
+		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
+
+	this->cleanUp(new_nodes, new_elements);
+	return nullptr;
+}
+
 std::vector<std::size_t> MeshRevision::collapseNodeIndeces(double eps) const
 {
 	const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
@@ -764,7 +796,7 @@ unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
 	else return std::numeric_limits<unsigned>::max();
 }
 
-void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements)
+void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements) const
 {
 	for (auto elem = new_elements.begin(); elem != new_elements.end(); ++elem)
 		delete *elem;
