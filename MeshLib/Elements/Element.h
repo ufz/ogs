@@ -44,6 +44,9 @@ public:
 	 */
 	bool addNeighbor(Element* e);
 
+	// Calculates the center of gravity for the mesh element
+	MeshLib::Node* getCenterOfGravity() const;
+
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	virtual double getContent() const = 0;
 
