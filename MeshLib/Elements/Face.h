@@ -22,6 +22,8 @@
 // GeoLib
 #include "Point.h"
 
+#include "Vector3.h"
+
 namespace MeshLib {
 
 /**
@@ -52,7 +54,7 @@ public:
 	unsigned getNFaces() const { return 0; };
 
 	/// Returns the surface normal of a 2D element.
-	void getSurfaceNormal(double normal[3]) const;
+	MathLib::Vector3 getSurfaceNormal() const;
 
 	/// Destructor
 	virtual ~Face();

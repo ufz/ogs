@@ -37,15 +37,15 @@ Face::Face(unsigned value, std::size_t id)
 Face::~Face()
 {}
 
-void Face::getSurfaceNormal(double normal[3]) const
+MathLib::Vector3 Face::getSurfaceNormal() const
 {
-	const double edge1[3] = { (*this->_nodes[0])[0]-(*this->_nodes[1])[0],
-				 			  (*this->_nodes[0])[1]-(*this->_nodes[1])[1],
-							  (*this->_nodes[0])[2]-(*this->_nodes[1])[2] };
-	const double edge2[3] = { (*this->_nodes[1])[0]-(*this->_nodes[2])[0],
+	const MathLib::Vector3 u ((*this->_nodes[0])[0]-(*this->_nodes[1])[0],
+				 		      (*this->_nodes[0])[1]-(*this->_nodes[1])[1],
+						      (*this->_nodes[0])[2]-(*this->_nodes[1])[2]);
+	const MathLib::Vector3 v ((*this->_nodes[1])[0]-(*this->_nodes[2])[0],
 							  (*this->_nodes[1])[1]-(*this->_nodes[2])[1],
-							  (*this->_nodes[1])[2]-(*this->_nodes[2])[2] };
-	MathLib::crossProd(edge1, edge2, normal);
+							  (*this->_nodes[1])[2]-(*this->_nodes[2])[2]);
+	return MathLib::crossProduct(u,v);
 }
 
 }
