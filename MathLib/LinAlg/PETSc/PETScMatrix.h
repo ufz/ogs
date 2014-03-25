@@ -36,7 +36,6 @@ class PETScMatrix
           \brief       Constructor for the matrix partitioning with default options:
                        The size of the glabal size, the numbers of local rows
                        and columns have the value of PETSC_DECIDE.
-
           \param size  The dimension of the matrix.
         */
         explicit PETScMatrix(const PetscInt size);
@@ -68,6 +67,8 @@ class PETScMatrix
 
         /*!
           \brief        Config memory allocation and set the related member data.
+                        Only called when an intance is created with the constructor
+                        wthout PETScMatrixOption argument.
           \param mat_op The configuration information for creating a matrix.
         */
         void config(const PETScMatrixOption &mat_op);
