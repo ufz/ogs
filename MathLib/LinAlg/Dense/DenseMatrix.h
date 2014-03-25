@@ -53,9 +53,12 @@ public:
    virtual ~DenseMatrix ();
 
    /**
-    * Get the raw data directly
+    * Get all entries, which are stored in an array.
    */
-   const FP_TYPE *getEntries() const;
+   const FP_TYPE *getEntries() const
+   {
+       return _data;
+   }
 
    /**
     * Assignment operator, makes a copy of the internal data of the object.

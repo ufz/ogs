@@ -18,6 +18,25 @@
 namespace MathLib
 {
 
+PETScMatrix::PETScMatrix (const PetscInt size)
+    :_size(size), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(PETSC_DECIDE)
+{
+    create();
+}
+
+PETScMatrix::PETScMatrix (const PetscInt size, const PetscInt n_loc_cols,
+                          const bool is_global_size)
+    :_size(size), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(n_loc_cols)
+{
+    if(!is_global_size)
+    {
+        _size = PETSC_DECIDE;
+        _n_loc_rows = size;
+    }
+
+    create();
+}
+
 PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption &mat_opt)
     :_size(size), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(mat_opt._n_local_cols)
 {
@@ -27,11 +46,21 @@ PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption &mat_opt)
         _n_loc_rows = size;
     }
 
+    create();
+
+    config(mat_opt);
+}
+
+void PETScMatrix::create()
+{
     MatCreate(PETSC_COMM_WORLD, &_A);
     MatSetSizes(_A, _n_loc_rows, _n_loc_cols, _size, _size);
 
     MatSetFromOptions(_A);
+}
 
+void PETScMatrix::config(const PETScMatrixOption &mat_opt)
+{
     // for a dense matrix: MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
     MatMPIAIJSetPreallocation(_A, mat_opt._d_nz, PETSC_NULL, mat_opt._o_nz, PETSC_NULL);
 

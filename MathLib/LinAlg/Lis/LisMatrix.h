@@ -82,7 +82,7 @@ public:
     LIS_MATRIX& getRawMatrix() { return _AA; }
 
     /// y = mat * x
-    void matvec(const LisVector &x, LisVector &y) const;
+    void multi(const LisVector &x, LisVector &y) const;
 
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions.

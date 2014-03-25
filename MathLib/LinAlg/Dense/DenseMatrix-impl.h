@@ -54,12 +54,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::~DenseMatrix ()
 }
 
 template <typename FP_TYPE, typename IDX_TYPE>
-const FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::getEntries() const
-{
-    return _data;
-}
-
-template <typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator=(DenseMatrix<FP_TYPE, IDX_TYPE> const& rhs)
 	throw (std::range_error)

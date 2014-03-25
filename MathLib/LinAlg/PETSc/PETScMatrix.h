@@ -33,9 +33,31 @@ class PETScMatrix
 {
     public:
         /*!
-          \brief        Constructor for the PETSc determined partitioning.
-          \param size   The dimension of the matrix.
-          \param mat_op The configuration information for creating a matrix
+          \brief       Constructor for the matrix partitioning with default options:
+                       The size of the glabal size, the numbers of local rows
+                       and columns have the value of PETSC_DECIDE.
+
+          \param size  The dimension of the matrix.
+        */
+        explicit PETScMatrix(const PetscInt size);
+
+        /*!
+          \brief       Constructor for the user determined matrix partitioning
+                       with two options.
+          \param size           The dimension of the matrix or the submatrix.
+          \param n_loc_cols     Number of the columns of the rank.
+                                If it is -1, it is PETSC_DECIDE.
+          \param is_global_size The flag of the type of vec_size,
+                                i.e. whether it is a global size  or local size.
+                                The default is true.
+        */
+        PETScMatrix(const PetscInt size, const PetscInt n_loc_cols,
+                    const bool is_global_size);
+
+        /*!
+          \brief        Constructor for the user determined partitioning with more options
+          \param size   The dimension of the matrix or the submatrix.
+          \param mat_op The configuration information for creating a matrix.
         */
         PETScMatrix(const PetscInt size, const PETScMatrixOption &mat_op = PETScMatrixOption() );
 
@@ -43,6 +65,12 @@ class PETScMatrix
         {
             MatDestroy(&_A);
         }
+
+        /*!
+          \brief        Config memory allocation and set the related member data.
+          \param mat_op The configuration information for creating a matrix.
+        */
+        void config(const PETScMatrixOption &mat_op);
 
         /*!
            \brief          Perform MPI collection of assembled entries in buffer
@@ -55,43 +83,55 @@ class PETScMatrix
             MatAssemblyEnd(_A, asm_type);
         }
 
-        /// Get the dimension
+        /// Get the dimension.
         PetscInt getDimension() const
         {
             return _size;
         }
 
-        /// Get the start global index of the rows of the same rank
+        /// Get the number of rows.
+        PetscInt getNRows() const
+        {
+            return _size;
+        }
+
+        /// Get the number of columns.
+        PetscInt getNCols() const
+        {
+            return _size;
+        }
+
+        /// Get the start global index of the rows of the same rank.
         PetscInt getRangeBegin() const
         {
             return _start_rank;
         }
 
-        /// Get the end global index of the rows in the same rank
+        /// Get the end global index of the rows in the same rank.
         PetscInt getRangeEnd() const
         {
             return _end_rank;
         }
 
-        /// Get the number of local rows
+        /// Get the number of local rows.
         PetscInt getNLocalRows() const
         {
             return _n_loc_rows;
         }
 
-        /// Get the number of local columns
+        /// Get the number of local columns.
         PetscInt getNLocalColumns() const
         {
             return _n_loc_cols;
         }
 
-        /// Get matrix reference
+        /// Get matrix reference.
         PETSc_Mat &getRawMatrix()
         {
             return _A;
         }
 
-        /// Set all entries to zero
+        /// Set all entries to zero.
         void setZero()
         {
             MatZeroEntries(_A);
@@ -111,16 +151,16 @@ class PETScMatrix
            \param vec_r The result vector, e.g. \f$ y \f$
             Both of the two arguments must be created prior to be used.
         */
-        void multiVector(const PETScVector &vec, PETScVector &vec_r)
+        void multi(const PETScVector &vec, PETScVector &vec_r)
         {
             MatMult(_A, vec.getData(), vec_r.getData() );
         }
 
         /*!
            \brief       Set a single entry with a value.
-           \param i     The row index
-           \param j     The column index
-           \param value The entry value
+           \param i     The row index.
+           \param j     The column index.
+           \param value The entry value.
         */
         void set(const PetscInt i, const PetscInt j, const PetscScalar value)
         {
@@ -129,9 +169,9 @@ class PETScMatrix
 
         /*!
            \brief Add value to a single entry.
-           \param i     The row index
-           \param j     The column index
-           \param value The entry value
+           \param i     The row index.
+           \param j     The column index.
+           \param value The entry value.
         */
         void add(const PetscInt i, const PetscInt j, const PetscScalar value)
         {
@@ -139,10 +179,10 @@ class PETScMatrix
         }
 
         /*!
-          \brief         Add a submatrix to this
-          \param row_pos The global row indicies of the entries of the submatrix
-          \param col_pos The global column indicies of the entries of the submatrix
-          \param sub_mat A dense matrix to be added on
+          \brief         Add a submatrix to this.
+          \param row_pos The global row indicies of the entries of the submatrix.
+          \param col_pos The global column indicies of the entries of the submatrix.
+          \param sub_mat A dense matrix to be added on.
         */
         template <class T_DENSE_MATRIX>
         void add(std::vector<PetscInt> const& row_pos,
@@ -191,13 +231,16 @@ class PETScMatrix
         /// Ending index in a rank
         PetscInt _end_rank;
 
+        /// Create the matrix
+        void create();
+
         friend bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type);
 };
 
 /*!
-    \brief          Add a dense sub-matrix to a PETSc matrix
-    \param row_pos  The global indices of the rows of the dense sub-matrix
-    \param col_pos  The global indices of the colums of the dense sub-matrix
+    \brief          Add a dense sub-matrix to a PETSc matrix.
+    \param row_pos  The global indices of the rows of the dense sub-matrix.
+    \param col_pos  The global indices of the colums of the dense sub-matrix.
     \param sub_mat  A dense sub-matrix to be added.
 */
 template<class T_DENSE_MATRIX>
@@ -212,10 +255,10 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
 };
 
 /*!
-    \brief          General interface for the matrix assembly
-    \param mat      The matrix to be finalized
+    \brief          General interface for the matrix assembly.
+    \param mat      The matrix to be finalized.
     \param asm_type Assmebly type, either MAT_FLUSH_ASSEMBLY
-                     or MAT_FINAL_ASSEMBLY
+                     or MAT_FINAL_ASSEMBLY.
 */
 bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type = MAT_FINAL_ASSEMBLY);
 

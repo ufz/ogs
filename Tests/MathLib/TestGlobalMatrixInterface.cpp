@@ -22,7 +22,7 @@
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 #endif
-#
+
 #ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #endif
@@ -91,7 +91,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     v = 1.;
     const bool deep_copy = false;
     T_VECTOR y(v, deep_copy);
-    m.multiVector(v, y);
+    m.multi(v, y);
 
     ASSERT_EQ(sqrt(3*(3*3 + 7*7)), y.getNorm());
 
@@ -102,7 +102,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
         m.add(1, 1, 5.0);
     }
     MathLib::finalizeMatrixAssembly(m);
-    m.multiVector(v, y);
+    m.multi(v, y);
 
     ASSERT_EQ(sqrt((2*3*3 + 8*8 + 3*7*7)), y.getNorm());
 }
@@ -139,6 +139,7 @@ TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 
     checkGlobalMatrixInterfaceMPI(A, x);
 }
+
 TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
@@ -150,5 +151,22 @@ TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 
     checkGlobalMatrixInterfaceMPI(A, x);
 }
+
+TEST(Math, CheckInterface_PETScMatrix_Global_local_late_config)
+{
+    MathLib::PETScMatrixOption opt;
+    opt._d_nz = 2;
+    opt._o_nz = 0;
+    opt._is_global_size = false;
+    opt._n_local_cols = 2;
+    MathLib::PETScMatrix A(2, 2, false);
+
+    const bool is_gloabal_size = false;
+    MathLib::PETScVector x(2, is_gloabal_size);
+
+    A.config(opt);
+    checkGlobalMatrixInterfaceMPI(A, x);
+}
+
 #endif // end of: ifdef USE_PETSC // or MPI
 
