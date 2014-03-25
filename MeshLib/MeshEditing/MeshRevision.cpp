@@ -32,6 +32,7 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+#include "Duplicate.h"
 
 namespace MeshLib {
 
@@ -49,7 +50,7 @@ MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, dou
 	new_elements.reserve(this->_mesh.getNElements());
 	std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
-		new_elements.push_back(copyElement(*elem, new_nodes));
+		new_elements.push_back(Duplicate::copyElement(*elem, new_nodes));
 	this->resetNodeIDs();
 	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 }
@@ -91,7 +92,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 				}
 			}
 			else
-				new_elements.push_back(copyElement(*elem, new_nodes));
+				new_elements.push_back(Duplicate::copyElement(*elem, new_nodes));
 		}
 		else if (n_unique_nodes < (*elem)->getNNodes() && n_unique_nodes>1)
 			reduceElement(*elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim);
@@ -199,26 +200,7 @@ void MeshRevision::resetNodeIDs()
 		nodes[i]->setID(i);
 }
 
-MeshLib::Element* MeshRevision::copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const
-{
-	if (element->getGeomType() == MeshElemType::LINE)
-		return this->copyLine(element, nodes);
-	else if (element->getGeomType() == MeshElemType::TRIANGLE)
-		return this->copyTri(element, nodes);
-	else if (element->getGeomType() == MeshElemType::QUAD)
-		return this->copyQuad(element, nodes);
-	else if (element->getGeomType() == MeshElemType::TETRAHEDRON)
-		return this->copyTet(element, nodes);
-	else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
-		return this->copyHex(element, nodes);
-	else if (element->getGeomType() == MeshElemType::PYRAMID)
-		return this->copyPyramid(element, nodes);
-	else if (element->getGeomType() == MeshElemType::PRISM)
-		return this->copyPrism(element, nodes);
 
-	ERR ("Error: Unknown element type.");
-	return nullptr;
-}
 
 bool MeshRevision::subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const
 {
@@ -261,62 +243,6 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 		this->reducePrism(element, n_unique_nodes, nodes, elements, min_elem_dim);
 	else
 		ERR ("Error: Unknown element type.");
-}
-
-MeshLib::Element* MeshRevision::copyLine(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[2];
-	new_nodes[0] = nodes[org_elem->getNode(0)->getID()];
-	new_nodes[1] = nodes[org_elem->getNode(1)->getID()];
-	return new MeshLib::Line(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* MeshRevision::copyTri(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[3];
-	for (unsigned i=0; i<3; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Tri(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* MeshRevision::copyQuad(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[4];
-	for (unsigned i=0; i<4; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Quad(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* MeshRevision::copyTet(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[4];
-	for (unsigned i=0; i<4; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Tet(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* MeshRevision::copyHex(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[8];
-	for (unsigned i=0; i<8; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Hex(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* MeshRevision::copyPyramid(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[5];
-	for (unsigned i=0; i<5; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Pyramid(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* MeshRevision::copyPrism(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes) const
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[6];
-	for (unsigned i=0; i<6; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Prism(new_nodes, org_elem->getValue());
 }
 
 unsigned MeshRevision::subdivideQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const
