@@ -16,7 +16,7 @@
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
-#include "MeshEditing/Duplicate.h"
+#include "MeshEditing/DuplicateMeshComponents.h"
 #include "MeshGenerators/MeshGenerator.h"
 #include "MeshQuality/MeshValidation.h"
 #include "MathTools.h"
@@ -25,8 +25,8 @@ TEST(MeshLib, Duplicate)
 {
 	MeshLib::Mesh* mesh (MeshLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1));
 
-	std::vector<MeshLib::Node*> new_nodes (MeshLib::Duplicate::NodeVector(mesh->getNodes()));
-	std::vector<MeshLib::Element*> new_elements (MeshLib::Duplicate::ElementVector(mesh->getElements(), new_nodes));
+	std::vector<MeshLib::Node*> new_nodes (MeshLib::copyNodeVector(mesh->getNodes()));
+	std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(mesh->getElements(), new_nodes));
 
 	MeshLib::Mesh new_mesh ("new", new_nodes, new_elements);
 
