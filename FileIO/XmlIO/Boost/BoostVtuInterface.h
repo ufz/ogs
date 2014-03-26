@@ -59,6 +59,7 @@ public:
 	void setMesh(const MeshLib::Mesh* mesh) { this->_mesh = const_cast<MeshLib::Mesh*>(mesh); };
 
 protected:
+	void buildPropertyTree(std::ostream& stream);
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node
 	void addDataArray(boost::property_tree::ptree &parent_node, const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
