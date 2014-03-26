@@ -152,21 +152,5 @@ TEST(Math, CheckInterface_PETScMatrix_Global_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-TEST(Math, CheckInterface_PETScMatrix_Global_local_late_config)
-{
-    MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
-    opt._is_global_size = false;
-    opt._n_local_cols = 2;
-    MathLib::PETScMatrix A(2, 2, false);
-
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector x(2, is_gloabal_size);
-
-    A.config(opt);
-    checkGlobalMatrixInterfaceMPI(A, x);
-}
-
 #endif // end of: ifdef USE_PETSC // or MPI
 

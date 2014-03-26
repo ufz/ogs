@@ -22,19 +22,8 @@ PETScMatrix::PETScMatrix (const PetscInt size)
     :_size(size), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(PETSC_DECIDE)
 {
     create();
-}
 
-PETScMatrix::PETScMatrix (const PetscInt size, const PetscInt n_loc_cols,
-                          const bool is_global_size)
-    :_size(size), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(n_loc_cols)
-{
-    if(!is_global_size)
-    {
-        _size = PETSC_DECIDE;
-        _n_loc_rows = size;
-    }
-
-    create();
+    config(PETSC_DECIDE, PETSC_DECIDE);
 }
 
 PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption &mat_opt)
@@ -48,7 +37,7 @@ PETScMatrix::PETScMatrix (const PetscInt size, const PETScMatrixOption &mat_opt)
 
     create();
 
-    config(mat_opt);
+    config(mat_opt._d_nz, mat_opt._o_nz);
 }
 
 void PETScMatrix::create()
@@ -59,10 +48,10 @@ void PETScMatrix::create()
     MatSetFromOptions(_A);
 }
 
-void PETScMatrix::config(const PETScMatrixOption &mat_opt)
+void PETScMatrix::config(const PetscInt d_nz, const PetscInt o_nz)
 {
     // for a dense matrix: MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
-    MatMPIAIJSetPreallocation(_A, mat_opt._d_nz, PETSC_NULL, mat_opt._o_nz, PETSC_NULL);
+    MatMPIAIJSetPreallocation(_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
 
     MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
     MatGetSize(_A, &_size,  PETSC_NULL);

@@ -42,19 +42,6 @@ class PETScMatrix
         explicit PETScMatrix(const PetscInt size);
 
         /*!
-          \brief       Constructor for the user determined matrix partitioning
-                       with two options.
-          \param size           The number of rows of the matrix or the local matrix.
-          \param n_loc_cols     Number of the columns of the rank.
-                                If it is -1, it is PETSC_DECIDE.
-          \param is_global_size The flag of the type of vec_size,
-                                i.e. whether it is a global size  or local size.
-                                The default is true.
-        */
-        PETScMatrix(const PetscInt size, const PetscInt n_loc_cols,
-                    const bool is_global_size);
-
-        /*!
           \brief        Constructor for the user determined partitioning with more options
           \param size   The number of rows of the matrix or the local matrix.
           \param mat_op The configuration information for creating a matrix.
@@ -65,14 +52,6 @@ class PETScMatrix
         {
             MatDestroy(&_A);
         }
-
-        /*!
-          \brief        Config memory allocation and set the related member data.
-                        Only called after an intance is created with the constructor
-                        wthout PETScMatrixOption argument.
-          \param mat_op The configuration information for creating a matrix.
-        */
-        void config(const PETScMatrixOption &mat_op);
 
         /*!
            \brief          Perform MPI collection of assembled entries in buffer
@@ -229,6 +208,15 @@ class PETScMatrix
 
         /// Create the matrix
         void create();
+
+        /*!
+          \brief Config memory allocation and set the related member data.
+          \param Number of nonzeros per row in the diagonal portion of local submatrix
+                 (same value is used for all local rows),
+          \param Number of nonzeros per row in the off-diagonal portion of local submatrix
+                 (same value is used for all local rows)
+        */
+        void config(const PetscInt d_nz, const PetscInt o_nz);
 
         friend bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type);
 };
