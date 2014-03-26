@@ -27,52 +27,47 @@ namespace MathLib
 {
 
 /*!
-   \brief Wrapper class for PETSc matrix routines for a square matrix for
-          the system of linear equations.
+   \brief Wrapper class for PETSc matrix routines for matrix.
 */
 class PETScMatrix
 {
     public:
         /*!
-          \brief       Constructor for the matrix partitioning with default options:
-                       The size of the glabal size, the numbers of local rows
-                       and columns have the value of PETSC_DECIDE.
-          \param size  The dimension of the matrix.
+          \brief       Constructor for a square matrix partitioning with default options:
+                       The numbers of local rows and columns have the value of PETSC_DECIDE.
+          \param dim  The dimension of the matrix.
         */
-        explicit PETScMatrix(const PetscInt size);
+        explicit PETScMatrix(const PetscInt dim);
 
         /*!
-          \brief       Constructor for the user determined matrix partitioning
-                       with two options.
-          \param size           The number of rows of the matrix or the local matrix.
-          \param n_loc_cols     Number of the columns of the rank.
-                                If it is -1, it is PETSC_DECIDE.
-          \param is_global_size The flag of the type of vec_size,
-                                i.e. whether it is a global size  or local size.
-                                The default is true.
-        */
-        PETScMatrix(const PetscInt size, const PetscInt n_loc_cols,
-                    const bool is_global_size);
-
-        /*!
-          \brief        Constructor for the user determined partitioning with more options
-          \param size   The number of rows of the matrix or the local matrix.
+          \brief        Constructor for a square matrix partitioning with more options
+          \param nrows  The number of rows of the matrix or the local matrix.
           \param mat_op The configuration information for creating a matrix.
         */
-        PETScMatrix(const PetscInt size, const PETScMatrixOption &mat_op = PETScMatrixOption() );
+        PETScMatrix(const PetscInt nrows, const PETScMatrixOption &mat_op = PETScMatrixOption() );
+
+        /*!
+          \brief       Constructor for a rectangular matrix partitioning with default options:
+                       The numbers of local rows and columns have the value of PETSC_DECIDE.
+          \param nrows_global  The number of global rows.
+          \param ncols_global  The number of global columns.
+        */
+        PETScMatrix(const PetscInt nrows_global, const PetscInt ncols_global);
+
+        /*!
+          \brief        Constructor for a rectangular matrix partitioning with more options
+          \param nrows  The number of global or local rows.
+          \param ncols  The number of global or local columns.
+          \param mat_op The configuration information for creating a matrix.
+        */
+        PETScMatrix(const PetscInt nrows, const PetscInt ncols,
+                    const PETScMatrixOption &mat_op = PETScMatrixOption() );
+
 
         ~PETScMatrix()
         {
             MatDestroy(&_A);
         }
-
-        /*!
-          \brief        Config memory allocation and set the related member data.
-                        Only called after an intance is created with the constructor
-                        wthout PETScMatrixOption argument.
-          \param mat_op The configuration information for creating a matrix.
-        */
-        void config(const PETScMatrixOption &mat_op);
 
         /*!
            \brief          Perform MPI collection of assembled entries in buffer
@@ -88,13 +83,26 @@ class PETScMatrix
         /// Get the number of rows.
         PetscInt getNRows() const
         {
-            return _size;
+            return _nrows;
         }
 
         /// Get the number of columns.
         PetscInt getNCols() const
         {
-            return _size;
+            return _ncols;
+        }
+
+
+        /// Get the number of local rows.
+        PetscInt getNLocalRows() const
+        {
+            return _n_loc_rows;
+        }
+
+        /// Get the number of local columns.
+        PetscInt getNLocalColumns() const
+        {
+            return _n_loc_cols;
         }
 
         /// Get the start global index of the rows of the same rank.
@@ -107,18 +115,6 @@ class PETScMatrix
         PetscInt getRangeEnd() const
         {
             return _end_rank;
-        }
-
-        /// Get the number of local rows.
-        PetscInt getNLocalRows() const
-        {
-            return _n_loc_rows;
-        }
-
-        /// Get the number of local columns.
-        PetscInt getNLocalColumns() const
-        {
-            return _n_loc_cols;
         }
 
         /// Get matrix reference.
@@ -215,20 +211,35 @@ class PETScMatrix
         /// PETSc matrix
         PETSc_Mat _A;
 
-        /// Dimension of matrix
-        PetscInt _size;
+        /// Number of the global rows
+        PetscInt _nrows;
+
+        /// Number of the global columns
+        PetscInt _ncols;
+
         /// Number of the local rows
         PetscInt _n_loc_rows;
+
         /// Number of the local columns
         PetscInt _n_loc_cols;
 
         /// Starting index in a rank
         PetscInt _start_rank;
+
         /// Ending index in a rank
         PetscInt _end_rank;
 
         /// Create the matrix
         void create();
+
+        /*!
+          \brief Config memory allocation and set the related member data.
+          \param Number of nonzeros per row in the diagonal portion of local submatrix
+                 (same value is used for all local rows),
+          \param Number of nonzeros per row in the off-diagonal portion of local submatrix
+                 (same value is used for all local rows)
+        */
+        void config(const PetscInt d_nz, const PetscInt o_nz);
 
         friend bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type);
 };
