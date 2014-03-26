@@ -90,6 +90,7 @@ private:
 	static const OptionalPtree findDataArray(std::string const& array_name, boost::property_tree::ptree const& tree);
 
 	bool _use_compressor;
+	boost::property_tree::ptree _doc;
 };
 
 }

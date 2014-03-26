@@ -45,7 +45,7 @@ namespace FileIO
 using namespace boost;
 
 BoostVtuInterface::BoostVtuInterface() :
-	_export_name(""), _mesh(nullptr), _use_compressor(false)
+	_export_name(""), _mesh(nullptr), _use_compressor(false), _doc()
 {
 }
 
@@ -413,9 +413,8 @@ bool BoostVtuInterface::write(std::ostream& stream)
 	const std::string data_array_indent("\t\t\t\t  ");
 
 	using boost::property_tree::ptree;
-	ptree doc;
 
-	ptree &root_node = doc.put("VTKFile", "");
+	ptree &root_node = _doc.put("VTKFile", "");
 	root_node.put("<xmlattr>.type", "UnstructuredGrid");
 	root_node.put("<xmlattr>.version", "0.1");
 	root_node.put("<xmlattr>.byte_order", "LittleEndian");
@@ -487,7 +486,7 @@ bool BoostVtuInterface::write(std::ostream& stream)
 	this->addDataArray(cells_node, "types", "UInt8", typestream.str());
 
 	property_tree::xml_writer_settings<char> settings('\t', 1);
-	write_xml(stream, doc, settings);
+	write_xml(stream, _doc, settings);
 	return true;
 }
 
