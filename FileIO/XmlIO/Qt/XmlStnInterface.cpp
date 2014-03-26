@@ -193,7 +193,7 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
 	}
 }
 
-bool XmlStnInterface::write(std::ostream& stream)
+bool XmlStnInterface::write()
 {
 	if (this->_exportName.empty())
 	{
@@ -201,8 +201,8 @@ bool XmlStnInterface::write(std::ostream& stream)
 		return 0;
 	}
 
-	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-	stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysSTN.xsl\"?>\n\n"; // stylefile definition
+	_out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
+	_out << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysSTN.xsl\"?>\n\n"; // stylefile definition
 
 	QDomDocument doc("OGS-STN-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysSTN");
@@ -269,7 +269,7 @@ bool XmlStnInterface::write(std::ostream& stream)
 	}
 
 	std::string xml = doc.toString().toStdString();
-	stream << xml;
+	_out << xml;
 	return true;
 }
 

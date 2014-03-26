@@ -395,8 +395,19 @@ const OptionalPtree BoostVtuInterface::findDataArray(std::string const& array_na
 	return OptionalPtree();
 }
 
-void BoostVtuInterface::buildPropertyTree(std::ostream& stream)
+void BoostVtuInterface::setMesh(const MeshLib::Mesh* mesh)
 {
+	if (!mesh)
+	{
+		ERR("BoostVtuInterface::write(): No mesh specified.");
+	}
+	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
+	buildPropertyTree();
+};
+
+void BoostVtuInterface::buildPropertyTree()
+{
+	_doc.clear();
 	const std::size_t nNodes (_mesh->getNNodes());
 	const std::size_t nElems (_mesh->getNElements());
 	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
@@ -428,7 +439,7 @@ void BoostVtuInterface::buildPropertyTree(std::ostream& stream)
 	celldata_node.put("<xmlattr>.Scalars", "MaterialIDs");
 
 	std::stringstream oss(std::stringstream::out);
-	oss.precision(stream.precision());
+	oss.precision(_out.precision());
 	oss << std::endl << data_array_indent;
 	for (unsigned i = 0; i < nElems; i++)
 		oss << elements[i]->getValue() << " ";
@@ -479,17 +490,14 @@ void BoostVtuInterface::buildPropertyTree(std::ostream& stream)
 	this->addDataArray(cells_node, "types", "UInt8", typestream.str());
 }
 
-bool BoostVtuInterface::write(std::ostream& stream)
+bool BoostVtuInterface::write()
 {
-	if (!_mesh)
-	{
+	if (_doc.empty()) {
 		ERR("BoostVtuInterface::write(): No mesh specified.");
-		return 0;
+		return false;
 	}
-
-	buildPropertyTree(stream);
 	property_tree::xml_writer_settings<char> settings('\t', 1);
-	write_xml(stream, _doc, settings);
+	write_xml(_out, _doc, settings);
 	return true;
 }
 

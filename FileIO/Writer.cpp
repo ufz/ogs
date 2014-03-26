@@ -32,7 +32,7 @@ std::string Writer::writeToString()
 	_out.str("");
 	_out.clear();
 
-	if (this->write(_out))
+	if (this->write())
 		return _out.str();
 	else
 		return std::string("");

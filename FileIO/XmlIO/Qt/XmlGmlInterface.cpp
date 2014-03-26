@@ -185,7 +185,7 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
 	}
 }
 
-bool XmlGmlInterface::write(std::ostream& stream)
+bool XmlGmlInterface::write()
 {
 	if (this->_exportName.empty())
 	{
@@ -195,8 +195,8 @@ bool XmlGmlInterface::write(std::ostream& stream)
 
 	std::size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
 
-	stream << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-	//stream << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
+	_out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
+	//_out << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
 
 	QDomDocument doc("OGS-GML-DOM");
 	QDomElement root = doc.createElement("OpenGeoSysGLI");
@@ -341,7 +341,7 @@ bool XmlGmlInterface::write(std::ostream& stream)
 
 	//insertStyleFileDefinition(filename);
 	std::string xml = doc.toString().toStdString();
-	stream << xml;
+	_out << xml;
 
 	return true;
 }
