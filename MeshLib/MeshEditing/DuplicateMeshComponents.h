@@ -17,7 +17,7 @@
 
 #include <vector>
 
-namespace MeshLib 
+namespace MeshLib
 {
 
 	class Mesh;
@@ -35,8 +35,8 @@ namespace MeshLib
 	std::vector<MeshLib::Element*> copyElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes);
 
 	/// Copies an element without change, using the nodes vector from the result mesh.
-	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
-		                          const std::vector<MeshLib::Node*> &nodes);
+	MeshLib::Element* copyElement(MeshLib::Element const*const element,
+                                  const std::vector<MeshLib::Node*> &nodes);
 
 	/// Creates a new line element identical with "line" but using the new nodes vector.
 	MeshLib::Element* copyLine(MeshLib::Element const*const line, const std::vector<MeshLib::Node*> &nodes);

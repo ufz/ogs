@@ -25,7 +25,7 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
-namespace MeshLib 
+namespace MeshLib
 {
 
 std::vector<MeshLib::Node*> copyNodeVector(const std::vector<MeshLib::Node*> &nodes)
