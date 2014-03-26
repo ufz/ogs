@@ -1,5 +1,5 @@
 /**
- * \file   Duplicate.cpp
+ * \file   DuplicateMeshComponents.cpp
  * \author Karsten Rink
  * \date   2014-03-25
  * \brief  Implementation of Duplicate functions.
@@ -12,7 +12,7 @@
  *
  */
 
-#include "Duplicate.h"
+#include "DuplicateMeshComponents.h"
 
 #include "Mesh.h"
 #include "Node.h"
@@ -28,20 +28,17 @@
 namespace MeshLib 
 {
 
-namespace Duplicate
-{
-
-std::vector<MeshLib::Node*> NodeVector(const std::vector<MeshLib::Node*> &nodes)
+std::vector<MeshLib::Node*> copyNodeVector(const std::vector<MeshLib::Node*> &nodes)
 {
 	const std::size_t nNodes(nodes.size());
 	std::vector<MeshLib::Node*> new_nodes;
 	new_nodes.reserve(nNodes);
 	for (std::size_t k = 0; k < nNodes; ++k)
-			new_nodes.push_back(new MeshLib::Node((*nodes[k])[0], (*nodes[k])[1], (*nodes[k])[2], new_nodes.size()));
+		new_nodes.push_back(new MeshLib::Node(nodes[k]->getCoords(), new_nodes.size()));
 	return new_nodes;
 }
 
-std::vector<MeshLib::Element*> ElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes)
+std::vector<MeshLib::Element*> copyElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes)
 {
 	const std::size_t nElements(elements.size());
 	std::vector<MeshLib::Element*> new_elements;
@@ -127,7 +124,5 @@ MeshLib::Element* copyPrism(MeshLib::Element const*const org_elem, const std::ve
 		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
 	return new MeshLib::Prism(new_nodes, org_elem->getValue());
 }
-
-} // namespace Duplicate
 
 } // namespace MeshLib

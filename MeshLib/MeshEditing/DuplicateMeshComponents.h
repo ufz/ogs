@@ -1,5 +1,5 @@
 /**
- * \file   Duplicate.h
+ * \file   DuplicateMeshComponents.h
  * \author Karsten Rink
  * \date   2014-03-25
  * \brief  Definition of Duplicate functions
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef DUPLICATE_H
-#define DUPLICATE_H
+#ifndef DUPLICATEMESHCOMPONENTS_H
+#define DUPLICATEMESHCOMPONENTS_H
 
 #include <vector>
 
@@ -24,14 +24,15 @@ namespace MeshLib
 	class Node;
 	class Element;
 
-namespace Duplicate 
-{
-
 	/// Creates a deep copy of a Node vector
-	std::vector<MeshLib::Node*> NodeVector(const std::vector<MeshLib::Node*> &nodes);
+	std::vector<MeshLib::Node*> copyNodeVector(const std::vector<MeshLib::Node*> &nodes);
 
-	/// Creates a deep copy of an element vector using the given Node vector
-	std::vector<MeshLib::Element*> ElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes);
+	/** Creates a deep copy of an element vector using the given Node vector.
+	 * @param elements The element vector that should be duplicated.
+	 * @param nodes    The new node vector used for the duplicated element vector. This should be consistent with the original node vector.
+	 * @return A deep copy of the elements vector using the new nodes vector.
+	 */
+	std::vector<MeshLib::Element*> copyElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes);
 
 	/// Copies an element without change, using the nodes vector from the result mesh.
 	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
@@ -52,8 +53,6 @@ namespace Duplicate
 	/// Creates a new prism element identical with "prism" but using the new nodes vector.
 	MeshLib::Element* copyPrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes);
 
-} // end namespace Duplicate
-
 } // end namespace MeshLib
 
-#endif //DUPLICATE_H
+#endif //DUPLICATEMESHCOMPONENTS_H

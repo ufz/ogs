@@ -32,7 +32,7 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
-#include "Duplicate.h"
+#include "DuplicateMeshComponents.h"
 
 namespace MeshLib {
 
@@ -50,7 +50,7 @@ MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, dou
 	new_elements.reserve(this->_mesh.getNElements());
 	std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
-		new_elements.push_back(Duplicate::copyElement(*elem, new_nodes));
+		new_elements.push_back(MeshLib::copyElement(*elem, new_nodes));
 	this->resetNodeIDs();
 	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
 }
@@ -92,7 +92,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 				}
 			}
 			else
-				new_elements.push_back(Duplicate::copyElement(*elem, new_nodes));
+				new_elements.push_back(MeshLib::copyElement(*elem, new_nodes));
 		}
 		else if (n_unique_nodes < (*elem)->getNNodes() && n_unique_nodes>1)
 			reduceElement(*elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim);
@@ -114,7 +114,7 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
 	if (this->_mesh.getNElements() == 0)
 		return nullptr;
 
-	std::vector<MeshLib::Node*> new_nodes = Duplicate::NodeVector(_mesh.getNodes());
+	std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
 	std::vector<MeshLib::Element*> new_elements;
 
 	const std::vector<MeshLib::Element*> &elements(this->_mesh.getElements());
@@ -131,7 +131,7 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
 			}
 		}
 		else
-			new_elements.push_back(Duplicate::copyElement(*elem, new_nodes));
+			new_elements.push_back(MeshLib::copyElement(*elem, new_nodes));
 	}
 
 	if (!new_elements.empty())
