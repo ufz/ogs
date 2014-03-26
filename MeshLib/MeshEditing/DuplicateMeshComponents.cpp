@@ -25,7 +25,7 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
-namespace MeshLib 
+namespace MeshLib
 {
 
 std::vector<MeshLib::Node*> copyNodeVector(const std::vector<MeshLib::Node*> &nodes)
@@ -51,78 +51,31 @@ std::vector<MeshLib::Element*> copyElementVector(const std::vector<MeshLib::Elem
 MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes)
 {
 	if (element->getGeomType() == MeshElemType::LINE)
-		return copyLine(element, nodes);
+		return copyElement<MeshLib::Line>(element, nodes);
 	else if (element->getGeomType() == MeshElemType::TRIANGLE)
-		return copyTri(element, nodes);
+		return copyElement<MeshLib::Tri>(element, nodes);
 	else if (element->getGeomType() == MeshElemType::QUAD)
-		return copyQuad(element, nodes);
+		return copyElement<MeshLib::Quad>(element, nodes);
 	else if (element->getGeomType() == MeshElemType::TETRAHEDRON)
-		return copyTet(element, nodes);
+		return copyElement<MeshLib::Tet>(element, nodes);
 	else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
-		return copyHex(element, nodes);
+		return copyElement<MeshLib::Hex>(element, nodes);
 	else if (element->getGeomType() == MeshElemType::PYRAMID)
-		return copyPyramid(element, nodes);
+		return copyElement<MeshLib::Pyramid>(element, nodes);
 	else if (element->getGeomType() == MeshElemType::PRISM)
-		return copyPrism(element, nodes);
+		return copyElement<MeshLib::Prism>(element, nodes);
 
 	ERR ("Error: Unknown element type.");
 	return nullptr;
 }
 
-MeshLib::Element* copyLine(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
+template <typename E>
+MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes)
 {
-	MeshLib::Node** new_nodes = new MeshLib::Node*[2];
-	new_nodes[0] = nodes[org_elem->getNode(0)->getID()];
-	new_nodes[1] = nodes[org_elem->getNode(1)->getID()];
-	return new MeshLib::Line(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* copyTri(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[3];
-	for (unsigned i=0; i<3; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Tri(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* copyQuad(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[4];
-	for (unsigned i=0; i<4; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Quad(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* copyTet(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[4];
-	for (unsigned i=0; i<4; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Tet(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* copyHex(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[8];
-	for (unsigned i=0; i<8; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Hex(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* copyPyramid(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[5];
-	for (unsigned i=0; i<5; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Pyramid(new_nodes, org_elem->getValue());
-}
-
-MeshLib::Element* copyPrism(MeshLib::Element const*const org_elem, const std::vector<MeshLib::Node*> &nodes)
-{
-	MeshLib::Node** new_nodes = new MeshLib::Node*[6];
-	for (unsigned i=0; i<6; ++i)
-		new_nodes[i] = nodes[org_elem->getNode(i)->getID()];
-	return new MeshLib::Prism(new_nodes, org_elem->getValue());
+	MeshLib::Node** new_nodes = new MeshLib::Node*[element->getNNodes()];
+	for (unsigned i=0; i<element->getNNodes(); ++i)
+		new_nodes[i] = nodes[element->getNode(i)->getID()];
+	return new E(new_nodes, element->getValue());
 }
 
 } // namespace MeshLib
