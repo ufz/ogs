@@ -143,6 +143,4 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 	return output;
 }
 
-
-
 } // end namespace MeshLib

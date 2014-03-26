@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>470</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -224,6 +224,23 @@
       </item>
       <item row="3" column="1">
        <widget class="QTextEdit" name="nonConvexText">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="nodeOrderLabel">
+        <property name="text">
+         <string>Node order:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QTextEdit" name="nodeOrderText">
         <property name="readOnly">
          <bool>true</bool>
         </property>

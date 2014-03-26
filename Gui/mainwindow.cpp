@@ -1286,7 +1286,6 @@ void MainWindow::FEMTestStart()
 {
 }
 
-
 void MainWindow::showTrackingSettingsDialog()
 {
 #ifdef OGS_USE_VRPN
