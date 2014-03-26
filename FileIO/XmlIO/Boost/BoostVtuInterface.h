@@ -39,9 +39,7 @@ namespace FileIO
 /**
  * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
  *
- * XML parsing is performed using RapidXML. Note, that this library uses string references instead
- * of copies of strings, i.e. strings used in the DOM tree need to be available as long the DOM tree
- * is needed.
+ * XML parsing is performed using boost::property_tree::ptree.
  */
 class BoostVtuInterface : public Writer
 {
