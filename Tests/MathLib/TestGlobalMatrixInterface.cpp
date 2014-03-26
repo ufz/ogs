@@ -61,7 +61,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
 
     ASSERT_EQ(3u, msize);
-    ASSERT_EQ(6u, m.getDimension());
+    ASSERT_EQ(6u, m.getNRows());
     ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNLocalRows());
 
     int gathered_cols;

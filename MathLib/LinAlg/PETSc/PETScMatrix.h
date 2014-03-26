@@ -27,7 +27,8 @@ namespace MathLib
 {
 
 /*!
-   \brief Wrapper class for PETSc matrix routines
+   \brief Wrapper class for PETSc matrix routines for a square matrix for
+          the system of linear equations.
 */
 class PETScMatrix
 {
@@ -43,7 +44,7 @@ class PETScMatrix
         /*!
           \brief       Constructor for the user determined matrix partitioning
                        with two options.
-          \param size           The dimension of the matrix or the submatrix.
+          \param size           The number of rows of the matrix or the local matrix.
           \param n_loc_cols     Number of the columns of the rank.
                                 If it is -1, it is PETSC_DECIDE.
           \param is_global_size The flag of the type of vec_size,
@@ -55,7 +56,7 @@ class PETScMatrix
 
         /*!
           \brief        Constructor for the user determined partitioning with more options
-          \param size   The dimension of the matrix or the submatrix.
+          \param size   The number of rows of the matrix or the local matrix.
           \param mat_op The configuration information for creating a matrix.
         */
         PETScMatrix(const PetscInt size, const PETScMatrixOption &mat_op = PETScMatrixOption() );
@@ -67,7 +68,7 @@ class PETScMatrix
 
         /*!
           \brief        Config memory allocation and set the related member data.
-                        Only called when an intance is created with the constructor
+                        Only called after an intance is created with the constructor
                         wthout PETScMatrixOption argument.
           \param mat_op The configuration information for creating a matrix.
         */
@@ -82,12 +83,6 @@ class PETScMatrix
         {
             MatAssemblyBegin(_A, asm_type);
             MatAssemblyEnd(_A, asm_type);
-        }
-
-        /// Get the dimension.
-        PetscInt getDimension() const
-        {
-            return _size;
         }
 
         /// Get the number of rows.
