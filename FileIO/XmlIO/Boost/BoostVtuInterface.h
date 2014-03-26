@@ -56,6 +56,8 @@ public:
 	/// Set mesh for writing.
 	void setMesh(const MeshLib::Mesh* mesh);
 
+	void addScalarPointProperty(std::string const& name, std::vector<double> const& prop_vals);
+
 protected:
 	void buildPropertyTree();
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node
