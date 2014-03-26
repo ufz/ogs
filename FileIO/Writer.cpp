@@ -23,6 +23,7 @@ namespace FileIO
 
 Writer::Writer()
 {
+	_out.precision(std::numeric_limits<double>::digits10);
 }
 
 std::string Writer::writeToString()
@@ -30,7 +31,6 @@ std::string Writer::writeToString()
 	// Empty stream and clear error states.
 	_out.str("");
 	_out.clear();
-	_out.precision(std::numeric_limits<double>::digits10);
 
 	if (this->write(_out))
 		return _out.str();
