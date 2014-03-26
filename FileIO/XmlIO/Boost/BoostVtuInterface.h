@@ -20,13 +20,10 @@
 #include <string>
 #include <vector>
 
-#include "MeshEnums.h"
-
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 #include <boost/optional.hpp>
 
-class ProjectData;
+#include "MeshEnums.h"
 
 typedef boost::optional<const boost::property_tree::ptree&> OptionalPtree;
 
@@ -59,7 +56,7 @@ public:
 	void setCompressData(bool flag=true) { _use_compressor = flag; };
 
 	/// Set mesh for writing.
-	void setMesh(const MeshLib::Mesh*  mesh) { this->_mesh = const_cast<MeshLib::Mesh*>(mesh); };
+	void setMesh(const MeshLib::Mesh* mesh) { this->_mesh = const_cast<MeshLib::Mesh*>(mesh); };
 
 protected:
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node

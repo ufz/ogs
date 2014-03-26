@@ -21,6 +21,7 @@
 #include <fstream>
 
 #include <boost/foreach.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
