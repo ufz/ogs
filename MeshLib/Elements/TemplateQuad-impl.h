@@ -129,6 +129,7 @@ ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::validate() const
 	if (!error_code[ElementErrorFlag::ZeroVolume]) 
 		error_code[ElementErrorFlag::NonConvex]   = (!(GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
 			                                           GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])));
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
 }
 

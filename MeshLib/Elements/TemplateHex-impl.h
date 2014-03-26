@@ -170,6 +170,7 @@ ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::validate() const
 		error_code |= quad->validate();
 		delete quad;
 	}
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
 }
 

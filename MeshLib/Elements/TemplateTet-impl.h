@@ -149,6 +149,7 @@ ElementErrorCode TemplateTet<NNODES,CELLTETTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
 }
 

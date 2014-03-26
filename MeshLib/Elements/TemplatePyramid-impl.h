@@ -174,7 +174,10 @@ ElementErrorCode TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::validate() const
 
 	const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(this->getFace(4)));
 	if (base)
+	{
 		error_code |= base->validate();
+		error_code[ElementErrorFlag::NodeOrder] = !this->testElementNodeOrder();
+	}
 	else
 		error_code.set(ElementErrorFlag::NodeOrder);
 	delete base;
