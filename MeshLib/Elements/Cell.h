@@ -48,6 +48,16 @@ public:
 	 */
 	virtual Element* clone() const = 0;
 
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 * For 3D elements true is returned if the normals of all faces points away from the centre of 
+	 * the element.
+	 * Note: This method might give wrong results if something else is wrong with the element 
+	 * (non-planar faces, non-convex geometry, possibly zero volume) which causes the calculated 
+	 * center of gravity to lie outside of the actual element
+	 */
+	virtual bool testElementNodeOrder() const;
+
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.

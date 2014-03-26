@@ -17,6 +17,7 @@
 #include "Node.h"
 
 #include "MathTools.h"
+#include "Vector3.h"
 
 
 namespace MeshLib {
@@ -46,6 +47,12 @@ MathLib::Vector3 Face::getSurfaceNormal() const
 							  (*this->_nodes[1])[1]-(*this->_nodes[2])[1],
 							  (*this->_nodes[1])[2]-(*this->_nodes[2])[2]);
 	return MathLib::crossProduct(u,v);
+}
+
+bool Face::testElementNodeOrder() const
+{
+	MathLib::Vector3 up_vec (0,0,1);
+	return (MathLib::scalarProduct(this->getSurfaceNormal(), up_vec) > 0) ? true : false;
 }
 
 }

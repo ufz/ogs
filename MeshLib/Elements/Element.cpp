@@ -75,9 +75,9 @@ MeshLib::Node Element::getCenterOfGravity() const
 	MeshLib::Node center(0,0,0);
 	for (unsigned i=0; i<nNodes; ++i)
 	{
-		center[0] += (*_nodes[0])[0];
-		center[1] += (*_nodes[0])[1];
-		center[2] += (*_nodes[0])[2];
+		center[0] += (*_nodes[i])[0];
+		center[1] += (*_nodes[i])[1];
+		center[2] += (*_nodes[i])[2];
 	}
 	center[0] /= nNodes;
 	center[1] /= nNodes;

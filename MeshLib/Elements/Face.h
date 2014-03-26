@@ -74,6 +74,12 @@ public:
 	 */
 	virtual Element* clone() const = 0;
 
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 * For 2D elements true is returned if the normal points (roughly) upwards.
+	 */
+	virtual bool testElementNodeOrder() const;
+
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.

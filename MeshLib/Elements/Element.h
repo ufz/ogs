@@ -179,6 +179,11 @@ public:
 	 */
 	virtual double computeVolume() = 0;
 
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 */
+	virtual bool testElementNodeOrder() const = 0;
+
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
