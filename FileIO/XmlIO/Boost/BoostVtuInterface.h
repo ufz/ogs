@@ -69,8 +69,6 @@ protected:
 
 	bool write();
 
-	MeshLib::Mesh* _mesh;
-
 private:
 
 	/// Returns the ID used by VTK for a given cell type (e.g. "5" for a triangle, etc.)
@@ -93,6 +91,7 @@ private:
 	/// Find first child of a tree, which is a DataArray and has requested name.
 	static const OptionalPtree findDataArray(std::string const& array_name, boost::property_tree::ptree const& tree);
 
+	MeshLib::Mesh* _mesh;
 	bool _use_compressor;
 	boost::property_tree::ptree _doc;
 };
