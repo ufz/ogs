@@ -46,10 +46,10 @@ public:
 	void setFormat(std::ios_base::fmtflags flags);
 
 protected:
-	/// @brief Writes the object to the given stream.
+	/// @brief Writes the object to the internal stream.
 	/// This method must be implemented by a subclass.
 	/// The implementation should return true on success, else false
-	virtual bool write(std::ostream& stream) = 0;
+	virtual bool write() = 0;
 
 	/// @brief The stream to write to.
 	std::stringstream _out;

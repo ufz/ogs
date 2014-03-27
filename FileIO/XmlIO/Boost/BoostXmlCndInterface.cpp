@@ -166,7 +166,7 @@ void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const
 	}
 }
 
-bool BoostXmlCndInterface::write(std::ostream& )
+bool BoostXmlCndInterface::write()
 {
 	// no implementation - please use the Qt Xml writer for writing
 	return true;

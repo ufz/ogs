@@ -53,7 +53,7 @@ public:
 
 protected:
 	/// Write mesh to stream.
-	bool write(std::ostream &out);
+	bool write();
 
 private:
 	void writeElements(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out) const;

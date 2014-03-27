@@ -86,9 +86,25 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	}
 
 	if (!polylines->empty())
+	{
 		geo_objects->addPolylineVec(polylines, geo_name, ply_names);
+	}
+	else
+	{
+		delete polylines;
+		delete ply_names;
+	}
+
 	if (!surfaces->empty())
+	{
 		geo_objects->addSurfaceVec(surfaces, geo_name, sfc_names);
+	}
+	else
+	{
+		delete surfaces;
+		delete sfc_names;
+	}
+
 	return true;
 }
 
@@ -230,7 +246,7 @@ bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root) co
 	return true;
 }
 
-bool BoostXmlGmlInterface::write(std::ostream&)
+bool BoostXmlGmlInterface::write()
 {
 	INFO ("Writing XML geometry is not implemented here. Please use the Qt XML class for this functionality.");
 	return false;

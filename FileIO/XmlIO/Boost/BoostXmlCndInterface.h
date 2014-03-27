@@ -42,7 +42,7 @@ public:
 
 protected:
 	/// @return true on success, else false
-	bool write(std::ostream& );
+	bool write();
 
 private:
 	/// Read the details of a boundary condition from an xml-file

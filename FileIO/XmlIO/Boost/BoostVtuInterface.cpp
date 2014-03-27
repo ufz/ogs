@@ -21,6 +21,7 @@
 #include <fstream>
 
 #include <boost/foreach.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -44,7 +45,7 @@ namespace FileIO
 using namespace boost;
 
 BoostVtuInterface::BoostVtuInterface() :
-	_export_name(""), _mesh(nullptr), _use_compressor(false)
+	_mesh(nullptr), _use_compressor(false), _doc()
 {
 }
 
@@ -394,15 +395,52 @@ const OptionalPtree BoostVtuInterface::findDataArray(std::string const& array_na
 	return OptionalPtree();
 }
 
-bool BoostVtuInterface::write(std::ostream& stream)
+void BoostVtuInterface::setMesh(const MeshLib::Mesh* mesh)
 {
-	//if (this->_export_name.empty())
-	if (!_mesh)
+	if (!mesh)
 	{
 		ERR("BoostVtuInterface::write(): No mesh specified.");
-		return 0;
+		return;
+	}
+	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
+	buildPropertyTree();
+};
+
+void BoostVtuInterface::addScalarPointProperty(std::string const& name,
+	std::vector<double> const& prop_vals)
+{
+	if (_doc.empty()) {
+		WARN("BoostVtuInterface::addPointProperty(): propertry tree empty (no mesh set)");
+		return;
 	}
 
+	if (_mesh->getNNodes() != prop_vals.size()) {
+		WARN("BoostVtuInterface::addPointProperty(): number of values for propertry %s (%d) does not match the number of nodes (%d)", name.c_str(), prop_vals.size(), _mesh->getNNodes());
+		return;
+	}
+
+	const std::string data_array_close("\t\t\t\t");
+	const std::string data_array_indent("\t\t\t\t  ");
+
+	// go to the node where data should be inserted
+	using boost::property_tree::ptree;
+	ptree &root_node = _doc.get_child("VTKFile");
+	ptree &piece_node = root_node.get_child("UnstructuredGrid.Piece");
+	ptree &pointdata_node = piece_node.get_child("PointData");
+
+	// prepare the data
+	std::stringstream oss(std::stringstream::out);
+	oss.precision(_out.precision());
+	oss << "\n" << data_array_indent;
+	std::copy(prop_vals.cbegin(), prop_vals.cend(), std::ostream_iterator<double>(oss, " "));
+	oss << "\n" << data_array_close;
+	this->addDataArray(pointdata_node, name, "Float64", oss.str());
+	oss.str(std::string());
+}
+
+void BoostVtuInterface::buildPropertyTree()
+{
+	_doc.clear();
 	const std::size_t nNodes (_mesh->getNNodes());
 	const std::size_t nElems (_mesh->getNElements());
 	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
@@ -412,9 +450,8 @@ bool BoostVtuInterface::write(std::ostream& stream)
 	const std::string data_array_indent("\t\t\t\t  ");
 
 	using boost::property_tree::ptree;
-	ptree doc;
 
-	ptree &root_node = doc.put("VTKFile", "");
+	ptree &root_node = _doc.put("VTKFile", "");
 	root_node.put("<xmlattr>.type", "UnstructuredGrid");
 	root_node.put("<xmlattr>.version", "0.1");
 	root_node.put("<xmlattr>.byte_order", "LittleEndian");
@@ -429,13 +466,13 @@ bool BoostVtuInterface::write(std::ostream& stream)
 	piece_node.put("<xmlattr>.NumberOfCells", str_nElems.c_str());
 
 	// scalar arrays for point- and cell-data
-	piece_node.add("PointData", "\n\t\t\t");
+	piece_node.add("PointData", "");
 	// add node_area array here if necessary!
 	ptree &celldata_node = piece_node.add("CellData", "");
 	celldata_node.put("<xmlattr>.Scalars", "MaterialIDs");
 
 	std::stringstream oss(std::stringstream::out);
-	oss.precision(stream.precision());
+	oss.precision(_out.precision());
 	oss << std::endl << data_array_indent;
 	for (unsigned i = 0; i < nElems; i++)
 		oss << elements[i]->getValue() << " ";
@@ -484,9 +521,16 @@ bool BoostVtuInterface::write(std::ostream& stream)
 	this->addDataArray(cells_node, "connectivity", "Int32", oss.str());
 	this->addDataArray(cells_node, "offsets", "Int32", offstream.str());
 	this->addDataArray(cells_node, "types", "UInt8", typestream.str());
+}
 
+bool BoostVtuInterface::write()
+{
+	if (_doc.empty()) {
+		ERR("BoostVtuInterface::write(): No mesh specified.");
+		return false;
+	}
 	property_tree::xml_writer_settings<char> settings('\t', 1);
-	write_xml(stream, doc, settings);
+	write_xml(_out, _doc, settings);
 	return true;
 }
 
