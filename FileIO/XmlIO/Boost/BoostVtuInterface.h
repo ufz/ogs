@@ -59,7 +59,11 @@ public:
 	void addScalarPointProperty(std::string const& name, std::vector<double> const& prop_vals);
 
 protected:
+	/** Method builds a tree structure storing the mesh data. This method is called from
+	 * setMesh().
+	 */
 	void buildPropertyTree();
+
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node
 	void addDataArray(boost::property_tree::ptree &parent_node, const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
