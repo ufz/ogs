@@ -125,13 +125,11 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		// Generate lines
 		newLines->InsertNextCell(numPoints);
 		plyIDs->InsertNextValue(j);
-		for (int i = 0; i < numPoints; i++)
-		{
-			if(isClosed)
-				newLines->InsertCellPoint((i + lastMaxIndex)%(numVerts+lastMaxIndex));
-			else
+		for (int i = 0; i < numVerts; i++)
 				newLines->InsertCellPoint(i + lastMaxIndex);
-		}
+
+		if(isClosed)
+			newLines->InsertCellPoint(lastMaxIndex);
 
 		lastMaxIndex += numPoints;
 	}
