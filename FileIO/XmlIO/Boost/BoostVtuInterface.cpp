@@ -400,6 +400,7 @@ void BoostVtuInterface::setMesh(const MeshLib::Mesh* mesh)
 	if (!mesh)
 	{
 		ERR("BoostVtuInterface::write(): No mesh specified.");
+		return;
 	}
 	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
 	buildPropertyTree();
