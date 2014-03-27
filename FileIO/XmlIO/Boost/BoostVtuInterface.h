@@ -58,7 +58,7 @@ public:
 
 	void addScalarPointProperty(std::string const& name, std::vector<double> const& prop_vals);
 
-protected:
+private:
 	/** Method builds a tree structure storing the mesh data. This method is called from
 	 * setMesh().
 	 */
@@ -68,8 +68,6 @@ protected:
 	void addDataArray(boost::property_tree::ptree &parent_node, const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
 	bool write();
-
-private:
 
 	/// Returns the ID used by VTK for a given cell type (e.g. "5" for a triangle, etc.)
 	unsigned getVTKElementID(MeshElemType type) const;
