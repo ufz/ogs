@@ -128,10 +128,10 @@ TEST(Math, CheckInterface_LisMatrix)
 TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
-    opt._is_global_size = false;
-    opt._n_local_cols = 2;
+    opt.d_nz = 2;
+    opt.o_nz = 0;
+    opt.is_global_size = false;
+    opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
     const bool is_gloabal_size = false;
@@ -143,8 +143,8 @@ TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
+    opt.d_nz = 2;
+    opt.o_nz = 0;
     MathLib::PETScMatrix A(6, opt);
 
     MathLib::PETScVector x(6);

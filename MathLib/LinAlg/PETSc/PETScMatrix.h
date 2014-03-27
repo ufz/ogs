@@ -113,7 +113,7 @@ class PETScMatrix
         }
 
         /*
-           \brief Set the specified rows to zero except off-diagonal entries, i.e.
+           \brief Set the specified rows to zero except diagonal entries, i.e.
                   \f$A(k, j) = 0, j!=k, j=1,2,\cdots, n\f$, where \f$k \in \mbox{row\_pos}\f$
                   This fucntion must be called by all rank.
            \param row_pos The row indicies of the specified rows.
@@ -155,8 +155,8 @@ class PETScMatrix
 
         /*!
           \brief         Add a submatrix to this.
-          \param row_pos The global row indicies of the entries of the submatrix.
-          \param col_pos The global column indicies of the entries of the submatrix.
+          \param row_pos The row indices of the entries of the submatrix.
+          \param col_pos The column indices of the entries of the submatrix.
           \param sub_mat A dense matrix to be added on.
         */
         template <class T_DENSE_MATRIX>
