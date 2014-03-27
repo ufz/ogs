@@ -136,10 +136,10 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MathLib::DenseMatrix<double> loc_m(2, 3);
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
-    loc_m(0, 1) = 3.;
+    loc_m(0, 2) = 3.;
     loc_m(1, 0) = 1.;
     loc_m(1, 1) = 2.;
-    loc_m(1, 1) = 3.;
+    loc_m(1, 2) = 3.;
 
     std::vector<int> row_pos(2);
     std::vector<int> col_pos(3);
@@ -153,15 +153,12 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     MathLib::finalizeMatrixAssembly(m);
     
-    //Cannot perform the following multiplication due to PETSc bug.
     // Multiply by a vector
     v = 1.;
-    const bool deep_copy = false;
-    T_VECTOR y(v, deep_copy);
+    T_VECTOR y(m.getNRows());
     m.multi(v, y);
 
-    ASSERT_EQ(sqrt(24.), y.getNorm());
-    
+    ASSERT_NEAR(6.*sqrt(6.), y.getNorm(), 1.e-10);    
 }
 
 #endif // end of: ifdef USE_PETSC // or MPI
