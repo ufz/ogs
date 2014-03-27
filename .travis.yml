@@ -24,6 +24,7 @@ before_install:
   - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev; fi
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
+  make test
 notifications:
   email:
     - lars.bilke@ufz.de
