@@ -65,6 +65,11 @@ public:
 	 */
 	MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim = 1);
 
+	/**
+	 * Create a new mesh where all elements with nonplanar faces are subdivided into simpler 
+	 * element types. This method does not collapse or remove any nodes.
+	 */
+	MeshLib::Mesh* subdivideMesh(const std::string &new_mesh_name) const;
 
 private:
 	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
@@ -78,10 +83,6 @@ private:
 	/// Resets the node IDs of the source mesh (needs to be called after everything is done).
 	void resetNodeIDs();
 	
-	/// Copies an element without change, using the nodes vector from the result mesh.
-	MeshLib::Element* copyElement(MeshLib::Element const*const element, 
-		                          const std::vector<MeshLib::Node*> &nodes) const;
-
 	/// Subdivides an element if it has a face that is not coplanar
 	bool subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const;
 
@@ -93,22 +94,7 @@ private:
 	    			   unsigned min_elem_dim) const;
 
 	/// Cleans up all nodes and elements if something went wrong
-	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements);
-
-	/// Creates a new line element identical with "line" but using the new nodes vector.
-	MeshLib::Element* copyLine(MeshLib::Element const*const line, const std::vector<MeshLib::Node*> &nodes) const;
-	/// Creates a new triangle element identical with "tri" but using the new nodes vector.
-	MeshLib::Element* copyTri(MeshLib::Element const*const tri, const std::vector<MeshLib::Node*> &nodes) const;
-	/// Creates a new quad element identical with "quad" but using the new nodes vector.
-	MeshLib::Element* copyQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes) const;
-	/// Creates a new tetrahedron element identical with "tet" but using the new nodes vector.
-	MeshLib::Element* copyTet(MeshLib::Element const*const tet, const std::vector<MeshLib::Node*> &nodes) const;
-	/// Creates a new hexahedron element identical with "hex" but using the new nodes vector.
-	MeshLib::Element* copyHex(MeshLib::Element const*const hex, const std::vector<MeshLib::Node*> &nodes) const;
-	/// Creates a new pyramid element identical with "pyramid" but using the new nodes vector.
-	MeshLib::Element* copyPyramid(MeshLib::Element const*const pyramid, const std::vector<MeshLib::Node*> &nodes) const;
-	/// Creates a new prism element identical with "prism" but using the new nodes vector.
-	MeshLib::Element* copyPrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes) const;
+	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Subdivides a nonplanar quad into two triangles
 	unsigned subdivideQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
