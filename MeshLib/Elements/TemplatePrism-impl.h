@@ -179,6 +179,7 @@ ElementErrorCode TemplatePrism<NNODES,CELLPRISMTYPE>::validate() const
 			error_code.set(ElementErrorFlag::NodeOrder);
 		delete quad;
 	}
+	error_code[ElementErrorFlag::NodeOrder] = !this->testElementNodeOrder();
 	return error_code;
 }
 

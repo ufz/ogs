@@ -77,6 +77,12 @@ public:
      */
     virtual Element* clone() const = 0;
 
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 * For 1D elements this always returns true.
+	 */
+	virtual bool testElementNodeOrder() const { return true; }
+
 protected:
     /// 1D elements have no edges.
     Node* getEdgeNode(unsigned /*edge_id*/, unsigned /*node_id*/) const { return nullptr; };

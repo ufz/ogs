@@ -17,6 +17,7 @@
 #include "Node.h"
 
 #include "MathTools.h"
+#include "Vector3.h"
 
 
 namespace MeshLib {
@@ -37,15 +38,17 @@ Face::Face(unsigned value, std::size_t id)
 Face::~Face()
 {}
 
-void Face::getSurfaceNormal(double normal[3]) const
+MathLib::Vector3 Face::getSurfaceNormal() const
 {
-	const double edge1[3] = { (*this->_nodes[0])[0]-(*this->_nodes[1])[0],
-				 			  (*this->_nodes[0])[1]-(*this->_nodes[1])[1],
-							  (*this->_nodes[0])[2]-(*this->_nodes[1])[2] };
-	const double edge2[3] = { (*this->_nodes[1])[0]-(*this->_nodes[2])[0],
-							  (*this->_nodes[1])[1]-(*this->_nodes[2])[1],
-							  (*this->_nodes[1])[2]-(*this->_nodes[2])[2] };
-	MathLib::crossProd(edge1, edge2, normal);
+	const MathLib::Vector3 u (*_nodes[1], *_nodes[0]);
+	const MathLib::Vector3 v (*_nodes[1], *_nodes[2]);
+	return MathLib::crossProduct(u,v);
+}
+
+bool Face::testElementNodeOrder() const
+{
+	MathLib::Vector3 up_vec (0,0,1);
+	return (MathLib::scalarProduct(this->getSurfaceNormal(), up_vec) < 0) ? true : false;
 }
 
 }

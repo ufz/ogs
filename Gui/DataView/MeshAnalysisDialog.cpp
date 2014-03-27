@@ -44,9 +44,11 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
 	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
 	const unsigned nCollapsableNodes (rev.getNCollapsableNodes());
+	this->nodesGroupBox->setTitle("Nodes (out of " + QString::number(mesh->getNNodes()) + ")");
 	this->nodesMsgOutput(unusedNodesIdx, nCollapsableNodes);
 
 	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshValidation::testElementGeometry(*mesh));
+	this->elementsGroupBox->setTitle("Elements (out of " + QString::number(mesh->getNElements()) + ")");
 	this->elementsMsgOutput(element_error_codes);
 }
 
@@ -75,4 +77,5 @@ void MeshAnalysisDialog::elementsMsgOutput(const std::vector<ElementErrorCode> &
 	this->zeroVolumeText->setText(QString::fromStdString(output_str[0]));
 	this-> nonPlanarText->setText(QString::fromStdString(output_str[1]));
 	this-> nonConvexText->setText(QString::fromStdString(output_str[2]));
+	this-> nodeOrderText->setText(QString::fromStdString(output_str[3]));
 }

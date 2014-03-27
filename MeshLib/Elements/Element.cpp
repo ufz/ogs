@@ -71,6 +71,22 @@ bool Element::addNeighbor(Element* e)
 	return false;
 }
 
+MeshLib::Node Element::getCenterOfGravity() const
+{
+	const unsigned nNodes (this->getNNodes());
+	MeshLib::Node center(0,0,0);
+	for (unsigned i=0; i<nNodes; ++i)
+	{
+		center[0] += (*_nodes[i])[0];
+		center[1] += (*_nodes[i])[1];
+		center[2] += (*_nodes[i])[2];
+	}
+	center[0] /= nNodes;
+	center[1] /= nNodes;
+	center[2] /= nNodes;
+	return center;
+}
+
 const Element* Element::getEdge(unsigned i) const
 {
 	if (i < getNEdges())

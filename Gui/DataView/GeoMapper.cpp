@@ -65,7 +65,7 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 		this->_mesh = new MeshLib::Mesh(*mesh);
 	else
 	{
-		const double dir[3] = {0,0,1};
+		const MathLib::Vector3 dir(0,0,1);
 		this->_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
 	}
 	std::vector<GeoLib::PointWithID*> sfc_pnts;
