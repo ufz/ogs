@@ -106,15 +106,16 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 	plyIDs->SetName("PolylineIDs");
 
 	int lastMaxIndex = 0;
-	//for (std::vector<GeoLib::Polyline*>::const_iterator it = _polylines->begin();
-	//	it != _polylines->end(); ++it)
 	for (size_t j = 0; j < _polylines->size(); j++)
 	{
 		const int numPoints = (*_polylines)[j]->getNumberOfPoints();
-		//const int numLines = numPoints - 1;
+		const bool isClosed = (*_polylines)[j]->isClosed();
 
 		// Generate points
-		for (int i = 0; i < numPoints; i++)
+		int numVerts = numPoints;
+		if(isClosed)
+			numVerts = numPoints - 1;
+		for (int i = 0; i < numVerts; i++)
 		{
 			const GeoLib::Point* point = (*_polylines)[j]->getPoint(i);
 			const double* coords = point->getCoords();
@@ -124,8 +125,11 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		// Generate lines
 		newLines->InsertNextCell(numPoints);
 		plyIDs->InsertNextValue(j);
-		for (int i = 0; i < numPoints; i++)
-			newLines->InsertCellPoint(i + lastMaxIndex);
+		for (int i = 0; i < numVerts; i++)
+				newLines->InsertCellPoint(i + lastMaxIndex);
+
+		if(isClosed)
+			newLines->InsertCellPoint(lastMaxIndex);
 
 		lastMaxIndex += numPoints;
 	}
