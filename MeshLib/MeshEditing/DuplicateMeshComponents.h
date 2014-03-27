@@ -38,7 +38,7 @@ namespace MeshLib
 	MeshLib::Element* copyElement(MeshLib::Element const*const element,
                                   const std::vector<MeshLib::Node*> &nodes);
 
-	/// Creates a new line element identical with "line" but using the new nodes vector.
+	/// Copies an element without change, using the nodes vector from the result mesh.
 	template <typename E>
 	MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes);
 
