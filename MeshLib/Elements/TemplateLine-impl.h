@@ -22,6 +22,9 @@ TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const&
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
 
+	_neighbors = new Element*[2];
+	std::fill_n(_neighbors, 2, nullptr);
+
 	this->_length = this->computeVolume();
 }
 
