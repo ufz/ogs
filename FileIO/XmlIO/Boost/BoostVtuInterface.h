@@ -69,7 +69,6 @@ protected:
 
 	bool write();
 
-	std::string _export_name;
 	MeshLib::Mesh* _mesh;
 
 private:

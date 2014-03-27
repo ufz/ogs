@@ -45,7 +45,7 @@ namespace FileIO
 using namespace boost;
 
 BoostVtuInterface::BoostVtuInterface() :
-	_export_name(""), _mesh(nullptr), _use_compressor(false), _doc()
+	_mesh(nullptr), _use_compressor(false), _doc()
 {
 }
 
