@@ -39,7 +39,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
 			it != elements.cend(); it++) {
 		std::size_t const n_edges((*it)->getNEdges());
 		for (std::size_t k(0); k<n_edges; k++) {
-			MeshLib::Edge const* edge(dynamic_cast<MeshLib::Edge const*>((*it)->getEdge(k)));
+			MeshLib::Line const* edge(dynamic_cast<MeshLib::Line const*>((*it)->getEdge(k)));
 			if (!edge) {
 				delete edge;
 				continue;
