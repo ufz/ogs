@@ -99,16 +99,16 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     ASSERT_EQ(sqrt(3*(3*3 + 7*7)), y.getNorm());
 
-    // Set/add a value
-    if(mrank == 1)
-    {
-        m.set(0, 0, 5.0);
-        m.add(1, 1, 5.0);
-    }
+    // set a value
+    m.set(2 * mrank, 2 * mrank, 5.0);
+    MathLib::finalizeMatrixAssembly(m);
+    // add a value
+    m.add(2 * mrank+1, 2 * mrank+1, 5.0);
     MathLib::finalizeMatrixAssembly(m);
     m.multi(v, y);
 
-    ASSERT_EQ(sqrt((2*3*3 + 8*8 + 3*7*7)), y.getNorm());
+    ASSERT_EQ(sqrt((3*7*7 + 3*12*12)), y.getNorm());
+
 }
 
 // Rectanglular matrix
@@ -152,9 +152,8 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     m.add(row_pos, col_pos, loc_m);
 
     MathLib::finalizeMatrixAssembly(m);
-
-    /*
-    Cannot perform the following multiplication due to PETSc bug.
+    
+    //Cannot perform the following multiplication due to PETSc bug.
     // Multiply by a vector
     v = 1.;
     const bool deep_copy = false;
@@ -162,7 +161,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     m.multi(v, y);
 
     ASSERT_EQ(sqrt(24.), y.getNorm());
-    */ 
+    
 }
 
 #endif // end of: ifdef USE_PETSC // or MPI
@@ -187,10 +186,10 @@ TEST(Math, CheckInterface_LisMatrix)
 TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
-    opt._is_global_size = false;
-    opt._n_local_cols = 2;
+    opt.d_nz = 2;
+    opt.o_nz = 0;
+    opt.is_global_size = false;
+    opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
     const bool is_gloabal_size = false;
@@ -202,8 +201,8 @@ TEST(Math, CheckInterface_PETScMatrix_Local_Size)
 TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 2;
-    opt._o_nz = 0;
+    opt.d_nz = 2;
+    opt.o_nz = 0;
     MathLib::PETScMatrix A(6, opt);
 
     MathLib::PETScVector x(6);
@@ -215,10 +214,10 @@ TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 TEST(Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 3;
-    opt._o_nz = 0;
-    opt._is_global_size = false;
-    opt._n_local_cols = -1;
+    opt.d_nz = 3;
+    opt.o_nz = 0;
+    opt.is_global_size = false;
+    opt.n_local_cols = -1;
     MathLib::PETScMatrix A(2, 3, opt);
 
     const bool is_gloabal_size = false;
@@ -230,8 +229,8 @@ TEST(Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
 TEST(Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
-    opt._d_nz = 3;
-    opt._o_nz = 0;
+    opt.d_nz = 3;
+    opt.o_nz = 0;
     MathLib::PETScMatrix A(6, 9, opt);
 
     MathLib::PETScVector x(9);

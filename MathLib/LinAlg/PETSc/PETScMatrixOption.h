@@ -23,8 +23,8 @@ namespace MathLib
 */
 struct PETScMatrixOption
 {
-    PETScMatrixOption() :  _is_global_size(true), _n_local_cols(PETSC_DECIDE),
-        _d_nz(PETSC_DECIDE), _o_nz(PETSC_DECIDE)
+    PETScMatrixOption() :  is_global_size(true), n_local_cols(PETSC_DECIDE),
+        d_nz(PETSC_DECIDE), o_nz(PETSC_DECIDE)
     { }
 
     /*!
@@ -34,22 +34,22 @@ struct PETScMatrixOption
               false: the size is the number of global rows.
             The default is false.
      */
-    bool _is_global_size;
+    bool is_global_size;
 
     /// Number of local columns. The default is PETSC_DECIDE.
-    PetscInt _n_local_cols;
+    PetscInt n_local_cols;
 
     /*!
      \brief Number of nonzeros per row in the diagonal portion of local submatrix
            (same value is used for all local rows), the default is PETSC_DECIDE
     */
-    PetscInt _d_nz;
+    PetscInt d_nz;
 
     /*!
      \brief Number of nonzeros per row in the off-diagonal portion of local submatrix
             (same value is used for all local rows), the default is PETSC_DECIDE
     */
-    PetscInt _o_nz;
+    PetscInt o_nz;
 };
 
 } // end namespace

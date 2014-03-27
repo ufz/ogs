@@ -27,9 +27,9 @@ PETScMatrix::PETScMatrix(const PetscInt dim)
 
 PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt)
     :_nrows(nrows), _ncols(nrows), _n_loc_rows(PETSC_DECIDE),
-     _n_loc_cols(mat_opt._n_local_cols)
+     _n_loc_cols(mat_opt.n_local_cols)
 {
-    if(!mat_opt._is_global_size)
+    if(!mat_opt.is_global_size)
     {
         _nrows = PETSC_DECIDE;
         _ncols = PETSC_DECIDE;
@@ -42,7 +42,7 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt
 
     create();
 
-    config(mat_opt._d_nz, mat_opt._o_nz);
+    config(mat_opt.d_nz, mat_opt.o_nz);
 }
 
 PETScMatrix::PETScMatrix(const PetscInt nrows_global, const PetscInt ncols_global)
@@ -54,9 +54,9 @@ PETScMatrix::PETScMatrix(const PetscInt nrows_global, const PetscInt ncols_globa
 
 PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETScMatrixOption &mat_opt)
     :_nrows(nrows), _ncols(ncols),  _n_loc_rows(PETSC_DECIDE),
-     _n_loc_cols(mat_opt._n_local_cols)
+     _n_loc_cols(mat_opt.n_local_cols)
 {
-    if(!mat_opt._is_global_size)
+    if(!mat_opt.is_global_size)
     {
         _nrows = PETSC_DECIDE;
         _ncols = PETSC_DECIDE;
@@ -66,7 +66,7 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETS
 
     create();
 
-    config(mat_opt._d_nz, mat_opt._o_nz);
+    config(mat_opt.d_nz, mat_opt.o_nz);
 }
 
 void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
