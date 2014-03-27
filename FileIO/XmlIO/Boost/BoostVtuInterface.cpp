@@ -421,7 +421,7 @@ void BoostVtuInterface::addScalarPointProperty(std::string const& name,
 	const std::string data_array_close("\t\t\t\t");
 	const std::string data_array_indent("\t\t\t\t  ");
 
-	// got to the node where data should be inserted
+	// go to the node where data should be inserted
 	using boost::property_tree::ptree;
 	ptree &root_node = _doc.get_child("VTKFile");
 	ptree &piece_node = root_node.get_child("UnstructuredGrid.Piece");
