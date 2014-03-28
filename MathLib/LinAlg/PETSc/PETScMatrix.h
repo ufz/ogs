@@ -33,26 +33,11 @@ class PETScMatrix
 {
     public:
         /*!
-          \brief      Constructor for a square matrix partitioning with default options:
-                      The numbers of local rows and columns have the value of PETSC_DECIDE.
-          \param dim  The dimension of the matrix.
-        */
-        explicit PETScMatrix(const PetscInt dim);
-
-        /*!
           \brief        Constructor for a square matrix partitioning with more options
           \param nrows  The number of rows of the matrix or the local matrix.
           \param mat_op The configuration information for creating a matrix.
         */
         PETScMatrix(const PetscInt nrows, const PETScMatrixOption &mat_op = PETScMatrixOption() );
-
-        /*!
-          \brief       Constructor for a rectangular matrix partitioning with default options:
-                       The numbers of local rows and columns have the value of PETSC_DECIDE.
-          \param nrows_global  The number of global rows.
-          \param ncols_global  The number of global columns.
-        */
-        PETScMatrix(const PetscInt nrows_global, const PetscInt ncols_global);
 
         /*!
           \brief        Constructor for a rectangular matrix partitioning with more options
@@ -229,17 +214,14 @@ class PETScMatrix
         /// Ending index in a rank
         PetscInt _end_rank;
 
-        /// Create the matrix
-        void create();
-
         /*!
-          \brief Config memory allocation and set the related member data.
+          \brief Create the matrix, configure memory allocation and set the related member data.
           \param Number of nonzeros per row in the diagonal portion of local submatrix
                  (same value is used for all local rows),
           \param Number of nonzeros per row in the off-diagonal portion of local submatrix
                  (same value is used for all local rows)
         */
-        void config(const PetscInt d_nz, const PetscInt o_nz);
+        void create(const PetscInt d_nz, const PetscInt o_nz);
 
         friend bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type);
 };

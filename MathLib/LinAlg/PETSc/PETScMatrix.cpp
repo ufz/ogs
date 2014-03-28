@@ -18,13 +18,6 @@
 namespace MathLib
 {
 
-PETScMatrix::PETScMatrix(const PetscInt dim)
-    :_nrows(dim), _ncols(dim), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(PETSC_DECIDE)
-{
-    create();
-    config(PETSC_DECIDE, PETSC_DECIDE);
-}
-
 PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt)
     :_nrows(nrows), _ncols(nrows), _n_loc_rows(PETSC_DECIDE),
      _n_loc_cols(mat_opt.n_local_cols)
@@ -40,16 +33,7 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt
         _ncols = _nrows;
     }
 
-    create();
-
-    config(mat_opt.d_nz, mat_opt.o_nz);
-}
-
-PETScMatrix::PETScMatrix(const PetscInt nrows_global, const PetscInt ncols_global)
-    :_nrows(nrows_global), _ncols(ncols_global), _n_loc_rows(PETSC_DECIDE), _n_loc_cols(PETSC_DECIDE)
-{
-    create();
-    config(PETSC_DECIDE, PETSC_DECIDE);
+    create(mat_opt.d_nz, mat_opt.o_nz);
 }
 
 PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETScMatrixOption &mat_opt)
@@ -64,9 +48,7 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETS
         _n_loc_cols = ncols;
     }
 
-    create();
-
-    config(mat_opt.d_nz, mat_opt.o_nz);
+    create(mat_opt.d_nz, mat_opt.o_nz);
 }
 
 void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
@@ -101,16 +83,13 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
 
 }
 
-void PETScMatrix::create()
+void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
 {
     MatCreate(PETSC_COMM_WORLD, &_A);
     MatSetSizes(_A, _n_loc_rows, _n_loc_cols, _nrows, _ncols);
 
     MatSetFromOptions(_A);
-}
 
-void PETScMatrix::config(const PetscInt d_nz, const PetscInt o_nz)
-{
     // for a dense matrix: MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
     MatMPIAIJSetPreallocation(_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
 

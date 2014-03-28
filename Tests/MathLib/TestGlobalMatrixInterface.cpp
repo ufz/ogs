@@ -148,17 +148,17 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     col_pos[0] = 3 * mrank;
     col_pos[1] = 3 * mrank + 1;
     col_pos[2] = 3 * mrank + 2;
-    
+
     m.add(row_pos, col_pos, loc_m);
 
     MathLib::finalizeMatrixAssembly(m);
-    
+
     // Multiply by a vector
     v = 1.;
     T_VECTOR y(m.getNRows());
     m.multi(v, y);
 
-    ASSERT_NEAR(6.*sqrt(6.), y.getNorm(), 1.e-10);    
+    ASSERT_NEAR(6.*sqrt(6.), y.getNorm(), 1.e-10);
 }
 
 #endif // end of: ifdef USE_PETSC // or MPI
