@@ -60,10 +60,6 @@ private:
 	/// Removes elements from vec_removed in vec_src_elems
 	std::vector<MeshLib::Element*> excludeElements(const std::vector<MeshLib::Element*> & vec_src_elems, const std::vector<std::size_t> &vec_removed) const;
 
-	/// Copies nodes and elements of the original mesh for constructing the new mesh
-	void copyNodesElements(const std::vector<MeshLib::Node*> &src_nodes, const std::vector<MeshLib::Element*> &src_elems,
-						   std::vector<MeshLib::Node*> &dst_nodes, std::vector<MeshLib::Element*> &dst_elems) const;
-
 	/// The mesh from which elements should be removed.
 	const MeshLib::Mesh &_mesh;
 	/// The vector of element indices that should be removed.

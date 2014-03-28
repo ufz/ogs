@@ -26,6 +26,7 @@ namespace MeshLib {
 	class Mesh;
 	class Node;
 	class Element;
+	class ElementExtraction;
 }
 
 namespace MeshLib {
@@ -35,6 +36,10 @@ namespace MeshLib {
  * reduces elements accordingly.
  */
 class MeshRevision {
+
+/* Definition of friend functions */
+	friend ElementExtraction;
+
 public:
 	/** 
 	 * Constructor

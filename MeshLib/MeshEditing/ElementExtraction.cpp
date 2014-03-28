@@ -15,6 +15,8 @@
 #include "ElementExtraction.h"
 #include "Mesh.h"
 #include "Elements/Element.h"
+#include "MeshEditing/DuplicateMeshComponents.h"
+#include "MeshEditing/MeshRevision.h"
 #include "AABB.h"
 
 #include "logog/include/logog.hpp"
@@ -42,9 +44,8 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 	INFO("Removing total %d elements...", _marked_elements.size());
 	std::vector<MeshLib::Element*> tmp_elems = excludeElements(_mesh.getElements(), _marked_elements);
 	INFO("%d elements remain in mesh.", tmp_elems.size());
-	std::vector<MeshLib::Node*> new_nodes;
-	std::vector<MeshLib::Element*> new_elems;
-	copyNodesElements(_mesh.getNodes(), tmp_elems, new_nodes, new_elems);
+	std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
+	std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(tmp_elems, new_nodes);
 
 	// create a new mesh object. Unsued nodes are removed during construction
 	if (!new_elems.empty())
@@ -142,30 +143,5 @@ std::vector<MeshLib::Element*> ElementExtraction::excludeElements(const std::vec
 
 	return vec_dest_eles;
 }
-
-void ElementExtraction::copyNodesElements(	const std::vector<MeshLib::Node*> &src_nodes, const std::vector<MeshLib::Element*> &src_elems,
-						std::vector<MeshLib::Node*> &dst_nodes, std::vector<MeshLib::Element*> &dst_elems) const 
-{
-	// copy nodes
-	dst_nodes.resize(src_nodes.size());
-	for (std::size_t i=0; i<dst_nodes.size(); i++) {
-		dst_nodes[i] = new MeshLib::Node(*src_nodes[i]);
-	}
-
-	// copy elements with new nodes
-	dst_elems.resize(src_elems.size());
-	for (std::size_t i=0; i<dst_elems.size(); i++) {
-		auto* src_elem = src_elems[i];
-		auto* dst_elem = src_elem->clone();
-		for (unsigned j=0; j<src_elem->getNNodes(); j++) {
-			dst_elem->setNode(j, dst_nodes[src_elem->getNode(j)->getID()]);
-		}
-		dst_elems[i] = dst_elem;
-	}
-}
-
-
-
-
 
 } // end namespace MeshLib
