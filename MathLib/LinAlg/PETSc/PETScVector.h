@@ -39,7 +39,7 @@ class PETScVector
         /*!
             \brief Constructor
             \param vec_size       The size of the vector, either global or local
-            \param is_global_size The flag of the type of vec_size, i.e. whether it is a global size 
+            \param is_global_size The flag of the type of vec_size, i.e. whether it is a global size
                                   or local size. The default is true.
         */
         PETScVector(const PetscInt vec_size, const bool is_global_size = true);
@@ -179,7 +179,7 @@ class PETScVector
         }
 
         /// Get PETsc vector. Use it only for test purpose
-        PETSc_Vec &getData()
+        const PETSc_Vec &getData() const
         {
             return _v;
         }
