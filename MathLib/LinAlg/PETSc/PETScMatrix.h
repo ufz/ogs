@@ -48,7 +48,6 @@ class PETScMatrix
         PETScMatrix(const PetscInt nrows, const PetscInt ncols,
                     const PETScMatrixOption &mat_op = PETScMatrixOption() );
 
-
         ~PETScMatrix()
         {
             MatDestroy(&_A);
