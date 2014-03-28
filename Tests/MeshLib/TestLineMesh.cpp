@@ -11,7 +11,7 @@
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Elements/Edge.h"
+#include "MeshLib/Elements/Line.h"
 
 class MeshLibLineMesh : public ::testing::Test
 {
