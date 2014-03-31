@@ -24,7 +24,6 @@ TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(std::array<Node*, NNODES> const&
 
 	_neighbors = new Element*[2];
 	std::fill_n(_neighbors, 2, nullptr);
-
 	this->_length = this->computeVolume();
 }
 
@@ -33,6 +32,8 @@ TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(Node* nodes[NNODES], unsigned va
 	: Element(value, id)
 {
 	_nodes = nodes;
+	_neighbors = new Element*[2];
+	std::fill_n(_neighbors, 2, nullptr);
 	this->_length = this->computeVolume();
 }
 
