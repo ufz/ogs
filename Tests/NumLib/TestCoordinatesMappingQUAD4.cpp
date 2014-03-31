@@ -141,7 +141,7 @@ const double NumLibFemNaturalCoordinatesMappingQuad4Test::eps = std::numeric_lim
 TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_N)
 {
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     //only N
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::N>(*naturalQuad, r, shape);
     ASSERT_FALSE(shape.N.isZero());
@@ -155,7 +155,7 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_N)
 TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDR)
 {
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     // dNdr
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::DNDR>(*naturalQuad, r, shape);
     ASSERT_TRUE(shape.N.isZero());
@@ -169,9 +169,8 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDR
 TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_N_J)
 {
     ShapeMatricesType shape(dim, e_nnodes);
-
-    // N_J
     shape.setZero();
+    // N_J
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::N_J>(*naturalQuad, r, shape);
     ASSERT_FALSE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
@@ -184,7 +183,7 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_N_J)
 TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDR_J)
 {
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     // dNdr, J
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::DNDR_J>(*naturalQuad, r, shape);
     ASSERT_TRUE(shape.N.isZero());
@@ -198,9 +197,8 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDR
 TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDX)
 {
     ShapeMatricesType shape(dim, e_nnodes);
-
-    // DNDX
     shape.setZero();
+    // DNDX
     NaturalCoordsMappingType::computeShapeMatrices<ShapeMatrixType::DNDX>(*naturalQuad, r, shape);
     ASSERT_TRUE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
@@ -213,9 +211,8 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_DNDX
 TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckFieldSpecification_ALL)
 {
     ShapeMatricesType shape(dim, e_nnodes);
-
-    // ALL
     shape.setZero();
+    // ALL
     NaturalCoordsMappingType::computeShapeMatrices(*naturalQuad, r, shape);
     ASSERT_FALSE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
@@ -230,7 +227,7 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckNaturalShape)
 {
     // identical to natural coordinates
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices(*naturalQuad, r, shape);
     double exp_J[]= {1.0, 0.0, 0.0, 1.0};
 
@@ -246,7 +243,7 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckIrregularShape)
 {
     // irregular shape
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices(*irregularQuad, r, shape);
 //        std::cout << shape;
     double exp_J[]= {-0.5125, 0.0, -0.0625, -0.35};
@@ -265,7 +262,7 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckClockwise)
 {
     // clockwise node ordering, which is invalid)
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices(*clockwiseQuad, r, shape);
     //std::cout << shape;
     double exp_J[]= {0.0, 1.0, 1.0, 0.0};
@@ -285,7 +282,7 @@ TEST_F(NumLibFemNaturalCoordinatesMappingQuad4Test, CheckZeroArea)
 {
     // zero area
     ShapeMatricesType shape(dim, e_nnodes);
-
+    shape.setZero();
     NaturalCoordsMappingType::computeShapeMatrices(*zeroAreaQuad, r, shape);
     //std::cout << shape;
     double exp_J[]= {1.0, 0.0, 0.0, 0.0};
