@@ -131,7 +131,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		if(isClosed)
 			newLines->InsertCellPoint(lastMaxIndex);
 
-		lastMaxIndex += numPoints;
+		lastMaxIndex += numVerts;
 	}
 
 	output->SetPoints(newPoints);
