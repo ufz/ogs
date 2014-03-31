@@ -1093,7 +1093,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 				if (!gmsh_path.empty())
 				{
 				std::string fname (fileName.toStdString());
-					std::string gmsh_command = gmsh_path + " -2 -algo meshadapt " + fname;
+					std::string gmsh_command = "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
 					size_t pos (fname.rfind ("."));
 					if (pos != std::string::npos)
 						fname = fname.substr (0, pos);
@@ -1104,6 +1104,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 				else
 					OGSError::box("Location of GMSH not specified.", "Error");
 			}
+
 			else
 					OGSError::box("Error executing command gmsh - no command processor available", "Error");
 
