@@ -1104,7 +1104,6 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 				else
 					OGSError::box("Location of GMSH not specified.", "Error");
 			}
-
 			else
 					OGSError::box("Error executing command gmsh - no command processor available", "Error");
 
