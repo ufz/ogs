@@ -74,7 +74,9 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
     PetscObjectSetName((PetscObject)_A,"Stiffness_matrix");
     MatView(_A,viewer);
 
-#define nEXIT_TEST
+// This preprocessor is only for debugging, e.g. dump the matrix and exit the program.
+// To activate, remove 'non' in ths following line.  
+#define nonEXIT_TEST  
 #ifdef EXIT_TEST
     MatDestroy(&_A);
     PetscFinalize();
