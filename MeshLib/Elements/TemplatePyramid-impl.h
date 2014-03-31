@@ -25,6 +25,12 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES, CELLPYRAMIDTYPE>::n_all_nodes = NNODES;
+
+template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES, CELLPYRAMIDTYPE>::n_base_nodes = 5;
+
+template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_face_nodes[5][4] =
 {
 	{0, 1, 4, 99}, // Face 0

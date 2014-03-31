@@ -50,6 +50,12 @@ template <unsigned NNODES, CellType CELLHEXTYPE>
 class TemplateHex : public Cell
 {
 public:
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes;
+
 	/// Constructor with an array of mesh nodes.
 	TemplateHex(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 

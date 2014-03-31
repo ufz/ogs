@@ -17,6 +17,9 @@
 #include "Vector3.h"
 
 namespace MeshLib {
+
+const unsigned Cell::dimension = 3u;
+
 /*
 Cell::Cell(Node** nodes, MeshElemType type, unsigned value)
 	: Element(nodes, type, value)

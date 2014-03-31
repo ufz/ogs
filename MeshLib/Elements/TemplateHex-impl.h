@@ -23,6 +23,12 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
+const unsigned TemplateHex<NNODES, CELLHEXTYPE>::n_all_nodes = NNODES;
+
+template <unsigned NNODES, CellType CELLHEXTYPE>
+const unsigned TemplateHex<NNODES, CELLHEXTYPE>::n_base_nodes = 8;
+
+template <unsigned NNODES, CellType CELLHEXTYPE>
 const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_face_nodes[6][4] =
 {
 	{0, 3, 2, 1}, // Face 0
