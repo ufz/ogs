@@ -33,7 +33,7 @@ public:
 	double getContent() const { return _volume; };
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return 3; };
+	unsigned getDimension() const { return dimension; };
 
 	/// Get the volume of this 3d element.
 	virtual double getVolume() const { return _volume; };

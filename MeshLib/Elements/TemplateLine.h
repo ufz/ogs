@@ -66,7 +66,7 @@ public:
 	double getContent() const { return _length; };
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return 1; };
+	unsigned getDimension() const { return dimension; };
 
 	/// Returns the edge i of the element.
 	const Element* getEdge(unsigned /*i*/) const { return nullptr; };
@@ -92,7 +92,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 2;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**

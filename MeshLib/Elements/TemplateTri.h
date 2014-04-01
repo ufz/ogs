@@ -74,7 +74,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 3;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
