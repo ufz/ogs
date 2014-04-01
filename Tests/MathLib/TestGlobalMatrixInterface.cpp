@@ -130,8 +130,6 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
     ASSERT_EQ(m.getNCols(), gathered_cols);
 
-    printf("m.getNRows()%d  m.getNRows() %d  %d",  m.getNRows(),  m.getNCols(), v.size() );
-
     // Add entries
     MathLib::DenseMatrix<double> loc_m(2, 3);
     loc_m(0, 0) = 1.;
