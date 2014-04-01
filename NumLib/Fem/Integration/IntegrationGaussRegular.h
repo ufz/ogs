@@ -26,7 +26,7 @@ namespace NumLib
 /**
  * \brief Gauss quadrature rule for regular shape elements, i.e. line, quad and hex
  *
- * \tpram N_DIM     Spatial dimension
+ * \tparam N_DIM    Spatial dimension
  */
 template <std::size_t N_DIM>
 class IntegrationGaussRegular
