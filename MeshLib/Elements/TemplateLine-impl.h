@@ -44,6 +44,10 @@ TemplateLine<NNODES,CELLLINETYPE>::TemplateLine(const TemplateLine<NNODES,CELLLI
 	_nodes = new Node*[NNODES];
 	for (unsigned k(0); k<NNODES; k++)
 		_nodes[k] = line._nodes[k];
+
+	_neighbors = new Element*[2];
+	_neighbors[0] = line._neighbors[0];
+	_neighbors[1] = line._neighbors[1];
 	_length = line.getLength();
 }
 
