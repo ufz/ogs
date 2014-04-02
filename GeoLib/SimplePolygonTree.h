@@ -75,18 +75,17 @@ void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hie
 {
 	typename std::list<POLYGONTREETYPE*>::iterator it0 (list_of_simple_polygon_hierarchies.begin()), it1;
 	while (it0 != list_of_simple_polygon_hierarchies.end()) {
-		it1 = it0;
-		it1++;
+		it1 = list_of_simple_polygon_hierarchies.begin();
 		while (it1 != list_of_simple_polygon_hierarchies.end()) {
+			if (it0 == it1) {
+				it1++;
+				if (it1 == list_of_simple_polygon_hierarchies.end())
+					break;
+			}
 			if ((*it0)->isPolygonInside(*it1)) {
 				(*it0)->insertSimplePolygonTree(*it1);
 				it1 = list_of_simple_polygon_hierarchies.erase(it1);
 			} else {
-				if ((*it1)->isPolygonInside(*it0)) {
-					(*it1)->insertSimplePolygonTree(*it0);
-					it0 = list_of_simple_polygon_hierarchies.erase(it0);
-				}
-
 				it1++;
 			}
 		}
