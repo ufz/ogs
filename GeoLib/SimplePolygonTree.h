@@ -25,7 +25,6 @@ namespace GeoLib
 /**
  * \brief This class computes and stores the topological relations between
  * polygons. Every node of the SimplePolygonTree represents a polygon.
- *
  */
 class SimplePolygonTree
 {
@@ -42,6 +41,7 @@ public:
 	 */
 	const Polygon* getPolygon () const;
 
+	/** returns the number of childs */
 	std::size_t getNChilds() const { return _childs.size(); }
 
 protected:
@@ -59,6 +59,7 @@ protected:
 	 * in the _node_polygon
 	 */
 	std::list<SimplePolygonTree*> _childs;
+
 private:
 	void setParent(SimplePolygonTree* parent)
 	{
