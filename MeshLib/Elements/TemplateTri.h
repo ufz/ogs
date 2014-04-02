@@ -47,6 +47,12 @@ template <unsigned NNODES, CellType CELLTRITYPE>
 class TemplateTri : public Face
 {
 public:
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes;
+
 	/// Constructor with an array of mesh nodes.
 	TemplateTri(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
@@ -68,7 +74,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 3;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
@@ -130,13 +136,6 @@ protected:
 
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
-
-template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
-		{0, 1}, // Edge 0
-		{1, 2}, // Edge 1
-		{0, 2}  // Edge 2
-	};
 
 } /* namespace */
 

@@ -63,5 +63,14 @@ ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::validate() const
 	return error_code;
 }
 
+template <unsigned NNODES, CellType CELLLINETYPE>
+const unsigned TemplateLine<NNODES, CELLLINETYPE>::dimension = 1u;
+
+template <unsigned NNODES, CellType CELLLINETYPE>
+const unsigned TemplateLine<NNODES, CELLLINETYPE>::n_all_nodes = NNODES;
+
+template <unsigned NNODES, CellType CELLLINETYPE>
+const unsigned TemplateLine<NNODES, CELLLINETYPE>::n_base_nodes = 2u;
+
 } // namespace MeshLib
 

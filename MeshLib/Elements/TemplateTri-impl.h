@@ -18,6 +18,19 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTRITYPE>
+const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_all_nodes = NNODES;
+
+template <unsigned NNODES, CellType CELLTRITYPE>
+const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_base_nodes = 3;
+
+template <unsigned NNODES, CellType CELLTRITYPE>
+const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
+		{0, 1}, // Edge 0
+		{1, 2}, // Edge 1
+		{0, 2}  // Edge 2
+	};
+
+template <unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value, std::size_t id) :
 	Face(value, id)
 {

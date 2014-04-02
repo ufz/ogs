@@ -38,6 +38,15 @@ template<unsigned NNODES, CellType CELLLINETYPE>
 class TemplateLine : public Element
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension;
+
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes;
+
 	/// Constructor with an array of mesh nodes.
 	TemplateLine(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
@@ -57,7 +66,7 @@ public:
 	double getContent() const { return _length; };
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return 1; };
+	unsigned getDimension() const { return dimension; };
 
 	/// Returns the edge i of the element.
 	const Element* getEdge(unsigned /*i*/) const { return nullptr; };
@@ -83,7 +92,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 2;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
