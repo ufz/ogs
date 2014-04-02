@@ -124,7 +124,7 @@ IF(OGS_USE_PETSC)
 
     ##Force CMake to accept a given PETSc configuration in case the failure of MPI tests
     ##This may cause the compilation broken.
-    IF(PETSC_EXECUTABLE_RUNS)
+    IF(FORCE_PETSC_EXECUTABLE_RUNS)
         SET(PETSC_EXECUTABLE_RUNS YES)
     ENDIF() 
 
