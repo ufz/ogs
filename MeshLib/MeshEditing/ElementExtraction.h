@@ -41,16 +41,16 @@ public:
 	MeshLib::Mesh* removeMeshElements(const std::string &new_mesh_name);
 	
 	/// Marks all elements with the given Material ID.
-	void searchByMaterialID(unsigned matID);
+	std::size_t searchByMaterialID(unsigned matID);
 
 	/// Marks all elements of the given element type.
-	void searchByElementType(MeshElemType eleType);
+	std::size_t searchByElementType(MeshElemType eleType);
 
 	/// Marks all elements with a volume smaller than std::numeric_limits<double>::epsilon().
-	void searchByZeroContent();
+	std::size_t searchByZeroContent();
 
 	/// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
-	void searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2);
+	std::size_t searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2);
 	
 
 private:

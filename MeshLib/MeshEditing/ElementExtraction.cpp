@@ -57,7 +57,7 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 	}
 }
 
-void ElementExtraction::searchByMaterialID(unsigned matID)
+std::size_t ElementExtraction::searchByMaterialID(unsigned matID)
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
@@ -68,9 +68,10 @@ void ElementExtraction::searchByMaterialID(unsigned matID)
 		i++;
 	}
 	this->updateUnion(matchedIDs);
+	return matchedIDs.size();
 }
 
-void ElementExtraction::searchByElementType(MeshElemType eleType)
+std::size_t ElementExtraction::searchByElementType(MeshElemType eleType)
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
@@ -81,9 +82,10 @@ void ElementExtraction::searchByElementType(MeshElemType eleType)
 		i++;
 	}
 	this->updateUnion(matchedIDs);
+	return matchedIDs.size();
 }
 
-void ElementExtraction::searchByZeroContent()
+std::size_t ElementExtraction::searchByZeroContent()
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
@@ -94,9 +96,10 @@ void ElementExtraction::searchByZeroContent()
 		i++;
 	}
 	this->updateUnion(matchedIDs);
+	return matchedIDs.size();
 }
 
-void ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2)
+std::size_t ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2)
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<MeshLib::Node> extent;
@@ -117,6 +120,7 @@ void ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshL
 			}
 	}
 	this->updateUnion(matchedIDs);
+	return matchedIDs.size();
 }
 
 void ElementExtraction::updateUnion(const std::vector<std::size_t> &vec)
