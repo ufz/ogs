@@ -64,8 +64,10 @@ struct SteadyDiffusion2DExample1
 	SteadyDiffusion2DExample1()
 	{
 		msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
-		for (auto* node : msh->getNodes())
+		for (auto itr=msh->getNodes().cbegin(); itr!=msh->getNodes().cend(); ++itr) {
+			auto* node = *itr;
 			vec_nodeIDs.push_back(node->getID());
+		}
 		vec_DirichletBC_id.resize(2 * mesh_stride);
 		for (std::size_t i = 0; i < mesh_stride; i++)
 		{

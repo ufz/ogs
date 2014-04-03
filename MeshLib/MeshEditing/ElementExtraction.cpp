@@ -62,7 +62,8 @@ void ElementExtraction::searchByMaterialID(unsigned matID)
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
+	for (auto itr=ele_vec.cbegin(); itr!=ele_vec.cend(); ++itr) {
+		const MeshLib::Element* ele = *itr;
 		if (ele->getValue()==matID)
 			matchedIDs.push_back(i);
 		i++;
@@ -75,7 +76,8 @@ void ElementExtraction::searchByElementType(MeshElemType eleType)
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
+	for (auto itr=ele_vec.cbegin(); itr!=ele_vec.cend(); ++itr) {
+		const MeshLib::Element* ele = *itr;
 		if (ele->getGeomType()==eleType)
 			matchedIDs.push_back(i);
 		i++;
@@ -88,7 +90,8 @@ void ElementExtraction::searchByZeroContent()
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
+	for (auto itr=ele_vec.cbegin(); itr!=ele_vec.cend(); ++itr) {
+		const MeshLib::Element* ele = *itr;
 		if (ele->getContent()<std::numeric_limits<double>::epsilon())
 			matchedIDs.push_back(i);
 		i++;

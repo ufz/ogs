@@ -60,9 +60,11 @@ class NumLibFemNaturalCoordinatesMappingQuad4Test : public ::testing::Test
         vec_eles.push_back(irregularQuad);
         vec_eles.push_back(clockwiseQuad);
         vec_eles.push_back(zeroAreaQuad);
-        for (auto e : vec_eles)
+        for (auto itr=vec_eles.cbegin(); itr!=vec_eles.cend(); ++itr) {
+            auto e = *itr;
             for (unsigned i=0; i<e->getNNodes(true); i++)
                 vec_nodes.push_back(e->getNode(i));
+        }
     }
 
     ~NumLibFemNaturalCoordinatesMappingQuad4Test()

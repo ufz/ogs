@@ -34,7 +34,8 @@ std::vector<std::size_t> searchByMaterialID(const std::vector<MeshLib::Element*>
 {
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
+	for (auto itr=ele_vec.cbegin(); itr!=ele_vec.cend(); ++itr) {
+		const MeshLib::Element* ele = *itr;
 		if (ele->getValue()==matID)
 			matchedIDs.push_back(i);
 		i++;
@@ -46,7 +47,8 @@ std::vector<std::size_t> searchByElementType(const std::vector<MeshLib::Element*
 {
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
+	for (auto itr=ele_vec.cbegin(); itr!=ele_vec.cend(); ++itr) {
+		const MeshLib::Element* ele = *itr;
 		if (ele->getGeomType()==eleType)
 			matchedIDs.push_back(i);
 		i++;
@@ -58,7 +60,8 @@ std::vector<std::size_t> searchByZeroContent(const std::vector<MeshLib::Element*
 {
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
+	for (auto itr=ele_vec.cbegin(); itr!=ele_vec.cend(); ++itr) {
+		const MeshLib::Element* ele = *itr;
 		if (ele->getContent()==.0)
 			matchedIDs.push_back(i);
 		i++;
@@ -148,7 +151,8 @@ int main (int argc, char* argv[])
 	}
 	if (eleTypeArg.isSet()) {
 		std::vector<std::string> eleTypeNames = eleTypeArg.getValue();
-		for (auto typeName : eleTypeNames) {
+		for (auto itr=eleTypeNames.cbegin(); itr!=eleTypeNames.cend(); ++itr) {
+			auto typeName = *itr;
 			MeshElemType type = String2MeshElemType(typeName);
 			if (type == MeshElemType::INVALID) continue;
 			std::vector<std::size_t> vec_matched = searchByElementType(mesh->getElements(), type);
@@ -158,7 +162,8 @@ int main (int argc, char* argv[])
 	}
 	if (matIDArg.isSet()) {
 		std::vector<unsigned> vec_matID = matIDArg.getValue();
-		for (auto matID : vec_matID) {
+		for (auto itr=vec_matID.cbegin(); itr!=vec_matID.cend(); ++itr) {
+			auto matID = *itr;
 			std::vector<std::size_t> vec_matched = searchByMaterialID(mesh->getElements(), matID);
 			updateUnion(vec_matched, vec_elementIDs_removed);
 			INFO("%d elements with material ID %d found.", vec_matched.size(), matID);
