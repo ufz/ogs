@@ -101,7 +101,7 @@ double LisMatrix::getMaxDiagCoeff()
     return abs_max_entry;
 }
 
-void LisMatrix::multi(const LisVector &x, LisVector &y) const
+void LisMatrix::multiply(const LisVector &x, LisVector &y) const
 {
     if (!_is_assembled)
         throw std::logic_error("LisMatrix::matvec(): matrix not assembled.");

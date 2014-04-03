@@ -127,7 +127,7 @@ class PETScMatrix
            \param vec_r The result vector, e.g. \f$ y \f$
             Both of the two arguments must be created prior to be used.
         */
-        void multi(const PETScVector &vec, PETScVector &vec_r)
+        void multiply(const PETScVector &vec, PETScVector &vec_r)
         {
             MatMult(_A, vec.getData(), vec_r.getData() );
         }
