@@ -75,8 +75,7 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
     MatView(_A,viewer);
 
 // This preprocessor is only for debugging, e.g. dump the matrix and exit the program.
-// To activate, remove 'non' in the following line.  
-#define nonEXIT_TEST  
+//#define EXIT_TEST  
 #ifdef EXIT_TEST
     MatDestroy(&_A);
     PetscFinalize();
