@@ -94,7 +94,7 @@ public:
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0));
 
         /// y = mat * x
-        void multi( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
+        void multiply( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
 };
 
 } // end namespace MathLib
