@@ -93,8 +93,8 @@ public:
 			std::vector<IDX_TYPE> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
 			FP_TYPE fkt = static_cast<FP_TYPE>(1.0));
 
-    /// y = mat * x
-    void matvec ( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
+        /// y = mat * x
+        void multiply( const DenseVector<FP_TYPE> &x, DenseVector<FP_TYPE> &y) const;
 };
 
 } // end namespace MathLib
