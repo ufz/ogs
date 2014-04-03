@@ -16,7 +16,6 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 #include "MeshEditing/DuplicateMeshComponents.h"
-#include "MeshEditing/MeshRevision.h"
 #include "AABB.h"
 
 #include "logog/include/logog.hpp"
