@@ -200,10 +200,12 @@ public:
     }
 };
 
-template <class T_MATRIX_TYPES, class T_FE>
-class NumLibFemIsoTest : public ::testing::Test, public T_FE
+template <class T>
+class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
 {
  public:
+    typedef typename T::T_MATRIX_TYPES T_MATRIX_TYPES;
+    typedef typename T::T_FE T_FE;
     // Matrix types
     typedef T_MATRIX_TYPES MatrixType;
     typedef typename T_MATRIX_TYPES::NodalMatrixType NodalMatrix;
@@ -264,31 +266,30 @@ class NumLibFemIsoTest : public ::testing::Test, public T_FE
     std::vector<const MeshElementType*> vec_eles;
     MeshElementType* mesh_element;
 
-}; // NumLibFemIsoLineTest
+}; // NumLibFemIsoTest
 
-template <class T_MATRIX_TYPES, class T_FE>
-const double NumLibFemIsoTest<T_MATRIX_TYPES, T_FE>::conductivity = 1e-11;
+template <class T>
+const double NumLibFemIsoTest<T>::conductivity = 1e-11;
 
-template <class T_MATRIX_TYPES, class T_FE>
-const double NumLibFemIsoTest<T_MATRIX_TYPES, T_FE>::eps = std::numeric_limits<double>::epsilon();
+template <class T>
+const double NumLibFemIsoTest<T>::eps = std::numeric_limits<double>::epsilon();
 
-template <class T_MATRIX_TYPES, class T_FE>
-const unsigned NumLibFemIsoTest<T_MATRIX_TYPES, T_FE>::dim;
+template <class T>
+const unsigned NumLibFemIsoTest<T>::dim;
 
-template <class T_MATRIX_TYPES, class T_FE>
-const unsigned NumLibFemIsoTest<T_MATRIX_TYPES, T_FE>::e_nnodes;
+template <class T>
+const unsigned NumLibFemIsoTest<T>::e_nnodes;
 
 } // namespace
 
 #ifdef OGS_USE_EIGEN
-
-template <unsigned NNODES, unsigned DIM>
+template <typename T_FE>
 struct EigenFixedMatrixTypes
 {
-    typedef Eigen::Matrix<double, NNODES, DIM, Eigen::RowMajor> NodalMatrixType;
-    typedef Eigen::Matrix<double, NNODES, 1> NodalVectorType;
-    typedef Eigen::Matrix<double, DIM, NNODES, Eigen::RowMajor> DimNodalMatrixType;
-    typedef Eigen::Matrix<double, DIM, DIM, Eigen::RowMajor> DimMatrixType;
+    typedef Eigen::Matrix<double, T_FE::e_nnodes, T_FE::e_nnodes, Eigen::RowMajor> NodalMatrixType;
+    typedef Eigen::Matrix<double, T_FE::e_nnodes, 1> NodalVectorType;
+    typedef Eigen::Matrix<double, T_FE::dim, T_FE::e_nnodes, Eigen::RowMajor> DimNodalMatrixType;
+    typedef Eigen::Matrix<double, T_FE::dim, T_FE::dim, Eigen::RowMajor> DimMatrixType;
 };
 
 struct EigenDynamicMatrixTypes
@@ -299,36 +300,32 @@ struct EigenDynamicMatrixTypes
     typedef Eigen::VectorXd NodalVectorType;
 };
 
-template <class T_FE>
-using NumLibFemIsoTestFeTypes = NumLibFemIsoTest<EigenDynamicMatrixTypes, T_FE>;
+typedef EigenDynamicMatrixTypes DefaultMatrixType;
 #endif // OGS_USE_EIGEN
 
-template <class T_MATRIX_TYPES>
-using NumLibFemIsoTestMatTypes = NumLibFemIsoTest<T_MATRIX_TYPES, TestFeLINE2>;
-
-template <class T>
-struct MatrixTypes
+// test cases
+template <class T_FE_TYPE, class T_MAT_TYPES=DefaultMatrixType>
+struct TestCase
 {
-    typedef ::testing::Types<
-#ifdef OGS_USE_EIGEN
-            EigenFixedMatrixTypes<T::e_nnodes, T::dim>
-            , EigenDynamicMatrixTypes
-#endif
-        > types;
+    typedef T_FE_TYPE T_FE;
+    typedef T_MAT_TYPES T_MATRIX_TYPES;
 };
 
-
 typedef ::testing::Types<
-        TestFeLINE2,
-        TestFeQUAD4,
-        TestFeHEX8
-        > FeTypes;
+        TestCase<TestFeLINE2>,
+        TestCase<TestFeQUAD4>,
+        TestCase<TestFeHEX8>
+#ifdef OGS_USE_EIGEN
+        ,TestCase<TestFeLINE2, EigenFixedMatrixTypes<TestFeLINE2> >
+        ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes<TestFeQUAD4> >
+        ,TestCase<TestFeHEX8, EigenFixedMatrixTypes<TestFeHEX8> >
+#endif
+        > TestTypes;
 
-TYPED_TEST_CASE(NumLibFemIsoTestFeTypes, FeTypes);
 
-TYPED_TEST_CASE(NumLibFemIsoTestMatTypes, MatrixTypes<TestFeLINE2>::types);
+TYPED_TEST_CASE(NumLibFemIsoTest, TestTypes);
 
-TYPED_TEST(NumLibFemIsoTestFeTypes, CheckMassMatrix)
+TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 {
     // Refer to typedefs in the fixture
     typedef typename TestFixture::FeType FeType;
@@ -351,7 +348,7 @@ TYPED_TEST(NumLibFemIsoTestFeTypes, CheckMassMatrix)
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 }
 
-TYPED_TEST(NumLibFemIsoTestFeTypes, CheckLaplaceMatrix)
+TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 {
     // Refer to typedefs in the fixture
     typedef typename TestFixture::FeType FeType;
@@ -373,7 +370,7 @@ TYPED_TEST(NumLibFemIsoTestFeTypes, CheckLaplaceMatrix)
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }
 
-TYPED_TEST(NumLibFemIsoTestFeTypes, CheckMassLaplaceMatrices)
+TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
 {
     // Refer to typedefs in the fixture
     typedef typename TestFixture::FeType FeType;
@@ -398,7 +395,7 @@ TYPED_TEST(NumLibFemIsoTestFeTypes, CheckMassLaplaceMatrices)
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }
 
-TYPED_TEST(NumLibFemIsoTestFeTypes, CheckGaussIntegrationLevel)
+TYPED_TEST(NumLibFemIsoTest, CheckGaussIntegrationLevel)
 {
     // Refer to typedefs in the fixture
     typedef typename TestFixture::FeType FeType;
