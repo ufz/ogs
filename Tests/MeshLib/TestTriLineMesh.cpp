@@ -77,6 +77,8 @@ class MeshLibTriLineMesh : public ::testing::Test
     bool
     elementIsNeigborOf(std::size_t const a, std::size_t const b) const
     {
+        (void)a;  // Avoid GCC warning
+        (void)b;      
         return false;
     }
 };
