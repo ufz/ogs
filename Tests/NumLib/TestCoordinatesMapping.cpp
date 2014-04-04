@@ -341,6 +341,105 @@ typedef ::testing::Types<
 
 TYPED_TEST_CASE(NumLibFemNaturalCoordinatesMappingTest, ElementTypes);
 
+TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
+{
+    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+
+    //only N
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N>(*this->naturalEle, this->r, shape);
+    ASSERT_FALSE(shape.N.isZero());
+    ASSERT_TRUE(shape.dNdr.isZero());
+    ASSERT_TRUE(shape.J.isZero());
+    ASSERT_TRUE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR)
+{
+    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+
+    // dNdr
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR>(*this->naturalEle, this->r, shape);
+    ASSERT_TRUE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_TRUE(shape.J.isZero());
+    ASSERT_TRUE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N_J)
+{
+    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+
+    // N_J
+    shape.setZero();
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N_J>(*this->naturalEle, this->r, shape);
+    ASSERT_FALSE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR_J)
+{
+    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+
+    // dNdr, J
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR_J>(*this->naturalEle, this->r, shape);
+    ASSERT_TRUE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_TRUE(shape.invJ.isZero());
+    ASSERT_TRUE(shape.dNdx.isZero());
+}
+
+TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDX)
+{
+    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+
+    // DNDX
+    shape.setZero();
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDX>(*this->naturalEle, this->r, shape);
+    ASSERT_TRUE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_FALSE(shape.invJ.isZero());
+    ASSERT_FALSE(shape.dNdx.isZero());
+}
+
+TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_ALL)
+{
+    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+
+    // ALL
+    shape.setZero();
+    NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape);
+    ASSERT_FALSE(shape.N.isZero());
+    ASSERT_FALSE(shape.dNdr.isZero());
+    ASSERT_FALSE(shape.J.isZero());
+    ASSERT_FALSE(shape.detJ == .0);
+    ASSERT_FALSE(shape.invJ.isZero());
+    ASSERT_FALSE(shape.dNdx.isZero());
+}
+
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
