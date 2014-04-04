@@ -72,14 +72,14 @@ MeshLib::Mesh* RapidVtuInterface::readVTUFile(const std::string &file_name)
 	rapidxml::xml_node<>* root_node (doc.first_node());
 	if (isVTKUnstructuredGrid(root_node))
 	{
-		bool is_compressed(false);
+                //  bool is_compressed = (false); // this variable is not used only be set once below
 		//check if content is compressed
 		const rapidxml::xml_attribute<>* compressor (root_node->first_attribute("compressor"));
 		if (compressor )
 		{
 			if (std::string(compressor->value()).compare("vtkZLibDataCompressor") == 0)
 			{
-				is_compressed = true;
+			  //is_compressed = true; // is not used hereafter
 				uncompressData(root_node);
 			}
 			else
@@ -323,7 +323,7 @@ unsigned char* RapidVtuInterface::uncompressData(const rapidxml::xml_node<>* nod
 	if (data_node)
 		compressed_data = data_node->value();
 
-	return NULL;
+	return NULL; // Does here return compressed_data?
 }
 
 
