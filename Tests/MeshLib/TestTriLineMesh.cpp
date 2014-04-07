@@ -73,12 +73,6 @@ class MeshLibTriLineMesh : public ::testing::Test
             elements[e])
                 != nodes[n]->getElements().cend();
     }
-
-    bool
-    elementIsNeigborOf(std::size_t const a, std::size_t const b) const
-    {
-        return false;
-    }
 };
 
 TEST_F(MeshLibTriLineMesh, Construction)

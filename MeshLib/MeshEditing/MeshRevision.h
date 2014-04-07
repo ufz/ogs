@@ -35,6 +35,7 @@ namespace MeshLib {
  * reduces elements accordingly.
  */
 class MeshRevision {
+
 public:
 	/** 
 	 * Constructor
