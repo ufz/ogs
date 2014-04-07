@@ -49,7 +49,7 @@ public:
     /// Change the integration order.
     void setIntegrationOrder(std::size_t order)
     {
-        this->_n_sampl_pt = std::pow(order, N_DIM);
+        this->_n_sampl_pt = static_cast<std::size_t>(std::pow(order, N_DIM));
         this->_order = order;
     }
 
