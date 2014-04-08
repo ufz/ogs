@@ -15,12 +15,15 @@
 #define C0ISOPARAMETRICELEMENTS_H_
 
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
+#include "NumLib/Fem/Integration/IntegrationGaussTri.h"
 
 #include "TemplateIsoparametric.h"
 
@@ -31,6 +34,12 @@ template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
 struct FeLINE2
 {
     typedef TemplateIsoparametric<MeshLib::Line, ShapeLine2, IntegrationGaussRegular<1>, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+};
+
+template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
+struct FeTRI3
+{
+    typedef TemplateIsoparametric<MeshLib::Tri, ShapeTri3, IntegrationGaussTri, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
 };
 
 template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
