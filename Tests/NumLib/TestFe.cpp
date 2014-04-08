@@ -51,7 +51,10 @@ class TestFeLINE2
 {
 public:
     template <class T_MATRIX_TYPES>
-    using FeType = NumLib::FeLINE2<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType>;
+    struct FeType
+    {
+        typedef NumLib::FeLINE2<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
+    };
     typedef MeshLib::Line MeshElementType;
     static const unsigned dim = MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
@@ -93,7 +96,10 @@ class TestFeQUAD4
 {
 public:
     template <class T_MATRIX_TYPES>
-    using FeType = NumLib::FeQUAD4<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType>;
+    struct FeType
+    {
+        typedef NumLib::FeQUAD4<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
+    };
     typedef MeshLib::Quad MeshElementType;
     static const unsigned dim = 2; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
@@ -143,7 +149,10 @@ class TestFeHEX8
 {
 public:
     template <class T_MATRIX_TYPES>
-    using FeType = NumLib::FeHEX8<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType>;
+    struct FeType
+    {
+        typedef NumLib::FeHEX8<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
+    };
     typedef MeshLib::Hex MeshElementType;
     static const unsigned dim = 3; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
@@ -213,7 +222,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
     typedef typename T_MATRIX_TYPES::DimNodalMatrixType DimNodalMatrix;
     typedef typename T_MATRIX_TYPES::DimMatrixType DimMatrix;
     // Finite element type
-    typedef typename T_FE::template FeType<T_MATRIX_TYPES>::type FeType;
+    typedef typename T_FE::template FeType<T_MATRIX_TYPES>::type::type FeType;
     // Shape matrix data type
     typedef typename FeType::ShapeMatricesType ShapeMatricesType;
     typedef typename T_FE::MeshElementType MeshElementType;
