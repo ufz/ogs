@@ -33,29 +33,29 @@
 #include "MathTools.h"
 
 
-MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std::vector<float> &thickness)
+MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std::vector<float> &layer_thickness_vector)
 {
-	std::size_t nLayers(thickness.size());
-	bool throw_error(false);
-	for (unsigned i=0; i<nLayers; ++i)
-		if (thickness[i]<=0)
-			throw_error = true;
-	if (nLayers < 1 || mesh->getDimension() != 2)
-		throw_error = true;
-
-	if (throw_error)
+	std::vector<float> thickness;
+	for (std::size_t i=0; i<layer_thickness_vector.size(); ++i)
+		if (layer_thickness_vector[i] > std::numeric_limits<float>::epsilon())
+			thickness.push_back(layer_thickness_vector[i]);
+		else
+			WARN ("Ignoring layer %d with thickness %f. (Layer thickness needs to be > 0)", i, layer_thickness_vector[i]);
+	
+	const std::size_t nLayers(thickness.size());
+	if (nLayers < 1 || mesh.getDimension() != 2)
 	{
 		ERR("MshLayerMapper::CreateLayers(): A 2D mesh with nLayers > 0 is required as input.");
 		return nullptr;
 	}
 
-	const size_t nNodes = mesh->getNNodes();
+	const size_t nNodes = mesh.getNNodes();
 	// count number of 2d elements in the original mesh
-	const std::size_t nElems (std::count_if(mesh->getElements().begin(), mesh->getElements().end(),
+	const std::size_t nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
 			[](MeshLib::Element const* elem) { return (elem->getDimension() == 2);}));
 
-	const std::vector<MeshLib::Node*> nodes = mesh->getNodes();
-	const std::vector<MeshLib::Element*> elems = mesh->getElements();
+	const std::vector<MeshLib::Node*> nodes = mesh.getNodes();
+	const std::vector<MeshLib::Element*> elems = mesh.getElements();
 	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
 	std::vector<MeshLib::Element*> new_elems(nElems * nLayers);
 	double z_offset(0.0);
@@ -83,7 +83,7 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh* mesh, const std
 				// counts the 2d elements (within the layer),
 				// used as a part of index computation in new_elems
 				std::size_t cnt(0);
-				for (unsigned i = 0; i < mesh->getNElements(); ++i)
+				for (unsigned i = 0; i < mesh.getNElements(); ++i)
 				{
 					const MeshLib::Element* sfc_elem( elems[i] );
 					if (sfc_elem->getDimension() == 2)

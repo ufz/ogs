@@ -15,6 +15,9 @@
 
 #include "MeshLayerEditDialog.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "OGSError.h"
 #include "StringTools.h"
 #include "Mesh.h"
@@ -197,12 +200,11 @@ void MeshLayerEditDialog::accept()
 				{
 					// "100" is just a default size to have any value for extruding 2D elements.
 					// The actual mapping based on a raster file will be performed later.
-					float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
-					if (thickness > std::numeric_limits<float>::epsilon())
-						layer_thickness.push_back(thickness);
+					const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
+					layer_thickness.push_back(thickness);
 				}
 
-				new_mesh = MshLayerMapper::CreateLayers(_msh, layer_thickness);
+				new_mesh = MshLayerMapper::CreateLayers(*_msh, layer_thickness);
 
 				if (_use_rasters)
 				{
