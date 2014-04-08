@@ -448,7 +448,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
     // identical to natural coordinates
     ShapeMatricesType shape(this->dim, this->e_nnodes);
     NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape);
-    double exp_J[this->dim*this->dim]= {0.0};
+    double exp_J[TestFixture::dim*TestFixture::dim]= {0.0};
     for (unsigned i=0; i<this->dim; i++)
         exp_J[i+this->dim*i] = 1.0;
 
@@ -488,8 +488,8 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckClockwise)
     NaturalCoordsMappingType::computeShapeMatrices(*this->clockwiseEle, this->r, shape);
     //std::cout << shape;
     // Inverse of the Jacobian matrix doesn't exist
-    double exp_invJ[this->dim*this->dim]= {0.0};
-    double exp_dNdx[this->dim*this->e_nnodes]= {0.0};
+    double exp_invJ[TestFixture::dim*TestFixture::dim]= {0.0};
+    double exp_dNdx[TestFixture::dim*TestFixture::e_nnodes]= {0.0};
 
     ASSERT_ARRAY_NEAR(this->nat_exp_N, shape.N.data(), shape.N.size(), this->eps);
     ASSERT_ARRAY_NEAR(this->nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), this->eps);
@@ -508,8 +508,8 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     NaturalCoordsMappingType::computeShapeMatrices(*this->zeroVolumeEle, this->r, shape);
     //std::cout << shape;
     // Inverse of the Jacobian matrix doesn't exist
-    double exp_invJ[this->dim*this->dim]= {0.0};
-    double exp_dNdx[this->dim*this->e_nnodes]= {0.0};
+    double exp_invJ[TestFixture::dim*TestFixture::dim]= {0.0};
+    double exp_dNdx[TestFixture::dim*TestFixture::e_nnodes]= {0.0};
 
     ASSERT_ARRAY_NEAR(this->nat_exp_N, shape.N.data(), shape.N.size(), this->eps);
     ASSERT_ARRAY_NEAR(this->nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), this->eps);
