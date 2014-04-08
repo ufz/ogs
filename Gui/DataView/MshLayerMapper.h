@@ -46,7 +46,7 @@ public:
 	 * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
 	 * Note: This only results in a valid mesh if the layers don't intersect each other.
 	 */
-	static int LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile,
+	static int LayerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile,
                             const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue);
 
 	/**

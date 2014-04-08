@@ -111,109 +111,102 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std
 	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elems);
 }
 
-int MshLayerMapper::LayerMapping(MeshLib::Mesh* new_mesh, const std::string &rasterfile,
+int MshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
                                  const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
 {
-	if (new_mesh == nullptr)
+	if (nLayers < layer_id)
 	{
-		ERR("MshLayerMapper::LayerMapping() - Passed Mesh is NULL.");
+		ERR("MshLayerMapper::LayerMapping() - Mesh has only %d Layers, cannot assign layer %d.", nLayers, layer_id);
 		return 0;
 	}
 
-	if (nLayers >= layer_id)
+	const GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
+	if (! raster) {
+		ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
+		return 0;
+	}
+	const double x0(raster->getOrigin()[0]);
+	const double y0(raster->getOrigin()[1]);
+	const double delta(raster->getRasterPixelDistance());
+	const double no_data(raster->getNoDataValue());
+	const std::size_t width(raster->getNCols());
+	const std::size_t height(raster->getNRows());
+	double const*const elevation(raster->begin());
+
+	const std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
+	const std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
+
+	const size_t nNodes (new_mesh.getNNodes());
+	const size_t nNodesPerLayer (nNodes / (nLayers+1));
+
+	const size_t firstNode (layer_id * nNodesPerLayer);
+	const size_t lastNode  (firstNode + nNodesPerLayer);
+
+	const double half_delta = 0.5*delta;
+	const std::vector<MeshLib::Node*> &nodes = new_mesh.getNodes();
+	for (unsigned i = firstNode; i < lastNode; ++i)
 	{
-		GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
-		if (! raster) {
-			ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
-			return 0;
-		}
-		const double x0(raster->getOrigin()[0]);
-		const double y0(raster->getOrigin()[1]);
-		const double delta(raster->getRasterPixelDistance());
-		const double no_data(raster->getNoDataValue());
-		const std::size_t width(raster->getNCols());
-		const std::size_t height(raster->getNRows());
-		double const*const elevation(raster->begin());
+		const double* coords (nodes[i]->getCoords());
 
-		const std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
-		const std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
-
-		const size_t nNodes = new_mesh->getNNodes();
-		const size_t nNodesPerLayer = nNodes / (nLayers+1);
-
-		const size_t firstNode = layer_id * nNodesPerLayer;
-		const size_t lastNode  = firstNode + nNodesPerLayer;
-
-		const double half_delta = 0.5*delta;
-		const std::vector<MeshLib::Node*> nodes = new_mesh->getNodes();
-		for (unsigned i = firstNode; i < lastNode; ++i)
+		if (!isNodeOnRaster(*nodes[i], xDim, yDim))
 		{
-			const double* coords = nodes[i]->getCoords();
+			// use either default value or elevation from layer above
+			const double new_elevation = (layer_id == 0) ? noDataReplacementValue : (*nodes[i-nNodesPerLayer])[2];
+			nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+			continue;
+		}
 
-			if (!isNodeOnRaster(*nodes[i], xDim, yDim))
+		// position in raster
+		const double xPos ((coords[0] - xDim.first) / delta);
+		const double yPos ((coords[1] - yDim.first) / delta);
+		// raster cell index
+		const size_t xIdx (static_cast<size_t>(floor(xPos)));
+		const size_t yIdx (static_cast<size_t>(floor(yPos)));
+
+		// weights for bilinear interpolation		
+		const double xShift = fabs(xPos-(xIdx+half_delta))/delta;
+		const double yShift = fabs(yPos-(yIdx+half_delta))/delta;
+		std::array<double,4> weight = { (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift };
+
+		// neightbors to include in interpolation
+		const int xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
+		const int yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
+		const std::array<int,4> x_nb = { 0, xShiftIdx, xShiftIdx, 0 };
+		const std::array<int,4> y_nb = { 0, 0, yShiftIdx, yShiftIdx };
+
+		// get pixel values
+		std::array<double,4>  pix_val;
+		unsigned no_data_count (0);
+		for (unsigned j=0; j<4; ++j)
+		{
+			pix_val[j] = elevation[(yIdx + y_nb[j])*width + (xIdx + x_nb[j])];
+			if (fabs(pix_val[j] - no_data) < std::numeric_limits<double>::epsilon())
 			{
-				if (layer_id == 0) // use default value
-					nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
-				else // use z-value from layer above
-					nodes[i]->updateCoordinates(coords[0], coords[1], (*nodes[i-nNodesPerLayer])[2]);
+				weight[j] = 0;
+				no_data_count++;
+			}
+		}
+
+		// adjust weights if necessary
+		if (no_data_count > 0)
+		{
+			if (no_data_count == 4) // if there is absolutely no data just use the default value
+			{
+				const double new_elevation = (layer_id == 0) ? noDataReplacementValue : (*nodes[i-nNodesPerLayer])[2];
+				nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
 				continue;
 			}
-
-			// position in raster
-			const double xPos ((coords[0] - xDim.first) / delta);
-			const double yPos ((coords[1] - yDim.first) / delta);
-			// raster cell index
-			const size_t xIdx (static_cast<size_t>(floor(xPos)));
-			const size_t yIdx (static_cast<size_t>(floor(yPos)));
-
-			// deviation of mesh node from centre of raster cell ( in [-1:1) because it is normalised by delta/2 )
-			const double xShift = (xPos-xIdx-half_delta)/half_delta;
-			const double yShift = (yPos-yIdx-half_delta)/half_delta;
-
-			const int xShiftIdx = static_cast<int>((xShift>=0) ? ceil(xShift) : floor(xShift));
-			const int yShiftIdx = static_cast<int>((yShift>=0) ? ceil(yShift) : floor(yShift));
-
-			// determining the neighbouring pixels that add weight to the interpolation
-			const int x_nb[4] = {0, xShiftIdx, xShiftIdx, 0};
-			const int y_nb[4] = {0, 0, yShiftIdx, yShiftIdx};
-
-			double locZ[4];
-			locZ[0] = elevation[yIdx*width + xIdx];
-			if (fabs(locZ[0] - no_data) > std::numeric_limits<double>::epsilon())
-			{
-				for (unsigned j=1; j<4; ++j)
-				{
-					locZ[j] = elevation[(yIdx+y_nb[j])*width + (xIdx+x_nb[j])];
-					if (fabs(locZ[j] - no_data) < std::numeric_limits<double>::epsilon())
-						locZ[j]=locZ[0];
-				}
-
-				double ome[4];
-				double xi = 1-fabs(xShift);
-				double eta = 1-fabs(xShift);
-				MathLib::MPhi2D(ome, xi, eta);
-
-				double z(0.0);
-				for(unsigned j = 0; j < 4; ++j)
-					z += ome[j] * locZ[j];
-
-				nodes[i]->updateCoordinates(coords[0], coords[1], z);
-			}
-			else
-			{
-				if (layer_id == 0) // use default value
-					nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
-				else // use z-value from layer above
-					nodes[i]->updateCoordinates(coords[0], coords[1], (*nodes[i-nNodesPerLayer])[2]);
-			}
+			const double norm = 4/(4-no_data_count);
+			for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
 		}
 
-		delete raster;
-		return 1;
+		// new value
+		double z = MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
+		nodes[i]->updateCoordinates(coords[0], coords[1], z);
 	}
-	else
-		ERR("MshLayerMapper::LayerMapping() - Mesh has only %d Layers, cannot assign layer %d.", nLayers, layer_id);
-	return 0;
+
+	delete raster;
+	return 1;
 }
 
 bool MshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
@@ -231,7 +224,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 	// construct surface mesh from DEM
 	const MathLib::Vector3 dir(0,0,1);
 	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
-	MshLayerMapper::LayerMapping(dem, dem_raster, 0, 0);
+	MshLayerMapper::LayerMapping(*dem, dem_raster, 0, 0);
 	const std::vector<MeshLib::Node*> dem_nodes (dem->getNodes());
 
 	const std::vector<MeshLib::Node*> mdl_nodes (mesh->getNodes());

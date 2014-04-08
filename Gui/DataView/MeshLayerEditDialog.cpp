@@ -191,7 +191,7 @@ void MeshLayerEditDialog::accept()
 				const std::string imgPath ( this->_edits[0]->text().toStdString() );
 				const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
 				if (!imgPath.empty())
-					result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
+					result = MshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
 			}
 			else
 			{
@@ -214,7 +214,7 @@ void MeshLayerEditDialog::accept()
 						const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
 						if (!imgPath.empty())
 						{
-							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, noDataReplacement);
+							result = MshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement);
 							if (result==0) break;
 						}
 					}

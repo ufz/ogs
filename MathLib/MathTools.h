@@ -177,8 +177,6 @@ T fastpow (T base, std::size_t exp)
 	return result;
 }
 
-/// 2D linear interpolation function (TODO adopted from geo_mathlib)
-void MPhi2D(double* vf, double r, double s);
 } // namespace
 
 #endif /* MATHTOOLS_H_ */
