@@ -4,7 +4,7 @@ FUNCTION (AddTest executable case_path case_name wrapper)
 
 	# Implement wrappers
 	IF(wrapper STREQUAL "TIME")
-		SET(WRAPPER_COMMAND ${TIME_TOOL_PATH})
+		SET(WRAPPER_COMMAND time)
 	ELSEIF(wrapper STREQUAL "MEMCHECK" AND VALGRIND_TOOL_PATH)
 		SET(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${case_path}/${case_name}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
 		SET(tester MEMCHECK)
