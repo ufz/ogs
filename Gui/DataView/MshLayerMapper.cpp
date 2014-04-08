@@ -40,8 +40,8 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std
 		if (layer_thickness_vector[i] > std::numeric_limits<float>::epsilon())
 			thickness.push_back(layer_thickness_vector[i]);
 		else
-			WARN ("Ignoring layer %d with thickness %f. (Layer thickness needs to be > 0)", i, layer_thickness_vector[i]);
-	
+			WARN ("Ignoring layer %d with thickness %f.", i, layer_thickness_vector[i]);
+
 	const std::size_t nLayers(thickness.size());
 	if (nLayers < 1 || mesh.getDimension() != 2)
 	{
@@ -54,66 +54,57 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std
 	const std::size_t nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
 			[](MeshLib::Element const* elem) { return (elem->getDimension() == 2);}));
 
-	const std::vector<MeshLib::Node*> nodes = mesh.getNodes();
-	const std::vector<MeshLib::Element*> elems = mesh.getElements();
-	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
-	std::vector<MeshLib::Element*> new_elems(nElems * nLayers);
-	double z_offset(0.0);
+	const std::size_t nOrgElems (mesh.getNElements());
+	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
+	const std::vector<MeshLib::Element*> &elems = mesh.getElements();
+	std::vector<MeshLib::Node*> new_nodes;
+	new_nodes.reserve(nNodes + (nLayers * nNodes));
+	std::vector<MeshLib::Element*> new_elems;
+	new_elems.reserve(nElems * nLayers);
+	double z_offset (0.0);
 
 	for (unsigned layer_id = 0; layer_id <= nLayers; ++layer_id)
 	{
 		// add nodes for new layer
 		unsigned node_offset (nNodes * layer_id);
-		unsigned elem_offset (nElems * (layer_id-1));
-		if (layer_id>0) z_offset += thickness[layer_id-1];
+		if (layer_id > 0) z_offset += thickness[layer_id-1];
 		for (unsigned i = 0; i < nNodes; ++i)
 		{
 			const double* coords = nodes[i]->getCoords();
-			new_nodes[node_offset+i] = new MeshLib::Node(coords[0], coords[1], coords[2]-z_offset, node_offset+i);
+			new_nodes.push_back (new MeshLib::Node(coords[0], coords[1], coords[2]-z_offset, node_offset+i));
 		}
 
 		// starting with 2nd layer create prism or hex elements connecting the last layer with the current one
+		const unsigned elem_offset (nElems * (layer_id-1));
 		if (layer_id > 0)
 		{
-			if (thickness[layer_id-1] > 0)
-			{
-				node_offset -= nNodes;
-				const unsigned mat_id (nLayers - layer_id);
+			node_offset -= nNodes;
+			const unsigned mat_id (nLayers - layer_id);
 
-				// counts the 2d elements (within the layer),
-				// used as a part of index computation in new_elems
-				std::size_t cnt(0);
-				for (unsigned i = 0; i < mesh.getNElements(); ++i)
+			for (unsigned i = 0; i < nOrgElems; ++i)
+			{
+				const MeshLib::Element* sfc_elem( elems[i] );
+				if (sfc_elem->getDimension() == 2)
 				{
-					const MeshLib::Element* sfc_elem( elems[i] );
-					if (sfc_elem->getDimension() == 2)
-					{
-						const unsigned nElemNodes(sfc_elem->getNNodes());
-						MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
+					const unsigned nElemNodes(sfc_elem->getNNodes());
+					MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
 
-						for (unsigned j=0; j<nElemNodes; ++j)
-						{
-							const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
-							e_nodes[j] = new_nodes[node_id+nNodes];
-							e_nodes[j+nElemNodes] = new_nodes[node_id];
-						}
-						if (sfc_elem->getGeomType() == MeshElemType::TRIANGLE)	// extrude triangles to prism
-							new_elems[elem_offset+cnt] = new MeshLib::Prism(e_nodes, mat_id);
-						else if (sfc_elem->getGeomType() == MeshElemType::QUAD)	// extrude quads to hexes
-							new_elems[elem_offset+cnt] = new MeshLib::Hex(e_nodes, mat_id);
-						cnt++;
-					}
-					else
+					for (unsigned j=0; j<nElemNodes; ++j)
 					{
-						WARN("MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements.");
-						WARN("Skipping Element %d of type \"%s\".", i, MeshElemType2String(sfc_elem->getGeomType()).c_str());
+						const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
+						e_nodes[j] = new_nodes[node_id+nNodes];
+						e_nodes[j+nElemNodes] = new_nodes[node_id];
 					}
+					if (sfc_elem->getGeomType() == MeshElemType::TRIANGLE)	// extrude triangles to prism
+						new_elems.push_back (new MeshLib::Prism(e_nodes, mat_id));
+					else if (sfc_elem->getGeomType() == MeshElemType::QUAD)	// extrude quads to hexes
+						new_elems.push_back (new MeshLib::Hex(e_nodes, mat_id));
 				}
-			}
-			else
-			{
-				ERR("Error in MshLayerMapper::CreateLayers() - Layer thickness for layer %d is %f (needs to be >0).", (layer_id-1), thickness[layer_id-1]);
-				return nullptr;
+				else
+				{
+					WARN("MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements.");
+					WARN("Skipping Element %d of type \"%s\".", i, MeshElemType2String(sfc_elem->getGeomType()).c_str());
+				}
 			}
 		}
 	}
