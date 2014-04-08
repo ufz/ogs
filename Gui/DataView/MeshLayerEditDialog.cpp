@@ -23,6 +23,7 @@
 #include "Mesh.h"
 
 #include <QCheckBox>
+#include <QFileInfo>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QSettings>
@@ -252,9 +253,9 @@ void MeshLayerEditDialog::getFileName()
 	QPushButton* button = dynamic_cast<QPushButton*>(this->sender());
 	QSettings settings;
 	QString filename = QFileDialog::getOpenFileName(this, "Select raster file to open",
-	                                                settings.value("lastOpenedFileDirectory").toString(),
+	                                                settings.value("lastOpenedRasterFileDirectory").toString(),
 	                                                "ASCII raster files (*.asc);;All files (* *.*)");
 	_fileButtonMap[button]->setText(filename);
-	QDir dir = QDir(filename);
-	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	QFileInfo fi(filename);
+	settings.setValue("lastOpenedRasterFileDirectory", fi.absolutePath());
 }
