@@ -221,7 +221,7 @@ void MeshLayerEditDialog::accept()
 					}
 					if (this->_edits[0]->text().length()>0)
 					{
-						MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
+						MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
 						delete new_mesh;
 						new_mesh = final_mesh;
 					}

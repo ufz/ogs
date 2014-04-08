@@ -219,16 +219,16 @@ bool MshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
 	return true;
 }
 
-MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster)
+MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster)
 {
 	// construct surface mesh from DEM
 	const MathLib::Vector3 dir(0,0,1);
-	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
+	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir);
 	MshLayerMapper::LayerMapping(*dem, dem_raster, 0, 0);
-	const std::vector<MeshLib::Node*> dem_nodes (dem->getNodes());
+	const std::vector<MeshLib::Node*> &dem_nodes (dem->getNodes());
 
-	const std::vector<MeshLib::Node*> mdl_nodes (mesh->getNodes());
-	const size_t nNodes = mesh->getNNodes();
+	const std::vector<MeshLib::Node*> &mdl_nodes (mesh.getNodes());
+	const size_t nNodes (mesh.getNNodes());
 	const size_t nNodesPerLayer = nNodes / (nLayers+1);
 	std::vector<bool> is_surface_node(nNodes, false);
 	std::vector<bool> nodes_below_surface(nNodes, false);
@@ -252,7 +252,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 	// if node < dem-node: do nothing
 	// if node > dem-node:
 	//		if first node above surface: map to dem and mark as surface node
-	//		else remove node (i.e. don't copy them)
+	//		else remove node (i.e. don't copy it)
 	for (int layer_id=nLayers-1; layer_id>=0; --layer_id)
 	{
 		const size_t firstNode = layer_id * nNodesPerLayer;
@@ -276,6 +276,8 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 			}
 		}
 	}
+	delete dem; // no longer needed
+
 	// copy valid nodes to new node vector
 	std::vector<MeshLib::Node*> new_nodes;
 	std::vector<int> node_index_map(nNodes, -1);
@@ -288,8 +290,8 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 		}
 
 	// copy elements (old elements need to have at least 4 nodes remaining and form a 3d element
-	const std::vector<MeshLib::Element*> mdl_elements (mesh->getElements());
-	const size_t nElems = mesh->getNElements();
+	const std::vector<MeshLib::Element*> &mdl_elements (mesh.getElements());
+	const size_t nElems (mesh.getNElements());
 	std::vector<MeshLib::Element*> new_elements;
 	for (unsigned j=0; j<nElems; ++j)
 	{
@@ -316,7 +318,7 @@ MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const
 				if (!nodes_below_surface[elem->getNode(i)->getID()])
 					top_idx = i-3;
 
-			// construct pyrmid element based on missing node
+			// construct pyramid element based on missing node
 			unsigned idx1 ((top_idx+1)%3);
 			unsigned idx2 ((top_idx+2)%3);
 			e_nodes[0] = new_nodes[node_index_map[elem->getNode(idx1)->getID()]];

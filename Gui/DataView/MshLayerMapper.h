@@ -55,7 +55,7 @@ public:
 	 * remedied at the end of method upon creating the actual mesh from the new node- and element-vector as the mesh-constructor checks for such
 	 * nodes and removes them. This note is just to call this issue to attention in case this methods is changed.
 	 */
-	static MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster);
+	static MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster);
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
