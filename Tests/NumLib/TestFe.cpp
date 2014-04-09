@@ -19,6 +19,7 @@
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
 
 #include "FeTestData/TestFeLINE2.h"
+#include "FeTestData/TestFeTRI3.h"
 #include "FeTestData/TestFeQUAD4.h"
 #include "FeTestData/TestFeHEX8.h"
 
@@ -60,10 +61,12 @@ struct TestCase
 
 typedef ::testing::Types<
         TestCase<TestFeLINE2>,
+        TestCase<TestFeTRI3>,
         TestCase<TestFeQUAD4>,
         TestCase<TestFeHEX8>
 #ifdef OGS_USE_EIGEN
         ,TestCase<TestFeLINE2, EigenFixedMatrixTypes<TestFeLINE2> >
+        ,TestCase<TestFeTRI3, EigenFixedMatrixTypes<TestFeTRI3> >
         ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes<TestFeQUAD4> >
         ,TestCase<TestFeHEX8, EigenFixedMatrixTypes<TestFeHEX8> >
 #endif

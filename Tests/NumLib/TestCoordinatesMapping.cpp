@@ -20,6 +20,7 @@
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
 
 #include "CoordinatesMappingTestData/TestLine2.h"
+#include "CoordinatesMappingTestData/TestTri3.h"
 #include "CoordinatesMappingTestData/TestQuad4.h"
 #include "CoordinatesMappingTestData/TestHex8.h"
 
@@ -35,6 +36,7 @@ namespace
 // Element types to be tested
 typedef ::testing::Types<
         TestLine2,
+        TestTri3,
         TestQuad4,
         TestHex8
         > TestTypes;
