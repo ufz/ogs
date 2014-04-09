@@ -14,6 +14,7 @@
 
 #include "VtkRaster.h"
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -85,24 +86,18 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, dou
 {
 	const unsigned length = height*width;
 	float* data = new float[length*2];
-	float max_val=noData;
+	float max_val = *std::max_element(data_array, data_array+length);
 	for (unsigned j=0; j<length; ++j)
-	{
 		data[j*2] = static_cast<float>(data_array[j]);
-		max_val = (data[j*2]>max_val) ? data[j*2] : max_val;
-	}
 	for (unsigned j=0; j<length; ++j)
 	{
-		if (data[j*2]==noData)
+		if (fabs(data[j*2]-noData) < std::numeric_limits<double>::epsilon())
 		{
 			data[j*2] = max_val;
 			data[j*2+1] = 0;
 		}
 		else
-		{
-			//data[j*2] = max_val-data[j*2];//delete;
 			data[j*2+1] = max_val;
-		}
 	}
 
 	vtkImageImport* image = vtkImageImport::New();
@@ -118,9 +113,6 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, dou
 
 	return image;
 }
-
-
-
 
 #ifdef GEOTIFF_FOUND
 vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
