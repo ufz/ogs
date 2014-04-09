@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   MeshLayerMapper.cpp
  * \author Karsten Rink
  * \date   2010-11-01
- * \brief  Implementation of the MshLayerMapper class.
+ * \brief  Implementation of the MeshLayerMapper class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -18,7 +18,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "MshLayerMapper.h"
+#include "MeshLayerMapper.h"
 // GeoLib
 #include "Raster.h"
 
@@ -33,7 +33,7 @@
 #include "MathTools.h"
 
 
-MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std::vector<float> &layer_thickness_vector)
+MeshLib::Mesh* MeshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std::vector<float> &layer_thickness_vector)
 {
 	std::vector<float> thickness;
 	for (std::size_t i=0; i<layer_thickness_vector.size(); ++i)
@@ -110,7 +110,7 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std
 	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elems);
 }
 
-int MshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
+int MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
                                  const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
 {
 	if (nLayers < layer_id)
@@ -208,7 +208,7 @@ int MshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &ras
 	return 1;
 }
 
-bool MshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
+bool MeshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
                                     const std::pair<double, double> &xDim,
                                     const std::pair<double, double> &yDim)
 {
@@ -218,12 +218,12 @@ bool MshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
 	return true;
 }
 
-MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster)
+MeshLib::Mesh* MeshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster)
 {
 	// construct surface mesh from DEM
 	const MathLib::Vector3 dir(0,0,1);
 	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir);
-	MshLayerMapper::LayerMapping(*dem, dem_raster, 0, 0);
+	MeshLayerMapper::LayerMapping(*dem, dem_raster, 0, 0);
 	const std::vector<MeshLib::Node*> &dem_nodes (dem->getNodes());
 
 	const std::vector<MeshLib::Node*> &mdl_nodes (mesh.getNodes());

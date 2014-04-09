@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   MeshLayerMapper.h
  * \author Karsten Rink
  * \date   2010-11-01
- * \brief  Definition of the MshLayerMapper class.
+ * \brief  Definition of the MeshLayerMapper class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef MSHLAYERMAPPER_H
-#define MSHLAYERMAPPER_H
+#ifndef MESHLAYERMAPPER_H
+#define MESHLAYERMAPPER_H
 
 #include <string>
 
@@ -27,11 +27,11 @@ namespace MeshLib {
 /**
  * \brief Manipulating and adding layers to an existing mesh
  */
-class MshLayerMapper
+class MeshLayerMapper
 {
 public:
-	MshLayerMapper() {}
-	~MshLayerMapper() {}
+	MeshLayerMapper() {}
+	~MeshLayerMapper() {}
 
 	/**
 	 * Based on a triangle-or quad mesh this method creates a 3D mesh with with a given number of prism- or hex-layers
@@ -64,4 +64,4 @@ private:
 	                           const std::pair<double, double> &yDim);
 };
 
-#endif //MSHLAYERMAPPER_H
+#endif //MESHLAYERMAPPER_H

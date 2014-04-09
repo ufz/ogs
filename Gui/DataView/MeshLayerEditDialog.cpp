@@ -192,7 +192,7 @@ void MeshLayerEditDialog::accept()
 				const std::string imgPath ( this->_edits[0]->text().toStdString() );
 				const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
 				if (!imgPath.empty())
-					result = MshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
+					result = MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
 			}
 			else
 			{
@@ -205,7 +205,7 @@ void MeshLayerEditDialog::accept()
 					layer_thickness.push_back(thickness);
 				}
 
-				new_mesh = MshLayerMapper::CreateLayers(*_msh, layer_thickness);
+				new_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
 
 				if (_use_rasters)
 				{
@@ -215,13 +215,13 @@ void MeshLayerEditDialog::accept()
 						const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
 						if (!imgPath.empty())
 						{
-							result = MshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement);
+							result = MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement);
 							if (result==0) break;
 						}
 					}
 					if (this->_edits[0]->text().length()>0)
 					{
-						MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
+						MeshLib::Mesh* final_mesh = MeshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
 						delete new_mesh;
 						new_mesh = final_mesh;
 					}
