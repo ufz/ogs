@@ -694,12 +694,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 
 		if (!fileName.isEmpty() && !element_fname.isEmpty()) {
 			FileIO::TetGenInterface tetgen;
-			MeshLib::Mesh* msh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
-			if (msh) {
-				std::string name(fileName.toStdString());
-				msh->setName(name);
-				_meshModels->addMesh(msh);
-			} else
+			MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
+			if (mesh)
+				_meshModels->addMesh(mesh);
+			else
 				OGSError::box("Failed to load a TetGen mesh.");
 		}
 	}

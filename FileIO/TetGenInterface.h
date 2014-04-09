@@ -57,7 +57,9 @@ private:
 	 * @param input the input stream
 	 * @return true, if all information is read, false if the method detects an error
 	 */
-	bool readNodesFromStream(std::ifstream &input);
+	bool readNodesFromStream(std::ifstream &input, 
+	                         std::vector<MeshLib::Node*> &nodes);
+
 	/**
 	 * Method parses the header of the nodes file created by TetGen
 	 * @param line the header is in this string (input)
@@ -67,24 +69,35 @@ private:
 	 * @param boundary_markers have the nodes boundary information (output)
 	 * @return true, if the file header is read, false if the method detects an error
 	 */
-	bool parseNodesFileHeader(std::string &line, std::size_t& n_nodes, std::size_t& dim,
-	                          std::size_t& n_attributes, bool& boundary_markers) const;
+	bool parseNodesFileHeader(std::string &line, 
+	                          std::size_t &n_nodes, 
+							  std::size_t &dim,
+	                          std::size_t &n_attributes, 
+							  bool &boundary_markers) const;
 	/**
 	 * method parses the lines reading the nodes from TetGen nodes file
 	 * @param ins the input stream (input)
+	 * @param nodes the nodes vector to be filled (input)
 	 * @param n_nodes the number of nodes to read (input)
 	 * @param dim the spatial dimension of the node (input)
 	 * @return true, if the nodes are read, false if the method detects an error
 	 */
-	bool parseNodes(std::ifstream& ins, std::size_t n_nodes, std::size_t dim);
+	bool parseNodes(std::ifstream &ins, 
+	                std::vector<MeshLib::Node*> &nodes, 
+	                std::size_t n_nodes, 
+	                std::size_t dim);
 
 	/**
 	 * Method reads the elements from stream and stores them in the element vector of the mesh class.
 	 * For this purpose it uses methods parseElementsFileHeader() and parseElements().
-	 * @param input the input stream
+	 * @param the input stream
+	 * @param the elements vector to be filled
+	 * @param the node information needed for creating elements
 	 * @return true, if all information is read, false if the method detects an error
 	 */
-	bool readElementsFromStream(std::ifstream &input);
+	bool readElementsFromStream(std::ifstream &input, 
+	                            std::vector<MeshLib::Element*> &elements, 
+	                            const std::vector<MeshLib::Node*> &nodes);
 	/**
 	 * Method parses the header of the elements file created by TetGen
 	 * @param line
@@ -93,27 +106,27 @@ private:
 	 * @param region_attribute is on output true, if there
 	 * @return
 	 */
-	bool parseElementsFileHeader(std::string &line, std::size_t& n_tets, std::size_t& n_nodes_per_tet,
-	                             bool& region_attribute) const;
+	bool parseElementsFileHeader(std::string &line, 
+	                             std::size_t &n_tets, 
+	                             std::size_t &n_nodes_per_tet,
+	                             bool &region_attribute) const;
 	/**
 	 * Method parses the tetrahedras and put them in the element vector of the mesh class.
 	 * @param ins the input stream
+	 * @param the elements vector to be filled
+	 * @param the node information needed for creating elements
 	 * @param n_tets the number of tetrahedras that should be read
 	 * @param n_nodes_per_tet the number of nodes per tetrahedron
 	 * @param region_attribute if region attribute is true, region information is read
 	 * @return true, if the tetrahedras are read, false if the method detects an error
 	 */
-	bool parseElements(std::ifstream& ins, std::size_t n_tets, std::size_t n_nodes_per_tet,
+	bool parseElements(std::ifstream& ins, 
+	                   std::vector<MeshLib::Element*> &elements, 
+	                   const std::vector<MeshLib::Node*> &nodes, 
+					   std::size_t n_tets, 
+					   std::size_t n_nodes_per_tet,
 	                   bool region_attribute);
 
-	/**
-	 * the nodes later on handed over to the mesh are stored in this vector
-	 */
-	std::vector<MeshLib::Node*> _nodes;
-	/**
-	 * the elements (tetrahedrons) later on handed over to the mesh are stored in this vector
-	 */
-	std::vector<MeshLib::Element*> _elements;
 	/**
 	 * the value is true if the indexing is zero based, else false
 	 */
