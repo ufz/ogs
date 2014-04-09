@@ -19,9 +19,9 @@ before_install:
   - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
   - if [[ "$CASE" == "GUI" ]]; then wget http://www.opengeosys.org/images/dev/vtk-6.1.0.tar.gz; fi
   - if [[ "$CASE" == "GUI" ]]; then tar -xf vtk-6.1.0.tar.gz; fi
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:amcg/petsc3.4; fi
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:fenics-packages/fenics-dev; fi
   - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo apt-get update; fi
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo apt-get install libhdf5-openmpi-7 libpetsc3.4.2 libpetsc3.4.2-dev; fi
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo apt-get install libpetsc3.4.2 libpetsc3.4.2-dev; fi
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
   - if [[ "$CASE" == "CLI" ]] || [[ "$CASE" == "GUI" ]]; then make test; fi
