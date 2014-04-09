@@ -196,7 +196,7 @@ int MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &ra
 				continue;
 			}
 			const double norm = 4/(4-no_data_count);
-			for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
+			std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
 		}
 
 		// new value
