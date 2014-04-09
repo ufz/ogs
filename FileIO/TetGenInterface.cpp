@@ -42,7 +42,7 @@ TetGenInterface::~TetGenInterface()
 }
 
 MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
-                                                   std::string const& ele_fname)
+                                                std::string const& ele_fname)
 {
 	std::ifstream ins_nodes (nodes_fname.c_str());
 	std::ifstream ins_ele (ele_fname.c_str());
@@ -86,9 +86,8 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins)
 	size_t pos_beg (line.find_first_not_of(" "));
 	size_t n_nodes, dim, n_attributes;
 	bool boundary_markers;
-	bool not_read_header (true);
 
-	while (!ins.fail() && not_read_header)
+	while (!ins.fail())
 	{
 		line = line.substr(pos_beg);
 		if (line.compare(0,1,"#") == 0)
@@ -96,28 +95,21 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins)
 			// this line is a comment - skip
 			getline (ins, line);
 			pos_beg = line.find_first_not_of(" ");
+			continue;
 		}
-		else
-			// read header line
-			not_read_header = !parseNodesFileHeader(line,
-			                                        n_nodes,
-			                                        dim,
-			                                        n_attributes,
-			                                        boundary_markers);
+		// read header line
+		bool header_okay = parseNodesFileHeader(line, n_nodes, dim, n_attributes, boundary_markers);
+		if (!header_okay)
+			return false;
+		if (!parseNodes(ins, n_nodes, dim))
+			return false;
+		return true;
 	}
-	if (not_read_header)
-		return false;
-	if (!parseNodes(ins, n_nodes, dim))
-		return false;
-
-	return true;
+	return false;	
 }
 
-bool TetGenInterface::parseNodesFileHeader(std::string &line,
-                                           size_t& n_nodes,
-                                           size_t& dim,
-                                           size_t& n_attributes,
-                                           bool& boundary_markers) const
+bool TetGenInterface::parseNodesFileHeader(std::string &line, size_t& n_nodes, size_t& dim,
+                                           size_t& n_attributes, bool& boundary_markers) const
 {
 	size_t pos_beg, pos_end;
 
@@ -160,43 +152,44 @@ bool TetGenInterface::parseNodes(std::ifstream& ins, size_t n_nodes, size_t dim)
 
 	for (std::size_t k(0); k < n_nodes && !ins.fail(); k++) {
 		getline(ins, line);
-		if (!ins.fail()) {
-			if (!line.empty()) {
-				pos_end = 0;
-				// read id
-				size_t id;
-				pos_beg = line.find_first_not_of(" ", pos_end);
-				pos_end = line.find_first_of(" \n", pos_beg);
-				if (pos_beg != std::string::npos && pos_end != std::string::npos) {
-					id = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
-					if (k == 0 && id == 0)
-						_zero_based_idx = true;
-				} else {
-					ERR("TetGenInterface::parseNodes(): error reading id of node %d", k);
-					return false;
-				}
-				// read coordinates
-				for (size_t i(0); i < dim; i++) {
-					pos_beg = line.find_first_not_of(" ", pos_end);
-					pos_end = line.find_first_of(" \n", pos_beg);
-					if (pos_end == std::string::npos) pos_end = line.size();
-					if (pos_beg != std::string::npos)
-						coordinates[i] = BaseLib::str2number<double> (
-										line.substr(pos_beg, pos_end - pos_beg));
-					else {
-						ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d", i, k);
-						return false;
-					}
-				}
-				if (!_zero_based_idx) id--;
-				// since CFEMesh is our friend we can access private data of mesh
-				_nodes.push_back(new MeshLib::Node(coordinates, id));
-				// read attributes and boundary markers ... - at the moment we do not use this information
-			}
-		} else {
+		if (ins.fail()) 
+		{
 			ERR("TetGenInterface::parseNodes(): error reading node %d, stream error", k);
 			return false;
 		}
+		if (line.empty())
+			continue;
+
+		pos_end = 0;
+		// read id
+		size_t id;
+		pos_beg = line.find_first_not_of(" ", pos_end);
+		pos_end = line.find_first_of(" \n", pos_beg);
+		if (pos_beg != std::string::npos && pos_end != std::string::npos) {
+			id = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
+			if (k == 0 && id == 0)
+				_zero_based_idx = true;
+		} else {
+			ERR("TetGenInterface::parseNodes(): error reading id of node %d", k);
+			return false;
+		}
+		// read coordinates
+		for (size_t i(0); i < dim; i++) {
+			pos_beg = line.find_first_not_of(" ", pos_end);
+			pos_end = line.find_first_of(" \n", pos_beg);
+			if (pos_end == std::string::npos) pos_end = line.size();
+			if (pos_beg != std::string::npos)
+				coordinates[i] = BaseLib::str2number<double> (
+								line.substr(pos_beg, pos_end - pos_beg));
+			else {
+				ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d", i, k);
+				return false;
+			}
+		}
+		if (!_zero_based_idx) id--;
+		// since CFEMesh is our friend we can access private data of mesh
+		_nodes.push_back(new MeshLib::Node(coordinates, id));
+		// read attributes and boundary markers ... - at the moment we do not use this information
 	}
 
 	return true;
@@ -209,9 +202,8 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins)
 	size_t pos_beg (line.find_first_not_of(" "));
 	size_t n_tets, n_nodes_per_tet;
 	bool region_attributes;
-	bool not_read_header (true);
 
-	while (!ins.fail() && not_read_header)
+	while (!ins.fail())
 	{
 		line = line.substr(pos_beg);
 		if (line.compare(0,1,"#") == 0)
@@ -219,20 +211,18 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins)
 			// this line is a comment - skip
 			getline (ins, line);
 			pos_beg = line.find_first_not_of(" ");
+			continue;
 		}
-		else
-			// read header line
-			not_read_header = !parseElementsFileHeader(line,
-			                                           n_tets,
-			                                           n_nodes_per_tet,
-			                                           region_attributes);
+		
+		// read header line
+		bool header_okay = parseElementsFileHeader(line, n_tets, n_nodes_per_tet, region_attributes);
+		if (!header_okay)
+			return false;
+		if (!parseElements(ins, n_tets, n_nodes_per_tet, region_attributes))
+			return false;
+		return true;
 	}
-	if (not_read_header)
-		return false;
-	if (!parseElements(ins, n_tets, n_nodes_per_tet, region_attributes))
-		return false;
-
-	return true;
+	return false;
 }
 
 bool TetGenInterface::parseElementsFileHeader(std::string &line,
@@ -278,70 +268,66 @@ bool TetGenInterface::parseElements(std::ifstream& ins, size_t n_tets, size_t n_
 	for (size_t k(0); k < n_tets && !ins.fail(); k++)
 	{
 		getline (ins, line);
-		if (!ins.fail())
-		{
-			if (!line.empty())
-			{
-				pos_end = 0;
-				// read id
-				size_t id;
-				pos_beg = line.find_first_not_of(" ", pos_end);
-				pos_end = line.find_first_of(" \n", pos_beg);
-				if (pos_beg != std::string::npos && pos_end != std::string::npos)
-					id = BaseLib::str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg));
-				else {
-					ERR("TetGenInterface::parseElements(): error reading id of tetrahedra %d", k);
-					return false;
-				}
-				// read node ids
-				for (size_t i(0); i < n_nodes_per_tet; i++)
-				{
-					pos_beg = line.find_first_not_of(" ", pos_end);
-					pos_end = line.find_first_of(" ", pos_beg);
-					if (pos_end == std::string::npos)
-						pos_end = line.size();
-					if (pos_beg != std::string::npos && pos_end !=
-					    std::string::npos)
-						ids[i] = BaseLib::str2number<std::size_t>(line.substr(pos_beg, pos_end - pos_beg));
-					else
-					{
-						ERR("TetGenInterface::parseElements(): error reading node %d of tetrahedra %d", i, k);
-						return false;
-					}
-				}
-				if (!_zero_based_idx) {
-					id--;
-					for (size_t i(0); i < n_nodes_per_tet; i++)
-						ids[i]--;
-				}
-
-				// read region attribute - this is something like material group
-				unsigned region (0);
-				if (region_attribute) {
-					pos_beg = line.find_first_not_of(" ", pos_end);
-					pos_end = line.find_first_of(" ", pos_beg);
-					if (pos_end == std::string::npos) pos_end = line.size();
-					if (pos_beg != std::string::npos && pos_end != std::string::npos)
-						region = BaseLib::str2number<unsigned> (line.substr(pos_beg, pos_end - pos_beg));
-					else {
-						ERR("TetGenInterface::parseElements(): error reading region attribute of tetrahedra %d", k);
-						return false;
-					}
-				}
-				// insert new element into vector
-				MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
-				for (unsigned k(0); k<4; k++) {
-					tet_nodes[k] = _nodes[ids[k]];
-				}
-				_elements.push_back (new MeshLib::Tet(tet_nodes, region));
-
-			}
-		}
-		else
+		if (ins.fail())
 		{
 			ERR("TetGenInterface::parseElements(): error reading node %d", k);
 			return false;
 		}
+		if (line.empty())
+			continue;
+				
+		pos_end = 0;
+		// read id
+		size_t id;
+		pos_beg = line.find_first_not_of(" ", pos_end);
+		pos_end = line.find_first_of(" \n", pos_beg);
+		if (pos_beg != std::string::npos && pos_end != std::string::npos)
+			id = BaseLib::str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg));
+		else {
+			ERR("TetGenInterface::parseElements(): error reading id of tetrahedra %d", k);
+			return false;
+		}
+		// read node ids
+		for (size_t i(0); i < n_nodes_per_tet; i++)
+		{
+			pos_beg = line.find_first_not_of(" ", pos_end);
+			pos_end = line.find_first_of(" ", pos_beg);
+			if (pos_end == std::string::npos)
+				pos_end = line.size();
+			if (pos_beg != std::string::npos && pos_end !=
+				std::string::npos)
+				ids[i] = BaseLib::str2number<std::size_t>(line.substr(pos_beg, pos_end - pos_beg));
+			else
+			{
+				ERR("TetGenInterface::parseElements(): error reading node %d of tetrahedra %d", i, k);
+				return false;
+			}
+		}
+		if (!_zero_based_idx) {
+			id--;
+			for (size_t i(0); i < n_nodes_per_tet; i++)
+				ids[i]--;
+		}
+
+		// read region attribute - this is something like material group
+		unsigned region (0);
+		if (region_attribute) {
+			pos_beg = line.find_first_not_of(" ", pos_end);
+			pos_end = line.find_first_of(" ", pos_beg);
+			if (pos_end == std::string::npos) pos_end = line.size();
+			if (pos_beg != std::string::npos && pos_end != std::string::npos)
+				region = BaseLib::str2number<unsigned> (line.substr(pos_beg, pos_end - pos_beg));
+			else {
+				ERR("TetGenInterface::parseElements(): error reading region attribute of tetrahedra %d", k);
+				return false;
+			}
+		}
+		// insert new element into vector
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
+		for (unsigned k(0); k<4; k++) {
+			tet_nodes[k] = _nodes[ids[k]];
+		}
+		_elements.push_back (new MeshLib::Tet(tet_nodes, region));
 	}
 	return true;
 }
