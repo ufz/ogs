@@ -84,27 +84,26 @@ MeshLib::Mesh* MshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std
 			for (unsigned i = 0; i < nOrgElems; ++i)
 			{
 				const MeshLib::Element* sfc_elem( elems[i] );
-				if (sfc_elem->getDimension() == 2)
-				{
-					const unsigned nElemNodes(sfc_elem->getNNodes());
-					MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
-
-					for (unsigned j=0; j<nElemNodes; ++j)
-					{
-						const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
-						e_nodes[j] = new_nodes[node_id+nNodes];
-						e_nodes[j+nElemNodes] = new_nodes[node_id];
-					}
-					if (sfc_elem->getGeomType() == MeshElemType::TRIANGLE)	// extrude triangles to prism
-						new_elems.push_back (new MeshLib::Prism(e_nodes, mat_id));
-					else if (sfc_elem->getGeomType() == MeshElemType::QUAD)	// extrude quads to hexes
-						new_elems.push_back (new MeshLib::Hex(e_nodes, mat_id));
-				}
-				else
+				if (sfc_elem->getDimension() != 2)
 				{
 					WARN("MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements.");
 					WARN("Skipping Element %d of type \"%s\".", i, MeshElemType2String(sfc_elem->getGeomType()).c_str());
+					continue;
 				}
+				
+				const unsigned nElemNodes(sfc_elem->getNNodes());
+				MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
+
+				for (unsigned j=0; j<nElemNodes; ++j)
+				{
+					const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
+					e_nodes[j] = new_nodes[node_id+nNodes];
+					e_nodes[j+nElemNodes] = new_nodes[node_id];
+				}
+				if (sfc_elem->getGeomType() == MeshElemType::TRIANGLE)	// extrude triangles to prism
+					new_elems.push_back (new MeshLib::Prism(e_nodes, mat_id));
+				else if (sfc_elem->getGeomType() == MeshElemType::QUAD)	// extrude quads to hexes
+					new_elems.push_back (new MeshLib::Hex(e_nodes, mat_id));
 			}
 		}
 	}
