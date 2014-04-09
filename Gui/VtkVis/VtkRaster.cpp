@@ -88,9 +88,8 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, dou
 	float* data = new float[length*2];
 	float max_val = *std::max_element(data_array, data_array+length);
 	for (unsigned j=0; j<length; ++j)
-		data[j*2] = static_cast<float>(data_array[j]);
-	for (unsigned j=0; j<length; ++j)
 	{
+		data[j*2] = static_cast<float>(data_array[j]);
 		if (fabs(data[j*2]-noData) < std::numeric_limits<double>::epsilon())
 		{
 			data[j*2] = max_val;
