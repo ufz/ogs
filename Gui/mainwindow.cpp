@@ -695,8 +695,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		else {
 			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
 			QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
-																 settings.value("lastOpenedTetgenFileDirectory").toString(),
-																 "TetGen element files (*.ele);;");
+			                                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
+			                                                     "TetGen element files (*.ele);;");
 
 			if (!fileName.isEmpty() && !element_fname.isEmpty()) {
 				FileIO::TetGenInterface tetgen;
