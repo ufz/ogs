@@ -114,12 +114,12 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
 }
 
 bool TetGenInterface::parseNodesFileHeader(std::string &line, 
-                                           size_t &n_nodes, 
-                                           size_t &dim,
-                                           size_t &n_attributes, 
+                                           std::size_t &n_nodes, 
+                                           std::size_t &dim,
+                                           std::size_t &n_attributes, 
                                            bool &boundary_markers) const
 {
-	size_t pos_beg, pos_end;
+	std::size_t pos_beg, pos_end;
 
 	// number of nodes
 	pos_beg = line.find_first_not_of (" ");
@@ -154,29 +154,33 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 
 bool TetGenInterface::parseNodes(std::ifstream &ins, 
                                  std::vector<MeshLib::Node*> &nodes, 
-                                 size_t n_nodes, 
-                                 size_t dim)
+                                 std::size_t n_nodes, 
+                                 std::size_t dim)
 {
-	std::size_t pos_beg, pos_end;
+	std::size_t pos_beg, pos_end, id;
 	std::string line;
 	double* coordinates (static_cast<double*> (alloca (sizeof(double) * dim)));
 	nodes.reserve(n_nodes);
 
-	for (std::size_t k(0); k < n_nodes && !ins.fail(); k++) {
+	for (std::size_t k(0); k < n_nodes && !ins.fail(); k++) 
+	{
 		getline(ins, line);
 		if (ins.fail()) 
 		{
 			ERR("TetGenInterface::parseNodes(): Error reading node %d.", k);
 			return false;
 		}
-		if (line.empty())
-			continue;
 
 		pos_end = 0;
-		// read id
-		size_t id;
 		pos_beg = line.find_first_not_of(" ", pos_end);
 		pos_end = line.find_first_of(" \n", pos_beg);
+
+		if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
+		{
+			k--;
+			continue;
+		}
+
 		if (pos_beg != std::string::npos && pos_end != std::string::npos) {
 			id = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
 			if (k == 0 && id == 0)
@@ -187,7 +191,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 		}
 		// read coordinates
 		const unsigned offset = (_zero_based_idx) ? 0 : 1;
-		for (size_t i(0); i < dim; i++) {
+		for (std::size_t i(0); i < dim; i++) {
 			pos_beg = line.find_first_not_of(" ", pos_end);
 			pos_end = line.find_first_of(" \n", pos_beg);
 			if (pos_end == std::string::npos) pos_end = line.size();
@@ -212,8 +216,8 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
 {
 	std::string line;
 	getline (ins, line);
-	size_t pos_beg (line.find_first_not_of(" "));
-	size_t n_tets, n_nodes_per_tet;
+	std::size_t pos_beg (line.find_first_not_of(" "));
+	std::size_t n_tets, n_nodes_per_tet;
 	bool region_attributes;
 
 	while (!ins.fail())
@@ -239,11 +243,11 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
 }
 
 bool TetGenInterface::parseElementsFileHeader(std::string &line,
-                                              size_t& n_tets,
-                                              size_t& n_nodes_per_tet,
+                                              std::size_t& n_tets,
+                                              std::size_t& n_nodes_per_tet,
                                               bool& region_attribute) const
 {
-	size_t pos_beg, pos_end;
+	std::size_t pos_beg, pos_end;
 
 	// number of tetrahedras
 	pos_beg = line.find_first_not_of (" ");
@@ -274,17 +278,17 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
 bool TetGenInterface::parseElements(std::ifstream& ins, 
                                     std::vector<MeshLib::Element*> &elements, 
                                     const std::vector<MeshLib::Node*> &nodes, 
-                                    size_t n_tets, 
-                                    size_t n_nodes_per_tet,
+                                    std::size_t n_tets, 
+                                    std::size_t n_nodes_per_tet,
                                     bool region_attribute)
 {
-	size_t pos_beg, pos_end;
+	std::size_t pos_beg, pos_end, id;
 	std::string line;
-	size_t* ids (static_cast<size_t*>(alloca (sizeof (size_t) * n_nodes_per_tet)));
+	std::size_t* ids (static_cast<size_t*>(alloca (sizeof (size_t) * n_nodes_per_tet)));
 	elements.reserve(n_tets);
 
 	const unsigned offset = (_zero_based_idx) ? 0 : 1;
-	for (size_t k(0); k < n_tets && !ins.fail(); k++)
+	for (std::size_t k(0); k < n_tets && !ins.fail(); k++)
 	{
 		getline (ins, line);
 		if (ins.fail())
@@ -292,14 +296,17 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 			ERR("TetGenInterface::parseElements(): Error reading node %d.", k);
 			return false;
 		}
-		if (line.empty())
-			continue;
-				
+
 		pos_end = 0;
-		// read id
-		size_t id;
 		pos_beg = line.find_first_not_of(" ", pos_end);
 		pos_end = line.find_first_of(" \n", pos_beg);
+
+		if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
+		{
+			k--;
+			continue;
+		}
+				
 		if (pos_beg != std::string::npos && pos_end != std::string::npos)
 			id = BaseLib::str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg));
 		else {
@@ -307,7 +314,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 			return false;
 		}
 		// read node ids
-		for (size_t i(0); i < n_nodes_per_tet; i++)
+		for (std::size_t i(0); i < n_nodes_per_tet; i++)
 		{
 			pos_beg = line.find_first_not_of(" ", pos_end);
 			pos_end = line.find_first_of(" ", pos_beg);
