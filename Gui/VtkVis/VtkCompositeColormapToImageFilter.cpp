@@ -52,7 +52,7 @@ void VtkCompositeColormapToImageFilter::init()
 	double range[2];
 	dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
 
-	if (!fileName.length()==0)
+	if (fileName.length() > 0)
 	{
 		colormap = FileIO::XmlLutReader::readFromFile(fileName);
 		settings.setValue("lastOpenedLookupTableFileDirectory", fileName);

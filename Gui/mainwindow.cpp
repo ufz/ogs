@@ -514,7 +514,7 @@ void MainWindow::save()
 void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 {
 	QFile file(fileName);
-	if (!file.open(QFile::ReadOnly))
+	if (!file.exists())
 	{
 		QMessageBox::warning(this, tr("Application"), tr(
 		                             "Cannot read file %1:\n%2.").arg(fileName).arg(

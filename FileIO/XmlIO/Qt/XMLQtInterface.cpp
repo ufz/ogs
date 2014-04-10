@@ -111,7 +111,9 @@ bool XMLQtInterface::checkHash() const
 	QFile file(md5FileName);
 	if (file.open(QIODevice::ReadOnly))
 	{
-		if(file.readAll() == fileHash)
+		QByteArray referenceHash = file.readAll();
+		file.close();
+		if(referenceHash == fileHash)
 			return true;
 		INFO("Hashfile does not match data ... checking file ...");
 	}
