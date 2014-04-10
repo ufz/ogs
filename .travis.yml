@@ -13,7 +13,7 @@ before_install:
   - travis_retry sudo apt-get update; travis_retry sudo apt-get install libeigen3-dev
 
   # Boost
-  - travis_retry sudo add-apt-repository --yes ppa:boost-latest
+  - travis_retry sudo add-apt-repository --yes ppa:boost-latest; travis_retry sudo apt-get update
   - travis_retry sudo apt-get install libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
 
   - "wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb"
