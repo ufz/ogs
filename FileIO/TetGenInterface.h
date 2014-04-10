@@ -60,6 +60,17 @@ public:
 	MeshLib::Mesh* readTetGenMesh (std::string const& nodes_fname,
 	                               std::string const& ele_fname);
 
+	/**
+	 * Writes the geometry of a given name to TetGen poly-file.
+	 * @param file_name    file name of the new poly file
+	 * @param geo_objects  the container for the geometry.
+	 * @param geo_name     the name for the geometry.
+	 * @return returns true on success and false otherwise.
+	 */
+	bool writeTetGenPoly(const std::string &file_name, 
+		                 const GeoLib::GEOObjects &geo_objects, 
+		                 const std::string &geo_name) const;
+
 private:
 	/**
 	 * Method reads the facets from stream and stores them in a GeoLib::Surface vector.

@@ -498,4 +498,49 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 	return true;
 }
 
+bool TetGenInterface::writeTetGenPoly(const std::string &file_name, 
+                                      const GeoLib::GEOObjects &geo_objects, 
+                                      const std::string &geo_name) const
+{
+	std::vector<GeoLib::Point*> const*const points = geo_objects.getPointVec(geo_name);
+	std::vector<GeoLib::Surface*> const*const surfaces = geo_objects.getSurfaceVec(geo_name);
+
+	if (points==nullptr)
+	{
+		ERR ("Geometry %s not found.", geo_name.c_str());
+		return false;
+	}
+	if (surfaces==nullptr)
+		WARN ("No surfaces found for geometry %s. Writing points only.", geo_name.c_str());
+
+	std::ofstream out( file_name.c_str(), std::ios::out );
+	// the points header
+	const std::size_t nPoints (points->size());
+	out << nPoints << " 3 0 0\n";
+	// the point list
+	for (std::size_t i=0; i<nPoints; ++i)
+		out << i << "  " << (*(*points)[i])[0] << " " << (*(*points)[i])[1] << " " << (*(*points)[i])[2] << "\n";
+	// the surfaces header
+	const std::size_t nSurfaces = (surfaces) ? surfaces->size() : 0;
+	out << nSurfaces << " 0\n";
+	// the facets list
+	for (std::size_t i=0; i<nSurfaces; ++i)
+	{
+		// the number of polys per facet
+		const std::size_t nTriangles ((*surfaces)[i]->getNTriangles());
+		out << nTriangles << "\n";
+		// the poly list
+		for (std::size_t j=0; j<nTriangles; ++j)
+		{
+			const GeoLib::Triangle &tri = *(*(*surfaces)[i])[j];
+			out << "3  " << tri[0] << " " << tri[1] << " " << tri[2] << "\n";			
+		}
+	}
+	out << "0\n"; // the polygon holes list
+	out << "0\n"; // the region attribues list
+	INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, nSurfaces);
+	out.close();
+	return true;
+}
+
 } // end namespace FileIO
