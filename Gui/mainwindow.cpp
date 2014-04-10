@@ -687,18 +687,25 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::TETGEN)
 	{
-		settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
-		QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
-						                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
-						                                     "TetGen element files (*.ele);;");
-
-		if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+		if (fi.suffix().toLower().compare("poly") == 0)
+		{
 			FileIO::TetGenInterface tetgen;
-			MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
-			if (mesh)
-				_meshModels->addMesh(mesh);
-			else
-				OGSError::box("Failed to load a TetGen mesh.");
+			tetgen.readTetGenPoly(fileName.toStdString(), *(_project.getGEOObjects()));
+		}
+		else {
+			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
+			QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
+																 settings.value("lastOpenedTetgenFileDirectory").toString(),
+																 "TetGen element files (*.ele);;");
+
+			if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+				FileIO::TetGenInterface tetgen;
+				MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
+				if (mesh)
+					_meshModels->addMesh(mesh);
+				else
+					OGSError::box("Failed to load a TetGen mesh.");
+			}
 		}
 	}
 	else if (t == ImportFileType::VTK)

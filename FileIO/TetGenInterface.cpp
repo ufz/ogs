@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <string>
+#include <fstream>
 
 // BaseLib
 #include "FileTools.h"
@@ -40,6 +41,151 @@ TetGenInterface::TetGenInterface() :
 
 TetGenInterface::~TetGenInterface()
 {
+}
+
+bool TetGenInterface::readTetGenPoly (std::string const& poly_fname,
+	                                  GeoLib::GEOObjects &geo_objects)
+{
+	std::ifstream poly_stream (poly_fname.c_str());
+
+	if (!poly_stream)
+	{
+		ERR ("TetGenInterface::readTetGenPoly failed to open %s", poly_fname.c_str());
+		return false;
+	}
+
+	std::vector<MeshLib::Node*> nodes;
+	if (!readNodesFromStream (poly_stream, nodes)) 
+	{
+		// remove nodes read until now
+		for (std::size_t k(0); k<nodes.size(); ++k)
+			delete nodes[k];
+		return false;
+	}
+	const std::size_t nNodes (nodes.size());
+	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>;
+	points->reserve(nNodes);
+	for (std::size_t k(0); k<nNodes; ++k) 
+	{
+		points->push_back(new GeoLib::Point(nodes[k]->getCoords()));
+		delete nodes[k];
+	}
+	std::vector<GeoLib::Surface*> *surfaces = new std::vector<GeoLib::Surface*>;
+	if (!parseFacets(poly_stream, *surfaces, *points))
+	{
+		// remove surfaces read until now but keep the points
+		for (std::size_t k=0; k<surfaces->size(); k++)
+			delete (*surfaces)[k];
+		delete surfaces;
+		surfaces = nullptr;
+	}
+
+	std::string geo_name (BaseLib::extractBaseNameWithoutExtension(poly_fname));
+	geo_objects.addPointVec(points, geo_name);
+	if (surfaces)
+		geo_objects.addSurfaceVec(surfaces, geo_name);
+	return true;
+}
+
+std::size_t TetGenInterface::getNFacets(std::ifstream &input) const
+{
+	std::string line;
+	while (!input.fail())
+	{
+		getline (input, line);
+		if (input.fail())
+		{
+			ERR("TetGenInterface::getNFacets(): Error reading number of facets.");
+			return false;
+		}
+		
+		BaseLib::simplify(line);
+		if (line.empty() || line.compare(0,1,"#") == 0)
+			continue;
+
+		const std::list<std::string> fields = BaseLib::splitString(line, ' ');
+		return BaseLib::str2number<size_t> (*fields.begin());
+		// here this line also includes a flag for boundary markers which we ignore for now
+	}
+	return false;
+}
+
+bool TetGenInterface::parseFacets(std::ifstream &input, 
+                                  std::vector<GeoLib::Surface*> &surfaces,
+                                  std::vector<GeoLib::Point*> &points)
+{
+	const std::size_t nFacets (this->getNFacets(input));
+	std::size_t nMultPolys (0);
+	std::string line;
+	surfaces.reserve(nFacets);
+	std::list<std::string>::const_iterator it;
+
+	const unsigned offset = (_zero_based_idx) ? 0 : 1;
+	for (std::size_t k(0); k<nFacets && !input.fail(); k++)
+	{
+		getline (input, line);
+		if (input.fail())
+		{
+			ERR("TetGenInterface::parseFacets(): Error reading facet %d.", k);
+			return false;
+		}
+
+		BaseLib::simplify(line);
+		if (line.empty() || line.compare(0,1,"#") == 0)
+		{
+			k--;
+			continue;
+		}
+		
+		// read facets
+		const std::list<std::string> poly_def_fields = BaseLib::splitString(line, ' ');
+		it = poly_def_fields.begin();
+		const std::size_t nPolys     = BaseLib::str2number<std::size_t>(*it);
+		const std::size_t nPolyHoles = (poly_def_fields.size()>1) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
+		// here this line also potentially includes a boundary marker which we ignore for now
+		nMultPolys += (nPolys-1);
+
+		// read polys
+		for (std::size_t i(0); i<nPolys && !input.fail(); ++i)
+		{
+			getline (input, line);
+			BaseLib::simplify(line);
+			if (line.empty() || line.compare(0,1,"#") == 0)
+			{
+				i--;
+				continue;
+			}
+
+			const std::list<std::string> point_fields = BaseLib::splitString(line, ' ');
+			it = point_fields.begin();
+			const std::size_t nPoints = BaseLib::str2number<std::size_t>(*it);
+			if (point_fields.size() > nPoints)
+			{
+				GeoLib::Polyline polyline(points);
+				for (std::size_t j(0); j<nPoints; ++j)
+					polyline.addPoint(BaseLib::str2number<std::size_t>(*(++it))-offset);
+				
+				polyline.closePolyline();
+				surfaces.push_back(GeoLib::Surface::createSurface(polyline));
+			}
+			else
+			{
+				ERR("TetGenInterface::parseFacets(): Error reading points for polygon %d of facet %d.", i, k);
+				return false;
+			}
+		}
+		for (std::size_t j(0); j<nPolyHoles && !input.fail(); ++j)
+			getline(input, line);
+			// Here are points defined which are located in holes within the surface. We ignore these as they are not part of the actual geometry.
+	}
+	// here the poly-file potentially defines a number of points to mark holes within the volumes defined by the facets, these are ignored for now
+	// here the poly-file potentially defines a number of region attributes, these are ignored for now
+
+	if (surfaces.size() == nFacets+nMultPolys)
+		return true;
+
+	ERR ("TetGenInterface::parseFacets(): Number of expected surfaces (%d) does not match number of found surfaces (%d).", nFacets+nMultPolys, surfaces.size());
+	return false;
 }
 
 MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
@@ -128,7 +274,7 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 		n_nodes = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
 	else
 	{
-		ERR("TetGenInterface::parseNodesFileHeader(): could not number of nodes specified in header.");
+		ERR("TetGenInterface::parseNodesFileHeader(): could not read number of nodes specified in header.");
 		return false;
 	}
 	// dimension
@@ -293,7 +439,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 		getline (ins, line);
 		if (ins.fail())
 		{
-			ERR("TetGenInterface::parseElements(): Error reading node %d.", k);
+			ERR("TetGenInterface::parseElements(): Error reading tetrahedron %d.", k);
 			return false;
 		}
 
