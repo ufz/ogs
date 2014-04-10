@@ -42,6 +42,7 @@ int XMLQtInterface::readFile(const QString &fileName)
 		return 0;
 	}
 	_fileData = file.readAll();
+	file.close();
 
 	if (!checkHash())
 		return 0;
