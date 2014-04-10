@@ -73,8 +73,8 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	Point const& ll (sfc.getAABB().getMinPoint());
 	Point const& ur (sfc.getAABB().getMaxPoint());
 
-	std::size_t n_cols = static_cast<size_t>(fabs(ur[0]-ll[0]) / cell_size)+1;
-	std::size_t n_rows = static_cast<size_t>(fabs(ur[1]-ll[1]) / cell_size)+1;
+	const std::size_t n_cols = static_cast<size_t>(fabs(ur[0]-ll[0]) / cell_size)+1;
+	const std::size_t n_rows = static_cast<size_t>(fabs(ur[1]-ll[1]) / cell_size)+1;
 	const size_t n_triangles (sfc.getNTriangles());
 	double *z_vals (new double[n_cols*n_rows]);
 	if (!z_vals) {
@@ -142,7 +142,7 @@ Raster* Raster::getRasterFromASCFile(std::string const& fname)
 		std::string s;
 		// read the data into the double-array
 		for (size_t j(0); j < n_rows; ++j) {
-			size_t idx ((n_rows - j - 1) * n_cols);
+			const size_t idx ((n_rows - j - 1) * n_cols);
 			for (size_t i(0); i < n_cols; ++i) {
 				in >> s;
 				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
@@ -215,18 +215,22 @@ Raster* Raster::getRasterFromSurferFile(std::string const& fname)
 
 	// header information
 	std::size_t n_cols(0), n_rows(0);
-	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), no_data_val(-9999);
+	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), min(0.0), max(0.0);
 
-	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, no_data_val)) {
+	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, min, max)) 
+	{
+		const double no_data_val (min-1);
 		double* values = new double[n_cols*n_rows];
 		std::string s;
 		// read the data into the double-array
-		for (size_t j(0); j < n_rows; ++j) {
-			size_t idx ((n_rows - j - 1) * n_cols);
-			for (size_t i(0); i < n_cols; ++i) {
+		for (size_t j(0); j < n_rows; ++j) 
+		{
+			const size_t idx (j * n_cols);
+			for (size_t i(0); i < n_cols; ++i) 
+			{
 				in >> s;
-				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
-
+				const double val (strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
+				values[idx+i] = (val > max || val < min) ? no_data_val : val;
 			}
 		}
 		in.close();
@@ -241,11 +245,10 @@ Raster* Raster::getRasterFromSurferFile(std::string const& fname)
 }
 
 bool Raster::readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
-				double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val)
+				double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max)
 {
 	std::string tag;
-	double min, max;
-
+	
 	in >> tag;
 
 	if (tag.compare("DSAA") != 0)
@@ -258,21 +261,19 @@ bool Raster::readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_
 		in >> n_cols >> n_rows;
 		in >> min >> max;
 		xllcorner = min;
-		cell_size = (max-min)/(double)n_cols;
+		cell_size = (max-min)/static_cast<double>(n_cols);
 
 		in >> min >> max;
 		yllcorner = min;
 
-		if (ceil((max-min)/(double)n_rows) == ceil(cell_size))
+		if (ceil((max-min)/static_cast<double>(n_rows)) == ceil(cell_size))
 			cell_size = ceil(cell_size);
 		else
 		{
 			ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
 			return 0;
 		}
-		in >> min >> max; // ignore min- and max-values
-
-		no_data_val = 1.70141E+038;
+		in >> min >> max;
 	}
 
 	return true;

@@ -117,7 +117,7 @@ private:
 	 * \return True if the header could be read correctly, false otherwise.
 	 */
 	static bool readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
-					double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
+					double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max);
 
 	void setCellSize(double cell_size);
 	void setNoDataVal (double no_data_val);
