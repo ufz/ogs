@@ -24,9 +24,7 @@
 #include "Mesh.h"
 #include "MeshEditing/removeMeshNodes.h"
 #include "MeshSurfaceExtraction.h"
-#ifdef OGS_BUILD_GUI
-	#include "../Gui/DataView/MshLayerMapper.h"
-#endif
+#include "MeshGenerators/MeshLayerMapper.h"
 
 namespace MeshLib {
 
@@ -38,11 +36,10 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-#ifdef OGS_BUILD_GUI
-	friend int MshLayerMapper::LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile, const unsigned nLayers,
+	friend int MeshLayerMapper::LayerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile, const unsigned nLayers,
 		                                    const unsigned layer_id, double noDataReplacementValue);
-	friend MeshLib::Mesh* MshLayerMapper::blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster);
-#endif
+	friend MeshLib::Mesh* MeshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster);
+
 	/* friend classes: */
 	friend class Mesh;
 	friend class MeshRevision;

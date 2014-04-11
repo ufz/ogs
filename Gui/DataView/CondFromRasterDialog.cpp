@@ -52,15 +52,15 @@ void CondFromRasterDialog::on_selectButton_pressed()
 	QString geotiffExtension("");
 #endif
 	QString fileName = QFileDialog::getOpenFileName(this, "Select raster file",
-					settings.value("lastOpenedConditionsFileDirectory").toString(), QString(
-									"Raster files (*.asc *.grd);;") .arg(geotiffExtension));
+	                                                settings.value("lastOpenedRasterFileDirectory").toString(), 
+	                                                QString("Raster files (*.asc *.grd);;").arg(geotiffExtension));
 
 	if (!fileName.isEmpty())
 	{
 		this->rasterEdit->setText(fileName);
 
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedConditionsFileDirectory", dir.absolutePath());
+		QFileInfo fi(fileName);
+		settings.setValue("lastOpenedRasterFileDirectory", fi.absolutePath());
 	}
 }
 
