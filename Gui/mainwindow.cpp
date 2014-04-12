@@ -1029,7 +1029,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-	MeshLib::convertMeshToGeo(*mesh, this->_project.getGEOObjects());
+	MeshLib::convertMeshToGeo(*mesh, *this->_project.getGEOObjects());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName)

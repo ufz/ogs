@@ -32,7 +32,7 @@ namespace MeshLib
 	 * converted to geometric triangles, quads are split into two triangles, all other elements
 	 * are ignored.
 	 */
-	bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects* geo_objects);
+	bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects);
 
 } // namespace
 

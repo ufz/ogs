@@ -37,29 +37,28 @@ namespace MeshLib {
 class LayerVolumes
 {
 public:
-	LayerVolumes(GeoLib::GEOObjects &geo_objects);
+	LayerVolumes();
 	~LayerVolumes() {}
 
 	bool createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<std::string> &raster_paths, double noDataReplacementValue = 0.0);
 
-private:
-	void addPoints(const std::vector<MeshLib::Node*> &nodes, 
-	               std::vector<GeoLib::Point*> *points,
-	               std::vector<std::size_t> &pnts_above, 
-				   std::vector<bool> &node_status) const;
+	MeshLib::Mesh* getMesh() const { return _mesh; }
 
-	GeoLib::Surface* createSurface(const std::vector<MeshLib::Element*> &elements, 
-	                               std::vector<GeoLib::Point*> *points,
-	                               const std::vector<std::size_t> &pnts_above,
-	                               const std::vector<bool> &node_status) const; 
+	bool addGeometry(GeoLib::GEOObjects &geo_objects) const;
+
+private:
+	void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id);
+
+	void addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nLayers);
 
 	bool allRastersExist(const std::vector<std::string> &raster_paths) const;
 
-	void cleanUpGeometryOnError(std::vector<GeoLib::Point*> *points, std::vector<GeoLib::Surface*> *surfaces);
+	void cleanUpOnError();
 
 	const int _invalid_value;
-	GeoLib::GEOObjects &_geo_objects;
-
+	std::vector<MeshLib::Node*> _nodes;
+	std::vector<MeshLib::Element*> _elements;
+	MeshLib::Mesh* _mesh;
 };
 
 #endif //LAYERVOLUMES_H
