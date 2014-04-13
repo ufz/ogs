@@ -51,6 +51,8 @@ private:
 
 	void addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nLayers);
 
+	void removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer);
+
 	bool allRastersExist(const std::vector<std::string> &raster_paths) const;
 
 	void cleanUpOnError();

@@ -17,6 +17,8 @@
 #include <fstream>
 #include <numeric>
 
+#include "Vector3.h"
+
 #include "GEOObjects.h"
 #include "PointVec.h"
 #include "Mesh.h"
@@ -47,7 +49,7 @@ bool LayerVolumes::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector
 	const std::size_t nRasters (raster_paths.size());
 	for (size_t i=1; i<nRasters; ++i)
 	{
-		if (!MeshLayerMapper::LayerMapping(mesh_layer, raster_paths[0], 0, 0, _invalid_value))
+		if (!MeshLayerMapper::LayerMapping(mesh_layer, raster_paths[i], 0, 0, _invalid_value))
 		{
 			this->cleanUpOnError();
 			return false;
@@ -55,6 +57,7 @@ bool LayerVolumes::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector
 		this->addLayerToMesh(mesh_layer, i);
 	}
 	this->addLayerBoundaries(mesh_layer, nRasters);
+	this->removeCongruentElements(nRasters, mesh.getNElements());
 	_mesh = new MeshLib::Mesh("BoundaryMesh", _nodes, _elements);
 
 	return true;
@@ -71,9 +74,10 @@ void LayerVolumes::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned laye
 	{
 		if (layer_id > 0 &&
 		   ((*layer_nodes[i])[2] == _invalid_value || 
-		   (*layer_nodes[i])[2] < (*_nodes[(layer_id-1)*nNodes+i])[2]))
+		    (*layer_nodes[i])[2] > (*_nodes[last_layer_offset+i])[2]))
 			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
-		_nodes.push_back(new MeshLib::Node(*layer_nodes[i]));
+		else 
+			_nodes.push_back(new MeshLib::Node(*layer_nodes[i]));
 	}
 
 	const std::vector<MeshLib::Element*> &layer_elements (mesh_layer.getElements());
@@ -110,16 +114,43 @@ void LayerVolumes::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nL
 				for (unsigned j=0; j<nLayerBoundaries; ++j)
 				{
 					const std::size_t offset (j*nNodes);
-					std::array<MeshLib::Node*,4> quad_nodes = 
-						{ 
-						  _nodes[offset + elem->getNode(i)->getID()],
-						  _nodes[offset + elem->getNode((i+1)%3)->getID()],
-						  _nodes[offset + nNodes + elem->getNode((i+1)%3)->getID()],
-						  _nodes[offset + nNodes + elem->getNode(i)->getID()] 
-						};
-					_elements.push_back(new MeshLib::Quad(quad_nodes, nLayers+j));
+					MeshLib::Node* n0 = _nodes[offset + elem->getNode(i)->getID()];
+					MeshLib::Node* n1 = _nodes[offset + elem->getNode((i+1)%3)->getID()];
+					MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNode((i+1)%3)->getID()];
+					MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNode(i)->getID()];
+					
+					if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon() &&
+						MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
+					{
+						std::array<MeshLib::Node*,4> quad_nodes = { n0, n1, n2, n3 };
+						_elements.push_back(new MeshLib::Quad(quad_nodes, nLayers+j));
+					}
 				}
 	}
+}
+
+void LayerVolumes::removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer)
+{
+	const double eps (std::numeric_limits<double>::epsilon());
+	for (std::size_t i=1; i<nLayers; ++i)
+	{
+		const std::size_t upper_offset ((i-1) * nElementsPerLayer);
+		const std::size_t lower_offset ( i    * nElementsPerLayer);
+		for (std::size_t j=0; j<nElementsPerLayer; ++j)
+		{
+			MeshLib::Element const*const high (_elements[upper_offset+j]);
+			MeshLib::Element const*const low  (_elements[lower_offset+j]);
+			if (MathLib::Vector3(*high->getNode(0), *low->getNode(0)).getLength() < eps &&
+				MathLib::Vector3(*high->getNode(1), *low->getNode(1)).getLength() < eps &&
+				MathLib::Vector3(*high->getNode(2), *low->getNode(2)).getLength() < eps)
+			{
+				delete _elements[upper_offset+j];
+				_elements[upper_offset+j] = nullptr;
+			}
+		}
+	}
+	auto elem_vec_end = std::remove(_elements.begin(), _elements.end(), nullptr);
+	_elements.erase(elem_vec_end, _elements.end());
 }
 
 bool LayerVolumes::addGeometry(GeoLib::GEOObjects &geo_objects) const
