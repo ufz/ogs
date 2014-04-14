@@ -210,7 +210,6 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
                                        std::vector<GeoLib::Point*> &points)
 {
 	const std::size_t nFacets (this->getNFacets(input));
-	std::size_t nMultPolys (0);
 	std::string line;
 	surfaces.reserve(nFacets);
 	std::list<std::string>::const_iterator it;
@@ -603,16 +602,17 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	std::size_t nTotalTriangles (0);
 	for (std::size_t i=0; i<nSurfaces; ++i)
 		nTotalTriangles += (*surfaces)[i]->getNTriangles();
-	out << nSurfaces << " 1\n";
+	out << nTotalTriangles << " 1\n";
 
 	for (std::size_t i=0; i<nSurfaces; ++i)
 	{
 		const std::size_t nTriangles ((*surfaces)[i]->getNTriangles());
+		const std::size_t marker (i+1); // must NOT be 0! 
 		// the poly list
 		for (std::size_t j=0; j<nTriangles; ++j)
 		{
 			const GeoLib::Triangle &tri = *(*(*surfaces)[i])[j];
-			out << "3  " << tri[0] << " " << tri[1] << " " << tri[2] << "\n";
+			out << "3  " << tri[0] << " " << tri[1] << " " << tri[2] << " " << marker << "\n";
 		}
 	}
 	out << "0\n"; // the polygon holes list
