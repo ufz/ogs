@@ -428,7 +428,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     std::size_t n_nodes_per_tet,
                                     bool region_attribute)
 {
-	std::size_t pos_beg, pos_end, id;
+	std::size_t pos_beg, pos_end;
 	std::string line;
 	std::size_t* ids (static_cast<size_t*>(alloca (sizeof (size_t) * n_nodes_per_tet)));
 	elements.reserve(n_tets);
@@ -453,12 +453,12 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 			continue;
 		}
 
-		if (pos_beg != std::string::npos && pos_end != std::string::npos)
-			id = BaseLib::str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg));
-		else {
+		if (pos_beg == std::string::npos || pos_end == std::string::npos)
+		{
 			ERR("TetGenInterface::parseElements(): Error reading id of tetrahedron %d.", k);
 			return false;
 		}
+
 		// read node ids
 		for (std::size_t i(0); i < n_nodes_per_tet; i++)
 		{
