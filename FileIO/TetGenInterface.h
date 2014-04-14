@@ -67,22 +67,13 @@ public:
 	 * @param geo_name     the name for the geometry.
 	 * @return returns true on success and false otherwise.
 	 */
-	bool writeTetGenPoly(const std::string &file_name, 
-		                 const GeoLib::GEOObjects &geo_objects, 
-		                 const std::string &geo_name) const;
+	bool writeTetGenPoly(const std::string &file_name,
+	                     const GeoLib::GEOObjects &geo_objects,
+	                     const std::string &geo_name) const;
 
 private:
-	/**
-	 * Method reads the facets from stream and stores them in a GeoLib::Surface vector.
-	 * For this purpose it uses methods parseFacetsHeader() and parseFacets().
-	 * @param input  the input stream
-	 * @return true, if all information is read, false if the method detects an error
-	 */
-	bool readFacetsFromStream(std::ifstream &input, 
-	                          std::vector<GeoLib::Point*> &points);
-
 	/// Returns the declared number of facets in the poly file.
-	std::size_t getNFacets(std::ifstream &input) const; 
+	std::size_t getNFacets(std::ifstream &input) const;
 
 	/**
 	 * Method parses the lines reading the facets from TetGen poly file
@@ -91,9 +82,9 @@ private:
 	 * @param points    the point vector needed for creating surfaces (input)
 	 * @return true, if the facets have been read correctly, false if the method detects an error
 	 */
-	bool parseFacets(std::ifstream &input, 
+	bool parseFacets(std::ifstream &input,
 	                 std::vector<GeoLib::Surface*> &surfaces,
-	                 std::vector<GeoLib::Point*> &points);
+	                 std::vector<GeoLib::Point*> &points) const;
 
 	/**
 	 * Method reads the nodes from stream and stores them in a node vector.
@@ -101,7 +92,7 @@ private:
 	 * @param input  the input stream
 	 * @return true, if all information is read, false if the method detects an error
 	 */
-	bool readNodesFromStream(std::ifstream &input, 
+	bool readNodesFromStream(std::ifstream &input,
 	                         std::vector<MeshLib::Node*> &nodes);
 
 	/**
@@ -113,11 +104,11 @@ private:
 	 * @param boundary_markers  have the nodes boundary information (output)
 	 * @return true, if the file header is read, false if the method detects an error
 	 */
-	bool parseNodesFileHeader(std::string &line, 
-	                          std::size_t &n_nodes, 
-							  std::size_t &dim,
-	                          std::size_t &n_attributes, 
-							  bool &boundary_markers) const;
+	bool parseNodesFileHeader(std::string &line,
+	                          std::size_t &n_nodes,
+	                          std::size_t &dim,
+	                          std::size_t &n_attributes,
+	                          bool &boundary_markers) const;
 	/**
 	 * method parses the lines reading the nodes from TetGen nodes file
 	 * @param ins      the input stream (input)
@@ -126,9 +117,9 @@ private:
 	 * @param dim      the spatial dimension of the node (input)
 	 * @return true, if the nodes are read, false if the method detects an error
 	 */
-	bool parseNodes(std::ifstream &ins, 
-	                std::vector<MeshLib::Node*> &nodes, 
-	                std::size_t n_nodes, 
+	bool parseNodes(std::ifstream &ins,
+	                std::vector<MeshLib::Node*> &nodes,
+	                std::size_t n_nodes,
 	                std::size_t dim);
 
 	/**
@@ -139,9 +130,9 @@ private:
 	 * @param nodes     the node information needed for creating elements
 	 * @return true, if all information is read, false if the method detects an error
 	 */
-	bool readElementsFromStream(std::ifstream &input, 
-	                            std::vector<MeshLib::Element*> &elements, 
-	                            const std::vector<MeshLib::Node*> &nodes);
+	bool readElementsFromStream(std::ifstream &input,
+	                            std::vector<MeshLib::Element*> &elements,
+	                            const std::vector<MeshLib::Node*> &nodes) const;
 	/**
 	 * Method parses the header of the elements file created by TetGen
 	 * @param line              the header is in this string (input)
@@ -150,8 +141,8 @@ private:
 	 * @param region_attribute  is on output true, if there
 	 * @return
 	 */
-	bool parseElementsFileHeader(std::string &line, 
-	                             std::size_t &n_tets, 
+	bool parseElementsFileHeader(std::string &line,
+	                             std::size_t &n_tets,
 	                             std::size_t &n_nodes_per_tet,
 	                             bool &region_attribute) const;
 	/**
@@ -164,12 +155,12 @@ private:
 	 * @param region_attribute  if region attribute is true, region information is read
 	 * @return true, if the tetrahedras are read, false if the method detects an error
 	 */
-	bool parseElements(std::ifstream& ins, 
-	                   std::vector<MeshLib::Element*> &elements, 
-	                   const std::vector<MeshLib::Node*> &nodes, 
-					   std::size_t n_tets, 
-					   std::size_t n_nodes_per_tet,
-	                   bool region_attribute);
+	bool parseElements(std::ifstream& ins,
+	                   std::vector<MeshLib::Element*> &elements,
+	                   const std::vector<MeshLib::Node*> &nodes,
+	                   std::size_t n_tets,
+	                   std::size_t n_nodes_per_tet,
+	                   bool region_attribute) const;
 
 	/**
 	 * the value is true if the indexing is zero based, else false
