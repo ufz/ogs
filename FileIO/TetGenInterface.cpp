@@ -303,7 +303,6 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
                                  std::size_t n_nodes,
                                  std::size_t dim)
 {
-	std::size_t pos_beg, pos_end, id;
 	std::string line;
 	double* coordinates (static_cast<double*> (alloca (sizeof(double) * dim)));
 	nodes.reserve(n_nodes);
@@ -317,8 +316,9 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 			return false;
 		}
 
-		pos_end = 0;
-		pos_beg = line.find_first_not_of(" ", pos_end);
+		std::size_t id;
+		std::size_t pos_end = 0;
+		std::size_t pos_beg = line.find_first_not_of(" ", pos_end);
 		pos_end = line.find_first_of(" \n", pos_beg);
 
 		if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
@@ -428,7 +428,6 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     std::size_t n_nodes_per_tet,
                                     bool region_attribute)
 {
-	std::size_t pos_beg, pos_end;
 	std::string line;
 	std::size_t* ids (static_cast<size_t*>(alloca (sizeof (size_t) * n_nodes_per_tet)));
 	elements.reserve(n_tets);
@@ -443,8 +442,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 			return false;
 		}
 
-		pos_end = 0;
-		pos_beg = line.find_first_not_of(" ", pos_end);
+		std::size_t pos_end = 0;
+		std::size_t pos_beg = line.find_first_not_of(" ", pos_end);
 		pos_end = line.find_first_of(" \n", pos_beg);
 
 		if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
