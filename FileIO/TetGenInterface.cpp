@@ -426,7 +426,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     const std::vector<MeshLib::Node*> &nodes,
                                     std::size_t n_tets,
                                     std::size_t n_nodes_per_tet,
-                                    bool region_attribute)
+                                    bool region_attribute) const
 {
 	std::string line;
 	std::size_t* ids (static_cast<size_t*>(alloca (sizeof (size_t) * n_nodes_per_tet)));
