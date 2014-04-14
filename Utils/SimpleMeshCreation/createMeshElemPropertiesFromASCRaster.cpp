@@ -142,7 +142,7 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		const double mu(std::accumulate(src_properties.begin(), src_properties.end(), 0) / size);
+		const double mu(std::accumulate(src_properties.begin(), src_properties.end(), 0.0) / size);
 		INFO("Mean value of source: %f.", mu);
 
 		double src_variance(MathLib::fastpow(src_properties[0] - mu, 2));

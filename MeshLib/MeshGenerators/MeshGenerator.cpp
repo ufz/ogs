@@ -68,10 +68,10 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 }
 
 Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-                              const double   cell_size,
+                              const unsigned n_y_cells,
+                              const double cell_size,
                               GeoLib::Point const& origin,
-							  std::string   const& mesh_name)
+                              std::string const& mesh_name)
 {
 	//nodes
 	const unsigned n_x_nodes (n_x_cells+1);
@@ -79,7 +79,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
 	std::vector<Node*> nodes;
 	nodes.reserve(n_x_nodes * n_y_nodes);	
 
-	for (std::size_t i = 0, node_id = 0; i < n_y_nodes; i++)
+	for (std::size_t i = 0; i < n_y_nodes; i++)
 	{
 		const double y_offset (origin[1] + cell_size * i);
 		for (std::size_t j = 0; j < n_x_nodes; j++)
@@ -130,7 +130,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
 	std::vector<Node*> nodes;
 	nodes.reserve(n_x_nodes * n_y_nodes * n_z_nodes);
 
-	for (std::size_t i = 0, node_id = 0; i < n_z_nodes; i++)
+	for (std::size_t i = 0; i < n_z_nodes; i++)
 	{
 		const double z_offset (origin[2] + cell_size * i);
 		for (std::size_t j = 0; j < n_y_nodes; j++)

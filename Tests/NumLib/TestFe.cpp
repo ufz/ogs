@@ -1,8 +1,4 @@
 /**
- * \file TestFEM.cpp
- * \author Norihiro Watanabe
- * \date   2012-08-03
- *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -19,155 +15,28 @@
 #include <Eigen/Eigen>
 #endif
 
-#include "MeshLib/Elements/Quad.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
+
+#include "FeTestData/TestFeLINE2.h"
+#include "FeTestData/TestFeQUAD4.h"
+#include "FeTestData/TestFeHEX8.h"
 
 #include "Tests/TestTools.h"
 
 using namespace NumLib;
+using namespace FeTestData;
 
 namespace
 {
-
-static const unsigned dim = 2;
-static const unsigned e_nnodes = 4;
-
-template <class T_MATRIX_TYPES>
-class NumLibFemIsoQuad4Test : public ::testing::Test
-{
- public:
-    // Matrix types
-    typedef typename T_MATRIX_TYPES::NodalMatrixType NodalMatrix;
-    typedef typename T_MATRIX_TYPES::NodalVectorType NodalVector;
-    typedef typename T_MATRIX_TYPES::DimNodalMatrixType DimNodalMatrix;
-    typedef typename T_MATRIX_TYPES::DimMatrixType DimMatrix;
-    // Finite element type
-    typedef typename NumLib::FeQUAD4<NodalVector, DimNodalMatrix, DimMatrix>::type FeQUAD4Type;
-    // Shape matrix data type
-    typedef typename FeQUAD4Type::ShapeMatricesType ShapeMatricesType;
-
- public:
-    NumLibFemIsoQuad4Test() :
-        D(dim, dim),
-        expectedM(e_nnodes,e_nnodes),
-        expectedK(e_nnodes,e_nnodes),
-        integration_method(2)
-    {
-        // create a quad element used for testing
-        unitSquareQuad   = createSquareQuad(1.0);
-
-        // set a conductivity tensor
-        setIdentityMatrix(dim, D);
-        D *= conductivity;
-
-        // set expected matrices
-        setExpectedMassMatrix(expectedM);
-        setExpectedLaplaceMatrix(conductivity, expectedK);
-
-        // for destructor
-        vec_eles.push_back(unitSquareQuad);
-        for (auto e : vec_eles)
-            for (unsigned i=0; i<e->getNNodes(true); i++)
-                vec_nodes.push_back(e->getNode(i));
-    }
-
-    ~NumLibFemIsoQuad4Test()
-    {
-        for (auto itr = vec_nodes.begin(); itr!=vec_nodes.end(); ++itr )
-            delete *itr;
-        for (auto itr = vec_eles.begin(); itr!=vec_eles.end(); ++itr )
-            delete *itr;
-    }
-
-    // Quad: square shape with a length of 1m
-    MeshLib::Quad* createSquareQuad(double h)
-    {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
-        nodes[1] = new MeshLib::Node(  h, 0.0, 0.0);
-        nodes[2] = new MeshLib::Node(  h,   h, 0.0);
-        nodes[3] = new MeshLib::Node(0.0,   h, 0.0);
-        return new MeshLib::Quad(nodes);
-    }
-
-    // set an identity matrix
-    template <class T_MATRIX, typename ID_TYPE=signed>
-    void setIdentityMatrix(unsigned dim, T_MATRIX &m) const
-    {
-        for (unsigned i=0; i<dim; i++)
-            for (unsigned j=0; j<dim; j++)
-                m(i,j) = 0.0;
-        for (unsigned i=0; i<dim; i++)
-            m(i,i) = 1.0;
-    }
-
-    // copy upper triangles to lower triangles in a matrix
-    template <class T_MATRIX, typename ID_TYPE=signed>
-    void copyUpperToLower(const ID_TYPE dim, T_MATRIX &m) const
-    {
-        for (ID_TYPE i=0; i<dim; i++)
-            for (ID_TYPE j=0; j<i; j++)
-                m(i,j) = m(j,i);
-    }
-
-    // set an expected mass matrix for 1m x 1m
-    template <class T_MATRIX, typename ID_TYPE=signed>
-    void setExpectedMassMatrix(T_MATRIX &m)
-    {
-        // set upper triangle entries
-        m(0,0) = 1.0; m(0,1) = 1./2; m(0,2) = 1./4; m(0,3) = 1./2;
-        m(1,1) = 1.0; m(1,2) = 1./2; m(1,3) = 1./4;
-        m(2,2) = 1.0; m(2,3) = 1./2;
-        m(3,3) = 1.0;
-        // make symmetric
-        copyUpperToLower(4, m);
-        m *= 1./9.;
-    }
-
-    // set an expected laplace matrix for 1m x 1m
-    template <class T_MATRIX, typename ID_TYPE=signed>
-    void setExpectedLaplaceMatrix(double k, T_MATRIX &m)
-    {
-        // set upper triangle entries
-        m(0,0) = 4.0; m(0,1) = -1.0; m(0,2) = -2.0; m(0,3) = -1.0;
-        m(1,1) = 4.0; m(1,2) = -1.0; m(1,3) = -2.0;
-        m(2,2) = 4.0; m(2,3) = -1.0;
-        m(3,3) = 4.0;
-        // make symmetric
-        copyUpperToLower(4, m);
-        m *= k/6.;
-    }
-
-    static const double conductivity;
-    static const double eps;
-    DimMatrix D;
-    NodalMatrix expectedM;
-    NodalMatrix expectedK;
-    typename FeQUAD4Type::IntegrationMethod integration_method;
-
-    std::vector<const MeshLib::Node*> vec_nodes;
-    std::vector<const MeshLib::Quad*> vec_eles;
-    MeshLib::Quad* unitSquareQuad;
-
-}; // NumLibFemIsoQuad4Test
-
-template <class T_MATRIX_TYPES>
-const double NumLibFemIsoQuad4Test<T_MATRIX_TYPES>::conductivity = 1e-11;
-
-template <class T_MATRIX_TYPES>
-const double NumLibFemIsoQuad4Test<T_MATRIX_TYPES>::eps = std::numeric_limits<double>::epsilon();
-
-} // namespace
-
 #ifdef OGS_USE_EIGEN
-
+template <typename T_FE>
 struct EigenFixedMatrixTypes
 {
-    typedef Eigen::Matrix<double, e_nnodes, e_nnodes, Eigen::RowMajor> NodalMatrixType;
-    typedef Eigen::Matrix<double, e_nnodes, 1> NodalVectorType;
-    typedef Eigen::Matrix<double, dim, e_nnodes, Eigen::RowMajor> DimNodalMatrixType;
-    typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrixType;
+    typedef Eigen::Matrix<double, T_FE::e_nnodes, T_FE::e_nnodes, Eigen::RowMajor> NodalMatrixType;
+    typedef Eigen::Matrix<double, T_FE::e_nnodes, 1> NodalVectorType;
+    typedef Eigen::Matrix<double, T_FE::dim, T_FE::e_nnodes, Eigen::RowMajor> DimNodalMatrixType;
+    typedef Eigen::Matrix<double, T_FE::dim, T_FE::dim, Eigen::RowMajor> DimMatrixType;
 };
 
 struct EigenDynamicMatrixTypes
@@ -178,30 +47,133 @@ struct EigenDynamicMatrixTypes
     typedef Eigen::VectorXd NodalVectorType;
 };
 
+typedef EigenDynamicMatrixTypes DefaultMatrixType;
 #endif // OGS_USE_EIGEN
 
+// test cases
+template <class T_FE_TYPE, class T_MAT_TYPES=DefaultMatrixType>
+struct TestCase
+{
+    typedef T_FE_TYPE T_FE;
+    typedef T_MAT_TYPES T_MATRIX_TYPES;
+};
+
 typedef ::testing::Types<
+        TestCase<TestFeLINE2>,
+        TestCase<TestFeQUAD4>,
+        TestCase<TestFeHEX8>
 #ifdef OGS_USE_EIGEN
-        EigenFixedMatrixTypes
-        , EigenDynamicMatrixTypes
+        ,TestCase<TestFeLINE2, EigenFixedMatrixTypes<TestFeLINE2> >
+        ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes<TestFeQUAD4> >
+        ,TestCase<TestFeHEX8, EigenFixedMatrixTypes<TestFeHEX8> >
 #endif
-        > MatrixTypes;
+        > TestTypes;
+}
 
-TYPED_TEST_CASE(NumLibFemIsoQuad4Test, MatrixTypes);
+template <class T>
+class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
+{
+ public:
+    typedef typename T::T_MATRIX_TYPES T_MATRIX_TYPES;
+    typedef typename T::T_FE T_FE;
+    // Matrix types
+    typedef T_MATRIX_TYPES MatrixType;
+    typedef typename T_MATRIX_TYPES::NodalMatrixType NodalMatrix;
+    typedef typename T_MATRIX_TYPES::NodalVectorType NodalVector;
+    typedef typename T_MATRIX_TYPES::DimNodalMatrixType DimNodalMatrix;
+    typedef typename T_MATRIX_TYPES::DimMatrixType DimMatrix;
+    // Finite element type
+    typedef typename T_FE::template FeType<T_MATRIX_TYPES>::type::type FeType;
+    // Shape matrix data type
+    typedef typename FeType::ShapeMatricesType ShapeMatricesType;
+    typedef typename T_FE::MeshElementType MeshElementType;
 
-TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassMatrix)
+    static const unsigned dim = T_FE::dim;
+    static const unsigned e_nnodes = T_FE::e_nnodes;
+    static const unsigned n_sample_pt_order2 = T_FE::n_sample_pt_order2;
+    static const unsigned n_sample_pt_order3 = T_FE::n_sample_pt_order3;
+
+ public:
+    NumLibFemIsoTest() :
+        D(dim, dim),
+        expectedM(e_nnodes,e_nnodes),
+        expectedK(e_nnodes,e_nnodes),
+        integration_method(2)
+    {
+        // create a mesh element used for testing
+        mesh_element = this->createMeshElement();
+
+        // set a conductivity tensor
+        setIdentityMatrix(dim, D);
+        D *= conductivity;
+
+        // set expected matrices
+        this->setExpectedMassMatrix(expectedM);
+        this->setExpectedLaplaceMatrix(conductivity, expectedK);
+
+        // for destructor
+        vec_eles.push_back(mesh_element);
+        for (auto e : vec_eles)
+            for (unsigned i=0; i<e->getNNodes(true); i++)
+                vec_nodes.push_back(e->getNode(i));
+    }
+
+    virtual ~NumLibFemIsoTest()
+    {
+        for (auto itr = vec_nodes.begin(); itr!=vec_nodes.end(); ++itr )
+            delete *itr;
+        for (auto itr = vec_eles.begin(); itr!=vec_eles.end(); ++itr )
+            delete *itr;
+    }
+
+
+    static const double conductivity;
+    static const double eps;
+    DimMatrix D;
+    NodalMatrix expectedM;
+    NodalMatrix expectedK;
+    typename FeType::IntegrationMethod integration_method;
+
+    std::vector<const MeshLib::Node*> vec_nodes;
+    std::vector<const MeshElementType*> vec_eles;
+    MeshElementType* mesh_element;
+
+}; // NumLibFemIsoTest
+
+template <class T>
+const double NumLibFemIsoTest<T>::conductivity = 1e-11;
+
+template <class T>
+const double NumLibFemIsoTest<T>::eps = std::numeric_limits<double>::epsilon();
+
+template <class T>
+const unsigned NumLibFemIsoTest<T>::dim;
+
+template <class T>
+const unsigned NumLibFemIsoTest<T>::e_nnodes;
+
+template <class T>
+const unsigned NumLibFemIsoTest<T>::n_sample_pt_order2;
+
+template <class T>
+const unsigned NumLibFemIsoTest<T>::n_sample_pt_order3;
+
+TYPED_TEST_CASE(NumLibFemIsoTest, TestTypes);
+
+TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
+    typedef typename TestFixture::FeType FeType;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
 
     // create a finite element object
-    FeQUAD4Type fe(*this->unitSquareQuad);
+    FeType fe(*this->mesh_element);
 
     // evaluate a mass matrix M = int{ N^T D N }dA_e
-    NodalMatrix M(e_nnodes, e_nnodes);
-    ShapeMatricesType shape(dim, e_nnodes);
+    NodalMatrix M(this->e_nnodes, this->e_nnodes);
+    M.setZero();
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -212,19 +184,20 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassMatrix)
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 }
 
-TYPED_TEST(NumLibFemIsoQuad4Test, CheckLaplaceMatrix)
+TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
+    typedef typename TestFixture::FeType FeType;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
 
     // create a finite element object
-    FeQUAD4Type fe(*this->unitSquareQuad);
+    FeType fe(*this->mesh_element);
 
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
-    NodalMatrix K(e_nnodes, e_nnodes);
-    ShapeMatricesType shape(dim, e_nnodes);
+    NodalMatrix K(this->e_nnodes, this->e_nnodes);
+    K.setZero();
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -234,20 +207,22 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckLaplaceMatrix)
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }
 
-TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassLaplaceMatrices)
+TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
+    typedef typename TestFixture::FeType FeType;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
 
     // create a finite element object
-    FeQUAD4Type fe(*this->unitSquareQuad);
+    FeType fe(*this->mesh_element);
 
     // evaluate both mass and laplace matrices at once
-    NodalMatrix M(e_nnodes, e_nnodes);
-    NodalMatrix K(e_nnodes, e_nnodes);
-    ShapeMatricesType shape(dim, e_nnodes);
+    NodalMatrix M(this->e_nnodes, this->e_nnodes);
+    M.setZero();
+    NodalMatrix K(this->e_nnodes, this->e_nnodes);
+    K.setZero();
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -259,20 +234,21 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckMassLaplaceMatrices)
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }
 
-TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
+TYPED_TEST(NumLibFemIsoTest, CheckGaussIntegrationLevel)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeQUAD4Type FeQUAD4Type;
+    typedef typename TestFixture::FeType FeType;
     typedef typename TestFixture::NodalMatrix NodalMatrix;
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
 
     // create a finite element object with gauss quadrature level 2
-    FeQUAD4Type fe(*this->unitSquareQuad);
+    FeType fe(*this->mesh_element);
 
     // evaluate a mass matrix
-    NodalMatrix M(e_nnodes, e_nnodes);
-    ShapeMatricesType shape(dim, e_nnodes);
-    ASSERT_EQ(4u, this->integration_method.getNPoints());
+    NodalMatrix M(this->e_nnodes, this->e_nnodes);
+    M.setZero();
+    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ASSERT_EQ(TestFixture::n_sample_pt_order2, this->integration_method.getNPoints());
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -284,7 +260,7 @@ TYPED_TEST(NumLibFemIsoQuad4Test, CheckGaussIntegrationLevel)
     // Change gauss quadrature level to 3
     this->integration_method.setIntegrationOrder(3);
     M *= .0;
-    ASSERT_EQ(9u, this->integration_method.getNPoints());
+    ASSERT_EQ(TestFixture::n_sample_pt_order3, this->integration_method.getNPoints());
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
