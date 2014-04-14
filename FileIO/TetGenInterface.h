@@ -84,7 +84,7 @@ private:
 	 */
 	bool parseFacets(std::ifstream &input,
 	                 std::vector<GeoLib::Surface*> &surfaces,
-	                 std::vector<GeoLib::Point*> &points);
+	                 std::vector<GeoLib::Point*> &points) const;
 
 	/**
 	 * Method reads the nodes from stream and stores them in a node vector.

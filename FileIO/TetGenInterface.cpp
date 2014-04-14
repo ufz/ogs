@@ -112,7 +112,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input) const
 
 bool TetGenInterface::parseFacets(std::ifstream &input,
                                   std::vector<GeoLib::Surface*> &surfaces,
-                                  std::vector<GeoLib::Point*> &points)
+                                  std::vector<GeoLib::Point*> &points) const
 {
 	const std::size_t nFacets (this->getNFacets(input));
 	std::size_t nMultPolys (0);
@@ -361,7 +361,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 
 bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
                                              std::vector<MeshLib::Element*> &elements,
-                                             const std::vector<MeshLib::Node*> &nodes)
+                                             const std::vector<MeshLib::Node*> &nodes) const
 {
 	std::string line;
 	getline (ins, line);
