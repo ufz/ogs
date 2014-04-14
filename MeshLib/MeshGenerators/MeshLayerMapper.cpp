@@ -75,7 +75,6 @@ MeshLib::Mesh* MeshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const st
 		}
 
 		// starting with 2nd layer create prism or hex elements connecting the last layer with the current one
-		const unsigned elem_offset (nElems * (layer_id-1));
 		if (layer_id > 0)
 		{
 			node_offset -= nNodes;
@@ -150,7 +149,6 @@ int MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &ra
 		if (!isNodeOnRaster(*nodes[i], xDim, yDim))
 		{
 			// use either default value or elevation from layer above
-			const double new_elevation = (layer_id == 0) ? noDataReplacementValue : (*nodes[i-nNodesPerLayer])[2];
 			nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
 			continue;
 		}
@@ -191,7 +189,6 @@ int MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &ra
 		{
 			if (no_data_count == 4) // if there is absolutely no data just use the default value
 			{
-				const double new_elevation = (layer_id == 0) ? noDataReplacementValue : (*nodes[i-nNodesPerLayer])[2];
 				nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
 				continue;
 			}
