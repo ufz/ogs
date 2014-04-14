@@ -109,19 +109,19 @@ MeshLib::Mesh* MeshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const st
 	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elems);
 }
 
-int MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
-                                 const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
+bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
+                                   const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
 {
 	if (nLayers < layer_id)
 	{
 		ERR("MshLayerMapper::LayerMapping() - Mesh has only %d Layers, cannot assign layer %d.", nLayers, layer_id);
-		return 0;
+		return false;
 	}
 
 	const GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
 	if (! raster) {
 		ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
-		return 0;
+		return false;
 	}
 	const double x0(raster->getOrigin()[0]);
 	const double y0(raster->getOrigin()[1]);
@@ -202,7 +202,7 @@ int MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &ra
 	}
 
 	delete raster;
-	return 1;
+	return true;
 }
 
 bool MeshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,

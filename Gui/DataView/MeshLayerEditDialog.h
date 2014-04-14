@@ -44,6 +44,10 @@ public:
 	~MeshLayerEditDialog(void);
 
 private:
+	void createMeshToolSelection();
+	MeshLib::Mesh* createPrismMesh();
+	MeshLib::Mesh* createTetMesh();
+
 	const MeshLib::Mesh* _msh;
 	unsigned _n_layers;
 	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
@@ -55,6 +59,7 @@ private:
 	QPushButton* _nextButton;
 	QGroupBox* _layerBox;
 	QGroupBox* _radioButtonBox;
+	QRadioButton* _ogsMeshButton;
 	QGridLayout* _layerSelectionLayout;
 	bool _use_rasters;
 
