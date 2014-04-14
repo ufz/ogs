@@ -68,10 +68,10 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 }
 
 Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-                              const double   cell_size,
+                              const unsigned n_y_cells,
+                              const double cell_size,
                               GeoLib::Point const& origin,
-							  std::string   const& mesh_name)
+                              std::string const& mesh_name)
 {
 	//nodes
 	const unsigned n_x_nodes (n_x_cells+1);
