@@ -72,15 +72,6 @@ public:
 	                     const std::string &geo_name) const;
 
 private:
-	/**
-	 * Method reads the facets from stream and stores them in a GeoLib::Surface vector.
-	 * For this purpose it uses methods parseFacetsHeader() and parseFacets().
-	 * @param input  the input stream
-	 * @return true, if all information is read, false if the method detects an error
-	 */
-	bool readFacetsFromStream(std::ifstream &input,
-	                          std::vector<GeoLib::Point*> &points);
-
 	/// Returns the declared number of facets in the poly file.
 	std::size_t getNFacets(std::ifstream &input) const;
 
