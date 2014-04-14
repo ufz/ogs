@@ -60,6 +60,15 @@ void trim(std::string &str, char ch)
 		str.erase(str.begin(), str.end());
 }
 
+void simplify(std::string &str)
+{
+	trim (str);
+	str.erase(
+	    std::unique(str.begin(), str.end(), [](char a, char b) { return a == ' ' && b == ' '; }), 
+		str.end() 
+	);  
+}
+
 std::string stringToUpper(std::string const& str)
 {
     std::string s = str;
