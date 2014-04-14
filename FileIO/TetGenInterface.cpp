@@ -55,7 +55,7 @@ bool TetGenInterface::readTetGenPoly (std::string const& poly_fname,
 	}
 
 	std::vector<MeshLib::Node*> nodes;
-	if (!readNodesFromStream (poly_stream, nodes)) 
+	if (!readNodesFromStream (poly_stream, nodes))
 	{
 		// remove nodes read until now
 		for (std::size_t k(0); k<nodes.size(); ++k)
@@ -65,7 +65,7 @@ bool TetGenInterface::readTetGenPoly (std::string const& poly_fname,
 	const std::size_t nNodes (nodes.size());
 	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>;
 	points->reserve(nNodes);
-	for (std::size_t k(0); k<nNodes; ++k) 
+	for (std::size_t k(0); k<nNodes; ++k)
 	{
 		points->push_back(new GeoLib::Point(nodes[k]->getCoords()));
 		delete nodes[k];
@@ -110,7 +110,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input) const
 	return false;
 }
 
-bool TetGenInterface::parseFacets(std::ifstream &input, 
+bool TetGenInterface::parseFacets(std::ifstream &input,
                                   std::vector<GeoLib::Surface*> &surfaces,
                                   std::vector<GeoLib::Point*> &points)
 {
@@ -229,7 +229,7 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
 	return new MeshLib::Mesh(mesh_name, nodes, elements);
 }
 
-bool TetGenInterface::readNodesFromStream (std::ifstream &ins, 
+bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
                                            std::vector<MeshLib::Node*> &nodes)
 {
 	std::string line;
@@ -259,10 +259,10 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
 	return false;	
 }
 
-bool TetGenInterface::parseNodesFileHeader(std::string &line, 
-                                           std::size_t &n_nodes, 
+bool TetGenInterface::parseNodesFileHeader(std::string &line,
+                                           std::size_t &n_nodes,
                                            std::size_t &dim,
-                                           std::size_t &n_attributes, 
+                                           std::size_t &n_attributes,
                                            bool &boundary_markers) const
 {
 	std::size_t pos_beg, pos_end;
@@ -298,9 +298,9 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 	return true;
 }
 
-bool TetGenInterface::parseNodes(std::ifstream &ins, 
-                                 std::vector<MeshLib::Node*> &nodes, 
-                                 std::size_t n_nodes, 
+bool TetGenInterface::parseNodes(std::ifstream &ins,
+                                 std::vector<MeshLib::Node*> &nodes,
+                                 std::size_t n_nodes,
                                  std::size_t dim)
 {
 	std::size_t pos_beg, pos_end, id;
@@ -308,10 +308,10 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 	double* coordinates (static_cast<double*> (alloca (sizeof(double) * dim)));
 	nodes.reserve(n_nodes);
 
-	for (std::size_t k(0); k < n_nodes && !ins.fail(); k++) 
+	for (std::size_t k(0); k < n_nodes && !ins.fail(); k++)
 	{
 		getline(ins, line);
-		if (ins.fail()) 
+		if (ins.fail())
 		{
 			ERR("TetGenInterface::parseNodes(): Error reading node %d.", k);
 			return false;
@@ -356,8 +356,8 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 	return true;
 }
 
-bool TetGenInterface::readElementsFromStream(std::ifstream &ins, 
-                                             std::vector<MeshLib::Element*> &elements, 
+bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
+                                             std::vector<MeshLib::Element*> &elements,
                                              const std::vector<MeshLib::Node*> &nodes)
 {
 	std::string line;
@@ -421,10 +421,10 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
 	return true;
 }
 
-bool TetGenInterface::parseElements(std::ifstream& ins, 
-                                    std::vector<MeshLib::Element*> &elements, 
-                                    const std::vector<MeshLib::Node*> &nodes, 
-                                    std::size_t n_tets, 
+bool TetGenInterface::parseElements(std::ifstream& ins,
+                                    std::vector<MeshLib::Element*> &elements,
+                                    const std::vector<MeshLib::Node*> &nodes,
+                                    std::size_t n_tets,
                                     std::size_t n_nodes_per_tet,
                                     bool region_attribute)
 {
@@ -452,7 +452,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 			k--;
 			continue;
 		}
-				
+
 		if (pos_beg != std::string::npos && pos_end != std::string::npos)
 			id = BaseLib::str2number<size_t>(line.substr(pos_beg, pos_end - pos_beg));
 		else {
@@ -498,8 +498,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 	return true;
 }
 
-bool TetGenInterface::writeTetGenPoly(const std::string &file_name, 
-                                      const GeoLib::GEOObjects &geo_objects, 
+bool TetGenInterface::writeTetGenPoly(const std::string &file_name,
+                                      const GeoLib::GEOObjects &geo_objects,
                                       const std::string &geo_name) const
 {
 	std::vector<GeoLib::Point*> const*const points = geo_objects.getPointVec(geo_name);
@@ -533,7 +533,7 @@ bool TetGenInterface::writeTetGenPoly(const std::string &file_name,
 		for (std::size_t j=0; j<nTriangles; ++j)
 		{
 			const GeoLib::Triangle &tri = *(*(*surfaces)[i])[j];
-			out << "3  " << tri[0] << " " << tri[1] << " " << tri[2] << "\n";			
+			out << "3  " << tri[0] << " " << tri[1] << " " << tri[2] << "\n";
 		}
 	}
 	out << "0\n"; // the polygon holes list
