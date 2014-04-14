@@ -84,7 +84,7 @@ public:
 		else if (t==ImportFileType::SHAPE)
 			return "ESRI Shape files (*.shp)";
 		else if (t==ImportFileType::TETGEN)
-			return "TetGen node files (*.node *.poly)";
+			return "TetGen node files (*.node *.poly *.smesh)";
 		else if (t==ImportFileType::VTK)
 			return "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu)";
 		else return "All files (*.*)";
