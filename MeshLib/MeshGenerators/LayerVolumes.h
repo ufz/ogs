@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "Point.h"
+#include "Node.h"
 
 namespace GeoLib {
 	class GEOObjects;
@@ -27,7 +27,6 @@ namespace GeoLib {
 
 namespace MeshLib {
 	class Mesh;
-	class Node;
 	class Element;
 }
 
@@ -46,6 +45,8 @@ public:
 
 	bool addGeometry(GeoLib::GEOObjects &geo_objects) const;
 
+	std::vector<MeshLib::Node> getAttributePoints() { return _attribute_points; }
+
 private:
 	void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id);
 
@@ -60,6 +61,7 @@ private:
 	const double _invalid_value;
 	std::vector<MeshLib::Node*> _nodes;
 	std::vector<MeshLib::Element*> _elements;
+	std::vector<MeshLib::Node> _attribute_points;
 	MeshLib::Mesh* _mesh;
 };
 

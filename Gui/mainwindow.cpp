@@ -687,10 +687,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::TETGEN)
 	{
-		if (fi.suffix().toLower().compare("poly") == 0)
+		if (fi.suffix().toLower().compare("poly") == 0 || fi.suffix().toLower().compare("smesh") == 0)
 		{
 			FileIO::TetGenInterface tetgen;
-			tetgen.readTetGenPoly(fileName.toStdString(), *(_project.getGEOObjects()));
+			tetgen.readTetGenGeometry(fileName.toStdString(), *(_project.getGEOObjects()));
 		}
 		else {
 			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
