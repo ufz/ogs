@@ -23,10 +23,3 @@ ADD_CUSTOM_TARGET(
 	-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/MoveDataToStore.cmake
 	VERBATIM
 )
-
-ExternalData_Add_Test(
-	data # data target specified above
-	NAME External-Data-Test
-	COMMAND ls -ll ${ExternalData_SOURCE_ROOT}/Elliptic/2d-quads-x1000-y1000/
-	DATA{${ExternalData_SOURCE_ROOT}/Elliptic/2d-quads-x1000-y1000/,REGEX:.*}
-)
