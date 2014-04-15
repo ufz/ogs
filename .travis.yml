@@ -26,8 +26,9 @@ before_install:
   - travis_retry sudo apt-get install libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
 
   # CMake
-  - travis_retry wget https://launchpad.net/ubuntu/+source/cmake/2.8.8-2ubuntu1/+build/3441442/+files/cmake_2.8.8-2ubuntu1_amd64.deb; travis_retry wget https://launchpad.net/ubuntu/+archive/primary/+files/cmake-data_2.8.8-2ubuntu1_all.deb
-  - sudo apt-get remove cmake-data cmake; sudo dpkg --install cmake-data_2.8.8-2ubuntu1_all.deb cmake_2.8.8-2ubuntu1_amd64.deb
+  - sudo apt-get remove cmake-data cmake
+  - travis_retry wget http://www.opengeosys.org/images/dev/cmake-2.8.12.2-Linux-x86_64.deb
+  - sudo sudo dpkg --install cmake-2.8.12.2-Linux-x86_64.deb
 
   # Qt and VTK
   - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
