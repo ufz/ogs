@@ -15,3 +15,22 @@ CONFIGURE_FILE(
 	${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.cmake.in
 	${CMAKE_BINARY_DIR}/CTestCustom.cmake
 )
+
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/Data.cmake)
+
+IF(CMAKE_CONFIGURATION_TYPES)
+	ADD_CUSTOM_TARGET(
+		ctest
+		COMMAND ${CMAKE_CTEST_COMMAND}
+		--force-new-ctest-process --output-on-failure
+		--build-config "$<CONFIGURATION>"
+		DEPENDS data
+	)
+ELSE()
+	ADD_CUSTOM_TARGET(
+		ctest
+		COMMAND ${CMAKE_CTEST_COMMAND}
+		--force-new-ctest-process --output-on-failure
+		DEPENDS data
+	)
+ENDIF()
