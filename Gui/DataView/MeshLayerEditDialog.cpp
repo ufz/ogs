@@ -22,6 +22,8 @@
 #include "StringTools.h"
 #include "Mesh.h"
 
+#include "TetGenInterface.h"
+
 #include <QCheckBox>
 #include <QFileInfo>
 #include <QFileDialog>
@@ -218,7 +220,24 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		raster_paths[i] = this->_edits[i+1]->text().toStdString();
 	LayerVolumes lv;
 	lv.createGeoVolumes(*_msh, raster_paths);
-	return lv.getMesh();
+
+	MeshLib::Mesh* tg_mesh (lv.getMesh());
+
+	QString file_path("");
+	if (tg_mesh)
+	{
+		QSettings settings;
+		QString filename = QFileDialog::getOpenFileName(this, "Write TetGen input file to",
+		                                                settings.value("lastOpenedTetgenFileDirectory").toString(),
+	                                                    "TetGen Geometry (*.smesh)");
+		if (!filename.isEmpty())
+		{
+			std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());
+			FileIO::TetGenInterface tetgen_interface;
+			tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
+		}
+	}
+	return tg_mesh;
 }
 
 void MeshLayerEditDialog::accept()
