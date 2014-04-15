@@ -69,10 +69,12 @@ public:
 	 */
 	bool writeTetGenSmesh(const std::string &file_name,
 	                      const GeoLib::GEOObjects &geo_objects,
-	                      const std::string &geo_name) const;
+	                      const std::string &geo_name,
+	                      const std::vector<GeoLib::PointWithID> &attribute_points) const;
 
 	bool writeTetGenSmesh(const std::string &file_name,
-	                      const MeshLib::Mesh &mesh) const;
+	                      const MeshLib::Mesh &mesh,
+	                      const std::vector<MeshLib::Node> &attribute_points) const;
 
 private:
 	/// Returns the declared number of facets in the poly file.
