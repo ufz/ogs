@@ -22,10 +22,10 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-const unsigned TemplateTet<NNODES, CELLTETTYPE>::n_all_nodes = NNODES;
+const unsigned TemplateTet<NNODES, CELLTETTYPE>::n_all_nodes;
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-const unsigned TemplateTet<NNODES, CELLTETTYPE>::n_base_nodes = 4;
+const unsigned TemplateTet<NNODES, CELLTETTYPE>::n_base_nodes;
 
 template <unsigned NNODES, CellType CELLTETTYPE>
 const unsigned TemplateTet<NNODES,CELLTETTYPE>::_face_nodes[4][3] =

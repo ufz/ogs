@@ -64,13 +64,13 @@ ElementErrorCode TemplateLine<NNODES,CELLLINETYPE>::validate() const
 }
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-const unsigned TemplateLine<NNODES, CELLLINETYPE>::dimension = 1u;
+const unsigned TemplateLine<NNODES, CELLLINETYPE>::dimension;
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-const unsigned TemplateLine<NNODES, CELLLINETYPE>::n_all_nodes = NNODES;
+const unsigned TemplateLine<NNODES, CELLLINETYPE>::n_all_nodes;
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-const unsigned TemplateLine<NNODES, CELLLINETYPE>::n_base_nodes = 2u;
+const unsigned TemplateLine<NNODES, CELLLINETYPE>::n_base_nodes;
 
 } // namespace MeshLib
 

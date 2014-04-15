@@ -25,10 +25,10 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
-const unsigned TemplatePrism<NNODES, CELLPRISMTYPE>::n_all_nodes = NNODES;
+const unsigned TemplatePrism<NNODES, CELLPRISMTYPE>::n_all_nodes;
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
-const unsigned TemplatePrism<NNODES, CELLPRISMTYPE>::n_base_nodes = 6;
+const unsigned TemplatePrism<NNODES, CELLPRISMTYPE>::n_base_nodes;
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
 const unsigned TemplatePrism<NNODES,CELLPRISMTYPE>::_face_nodes[5][4] =
