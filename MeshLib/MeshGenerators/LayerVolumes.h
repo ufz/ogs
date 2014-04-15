@@ -57,7 +57,7 @@ private:
 
 	void cleanUpOnError();
 
-	const int _invalid_value;
+	const double _invalid_value;
 	std::vector<MeshLib::Node*> _nodes;
 	std::vector<MeshLib::Element*> _elements;
 	MeshLib::Mesh* _mesh;

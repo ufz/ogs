@@ -28,6 +28,8 @@
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 #include "MeshGenerators/MeshLayerMapper.h"
+#include "MeshQuality/MeshValidation.h"
+#include "MeshEditing/ElementExtraction.h"
 
 LayerVolumes::LayerVolumes()
 : _invalid_value(-9999), _mesh(nullptr)
@@ -36,30 +38,35 @@ LayerVolumes::LayerVolumes()
 
 bool LayerVolumes::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<std::string> &raster_paths, double noDataReplacementValue)
 {
-	if (!allRastersExist(raster_paths))
+	if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
 		return false;
 
-	// DEM
-	MeshLib::Mesh mesh_layer (mesh);
-	if (!MeshLayerMapper::LayerMapping(mesh_layer, raster_paths[0], 0, 0, noDataReplacementValue))
-		return false;
-	this->addLayerToMesh(mesh_layer, 0);
-
-	// subsurface layers
+	// remove line elements, only tri + quad remain
+	MeshLib::ElementExtraction ex(mesh);
+	ex.searchByElementType(MeshElemType::LINE);
+	MeshLib::Mesh* mesh_layer (ex.removeMeshElements("MeshLayer"));
+	if (mesh_layer==nullptr)
+		mesh_layer = new MeshLib::Mesh(mesh);
+	
+	// map each layer and attach to subsurface mesh
 	const std::size_t nRasters (raster_paths.size());
-	for (size_t i=1; i<nRasters; ++i)
+	for (size_t i=0; i<nRasters; ++i)
 	{
-		if (!MeshLayerMapper::LayerMapping(mesh_layer, raster_paths[i], 0, 0, _invalid_value))
+		const double replacement_value = (i==0) ? noDataReplacementValue : _invalid_value;
+		if (!MeshLayerMapper::LayerMapping(*mesh_layer, raster_paths[i], 0, 0, _invalid_value))
 		{
 			this->cleanUpOnError();
 			return false;
 		}
-		this->addLayerToMesh(mesh_layer, i);
+		this->addLayerToMesh(*mesh_layer, i);
 	}
-	this->addLayerBoundaries(mesh_layer, nRasters);
+	// close boundaries between layers
+	this->addLayerBoundaries(*mesh_layer, nRasters);
+	delete mesh_layer;
+
 	this->removeCongruentElements(nRasters, mesh.getNElements());
 	_mesh = new MeshLib::Mesh("BoundaryMesh", _nodes, _elements);
-
+	MeshLib::MeshValidation::removeUnusedMeshNodes(*_mesh);
 	return true;
 }
 
@@ -74,10 +81,10 @@ void LayerVolumes::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned laye
 	{
 		if (layer_id > 0 &&
 		   ((*layer_nodes[i])[2] == _invalid_value || 
-		    (*layer_nodes[i])[2] > (*_nodes[last_layer_offset+i])[2]))
+		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < std::numeric_limits<double>::epsilon()))
 			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
 		else 
-			_nodes.push_back(new MeshLib::Node(*layer_nodes[i]));
+			_nodes.push_back(new MeshLib::Node(layer_nodes[i]->getCoords(), _nodes.size()));
 	}
 
 	const std::vector<MeshLib::Element*> &layer_elements (mesh_layer.getElements());
@@ -85,7 +92,6 @@ void LayerVolumes::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned laye
 	{
 		if (elem->getGeomType() == MeshElemType::TRIANGLE)
 		{
-			
 			std::array<MeshLib::Node*,3> tri_nodes = { _nodes[node_id_offset+elem->getNode(0)->getID()],
 			                                           _nodes[node_id_offset+elem->getNode(1)->getID()],
 			                                           _nodes[node_id_offset+elem->getNode(2)->getID()] };
@@ -109,14 +115,15 @@ void LayerVolumes::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nL
 	const std::vector<MeshLib::Element*> &layer_elements (layer.getElements());
 	for (MeshLib::Element* elem : layer_elements)
 	{
-		for (unsigned i=0; i<3; ++i)
+		const std::size_t nElemNodes (elem->getNNodes());
+		for (unsigned i=0; i<nElemNodes; ++i)
 			if (elem->getNeighbor(i) == nullptr)
 				for (unsigned j=0; j<nLayerBoundaries; ++j)
 				{
 					const std::size_t offset (j*nNodes);
 					MeshLib::Node* n0 = _nodes[offset + elem->getNode(i)->getID()];
-					MeshLib::Node* n1 = _nodes[offset + elem->getNode((i+1)%3)->getID()];
-					MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNode((i+1)%3)->getID()];
+					MeshLib::Node* n1 = _nodes[offset + elem->getNode((i+1)%nElemNodes)->getID()];
+					MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNode((i+1)%nElemNodes)->getID()];
 					MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNode(i)->getID()];
 					
 					if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon() &&
@@ -131,7 +138,6 @@ void LayerVolumes::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nL
 
 void LayerVolumes::removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer)
 {
-	const double eps (std::numeric_limits<double>::epsilon());
 	for (std::size_t i=1; i<nLayers; ++i)
 	{
 		const std::size_t upper_offset ((i-1) * nElementsPerLayer);
@@ -139,10 +145,18 @@ void LayerVolumes::removeCongruentElements(std::size_t nLayers, std::size_t nEle
 		for (std::size_t j=0; j<nElementsPerLayer; ++j)
 		{
 			MeshLib::Element const*const high (_elements[upper_offset+j]);
-			MeshLib::Element const*const low  (_elements[lower_offset+j]);
-			if (MathLib::Vector3(*high->getNode(0), *low->getNode(0)).getLength() < eps &&
-				MathLib::Vector3(*high->getNode(1), *low->getNode(1)).getLength() < eps &&
-				MathLib::Vector3(*high->getNode(2), *low->getNode(2)).getLength() < eps)
+			MeshLib::Element *low  (_elements[lower_offset+j]);
+
+			unsigned count(0);
+			const std::size_t nElemNodes (low->getNNodes());
+			for (std::size_t k=0; k<nElemNodes; ++k)
+				if (high->getNode(k)->getID() == low->getNode(k)->getID())
+				{
+					low->setNode(k, _nodes[high->getNodeIndex(k)]);
+					count++;
+				}
+
+			if (count == nElemNodes)
 			{
 				delete _elements[upper_offset+j];
 				_elements[upper_offset+j] = nullptr;
@@ -157,7 +171,7 @@ bool LayerVolumes::addGeometry(GeoLib::GEOObjects &geo_objects) const
 {
 	if (_mesh == nullptr)
 		return false;
-	MeshLib::convertMeshToGeo(*_mesh, geo_objects);
+	MeshLib::convertMeshToGeo(*_mesh, geo_objects, std::numeric_limits<double>::min());
 	return true;
 }
 
