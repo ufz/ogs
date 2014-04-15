@@ -28,7 +28,7 @@
 
 namespace MeshLib {
 
-bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects)
+bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects, double eps)
 {
 	if (mesh.getDimension() != 2)
 	{
@@ -45,7 +45,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 		(*points)[i] = new GeoLib::Point(static_cast<GeoLib::Point>(*nodes[i]));
 
 	std::string mesh_name (mesh.getName());
-	geo_objects.addPointVec(points, mesh_name);
+	geo_objects.addPointVec(points, mesh_name, nullptr, eps);
 	const std::vector<std::size_t> id_map (geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
 	// elements to surface triangles conversion

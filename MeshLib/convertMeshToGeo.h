@@ -15,6 +15,8 @@
 #ifndef CONVERTMESHTOGEO_H_
 #define CONVERTMESHTOGEO_H_
 
+#include <limits>
+
 namespace GeoLib
 {
 class GEOObjects;
@@ -32,7 +34,7 @@ namespace MeshLib
 	 * converted to geometric triangles, quads are split into two triangles, all other elements
 	 * are ignored.
 	 */
-	bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects);
+	bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects, double eps = std::numeric_limits<double>::epsilon());
 
 } // namespace
 
