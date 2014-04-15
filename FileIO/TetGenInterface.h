@@ -71,6 +71,9 @@ public:
 	                      const GeoLib::GEOObjects &geo_objects,
 	                      const std::string &geo_name) const;
 
+	bool writeTetGenSmesh(const std::string &file_name,
+	                      const MeshLib::Mesh &mesh) const;
+
 private:
 	/// Returns the declared number of facets in the poly file.
 	std::size_t getNFacets(std::ifstream &input);

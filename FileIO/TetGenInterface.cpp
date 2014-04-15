@@ -34,6 +34,7 @@
 #include "Node.h"
 #include "Elements/Element.h"
 #include "Elements/Tet.h"
+#include "MeshInformation.h"
 
 namespace FileIO
 {
@@ -618,6 +619,46 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	out << "0\n"; // the polygon holes list
 	out << "0\n"; // the region attribues list
 	INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, nSurfaces);
+	out.close();
+	return true;
+}
+
+bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
+                                       const MeshLib::Mesh &mesh) const
+{
+	if (mesh.getDimension() != 2)
+		return false;
+
+	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
+	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
+
+	std::ofstream out( file_name.c_str(), std::ios::out );
+	// the points header
+	const std::size_t nPoints (nodes.size());
+	out << nPoints << " 3\n";
+	// the point list
+	for (std::size_t i=0; i<nPoints; ++i)
+		out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << "\n";
+	
+	// the surfaces header
+	const std::array<unsigned,7> types = MeshInformation::getNumberOfElementTypes(mesh);
+	const unsigned nTotalTriangles (types[1] + (2*types[2]));
+	out << nTotalTriangles << " 1\n";
+
+	const std::size_t nElements (elements.size());
+	for (std::size_t i=0; i<nElements; ++i)
+	{
+		if (elements[i]->getGeomType() == MeshElemType::TRIANGLE)
+			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << "\n";
+		else if (elements[i]->getGeomType() == MeshElemType::QUAD)
+		{
+			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << "\n";
+			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getNodeIndex(3) << " " << elements[i]->getValue() << "\n";
+		}
+	}
+	out << "0\n"; // the polygon holes list
+	out << "0\n"; // the region attribues list
+	INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, nElements);
 	out.close();
 	return true;
 }
