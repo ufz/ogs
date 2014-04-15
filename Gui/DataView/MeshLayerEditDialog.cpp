@@ -227,7 +227,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 	if (tg_mesh)
 	{
 		QSettings settings;
-		QString filename = QFileDialog::getOpenFileName(this, "Write TetGen input file to",
+		QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
 		                                                settings.value("lastOpenedTetgenFileDirectory").toString(),
 	                                                    "TetGen Geometry (*.smesh)");
 		if (!filename.isEmpty())

@@ -62,9 +62,10 @@ public:
 
 	/**
 	 * Writes the geometry of a given name to TetGen smesh-file.
-	 * @param file_name    file name of the new smesh file
-	 * @param geo_objects  the container for the geometry.
-	 * @param geo_name     the name for the geometry.
+	 * @param file_name         file name of the new smesh file.
+	 * @param geo_objects       the container for the geometry.
+	 * @param geo_name          the name for the geometry containing the subsurface boundary representation used for meshing.
+	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
 	 * @return returns true on success and false otherwise.
 	 */
 	bool writeTetGenSmesh(const std::string &file_name,
@@ -72,6 +73,13 @@ public:
 	                      const std::string &geo_name,
 	                      const std::vector<GeoLib::PointWithID> &attribute_points) const;
 
+	/**
+	 * Writes the geometry of a given name to TetGen smesh-file.
+	 * @param file_name         file name of the new smesh file.
+	 * @param mesh              mesh containing the subsurface boundary representation used for meshing.
+	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
+	 * @return returns true on success and false otherwise.
+	 */
 	bool writeTetGenSmesh(const std::string &file_name,
 	                      const MeshLib::Mesh &mesh,
 	                      const std::vector<MeshLib::Node> &attribute_points) const;
