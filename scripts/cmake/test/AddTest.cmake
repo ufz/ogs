@@ -22,7 +22,8 @@ FUNCTION (AddTest executable case_path case_name wrapper)
 
 	## -----------
 
-	ADD_TEST(NAME "${executable}-${case_path}-${wrapper}"
+	ExternalData_Add_Test(data
+		NAME "${executable}-${case_path}-${wrapper}"
 		COMMAND ${CMAKE_COMMAND}
 		-Dexecutable=$<TARGET_FILE:${executable}>
 		-Dcase_path=${case_path}
@@ -31,6 +32,7 @@ FUNCTION (AddTest executable case_path case_name wrapper)
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
 		-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
+		DATA{${case_path}/${case_name}.cnd, ${case_path}/${case_name}.gml, ${case_path}/${case_name}.vtu}
 	)
 
 	IF(NOT tester)

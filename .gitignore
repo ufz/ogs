@@ -2,3 +2,4 @@
 build*/
 *.sw[op]
 tags
+.ExternalData_*
