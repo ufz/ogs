@@ -162,6 +162,8 @@ IF( OGS_BUILD_TESTS AND NOT IS_SUBPROJECT )
 	# Create a target 'data', which downloads all referenced data sets into the build tree
 	# This has to be defined after all tests are defined
 	ExternalData_Add_Target(data)
+	SET_TARGET_PROPERTIES(data PROPERTIES EXCLUDE_FROM_ALL 1)
+	ADD_DEPENDENCIES(ctest data)
 ENDIF() # OGS_BUILD_TESTS
 IF(OGS_BUILD_UTILS AND NOT IS_SUBPROJECT)
 	ADD_SUBDIRECTORY( Utils/SimpleMeshCreation )
