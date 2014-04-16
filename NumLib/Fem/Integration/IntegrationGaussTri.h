@@ -36,7 +36,7 @@ namespace NumLib
  */
 class IntegrationGaussTri
 {
-    typedef typename MathLib::TemplateWeightedPoint<double, double, 2>
+    typedef MathLib::TemplateWeightedPoint<double, double, 2>
         WeightedPoint;
 public:
     /**
