@@ -47,7 +47,7 @@ public:
 	 * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0]) 
 	 * @result true if the subsurface representation has been created, false if there was an error
 	 */
-	bool createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*const> &rasters, double noDataReplacementValue = 0.0);
+	bool createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue = 0.0);
 
 	/**
 	 * Constructs a subsurface representation of a mesh using only 2D elements (i.e. layer boundaries are represented by surfaces)
@@ -83,7 +83,8 @@ private:
 	/// Cleans up the already created object in case of an error
 	void cleanUpOnError();
 
-	const double _invalid_value;
+	static const double _invalid_value;
+	static const double _elevation_epsilon;
 	std::vector<MeshLib::Node*> _nodes;
 	std::vector<MeshLib::Element*> _elements;
 	std::vector<MeshLib::Node> _attribute_points;

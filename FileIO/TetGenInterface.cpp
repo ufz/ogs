@@ -80,12 +80,16 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 		points->push_back(new GeoLib::Point(nodes[k]->getCoords()));
 		delete nodes[k];
 	}
+	std::string geo_name (BaseLib::extractBaseNameWithoutExtension(geo_fname));
+	geo_objects.addPointVec(points, geo_name);
+	const std::vector<std::size_t> &id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
+
 	std::vector<GeoLib::Surface*> *surfaces = new std::vector<GeoLib::Surface*>;
 	bool failed (true);
 	if (ext.compare("poly") == 0)
-		failed = !parsePolyFacets(poly_stream, *surfaces, *points);
+		failed = !parsePolyFacets(poly_stream, *surfaces, *points, id_map);
 	else
-		failed = !parseSmeshFacets(poly_stream, *surfaces, *points);
+		failed = !parseSmeshFacets(poly_stream, *surfaces, *points, id_map);
 	if (failed)
 	{
 		// remove surfaces read until now but keep the points
@@ -95,8 +99,6 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 		surfaces = nullptr;
 	}
 
-	std::string geo_name (BaseLib::extractBaseNameWithoutExtension(geo_fname));
-	geo_objects.addPointVec(points, geo_name);
 	if (surfaces)
 		geo_objects.addSurfaceVec(surfaces, geo_name);
 	return true;
@@ -130,7 +132,8 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
 
 bool TetGenInterface::parsePolyFacets(std::ifstream &input,
                                       std::vector<GeoLib::Surface*> &surfaces,
-                                      std::vector<GeoLib::Point*> &points)
+                                      const std::vector<GeoLib::Point*> &points,
+                                      const std::vector<std::size_t> &pnt_id_map)
 {
 	const std::size_t nFacets (this->getNFacets(input));
 	std::size_t nMultPolys (0);
@@ -181,7 +184,7 @@ bool TetGenInterface::parsePolyFacets(std::ifstream &input,
 			{
 				GeoLib::Polyline polyline(points);
 				for (std::size_t j(0); j<nPoints; ++j)
-					polyline.addPoint(BaseLib::str2number<std::size_t>(*(++it))-offset);
+					polyline.addPoint(pnt_id_map[BaseLib::str2number<std::size_t>(*(++it))-offset]);
 				
 				polyline.closePolyline();
 				surfaces.push_back(GeoLib::Surface::createSurface(polyline));
@@ -208,7 +211,8 @@ bool TetGenInterface::parsePolyFacets(std::ifstream &input,
 
 bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
                                        std::vector<GeoLib::Surface*> &surfaces,
-                                       std::vector<GeoLib::Point*> &points)
+                                       const std::vector<GeoLib::Point*> &points,
+                                       const std::vector<std::size_t> &pnt_id_map)
 {
 	const std::size_t nFacets (this->getNFacets(input));
 	std::string line;
@@ -248,7 +252,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 		if (point_fields.size() > point_field_size)
 		{
 			for (std::size_t j(0); j<nPoints; ++j)
-				point_ids[j] = (BaseLib::str2number<std::size_t>(*(++it))-offset);
+				point_ids.push_back(pnt_id_map[BaseLib::str2number<std::size_t>(*(++it))-offset]);
 			
 			const std::size_t sfc_marker = (_boundary_markers) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
 			const std::size_t idx = std::find(idx_map.begin(), idx_map.end(), sfc_marker) - idx_map.begin();

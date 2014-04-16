@@ -30,8 +30,12 @@
 #include "MeshQuality/MeshValidation.h"
 #include "MeshEditing/ElementExtraction.h"
 
+
+const double LayeredVolume::_invalid_value = -9999;
+const double LayeredVolume::_elevation_epsilon = 0.0001;
+
 LayeredVolume::LayeredVolume()
-: _invalid_value(-9999), _mesh(nullptr)
+: _mesh(nullptr)
 {
 }
 
@@ -40,7 +44,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
 		return false;
 	
-	std::vector<GeoLib::Raster const*const> rasters;
+	std::vector<GeoLib::Raster const*> rasters;
 	rasters.reserve(raster_paths.size());
 	for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
 		rasters.push_back(GeoLib::Raster::getRasterFromASCFile(*path));
@@ -51,7 +55,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 }
 
 
-bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*const> &rasters, double noDataReplacementValue)
+bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue)
 {
 	if (mesh.getDimension() != 2)
 		return false;
@@ -97,7 +101,7 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 	{
 		if (layer_id > 0 &&
 		   ((*layer_nodes[i])[2] == _invalid_value || 
-		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < 1))
+		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < _elevation_epsilon))
 			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
 		else 
 			_nodes.push_back(new MeshLib::Node(layer_nodes[i]->getCoords(), _nodes.size()));
@@ -108,17 +112,17 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 	{
 		if (elem->getGeomType() == MeshElemType::TRIANGLE)
 		{
-			std::array<MeshLib::Node*,3> tri_nodes = { _nodes[node_id_offset+elem->getNode(0)->getID()],
-			                                           _nodes[node_id_offset+elem->getNode(1)->getID()],
-			                                           _nodes[node_id_offset+elem->getNode(2)->getID()] };
+			std::array<MeshLib::Node*,3> tri_nodes = { _nodes[node_id_offset+elem->getNodeIndex(0)],
+			                                           _nodes[node_id_offset+elem->getNodeIndex(1)],
+			                                           _nodes[node_id_offset+elem->getNodeIndex(2)] };
 			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id));
 		}
 		else if (elem->getGeomType() == MeshElemType::QUAD)
 		{			
-			std::array<MeshLib::Node*,4> quad_nodes = { _nodes[node_id_offset+elem->getNode(0)->getID()],
-			                                            _nodes[node_id_offset+elem->getNode(1)->getID()],
-			                                            _nodes[node_id_offset+elem->getNode(2)->getID()],
-			                                            _nodes[node_id_offset+elem->getNode(3)->getID()] };
+			std::array<MeshLib::Node*,4> quad_nodes = { _nodes[node_id_offset+elem->getNodeIndex(0)],
+			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
+			                                            _nodes[node_id_offset+elem->getNodeIndex(2)],
+			                                            _nodes[node_id_offset+elem->getNodeIndex(3)] };
 			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id));
 		}
 	}
@@ -137,10 +141,10 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
 				for (unsigned j=0; j<nLayerBoundaries; ++j)
 				{
 					const std::size_t offset (j*nNodes);
-					MeshLib::Node* n0 = _nodes[offset + elem->getNode(i)->getID()];
-					MeshLib::Node* n1 = _nodes[offset + elem->getNode((i+1)%nElemNodes)->getID()];
-					MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNode((i+1)%nElemNodes)->getID()];
-					MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNode(i)->getID()];
+					MeshLib::Node* n0 = _nodes[offset + elem->getNodeIndex(i)];
+					MeshLib::Node* n1 = _nodes[offset + elem->getNodeIndex((i+1)%nElemNodes)];
+					MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNodeIndex((i+1)%nElemNodes)];
+					MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNodeIndex(i)];
 					
 					if (MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
 					{
@@ -170,7 +174,7 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 			unsigned count(0);
 			const std::size_t nElemNodes (low->getNNodes());
 			for (std::size_t k=0; k<nElemNodes; ++k)
-				if (high->getNode(k)->getID() == low->getNode(k)->getID())
+				if (high->getNodeIndex(k) == low->getNodeIndex(k))
 				{
 					low->setNode(k, _nodes[high->getNodeIndex(k)]);
 					count++;
