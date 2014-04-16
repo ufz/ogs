@@ -77,6 +77,9 @@ private:
 	/// Removes duplicate 2D elements (possible due to outcroppings)
 	void removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer);
 
+	/// Calculates a data-dependent epsilon value
+	double calcEpsilon(const GeoLib::Raster &high, const GeoLib::Raster &low);
+
 	/// Checks if all raster files actually exist
 	bool allRastersExist(const std::vector<std::string> &raster_paths) const;
 
@@ -84,7 +87,7 @@ private:
 	void cleanUpOnError();
 
 	static const double _invalid_value;
-	static const double _elevation_epsilon;
+	double _elevation_epsilon;
 	std::vector<MeshLib::Node*> _nodes;
 	std::vector<MeshLib::Element*> _elements;
 	std::vector<MeshLib::Node> _attribute_points;
