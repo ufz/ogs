@@ -18,10 +18,10 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_all_nodes = NNODES;
+const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_all_nodes;
 
 template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_base_nodes = 3;
+const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_base_nodes;
 
 template <unsigned NNODES, CellType CELLTRITYPE>
 const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {

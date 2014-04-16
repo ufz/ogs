@@ -25,10 +25,10 @@ namespace MeshLib
 {
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_all_nodes = NNODES;
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_all_nodes;
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_base_nodes = 4;
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_base_nodes;
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
 const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
