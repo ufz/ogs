@@ -83,9 +83,8 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	}
 	// close boundaries between layers
 	this->addLayerBoundaries(*mesh_layer, nRasters);
+	this->removeCongruentElements(nRasters, mesh_layer->getNElements());
 	delete mesh_layer;
-
-	this->removeCongruentElements(nRasters, mesh.getNElements());
 	_mesh = new MeshLib::Mesh("BoundaryMesh", _nodes, _elements);
 	MeshLib::MeshValidation::removeUnusedMeshNodes(*_mesh);
 	return true;
@@ -116,7 +115,7 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 			std::array<MeshLib::Node*,3> tri_nodes = { _nodes[node_id_offset+elem->getNodeIndex(0)],
 			                                           _nodes[node_id_offset+elem->getNodeIndex(1)],
 			                                           _nodes[node_id_offset+elem->getNodeIndex(2)] };
-			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id));
+			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id+1));
 		}
 		else if (elem->getGeomType() == MeshElemType::QUAD)
 		{			
@@ -124,7 +123,7 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(2)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(3)] };
-			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id));
+			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id+1));
 		}
 	}
 }
