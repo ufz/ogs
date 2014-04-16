@@ -112,24 +112,32 @@ MeshLib::Mesh* MeshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const st
 bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
                                    const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
 {
+	const GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
+	if (! raster) {
+		ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
+		return false;
+	}
+	const bool result = LayerMapping(new_mesh, *raster, nLayers, layer_id, noDataReplacementValue);
+	delete raster;
+	return result;
+}
+
+bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster &raster,
+                                   const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
+{
 	if (nLayers < layer_id)
 	{
 		ERR("MshLayerMapper::LayerMapping() - Mesh has only %d Layers, cannot assign layer %d.", nLayers, layer_id);
 		return false;
 	}
 
-	const GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
-	if (! raster) {
-		ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
-		return false;
-	}
-	const double x0(raster->getOrigin()[0]);
-	const double y0(raster->getOrigin()[1]);
-	const double delta(raster->getRasterPixelDistance());
-	const double no_data(raster->getNoDataValue());
-	const std::size_t width(raster->getNCols());
-	const std::size_t height(raster->getNRows());
-	double const*const elevation(raster->begin());
+	const double x0(raster.getOrigin()[0]);
+	const double y0(raster.getOrigin()[1]);
+	const double delta(raster.getRasterPixelDistance());
+	const double no_data(raster.getNoDataValue());
+	const std::size_t width(raster.getNCols());
+	const std::size_t height(raster.getNRows());
+	double const*const elevation(raster.begin());
 
 	const std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
 	const std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
@@ -201,7 +209,6 @@ bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &r
 		nodes[i]->updateCoordinates(coords[0], coords[1], z);
 	}
 
-	delete raster;
 	return true;
 }
 

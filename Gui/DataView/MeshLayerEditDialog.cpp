@@ -12,7 +12,7 @@
  *
  */
 
-#include "MeshGenerators/LayerVolumes.h"
+#include "MeshGenerators/LayeredVolume.h"
 #include "MeshLayerEditDialog.h"
 
 // ThirdParty/logog
@@ -218,7 +218,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 	std::vector<std::string> raster_paths(nLayers+1);
 	for (unsigned i=0; i<=nLayers; ++i)
 		raster_paths[i] = this->_edits[i+1]->text().toStdString();
-	LayerVolumes lv;
+	LayeredVolume lv;
 	lv.createGeoVolumes(*_msh, raster_paths);
 
 	MeshLib::Mesh* tg_mesh (lv.getMesh());

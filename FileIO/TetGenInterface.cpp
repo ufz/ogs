@@ -216,7 +216,6 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 	std::list<std::string>::const_iterator it;
 
 	const unsigned offset = (_zero_based_idx) ? 0 : 1;
-	MathLib::TemplatePoint<std::size_t, 3> tri;
 	std::vector<std::size_t> idx_map;
 
 	for (std::size_t k(0); k<nFacets && !input.fail(); k++)
@@ -244,11 +243,12 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 			ERR ("Smesh-files are currently only supported for triangle meshes.");
 			return false;
 		}
+		std::vector<std::size_t> point_ids;
 		const std::size_t point_field_size = (_boundary_markers) ? nPoints+1 : nPoints;
 		if (point_fields.size() > point_field_size)
 		{
 			for (std::size_t j(0); j<nPoints; ++j)
-				tri[j] = (BaseLib::str2number<std::size_t>(*(++it))-offset);
+				point_ids[j] = (BaseLib::str2number<std::size_t>(*(++it))-offset);
 			
 			const std::size_t sfc_marker = (_boundary_markers) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
 			const std::size_t idx = std::find(idx_map.begin(), idx_map.end(), sfc_marker) - idx_map.begin();
@@ -257,7 +257,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 				idx_map.push_back(sfc_marker);
 				surfaces.push_back(new GeoLib::Surface(points));
 			}
-			surfaces[idx]->addTriangle(tri[0], tri[1], tri[2]);
+			surfaces[idx]->addTriangle(point_ids[0], point_ids[1], point_ids[2]);
 		}
 		else
 		{
@@ -330,7 +330,7 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
 	while (!ins.fail())
 	{
 		BaseLib::simplify(line);
-		if (line.compare(0,1,"#") == 0 || line.empty())
+		if (line.empty() || line.compare(0,1,"#") == 0)
 		{
 			// this line is a comment - skip
 			getline (ins, line);
@@ -449,7 +449,7 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
 	while (!ins.fail())
 	{
 		BaseLib::simplify(line);
-		if (line.compare(0,1,"#") == 0 || line.empty())
+		if (line.empty() || line.compare(0,1,"#") == 0)
 		{
 			// this line is a comment - skip
 			getline (ins, line);
@@ -659,14 +659,17 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	out << nTotalTriangles << " 1\n";
 
 	const std::size_t nElements (elements.size());
+	unsigned count(0);
 	for (std::size_t i=0; i<nElements; ++i)
 	{
+		count++;
 		if (elements[i]->getGeomType() == MeshElemType::TRIANGLE)
-			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << "\n";
+			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << " # " << count << "\n";
 		else if (elements[i]->getGeomType() == MeshElemType::QUAD)
 		{
-			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << "\n";
-			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getNodeIndex(3) << " " << elements[i]->getValue() << "\n";
+			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << " # " << count << "\n";
+			count++;
+			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getNodeIndex(3) << " " << elements[i]->getValue() << " # " << count << "\n";
 		}
 	}
 	out << "0\n"; // the polygon holes list
