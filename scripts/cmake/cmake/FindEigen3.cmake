@@ -70,6 +70,7 @@ else (EIGEN3_INCLUDE_DIR)
       /opt/boxen/homebrew/include
       C:/
       $ENV{ProgramFiles}/
+      /usr/local/eigen/*/include
       PATH_SUFFIXES eigen3 eigen
     )
 
