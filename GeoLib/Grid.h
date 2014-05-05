@@ -72,37 +72,34 @@ public:
 
 		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
 		// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-		if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() ||
-						fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
+		const double eps(std::numeric_limits<double>::epsilon());
+		if (fabs(delta[1]) < eps || fabs(delta[2]) < eps) {
 			// 1d case y = z = 0
-			if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() &&
-							fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
+			if (fabs(delta[1]) < eps && fabs(delta[2]) < eps) {
 				_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
 				_n_steps[1] = 1;
 				_n_steps[2] = 1;
 			} else {
 				// 1d case x = z = 0
-				if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() &&
-								fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
+				if (fabs(delta[0]) < eps && fabs(delta[2]) < eps) {
 					_n_steps[0] = 1;
 					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
 					_n_steps[2] = 1;
 				} else {
 					// 1d case x = y = 0
-					if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() && fabs(delta[1])
-									< std::numeric_limits<double>::epsilon()) {
+					if (fabs(delta[0]) < eps && fabs(delta[1]) < eps) {
 						_n_steps[0] = 1;
 						_n_steps[1] = 1;
 						_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
 					} else {
 						// 2d case
-						if (fabs(delta[1]) < std::numeric_limits<double>::epsilon()) {
+						if (fabs(delta[1]) < eps) {
 							// y = const
 							_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
 							_n_steps[1] = 1;
 							_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
 						} else {
-							if (fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
+							if (fabs(delta[2]) < eps) {
 								// z = const
 								_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
 								_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
