@@ -55,7 +55,11 @@ public:
 	 */
 	template <typename InputIterator>
 	Grid(InputIterator first, InputIterator last, std::size_t max_num_per_grid_cell = 512) :
-		GeoLib::AABB<POINT>(first, last), _grid_cell_nodes_map(NULL)
+		GeoLib::AABB<POINT>(first, last),
+		_n_steps({{1,1,1}}),
+		_step_sizes({{0.0,0.0,0.0}}),
+		_inverse_step_sizes({{0.0,0.0,0.0}}),
+		_grid_cell_nodes_map(nullptr)
 	{
 		std::size_t n_pnts(std::distance(first, last));
 
@@ -365,9 +369,9 @@ private:
 	static POINT const* copyOrAddress(POINT const& p) { return &p; }
 	static POINT* copyOrAddress(POINT* p) { return p; }
 
-	double _step_sizes[3];
-	double _inverse_step_sizes[3];
-	std::size_t _n_steps[3];
+	std::array<std::size_t,3> _n_steps;
+	std::array<double, 3> _step_sizes;
+	std::array<double, 3> _inverse_step_sizes;
 	/**
 	 * This is an array that stores pointers to POINT objects.
 	 */
