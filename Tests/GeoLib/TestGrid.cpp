@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <memory>
+
 #include "gtest/gtest.h"
 
 #include "GeoLib/Point.h"
@@ -30,6 +32,7 @@ TEST(GeoLib, InsertOnePointInGrid)
 	std::vector<GeoLib::Point*> pnts;
 	pnts.push_back(new GeoLib::Point(0.0,0.0,0.0));
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 TEST(GeoLib, InsertTwoPointsInGrid)
@@ -38,6 +41,7 @@ TEST(GeoLib, InsertTwoPointsInGrid)
 	pnts.push_back(new GeoLib::Point(4.5, -400.0, 0.0));
 	pnts.push_back(new GeoLib::Point(50, -300.0, 0.0));
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 
@@ -59,6 +63,7 @@ TEST(GeoLib, InsertManyPointsInGrid)
 	}
 
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 TEST(GeoLib, SearchNearestPointInGrid)
@@ -71,6 +76,9 @@ TEST(GeoLib, SearchNearestPointInGrid)
 	GeoLib::Point p0(0,10,10);
 	GeoLib::Point* res(grid->getNearestPoint(p0.getCoords()));
 	ASSERT_EQ(sqrt(MathLib::sqrDist(*res, *pnts[0])), 0.0);
+
+	delete grid;
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 TEST(GeoLib, SearchNearestPointsInDenseGrid)
@@ -125,4 +133,6 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 		}
 	}
 
+	delete grid;
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::PointWithID>());
 }
