@@ -2,7 +2,7 @@
  * @file TestGrid.cpp
  * @author Thomas Fischer
  * @date Mar 22, 2013
- * @brief 
+ * @brief Tests for class GeoLib::Grid.
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
