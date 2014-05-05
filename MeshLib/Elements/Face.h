@@ -22,6 +22,8 @@
 // GeoLib
 #include "Point.h"
 
+#include "Vector3.h"
+
 namespace MeshLib {
 
 /**
@@ -52,7 +54,7 @@ public:
 	unsigned getNFaces() const { return 0; };
 
 	/// Returns the surface normal of a 2D element.
-	void getSurfaceNormal(double normal[3]) const;
+	MathLib::Vector3 getSurfaceNormal() const;
 
 	/// Destructor
 	virtual ~Face();
@@ -72,13 +74,19 @@ public:
 	 */
 	virtual Element* clone() const = 0;
 
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 * For 2D elements true is returned if the normal points (roughly) upwards.
+	 */
+	virtual bool testElementNodeOrder() const;
+
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Face(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Face(unsigned value = 0);
+	Face(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	double _area;
 

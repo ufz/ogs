@@ -16,6 +16,8 @@
 #ifndef GEOOBJECT_H_
 #define GEOOBJECT_H_
 
+#include "GeoType.h"
+
 namespace GeoLib
 {
 class GeoObject
@@ -23,6 +25,9 @@ class GeoObject
 public:
 	GeoObject() {}
 	virtual ~GeoObject() {}
+
+	/// return a geometry type
+	virtual GEOTYPE getGeoType() const = 0;
 };
 } // end namespace GeoLib
 

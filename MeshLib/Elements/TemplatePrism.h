@@ -48,11 +48,17 @@ template <unsigned NNODES, CellType CELLPRISMTYPE>
 class TemplatePrism : public Cell
 {
 public:
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes = NNODES;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes = 6u;
+
 	/// Constructor with an array of mesh nodes.
-	TemplatePrism(Node* nodes[NNODES], unsigned value = 0);
+	TemplatePrism(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a prism from array of Node pointers.
-	TemplatePrism(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplatePrism(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplatePrism(const TemplatePrism &prism);
@@ -78,7 +84,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 6;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
@@ -108,17 +114,6 @@ public:
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
-
-	/**
-	 * This method should be called after at least two nodes of the prism
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the prism will be collapsed. If one of the edges 3, 4 or 5 (see
-	 * sketch @ref PrismNodeAndEdgeNumbering) is collapsed we obtain a
-	 * pyramid. In this case the method will create the appropriate
-	 * object of class Pyramid.
-	 * @return a pyramid object or NULL
-	 */
-	virtual Element* reviseElement() const;
 
 protected:
 	/// Calculates the volume of a prism by subdividing it into three tetrahedra.

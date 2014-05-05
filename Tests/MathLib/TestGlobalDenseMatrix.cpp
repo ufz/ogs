@@ -36,7 +36,7 @@ TEST(MathLib, GlobalDenseMatrix)
 	mat1 = mat0;
 	for (std::size_t i(0); i<n_rows; i++) {
 		for (std::size_t j(0); j<n_cols; j++) {
-			ASSERT_NEAR(1.0/(i+j+2.0), mat1(i,j), std::numeric_limits<double>::min());
+			ASSERT_NEAR(1.0/(i+j+2.0), mat1(i,j), std::numeric_limits<double>::epsilon());
 		}
 	}
 

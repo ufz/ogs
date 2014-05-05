@@ -446,8 +446,7 @@ void MainWindow::open(int file_type)
 	QSettings settings;
 	ImportFileType::type t = static_cast<ImportFileType::type>(file_type);
 	QString type_str = QString::fromStdString((ImportFileType::convertImportFileTypeToString(t)));
-	QString fileName = QFileDialog::getOpenFileName(this,
-	                                                "Select " + type_str + " file to import",
+	QString fileName = QFileDialog::getOpenFileName(this, "Select " + type_str + " file to import",
 													settings.value("lastOpenedFileDirectory").toString(),
 	                                                QString::fromStdString(ImportFileType::getFileSuffixString(t)));
 	if (!fileName.isEmpty())
@@ -514,7 +513,7 @@ void MainWindow::save()
 void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 {
 	QFile file(fileName);
-	if (!file.open(QFile::ReadOnly))
+	if (!file.exists())
 	{
 		QMessageBox::warning(this, tr("Application"), tr(
 		                             "Cannot read file %1:\n%2.").arg(fileName).arg(
@@ -688,20 +687,25 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::TETGEN)
 	{
-		QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
-						                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
-						                                     "TetGen element files (*.ele);;");
-
-		if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+		if (fi.suffix().toLower().compare("poly") == 0)
+		{
 			FileIO::TetGenInterface tetgen;
-			MeshLib::Mesh* msh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
-			if (msh) {
-				std::string name(fileName.toStdString());
-				msh->setName(name);
-				_meshModels->addMesh(msh);
-			} else
-				OGSError::box("Failed to load a TetGen mesh.");
-			settings.setValue("lastOpenedFileDirectory", QDir(fileName).absolutePath());
+			tetgen.readTetGenPoly(fileName.toStdString(), *(_project.getGEOObjects()));
+		}
+		else {
+			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
+			QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
+			                                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
+			                                                     "TetGen element files (*.ele);;");
+
+			if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+				FileIO::TetGenInterface tetgen;
+				MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
+				if (mesh)
+					_meshModels->addMesh(mesh);
+				else
+					OGSError::box("Failed to load a TetGen mesh.");
+			}
 		}
 	}
 	else if (t == ImportFileType::VTK)
@@ -1093,7 +1097,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 				if (!gmsh_path.empty())
 				{
 				std::string fname (fileName.toStdString());
-					std::string gmsh_command = gmsh_path + " -2 -algo meshadapt " + fname;
+					std::string gmsh_command = "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
 					size_t pos (fname.rfind ("."));
 					if (pos != std::string::npos)
 						fname = fname.substr (0, pos);
@@ -1285,7 +1289,6 @@ void MainWindow::showDataExplorerSettingsDialog()
 void MainWindow::FEMTestStart()
 {
 }
-
 
 void MainWindow::showTrackingSettingsDialog()
 {

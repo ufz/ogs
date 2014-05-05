@@ -13,6 +13,7 @@
  */
 
 // ** INCLUDES **
+#include "FileTools.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkCompositeFilter.h"
@@ -147,7 +148,7 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 				InitializeSdkObjects(lSdkManager, lScene);
 
 				VtkFbxConverter fbxConverter(static_cast<vtkActor*>(_actor), lScene);
-				fbxConverter.convert(filename.c_str());
+				fbxConverter.convert(BaseLib::extractBaseNameWithoutExtension(filename));
 				FbxNode* node = fbxConverter.getNode();
 				if(node)
 				{

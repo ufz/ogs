@@ -47,11 +47,17 @@ template <unsigned NNODES, CellType CELLTRITYPE>
 class TemplateTri : public Face
 {
 public:
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes = NNODES;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes = 3u;
+
 	/// Constructor with an array of mesh nodes.
-	TemplateTri(Node* nodes[NNODES], unsigned value = 0);
+	TemplateTri(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a triangle from array of Node pointers.
-	TemplateTri(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateTri(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplateTri(const TemplateTri &tri);
@@ -68,7 +74,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 3;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
@@ -111,17 +117,6 @@ public:
 		return new TemplateTri<NNODES,CELLTRITYPE>(*this);
 	}
 
-
-	/**
-	 * This method should be called after at least two nodes of the triangle
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the triangle will be collapsed. If one of the edges is collapsed we
-	 * obtain an edge. In this case the method will create the appropriate
-	 * object of class Edge.
-	 * @return an Edge object or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
 	double computeVolume()
@@ -141,13 +136,6 @@ protected:
 
 	static const unsigned _edge_nodes[3][2];
 }; /* class */
-
-template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
-		{0, 1}, // Edge 0
-		{1, 2}, // Edge 1
-		{0, 2}  // Edge 2
-	};
 
 } /* namespace */
 

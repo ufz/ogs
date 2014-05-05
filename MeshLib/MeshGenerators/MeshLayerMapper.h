@@ -1,8 +1,8 @@
 /**
- * \file
+ * \file   MeshLayerMapper.h
  * \author Karsten Rink
  * \date   2010-11-01
- * \brief  Definition of the MshLayerMapper class.
+ * \brief  Definition of the MeshLayerMapper class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef MSHLAYERMAPPER_H
-#define MSHLAYERMAPPER_H
+#ifndef MESHLAYERMAPPER_H
+#define MESHLAYERMAPPER_H
 
 #include <string>
 
@@ -27,11 +27,11 @@ namespace MeshLib {
 /**
  * \brief Manipulating and adding layers to an existing mesh
  */
-class MshLayerMapper
+class MeshLayerMapper
 {
 public:
-	MshLayerMapper() {}
-	~MshLayerMapper() {}
+	MeshLayerMapper() {}
+	~MeshLayerMapper() {}
 
 	/**
 	 * Based on a triangle-or quad mesh this method creates a 3D mesh with with a given number of prism- or hex-layers
@@ -40,13 +40,13 @@ public:
 	 * \param thickness The thickness of each of these newly added layers
 	 * \return A mesh with the requested number of layers of prism/hex elements
 	 */
-	static MeshLib::Mesh* CreateLayers(const MeshLib::Mesh* mesh, const std::vector<float> &thickness);
+	static MeshLib::Mesh* CreateLayers(const MeshLib::Mesh &mesh, const std::vector<float> &layer_thickness_vector);
 
 	/**
 	 * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
 	 * Note: This only results in a valid mesh if the layers don't intersect each other.
 	 */
-	static int LayerMapping(MeshLib::Mesh* msh, const std::string &rasterfile,
+	static int LayerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile,
                             const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue);
 
 	/**
@@ -55,7 +55,7 @@ public:
 	 * remedied at the end of method upon creating the actual mesh from the new node- and element-vector as the mesh-constructor checks for such
 	 * nodes and removes them. This note is just to call this issue to attention in case this methods is changed.
 	 */
-	static MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh* mesh, const unsigned nLayers, const std::string &dem_raster);
+	static MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster);
 
 private:
 	/// Checks if the given mesh is within the dimensions given by xDim and yDim.
@@ -64,4 +64,4 @@ private:
 	                           const std::pair<double, double> &yDim);
 };
 
-#endif //MSHLAYERMAPPER_H
+#endif //MESHLAYERMAPPER_H

@@ -25,8 +25,23 @@ namespace MeshLib
 {
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value)
-	: Face(value)
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_all_nodes;
+
+template <unsigned NNODES, CellType CELLQUADTYPE>
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_base_nodes;
+
+template <unsigned NNODES, CellType CELLQUADTYPE>
+const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
+{
+	{0, 1}, // Edge 0
+	{1, 2}, // Edge 1
+	{2, 3}, // Edge 2
+	{0, 3}  // Edge 3
+};
+
+template <unsigned NNODES, CellType CELLQUADTYPE>
+TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned value, std::size_t id)
+	: Face(value, id)
 {
 	_nodes = nodes;
 
@@ -38,8 +53,8 @@ TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(Node* nodes[NNODES], unsigned va
 
 template<unsigned NNODES, CellType CELLQUADTYPE>
 TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const& nodes,
-                                                unsigned value)
-	: Face(value)
+                                                unsigned value, std::size_t id)
+	: Face(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -52,7 +67,7 @@ TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(std::array<Node*, NNODES> const&
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
 TemplateQuad<NNODES,CELLQUADTYPE>::TemplateQuad(const TemplateQuad<NNODES,CELLQUADTYPE> &quad)
-	: Face(quad.getValue())
+	: Face(quad.getValue(), quad.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++) {
@@ -124,35 +139,13 @@ ElementErrorCode TemplateQuad<NNODES,CELLQUADTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume]  = this->hasZeroVolume();
-	error_code[ElementErrorFlag::NonCoplanar] = (!GeoLib::pointsOnAPlane(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
+	error_code[ElementErrorFlag::NonCoplanar] = (!GeoLib::isCoplanar(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
 	// for collapsed quads (i.e. reduced to a line) this test might result "false" as all four points are actually located on a line.
 	if (!error_code[ElementErrorFlag::ZeroVolume]) 
 		error_code[ElementErrorFlag::NonConvex]   = (!(GeoLib::dividedByPlane(*_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
 			                                           GeoLib::dividedByPlane(*_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])));
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
-}
-
-template <unsigned NNODES, CellType CELLQUADTYPE>
-Element* TemplateQuad<NNODES,CELLQUADTYPE>::reviseElement() const
-{
-	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		tri_nodes[0] = _nodes[0];
-		tri_nodes[1] = _nodes[2];
-		tri_nodes[2] = _nodes[3];
-		return new Tri(tri_nodes, _value);
-	}
-
-	if (_nodes[2] == _nodes[3] || _nodes[3] == _nodes[0]) {
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		tri_nodes[0] = _nodes[0];
-		tri_nodes[1] = _nodes[1];
-		tri_nodes[2] = _nodes[2];
-		return new Tri(tri_nodes, _value);
-	}
-
-	// this should not happen
-	return NULL;
 }
 
 }

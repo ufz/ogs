@@ -69,8 +69,15 @@ template<typename T> T str2number (const std::string &str)
 
 /**
  * Strip whitespace (or other characters) from the beginning and end of a string.
+ * Equivalent functionality to Qt::QString::trim().
  */
 void trim(std::string &str, char ch=' ');
+
+/**
+ * Removes multiple whitespaces (or other characters) from within a string.
+ * Equivalent functionality to Qt::QString::simplify().
+ */
+void simplify(std::string &str);
 
 /**
  * Returns same string with all characters in upper case.

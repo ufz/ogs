@@ -45,7 +45,7 @@ float DiagramList::calcMinXValue()
 
 float DiagramList::calcMaxXValue()
 {
-	float max = std::numeric_limits<float>::min();
+	float max = std::numeric_limits<float>::lowest();
 	size_t nCoords = _coords.size();
 	for (size_t i = 0; i < nCoords; i++)
 		if (_coords[i].first > max)
@@ -65,7 +65,7 @@ float DiagramList::calcMinYValue()
 
 float DiagramList::calcMaxYValue()
 {
-	float max = std::numeric_limits<float>::min();
+	float max = std::numeric_limits<float>::lowest();
 	size_t nCoords = _coords.size();
 	for (size_t i = 0; i < nCoords; i++)
 		if (_coords[i].second > max)

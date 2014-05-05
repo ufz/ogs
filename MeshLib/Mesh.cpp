@@ -35,12 +35,13 @@ Mesh::Mesh(const std::string &name,
            const std::vector<Element*> &elements)
 	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
 {
-	this->resetNodeIDs(); // reset node ids so they match the node position in the vector
+	this->resetNodeIDs();
+	this->resetElementIDs();
 	this->setDimension();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
-	this->setElementsConnectedToElements();
+	this->setElementNeighbors();
 
 	_edge_length[0] =  std::numeric_limits<double>::max();
 	_edge_length[1] = -std::numeric_limits<double>::max();
@@ -72,7 +73,7 @@ Mesh::Mesh(const Mesh &mesh)
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
-	this->setElementsConnectedToElements();
+	this->setElementNeighbors();
 }
 
 Mesh::~Mesh()
@@ -106,6 +107,13 @@ void Mesh::resetNodeIDs()
 	const size_t nNodes (this->_nodes.size());
 	for (unsigned i=0; i<nNodes; ++i)
 		_nodes[i]->setID(i);
+}
+
+void Mesh::resetElementIDs()
+{
+	const size_t nElements (this->_elements.size());
+	for (unsigned i=0; i<nElements; ++i)
+		_elements[i]->setID(i);
 }
 
 void Mesh::setDimension()
@@ -151,7 +159,7 @@ void Mesh::calcEdgeLengthRange()
 	this->_edge_length[1] = sqrt(this->_edge_length[1]);
 }
 
-void Mesh::setElementsConnectedToElements()
+void Mesh::setElementNeighbors()
 {
 	const size_t nElements = _elements.size();
 	for (unsigned m(0); m<nElements; ++m)
@@ -159,23 +167,21 @@ void Mesh::setElementsConnectedToElements()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		std::vector<Element*> neighbors;
 		Element *const element (_elements[m]);
-		if (element->getGeomType() != MeshElemType::LINE)
+
+		const size_t nNodes (element->getNNodes());
+		for (unsigned n(0); n<nNodes; ++n)
 		{
-			const size_t nNodes (element->getNNodes());
-			for (unsigned n(0); n<nNodes; ++n)
-			{
-				std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
-				neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
-			}
+			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
+			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+		}
 
-			const unsigned nNeighbors ( neighbors.size() );
+		const unsigned nNeighbors ( neighbors.size() );
 
-			for (unsigned i(0); i<nNeighbors; ++i)
+		for (unsigned i(0); i<nNeighbors; ++i)
+		{
+			if (element->addNeighbor(neighbors[i]))
 			{
-				if (element->addNeighbor(neighbors[i]) && neighbors[i]->getGeomType() != MeshElemType::LINE)
-				{
-					neighbors[i]->addNeighbor(element);
-				}
+				neighbors[i]->addNeighbor(element);
 			}
 		}
 	}

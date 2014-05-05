@@ -51,6 +51,7 @@ public:
 		if (docElement.nodeName().compare("ColorMap"))
 		{
 			ERR("XmlLutReader::readFromFile(): Unexpected XML root.");
+			file->close();
 			delete file;
 			return NULL;
 		}
@@ -97,6 +98,7 @@ public:
 
 		lut->SetTableRange(range[0], range[1]);
 
+		file->close();
 		delete file;
 
 		return lut;

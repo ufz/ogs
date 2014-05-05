@@ -41,16 +41,16 @@ class TemplateQuad : public Face
 {
 public:
 	/// Constant: The number of all nodes for this element
-	static const unsigned n_all_nodes;
+	static const unsigned n_all_nodes = NNODES;
 
 	/// Constant: The number of base nodes for this element
-	static const unsigned n_base_nodes;
+	static const unsigned n_base_nodes = 4u;
 
 	/// Constructor with an array of mesh nodes.
-	TemplateQuad(Node* nodes[NNODES], unsigned value = 0);
+	TemplateQuad(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs an edge from array of Node pointers.
-	TemplateQuad(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateQuad(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a quad from NNODES of Nodes initializing Face with
 	//  value = 0.
@@ -109,17 +109,6 @@ public:
 	 */
 	virtual Element* clone() const;
 
-	/**
-	 * This method should be called after at least two nodes of the quad
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the quad will be collapsed. If one of the edges (see
-	 * sketch @ref PyramidNodeAndEdgeNumbering) is collapsed we obtain a
-	 * triangle. In this case the method will create the appropriate
-	 * object of class Tri.
-	 * @return a Tri object or NULL
-	 */
-	virtual Element* reviseElement() const;
-
 protected:
 	/// Calculates the area of a convex quadliteral by dividing it into two triangles.
 	double computeVolume();
@@ -133,21 +122,6 @@ protected:
 
 	static const unsigned _edge_nodes[4][2];
 }; /* class */
-
-template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
-{
-	{0, 1}, // Edge 0
-	{1, 2}, // Edge 1
-	{2, 3}, // Edge 2
-	{0, 3}  // Edge 3
-};
-
-template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_all_nodes = NNODES;
-
-template <unsigned NNODES, CellType CELLQUADTYPE>
-const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::n_base_nodes = 4;
 
 } /* namespace */
 

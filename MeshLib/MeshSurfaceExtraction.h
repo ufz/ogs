@@ -18,6 +18,8 @@
 #include <cstddef>
 #include <vector>
 
+#include "Vector3.h"
+
 namespace GeoLib {
 	class PointWithID;
 }
@@ -38,14 +40,14 @@ public:
 	static void getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec);
 
 	/// Returns the surface nodes of a layered mesh.
-	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh, const double* dir = NULL);
+	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir);
 
 	/// Returns the 2d-element mesh representing the surface of the given layered mesh.
-	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const double* dir = NULL);
+	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir);
 
 private:
 	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
-	static void get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension);
+	static void get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, unsigned mesh_dimension);
 
 	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
 	static void get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map);

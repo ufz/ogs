@@ -39,7 +39,6 @@ private:
 	 * copies the points of the polygon to the vector _pnts
 	 */
 	inline void copyPolygonPoints (const GeoLib::Polygon* polygon);
-	inline void rotate ();
 	inline void ensureCWOrientation ();
 
 	inline bool isEar(std::size_t v0, std::size_t v1, std::size_t v2) const;

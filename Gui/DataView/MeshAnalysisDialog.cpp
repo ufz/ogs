@@ -15,6 +15,7 @@
 #include "MeshAnalysisDialog.h"
 #include "Mesh.h"
 #include "MeshQuality/MeshValidation.h"
+#include "MeshEditing/MeshRevision.h"
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -41,26 +42,40 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()]);
 
 	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
-	this->nodesMsgOutput(unusedNodesIdx);
+	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
+	const unsigned nCollapsableNodes (rev.getNCollapsableNodes());
+	this->nodesGroupBox->setTitle("Nodes (out of " + QString::number(mesh->getNNodes()) + ")");
+	this->nodesMsgOutput(unusedNodesIdx, nCollapsableNodes);
 
 	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshValidation::testElementGeometry(*mesh));
-	//this->elementMsgOutput(element_error_codes);
-	QString elementMsgOutput = QString::fromStdString(MeshLib::MeshValidation::ElementErrorCodeOutput(element_error_codes));
-	this->elementsMsg->setText(elementMsgOutput);
+	this->elementsGroupBox->setTitle("Elements (out of " + QString::number(mesh->getNElements()) + ")");
+	this->elementsMsgOutput(element_error_codes);
 }
 
-void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids)
+void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids, unsigned nCollapsableNodes)
 {
 	const std::size_t nNodeIds (node_ids.size());
 	QString nodes_output("");
 	if (node_ids.empty())
-		nodes_output += "Nothing to report.";
+		nodes_output += "No unused nodes found.";
 	else
 	{
 		(QString::number(nNodeIds) + " nodes are not part of any element:\n");
 		for (std::size_t i=0; i<nNodeIds; ++i)
 			nodes_output += (QString::number(node_ids[i]) + ", ");
 	}
-	this->nodesMsg->setText(nodes_output);
+	this->unusedNodesText->setText(nodes_output);
+
+	nodes_output = QString::number(nCollapsableNodes) + " nodes found.";
+	this->collapsableNodesText->setText(nodes_output);
 }
 
+void MeshAnalysisDialog::elementsMsgOutput(const std::vector<ElementErrorCode> &element_error_codes)
+{
+	std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output_str(MeshLib::MeshValidation::ElementErrorCodeOutput(element_error_codes));
+
+	this->zeroVolumeText->setText(QString::fromStdString(output_str[0]));
+	this-> nonPlanarText->setText(QString::fromStdString(output_str[1]));
+	this-> nonConvexText->setText(QString::fromStdString(output_str[2]));
+	this-> nodeOrderText->setText(QString::fromStdString(output_str[3]));
+}

@@ -20,8 +20,8 @@ TEST(MathLib, WeightedPoint1D)
 	double w = 100.0;
 	MathLib::WeightedPoint1D wpnt_1d(pnt, w);
 
-	ASSERT_NEAR(pnt[0], wpnt_1d[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(w, wpnt_1d.getWeight(), std::numeric_limits<double>::min());
+	ASSERT_NEAR(pnt[0], wpnt_1d[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(w, wpnt_1d.getWeight(), std::numeric_limits<double>::epsilon());
 }
 
 TEST(MathLib, WeightedPoint2D)
@@ -32,9 +32,9 @@ TEST(MathLib, WeightedPoint2D)
 	double w = 200.0;
 	MathLib::WeightedPoint2D wpnt_2d(pnt, w);
 
-	ASSERT_NEAR(pnt[0], wpnt_2d[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(pnt[1], wpnt_2d[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(w, wpnt_2d.getWeight(), std::numeric_limits<double>::min());
+	ASSERT_NEAR(pnt[0], wpnt_2d[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(pnt[1], wpnt_2d[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(w, wpnt_2d.getWeight(), std::numeric_limits<double>::epsilon());
 }
 
 TEST(MathLib, WeightedPoint3D)
@@ -46,8 +46,8 @@ TEST(MathLib, WeightedPoint3D)
 	double w = 300.0;
 	MathLib::WeightedPoint3D wpnt_3d(pnt, w);
 
-	ASSERT_NEAR(pnt[0], wpnt_3d[0], std::numeric_limits<double>::min());
-	ASSERT_NEAR(pnt[1], wpnt_3d[1], std::numeric_limits<double>::min());
-	ASSERT_NEAR(pnt[2], wpnt_3d[2], std::numeric_limits<double>::min());
-	ASSERT_NEAR(w, wpnt_3d.getWeight(), std::numeric_limits<double>::min());
+	ASSERT_NEAR(pnt[0], wpnt_3d[0], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(pnt[1], wpnt_3d[1], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(pnt[2], wpnt_3d[2], std::numeric_limits<double>::epsilon());
+	ASSERT_NEAR(w, wpnt_3d.getWeight(), std::numeric_limits<double>::epsilon());
 }

@@ -105,16 +105,16 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 	plyIDs->SetNumberOfComponents(1);
 	plyIDs->SetName("PolylineIDs");
 
-	int lastMaxIndex = 0;
-	//for (std::vector<GeoLib::Polyline*>::const_iterator it = _polylines->begin();
-	//	it != _polylines->end(); ++it)
-	for (size_t j = 0; j < _polylines->size(); j++)
+	unsigned lastMaxIndex (0);
+	const std::size_t nPolylines (_polylines->size());
+	for (size_t j = 0; j < nPolylines; j++)
 	{
 		const int numPoints = (*_polylines)[j]->getNumberOfPoints();
-		//const int numLines = numPoints - 1;
+		const bool isClosed = (*_polylines)[j]->isClosed();
 
 		// Generate points
-		for (int i = 0; i < numPoints; i++)
+		const int numVerts = (isClosed) ? numPoints-1 : numPoints;
+		for (int i = 0; i < numVerts; i++)
 		{
 			const GeoLib::Point* point = (*_polylines)[j]->getPoint(i);
 			const double* coords = point->getCoords();
@@ -124,10 +124,13 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 		// Generate lines
 		newLines->InsertNextCell(numPoints);
 		plyIDs->InsertNextValue(j);
-		for (int i = 0; i < numPoints; i++)
-			newLines->InsertCellPoint(i + lastMaxIndex);
+		for (int i = 0; i < numVerts; i++)
+				newLines->InsertCellPoint(i + lastMaxIndex);
 
-		lastMaxIndex += numPoints;
+		if(isClosed)
+			newLines->InsertCellPoint(lastMaxIndex);
+
+		lastMaxIndex += numVerts;
 	}
 
 	output->SetPoints(newPoints);

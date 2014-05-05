@@ -146,9 +146,8 @@ VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 }
 void VisualizationWidget::updateView()
 {
-	//QDialog box(0, Qt::WindowTitleHint);
-    //box.show();
-	vtkWidget->GetRenderWindow()->Render();
+	if(vtkWidget->GetRenderWindow()->IsDrawable())
+		vtkWidget->GetRenderWindow()->Render();
 }
 
 void VisualizationWidget::showAll(int x, int y, int z)

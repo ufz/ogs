@@ -73,9 +73,9 @@ double EdgeRatioMetric::checkTriangle (GeoLib::Point const* const a,
                                                        GeoLib::Point const* const b,
                                                        GeoLib::Point const* const c) const
 {
-	double len0 (sqrt(MathLib::sqrDist (b,a)));
-	double len1 (sqrt(MathLib::sqrDist (b,c)));
-	double len2 (sqrt(MathLib::sqrDist (a,c)));
+	double len0 (sqrt(MathLib::sqrDist (*b,*a)));
+	double len1 (sqrt(MathLib::sqrDist (*b,*c)));
+	double len2 (sqrt(MathLib::sqrDist (*a,*c)));
 
 	if (len0 < len1 && len0 < len2)
 	{
@@ -108,10 +108,10 @@ double EdgeRatioMetric::checkQuad (GeoLib::Point const* const a,
                                                    GeoLib::Point const* const c,
                                                    GeoLib::Point const* const d) const
 {
-	double sqr_lengths[4] = {MathLib::sqrDist (b,a),
-		                 MathLib::sqrDist (c,b),
-		                 MathLib::sqrDist (d,c),
-		                 MathLib::sqrDist (a,d)};
+	double sqr_lengths[4] = {MathLib::sqrDist (*b,*a),
+		                 MathLib::sqrDist (*c,*b),
+		                 MathLib::sqrDist (*d,*c),
+		                 MathLib::sqrDist (*a,*d)};
 
 	// sort lengths - since this is a very small array we use bubble sort
 	for (size_t i(0); i < 4; i++)
@@ -127,9 +127,9 @@ double EdgeRatioMetric::checkTetrahedron (GeoLib::Point const* const a,
                                                           GeoLib::Point const* const c,
                                                           GeoLib::Point const* const d) const
 {
-	double sqr_lengths[6] = {MathLib::sqrDist (b,a), MathLib::sqrDist (c,b),
-		                 MathLib::sqrDist (c,a), MathLib::sqrDist (a,d),
-		                 MathLib::sqrDist (b,d), MathLib::sqrDist (c,d)};
+	double sqr_lengths[6] = {MathLib::sqrDist (*b,*a), MathLib::sqrDist (*c,*b),
+		                 MathLib::sqrDist (*c,*a), MathLib::sqrDist (*a,*d),
+		                 MathLib::sqrDist (*b,*d), MathLib::sqrDist (*c,*d)};
 
 	// sort lengths - since this is a very small array we use bubble sort
 	for (size_t i(0); i < 6; i++)
@@ -142,15 +142,15 @@ double EdgeRatioMetric::checkTetrahedron (GeoLib::Point const* const a,
 
 double EdgeRatioMetric::checkPrism (std::vector<const GeoLib::Point*> const & pnts) const
 {
-	double sqr_lengths[9] = {MathLib::sqrDist (pnts[0],pnts[1]),
-		                 MathLib::sqrDist (pnts[1],pnts[2]),
-		                 MathLib::sqrDist (pnts[2],pnts[0]),
-		                 MathLib::sqrDist (pnts[3],pnts[4]),
-		                 MathLib::sqrDist (pnts[4],pnts[5]),
-		                 MathLib::sqrDist (pnts[5],pnts[3]),
-		                 MathLib::sqrDist (pnts[0],pnts[3]),
-		                 MathLib::sqrDist (pnts[1],pnts[4]),
-		                 MathLib::sqrDist (pnts[2],pnts[5])};
+	double sqr_lengths[9] = {MathLib::sqrDist (*pnts[0],*pnts[1]),
+		                 MathLib::sqrDist (*pnts[1],*pnts[2]),
+		                 MathLib::sqrDist (*pnts[2],*pnts[0]),
+		                 MathLib::sqrDist (*pnts[3],*pnts[4]),
+		                 MathLib::sqrDist (*pnts[4],*pnts[5]),
+		                 MathLib::sqrDist (*pnts[5],*pnts[3]),
+		                 MathLib::sqrDist (*pnts[0],*pnts[3]),
+		                 MathLib::sqrDist (*pnts[1],*pnts[4]),
+		                 MathLib::sqrDist (*pnts[2],*pnts[5])};
 
 	// sort lengths - since this is a very small array we use bubble sort
 	for (size_t i(0); i < 9; i++)
@@ -163,18 +163,18 @@ double EdgeRatioMetric::checkPrism (std::vector<const GeoLib::Point*> const & pn
 
 double EdgeRatioMetric::checkHexahedron (std::vector<const GeoLib::Point*> const & pnts) const
 {
-	double sqr_lengths[12] = {MathLib::sqrDist (pnts[0],pnts[1]),
-		                  MathLib::sqrDist (pnts[1],pnts[2]),
-		                  MathLib::sqrDist (pnts[2],pnts[3]),
-		                  MathLib::sqrDist (pnts[3],pnts[0]),
-		                  MathLib::sqrDist (pnts[4],pnts[5]),
-		                  MathLib::sqrDist (pnts[5],pnts[6]),
-		                  MathLib::sqrDist (pnts[6],pnts[7]),
-		                  MathLib::sqrDist (pnts[7],pnts[4]),
-		                  MathLib::sqrDist (pnts[0],pnts[4]),
-		                  MathLib::sqrDist (pnts[1],pnts[5]),
-		                  MathLib::sqrDist (pnts[2],pnts[6]),
-		                  MathLib::sqrDist (pnts[3],pnts[7])};
+	double sqr_lengths[12] = {MathLib::sqrDist (*pnts[0],*pnts[1]),
+		                  MathLib::sqrDist (*pnts[1],*pnts[2]),
+		                  MathLib::sqrDist (*pnts[2],*pnts[3]),
+		                  MathLib::sqrDist (*pnts[3],*pnts[0]),
+		                  MathLib::sqrDist (*pnts[4],*pnts[5]),
+		                  MathLib::sqrDist (*pnts[5],*pnts[6]),
+		                  MathLib::sqrDist (*pnts[6],*pnts[7]),
+		                  MathLib::sqrDist (*pnts[7],*pnts[4]),
+		                  MathLib::sqrDist (*pnts[0],*pnts[4]),
+		                  MathLib::sqrDist (*pnts[1],*pnts[5]),
+		                  MathLib::sqrDist (*pnts[2],*pnts[6]),
+		                  MathLib::sqrDist (*pnts[3],*pnts[7])};
 
 	// sort lengths - since this is a very small array we use bubble sort
 	for (size_t i(0); i < 12; i++)

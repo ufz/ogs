@@ -22,8 +22,8 @@
 
 namespace MeshLib {
 
-Element::Element(unsigned value)
-	: _nodes(nullptr), _value(value), _neighbors(nullptr)
+Element::Element(unsigned value, std::size_t id)
+	: _nodes(nullptr), _id(id), _value(value), _neighbors(nullptr)
 {
 }
 
@@ -35,7 +35,9 @@ Element::~Element()
 
 bool Element::addNeighbor(Element* e)
 {
-	if (e == this || e==nullptr)
+	if (e == this ||
+		e == nullptr ||
+		e->getDimension() != this->getDimension())
 		return false;
 
 	unsigned nNeighbors (this->getNNeighbors());
@@ -69,6 +71,22 @@ bool Element::addNeighbor(Element* e)
 	return false;
 }
 
+MeshLib::Node Element::getCenterOfGravity() const
+{
+	const unsigned nNodes (this->getNNodes());
+	MeshLib::Node center(0,0,0);
+	for (unsigned i=0; i<nNodes; ++i)
+	{
+		center[0] += (*_nodes[i])[0];
+		center[1] += (*_nodes[i])[1];
+		center[2] += (*_nodes[i])[2];
+	}
+	center[0] /= nNodes;
+	center[1] /= nNodes;
+	center[2] /= nNodes;
+	return center;
+}
+
 const Element* Element::getEdge(unsigned i) const
 {
 	if (i < getNEdges())
@@ -85,11 +103,11 @@ const Element* Element::getEdge(unsigned i) const
 void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 {
 	min = std::numeric_limits<double>::max();
-	max = std::numeric_limits<double>::min();
+	max = 0;
 	const unsigned nEdges (this->getNEdges());
 	for (unsigned i=0; i<nEdges; i++)
 	{
-		const double dist (MathLib::sqrDist(getEdgeNode(i,0), getEdgeNode(i,1)));
+		const double dist (MathLib::sqrDist(*getEdgeNode(i,0), *getEdgeNode(i,1)));
 		min = (dist<min) ? dist : min;
 		max = (dist>max) ? dist : max;
 	}

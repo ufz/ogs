@@ -38,6 +38,9 @@ public:
 	Surface	(const std::vector<Point*> &pnt_vec);
 	virtual ~Surface ();
 
+	/// return a geometry type
+	virtual GEOTYPE getGeoType() const {return GEOTYPE::SURFACE;}
+
 	/**
 	 * adds three indices describing a triangle and updates the bounding box
 	 * */
@@ -58,14 +61,14 @@ public:
 	/**
 	 * is the given point in the bounding volume of the surface
 	 */
-	bool isPntInBoundingVolume(const double *pnt) const;
+	bool isPntInBoundingVolume(Point const& pnt) const;
 
 	/**
 	 * is the given point pnt located in the surface
 	 * @param pnt the point
 	 * @return true if the point is contained in the surface
 	 */
-	bool isPntInSfc (const double *pnt) const;
+	bool isPntInSfc (Point const& pnt) const;
 
 	const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; }
 

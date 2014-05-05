@@ -25,6 +25,12 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES, CELLPYRAMIDTYPE>::n_all_nodes;
+
+template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
+const unsigned TemplatePyramid<NNODES, CELLPYRAMIDTYPE>::n_base_nodes;
+
+template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_face_nodes[5][4] =
 {
 	{0, 1, 4, 99}, // Face 0
@@ -51,8 +57,8 @@ template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 const unsigned TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
-TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], unsigned value)
-	: Cell(value)
+TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], unsigned value, std::size_t id)
+	: Cell(value, id)
 {
 	_nodes = nodes;
 
@@ -64,8 +70,8 @@ TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(Node* nodes[NNODES], un
 
 template<unsigned NNODES, CellType CELLPYRAMIDTYPE>
 TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(std::array<Node*, NNODES> const& nodes,
-                                                         unsigned value)
-	: Cell(value)
+                                                         unsigned value, std::size_t id)
+	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -78,7 +84,7 @@ TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(std::array<Node*, NNODE
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::TemplatePyramid(const TemplatePyramid<NNODES,CELLPYRAMIDTYPE> &pyramid)
-	: Cell(pyramid.getValue())
+	: Cell(pyramid.getValue(), pyramid.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++) {
@@ -174,34 +180,15 @@ ElementErrorCode TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::validate() const
 
 	const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(this->getFace(4)));
 	if (base)
+	{
 		error_code |= base->validate();
+		error_code[ElementErrorFlag::NodeOrder] = !this->testElementNodeOrder();
+	}
 	else
 		error_code.set(ElementErrorFlag::NodeOrder);
 	delete base;
 
 	return error_code;
-}
-
-template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
-Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::reviseElement() const
-{
-	// try to create tetrahedron
-	if (_nodes[_edge_nodes[0][0]] == _nodes[_edge_nodes[0][1]]
-		|| _nodes[_edge_nodes[1][0]] == _nodes[_edge_nodes[1][1]]) {
-		Node** tet_nodes = new Node*[4];
-		for (unsigned k(0); k<4; k++) tet_nodes[k] = _nodes[k];
-		return new Tet(tet_nodes, _value);
-	}
-
-	if (_nodes[_edge_nodes[2][0]] == _nodes[_edge_nodes[2][1]]
-	|| _nodes[_edge_nodes[3][0]] == _nodes[_edge_nodes[3][1]]) {
-		Node** tet_nodes = new Node*[4];
-		for (unsigned k(0); k<3; k++) tet_nodes[k] = _nodes[k];
-		tet_nodes[3] = _nodes[4];
-		return new Tet(tet_nodes, _value);
-	}
-
-	return NULL;
 }
 
 } // end namespace MeshLib

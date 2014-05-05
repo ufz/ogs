@@ -228,30 +228,30 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 	return elem;
 }
 
-bool MeshIO::write(std::ostream &out)
+bool MeshIO::write()
 {
 	if(!_mesh) {
 		WARN("MeshIO::write(): Cannot write: no mesh object specified.");
 		return false;
 	}
 
-	out << "#FEM_MSH\n"
+	_out << "#FEM_MSH\n"
 		<< "$PCS_TYPE\n"
 		<< "  NO_PCS\n"
 		<< "$NODES\n"
 		<< "  ";
 	const size_t n_nodes(_mesh->getNNodes());
-	out << n_nodes << "\n";
+	_out << n_nodes << "\n";
 	for (size_t i(0); i < n_nodes; ++i) {
-		out << i << " " << *(_mesh->getNode(i)) << "\n";
+		_out << i << " " << *(_mesh->getNode(i)) << "\n";
 	}
 
-	out << "$ELEMENTS\n"
+	_out << "$ELEMENTS\n"
 		<< "  ";
 
-	writeElements(_mesh->getElements(), out);
+	writeElements(_mesh->getElements(), _out);
 
-	out << " $LAYER\n"
+	_out << " $LAYER\n"
 		<< "  0\n"
 		<< "#STOP\n";
 

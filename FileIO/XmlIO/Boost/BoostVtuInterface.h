@@ -20,13 +20,10 @@
 #include <string>
 #include <vector>
 
-#include "MeshEnums.h"
-
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 #include <boost/optional.hpp>
 
-class ProjectData;
+#include "MeshEnums.h"
 
 typedef boost::optional<const boost::property_tree::ptree&> OptionalPtree;
 
@@ -42,9 +39,7 @@ namespace FileIO
 /**
  * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
  *
- * XML parsing is performed using RapidXML. Note, that this library uses string references instead
- * of copies of strings, i.e. strings used in the DOM tree need to be available as long the DOM tree
- * is needed.
+ * XML parsing is performed using boost::property_tree::ptree.
  */
 class BoostVtuInterface : public Writer
 {
@@ -59,18 +54,20 @@ public:
 	void setCompressData(bool flag=true) { _use_compressor = flag; };
 
 	/// Set mesh for writing.
-	void setMesh(const MeshLib::Mesh*  mesh) { this->_mesh = const_cast<MeshLib::Mesh*>(mesh); };
+	void setMesh(const MeshLib::Mesh* mesh);
 
-protected:
+	void addScalarPointProperty(std::string const& name, std::vector<double> const& prop_vals);
+
+private:
+	/** Method builds a tree structure storing the mesh data. This method is called from
+	 * setMesh().
+	 */
+	void buildPropertyTree();
+
 	/// Adds a VTK-DataArray of the given name and datatype to the DOM tree and inserts the data-string at that node
 	void addDataArray(boost::property_tree::ptree &parent_node, const std::string &name, const std::string &data_type, const std::string &data, unsigned nComponents = 1);
 
-	bool write(std::ostream& stream);
-
-	std::string _export_name;
-	MeshLib::Mesh* _mesh;
-
-private:
+	bool write();
 
 	/// Returns the ID used by VTK for a given cell type (e.g. "5" for a triangle, etc.)
 	unsigned getVTKElementID(MeshElemType type) const;
@@ -92,7 +89,9 @@ private:
 	/// Find first child of a tree, which is a DataArray and has requested name.
 	static const OptionalPtree findDataArray(std::string const& array_name, boost::property_tree::ptree const& tree);
 
+	MeshLib::Mesh* _mesh;
 	bool _use_compressor;
+	boost::property_tree::ptree _doc;
 };
 
 }

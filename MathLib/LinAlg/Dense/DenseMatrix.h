@@ -53,6 +53,14 @@ public:
    virtual ~DenseMatrix ();
 
    /**
+    * Get all entries, which are stored in an array.
+   */
+   const FP_TYPE *getEntries() const
+   {
+       return _data;
+   }
+
+   /**
     * Assignment operator, makes a copy of the internal data of the object.
     * @param rhs The DenseMatrix object to the right side of the assignment symbol.
     */

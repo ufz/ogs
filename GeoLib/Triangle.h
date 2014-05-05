@@ -75,12 +75,7 @@ public:
 	 * @param pnt The input point
 	 * @return true, if point is in triangle, else false
 	 */
-	bool containsPoint (const double *pnt) const;
-
-	bool containsPoint (const Point &pnt) const
-	{
-		return containsPoint (pnt.getCoords());
-	}
+	bool containsPoint (Point const& pnt) const;
 
 	/**
 	 * projects the triangle points to the x-y-plane and
@@ -88,7 +83,7 @@ public:
 	 * @param pnt the point to test for
 	 * @return true, if the point is into the projected triangle
 	 */
-	bool containsPoint2D (const double *pnt) const;
+	bool containsPoint2D (Point const& pnt) const;
 
 protected:
 	/** a vector of pointers to points */

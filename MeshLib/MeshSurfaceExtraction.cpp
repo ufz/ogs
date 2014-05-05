@@ -13,6 +13,11 @@
  */
 
 #include "MeshSurfaceExtraction.h"
+
+#include <cassert>
+
+#include "logog/include/logog.hpp"
+
 #include "PointWithID.h"
 #include "Mesh.h"
 #include "Node.h"
@@ -20,9 +25,6 @@
 #include "Elements/Cell.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
-
-#include <cassert>
-#include "logog/include/logog.hpp"
 
 namespace MeshLib {
 
@@ -60,7 +62,7 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, st
 		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const double* dir)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir)
 {
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
@@ -99,13 +101,13 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	return new Mesh("SurfaceMesh", sfc_nodes, new_elements);
 }
 
-void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const double* dir, unsigned mesh_dimension)
+void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, unsigned mesh_dimension)
 {
 	if (mesh_dimension<2 || mesh_dimension>3)
 		ERR("Cannot handle meshes of dimension %i", mesh_dimension);
 
 	bool complete_surface (true);
-	if (MathLib::scalarProduct<double, 3>(dir, dir) != 0)
+	if (MathLib::scalarProduct(dir, dir) != 0)
 		complete_surface = false;
 
 	for (auto elem = all_elements.begin(); elem != all_elements.end(); ++elem)
@@ -119,9 +121,8 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 			if (!complete_surface)
 			{
 				MeshLib::Face* face = dynamic_cast<MeshLib::Face*>(*elem);
-				double normal[3];
-				face->getSurfaceNormal(normal);
-				if (MathLib::scalarProduct(normal, dir, 3) <= 0)
+
+				if (MathLib::scalarProduct(face->getSurfaceNormal(), dir) <= 0)
 					continue;	
 			}
 			sfc_elements.push_back(*elem);
@@ -139,13 +140,11 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 
 				const MeshLib::Face* face = static_cast<const MeshLib::Face*>(cell->getFace(j));
 				if (!complete_surface)
-				{
-					double normal[3];
-					face->getSurfaceNormal(normal);
-					if (MathLib::scalarProduct<double,3>(normal, dir) <= 0)
+					if (MathLib::scalarProduct(face->getSurfaceNormal(), dir) <= 0)
+					{
+						delete face;
 						continue;
-				}
-
+					}
 				if (face->getGeomType() == MeshElemType::TRIANGLE)
 					sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
 				else
@@ -179,7 +178,7 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(const std::vector<MeshLib::Node*> 
 	}
 }
 
-std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const double *dir)
+std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir)
 {
 	INFO ("Extracting surface nodes...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());

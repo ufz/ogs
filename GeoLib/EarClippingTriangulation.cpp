@@ -32,7 +32,7 @@ EarClippingTriangulation::EarClippingTriangulation(const GeoLib::Polygon* polygo
 	copyPolygonPoints (polygon);
 
 	if (rot) {
-		rotate ();
+		rotatePointsToXY (_pnts);
 		ensureCWOrientation ();
 	}
 
@@ -77,24 +77,6 @@ void EarClippingTriangulation::copyPolygonPoints (const GeoLib::Polygon* polygon
 	for (std::size_t k(0); k < n_pnts; k++) {
 		_pnts.push_back (new GeoLib::Point (*(polygon->getPoint(k))));
 	}
-}
-
-void EarClippingTriangulation::rotate ()
-{
-	// calculate supporting plane
-	MathLib::Vector3 plane_normal;
-	double d;
-	// compute the plane normal
-	getNewellPlane(_pnts, plane_normal, d);
-
-	double tol (sqrt(std::numeric_limits<double>::min()));
-	if (fabs(plane_normal[0]) > tol || fabs(plane_normal[1]) > tol) {
-		// rotate copied points into x-y-plane
-		rotatePointsToXY(plane_normal, _pnts);
-	}
-
-	for (std::size_t k(0); k<_pnts.size(); k++)
-		(*(_pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
 }
 
 void EarClippingTriangulation::ensureCWOrientation ()

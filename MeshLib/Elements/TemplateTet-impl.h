@@ -22,6 +22,12 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTETTYPE>
+const unsigned TemplateTet<NNODES, CELLTETTYPE>::n_all_nodes;
+
+template <unsigned NNODES, CellType CELLTETTYPE>
+const unsigned TemplateTet<NNODES, CELLTETTYPE>::n_base_nodes;
+
+template <unsigned NNODES, CellType CELLTETTYPE>
 const unsigned TemplateTet<NNODES,CELLTETTYPE>::_face_nodes[4][3] =
 {
 	{0, 2, 1}, // Face 0
@@ -42,8 +48,8 @@ const unsigned TemplateTet<NNODES,CELLTETTYPE>::_edge_nodes[6][2] =
 };
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value)
-	: Cell(value)
+TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value, std::size_t id)
+	: Cell(value, id)
 {
 	_nodes = nodes;
 
@@ -55,8 +61,8 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(Node* nodes[NNODES], unsigned value
 
 template<unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& nodes,
-                                             unsigned value)
-	: Cell(value)
+                                             unsigned value, std::size_t id)
+	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -69,7 +75,7 @@ TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(std::array<Node*, NNODES> const& no
 
 template <unsigned NNODES, CellType CELLTETTYPE>
 TemplateTet<NNODES,CELLTETTYPE>::TemplateTet(const TemplateTet<NNODES,CELLTETTYPE> &tet)
-	: Cell(tet.getValue())
+	: Cell(tet.getValue(), tet.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++) {
@@ -149,38 +155,8 @@ ElementErrorCode TemplateTet<NNODES,CELLTETTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
-}
-
-template <unsigned NNODES, CellType CELLTETTYPE>
-Element* TemplateTet<NNODES,CELLTETTYPE>::reviseElement() const
-{
-	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		tri_nodes[0] = _nodes[0];
-		tri_nodes[1] = _nodes[2];
-		tri_nodes[2] = _nodes[3];
-		return new Tri(tri_nodes, _value);
-	}
-
-	if (_nodes[2] == _nodes[0]) {
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		tri_nodes[0] = _nodes[0];
-		tri_nodes[1] = _nodes[1];
-		tri_nodes[2] = _nodes[3];
-		return new Tri(tri_nodes, _value);
-	}
-
-	if (_nodes[0] == _nodes[3] || _nodes[1] == _nodes[3] || _nodes[2] == _nodes[3]) {
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		tri_nodes[0] = _nodes[0];
-		tri_nodes[1] = _nodes[1];
-		tri_nodes[2] = _nodes[2];
-		return new Tri(tri_nodes, _value);
-	}
-
-	// this should not happen
-	return NULL;
 }
 
 } // end namespace MeshLib

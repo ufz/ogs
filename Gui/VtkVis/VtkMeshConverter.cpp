@@ -19,7 +19,7 @@
 
 #include "Mesh.h"
 #include "Node.h"
-#include "Elements/Edge.h"
+#include "Elements/Line.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"

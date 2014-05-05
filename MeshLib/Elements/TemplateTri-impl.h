@@ -18,8 +18,21 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTRITYPE>
-TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value) :
-	Face(value)
+const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_all_nodes;
+
+template <unsigned NNODES, CellType CELLTRITYPE>
+const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_base_nodes;
+
+template <unsigned NNODES, CellType CELLTRITYPE>
+const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
+		{0, 1}, // Edge 0
+		{1, 2}, // Edge 1
+		{0, 2}  // Edge 2
+	};
+
+template <unsigned NNODES, CellType CELLTRITYPE>
+TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value, std::size_t id) :
+	Face(value, id)
 {
 	_nodes = nodes;
 	_neighbors = new Element*[3];
@@ -29,8 +42,8 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 
 template<unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& nodes,
-                                             unsigned value)
-	: Face(value)
+                                             unsigned value, std::size_t id)
+	: Face(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -43,7 +56,7 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& no
 
 template <unsigned NNODES, CellType CELLTRITYPE>
 TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE> &tri) :
-	Face(tri.getValue())
+	Face(tri.getValue(), tri.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++)
@@ -85,29 +98,8 @@ ElementErrorCode TemplateTri<NNODES,CELLTRITYPE>::validate() const
 { 
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
-}
-
-
-template <unsigned NNODES, CellType CELLTRITYPE>
-Element* TemplateTri<NNODES,CELLTRITYPE>::reviseElement() const
-{
-	// try to create an edge
-	if (_nodes[0] == _nodes[1] || _nodes[1] == _nodes[2]) {
-		Node** nodes = new Node*[2];
-		nodes[0] = _nodes[0];
-		nodes[1] = _nodes[2];
-		return new Line(nodes, _value);
-	}
-
-	if (_nodes[0] == _nodes[2]) {
-		Node** nodes = new Node*[2];
-		nodes[0] = _nodes[0];
-		nodes[1] = _nodes[1];
-		return new Line(nodes, _value);
-	}
-
-	return NULL;
 }
 
 template <unsigned NNODES, CellType CELLTRITYPE>

@@ -115,12 +115,12 @@ const Triangle* Surface::operator[] (std::size_t i) const
 	return _sfc_triangles[i];
 }
 
-bool Surface::isPntInBoundingVolume(const double *pnt) const
+bool Surface::isPntInBoundingVolume(Point const& pnt) const
 {
 	return _bounding_volume->containsPoint (pnt);
 }
 
-bool Surface::isPntInSfc (const double *pnt) const
+bool Surface::isPntInSfc (Point const& pnt) const
 {
 	bool nfound (true);
 	for (std::size_t k(0); k<_sfc_triangles.size() && nfound; k++) {

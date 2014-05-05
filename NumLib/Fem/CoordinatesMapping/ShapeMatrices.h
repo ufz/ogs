@@ -61,7 +61,10 @@ struct ShapeMatrices
      */
     ShapeMatrices(std::size_t dim, std::size_t n_nodes)
     : N(n_nodes), dNdr(dim, n_nodes), J(dim, dim), detJ(.0),
-      invJ(dim, dim), dNdx(dim, n_nodes) {}
+      invJ(dim, dim), dNdx(dim, n_nodes)
+    {
+        this->setZero();
+    }
 
     ~ShapeMatrices() {}
 

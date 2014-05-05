@@ -51,7 +51,7 @@ public:
 	void setConditionType(FEMCondition::CondType type) { _type = type; }
 
 protected:
-	bool write(std::ostream& stream);
+	bool write();
 
 private:
 	/// Read the details of various FEM Conditions from an xml-file

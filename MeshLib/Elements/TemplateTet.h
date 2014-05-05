@@ -45,11 +45,17 @@ template <unsigned NNODES, CellType CELLTETTYPE>
 class TemplateTet : public Cell
 {
 public:
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes = NNODES;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes = 4u;
+
 	/// Constructor with an array of mesh nodes.
-	TemplateTet(Node* nodes[NNODES], unsigned value = 0);
+	TemplateTet(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a tetrahedron from array of Node pointers.
-	TemplateTet(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateTet(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplateTet(const TemplateTet &tet);
@@ -75,8 +81,8 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 4;
-	};
+		return all ? n_all_nodes : n_base_nodes;
+	}
 
 	/**
 	 * Method returns the type of the element. In this case TETRAHEDRON will be returned.
@@ -104,15 +110,6 @@ public:
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
-
-	/**
-	 * This method should be called after at least two nodes of the tetrahedron
-	 * element are collapsed. As a consequence of the node collapsing an edge
-	 * of the tetrahedron will be collapsed. If one edge is collapsed we obtain
-	 * a triangle.
-	 * @return a Triangle object or NULL
-	 */
-	virtual Element* reviseElement() const;
 
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.

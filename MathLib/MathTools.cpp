@@ -86,13 +86,4 @@ double calcTetrahedronVolume(const double* x1, const double* x2, const double* x
 	          + (x1[2] - x4[2]) * ((x2[0] - x4[0]) * (x3[1] - x4[1]) - (x2[1] - x4[1]) * (x3[0] - x4[0]))) / 6.0;
 }
 
-void MPhi2D(double* vf, double r, double s)
-{
-	vf[0] = (1.0 + r) * (1.0 + s);
-	vf[1] = (1.0 - r) * (1.0 + s);
-	vf[2] = (1.0 - r) * (1.0 - s);
-	vf[3] = (1.0 + r) * (1.0 - s);
-	for (unsigned i = 0; i < 4; i++)
-		vf[i] *= 0.25;
-}
 } // namespace

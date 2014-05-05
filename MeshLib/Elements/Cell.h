@@ -26,11 +26,14 @@ namespace MeshLib {
 class Cell : public Element
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension;
+
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	double getContent() const { return _volume; };
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return 3; };
+	unsigned getDimension() const { return dimension; };
 
 	/// Get the volume of this 3d element.
 	virtual double getVolume() const { return _volume; };
@@ -48,13 +51,23 @@ public:
 	 */
 	virtual Element* clone() const = 0;
 
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 * For 3D elements true is returned if the normals of all faces points away from the centre of 
+	 * the element.
+	 * Note: This method might give wrong results if something else is wrong with the element 
+	 * (non-planar faces, non-convex geometry, possibly zero volume) which causes the calculated 
+	 * center of gravity to lie outside of the actual element
+	 */
+	virtual bool testElementNodeOrder() const;
+
 protected:
 /*
 	/// Constructor for a generic mesh element containing an array of mesh nodes.
 	Cell(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Cell(unsigned value = 0);
+	Cell(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	double _volume;
 

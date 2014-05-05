@@ -48,7 +48,7 @@ void VtkCompositeThresholdFilter::init()
 
 	// Setting the threshold to min / max values to ensure that the whole data
 	// is first processed. This is needed for correct lookup table generation.
-	const double dMin = std::numeric_limits<double>::min();
+	const double dMin = std::numeric_limits<double>::lowest();
 	const double dMax = std::numeric_limits<double>::max();
 	threshold->ThresholdBetween(dMin, dMax);
 

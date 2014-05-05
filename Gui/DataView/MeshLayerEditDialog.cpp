@@ -15,11 +15,15 @@
 
 #include "MeshLayerEditDialog.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include "OGSError.h"
 #include "StringTools.h"
 #include "Mesh.h"
 
 #include <QCheckBox>
+#include <QFileInfo>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QSettings>
@@ -188,7 +192,7 @@ void MeshLayerEditDialog::accept()
 				const std::string imgPath ( this->_edits[0]->text().toStdString() );
 				const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
 				if (!imgPath.empty())
-					result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
+					result = MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
 			}
 			else
 			{
@@ -197,12 +201,11 @@ void MeshLayerEditDialog::accept()
 				{
 					// "100" is just a default size to have any value for extruding 2D elements.
 					// The actual mapping based on a raster file will be performed later.
-					float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
-					if (thickness > std::numeric_limits<float>::epsilon())
-						layer_thickness.push_back(thickness);
+					const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
+					layer_thickness.push_back(thickness);
 				}
 
-				new_mesh = MshLayerMapper::CreateLayers(_msh, layer_thickness);
+				new_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
 
 				if (_use_rasters)
 				{
@@ -212,13 +215,13 @@ void MeshLayerEditDialog::accept()
 						const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
 						if (!imgPath.empty())
 						{
-							result = MshLayerMapper::LayerMapping(new_mesh, imgPath, nLayers, i, noDataReplacement);
+							result = MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement);
 							if (result==0) break;
 						}
 					}
 					if (this->_edits[0]->text().length()>0)
 					{
-						MeshLib::Mesh* final_mesh = MshLayerMapper::blendLayersWithSurface(new_mesh, nLayers, this->_edits[0]->text().toStdString());
+						MeshLib::Mesh* final_mesh = MeshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
 						delete new_mesh;
 						new_mesh = final_mesh;
 					}
@@ -250,9 +253,9 @@ void MeshLayerEditDialog::getFileName()
 	QPushButton* button = dynamic_cast<QPushButton*>(this->sender());
 	QSettings settings;
 	QString filename = QFileDialog::getOpenFileName(this, "Select raster file to open",
-	                                                settings.value("lastOpenedFileDirectory").toString(),
+	                                                settings.value("lastOpenedRasterFileDirectory").toString(),
 	                                                "ASCII raster files (*.asc);;All files (* *.*)");
 	_fileButtonMap[button]->setText(filename);
-	QDir dir = QDir(filename);
-	settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+	QFileInfo fi(filename);
+	settings.setValue("lastOpenedRasterFileDirectory", fi.absolutePath());
 }

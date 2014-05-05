@@ -40,7 +40,7 @@ void AreaMetric::calculateQuality()
 		else if (elem->getDimension() == 2)
 		{		
 			area = elem->getContent();
-			if (area < sqrt(fabs(std::numeric_limits<double>::min()))) errorMsg(elem, k);
+			if (area < sqrt(fabs(std::numeric_limits<double>::epsilon()))) errorMsg(elem, k);
 		} 
 		else {
 			size_t nFaces(elem->getNFaces());
@@ -49,7 +49,7 @@ void AreaMetric::calculateQuality()
 			{
 				const double sub_area (elem->getFace(i)->getContent());
 
-				if (sub_area < sqrt(fabs(std::numeric_limits<double>::min())))
+				if (sub_area < sqrt(fabs(std::numeric_limits<double>::epsilon())))
 					errorMsg(elem, k);
 				if (sub_area < area) area = sub_area;
 			}

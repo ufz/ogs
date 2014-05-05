@@ -23,6 +23,12 @@
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
+const unsigned TemplateHex<NNODES, CELLHEXTYPE>::n_all_nodes;
+
+template <unsigned NNODES, CellType CELLHEXTYPE>
+const unsigned TemplateHex<NNODES, CELLHEXTYPE>::n_base_nodes;
+
+template <unsigned NNODES, CellType CELLHEXTYPE>
 const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_face_nodes[6][4] =
 {
 	{0, 3, 2, 1}, // Face 0
@@ -51,8 +57,8 @@ const unsigned TemplateHex<NNODES,CELLHEXTYPE>::_edge_nodes[12][2] =
 };
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
-TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value)
-	: Cell(value)
+TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value, std::size_t id)
+	: Cell(value, id)
 {
 	_nodes = nodes;
 
@@ -64,8 +70,8 @@ TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(Node* nodes[NNODES], unsigned value
 
 template<unsigned NNODES, CellType CELLHEXTYPE>
 TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(std::array<Node*, NNODES> const& nodes,
-                                             unsigned value)
-	: Cell(value)
+                                             unsigned value, std::size_t id)
+	: Cell(value, id)
 {
 	_nodes = new Node*[NNODES];
 	std::copy(nodes.begin(), nodes.end(), _nodes);
@@ -78,7 +84,7 @@ TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(std::array<Node*, NNODES> const& no
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
 TemplateHex<NNODES,CELLHEXTYPE>::TemplateHex(const TemplateHex<NNODES,CELLHEXTYPE> &hex)
-	: Cell(hex.getValue())
+	: Cell(hex.getValue(), hex.getID())
 {
 	_nodes = new Node*[NNODES];
 	for (unsigned i=0; i<NNODES; i++)
@@ -170,110 +176,8 @@ ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::validate() const
 		error_code |= quad->validate();
 		delete quad;
 	}
+	error_code[ElementErrorFlag::NodeOrder]  = !this->testElementNodeOrder();
 	return error_code;
-}
-
-template <unsigned NNODES, CellType CELLHEXTYPE>
-Element* TemplateHex<NNODES,CELLHEXTYPE>::reviseElement() const
-{
-	std::vector<size_t> collapsed_edges;
-	for (size_t edge(0); edge<getNEdges(); edge++) {
-		if (_nodes[_edge_nodes[edge][0]] == _nodes[_edge_nodes[edge][1]]) {
-			collapsed_edges.push_back(edge);
-		}
-	}
-
-	if (collapsed_edges.size() == 1) {
-		ERR("[TemplateHex<NNODES,CELLHEXTYPE>::reviseElement()] collapsing of one edge in hexahedron not handled.");
-		return NULL;
-	}
-
-	if (collapsed_edges.size() == 2) {
-		// try to create a prism out of the hex
-		if (collapsed_edges[0] == 0 && collapsed_edges[1] == 2) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[4];
-			prism_nodes[2] = _nodes[5];
-			prism_nodes[3] = _nodes[3];
-			prism_nodes[4] = _nodes[7];
-			prism_nodes[5] = _nodes[6];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 1 && collapsed_edges[1] == 3) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[4];
-			prism_nodes[2] = _nodes[7];
-			prism_nodes[3] = _nodes[1];
-			prism_nodes[4] = _nodes[5];
-			prism_nodes[5] = _nodes[6];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 4 && collapsed_edges[1] == 5) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[7];
-			prism_nodes[2] = _nodes[3];
-			prism_nodes[3] = _nodes[1];
-			prism_nodes[4] = _nodes[6];
-			prism_nodes[5] = _nodes[2];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 5 && collapsed_edges[1] == 6) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[1];
-			prism_nodes[2] = _nodes[4];
-			prism_nodes[3] = _nodes[3];
-			prism_nodes[4] = _nodes[2];
-			prism_nodes[5] = _nodes[7];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 6 && collapsed_edges[1] == 7) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[3];
-			prism_nodes[2] = _nodes[4];
-			prism_nodes[3] = _nodes[1];
-			prism_nodes[4] = _nodes[2];
-			prism_nodes[5] = _nodes[5];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 7 && collapsed_edges[1] == 4) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[1];
-			prism_nodes[2] = _nodes[5];
-			prism_nodes[3] = _nodes[3];
-			prism_nodes[4] = _nodes[2];
-			prism_nodes[5] = _nodes[6];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 8 && collapsed_edges[1] == 10) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[1];
-			prism_nodes[2] = _nodes[4];
-			prism_nodes[3] = _nodes[3];
-			prism_nodes[4] = _nodes[2];
-			prism_nodes[5] = _nodes[7];
-			return new Prism(prism_nodes, _value);
-		}
-		if (collapsed_edges[0] == 9 && collapsed_edges[1] == 11) {
-			Node** prism_nodes = new Node*[6];
-			prism_nodes[0] = _nodes[0];
-			prism_nodes[1] = _nodes[3];
-			prism_nodes[2] = _nodes[4];
-			prism_nodes[3] = _nodes[1];
-			prism_nodes[4] = _nodes[2];
-			prism_nodes[5] = _nodes[5];
-			return new Prism(prism_nodes, _value);
-		}
-		return NULL;
-	}
-
-	return NULL;
 }
 
 } // end namespace MeshLib

@@ -40,7 +40,7 @@ Orientation getOrientation(const double& p0_x, const double& p0_y, const double&
 	double h1((p1_x - p0_x) * (p2_y - p0_y));
 	double h2((p2_x - p0_x) * (p1_y - p0_y));
 
-	double tol(sqrt( std::numeric_limits<double>::min()));
+	double tol(std::numeric_limits<double>::epsilon());
 	if (fabs(h1 - h2) <= tol * std::max(fabs(h1), fabs(h2)))
 		return COLLINEAR;
 	if (h1 - h2 > 0.0)
@@ -55,54 +55,103 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 	return getOrientation((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
-bool lineSegmentIntersect(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c,
-                          const GeoLib::Point& d, GeoLib::Point& s)
+bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
-	MathLib::DenseMatrix<double> mat(2, 2);
-	mat(0, 0) = b[0] - a[0];
-	mat(1, 0) = b[1] - a[1];
-	mat(0,1) = c[0] - d[0];
-	mat(1,1) = c[1] - d[1];
+	const double eps(std::numeric_limits<double>::epsilon());
 
-	// check if vectors are parallel
-	double eps (sqrt(std::numeric_limits<double>::min()));
-	if (fabs(mat(1,1)) < eps) {
-		// vector (D-C) is parallel to x-axis
-		if (fabs(mat(0,1)) < eps) {
-			// vector (B-A) is parallel to x-axis
-			return false;
-		}
-	} else {
-		// vector (D-C) is not parallel to x-axis
-		if (fabs(mat(0,1)) >= eps) {
-			// vector (B-A) is not parallel to x-axis
-			// \f$(B-A)\f$ and \f$(D-C)\f$ are parallel iff there exists
-			// a constant \f$c\f$ such that \f$(B-A) = c (D-C)\f$
-			if (fabs (mat(0,0) / mat(0,1) - mat(1,0) / mat(1,1)) < eps * fabs (mat(0,0) / mat(0,1)))
-				return false;
+	// check degenerated cases
+	if (v.getLength() < eps)
+		return false;
+
+	if (w.getLength() < eps)
+		return false;
+
+	v.normalize();
+	w.normalize();
+
+	bool parallel(true);
+	if (std::abs(v[0]-w[0]) > eps)
+		parallel = false;
+	if (std::abs(v[1]-w[1]) > eps)
+		parallel = false;
+	if (std::abs(v[2]-w[2]) > eps)
+		parallel = false;
+
+	if (! parallel) {
+		parallel = true;
+		// change sense of direction of v_normalised
+		v *= -1.0;
+		// check again
+		if (std::abs(v[0]-w[0]) > eps)
+			parallel = false;
+		if (std::abs(v[1]-w[1]) > eps)
+			parallel = false;
+		if (std::abs(v[2]-w[2]) > eps)
+			parallel = false;
+	}
+
+	return parallel;
+}
+
+bool lineSegmentIntersect(
+	GeoLib::Point const& a,
+	GeoLib::Point const& b,
+	GeoLib::Point const& c,
+	GeoLib::Point const& d,
+	GeoLib::Point& s)
+{
+	if (!isCoplanar(a, b, c, d))
+		return false;
+
+	MathLib::Vector3 const v(a, b);
+	MathLib::Vector3 const w(c, d);
+	MathLib::Vector3 const qp(a, c);
+	MathLib::Vector3 const pq(c, a);
+
+	const double sqr_len_v(v.getSqrLength());
+	const double sqr_len_w(w.getSqrLength());
+
+	if (parallel(v,w)) {
+		if (parallel(pq,v)) {
+			const double sqr_dist_pq(pq.getSqrLength());
+			if (sqr_dist_pq < sqr_len_v || sqr_dist_pq < sqr_len_w)
+				return true;
 		}
 	}
 
-	double *rhs (new double[2]);
-	rhs[0] = c[0] - a[0];
-	rhs[1] = c[1] - a[1];
+	MathLib::DenseMatrix<double> mat(2,2);
+	mat(0,0) = sqr_len_v;
+	mat(0,1) = -1.0 * MathLib::scalarProduct(v,w);
+	mat(1,1) = sqr_len_w;
+	mat(1,0) = mat(0,1);
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu_solver (mat);
-	lu_solver.solve (rhs);
-	if (0 <= rhs[0] && rhs[0] <= 1.0 && 0 <= rhs[1] && rhs[1] <= 1.0) {
-		s[0] = a[0] + rhs[0] * (b[0] - a[0]);
-		s[1] = a[1] + rhs[0] * (b[1] - a[1]);
-		s[2] = a[2] + rhs[0] * (b[2] - a[2]);
-		// check z component
-		double z0 (a[2] - d[2]), z1(rhs[0] * (b[2] - a[2]) + rhs[1] * (d[2] - c[2]));
-		delete [] rhs;
-		if (std::fabs (z0 - z1) < eps)
-			return true;
-		else
-			return false;
+	double rhs[2] = {MathLib::scalarProduct(v,qp), MathLib::scalarProduct(w,pq)};
+
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
+	lu.solve (rhs);
+
+	// no theory for the following tolerances, determined by testing
+	// lower tolerance: little bit smaller than zero
+	const double l(-1.0*std::numeric_limits<float>::epsilon());
+	// upper tolerance a little bit greater than one
+	const double u(1.0+std::numeric_limits<float>::epsilon());
+	if (rhs[0] < l || u < rhs[0] || rhs[1] < l || u < rhs[1]) {
+		return false;
 	}
-	else
-		delete [] rhs;
+
+	// compute points along line segments with minimal distance
+	GeoLib::Point const p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
+	GeoLib::Point const p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
+
+	double const min_dist(sqrt(MathLib::sqrDist(p0, p1)));
+	double const min_seg_len(std::min(sqrt(sqr_len_v), sqrt(sqr_len_w)));
+	if (min_dist < min_seg_len * 1e-6) {
+		s[0] = 0.5 * (p0[0] + p1[0]);
+		s[1] = 0.5 * (p0[1] + p1[1]);
+		s[2] = 0.5 * (p0[2] + p1[2]);
+		return true;
+	}
+
 	return false;
 }
 
@@ -163,11 +212,10 @@ bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const Geo
 static
 double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
 {
-	const double u[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2] };
-	const double v[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
-	double w[3];
-	MathLib::crossProd(u, v, w);
-	return 0.5 * sqrt(MathLib::scalarProduct<double, 3>(w, w));
+	const MathLib::Vector3 u(a,c);
+	const MathLib::Vector3 v(a,b);
+	const MathLib::Vector3 w(MathLib::crossProduct(u, v));
+	return 0.5 * sqrt(MathLib::scalarProduct(w, w));
 }
 
 bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b,
@@ -217,60 +265,8 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 		centroid += *(pnts[j]);
 	}
 
-	plane_normal *= 1.0 / plane_normal.length();
+	plane_normal *= 1.0 / plane_normal.getLength();
 	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
-}
-
-void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts)
-{
-	double small_value(sqrt( std::numeric_limits<double>::min()));
-	if (fabs(plane_normal[0]) < small_value && fabs(plane_normal[1]) < small_value)
-		return;
-
-	MathLib::DenseMatrix<double> rot_mat(3, 3);
-	computeRotationMatrixToXY(plane_normal, rot_mat);
-	rotatePoints(rot_mat, pnts);
-
-	double* tmp(rot_mat * plane_normal.getCoords());
-	for (std::size_t j(0); j < 3; j++)
-		plane_normal[j] = tmp[j];
-
-	delete[] tmp;
-}
-
-void rotatePointsToXZ(MathLib::Vector3 &n, std::vector<GeoLib::Point*> &pnts)
-{
-	double small_value(sqrt( std::numeric_limits<double>::min()));
-	if (fabs(n[0]) < small_value && fabs(n[1]) < small_value)
-		return;
-
-	// *** some frequently used terms ***
-	// n_1^2 + n_2^2
-	const double h0(n[0] * n[0] + n[1] * n[1]);
-	// 1 / sqrt (n_1^2 + n_2^2)
-	const double h1(1.0 / sqrt(h0));
-	// 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
-	const double h2(1.0 / sqrt(h0 + n[2] * n[2]));
-
-	MathLib::DenseMatrix<double> rot_mat(3, 3);
-	// calc rotation matrix
-	rot_mat(0, 0) = n[1] * h1;
-	rot_mat(0, 1) = -n[0] * h1;
-	rot_mat(0, 2) = 0.0;
-	rot_mat(1, 0) = n[0] * h2;
-	rot_mat(1, 1) = n[1] * h2;
-	rot_mat(1, 2) = n[2] * h2;
-	rot_mat(2, 0) = n[0] * n[2] * h1 * h2;
-	rot_mat(2, 1) = n[1] * n[2] * h1 * h2;
-	rot_mat(2, 2) = -sqrt(h0) * h2;
-
-	rotatePoints(rot_mat, pnts);
-
-	double *tmp(rot_mat * n.getCoords());
-	for (std::size_t j(0); j < 3; j++)
-		n[j] = tmp[j];
-
-	delete[] tmp;
 }
 
 void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
@@ -296,6 +292,28 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::De
 	rot_mat(2, 2) = plane_normal[2] * h2;
 }
 
+void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
+{
+	// *** some frequently used terms ***
+	// n_1^2 + n_2^2
+	const double h0(plane_normal[0] * plane_normal[0] + plane_normal[1] * plane_normal[1]);
+	// 1 / sqrt (n_1^2 + n_2^2)
+	const double h1(1.0 / sqrt(h0));
+	// 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
+	const double h2(1.0 / sqrt(h0 + plane_normal[2] * plane_normal[2]));
+
+	// calc rotation matrix
+	rot_mat(0, 0) = plane_normal[1] * h1;
+	rot_mat(0, 1) = -plane_normal[0] * h1;
+	rot_mat(0, 2) = 0.0;
+	rot_mat(1, 0) = plane_normal[0] * h2;
+	rot_mat(1, 1) = plane_normal[1] * h2;
+	rot_mat(1, 2) = plane_normal[2] * h2;
+	rot_mat(2, 0) = plane_normal[0] * plane_normal[2] * h1 * h2;
+	rot_mat(2, 1) = plane_normal[1] * plane_normal[2] * h1 * h2;
+	rot_mat(2, 2) = -sqrt(h0) * h2;
+}
+
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
 	double* tmp (NULL);
@@ -308,12 +326,54 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLi
 	}
 }
 
+void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
+{
+	assert(pnts.size()>2);
+	// calculate supporting plane
+	MathLib::Vector3 plane_normal;
+	double d;
+	// compute the plane normal
+	GeoLib::getNewellPlane(pnts, plane_normal, d);
+
+	const double tol (std::numeric_limits<double>::epsilon());
+	if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
+		// rotate copied points into x-y-plane
+		MathLib::DenseMatrix<double> rot_mat(3, 3);
+		computeRotationMatrixToXY(plane_normal, rot_mat);
+		rotatePoints(rot_mat, pnts);
+	}
+
+	for (std::size_t k(0); k<pnts.size(); k++)
+		(*(pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
+}
+
+void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
+{
+	assert(pnts.size()>2);
+	// calculate supporting plane
+	MathLib::Vector3 plane_normal;
+	double d;
+	// compute the plane normal
+	GeoLib::getNewellPlane(pnts, plane_normal, d);
+
+	const double tol (std::numeric_limits<double>::epsilon());
+	if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
+		// rotate copied points into x-z-plane
+		MathLib::DenseMatrix<double> rot_mat(3, 3);
+		computeRotationMatrixToXZ(plane_normal, rot_mat);
+		rotatePoints(rot_mat, pnts);
+	}
+
+	for (std::size_t k(0); k<pnts.size(); k++)
+		(*(pnts[k]))[1] = 0.0; // should be -= d but there are numerical errors
+}
+
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q)
 {
-	const GeoLib::Point pq(q[0]-p[0], q[1]-p[1], q[2]-p[2]);
-	const GeoLib::Point pa(a[0]-p[0], a[1]-p[1], a[2]-p[2]);
-	const GeoLib::Point pb(b[0]-p[0], b[1]-p[1], b[2]-p[2]);
-	const GeoLib::Point pc(c[0]-p[0], c[1]-p[1], c[2]-p[2]);
+	const MathLib::Vector3 pq(p, q);
+	const MathLib::Vector3 pa(p, a);
+	const MathLib::Vector3 pb(p, b);
+	const MathLib::Vector3 pc(p, c);
 	
 	double u (scalarTriple(pq, pc, pb));
 	if (u<0) return nullptr;
@@ -329,14 +389,10 @@ GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point co
 	return new GeoLib::Point(u*a[0]+v*b[0]+w*c[0],u*a[1]+v*b[1]+w*c[1],u*a[2]+v*b[2]+w*c[2]);
 }
 
-double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w)
+double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w)
 {
-	double cross[3];
-	MathLib::crossProd(u.getCoords(), v.getCoords(), cross);
-	double result(0);
-	for (unsigned i=0; i<3; ++i)
-		result+=(cross[i]*w[i]);
-	return result;
+	MathLib::Vector3 const cross(MathLib::crossProduct(u, v));
+	return MathLib::scalarProduct(cross,w);
 }
 
 bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
@@ -353,18 +409,30 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	return false;
 }
 
-bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
 {
-	const GeoLib::Point AB(b[0]-a[0], b[1]-a[1], b[2]-a[2]);
-	const GeoLib::Point AC(c[0]-a[0], c[1]-a[1], c[2]-a[2]);
-	const GeoLib::Point AD(d[0]-a[0], d[1]-a[1], d[2]-a[2]);
+	const MathLib::Vector3 ab(a,b);
+	const MathLib::Vector3 ac(a,c);
+	const MathLib::Vector3 ad(a,d);
 
-	double squared_scalar_triple = pow(GeoLib::scalarTriple(AC, AD, AB), 2);
-	double normalisation_factor  = (AB[0]*AB[0]+AB[1]*AB[1]+AB[2]*AB[2]) * 
-			                        (AC[0]*AC[0]+AC[1]*AC[1]+AC[2]*AC[2]) * 
-									(AD[0]*AD[0]+AD[1]*AD[1]+AD[2]*AD[2]);
+	if (ab.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2) ||
+		ac.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2) ||
+		ad.getSqrLength() < pow(std::numeric_limits<double>::epsilon(),2)) {
+		return true;
+	}
 
-	return (squared_scalar_triple/normalisation_factor < std::numeric_limits<double>::epsilon());
+	// In exact arithmetic <ac*ad^T, ab> should be zero
+	// if all four points are coplanar.
+	const double sqr_scalar_triple(pow(MathLib::scalarProduct(MathLib::crossProduct(ac,ad), ab),2));
+	// Due to evaluating the above numerically some cancellation or rounding
+	// can occur. For this reason a normalisation factor is introduced.
+	const double normalisation_factor =
+		(ab.getSqrLength() * ac.getSqrLength() * ad.getSqrLength());
+
+	// tolerance 1e-11 is choosen such that
+	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as coplanar
+	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-5) are considered as not coplanar
+	return (sqr_scalar_triple/normalisation_factor < 1e-11);
 }
 
 } // end namespace GeoLib

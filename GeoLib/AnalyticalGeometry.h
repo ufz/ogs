@@ -60,26 +60,6 @@ void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
                      double& d);
 
 /**
- * The vector plane_normal should be the surface normal of the plane surface described
- * by the points within the vector pnts. See function getNewellPlane() to get the
- * "plane normal" of a point set. The method rotates both the plane normal and
- * the points. The plane normal is rotated such that it is parallel to the \f$z\f$ axis.
- * @param plane_normal the normal of the plane
- * @param pnts pointers to points in a vector that should be rotated
- * @sa getNewellPlane()
- */
-void rotatePointsToXY(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
-
-/**
- * The vector plane_normal should be the surface normal of the plane surface described
- * by the points within the vector pnts. See function getNewellPlane() to get the
- * "plane normal" of a point set. The method rotates both the plane normal and
- * the points. The plane normal is rotated such that it is parallel to the \f$y\f$ axis.
- * @sa getNewellPlane()
- */
-void rotatePointsToXZ(MathLib::Vector3 &plane_normal, std::vector<GeoLib::Point*> &pnts);
-
-/**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
  * @param plane_normal the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
@@ -88,11 +68,35 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
                                MathLib::DenseMatrix<double> & rot_mat);
 
 /**
+ * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
+ * @param plane_normal the (3d) vector that is rotated parallel to the \f$y\f$ axis
+ * @param rot_mat 3x3 rotation matrix
+ */
+void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal,
+                               MathLib::DenseMatrix<double> & rot_mat);
+
+/**
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts vector of points
  */
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
+
+/**
+ * rotate points to X-Y plane
+ * @param pnts a vector of points with a minimum length of three.
+ * Points are rotated using a rotation matrix computed from the first three points
+ * in the vector. Point coordinates are modified as a result of the rotation.
+ */
+void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
+
+/**
+ * rotate points to X-Z plane
+ * @param pnts a vector of points with a minimum length of three.
+ * Points are rotated using a rotation matrix computed from the first three points
+ * in the vector. Point coordinates are modified as a result of the rotation.
+ */
+void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
 
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
@@ -115,14 +119,21 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
                             GeoLib::Point& intersection_pnt);
 
 /**
+ * Check if the two vectors \f$v, w \in R^3\f$ are in parallel
+ * @param v first vector
+ * @param w second vector
+ * @return true if the vectors are in parallel, else false
+*/
+bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
+
+/**
  * A line segment is given by its two end-points. The function checks,
- * if the two line segments (ab) and (cd) intersects. Up to now only
- * 2D line segments are handled!
+ * if the two line segments (ab) and (cd) intersects.
  * @param a first end-point of the first line segment
  * @param b second end-point of the first line segment
  * @param c first end-point of the second line segment
  * @param d second end-point of the second line segment
- * @param s the intersection point
+ * @param s the intersection point if the segments do intersect
  * @return true, if the line segments intersect, else false
  */
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
@@ -136,7 +147,7 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q);
 
 /// Calculates the scalar triple (u x v) . w
-double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Point const& w);
+double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
 
 /** 
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
@@ -151,7 +162,7 @@ double scalarTriple(GeoLib::Point const& u, GeoLib::Point const& v, GeoLib::Poin
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
  /// Checks if the four given points are located on a plane.
- bool pointsOnAPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
+ bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
 

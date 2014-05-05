@@ -50,11 +50,17 @@ template <unsigned NNODES, CellType CELLHEXTYPE>
 class TemplateHex : public Cell
 {
 public:
+	/// Constant: The number of all nodes for this element
+	static const unsigned n_all_nodes = NNODES;
+
+	/// Constant: The number of base nodes for this element
+	static const unsigned n_base_nodes = 8u;
+
 	/// Constructor with an array of mesh nodes.
-	TemplateHex(Node* nodes[NNODES], unsigned value = 0);
+	TemplateHex(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a hex from array of Node pointers.
-	TemplateHex(std::array<Node*, NNODES> const& nodes, unsigned value = 0);
+	TemplateHex(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplateHex(const TemplateHex &hex);
@@ -80,7 +86,7 @@ public:
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes(bool all = false) const
 	{
-		return all ? NNODES : 8;
+		return all ? n_all_nodes : n_base_nodes;
 	}
 
 	/**
@@ -109,12 +115,6 @@ public:
 	 * @return an exact copy of the object
 	 */
 	virtual Element* clone() const;
-
-	/**
-	 * Change the element type from hexahedron to a prism if two appropriate edges of the hexahedron are collapsed.
-	 * @return a prism element with nice properties or NULL
-	 */
-	virtual Element* reviseElement() const;
 
 protected:
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
