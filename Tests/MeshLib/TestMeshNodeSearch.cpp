@@ -77,15 +77,15 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 
 	pnt[0] = 0.051;
 	pnt[1] = 0.049;
-	ASSERT_EQ(1, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 0.049;
 	pnt[1] = 0.051;
-	ASSERT_EQ(100, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(100u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 0.051;
 	pnt[1] = 0.051;
-	ASSERT_EQ(101, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(101u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 9.951;
 	pnt[1] = 9.951;
@@ -114,7 +114,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
 	std::vector<std::size_t> const& found_ids_ply0(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply0));
 
-	ASSERT_EQ(100, found_ids_ply0.size());
+	ASSERT_EQ(100u, found_ids_ply0.size());
 	for (std::size_t k(0); k<found_ids_ply0.size(); k++)
 		ASSERT_EQ(k, found_ids_ply0[k]);
 
@@ -123,7 +123,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	ply1.addPoint(3);
 	std::vector<std::size_t> const& found_ids_ply1(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply1));
 
-	ASSERT_EQ(100, found_ids_ply1.size());
+	ASSERT_EQ(100u, found_ids_ply1.size());
 	for (std::size_t k(0); k<found_ids_ply1.size(); k++)
 		ASSERT_EQ(k, found_ids_ply1[k]);
 
@@ -133,7 +133,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	std::vector<std::size_t> const& found_ids_ply2(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply2));
 
 	std::size_t offset((_number_of_subdivisions_per_direction+1)*_number_of_subdivisions_per_direction);
-	ASSERT_EQ(100, found_ids_ply2.size());
+	ASSERT_EQ(100u, found_ids_ply2.size());
 	for (std::size_t k(0); k<found_ids_ply2.size(); k++)
 		ASSERT_EQ(offset + k, found_ids_ply2[k]);
 
@@ -142,7 +142,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	ply3.addPoint(7);
 	std::vector<std::size_t> const& found_ids_ply3(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply3));
 
-	ASSERT_EQ(100, found_ids_ply3.size());
+	ASSERT_EQ(100u, found_ids_ply3.size());
 	for (std::size_t k(0); k<found_ids_ply3.size(); k++)
 		ASSERT_EQ(offset + k, found_ids_ply3[k]);
 
@@ -152,7 +152,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	ply4.addPoint(6);
 	std::vector<std::size_t> const& found_ids_ply4(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply4));
 
-	ASSERT_EQ(100, found_ids_ply4.size());
+	ASSERT_EQ(100u, found_ids_ply4.size());
 	for (std::size_t k(0); k<found_ids_ply4.size(); k++)
 		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1), found_ids_ply4[k]);
 
@@ -162,7 +162,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	ply5.addPoint(7);
 	std::vector<std::size_t> const& found_ids_ply5(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply5));
 
-	ASSERT_EQ(100, found_ids_ply5.size());
+	ASSERT_EQ(100u, found_ids_ply5.size());
 	for (std::size_t k(0); k<found_ids_ply5.size(); k++)
 		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1)+_number_of_subdivisions_per_direction, found_ids_ply5[k]);
 
@@ -172,7 +172,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 	ply6.addPoint(5);
 	std::vector<std::size_t> const& found_ids_ply6(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply6));
 
-	ASSERT_EQ(100, found_ids_ply6.size());
+	ASSERT_EQ(100u, found_ids_ply6.size());
 	for (std::size_t k(0); k<found_ids_ply6.size(); k++)
 		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1)+k, found_ids_ply6[k]);
 
