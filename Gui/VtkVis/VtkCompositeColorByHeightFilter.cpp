@@ -47,14 +47,16 @@ void VtkCompositeColorByHeightFilter::init()
 	unsigned char a[4] = { 0, 0, 255, 255 }; // blue
 	unsigned char b[4] = { 0, 255, 0, 255 }; // green
 	unsigned char c[4] = { 255, 255, 0, 255 }; // yellow
-	unsigned char d[4] = { 255, 0, 0, 255 }; // red
+	unsigned char d[4] = { 155, 100, 50, 255 }; // brown
+	unsigned char e[4] = { 255, 0, 0, 255 }; // red
 	VtkColorLookupTable* ColorLookupTable = heightFilter->GetColorLookupTable();
 	ColorLookupTable->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
-	ColorLookupTable->setColor(-35, a);
-	ColorLookupTable->setColor(150, b); // green at about 150m
-	ColorLookupTable->setColor(450, c); // yellow at about 450m and changing to red from then on
-	ColorLookupTable->setColor(800, d);
-	ColorLookupTable->SetTableRange(-35, 800);
+	ColorLookupTable->setColor(-50, a);
+	ColorLookupTable->setColor(200, b); // green at about 20m
+	ColorLookupTable->setColor(500, c); // yellow at about 500m and changing to red from then on
+	ColorLookupTable->setColor(1000, d);
+	ColorLookupTable->setColor(2000, e);
+	ColorLookupTable->SetTableRange(-35, 2000);
 	ColorLookupTable->Build();
 
 	// This passes ownership of the ColorLookupTable to VtkVisPointSetItem

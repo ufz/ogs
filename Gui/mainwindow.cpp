@@ -694,11 +694,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else {
 			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
-			QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
-			                                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
-			                                                     "TetGen element files (*.ele);;");
+			QString element_fname(fi.path() + "\\" + fi.completeBaseName() + ".ele");
 
-			if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+			if (!fileName.isEmpty()) 
+			{
 				FileIO::TetGenInterface tetgen;
 				MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
 				if (mesh)

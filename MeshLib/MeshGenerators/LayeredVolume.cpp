@@ -59,7 +59,9 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	if (mesh.getDimension() != 2)
 		return false;
 
-	_elevation_epsilon = calcEpsilon(*rasters.back(), *rasters[0]);
+	_elevation_epsilon = calcEpsilon(*rasters[0], *rasters.back());
+	if (_elevation_epsilon <= 0)
+		return false;
 
 	// remove line elements, only tri + quad remain
 	MeshLib::ElementExtraction ex(mesh);
@@ -74,7 +76,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	for (size_t i=0; i<nRasters; ++i)
 	{
 		const double replacement_value = (i==0) ? noDataReplacementValue : _invalid_value;
-		if (!MeshLayerMapper::LayerMapping(*mesh_layer, *rasters[i], 0, 0, _invalid_value))
+		if (!MeshLayerMapper::LayerMapping(*mesh_layer, *rasters[i], 0, 0, replacement_value))
 		{
 			this->cleanUpOnError();
 			return false;
@@ -207,7 +209,7 @@ bool LayeredVolume::exportToGeometry(GeoLib::GEOObjects &geo_objects) const
 double LayeredVolume::calcEpsilon(const GeoLib::Raster &high, const GeoLib::Raster &low)
 {
 	const double max (*std::max_element(high.begin(), high.end()));
-	const double min (*std::min_element(high.begin(), high.end()));
+	const double min (*std::min_element( low.begin(),  low.end()));
 	return ((max-min)*1e-07);
 }
 
