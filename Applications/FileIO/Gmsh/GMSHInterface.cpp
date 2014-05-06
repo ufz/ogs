@@ -116,7 +116,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
     std::vector<GeoLib::Polyline*> const* merged_plys(
         _geo_objs.getPolylineVec(_gmsh_geo_name));
-    DBUG("GMSHInterface::writeGMSHInputFile(): \t ok.");
+    DBUG("GMSHInterface::writeGMSHInputFile(): Obtained data.");
 
     if (!merged_plys) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not find any polylines.");
