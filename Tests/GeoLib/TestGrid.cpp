@@ -66,6 +66,17 @@ TEST(GeoLib, InsertManyPointsInGrid)
 	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
+TEST(GeoLib, InsertPointsWithSameXCoordinateInGrid)
+{
+	std::vector<GeoLib::Point*> pnts;
+	pnts.push_back(new GeoLib::Point(0,0,0));
+	pnts.push_back(new GeoLib::Point(0,1,0));
+	pnts.push_back(new GeoLib::Point(0,1,0.1));
+
+	GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end());
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
+}
+
 TEST(GeoLib, SearchNearestPointInGrid)
 {
 	std::vector<GeoLib::Point*> pnts;
