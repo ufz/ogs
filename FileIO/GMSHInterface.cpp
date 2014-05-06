@@ -376,6 +376,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
         _gmsh_geo_name = _selected_geometries[0];
         remove_geometry = false;
     }
+
     std::vector<GeoLib::Point*> * merged_pnts(const_cast<std::vector<GeoLib::Point*> *>(_geo_objs.getPointVec(_gmsh_geo_name)));
     if (! merged_pnts) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
@@ -390,20 +391,21 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
     std::vector<GeoLib::Polyline*> const* merged_plys(_geo_objs.getPolylineVec(_gmsh_geo_name));
     DBUG("GMSHInterface::writeGMSHInputFile(): \t ok.");
 
-    // *** compute topological hierarchy of polygons
-    if (merged_plys) {
-        for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
-            it!=merged_plys->end(); ++it) {
-            if ((*it)->isClosed()) {
-                _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(new GeoLib::Polygon(*(*it), true), NULL, _geo_objs, _gmsh_geo_name, _mesh_density_strategy));
-            }
-        }
-        DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - detected %d polygons.", _polygon_tree_list.size());
-        GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
-        DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - calculated %d polygon trees.", _polygon_tree_list.size());
-    } else {
+    if (!merged_plys) {
+        ERR("GMSHInterface::writeGMSHInputFile(): Did not found any polylines.");
         return;
     }
+
+    // *** compute topological hierarchy of polygons
+    for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
+        it!=merged_plys->end(); it++) {
+        if ((*it)->isClosed()) {
+            _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(new GeoLib::Polygon(*(*it), true), NULL, _geo_objs, _gmsh_geo_name, _mesh_density_strategy));
+        }
+    }
+    DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - detected %d polygons.", _polygon_tree_list.size());
+    GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
+    DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - calculated %d polygon trees.", _polygon_tree_list.size());
 
     // *** insert stations and polylines (except polygons) in the appropriate object of
     //     class GMSHPolygonTree
