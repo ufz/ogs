@@ -316,14 +316,14 @@ bool RapidVtuInterface::isVTKUnstructuredGrid(const rapidxml::xml_node<>* vtk_ro
 	return false;
 }
 
-char* RapidVtuInterface::uncompressData(const rapidxml::xml_node<>* node)
+unsigned char* RapidVtuInterface::uncompressData(const rapidxml::xml_node<>* node)
 {
 	rapidxml::xml_node<>* data_node = node->first_node("AppendedData");
 	char* compressed_data (NULL);
 	if (data_node)
 		compressed_data = data_node->value();
 
-	return compressed_data; //? return NULL; // Does here return compressed_data?
+	return NULL; // Does here return compressed_data?
 }
 
 
