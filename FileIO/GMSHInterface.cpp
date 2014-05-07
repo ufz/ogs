@@ -396,6 +396,24 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
         return;
     }
 
+    // *** compute and insert all intersection points between polylines
+    GeoLib::PointVec * pnt_vec(const_cast<GeoLib::PointVec*>(_geo_objs.getPointVecObj(_gmsh_geo_name)));
+    for (auto it0(merged_plys->begin()); it0 != merged_plys->end(); it0++) {
+        auto it1(it0);
+        it1++;
+        for (; it1 != merged_plys->end(); it1++) {
+            std::vector<std::tuple<std::size_t, std::size_t, GeoLib::Point>> intersection_info(
+                GeoLib::computeIntersectionPoints(*(*it0), *(*it1)));
+
+            for (auto it(intersection_info.begin()); it != intersection_info.end(); it++) {
+                // add point to GeoLib::PointVec object
+                std::size_t const id(pnt_vec->push_back(new GeoLib::Point(std::get<2>(*it))));
+                (*it0)->insertPoint(std::get<0>(*it)+1, id); // insert intersection pnt in ply
+                (*it1)->insertPoint(std::get<1>(*it)+1, id); // insert intersection pnt in ply
+            }
+        }
+    }
+
     // *** compute topological hierarchy of polygons
     for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
         it!=merged_plys->end(); it++) {
