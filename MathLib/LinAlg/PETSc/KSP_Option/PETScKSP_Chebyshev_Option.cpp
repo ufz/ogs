@@ -1,5 +1,5 @@
 /*!
-   \file  PETScPC_KSP_Chebyshev_Option.cpp
+   \file  PETScKSP_Chebyshev_Option.cpp
    \brief Define the configuration data for the PETSc Chebyshev linear solver.
 
    \author Wenqing Wang
@@ -12,15 +12,15 @@
                http://www.opengeosys.org/project/license
 */
 
-#include "PETScPC_KSP_Chebyshev_Option.h"
+#include "PETScKSP_Chebyshev_Option.h"
 
 namespace MathLib
 {
 
 using boost::property_tree::ptree;
 
-PETScPC_KSP_Chebyshev_Option::
-PETScPC_KSP_Chebyshev_Option(const boost::property_tree::ptree &option)
+PETScKSP_Chebyshev_Option::
+PETScKSP_Chebyshev_Option(const boost::property_tree::ptree &option)
     : emin_chebyshev(0.01), emax_chebyshev(100.0)
 {
     auto val = option.get_optional<double>("smallest_eignvalue");

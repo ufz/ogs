@@ -22,9 +22,9 @@
 
 #include "PETScLinearSolverOption.h"
 
-#include "KSP_Option/PETScPC_KSP_Chebyshev_Option.h"
-#include "KSP_Option/PETScPC_KSP_Richards_Option.h"
-#include "KSP_Option/PETScPC_KSP_GMRES_Option.h"
+#include "KSP_Option/PETScKSP_Chebyshev_Option.h"
+#include "KSP_Option/PETScKSP_Richards_Option.h"
+#include "KSP_Option/PETScKSP_GMRES_Option.h"
 
 #include "PC_Option/PETScPC_ILU_Option.h"
 #include "PC_Option/PETScPC_SOR_Option.h"
@@ -45,8 +45,8 @@ class PETScLinearSolver
 
         /*!
             Constructor
-            \param A       Matrix, cannot be constant.
-            \param option  Configuration data for solver and preconditioner.
+            \param A      Matrix, cannot be constant.
+            \param option Configuration data for solver and preconditioner.
         */
         PETScLinearSolver(PETScMatrix &A, const boost::property_tree::ptree &option);
 

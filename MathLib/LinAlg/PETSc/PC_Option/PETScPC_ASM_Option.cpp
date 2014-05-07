@@ -36,7 +36,7 @@ PETScPC_ASM_Option(const boost::property_tree::ptree &option)
     {
         type = PC_ASM_RESTRICT;
     }
-    if(type_name->find("PC_ASM_NONE") != std::string::npos)
+    if(type_name->find("none") != std::string::npos)
     {
         type = PC_ASM_NONE;
     }

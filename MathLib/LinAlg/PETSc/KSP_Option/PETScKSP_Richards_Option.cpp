@@ -1,5 +1,5 @@
 /*!
-   \file  PETScPC_KSP_Richards_Option.cpp
+   \file  PETScKSP_Richards_Option.cpp
    \brief Define the configuration data for the PETSc Richards linear solver.
 
    \author Wenqing Wang
@@ -12,15 +12,15 @@
                http://www.opengeosys.org/project/license
 */
 
-#include "PETScPC_KSP_Richards_Option.h"
+#include "PETScKSP_Richards_Option.h"
 
 namespace MathLib
 {
 
 using boost::property_tree::ptree;
 
-PETScPC_KSP_Richards_Option::
-PETScPC_KSP_Richards_Option(const boost::property_tree::ptree &option)
+PETScKSP_Richards_Option::
+PETScKSP_Richards_Option(const boost::property_tree::ptree &option)
     : damping_factor_richards(1.0)
 {
     auto damping_factor = option.get_optional<double>("damping_factor");

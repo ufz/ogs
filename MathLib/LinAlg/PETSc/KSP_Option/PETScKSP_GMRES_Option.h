@@ -1,5 +1,5 @@
 /*!
-   \file  PETScPC_KSP_GMRES_Option.h
+   \file  PETScKSP_GMRES_Option.h
    \brief Define the configuration data for the PETSc GMRES linear solver.
 
    \author Wenqing Wang
@@ -11,8 +11,8 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef PETSCPC_KSP_GMRES_OPTION_H_
-#define PETSCPC_KSP_GMRES_OPTION_H_
+#ifndef PETSCKSP_GMRES_OPTION_H_
+#define PETSCKSP_GMRES_OPTION_H_
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -24,15 +24,15 @@ namespace MathLib
     PETSc KSP GMRES options
 
  */
-struct PETScPC_KSP_GMRES_Option
+struct PETScKSP_GMRES_Option
 {
-    PETScPC_KSP_GMRES_Option(const boost::property_tree::ptree &option);
+    PETScKSP_GMRES_Option(const boost::property_tree::ptree &option);
 
     /// Set GMRES option
     void setOption(KSP &solver);
 
     /// Overloaded assign operator
-    void operator = (const PETScPC_KSP_GMRES_Option& opt)
+    void operator = (const PETScKSP_GMRES_Option& opt)
     {
         restart_number = opt.restart_number;
         is_modified_gram_schmidt = opt.is_modified_gram_schmidt;

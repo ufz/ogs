@@ -1,5 +1,5 @@
 /*!
-   \file  PETScPC_KSP_GMRES_Option.cpp
+   \file  PETScKSP_GMRES_Option.cpp
    \brief Define the configuration data for the PETSc GMRES linear solver.
 
    \author Wenqing Wang
@@ -12,15 +12,15 @@
                http://www.opengeosys.org/project/license
 */
 
-#include "PETScPC_KSP_GMRES_Option.h"
+#include "PETScKSP_GMRES_Option.h"
 
 namespace MathLib
 {
 
 using boost::property_tree::ptree;
 
-PETScPC_KSP_GMRES_Option::
-PETScPC_KSP_GMRES_Option(const boost::property_tree::ptree &option)
+PETScKSP_GMRES_Option::
+PETScKSP_GMRES_Option(const boost::property_tree::ptree &option)
     : restart_number(30), is_modified_gram_schmidt(false),
       refine_type(KSP_GMRES_CGS_REFINE_NEVER)
 {
@@ -49,7 +49,7 @@ PETScPC_KSP_GMRES_Option(const boost::property_tree::ptree &option)
 }
 
 /// Set Chebyshev option
-void PETScPC_KSP_GMRES_Option::setOption(KSP &solver)
+void PETScKSP_GMRES_Option::setOption(KSP &solver)
 {
     KSPGMRESSetRestart(solver, restart_number);
 

@@ -1,5 +1,5 @@
 /*!
-   \file  PETScPC_KSP_Chebyshev_Option.h
+   \file  PETScKSP_Chebyshev_Option.h
    \brief Define the configuration data for the PETSc Chebyshev linear solver.
 
    \author Wenqing Wang
@@ -11,8 +11,8 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef PETSCPC_KSP_CHEBYSHEV_OPTION_H_
-#define PETSCPC_KSP_CHEBYSHEV_OPTION_H_
+#ifndef PETSCKSP_CHEBYSHEV_OPTION_H_
+#define PETSCKSP_CHEBYSHEV_OPTION_H_
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -24,9 +24,9 @@ namespace MathLib
     PETSc KSP Chebyshev options
 
  */
-struct PETScPC_KSP_Chebyshev_Option
+struct PETScKSP_Chebyshev_Option
 {
-    PETScPC_KSP_Chebyshev_Option(const boost::property_tree::ptree &option);
+    PETScKSP_Chebyshev_Option(const boost::property_tree::ptree &option);
 
     /// Set Chebyshev option
     void setOption(KSP &solver)
@@ -35,7 +35,7 @@ struct PETScPC_KSP_Chebyshev_Option
     }
 
     /// Overloaded assign operator
-    void operator = (const PETScPC_KSP_Chebyshev_Option& opt)
+    void operator = (const PETScKSP_Chebyshev_Option& opt)
     {
         emin_chebyshev = opt.emin_chebyshev;
         emax_chebyshev = opt.emax_chebyshev;

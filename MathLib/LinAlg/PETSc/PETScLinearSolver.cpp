@@ -60,21 +60,21 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
   
     if(pt_solver_spec)
     {		
-        PETScPC_KSP_Richards_Option ksp_opt(*pt_solver_spec);
+        PETScKSP_Richards_Option ksp_opt(*pt_solver_spec);
         setKSP_Option(ksp_opt);
     }
 
     pt_solver_spec = pt_solver->get_child_optional("Chebyshev");
     if(pt_solver_spec)
     {
-        PETScPC_KSP_Chebyshev_Option ksp_opt(*pt_solver_spec);
+        PETScKSP_Chebyshev_Option ksp_opt(*pt_solver_spec);
         setKSP_Option(ksp_opt);
     }
 
     pt_solver_spec = pt_solver->get_child_optional("gmres");
     if(pt_solver_spec)
     {		
-        PETScPC_KSP_GMRES_Option ksp_opt(*pt_solver_spec);
+        PETScKSP_GMRES_Option ksp_opt(*pt_solver_spec);
         setKSP_Option(ksp_opt);
     }
 
