@@ -44,10 +44,9 @@ class PETScLinearSolver
     public:
 
         /*!
-            Constructor.
-            \param A           Matrix, cannot be constant.
-            \param solver_name Solver name.
-            \param pc_name Preconditioner name.
+            Constructor
+            \param A       Matrix, cannot be constant.
+            \param option  Configuration data for solver and preconditioner.
         */
         PETScLinearSolver(PETScMatrix &A, const boost::property_tree::ptree &option);
 

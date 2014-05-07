@@ -46,7 +46,7 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
        PETScLinearSolverOption opt(*pt_solver);          
        opt.setOption(_solver, _pc);
        KSPSetFromOptions(_solver);  // set running time option         
-        return;
+       return;
     }
 
     // Base configuration
@@ -56,14 +56,13 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
 
     //----------------------------------------------------------------------
     // Specific configuration, solver
-     boost::optional<const ptree&> pt_solver_spec = pt_solver->get_child_optional("Richards");
- 
-    
+    boost::optional<const ptree&> pt_solver_spec = pt_solver->get_child_optional("Richards");
+  
     if(pt_solver_spec)
     {		
         PETScPC_KSP_Richards_Option ksp_opt(*pt_solver_spec);
         setKSP_Option(ksp_opt);
-   }
+    }
 
     pt_solver_spec = pt_solver->get_child_optional("Chebyshev");
     if(pt_solver_spec)

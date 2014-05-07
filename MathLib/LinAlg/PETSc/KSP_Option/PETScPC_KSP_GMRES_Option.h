@@ -34,16 +34,16 @@ struct PETScPC_KSP_GMRES_Option
     /// Overloaded assign operator
     void operator = (const PETScPC_KSP_GMRES_Option& opt)
     {
-        restart_number_gmres = opt.restart_number_gmres;
-        is_modified_gram_schmidt_gmres = opt.is_modified_gram_schmidt_gmres;
-        refine_type_gmres = opt.refine_type_gmres;
+        restart_number = opt.restart_number;
+        is_modified_gram_schmidt = opt.is_modified_gram_schmidt;
+        refine_type = opt.refine_type;
     }
 
     ///  Restart number of GMRES.
-    PetscInt restart_number_gmres;
+    PetscInt restart_number;
 
     /// Flag for the modified Gram-Schmidt orthogonalization.
-    bool is_modified_gram_schmidt_gmres;
+    bool is_modified_gram_schmidt;
 
     /*!
          \brief Refinement type for GMRES.
@@ -53,7 +53,7 @@ struct PETScPC_KSP_GMRES_Option
          typedef enum {KSP_GMRES_CGS_REFINE_NEVER, KSP_GMRES_CGS_REFINE_IFNEEDED,
                        KSP_GMRES_CGS_REFINE_ALWAYS} KSPGMRESCGSRefinementType;
     */
-    KSPGMRESCGSRefinementType refine_type_gmres;
+    KSPGMRESCGSRefinementType refine_type;
 };
 
 } // end namespace
