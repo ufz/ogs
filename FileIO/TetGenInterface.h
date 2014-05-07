@@ -43,13 +43,13 @@ public:
 	virtual ~TetGenInterface();
 
 	/**
-	 * Method reads the TetGen mesh from node file and element file.
-	 * @param poly_fname   file name of the poly file
+	 * Method reads geometry from a TetGen poly or smesh file.
+	 * @param geo_fname   file name of the poly file
 	 * @param geo_objects  where the geometry is written to
 	 * @return on success  the method returns true, otherwise it returns false
 	 */
-	bool readTetGenPoly (std::string const& poly_fname,
-	                     GeoLib::GEOObjects &geo_objects);
+	bool readTetGenGeometry (std::string const& geo_fname,
+	                         GeoLib::GEOObjects &geo_objects);
 
 	/**
 	 * Method reads the TetGen mesh from node file and element file.
@@ -61,30 +61,58 @@ public:
 	                               std::string const& ele_fname);
 
 	/**
-	 * Writes the geometry of a given name to TetGen poly-file.
-	 * @param file_name    file name of the new poly file
-	 * @param geo_objects  the container for the geometry.
-	 * @param geo_name     the name for the geometry.
+	 * Writes the geometry of a given name to TetGen smesh-file.
+	 * @param file_name         file name of the new smesh file.
+	 * @param geo_objects       the container for the geometry.
+	 * @param geo_name          the name for the geometry containing the subsurface boundary representation used for meshing.
+	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
 	 * @return returns true on success and false otherwise.
 	 */
-	bool writeTetGenPoly(const std::string &file_name,
-	                     const GeoLib::GEOObjects &geo_objects,
-	                     const std::string &geo_name) const;
+	bool writeTetGenSmesh(const std::string &file_name,
+	                      const GeoLib::GEOObjects &geo_objects,
+	                      const std::string &geo_name,
+	                      const std::vector<GeoLib::PointWithID> &attribute_points) const;
+
+	/**
+	 * Writes the geometry of a given name to TetGen smesh-file.
+	 * @param file_name         file name of the new smesh file.
+	 * @param mesh              mesh containing the subsurface boundary representation used for meshing.
+	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
+	 * @return returns true on success and false otherwise.
+	 */
+	bool writeTetGenSmesh(const std::string &file_name,
+	                      const MeshLib::Mesh &mesh,
+	                      const std::vector<MeshLib::Node> &attribute_points) const;
 
 private:
 	/// Returns the declared number of facets in the poly file.
-	std::size_t getNFacets(std::ifstream &input) const;
+	std::size_t getNFacets(std::ifstream &input);
 
 	/**
 	 * Method parses the lines reading the facets from TetGen poly file
-	 * @param input     the input stream (input)
-	 * @param surfaces  the vector of surfaces to be filled (output)
-	 * @param points    the point vector needed for creating surfaces (input)
+	 * @param input       the input stream (input)
+	 * @param surfaces    the vector of surfaces to be filled (output)
+	 * @param points      the point vector needed for creating surfaces (input)
+	 * @param pnt_id_map  the id map to compensate for possibly changed point ids after adding the point vector to GEOObjects
 	 * @return true, if the facets have been read correctly, false if the method detects an error
 	 */
-	bool parseFacets(std::ifstream &input,
-	                 std::vector<GeoLib::Surface*> &surfaces,
-	                 std::vector<GeoLib::Point*> &points) const;
+	bool parsePolyFacets(std::ifstream &input,
+	                     std::vector<GeoLib::Surface*> &surfaces,
+	                     const std::vector<GeoLib::Point*> &points,
+						 const std::vector<std::size_t> &pnt_id_map);
+
+	/**
+	 * Method parses the lines reading the facets from TetGen smesh file
+	 * @param input       the input stream (input)
+	 * @param surfaces    the vector of surfaces to be filled (output)
+	 * @param points      the point vector needed for creating surfaces (input)
+	 * @param pnt_id_map  the id map to compensate for possibly changed point ids after adding the point vector to GEOObjects
+	 * @return true, if the facets have been read correctly, false if the method detects an error
+	 */
+	bool parseSmeshFacets(std::ifstream &input,
+	                      std::vector<GeoLib::Surface*> &surfaces,
+	                      const std::vector<GeoLib::Point*> &points,
+						  const std::vector<std::size_t> &pnt_id_map);
 
 	/**
 	 * Method reads the nodes from stream and stores them in a node vector.
@@ -162,10 +190,12 @@ private:
 	                   std::size_t n_nodes_per_tet,
 	                   bool region_attribute) const;
 
-	/**
-	 * the value is true if the indexing is zero based, else false
-	 */
+
+	/// the value is true if the indexing is zero based, else false
 	bool _zero_based_idx;
+
+	/// true if boundary markers are set, false otherwise
+	bool _boundary_markers;
 };
 }
 
