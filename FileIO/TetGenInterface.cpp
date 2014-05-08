@@ -705,7 +705,7 @@ void TetGenInterface::smeshFrom3D(std::ofstream &out,
 	// get position where number of facets need to be written and figure out worst case of chars that are needed
 	std::streamoff before_elems_pos (out.tellp());
 	unsigned n_spaces (static_cast<unsigned>(floor(log(nElements*8))) + 1);
-	out << std::string(n_spaces, ' ');
+	out << std::string(n_spaces, ' ') << "\n";
 
 	unsigned element_count(0);
 	for (std::size_t i=0; i<nElements; ++i)
@@ -718,10 +718,18 @@ void TetGenInterface::smeshFrom3D(std::ofstream &out,
 			if (neighbor)
 			{
 				if (elements[i]->getValue() > neighbor->getValue())
-					this->writeElementToFacets(out, *elements[i]->getFace(j), element_count);
+				{
+					MeshLib::Element const*const face (elements[i]->getFace(j));
+					this->writeElementToFacets(out, *face, element_count);
+					delete face;
+				}
 			}
 			else
-				this->writeElementToFacets(out, *elements[i]->getFace(j), element_count);
+			{
+				MeshLib::Element const*const face (elements[i]->getFace(j));
+				this->writeElementToFacets(out, *face, element_count);
+				delete face;
+			}
 		}
 		attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), elements[i]->getValue()));
 	}
