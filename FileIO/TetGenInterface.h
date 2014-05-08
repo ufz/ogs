@@ -82,7 +82,7 @@ public:
 	 */
 	bool writeTetGenSmesh(const std::string &file_name,
 	                      const MeshLib::Mesh &mesh,
-	                      const std::vector<MeshLib::Node> &attribute_points) const;
+	                      std::vector<MeshLib::Node> &attribute_points) const;
 
 private:
 	/// Returns the declared number of facets in the poly file.
@@ -190,6 +190,15 @@ private:
 	                   std::size_t n_nodes_per_tet,
 	                   bool region_attribute) const;
 
+	void smeshFrom2D(std::ofstream &out,
+	                 const MeshLib::Mesh &mesh,
+	                 std::vector<MeshLib::Node> &attribute_points) const;
+
+	void smeshFrom3D(std::ofstream &out,
+	                 const MeshLib::Mesh &mesh,
+	                 std::vector<MeshLib::Node> &attribute_points) const;
+
+	void writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const;
 
 	/// the value is true if the indexing is zero based, else false
 	bool _zero_based_idx;

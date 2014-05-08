@@ -640,13 +640,12 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 
 bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
                                        const MeshLib::Mesh &mesh,
-                                       const std::vector<MeshLib::Node> &attribute_points) const
+                                       std::vector<MeshLib::Node> &attribute_points) const
 {
-	if (mesh.getDimension() != 2)
+	if (mesh.getDimension() == 1)
 		return false;
 
 	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
-	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
 
 	std::ofstream out( file_name.c_str(), std::ios::out );
 	out.precision(std::numeric_limits<double>::digits10);
@@ -657,25 +656,11 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	for (std::size_t i=0; i<nPoints; ++i)
 		out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << "\n";
 	
-	// the surfaces header
-	const std::array<unsigned,7> types = MeshInformation::getNumberOfElementTypes(mesh);
-	const unsigned nTotalTriangles (types[1] + (2*types[2]));
-	out << nTotalTriangles << " 1\n";
+	if (mesh.getDimension() == 2)
+		smeshFrom2D(out, mesh, attribute_points);
+	else
+		smeshFrom3D(out, mesh, attribute_points);
 
-	const std::size_t nElements (elements.size());
-	unsigned count(0);
-	for (std::size_t i=0; i<nElements; ++i)
-	{
-		count++;
-		if (elements[i]->getGeomType() == MeshElemType::TRIANGLE)
-			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << " # " << count << "\n";
-		else if (elements[i]->getGeomType() == MeshElemType::QUAD)
-		{
-			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(1) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getValue() << " # " << count << "\n";
-			count++;
-			out << "3  " << elements[i]->getNodeIndex(0) << " " << elements[i]->getNodeIndex(2) << " " << elements[i]->getNodeIndex(3) << " " << elements[i]->getValue() << " # " << count << "\n";
-		}
-	}
 	out << "0\n"; // the polygon holes list
 
 	// the region attributes list
@@ -688,9 +673,76 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 		for (std::size_t i=0; i<nAttributePoints; ++i)
 			out << i+1 << " " << attribute_points[i][0] << " " << attribute_points[i][1] << " " << attribute_points[i][2] << " " << 10*attribute_points[i].getID() << "\n";
 	}
-	INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, nElements);
+
+	INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, mesh.getNElements());
 	out.close();
 	return true;
+}
+
+void TetGenInterface::smeshFrom2D(std::ofstream &out,
+	                const MeshLib::Mesh &mesh,
+	                std::vector<MeshLib::Node> &attribute_points) const
+{
+	// the surfaces header
+	const std::array<unsigned,7> types = MeshInformation::getNumberOfElementTypes(mesh);
+	const unsigned nTotalTriangles (types[1] + (2*types[2]));
+	out << nTotalTriangles << " 1\n";
+
+	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
+	const std::size_t nElements (elements.size());
+	unsigned element_count(0);
+	for (std::size_t i=0; i<nElements; ++i)
+		this->writeElementToFacets(out, *elements[i], element_count);
+}
+
+void TetGenInterface::smeshFrom3D(std::ofstream &out,
+	                const MeshLib::Mesh &mesh,
+                    std::vector<MeshLib::Node> &attribute_points) const
+{
+	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
+	const std::size_t nElements (elements.size());
+
+	// get position where number of facets need to be written and figure out worst case of chars that are needed
+	std::streamoff before_elems_pos (out.tellp());
+	unsigned n_spaces (static_cast<unsigned>(floor(log(nElements*8))) + 1);
+	out << std::string(n_spaces, ' ');
+
+	unsigned element_count(0);
+	for (std::size_t i=0; i<nElements; ++i)
+	{
+		const unsigned nFaces (elements[i]->getNNeighbors());
+		for (std::size_t j=0; j<nFaces; ++j)
+		{
+			const MeshLib::Element* neighbor ( elements[i]->getNeighbor(j) );
+
+			if (neighbor)
+			{
+				if (elements[i]->getValue() > neighbor->getValue())
+					this->writeElementToFacets(out, *elements[i]->getFace(j), element_count);
+			}
+			else
+				this->writeElementToFacets(out, *elements[i]->getFace(j), element_count);
+		}
+		attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), elements[i]->getValue()));
+	}
+	// add number of facets at correct position and jump back
+	std::streamoff after_elems_pos (out.tellp());
+	out.seekp(before_elems_pos);
+	out << element_count;
+	out.seekp(after_elems_pos);
+}
+
+void TetGenInterface::writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const
+{
+	element_count++;
+	if (element.getGeomType() == MeshElemType::TRIANGLE)
+		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << element.getValue() << " # " << element_count << "\n";
+	else if (element.getGeomType() == MeshElemType::QUAD)
+	{
+		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << element.getValue() << " # " << element_count << "\n";
+		element_count++;
+		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(2) << " " << element.getNodeIndex(3) << " " << element.getValue() << " # " << element_count << "\n";
+	}
 }
 
 } // end namespace FileIO
