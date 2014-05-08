@@ -39,7 +39,7 @@ enum class EdgeType
 };
 
 /**
- *
+ * A polygon is a (closed) polyline. Thus class Polygon is derived from class Polyline.
  */
 class Polygon : public Polyline
 {
