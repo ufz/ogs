@@ -657,9 +657,9 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 		out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << "\n";
 	
 	if (mesh.getDimension() == 2)
-		smeshFrom2D(out, mesh, attribute_points);
+		write2dElements(out, mesh, attribute_points);
 	else
-		smeshFrom3D(out, mesh, attribute_points);
+		write3dElements(out, mesh, attribute_points);
 
 	out << "0\n"; // the polygon holes list
 
@@ -679,9 +679,9 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	return true;
 }
 
-void TetGenInterface::smeshFrom2D(std::ofstream &out,
-	                const MeshLib::Mesh &mesh,
-	                std::vector<MeshLib::Node> &attribute_points) const
+void TetGenInterface::write2dElements(std::ofstream &out,
+	                                  const MeshLib::Mesh &mesh,
+	                                  std::vector<MeshLib::Node> &attribute_points) const
 {
 	// the surfaces header
 	const std::array<unsigned,7> types = MeshInformation::getNumberOfElementTypes(mesh);
@@ -695,12 +695,14 @@ void TetGenInterface::smeshFrom2D(std::ofstream &out,
 		this->writeElementToFacets(out, *elements[i], element_count);
 }
 
-void TetGenInterface::smeshFrom3D(std::ofstream &out,
-	                const MeshLib::Mesh &mesh,
-                    std::vector<MeshLib::Node> &attribute_points) const
+void TetGenInterface::write3dElements(std::ofstream &out,
+	                                  const MeshLib::Mesh &mesh,
+                                      std::vector<MeshLib::Node> &attribute_points) const
 {
 	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
 	const std::size_t nElements (elements.size());
+	if (!attribute_points.empty())
+		attribute_points.clear();
 
 	// get position where number of facets need to be written and figure out worst case of chars that are needed
 	std::streamoff before_elems_pos (out.tellp());

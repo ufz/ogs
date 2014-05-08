@@ -190,14 +190,29 @@ private:
 	                   std::size_t n_nodes_per_tet,
 	                   bool region_attribute) const;
 
-	void smeshFrom2D(std::ofstream &out,
-	                 const MeshLib::Mesh &mesh,
-	                 std::vector<MeshLib::Node> &attribute_points) const;
+	/**
+	 * Writes the elements from a 2D mesh to a TetGen smesh-file.
+	 * @param out               the output stream the information is written to.
+	 * @param mesh              mesh containing the subsurface boundary representation used for meshing.
+	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
+	 * @return returns true on success and false otherwise.
+	 */
+	void write2dElements(std::ofstream &out,
+	                     const MeshLib::Mesh &mesh,
+	                     std::vector<MeshLib::Node> &attribute_points) const;
 
-	void smeshFrom3D(std::ofstream &out,
-	                 const MeshLib::Mesh &mesh,
-	                 std::vector<MeshLib::Node> &attribute_points) const;
+	/**
+	 * Writes the elements from a 3D mesh to a TetGen smesh-file.
+	 * @param out               the output stream the information is written to.
+	 * @param mesh              the 3D mesh.
+	 * @param attribute_points  attribute points containing material IDs (emptied when called and then filled with correct values).
+	 * @return returns true on success and false otherwise.
+	 */
+	void write3dElements(std::ofstream &out,
+	                     const MeshLib::Mesh &mesh,
+	                     std::vector<MeshLib::Node> &attribute_points) const;
 
+	/// Writes facet information from a 2D element to the stream and increments the total element count accordingly
 	void writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const;
 
 	/// the value is true if the indexing is zero based, else false
