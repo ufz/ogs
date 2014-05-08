@@ -73,6 +73,8 @@ private slots:
 
 	void extractSurfaceMesh();
 
+	void exportToTetGen();
+
 	void loadDIRECTSourceTerms();
 
 	void convertMeshToGeometry();
