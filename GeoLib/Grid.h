@@ -74,57 +74,7 @@ public:
 			delta[k] = this->_max_pnt[k] - this->_min_pnt[k];
 		}
 
-		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
-		// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-		const double eps(std::numeric_limits<double>::epsilon());
-		if (fabs(delta[0]) < eps) { // dx == 0
-			if(fabs(delta[1]) < eps) { // dy == 0
-				if(fabs(delta[2]) < eps) { // degenerated case, dx == 0, dy == 0, dz == 0
-					WARN("Grid constructor: Bounding volume [%f,%f] x [%f,%f] x [%f,%f] too small.",
-					this->_min_pnt[0], this->_max_pnt[0],
-					this->_min_pnt[1], this->_max_pnt[1],
-					this->_min_pnt[2], this->_max_pnt[2]
-					);
-				} else { // 1d case: dx == 0, dy == 0, dz != 0
-					_n_steps[0] = 1;
-					_n_steps[1] = 1;
-					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-				}
-			} else { // dy != 0
-				if(fabs(delta[2]) < eps) { // 1d case: dx == 0, dy != 0, dz == 0
-					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-					_n_steps[2] = 1;
-				} else { // 2d case: dx == 0, dy != 0, dz != 0
-					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[1] / (max_num_per_grid_cell * delta[2]))));
-					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-				}
-			}
-		} else { // dx != 0
-			if(fabs(delta[1]) < eps) { // dy == 0
-				if(fabs(delta[2]) < eps) { // 1d case: dx != 0, dy == 0, dz == 0
-					_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-					_n_steps[1] = 1;
-					_n_steps[2] = 1;
-				} else { // 2d case: dx != 0, dy == 0, dz != 0
-					_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
-					_n_steps[1] = 1;
-					_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
-				}
-			} else { // dy != 0
-				if(fabs(delta[2]) < eps) { // 2d case: dx != 0, dy != 0, dz == 0
-					_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
-					_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-					_n_steps[2] = 1;
-				} else { // 3d case: dx != 0, dy != 0, dz != 0
-					_n_steps[0] = static_cast<std::size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
-									/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
-					_n_steps[1] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0])), static_cast<std::size_t>(100)));
-					_n_steps[2] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0])), static_cast<std::size_t>(100)));
-				}
-			}
-		}
+		initNumberOfSteps(max_num_per_grid_cell, n_pnts, delta);
 
 		const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
 		_grid_cell_nodes_map = new std::vector<POINT*>[n_plane * _n_steps[2]];
@@ -301,6 +251,61 @@ public:
 #endif
 
 private:
+	void initNumberOfSteps(std::size_t max_num_per_grid_cell, std::size_t n_pnts, double delta[3])
+	{
+		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
+		// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
+		const double eps(std::numeric_limits<double>::epsilon());
+		if (fabs(delta[0]) < eps) { // dx == 0
+			if(fabs(delta[1]) < eps) { // dy == 0
+				if(fabs(delta[2]) < eps) { // degenerated case, dx == 0, dy == 0, dz == 0
+					WARN("Grid constructor: Bounding volume [%f,%f] x [%f,%f] x [%f,%f] too small.",
+					this->_min_pnt[0], this->_max_pnt[0],
+					this->_min_pnt[1], this->_max_pnt[1],
+					this->_min_pnt[2], this->_max_pnt[2]
+					);
+				} else { // 1d case: dx == 0, dy == 0, dz != 0
+					_n_steps[0] = 1;
+					_n_steps[1] = 1;
+					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+				}
+			} else { // dy != 0
+				if(fabs(delta[2]) < eps) { // 1d case: dx == 0, dy != 0, dz == 0
+					_n_steps[0] = 1;
+					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[2] = 1;
+				} else { // 2d case: dx == 0, dy != 0, dz != 0
+					_n_steps[0] = 1;
+					_n_steps[1] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[1] / (max_num_per_grid_cell * delta[2]))));
+					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+				}
+			}
+		} else { // dx != 0
+			if(fabs(delta[1]) < eps) { // dy == 0
+				if(fabs(delta[2]) < eps) { // 1d case: dx != 0, dy == 0, dz == 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[1] = 1;
+					_n_steps[2] = 1;
+				} else { // 2d case: dx != 0, dy == 0, dz != 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
+					_n_steps[1] = 1;
+					_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
+				}
+			} else { // dy != 0
+				if(fabs(delta[2]) < eps) { // 2d case: dx != 0, dy != 0, dz == 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
+					_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
+					_n_steps[2] = 1;
+				} else { // 3d case: dx != 0, dy != 0, dz != 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
+									/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
+					_n_steps[1] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0])), static_cast<std::size_t>(100)));
+					_n_steps[2] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0])), static_cast<std::size_t>(100)));
+				}
+			}
+		}
+	}
+
 	/**
 	 * Method calculates the grid cell coordinates for the given point pnt. If
 	 * the point is located outside of the bounding box the coordinates of the
