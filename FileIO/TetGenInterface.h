@@ -89,19 +89,6 @@ private:
 	std::size_t getNFacets(std::ifstream &input);
 
 	/**
-	 * Method parses the lines reading the facets from TetGen poly file
-	 * @param input       the input stream (input)
-	 * @param surfaces    the vector of surfaces to be filled (output)
-	 * @param points      the point vector needed for creating surfaces (input)
-	 * @param pnt_id_map  the id map to compensate for possibly changed point ids after adding the point vector to GEOObjects
-	 * @return true, if the facets have been read correctly, false if the method detects an error
-	 */
-	bool parsePolyFacets(std::ifstream &input,
-	                     std::vector<GeoLib::Surface*> &surfaces,
-	                     const std::vector<GeoLib::Point*> &points,
-						 const std::vector<std::size_t> &pnt_id_map);
-
-	/**
 	 * Method parses the lines reading the facets from TetGen smesh file
 	 * @param input       the input stream (input)
 	 * @param surfaces    the vector of surfaces to be filled (output)
