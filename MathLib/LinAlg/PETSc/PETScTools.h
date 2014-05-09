@@ -25,10 +25,8 @@
 namespace MathLib
 {
 /*!
-  \brief apply known solutions to a system of linear equations
-
-  This function introduces the constants into the system by the penalty method.
-
+   \brief apply known solutions to a system of linear equations
+  
    \param A                 Coefficient matrix
    \param b                 RHS vector
    \param vec_knownX_id    a vector of known solution entry IDs

@@ -50,11 +50,19 @@ class PETScLinearSolver
         */
         PETScLinearSolver(PETScMatrix &A, const boost::property_tree::ptree &option);
 
+        /*!
+            Set Krylov subspace parameters with given option
+            \param  ksp_opt Given parameters 
+        */ 
         template <typename T_KSP_OPTION> void setKSP_Option(T_KSP_OPTION &ksp_opt)
         {
             ksp_opt.setOption(_solver);
         }
-
+        
+        /*!
+            Set preconditioner parameters with given option
+            \param  pc_opt Given parameters 
+        */ 
         template <typename T_PC_OPTION> void setPC_Option(T_PC_OPTION &pc_opt)
         {
             pc_opt.setOption(_pc);

@@ -41,7 +41,7 @@ class PETScLinearSolverOption
         /*!
             \param ksp_option ptree of basic configuration data for solver
         */
-        PETScLinearSolverOption(const boost::property_tree::ptree &ksp_option);
+        explicit PETScLinearSolverOption(const boost::property_tree::ptree &ksp_option);
 
         /*!
             \param ksp_option ptree of basic configuration data for solver
