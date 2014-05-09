@@ -350,7 +350,7 @@ TEST(Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     // the default setting will be taken.
     boost::property_tree::ptree t_solver_spec;
     t_solver_spec.put("restart_number", 20);
-    t_solver_spec.put("is_modified_ram_schmidt_orthog", false);
+    t_solver_spec.put("modified_gram_schmidt", false);
     t_solver_spec.put("refine_type", 1);
     t_solver.put_child("gmres", t_solver_spec);
 

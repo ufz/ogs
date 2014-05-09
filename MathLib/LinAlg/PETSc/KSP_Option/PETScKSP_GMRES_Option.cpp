@@ -27,7 +27,7 @@ PETScKSP_GMRES_Option(const boost::property_tree::ptree &option)
     auto val = option.get_optional<double>("restart_number");
     restart_number = *val;
 
-    boost::optional<bool> bool_vals = option.get_optional<bool>("is_modified_gram_schmidt_orthog");
+    boost::optional<bool> bool_vals = option.get_optional<bool>("modified_gram_schmidt");
     is_modified_gram_schmidt = *bool_vals;
 
     auto refine_type = option.get_optional<int>("refine_type");
