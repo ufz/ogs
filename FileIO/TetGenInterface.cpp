@@ -621,17 +621,20 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 		attribute_points.clear();
 
 	// get position where number of facets need to be written and figure out worst case of chars that are needed
-	std::streamoff before_elems_pos (out.tellp());
-	unsigned n_spaces (static_cast<unsigned>(floor(log(nElements*8))) + 1);
+	const std::streamoff before_elems_pos (out.tellp());
+	const unsigned n_spaces (static_cast<unsigned>(floor(log(nElements*8))) + 1);
 	out << std::string(n_spaces, ' ') << "\n";
 
 	unsigned element_count(0);
 	for (std::size_t i=0; i<nElements; ++i)
 	{
+		if (elements[i]->getDimension() < 3)
+			continue;
+
 		const unsigned nFaces (elements[i]->getNNeighbors());
 		for (std::size_t j=0; j<nFaces; ++j)
 		{
-			const MeshLib::Element* neighbor ( elements[i]->getNeighbor(j) );
+			MeshLib::Element const*const neighbor ( elements[i]->getNeighbor(j) );
 
 			if (neighbor)
 			{
@@ -652,7 +655,7 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 		attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), elements[i]->getValue()));
 	}
 	// add number of facets at correct position and jump back
-	std::streamoff after_elems_pos (out.tellp());
+	const std::streamoff after_elems_pos (out.tellp());
 	out.seekp(before_elems_pos);
 	out << element_count;
 	out.seekp(after_elems_pos);
