@@ -18,118 +18,19 @@
 
 namespace MathLib
 {
-using boost::property_tree::ptree;
-
-PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
-                                     const boost::property_tree::ptree &option)
+PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string prefix)
 {
     KSPCreate(PETSC_COMM_WORLD, &_solver);
     KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
 
-    boost::optional<const ptree&> pt_solver = option.get_child_optional("linear_solver");
-    if(!pt_solver)
-    {
-       PetscPrintf(PETSC_COMM_WORLD,"\n*** PETSc linear solver is not specified, bcgs + bjacobi are used.\n");
-       // Base configuration
-       PETScLinearSolverOption opt;          
-       opt.setOption(_solver, _pc);
-       KSPSetFromOptions(_solver);  // set running time option 
-       return;
-    }
-
-    // Preconditioners:
-    boost::optional<const ptree&> pt_pc = option.get_child_optional("preconditioner");
-    if(!pt_pc)
-    {
-        PetscPrintf(PETSC_COMM_WORLD,"\n*** PETSc preconditioner is not specified, bjacobi is used.");
-       // Base configuration
-       PETScLinearSolverOption opt(*pt_solver);          
-       opt.setOption(_solver, _pc);
-       KSPSetFromOptions(_solver);  // set running time option         
-       return;
-    }
-
-    // Base configuration
-    PETScLinearSolverOption opt(*pt_solver, *pt_pc);
-          
-    opt.setOption(_solver, _pc);
-
-    //----------------------------------------------------------------------
-    // Specific configuration, solver
-    boost::optional<const ptree&> pt_solver_spec = pt_solver->get_child_optional("Richards");
-  
-    if(pt_solver_spec)
-    {		
-        PETScKSP_Richards_Option ksp_opt(*pt_solver_spec);
-        setKSP_Option(ksp_opt);
-    }
-
-    pt_solver_spec = pt_solver->get_child_optional("Chebyshev");
-    if(pt_solver_spec)
-    {
-        PETScKSP_Chebyshev_Option ksp_opt(*pt_solver_spec);
-        setKSP_Option(ksp_opt);
-    }
-
-    pt_solver_spec = pt_solver->get_child_optional("gmres");
-    if(pt_solver_spec)
-    {		
-        PETScKSP_GMRES_Option ksp_opt(*pt_solver_spec);
-        setKSP_Option(ksp_opt);
-    }
-
-    //----------------------------------------------------------------------
-    // Specific configuration, preconditioner
-    boost::optional<const ptree&> pt_pc_spec = pt_pc->get_child_optional("sor");
-    if(pt_pc_spec)
-    {
-        PETScPC_SOR_Option pc_opt(*pt_pc_spec);
-        setPC_Option(pc_opt);
-    }
- 
-    pt_pc_spec = pt_pc->get_child_optional("asm");
-    if(pt_pc_spec)
-    {
-        PETScPC_ASM_Option pc_opt(*pt_pc_spec);
-        setPC_Option(pc_opt);
-    }
-
-    pt_pc_spec = pt_pc->get_child_optional("amg");
-    if(pt_pc_spec)
-    {
-        PETScPC_AMG_Option pc_opt(*pt_pc_spec);
-        setPC_Option(pc_opt);
-    }  
-   
-    //----------------------------------------------------------------------------
-    // Only for sub-block preconditioner or sequential computation if it is needed.          
-    // ILU or ICC
-    pt_pc_spec = pt_pc->get_child_optional("ilu");
-    if(pt_pc_spec)
-    {
-        PETScPC_ILU_Option pc_opt(*pt_pc_spec);
-        setPC_Option(pc_opt);
-    }
-    else
-    {
-        pt_pc_spec = pt_pc->get_child_optional("icc");
-        if(pt_pc_spec)
-        {
-            PETScPC_ILU_Option pc_opt(*pt_pc_spec);
-            setPC_Option(pc_opt);
-        }
-    }
-
-    pt_pc_spec = pt_pc->get_child_optional("lu");
-    if(pt_pc_spec)
-    {
-        PETScPC_LU_Option pc_opt(*pt_pc_spec);
-        setPC_Option(pc_opt);
-    }
-    //----------------------------------------------------------------------------
-            
     //
+    KSPSetOptionsPrefix(_solver, prefix.c_str());    
     KSPSetFromOptions(_solver);  // set running time option
+    
+    KSPGetPC(_solver, &_pc);
+     
+    PCSetOptionsPrefix(_pc, prefix.c_str());    
+    PCSetFromOptions(_pc);  // set running time option
 }
 
 void PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)

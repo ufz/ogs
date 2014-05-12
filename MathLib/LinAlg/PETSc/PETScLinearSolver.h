@@ -17,20 +17,12 @@
 #ifndef PETSCLINEARSOLVER_H_
 #define PETSCLINEARSOLVER_H_
 
+#include<string>
+
+#include "petscksp.h"
+
 #include "PETScMatrix.h"
 #include "PETScVector.h"
-
-#include "PETScLinearSolverOption.h"
-
-#include "KSP_Option/PETScKSP_Chebyshev_Option.h"
-#include "KSP_Option/PETScKSP_Richards_Option.h"
-#include "KSP_Option/PETScKSP_GMRES_Option.h"
-
-#include "PC_Option/PETScPC_ILU_Option.h"
-#include "PC_Option/PETScPC_SOR_Option.h"
-#include "PC_Option/PETScPC_LU_Option.h"
-#include "PC_Option/PETScPC_ASM_Option.h"
-#include "PC_Option/PETScPC_AMG_Option.h"
 
 namespace MathLib
 {
@@ -38,6 +30,7 @@ namespace MathLib
 /*!
      A class of linear solver based on PETSc rountines.
 
+     All options for KSP and PC must given in the command line.
 */
 class PETScLinearSolver
 {
@@ -45,28 +38,12 @@ class PETScLinearSolver
 
         /*!
             Constructor
-            \param A      Matrix, cannot be constant.
-            \param option Configuration data for solver and preconditioner.
+            \param A       Matrix, cannot be constant.
+            \param prefix  Name used to distinguish the options in the command
+                           line for this solver. It can be the name of the PDE
+                           that owns an instance of this class.
         */
-        PETScLinearSolver(PETScMatrix &A, const boost::property_tree::ptree &option);
-
-        /*!
-            Set Krylov subspace parameters with given option
-            \param  ksp_opt Given parameters 
-        */ 
-        template <typename T_KSP_OPTION> void setKSP_Option(T_KSP_OPTION &ksp_opt)
-        {
-            ksp_opt.setOption(_solver);
-        }
-        
-        /*!
-            Set preconditioner parameters with given option
-            \param  pc_opt Given parameters 
-        */ 
-        template <typename T_PC_OPTION> void setPC_Option(T_PC_OPTION &pc_opt)
-        {
-            pc_opt.setOption(_pc);
-        }
+        PETScLinearSolver(PETScMatrix &A, const std::string prefix);
 
         ~PETScLinearSolver()
         {
