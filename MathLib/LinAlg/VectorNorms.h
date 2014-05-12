@@ -118,17 +118,17 @@ inline double norm(const T_VEC &v, VecNormType normType = VecNormType::NORM2)
     double norm = -1;
     switch (normType)
     {
-    case VecNormType::NORM1:
-        norm = norm_1(v);
-        break;
-    case VecNormType::NORM2:
-        norm = norm_2(v);
-        break;
-    case VecNormType::INFINITY_N:
-        norm = norm_max(v);
-        break;
-    default:
-        break;
+        case VecNormType::NORM1:
+            norm = norm_1(v);
+            break;
+        case VecNormType::NORM2:
+            norm = norm_2(v);
+            break;
+        case VecNormType::INFINITY_N:
+            norm = norm_max(v);
+            break;
+        default:
+            break;
     }
     return norm;
 }
