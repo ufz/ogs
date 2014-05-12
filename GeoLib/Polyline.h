@@ -144,6 +144,15 @@ public:
 	 */
 	double getLength (std::size_t k) const;
 
+	/**
+	 * returns the distance along the polyline from the beginning of the polyline
+	 * @param pnt the point on the polyline
+	 * @param epsilon_radius the epsilon
+	 * @return the distance along the polyline between the given point and the beginning of the polyline.
+	 * If the given point is not on the polyine, negative value is returned.
+	 */
+	double getDistanceAlongPolyline(const GeoLib::Point& pnt, const double epsilon_radius) const;
+
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
 	/**

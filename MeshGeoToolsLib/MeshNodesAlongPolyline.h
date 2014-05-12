@@ -40,22 +40,31 @@ public:
 	 * @param ply Along the GeoLib::Polyline ply the mesh nodes are searched.
 	 * @param epsilon_radius Search / tube radius
 	 */
-	MeshNodesAlongPolyline(std::vector<MeshLib::Node*> const& mesh_nodes,
+	MeshNodesAlongPolyline(MeshLib::Mesh const& mesh,
 			GeoLib::Polyline const& ply, double epsilon_radius);
+
+	/// return the mesh object
+	MeshLib::Mesh const& getMesh() const;
+
 	/**
 	 * Access the vector of mesh node ids.
 	 * @return The vector of mesh node ids calculated in the constructor
 	 */
 	std::vector<std::size_t> const& getNodeIDs () const;
+
 	/**
 	 * Deploying this method the user can get access to the underlying
 	 * GeoLib::Polyline.
 	 * @return the underlying GeoLib::Polyline
 	 */
 	GeoLib::Polyline const& getPolyline () const;
+
+	/// return a vector of node distance from the polyline start. The vector
+	/// corresponds to a vector returned in getNodeIDs()
 	std::vector<double> const & getDistOfProjNodeFromPlyStart() const;
 
 private:
+	MeshLib::Mesh const& _mesh;
 	GeoLib::Polyline const& _ply;
 	std::vector<std::size_t> _msh_node_ids;
 	std::vector<double> _dist_of_proj_node_from_ply_start;

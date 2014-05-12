@@ -2,7 +2,7 @@
  * @file TestGrid.cpp
  * @author Thomas Fischer
  * @date Mar 22, 2013
- * @brief 
+ * @brief Tests for class GeoLib::Grid.
  *
  * @copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -10,6 +10,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
+
+#include <memory>
 
 #include "gtest/gtest.h"
 
@@ -30,6 +32,7 @@ TEST(GeoLib, InsertOnePointInGrid)
 	std::vector<GeoLib::Point*> pnts;
 	pnts.push_back(new GeoLib::Point(0.0,0.0,0.0));
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 TEST(GeoLib, InsertTwoPointsInGrid)
@@ -38,6 +41,7 @@ TEST(GeoLib, InsertTwoPointsInGrid)
 	pnts.push_back(new GeoLib::Point(4.5, -400.0, 0.0));
 	pnts.push_back(new GeoLib::Point(50, -300.0, 0.0));
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 
@@ -59,6 +63,18 @@ TEST(GeoLib, InsertManyPointsInGrid)
 	}
 
 	ASSERT_NO_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()));
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
+}
+
+TEST(GeoLib, InsertPointsWithSameXCoordinateInGrid)
+{
+	std::vector<GeoLib::Point*> pnts;
+	pnts.push_back(new GeoLib::Point(0,0,0));
+	pnts.push_back(new GeoLib::Point(0,1,0));
+	pnts.push_back(new GeoLib::Point(0,1,0.1));
+
+	GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end());
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 TEST(GeoLib, SearchNearestPointInGrid)
@@ -71,6 +87,9 @@ TEST(GeoLib, SearchNearestPointInGrid)
 	GeoLib::Point p0(0,10,10);
 	GeoLib::Point* res(grid->getNearestPoint(p0.getCoords()));
 	ASSERT_EQ(sqrt(MathLib::sqrDist(*res, *pnts[0])), 0.0);
+
+	delete grid;
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
 
 TEST(GeoLib, SearchNearestPointsInDenseGrid)
@@ -125,4 +144,6 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 		}
 	}
 
+	delete grid;
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::PointWithID>());
 }

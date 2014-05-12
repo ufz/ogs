@@ -55,7 +55,11 @@ public:
 	 */
 	template <typename InputIterator>
 	Grid(InputIterator first, InputIterator last, std::size_t max_num_per_grid_cell = 512) :
-		GeoLib::AABB<POINT>(first, last), _grid_cell_nodes_map(NULL)
+		GeoLib::AABB<POINT>(first, last),
+		_n_steps({{1,1,1}}),
+		_step_sizes({{0.0,0.0,0.0}}),
+		_inverse_step_sizes({{0.0,0.0,0.0}}),
+		_grid_cell_nodes_map(nullptr)
 	{
 		std::size_t n_pnts(std::distance(first, last));
 
@@ -70,60 +74,7 @@ public:
 			delta[k] = this->_max_pnt[k] - this->_min_pnt[k];
 		}
 
-		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
-		// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-		if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() ||
-						fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-			// 1d case y = z = 0
-			if (fabs(delta[1]) < std::numeric_limits<double>::epsilon() &&
-							fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-				_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-				_n_steps[1] = 1;
-				_n_steps[2] = 1;
-			} else {
-				// 1d case x = z = 0
-				if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() &&
-								fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-					_n_steps[2] = 1;
-				} else {
-					// 1d case x = y = 0
-					if (fabs(delta[0]) < std::numeric_limits<double>::epsilon() && fabs(delta[1])
-									< std::numeric_limits<double>::epsilon()) {
-						_n_steps[0] = 1;
-						_n_steps[1] = 1;
-						_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
-					} else {
-						// 2d case
-						if (fabs(delta[1]) < std::numeric_limits<double>::epsilon()) {
-							// y = const
-							_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
-							_n_steps[1] = 1;
-							_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
-						} else {
-							if (fabs(delta[2]) < std::numeric_limits<double>::epsilon()) {
-								// z = const
-								_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
-								_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-								_n_steps[2] = 1;
-							} else {
-								// x = const
-								_n_steps[0] = 1;
-								_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts * delta[1] / (max_num_per_grid_cell * delta[2])));
-								_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[1] * delta[2] / delta[1]));
-							}
-						}
-					}
-				}
-			}
-		} else {
-			// 3d case
-			_n_steps[0] = static_cast<std::size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
-									/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
-			_n_steps[1] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0])), static_cast<std::size_t>(100)));
-			_n_steps[2] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0])), static_cast<std::size_t>(100)));
-		}
+		initNumberOfSteps(max_num_per_grid_cell, n_pnts, delta);
 
 		const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
 		_grid_cell_nodes_map = new std::vector<POINT*>[n_plane * _n_steps[2]];
@@ -300,6 +251,61 @@ public:
 #endif
 
 private:
+	void initNumberOfSteps(std::size_t max_num_per_grid_cell, std::size_t n_pnts, double delta[3])
+	{
+		// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
+		// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
+		const double eps(std::numeric_limits<double>::epsilon());
+		if (fabs(delta[0]) < eps) { // dx == 0
+			if(fabs(delta[1]) < eps) { // dy == 0
+				if(fabs(delta[2]) < eps) { // degenerated case, dx == 0, dy == 0, dz == 0
+					WARN("Grid constructor: Bounding volume [%f,%f] x [%f,%f] x [%f,%f] too small.",
+					this->_min_pnt[0], this->_max_pnt[0],
+					this->_min_pnt[1], this->_max_pnt[1],
+					this->_min_pnt[2], this->_max_pnt[2]
+					);
+				} else { // 1d case: dx == 0, dy == 0, dz != 0
+					_n_steps[0] = 1;
+					_n_steps[1] = 1;
+					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+				}
+			} else { // dy != 0
+				if(fabs(delta[2]) < eps) { // 1d case: dx == 0, dy != 0, dz == 0
+					_n_steps[0] = 1;
+					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[2] = 1;
+				} else { // 2d case: dx == 0, dy != 0, dz != 0
+					_n_steps[0] = 1;
+					_n_steps[1] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[1] / (max_num_per_grid_cell * delta[2]))));
+					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+				}
+			}
+		} else { // dx != 0
+			if(fabs(delta[1]) < eps) { // dy == 0
+				if(fabs(delta[2]) < eps) { // 1d case: dx != 0, dy == 0, dz == 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[1] = 1;
+					_n_steps[2] = 1;
+				} else { // 2d case: dx != 0, dy == 0, dz != 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
+					_n_steps[1] = 1;
+					_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
+				}
+			} else { // dy != 0
+				if(fabs(delta[2]) < eps) { // 2d case: dx != 0, dy != 0, dz == 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
+					_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
+					_n_steps[2] = 1;
+				} else { // 3d case: dx != 0, dy != 0, dz != 0
+					_n_steps[0] = static_cast<std::size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
+									/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
+					_n_steps[1] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0])), static_cast<std::size_t>(100)));
+					_n_steps[2] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0])), static_cast<std::size_t>(100)));
+				}
+			}
+		}
+	}
+
 	/**
 	 * Method calculates the grid cell coordinates for the given point pnt. If
 	 * the point is located outside of the bounding box the coordinates of the
@@ -368,9 +374,9 @@ private:
 	static POINT const* copyOrAddress(POINT const& p) { return &p; }
 	static POINT* copyOrAddress(POINT* p) { return p; }
 
-	double _step_sizes[3];
-	double _inverse_step_sizes[3];
-	std::size_t _n_steps[3];
+	std::array<std::size_t,3> _n_steps;
+	std::array<double, 3> _step_sizes;
+	std::array<double, 3> _inverse_step_sizes;
 	/**
 	 * This is an array that stores pointers to POINT objects.
 	 */

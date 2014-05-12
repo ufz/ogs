@@ -687,18 +687,17 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::TETGEN)
 	{
-		if (fi.suffix().toLower().compare("poly") == 0)
+		if (fi.suffix().toLower().compare("poly") == 0 || fi.suffix().toLower().compare("smesh") == 0)
 		{
 			FileIO::TetGenInterface tetgen;
-			tetgen.readTetGenPoly(fileName.toStdString(), *(_project.getGEOObjects()));
+			tetgen.readTetGenGeometry(fileName.toStdString(), *(_project.getGEOObjects()));
 		}
 		else {
 			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
-			QString element_fname = QFileDialog::getOpenFileName(this, "Select TetGen element file",
-			                                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
-			                                                     "TetGen element files (*.ele);;");
+			QString element_fname(fi.path() + "\\" + fi.completeBaseName() + ".ele");
 
-			if (!fileName.isEmpty() && !element_fname.isEmpty()) {
+			if (!fileName.isEmpty()) 
+			{
 				FileIO::TetGenInterface tetgen;
 				MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
 				if (mesh)
@@ -1029,7 +1028,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-	MeshLib::convertMeshToGeo(*mesh, this->_project.getGEOObjects());
+	MeshLib::convertMeshToGeo(*mesh, *this->_project.getGEOObjects());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName)

@@ -12,7 +12,7 @@
  *
  */
 
-
+#include "MeshGenerators/LayeredVolume.h"
 #include "MeshLayerEditDialog.h"
 
 // ThirdParty/logog
@@ -22,6 +22,8 @@
 #include "StringTools.h"
 #include "Mesh.h"
 
+#include "TetGenInterface.h"
+
 #include <QCheckBox>
 #include <QFileInfo>
 #include <QFileDialog>
@@ -30,21 +32,24 @@
 #include <QLineEdit>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _n_layers(0),
-	  _nLayerExplanation (new QLabel("(select \"0\" for surface mapping)")),
-	  _layerEdit (new QLineEdit("0")),
+	  _nLayerExplanation (new QLabel(this)),
+	  _layerEdit (new QLineEdit("0", this)),
 	  _noDataReplacementEdit(nullptr),
-	  _nextButton (new QPushButton("Next")),
+	  _nextButton (new QPushButton("Next", this)),
 	  _layerBox (nullptr),
 	  _radioButtonBox (nullptr),
-	  _layerSelectionLayout (new QGridLayout),
+	  _ogsMeshButton (nullptr),
+	  _layerSelectionLayout (new QGridLayout(_layerBox)),
 	  _use_rasters(true)
 {
 	setupUi(this);
 
+	_nLayerExplanation->setText("(select \"0\" for surface mapping)");
 	this->gridLayoutLayerMapping->addWidget(new QLabel("Please specify the number of layers to add:", this), 0, 0);
 	this->gridLayoutLayerMapping->addWidget(_nLayerExplanation, 1, 0);
 	this->gridLayoutLayerMapping->addWidget(_layerEdit, 0, 1);
@@ -53,7 +58,6 @@ MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* par
 	connect(_nextButton, SIGNAL(pressed()), this, SLOT(nextButtonPressed()));
 
 	// configure group box + layout
-	_layerBox = new QGroupBox;
 	this->_layerSelectionLayout->setMargin(10);
 	this->_layerSelectionLayout->setColumnMinimumWidth(2,10);
 	this->_layerSelectionLayout->setColumnStretch(0, 80);
@@ -63,16 +67,6 @@ MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* par
 
 MeshLayerEditDialog::~MeshLayerEditDialog()
 {
-	for (int i = 0; i < _edits.size(); ++i)
-		delete _edits[i];
-
-	delete _nLayerExplanation;
-	delete _layerEdit;
-	delete _noDataReplacementEdit;
-	delete _nextButton;
-	delete _radioButtonBox;
-	delete _layerSelectionLayout;
-	delete _layerBox;
 }
 
 void MeshLayerEditDialog::nextButtonPressed()
@@ -82,12 +76,14 @@ void MeshLayerEditDialog::nextButtonPressed()
 	_nLayerExplanation->setText("");
 	_n_layers  = static_cast<unsigned>(_layerEdit->text().toInt());
 
-	if (_n_layers > 0)
+	if (_n_layers == 0)
+		this->createWithRasters();
+	else
 	{
 		QVBoxLayout* _radiobuttonLayout (new QVBoxLayout(_radioButtonBox));
 		QRadioButton* selectButton1 (new QRadioButton("Add layers based on raster files", _radioButtonBox));
 		QRadioButton* selectButton2 (new QRadioButton("Add layers with static thickness", _radioButtonBox));
-		_radioButtonBox = new QGroupBox;
+		_radioButtonBox = new QGroupBox(this);
 		_radiobuttonLayout->addWidget(selectButton1);
 		_radiobuttonLayout->addWidget(selectButton2);
 		_radioButtonBox->setLayout(_radiobuttonLayout);
@@ -97,10 +93,6 @@ void MeshLayerEditDialog::nextButtonPressed()
 		connect(selectButton1, SIGNAL(pressed()), this, SLOT(createWithRasters()));
 		connect(selectButton2, SIGNAL(pressed()), this, SLOT(createStatic()));
 	}
-	else
-		this->createWithRasters();
-
-
 }
 
 void MeshLayerEditDialog::createWithRasters()
@@ -110,7 +102,8 @@ void MeshLayerEditDialog::createWithRasters()
 		this->_radioButtonBox->setEnabled(false);
 	const QString selectText = (_n_layers>0) ?
 			"Please specify a raster file for mapping each layer:" :
-			"Please specify rasterfile for surface mapping:";
+			"Please specify raster file for surface mapping:";
+	this->_layerBox = new QGroupBox(this);
 	this->_layerBox->setTitle(selectText);
 
 	for (unsigned i = 0; i <= _n_layers+1; ++i)
@@ -119,7 +112,7 @@ void MeshLayerEditDialog::createWithRasters()
 		if (i==0) text = "Surface";
 		else if (i>_n_layers) text = "Layer" + QString::number(_n_layers) + "-Bottom";
 		else text="Layer" + QString::number(i) + "-Top";
-		QLineEdit* edit (new QLineEdit());
+		QLineEdit* edit (new QLineEdit(this));
 		QPushButton* button (new QPushButton("...", _layerBox));
 
 		this->_edits.push_back(edit);
@@ -144,103 +137,180 @@ void MeshLayerEditDialog::createWithRasters()
 	}
 	this->_layerBox->setLayout(this->_layerSelectionLayout);
 	this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
+	if (this->_n_layers > 0)
+		this->createMeshToolSelection();
 }
 
 void MeshLayerEditDialog::createStatic()
 {
 	this->_use_rasters = false;
 	this->_radioButtonBox->setEnabled(false);
+	this->_layerBox = new QGroupBox(this);
 	this->_layerBox->setTitle("Please specify a thickness or each layer");
 
 	for (unsigned i = 0; i < this->_n_layers; ++i)
 	{
 		QString text("Layer" + QString::number(i) + "-Thickness");
-		QLineEdit* staticLayerEdit = new QLineEdit("10");
+		QLineEdit* staticLayerEdit = new QLineEdit("10", this);
 		staticLayerEdit->setValidator(new QDoubleValidator(staticLayerEdit));
 		_edits.push_back(staticLayerEdit);
 		this->_layerSelectionLayout->addWidget(new QLabel(text, _layerBox),  i, 0);
 		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
 	}
 	this->_layerBox->setLayout(this->_layerSelectionLayout);
-	this->gridLayoutLayerMapping->addWidget(_layerBox, 5, 0, 1, 3);
+	this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
+	this->createMeshToolSelection();
+}
+
+void MeshLayerEditDialog::createMeshToolSelection()
+{
+	QGroupBox* meshToolSelectionBox (new QGroupBox(this));
+	meshToolSelectionBox->setTitle("Select output element type");
+	QHBoxLayout* meshToolSelectionLayout (new QHBoxLayout(meshToolSelectionBox));
+	_ogsMeshButton = new QRadioButton("Prisms", meshToolSelectionBox);
+	QRadioButton* tetgenMeshButton = new QRadioButton("Tetrahedra", meshToolSelectionBox);
+	meshToolSelectionLayout->addWidget(_ogsMeshButton);
+	meshToolSelectionLayout->addWidget(tetgenMeshButton);
+	meshToolSelectionBox->setLayout(meshToolSelectionLayout);
+	_ogsMeshButton->setChecked(true);
+	gridLayoutLayerMapping->addWidget(meshToolSelectionBox, 5, 0, 1, 3);
+}
+
+MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
+{
+	const unsigned nLayers = _layerEdit->text().toInt();
+	std::vector<float> layer_thickness;
+	for (unsigned i=0; i<nLayers; ++i)
+	{
+		// "100" is just a default size to have any value for extruding 2D elements.
+		// The actual mapping based on a raster file will be performed later.
+		const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
+		layer_thickness.push_back(thickness);
+	}
+
+	MeshLib::Mesh* new_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
+
+	if (_use_rasters)
+	{
+		for (unsigned i=0; i<=nLayers; ++i)
+		{
+			const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
+			const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
+			if (!MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement))
+			{
+				delete new_mesh;
+				return nullptr;
+			}
+		}
+		if (this->_edits[0]->text().length()>0)
+		{
+			MeshLib::Mesh* final_mesh = MeshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
+			delete new_mesh;
+			new_mesh = final_mesh;
+		}
+	}
+	return new_mesh;
+}
+
+MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
+{
+	QSettings settings;
+	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
+													settings.value("lastOpenedTetgenFileDirectory").toString(),
+													"TetGen Geometry (*.smesh)");
+	if (filename.isEmpty())
+		return nullptr;
+
+	const unsigned nLayers = _layerEdit->text().toInt();
+	MeshLib::Mesh* tg_mesh (nullptr);
+	if (_use_rasters)
+	{
+		std::vector<std::string> raster_paths(nLayers+1);
+		for (unsigned i=0; i<=nLayers; ++i)
+			raster_paths[i] = this->_edits[i+1]->text().toStdString();
+		LayeredVolume lv;
+		lv.createGeoVolumes(*_msh, raster_paths);
+
+		tg_mesh = lv.getMesh();
+
+		QString file_path("");
+		if (tg_mesh)
+		{
+			std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());
+			FileIO::TetGenInterface tetgen_interface;
+			tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
+		}
+	}
+	else
+	{
+		std::vector<float> layer_thickness;
+		for (unsigned i=0; i<nLayers; ++i)
+			layer_thickness.push_back(this->_edits[i]->text().toFloat());
+		tg_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
+		std::vector<MeshLib::Node> tg_attr;
+		FileIO::TetGenInterface tetgen_interface;
+		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
+	}
+		
+	return tg_mesh;
 }
 
 void MeshLayerEditDialog::accept()
 {
-	if (this->_edits.size()>0)
+	if (this->_edits.isEmpty())
 	{
-		bool all_paths_set (true);
-		if ((_n_layers==0) && _use_rasters && (_edits[0]->text().length()==0))
+		OGSError::box("Please specifiy the number and\n type of layers and press \"Next\"");
+		return;
+	}
+
+	bool all_paths_set (true);
+	if (_n_layers==0)
+	{
+		if (_edits[0]->text().isEmpty())
 			all_paths_set = false;
-		else
-		{
-			int start_idx = (_use_rasters) ? 1:0;
-			for (int i=start_idx; i<_edits.size(); ++i)
-				if (_edits[i]->text().length()==0)
-					all_paths_set = false;
-		}
-
-		if (all_paths_set)
-		{
-			int result(1);
-			const unsigned nLayers = _layerEdit->text().toInt();
-			MeshLib::Mesh* new_mesh (NULL);
-
-			if (nLayers==0)
-			{
-				new_mesh = new MeshLib::Mesh(*_msh);
-				const std::string imgPath ( this->_edits[0]->text().toStdString() );
-				const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
-				if (!imgPath.empty())
-					result = MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue);
-			}
-			else
-			{
-				std::vector<float> layer_thickness;
-				for (unsigned i=0; i<nLayers; ++i)
-				{
-					// "100" is just a default size to have any value for extruding 2D elements.
-					// The actual mapping based on a raster file will be performed later.
-					const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
-					layer_thickness.push_back(thickness);
-				}
-
-				new_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
-
-				if (_use_rasters)
-				{
-					for (unsigned i=0; i<=nLayers; ++i)
-					{
-						const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
-						const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
-						if (!imgPath.empty())
-						{
-							result = MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement);
-							if (result==0) break;
-						}
-					}
-					if (this->_edits[0]->text().length()>0)
-					{
-						MeshLib::Mesh* final_mesh = MeshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
-						delete new_mesh;
-						new_mesh = final_mesh;
-					}
-				}
-			}
-
-			if (new_mesh)
-				emit mshEditFinished(new_mesh);
-
-			if (!new_mesh || result==0)
-				OGSError::box("Error creating mesh");
-
-			this->done(QDialog::Accepted);
-		}
-		else
-			OGSError::box("Please specifiy raster files for all layers.");
 	}
 	else
-		OGSError::box("Please specifiy the number and\n type of layers and press \"Next\"");
+	{
+		int start_idx = (_use_rasters) ? 1:0;
+		for (int i=start_idx; i<_edits.size(); ++i)
+			if (_edits[i]->text().isEmpty())
+				all_paths_set = false;
+	}
+
+	if (!all_paths_set)
+	{
+		OGSError::box("Please specifiy raster files for all layers.");
+		return;
+	}
+
+	const unsigned nLayers = _layerEdit->text().toInt();
+	MeshLib::Mesh* new_mesh (NULL);
+
+	if (nLayers==0)
+	{
+		new_mesh = new MeshLib::Mesh(*_msh);
+		const std::string imgPath ( this->_edits[0]->text().toStdString() );
+		const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
+		if (!MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue))
+		{
+			delete new_mesh;
+			return;
+		}
+	}
+	else
+	{
+		if (_ogsMeshButton->isChecked())
+			new_mesh = this->createPrismMesh();
+		else
+			new_mesh = this->createTetMesh();
+	}
+
+	if (new_mesh)
+		emit mshEditFinished(new_mesh);
+	else
+		OGSError::box("Error creating mesh");
+
+	this->done(QDialog::Accepted);
 }
 
 void MeshLayerEditDialog::reject()

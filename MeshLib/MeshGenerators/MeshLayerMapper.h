@@ -16,6 +16,7 @@
 #define MESHLAYERMAPPER_H
 
 #include <string>
+#include "Raster.h"
 
 class QImage;
 
@@ -46,8 +47,15 @@ public:
 	 * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
 	 * Note: This only results in a valid mesh if the layers don't intersect each other.
 	 */
-	static int LayerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile,
-                            const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue);
+	static bool LayerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile,
+                             const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue);
+
+	/**
+	 * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
+	 * Note: This only results in a valid mesh if the layers don't intersect each other.
+	 */
+	static bool LayerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster,
+                             const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue);
 
 	/**
 	 * Blends a mesh with the surface given by dem_raster. Nodes and elements above the surface are either removed or adapted to fit the surface.
