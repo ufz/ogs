@@ -122,13 +122,17 @@ bool Surface::isPntInBoundingVolume(Point const& pnt) const
 
 bool Surface::isPntInSfc (Point const& pnt) const
 {
-	bool nfound (true);
-	for (std::size_t k(0); k<_sfc_triangles.size() && nfound; k++) {
+	return (findTriangle(pnt)!=nullptr);
+}
+
+const Triangle* Surface::findTriangle (Point const& pnt) const
+{
+	for (std::size_t k(0); k<_sfc_triangles.size(); k++) {
 		if (_sfc_triangles[k]->containsPoint (pnt)) {
-			nfound = false;
+			return _sfc_triangles[k];
 		}
 	}
-	return !nfound;
+	return nullptr;
 }
 
 } // end namespace

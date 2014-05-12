@@ -70,6 +70,14 @@ public:
 	 */
 	bool isPntInSfc (Point const& pnt) const;
 
+	/**
+	 * find a triangle in which the given point is located
+	 * @param pnt the point
+	 * @return a pointer to a triangle. nullptr is returned if the point is not
+	 * contained in the surface
+	 */
+	const Triangle* findTriangle (Point const& pnt) const;
+
 	const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; }
 
 	/**

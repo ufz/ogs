@@ -377,6 +377,35 @@ void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
 	}
 }
 
+double Polyline::getDistanceAlongPolyline(const GeoLib::Point& pnt, const double epsilon_radius) const
+{
+	double dist, lambda;
+	bool found = false;
+	// loop over all line segments of the polyline
+	for (size_t k = 0; k < this->getNumberOfPoints() - 1; k++) {
+		// is the orthogonal projection of the j-th node to the
+		// line g(lambda) = _ply->getPoint(k) + lambda * (_ply->getPoint(k+1) - _ply->getPoint(k))
+		// at the k-th line segment of the polyline, i.e. 0 <= lambda <= 1?
+		if (MathLib::calcProjPntToLineAndDists(pnt.getCoords(),
+						(this->getPoint(k))->getCoords(), (this->getPoint(k + 1))->getCoords(),
+						lambda, dist) <= epsilon_radius) {
+
+			double act_length_of_ply(this->getLength(k));
+			double seg_length (getLength(k+1)-getLength(k));
+			double lower_lambda (- epsilon_radius / seg_length);
+			double upper_lambda (1 + epsilon_radius / seg_length);
+
+			if (lower_lambda <= lambda && lambda <= upper_lambda) {
+				found = true;
+				dist = act_length_of_ply + dist;
+				break;
+			} // end if lambda
+		}
+	} // end line segment loop
+
+	return found ? dist : -1;
+}
+
 std::ostream& operator<< (std::ostream &os, const Polyline &pl)
 {
 	pl.write (os);
