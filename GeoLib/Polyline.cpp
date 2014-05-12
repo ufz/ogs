@@ -383,17 +383,18 @@ double Polyline::getDistanceAlongPolyline(const GeoLib::Point& pnt, const double
 	bool found = false;
 	// loop over all line segments of the polyline
 	for (size_t k = 0; k < this->getNumberOfPoints() - 1; k++) {
-		double act_length_of_ply(this->getLength(k));
-		double seg_length (getLength(k+1)-getLength(k));
-		double lower_lambda (- epsilon_radius / seg_length);
-		double upper_lambda (1 + epsilon_radius / seg_length);
-
 		// is the orthogonal projection of the j-th node to the
 		// line g(lambda) = _ply->getPoint(k) + lambda * (_ply->getPoint(k+1) - _ply->getPoint(k))
 		// at the k-th line segment of the polyline, i.e. 0 <= lambda <= 1?
 		if (MathLib::calcProjPntToLineAndDists(pnt.getCoords(),
 						(this->getPoint(k))->getCoords(), (this->getPoint(k + 1))->getCoords(),
 						lambda, dist) <= epsilon_radius) {
+
+			double act_length_of_ply(this->getLength(k));
+			double seg_length (getLength(k+1)-getLength(k));
+			double lower_lambda (- epsilon_radius / seg_length);
+			double upper_lambda (1 + epsilon_radius / seg_length);
+
 			if (lower_lambda <= lambda && lambda <= upper_lambda) {
 				found = true;
 				dist = act_length_of_ply + dist;
