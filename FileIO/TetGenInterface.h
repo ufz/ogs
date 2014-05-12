@@ -82,24 +82,11 @@ public:
 	 */
 	bool writeTetGenSmesh(const std::string &file_name,
 	                      const MeshLib::Mesh &mesh,
-	                      const std::vector<MeshLib::Node> &attribute_points) const;
+	                      std::vector<MeshLib::Node> &attribute_points) const;
 
 private:
 	/// Returns the declared number of facets in the poly file.
 	std::size_t getNFacets(std::ifstream &input);
-
-	/**
-	 * Method parses the lines reading the facets from TetGen poly file
-	 * @param input       the input stream (input)
-	 * @param surfaces    the vector of surfaces to be filled (output)
-	 * @param points      the point vector needed for creating surfaces (input)
-	 * @param pnt_id_map  the id map to compensate for possibly changed point ids after adding the point vector to GEOObjects
-	 * @return true, if the facets have been read correctly, false if the method detects an error
-	 */
-	bool parsePolyFacets(std::ifstream &input,
-	                     std::vector<GeoLib::Surface*> &surfaces,
-	                     const std::vector<GeoLib::Point*> &points,
-						 const std::vector<std::size_t> &pnt_id_map);
 
 	/**
 	 * Method parses the lines reading the facets from TetGen smesh file
@@ -190,6 +177,30 @@ private:
 	                   std::size_t n_nodes_per_tet,
 	                   bool region_attribute) const;
 
+	/**
+	 * Writes the elements from a 2D mesh to a TetGen smesh-file.
+	 * @param out               the output stream the information is written to.
+	 * @param mesh              mesh containing the subsurface boundary representation used for meshing.
+	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
+	 * @return returns true on success and false otherwise.
+	 */
+	void write2dElements(std::ofstream &out,
+	                     const MeshLib::Mesh &mesh,
+	                     std::vector<MeshLib::Node> &attribute_points) const;
+
+	/**
+	 * Writes the elements from a 3D mesh to a TetGen smesh-file.
+	 * @param out               the output stream the information is written to.
+	 * @param mesh              the 3D mesh.
+	 * @param attribute_points  attribute points containing material IDs (emptied when called and then filled with correct values).
+	 * @return returns true on success and false otherwise.
+	 */
+	void write3dElements(std::ofstream &out,
+	                     const MeshLib::Mesh &mesh,
+	                     std::vector<MeshLib::Node> &attribute_points) const;
+
+	/// Writes facet information from a 2D element to the stream and increments the total element count accordingly
+	void writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const;
 
 	/// the value is true if the indexing is zero based, else false
 	bool _zero_based_idx;

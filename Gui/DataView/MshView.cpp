@@ -22,6 +22,7 @@
 #include <QSettings>
 
 #include "Mesh.h"
+#include "Node.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "MshItem.h"
@@ -39,6 +40,7 @@
 #include "XmlIO/Boost/BoostVtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 #include "SHPInterface.h"
+#include "TetGenInterface.h"
 
 MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -120,11 +122,15 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QAction*    editMeshAction = menu.addAction("Edit mesh...");
 		QAction*  editValuesAction = menu.addAction("Edit material groups...");
 		QAction* meshQualityAction = menu.addAction("Calculate element quality...");
-		QAction* surfaceMeshAction (NULL);
+		QAction* surfaceMeshAction (nullptr);
+		QAction* tetgenExportAction (nullptr);
 		if (mesh_dim==3)
-			     surfaceMeshAction = menu.addAction("Extract surface");
-		QAction* mesh2geoAction (NULL);
-		QAction* shapeExportAction (NULL);
+		{
+			surfaceMeshAction = menu.addAction("Extract surface");
+			tetgenExportAction = menu.addAction("Export to TetGen...");
+		}
+		QAction* mesh2geoAction (nullptr);
+		QAction* shapeExportAction (nullptr);
 		if (mesh_dim==2)
 		{
 			mesh2geoAction = menu.addAction("Convert to geometry");
@@ -136,17 +142,20 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QAction*   addDirectAction = direct_cond_menu.addAction("Add...");
 		QAction*  loadDirectAction = direct_cond_menu.addAction("Load...");
 		//menu.addSeparator();
-		connect(editMeshAction,        SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
-		connect(editValuesAction,      SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
-		connect(meshQualityAction,     SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
+		connect(editMeshAction,         SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
+		connect(editValuesAction,       SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
+		connect(meshQualityAction,      SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		if (mesh_dim==3)
-			connect(surfaceMeshAction, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
-		connect(addDirectAction,	   SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
-		connect(loadDirectAction,      SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
+		{
+			connect(surfaceMeshAction,  SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
+			connect(tetgenExportAction, SIGNAL(triggered()), this, SLOT(exportToTetGen()));
+		}
+		connect(addDirectAction,	    SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
+		connect(loadDirectAction,       SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
 		if (mesh_dim==2)
 		{
-			connect(mesh2geoAction,    SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
-			connect(shapeExportAction, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
+			connect(mesh2geoAction,     SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
+			connect(shapeExportAction,  SIGNAL(triggered()), this, SLOT(exportToShapefile()));
 		}
 		menu.exec(event->globalPos());
 	}
@@ -210,6 +219,26 @@ void MshView::exportToShapefile() const
 	if (!fileName.isEmpty())
 		if (!FileIO::SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
 			OGSError::box("Error exporting mesh\n to shapefile");
+}
+
+void MshView::exportToTetGen()
+{
+	QModelIndex index = this->selectionModel()->currentIndex();
+
+	if (!index.isValid())
+		return;
+	
+	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	QSettings settings;
+	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
+													settings.value("lastOpenedTetgenFileDirectory").toString(),
+													"TetGen Geometry (*.smesh)");
+	if (!filename.isEmpty())
+	{
+		FileIO::TetGenInterface tg;
+		std::vector<MeshLib::Node> attr;
+		tg.writeTetGenSmesh(filename.toStdString(), *mesh, attr);
+	}
 }
 
 int MshView::writeToFile() const

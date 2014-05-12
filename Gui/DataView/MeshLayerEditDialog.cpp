@@ -214,29 +214,44 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 {
+	QSettings settings;
+	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
+													settings.value("lastOpenedTetgenFileDirectory").toString(),
+													"TetGen Geometry (*.smesh)");
+	if (filename.isEmpty())
+		return nullptr;
+
 	const unsigned nLayers = _layerEdit->text().toInt();
-	std::vector<std::string> raster_paths(nLayers+1);
-	for (unsigned i=0; i<=nLayers; ++i)
-		raster_paths[i] = this->_edits[i+1]->text().toStdString();
-	LayeredVolume lv;
-	lv.createGeoVolumes(*_msh, raster_paths);
-
-	MeshLib::Mesh* tg_mesh (lv.getMesh());
-
-	QString file_path("");
-	if (tg_mesh)
+	MeshLib::Mesh* tg_mesh (nullptr);
+	if (_use_rasters)
 	{
-		QSettings settings;
-		QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
-		                                                settings.value("lastOpenedTetgenFileDirectory").toString(),
-	                                                    "TetGen Geometry (*.smesh)");
-		if (!filename.isEmpty())
+		std::vector<std::string> raster_paths(nLayers+1);
+		for (unsigned i=0; i<=nLayers; ++i)
+			raster_paths[i] = this->_edits[i+1]->text().toStdString();
+		LayeredVolume lv;
+		lv.createGeoVolumes(*_msh, raster_paths);
+
+		tg_mesh = lv.getMesh();
+
+		QString file_path("");
+		if (tg_mesh)
 		{
 			std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());
 			FileIO::TetGenInterface tetgen_interface;
 			tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
 		}
 	}
+	else
+	{
+		std::vector<float> layer_thickness;
+		for (unsigned i=0; i<nLayers; ++i)
+			layer_thickness.push_back(this->_edits[i]->text().toFloat());
+		tg_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
+		std::vector<MeshLib::Node> tg_attr;
+		FileIO::TetGenInterface tetgen_interface;
+		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
+	}
+		
 	return tg_mesh;
 }
 
