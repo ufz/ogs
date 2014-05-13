@@ -219,7 +219,7 @@ TEST(Math, CheckInterface_Lis)
 #endif
 
 #ifdef USE_PETSC
-TEST(Math, CheckInterface_PETSc_Linear_Solver_basic)
+TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -243,7 +243,7 @@ TEST(Math, CheckInterface_PETSc_Linear_Solver_basic)
                                MathLib::PETScLinearSolver>(A, b, "ptest1_");
 }
 
-TEST(Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
+TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -267,7 +267,7 @@ TEST(Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
                                MathLib::PETScLinearSolver>(A, b, "ptest2_");
 }
 
-TEST(Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
+TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;

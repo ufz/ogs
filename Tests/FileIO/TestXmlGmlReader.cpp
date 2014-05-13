@@ -26,16 +26,10 @@
 // GeoLib
 #include "Polyline.h"
 
+
 TEST(FileIO, XmlGmlWriterReaderTest)
 {
-#if defined(USE_PETSC) || defined(USE_MPI)
-	int mrank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &mrank);
-	if(mrank == 0)
-	{
-#endif
-
-    // Writer test
+	// Writer test
 	std::string test_data_file(std::string(SOURCEPATH).append("/Tests/FileIO/xmlgmltestdata.gml"));
 
 	ProjectData project;
@@ -127,10 +121,4 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	boost::filesystem::remove(test_data_file);
 	test_data_file += ".md5";
 	boost::filesystem::remove(test_data_file);
-	
-#if defined(USE_PETSC) || defined(USE_MPI)
-	}
-#endif
-	
 }
-#endif

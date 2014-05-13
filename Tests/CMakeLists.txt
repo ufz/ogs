@@ -78,7 +78,11 @@ ENDIF()
 # This should override CTest's predefined test-target but it does not
 IF (OGS_USE_PETSC)
 	ADD_CUSTOM_TARGET(test
-		mpirun -np 3 $<TARGET_FILE:testrunner>
+		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*
+		DEPENDS testrunner
+	)
+	ADD_CUSTOM_TARGET(test_mpi
+		mpirun -np 3 $<TARGET_FILE:testrunner>  --gtest_filter=MPITest*
 		DEPENDS testrunner
 	)
 ELSE ()
