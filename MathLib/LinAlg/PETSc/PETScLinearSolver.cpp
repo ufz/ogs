@@ -25,7 +25,11 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix) 
     KSPGetPC(_solver, &_pc);
 
     //
-    KSPSetOptionsPrefix(_solver, prefix.c_str());    
+    if ( !prefix.empty() ) 
+    {       
+       KSPSetOptionsPrefix(_solver, prefix.c_str());
+    }
+               
     KSPSetFromOptions(_solver);  // set running time option
 }
 

@@ -27,6 +27,13 @@
 
 TEST(FileIO, TestBoostXmlCndInterfaceUsingBoundaryCondition)
 {
+#if defined(USE_PETSC) || defined(USE_MPI)
+	int mrank;
+	MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+	if(mrank == 0)
+	{
+#endif
+
 	// setup test data
 	std::string geometry_name("GeometryForBC");
 	const std::string bc_pnt_name("bc_pnt");
@@ -116,4 +123,8 @@ TEST(FileIO, TestBoostXmlCndInterfaceUsingBoundaryCondition)
 		conds[1]->getProcessDistributionType());
 	ASSERT_EQ(conds[0]->getDisValues().size(), conds[1]->getDisValues().size());
 	ASSERT_NEAR(conds[0]->getDisValues()[0], conds[1]->getDisValues()[0], std::numeric_limits<double>::epsilon());
+	
+#if defined(USE_PETSC) || defined(USE_MPI)
+	}
+#endif	
 }
