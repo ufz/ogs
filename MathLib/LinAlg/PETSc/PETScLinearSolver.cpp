@@ -18,19 +18,15 @@
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string prefix)
+PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix) : _A(A)
 {
     KSPCreate(PETSC_COMM_WORLD, &_solver);
-    KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
+
+    KSPGetPC(_solver, &_pc);
 
     //
     KSPSetOptionsPrefix(_solver, prefix.c_str());    
     KSPSetFromOptions(_solver);  // set running time option
-    
-    KSPGetPC(_solver, &_pc);
-     
-    PCSetOptionsPrefix(_pc, prefix.c_str());    
-    PCSetFromOptions(_pc);  // set running time option
 }
 
 void PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
@@ -40,6 +36,8 @@ void PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     PetscLogDouble mem1, mem2;
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
+
+    KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
 
     KSPSolve(_solver, b.getData(), x.getData());
 

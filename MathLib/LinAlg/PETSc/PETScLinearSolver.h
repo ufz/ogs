@@ -43,7 +43,7 @@ class PETScLinearSolver
                            line for this solver. It can be the name of the PDE
                            that owns an instance of this class.
         */
-        PETScLinearSolver(PETScMatrix &A, const std::string prefix);
+        PETScLinearSolver(PETScMatrix &A, const std::string &prefix="");
 
         ~PETScLinearSolver()
         {
@@ -58,8 +58,12 @@ class PETScLinearSolver
         void solve(const PETScVector &b, PETScVector &x);
 
     private:
+        /// Matrix, kept as a member only for solving successive linear equation
+        /// that preconditioner matrix may vary.    
+        PETScMatrix &_A;  
+    
         KSP _solver; ///< Slover type.
-        PC _pc;      ///< Preconditioner type.
+        PC _pc;      ///< Preconditioner type.        
 };
 
 } // end namespace

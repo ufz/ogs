@@ -127,7 +127,7 @@ void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_opt
 
 #ifdef USE_PETSC
 template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
-void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string prefix_name)
+void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &prefix_name)
 {
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
@@ -290,29 +290,6 @@ TEST(Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
 
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(A, b, "ptest3_");
-}
-
-TEST(Math, CheckInterface_PETSc_Linear_Solver_cg_asm)
-{
-    MathLib::PETScMatrixOption opt;
-    opt.d_nz = 2;
-    opt.o_nz = 0;
-    opt.is_global_size = false;
-    opt.n_local_cols = 2;
-    MathLib::PETScMatrix A(2, opt);
-
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
-
-    PetscOptionsSetValue("-ptest4_ksp_type", "cg");
-    PetscOptionsSetValue("-ptest4_ksp_rtol", "1.e-8");
-
-    PetscOptionsSetValue("-ptest4_pc_type", "gasm");
-    PetscOptionsSetValue("-ptest4_pc_gasm_type", "interpolate");
-
-    checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
-                               MathLib::PETScLinearSolver>(A, b, "ptest4_");
-
 }
 
 #endif
