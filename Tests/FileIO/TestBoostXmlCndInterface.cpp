@@ -29,7 +29,7 @@ TEST(FileIO, TestBoostXmlCndInterfaceUsingBoundaryCondition)
 {
 #if defined(USE_PETSC) || defined(USE_MPI)
 	int mrank;
-	MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+	MPI_Comm_rank(MPI_COMM_WORLD, &mrank);
 	if(mrank == 0)
 	{
 #endif
