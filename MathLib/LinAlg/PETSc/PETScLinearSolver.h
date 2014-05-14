@@ -54,16 +54,30 @@ class PETScLinearSolver
             Solve a system of equations.
             \param b The right hand of the equations.
             \param x The solutions to be solved.
+            \return  true: converged, false: diverged due to exeeding
+                     the maximum iterations.
         */
-        void solve(const PETScVector &b, PETScVector &x);
+        bool solve(const PETScVector &b, PETScVector &x);
+
+        /*!
+            \brief Get number of iterations.
+            If function solve(...) returns false, it returns the maximum
+            iterations.
+        */
+        PetscInt getIterations() const
+        {
+            PetscInt its = 0;
+            KSPGetIterationNumber(_solver, &its);
+            return its;
+        }
 
     private:
         /// Matrix, kept as a member only for solving successive linear equation
-        /// that preconditioner matrix may vary.    
-        PETScMatrix &_A;  
-    
+        /// that preconditioner matrix may vary.
+        PETScMatrix &_A;
+
         KSP _solver; ///< Slover type.
-        PC _pc;      ///< Preconditioner type.        
+        PC _pc;      ///< Preconditioner type.
 };
 
 } // end namespace

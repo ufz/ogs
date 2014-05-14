@@ -155,7 +155,7 @@ void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &pre
     std::vector<double> local_vec(2);
     local_vec[0] = mrank+1;
     local_vec[1] = 2. * (mrank+1);
-    x.set(col_pos, local_vec);
+    x.set(row_pos, local_vec);
 
     double x0[6];
     double x1[6];
@@ -164,7 +164,7 @@ void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &pre
     A.multiply(x, b);
 
     // apply BC
-    std::vector<int> bc_id;  /// Type must be int to match Petsc_Int
+    std::vector<int> bc_id;  // Type must be int to match Petsc_Int
     std::vector<double> bc_value;
 
     if(mrank == 1)
@@ -182,9 +182,11 @@ void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &pre
     // solve
     T_LINEAR_SOVLER ls(A, prefix_name);
     ls.solve(b, x);
+    
+    EXPECT_GT(ls.getIterations(), 0u);
+    
     x.getGlobalVector(x1);
-
-    ASSERT_ARRAY_NEAR(x0, x1, 6, 1e-5);
+    ASSERT_ARRAY_NEAR(x0, x1, 6, 1e-5);        
 }
 #endif
 

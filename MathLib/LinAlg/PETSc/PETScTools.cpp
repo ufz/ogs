@@ -28,10 +28,10 @@ void applyKnownSolution(PETScMatrix &A, PETScVector &b, PETScVector &x,
 
     if(vec_knownX_id.size() > 0)
     {
-       x.set(vec_knownX_id, vec_knownX_x);
-       b.set(vec_knownX_id, vec_knownX_x);
+        x.set(vec_knownX_id, vec_knownX_x);
+        b.set(vec_knownX_id, vec_knownX_x);
     }
-     
+
     x.finalizeAssembly();
     b.finalizeAssembly();
 }

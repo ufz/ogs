@@ -25,15 +25,15 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix) 
     KSPGetPC(_solver, &_pc);
 
     //
-    if ( !prefix.empty() ) 
-    {       
-       KSPSetOptionsPrefix(_solver, prefix.c_str());
+    if ( !prefix.empty() )
+    {
+        KSPSetOptionsPrefix(_solver, prefix.c_str());
     }
-               
+
     KSPSetFromOptions(_solver);  // set running time option
 }
 
-void PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
+bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
 {
 // define TEST_MEM_PETSC
 #ifdef TEST_MEM_PETSC
@@ -48,16 +48,8 @@ void PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     KSPConvergedReason reason;
     KSPGetConvergedReason(_solver, &reason);
 
-    if(reason == KSP_DIVERGED_INDEFINITE_PC)
-    {
-        PetscPrintf(PETSC_COMM_WORLD,"\nDivergence because of indefinite preconditioner;\n");
-        PetscPrintf(PETSC_COMM_WORLD,"Run the executable again but with -pc_factor_shift_positive_definite option.\n");
-    }
-    else if(reason < 0)
-    {
-        PetscPrintf(PETSC_COMM_WORLD,"\nOther kind of divergence: this should not happen.\n");
-    }
-    else
+    bool converged = true;
+    if(reason > 0)
     {
         const char *slv_type;
         const char *prc_type;
@@ -71,14 +63,47 @@ void PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
         int its;
         KSPGetIterationNumber(_solver, &its);
         PetscPrintf(PETSC_COMM_WORLD,"\nConvergence in %d iterations.\n", its);
-        PetscPrintf(PETSC_COMM_WORLD,"\n================================================");
+        PetscPrintf(PETSC_COMM_WORLD,"\n================================================\n");
     }
-    PetscPrintf(PETSC_COMM_WORLD,"\n");
+    else if(reason == KSP_DIVERGED_ITS)
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "\nWaning: maximum iteration reached.\n");
+        converged = false;
+    }
+    else
+    {
+        if(reason == KSP_DIVERGED_INDEFINITE_PC)
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "\nDivergence because of indefinite preconditioner,");
+            PetscPrintf(PETSC_COMM_WORLD, "\nTry to run again with -pc_factor_shift_positive_definite option.\n");
+        }
+        else if(reason == KSP_DIVERGED_BREAKDOWN_BICG)
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "\nKSPBICG method was detected so the method could not continue to enlarge the Krylov space.");
+            PetscPrintf(PETSC_COMM_WORLD, "\nTry to run again with another solver.\n");
+        }
+
+        else if(reason == KSP_DIVERGED_NONSYMMETRIC)
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "\nMatrx or preconditioner is unsymmetric but KSP requires symmetric.\n");
+        }
+        else
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "\nOther kind divergence, use command option -ksp_monitor or -log_summary to check the details.\n");
+        }
+
+        PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver (PETSc KSP) failed, quit now.\n");
+        KSPDestroy(&_solver);
+        PetscFinalize();
+        exit(EXIT_FAILURE);
+    }
 
 #ifdef TEST_MEM_PETSC
     PetscMemoryGetCurrentUsage(&mem2);
     PetscPrintf(PETSC_COMM_WORLD, "###Memory usage by solver. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
+
+    return converged;
 }
 
 } //end of namespace
