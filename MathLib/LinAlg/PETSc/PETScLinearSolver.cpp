@@ -67,7 +67,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     }
     else if(reason == KSP_DIVERGED_ITS)
     {
-        PetscPrintf(PETSC_COMM_WORLD, "\nWaning: maximum iteration reached.\n");
+        PetscPrintf(PETSC_COMM_WORLD, "\nWarning: maximum iteration reached.\n");
         converged = false;
     }
     else
@@ -85,7 +85,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
 
         else if(reason == KSP_DIVERGED_NONSYMMETRIC)
         {
-            PetscPrintf(PETSC_COMM_WORLD, "\nMatrx or preconditioner is unsymmetric but KSP requires symmetric.\n");
+            PetscPrintf(PETSC_COMM_WORLD, "\nMatrix or preconditioner is unsymmetric but KSP requires symmetric.\n");
         }
         else
         {
