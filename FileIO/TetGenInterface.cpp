@@ -573,7 +573,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 		out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << "\n";
 	
 	if (mesh.getDimension() == 2)
-		write2dElements(out, mesh, attribute_points);
+		write2dElements(out, mesh);
 	else
 		write3dElements(out, mesh, attribute_points);
 
@@ -596,8 +596,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 }
 
 void TetGenInterface::write2dElements(std::ofstream &out,
-	                                  const MeshLib::Mesh &mesh,
-	                                  std::vector<MeshLib::Node> &attribute_points) const
+	                                  const MeshLib::Mesh &mesh) const
 {
 	// the surfaces header
 	const std::array<unsigned,7> types = MeshInformation::getNumberOfElementTypes(mesh);
