@@ -51,14 +51,14 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     bool converged = true;
     if(reason > 0)
     {
-        const char *slv_type;
-        const char *prc_type;
-        KSPGetType(_solver, &slv_type);
-        PCGetType(_pc, &prc_type);
+        const char *ksp_type;
+        const char *pc_type;
+        KSPGetType(_solver, &ksp_type);
+        PCGetType(_pc, &pc_type);
 
         PetscPrintf(PETSC_COMM_WORLD,"\n================================================");
         PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver %s with %s preconditioner",
-                    slv_type, prc_type);
+                    ksp_type, pc_type);
 
         int its;
         KSPGetIterationNumber(_solver, &its);
@@ -89,7 +89,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
         }
         else
         {
-            PetscPrintf(PETSC_COMM_WORLD, "\nOther kind divergence, use command option -ksp_monitor or -log_summary to check the details.\n");
+            PetscPrintf(PETSC_COMM_WORLD, "\nDivergence detected, use command option -ksp_monitor or -log_summary to check the details.\n");
         }
 
         PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver (PETSc KSP) failed, quit now.\n");
