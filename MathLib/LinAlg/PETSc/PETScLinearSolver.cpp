@@ -67,7 +67,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     }
     else if(reason == KSP_DIVERGED_ITS)
     {
-        PetscPrintf(PETSC_COMM_WORLD, "\nWarning: maximum iteration reached.\n");
+        PetscPrintf(PETSC_COMM_WORLD, "\nWarning: maximum number of iterations reached.\n");
         converged = false;
     }
     else
