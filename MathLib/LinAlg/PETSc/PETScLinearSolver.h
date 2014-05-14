@@ -61,10 +61,10 @@ class PETScLinearSolver
 
         /*!
             \brief Get number of iterations.
-            If function solve(...) returns false, it returns the maximum
-            iterations.
+            If function solve(...) returns false, the return value is
+            exactly the maximum iterations.
         */
-        PetscInt getIterations() const
+        PetscInt getNumberOfIterations() const
         {
             PetscInt its = 0;
             KSPGetIterationNumber(_solver, &its);
@@ -76,7 +76,7 @@ class PETScLinearSolver
         /// that preconditioner matrix may vary.
         PETScMatrix &_A;
 
-        KSP _solver; ///< Slover type.
+        KSP _solver; ///< Solver type.
         PC _pc;      ///< Preconditioner type.
 };
 
