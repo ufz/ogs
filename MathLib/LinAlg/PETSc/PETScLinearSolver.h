@@ -54,7 +54,7 @@ class PETScLinearSolver
             Solve a system of equations.
             \param b The right hand of the equations.
             \param x The solutions to be solved.
-            \return  true: converged, false: diverged due to exeeding
+            \return  true: converged, false: diverged due to exceeding
                      the maximum iterations.
         */
         bool solve(const PETScVector &b, PETScVector &x);
