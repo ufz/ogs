@@ -95,7 +95,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
         PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver (PETSc KSP) failed, quit now.\n");
         KSPDestroy(&_solver);
         PetscFinalize();
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
 
 #ifdef TEST_MEM_PETSC
