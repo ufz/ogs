@@ -181,12 +181,10 @@ private:
 	 * Writes the elements from a 2D mesh to a TetGen smesh-file.
 	 * @param out               the output stream the information is written to.
 	 * @param mesh              mesh containing the subsurface boundary representation used for meshing.
-	 * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
 	 * @return returns true on success and false otherwise.
 	 */
 	void write2dElements(std::ofstream &out,
-	                     const MeshLib::Mesh &mesh,
-	                     std::vector<MeshLib::Node> &attribute_points) const;
+	                     const MeshLib::Mesh &mesh) const;
 
 	/**
 	 * Writes the elements from a 3D mesh to a TetGen smesh-file.
