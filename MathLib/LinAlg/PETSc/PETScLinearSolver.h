@@ -52,23 +52,31 @@ class PETScLinearSolver
 
         /*!
             Solve a system of equations.
-            \param b The right hand of the equations.
+            \param b The right hand side of the equations.
             \param x The solutions to be solved.
-            \return  true: converged, false: diverged due to exceeding
-                     the maximum iterations.
+            \return  true: converged, false: diverged.
         */
         bool solve(const PETScVector &b, PETScVector &x);
 
-        /*!
-            \brief Get number of iterations.
-            If function solve(...) returns false, the return value is
-            exactly the maximum iterations.
-        */
+        /// Get number of iterations.
         PetscInt getNumberOfIterations() const
         {
             PetscInt its = 0;
             KSPGetIterationNumber(_solver, &its);
             return its;
+        }
+
+        /*!
+            \brief Function used to prepare quiting of program
+            Release memory and conclude the program before exit.
+            It must be called before exit() being called after solver fails
+            to converge.
+        */
+        void Finalize()
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver (PETSc KSP) failed, quit now.\n");
+            KSPDestroy(&_solver);
+            PetscFinalize();
         }
 
     private:

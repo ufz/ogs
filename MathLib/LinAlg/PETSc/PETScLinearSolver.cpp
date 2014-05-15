@@ -60,7 +60,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
         PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver %s with %s preconditioner",
                     ksp_type, pc_type);
 
-        int its;
+        PetscInt its;
         KSPGetIterationNumber(_solver, &its);
         PetscPrintf(PETSC_COMM_WORLD,"\nConvergence in %d iterations.\n", its);
         PetscPrintf(PETSC_COMM_WORLD,"\n================================================\n");
@@ -68,10 +68,10 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     else if(reason == KSP_DIVERGED_ITS)
     {
         PetscPrintf(PETSC_COMM_WORLD, "\nWarning: maximum number of iterations reached.\n");
-        converged = false;
     }
     else
     {
+        converged = false;
         if(reason == KSP_DIVERGED_INDEFINITE_PC)
         {
             PetscPrintf(PETSC_COMM_WORLD, "\nDivergence because of indefinite preconditioner,");
@@ -82,7 +82,6 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
             PetscPrintf(PETSC_COMM_WORLD, "\nKSPBICG method was detected so the method could not continue to enlarge the Krylov space.");
             PetscPrintf(PETSC_COMM_WORLD, "\nTry to run again with another solver.\n");
         }
-
         else if(reason == KSP_DIVERGED_NONSYMMETRIC)
         {
             PetscPrintf(PETSC_COMM_WORLD, "\nMatrix or preconditioner is unsymmetric but KSP requires symmetric.\n");
@@ -91,11 +90,6 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
         {
             PetscPrintf(PETSC_COMM_WORLD, "\nDivergence detected, use command option -ksp_monitor or -log_summary to check the details.\n");
         }
-
-        PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver (PETSc KSP) failed, quit now.\n");
-        KSPDestroy(&_solver);
-        PetscFinalize();
-        std::exit(EXIT_FAILURE);
     }
 
 #ifdef TEST_MEM_PETSC
