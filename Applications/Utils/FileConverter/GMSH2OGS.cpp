@@ -45,7 +45,7 @@ int main (int argc, char* argv[])
     TCLAP::ValueArg<std::string> ogs_mesh_arg(
         "o",
         "out",
-        "filename for output mesh (if extension is msh, old OGS fileformat is written)",
+        "filename for output mesh (if extension is .msh, old OGS-5 fileformat is written, if extension is .vtu, a vtk unstructure grid file is written (OGS-6 mesh format))",
         true,
         "",
         "filename as string");
