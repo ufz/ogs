@@ -113,6 +113,33 @@ bool Polygon::isPntInPolygon(double x, double y, double z) const
 	return isPntInPolygon (pnt);
 }
 
+std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
+		GeoLib::Point const& a, GeoLib::Point const& b) const
+{
+	std::vector<GeoLib::Point> intersections;
+	const std::size_t n_segments(getNumberOfPoints() - 1);
+	GeoLib::Point s;
+	for (std::size_t k(0); k < n_segments; k++) {
+		// handle special cases here to avoid computing intersection numerical
+		if (MathLib::sqrDist(*(getPoint(k)), a) < std::numeric_limits<double>::epsilon() ||
+			MathLib::sqrDist(*(getPoint(k)), b) < std::numeric_limits<double>::epsilon()) {
+			intersections.emplace_back(*(getPoint(k)));
+			continue;
+		}
+		if (MathLib::sqrDist(*(getPoint(k+1)), a) < std::numeric_limits<double>::epsilon() ||
+			MathLib::sqrDist(*(getPoint(k+1)), b) < std::numeric_limits<double>::epsilon()) {
+			intersections.emplace_back(*(getPoint(k+1)));
+			continue;
+		}
+		// general case
+		if (GeoLib::lineSegmentIntersect(*(getPoint(k)), *(getPoint(k+1)), a, b, s)) {
+			intersections.push_back(s);
+		}
+	}
+
+	return intersections;
+}
+
 bool Polygon::isPolylineInPolygon(const Polyline& ply) const
 {
 	std::size_t ply_size (ply.getNumberOfPoints()), cnt (0);
