@@ -15,6 +15,7 @@
 #include <limits>
 #include <array>
 #include <cassert>
+#include <numeric>
 
 #include "MathLib/Vector3.h"
 #include "GeoLib/Surface.h"
