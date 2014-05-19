@@ -37,6 +37,14 @@ public:
 		(void)(pnt);
 		return 0.0;
 	}
+
+	double getMeshDensityAtStation(GeoLib::Point const*const pnt) const
+	{
+		// to avoid a warning here:
+		(void)(pnt);
+		return 0.0;
+	}
+
 };
 
 }

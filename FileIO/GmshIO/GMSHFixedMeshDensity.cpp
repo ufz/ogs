@@ -36,5 +36,12 @@ double GMSHFixedMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const pnt
 	return _mesh_density;
 }
 
+double GMSHFixedMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const pnt) const
+{
+	// to avoid a warning here:
+	(void)(const_cast<GeoLib::Point const*>(pnt));
+	return _mesh_density;
+}
+
 }
 } // end namespace FileIO
