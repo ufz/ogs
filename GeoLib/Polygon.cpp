@@ -140,18 +140,67 @@ std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
 	return intersections;
 }
 
-bool Polygon::isPolylineInPolygon(const Polyline& ply) const
+bool Polygon::containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) const
 {
-	std::size_t ply_size (ply.getNumberOfPoints()), cnt (0);
-	for (std::size_t k(0); k < ply_size; k++) {
-		if (isPntInPolygon (*(ply.getPoint(k)))) {
-			cnt++;
+	std::vector<GeoLib::Point> s(getAllIntersectionPoints(a, b));
+
+	// no intersections -> check if at least one point of segment is in polygon
+	if (s.empty()) {
+		return (isPntInPolygon(a));
+	}
+
+	// one intersection, intersection in line segment end point
+	if (s.size() == 1) {
+		const double sqr_dist_as(MathLib::sqrDist(a,s[0]));
+		if (sqr_dist_as < std::numeric_limits<float>::epsilon()) {
+			return (isPntInPolygon(b));
+		}
+
+		const double sqr_dist_bs(MathLib::sqrDist(b,s[0]));
+		if (sqr_dist_bs < std::numeric_limits<float>::epsilon()) {
+			return (isPntInPolygon(a));
 		}
 	}
 
-	if (cnt == ply_size)
-		return true;
-	return false;
+	// Sorting the intersection with respect to the distance to the point a.
+	// This induces a partition of the line segment into sub segments.
+	std::sort(s.begin(), s.end(),
+		[&a] (GeoLib::Point const& p0, GeoLib::Point const& p1) {
+			return MathLib::sqrDist(a, p0) <= MathLib::sqrDist(a, p1);
+		}
+	);
+
+	// remove sub segments with almost zero length
+	for (std::size_t k(0); k<s.size()-1; ) {
+		if (MathLib::sqrDist(s[k], s[k+1]) < std::numeric_limits<float>::epsilon()) {
+			s.erase(s.begin()+k+1);
+		} else {
+			k++;
+		}
+	}
+
+	// Check if all sub segments are within the polygon.
+	if (!isPntInPolygon(GeoLib::Point(0.5*(a[0]+s[0][0]), 0.5*(a[1]+s[0][1]), 0.5*(a[2]+s[0][2]))))
+		return false;
+	const std::size_t n_sub_segs(s.size()-1);
+	for (std::size_t k(0); k<n_sub_segs; k++) {
+		if (!isPntInPolygon(GeoLib::Point(0.5*(s[k][0]+s[k+1][0]), 0.5*(s[k][1]+s[k+1][1]), 0.5*(s[k][2]+s[k+1][2]))))
+		return false;
+	}
+	if (!isPntInPolygon(GeoLib::Point(0.5*(s[0][0]+b[0]), 0.5*(s[0][1]+b[1]), 0.5*(s[0][2]+b[2]))))
+		return false;
+	return true;
+}
+
+bool Polygon::isPolylineInPolygon(const Polyline& ply) const
+{
+	std::size_t const n_segments(ply.getNumberOfPoints()-1);
+	for (std::size_t k(0); k < n_segments; k++) {
+		if (!containsSegment(*ply.getPoint(k), *ply.getPoint(k+1))) {
+			return false;
+		}
+	}
+	return true;
 }
 
 bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const

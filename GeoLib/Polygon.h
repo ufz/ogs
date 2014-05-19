@@ -71,6 +71,9 @@ public:
 	 * @return if point is inside the polygon true, else false
 	 */
 	bool isPntInPolygon (double x, double y, double z) const;
+
+	bool containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) const;
+
 	/**
 	 * Method checks if all points of the polyline ply are inside of the polygon.
 	 * @param ply the polyline that should be checked
