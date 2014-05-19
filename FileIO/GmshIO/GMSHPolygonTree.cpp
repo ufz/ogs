@@ -255,13 +255,15 @@ void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(std::size_t &line_offset
 
 void GMSHPolygonTree::writeStations(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const
 {
-	const std::size_t n_stations(_stations.size());
-	for (std::size_t k(0); k<n_stations; k++) {
-		out << "Point(" << pnt_id_offset + k << ") = {" << (*(_stations[k]))[0] << "," << (*(_stations[k]))[1] << ", 0.0, ";
-		out << _mesh_density_strategy->getMeshDensityAtPoint(_stations[k]) << "};\n";
-		out << "Point { " << pnt_id_offset + k << " } In Surface { " << sfc_number << " };\n";
+	for (auto const* station : _stations) {
+		out << "Point(" << pnt_id_offset << ") = {" << (*station)[0] << ", "
+		    << (*station)[1] << ", 0.0, "
+		    << _mesh_density_strategy->getMeshDensityAtStation(station)
+		    << "}; // Station "
+		    << static_cast<GeoLib::Station const*>(station)->getName() << " \n";
+		out << "Point { " << pnt_id_offset << " } In Surface { " << sfc_number << " };\n";
+		++pnt_id_offset;
 	}
-	pnt_id_offset += n_stations;
 }
 
 void GMSHPolygonTree::writeAdditionalPointData(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const
