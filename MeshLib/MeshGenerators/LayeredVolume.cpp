@@ -151,12 +151,12 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
 					if (MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
 					{
 						const std::array<MeshLib::Node*,3> tri_nodes = { n0, n1, n2 };
-						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+j));
+						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+1+j));
 					}
 					if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon())
 					{
 						const std::array<MeshLib::Node*,3> tri_nodes = { n0, n2, n3 };
-						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+j));
+						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+1+j));
 					}
 				}
 	}
