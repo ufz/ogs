@@ -115,8 +115,11 @@ class PETScMatrix
 
         /*
            \brief Set the specified rows to zero except diagonal entries, i.e.
-                  \f$A(k, j) = 0, j!=k, j=1,2,\cdots, n\f$, where \f$k \in \mbox{row\_pos}\f$
-                  This fucntion must be called by all rank.
+                  \f$A(k, j) = \begin{cases}
+                    0.0, &j\not=k, j=1,2,\dots,k-1, k+1, \dots, n
+                    1.0, &j = k
+                  \end{cases}f$, where \f$k \in \mbox{row\_pos}\f$
+                  This function must be called by all ranks.
            \param row_pos The row indicies of the specified rows.
         */
         void setRowsColumnsZero(std::vector<PetscInt> const& row_pos);
