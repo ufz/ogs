@@ -211,7 +211,7 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 
 	// *** tests
 	// check number of points
-	ASSERT_EQ(geo_objs.getPointVec(merged_geometries_name)->size(), 4);
+	ASSERT_EQ(4u, geo_objs.getPointVec(merged_geometries_name)->size());
 
 	GeoLib::PolylineVec const*const ply_vec_objs =
 		geo_objs.getPolylineVecObj(merged_geometries_name);
@@ -220,7 +220,7 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 
 	// check number of polylines
 	ASSERT_TRUE(polylines != nullptr);
-	ASSERT_EQ(polylines->size(), 3u);
+	ASSERT_EQ(3u, polylines->size());
 
 	// check names of polylines
 	ASSERT_TRUE(ply_vec_objs->getElementByName("Polyline0FromGeometry0") != nullptr);
