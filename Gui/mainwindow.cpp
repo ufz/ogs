@@ -68,7 +68,7 @@
 #include "SourceTerm.h"
 
 // FileIO includes
-// TODO6 #include "FEFLOWInterface.h"
+#include "FEFLOWInterface.h"
 #include "GMSInterface.h"
 #include "Legacy/MeshIO.h"
 #include "Legacy/OGSIOVer4.h"
@@ -593,22 +593,17 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::FEFLOW)
 	{
-		OGSError::box("Interface not yet integrated");
-		/* TODO6
-		FEFLOWInterface feflowIO(_project.getGEOObjects());
-		MeshLib::Mesh* msh = feflowIO.readFEFLOWModelFile(fileName.toStdString());
-		if (msh)
+		if (fi.suffix().toLower() == "fem") // FEFLOW model files
 		{
-			std::string name = fileName.toStdString();
-			msh->setName(name);
-			_meshModels->addMesh(msh);
-			QDir dir = QDir(fileName);
-			settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-			updateDataViews();
+			FEFLOWInterface feflowIO(_project.getGEOObjects());
+			MeshLib::Mesh* msh = feflowIO.readFEFLOWFile(fileName.toStdString());
+			if (msh)
+				_meshModels->addMesh(msh);
+			else
+				OGSError::box("Failed to load a FEFLOW mesh.");
 		}
-		else
-			OGSError::box("Failed to load a FEFLOW file.");
-		*/
+		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+
 	}
 	else if (t == ImportFileType::GMS)
 	{
@@ -773,10 +768,9 @@ QMenu* MainWindow::createImportFilesMenu()
 {
 	_signal_mapper = new QSignalMapper(this);
 	QMenu* importFiles = new QMenu("&Import Files");
-/* TODO6
 	QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-	connect(feflowFiles, SIGNAL(triggered()), this, SLOT(importFeflow()));
-*/
+	connect(feflowFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
+	_signal_mapper->setMapping(feflowFiles, ImportFileType::FEFLOW);
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
 	connect(gmsFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
 	_signal_mapper->setMapping(gmsFiles, ImportFileType::GMS);
