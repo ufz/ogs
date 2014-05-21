@@ -36,7 +36,7 @@ public:
 		QFileInfo fi(path);
 		QDir dir = QDir(fi.absolutePath());
 		QSettings settings;
-		settings.setValue("lastSavedFileDirectory", dir.absolutePath());
+		settings.setValue("lastSavedFileDirectory", dir.absolutePath() + "/");
 	}
 
 };

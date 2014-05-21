@@ -214,11 +214,14 @@ void MshView::exportToShapefile() const
 	QFileInfo fi (settings.value("lastOpenedMeshFileDirectory").toString());
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	QString fileName = QFileDialog::getSaveFileName(NULL, "Convert mesh to shapefile...",
-		                                    fi.absolutePath() + QString::fromStdString(mesh->getName()),
+		                                    LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
 											"ESRI Shapefile (*.shp)");
 	if (!fileName.isEmpty())
+	{
+		LastSavedFileDirectory::setDir(fileName);
 		if (!FileIO::SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
 			OGSError::box("Error exporting mesh\n to shapefile");
+	}
 }
 
 void MshView::exportToTetGen()
