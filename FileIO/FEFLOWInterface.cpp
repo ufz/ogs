@@ -147,10 +147,7 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 	}
 	in.close();
 
-	if (lines && lines->size() > 1)
-	{
-		this->setMaterialID(vec_elements, lines);
-	}
+	setMaterialID(fem_class, fem_dim, lines, vec_elements);
 
 	if (isXZplane)
 	{
@@ -216,29 +213,103 @@ void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fe
 	}
 }
 
+std::vector<size_t> FEFLOWInterface::getNodeList(const std::string &str_ranges)
+{
+	std::vector<size_t> vec_node_IDs;
+
+	// insert space before and after minus
+	std::string str_ranges2(BaseLib::replaceString("-",  " # ", str_ranges));
+	BaseLib::trim(str_ranges2);
+	auto splitted_str = BaseLib::splitString(str_ranges2, ' ');
+	bool is_range = false;
+	for (auto itr=splitted_str.begin(); itr!=splitted_str.end(); ++itr) {
+		auto str = *itr;
+		if (str.empty()) continue;
+		if (str[0]=='#') {
+			is_range = true;
+		} else if (is_range) {
+			size_t start = vec_node_IDs.back();
+			size_t end = BaseLib::str2number<size_t>(str);
+			for (size_t i=start+1; i<end+1; i++)
+				vec_node_IDs.push_back(i);
+			is_range = false;
+		} else {
+			BaseLib::trim(str);
+			vec_node_IDs.push_back(BaseLib::str2number<size_t>(str));
+		}
+	}
+
+	return vec_node_IDs;
+}
+
 void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
 {
 	const size_t no_nodes_per_layer = fem_dim.n_nodes / (fem_class.n_layers3d + 1);
 	double z = .0;
-	size_t n0 = 0;
+	std::string str_nodeList;
 	std::string line_string;
 	std::stringstream line_stream;
-	for (size_t l = 0; l < fem_class.n_layers3d + 1; l++)
+	size_t l = 0;
+	unsigned mode = 0; // 0: exit, 1: slice no, 2: elevation value, 3: continued line of mode 2
+	int pos_prev_line = 0;
+	while (true)
 	{
-		if (l > 0)
-			getline(in, line_string);
-
+		pos_prev_line = in.tellg();
 		getline(in, line_string);
-		line_stream.str(line_string);
-		line_stream >> z >> n0;
-		line_stream.clear();
 
-		for (size_t i = 0; i < no_nodes_per_layer; i++)
-		{
-			size_t n = n0 - 1 + i + l * no_nodes_per_layer;
-			(*vec_nodes[n])[2] = z;
+		// check mode
+		auto columns = BaseLib::splitString(line_string, ' ');
+		if (!in || std::isalpha(line_string[0]))
+			mode = 0;
+		else if (line_string.empty())
+			continue;
+		else if (line_string[0]=='\t')
+			mode = 3;
+		else if (columns.size()==1)
+			mode = 1;
+		else // columns.size()>1
+			mode = 2;
+
+		// process stocked data
+		if (mode != 3) {
+			if (!str_nodeList.empty()) {
+				// process previous lines
+				auto vec_nodeIDs = getNodeList(str_nodeList);
+				for (auto n0 : vec_nodeIDs)
+				{
+					size_t n = n0 - 1 + l * no_nodes_per_layer;
+					(*vec_nodes[n])[2] = z;
+//					for (size_t i = 0; i < no_nodes_per_layer; i++)
+//					{
+//					}
+				}
+				str_nodeList.clear();
+			}
+		}
+
+		if (mode == 0) {
+			break;
+		} else if (mode == 1) {
+			// slice number
+			l++;
+			assert(l+1==BaseLib::str2number<size_t>(columns.front()));
+		} else if (mode == 2) {
+			// parse current line
+			line_stream.str(line_string);
+			line_stream >> z;
+			getline(line_stream, str_nodeList);
+			BaseLib::trim(str_nodeList, '\t');
+			line_stream.clear();
+		} else if (mode == 3) {
+			// continue reading node range
+			BaseLib::trim(line_string, '\t');
+			str_nodeList += " " + line_string;
 		}
 	}
+
+	// move stream position to previous line
+	if (std::isalpha(line_string[0]))
+		in.seekg(pos_prev_line);
 }
 
 MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim, const MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes)
@@ -373,28 +444,42 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 	}
 }
 
-void FEFLOWInterface::setMaterialID(std::vector<MeshLib::Element*> &vec_elements, std::vector<GeoLib::Polyline*>* lines)
+void FEFLOWInterface::setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, std::vector<MeshLib::Element*> &vec_elements)
 {
-	for (size_t i = 0; i < vec_elements.size(); i++)
+	if (lines && lines->size() > 1)
 	{
-		MeshLib::Element* e = vec_elements[i];
-		const MeshLib::Node gpt = e->getCenterOfGravity();
-		size_t matId = 0;
-		for (size_t j = 0; j < lines->size(); j++)
+		for (size_t i = 0; i < vec_elements.size(); i++)
 		{
-			GeoLib::Polyline* poly = (*lines)[j];
-			if (!poly->isClosed())
-				continue;
-
-			GeoLib::Polygon polygon(*poly, true);
-			if (polygon.isPntInPolygon(gpt[0], gpt[1], gpt[2]))
+			MeshLib::Element* e = vec_elements[i];
+			const MeshLib::Node gpt = e->getCenterOfGravity();
+			size_t matId = 0;
+			for (size_t j = 0; j < lines->size(); j++)
 			{
-				matId = j;
-				break;
+				GeoLib::Polyline* poly = (*lines)[j];
+				if (!poly->isClosed())
+					continue;
+
+				GeoLib::Polygon polygon(*poly, true);
+				if (polygon.isPntInPolygon(gpt[0], gpt[1], gpt[2]))
+				{
+					matId = j;
+					break;
+				}
 			}
+			e->setValue(matId);
 		}
-		e->setValue(matId);
+	} else if (fem_class.n_layers3d>0) {
+		const size_t no_nodes_per_layer = fem_dim.n_nodes / (fem_class.n_layers3d + 1);
+		for (auto* e : vec_elements)
+		{
+			unsigned e_min_nodeID = std::numeric_limits<unsigned>::max();
+			for (size_t i=0; i<e->getNNodes(); i++)
+				e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(i));
+			size_t layer_id = e_min_nodeID / no_nodes_per_layer;
+			e->setValue(layer_id);
+		}
 	}
+
 }
 
 } // end namespace FileIO
