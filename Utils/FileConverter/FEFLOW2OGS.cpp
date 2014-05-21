@@ -50,19 +50,19 @@ int main (int argc, char* argv[])
 		"filename as string");
 	cmd.add(ogs_mesh_arg);
 
-	TCLAP::ValueArg<std::string> gmsh_mesh_arg(
+	TCLAP::ValueArg<std::string> feflow_mesh_arg(
 		"i",
 		"in",
 		"FEFLOW input file (*.fem)",
 		true,
 		"",
 		"filename as string");
-	cmd.add(gmsh_mesh_arg);
+	cmd.add(feflow_mesh_arg);
 
 	cmd.parse(argc, argv);
 
 	// *** read mesh
-	INFO("Reading %s.", gmsh_mesh_arg.getValue().c_str());
+	INFO("Reading %s.", feflow_mesh_arg.getValue().c_str());
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
@@ -70,10 +70,10 @@ int main (int argc, char* argv[])
 	BaseLib::RunTime run_time;
 	run_time.start();
 	FileIO::FEFLOWInterface feflowIO(nullptr);
-	MeshLib::Mesh const*const mesh(feflowIO.readFEFLOWFile(gmsh_mesh_arg.getValue()));
+	MeshLib::Mesh const*const mesh(feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 
 	if (mesh == nullptr) {
-		INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());
+		INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
 		return -1;
 	}
 #ifndef WIN32
