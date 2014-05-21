@@ -70,10 +70,10 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 			line_stream >> fem_dim.n_nodes >> fem_dim.n_elements >> fem_dim.n_nodes_of_element >> std::ws;
 			// create node pointers with dummy coordinates to create element objects.
 			// True coordinates are set later in COOR and ELEV_I.
+			vec_nodes.resize(fem_dim.n_nodes);
+			size_t count = 0;
 			double dummy_coords[3] = {};
-			vec_nodes.reserve(fem_dim.n_nodes);
-			for (size_t i=0; i<fem_dim.n_nodes; i++)
-				vec_nodes.push_back(new MeshLib::Node(dummy_coords, i));
+			std::generate(vec_nodes.begin(), vec_nodes.end(), [&]() { return new MeshLib::Node(dummy_coords, count++); });
 			line_stream.clear();
 		}
 		//....................................................................
@@ -98,6 +98,8 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 
 			if (eleType == MeshElemType::INVALID) {
 				ERR("FEFLOWInterface::readFEFLOWFile(): Unsupported element type with the number of node = %d and dim = %d", fem_dim.n_nodes_of_element, fem_class.dimension);
+				std::for_each(vec_nodes.begin(), vec_nodes.end(), [](MeshLib::Node* nod) { delete nod;});
+				vec_nodes.clear();
 				return nullptr;
 			}
 
@@ -120,12 +122,7 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 		{
 			if (fem_class.dimension == 2)
 				continue;
-			readELEV(in, fem_class, fem_dim, vec_nodes);
-		}
-		//....................................................................
-		// EXTENTS
-		else if (line_string.compare("EXTENTS") == 0)
-		{
+			readElevation(in, fem_class, fem_dim, vec_nodes);
 		}
 		//....................................................................
 		// GRAVITY
@@ -199,7 +196,6 @@ void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fe
 		{
 			getline(in, line_string);
 			line_stream.str(line_string);
-			// maximum 12 columns
 			for (unsigned j = 0; j < 12; j++)
 			{
 				if (i * 12 + j >= no_nodes_per_layer)
@@ -207,7 +203,7 @@ void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fe
 				line_stream >> x >> dummy_char;
 				for (size_t l = 0; l < n_layers; l++)
 				{
-					size_t n = i * 12 + l * no_nodes_per_layer + j;
+					const size_t n = i * 12 + l * no_nodes_per_layer + j;
 					MeshLib::Node* m_nod = vec_nodes[n];
 					if (k == 0)
 						(*m_nod)[0] = x;
@@ -220,7 +216,7 @@ void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fe
 	}
 }
 
-void FEFLOWInterface::readELEV(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
+void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
 {
 	const size_t no_nodes_per_layer = fem_dim.n_nodes / (fem_class.n_layers3d + 1);
 	double z = .0;
@@ -286,14 +282,12 @@ void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, 
 	std::istringstream ss(str_pt_list1.toStdString());
 	while (!ss.eof())
 	{
-		int pt_id = 0;
-		double pt_xyz[3] =
-		{ };
+		size_t pt_id = 0;
+		double pt_xyz[3] = { };
 		ss >> pt_id;
 		for (int i = 0; i < dim; i++)
 			ss >> pt_xyz[i];
-		GeoLib::Point* pnt = new GeoLib::Point(pt_xyz[0], pt_xyz[1], pt_xyz[2]); //id?
-		points[pt_id - 1] = pnt;
+		points[pt_id - 1] = new GeoLib::PointWithID(pt_xyz, pt_id);
 	}
 }
 
@@ -311,9 +305,7 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 		if (line_string.find("</supermesh>") != std::string::npos)
 			break;
 	}
-//	std::cout << oss.str();
-	QString strXML(oss.str().c_str());
-	//qDebug() << strXML;
+	const QString strXML(oss.str().c_str());
 
 	// convert string to XML
 	QDomDocument doc;
@@ -331,8 +323,9 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 	QDomElement nodesEle = docElem.firstChildElement("nodes");
 	if (nodesEle.isNull())
 		return;
+
 	{
-		QString str = nodesEle.attribute("count");
+		const QString str = nodesEle.attribute("count");
 		const long n_points = str.toLong();
 		points->resize(n_points);
 		//fixed
@@ -347,6 +340,7 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 	QDomElement polygonsEle = docElem.firstChildElement("polygons");
 	if (polygonsEle.isNull())
 		return;
+
 	{
 		QDomNode child = polygonsEle.firstChild();
 		while (!child.isNull())
@@ -359,7 +353,7 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 			QDomElement xmlEle = child.firstChildElement("nodes");
 			if (xmlEle.isNull())
 				continue;
-			QString str = xmlEle.attribute("count");
+			const QString str = xmlEle.attribute("count");
 			const size_t n_points = str.toLong();
 			QString str_ptId_list = xmlEle.text().simplified();
 			{
@@ -384,7 +378,7 @@ void FEFLOWInterface::setMaterialID(std::vector<MeshLib::Element*> &vec_elements
 	for (size_t i = 0; i < vec_elements.size(); i++)
 	{
 		MeshLib::Element* e = vec_elements[i];
-		MeshLib::Node gpt = e->getCenterOfGravity();
+		const MeshLib::Node gpt = e->getCenterOfGravity();
 		size_t matId = 0;
 		for (size_t j = 0; j < lines->size(); j++)
 		{

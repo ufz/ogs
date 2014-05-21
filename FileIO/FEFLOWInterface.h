@@ -31,13 +31,14 @@ namespace FileIO
 {
 
 /**
- * Read FEFLOW files into OGS data structure
+ * Read FEFLOW model files (*.fem) into OGS data structure. Currently this class supports
+ * only import of mesh data and some geometry given in Supermesh section.
  */
 class FEFLOWInterface
 {
 public:
 	/// Constructor
-	explicit FEFLOWInterface(GeoLib::GEOObjects* obj)
+	explicit FEFLOWInterface(GeoLib::GEOObjects* obj = nullptr)
 			: _geoObjects(obj)
 	{
 	}
@@ -119,16 +120,19 @@ private:
 		}
 	};
 
-	/// read node index and create a mesh element
+	/// read node indices and create a mesh element
 	MeshLib::Element* readElement(const FEM_DIM &fem_dim, const MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes);
 
 	/// read node coordinates
 	void readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &nodes);
 
 	/// read elevation data
-	void readELEV(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes);
+	void readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes);
 
 	/// read Supermesh data
+	///
+	/// A super mesh is a collection of polygons, lines and points in the 2D plane
+	/// and will be used for mesh generation and to define the modeling region
 	void readSuperMesh(std::ifstream &feflow_file, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** points, std::vector<GeoLib::Polyline*>** lines);
 
 	//// read point data in Supermesh
