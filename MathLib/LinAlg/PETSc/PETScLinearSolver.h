@@ -66,19 +66,6 @@ class PETScLinearSolver
             return its;
         }
 
-        /*!
-            \brief Function used to prepare quiting of program
-            Release memory and conclude the program before exit.
-            It must be called before exit() being called after solver fails
-            to converge.
-        */
-        void Finalize()
-        {
-            PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver (PETSc KSP) failed, quit now.\n");
-            KSPDestroy(&_solver);
-            PetscFinalize();
-        }
-
     private:
         /// Matrix, kept as a member only for solving successive linear equation
         /// that preconditioner matrix may vary.
