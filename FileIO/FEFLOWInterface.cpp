@@ -217,19 +217,19 @@ std::vector<size_t> FEFLOWInterface::getNodeList(const std::string &str_ranges)
 {
 	std::vector<size_t> vec_node_IDs;
 
-	// insert space before and after minus
+	// insert space before and after minus for splitting
 	std::string str_ranges2(BaseLib::replaceString("-",  " # ", str_ranges));
 	BaseLib::trim(str_ranges2);
 	auto splitted_str = BaseLib::splitString(str_ranges2, ' ');
 	bool is_range = false;
-	for (auto itr=splitted_str.begin(); itr!=splitted_str.end(); ++itr) {
-		auto str = *itr;
+	for (auto str : splitted_str)
+	{
 		if (str.empty()) continue;
 		if (str[0]=='#') {
 			is_range = true;
 		} else if (is_range) {
-			size_t start = vec_node_IDs.back();
-			size_t end = BaseLib::str2number<size_t>(str);
+			const size_t start = vec_node_IDs.back();
+			const size_t end = BaseLib::str2number<size_t>(str);
 			for (size_t i=start+1; i<end+1; i++)
 				vec_node_IDs.push_back(i);
 			is_range = false;
@@ -271,20 +271,15 @@ void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_clas
 			mode = 2;
 
 		// process stocked data
-		if (mode != 3) {
-			if (!str_nodeList.empty()) {
-				// process previous lines
-				auto vec_nodeIDs = getNodeList(str_nodeList);
-				for (auto n0 : vec_nodeIDs)
-				{
-					size_t n = n0 - 1 + l * no_nodes_per_layer;
-					(*vec_nodes[n])[2] = z;
-//					for (size_t i = 0; i < no_nodes_per_layer; i++)
-//					{
-//					}
-				}
-				str_nodeList.clear();
+		if (mode != 3 && !str_nodeList.empty()) {
+			// process previous lines
+			auto vec_nodeIDs = getNodeList(str_nodeList);
+			for (auto n0 : vec_nodeIDs)
+			{
+				const size_t n = n0 - 1 + l * no_nodes_per_layer;
+				(*vec_nodes[n])[2] = z;
 			}
+			str_nodeList.clear();
 		}
 
 		if (mode == 0) {
