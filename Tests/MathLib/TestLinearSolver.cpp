@@ -181,7 +181,7 @@ void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &pre
 
     // solve
     T_LINEAR_SOVLER ls(A, prefix_name);
-    ls.solve(b, x);
+    EXPECT_TRUE(ls.solve(b, x));
     
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
     
