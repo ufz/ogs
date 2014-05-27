@@ -14,6 +14,9 @@
 
 #include "Triangle.h"
 
+// GeoLib
+#include "AnalyticalGeometry.h"
+
 // MathLib
 #include "LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathTools.h"
@@ -59,106 +62,12 @@ void Triangle::setTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
 	_longest_edge = sqrt (_longest_edge);
 }
 
-bool Triangle::containsPoint (Point const& pnt) const
+bool Triangle::containsPoint(Point const& q, double eps) const
 {
-	GeoLib::Point const& a_tmp (*(_pnts[_pnt_ids[0]]));
-	GeoLib::Point const& b_tmp (*(_pnts[_pnt_ids[1]]));
-	GeoLib::Point const& c_tmp (*(_pnts[_pnt_ids[2]]));
-
-	GeoLib::Point s(a_tmp);
-	for (size_t k(0); k<3; k++) {
-		s[k] += b_tmp[k] + c_tmp[k];
-		s[k] /= 3.0;
-	}
-
-	double eps (1e-2);
-	GeoLib::Point const a (a_tmp[0] + eps *(a_tmp[0]-s[0]),
-			a_tmp[1] + eps *(a_tmp[1]-s[1]),
-			a_tmp[2] + eps *(a_tmp[2]-s[2]));
-	GeoLib::Point const b (b_tmp[0] + eps *(b_tmp[0]-s[0]),
-				b_tmp[1] + eps *(b_tmp[1]-s[1]),
-				b_tmp[2] + eps *(b_tmp[2]-s[2]));
-	GeoLib::Point const c (c_tmp[0] + eps *(c_tmp[0]-s[0]),
-				c_tmp[1] + eps *(c_tmp[1]-s[1]),
-				c_tmp[2] + eps *(c_tmp[2]-s[2]));
-
-	const double delta (std::numeric_limits<double>::epsilon());
-	const double upper (1+delta);
-
-	// check special case where points of triangle have the same x-coordinate
-	if (fabs(b[0]-a[0]) <= std::numeric_limits<double>::epsilon() &&
-			fabs(c[0]-a[0]) <= std::numeric_limits<double>::epsilon()) {
-		// all points of triangle have same x-coordinate
-		if (fabs(pnt[0]-a[0]) / _longest_edge <= 1e-3) {
-			// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-			MathLib::DenseMatrix<double> mat (2,2);
-			mat(0,0) = b[1] - a[1];
-			mat(0,1) = c[1] - a[1];
-			mat(1,0) = b[2] - a[2];
-			mat(1,1) = c[2] - a[2];
-			double y[2] = {pnt[1]-a[1], pnt[2]-a[2]};
-
-			MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
-			gauss.solve (y);
-
-			if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper
-					&& y[0] + y[1] <= upper) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-
-	// check special case where points of triangle have the same y-coordinate
-	if (fabs(b[1]-a[1]) <= std::numeric_limits<double>::epsilon() &&
-			fabs(c[1]-a[1]) <= std::numeric_limits<double>::epsilon()) {
-		// all points of triangle have same y-coordinate
-		if (fabs(pnt[1]-a[1]) / _longest_edge <= 1e-3) {
-			// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-			MathLib::DenseMatrix<double> mat (2,2);
-			mat(0,0) = b[0] - a[0];
-			mat(0,1) = c[0] - a[0];
-			mat(1,0) = b[2] - a[2];
-			mat(1,1) = c[2] - a[2];
-			double y[2] = {pnt[0]-a[0], pnt[2]-a[2]};
-
-			MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
-			gauss.solve (y);
-
-			if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper && y[0] + y[1] <= upper) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-
-	// criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-	MathLib::DenseMatrix<double> mat (2,2);
-	mat(0,0) = b[0] - a[0];
-	mat(0,1) = c[0] - a[0];
-	mat(1,0) = b[1] - a[1];
-	mat(1,1) = c[1] - a[1];
-	double y[2] = {pnt[0]-a[0], pnt[1]-a[1]};
-
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
-	gauss.solve (y);
-
-	// check if the solution fulfills the third equation
-	if (fabs((b[2]-a[2]) * y[0] + (c[2]-a[2]) * y[1] - (pnt[2] - a[2])) < 1e-3) {
-		if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper &&
-				y[0] + y[1] <= upper) {
-			return true;
-		}
-		return false;
-	} else {
-		return false;
-	}
+	GeoLib::Point const& a(*(_pnts[_pnt_ids[0]]));
+	GeoLib::Point const& b(*(_pnts[_pnt_ids[1]]));
+	GeoLib::Point const& c(*(_pnts[_pnt_ids[2]]));
+	return GeoLib::isPointInTriangle(q, a, b, c, eps);
 }
 
 bool Triangle::containsPoint2D (Point const& pnt) const
