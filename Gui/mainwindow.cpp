@@ -694,7 +694,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else {
 			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
-			QString element_fname(fi.path() + "\\" + fi.completeBaseName() + ".ele");
+			QString element_fname(fi.path() + "/" + fi.completeBaseName() + ".ele");
 
 			if (!fileName.isEmpty()) 
 			{
