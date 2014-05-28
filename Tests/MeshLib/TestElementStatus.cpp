@@ -72,19 +72,19 @@ TEST(MeshLib, ElementStatus)
 	ASSERT_EQ(status.getElementStatus(1), true);
 
 	std::vector<std::size_t> active_elements_at_node (status.getActiveElementsAtNode(2));
-	ASSERT_EQ(1, active_elements_at_node.size());
+	ASSERT_EQ(1u, active_elements_at_node.size());
 	active_elements_at_node = status.getActiveElementsAtNode(22);
-	ASSERT_EQ(1, active_elements_at_node.size());
+	ASSERT_EQ(1u, active_elements_at_node.size());
 	active_elements_at_node = status.getActiveElementsAtNode(44);
-	ASSERT_EQ(2, active_elements_at_node.size());
+	ASSERT_EQ(2u, active_elements_at_node.size());
 	active_elements_at_node = status.getActiveElementsAtNode(102);
-	ASSERT_EQ(4, active_elements_at_node.size());
+	ASSERT_EQ(4u, active_elements_at_node.size());
 
 	status.setAll(true);
 	ASSERT_EQ(elements.size(), status.getNActiveElements());
 	ASSERT_EQ(mesh->getNNodes(), status.getNActiveNodes());
 
 	status.setAll(false);
-	ASSERT_EQ(0, status.getNActiveElements());
-	ASSERT_EQ(0, status.getNActiveNodes());
+	ASSERT_EQ(0u, status.getNActiveElements());
+	ASSERT_EQ(0u, status.getNActiveNodes());
 }

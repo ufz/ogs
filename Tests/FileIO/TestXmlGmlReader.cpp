@@ -93,30 +93,30 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	const GeoLib::PolylineVec *line_vec = geo_objects.getPolylineVecObj(geo_name);
 	const std::vector<GeoLib::Polyline*> *readerLines = geo_objects.getPolylineVec(geo_name);
 	const std::vector<GeoLib::Surface*> *readerSfcs = geo_objects.getSurfaceVec(geo_name);
-	ASSERT_EQ(readerPoints->size(), 9);
-	ASSERT_EQ(readerLines->size(), 5);
-	ASSERT_EQ(readerSfcs->size(), 2);
+	ASSERT_EQ(9u, readerPoints->size());
+	ASSERT_EQ(5u, readerLines->size());
+	ASSERT_EQ(2u, readerSfcs->size());
 
 	GeoLib::Point* pnt = (*readerPoints)[7];
-	ASSERT_EQ((*pnt)[0],3);
-	ASSERT_EQ((*pnt)[1],2);
-	ASSERT_EQ((*pnt)[2],0);
+	ASSERT_EQ(3.0, (*pnt)[0]);
+	ASSERT_EQ(2.0, (*pnt)[1]);
+	ASSERT_EQ(0.0, (*pnt)[2]);
 
 	GeoLib::Polyline* line = (*readerLines)[4];
-	ASSERT_EQ(line->getNumberOfPoints(), 3);
-	ASSERT_EQ(line->getPointID(0), 6);
-	ASSERT_EQ(line->getPointID(1), 7);
-	ASSERT_EQ(line->getPointID(2), 8);
+	ASSERT_EQ(3u, line->getNumberOfPoints());
+	ASSERT_EQ(6u, line->getPointID(0));
+	ASSERT_EQ(7u, line->getPointID(1));
+	ASSERT_EQ(8u, line->getPointID(2));
 	std::string line_name("");
 	line_vec->getNameOfElementByID(4, line_name);
-	ASSERT_EQ(line_name, "right");
+	ASSERT_EQ("right", line_name);
 
 	GeoLib::Surface* sfc = (*readerSfcs)[1];
-	ASSERT_EQ(sfc->getNTriangles(), 2);
+	ASSERT_EQ(2u, sfc->getNTriangles());
 	const GeoLib::Triangle* tri = (*sfc)[1];
-	ASSERT_EQ((*tri)[0],3);
-	ASSERT_EQ((*tri)[1],8);
-	ASSERT_EQ((*tri)[2],5);
+	ASSERT_EQ(3u, (*tri)[0]);
+	ASSERT_EQ(8u, (*tri)[1]);
+	ASSERT_EQ(5u, (*tri)[2]);
 
 	boost::filesystem::remove(test_data_file);
 	test_data_file += ".md5";
