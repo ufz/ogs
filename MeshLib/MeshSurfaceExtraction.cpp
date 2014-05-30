@@ -37,6 +37,7 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 		// for each node, a vector containing all the element idget every element
 		std::vector<MeshLib::Node*> nodes = mesh.getNodes();
 		const size_t nNodes ( mesh.getNNodes() );
+		node_area_vec.reserve(nNodes);
 		for (size_t n=0; n<nNodes; ++n)
 		{
 			double node_area (0);
@@ -101,14 +102,14 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	std::vector<std::size_t> id_map;
 	if (keep3dMeshIds)
 	{
-		id_map.reserve(mesh.getNNodes());
-		std::size_t idx(0);
-		std::generate(id_map.begin(), id_map.end(), [&sfc_nodes, &idx](){ return sfc_nodes[idx++]->getID(); });
+		id_map.reserve(sfc_nodes.size());
+		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
+			id_map.push_back((*node)->getID());
 	}
 	MeshLib::Mesh* result (new Mesh("SurfaceMesh", sfc_nodes, new_elements));
 	if (keep3dMeshIds)
-		for (MeshLib::Node* node : sfc_nodes)
-			node->setID(id_map[node->getID()]);
+		for (auto node = sfc_nodes.begin(); node != sfc_nodes.end(); ++node)
+			(*node)->setID(id_map[(*node)->getID()]);
 
 	return result;
 }
