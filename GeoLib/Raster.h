@@ -96,6 +96,11 @@ public:
 	 */
 	const_iterator end() const { return _raster_data + _n_rows*_n_cols; }
 
+	/**
+	 * Returns the raster value at the position of the given point.
+	 */
+	double getValueAtPoint(const GeoLib::Point &pnt);
+
 	~Raster();
 
 	/**
