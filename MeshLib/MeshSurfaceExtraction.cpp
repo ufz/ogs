@@ -28,15 +28,15 @@
 
 namespace MeshLib {
 
-void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
+void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, std::vector<double> &node_area_vec)
 {
-	if (mesh->getDimension() == 2)
+	if (mesh.getDimension() == 2)
 	{
 		double total_area (0);
 
 		// for each node, a vector containing all the element idget every element
-		std::vector<MeshLib::Node*> nodes = mesh->getNodes();
-		const size_t nNodes ( mesh->getNNodes() );
+		std::vector<MeshLib::Node*> nodes = mesh.getNodes();
+		const size_t nNodes ( mesh.getNNodes() );
 		for (size_t n=0; n<nNodes; ++n)
 		{
 			double node_area (0);
