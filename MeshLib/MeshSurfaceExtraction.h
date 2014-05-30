@@ -42,8 +42,14 @@ public:
 	/// Returns the surface nodes of a layered mesh.
 	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir);
 
-	/// Returns the 2d-element mesh representing the surface of the given layered mesh.
-	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir);
+	/**
+	 * Returns the 2d-element mesh representing the surface of the given layered mesh.
+	 * \param mesh          The original mesh
+	 * \param dir           The direction in which face normals have to point to be considered surface elements
+	 * \param keep3dMeshIds If true, ids of mesh nodes are set to ids in original mesh, otherwise node ids are reset (as usual when creating a mesh)
+	 * \return              A 2D mesh representing the surface in direction dir
+	 */
+	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, bool keep3dMeshIds = false);
 
 private:
 	/// Functionality needed for getSurfaceNodes() and getMeshSurface()
