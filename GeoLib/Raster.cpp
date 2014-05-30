@@ -19,6 +19,7 @@
 #include "Raster.h"
 
 // BaseLib
+#include "FileTools.h"
 #include "StringTools.h"
 
 namespace GeoLib {
@@ -119,9 +120,8 @@ double Raster::getValueAtPoint(const GeoLib::Point &pnt)
 		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ? (_n_cols-1) : cell_x);
 		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_n_rows)) ? (_n_rows-1) : cell_y);
 
-		size_t index = cell_y*_n_cols+cell_x;
-		if (fabs(_raster_data[index] - _no_data_val) > std::numeric_limits<float>::epsilon())
-			return _raster_data[index];
+		const std::size_t index = cell_y*_n_cols+cell_x;
+		return _raster_data[index];
 	}
 	return _no_data_val;
 }
@@ -143,6 +143,16 @@ void Raster::writeRasterAsASC(std::ostream &os) const
 		}
 		os << "\n";
 	}
+}
+
+Raster* Raster::readRaster(std::string const& fname)
+{
+	const std::string ext (BaseLib::getFileExtension(fname));
+	if (ext.compare("asc") == 0 || ext.compare("ASC") == 0)
+		return getRasterFromASCFile(fname);
+	if (ext.compare("grd") == 0 || ext.compare("GRD") == 0)
+		return getRasterFromSurferFile(fname);
+	return nullptr;
 }
 
 Raster* Raster::getRasterFromASCFile(std::string const& fname)

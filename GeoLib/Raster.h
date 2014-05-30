@@ -109,6 +109,7 @@ public:
 	 */
 	void writeRasterAsASC(std::ostream &os) const;
 
+	static Raster* readRaster(std::string const& fname);
 	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
 	static Raster* getRasterFromASCFile(std::string const& fname);
 	static Raster* getRasterFromSurferFile(std::string const& fname);
