@@ -63,7 +63,7 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, bool keep3dMeshIds)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, bool keepOriginalNodeIds)
 {
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
@@ -100,14 +100,14 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	}
 
 	std::vector<std::size_t> id_map;
-	if (keep3dMeshIds)
+	if (keepOriginalNodeIds)
 	{
 		id_map.reserve(sfc_nodes.size());
 		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
 			id_map.push_back((*node)->getID());
 	}
 	MeshLib::Mesh* result (new Mesh("SurfaceMesh", sfc_nodes, new_elements));
-	if (keep3dMeshIds)
+	if (keepOriginalNodeIds)
 		for (auto node = sfc_nodes.begin(); node != sfc_nodes.end(); ++node)
 			(*node)->setID(id_map[(*node)->getID()]);
 
