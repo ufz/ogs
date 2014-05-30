@@ -193,7 +193,7 @@ void MshView::extractSurfaceMesh()
 		return;
 
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
-	const MathLib::Vector3 dir(0, 0, 1);
+	const MathLib::Vector3 dir(0, 0, -1);
 	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir) );
 }
 
