@@ -147,10 +147,11 @@ void Raster::writeRasterAsASC(std::ostream &os) const
 
 Raster* Raster::readRaster(std::string const& fname)
 {
-	const std::string ext (BaseLib::getFileExtension(fname));
-	if (ext.compare("asc") == 0 || ext.compare("ASC") == 0)
+	std::string ext (BaseLib::getFileExtension(fname));
+	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	if (ext.compare("asc") == 0)
 		return getRasterFromASCFile(fname);
-	if (ext.compare("grd") == 0 || ext.compare("GRD") == 0)
+	if (ext.compare("grd") == 0)
 		return getRasterFromSurferFile(fname);
 	return nullptr;
 }
