@@ -28,15 +28,16 @@
 
 namespace MeshLib {
 
-void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, std::vector<double> &node_area_vec)
+void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, std::vector<double> &node_area_vec)
 {
-	if (mesh->getDimension() == 2)
+	if (mesh.getDimension() == 2)
 	{
 		double total_area (0);
 
 		// for each node, a vector containing all the element idget every element
-		std::vector<MeshLib::Node*> nodes = mesh->getNodes();
-		const size_t nNodes ( mesh->getNNodes() );
+		const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
+		const size_t nNodes ( mesh.getNNodes() );
+		node_area_vec.reserve(nNodes);
 		for (size_t n=0; n<nNodes; ++n)
 		{
 			double node_area (0);
@@ -62,7 +63,7 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh* mesh, st
 		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, bool keepOriginalNodeIds)
 {
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
@@ -98,7 +99,19 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 		delete *elem;
 	}
 
-	return new Mesh("SurfaceMesh", sfc_nodes, new_elements);
+	std::vector<std::size_t> id_map;
+	if (keepOriginalNodeIds)
+	{
+		id_map.reserve(sfc_nodes.size());
+		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
+			id_map.push_back((*node)->getID());
+	}
+	MeshLib::Mesh* result (new Mesh(mesh.getName()+"-Surface", sfc_nodes, new_elements));
+	if (keepOriginalNodeIds)
+		for (auto node = sfc_nodes.begin(); node != sfc_nodes.end(); ++node)
+			(*node)->setID(id_map[(*node)->getID()]);
+
+	return result;
 }
 
 void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, unsigned mesh_dimension)

@@ -96,6 +96,11 @@ public:
 	 */
 	const_iterator end() const { return _raster_data + _n_rows*_n_cols; }
 
+	/**
+	 * Returns the raster value at the position of the given point.
+	 */
+	double getValueAtPoint(const GeoLib::Point &pnt);
+
 	~Raster();
 
 	/**
@@ -104,8 +109,16 @@ public:
 	 */
 	void writeRasterAsASC(std::ostream &os) const;
 
+	/// Reads raster file by detecting type based on extension and then calling the apropriate method
+	static Raster* readRaster(std::string const& fname);
+
+	/// Creates a Raster based on a GeoLib::Surface
 	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
+
+	/// Reads an ArcGis ASC raster file
 	static Raster* getRasterFromASCFile(std::string const& fname);
+
+	/// Reads a Surfer GRD raster file
 	static Raster* getRasterFromSurferFile(std::string const& fname);
 private:
 	static bool readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,

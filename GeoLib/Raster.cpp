@@ -19,6 +19,7 @@
 #include "Raster.h"
 
 // BaseLib
+#include "FileTools.h"
 #include "StringTools.h"
 
 namespace GeoLib {
@@ -105,6 +106,24 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, z_vals, z_vals+n_cols*n_rows ,-9999);
 }
 
+double Raster::getValueAtPoint(const GeoLib::Point &pnt)
+{
+	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
+		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
+	{
+		int cell_x = static_cast<int>(floor((pnt[0] - _ll_pnt[0])/_cell_size));
+		int cell_y = static_cast<int>(floor((pnt[1] - _ll_pnt[1])/_cell_size));
+
+		// use raster boundary values if node is outside raster due to rounding errors or floating point arithmetic
+		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ? (_n_cols-1) : cell_x);
+		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_n_rows)) ? (_n_rows-1) : cell_y);
+
+		const std::size_t index = cell_y*_n_cols+cell_x;
+		return _raster_data[index];
+	}
+	return _no_data_val;
+}
+
 void Raster::writeRasterAsASC(std::ostream &os) const
 {
 	// write header
@@ -122,6 +141,17 @@ void Raster::writeRasterAsASC(std::ostream &os) const
 		}
 		os << "\n";
 	}
+}
+
+Raster* Raster::readRaster(std::string const& fname)
+{
+	std::string ext (BaseLib::getFileExtension(fname));
+	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	if (ext.compare("asc") == 0)
+		return getRasterFromASCFile(fname);
+	if (ext.compare("grd") == 0)
+		return getRasterFromSurferFile(fname);
+	return nullptr;
 }
 
 Raster* Raster::getRasterFromASCFile(std::string const& fname)
