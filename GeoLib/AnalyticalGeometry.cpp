@@ -229,14 +229,12 @@ bool isPointInTriangle(GeoLib::Point const& q,
 	return false;
 }
 
-
-static
-double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
+double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
 {
-	const MathLib::Vector3 u(a,c);
-	const MathLib::Vector3 v(a,b);
-	const MathLib::Vector3 w(MathLib::crossProduct(u, v));
-	return 0.5 * sqrt(MathLib::scalarProduct(w, w));
+	MathLib::Vector3 const u(a,c);
+	MathLib::Vector3 const v(a,b);
+	MathLib::Vector3 const w(MathLib::crossProduct(u, v));
+	return 0.5 * w.getLength();
 }
 
 // NewellPlane from book Real-Time Collision detection p. 494
