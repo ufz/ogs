@@ -22,6 +22,7 @@
 #include "MeshEnums.h"
 
 #include "MathTools.h"
+#include "AnalyticalGeometry.h"
 
 
 namespace MeshLib {
@@ -121,7 +122,7 @@ protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
 	double computeVolume()
 	{
-		return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords());
+		return GeoLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]);
 	}
 
 protected:

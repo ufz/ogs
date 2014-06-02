@@ -70,10 +70,10 @@ double LinearInterpolationOnSurface::interpolateInTri(const GeoLib::Triangle &tr
 	std::vector<GeoLib::Point*> p_pnts = {{&pnts[0], &pnts[1], &pnts[2]}};
 	GeoLib::rotatePointsToXY(p_pnts);
 
-	const double* v1 = pnts[0].getCoords();
-	const double* v2 = pnts[1].getCoords();
-	const double* v3 = pnts[2].getCoords();
-	const double area = MathLib::calcTriangleArea(v1, v2, v3);
+	GeoLib::Point const& v1(pnts[0]);
+	GeoLib::Point const& v2(pnts[1]);
+	GeoLib::Point const& v3(pnts[2]);
+	const double area = GeoLib::calcTriangleArea(v1, v2, v3);
 
 	if (area==.0) {
 		// take average if all points have the same coordinates
