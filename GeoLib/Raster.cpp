@@ -108,15 +108,13 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 
 double Raster::getValueAtPoint(const GeoLib::Point &pnt)
 {
-	const double* coords (pnt.getCoords());
-
-	if (coords[0]>=_ll_pnt[0] && coords[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
-		coords[1]>=_ll_pnt[1] && coords[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
+	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
+		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
 	{
-		int cell_x = static_cast<int>(floor((coords[0] - _ll_pnt[0])/_cell_size));
-		int cell_y = static_cast<int>(floor((coords[1] - _ll_pnt[1])/_cell_size));
+		int cell_x = static_cast<int>(floor((pnt[0] - _ll_pnt[0])/_cell_size));
+		int cell_y = static_cast<int>(floor((pnt[1] - _ll_pnt[1])/_cell_size));
 
-		// if node outside of raster use raster boundary values
+		// use raster boundary values if node is outside raster due to rounding errors or floating point arithmetic
 		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ? (_n_cols-1) : cell_x);
 		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_n_rows)) ? (_n_rows-1) : cell_y);
 

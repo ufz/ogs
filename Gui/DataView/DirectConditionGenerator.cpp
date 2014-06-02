@@ -46,7 +46,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		for (size_t i=0; i<nNodes; i++)
 		{
 			double val (raster->getValueAtPoint(*surface_nodes[i]));
-			val = (fabs(val-no_data) < std::numeric_limits<double>::epsilon()) ? 0 : val;
+			val = (val == no_data) ? 0 : val;
 			_direct_values.push_back (std::pair<size_t, double>(surface_nodes[i]->getID(), val));
 		}
 		delete raster;
@@ -79,7 +79,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 		for (size_t i=0; i<nNodes; ++i)
 		{
 			double val (raster->getValueAtPoint(*surface_nodes[i]));
-			val = (fabs(val-no_data) < std::numeric_limits<double>::epsilon()) ? 0 : ((val*node_area_vec[i])/scaling);
+			val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
 			_direct_values.push_back (std::pair<size_t, double>(surface_nodes[i]->getID(), val));
 		}
 

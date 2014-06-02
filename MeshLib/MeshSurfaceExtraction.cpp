@@ -35,7 +35,7 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 		double total_area (0);
 
 		// for each node, a vector containing all the element idget every element
-		std::vector<MeshLib::Node*> nodes = mesh.getNodes();
+		const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
 		const size_t nNodes ( mesh.getNNodes() );
 		node_area_vec.reserve(nNodes);
 		for (size_t n=0; n<nNodes; ++n)
@@ -106,7 +106,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
 			id_map.push_back((*node)->getID());
 	}
-	MeshLib::Mesh* result (new Mesh("SurfaceMesh", sfc_nodes, new_elements));
+	MeshLib::Mesh* result (new Mesh(mesh.getName()+"-Surface", sfc_nodes, new_elements));
 	if (keepOriginalNodeIds)
 		for (auto node = sfc_nodes.begin(); node != sfc_nodes.end(); ++node)
 			(*node)->setID(id_map[(*node)->getID()]);
