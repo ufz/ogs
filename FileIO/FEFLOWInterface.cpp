@@ -318,26 +318,40 @@ MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim, const Mes
 	for (size_t i = 0; i < fem_dim.n_nodes_of_element; ++i)
 		ss >> idx[i];
 	MeshLib::Node** ele_nodes = new MeshLib::Node*[fem_dim.n_nodes_of_element];
-	for (unsigned k(0); k < fem_dim.n_nodes_of_element; ++k)
-		ele_nodes[k] = nodes[idx[k]-1];
 
 	switch (elem_type)
 	{
-	case MeshElemType::LINE:
-		return new MeshLib::Line(ele_nodes);
-	case MeshElemType::TRIANGLE:
-		return new MeshLib::Tri(ele_nodes);
-	case MeshElemType::QUAD:
-		return new MeshLib::Quad(ele_nodes);
-	case MeshElemType::TETRAHEDRON:
-		return new MeshLib::Tet(ele_nodes);
-	case MeshElemType::HEXAHEDRON:
-		return new MeshLib::Hex(ele_nodes);
-	case MeshElemType::PRISM:
-		return new MeshLib::Prism(ele_nodes);
-	default:
-		assert(false);
-		return nullptr;
+		default:
+			for (unsigned k(0); k < fem_dim.n_nodes_of_element; ++k)
+				ele_nodes[k] = nodes[idx[k]-1];
+			break;
+		case MeshElemType::HEXAHEDRON:
+		case MeshElemType::PRISM:
+			const unsigned n_half_nodes = fem_dim.n_nodes_of_element/2;
+			for (unsigned k(0); k < n_half_nodes; ++k) {
+				ele_nodes[k] = nodes[idx[k+n_half_nodes]-1];
+				ele_nodes[k+n_half_nodes] = nodes[idx[k]-1];
+			}
+			break;
+	}
+
+	switch (elem_type)
+	{
+		case MeshElemType::LINE:
+			return new MeshLib::Line(ele_nodes);
+		case MeshElemType::TRIANGLE:
+			return new MeshLib::Tri(ele_nodes);
+		case MeshElemType::QUAD:
+			return new MeshLib::Quad(ele_nodes);
+		case MeshElemType::TETRAHEDRON:
+			return new MeshLib::Tet(ele_nodes);
+		case MeshElemType::HEXAHEDRON:
+			return new MeshLib::Hex(ele_nodes);
+		case MeshElemType::PRISM:
+			return new MeshLib::Prism(ele_nodes);
+		default:
+			assert(false);
+			return nullptr;
 	}
 }
 
