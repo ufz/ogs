@@ -8,6 +8,8 @@
 
 #include "FEFLOWInterface.h"
 
+#include <cctype>
+
 #include "logog/include/logog.hpp"
 #include <QtXml>
 
