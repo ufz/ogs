@@ -17,6 +17,7 @@
 #include "Elements/Element.h"
 #include "MeshEditing/DuplicateMeshComponents.h"
 #include "AABB.h"
+#include "MeshQuality/MeshValidation.h"
 
 #include "logog/include/logog.hpp"
 
@@ -46,9 +47,12 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 	std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
 	std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(tmp_elems, new_nodes);
 
-	// create a new mesh object. Unsued nodes are removed during construction
 	if (!new_elems.empty())
-		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems);
+	{
+		MeshLib::Mesh* new_mesh = new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems);
+		MeshValidation::removeUnusedMeshNodes(*new_mesh);
+		return new_mesh;
+	}
 	else
 	{
 		INFO("Current selection removes all elements.");
