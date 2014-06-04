@@ -155,7 +155,7 @@ bool lineSegmentIntersect(
 	return false;
 }
 
-bool lineSegmentsIntersect(const GeoLib::Polyline* ply, 
+bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
                             size_t &idx0,
                             size_t &idx1,
                            GeoLib::Point& intersection_pnt)
@@ -433,6 +433,28 @@ bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Po
 	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as coplanar
 	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-5) are considered as not coplanar
 	return (sqr_scalar_triple/normalisation_factor < 1e-11);
+}
+
+void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
+	std::vector<GeoLib::Polyline*> & plys)
+{
+	for (auto it0(plys.begin()); it0 != plys.end(); it0++) {
+		auto it1(it0);
+		it1++;
+		for (; it1 != plys.end(); it1++) {
+			GeoLib::Point s;
+			for (std::size_t i(0); i<(*it0)->getNumberOfPoints()-1; i++) {
+				for (std::size_t j(0); j<(*it1)->getNumberOfPoints()-1; j++) {
+					if (lineSegmentIntersect(*(*it0)->getPoint(i), *(*it0)->getPoint(i+1),
+						*(*it1)->getPoint(j), *(*it1)->getPoint(j+1), s)) {
+						std::size_t const id(pnt_vec.push_back(new GeoLib::Point(s)));
+						(*it0)->insertPoint(i+1, id);
+						(*it1)->insertPoint(j+1, id);
+					}
+				}
+			}
+		}
+	}
 }
 
 } // end namespace GeoLib
