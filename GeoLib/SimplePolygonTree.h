@@ -73,12 +73,14 @@ private:
 template <typename POLYGONTREETYPE>
 void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hierarchies)
 {
-	typename std::list<POLYGONTREETYPE*>::iterator it0 (list_of_simple_polygon_hierarchies.begin()), it1;
-	while (it0 != list_of_simple_polygon_hierarchies.end()) {
-		it1 = list_of_simple_polygon_hierarchies.begin();
+	typedef typename std::list<POLYGONTREETYPE*>::const_iterator IT;
+	for (IT it0(list_of_simple_polygon_hierarchies.begin());
+		it0 != list_of_simple_polygon_hierarchies.end(); ++it0) {
+		IT it1 = list_of_simple_polygon_hierarchies.begin();
 		while (it1 != list_of_simple_polygon_hierarchies.end()) {
-			if (it0 == it1) {
-				it1++;
+			if (it0 == it1) { // don't check same polygons
+				++it1;
+				// skip test if it1 points to the end after increment
 				if (it1 == list_of_simple_polygon_hierarchies.end())
 					break;
 			}
@@ -86,10 +88,9 @@ void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hie
 				(*it0)->insertSimplePolygonTree(*it1);
 				it1 = list_of_simple_polygon_hierarchies.erase(it1);
 			} else {
-				it1++;
+				++it1;
 			}
 		}
-		it0++;
 	}
 }
 
