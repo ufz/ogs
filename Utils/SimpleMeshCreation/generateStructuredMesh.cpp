@@ -62,6 +62,9 @@ int main (int argc, char* argv[])
 	case MeshElemType::LINE:
 		mesh = MeshLib::MeshGenerator::generateLineMesh(length, n_subdivision);
 		break;
+	case MeshElemType::TRIANGLE:
+		mesh = MeshLib::MeshGenerator::generateRegularTriMesh(length, n_subdivision);
+		break;
 	case MeshElemType::QUAD:
 		mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(length, n_subdivision);
 		break;
