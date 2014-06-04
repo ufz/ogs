@@ -24,15 +24,28 @@ namespace GeoLib
 {
 /**
  * \brief This class computes and stores the topological relations between
- * polygons. Every node of the SimplePolygonTree represents a polygon.
+ * polygons. Every node of the SimplePolygonTree represents a polygon. A
+ * child node c of a parent node p mean that the polygon represented by c
+ * is contained in the polygon represented by p.
  */
 class SimplePolygonTree
 {
 public:
+	/** Creates a node of a tree containing a simple polygon.
+	 * @param polygon the polygon represented by this tree node
+	 * @param parent pointer to the parent node within the tree or nullptr
+	 * (if SimplePolygonTree node is the root node of the tree)
+	 */
 	SimplePolygonTree(Polygon* polygon, SimplePolygonTree* parent);
+	/** Destructor: Attention: does not destroy the polygon! */
 	virtual ~SimplePolygonTree();
-
+	/** Checks if the polygon represented by the given polygon tree node
+	 * is inside this node polygon.
+	 */
 	bool isPolygonInside (const SimplePolygonTree* polygon_tree) const;
+	/** Either insert the given SimplePolygonTree in one of the existing
+	 * childs or as a new child.
+	 */
 	void insertSimplePolygonTree (SimplePolygonTree* polygon_tree);
 
 	/**
