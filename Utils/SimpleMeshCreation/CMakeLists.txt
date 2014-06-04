@@ -35,3 +35,14 @@ IF(TARGET VtkVis)
 	)
 
 ENDIF() # VtkVis-target is existing
+
+
+ADD_EXECUTABLE( generateStructuredMesh generateStructuredMesh.cpp )
+TARGET_LINK_LIBRARIES( generateStructuredMesh
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+)
+SET_TARGET_PROPERTIES(generateStructuredMesh PROPERTIES FOLDER Utilities)
+
