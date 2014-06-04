@@ -28,8 +28,8 @@
 namespace FileIO
 {
 
-BoostXmlGmlInterface::BoostXmlGmlInterface(ProjectData & project_data) :
-		_project_data(project_data)
+BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
+		_geo_objects(geo_objs)
 {}
 
 bool BoostXmlGmlInterface::readFile(const std::string &fname)
@@ -50,7 +50,7 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
 	std::map<std::string, std::size_t>* sfc_names  = new std::map<std::string, std::size_t>;
 
-	GeoLib::GEOObjects* geo_objects (_project_data.getGEOObjects());
+	GeoLib::GEOObjects* geo_objects (&_geo_objects);
 
 
 	// build DOM tree
