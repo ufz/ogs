@@ -38,7 +38,7 @@ int main (int argc, char* argv[])
 	                                      "the name of the file the mesh will be written to", true,
 	                                      "", "file name of output mesh");
 	cmd.add(mesh_out);
-	TCLAP::ValueArg<std::string> eleTypeArg("t", "element-type",
+	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type to be created",
 	                                      "element type to be removed", true, "line", "element type");
 	cmd.add(eleTypeArg);
 	TCLAP::ValueArg<double> lengthArg("l", "length",
@@ -84,6 +84,8 @@ int main (int argc, char* argv[])
 		FileIO::Legacy::MeshIO meshIO;
 		meshIO.setMesh(mesh);
 		meshIO.writeToFile(mesh_out.getValue());
+
+		delete mesh;
 	}
 
 	delete custom_format;
