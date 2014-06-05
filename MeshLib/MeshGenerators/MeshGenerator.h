@@ -121,7 +121,7 @@ Mesh* generateRegularTriMesh(const double length,
  *
  * \param n_x_cells Number of cells in x-direction.
  * \param n_y_cells Number of cells in y-direction.
- * \param cell_size Edge length of Triangle elements
+ * \param cell_size Edge length of two equal sides of isosceles triangles
  * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
