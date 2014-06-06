@@ -25,7 +25,6 @@
 
 #include "../XMLInterface.h"
 
-class ProjectData;
 class Point;
 class Polyline;
 class Surface;
@@ -36,7 +35,7 @@ namespace FileIO
 class BoostXmlGmlInterface : public XMLInterface
 {
 public:
-	BoostXmlGmlInterface(ProjectData & project);
+	BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs);
 	virtual ~BoostXmlGmlInterface()	{}
 
 	/// Reads an xml-file containing OGS geometry
@@ -70,7 +69,7 @@ private:
 	bool isGmlFile( boost::property_tree::ptree const& root) const;
 
 	std::map<std::size_t, std::size_t> _idx_map;
-	ProjectData & _project_data;
+	GeoLib::GEOObjects &_geo_objects;
 };
 
 } // end namespace FileIO

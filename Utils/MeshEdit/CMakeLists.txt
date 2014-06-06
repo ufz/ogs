@@ -57,3 +57,14 @@ TARGET_LINK_LIBRARIES( MoveMesh
 )
 SET_TARGET_PROPERTIES(MoveMesh PROPERTIES FOLDER Utilities)
 
+ADD_EXECUTABLE( appendLinesAlongPolyline appendLinesAlongPolyline.cpp )
+TARGET_LINK_LIBRARIES( appendLinesAlongPolyline
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+	MeshGeoToolsLib
+)
+
+SET_TARGET_PROPERTIES(appendLinesAlongPolyline
+	PROPERTIES FOLDER Utilities)
