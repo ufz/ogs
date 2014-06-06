@@ -103,6 +103,34 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
 	                         GeoLib::Point const& origin = GeoLib::ORIGIN,
 	                         std::string   const& mesh_name = "mesh");
 
+/**
+ * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
+ * x-y-plane.
+ *
+ * \param length Mesh's dimensions in x- and y-directions.
+ * \param subdivision Number of subdivisions.
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ */
+Mesh* generateRegularTriMesh(const double length,
+                              const std::size_t subdivision,
+                              GeoLib::Point const& origin = GeoLib::ORIGIN);
+
+/**
+ * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
+ * x-y-plane.
+ *
+ * \param n_x_cells Number of cells in x-direction.
+ * \param n_y_cells Number of cells in y-direction.
+ * \param cell_size Edge length of two equal sides of isosceles triangles
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
+ */
+Mesh* generateRegularTriMesh(const unsigned n_x_cells,
+	                          const unsigned n_y_cells,
+	                          const double   cell_size,
+	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
+	                          std::string   const& mesh_name = "mesh");
+
 }  //MeshGenerator
 } //MeshLib
 
