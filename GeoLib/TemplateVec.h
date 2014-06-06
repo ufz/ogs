@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <map>
+#include <vector>
+#include <string>
 
 namespace GeoLib
 {
