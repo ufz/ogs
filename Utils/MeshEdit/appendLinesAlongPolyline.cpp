@@ -92,6 +92,8 @@ int main (int argc, char* argv[])
 	meshIO.setMesh(new_mesh);
 	meshIO.writeToFile(mesh_out.getValue());
 
+	delete new_mesh;
+
 	delete custom_format;
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
