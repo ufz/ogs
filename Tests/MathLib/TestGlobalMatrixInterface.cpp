@@ -178,7 +178,7 @@ TEST(Math, CheckInterface_LisMatrix)
 #endif
 
 #ifdef USE_PETSC // or MPI
-TEST(Math, CheckInterface_PETScMatrix_Local_Size)
+TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -193,7 +193,7 @@ TEST(Math, CheckInterface_PETScMatrix_Local_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-TEST(Math, CheckInterface_PETScMatrix_Global_Size)
+TEST(MPITest_Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -206,7 +206,7 @@ TEST(Math, CheckInterface_PETScMatrix_Global_Size)
 }
 
 // Test rectangular matrix
-TEST(Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
+TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 3;
@@ -221,7 +221,7 @@ TEST(Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
     checkGlobalRectangularMatrixInterfaceMPI(A, x);
 }
 
-TEST(Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
+TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 3;
