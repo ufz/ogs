@@ -38,8 +38,8 @@ int main (int argc, char* argv[])
 	                                      "the name of the file the mesh will be written to", true,
 	                                      "", "file name of output mesh");
 	cmd.add(mesh_out);
-	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type to be created",
-	                                      "element type to be removed", true, "line", "element type");
+	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
+	                                      "element type to be created", true, "line", "element type");
 	cmd.add(eleTypeArg);
 	TCLAP::ValueArg<double> lengthArg("l", "length",
 	                                      "length of a domain", true, 10.0, "length of a domain");
