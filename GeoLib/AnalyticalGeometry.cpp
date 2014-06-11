@@ -103,6 +103,19 @@ bool lineSegmentIntersect(
 	if (!isCoplanar(a, b, c, d))
 		return false;
 
+	// handle special cases here to avoid computing intersection numerical
+	if (MathLib::sqrDist(a, c) < std::numeric_limits<double>::epsilon() ||
+		MathLib::sqrDist(a, d) < std::numeric_limits<double>::epsilon()) {
+		s = a;
+		return true;
+	}
+	if (MathLib::sqrDist(b, c) < std::numeric_limits<double>::epsilon() ||
+		MathLib::sqrDist(b, d) < std::numeric_limits<double>::epsilon()) {
+		s = b;
+		return true;
+	}
+
+	// general case
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(c, d);
 	MathLib::Vector3 const qp(a, c);

@@ -120,18 +120,6 @@ std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
 	const std::size_t n_segments(getNumberOfPoints() - 1);
 	GeoLib::Point s;
 	for (std::size_t k(0); k < n_segments; k++) {
-		// handle special cases here to avoid computing intersection numerical
-		if (MathLib::sqrDist(*(getPoint(k)), a) < std::numeric_limits<double>::epsilon() ||
-			MathLib::sqrDist(*(getPoint(k)), b) < std::numeric_limits<double>::epsilon()) {
-			intersections.emplace_back(*(getPoint(k)));
-			continue;
-		}
-		if (MathLib::sqrDist(*(getPoint(k+1)), a) < std::numeric_limits<double>::epsilon() ||
-			MathLib::sqrDist(*(getPoint(k+1)), b) < std::numeric_limits<double>::epsilon()) {
-			intersections.emplace_back(*(getPoint(k+1)));
-			continue;
-		}
-		// general case
 		if (GeoLib::lineSegmentIntersect(*(getPoint(k)), *(getPoint(k+1)), a, b, s)) {
 			intersections.push_back(s);
 		}
