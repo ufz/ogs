@@ -17,6 +17,7 @@
 
 // GeoLib
 #include "Triangle.h"
+#include "PointVec.h"
 
 // MathLib
 #include "LinAlg/Dense/DenseMatrix.h"
@@ -182,6 +183,16 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
  bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
+
+/**
+ * Method first computes the intersection points of line segements of GeoLib::Polyline objects
+ * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec
+ * pnt_vec. For each intersection an id is returned.  This id is used to split the two
+ * intersecting straight line segments in four straight line segments.
+ */
+void computeAndInsertAllIntersectionPoints(
+	GeoLib::PointVec &pnt_vec,
+	std::vector<GeoLib::Polyline*> & plys);
 
 } // end namespace GeoLib
 
