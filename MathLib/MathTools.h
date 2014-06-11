@@ -149,12 +149,6 @@ float normalize(float min, float max, float val);
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
 
 /**
- * Calculates the area of a triangle.
- * The formula is A=.5*|u x v|, i.e. half of the area of the parallelogram specified by u=p0->p1 and v=p0->p2.
- */
-double calcTriangleArea(const double* p0, const double* p1, const double* p2);
-
-/**
  * Calculates the volume of a tetrahedron.
  * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
  */
