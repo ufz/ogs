@@ -115,7 +115,7 @@ public:
 	friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
 	/**
-	 * computes all intersection points of the traight line segment and the polyline boundary
+	 * computes all intersection points of the straight line segment and the polyline boundary
 	 * @param a end point of line segment
 	 * @param b end point of line segment
 	 * @return a vector of tuples, where a tuple contains the intersection point and

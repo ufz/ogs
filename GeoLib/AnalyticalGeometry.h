@@ -168,8 +168,8 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
 
 
 /**
- * Method first compute the intersection points of line segements of GeoLib::Polyline objects
- * (@see computeIntersectionPoints()) and pushs each intersection point in the GeoLib::PointVec
+ * Method first computes the intersection points of line segements of GeoLib::Polyline objects
+ * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec
  * pnt_vec. For each intersection an id is returned.  This id is used to split the two
  * intersecting straight line segments in four straight line segments.
  */

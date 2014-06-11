@@ -20,7 +20,7 @@
 namespace GeoLib {
 
 /**
- * This is a polyline with the possility to mark some segments. Thus class
+ * This is a polyline with the possibility to mark some segments. Thus class
  * PolylineWithSegmentMarker is derived from class Polyline.
  */
 class PolylineWithSegmentMarker: public GeoLib::Polyline {
