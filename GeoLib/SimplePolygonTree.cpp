@@ -22,7 +22,6 @@ SimplePolygonTree::SimplePolygonTree(Polygon * polygon, SimplePolygonTree * pare
 
 SimplePolygonTree::~SimplePolygonTree()
 {
-	delete _node_polygon;
 	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
 		     it != _childs.end(); ++it) {
 		delete *it;
@@ -53,15 +52,7 @@ void SimplePolygonTree::insertSimplePolygonTree (SimplePolygonTree* polygon_hier
 	bool nfound (true);
 	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
 	     it != _childs.end() && nfound; ++it) {
-		// check all points of polygon
-		size_t n_pnts_polygon (polygon->getNumberOfPoints()), cnt(0);
-		for (size_t k(0); k < n_pnts_polygon && cnt == k; k++) {
-			if (((*it)->getPolygon())->isPntInPolygon (*(polygon->getPoint(k)))) {
-				cnt++;
-			}
-		}
-		// all points of the given polygon are contained in the current polygon
-		if (cnt == n_pnts_polygon) {
+		if (((*it)->getPolygon())->isPolylineInPolygon (*(polygon))) {
 			(*it)->insertSimplePolygonTree (polygon_hierarchy);
 			nfound = false;
 		}
