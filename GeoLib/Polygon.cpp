@@ -137,15 +137,17 @@ bool Polygon::containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) co
 		return (isPntInPolygon(a));
 	}
 
+	const double tol(std::numeric_limits<float>::epsilon());
+
 	// one intersection, intersection in line segment end point
 	if (s.size() == 1) {
 		const double sqr_dist_as(MathLib::sqrDist(a,s[0]));
-		if (sqr_dist_as < std::numeric_limits<float>::epsilon()) {
+		if (sqr_dist_as < tol) {
 			return (isPntInPolygon(b));
 		}
 
 		const double sqr_dist_bs(MathLib::sqrDist(b,s[0]));
-		if (sqr_dist_bs < std::numeric_limits<float>::epsilon()) {
+		if (sqr_dist_bs < tol) {
 			return (isPntInPolygon(a));
 		}
 	}
@@ -160,7 +162,7 @@ bool Polygon::containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) co
 
 	// remove sub segments with almost zero length
 	for (std::size_t k(0); k<s.size()-1; ) {
-		if (MathLib::sqrDist(s[k], s[k+1]) < std::numeric_limits<float>::epsilon()) {
+		if (MathLib::sqrDist(s[k], s[k+1]) < tol) {
 			s.erase(s.begin()+k+1);
 		} else {
 			k++;
