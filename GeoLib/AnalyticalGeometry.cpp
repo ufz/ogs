@@ -451,10 +451,10 @@ bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Po
 void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 	std::vector<GeoLib::Polyline*> & plys)
 {
-	for (auto it0(plys.begin()); it0 != plys.end(); it0++) {
+	for (auto it0(plys.begin()); it0 != plys.end(); ++it0) {
 		auto it1(it0);
-		it1++;
-		for (; it1 != plys.end(); it1++) {
+		++it1;
+		for (; it1 != plys.end(); ++it1) {
 			GeoLib::Point s;
 			for (std::size_t i(0); i<(*it0)->getNumberOfPoints()-1; i++) {
 				for (std::size_t j(0); j<(*it1)->getNumberOfPoints()-1; j++) {
