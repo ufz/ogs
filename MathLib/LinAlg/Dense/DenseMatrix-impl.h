@@ -276,6 +276,7 @@ template <typename FP_TYPE, typename IDX_TYPE>
 void
 DenseMatrix<FP_TYPE, IDX_TYPE>::write (std::ostream &out) const
 {
+	out << _n_rows << " " << _n_cols << "\n";
 	for (IDX_TYPE i = 0; i < _n_rows; i++) {
 		for (IDX_TYPE j = 0; j < _n_cols; j++) {
 			out << _data[address(i, j)] << "\t";
