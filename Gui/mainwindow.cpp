@@ -1038,6 +1038,9 @@ void MainWindow::callFileConverter() const
 	{
 		QSettings settings;
 		QString converter_path = settings.value("DataExplorerConverterPath").toString();
+#if _WIN32
+		converter_path = QString("\"").append(converter_path).append("\"");
+#endif
 		if (!converter_path.isEmpty())
 			system(converter_path.toAscii());
 		else
