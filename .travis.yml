@@ -40,6 +40,8 @@ before_install:
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
   - make test
+  # PetSc
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then make test_mpi; fi
 
 notifications:
   email:

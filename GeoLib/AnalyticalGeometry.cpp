@@ -103,6 +103,19 @@ bool lineSegmentIntersect(
 	if (!isCoplanar(a, b, c, d))
 		return false;
 
+	// handle special cases here to avoid computing intersection numerical
+	if (MathLib::sqrDist(a, c) < std::numeric_limits<double>::epsilon() ||
+		MathLib::sqrDist(a, d) < std::numeric_limits<double>::epsilon()) {
+		s = a;
+		return true;
+	}
+	if (MathLib::sqrDist(b, c) < std::numeric_limits<double>::epsilon() ||
+		MathLib::sqrDist(b, d) < std::numeric_limits<double>::epsilon()) {
+		s = b;
+		return true;
+	}
+
+	// general case
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(c, d);
 	MathLib::Vector3 const qp(a, c);
@@ -155,7 +168,7 @@ bool lineSegmentIntersect(
 	return false;
 }
 
-bool lineSegmentsIntersect(const GeoLib::Polyline* ply, 
+bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
                             size_t &idx0,
                             size_t &idx1,
                            GeoLib::Point& intersection_pnt)
@@ -184,68 +197,57 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 	return false;
 }
 
-static
-bool isPointInTriangle(const double p[3], const double a[3], const double b[3], const double c[3])
-{
-	// criterion: p-b = u0 * (b - a) + u1 * (b - c); 0 <= u0, u1 <= 1, u0+u1 <= 1
-	MathLib::DenseMatrix<double> mat(2, 2);
-	mat(0, 0) = a[0] - b[0];
-	mat(0, 1) = c[0] - b[0];
-	mat(1, 0) = a[1] - b[1];
-	mat(1, 1) = c[1] - b[1];
-	double rhs[2] = { p[0] - b[0], p[1] - b[1] };
-
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss(mat);
-	gauss.solve(rhs);
-
-	if (0 <= rhs[0] && rhs[0] <= 1 && 0 <= rhs[1] && rhs[1] <= 1 && rhs[0] + rhs[1] <= 1)
-		return true;
-	return false;
-}
-
 bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const GeoLib::Point* b,
                        const GeoLib::Point* c)
 {
-	return isPointInTriangle(p->getCoords(), a->getCoords(), b->getCoords(), c->getCoords());
+	return isPointInTriangle(*p, *a, *b, *c);
 }
 
-static
-double getOrientedTriArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
+bool isPointInTriangle(GeoLib::Point const& q,
+                       GeoLib::Point const& a,
+                       GeoLib::Point const& b,
+                       GeoLib::Point const& c,
+                       double eps)
 {
-	const MathLib::Vector3 u(a,c);
-	const MathLib::Vector3 v(a,b);
-	const MathLib::Vector3 w(MathLib::crossProduct(u, v));
-	return 0.5 * sqrt(MathLib::scalarProduct(w, w));
-}
+	MathLib::Vector3 const v(a, b);
+	MathLib::Vector3 const w(a, c);
 
-bool isPointInTriangle(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b,
-                       GeoLib::Point const& c, double eps)
-{
-	const unsigned dim(3);
-	MathLib::DenseMatrix<double> m(dim, dim);
-	for (unsigned i(0); i < dim; i++)
-		m(i, 0) = b[i] - a[i];
-	for (unsigned i(0); i < dim; i++)
-		m(i, 1) = c[i] - a[i];
-	for (unsigned i(0); i < dim; i++)
-		m(i, 2) = p[i] - a[i];
+	MathLib::DenseMatrix<double> mat (2,2);
+	mat(0,0) = v.getSqrLength();
+	mat(0,1) = v[0]*w[0] + v[1]*w[1] + v[2]*w[2];
+	mat(1,0) = mat(0,1);
+	mat(1,1) = w.getSqrLength();
+	double y[2] = {
+		v[0] * (q[0] - a[0]) + v[1] * (q[1] - a[1]) + v[2] * (q[2] - a[2]),
+		w[0] * (q[0] - a[0]) + w[1] * (q[1] - a[1]) + w[2] * (q[2] - a[2])
+	};
 
-	// point p is in the same plane as the triangle if and only if
-	// the following determinate of the 3x3 matrix equals zero (up to an eps)
-	double det3x3(m(0, 0) * (m(1, 1) * m(2, 2) - m(2, 1) * m(1, 2))
-	              - m(1, 0) * (m(2, 1) * m(0, 2) - m(0, 1) * m(2, 2))
-	              + m(2, 0) * (m(0, 1) * m(1, 2) - m(1, 1) * m(0, 2)));
-	if (fabs(det3x3) > eps)
-		return false;
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss(mat);
+	gauss.solve(y);
 
-	double total_area(getOrientedTriArea(a, b, c));
-	double abp_area(getOrientedTriArea(a, b, p));
-	double bcp_area(getOrientedTriArea(b, c, p));
-	double cap_area(getOrientedTriArea(c, a, p));
+	const double lower (std::numeric_limits<float>::epsilon());
+	const double upper (1 + lower);
 
-	if (fabs(abp_area + bcp_area + cap_area - total_area) < eps)
-		return true;
+	if (-lower <= y[0] && y[0] <= upper && -lower <= y[1] && y[1] <= upper && y[0] + y[1] <=
+	    upper) {
+		GeoLib::Point const q_projected(
+			a[0] + y[0] * v[0] + y[1] * w[0],
+			a[1] + y[0] * v[1] + y[1] * w[1],
+			a[2] + y[0] * v[2] + y[1] * w[2]
+		);
+		if (MathLib::sqrDist(q, q_projected) < eps)
+			return true;
+	}
+
 	return false;
+}
+
+double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
+{
+	MathLib::Vector3 const u(a,c);
+	MathLib::Vector3 const v(a,b);
+	MathLib::Vector3 const w(MathLib::crossProduct(u, v));
+	return 0.5 * w.getLength();
 }
 
 // NewellPlane from book Real-Time Collision detection p. 494
@@ -433,6 +435,28 @@ bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Po
 	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as coplanar
 	// a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-5) are considered as not coplanar
 	return (sqr_scalar_triple/normalisation_factor < 1e-11);
+}
+
+void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
+	std::vector<GeoLib::Polyline*> & plys)
+{
+	for (auto it0(plys.begin()); it0 != plys.end(); ++it0) {
+		auto it1(it0);
+		++it1;
+		for (; it1 != plys.end(); ++it1) {
+			GeoLib::Point s;
+			for (std::size_t i(0); i<(*it0)->getNumberOfPoints()-1; i++) {
+				for (std::size_t j(0); j<(*it1)->getNumberOfPoints()-1; j++) {
+					if (lineSegmentIntersect(*(*it0)->getPoint(i), *(*it0)->getPoint(i+1),
+						*(*it1)->getPoint(j), *(*it1)->getPoint(j+1), s)) {
+						std::size_t const id(pnt_vec.push_back(new GeoLib::Point(s)));
+						(*it0)->insertPoint(i+1, id);
+						(*it1)->insertPoint(j+1, id);
+					}
+				}
+			}
+		}
+	}
 }
 
 } // end namespace GeoLib

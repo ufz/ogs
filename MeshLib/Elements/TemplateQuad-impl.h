@@ -90,8 +90,8 @@ TemplateQuad<NNODES,CELLQUADTYPE>::~TemplateQuad()
 template <unsigned NNODES, CellType CELLQUADTYPE>
 double TemplateQuad<NNODES,CELLQUADTYPE>::computeVolume()
 {
-	return MathLib::calcTriangleArea(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords())
-         + MathLib::calcTriangleArea(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords());
+	return GeoLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2])
+         + GeoLib::calcTriangleArea(*_nodes[2], *_nodes[3], *_nodes[0]);
 }
 
 template <unsigned NNODES, CellType CELLQUADTYPE>

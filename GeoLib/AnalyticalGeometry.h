@@ -17,6 +17,7 @@
 
 // GeoLib
 #include "Triangle.h"
+#include "PointVec.h"
 
 // MathLib
 #include "LinAlg/Dense/DenseMatrix.h"
@@ -98,12 +99,29 @@ void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
  */
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
 
+/**
+ * Calculates the area of the triangle defined by its edge nodes a, b and c..
+ * The formula is \f$A= \frac{1}{2} \cdot |u \times v|\f$, i.e. half of the area of the
+ * parallelogram specified by the vectors\f$u=b-a\f$ and \f$v=c-a\f.
+ */
+double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
+
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
 
+/**
+ * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
+ * Using the eps it is possible to test a 'epsilon' neighbourhood around the triangle.
+ * @param p test point
+ * @param a edge node of triangle
+ * @param b edge node of triangle
+ * @param c edge node of triangle
+ * @param eps size of neighbourhood (orthogonal distance to the plane spaned by triangle)
+ * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
+ */
 bool isPointInTriangle(GeoLib::Point const& p,
 				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps = std::numeric_limits<double>::epsilon());
+				double eps = std::numeric_limits<float>::epsilon());
 
 /**
  * test for intersections of the line segments of the Polyline
@@ -165,6 +183,16 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
  bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
 
+
+/**
+ * Method first computes the intersection points of line segements of GeoLib::Polyline objects
+ * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec
+ * pnt_vec. For each intersection an id is returned.  This id is used to split the two
+ * intersecting straight line segments in four straight line segments.
+ */
+void computeAndInsertAllIntersectionPoints(
+	GeoLib::PointVec &pnt_vec,
+	std::vector<GeoLib::Polyline*> & plys);
 
 } // end namespace GeoLib
 

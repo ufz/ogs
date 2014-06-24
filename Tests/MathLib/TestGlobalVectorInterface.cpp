@@ -204,7 +204,7 @@ TEST(Math, CheckInterface_LisVector)
 
 //--------------------------------------------
 #ifdef USE_PETSC
-TEST(Math, CheckInterface_PETScVector)
+TEST(MPITest_Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
 }

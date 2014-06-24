@@ -101,3 +101,15 @@ TARGET_LINK_LIBRARIES ( MatTestRemoveRowsCols
 	MathLib
 )
 
+ADD_EXECUTABLE( DenseGaussEliminationChecker
+        DenseGaussEliminationChecker.cpp
+        ${SOURCES}
+        ${HEADERS}
+)
+SET_TARGET_PROPERTIES(DenseGaussEliminationChecker PROPERTIES FOLDER SimpleTests)
+TARGET_LINK_LIBRARIES(DenseGaussEliminationChecker
+	logog
+	BaseLib
+	MathLib
+)
+

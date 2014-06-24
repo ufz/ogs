@@ -39,7 +39,7 @@ enum class EdgeType
 };
 
 /**
- *
+ * A polygon is a (closed) polyline. Thus class Polygon is derived from class Polyline.
  */
 class Polygon : public Polyline
 {
@@ -71,6 +71,16 @@ public:
 	 * @return if point is inside the polygon true, else false
 	 */
 	bool isPntInPolygon (double x, double y, double z) const;
+
+	/**
+	 * Checks if the straight line segment given by its end points a and b
+	 * is contained within the polygon.
+	 * @param a the first end point of the straight line segment
+	 * @param b the second end point of the straight line segment
+	 * @return true if the straight line segment is within the polygon, else false
+	 */
+	bool containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) const;
+
 	/**
 	 * Method checks if all points of the polyline ply are inside of the polygon.
 	 * @param ply the polyline that should be checked
@@ -104,6 +114,16 @@ public:
 
 	friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
+	/**
+	 * computes all intersection points of the straight line segment and the polyline boundary
+	 * @param a end point of line segment
+	 * @param b end point of line segment
+	 * @return a vector of tuples, where a tuple contains the intersection point and
+	 * the intersected segment number
+	 */
+	std::vector<GeoLib::Point> getAllIntersectionPoints(
+		GeoLib::Point const& a, GeoLib::Point const& b) const;
+
 	/**
 	 * from book: Computational Geometry and Computer Graphics in C++, page 119
 	 * get the type of edge with respect to the given point (2d method!)

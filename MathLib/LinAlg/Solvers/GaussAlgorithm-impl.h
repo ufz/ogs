@@ -32,7 +32,7 @@ GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
 		_perm[k] = k;
 		for (i=k+1; i<nr; i++) {
 			if (std::abs(_mat(i,k)) > t) {
-				t = _mat(i,k);
+				t = std::abs(_mat(i,k));
 				_perm[k] = i;
 			}
 		}

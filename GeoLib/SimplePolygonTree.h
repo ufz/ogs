@@ -24,16 +24,28 @@ namespace GeoLib
 {
 /**
  * \brief This class computes and stores the topological relations between
- * polygons. Every node of the SimplePolygonTree represents a polygon.
- *
+ * polygons. Every node of the SimplePolygonTree represents a polygon. A
+ * child node c of a parent node p mean that the polygon represented by c
+ * is contained in the polygon represented by p.
  */
 class SimplePolygonTree
 {
 public:
+	/** Creates a node of a tree containing a simple polygon.
+	 * @param polygon the polygon represented by this tree node
+	 * @param parent pointer to the parent node within the tree or nullptr
+	 * (if SimplePolygonTree node is the root node of the tree)
+	 */
 	SimplePolygonTree(Polygon* polygon, SimplePolygonTree* parent);
+	/** Destructor: Attention: does not destroy the polygon! */
 	virtual ~SimplePolygonTree();
-
+	/** Checks if the polygon represented by the given polygon tree node
+	 * is inside this node polygon.
+	 */
 	bool isPolygonInside (const SimplePolygonTree* polygon_tree) const;
+	/** Either insert the given SimplePolygonTree in one of the existing
+	 * childs or as a new child.
+	 */
 	void insertSimplePolygonTree (SimplePolygonTree* polygon_tree);
 
 	/**
@@ -42,6 +54,7 @@ public:
 	 */
 	const Polygon* getPolygon () const;
 
+	/** returns the number of childs */
 	std::size_t getNChilds() const { return _childs.size(); }
 
 protected:
@@ -59,6 +72,7 @@ protected:
 	 * in the _node_polygon
 	 */
 	std::list<SimplePolygonTree*> _childs;
+
 private:
 	void setParent(SimplePolygonTree* parent)
 	{
@@ -72,24 +86,25 @@ private:
 template <typename POLYGONTREETYPE>
 void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hierarchies)
 {
-	typename std::list<POLYGONTREETYPE*>::iterator it0 (list_of_simple_polygon_hierarchies.begin()), it1;
-	while (it0 != list_of_simple_polygon_hierarchies.end()) {
-		it1 = it0;
-		it1++;
+	typedef typename std::list<POLYGONTREETYPE*>::const_iterator CIT;
+	typedef typename std::list<POLYGONTREETYPE*>::iterator IT;
+	for (CIT it0(list_of_simple_polygon_hierarchies.begin());
+		it0 != list_of_simple_polygon_hierarchies.end(); ++it0) {
+		IT it1 = list_of_simple_polygon_hierarchies.begin();
 		while (it1 != list_of_simple_polygon_hierarchies.end()) {
+			if (it0 == it1) { // don't check same polygons
+				++it1;
+				// skip test if it1 points to the end after increment
+				if (it1 == list_of_simple_polygon_hierarchies.end())
+					break;
+			}
 			if ((*it0)->isPolygonInside(*it1)) {
 				(*it0)->insertSimplePolygonTree(*it1);
 				it1 = list_of_simple_polygon_hierarchies.erase(it1);
 			} else {
-				if ((*it1)->isPolygonInside(*it0)) {
-					(*it1)->insertSimplePolygonTree(*it0);
-					it0 = list_of_simple_polygon_hierarchies.erase(it0);
-				}
-
-				it1++;
+				++it1;
 			}
 		}
-		it0++;
 	}
 }
 

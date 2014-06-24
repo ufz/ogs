@@ -1,15 +1,16 @@
-IF(TARGET VtkVis)
 
-	INCLUDE_DIRECTORIES(
-		${CMAKE_SOURCE_DIR}
-		${CMAKE_SOURCE_DIR}/BaseLib
-		${CMAKE_SOURCE_DIR}/FileIO
-		${CMAKE_SOURCE_DIR}/FileIO/Legacy
-		${CMAKE_SOURCE_DIR}/GeoLib
-		${CMAKE_SOURCE_DIR}/MathLib
-		${CMAKE_SOURCE_DIR}/MeshLib
-		${CMAKE_SOURCE_DIR}/Gui/VtkVis
-	)
+INCLUDE_DIRECTORIES(
+	${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/FileIO
+	${CMAKE_SOURCE_DIR}/FileIO/Legacy
+	${CMAKE_SOURCE_DIR}/GeoLib
+	${CMAKE_SOURCE_DIR}/MathLib
+	${CMAKE_SOURCE_DIR}/MeshLib
+	${CMAKE_SOURCE_DIR}/Gui/VtkVis
+)
+
+IF(TARGET VtkVis)
 
 	ADD_EXECUTABLE( generateStructuredQuadMesh generateStructuredQuadMesh.cpp )
 	SET_TARGET_PROPERTIES( generateStructuredQuadMesh PROPERTIES FOLDER Utils)
@@ -35,3 +36,14 @@ IF(TARGET VtkVis)
 	)
 
 ENDIF() # VtkVis-target is existing
+
+
+ADD_EXECUTABLE( generateStructuredMesh generateStructuredMesh.cpp )
+TARGET_LINK_LIBRARIES( generateStructuredMesh
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+)
+SET_TARGET_PROPERTIES(generateStructuredMesh PROPERTIES FOLDER Utilities)
+

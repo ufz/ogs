@@ -71,11 +71,12 @@ public:
 	}
 
 	/**
-	 * checks if point is in triangle
-	 * @param pnt The input point
+	 * Checks if point q is within the triangle, uses GeoLib::isPointInTriangle().
+	 * @param q The input point.
+	 * @param eps Checks the 'epsilon'-neighbourhood
 	 * @return true, if point is in triangle, else false
 	 */
-	bool containsPoint (Point const& pnt) const;
+	bool containsPoint(Point const& q, double eps = std::numeric_limits<float>::epsilon()) const;
 
 	/**
 	 * projects the triangle points to the x-y-plane and

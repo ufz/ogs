@@ -18,6 +18,7 @@
 #include "Elements/Line.h"
 #include "Elements/Quad.h"
 #include "Elements/Hex.h"
+#include "Elements/Tri.h"
 
 #include <vector>
 
@@ -168,6 +169,59 @@ Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
 				element_nodes[7] = nodes[offset_z2 + offset_y2 + k];
 				elements.push_back (new Hex(element_nodes));
 			}
+		}
+	}
+
+	return new Mesh(mesh_name, nodes, elements);
+}
+
+Mesh* MeshGenerator::generateRegularTriMesh(
+        const double length,
+        const std::size_t subdivision,
+        const GeoLib::Point& origin)
+{
+	return generateRegularTriMesh(subdivision, subdivision, length/subdivision, origin);
+}
+
+Mesh* MeshGenerator::generateRegularTriMesh(const unsigned n_x_cells,
+                              const unsigned n_y_cells,
+                              const double cell_size,
+                              GeoLib::Point const& origin,
+                              std::string const& mesh_name)
+{
+	//nodes
+	const unsigned n_x_nodes (n_x_cells+1);
+	const unsigned n_y_nodes (n_y_cells+1);
+	std::vector<Node*> nodes;
+	nodes.reserve(n_x_nodes * n_y_nodes);
+
+	for (std::size_t i = 0; i < n_y_nodes; i++)
+	{
+		const double y_offset (origin[1] + cell_size * i);
+		for (std::size_t j = 0; j < n_x_nodes; j++)
+			nodes.push_back (new Node(origin[0] + cell_size * j, y_offset, origin[2]));
+	}
+
+	//elements
+	std::vector<Element*> elements;
+	elements.reserve(n_x_cells * n_y_cells * 2);
+
+	for (std::size_t j = 0; j < n_y_cells; j++)
+	{
+		const std::size_t offset_y1 = j * n_x_nodes;
+		const std::size_t offset_y2 = (j + 1) * n_x_nodes;
+		for (std::size_t k = 0; k < n_x_cells; k++)
+		{
+			std::array<Node*, 3> element1_nodes;
+			element1_nodes[0] = nodes[offset_y1 + k];
+			element1_nodes[1] = nodes[offset_y2 + k + 1];
+			element1_nodes[2] = nodes[offset_y2 + k];
+			elements.push_back (new Tri(element1_nodes));
+			std::array<Node*, 3> element2_nodes;
+			element2_nodes[0] = nodes[offset_y1 + k];
+			element2_nodes[1] = nodes[offset_y1 + k + 1];
+			element2_nodes[2] = nodes[offset_y2 + k + 1];
+			elements.push_back (new Tri(element2_nodes));
 		}
 	}
 
