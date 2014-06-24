@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "Mesh"
 
 namespace MeshLib
 {
