@@ -11,9 +11,9 @@ PROJECT( OGS-6 )
 ###########################################################################
 ### OGS version information. Adjust these if you release a new version. ###
 ###########################################################################
-SET (OGS_VERSION_MAJOR 0)
+SET (OGS_VERSION_MAJOR 6)
 SET (OGS_VERSION_MINOR 0)
-SET (OGS_VERSION_PATCH 1)
+SET (OGS_VERSION_PATCH "0 Beta")
 SET (OGS_RELEASE_PERSONS "LB/TF/KR")
 SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}")
 SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} (${OGS_RELEASE_PERSONS})")
