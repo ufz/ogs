@@ -35,7 +35,7 @@ class ElementDDC : puclic Element
          */
         virtual unsigned getNNodes(bool all = false) const
         {
-            _l_act_nodes_ids[all];
+            _act_nodes_num[all];
         }
 
         /*!
@@ -49,10 +49,13 @@ class ElementDDC : puclic Element
 
     private:
         /*!
-           Local indices of active nodes of each elements.
-           The vector size is equal to the number of elements.
+           Number of active nodes
            [0]: number of active nodes
            [1]: number of active nodes for a high order element
+        */
+        unsigned _act_nodes_num;
+        /*!
+           Local indices of active nodes of each elements.
         */
         unsigned* _l_act_nodes_ids;
 
