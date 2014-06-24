@@ -123,6 +123,15 @@ public:
 	 */
 	unsigned getNodeIndex(unsigned i) const;
 
+    /**
+     *  Get local indicies of active nodes
+     *  @param local_id ID of entry of array _nodes   
+     */
+    virtual const unsigned getLocalActiveNodeID(const unsigned local_id);
+    {
+         return local_id;
+    }
+
 	/**
 	 * Get the type of the mesh element in geometric context (as a MeshElemType-enum).
 	 */
