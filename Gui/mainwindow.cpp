@@ -909,21 +909,28 @@ void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 	for (size_t i = 0; i < conditions.size(); i++)
 	{
 		bool condition_ok(true);
-		if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
+		if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT ||
+			conditions[i]->getProcessDistributionType() == FiniteElement::NODESCONSTANT)
 		{
 			if (_meshModels->getMesh(conditions[i]->getAssociatedGeometryName()) != NULL) {
-				std::vector<MeshLib::Node*> nodes = _meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes();
+				const std::vector<MeshLib::Node*> &nodes = _meshModels->getMesh(conditions[i]->getAssociatedGeometryName())->getNodes();
 				const size_t nPoints(nodes.size());
 				std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nPoints);
 				for (size_t j = 0; j < nPoints; j++)
 					(*new_points)[j] = new GeoLib::Point(nodes[j]->getCoords());
-				GeoLib::PointVec pnt_vec("MeshNodes", new_points);
-				std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
+				if (conditions[i]->getProcessDistributionType() == FiniteElement::DIRECT)
+				{
+					const GeoLib::PointVec pnt_vec("MeshNodes", new_points);
+					std::vector<GeoLib::Point*> *cond_points = pnt_vec.getSubset(conditions[i]->getDisNodes());
+					std::for_each(new_points->begin(), new_points->end(), [](GeoLib::Point const*const pnt){delete pnt;} );
+					new_points->clear();
+					new_points = cond_points;
+				}
 				std::string geo_name = conditions[i]->getGeoName();
-				this->_project.getGEOObjects()->addPointVec(cond_points, geo_name);
+				this->_project.getGEOObjects()->addPointVec(new_points, geo_name);
 				conditions[i]->setGeoName(geo_name); // this might have been changed upon inserting it into geo_objects
 			} else {
-				OGSError::box("Please load an appropriate geometry first", "Error");
+				OGSError::box("Please load the referenced mesh first", "Error");
 				condition_ok = false;
 			}
 		}

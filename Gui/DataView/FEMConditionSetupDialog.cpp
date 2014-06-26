@@ -77,6 +77,9 @@ FEMConditionSetupDialog::~FEMConditionSetupDialog()
 
 void FEMConditionSetupDialog::setupDialog()
 {
+	directButton = new QPushButton("Calculate Values");
+	connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
+
 	if (_cond.getGeomType() != GeoLib::GEOTYPE::INVALID)
 	{
 		this->disTypeBox->addItem("Constant (Dirichlet)");
@@ -162,7 +165,7 @@ void FEMConditionSetupDialog::accept()
 
 	if (_cond.getGeomType() != GeoLib::GEOTYPE::INVALID)
 	{
-		if (condTypeBox->currentIndex()>1)
+		if (condTypeBox->currentIndex()>1) // ST
 		{
 			if (this->disTypeBox->currentIndex()>0)
 				_cond.setProcessDistributionType(FiniteElement::LINEAR_NEUMANN);
@@ -172,7 +175,7 @@ void FEMConditionSetupDialog::accept()
 				_cond.setConstantDisValue(this->firstValueEdit->text().toDouble());
 			}
 		}
-		else
+		else // BC or IC
 		{
 			if (this->disTypeBox->currentIndex()>0)
 				_cond.setProcessDistributionType(FiniteElement::LINEAR);
@@ -184,7 +187,15 @@ void FEMConditionSetupDialog::accept()
 		}
 	}
 	else	// direct on mesh
-		_cond.setProcessDistributionType(FiniteElement::DIRECT);
+	{
+		if (this->condTypeBox->currentIndex()==1) // IC
+		{
+			_cond.setProcessDistributionType(FiniteElement::NODESCONSTANT);
+			_cond.setConstantDisValue(this->firstValueEdit->text().toDouble());
+		}
+		else // BC or ST
+			_cond.setProcessDistributionType(FiniteElement::DIRECT);
+	}
 	if (_cond.getDisValues().size()==0)
 	{
 		OGSError::box("No distribution values specified!");
@@ -218,19 +229,31 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 	{
 		if (index>1) // source terms selected
 		{
-			while (this->disTypeBox->count()>0)
-				this->disTypeBox->removeItem(0);
+			this->clearDisTypeBox();
 			this->disTypeBox->addItem("Constant (Neumann)");
 			if (_cond.getGeomType() == GeoLib::GEOTYPE::POLYLINE)
 				this->disTypeBox->addItem("Linear (Neumann)");
 		}
 		else
 		{
-			while (this->disTypeBox->count()>0)
-				this->disTypeBox->removeItem(0);
+			this->clearDisTypeBox();
 			this->disTypeBox->addItem("Constant (Dirichlet)");
 			if (_cond.getGeomType() == GeoLib::GEOTYPE::POLYLINE)
 				this->disTypeBox->addItem("Linear (Dirichlet)");
+		}
+	}
+	else {
+		if (index==1) // initial condition selected
+		{
+			this->clearDisTypeBox();
+			this->disTypeBox->addItem("Domain");
+			this->setValueInputWidget(false);
+		}
+		else
+		{
+			this->clearDisTypeBox();
+			this->disTypeBox->addItem("Direct");
+			this->setValueInputWidget(true);
 		}
 	}
 }
@@ -238,21 +261,26 @@ void FEMConditionSetupDialog::on_condTypeBox_currentIndexChanged(int index)
 
 void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 {
-	if (index>0) // linear
+	this->setValueInputWidget(index>0);
+}
+
+void FEMConditionSetupDialog::setValueInputWidget(bool is_button)
+{
+	if (is_button) // linear or direct
 	{
 		static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
 		directButton = new QPushButton("Calculate Values");
 		connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
 		static_cast<QGridLayout*>(this->layout())->addWidget(directButton,5,1);
 	}
-	else	// constant
+	else	// constant or domain
 	{
 		static_cast<QGridLayout*>(this->layout())->removeWidget(this->directButton);
 		delete directButton;
 		directButton = nullptr;
+		this->firstValueEdit->setText("0");
 		static_cast<QGridLayout*>(this->layout())->addWidget(this->firstValueEdit,5,1);
 	}
-
 }
 
 void FEMConditionSetupDialog::directButton_pressed()
@@ -283,7 +311,6 @@ void FEMConditionSetupDialog::addDisValues(std::vector< std::pair<size_t,double>
 {
 	_cond.setDisValues(direct_values);
 	this->directButton->setText(QString::number(direct_values.size()) + " values added");
-	//this->directButton->setEnabled(false);
 }
 
 FEMCondition* FEMConditionSetupDialog::typeCast(const FEMCondition &cond)
@@ -344,4 +371,10 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 	}
 	else
 		ERR("FEMConditionSetupDialog::copyCondOnPoints(): discerning GeoType.");
+}
+
+void FEMConditionSetupDialog::clearDisTypeBox()
+{
+	while (this->disTypeBox->count()>0)
+		this->disTypeBox->removeItem(0);
 }

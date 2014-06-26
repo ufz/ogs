@@ -106,7 +106,7 @@ public:
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
 
 	/// Returns a subset of this point vector containing only the points specified in "subset" as PointWithID-objects
-	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset);
+	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset) const;
 
 private:
 	/**

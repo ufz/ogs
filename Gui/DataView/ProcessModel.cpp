@@ -26,6 +26,7 @@
 #include "GEOObjects.h"
 #include "GeoObject.h"
 #include "GeoType.h"
+#include "FEMEnums.h"
 
 #include <QFileInfo>
 #include <vtkPolyDataAlgorithm.h>
@@ -83,8 +84,9 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 	std::vector<size_t> dis_nodes = c->getDisNodes();
 	std::vector<double> dis_values = c->getDisValues();
 	TreeItem* disInfo;
-	if (c->getProcessDistributionType() == FiniteElement::CONSTANT
-			|| c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN)
+	if (c->getProcessDistributionType() == FiniteElement::CONSTANT ||
+	    c->getProcessDistributionType() == FiniteElement::CONSTANT_NEUMANN ||
+		c->getProcessDistributionType() == FiniteElement::NODESCONSTANT)
 	{
 		disData << dis_values[0];
 		disInfo = new TreeItem(disData, condItem);
@@ -112,10 +114,11 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 
 void ProcessModel::addCondition(FEMCondition* condition)
 {
-	bool is_domain = (condition->getGeomType() == GeoLib::GEOTYPE::GEODOMAIN) ? true : false;
 	// HACK: direct source terms are not domain conditions but they also don't contain geo-object-names
-	if (condition->getProcessDistributionType() == FiniteElement::DIRECT)
-		is_domain = true;
+	bool is_domain (false);
+	if (condition->getProcessDistributionType() == FiniteElement::NODESCONSTANT ||
+		condition->getProcessDistributionType() == FiniteElement::DIRECT)
+		is_domain = true;		
 
 	const GeoLib::GeoObject* object = condition->getGeoObj();
 	if (object == nullptr)
