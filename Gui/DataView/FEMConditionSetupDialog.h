@@ -58,8 +58,12 @@ public:
 	~FEMConditionSetupDialog(void);
 
 private:
+	/// Clears the DistributionType-combobox
+	void clearDisTypeBox();
 	/// Sets layout of the dialog according to properties of the object
 	void setupDialog();
+	/// switches the input widget from lineEdit to PushButton (if true) and vice versa (if false)
+	void setValueInputWidget(bool is_button);
 	/// Inserts existing values if an existing FEMCondition is being edited
 	void setValuesFromCond();
 

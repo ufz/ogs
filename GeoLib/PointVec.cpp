@@ -242,7 +242,7 @@ void PointVec::calculateShortestDistance ()
 	_sqr_shortest_dist = MathLib::sqrDist (*(*_data_vec)[i], *(*_data_vec)[j]);
 }
 
-std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> &subset)
+std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> &subset) const
 {
 	std::vector<GeoLib::Point*> *new_points (new std::vector<GeoLib::Point*>(subset.size()));
 
