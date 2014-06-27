@@ -141,15 +141,17 @@ void BoostXmlCndInterface::readDistributionTag(boost::property_tree::ptree const
 			FiniteElement::DistributionType const& dt(cond->getProcessDistributionType());
 
 			if (dt == FiniteElement::CONSTANT || 
-				dt == FiniteElement::CONSTANT_NEUMANN ||
-				dt == FiniteElement::NODESCONSTANT) {
+			    dt == FiniteElement::CONSTANT_NEUMANN ||
+			    dt == FiniteElement::NODESCONSTANT) 
+			{
 				cond->setConstantDisValue(BaseLib::str2number<double>(dis_tag.second.data()));
 				return;
 			}
 
 			if (dt == FiniteElement::LINEAR || 
-				dt == FiniteElement::LINEAR_NEUMANN ||
-				dt == FiniteElement::DIRECT) {
+			    dt == FiniteElement::LINEAR_NEUMANN ||
+			    dt == FiniteElement::DIRECT) 
+			{
 				std::vector<std::size_t> dis_node_ids;
 				std::vector<double> dis_values;
 

@@ -77,9 +77,6 @@ FEMConditionSetupDialog::~FEMConditionSetupDialog()
 
 void FEMConditionSetupDialog::setupDialog()
 {
-	directButton = new QPushButton("Calculate Values");
-	connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
-
 	if (_cond.getGeomType() != GeoLib::GEOTYPE::INVALID)
 	{
 		this->disTypeBox->addItem("Constant (Dirichlet)");
