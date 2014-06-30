@@ -251,9 +251,7 @@ bool MeshIO::write()
 
 	writeElements(_mesh->getElements(), _out);
 
-	_out << " $LAYER\n"
-		<< "  0\n"
-		<< "#STOP\n";
+	_out << "#STOP\n";
 
 	return true;
 }
