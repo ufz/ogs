@@ -177,18 +177,18 @@ enum DistributionType
 	CONSTANT_GEO,
 	CONSTANT_NEUMANN,                     // ST
 	CRITICALDEPTH,                        // ST
-	DIRECT,
+	DIRECT,                               // ST (directly on mesh nodes)
 	FUNCTION,
 	GRADIENT,                             // IC
 	GREEN_AMPT,                           // ST
 	RESTART,                              // IC
 	LINEAR,                               // BC, ST
 	LINEAR_NEUMANN,                       // ST
+	NODESCONSTANT,                        // IC (directly on mesh nodes)
 	NORMALDEPTH,                          // ST
 	POINT,                                // BC
 	PRECIPITATION,
 	SYSTEM_DEPENDENT,                     // ST
-	// Sort of Neumann BC //WW
 	// make sure that this is always the last entry (important for iterating over the enum entries)!
 	DIS_END
 };
