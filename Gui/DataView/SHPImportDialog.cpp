@@ -77,7 +77,7 @@ void SHPImportDialog::setupDialog()
 
 		if ((shpType - 1) % 10 == 0 && shpType != 31) // Points
 		{
-			_choice1 = new QRadioButton("Read as GLI-Points");
+			_choice1 = new QRadioButton("Read as Geometry Points");
 			_choice2 = new QRadioButton("Read as Station Points");
 			_choice1->toggle(); // default choice
 			_layout->addWidget( _shpContentLabel );
@@ -89,8 +89,8 @@ void SHPImportDialog::setupDialog()
 		}
 		else if ((shpType - 3) % 10 == 0 || (shpType - 5) % 10 == 0) // Polylines
 		{
-			_choice1 = new QRadioButton("Read as Polylines");
-			_choice2 = new QRadioButton("Read as Polygons");
+			_choice1 = new QRadioButton("Read Polylines only");
+			_choice2 = new QRadioButton("Read Polylines/Surfaces");
 			if ((shpType - 3) % 10 == 0)
 				_choice2->setDisabled(true);          // disable polygon-choice if file contains only polylines
 			_choice1->toggle(); // default choice
