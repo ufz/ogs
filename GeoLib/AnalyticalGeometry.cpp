@@ -250,6 +250,14 @@ double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::
 	return 0.5 * w.getLength();
 }
 
+double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4)
+{
+	const MathLib::Vector3 ab(x1, x2);
+	const MathLib::Vector3 ac(x1, x3);
+	const MathLib::Vector3 ad(x1, x4);
+	return GeoLib::scalarTriple(ab, ac, ad) / 6.0;
+}
+
 // NewellPlane from book Real-Time Collision detection p. 494
 void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &plane_normal, double& d)
 {
@@ -458,5 +466,6 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 		}
 	}
 }
+
 
 } // end namespace GeoLib

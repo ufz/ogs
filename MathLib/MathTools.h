@@ -148,11 +148,6 @@ float normalize(float min, float max, float val);
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
 
-/**
- * Calculates the volume of a tetrahedron.
- * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
- */
-double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4);
 
 /**
  * simple power function that takes as a second argument an integer instead of a float

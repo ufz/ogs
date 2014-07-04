@@ -20,7 +20,7 @@
 #include "Tet.h"
 #include "Quad.h"
 
-#include "MathTools.h"
+#include "AnalyticalGeometry.h"
 
 namespace MeshLib {
 
@@ -107,8 +107,8 @@ TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::~TemplatePyramid()
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 double TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[4]->getCoords())
-		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords(), _nodes[4]->getCoords());
+	return GeoLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[4]->getCoords())
+		 + GeoLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords(), _nodes[4]->getCoords());
 }
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>

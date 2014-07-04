@@ -17,7 +17,7 @@
 #include "Node.h"
 #include "Tri.h"
 
-#include "MathTools.h"
+#include "AnalyticalGeometry.h"
 
 namespace MeshLib {
 
@@ -99,7 +99,7 @@ TemplateTet<NNODES,CELLTETTYPE>::~TemplateTet()
 template <unsigned NNODES, CellType CELLTETTYPE>
 double TemplateTet<NNODES,CELLTETTYPE>::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords());
+	return GeoLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords());
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
