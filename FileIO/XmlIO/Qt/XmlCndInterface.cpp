@@ -185,9 +185,23 @@ bool XmlCndInterface::write()
 	if (conditions.empty())
 		return 1;
 
+	const QString export_name (QString::fromStdString(_exportName));
 	doc.appendChild(root);
 
 	size_t nConditions (conditions.size());
+
+	// create root nodes for various conditions types if there is at least one condition of that type
+	QDomElement ic_root, bc_root, st_root;
+	if (std::count_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::INITIAL_CONDITION;}))
+		ic_root = this->getCondListElement(doc, root, "InitialConditions");
+	if (std::count_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::BOUNDARY_CONDITION;}))
+		bc_root = this->getCondListElement(doc, root, "BoundaryConditions");
+	if (std::count_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::SOURCE_TERM;}))
+		st_root = this->getCondListElement(doc, root, "SourceTerms");
+
 	for (size_t i = 0; i < nConditions; i++)
 	{
 		FEMCondition::CondType current_type = conditions[i]->getCondType();
@@ -198,17 +212,17 @@ bool XmlCndInterface::write()
 
 			if (current_type == FEMCondition::BOUNDARY_CONDITION)
 			{
-				listTag = this->getCondListElement(doc, root, "BoundaryConditions");
+				listTag = bc_root;
 				condText = "BC";
 			}
 			else if (current_type == FEMCondition::INITIAL_CONDITION)
 			{
-				listTag = this->getCondListElement(doc, root, "InitialConditions");
+				listTag = ic_root;
 				condText = "IC";
 			}
 			else if (current_type == FEMCondition::SOURCE_TERM)
 			{
-				listTag = this->getCondListElement(doc, root, "SourceTerms");
+				listTag = st_root;
 				condText = "ST";
 			}
 			else
@@ -216,11 +230,7 @@ bool XmlCndInterface::write()
 				ERR("XmlCndInterface::writeFile(): Unspecified FEMConditions found ... Abort writing.");
 				return 0;
 			}
-			this->writeCondition(doc,
-			                     listTag,
-			                     conditions[i],
-			                     condText,
-			                     QString::fromStdString(_exportName));
+			this->writeCondition(doc, listTag, conditions[i], condText, export_name);
 		}
 	}
 	std::string xml = doc.toString().toStdString();
@@ -316,7 +326,7 @@ void XmlCndInterface::writeCondition(QDomDocument doc, QDomElement &listTag,
 QDomElement XmlCndInterface::getCondListElement(QDomDocument doc, QDomElement &root,
                                                 const QString &text) const
 {
-	QDomNodeList list = root.elementsByTagName(text);
+	const QDomNodeList list = root.elementsByTagName(text);
 	if (list.isEmpty()) {
 		QDomElement newListTag(doc.createElement(text));
 		root.appendChild(newListTag);

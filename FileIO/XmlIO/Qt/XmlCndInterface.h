@@ -57,7 +57,7 @@ private:
 	/// Read the details of various FEM Conditions from an xml-file
 	void readConditions(const QDomNode &condRoot, FEMCondition::CondType type);
 
-	/// Returns a list of a certain kind of FEM Condition specified by condText
+	/// Returns the root node for the kind of FEM Condition specified by condText
 	QDomElement getCondListElement(QDomDocument doc, QDomElement &root,
 	                               const QString &condText) const;
 	
