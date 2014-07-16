@@ -198,7 +198,9 @@ target_link_libraries( QtDataView
 	shp
 )
 
-ADD_DEPENDENCIES(QtDataView VtkRescan)
+IF(TARGET VtkRescan)
+	ADD_DEPENDENCIES(QtDataView VtkRescan)
+ENDIF()
 
 IF (GEOTIFF_FOUND)
 	TARGET_LINK_LIBRARIES( QtDataView ${GEOTIFF_LIBRARIES} )

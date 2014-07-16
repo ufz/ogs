@@ -49,7 +49,10 @@ add_library( VtkAct STATIC
 	${MOC_SOURCES}
 	${UIS}
 )
-ADD_DEPENDENCIES(VtkAct VtkRescan)
+
+IF(TARGET VtkRescan)
+	ADD_DEPENDENCIES(VtkAct VtkRescan)
+ENDIF()
 
 target_link_libraries( VtkAct ${QT_LIBRARIES} )
 

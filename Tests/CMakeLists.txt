@@ -38,7 +38,9 @@ ENDIF()
 
 ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
 SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
-ADD_DEPENDENCIES(testrunner Eigen)
+IF(TARGET Eigen)
+	ADD_DEPENDENCIES(testrunner Eigen)
+ENDIF()
 
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
@@ -68,25 +70,23 @@ IF(OGS_BUILD_GUI)
 ENDIF()
 
 IF (QT4_FOUND)
-  TARGET_LINK_LIBRARIES(testrunner
-  	${QT_LIBRARIES}
-  )
+	TARGET_LINK_LIBRARIES(testrunner ${QT_LIBRARIES})
 ENDIF()
 
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
 IF (OGS_USE_PETSC)
-	ADD_CUSTOM_TARGET(test
+	ADD_CUSTOM_TARGET(tests
 		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*
 		DEPENDS testrunner
 	)
-	ADD_CUSTOM_TARGET(test_mpi
+	ADD_CUSTOM_TARGET(tests_mpi
 		mpirun -np 3 $<TARGET_FILE:testrunner>  --gtest_filter=MPITest*
 		DEPENDS testrunner
 	)
 ELSE ()
-	ADD_CUSTOM_TARGET(test
+	ADD_CUSTOM_TARGET(tests
 		$<TARGET_FILE:testrunner>
 		DEPENDS testrunner
 	)
