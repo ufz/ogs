@@ -166,7 +166,26 @@ ProcessItem* ProcessModel::addProcess(ProcessInfo *pcs)
 	}
 }
 
-void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type,
+const FEMCondition* ProcessModel::getCondition(const FiniteElement::ProcessType pcs_type, const std::string &geo_name, const FEMCondition::CondType cond_type, const GeoLib::GEOTYPE geo_type, const std::string &cond_name) const
+{
+	Q_UNUSED(geo_name);
+	ProcessItem const*const pcs_item (this->getProcessParent(pcs_type));
+	if (!pcs_item)
+		return nullptr;
+	CondObjectListItem const*const cnd_list = getCondParent(pcs_item, cond_type);
+	if (!cnd_list)
+		return nullptr;
+	for (int i = 0; i < cnd_list->childCount(); i++)
+	{
+		CondItem* item = static_cast<CondItem*>(cnd_list->child(i));
+		if ((item->data(0).toString().toStdString().compare(cond_name) == 0) &&
+			(item->data(1).toString().toStdString().compare(GeoLib::convertGeoTypeToString(geo_type)) == 0))
+			return item->getItem();
+	}
+	return nullptr;
+}
+
+void ProcessModel::removeConditions(const FiniteElement::ProcessType pcs_type,
 		const std::string &geometry_name, const FEMCondition::CondType cond_type)
 {
 	_project.removeConditions(pcs_type, geometry_name, cond_type);
@@ -194,7 +213,7 @@ void ProcessModel::removeFEMConditions(const FiniteElement::ProcessType pcs_type
 
 void ProcessModel::removeProcess(const FiniteElement::ProcessType type)
 {
-	this->removeFEMConditions(type, "", FEMCondition::UNSPECIFIED);
+	this->removeConditions(type, "", FEMCondition::UNSPECIFIED);
 
 	const ProcessItem* processParent = this->getProcessParent(type);
 	if (processParent)
@@ -241,11 +260,10 @@ ProcessItem* ProcessModel::getProcessParent(const FiniteElement::ProcessType typ
 	for (int i = 0; i < nLists; i++)
 		if (static_cast<ProcessItem*>(_rootItem->child(i))->getItem()->getProcessType() == type)
 			return static_cast<ProcessItem*>(_rootItem->child(i));
-
 	return nullptr;
 }
 
-CondObjectListItem* ProcessModel::getCondParent(TreeItem* parent, const FEMCondition::CondType type)
+CondObjectListItem* ProcessModel::getCondParent(TreeItem const*const parent, const FEMCondition::CondType type) const
 {
 	int nLists = parent->childCount();
 	for (int i = 0; i < nLists; i++)
@@ -292,4 +310,13 @@ void ProcessModel::replaceCondition(const QModelIndex &idx, FEMCondition* condit
 	this->getItem(idx)->parentItem()->removeChildren(this->getItem(idx)->row(), 1);
 	//add new condition
 	this->addCondition(condition);
+}
+
+void ProcessModel::updateModel()
+{
+	const std::vector<FEMCondition*> cnd_vec = _project.getConditions();
+	for (auto it(cnd_vec.cbegin()); it != cnd_vec.cend(); ++it)
+		// if Condition is not yet added to GUI, do it now
+		if (!this->getCondition((*it)->getProcessType(), (*it)->getAssociatedGeometryName(), (*it)->getCondType(), (*it)->getGeomType(), (*it)->getGeoName())) 
+			addConditionItem(*it);
 }

@@ -125,7 +125,8 @@ void ProjectData::addConditions(std::vector<FEMCondition*> conds)
 		_cond_vec.push_back(conds[i]);
 }
 
-const FEMCondition* ProjectData::getCondition(const std::string &geo_name,
+const FEMCondition* ProjectData::getCondition(FiniteElement::ProcessType pcs_type,
+                                              const std::string &geo_name,
                                               GeoLib::GEOTYPE type,
                                               const std::string &cond_name) const
 {
@@ -135,14 +136,14 @@ const FEMCondition* ProjectData::getCondition(const std::string &geo_name,
 			     ((*it)->getGeomType() == type) )
 				return *it;
 
-	std::cout << "Error in ProjectData::getCondition() - No condition found with name \"" <<
-	cond_name << "\"..." << std::endl;
-	return NULL;
+	std::cout << "Error in ProjectData::getCondition() - No condition found with name \"" 
+		      << cond_name << "\"..." << std::endl;
+	return nullptr;
 }
 
 std::vector<FEMCondition*> ProjectData::getConditions(FiniteElement::ProcessType pcs_type,
-															std::string geo_name,
-                                                            FEMCondition::CondType cond_type) const
+                                                      std::string geo_name,
+                                                      FEMCondition::CondType cond_type) const
 {
 	// if all
 	if (pcs_type == FiniteElement::INVALID_PROCESS && geo_name.empty() && cond_type == FEMCondition::UNSPECIFIED)

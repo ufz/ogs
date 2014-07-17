@@ -31,7 +31,7 @@ public:
 	 * Constructor
 	 * \param project Project data.
 	 */
-	XmlGspInterface(ProjectData* project);
+	XmlGspInterface(ProjectData &project);
 
 	virtual ~XmlGspInterface() {};
 
@@ -49,7 +49,7 @@ protected:
 private:
 	std::string _filename;
 
-	ProjectData* _project;
+	ProjectData& _project;
 };
 
 }

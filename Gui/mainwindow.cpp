@@ -227,7 +227,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 
 	// Setup connections for process model to GUI
 	connect(modellingTabWidget->treeView, SIGNAL(conditionsRemoved(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)),
-	        _processModel, SLOT(removeFEMConditions(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)));
+	        _processModel, SLOT(removeConditions(const FiniteElement::ProcessType, const std::string&, const FEMCondition::CondType)));
 	connect(modellingTabWidget->treeView, SIGNAL(processRemoved(const FiniteElement::ProcessType)),
 	        _processModel, SLOT(removeProcess(const FiniteElement::ProcessType)));
 	connect(modellingTabWidget, SIGNAL(requestNewProcess()),
@@ -480,7 +480,7 @@ void MainWindow::save()
 
 		if (fi.suffix().toLower() == "gsp")
 		{
-			XmlGspInterface xml(&_project);
+			XmlGspInterface xml(_project);
 			xml.writeToFile(fileName.toStdString());
 		}
 		else if (fi.suffix().toLower() == "geo")
@@ -540,11 +540,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gsp")
 		{
-			XmlGspInterface xml(&_project);
+			XmlGspInterface xml(_project);
 			if (xml.readFile(fileName))
 			{
-				INFO("Adding missing meshes to GUI.");
 				_meshModels->updateModel();
+				_processModel->updateModel();
 			}
 			else
 				OGSError::box("Failed to load project file.\n Please see console for details.");
@@ -887,7 +887,7 @@ void MainWindow::loadFEMConditionsFromFile(const QString &fileName, std::string 
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 		std::vector<FEMCondition*> conditions;
-		XmlCndInterface xml(&_project);
+		XmlCndInterface xml(_project);
 		std::size_t const n_cond_before(this->_project.getConditions().size());
 		if (xml.readFile(fileName)) {
 			std::size_t const n_cond_after(this->_project.getConditions().size());
@@ -943,7 +943,7 @@ void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName)
 {
 	QFileInfo fi(fileName);
-	XmlCndInterface xml(&_project);
+	XmlCndInterface xml(_project);
 	xml.setNameForExport(geoName.toStdString());
 	xml.setConditionType(type);
 	xml.writeToFile(fileName.toStdString());

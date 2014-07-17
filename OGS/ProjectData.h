@@ -89,7 +89,8 @@ public:
 	virtual void addConditions(std::vector<FEMCondition*> conds);
 
 	/// Returns the FEM Condition set on a GeoObject with the given name and type from a certain geometry.
-	const FEMCondition* getCondition(const std::string &geo_name,
+	const FEMCondition* getCondition(FiniteElement::ProcessType pcs_type,
+	                                 const std::string &geo_name,
 	                                 GeoLib::GEOTYPE type,
 	                                 const std::string &cond_name) const;
 

@@ -56,8 +56,11 @@ public slots:
 	/// Adds a process to the model
 	ProcessItem* addProcess(ProcessInfo* pcs);
 
+	/// Returns the FEM Condition set on a GeoObject with the given name and type from a certain geometry.
+	const FEMCondition* getCondition(const FiniteElement::ProcessType pcs_type, const std::string &geo_name, const FEMCondition::CondType cond_type, const GeoLib::GEOTYPE geo_type, const std::string &cond_name) const;
+
 	/// Removes FEMConditions from the the model. Conditions can be specified by process type, geometry name or condition type or a combination of the three.
-	void removeFEMConditions(const FiniteElement::ProcessType pcs_type, const std::string &geometry_name, const FEMCondition::CondType cond_type);
+	void removeConditions(const FiniteElement::ProcessType pcs_type, const std::string &geometry_name, const FEMCondition::CondType cond_type);
 
 	/// Removes a process from the model
 	void removeProcess(const FiniteElement::ProcessType type);
@@ -67,6 +70,9 @@ public slots:
 
 	/// Remove the given TreeItem and replace it with another condition (this is used for editing FEMConditions)
 	void replaceCondition(const QModelIndex &idx, FEMCondition* condition);
+
+	/// Updates the model based on the ProjectData-object
+	void updateModel();
 
 private:
 	/// Adds a new FEM condition to the condition tree model.
@@ -79,7 +85,7 @@ private:
 	CondObjectListItem* createCondParent(ProcessItem* parent, FEMCondition* cond);
 
 	/// Returns the subtree-item for a given type of condtion.
-	CondObjectListItem* getCondParent(TreeItem* parent, const FEMCondition::CondType type) ;
+	CondObjectListItem* getCondParent(TreeItem const*const parent, const FEMCondition::CondType type) const;
 
 	/// Returns the subtree item for a process with the given name. If create_item is true, this item will be created if it doesn't exist yet.
 	ProcessItem* getProcessParent(const FiniteElement::ProcessType type) const;
