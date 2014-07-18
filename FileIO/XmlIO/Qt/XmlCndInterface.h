@@ -37,7 +37,7 @@ public:
 	 * Constructor
 	 * \param project Project data.
 	 */
-	XmlCndInterface(ProjectData* project);
+	XmlCndInterface(ProjectData &project);
 
 	~XmlCndInterface() {}
 
@@ -67,7 +67,7 @@ private:
 
 	FEMCondition::CondType _type;
 
-	ProjectData* _project;
+	ProjectData& _project;
 };
 }
 

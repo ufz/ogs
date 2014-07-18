@@ -21,6 +21,7 @@
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
 
+#include "FileTools.h"
 #include "FileFinder.h"
 #include "FileIO/Legacy/MeshIO.h"
 #include "FileIO/readMeshFromFile.h"
@@ -32,7 +33,7 @@
 
 namespace FileIO
 {
-XmlGspInterface::XmlGspInterface(ProjectData* project) :
+XmlGspInterface::XmlGspInterface(ProjectData& project) :
 	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
 	_project(project)
 {
@@ -62,7 +63,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		const QString file_node(fileList.at(i).nodeName());
 		if (file_node.compare("geo") == 0)
 		{
-			XmlGmlInterface gml(*(_project->getGEOObjects()));
+			XmlGmlInterface gml(*(_project.getGEOObjects()));
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 			{
@@ -79,7 +80,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		}
 		else if (file_node.compare("stn") == 0)
 		{
-			XmlStnInterface stn(*(_project->getGEOObjects()));
+			XmlStnInterface stn(*(_project.getGEOObjects()));
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
@@ -92,7 +93,14 @@ int XmlGspInterface::readFile(const QString &fileName)
 			                             fileList.at(i).toElement().text().toStdString();
 			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
 			if (msh)
-				_project->addMesh(msh);
+				_project.addMesh(msh);
+		}
+		else if (file_node.compare("cnd") == 0)
+		{
+			const std::string cnd_name = path.toStdString() +
+			                             fileList.at(i).toElement().text().toStdString();
+			XmlCndInterface cnd(_project);
+			cnd.readFile(cnd_name);
 		}
 	}
 
@@ -107,7 +115,7 @@ int XmlGspInterface::writeToFile(std::string filename)
 
 bool XmlGspInterface::write()
 {
-	GeoLib::GEOObjects* geoObjects = _project->getGEOObjects();
+	GeoLib::GEOObjects* geoObjects = _project.getGEOObjects();
 	QFileInfo fi(QString::fromStdString(_filename));
 	std::string path((fi.absolutePath()).toStdString() + "/");
 
@@ -123,11 +131,10 @@ bool XmlGspInterface::write()
 
 	doc.appendChild(root);
 
-	// GLI
+	// GML
 	std::vector<std::string> geoNames;
 	geoObjects->getGeometryNames(geoNames);
-	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end();
-	     ++it)
+	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end(); ++it)
 	{
 		// write GLI file
 		XmlGmlInterface gml(*geoObjects);
@@ -147,9 +154,8 @@ bool XmlGspInterface::write()
 	}
 
 	// MSH
-	const std::vector<MeshLib::Mesh*> msh_vec = _project->getMeshObjects();
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end();
-	     ++it)
+	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
+	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
 	{
 		// write mesh file
 		Legacy::MeshIO meshIO;
@@ -169,8 +175,7 @@ bool XmlGspInterface::write()
 	// STN
 	std::vector<std::string> stnNames;
 	geoObjects->getStationVectorNames(stnNames);
-	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end();
-	     ++it)
+	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
 	{
 		// write STN file
 		XmlStnInterface stn(*geoObjects);
@@ -189,7 +194,27 @@ bool XmlGspInterface::write()
 			fileNameTag.appendChild(fileNameText);
 		}
 		else
-			ERR("XmlGspInterface::writeFile(): Error writing file \"%s\".", name.c_str());
+			ERR("XmlGspInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
+	}
+
+	// CND
+	const std::vector<FEMCondition*> &cnd_vec (_project.getConditions());
+	if (!cnd_vec.empty())
+	{
+		XmlCndInterface cnd(_project);
+		const std::string cnd_name (BaseLib::extractBaseNameWithoutExtension(_filename) + ".cnd");
+		if (cnd.writeToFile(path + cnd_name))
+		{
+			// write entry in project file
+			QDomElement cndTag = doc.createElement("cnd");
+			root.appendChild(cndTag);
+			QDomElement fileNameTag = doc.createElement("file");
+			cndTag.appendChild(fileNameTag);
+			QDomText fileNameText = doc.createTextNode(QString::fromStdString(cnd_name));
+			fileNameTag.appendChild(fileNameText);
+		}
+		else
+			ERR("XmlGspInterface::writeFile(): Error writing cnd-file \"%s\".", cnd_name.c_str());
 	}
 
 	std::string xml = doc.toString().toStdString();

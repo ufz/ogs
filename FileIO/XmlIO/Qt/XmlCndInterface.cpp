@@ -26,7 +26,7 @@
 
 namespace FileIO
 {
-XmlCndInterface::XmlCndInterface(ProjectData* project)
+XmlCndInterface::XmlCndInterface(ProjectData &project)
 	: XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysCND.xsd")),
 	  _type(FEMCondition::UNSPECIFIED), _project(project)
 {
@@ -46,7 +46,7 @@ int XmlCndInterface::readFile(const QString &fileName)
 		return 0;
 	}
 
-	std::size_t const n_cond_before(this->_project->getConditions().size());
+	std::size_t const n_cond_before(this->_project.getConditions().size());
 	QDomNodeList lists = docElement.childNodes();
 	for (int i = 0; i < lists.count(); i++)
 	{
@@ -58,7 +58,7 @@ int XmlCndInterface::readFile(const QString &fileName)
 		else if (list_node.nodeName().compare("SourceTerms") == 0)
 			readConditions(list_node, FEMCondition::SOURCE_TERM);
 	}
-	std::size_t const n_cond_after(this->_project->getConditions().size());
+	std::size_t const n_cond_after(this->_project.getConditions().size());
 	if (n_cond_after-n_cond_before > 0)
 		return 1;     //do something like _geoObjects->addStationVec(stations, stnName, color);
 	else
@@ -77,8 +77,8 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 	while (!cond.isNull())
 	{
 		std::string geometry_name ( cond.attribute("geometry").toStdString() );
-		if (this->_project->getGEOObjects()->exists(geometry_name) >= 0 ||
-		    this->_project->meshExists(geometry_name))
+		if (this->_project.getGEOObjects()->exists(geometry_name) >= 0 ||
+		    this->_project.meshExists(geometry_name))
 		{
 			FEMCondition* c ( new FEMCondition(geometry_name, type) );
 
@@ -111,7 +111,7 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 						else if (prop_name.compare("Name") == 0)
 							geo_obj_name = geoProps.at(j).toElement().text().toStdString();
 					}
-					c->initGeometricAttributes(geometry_name, geo_type, geo_obj_name, *(_project->getGEOObjects()));
+					c->initGeometricAttributes(geometry_name, geo_type, geo_obj_name, *(_project.getGEOObjects()));
 				}
 				else if (prop_node.nodeName().compare("Distribution") == 0)
 				{
@@ -156,7 +156,7 @@ void XmlCndInterface::readConditions(const QDomNode &listRoot,
 					}
 				}
 			}
-			this->_project->addCondition(c);
+			this->_project.addCondition(c);
 		}
 		else
 		{
@@ -177,7 +177,7 @@ bool XmlCndInterface::write()
 	root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd" );
 
-	std::vector<FEMCondition*> const& conditions (_project->getConditions(
+	std::vector<FEMCondition*> const& conditions (_project.getConditions(
 	                                                     FiniteElement::INVALID_PROCESS,
 	                                                     _exportName,
 	                                                     _type) );

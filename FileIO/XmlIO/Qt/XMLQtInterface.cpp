@@ -38,7 +38,7 @@ int XMLQtInterface::readFile(const QString &fileName)
 	QFile file(fileName);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		ERR("XMLQtInterface::readFile(): Can't open xml-file %s.", fileName.data());
+		ERR("XMLQtInterface::readFile(): Can't open xml-file %s.", fileName.toStdString().c_str());
 		return 0;
 	}
 	_fileData = file.readAll();

@@ -40,9 +40,7 @@
       <xs:sequence>
         <xs:element name="geo" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="msh" type="mshElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="bc"  type="geoElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="ic"  type="geoElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="st"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+	<xs:element name="cnd" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
 	<xs:element name="mfp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
 	<xs:element name="mmp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
 	<xs:element name="msp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
