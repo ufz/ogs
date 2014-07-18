@@ -61,7 +61,7 @@ TEST(FileIO, TestBoostXmlCndInterfaceUsingBoundaryCondition)
 	const std::string local_path("XmlCndInterfaceTestFile.cnd");
 	std::string fname(std::string(PUT_TMP_DIR_IN).append(local_path));
 
-	FileIO::XmlCndInterface xml(&project_data);
+	FileIO::XmlCndInterface xml(project_data);
 	xml.setNameForExport(geometry_name);
 	int result_out = xml.writeToFile(fname);
 	ASSERT_EQ(result_out, 1);
