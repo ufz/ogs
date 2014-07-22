@@ -99,10 +99,8 @@ void FEMConditionSetupDialog::setupDialog()
 	else	// direct on mesh
 	{
 		this->disTypeBox->addItem("Direct");
-		//static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
-		directButton = new QPushButton("Calculate Values");
-		static_cast<QGridLayout*>(this->layout())->addWidget(directButton,5,1);
-		connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
+		this->setValueInputWidget(true);
+		this->condTypeBox->setCurrentIndex(2);
 	}
 
 	const std::list<std::string> process_names = FiniteElement::getAllProcessNames();
@@ -263,9 +261,11 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 
 void FEMConditionSetupDialog::setValueInputWidget(bool is_button)
 {
-	if (is_button) // linear or direct
+	if (is_button || _cond.getGeomType() == GeoLib::GEOTYPE::INVALID) // linear or direct
 	{
 		static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
+		delete firstValueEdit;
+		firstValueEdit = nullptr;
 		directButton = new QPushButton("Calculate Values");
 		connect(this->directButton, SIGNAL(pressed()), this, SLOT(directButton_pressed()));
 		static_cast<QGridLayout*>(this->layout())->addWidget(directButton,5,1);
@@ -275,7 +275,8 @@ void FEMConditionSetupDialog::setValueInputWidget(bool is_button)
 		static_cast<QGridLayout*>(this->layout())->removeWidget(this->directButton);
 		delete directButton;
 		directButton = nullptr;
-		this->firstValueEdit->setText("0");
+		firstValueEdit = new QLineEdit("0");
+		this->firstValueEdit->setValidator (_first_value_validator);
 		static_cast<QGridLayout*>(this->layout())->addWidget(this->firstValueEdit,5,1);
 	}
 }
