@@ -45,6 +45,7 @@ private:
 	                         GeoLib::Point const* const c,
 	                         GeoLib::Point const* const d) const;
 	double checkPrism (std::vector<const GeoLib::Point*> const & pnts) const;
+	double checkPyramid (std::vector<const GeoLib::Point*> const & pnts) const;
 	double checkHexahedron (std::vector<const GeoLib::Point*> const & pnts) const;
 };
 }
