@@ -18,6 +18,8 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+#include "FileTools.h"
+
 // models
 #include "ProcessModel.h"
 #include "ElementTreeModel.h"
@@ -942,11 +944,17 @@ void MainWindow::addFEMConditions(std::vector<FEMCondition*> const& conditions)
 
 void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName)
 {
-	QFileInfo fi(fileName);
+	std::string file_name (fileName.toStdString());
+	if (BaseLib::getFileExtension(file_name).compare("cnd"))
+		file_name.append(".cnd");
+	if (BaseLib::IsFileExisting(file_name))
+		if (!OGSError::question("File already exists.\nOverwrite file?", "Warning"))
+			return;
+
 	XmlCndInterface xml(_project);
 	xml.setNameForExport(geoName.toStdString());
 	xml.setConditionType(type);
-	xml.writeToFile(fileName.toStdString());
+	xml.writeToFile(file_name);
 }
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
