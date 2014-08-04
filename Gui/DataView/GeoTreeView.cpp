@@ -254,7 +254,7 @@ void GeoTreeView::writeToFile() const
 	{
 		TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
 		QString file_type ("GeoSys geometry file (*.gml)");
-#ifdef _DEBUG
+#ifndef NDEBUG
 		 file_type.append(";;Legacy geometry file (*.gli)");
 #endif // DEBUG
 		QString geoName = item->data(0).toString();

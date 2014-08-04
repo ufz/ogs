@@ -959,7 +959,7 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
-#ifdef _DEBUG
+#ifndef NDEBUG
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "gli")
 	{
