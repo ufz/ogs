@@ -959,6 +959,14 @@ void MainWindow::writeFEMConditionsToFile(const QString &geoName, const FEMCondi
 
 void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 {
+#ifndef NDEBUG
+	QFileInfo fi(fileName);
+	if (fi.suffix().toLower() == "gli")
+	{
+		FileIO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(), *this->_project.getGEOObjects());
+		return;
+	}
+#endif
 	XmlGmlInterface xml(*(_project.getGEOObjects()));
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
