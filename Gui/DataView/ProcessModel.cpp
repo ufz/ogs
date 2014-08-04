@@ -74,9 +74,7 @@ void ProcessModel::addConditionItem(FEMCondition* c)
 	condParent->appendChild(condItem);
 	// add information on primary variable
 	QList<QVariant> pvData;
-	pvData
-			<< QString::fromStdString(
-					convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
+	pvData << QString::fromStdString(convertPrimaryVariableToString(c->getProcessPrimaryVariable()));
 	TreeItem* pvInfo = new TreeItem(pvData, condItem);
 	// add distribution information
 	QList<QVariant> disData;

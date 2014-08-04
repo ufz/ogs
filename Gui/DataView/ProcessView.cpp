@@ -68,8 +68,13 @@ void ProcessView::contextMenuEvent( QContextMenuEvent* event )
 	}
 	else if (this->isConditionItem(idx))
 	{
+
 		QAction* editCondAction = menu.addAction("Edit condition");
-		connect(editCondAction, SIGNAL(triggered()), this, SLOT(editCondition()));
+		// check if condition on mesh, if so it is not editable
+		if (GeoLib::convertGeoType(static_cast<ProcessModel*>(this->model())->getItem(idx)->data(1).toString().toStdString()) != GeoLib::GEOTYPE::INVALID)
+			connect(editCondAction, SIGNAL(triggered()), this, SLOT(editCondition()));
+		else
+			editCondAction->setEnabled(false);
 	}
 
 	menu.exec(event->globalPos());
