@@ -97,7 +97,7 @@ IF (GEOTIFF_FOUND)
 	TARGET_LINK_LIBRARIES( ogs-gui ${GEOTIFF_LIBRARIES} )
 ENDIF () # GEOTIFF_FOUND
 
-ADD_DEPENDENCIES ( ogs-gui VtkVis OGSProject )
+ADD_DEPENDENCIES ( ogs-gui VtkVis )
 
 IF(MSVC)
 	# Set linker flags

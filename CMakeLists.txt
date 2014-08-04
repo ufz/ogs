@@ -140,7 +140,9 @@ ENDIF() # OGS_BUILD_GUI
 ADD_SUBDIRECTORY( AssemblerLib )
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
-ADD_DEPENDENCIES(BaseLib Boost)
+IF(TARGET Boost)
+	ADD_DEPENDENCIES(BaseLib Boost)
+ENDIF()
 ADD_SUBDIRECTORY( FileIO )
 ADD_SUBDIRECTORY( GeoLib )
 ADD_SUBDIRECTORY( MathLib )
