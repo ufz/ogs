@@ -253,9 +253,13 @@ void GeoTreeView::writeToFile() const
 	else
 	{
 		TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
+		QString file_type ("GeoSys geometry file (*.gml)");
+#ifdef _DEBUG
+		 file_type.append(";;Legacy geometry file (*.gli)");
+#endif // DEBUG
 		QString geoName = item->data(0).toString();
 		QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as", 
-			LastSavedFileDirectory::getDir() + geoName, "GeoSys geometry file (*.gml)");
+			LastSavedFileDirectory::getDir() + geoName, file_type);
 		if (!fileName.isEmpty())
 		{
 			LastSavedFileDirectory::setDir(fileName);
