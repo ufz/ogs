@@ -1,56 +1,35 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <!-- OpenGeoSysProject schema; initial implementation: Karsten Rink, 2010-08-20 -->
+<!-- OpenGeoSysProject schema; initial implementation: Karsten Rink, 2010-08-20 -->
   
-  <!-- object containing just a source file definition -->
-  <xs:complexType name="projectElement">
-    <xs:sequence>
-	<xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
-    </xs:sequence>
-  </xs:complexType>
-
-  <!-- object containing a required reference to a geometry file -->
-  <xs:complexType name="geoElement">
-    <xs:complexContent>
-      <xs:extension base="projectElement">
-        <xs:sequence>
-          <xs:element name="geoReference" type="xs:string"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <!-- msh-object with optional geometry- and texture-reference -->
-  <xs:complexType name="mshElement">
-    <xs:complexContent>
-      <xs:extension base="projectElement">
-        <xs:sequence>
-          <xs:element name="geoReference" type="xs:string" minOccurs="0" />
-          <xs:element name="texture" type="xs:string" minOccurs="0" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  
-  <!-- definition of file content -->    
+  <!-- enum of valid processes -->
+  <xs:simpleType name="ProcessType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Undefined" />
+      <xs:enumeration value="GroundwaterFlow" />
+      <!-- add more valid processes here -->
+    </xs:restriction>
+  </xs:simpleType>
+    
+  <!-- definition of project files-->    
   <xs:element name="OpenGeoSysProject">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="geo" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element name="msh" type="mshElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="cnd" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="mfp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="mmp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="msp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="np"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="out" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="pcs" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="sim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="tim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="fct" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="stn" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+        <!-- all elements are optional so project files can be used even if a certain file required
+             for simulation does not yet exist -->
+	<xs:element name="geofile" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="mshfile" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="stnfile" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="process" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+                <xs:element name="numfile" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="cndfile" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element name="matfile" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="type" type="ProcessType" use="required" />
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>  
   </xs:element> 

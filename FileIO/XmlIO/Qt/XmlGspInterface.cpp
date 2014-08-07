@@ -17,9 +17,10 @@
 
 #include "XmlGspInterface.h"
 
-#include "XmlCndInterface.h"
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
+#include "XmlCndInterface.h"
+#include "XmlIO/Boost/BoostVtuInterface.h"
 
 #include "FileTools.h"
 #include "FileFinder.h"
@@ -44,64 +45,67 @@ int XmlGspInterface::readFile(const QString &fileName)
 	if(XMLQtInterface::readFile(fileName) == 0)
 		return 0;
 
-	QFileInfo fi(fileName);
-	QString path = (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
+	QFileInfo const fi(fileName);
+	QString const path = (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
 
 	QDomDocument doc("OGS-PROJECT-DOM");
 	doc.setContent(_fileData);
-	QDomElement docElement = doc.documentElement(); //OpenGeoSysProject
+	QDomElement const docElement = doc.documentElement(); //OpenGeoSysProject
 	if (docElement.nodeName().compare("OpenGeoSysProject"))
 	{
 		ERR("XmlGspInterface::readFile(): Unexpected XML root.");
 		return 0;
 	}
 
-	QDomNodeList fileList = docElement.childNodes();
-
-	for(int i = 0; i < fileList.count(); i++)
+	QDomElement file_node = docElement.firstChildElement();
+	while (!file_node.isNull())
 	{
-		const QString file_node(fileList.at(i).nodeName());
-		if (file_node.compare("geo") == 0)
+		if (file_node.nodeName().compare("geofile") == 0)
 		{
 			XmlGmlInterface gml(*(_project.getGEOObjects()));
-			const QDomNodeList childList = fileList.at(i).childNodes();
-			for(int j = 0; j < childList.count(); j++)
-			{
-				const QDomNode child_node (childList.at(j));
-				if (child_node.nodeName().compare("file") == 0)
-				{
-					DBUG("XmlGspInterface::readFile(): path: \"%s\".",
-					     path.data());
-					DBUG("XmlGspInterface::readFile(): file name: \"%s\".",
-					     (child_node.toElement().text()).data());
-					gml.readFile(QString(path + child_node.toElement().text()));
-				}
-			}
+			DBUG("XmlGspInterface::readFile(): path: \"%s\".",
+					path.data());
+			DBUG("XmlGspInterface::readFile(): file name: \"%s\".",
+					(child_node.toElement().text()).data());
+			gml.readFile(QString(path + file_node.toElement().text()));
 		}
-		else if (file_node.compare("stn") == 0)
+		else if (file_node.nodeName().compare("stnfile") == 0)
 		{
 			XmlStnInterface stn(*(_project.getGEOObjects()));
-			const QDomNodeList childList = fileList.at(i).childNodes();
-			for(int j = 0; j < childList.count(); j++)
-				if (childList.at(j).nodeName().compare("file") == 0)
-					stn.readFile(QString(path +
-					                     childList.at(j).toElement().text()));
+			stn.readFile(QString(path + file_node.toElement().text()));
 		}
-		else if (file_node.compare("msh") == 0)
+		else if (file_node.nodeName().compare("mshfile") == 0)
 		{
-			const std::string msh_name = path.toStdString() +
-			                             fileList.at(i).toElement().text().toStdString();
-			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
-			if (msh)
-				_project.addMesh(msh);
+			std::string const msh_name = 
+				path.toStdString() + file_node.toElement().text().toStdString();
+			MeshLib::Mesh* mesh = FileIO::readMeshFromFile(msh_name);
+			if (mesh)
+				_project.addMesh(mesh);
 		}
-		else if (file_node.compare("cnd") == 0)
+		else if (file_node.nodeName().compare("process") == 0)
 		{
-			const std::string cnd_name = path.toStdString() +
-			                             fileList.at(i).toElement().text().toStdString();
-			XmlCndInterface cnd(_project);
-			cnd.readFile(cnd_name);
+			QDomElement process_node = file_node.firstChildElement();
+			while (!process_node.isNull())
+			{
+				if (process_node.nodeName().compare("cndfile") == 0)
+				{
+					const std::string cnd_name = 
+						path.toStdString() + process_node.toElement().text().toStdString();
+					XmlCndInterface cnd(_project);
+					cnd.readFile(cnd_name);
+				}
+				if (file_node.nodeName().compare("matfile") == 0)
+				{
+					INFO ("Material file reader not yet implemented.");
+				}
+				if (file_node.nodeName().compare("numfile") == 0)
+				{
+					INFO ("Numeric file reader not yet implemented.");
+				}
+				process_node = process_node.nextSiblingElement();
+			}
 		}
+		file_node = file_node.nextSiblingElement();
 	}
 
 	return 1;
@@ -131,94 +135,100 @@ bool XmlGspInterface::write()
 
 	doc.appendChild(root);
 
-	// GML
+	
+	{ // GML
 	std::vector<std::string> geoNames;
 	geoObjects->getGeometryNames(geoNames);
+	XmlGmlInterface gml(*geoObjects);
 	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end(); ++it)
 	{
-		// write GLI file
-		XmlGmlInterface gml(*geoObjects);
-		std::string name(*it);
-		gml.setNameForExport(name);
-		if (gml.writeToFile(std::string(path + name + ".gml")))
-		{
-			// write entry in project file
-			QDomElement geoTag = doc.createElement("geo");
-			root.appendChild(geoTag);
-			QDomElement fileNameTag = doc.createElement("file");
-			geoTag.appendChild(fileNameTag);
-			QDomText fileNameText =
-			        doc.createTextNode(QString::fromStdString(name + ".gml"));
-			fileNameTag.appendChild(fileNameText);
-		}
+		gml.setNameForExport(*it);
+		this->writeFileName(doc, root, "geofile", gml, path, *it, "gml");
 	}
+	} // end GML-scope
 
-	// MSH
-	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
+	{ // MSH
+	std::vector<MeshLib::Mesh*> const msh_vec = _project.getMeshObjects();
+	BoostVtuInterface msh;
 	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
 	{
-		// write mesh file
-		Legacy::MeshIO meshIO;
-		meshIO.setMesh(*it);
-		std::string fileName(path + (*it)->getName());
-		meshIO.writeToFile(fileName);
-
-		// write entry in project file
-		QDomElement mshTag = doc.createElement("msh");
-		root.appendChild(mshTag);
-		QDomElement fileNameTag = doc.createElement("file");
-		mshTag.appendChild(fileNameTag);
-		QDomText fileNameText = doc.createTextNode(QString::fromStdString((*it)->getName()));
-		fileNameTag.appendChild(fileNameText);
+		std::string const name((*it)->getName());
+		msh.setMesh(*it);
+		if (msh.writeToFile(path + name + ".vtu"))
+		{
+			// write entry in project file
+			QDomElement fileTag = doc.createElement("mshfile");
+			root.appendChild(fileTag);
+			QDomText const fileNameText =
+				doc.createTextNode(QString::fromStdString(name + ".vtu"));
+			fileTag.appendChild(fileNameText);
+		}
+		else
+			ERR("XmlGspInterface::writeFile(): Error writing vtu-file \"%s\".", name.c_str());
 	}
+	} // end MSH-scope
 
-	// STN
+	{ // STN
 	std::vector<std::string> stnNames;
 	geoObjects->getStationVectorNames(stnNames);
+	XmlStnInterface stn(*geoObjects);
 	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
 	{
-		// write STN file
-		XmlStnInterface stn(*geoObjects);
-		std::string name(*it);
-		stn.setNameForExport(name);
-
-		if (stn.writeToFile(path + name + ".stn"))
-		{
-			// write entry in project file
-			QDomElement geoTag = doc.createElement("stn");
-			root.appendChild(geoTag);
-			QDomElement fileNameTag = doc.createElement("file");
-			geoTag.appendChild(fileNameTag);
-			QDomText fileNameText =
-			        doc.createTextNode(QString::fromStdString(name + ".stn"));
-			fileNameTag.appendChild(fileNameText);
-		}
-		else
-			ERR("XmlGspInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
+		stn.setNameForExport(*it);
+		this->writeFileName(doc, root, "stnfile", stn, path, *it, "stn");
 	}
+	} // end STN-scope
 
-	// CND
+	// process-specific data
+	QDomElement processTag = doc.createElement("process");
+	std::string const process_name ("Undefined"); // TODO: extract process name from project data
+	processTag.setAttribute( "type", QString::fromStdString(process_name) );
+	root.appendChild(processTag);
+
+	{ // CND
 	const std::vector<FEMCondition*> &cnd_vec (_project.getConditions());
+	XmlCndInterface cnd(_project);
 	if (!cnd_vec.empty())
-	{
-		XmlCndInterface cnd(_project);
-		const std::string cnd_name (BaseLib::extractBaseNameWithoutExtension(_filename) + ".cnd");
-		if (cnd.writeToFile(path + cnd_name))
-		{
-			// write entry in project file
-			QDomElement cndTag = doc.createElement("cnd");
-			root.appendChild(cndTag);
-			QDomElement fileNameTag = doc.createElement("file");
-			cndTag.appendChild(fileNameTag);
-			QDomText fileNameText = doc.createTextNode(QString::fromStdString(cnd_name));
-			fileNameTag.appendChild(fileNameText);
-		}
-		else
-			ERR("XmlGspInterface::writeFile(): Error writing cnd-file \"%s\".", cnd_name.c_str());
+	{		
+		std::string const cnd_name (process_name + ".cnd");
+		this->writeFileName(doc, processTag, "cndfile", cnd, path, process_name, "cnd");
 	}
+	} // end CND-scope
+
+	// TODO: writer for MAT-files
+
+	// TODO: writer for NUM-files
+
+	// if no process-dependent information exists, the process tag can be removed again
+	if (processTag.toElement().childNodes().isEmpty())
+		root.removeAttribute("process");
 
 	std::string xml = doc.toString().toStdString();
 	_out << xml;
 	return true;
 }
+
+
+void XmlGspInterface::writeFileName(QDomDocument &doc, 
+	                                QDomElement &parent, 
+									QString const& tag_name,
+									XMLInterface &xml, 
+									std::string const& path, 
+									std::string const& file_name, 
+									std::string const& extension)
+{
+	if (xml.writeToFile(path + file_name + "." + extension))
+	{
+		// write entry in project file
+		QDomElement fileTag = doc.createElement(tag_name);
+		parent.appendChild(fileTag);
+		QDomText const fileNameText =
+			doc.createTextNode(QString::fromStdString(file_name + "." + extension));
+		fileTag.appendChild(fileNameText);
+	}
+	else
+		ERR("XmlGspInterface::writeFile(): Error writing %s-file \"%s\".", extension.c_str(), file_name.c_str());
+}
+
+
 }
