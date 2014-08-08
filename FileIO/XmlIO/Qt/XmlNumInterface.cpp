@@ -50,7 +50,7 @@ int XmlNumInterface::readFile(QString const& fileName)
 		if (num_node.nodeName().compare("Type") == 0)
 		{
 			std::string const solver_type = num_node.toElement().text().toStdString();
-			std::cout << "Non-linear solver type: " << solver_type << std::endl;
+			INFO("Non-linear solver type: %s.", solver_type);
 		}
 		else if (num_node.nodeName().compare("LinearSolver") == 0)
 			readLinearSolverConfiguration(num_node);
