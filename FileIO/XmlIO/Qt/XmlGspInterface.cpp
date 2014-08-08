@@ -63,10 +63,6 @@ int XmlGspInterface::readFile(const QString &fileName)
 		if (file_node.nodeName().compare("geofile") == 0)
 		{
 			XmlGmlInterface gml(*(_project.getGEOObjects()));
-			DBUG("XmlGspInterface::readFile(): path: \"%s\".",
-					path.data());
-			DBUG("XmlGspInterface::readFile(): file name: \"%s\".",
-					(child_node.toElement().text()).data());
 			gml.readFile(QString(path + file_node.toElement().text()));
 		}
 		else if (file_node.nodeName().compare("stnfile") == 0)
