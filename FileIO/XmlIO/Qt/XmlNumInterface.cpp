@@ -79,8 +79,7 @@ void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 			precond_type = linear_solver_node.toElement().text().toStdString();
 		linear_solver_node = linear_solver_node.nextSiblingElement();
 	}
-	std::cout << "Using " << library << "-library with solver " << lin_solver_type 
-		      << " and " << precond_type << " preconditioner." << std::endl;
+	INFO("Using %s-library with solver %s and %s preconditioner.",library, lin_solver_type, precond_type);
 }
 
 
@@ -98,7 +97,7 @@ void XmlNumInterface::readIterationScheme(QDomElement const& iteration_root)
 
 		iteration_node = iteration_node.nextSiblingElement();
 	}
-	std::cout << "Doing " << max_iterations << " iterations at fixed step size of " << fixed_step_size << std::endl;
+	INFO("Doing a maximum of %d iterations at fixed step size of %f", max_iterations, fixed_step_size);
 }
 
 void XmlNumInterface::readConvergenceCriteria(QDomElement const& convergence_root)
@@ -116,12 +115,12 @@ void XmlNumInterface::readConvergenceCriteria(QDomElement const& convergence_roo
 
 		conv_node = conv_node.nextSiblingElement();
 	}
-	std::cout << "Convergence reached when error below " << error_threshold << " using " << error_method << std::endl;
+	INFO("Convergence reached when error below %f using %s.", error_threshold, error_method);
 }
 
 bool XmlNumInterface::write()
 {
-	std::cout << "Not yet implemented..." << std::endl;
+	INFO("Not yet implemented...");
 	return false;
 }
 
