@@ -195,7 +195,7 @@ std::string readPolyline(std::istream &in,
 		{ // read the point ids
 			in >> line;
 			if (type != 100)
-				while (!in.eof() && line.size() != 0
+				while (!in.eof() && !in.fail() && line.size() != 0
 				       && (line.find("#") == std::string::npos)
 				       && (line.find("$") == std::string::npos))
 				{
@@ -261,7 +261,7 @@ std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_
 	}
 	std::string tag("#POLYLINE");
 
-	while (!in.eof() && tag.find("#POLYLINE") != std::string::npos)
+	while (!in.eof() && !in.fail() && tag.find("#POLYLINE") != std::string::npos)
 		tag = readPolyline(in, ply_vec, ply_vec_names, pnt_vec,
 		                   zero_based_indexing, pnt_id_map, path, errors);
 
@@ -367,7 +367,7 @@ std::string readSurface(std::istream &in,
 		if (line.find("$POLYLINES") != std::string::npos) // subkeyword found
 		{ // read the name of the polyline(s)
 			in >> line;
-			while (!in.eof() && line.size() != 0
+			while (!in.eof() && !in.fail() && line.size() != 0
 			       && (line.find("#") == std::string::npos)
 			       && (line.find("$") == std::string::npos))
 			{
@@ -448,7 +448,7 @@ std::string readSurfaces(std::istream &in,
 
 	std::vector<GeoLib::Polygon*> polygon_vec;
 
-	while (!in.eof() && tag.find("#SURFACE") != std::string::npos)
+	while (!in.eof() && !in.fail() && tag.find("#SURFACE") != std::string::npos)
 	{
 		std::size_t n_polygons (polygon_vec.size());
 		tag = readSurface(in,
