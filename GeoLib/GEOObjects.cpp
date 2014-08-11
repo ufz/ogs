@@ -351,14 +351,12 @@ bool GEOObjects::isPntVecUsed (const std::string &name) const
 	for (std::vector<PolylineVec*>::const_iterator it ( _ply_vecs.begin()); it != _ply_vecs.end();
 	     it++)
 	{
-		std::string a = (*it)->getName();
 		if (((*it)->getName()).compare(name) == 0)
 			return true;
 	}
 	for (std::vector<SurfaceVec*>::const_iterator it ( _sfc_vecs.begin()); it != _sfc_vecs.end();
 	     it++)
 	{
-		std::string a = (*it)->getName();
 		if (((*it)->getName()).compare(name) == 0)
 			return true;
 	}

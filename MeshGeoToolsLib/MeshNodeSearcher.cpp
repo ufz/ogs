@@ -93,7 +93,6 @@ std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(Geo
 
 MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Polyline const& ply)
 {
-	std::vector<double> points;
 	std::vector<MeshNodesAlongPolyline*>::const_iterator it(_mesh_nodes_along_polylines.begin());
 	for (; it != _mesh_nodes_along_polylines.end(); it++) {
 		if (&(*it)->getPolyline() == &ply) {
@@ -110,7 +109,6 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
 
 MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surface const& sfc)
 {
-	std::vector<double> points;
 	std::vector<MeshNodesAlongSurface*>::const_iterator it(_mesh_nodes_along_surfaces.begin());
 	for (; it != _mesh_nodes_along_surfaces.end(); it++) {
 		if (&(*it)->getSurface() == &sfc) {

@@ -318,7 +318,6 @@ void XmlCndInterface::writeCondition(QDomDocument doc, QDomElement &listTag,
 		ERR("XmlCndInterface::writeCondition(): Inconsistent length of distribution value array.");
 		ss << "-9999";
 	}
-	std::string dv  = ss.str();
 	QDomText disValueText = doc.createTextNode(QString::fromStdString(ss.str()));
 	disValueTag.appendChild(disValueText);
 }
