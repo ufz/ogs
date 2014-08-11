@@ -78,10 +78,6 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	const std::size_t n_rows = static_cast<size_t>(fabs(ur[1]-ll[1]) / cell_size)+1;
 	const size_t n_triangles (sfc.getNTriangles());
 	double *z_vals (new double[n_cols*n_rows]);
-	if (!z_vals) {
-		WARN("CreateRaster::getRaster not enough memory for %d x %d raster", n_cols, n_rows);
-		return NULL;
-	}
 	size_t k(0);
 
 	for (size_t r(0); r < n_cols; r++) {
