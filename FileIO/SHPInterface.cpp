@@ -246,9 +246,9 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 			DBFWriteIntegerAttribute(hDBF, polygon_id, mat_field, e->getValue());
 
 			unsigned nNodes (e->getNNodes());
-			padfX = new double(nNodes+1);
-			padfY = new double(nNodes+1);
-			padfZ = new double(nNodes+1);
+			padfX = new double[nNodes+1];
+			padfY = new double[nNodes+1];
+			padfZ = new double[nNodes+1];
 			for (unsigned j=0; j<nNodes; ++j)
 			{
 				padfX[j]=(*e->getNode(j))[0];
