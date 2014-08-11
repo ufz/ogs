@@ -30,9 +30,9 @@ NewtonRaphson::NewtonRaphson()
 template<class F_RESIDUAL, class F_DX, class T_VALUE>
 bool NewtonRaphson::solve(F_RESIDUAL &f_residual, F_DX &f_dx, const T_VALUE &x0, T_VALUE &x_new)
 {
-    const bool checkAbsResidualError = (_r_abs_tol<std::numeric_limits<double>::max());
-    const bool checkRelResidualError = (_r_rel_tol<std::numeric_limits<double>::max());
-    const bool checkRelDxError = (_dx_rel_tol>.0);
+    const bool checkAbsResidualError = (_r_abs_tol < std::numeric_limits<double>::max());
+    const bool checkRelResidualError = (_r_rel_tol < std::numeric_limits<double>::max());
+    const bool checkRelDxError = (_dx_rel_tol > .0);
     const bool needXNorm =  (checkRelResidualError || checkRelDxError);
 
     INFO("------------------------------------------------------------------");
