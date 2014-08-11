@@ -166,7 +166,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std
 	std::vector<GeoLib::Surface*>* sfc_vec(new std::vector<GeoLib::Surface*>);
 
 	for (std::vector<GeoLib::Polyline*>::const_iterator poly_it(polylines->begin()); poly_it
-	                != polylines->end(); poly_it++) {
+	                != polylines->end(); ++poly_it) {
 		GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*(*poly_it)));
 		if (sfc)
 			sfc_vec->push_back(sfc);

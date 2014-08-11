@@ -87,7 +87,7 @@ Surface* Surface::createSurface(const Polyline &ply)
 			std::list<GeoLib::Triangle>::const_iterator it (triangles.begin());
 			while (it != triangles.end()) {
 				sfc->addTriangle ((*it)[0], (*it)[1], (*it)[2]);
-				it++;
+				++it;
 			}
 		}
 		delete polygon;
