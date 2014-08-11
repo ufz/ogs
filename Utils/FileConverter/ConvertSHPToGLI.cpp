@@ -62,7 +62,7 @@ void convertPoints (DBFHandle dbf_handle,
 		if (z_id != std::numeric_limits<size_t>::max())
 			z = DBFReadDoubleAttribute(dbf_handle, k, z_id);
 
-		name = "";
+		name.clear();
 		if (!name_component_ids.empty()) {
 			for (size_t j(0); j < name_component_ids.size(); j++)
 				if (name_component_ids[j] != std::numeric_limits<size_t>::max()) {
