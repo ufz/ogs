@@ -51,11 +51,12 @@ int XmlCndInterface::readFile(const QString &fileName)
 	for (int i = 0; i < lists.count(); i++)
 	{
 		const QDomNode list_node (lists.at(i));
-		if (list_node.nodeName().compare("BoundaryConditions") == 0)
+		const QString nodeName = list_node.nodeName();
+		if (nodeName.compare("BoundaryConditions") == 0)
 			readConditions(list_node, FEMCondition::BOUNDARY_CONDITION);
-		else if (list_node.nodeName().compare("InitialConditions") == 0)
+		else if (nodeName.compare("InitialConditions") == 0)
 			readConditions(list_node, FEMCondition::INITIAL_CONDITION);
-		else if (list_node.nodeName().compare("SourceTerms") == 0)
+		else if (nodeName.compare("SourceTerms") == 0)
 			readConditions(list_node, FEMCondition::SOURCE_TERM);
 	}
 	std::size_t const n_cond_after(this->_project.getConditions().size());
