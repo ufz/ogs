@@ -58,7 +58,7 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 		return false;
 	}
 	std::string ext (BaseLib::getFileExtension(geo_fname));
-	if (ext.compare("smesh"))
+	if (ext.compare("smesh") != 0)
 	{
 		ERR ("TetGenInterface::readTetGenPoly() - unknown file type (only *.smesh are supported).");
 		return false;

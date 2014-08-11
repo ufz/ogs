@@ -340,7 +340,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	doc.parse<0>(buffer);
 
 	// parse content
-	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN"))
+	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
 	{
 		ERR("XmlStnInterface::readFile() - Unexpected XML root.");
 		return 0;
