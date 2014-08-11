@@ -59,7 +59,7 @@ int XmlCndInterface::readFile(const QString &fileName)
 			readConditions(list_node, FEMCondition::SOURCE_TERM);
 	}
 	std::size_t const n_cond_after(this->_project.getConditions().size());
-	if (n_cond_after-n_cond_before > 0)
+	if (n_cond_after > n_cond_before)
 		return 1;     //do something like _geoObjects->addStationVec(stations, stnName, color);
 	else
 	{

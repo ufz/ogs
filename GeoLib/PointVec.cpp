@@ -40,7 +40,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
-	if (number_of_all_input_pnts - _data_vec->size() > 0)
+	if (number_of_all_input_pnts > _data_vec->size())
 		WARN("PointVec::PointVec(): there are %d double points.",
 		     number_of_all_input_pnts - _data_vec->size());
 
