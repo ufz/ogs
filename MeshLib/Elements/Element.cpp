@@ -33,21 +33,23 @@ Element::~Element()
 	delete [] this->_neighbors;
 }
 
-bool Element::addNeighbor(Element* e)
+void Element::setNeighbor(Element* neighbor, unsigned const face_id)
+{
+	if (neighbor == this)
+		return;
+
+	this->_neighbors[face_id] = neighbor;
+}
+
+boost::optional<unsigned> Element::addNeighbor(Element* e)
 {
 	if (e == this ||
 		e == nullptr ||
 		e->getDimension() != this->getDimension())
-		return false;
+		return boost::optional<unsigned>();
 
-	unsigned nNeighbors (this->getNNeighbors());
-	for (unsigned n=0; n<nNeighbors; n++)
-	{
-		if (this->_neighbors[n] == e)
-			return false;
-		if (this->_neighbors[n] == nullptr)
-			break;
-	}
+	if (this->hasNeighbor(e))
+		return boost::optional<unsigned>();
 
 	Node* face_nodes[3];
 	const unsigned nNodes (this->getNNodes());
@@ -64,11 +66,11 @@ bool Element::addNeighbor(Element* e)
 				if ((++count)>=dim)
 				{
 					_neighbors[ this->identifyFace(face_nodes) ] = e;
-					return true;
+					return boost::optional<unsigned>(e->identifyFace(face_nodes));
 				}
 			}
 
-	return false;
+	return boost::optional<unsigned>();
 }
 
 MeshLib::Node Element::getCenterOfGravity() const

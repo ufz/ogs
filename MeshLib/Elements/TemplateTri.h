@@ -118,6 +118,9 @@ public:
 		return new TemplateTri<NNODES,CELLTRITYPE>(*this);
 	}
 
+	/// Returns the ID of a face given an array of nodes.
+	unsigned identifyFace(Node* nodes[3]) const;
+
 protected:
 	/// Calculates the area of the triangle by returning half of the area of the corresponding parallelogram.
 	double computeVolume()
@@ -131,9 +134,6 @@ protected:
 	{
 		return _nodes[_edge_nodes[edge_id][node_id]];
 	}
-
-	/// Returns the ID of a face given an array of nodes.
-	unsigned identifyFace(Node* nodes[3]) const;
 
 	static const unsigned _edge_nodes[3][2];
 }; /* class */

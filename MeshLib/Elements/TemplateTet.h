@@ -111,6 +111,9 @@ public:
 	 */
 	virtual Element* clone() const;
 
+	/// Returns the ID of a face given an array of nodes.
+	unsigned identifyFace(Node* nodes[3]) const;
+
 protected:
 	/// Calculates the volume of a tetrahedron via the determinant of the matrix given by its four points.
 	double computeVolume();
@@ -124,10 +127,6 @@ protected:
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const {
 		return _nodes[_edge_nodes[edge_id][node_id]];
 	}
-
-	/// Returns the ID of a face given an array of nodes.
-	unsigned identifyFace(Node* nodes[3]) const;
-
 
 	static const unsigned _face_nodes[4][3];
 	static const unsigned _edge_nodes[6][2];

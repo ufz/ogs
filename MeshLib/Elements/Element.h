@@ -17,6 +17,8 @@
 
 #include <vector>
 #include <limits>
+#include <boost/optional.hpp>
+
 #include "MeshEnums.h"
 #include "Mesh.h"
 #include "MeshQuality/ElementErrorCode.h"
@@ -40,9 +42,10 @@ public:
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
-	 * neighbour-list and true is returned. Otherwise false is returned.
+	 * neighbour-list and the face id of the neighbour connected to this element
+	 * is returned. Otherwise the maximum value of the value type is returned.
 	 */
-	bool addNeighbor(Element* e);
+	boost::optional<unsigned> addNeighbor(Element* e);
 
 	// Calculates the center of gravity for the mesh element
 	MeshLib::Node getCenterOfGravity() const;
@@ -179,6 +182,9 @@ public:
 	 */
 	virtual double computeVolume() = 0;
 
+	/// Returns the ID of a face given an array of nodes.
+	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
+	
 	/**
 	 * Checks if the node order of an element is correct by testing surface normals.
 	 */
@@ -192,12 +198,8 @@ protected:
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
-	/// Returns the ID of a face given an array of nodes.
-	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
-
 	/// Sets the element ID.
 	virtual void setID(std::size_t id) { this->_id = id; }
-
 
 	Node** _nodes;
 	std::size_t _id;
@@ -206,6 +208,10 @@ protected:
 	 */
 	unsigned _value;
 	Element** _neighbors;
+	/// Sets the neighbor over the face with \c face_id to the given \c
+	/// neighbor.
+	void setNeighbor(Element* neighbor, unsigned const face_id);
+
 }; /* class */
 
 } /* namespace */

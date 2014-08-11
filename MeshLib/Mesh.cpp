@@ -12,6 +12,8 @@
  *
  */
 
+#include "boost/optional.hpp"
+
 #include "Mesh.h"
 
 #include "Node.h"
@@ -126,13 +128,11 @@ void Mesh::setDimension()
 
 void Mesh::setElementsConnectedToNodes()
 {
-	const size_t nElements (_elements.size());
-	for (unsigned i=0; i<nElements; ++i)
+	for (auto e = _elements.begin(); e != _elements.end(); ++e)
 	{
-		MeshLib::Element* element = _elements[i];
-		const unsigned nNodes (element->getNNodes());
+		const unsigned nNodes ((*e)->getNNodes());
 		for (unsigned j=0; j<nNodes; ++j)
-			element->_nodes[j]->addElement(element);
+			(*e)->_nodes[j]->addElement(*e);
 	}
 }
 
@@ -161,12 +161,11 @@ void Mesh::calcEdgeLengthRange()
 
 void Mesh::setElementNeighbors()
 {
-	const size_t nElements = _elements.size();
-	for (unsigned m(0); m<nElements; ++m)
+	std::vector<Element*> neighbors;
+	for (auto it = _elements.begin(); it != _elements.end(); ++it)
 	{
 		// create vector with all elements connected to current element (includes lots of doubles!)
-		std::vector<Element*> neighbors;
-		Element *const element (_elements[m]);
+		Element *const element = *it;
 
 		const size_t nNodes (element->getNNodes());
 		for (unsigned n(0); n<nNodes; ++n)
@@ -174,16 +173,18 @@ void Mesh::setElementNeighbors()
 			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
 			neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
 		}
+		std::sort(neighbors.begin(), neighbors.end());
+		auto const neighbors_new_end = std::unique(neighbors.begin(), neighbors.end());
 
-		const unsigned nNeighbors ( neighbors.size() );
-
-		for (unsigned i(0); i<nNeighbors; ++i)
+		for (auto neighbor = neighbors.begin(); neighbor != neighbors_new_end; ++neighbor)
 		{
-			if (element->addNeighbor(neighbors[i]))
+			boost::optional<unsigned> const opposite_face_id = element->addNeighbor(*neighbor);
+			if (opposite_face_id)
 			{
-				neighbors[i]->addNeighbor(element);
+				(*neighbor)->setNeighbor(element, *opposite_face_id);
 			}
 		}
+		neighbors.clear();
 	}
 }
 
