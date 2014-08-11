@@ -50,8 +50,7 @@ void Raster::refineRaster(std::size_t scaling)
 
 Raster::~Raster()
 {
-	if (_raster_data != NULL)
-		delete [] _raster_data;
+	delete [] _raster_data;
 }
 
 void Raster::setCellSize(double cell_size)
