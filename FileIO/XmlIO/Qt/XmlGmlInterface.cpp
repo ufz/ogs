@@ -62,7 +62,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 			if (type_node.toElement().text().isEmpty())
 			{
 				ERR("XmlGmlInterface::readFile(): <name>-tag is empty.")
-				return false;
+				return 0;
 			}
 			else
 				gliName = type_node.toElement().text().toStdString();
