@@ -192,14 +192,14 @@ bool XmlCndInterface::write()
 
 	// create root nodes for various conditions types if there is at least one condition of that type
 	QDomElement ic_root, bc_root, st_root;
-	if (std::count_if(conditions.begin(), conditions.end(), 
-		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::INITIAL_CONDITION;}))
+	if (std::find_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::INITIAL_CONDITION;}) != conditions.end())
 		ic_root = this->getCondListElement(doc, root, "InitialConditions");
-	if (std::count_if(conditions.begin(), conditions.end(), 
-		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::BOUNDARY_CONDITION;}))
+	if (std::find_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::BOUNDARY_CONDITION; }) != conditions.end())
 		bc_root = this->getCondListElement(doc, root, "BoundaryConditions");
-	if (std::count_if(conditions.begin(), conditions.end(), 
-		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::SOURCE_TERM;}))
+	if (std::find_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::SOURCE_TERM; }) != conditions.end())
 		st_root = this->getCondListElement(doc, root, "SourceTerms");
 
 	for (size_t i = 0; i < nConditions; i++)
