@@ -604,11 +604,7 @@ void writeGLIFileV4 (const std::string& fname,
 			for (std::size_t j(0); j < (*plys)[k]->getNumberOfPoints(); j++)
 				os << "  " << ((*plys)[k])->getPointID(j) << "\n";
 		}
-	}
 
-	if (plys_vec)
-	{
-		const std::vector<GeoLib::Polyline*>* plys(plys_vec->getVector());
 		INFO("GeoLib::writeGLIFileV4(): write closed polylines as surfaces to file %s.",
 		     fname.c_str());
 		for (std::size_t k(0); k < plys->size(); k++)
