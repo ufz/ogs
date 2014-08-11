@@ -52,7 +52,7 @@ bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int 
 	return true;
 }
 
-void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, std::string listName)
+void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, const std::string &listName)
 {
 	int shapeType, numberOfElements;
 	double padfMinBound[4], padfMaxBound[4];
@@ -158,7 +158,7 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 	}
 }
 
-void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std::string listName)
+void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
 {
 	this->readPolylines(hSHP, numberOfElements, listName);
 
@@ -180,7 +180,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std
 }
 
 void SHPInterface::adjustPolylines(std::vector<GeoLib::Polyline*>* lines,
-                                   std::vector<std::size_t> id_map)
+                                   const std::vector<std::size_t> &id_map)
 
 {
 	for (std::size_t i = 0; i < lines->size(); i++) {

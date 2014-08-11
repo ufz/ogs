@@ -120,7 +120,7 @@ public:
 	 * \param get A function pointer to a static read function for the variable referred to by pname
 	 * \param set A function pointer to a static write function for the variable referred to by pname
 	 */
-	void addProperty(std::string pname, double (* get)(void*), void (* set)(void*, double));
+	void addProperty(const std::string &pname, double (* get)(void*), void (* set)(void*, double));
 
 	/// Returns a map containing all the properties of that station type.
 	const std::map<std::string, double> getProperties();

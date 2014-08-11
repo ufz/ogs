@@ -63,7 +63,7 @@ public:
 	                            const std::string &filename);
 
 	/// Reads a GMS *.3dm file and converts it to an CFEMesh.
-	static MeshLib::Mesh* readGMS3DMMesh(std::string file_name);
+	static MeshLib::Mesh* readGMS3DMMesh(const std::string &file_name);
 
 private:
 	/**

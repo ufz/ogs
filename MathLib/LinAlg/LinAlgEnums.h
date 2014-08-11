@@ -30,7 +30,7 @@ enum class VecNormType
 std::string convertVecNormTypeToString(VecNormType normType);
 
 /// convert string to VecNormType
-VecNormType convertVecNormTypeToString(std::string str);
+VecNormType convertVecNormTypeToString(const std::string &str);
 
 } // end namespace MathLib
 

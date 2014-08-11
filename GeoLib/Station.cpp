@@ -54,7 +54,7 @@ Station::Station(Station const& src) :
 	addProperty("z", &getZ, &Station::setZ);
 }
 
-void Station::addProperty(std::string pname, double (* getFct)(void*), void (* set)(void*, double))
+void Station::addProperty(const std::string &pname, double (* getFct)(void*), void (* set)(void*, double))
 {
 	STNProperty p;
 	p.name = pname;

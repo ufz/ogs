@@ -25,7 +25,7 @@ std::string convertVecNormTypeToString(VecNormType normType)
     }
 }
 
-VecNormType convertVecNormTypeToString(std::string str)
+VecNormType convertVecNormTypeToString(const std::string &str)
 {
     if (str.compare("NORM1")==0) return VecNormType::NORM1;
     if (str.compare("NORM2")==0) return VecNormType::NORM2;

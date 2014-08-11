@@ -243,7 +243,7 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
                                                 double y,
                                                 double z,
                                                 double depth,
-                                                std::string date)
+                                                const std::string &date)
 {
 	StationBorehole* station = new StationBorehole();
 	station->_name  = name;
