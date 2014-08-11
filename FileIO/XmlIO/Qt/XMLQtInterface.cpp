@@ -87,7 +87,6 @@ int XMLQtInterface::insertStyleFileDefinition(const QString &fileName) const
 {
 	std::string path = fileName.toStdString();
 	std::fstream stream(path.c_str());
-	std::string line;
 	std::string styleDef("\n<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>");
 
 	if (!stream.is_open())

@@ -72,7 +72,6 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	
 	// map each layer and attach to subsurface mesh
 	const std::size_t nRasters (rasters.size());
-	std::vector<GeoLib::Point> in_region_points(nRasters-1, GeoLib::Point(0,0,0));
 	for (size_t i=0; i<nRasters; ++i)
 	{
 		const double replacement_value = (i==0) ? noDataReplacementValue : _invalid_value;
