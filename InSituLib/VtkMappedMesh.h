@@ -2,7 +2,9 @@
  * \file
  * \author Lars Bilke
  * \date   2014-02-27
- * \brief  Definition of the VtkMappedMesh class.
+ * \brief  VtkMappedMesh is a adapter for converting OGS cell connectivity to its
+ *         VTK counter part. This generates an incomplete vtkUnstructureGrid
+ *         without node coordinates. See VtkMeshNodalCoordinatesTemplate.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)

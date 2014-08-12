@@ -2,7 +2,15 @@
  * \file
  * \author Lars Bilke
  * \date   2014-08-12
- * \brief  Definition of the VtkMappedMeshSource class.
+ * \brief  VtkMappedMeshSource is a souce class to transform OGS meshes into complete
+ *         vtkUnstructuredGrids.
+ * Usage:
+ * \code
+ * vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
+ * vtkSource->SetMesh(mesh);
+ * vtkSource->Update();
+ * vtkUnstructuredGrid* output = vtkSource->GetOutput();
+ * \endcode
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -16,9 +24,9 @@
 #define _VTKMAPPEDMESHSOURCE
 
 #include "vtkUnstructuredGridAlgorithm.h"
-#include "vtkNew.h" // For vtkNew
-#include <string> // For std::string
-#include <vector> // For std::vector
+#include "vtkNew.h"
+#include <string>
+#include <vector>
 
 class vtkDataArrayCollection;
 class vtkPointData;
@@ -52,16 +60,14 @@ protected:
 
 private:
 	VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
-	void operator=(const VtkMappedMeshSource &);   // Not implemented.
+	void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
 	const MeshLib::Mesh* _mesh;
 
 	int NumberOfDimensions;
 	int NumberOfNodes;
-	//int NumberOfElementBlocks;
 	std::vector<std::string> NodalVariableNames;
 	std::vector<std::string> ElementVariableNames;
-	//std::vector<int> ElementBlockIds;
 
 	vtkNew<vtkPoints> Points;
 	vtkNew<vtkPointData> PointData;

@@ -2,7 +2,8 @@
  * \file
  * \author Lars Bilke
  * \date   2014-02-26
- * \brief  Definition of the VtkMeshNodalCoordinates class.
+ * \brief  VtkMeshNodalCoordinatesTemplate is a adapter for node coordinates of
+ *         OGS meshes to VTK unstructured grids.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)

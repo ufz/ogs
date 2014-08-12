@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2014-02-26
- * \brief  Definition of the ElementStatus class.
+ * \brief  Definition of the VtkMeshNodalCoordinatesTemplate class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
