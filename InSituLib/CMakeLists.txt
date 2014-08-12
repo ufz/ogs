@@ -1,4 +1,6 @@
 INCLUDE_DIRECTORIES(
+	${CMAKE_CURRENT_SOURCE_DIR}/../GeoLib
+	${CMAKE_CURRENT_SOURCE_DIR}/../MathLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib/Elements
 )
@@ -6,6 +8,10 @@ INCLUDE_DIRECTORIES(
 ADD_LIBRARY(InSituLib
 	VtkMappedMesh.h
 	VtkMappedMesh.cpp
+	VtkMappedMeshSource.h
+	VtkMappedMeshSource.cpp
 )
 
-ADD_DEPENDENCIES(InSituLib STATIC VtkRescan)
+IF(TARGET VtkRescan)
+	ADD_DEPENDENCIES(InSituLib STATIC VtkRescan)
+ENDIF()

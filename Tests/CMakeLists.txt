@@ -42,6 +42,7 @@ TARGET_LINK_LIBRARIES(testrunner
 	AssemblerLib
 	BaseLib
 	FileIO
+	InSituLib
 	GeoLib
 	MathLib
 	MeshLib
@@ -61,7 +62,6 @@ ENDIF ()
 
 IF(OGS_BUILD_GUI)
 	TARGET_LINK_LIBRARIES(testrunner
-		InSituLib
 		QtDataView
 		VtkVis
 		${VTK_LIBRARIES}

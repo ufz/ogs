@@ -15,6 +15,10 @@
 #include "VtkMappedMesh.h"
 
 #include "Element.h"
+#include "Node.h"
+#include "MeshEnums.h"
+
+#include "logog/include/logog.hpp"
 
 #include <vtkCellType.h>
 #include <vtkCellTypes.h>
@@ -23,126 +27,166 @@
 #include <vtkObjectFactory.h>
 #include <vtkPoints.h>
 
+#include <algorithm>
+
 namespace InSituLib {
 
 vtkStandardNewMacro(VtkMappedMesh)
+vtkStandardNewMacro(VtkMappedMeshImpl)
 
-void VtkMappedMesh::PrintSelf(ostream &os, vtkIndent indent)
+void VtkMappedMeshImpl::PrintSelf(ostream &os, vtkIndent indent)
 {
 	this->Superclass::PrintSelf(os, indent);
 	// TODO
 	os << indent << "NumberOfCells: " << this->NumberOfCells << endl;
 }
 
-bool VtkMappedMesh::SetElements(std::vector< MeshLib::Element * > const & elements)
+void VtkMappedMeshImpl::SetNodes(std::vector<MeshLib::Node*> const & nodes)
 {
-	_elements = &elements;
-
-	return true;
+	_nodes = &nodes;
 }
 
-vtkIdType VtkMappedMesh::GetNumberOfCells()
+void VtkMappedMeshImpl::SetElements(std::vector<MeshLib::Element*> const & elements)
+{
+	_elements = &elements;
+	this->NumberOfCells = _elements->size();
+	this->Modified();
+}
+
+vtkIdType VtkMappedMeshImpl::GetNumberOfCells()
 {
 	return this->NumberOfCells;
 }
 
-int VtkMappedMesh::GetCellType(vtkIdType cellId)
+int VtkMappedMeshImpl::GetCellType(vtkIdType cellId)
 {
-	return (int)(*_elements)[cellId]->getCellType();
+	int type = 0;
+	switch ((*_elements)[cellId]->getGeomType())
+	{
+		case MeshElemType::INVALID:
+			break;
+		case MeshElemType::LINE:
+			type = VTK_LINE;
+			break;
+		case MeshElemType::TRIANGLE:
+			type = VTK_TRIANGLE;
+			break;
+		case MeshElemType::QUAD:
+			type = VTK_QUAD;
+			break;
+		case MeshElemType::HEXAHEDRON:
+			type = VTK_HEXAHEDRON;
+			break;
+		case MeshElemType::TETRAHEDRON:
+			type = VTK_TETRA;
+			break;
+		case MeshElemType::PRISM:
+			type = VTK_WEDGE;
+			break;
+		case MeshElemType::PYRAMID:
+			type = VTK_PYRAMID;
+			break;
+	}
+	return type;
 }
 
-void VtkMappedMesh::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
+void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
 {
-	ptIds->SetNumberOfIds((int)(*_elements)[cellId]->getNNodes());
+	const MeshLib::Element* elem = (*_elements)[cellId];
+	const unsigned numNodes(elem->getNNodes());
+	const MeshLib::Node* const* nodes = (*_elements)[cellId]->getNodes();
+	ptIds->SetNumberOfIds(numNodes);
 
-	std::transform(this->GetElementStart(cellId),
-	               this->GetElementEnd(cellId),
-	               ptIds->GetPointer(0), NodeToPoint);
+	for (unsigned i(0); i < numNodes; ++i)
+		ptIds->SetId(i, nodes[i]->getID());
+
+	if(GetCellType(cellId) == VTK_WEDGE)
+	{
+		for (unsigned i=0; i<3; ++i)
+		{
+			const unsigned prism_swap_id = ptIds->GetId(i);
+			ptIds->SetId(i, ptIds->GetId(i+3));
+			ptIds->SetId(i+3, prism_swap_id);
+		}
+	}
 }
 
-void VtkMappedMesh::GetPointCells(vtkIdType ptId, *cellIds)
+void VtkMappedMeshImpl::GetPointCells(vtkIdType ptId, vtkIdList *cellIds)
 {
-	const int targetElement = PointToNode(ptId);
-	int *element = this->GetStart();
-	int *elementEnd = this->GetEnd();
-
 	cellIds->Reset();
 
-	element = std::find(element, elementEnd, targetElement);
-	while (element != elementEnd)
-		{
-		cellIds->InsertNextId(static_cast<vtkIdType>((element - this->Elements)
-		                                             / this->CellSize));
-		element = std::find(element, elementEnd, targetElement);
-		}
+	auto elements((*_nodes)[ptId]->getElements());
+	for (auto elem(elements.begin()); elem != elements.end(); ++elem)
+		cellIds->InsertNextId((*elem)->getID());
 }
 
-int VtkMappedMesh::GetMaxCellSize()
+int VtkMappedMeshImpl::GetMaxCellSize()
 {
-	return this->CellSize;
+	unsigned int size = 0;
+	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
+		size = std::max(size, (*elem)->getNNodes());
+	return size;
 }
 
-void VtkMappedMesh::GetIdsOfCellsOfType(int type,
+void VtkMappedMeshImpl::GetIdsOfCellsOfType(int type, vtkIdTypeArray *array)
 {
 	array->Reset();
-	if (type == this->CellType)
-		{
-		array->SetNumberOfComponents(1);
-		array->Allocate(this->NumberOfCells);
-		for (vtkIdType i = 0; i < this->NumberOfCells; ++i)
-			{
-			array->InsertNextValue(i);
-			}
-		}
+
+	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
+	{
+		if ((*elem)->getGeomType() == VtkCellTypeToOGS(type))
+			array->InsertNextValue((*elem)->getID());
+	}
 }
 
-int VtkMappedMesh::IsHomogeneous()
+int VtkMappedMeshImpl::IsHomogeneous()
 {
+	MeshElemType type = (*(_elements->begin()))->getGeomType();
+	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
+		if((*elem)->getGeomType() != type)
+			return 0;
 	return 1;
 }
 
-void VtkMappedMesh::Allocate(vtkIdType, int)
+void VtkMappedMeshImpl::Allocate(vtkIdType, int)
 {
 	vtkErrorMacro("Read only container.")
 	return;
 }
 
-vtkIdType VtkMappedMesh::InsertNextCell(int, vtkIdList*)
+vtkIdType VtkMappedMeshImpl::InsertNextCell(int, vtkIdList*)
 {
 	vtkErrorMacro("Read only container.")
 	return -1;
 }
 
-vtkIdType VtkMappedMesh::InsertNextCell(int, vtkIdType, vtkIdType*)
+vtkIdType VtkMappedMeshImpl::InsertNextCell(int, vtkIdType, vtkIdType*)
 {
 	vtkErrorMacro("Read only container.")
 	return -1;
 }
 
-vtkIdType VtkMappedMesh::InsertNextCell(
+vtkIdType VtkMappedMeshImpl::InsertNextCell(
 		int, vtkIdType, vtkIdType*, vtkIdType, vtkIdType*)
 {
 	vtkErrorMacro("Read only container.")
 	return -1;
 }
 
-void VtkMappedMesh::ReplaceCell(vtkIdType, int, vtkIdType*)
+void VtkMappedMeshImpl::ReplaceCell(vtkIdType, int, vtkIdType*)
 {
 	vtkErrorMacro("Read only container.")
 	return;
 }
 
-VtkMappedMesh::VtkMappedMesh()
-	: Elements(NULL),
-		CellType(VTK_EMPTY_CELL),
-		CellSize(0),
-		NumberOfCells(0)
+VtkMappedMeshImpl::VtkMappedMeshImpl()
+	: _nodes(NULL), _elements(NULL), NumberOfCells(0)
 {
 }
 
-VtkMappedMesh::~VtkMappedMesh()
+VtkMappedMeshImpl::~VtkMappedMeshImpl()
 {
-	delete [] this->Elements;
+	// delete [] this->Elements;
 }
 
 } // end namespace
