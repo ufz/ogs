@@ -50,7 +50,7 @@ int XmlNumInterface::readFile(QString const& fileName)
 		if (num_node.nodeName().compare("Type") == 0)
 		{
 			std::string const solver_type = num_node.toElement().text().toStdString();
-			INFO("Non-linear solver type: %s.", solver_type);
+			INFO("Non-linear solver type: %s.", solver_type.c_str());
 		}
 		else if (num_node.nodeName().compare("LinearSolver") == 0)
 			readLinearSolverConfiguration(num_node);
@@ -79,7 +79,7 @@ void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 			precond_type = linear_solver_node.toElement().text().toStdString();
 		linear_solver_node = linear_solver_node.nextSiblingElement();
 	}
-	INFO("Using %s-library with solver %s and %s preconditioner.",library, lin_solver_type, precond_type);
+	INFO("Using %s-library with solver %s and %s preconditioner.", library.c_str(), lin_solver_type.c_str(), precond_type.c_str());
 }
 
 
@@ -115,7 +115,7 @@ void XmlNumInterface::readConvergenceCriteria(QDomElement const& convergence_roo
 
 		conv_node = conv_node.nextSiblingElement();
 	}
-	INFO("Convergence reached when error below %f using %s.", error_threshold, error_method);
+	INFO("Convergence reached when error below %f using %s.", error_threshold, error_method.c_str());
 }
 
 bool XmlNumInterface::write()
