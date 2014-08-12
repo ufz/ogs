@@ -63,14 +63,8 @@ private:
 	std::vector<std::string> ElementVariableNames;
 	//std::vector<int> ElementBlockIds;
 
-	bool GetCoords();
 	vtkNew<vtkPoints> Points;
-
-	bool GetNodalVars();
 	vtkNew<vtkPointData> PointData;
-
-	bool GetElems();
-	vtkNew<vtkUnstructuredGrid> ElementData;
 };
 
 } // Namespace InSituLib

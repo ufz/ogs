@@ -30,6 +30,7 @@
 #include "vtkPointData.h"
 #include "vtkPoints.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkIdTypeArray.h"
 
 namespace InSituLib {
 
@@ -73,7 +74,6 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
 	vtkSmartPointer<vtkUnstructuredGrid> output = vtkUnstructuredGrid::SafeDownCast(
 	        outInfo->Get(vtkDataObject::DATA_OBJECT()));
-	//output->Allocate(nElems);
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
@@ -84,7 +84,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	nodeCoords->SetNodes(_mesh->getNodes());
 	this->Points->SetData(nodeCoords.GetPointer());
 
-	//this->GetNodalVars();
+	// TODO nodal vals
 
 	vtkNew<VtkMappedMesh> elems;
 	elems->GetImplementation()->SetNodes(_mesh->getNodes());
@@ -93,11 +93,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	 // Use the mapped point container for the block points
 	elems->SetPoints(this->Points.GetPointer());
 
-	//this->Cells->Reset();
+	// TODO cell vals
 
-	// TODO
-
-	WARN("RequestData %d", nodeCoords->GetNumberOfTuples());
+	output->Allocate(elems->GetNumberOfCells());
+	output->ShallowCopy(elems.GetPointer());
 
 	return 1;
 }
@@ -105,42 +104,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 int VtkMappedMeshSource::RequestInformation(
 	vtkInformation *, vtkInformationVector **, vtkInformationVector *)
 {
-	// TODO
-	//bool success(this->ExGetMetaData());
-	//return success ? 1 : 0;
 	this->NumberOfDimensions = 3;
 	this->NumberOfNodes = _mesh->getNNodes();
 
 	return 1;
-}
-
-bool VtkMappedMeshSource::GetCoords()
-{
-	this->Points->Reset();
-
-	vtkNew<VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
-	nodeCoords->SetNodes(_mesh->getNodes());
-	this->Points->SetData(nodeCoords.GetPointer());
-
-	return true;
-}
-
-bool VtkMappedMeshSource::GetElems()
-{
-	vtkNew<VtkMappedMesh> elems;
-	elems->GetImplementation()->SetNodes(_mesh->getNodes());
-	elems->GetImplementation()->SetElements(_mesh->getElements());
-
-	 // Use the mapped point container for the block points
-	elems->SetPoints(this->Points.GetPointer());
-
-	// Add the point data arrays
-	//elems->GetPointData()->ShallowCopy(this->PointData.GetPointer());
-
-	// Read the element variables (cell data)
-	//TODO
-
-	return true;
 }
 
 } // Namespace InSituLib

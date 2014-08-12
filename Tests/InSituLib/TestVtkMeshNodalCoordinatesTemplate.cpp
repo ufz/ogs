@@ -76,20 +76,10 @@ TEST_F(InSituMesh, MappedMeshSource)
 	vtkSource->SetMesh(mesh);
 	vtkSource->UpdateInformation();
 	vtkSource->Update();
-
 	vtkUnstructuredGrid* output = vtkSource->GetOutput();
 
-	// There are n_elements^2 elements in the mesh.
-	//ASSERT_EQ(n_elements * n_elements, vtkSource->);
-
-	//ASSERT_EQ(subdivisions*subdivisions, output->GetNumberOfCells());
 	ASSERT_EQ((subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
-
-	// All elements have maximum four neighbors.
-	//testAllElements([](MeshLib::Element const* const e, ...)
-	//	{
-	//	ASSERT_EQ(4u, e->getNNeighbors());
-	//	});
+	ASSERT_EQ(subdivisions*subdivisions, output->GetNumberOfCells());
 }
 
 TEST(InSituLibNodalCoordinates, Init)
