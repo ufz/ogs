@@ -340,7 +340,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	doc.parse<0>(buffer);
 
 	// parse content
-	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN"))
+	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
 	{
 		ERR("XmlStnInterface::readFile() - Unexpected XML root.");
 		return 0;
@@ -358,9 +358,9 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 		     list_item = list_item->next_sibling())
 		{
 			std::string b(list_item->name());
-			if (std::string(list_item->name()).compare("stations") == 0)
+			if (b.compare("stations") == 0)
 				this->rapidReadStations(list_item, stations, fileName);
-			if (std::string(list_item->name()).compare("boreholes") == 0)
+			if (b.compare("boreholes") == 0)
 				this->rapidReadStations(list_item, stations, fileName);
 		}
 

@@ -112,7 +112,7 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pn
 	_quad_tree->getLeafs(leaf_list);
 
 	for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
-					!= leaf_list.end(); it++) {
+					!= leaf_list.end(); ++it) {
 		if ((*it)->getPoints().empty()) {
 			// compute point from square
 			GeoLib::Point ll, ur;
@@ -140,7 +140,7 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
 	_quad_tree->getLeafs(leaf_list);
 
 	for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
-		!= leaf_list.end(); it++) {
+		!= leaf_list.end(); ++it) {
 		// fetch corner points from leaf
 		GeoLib::Point *ll(new GeoLib::Point), *ur(new GeoLib::Point);
 		(*it)->getSquarePoints(*ll, *ur);

@@ -82,16 +82,16 @@ int main (int argc, char* argv[])
 	while (it != sfc_pnt_ids.end())
 	{
 		std::vector<size_t>::iterator next (it);
-		next++;
+		++next;
 		if (next != sfc_pnt_ids.end())
 		{
 			if (*it == *next)
 				it = sfc_pnt_ids.erase (it);
 			else
-				it++;
+				++it;
 		}
 		else
-			it++;
+			++it;
 	}
 	std::cout << "done" << std::endl;
 

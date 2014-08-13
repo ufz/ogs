@@ -51,8 +51,7 @@ public:
 
 	void calcPrecond()
 	{
-		if (_inv_diag != NULL)
-			delete [] _inv_diag;
+		delete [] _inv_diag;
 		_inv_diag = new double[_n_rows];
 
 		if (!generateDiagPrecond(_n_rows, _row_ptr, _col_idx, _data, _inv_diag)) {

@@ -58,23 +58,24 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	for (int i = 0; i < geoTypes.count(); i++)
 	{
 		const QDomNode type_node(geoTypes.at(i));
-		if (type_node.nodeName().compare("name") == 0)
+		const QString nodeName = type_node.nodeName();
+		if (nodeName.compare("name") == 0)
 			if (type_node.toElement().text().isEmpty())
 			{
 				ERR("XmlGmlInterface::readFile(): <name>-tag is empty.")
-				return false;
+				return 0;
 			}
 			else
 				gliName = type_node.toElement().text().toStdString();
-		else if (type_node.nodeName().compare("points") == 0)
+		else if (nodeName.compare("points") == 0)
 		{
 			readPoints(type_node, points, pnt_names);
 			_geo_objs.addPointVec(points, gliName, pnt_names);
 		}
-		else if (type_node.nodeName().compare("polylines") == 0)
+		else if (nodeName.compare("polylines") == 0)
 			readPolylines(type_node, polylines, points,
 			              _geo_objs.getPointVecObj(gliName)->getIDMap(), ply_names);
-		else if (type_node.nodeName().compare("surfaces") == 0)
+		else if (nodeName.compare("surfaces") == 0)
 			readSurfaces(type_node, surfaces, points,
 			             _geo_objs.getPointVecObj(gliName)->getIDMap(), sfc_names);
 	}

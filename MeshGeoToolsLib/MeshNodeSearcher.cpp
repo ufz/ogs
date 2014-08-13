@@ -36,7 +36,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
 	std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
 
 	for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
-			it != elements.cend(); it++) {
+			it != elements.cend(); ++it) {
 		std::size_t const n_edges((*it)->getNEdges());
 		for (std::size_t k(0); k<n_edges; k++) {
 			MeshLib::Line const* edge(dynamic_cast<MeshLib::Line const*>((*it)->getEdge(k)));
@@ -70,7 +70,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
 MeshNodeSearcher::~MeshNodeSearcher()
 {
 	std::vector<MeshNodesAlongPolyline*>::iterator it(_mesh_nodes_along_polylines.begin());
-	for (; it != _mesh_nodes_along_polylines.end(); it++) {
+	for (; it != _mesh_nodes_along_polylines.end(); ++it) {
 		delete (*it);
 	}
 }
@@ -93,9 +93,8 @@ std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(Geo
 
 MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Polyline const& ply)
 {
-	std::vector<double> points;
 	std::vector<MeshNodesAlongPolyline*>::const_iterator it(_mesh_nodes_along_polylines.begin());
-	for (; it != _mesh_nodes_along_polylines.end(); it++) {
+	for (; it != _mesh_nodes_along_polylines.end(); ++it) {
 		if (&(*it)->getPolyline() == &ply) {
 			// we calculated mesh nodes for this polyline already
 			return *(*it);
@@ -110,9 +109,8 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
 
 MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surface const& sfc)
 {
-	std::vector<double> points;
 	std::vector<MeshNodesAlongSurface*>::const_iterator it(_mesh_nodes_along_surfaces.begin());
-	for (; it != _mesh_nodes_along_surfaces.end(); it++) {
+	for (; it != _mesh_nodes_along_surfaces.end(); ++it) {
 		if (&(*it)->getSurface() == &sfc) {
 			// we calculated mesh nodes for this polyline already
 			return *(*it);

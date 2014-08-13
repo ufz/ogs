@@ -312,7 +312,6 @@ void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_clas
 MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim, const MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes)
 {
 	std::stringstream ss(line);
-	std::string elem_type_str("");
 
 	unsigned idx[8];
 	for (size_t i = 0; i < fem_dim.n_nodes_of_element; ++i)

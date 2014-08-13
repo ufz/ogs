@@ -41,7 +41,7 @@ public:
 
 	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
-	int writeToFile(std::string filename);
+	int writeToFile(const std::string& filename);
 
 protected:
 	bool write();

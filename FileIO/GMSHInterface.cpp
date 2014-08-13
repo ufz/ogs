@@ -234,7 +234,7 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 	}
 	in.close();
 	if (elements.empty()) {
-		for (auto it(nodes.begin()); it != nodes.end(); it++) {
+		for (auto it(nodes.begin()); it != nodes.end(); ++it) {
 			delete *it;
 		}
 		return nullptr;
@@ -300,7 +300,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	// *** compute topological hierarchy of polygons
 	if (merged_plys) {
 		for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
-			it!=merged_plys->end(); it++) {
+			it!=merged_plys->end(); ++it) {
 			if ((*it)->isClosed()) {
 				_polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(new GeoLib::Polygon(*(*it), true), NULL, _geo_objs, _gmsh_geo_name, _mesh_density_strategy));
 			}
@@ -323,7 +323,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 			for (size_t k(0); k < n_stations; k++) {
 				bool found(false);
 				for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-					it != _polygon_tree_list.end() && !found; it++) {
+					it != _polygon_tree_list.end() && !found; ++it) {
 					if ((*it)->insertStation((*stations)[k])) {
 						found = true;
 					}
@@ -336,7 +336,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	for (size_t k(0); k<n_plys; k++) {
 		if (! (*merged_plys)[k]->isClosed()) {
 			for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-				it != _polygon_tree_list.end(); it++) {
+				it != _polygon_tree_list.end(); ++it) {
 				(*it)->insertPolyline(new GeoLib::PolylineWithSegmentMarker(*(*merged_plys)[k]));
 			}
 		}
@@ -344,7 +344,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
 	// *** init mesh density strategies
 	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-		it != _polygon_tree_list.end(); it++) {
+		it != _polygon_tree_list.end(); ++it) {
 		(*it)->initMeshDensityStrategy();
 	}
 
@@ -355,7 +355,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 		_gmsh_pnts[k] = NULL;
 	}
 	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-		it != _polygon_tree_list.end(); it++) {
+		it != _polygon_tree_list.end(); ++it) {
 		(*it)->createGMSHPoints(_gmsh_pnts);
 	}
 
@@ -363,7 +363,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	writePoints(out);
 	size_t pnt_id_offset(_gmsh_pnts.size());
 	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-		it != _polygon_tree_list.end(); it++) {
+		it != _polygon_tree_list.end(); ++it) {
 		(*it)->writeLineLoop(_n_lines, _n_plane_sfc, out);
 		(*it)->writeSubPolygonsAsLineConstraints(_n_lines, _n_plane_sfc-1, out);
 		(*it)->writeLineConstraints(_n_lines, _n_plane_sfc-1, out);

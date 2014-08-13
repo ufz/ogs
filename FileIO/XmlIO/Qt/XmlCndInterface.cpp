@@ -51,15 +51,16 @@ int XmlCndInterface::readFile(const QString &fileName)
 	for (int i = 0; i < lists.count(); i++)
 	{
 		const QDomNode list_node (lists.at(i));
-		if (list_node.nodeName().compare("BoundaryConditions") == 0)
+		const QString nodeName = list_node.nodeName();
+		if (nodeName.compare("BoundaryConditions") == 0)
 			readConditions(list_node, FEMCondition::BOUNDARY_CONDITION);
-		else if (list_node.nodeName().compare("InitialConditions") == 0)
+		else if (nodeName.compare("InitialConditions") == 0)
 			readConditions(list_node, FEMCondition::INITIAL_CONDITION);
-		else if (list_node.nodeName().compare("SourceTerms") == 0)
+		else if (nodeName.compare("SourceTerms") == 0)
 			readConditions(list_node, FEMCondition::SOURCE_TERM);
 	}
 	std::size_t const n_cond_after(this->_project.getConditions().size());
-	if (n_cond_after-n_cond_before > 0)
+	if (n_cond_after > n_cond_before)
 		return 1;     //do something like _geoObjects->addStationVec(stations, stnName, color);
 	else
 	{
@@ -192,14 +193,14 @@ bool XmlCndInterface::write()
 
 	// create root nodes for various conditions types if there is at least one condition of that type
 	QDomElement ic_root, bc_root, st_root;
-	if (std::count_if(conditions.begin(), conditions.end(), 
-		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::INITIAL_CONDITION;}))
+	if (std::find_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::INITIAL_CONDITION;}) != conditions.end())
 		ic_root = this->getCondListElement(doc, root, "InitialConditions");
-	if (std::count_if(conditions.begin(), conditions.end(), 
-		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::BOUNDARY_CONDITION;}))
+	if (std::find_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::BOUNDARY_CONDITION; }) != conditions.end())
 		bc_root = this->getCondListElement(doc, root, "BoundaryConditions");
-	if (std::count_if(conditions.begin(), conditions.end(), 
-		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::SOURCE_TERM;}))
+	if (std::find_if(conditions.begin(), conditions.end(), 
+		[](FEMCondition const*const cond){return cond->getCondType() == FEMCondition::SOURCE_TERM; }) != conditions.end())
 		st_root = this->getCondListElement(doc, root, "SourceTerms");
 
 	for (size_t i = 0; i < nConditions; i++)
@@ -318,7 +319,6 @@ void XmlCndInterface::writeCondition(QDomDocument doc, QDomElement &listTag,
 		ERR("XmlCndInterface::writeCondition(): Inconsistent length of distribution value array.");
 		ss << "-9999";
 	}
-	std::string dv  = ss.str();
 	QDomText disValueText = doc.createTextNode(QString::fromStdString(ss.str()));
 	disValueTag.appendChild(disValueText);
 }

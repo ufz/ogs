@@ -107,7 +107,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 	return 1;
 }
 
-int XmlGspInterface::writeToFile(std::string filename)
+int XmlGspInterface::writeToFile(const std::string& filename)
 {
 	_filename = filename;
 	return FileIO::Writer::writeToFile(filename);

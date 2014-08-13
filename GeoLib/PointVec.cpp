@@ -40,7 +40,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
 
-	if (number_of_all_input_pnts - _data_vec->size() > 0)
+	if (number_of_all_input_pnts > _data_vec->size())
 		WARN("PointVec::PointVec(): there are %d double points.",
 		     number_of_all_input_pnts - _data_vec->size());
 
@@ -205,7 +205,7 @@ void PointVec::correctNameIDMapping()
 {
 	// create mapping id -> name using the std::vector id_names
 	std::vector<std::string> id_names(_pnt_id_map.size(), std::string(""));
-	for (auto it = _name_id_map->begin(); it != _name_id_map->end(); it++) {
+	for (auto it = _name_id_map->begin(); it != _name_id_map->end(); ++it) {
 		id_names[it->second] = it->first;
 	}
 
@@ -214,7 +214,7 @@ void PointVec::correctNameIDMapping()
 		const std::size_t id(it->second);
 
 		if (_pnt_id_map[id] == id) {
-			it++;
+			++it;
 			continue;
 		}
 
@@ -226,11 +226,11 @@ void PointVec::correctNameIDMapping()
 				// until now the point has not a name
 				// assign the second occurrence the correct id
 				it->second = _pnt_id_map[id];
-				it++;
+				++it;
 			}
 		} else {
 			it->second = _pnt_id_map[id]; // update id associated to the name
-			it++;
+			++it;
 		}
 	}
 }

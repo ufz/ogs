@@ -218,7 +218,7 @@ std::vector<std::string> GMSInterface::readSoilIDfromFile(const std::string &fil
 	return soilID;
 }
 
-MeshLib::Mesh* GMSInterface::readGMS3DMMesh(std::string filename)
+MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 {
 	std::string line("");
 

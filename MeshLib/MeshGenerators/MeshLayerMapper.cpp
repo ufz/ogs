@@ -200,7 +200,7 @@ bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster
 				nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
 				continue;
 			}
-			const double norm = 4/(4-no_data_count);
+			const double norm = (double)(4)/(4-no_data_count);
 			std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
 		}
 

@@ -58,7 +58,7 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 		return false;
 	}
 	std::string ext (BaseLib::getFileExtension(geo_fname));
-	if (ext.compare("smesh"))
+	if (ext.compare("smesh") != 0)
 	{
 		ERR ("TetGenInterface::readTetGenPoly() - unknown file type (only *.smesh are supported).");
 		return false;
@@ -108,7 +108,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
 		if (input.fail())
 		{
 			ERR("TetGenInterface::getNFacets(): Error reading number of facets.");
-			return false;
+			return 0;
 		}
 		
 		BaseLib::simplify(line);
@@ -122,7 +122,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
 			_boundary_markers = (BaseLib::str2number<size_t> (*(++it)) == 0) ? false : true;
 		return nFacets;
 	}
-	return false;
+	return 0;
 }
 
 bool TetGenInterface::parseSmeshFacets(std::ifstream &input,

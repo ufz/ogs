@@ -134,7 +134,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		std::list<std::string>::const_iterator it(str_list.begin());
 		while (it != str_list.end()) {
 			INFO("PetrelInterface::readPetrelWellTrace(): well name: %s.", it->c_str());
-			it++;
+			++it;
 		}
 
 		// read well head x coordinate
@@ -144,10 +144,10 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		it = str_list.begin();
 		while (it != str_list.end()) {
 			INFO("PetrelInterface::readPetrelWellTrace(): well head x coord: %s.", it->c_str());
-			it++;
+			++it;
 		}
 		it = (str_list.end())--;
-		it--;
+		--it;
 		char* buf;
 		double well_head_x(strtod((*it).c_str(), &buf));
 
@@ -158,10 +158,10 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		it = str_list.begin();
 		while (it != str_list.end()) {
 			INFO("PetrelInterface::readPetrelWellTrace(): well head y coord: %s.", it->c_str());
-			it++;
+			++it;
 		}
 		it = (str_list.end())--;
-		it--;
+		--it;
 		double well_head_y(strtod((*it).c_str(), &buf));
 
 		// read well KB
@@ -171,20 +171,17 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
 		it = str_list.begin();
 		while (it != str_list.end()) {
 			INFO("PetrelInterface::readPetrelWellTrace(): well kb entry: %s.", it->c_str());
-			it++;
+			++it;
 		}
 		it = (str_list.end())--;
-		it--;
+		--it;
 		double well_kb(strtod((*it).c_str(), &buf));
 
 		INFO("PetrelInterface::readPetrelWellTrace(): %f, %f, %f.",
 		     well_head_x,
 		     well_head_y,
 		     well_kb);
-		well_vec->push_back(
-		        static_cast<GeoLib::StationBorehole*> (new GeoLib::StationBorehole(
-		                                                       well_head_x, well_head_y,
-		                                                       well_kb)));
+		well_vec->push_back(new GeoLib::StationBorehole(well_head_x, well_head_y, well_kb));
 
 		// read well type
 		in.getline(buffer, MAX_COLS_PER_ROW);
@@ -214,7 +211,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 	std::list<std::string>::const_iterator it = str_list.begin();
 	while (it != str_list.end()) {
 		INFO("PetrelInterface::readPetrelWellTraceData(): column information: %s.", it->c_str());
-		it++;
+		++it;
 	}
 
 	// read points

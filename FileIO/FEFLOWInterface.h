@@ -84,15 +84,15 @@ private:
 	{
 		size_t n_nodes;
 		size_t n_elements;
+		size_t obs;
+		size_t np_cor;
 		unsigned n_nodes_of_element;
 		unsigned n_steps;
 		unsigned icrank;
 		unsigned upwind;
-		size_t obs;
 		unsigned optim;
 		unsigned aquifer_type;
 		unsigned nwca;
-		size_t np_cor;
 		unsigned adaptive_mesh;
 		unsigned sp_fem_pcs_id;
 		unsigned sorption_type;

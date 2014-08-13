@@ -42,7 +42,7 @@ public:
 	                                      double y,
 	                                      double z,
 	                                      double depth,
-	                                      std::string date = "");
+	                                      const std::string &date = "");
 
 	/// Adds a stratigraphy to a borehole given a vector of points of length "n" and a vector of soil names of length "n-1".
 	int addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names);

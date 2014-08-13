@@ -52,7 +52,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
 	doc.parse<0>(buffer);
 
 	// parse content
-	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN"))
+	if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
 	{
 		std::cout << "XmlStnInterface::readFile() - Unexpected XML root." << std::endl;
 		return NULL;
@@ -67,9 +67,9 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
 		for (rapidxml::xml_node<>* list_item = station_list->first_node(); list_item; list_item = list_item->next_sibling())
 		{
 			std::string b(list_item->name());
-			if (std::string(list_item->name()).compare("stations") == 0)
+			if (b.compare("stations") == 0)
 				RapidStnInterface::readStations(list_item, stations, fileName);
-			if (std::string(list_item->name()).compare("boreholes") == 0)
+			if (b.compare("boreholes") == 0)
 				RapidStnInterface::readStations(list_item, stations, fileName);
 		}
 	}

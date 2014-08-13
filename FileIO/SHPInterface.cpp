@@ -52,7 +52,7 @@ bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int 
 	return true;
 }
 
-void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, std::string listName)
+void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, const std::string &listName)
 {
 	int shapeType, numberOfElements;
 	double padfMinBound[4], padfMaxBound[4];
@@ -158,7 +158,7 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 	}
 }
 
-void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std::string listName)
+void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
 {
 	this->readPolylines(hSHP, numberOfElements, listName);
 
@@ -166,7 +166,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std
 	std::vector<GeoLib::Surface*>* sfc_vec(new std::vector<GeoLib::Surface*>);
 
 	for (std::vector<GeoLib::Polyline*>::const_iterator poly_it(polylines->begin()); poly_it
-	                != polylines->end(); poly_it++) {
+	                != polylines->end(); ++poly_it) {
 		GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*(*poly_it)));
 		if (sfc)
 			sfc_vec->push_back(sfc);
@@ -180,7 +180,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, std
 }
 
 void SHPInterface::adjustPolylines(std::vector<GeoLib::Polyline*>* lines,
-                                   std::vector<std::size_t> id_map)
+                                   const std::vector<std::size_t> &id_map)
 
 {
 	for (std::size_t i = 0; i < lines->size(); i++) {
@@ -246,9 +246,9 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 			DBFWriteIntegerAttribute(hDBF, polygon_id, mat_field, e->getValue());
 
 			unsigned nNodes (e->getNNodes());
-			padfX = new double(nNodes+1);
-			padfY = new double(nNodes+1);
-			padfZ = new double(nNodes+1);
+			padfX = new double[nNodes+1];
+			padfY = new double[nNodes+1];
+			padfZ = new double[nNodes+1];
 			for (unsigned j=0; j<nNodes; ++j)
 			{
 				padfX[j]=(*e->getNode(j))[0];

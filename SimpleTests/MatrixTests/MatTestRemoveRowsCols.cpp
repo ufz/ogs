@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	// *** reading matrix in crs format from file
 	std::ifstream in(fname_mat.c_str(), std::ios::in | std::ios::binary);
 	double *A(NULL);
-	unsigned *iA(NULL), *jA(NULL), n;
+	unsigned *iA(NULL), *jA(NULL), n = 0;
 	if (in) {
 		if (verbose) {
 			std::cout << "reading matrix from " << fname_mat << " ... " << std::flush;

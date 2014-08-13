@@ -37,7 +37,7 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
 	if (_node_polygon->isPntInPolygon(*station)) {
 		// try to insert station into the child nodes
 		for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
-			 it != _childs.end(); it++) {
+			 it != _childs.end(); ++it) {
 			if (((*it)->getPolygon())->isPntInPolygon (*station)) {
 				bool rval(dynamic_cast<GMSHPolygonTree*>((*it))->insertStation (station));
 				// stop recursion if sub SimplePolygonTree is a leaf
@@ -59,7 +59,7 @@ void GMSHPolygonTree::insertPolyline (GeoLib::PolylineWithSegmentMarker * ply)
 	if (_node_polygon->isPartOfPolylineInPolygon(*ply)) {
 		// check childs
 		for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
-			it != _childs.end(); it++) {
+			it != _childs.end(); ++it) {
 			dynamic_cast<GMSHPolygonTree*>((*it))->insertPolyline (ply);
 		}
 		_plys.push_back(ply);
@@ -177,7 +177,7 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & g
 	}
 
 	// walk through childs
-	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); it++) {
+	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); ++it) {
 		dynamic_cast<GMSHPolygonTree*>((*it))->createGMSHPoints(gmsh_pnts);
 	}
 }
@@ -221,7 +221,7 @@ void GMSHPolygonTree::writeLineConstraints(size_t &line_offset, size_t sfc_numbe
 
 void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(size_t &line_offset, size_t sfc_number, std::ostream& out) const
 {
-	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); it++) {
+	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); ++it) {
 		dynamic_cast<GMSHPolygonTree*>((*it))->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
 	}
 
@@ -293,7 +293,7 @@ void GMSHPolygonTree::getPointsFromSubPolygons(std::vector<GeoLib::Point const*>
 		pnts.push_back(_node_polygon->getPoint(k));
 	}
 
-	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); it++) {
+	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); ++it) {
 		dynamic_cast<GMSHPolygonTree*>((*it))->getPointsFromSubPolygons(pnts);
 	}
 }
@@ -305,7 +305,7 @@ void GMSHPolygonTree::getStationsInsideSubPolygons(std::vector<GeoLib::Point con
 		stations.push_back(_stations[k]);
 	}
 
-	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); it++) {
+	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin()); it != _childs.end(); ++it) {
 		dynamic_cast<GMSHPolygonTree*>((*it))->getStationsInsideSubPolygons(stations);
 	}
 }
