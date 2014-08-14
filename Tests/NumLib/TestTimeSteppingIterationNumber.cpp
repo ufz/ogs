@@ -100,18 +100,22 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
 
     struct IterationNumberUpdate
     {
-        IterationNumberUpdate(const std::vector<std::size_t> &vec) : _nr_iterations(vec) {}
+        IterationNumberUpdate(const std::vector<std::size_t> &vec, std::size_t& counter)
+            : _nr_iterations(vec), i(counter) {}
+
         std::vector<std::size_t> _nr_iterations;
+        std::size_t& i;
+
         void operator()(NumLib::IterationNumberBasedAdaptiveTimeStepping &obj)
         {
-            static std::size_t i = 0;
             std::size_t n = (i<_nr_iterations.size()) ? _nr_iterations[i++] : 0;
             //INFO("-> NR-iterations=%d", n);
             obj.setNIterations(n);
         }
     };
 
-    IterationNumberUpdate update(nr_iterations);
+    std::size_t counter = 0;
+    IterationNumberUpdate update(nr_iterations, counter);
 
     std::vector<double> vec_t = timeStepping(alg, &update);
     //std::cout << vec_t;
