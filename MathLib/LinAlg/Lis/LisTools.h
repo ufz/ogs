@@ -29,8 +29,8 @@ class LisVector;
  *
  * @param A                 Coefficient matrix
  * @param b                 RHS vector
- * @param vec_knownX_id    a vector of known solution entry IDs
- * @param vec_knownX_x     a vector of known solutions
+ * @param _vec_knownX_id    a vector of known solution entry IDs
+ * @param _vec_knownX_x     a vector of known solutions
  * @param penalty_scaling value for scaling some matrix and right hand side
  * entries to enforce some conditions
  */
