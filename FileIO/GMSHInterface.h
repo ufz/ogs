@@ -106,8 +106,6 @@ private:
 	std::string _gmsh_geo_name;
 	std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
 
-	bool _include_stations_as_constraints;
-
 	std::vector<FileIO::GMSH::GMSHPoint*> _gmsh_pnts;
 
 	GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
