@@ -39,7 +39,7 @@ before_install:
 
 script:
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
-  - make tests
+  - ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3
   # PetSc
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
