@@ -42,7 +42,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 {
 	if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
 		return false;
-	
+
 	std::vector<GeoLib::Raster const*> rasters;
 	rasters.reserve(raster_paths.size());
 	for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
@@ -69,7 +69,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	MeshLib::Mesh* mesh_layer (ex.removeMeshElements("MeshLayer"));
 	if (mesh_layer==nullptr)
 		mesh_layer = new MeshLib::Mesh(mesh);
-	
+
 	// map each layer and attach to subsurface mesh
 	const std::size_t nRasters (rasters.size());
 	for (size_t i=0; i<nRasters; ++i)
@@ -97,14 +97,14 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 	const std::size_t nNodes (layer_nodes.size());
 	const std::size_t node_id_offset (_nodes.size());
 	const std::size_t last_layer_offset (node_id_offset-nNodes);
-	
+
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
 		if (layer_id > 0 &&
-		   ((*layer_nodes[i])[2] == _invalid_value || 
+		   ((*layer_nodes[i])[2] == _invalid_value ||
 		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < _elevation_epsilon))
 			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
-		else 
+		else
 			_nodes.push_back(new MeshLib::Node(layer_nodes[i]->getCoords(), _nodes.size()));
 	}
 
@@ -113,17 +113,17 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 	{
 		if (elem->getGeomType() == MeshElemType::TRIANGLE)
 		{
-			std::array<MeshLib::Node*,3> tri_nodes = { _nodes[node_id_offset+elem->getNodeIndex(0)],
+			std::array<MeshLib::Node*,3> tri_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
 			                                           _nodes[node_id_offset+elem->getNodeIndex(1)],
-			                                           _nodes[node_id_offset+elem->getNodeIndex(2)] };
+			                                           _nodes[node_id_offset+elem->getNodeIndex(2)] }};
 			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id+1));
 		}
 		else if (elem->getGeomType() == MeshElemType::QUAD)
-		{			
-			std::array<MeshLib::Node*,4> quad_nodes = { _nodes[node_id_offset+elem->getNodeIndex(0)],
+		{
+			std::array<MeshLib::Node*,4> quad_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(2)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(3)] };
+			                                            _nodes[node_id_offset+elem->getNodeIndex(3)] }};
 			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id+1));
 		}
 	}
@@ -146,15 +146,15 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
 					MeshLib::Node* n1 = _nodes[offset + elem->getNodeIndex((i+1)%nElemNodes)];
 					MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNodeIndex((i+1)%nElemNodes)];
 					MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNodeIndex(i)];
-					
+
 					if (MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
 					{
-						const std::array<MeshLib::Node*,3> tri_nodes = { n0, n2, n1 };
+						const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n2, n1 }};
 						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+1+j));
 					}
 					if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon())
 					{
-						const std::array<MeshLib::Node*,3> tri_nodes = { n0, n3, n2 };
+						const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n3, n2 }};
 						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+1+j));
 					}
 				}
