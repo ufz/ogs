@@ -64,7 +64,7 @@ public:
     * Assignment operator, makes a copy of the internal data of the object.
     * @param rhs The DenseMatrix object to the right side of the assignment symbol.
     */
-   DenseMatrix& operator=(DenseMatrix const& rhs) throw (std::range_error);
+   DenseMatrix& operator=(DenseMatrix const& rhs) noexcept(false);
 
    /**
     * This is the move assignment operator.
@@ -88,18 +88,18 @@ public:
    /**
     * DenseMatrix matrix addition.
     */
-   DenseMatrix* operator+ (const DenseMatrix& mat) const throw (std::range_error);
+   DenseMatrix* operator+ (const DenseMatrix& mat) const noexcept(false);
    /**
     * DenseMatrix matrix subtraction
     */
-   DenseMatrix* operator- (const DenseMatrix& mat) const throw (std::range_error);
+   DenseMatrix* operator- (const DenseMatrix& mat) const noexcept(false);
 
    /**
     * DenseMatrix matrix multiplication \f$ C = A \cdot B\f$
     * @param mat the matrix \f$ B \f$
     * @return the matrix \f$ C \f$
     */
-   DenseMatrix* operator* (const DenseMatrix& mat) const throw (std::range_error);
+   DenseMatrix* operator* (const DenseMatrix& mat) const noexcept(false);
 
    /**
     * matrix transpose
@@ -107,7 +107,7 @@ public:
     */
    DenseMatrix* transpose() const; // HB & ZC
 
-   DenseMatrix* getSubMatrix (IDX_TYPE b_row, IDX_TYPE b_col, IDX_TYPE e_row, IDX_TYPE e_col) const throw (std::range_error);
+   DenseMatrix* getSubMatrix (IDX_TYPE b_row, IDX_TYPE b_col, IDX_TYPE e_row, IDX_TYPE e_col) const noexcept(false);
 
    /**
     * overwrites values of the matrix with the given sub matrix
@@ -115,10 +115,10 @@ public:
     * @param b_col the first column
     * @param sub_mat the sub matrix
     */
-   void setSubMatrix (IDX_TYPE b_row, IDX_TYPE b_col, const DenseMatrix& sub_mat) throw (std::range_error);
+   void setSubMatrix (IDX_TYPE b_row, IDX_TYPE b_col, const DenseMatrix& sub_mat) noexcept(false);
 
-   inline FP_TYPE & operator() (IDX_TYPE row, IDX_TYPE col) throw (std::range_error);
-   inline FP_TYPE const& operator() (IDX_TYPE row, IDX_TYPE col) const throw (std::range_error);
+   inline FP_TYPE & operator() (IDX_TYPE row, IDX_TYPE col) noexcept(false);
+   inline FP_TYPE const& operator() (IDX_TYPE row, IDX_TYPE col) const noexcept(false);
 
    /**
     * writes the matrix entries into the output stream
