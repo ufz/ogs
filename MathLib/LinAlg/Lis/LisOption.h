@@ -109,7 +109,7 @@ struct LisOption
     LisOption();
 
     /// Destructor
-    ~LisOption() {};
+    ~LisOption() {}
 
     /**
      * return a linear solver type from the solver name

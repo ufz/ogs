@@ -168,16 +168,16 @@ bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster
 		const size_t xIdx (static_cast<size_t>(floor(xPos)));
 		const size_t yIdx (static_cast<size_t>(floor(yPos)));
 
-		// weights for bilinear interpolation		
+		// weights for bilinear interpolation
 		const double xShift = fabs(xPos-(xIdx+half_delta))/delta;
 		const double yShift = fabs(yPos-(yIdx+half_delta))/delta;
-		std::array<double,4> weight = { (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift };
+		std::array<double,4> weight = {{ (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
 
 		// neightbors to include in interpolation
 		const int xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
 		const int yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
-		const std::array<int,4> x_nb = { 0, xShiftIdx, xShiftIdx, 0 };
-		const std::array<int,4> y_nb = { 0, 0, yShiftIdx, yShiftIdx };
+		const std::array<int,4> x_nb = {{ 0, xShiftIdx, xShiftIdx, 0 }};
+		const std::array<int,4> y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
 
 		// get pixel values
 		std::array<double,4>  pix_val;

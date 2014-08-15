@@ -54,14 +54,13 @@
 namespace FileIO
 {
 GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
-                             bool include_stations_as_constraints,
+                             bool /*include_stations_as_constraints*/,
                              GMSH::MeshDensityAlgorithm mesh_density_algorithm,
                              double param1,
                              double param2,
                              size_t param3,
                              std::vector<std::string>& selected_geometries) :
-	_n_lines(0), _n_plane_sfc(0), _geo_objs(geo_objs), _selected_geometries(selected_geometries),
-	_include_stations_as_constraints(include_stations_as_constraints)
+	_n_lines(0), _n_plane_sfc(0), _geo_objs(geo_objs), _selected_geometries(selected_geometries)
 {
 	switch (mesh_density_algorithm) {
 	case GMSH::MeshDensityAlgorithm::NoMeshDensity:

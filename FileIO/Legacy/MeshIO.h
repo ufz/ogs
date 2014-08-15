@@ -60,7 +60,6 @@ private:
 	MeshLib::Element* readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes);
 	std::string ElemType2StringOutput(const MeshElemType t) const;
 
-	double* _edge_length[2];
 	const MeshLib::Mesh* _mesh;
 
 };  /* class */
