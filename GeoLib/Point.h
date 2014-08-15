@@ -22,7 +22,7 @@
 #include "GeoObject.h"
 
 // MathLib
-#include "TemplatePoint.h"
+#include "MathLib/TemplatePoint.h"
 
 namespace GeoLib
 {

@@ -16,8 +16,8 @@
 #define GEOINFO_H_
 
 // GEO
-#include "GeoObject.h"
-#include "GeoType.h"
+#include "GeoLib/GeoObject.h"
+#include "GeoLib/GeoType.h"
 
 /**
  * \brief GeoInfo stores the type of the geometric entity and
