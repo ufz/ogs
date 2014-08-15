@@ -4,6 +4,9 @@ compiler:
   - gcc
   - clang
 
+cache:
+  - apt
+
 branches:
   only:
     - master
