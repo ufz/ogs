@@ -117,7 +117,7 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
 
     int iter = 0;
     double resid = 0.0;
-    ierr = lis_solver_get_iters(solver, &iter);
+    ierr = lis_solver_get_iter(solver, &iter);
     checkLisError(ierr);
     ierr = lis_solver_get_residualnorm(solver, &resid);
     checkLisError(ierr);
