@@ -56,7 +56,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::~DenseMatrix ()
 template <typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator=(DenseMatrix<FP_TYPE, IDX_TYPE> const& rhs)
-	noexcept(false)
 {
 	if (this == &rhs)
 		return *this;
@@ -140,7 +139,6 @@ V DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (V const& x) const
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator+(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
-		noexcept(false)
 {
 	// make sure the two matrices have the same dimension.
 	if (_n_rows != mat.getNRows() || _n_cols != mat.getNCols())
@@ -159,7 +157,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator+(const DenseMatrix<FP_TYPE, IDX_TYPE>& 
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator-(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
-		noexcept(false)
 {
 	// make sure the two matrices have the same dimension.
 	if (_n_rows != mat.getNRows() || _n_cols != mat.getNCols())
@@ -178,7 +175,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator-(const DenseMatrix<FP_TYPE, IDX_TYPE>& 
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator*(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
-		noexcept(false)
 {
 	// make sure the two matrices have the same dimension.
 	if (_n_cols != mat.getNRows())
@@ -218,7 +214,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::getSubMatrix(
 		IDX_TYPE b_row, IDX_TYPE b_col,
 		IDX_TYPE e_row, IDX_TYPE e_col) const
-		noexcept(false)
 {
 	if (b_row >= e_row | b_col >= e_col)
 		throw std::range_error("DenseMatrix::getSubMatrix() illegal sub matrix");
@@ -239,7 +234,6 @@ template<typename FP_TYPE, typename IDX_TYPE>
 void
 DenseMatrix<FP_TYPE, IDX_TYPE>::setSubMatrix(IDX_TYPE b_row, IDX_TYPE b_col,
 		const DenseMatrix<FP_TYPE, IDX_TYPE>& sub_mat)
-		noexcept(false)
 {
 	if (b_row + sub_mat.getNRows() > _n_rows | b_col + sub_mat.getNCols() > _n_cols)
 		throw std::range_error("DenseMatrix::setSubMatrix() sub matrix to big");
@@ -254,7 +248,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::setSubMatrix(IDX_TYPE b_row, IDX_TYPE b_col,
 template<typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col)
-	noexcept(false)
 {
 	if ((row >= _n_rows) | (col >= _n_cols))
 		throw std::range_error("DenseMatrix: op() const range error");
@@ -265,7 +258,6 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col)
 template<typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE const&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col) const
-	noexcept(false)
 {
 	if ((row >= _n_rows) | (col >= _n_cols))
 		throw std::range_error("DenseMatrix: op() const range error");
