@@ -45,13 +45,13 @@ int main(int argc, char *argv[])
 		' ',
 		BaseLib::BuildInfo::git_version_sha1);
 
-	TCLAP::ValueArg<std::string> project_arg(
-		"p", // option tag
-		"project", // long option tag
-		"file name of the project", // description
-		true, // required
+	TCLAP::UnlabeledValueArg<std::string> project_arg(
+		"project-file",
+		"Path to the ogs6 project file.",
+		true,
 		"",
-		"string"); // type of information
+		"PROJECT FILE");
+
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
 
