@@ -35,7 +35,7 @@
 #endif
 
 #ifdef OGS_BUILD_INFO
-#include "BuildInfo.h"
+#include "BaseLib/BuildInfo.h"
 #endif
 
 #ifdef _OPENMP
@@ -100,12 +100,18 @@ int main(int argc, char *argv[])
 	unsigned n_threads (n_cores_arg.getValue());
 
 #ifdef OGS_BUILD_INFO
-	INFO("%s was build with compiler %s", argv[0], CMAKE_CXX_COMPILER);
-#ifdef NDEBUG
-	INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
-#else
-	INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
-#endif
+	INFO("%s was build with compiler %s",
+		argv[0],
+		BaseLib::BuildInfo::cmake_cxx_compiler.c_str());
+	#ifdef NDEBUG
+		INFO("CXX_FLAGS: %s %s",
+			BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
+			BaseLib::BuildInfo::cmake_cxx_flags_release.c_str());
+	#else
+		INFO("CXX_FLAGS: %s %s",
+			BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
+			BaseLib::BuildInfo::cmake_cxx_flags_debug.c_str());
+	#endif
 #endif
 
 #ifdef UNIX

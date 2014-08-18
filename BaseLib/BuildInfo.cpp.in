@@ -1,0 +1,37 @@
+/**
+ * \brief  Build information.
+ *
+ * \copyright
+ * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include "BaseLib/BuildInfo.h"
+
+namespace BaseLib
+{
+
+namespace BuildInfo
+{
+
+    const std::string build_timestamp("@BUILD_TIMESTAMP@");
+
+    const std::string cmake_cxx_compiler("@CMAKE_CXX_COMPILER@");
+    const std::string cmake_cxx_flags("@CMAKE_CXX_FLAGS@");
+    const std::string cmake_cxx_flags_release("@CMAKE_CXX_FLAGS_RELEASE@");
+    const std::string cmake_cxx_flags_debug("@CMAKE_CXX_FLAGS_DEBUG@");
+
+    const std::string git_version_sha1("@GIT_SHA1@");
+    const std::string git_version_sha1_short("@GIT_SHA1_SHORT@");
+
+    const std::string ogs_version("@OGS_VERSION@");
+    const std::string ogs_version_and_persons("@OGS_VERSION_AND_PERSONS@");
+
+    const std::string source_path("@CMAKE_CURRENT_SOURCE_DIR@");
+    const std::string tests_tmp_path("@PROJECT_BINARY_DIR@/Tests/");
+
+}
+}

@@ -33,7 +33,7 @@
 #endif
 
 #ifdef OGS_BUILD_INFO
-#include "BuildInfo.h"
+#include "BaseLib/BuildInfo.h"
 #endif
 
 #ifdef HAVE_PTHREADS
@@ -94,16 +94,18 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef OGS_BUILD_INFO
-	INFO("%s was build with compiler %s", argv[0], CMAKE_CXX_COMPILER);
-#ifdef CMAKE_BUILD_TYPE
-	if (std::string(CMAKE_BUILD_TYPE).compare("Release") == 0) {
-		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_RELEASE);
-	} else {
-		INFO("CXX_FLAGS: %s %s", CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS_DEBUG);
-	}
-#else
-    INFO("CXX_FLAGS: %s", CMAKE_CXX_FLAGS);
-#endif
+	INFO("%s was build with compiler %s",
+		argv[0],
+		BaseLib::BuildInfo::cmake_cxx_compiler.c_str());
+	#ifdef NDEBUG
+		INFO("CXX_FLAGS: %s %s",
+			BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
+			BaseLib::BuildInfo::cmake_cxx_flags_release.c_str());
+	#else
+		INFO("CXX_FLAGS: %s %s",
+			BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
+			BaseLib::BuildInfo::cmake_cxx_flags_debug.c_str());
+	#endif
 #endif
 
 #ifdef UNIX

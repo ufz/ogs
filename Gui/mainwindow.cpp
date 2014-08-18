@@ -12,14 +12,13 @@
  *
  */
 
-#include "Configure.h"
 #include "mainwindow.h"
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
 // BaseLib
-#include "GitSHA1.h"
+#include "BaseLib/BuildInfo.h"
 #include "FileTools.h"
 
 // models
@@ -121,7 +120,7 @@
 #endif // OGS_USE_VRPN
 
 #ifdef OGS_BUILD_INFO
-#include "BuildInfo.h"
+#include "BaseLib/BuildInfo.h"
 #endif // OGS_BUILD_INFO
 
 using namespace FileIO;
@@ -749,11 +748,12 @@ void MainWindow::showLicense()
 void MainWindow::about()
 {
 	QString about("<a href='http://www.opengeosys.org'>http://www.opengeosys.org</a><br /><br />");
-	QString ogsVersion = QString(OGS_VERSION_AND_PERSONS);
+	QString ogsVersion = QString::fromStdString(
+		BaseLib::BuildInfo::ogs_version_and_persons);
 	about.append(QString("Version: %1<br /><br />").arg(ogsVersion));
 
 	about.append(QString("Git commit: <a href='https://github.com/ufz/ogs/commit/%1'>%1</a><br />")
-		.arg(QString(g_GIT_SHA1_SHORT)));
+		.arg(QString::fromStdString(BaseLib::BuildInfo::git_version_sha1_short)));
 	about.append(QString("Built date: %1<br />").arg(QDate::currentDate().toString(Qt::ISODate)));
 
 	QMessageBox::about(this, "About OpenGeoSys 6", about);

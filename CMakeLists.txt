@@ -166,5 +166,6 @@ IF(OGS_BUILD_UTILS AND NOT IS_SUBPROJECT)
 	ADD_SUBDIRECTORY( Utils/MeshEdit )
 ENDIF() # OGS_BUILD_UTILS
 
-CONFIGURE_FILE (BaseLib/BuildInfo.h.in ${PROJECT_BINARY_DIR}/BaseLib/BuildInfo.h)
-CONFIGURE_FILE (BaseLib/Configure.h.in ${PROJECT_BINARY_DIR}/BaseLib/Configure.h)
+# The configuration must be called from the source dir and not BaseLib/.
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/BaseLib/BuildInfo.cpp" @ONLY)

@@ -1,4 +1,3 @@
-#include "Configure.h"
 #include "mainwindow.h"
 #include <QtGui/QApplication>
 #ifdef VTKOSGCONVERTER_FOUND
@@ -12,6 +11,8 @@
 FbxManager* lSdkManager = NULL;
 FbxScene* lScene = NULL;
 #endif
+
+#include "BaseLib/BuildInfo.h"
 
 int main(int argc, char* argv[])
 {
@@ -27,13 +28,16 @@ int main(int argc, char* argv[])
 	logogCout->SetFormatter(*formatter);
 	QApplication a(argc, argv);
 	QApplication::setApplicationName("OpenGeoSys - Data Explorer");
-	QApplication::setApplicationVersion(QString(OGS_VERSION));
+	QApplication::setApplicationVersion(QString::fromStdString(
+		BaseLib::BuildInfo::ogs_version));
 	QApplication::setOrganizationName("OpenGeoSys Community");
 	QApplication::setOrganizationDomain("opengeosys.org");
 	setlocale(LC_NUMERIC,"C");
 	QLocale::setDefault(QLocale::German);
 	MainWindow* w = new MainWindow();
-	w->setWindowTitle( w->windowTitle() + " - " + QString(OGS_VERSION_AND_PERSONS) + " - FirstFloor");
+	w->setWindowTitle( w->windowTitle() + " - " +
+		QString::fromStdString(BaseLib::BuildInfo::ogs_version_and_persons) +
+		" - FirstFloor");
 	w->show();
 	int returncode = a.exec();
 	delete w;
