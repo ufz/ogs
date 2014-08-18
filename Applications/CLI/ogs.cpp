@@ -19,6 +19,7 @@
 #include "ThirdParty/tclap/CmdLine.h"
 
 // BaseLib
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // OGS
@@ -34,8 +35,16 @@ int main(int argc, char *argv[])
 	logog_cout->SetFormatter(*fmt);
 
 	// Parse CLI arguments.
-	TCLAP::CmdLine cmd(
-			"OpenGeoSys simulation application", ' ', "0.1");
+	TCLAP::CmdLine cmd("OpenGeoSys-6 software (" +
+			BaseLib::BuildInfo::git_version_sha1_short + ")\n" +
+			"Copyright (c) 2014, OpenGeoSys Community " +
+			"(http://www.opengeosys.org) " +
+			"Distributed under a Modified BSD License. " +
+			"See accompanying file LICENSE.txt or " +
+			"http://www.opengeosys.org/project/license",
+		' ',
+		BaseLib::BuildInfo::git_version_sha1);
+
 	TCLAP::ValueArg<std::string> project_arg(
 		"p", // option tag
 		"project", // long option tag
