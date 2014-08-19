@@ -81,11 +81,6 @@ IF (OGS_CMAKE_DEBUG)
 	list_all_cmake_variable_values()
 ENDIF (OGS_CMAKE_DEBUG)
 
-OPTION(OGS_BUILD_INFO "Should build information be generated" ON)
-IF (OGS_BUILD_INFO)
-	ADD_DEFINITIONS (-DOGS_BUILD_INFO)
-ENDIF (OGS_BUILD_INFO)
-
 # Code coverage
 OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 

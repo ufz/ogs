@@ -35,9 +35,7 @@
 #include <sys/unistd.h>
 #endif
 
-#ifdef OGS_BUILD_INFO
 #include "BaseLib/BuildInfo.h"
-#endif
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -101,19 +99,17 @@ int main(int argc, char *argv[])
 	// read number of threads
 	unsigned n_threads (n_cores_arg.getValue());
 
-#ifdef OGS_BUILD_INFO
 	INFO("%s was build with compiler %s",
 		argv[0],
 		BaseLib::BuildInfo::cmake_cxx_compiler.c_str());
-	#ifdef NDEBUG
-		INFO("CXX_FLAGS: %s %s",
-			BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
-			BaseLib::BuildInfo::cmake_cxx_flags_release.c_str());
-	#else
-		INFO("CXX_FLAGS: %s %s",
-			BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
-			BaseLib::BuildInfo::cmake_cxx_flags_debug.c_str());
-	#endif
+#ifdef NDEBUG
+	INFO("CXX_FLAGS: %s %s",
+		BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
+		BaseLib::BuildInfo::cmake_cxx_flags_release.c_str());
+#else
+	INFO("CXX_FLAGS: %s %s",
+		BaseLib::BuildInfo::cmake_cxx_flags.c_str(),
+		BaseLib::BuildInfo::cmake_cxx_flags_debug.c_str());
 #endif
 
 #ifdef UNIX

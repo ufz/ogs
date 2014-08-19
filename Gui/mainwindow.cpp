@@ -119,9 +119,7 @@
 #include "VtkTrackedCamera.h"
 #endif // OGS_USE_VRPN
 
-#ifdef OGS_BUILD_INFO
 #include "BaseLib/BuildInfo.h"
-#endif // OGS_BUILD_INFO
 
 using namespace FileIO;
 
