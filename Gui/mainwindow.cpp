@@ -1303,14 +1303,15 @@ void MainWindow::showDataExplorerSettingsDialog()
 void MainWindow::FEMTestStart()
 {
 	std::vector<GeoLib::Point*> *pnts = const_cast<std::vector<GeoLib::Point*>*>(this->_project.getGEOObjects()->getPointVec("testgeo"));
-	//GeoLib::BoundingSphere s(*pnts);
-	//std::vector<size_t> perm(4);
-	//std::iota(perm.begin(), perm.end(), 0);
-	//BaseLib::Quicksort<GeoLib::Point*>(*pnts, 0, pnts->size(), perm);
-	GeoLib::BoundingSphere s(*(pnts->at(0)), *(pnts->at(1)), *(pnts->at(2)));//, *(pnts->at(3)));
-	GeoLib::Point c = s.getCenter();
+	//GeoLib::BoundingSphere s(*(pnts->at(0)), *(pnts->at(1)), *(pnts->at(2)), *(pnts->at(3)));
+	GeoLib::BoundingSphere s(*pnts);
+	GeoLib::Point* c = new GeoLib::Point(s.getCenter().getCoords());
 	double r = s.getRadius();
-	std::cout << "Center: (" << c[0] << ", " << c[1] << ", " << c[2] << "), Radius: " << r << std::endl;
+	std::cout << "Center: (" << (*c)[0] << ", " << (*c)[1] << ", " << (*c)[2] << "), Radius: " << r << std::endl;
+	std::vector<GeoLib::Point*> *result = (s.getSpherePoints(10000));
+	result->push_back(c);
+	std::string geo_name("result");
+	_project.getGEOObjects()->addPointVec(result, geo_name);
 }
 
 void MainWindow::showTrackingSettingsDialog()
