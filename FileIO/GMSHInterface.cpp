@@ -22,8 +22,7 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
-#include "BuildInfo.h"
-#include "Configure.h"
+#include "BaseLib/BuildInfo.h"
 #include "FileTools.h"
 #include "StringTools.h"
 
@@ -256,9 +255,9 @@ void GMSHInterface::readNodeIDs(std::ifstream &in,
 
 bool GMSHInterface::write()
 {
-	_out << "// GMSH input file created by OpenGeoSys " << OGS_VERSION_AND_PERSONS;
+	_out << "// GMSH input file created by OpenGeoSys " << BaseLib::BuildInfo::ogs_version_and_persons;
 #ifdef BUILD_TIMESTAMP
-	_out << " built on " << BUILD_TIMESTAMP;
+	_out << " built on " << BaseLib::BuildInfo::build_timestamp;
 #endif
 	_out << "\n\n";
 

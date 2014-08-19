@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "Configure.h"
+#include "BuildInfo.h"
 #include "logog/include/logog.hpp"
 
 namespace BaseLib
@@ -36,7 +36,7 @@ public:
 	FileFinder()
 	{
 		addDirectory(".");
-		addDirectory(std::string(SOURCEPATH).append("/FileIO"));
+		addDirectory(BuildInfo::source_path + "/FileIO");
 	}
 
 	/**

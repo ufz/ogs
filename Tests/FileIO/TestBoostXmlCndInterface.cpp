@@ -14,7 +14,8 @@
 #include <boost/filesystem.hpp>
 
 #include "gtest/gtest.h"
-#include "Configure.h"
+
+#include "BaseLib/BuildInfo.h"
 
 // FileIO
 #include "XmlIO/Qt/XmlCndInterface.h"
@@ -59,7 +60,7 @@ TEST(FileIO, TestBoostXmlCndInterfaceUsingBoundaryCondition)
 
 	// write bc to file
 	const std::string local_path("XmlCndInterfaceTestFile.cnd");
-	std::string fname(std::string(PUT_TMP_DIR_IN).append(local_path));
+	std::string fname(BaseLib::BuildInfo::tests_tmp_path + local_path);
 
 	FileIO::XmlCndInterface xml(project_data);
 	xml.setNameForExport(geometry_name);

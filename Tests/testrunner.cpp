@@ -13,7 +13,6 @@
  */
 
 // ** INCLUDES **
-#include "Configure.h"
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
 

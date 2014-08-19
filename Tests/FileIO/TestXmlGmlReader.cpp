@@ -15,7 +15,7 @@
 #include <boost/filesystem.hpp>
 
 #include "gtest/gtest.h"
-#include "Configure.h"
+#include "BaseLib/BuildInfo.h"
 
 // FileIO
 #include "XmlIO/Qt/XmlGmlInterface.h"
@@ -30,7 +30,7 @@
 TEST(FileIO, XmlGmlWriterReaderTest)
 {
 	// Writer test
-	std::string test_data_file(std::string(SOURCEPATH).append("/Tests/FileIO/xmlgmltestdata.gml"));
+	std::string test_data_file(BaseLib::BuildInfo::source_path + "/Tests/FileIO/xmlgmltestdata.gml");
 
 	ProjectData project;
 	GeoLib::GEOObjects geo_objects;

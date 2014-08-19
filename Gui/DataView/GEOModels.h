@@ -15,10 +15,10 @@
 #ifndef GEOMODELS_H
 #define GEOMODELS_H
 
-// ** INCLUDES **
-#include "GEOObjects.h"
-#include "GeoType.h"
 #include <QObject>
+
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/GeoType.h"
 
 class GeoTreeModel;
 class Model;
