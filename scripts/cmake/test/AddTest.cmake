@@ -1,3 +1,12 @@
+FUNCTION (AddOgsBenchmark name project_name)
+
+	ExternalData_Add_Test(data
+		NAME "${name}-${project_name}"
+		COMMAND ogs DATA{${ExternalData_SOURCE_ROOT}/${project_name}} ${ARGN}
+	)
+
+ENDFUNCTION()
+
 FUNCTION (AddTest executable case_path case_name wrapper)
 
 	SET(tester ${ARGV4})
