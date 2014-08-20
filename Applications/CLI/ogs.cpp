@@ -21,9 +21,6 @@
 // BaseLib
 #include "BaseLib/LogogSimpleFormatter.h"
 
-// FileIO/XmlIO/Qt
-#include "FileIO/XmlIO/Qt/XmlGspInterface.h"
-
 // OGS
 
 #include "Applications/ApplicationsLib/ProjectData.h"
@@ -50,8 +47,6 @@ int main(int argc, char *argv[])
 	cmd.parse(argc, argv);
 
 	ProjectData project_data;
-	FileIO::XmlGspInterface project_reader(project_data);
-	project_reader.readFile(project_arg.getValue());
 
 	delete fmt;
 	delete logog_cout;
