@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2011-11-23
- * \brief  Definition of the XmlGspInterface class.
+ * \brief  Definition of the XmlProjectInterface class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef XMLGSPINTERFACE_H
-#define XMLGSPINTERFACE_H
+#ifndef XMLPROJECTINTERFACE_H
+#define XMLPROJECTINTERFACE_H
 
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
@@ -24,16 +24,16 @@ namespace FileIO
 /**
  * \brief Reads and writes project information to and from XML files.
  */
-class XmlGspInterface : public XMLInterface, public XMLQtInterface
+class XmlProjectInterface : public XMLInterface, public XMLQtInterface
 {
 public:
 	/**
 	 * Constructor
 	 * \param project Project data.
 	 */
-	XmlGspInterface(ProjectData &project);
+	XmlProjectInterface(ProjectData &project);
 
-	virtual ~XmlGspInterface() {};
+	virtual ~XmlProjectInterface() {};
 
 	/// Reads an xml-file containing a GeoSys project.
 	/// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.
@@ -63,4 +63,4 @@ private:
 
 }
 
-#endif // XMLGSPINTERFACE_H
+#endif // XMLPROJECTINTERFACE_H

@@ -79,7 +79,7 @@
 #include "PetrelInterface.h"
 #include "XmlIO/Qt/XmlCndInterface.h"
 #include "XmlIO/Qt/XmlGmlInterface.h"
-#include "XmlIO/Qt/XmlGspInterface.h"
+#include "XmlIO/Qt/XmlProjectInterface.h"
 #include "XmlIO/Qt/XmlStnInterface.h"
 
 #include "StringTools.h"
@@ -473,16 +473,16 @@ void MainWindow::save()
 	        this,
 	        "Save data as",
 	        LastSavedFileDirectory::getDir(),
-			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)"); //Saving gli files is no longer possible
+			"GeoSys project (*.prj);;GMSH geometry files (*.geo)"); //Saving gli files is no longer possible
 
 	if (!fileName.isEmpty())
 	{
 		QFileInfo fi(fileName);
 		LastSavedFileDirectory::setDir(fileName);
 
-		if (fi.suffix().toLower() == "gsp")
+		if (fi.suffix().toLower() == "prj")
 		{
-			XmlGspInterface xml(_project);
+			XmlProjectInterface xml(_project);
 			xml.writeToFile(fileName.toStdString());
 		}
 		else if (fi.suffix().toLower() == "geo")
@@ -540,9 +540,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
 		}
-		else if (fi.suffix().toLower() == "gsp")
+		else if (fi.suffix().toLower() == "prj")
 		{
-			XmlGspInterface xml(_project);
+			XmlProjectInterface xml(_project);
 			if (xml.readFile(fileName))
 			{
 				_meshModels->updateModel();

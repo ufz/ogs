@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2011-11-23
- * \brief  Implementation of the XmlGspInterface class.
+ * \brief  Implementation of the XmlProjectInterface class.
  *
  * \copyright
  * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,7 +15,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "XmlGspInterface.h"
+#include "XmlProjectInterface.h"
 
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
@@ -34,13 +34,13 @@
 
 namespace FileIO
 {
-XmlGspInterface::XmlGspInterface(ProjectData& project) :
+XmlProjectInterface::XmlProjectInterface(ProjectData& project) :
 	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
 	_project(project)
 {
 }
 
-int XmlGspInterface::readFile(const QString &fileName)
+int XmlProjectInterface::readFile(const QString &fileName)
 {
 	if(XMLQtInterface::readFile(fileName) == 0)
 		return 0;
@@ -53,7 +53,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 	QDomElement const docElement = doc.documentElement(); //OpenGeoSysProject
 	if (docElement.nodeName().compare("OpenGeoSysProject"))
 	{
-		ERR("XmlGspInterface::readFile(): Unexpected XML root.");
+		ERR("XmlProjectInterface::readFile(): Unexpected XML root.");
 		return 0;
 	}
 
@@ -107,13 +107,13 @@ int XmlGspInterface::readFile(const QString &fileName)
 	return 1;
 }
 
-int XmlGspInterface::writeToFile(std::string filename)
+int XmlProjectInterface::writeToFile(std::string filename)
 {
 	_filename = filename;
 	return FileIO::Writer::writeToFile(filename);
 }
 
-bool XmlGspInterface::write()
+bool XmlProjectInterface::write()
 {
 	GeoLib::GEOObjects* geoObjects = _project.getGEOObjects();
 	QFileInfo fi(QString::fromStdString(_filename));
@@ -160,7 +160,7 @@ bool XmlGspInterface::write()
 			fileTag.appendChild(fileNameText);
 		}
 		else
-			ERR("XmlGspInterface::writeFile(): Error writing vtu-file \"%s\".", name.c_str());
+			ERR("XmlProjectInterface::writeFile(): Error writing vtu-file \"%s\".", name.c_str());
 	}
 	} // end MSH-scope
 
@@ -205,13 +205,13 @@ bool XmlGspInterface::write()
 }
 
 
-void XmlGspInterface::writeFile(QDomDocument &doc, 
-	                            QDomElement &parent, 
-	                            QString const& tag_name,
-	                            XMLInterface &xml_interface, 
-	                            std::string const& path, 
-	                            std::string const& file_name, 
-	                            std::string const& extension)
+void XmlProjectInterface::writeFile(QDomDocument &doc, 
+	                                QDomElement &parent, 
+	                                QString const& tag_name,
+	                                XMLInterface &xml_interface, 
+	                                std::string const& path, 
+    	                            std::string const& file_name, 
+	                                std::string const& extension)
 {
 	if (xml_interface.writeToFile(path + file_name + "." + extension))
 	{
@@ -223,7 +223,7 @@ void XmlGspInterface::writeFile(QDomDocument &doc,
 		fileTag.appendChild(fileNameText);
 	}
 	else
-		ERR("XmlGspInterface::writeFile(): Error writing %s-file \"%s\".", extension.c_str(), file_name.c_str());
+		ERR("XmlProjectInterface::writeFile(): Error writing %s-file \"%s\".", extension.c_str(), file_name.c_str());
 }
 
 
