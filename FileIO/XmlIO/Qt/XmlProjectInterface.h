@@ -1,5 +1,4 @@
 /**
- * \file
  * \author Karsten Rink
  * \date   2011-11-23
  * \brief  Definition of the XmlProjectInterface class.
@@ -50,9 +49,9 @@ protected:
 	void writeFile(QDomDocument &doc,
 	               QDomElement &parent_node,
 	               QString const& tag_name,
-	               XMLInterface &xml_interface, 
-	               std::string const& path, 
-	               std::string const& file_name, 
+	               XMLInterface &xml_interface,
+	               std::string const& path,
+	               std::string const& file_name,
 	               std::string const& extension);
 
 private:

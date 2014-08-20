@@ -1,5 +1,4 @@
 /**
- * \file
  * \author Karsten Rink
  * \date   2011-11-23
  * \brief  Implementation of the XmlProjectInterface class.
@@ -72,7 +71,7 @@ int XmlProjectInterface::readFile(const QString &fileName)
 		}
 		else if (file_node.nodeName().compare("mshfile") == 0)
 		{
-			std::string const msh_name = 
+			std::string const msh_name =
 				path.toStdString() + file_node.toElement().text().toStdString();
 			MeshLib::Mesh* mesh = FileIO::readMeshFromFile(msh_name);
 			if (mesh)
@@ -85,7 +84,7 @@ int XmlProjectInterface::readFile(const QString &fileName)
 			{
 				if (process_node.nodeName().compare("cndfile") == 0)
 				{
-					const std::string cnd_name = 
+					const std::string cnd_name =
 						path.toStdString() + process_node.toElement().text().toStdString();
 					XmlCndInterface cnd(_project);
 					cnd.readFile(cnd_name);
@@ -131,7 +130,7 @@ bool XmlProjectInterface::write()
 
 	doc.appendChild(root);
 
-	
+
 	{ // GML
 	std::vector<std::string> geoNames;
 	geoObjects->getGeometryNames(geoNames);
@@ -185,7 +184,7 @@ bool XmlProjectInterface::write()
 	const std::vector<FEMCondition*> &cnd_vec (_project.getConditions());
 	XmlCndInterface cnd(_project);
 	if (!cnd_vec.empty())
-	{		
+	{
 		std::string const cnd_name (process_name + ".cnd");
 		this->writeFile(doc, processTag, "cndfile", cnd, path, process_name, "cnd");
 	}
