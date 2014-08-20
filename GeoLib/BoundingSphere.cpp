@@ -140,7 +140,7 @@ double BoundingSphere::sqrPointDist(const GeoLib::Point pnt) const
 	return MathLib::sqrDist(_center.getCoords(), pnt.getCoords())-(_radius*_radius);
 }
 
-std::vector<GeoLib::Point*>* BoundingSphere::getSpherePoints(std::size_t n_points) const
+std::vector<GeoLib::Point*>* BoundingSphere::getRandomSpherePoints(std::size_t n_points) const
 {
 	std::vector<GeoLib::Point*> *pnts = new std::vector<GeoLib::Point*>;
 	pnts->reserve(n_points);
