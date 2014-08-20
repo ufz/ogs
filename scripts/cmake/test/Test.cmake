@@ -13,6 +13,7 @@ CONFIGURE_FILE(
 	${CMAKE_BINARY_DIR}/CTestCustom.cmake
 )
 
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/Data.cmake)
 
 IF(CMAKE_CONFIGURATION_TYPES)
