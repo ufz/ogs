@@ -47,13 +47,13 @@ protected:
 	bool write();
 
 	// helper function for writing file + filename of every individual file-type
-	void writeFileName(QDomDocument &doc,
-		               QDomElement &parent_node,
-					   QString const& tag_name,
-		               XMLInterface &xml, 
-		               std::string const& path, 
-		               std::string const& file_name, 
-		               std::string const& extension);
+	void writeFile(QDomDocument &doc,
+	               QDomElement &parent_node,
+	               QString const& tag_name,
+	               XMLInterface &xml_interface, 
+	               std::string const& path, 
+	               std::string const& file_name, 
+	               std::string const& extension);
 
 private:
 	std::string _filename;

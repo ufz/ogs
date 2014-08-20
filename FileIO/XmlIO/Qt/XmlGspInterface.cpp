@@ -139,7 +139,7 @@ bool XmlGspInterface::write()
 	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end(); ++it)
 	{
 		gml.setNameForExport(*it);
-		this->writeFileName(doc, root, "geofile", gml, path, *it, "gml");
+		this->writeFile(doc, root, "geofile", gml, path, *it, "gml");
 	}
 	} // end GML-scope
 
@@ -171,7 +171,7 @@ bool XmlGspInterface::write()
 	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
 	{
 		stn.setNameForExport(*it);
-		this->writeFileName(doc, root, "stnfile", stn, path, *it, "stn");
+		this->writeFile(doc, root, "stnfile", stn, path, *it, "stn");
 	}
 	} // end STN-scope
 
@@ -187,7 +187,7 @@ bool XmlGspInterface::write()
 	if (!cnd_vec.empty())
 	{		
 		std::string const cnd_name (process_name + ".cnd");
-		this->writeFileName(doc, processTag, "cndfile", cnd, path, process_name, "cnd");
+		this->writeFile(doc, processTag, "cndfile", cnd, path, process_name, "cnd");
 	}
 	} // end CND-scope
 
@@ -205,15 +205,15 @@ bool XmlGspInterface::write()
 }
 
 
-void XmlGspInterface::writeFileName(QDomDocument &doc, 
-	                                QDomElement &parent, 
-									QString const& tag_name,
-									XMLInterface &xml, 
-									std::string const& path, 
-									std::string const& file_name, 
-									std::string const& extension)
+void XmlGspInterface::writeFile(QDomDocument &doc, 
+	                            QDomElement &parent, 
+	                            QString const& tag_name,
+	                            XMLInterface &xml_interface, 
+	                            std::string const& path, 
+	                            std::string const& file_name, 
+	                            std::string const& extension)
 {
-	if (xml.writeToFile(path + file_name + "." + extension))
+	if (xml_interface.writeToFile(path + file_name + "." + extension))
 	{
 		// write entry in project file
 		QDomElement fileTag = doc.createElement(tag_name);
