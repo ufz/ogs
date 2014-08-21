@@ -205,13 +205,13 @@ bool XmlProjectInterface::write()
 }
 
 
-void XmlProjectInterface::writeFile(QDomDocument &doc, 
-	                                QDomElement &parent, 
-	                                QString const& tag_name,
-	                                XMLInterface &xml_interface, 
-	                                std::string const& path, 
-    	                            std::string const& file_name, 
-	                                std::string const& extension)
+void XmlProjectInterface::writeFile(QDomDocument &doc,
+                                    QDomElement &parent,
+                                    QString const& tag_name,
+                                    XMLInterface &xml_interface,
+                                    std::string const& path,
+                                    std::string const& file_name,
+                                    std::string const& extension)
 {
 	if (xml_interface.writeToFile(path + file_name + "." + extension))
 	{
