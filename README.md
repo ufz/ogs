@@ -40,6 +40,6 @@ publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.org
 [devguide]: http://docs.opengeosys.org/docs/devguide
-[jenkins-ci]: https://svn.ufz.de/jenkins/job/OGS-6/
-[docs]: https://svn.ufz.de/jenkins/job/OGS-6/job/Docs/lastSuccessfulBuild/artifact/build/docs/index.html
+[jenkins-ci]: https://svn.ufz.de:8443/job/OGS-6/
+[docs]: http://doxygen.opengeosys.org
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
