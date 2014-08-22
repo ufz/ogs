@@ -68,3 +68,14 @@ TARGET_LINK_LIBRARIES( appendLinesAlongPolyline
 
 SET_TARGET_PROPERTIES(appendLinesAlongPolyline
 	PROPERTIES FOLDER Utilities)
+
+ADD_EXECUTABLE( editMaterialID editMaterialID.cpp )
+TARGET_LINK_LIBRARIES( editMaterialID
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+)
+
+SET_TARGET_PROPERTIES(editMaterialID
+	PROPERTIES FOLDER Utilities)
