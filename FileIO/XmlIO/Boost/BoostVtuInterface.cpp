@@ -206,7 +206,8 @@ MeshLib::Mesh* BoostVtuInterface::readVTUFile(const std::string &file_name)
 				}
 			}
 
-			INFO("Reading OGS mesh finished.");
+			INFO("Reading VTU mesh finished.");
+			INFO("Name: %s", BaseLib::extractBaseNameWithoutExtension(file_name).c_str());
 			INFO("Nr. Nodes: %d", nodes.size());
 			INFO("Nr. Elements: %d", elements.size());
 			return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
