@@ -52,6 +52,13 @@ public:
 	virtual ~MeshNodeSearcher();
 
 	/**
+	 * Searches for the nearest mesh nodes on the given geometric object (point, polyline, surface).
+	 * @param geoObj a GeoLib::GeoObject where the nearest mesh node is searched for
+	 * @return a vector of mesh node ids
+	 */
+	std::vector<std::size_t> getMeshNodeIDs(GeoLib::GeoObject const& geoObj);
+
+	/**
 	 * Searches for the node nearest by the given point. If there are two nodes
 	 * with the same distance the id of the one that was first found will be
 	 * returned. The algorithm for the search is using GeoLib::Grid data
