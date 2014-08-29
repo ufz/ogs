@@ -137,14 +137,14 @@ BoundingSphere::BoundingSphere(const std::vector<GeoLib::Point*> &points)
 	for(unsigned int i = 0; i < n_points; i++)
 		sphere_points[i] = points[i];
 
-	const BoundingSphere bounding_sphere = recurseCalculation(sphere_points, n_points, 0);
+	const BoundingSphere bounding_sphere = recurseCalculation(points, 0, points.size(), 0);
 	delete[] sphere_points;
 	
 	this->_center = bounding_sphere.getCenter();
 	this->_radius = bounding_sphere.getRadius();
 }
 
-BoundingSphere BoundingSphere::recurseCalculation(GeoLib::Point* sphere_points[], std::size_t n_points, std::size_t n_boundary_points)
+BoundingSphere BoundingSphere::recurseCalculation(std::vector<GeoLib::Point*> sphere_points, std::size_t current_index, std::size_t n_points, std::size_t n_boundary_points)
 {
 	BoundingSphere sphere;
 	switch(n_boundary_points)
@@ -153,30 +153,29 @@ BoundingSphere BoundingSphere::recurseCalculation(GeoLib::Point* sphere_points[]
 		sphere = BoundingSphere();
 		break;
 	case 1:
-		sphere = BoundingSphere(*sphere_points[-1]);
+		sphere = BoundingSphere(*sphere_points[current_index-1]);
 		break;
 	case 2:
-		sphere = BoundingSphere(*sphere_points[-1], *sphere_points[-2]);
+		sphere = BoundingSphere(*sphere_points[current_index-1], *sphere_points[current_index-2]);
 		break;
 	case 3:
-		sphere = BoundingSphere(*sphere_points[-1], *sphere_points[-2], *sphere_points[-3]);
+		sphere = BoundingSphere(*sphere_points[current_index-1], *sphere_points[current_index-2], *sphere_points[current_index-3]);
 		break;
 	case 4:
-		sphere = BoundingSphere(*sphere_points[-1], *sphere_points[-2], *sphere_points[-3], *sphere_points[-4]);
+		sphere = BoundingSphere(*sphere_points[current_index-1], *sphere_points[current_index-2], *sphere_points[current_index-3], *sphere_points[current_index-4]);
 		return sphere;
 	}
 
-	for(std::size_t i=0; i<n_points; ++i)
+	for(std::size_t i=current_index; i<n_points; ++i)
 	{
+        // current point is located outside of sphere
 		if(sphere.sqrPointDist(*sphere_points[i]) > 0)
 		{
-			for(unsigned int j = i; j > 0; --j)
-			{
-				GeoLib::Point* tmp = sphere_points[j];
-				sphere_points[j] = sphere_points[j - 1];
-				sphere_points[j - 1] = tmp;
-			}        
-    		sphere = recurseCalculation(sphere_points+1, i, n_boundary_points+1);
+			GeoLib::Point* tmp = sphere_points[i];
+            std::copy(sphere_points.begin(), sphere_points.begin() + i, sphere_points.begin() + 1);
+            sphere_points[0] = tmp;
+
+    		sphere = recurseCalculation(sphere_points, current_index+1, i, n_boundary_points+1);
 		}
 	}
 	return sphere;
