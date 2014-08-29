@@ -61,9 +61,9 @@ private:
 	/**
 	 * Recursive method for calculating a minimal bounding sphere for an arbitrary number of points.
 	 * Algorithm based on Bernd Gärtner: Fast and Robust Smallest Enclosing Balls. ESA99, pages 325-338, 1999.
-	 * Code based on "Smallest Enclosing Spheres" by Nicolas Capens on flipcode's Developer Toolbox (www.flipcode.com)
+	 * Code based on "Smallest Enclosing Spheres" implementation by Nicolas Capens on flipcode's Developer Toolbox (www.flipcode.com)
 	 */
-	static BoundingSphere recurseCalculation(GeoLib::Point* sphere_points[], std::size_t n_points, std::size_t boundary_points);
+	static BoundingSphere recurseCalculation(GeoLib::Point* sphere_points[], std::size_t n_points, std::size_t n_boundary_points);
 
 	double _radius;
 	MathLib::Vector3 _center;

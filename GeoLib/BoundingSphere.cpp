@@ -18,11 +18,12 @@
 #include "logog/include/logog.hpp"
 
 #include "MathTools.h"
+#include "AnalyticalGeometry.h"
 
 namespace GeoLib {
 
 BoundingSphere::BoundingSphere()
-: _center(0,0,0), _radius(-1)
+: _center(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()), _radius(-1)
 {	
 }
 
@@ -42,11 +43,16 @@ BoundingSphere::BoundingSphere(const GeoLib::Point &p, double radius)
 }
 
 BoundingSphere::BoundingSphere(const GeoLib::Point &p, const GeoLib::Point &q)
+: _center(p), _radius(std::numeric_limits<double>::epsilon())
 {
 	const MathLib::Vector3 a(p, q);
-	const MathLib::Vector3 o(0.5*a);
-	_radius = o.getLength() + std::numeric_limits<double>::epsilon();
-	_center = MathLib::Vector3(p) + o;
+
+    if (a.getLength() > 0)
+    {
+	    const MathLib::Vector3 o(0.5*a);
+	    _radius = o.getLength() + std::numeric_limits<double>::epsilon();
+	    _center = MathLib::Vector3(p) + o;
+    }
 }
 
 BoundingSphere::BoundingSphere(const GeoLib::Point &p, const GeoLib::Point &q,  const GeoLib::Point &r)
@@ -55,12 +61,26 @@ BoundingSphere::BoundingSphere(const GeoLib::Point &p, const GeoLib::Point &q,  
 	const MathLib::Vector3 b(p,q);
 
 	const MathLib::Vector3 cross_ab(crossProduct(a,b));
-	const double denom = 2.0 * scalarProduct(cross_ab,cross_ab);
-	const MathLib::Vector3 o = (scalarProduct(b,b) * crossProduct(cross_ab, a) 
-	 	                      + scalarProduct(a,a) * crossProduct(b, cross_ab))
-		                      * (1.0 / denom);
-	_radius = o.getLength() + std::numeric_limits<double>::epsilon();
-	_center = MathLib::Vector3(p) + o;
+
+    if (cross_ab.getLength() > 0)
+    {
+	    const double denom = 2.0 * scalarProduct(cross_ab,cross_ab);
+	    const MathLib::Vector3 o = (scalarProduct(b,b) * crossProduct(cross_ab, a) 
+	 	                          + scalarProduct(a,a) * crossProduct(b, cross_ab))
+		                          * (1.0 / denom);
+	    _radius = o.getLength() + std::numeric_limits<double>::epsilon();
+	    _center = MathLib::Vector3(p) + o;
+    }
+    else
+    {
+        BoundingSphere two_pnts_sphere;
+        if (a.getLength() > b.getLength())
+            two_pnts_sphere = BoundingSphere(p,r);
+        else
+            two_pnts_sphere = BoundingSphere(p,q);
+        _radius = two_pnts_sphere.getRadius();
+	    _center = two_pnts_sphere.getCenter();
+    }
 }
 
 BoundingSphere::BoundingSphere(const GeoLib::Point &p, const GeoLib::Point &q, const GeoLib::Point &r, const GeoLib::Point &s)
@@ -69,17 +89,44 @@ BoundingSphere::BoundingSphere(const GeoLib::Point &p, const GeoLib::Point &q, c
 	const MathLib::Vector3 b(p, r);
 	const MathLib::Vector3 c(p, s);
 
-	// det of matrix [a^T, b^T, c^T]^T
-	const double denom = 2.0 * (a[0] * (b[1] * c[2] - c[1] * b[2])
-							  - b[0] * (a[1] * c[2] - c[1] * a[2])
-							  + c[0] * (a[1] * b[2] - b[1] * a[2]));
-	const MathLib::Vector3 o = (scalarProduct(c,c) * crossProduct(a,b) 
-							  + scalarProduct(b,b) * crossProduct(c,a)
-							  + scalarProduct(a,a) * crossProduct(b,c)) 
-							* (1.0 / denom);
+    if (!GeoLib::isCoplanar(p, q, r, s))
+    {
+    	// det of matrix [a^T, b^T, c^T]^T
+	    const double denom = 2.0 * (a[0] * (b[1] * c[2] - c[1] * b[2])
+							      - b[0] * (a[1] * c[2] - c[1] * a[2])
+							      + c[0] * (a[1] * b[2] - b[1] * a[2]));
+	    const MathLib::Vector3 o = (scalarProduct(c,c) * crossProduct(a,b) 
+							      + scalarProduct(b,b) * crossProduct(c,a)
+							      + scalarProduct(a,a) * crossProduct(b,c)) 
+							    * (1.0 / denom);
 
-	_radius = o.getLength() + std::numeric_limits<double>::epsilon();
-	_center = MathLib::Vector3(p) + o;
+	    _radius = o.getLength() + std::numeric_limits<double>::epsilon();
+	    _center = MathLib::Vector3(p) + o;
+    }
+    else
+    {
+        BoundingSphere pqr(p, q , r);
+        BoundingSphere pqs(p, q , s);
+        BoundingSphere prs(p, r , s);
+        BoundingSphere qrs(q, r , s);
+        _radius = pqr.getRadius();
+        _center = pqr.getCenter();
+        if (_radius < pqs.getRadius())
+        {
+            _radius = pqs.getRadius();
+            _center = pqs.getCenter();
+        }
+        if (_radius < prs.getRadius())
+        {
+            _radius = prs.getRadius();
+            _center = prs.getCenter();
+        }
+        if (_radius < qrs.getRadius())
+        {
+            _radius = qrs.getRadius();
+            _center = qrs.getCenter();
+        }
+    }
 }
 
 BoundingSphere::BoundingSphere(const std::vector<GeoLib::Point*> &points)
@@ -97,10 +144,10 @@ BoundingSphere::BoundingSphere(const std::vector<GeoLib::Point*> &points)
 	this->_radius = bounding_sphere.getRadius();
 }
 
-BoundingSphere BoundingSphere::recurseCalculation(GeoLib::Point* sphere_points[], std::size_t n_points, std::size_t boundary_points)
+BoundingSphere BoundingSphere::recurseCalculation(GeoLib::Point* sphere_points[], std::size_t n_points, std::size_t n_boundary_points)
 {
 	BoundingSphere sphere;
-	switch(boundary_points)
+	switch(n_boundary_points)
 	{
 	case 0:
 		sphere = BoundingSphere();
@@ -123,14 +170,14 @@ BoundingSphere BoundingSphere::recurseCalculation(GeoLib::Point* sphere_points[]
 	{
 		if(sphere.sqrPointDist(*sphere_points[i]) > 0)
 		{
-			for(unsigned int j = i; j > 0; j--)
+			for(unsigned int j = i; j > 0; --j)
 			{
 				GeoLib::Point* tmp = sphere_points[j];
 				sphere_points[j] = sphere_points[j - 1];
 				sphere_points[j - 1] = tmp;
-			}
+			}        
+    		sphere = recurseCalculation(sphere_points+1, i, n_boundary_points+1);
 		}
-		sphere = recurseCalculation(sphere_points+1, i, boundary_points+1);
 	}
 	return sphere;
 }

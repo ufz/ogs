@@ -1308,7 +1308,7 @@ void MainWindow::FEMTestStart()
 	GeoLib::Point* c = new GeoLib::Point(s.getCenter().getCoords());
 	double r = s.getRadius();
 	std::cout << "Center: (" << (*c)[0] << ", " << (*c)[1] << ", " << (*c)[2] << "), Radius: " << r << std::endl;
-	std::vector<GeoLib::Point*> *result = (s.getSpherePoints(10000));
+	std::vector<GeoLib::Point*> *result = (s.getRandomSpherePoints(10000));
 	result->push_back(c);
 	std::string geo_name("result");
 	_project.getGEOObjects()->addPointVec(result, geo_name);
