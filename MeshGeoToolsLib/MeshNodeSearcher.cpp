@@ -75,9 +75,13 @@ MeshNodeSearcher::~MeshNodeSearcher()
 	}
 }
 
-std::size_t MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
+boost::optional<std::size_t> MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
 {
-	return (_mesh_grid.getNearestPoint(pnt.getCoords()))->getID();
+	auto* found = _mesh_grid.getNearestPoint(pnt.getCoords());
+	if (found)
+		return found->getID();
+	else
+		return boost::none;
 }
 
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(

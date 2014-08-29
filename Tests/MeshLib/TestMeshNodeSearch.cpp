@@ -69,27 +69,27 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
 
 	// find ORIGIN
-	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 0.049;
 	pnt[1] = 0.049;
-	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 0.051;
 	pnt[1] = 0.049;
-	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(1u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 0.049;
 	pnt[1] = 0.051;
-	ASSERT_EQ(100u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(100u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 0.051;
 	pnt[1] = 0.051;
-	ASSERT_EQ(101u, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(101u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 
 	pnt[0] = 9.951;
 	pnt[1] = 9.951;
-	ASSERT_EQ((_number_of_subdivisions_per_direction+1) * (_number_of_subdivisions_per_direction+1) - 1, mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ((_number_of_subdivisions_per_direction+1) * (_number_of_subdivisions_per_direction+1) - 1, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
 }
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)

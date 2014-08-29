@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#include "boost/optional.hpp"
+
 // GeoLib
 #include "Point.h"
 #include "Polyline.h"
@@ -57,7 +59,7 @@ public:
 	 * @param pnt a GeoLib::Point the nearest mesh node is searched for
 	 * @return the id of the nearest mesh node
 	 */
-	std::size_t getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
+	boost::optional<std::size_t> getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
 
 	/**
 	 * Searches for the nearest mesh nodes along a GeoLib::Polyline.
