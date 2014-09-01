@@ -44,6 +44,7 @@ bool BoostXmlCndInterface::readFile(const std::string &fname)
 	ptree pt;
 	read_xml(in, pt);
 
+	/***** Restructure ProjectData ****
 	ptree const& root_node = pt.get_child("OpenGeoSysCond");
 
 	BOOST_FOREACH(ptree::value_type const & conditions_type, root_node) {
@@ -51,6 +52,7 @@ bool BoostXmlCndInterface::readFile(const std::string &fname)
 			readBoundaryConditions(conditions_type.second);
 		}
 	}
+	****** Restructure ProjectData ***/
 
 	return true;
 }
@@ -58,6 +60,7 @@ bool BoostXmlCndInterface::readFile(const std::string &fname)
 void BoostXmlCndInterface::readBoundaryConditions(
 		boost::property_tree::ptree const& boundary_condition_nodes)
 {
+	/***** Restructure ProjectData ****
 	using boost::property_tree::ptree;
 	BOOST_FOREACH(ptree::value_type const & boundary_condition_node,
 			boundary_condition_nodes) {
@@ -97,12 +100,14 @@ void BoostXmlCndInterface::readBoundaryConditions(
 		}
 		_project_data.addCondition(bc);
 	}
+	****** Restructure ProjectData ***/
 }
 
 void BoostXmlCndInterface::readProcessTag(boost::property_tree::ptree const& pcs_tags,
 		std::string &pcs_type, std::string &primary_variable) const
 {
 	using boost::property_tree::ptree;
+	/***** Restructure ProjectData ****
 	BOOST_FOREACH(ptree::value_type const & pcs_tag, pcs_tags) {
 		if (pcs_tag.first.compare("Type") == 0) {
 			pcs_type = pcs_tag.second.data();
@@ -111,6 +116,7 @@ void BoostXmlCndInterface::readProcessTag(boost::property_tree::ptree const& pcs
 			primary_variable = pcs_tag.second.data();
 		}
 	}
+	****** Restructure ProjectData ***/
 }
 
 void BoostXmlCndInterface::readGeometryTag(boost::property_tree::ptree const& geometry_tags,
