@@ -1,8 +1,6 @@
 /**
- * \file
  * \author Karsten Rink
  * \date   2010-08-25
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,13 +13,10 @@
 #ifndef PROJECTDATA_H_
 #define PROJECTDATA_H_
 
-#include "FEMCondition.h"
-#include "FEMEnums.h"
-
 #ifdef OGS_BUILD_GUI
 #include "Gui/DataView/GEOModels.h"
 #else
-#include "GEOObjects.h"
+#include "GeoLib/GEOObjects.h"
 #endif
 
 
@@ -69,46 +64,6 @@ public:
 
 	bool meshExists(const std::string &name);
 
-	//** Process functionality **//
-
-	/// Adds a new process
-	virtual void addProcess(ProcessInfo* pcs);
-
-	/// Returns a process of the given type
-	const ProcessInfo* getProcess(FiniteElement::ProcessType type) const;
-
-	/// Removes a process of the given type
-	virtual bool removeProcess(FiniteElement::ProcessType type);
-
-	//** FEM Condition functionality **//
-
-	/// Adds a new FEM Condition
-	virtual void addCondition(FEMCondition* cond);
-
-	/// Adds new FEM Conditions
-	virtual void addConditions(std::vector<FEMCondition*> conds);
-
-	/// Returns the FEM Condition set on a GeoObject with the given name and type from a certain geometry.
-	const FEMCondition* getCondition(FiniteElement::ProcessType pcs_type,
-	                                 const std::string &geo_name,
-	                                 GeoLib::GEOTYPE type,
-	                                 const std::string &cond_name) const;
-
-	/// Returns all FEM Conditions with the given type from a certain geometry.
-	std::vector<FEMCondition*> getConditions(FiniteElement::ProcessType pcs_type = FiniteElement::INVALID_PROCESS,
-												   std::string geo_name = "",
-												   FEMCondition::CondType type = FEMCondition::UNSPECIFIED) const;
-
-	/// Removes the FEM Condition set on a GeoObject with the given name and type from a certain geometry.
-	virtual bool removeCondition(const std::string &geo_name,
-	                             GeoLib::GEOTYPE type,
-	                             const std::string &cond_name);
-
-	/// Removes all FEM Conditions with the given type from the given process
-	virtual void removeConditions(FiniteElement::ProcessType pcs_type = FiniteElement::INVALID_PROCESS,
-								  std::string geo_name = "",
-								  FEMCondition::CondType cond_type = FEMCondition::UNSPECIFIED);
-
 private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects;
@@ -116,8 +71,6 @@ private:
 	GeoLib::GEOObjects *_geoObjects;
 #endif
 	std::vector<MeshLib::Mesh*> _msh_vec;
-	std::vector<ProcessInfo*> _pcs_vec;
-	std::vector<FEMCondition*> _cond_vec;
 };
 
 #endif //PROJECTDATA_H_
