@@ -28,6 +28,7 @@
 #include "MeshQuality/AreaMetric.h"
 #include "MeshQuality/VolumeMetric.h"
 #include "MeshQuality/EdgeRatioMetric.h"
+#include "MeshQuality/RadiusEdgeRatioMetric.h"
 #include "MshItem.h"
 #include "MshModel.h"
 #include "StationTreeModel.h"
@@ -469,6 +470,8 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 			quality_tester = new MeshLib::VolumeMetric(*mesh);
 		else if (t == MeshQualityType::EQUIANGLESKEW)
 			quality_tester = new MeshLib::AngleSkewMetric(*mesh);
+		else if (t == MeshQualityType::RADIUSEDGERATIO)
+			quality_tester = new MeshLib::RadiusEdgeRatioMetric(*mesh);
 		else
 		{
 			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MeshQualityType.");

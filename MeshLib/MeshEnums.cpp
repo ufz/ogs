@@ -54,14 +54,16 @@ MeshElemType String2MeshElemType(const std::string &s)
 
 const std::string MeshQualityType2String(const MeshQualityType t)
 {
-	if (t == MeshQualityType::AREA)
-		return "Area";
-	if (t == MeshQualityType::EDGERATIO)
-		return "EdgeRatio";
-	if (t == MeshQualityType::EQUIANGLESKEW)
-		return "EquiAngleSkew";
-	if (t == MeshQualityType::VOLUME)
-		return "Volume";
-	return "none";
+    if (t == MeshQualityType::AREA)
+        return "Area";
+    if (t == MeshQualityType::EDGERATIO)
+        return "EdgeRatio";
+    if (t == MeshQualityType::EQUIANGLESKEW)
+        return "EquiAngleSkew";
+    if (t == MeshQualityType::RADIUSEDGERATIO)
+        return "RadiusEdgeRatio";
+    if (t == MeshQualityType::VOLUME)
+        return "Volume";
+    return "none";
 }
 

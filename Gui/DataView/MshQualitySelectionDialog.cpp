@@ -30,20 +30,22 @@ MshQualitySelectionDialog::~MshQualitySelectionDialog()
 /// Instructions if the OK-Button has been pressed.
 void MshQualitySelectionDialog::accept()
 {
-	MeshQualityType t;
-	if (this->choiceEdges->isChecked())
-		t = MeshQualityType::EDGERATIO;
-	else if (this->choiceArea->isChecked())
-		t = MeshQualityType::AREA;
-	else if (this->choiceVolume->isChecked())
-		t = MeshQualityType::VOLUME;
-	else if (this->choiceAngles->isChecked())
-		t = MeshQualityType::EQUIANGLESKEW;
-	else
-		t = MeshQualityType::INVALID;
+    MeshQualityType t;
+    if (this->choiceEdges->isChecked())
+        t = MeshQualityType::EDGERATIO;
+    else if (this->choiceArea->isChecked())
+        t = MeshQualityType::AREA;
+    else if (this->choiceVolume->isChecked())
+        t = MeshQualityType::VOLUME;
+    else if (this->choiceAngles->isChecked())
+        t = MeshQualityType::EQUIANGLESKEW;
+    else if (this->choiceRadius->isChecked())
+        t = MeshQualityType::RADIUSEDGERATIO;
+    else
+        t = MeshQualityType::INVALID;
 
-	emit measureSelected(_msh, t);
-	this->done(QDialog::Accepted);
+    emit measureSelected(_msh, t);
+    this->done(QDialog::Accepted);
 }
 
 /// Instructions if the Cancel-Button has been pressed.

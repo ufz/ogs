@@ -13,8 +13,7 @@
  */
 
 #include "mainwindow.h"
-#include <algorithm>
-#include "MeshQuality\RadiusEdgeRatioMetric.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -1299,13 +1298,6 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
-    const MeshLib::Mesh* msh = _project.getMesh("Ammer-Homogen100m-Final");
-    MeshLib::RadiusEdgeRatioMetric metric(*msh);
-    metric.calculateQuality();
-    std::vector<double> result (metric.getElementQuality());
-    auto minmax = std::minmax_element(result.begin(), result.end());
-    std::cout << "min: " << *minmax.first << " at pos " << minmax.first-result.begin() 
-              << ", max: " << *minmax.second << " at pos " << minmax.second-result.begin() << std::endl;
 }
 
 void MainWindow::showTrackingSettingsDialog()
