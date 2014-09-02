@@ -255,7 +255,7 @@ double calcTetrahedronVolume(const double* x1, const double* x2, const double* x
 	const MathLib::Vector3 ab(x1, x2);
 	const MathLib::Vector3 ac(x1, x3);
 	const MathLib::Vector3 ad(x1, x4);
-	return GeoLib::scalarTriple(ab, ac, ad) / 6.0;
+	return std::abs(GeoLib::scalarTriple(ac, ad, ab)) / 6.0;
 }
 
 // NewellPlane from book Real-Time Collision detection p. 494

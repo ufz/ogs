@@ -22,27 +22,33 @@
 namespace GeoLib {
 
 BoundingSphere::BoundingSphere()
-: _center(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()), _radius(-1)
+: _radius(-1), _center(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max())
 {	
 }
 
 BoundingSphere::BoundingSphere(BoundingSphere const& sphere)
-: _center(sphere.getCenter()), _radius(sphere.getRadius())
+: _radius(sphere.getRadius()), _center(sphere.getCenter())
 {
 }
 
+BoundingSphere::BoundingSphere(BoundingSphere const&& sphere)
+: _radius(sphere.getRadius()), _center(sphere.getCenter())
+{
+}
+
+
 BoundingSphere::BoundingSphere(GeoLib::Point const& p)
-: _center(p), _radius(std::numeric_limits<double>::epsilon())
+: _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
 }
 
 BoundingSphere::BoundingSphere(GeoLib::Point const& p, double radius)
-: _center(p), _radius(radius)
+: _radius(radius), _center(p)
 {
 }
 
 BoundingSphere::BoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q)
-: _center(p), _radius(std::numeric_limits<double>::epsilon())
+: _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
     MathLib::Vector3 const a(p, q);
 
@@ -164,7 +170,7 @@ BoundingSphere BoundingSphere::recurseCalculation(std::vector<GeoLib::Point*> sp
     for(std::size_t i=0; i<length; ++i)
     {
         // current point is located outside of sphere
-        if (sphere.sqrPointDist(*sphere_points[start_idx+i]) > 0)
+        if (sphere.pointDistanceSquared(*sphere_points[start_idx+i]) > 0)
         {
             if (i>start_idx)
             {
@@ -178,7 +184,7 @@ BoundingSphere BoundingSphere::recurseCalculation(std::vector<GeoLib::Point*> sp
     return sphere;
 }
 
-double BoundingSphere::sqrPointDist(GeoLib::Point const& pnt) const
+double BoundingSphere::pointDistanceSquared(GeoLib::Point const& pnt) const
 {
     return MathLib::sqrDist(_center.getCoords(), pnt.getCoords())-(_radius*_radius);
 }
