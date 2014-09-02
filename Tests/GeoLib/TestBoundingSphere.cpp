@@ -92,17 +92,26 @@ TEST(GeoLib, TestBoundingSphere)
     ASSERT_NEAR(0.8660, s.getRadius(), 0.0001);
     }
 
-    {
     /**
      * A "cube" where one node is pulled away from the centre (making the resulting sphere larger).
      * Expected result is C=(0.5,0.5,0.6), r=0.9273
      */
     (*pnts[7])[2] += 0.3;
     GeoLib::MinimalBoundingSphere s(pnts);
+    {
     GeoLib::Point center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
     }
+
+    /// Calculates the bounding sphere of points on a bounding sphere
+    std::vector<GeoLib::Point*> *sphere_points (s.getRandomSpherePoints(1000));
+    GeoLib::MinimalBoundingSphere t(*sphere_points);
+    GeoLib::Point center = s.getCenter();
+    ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
 }
