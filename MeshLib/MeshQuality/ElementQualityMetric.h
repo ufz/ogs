@@ -35,7 +35,7 @@ namespace MeshLib
 class ElementQualityMetric
 {
 public:
-	ElementQualityMetric(Mesh const* const mesh);
+	ElementQualityMetric(Mesh const& mesh);
 
 	virtual ~ElementQualityMetric () {}
 
@@ -51,11 +51,11 @@ public:
 	virtual BaseLib::Histogram<double> getHistogram (std::size_t nclasses = 0) const;
 
 protected:
-	void errorMsg (const Element* elem, std::size_t idx) const;
+	void errorMsg (Element const& elem, std::size_t idx) const;
 
 	double _min;
 	double _max;
-	Mesh const* const _mesh;
+	Mesh const& _mesh;
 	std::vector<double> _element_quality_metric;
 };
 }

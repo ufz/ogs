@@ -462,13 +462,13 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 		const MeshLib::Mesh* mesh = source->GetMesh();
 		MeshLib::ElementQualityMetric* quality_tester (nullptr);
 		if (t == MeshQualityType::EDGERATIO)
-			quality_tester = new MeshLib::EdgeRatioMetric(mesh);
+			quality_tester = new MeshLib::EdgeRatioMetric(*mesh);
 		else if (t == MeshQualityType::AREA)
-			quality_tester = new MeshLib::AreaMetric(mesh);
+			quality_tester = new MeshLib::AreaMetric(*mesh);
 		else if (t == MeshQualityType::VOLUME)
-			quality_tester = new MeshLib::VolumeMetric(mesh);
+			quality_tester = new MeshLib::VolumeMetric(*mesh);
 		else if (t == MeshQualityType::EQUIANGLESKEW)
-			quality_tester = new MeshLib::AngleSkewMetric(mesh);
+			quality_tester = new MeshLib::AngleSkewMetric(*mesh);
 		else
 		{
 			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MeshQualityType.");

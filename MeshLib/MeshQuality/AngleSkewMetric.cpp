@@ -29,7 +29,7 @@
 
 namespace MeshLib
 {
-AngleSkewMetric::AngleSkewMetric(Mesh const* const mesh) :
+AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
 	ElementQualityMetric(mesh), M_PI_THIRD (M_PI / 3.0), TWICE_M_PI (2 * M_PI)
 {}
 
@@ -38,13 +38,13 @@ AngleSkewMetric::~AngleSkewMetric()
 
 void AngleSkewMetric::calculateQuality ()
 {
-	const std::vector<MeshLib::Element*>& elements(_mesh->getElements());
-	const size_t nElements (_mesh->getNElements());
+	const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
+	const size_t nElements (_mesh.getNElements());
 
 	for (size_t k(0); k < nElements; k++)
 	{
-		const Element* elem (elements[k]);
-		switch (elem->getGeomType())
+		Element const& elem (*elements[k]);
+		switch (elem.getGeomType())
 		{
 		case MeshElemType::LINE:
 			_element_quality_metric[k] = -1.0;
@@ -70,11 +70,11 @@ void AngleSkewMetric::calculateQuality ()
 	}
 }
 
-double AngleSkewMetric::checkTriangle (Element const* const elem) const
+double AngleSkewMetric::checkTriangle (Element const& elem) const
 {
-	double const* const node0 (elem->getNode(0)->getCoords());
-	double const* const node1 (elem->getNode(1)->getCoords());
-	double const* const node2 (elem->getNode(2)->getCoords());
+	double const* const node0 (elem.getNode(0)->getCoords());
+	double const* const node1 (elem.getNode(1)->getCoords());
+	double const* const node2 (elem.getNode(2)->getCoords());
 
 	double min_angle (M_PI_2), max_angle (0.0);
 	getMinMaxAngleFromTriangle (node0, node1, node2, min_angle, max_angle);
@@ -84,12 +84,12 @@ double AngleSkewMetric::checkTriangle (Element const* const elem) const
 	                (M_PI_THIRD - min_angle) / (M_PI_THIRD));
 }
 
-double AngleSkewMetric::checkQuad (Element const* const elem) const
+double AngleSkewMetric::checkQuad (Element const& elem) const
 {
-	double const* const node0 (elem->getNode(0)->getCoords());
-	double const* const node1 (elem->getNode(1)->getCoords());
-	double const* const node2 (elem->getNode(2)->getCoords());
-	double const* const node3 (elem->getNode(3)->getCoords());
+	double const* const node0 (elem.getNode(0)->getCoords());
+	double const* const node1 (elem.getNode(1)->getCoords());
+	double const* const node2 (elem.getNode(2)->getCoords());
+	double const* const node3 (elem.getNode(3)->getCoords());
 
 	double min_angle (TWICE_M_PI);
 	double max_angle (0.0);
@@ -100,12 +100,12 @@ double AngleSkewMetric::checkQuad (Element const* const elem) const
 	       std::max((max_angle - M_PI_2) / (M_PI - M_PI_2), (M_PI_2 - min_angle) / (M_PI_2));
 }
 
-double AngleSkewMetric::checkTetrahedron (Element const* const elem) const
+double AngleSkewMetric::checkTetrahedron (Element const& elem) const
 {
-	double const* const node0 (elem->getNode(0)->getCoords());
-	double const* const node1 (elem->getNode(1)->getCoords());
-	double const* const node2 (elem->getNode(2)->getCoords());
-	double const* const node3 (elem->getNode(3)->getCoords());
+	double const* const node0 (elem.getNode(0)->getCoords());
+	double const* const node1 (elem.getNode(1)->getCoords());
+	double const* const node2 (elem.getNode(2)->getCoords());
+	double const* const node3 (elem.getNode(3)->getCoords());
 
 	double min_angle (M_PI_2);
 	double max_angle (0.0);
@@ -123,16 +123,16 @@ double AngleSkewMetric::checkTetrahedron (Element const* const elem) const
 	                      (M_PI_THIRD - min_angle) / (M_PI_THIRD));
 }
 
-double AngleSkewMetric::checkHexahedron (Element const* const elem) const
+double AngleSkewMetric::checkHexahedron (Element const& elem) const
 {
-	double const* const node0 (elem->getNode(0)->getCoords());
-	double const* const node1 (elem->getNode(1)->getCoords());
-	double const* const node2 (elem->getNode(2)->getCoords());
-	double const* const node3 (elem->getNode(3)->getCoords());
-	double const* const node4 (elem->getNode(4)->getCoords());
-	double const* const node5 (elem->getNode(5)->getCoords());
-	double const* const node6 (elem->getNode(6)->getCoords());
-	double const* const node7 (elem->getNode(7)->getCoords());
+	double const* const node0 (elem.getNode(0)->getCoords());
+	double const* const node1 (elem.getNode(1)->getCoords());
+	double const* const node2 (elem.getNode(2)->getCoords());
+	double const* const node3 (elem.getNode(3)->getCoords());
+	double const* const node4 (elem.getNode(4)->getCoords());
+	double const* const node5 (elem.getNode(5)->getCoords());
+	double const* const node6 (elem.getNode(6)->getCoords());
+	double const* const node7 (elem.getNode(7)->getCoords());
 
 	double min_angle (2 * M_PI);
 	double max_angle (0.0);
@@ -154,14 +154,14 @@ double AngleSkewMetric::checkHexahedron (Element const* const elem) const
 	       std::max((max_angle - M_PI_2) / (M_PI - M_PI_2), (M_PI_2 - min_angle) / (M_PI_2));
 }
 
-double AngleSkewMetric::checkPrism (Element const* const elem) const
+double AngleSkewMetric::checkPrism (Element const& elem) const
 {
-	double const* const node0 (elem->getNode(0)->getCoords());
-	double const* const node1 (elem->getNode(1)->getCoords());
-	double const* const node2 (elem->getNode(2)->getCoords());
-	double const* const node3 (elem->getNode(3)->getCoords());
-	double const* const node4 (elem->getNode(4)->getCoords());
-	double const* const node5 (elem->getNode(5)->getCoords());
+	double const* const node0 (elem.getNode(0)->getCoords());
+	double const* const node1 (elem.getNode(1)->getCoords());
+	double const* const node2 (elem.getNode(2)->getCoords());
+	double const* const node3 (elem.getNode(3)->getCoords());
+	double const* const node4 (elem.getNode(4)->getCoords());
+	double const* const node5 (elem.getNode(5)->getCoords());
 
 	double min_angle_tri (2 * M_PI);
 	double max_angle_tri (0.0);
