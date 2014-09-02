@@ -1,0 +1,36 @@
+/**
+ * \file   RadiusEdgeRatioMetric.h
+ * \author Karsten Rink
+ * \date   2014-09-02
+ * \brief  Definition of the RadiusEdgeRatioMetric class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef RADIUSEDGERATIOMETRIC_H_
+#define RADIUSEDGERATIOMETRIC_H_
+
+#include "ElementQualityMetric.h"
+
+namespace MeshLib
+{
+
+/** 
+ * Calculates the quality of mesh elements based on the EquiAngleSkew measure
+ */
+class RadiusEdgeRatioMetric : public ElementQualityMetric
+{
+public:
+    RadiusEdgeRatioMetric(Mesh const& mesh);
+    virtual ~RadiusEdgeRatioMetric() {};
+
+    virtual void calculateQuality ();
+};
+}
+
+#endif /* RADIUSEDGERATIOMETRIC_H_ */
