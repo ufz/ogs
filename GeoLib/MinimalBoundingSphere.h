@@ -2,10 +2,10 @@
  * \file   Calculation of a minimum bounding sphere for a vector of points
  * \author Karsten Rink
  * \date   2014-07-11
- * \brief  Definition of the BoundingSphere class.
+ * \brief  Definition of the MinimalBoundingSphere class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef BOUNDINGSPHERE_H_
-#define BOUNDINGSPHERE_H_
+#ifndef MINIMALBOUNDINGSPHERE_H_
+#define MINIMALBOUNDINGSPHERE_H_
 
 #include <vector>
 
@@ -24,28 +24,25 @@
 namespace GeoLib
 {
 
-class BoundingSphere
+/**
+ * Calculated center and radius of a minimal bounding sphere for a given number of geometric points.
+ */
+class MinimalBoundingSphere
 {
 public:
-    /// Constructor using no points
-    BoundingSphere();
     /// Copy constructor
-    BoundingSphere(BoundingSphere const& sphere);
-    /// Move constructor
-    BoundingSphere(BoundingSphere const&& sphere);
+    MinimalBoundingSphere(MinimalBoundingSphere const& sphere) = default;
     /// Point-Sphere
-    BoundingSphere(GeoLib::Point const& p);
-    /// Constructor using center and radius
-    BoundingSphere(GeoLib::Point const& p, double radius);
+    MinimalBoundingSphere(GeoLib::Point const& p, double radius = std::numeric_limits<double>::epsilon());
     /// Bounding sphere using two points
-    BoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q);
+    MinimalBoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q);
     /// Bounding sphere using three points
-    BoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q, GeoLib::Point const& r);
+    MinimalBoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q, GeoLib::Point const& r);
     /// Bounding sphere using four points
-    BoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q, GeoLib::Point const& r, GeoLib::Point const& s);
+    MinimalBoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q, GeoLib::Point const& r, GeoLib::Point const& s);
     /// Bounding sphere of n points
-    BoundingSphere(std::vector<GeoLib::Point*> const& points);
-    ~BoundingSphere() {}
+    MinimalBoundingSphere(std::vector<GeoLib::Point*> const& points);
+    ~MinimalBoundingSphere() {}
 
     /// Returns the center point of the sphere
     GeoLib::Point getCenter() const { return GeoLib::Point(_center.getCoords()); }
@@ -60,6 +57,9 @@ public:
     std::vector<GeoLib::Point*>* getRandomSpherePoints(std::size_t n_points) const;
 
 private:
+    /// Constructor using no points
+    MinimalBoundingSphere();
+
     /**
      * Recursive method for calculating a minimal bounding sphere for an arbitrary number of points.
      * Note: This method will change the order of elements in the vector sphere_points.
@@ -70,10 +70,10 @@ private:
      *
      * Algorithm based the following two papers:
      *   Emo Welzl: Smallest enclosing disks (balls and ellipsoids). New Results and New Trends in Computer Science, pp. 359--370, 1991
-     *   Bernd Gärtner: Fast and Robust Smallest Enclosing Balls. ESA99, pp. 325--338, 1999.
+     *   Bernd Gaertner: Fast and Robust Smallest Enclosing Balls. ESA99, pp. 325--338, 1999.
      * Code based on "Smallest Enclosing Spheres" implementation by Nicolas Capens on flipcode's Developer Toolbox (www.flipcode.com)
      */
-    static BoundingSphere recurseCalculation(std::vector<GeoLib::Point*> sphere_points, std::size_t start_idx, std::size_t length, std::size_t n_boundary_points);
+    static MinimalBoundingSphere recurseCalculation(std::vector<GeoLib::Point*> sphere_points, std::size_t start_idx, std::size_t length, std::size_t n_boundary_points);
 
     double _radius;
     MathLib::Vector3 _center;
@@ -81,4 +81,4 @@ private:
 
 } // namespace
 
-#endif /* BOUNDINGSPHERE_H_ */
+#endif /* MINIMALBOUNDINGSPHERE_H_ */

@@ -4,7 +4,7 @@
  * \date   2014-08-29
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -14,7 +14,7 @@
 
 #include "gtest/gtest.h"
 
-#include "GeoLib/BoundingSphere.h"
+#include "GeoLib/MinimalBoundingSphere.h"
 #include "GeoLib/Point.h"
 
 TEST(GeoLib, TestBoundingSphere)
@@ -40,7 +40,7 @@ TEST(GeoLib, TestBoundingSphere)
      * Tests if a smaller number of points than available is used if the resulting sphere is smaller.
      * Expected result is C=(1,0,0), r=1
      */
-    GeoLib::BoundingSphere s(pnts);
+    GeoLib::MinimalBoundingSphere s(pnts);
     GeoLib::Point center = s.getCenter();
     ASSERT_NEAR(1.0, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.0, center[1], std::numeric_limits<double>::epsilon());
@@ -62,7 +62,7 @@ TEST(GeoLib, TestBoundingSphere)
      * Expected result is C=(1,0.0246,-0.3446), r=1.058
      */
     (*pnts[2])[2] -= 1.4;
-    GeoLib::BoundingSphere s(pnts);
+    GeoLib::MinimalBoundingSphere s(pnts);
     GeoLib::Point center = s.getCenter();
     ASSERT_NEAR(1.0, center[0], 0.0001);
     ASSERT_NEAR(0.0246, center[1], 0.0001);
@@ -84,7 +84,7 @@ TEST(GeoLib, TestBoundingSphere)
      * A "cube" where one node is pushed slightly towards the centre (and should be ignored).
      * Expected result is C=(0.5,0.5,0.5), r=0.866
      */
-    GeoLib::BoundingSphere s(pnts);
+    GeoLib::MinimalBoundingSphere s(pnts);
     GeoLib::Point center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
@@ -98,7 +98,7 @@ TEST(GeoLib, TestBoundingSphere)
      * Expected result is C=(0.5,0.5,0.6), r=0.9273
      */
     (*pnts[7])[2] += 0.3;
-    GeoLib::BoundingSphere s(pnts);
+    GeoLib::MinimalBoundingSphere s(pnts);
     GeoLib::Point center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
