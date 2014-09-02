@@ -20,7 +20,7 @@
 #include "Pyramid.h"
 #include "Quad.h"
 
-#include "MathTools.h"
+#include "AnalyticalGeometry.h"
 
 namespace MeshLib {
 
@@ -104,9 +104,9 @@ TemplatePrism<NNODES,CELLPRISMTYPE>::~TemplatePrism()
 template <unsigned NNODES, CellType CELLPRISMTYPE>
 double TemplatePrism<NNODES,CELLPRISMTYPE>::computeVolume()
 {
-	return MathLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
-		 + MathLib::calcTetrahedronVolume(_nodes[1]->getCoords(), _nodes[4]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
-		 + MathLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[4]->getCoords(), _nodes[5]->getCoords(), _nodes[3]->getCoords());
+	return GeoLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
+		 + GeoLib::calcTetrahedronVolume(_nodes[1]->getCoords(), _nodes[4]->getCoords(), _nodes[2]->getCoords(), _nodes[3]->getCoords())
+		 + GeoLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[4]->getCoords(), _nodes[5]->getCoords(), _nodes[3]->getCoords());
 }
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>

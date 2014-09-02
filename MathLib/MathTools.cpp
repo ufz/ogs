@@ -62,11 +62,6 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	return acos (scalarProduct<double,3> (v0,v1) / (sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
-double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4)
-{
-	return fabs((x1[0] - x4[0]) * ((x2[1] - x4[1]) * (x3[2] - x4[2]) - (x2[2] - x4[2]) * (x3[1] - x4[1]))
-	          - (x1[1] - x4[1]) * ((x2[0] - x4[0]) * (x3[2] - x4[2]) - (x2[2] - x4[2]) * (x3[0] - x4[0]))
-	          + (x1[2] - x4[2]) * ((x2[0] - x4[0]) * (x3[1] - x4[1]) - (x2[1] - x4[1]) * (x3[0] - x4[0]))) / 6.0;
-}
+
 
 } // namespace

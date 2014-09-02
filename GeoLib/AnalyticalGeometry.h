@@ -106,6 +106,12 @@ void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
  */
 double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
 
+/**
+ * Calculates the volume of a tetrahedron.
+ * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
+ */
+double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4);
+
 bool isPointInTriangle (const GeoLib::Point* p,
 		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
 
@@ -193,6 +199,7 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
 void computeAndInsertAllIntersectionPoints(
 	GeoLib::PointVec &pnt_vec,
 	std::vector<GeoLib::Polyline*> & plys);
+
 
 } // end namespace GeoLib
 
