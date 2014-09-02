@@ -31,6 +31,8 @@ public:
     BoundingSphere();
     /// Copy constructor
     BoundingSphere(BoundingSphere const& sphere);
+    /// Move constructor
+    BoundingSphere(BoundingSphere const&& sphere);
     /// Point-Sphere
     BoundingSphere(GeoLib::Point const& p);
     /// Constructor using center and radius
@@ -51,10 +53,10 @@ public:
     /// Returns the radius of the sphere
     double getRadius() const {return _radius; }
 
-    /// Returns the squared distance of a point from the sphere (for points within the sphere distance is negative)
-    double sqrPointDist(GeoLib::Point const& pnt) const;
+    /// Returns the squared euclidean distance of a point from the sphere (for points within the sphere distance is negative)
+    double pointDistanceSquared(GeoLib::Point const& pnt) const;
 
-    /// Creates n_points random points located on the surface of the sphere (useful for visualisation)
+    /// Creates n_points random points located on the surface of the bounding sphere (useful for visualisation)
     std::vector<GeoLib::Point*>* getRandomSpherePoints(std::size_t n_points) const;
 
 private:
