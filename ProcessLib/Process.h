@@ -24,7 +24,9 @@ public:
 
     virtual ~Process() = default;
 
-private:
+    virtual void initialize() = 0;
+
+protected:
     MeshLib::Mesh const& _mesh;
 };
 

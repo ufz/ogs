@@ -50,6 +50,10 @@ public:
 
     }
 
+    void initialize()
+    {
+    }
+
 private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
 };
