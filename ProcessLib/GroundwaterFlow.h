@@ -15,6 +15,7 @@
 
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSubset.h"
 #include "OGS/ProcessVariable.h"
 
 namespace ProcessLib
@@ -52,10 +53,15 @@ public:
 
     void initialize()
     {
+        // Create mesh's subset using all nodes of the mesh.
+        _mesh_items_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
+
     }
 
 private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
+
+    MeshLib::MeshSubset const* _mesh_items_all_nodes = nullptr;
 };
 
 }   // namespace ProcessLib
