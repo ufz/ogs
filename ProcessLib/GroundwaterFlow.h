@@ -61,6 +61,9 @@ public:
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
         AssemblerLib::MeshComponentMap mesh_component_map(_all_mesh_subsets,
                 AssemblerLib::ComponentOrder::BY_COMPONENT);
+
+        std::vector <std::vector<std::size_t>> const dof_map =
+            createDofMap(mesh_component_map);
     }
 
     ~GroundwaterFlowProcess()
