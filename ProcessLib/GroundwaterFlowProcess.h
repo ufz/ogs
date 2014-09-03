@@ -53,6 +53,7 @@ public:
 
     void initialize()
     {
+        DBUG("Construct dof mappings.");
         // Create mesh's subset using all nodes of the mesh.
         _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
 
@@ -60,6 +61,8 @@ public:
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
         AssemblerLib::MeshComponentMap mesh_component_map(_all_mesh_subsets,
                 AssemblerLib::ComponentOrder::BY_COMPONENT);
+
+        _dof_map = createDofMap(mesh_component_map);
     }
 
     ~GroundwaterFlowProcess()
@@ -75,6 +78,7 @@ private:
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
+    std::vector <std::vector<std::size_t>> _dof_map;
 };
 
 }   // namespace ProcessLib
