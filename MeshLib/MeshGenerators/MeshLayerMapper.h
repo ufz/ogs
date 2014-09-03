@@ -16,7 +16,7 @@
 #define MESHLAYERMAPPER_H
 
 #include <string>
-#include "Raster.h"
+#include "GeoLib/Raster.h"
 
 class QImage;
 

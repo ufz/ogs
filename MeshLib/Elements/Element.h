@@ -19,9 +19,9 @@
 #include <limits>
 #include <boost/optional.hpp>
 
-#include "MeshEnums.h"
-#include "Mesh.h"
-#include "MeshQuality/ElementErrorCode.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshQuality/ElementErrorCode.h"
 
 namespace MeshLib {
 

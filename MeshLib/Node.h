@@ -20,7 +20,7 @@
 #include <vector>
 #include <set>
 
-#include "PointWithID.h"
+#include "GeoLib/PointWithID.h"
 #include "Mesh.h"
 #include "MeshEditing/removeMeshNodes.h"
 #include "MeshSurfaceExtraction.h"

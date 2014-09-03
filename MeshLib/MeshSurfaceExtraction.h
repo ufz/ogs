@@ -18,7 +18,7 @@
 #include <cstddef>
 #include <vector>
 
-#include "Vector3.h"
+#include "MathLib/Vector3.h"
 
 namespace GeoLib {
 	class PointWithID;
