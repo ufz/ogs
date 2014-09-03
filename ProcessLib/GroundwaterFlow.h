@@ -13,7 +13,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
-#include "AssemblerLib/MeshComponentMap.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
