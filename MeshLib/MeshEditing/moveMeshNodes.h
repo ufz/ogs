@@ -4,11 +4,11 @@
  * @date Feb 03, 2014
  * @brief Functionality to move mesh nodes using a given displacement vec.
  *
- * @copyright
- * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * \copyright
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 #ifndef MOVEMESHNODES_H_
 #define MOVEMESHNODES_H_

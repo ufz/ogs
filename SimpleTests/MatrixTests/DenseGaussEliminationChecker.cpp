@@ -3,7 +3,7 @@
  * \brief  Implementation of tests.
  *
  * \copyright
- * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
