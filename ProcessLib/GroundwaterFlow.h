@@ -56,11 +56,11 @@ public:
     void initialize()
     {
         // Create mesh's subset using all nodes of the mesh.
-        _mesh_items_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
+        _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
 
         // Define a mesh item composition in a vector.
+        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
         std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
-        vec_comp_dis.push_back(new MeshLib::MeshSubsets(_mesh_items_all_nodes));
         AssemblerLib::MeshComponentMap vec1_composition(vec_comp_dis,
                 AssemblerLib::ComponentOrder::BY_COMPONENT);
     }
@@ -69,7 +69,7 @@ public:
 private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
 
-    MeshLib::MeshSubset const* _mesh_items_all_nodes = nullptr;
+    MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 };
 
 }   // namespace ProcessLib
