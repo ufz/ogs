@@ -65,6 +65,11 @@ public:
                 AssemblerLib::ComponentOrder::BY_COMPONENT);
     }
 
+    ~GroundwaterFlowProcess()
+    {
+        delete _mesh_subset_all_nodes;
+    }
+
 
 private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
