@@ -31,7 +31,7 @@ class MinimalBoundingSphere
 {
 public:
     /// Copy constructor
-    MinimalBoundingSphere(MinimalBoundingSphere const& sphere) = default;
+    MinimalBoundingSphere(MinimalBoundingSphere const&) = default;
     /// Point-Sphere
     MinimalBoundingSphere(GeoLib::Point const& p, double radius = std::numeric_limits<double>::epsilon());
     /// Bounding sphere using two points
