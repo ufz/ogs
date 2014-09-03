@@ -41,7 +41,11 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
+#ifdef PETSC_V35
+    KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix());
+#else 
     KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
+#endif
 
     KSPSolve(_solver, b.getData(), x.getData());
 
