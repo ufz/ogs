@@ -60,13 +60,15 @@ public:
 
         // Define a mesh item composition in a vector.
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
-        std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
-        AssemblerLib::MeshComponentMap vec1_composition(vec_comp_dis,
+        AssemblerLib::MeshComponentMap mesh_component_map(_all_mesh_subsets,
                 AssemblerLib::ComponentOrder::BY_COMPONENT);
     }
 
     ~GroundwaterFlowProcess()
     {
+        for (auto p : _all_mesh_subsets)
+            delete p;
+
         delete _mesh_subset_all_nodes;
     }
 
@@ -75,6 +77,7 @@ private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
+    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 };
 
 }   // namespace ProcessLib
