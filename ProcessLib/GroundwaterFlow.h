@@ -53,6 +53,10 @@ public:
     {
     }
 
+    ~GroundwaterFlowProcess()
+    {
+    }
+
 private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
 };
