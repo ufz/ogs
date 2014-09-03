@@ -13,9 +13,11 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "AssemblerLib/MeshComponentMap.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/MeshSubsets.h"
 #include "OGS/ProcessVariable.h"
 
 namespace ProcessLib
@@ -56,7 +58,13 @@ public:
         // Create mesh's subset using all nodes of the mesh.
         _mesh_items_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
 
+        // Define a mesh item composition in a vector.
+        std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
+        vec_comp_dis.push_back(new MeshLib::MeshSubsets(_mesh_items_all_nodes));
+        AssemblerLib::MeshComponentMap vec1_composition(vec_comp_dis,
+                AssemblerLib::ComponentOrder::BY_COMPONENT);
     }
+
 
 private:
     OGS::ProcessVariable const* _hydraulic_head = nullptr;
