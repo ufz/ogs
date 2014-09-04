@@ -70,7 +70,7 @@ public:
 		else if (t==ImportFileType::NETCDF)
 			return "NetCDF files (*.nc)";
 		else if (t==ImportFileType::OGS)
-			return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy files (*.gli *.msh);;GeoSys FEM Conditions (*.cnd *.bc *.ic *.st);;All files (* *.*)";
+			return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy files (*.gli *.msh);;All files (* *.*)";
 		else if (t==ImportFileType::OGS_GEO)
 			return "OpenGeosys files (*.gml *.gli)";
 		else if (t==ImportFileType::OGS_STN)

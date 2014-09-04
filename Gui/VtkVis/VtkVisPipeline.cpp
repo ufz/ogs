@@ -22,7 +22,6 @@
 #include "InterpolationAlgorithms/LinearIntervalInterpolation.h"
 
 //#include "Model.h"
-#include "ProcessModel.h"
 #include "GeoTreeModel.h"
 #include "MeshQuality/AngleSkewMetric.h"
 #include "MeshQuality/AreaMetric.h"
@@ -279,11 +278,6 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
 	addPipelineItem(model->vtkSource(name));
 }
 
-void VtkVisPipeline::addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
-{
-	addPipelineItem(model->vtkSource(pcs_type, cond_type));
-}
-
 void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
 {
 	addPipelineItem(static_cast<MshItem*>(model->getItem(idx))->vtkSource());
@@ -365,19 +359,6 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
 	{
 		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
 		if (item->algorithm() == model->vtkSource(name, type))
-		{
-			removePipelineItem(index(i, 0));
-			return;
-		}
-	}
-}
-
-void VtkVisPipeline::removeSourceItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, const FEMCondition::CondType cond_type)
-{
-	for (int i = 0; i < _rootItem->childCount(); i++)
-	{
-		VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
-		if (item->algorithm() == model->vtkSource(pcs_type, cond_type))
 		{
 			removePipelineItem(index(i, 0));
 			return;

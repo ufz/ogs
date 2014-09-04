@@ -49,7 +49,6 @@ public:
 
 protected:
 	void closeEvent( QCloseEvent* event );
-	void addFEMConditions(std::vector<FEMCondition*> const& conditions);
 
 protected slots:
 	void showGeoDockWidget( bool show );
@@ -76,15 +75,11 @@ protected slots:
 	/// Testing functionality for connection to FEM lib
 	void FEMTestStart();
 	void loadPetrelFiles();
-	void loadFEMConditions(std::string geoName);
 	void mapGeometry(const std::string &geo_name);
 	void convertMeshToGeometry(const MeshLib::Mesh* mesh);
 	void openRecentFile();
 	void about();
 	void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
-	void showConditionWriterDialog();
-	/// Call dialog for creating or modifying FEM conditions.
-	void showCondSetupDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, bool on_points = false);
 	void showDataExplorerSettingsDialog();
 	/// Allows setting the name for a geometric object
 	void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id);
@@ -101,13 +96,10 @@ protected slots:
 	void showMergeGeometriesDialog();
 	void showMeshAnalysisDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
-	void showNewProcessDialog();
 	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
 	void showTrackingSettingsDialog();
 	void updateDataViews();
-	void createFEMConditions(std::vector<FEMCondition*> const& conditions);
-	void writeFEMConditionsToFile(const QString &geoName, const FEMCondition::CondType type, const QString &fileName);
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
 
@@ -132,7 +124,7 @@ private:
 
 	MshModel* _meshModels;
 	ElementTreeModel* _elementModel;
-	ProcessModel* _processModel;
+	TreeModel* _processModel;
 	ProjectData _project;
 	VtkVisPipeline* _vtkVisPipeline;
 	QList<QRect> _screenGeometries;
