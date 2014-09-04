@@ -20,30 +20,29 @@
 
 namespace MeshLib
 {
-ElementQualityMetric::ElementQualityMetric(Mesh const* const mesh) :
+ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) :
 	_min (std::numeric_limits<double>::max()), _max (0), _mesh (mesh)
 {
-	if (_mesh)
-		_element_quality_metric.resize (_mesh->getNElements(), -1.0);
+	_element_quality_metric.resize (_mesh.getNElements(), -1.0);
 }
 
 BaseLib::Histogram<double> ElementQualityMetric::getHistogram (size_t nclasses) const
 {
 	if (nclasses == 0) {
 		// simple suggestion: number of classes with Sturges criterion
-		nclasses = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh->getNElements()))));
+		nclasses = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh.getNElements()))));
 	}
 
 	return BaseLib::Histogram<double>(getElementQuality(), nclasses, true);
 }
 
-void ElementQualityMetric::errorMsg (const Element* elem, size_t idx) const
+void ElementQualityMetric::errorMsg (Element const& elem, size_t idx) const
 {
 	ERR ("Error in MeshQualityChecker::check() - Calculated value of element is below double precision minimum.");
-	ERR ("Points of %s-Element %d: ", MeshElemType2String(elem->getGeomType()).c_str(), idx);
-	for (size_t i(0); i < elem->getNNodes(); i++)
+	ERR ("Points of %s-Element %d: ", MeshElemType2String(elem.getGeomType()).c_str(), idx);
+	for (size_t i(0); i < elem.getNNodes(); i++)
 	{
-		const double* coords = elem->getNode(i)->getCoords();
+		const double* coords = elem.getNode(i)->getCoords();
 		ERR ("\t Node %d: (%f, %f, %f)", i, coords[0], coords[1], coords[2]);
 	}
 }

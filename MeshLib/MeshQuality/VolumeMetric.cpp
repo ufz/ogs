@@ -20,28 +20,28 @@
 namespace MeshLib
 {
 
-VolumeMetric::VolumeMetric(Mesh const* const mesh) :
+VolumeMetric::VolumeMetric(Mesh const& mesh) :
 	ElementQualityMetric(mesh)
 { }
 
 void VolumeMetric::calculateQuality()
 {
 	// get all elements of mesh
-	const std::vector<MeshLib::Element*>& elements(_mesh->getElements());
+	const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
 
 	size_t error_count(0);
-	size_t nElements (_mesh->getNElements());
+	size_t nElements (_mesh.getNElements());
 
 	for (size_t k(0); k < nElements; k++)
 	{
-		const Element* elem (elements[k]);
-		if (elem->getDimension()<3)
+		Element const& elem (*elements[k]);
+		if (elem.getDimension()<3)
 		{
             _element_quality_metric[k] = 0.0;
             continue;
         }
 
-        double volume (elem->getContent());
+        double volume (elem.getContent());
         if (volume > _max)
             _max = volume;
         if (volume < sqrt(fabs(std::numeric_limits<double>::epsilon()))) {

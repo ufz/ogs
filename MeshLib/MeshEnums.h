@@ -61,11 +61,12 @@ enum class CellType
  */
 enum class MeshQualityType
 {
-	INVALID = 0,
-	AREA,
-	VOLUME,
-	EDGERATIO,
-	EQUIANGLESKEW
+    INVALID = 0,
+    AREA,
+    VOLUME,
+    EDGERATIO,
+    EQUIANGLESKEW,
+    RADIUSEDGERATIO
 };
 
 /// Given a MeshElemType this returns the appropriate string.

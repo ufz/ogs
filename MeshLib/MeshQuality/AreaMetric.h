@@ -26,7 +26,7 @@ namespace MeshLib
 class AreaMetric : public ElementQualityMetric
 {
 public:
-	AreaMetric(Mesh const* const mesh);
+	AreaMetric(Mesh const& mesh);
 	virtual ~AreaMetric() {}
 
 	virtual void calculateQuality ();

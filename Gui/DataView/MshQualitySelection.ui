@@ -48,6 +48,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QRadioButton" name="choiceRadius">
+        <property name="text">
+         <string>Radius to Shortest Edge Ratio</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
