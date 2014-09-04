@@ -13,20 +13,24 @@
 #include "Node.h"
 #include "Elements/Element.h"
 
+#include <algorithm>
+
 namespace MeshLib
 {
 
 std::vector<std::size_t> getConnectedElements(MeshLib::Mesh const& msh, const std::vector<std::size_t> &nodes)
 {
 	std::vector<std::size_t> connected_elements;
-	for (auto* e : msh.getElements()) {
-		for (std::size_t j=0; j<e->getNNodes(); j++) {
-			if (std::find(nodes.begin(), nodes.end(), e->getNodeIndex(j))!=nodes.end()) {
+	std::for_each(nodes.begin(), nodes.end(),
+		[&](std::size_t node_id)
+		{
+			for (auto* e : msh.getNode(node_id)->getElements()) {
 				connected_elements.push_back(e->getID());
-				break;
 			}
-		}
-	}
+		});
+	std::sort(connected_elements.begin(), connected_elements.end());
+	auto it = std::unique(connected_elements.begin(), connected_elements.end());
+	connected_elements.resize(std::distance(connected_elements.begin(),it));
 	return connected_elements;
 }
 
