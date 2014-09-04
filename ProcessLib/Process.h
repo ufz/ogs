@@ -50,8 +50,8 @@ public:
         {
             std::size_t const nnodes = e->getNNodes();
             std::vector<MeshLib::Location> vec_items;
-            vec_items.reserve(nnodes);
-            for (std::size_t j = 0; j < nnodes; j++)
+            vec_items.reserve(_numberNodeDOFs*nnodes);
+            for (std::size_t j = 0; j < _numberNodeDOFs*nnodes; j++)
                 vec_items.emplace_back(
                     mesh_id,
                     MeshLib::MeshItemType::Node,
