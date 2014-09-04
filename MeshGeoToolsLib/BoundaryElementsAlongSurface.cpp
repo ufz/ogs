@@ -29,6 +29,17 @@ BoundaryElementsAlongSurface::BoundaryElementsAlongSurface(MeshLib::Mesh const& 
 	// get a list of edges made of the nodes
 	for (auto ele_id : ele_ids_near_sfc) {
 		auto* e = _mesh.getElement(ele_id);
+		// skip internal elements
+		bool isOuterElement = false;
+		for (unsigned i=0; i<e->getNNeighbors(); i++) {
+			if (!e->getNeighbor(i)) {
+				isOuterElement = true;
+				break;
+			}
+		}
+		if (!isOuterElement)
+			continue;
+		// find faces on surface
 		for (unsigned i=0; i<e->getNEdges(); i++) {
 			auto* edge = e->getEdge(i);
 			// check
