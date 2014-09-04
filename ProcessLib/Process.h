@@ -49,12 +49,17 @@ public:
         {
             std::size_t const nnodes = e->getNNodes();
             std::vector<MeshLib::Location> vec_items;
-            vec_items.reserve(nnodes);
-            for (std::size_t j = 0; j < nnodes; j++)
-                vec_items.emplace_back(
-                    mesh_id,
-                    MeshLib::MeshItemType::Node,
-                    e->getNode(j)->getID());
+            vec_items.reserve(_numberOfNodeComponents*nnodes);
+            for (std::size_t n = 0; n < nnodes; n++)
+            {
+                // For each component in node push back
+                // a location (mesh_id, Node, node_id).
+                for (int c = 0; c < _numberOfNodeComponents; c++)
+                    vec_items.emplace_back(
+                        mesh_id,
+                        MeshLib::MeshItemType::Node,
+                        e->getNode(n)->getID());
+            }
 
             dof_map.push_back(mesh_component_map.getGlobalIndices<
                 AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
