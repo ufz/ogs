@@ -18,7 +18,7 @@
 namespace MeshLib
 {
 
-std::vector<std::size_t> getConnectedElements(MeshLib::Mesh const& msh, const std::vector<std::size_t> &nodes)
+std::vector<std::size_t> getConnectedElementIDs(MeshLib::Mesh const& msh, const std::vector<std::size_t> &nodes)
 {
 	std::vector<std::size_t> connected_elements;
 	std::for_each(nodes.begin(), nodes.end(),
