@@ -17,7 +17,6 @@
 
 // ** INCLUDES **
 #include "Color.h"
-#include "FEMCondition.h"
 #include "GeoType.h"
 #include "MeshEnums.h"
 #include "Point.h"
@@ -99,7 +98,6 @@ public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
 	void addPipelineItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
-	void addPipelineItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void addPipelineItem(StationTreeModel* model, const std::string &name);
 	QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
 
@@ -109,7 +107,6 @@ public slots:
 	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
 	void removeSourceItem(MshModel* model, const QModelIndex &idx);
 	void removeSourceItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
-	void removeSourceItem(ProcessModel* model, const FiniteElement::ProcessType pcs_type, FEMCondition::CondType cond_type);
 	void removeSourceItem(StationTreeModel* model, const std::string &name);
 
 	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached

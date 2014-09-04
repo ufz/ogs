@@ -146,7 +146,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 		if (parent != NULL)
 		{
 			QMenu* cond_menu = new QMenu("Set FEM Condition");
-			menu.addMenu(cond_menu);
+			//menu.addMenu(cond_menu);
 			QAction* addCondAction = cond_menu->addAction("On object...");
 			QAction* addCondPointAction = cond_menu->addAction("On all points...");
 			QAction* addNameAction = menu.addAction("Set name...");
@@ -172,7 +172,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 				//QAction* removeAction = menu.addAction("Remove geometry");
 				//connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 				connect(mapAction, SIGNAL(triggered()), this, SLOT(mapGeometry()));
-				connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
+				//connect(addCNDAction, SIGNAL(triggered()), this, SLOT(loadFEMConditions()));
 				//connect(saveCondAction, SIGNAL(triggered()), this, SLOT(saveFEMConditions()));
 				//connect(removeAction, SIGNAL(triggered()), this, SLOT(removeList()));
 			}
