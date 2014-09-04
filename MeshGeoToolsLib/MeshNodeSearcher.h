@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#include "boost/optional.hpp"
+
 // GeoLib
 #include "Point.h"
 #include "Polyline.h"
@@ -50,6 +52,13 @@ public:
 	virtual ~MeshNodeSearcher();
 
 	/**
+	 * Searches for the nearest mesh nodes on the given geometric object (point, polyline, surface).
+	 * @param geoObj a GeoLib::GeoObject where the nearest mesh node is searched for
+	 * @return a vector of mesh node ids
+	 */
+	std::vector<std::size_t> getMeshNodeIDs(GeoLib::GeoObject const& geoObj);
+
+	/**
 	 * Searches for the node nearest by the given point. If there are two nodes
 	 * with the same distance the id of the one that was first found will be
 	 * returned. The algorithm for the search is using GeoLib::Grid data
@@ -57,7 +66,7 @@ public:
 	 * @param pnt a GeoLib::Point the nearest mesh node is searched for
 	 * @return the id of the nearest mesh node
 	 */
-	std::size_t getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
+	boost::optional<std::size_t> getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
 
 	/**
 	 * Searches for the nearest mesh nodes along a GeoLib::Polyline.
