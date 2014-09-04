@@ -53,6 +53,14 @@ public:
     {
     }
 
+    void solve()
+    {
+    }
+
+    void post()
+    {
+    }
+
     ~GroundwaterFlowProcess()
     {
     }
