@@ -5,7 +5,7 @@
  * \brief  Definition of the Element class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -19,9 +19,9 @@
 #include <limits>
 #include <boost/optional.hpp>
 
-#include "MeshEnums.h"
-#include "Mesh.h"
-#include "MeshQuality/ElementErrorCode.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshQuality/ElementErrorCode.h"
 
 namespace MeshLib {
 

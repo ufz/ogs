@@ -5,7 +5,7 @@
  * \brief  Definition of the AABB class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -22,7 +22,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 #include "Point.h"
 
 namespace GeoLib

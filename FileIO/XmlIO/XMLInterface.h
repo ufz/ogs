@@ -5,7 +5,7 @@
  * \brief  Definition of the XMLInterface class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -17,7 +17,7 @@
 
 #include "OGS/ProjectData.h"
 
-#include "Writer.h"
+#include "FileIO/Writer.h"
 
 namespace FileIO
 {
