@@ -24,6 +24,10 @@ namespace MeshLib {
 	class Mesh;
 }
 
+namespace ProcessLib {
+	class Process;
+}
+
 /**
  * The ProjectData Object contains all the data needed for a certain project, i.e. all
  * geometric data (stored in a GEOObjects-object), all the meshes, FEM Conditions (i.e.
@@ -71,6 +75,7 @@ private:
 	GeoLib::GEOObjects *_geoObjects;
 #endif
 	std::vector<MeshLib::Mesh*> _msh_vec;
+	std::vector<ProcessLib::Process*> _processes;
 };
 
 #endif //PROJECTDATA_H_
