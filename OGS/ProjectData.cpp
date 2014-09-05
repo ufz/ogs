@@ -14,6 +14,7 @@
 #include "ProjectData.h"
 
 #include "MeshLib/Mesh.h"
+#include "ProcessLib/Process.h"
 
 ProjectData::ProjectData()
 :
@@ -28,8 +29,11 @@ ProjectData::ProjectData()
 ProjectData::~ProjectData()
 {
 	delete _geoObjects;
-	for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	for(auto it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
 		delete *it;
+
+	std::remove_if(_processes.begin(), _processes.end(),
+		[](ProcessLib::Process* p) { delete p; return true; });
 }
 
 void ProjectData::addMesh(MeshLib::Mesh* mesh)
