@@ -22,7 +22,10 @@
 
 #include "MeshLib/Mesh.h"
 #include "ProcessLib/Process.h"
+
+// FileIO
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "FileIO/readMeshFromFile.h"
 
 namespace detail
 {
@@ -59,6 +62,12 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 			project_config.get<std::string>("geometry"), path
 		);
 	detail::readGeometry(geometry_file, *_geoObjects);
+
+	// read mesh
+	std::string const mesh_file = BaseLib::copyPathToFileName(
+			project_config.get<std::string>("mesh"), path
+		);
+	_mesh_vec.push_back(FileIO::readMeshFromFile(mesh_file));
 }
 
 ProjectData::~ProjectData()
