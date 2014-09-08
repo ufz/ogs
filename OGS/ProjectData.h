@@ -59,7 +59,7 @@ public:
 	const MeshLib::Mesh* getMesh(const std::string &name) const;
 
 	/// Returns all the meshes with their respective names
-	const std::vector<MeshLib::Mesh*>& getMeshObjects() const { return _msh_vec; }
+	const std::vector<MeshLib::Mesh*>& getMeshObjects() const { return _mesh_vec; }
 
 	/// Removes the mesh with the given name.
 	virtual bool removeMesh(const std::string &name);
@@ -75,7 +75,7 @@ private:
 #else
 	GeoLib::GEOObjects *_geoObjects;
 #endif
-	std::vector<MeshLib::Mesh*> _msh_vec;
+	std::vector<MeshLib::Mesh*> _mesh_vec;
 	std::vector<ProcessLib::Process*> _processes;
 	std::vector<OGS::ProcessVariable> _process_variables;
 };
