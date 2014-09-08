@@ -43,7 +43,7 @@ public:
 	/**
 	 * Constructs a subsurface representation of a mesh using only 2D elements (i.e. layer boundaries are represented by surfaces)
 	 * @param mesh                    The 2D surface mesh that is used as a basis for the subsurface mesh
-	 * @param rasters                 Containing all the raster-data for the subsurface layers from top to bottom (starting with the DEM)
+	 * @param rasters                 Containing all the raster-data for the subsurface layers from bottom to top (starting with the bottom of the oldest layer and ending with the DEM)
 	 * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0]) 
 	 * @result true if the subsurface representation has been created, false if there was an error
 	 */
@@ -52,7 +52,7 @@ public:
 	/**
 	 * Constructs a subsurface representation of a mesh using only 2D elements (i.e. layer boundaries are represented by surfaces)
 	 * @param mesh                    The 2D surface mesh that is used as a basis for the subsurface mesh
-	 * @param raster_paths            Containing all the raster-file-names for the subsurface layers from top to bottom (starting with the DEM)
+	 * @param raster_paths            Containing all the raster-file-names for the subsurface layers from bottom to top (starting with the bottom of the oldest layer and ending with the DEM)
 	 * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0]) 
 	 * @result true if the subsurface representation has been created, false if there was an error
 	 */
