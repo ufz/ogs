@@ -17,9 +17,7 @@
 
 #include "Mesh2MeshPropertyInterpolation.h"
 
-// BaseLib
 #include "logog/include/logog.hpp"
-#include "StringTools.h"
 
 // GeoLib
 #include "AABB.h"
@@ -109,7 +107,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 
 		if (cnt == 0) {
 			std::string base_name("DebugData/Element-");
-			base_name += BaseLib::number2str(k);
+			base_name += std::to_string(k);
 
 			std::string aabb_fname(base_name + "-aabb.gli");
 			std::ofstream out_aabb(aabb_fname.c_str());

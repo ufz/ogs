@@ -20,9 +20,6 @@
 #include <stdexcept>
 #include <iostream>
 
-// BaseLib
-#include "StringTools.h"
-
 namespace MathLib {
 
 /**

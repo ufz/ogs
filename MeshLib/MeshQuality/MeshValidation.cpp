@@ -18,7 +18,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "StringTools.h"
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
@@ -55,7 +54,7 @@ std::vector<std::size_t> MeshValidation::findUnusedMeshNodes(const MeshLib::Mesh
 			++count;
 		}
 
-	std::string nUnusedNodesStr = (count) ? BaseLib::number2str(count) : "No";
+	std::string nUnusedNodesStr = (count) ? std::to_string(count) : "No";
 	INFO ("%s unused mesh nodes found.", nUnusedNodesStr.c_str());
 	return del_node_idx;
 }
@@ -128,12 +127,12 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 		{
 			if (error_codes[j][flags[i]])
 			{
-				elementIdStr += (BaseLib::number2str(j) + ", ");
+				elementIdStr += (std::to_string(j) + ", ");
 				count++;
 			}
 		
 		}
-		const std::string nErrorsStr = (count) ? BaseLib::number2str(count) : "No";
+		const std::string nErrorsStr = (count) ? std::to_string(count) : "No";
 		output[i] = (nErrorsStr + " elements found with " + ElementErrorCode::toString(flags[i]) + ".\n");
 
 		if (count)

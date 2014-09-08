@@ -27,7 +27,6 @@
 #include "logog/include/logog.hpp"
 
 #include "FileTools.h"
-#include "StringTools.h"
 
 // MSH
 #include "Elements/Line.h"
@@ -462,8 +461,8 @@ void BoostVtuInterface::buildPropertyTree()
 		root_node.put("<xmlattr>.compressor", "vtkZLibDataCompressor");
 
 	ptree &piece_node = root_node.put("UnstructuredGrid.Piece", "");
-	const std::string str_nNodes (BaseLib::number2str(nNodes));
-	const std::string str_nElems (BaseLib::number2str(nElems));
+	const std::string str_nNodes (std::to_string(nNodes));
+	const std::string str_nElems (std::to_string(nElems));
 	piece_node.put("<xmlattr>.NumberOfPoints", str_nNodes.c_str());
 	piece_node.put("<xmlattr>.NumberOfCells", str_nElems.c_str());
 
@@ -567,7 +566,7 @@ void BoostVtuInterface::addDataArray(property_tree::ptree &parent_node, const st
 	dataarray_node.put("<xmlattr>.type", data_type.c_str());
 	dataarray_node.put("<xmlattr>.Name", name.c_str());
 	if (nComponents > 1)
-		dataarray_node.put("<xmlattr>.NumberOfComponents", BaseLib::number2str(nComponents).c_str());
+		dataarray_node.put("<xmlattr>.NumberOfComponents", std::to_string(nComponents).c_str());
 	std::string comp_type = (_use_compressor) ? "appended" : "ascii";
 	dataarray_node.put("<xmlattr>.format", comp_type.c_str());
 	// ---- offset attribute for compressed data! ----

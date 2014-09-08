@@ -25,7 +25,6 @@
 
 // BaseLib
 #include "FileTools.h"
-#include "StringTools.h"
 #include "quicksort.h"
 
 // GeoLib
@@ -717,7 +716,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 						os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
 					} else {
 						os << "\t$NAME " << "\n" << "\t\t" << sfcs_cnt << "\n";
-					sfc_name = BaseLib::number2str (sfcs_cnt);
+					sfc_name = std::to_string (sfcs_cnt);
 				}
 				sfc_name += ".tin";
 				os << "\t$TIN" << "\n";

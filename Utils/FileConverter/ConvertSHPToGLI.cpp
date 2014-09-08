@@ -28,7 +28,6 @@
 
 // BaseLib
 #include "LogogSimpleFormatter.h"
-#include "StringTools.h"
 
 // FileIO
 #include "XmlIO/Qt/XmlGmlInterface.h"
@@ -71,7 +70,7 @@ void convertPoints (DBFHandle dbf_handle,
 				}
 		}
 		else
-			name = BaseLib::number2str(k);
+			name = std::to_string(k);
 
 		if (station) {
 			GeoLib::Station* pnt(GeoLib::Station::createStation(name, x, y, z));
