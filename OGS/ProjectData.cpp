@@ -26,7 +26,8 @@ ProjectData::ProjectData()
 {
 }
 
-ProjectData::ProjectData(ConfigTree const& project_config)
+ProjectData::ProjectData(ConfigTree const& project_config,
+	std::string const& path)
 :
 #ifdef OGS_BUILD_GUI
 	_geoObjects(new GEOModels())
