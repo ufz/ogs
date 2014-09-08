@@ -13,8 +13,25 @@
 
 #include "ProjectData.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+#include "BaseLib/FileTools.h"
+
 #include "MeshLib/Mesh.h"
 #include "ProcessLib/Process.h"
+#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+
+namespace detail
+{
+void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
+
+{
+	DBUG("Reading geometry file \'%s\'.", fname.c_str());
+	FileIO::BoostXmlGmlInterface gml_reader(geo_objects);
+	gml_reader.readFile(fname);
+}
+}
 
 ProjectData::ProjectData()
 :
@@ -35,6 +52,11 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 	_geoObjects(new GeoLib::GEOObjects())
 #endif
 {
+	// read geometry
+	std::string const geometry_file = BaseLib::copyPathToFileName(
+			project_config.get<std::string>("geometry"), path
+		);
+	detail::readGeometry(geometry_file, *_geoObjects);
 }
 
 ProjectData::~ProjectData()
