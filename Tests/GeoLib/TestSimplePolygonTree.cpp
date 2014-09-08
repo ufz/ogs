@@ -4,11 +4,11 @@
  * @date Apr 02, 2014
  * @brief Test functionality of class SimplePolygonTree.
  *
- * @copyright
- * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * \copyright
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <memory>

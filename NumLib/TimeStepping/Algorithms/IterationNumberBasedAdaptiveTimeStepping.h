@@ -2,10 +2,11 @@
  * \author Haibing Shao and Norihiro Watanabe
  * \date   2013-08-07
  *
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.com)
+ * \copyright
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.com/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #ifndef ITERATIONNUMBERBASEDADAPTIVETIMESTEPPING_H_

@@ -5,7 +5,7 @@
  * \brief  Definition of the GeoInfo class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -16,8 +16,8 @@
 #define GEOINFO_H_
 
 // GEO
-#include "GeoObject.h"
-#include "GeoType.h"
+#include "GeoLib/GeoObject.h"
+#include "GeoLib/GeoType.h"
 
 /**
  * \brief GeoInfo stores the type of the geometric entity and
