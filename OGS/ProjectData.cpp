@@ -26,6 +26,16 @@ ProjectData::ProjectData()
 {
 }
 
+ProjectData::ProjectData(ConfigTree const& project_config)
+:
+#ifdef OGS_BUILD_GUI
+	_geoObjects(new GEOModels())
+#else
+	_geoObjects(new GeoLib::GEOObjects())
+#endif
+{
+}
+
 ProjectData::~ProjectData()
 {
 	delete _geoObjects;

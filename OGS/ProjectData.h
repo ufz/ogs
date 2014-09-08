@@ -13,6 +13,8 @@
 #ifndef PROJECTDATA_H_
 #define PROJECTDATA_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 #ifdef OGS_BUILD_GUI
 #include "Gui/DataView/GEOModels.h"
 #else
@@ -20,7 +22,6 @@
 #endif
 
 #include "OGS/ProcessVariable.h"
-
 namespace MeshLib {
 	class Mesh;
 }
@@ -41,8 +42,10 @@ namespace ProcessLib {
  */
 class ProjectData
 {
+using ConfigTree = boost::property_tree::ptree;
 public:
 	ProjectData();
+	ProjectData(ConfigTree const& config_tree);
 	virtual ~ProjectData();
 
 	//** Geometry functionality **//
