@@ -45,7 +45,7 @@ class ProjectData
 using ConfigTree = boost::property_tree::ptree;
 public:
 	ProjectData();
-	ProjectData(ConfigTree const& config_tree);
+	ProjectData(ConfigTree const& config_tree, std::string const& path);
 	virtual ~ProjectData();
 
 	//** Geometry functionality **//
