@@ -226,7 +226,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 	if (_use_rasters)
 	{
 		std::vector<std::string> raster_paths(nLayers+1);
-		for (unsigned i=0; i<=nLayers; ++i)
+		for (int i=nLayers; i>=0; --i)
 			raster_paths[i] = this->_edits[i+1]->text().toStdString();
 		LayeredVolume lv;
 		lv.createGeoVolumes(*_msh, raster_paths);
