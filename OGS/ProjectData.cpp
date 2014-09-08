@@ -71,11 +71,12 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 ProjectData::~ProjectData()
 {
 	delete _geoObjects;
-	for(auto it = _mesh_vec.begin(); it != _mesh_vec.end(); ++it)
-		delete *it;
 
-	std::remove_if(_processes.begin(), _processes.end(),
-		[](ProcessLib::Process* p) { delete p; return true; });
+	for(ProcessLib::Process* p : _processes)
+		delete p;
+
+	for (MeshLib::Mesh* m : _mesh_vec)
+		delete m;
 }
 
 void ProjectData::addMesh(MeshLib::Mesh* mesh)
