@@ -73,6 +73,12 @@ public:
 	bool meshExists(const std::string &name);
 
 private:
+	std::vector<MeshLib::Mesh*>::const_iterator findMeshByName(
+		std::string const& name) const;
+	std::vector<MeshLib::Mesh*>::iterator findMeshByName(
+		std::string const& name);
+
+private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects;
 #else

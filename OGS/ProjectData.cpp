@@ -87,6 +87,23 @@ void ProjectData::addMesh(MeshLib::Mesh* mesh)
 	_mesh_vec.push_back(mesh);
 }
 
+std::vector<MeshLib::Mesh*>::const_iterator ProjectData::findMeshByName(
+		std::string const& name) const
+{
+	return findMeshByName(name);
+}
+
+std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
+		std::string const& name)
+{
+	return std::find_if(_mesh_vec.begin(), _mesh_vec.end(),
+			[&name](MeshLib::Mesh* mesh)
+			{
+				return name == mesh->getName();
+			});
+
+}
+
 const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 {
 	for (std::vector<MeshLib::Mesh*>::const_iterator it = _mesh_vec.begin();
