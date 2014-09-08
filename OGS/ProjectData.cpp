@@ -112,15 +112,19 @@ const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 
 bool ProjectData::removeMesh(const std::string &name)
 {
-	for (std::vector<MeshLib::Mesh*>::iterator it = _mesh_vec.begin();
-			it != _mesh_vec.end(); ++it)
-		if (name.compare((*it)->getName()) == 0)
-		{
-			delete *it;
-			_mesh_vec.erase(it);
-			return true;
-		}
-	return false;
+	bool mesh_found = false;
+	std::vector<MeshLib::Mesh*>::iterator it = findMeshByName(name);
+	while (it != _mesh_vec.end())
+	{
+		delete *it;
+		*it = nullptr;
+		it = findMeshByName(name);
+		mesh_found = true;
+	}
+
+	_mesh_vec.erase(std::remove(_mesh_vec.begin(), _mesh_vec.end(), nullptr),
+			_mesh_vec.end());
+	return mesh_found;
 }
 
 bool ProjectData::meshExists(const std::string &name)

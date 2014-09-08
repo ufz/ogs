@@ -64,7 +64,8 @@ public:
 	/// Returns all the meshes with their respective names
 	const std::vector<MeshLib::Mesh*>& getMeshObjects() const { return _mesh_vec; }
 
-	/// Removes the mesh with the given name.
+	/// Deletes all meshes with the given name and removes them from the list of
+	//  saved meshes.
 	virtual bool removeMesh(const std::string &name);
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
