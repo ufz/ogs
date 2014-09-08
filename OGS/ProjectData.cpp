@@ -30,7 +30,7 @@ ProjectData::ProjectData()
 ProjectData::~ProjectData()
 {
 	delete _geoObjects;
-	for(auto it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	for(auto it = _mesh_vec.begin(); it != _mesh_vec.end(); ++it)
 		delete *it;
 
 	std::remove_if(_processes.begin(), _processes.end(),
@@ -42,12 +42,13 @@ void ProjectData::addMesh(MeshLib::Mesh* mesh)
 	std::string name = mesh->getName();
 	isUniqueMeshName(name);
 	mesh->setName(name);
-	_msh_vec.push_back(mesh);
+	_mesh_vec.push_back(mesh);
 }
 
 const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 {
-	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	for (std::vector<MeshLib::Mesh*>::const_iterator it = _mesh_vec.begin(); it
+!= _mesh_vec.end(); ++it)
 		if (name.compare((*it)->getName()) == 0)
 			return *it;
 	return NULL;
@@ -55,11 +56,12 @@ const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
 
 bool ProjectData::removeMesh(const std::string &name)
 {
-	for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	for (std::vector<MeshLib::Mesh*>::iterator it = _mesh_vec.begin(); it !=
+	_mesh_vec.end(); ++it)
 		if (name.compare((*it)->getName()) == 0)
 		{
 			delete *it;
-			_msh_vec.erase(it);
+			_mesh_vec.erase(it);
 			return true;
 		}
 	return false;
@@ -67,7 +69,8 @@ bool ProjectData::removeMesh(const std::string &name)
 
 bool ProjectData::meshExists(const std::string &name)
 {
-	for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+	for (std::vector<MeshLib::Mesh*>::const_iterator it = _mesh_vec.begin(); it
+!= _mesh_vec.end(); ++it)
 		if (name.compare((*it)->getName()) == 0)
 			return true;
 	return false;
@@ -90,7 +93,8 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 		if (count > 1)
 			cpName = cpName + "-" + BaseLib::number2str(count);
 
-		for (std::vector<MeshLib::Mesh*>::iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+		for (std::vector<MeshLib::Mesh*>::iterator it = _mesh_vec.begin(); it !=
+_mesh_vec.end(); ++it)
 			if ( cpName.compare((*it)->getName()) == 0 )
 				isUnique = false;
 	}
