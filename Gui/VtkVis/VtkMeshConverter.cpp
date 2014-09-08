@@ -89,7 +89,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 
 			// is current pixel visible
 			if (nTuple == 2 || nTuple == 4)
-				visNodes[index] = (colour[nTuple-1] > 0);
+				visNodes[index] = (colour[nTuple-1] != 0);
 			else
 				visNodes[index] = true;
 
@@ -238,6 +238,9 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 				}
 			}
 		}
+
+	if (elements.empty())
+		return nullptr;
 
 	return new MeshLib::Mesh("RasterDataMesh", nodes, elements); // the name is only a temp-name, the name given in the dialog is set later
 }

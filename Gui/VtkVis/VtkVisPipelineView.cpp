@@ -15,6 +15,8 @@
 // ** INCLUDES **
 #include "VtkVisPipelineView.h"
 
+#include "OGSError.h"
+
 #include "CheckboxDelegate.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
@@ -211,8 +213,13 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType e
 	imageSource->GetOutput()->GetSpacing(spacing);
 
 	MeshLib::Mesh* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
-	mesh->setName(msh_name.toStdString());
-	emit meshAdded(mesh);
+	if (mesh)
+	{
+		mesh->setName(msh_name.toStdString());
+		emit meshAdded(mesh);
+	}
+	else
+		OGSError::box("Error creating mesh.");
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
