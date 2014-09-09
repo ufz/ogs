@@ -28,12 +28,12 @@
 namespace detail
 {
 void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
-
 {
 	DBUG("Reading geometry file \'%s\'.", fname.c_str());
 	FileIO::BoostXmlGmlInterface gml_reader(geo_objects);
 	gml_reader.readFile(fname);
 }
+
 }
 
 ProjectData::ProjectData()
@@ -69,6 +69,9 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 
 	// read process variables
 	readProcessVariables(project_config.get_child("process_variables"));
+
+	// read processes
+	readProcesses(project_config.get_child("processes"));
 }
 
 ProjectData::~ProjectData()
@@ -185,5 +188,23 @@ void ProjectData::readProcessVariables(
 		// can be several meshes. Then we have to assign the referenced mesh
 		// here.
 		_process_variables.emplace_back(var_config,*_mesh_vec[0],*_geoObjects);
+	}
+}
+
+void ProjectData::readProcesses(ConfigTree const& processes_config)
+{
+	DBUG("Reading processes:\n");
+	for (auto pc_it : processes_config) {
+		ConfigTree const& process_config = pc_it.second;
+		if (process_config.get<std::string>("type") == "GROUNDWATER_FLOW") {
+			// The existence check of the in the configuration referenced
+			// process variables is checked in the physical process.
+			// TODO at the moment we have only one mesh, later there can be
+			// several meshes. Then we have to assign the referenced mesh
+			// here.
+			_processes.push_back(new ProcessLib::GroundwaterFlowProcess(
+				*_mesh_vec[0], _process_variables, process_config)
+			);
+		}
 	}
 }

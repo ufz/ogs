@@ -82,6 +82,9 @@ private:
 	/// read the process variables from configuration
 	void readProcessVariables(ConfigTree const& process_variables_config);
 
+	// read the processes from configuration
+	void readProcesses(ConfigTree const& process_config);
+
 private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects;
