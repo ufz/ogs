@@ -188,7 +188,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		layer_thickness.push_back(thickness);
 	}
 
-	MeshLib::Mesh* new_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
+    MeshLayerMapper const mapper;
+	MeshLib::Mesh* new_mesh = mapper.createLayers(*_msh, layer_thickness);
 
 	if (_use_rasters)
 	{
@@ -196,7 +197,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		{
 			const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
 			const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
-			if (!MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement))
+			if (!mapper.layerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement))
 			{
 				delete new_mesh;
 				return nullptr;
@@ -204,7 +205,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		}
 		if (this->_edits[0]->text().length()>0)
 		{
-			MeshLib::Mesh* final_mesh = MeshLayerMapper::blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
+			MeshLib::Mesh* final_mesh = mapper.blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
 			delete new_mesh;
 			new_mesh = final_mesh;
 		}
@@ -246,7 +247,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		std::vector<float> layer_thickness;
 		for (unsigned i=0; i<nLayers; ++i)
 			layer_thickness.push_back(this->_edits[i]->text().toFloat());
-		tg_mesh = MeshLayerMapper::CreateLayers(*_msh, layer_thickness);
+        MeshLayerMapper const mapper;
+		tg_mesh = mapper.createLayers(*_msh, layer_thickness);
 		std::vector<MeshLib::Node> tg_attr;
 		FileIO::TetGenInterface tetgen_interface;
 		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
@@ -291,7 +293,8 @@ void MeshLayerEditDialog::accept()
 		new_mesh = new MeshLib::Mesh(*_msh);
 		const std::string imgPath ( this->_edits[0]->text().toStdString() );
 		const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
-		if (!MeshLayerMapper::LayerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue))
+        MeshLayerMapper const mapper;
+		if (!mapper.layerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue))
 		{
 			delete new_mesh;
 			return;

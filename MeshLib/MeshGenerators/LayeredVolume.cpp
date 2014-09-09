@@ -71,11 +71,12 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 		mesh_layer = new MeshLib::Mesh(mesh);
 
 	// map each layer and attach to subsurface mesh
+    MeshLayerMapper const mapper;
 	const std::size_t nRasters (rasters.size());
 	for (size_t i=0; i<nRasters; ++i)
 	{
 		const double replacement_value = (i==(nRasters-1)) ? noDataReplacementValue : _invalid_value;
-		if (!MeshLayerMapper::LayerMapping(*mesh_layer, *rasters[i], 0, 0, replacement_value))
+		if (!mapper.layerMapping(*mesh_layer, *rasters[i], 0, 0, replacement_value))
 		{
 			this->cleanUpOnError();
 			return false;

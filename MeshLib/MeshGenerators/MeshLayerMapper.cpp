@@ -32,8 +32,7 @@
 #include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
-
-MeshLib::Mesh* MeshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const std::vector<float> &layer_thickness_vector)
+MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector) const
 {
 	std::vector<float> thickness;
 	for (std::size_t i=0; i<layer_thickness_vector.size(); ++i)
@@ -109,21 +108,21 @@ MeshLib::Mesh* MeshLayerMapper::CreateLayers(const MeshLib::Mesh &mesh, const st
 	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elems);
 }
 
-bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
-                                   const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
+bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
+                                   const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0) const
 {
 	const GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
 	if (! raster) {
 		ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
 		return false;
 	}
-	const bool result = LayerMapping(new_mesh, *raster, nLayers, layer_id, noDataReplacementValue);
+	const bool result = layerMapping(new_mesh, *raster, nLayers, layer_id, noDataReplacementValue);
 	delete raster;
 	return result;
 }
 
-bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster &raster,
-                                   const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0)
+bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster &raster,
+                                   const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0) const
 {
 	if (nLayers < layer_id)
 	{
@@ -214,7 +213,7 @@ bool MeshLayerMapper::LayerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster
 
 bool MeshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
                                     const std::pair<double, double> &xDim,
-                                    const std::pair<double, double> &yDim)
+                                    const std::pair<double, double> &yDim) const
 {
 	if (node[0] < xDim.first || node[0] > xDim.second || node[1] < yDim.first || node[1] > yDim.second)
 		return false;
@@ -222,12 +221,12 @@ bool MeshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
 	return true;
 }
 
-MeshLib::Mesh* MeshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster)
+MeshLib::Mesh* MeshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster) const
 {
 	// construct surface mesh from DEM
 	const MathLib::Vector3 dir(0,0,1);
 	MeshLib::Mesh* dem = MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir);
-	MeshLayerMapper::LayerMapping(*dem, dem_raster, 0, 0);
+	this->layerMapping(*dem, dem_raster, 0, 0);
 	const std::vector<MeshLib::Node*> &dem_nodes (dem->getNodes());
 
 	const std::vector<MeshLib::Node*> &mdl_nodes (mesh.getNodes());
