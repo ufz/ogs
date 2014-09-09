@@ -19,9 +19,6 @@
 #include <map>
 #include <string>
 
-// BaseLib
-#include "StringTools.h"
-
 // GeoLib
 #include "GEOObjects.h"
 
@@ -38,8 +35,8 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std:
 			for (std::size_t i(0); i < pnts_per_edge; i++) {
 				pnts->push_back(new GeoLib::Point(i+shift[0], j+shift[1], k+shift[2]));
 				std::string pnt_name(
-						name + "-" + BaseLib::number2str(i) + "-" + BaseLib::number2str(j) + "-"
-								+ BaseLib::number2str(k));
+						name + "-" + std::to_string(i) + "-" + std::to_string(j) + "-"
+								+ std::to_string(k));
 				pnt_name_map->insert(std::pair< std::string, std::size_t>(pnt_name, i + offset));
 			}
 		}

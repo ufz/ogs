@@ -17,6 +17,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -77,13 +78,13 @@ std::string date2string(double ddate)
 	if (d < 1 || d > 31)
 		WARN("date2String(): day not in [1:31].");
 
-	std::string day = BaseLib::number2str(d);
+	std::string day = std::to_string(d);
 	if (d < 10)
 		day = "0" + day;
-	std::string month = BaseLib::number2str(m);
+	std::string month = std::to_string(m);
 	if (m < 10)
 		month = "0" + month;
-	std::string s =  BaseLib::number2str(y) + "-" + month + "-" + day;
+	std::string s =  std::to_string(y) + "-" + month + "-" + day;
 	return s;
 }
 

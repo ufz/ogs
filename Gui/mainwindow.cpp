@@ -83,7 +83,6 @@
 #include "XmlIO/Qt/XmlGspInterface.h"
 #include "XmlIO/Qt/XmlStnInterface.h"
 
-#include "StringTools.h"
 #include "LastSavedFileDirectory.h"
 
 // MeshLib
@@ -1342,7 +1341,7 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 		{
 			count++;
 			static_cast<VtkVisPipelineItem*> (*it)->writeToFile(basename
-			                                                    + BaseLib::number2str(count));
+                                                    + std::to_string(count));
 			++it;
 		}
 	}

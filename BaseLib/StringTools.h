@@ -42,18 +42,6 @@ std::list<std::string> splitString(const std::string &str, char delim);
 std::string replaceString(const std::string &searchString, const std::string &replaceString, std::string stringToReplace);
 
 /**
- *   Converts a number (double, float, int, ...) into a string
- *  \param d The number to be converted
- *  \return The number as string
- */
-template<typename T> std::string number2str(T d)
-{
-	std::stringstream out;
-	out << d;
-	return out.str();
-}
-
-/**
  *   Converts a string into a number (double, float, int, ...)
  *  Example: std::size_t number (str2number<std::size_t> (str));
  *  \param str string to be converted

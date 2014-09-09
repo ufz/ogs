@@ -21,7 +21,6 @@
 #include "FEMEnums.h"
 #include "ProjectData.h"
 #include "StrictDoubleValidator.h"
-#include "StringTools.h"
 #include "LinearEditDialog.h"
 #include "CondFromRasterDialog.h"
 
@@ -340,7 +339,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 			FEMCondition* cond = new FEMCondition(_cond);
 			cond->setGeoObj(nullptr);
 			cond->setGeoType(GeoLib::GEOTYPE::POINT);
-			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + BaseLib::number2str(ply->getPointID(i)));
+			cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + std::to_string(ply->getPointID(i)));
 			cond->clearDisValues();
 			cond->setConstantDisValue((*ply->getPoint(i))[2]);
 			conditions.push_back(this->typeCast(*cond));
@@ -359,7 +358,7 @@ void FEMConditionSetupDialog::copyCondOnPoints()
 				FEMCondition* cond = new FEMCondition(_cond);
 				cond->setGeoObj(nullptr);
 				cond->setGeoType(GeoLib::GEOTYPE::POINT);
-				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + BaseLib::number2str((*tri)[j]));
+				cond->setGeoName(_cond.getAssociatedGeometryName() + "_Point" + std::to_string((*tri)[j]));
 				cond->clearDisValues();
 				cond->setConstantDisValue((*tri->getPoint(j))[2]);
 				conditions.push_back(this->typeCast(*cond));

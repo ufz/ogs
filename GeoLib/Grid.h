@@ -24,11 +24,6 @@
 #include "AABB.h"
 #include "GEOObjects.h"
 
-#ifndef NDEBUG
-// BaseLib
-#include "StringTools.h"
-#endif
-
 // MathLib
 #include "MathTools.h"
 
@@ -452,11 +447,11 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 			for (std::size_t k(0); k<_n_steps[2]; k++) {
 
 				std::string name("Grid-");
-				name += BaseLib::number2str<std::size_t>(i);
+				name += std::to_string(i);
 				name += "-";
-				name += BaseLib::number2str<std::size_t>(j);
+				name += std::to_string(j);
 				name += "-";
-				name += BaseLib::number2str<std::size_t> (k);
+				name += std::to_string (k);
 				grid_names.push_back(name);
 
 				std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);

@@ -20,9 +20,6 @@
 
 #include "SHPInterface.h"
 
-// BaseLib
-#include "StringTools.h"
-
 // MathLib
 #include "AnalyticalGeometry.h"
 
@@ -101,7 +98,7 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
 
 		for (int i = 0; i < numberOfElements; i++) {
 			hSHPObject = SHPReadObject(hSHP, i);
-			GeoLib::Station* stn = GeoLib::Station::createStation(BaseLib::number2str(i),
+			GeoLib::Station* stn = GeoLib::Station::createStation(std::to_string(i),
 			                                                      *(hSHPObject->padfX),
 			                                                      *(hSHPObject->padfY),
 			                                                      *(hSHPObject->padfZ));

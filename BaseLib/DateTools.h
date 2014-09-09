@@ -15,7 +15,6 @@
 #ifndef DATETOOLS_H
 #define DATETOOLS_H
 
-#include "StringTools.h"
 #include <string>
 
 namespace BaseLib {

@@ -21,8 +21,6 @@
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 
-#include "StringTools.h"
-
 #include "OGSError.h"
 
 GEOModels::GEOModels( QObject* parent /*= 0*/ ) :
@@ -282,7 +280,7 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
 		for (std::size_t i = 0; i < nPoints; i++)
 			pnt_vec->setNameForElement(ply->getPointID(
 			                                   i), new_name + "_Point" +
-			                           BaseLib::number2str(ply->getPointID(i)));
+			                           std::to_string(ply->getPointID(i)));
 	}
 	else if (object_type == GeoLib::GEOTYPE::SURFACE)
 	{
@@ -293,13 +291,13 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
 			const GeoLib::Triangle* tri = (*sfc)[i];
 			pnt_vec->setNameForElement((*tri)[0],
 			                           new_name + "_Point" +
-			                           BaseLib::number2str((*tri)[0]));
+			                           std::to_string((*tri)[0]));
 			pnt_vec->setNameForElement((*tri)[1],
 			                           new_name + "_Point" +
-			                           BaseLib::number2str((*tri)[1]));
+			                           std::to_string((*tri)[1]));
 			pnt_vec->setNameForElement((*tri)[2],
 			                           new_name + "_Point" +
-			                           BaseLib::number2str((*tri)[2]));
+			                           std::to_string((*tri)[2]));
 		}
 	}
 	else

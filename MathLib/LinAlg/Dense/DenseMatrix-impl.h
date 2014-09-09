@@ -62,10 +62,10 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator=(DenseMatrix<FP_TYPE, IDX_TYPE> const& 
 
 	if (_n_rows != rhs.getNRows() || _n_cols != rhs.getNCols()) {
 		std::string msg("DenseMatrix::operator=(DenseMatrix const& rhs), Dimension mismatch, ");
-		msg += " left hand side: " + BaseLib::number2str(_n_rows) + " x "
-				+ BaseLib::number2str(_n_cols);
-		msg += " right hand side: " + BaseLib::number2str(rhs.getNRows()) + " x "
-				+ BaseLib::number2str(rhs.getNCols());
+		msg += " left hand side: " + std::to_string(_n_rows) + " x "
+				+ std::to_string(_n_cols);
+		msg += " right hand side: " + std::to_string(rhs.getNRows()) + " x "
+				+ std::to_string(rhs.getNCols());
 		throw std::range_error(msg);
 		return *this;
 	}
