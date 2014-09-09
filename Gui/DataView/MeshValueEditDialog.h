@@ -16,7 +16,6 @@
 #define MESHVALUEEDITDIALOG_H
 
 #include "ui_MeshValueEdit.h"
-#include "FEMCondition.h"
 
 #include <QDialog>
 

@@ -1,40 +1,61 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2011-08-30
- * \brief  Definition of the BoundaryCondition class.
- *
  * \copyright
- * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  */
 
-#ifndef BOUNDARYCONDITION_H
-#define BOUNDARYCONDITION_H
+#ifndef OGS_BOUNDARY_CONDITION_H_
+#define OGS_BOUNDARY_CONDITION_H_
 
-#include "FEMCondition.h"
+#include <boost/property_tree/ptree.hpp>
+#include "logog/include/logog.hpp"
 
-/**
- * \brief Adapter class for handling boundary conditions in the user Interface
- * \sa FEMCondition
- */
-class BoundaryCondition : public FEMCondition
+//#include "GeoLib/GEOObjects.h"
+
+namespace GeoLib
+{
+    class GeoObject;
+}
+
+namespace OGS
+{
+
+class BoundaryCondition
 {
 public:
-	BoundaryCondition(const std::string &geometry_name)
-		: FEMCondition(geometry_name, FEMCondition::BOUNDARY_CONDITION), _tim_type(0) {};
-	BoundaryCondition(const FEMCondition &cond)
-		: FEMCondition(cond, FEMCondition::BOUNDARY_CONDITION) {};
-	~BoundaryCondition() {}
+    BoundaryCondition(GeoLib::GeoObject const* const geometry)
+        : _geometry(geometry)
+    { }
 
-	std::size_t getTimType() const {return _tim_type; }
-	void setTimType(std::size_t value) { _tim_type = value; }
+    virtual ~BoundaryCondition() = default;
 
 private:
-	std::size_t _tim_type;
+    GeoLib::GeoObject const* const _geometry;
 };
 
-#endif //BOUNDARYCONDITION_H
+
+class DirichletBoundaryCondition : public BoundaryCondition
+{
+    using ConfigTree = boost::property_tree::ptree;
+public:
+    DirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
+            ConfigTree const& config)
+        : BoundaryCondition(geometry)
+    {
+        DBUG("Constructing Dirichlet boundary condition");
+
+        _value = config.get<double>("value", 0);
+        DBUG("Read value %g", _value);
+    }
+
+private:
+    double _value;
+};
+
+
+}   // namespace OGS
+
+#endif  // OGS_BOUNDARY_CONDITION_H_

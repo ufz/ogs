@@ -1,35 +1,48 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2011-08-30
- * \brief  Definition of the InitialCondition class.
- *
  * \copyright
- * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  */
 
-#ifndef INITIALCONDITION_H
-#define INITIALCONDITION_H
+#ifndef OGS_INITIAL_CONDITION_H_
+#define OGS_INITIAL_CONDITION_H_
 
-#include "FEMCondition.h"
+#include <boost/property_tree/ptree.hpp>
+#include "logog/include/logog.hpp"
 
-/**
- * \brief Adapter class for handling boundary conditions in the user Interface
- * \sa FEMCondition
- */
-class InitialCondition : public FEMCondition
+#include "GeoLib/GEOObjects.h"
+#include "MeshLib/Mesh.h"
+
+namespace OGS
+{
+
+class InitialCondition
 {
 public:
-	InitialCondition(const std::string &geometry_name)
-		: FEMCondition(geometry_name, FEMCondition::INITIAL_CONDITION) {};
-	//InitialCondition(const CInitialCondition &ic, const std::string &geometry_name);
-	InitialCondition(const FEMCondition &cond)
-		: FEMCondition(cond, FEMCondition::INITIAL_CONDITION) {};
-	~InitialCondition() {}
+    virtual ~InitialCondition() = default;
 };
 
-#endif //INITIALCONDITION_H
+
+class UniformInitialCondition : public InitialCondition
+{
+    using ConfigTree = boost::property_tree::ptree;
+public:
+    UniformInitialCondition(ConfigTree const& config)
+    {
+        DBUG("Constructing Uniform initial condition");
+
+        _value = config.get<double>("value", 0);
+        DBUG("Read value %g", _value);
+    }
+
+private:
+    double _value;
+};
+
+
+}   // namespace OGS
+
+#endif  // OGS_INITIAL_CONDITION_H_

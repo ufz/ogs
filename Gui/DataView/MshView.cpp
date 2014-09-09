@@ -138,7 +138,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		}
 
 		menu.addSeparator();
-		menu.addMenu(&direct_cond_menu);
+		//menu.addMenu(&direct_cond_menu);
 		QAction*   addDirectAction = direct_cond_menu.addAction("Add...");
 		QAction*  loadDirectAction = direct_cond_menu.addAction("Load...");
 		//menu.addSeparator();
