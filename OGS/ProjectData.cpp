@@ -66,6 +66,9 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 			project_config.get<std::string>("mesh"), path
 		);
 	_mesh_vec.push_back(FileIO::readMeshFromFile(mesh_file));
+
+	// read process variables
+	readProcessVariables(project_config.get_child("process_variables"));
 }
 
 ProjectData::~ProjectData()
@@ -164,4 +167,23 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 		name = cpName;
 	}
 	return isUnique;
+}
+
+void ProjectData::readProcessVariables(
+	ConfigTree const& process_variables_config)
+{
+	DBUG("Reading process variables:")
+	if (_geoObjects == nullptr) {
+		ERR("Geometric objects are needed to defined process variables.");
+		ERR("No geometric objects are read.");
+		return;
+	}
+
+	for (auto it : process_variables_config) {
+		ConfigTree const& var_config = it.second;
+		// TODO at the moment we have only one mesh, later there
+		// can be several meshes. Then we have to assign the referenced mesh
+		// here.
+		_process_variables.emplace_back(var_config,*_mesh_vec[0],*_geoObjects);
+	}
 }

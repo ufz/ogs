@@ -79,6 +79,9 @@ private:
 	std::vector<MeshLib::Mesh*>::iterator findMeshByName(
 		std::string const& name);
 
+	/// read the process variables from configuration
+	void readProcessVariables(ConfigTree const& process_variables_config);
+
 private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects;
