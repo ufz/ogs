@@ -1,11 +1,10 @@
 /**
- * \file
  * \author Thomas Fischer / Karsten Rink
  * \date   2010-01-21
  * \brief  Definition of the GeoObjects class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -255,6 +254,18 @@ public:
 	/// Returns the geo object for a geometric item of the given name and type for the associated geometry.
 	const GeoLib::GeoObject* getGeoObject(const std::string &geo_name,
 	                                      GeoLib::GEOTYPE type,
+	                                      const std::string &geo_obj_name) const;
+
+	/// Return named (by the tuple geo_name and geo_obj_name) geo object.
+	// It is required that a tuple is a unique key for a geometric object!
+	// If there is another geo object with same name one of them is returned.
+	// In theory different types of geometric objects can have the same name.
+	// For instance it is possible that a point object and a polyline object
+	// share the same name. If there exists several objects sharing the same
+	// name the first object found will be returned.
+	// @param geo_name name of geometry
+	// @param geo_obj_name name of the geo object
+	GeoLib::GeoObject const* getGeoObject(const std::string &geo_name,
 	                                      const std::string &geo_obj_name) const;
 
 	/** constructor */

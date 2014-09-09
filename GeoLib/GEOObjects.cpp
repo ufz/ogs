@@ -591,6 +591,27 @@ const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
 	return geo_obj;
 }
 
+GeoLib::GeoObject const* GEOObjects::getGeoObject(
+	const std::string &geo_name,
+	const std::string &geo_obj_name) const
+{
+	GeoLib::GeoObject const* geo_obj(
+		getGeoObject(geo_name, GeoLib::GEOTYPE::POINT, geo_obj_name)
+	);
+
+	if(!geo_obj)
+		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::POLYLINE, geo_obj_name);
+
+	if(!geo_obj)
+		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::SURFACE, geo_obj_name);
+
+	if (!geo_obj) {
+		ERR("GEOObjects::getGeoObject(): Could not find \"%s\" in geometry %s.",
+			geo_obj_name.c_str(), geo_name.c_str());
+	}
+	return geo_obj;
+}
+
 int GEOObjects::exists(const std::string &geometry_name) const
 {
 	std::size_t size (_pnt_vecs.size());
