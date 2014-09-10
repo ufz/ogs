@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef OGS_BOUNDARY_CONDITION_H_
-#define OGS_BOUNDARY_CONDITION_H_
+#ifndef PROCESS_LIB_BOUNDARY_CONDITION_H_
+#define PROCESS_LIB_BOUNDARY_CONDITION_H_
 
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
@@ -18,7 +18,7 @@ namespace GeoLib
     class GeoObject;
 }
 
-namespace OGS
+namespace ProcessLib
 {
 
 class BoundaryCondition
@@ -54,6 +54,6 @@ private:
 };
 
 
-}   // namespace OGS
+}   // namespace ProcessLib
 
-#endif  // OGS_BOUNDARY_CONDITION_H_
+#endif  // PROCESS_LIB_BOUNDARY_CONDITION_H_

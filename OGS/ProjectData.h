@@ -21,7 +21,7 @@
 #include "GeoLib/GEOObjects.h"
 #endif
 
-#include "OGS/ProcessVariable.h"
+#include "ProcessLib/ProcessVariable.h"
 namespace MeshLib {
 	class Mesh;
 }
@@ -93,7 +93,7 @@ private:
 #endif
 	std::vector<MeshLib::Mesh*> _mesh_vec;
 	std::vector<ProcessLib::Process*> _processes;
-	std::vector<OGS::ProcessVariable> _process_variables;
+	std::vector<ProcessLib::ProcessVariable> _process_variables;
 };
 
 #endif //PROJECTDATA_H_

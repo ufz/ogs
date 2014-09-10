@@ -14,7 +14,7 @@
 #include "logog/include/logog.hpp"
 
 #include "MeshLib/Mesh.h"
-#include "OGS/ProcessVariable.h"
+#include "ProcessVariable.h"
 
 namespace ProcessLib
 {
@@ -25,7 +25,7 @@ class GroundwaterFlowProcess : public Process
 
 public:
     GroundwaterFlowProcess(MeshLib::Mesh const& mesh,
-            std::vector<OGS::ProcessVariable> const& variables,
+            std::vector<ProcessVariable> const& variables,
             ConfigTree const& config)
         : Process(mesh, 1)
     {
@@ -35,7 +35,7 @@ public:
         std::string const name = config.get<std::string>("process_variable");
 
         auto const& variable = std::find_if(variables.cbegin(), variables.cend(),
-                [&name](OGS::ProcessVariable const& v) {
+                [&name](ProcessVariable const& v) {
                     return v.getName() == name;
                 });
 
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    OGS::ProcessVariable const* _hydraulic_head = nullptr;
+    ProcessVariable const* _hydraulic_head = nullptr;
 };
 
 }   // namespace ProcessLib

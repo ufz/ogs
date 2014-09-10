@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef OGS_PROCESS_VARIABLE_H_
-#define OGS_PROCESS_VARIABLE_H_
+#ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
+#define PROCESS_LIB_PROCESS_VARIABLE_H_
 
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
@@ -16,10 +16,10 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
-#include "OGS/BoundaryCondition.h"
-#include "OGS/InitialCondition.h"
+#include "BoundaryCondition.h"
+#include "InitialCondition.h"
 
-namespace OGS
+namespace ProcessLib
 {
 
 /// A named process variable. Its properties includes the mesh, and the initial
@@ -46,7 +46,7 @@ public:
             if (type == "Uniform")
             {
                 _initial_condition =
-                    new OGS::UniformInitialCondition(ic_config->second);
+                    new UniformInitialCondition(ic_config->second);
             }
             else
             {
@@ -82,7 +82,7 @@ public:
                 if (type == "Dirichlet")
                 {
                     _boundary_conditions.emplace_back(
-                        new OGS::DirichletBoundaryCondition(
+                        new DirichletBoundaryCondition(
                             geometry, bc_config));
                 }
                 else
@@ -111,10 +111,10 @@ public:
 private:
     std::string const _name;
     MeshLib::Mesh const& _mesh;
-    OGS::InitialCondition* _initial_condition;
-    std::vector<OGS::BoundaryCondition*> _boundary_conditions;
+    InitialCondition* _initial_condition;
+    std::vector<BoundaryCondition*> _boundary_conditions;
 };
 
-}   // namespace OGS
+}   // namespace ProcessLib
 
-#endif  // OGS_PROCESS_VARIABLE_H_
+#endif  // PROCESS_LIB_PROCESS_VARIABLE_H_

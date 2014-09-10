@@ -7,15 +7,15 @@
  *
  */
 
-#ifndef OGS_INITIAL_CONDITION_H_
-#define OGS_INITIAL_CONDITION_H_
+#ifndef PROCESS_LIB_INITIAL_CONDITION_H_
+#define PROCESS_LIB_INITIAL_CONDITION_H_
 
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
 #include "MeshLib/Mesh.h"
 
-namespace OGS
+namespace ProcessLib
 {
 
 class InitialCondition
@@ -42,6 +42,6 @@ private:
 };
 
 
-}   // namespace OGS
+}   // namespace ProcessLib
 
-#endif  // OGS_INITIAL_CONDITION_H_
+#endif  // PROCESS_LIB_INITIAL_CONDITION_H_
