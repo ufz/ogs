@@ -134,6 +134,7 @@ IF(OGS_BUILD_GUI)
 	ADD_SUBDIRECTORY(Gui)
 ENDIF() # OGS_BUILD_GUI
 
+ADD_SUBDIRECTORY( Applications )
 ADD_SUBDIRECTORY( AssemblerLib )
 ADD_SUBDIRECTORY( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
