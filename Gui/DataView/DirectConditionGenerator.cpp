@@ -19,6 +19,8 @@
 
 #include "DirectConditionGenerator.h"
 
+#include "AsciiRasterInterface.h"
+
 #include "Raster.h"
 #include "MeshSurfaceExtraction.h"
 #include "PointWithID.h"
@@ -32,7 +34,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 {
 	if (_direct_values.empty())
 	{
-		GeoLib::Raster* raster (GeoLib::Raster::readRaster(filename));
+		GeoLib::Raster* raster (FileIO::AsciiRasterInterface::readRaster(filename));
 		if (! raster) {
 			ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - could not load raster file.");
 			return _direct_values;
@@ -62,7 +64,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 {
 	if (_direct_values.empty())
 	{
-		GeoLib::Raster* raster (GeoLib::Raster::readRaster(filename));
+		GeoLib::Raster* raster (FileIO::AsciiRasterInterface::readRaster(filename));
 		if (!raster) {
 			ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load raster file.");
 			return _direct_values;

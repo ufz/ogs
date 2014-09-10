@@ -29,6 +29,7 @@
 #include "FileTools.h"
 #include "MeshIO.h"
 #include "readMeshFromFile.h"
+#include "AsciiRasterInterface.h"
 
 // GeoLib
 #include "Raster.h"
@@ -122,9 +123,7 @@ int main (int argc, char* argv[])
 			                                      raster_arg.getValue()));
 			new_raster_fname += "-" + std::to_string(raster->getNRows()) + "x" +
 			                    std::to_string(raster->getNCols()) + ".asc";
-			std::ofstream out(new_raster_fname);
-			raster->writeRasterAsASC(out);
-			out.close();
+			FileIO::AsciiRasterInterface::writeRasterAsASC(raster, new_raster_fname);
 		}
 	}
 

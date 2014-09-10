@@ -19,6 +19,9 @@
 #include "logog/include/logog.hpp"
 
 #include "MeshLayerMapper.h"
+
+#include "FileIO/AsciiRasterInterface.h"
+
 // GeoLib
 #include "Raster.h"
 
@@ -30,6 +33,8 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 #include "MeshSurfaceExtraction.h"
+
+
 #include "MathTools.h"
 
 MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name) const
@@ -104,7 +109,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,
                                    const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue = 0.0) const
 {
-	const GeoLib::Raster *raster(GeoLib::Raster::getRasterFromASCFile(rasterfile));
+	const GeoLib::Raster *raster(FileIO::AsciiRasterInterface::getRasterFromASCFile(rasterfile));
 	if (! raster) {
 		ERR("MshLayerMapper::LayerMapping - could not read raster file %s", rasterfile.c_str());
 		return false;
@@ -125,7 +130,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster
 
 	const double x0(raster.getOrigin()[0]);
 	const double y0(raster.getOrigin()[1]);
-	const double delta(raster.getRasterPixelDistance());
+	const double delta(raster.getRasterPixelSize());
 	const double no_data(raster.getNoDataValue());
 	const std::size_t width(raster.getNCols());
 	const std::size_t height(raster.getNRows());
