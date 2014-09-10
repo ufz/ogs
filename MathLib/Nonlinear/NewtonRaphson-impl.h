@@ -30,34 +30,32 @@ NewtonRaphson::NewtonRaphson()
 template<class F_RESIDUAL, class F_DX, class T_VALUE>
 bool NewtonRaphson::solve(F_RESIDUAL &f_residual, F_DX &f_dx, const T_VALUE &x0, T_VALUE &x_new)
 {
-    T_VALUE r(x0), dx(x0);
-    r = .0;
-    dx = .0;
-
-    const bool checkAbsResidualError = (_r_abs_tol<std::numeric_limits<double>::max());
-    const bool checkRelResidualError = (_r_rel_tol<std::numeric_limits<double>::max());
-    const bool checkRelDxError = (_dx_rel_tol>.0);
+    const bool checkAbsResidualError = (_r_abs_tol < std::numeric_limits<double>::max());
+    const bool checkRelResidualError = (_r_rel_tol < std::numeric_limits<double>::max());
+    const bool checkRelDxError = (_dx_rel_tol > .0);
     const bool needXNorm =  (checkRelResidualError || checkRelDxError);
 
     INFO("------------------------------------------------------------------");
     INFO("*** NEWTON-RAPHSON nonlinear solver");
     INFO("-> iteration started");
 
-    double x_norm = -1.;
-    double dx_norm = -1.;
-    double r_norm = -1.;
-    bool converged = false;
-
     // evaluate initial residual
     x_new = x0;
+    T_VALUE r(x0);
     f_residual(x_new, r);
+
     // check convergence
-    r_norm = norm(r, _normType);
-    dx_norm = norm(dx, _normType);
+    double r_norm = norm(r, _normType);
+
+    T_VALUE dx(x0);
+    double dx_norm = norm(dx, _normType);
+
+    double x_norm = -1.;
     if (needXNorm)
         x_norm = norm(x_new, _normType);
-    converged = ((r_norm < _r_abs_tol && r_norm < _r_rel_tol*x_norm)
-                || (checkRelDxError && dx_norm < _dx_rel_tol*x_norm));
+
+    bool converged = ((r_norm < _r_abs_tol && r_norm < _r_rel_tol*x_norm)
+                     || (checkRelDxError && dx_norm < _dx_rel_tol*x_norm));
     if (_printErrors)
         INFO("-> %d: ||r||=%1.3e, ||dx||=%1.3e, ||x||=%1.3e, ||dx||/||x||=%1.3e", 0, r_norm, dx_norm, x_norm, x_norm==0 ? dx_norm : dx_norm/x_norm);
 
