@@ -39,9 +39,10 @@ public:
     * \param mesh The triangle/quad mesh that is the basis for the new prism/hex mesh
     * \param nLayers The number of layers of prism/hex elements that will be extruded from the triangle/quad elements of the original mesh
     * \param thickness The thickness of each of these newly added layers
+    * \param mesh_name The name of the newly created mesh
     * \return A mesh with the requested number of layers of prism/hex elements
     */
-    MeshLib::Mesh* createLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector) const;
+    MeshLib::Mesh* createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name = "SubsurfaceMesh") const;
 
     /**
     * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
