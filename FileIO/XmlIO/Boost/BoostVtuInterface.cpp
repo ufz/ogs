@@ -530,7 +530,11 @@ bool BoostVtuInterface::write()
 		ERR("BoostVtuInterface::write(): No mesh specified.");
 		return false;
 	}
+#if BOOST_VERSION <= 105500
 	property_tree::xml_writer_settings<char> settings('\t', 1);
+#else
+	property_tree::xml_writer_settings<std::string> settings('\t', 1);
+#endif  // BOOST_VERSION
 	write_xml(_out, _doc, settings);
 	return true;
 }
