@@ -70,6 +70,7 @@ ADD_EXECUTABLE( ogs-gui MACOSX_BUNDLE
 
 TARGET_LINK_LIBRARIES( ogs-gui
 	${QT_LIBRARIES}
+	ApplicationsLib
 	BaseLib
 	GeoLib
 	FileIO

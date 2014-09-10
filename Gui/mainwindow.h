@@ -15,7 +15,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "ProjectData.h"
+#include "Applications/ProjectData.h"
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
 

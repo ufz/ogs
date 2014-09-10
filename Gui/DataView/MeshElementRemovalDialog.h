@@ -18,7 +18,7 @@
 #include "ui_MeshElementRemoval.h"
 #include <QDialog>
 
-#include "ProjectData.h"
+#include "Applications/ProjectData.h"
 
 class Node;
 

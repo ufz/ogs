@@ -44,6 +44,7 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
+	ApplicationsLib
 	AssemblerLib
 	BaseLib
 	FileIO

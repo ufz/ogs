@@ -26,6 +26,7 @@ IF (QT4_FOUND)
 
 	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
 	TARGET_LINK_LIBRARIES (generateBCandGLI
+		ApplicationsLib
 		FileIO
 		GeoLib
 		OgsLib
@@ -34,6 +35,7 @@ IF (QT4_FOUND)
 
 	ADD_EXECUTABLE (generateBCFromPolyline generateBCFromPolyline.cpp )
 	TARGET_LINK_LIBRARIES (generateBCFromPolyline
+		ApplicationsLib
 		FileIO
 		GeoLib
 		OgsLib

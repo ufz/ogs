@@ -21,7 +21,7 @@
 #include "PolylineVec.h"
 
 // OGS
-#include "OGS/ProjectData.h"
+#include "Applications/ProjectData.h"
 
 // FileIO
 #include "XmlIO/Qt/XmlGmlInterface.h"

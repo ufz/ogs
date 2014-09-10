@@ -16,7 +16,7 @@
 #define MSHMODEL_H
 
 // ** INCLUDES **
-#include "ProjectData.h"
+#include "Applications/ProjectData.h"
 #include "TreeModel.h"
 
 namespace MeshLib {
