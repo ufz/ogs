@@ -20,6 +20,8 @@
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
+#include "GeoLib/GEOObjects.h"
+
 namespace GeoLib {
 	class StationBorehole;
 }
@@ -33,10 +35,6 @@ namespace FileIO
 class XmlStnInterface : public XMLInterface, public XMLQtInterface
 {
 public:
-	/**
-	 * Constructor
-	 * \param project Project data.
-	 */
 	XmlStnInterface(GeoLib::GEOObjects& geo_objs);
 
 	/// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)

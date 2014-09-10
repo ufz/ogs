@@ -18,6 +18,8 @@
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
+#include "OGS/ProjectData.h"
+
 namespace FileIO
 {
 

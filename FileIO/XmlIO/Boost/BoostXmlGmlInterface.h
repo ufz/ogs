@@ -24,6 +24,7 @@
 #include <boost/optional.hpp>
 
 #include "../XMLInterface.h"
+#include "GeoLib/GEOObjects.h"
 
 class Point;
 class Polyline;

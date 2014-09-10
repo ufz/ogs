@@ -21,9 +21,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "ProjectData.h"
-#include "GEOObjects.h"
-
 
 namespace FileIO
 {
