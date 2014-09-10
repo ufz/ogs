@@ -21,21 +21,13 @@
 namespace FileIO
 {
 
-/**
- * \brief Reads and writes GeoObjects to and from XML files.
- */
 class XmlNumInterface : public XMLInterface, public XMLQtInterface
 {
 public:
-	/**
-	 * Constructor
-	 * \param project Project data.
-	 */
-	XmlNumInterface(ProjectData &project);
+	XmlNumInterface();
 
 	virtual ~XmlNumInterface() {}
 
-	/// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
 	int readFile(QString const& fileName);
 
 	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
@@ -46,8 +38,6 @@ protected:
 	void readConvergenceCriteria(QDomElement const& convergence_root);
 	bool write();
 
-private:
-	ProjectData &_project;
 };
 
 }
