@@ -32,7 +32,7 @@
 #include "MeshSurfaceExtraction.h"
 #include "MathTools.h"
 
-MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector) const
+MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name) const
 {
 	std::vector<float> thickness;
 	for (std::size_t i=0; i<layer_thickness_vector.size(); ++i)
@@ -44,7 +44,7 @@ MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vec
 	const std::size_t nLayers(thickness.size());
 	if (nLayers < 1 || mesh.getDimension() != 2)
 	{
-		ERR("MshLayerMapper::CreateLayers(): A 2D mesh with nLayers > 0 is required as input.");
+		ERR("MeshLayerMapper::createStaticLayers(): A 2D mesh with nLayers > 0 is required as input.");
 		return nullptr;
 	}
 
@@ -56,8 +56,7 @@ MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vec
 	const std::size_t nOrgElems (mesh.getNElements());
 	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
 	const std::vector<MeshLib::Element*> &elems = mesh.getElements();
-	std::vector<MeshLib::Node*> new_nodes;
-	new_nodes.reserve(nNodes + (nLayers * nNodes));
+	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
 	std::vector<MeshLib::Element*> new_elems;
 	new_elems.reserve(nElems * nLayers);
 	double z_offset (0.0);
@@ -67,11 +66,9 @@ MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vec
 		// add nodes for new layer
 		unsigned node_offset (nNodes * layer_id);
 		if (layer_id > 0) z_offset += thickness[layer_id-1];
-		for (unsigned i = 0; i < nNodes; ++i)
-		{
-			const double* coords = nodes[i]->getCoords();
-			new_nodes.push_back (new MeshLib::Node(coords[0], coords[1], coords[2]-z_offset, node_offset+i));
-		}
+
+        std::transform(nodes.cbegin(), nodes.cend(), new_nodes.begin() + node_offset,
+            [&z_offset](MeshLib::Node* node){ return new MeshLib::Node((*node)[0], (*node)[1], (*node)[2]-z_offset); });
 
 		// starting with 2nd layer create prism or hex elements connecting the last layer with the current one
 		if (layer_id > 0)
@@ -82,12 +79,8 @@ MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vec
 			for (unsigned i = 0; i < nOrgElems; ++i)
 			{
 				const MeshLib::Element* sfc_elem( elems[i] );
-				if (sfc_elem->getDimension() != 2)
-				{
-					WARN("MshLayerMapper::CreateLayers() - Method can only handle 2D mesh elements.");
-					WARN("Skipping Element %d of type \"%s\".", i, MeshElemType2String(sfc_elem->getGeomType()).c_str());
+				if (sfc_elem->getDimension() < 2) // ignore line-elements
 					continue;
-				}
 				
 				const unsigned nElemNodes(sfc_elem->getNNodes());
 				MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
@@ -105,7 +98,7 @@ MeshLib::Mesh* MeshLayerMapper::createLayers(MeshLib::Mesh const& mesh, std::vec
 			}
 		}
 	}
-	return new MeshLib::Mesh("SubsurfaceMesh", new_nodes, new_elems);
+	return new MeshLib::Mesh(mesh_name, new_nodes, new_elems);
 }
 
 bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const std::string &rasterfile,

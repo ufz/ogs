@@ -189,7 +189,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 	}
 
     MeshLayerMapper const mapper;
-	MeshLib::Mesh* new_mesh = mapper.createLayers(*_msh, layer_thickness);
+	MeshLib::Mesh* new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
 
 	if (_use_rasters)
 	{
@@ -248,7 +248,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		for (unsigned i=0; i<nLayers; ++i)
 			layer_thickness.push_back(this->_edits[i]->text().toFloat());
         MeshLayerMapper const mapper;
-		tg_mesh = mapper.createLayers(*_msh, layer_thickness);
+		tg_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
 		std::vector<MeshLib::Node> tg_attr;
 		FileIO::TetGenInterface tetgen_interface;
 		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
