@@ -1,6 +1,8 @@
 # Source files
 # GET_SOURCE_FILES(SOURCES_FILEIO)
 SET( SOURCES
+	AsciiRasterInterface.h
+	AsciiRasterInterface.cpp
 	GMSInterface.h
 	GMSInterface.cpp
 	GMSHInterface.h

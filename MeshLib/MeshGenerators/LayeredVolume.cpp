@@ -19,6 +19,8 @@
 
 #include "Vector3.h"
 
+#include "FileIO/AsciiRasterInterface.h"
+
 #include "GEOObjects.h"
 #include "PointVec.h"
 #include "Mesh.h"
@@ -46,7 +48,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	std::vector<GeoLib::Raster const*> rasters;
 	rasters.reserve(raster_paths.size());
 	for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
-		rasters.push_back(GeoLib::Raster::getRasterFromASCFile(*path));
+		rasters.push_back(FileIO::AsciiRasterInterface::getRasterFromASCFile(*path));
 
 	const bool result = this->createGeoVolumes(mesh, rasters, noDataReplacementValue);
 	std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });

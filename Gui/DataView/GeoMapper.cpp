@@ -19,6 +19,8 @@
 
 #include <numeric>
 
+#include "FileIO/AsciiRasterInterface.h"
+
 #include "AABB.h"
 #include "Mesh.h"
 #include "Elements/Element.h"
@@ -44,7 +46,7 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	this->_raster = GeoLib::Raster::getRasterFromASCFile(file_name);
+	this->_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
 	if (! _raster) {
 		ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
 		return;
@@ -131,7 +133,7 @@ float GeoMapper::getDemElevation(double x, double y) const
 {
 	const double origin_x(_raster->getOrigin()[0]);
 	const double origin_y(_raster->getOrigin()[1]);
-	const double cellsize(_raster->getRasterPixelDistance());
+	const double cellsize(_raster->getRasterPixelSize());
 	const std::size_t width(_raster->getNCols());
 	const std::size_t height(_raster->getNRows());
 
