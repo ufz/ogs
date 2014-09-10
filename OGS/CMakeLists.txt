@@ -15,7 +15,9 @@ include_directories(
 
 
 target_link_libraries (OgsLib
+	AssemblerLib
 	BaseLib
+	FileIO
 	GeoLib
 	MeshLib
 )
