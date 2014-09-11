@@ -36,7 +36,7 @@ const unsigned TemplateQuad<NNODES, CELLQUADTYPE>::_edge_nodes[4][2] =
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
 	{2, 3}, // Edge 2
-	{0, 3}  // Edge 3
+	{3, 0}  // Edge 3
 };
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
