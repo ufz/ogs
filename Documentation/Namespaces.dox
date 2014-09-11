@@ -1,5 +1,4 @@
 /**
- * \file   OGSNamespaceDoc.h
  * \author Karsten Rink
  * \date   2014-02-12
  * \brief  Documentation of namespaces.
@@ -11,11 +10,6 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-
-#error Documentation only
-
-#ifndef OGSNAMESPACEDOC_H_
-#define OGSNAMESPACEDOC_H_
 
 namespace AssemblerLib {
 	namespace detail {
@@ -115,6 +109,3 @@ namespace NumLib {
 	}
 }
 
-
-
-#endif /* OGSNAMESPACEDOC_H_ */
