@@ -17,7 +17,6 @@ IF (QT4_FOUND)
 		FileIO
 		GeoLib
 		BaseLib
-		OgsLib
 		shp
 		${QT_LIBRARIES}
 	)
@@ -29,7 +28,6 @@ IF (QT4_FOUND)
 		ApplicationsLib
 		FileIO
 		GeoLib
-		OgsLib
 		${QT_LIBRARIES}
 	)
 
@@ -38,7 +36,6 @@ IF (QT4_FOUND)
 		ApplicationsLib
 		FileIO
 		GeoLib
-		OgsLib
 		${QT_LIBRARIES}
 	)
 
