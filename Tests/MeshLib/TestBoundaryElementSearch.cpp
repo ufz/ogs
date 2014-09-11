@@ -10,8 +10,10 @@
 
 #include <memory>
 
-#include "Mesh.h"
-#include "MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/MeshSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
@@ -21,7 +23,7 @@ class MeshLibBoundaryElementSearchInSimpleQuadMesh : public testing::Test
 {
 public:
 	MeshLibBoundaryElementSearchInSimpleQuadMesh() :
-		_geometric_size(10.0), _number_of_subdivisions_per_direction(99),
+		_geometric_size(10.0), _number_of_subdivisions_per_direction(10),
 		_quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
 	{}
 
@@ -58,114 +60,72 @@ protected:
 TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
 {
 	ASSERT_TRUE(_quad_mesh != nullptr);
-	// create geometry
+	const unsigned n_eles_per_dir = _number_of_subdivisions_per_direction;
+	const unsigned n_nodes_per_dir = _number_of_subdivisions_per_direction + 1;
+
+	// create a polyline (closed)
 	std::vector<GeoLib::Point*> pnts;
 	pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 	pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
-	pnts.push_back(new GeoLib::Point(0.0, 0.049, 0.0));
-	pnts.push_back(new GeoLib::Point(_geometric_size, 0.049, 0.0));
-	pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
 	pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-	pnts.push_back(new GeoLib::Point(0.0, _geometric_size - 0.049, 0.0));
-	pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size - 0.049, 0.0));
-
+	pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
 	GeoLib::Polyline ply0(pnts);
 	ply0.addPoint(0);
 	ply0.addPoint(1);
+	ply0.addPoint(2);
+	ply0.addPoint(3);
+	ply0.addPoint(0);
 
-	// perform search and compare results with expected vals
+	// perform search on the polyline
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh);
 	MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_quad_mesh, mesh_node_searcher);
-	std::vector<MeshLib::Element*> const& found_ids_ply0(boundary_element_searcher.getBoundaryElements(ply0));
+	std::vector<MeshLib::Element*> const& found_edges_ply0(boundary_element_searcher.getBoundaryElements(ply0));
 
-/*
-	ASSERT_EQ(100u, found_ids_ply0.size());
-	for (std::size_t k(0); k<found_ids_ply0.size(); k++)
-		ASSERT_EQ(k, found_ids_ply0[k]);
+	// check the total number of found edges
+	ASSERT_EQ(n_eles_per_dir*4u, found_edges_ply0.size());
+	// check node IDs of edges
+	for (unsigned i=0; i<n_eles_per_dir; i++) {
+		// edge found on a bottom line
+		auto* edge0 = found_edges_ply0[i];
+		ASSERT_EQ(2u, edge0->getNNodes());
+		ASSERT_EQ(i, edge0->getNodeIndex(0));
+		ASSERT_EQ(i+1, edge0->getNodeIndex(1));
+		// edge found on a right line
+		auto* edge1 = found_edges_ply0[i+n_eles_per_dir];
+		ASSERT_EQ(2u, edge1->getNNodes());
+		ASSERT_EQ(n_nodes_per_dir*i+n_nodes_per_dir-1, edge1->getNodeIndex(0));
+		ASSERT_EQ(n_nodes_per_dir*(i+1)+n_nodes_per_dir-1, edge1->getNodeIndex(1));
+		// edge found on a top line
+		auto* edge2 = found_edges_ply0[i+n_eles_per_dir*2];
+		ASSERT_EQ(2u, edge2->getNNodes());
+		ASSERT_EQ(n_nodes_per_dir*n_nodes_per_dir-1-i, edge2->getNodeIndex(0));
+		ASSERT_EQ(n_nodes_per_dir*n_nodes_per_dir-1-(i+1), edge2->getNodeIndex(1));
+		// edge found on a left line
+		auto* edge3 = found_edges_ply0[i+n_eles_per_dir*3];
+		ASSERT_EQ(2u, edge3->getNNodes());
+		ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*i, edge3->getNodeIndex(0));
+		ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*(i+1), edge3->getNodeIndex(1));
+	}
 
-	GeoLib::Polyline ply1(pnts);
-	ply1.addPoint(2);
-	ply1.addPoint(3);
-	std::vector<std::size_t> const& found_ids_ply1(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply1));
-
-	ASSERT_EQ(100u, found_ids_ply1.size());
-	for (std::size_t k(0); k<found_ids_ply1.size(); k++)
-		ASSERT_EQ(k, found_ids_ply1[k]);
-
-	GeoLib::Polyline ply2(pnts);
-	ply2.addPoint(4);
-	ply2.addPoint(5);
-	std::vector<std::size_t> const& found_ids_ply2(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply2));
-
-	std::size_t offset((_number_of_subdivisions_per_direction+1)*_number_of_subdivisions_per_direction);
-	ASSERT_EQ(100u, found_ids_ply2.size());
-	for (std::size_t k(0); k<found_ids_ply2.size(); k++)
-		ASSERT_EQ(offset + k, found_ids_ply2[k]);
-
-	GeoLib::Polyline ply3(pnts);
-	ply3.addPoint(6);
-	ply3.addPoint(7);
-	std::vector<std::size_t> const& found_ids_ply3(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply3));
-
-	ASSERT_EQ(100u, found_ids_ply3.size());
-	for (std::size_t k(0); k<found_ids_ply3.size(); k++)
-		ASSERT_EQ(offset + k, found_ids_ply3[k]);
-
-	// left border
-	GeoLib::Polyline ply4(pnts);
-	ply4.addPoint(0);
-	ply4.addPoint(6);
-	std::vector<std::size_t> const& found_ids_ply4(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply4));
-
-	ASSERT_EQ(100u, found_ids_ply4.size());
-	for (std::size_t k(0); k<found_ids_ply4.size(); k++)
-		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1), found_ids_ply4[k]);
-
-	// right border
-	GeoLib::Polyline ply5(pnts);
-	ply5.addPoint(1);
-	ply5.addPoint(7);
-	std::vector<std::size_t> const& found_ids_ply5(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply5));
-
-	ASSERT_EQ(100u, found_ids_ply5.size());
-	for (std::size_t k(0); k<found_ids_ply5.size(); k++)
-		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1)+_number_of_subdivisions_per_direction, found_ids_ply5[k]);
-
-	// diagonal
-	GeoLib::Polyline ply6(pnts);
-	ply6.addPoint(0);
-	ply6.addPoint(5);
-	std::vector<std::size_t> const& found_ids_ply6(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply6));
-
-	ASSERT_EQ(100u, found_ids_ply6.size());
-	for (std::size_t k(0); k<found_ids_ply6.size(); k++)
-		ASSERT_EQ(k*(_number_of_subdivisions_per_direction+1)+k, found_ids_ply6[k]);
-*/
 	std::for_each(pnts.begin(), pnts.end(), [](GeoLib::Point* pnt) { delete pnt; });
 }
 
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 {
 	ASSERT_TRUE(_hex_mesh != nullptr);
-	// create geometry
+	const std::size_t n_nodes_1d = _number_of_subdivisions_per_direction + 1;
+	const std::size_t n_nodes_2d = n_nodes_1d * n_nodes_1d;
+	const std::size_t n_eles_2d = (n_nodes_1d-1) * (n_nodes_1d-1);
+
+	// create bottom and front surfaces of a cubic
 	std::vector<GeoLib::Point*> pnts;
 	pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 	pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
 	pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
 	pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
-	pnts.push_back(new GeoLib::Point(0.0, 0.0, _geometric_size));
 	pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, _geometric_size));
-	pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
-	pnts.push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
+	pnts.push_back(new GeoLib::Point(0.0, 0.0, _geometric_size));
 
-	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh);
-	MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_hex_mesh, mesh_node_searcher);
-
-	const std::size_t n_nodes_1d = _number_of_subdivisions_per_direction + 1;
-	const std::size_t n_nodes_2d = n_nodes_1d * n_nodes_1d;
-	const std::size_t n_nodes_3d = n_nodes_1d * n_nodes_1d * n_nodes_1d;
-
-	// bottom surface
 	GeoLib::Polyline ply_bottom(pnts);
 	ply_bottom.addPoint(0);
 	ply_bottom.addPoint(1);
@@ -174,96 +134,37 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 	ply_bottom.addPoint(0);
 	std::unique_ptr<GeoLib::Surface> sfc_bottom(GeoLib::Surface::createSurface(ply_bottom));
 
-	std::vector<MeshLib::Element*> const& found_ids_sfc_b(boundary_element_searcher.getBoundaryElements(*sfc_bottom));
-/*
-	ASSERT_EQ(n_nodes_2d, found_ids_sfc_b.size());
-	for (std::size_t k(0); k<found_ids_sfc_b.size(); k++)
-		ASSERT_EQ(k, found_ids_sfc_b[k]);
-
-	// top surface
-	GeoLib::Polyline ply_top(pnts);
-	ply_top.addPoint(4);
-	ply_top.addPoint(5);
-	ply_top.addPoint(6);
-	ply_top.addPoint(7);
-	ply_top.addPoint(4);
-	std::unique_ptr<GeoLib::Surface> sfc_top(GeoLib::Surface::createSurface(ply_top));
-
-	std::vector<std::size_t> const& found_ids_sfc_t(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_top));
-	ASSERT_EQ(n_nodes_2d, found_ids_sfc_t.size());
-	const std::size_t offset_t = n_nodes_3d - n_nodes_2d;
-	for (std::size_t k(0); k<found_ids_sfc_t.size(); k++)
-		ASSERT_EQ(offset_t + k, found_ids_sfc_t[k]);
-
-	// front
 	GeoLib::Polyline ply_front(pnts);
 	ply_front.addPoint(0);
 	ply_front.addPoint(1);
-	ply_front.addPoint(5);
 	ply_front.addPoint(4);
+	ply_front.addPoint(5);
 	ply_front.addPoint(0);
 	std::unique_ptr<GeoLib::Surface> sfc_front(GeoLib::Surface::createSurface(ply_front));
 
-	std::vector<std::size_t> const& found_ids_sfc_f(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_front));
-	ASSERT_EQ(n_nodes_2d, found_ids_sfc_f.size());
-	std::size_t cnt=0;
-	for (std::size_t k(0); k<n_nodes_1d; k++) {
-		for (std::size_t i(0); i<n_nodes_1d; i++)
-			ASSERT_EQ(k*n_nodes_2d+i, found_ids_sfc_f[cnt++]);
-	}
+	// perform search on the bottom surface
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh);
+	MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_hex_mesh, mesh_node_searcher);
+	std::vector<MeshLib::Element*> const& found_faces_sfc_b(boundary_element_searcher.getBoundaryElements(*sfc_bottom));
+	ASSERT_EQ(n_eles_2d, found_faces_sfc_b.size());
+	double sum_area_b = std::accumulate(found_faces_sfc_b.begin(), found_faces_sfc_b.end(), 0.0,
+				[](double v, MeshLib::Element*e){return v+e->getContent();});
+	ASSERT_EQ(_geometric_size*_geometric_size, sum_area_b);
+	auto connected_nodeIDs_b = MeshLib::getConnectedNodeIDs(found_faces_sfc_b);
+	ASSERT_EQ(n_nodes_2d, connected_nodeIDs_b.size());
+	for (auto nodeID : connected_nodeIDs_b)
+		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[2]); // check z coordinates
 
-	// back
-	GeoLib::Polyline ply_back(pnts);
-	ply_back.addPoint(3);
-	ply_back.addPoint(2);
-	ply_back.addPoint(6);
-	ply_back.addPoint(7);
-	ply_back.addPoint(3);
-	std::unique_ptr<GeoLib::Surface> sfc_back(GeoLib::Surface::createSurface(ply_back));
-	std::vector<std::size_t> const& found_ids_sfc_back(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_back));
-	ASSERT_EQ(n_nodes_2d, found_ids_sfc_back.size());
-	cnt = 0;
-	const std::size_t y_offset = n_nodes_1d*(n_nodes_1d-1);
-	for (std::size_t k(0); k<n_nodes_1d; k++) {
-		const std::size_t z_offset = n_nodes_2d*k;
-		for (std::size_t i(0); i<n_nodes_1d; i++)
-			ASSERT_EQ(z_offset + y_offset + i, found_ids_sfc_back[cnt++]);
-	}
-
-	// left
-	GeoLib::Polyline ply_left(pnts);
-	ply_left.addPoint(0);
-	ply_left.addPoint(3);
-	ply_left.addPoint(7);
-	ply_left.addPoint(4);
-	ply_left.addPoint(0);
-	std::unique_ptr<GeoLib::Surface> sfc_left(GeoLib::Surface::createSurface(ply_left));
-	std::vector<std::size_t> const& found_ids_sfc_left(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_left));
-	ASSERT_EQ(n_nodes_2d, found_ids_sfc_left.size());
-	cnt = 0;
-	for (std::size_t k(0); k<n_nodes_1d; k++) {
-		const std::size_t z_offset = n_nodes_2d*k;
-		for (std::size_t j(0); j<n_nodes_1d; j++)
-			ASSERT_EQ(z_offset + j*n_nodes_1d, found_ids_sfc_left[cnt++]);
-	}
-
-	// right
-	GeoLib::Polyline ply_right(pnts);
-	ply_right.addPoint(1);
-	ply_right.addPoint(2);
-	ply_right.addPoint(6);
-	ply_right.addPoint(5);
-	ply_right.addPoint(1);
-	std::unique_ptr<GeoLib::Surface> sfc_right(GeoLib::Surface::createSurface(ply_right));
-	std::vector<std::size_t> const& found_ids_sfc_right(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_right));
-	ASSERT_EQ(n_nodes_2d, found_ids_sfc_right.size());
-	cnt = 0;
-	for (std::size_t k(0); k<n_nodes_1d; k++) {
-		const std::size_t z_offset = n_nodes_2d*k;
-		for (std::size_t j(0); j<n_nodes_1d; j++)
-			ASSERT_EQ(z_offset + (j+1)*n_nodes_1d-1, found_ids_sfc_right[cnt++]);
-	}
-*/
+	// perform search on the front surface
+	std::vector<MeshLib::Element*> const& found_faces_sfc_f(boundary_element_searcher.getBoundaryElements(*sfc_front));
+	ASSERT_EQ(n_eles_2d, found_faces_sfc_f.size());
+	double sum_area_f = std::accumulate(found_faces_sfc_f.begin(), found_faces_sfc_f.end(), 0.0,
+				[](double v, MeshLib::Element*e){return v+e->getContent();});
+	ASSERT_EQ(_geometric_size*_geometric_size, sum_area_f);
+	auto connected_nodeIDs_f = MeshLib::getConnectedNodeIDs(found_faces_sfc_f);
+	ASSERT_EQ(n_nodes_2d, connected_nodeIDs_f.size());
+	for (auto nodeID : connected_nodeIDs_f)
+		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[1]); // check y coordinates
 
 	std::for_each(pnts.begin(), pnts.end(), [](GeoLib::Point* pnt) { delete pnt; });
 }
