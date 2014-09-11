@@ -54,7 +54,7 @@ public:
 	GeoLib::Surface const& getSurface() const {return _sfc;}
 
 	/**
-	 * Return the vector of boundary elements
+	 * Return the vector of boundary elements (i.e. faces). The elements are unsorted.
 	 */
 	std::vector<MeshLib::Element*> const& getBoundaryElements() const {return _boundary_elements;}
 

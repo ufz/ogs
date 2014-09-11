@@ -40,19 +40,19 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 		if (!isOuterElement)
 			continue;
 		// find faces on surface
-		for (unsigned i=0; i<e->getNEdges(); i++) {
-			auto* edge = e->getEdge(i);
+		for (unsigned i=0; i<e->getNFaces(); i++) {
+			auto* face = e->getFace(i);
 			// check
 			size_t cnt_match = 0;
-			for (size_t j=0; j<edge->getNNodes(); j++) {
-				if (std::find(node_ids_on_sfc.begin(), node_ids_on_sfc.end(), edge->getNodeIndex(j)) != node_ids_on_sfc.end())
+			for (size_t j=0; j<face->getNNodes(); j++) {
+				if (std::find(node_ids_on_sfc.begin(), node_ids_on_sfc.end(), face->getNodeIndex(j)) != node_ids_on_sfc.end())
 					cnt_match++;
 				else
 					break;
 			}
 			// update the list
-			if (cnt_match==edge->getNNodes())
-				_boundary_elements.push_back(const_cast<MeshLib::Element*>(edge));
+			if (cnt_match==face->getNNodes())
+				_boundary_elements.push_back(const_cast<MeshLib::Element*>(face));
 		}
 	}
 }
