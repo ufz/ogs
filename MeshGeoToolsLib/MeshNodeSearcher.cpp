@@ -81,7 +81,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	switch (geoObj.getGeoType()) {
 	case GeoLib::GEOTYPE::POINT:
 	{
-		auto node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::PointWithID*>(&geoObj));
+		boost::optional<std::size_t> node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::PointWithID*>(&geoObj));
 		if (node_id) vec_nodes.push_back(*node_id);
 		break;
 	}
@@ -99,7 +99,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 
 boost::optional<std::size_t> MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
 {
-	auto* found = _mesh_grid.getNearestPoint(pnt.getCoords());
+	const MeshLib::Node* found = _mesh_grid.getNearestPoint(pnt.getCoords());
 	if (found)
 		return found->getID();
 	else
