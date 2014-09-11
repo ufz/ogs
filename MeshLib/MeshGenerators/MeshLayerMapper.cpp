@@ -34,7 +34,6 @@
 #include "Elements/Prism.h"
 #include "MeshSurfaceExtraction.h"
 
-
 #include "MathTools.h"
 
 MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name) const
@@ -132,12 +131,10 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster
 	const double y0(raster.getOrigin()[1]);
 	const double delta(raster.getRasterPixelSize());
 	const double no_data(raster.getNoDataValue());
-	const std::size_t width(raster.getNCols());
-	const std::size_t height(raster.getNRows());
 	double const*const elevation(raster.begin());
 
-	const std::pair<double, double> xDim(x0, x0 + width * delta); // extension in x-dimension
-	const std::pair<double, double> yDim(y0, y0 + height * delta); // extension in y-dimension
+	const std::pair<double, double> xDim(x0, x0 + raster.getNCols() * delta); // extension in x-dimension
+	const std::pair<double, double> yDim(y0, y0 + raster.getNRows() * delta); // extension in y-dimension
 
 	const size_t nNodes (new_mesh.getNNodes());
 	const size_t nNodesPerLayer (nNodes / (nLayers+1));
@@ -149,72 +146,18 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, const GeoLib::Raster
 	const std::vector<MeshLib::Node*> &nodes = new_mesh.getNodes();
 	for (unsigned i = firstNode; i < lastNode; ++i)
 	{
-		const double* coords (nodes[i]->getCoords());
-
-		if (!isNodeOnRaster(*nodes[i], xDim, yDim))
+		if (!raster.isPntOnRaster(*nodes[i]))
 		{
 			// use either default value or elevation from layer above
-			nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
+			nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], noDataReplacementValue);
 			continue;
 		}
 
-		// position in raster
-		const double xPos ((coords[0] - xDim.first) / delta);
-		const double yPos ((coords[1] - yDim.first) / delta);
-		// raster cell index
-		const size_t xIdx (static_cast<size_t>(floor(xPos)));
-		const size_t yIdx (static_cast<size_t>(floor(yPos)));
-
-		// weights for bilinear interpolation
-		const double xShift = fabs(xPos-(xIdx+half_delta))/delta;
-		const double yShift = fabs(yPos-(yIdx+half_delta))/delta;
-		std::array<double,4> weight = {{ (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
-
-		// neightbors to include in interpolation
-		const int xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
-		const int yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
-		const std::array<int,4> x_nb = {{ 0, xShiftIdx, xShiftIdx, 0 }};
-		const std::array<int,4> y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
-
-		// get pixel values
-		std::array<double,4>  pix_val;
-		unsigned no_data_count (0);
-		for (unsigned j=0; j<4; ++j)
-		{
-			pix_val[j] = elevation[(yIdx + y_nb[j])*width + (xIdx + x_nb[j])];
-			if (fabs(pix_val[j] - no_data) < std::numeric_limits<double>::epsilon())
-			{
-				weight[j] = 0;
-				no_data_count++;
-			}
-		}
-
-		// adjust weights if necessary
-		if (no_data_count > 0)
-		{
-			if (no_data_count == 4) // if there is absolutely no data just use the default value
-			{
-				nodes[i]->updateCoordinates(coords[0], coords[1], noDataReplacementValue);
-				continue;
-			}
-			const double norm = (double)(4)/(4-no_data_count);
-			std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
-		}
-
-		// new value
-		double z = MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
-		nodes[i]->updateCoordinates(coords[0], coords[1], z);
+		double elevation (raster.interpolateValueAtPoint(*nodes[i]));
+		if (elevation - no_data < std::numeric_limits<double>::epsilon()) 
+			elevation = noDataReplacementValue;
+		nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], elevation);
 	}
-
-	return true;
-}
-
-bool MeshLayerMapper::isNodeOnRaster(const MeshLib::Node &node,
-                                    const std::pair<double, double> &xDim,
-                                    const std::pair<double, double> &yDim) const
-{
-	if (node[0] < xDim.first || node[0] > xDim.second || node[1] < yDim.first || node[1] > yDim.second)
-		return false;
 
 	return true;
 }

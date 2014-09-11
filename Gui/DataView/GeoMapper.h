@@ -57,7 +57,7 @@ private:
 	double getMeshElevation(double x, double y, double min_val, double max_val) const;
 
 	// Returns the elevation at Point (x,y) based on a raster
-	float getDemElevation(double x, double y) const;
+	float getDemElevation(GeoLib::Point const& pnt) const;
 
 	// Calculates the intersection of two lines embedded in the xy-plane
 	GeoLib::Point* calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
