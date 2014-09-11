@@ -39,7 +39,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
 			it != elements.cend(); ++it) {
 		std::size_t const n_edges((*it)->getNEdges());
 		for (std::size_t k(0); k<n_edges; k++) {
-			MeshLib::Line const* edge(dynamic_cast<MeshLib::Line const*>((*it)->getEdge(k)));
+			MeshLib::Line const* edge(static_cast<MeshLib::Line const*>((*it)->getEdge(k)));
 			if (!edge) {
 				delete edge;
 				continue;
@@ -81,15 +81,15 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	switch (geoObj.getGeoType()) {
 	case GeoLib::GEOTYPE::POINT:
 	{
-		auto node_id = this->getMeshNodeIDForPoint(*dynamic_cast<const GeoLib::PointWithID*>(&geoObj));
+		auto node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::PointWithID*>(&geoObj));
 		if (node_id) vec_nodes.push_back(*node_id);
 		break;
 	}
 	case GeoLib::GEOTYPE::POLYLINE:
-		vec_nodes = this->getMeshNodeIDsAlongPolyline(*dynamic_cast<const GeoLib::Polyline*>(&geoObj));
+		vec_nodes = this->getMeshNodeIDsAlongPolyline(*static_cast<const GeoLib::Polyline*>(&geoObj));
 		break;
 	case GeoLib::GEOTYPE::SURFACE:
-		vec_nodes = this->getMeshNodeIDsAlongSurface(*dynamic_cast<const GeoLib::Surface*>(&geoObj));
+		vec_nodes = this->getMeshNodeIDsAlongSurface(*static_cast<const GeoLib::Surface*>(&geoObj));
 		break;
 	default:
 		break;
