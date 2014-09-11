@@ -101,7 +101,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, z_vals, z_vals+n_cols*n_rows ,-9999);
 }
 
-double Raster::getValueAtPoint(const GeoLib::Point &pnt)
+double Raster::getValueAtPoint(const GeoLib::Point &pnt) const
 {
 	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
 		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
@@ -117,6 +117,62 @@ double Raster::getValueAtPoint(const GeoLib::Point &pnt)
 		return _raster_data[index];
 	}
 	return _no_data_val;
+}
+
+double Raster::interpolateValueAtPoint(GeoLib::Point const& pnt) const
+{
+    // position in raster
+    double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
+    double const yPos ((pnt[1] - _ll_pnt[1]) / _cell_size);
+    // raster cell index
+    std::size_t const xIdx (static_cast<size_t>(floor(xPos)));
+    std::size_t const yIdx (static_cast<size_t>(floor(yPos)));
+
+    // weights for bilinear interpolation
+    double const half_delta = 0.5*_cell_size;
+    double const xShift = fabs(xPos-(xIdx+half_delta)) / _cell_size;
+    double const yShift = fabs(yPos-(yIdx+half_delta)) / _cell_size;
+    std::array<double,4> weight = {{ (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
+
+    // neightbors to include in interpolation
+    int const xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
+    int const yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
+    std::array<int,4> const x_nb = {{ 0, xShiftIdx, xShiftIdx, 0 }};
+    std::array<int,4> const y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
+
+    // get pixel values
+    std::array<double,4>  pix_val;
+    unsigned no_data_count (0);
+    for (unsigned j=0; j<4; ++j)
+    {
+        pix_val[j] = _raster_data[(yIdx + y_nb[j])*_n_cols + (xIdx + x_nb[j])];
+        if (fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
+        {
+            weight[j] = 0;
+            no_data_count++;
+        }
+    }
+
+    // adjust weights if necessary
+    if (no_data_count > 0)
+    {
+        if (no_data_count == 4) // if there is absolutely no data just use the default value
+            return _no_data_val;
+
+        const double norm = (double)(4)/(4-no_data_count);
+        std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
+    }
+
+    // new value
+    return MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
+}
+
+bool Raster::isPntOnRaster(GeoLib::Point const& pnt) const
+{
+    if ((pnt[0]<_ll_pnt[0]) || (pnt[0]>_ll_pnt[0]+(_n_cols*_cell_size)) || 
+        (pnt[1]<_ll_pnt[1]) || (pnt[1]>_ll_pnt[1]+(_n_rows*_cell_size)))
+		return false;
+    return true;
 }
 
 } // end namespace GeoLib

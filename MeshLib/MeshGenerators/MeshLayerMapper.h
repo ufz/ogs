@@ -67,9 +67,7 @@ public:
     MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster) const;
 
 private:
-    /// Checks if the given mesh is within the dimensions given by xDim and yDim.
-    bool isNodeOnRaster(const MeshLib::Node &node, 
-                        const std::pair<double, double> &xDim, const std::pair<double, double> &yDim) const;
+
 };
 
 #endif //MESHLAYERMAPPER_H
