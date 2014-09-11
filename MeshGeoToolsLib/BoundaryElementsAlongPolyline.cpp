@@ -8,6 +8,8 @@
 
 #include "BoundaryElementsAlongPolyline.h"
 
+#include <algorithm>
+
 #include "GeoLib/Polyline.h"
 
 #include "MeshLib/Mesh.h"
@@ -22,13 +24,21 @@ namespace MeshGeoToolsLib
 BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Polyline const& ply)
 : _mesh(mesh), _ply(ply)
 {
-	// search elements near the polyline
+	// search nodes located along the polyline
 	auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDsAlongPolyline(ply);
-	auto ele_ids_near_poly = MeshLib::getConnectedElementIDs(_mesh, node_ids_on_poly);
+	std::vector<std::size_t> work_node_ids(node_ids_on_poly);
+	if (ply.isClosed())
+		work_node_ids.push_back(work_node_ids[0]);
 
-	// get a list of edges made of the nodes
-	for (auto ele_id : ele_ids_near_poly) {
-		auto* e = _mesh.getElement(ele_id);
+	// search edges
+	for (unsigned i=0; i<work_node_ids.size()-1; i++) {
+		std::vector<std::size_t> edge_nodeIDs = {work_node_ids[i], work_node_ids[i+1]};
+		// find a shared element
+		auto* node1 = mesh.getNode(edge_nodeIDs[0]);
+		auto* node2 = mesh.getNode(edge_nodeIDs[1]);
+		auto it = std::find_first_of(node1->getElements().begin(), node1->getElements().end(), node2->getElements().begin(), node2->getElements().end());
+		assert (it!=node1->getElements().end());
+		auto* e = *it;
 		// skip internal elements
 		bool isOuterElement = false;
 		for (unsigned i=0; i<e->getNNeighbors(); i++) {
@@ -45,14 +55,16 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
 			// check
 			size_t cnt_match = 0;
 			for (size_t j=0; j<edge->getNNodes(); j++) {
-				if (std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(), edge->getNodeIndex(j)) != node_ids_on_poly.end())
+				if (std::find(edge_nodeIDs.begin(), edge_nodeIDs.end(), edge->getNodeIndex(j)) != edge_nodeIDs.end())
 					cnt_match++;
 				else
 					break;
 			}
 			// update the list
-			if (cnt_match==edge->getNNodes())
+			if (cnt_match==edge->getNNodes()) {
 				_boundary_elements.push_back(const_cast<MeshLib::Element*>(edge));
+				break;
+			}
 		}
 	}
 }

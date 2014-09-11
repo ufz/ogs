@@ -54,7 +54,8 @@ public:
 	GeoLib::Polyline const& getPolyline () const {return _ply;}
 
 	/**
-	 * Return the vector of boundary elements
+	 * Return the vector of boundary elements (i.e. edges). The elements are sorted
+	 * according to their distance to the starting point of the given polyline.
 	 */
 	std::vector<MeshLib::Element*> const& getBoundaryElements() const {return _boundary_elements; }
 
