@@ -34,5 +34,20 @@ std::vector<std::size_t> getConnectedElementIDs(MeshLib::Mesh const& msh, const 
 	return connected_elements;
 }
 
+std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*> &elements)
+{
+	std::vector<std::size_t> connected_nodes;
+	std::for_each(elements.begin(), elements.end(),
+		[&](MeshLib::Element* e)
+		{
+			for (unsigned i=0; i<e->getNNodes(); i++)
+				connected_nodes.push_back(e->getNodeIndex(i));
+		});
+	std::sort(connected_nodes.begin(), connected_nodes.end());
+	auto it = std::unique(connected_nodes.begin(), connected_nodes.end());
+	connected_nodes.resize(std::distance(connected_nodes.begin(),it));
+	return connected_nodes;
+}
+
 } // end namespace MeshLib
 

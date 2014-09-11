@@ -17,14 +17,22 @@ namespace MeshLib
 {
 // forward declarations
 class Mesh;
+class Element;
 
 /**
- * get a list of elements connected to given nodes
+ * get a vector of elements connected to given nodes
  * @param msh       a mesh object
  * @param node_ids  a vector of mesh node ids
  * @return a vector of element ids which connect to the given nodes
  */
 std::vector<std::size_t> getConnectedElementIDs(MeshLib::Mesh const& msh, const std::vector<std::size_t> &node_ids);
+
+/**
+ * get a vector of node ID connected to given elements
+ * @param elements  a vector of a pointer to a mesh element object
+ * @return a vector of node ID
+ */
+std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*> &elements);
 
 } // end namespace MeshLib
 
