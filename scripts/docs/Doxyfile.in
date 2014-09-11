@@ -748,6 +748,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ${CMAKE_SOURCE_DIR}/AssemblerLib \
                          ${CMAKE_SOURCE_DIR}/BaseLib \
+                         ${CMAKE_SOURCE_DIR}/Documentation \
                          ${CMAKE_SOURCE_DIR}/FileIO \
                          ${CMAKE_SOURCE_DIR}/GeoLib \
                          ${CMAKE_SOURCE_DIR}/Gui \
