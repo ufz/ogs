@@ -27,7 +27,7 @@ namespace MeshGeoToolsLib
 {
 class MeshNodeSearcher;
 class BoundaryElementsAlongPolyline;
-class BoundaryElementsAlongSurface;
+class BoundaryElementsOnSurface;
 
 /**
  * This class searches boundary elements located on a given geometric object, i.e. polyline and surface.
@@ -66,14 +66,14 @@ public:
 	 * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
 	 * @return a vector of boundary element objects
 	 */
-	std::vector<MeshLib::Element*> const& getBoundaryElementsAlongSurface(GeoLib::Surface const& sfc);
+	std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(GeoLib::Surface const& sfc);
 
 
 private:
 	MeshLib::Mesh const& _mesh;
 	MeshNodeSearcher &_mshNodeSearcher;
 	std::vector<BoundaryElementsAlongPolyline*> _boundary_elements_along_polylines;
-	std::vector<BoundaryElementsAlongSurface*> _boundary_elements_along_surfaces;
+	std::vector<BoundaryElementsOnSurface*> _boundary_elements_along_surfaces;
 };
 
 } // end namespace MeshGeoTools

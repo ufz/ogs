@@ -6,7 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "BoundaryElementsAlongSurface.h"
+#include "BoundaryElementsOnSurface.h"
 
 #include "GeoLib/Surface.h"
 
@@ -19,7 +19,7 @@
 namespace MeshGeoToolsLib
 {
 
-BoundaryElementsAlongSurface::BoundaryElementsAlongSurface(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Surface const& sfc)
+BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Surface const& sfc)
 : _mesh(mesh), _sfc(sfc)
 {
 	// search elements near the polyline
@@ -57,7 +57,7 @@ BoundaryElementsAlongSurface::BoundaryElementsAlongSurface(MeshLib::Mesh const& 
 	}
 }
 
-BoundaryElementsAlongSurface::~BoundaryElementsAlongSurface()
+BoundaryElementsOnSurface::~BoundaryElementsOnSurface()
 {
 	for (auto p : _boundary_elements)
 		delete p;

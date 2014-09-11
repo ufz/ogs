@@ -18,7 +18,7 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/BoundaryElementsAlongPolyline.h"
-#include "MeshGeoToolsLib/BoundaryElementsAlongSurface.h"
+#include "MeshGeoToolsLib/BoundaryElementsOnSurface.h"
 
 
 namespace MeshGeoToolsLib
@@ -42,7 +42,7 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
 		return this->getBoundaryElementsAlongPolyline(*dynamic_cast<const GeoLib::Polyline*>(&geoObj));
 		break;
 	case GeoLib::GEOTYPE::SURFACE:
-		return this->getBoundaryElementsAlongSurface(*dynamic_cast<const GeoLib::Surface*>(&geoObj));
+		return this->getBoundaryElementsOnSurface(*dynamic_cast<const GeoLib::Surface*>(&geoObj));
 		break;
 	default:
 		const static std::vector<MeshLib::Element*> dummy;
@@ -65,9 +65,9 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
 	return _boundary_elements_along_polylines.back()->getBoundaryElements();
 }
 
-std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryElementsAlongSurface(GeoLib::Surface const& sfc)
+std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryElementsOnSurface(GeoLib::Surface const& sfc)
 {
-	std::vector<BoundaryElementsAlongSurface*>::const_iterator it(_boundary_elements_along_surfaces.begin());
+	std::vector<BoundaryElementsOnSurface*>::const_iterator it(_boundary_elements_along_surfaces.begin());
 	for (; it != _boundary_elements_along_surfaces.end(); ++it) {
 		if (&(*it)->getSurface() == &sfc) {
 			// we calculated mesh nodes for this surface already
@@ -76,7 +76,7 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
 	}
 
 	_boundary_elements_along_surfaces.push_back(
-			new BoundaryElementsAlongSurface(_mesh, _mshNodeSearcher, sfc));
+			new BoundaryElementsOnSurface(_mesh, _mshNodeSearcher, sfc));
 	return _boundary_elements_along_surfaces.back()->getBoundaryElements();
 }
 
