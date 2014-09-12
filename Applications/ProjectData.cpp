@@ -51,7 +51,12 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 	std::string const mesh_file = BaseLib::copyPathToFileName(
 			project_config.get<std::string>("mesh"), path
 		);
-	_mesh_vec.push_back(FileIO::readMeshFromFile(mesh_file));
+
+	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
+	if (!mesh)
+		ERR("Could not read mesh from \'%s\' file. No mesh added.",
+			mesh_file.c_str());
+	_mesh_vec.push_back(mesh);
 
 	// process variables
 	parseProcessVariables(project_config.get_child("process_variables"));
