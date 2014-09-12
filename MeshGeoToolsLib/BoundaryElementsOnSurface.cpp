@@ -53,6 +53,8 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 			// update the list
 			if (cnt_match==face->getNNodes())
 				_boundary_elements.push_back(const_cast<MeshLib::Element*>(face));
+			else
+				delete face;
 		}
 	}
 }
