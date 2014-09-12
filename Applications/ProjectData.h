@@ -32,57 +32,75 @@ namespace ProcessLib {
 
 /**
  * The ProjectData Object contains all the data needed for a certain project, i.e. all
- * geometric data (stored in a GEOObjects-object), all the meshes, FEM Conditions (i.e.
- * Boundary Conditions, Source Terms and Initial Conditions), etc.
- * ProjectData does not administrate any of the objects, it is just a "container class"
- * to store them all in one place.
- * For each class of object stored in this container exists an add-, get- and remove-method.
- *
- * \sa GEOModels, FEMCondition
+ * geometric data (stored in a GEOObjects-object), all the meshes, processes,
+ * and process variables.
  */
 class ProjectData
 {
 using ConfigTree = boost::property_tree::ptree;
 public:
+	/// The empty constructor used in the gui, for example, when the project's
+	/// configuration is not loaded yet.
 	ProjectData();
+
+	/// Constructs project data by parsing provided configuration.
+	/// The additional  path is used to find files referenced in the
+	/// configuration.
 	ProjectData(ConfigTree const& config_tree, std::string const& path);
+
 	virtual ~ProjectData();
 
-	//** Geometry functionality **//
+	/// Returns the GEOObjects containing all points, polylines and surfaces.
+	GeoLib::GEOObjects* getGEOObjects()
+	{
+		return _geoObjects;
+	}
 
-	// Returns the GEOObjects containing all points, polylines and surfaces
-	GeoLib::GEOObjects* getGEOObjects() { return _geoObjects; }
-
-	//** Mesh functionality **//
-
-	/// Adds a new mesh
+	/// Adds a new mesh under a (possibly new) unique name.
+	/// \attention This might change the given mesh's name.
 	void addMesh(MeshLib::Mesh* mesh);
 
-	/// Returns the mesh with the given name.
+	/// Returns the mesh with the given name or a \c nullptr if the mesh was not
+	/// found.
 	const MeshLib::Mesh* getMesh(const std::string &name) const;
 
 	/// Returns all the meshes with their respective names
-	const std::vector<MeshLib::Mesh*>& getMeshObjects() const { return _mesh_vec; }
+	/// \attention This method should be used only by methods garanteeing
+	/// read-only access to the meshes.
+	/// \todo This method breaks encapsulation.
+	const std::vector<MeshLib::Mesh*>& getMeshObjects() const
+	{
+		return _mesh_vec;
+	}
 
 	/// Deletes all meshes with the given name and removes them from the list of
-	//  saved meshes.
+	/// saved meshes. If any mesh was found for removal, true is returned and
+	/// false otherwise.
 	bool removeMesh(const std::string &name);
 
-	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
+	/// Checks if a mesh with the same name exists and provides a unique name in
+	/// case of already existing mesh. Returns true if the mesh name is unique.
+	/// Returns false and changes the provided name to a unique name otherwise.
 	bool isUniqueMeshName(std::string &name);
 
+	/// Returns true if a mesh with the same name exists and false otherwise.
 	bool meshExists(const std::string &name);
 
 private:
+	/// Returns an iterator to the first found mesh with the given name.
 	std::vector<MeshLib::Mesh*>::const_iterator findMeshByName(
 		std::string const& name) const;
 	std::vector<MeshLib::Mesh*>::iterator findMeshByName(
 		std::string const& name);
 
-	/// read the process variables from configuration
+	/// Parses the process variables configuration and creates new variables for
+	/// each variable entry passing the corresponding subtree to the process
+	/// variable constructor.
 	void readProcessVariables(ConfigTree const& process_variables_config);
 
-	// read the processes from configuration
+	/// Parses the processes configuration and creates new processes for each
+	/// process entry passing the corresponding subtree to the process
+	/// constructor.
 	void readProcesses(ConfigTree const& process_config);
 
 private:

@@ -34,7 +34,10 @@ private:
     GeoLib::GeoObject const* const _geometry;
 };
 
-
+/// The DirichletBoundaryCondition class describes a constant in space
+/// and time Dirichlet boundary condition.
+/// The expected parameter in the passed configuration is "value" which, when
+/// not present defaults to zero.
 class DirichletBoundaryCondition : public BoundaryCondition
 {
     using ConfigTree = boost::property_tree::ptree;
