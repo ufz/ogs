@@ -78,6 +78,7 @@ public:
 	/// false otherwise.
 	bool removeMesh(const std::string &name);
 
+private:
 	/// Checks if a mesh with the same name exists and provides a unique name in
 	/// case of already existing mesh. Returns true if the mesh name is unique.
 	/// Returns false and changes the provided name to a unique name otherwise.
@@ -86,7 +87,7 @@ public:
 	/// Returns true if a mesh with the same name exists and false otherwise.
 	bool meshExists(const std::string &name) const;
 
-private:
+
 	/// Returns an iterator to the first found mesh with the given name.
 	std::vector<MeshLib::Mesh*>::const_iterator findMeshByName(
 		std::string const& name) const;
