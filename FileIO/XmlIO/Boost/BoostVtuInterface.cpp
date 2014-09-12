@@ -235,6 +235,16 @@ MeshLib::Element* BoostVtuInterface::readElement(std::stringstream &iss,
 		return new MeshLib::Line(edge_nodes, material);
 		break;
 	}
+	case 21: { //quadratic line
+		for (unsigned i(0); i < 3; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** edge_nodes = new MeshLib::Node*[3];
+		edge_nodes[0] = nodes[node_ids[0]];
+		edge_nodes[1] = nodes[node_ids[1]];
+		edge_nodes[2] = nodes[node_ids[2]];
+		return new MeshLib::Line3(edge_nodes, material);
+		break;
+	}
 	case 5: { //triangle
 		for (unsigned i(0); i < 3; i++)
 			iss >> node_ids[i];
@@ -245,6 +255,19 @@ MeshLib::Element* BoostVtuInterface::readElement(std::stringstream &iss,
 		return new MeshLib::Tri(tri_nodes, material);
 		break;
 	}
+	case 22: { //quadratic triangle
+		for (unsigned i(0); i < 6; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[6];
+		tri_nodes[0] = nodes[node_ids[0]];
+		tri_nodes[1] = nodes[node_ids[1]];
+		tri_nodes[2] = nodes[node_ids[2]];
+		tri_nodes[3] = nodes[node_ids[3]];
+		tri_nodes[4] = nodes[node_ids[4]];
+		tri_nodes[5] = nodes[node_ids[5]];
+		return new MeshLib::Tri6(tri_nodes, material);
+		break;
+	}
 	case 9: { //quad
 		for (unsigned i(0); i < 4; i++)
 			iss >> node_ids[i];
@@ -252,6 +275,15 @@ MeshLib::Element* BoostVtuInterface::readElement(std::stringstream &iss,
 		for (unsigned k(0); k < 4; k++)
 			quad_nodes[k] = nodes[node_ids[k]];
 		return new MeshLib::Quad(quad_nodes, material);
+		break;
+	}
+	case 23: { //quadratic quad with 8 nodes
+		for (unsigned i(0); i < 8; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** quad_nodes = new MeshLib::Node*[8];
+		for (unsigned k(0); k < 8; k++)
+			quad_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Quad8(quad_nodes, material);
 		break;
 	}
 	case 8: { //pixel
