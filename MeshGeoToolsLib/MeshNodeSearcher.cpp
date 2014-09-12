@@ -39,7 +39,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
 			it != elements.cend(); ++it) {
 		std::size_t const n_edges((*it)->getNEdges());
 		for (std::size_t k(0); k<n_edges; k++) {
-			MeshLib::Line const* edge(dynamic_cast<MeshLib::Line const*>((*it)->getEdge(k)));
+			MeshLib::Line const* edge(static_cast<MeshLib::Line const*>((*it)->getEdge(k)));
 			if (!edge) {
 				delete edge;
 				continue;
@@ -75,9 +75,35 @@ MeshNodeSearcher::~MeshNodeSearcher()
 	}
 }
 
-std::size_t MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
+std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject const& geoObj)
 {
-	return (_mesh_grid.getNearestPoint(pnt.getCoords()))->getID();
+	std::vector<std::size_t> vec_nodes;
+	switch (geoObj.getGeoType()) {
+	case GeoLib::GEOTYPE::POINT:
+	{
+		boost::optional<std::size_t> node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::PointWithID*>(&geoObj));
+		if (node_id) vec_nodes.push_back(*node_id);
+		break;
+	}
+	case GeoLib::GEOTYPE::POLYLINE:
+		vec_nodes = this->getMeshNodeIDsAlongPolyline(*static_cast<const GeoLib::Polyline*>(&geoObj));
+		break;
+	case GeoLib::GEOTYPE::SURFACE:
+		vec_nodes = this->getMeshNodeIDsAlongSurface(*static_cast<const GeoLib::Surface*>(&geoObj));
+		break;
+	default:
+		break;
+	}
+	return vec_nodes;
+}
+
+boost::optional<std::size_t> MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
+{
+	const MeshLib::Node* found = _mesh_grid.getNearestPoint(pnt.getCoords());
+	if (found)
+		return found->getID();
+	else
+		return boost::none;
 }
 
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
