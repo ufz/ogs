@@ -177,16 +177,23 @@ void ProjectData::parseProcessVariables(
 {
 	DBUG("Parse process variables:")
 	if (_geoObjects == nullptr) {
-		ERR("Geometric objects are needed to defined process variables.");
+		ERR("Geometric objects are required to define process variables.");
+		ERR("No geometric objects present.");
+		return;
+	}
+
+	// TODO at the moment we have only one mesh, later there
+	// can be several meshes. Then we have to check for correct mesh here and
+	// assign the referenced mesh below.
+	if (_mesh_vec.empty() || _mesh_vec[0] == nullptr) {
+		ERR("A mesh is required to define process variables.");
 		ERR("No geometric objects are read.");
 		return;
 	}
 
 	for (auto it : process_variables_config) {
 		ConfigTree const& var_config = it.second;
-		// TODO at the moment we have only one mesh, later there
-		// can be several meshes. Then we have to assign the referenced mesh
-		// here.
+		// TODO Extend to referenced meshes.
 		_process_variables.emplace_back(var_config,*_mesh_vec[0],*_geoObjects);
 	}
 }
