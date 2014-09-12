@@ -93,7 +93,7 @@ template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator=(FP_TYPE const& v)
 {
-	std::fill(this->_data, this->_data + this->_n_rows * this->_n_cols, static_cast<FP_TYPE>(v));
+	std::fill(this->_data, this->_data + this->_n_rows * this->_n_cols, v);
 	return *this;
 }
 
