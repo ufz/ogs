@@ -110,6 +110,80 @@ Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
 	return new Mesh(mesh_name, nodes, elements);
 }
 
+Mesh* MeshGenerator::generateRegularQuad8Mesh(
+        const double length,
+        const std::size_t subdivision,
+        const GeoLib::Point& origin)
+{
+	return generateRegularQuad8Mesh(subdivision, subdivision, length/subdivision, origin);
+}
+
+Mesh* MeshGenerator::generateRegularQuad8Mesh(const unsigned n_x_cells,
+                              const unsigned n_y_cells,
+                              const double cell_size,
+                              GeoLib::Point const& origin,
+                              std::string const& mesh_name)
+{
+	const unsigned n_x_l_nodes (n_x_cells+1);
+	const unsigned n_y_l_nodes (n_y_cells+1);
+	const unsigned n_all_nodes (n_x_l_nodes * n_y_l_nodes +  n_x_l_nodes * (n_y_l_nodes + 1) + (n_x_l_nodes + 1) * n_y_l_nodes);
+	std::vector<Node*> nodes;
+	nodes.reserve(n_all_nodes);
+
+	// first, add all linear nodes
+	for (std::size_t i = 0; i < n_y_l_nodes; i++)
+	{
+		const double y_offset (origin[1] + cell_size * i);
+		for (std::size_t j = 0; j < n_x_l_nodes; j++)
+			nodes.push_back (new Node(origin[0] + cell_size * j, y_offset, origin[2]));
+	}
+
+	// second, add quadratic nodes
+	for (std::size_t i = 0; i < n_y_l_nodes + n_y_cells; i++)
+	{
+		if (i%2==0) {
+			const double x_offset (origin[0] + cell_size * 0.5);
+			const double y_offset (origin[1] + cell_size * i/2);
+			for (std::size_t j = 0; j < n_x_l_nodes-1; j++)
+				nodes.push_back (new Node(x_offset + cell_size * j, y_offset, origin[2]));
+		} else {
+			const double x_offset (origin[0]);
+			const double y_offset (origin[1] + cell_size * 0.5 + cell_size * i/2);
+			for (std::size_t j = 0; j < n_x_l_nodes; j++)
+				nodes.push_back (new Node(x_offset + cell_size * j, y_offset, origin[2]));
+		}
+	}
+
+	//elements
+	std::vector<Element*> elements;
+	elements.reserve(n_x_cells * n_y_cells);
+
+	for (std::size_t j = 0; j < n_y_cells; j++)
+	{
+		const std::size_t offset_y1 = j * n_x_l_nodes;
+		const std::size_t offset_y2 = (j + 1) * n_x_l_nodes;
+		const std::size_t n_linear_nodes = n_x_l_nodes*n_y_l_nodes;
+		const std::size_t offset_quadratic1 = ((n_x_l_nodes-1) + n_x_l_nodes)*j;
+		const std::size_t offset_quadratic2 = offset_quadratic1 + n_x_l_nodes - 1;
+		const std::size_t offset_quadratic3 = offset_quadratic2 + n_x_l_nodes;
+		for (std::size_t k = 0; k < n_x_cells; k++)
+		{
+			std::array<Node*, 8> element_nodes;
+			element_nodes[0] = nodes[offset_y1 + k];
+			element_nodes[1] = nodes[offset_y1 + k + 1];
+			element_nodes[2] = nodes[offset_y2 + k + 1];
+			element_nodes[3] = nodes[offset_y2 + k];
+			element_nodes[4] = nodes[n_linear_nodes + offset_quadratic1 + k];
+			element_nodes[5] = nodes[n_linear_nodes + offset_quadratic2 + k + 1];
+			element_nodes[6] = nodes[n_linear_nodes + offset_quadratic3 + k];
+			element_nodes[7] = nodes[n_linear_nodes + offset_quadratic2 + k];
+			elements.push_back (new Quad8(element_nodes));
+		}
+	}
+
+	return new Mesh(mesh_name, nodes, elements);
+}
+
 Mesh* MeshGenerator::generateRegularHexMesh(
         const double length,
         const std::size_t subdivision,
