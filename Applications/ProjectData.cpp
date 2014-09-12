@@ -36,24 +36,8 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 
 }
 
-ProjectData::ProjectData()
-:
-#ifdef OGS_BUILD_GUI
-	_geoObjects(new GEOModels())
-#else
-	_geoObjects(new GeoLib::GEOObjects())
-#endif
-{
-}
-
 ProjectData::ProjectData(ConfigTree const& project_config,
 	std::string const& path)
-:
-#ifdef OGS_BUILD_GUI
-	_geoObjects(new GEOModels())
-#else
-	_geoObjects(new GeoLib::GEOObjects())
-#endif
 {
 	// geometry
 	std::string const geometry_file = BaseLib::copyPathToFileName(

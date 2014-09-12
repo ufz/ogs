@@ -41,7 +41,7 @@ using ConfigTree = boost::property_tree::ptree;
 public:
 	/// The empty constructor used in the gui, for example, when the project's
 	/// configuration is not loaded yet.
-	ProjectData();
+	ProjectData() = default;
 
 	/// Constructs project data by parsing provided configuration.
 	/// The additional  path is used to find files referenced in the
@@ -106,9 +106,9 @@ private:
 
 private:
 #ifdef OGS_BUILD_GUI
-	GEOModels *_geoObjects;
+	GEOModels *_geoObjects = new GEOModels();
 #else
-	GeoLib::GEOObjects *_geoObjects;
+	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
 #endif
 	std::vector<MeshLib::Mesh*> _mesh_vec;
 	std::vector<ProcessLib::Process*> _processes;
