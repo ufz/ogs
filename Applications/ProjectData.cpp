@@ -11,6 +11,8 @@
  *
  */
 
+#include <algorithm>
+
 #include "ProjectData.h"
 
 // ThirdParty/logog
