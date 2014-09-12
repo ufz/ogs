@@ -20,6 +20,7 @@
 #include "zLibDataCompressor.h"
 #include <fstream>
 
+#include <boost/version.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
