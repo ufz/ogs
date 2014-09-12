@@ -56,7 +56,7 @@ public:
 	//** Mesh functionality **//
 
 	/// Adds a new mesh
-	virtual void addMesh(MeshLib::Mesh* mesh);
+	void addMesh(MeshLib::Mesh* mesh);
 
 	/// Returns the mesh with the given name.
 	const MeshLib::Mesh* getMesh(const std::string &name) const;
@@ -66,7 +66,7 @@ public:
 
 	/// Deletes all meshes with the given name and removes them from the list of
 	//  saved meshes.
-	virtual bool removeMesh(const std::string &name);
+	bool removeMesh(const std::string &name);
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
 	bool isUniqueMeshName(std::string &name);
