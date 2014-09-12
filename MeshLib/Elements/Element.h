@@ -81,7 +81,7 @@ public:
 	virtual unsigned getDimension() const = 0;
 
 	/// Returns the i-th edge of the element.
-	const Element* getEdge(unsigned i) const;
+	virtual const Element* getEdge(unsigned i) const;
 
 	/// Returns the i-th face of the element.
 	virtual const Element* getFace(unsigned i) const = 0;
