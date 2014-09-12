@@ -81,10 +81,10 @@ public:
 	/// Checks if a mesh with the same name exists and provides a unique name in
 	/// case of already existing mesh. Returns true if the mesh name is unique.
 	/// Returns false and changes the provided name to a unique name otherwise.
-	bool isUniqueMeshName(std::string &name);
+	bool isMeshNameUniqueAndProvideUniqueName(std::string &name) const;
 
 	/// Returns true if a mesh with the same name exists and false otherwise.
-	bool meshExists(const std::string &name);
+	bool meshExists(const std::string &name) const;
 
 private:
 	/// Returns an iterator to the first found mesh with the given name.
@@ -96,12 +96,12 @@ private:
 	/// Parses the process variables configuration and creates new variables for
 	/// each variable entry passing the corresponding subtree to the process
 	/// variable constructor.
-	void readProcessVariables(ConfigTree const& process_variables_config);
+	void parseProcessVariables(ConfigTree const& process_variables_config);
 
 	/// Parses the processes configuration and creates new processes for each
 	/// process entry passing the corresponding subtree to the process
 	/// constructor.
-	void readProcesses(ConfigTree const& process_config);
+	void parseProcesses(ConfigTree const& process_config);
 
 private:
 #ifdef OGS_BUILD_GUI

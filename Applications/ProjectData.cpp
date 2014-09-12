@@ -55,23 +55,23 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 	_geoObjects(new GeoLib::GEOObjects())
 #endif
 {
-	// read geometry
+	// geometry
 	std::string const geometry_file = BaseLib::copyPathToFileName(
 			project_config.get<std::string>("geometry"), path
 		);
 	detail::readGeometry(geometry_file, *_geoObjects);
 
-	// read mesh
+	// mesh
 	std::string const mesh_file = BaseLib::copyPathToFileName(
 			project_config.get<std::string>("mesh"), path
 		);
 	_mesh_vec.push_back(FileIO::readMeshFromFile(mesh_file));
 
-	// read process variables
-	readProcessVariables(project_config.get_child("process_variables"));
+	// process variables
+	parseProcessVariables(project_config.get_child("process_variables"));
 
-	// read processes
-	readProcesses(project_config.get_child("processes"));
+	// processes
+	parseProcesses(project_config.get_child("processes"));
 }
 
 ProjectData::~ProjectData()
@@ -88,7 +88,7 @@ ProjectData::~ProjectData()
 void ProjectData::addMesh(MeshLib::Mesh* mesh)
 {
 	std::string name = mesh->getName();
-	isUniqueMeshName(name);
+	isMeshNameUniqueAndProvideUniqueName(name);
 	mesh->setName(name);
 	_mesh_vec.push_back(mesh);
 }
@@ -133,12 +133,12 @@ bool ProjectData::removeMesh(const std::string &name)
 	return mesh_found;
 }
 
-bool ProjectData::meshExists(const std::string &name)
+bool ProjectData::meshExists(const std::string &name) const
 {
 	return findMeshByName(name) != _mesh_vec.end();
 }
 
-bool ProjectData::isUniqueMeshName(std::string &name)
+bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string &name) const
 {
 	int count(0);
 	bool isUnique(false);
@@ -155,7 +155,7 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 		if (count > 1)
 			cpName = cpName + "-" + std::to_string(count);
 
-		for (std::vector<MeshLib::Mesh*>::iterator it = _mesh_vec.begin();
+		for (std::vector<MeshLib::Mesh*>::const_iterator it = _mesh_vec.begin();
 				it != _mesh_vec.end(); ++it)
 			if ( cpName.compare((*it)->getName()) == 0 )
 				isUnique = false;
@@ -172,10 +172,10 @@ bool ProjectData::isUniqueMeshName(std::string &name)
 	return isUnique;
 }
 
-void ProjectData::readProcessVariables(
+void ProjectData::parseProcessVariables(
 	ConfigTree const& process_variables_config)
 {
-	DBUG("Reading process variables:")
+	DBUG("Parse process variables:")
 	if (_geoObjects == nullptr) {
 		ERR("Geometric objects are needed to defined process variables.");
 		ERR("No geometric objects are read.");
@@ -191,7 +191,7 @@ void ProjectData::readProcessVariables(
 	}
 }
 
-void ProjectData::readProcesses(ConfigTree const& processes_config)
+void ProjectData::parseProcesses(ConfigTree const& processes_config)
 {
 	DBUG("Reading processes:\n");
 	for (auto pc_it : processes_config) {
