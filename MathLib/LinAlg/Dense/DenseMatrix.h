@@ -33,7 +33,7 @@ public:
 
 public:
    /// Dense square matrix constructor.
-   DenseMatrix (IDX_TYPE rows) : DenseMatrix(rows, rows) {}
+   explicit DenseMatrix (IDX_TYPE rows) : DenseMatrix(rows, rows) {};
 
    /// Dense rectangular matrix constructor.
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
@@ -69,6 +69,11 @@ public:
     * After applying this operation the object src has no rows and columns anymore.
     */
    DenseMatrix& operator=(DenseMatrix && rhs);
+
+   /**
+    * Assignment operator
+    */
+   DenseMatrix& operator=(FP_TYPE const& v);
 
    /**
     * \f$ y = \alpha \cdot A x + \beta y\f$
