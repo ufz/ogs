@@ -20,6 +20,7 @@
 namespace MeshLib {
 
 typedef TemplateLine<2,CellType::LINE2> Line;
+typedef TemplateLine<3,CellType::LINE3> Line3;
 
 }
 
