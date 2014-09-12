@@ -28,29 +28,29 @@ template<class F_JACOBIAN>
 class ScalarDx
 {
 public:
-    ScalarDx(F_JACOBIAN &f_J) : _f_Jacobain(f_J) {}
+    ScalarDx(F_JACOBIAN &f_J) : _f_Jacobian(f_J) {}
     // dx = - r/J
     void operator()(const double &x, const double &r, double &dx)
     {
         double j;
-        _f_Jacobain(x, j);
+        _f_Jacobian(x, j);
         dx = - r/j;
     }
 
 private:
-    F_JACOBIAN &_f_Jacobain;
+    F_JACOBIAN &_f_Jacobian;
 };
 
 template<class F_JACOBIAN>
 class VectorDx
 {
 public:
-    VectorDx(F_JACOBIAN &f_J, MatrixType &matJ) : _f_Jacobain(f_J), _matJ(matJ) {}
+    VectorDx(F_JACOBIAN &f_J, MatrixType &matJ) : _f_Jacobian(f_J), _matJ(matJ) {}
 
     // dx = - r/J
     void operator()(const VectorType &x, const VectorType &r, VectorType &dx)
     {
-        _f_Jacobain(x, _matJ);
+        _f_Jacobian(x, _matJ);
         DenseSolverType solver(_matJ);
         VectorType rhs(r);
         rhs *= -1.;
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    F_JACOBIAN &_f_Jacobain;
+    F_JACOBIAN &_f_Jacobian;
     MatrixType &_matJ;
 };
 
