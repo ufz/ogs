@@ -39,7 +39,8 @@ public:
         {
             auto const& ic_config = config.find("initial_condition");
             if (ic_config == config.not_found())
-                ERR("No initial condition found.");
+                INFO("No initial condition found.");
+
 
             std::string const type =
                 config.get<std::string>("initial_condition.type");
@@ -58,7 +59,7 @@ public:
         {
             auto const& bcs_config = config.find("boundary_conditions");
             if (bcs_config == config.not_found())
-                ERR("No boundary conditions found.");
+                INFO("No boundary conditions found.");
 
             for (auto const& bc_iterator : bcs_config->second)
             {
