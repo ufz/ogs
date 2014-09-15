@@ -18,9 +18,15 @@ env:
 
 before_install:
   # -- External package sources --
-  - sudo add-apt-repository --yes ppa:boost-latest
+  - travis_retry sudo add-apt-repository --yes ppa:boost-latest
+  - travis_retry sudo apt-get install python-software-properties
+  - travis_retry sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:fenics-packages/fenics-dev; fi
   - travis_retry sudo apt-get update;
+
+  # GCC 4.8
+  - travis_retry sudo apt-get install gcc-4.8
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 
   # -- Install packages --
   - travis_retry sudo apt-get install libeigen3-dev
