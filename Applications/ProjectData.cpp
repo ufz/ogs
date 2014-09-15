@@ -96,7 +96,7 @@ std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
 	return std::find_if(_mesh_vec.begin(), _mesh_vec.end(),
 			[&name](MeshLib::Mesh* mesh)
 			{
-				return name == mesh->getName();
+				return mesh && (name == mesh->getName());
 			});
 
 }
