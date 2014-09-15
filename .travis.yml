@@ -7,10 +7,6 @@ compiler:
 cache:
   - apt
 
-branches:
-  only:
-    - master
-
 env:
   - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
   - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
@@ -55,8 +51,6 @@ script:
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
 notifications:
-  email:
-    - lars.bilke@ufz.de
   hipchat:
     rooms:
       secure: kmLyt50IGFuK96xbD+VzWRRzF6UU6SdVpsn1bolKQaTCCj1rz4H1np1iUML0jeGn86DAkkHPWmFXaS2JN0EoX8L74HavJSkUfIa49cegk0je986fxucaUV1fnhFIRh6EGkpqvqE+uXs/wKHkzrkYbpHaRvJgmxQSV9kR4yRuAmw=
