@@ -34,22 +34,22 @@ private:
     GeoLib::GeoObject const* const _geometry;
 };
 
-/// The DirichletBoundaryCondition class describes a constant in space
+/// The UniformDirichletBoundaryCondition class describes a constant in space
 /// and time Dirichlet boundary condition.
 /// The expected parameter in the passed configuration is "value" which, when
 /// not present defaults to zero.
-class DirichletBoundaryCondition : public BoundaryCondition
+class UniformDirichletBoundaryCondition : public BoundaryCondition
 {
     using ConfigTree = boost::property_tree::ptree;
 public:
-    DirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
+    UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
             ConfigTree const& config)
         : BoundaryCondition(geometry)
     {
-        DBUG("Constructing Dirichlet boundary condition");
+        DBUG("Constructing UniformDirichletBoundaryCondition from config.");
 
         _value = config.get<double>("value", 0);
-        DBUG("Read value %g", _value);
+        DBUG("Using value %g", _value);
     }
 
 private:

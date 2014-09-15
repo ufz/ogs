@@ -80,10 +80,10 @@ public:
                 // Construct type dependent boundary condition
                 std::string const type = bc_config.get<std::string>("type");
 
-                if (type == "Dirichlet")
+                if (type == "UniformDirichlet")
                 {
                     _boundary_conditions.emplace_back(
-                        new DirichletBoundaryCondition(
+                        new UniformDirichletBoundaryCondition(
                             geometry, bc_config));
                 }
                 else
