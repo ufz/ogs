@@ -25,8 +25,9 @@ before_install:
   - travis_retry sudo apt-get update;
 
   # GCC 4.8
-  - travis_retry sudo apt-get install gcc-4.8
+  - travis_retry sudo apt-get install gcc-4.8 g++-4.8
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 
   # -- Install packages --
   - travis_retry sudo apt-get install libeigen3-dev
