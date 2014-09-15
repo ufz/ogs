@@ -24,6 +24,6 @@ IF(DOXYGEN_FOUND)
 			COMMENT "Generating docset ...")
 	ENDIF() # DOCS_GENERATE_DOCSET
 
-	CONFIGURE_FILE(scripts/docs/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
+	CONFIGURE_FILE(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
 ENDIF() # DOXYGEN_FOUND
