@@ -7,10 +7,6 @@ compiler:
 cache:
   - apt
 
-branches:
-  only:
-    - master
-
 env:
   - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
   - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
