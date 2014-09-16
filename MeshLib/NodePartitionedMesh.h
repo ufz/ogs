@@ -1,8 +1,8 @@
 /*!
-  \file MeshDDC.h
+  \file NodePartitionedMesh.h
   \author Wenqing Wang
   \date   2014.06
-  \brief  Definition of mesh class for partitioned mesh for parallel computing within the
+  \brief  Definition of mesh class for partitioned mesh (by node) for parallel computing within the
           framework of domain decomposition (DDC).
 
   \copyright
@@ -11,12 +11,12 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 
- */
+*/
 
-#ifndef MESH_DDC_H_
-#define MESH_DDC_H_
+#ifndef NODE_PARTITIONED_MESH_H_
+#define NODE_PARTITIONED_MESH_H_
 
-#include <cstdlib>
+#include <vector>
 #include <string>
 
 #include "Mesh"
@@ -28,7 +28,7 @@ class Node;
 class Element;
 
 /// A subdomain mesh.
-class MeshDDC : public Mesh
+class NodePartitionedMesh : public Mesh
 {
     public:
         /*!
@@ -42,18 +42,15 @@ class MeshDDC : public Mesh
             \param nnodes_active Number of active nodes of the partition.
                                  0: with linear elements
                                  1: with quadratic elemens.
-
-            \param axisymmetry   Indicator for axisymmetry.
         */
-        MeshDDC(const std::string &name,
+        NodePartitionedMesh(const std::string &name,
                 const std::vector<Node*> &nodes,
                 const std::vector<Element*> &elements,
                 const MyInt [] nnodes_global,
-                const MyInt [] nnodes_local
-                const bool axisymmetry)
-            : Mesh(name, nodes, elements, false), _axisymmetry(axisymmetry),
+                const MyInt [] nnodes_local)
+            : Mesh(name, nodes, elements, false), 
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
-        _nnodes_active {nnodes_active[0], nnodes_active[1] }
+              _nnodes_active {nnodes_active[0], nnodes_active[1] }
         {
         }
 
@@ -77,6 +74,26 @@ class MeshDDC : public Mesh
             return _nnodes_active[order];
         }
 
+		/*!
+		  \brief Get the number of active nodes of an element 
+		  \param gelem_id Index of ghost element 
+		  \param order    The order of elements (either 0 or 1).    
+		   
+	    */
+        MyInt getElementActiveNNodes(const unsigned gelem_id, const int order = 0) const
+        {
+            return _act_nodes_ids_of_ghost_element[gelem_id][order];
+        }
+
+		/*!
+		  \brief Get IDs of the active nodes of an element 
+		  \param gelem_id Index of ghost element 		   
+	    */
+        MyInt *getElementActiveNNodes(const unsigned gelem_id) const
+        {
+            return &_act_nodes_ids_of_ghost_element[gelem_id][2];
+        }
+
         /// Get the largest ID of active nodes for higher order elements.
         MyInt getLargestActiveNodeID() const
         {
@@ -91,10 +108,12 @@ class MeshDDC : public Mesh
 
         /// Number of the active nodes. 0: for linear elements; 1: for quadratic elements.
         MyInt _nnodes_active[2];
-
+        
+        /// Active node indices of each ghost elements
+        std::vector<MyInt *> _act_nodes_ids_of_ghost_element
 };
 
 } // end of namespace
 
-#endif // end of #ifndef MESH_DDC_H_
+#endif // end of #ifndef NODE_PARTITIONED_MESH_H_
 
