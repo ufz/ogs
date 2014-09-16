@@ -178,7 +178,6 @@ void ProjectData::parseProcessVariables(
 	// assign the referenced mesh below.
 	if (_mesh_vec.empty() || _mesh_vec[0] == nullptr) {
 		ERR("A mesh is required to define process variables.");
-		ERR("No geometric objects are read.");
 		return;
 	}
 
