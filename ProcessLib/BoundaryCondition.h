@@ -10,8 +10,12 @@
 #ifndef PROCESS_LIB_BOUNDARY_CONDITION_H_
 #define PROCESS_LIB_BOUNDARY_CONDITION_H_
 
+#include <vector>
+
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
+
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 namespace GeoLib
 {
@@ -30,8 +34,15 @@ public:
 
     virtual ~BoundaryCondition() = default;
 
+    void applyToMesh(MeshLib::Mesh const& mesh)
+    {
+        MeshGeoToolsLib::MeshNodeSearcher searcher(mesh);
+        _node_ids = searcher.getMeshNodeIDs(*_geometry);
+    }
+
 private:
     GeoLib::GeoObject const* const _geometry;
+    std::vector<std::size_t> _node_ids;
 };
 
 /// The UniformDirichletBoundaryCondition class describes a constant in space
