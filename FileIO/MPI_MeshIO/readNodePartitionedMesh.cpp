@@ -14,6 +14,9 @@
 
 #include "readNodePartitionedMesh.h"
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 #include <cstdlib>
 
 #include "MeshLib/Elements/Element.h"
@@ -79,7 +82,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::read(MPI_Comm comm, const
     {
 
         if( _rank == 0 )
-            printf("-->Reading ASCII mesh file ...");
+            INFO("-->Reading ASCII mesh file ...");
+
 
         mesh = readASCII(comm, file_name);
     }
@@ -87,13 +91,14 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::read(MPI_Comm comm, const
     {
         MPI_File_close(&fh);
         if( _rank == 0 )
-            printf("-->Reading binary mesh file ...");
+            INFO("-->Reading binary mesh file ...");
 
         mesh = readBinary(comm, file_name);
     }
 
     if( _rank == 0 )
-        printf( "\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed() );
+        INFO("\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed());
+
 
     MPI_Barrier(comm);
 
@@ -115,7 +120,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
 
         MPI_Finalize();
         if( _rank == 0 )
-            printf("! File %s does not exist.", &fname_new_base[0]);
+            INFO("! File %s does not exist.", &fname_new_base[0]);
         exit( EXIT_FAILURE );
     }
     //
@@ -134,7 +139,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
 
         MPI_Finalize();
         if( _rank == 0 )
-            printf("! File %s does not exist.", &fname_new_base[0]);
+            INFO("! File %s does not exist.", &fname_new_base[0]);
         exit(EXIT_FAILURE);
     }
 
