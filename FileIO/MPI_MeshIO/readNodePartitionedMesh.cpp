@@ -152,7 +152,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
     MPI_File_read(fh, s_nodes, _mesh_controls[0], MPI_node, MPI_STATUS_IGNORE);
     MPI_File_close(&fh);
 
-    mesh->setSubdomainNodes(mesh_header, s_nodes);
+    vector<MeshLib::Node*> mesh_nodes;
+    mesh->setNodes(s_nodes, mesh_nodes);
     free(s_nodes);
 
     MPI_Type_free(&MPI_node);
