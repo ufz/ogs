@@ -40,10 +40,10 @@ public:
                 });
 
         if (variable == variables.end())
-            ERR("Expected field \'%s\' not found in provided fields.",
+            ERR("Expected process variable \'%s\' not found in provided variables list.",
                 name.c_str());
 
-        DBUG("Associate hydraulic_head with field named \'%s\'.",
+        DBUG("Associate hydraulic_head with process variable \'%s\'.",
             name.c_str());
         _hydraulic_head = &*variable;
 
