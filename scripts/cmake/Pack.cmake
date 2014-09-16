@@ -18,7 +18,7 @@ IF(APPLE)
 	SET(CPACK_DMG_FORMAT "UDBZ")
 	SET(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME}")
 	# See http://stackoverflow.com/a/16662169/80480 how to create the DS_Store file.
-	SET(CPACK_DMG_BACKGROUND_IMAGE ${CMAKE_SOURCE_DIR}/scripts/docs/OpenGeoSys-Logo.png)
+	SET(CPACK_DMG_BACKGROUND_IMAGE ${CMAKE_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png)
 	SET(CPACK_DMG_DS_STORE ${CMAKE_SOURCE_DIR}/scripts/packaging/.DS_Store)
 	SET(CPACK_SYSTEM_NAME "OSX")
 ELSE() # APPLE
