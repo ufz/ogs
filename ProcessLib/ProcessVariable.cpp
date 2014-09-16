@@ -61,15 +61,15 @@ ProcessVariable::ProcessVariable(
             ConfigTree const& bc_config = bc_iterator.second;
 
             // Find corresponding GeoObject
+            std::string const geometrical_set_name =
+                bc_config.get<std::string>("geometrical_set");
             std::string const geometry_name =
                 bc_config.get<std::string>("geometry");
-            std::string const patch_name =
-                bc_config.get<std::string>("patch");
 
             // TODO Currently only Polylines are supported for the boundary
             // conditions.
             GeoLib::GeoObject const* const geometry = geometries.getGeoObject(
-                    geometry_name, GeoLib::GEOTYPE::POLYLINE, patch_name);
+                    geometrical_set_name, GeoLib::GEOTYPE::POLYLINE, geometry_name);
             DBUG("Found geometry type \"%s\"",
                 GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
