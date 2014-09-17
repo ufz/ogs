@@ -156,7 +156,7 @@ bool Polygon::containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) co
 	// This induces a partition of the line segment into sub segments.
 	std::sort(s.begin(), s.end(),
 		[&a] (GeoLib::Point const& p0, GeoLib::Point const& p1) {
-			return MathLib::sqrDist(a, p0) <= MathLib::sqrDist(a, p1);
+			return MathLib::sqrDist(a, p0) < MathLib::sqrDist(a, p1);
 		}
 	);
 
