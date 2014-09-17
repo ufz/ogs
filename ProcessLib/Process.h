@@ -36,6 +36,6 @@ protected:
 //
 // Include all known processes here.
 //
-#include "GroundwaterFlow.h"
+#include "GroundwaterFlowProcess.h"
 
 #endif  // PROCESS_LIB_PROCESS_H_

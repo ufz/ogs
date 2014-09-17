@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef PROCESS_LIB_GROUNDWATERFLOW_H_
-#define PROCESS_LIB_GROUNDWATERFLOW_H_
+#ifndef PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
+#define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
@@ -63,4 +63,4 @@ private:
 
 }   // namespace ProcessLib
 
-#endif  // PROCESS_LIB_GROUNDWATERFLOW_H_
+#endif  // PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
