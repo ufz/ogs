@@ -19,12 +19,20 @@
 
 #include <cstdlib>
 
+#include "BaseLib/StringTools.h" // for int to string
+#include "BaseLib/WallClockTimer.h"
+
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/NodePartitionedMes.h"
 #include "MeshLib/Node.h"
 
-#include "BaseLib/StringTools.h" // for int to string
-#include "BaseLib/WallClockTimer.h"
+#include "Elements/Line.h"
+#include "Elements/Hex.h"
+#include "Elements/Prism.h"
+#include "Elements/Pyramid.h"
+#include "Elements/Quad.h"
+#include "Elements/Tet.h"
+#include "Elements/Tri.h"
 
 using namespace MeshLib;
 
@@ -115,14 +123,11 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
     string fname_new_base = file_name + "_partitioned_msh_cfg" + _size_str + ".bin";
     rc = MPI_File_open(MPI_COMM_WORLD, &fname_new_base[0], MPI_MODE_RDONLY,
                        MPI_INFO_NULL, &fh);
-    if (rc )
+    if (rc ) // Failed to open the file
     {
-
-        MPI_Finalize();
-        if( _rank == 0 )
-            INFO("! File %s does not exist.", &fname_new_base[0]);
-        exit( EXIT_FAILURE );
+        quit(fname_new_base);
     }
+
     //
     MPI_Offset offset_new;
     offset_new = _rank * _mesh_controls * sizeof(MyInt);
@@ -134,17 +139,13 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
     fname_new_base = file_name + "_partitioned_msh_nod" + _size_str + ".bin";
     rc = MPI_File_open(MPI_COMM_WORLD, &fname_new_base[0], MPI_MODE_RDONLY,
                        MPI_INFO_NULL, &fh);
-    if (rc )
+    if (rc ) // Failed to open the file
     {
-
-        MPI_Finalize();
-        if( _rank == 0 )
-            INFO("! File %s does not exist.", &fname_new_base[0]);
-        exit(EXIT_FAILURE);
+        quit(fname_new_base);
     }
 
     MPI_Datatype MPI_node;
-    NodeData *s_nodes = (NodeData *)malloc(s_nodes, sizeof(NodeData) * _mesh_controls[0]);
+    NodeData *s_nodes = (NodeData *)malloc(sizeof(NodeData) * _mesh_controls[0]);
     buildNodeStrucTypeMPI(s_nodes, &MPI_node);
 
     offset_new =  _mesh_controls[10];
@@ -153,10 +154,61 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
     MPI_File_close(&fh);
 
     vector<MeshLib::Node*> mesh_nodes;
-    mesh->setNodes(s_nodes, mesh_nodes);
+    setNodes(s_nodes, mesh_nodes);
     free(s_nodes);
 
     MPI_Type_free(&MPI_node);
+
+    // Elements
+    fname_new_base = file_name + "_partitioned_msh_ele" + _size_str + ".bin";
+    rc = MPI_File_open(MPI_COMM_WORLD, &fname_new_base[0], MPI_MODE_RDONLY,
+                       MPI_INFO_NULL, &fh);
+    if (rc ) // Failed to open the file
+    {
+        quit(fname_new_base);
+    }
+
+    MyInt size_elem_info =   _mesh_controls[2] + _mesh_controls[8];
+    MyInt *elem_data = (MyInt *)malloc(sizeof(MyInt) * size_elem_info );
+    offset_new =  _mesh_controls[11];
+    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG, &ftype[0], MPI_INFO_NULL);
+    MPI_File_read(fh, elem_data, size_elem_info, MPI_LONG, MPI_STATUS_IGNORE);
+    MPI_File_close(&fh);
+
+    // _mesh_controls[2]: number of regular elements. _mesh_controls[3]: number of ghost elements
+    std::vector<MeshLib::Element*> mesh_elems(_mesh_controls[2] + _mesh_controls[3]);
+    std::vector<short*> ghost_elems(0);
+    setElements(mesh_nodes, elem_data, mesh_elems, ghost_elems);
+
+    //Ghost element
+    fname_new_base = file_name + "_partitioned_msh_ele_g" + _size_str + ".bin";
+    rc = MPI_File_open(MPI_COMM_WORLD, &fname_new_base[0], MPI_MODE_RDONLY,
+                       MPI_INFO_NULL, &fh);
+    if( rc )
+    {
+        MPI_Finalize();
+        if( _rank == 0 )
+            INFO("! File %s does not exist.", &fname_new_base[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    size_elem_info =   _mesh_controls[3] + _mesh_controls[9];
+    elem_data = (MyInt *)realloc(elem_data, sizeof(MyInt) * size_elem_info );
+    offset_new =  _mesh_controls[12];
+    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG,  &ftype[0], MPI_INFO_NULL);
+    MPI_File_read(fh, elem_data, size_elem_info, MPI_LONG, MPI_STATUS_IGNORE);
+    MPI_File_close(&fh);
+
+    std::vector<short*> ghost_elems( _mesh_controls[3] );
+    setElements(mesh_nodes, elem_data, mesh_elems, ghost_elems);
+
+    free(elem_info);
+
+    unsigned nnodes_local[] = { _mesh_controls[4], _mesh_controls[5] };
+    unsigned nnodes_global[] = { _mesh_controls[6], _mesh_controls[7] };
+
+    return  new NodePartitionedMesh(file_name + _size_str,
+                                    mesh_nodes,  mesh_elems, nnodes_global, nnodes_local);
 }
 
 MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, const std::string &file_name)
@@ -172,14 +224,96 @@ void readNodePartitionedMesh::setNodes(const NodeData *node_data,
     for(size_t i=0; i<mesh_node.size(); i++)
     {
         const NodeData *nd = &node_data[i];
-        mesh_node[i] = new MeshLib::Node(nd->x, nd->y, nd->z, nd->index);
+        mesh_node[i] = new MeshLib::Node( nd->x, nd->y, nd->z, static_cast<unsigned>(nd->index) );
     }
 }
 
-void readNodePartitionedMesh::setElements(const MyInt *elem_data,
-        std::vector<MeshLib::Element*> &mesh_elem,
-        const bool ghost)
+void readNodePartitionedMesh::setElements(const std::vector<MeshLib::Node*> &mesh_nodes,
+        const MyInt *elem_data, std::vector<MeshLib::Element*> &mesh_elems,
+        std::vector<unsigned*> &mesh_ghost_elems)
 {
+    bool ghost = (mesh_ghost_elems.size() > 0) ? true : false;
+    // Number of elements, either ghost ot regular
+    MyInt ne = ghost ? _mesh_controls[3] : _mesh_controls[2];
+    MyInt counter;
+    for(MyInt i=0; i<ne; i++)
+    {
+        counter = elem_data[i];
+
+        const MyInt mat_idx = static_cast<size_t>( elem_data[counter] );
+        counter++;
+        const MyInt e_type = elem_data[counter];
+        counter++;
+        const MyInt nnodes = elem_data[counter];
+        counter++;
+
+        MeshLib::Node **elem_nodes = new MeshLib::Node*[nnodes]
+        for(MyInt k=0; k<nnodes; k++)
+        {
+            elem_nodes[k] = mesh_nodes[ elem_data[counter] ];
+            counter++;
+        }
+
+        MeshLib::Element *elem = nullptr;
+
+        switch(e_type)
+        {
+            case 1:
+                elem = new MeshLib::Line(elem_nodes, mat_idx);
+                break;
+            case 2:
+                elem = new MeshLib::Quad(elem_nodes, mat_idx);
+                break;
+            case 3:
+                elem = new MeshLib::Hex(elem_nodes, mat_idx);
+                break;
+            case 4:
+                elem = new MeshLib::Tri(elem_nodes, mat_idx);
+                break;
+            case 5:
+                elem = new MeshLib::Tet(elem_nodes, mat_idx);
+                break;
+            case 6:
+                elem = new MeshLib::Prism(elem_nodes, mat_idx);
+                break;
+            case 7:
+                elem = new MeshLib::Pyramid(elem_nodes, mat_idx);
+                break;
+        }
+
+        if( ghost )
+        {
+            mesh_elems[i + _mesh_controls[2] ] = elem;
+
+            const short nn_gl = static_cast<short>( elem_data[counter] );
+            counter++;
+            const short nn_g = static_cast<short>( elem_data[counter] );
+            counter++;
+
+            short *local_ids = new int[nn_g+2];
+            local_ids[0] = nn_gl;
+            local_ids[1] = nn_g;
+            for(int k=2; k<nn_g+2; k++)
+            {
+                local_ids[k] = static_cast<short>( elem_data[counter] );
+                counter++;
+            }
+
+            mesh_ghost_elems[i] = local_ids;
+        }
+        else
+        {
+            mesh_elems[i] = elem;
+        }
+
+    }
 }
 
+void readNodePartitionedMesh::quit(const string & file_name)
+{
+    MPI_Finalize();
+    if(_rank == 0 )
+        INFO("! File %s does not exist.", &file_name[0]);
+    exit(EXIT_FAILURE);
+}
 } // end of name space FileIO

@@ -21,7 +21,11 @@
 
 #include "Mesh"
 
-typedef long MyInt;
+namespace FileIO
+{
+   class readNodePartitionedMesh;
+}
+
 namespace MeshLib
 {
 class Node;
@@ -46,20 +50,28 @@ class NodePartitionedMesh : public Mesh
         NodePartitionedMesh(const std::string &name,
                 const std::vector<Node*> &nodes,
                 const std::vector<Element*> &elements,
-                const MyInt [] nnodes_global,
-                const MyInt [] nnodes_local)
+                const unsigned [] nnodes_global,
+                const unsigned [] nnodes_local)
             : Mesh(name, nodes, elements, false), 
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
               _nnodes_active {nnodes_active[0], nnodes_active[1] }
         {
         }
 
+        ~NodePartitionedMesh()
+        {
+			for(auto ele_data : _act_nodes_ids_of_ghost_element)
+			{
+				delete [] ele_data;
+			}
+		}
+
         /*!
             \brief Get the number of nodes of the whole mesh.
             \param order The order of elements (0 or 1).
                          Its default value is 0 for linear elements.
         */
-        MyInt getGlobalNNodes(const int order = 0) const
+        unsigned getGlobalNNodes(const int order = 0) const
         {
             return _nnodes_global[order];
         }
@@ -69,7 +81,7 @@ class NodePartitionedMesh : public Mesh
             \param order The order of elements (0 or 1).
                          Its default value is 0 for linear elements.
         */
-        MyInt getActiveNNodes(const int order = 0) const
+        unsigned getActiveNNodes(const int order = 0) const
         {
             return _nnodes_active[order];
         }
@@ -80,37 +92,47 @@ class NodePartitionedMesh : public Mesh
 		  \param order    The order of elements (either 0 or 1).    
 		   
 	    */
-        MyInt getElementActiveNNodes(const unsigned gelem_id, const int order = 0) const
+        unsigned getElementActiveNNodes(const unsigned gelem_id, const int order = 0) const
         {
             return _act_nodes_ids_of_ghost_element[gelem_id][order];
         }
 
 		/*!
-		  \brief Get IDs of the active nodes of an element 
+		  \brief Get local IDs of the active nodes of an element 
 		  \param gelem_id Index of ghost element 		   
 	    */
-        MyInt *getElementActiveNNodes(const unsigned gelem_id) const
+        short *getElementActiveNNodes(const unsigned gelem_id) const
         {
             return &_act_nodes_ids_of_ghost_element[gelem_id][2];
         }
 
         /// Get the largest ID of active nodes for higher order elements.
-        MyInt getLargestActiveNodeID() const
+        unsigned getLargestActiveNodeID() const
         {
             // Note: _nodes.size() should be changed once the high order element is condidered
             // in the root class.
-            return static_cast<MyInt>( _nodes.size() ) + _nnodes_active[1] - _nnodes_active[0];
+            return static_cast<unsigned>( _nodes.size() ) + _nnodes_active[1] - _nnodes_active[0];
         }
-
+        
+        /// Get the start entry ID of ghost elements in element vector.
+        unsigned getStartIndexOfGhostElement() const
+        {
+			return _start_id_g_elem;
+		} 
     private:
         /// Number of nodes of the whole mesh. 0: for linear elements; 1: for quadratic elements.
-        MyInt _nnodes_global[2];
+        unsigned _nnodes_global[2];
 
         /// Number of the active nodes. 0: for linear elements; 1: for quadratic elements.
-        MyInt _nnodes_active[2];
+        unsigned  _nnodes_active[2];
+
+        /// ID of the start entry of ghost elements in _elements vector.
+        unsigned  _start_id_g_elem;
         
         /// Active node indices of each ghost elements
-        std::vector<MyInt *> _act_nodes_ids_of_ghost_element
+        std::vector<short *> _act_nodes_ids_of_ghost_element
+        
+        friend FileIO::readNodePartitionedMesh;
 };
 
 } // end of namespace

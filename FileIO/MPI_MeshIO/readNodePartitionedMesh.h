@@ -27,6 +27,7 @@ class Element;
 
 namespace FileIO
 {
+typedef long MyInt;
 /// Node data only for parallel reading.
 struct NodeData
 {
@@ -58,6 +59,21 @@ class readNodePartitionedMesh
         MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name);
 
     private:
+        /// Numbers define the partition.
+        MyInt _mesh_controls[14];
+
+        /// How many numbers that define the partition, fixed to 14
+        unsigned _num_controls;
+
+        /// Number of MPI processes
+        int _size;
+
+        /// _size converted to string
+        string _size_str;
+
+        /// Rank of compute core
+        int _rank;
+
         /*!
              \brief Create a NodePartitionedMesh object, read binary mesh data to it,
                     and return a pointer to it.
@@ -85,27 +101,18 @@ class readNodePartitionedMesh
 
         /*!
              \brief Set mesh elements from a tempory  array containing node data read from file.
-             \param node_data  Array containing element data read from file.
-             \param mesh_elem  Vector of mesh elements to be set.
-             \param ghost      Flag for ghost element
+             \param mesh_nodes        Vector of mesh nodes used to set element nodes.
+             \param elem_data         Array containing element data read from file.
+             \param mesh_elems        Vector of mesh elements to be set.
+             \param mesh_ghost_elems  Local IDs of active element nodes.
         */
-        void setElements(const MyInt *elem_data, std::vector<MeshLib::Element*> &mesh_elem,
-                         const bool ghost = false);
+        void setElements(const std::vector<MeshLib::Node*> &mesh_nodes, const MyInt *elem_data,
+                         std::vector<MeshLib::Element*> &mesh_elems,
+                         std::vector<unsigned*> &mesh_ghost_elems )
 
-        /// Numbers define the partition.
-        MyInt _mesh_controls[14];
+        /// Teminate programm due to failed to open the file
+        void quit(const string & file_name);
 
-        /// How many numbers that define the partition, fixed to 14
-        unsigned _num_controls;
-
-        /// Number of MPI processes
-        int _size;
-
-        /// _size converted to string
-        string _size_str;
-
-        /// Rank of compute core
-        int _rank;
 }
 
 } // End of namespace
