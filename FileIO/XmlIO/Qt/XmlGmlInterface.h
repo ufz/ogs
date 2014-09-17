@@ -18,6 +18,8 @@
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
+#include "GeoLib/GEOObjects.h"
+
 namespace FileIO
 {
 
@@ -27,10 +29,6 @@ namespace FileIO
 class XmlGmlInterface : public XMLInterface, public XMLQtInterface
 {
 public:
-	/**
-	 * Constructor
-	 * \param project Project data.
-	 */
 	XmlGmlInterface(GeoLib::GEOObjects& geo_objs);
 
 	virtual ~XmlGmlInterface() {}

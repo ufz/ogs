@@ -44,6 +44,7 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(testrunner
 	GTest
+	ApplicationsLib
 	AssemblerLib
 	BaseLib
 	FileIO
@@ -52,7 +53,6 @@ TARGET_LINK_LIBRARIES(testrunner
 	MeshLib
 	MeshGeoToolsLib
 	NumLib
-	OgsLib
 	logog
 	${BOOST_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}

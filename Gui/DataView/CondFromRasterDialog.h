@@ -18,7 +18,7 @@
 #include "ui_CondFromRaster.h"
 #include <QDialog>
 
-#include "ProjectData.h"
+#include "Applications/ProjectData.h"
 
 namespace MeshLib {
 	class Mesh;

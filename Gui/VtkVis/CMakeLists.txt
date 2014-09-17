@@ -24,7 +24,6 @@ SET( SOURCES
 	VtkCompositePointToGlyphFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
-	VtkConditionSource.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
@@ -82,7 +81,6 @@ SET( HEADERS
 	VtkCompositePointToGlyphFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
-	VtkConditionSource.h
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
@@ -137,7 +135,6 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/../../MathLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FileIO
 	${CMAKE_CURRENT_SOURCE_DIR}/../../MeshLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../../OGS
 	${CMAKE_CURRENT_SOURCE_DIR}/../Base
 	${CMAKE_CURRENT_SOURCE_DIR}/../DataView
 	${CMAKE_CURRENT_BINARY_DIR}/../DataView

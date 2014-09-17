@@ -3,12 +3,10 @@ set( SOURCES
 	ColorTableModel.cpp
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
-	ConditionWriterDialog.cpp
 	DataExplorerSettingsDialog.cpp
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	ElementTreeView.cpp
-	FEMConditionSetupDialog.cpp
 	GeoMapper.cpp
 	GEOModels.cpp
 	GeoOnMeshMappingDialog.cpp
@@ -33,9 +31,6 @@ set( SOURCES
 	MshTabWidget.cpp
 	MshView.cpp
 	NetCdfConfigureDialog.cpp
-	NewProcessDialog.cpp
-	ProcessModel.cpp
-	ProcessView.cpp
 	SelectMeshDialog.cpp
 	SetNameDialog.cpp
 	SHPImportDialog.cpp
@@ -49,11 +44,9 @@ set( MOC_HEADERS
 	ColorTableModel.h
 	ColorTableView.h
 	CondFromRasterDialog.h
-	ConditionWriterDialog.h
 	DataExplorerSettingsDialog.h
 	ElementTreeModel.h
 	ElementTreeView.h
-	FEMConditionSetupDialog.h
 	GEOModels.h
 	GeoOnMeshMappingDialog.h
 	GeoTabWidget.h
@@ -75,9 +68,6 @@ set( MOC_HEADERS
 	MshTabWidget.h
 	MshView.h
 	NetCdfConfigureDialog.h
-	NewProcessDialog.h
-	ProcessModel.h
-	ProcessView.h
 	SelectMeshDialog.h
 	SetNameDialog.h
 	SHPImportDialog.h
@@ -97,7 +87,6 @@ set( HEADERS
 	GeoTreeItem.h
 	ModelTreeItem.h
 	MshItem.h
-	ProcessItem.h
 )
 
 # UI files
@@ -149,7 +138,6 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../../BaseLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../../MathLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../../GeoLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../../OGS
 	${CMAKE_CURRENT_SOURCE_DIR}/../../MeshLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FileIO
 	${CMAKE_CURRENT_SOURCE_DIR}

@@ -20,8 +20,7 @@
 // FileIO
 #include "XmlIO/Qt/XmlGmlInterface.h"
 
-// OgsLib
-#include "OGS/ProjectData.h"
+#include "Applications/ProjectData.h"
 
 // GeoLib
 #include "Polyline.h"

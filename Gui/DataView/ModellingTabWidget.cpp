@@ -13,7 +13,7 @@
  */
 
 // ** INCLUDES **
-#include "ProcessModel.h"
+//#include "ProcessModel.h"
 #include "ModellingTabWidget.h"
 
 ModellingTabWidget::ModellingTabWidget( QWidget* parent /*= 0*/ )
@@ -22,12 +22,4 @@ ModellingTabWidget::ModellingTabWidget( QWidget* parent /*= 0*/ )
 	setupUi(this);
 }
 
-void ModellingTabWidget::on_addProcessButton_pressed()
-{
-	emit requestNewProcess();
-}
 
-void ModellingTabWidget::on_deleteAllButton_pressed()
-{
-	static_cast<ProcessModel*>(this->treeView->model())->removeAllProcesses();
-}

@@ -23,8 +23,7 @@
 #include "GEOObjects.h"
 #include "SurfaceVec.h"
 
-// OgsLib
-#include "OGS/ProjectData.h"
+#include "Applications/ProjectData.h"
 
 // FileIO
 #include "XmlIO/Qt/XmlGmlInterface.h"

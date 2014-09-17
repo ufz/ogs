@@ -17,7 +17,6 @@ IF (QT4_FOUND)
 		FileIO
 		GeoLib
 		BaseLib
-		OgsLib
 		shp
 		${QT_LIBRARIES}
 	)
@@ -26,17 +25,17 @@ IF (QT4_FOUND)
 
 	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
 	TARGET_LINK_LIBRARIES (generateBCandGLI
+		ApplicationsLib
 		FileIO
 		GeoLib
-		OgsLib
 		${QT_LIBRARIES}
 	)
 
 	ADD_EXECUTABLE (generateBCFromPolyline generateBCFromPolyline.cpp )
 	TARGET_LINK_LIBRARIES (generateBCFromPolyline
+		ApplicationsLib
 		FileIO
 		GeoLib
-		OgsLib
 		${QT_LIBRARIES}
 	)
 

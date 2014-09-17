@@ -746,7 +746,8 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ${CMAKE_SOURCE_DIR}/AssemblerLib \
+INPUT                  = ${CMAKE_SOURCE_DIR}/Applications \
+                         ${CMAKE_SOURCE_DIR}/AssemblerLib \
                          ${CMAKE_SOURCE_DIR}/BaseLib \
                          ${CMAKE_SOURCE_DIR}/Documentation \
                          ${CMAKE_SOURCE_DIR}/FileIO \
@@ -755,7 +756,7 @@ INPUT                  = ${CMAKE_SOURCE_DIR}/AssemblerLib \
                          ${CMAKE_SOURCE_DIR}/MathLib \
                          ${CMAKE_SOURCE_DIR}/MeshLib \
                          ${CMAKE_SOURCE_DIR}/NumLib \
-                         ${CMAKE_SOURCE_DIR}/OGS \
+                         ${CMAKE_SOURCE_DIR}/ProcessLib \
                          ${CMAKE_SOURCE_DIR}/README.md \
                          ${CMAKE_SOURCE_DIR}/SimpleTests \
                          ${CMAKE_SOURCE_DIR}/Utils

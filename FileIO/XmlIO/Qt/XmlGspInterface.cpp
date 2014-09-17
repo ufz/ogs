@@ -17,7 +17,6 @@
 
 #include "XmlGspInterface.h"
 
-#include "XmlCndInterface.h"
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
 
@@ -94,13 +93,6 @@ int XmlGspInterface::readFile(const QString &fileName)
 			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
 			if (msh)
 				_project.addMesh(msh);
-		}
-		else if (file_node.compare("cnd") == 0)
-		{
-			const std::string cnd_name = path.toStdString() +
-			                             fileList.at(i).toElement().text().toStdString();
-			XmlCndInterface cnd(_project);
-			cnd.readFile(cnd_name);
 		}
 	}
 
@@ -195,26 +187,6 @@ bool XmlGspInterface::write()
 		}
 		else
 			ERR("XmlGspInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
-	}
-
-	// CND
-	const std::vector<FEMCondition*> &cnd_vec (_project.getConditions());
-	if (!cnd_vec.empty())
-	{
-		XmlCndInterface cnd(_project);
-		const std::string cnd_name (BaseLib::extractBaseNameWithoutExtension(_filename) + ".cnd");
-		if (cnd.writeToFile(path + cnd_name))
-		{
-			// write entry in project file
-			QDomElement cndTag = doc.createElement("cnd");
-			root.appendChild(cndTag);
-			QDomElement fileNameTag = doc.createElement("file");
-			cndTag.appendChild(fileNameTag);
-			QDomText fileNameText = doc.createTextNode(QString::fromStdString(cnd_name));
-			fileNameTag.appendChild(fileNameText);
-		}
-		else
-			ERR("XmlGspInterface::writeFile(): Error writing cnd-file \"%s\".", cnd_name.c_str());
 	}
 
 	std::string xml = doc.toString().toStdString();

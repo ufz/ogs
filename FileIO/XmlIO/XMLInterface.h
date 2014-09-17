@@ -15,8 +15,6 @@
 #ifndef XMLINTERFACE_H
 #define XMLINTERFACE_H
 
-#include "OGS/ProjectData.h"
-
 #include "FileIO/Writer.h"
 
 namespace FileIO

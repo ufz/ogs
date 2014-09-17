@@ -18,7 +18,7 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="ProcessView" name="treeView"/>
+    <widget class="QTreeView" name="treeView"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -40,13 +40,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ProcessView</class>
-   <extends>QTreeView</extends>
-   <header>ProcessView.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
