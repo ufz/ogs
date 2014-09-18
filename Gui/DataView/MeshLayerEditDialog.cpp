@@ -106,12 +106,12 @@ void MeshLayerEditDialog::createWithRasters()
 	this->_layerBox = new QGroupBox(this);
 	this->_layerBox->setTitle(selectText);
 
-	for (unsigned i = 0; i <= _n_layers+1; ++i)
+	for (unsigned i = 0; i <= _n_layers; ++i)
 	{
 		QString text("");
 		if (i==0) text = "Surface";
-		else if (i>_n_layers) text = "Layer" + QString::number(_n_layers) + "-Bottom";
-		else text="Layer" + QString::number(i) + "-Top";
+		else if (i == _n_layers) text = "Layer" + QString::number(_n_layers) + "-Bottom";
+		else text="Layer" + QString::number(i+1) + "-Top";
 		QLineEdit* edit (new QLineEdit(this));
 		QPushButton* button (new QPushButton("...", _layerBox));
 
@@ -193,22 +193,10 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 
 	if (_use_rasters)
 	{
-		for (unsigned i=0; i<=nLayers; ++i)
-		{
-			const std::string imgPath ( this->_edits[i+1]->text().toStdString() );
-			const double noDataReplacement = (i==0) ? 0.0 : -9999.0;
-			if (!mapper.layerMapping(*new_mesh, imgPath, nLayers, i, noDataReplacement))
-			{
-				delete new_mesh;
-				return nullptr;
-			}
-		}
-		if (this->_edits[0]->text().length()>0)
-		{
-			MeshLib::Mesh* final_mesh = mapper.blendLayersWithSurface(*new_mesh, nLayers, this->_edits[0]->text().toStdString());
-			delete new_mesh;
-			new_mesh = final_mesh;
-		}
+        std::vector<std::string> raster_paths;
+		for (int i=nLayers; i>=0; --i)
+            raster_paths.push_back(this->_edits[i]->text().toStdString());
+        new_mesh = mapper.createRasterLayers(*_msh, raster_paths);
 	}
 	return new_mesh;
 }
@@ -228,7 +216,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 	{
 		std::vector<std::string> raster_paths(nLayers+1);
 		for (int i=nLayers; i>=0; --i)
-			raster_paths[i] = this->_edits[i+1]->text().toStdString();
+			raster_paths[i] = this->_edits[i]->text().toStdString();
 		LayeredVolume lv;
 		lv.createGeoVolumes(*_msh, raster_paths);
 
@@ -294,7 +282,7 @@ void MeshLayerEditDialog::accept()
 		const std::string imgPath ( this->_edits[0]->text().toStdString() );
 		const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
         MeshLayerMapper const mapper;
-		if (!mapper.layerMapping(*new_mesh, imgPath, nLayers, 0, noDataReplacementValue))
+		if (!mapper.layerMapping(*new_mesh, imgPath, noDataReplacementValue))
 		{
 			delete new_mesh;
 			return;
