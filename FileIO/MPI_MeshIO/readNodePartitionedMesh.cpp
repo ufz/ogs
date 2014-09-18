@@ -311,7 +311,6 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
                 MPI_Recv(s_nodes, _mesh_controls[0], MPI_node, 0, tag[0], comm, &status);
                 setNodes(s_nodes, mesh_nodes);
             }
-
         }
         free(s_nodes);
 
@@ -330,7 +329,6 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
             {
                 MPI_Send(elem_info, size_elem_info, MPI_LONG, i, tag[1], comm);
             }
-
         }
         if(i>0)
         {
@@ -359,7 +357,6 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
             {
                 MPI_Send(elem_info, size_elem_g_info, MPI_LONG, i, tag[2], comm);
             }
-
         }
         if(i>0)
         {
@@ -369,7 +366,6 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
                 setElements(mesh_nodes, elem_info, mesh_elems, ghost_elems, process_ghost);
             }
         }
-
     }
 
     if(s_nodes)
@@ -540,7 +536,6 @@ void readNodePartitionedMesh::setElements(const std::vector<MeshLib::Node*> &mes
         {
             mesh_elems[i] = elem;
         }
-
     }
 }
 
