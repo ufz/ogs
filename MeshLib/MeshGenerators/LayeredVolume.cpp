@@ -14,49 +14,17 @@
 
 #include "LayeredVolume.h"
 
-#include <fstream>
-#include <numeric>
-
 #include "Vector3.h"
 
-#include "FileIO/AsciiRasterInterface.h"
+#include "Raster.h"
 
-#include "GEOObjects.h"
-#include "PointVec.h"
-#include "Mesh.h"
-#include "convertMeshToGeo.h"
-#include "Elements/Element.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 #include "MeshGenerators/MeshLayerMapper.h"
-#include "MeshQuality/MeshValidation.h"
 #include "MeshEditing/ElementExtraction.h"
 
 
-const double LayeredVolume::_invalid_value = -9999;
-
-LayeredVolume::LayeredVolume()
-: _elevation_epsilon(0.0001), _mesh(nullptr)
-{
-}
-
-bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<std::string> &raster_paths, double noDataReplacementValue)
-{
-	if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
-		return false;
-
-	std::vector<GeoLib::Raster const*> rasters;
-	rasters.reserve(raster_paths.size());
-	for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
-		rasters.push_back(FileIO::AsciiRasterInterface::getRasterFromASCFile(*path));
-
-	const bool result = this->createGeoVolumes(mesh, rasters, noDataReplacementValue);
-	std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });
-	return result;
-}
-
-
-bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue)
+bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue)
 {
 	if (mesh.getDimension() != 2)
 		return false;
@@ -73,38 +41,36 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 		mesh_layer = new MeshLib::Mesh(mesh);
 
 	// map each layer and attach to subsurface mesh
-    MeshLayerMapper const mapper;
 	const std::size_t nRasters (rasters.size());
 	for (size_t i=0; i<nRasters; ++i)
 	{
-		const double replacement_value = (i==(nRasters-1)) ? noDataReplacementValue : _invalid_value;
-		if (!mapper.layerMapping(*mesh_layer, *rasters[i], replacement_value))
+		const double replacement_value = (i==(nRasters-1)) ? noDataReplacementValue : rasters[i]->getNoDataValue();
+		if (!MeshLayerMapper::layerMapping(*mesh_layer, *rasters[i], replacement_value))
 		{
 			this->cleanUpOnError();
 			return false;
 		}
-		this->addLayerToMesh(*mesh_layer, i);
+		this->addLayerToMesh(*mesh_layer, i, *rasters[i]);
 	}
 	// close boundaries between layers
 	this->addLayerBoundaries(*mesh_layer, nRasters);
 	this->removeCongruentElements(nRasters, mesh_layer->getNElements());
 	delete mesh_layer;
-	_mesh = new MeshLib::Mesh("BoundaryMesh", _nodes, _elements);
-	MeshLib::MeshValidation::removeUnusedMeshNodes(*_mesh);
 	return true;
 }
 
-void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id)
+void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster)
 {
 	const std::vector<MeshLib::Node*> &layer_nodes (mesh_layer.getNodes());
 	const std::size_t nNodes (layer_nodes.size());
 	const std::size_t node_id_offset (_nodes.size());
 	const std::size_t last_layer_offset (node_id_offset-nNodes);
+    const double no_data_value (raster.getNoDataValue());
 
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
 		if (layer_id > 0 &&
-		   ((*layer_nodes[i])[2] == _invalid_value ||
+		   ((*layer_nodes[i])[2] == no_data_value ||
 		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < _elevation_epsilon))
 			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
 		else
@@ -198,37 +164,4 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 	}
 	auto elem_vec_end = std::remove(_elements.begin(), _elements.end(), nullptr);
 	_elements.erase(elem_vec_end, _elements.end());
-}
-
-bool LayeredVolume::exportToGeometry(GeoLib::GEOObjects &geo_objects) const
-{
-	if (_mesh == nullptr)
-		return false;
-	MeshLib::convertMeshToGeo(*_mesh, geo_objects, std::numeric_limits<double>::min());
-	return true;
-}
-
-double LayeredVolume::calcEpsilon(const GeoLib::Raster &high, const GeoLib::Raster &low)
-{
-	const double max (*std::max_element(high.begin(), high.end()));
-	const double min (*std::min_element( low.begin(),  low.end()));
-	return ((max-min)*1e-07);
-}
-
-bool LayeredVolume::allRastersExist(const std::vector<std::string> &raster_paths) const
-{
-	for (auto raster = raster_paths.begin(); raster != raster_paths.end(); ++raster)
-	{
-		std::ifstream file_stream (*raster, std::ifstream::in);
-		if (!file_stream.good())
-			return false;
-		file_stream.close();
-	}
-	return true;
-}
-
-void LayeredVolume::cleanUpOnError()
-{
-	std::for_each(_nodes.begin(), _nodes.end(), [](MeshLib::Node *node) { delete node; });
-	std::for_each(_elements.begin(), _elements.end(), [](MeshLib::Element *elem) { delete elem; });
 }
