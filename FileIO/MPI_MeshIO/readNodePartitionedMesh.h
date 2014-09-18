@@ -15,9 +15,11 @@
 #define READ_NODE_PARTITIONED_MESH_H
 
 #include <mpi.h>
-#include <string>
 
-#inlcude "NodePartitionedMesh"
+#include <string>
+#include <fstream>
+
+#include "NodePartitionedMesh.h"
 
 namespace MeshLib
 {
@@ -69,7 +71,7 @@ class readNodePartitionedMesh
         int _size;
 
         /// _size converted to string
-        string _size_str;
+        std::string _size_str;
 
         /// Rank of compute core
         int _rank;
@@ -93,6 +95,15 @@ class readNodePartitionedMesh
         MeshLib::NodePartitionedMesh* readASCII(MPI_Comm comm, const std::string &file_name);
 
         /*!
+             \brief Read elements data from ASCII file.
+             \param ins       Input stream.
+             \param elem_info Pointer to array that contains element data, which to be filled.
+             \param ghost     Flag to read ghost elements.
+        */
+        void readElementASCII(std::ifstream &ins, MyInt *elem_info,
+                              const bool ghost = false);
+
+        /*!
              \brief Set mesh nodes from a tempory array containing node data read from file.
              \param node_data  Array containing node data read from file.
              \param mesh_node  Vector of mesh nodes to be set.
@@ -105,15 +116,16 @@ class readNodePartitionedMesh
              \param elem_data         Array containing element data read from file.
              \param mesh_elems        Vector of mesh elements to be set.
              \param mesh_ghost_elems  Local IDs of active element nodes.
+             \param ghost             Flag of processing ghost elements.
         */
         void setElements(const std::vector<MeshLib::Node*> &mesh_nodes, const MyInt *elem_data,
                          std::vector<MeshLib::Element*> &mesh_elems,
-                         std::vector<unsigned*> &mesh_ghost_elems )
+                         std::vector<short*> &mesh_ghost_elems, const bool ghost = false);
 
-        /// Teminate programm due to failed to open the file
-        void quit(const string & file_name);
+        /// Teminate programm due to failed to open the file or mismatch between two requested numbers
+        void quit(const std::string & err_message, const bool for_fileopen = true);
 
-}
+};
 
 } // End of namespace
 

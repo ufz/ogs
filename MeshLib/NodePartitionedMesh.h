@@ -19,12 +19,12 @@
 #include <vector>
 #include <string>
 
-#include "Mesh"
+#include "Mesh.h"
 
 namespace FileIO
 {
 class readNodePartitionedMesh;
-}
+};
 
 namespace MeshLib
 {
@@ -50,8 +50,8 @@ class NodePartitionedMesh : public Mesh
         NodePartitionedMesh(const std::string &name,
                             const std::vector<Node*> &nodes,
                             const std::vector<Element*> &elements,
-                            const unsigned [] nnodes_global,
-                            const unsigned [] nnodes_local)
+                            const unsigned nnodes_global[],
+                            const unsigned nnodes_active[])
             : Mesh(name, nodes, elements, false),
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
         _nnodes_active {nnodes_active[0], nnodes_active[1] }
@@ -130,7 +130,7 @@ class NodePartitionedMesh : public Mesh
         unsigned  _start_id_g_elem;
 
         /// Active node indices of each ghost elements
-        std::vector<short *> _act_nodes_ids_of_ghost_element
+        std::vector<short *> _act_nodes_ids_of_ghost_element;
 
         friend FileIO::readNodePartitionedMesh;
 };

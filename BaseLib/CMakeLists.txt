@@ -2,6 +2,10 @@
 
 GET_SOURCE_FILES(SOURCES)
 
+IF(OGS_USE_PETSC)
+	SET (SOURCES ${SOURCES} WallClockTimer.h PETScWallClockTimer.h)
+ENDIF(OGS_USE_PETSC)
+
 LIST(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
 
 # Create the library
