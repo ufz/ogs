@@ -36,7 +36,7 @@ public:
     ~MeshLayerMapper() {};
 
     /**
-    * Based on a triangle-or quad mesh this method creates a 3D mesh with with a given number of prism- or hex-layers
+    * Based on a 2D triangle-or quad mesh this method creates a 3D mesh with with a given number of prism- or hex-layers
     * \param mesh The triangle/quad mesh that is the basis for the new prism/hex mesh
     * \param nLayers The number of layers of prism/hex elements that will be extruded from the triangle/quad elements of the original mesh
     * \param thickness The thickness of each of these newly added layers
@@ -45,34 +45,34 @@ public:
     */
     MeshLib::Mesh* createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name = "SubsurfaceMesh") const;
 
+   /**
+    * Based on a 2D triangle mesh this method creates a 3D mesh with with a given number of prism-layers.
+    * Note: This method would theoretically also work with quad meshes. However, this is discouraged as quad elements will most likely not
+    * be coplanar after the mapping process and result in invaled elements.
+    * \param mesh The 2D triangle mesh that is the basis for the new 3D prism mesh
+    * \param nLayers The number of layers of prism/hex elements that will be extruded from the triangle/quad elements of the original mesh
+    * \param thickness The thickness of each of these newly added layers
+    * \param mesh_name The name of the newly created mesh
+    * \return A mesh with the requested number of layers of prism/hex elements
+    */
     MeshLib::Mesh* createRasterLayers(MeshLib::Mesh const& mesh, std::vector<std::string> const& raster_paths, std::string const& mesh_name = "SubsurfaceMesh") const;
 
     MeshLib::Mesh* createRasterLayers(MeshLib::Mesh const& mesh, std::vector<GeoLib::Raster const*> const& rasters, std::string const& mesh_name = "SubsurfaceMesh") const;
 
     /**
-    * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-    * Note: This only results in a valid mesh if the layers don't intersect each other.
+    * Maps the elevation of nodes of a given 2D mesh according to the raster specified by the file path.
+    * At locations wher no information is given, node elevation is set to noDataReplacementValue.
     */
-    bool layerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile,
-                      const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue) const;
+    bool layerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile, double noDataReplacementValue) const;
 
     /**
-    * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
-    * Note: This only results in a valid mesh if the layers don't intersect each other.
+    * Maps the elevation of nodes of a given 2D mesh according to the raster. At locations wher no 
+    * information is given, node elevation is set to noDataReplacementValue.
     */
-    bool layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster,
-                      const unsigned nLayers, const unsigned layer_id, double noDataReplacementValue) const;
-
-    /**
-    * Blends a mesh with the surface given by dem_raster. Nodes and elements above the surface are either removed or adapted to fit the surface.
-    * Note: It is unlikely but possible that the new nodes vector contains (very few) nodes that are not part of any element. This problem is
-    * remedied at the end of method upon creating the actual mesh from the new node- and element-vector as the mesh-constructor checks for such
-    * nodes and removes them. This note is just to call this issue to attention in case this methods is changed.
-    */
-    MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster) const;
+    bool layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue) const;
 
 private:
-    /// Adds another layer to the subsurface mesh
+    /// Adds another layer to a subsurface mesh
     void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster, std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elems) const;
 
     /// Checks if all raster files actually exist

@@ -36,9 +36,7 @@ class Element;
 class Node : public GeoLib::PointWithID
 {
 	/* friend functions: */
-	friend bool MeshLayerMapper::layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, const unsigned nLayers,
-		                                      const unsigned layer_id, double noDataReplacementValue) const;
-	friend MeshLib::Mesh* MeshLayerMapper::blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster) const;
+	friend bool MeshLayerMapper::layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue) const;
 	friend MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, bool keep3dMeshIds);
 
 	/* friend classes: */
