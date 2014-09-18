@@ -188,16 +188,19 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		layer_thickness.push_back(thickness);
 	}
 
-    MeshLayerMapper const mapper;
-	MeshLib::Mesh* new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
+    MeshLayerMapper mapper;
+	MeshLib::Mesh* new_mesh (nullptr);
 
 	if (_use_rasters)
 	{
         std::vector<std::string> raster_paths;
 		for (int i=nLayers; i>=0; --i)
             raster_paths.push_back(this->_edits[i]->text().toStdString());
-        new_mesh = mapper.createRasterLayers(*_msh, raster_paths);
+        if (mapper.createLayers(*_msh, raster_paths))
+            new_mesh= mapper.getMesh("SubsurfaceMesh");
 	}
+    else
+        new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
 	return new_mesh;
 }
 
@@ -218,9 +221,9 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		for (int i=nLayers; i>=0; --i)
 			raster_paths[i] = this->_edits[i]->text().toStdString();
 		LayeredVolume lv;
-		lv.createGeoVolumes(*_msh, raster_paths);
+		lv.createLayers(*_msh, raster_paths);
 
-		tg_mesh = lv.getMesh();
+		tg_mesh = lv.getMesh("SubsurfaceMesh");
 
 		QString file_path("");
 		if (tg_mesh)
