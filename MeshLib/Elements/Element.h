@@ -114,7 +114,7 @@ public:
 	 * @param all (default = false)
 	 * @return the number of nodes with respect to the parameter.
 	 */
-	virtual unsigned getNNodes(bool all = false) const = 0;
+	virtual unsigned getNNodes(bool all = true) const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;
