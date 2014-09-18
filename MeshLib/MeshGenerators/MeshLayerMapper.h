@@ -23,6 +23,7 @@ class QImage;
 namespace MeshLib {
     class Mesh;
     class Node;
+    class Element;
 }
 
 /**
@@ -43,6 +44,10 @@ public:
     * \return A mesh with the requested number of layers of prism/hex elements
     */
     MeshLib::Mesh* createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name = "SubsurfaceMesh") const;
+
+    MeshLib::Mesh* createRasterLayers(MeshLib::Mesh const& mesh, std::vector<std::string> const& raster_paths, std::string const& mesh_name = "SubsurfaceMesh") const;
+
+    MeshLib::Mesh* createRasterLayers(MeshLib::Mesh const& mesh, std::vector<GeoLib::Raster const*> const& rasters, std::string const& mesh_name = "SubsurfaceMesh") const;
 
     /**
     * Maps the z-values of nodes in the designated layer of the given mesh according to the given raster.
@@ -67,7 +72,13 @@ public:
     MeshLib::Mesh* blendLayersWithSurface(MeshLib::Mesh &mesh, const unsigned nLayers, const std::string &dem_raster) const;
 
 private:
+    /// Adds another layer to the subsurface mesh
+    void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster, std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elems) const;
 
+    /// Checks if all raster files actually exist
+	bool allRastersExist(const std::vector<std::string> &raster_paths) const;
+
+    static const unsigned _pyramid_base[3][4];
 };
 
 #endif //MESHLAYERMAPPER_H
