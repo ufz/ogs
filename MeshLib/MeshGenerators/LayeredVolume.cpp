@@ -78,7 +78,7 @@ bool LayeredVolume::createGeoVolumes(const MeshLib::Mesh &mesh, const std::vecto
 	for (size_t i=0; i<nRasters; ++i)
 	{
 		const double replacement_value = (i==(nRasters-1)) ? noDataReplacementValue : _invalid_value;
-		if (!mapper.layerMapping(*mesh_layer, *rasters[i], 0, 0, replacement_value))
+		if (!mapper.layerMapping(*mesh_layer, *rasters[i], replacement_value))
 		{
 			this->cleanUpOnError();
 			return false;
