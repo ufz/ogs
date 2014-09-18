@@ -178,30 +178,30 @@ void MeshLayerEditDialog::createMeshToolSelection()
 
 MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 {
-	const unsigned nLayers = _layerEdit->text().toInt();
-	std::vector<float> layer_thickness;
-	for (unsigned i=0; i<nLayers; ++i)
-	{
-		// "100" is just a default size to have any value for extruding 2D elements.
-		// The actual mapping based on a raster file will be performed later.
-		const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
-		layer_thickness.push_back(thickness);
-	}
+    const unsigned nLayers = _layerEdit->text().toInt();
+    std::vector<float> layer_thickness;
+    for (unsigned i=0; i<nLayers; ++i)
+    {
+        // "100" is just a default size to have any value for extruding 2D elements.
+        // The actual mapping based on a raster file will be performed later.
+        const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
+        layer_thickness.push_back(thickness);
+    }
 
     MeshLayerMapper mapper;
-	MeshLib::Mesh* new_mesh (nullptr);
+    MeshLib::Mesh* new_mesh (nullptr);
 
-	if (_use_rasters)
-	{
+    if (_use_rasters)
+    {
         std::vector<std::string> raster_paths;
-		for (int i=nLayers; i>=0; --i)
+        for (int i=nLayers; i>=0; --i)
             raster_paths.push_back(this->_edits[i]->text().toStdString());
         if (mapper.createLayers(*_msh, raster_paths))
             new_mesh= mapper.getMesh("SubsurfaceMesh");
-	}
+    }
     else
         new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
-	return new_mesh;
+    return new_mesh;
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
@@ -238,7 +238,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		std::vector<float> layer_thickness;
 		for (unsigned i=0; i<nLayers; ++i)
 			layer_thickness.push_back(this->_edits[i]->text().toFloat());
-        MeshLayerMapper const mapper;
+		MeshLayerMapper const mapper;
 		tg_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
 		std::vector<MeshLib::Node> tg_attr;
 		FileIO::TetGenInterface tetgen_interface;
@@ -284,7 +284,7 @@ void MeshLayerEditDialog::accept()
 		new_mesh = new MeshLib::Mesh(*_msh);
 		const std::string imgPath ( this->_edits[0]->text().toStdString() );
 		const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
-        MeshLayerMapper const mapper;
+		MeshLayerMapper const mapper;
 		if (!mapper.layerMapping(*new_mesh, imgPath, noDataReplacementValue))
 		{
 			delete new_mesh;

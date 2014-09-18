@@ -72,14 +72,14 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 		unsigned node_offset (nNodes * layer_id);
 		if (layer_id > 0) z_offset += thickness[layer_id-1];
 
-        std::transform(nodes.cbegin(), nodes.cend(), new_nodes.begin() + node_offset,
-            [&z_offset](MeshLib::Node* node){ return new MeshLib::Node((*node)[0], (*node)[1], (*node)[2]-z_offset); });
+		std::transform(nodes.cbegin(), nodes.cend(), new_nodes.begin() + node_offset,
+			[&z_offset](MeshLib::Node* node){ return new MeshLib::Node((*node)[0], (*node)[1], (*node)[2]-z_offset); });
 
 		// starting with 2nd layer create prism or hex elements connecting the last layer with the current one
 		if (layer_id == 0)
-            continue;
+			continue;
 
-        node_offset -= nNodes;
+		node_offset -= nNodes;
 		const unsigned mat_id (nLayers - layer_id);
 
 		for (unsigned i = 0; i < nOrgElems; ++i)
@@ -109,11 +109,11 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<GeoLib::Raster const*> const& rasters, double noDataReplacementValue)
 {
     const std::size_t nLayers(rasters.size());
-	if (nLayers < 1 || mesh.getDimension() != 2)
-	{
-		ERR("MeshLayerMapper::createRasterLayers(): A 2D mesh and at least two rasters required as input.");
-		return nullptr;
-	}
+    if (nLayers < 1 || mesh.getDimension() != 2)
+    {
+        ERR("MeshLayerMapper::createRasterLayers(): A 2D mesh and at least two rasters required as input.");
+        return nullptr;
+    }
 
     MeshLib::Mesh* dem_mesh (new MeshLib::Mesh(mesh));
     if (layerMapping(*dem_mesh, *rasters.back(), 0))
@@ -121,9 +121,9 @@ bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<
         std::size_t const nNodes = mesh.getNNodes();
         _nodes.reserve(nLayers * nNodes);
 
-	    // number of triangles in the original mesh
-	    std::size_t const nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
-			[](MeshLib::Element const* elem) { return (elem->getGeomType() == MeshElemType::TRIANGLE);}));
+        // number of triangles in the original mesh
+        std::size_t const nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
+            [](MeshLib::Element const* elem) { return (elem->getGeomType() == MeshElemType::TRIANGLE);}));
         _elements.reserve(nElems * (nLayers-1));
 
         for (std::size_t i=0; i<nLayers; ++i)
@@ -137,12 +137,12 @@ bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<
 void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer_id, GeoLib::Raster const& raster)
 {
     std::size_t const nNodes = dem_mesh.getNNodes();
-	std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
+    std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
     int const last_layer_node_offset = (layer_id-1) * nNodes;
     unsigned const layer_node_offset = layer_id * nNodes;
     double const no_data_value (raster.getNoDataValue());
 
-	// add nodes for new layer
+    // add nodes for new layer
     for (std::size_t i=0; i<nNodes; ++i)
     {
         // min of dem elevation and layer elevation
@@ -159,7 +159,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
     if (layer_id == 0)
         return;
 
-	std::vector<MeshLib::Element*> const& elems = dem_mesh.getElements();
+    std::vector<MeshLib::Element*> const& elems = dem_mesh.getElements();
     std::size_t const nElems (dem_mesh.getNElements());
 
     for (std::size_t i=0; i<nElems; ++i)
@@ -219,9 +219,9 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, std::string const& r
 bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const& raster, double noDataReplacementValue = 0.0)
 {
 	if (new_mesh.getDimension() != 2)
-    {
-        ERR("MshLayerMapper::layerMapping - requires 2D mesh");
-        return false;
+	{
+		ERR("MshLayerMapper::layerMapping - requires 2D mesh");
+		return false;
 	}
 
 	const double x0(raster.getOrigin()[0]);

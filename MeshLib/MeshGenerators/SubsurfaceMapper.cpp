@@ -33,17 +33,17 @@ SubsurfaceMapper::SubsurfaceMapper()
 
 bool SubsurfaceMapper::createLayers(MeshLib::Mesh const& mesh, std::vector<std::string> const& raster_paths, double noDataReplacementValue)
 {
-	if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
-		return false;
+    if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
+        return false;
 
-	std::vector<GeoLib::Raster const*> rasters;
-	rasters.reserve(raster_paths.size());
-	for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
-		rasters.push_back(FileIO::AsciiRasterInterface::getRasterFromASCFile(*path));
+    std::vector<GeoLib::Raster const*> rasters;
+    rasters.reserve(raster_paths.size());
+    for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
+        rasters.push_back(FileIO::AsciiRasterInterface::getRasterFromASCFile(*path));
 
-	bool result = createRasterLayers(mesh, rasters, noDataReplacementValue);
-	std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });
-    return result;
+    bool result = createRasterLayers(mesh, rasters, noDataReplacementValue);
+    std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });
+    return true;
 }
 
 MeshLib::Mesh* SubsurfaceMapper::getMesh(std::string const& mesh_name) const 
@@ -58,25 +58,25 @@ MeshLib::Mesh* SubsurfaceMapper::getMesh(std::string const& mesh_name) const
 
 double SubsurfaceMapper::calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low)
 {
-	const double max (*std::max_element(high.begin(), high.end()));
-	const double min (*std::min_element( low.begin(),  low.end()));
-	return ((max-min)*1e-07);
+    const double max (*std::max_element(high.begin(), high.end()));
+    const double min (*std::min_element( low.begin(),  low.end()));
+    return ((max-min)*1e-07);
 }
 
 bool SubsurfaceMapper::allRastersExist(std::vector<std::string> const& raster_paths) const
 {
-	for (auto raster = raster_paths.begin(); raster != raster_paths.end(); ++raster)
-	{
-		std::ifstream file_stream (*raster, std::ifstream::in);
-		if (!file_stream.good())
-			return false;
-		file_stream.close();
-	}
-	return true;
+    for (auto raster = raster_paths.begin(); raster != raster_paths.end(); ++raster)
+    {
+        std::ifstream file_stream (*raster, std::ifstream::in);
+        if (!file_stream.good())
+            return false;
+        file_stream.close();
+    }
+    return true;
 }
 
 void SubsurfaceMapper::cleanUpOnError()
 {
-	std::for_each(_nodes.begin(), _nodes.end(), [](MeshLib::Node *node) { delete node; });
-	std::for_each(_elements.begin(), _elements.end(), [](MeshLib::Element *elem) { delete elem; });
+    std::for_each(_nodes.begin(), _nodes.end(), [](MeshLib::Node *node) { delete node; });
+    std::for_each(_elements.begin(), _elements.end(), [](MeshLib::Element *elem) { delete elem; });
 }
