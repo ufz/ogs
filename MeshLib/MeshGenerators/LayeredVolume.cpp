@@ -65,7 +65,7 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 	const std::size_t nNodes (layer_nodes.size());
 	const std::size_t node_id_offset (_nodes.size());
 	const std::size_t last_layer_offset (node_id_offset-nNodes);
-    const double no_data_value (raster.getNoDataValue());
+	const double no_data_value (raster.getNoDataValue());
 
 	for (std::size_t i=0; i<nNodes; ++i)
 	{

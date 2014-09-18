@@ -196,23 +196,25 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     unsigned const nCols (raster.getNCols());
     unsigned const nRows (raster.getNRows());
 
-	// write header
+    // write header
     std::ofstream out(file_name);
-	out << "ncols " << nCols << "\n";
-	out << "nrows " << nRows << "\n";
-	out << "xllcorner " << origin[0] << "\n";
-	out << "yllcorner " << origin[1] << "\n";
-	out << "cellsize " <<  raster.getRasterPixelSize() << "\n";
-	out << "NODATA_value " << raster.getNoDataValue() << "\n";
+    out << "ncols " << nCols << "\n";
+    out << "nrows " << nRows << "\n";
+    out << "xllcorner " << origin[0] << "\n";
+    out << "yllcorner " << origin[1] << "\n";
+    out << "cellsize " <<  raster.getRasterPixelSize() << "\n";
+    out << "NODATA_value " << raster.getNoDataValue() << "\n";
 
-	// write data
+    // write data
     double const*const elevation(raster.begin());
-	for (unsigned row(0); row < nRows; ++row) {
-		for (unsigned col(0); col < nCols; ++col) {
-			out << elevation[(nRows-row-1) * nCols + col] << " ";
-		}
-		out << "\n";
-	}
+    for (unsigned row(0); row < nRows; ++row) 
+    {
+        for (unsigned col(0); col < nCols; ++col)
+        {
+            out << elevation[(nRows-row-1) * nCols + col] << " ";
+        }
+        out << "\n";
+    }
     out.close();
 }
 

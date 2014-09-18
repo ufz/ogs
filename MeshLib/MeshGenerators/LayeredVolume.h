@@ -32,7 +32,7 @@ namespace GeoLib {
 class LayeredVolume : public SubsurfaceMapper
 {
 public:
-    LayeredVolume() {}
+	LayeredVolume() {}
 	~LayeredVolume() {}
 
 	/**
