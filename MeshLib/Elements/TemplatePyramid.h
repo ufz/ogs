@@ -80,7 +80,7 @@ public:
 	unsigned getNNeighbors() const { return 5; };
 
 	/// Get the number of nodes for this element.
-	virtual unsigned getNNodes(bool all = false) const
+	virtual unsigned getNNodes(bool all = true) const
 	{
 		return all ? n_all_nodes : n_base_nodes;
 	}
