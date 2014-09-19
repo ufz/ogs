@@ -1,5 +1,5 @@
 /**
- * \file   SubsurfaceMapper.h
+ * \file   LayeredMeshGenerator.h
  * \author Karsten Rink
  * \date   2014-09-18
  * \brief  Definition of the SubsurfaceMapper class
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef SUBSURFACEMAPPER_H
-#define SUBSURFACEMAPPER_H
+#ifndef LAYEREDMESHGENERATOR_H
+#define LAYEREDMESHGENERATOR_H
 
 #include <string>
 #include <vector>
@@ -31,7 +31,7 @@ namespace MeshLib {
 /**
  * \brief Base class for creation of 3D subsurface meshes based on raster data
  */
-class SubsurfaceMapper
+class LayeredMeshGenerator
 {
 public:
     /**
@@ -56,8 +56,8 @@ public:
     MeshLib::Mesh* getMesh(std::string const& mesh_name) const;
 
 protected:
-    SubsurfaceMapper();
-    ~SubsurfaceMapper() {}
+    LayeredMeshGenerator();
+    ~LayeredMeshGenerator() {}
 
     /// Adds another layer to the subsurface mesh
     virtual void addLayerToMesh(MeshLib::Mesh const& mesh_layer, unsigned layer_id, GeoLib::Raster const& raster) = 0;
@@ -76,4 +76,4 @@ protected:
     std::vector<MeshLib::Element*> _elements;
 };
 
-#endif //SUBSURFACEMAPPER_H
+#endif //LAYEREDMESHGENERATOR_H

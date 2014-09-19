@@ -132,7 +132,7 @@ void GeoMapper::mapData()
 float GeoMapper::getDemElevation(GeoLib::Point const& pnt) const
 {
 	double const elevation (_raster->getValueAtPoint(pnt));
-	if (elevation-_raster->getNoDataValue() < std::numeric_limits<double>::epsilon())
+	if (std::abs(elevation-_raster->getNoDataValue()) < std::numeric_limits<double>::epsilon())
 		return 0.0;
 	return static_cast<float>(elevation);
 }

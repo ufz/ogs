@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "Node.h"
-#include "SubsurfaceMapper.h"
+#include "LayeredMeshGenerator.h"
 
 namespace GeoLib {
 	class GEOObjects;
@@ -29,7 +29,7 @@ namespace GeoLib {
 /**
  * \brief Creates a volume geometry from 2D mesh layers based on raster data.
  */
-class LayeredVolume : public SubsurfaceMapper
+class LayeredVolume : public LayeredMeshGenerator
 {
 public:
 	LayeredVolume() {}
