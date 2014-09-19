@@ -35,6 +35,7 @@ Mesh::Mesh(const std::string &name,
            const std::vector<Element*> &elements)
 	: _id(_counter_value), _mesh_dimension(0),
 	_edge_length{std::numeric_limits<double>::max(), 0},
+	_node_distance{std::numeric_limits<double>::max(), 0},
 	_name(name), _nodes(nodes), _elements(elements)
 {
 	this->resetNodeIDs();
@@ -46,11 +47,13 @@ Mesh::Mesh(const std::string &name,
 	this->setElementNeighbors();
 
 	this->calcEdgeLengthRange();
+	this->calcNodeDistanceRange();
 }
 
 Mesh::Mesh(const Mesh &mesh)
 	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
 	_edge_length{mesh._edge_length[0], mesh._edge_length[1]},
+	_node_distance{mesh._node_distance[0], mesh._node_distance[1]},
 	_name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
@@ -156,6 +159,23 @@ void Mesh::calcEdgeLengthRange()
 	}
 	this->_edge_length[0] = sqrt(this->_edge_length[0]);
 	this->_edge_length[1] = sqrt(this->_edge_length[1]);
+}
+
+void Mesh::calcNodeDistanceRange()
+{
+	this->_node_distance[0] = std::numeric_limits<double>::max();
+	this->_node_distance[1] = 0;
+	double min_length(0);
+	double max_length(0);
+	const std::size_t nElems (this->getNElements());
+	for (std::size_t i=0; i<nElems; ++i)
+	{
+		_elements[i]->computeSqrNodeDistanceRange(min_length, max_length);
+		this->_node_distance[0] = std::min(this->_node_distance[0], min_length);
+		this->_node_distance[1] = std::max(this->_node_distance[1], max_length);
+	}
+	this->_node_distance[0] = sqrt(this->_edge_length[0]);
+	this->_node_distance[1] = sqrt(this->_edge_length[1]);
 }
 
 void Mesh::setElementNeighbors()

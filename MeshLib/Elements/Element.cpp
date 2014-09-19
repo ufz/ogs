@@ -116,6 +116,21 @@ void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 	}
 }
 
+void Element::computeSqrNodeDistanceRange(double &min, double &max) const
+{
+	min = std::numeric_limits<double>::max();
+	max = 0;
+	for (unsigned i=0; i<getNNodes(true); i++)
+	{
+		for (unsigned j=i+1; j<getNNodes(true); j++)
+		{
+			const double dist (MathLib::sqrDist(*getNode(i), *getNode(j)));
+			min = std::min(dist, min);
+			max = std::max(dist, max);
+		}
+	}
+}
+
 const Element* Element::getNeighbor(unsigned i) const
 {
 	if (i < getNNeighbors())
