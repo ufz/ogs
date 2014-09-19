@@ -31,7 +31,29 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
 		_search_length(0.0)
 {
 	DBUG("Constructing MeshNodeSearcher obj.");
-	_search_length = search_length_algorithm.getSearchLength();
+	//_search_length = search_length_algorithm.getSearchLength();
+
+	double sum (0.0);
+	double sum_of_sqr (0.0);
+	const std::size_t ele_cnt(_mesh.getNElements());
+
+	double min=0, max=0;
+	for (const MeshLib::Element* e : _mesh.getElements()) {
+		e->computeSqrNodeDistanceRange(min, max);
+		sum += std::sqrt(min);
+		sum_of_sqr += min;
+	}
+
+	const double mu (sum/ele_cnt);
+	const double s (sqrt(1.0/(ele_cnt-1) * (sum_of_sqr - (sum*sum)/ele_cnt) ));
+	// heuristic to prevent negative search lengths
+	// in the case of a big standard deviation s
+	double c(2.0);
+	while (mu < c * s) {
+		c *= 0.9;
+	}
+
+	_search_length = (mu - c * s)/2;
 
 	DBUG("Calculated search length for mesh \"%s\" is %e.",
 		_mesh.getName().c_str(), _search_length);
