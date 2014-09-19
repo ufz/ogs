@@ -88,7 +88,7 @@ IF (WIN32)
 			-DNOMINMAX # This fixes compile errors with std::numeric_limits<T>::min() / max()
 		)
 		# Sets warning level 3 and ignores some warnings
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267 /wd4996")
 		SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /ZI /Od /Ob0")
 
 		DisableCompilerFlag(DEBUG /RTC1)
