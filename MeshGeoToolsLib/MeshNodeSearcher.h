@@ -30,6 +30,7 @@ namespace MeshGeoToolsLib
 {
 class MeshNodesAlongPolyline;
 class MeshNodesAlongSurface;
+class SearchLength;
 }
 
 namespace MeshGeoToolsLib
@@ -48,7 +49,8 @@ public:
 	 * @param mesh The mesh within the search will be performed. It is asumed
 	 * that the mesh does not change its geometry.
 	 */
-	explicit MeshNodeSearcher(MeshLib::Mesh const& mesh);
+	explicit MeshNodeSearcher(MeshLib::Mesh const& mesh,
+		MeshGeoToolsLib::SearchLength const& search_length_algorithm);
 	virtual ~MeshNodeSearcher();
 
 	/**
