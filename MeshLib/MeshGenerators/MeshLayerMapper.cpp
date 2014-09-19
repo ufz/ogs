@@ -139,7 +139,6 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
     std::size_t const nNodes = dem_mesh.getNNodes();
     std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
     int const last_layer_node_offset = (layer_id-1) * nNodes;
-    unsigned const layer_node_offset = layer_id * nNodes;
     double const no_data_value (raster.getNoDataValue());
 
     // add nodes for new layer
@@ -228,14 +227,11 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 	const double y0(raster.getOrigin()[1]);
 	const double delta(raster.getRasterPixelSize());
 	const double no_data(raster.getNoDataValue());
-	double const*const elevation(raster.begin());
 
 	const std::pair<double, double> xDim(x0, x0 + raster.getNCols() * delta); // extension in x-dimension
 	const std::pair<double, double> yDim(y0, y0 + raster.getNRows() * delta); // extension in y-dimension
 
 	const size_t nNodes (new_mesh.getNNodes());
-    
-	const double half_delta = 0.5*delta;
 	const std::vector<MeshLib::Node*> &nodes = new_mesh.getNodes();
 	for (unsigned i = 0; i < nNodes; ++i)
 	{

@@ -15,19 +15,19 @@
 #ifndef MESHLAYERMAPPER_H
 #define MESHLAYERMAPPER_H
 
-#include "SubsurfaceMapper.h"
+#include "LayeredMeshGenerator.h"
 
 /**
  * \brief Manipulating and adding prism element layers to an existing 2D mesh
  */
-class MeshLayerMapper : public SubsurfaceMapper
+class MeshLayerMapper : public LayeredMeshGenerator
 {
 public:
     MeshLayerMapper() {}
     ~MeshLayerMapper() {}
 
     /**
-    * Based on a 2D triangle-or quad mesh this method creates a 3D mesh with with a given number of prism- or hex-layers
+    * Based on a 2D triangle-or quad mesh this method creates a 3D mesh with a given number of prism- or hex-layers
     * \param mesh The triangle/quad mesh that is the basis for the new prism/hex mesh
     * \param nLayers The number of layers of prism/hex elements that will be extruded from the triangle/quad elements of the original mesh
     * \param thickness The thickness of each of these newly added layers
@@ -37,7 +37,7 @@ public:
     MeshLib::Mesh* createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name = "SubsurfaceMesh") const;
 
    /**
-    * Based on a 2D triangle mesh this method creates a 3D mesh with with a given number of prism-layers.
+    * Based on a 2D triangle mesh this method creates a 3D mesh with a given number of prism-layers.
     * Note: While this method would technically also work with quad meshes, this is discouraged as quad elements will most likely not
     * be coplanar after the mapping process which result in invaled mesh elements.
     * \param mesh The 2D triangle mesh that is the basis for the new 3D prism mesh

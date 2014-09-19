@@ -13,6 +13,8 @@
 
 #include "AsciiRasterInterface.h"
 
+#include <cctype>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -27,7 +29,7 @@ namespace FileIO {
 GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
 {
 	std::string ext (BaseLib::getFileExtension(fname));
-	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	std::transform(ext.begin(), ext.end(), ext.begin(), std::tolower);
 	if (ext.compare("asc") == 0)
 		return getRasterFromASCFile(fname);
 	if (ext.compare("grd") == 0)
@@ -41,7 +43,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 
 	if (!in.is_open()) {
 		WARN("Raster::getRasterFromASCFile(): Could not open file %s.", fname.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	// header information
@@ -52,7 +54,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 		double* values = new double[n_cols*n_rows];
 		std::string s;
 		// read the data into the double-array
-		for (size_t j(0); j < n_rows; ++j) {
+		for (std::size_t j(0); j < n_rows; ++j) {
 			const size_t idx ((n_rows - j - 1) * n_cols);
 			for (size_t i(0); i < n_cols; ++i) {
 				in >> s;
@@ -67,7 +69,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 		return raster;
 	} else {
 		WARN("Raster::getRasterFromASCFile(): Could not read header of file %s", fname.c_str());
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -121,7 +123,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 
 	if (!in.is_open()) {
 		ERR("Raster::getRasterFromSurferFile() - Could not open file %s", fname.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	// header information
@@ -151,7 +153,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 		return raster;
 	} else {
 		ERR("Raster::getRasterFromASCFile() - could not read header of file %s", fname.c_str());
-		return NULL;
+		return nullptr;
 	}
 }
 

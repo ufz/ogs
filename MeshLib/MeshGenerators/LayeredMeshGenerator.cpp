@@ -1,5 +1,5 @@
 /**
- * \file   SubsurfaceMapper.cpp
+ * \file   LayeredMeshGenerator.cpp
  * \author Karsten Rink
  * \date   2014-09-18
  * \brief  Implementation of the SubsurfaceMapper class.
@@ -12,7 +12,7 @@
  *
  */
 
-#include "SubsurfaceMapper.h"
+#include "LayeredMeshGenerator.h"
 
 #include <vector>
 #include <fstream>
@@ -26,12 +26,12 @@
 #include "Elements/Element.h"
 #include "MeshQuality/MeshValidation.h"
 
-SubsurfaceMapper::SubsurfaceMapper()
+LayeredMeshGenerator::LayeredMeshGenerator()
 : _elevation_epsilon(0.0001)
 {
 }
 
-bool SubsurfaceMapper::createLayers(MeshLib::Mesh const& mesh, std::vector<std::string> const& raster_paths, double noDataReplacementValue)
+bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh, std::vector<std::string> const& raster_paths, double noDataReplacementValue)
 {
     if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
         return false;
@@ -43,10 +43,10 @@ bool SubsurfaceMapper::createLayers(MeshLib::Mesh const& mesh, std::vector<std::
 
     bool result = createRasterLayers(mesh, rasters, noDataReplacementValue);
     std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });
-    return true;
+    return result;
 }
 
-MeshLib::Mesh* SubsurfaceMapper::getMesh(std::string const& mesh_name) const 
+MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const 
 {
     if (_nodes.empty() || _elements.empty())
         return nullptr;
@@ -56,14 +56,14 @@ MeshLib::Mesh* SubsurfaceMapper::getMesh(std::string const& mesh_name) const
     return result;
 }
 
-double SubsurfaceMapper::calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low)
+double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low)
 {
     const double max (*std::max_element(high.begin(), high.end()));
     const double min (*std::min_element( low.begin(),  low.end()));
     return ((max-min)*1e-07);
 }
 
-bool SubsurfaceMapper::allRastersExist(std::vector<std::string> const& raster_paths) const
+bool LayeredMeshGenerator::allRastersExist(std::vector<std::string> const& raster_paths) const
 {
     for (auto raster = raster_paths.begin(); raster != raster_paths.end(); ++raster)
     {
@@ -75,7 +75,7 @@ bool SubsurfaceMapper::allRastersExist(std::vector<std::string> const& raster_pa
     return true;
 }
 
-void SubsurfaceMapper::cleanUpOnError()
+void LayeredMeshGenerator::cleanUpOnError()
 {
     std::for_each(_nodes.begin(), _nodes.end(), [](MeshLib::Node *node) { delete node; });
     std::for_each(_elements.begin(), _elements.end(), [](MeshLib::Element *elem) { delete elem; });
