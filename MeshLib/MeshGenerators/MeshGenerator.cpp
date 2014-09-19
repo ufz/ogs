@@ -143,12 +143,12 @@ Mesh* MeshGenerator::generateRegularQuad8Mesh(const unsigned n_x_cells,
 	{
 		if (i%2==0) {
 			const double x_offset (origin[0] + cell_size * 0.5);
-			const double y_offset (origin[1] + cell_size * i/2);
+			const double y_offset (origin[1] + cell_size * (i/2));
 			for (std::size_t j = 0; j < n_x_l_nodes-1; j++)
 				nodes.push_back (new Node(x_offset + cell_size * j, y_offset, origin[2]));
 		} else {
 			const double x_offset (origin[0]);
-			const double y_offset (origin[1] + cell_size * 0.5 + cell_size * i/2);
+			const double y_offset (origin[1] + cell_size * 0.5 + cell_size * (i/2));
 			for (std::size_t j = 0; j < n_x_l_nodes; j++)
 				nodes.push_back (new Node(x_offset + cell_size * j, y_offset, origin[2]));
 		}
