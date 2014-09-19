@@ -53,7 +53,8 @@ enum class CellType
 	PRISM6,
 	PRISM15,
 	PRISM18,
-	PYRAMID5
+	PYRAMID5,
+	PYRAMID13
 };
 
 /**

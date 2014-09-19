@@ -19,6 +19,7 @@
 
 namespace MeshLib {
 typedef TemplateHex<8, CellType::HEX8> Hex;
+typedef TemplateHex<20, CellType::HEX20> Hex20;
 }
 
 #endif /* HEX_H_ */
