@@ -33,7 +33,9 @@ namespace MeshLib
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
            const std::vector<Element*> &elements)
-	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
+	: _id(_counter_value), _mesh_dimension(0),
+	_edge_length{std::numeric_limits<double>::max(), 0},
+	_name(name), _nodes(nodes), _elements(elements)
 {
 	this->resetNodeIDs();
 	this->resetElementIDs();
@@ -43,14 +45,13 @@ Mesh::Mesh(const std::string &name,
 	//this->setNodesConnectedByElements();
 	this->setElementNeighbors();
 
-	_edge_length[0] =  std::numeric_limits<double>::max();
-	_edge_length[1] = -std::numeric_limits<double>::max();
 	this->calcEdgeLengthRange();
 }
 
 Mesh::Mesh(const Mesh &mesh)
 	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
-	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	_edge_length{mesh._edge_length[0], mesh._edge_length[1]},
+	_name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
@@ -68,8 +69,6 @@ Mesh::Mesh(const Mesh &mesh)
 	}
 
 	if (_mesh_dimension==0) this->setDimension();
-	this->_edge_length[0] = mesh.getMinEdgeLength();
-	this->_edge_length[1] = mesh.getMaxEdgeLength();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
@@ -144,6 +143,8 @@ void Mesh::resetElementsConnectedToNodes()
 
 void Mesh::calcEdgeLengthRange()
 {
+	this->_edge_length[0] = std::numeric_limits<double>::max();
+	this->_edge_length[1] = 0;
 	double min_length(0);
 	double max_length(0);
 	const std::size_t nElems (this->getNElements());
