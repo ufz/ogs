@@ -621,7 +621,7 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 
 	// get position where number of facets need to be written and figure out worst case of chars that are needed
 	const std::streamoff before_elems_pos (out.tellp());
-	const unsigned n_spaces (static_cast<unsigned>(floor(log(nElements*8))) + 1);
+	const unsigned n_spaces (static_cast<unsigned>(std::floor(log(nElements*8))) + 1);
 	out << std::string(n_spaces, ' ') << "\n";
 
 	unsigned element_count(0);

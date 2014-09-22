@@ -73,8 +73,8 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	Point const& ll (sfc.getAABB().getMinPoint());
 	Point const& ur (sfc.getAABB().getMaxPoint());
 
-	const std::size_t n_cols = static_cast<size_t>(fabs(ur[0]-ll[0]) / cell_size)+1;
-	const std::size_t n_rows = static_cast<size_t>(fabs(ur[1]-ll[1]) / cell_size)+1;
+	const std::size_t n_cols = static_cast<size_t>(std::fabs(ur[0]-ll[0]) / cell_size)+1;
+	const std::size_t n_rows = static_cast<size_t>(std::fabs(ur[1]-ll[1]) / cell_size)+1;
 	const size_t n_triangles (sfc.getNTriangles());
 	double *z_vals (new double[n_cols*n_rows]);
 	size_t k(0);
@@ -106,8 +106,8 @@ double Raster::getValueAtPoint(const GeoLib::Point &pnt) const
 	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
 		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
 	{
-		int cell_x = static_cast<int>(floor((pnt[0] - _ll_pnt[0])/_cell_size));
-		int cell_y = static_cast<int>(floor((pnt[1] - _ll_pnt[1])/_cell_size));
+		int cell_x = static_cast<int>(std::floor((pnt[0] - _ll_pnt[0])/_cell_size));
+		int cell_y = static_cast<int>(std::floor((pnt[1] - _ll_pnt[1])/_cell_size));
 
 		// use raster boundary values if node is outside raster due to rounding errors or floating point arithmetic
 		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ? (_n_cols-1) : cell_x);
@@ -125,13 +125,13 @@ double Raster::interpolateValueAtPoint(GeoLib::Point const& pnt) const
     double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
     double const yPos ((pnt[1] - _ll_pnt[1]) / _cell_size);
     // raster cell index
-    std::size_t const xIdx (static_cast<size_t>(floor(xPos)));
-    std::size_t const yIdx (static_cast<size_t>(floor(yPos)));
+    std::size_t const xIdx (static_cast<size_t>(std::floor(xPos)));
+    std::size_t const yIdx (static_cast<size_t>(std::floor(yPos)));
 
     // weights for bilinear interpolation
     double const half_delta = 0.5*_cell_size;
-    double const xShift = fabs(xPos-(xIdx+half_delta)) / _cell_size;
-    double const yShift = fabs(yPos-(yIdx+half_delta)) / _cell_size;
+    double const xShift = std::fabs(xPos-(xIdx+half_delta)) / _cell_size;
+    double const yShift = std::fabs(yPos-(yIdx+half_delta)) / _cell_size;
     std::array<double,4> weight = {{ (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
 
     // neightbors to include in interpolation
@@ -146,7 +146,7 @@ double Raster::interpolateValueAtPoint(GeoLib::Point const& pnt) const
     for (unsigned j=0; j<4; ++j)
     {
         pix_val[j] = _raster_data[(yIdx + y_nb[j])*_n_cols + (xIdx + x_nb[j])];
-        if (fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
+        if (std::fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
         {
             weight[j] = 0;
             no_data_count++;
