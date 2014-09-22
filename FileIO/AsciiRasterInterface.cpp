@@ -13,8 +13,6 @@
 
 #include "AsciiRasterInterface.h"
 
-#include <cctype>
-
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -29,7 +27,7 @@ namespace FileIO {
 GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
 {
 	std::string ext (BaseLib::getFileExtension(fname));
-	std::transform(ext.begin(), ext.end(), ext.begin(), std::tolower);
+	std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
 	if (ext.compare("asc") == 0)
 		return getRasterFromASCFile(fname);
 	if (ext.compare("grd") == 0)

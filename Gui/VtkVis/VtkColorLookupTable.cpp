@@ -70,7 +70,7 @@ void VtkColorLookupTable::Build()
 		for (std::map<double, unsigned char*>::const_iterator it = _dict.begin(); it != _dict.end(); ++it)
 		{
 			double val = (it->first < range[0]) ? range[0] : ((it->first > range[1]) ? range[1] : it->first);
-			nextIndex = static_cast<size_t>( floor(val-range[0]) );
+			nextIndex = static_cast<size_t>( std::floor(val-range[0]) );
 
 			this->SetTableValue(nextIndex, it->second);
 
@@ -181,7 +181,7 @@ void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
 				? static_cast<vtkIdType>(this->TableRange[0])
 				: (indx >=this->TableRange[1] ? static_cast<vtkIdType>(this->TableRange[1]) - 1 : indx));
 	indx =
-	        static_cast<size_t>( floor( (indx - this->TableRange[0]) *
+	        static_cast<size_t>( std::floor( (indx - this->TableRange[0]) *
 	                                    (this->NumberOfColors / (this->TableRange[1] - this->TableRange[0])) ) );
 
 	unsigned char* _rgba;
