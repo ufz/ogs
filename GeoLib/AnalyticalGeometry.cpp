@@ -242,6 +242,31 @@ bool isPointInTriangle(GeoLib::Point const& q,
 	return false;
 }
 
+bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
+                          GeoLib::Point const& c, GeoLib::Point const& d)
+{
+    double const d0 (orient3d(a,b,c,d));
+    // if tetrahedron is not coplanar
+    if (d0 != 0)
+    {
+        bool const d0_sign (d0>0);
+        // if p is on the same side of bcd as a
+        if (d0_sign != (orient3d(d, p, b, c)>0))
+            return false;
+        // if p is on the same side of acd as b
+        if (d0_sign != (orient3d(d, a, p, c)>0))
+            return false;
+        // if p is on the same side of abd as c
+        if (d0_sign != (orient3d(d, a, b, p)>0))
+            return false;
+        // if p is on the same side of abc as d
+        if (d0_sign != (orient3d(p, a, b, c)>0))
+            return false;
+        return true;
+    }
+    return false;
+}
+
 double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
 {
 	MathLib::Vector3 const u(a,c);
@@ -403,6 +428,15 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
 {
 	MathLib::Vector3 const cross(MathLib::crossProduct(u, v));
 	return MathLib::scalarProduct(cross,w);
+}
+
+double orient3d(GeoLib::Point const& p,
+                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
+{
+    MathLib::Vector3 const ap (a, p);
+    MathLib::Vector3 const bp (b, p);
+    MathLib::Vector3 const cp (c, p);
+    return scalarTriple(bp,cp,ap);
 }
 
 bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)

@@ -130,6 +130,18 @@ bool isPointInTriangle(GeoLib::Point const& p,
 				double eps = std::numeric_limits<float>::epsilon());
 
 /**
+ * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
+ * @param p test point
+ * @param a edge node of tetrahedron
+ * @param b edge node of tetrahedron
+ * @param c edge node of tetrahedron
+ * @param c edge node of tetrahedron
+ * @return true if the test point p is not located outside of abcd (i.e. inside or on a plane/edge).
+ */
+bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
+                          GeoLib::Point const& c, GeoLib::Point const& d);
+
+/**
  * test for intersections of the line segments of the Polyline
  * @param ply the polyline
  * @param idx0 beginning index of the first line segment that has an intersection
@@ -173,7 +185,19 @@ GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point co
 /// Calculates the scalar triple (u x v) . w
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
 
-/** 
+/**
+ * Checks if a point p is on the left or right side of a plane spanned by three points a, b, c.
+ * @param p point to test
+ * @param a first point on plane
+ * @param b second point on plane
+ * @param c third point on plane
+ * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a value < 0,
+ * otherwise it will return > 0. If p is coplanar with abc, the function will return 0.
+ */
+double orient3d(GeoLib::Point const& p,
+                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
+
+/**
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
  * (In 2D space this checks if c and d are on different sides of a line through a and b.)
  * @param a first point on plane
