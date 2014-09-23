@@ -16,6 +16,8 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshGeoToolsLib/FixedSearchLength.h"
+#include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
@@ -32,7 +34,9 @@ public:
 	NumLibDistributionQuad() :
 		_geometric_size(10.0), _number_of_subdivisions_per_direction(10),
 		_msh(MeshLib::MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction)),
-		_project_name("test"), _mshNodesSearcher(*_msh), _ply0(nullptr)
+		_project_name("test"),
+		_mshNodesSearcher(*_msh,MeshGeoToolsLib::FixedSearchLength(*_msh)),
+		_ply0(nullptr)
 	{
 		// create geometry
 		std::vector<GeoLib::Point*>* pnts (new std::vector<GeoLib::Point*>);
@@ -81,7 +85,9 @@ public:
 	NumLibDistributionHex() :
 		_geometric_size(10.0), _number_of_subdivisions_per_direction(10),
 		_msh(MeshLib::MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction)),
-		_project_name("test"), _mshNodesSearcher(*_msh), _ply0(nullptr)
+		_project_name("test"),
+		_mshNodesSearcher(*_msh,MeshGeoToolsLib::FixedSearchLength(*_msh)),
+		_ply0(nullptr)
 	{
 		// create geometry
 		std::vector<GeoLib::Point*>* pnts (new std::vector<GeoLib::Point*>);
