@@ -35,10 +35,10 @@ class LayeredMeshGenerator
 {
 public:
     /**
-     * Returns a subsurface representation of a region represented by a 2D by reading raster files and calling the appropriate construction method.
+     * Returns a subsurface representation of a region represented by a 2D  mesh by reading raster files and calling the appropriate construction method.
      * @param mesh                    The 2D surface mesh that is used as a basis for the subsurface mesh
      * @param raster_paths            Containing all the raster-file-names for the subsurface layers from bottom to top (starting with the bottom of the oldest layer and ending with the DEM)
-     * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0]) 
+     * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
      * @result true if the subsurface representation has been created, false if there was an error
      */
     virtual bool createLayers(MeshLib::Mesh const& mesh, std::vector<std::string> const& raster_paths, double noDataReplacementValue = 0.0) final;
@@ -47,7 +47,7 @@ public:
      * Constructs a subsurface representation based on a 2D mesh and a number of rasters representing subsurface layer boundaries.
      * @param mesh                    The 2D surface mesh that is used as a basis for the subsurface mesh
      * @param rasters                 Containing all the raster-data for the subsurface layers from bottom to top (starting with the bottom of the oldest layer and ending with the DEM)
-     * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0]) 
+     * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
      * @result true if the subsurface representation has been created, false if there was an error
      */
     virtual bool createRasterLayers(MeshLib::Mesh const& mesh, std::vector<GeoLib::Raster const*> const& rasters, double noDataReplacementValue) = 0;
