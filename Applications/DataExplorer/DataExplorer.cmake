@@ -78,7 +78,7 @@ TARGET_LINK_LIBRARIES( ogs-gui
 	#MSHGEOTOOLS
 	QtBase
 	QtDataView
-	StratView
+	QtStratView
 	VtkVis
 	VtkAct
 	${Boost_LIBRARIES}

@@ -47,7 +47,7 @@ source_group("Moc Files" REGULAR_EXPRESSION moc_*)
 
 # Create the library
 #add_executable( StratView
-add_library( StratView STATIC
+add_library( QtStratView STATIC
 	${SOURCES}
 	${HEADERS}
 	${MOC_HEADERS}
@@ -56,11 +56,11 @@ add_library( StratView STATIC
 )
 
 # Link Qt library
-target_link_libraries( StratView
+target_link_libraries( QtStratView
 	${QT_LIBRARIES}
 	BaseLib
 	GeoLib
 	MathLib
 )
 
-set_property(TARGET StratView PROPERTY FOLDER "DataExplorer")
+set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")

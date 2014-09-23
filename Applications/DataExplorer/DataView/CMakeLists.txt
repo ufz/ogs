@@ -179,8 +179,8 @@ target_link_libraries( QtDataView
 	GeoLib
 	MeshLib
 	QtBase
-	DiagramView
-	StratView
+	QtDiagramView
+	QtStratView
 	shp
 )
 

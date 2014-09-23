@@ -55,8 +55,7 @@ INCLUDE_DIRECTORIES(
 SOURCE_GROUP("Moc Files" REGULAR_EXPRESSION moc_*)
 
 # Create the library
-#add_executable( DiagramView
-ADD_LIBRARY( DiagramView STATIC
+ADD_LIBRARY( QtDiagramView STATIC
 	${SOURCES}
 	${HEADERS}
 	${MOC_HEADERS}
@@ -65,9 +64,9 @@ ADD_LIBRARY( DiagramView STATIC
 )
 
 # Link Qt library
-TARGET_LINK_LIBRARIES( DiagramView
+TARGET_LINK_LIBRARIES( QtDiagramView
 	${QT_LIBRARIES}
 	GeoLib
 )
 
-SET_PROPERTY(TARGET DiagramView PROPERTY FOLDER "DataExplorer")
+SET_PROPERTY(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")
