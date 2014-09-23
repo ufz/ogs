@@ -245,22 +245,22 @@ bool isPointInTriangle(GeoLib::Point const& q,
 bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
                           GeoLib::Point const& c, GeoLib::Point const& d)
 {
-    double const d0 (orient3d(a,b,c,d));
+    double const d0 (orient3d(d,a,b,c));
     // if tetrahedron is not coplanar
     if (d0 != 0)
     {
         bool const d0_sign (d0>0);
         // if p is on the same side of bcd as a
-        if (d0_sign != (orient3d(d, p, b, c)>0))
+        if (d0_sign != (orient3d(d, p, b, c)>=0))
             return false;
         // if p is on the same side of acd as b
-        if (d0_sign != (orient3d(d, a, p, c)>0))
+        if (d0_sign != (orient3d(d, a, p, c)>=0))
             return false;
         // if p is on the same side of abd as c
-        if (d0_sign != (orient3d(d, a, b, p)>0))
+        if (d0_sign != (orient3d(d, a, b, p)>=0))
             return false;
         // if p is on the same side of abc as d
-        if (d0_sign != (orient3d(p, a, b, c)>0))
+        if (d0_sign != (orient3d(p, a, b, c)>=0))
             return false;
         return true;
     }
