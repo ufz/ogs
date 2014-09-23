@@ -10,7 +10,7 @@ cache:
 env:
   - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
   - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
-  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=/home/travis/build/ufz/ogs/VTK-Install/lib/cmake/vtk-6.1/"
+  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=`pwd`/VTK-Install/lib/cmake/vtk-6.1/"
 
 before_install:
   # -- External package sources --
@@ -45,6 +45,7 @@ before_install:
   - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install libpetsc3.4.2 libpetsc3.4.2-dev; fi
 
 script:
+  - echo $CMAKE_ARGS
   - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
   - ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3
   # PetSc
