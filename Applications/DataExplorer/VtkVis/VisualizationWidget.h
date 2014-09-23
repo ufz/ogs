@@ -21,9 +21,6 @@
 class vtkRenderer;
 class VtkCustomInteractorStyle;
 class VtkPickCallback;
-#ifdef OGS_USE_VRPN
-class vtkEventQtSlotConnect;
-#endif // OGS_USE_VRPN
 
 /**
  * \brief Widget containing the 3d VTK scene view.
@@ -110,9 +107,6 @@ private:
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
 	bool _isShowAllOnLoad;
-#ifdef OGS_USE_VRPN
-	vtkEventQtSlotConnect* _qtConnect;
-#endif     // OGS_USE_VRPN
 };
 
 #endif // VISUALIZATIONWIDGET_H

@@ -18,7 +18,7 @@
 #include "ui_MeshElementRemoval.h"
 #include <QDialog>
 
-#include "Applications/ProjectData.h"
+#include "Applications/ApplicationsLib/ProjectData.h"
 
 class Node;
 
@@ -32,7 +32,7 @@ class MeshElementRemovalDialog : public QDialog, private Ui_MeshElementRemoval
 public:
 	MeshElementRemovalDialog(const ProjectData &project, QDialog* parent = 0);
 	~MeshElementRemovalDialog(void);
-	
+
 private slots:
 	void on_boundingBoxCheckBox_toggled(bool is_checked);
 	void on_elementTypeCheckBox_toggled(bool is_checked);
@@ -44,7 +44,7 @@ private slots:
 private:
 	const ProjectData& _project;
 	unsigned _currentIndex, _aabbIndex, _matIDIndex;
-	
+
 signals:
 	void meshAdded(MeshLib::Mesh* mesh);
 };

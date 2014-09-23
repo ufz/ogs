@@ -23,7 +23,7 @@
 #include "GEOObjects.h"
 #include "SurfaceVec.h"
 
-#include "Applications/ProjectData.h"
+#include "Applications/ApplicationsLib/ProjectData.h"
 
 // FileIO
 #include "XmlIO/Qt/XmlGmlInterface.h"

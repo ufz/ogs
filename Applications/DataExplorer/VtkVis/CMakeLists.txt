@@ -35,7 +35,6 @@ SET( SOURCES
 	VtkStationSource.cpp
 	VtkSurfacesSource.cpp
 	VtkTextureOnSurfaceFilter.cpp
-	VtkTrackedCamera.cpp
 	VtkVisHelper.cpp
 	VtkVisImageItem.cpp
 	VtkVisPipeline.cpp
@@ -57,7 +56,6 @@ SET( MOC_HEADERS
 	VtkAlgorithmPropertyLineEdit.h
 	VtkAlgorithmPropertyCheckbox.h
 	VtkAlgorithmPropertyVectorEdit.h
-	VtkTrackedCamera.h
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
@@ -125,18 +123,21 @@ QT4_WRAP_UI( UI_HEADERS ${UIS} )
 # Run Qts meta object compiler moc on header files
 QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
 
+SET(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+SET(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
 INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/../VtkAct
+	${SOURCE_DIR_REL}/BaseLib
+	${SOURCE_DIR_REL}/GeoLib
+	${SOURCE_DIR_REL}/MathLib
+	${SOURCE_DIR_REL}/FileIO
+	${SOURCE_DIR_REL}/MeshLib
+	${GUI_SOURCE_DIR_REL}/VtkAct
+	${GUI_SOURCE_DIR_REL}/Base
+	${GUI_SOURCE_DIR_REL}/DataView
+
 	${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/../../BaseLib
 	${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../../GeoLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../../MathLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FileIO
-	${CMAKE_CURRENT_SOURCE_DIR}/../../MeshLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../Base
-	${CMAKE_CURRENT_SOURCE_DIR}/../DataView
 	${CMAKE_CURRENT_BINARY_DIR}/../DataView
 )
 
@@ -161,10 +162,6 @@ ENDIF () # GEOTIFF_FOUND
 TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} )
 
 ADD_DEPENDENCIES(VtkVis QtDataView)
-
-IF(OGS_USE_VRPN)
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../Vrpn)
-ENDIF() # OGS_USE_VRPN
 
 IF (VTKOSGCONVERTER_FOUND)
 	USE_OPENSG(VtkVis)

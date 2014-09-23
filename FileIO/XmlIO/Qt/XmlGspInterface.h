@@ -18,7 +18,7 @@
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
-#include "Applications/ProjectData.h"
+#include "Applications/ApplicationsLib/ProjectData.h"
 
 namespace FileIO
 {

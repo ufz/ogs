@@ -38,7 +38,6 @@
 #include "VtkCompositeGeoObjectFilter.h"
 #include "VtkFilterFactory.h"
 #include "VtkMeshSource.h"
-#include "VtkTrackedCamera.h"
 #include "VtkVisImageItem.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
@@ -328,7 +327,7 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex p
 		if (old_reader)
 			fi.setFile(QString(old_reader->GetFileName()));
 		else if (new_reader)
-			fi.setFile(QString(new_reader->GetFileName()));		
+			fi.setFile(QString(new_reader->GetFileName()));
 		else if (image_reader)
 			fi.setFile(QString(image_reader->GetFileName()));
 		else if (props)

@@ -19,7 +19,6 @@
 #include "VisualizationWidget.h"
 #include "VtkCustomInteractorStyle.h"
 #include "VtkPickCallback.h"
-#include "VtkTrackedCamera.h"
 
 #include <vtkCamera.h>
 #include <vtkCellPicker.h>
@@ -45,14 +44,6 @@
 #include <QSettings>
 #include <QString>
 
-#ifdef OGS_USE_VRPN
-#include "QSpaceNavigatorClient.h"
-#include "QVrpnArtTrackingClient.h"
-#include "VtkTrackedCamera.h"
-#include <QTimer>
-#include <vtkEventQtSlotConnect.h>
-#endif // OGS_USE_VRPN
-
 VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	: QWidget(parent)
 {
@@ -74,41 +65,6 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	_interactorStyle->SetDefaultRenderer(_vtkRender);
 
 	QSettings settings;
-
-#ifdef OGS_USE_VRPN
-	VtkTrackedCamera* cam = new VtkTrackedCamera(this);
-	_vtkRender->SetActiveCamera(cam);
-	connect( cam, SIGNAL(viewUpdated()), this, SLOT(updateView()) );
-
-	//QSpaceNavigatorClient* spacenav = QSpaceNavigatorClient::Instance();
-	//spacenav->init("spacenav@localhost", 1000 / 15, SpaceNavigatorClient::Z);
-	//cam->setFocalPoint(0, 5.0, 0.5);
-	//cam->updateView();
-	//spacenav->setTranslationFactor(2.0);
-	//connect( spacenav, SIGNAL(translated(double, double, double)), cam, SLOT(setTrackingData(double, double, double)) );
-	//connect( spacenav, SIGNAL(translated(double, double, double)), cam, SLOT(translate(double, double, double)) );
-
-	QVrpnArtTrackingClient* art = QVrpnArtTrackingClient::Instance(this);
-	if (settings.contains("Tracking/artDeviceName"))
-	{
-		QString deviceName = settings.value("Tracking/artDeviceName").toString();
-		QString deviceNameAt = settings.value("Tracking/artDeviceNameAt").toString();
-		art->StartTracking(QString(deviceName + "@" + deviceNameAt).toStdString().c_str(),
-		                   settings.value("Tracking/artUpdateInterval").toInt());
-	}
-	else
-		art->StartTracking("DTrack@141.65.34.36");
-	connect( art, SIGNAL(positionUpdated(double, double, double)),
-	         cam, SLOT(setTrackingData(double, double, double)) );
-
-	// Connect the vtk event to the qt slot
-	_qtConnect = vtkEventQtSlotConnect::New();
-	_qtConnect->Connect(vtkWidget->GetRenderWindow()->GetInteractor(),
-	                    vtkCommand::EndInteractionEvent,
-	                    cam,
-	                    SLOT(updatedFromOutside()));
-
-#endif // OGS_USE_VRPN
 
 	_vtkRender->SetBackground(0.0,0.0,0.0);
 
@@ -132,18 +88,18 @@ VisualizationWidget::~VisualizationWidget()
 {
 	_interactorStyle->deleteLater();
 	_vtkPickCallback->deleteLater();
-#ifdef OGS_USE_VRPN
-	_qtConnect->Delete();
-#endif     // OGS_USE_VRPN
 }
+
 VtkCustomInteractorStyle* VisualizationWidget::interactorStyle() const
 {
 	return _interactorStyle;
 }
+
 VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 {
 	return _vtkPickCallback;
 }
+
 void VisualizationWidget::updateView()
 {
 	if(vtkWidget->GetRenderWindow()->IsDrawable())

@@ -102,11 +102,6 @@
 #include <OpenSG/OSGSceneFileHandler.h>
 #endif
 
-#ifdef OGS_USE_VRPN
-#include "TrackingSettingsWidget.h"
-#include "VtkTrackedCamera.h"
-#endif // OGS_USE_VRPN
-
 #include "BaseLib/BuildInfo.h"
 
 using namespace FileIO;
@@ -333,12 +328,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SLOT(createPresentationMenu()));
 	menuWindows->insertMenu(showVisDockAction, presentationMenu);
 
-#ifdef OGS_USE_VRPN
-	VtkTrackedCamera* cam = static_cast<VtkTrackedCamera*>
-	                        (visualizationWidget->renderer()->GetActiveCamera());
-	_trackingSettingsWidget = new TrackingSettingsWidget(cam, visualizationWidget, Qt::Window);
-#endif     // OGS_USE_VRPN
-
 	// connects for station model
 	connect(stationTabWidget->treeView,
 	        SIGNAL(propertiesDialogRequested(std::string)), this,
@@ -354,10 +343,6 @@ MainWindow::~MainWindow()
 	delete _vtkVisPipeline;
 	delete _meshModels;
 	delete _processModel;
-
-#ifdef OGS_USE_VRPN
-	delete _trackingSettingsWidget;
-#endif // OGS_USE_VRPN
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -1107,16 +1092,6 @@ void MainWindow::showDataExplorerSettingsDialog()
 
 void MainWindow::FEMTestStart()
 {
-}
-
-void MainWindow::showTrackingSettingsDialog()
-{
-#ifdef OGS_USE_VRPN
-	_trackingSettingsWidget->show();
-#else // OGS_USE_VRPN
-	QMessageBox::warning(this, "Functionality not implemented",
-	                     "Sorry but this progam was not compiled with VRPN support.");
-#endif // OGS_USE_VRPN
 }
 
 void MainWindow::ShowWindow()

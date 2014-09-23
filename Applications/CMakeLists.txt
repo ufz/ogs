@@ -1,10 +1,6 @@
-# Source files
-SET ( LIB_SOURCES ProjectData.cpp )
+ADD_SUBDIRECTORY(ApplicationsLib)
 
-# Library
-ADD_LIBRARY (ApplicationsLib STATIC ${LIB_SOURCES})
-
-TARGET_LINK_LIBRARIES( ApplicationsLib
-        GeoLib
-        ProcessLib
-    )
+IF(OGS_BUILD_GUI)
+	ADD_DEFINITIONS(-DOGS_BUILD_GUI)
+	ADD_SUBDIRECTORY(DataExplorer)
+ENDIF() # OGS_BUILD_GUI

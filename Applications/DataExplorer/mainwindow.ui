@@ -119,7 +119,6 @@
     </property>
     <addaction name="actionData_Explorer_Settings"/>
     <addaction name="action_VisualisationSettings"/>
-    <addaction name="action_TrackingSettings"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -369,14 +368,6 @@
     <string>Export to OpenSG binary format</string>
    </property>
   </action>
-  <action name="action_TrackingSettings">
-   <property name="text">
-    <string>Tracking Settings...</string>
-   </property>
-   <property name="toolTip">
-    <string>Sets settings for head-tracking.</string>
-   </property>
-  </action>
   <action name="actionMesh_Generation">
    <property name="text">
     <string>Mesh Generation...</string>
@@ -525,22 +516,6 @@
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
    <slot>showVisalizationPrefsDialog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_TrackingSettings</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindowClass</receiver>
-   <slot>showTrackingSettingsDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -718,7 +693,6 @@
   <slot>import()</slot>
   <slot>save()</slot>
   <slot>showVisalizationPrefsDialog()</slot>
-  <slot>showTrackingSettingsDialog()</slot>
   <slot>showGMSHPrefsDialog()</slot>
   <slot>FEMTestStart()</slot>
   <slot>showDiagramPrefsDialog()</slot>

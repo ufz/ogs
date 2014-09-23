@@ -15,7 +15,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "Applications/ProjectData.h"
+#include "Applications/ApplicationsLib/ProjectData.h"
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
 
@@ -28,10 +28,6 @@ class VtkVisPipeline;
 class VisPrefsDialog;
 
 class QSignalMapper;
-
-#ifdef OGS_USE_VRPN
-class TrackingSettingsWidget;
-#endif // OGS_USE_VRPN
 
 /**
  * Main program window for the graphical user interface of OpenGeoSys.
@@ -98,7 +94,6 @@ protected slots:
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
 	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
-	void showTrackingSettingsDialog();
 	void updateDataViews();
 	void writeGeometryToFile(QString listName, QString fileName);
 	void writeStationListToFile(QString listName, QString fileName);
@@ -133,9 +128,6 @@ private:
 	QMenu* _import_files_menu;
 	QSignalMapper* _signal_mapper;
 
-#ifdef OGS_USE_VRPN
-	TrackingSettingsWidget* _trackingSettingsWidget;
-#endif     // OGS_USE_VRPN
 	VisPrefsDialog* _visPrefsDialog;
 
 signals:
