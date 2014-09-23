@@ -149,6 +149,14 @@ bool TemplatePrism<NNODES,CELLPRISMTYPE>::isEdge(unsigned idx1, unsigned idx2) c
 }
 
 template <unsigned NNODES, CellType CELLPRISMTYPE>
+bool TemplatePrism<NNODES,CELLPRISMTYPE>::isPntInElement(GeoLib::Point const& pnt) const
+{
+    return (GeoLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[1], *_nodes[4], *_nodes[2], *_nodes[3]) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3]));
+}
+
+template <unsigned NNODES, CellType CELLPRISMTYPE>
 Element* TemplatePrism<NNODES,CELLPRISMTYPE>::clone() const
 {
 	return new TemplatePrism<NNODES,CELLPRISMTYPE>(*this);

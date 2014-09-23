@@ -104,6 +104,9 @@ public:
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
+    /// Returns true if the given point is not located outside of the hexahedron
+    bool isPntInElement(GeoLib::Point const& pnt) const;
+
 	/**
 	 * Tests if the element is geometrically valid.
 	 * @param check_zero_volume indicates if volume == 0 should be checked

@@ -212,8 +212,7 @@ double orient3d(GeoLib::Point const& p,
  /// Checks if the four given points are located on a plane.
  bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
-
-
+ 
 /**
  * Method first computes the intersection points of line segements of GeoLib::Polyline objects
  * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec

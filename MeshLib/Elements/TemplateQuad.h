@@ -89,6 +89,9 @@ public:
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
+    /// Returns true if the given point is not located outside of the quad
+    bool isPntInElement(GeoLib::Point const& pnt) const { return isPntInside(pnt); }
+
 	/**
 	 * Check if the 3d GeoLib::Point is inside of the quad element.
 	 * @param pnt the 3d GeoLib::Point object
