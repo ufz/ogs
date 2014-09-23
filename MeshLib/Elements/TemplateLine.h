@@ -115,8 +115,8 @@ public:
 		return false;
 	}
 
-    /// Returns true if pnt is located on the line segment and false otherwise
-    bool isPntInElement(GeoLib::Point const& pnt) const;
+	/// Returns true if pnt is located on the line segment and false otherwise
+	bool isPntInElement(GeoLib::Point const& pnt) const;
 
 	/**
 		* Tests if the element is geometrically valid.

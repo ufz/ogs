@@ -155,8 +155,8 @@ public:
 	/// Returns true if these two indeces form an edge and false otherwise
 	virtual bool isEdge(unsigned i, unsigned j) const = 0;
 
-    /// Returns true if the given point is not located outside of the element
-    virtual bool isPntInElement(GeoLib::Point const& pnt) const = 0;
+	/// Returns true if the given point is not located outside of the element
+	virtual bool isPntInElement(GeoLib::Point const& pnt) const = 0;
 
 	/**
 	 * Tests if the element is geometrically valid.

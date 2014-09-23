@@ -27,14 +27,14 @@
 
 std::vector<MeshLib::Node*> createNodes()
 {
-	std::vector<MeshLib::Node*> nodes;
-	nodes.push_back(new MeshLib::Node(0,0,0));
-	nodes.push_back(new MeshLib::Node(1,0,0));
-	nodes.push_back(new MeshLib::Node(1,1,0));
+    std::vector<MeshLib::Node*> nodes;
+    nodes.push_back(new MeshLib::Node(0,0,0));
+    nodes.push_back(new MeshLib::Node(1,0,0));
+    nodes.push_back(new MeshLib::Node(1,1,0));
     nodes.push_back(new MeshLib::Node(0,1,0));
-	nodes.push_back(new MeshLib::Node(0,0,1));
-	nodes.push_back(new MeshLib::Node(1,0,1));
-	nodes.push_back(new MeshLib::Node(1,1,1));
+    nodes.push_back(new MeshLib::Node(0,0,1));
+    nodes.push_back(new MeshLib::Node(1,0,1));
+    nodes.push_back(new MeshLib::Node(1,1,1));
     nodes.push_back(new MeshLib::Node(0,1,1));
     return nodes;
 }

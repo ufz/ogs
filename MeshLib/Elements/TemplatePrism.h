@@ -102,8 +102,8 @@ public:
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
-    /// Returns true if the given point is not located outside of the prism
-    bool isPntInElement(GeoLib::Point const& pnt) const;
+	/// Returns true if the given point is not located outside of the prism
+	bool isPntInElement(GeoLib::Point const& pnt) const;
 
 	/**
 	 * Tests if the element is geometrically valid.
