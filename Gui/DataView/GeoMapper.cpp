@@ -19,6 +19,8 @@
 
 #include <numeric>
 
+#include "FileIO/AsciiRasterInterface.h"
+
 #include "AABB.h"
 #include "Mesh.h"
 #include "Elements/Element.h"
@@ -44,7 +46,7 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	this->_raster = GeoLib::Raster::getRasterFromASCFile(file_name);
+	this->_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
 	if (! _raster) {
 		ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
 		return;
@@ -104,7 +106,7 @@ void GeoMapper::mapData()
 		{
 			GeoLib::Point* pnt ((*points)[j]);
 			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
-				                : this->getDemElevation((*pnt)[0],(*pnt)[1]);
+				                : this->getDemElevation(*pnt);
 		}
 	}
 	else
@@ -113,7 +115,7 @@ void GeoMapper::mapData()
 		{
 			GeoLib::Point* pnt ((*points)[j]);
 			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val) - (*pnt)[2])
-				                    : (this->getDemElevation((*pnt)[0],(*pnt)[1]) - (*pnt)[2]);
+				                    :  this->getDemElevation(*pnt);
 
 			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
 			const std::vector<GeoLib::Point*> layers = borehole->getProfile();
@@ -127,21 +129,12 @@ void GeoMapper::mapData()
 	}
 }
 
-float GeoMapper::getDemElevation(double x, double y) const
+float GeoMapper::getDemElevation(GeoLib::Point const& pnt) const
 {
-	const double origin_x(_raster->getOrigin()[0]);
-	const double origin_y(_raster->getOrigin()[1]);
-	const double cellsize(_raster->getRasterPixelDistance());
-	const std::size_t width(_raster->getNCols());
-	const std::size_t height(_raster->getNRows());
-
-	if ((x<origin_x) || (x>origin_x+(width*cellsize)) || (y<origin_y) || (y>origin_y+(height*cellsize)))
-		return 0;
-
-	const unsigned x_index = static_cast<unsigned>((x-origin_x)/cellsize);
-	const unsigned y_index = static_cast<unsigned>((y-origin_y)/cellsize);
-
-	return static_cast<float>(*(_raster->begin() + (y_index*width+x_index)));
+	double const elevation (_raster->getValueAtPoint(pnt));
+	if (std::abs(elevation-_raster->getNoDataValue()) < std::numeric_limits<double>::epsilon())
+		return 0.0;
+	return static_cast<float>(elevation);
 }
 
 double GeoMapper::getMeshElevation(double x, double y, double min_val, double max_val) const

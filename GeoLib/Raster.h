@@ -70,7 +70,7 @@ public:
 	/**
 	 * get the distance between raster pixels
 	 */
-	double getRasterPixelDistance() const { return _cell_size; }
+	double getRasterPixelSize() const { return _cell_size; }
 
 	/**
 	 * get the origin of lower left raster cell
@@ -99,39 +99,20 @@ public:
 	/**
 	 * Returns the raster value at the position of the given point.
 	 */
-	double getValueAtPoint(const GeoLib::Point &pnt);
+	double getValueAtPoint(const GeoLib::Point &pnt) const;
+
+	/// Interpolates the elevation of the given point based on the 8-neighbourhood of the raster cell it is located on
+	double interpolateValueAtPoint(const GeoLib::Point &pnt) const;
+    
+	/// Checks if the given point is located within the (x,y)-extension of the raster.
+	bool isPntOnRaster(GeoLib::Point const& node) const;
 
 	~Raster();
-
-	/**
-	 * Write meta data and raw raster data as asci file into the output stream.
-	 * @param os the output stream
-	 */
-	void writeRasterAsASC(std::ostream &os) const;
-
-	/// Reads raster file by detecting type based on extension and then calling the apropriate method
-	static Raster* readRaster(std::string const& fname);
 
 	/// Creates a Raster based on a GeoLib::Surface
 	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
 
-	/// Reads an ArcGis ASC raster file
-	static Raster* getRasterFromASCFile(std::string const& fname);
-
-	/// Reads a Surfer GRD raster file
-	static Raster* getRasterFromSurferFile(std::string const& fname);
 private:
-	static bool readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
-						double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
-	/**
-	 * Reads the header of a Surfer grd-file.
-	 * \param header The ascHeader-object into which all the information will be written.
-	 * \param in FileInputStream used for reading the data.
-	 * \return True if the header could be read correctly, false otherwise.
-	 */
-	static bool readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
-					double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max);
-
 	void setCellSize(double cell_size);
 	void setNoDataVal (double no_data_val);
 

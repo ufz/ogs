@@ -76,7 +76,7 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 	const size_t height = _raster.getNRows()+1;
 	const size_t width = _raster.getNCols()+1;
 	size_t node_idx_count(0);
-	const double distance(_raster.getRasterPixelDistance());
+	const double distance(_raster.getRasterPixelSize());
 	const double x_offset(_raster.getOrigin()[0]); // - distance / 2.0);
 	const double y_offset(_raster.getOrigin()[1]); // - distance / 2.0);
 

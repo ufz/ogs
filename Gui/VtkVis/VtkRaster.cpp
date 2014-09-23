@@ -27,6 +27,8 @@
 
 #include "StringTools.h"
 
+#include "AsciiRasterInterface.h"
+
 // GeoLib
 #include "Raster.h"
 
@@ -54,16 +56,16 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 
 	GeoLib::Raster *raster(nullptr);
 	if (fileInfo.suffix().toLower() == "asc") {
-		raster = GeoLib::Raster::getRasterFromASCFile(fileName);
+		raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(fileName);
 	}
 	else if (fileInfo.suffix().toLower() == "grd")
 	{
-		raster = GeoLib::Raster::getRasterFromSurferFile(fileName);
+		raster = FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName);
 	}
 	if (raster) {
 		x0 = raster->getOrigin()[0];
 		y0 = raster->getOrigin()[1];
-		delta = raster->getRasterPixelDistance();
+		delta = raster->getRasterPixelSize();
 		double const*const data (raster->begin());
 		return VtkRaster::loadImageFromArray(data, x0, y0,
 						raster->getNCols(), raster->getNRows(), delta,

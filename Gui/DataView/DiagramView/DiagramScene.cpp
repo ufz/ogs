@@ -134,15 +134,15 @@ void DiagramScene::adjustAxis(float &min, float &max, int &numberOfTicks)
 {
 	const int MinTicks = 4;
 	double grossStep = (max - min) / MinTicks;
-	double step = pow(10.0, floor(log10(grossStep)));
+	double step = pow(10.0, std::floor(log10(grossStep)));
 	if (5 * step < grossStep)
 		step *= 5;
 	else if (2 * step < grossStep)
 		step *= 2;
-	numberOfTicks = int(ceil(max / step) - floor(min / step));
+	numberOfTicks = int(ceil(max / step) - std::floor(min / step));
 	if (numberOfTicks < MinTicks)
 		numberOfTicks = MinTicks;
-	min = floor(min / step) * step;
+	min = std::floor(min / step) * step;
 	max = ceil(max / step) * step;
 }
 
