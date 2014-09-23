@@ -7,3 +7,6 @@
 [submodule "ThirdParty/VtkOsgConverter"]
 	path = ThirdParty/VtkOsgConverter
 	url = git://github.com/ufz-vislab/VtkOsgConverter.git
+[submodule "ThirdParty/tetgen"]
+	path = ThirdParty/tetgen
+	url = https://github.com/ufz/tetgen.git
