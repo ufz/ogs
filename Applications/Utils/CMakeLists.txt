@@ -1,0 +1,3 @@
+ADD_SUBDIRECTORY( FileConverter )
+ADD_SUBDIRECTORY( MeshEdit )
+ADD_SUBDIRECTORY( SimpleMeshCreation )
