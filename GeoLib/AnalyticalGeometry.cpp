@@ -243,24 +243,28 @@ bool isPointInTriangle(GeoLib::Point const& q,
 }
 
 bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
-                          GeoLib::Point const& c, GeoLib::Point const& d)
+                          GeoLib::Point const& c, GeoLib::Point const& d, double eps)
 {
     double const d0 (orient3d(d,a,b,c));
     // if tetrahedron is not coplanar
-    if (d0 != 0)
+    if (std::abs(d0) > std::numeric_limits<double>::epsilon())
     {
         bool const d0_sign (d0>0);
         // if p is on the same side of bcd as a
-        if (d0_sign != (orient3d(d, p, b, c)>=0))
+        double const d1 (orient3d(d, p, b, c));
+        if (!(d0_sign == (d1>=0) || std::abs(d1) < eps))
             return false;
         // if p is on the same side of acd as b
-        if (d0_sign != (orient3d(d, a, p, c)>=0))
+        double const d2 (orient3d(d, a, p, c));
+        if (!(d0_sign == (d2>=0) || std::abs(d2) < eps))
             return false;
         // if p is on the same side of abd as c
-        if (d0_sign != (orient3d(d, a, b, p)>=0))
+        double const d3 (orient3d(d, a, b, p));
+        if (!(d0_sign == (d3>=0) || std::abs(d3) < eps))
             return false;
         // if p is on the same side of abc as d
-        if (d0_sign != (orient3d(p, a, b, c)>=0))
+        double const d4 (orient3d(p, a, b, c));
+        if (!(d0_sign == (d4>=0) || std::abs(d4) < eps))
             return false;
         return true;
     }

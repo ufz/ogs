@@ -139,7 +139,7 @@ bool isPointInTriangle(GeoLib::Point const& p,
  * @return true if the test point p is not located outside of abcd (i.e. inside or on a plane/edge).
  */
 bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
-                          GeoLib::Point const& c, GeoLib::Point const& d);
+                          GeoLib::Point const& c, GeoLib::Point const& d, double eps = std::numeric_limits<double>::epsilon());
 
 /**
  * test for intersections of the line segments of the Polyline

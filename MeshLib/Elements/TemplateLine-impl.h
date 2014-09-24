@@ -56,12 +56,12 @@ TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-bool TemplateLine<NNODES,CELLLINETYPE>::isPntInElement(GeoLib::Point const& pnt) const
+bool TemplateLine<NNODES,CELLLINETYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
 {
     double tmp;
     double tmp_dst(0);
     double const dist =MathLib::calcProjPntToLineAndDists(pnt.getCoords(), _nodes[0]->getCoords(), _nodes[1]->getCoords(), tmp, tmp_dst);
-    return (dist < std::numeric_limits<double>::epsilon());
+    return (dist < eps);
 }
 
 template <unsigned NNODES, CellType CELLLINETYPE>

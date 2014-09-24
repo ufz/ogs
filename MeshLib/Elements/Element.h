@@ -19,7 +19,7 @@
 #include <limits>
 #include <boost/optional.hpp>
 
-#include "Point.h"
+#include "GeoLib/Point.h"
 
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Mesh.h"
@@ -155,8 +155,13 @@ public:
 	/// Returns true if these two indeces form an edge and false otherwise
 	virtual bool isEdge(unsigned i, unsigned j) const = 0;
 
-	/// Returns true if the given point is not located outside of the element
-	virtual bool isPntInElement(GeoLib::Point const& pnt) const = 0;
+	/**
+	 * Checks if a point is inside the element.
+	 * @param pnt a 3D GeoLib::Point object
+	 * @param eps tolerance for numerical algorithm used or computing the property
+	 * @return true if the point is not outside the element, false otherwise
+	 */
+	virtual bool isPntInElement(GeoLib::Point const& pnt, double eps) const = 0;
 
 	/**
 	 * Tests if the element is geometrically valid.

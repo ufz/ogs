@@ -93,16 +93,13 @@ public:
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned idx1, unsigned idx2) const;
 
-	/// Returns true if the given point is not located outside of the triangle
-	bool isPntInElement(GeoLib::Point const& pnt) const { return isPntInside(pnt); }
-
 	/**
-	 * Check if the 3d GeoLib::Point is inside of the element.
-	 * @param pnt the 3d GeoLib::Point object
+	 * Checks if a point is inside the element.
+	 * @param pnt a 3D GeoLib::Point object
 	 * @param eps tolerance for numerical algorithm used or computing the property
-	 * @return true if the point is inside the element, false otherwise
+	 * @return true if the point is not outside the element, false otherwise
 	 */
-	virtual bool isPntInside(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+	bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/**
 	 * Tests if the element is geometrically valid

@@ -115,8 +115,13 @@ public:
 		return false;
 	}
 
-	/// Returns true if pnt is located on the line segment and false otherwise
-	bool isPntInElement(GeoLib::Point const& pnt) const;
+	/**
+	 * Checks if a point is located on the line
+	 * @param pnt a 3D GeoLib::Point object
+	 * @param eps tolerance for numerical algorithm used or computing the property
+	 * @return true if the point is located on the line, false otherwise
+	 */
+	bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/**
 		* Tests if the element is geometrically valid.
