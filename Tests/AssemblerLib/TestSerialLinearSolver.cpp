@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
+#include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/MeshComponentMap.h"
 #include "AssemblerLib/SerialDenseSetup.h"
 
@@ -95,22 +96,40 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
                 <AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
     }
 
+    // Initializer of the local assembler data.
+    using LocalMatrixType = MathLib::DenseMatrix<double>;
+    using LocalVectorType = MathLib::DenseVector<double>;
+
+    std::vector<LocalAssemblerData<LocalMatrixType, LocalVectorType>*>
+        local_assembler_data;
+    local_assembler_data.resize(ex1.msh->getNElements());
+
+    LocalDataInitializer<LocalMatrixType, LocalVectorType> initializer;
+
+    typedef AssemblerLib::LocalAssemblerBuilder<
+            MeshLib::Element,
+            LocalDataInitializer<LocalMatrixType, LocalVectorType>
+                > GlobalInitializer;
+
+    GlobalInitializer global_initializer(initializer);
+
+    // Call global initializer for each mesh element.
+    globalSetup.execute(
+            global_initializer,
+            ex1.msh->getElements(),
+            local_assembler_data,
+            ex1._localA,
+            ex1._localRhs);
+
     // Local and global assemblers.
-    typedef SteadyDiffusion2DExample1::LocalAssembler LocalAssembler;
-    LocalAssembler local_assembler;
-
     typedef AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector,
-            MeshLib::Element, LocalAssembler,
-            MathLib::DenseMatrix<double>,
-            MathLib::DenseVector<double>
-        > GlobalAssembler;
+            GlobalMatrix, GlobalVector> GlobalAssembler;
 
-    GlobalAssembler assembler(*A.get(), *rhs.get(), local_assembler,
+    GlobalAssembler assembler(*A.get(), *rhs.get(),
         AssemblerLib::LocalToGlobalIndexMap(map_ele_nodes2vec_entries));
 
     // Call global assembler for each mesh element.
-    globalSetup.execute(assembler, ex1.msh->getElements());
+    globalSetup.execute(assembler, local_assembler_data);
 
     //std::cout << "A=\n";
     //A->write(std::cout);
