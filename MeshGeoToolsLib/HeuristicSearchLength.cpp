@@ -47,15 +47,19 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
 	}
 
 	const double mu (sum/edge_cnt);
-	const double s (sqrt(1.0/(edge_cnt-1) * (sum_of_sqr - (sum*sum)/edge_cnt) ));
-	// heuristic to prevent negative search lengths
-	// in the case of a big standard deviation s
-	double c(2.0);
-	while (mu < c * s) {
-		c *= 0.9;
+	const double helper (sum_of_sqr - (sum*sum)/edge_cnt);
+	if (helper < 0.0) {
+		_search_length = mu/2;
+	} else {
+		const double s (sqrt(helper/(edge_cnt-1)));
+		// heuristic to prevent negative search lengths
+		// in the case of a big standard deviation s
+		double c(2.0);
+		while (mu < c * s) {
+			c *= 0.9;
+		}
+		_search_length = (mu - c * s)/2;
 	}
-
-	_search_length = (mu - c * s)/2;
 
 	DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
 			_mesh.getName().c_str(), _search_length);
