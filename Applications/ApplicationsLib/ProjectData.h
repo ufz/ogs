@@ -16,7 +16,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #ifdef OGS_BUILD_GUI
-#include "GEOModels.h"
+#include "Applications/DataExplorer/DataView/GEOModels.h"
 #else
 #include "GeoLib/GEOObjects.h"
 #endif
