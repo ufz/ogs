@@ -148,6 +148,8 @@ public:
 	 */
 	bool hasZeroVolume() const { return this->getContent() < std::numeric_limits<double>::epsilon(); }
 
+	/// Returns true if the element is located at a boundary (i.e. has at least one face without neighbour)
+	virtual bool isBoundaryElement() const;
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	virtual bool isEdge(unsigned i, unsigned j) const = 0;

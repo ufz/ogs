@@ -163,6 +163,11 @@ bool Element::hasNeighbor(Element* elem) const
 	return false;
 }
 
+bool Element::isBoundaryElement() const
+{
+    return std::any_of(_neighbors, _neighbors + this->getNNeighbors(), 
+        [](MeshLib::Element* e){ return e == nullptr; });
+}
 
 }
 
