@@ -22,26 +22,19 @@ namespace AssemblerLib
 /// the LocalToGlobalIndexMap in the construction.
 template<
     typename GLOBAL_MATRIX_,
-    typename GLOBAL_VECTOR_,
-    typename MESH_ITEM_,
-    typename ASSEMBLER_,
-    typename LOCAL_MATRIX_,
-    typename LOCAL_VECTOR_>
+    typename GLOBAL_VECTOR_>
 class VectorMatrixAssembler
 {
 public:
     typedef GLOBAL_MATRIX_ GLOBAL_MATRIX;
     typedef GLOBAL_VECTOR_ GLOBAL_VECTOR;
-    typedef LOCAL_MATRIX_ LOCAL_MATRIX;
-    typedef LOCAL_VECTOR_ LOCAL_VECTOR;
 
 public:
     VectorMatrixAssembler(
         GLOBAL_MATRIX_ &A,
         GLOBAL_VECTOR_ &rhs,
-        ASSEMBLER_ &local_assembler,
         LocalToGlobalIndexMap const& data_pos)
-    : _A(A), _rhs(rhs), _local_assembler(local_assembler), _data_pos(data_pos) {}
+    : _A(A), _rhs(rhs), _data_pos(data_pos) {}
 
     ~VectorMatrixAssembler() {}
 
@@ -50,23 +43,22 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necesserily the mesh item's id.
-    void operator()(const MESH_ITEM_* item, std::size_t id) const
+    template <typename LocalAssembler_>
+    void operator()(std::size_t const id,
+        LocalAssembler_* const local_assembler) const
     {
         assert(_data_pos.size() > id);
 
         LocalToGlobalIndexMap::RowColumnIndices const& indices = _data_pos[id];
-        LOCAL_MATRIX_ local_A(indices.rows.size(), indices.columns.size());
-        LOCAL_VECTOR_ local_rhs(indices.rows.size());
 
-        _local_assembler(*item, local_A, local_rhs);
-        _A.add(indices, local_A);
-        _rhs.add(indices.rows, local_rhs);
+        local_assembler->assemble(indices.rows.size(), indices.columns.size());
+        _A.add(indices, local_assembler->getLocalMatrix());
+        _rhs.add(indices.rows, local_assembler->getLocalVector());
     }
 
 protected:
     GLOBAL_MATRIX_ &_A;
     GLOBAL_VECTOR_ &_rhs;
-    ASSEMBLER_ &_local_assembler;
     LocalToGlobalIndexMap const& _data_pos;
 };
 
