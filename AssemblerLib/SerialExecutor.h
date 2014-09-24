@@ -27,17 +27,17 @@ struct SerialExecutor
     /// \param f    a function that accepts a pointer to container's elements and
     ///             an index as arguments.
     /// \param c    a container supporting access over operator[].
-    template <typename F, typename C>
+    template <typename F, typename C, typename ...Args_>
     static
     void
 #if defined(_MSC_VER) && (_MSC_VER >= 1700)
-    execute(F& f, C const& c)
+    execute(F& f, C const& c, Args_&&... args)
 #else
-    execute(F const& f, C const& c)
+    execute(F const& f, C const& c, Args_&&... args)
 #endif
     {
         for (std::size_t i = 0; i < c.size(); i++)
-            f(c[i], i);
+            f(i, c[i], std::forward<Args_>(args)...);
     }
 
 };
