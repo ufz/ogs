@@ -25,8 +25,8 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
 : SearchLength(mesh)
 {
 	double sum (0.0);
-	double sum_of_sqr (0.0);
-	std::size_t edge_cnt(0);
+	double sum_of_sqr (0.0); // total length of edges
+	std::size_t edge_cnt(0); // total length of edges squared
 	std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
 
 	for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
@@ -41,19 +41,22 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
 		edge_cnt += n_edges;
 	}
 
-	const double mu (sum/edge_cnt);
-	const double helper (sum_of_sqr - (sum*sum)/edge_cnt);
-	if (helper < 0.0) {
-		_search_length = mu/2;
-	} else {
-		const double s (sqrt(helper/(edge_cnt-1)));
+	const double mean (sum/edge_cnt);
+	const double variance ((sum_of_sqr - (sum*sum)/edge_cnt)/(edge_cnt-1));
+
+	// Set the search length for the case of non-positive variance (which can
+	// happen due to numerics).
+	_search_length = mean/2;
+
+	if (variance > 0.0) {
+		const double std_deviation (sqrt(variance));
 		// heuristic to prevent negative search lengths
-		// in the case of a big standard deviation s
+		// in the case of a big standard deviation
 		double c(2.0);
-		while (mu < c * s) {
+		while (mean < c * std_deviation) {
 			c *= 0.9;
 		}
-		_search_length = (mu - c * s)/2;
+		_search_length = (mean - c * std_deviation)/2;
 	}
 
 	DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
