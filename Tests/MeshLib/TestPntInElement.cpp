@@ -39,6 +39,11 @@ std::vector<MeshLib::Node*> createNodes()
     return nodes;
 }
 
+void deleteNodes(std::vector<MeshLib::Node*> &nodes)
+{
+    std::for_each(nodes.begin(), nodes.end(), [](MeshLib::Node* node){ delete node; });
+}
+
 TEST(IsPntInElement, Line)
 {
     GeoLib::Point pnt;
@@ -49,6 +54,7 @@ TEST(IsPntInElement, Line)
     ASSERT_EQ(true, line.isPntInElement(pnt));
     pnt = GeoLib::Point(0,0.1,0.7);
     ASSERT_EQ(false, line.isPntInElement(pnt));
+    deleteNodes(nodes);
 }
 TEST(IsPntInElement, Tri)
 {
@@ -57,11 +63,28 @@ TEST(IsPntInElement, Tri)
     std::array<MeshLib::Node*, 3> tri_nodes = { nodes[0], nodes[1], nodes[4] };
     MeshLib::Tri tri(tri_nodes);
 
-    pnt = GeoLib::Point(0.1,0,.1);
+    pnt = GeoLib::Point(0.1,0,0.1);
     ASSERT_EQ(true, tri.isPntInElement(pnt));
-    pnt = GeoLib::Point(0.9,0,.7);
+    pnt = GeoLib::Point(0.9,0,0.7);
     ASSERT_EQ(false, tri.isPntInElement(pnt));
+    deleteNodes(nodes);
+}
 
+TEST(IsPntInElement, Quad)
+{
+    GeoLib::Point pnt;
+    std::vector<MeshLib::Node*> nodes (createNodes());
+    std::array<MeshLib::Node*, 4> quad_nodes = { nodes[0], nodes[1], nodes[5], nodes[4] };
+    MeshLib::Quad quad(quad_nodes);
+    
+    pnt = GeoLib::Point(0.1,0,0.1);
+    ASSERT_EQ(true, quad.isPntInElement(pnt));
+    pnt = GeoLib::Point(0.999,0,0.001);
+    ASSERT_EQ(true, quad.isPntInElement(pnt));
+    pnt = GeoLib::Point(0.5,0.00001,1);
+    ASSERT_EQ(false, quad.isPntInElement(pnt));
+    ASSERT_EQ(true, quad.isPntInElement(pnt, 0.001));
+    deleteNodes(nodes);
 }
 
 TEST(IsPntInElement, Tet)
@@ -75,6 +98,41 @@ TEST(IsPntInElement, Tet)
     ASSERT_EQ(true, tet.isPntInElement(pnt));
     pnt = GeoLib::Point(0.5,0.6,0.1);
     ASSERT_EQ(false, tet.isPntInElement(pnt));
+    deleteNodes(nodes);
+}
+
+TEST(IsPntInElement, Pyramid)
+{
+    GeoLib::Point pnt;
+    std::vector<MeshLib::Node*> nodes (createNodes());
+    std::array<MeshLib::Node*, 5> pyr_nodes;
+    std::copy(nodes.begin(), nodes.begin()+5, pyr_nodes.begin());
+    MeshLib::Pyramid pyr(pyr_nodes);
+
+    pnt = GeoLib::Point(0.5,0.00001,-0.000001);
+    ASSERT_EQ(false, pyr.isPntInElement(pnt));
+    ASSERT_EQ(true, pyr.isPntInElement(pnt, 0.0001));
+    pnt = GeoLib::Point(0.5,0.5,0.1);
+    ASSERT_EQ(true, pyr.isPntInElement(pnt));
+    pnt = GeoLib::Point(0.5,0.5,0.51);
+    ASSERT_EQ(false, pyr.isPntInElement(pnt));
+    ASSERT_EQ(true, pyr.isPntInElement(pnt, 0.02));
+    deleteNodes(nodes);
+}
+
+TEST(IsPntInElement, Prism)
+{
+    GeoLib::Point pnt;
+    std::vector<MeshLib::Node*> nodes (createNodes());
+    std::array<MeshLib::Node*, 6> prism_nodes = { nodes[0], nodes[1], nodes[2], nodes[4], nodes[5], nodes[6] };
+    MeshLib::Prism prism(prism_nodes);
+
+    pnt = GeoLib::Point(0.5,0.5,0.1);
+    ASSERT_EQ(true, prism.isPntInElement(pnt));
+    pnt = GeoLib::Point(0.49,0.51,0.1);
+    ASSERT_EQ(false, prism.isPntInElement(pnt));
+    ASSERT_EQ(true, prism.isPntInElement(pnt, 0.03));
+    deleteNodes(nodes);
 }
 
 TEST(IsPntInElement, Hex)
@@ -93,4 +151,6 @@ TEST(IsPntInElement, Hex)
     ASSERT_EQ(true, hex.isPntInElement(pnt));
     pnt = GeoLib::Point(1.01,0.99,0.99);
     ASSERT_EQ(false, hex.isPntInElement(pnt));
+    ASSERT_EQ(true, hex.isPntInElement(pnt, 0.02));
+    deleteNodes(nodes);
 }
