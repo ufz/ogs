@@ -197,8 +197,8 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
  * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a negative value,
  * otherwise it will return a positive value. If p is coplanar with abc, the function will return 0.
  */
-double orient3d(GeoLib::Point const& p,
-                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
+double orientation3d(GeoLib::Point const& p,
+                     GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
 
 /**
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
