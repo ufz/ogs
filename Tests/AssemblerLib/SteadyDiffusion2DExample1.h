@@ -42,7 +42,11 @@ public:
 	}
 
 	void assemble(std::size_t const rows, std::size_t const columns)
-	{ }
+	{
+		// The local contributions are computed here, usually, but for this
+		// particular test all contributions are equal for all elements and are
+		// already stored in the _localA matrix.
+	}
 
 	LocalMatrixType const& getLocalMatrix() const
 	{
