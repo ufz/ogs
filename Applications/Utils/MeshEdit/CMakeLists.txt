@@ -112,6 +112,16 @@ target_link_libraries (reviseMesh
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(reviseMesh)
+set_target_properties(reviseMesh
+	PROPERTIES FOLDER Utilities)
 
-set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
+add_executable( ModifyMeshProperties ModifyMeshProperties.cpp )
+target_link_libraries( ModifyMeshProperties
+	FileIO
+	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
 
+set_target_properties(ModifyMeshProperties
+	PROPERTIES FOLDER Utilities)
