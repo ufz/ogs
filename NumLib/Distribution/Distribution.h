@@ -18,11 +18,6 @@ namespace MeshLib
 class Mesh;
 }
 
-namespace GeoLib
-{
-class GeoObject;
-}
-
 namespace NumLib
 {
 class ISpatialFunction;

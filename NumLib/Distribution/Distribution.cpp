@@ -12,10 +12,8 @@
 
 #include <algorithm>
 
-#include "GeoLib/GeoObject.h"
-#include "GeoLib/PointWithID.h"
 #include "MeshLib/Mesh.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshLib/Node.h"
 #include "NumLib/Function/ISpatialFunction.h"
 
 namespace NumLib
