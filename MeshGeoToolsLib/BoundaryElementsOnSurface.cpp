@@ -26,18 +26,11 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 	auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
 	auto ele_ids_near_sfc = MeshLib::getConnectedElementIDs(_mesh, node_ids_on_sfc);
 
-	// get a list of edges made of the nodes
+	// get a list of faces made of the nodes
 	for (auto ele_id : ele_ids_near_sfc) {
 		auto* e = _mesh.getElement(ele_id);
 		// skip internal elements
-		bool isOuterElement = false;
-		for (unsigned i=0; i<e->getNNeighbors(); i++) {
-			if (!e->getNeighbor(i)) {
-				isOuterElement = true;
-				break;
-			}
-		}
-		if (!isOuterElement)
+		if (!e->isBoundaryElement())
 			continue;
 		// find faces on surface
 		for (unsigned i=0; i<e->getNFaces(); i++) {

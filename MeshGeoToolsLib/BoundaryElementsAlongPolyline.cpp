@@ -34,14 +34,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
 	for (auto ele_id : ele_ids_near_ply) {
 		auto* e = _mesh.getElement(ele_id);
 		// skip internal elements
-		bool isOuterElement = false;
-		for (unsigned i=0; i<e->getNNeighbors(); i++) {
-			if (!e->getNeighbor(i)) {
-				isOuterElement = true;
-				break;
-			}
-		}
-		if (!isOuterElement)
+		if (!e->isBoundaryElement())
 			continue;
 		// find edges on the polyline
 		for (unsigned i=0; i<e->getNEdges(); i++) {
