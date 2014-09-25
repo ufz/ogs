@@ -108,17 +108,11 @@ public:
 	/// Get the number of neighbors for this element.
 	virtual unsigned getNNeighbors() const = 0;
 
-	/**
-	 * Returns the number of nodes. In dependency of the parameter
-	 * the number of nodes for the geometric element is returned or
-	 * the total number of nodes associated with this element
-	 * is returned. The numbers can be different for instance if the
-	 * element is used for higher order elements in finite element
-	 * method.
-	 * @param all (default = false)
-	 * @return the number of nodes with respect to the parameter.
-	 */
-	virtual unsigned getNNodes(bool all = true) const = 0;
+	/// Returns the number of nodes including both linear and nonlinear ones
+	virtual unsigned getNNodes() const = 0;
+
+	/// Returns the number of linear nodes
+	virtual unsigned getNLinearNodes() const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;
