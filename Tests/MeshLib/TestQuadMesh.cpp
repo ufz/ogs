@@ -209,6 +209,7 @@ TEST_F(MeshLibQuadMesh, ElementNeighbors)
             // Test the test
             EXPECT_EQ(1u, ij_neighbors.first.size());
             EXPECT_EQ(1u, ij_neighbors.second.size());
+            ASSERT_TRUE(e->isBoundaryElement());
 
             testNeighbors(e, i, j, ij_neighbors);
         });
@@ -222,6 +223,7 @@ TEST_F(MeshLibQuadMesh, ElementNeighbors)
             std::pair<Indices, Indices> const ij_neighbors = getNeighborIndices(i, j);
             // Test the test
             EXPECT_EQ(3u, ij_neighbors.first.size() + ij_neighbors.second.size());
+            ASSERT_TRUE(e->isBoundaryElement());
 
             testNeighbors(e, i, j, ij_neighbors);
         });
@@ -236,6 +238,7 @@ TEST_F(MeshLibQuadMesh, ElementNeighbors)
             // Test the test
             EXPECT_EQ(2u, ij_neighbors.first.size());
             EXPECT_EQ(2u, ij_neighbors.second.size());
+            ASSERT_FALSE(e->isBoundaryElement());
 
             testNeighbors(e, i, j, ij_neighbors);
         });
