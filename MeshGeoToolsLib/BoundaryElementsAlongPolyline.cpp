@@ -39,28 +39,13 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
 		// find edges on the polyline
 		for (unsigned i=0; i<e->getNEdges(); i++) {
 			auto* edge = e->getEdge(i);
-			// check if an edge node is on the polyline (if yes, store a distance)
-			std::vector<std::size_t> vec_matched_node_distance_along_ply;
-			for (size_t j=0; j<edge->getNNodes(); j++) {
-				auto itr = std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(), edge->getNodeIndex(j));
-				if (itr != node_ids_on_poly.end())
-					vec_matched_node_distance_along_ply.push_back(std::distance(node_ids_on_poly.begin(), itr));
-				else
-					break;
-			}
-			// the edge is picked if its all nodes are on the polyline
-			if (vec_matched_node_distance_along_ply.size()==edge->getNNodes()) {
-				MeshLib::Element* picked_ele = const_cast<MeshLib::Element*>(edge);
-				// The first node of the edge should be always closer to the beginning of the polyline than other nodes.
-				// Otherwise, create a new element with reversed local node index
-				if (vec_matched_node_distance_along_ply.front() > vec_matched_node_distance_along_ply.back()
-						|| (ply.isClosed() && vec_matched_node_distance_along_ply.back() == node_ids_on_poly.size()-1)) {
-					MeshLib::Node** new_nodes = new MeshLib::Node*[edge->getNNodes()];
-					std::reverse_copy(edge->getNodes(), edge->getNodes()+edge->getNNodes(), new_nodes);
-					picked_ele = new MeshLib::Line(new_nodes);
+			// check if all edge nodes are along the polyline (if yes, store a distance)
+			std::vector<std::size_t> edge_node_distances_along_ply;
+			if (includesAllEdgeNodeIDs(node_ids_on_poly, *edge, edge_node_distances_along_ply)) {
+				auto* new_edge = modifyEdgeNodeOrdering(*edge, ply, edge_node_distances_along_ply, node_ids_on_poly);
+				if (edge != new_edge)
 					delete edge;
-				}
-				_boundary_elements.push_back(picked_ele);
+				_boundary_elements.push_back(new_edge);
 			} else {
 				delete edge;
 			}
@@ -83,6 +68,33 @@ BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
 {
 	for (auto p : _boundary_elements)
 		delete p;
+}
+
+bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(const std::vector<std::size_t> &vec_node_ids, const MeshLib::Element &edge, std::vector<std::size_t> &edge_node_distances) const
+{
+	unsigned j=0;
+	for (; j<edge.getNNodes(); j++) {
+		auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(), edge.getNodeIndex(j));
+		if (itr != vec_node_ids.end())
+			edge_node_distances.push_back(std::distance(vec_node_ids.begin(), itr));
+		else
+			break;
+	}
+	return (j==edge.getNNodes());
+}
+
+MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(const MeshLib::Element &edge, const GeoLib::Polyline &ply, const std::vector<std::size_t> &edge_node_distances_along_ply, const std::vector<std::size_t> &node_ids_on_poly) const
+{
+	MeshLib::Element* new_edge = const_cast<MeshLib::Element*>(&edge);
+	// The first node of the edge should be always closer to the beginning of the polyline than other nodes.
+	// Otherwise, create a new element with reversed local node index
+	if (edge_node_distances_along_ply.front() > edge_node_distances_along_ply.back()
+			|| (ply.isClosed() && edge_node_distances_along_ply.back() == node_ids_on_poly.size()-1)) {
+		MeshLib::Node** new_nodes = new MeshLib::Node*[edge.getNNodes()];
+		std::reverse_copy(edge.getNodes(), edge.getNodes()+edge.getNNodes(), new_nodes);
+		new_edge = new MeshLib::Line(new_nodes);
+	}
+	return new_edge;
 }
 
 } // end namespace MeshGeoTools
