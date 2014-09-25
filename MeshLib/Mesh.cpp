@@ -32,11 +32,13 @@ namespace MeshLib
 
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
-           const std::vector<Element*> &elements)
+           const std::vector<Element*> &elements,
+           const std::size_t n_linear_nodes)
 	: _id(_counter_value), _mesh_dimension(0),
 	_edge_length{std::numeric_limits<double>::max(), 0},
 	_node_distance{std::numeric_limits<double>::max(), 0},
-	_name(name), _nodes(nodes), _elements(elements)
+	_name(name), _nodes(nodes), _elements(elements),
+	_n_linear_nodes(n_linear_nodes==std::numeric_limits<std::size_t>::max() ? nodes.size() : n_linear_nodes)
 {
 	this->resetNodeIDs();
 	this->resetElementIDs();
@@ -54,7 +56,8 @@ Mesh::Mesh(const Mesh &mesh)
 	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
 	_edge_length{mesh._edge_length[0], mesh._edge_length[1]},
 	_node_distance{mesh._node_distance[0], mesh._node_distance[1]},
-	_name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	_name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
+	_n_linear_nodes(mesh._n_linear_nodes)
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
