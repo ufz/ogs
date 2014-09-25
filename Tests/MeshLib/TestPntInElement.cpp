@@ -56,6 +56,7 @@ TEST(IsPntInElement, Line)
     ASSERT_EQ(false, line.isPntInElement(pnt));
     deleteNodes(nodes);
 }
+
 TEST(IsPntInElement, Tri)
 {
     GeoLib::Point pnt;

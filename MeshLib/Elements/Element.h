@@ -161,7 +161,7 @@ public:
 	 * @param eps tolerance for numerical algorithm used or computing the property
 	 * @return true if the point is not outside the element, false otherwise
 	 */
-	virtual bool isPntInElement(GeoLib::Point const& pnt, double eps) const = 0;
+	virtual bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const = 0;
 
 	/**
 	 * Tests if the element is geometrically valid.

@@ -131,11 +131,14 @@ bool isPointInTriangle(GeoLib::Point const& p,
 
 /**
  * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
+ * If the tet specified by a, b, c, d is degenerated (i.e. all points are coplanar) the function
+ * will return false because there is no meaningful concept of "inside" for such elements.
  * @param p test point
  * @param a edge node of tetrahedron
  * @param b edge node of tetrahedron
  * @param c edge node of tetrahedron
- * @param c edge node of tetrahedron
+ * @param d edge node of tetrahedron
+ * @param eps Accounts for numerical inaccuracies by allowing a point to be slightly outside of the element and still be regarded as inside.
  * @return true if the test point p is not located outside of abcd (i.e. inside or on a plane/edge).
  */
 bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
@@ -191,8 +194,8 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
  * @param a first point on plane
  * @param b second point on plane
  * @param c third point on plane
- * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a value < 0,
- * otherwise it will return > 0. If p is coplanar with abc, the function will return 0.
+ * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a negative value,
+ * otherwise it will return a positive value. If p is coplanar with abc, the function will return 0.
  */
 double orient3d(GeoLib::Point const& p,
                 GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
