@@ -41,7 +41,7 @@ public:
 		_localRhs = &localRhs;
 	}
 
-	void assemble(std::size_t const rows, std::size_t const columns)
+	void assemble(std::size_t const /*rows*/, std::size_t const /*columns*/)
 	{
 		// The local contributions are computed here, usually, but for this
 		// particular test all contributions are equal for all elements and are
