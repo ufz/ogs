@@ -24,57 +24,50 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 
-template <typename LocalMatrixType_, typename LocalVectorType_>
-class LocalAssemblerData
-{
-public:
-	using LocalMatrixType = LocalMatrixType_;
-	using LocalVectorType = LocalVectorType_;
-
-public:
-
-	void init(MeshLib::Element const&,
-		LocalMatrixType const& localA,
-		LocalVectorType const& localRhs)
-	{
-		_localA = &localA;
-		_localRhs = &localRhs;
-	}
-
-	void assemble(std::size_t const /*rows*/, std::size_t const /*columns*/)
-	{
-		// The local contributions are computed here, usually, but for this
-		// particular test all contributions are equal for all elements and are
-		// already stored in the _localA matrix.
-	}
-
-	LocalMatrixType const& getLocalMatrix() const
-	{
-		return *_localA;
-	}
-
-	LocalVectorType const& getLocalVector() const
-	{
-		return *_localRhs;
-	}
-
-
-private:
-	LocalMatrixType const* _localA = nullptr;
-	LocalVectorType const* _localRhs = nullptr;
-};
-
 struct SteadyDiffusion2DExample1
 {
 	using LocalMatrixType = MathLib::DenseMatrix<double>;
 	using LocalVectorType = MathLib::DenseVector<double>;
 
+	class LocalAssemblerData
+	{
+	public:
+		void init(MeshLib::Element const&,
+			LocalMatrixType const& localA,
+			LocalVectorType const& localRhs)
+		{
+			_localA = &localA;
+			_localRhs = &localRhs;
+		}
+
+		void assemble(std::size_t const /*rows*/, std::size_t const /*columns*/)
+		{
+			// The local contributions are computed here, usually, but for this
+			// particular test all contributions are equal for all elements and are
+			// already stored in the _localA matrix.
+		}
+
+		LocalMatrixType const& getLocalMatrix() const
+		{
+			return *_localA;
+		}
+
+		LocalVectorType const& getLocalVector() const
+		{
+			return *_localRhs;
+		}
+
+	private:
+		LocalMatrixType const* _localA = nullptr;
+		LocalVectorType const* _localRhs = nullptr;
+	};
+
 	static
 	void initializeLocalData(const MeshLib::Element& e,
-			LocalAssemblerData<LocalMatrixType, LocalVectorType>*& data_ptr,
+			LocalAssemblerData*& data_ptr,
 			SteadyDiffusion2DExample1 const& example)
 	{
-		data_ptr = new LocalAssemblerData<LocalMatrixType, LocalVectorType>;
+		data_ptr = new LocalAssemblerData;
 		data_ptr->init(e, example._localA, example._localRhs);
 	}
 

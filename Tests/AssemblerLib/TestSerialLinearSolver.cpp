@@ -100,14 +100,14 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     using LocalMatrixType = MathLib::DenseMatrix<double>;
     using LocalVectorType = MathLib::DenseVector<double>;
 
-    std::vector<LocalAssemblerData<LocalMatrixType, LocalVectorType>*>
+    std::vector<SteadyDiffusion2DExample1::LocalAssemblerData*>
         local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
 
     typedef AssemblerLib::LocalAssemblerBuilder<
             MeshLib::Element,
             void (const MeshLib::Element &,
-                    LocalAssemblerData<LocalMatrixType, LocalVectorType> *&,
+                    SteadyDiffusion2DExample1::LocalAssemblerData *&,
                     SteadyDiffusion2DExample1 const&)
                 > LocalAssemblerBuilder;
 
