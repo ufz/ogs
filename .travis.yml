@@ -46,8 +46,7 @@ before_install:
   - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install libpetsc3.4.2 libpetsc3.4.2-dev; fi
 
 script:
-  - echo $CMAKE_ARGS
-  - "pwd & mkdir build && cd build && ../cmake/bin/cmake $CMAKE_ARGS .. && make"
+  - "export PATH=$PATH:`pwd`/cmake/bin && mkdir build && cd build && cmake $CMAKE_ARGS .. && make"
   - ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3
   # PetSc
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
