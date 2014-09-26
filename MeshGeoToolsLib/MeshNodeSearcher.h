@@ -51,7 +51,8 @@ public:
 	 */
 	explicit MeshNodeSearcher(MeshLib::Mesh const& mesh,
 		MeshGeoToolsLib::SearchLength const& search_length_algorithm
-			= MeshGeoToolsLib::SearchLength());
+			= MeshGeoToolsLib::SearchLength(),
+		bool search_all_nodes = true);
 
 	virtual ~MeshNodeSearcher();
 
@@ -110,6 +111,7 @@ private:
 	MeshLib::Mesh const& _mesh;
 	GeoLib::Grid<MeshLib::Node> _mesh_grid;
 	double _search_length;
+	bool _search_all_nodes;
 	// with newer compiler we can omit to use a pointer here
 	std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
 	std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;

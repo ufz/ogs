@@ -181,7 +181,7 @@ Mesh* MeshGenerator::generateRegularQuad8Mesh(const unsigned n_x_cells,
 		}
 	}
 
-	return new Mesh(mesh_name, nodes, elements);
+	return new Mesh(mesh_name, nodes, elements, n_x_l_nodes*n_y_l_nodes);
 }
 
 Mesh* MeshGenerator::generateRegularHexMesh(

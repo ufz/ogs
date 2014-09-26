@@ -26,9 +26,9 @@ namespace MeshGeoToolsLib
 {
 
 MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
-	MeshGeoToolsLib::SearchLength const& search_length_algorithm) :
+	MeshGeoToolsLib::SearchLength const& search_length_algorithm, bool search_all_nodes) :
 		_mesh(mesh), _mesh_grid(_mesh.getNodes().cbegin(), _mesh.getNodes().cend()),
-		_search_length(0.0)
+		_search_length(0.0), _search_all_nodes(search_all_nodes)
 {
 	DBUG("Constructing MeshNodeSearcher obj.");
 	//_search_length = search_length_algorithm.getSearchLength();
@@ -39,7 +39,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
 
 	double min=0, max=0;
 	for (const MeshLib::Element* e : _mesh.getElements()) {
-		e->computeSqrNodeDistanceRange(min, max);
+		e->computeSqrNodeDistanceRange(min, max, search_all_nodes);
 		sum += std::sqrt(min);
 		sum_of_sqr += min;
 	}
@@ -121,7 +121,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_polylines.push_back(
-			new MeshNodesAlongPolyline(_mesh, ply, _search_length));
+			new MeshNodesAlongPolyline(_mesh, ply, _search_length, _search_all_nodes));
 	return *_mesh_nodes_along_polylines.back();
 }
 
@@ -137,7 +137,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_surfaces.push_back(
-			new MeshNodesAlongSurface(_mesh, sfc));
+			new MeshNodesAlongSurface(_mesh, sfc, _search_all_nodes));
 	return *_mesh_nodes_along_surfaces.back();
 }
 

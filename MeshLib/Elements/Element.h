@@ -44,7 +44,7 @@ public:
 
 	/// Compute the minimum and maximum node distances for this element.
 	/// @return a pair with the smallest as first element and the largest as second
-	virtual void computeSqrNodeDistanceRange(double &min, double &max) const;
+	virtual void computeSqrNodeDistanceRange(double &min, double &max, bool all=true) const;
 
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
