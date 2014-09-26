@@ -31,10 +31,11 @@ before_install:
   # Boost
   - travis_retry sudo apt-get install libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
 
-  # CMake
+  # CMake (32-bit)
   - sudo apt-get remove cmake-data cmake
-  - travis_retry wget http://www.opengeosys.org/images/dev/cmake-2.8.12.2-Linux-x86_64.deb
-  - sudo sudo dpkg --install cmake-2.8.12.2-Linux-x86_64.deb
+  - travis_retry sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
+  - travis_retry wget http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz
+  - "tar -xf cmake-3.0.2-Linux-i386.tar.gz && mv cmake-3.0.2-Linux-i386 cmake"
 
   # Qt and VTK
   - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
@@ -46,7 +47,7 @@ before_install:
 
 script:
   - echo $CMAKE_ARGS
-  - "pwd & mkdir build && cd build && cmake $CMAKE_ARGS .. && cmake .. && make"
+  - "pwd & mkdir build && cd build && ../cmake/bin/cmake $CMAKE_ARGS .. && make"
   - ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3
   # PetSc
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
