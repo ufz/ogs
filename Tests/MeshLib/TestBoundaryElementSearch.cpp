@@ -9,6 +9,7 @@
 #include "gtest/gtest.h"
 
 #include <memory>
+#include <numeric>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
