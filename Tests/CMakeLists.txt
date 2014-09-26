@@ -63,6 +63,8 @@ IF(OGS_BUILD_GUI)
 		VtkVis
 		${VTK_LIBRARIES}
 	)
+ELSE()
+	TARGET_LINK_LIBRARIES(testrunner vtkIO)
 ENDIF()
 
 IF (QT4_FOUND)

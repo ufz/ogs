@@ -3,7 +3,7 @@
 
 #include "NetCdfConfigureDialog.h"
 
-#include "VtkMeshConverter.h"
+#include "MeshGenerators/VtkMeshConverter.h"
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
 
@@ -361,8 +361,8 @@ void NetCdfConfigureDialog::createDataObject()
 	if (this->radioMesh->isChecked())
 	{
 		MeshElemType meshElemType = MeshElemType::QUAD;
-		UseIntensityAs useIntensity = UseIntensityAs::MATERIAL;
-		if ((comboBoxMeshElemType->currentIndex()) == 1) 
+		MeshLib::UseIntensityAs useIntensity = MeshLib::UseIntensityAs::MATERIAL;
+		if ((comboBoxMeshElemType->currentIndex()) == 1)
 		{
 			meshElemType = MeshElemType::TRIANGLE;
 		}else{
@@ -370,12 +370,12 @@ void NetCdfConfigureDialog::createDataObject()
 		}
 		if ((comboBoxUseIntensity->currentIndex()) == 1)
 		{
-			useIntensity = UseIntensityAs::ELEVATION;
+			useIntensity = MeshLib::UseIntensityAs::ELEVATION;
 		}else{
-			useIntensity = UseIntensityAs::MATERIAL;
+			useIntensity = MeshLib::UseIntensityAs::MATERIAL;
 		}
 
-		_currentMesh = VtkMeshConverter::convertImgToMesh(data_array,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);
+		_currentMesh = MeshLib::VtkMeshConverter::convertImgToMesh(data_array,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);
 	}
 	else
 	{

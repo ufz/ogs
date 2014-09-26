@@ -41,6 +41,9 @@ public:
 	/// Decide if the mesh data should be written compressed (default is false).
 	void setCompressData(bool flag=true) { _use_compressor = flag; };
 
+	/// Sets the mesh to write.
+	void setMesh(const MeshLib::Mesh* mesh);
+
 private:
 	bool write();
 

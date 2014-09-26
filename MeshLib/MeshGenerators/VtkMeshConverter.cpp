@@ -39,6 +39,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkFloatArray.h>
 
+namespace MeshLib {
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const double origin[3],
@@ -368,3 +369,5 @@ double VtkMeshConverter::getExistingValue(const double* img, size_t length)
 	}
 	return -9999;
 }
+
+} // end namespace MeshLib

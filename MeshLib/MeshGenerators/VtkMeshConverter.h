@@ -16,14 +16,14 @@
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
-namespace MeshLib {
-	class Mesh;
-}
-
 #include "MeshEnums.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
+
+namespace MeshLib {
+
+class Mesh;
 
 /// Selection of possible interpretations for intensities
 enum class UseIntensityAs
@@ -81,5 +81,7 @@ private:
 
 	static double getExistingValue(const double* img, std::size_t length);
 };
+
+} // end namespace MeshLib
 
 #endif // VTKMESHCONVERTER_H

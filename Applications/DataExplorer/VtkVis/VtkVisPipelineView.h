@@ -17,7 +17,6 @@
 
 // ** INCLUDES **
 #include <QTreeView>
-#include "VtkMeshConverter.h"
 
 class QItemSelection;
 class QAbstractItemModel;
@@ -25,8 +24,11 @@ class VtkVisPipelineItem;
 class vtkProp3D;
 class vtkDataObject;
 
+enum class MeshElemType;
+
 namespace MeshLib {
 	class Mesh;
+	enum class UseIntensityAs;
 }
 
 /**
@@ -74,7 +76,7 @@ private slots:
 	void addPipelineFilterItem();
 
 	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
-	void constructMeshFromImage(QString msh_name, MeshElemType element_type, UseIntensityAs intensity_type);
+	void constructMeshFromImage(QString msh_name, MeshElemType element_type, MeshLib::UseIntensityAs intensity_type);
 
 	/// Calls the dialog to
 	void showImageToMeshConversionDialog();

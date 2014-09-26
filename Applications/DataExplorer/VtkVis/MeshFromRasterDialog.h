@@ -16,9 +16,14 @@
 #define MSHFROMRASTERDIALOG_H
 
 #include "ui_MeshFromRaster.h"
-#include "VtkMeshConverter.h"
 
 #include <QtGui/QDialog>
+
+enum class MeshElemType;
+
+namespace MeshLib {
+	enum class UseIntensityAs;
+}
 
 
 /**
@@ -42,7 +47,7 @@ private slots:
 	void reject();
 
 signals:
-	void setMeshParameters(QString, MeshElemType, UseIntensityAs);
+	void setMeshParameters(QString, MeshElemType, MeshLib::UseIntensityAs);
 
 };
 

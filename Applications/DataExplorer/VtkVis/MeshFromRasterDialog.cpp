@@ -14,6 +14,7 @@
 
 #include "MeshFromRasterDialog.h"
 #include "OGSError.h"
+#include "MeshGenerators/VtkMeshConverter.h"
 
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
 : QDialog(parent)
@@ -33,9 +34,9 @@ MeshFromRasterDialog::~MeshFromRasterDialog()
 
 void MeshFromRasterDialog::accept()
 {
-	UseIntensityAs i_type(UseIntensityAs::ELEVATION);
-	if (this->materialButton->isChecked()) i_type = UseIntensityAs::MATERIAL;
-	else if (this->ignoreButton->isChecked()) i_type = UseIntensityAs::NONE;
+	MeshLib::UseIntensityAs i_type(MeshLib::UseIntensityAs::ELEVATION);
+	if (this->materialButton->isChecked()) i_type = MeshLib::UseIntensityAs::MATERIAL;
+	else if (this->ignoreButton->isChecked()) i_type = MeshLib::UseIntensityAs::NONE;
 
 	MeshElemType e_type(MeshElemType::TRIANGLE);
 	if (this->quadButton->isChecked()) e_type = MeshElemType::QUAD;
