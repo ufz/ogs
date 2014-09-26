@@ -40,7 +40,7 @@ ExternalProject_Add(Catalyst
 
 IF(NOT ${ParaView_FOUND})
 	# Rerun cmake in initial build
-	ADD_CUSTOM_TARGET(CatalystRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Catalyst)
+	ADD_CUSTOM_TARGET(VtkRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Catalyst)
 ELSE()
-	ADD_CUSTOM_TARGET(CatalystRescan) # dummy target for caching
+	ADD_CUSTOM_TARGET(VtkRescan) # dummy target for caching
 ENDIF()

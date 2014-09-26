@@ -13,5 +13,5 @@ ADD_LIBRARY(InSituLib
 )
 
 IF(TARGET VtkRescan)
-	ADD_DEPENDENCIES(InSituLib STATIC VtkRescan)
+	ADD_DEPENDENCIES(InSituLib VtkRescan)
 ENDIF()

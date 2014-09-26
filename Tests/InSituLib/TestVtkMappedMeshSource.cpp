@@ -11,16 +11,21 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#include <vtkNew.h>
-#include <vtkUnstructuredGrid.h>
-
 #include "gtest/gtest.h"
 
+#include "BaseLib/BuildInfo.h"
 #include "Mesh.h"
 #include "MeshGenerators/MeshGenerator.h"
+#include "MeshGenerators/VtkMeshConverter.h"
 
 #include "VtkMappedMesh.h"
 #include "VtkMappedMeshSource.h"
+
+#include <vtkNew.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkSmartPointer.h>
+#include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkXMLUnstructuredGridReader.h>
 
 class InSituMesh : public ::testing::Test
 {
@@ -67,10 +72,14 @@ TEST_F(InSituMesh, MappedMesh)
 	ASSERT_EQ(0, vtkMesh->GetNumberOfPoints()); // No points are defined
 }
 
-TEST_F(InSituMesh, MappedMeshSource)
+TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 {
-	ASSERT_TRUE(mesh != nullptr);
+	// TODO Add more comparison criteria
 
+	ASSERT_TRUE(mesh != nullptr);
+	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path + "/MappedMeshSourceRoundtrip.vtu");
+
+	// Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
 	vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
 	vtkSource->SetMesh(mesh);
 	vtkSource->Update();
@@ -78,4 +87,30 @@ TEST_F(InSituMesh, MappedMeshSource)
 
 	ASSERT_EQ((subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
 	ASSERT_EQ(subdivisions*subdivisions, output->GetNumberOfCells());
+
+	// Write VTK mesh to file
+	vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtuWriter =
+		vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+	// Setting binary file  mode, otherwise corrupted output due to VTK bug
+	// See http://www.paraview.org/Bug/view.php?id=13382
+	vtuWriter->SetDataModeToBinary();
+	vtuWriter->SetFileName(test_data_file.c_str());
+	vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
+	vtuWriter->Write();
+
+	// Read back VTK mesh
+	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
+		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+	reader->SetFileName(test_data_file.c_str());
+	reader->Update();
+	vtkUnstructuredGrid* vtkMesh = reader->GetOutput();
+
+	// Both VTK meshes should be identical
+	ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
+	ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
+
+	// Both OGS meshes should be identical
+	MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);
+	ASSERT_EQ(mesh->getNNodes(), newMesh->getNNodes());
+	ASSERT_EQ(mesh->getNElements(), newMesh->getNElements());
 }

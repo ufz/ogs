@@ -56,8 +56,8 @@ TARGET_LINK_LIBRARIES (FileIO
 	shp
 )
 
-IF(TARGET CatalystRescan)
-	ADD_DEPENDENCIES(FileIO CatalystRescan)
+IF(TARGET VtkRescan)
+	ADD_DEPENDENCIES(FileIO VtkRescan)
 ENDIF()
 
 FILE(GLOB XSD_FILES . *.xsd)
