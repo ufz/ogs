@@ -104,22 +104,22 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
 
-    LocalDataInitializer<LocalMatrixType, LocalVectorType> initializer;
-
     typedef AssemblerLib::LocalAssemblerBuilder<
             MeshLib::Element,
-            LocalDataInitializer<LocalMatrixType, LocalVectorType>
-                > GlobalInitializer;
+            void (const MeshLib::Element &,
+                    LocalAssemblerData<LocalMatrixType, LocalVectorType> *&,
+                    SteadyDiffusion2DExample1 const&)
+                > LocalAssemblerBuilder;
 
-    GlobalInitializer global_initializer(initializer);
+    LocalAssemblerBuilder local_asm_builder(
+        SteadyDiffusion2DExample1::initializeLocalData);
 
     // Call global initializer for each mesh element.
     globalSetup.execute(
-            global_initializer,
+            local_asm_builder,
             ex1.msh->getElements(),
             local_assembler_data,
-            ex1._localA,
-            ex1._localRhs);
+            ex1);
 
     // Local and global assemblers.
     typedef AssemblerLib::VectorMatrixAssembler<

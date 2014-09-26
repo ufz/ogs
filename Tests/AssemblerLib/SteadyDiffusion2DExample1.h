@@ -64,24 +64,19 @@ private:
 	LocalVectorType const* _localRhs = nullptr;
 };
 
-template <typename LocalMatrixType_, typename LocalVectorType_>
-struct LocalDataInitializer
-{
-	template <typename ...Args_>
-	void operator()(const MeshLib::Element& e,
-		LocalAssemblerData<LocalMatrixType_, LocalVectorType_>*& data_ptr,
-		Args_&&... args)
-	{
-		data_ptr = new LocalAssemblerData<LocalMatrixType_, LocalVectorType_>;
-		data_ptr->init(e, std::forward<Args_>(args)...);
-	}
-};
-
-
 struct SteadyDiffusion2DExample1
 {
 	using LocalMatrixType = MathLib::DenseMatrix<double>;
 	using LocalVectorType = MathLib::DenseVector<double>;
+
+	static
+	void initializeLocalData(const MeshLib::Element& e,
+			LocalAssemblerData<LocalMatrixType, LocalVectorType>*& data_ptr,
+			SteadyDiffusion2DExample1 const& example)
+	{
+		data_ptr = new LocalAssemblerData<LocalMatrixType, LocalVectorType>;
+		data_ptr->init(e, example._localA, example._localRhs);
+	}
 
 	SteadyDiffusion2DExample1()
 		: _localA(4, 4), _localRhs(4)
