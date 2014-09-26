@@ -24,8 +24,8 @@ namespace MeshGeoToolsLib
 class SearchLength
 {
 public:
-	SearchLength(MeshLib::Mesh const& mesh)
-		: _mesh(mesh), _search_length(0.0) {}
+	SearchLength(MeshLib::Mesh const& mesh, double search_length = 0.0)
+		: _mesh(mesh), _search_length(search_length) {}
 	virtual double getSearchLength() const = 0;
 protected:
 	MeshLib::Mesh const& _mesh;

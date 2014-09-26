@@ -30,10 +30,8 @@ public:
 	/// of 10 angstrom (\f$10^{-9}\f$ m)
 	FixedSearchLength(MeshLib::Mesh const& mesh,
 		double search_length = 1e-9)
-	: SearchLength(mesh)
-	{
-		_search_length = search_length;
-	}
+	: SearchLength(mesh, search_length)
+	{}
 
 	virtual double getSearchLength() const { return _search_length; }
 };
