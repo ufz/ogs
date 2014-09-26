@@ -1,5 +1,11 @@
-#ADD_LIBRARY(InSituLib
-#	VtkMeshNodalCoordinatesTemplate.txx
-#)
+INCLUDE_DIRECTORIES(
+	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib
+	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib/Elements
+)
 
-#ADD_DEPENDENCIES(InSituLib STATIC VtkRescan)
+ADD_LIBRARY(InSituLib
+	VtkMappedMesh.h
+	VtkMappedMesh.cpp
+)
+
+ADD_DEPENDENCIES(InSituLib STATIC VtkRescan)
