@@ -129,6 +129,10 @@ bool isPointInTriangle(GeoLib::Point const& p,
 				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
 				double eps = std::numeric_limits<float>::epsilon());
 
+bool isPointInTriangle2(GeoLib::Point const& p,
+				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+				double eps = std::numeric_limits<float>::epsilon());
+
 /**
  * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
  * If the tet specified by a, b, c, d is degenerated (i.e. all points are coplanar) the function
