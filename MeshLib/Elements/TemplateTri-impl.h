@@ -88,7 +88,7 @@ bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 }
 
 template <unsigned NNODES, CellType CELLTRITYPE>
-bool TemplateTri<NNODES,CELLTRITYPE>::isPntInside(GeoLib::Point const& pnt, double eps) const
+bool TemplateTri<NNODES,CELLTRITYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
 {
 	return GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }

@@ -116,6 +116,14 @@ public:
 	}
 
 	/**
+	 * Checks if a point is located on the line
+	 * @param pnt a 3D GeoLib::Point object
+	 * @param eps tolerance for numerical algorithm used or computing the property
+	 * @return true if the point is located on the line, false otherwise
+	 */
+	bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+
+	/**
 		* Tests if the element is geometrically valid.
 		* @param check_zero_volume indicates if area == 0 should be checked
 		* @return error code (0 = okay, 1 = zero volume)

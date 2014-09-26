@@ -100,6 +100,14 @@ public:
 	bool isEdge(unsigned i, unsigned j) const;
 
 	/**
+	 * Checks if a point is inside the element.
+	 * @param pnt a 3D GeoLib::Point object
+	 * @param eps tolerance for numerical algorithm used or computing the property
+	 * @return true if the point is not outside the element, false otherwise
+	 */
+	bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+
+	/**
 	 * Tests if the element is geometrically valid.
 	 * @param check_zero_volume indicates if volume == 0 should be checked
 	 */

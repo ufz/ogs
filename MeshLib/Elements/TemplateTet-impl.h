@@ -129,6 +129,12 @@ bool TemplateTet<NNODES,CELLTETTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
+bool TemplateTet<NNODES,CELLTETTYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
+{
+    return GeoLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3], eps);
+}
+
+template <unsigned NNODES, CellType CELLTETTYPE>
 Element* TemplateTet<NNODES,CELLTETTYPE>::clone() const
 {
 	return new TemplateTet<NNODES,CELLTETTYPE>(*this);

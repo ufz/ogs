@@ -151,6 +151,13 @@ bool TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isEdge(unsigned idx1, unsigned idx
 }
 
 template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
+bool TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
+{
+    return (GeoLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4], eps) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[2], *_nodes[3], *_nodes[4], eps));
+}
+
+template <unsigned NNODES, CellType CELLPYRAMIDTYPE>
 Element* TemplatePyramid<NNODES,CELLPYRAMIDTYPE>::clone() const
 {
 	return new TemplatePyramid<NNODES,CELLPYRAMIDTYPE>(*this);

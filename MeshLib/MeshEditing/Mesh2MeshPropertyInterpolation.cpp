@@ -94,7 +94,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 			for (size_t j(0); j<n_nodes_in_vec; j++) {
 				MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
 				if (elem_aabb.containsPoint(*j_th_node)) {
-					if (dynamic_cast<MeshLib::Face*>(dest_elements[k])->isPntInside(* dynamic_cast<GeoLib::Point const*>(j_th_node), 30)) {
+					if (dest_elements[k]->isPntInElement(*j_th_node, 30)) {
 						dest_properties[k] += interpolated_src_node_properties[(*i_th_vec)[j]->getID()];
 						cnt++;
 					}

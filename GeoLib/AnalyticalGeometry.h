@@ -130,6 +130,21 @@ bool isPointInTriangle(GeoLib::Point const& p,
 				double eps = std::numeric_limits<float>::epsilon());
 
 /**
+ * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
+ * If the tet specified by a, b, c, d is degenerated (i.e. all points are coplanar) the function
+ * will return false because there is no meaningful concept of "inside" for such elements.
+ * @param p test point
+ * @param a edge node of tetrahedron
+ * @param b edge node of tetrahedron
+ * @param c edge node of tetrahedron
+ * @param d edge node of tetrahedron
+ * @param eps Accounts for numerical inaccuracies by allowing a point to be slightly outside of the element and still be regarded as inside.
+ * @return true if the test point p is not located outside of abcd (i.e. inside or on a plane/edge).
+ */
+bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
+                          GeoLib::Point const& c, GeoLib::Point const& d, double eps = std::numeric_limits<double>::epsilon());
+
+/**
  * test for intersections of the line segments of the Polyline
  * @param ply the polyline
  * @param idx0 beginning index of the first line segment that has an intersection
@@ -173,7 +188,19 @@ GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point co
 /// Calculates the scalar triple (u x v) . w
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
 
-/** 
+/**
+ * Checks if a point p is on the left or right side of a plane spanned by three points a, b, c.
+ * @param p point to test
+ * @param a first point on plane
+ * @param b second point on plane
+ * @param c third point on plane
+ * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a negative value,
+ * otherwise it will return a positive value. If p is coplanar with abc, the function will return 0.
+ */
+double orientation3d(GeoLib::Point const& p,
+                     GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
+
+/**
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
  * (In 2D space this checks if c and d are on different sides of a line through a and b.)
  * @param a first point on plane
@@ -188,8 +215,7 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
  /// Checks if the four given points are located on a plane.
  bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
-
-
+ 
 /**
  * Method first computes the intersection points of line segements of GeoLib::Polyline objects
  * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec

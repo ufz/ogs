@@ -140,6 +140,17 @@ bool TemplateHex<NNODES,CELLHEXTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 }
 
 template <unsigned NNODES, CellType CELLHEXTYPE>
+bool TemplateHex<NNODES,CELLHEXTYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
+{
+    return (GeoLib::isPointInTetrahedron(pnt, *_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0], eps) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0], eps) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0], eps) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2], eps) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2], eps) ||
+            GeoLib::isPointInTetrahedron(pnt, *_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2], eps));
+}
+
+template <unsigned NNODES, CellType CELLHEXTYPE>
 Element* TemplateHex<NNODES,CELLHEXTYPE>::clone() const
 {
 	return new TemplateHex<NNODES,CELLHEXTYPE>(*this);
