@@ -77,7 +77,7 @@ public:
         vec_eles.push_back(clockwiseEle);
         vec_eles.push_back(zeroVolumeEle);
         for (auto e : vec_eles)
-            for (unsigned i=0; i<e->getNNodes(); i++)
+            for (unsigned i=0; i<e->getNBaseNodes(); i++)
                 vec_nodes.push_back(e->getNode(i));
     }
 

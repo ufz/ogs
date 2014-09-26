@@ -81,7 +81,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     map_ele_nodes2vec_entries.reserve(all_eles.size());
     for (auto e = all_eles.cbegin(); e != all_eles.cend(); ++e)
     {
-        std::size_t const nnodes = (*e)->getNNodes();
+        std::size_t const nnodes = (*e)->getNBaseNodes();
         std::size_t const mesh_id = ex1.msh->getID();
         std::vector<MeshLib::Location> vec_items;
         vec_items.reserve(nnodes);

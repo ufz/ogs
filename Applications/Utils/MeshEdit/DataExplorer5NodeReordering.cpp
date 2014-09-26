@@ -32,7 +32,7 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 	std::size_t nElements (elements.size());
 	for (std::size_t i=0; i<nElements; ++i) 
 	{
-		const unsigned nElemNodes (elements[i]->getNNodes());
+		const unsigned nElemNodes (elements[i]->getNBaseNodes());
 		std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
 
 		switch (elements[i]->getGeomType())

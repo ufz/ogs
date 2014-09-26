@@ -53,8 +53,8 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 		return boost::optional<unsigned>();
 
 	Node* face_nodes[3];
-	const unsigned nNodes (this->getNNodes());
-	const unsigned eNodes (e->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
+	const unsigned eNodes (e->getNBaseNodes());
 	const Node* const* e_nodes = e->getNodes();
 	unsigned count(0);
 	const unsigned dim (this->getDimension());
@@ -76,7 +76,7 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 
 MeshLib::Node Element::getCenterOfGravity() const
 {
-	const unsigned nNodes (this->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
 	MeshLib::Node center(0,0,0);
 	for (unsigned i=0; i<nNodes; ++i)
 	{

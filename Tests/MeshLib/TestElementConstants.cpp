@@ -27,7 +27,7 @@ TEST(MeshLib, Quad4ElementConstants)
 
 	ASSERT_EQ(2u, quad.getDimension());
 	ASSERT_EQ(4u, quad.getNNodes());
-	ASSERT_EQ(4u, quad.getNLinearNodes());
+	ASSERT_EQ(4u, quad.getNBaseNodes());
 }
 
 TEST(MeshLib, Quad8ElementConstants)
@@ -51,7 +51,7 @@ TEST(MeshLib, Quad8ElementConstants)
 
 	ASSERT_EQ(2u, quad8.getDimension());
 	ASSERT_EQ(8u, quad8.getNNodes());
-	ASSERT_EQ(4u, quad8.getNLinearNodes());
+	ASSERT_EQ(4u, quad8.getNBaseNodes());
 }
 
 TEST(MeshLib, Quad9ElementConstants)
@@ -76,6 +76,6 @@ TEST(MeshLib, Quad9ElementConstants)
 
 	ASSERT_EQ(2u, quad9.getDimension());
 	ASSERT_EQ(9u, quad9.getNNodes());
-	ASSERT_EQ(4u, quad9.getNLinearNodes());
+	ASSERT_EQ(4u, quad9.getNBaseNodes());
 }
 

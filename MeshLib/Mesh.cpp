@@ -189,7 +189,7 @@ void Mesh::setElementNeighbors()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		Element *const element = *it;
 
-		const size_t nNodes (element->getNNodes());
+		const size_t nNodes (element->getNBaseNodes());
 		for (unsigned n(0); n<nNodes; ++n)
 		{
 			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
@@ -231,7 +231,7 @@ void Mesh::setNodesConnectedByEdges()
 					if (conn_elems[j]->getNode(k) == conn_set[l])
 						is_in_vector = true;
 				if (is_in_vector) continue;
-				if (conn_elems[j]->isEdge(idx, k))
+				if (conn_elems[j]->isEdge(idx, k)) //TODO doesn't work with higher order nodes
 					conn_set.push_back(_nodes[conn_elems[j]->getNode(k)->getID()]);
 			}
 		}

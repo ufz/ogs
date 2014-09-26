@@ -108,11 +108,11 @@ public:
 	/// Get the number of neighbors for this element.
 	virtual unsigned getNNeighbors() const = 0;
 
+	/// Returns the number of linear nodes
+	virtual unsigned getNBaseNodes() const = 0;
+
 	/// Returns the number of nodes including both linear and nonlinear ones
 	virtual unsigned getNNodes() const = 0;
-
-	/// Returns the number of linear nodes
-	virtual unsigned getNLinearNodes() const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;

@@ -83,16 +83,16 @@ public:
 	/// Get the number of neighbors for this element.
 	unsigned getNNeighbors() const { return 6; };
 
+	/// Get the number of linear nodes for this element.
+	virtual unsigned getNBaseNodes() const
+	{
+		return n_base_nodes;
+	}
+
 	/// Get the number of nodes for this element.
 	virtual unsigned getNNodes() const
 	{
 		return n_all_nodes;
-	}
-
-	/// Get the number of linear nodes for this element.
-	virtual unsigned getNLinearNodes() const
-	{
-		return n_base_nodes;
 	}
 
 	/**

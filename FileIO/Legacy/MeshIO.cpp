@@ -269,7 +269,7 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
 	out << ele_vector_size << "\n";
 	for (size_t i(0); i < ele_vector_size; ++i) {
 		out << i << " " << ele_vec[i]->getValue() << " " << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
-		unsigned nElemNodes (ele_vec[i]->getNNodes());
+		unsigned nElemNodes (ele_vec[i]->getNBaseNodes());
 		for(size_t j = 0; j < nElemNodes; ++j)
 			out << ele_vec[i]->getNode(j)->getID() << " ";
 		out << "\n";
