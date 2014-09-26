@@ -56,7 +56,8 @@ class readNodePartitionedMesh
                     and return a pointer to it.
              \param comm  MPI  communicator.
              \param file_name  Name of file to be read.
-             \return           Pointer to Mesh object.
+             \return           Pointer to Mesh object. If the creation of mesh object
+                               fails, return a null pointer.
         */
         MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name);
 
@@ -123,7 +124,7 @@ class readNodePartitionedMesh
                          std::vector<short*> &mesh_ghost_elems, const bool ghost = false);
 
         /// Teminate programm due to failed to open the file or mismatch between two requested numbers
-        void quit(const std::string & err_message, const bool for_fileopen = true);
+        void printMessage(const std::string & err_message, const bool for_fileopen = true);
 
 };
 

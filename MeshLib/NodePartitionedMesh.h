@@ -40,6 +40,9 @@ class NodePartitionedMesh : public Mesh
             \param name          Name assigned to the mesh.
             \param nodes         Vector for nodes.
             \param elements      Vector for elements.
+            \param g_elem_data   Element wise local node IDs of active nodes.
+            \param start_id_gele Start ID of the entry of ghost element in 
+                                 the element vector.
             \param nnodes_global Number of nodes of the whole mesh.
                                  0: with linear elements
                                  1: with quadratic elemens.
@@ -50,11 +53,15 @@ class NodePartitionedMesh : public Mesh
         NodePartitionedMesh(const std::string &name,
                             const std::vector<Node*> &nodes,
                             const std::vector<Element*> &elements,
+                            const std::vector<short*> &g_elem_data,
+                            const unsigned start_id_g_elem,
                             const unsigned nnodes_global[],
                             const unsigned nnodes_active[])
             : Mesh(name, nodes, elements, false),
+              _start_id_g_elem(start_id_g_elem), 
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
-        _nnodes_active {nnodes_active[0], nnodes_active[1] }
+              _nnodes_active {nnodes_active[0], nnodes_active[1] }, 
+              _act_nodes_ids_of_ghost_element(g_elem_data)
         {
         }
 
@@ -101,7 +108,7 @@ class NodePartitionedMesh : public Mesh
           \brief Get local IDs of the active nodes of an element
           \param gelem_id Index of ghost element
         */
-        short *getElementActiveNNodes(const unsigned gelem_id) const
+        short *getElementActiveNodes(const unsigned gelem_id) const
         {
             return &_act_nodes_ids_of_ghost_element[gelem_id][2];
         }
@@ -119,15 +126,16 @@ class NodePartitionedMesh : public Mesh
         {
             return _start_id_g_elem;
         }
+        
     private:
+        /// ID of the start entry of ghost elements in _elements vector.
+        unsigned  _start_id_g_elem;
+    
         /// Number of nodes of the whole mesh. 0: for linear elements; 1: for quadratic elements.
         unsigned _nnodes_global[2];
 
         /// Number of the active nodes. 0: for linear elements; 1: for quadratic elements.
         unsigned  _nnodes_active[2];
-
-        /// ID of the start entry of ghost elements in _elements vector.
-        unsigned  _start_id_g_elem;
 
         /// Active node indices of each ghost elements
         std::vector<short *> _act_nodes_ids_of_ghost_element;

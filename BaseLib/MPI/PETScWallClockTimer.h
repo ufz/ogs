@@ -35,9 +35,9 @@ class PETScWallClockTimer
         }
 
         /// Return the elapsed time when this function is called.
-        double elapsed()
+        PetscLogDouble elapsed()
         {
-            double  current_time
+            PetscLogDouble current_time
 #if (PETSC_VERSION_MAJOR == 3) && (PETSC_VERSION_MINOR > 2 || PETSC_VERSION_MAJOR > 3)
             PetscTime(&current_time);
 #else
@@ -48,7 +48,7 @@ class PETScWallClockTimer
 
     private:
         /// Start time.
-        double _start_time;
+        PetscLogDouble _start_time;
 };
 
 } // end namespace BaseLib

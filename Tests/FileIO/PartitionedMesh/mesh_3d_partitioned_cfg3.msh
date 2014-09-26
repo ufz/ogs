@@ -1,0 +1,5 @@
+Subdomain mesh (Nodes;  Nodes_linear; Elements; Ghost elements; Nodes of Linear elements; Nodes of quadratic elements) Nodes of Linear whole elements; Nodes of whole quadratic elements; Total integer variables of elements;Total integer variables of ghost elements  
+3
+42 42 35 63 23 23 63 63 245 692 0
+44 44 31 73 20 20 63 63 217 793 0
+42 42 30 66 20 20 63 63 210 717 0

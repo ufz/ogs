@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 
-#include "BaseLib/WallClockTimer.h"
+#include "BaseLib/MPI/WallClockTimer.h"
 
 #include "NodePartitionedMesh.h"
 #include "Node.h"
@@ -74,7 +74,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::read(MPI_Comm comm, const
     timer.start();
 
     MPI_Comm_size(comm, &_size);
-    string _size_str = std::to_string(_size);
+    _size_str = std::to_string(_size);
     MPI_Comm_rank(comm, &_rank);
 
     // Always try binary file first
@@ -124,7 +124,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
                        MPI_INFO_NULL, &fh);
     if (rc ) // Failed to open the file
     {
-        quit(fname_new_base);
+        printMessage(fname_new_base);
+        return nullptr;
     }
 
     //
@@ -141,7 +142,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
                        MPI_INFO_NULL, &fh);
     if (rc ) // Failed to open the file
     {
-        quit(fname_new_base);
+        printMessage(fname_new_base);
+        return nullptr;
     }
 
     MPI_Datatype MPI_node;
@@ -166,7 +168,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
                        MPI_INFO_NULL, &fh);
     if (rc ) // Failed to open the file
     {
-        quit(fname_new_base);
+        printMessage(fname_new_base);
+        return nullptr;
     }
 
     MyInt size_elem_info =   _mesh_controls[2] + _mesh_controls[8];
@@ -188,7 +191,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
                        MPI_INFO_NULL, &fh);
     if( rc )
     {
-        quit(fname_new_base);
+        printMessage(fname_new_base);
+        return nullptr;
     }
 
     size_elem_info =   _mesh_controls[3] + _mesh_controls[9];
@@ -212,8 +216,8 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
                                 static_cast<unsigned>(_mesh_controls[7])
                                };
 
-    return  new NodePartitionedMesh(file_name + _size_str,
-                                    mesh_nodes,  mesh_elems, nnodes_global, nnodes_active);
+    return  new NodePartitionedMesh(file_name + _size_str, mesh_nodes,  mesh_elems,
+                                    ghost_elems, _mesh_controls[2], nnodes_global, nnodes_active);
 }
 
 MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, const std::string &file_name)
@@ -221,42 +225,57 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
     ifstream is_cfg;
     ifstream is_node;
     ifstream is_elem;
+    int file_opened = 1;
 
     if(_rank == 0)
     {
         string str_var = file_name + "_partitioned_cfg"+ _size_str + ".msh";
         is_cfg.open(str_var.c_str());
+
         if( !is_cfg.good() )
         {
-            quit(str_var);
+            file_opened = false;
+            printMessage(str_var);
+        }
+        else
+        {
+            getline(is_cfg, str_var);
+            int num_parts;
+            is_cfg >> num_parts >>ws;
+
+            if(num_parts != _size)
+            {
+                file_opened = false;
+                string str_var = "Sorry, I have to quit the simulation now because that "
+                                 " the number of the requested computer cores "
+                                 "is not identical to the number of subdomains.";
+                printMessage(str_var, file_opened);
+            }
         }
 
         str_var = file_name + "_partitioned_nodes_" + _size_str + ".msh";
         is_node.open(str_var.c_str());
+        if( !is_node.good() )
         {
-            quit(str_var);
+            file_opened = false;
         }
 
         str_var = file_name + "_partitioned_elems_" + _size_str + ".msh";
         is_elem.open(str_var.c_str());
         if( !is_elem.good() )
         {
-            quit(str_var);
-        }
-
-        getline(is_cfg, str_var);
-        int num_parts;
-        is_cfg >> num_parts >>ws;
-        if(num_parts != _size)
-        {
-            string str_var = "Sorry, I have to quit the simulation now because that "
-                             " the number of the requested computer cores "
-                             "is not identical to the number of subdomains.";
-            const bool for_fileopen = false;
-            quit(str_var, for_fileopen);
+            printMessage(str_var);
+            file_opened = false;
         }
     }
 
+    MPI_Bcast(&file_opened, 1, MPI_INT, 0, comm);
+
+    if( !file_opened )
+        return nullptr;
+
+    NodePartitionedMesh * elem = nullptr;
+    _num_controls = 11;
     NodeData *s_nodes = nullptr;
     MyInt *elem_info = nullptr;
     MPI_Datatype MPI_node;
@@ -275,8 +294,20 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
             for(MyInt j=0; j< _num_controls; j++)
                 is_cfg >> _mesh_controls[j];
             is_cfg >> ws;
+
+            if(i > 0)
+            {
+                MPI_Send(_mesh_controls, _num_controls, MPI_LONG, i, tag[0], comm);
+            }
         }
-        MPI_Bcast(_mesh_controls, _num_controls, MPI_LONG, 0, comm);
+        if(i > 0)
+        {
+            if(_rank == i)
+            {
+                MPI_Recv(_mesh_controls, _num_controls, MPI_LONG, 0, tag[0], comm, &status);
+            }
+        }
+        // MPI_Bcast(_mesh_controls, _num_controls, MPI_LONG, 0, comm);
 
         //----------------------------------------------------------------------------------
         // Read Nodes
@@ -312,7 +343,9 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
                 setNodes(s_nodes, mesh_nodes);
             }
         }
-        free(s_nodes);
+
+        if(i > 0)
+            MPI_Type_free(&MPI_node);
 
         //----------------------------------------------------------------------------------
         // Read elements
@@ -344,7 +377,6 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
         const bool process_ghost = true;
         const MyInt size_elem_g_info = _mesh_controls[3] + _mesh_controls[9];
         elem_info = (MyInt *)realloc(elem_info, sizeof(MyInt) * size_elem_g_info );
-        ghost_elems.resize( _mesh_controls[3] );
         if(_rank == 0)
         {
             readElementASCII(is_elem, elem_info, true);
@@ -366,6 +398,21 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
                 setElements(mesh_nodes, elem_info, mesh_elems, ghost_elems, process_ghost);
             }
         }
+
+        if(_rank == i)
+        {
+            //----------------------------------------------------------------------------------
+            //Create a mesh and return it
+            unsigned nnodes_active[] = { static_cast<unsigned>(_mesh_controls[4]),
+                                         static_cast<unsigned>(_mesh_controls[5])
+                                       };
+            unsigned nnodes_global[] = {static_cast<unsigned>(_mesh_controls[6]),
+                                        static_cast<unsigned>(_mesh_controls[7])
+                                       };
+
+            elem =  new NodePartitionedMesh(file_name + _size_str, mesh_nodes,  mesh_elems,
+                                            ghost_elems,  _mesh_controls[2], nnodes_global, nnodes_active);
+        }
     }
 
     if(s_nodes)
@@ -376,7 +423,6 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
     {
         free(elem_info);
     }
-    MPI_Type_free(&MPI_node);
 
     if(_rank == 0)
     {
@@ -387,17 +433,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
 
     MPI_Barrier(comm);
 
-    //----------------------------------------------------------------------------------
-    //Create a mesh and return it
-    unsigned nnodes_active[] = { static_cast<unsigned>(_mesh_controls[4]),
-                                 static_cast<unsigned>(_mesh_controls[5])
-                               };
-    unsigned nnodes_global[] = {static_cast<unsigned>(_mesh_controls[6]),
-                                static_cast<unsigned>(_mesh_controls[7])
-                               };
-
-    return  new NodePartitionedMesh(file_name + _size_str,
-                                    mesh_nodes,  mesh_elems, nnodes_global, nnodes_active);
+    return  elem;
 }
 
 void readNodePartitionedMesh::readElementASCII(std::ifstream &ins,
@@ -539,10 +575,8 @@ void readNodePartitionedMesh::setElements(const std::vector<MeshLib::Node*> &mes
     }
 }
 
-void readNodePartitionedMesh::quit(const std::string & err_message, const bool for_fileopen)
+void readNodePartitionedMesh::printMessage(const std::string & err_message, const bool for_fileopen)
 {
-    MPI_Finalize();
-
     if( for_fileopen )
     {
         if(_rank == 0 )
@@ -550,8 +584,6 @@ void readNodePartitionedMesh::quit(const std::string & err_message, const bool f
     }
     else
         INFO( err_message.c_str() );
-
-    exit(EXIT_FAILURE);
 }
 
 } // end of name space FileIO
