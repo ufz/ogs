@@ -15,15 +15,15 @@ ENDIF()
 
 IF(WIN32)
 	SET(CATALYST_MAKE_COMMAND
-		cmake --build . --config Release &&
-		cmake --build . --config Debug)
+		cmake --build . --config Release --target vtkIO &&
+		cmake --build . --config Debug --target vtkIO)
 	SET(CATALYST_CONFIGURE_COMMAND cmake.bat)
 	# MESSAGE(STATUS ${CATALYST_MAKE_COMMAND})
 ELSE()
 	IF($ENV{CI})
-		SET(CATALYST_MAKE_COMMAND make)
+		SET(CATALYST_MAKE_COMMAND make vtkIO)
 	ELSE()
-		SET(CATALYST_MAKE_COMMAND make -j ${NUM_PROCESSORS})
+		SET(CATALYST_MAKE_COMMAND make -j ${NUM_PROCESSORS} vtkIO)
 	ENDIF()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.sh)
 ENDIF()
