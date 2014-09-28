@@ -36,11 +36,7 @@ Cell::~Cell()
 
 bool Cell::isOnSurface() const
 {
-	unsigned n (this->getNNeighbors());
-	for (unsigned i(0); i<n; i++)
-		if (!this->_neighbors[i])
-			return true;
-	return false;
+	return isBoundaryElement();
 }
 
 bool Cell::testElementNodeOrder() const

@@ -115,6 +115,14 @@ public:
 			this->_x[i] *= s;
 	}
 
+	/// Returns a normalized version of this vector
+	TemplateVector3<double> normalizeVector() const
+	{
+		TemplateVector3<double> norm_vec (_x[0], _x[1], _x[2]);
+		norm_vec.normalize();
+		return norm_vec;
+	}
+
 	/// Returns the squared length
 	double getSqrLength(void) const
 	{

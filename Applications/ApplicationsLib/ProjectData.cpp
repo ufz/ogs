@@ -84,11 +84,13 @@ void ProjectData::addMesh(MeshLib::Mesh* mesh)
 	_mesh_vec.push_back(mesh);
 }
 
+
 std::vector<MeshLib::Mesh*>::const_iterator ProjectData::findMeshByName(
 		std::string const& name) const
 {
 	return const_cast<ProjectData&>(*this).findMeshByName(name);
 }
+
 
 std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
 		std::string const& name)
@@ -98,7 +100,6 @@ std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
 			{
 				return mesh && (name == mesh->getName());
 			});
-
 }
 
 const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const

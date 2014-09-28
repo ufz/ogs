@@ -15,6 +15,7 @@
 #include "MeshSurfaceExtraction.h"
 
 #include <cassert>
+#include <math.h>
 
 #include "logog/include/logog.hpp"
 
@@ -63,14 +64,17 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, bool keepOriginalNodeIds)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)
 {
+	if (angle< 0) angle = 0;
+	if (angle > 90) angle = 90;
+
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
 	const std::vector<MeshLib::Node*> all_nodes (mesh.getNodes());
 
 	std::vector<MeshLib::Element*> sfc_elements;
-	get2DSurfaceElements(all_elements, sfc_elements, dir, mesh.getDimension());
+	get2DSurfaceElements(all_elements, sfc_elements, dir, angle, mesh.getDimension());
 
 	if (sfc_elements.empty())
 		return nullptr;
@@ -114,7 +118,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	return result;
 }
 
-void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, unsigned mesh_dimension)
+void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, double angle, unsigned mesh_dimension)
 {
 	if (mesh_dimension<2 || mesh_dimension>3)
 		ERR("Cannot handle meshes of dimension %i", mesh_dimension);
@@ -122,6 +126,10 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 	bool complete_surface (true);
 	if (MathLib::scalarProduct(dir, dir) != 0)
 		complete_surface = false;
+
+	double const pi (3.14159265358979323846);
+	double const cos_theta (std::cos(angle * pi / 180.0));
+	MathLib::Vector3 const norm_dir (dir.normalizeVector());
 
 	for (auto elem = all_elements.begin(); elem != all_elements.end(); ++elem)
 	{
@@ -134,8 +142,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 			if (!complete_surface)
 			{
 				MeshLib::Face* face = dynamic_cast<MeshLib::Face*>(*elem);
-
-				if (MathLib::scalarProduct(face->getSurfaceNormal(), dir) <= 0)
+				if (MathLib::scalarProduct(face->getSurfaceNormal().normalizeVector(), norm_dir) >= cos_theta)
 					continue;	
 			}
 			sfc_elements.push_back(*elem);
@@ -153,11 +160,13 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 
 				const MeshLib::Face* face = static_cast<const MeshLib::Face*>(cell->getFace(j));
 				if (!complete_surface)
-					if (MathLib::scalarProduct(face->getSurfaceNormal(), dir) <= 0)
+				{
+					if (MathLib::scalarProduct(face->getSurfaceNormal().normalizeVector(), norm_dir) < cos_theta)
 					{
 						delete face;
 						continue;
 					}
+				}
 				if (face->getGeomType() == MeshElemType::TRIANGLE)
 					sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
 				else
@@ -191,14 +200,14 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(const std::vector<MeshLib::Node*> 
 	}
 }
 
-std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir)
+std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle)
 {
 	INFO ("Extracting surface nodes...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
 	const std::vector<MeshLib::Node*> all_nodes (mesh.getNodes());
 
 	std::vector<MeshLib::Element*> sfc_elements;
-	get2DSurfaceElements(all_elements, sfc_elements, dir, mesh.getDimension());
+	get2DSurfaceElements(all_elements, sfc_elements, dir, angle, mesh.getDimension());
 
 	std::vector<MeshLib::Node*> sfc_nodes;
 	std::vector<unsigned> node_id_map(mesh.getNNodes());
