@@ -84,7 +84,6 @@ void ProjectData::addMesh(MeshLib::Mesh* mesh)
 	_mesh_vec.push_back(mesh);
 }
 
-
 std::vector<MeshLib::Mesh*>::const_iterator ProjectData::findMeshByName(
 		std::string const& name) const
 {
