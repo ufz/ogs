@@ -18,7 +18,7 @@ IF (QT4_FOUND)
 ENDIF()
 
 IF(OGS_USE_PETSC)
-	SET(TEST_SOURCES ${TEST_SOURCES} FileIO/TestReadNodePartitionedMesh.cpp)
+	SET(TEST_SOURCES ${TEST_SOURCES} FileIO/TestNodePartitionedMeshReader.cpp)
 ENDIF(OGS_USE_PETSC)
 
 

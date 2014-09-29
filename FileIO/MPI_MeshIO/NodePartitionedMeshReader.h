@@ -1,5 +1,5 @@
 /*!
-  \file readNodePartitionedMesh.h
+  \file NodePartitionedMeshReader.h
   \author Wenqing Wang
   \date   2014.08
   \brief  Declare a class to read node-wise partitioned mesh with MPI functions.
@@ -11,8 +11,8 @@
                http://www.opengeosys.org/project/license
 */
 
-#ifndef READ_NODE_PARTITIONED_MESH_H
-#define READ_NODE_PARTITIONED_MESH_H
+#ifndef NODE_PARTITIONED_MESH_READER_H
+#define NODE_PARTITIONED_MESH_READER_H
 
 #include <mpi.h>
 
@@ -43,11 +43,11 @@ struct NodeData
 void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr);
 
 /// Class to handle reading data of partitioned mesh.
-class readNodePartitionedMesh
+class NodePartitionedMeshReader
 {
     public:
 
-        readNodePartitionedMesh() : _num_controls(14)
+        NodePartitionedMeshReader() : _num_controls(14)
         {
         }
 

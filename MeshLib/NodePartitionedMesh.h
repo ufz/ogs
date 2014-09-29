@@ -31,6 +31,13 @@ namespace MeshLib
 class Node;
 class Element;
 
+/// Element order for reading partitioned mesh data
+enum class ElementOrder
+{
+    LINEAR = 0,
+    QUADRATIC = 1,
+};
+
 /// A subdomain mesh.
 class NodePartitionedMesh : public Mesh
 {
@@ -41,7 +48,7 @@ class NodePartitionedMesh : public Mesh
             \param nodes         Vector for nodes.
             \param elements      Vector for elements.
             \param g_elem_data   Element wise local node IDs of active nodes.
-            \param start_id_gele Start ID of the entry of ghost element in 
+            \param start_id_gele Start ID of the entry of ghost element in
                                  the element vector.
             \param nnodes_global Number of nodes of the whole mesh.
                                  0: with linear elements
@@ -58,10 +65,10 @@ class NodePartitionedMesh : public Mesh
                             const unsigned nnodes_global[],
                             const unsigned nnodes_active[])
             : Mesh(name, nodes, elements, false),
-              _start_id_g_elem(start_id_g_elem), 
+              _start_id_g_elem(start_id_g_elem),
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
-              _nnodes_active {nnodes_active[0], nnodes_active[1] }, 
-              _act_nodes_ids_of_ghost_element(g_elem_data)
+                         _nnodes_active {nnodes_active[0], nnodes_active[1] },
+                         _act_nodes_ids_of_ghost_element(g_elem_data)
         {
         }
 
@@ -78,9 +85,9 @@ class NodePartitionedMesh : public Mesh
             \param order The order of elements (0 or 1).
                          Its default value is 0 for linear elements.
         */
-        unsigned getGlobalNNodes(const int order = 0) const
+        unsigned getGlobalNNodes(const ElementOrder order = ElementOrder::LINEAR) const
         {
-            return _nnodes_global[order];
+            return _nnodes_global[static_cast<int>(order)];
         }
 
         /*!
@@ -88,9 +95,9 @@ class NodePartitionedMesh : public Mesh
             \param order The order of elements (0 or 1).
                          Its default value is 0 for linear elements.
         */
-        unsigned getActiveNNodes(const int order = 0) const
+        unsigned getActiveNNodes(const ElementOrder order = ElementOrder::LINEAR) const
         {
-            return _nnodes_active[order];
+            return _nnodes_active[static_cast<int>(order)];
         }
 
         /*!
@@ -99,9 +106,10 @@ class NodePartitionedMesh : public Mesh
           \param order    The order of elements (either 0 or 1).
 
         */
-        unsigned getElementActiveNNodes(const unsigned gelem_id, const int order = 0) const
+        unsigned getElementActiveNNodes(const unsigned gelem_id,
+                                        const ElementOrder order = ElementOrder::LINEAR) const
         {
-            return _act_nodes_ids_of_ghost_element[gelem_id][order];
+            return _act_nodes_ids_of_ghost_element[gelem_id][static_cast<int>(order)];
         }
 
         /*!
@@ -126,11 +134,11 @@ class NodePartitionedMesh : public Mesh
         {
             return _start_id_g_elem;
         }
-        
+
     private:
         /// ID of the start entry of ghost elements in _elements vector.
         unsigned  _start_id_g_elem;
-    
+
         /// Number of nodes of the whole mesh. 0: for linear elements; 1: for quadratic elements.
         unsigned _nnodes_global[2];
 

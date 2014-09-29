@@ -1,8 +1,8 @@
 /*!
-  \file readNodePartitionedMesh.cpp
+  \file NodePartitionedMeshReader.cpp
   \author Wenqing Wang
   \date   2014.08
-  \brief  Define members of class readNodePartitionedMesh to read node-wise partitioned mesh with MPI functions.
+  \brief  Define members of class NodePartitionedMeshReader to read node-wise partitioned mesh with MPI functions.
 
   \copyright
   Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
 
 */
 
-#include "readNodePartitionedMesh.h"
+#include "NodePartitionedMeshReader.h"
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -68,7 +68,7 @@ void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
     MPI_Type_commit(MPI_Node_ptr);
 }
 
-MeshLib::NodePartitionedMesh* readNodePartitionedMesh::read(MPI_Comm comm, const std::string &file_name)
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, const std::string &file_name)
 {
     BaseLib::WallClockTimer timer;
     timer.start();
@@ -111,7 +111,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::read(MPI_Comm comm, const
     return mesh;
 }
 
-MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm, const std::string &file_name)
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm comm, const std::string &file_name)
 {
     //----------------------------------------------------------------------------------
     // Read headers
@@ -220,7 +220,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readBinary(MPI_Comm comm,
                                     ghost_elems, _mesh_controls[2], nnodes_global, nnodes_active);
 }
 
-MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, const std::string &file_name)
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm, const std::string &file_name)
 {
     ifstream is_cfg;
     ifstream is_node;
@@ -436,7 +436,7 @@ MeshLib::NodePartitionedMesh* readNodePartitionedMesh::readASCII(MPI_Comm comm, 
     return  elem;
 }
 
-void readNodePartitionedMesh::readElementASCII(std::ifstream &ins,
+void NodePartitionedMeshReader::readElementASCII(std::ifstream &ins,
         MyInt *elem_info, const bool ghost)
 {
     MyInt ne = ghost ? _mesh_controls[3] : _mesh_controls[2];
@@ -475,8 +475,8 @@ void readNodePartitionedMesh::readElementASCII(std::ifstream &ins,
     }
 }
 
-void readNodePartitionedMesh::setNodes(const NodeData *node_data,
-                                       std::vector<MeshLib::Node*> &mesh_node)
+void NodePartitionedMeshReader::setNodes(const NodeData *node_data,
+        std::vector<MeshLib::Node*> &mesh_node)
 {
     mesh_node.resize( _mesh_controls[0] );
 
@@ -487,7 +487,7 @@ void readNodePartitionedMesh::setNodes(const NodeData *node_data,
     }
 }
 
-void readNodePartitionedMesh::setElements(const std::vector<MeshLib::Node*> &mesh_nodes,
+void NodePartitionedMeshReader::setElements(const std::vector<MeshLib::Node*> &mesh_nodes,
         const MyInt *elem_data, std::vector<MeshLib::Element*> &mesh_elems,
         std::vector<short*> &mesh_ghost_elems, const bool ghost)
 {
@@ -575,7 +575,7 @@ void readNodePartitionedMesh::setElements(const std::vector<MeshLib::Node*> &mes
     }
 }
 
-void readNodePartitionedMesh::printMessage(const std::string & err_message, const bool for_fileopen)
+void NodePartitionedMeshReader::printMessage(const std::string & err_message, const bool for_fileopen)
 {
     if( for_fileopen )
     {
@@ -583,7 +583,10 @@ void readNodePartitionedMesh::printMessage(const std::string & err_message, cons
             INFO("! File %s does not exist.", &err_message[0]);
     }
     else
-        INFO( err_message.c_str() );
+    {
+        if(_rank == 0 )
+            INFO( err_message.c_str() );
+    }
 }
 
 } // end of name space FileIO

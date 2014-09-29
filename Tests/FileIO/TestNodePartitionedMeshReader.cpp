@@ -1,5 +1,5 @@
 /*!
-  \file TestReadNodePartitionedMesh.cpp
+  \file TestNodePartitionedMeshReader.cpp
   \author Wenqing Wang
   \date   2014.08
   \brief  Test class readNodePartitionedMesh to read node-wise partitioned mesh with MPI functions.
@@ -17,16 +17,16 @@
 
 #include "Node.h"
 
-#include "MPI_MeshIO/readNodePartitionedMesh.h"
+#include "MPI_MeshIO/NodePartitionedMeshReader.h"
 
 using namespace MeshLib;
 using namespace FileIO;
 
-TEST(MPITest_FileIO, readNodePartitionedMesh)
+TEST(MPITest_FileIO, TestNodePartitionedMeshReader)
 {
     std::string fname = BaseLib::BuildInfo::source_path + "/Tests/FileIO/PartitionedMesh/mesh_3d";
 
-    readNodePartitionedMesh read_pmesh;
+    NodePartitionedMeshReader read_pmesh;
 
     NodePartitionedMesh *mesh = read_pmesh.read(MPI_COMM_WORLD, fname);
 
