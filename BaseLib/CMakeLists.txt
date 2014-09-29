@@ -6,6 +6,10 @@ IF(OGS_USE_PETSC)
 	SET (SOURCES ${SOURCES} MPI/WallClockTimer.h MPI/PETScWallClockTimer.h)
 ENDIF(OGS_USE_PETSC)
 
+IF(OGS_USE_MPI)
+	SET (SOURCES ${SOURCES} MPI/WallClockTimer.h)
+ENDIF(OGS_USE_MPI)
+
 LIST(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
 
 # Create the library
