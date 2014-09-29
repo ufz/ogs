@@ -87,7 +87,7 @@ void ProjectData::addMesh(MeshLib::Mesh* mesh)
 std::vector<MeshLib::Mesh*>::const_iterator ProjectData::findMeshByName(
 		std::string const& name) const
 {
-	return findMeshByName(name);
+	return const_cast<ProjectData&>(*this).findMeshByName(name);
 }
 
 std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
