@@ -17,8 +17,6 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-//#include <cstdlib>
-
 #include "BaseLib/MPI/WallClockTimer.h"
 
 #include "NodePartitionedMesh.h"
