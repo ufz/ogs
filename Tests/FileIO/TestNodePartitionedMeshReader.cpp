@@ -22,14 +22,11 @@
 using namespace MeshLib;
 using namespace FileIO;
 
-TEST(MPITest_FileIO, TestNodePartitionedMeshReader)
+void testNodePartitionedMeshReader(const std::string &file_name)
 {
-    std::string fname = BaseLib::BuildInfo::source_path + "/Tests/FileIO/PartitionedMesh/mesh_3d";
-
     NodePartitionedMeshReader read_pmesh;
 
-    NodePartitionedMesh *mesh = read_pmesh.read(MPI_COMM_WORLD, fname);
-
+    NodePartitionedMesh *mesh = read_pmesh.read(MPI_COMM_WORLD, file_name);
 
     const size_t nn = mesh->getNNodes();
     const size_t ne = mesh->getNElements();
@@ -109,4 +106,16 @@ TEST(MPITest_FileIO, TestNodePartitionedMeshReader)
     }
 
     delete mesh;
+}
+
+TEST(MPITest_FileIO, TestNodePartitionedMeshReader_ASCII)
+{
+    std::string fname = BaseLib::BuildInfo::source_path + "/Tests/FileIO/PartitionedMesh/mesh_3d";
+    testNodePartitionedMeshReader(fname);
+}
+
+TEST(MPITest_FileIO, TestNodePartitionedMeshReader_Binary)
+{
+    std::string fname = BaseLib::BuildInfo::source_path + "/Tests/FileIO/PartitionedMesh/Bin/mesh_3d";
+    testNodePartitionedMeshReader(fname);
 }
