@@ -97,9 +97,6 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     }
 
     // Initializer of the local assembler data.
-    using LocalMatrixType = MathLib::DenseMatrix<double>;
-    using LocalVectorType = MathLib::DenseVector<double>;
-
     std::vector<SteadyDiffusion2DExample1::LocalAssemblerData*>
         local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
