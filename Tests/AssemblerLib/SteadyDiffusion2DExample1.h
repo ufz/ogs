@@ -26,42 +26,53 @@
 
 struct SteadyDiffusion2DExample1
 {
-	class LocalAssembler
+	using LocalMatrixType = MathLib::DenseMatrix<double>;
+	using LocalVectorType = MathLib::DenseVector<double>;
+
+	class LocalAssemblerData
 	{
 	public:
-		LocalAssembler()
-			: _m(4,4)
+		void init(MeshLib::Element const&,
+			LocalMatrixType const& localA,
+			LocalVectorType const& localRhs)
 		{
-			_m(0,0) = 4.0; _m(0,1) = -1.0; _m(0,2) = -2.0; _m(0,3) = -1.0;
-			_m(1,1) = 4.0; _m(1,2) = -1.0; _m(1,3) = -2.0;
-			_m(2,2) = 4.0; _m(2,3) = -1.0;
-			_m(3,3) = 4.0;
-
-			// copy upper triangle to lower to make symmetric
-			for (std::size_t i = 0; i < 4; i++)
-				for (std::size_t j = 0; j < i; j++)
-					_m(i,j) = _m(j,i);
-
-			//_m *= 1.e-11/6.0;
-			for (std::size_t i = 0; i < 4; i++)
-				for (std::size_t j = 0; j < 4; j++)
-					_m(i,j) *= 1.e-11 / 6.0;
+			_localA = &localA;
+			_localRhs = &localRhs;
 		}
 
-		void operator()(const MeshLib::Element & /*e*/,
-		                MathLib::DenseMatrix<double> &localA,
-		                MathLib::DenseVector<double> & /*rhs*/)
+		void assemble(std::size_t const /*rows*/, std::size_t const /*columns*/)
 		{
-			for (std::size_t i = 0; i < 4; i++)
-				for (std::size_t j = 0; j < 4; j++)
-					localA(i,j) = _m(i,j);
+			// The local contributions are computed here, usually, but for this
+			// particular test all contributions are equal for all elements and are
+			// already stored in the _localA matrix.
+		}
+
+		LocalMatrixType const& getLocalMatrix() const
+		{
+			return *_localA;
+		}
+
+		LocalVectorType const& getLocalVector() const
+		{
+			return *_localRhs;
 		}
 
 	private:
-		MathLib::DenseMatrix<double> _m;
+		LocalMatrixType const* _localA = nullptr;
+		LocalVectorType const* _localRhs = nullptr;
 	};
 
+	static
+	void initializeLocalData(const MeshLib::Element& e,
+			LocalAssemblerData*& data_ptr,
+			SteadyDiffusion2DExample1 const& example)
+	{
+		data_ptr = new LocalAssemblerData;
+		data_ptr->init(e, example._localA, example._localRhs);
+	}
+
 	SteadyDiffusion2DExample1()
+		: _localA(4, 4), _localRhs(4)
 	{
 		msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
 		for (auto* node : msh->getNodes())
@@ -74,6 +85,28 @@ struct SteadyDiffusion2DExample1
 
 			// right side
 			vec_DirichletBC_id[mesh_stride + i] = i * mesh_stride + mesh_subdivs;
+		}
+
+		// Local assembler matrix and vector are equal for all quad elements.
+		{
+			_localA(0,0) = 4.0; _localA(0,1) = -1.0; _localA(0,2) = -2.0; _localA(0,3) = -1.0;
+			_localA(1,1) = 4.0; _localA(1,2) = -1.0; _localA(1,3) = -2.0;
+			_localA(2,2) = 4.0; _localA(2,3) = -1.0;
+			_localA(3,3) = 4.0;
+
+			// copy upper triangle to lower to localA for symmetry
+			for (std::size_t i = 0; i < 4; i++)
+				for (std::size_t j = 0; j < i; j++)
+					_localA(i,j) = _localA(j,i);
+
+			//_localA *= 1.e-11/6.0;
+			for (std::size_t i = 0; i < 4; i++)
+				for (std::size_t j = 0; j < 4; j++)
+					_localA(i,j) *= 1.e-11 / 6.0;
+
+			// Fill rhs with zero;
+			for (std::size_t i = 0; i < 4; i++)
+				_localRhs[i] = 0;
 		}
 
 		vec_DirichletBC_value.resize(2 * mesh_stride);
@@ -98,6 +131,10 @@ struct SteadyDiffusion2DExample1
 	std::vector<double> vec_DirichletBC_value;
 	std::vector<double> exact_solutions;
 	std::vector<std::size_t> vec_nodeIDs;
+
+	LocalMatrixType _localA;
+	LocalVectorType _localRhs;
 };
+
 
 #endif //STEADYDIFFUSION2DEXAMPLE1_H_
