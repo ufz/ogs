@@ -40,16 +40,16 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 
 	// for each node, a vector containing all the element idget every element
 	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
-	const size_t nNodes ( mesh.getNNodes() );
+	const std::size_t nNodes ( mesh.getNNodes() );
 	node_area_vec.reserve(nNodes);
-	for (size_t n=0; n<nNodes; ++n)
+	for (std::size_t n=0; n<nNodes; ++n)
 	{
 		double node_area (0);
 
 		std::vector<MeshLib::Element*> conn_elems = nodes[n]->getElements();
-		const size_t nConnElems (conn_elems.size());
+		const std::size_t nConnElems (conn_elems.size());
 
-		for (size_t i=0; i<nConnElems; ++i)
+		for (std::size_t i=0; i<nConnElems; ++i)
 		{
 			const MeshLib::Element* elem (conn_elems[i]);
 			const unsigned nElemParts = (elem->getGeomType() == MeshElemType::TRIANGLE) ? 3 : 4;
@@ -179,9 +179,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 
 void MeshSurfaceExtraction::get2DSurfaceNodes(const std::vector<MeshLib::Node*> &all_nodes, std::vector<MeshLib::Node*> &sfc_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<unsigned> &node_id_map)
 {
-	const size_t nNewElements (sfc_elements.size());
+	const std::size_t nNewElements (sfc_elements.size());
 	std::vector<const MeshLib::Node*> tmp_nodes(all_nodes.size(), NULL);
-	const size_t nNodes (tmp_nodes.size());
+	const std::size_t nNodes (tmp_nodes.size());
 	for (unsigned i=0; i<nNewElements; ++i)
 	{
 		const MeshLib::Element* elem (sfc_elements[i]);
@@ -218,7 +218,7 @@ std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const M
 	for (unsigned i=0; i<nElements; ++i)
 		delete sfc_elements[i];
 
-	const size_t nNodes (sfc_nodes.size());
+	const std::size_t nNodes (sfc_nodes.size());
 	std::vector<GeoLib::PointWithID*> surface_pnts(nNodes);
 	for (unsigned i=0; i<nNodes; ++i)
 	{
