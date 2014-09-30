@@ -18,7 +18,6 @@
 #include "Mesh.h"
 #include "MeshGenerators/MeshGenerator.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshGeoToolsLib/FixedSearchLength.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 
 using namespace MeshLib;
@@ -68,7 +67,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 	GeoLib::Point pnt(0.0, 0.0, 0.0);
 
 	// 2 perform search and compare results with expected vals
-	MeshGeoToolsLib::FixedSearchLength search_length(*_quad_mesh);
+	MeshGeoToolsLib::SearchLength search_length;
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
 		search_length);
 
@@ -197,7 +196,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 	pnts.push_back(new GeoLib::Point(_geometric_size, 0.5*_geometric_size, 0.0));
 	pnts.push_back(new GeoLib::Point(0.0, 0.5*_geometric_size, 0.0));
 
-	MeshGeoToolsLib::FixedSearchLength search_length(*_quad_mesh);
+	MeshGeoToolsLib::SearchLength search_length;
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
 		search_length);
 
@@ -248,7 +247,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
 	pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
 	pnts.push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
 
-	MeshGeoToolsLib::FixedSearchLength search_length(*_hex_mesh);
+	MeshGeoToolsLib::SearchLength search_length;
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh,
 		search_length);
 

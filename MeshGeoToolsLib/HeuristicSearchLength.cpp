@@ -1,5 +1,4 @@
 /**
- * @file
  * @date 2014-09-19
  * @brief Implementation of heuristic search length strategy.
  *
@@ -22,7 +21,7 @@ namespace MeshGeoToolsLib
 {
 
 HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
-: SearchLength(mesh)
+: _mesh(mesh)
 {
 	double sum (0.0);
 	double sum_of_sqr (0.0); // total length of edges
@@ -57,11 +56,6 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
 
 	DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
 			_mesh.getName().c_str(), _search_length);
-}
-
-double HeuristicSearchLength::getSearchLength() const
-{
-	return _search_length;
 }
 
 } // end namespace MeshGeoToolsLib

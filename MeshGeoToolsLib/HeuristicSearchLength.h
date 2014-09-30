@@ -1,5 +1,4 @@
 /**
- * @file
  * @date 2014-09-19
  * @brief Interface for heuristic search length strategy.
  *
@@ -26,8 +25,9 @@ namespace MeshGeoToolsLib
 class HeuristicSearchLength : public SearchLength
 {
 public:
-	HeuristicSearchLength(MeshLib::Mesh const& mesh);
-	virtual double getSearchLength() const;
+	explicit HeuristicSearchLength(MeshLib::Mesh const& mesh);
+private:
+	MeshLib::Mesh const& _mesh;
 };
 
 } // end namespace MeshGeoToolsLib

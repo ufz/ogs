@@ -1,5 +1,4 @@
 /**
- * @file
  * @date 2014-09-19
  * @brief Base class for different search length strategies.
  *
@@ -18,17 +17,26 @@
 namespace MeshGeoToolsLib
 {
 
-/**
- * (Abstract) Base class for all SearchLength strategy implementations.
- */
+ /// Base class for all SearchLength strategy implementations.
+ /// The default implementation is mesh independent and provides a strong
+ /// criterion for searching mesh nodes near a geometry. The algorithm can be
+ /// used for meshes that have nearly equi-sized elements.
 class SearchLength
 {
 public:
-	SearchLength(MeshLib::Mesh const& mesh, double search_length = 0.0)
-		: _mesh(mesh), _search_length(search_length) {}
-	virtual double getSearchLength() const = 0;
+	/// Constructor for SearchLength object with a default search length
+	/// of 10 angstrom (\f$10^{-9}\f$ m)
+	explicit SearchLength(double search_length = 1e-9)
+		: _search_length(search_length) {}
+
+	virtual ~SearchLength() = default;
+
+	virtual double getSearchLength() const
+	{
+		return _search_length;
+	}
+
 protected:
-	MeshLib::Mesh const& _mesh;
 	double _search_length;
 };
 

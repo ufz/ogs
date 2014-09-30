@@ -16,7 +16,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshGeoToolsLib/FixedSearchLength.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
@@ -35,7 +34,7 @@ public:
 		_geometric_size(10.0), _number_of_subdivisions_per_direction(10),
 		_msh(MeshLib::MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction)),
 		_project_name("test"),
-		_mshNodesSearcher(*_msh,MeshGeoToolsLib::FixedSearchLength(*_msh)),
+		_mshNodesSearcher(*_msh,MeshGeoToolsLib::SearchLength()),
 		_ply0(nullptr)
 	{
 		// create geometry
@@ -86,7 +85,7 @@ public:
 		_geometric_size(10.0), _number_of_subdivisions_per_direction(10),
 		_msh(MeshLib::MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction)),
 		_project_name("test"),
-		_mshNodesSearcher(*_msh,MeshGeoToolsLib::FixedSearchLength(*_msh)),
+		_mshNodesSearcher(*_msh,MeshGeoToolsLib::SearchLength()),
 		_ply0(nullptr)
 	{
 		// create geometry
