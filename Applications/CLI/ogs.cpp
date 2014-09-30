@@ -41,12 +41,11 @@ int main(int argc, char *argv[])
 	logog_cout->SetFormatter(*fmt);
 
 	// Parse CLI arguments.
-	TCLAP::CmdLine cmd("OpenGeoSys-6 software (" +
-			BaseLib::BuildInfo::git_version_sha1_short + ")\n" +
-			"Copyright (c) 2014, OpenGeoSys Community " +
-			"(http://www.opengeosys.org) " +
-			"Distributed under a Modified BSD License. " +
-			"See accompanying file LICENSE.txt or " +
+	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
+			"Copyright (c) 2012-2014, OpenGeoSys Community "
+			"(http://www.opengeosys.org) "
+			"Distributed under a Modified BSD License. "
+			"See accompanying file LICENSE.txt or "
 			"http://www.opengeosys.org/project/license",
 		' ',
 		BaseLib::BuildInfo::git_version_sha1);
