@@ -113,17 +113,17 @@ int main (int argc, char* argv[])
 	    zSmallArg.isSet() || zLargeArg.isSet())
 	{
 		bool aabb_error (false);
-		if (xSmallArg.isSet() >= xLargeArg.isSet())
+		if (xSmallArg.getValue() >= xLargeArg.getValue())
 		{
 		    ERR ("Minimum x-extent larger than maximum x-extent.");
 		    aabb_error = true;
 		}
-		if (ySmallArg.isSet() >= yLargeArg.isSet())
+		if (ySmallArg.getValue() >= yLargeArg.getValue())
 		{
 		    ERR ("Minimum y-extent larger than maximum y-extent.");
 		    aabb_error = true;
 		}
-		if (zSmallArg.isSet() >= zLargeArg.isSet())
+		if (zSmallArg.getValue() >= zLargeArg.getValue())
 		{
 		    ERR ("Minimum z-extent larger than maximum z-extent.");
 		    aabb_error = true;

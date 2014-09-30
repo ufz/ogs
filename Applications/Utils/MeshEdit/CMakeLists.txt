@@ -12,14 +12,6 @@ INCLUDE_DIRECTORIES(
 # Create executables
 IF(QT4_FOUND)
 
-	ADD_EXECUTABLE( removeMeshNodes removeMeshNodes.cpp )
-	TARGET_LINK_LIBRARIES( removeMeshNodes
-		BaseLib
-		FileIO
-		MeshLib
-		${QT_LIBRARIES}
-	)
-
 	ADD_EXECUTABLE( moveMeshNodes moveMeshNodes.cpp )
 	TARGET_LINK_LIBRARIES( moveMeshNodes
 		BaseLib
@@ -29,7 +21,7 @@ IF(QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 
-	SET_TARGET_PROPERTIES(moveMeshNodes removeMeshNodes
+	SET_TARGET_PROPERTIES(moveMeshNodes
 		PROPERTIES FOLDER Utilities)
 
 ENDIF() # QT4_FOUND
