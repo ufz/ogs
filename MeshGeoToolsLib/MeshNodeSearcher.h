@@ -23,12 +23,14 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
+// MeshGeoToolsLib
+#include "MeshGeoToolsLib/SearchLength.h"
+
 // forward declaration
 namespace MeshGeoToolsLib
 {
 class MeshNodesAlongPolyline;
 class MeshNodesAlongSurface;
-class SearchLength;
 }
 
 namespace MeshGeoToolsLib
@@ -48,7 +50,9 @@ public:
 	 * that the mesh does not change its geometry.
 	 */
 	explicit MeshNodeSearcher(MeshLib::Mesh const& mesh,
-		MeshGeoToolsLib::SearchLength const& search_length_algorithm);
+		MeshGeoToolsLib::SearchLength const& search_length_algorithm
+			= MeshGeoToolsLib::SearchLength());
+
 	virtual ~MeshNodeSearcher();
 
 	/**
