@@ -28,12 +28,13 @@
 
 namespace MeshLib {
 
-void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, std::vector<double> &node_area_vec)
+std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh)
 {
+	std::vector<double> node_area_vec;
 	if (mesh.getDimension() != 2)
 	{
 		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
-		return;
+		return node_area_vec;
 	}
 
 	double total_area (0);
@@ -41,7 +42,6 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 	// for each node, a vector containing all the element idget every element
 	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
 	const std::size_t nNodes ( mesh.getNNodes() );
-	node_area_vec.reserve(nNodes);
 	for (std::size_t n=0; n<nNodes; ++n)
 	{
 		double node_area (0);
@@ -62,6 +62,8 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 	}
 
 	INFO ("Total surface Area: %f", total_area);
+
+	return node_area_vec;
 }
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)

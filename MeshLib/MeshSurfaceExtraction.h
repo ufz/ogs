@@ -36,8 +36,8 @@ class Node;
 class MeshSurfaceExtraction
 {
 public:
-	/// Returns the area assigned to each node on a surface mesh.
-	static void getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, std::vector<double> &node_area_vec);
+	/// Returns a vector of the areas assigned to each node on a surface mesh.
+	static std::vector<double> getSurfaceAreaForNodes(const MeshLib::Mesh &mesh);
 
 	/// Returns the surface nodes of a layered mesh.
 	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle);

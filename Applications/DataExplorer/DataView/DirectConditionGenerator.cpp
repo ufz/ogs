@@ -72,8 +72,8 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 
 		const MathLib::Vector3 dir(0,0,-1);
 		MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, true));
-		std::vector<double> node_area_vec;
-		MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*sfc_mesh, node_area_vec);
+		std::vector<double> node_area_vec =
+			MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*sfc_mesh);
 		const std::vector<MeshLib::Node*> &surface_nodes (sfc_mesh->getNodes());
 		const size_t nNodes(sfc_mesh->getNNodes());
 		const double no_data (raster->getNoDataValue());
