@@ -129,8 +129,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 	if (MathLib::scalarProduct(dir, dir) != 0)
 		complete_surface = false;
 
-	double const pi (boost::math::constants::pi<double>());
-	double const cos_theta (std::cos(angle * pi / 180.0));
+	double const cos_theta (std::cos(angle * boost::math::constants::radian<double>()));
 	MathLib::Vector3 const norm_dir (dir.getNormalizedVector());
 
 	for (auto elem = all_elements.begin(); elem != all_elements.end(); ++elem)
