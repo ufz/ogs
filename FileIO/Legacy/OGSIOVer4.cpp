@@ -565,6 +565,39 @@ bool readGLIFileV4(const std::string& fname,
 		return false;
 }
 
+std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_vec, std::size_t sfc_count, std::string const& path)
+{
+	const std::vector<GeoLib::Surface*>* sfcs (sfcs_vec->getVector());
+	for (std::size_t k(0); k < sfcs->size(); k++)
+	{
+		os << "#SURFACE" << "\n";
+		std::string sfc_name;
+		if (sfcs_vec->getNameOfElementByID (sfc_count, sfc_name)) {
+			os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
+		} else {
+			os << "\t$NAME " << "\n" << "\t\t" << sfc_count << "\n";
+			sfc_name = std::to_string (sfc_count);
+		}
+		sfc_name += ".tin";
+		os << "\t$TIN" << "\n";
+		os << "\t\t" << sfc_name << "\n";
+		// create tin file
+		sfc_name = path + sfc_name;
+		std::ofstream tin_os (sfc_name.c_str());
+		GeoLib::Surface const& sfc (*(*sfcs)[k]);
+		const std::size_t n_tris (sfc.getNTriangles());
+		for (std::size_t l(0); l < n_tris; l++) {
+			GeoLib::Triangle const& tri (*(sfc[l]));
+		tin_os << l << " " << *(tri.getPoint(0)) << " " <<
+		*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) <<
+		"\n";
+		}
+		tin_os.close();
+		sfc_count++;
+	}
+	return sfc_count;
+}
+
 void writeGLIFileV4 (const std::string& fname,
                      const std::string& geo_name,
                      const GeoLib::GEOObjects& geo)
@@ -617,40 +650,9 @@ void writeGLIFileV4 (const std::string& fname,
 	}
 
 	// writing surfaces as TIN files
-	const std::string path = BaseLib::extractPath(fname);
-	std::size_t sfcs_cnt (0);
-	const GeoLib::SurfaceVec* sfcs_vec (geo.getSurfaceVecObj (geo_name]));
-	if (sfcs_vec) {
-		const std::vector<GeoLib::Surface*>* sfcs (sfcs_vec->getVector());
-		for (std::size_t k(0); k < sfcs->size(); k++)
-		{
-			os << "#SURFACE" << "\n";
-			std::string sfc_name;
-			if (sfcs_vec->getNameOfElementByID (sfcs_cnt, sfc_name)) {
-				os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
-			} else {
-				os << "\t$NAME " << "\n" << "\t\t" << sfcs_cnt << "\n";
-				sfc_name = std::to_string (sfcs_cnt);
-			}
-			sfc_name += ".tin";
-			os << "\t$TIN" << "\n";
-			os << "\t\t" << sfc_name << "\n";
-			// create tin file
-			sfc_name = path + sfc_name;
-			std::ofstream tin_os (sfc_name.c_str());
-			GeoLib::Surface const& sfc (*(*sfcs)[k]);
-			const std::size_t n_tris (sfc.getNTriangles());
-			for (std::size_t l(0); l < n_tris; l++) {
-				GeoLib::Triangle const& tri (*(sfc[l]));
-			tin_os << l << " " << *(tri.getPoint(0)) << " " <<
-			*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) <<
-			"\n";
-			}
-			tin_os.close();
-
-			sfcs_cnt++;
-		}
-	}
+	const GeoLib::SurfaceVec* sfcs_vec (geo.getSurfaceVecObj (geo_name));
+	if (sfcs_vec) 
+		writeTINSurfaces(os, sfcs_vec, 0, BaseLib::extractPath(fname));
 
 	os << "#STOP" << "\n";
 	os.close ();
@@ -742,37 +744,8 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 	for (std::size_t j(0); j < geo_names.size(); j++)
 	{
 		const GeoLib::SurfaceVec* sfcs_vec (geo.getSurfaceVecObj (geo_names[j]));
-			if (sfcs_vec) {
-				const std::vector<GeoLib::Surface*>* sfcs (sfcs_vec->getVector());
-				for (std::size_t k(0); k < sfcs->size(); k++)
-				{
-					os << "#SURFACE" << "\n";
-					std::string sfc_name;
-					if (sfcs_vec->getNameOfElementByID (sfcs_cnt, sfc_name)) {
-						os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
-					} else {
-						os << "\t$NAME " << "\n" << "\t\t" << sfcs_cnt << "\n";
-					sfc_name = std::to_string (sfcs_cnt);
-				}
-				sfc_name += ".tin";
-				os << "\t$TIN" << "\n";
-				os << "\t\t" << sfc_name << "\n";
-				// create tin file
-				sfc_name = path + sfc_name;
-				std::ofstream tin_os (sfc_name.c_str());
-				GeoLib::Surface const& sfc (*(*sfcs)[k]);
-				const std::size_t n_tris (sfc.getNTriangles());
-					for (std::size_t l(0); l < n_tris; l++) {
-						GeoLib::Triangle const& tri (*(sfc[l]));
-					tin_os << l << " " << *(tri.getPoint(0)) << " " <<
-					*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) <<
-					"\n";
-				}
-				tin_os.close();
-
-				sfcs_cnt++;
-			}
-		}
+		if (sfcs_vec)
+			sfcs_cnt += writeTINSurfaces(os, sfcs_vec, sfcs_cnt, path);
 	}
 
 	os << "#STOP" << "\n";
