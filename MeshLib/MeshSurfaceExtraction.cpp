@@ -30,37 +30,38 @@ namespace MeshLib {
 
 void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, std::vector<double> &node_area_vec)
 {
-	if (mesh.getDimension() == 2)
+	if (mesh.getDimension() != 2)
 	{
-		double total_area (0);
+		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
+		return;
+	}
 
-		// for each node, a vector containing all the element idget every element
-		const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
-		const size_t nNodes ( mesh.getNNodes() );
-		node_area_vec.reserve(nNodes);
-		for (size_t n=0; n<nNodes; ++n)
+	double total_area (0);
+
+	// for each node, a vector containing all the element idget every element
+	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
+	const size_t nNodes ( mesh.getNNodes() );
+	node_area_vec.reserve(nNodes);
+	for (size_t n=0; n<nNodes; ++n)
+	{
+		double node_area (0);
+
+		std::vector<MeshLib::Element*> conn_elems = nodes[n]->getElements();
+		const size_t nConnElems (conn_elems.size());
+
+		for (size_t i=0; i<nConnElems; ++i)
 		{
-			double node_area (0);
-
-			std::vector<MeshLib::Element*> conn_elems = nodes[n]->getElements();
-			const size_t nConnElems (conn_elems.size());
-
-			for (size_t i=0; i<nConnElems; ++i)
-			{
-				const MeshLib::Element* elem (conn_elems[i]);
-				const unsigned nElemParts = (elem->getGeomType() == MeshElemType::TRIANGLE) ? 3 : 4;
-				const double area = conn_elems[i]->getContent() / nElemParts;
-				node_area += area;
-				total_area += area;
-			}
-
-			node_area_vec.push_back(node_area);
+			const MeshLib::Element* elem (conn_elems[i]);
+			const unsigned nElemParts = (elem->getGeomType() == MeshElemType::TRIANGLE) ? 3 : 4;
+			const double area = conn_elems[i]->getContent() / nElemParts;
+			node_area += area;
+			total_area += area;
 		}
 
-		INFO ("Total surface Area: %f", total_area);
+		node_area_vec.push_back(node_area);
 	}
-	else
-		ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
+
+	INFO ("Total surface Area: %f", total_area);
 }
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)
