@@ -66,10 +66,10 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)
 {
 	if (angle< 0 ||  angle > 90) 
-    {
-        ERR ("Supported angle between 0 and 90 degrees only.");
-        return nullptr;
-    }
+	{
+	    ERR ("Supported angle between 0 and 90 degrees only.");
+	    return nullptr;
+	}
 
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
