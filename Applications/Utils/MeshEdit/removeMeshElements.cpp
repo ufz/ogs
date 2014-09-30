@@ -39,14 +39,28 @@ int main (int argc, char* argv[])
 	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Remove mesh elements.", ' ', "0.1");
-	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
-	                                     "the name of the file containing the input mesh", true,
-	                                     "", "file name of input mesh");
-	cmd.add(mesh_in);
-	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
-	                                      "the name of the file the mesh will be written to", true,
-	                                      "", "file name of output mesh");
-	cmd.add(mesh_out);
+
+	// Bounding box params
+	TCLAP::ValueArg<double> zLargeArg("", "z-max", "largest allowed extent in z-dimension", 
+	                                  false, std::numeric_limits<double>::max(), "value");
+	cmd.add(zLargeArg);
+	TCLAP::ValueArg<double> zSmallArg("", "z-min", "largest allowed extent in z-dimension", 
+	                                  false,  -1 * std::numeric_limits<double>::max(), "value");
+	cmd.add(zSmallArg);
+	TCLAP::ValueArg<double> yLargeArg("", "y-max", "largest allowed extent in y-dimension", 
+	                                  false, std::numeric_limits<double>::max(), "value");
+	cmd.add(yLargeArg);
+	TCLAP::ValueArg<double> ySmallArg("", "y-min", "largest allowed extent in y-dimension", 
+	                                   false,  -1 * std::numeric_limits<double>::max(), "value");
+	cmd.add(ySmallArg);
+	TCLAP::ValueArg<double> xLargeArg("", "x-max", "largest allowed extent in x-dimension", 
+	                                   false, std::numeric_limits<double>::max(), "value");
+	cmd.add(xLargeArg);
+	TCLAP::ValueArg<double> xSmallArg("", "x-min", "smallest allowed extent in x-dimension", 
+	                                  false, -1 * std::numeric_limits<double>::max(), "value");
+	cmd.add(xSmallArg);
+
+	// Non-bounding-box params
 	TCLAP::SwitchArg zveArg("z", "zero-volume", "remove zero volume elements", false);
 	cmd.add(zveArg);
 	TCLAP::MultiArg<std::string> eleTypeArg("t", "element-type",
@@ -56,25 +70,15 @@ int main (int argc, char* argv[])
 	                                      "material id", false, "material id");
 	cmd.add(matIDArg);
 
-	// Bounding box params
-	TCLAP::ValueArg<double> xSmallArg("", "x-less", "smallest allowed extent in x-dimension", 
-	                                  false, -1 * std::numeric_limits<double>::max(), "value");
-	cmd.add(xSmallArg);
-	TCLAP::ValueArg<double> xLargeArg("", "x-more", "largest allowed extent in x-dimension", 
-	                                   false, std::numeric_limits<double>::max(), "value");
-	cmd.add(xLargeArg);
-	TCLAP::ValueArg<double> ySmallArg("", "y-less", "largest allowed extent in y-dimension", 
-	                                   false,  -1 * std::numeric_limits<double>::max(), "value");
-	cmd.add(ySmallArg);
-	TCLAP::ValueArg<double> yLargeArg("", "y-more", "largest allowed extent in y-dimension", 
-	                                  false, std::numeric_limits<double>::max(), "value");
-	cmd.add(yLargeArg);
-	TCLAP::ValueArg<double> zSmallArg("", "z-less", "largest allowed extent in z-dimension", 
-	                                  false,  -1 * std::numeric_limits<double>::max(), "value");
-	cmd.add(zSmallArg);
-	TCLAP::ValueArg<double> zLargeArg("", "z-more", "largest allowed extent in z-dimension", 
-                                      false, std::numeric_limits<double>::max(), "value");
-	cmd.add(zLargeArg);
+	// I/O params
+	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
+	                                      "the name of the file the mesh will be written to", true,
+	                                      "", "file name of output mesh");
+	cmd.add(mesh_out);
+	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
+	                                     "the name of the file containing the input mesh", true,
+	                                     "", "file name of input mesh");
+	cmd.add(mesh_in);
 
 	cmd.parse(argc, argv);
 
@@ -108,6 +112,25 @@ int main (int argc, char* argv[])
 	    ySmallArg.isSet() || yLargeArg.isSet() ||
 	    zSmallArg.isSet() || zLargeArg.isSet())
 	{
+		bool aabb_error (false);
+		if (xSmallArg.isSet() >= xLargeArg.isSet())
+		{
+		    ERR ("Minimum x-extent larger than maximum x-extent.");
+		    aabb_error = true;
+		}
+		if (ySmallArg.isSet() >= yLargeArg.isSet())
+		{
+		    ERR ("Minimum y-extent larger than maximum y-extent.");
+		    aabb_error = true;
+		}
+		if (zSmallArg.isSet() >= zLargeArg.isSet())
+		{
+		    ERR ("Minimum z-extent larger than maximum z-extent.");
+		    aabb_error = true;
+		}
+		if (aabb_error)
+		    return 1;
+
 		MeshLib::Node ll (xSmallArg.getValue(), ySmallArg.getValue(), zSmallArg.getValue());
 		MeshLib::Node ur (xLargeArg.getValue(), yLargeArg.getValue(), zLargeArg.getValue());
 		const std::size_t n_removed_elements = ex.searchByBoundingBox(ll, ur);
