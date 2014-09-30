@@ -55,6 +55,27 @@ int main (int argc, char* argv[])
 	TCLAP::MultiArg<unsigned> matIDArg("m", "material-id",
 	                                      "material id", false, "material id");
 	cmd.add(matIDArg);
+
+	// Bounding box params
+	TCLAP::ValueArg<double> xSmallArg("", "x-less", "smallest allowed extent in x-dimension", 
+	                                  false, -1 * std::numeric_limits<double>::max(), "value");
+	cmd.add(xSmallArg);
+	TCLAP::ValueArg<double> xLargeArg("", "x-more", "largest allowed extent in x-dimension", 
+	                                   false, std::numeric_limits<double>::max(), "value");
+	cmd.add(xLargeArg);
+	TCLAP::ValueArg<double> ySmallArg("", "y-less", "largest allowed extent in y-dimension", 
+	                                   false,  -1 * std::numeric_limits<double>::max(), "value");
+	cmd.add(ySmallArg);
+	TCLAP::ValueArg<double> yLargeArg("", "y-more", "largest allowed extent in y-dimension", 
+	                                  false, std::numeric_limits<double>::max(), "value");
+	cmd.add(yLargeArg);
+	TCLAP::ValueArg<double> zSmallArg("", "z-less", "largest allowed extent in z-dimension", 
+	                                  false,  -1 * std::numeric_limits<double>::max(), "value");
+	cmd.add(zSmallArg);
+	TCLAP::ValueArg<double> zLargeArg("", "z-more", "largest allowed extent in z-dimension", 
+                                      false, std::numeric_limits<double>::max(), "value");
+	cmd.add(zLargeArg);
+
 	cmd.parse(argc, argv);
 
 	MeshLib::Mesh const*const mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
@@ -81,6 +102,16 @@ int main (int argc, char* argv[])
 			const std::size_t n_removed_elements = ex.searchByMaterialID(matID);
 			INFO("%d elements with material ID %d found.", n_removed_elements, matID);
 		}
+	}
+
+	if (xSmallArg.isSet() || xLargeArg.isSet() ||
+	    ySmallArg.isSet() || yLargeArg.isSet() ||
+	    zSmallArg.isSet() || zLargeArg.isSet())
+	{
+		MeshLib::Node ll (xSmallArg.getValue(), ySmallArg.getValue(), zSmallArg.getValue());
+		MeshLib::Node ur (xLargeArg.getValue(), yLargeArg.getValue(), zLargeArg.getValue());
+		const std::size_t n_removed_elements = ex.searchByBoundingBox(ll, ur);
+		INFO("%d elements found.", n_removed_elements);
 	}
 
 	// remove the elements and create a new mesh object.
