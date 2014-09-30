@@ -14,8 +14,7 @@
 
 #include "MeshSurfaceExtraction.h"
 
-#include <cassert>
-#include <math.h>
+#include <boost/math/constants/constants.hpp>
 
 #include "logog/include/logog.hpp"
 
@@ -66,8 +65,11 @@ void MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh, st
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)
 {
-	if (angle< 0) angle = 0;
-	if (angle > 90) angle = 90;
+	if (angle< 0 ||  angle > 90) 
+    {
+        ERR ("Supported angle between 0 and 90 degrees only.");
+        return nullptr;
+    }
 
 	INFO ("Extracting mesh surface...");
 	const std::vector<MeshLib::Element*> all_elements (mesh.getElements());
@@ -127,9 +129,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 	if (MathLib::scalarProduct(dir, dir) != 0)
 		complete_surface = false;
 
-	double const pi (3.14159265358979323846);
+	double const pi (boost::math::constants::pi<double>());
 	double const cos_theta (std::cos(angle * pi / 180.0));
-	MathLib::Vector3 const norm_dir (dir.normalizeVector());
+	MathLib::Vector3 const norm_dir (dir.getNormalizedVector());
 
 	for (auto elem = all_elements.begin(); elem != all_elements.end(); ++elem)
 	{
@@ -142,26 +144,25 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 			if (!complete_surface)
 			{
 				MeshLib::Face* face = dynamic_cast<MeshLib::Face*>(*elem);
-				if (MathLib::scalarProduct(face->getSurfaceNormal().normalizeVector(), norm_dir) >= cos_theta)
+				if (MathLib::scalarProduct(face->getSurfaceNormal().getNormalizedVector(), norm_dir) >= cos_theta)
 					continue;	
 			}
 			sfc_elements.push_back(*elem);
 		}
 		else
 		{
-			const MeshLib::Cell* cell = static_cast<MeshLib::Cell*>(*elem);
-			if (!cell->isOnSurface())
+			if (!(*elem)->isBoundaryElement())
 				continue;
-			const unsigned nFaces (cell->getNFaces());
+			const unsigned nFaces ((*elem)->getNFaces());
 			for (unsigned j=0; j<nFaces; ++j)
 			{
-				if (cell->getNeighbor(j) != nullptr)
+				if ((*elem)->getNeighbor(j) != nullptr)
 					continue;
 
-				const MeshLib::Face* face = static_cast<const MeshLib::Face*>(cell->getFace(j));
+				const MeshLib::Face* face = static_cast<const MeshLib::Face*>((*elem)->getFace(j));
 				if (!complete_surface)
 				{
-					if (MathLib::scalarProduct(face->getSurfaceNormal().normalizeVector(), norm_dir) < cos_theta)
+					if (MathLib::scalarProduct(face->getSurfaceNormal().getNormalizedVector(), norm_dir) < cos_theta)
 					{
 						delete face;
 						continue;

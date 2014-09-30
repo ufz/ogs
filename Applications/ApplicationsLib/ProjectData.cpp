@@ -90,7 +90,6 @@ std::vector<MeshLib::Mesh*>::const_iterator ProjectData::findMeshByName(
 	return const_cast<ProjectData&>(*this).findMeshByName(name);
 }
 
-
 std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
 		std::string const& name)
 {

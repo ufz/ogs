@@ -34,11 +34,6 @@ Cell::Cell(unsigned value, std::size_t id)
 Cell::~Cell()
 {}
 
-bool Cell::isOnSurface() const
-{
-	return isBoundaryElement();
-}
-
 bool Cell::testElementNodeOrder() const
 {
 	const MathLib::Vector3 c (getCenterOfGravity());
