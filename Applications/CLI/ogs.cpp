@@ -74,6 +74,9 @@ int main(int argc, char *argv[])
 	ProjectData project(project_config,
 			BaseLib::extractPath(project_arg.getValue()));
 
+	// Create processes.
+	project.buildProcesses<GlobalSetupType>();
+
 
 	delete fmt;
 	delete logog_cout;
