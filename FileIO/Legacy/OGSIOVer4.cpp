@@ -636,17 +636,6 @@ void writeGLIFileV4 (const std::string& fname,
 			for (std::size_t j(0); j < (*plys)[k]->getNumberOfPoints(); j++)
 				os << "  " << ((*plys)[k])->getPointID(j) << "\n";
 		}
-
-		INFO("GeoLib::writeGLIFileV4(): write closed polylines as surfaces to file %s.",
-		     fname.c_str());
-		for (std::size_t k(0); k < plys->size(); k++)
-			if ((*plys)[k]->isClosed())
-			{
-				os << "#SURFACE" << "\n";
-				os << " $NAME " << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
-				os << " $TYPE " << "\n" << "  0" << "\n";
-				os << " $POLYLINES" << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
-			}
 	}
 
 	// writing surfaces as TIN files
@@ -724,14 +713,15 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			for (std::size_t k(0); k < plys->size(); k++) {
 				os << "#POLYLINE" << "\n";
 				std::string ply_name;
-				os << "  $NAME\n";
 				if (plys_vec->getNameOfElementByID (plys_cnt, ply_name))
-					os << "    " << ply_name << "\n";
+					os << "\t$NAME " << "\n" << "\t\t" << ply_name <<
+					"\n";
 				else
-					os << "    " << geo_names[j] << "-" << plys_cnt << "\n";
-				os << "  $POINTS" << "\n";
+					os << "\t$NAME " << "\n" << "\t\t" << geo_names[j] <<
+					"-" << plys_cnt << "\n";
+				os << "\t$POINTS" << "\n";
 				for (std::size_t l(0); l < (*plys)[k]->getNumberOfPoints(); l++)
-					os << "    " << pnts_id_offset[j] +
+					os << "\t\t" << pnts_id_offset[j] +
 					((*plys)[k])->getPointID(l) << "\n";
 				plys_cnt++;
 			}
