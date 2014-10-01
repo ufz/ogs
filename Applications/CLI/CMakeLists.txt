@@ -10,3 +10,5 @@ TARGET_LINK_LIBRARIES(ogs
     MeshLib
     ${Boost_LIBRARIES}
 )
+
+INCLUDE(Tests.cmake)
