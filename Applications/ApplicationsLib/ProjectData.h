@@ -22,6 +22,7 @@
 #endif
 
 #include "ProcessLib/ProcessVariable.h"
+#include "ProcessLib/Process.h"
 namespace MeshLib {
 	class Mesh;
 }
@@ -78,6 +79,35 @@ public:
 	/// false otherwise.
 	bool removeMesh(const std::string &name);
 
+	//
+	// Process interface
+	//
+
+	/// Builder for processes. The supplied template defines the types of global
+	/// vectors and matrices, and the global executor. These types are passed to
+	/// every of the constructed processes.
+	template <typename GlobalSetupType>
+	void buildProcesses()
+	{
+		for (auto pc : _process_configs)
+		{
+			/* Adding of a specific proccess will look like in the following
+			 * if-clause. Commented, because there is no GroundwaterFlow process
+			 * for now.
+			if (pc.get<std::string>("type") == "GROUNDWATER_FLOW") {
+				// The existence check of the in the configuration referenced
+				// process variables is checked in the physical process.
+				// TODO at the moment we have only one mesh, later there can be
+				// several meshes. Then we have to assign the referenced mesh
+				// here.
+				_processes.push_back(
+					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
+						*_mesh_vec[0], _process_variables, pc));
+			}
+			 */
+		}
+	}
+
 private:
 	/// Checks if a mesh with the same name exists and provides a unique name in
 	/// case of already existing mesh. Returns true if the mesh name is unique.
@@ -113,6 +143,11 @@ private:
 	std::vector<MeshLib::Mesh*> _mesh_vec;
 	std::vector<ProcessLib::Process*> _processes;
 	std::vector<ProcessLib::ProcessVariable> _process_variables;
+
+	/// Buffer for each process' config used in the process building function.
+	std::vector<ConfigTree> _process_configs;
+
+
 };
 
 #endif //PROJECTDATA_H_

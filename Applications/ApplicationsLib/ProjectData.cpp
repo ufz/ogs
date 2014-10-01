@@ -192,15 +192,13 @@ void ProjectData::parseProcesses(ConfigTree const& processes_config)
 	DBUG("Reading processes:\n");
 	for (auto pc_it : processes_config) {
 		ConfigTree const& process_config = pc_it.second;
-		if (process_config.get<std::string>("type") == "GROUNDWATER_FLOW") {
-			// The existence check of the in the configuration referenced
-			// process variables is checked in the physical process.
-			// TODO at the moment we have only one mesh, later there can be
-			// several meshes. Then we have to assign the referenced mesh
-			// here.
-			_processes.push_back(new ProcessLib::GroundwaterFlowProcess(
-				*_mesh_vec[0], _process_variables, process_config)
-			);
+
+		// Check if the process type is specified.
+		if (!process_config.get_optional<std::string>("type")) {
+			ERR("The process config does not provide a type tag.");
+			ERR("   Ignoring this process config.");
+			continue;
 		}
+		_process_configs.push_back(process_config);
 	}
 }
