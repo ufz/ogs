@@ -733,15 +733,14 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			for (std::size_t k(0); k < plys->size(); k++) {
 				os << "#POLYLINE" << "\n";
 				std::string ply_name;
+				os << "  $NAME\n";
 				if (plys_vec->getNameOfElementByID (plys_cnt, ply_name))
-					os << "\t$NAME " << "\n" << "\t\t" << ply_name <<
-					"\n";
+					os << "    " << ply_name << "\n";
 				else
-					os << "\t$NAME " << "\n" << "\t\t" << geo_names[j] <<
-					"-" << plys_cnt << "\n";
-				os << "\t$POINTS" << "\n";
+					os << "    " << geo_names[j] << "-" << plys_cnt << "\n";
+				os << "  $POINTS" << "\n";
 				for (std::size_t l(0); l < (*plys)[k]->getNumberOfPoints(); l++)
-					os << "\t\t" << pnts_id_offset[j] +
+					os << "    " << pnts_id_offset[j] +
 					((*plys)[k])->getPointID(l) << "\n";
 				plys_cnt++;
 			}
