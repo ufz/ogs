@@ -10,7 +10,7 @@ IF(ParaView_FOUND)
 	# MESSAGE("Using Catalyst in ${ParaView_FOUND}")
 	RETURN()
 ELSE()
-	SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/catalyst-build CACHE PATH "" FORCE)
+	SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
 ENDIF()
 
 IF(WIN32)
