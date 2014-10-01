@@ -44,13 +44,13 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<double> zLargeArg("", "z-max", "largest allowed extent in z-dimension", 
 	                                  false, std::numeric_limits<double>::max(), "value");
 	cmd.add(zLargeArg);
-	TCLAP::ValueArg<double> zSmallArg("", "z-min", "largest allowed extent in z-dimension", 
+	TCLAP::ValueArg<double> zSmallArg("", "z-min", "smallest allowed extent in z-dimension", 
 	                                  false,  -1 * std::numeric_limits<double>::max(), "value");
 	cmd.add(zSmallArg);
 	TCLAP::ValueArg<double> yLargeArg("", "y-max", "largest allowed extent in y-dimension", 
 	                                  false, std::numeric_limits<double>::max(), "value");
 	cmd.add(yLargeArg);
-	TCLAP::ValueArg<double> ySmallArg("", "y-min", "largest allowed extent in y-dimension", 
+	TCLAP::ValueArg<double> ySmallArg("", "y-min", "smallest allowed extent in y-dimension", 
 	                                   false,  -1 * std::numeric_limits<double>::max(), "value");
 	cmd.add(ySmallArg);
 	TCLAP::ValueArg<double> xLargeArg("", "x-max", "largest allowed extent in x-dimension", 
