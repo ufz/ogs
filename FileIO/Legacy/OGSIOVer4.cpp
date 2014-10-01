@@ -565,44 +565,35 @@ bool readGLIFileV4(const std::string& fname,
 		return false;
 }
 
-std::size_t writeTINSurfaces(std::ofstream &os,
-	GeoLib::SurfaceVec const* sfcs_vec,
-	std::size_t sfc_count,
-	std::string const& path)
+std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_vec, std::size_t sfc_count, std::string const& path)
 {
 	const std::vector<GeoLib::Surface*>* sfcs (sfcs_vec->getVector());
 	for (std::size_t k(0); k < sfcs->size(); k++)
 	{
+		os << "#SURFACE" << "\n";
 		std::string sfc_name;
-		if (! sfcs_vec->getNameOfElementByID (sfc_count, sfc_name)) {
+		if (sfcs_vec->getNameOfElementByID (sfc_count, sfc_name)) {
+			os << "\t$NAME " << "\n" << "\t\t" << sfc_name << "\n";
+		} else {
+			os << "\t$NAME " << "\n" << "\t\t" << sfc_count << "\n";
 			sfc_name = std::to_string (sfc_count);
 		}
-		std::string const sfc_file_name(sfc_name +".tin");
-		std::string const sfc_file_path(path + sfc_file_name);
-
+		sfc_name += ".tin";
+		os << "\t$TIN" << "\n";
+		os << "\t\t" << sfc_name << "\n";
 		// create tin file
-		std::ofstream tin_os (sfc_file_path.c_str());
-		if (! tin_os.good()) {
-			ERR("Could not write TIN data to file \"%s\".",
-				sfc_file_path.c_str());
-			continue;
-		}
+		sfc_name = path + sfc_name;
+		std::ofstream tin_os (sfc_name.c_str());
 		GeoLib::Surface const& sfc (*(*sfcs)[k]);
 		const std::size_t n_tris (sfc.getNTriangles());
 		for (std::size_t l(0); l < n_tris; l++) {
 			GeoLib::Triangle const& tri (*(sfc[l]));
-			tin_os << l << " " << *(tri.getPoint(0)) << " " <<
-				*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) << "\n";
+		tin_os << l << " " << *(tri.getPoint(0)) << " " <<
+		*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) <<
+		"\n";
 		}
 		tin_os.close();
 		sfc_count++;
-
-		// create entry/link in gli file
-		os << "#SURFACE\n";
-		os << "  $NAME\n";
-		os << "    " << sfc_name << "\n";
-		os << "  $TIN\n";
-		os << "    " << sfc_file_name << "\n";
 	}
 	return sfc_count;
 }
@@ -645,17 +636,6 @@ void writeGLIFileV4 (const std::string& fname,
 			for (std::size_t j(0); j < (*plys)[k]->getNumberOfPoints(); j++)
 				os << "  " << ((*plys)[k])->getPointID(j) << "\n";
 		}
-
-		INFO("GeoLib::writeGLIFileV4(): write closed polylines as surfaces to file %s.",
-		     fname.c_str());
-		for (std::size_t k(0); k < plys->size(); k++)
-			if ((*plys)[k]->isClosed())
-			{
-				os << "#SURFACE" << "\n";
-				os << " $NAME " << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
-				os << " $TYPE " << "\n" << "  0" << "\n";
-				os << " $POLYLINES" << "\n" << "  " << k << "\n"; //plys_vec->getNameOfElement ((*plys)[k]) << "\n";
-			}
 	}
 
 	// writing surfaces as TIN files
@@ -733,14 +713,15 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			for (std::size_t k(0); k < plys->size(); k++) {
 				os << "#POLYLINE" << "\n";
 				std::string ply_name;
-				os << "  $NAME\n";
 				if (plys_vec->getNameOfElementByID (plys_cnt, ply_name))
-					os << "    " << ply_name << "\n";
+					os << "\t$NAME " << "\n" << "\t\t" << ply_name <<
+					"\n";
 				else
-					os << "    " << geo_names[j] << "-" << plys_cnt << "\n";
-				os << "  $POINTS" << "\n";
+					os << "\t$NAME " << "\n" << "\t\t" << geo_names[j] <<
+					"-" << plys_cnt << "\n";
+				os << "\t$POINTS" << "\n";
 				for (std::size_t l(0); l < (*plys)[k]->getNumberOfPoints(); l++)
-					os << "    " << pnts_id_offset[j] +
+					os << "\t\t" << pnts_id_offset[j] +
 					((*plys)[k])->getPointID(l) << "\n";
 				plys_cnt++;
 			}
