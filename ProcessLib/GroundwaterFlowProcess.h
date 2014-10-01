@@ -70,6 +70,10 @@ public:
         _local_to_global_index_map.reset(
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
+        DBUG("Allocate global matrix, vectors, and linear solver.");
+        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
+        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         //DBUG("Create global assembler.");
         //_global_assembler.reset(
         //    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
@@ -98,6 +102,9 @@ private:
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     GlobalSetup _global_setup;
+    std::unique_ptr<typename GlobalSetup::MatrixType> _A;
+    std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
+    std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 };
