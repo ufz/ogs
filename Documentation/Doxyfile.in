@@ -754,6 +754,7 @@ INPUT                  = ${CMAKE_SOURCE_DIR}/Applications \
                          ${CMAKE_SOURCE_DIR}/GeoLib \
                          ${CMAKE_SOURCE_DIR}/Gui \
                          ${CMAKE_SOURCE_DIR}/MathLib \
+                         ${CMAKE_SOURCE_DIR}/MeshGeoToolsLib \
                          ${CMAKE_SOURCE_DIR}/MeshLib \
                          ${CMAKE_SOURCE_DIR}/NumLib \
                          ${CMAKE_SOURCE_DIR}/ProcessLib \

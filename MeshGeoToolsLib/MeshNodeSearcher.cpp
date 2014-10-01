@@ -1,7 +1,5 @@
 /**
- * @file
  * @date Oct 24, 2013
- * @brief
  *
  * @copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -10,61 +8,33 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-
 // MeshLib
-#include "Elements/Element.h"
-#include "Elements/Line.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Line.h"
 
 // MeshGeoToolsLib
+#include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 
 namespace MeshGeoToolsLib
 {
 
-MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh) :
+MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
+	MeshGeoToolsLib::SearchLength const& search_length_algorithm) :
 		_mesh(mesh), _mesh_grid(_mesh.getNodes().cbegin(), _mesh.getNodes().cend()),
 		_search_length(0.0)
 {
-	double sum (0.0);
-	double sum_of_sqr (0.0);
-	std::size_t edge_cnt(0);
-	std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
+	DBUG("Constructing MeshNodeSearcher obj.");
+	_search_length = search_length_algorithm.getSearchLength();
 
-	for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
-			it != elements.cend(); ++it) {
-		std::size_t const n_edges((*it)->getNEdges());
-		for (std::size_t k(0); k<n_edges; k++) {
-			MeshLib::Line const* edge(static_cast<MeshLib::Line const*>((*it)->getEdge(k)));
-			if (!edge) {
-				delete edge;
-				continue;
-			}
-			double const len(edge->getLength());
-			sum += len;
-			sum_of_sqr += len*len;
-			delete edge;
-		}
-		edge_cnt += n_edges;
-	}
-
-	const double mu (sum/edge_cnt);
-	const double s (sqrt(1.0/(edge_cnt-1) * (sum_of_sqr - (sum*sum)/edge_cnt) ));
-	// heuristic to prevent negative search lengths
-	// in the case of a big standard deviation s
-	double c(2.0);
-	while (mu < c * s) {
-		c *= 0.9;
-	}
-
-	_search_length = (mu - c * s)/2;
-
-	DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
-			_mesh.getName().c_str(), _search_length);
+	DBUG("Calculated search length for mesh \"%s\" is %e.",
+		_mesh.getName().c_str(), _search_length);
 }
 
 MeshNodeSearcher::~MeshNodeSearcher()
