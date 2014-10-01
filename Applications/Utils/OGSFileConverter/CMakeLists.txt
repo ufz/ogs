@@ -88,6 +88,8 @@ set ( CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE TYPE INTERNAL FORCE )
 set( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
 set( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
 
+SET_PROPERTY(TARGET OGSFileConverter PROPERTY FOLDER "Utilities")
+
 ####################
 ### Installation ###
 ####################
