@@ -27,6 +27,7 @@
 namespace ProcessLib
 {
 
+template<typename GlobalSetup>
 class GroundwaterFlowProcess : public Process
 {
     using ConfigTree = boost::property_tree::ptree;
@@ -95,6 +96,8 @@ private:
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
+
+    GlobalSetup _global_setup;
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 };

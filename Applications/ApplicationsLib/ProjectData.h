@@ -91,9 +91,6 @@ public:
 	{
 		for (auto pc : _process_configs)
 		{
-			/* Adding of a specific proccess will look like in the following
-			 * if-clause. Commented, because there is no GroundwaterFlow process
-			 * for now.
 			if (pc.get<std::string>("type") == "GROUNDWATER_FLOW") {
 				// The existence check of the in the configuration referenced
 				// process variables is checked in the physical process.
@@ -104,7 +101,6 @@ public:
 					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
 						*_mesh_vec[0], _process_variables, pc));
 			}
-			 */
 		}
 	}
 
