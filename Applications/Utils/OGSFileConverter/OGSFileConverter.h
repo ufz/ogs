@@ -21,15 +21,15 @@ private:
 	bool fileExists(const std::string &file_name) const;
 
 private slots:
-	void convertGML2GLI(const QStringList &input, const QString &output);
-	void convertGLI2GML(const QStringList &input, const QString &output);
-	void convertVTU2MSH(const QStringList &input, const QString &output);
-	void convertMSH2VTU(const QStringList &input, const QString &output);
+	void convertGML2GLI(const QStringList &input, const QString &output) const;
+	void convertGLI2GML(const QStringList &input, const QString &output) const;
+	void convertVTU2MSH(const QStringList &input, const QString &output) const;
+	void convertMSH2VTU(const QStringList &input, const QString &output) const;
 
-	void on_gml2gliButton_pressed();
-	void on_gli2gmlButton_pressed();
-	void on_vtu2mshButton_pressed();
-	void on_msh2vtuButton_pressed();
+	void on_gml2gliButton_pressed() const;
+	void on_gli2gmlButton_pressed() const;
+	void on_vtu2mshButton_pressed() const;
+	void on_msh2vtuButton_pressed() const;
 	void on_closeDialogButton_pressed();
 };
 

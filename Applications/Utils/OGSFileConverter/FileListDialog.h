@@ -28,11 +28,11 @@ public:
 	FileListDialog(FileType input, FileType output, QWidget* parent = NULL);
 	~FileListDialog(void);
 
-	const QStringList getInputFileList() { return _allFiles.stringList(); };
-	const QString getOutputDir() { return _output_dir; };
+	const QStringList getInputFileList() const { return _allFiles.stringList(); };
+	const QString getOutputDir() const { return _output_dir; };
 
 private:
-	QString getFileTypeString(FileType file_type);
+	const QString getFileTypeString(FileType file_type) const;
 
 	QStringListModel _allFiles;
 	QString _output_dir;
