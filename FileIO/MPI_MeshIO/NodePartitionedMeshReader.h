@@ -14,10 +14,10 @@
 #ifndef NODE_PARTITIONED_MESH_READER_H
 #define NODE_PARTITIONED_MESH_READER_H
 
-#include <mpi.h>
-
 #include <string>
 #include <fstream>
+
+#include <mpi.h>
 
 #include "NodePartitionedMesh.h"
 
@@ -62,7 +62,18 @@ class NodePartitionedMeshReader
         MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name);
 
     private:
-        /// Numbers define the partition.
+        /*! Numbers define the partition.
+            0:    Number of all nodes of a partition,
+            1:    Number of nodes for linear element of a parition,
+            2:    Number of non-ghost elements of a partition,
+            3:    Number of ghost element of a partition,
+            4:    Number of active nodes for linear element of a parition,
+            5:    Number of all active nodes a parition,
+            6:    Number of nodes for linear element of global mesh,
+            7:    Number of all nodes of global mesh,
+            8~12: Offsets of positions of partitions in the data arrays,
+            13:   Reserved for exra flag.
+        */
         MyInt _mesh_controls[14];
 
         /// How many numbers that define the partition, fixed to 14
@@ -112,7 +123,7 @@ class NodePartitionedMeshReader
         void setNodes(const NodeData *node_data, std::vector<MeshLib::Node*> &mesh_node);
 
         /*!
-             \brief Set mesh elements from a tempory  array containing node data read from file.
+             \brief Set mesh elements from a tempory array containing node data read from file.
              \param mesh_nodes        Vector of mesh nodes used to set element nodes.
              \param elem_data         Array containing element data read from file.
              \param mesh_elems        Vector of mesh elements to be set.
@@ -125,7 +136,6 @@ class NodePartitionedMeshReader
 
         /// Teminate programm due to failed to open the file or mismatch between two requested numbers
         void printMessage(const std::string & err_message, const bool for_fileopen = true);
-
 };
 
 } // End of namespace

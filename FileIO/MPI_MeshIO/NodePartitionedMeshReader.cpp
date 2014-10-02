@@ -305,7 +305,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
                 MPI_Recv(_mesh_controls, _num_controls, MPI_LONG, 0, tag[0], comm, &status);
             }
         }
-        // MPI_Bcast(_mesh_controls, _num_controls, MPI_LONG, 0, comm);
 
         //----------------------------------------------------------------------------------
         // Read Nodes

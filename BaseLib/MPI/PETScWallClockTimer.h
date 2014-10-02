@@ -17,6 +17,8 @@
 
 #include <petsctime.h>
 
+#include <BaseLib/MPI/PETScVersion.h>
+
 namespace BaseLib
 {
 
@@ -27,7 +29,7 @@ class PETScWallClockTimer
         /// Record the start time.
         void start()
         {
-#if (PETSC_VERSION_MAJOR == 3) && (PETSC_VERSION_MINOR > 2 || PETSC_VERSION_MAJOR > 3)
+#if (PETSC_VERSION_NUMBER > 3020)
             PetscTime(&_start_time);
 #else
             PetscGetTime(&_start_time);
@@ -37,8 +39,8 @@ class PETScWallClockTimer
         /// Return the elapsed time when this function is called.
         PetscLogDouble elapsed()
         {
-            PetscLogDouble current_time
-#if (PETSC_VERSION_MAJOR == 3) && (PETSC_VERSION_MINOR > 2 || PETSC_VERSION_MAJOR > 3)
+            PetscLogDouble current_time;
+#if (PETSC_VERSION_NUMBER > 3020)
             PetscTime(&current_time);
 #else
             PetscGetTime(&current_time);
@@ -48,7 +50,7 @@ class PETScWallClockTimer
 
     private:
         /// Start time.
-        PetscLogDouble _start_time;
+        PetscLogDouble _start_time = 0.;
 };
 
 } // end namespace BaseLib

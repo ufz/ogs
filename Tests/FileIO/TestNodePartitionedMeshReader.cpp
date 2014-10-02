@@ -17,6 +17,8 @@
 
 #include "Node.h"
 
+#include "BaseLib/MPI/PETScVersion.h"
+
 #include "MPI_MeshIO/NodePartitionedMeshReader.h"
 
 using namespace MeshLib;

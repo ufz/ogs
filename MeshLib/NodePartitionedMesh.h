@@ -47,7 +47,7 @@ class NodePartitionedMesh : public Mesh
             \param name          Name assigned to the mesh.
             \param nodes         Vector for nodes.
             \param elements      Vector for elements. Ghost elements are stored
-                                 after regular elements.             
+                                 after regular elements.
             \param g_elem_data   Element wise local node IDs of active nodes.
             \param start_id_gele Start ID of the entry of ghost element in
                                  the element vector.
@@ -92,7 +92,7 @@ class NodePartitionedMesh : public Mesh
         }
 
         /*!
-            \brief Get the number of nodes of the whole mesh.
+            \brief Get the number of the active nodes of the partition.
             \param order The order of elements (0 or 1).
                          Its default value is 0 for linear elements.
         */
@@ -102,27 +102,31 @@ class NodePartitionedMesh : public Mesh
         }
 
         /*!
-          \brief Get the number of active nodes of an element
+          \brief Get the number of active nodes of a ghost element
           \param gelem_id Index of ghost element
           \param order    The order of elements (either 0 or 1).
-
+          \return         The first or the second element of array by
+                           _nnodes_active[static_cast<gelem_id> , which stores
+                          the number of active nodes either for linear or high
+                          order element of an ghost element.
         */
         unsigned getNGhostElementActiveNodes(const unsigned gelem_id,
-                                        const ElementOrder order = ElementOrder::LINEAR) const
+                                             const ElementOrder order = ElementOrder::LINEAR) const
         {
             return _act_nodes_ids_of_ghost_element[gelem_id][static_cast<int>(order)];
         }
 
         /*!
-          \brief Get local IDs of the active nodes of an element
-          \param gelem_id Index of ghost element
+          \brief Get local IDs of the active nodes of a ghost element by a pointer to
+                 an array.
+          \param gelem_id Index of ghost element.
         */
         short *getGhostElementActiveNodes(const unsigned gelem_id) const
         {
             return &_act_nodes_ids_of_ghost_element[gelem_id][2];
         }
 
-        /// Get the largest ID of active nodes for higher order elements.
+        /// Get the largest ID of active nodes for higher order elements in a partition.
         unsigned getLargestActiveNodeID() const
         {
             // Note: _nodes.size() should be changed once the high order element is condidered
@@ -146,7 +150,11 @@ class NodePartitionedMesh : public Mesh
         /// Number of the active nodes. 0: for linear elements; 1: for quadratic elements.
         unsigned  _nnodes_active[2];
 
-        /// Active node indices of each ghost elements
+        /*! Active node indices of each ghost elements.
+            In each element of the vector, an integger array, the first and the second element of the array
+            stores the numbers of active nodes either for linear and high order element, repectively,
+            while the remaining elements of the array are for local IDs of active .
+        */
         std::vector<short *> _act_nodes_ids_of_ghost_element;
 
         friend FileIO::readNodePartitionedMesh;

@@ -3,7 +3,10 @@
 GET_SOURCE_FILES(SOURCES)
 
 IF(OGS_USE_PETSC)
-	SET (SOURCES ${SOURCES} MPI/WallClockTimer.h MPI/PETScWallClockTimer.h)
+	SET (SOURCES ${SOURCES} 
+		MPI/WallClockTimer.h 
+		MPI/PETScWallClockTimer.h
+		MPI/PETScVersion.h)
 ENDIF(OGS_USE_PETSC)
 
 IF(OGS_USE_MPI)

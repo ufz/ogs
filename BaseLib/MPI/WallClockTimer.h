@@ -37,7 +37,7 @@ class WallClockTimer
         }
 
     private:
-        double _timer;
+        double _timer = 0.;
 };
 
 } // end namespace BaseLib
