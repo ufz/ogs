@@ -25,6 +25,8 @@ public:
     virtual ~Process() = default;
 
     virtual void initialize() = 0;
+    virtual void solve() = 0;
+    virtual void post() = 0;
 
 protected:
     MeshLib::Mesh const& _mesh;
