@@ -244,26 +244,26 @@ bool isPointInTriangle(GeoLib::Point const& q,
 
 bool isPointInTriangle2(GeoLib::Point const& p,
 				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps)
+				double eps_pnt_out_of_plane, double eps_pnt_out_of_tri)
 {
-    if (std::abs(orientation3d(p, a, b, c)) > eps)
-        return false;
+	if (std::abs(orientation3d(p, a, b, c)) > eps_pnt_out_of_plane)
+		return false;
 
-    MathLib::Vector3 const pa (p,a); 
-    MathLib::Vector3 const pb (p,b);
-    MathLib::Vector3 const pc (p,c);
-    double const area_x_2 (calcTriangleArea(a,b,c) * 2);
+	MathLib::Vector3 const pa (p,a); 
+	MathLib::Vector3 const pb (p,b);
+	MathLib::Vector3 const pc (p,c);
+	double const area_x_2 (calcTriangleArea(a,b,c) * 2);
     
-    double const alpha ((MathLib::crossProduct(pb,pc).getLength()) / area_x_2);
-    if (alpha < 0 || alpha > 1)
-        return false;
-    double const beta  ((MathLib::crossProduct(pc,pa).getLength()) / area_x_2);
-    if (beta  < 0 || beta  > 1)
-        return false;
-    double const gamma (1 - alpha - beta);
-    if (gamma < 0 || gamma > 1)
-        return false;
-    return true;
+	double const alpha ((MathLib::crossProduct(pb,pc).getLength()) / area_x_2);
+	if (alpha < -eps_pnt_out_of_tri || alpha > 1+eps_pnt_out_of_tri)
+		return false;
+	double const beta  ((MathLib::crossProduct(pc,pa).getLength()) / area_x_2);
+	if (beta  < -eps_pnt_out_of_tri || beta  > 1+eps_pnt_out_of_tri)
+		return false;
+	double const gamma (1 - alpha - beta);
+	if (gamma < -eps_pnt_out_of_tri || gamma > 1+eps_pnt_out_of_tri)
+		return false;
+	return true;
 }
 
 bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
