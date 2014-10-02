@@ -74,6 +74,8 @@ public:
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+
         //DBUG("Create global assembler.");
         //_global_assembler.reset(
         //    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
@@ -81,6 +83,11 @@ public:
 
     void solve()
     {
+        this->_A->setZero();
+        for (std::size_t i = 0; i < _A->getNRows(); ++i)
+            _A->setValue(i, i, 1);
+
+        _linearSolver->solve(*_rhs, *_x);
     }
 
     void post()
@@ -102,6 +109,7 @@ private:
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     GlobalSetup _global_setup;
+    std::unique_ptr<typename GlobalSetup::LinearSolver> _linearSolver;
     std::unique_ptr<typename GlobalSetup::MatrixType> _A;
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
