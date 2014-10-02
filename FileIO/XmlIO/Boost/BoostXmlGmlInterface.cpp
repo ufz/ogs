@@ -12,6 +12,7 @@
  *
  */
 
+#include <boost/version.hpp>
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 
@@ -50,12 +51,10 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 
 	GeoLib::GEOObjects* geo_objects (&_geo_objects);
 
-
 	// build DOM tree
 	using boost::property_tree::ptree;
 	ptree doc;
 	read_xml(in, doc, boost::property_tree::xml_parser::no_comments);
-
 
 	if (!isGmlFile(doc))
 		return false;
@@ -263,8 +262,61 @@ bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root) co
 
 bool BoostXmlGmlInterface::write()
 {
-	INFO ("Writing XML geometry is not implemented here. Please use the Qt XML class for this functionality.");
-	return false;
+	if (this->_exportName.empty()) {
+		ERR("BoostXmlGmlInterface::write(): No geometry specified.");
+		return false;
+	}
+
+	GeoLib::PointVec const*const pnt_vec(_geo_objects.getPointVecObj(_exportName));
+	if (! pnt_vec) {
+		ERR("BoostXmlGmlInterface::write(): No PointVec within the geometry \"%s\".",
+			_exportName.c_str());
+		return false;
+	}
+
+	std::vector<GeoLib::Point*> const*const pnts(pnt_vec->getVector());
+	if (! pnts) {
+		ERR("BoostXmlGmlInterface::write(): No vector of points within the geometry \"%s\".",
+			_exportName.c_str());
+		return false;
+	}
+	if (pnts->empty()) {
+		ERR("BoostXmlGmlInterface::write(): No points within the geometry \"%s\".",
+			_exportName.c_str());
+		return false;
+	}
+
+	// create a property tree for writing it to file
+	using boost::property_tree::ptree;
+	ptree pt;
+
+	// put header in property tree
+	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation",
+		"http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd");
+	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
+	ptree &geometry_set = pt.add("OpenGeoSysGLI", "");
+
+	geometry_set.add("name", _exportName);
+	ptree & pnts_tag = geometry_set.add("points", "");
+	for (std::size_t k(0); k<pnts->size(); k++) {
+		ptree &pnt_tag = pnts_tag.add("point", "");
+		pnt_tag.put("<xmlattr>.id", k);
+		pnt_tag.put("<xmlattr>.x", (*((*pnts)[k]))[0]);
+		pnt_tag.put("<xmlattr>.y", (*((*pnts)[k]))[1]);
+		pnt_tag.put("<xmlattr>.z", (*((*pnts)[k]))[2]);
+		std::string point_name;
+		if (pnt_vec->getNameOfElementByID(k, point_name))
+			pnt_tag.put("<xmlattr>.name", point_name);
+	}
+
+#if BOOST_VERSION <= 105500
+	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+#else
+	boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
+#endif  // BOOST_VERSION
+	write_xml(_out, pt, settings);
+	return true;
 }
 
 } // end namespace FileIO
