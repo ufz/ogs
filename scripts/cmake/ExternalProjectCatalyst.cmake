@@ -13,12 +13,18 @@ ELSE()
 	SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
 ENDIF()
 
+SET(CATALYST_CMAKE_GENERATOR ${CMAKE_GENERATOR})
 IF(WIN32)
-	SET(CATALYST_MAKE_COMMAND
-		cmake --build . --config Release --target vtkIO &&
-		cmake --build . --config Debug --target vtkIO)
+	FIND_PROGRAM(NINJA_TOOL_PATH ninja DOC "Ninja build tool")
+	IF(NINJA_TOOL_PATH)
+		SET(CATALYST_CMAKE_GENERATOR Ninja)
+		SET(CATALYST_MAKE_COMMAND ninja vtkIO)
+	ELSE()
+		SET(CATALYST_MAKE_COMMAND
+			cmake --build . --config Release --target vtkIO -- /m &&
+			cmake --build . --config Debug --target vtkIO -- /m)
+	ENDIF()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.bat)
-	# MESSAGE(STATUS ${CATALYST_MAKE_COMMAND})
 ELSE()
 	IF($ENV{CI})
 		SET(CATALYST_MAKE_COMMAND make vtkIO)
@@ -33,7 +39,7 @@ ExternalProject_Add(Catalyst
 	GIT_REPOSITORY ${CATALYST_GIT_URL}
 	#URL ${OGS_VTK_URL}
 	#URL_MD5 ${OGS_VTK_MD5}
-	CONFIGURE_COMMAND ../Catalyst/${CATALYST_CONFIGURE_COMMAND} ../Catalyst
+	CONFIGURE_COMMAND ../Catalyst/${CATALYST_CONFIGURE_COMMAND} -G ${CATALYST_CMAKE_GENERATOR} ../Catalyst
 	BUILD_COMMAND ${CATALYST_MAKE_COMMAND}
 	INSTALL_COMMAND ""
 )
