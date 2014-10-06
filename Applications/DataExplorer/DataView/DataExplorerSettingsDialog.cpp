@@ -28,22 +28,11 @@ DataExplorerSettingsDialog::DataExplorerSettingsDialog(QDialog* parent) : QDialo
 	setupUi(this);
 
 	QSettings settings;
-	this->fcPathEdit->setText(settings.value("DataExplorerConverterPath").toString());
 	this->gmshPathEdit->setText(settings.value("DataExplorerGmshPath").toString());
 }
 
 DataExplorerSettingsDialog::~DataExplorerSettingsDialog()
 {
-}
-
-void DataExplorerSettingsDialog::on_fcPathButton_clicked()
-{
-	QSettings settings;
-	QString file_name = QFileDialog::getOpenFileName(this, "Select path for OGS File Converter...",
-						                                   settings.value("DataExplorerConverterPath").toString(),
-						                                   "*OGSFileConverter*");
-	if (!file_name.isEmpty())
-		this->fcPathEdit->setText(file_name);
 }
 
 void DataExplorerSettingsDialog::on_gmshPathButton_clicked()
@@ -59,7 +48,6 @@ void DataExplorerSettingsDialog::on_gmshPathButton_clicked()
 void DataExplorerSettingsDialog::accept()
 {
 	QSettings settings;
-	settings.setValue("DataExplorerConverterPath", this->fcPathEdit->text());
 	settings.setValue("DataExplorerGmshPath", this->gmshPathEdit->text());
 	this->done(QDialog::Accepted);
 }

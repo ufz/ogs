@@ -31,8 +31,6 @@ public:
 
 
 private slots:
-	void on_fcPathButton_clicked();
-
 	void on_gmshPathButton_clicked();
 
 	/// Instructions if the OK-Button has been pressed.
