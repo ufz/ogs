@@ -169,17 +169,24 @@ int main (int argc, char* argv[])
 			MeshGeoToolsLib::SearchLength(search_length_arg.getValue());
 	}
 
+	GeoLib::GEOObjects geometry_sets;
 	MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(*mesh,
 		search_length_strategy);
-	std::size_t pnt_offset(0);
 	for(std::size_t k(0); k<plys->size(); k++) {
 		std::vector<std::size_t> ids
 			(mesh_searcher.getMeshNodeIDsAlongPolyline(*((*plys)[k])));
 		if (ids.empty())
 			continue;
 		std::string geo_name("Polyline-"+std::to_string(k));
-		writeBCAndMeshNodesAsGLI(*mesh, ids, pnt_offset, geo_name);
+		convertMeshNodesToGeometry(mesh->getNodes(), ids, geo_name,
+			geometry_sets);
 	}
+
+	// merge all together
+	std::vector<std::string> geo_names;
+	std::string merge_name("TM");
+	geometry_sets.getGeometryNames(geo_names);
+	geometry_sets.mergeGeometries(geo_names, merge_name);
 
 	return 0;
 }
