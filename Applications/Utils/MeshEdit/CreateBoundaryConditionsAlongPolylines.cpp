@@ -59,53 +59,40 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 	geometry_sets.addPointVec(pnts, geo_name, pnt_names);
 }
 
-void writeMeshNodesToGML(MeshLib::Mesh const& mesh,
-	std::vector<std::size_t> const& node_ids,
+void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
 	std::string & geo_name)
 {
-	GeoLib::GEOObjects geometry_sets;
-	convertMeshNodesToGeometry(mesh.getNodes(), node_ids, geo_name,
-		geometry_sets);
-
-	INFO("write points to \"%s.gml\".", geo_name.c_str());
-	FileIO::BoostXmlGmlInterface xml_io(geometry_sets);
-	xml_io.setNameForExport(geo_name);
-	xml_io.writeToFile(geo_name+".gml");
-}
-
-
-void writeBCAndMeshNodesAsGLI(MeshLib::Mesh const& mesh,
-	std::vector<std::size_t> const& node_ids,
-	std::size_t &offset,
-	std::string & geo_name)
-{
-	GeoLib::GEOObjects geometry_sets;
-	convertMeshNodesToGeometry(mesh.getNodes(), node_ids, geo_name,
-		geometry_sets);
-
 	INFO("write points to \"%s.gml\".", geo_name.c_str());
 	FileIO::BoostXmlGmlInterface xml_io(geometry_sets);
 	xml_io.setNameForExport(geo_name);
 	xml_io.writeToFile(geo_name+".gml");
 
-	std::vector<GeoLib::Point*> const& pnts(*geometry_sets.getPointVec(geo_name));
+	GeoLib::PointVec const* pnt_vec_objs(geometry_sets.getPointVecObj(geo_name));
+	std::vector<GeoLib::Point*> const& pnts(*(pnt_vec_objs->getVector()));
 	std::string fname("UnstrutCatchment.gli");
-	std::ofstream out (fname.c_str(), std::fstream::app);
+	std::ofstream out (fname.c_str());
+	out << "#POINTS\n";
 	out.precision(20);
-	std::ofstream bc_out ("UnstrutCatchment.bc", std::fstream::app);
+	std::ofstream bc_out ("UnstrutCatchment.bc");
 	for (std::size_t k(0); k<pnts.size(); k++) {
-		out << offset++ << " " << *(pnts[k])
-			<< "$NAME " << geo_name + "-PNT-" + std::to_string(k) << "\n";
-		bc_out << "#BOUNDARY_CONDITION\n";
-		bc_out << "  $PCS_TYPE\n";
-		bc_out << "    LIQUID_FLOW\n";
-		bc_out << "  $PRIMARY_VARIABLE\n";
-		bc_out << "    PRESSURE1\n";
-		bc_out << "  $GEO_TYPE\n";
-		bc_out << "    POINT " << geo_name + "-PNT-" + std::to_string(k) << "\n";
-		bc_out << "  $DIS_TYPE\n";
-		bc_out << "    CONSTANT 0.0\n";
+		out << k << " " << *(pnts[k]);
+		std::string pnt_name;
+		if (pnt_vec_objs->getNameOfElementByID(k, pnt_name)) {
+			out << "$NAME " << pnt_name;
+			bc_out << "#BOUNDARY_CONDITION\n";
+			bc_out << "  $PCS_TYPE\n";
+			bc_out << "    LIQUID_FLOW\n";
+			bc_out << "  $PRIMARY_VARIABLE\n";
+			bc_out << "    PRESSURE1\n";
+			bc_out << "  $GEO_TYPE\n";
+			bc_out << "    POINT " << pnt_name << "\n";
+			bc_out << "  $DIS_TYPE\n";
+			bc_out << "    CONSTANT 0.0\n";
+		}
+		out << "\n";
 	}
+	out << "#STOP\n";
+	bc_out << "#STOP\n";
 	bc_out.close();
 	out.close();
 }
