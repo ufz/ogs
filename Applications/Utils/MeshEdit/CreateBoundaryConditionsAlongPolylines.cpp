@@ -188,5 +188,8 @@ int main (int argc, char* argv[])
 	geometry_sets.getGeometryNames(geo_names);
 	geometry_sets.mergeGeometries(geo_names, merge_name);
 
+	// write the BCs and the merged geometry set to file
+	writeBCsAndGML(geometry_sets, merge_name);
+
 	return 0;
 }
