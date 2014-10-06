@@ -95,6 +95,8 @@
 #include <vtkRenderer.h>
 #include <vtkVRMLExporter.h>
 
+#include "Applications/Utils/OGSFileConverter/OGSFileConverter.h"
+
 #ifdef VTKOSGCONVERTER_FOUND
 #include "vtkOsgConverter.h"
 #include <OpenSG/OSGCoredNodePtr.h>
@@ -893,22 +895,12 @@ void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName
 }
 
 
-void MainWindow::callFileConverter() const
+void MainWindow::showFileConverter() const
 {
-	if (system(NULL) != 0) // command processor available
-	{
-		QSettings settings;
-		QString converter_path = settings.value("DataExplorerConverterPath").toString();
-#if _WIN32
-		converter_path = QString("\"").append(converter_path).append("\"");
-#endif
-		if (!converter_path.isEmpty())
-			system(converter_path.toAscii());
-		else
-			OGSError::box("Location of OGS File Converter not specified", "Error");
-	}
-	else
-		OGSError::box("Error executing OGSFileConverter - no command processor available", "Error");
+	OGSFileConverter* dlg = new OGSFileConverter();
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->show();
+	dlg->raise();
 }
 
 void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,

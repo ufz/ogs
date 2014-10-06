@@ -643,7 +643,7 @@
    <sender>actionFile_Converter</sender>
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
-   <slot>callFileConverter()</slot>
+   <slot>showFileConverter()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -700,7 +700,7 @@
   <slot>showLicense()</slot>
   <slot>showMergeGeometriesDialog()</slot>
   <slot>showMeshElementRemovalDialog()</slot>
-  <slot>callFileConverter()</slot>
+  <slot>showFileConverter()</slot>
   <slot>showDataExplorerSettingsDialog()</slot>
   <slot>showMeshAnalysisDialog()</slot>
  </slots>
