@@ -34,15 +34,6 @@ Cell::Cell(unsigned value, std::size_t id)
 Cell::~Cell()
 {}
 
-bool Cell::isOnSurface() const
-{
-	unsigned n (this->getNNeighbors());
-	for (unsigned i(0); i<n; i++)
-		if (!this->_neighbors[i])
-			return true;
-	return false;
-}
-
 bool Cell::testElementNodeOrder() const
 {
 	const MathLib::Vector3 c (getCenterOfGravity());

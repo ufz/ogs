@@ -68,7 +68,7 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	else
 	{
 		const MathLib::Vector3 dir(0,0,-1);
-		this->_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir);
+		this->_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
 	}
 	std::vector<GeoLib::PointWithID*> sfc_pnts;
 	// init grid

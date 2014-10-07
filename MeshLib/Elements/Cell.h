@@ -38,9 +38,6 @@ public:
 	/// Get the volume of this 3d element.
 	virtual double getVolume() const { return _volume; };
 
-	/// Returns true if the cell is somewhere on the mesh surface and false otherwise.
-	bool isOnSurface() const;
-
 	/// Destructor
 	virtual ~Cell();
 

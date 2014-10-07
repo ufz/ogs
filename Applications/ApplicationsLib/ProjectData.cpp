@@ -98,7 +98,6 @@ std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
 			{
 				return mesh && (name == mesh->getName());
 			});
-
 }
 
 const MeshLib::Mesh* ProjectData::getMesh(const std::string &name) const
