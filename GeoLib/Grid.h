@@ -25,7 +25,7 @@
 #include "GEOObjects.h"
 
 // MathLib
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 
 namespace GeoLib
 {
