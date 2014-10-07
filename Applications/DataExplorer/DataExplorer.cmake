@@ -1,11 +1,15 @@
 # Source files
 SET( SOURCES
 	mainwindow.cpp
+	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/OGSFileConverter.cpp
+	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/FileListDialog.cpp
 )
 
 # Moc Header files
 SET( MOC_HEADERS
 	mainwindow.h
+	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/OGSFileConverter.h
+	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/FileListDialog.h
 )
 
 # Header files
@@ -16,6 +20,8 @@ SET( HEADERS
 # UI files
 SET( UIS
 	mainwindow.ui
+	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/OGSFileConverter.ui
+	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/FileList.ui
 )
 
 
@@ -44,6 +50,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_BINARY_DIR}/DataView/DiagramView
 	${CMAKE_CURRENT_BINARY_DIR}/VtkVis
 	${CMAKE_CURRENT_BINARY_DIR}/VtkAct
+	${CMAKE_CURRENT_BINARY_DIR}/Applications/Utils/OGSFileConverter
 	${CMAKE_CURRENT_SOURCE_DIR}/Base
 	${CMAKE_CURRENT_SOURCE_DIR}/DataView
 	${CMAKE_CURRENT_SOURCE_DIR}/DataView/StratView

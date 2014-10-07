@@ -57,8 +57,6 @@ protected slots:
 	void open(int i = 0);
 	/// Function calls for saving files.
 	void save();
-	/// Calls the OGSFileConverter as an external tool
-	void callFileConverter() const;
 	/// Function calls for generating GMSH files from the GUI
 	void callGMSH(std::vector<std::string> & selectedGeometries,
 	              unsigned param1,
@@ -85,6 +83,8 @@ protected slots:
 	void showDiagramPrefsDialog();
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
+	/// Calls the OGSFileConverter as an external tool
+	void showFileConverter() const;
 	//TODO6 void showFileConverterDialog();
 	void showLicense();
 	void showLineEditDialog(const std::string &geoName);
