@@ -20,20 +20,18 @@
 #include <QFileDialog>
 #include <QStringListModel>
 
+enum class FileType {
+	GML,	// xml-geometries
+	VTU,	// xml-meshes
+	GLI,	// ascii-geometries
+	MSH,	// ascii-meshes
+};
+
 class FileListDialog : public QDialog, private Ui_FileList
 {
 	Q_OBJECT
 
 public:
-	enum FileType {
-		GML,	// xml-geometries
-		VTU,	// xml-meshes
-		CND,	// xml-fem-conditions
-		GLI,	// ascii-geometries
-		MSH,	// ascii-meshes
-		BC		// ascii-fem-conditions
-	};
-
 	FileListDialog(FileType input, FileType output, QWidget* parent = NULL);
 	~FileListDialog(void);
 

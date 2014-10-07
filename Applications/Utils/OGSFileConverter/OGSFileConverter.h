@@ -30,6 +30,7 @@ private:
 	bool fileExists(const std::string &file_name) const;
 
 private slots:
+	/// Converts all files in the input list and writes the new files to the output directory with the same file name + updated extension.
 	void convertGML2GLI(const QStringList &input, const QString &output) const;
 	void convertGLI2GML(const QStringList &input, const QString &output) const;
 	void convertVTU2MSH(const QStringList &input, const QString &output) const;

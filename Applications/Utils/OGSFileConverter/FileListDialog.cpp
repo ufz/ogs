@@ -91,9 +91,9 @@ void FileListDialog::reject()
 
 const QString FileListDialog::getFileTypeString(FileType file_type) const
 {
-	if (file_type==GML)      return "OpenGeoSys geometry files (*.gml)";
-	else if (file_type==VTU) return "OpenGeoSys mesh files (*.vtu)";
-	else if (file_type==GLI) return "GeoSys geometry files (*.gli)";
-	else if (file_type==MSH) return "GeoSys mesh files (*.msh)";
+	if      (file_type==FileType::GML) return "OpenGeoSys geometry files (*.gml)";
+	else if (file_type==FileType::VTU) return "OpenGeoSys mesh files (*.vtu)";
+	else if (file_type==FileType::GLI) return "GeoSys geometry files (*.gli)";
+	else if (file_type==FileType::MSH) return "GeoSys mesh files (*.msh)";
 	else return "All files (*.*)";
 }

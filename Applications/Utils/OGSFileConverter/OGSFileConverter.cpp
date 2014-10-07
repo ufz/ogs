@@ -169,28 +169,28 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
 
 void OGSFileConverter::on_gml2gliButton_pressed() const
 {
-	FileListDialog dlg(FileListDialog::GML, FileListDialog::GLI);
+	FileListDialog dlg(FileType::GML, FileType::GLI);
 	if (dlg.exec())
 		convertGML2GLI(dlg.getInputFileList(), dlg.getOutputDir());
 }
 
 void OGSFileConverter::on_gli2gmlButton_pressed() const
 {
-	FileListDialog dlg(FileListDialog::GLI, FileListDialog::GML);
+	FileListDialog dlg(FileType::GLI, FileType::GML);
 	if (dlg.exec())
 		convertGLI2GML(dlg.getInputFileList(), dlg.getOutputDir());
 }
 
 void OGSFileConverter::on_vtu2mshButton_pressed() const
 {
-	FileListDialog dlg(FileListDialog::VTU, FileListDialog::MSH);
+	FileListDialog dlg(FileType::VTU, FileType::MSH);
 	if (dlg.exec())
 		convertVTU2MSH(dlg.getInputFileList(), dlg.getOutputDir());
 }
 
 void OGSFileConverter::on_msh2vtuButton_pressed() const
 {
-	FileListDialog dlg(FileListDialog::MSH, FileListDialog::VTU);
+	FileListDialog dlg(FileType::MSH, FileType::VTU);
 	if (dlg.exec())
 		convertMSH2VTU(dlg.getInputFileList(), dlg.getOutputDir());
 }
