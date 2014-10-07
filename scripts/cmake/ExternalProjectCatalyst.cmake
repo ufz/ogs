@@ -3,6 +3,10 @@ INCLUDE(ExternalProject)
 
 SET(CATALYST_GIT_URL https://github.com/ufz/catalyst-io.git)
 
+IF(NOT DEFINED ParaView_DIR AND DEFINED ENV{ParaView_DIR})
+	SET(ParaView_DIR $ENV{ParaView_DIR})
+ENDIF()
+
 FIND_PACKAGE(ParaView 4.2 COMPONENTS vtkIOXML QUIET)
 
 FIND_LIBRARY(VTKIO_LIB_FOUND vtkIOXML-pv4.2 HINTS ${ParaView_DIR}/lib PATH_SUFFIXES Release Debug)
@@ -10,7 +14,7 @@ IF(ParaView_FOUND AND VTKIO_LIB_FOUND)
 	INCLUDE("${PARAVIEW_USE_FILE}")
 	# MESSAGE("Using Catalyst in ${ParaView_FOUND}")
 	RETURN()
-ELSE()
+ELSEIF(NOT ParaView_DIR)
 	SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
 ENDIF()
 
@@ -52,4 +56,4 @@ IF(NOT ${ParaView_FOUND})
 ELSE()
 	ADD_CUSTOM_TARGET(VtkRescan) # dummy target for caching
 ENDIF()
- 
+
