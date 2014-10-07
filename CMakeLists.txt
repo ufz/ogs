@@ -29,7 +29,6 @@ SET(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 
 ### CMake includes ###
 INCLUDE(scripts/cmake/CheckTypeSizes.cmake)
-INCLUDE(scripts/cmake/FindIncludeHeader.cmake)
 INCLUDE(scripts/cmake/Functions.cmake)
 INCLUDE(scripts/cmake/CMakeSetup.cmake)
 INCLUDE(scripts/cmake/CompilerSetup.cmake)
