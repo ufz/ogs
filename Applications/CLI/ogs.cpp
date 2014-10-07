@@ -25,16 +25,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-
-#include "GeoLib/GEOObjects.h"
-
-#include "MeshLib/Mesh.h"
-
-#include "ProcessLib/ProcessVariable.h"
-#include "ProcessLib/Process.h"
-
 #include "Applications/ApplicationsLib/ProjectData.h"
 
 
@@ -81,68 +71,9 @@ int main(int argc, char *argv[])
 
 	project_config = project_config.get_child("OpenGeoSysProject");
 
-	// Mesh
-	MeshLib::Mesh const* mesh;
-	{
-		std::string const mesh_file =
-			BaseLib::copyPathToFileName(
-					project_config.get<std::string>("mesh"),
-					project_arg.getValue());
-		mesh = FileIO::readMeshFromFile(mesh_file);
-	}
+	ProjectData project(project_config,
+			BaseLib::extractPath(project_arg.getValue()));
 
-	// Geometry
-	GeoLib::GEOObjects geometries;
-	{
-		std::string const geometry_file =
-			BaseLib::copyPathToFileName(
-					project_config.get<std::string>("geometry"),
-					project_arg.getValue());
-		DBUG("Reading geometry file \'%s\'.", geometry_file.c_str());
-
-		FileIO::BoostXmlGmlInterface gml_reader(geometries);
-		gml_reader.readFile(geometry_file);
-	}
-
-	// Process variables
-	std::vector<OGS::ProcessVariable> process_variables;
-
-	{
-		DBUG("Reading process variables:")
-		ConfigTree const& process_variables_config =
-			project_config.get_child("process_variables");
-
-		for (auto it : process_variables_config)
-		{
-			ConfigTree const& var_config = it.second;
-			process_variables.emplace_back(var_config, *mesh, geometries);
-		}
-	}
-
-	// Processes
-	std::vector<ProcessLib::Process*> processes;
-
-	{
-		ConfigTree processes_config;
-		processes_config = project_config.get_child("processes");
-		//write_info(std::cout, processes_config);
-
-		DBUG("Reading processes:\n");
-		for (auto pc_it : processes_config)
-		{
-			ConfigTree const& process_config = pc_it.second;
-
-			if (process_config.get<std::string>("type") == "GROUNDWATER_FLOW")
-				processes.push_back(new ProcessLib::GroundwaterFlowProcess(
-							*mesh, process_variables, process_config));
-		}
-
-	}
-
-
-	std::remove_if(processes.begin(), processes.end(),
-			[](ProcessLib::Process* p) { delete p; return true; });
-	delete mesh;
 
 	delete fmt;
 	delete logog_cout;
