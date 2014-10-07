@@ -19,6 +19,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
+
+#include "GroundwaterFlowFEM.h"
 #include "ProcessVariable.h"
 
 namespace ProcessLib
