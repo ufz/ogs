@@ -158,7 +158,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 	}
 
 	for (auto pnt = polyline_vec.getNameIDMapBegin(); pnt != polyline_vec.getNameIDMapEnd(); ++pnt)
-		QVariant pnt_data (plyList->child(pnt->second)->setData(4, QString::fromStdString(pnt->first)));
+		QVariant pnt_data (plyList->child(pnt->second)->setData(1, QString::fromStdString(pnt->first)));
 
 	INFO("%d polylines added.", end_index - start_index);
 }
@@ -228,9 +228,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 	{
 		QList<QVariant> surface;
 		surface.reserve(4);
-		std::string sfc_name("");
-		surface_vec.getNameOfElementByID(i, sfc_name);
-		surface << "Surface " + QString::number(i) << QString::fromStdString(sfc_name) <<
+		surface << "Surface " + QString::number(i) << "" <<
 		"" << "";
 
 		const GeoLib::Surface &sfc(*(*surfaces)[i]);
@@ -262,6 +260,10 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 			}
 		}
 	}
+
+	for (auto pnt = surface_vec.getNameIDMapBegin(); pnt != surface_vec.getNameIDMapEnd(); ++pnt)
+		QVariant pnt_data (sfcList->child(pnt->second)->setData(1, QString::fromStdString(pnt->first)));
+
 	INFO("%d surfaces added.", end_index - start_index);
 }
 
