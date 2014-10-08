@@ -51,15 +51,15 @@ public:
 	 * \param geoName Name of the new subtree. If no name is given a default name is assigned.
 	 * \param pointVec The list of points to be added as children of that subtree (no geometry can be added with a set of points!)
 	 */
-	void addPointList(QString geoName, const GeoLib::PointVec* pointVec);
+	void addPointList(QString geoName, GeoLib::PointVec const& pointVec);
 	/// Adds a subtree "Polylines" to an existing geometry with the given name.
-	void addPolylineList(QString geoName, const GeoLib::PolylineVec* polylineVec);
+	void addPolylineList(QString geoName, GeoLib::PolylineVec const& polylineVec);
 	/// Appends polylines to the "Polyline"-subtree
-	void appendPolylines(const std::string &name, const GeoLib::PolylineVec* polylineVec);
+	void appendPolylines(const std::string &name, GeoLib::PolylineVec const& polylineVec);
 	/// Adds a subtree "Surfaces" to an existing geometry with the given name.
-	void addSurfaceList(QString geoName, const GeoLib::SurfaceVec* surfaceVec);
+	void addSurfaceList(QString geoName, GeoLib::SurfaceVec const& surfaceVec);
 	/// Appends surfaces to the "Surface"-subtree
-	void appendSurfaces(const std::string &name, GeoLib::SurfaceVec* surfaceVec);
+	void appendSurfaces(const std::string &name, GeoLib::SurfaceVec const& surfaceVec);
 	/// Returns a list of all existing geometries.
 	const std::vector<GeoTreeItem*> &getLists() { return _lists; }
 	/**
@@ -84,13 +84,13 @@ public:
 private:
 	/// Adds children to the "Polylines" node
 	void addChildren(GeoObjectListItem* plyList,
-	                 const GeoLib::PolylineVec* polyline_vec,
+	                 GeoLib::PolylineVec const& polyline_vec,
 	                 std::size_t start_index,
 	                 std::size_t end_index);
 
 	/// Adds children to the "Surfaces" node
 	void addChildren(GeoObjectListItem* sfcList,
-	                 const GeoLib::SurfaceVec* surface_vec,
+	                 GeoLib::SurfaceVec const& surface_vec,
 	                 std::size_t start_index,
 	                 std::size_t end_index);
 
