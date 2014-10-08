@@ -56,19 +56,20 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
 	for (size_t j = 0; j < nPoints; j++)
 	{
 		const GeoLib::Point &pnt(*(*points)[j]);
-		std::string pnt_name("");
-		pointVec.getNameOfElementByID(j, pnt_name);
 		QList<QVariant> pnt_data;
 		pnt_data.reserve(5);
 		pnt_data << static_cast<unsigned>(j)
 		         << QString::number(pnt[0], 'f')
 		         << QString::number(pnt[1], 'f')
 		         << QString::number(pnt[2], 'f')
-		         << QString::fromStdString(pnt_name);
+		         << "";
 		pointList->appendChild(new GeoTreeItem(pnt_data,
 		                                       pointList,
 		                                       static_cast<const GeoLib::Point*>(&pnt)));
 	}
+
+	for (auto pnt = pointVec.getNameIDMapBegin(); pnt != pointVec.getNameIDMapEnd(); ++pnt)
+		QVariant pnt_data (pointList->child(pnt->second)->setData(4, QString::fromStdString(pnt->first)));
 
 	INFO("Geometry \"%s\" built. %d points added.", geoName.toStdString().c_str(), nPoints);
 
@@ -135,10 +136,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 	{
 		QList<QVariant> line_data;
 		line_data.reserve(4);
-		std::string ply_name("");
-		if (polyline_vec.getNameOfElementByID(i, ply_name))
-			line_data << "Line " + QString::number(i) << QString::fromStdString(ply_name) << "" << "";
-		else line_data << "Line " + QString::number(i) << "" << "" << "";
+		line_data << "Line " + QString::number(i) << "" << "" << "";
 
 		const GeoLib::Polyline &line(*(lines[i]));
 		GeoTreeItem* lineItem(new GeoTreeItem(line_data, plyList, &line));
@@ -158,6 +156,10 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
 			lineItem->appendChild(new TreeItem(pnt_data, lineItem));
 		}
 	}
+
+	for (auto pnt = polyline_vec.getNameIDMapBegin(); pnt != polyline_vec.getNameIDMapEnd(); ++pnt)
+		QVariant pnt_data (plyList->child(pnt->second)->setData(4, QString::fromStdString(pnt->first)));
+
 	INFO("%d polylines added.", end_index - start_index);
 }
 
