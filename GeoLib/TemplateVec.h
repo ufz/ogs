@@ -82,6 +82,12 @@ public:
 	 */
 	std::string getName () const { return _name; }
 
+	/// Returns the begin of the name id mapping structure
+	NameIdMap::const_iterator getNameIDMapBegin() const { return _name_id_map->cbegin(); }
+	
+	/// Returns the end of the name id mapping structure
+	NameIdMap::const_iterator getNameIDMapEnd() const { return _name_id_map->cend(); }
+
 	/**
 	 * @return the number of data elements
 	 */
