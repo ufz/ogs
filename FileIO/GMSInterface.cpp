@@ -26,7 +26,7 @@
 #include "GMSInterface.h"
 #include "Mesh.h"
 #include "MeshEnums.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "StationBorehole.h"
 // BaseLib
 #include "FileTools.h"

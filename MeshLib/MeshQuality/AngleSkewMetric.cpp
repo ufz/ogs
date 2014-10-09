@@ -13,6 +13,9 @@
  */
 
 #include "AngleSkewMetric.h"
+#include "MeshLib/Node.h"
+
+#include "MathTools.h"
 
 #include <cmath>
 

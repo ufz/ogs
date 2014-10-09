@@ -14,7 +14,7 @@
 #include "gtest/gtest.h"
 
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "MeshEditing/DuplicateMeshComponents.h"
 #include "MeshGenerators/MeshGenerator.h"

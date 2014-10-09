@@ -13,6 +13,12 @@
  */
 
 #include "MeshGenerator.h"
+#include "MeshLib/Node.h"
+
+#include "Elements/Line.h"
+#include "Elements/Quad.h"
+#include "Elements/Hex.h"
+#include "Elements/Tri.h"
 
 #include <vector>
 
@@ -79,7 +85,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
 	const unsigned n_x_nodes (n_x_cells+1);
 	const unsigned n_y_nodes (n_y_cells+1);
 	std::vector<Node*> nodes;
-	nodes.reserve(n_x_nodes * n_y_nodes);	
+	nodes.reserve(n_x_nodes * n_y_nodes);
 
 	for (std::size_t i = 0; i < n_y_nodes; i++)
 	{

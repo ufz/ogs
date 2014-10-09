@@ -98,7 +98,7 @@ std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &me
 	const unsigned error_sum (static_cast<unsigned>(std::accumulate(error_count, error_count+nErrorCodes, 0.0)));
 	if (error_sum != 0)
 	{
-		ElementErrorFlag flags[nErrorCodes] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
+		ElementErrorFlag flags[nErrorCodes] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
 											    ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
 		for (std::size_t i=0; i<nErrorCodes; ++i)
 			if (error_count[i])
@@ -112,8 +112,8 @@ std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &me
 std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
 MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
 {
-	const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue)); 
-	ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar, 
+	const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
+	ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
 		                                    ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
 	const std::size_t nElements (error_codes.size());
 	std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output;
@@ -122,7 +122,7 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 	{
 		unsigned count(0);
 		std::string elementIdStr("");
-		
+
 		for (std::size_t j=0; j<nElements; ++j)
 		{
 			if (error_codes[j][flags[i]])
@@ -130,7 +130,7 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 				elementIdStr += (std::to_string(j) + ", ");
 				count++;
 			}
-		
+
 		}
 		const std::string nErrorsStr = (count) ? std::to_string(count) : "No";
 		output[i] = (nErrorsStr + " elements found with " + ElementErrorCode::toString(flags[i]) + ".\n");

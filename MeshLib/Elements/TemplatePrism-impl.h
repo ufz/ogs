@@ -188,7 +188,7 @@ ElementErrorCode TemplatePrism<NNODES,CELLPRISMTYPE>::validate() const
 		const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(this->getFace(i)));
 		if (quad)
 			error_code |= quad->validate();
-		else 
+		else
 			error_code.set(ElementErrorFlag::NodeOrder);
 		delete quad;
 	}

@@ -17,7 +17,7 @@
 
 #include <array>
 #include "GeoLib/AABB.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -35,9 +35,9 @@ public:
 	/// Returns the bounding box of the mesh.
 	static const GeoLib::AABB<MeshLib::Node> getBoundingBox(const MeshLib::Mesh &mesh);
 
-	/** 
+	/**
 	 * Returns an array with the number of elements of each type in the given mesh.
-	 * On completion, n_element_types array contains the number of elements of each of the seven 
+	 * On completion, n_element_types array contains the number of elements of each of the seven
 	 * supported types. The index to element type conversion is this:
 	 *		0: #lines
 	 *		1: #triangles

@@ -14,7 +14,7 @@
 
 #include "VtkMeshNodalCoordinatesTemplate.h"
 
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 #include <vtkIdList.h>
 #include <vtkObjectFactory.h>

@@ -13,7 +13,7 @@
 
 #include "MathTools.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshGenerators/MeshGenerator.h"
 #include "Elements/Element.h"
 #include "Elements/Hex.h"

@@ -31,7 +31,7 @@
 
 // MeshLib
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "Elements/Tet.h"
 #include "MeshInformation.h"
@@ -110,7 +110,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
 			ERR("TetGenInterface::getNFacets(): Error reading number of facets.");
 			return 0;
 		}
-		
+
 		BaseLib::simplify(line);
 		if (line.empty() || line.compare(0,1,"#") == 0)
 			continue;
@@ -153,7 +153,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 			k--;
 			continue;
 		}
-		
+
 		// read facets
 		const std::list<std::string> point_fields = BaseLib::splitString(line, ' ');
 		it = point_fields.begin();
@@ -169,7 +169,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 		{
 			for (std::size_t j(0); j<nPoints; ++j)
 				point_ids.push_back(pnt_id_map[BaseLib::str2number<std::size_t>(*(++it))-offset]);
-			
+
 			const std::size_t sfc_marker = (_boundary_markers) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
 			const std::size_t idx = std::find(idx_map.begin(), idx_map.end(), sfc_marker) - idx_map.begin();
 			if (idx >= surfaces.size())
@@ -264,7 +264,7 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
 			return false;
 		return true;
 	}
-	return false;	
+	return false;
 }
 
 bool TetGenInterface::parseNodesFileHeader(std::string &line,
@@ -282,7 +282,7 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 	auto it = pnt_header.begin();
 	n_nodes = BaseLib::str2number<size_t> (*it);
 	dim = (pnt_header.size()==1) ? 3 : BaseLib::str2number<size_t> (*(++it));
-	
+
 	if (pnt_header.size()<4)
 	{
 		n_attributes = 0;
@@ -375,7 +375,7 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
 			getline (ins, line);
 			continue;
 		}
-		
+
 		// read header line
 		bool header_okay = parseElementsFileHeader(line, n_tets, n_nodes_per_tet, region_attributes);
 		if (!header_okay)
@@ -530,7 +530,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	for (std::size_t i=0; i<nSurfaces; ++i)
 	{
 		const std::size_t nTriangles ((*surfaces)[i]->getNTriangles());
-		const std::size_t marker (i+1); // must NOT be 0! 
+		const std::size_t marker (i+1); // must NOT be 0!
 		// the poly list
 		for (std::size_t j=0; j<nTriangles; ++j)
 		{
@@ -541,7 +541,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	out << "0\n"; // the polygon holes list
 	// the region attributes list
 	if (attribute_points.empty())
-		out << "0\n"; 
+		out << "0\n";
 	else
 	{
 		const std::size_t nAttributePoints (attribute_points.size());
@@ -571,7 +571,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 	// the point list
 	for (std::size_t i=0; i<nPoints; ++i)
 		out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << "\n";
-	
+
 	if (mesh.getDimension() == 2)
 		write2dElements(out, mesh);
 	else
@@ -581,7 +581,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 
 	// the region attributes list
 	if (attribute_points.empty())
-		out << "0\n"; 
+		out << "0\n";
 	else
 	{
 		const std::size_t nAttributePoints (attribute_points.size());

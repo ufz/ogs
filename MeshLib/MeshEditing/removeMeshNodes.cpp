@@ -44,12 +44,12 @@ void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &del_no
 			delete *del_elem;
 			*del_elem = nullptr;
 		}
-		
+
 		delete nodes[idx];
 		nodes[idx] = nullptr;
 	}
 
-	// due to element removal neighbourhoods have to be reset and additional nodes 
+	// due to element removal neighbourhoods have to be reset and additional nodes
 	// might need to be deleted as they are no longer part of any element
 	if (elements_removed)
 	{
@@ -63,7 +63,7 @@ void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &del_no
 				*node = nullptr;
 			}
 	}
-	
+
 	auto node_vec_end = std::remove(nodes.begin(), nodes.end(), nullptr);
 	nodes.erase(node_vec_end, nodes.end());
 

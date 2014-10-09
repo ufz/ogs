@@ -24,7 +24,7 @@
 #include "AABB.h"
 #include "Mesh.h"
 #include "Elements/Element.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshSurfaceExtraction.h"
 #include "AnalyticalGeometry.h"
 #include "PointWithID.h"
@@ -90,7 +90,7 @@ void GeoMapper::mapData()
 	bool is_borehole(false);
 	if (stn_test != nullptr && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
 		is_borehole = true;
-	
+
 	double min_val(0), max_val(0);
 	if (_mesh)
 	{
@@ -208,8 +208,8 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	GeoLib::Grid<GeoLib::Point> grid(new_points->begin(), new_points->end());
 	double max_segment_length (this->getMaxSegmentLength(*new_lines));
 	max_segment_length *= max_segment_length; // squared so it can be compared to the squared distances calculated later
-	
-	const unsigned nMeshNodes ( mesh->getNNodes() );	
+
+	const unsigned nMeshNodes ( mesh->getNNodes() );
 	std::vector<int> closest_geo_point(nMeshNodes); // index of closest geo point for each mesh node in (x,y)-plane
 	std::vector<double> dist(nMeshNodes);  // distance between geo points and mesh nodes in (x,y)-plane
 	for (size_t i=0; i<nMeshNodes; ++i)
@@ -219,7 +219,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 		dist[i] = MathLib::sqrDist(pnt->getCoords(), zero_coords);
 		closest_geo_point[i] = (dist[i]<=max_segment_length) ? getIndexInPntVec(pnt, new_points) : -1;
 	}
-	
+
 	// store for each point the line segment to which it was added.
 	const size_t nLines (new_lines->size());
 	std::vector< std::vector<unsigned> > line_segment_map(nLines);
@@ -232,14 +232,14 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	for (std::size_t i=0; i<nMeshNodes; ++i)
 	{
 		// if mesh node too far away or exactly at point position
-		if (closest_geo_point[i] == -1 || dist[i] < eps) continue; 
+		if (closest_geo_point[i] == -1 || dist[i] < eps) continue;
 
 		const MeshLib::Node* node (mesh->getNode(i));
 		for (std::size_t l=0; l<nLines; ++l)
 		{
 			// find relevant polylines
 			if (!(*org_lines)[l]->isPointIDInPolyline(closest_geo_point[i])) continue;
-			
+
 			// find point position of closest geo point in original polyline
 			GeoLib::Polyline* ply ((*org_lines)[l]);
 			std::size_t nLinePnts ( ply->getNumberOfPoints() );
@@ -306,15 +306,15 @@ GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib:
 {
 	const double x1 = (*p1)[0], x2 = (*p2)[0], x3 = (*q1)[0], x4 = (*q2)[0];
 	const double y1 = (*p1)[1], y2 = (*p2)[1], y3 = (*q1)[1], y4 = (*q2)[1];
- 
+
 	const double det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 	if (fabs(det) < std::numeric_limits<double>::epsilon()) return NULL;
- 
+
 	const double pre  = (x1*y2 - y1*x2);
 	const double post = (x3*y4 - y3*x4);
 	const double x = ( pre * (x3 - x4) - (x1 - x2) * post ) / det;
 	const double y = ( pre * (y3 - y4) - (y1 - y2) * post ) / det;
- 
+
 	// Check if the x and y coordinates are within both line segments
 	if (isPntInBoundingBox(x1,y1,x2,y2,x,y) && isPntInBoundingBox(x3,y3,x4,y4,x,y))
 		return new GeoLib::Point(x, y, 0);
@@ -341,8 +341,8 @@ unsigned GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, unsigne
 
 bool GeoMapper::isPntInBoundingBox(double ax, double ay, double bx, double by, double px, double py) const
 {
-	if ( px < (std::min(ax, bx)-std::numeric_limits<double>::epsilon()) || px > (std::max(ax, bx)+std::numeric_limits<double>::epsilon()) || 
-		 py < (std::min(ay, by)-std::numeric_limits<double>::epsilon()) || py > (std::max(ay, by)+std::numeric_limits<double>::epsilon()) ) 
+	if ( px < (std::min(ax, bx)-std::numeric_limits<double>::epsilon()) || px > (std::max(ax, bx)+std::numeric_limits<double>::epsilon()) ||
+		 py < (std::min(ay, by)-std::numeric_limits<double>::epsilon()) || py > (std::max(ay, by)+std::numeric_limits<double>::epsilon()) )
 		 return false;
 	return true;
 }
@@ -360,7 +360,7 @@ double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &line
 			const double dist (line->getLength(j)-line->getLength(j-1));
 			if (dist>max_segment_length)
 				max_segment_length=dist;
-		}	
+		}
 	}
 	return max_segment_length;
 }

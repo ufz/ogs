@@ -158,8 +158,8 @@ protected:
 	}
 
 	/// Returns the specified node.
-	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const 
-	{ 
+	Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
+	{
 		if (edge_id==0 && node_id<2)
 			return _nodes[node_id];
 		return nullptr;

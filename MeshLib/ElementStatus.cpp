@@ -15,7 +15,7 @@
 #include "ElementStatus.h"
 
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 
 namespace MeshLib {
@@ -40,7 +40,7 @@ std::vector<std::size_t> ElementStatus::getActiveElements() const
 	return active_elements;
 }
 
-std::vector<std::size_t> ElementStatus::getActiveNodes() const 
+std::vector<std::size_t> ElementStatus::getActiveNodes() const
 {
 	std::vector<std::size_t> active_nodes;
 	active_nodes.reserve(this->getNActiveNodes());
@@ -68,12 +68,12 @@ std::vector<std::size_t> ElementStatus::getActiveElementsAtNode(std::size_t node
 	return active_elements;
 }
 
-std::size_t ElementStatus::getNActiveNodes() const 
+std::size_t ElementStatus::getNActiveNodes() const
 {
 	return _active_nodes.size() - std::count(_active_nodes.cbegin(), _active_nodes.cend(), 0);
 }
 
-std::size_t ElementStatus::getNActiveElements() const 
+std::size_t ElementStatus::getNActiveElements() const
 {
 	return static_cast<std::size_t>(std::count(_element_status.cbegin(), _element_status.cend(), true));
 }

@@ -34,7 +34,7 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 #include "MeshIO.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 // BaseLib
 #include "FileTools.h"

@@ -22,7 +22,7 @@
 #include "Grid.h"
 
 // MeshLib
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "Legacy/MeshIO.h"

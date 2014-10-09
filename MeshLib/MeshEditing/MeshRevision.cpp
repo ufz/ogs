@@ -2,7 +2,7 @@
  * \file   MeshRevision.cpp
  * \author Karsten Rink
  * \date   2014-02-14
- * \brief  Implementation of the MeshRevision class. 
+ * \brief  Implementation of the MeshRevision class.
  *
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -93,7 +93,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 			ERR ("Something is wrong, more unique nodes than actual nodes");
 
 	}
-		
+
 	this->resetNodeIDs();
 	if (!new_elements.empty())
 		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
@@ -241,8 +241,8 @@ bool MeshRevision::subdivideElement(MeshLib::Element const*const element, const 
 	return (n_new_elems > 0);
 }
 
-void MeshRevision::reduceElement(MeshLib::Element const*const element, 
-								 unsigned n_unique_nodes, 
+void MeshRevision::reduceElement(MeshLib::Element const*const element,
+								 unsigned n_unique_nodes,
 								 const std::vector<MeshLib::Node*> &nodes,
 								 std::vector<MeshLib::Element*> &elements,
 								 unsigned min_elem_dim) const
@@ -252,7 +252,7 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 	 ***************/
 	if (element->getGeomType() == MeshElemType::TRIANGLE && min_elem_dim == 1)
 		elements.push_back (this->constructLine(element, nodes));
-	else if ((element->getGeomType() == MeshElemType::QUAD) || 
+	else if ((element->getGeomType() == MeshElemType::QUAD) ||
 		     (element->getGeomType() == MeshElemType::TETRAHEDRON))
 	{
 		if (n_unique_nodes == 3 && min_elem_dim < 3)
@@ -359,8 +359,8 @@ unsigned MeshRevision::subdividePrism(MeshLib::Element const*const prism, const 
 	return 3;
 }
 
-unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem, 
-							 unsigned n_unique_nodes, 
+unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
+							 unsigned n_unique_nodes,
 							 const std::vector<MeshLib::Node*> &nodes,
 							 std::vector<MeshLib::Element*> &new_elements,
 							 unsigned min_elem_dim) const
@@ -437,7 +437,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 				{
 					for (unsigned k=i; k<7; ++k)
 						for (unsigned l=k+1; l<8; ++l)
-							if (!(i==k && j==l) && org_elem->isEdge(i,j) && org_elem->isEdge(k,l) && 
+							if (!(i==k && j==l) && org_elem->isEdge(i,j) && org_elem->isEdge(k,l) &&
 								org_elem->getNode(k)->getID() == org_elem->getNode(l)->getID())
 							{
 								const std::pair<unsigned, unsigned> back (this->lutHexBackNodes(i,j,k,l));
@@ -450,10 +450,10 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 								std::array<unsigned, 4> cutting_plane (this->lutHexCuttingQuadNodes(back.first, back.second));
 								MeshLib::Node** pris1_nodes = new MeshLib::Node*[6];
 								pris1_nodes[0] = const_cast<MeshLib::Node*>(org_elem->getNode(back.first));
-								pris1_nodes[1] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[0])); 
+								pris1_nodes[1] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[0]));
 								pris1_nodes[2] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[3]));
-								pris1_nodes[3] = const_cast<MeshLib::Node*>(org_elem->getNode(back.second)); 
-								pris1_nodes[4] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[1])); 
+								pris1_nodes[3] = const_cast<MeshLib::Node*>(org_elem->getNode(back.second));
+								pris1_nodes[4] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[1]));
 								pris1_nodes[5] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[2]));
 								MeshLib::Prism* prism1 (new MeshLib::Prism(pris1_nodes, org_elem->getValue()));
 								unsigned nNewElements = this->reducePrism(prism1, 5, nodes, new_elements, min_elem_dim);
@@ -491,7 +491,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 			tet1_nodes[3] = nodes[org_elem->getNode(fifth_node)->getID()];
 			new_elements.push_back(new MeshLib::Tet(tet1_nodes, org_elem->getValue()));
 		}
-		else 
+		else
 			new_elements.push_back(tet1);
 
 		MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
@@ -524,9 +524,9 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 	return 0;
 }
 
-void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem, 
-								 unsigned n_unique_nodes, 
-								 const std::vector<MeshLib::Node*> &nodes, 
+void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem,
+								 unsigned n_unique_nodes,
+								 const std::vector<MeshLib::Node*> &nodes,
 								 std::vector<MeshLib::Element*> &new_elements,
 								 unsigned min_elem_dim) const
 {
@@ -543,9 +543,9 @@ void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem,
 	return;
 }
 
-unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem, 
-							   unsigned n_unique_nodes, 
-							   const std::vector<MeshLib::Node*> &nodes, 
+unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
+							   unsigned n_unique_nodes,
+							   const std::vector<MeshLib::Node*> &nodes,
 							   std::vector<MeshLib::Element*> &new_elements,
 							   unsigned min_elem_dim) const
 {
@@ -573,7 +573,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 						MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
 						tet2_nodes[0] = nodes[org_elem->getNode((i+1)%3+3)->getID()];
 						tet2_nodes[1] = nodes[org_elem->getNode((i+2)%3)->getID()];
-						tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];					
+						tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
 						tet2_nodes[3] = nodes[org_elem->getNode((i+2)%3+3)->getID()];
 						new_elements.push_back (new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
 						return 2;
@@ -598,7 +598,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
 					tet2_nodes[0] = nodes[org_elem->getNode(l+offset)->getID()];
 					tet2_nodes[1] = nodes[org_elem->getNode(k+offset)->getID()];
-					tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];					
+					tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
 					tet2_nodes[3] = nodes[org_elem->getNode(k)->getID()];
 					new_elements.push_back (new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
 					return 2;
@@ -617,7 +617,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 	return 1;
 }
 
-MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const element, 
+MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const element,
 	                                          const std::vector<MeshLib::Node*> &nodes) const
 {
 	MeshLib::Node** line_nodes = new MeshLib::Node*[2];
@@ -635,11 +635,11 @@ MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const eleme
 	return new MeshLib::Line(line_nodes, element->getValue());
 }
 
-MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const element, 
+MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const element,
 	                                         const std::vector<MeshLib::Node*> &nodes) const
 {
-	// TODO? 
-	// In theory three unique nodes could also be reduced to two lines e.g. with  
+	// TODO?
+	// In theory three unique nodes could also be reduced to two lines e.g. with
 	// a quad where two diametral nodes collapse. This case is currently not implemented!
 	MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 	tri_nodes[0] = nodes[element->getNode(0)->getID()];
@@ -683,9 +683,9 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(MeshLib::Element const*
 			}
 		}
 		if (unique_node)
-			new_nodes[count++] = nodes[element->getNode(i)->getID()];; 
+			new_nodes[count++] = nodes[element->getNode(i)->getID()];;
 	}
-	
+
 	// test if quad or tet
 	const bool isQuad (GeoLib::isCoplanar(*new_nodes[0], *new_nodes[1], *new_nodes[2], *new_nodes[3]));
 	if (isQuad && min_elem_dim < 3)
@@ -732,7 +732,7 @@ unsigned MeshRevision::lutHexDiametralNode(unsigned id) const
 }
 
 const std::array<unsigned,4> MeshRevision::lutHexCuttingQuadNodes(unsigned id1, unsigned id2) const
-{	
+{
 	std::array<unsigned,4> nodes;
 	if      (id1==0 && id2==1) { nodes[0]=3; nodes[1]=2; nodes[2]=5; nodes[3]=4; }
 	else if (id1==1 && id2==2) { nodes[0]=0; nodes[1]=3; nodes[2]=6; nodes[3]=5; }

@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshEditing/moveMeshNodes.h"
 
 TEST(MeshLib, moveMeshNodes)

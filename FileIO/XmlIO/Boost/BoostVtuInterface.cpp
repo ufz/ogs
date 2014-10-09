@@ -38,7 +38,7 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 namespace FileIO
 {
@@ -363,7 +363,7 @@ unsigned char* BoostVtuInterface::uncompressData(property_tree::ptree const& com
 	unsigned long compressed_size = strlen(compressed_data_node.data().c_str());
 	unsigned char* uncompressed_data = NULL;
 	unsigned long uncompressed_size = 0;
-	// unsigned long result = 
+	// unsigned long result =
 	zLibDataCompressor::UncompressBuffer(compressed_data, compressed_size, uncompressed_data, uncompressed_size);
 	return uncompressed_data;
 }

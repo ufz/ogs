@@ -22,7 +22,7 @@
 #include <QSettings>
 
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "MshItem.h"
@@ -230,7 +230,7 @@ void MshView::exportToTetGen()
 
 	if (!index.isValid())
 		return;
-	
+
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	QSettings settings;
 	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",

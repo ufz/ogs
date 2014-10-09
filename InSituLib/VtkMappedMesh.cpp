@@ -15,7 +15,7 @@
 #include "VtkMappedMesh.h"
 
 #include "Element.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshEnums.h"
 
 #include "logog/include/logog.hpp"

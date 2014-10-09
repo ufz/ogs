@@ -25,7 +25,7 @@
 #include "MeshSurfaceExtraction.h"
 #include "PointWithID.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 #include <cmath>
 #include <limits>

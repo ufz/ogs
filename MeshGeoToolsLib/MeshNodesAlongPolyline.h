@@ -19,7 +19,7 @@
 #include "Polyline.h"
 
 // MeshLib
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 namespace MeshGeoToolsLib
 {

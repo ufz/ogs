@@ -20,7 +20,7 @@
 namespace MeshLib
 {
 
-RadiusEdgeRatioMetric::RadiusEdgeRatioMetric(Mesh const& mesh) 
+RadiusEdgeRatioMetric::RadiusEdgeRatioMetric(Mesh const& mesh)
 : ElementQualityMetric(mesh)
 {}
 

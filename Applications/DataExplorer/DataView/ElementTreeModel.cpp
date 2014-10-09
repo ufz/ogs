@@ -16,7 +16,7 @@
 #include "OGSError.h"
 #include "TreeItem.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshInformation.h"
 #include "Elements/Element.h"
 #include "AABB.h"
@@ -105,7 +105,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 
 	if (!mesh)
 		return;
-	
+
 	QList<QVariant> mesh_name;
 	mesh_name << "Name:" << QString::fromStdString(mesh->getName()) << "" << "" << "";
 	TreeItem* name_item = new TreeItem(mesh_name, _rootItem);
@@ -165,6 +165,6 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	_rootItem->appendChild(mat_item);
 
 	reset();
-	
+
 }
 

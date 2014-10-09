@@ -80,7 +80,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 
 	if (sfc_elements.empty())
 		return nullptr;
-	
+
 	std::vector<MeshLib::Node*> sfc_nodes;
 	std::vector<std::size_t> node_id_map(mesh.getNNodes());
 	get2DSurfaceNodes(sfc_nodes, mesh.getNNodes(), sfc_elements, node_id_map);

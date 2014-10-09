@@ -29,7 +29,7 @@
 #include "AABB.h"
 
 // MeshLib
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "MeshEditing/moveMeshNodes.h"
 #include "Mesh.h"

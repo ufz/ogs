@@ -34,7 +34,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 		ERR ("Mesh to geometry conversion is only working for 2D meshes.");
 		return false;
 	}
-	
+
 	// nodes to points conversion
 	const std::size_t nNodes (mesh.getNNodes());
 	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>(nNodes);

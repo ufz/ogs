@@ -18,7 +18,7 @@
 #include "logog/include/logog.hpp"
 
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Line.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"

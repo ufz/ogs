@@ -27,7 +27,7 @@
 #include "readMeshFromFile.h"
 
 // MeshLib
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
 

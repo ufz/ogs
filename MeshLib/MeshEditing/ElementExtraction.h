@@ -33,13 +33,13 @@ public:
 
 	~ElementExtraction();
 
-	/// The error code determined during element extraction 
+	/// The error code determined during element extraction
 	/// (0 = no errors, 1 = all elements selected, 2 = no elements selected)
 	unsigned getErrorCode() { return _error_code; };
 
 	/// Removes all mesh elements marked by search-methods.
 	MeshLib::Mesh* removeMeshElements(const std::string &new_mesh_name);
-	
+
 	/// Marks all elements with the given Material ID.
 	std::size_t searchByMaterialID(unsigned matID);
 
@@ -51,7 +51,7 @@ public:
 
 	/// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
 	std::size_t searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2);
-	
+
 
 private:
 	/// Updates the vector of marked elements with values from vec.

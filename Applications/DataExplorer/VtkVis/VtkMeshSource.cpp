@@ -19,7 +19,7 @@
 
 #include "Elements/Element.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "VtkColorLookupTable.h"
 
 #include "Color.h"
