@@ -20,7 +20,7 @@ IF(TARGET VtkVis)
 		GeoLib
 		MathLib
 		VtkVis
-		${VTK_LIBRARIES}
+		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
 	)
 
@@ -31,7 +31,7 @@ IF(TARGET VtkVis)
 		FileIO
 		VtkVis
 		zlib
-		${VTK_LIBRARIES}
+		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
 	)
 

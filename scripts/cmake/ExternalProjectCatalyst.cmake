@@ -7,12 +7,45 @@ IF(NOT DEFINED ParaView_DIR AND DEFINED ENV{ParaView_DIR})
 	SET(ParaView_DIR $ENV{ParaView_DIR})
 ENDIF()
 
-FIND_PACKAGE(ParaView 4.2 COMPONENTS vtkIOXML QUIET)
+# CLI modules
+SET(PARAVIEW_MODULES vtkIOXML)
+
+# GUI modules
+IF(OGS_BUILD_GUI)
+	SET(PARAVIEW_MODULES ${PARAVIEW_MODULES}
+		vtkRenderingCore
+		vtkRenderingOpenGL
+		vtknetcdf
+		vtkIOLegacy
+		vtkIOImage
+		vtkGUISupportQt
+		vtkRenderingAnnotation
+		vtkFiltersTexture
+		vtkFiltersModeling
+		vtkFiltersSources
+		vtkImagingCore
+		vtkInteractionWidgets
+		vtkIOExport
+		vtkRenderingFreeType
+	)
+	SET(CATALYST_GIT_URL https://github.com/ufz/catalyst-gui.git)
+ENDIF()
+SET(CATALYST_LIBRARIES ${PARAVIEW_MODULES} CACHE STRING "")
+
+IF(OGS_BUILD_GUI)
+	# Replace vtknetcdf with vtkNetCDF vtkNetCDF_cxx
+	LIST(REMOVE_ITEM CATALYST_LIBRARIES vtknetcdf)
+	LIST(APPEND CATALYST_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
+ENDIF()
+
+FIND_PACKAGE(ParaView 4.2 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE)
 
 FIND_LIBRARY(VTKIO_LIB_FOUND vtkIOXML-pv4.2 HINTS ${ParaView_DIR}/lib PATH_SUFFIXES Release Debug)
 IF(ParaView_FOUND AND VTKIO_LIB_FOUND)
 	INCLUDE("${PARAVIEW_USE_FILE}")
-	# MESSAGE("Using Catalyst in ${ParaView_FOUND}")
+
+	# see http://stackoverflow.com/questions/18642155
+	SET_PROPERTY(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
 	RETURN()
 ELSEIF(NOT ParaView_DIR)
 	SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
@@ -20,22 +53,22 @@ ENDIF()
 
 SET(CATALYST_CMAKE_GENERATOR ${CMAKE_GENERATOR})
 IF(WIN32)
-	# Ninja tempory disabled because it builds only the Release mode.
+	# Ninja temporary disabled because it builds only the Release mode.
 	# FIND_PROGRAM(NINJA_TOOL_PATH ninja DOC "Ninja build tool")
 	IF(NINJA_TOOL_PATH)
 		SET(CATALYST_CMAKE_GENERATOR Ninja)
-		SET(CATALYST_MAKE_COMMAND ninja vtkIOXML)
+		SET(CATALYST_MAKE_COMMAND ninja ${CATALYST_LIBRARIES})
 	ELSE()
 		SET(CATALYST_MAKE_COMMAND
-			cmake --build . --config Release --target vtkIOXML -- /m &&
-			cmake --build . --config Debug --target vtkIOXML -- /m)
+			cmake --build . --config Release --target ${CATALYST_LIBRARIES} -- /m &&
+			cmake --build . --config Debug --target ${CATALYST_LIBRARIES} -- /m)
 	ENDIF()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.bat)
 ELSE()
 	IF($ENV{CI})
-		SET(CATALYST_MAKE_COMMAND make vtkIOXML)
+		SET(CATALYST_MAKE_COMMAND make ${CATALYST_LIBRARIES})
 	ELSE()
-		SET(CATALYST_MAKE_COMMAND make -j ${NUM_PROCESSORS} vtkIOXML)
+		SET(CATALYST_MAKE_COMMAND make -j ${NUM_PROCESSORS} ${CATALYST_LIBRARIES})
 	ENDIF()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.sh)
 ENDIF()

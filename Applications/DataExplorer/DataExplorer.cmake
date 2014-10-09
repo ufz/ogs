@@ -88,7 +88,7 @@ TARGET_LINK_LIBRARIES( DataExplorer
 	VtkVis
 	VtkAct
 	${Boost_LIBRARIES}
-	${VTK_LIBRARIES}
+	${CATALYST_LIBRARIES}
 	zlib
 	shp
 )

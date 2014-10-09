@@ -4,7 +4,7 @@
 #ifndef NETCDFCONFIGUREDIALOG_H
 #define NETCDFCONFIGUREDIALOG_H
 
-#include <netcdfcpp.h>
+#include <vtknetcdf/cxx/netcdfcpp.h>
 
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
