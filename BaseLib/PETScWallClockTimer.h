@@ -17,8 +17,6 @@
 
 #include <petsctime.h>
 
-#include <BaseLib/MPI/PETScVersion.h>
-
 namespace BaseLib
 {
 
@@ -37,7 +35,7 @@ class PETScWallClockTimer
         }
 
         /// Return the elapsed time when this function is called.
-        PetscLogDouble elapsed()
+        PetscLogDouble elapsed() const
         {
             PetscLogDouble current_time;
 #if (PETSC_VERSION_NUMBER > 3020)

@@ -43,11 +43,11 @@ class NodePartitionedMesh : public Mesh
 {
     public:
         /*!
-            \brief  Constructor
+            \brief Constructor
             \param name          Name assigned to the mesh.
             \param nodes         Vector for nodes.
             \param elements      Vector for elements. Ghost elements are stored
-                                 after regular elements.
+                                 after regular (non-ghost) elements.
             \param g_elem_data   Element wise local node IDs of active nodes.
             \param start_id_gele Start ID of the entry of ghost element in
                                  the element vector.

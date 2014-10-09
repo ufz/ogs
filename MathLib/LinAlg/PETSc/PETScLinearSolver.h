@@ -23,7 +23,7 @@
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
-#include "BaseLib/MPI/PETScWallClockTimer.h"
+#include "BaseLib/PETScWallClockTimer.h"
 
 namespace MathLib
 {
