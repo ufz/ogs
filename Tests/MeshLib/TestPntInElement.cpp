@@ -48,7 +48,7 @@ TEST(IsPntInElement, Line)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 2> line_nodes = { nodes[0], nodes[4] };
+    std::array<MeshLib::Node*, 2> line_nodes = {{ nodes[0], nodes[4] }};
     MeshLib::Line line(line_nodes);
     pnt = GeoLib::Point(0,0,0.7);
     ASSERT_EQ(true, line.isPntInElement(pnt));
@@ -61,7 +61,7 @@ TEST(IsPntInElement, Tri)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 3> tri_nodes = { nodes[0], nodes[1], nodes[4] };
+    std::array<MeshLib::Node*, 3> tri_nodes = {{ nodes[0], nodes[1], nodes[4] }};
     MeshLib::Tri tri(tri_nodes);
 
     pnt = GeoLib::Point(0.1,0,0.1);
@@ -75,9 +75,10 @@ TEST(IsPntInElement, Quad)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 4> quad_nodes = { nodes[0], nodes[1], nodes[5], nodes[4] };
+    std::array<MeshLib::Node*, 4> quad_nodes =
+        {{ nodes[0], nodes[1], nodes[5], nodes[4] }};
     MeshLib::Quad quad(quad_nodes);
-    
+
     pnt = GeoLib::Point(0.1,0,0.1);
     ASSERT_EQ(true, quad.isPntInElement(pnt));
     pnt = GeoLib::Point(0.999,0,0.001);
@@ -92,7 +93,8 @@ TEST(IsPntInElement, Tet)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 4> tet_nodes = { nodes[0], nodes[1], nodes[2], nodes[4] };
+    std::array<MeshLib::Node*, 4> tet_nodes =
+        {{ nodes[0], nodes[1], nodes[2], nodes[4] }};
     MeshLib::Tet tet(tet_nodes);
 
     pnt = GeoLib::Point(0.5,0.3,0.1);
@@ -125,7 +127,8 @@ TEST(IsPntInElement, Prism)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 6> prism_nodes = { nodes[0], nodes[1], nodes[2], nodes[4], nodes[5], nodes[6] };
+    std::array<MeshLib::Node*, 6> prism_nodes =
+        {{ nodes[0], nodes[1], nodes[2], nodes[4], nodes[5], nodes[6] }};
     MeshLib::Prism prism(prism_nodes);
 
     pnt = GeoLib::Point(0.5,0.5,0.1);
