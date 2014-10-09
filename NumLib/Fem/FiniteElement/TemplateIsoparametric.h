@@ -28,7 +28,6 @@ namespace NumLib
  *
  * \tparam T_ELEMENT            Mesh element class
  * \tparam T_SHAPE              Shape function
- * \tparam T_INTEGRAL           Integration method
  * \tparam T_NODAL_VECTOR       Nodal vector class
  * \tparam T_DIM_NODAL_MATRIX   Matrix class for a size of dim * nnodes
  * \tparam T_DIM_MATRIX         Matrix class for a size of dim * dim
@@ -36,7 +35,6 @@ namespace NumLib
 template <
     class T_MESH_ELEMENT,
     class T_SHAPE,
-    class T_INTEGRAL,
     class T_NODAL_VECTOR,
     class T_DIM_NODAL_MATRIX,
     class T_DIM_MATRIX
@@ -46,7 +44,6 @@ class TemplateIsoparametric
 public:
     typedef T_MESH_ELEMENT MeshElementType;
     typedef T_SHAPE ShapeFunctionType;
-    typedef T_INTEGRAL IntegrationMethod;
     typedef T_NODAL_VECTOR NodalVectorType;
     typedef T_DIM_NODAL_MATRIX DimNodalMatrixType;
     typedef T_DIM_MATRIX DimMatrixType;
