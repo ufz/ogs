@@ -5,7 +5,8 @@ SET_DEFAULT_BUILD_TYPE(Debug)
 INCLUDE(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 
 # Set compiler helper variables
-IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+
+IF ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     SET(COMPILER_IS_CLANG TRUE)
 ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     SET(COMPILER_IS_GCC TRUE)
