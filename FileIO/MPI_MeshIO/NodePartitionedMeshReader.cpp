@@ -84,10 +84,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     int rc = 0;
     rc = MPI_File_open(comm, &fname_new[0],
                        MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
-    if (rc )
+    if(rc)
     {
-
-        if( _rank == 0 )
+        if(_rank == 0)
             INFO("-->Reading ASCII mesh file ...");
 
         mesh = readASCII(comm, file_name);
@@ -95,13 +94,13 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     else
     {
         MPI_File_close(&fh);
-        if( _rank == 0 )
+        if(_rank == 0)
             INFO("-->Reading binary mesh file ...");
 
         mesh = readBinary(comm, file_name);
     }
 
-    if( _rank == 0 )
+    if(_rank == 0)
         INFO("\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed());
 
     MPI_Barrier(comm);
@@ -120,7 +119,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     string fname_new_base = file_name + "_partitioned_msh_cfg" + _size_str + ".bin";
     rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                        MPI_INFO_NULL, &fh);
-    if (rc ) // Failed to open the file
+    if(rc) // Failed to open the file
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -138,7 +137,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     fname_new_base = file_name + "_partitioned_msh_nod" + _size_str + ".bin";
     rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                        MPI_INFO_NULL, &fh);
-    if (rc ) // Failed to open the file
+    if(rc) // Failed to open the file
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -164,7 +163,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     fname_new_base = file_name + "_partitioned_msh_ele" + _size_str + ".bin";
     rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                        MPI_INFO_NULL, &fh);
-    if (rc ) // Failed to open the file
+    if(rc) // Failed to open the file
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -187,7 +186,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     fname_new_base = file_name + "_partitioned_msh_ele_g" + _size_str + ".bin";
     rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                        MPI_INFO_NULL, &fh);
-    if( rc )
+    if(rc)
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -244,9 +243,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
             if(num_parts != _size)
             {
                 file_opened = false;
-                string str_var = "Sorry, I have to quit the simulation now because that "
-                                 " the number of the requested computer cores "
-                                 "is not identical to the number of subdomains.";
+                string str_var = "Aborting computation because of number of cores / subdomains mismatch.";
                 printMessage(str_var, file_opened);
             }
         }
@@ -351,7 +348,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
         if(_rank == 0)
         {
             readElementASCII(is_elem, elem_info);
-            if(i==0)
+            if(i == 0)
             {
                 setElements(mesh_nodes, elem_info, mesh_elems, ghost_elems);
             }
@@ -360,7 +357,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
                 MPI_Send(elem_info, size_elem_info, MPI_LONG, i, tag[1], comm);
             }
         }
-        if(i>0)
+        if(i > 0)
         {
             if(_rank == i)
             {
@@ -378,7 +375,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
         {
             readElementASCII(is_elem, elem_info, true);
 
-            if(i==0)
+            if(i == 0)
             {
                 setElements(mesh_nodes, elem_info, mesh_elems, ghost_elems, process_ghost);
             }
@@ -387,7 +384,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
                 MPI_Send(elem_info, size_elem_g_info, MPI_LONG, i, tag[2], comm);
             }
         }
-        if(i>0)
+        if(i > 0)
         {
             if(_rank == i)
             {
@@ -454,7 +451,7 @@ void NodePartitionedMeshReader::readElementASCII(std::ifstream &ins,
             counter++;
         }
 
-        if(!ghost)
+        if( !ghost )
             continue;
 
         // ghost nodes for linear element
@@ -488,7 +485,7 @@ void NodePartitionedMeshReader::setElements(const std::vector<MeshLib::Node*> &m
         const MyInt *elem_data, std::vector<MeshLib::Element*> &mesh_elems,
         std::vector<short*> &mesh_ghost_elems, const bool ghost)
 {
-    if(!ghost)
+    if( !ghost )
     {
         mesh_elems.resize(_mesh_controls[2] + _mesh_controls[3]);
     }
@@ -576,12 +573,12 @@ void NodePartitionedMeshReader::printMessage(const std::string & err_message, co
 {
     if( for_fileopen )
     {
-        if(_rank == 0 )
+        if(_rank == 0)
             INFO("! File %s does not exist.", &err_message[0]);
     }
     else
     {
-        if(_rank == 0 )
+        if(_rank == 0)
             INFO( err_message.c_str() );
     }
 }

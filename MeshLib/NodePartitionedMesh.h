@@ -151,9 +151,9 @@ class NodePartitionedMesh : public Mesh
         unsigned  _nnodes_active[2];
 
         /*! Active node indices of each ghost elements.
-            In each element of the vector, an integger array, the first and the second element of the array
-            stores the numbers of active nodes either for linear and high order element, repectively,
-            while the remaining elements of the array are for local IDs of active .
+            In each element of the vector, an integer array, the first and the second element of the array
+            stores the numbers of active nodes either for linear and high order element, respectively,
+            while the remaining elements of the array are for local IDs of active nodes.
         */
         std::vector<short *> _act_nodes_ids_of_ghost_element;
 
