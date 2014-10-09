@@ -30,6 +30,7 @@
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/PointWithID.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -183,13 +184,55 @@ int main (int argc, char* argv[])
 	}
 
 	// merge all together
+	std::string merge_name("NodesAlongPolylineUnsorted");
 	std::vector<std::string> geo_names;
-	std::string merge_name("TM");
 	geometry_sets.getGeometryNames(geo_names);
 	geometry_sets.mergeGeometries(geo_names, merge_name);
 
+	GeoLib::PointVec const* pnt_vec(geometry_sets.getPointVecObj(merge_name));
+	std::vector<GeoLib::Point*> const* merged_pnts(pnt_vec->getVector());
+
+	std::vector<GeoLib::PointWithID> pnts_with_id;
+	const size_t n_merged_pnts(merged_pnts->size());
+	for(std::size_t k(0); k<n_merged_pnts; ++k) {
+		pnts_with_id.emplace_back((*merged_pnts)[k]->getCoords(), k);
+	}
+
+	std::sort(pnts_with_id.begin(), pnts_with_id.end(),
+		[](GeoLib::PointWithID const& p0, GeoLib::PointWithID const& p1)
+			{ return p0 < p1; }
+	);
+
+	double const eps (std::numeric_limits<double>::epsilon());
+	std::vector<GeoLib::Point*> *surface_pnts (new std::vector<GeoLib::Point*>);
+	std::map<std::string, std::size_t> *name_id_map(
+		new std::map<std::string, std::size_t>
+	);
+	for (std::size_t k(1); k < n_merged_pnts; ++k) {
+		const GeoLib::PointWithID& p0 (pnts_with_id[k-1]);
+		const GeoLib::PointWithID& p1 (pnts_with_id[k]);
+		if (std::abs (p0[0] - p1[0]) > eps || std::abs (p0[1] - p1[1]) > eps) {
+			surface_pnts->push_back(new GeoLib::Point(pnts_with_id[k-1]));
+			std::string element_name;
+			pnt_vec->getNameOfElementByID(k, element_name);
+			name_id_map->insert(
+				std::pair<std::string, std::size_t>(element_name,
+				surface_pnts->size()-1)
+			);
+		}
+	}
+	// last point
+	surface_pnts->push_back (new GeoLib::Point((*(*merged_pnts)[n_merged_pnts - 1])));
+	std::string element_name;
+	pnt_vec->getNameOfElementByID(n_merged_pnts-1, element_name);
+	name_id_map->insert(std::pair<std::string, std::size_t>
+		(element_name, surface_pnts->size()-1));
+
+	std::string surface_name("TM");
+	geometry_sets.addPointVec(surface_pnts, surface_name, name_id_map, 1e-6);
+
 	// write the BCs and the merged geometry set to file
-	writeBCsAndGML(geometry_sets, merge_name);
+	writeBCsAndGML(geometry_sets, surface_name);
 
 	return 0;
 }
