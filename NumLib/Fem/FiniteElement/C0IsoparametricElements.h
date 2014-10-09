@@ -31,25 +31,25 @@ namespace NumLib
 template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
 struct FeLINE2
 {
-    typedef TemplateIsoparametric<MeshLib::Line, ShapeLine2, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeLine2, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
 };
 
 template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
 struct FeTRI3
 {
-    typedef TemplateIsoparametric<MeshLib::Tri, ShapeTri3, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeTri3, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
 };
 
 template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
 struct FeQUAD4
 {
-    typedef TemplateIsoparametric<MeshLib::Quad, ShapeQuad4, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeQuad4, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
 };
 
 template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
 struct FeHEX8
 {
-    typedef TemplateIsoparametric<MeshLib::Hex, ShapeHex8, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeHex8, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
 };
 
 } // NumLib

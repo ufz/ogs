@@ -33,7 +33,6 @@ namespace NumLib
  * \tparam T_DIM_MATRIX         Matrix class for a size of dim * dim
  */
 template <
-    class T_MESH_ELEMENT,
     class T_SHAPE,
     class T_NODAL_VECTOR,
     class T_DIM_NODAL_MATRIX,
@@ -42,7 +41,7 @@ template <
 class TemplateIsoparametric
 {
 public:
-    typedef T_MESH_ELEMENT MeshElementType;
+    typedef typename T_SHAPE::MeshElement MeshElementType;
     typedef T_SHAPE ShapeFunctionType;
     typedef T_NODAL_VECTOR NodalVectorType;
     typedef T_DIM_NODAL_MATRIX DimNodalMatrixType;
