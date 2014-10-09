@@ -34,19 +34,14 @@ namespace NumLib
  */
 template <
     class T_SHAPE,
-    class T_NODAL_VECTOR,
-    class T_DIM_NODAL_MATRIX,
-    class T_DIM_MATRIX
+    class T_SHAPE_MATRICES
     >
 class TemplateIsoparametric
 {
 public:
     typedef typename T_SHAPE::MeshElement MeshElementType;
     typedef T_SHAPE ShapeFunctionType;
-    typedef T_NODAL_VECTOR NodalVectorType;
-    typedef T_DIM_NODAL_MATRIX DimNodalMatrixType;
-    typedef T_DIM_MATRIX DimMatrixType;
-    typedef ShapeMatrices<NodalVectorType, DimNodalMatrixType, DimMatrixType> ShapeMatricesType;
+    typedef typename T_SHAPE_MATRICES::ShapeMatrices ShapeMatricesType;
     typedef NaturalCoordinatesMapping<MeshElementType, ShapeFunctionType, ShapeMatricesType> NaturalCoordsMappingType;
 
     /**
