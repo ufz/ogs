@@ -19,14 +19,12 @@
 
 #include "logog/include/logog.hpp"
 
-// GeoLib
-#include "AABB.h"
-#include "Grid.h"
+#include "GeoLib/AABB.h"
+#include "GeoLib/Grid.h"
 
-// MeshLib
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Face.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Face.h"
 
 namespace MeshLib {
 

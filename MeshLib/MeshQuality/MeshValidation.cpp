@@ -18,11 +18,11 @@
 
 #include "logog/include/logog.hpp"
 
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Element.h"
-#include "MeshEditing/removeMeshNodes.h"
-#include "MeshEditing/MeshRevision.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEditing/removeMeshNodes.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
 
 namespace MeshLib {
 

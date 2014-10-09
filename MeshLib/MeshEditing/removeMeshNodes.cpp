@@ -13,9 +13,10 @@
  */
 
 #include "removeMeshNodes.h"
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Element.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
 
 namespace MeshLib {
 

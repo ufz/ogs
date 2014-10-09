@@ -9,14 +9,6 @@ SET ( SOURCES ${SOURCES_MESHLIB} ${SOURCES_ELEMENTS} ${SOURCES_EDITING} ${SOURCE
 # Create the library
 ADD_LIBRARY(MeshLib STATIC ${SOURCES})
 
-include_directories(
-	.
-	../BaseLib
-	../GeoLib
-	../MathLib
-)
-
-
 target_link_libraries (MeshLib
 	BaseLib
 	GeoLib

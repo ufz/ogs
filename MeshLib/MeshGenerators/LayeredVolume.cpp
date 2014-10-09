@@ -14,14 +14,15 @@
 
 #include "LayeredVolume.h"
 
-#include "Vector3.h"
+#include "MathLib/Vector3.h"
 
-#include "Raster.h"
+#include "GeoLib/Raster.h"
 
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
-#include "MeshGenerators/MeshLayerMapper.h"
-#include "MeshEditing/ElementExtraction.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/MeshEditing/ElementExtraction.h"
+
+#include "MeshLayerMapper.h"
 
 
 bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue)

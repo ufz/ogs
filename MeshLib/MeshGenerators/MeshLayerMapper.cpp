@@ -20,15 +20,15 @@
 
 #include "FileIO/AsciiRasterInterface.h"
 
-#include "Raster.h"
+#include "GeoLib/Raster.h"
 
-#include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
-#include "MeshSurfaceExtraction.h"
+#include "MathLib/MathTools.h"
 
-#include "MathTools.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
 
 const unsigned MeshLayerMapper::_pyramid_base[3][4] =
 {

@@ -17,8 +17,8 @@
 
 #include <string>
 #include <vector>
-#include "MeshEnums.h"
-#include "Node.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib {
 

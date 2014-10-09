@@ -14,16 +14,15 @@
 
 #include "DuplicateMeshComponents.h"
 
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Element.h"
-#include "Elements/Line.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Prism.h"
 
 namespace MeshLib
 {

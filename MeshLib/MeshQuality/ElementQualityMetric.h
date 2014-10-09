@@ -17,14 +17,12 @@
 
 #include <vector>
 
-// BaseLib
-#include "Histogram.h"
-
-// MSH
-#include "Mesh.h"
-#include "Elements/Element.h"
-
 #include "logog/include/logog.hpp"
+
+#include "BaseLib/Histogram.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 
 namespace MeshLib
 {

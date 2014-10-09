@@ -13,10 +13,9 @@
 
 #include "ConvertRasterToMesh.h"
 
-// MeshLib
-#include "Node.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
 
 namespace MeshLib {
 

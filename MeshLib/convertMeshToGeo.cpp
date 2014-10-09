@@ -14,16 +14,17 @@
 
 #include "convertMeshToGeo.h"
 
-// ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "GEOObjects.h"
-#include "Surface.h"
+#include "GeoLib/GEOObjects.h"
+namespace GeoLib
+{
+    class Surface;
+}
 
 #include "Mesh.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
-#include "Node.h"
 #include "MeshInformation.h"
 
 namespace MeshLib {

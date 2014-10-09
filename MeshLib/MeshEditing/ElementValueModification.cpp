@@ -12,13 +12,15 @@
  *
  */
 
+#include "ElementValueModification.h"
+
 #include <algorithm>
 
-#include "ElementValueModification.h"
-#include "Mesh.h"
-#include "Elements/Element.h"
-
 #include "logog/include/logog.hpp"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
+
 
 namespace MeshLib {
 

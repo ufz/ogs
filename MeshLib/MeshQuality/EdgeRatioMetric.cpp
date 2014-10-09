@@ -13,8 +13,9 @@
  */
 
 #include "EdgeRatioMetric.h"
-#include "Node.h"
-#include "MathTools.h"
+
+#include "MathLib/MathTools.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

@@ -12,9 +12,10 @@
  *
  */
 
+#include "MathLib/Vector3.h"
+#include "MeshLib/Node.h"
+
 #include "Cell.h"
-#include "Node.h"
-#include "Vector3.h"
 
 namespace MeshLib {
 

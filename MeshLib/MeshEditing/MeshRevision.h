@@ -19,7 +19,6 @@
 #include <limits>
 #include <string>
 #include <vector>
-#include <cstddef>
 
 // forward declaration
 namespace MeshLib {
