@@ -16,7 +16,7 @@
 #define TEMPLATEPRISM_H_
 
 #include <array>
-#include "MeshEnums.h"
+#include "MeshLib/MeshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {

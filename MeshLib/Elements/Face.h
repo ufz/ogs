@@ -17,12 +17,11 @@
 
 #include <limits>
 
+#include "GeoLib/Point.h"
+
+#include "MathLib/Vector3.h"
+
 #include "Element.h"
-
-// GeoLib
-#include "Point.h"
-
-#include "Vector3.h"
 
 namespace MeshLib {
 

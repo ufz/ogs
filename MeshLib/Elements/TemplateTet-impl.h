@@ -14,10 +14,9 @@
 
 #include "logog/include/logog.hpp"
 
-#include "Node.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "MeshLib/Node.h"
 #include "Tri.h"
-
-#include "AnalyticalGeometry.h"
 
 namespace MeshLib {
 
