@@ -163,7 +163,6 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 			for (std::size_t k(beg); k < end - 1; k++)
 				if (perm[k] > perm[k + 1])
 					std::swap(perm[k], perm[k + 1]);
-
 	}
 
 	// check if there are identical points
@@ -175,12 +174,10 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	BaseLib::Quicksort<std::size_t, GeoLib::Point*>(perm, 0, n_pnts_in_file, *pnt_vec);
 
 	// remove the second, third, ... occurrence from vector
-	std::size_t cnt(0); // counts the points that are deleted
 	for (std::size_t k(0); k < n_pnts_in_file; k++) {
 		if (pnt_id_map[k] < k) {
 			delete (*pnt_vec)[k];
 			(*pnt_vec)[k] = nullptr;
-			cnt++;
 		}
 	}
 
@@ -188,11 +185,11 @@ void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
 	pnt_vec->erase(pnt_vec_end, pnt_vec->end());
 
 	// renumber id-mapping
-	cnt = 0;
+	std::size_t id(0);
 	for (std::size_t k(0); k < n_pnts_in_file; k++) {
 		if (pnt_id_map[k] == k) { // point not removed, if necessary: id change
-			pnt_id_map[k] = cnt;
-			cnt++;
+			pnt_id_map[k] = id;
+			id++;
 		} else {
 			pnt_id_map[k] = pnt_id_map[pnt_id_map[k]];
 		}
