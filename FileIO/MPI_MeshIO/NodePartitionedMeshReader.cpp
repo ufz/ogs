@@ -110,7 +110,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     // Read headers
     MPI_File fh;
-    const char *ftype = "native";
+    char *ftype = "native";
     int file_status = 0;
     const string fname_header = file_name +  "_partitioned_msh_";
     const string fname_num_p_ext = _size_str + ".bin";
