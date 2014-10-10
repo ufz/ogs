@@ -124,13 +124,11 @@ double PointVec::getShortestPointDistance () const
 void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
                                std::vector<std::size_t> &pnt_id_map, double eps)
 {
-	std::size_t n_pnts_in_file(pnt_vec->size());
-	std::vector<std::size_t> perm;
-	pnt_id_map.reserve(n_pnts_in_file);
-	for (std::size_t k(0); k < n_pnts_in_file; k++) {
-		perm.push_back(k);
-		pnt_id_map.push_back(k);
-	}
+	std::size_t const n_pnts_in_file(pnt_vec->size());
+	std::vector<std::size_t> perm(n_pnts_in_file);
+	pnt_id_map.resize(n_pnts_in_file);
+	std::iota(perm.begin(), perm.end(), 0);
+	std::iota(pnt_id_map.begin(), pnt_id_map.end(), 0);
 
 	// sort the points
 	BaseLib::Quicksort<GeoLib::Point*>(*pnt_vec, 0, n_pnts_in_file, perm);
