@@ -12,6 +12,5 @@ ADD_LIBRARY(InSituLib
 	VtkMappedMeshSource.cpp
 )
 
-IF(TARGET VtkRescan)
-	ADD_DEPENDENCIES(InSituLib VtkRescan)
-ENDIF()
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(InSituLib)

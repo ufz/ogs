@@ -16,6 +16,5 @@ target_link_libraries (MeshLib
 	logog
 )
 
-IF(TARGET VtkRescan)
-	ADD_DEPENDENCIES(MeshLib VtkRescan)
-ENDIF()
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(MeshLib)

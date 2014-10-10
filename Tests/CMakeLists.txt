@@ -72,6 +72,8 @@ IF (QT4_FOUND)
 	TARGET_LINK_LIBRARIES(testrunner ${QT_LIBRARIES})
 ENDIF()
 
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(testrunner)
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
