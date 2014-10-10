@@ -25,6 +25,7 @@ IF(OGS_BUILD_GUI)
 		vtkFiltersSources
 		vtkImagingCore
 		vtkInteractionWidgets
+		vtkInteractionStyle
 		vtkIOExport
 		vtkRenderingFreeType
 	)
