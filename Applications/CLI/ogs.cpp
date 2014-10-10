@@ -37,8 +37,8 @@
 int main(int argc, char *argv[])
 {
 #ifdef USE_PETSC
-    char help[] = "ogs6 with PETSc \n";
-    PetscInitialize(&argc,&argv,(char *)0,help);
+	char help[] = "ogs6 with PETSc \n";
+	PetscInitialize(&argc,&argv,(char *)0,help);
 #endif
 
 	using ConfigTree = boost::property_tree::ptree;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 		(*p_it)->post(output_file);
 	}
 #ifdef USE_PETSC
-        PetscFinalize();
+	PetscFinalize();
 #endif
 
 	output_file.close();
