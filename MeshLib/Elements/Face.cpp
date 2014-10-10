@@ -12,10 +12,11 @@
  *
  */
 
+#include "Face.h"
+
 #include "MathLib/MathTools.h"
 #include "MathLib/Vector3.h"
 
-#include "Face.h"
 #include "Line.h"
 
 namespace MeshLib {
