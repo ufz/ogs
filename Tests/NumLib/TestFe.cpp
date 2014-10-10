@@ -17,6 +17,7 @@
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
+#include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
 
 #include "FeTestData/TestFeLINE2.h"
 #include "FeTestData/TestFeTRI3.h"
@@ -96,6 +97,10 @@ class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
     static const unsigned n_sample_pt_order2 = T_FE::n_sample_pt_order2;
     static const unsigned n_sample_pt_order3 = T_FE::n_sample_pt_order3;
 
+    using IntegrationMethod =
+        typename NumLib::GaussIntegrationPolicy<MeshElementType>::IntegrationMethod;
+
+
  public:
     NumLibFemIsoTest() :
         D(dim, dim),
@@ -135,7 +140,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
     DimMatrix D;
     NodalMatrix expectedM;
     NodalMatrix expectedK;
-    typename FeType::IntegrationMethod integration_method;
+    IntegrationMethod integration_method;
 
     std::vector<const MeshLib::Node*> vec_nodes;
     std::vector<const MeshElementType*> vec_eles;
