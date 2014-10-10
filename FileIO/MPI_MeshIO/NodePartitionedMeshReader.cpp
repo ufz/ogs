@@ -79,7 +79,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     NodePartitionedMesh *mesh = nullptr;
 
     MPI_File fh;
-    int file_status = MPI_File_open(comm, fname_new.c_str(),
+    int file_status = MPI_File_open(comm, &fname_new[0],
                                     MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
     if(file_status)
     {
@@ -116,7 +116,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     const string fname_num_p_ext = _size_str + ".bin";
 
     string fname_new_base = fname_header + "cfg" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
@@ -134,7 +134,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     // Read Nodes
     fname_new_base = fname_header + "nod" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
@@ -160,7 +160,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     // Read and elements
     fname_new_base = fname_header +"ele" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
@@ -183,7 +183,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     //Read ghost element
     fname_new_base = fname_header + "ele_g" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status)
     {
