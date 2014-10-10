@@ -25,7 +25,7 @@ namespace MeshLib
 {
 class Node;
 class Element;
-};
+}
 
 namespace FileIO
 {
@@ -33,21 +33,18 @@ typedef long MyInt;
 /// Node data only for parallel reading.
 struct NodeData
 {
-    MyInt index;
+    MyInt index; ///< Global node index.
     double x;
     double y;
     double z;
 };
-
-/// Define MPI data type, MPI_Node_ptr, for struct MeshNode for palllel reading of nodes
-void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr);
 
 /// Class to handle reading data of partitioned mesh.
 class NodePartitionedMeshReader
 {
     public:
 
-        NodePartitionedMeshReader() : _num_controls(14)
+        NodePartitionedMeshReader()
         {
         }
 
@@ -77,7 +74,7 @@ class NodePartitionedMeshReader
         MyInt _mesh_controls[14];
 
         /// How many numbers that define the partition, fixed to 14
-        unsigned _num_controls;
+        unsigned _num_controls = 14;
 
         /// Number of MPI processes
         int _size;
@@ -92,7 +89,8 @@ class NodePartitionedMeshReader
              \brief Create a NodePartitionedMesh object, read binary mesh data to it,
                     and return a pointer to it.
              \param comm  MPI  Communicator.
-             \param file_name  Name of file to be read.
+             \param file_name  Name of file to be read, which must be a name with the
+                               path to the file and without file extension.
              \return           Pointer to Mesh object.
         */
         MeshLib::NodePartitionedMesh* readBinary(MPI_Comm comm, const std::string &file_name);
@@ -101,7 +99,8 @@ class NodePartitionedMeshReader
              \brief Create a NodePartitionedMesh object, read ASCII mesh data to it,
                     and return a pointer to it.
              \param comm  MPI  Communicator.
-             \param file_name  Name of file to be read.
+             \param file_name  Name of file to be read, which must be a name with the
+                               path to the file and without file extension.
              \return           Pointer to Mesh object.
         */
         MeshLib::NodePartitionedMesh* readASCII(MPI_Comm comm, const std::string &file_name);

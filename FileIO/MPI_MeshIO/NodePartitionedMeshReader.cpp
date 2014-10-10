@@ -17,7 +17,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "BaseLib/MPI/WallClockTimer.h"
+#include "BaseLib/RunTime.h"
 
 #include "NodePartitionedMesh.h"
 #include "Node.h"
@@ -36,6 +36,8 @@ using namespace std;
 
 namespace FileIO
 {
+// Local function:
+// Define MPI data type, MPI_Node_ptr, for struct MeshNode for palllel reading of nodes
 void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
 {
     MPI_Datatype my_comp_type[4];
@@ -44,11 +46,7 @@ void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
     my_comp_type[2] = MPI_DOUBLE;
     my_comp_type[3] = MPI_DOUBLE;
 
-    int nblocklen[4];
-    nblocklen[0] = 1;
-    nblocklen[1] = 1;
-    nblocklen[2] = 1;
-    nblocklen[3] = 1;
+    int nblocklen[4] = {1, 1, 1, 1};
 
     MPI_Aint disp[4], base;
     MPI_Get_address(anode, disp);
@@ -68,7 +66,7 @@ void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
 
 MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, const std::string &file_name)
 {
-    BaseLib::WallClockTimer timer;
+    BaseLib::RunTime timer;
     timer.start();
 
     MPI_Comm_size(comm, &_size);
@@ -81,10 +79,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     NodePartitionedMesh *mesh = nullptr;
 
     MPI_File fh;
-    int rc = 0;
-    rc = MPI_File_open(comm, &fname_new[0],
-                       MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
-    if(rc)
+    int file_status = MPI_File_open(comm, fname_new.c_str(),
+                                    MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
+    if(file_status)
     {
         if(_rank == 0)
             INFO("-->Reading ASCII mesh file ...");
@@ -113,13 +110,15 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     // Read headers
     MPI_File fh;
-    string ftype = "native";
-    int rc = 0;
+    const char *ftype = "native";
+    int file_status = 0;
+    const string fname_header = file_name +  "_partitioned_msh_";
+    const string fname_num_p_ext = _size_str + ".bin";
 
-    string fname_new_base = file_name + "_partitioned_msh_cfg" + _size_str + ".bin";
-    rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
-                       MPI_INFO_NULL, &fh);
-    if(rc) // Failed to open the file
+    string fname_new_base = fname_header + "cfg" + fname_num_p_ext;
+    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+                                MPI_INFO_NULL, &fh);
+    if(file_status) // Failed to open the file
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -128,16 +127,16 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //
     MPI_Offset offset_new;
     offset_new = _rank * _num_controls * sizeof(MyInt);
-    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG,  &ftype[0], MPI_INFO_NULL);
+    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG, ftype, MPI_INFO_NULL);
     MPI_File_read(fh, _mesh_controls, _num_controls, MPI_LONG, MPI_STATUS_IGNORE); //_all
     MPI_File_close(&fh);
 
     //----------------------------------------------------------------------------------
     // Read Nodes
-    fname_new_base = file_name + "_partitioned_msh_nod" + _size_str + ".bin";
-    rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
-                       MPI_INFO_NULL, &fh);
-    if(rc) // Failed to open the file
+    fname_new_base = fname_header + "nod" + fname_num_p_ext;
+    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+                                MPI_INFO_NULL, &fh);
+    if(file_status) // Failed to open the file
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -148,7 +147,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     buildNodeStrucTypeMPI(s_nodes, &MPI_node);
 
     offset_new =  _mesh_controls[10];
-    MPI_File_set_view(fh, offset_new, MPI_node, MPI_node,  &ftype[0], MPI_INFO_NULL);
+    MPI_File_set_view(fh, offset_new, MPI_node, MPI_node, ftype, MPI_INFO_NULL);
     MPI_File_read(fh, s_nodes, _mesh_controls[0], MPI_node, MPI_STATUS_IGNORE);
     MPI_File_close(&fh);
 
@@ -160,10 +159,10 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
 
     //----------------------------------------------------------------------------------
     // Read and elements
-    fname_new_base = file_name + "_partitioned_msh_ele" + _size_str + ".bin";
-    rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
-                       MPI_INFO_NULL, &fh);
-    if(rc) // Failed to open the file
+    fname_new_base = fname_header +"ele" + fname_num_p_ext;
+    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+                                MPI_INFO_NULL, &fh);
+    if(file_status) // Failed to open the file
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -172,7 +171,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     MyInt size_elem_info =   _mesh_controls[2] + _mesh_controls[8];
     MyInt *elem_data = (MyInt *)malloc(sizeof(MyInt) * size_elem_info );
     offset_new =  _mesh_controls[11];
-    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG, &ftype[0], MPI_INFO_NULL);
+    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG, ftype, MPI_INFO_NULL);
     MPI_File_read(fh, elem_data, size_elem_info, MPI_LONG, MPI_STATUS_IGNORE);
     MPI_File_close(&fh);
 
@@ -183,10 +182,10 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
 
     //----------------------------------------------------------------------------------
     //Read ghost element
-    fname_new_base = file_name + "_partitioned_msh_ele_g" + _size_str + ".bin";
-    rc = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
-                       MPI_INFO_NULL, &fh);
-    if(rc)
+    fname_new_base = fname_header + "ele_g" + fname_num_p_ext;
+    file_status = MPI_File_open(comm, fname_new_base.c_str(), MPI_MODE_RDONLY,
+                                MPI_INFO_NULL, &fh);
+    if(file_status)
     {
         printMessage(fname_new_base);
         return nullptr;
@@ -195,7 +194,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     size_elem_info =   _mesh_controls[3] + _mesh_controls[9];
     elem_data = (MyInt *)realloc(elem_data, sizeof(MyInt) * size_elem_info );
     offset_new =  _mesh_controls[12];
-    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG,  &ftype[0], MPI_INFO_NULL);
+    MPI_File_set_view(fh, offset_new, MPI_LONG, MPI_LONG, ftype, MPI_INFO_NULL);
     MPI_File_read(fh, elem_data, size_elem_info, MPI_LONG, MPI_STATUS_IGNORE);
     MPI_File_close(&fh);
 
@@ -224,9 +223,12 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
     ifstream is_elem;
     int file_opened = 1;
 
+    const string fname_header = file_name +  "_partitioned_";
+    const string fname_num_p_ext = _size_str + ".msh";
+
     if(_rank == 0)
     {
-        string str_var = file_name + "_partitioned_cfg"+ _size_str + ".msh";
+        string str_var = fname_header + "cfg"+ fname_num_p_ext;
         is_cfg.open(str_var.c_str());
 
         if( !is_cfg.good() )
@@ -248,14 +250,14 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
             }
         }
 
-        str_var = file_name + "_partitioned_nodes_" + _size_str + ".msh";
+        str_var = fname_header + "nodes_" + fname_num_p_ext;
         is_node.open(str_var.c_str());
         if( !is_node.good() )
         {
             file_opened = false;
         }
 
-        str_var = file_name + "_partitioned_elems_" + _size_str + ".msh";
+        str_var = fname_header + "elems_" + fname_num_p_ext;
         is_elem.open(str_var.c_str());
         if( !is_elem.good() )
         {
