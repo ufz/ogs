@@ -17,14 +17,16 @@
 
 #include <cstdlib>
 #include <limits>
-#include <vector>
 #include <set>
+#include <vector>
 
 #include "GeoLib/PointWithID.h"
-#include "Mesh.h"
+
 #include "MeshEditing/removeMeshNodes.h"
-#include "MeshSurfaceExtraction.h"
 #include "MeshGenerators/MeshLayerMapper.h"
+
+#include "MeshSurfaceExtraction.h"
+#include "Mesh.h"
 
 namespace MeshLib {
 

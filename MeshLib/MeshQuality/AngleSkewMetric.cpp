@@ -13,11 +13,12 @@
  */
 
 #include "AngleSkewMetric.h"
-#include "Node.h"
-
-#include "MathTools.h"
 
 #include <cmath>
+
+#include "MeshLib/Node.h"
+
+#include "MathLib/MathTools.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

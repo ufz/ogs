@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "LayeredMeshGenerator.h"
 
 namespace GeoLib {

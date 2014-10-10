@@ -16,8 +16,7 @@
 #define MESHINFORMATION_H
 
 #include <array>
-
-#include "AABB.h"
+#include "GeoLib/AABB.h"
 #include "Node.h"
 
 namespace MeshLib {

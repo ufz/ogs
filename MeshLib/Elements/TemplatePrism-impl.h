@@ -15,12 +15,11 @@
 // Thirdparty
 #include "logog/include/logog.hpp"
 
-#include "Node.h"
-#include "Tri.h"
-#include "Pyramid.h"
-#include "Quad.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "MeshLib/Node.h"
 
-#include "AnalyticalGeometry.h"
+#include "Tri.h"
+#include "Quad.h"
 
 namespace MeshLib {
 

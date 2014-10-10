@@ -16,7 +16,7 @@
 #define EDGERATIOMETRIC_H_
 
 #include "ElementQualityMetric.h"
-#include "Point.h"
+#include "GeoLib/Point.h"
 
 namespace MeshLib
 {

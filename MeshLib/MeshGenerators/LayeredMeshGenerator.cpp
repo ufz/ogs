@@ -19,12 +19,12 @@
 
 #include "FileIO/AsciiRasterInterface.h"
 
-#include "Raster.h"
+#include "GeoLib/Raster.h"
 
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Element.h"
-#include "MeshQuality/MeshValidation.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
 
 LayeredMeshGenerator::LayeredMeshGenerator()
 : _elevation_epsilon(0.0001)

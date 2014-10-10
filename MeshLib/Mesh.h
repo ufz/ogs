@@ -19,9 +19,9 @@
 #include <string>
 #include <vector>
 
-#include "MeshEnums.h"
-
 #include "BaseLib/Counter.h"
+
+#include "MeshEnums.h"
 
 namespace MeshLib
 {

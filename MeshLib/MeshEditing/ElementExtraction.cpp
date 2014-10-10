@@ -13,13 +13,16 @@
  */
 
 #include "ElementExtraction.h"
-#include "Mesh.h"
-#include "Elements/Element.h"
-#include "MeshEditing/DuplicateMeshComponents.h"
-#include "AABB.h"
-#include "MeshQuality/MeshValidation.h"
 
 #include "logog/include/logog.hpp"
+
+#include "GeoLib/AABB.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
+
+#include "DuplicateMeshComponents.h"
 
 namespace MeshLib {
 

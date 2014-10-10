@@ -13,13 +13,13 @@
 #ifndef MESHSUBSETS_H_
 #define MESHSUBSETS_H_
 
-#include <vector>
 #include <algorithm>
-#include <stdexcept>
 #include <functional>
 #include <numeric>
+#include <stdexcept>
+#include <vector>
 
-#include "MeshLib/MeshSubset.h"
+#include "MeshSubset.h"
 
 namespace MeshLib
 {

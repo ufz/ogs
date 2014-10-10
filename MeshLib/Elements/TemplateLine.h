@@ -19,12 +19,12 @@
 #include <limits>
 #include <cmath>
 
-#include "MeshEnums.h"
+#include "MathLib/MathTools.h"
+
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Node.h"
+
 #include "Element.h"
-#include "Node.h"
-
-#include "MathTools.h"
-
 
 namespace MeshLib {
 

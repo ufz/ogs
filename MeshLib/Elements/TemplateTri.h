@@ -16,14 +16,16 @@
 #define TEMPLATETRI_H_
 
 #include <array>
-#include "Line.h"
-#include "Node.h"
+
+#include "GeoLib/AnalyticalGeometry.h"
+
+#include "MathLib/MathTools.h"
+
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Node.h"
+
 #include "Face.h"
-#include "MeshEnums.h"
-
-#include "MathTools.h"
-#include "AnalyticalGeometry.h"
-
+#include "Line.h"
 
 namespace MeshLib {
 

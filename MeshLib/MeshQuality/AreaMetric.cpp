@@ -14,7 +14,7 @@
 
 
 #include "AreaMetric.h"
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 
 namespace MeshLib
 {

@@ -9,11 +9,11 @@
 
 #include "MeshSearcher.h"
 
+#include <algorithm>
+
 #include "Mesh.h"
 #include "Node.h"
 #include "Elements/Element.h"
-
-#include <algorithm>
 
 namespace MeshLib
 {

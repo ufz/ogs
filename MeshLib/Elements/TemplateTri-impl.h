@@ -12,9 +12,6 @@
  *
  */
 
-// MathLib
-#include "AnalyticalGeometry.h"
-
 namespace MeshLib {
 
 template <unsigned NNODES, CellType CELLTRITYPE>

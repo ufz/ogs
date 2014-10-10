@@ -12,13 +12,14 @@
  *
  */
 
+#include "Element.h"
+
 #include "logog/include/logog.hpp"
 
-#include "Element.h"
-#include "Node.h"
-#include "Line.h"
+#include "MathLib/MathTools.h"
+#include "MeshLib/Node.h"
 
-#include "MathTools.h"
+#include "Line.h"
 
 namespace MeshLib {
 

@@ -15,7 +15,8 @@
 #ifndef FEMELEM_H_
 #define FEMELEM_H_
 
-#include "Point.h"
+// GeoLib
+#include "GeoLib/Point.h"
 
 namespace MeshLib {
 

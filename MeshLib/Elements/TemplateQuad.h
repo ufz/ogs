@@ -16,7 +16,7 @@
 #define TEMPLATEQUAD_H_
 
 #include <array>
-#include "MeshEnums.h"
+#include "MeshLib/MeshEnums.h"
 #include "Face.h"
 
 namespace MeshLib {

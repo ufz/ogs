@@ -14,11 +14,12 @@
 
 #include "logog/include/logog.hpp"
 
-#include "Node.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "MeshLib/Node.h"
+
 #include "Quad.h"
 #include "Prism.h"
 
-#include "AnalyticalGeometry.h"
 
 namespace MeshLib {
 

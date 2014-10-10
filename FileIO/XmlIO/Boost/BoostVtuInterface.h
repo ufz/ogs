@@ -15,7 +15,7 @@
 #ifndef BOOSTVTUINTERFACE_H_
 #define BOOSTVTUINTERFACE_H_
 
-#include "Writer.h"
+#include "FileIO/Writer.h"
 
 #include <string>
 #include <vector>
@@ -23,7 +23,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/optional.hpp>
 
-#include "MeshEnums.h"
+#include "MeshLib/MeshEnums.h"
 
 typedef boost::optional<const boost::property_tree::ptree&> OptionalPtree;
 

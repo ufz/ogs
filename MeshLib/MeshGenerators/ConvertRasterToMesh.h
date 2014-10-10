@@ -15,11 +15,8 @@
 #ifndef CONVERTRASTERTOMESH_H_
 #define CONVERTRASTERTOMESH_H_
 
-// GeoLib
-#include "Raster.h"
-
-// MeshLib
-#include "MeshEnums.h"
+#include "GeoLib/Raster.h"
+#include "MeshLib/MeshEnums.h"
 
 namespace MeshLib {
 

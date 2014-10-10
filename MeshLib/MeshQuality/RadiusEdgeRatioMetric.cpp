@@ -14,8 +14,8 @@
 
 #include "RadiusEdgeRatioMetric.h"
 
-#include "Node.h"
-#include "MinimalBoundingSphere.h"
+#include "GeoLib/MinimalBoundingSphere.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

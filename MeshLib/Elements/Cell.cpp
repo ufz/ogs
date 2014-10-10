@@ -13,8 +13,9 @@
  */
 
 #include "Cell.h"
-#include "Node.h"
-#include "Vector3.h"
+
+#include "MathLib/Vector3.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib {
 

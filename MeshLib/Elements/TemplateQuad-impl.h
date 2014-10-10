@@ -14,12 +14,10 @@
 
 #include <array>
 
-#include "Node.h"
-#include "Tri.h"
+#include "MeshLib/Node.h"
 
-// MathLib
-#include "MathTools.h"
-#include "AnalyticalGeometry.h"
+#include "MathLib/MathTools.h"
+#include "GeoLib/AnalyticalGeometry.h"
 
 namespace MeshLib
 {

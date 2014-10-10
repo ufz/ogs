@@ -18,9 +18,9 @@
 
 #include "logog/include/logog.hpp"
 
-#include "PointWithID.h"
+#include "GeoLib/PointWithID.h"
+
 #include "Mesh.h"
-#include "Node.h"
 #include "Elements/Face.h"
 #include "Elements/Cell.h"
 #include "Elements/Tri.h"

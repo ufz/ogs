@@ -13,10 +13,12 @@
  */
 
 #include "ElementQualityMetric.h"
-#include "Node.h"
-#include "Point.h"
+
 #include <cmath>
 #include <iostream>
+
+#include "GeoLib/Point.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

@@ -13,7 +13,7 @@
 #ifndef MOVEMESHNODES_H_
 #define MOVEMESHNODES_H_
 
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

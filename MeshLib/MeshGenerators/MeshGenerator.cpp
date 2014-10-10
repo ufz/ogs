@@ -13,14 +13,15 @@
  */
 
 #include "MeshGenerator.h"
-#include "Node.h"
-
-#include "Elements/Line.h"
-#include "Elements/Quad.h"
-#include "Elements/Hex.h"
-#include "Elements/Tri.h"
 
 #include <vector>
+
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Tri.h"
+
 
 namespace MeshLib
 {
