@@ -32,7 +32,7 @@ class Face : public Element
 {
 public:
 	/// Constant: Dimension of this mesh element
-	static const unsigned dimension;
+	static constexpr unsigned dimension = 2;
 
 	/// Get the area of this 2d element.
 	virtual double getArea() const { return _area; };
