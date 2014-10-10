@@ -37,8 +37,8 @@
 int main(int argc, char *argv[])
 {
 #ifdef USE_PETSC
-	char help[] = "ogs6 with PETSc \n";
-	PetscInitialize(&argc,&argv,(char *)0,help);
+	const std::string help= "ogs6 with PETSc \n";
+	PetscInitialize(&argc, &argv, nullptr, help.c_str());
 #endif
 
 	using ConfigTree = boost::property_tree::ptree;
