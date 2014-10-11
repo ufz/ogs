@@ -122,7 +122,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	_rootItem->appendChild(elements_item);
 
 	const std::array<QString, 7> n_element_names = {{ "Lines:", "Triangles:", "Quads:", "Tetrahedra:", "Hexahedra:", "Pyramids:", "Prisms:" }};
-    const std::array<unsigned, 7>& n_element_types (MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
+	const std::array<unsigned, 7>& n_element_types (MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
 	for (std::size_t i=0; i<n_element_types.size(); ++i)
 	{
 		if (n_element_types[i])
