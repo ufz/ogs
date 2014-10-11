@@ -89,3 +89,27 @@ TARGET_LINK_LIBRARIES (VTK2OGS
 	FileIO
 	zlib
 )
+
+ADD_EXECUTABLE (Raster2Mesh Raster2Mesh.cpp)
+SET_TARGET_PROPERTIES(Raster2Mesh PROPERTIES FOLDER Utilities)
+TARGET_LINK_LIBRARIES (Raster2Mesh
+	MeshLib
+	FileIO
+	zlib
+)
+
+ADD_EXECUTABLE (CSV2Raster CSV2Raster.cpp)
+SET_TARGET_PROPERTIES(CSV2Raster PROPERTIES FOLDER Utilities)
+TARGET_LINK_LIBRARIES (CSV2Raster
+	MeshLib
+	FileIO
+	zlib
+)
+
+ADD_EXECUTABLE (addMarginToRaster addMarginToRaster.cpp)
+SET_TARGET_PROPERTIES(addMarginToRaster PROPERTIES FOLDER Utilities)
+TARGET_LINK_LIBRARIES (addMarginToRaster
+	MeshLib
+	FileIO
+	zlib
+)
