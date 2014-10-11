@@ -71,3 +71,14 @@ TARGET_LINK_LIBRARIES( editMaterialID
 
 SET_TARGET_PROPERTIES(editMaterialID
 	PROPERTIES FOLDER Utilities)
+
+ADD_EXECUTABLE( checkMesh checkMesh.cpp)
+TARGET_LINK_LIBRARIES ( checkMesh
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+)
+
+SET_TARGET_PROPERTIES(checkMesh
+	PROPERTIES FOLDER Utilities)
