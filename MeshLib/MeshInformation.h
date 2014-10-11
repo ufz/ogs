@@ -19,9 +19,9 @@
 #include "GeoLib/AABB.h"
 #include "Node.h"
 
-namespace MeshLib {
-	class Mesh;
-}
+namespace MeshLib
+{
+class Mesh;
 
 /**
  * \brief A set of tools for extracting information from a mesh
@@ -51,5 +51,7 @@ public:
 
 
 };
+
+}
 
 #endif //MESHINFORMATION_H

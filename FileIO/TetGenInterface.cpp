@@ -599,7 +599,7 @@ void TetGenInterface::write2dElements(std::ofstream &out,
 	                                  const MeshLib::Mesh &mesh) const
 {
 	// the surfaces header
-	const std::array<unsigned,7> types = MeshInformation::getNumberOfElementTypes(mesh);
+	const std::array<unsigned,7> types = MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
 	const unsigned nTotalTriangles (types[1] + (2*types[2]));
 	out << nTotalTriangles << " 1\n";
 
