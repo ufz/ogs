@@ -22,6 +22,8 @@ namespace FeTestData
 class TestFeTRI3
 {
 public:
+    using ShapeFunction = NumLib::ShapeTri3;
+
     // Fe type information
     template <class T_MATRIX_TYPES>
     using FeType = NumLib::FeTRI3<

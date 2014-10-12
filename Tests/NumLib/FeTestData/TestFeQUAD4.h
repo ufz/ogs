@@ -22,6 +22,8 @@ namespace FeTestData
 class TestFeQUAD4
 {
 public:
+    using ShapeFunction = NumLib::ShapeQuad4;
+
     // Fe type information
     template <class T_MATRIX_TYPES>
     using FeType = NumLib::FeQUAD4<

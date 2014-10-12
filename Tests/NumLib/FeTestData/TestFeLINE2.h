@@ -22,6 +22,8 @@ namespace FeTestData
 class TestFeLINE2
 {
 public:
+    using ShapeFunction = NumLib::ShapeLine2;
+
     // Fe type information
     template <class T_MATRIX_TYPES>
     using FeType = NumLib::FeLINE2<

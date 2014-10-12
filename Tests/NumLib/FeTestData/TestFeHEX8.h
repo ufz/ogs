@@ -22,6 +22,8 @@ namespace FeTestData
 class TestFeHEX8
 {
 public:
+    using ShapeFunction = NumLib::ShapeHex8;
+
     // Fe type information
     template <class T_MATRIX_TYPES>
     using FeType = NumLib::FeHEX8<
