@@ -41,6 +41,7 @@ struct EigenFixedMatrixTypes
     typedef Eigen::Matrix<double, T_FE::dim, T_FE::dim, Eigen::RowMajor> DimMatrixType;
 };
 
+template <typename T_FE>
 struct EigenDynamicMatrixTypes
 {
     typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> NodalMatrixType;
@@ -49,11 +50,10 @@ struct EigenDynamicMatrixTypes
     typedef Eigen::VectorXd NodalVectorType;
 };
 
-typedef EigenDynamicMatrixTypes DefaultMatrixType;
 #endif // OGS_USE_EIGEN
 
 // test cases
-template <class T_FE_TYPE, class T_MAT_TYPES=DefaultMatrixType>
+template <class T_FE_TYPE, class T_MAT_TYPES>
 struct TestCase
 {
     typedef T_FE_TYPE T_FE;
@@ -62,10 +62,10 @@ struct TestCase
 
 typedef ::testing::Types<
 #ifdef OGS_USE_EIGEN
-        TestCase<TestFeLINE2>,
-        TestCase<TestFeTRI3>,
-        TestCase<TestFeQUAD4>,
-        TestCase<TestFeHEX8>
+         TestCase<TestFeLINE2, EigenDynamicMatrixTypes<TestFeLINE2> >
+        ,TestCase<TestFeTRI3, EigenDynamicMatrixTypes<TestFeTRI3> >
+        ,TestCase<TestFeQUAD4, EigenDynamicMatrixTypes<TestFeQUAD4> >
+        ,TestCase<TestFeHEX8, EigenDynamicMatrixTypes<TestFeHEX8> >
         ,TestCase<TestFeLINE2, EigenFixedMatrixTypes<TestFeLINE2> >
         ,TestCase<TestFeTRI3, EigenFixedMatrixTypes<TestFeTRI3> >
         ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes<TestFeQUAD4> >
