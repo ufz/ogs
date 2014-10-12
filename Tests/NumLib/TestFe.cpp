@@ -32,16 +32,16 @@ using namespace FeTestData;
 namespace
 {
 #ifdef OGS_USE_EIGEN
-template <typename T_FE>
+template <typename TestFeType>
 struct EigenFixedMatrixTypes
 {
-    typedef Eigen::Matrix<double, T_FE::e_nnodes, T_FE::e_nnodes, Eigen::RowMajor> NodalMatrixType;
-    typedef Eigen::Matrix<double, T_FE::e_nnodes, 1> NodalVectorType;
-    typedef Eigen::Matrix<double, T_FE::dim, T_FE::e_nnodes, Eigen::RowMajor> DimNodalMatrixType;
-    typedef Eigen::Matrix<double, T_FE::dim, T_FE::dim, Eigen::RowMajor> DimMatrixType;
+    typedef Eigen::Matrix<double, TestFeType::e_nnodes, TestFeType::e_nnodes, Eigen::RowMajor> NodalMatrixType;
+    typedef Eigen::Matrix<double, TestFeType::e_nnodes, 1> NodalVectorType;
+    typedef Eigen::Matrix<double, TestFeType::dim, TestFeType::e_nnodes, Eigen::RowMajor> DimNodalMatrixType;
+    typedef Eigen::Matrix<double, TestFeType::dim, TestFeType::dim, Eigen::RowMajor> DimMatrixType;
 };
 
-template <typename T_FE>
+template <typename TestFeType>
 struct EigenDynamicMatrixTypes
 {
     typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> NodalMatrixType;
@@ -53,11 +53,11 @@ struct EigenDynamicMatrixTypes
 #endif // OGS_USE_EIGEN
 
 // test cases
-template <class T_FE_TYPE, class ShapeMatrixPolicy_>
+template <class TestFeType_, class ShapeMatrixPolicy_>
 struct TestCase
 {
-    typedef T_FE_TYPE T_FE;
     typedef ShapeMatrixPolicy_ ShapeMatrixPolicy;
+    typedef TestFeType_ TestFeType;
 };
 
 typedef ::testing::Types<
@@ -75,27 +75,26 @@ typedef ::testing::Types<
 }
 
 template <class T>
-class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
+class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
 {
  public:
     typedef typename T::ShapeMatrixPolicy ShapeMatrixPolicy;
-    typedef typename T::T_FE T_FE;
+    typedef typename T::TestFeType TestFeType;
     // Matrix types
-    typedef ShapeMatrixPolicy MatrixType;
     typedef typename ShapeMatrixPolicy::NodalMatrixType NodalMatrix;
     typedef typename ShapeMatrixPolicy::NodalVectorType NodalVector;
     typedef typename ShapeMatrixPolicy::DimNodalMatrixType DimNodalMatrix;
     typedef typename ShapeMatrixPolicy::DimMatrixType DimMatrix;
     // Finite element type
-    typedef typename T_FE::template FeType<ShapeMatrixPolicy>::type FeType;
+    typedef typename TestFeType::template FeType<ShapeMatrixPolicy>::type FeType;
     // Shape matrix data type
     typedef typename FeType::ShapeMatricesType ShapeMatricesType;
-    typedef typename T_FE::MeshElementType MeshElementType;
+    typedef typename TestFeType::MeshElementType MeshElementType;
 
-    static const unsigned dim = T_FE::dim;
-    static const unsigned e_nnodes = T_FE::e_nnodes;
-    static const unsigned n_sample_pt_order2 = T_FE::n_sample_pt_order2;
-    static const unsigned n_sample_pt_order3 = T_FE::n_sample_pt_order3;
+    static const unsigned dim = TestFeType::dim;
+    static const unsigned e_nnodes = TestFeType::e_nnodes;
+    static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
+    static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
 
     using IntegrationMethod =
         typename NumLib::GaussIntegrationPolicy<MeshElementType>::IntegrationMethod;
