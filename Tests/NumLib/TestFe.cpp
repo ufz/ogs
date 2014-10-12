@@ -53,23 +53,23 @@ struct EigenDynamicMatrixTypes
 #endif // OGS_USE_EIGEN
 
 // test cases
-template <class TestFeType_, class ShapeMatrixPolicy_>
+template <class TestFeType_, template <typename> class ShapeMatrixPolicy_>
 struct TestCase
 {
-    typedef ShapeMatrixPolicy_ ShapeMatrixPolicy;
     typedef TestFeType_ TestFeType;
+    typedef ShapeMatrixPolicy_<TestFeType> ShapeMatrixTypes;
 };
 
 typedef ::testing::Types<
 #ifdef OGS_USE_EIGEN
-         TestCase<TestFeLINE2, EigenDynamicMatrixTypes<TestFeLINE2> >
-        ,TestCase<TestFeTRI3, EigenDynamicMatrixTypes<TestFeTRI3> >
-        ,TestCase<TestFeQUAD4, EigenDynamicMatrixTypes<TestFeQUAD4> >
-        ,TestCase<TestFeHEX8, EigenDynamicMatrixTypes<TestFeHEX8> >
-        ,TestCase<TestFeLINE2, EigenFixedMatrixTypes<TestFeLINE2> >
-        ,TestCase<TestFeTRI3, EigenFixedMatrixTypes<TestFeTRI3> >
-        ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes<TestFeQUAD4> >
-        ,TestCase<TestFeHEX8, EigenFixedMatrixTypes<TestFeHEX8> >
+         TestCase<TestFeLINE2, EigenDynamicMatrixTypes >
+        ,TestCase<TestFeTRI3, EigenDynamicMatrixTypes >
+        ,TestCase<TestFeQUAD4, EigenDynamicMatrixTypes >
+        ,TestCase<TestFeHEX8, EigenDynamicMatrixTypes >
+        ,TestCase<TestFeLINE2, EigenFixedMatrixTypes >
+        ,TestCase<TestFeTRI3, EigenFixedMatrixTypes >
+        ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes >
+        ,TestCase<TestFeHEX8, EigenFixedMatrixTypes >
 #endif
         > TestTypes;
 }
@@ -78,15 +78,15 @@ template <class T>
 class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
 {
  public:
-    typedef typename T::ShapeMatrixPolicy ShapeMatrixPolicy;
+    typedef typename T::ShapeMatrixTypes ShapeMatrixTypes;
     typedef typename T::TestFeType TestFeType;
     // Matrix types
-    typedef typename ShapeMatrixPolicy::NodalMatrixType NodalMatrix;
-    typedef typename ShapeMatrixPolicy::NodalVectorType NodalVector;
-    typedef typename ShapeMatrixPolicy::DimNodalMatrixType DimNodalMatrix;
-    typedef typename ShapeMatrixPolicy::DimMatrixType DimMatrix;
+    typedef typename ShapeMatrixTypes::NodalMatrixType NodalMatrix;
+    typedef typename ShapeMatrixTypes::NodalVectorType NodalVector;
+    typedef typename ShapeMatrixTypes::DimNodalMatrixType DimNodalMatrix;
+    typedef typename ShapeMatrixTypes::DimMatrixType DimMatrix;
     // Finite element type
-    typedef typename TestFeType::template FeType<ShapeMatrixPolicy>::type FeType;
+    typedef typename TestFeType::template FeType<ShapeMatrixTypes>::type FeType;
     // Shape matrix data type
     typedef typename FeType::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFeType::MeshElementType MeshElementType;
