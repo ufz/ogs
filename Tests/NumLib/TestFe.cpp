@@ -53,11 +53,11 @@ struct EigenDynamicMatrixTypes
 #endif // OGS_USE_EIGEN
 
 // test cases
-template <class T_FE_TYPE, class T_MAT_TYPES>
+template <class T_FE_TYPE, class ShapeMatrixPolicy_>
 struct TestCase
 {
     typedef T_FE_TYPE T_FE;
-    typedef T_MAT_TYPES T_MATRIX_TYPES;
+    typedef ShapeMatrixPolicy_ ShapeMatrixPolicy;
 };
 
 typedef ::testing::Types<
@@ -78,16 +78,16 @@ template <class T>
 class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
 {
  public:
-    typedef typename T::T_MATRIX_TYPES T_MATRIX_TYPES;
+    typedef typename T::ShapeMatrixPolicy ShapeMatrixPolicy;
     typedef typename T::T_FE T_FE;
     // Matrix types
-    typedef T_MATRIX_TYPES MatrixType;
-    typedef typename T_MATRIX_TYPES::NodalMatrixType NodalMatrix;
-    typedef typename T_MATRIX_TYPES::NodalVectorType NodalVector;
-    typedef typename T_MATRIX_TYPES::DimNodalMatrixType DimNodalMatrix;
-    typedef typename T_MATRIX_TYPES::DimMatrixType DimMatrix;
+    typedef ShapeMatrixPolicy MatrixType;
+    typedef typename ShapeMatrixPolicy::NodalMatrixType NodalMatrix;
+    typedef typename ShapeMatrixPolicy::NodalVectorType NodalVector;
+    typedef typename ShapeMatrixPolicy::DimNodalMatrixType DimNodalMatrix;
+    typedef typename ShapeMatrixPolicy::DimMatrixType DimMatrix;
     // Finite element type
-    typedef typename T_FE::template FeType<T_MATRIX_TYPES>::type FeType;
+    typedef typename T_FE::template FeType<ShapeMatrixPolicy>::type FeType;
     // Shape matrix data type
     typedef typename FeType::ShapeMatricesType ShapeMatricesType;
     typedef typename T_FE::MeshElementType MeshElementType;
