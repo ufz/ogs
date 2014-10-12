@@ -18,6 +18,7 @@
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "FeTestData/TestFeLINE2.h"
 #include "FeTestData/TestFeTRI3.h"
@@ -31,45 +32,25 @@ using namespace FeTestData;
 
 namespace
 {
-#ifdef OGS_USE_EIGEN
-template <typename TestFeType>
-struct EigenFixedMatrixTypes
-{
-    typedef Eigen::Matrix<double, TestFeType::e_nnodes, TestFeType::e_nnodes, Eigen::RowMajor> NodalMatrixType;
-    typedef Eigen::Matrix<double, TestFeType::e_nnodes, 1> NodalVectorType;
-    typedef Eigen::Matrix<double, TestFeType::dim, TestFeType::e_nnodes, Eigen::RowMajor> DimNodalMatrixType;
-    typedef Eigen::Matrix<double, TestFeType::dim, TestFeType::dim, Eigen::RowMajor> DimMatrixType;
-};
-
-template <typename TestFeType>
-struct EigenDynamicMatrixTypes
-{
-    typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> NodalMatrixType;
-    typedef NodalMatrixType DimNodalMatrixType;
-    typedef NodalMatrixType DimMatrixType;
-    typedef Eigen::VectorXd NodalVectorType;
-};
-
-#endif // OGS_USE_EIGEN
 
 // test cases
 template <class TestFeType_, template <typename> class ShapeMatrixPolicy_>
 struct TestCase
 {
     typedef TestFeType_ TestFeType;
-    typedef ShapeMatrixPolicy_<TestFeType> ShapeMatrixTypes;
+    typedef ShapeMatrixPolicy_<typename TestFeType::ShapeFunction> ShapeMatrixTypes;
 };
 
 typedef ::testing::Types<
 #ifdef OGS_USE_EIGEN
-         TestCase<TestFeLINE2, EigenDynamicMatrixTypes >
-        ,TestCase<TestFeTRI3, EigenDynamicMatrixTypes >
-        ,TestCase<TestFeQUAD4, EigenDynamicMatrixTypes >
-        ,TestCase<TestFeHEX8, EigenDynamicMatrixTypes >
-        ,TestCase<TestFeLINE2, EigenFixedMatrixTypes >
-        ,TestCase<TestFeTRI3, EigenFixedMatrixTypes >
-        ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes >
-        ,TestCase<TestFeHEX8, EigenFixedMatrixTypes >
+        TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
+        TestCase<TestFeTRI3, EigenDynamicShapeMatrixPolicy>,
+        TestCase<TestFeQUAD4, EigenDynamicShapeMatrixPolicy>,
+        TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
+        TestCase<TestFeLINE2, EigenFixedShapeMatrixPolicy>,
+        TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>,
+        TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
+        TestCase<TestFeHEX8, EigenFixedShapeMatrixPolicy>
 #endif
         > TestTypes;
 }
@@ -88,7 +69,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     // Finite element type
     typedef typename TestFeType::template FeType<ShapeMatrixTypes>::type FeType;
     // Shape matrix data type
-    typedef typename FeType::ShapeMatricesType ShapeMatricesType;
+    typedef typename ShapeMatrixTypes::ShapeMatrices ShapeMatricesType;
     typedef typename TestFeType::MeshElementType MeshElementType;
 
     static const unsigned dim = TestFeType::dim;
