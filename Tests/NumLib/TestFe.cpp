@@ -61,11 +61,11 @@ struct TestCase
 };
 
 typedef ::testing::Types<
+#ifdef OGS_USE_EIGEN
         TestCase<TestFeLINE2>,
         TestCase<TestFeTRI3>,
         TestCase<TestFeQUAD4>,
         TestCase<TestFeHEX8>
-#ifdef OGS_USE_EIGEN
         ,TestCase<TestFeLINE2, EigenFixedMatrixTypes<TestFeLINE2> >
         ,TestCase<TestFeTRI3, EigenFixedMatrixTypes<TestFeTRI3> >
         ,TestCase<TestFeQUAD4, EigenFixedMatrixTypes<TestFeQUAD4> >
