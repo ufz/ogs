@@ -24,10 +24,11 @@ class TestFeTRI3
 public:
     // Fe type information
     template <class T_MATRIX_TYPES>
-    struct FeType
-    {
-        typedef NumLib::FeTRI3<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
-    };
+    using FeType = NumLib::FeTRI3<
+        typename T_MATRIX_TYPES::NodalVectorType,
+        typename T_MATRIX_TYPES::DimNodalMatrixType,
+        typename T_MATRIX_TYPES::DimMatrixType>;
+
     typedef MeshLib::Tri MeshElementType;
     static const unsigned dim = 2; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;

@@ -24,10 +24,11 @@ class TestFeLINE2
 public:
     // Fe type information
     template <class T_MATRIX_TYPES>
-    struct FeType
-    {
-        typedef NumLib::FeLINE2<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
-    };
+    using FeType = NumLib::FeLINE2<
+        typename T_MATRIX_TYPES::NodalVectorType,
+        typename T_MATRIX_TYPES::DimNodalMatrixType,
+        typename T_MATRIX_TYPES::DimMatrixType>;
+
     typedef MeshLib::Line MeshElementType;
     static const unsigned dim = MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;

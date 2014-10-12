@@ -87,7 +87,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
     typedef typename T_MATRIX_TYPES::DimNodalMatrixType DimNodalMatrix;
     typedef typename T_MATRIX_TYPES::DimMatrixType DimMatrix;
     // Finite element type
-    typedef typename T_FE::template FeType<T_MATRIX_TYPES>::type::type FeType;
+    typedef typename T_FE::template FeType<T_MATRIX_TYPES>::type FeType;
     // Shape matrix data type
     typedef typename FeType::ShapeMatricesType ShapeMatricesType;
     typedef typename T_FE::MeshElementType MeshElementType;
