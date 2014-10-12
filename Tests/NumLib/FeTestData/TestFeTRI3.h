@@ -25,11 +25,8 @@ public:
     using ShapeFunction = NumLib::ShapeTri3;
 
     // Fe type information
-    template <class T_MATRIX_TYPES>
-    using FeType = NumLib::FeTRI3<
-        typename T_MATRIX_TYPES::NodalVectorType,
-        typename T_MATRIX_TYPES::DimNodalMatrixType,
-        typename T_MATRIX_TYPES::DimMatrixType>;
+    template <template <typename> class ShapeMatrixPolicy_>
+    using FeType = NumLib::FeTRI3<ShapeMatrixPolicy_>;
 
     typedef MeshLib::Tri MeshElementType;
     static const unsigned dim = 2; //MeshElementType::dimension;

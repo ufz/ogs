@@ -39,6 +39,8 @@ struct TestCase
 {
     typedef TestFeType_ TestFeType;
     typedef ShapeMatrixPolicy_<typename TestFeType::ShapeFunction> ShapeMatrixTypes;
+    template <typename X>
+    using ShapeMatrixPolicy = ShapeMatrixPolicy_<X>;
 };
 
 typedef ::testing::Types<
@@ -66,8 +68,12 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     typedef typename ShapeMatrixTypes::NodalVectorType NodalVector;
     typedef typename ShapeMatrixTypes::DimNodalMatrixType DimNodalMatrix;
     typedef typename ShapeMatrixTypes::DimMatrixType DimMatrix;
+
     // Finite element type
-    typedef typename TestFeType::template FeType<ShapeMatrixTypes>::type FeType;
+    template <typename X>
+    using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
+    typedef typename TestFeType::template FeType<ShapeMatrixPolicy>::type FeType;
+
     // Shape matrix data type
     typedef typename ShapeMatrixTypes::ShapeMatrices ShapeMatricesType;
     typedef typename TestFeType::MeshElementType MeshElementType;
