@@ -75,19 +75,20 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     std::unique_ptr<GlobalVector> x(globalSetup.createVector(local_to_global_index_map.dofSize()));
 
     // Initializer of the local assembler data.
-    std::vector<SteadyDiffusion2DExample1::LocalAssemblerData*>
-        local_assembler_data;
+    std::vector<SteadyDiffusion2DExample1::LocalAssemblerData<
+        GlobalMatrix, GlobalVector>*> local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
 
     typedef AssemblerLib::LocalAssemblerBuilder<
             MeshLib::Element,
             void (const MeshLib::Element &,
-                    SteadyDiffusion2DExample1::LocalAssemblerData *&,
+                    SteadyDiffusion2DExample1::LocalAssemblerData<
+                        GlobalMatrix, GlobalVector> *&,
                     SteadyDiffusion2DExample1 const&)
                 > LocalAssemblerBuilder;
 
     LocalAssemblerBuilder local_asm_builder(
-        SteadyDiffusion2DExample1::initializeLocalData);
+        SteadyDiffusion2DExample1::initializeLocalData<GlobalMatrix, GlobalVector>);
 
     // Call global initializer for each mesh element.
     globalSetup.execute(

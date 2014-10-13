@@ -29,6 +29,7 @@ struct SteadyDiffusion2DExample1
 	using LocalMatrixType = MathLib::DenseMatrix<double>;
 	using LocalVectorType = MathLib::DenseVector<double>;
 
+	template <typename GlobalMatrix, typename GlobalVector>
 	class LocalAssemblerData
 	{
 	public:
@@ -47,6 +48,14 @@ struct SteadyDiffusion2DExample1
 			// already stored in the _localA matrix.
 		}
 
+		void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
+				AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
+		{
+			A.add(indices, *_localA);
+			rhs.add(indices.rows, *_localRhs);
+		}
+
+
 		LocalMatrixType const& getLocalMatrix() const
 		{
 			return *_localA;
@@ -62,12 +71,13 @@ struct SteadyDiffusion2DExample1
 		LocalVectorType const* _localRhs = nullptr;
 	};
 
+	template <typename GlobalMatrix, typename GlobalVector>
 	static
 	void initializeLocalData(const MeshLib::Element& e,
-			LocalAssemblerData*& data_ptr,
+			LocalAssemblerData<GlobalMatrix, GlobalVector>*& data_ptr,
 			SteadyDiffusion2DExample1 const& example)
 	{
-		data_ptr = new LocalAssemblerData;
+		data_ptr = new LocalAssemblerData<GlobalMatrix, GlobalVector>;
 		data_ptr->init(e, example._localA, example._localRhs);
 	}
 
