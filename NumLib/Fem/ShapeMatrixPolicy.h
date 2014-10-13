@@ -15,6 +15,8 @@
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
 
+/// An implementation of ShapeMatrixPolicy using fixed size (compile-time) eigen
+/// matrices and vectors.
 template <typename ShapeFunction>
 struct EigenFixedShapeMatrixPolicy
 {
@@ -35,6 +37,8 @@ struct EigenFixedShapeMatrixPolicy
             DimMatrixType>;
 };
 
+/// An implementation of ShapeMatrixPolicy using dynamic size eigen matrices and
+/// vectors.
 template <typename ShapeFunction>
 struct EigenDynamicShapeMatrixPolicy
 {
@@ -58,6 +62,7 @@ struct EigenDynamicShapeMatrixPolicy
             DimMatrixType>;
 };
 
+/// Default choice of the ShapeMatrixPolicy.
 template <typename ShapeFunction>
 using ShapeMatrixPolicyType = EigenFixedShapeMatrixPolicy<ShapeFunction>;
 
