@@ -117,7 +117,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     const string fname_num_p_ext = _size_str + ".bin";
 
     string fname_new_base = fname_header + "cfg" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, fname_new_base, MPI_MODE_RDONLY,
+    file_status = MPI_File_open(comm, fname_new_base.data(), MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
