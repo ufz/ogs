@@ -159,7 +159,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     MPI_Type_free(&MPI_node);
 
     //----------------------------------------------------------------------------------
-    // Read and elements
+    // Read non-ghost elements
     fname_new_base = fname_header +"ele" + fname_num_p_ext;
     file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
