@@ -121,8 +121,9 @@ public:
     void solve()
     {
         this->_A->setZero();
-        for (std::size_t i = 0; i < _A->getNRows(); ++i)
-            _A->setValue(i, i, 1);
+
+        // Call global assembler for each local assembly item.
+        _global_setup.execute(*_global_assembler, _local_assemblers);
 
         _linearSolver->solve(*_rhs, *_x);
     }
