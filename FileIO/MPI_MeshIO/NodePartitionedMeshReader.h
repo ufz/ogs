@@ -58,27 +58,14 @@ class NodePartitionedMeshReader
         MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name);
 
     private:
-        /*! Array that contains integer numbers of the partition data header. For binary
-            data, its size is 14, while for ASCII data, the size is 11.
-            0:    Number of all nodes of a partition,
-            1:    Number of nodes for linear element of a parition,
-            2:    Number of non-ghost elements of a partition,
-            3:    Number of ghost element of a partition,
-            4:    Number of active nodes for linear element of a parition,
-            5:    Number of all active nodes a parition,
-            6:    Number of nodes for linear element of global mesh,
-            7:    Number of all nodes of global mesh,
-            Binary
-            8~12: Offsets of positions of partitions in the data arrays,
-            13:   Reserved for exra flag.
-            ASCII
-            8~9:  Offsets of positions of partitions in the data arrays,
-            11:   Reserved for exra flag.
-        */
-        long _mesh_controls[14];
+        /// Number of all nodes of a partition.
+        long _num_nodes_part;
 
-        /// How many numbers that define the partition, fixed to 14
-        unsigned _num_controls = 14;
+        /// Number of regular (non-ghost) elements of a partition.
+        long _num_regular_elems_part;
+
+        /// Number of ghost elements of a partition.
+        long _num_ghost_elems_part;
 
         /// Number of MPI processes
         int _size;
