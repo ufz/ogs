@@ -32,9 +32,12 @@ namespace MeshLib
 
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
-           const std::vector<Element*> &elements)
-	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
+           const std::vector<Element*> &elements,
+           const std::size_t n_base_nodes)
+	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements),
+	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes)
 {
+	assert(n_base_nodes <= nodes.size());
 	this->resetNodeIDs();
 	this->resetElementIDs();
 	this->setDimension();
@@ -50,7 +53,8 @@ Mesh::Mesh(const std::string &name,
 
 Mesh::Mesh(const Mesh &mesh)
 	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
-	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
+	  _n_base_nodes(mesh.getNBaseNodes())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
