@@ -53,8 +53,8 @@ public:
     static void computeGradShapeFunction(const T_X &r, T_N &dN);
 
     using MeshElement = MeshLib::Quad;
-    static constexpr std::size_t DIM = 2;
-    static constexpr std::size_t NPOINTS = 4;
+    static constexpr std::size_t DIM = MeshElement::dimension;
+    static constexpr std::size_t NPOINTS = MeshElement::n_all_nodes;
 };
 
 }
