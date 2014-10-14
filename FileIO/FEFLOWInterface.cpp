@@ -483,7 +483,7 @@ void FEFLOWInterface::setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &f
 		for (auto* e : vec_elements)
 		{
 			unsigned e_min_nodeID = std::numeric_limits<unsigned>::max();
-			for (size_t i=0; i<e->getNNodes(); i++)
+			for (size_t i=0; i<e->getNBaseNodes(); i++)
 				e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(i));
 			size_t layer_id = e_min_nodeID / no_nodes_per_layer;
 			e->setValue(layer_id);

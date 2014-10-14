@@ -79,7 +79,7 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 	elemItem->appendChild(nodeListItem);
 
 	//const std::vector<MeshLib::Node*> nodes_vec = grid->getNodes();
-	size_t nElemNodes = elem->getNNodes();
+	size_t nElemNodes = elem->getNBaseNodes();
 	for (size_t i = 0; i < nElemNodes; i++)
 	{
 		const MeshLib::Node* node = elem->getNode(i);

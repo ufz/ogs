@@ -83,7 +83,7 @@ TEST_F(MeshLibLineMesh, ElementToNodeConnectivity)
     for (std::size_t i = 0; i < elements.size(); ++i)
     {
         // An element consists of two nodes n and n+1
-        ASSERT_EQ(2u, elements[i]->getNNodes());
+        ASSERT_EQ(2u, elements[i]->getNBaseNodes());
         ASSERT_EQ(i, elements[i]->getNode(0)->getID());
         ASSERT_EQ(i+1, elements[i]->getNode(1)->getID());
     }

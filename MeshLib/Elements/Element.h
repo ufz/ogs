@@ -60,7 +60,7 @@ public:
 	 * Get node with local index i where i should be at most the number
 	 * of nodes of the element
 	 * @param i local index of node, at most the number of nodes of the
-	 * element that you can obtain with Element::getNNodes()
+	 * element that you can obtain with Element::getNBaseNodes()
 	 * @return a pointer to the appropriate (and constant, i.e. not
 	 * modifiable by the user) instance of class Node or a NULL pointer
 	 * @sa Element::getNodeIndex()
@@ -105,16 +105,12 @@ public:
 	virtual unsigned getNNeighbors() const = 0;
 
 	/**
-	 * Returns the number of nodes. In dependency of the parameter
-	 * the number of nodes for the geometric element is returned or
-	 * the total number of nodes associated with this element
-	 * is returned. The numbers can be different for instance if the
-	 * element is used for higher order elements in finite element
-	 * method.
-	 * @param all (default = false)
-	 * @return the number of nodes with respect to the parameter.
+	 * Returns the number of linear nodes.
 	 */
-	virtual unsigned getNNodes(bool all = false) const = 0;
+	virtual unsigned getNBaseNodes() const = 0;
+
+	/// Returns the number of all nodes including both linear and nonlinear nodes
+	virtual unsigned getNNodes() const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;
@@ -123,7 +119,7 @@ public:
 	 * Get the global index for the Node with local index i.
 	 * The index i should be at most the number of nodes of the element.
 	 * @param i local index of Node, at most the number of nodes of the
-	 * element that you can obtain with Element::getNNodes()
+	 * element that you can obtain with Element::getNBaseNodes()
 	 * @return the global index or std::numeric_limits<unsigned>::max()
 	 * @sa Element::getNode()
 	 */

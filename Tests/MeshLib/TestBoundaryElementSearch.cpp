@@ -90,22 +90,22 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
 	for (unsigned i=0; i<n_eles_per_dir; i++) {
 		// edge found on a bottom line
 		auto* edge0 = found_edges_ply0[i];
-		ASSERT_EQ(2u, edge0->getNNodes());
+		ASSERT_EQ(2u, edge0->getNBaseNodes());
 		ASSERT_EQ(i, edge0->getNodeIndex(0));
 		ASSERT_EQ(i+1, edge0->getNodeIndex(1));
 		// edge found on a right line
 		auto* edge1 = found_edges_ply0[i+n_eles_per_dir];
-		ASSERT_EQ(2u, edge1->getNNodes());
+		ASSERT_EQ(2u, edge1->getNBaseNodes());
 		ASSERT_EQ(n_nodes_per_dir*i+n_nodes_per_dir-1, edge1->getNodeIndex(0));
 		ASSERT_EQ(n_nodes_per_dir*(i+1)+n_nodes_per_dir-1, edge1->getNodeIndex(1));
 		// edge found on a top line
 		auto* edge2 = found_edges_ply0[i+n_eles_per_dir*2];
-		ASSERT_EQ(2u, edge2->getNNodes());
+		ASSERT_EQ(2u, edge2->getNBaseNodes());
 		ASSERT_EQ(n_nodes_per_dir*n_nodes_per_dir-1-i, edge2->getNodeIndex(0));
 		ASSERT_EQ(n_nodes_per_dir*n_nodes_per_dir-1-(i+1), edge2->getNodeIndex(1));
 		// edge found on a left line
 		auto* edge3 = found_edges_ply0[i+n_eles_per_dir*3];
-		ASSERT_EQ(2u, edge3->getNNodes());
+		ASSERT_EQ(2u, edge3->getNBaseNodes());
 		ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*i, edge3->getNodeIndex(0));
 		ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*(i+1), edge3->getNodeIndex(1));
 	}

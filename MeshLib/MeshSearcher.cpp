@@ -40,7 +40,7 @@ std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*
 	std::for_each(elements.begin(), elements.end(),
 		[&](MeshLib::Element* e)
 		{
-			for (unsigned i=0; i<e->getNNodes(); i++)
+			for (unsigned i=0; i<e->getNBaseNodes(); i++)
 				connected_nodes.push_back(e->getNodeIndex(i));
 		});
 	std::sort(connected_nodes.begin(), connected_nodes.end());

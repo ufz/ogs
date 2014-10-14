@@ -506,7 +506,7 @@ void BoostVtuInterface::buildPropertyTree()
 	for (unsigned i = 0; i < nElems; i++)
 	{
 		MeshLib::Element* element (elements[i]);
-		const unsigned nElemNodes (element->getNNodes());
+		const unsigned nElemNodes (element->getNBaseNodes());
 		oss << data_array_indent;
 		for (unsigned j = 0; j < nElemNodes; j++)
 			oss << element->getNode(j)->getID() << " ";

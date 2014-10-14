@@ -71,7 +71,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
 	{
 		unsigned n_unique_nodes(this->getNUniqueNodes(*elem));
-		if (n_unique_nodes == (*elem)->getNNodes() && (*elem)->getDimension() >= min_elem_dim)
+		if (n_unique_nodes == (*elem)->getNBaseNodes() && (*elem)->getDimension() >= min_elem_dim)
 		{
 			ElementErrorCode e((*elem)->validate());
 			if (e[ElementErrorFlag::NonCoplanar])
@@ -87,7 +87,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 			else
 				new_elements.push_back(MeshLib::copyElement(*elem, new_nodes));
 		}
-		else if (n_unique_nodes < (*elem)->getNNodes() && n_unique_nodes>1)
+		else if (n_unique_nodes < (*elem)->getNBaseNodes() && n_unique_nodes>1)
 			reduceElement(*elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim);
 		else
 			ERR ("Something is wrong, more unique nodes than actual nodes");
@@ -204,7 +204,7 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
 
 unsigned MeshRevision::getNUniqueNodes(MeshLib::Element const*const element) const
 {
-	unsigned nNodes(element->getNNodes());
+	unsigned nNodes(element->getNBaseNodes());
 	unsigned count(nNodes);
 
 	for (unsigned i = 0; i < nNodes - 1; ++i)
@@ -623,7 +623,7 @@ MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const eleme
 	MeshLib::Node** line_nodes = new MeshLib::Node*[2];
 	line_nodes[0] = nodes[element->getNode(0)->getID()];
 	line_nodes[1] = nullptr;
-	for (unsigned i=1; i<element->getNNodes(); ++i)
+	for (unsigned i=1; i<element->getNBaseNodes(); ++i)
 	{
 		if (element->getNode(i)->getID() != element->getNode(0)->getID())
 		{
@@ -644,12 +644,12 @@ MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const elemen
 	MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 	tri_nodes[0] = nodes[element->getNode(0)->getID()];
 	tri_nodes[2] = nullptr;
-	for (unsigned i = 1; i < element->getNNodes(); ++i)
+	for (unsigned i = 1; i < element->getNBaseNodes(); ++i)
 	{
 		if (element->getNode(i)->getID() != tri_nodes[0]->getID())
 		{
 			tri_nodes[1] = nodes[element->getNode(i)->getID()];
-			for (unsigned j = i + 1; j < element->getNNodes(); ++j)
+			for (unsigned j = i + 1; j < element->getNBaseNodes(); ++j)
 			{
 				if (element->getNode(j)->getID() != tri_nodes[1]->getID())
 				{
@@ -669,7 +669,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(MeshLib::Element const*
 	MeshLib::Node** new_nodes = new MeshLib::Node*[4];
 	unsigned count(0);
 	new_nodes[count++] = nodes[element->getNode(0)->getID()];
-	for (unsigned i=1; i<element->getNNodes(); ++i)
+	for (unsigned i=1; i<element->getNBaseNodes(); ++i)
 	{
 		if (count>3)
 			break;
@@ -713,7 +713,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(MeshLib::Element const*
 
 unsigned MeshRevision::findPyramidTopNode(const MeshLib::Element &element, const std::array<std::size_t,4> &base_node_ids) const
 {
-	const std::size_t nNodes (element.getNNodes());
+	const std::size_t nNodes (element.getNBaseNodes());
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
 		bool top_node=true;
