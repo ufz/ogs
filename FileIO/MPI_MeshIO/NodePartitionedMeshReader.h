@@ -51,7 +51,7 @@ class NodePartitionedMeshReader
              \brief Create a NodePartitionedMesh object, read data to it,
                     and return a pointer to it.
              \param comm  MPI  communicator.
-             \param file_name  Name of file to be read.
+             \param file_name  Name of file to be read, and it must be base name.
              \return           Pointer to Mesh object. If the creation of mesh object
                                fails, return a null pointer.
         */

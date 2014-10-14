@@ -39,7 +39,7 @@ namespace FileIO
 {
 // Local function:
 // Define MPI data type, MPI_Node_ptr, for struct MeshNode for palllel reading of nodes
-void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
+static void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
 {
     MPI_Datatype my_comp_type[4];
     my_comp_type[0] = MPI_LONG;
