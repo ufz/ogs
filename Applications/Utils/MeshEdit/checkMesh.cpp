@@ -25,6 +25,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
 
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/Legacy/MeshIO.h"
@@ -40,6 +41,8 @@ int main(int argc, char *argv[])
 	TCLAP::CmdLine cmd("Checks mesh properties", ' ', BaseLib::BuildInfo::git_version_sha1);
 	TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
 	cmd.add( mesh_arg );
+	TCLAP::SwitchArg valid_arg("v","validation","validate the mesh");
+	cmd.add( valid_arg );
 
 	cmd.parse( argc, argv );
 
@@ -86,6 +89,11 @@ int main(int argc, char *argv[])
 	const std::pair<unsigned, unsigned> minmax_values(MeshLib::MeshInformation::getValueBounds(*mesh));
 	INFO("Material IDs: [%d, %d]", minmax_values.first, minmax_values.second);
 
+	if (valid_arg.isSet()) {
+		// Validation
+		MeshLib::MeshValidation validation(*const_cast<MeshLib::Mesh*>(mesh)); // MeshValidation outputs error messages
+		/* Remark: MeshValidation can modify the original mesh */
+	}
 
 	delete mesh;
 	delete custom_format;
