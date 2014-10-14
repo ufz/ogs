@@ -36,9 +36,10 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-template <unsigned NNODES, CellType CELLQUADTYPE>
-class TemplateQuad : public Face
+template <unsigned NNODES, CellType CELLQUADTYPE, typename EDGENODES>
+class TemplateQuad : public Face, public EDGENODES
 {
+	using EDGENODES::_edge_nodes;
 public:
 	/// Constant: The number of all nodes for this element
 	static const unsigned n_all_nodes = NNODES;
@@ -126,7 +127,6 @@ protected:
 	/// Return a specific edge node.
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
-	static const unsigned _edge_nodes[4][2];
 }; /* class */
 
 } /* namespace */
