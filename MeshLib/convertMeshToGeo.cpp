@@ -17,15 +17,13 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/GEOObjects.h"
-namespace GeoLib
-{
-    class Surface;
-}
+#include "GeoLib/Surface.h"
 
 #include "Mesh.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 #include "MeshInformation.h"
+#include "MeshEditing/MeshRevision.h"
 
 namespace MeshLib {
 
@@ -81,6 +79,28 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 	return true;
 }
 
+MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::string &mesh_name, double eps)
+{
+	// convert to a mesh including duplicated nodes
+	std::vector<MeshLib::Node*> nodes;
+	std::vector<MeshLib::Element*> elements;
+	std::size_t nodeId = 0;
+	for (std::size_t i=0; i<sfc.getNTriangles(); i++)
+	{
+		auto* tri = sfc[i];
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+		for (unsigned j=0; j<3; j++)
+			tri_nodes[j] = new MeshLib::Node(tri->getPoint(j)->getCoords(), nodeId++);
+		elements.push_back(new MeshLib::Tri(tri_nodes, 0, i));
+		for (unsigned j=0; j<3; j++)
+			nodes.push_back(tri_nodes[j]);
+	}
+	MeshLib::Mesh mesh_with_duplicated_nodes(mesh_name, nodes, elements);
+
+	// remove duplicated nodes
+	MeshLib::MeshRevision rev(mesh_with_duplicated_nodes);
+	return rev.simplifyMesh(mesh_with_duplicated_nodes.getName(), eps);
+}
 
 }
 
