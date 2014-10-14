@@ -1,7 +1,7 @@
 # Source files
 GET_SOURCE_FILES(SOURCES_MESHLIB)
 
-# It should be removed for other MPI based DDC approach in future.
+# It should be removed too for other MPI based DDC approach in future.
 IF(NOT OGS_USE_PETSC)
 	list(REMOVE_ITEM SOURCES_MESHLIB NodePartitionedMesh.h)
 ENDIF(NOT OGS_USE_PETSC)
