@@ -12,6 +12,7 @@
  */
 
 // STL
+#include <memory>
 #include <string>
 #include <fstream>
 
@@ -22,40 +23,22 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
-#include "LogogSimpleFormatter.h"
+#include "BaseLib/LogogSimpleFormatter.h"
+
+// GeoLib
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Surface.h"
+
+// MeshLib
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/convertMeshToGeo.h"
 
 // FileIO
 #include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
-#include "Legacy/MeshIO.h"
+#include "FileIO/TINInterface.h"
 
-// MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
-#include "Node.h"
-
-void writeTIN(const MeshLib::Mesh &mesh, const std::string &tinFile)
-{
-	std::ofstream os(tinFile.c_str());
-	if (!os) {
-		ERR("Error: cannot open a file %s", tinFile.c_str());
-		return;
-	}
-
-	os.precision(std::numeric_limits<double>::digits10);
-	for (size_t ie=0; ie<mesh.getNElements(); ie++)
-	{
-		auto e = mesh.getElement(ie);
-		os << ie << " ";
-		for (size_t in=0; in<3; in++)
-		{
-			auto nod = e->getNode(in);
-			os << (*nod)[0] << " " << (*nod)[1] << " " << (*nod)[2] << " ";
-		}
-		os << "\n";
-	}
-
-	os.close();
-}
 
 int main (int argc, char* argv[])
 {
@@ -75,10 +58,15 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::BoostVtuInterface::readVTUFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh (FileIO::BoostVtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	writeTIN(*mesh, mesh_out.getValue());
+	INFO("Converting the mesh to TIN");
+	GeoLib::GEOObjects geo_objects;
+	if (MeshLib::convertMeshToGeo(*mesh, geo_objects)) {
+		INFO("Writing TIN into the file");
+		FileIO::TINInterface::writeSurfaceAsTIN(*(*geo_objects.getSurfaceVec(mesh->getName()))[0], mesh_out.getValue());
+	}
 
 	delete custom_format;
 	delete logog_cout;

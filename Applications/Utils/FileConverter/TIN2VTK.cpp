@@ -7,9 +7,9 @@
  */
 
 // STL
-#include <string>
-#include <fstream>
 #include <memory>
+#include <string>
+#include <vector>
 
 // TCLAP
 #include "tclap/CmdLine.h"
@@ -20,59 +20,19 @@
 // BaseLib
 #include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/StringTools.h"
+
+// GeoLib
+#include "GeoLib/Point.h"
+#include "GeoLib/Surface.h"
 
 // FileIO
 #include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
-#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/TINInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Tri.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/convertMeshToGeo.h"
 
-MeshLib::Mesh* readTIN(const std::string &tinFile)
-{
-	std::ifstream is(tinFile.c_str());
-	if (!is) {
-		ERR("Error: cannot open a file %s", tinFile.c_str());
-		return nullptr;
-	}
-
-	std::vector<MeshLib::Node*> nodes;
-	std::vector<MeshLib::Element*> elements;
-
-	std::string line;
-	std::size_t eId;
-	double coords[3];
-	std::size_t nodeId = 0;
-
-	while (!is.eof())
-	{
-		getline(is, line);
-		BaseLib::simplify(line);
-		if (line.empty())
-			continue;
-
-		std::stringstream ss(line);
-		ss >> eId;
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		for (unsigned i=0; i<3; i++) {
-			for (unsigned j=0; j<3; j++)
-				ss >> coords[j];
-			tri_nodes[i] = new MeshLib::Node(coords, nodeId++);
-		}
-		elements.push_back(new MeshLib::Tri(tri_nodes, 0, eId));
-		for (unsigned i=0; i<3; i++)
-			nodes.push_back(tri_nodes[i]);
-	}
-
-	is.close();
-
-	return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(tinFile), nodes, elements);
-}
 
 int main (int argc, char* argv[])
 {
@@ -93,21 +53,23 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	INFO("reading the TIN file...");
-	std::unique_ptr<MeshLib::Mesh> mesh_with_duplicated_nodes(readTIN(inArg.getValue()));
-	if (!mesh_with_duplicated_nodes)
+	const std::string tinFileName(inArg.getValue());
+	std::vector<GeoLib::Point*> pnt_vec;
+	std::unique_ptr<GeoLib::Surface> sfc(FileIO::TINInterface::readTIN(tinFileName, pnt_vec));
+	if (!sfc)
 		return 1;
-	INFO("TIN read:  %d points, %d triangles", mesh_with_duplicated_nodes->getNNodes(), mesh_with_duplicated_nodes->getNElements());
+	INFO("TIN read:  %d points, %d triangles", pnt_vec.size(), sfc->getNTriangles());
 
-	INFO("removing duplicated nodes");
-	MeshLib::MeshRevision rev(*mesh_with_duplicated_nodes);
-	std::unique_ptr<MeshLib::Mesh> mesh(rev.simplifyMesh(mesh_with_duplicated_nodes->getName(), std::numeric_limits<double>::epsilon()));
+	INFO("converting to mesh data");
+	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
 	INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	INFO("Write it into VTK");
+	INFO("Write it into VTU");
 	FileIO::BoostVtuInterface writer;
 	writer.setMesh(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
+	for (auto p : pnt_vec) delete p;
 	delete custom_format;
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
