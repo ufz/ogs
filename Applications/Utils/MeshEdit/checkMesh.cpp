@@ -26,24 +26,9 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 
+#include "FileIO/readMeshFromFile.h"
 #include "FileIO/Legacy/MeshIO.h"
 #include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
-
-MeshLib::Mesh* readMeshFile(const std::string& filename)
-{
-	MeshLib::Mesh* mesh = nullptr;
-	const std::string fext(BaseLib::getFileExtension(filename));
-	if (fext == "msh") {
-		FileIO::Legacy::MeshIO mesh_io;
-		mesh = mesh_io.loadMeshFromFile(filename);
-	} else if (fext == "vtu") {
-		mesh = FileIO::BoostVtuInterface::readVTUFile(filename);
-	} else {
-		ERR("Given file extension (%s) is not supported.", fext.c_str());
-	}
-
-	return mesh;
-}
 
 int main(int argc, char *argv[])
 {
@@ -65,7 +50,7 @@ int main(int argc, char *argv[])
 	const unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 	BaseLib::RunTime run_time;
 	run_time.start();
-	const MeshLib::Mesh* mesh = readMeshFile(filename); // FileIO outputs nr. of nodes and elements
+	const MeshLib::Mesh* mesh = FileIO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
 	run_time.stop();
 	if (!mesh)
 		return 1;
