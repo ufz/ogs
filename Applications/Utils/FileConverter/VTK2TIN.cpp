@@ -1,11 +1,6 @@
 /**
- * @file VTK2TIN.cpp
- * @author Norihiro Watanabe
- * @date Feb 04, 2014
- * @brief Converts a VTK mesh into a TIN file.
- *
  * @copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -23,6 +18,7 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // GeoLib
@@ -47,7 +43,7 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Converts VTK mesh into TIN file.", ' ', "0.1");
+	TCLAP::CmdLine cmd("Converts VTK mesh into TIN file.", ' ', BaseLib::BuildInfo::git_version_sha1);
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
 	                                     "the name of the file containing the input mesh", true,
 	                                     "", "file name of input mesh");

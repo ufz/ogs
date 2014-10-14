@@ -18,6 +18,7 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
@@ -41,12 +42,12 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Converts TIN file into VTK mesh.", ' ', "0.1");
-	TCLAP::ValueArg<std::string> inArg("i", "input-file",
+	TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_version_sha1);
+	TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
 	                                     "the name of the file containing the input TIN", true,
 	                                     "", "string");
 	cmd.add(inArg);
-	TCLAP::ValueArg<std::string> outArg("o", "output-file",
+	TCLAP::ValueArg<std::string> outArg("o", "output-vtu-file",
 	                                      "the name of the file the mesh will be written to", true,
 	                                      "", "string");
 	cmd.add(outArg);
