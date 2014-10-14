@@ -80,6 +80,10 @@ public:
 	/// Get dimension of the mesh element.
 	virtual unsigned getDimension() const = 0;
 
+	/// Get dimension of the mesh element type.
+	/// @param eleType element type
+	static unsigned getDimension(MeshElemType eleType);
+
 	/// Returns the i-th edge of the element.
 	const Element* getEdge(unsigned i) const;
 
