@@ -21,6 +21,20 @@
 
 namespace MeshLib {
 
+namespace detail
+{
+class QuadEdgeLinearNodes
+{
+protected:
+	static constexpr unsigned _edge_nodes[4][2] = {
+		{0, 1}, // Edge 0
+		{1, 2}, // Edge 1
+		{2, 3}, // Edge 2
+		{0, 3}  // Edge 3
+	};
+};
+} // end detail
+
 /**
  * This class represents a 2d quadliteral element. The following sketch shows the node and edge numbering.
  * @anchor QuadNodeAndEdgeNumbering
@@ -36,10 +50,12 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-template <unsigned NNODES, CellType CELLQUADTYPE, typename EDGENODES>
+template <unsigned NNODES, CellType CELLQUADTYPE, typename EDGENODES = detail::QuadEdgeLinearNodes>
 class TemplateQuad : public Face, public EDGENODES
 {
+protected:
 	using EDGENODES::_edge_nodes;
+
 public:
 	/// Constant: The number of all nodes for this element
 	static const unsigned n_all_nodes = NNODES;

@@ -7,14 +7,12 @@
  *
  */
 
-#include "Quad.h"
+#include "TemplateQuadQuadratic.h"
 
 namespace MeshLib
 {
 namespace detail
 {
-constexpr unsigned QuadEdgeLinearNodes::_edge_nodes[4][2];
 constexpr unsigned QuadEdgeQuadraticNodes::_edge_nodes[4][3];
 }
 }
-
