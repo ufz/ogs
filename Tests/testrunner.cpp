@@ -13,9 +13,6 @@
  */
 
 // ** INCLUDES **
-#include "gtest/gtest.h"
-#include "logog/include/logog.hpp"
-
 #ifdef USE_LIS
 #include <lis.h>
 #endif
@@ -23,6 +20,10 @@
 #ifdef USE_PETSC
 #include <petscksp.h>
 #endif
+
+#include "gtest/gtest.h"
+#include "BaseLib/LogogWrapper.h"
+//#include "logog/include/logog.hpp"
 
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef QT4_FOUND
@@ -44,7 +45,7 @@ int main(int argc, char* argv[])
 
 #ifdef USE_PETSC
         char help[] = "ogs6 with PETSc \n";
-        PetscInitialize(&argc,&argv,(char *)0,help);
+        PetscInitialize(&argc, &argv, nullptr, help);
 #endif
 
         try
@@ -59,15 +60,15 @@ int main(int argc, char* argv[])
         }
         catch (char* e)
         {
-            ERR(e);
+            BaseLib::err(e);
         }
         catch (std::exception& e)
         {
-            ERR(e.what());
+            BaseLib::err(e.what());
         }
         catch (...)
         {
-            ERR("Unknown exception occurred!");
+            BaseLib::err("Unknown exception occurred!");
         }
         // finalize libraries
 #ifdef USE_LIS
