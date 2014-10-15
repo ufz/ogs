@@ -200,14 +200,29 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const GeoLib::Point* b,
                        const GeoLib::Point* c)
 {
-	return isPointInTriangle(*p, *a, *b, *c);
+	return gaussPointInTriangle(*p, *a, *b, *c);
 }
 
-bool isPointInTriangle(GeoLib::Point const& q,
-                       GeoLib::Point const& a,
-                       GeoLib::Point const& b,
-                       GeoLib::Point const& c,
-                       double eps)
+bool isPointInTriangle(GeoLib::Point const& p,
+				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+				double eps_pnt_out_of_plane, double eps_pnt_out_of_tri,
+				GeoLib::TriangleTest algorithm)
+{
+	switch (algorithm)
+	{
+	case GeoLib::BARYCENTRIC:
+		return barycentricPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
+	default:
+		return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane);
+	}
+	return false;
+}
+
+bool gaussPointInTriangle(GeoLib::Point const& q,
+				GeoLib::Point const& a,
+				GeoLib::Point const& b,
+				GeoLib::Point const& c,
+				double eps)
 {
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(a, c);
@@ -242,7 +257,7 @@ bool isPointInTriangle(GeoLib::Point const& q,
 	return false;
 }
 
-bool isPointInTriangle2(GeoLib::Point const& p,
+bool barycentricPointInTriangle(GeoLib::Point const& p,
 				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
 				double eps_pnt_out_of_plane, double eps_pnt_out_of_tri)
 {
