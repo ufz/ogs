@@ -42,6 +42,10 @@ public:
 	/// Compute the minimum and maximum squared edge length for this element
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
+	/// Compute the minimum and maximum node distances for this element.
+	/// @return a pair with the smallest as first element and the largest as second
+	virtual void computeSqrNodeDistanceRange(double &min, double &max, bool all=true) const;
+
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
@@ -50,7 +54,7 @@ public:
 	 */
 	boost::optional<unsigned> addNeighbor(Element* e);
 
-	// Calculates the center of gravity for the mesh element
+	/// Calculates the center of gravity for the mesh element
 	MeshLib::Node getCenterOfGravity() const;
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
