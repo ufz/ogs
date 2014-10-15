@@ -117,9 +117,6 @@ double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::
  */
 double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4);
 
-bool isPointInTriangle (const GeoLib::Point* p,
-		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
-
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
  * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle

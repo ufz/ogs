@@ -197,12 +197,6 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 	return false;
 }
 
-bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const GeoLib::Point* b,
-                       const GeoLib::Point* c)
-{
-	return gaussPointInTriangle(*p, *a, *b, *c);
-}
-
 bool isPointInTriangle(GeoLib::Point const& p,
 				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
 				double eps_pnt_out_of_plane, double eps_pnt_out_of_tri,
