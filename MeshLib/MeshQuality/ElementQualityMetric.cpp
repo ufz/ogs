@@ -42,7 +42,7 @@ void ElementQualityMetric::errorMsg (Element const& elem, size_t idx) const
 {
 	ERR ("Error in MeshQualityChecker::check() - Calculated value of element is below double precision minimum.");
 	ERR ("Points of %s-Element %d: ", MeshElemType2String(elem.getGeomType()).c_str(), idx);
-	for (size_t i(0); i < elem.getNNodes(); i++)
+	for (size_t i(0); i < elem.getNBaseNodes(); i++)
 	{
 		const double* coords = elem.getNode(i)->getCoords();
 		ERR ("\t Node %d: (%f, %f, %f)", i, coords[0], coords[1], coords[2]);

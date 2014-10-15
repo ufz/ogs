@@ -20,6 +20,7 @@
 namespace MeshLib {
 
 typedef TemplatePyramid<5,CellType::PYRAMID5> Pyramid;
+typedef TemplatePyramid<13,CellType::PYRAMID13> Pyramid13;
 
 }
 

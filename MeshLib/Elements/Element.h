@@ -42,6 +42,10 @@ public:
 	/// Compute the minimum and maximum squared edge length for this element
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
+	/// Compute the minimum and maximum node distances for this element.
+	/// @return a pair with the smallest as first element and the largest as second
+	virtual void computeSqrNodeDistanceRange(double &min, double &max, bool all=true) const;
+
 	/**
 	 * \brief Tries to add an element e as neighbour to this element.
 	 * If the elements really are neighbours, the element is added to the
@@ -50,7 +54,7 @@ public:
 	 */
 	boost::optional<unsigned> addNeighbor(Element* e);
 
-	// Calculates the center of gravity for the mesh element
+	/// Calculates the center of gravity for the mesh element
 	MeshLib::Node getCenterOfGravity() const;
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
@@ -81,7 +85,7 @@ public:
 	virtual unsigned getDimension() const = 0;
 
 	/// Returns the i-th edge of the element.
-	const Element* getEdge(unsigned i) const;
+	virtual const Element* getEdge(unsigned i) const;
 
 	/// Returns the i-th face of the element.
 	virtual const Element* getFace(unsigned i) const = 0;
@@ -104,17 +108,11 @@ public:
 	/// Get the number of neighbors for this element.
 	virtual unsigned getNNeighbors() const = 0;
 
-	/**
-	 * Returns the number of nodes. In dependency of the parameter
-	 * the number of nodes for the geometric element is returned or
-	 * the total number of nodes associated with this element
-	 * is returned. The numbers can be different for instance if the
-	 * element is used for higher order elements in finite element
-	 * method.
-	 * @param all (default = false)
-	 * @return the number of nodes with respect to the parameter.
-	 */
-	virtual unsigned getNNodes(bool all = false) const = 0;
+	/// Returns the number of linear nodes
+	virtual unsigned getNBaseNodes() const = 0;
+
+	/// Returns the number of nodes including both linear and nonlinear ones
+	virtual unsigned getNNodes() const = 0;
 
 	/// Returns the position of the given node in the node array of this element.
 	virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;

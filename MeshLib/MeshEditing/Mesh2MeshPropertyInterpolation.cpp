@@ -77,7 +77,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 	const size_t n_dest_elements(dest_elements.size());
 	for (size_t k(0); k<n_dest_elements; k++) {
 		// compute axis aligned bounding box around the current element
-		const GeoLib::AABB<MeshLib::Node> elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNNodes());
+		const GeoLib::AABB<MeshLib::Node> elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNBaseNodes());
 
 		// request "interesting" nodes from grid
 		std::vector<std::vector<MeshLib::Node*> const*> nodes;

@@ -117,7 +117,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::T_FE
         // for destructor
         vec_eles.push_back(mesh_element);
         for (auto e : vec_eles)
-            for (unsigned i=0; i<e->getNNodes(true); i++)
+            for (unsigned i=0; i<e->getNBaseNodes(); i++)
                 vec_nodes.push_back(e->getNode(i));
     }
 

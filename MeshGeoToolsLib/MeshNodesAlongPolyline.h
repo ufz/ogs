@@ -41,7 +41,7 @@ public:
 	 * @param epsilon_radius Search / tube radius
 	 */
 	MeshNodesAlongPolyline(MeshLib::Mesh const& mesh,
-			GeoLib::Polyline const& ply, double epsilon_radius);
+			GeoLib::Polyline const& ply, double epsilon_radius, bool search_all_nodes = true);
 
 	/// return the mesh object
 	MeshLib::Mesh const& getMesh() const;

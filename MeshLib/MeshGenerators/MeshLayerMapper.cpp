@@ -88,7 +88,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 			if (sfc_elem->getDimension() < 2) // ignore line-elements
 				continue;
 				
-			const unsigned nElemNodes(sfc_elem->getNNodes());
+			const unsigned nElemNodes(sfc_elem->getNBaseNodes());
 			MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
 
 			for (unsigned j=0; j<nElemNodes; ++j)

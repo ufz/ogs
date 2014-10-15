@@ -32,8 +32,13 @@ namespace MeshLib
 
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
-           const std::vector<Element*> &elements)
-	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
+           const std::vector<Element*> &elements,
+           const std::size_t n_linear_nodes)
+	: _id(_counter_value), _mesh_dimension(0),
+	_edge_length{std::numeric_limits<double>::max(), 0},
+	_node_distance{std::numeric_limits<double>::max(), 0},
+	_name(name), _nodes(nodes), _elements(elements),
+	_n_linear_nodes(n_linear_nodes==std::numeric_limits<std::size_t>::max() ? nodes.size() : n_linear_nodes)
 {
 	this->resetNodeIDs();
 	this->resetElementIDs();
@@ -43,14 +48,16 @@ Mesh::Mesh(const std::string &name,
 	//this->setNodesConnectedByElements();
 	this->setElementNeighbors();
 
-	_edge_length[0] =  std::numeric_limits<double>::max();
-	_edge_length[1] = -std::numeric_limits<double>::max();
 	this->calcEdgeLengthRange();
+	this->calcNodeDistanceRange();
 }
 
 Mesh::Mesh(const Mesh &mesh)
 	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
-	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	_edge_length{mesh._edge_length[0], mesh._edge_length[1]},
+	_node_distance{mesh._node_distance[0], mesh._node_distance[1]},
+	_name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
+	_n_linear_nodes(mesh._n_linear_nodes)
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
@@ -68,8 +75,6 @@ Mesh::Mesh(const Mesh &mesh)
 	}
 
 	if (_mesh_dimension==0) this->setDimension();
-	this->_edge_length[0] = mesh.getMinEdgeLength();
-	this->_edge_length[1] = mesh.getMaxEdgeLength();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
 	//this->setNodesConnectedByElements();
@@ -144,6 +149,8 @@ void Mesh::resetElementsConnectedToNodes()
 
 void Mesh::calcEdgeLengthRange()
 {
+	this->_edge_length[0] = std::numeric_limits<double>::max();
+	this->_edge_length[1] = 0;
 	double min_length(0);
 	double max_length(0);
 	const std::size_t nElems (this->getNElements());
@@ -157,6 +164,23 @@ void Mesh::calcEdgeLengthRange()
 	this->_edge_length[1] = sqrt(this->_edge_length[1]);
 }
 
+void Mesh::calcNodeDistanceRange()
+{
+	this->_node_distance[0] = std::numeric_limits<double>::max();
+	this->_node_distance[1] = 0;
+	double min_length(0);
+	double max_length(0);
+	const std::size_t nElems (this->getNElements());
+	for (std::size_t i=0; i<nElems; ++i)
+	{
+		_elements[i]->computeSqrNodeDistanceRange(min_length, max_length);
+		this->_node_distance[0] = std::min(this->_node_distance[0], min_length);
+		this->_node_distance[1] = std::max(this->_node_distance[1], max_length);
+	}
+	this->_node_distance[0] = sqrt(this->_edge_length[0]);
+	this->_node_distance[1] = sqrt(this->_edge_length[1]);
+}
+
 void Mesh::setElementNeighbors()
 {
 	std::vector<Element*> neighbors;
@@ -165,7 +189,7 @@ void Mesh::setElementNeighbors()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		Element *const element = *it;
 
-		const size_t nNodes (element->getNNodes());
+		const size_t nNodes (element->getNBaseNodes());
 		for (unsigned n(0); n<nNodes; ++n)
 		{
 			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
@@ -207,7 +231,7 @@ void Mesh::setNodesConnectedByEdges()
 					if (conn_elems[j]->getNode(k) == conn_set[l])
 						is_in_vector = true;
 				if (is_in_vector) continue;
-				if (conn_elems[j]->isEdge(idx, k))
+				if (conn_elems[j]->isEdge(idx, k)) //TODO doesn't work with higher order nodes
 					conn_set.push_back(_nodes[conn_elems[j]->getNode(k)->getID()]);
 			}
 		}

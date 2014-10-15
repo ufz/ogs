@@ -1,22 +1,17 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2012-05-02
- * \brief  Definition of the TemplateHex class.
- *
  * \copyright
- * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  */
 
-#ifndef TEMPLATEHEX_H_
-#define TEMPLATEHEX_H_
+#ifndef TEMPLATEHEX20_H_
+#define TEMPLATEHEX20_H_
 
 #include <array>
-#include "MeshLib/MeshEnums.h"
+#include "MeshEnums.h"
 #include "Cell.h"
 
 namespace MeshLib {
@@ -47,7 +42,7 @@ namespace MeshLib {
  * @endcode
  */
 template <unsigned NNODES, CellType CELLHEXTYPE>
-class TemplateHex : public Cell
+class TemplateHex20 : public Cell
 {
 public:
 	/// Constant: The number of all nodes for this element
@@ -57,16 +52,16 @@ public:
 	static const unsigned n_base_nodes = 8u;
 
 	/// Constructor with an array of mesh nodes.
-	TemplateHex(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	TemplateHex20(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a hex from array of Node pointers.
-	TemplateHex(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	TemplateHex20(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
-	TemplateHex(const TemplateHex &hex);
+	TemplateHex20(const TemplateHex20 &hex);
 
 	/// Destructor
-	virtual ~TemplateHex();
+	virtual ~TemplateHex20();
 
 	/// Returns the face i of the element.
 	const Element* getFace(unsigned i) const;
@@ -110,13 +105,13 @@ public:
 	/// Returns true if these two indices form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
 
-    /**
+	/**
 	 * Checks if a point is inside the element.
 	 * @param pnt a 3D GeoLib::Point object
 	 * @param eps tolerance for numerical algorithm used or computing the property
 	 * @return true if the point is not outside the element, false otherwise
 	 */
-    bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+	bool isPntInElement(GeoLib::Point const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/**
 	 * Tests if the element is geometrically valid.
@@ -140,14 +135,14 @@ protected:
 	/// Return a specific edge node.
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
-	static const unsigned _face_nodes[6][4];
-	static const unsigned _edge_nodes[12][2];
+	static const unsigned _face_nodes[6][8];
+	static const unsigned _edge_nodes[12][3];
 
 }; /* class */
 
 } /* namespace */
 
-#include "TemplateHex-impl.h"
+#include "TemplateHex20-impl.h"
 
 #endif /* TEMPLATEHEX_H_ */
 

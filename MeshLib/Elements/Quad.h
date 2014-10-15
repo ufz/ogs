@@ -16,12 +16,13 @@
 #define QUAD_H_
 
 #include "TemplateQuad.h"
+#include "TemplateQuad2.h"
 
 namespace MeshLib {
 
 typedef TemplateQuad<4,CellType::QUAD4> Quad;
-typedef TemplateQuad<8, CellType::QUAD8> Quad8;
-typedef TemplateQuad<9, CellType::QUAD9> Quad9;
+typedef TemplateQuad2<8, CellType::QUAD8> Quad8;
+typedef TemplateQuad2<9, CellType::QUAD9> Quad9;
 
 }
 

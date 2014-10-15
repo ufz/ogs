@@ -18,6 +18,8 @@
 #include "Elements/Element.h"
 #include "Elements/Hex.h"
 
+#include "Tests/TestTools.h"
+
 using namespace MeshLib;
 
 TEST(MeshLib, MeshGeneratorRegularHex)
@@ -111,4 +113,52 @@ TEST(MeshLib, MeshGeneratorRegularQuad)
 	node = quad_mesh2->getNode(quad_mesh2->getNNodes()-1);
 	ASSERT_DOUBLE_EQ(L, (*node)[0]);
 	ASSERT_DOUBLE_EQ(L, (*node)[1]);
+}
+
+TEST(MeshLib, MeshGeneratorRegularQuad8)
+{
+	unsigned n_x (10);
+	unsigned n_y (5);
+	double delta (1.2);
+	double tol(std::numeric_limits<float>::epsilon());
+	std::unique_ptr<Mesh> quad_mesh (MeshGenerator::generateRegularQuad8Mesh(n_x, n_y,delta));
+	ASSERT_EQ(n_x * n_y, quad_mesh->getNElements());
+	ASSERT_EQ((n_x+1) * (n_y+1) + n_x * (n_y+1) + (n_x+1)*n_y, quad_mesh->getNNodes());
+	const MeshLib::Element* ele0 = quad_mesh->getElement(0);
+	ASSERT_EQ(CellType::QUAD8, ele0->getCellType());
+	ASSERT_ARRAY_NEAR(Node(0,     0,     0), *ele0->getNode(0), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta, 0,     0), *ele0->getNode(1), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta, delta, 0), *ele0->getNode(2), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(0,     delta, 0), *ele0->getNode(3), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*0.5, 0,         0), *ele0->getNode(4), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta,     delta*0.5, 0), *ele0->getNode(5), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*0.5, delta,     0), *ele0->getNode(6), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(0,         delta*0.5, 0), *ele0->getNode(7), 3, tol);
+	const MeshLib::Element* ele1 = quad_mesh->getElement(quad_mesh->getNElements()-1);
+	ASSERT_EQ(CellType::QUAD8, ele1->getCellType());
+	ASSERT_ARRAY_NEAR(Node(delta*(n_x-1), delta*(n_y-1), 0),         *ele1->getNode(0), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*n_x,     delta*(n_y-1), 0),     *ele1->getNode(1), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*n_x,     delta*n_y,     0), *ele1->getNode(2), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*(n_x-1), delta*n_y,     0),     *ele1->getNode(3), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*(n_x-0.5),  delta*(n_y-1),   0), *ele1->getNode(4), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*n_x,        delta*(n_y-0.5), 0), *ele1->getNode(5), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*(n_x-0.5),  delta*n_y,       0), *ele1->getNode(6), 3, tol);
+	ASSERT_ARRAY_NEAR(Node(delta*(n_x-1),    delta*(n_y-0.5), 0), *ele1->getNode(7), 3, tol);
+	const MeshLib::Node* nodel (quad_mesh->getNode((n_x+1)*(n_y+1)-1));
+	ASSERT_DOUBLE_EQ(n_x*delta, (*nodel)[0]);
+	ASSERT_DOUBLE_EQ(n_y*delta, (*nodel)[1]);
+	ASSERT_DOUBLE_EQ(0, (*nodel)[2]);
+	const MeshLib::Node* nodeq (quad_mesh->getNode(quad_mesh->getNNodes()-1));
+	ASSERT_DOUBLE_EQ(n_x*delta-delta*0.5, (*nodeq)[0]);
+	ASSERT_DOUBLE_EQ(n_y*delta, (*nodeq)[1]);
+	ASSERT_DOUBLE_EQ(0, (*nodeq)[2]);
+
+	const double L = 10.0;
+	const std::size_t n_subdivisions = 9;
+	std::unique_ptr<Mesh> quad_mesh2(MeshGenerator::generateRegularQuad8Mesh(L, n_subdivisions));
+	ASSERT_EQ(n_subdivisions * n_subdivisions, quad_mesh2->getNElements());
+	nodeq = quad_mesh2->getNode(quad_mesh2->getNNodes()-1);
+	ASSERT_DOUBLE_EQ(L-L/n_subdivisions*0.5, (*nodeq)[0]);
+	ASSERT_DOUBLE_EQ(L, (*nodeq)[1]);
+	ASSERT_DOUBLE_EQ(0, (*nodeq)[2]);
 }

@@ -20,6 +20,7 @@
 namespace MeshLib {
 
 typedef TemplateTet<4,CellType::TET4> Tet;
+typedef TemplateTet<10,CellType::TET10> Tet10;
 
 }
 

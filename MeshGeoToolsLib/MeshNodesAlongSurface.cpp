@@ -23,14 +23,14 @@ namespace MeshGeoToolsLib
 
 MeshNodesAlongSurface::MeshNodesAlongSurface(
 		MeshLib::Mesh const& mesh,
-		GeoLib::Surface const& sfc) :
+		GeoLib::Surface const& sfc,
+		bool search_all_nodes) :
 	_mesh(mesh), _sfc(sfc)
 {
-	auto& mesh_nodes = _mesh.getNodes();
-	const std::size_t n_nodes (mesh_nodes.size());
+	const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNLinearNodes());
 	// loop over all nodes
 	for (size_t i = 0; i < n_nodes; i++) {
-		auto* node = mesh_nodes[i];
+		auto* node = _mesh.getNode(i);
 		if (!sfc.isPntInBoundingVolume(node->getCoords()))
 			continue;
 		if (sfc.isPntInSfc(node->getCoords())) {

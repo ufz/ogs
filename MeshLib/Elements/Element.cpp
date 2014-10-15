@@ -53,8 +53,8 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 		return boost::optional<unsigned>();
 
 	Node* face_nodes[3];
-	const unsigned nNodes (this->getNNodes());
-	const unsigned eNodes (e->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
+	const unsigned eNodes (e->getNBaseNodes());
 	const Node* const* e_nodes = e->getNodes();
 	unsigned count(0);
 	const unsigned dim (this->getDimension());
@@ -76,7 +76,7 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 
 MeshLib::Node Element::getCenterOfGravity() const
 {
-	const unsigned nNodes (this->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
 	MeshLib::Node center(0,0,0);
 	for (unsigned i=0; i<nNodes; ++i)
 	{
@@ -113,6 +113,22 @@ void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 		const double dist (MathLib::sqrDist(*getEdgeNode(i,0), *getEdgeNode(i,1)));
 		min = (dist<min) ? dist : min;
 		max = (dist>max) ? dist : max;
+	}
+}
+
+void Element::computeSqrNodeDistanceRange(double &min, double &max, bool all) const
+{
+	min = std::numeric_limits<double>::max();
+	max = 0;
+	const unsigned nnodes = all ? getNNodes() : getNBaseNodes();
+	for (unsigned i=0; i<nnodes; i++)
+	{
+		for (unsigned j=i+1; j<nnodes; j++)
+		{
+			const double dist (MathLib::sqrDist(*getNode(i), *getNode(j)));
+			min = std::min(dist, min);
+			max = std::max(dist, max);
+		}
 	}
 }
 

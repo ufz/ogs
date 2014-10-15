@@ -316,6 +316,74 @@ MeshLib::Element* BoostVtuInterface::readElement(std::stringstream &iss,
 		return new MeshLib::Prism(prism_nodes, material);
 		break;
 	}
+	case 21: { //quadratic line
+		for (unsigned i(0); i < 3; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** edge_nodes = new MeshLib::Node*[3];
+		edge_nodes[0] = nodes[node_ids[0]];
+		edge_nodes[1] = nodes[node_ids[1]];
+		edge_nodes[2] = nodes[node_ids[2]];
+		return new MeshLib::Line3(edge_nodes, material);
+		break;
+	}
+	case 22: { //quadratic triangle
+		for (unsigned i(0); i < 6; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[6];
+		tri_nodes[0] = nodes[node_ids[0]];
+		tri_nodes[1] = nodes[node_ids[1]];
+		tri_nodes[2] = nodes[node_ids[2]];
+		tri_nodes[3] = nodes[node_ids[3]];
+		tri_nodes[4] = nodes[node_ids[4]];
+		tri_nodes[5] = nodes[node_ids[5]];
+		return new MeshLib::Tri6(tri_nodes, material);
+		break;
+	}
+	case 23: { //quadratic quad with 8 nodes
+		for (unsigned i(0); i < 8; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** quad_nodes = new MeshLib::Node*[8];
+		for (unsigned k(0); k < 8; k++)
+			quad_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Quad8(quad_nodes, material);
+		break;
+	}
+	case 24: { //quadratic tetra
+		for (unsigned i(0); i < 10; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[10];
+		for (unsigned k(0); k < 10; k++)
+			tet_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Tet10(tet_nodes, material);
+		break;
+	}
+	case 25: { //quadratic hexahedron with 20 nodes
+		for (unsigned i(0); i < 20; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** hex_nodes = new MeshLib::Node*[20];
+		for (unsigned k(0); k < 20; k++)
+			hex_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Hex20(hex_nodes, material);
+		break;
+	}
+	case 26: { //quadratic wedge
+		for (unsigned i(0); i < 15; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** prism_nodes = new MeshLib::Node*[15];
+		for (unsigned k(0); k < 15; k++)
+			prism_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Prism15(prism_nodes, material);
+		break;
+	}
+	case 27: { //quadratic pyramid
+		for (unsigned i(0); i < 13; i++)
+			iss >> node_ids[i];
+		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[13];
+		for (unsigned k(0); k < 13; k++)
+			pyramid_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Pyramid13(pyramid_nodes, material);
+		break;
+	}
 	default:
 		ERR("BoostVtuInterface::readElement(): Unknown mesh element type \"%d\".", type);
 		return nullptr;
@@ -513,7 +581,10 @@ void BoostVtuInterface::buildPropertyTree()
 		oss << std::endl;
 		offset_count += nElemNodes;
 		offstream << offset_count << " ";
-		typestream << this->getVTKElementID(element->getGeomType()) << " ";
+		unsigned cellType = this->getVTKElementID(element->getCellType());
+		if (cellType==std::numeric_limits<unsigned>::max())
+			cellType = this->getVTKElementID(element->getGeomType());
+		typestream << cellType << " ";
 	}
 	oss << data_array_close;
 	offstream << std::endl << data_array_close;
@@ -558,6 +629,43 @@ unsigned BoostVtuInterface::getVTKElementID(MeshElemType type) const
 		return 14;
 	case MeshElemType::PRISM:
 		return 13;
+	default:
+		return std::numeric_limits<unsigned>::max();
+	}
+}
+
+unsigned BoostVtuInterface::getVTKElementID(CellType type) const
+{
+	switch (type)
+	{
+	case CellType::LINE2:
+		return 3;
+	case CellType::LINE3:
+		return 21;
+	case CellType::TRI3:
+		return 5;
+	case CellType::TRI6:
+		return 22;
+	case CellType::QUAD4:
+		return 9;
+	case CellType::QUAD8:
+		return 23;
+	case CellType::TET4:
+		return 10;
+	case CellType::TET10:
+		return 24;
+	case CellType::HEX8:
+		return 12;
+	case CellType::HEX20:
+		return 25;
+	case CellType::PYRAMID5:
+		return 14;
+	case CellType::PYRAMID13:
+		return 27;
+	case CellType::PRISM6:
+		return 13;
+	case CellType::PRISM15:
+		return 26;
 	default:
 		return std::numeric_limits<unsigned>::max();
 	}

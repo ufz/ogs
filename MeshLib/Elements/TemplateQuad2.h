@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2012-05-02
- * \brief  Definition of the TemplateQuad class.
- *
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,11 +7,11 @@
  *
  */
 
-#ifndef TEMPLATEQUAD_H_
-#define TEMPLATEQUAD_H_
+#ifndef TEMPLATEQUAD2_H_
+#define TEMPLATEQUAD2_H_
 
 #include <array>
-#include "MeshLib/MeshEnums.h"
+#include "MeshEnums.h"
 #include "Face.h"
 
 namespace MeshLib {
@@ -37,7 +32,7 @@ namespace MeshLib {
  * @endcode
  */
 template <unsigned NNODES, CellType CELLQUADTYPE>
-class TemplateQuad : public Face
+class TemplateQuad2 : public Face
 {
 public:
 	/// Constant: The number of all nodes for this element
@@ -47,20 +42,20 @@ public:
 	static const unsigned n_base_nodes = 4u;
 
 	/// Constructor with an array of mesh nodes.
-	TemplateQuad(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	TemplateQuad2(Node* nodes[NNODES], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs an edge from array of Node pointers.
-	TemplateQuad(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	TemplateQuad2(std::array<Node*, NNODES> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructs a quad from NNODES of Nodes initializing Face with
 	//  value = 0.
-	TemplateQuad(Node* n0, Node* n1, Node* n2, Node* n3, ...);
+	TemplateQuad2(Node* n0, Node* n1, Node* n2, Node* n3, ...);
 
 	/// Copy constructor
-	TemplateQuad(const TemplateQuad &quad);
+	TemplateQuad2(const TemplateQuad2 &quad);
 
 	/// Destructor
-	virtual ~TemplateQuad();
+	virtual ~TemplateQuad2();
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 4; };
@@ -126,12 +121,12 @@ protected:
 	/// Return a specific edge node.
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
-	static const unsigned _edge_nodes[4][2];
+	static const unsigned _edge_nodes[4][3];
 }; /* class */
 
 } /* namespace */
 
-#include "TemplateQuad-impl.h"
+#include "TemplateQuad2-impl.h"
 
-#endif /* TEMPLATEQUAD_H_ */
+#endif /* TEMPLATEQUAD2_H_ */
 

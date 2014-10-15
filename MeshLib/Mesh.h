@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <limits>
 
 #include "BaseLib/Counter.h"
 
@@ -40,7 +41,8 @@ public:
 	/// Constructor using a mesh name and an array of nodes and elements
 	Mesh(const std::string &name,
 	     const std::vector<Node*> &nodes,
-	     const std::vector<Element*> &elements);
+	     const std::vector<Element*> &elements,
+	     const std::size_t n_linear_nodes = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	Mesh(const Mesh &mesh);
@@ -69,6 +71,12 @@ public:
 	/// Get the maximum edge length over all elements of the mesh.
 	double getMaxEdgeLength() const { return _edge_length[1]; }
 
+	/// Get the minimum node distance over all elements of the mesh.
+	double getMinNodeDistance() const { return _node_distance[0]; }
+
+	/// Get the maximum node distance over all elements of the mesh.
+	double getMaxNodeDistance() const { return _node_distance[1]; }
+
 	/// Get the number of elements
 	std::size_t getNElements() const { return _elements.size(); }
 
@@ -96,9 +104,17 @@ public:
 	/// Get id of the mesh
 	std::size_t getID() const {return _id; }
 
+	/// Get the number of linear nodes
+	std::size_t getNLinearNodes() const { return _n_linear_nodes; }
+
+	/// Return if a given node is linear one
+	bool isLinearNode(std::size_t nodeId) const {return nodeId<_n_linear_nodes; }
+
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
+	/// Set the minimum and maximum node distances within elements.
+	void calcNodeDistanceRange();
 
 	/**
 	 * Resets the connected elements for the node vector, i.e. removes the old information and
@@ -124,9 +140,11 @@ protected:
 	std::size_t const _id;
 	unsigned _mesh_dimension;
 	double _edge_length[2];
+	double _node_distance[2];
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
+	std::size_t _n_linear_nodes;
 
 }; /* class */
 

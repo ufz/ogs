@@ -26,12 +26,34 @@ namespace MeshGeoToolsLib
 {
 
 MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
-	MeshGeoToolsLib::SearchLength const& search_length_algorithm) :
+	MeshGeoToolsLib::SearchLength const& search_length_algorithm, bool search_all_nodes) :
 		_mesh(mesh), _mesh_grid(_mesh.getNodes().cbegin(), _mesh.getNodes().cend()),
-		_search_length(0.0)
+		_search_length(0.0), _search_all_nodes(search_all_nodes)
 {
 	DBUG("Constructing MeshNodeSearcher obj.");
-	_search_length = search_length_algorithm.getSearchLength();
+	//_search_length = search_length_algorithm.getSearchLength();
+
+	double sum (0.0);
+	double sum_of_sqr (0.0);
+	const std::size_t ele_cnt(_mesh.getNElements());
+
+	double min=0, max=0;
+	for (const MeshLib::Element* e : _mesh.getElements()) {
+		e->computeSqrNodeDistanceRange(min, max, search_all_nodes);
+		sum += std::sqrt(min);
+		sum_of_sqr += min;
+	}
+
+	const double mu (sum/ele_cnt);
+	const double s (sqrt(1.0/(ele_cnt-1) * (sum_of_sqr - (sum*sum)/ele_cnt) ));
+	// heuristic to prevent negative search lengths
+	// in the case of a big standard deviation s
+	double c(2.0);
+	while (mu < c * s) {
+		c *= 0.9;
+	}
+
+	_search_length = (mu - c * s)/2;
 
 	DBUG("Calculated search length for mesh \"%s\" is %e.",
 		_mesh.getName().c_str(), _search_length);
@@ -99,7 +121,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_polylines.push_back(
-			new MeshNodesAlongPolyline(_mesh, ply, _search_length));
+			new MeshNodesAlongPolyline(_mesh, ply, _search_length, _search_all_nodes));
 	return *_mesh_nodes_along_polylines.back();
 }
 
@@ -115,7 +137,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
 
 	// compute nodes (and supporting points) along polyline
 	_mesh_nodes_along_surfaces.push_back(
-			new MeshNodesAlongSurface(_mesh, sfc));
+			new MeshNodesAlongSurface(_mesh, sfc, _search_all_nodes));
 	return *_mesh_nodes_along_surfaces.back();
 }
 
