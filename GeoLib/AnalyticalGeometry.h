@@ -147,12 +147,15 @@ bool isPointInTriangle(GeoLib::Point const& p,
  * @param a edge node of triangle
  * @param b edge node of triangle
  * @param c edge node of triangle
- * @param eps size of neighbourhood (orthogonal distance to the plane spaned by triangle)
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
+ *                             ((orthogonal distance to the plane spaned by triangle)
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
 bool gaussPointInTriangle(GeoLib::Point const& p,
 				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps = std::numeric_limits<float>::epsilon());
+				double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+				double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.

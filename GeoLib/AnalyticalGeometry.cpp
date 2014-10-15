@@ -213,7 +213,7 @@ bool isPointInTriangle(GeoLib::Point const& p,
 	case GeoLib::BARYCENTRIC:
 		return barycentricPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 	default:
-		return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane);
+		return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 	}
 	return false;
 }
@@ -222,7 +222,8 @@ bool gaussPointInTriangle(GeoLib::Point const& q,
 				GeoLib::Point const& a,
 				GeoLib::Point const& b,
 				GeoLib::Point const& c,
-				double eps)
+				double eps_pnt_out_of_plane, 
+				double eps_pnt_out_of_tri)
 {
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(a, c);
@@ -240,7 +241,7 @@ bool gaussPointInTriangle(GeoLib::Point const& q,
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss(mat);
 	gauss.solve(y);
 
-	const double lower (std::numeric_limits<float>::epsilon());
+	const double lower (eps_pnt_out_of_tri);
 	const double upper (1 + lower);
 
 	if (-lower <= y[0] && y[0] <= upper && -lower <= y[1] && y[1] <= upper && y[0] + y[1] <=
@@ -250,7 +251,7 @@ bool gaussPointInTriangle(GeoLib::Point const& q,
 			a[1] + y[0] * v[1] + y[1] * w[1],
 			a[2] + y[0] * v[2] + y[1] * w[2]
 		);
-		if (MathLib::sqrDist(q, q_projected) < eps)
+		if (MathLib::sqrDist(q, q_projected) < eps_pnt_out_of_plane)
 			return true;
 	}
 
