@@ -78,7 +78,8 @@ using GlobalVectorMatrixBuilderType =
 using GlobalSetupType =
     AssemblerLib::GlobalSetup<
         detail::GlobalVectorMatrixBuilderType,
-        detail::GlobalExecutorType>;
+        detail::GlobalExecutorType,
+        detail::LinearSolverType>;
 
 
 //
