@@ -90,7 +90,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	new_elements.reserve(sfc_elements.size());
 	for (auto elem = sfc_elements.cbegin(); elem != sfc_elements.cend(); ++elem)
 	{
-		unsigned const n_elem_nodes ((*elem)->getNNodes());
+		unsigned const n_elem_nodes ((*elem)->getNBaseNodes());
 		MeshLib::Node** new_nodes = new MeshLib::Node*[n_elem_nodes];
 		for (unsigned k(0); k<n_elem_nodes; k++)
 			new_nodes[k] = sfc_nodes[node_id_map[(*elem)->getNode(k)->getID()]];
@@ -180,7 +180,7 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(std::vector<MeshLib::Node*> &sfc_n
 	for (std::size_t i=0; i<nNewElements; ++i)
 	{
 		const MeshLib::Element* elem (sfc_elements[i]);
-		for (unsigned j=0; j<elem->getNNodes(); ++j)
+		for (unsigned j=0; j<elem->getNBaseNodes(); ++j)
 		{
 			const MeshLib::Node* node (elem->getNode(j));
 			tmp_nodes[node->getID()] = node;

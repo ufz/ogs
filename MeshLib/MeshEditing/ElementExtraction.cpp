@@ -118,7 +118,7 @@ std::size_t ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, cons
 	const std::size_t n_elems(ele_vec.size());
 	for (std::size_t i = 0; i<n_elems; i++)
 	{
-		std::size_t nElemNodes (ele_vec[i]->getNNodes());
+		std::size_t nElemNodes (ele_vec[i]->getNBaseNodes());
 		for (std::size_t j=0; j<nElemNodes; ++j)
 			if (!aabb.containsPoint(*ele_vec[i]->getNode(j)))
 			{

@@ -53,8 +53,8 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 		return boost::optional<unsigned>();
 
 	Node* face_nodes[3];
-	const unsigned nNodes (this->getNNodes());
-	const unsigned eNodes (e->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
+	const unsigned eNodes (e->getNBaseNodes());
 	const Node* const* e_nodes = e->getNodes();
 	unsigned count(0);
 	const unsigned dim (this->getDimension());
@@ -76,7 +76,7 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 
 MeshLib::Node Element::getCenterOfGravity() const
 {
-	const unsigned nNodes (this->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
 	MeshLib::Node center(0,0,0);
 	for (unsigned i=0; i<nNodes; ++i)
 	{
@@ -126,7 +126,7 @@ const Element* Element::getNeighbor(unsigned i) const
 
 unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 {
-	const unsigned nNodes (this->getNNodes());
+	const unsigned nNodes (this->getNBaseNodes());
 	for (unsigned i(0); i<nNodes; i++)
 		if (node == _nodes[i])
 			return i;
@@ -135,7 +135,7 @@ unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 
 const Node* Element::getNode(unsigned i) const
 {
-	if (i < getNNodes())
+	if (i < getNBaseNodes())
 		return _nodes[i];
 	ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MeshElemType2String(getGeomType()).c_str());
 	return nullptr;
@@ -143,13 +143,13 @@ const Node* Element::getNode(unsigned i) const
 
 void Element::setNode(unsigned idx, Node* node)
 {
-	if (idx < getNNodes())
+	if (idx < getNBaseNodes())
 		_nodes[idx] = node;
 }
 
 unsigned Element::getNodeIndex(unsigned i) const
 {
-	if (i<getNNodes())
+	if (i<getNBaseNodes())
 		return _nodes[i]->getID();
 	ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
 	return std::numeric_limits<unsigned>::max();

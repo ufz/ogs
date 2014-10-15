@@ -253,7 +253,7 @@ TEST_F(MeshLibQuadMesh, ElementToNodeConnectivity)
         std::size_t const i,
         std::size_t const j)
         {
-            EXPECT_EQ(4u, e->getNNodes());
+            EXPECT_EQ(4u, e->getNBaseNodes());
             EXPECT_EQ(getNode(i,   j),   e->getNode(0));
             EXPECT_EQ(getNode(i,   j+1), e->getNode(1));
             EXPECT_EQ(getNode(i+1, j+1), e->getNode(2));

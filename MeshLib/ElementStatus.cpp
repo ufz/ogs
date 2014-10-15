@@ -99,7 +99,7 @@ void ElementStatus::setElementStatus(std::size_t i, bool status)
 	{
 		const int change = (status) ? 1 : -1;
 		_element_status[i] = status;
-		const unsigned nElemNodes (_mesh->getElement(i)->getNNodes());
+		const unsigned nElemNodes (_mesh->getElement(i)->getNBaseNodes());
 		MeshLib::Node const*const*const nodes = _mesh->getElement(i)->getNodes();
 		for (unsigned i=0; i<nElemNodes; ++i)
 		{

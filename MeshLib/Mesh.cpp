@@ -32,9 +32,12 @@ namespace MeshLib
 
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
-           const std::vector<Element*> &elements)
-	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements)
+           const std::vector<Element*> &elements,
+           const std::size_t n_base_nodes)
+	: _id(_counter_value), _mesh_dimension(0), _name(name), _nodes(nodes), _elements(elements),
+	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes)
 {
+	assert(n_base_nodes <= nodes.size());
 	this->resetNodeIDs();
 	this->resetElementIDs();
 	this->setDimension();
@@ -50,7 +53,8 @@ Mesh::Mesh(const std::string &name,
 
 Mesh::Mesh(const Mesh &mesh)
 	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
-	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements())
+	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
+	  _n_base_nodes(mesh.getNBaseNodes())
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
@@ -61,7 +65,7 @@ Mesh::Mesh(const Mesh &mesh)
 	const size_t nElements (elements.size());
 	for (unsigned i=0; i<nElements; ++i)
 	{
-		const size_t nElemNodes = elements[i]->getNNodes();
+		const size_t nElemNodes = elements[i]->getNBaseNodes();
 		_elements[i] = elements[i]->clone();
 		for (unsigned j=0; j<nElemNodes; ++j)
 			_elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
@@ -97,7 +101,7 @@ void Mesh::addElement(Element* elem)
 	_elements.push_back(elem);
 
 	// add element information to nodes
-	unsigned nNodes (elem->getNNodes());
+	unsigned nNodes (elem->getNBaseNodes());
 	for (unsigned i=0; i<nNodes; ++i)
 		elem->_nodes[i]->addElement(elem);
 }
@@ -128,7 +132,7 @@ void Mesh::setElementsConnectedToNodes()
 {
 	for (auto e = _elements.begin(); e != _elements.end(); ++e)
 	{
-		const unsigned nNodes ((*e)->getNNodes());
+		const unsigned nNodes ((*e)->getNBaseNodes());
 		for (unsigned j=0; j<nNodes; ++j)
 			(*e)->_nodes[j]->addElement(*e);
 	}
@@ -165,7 +169,7 @@ void Mesh::setElementNeighbors()
 		// create vector with all elements connected to current element (includes lots of doubles!)
 		Element *const element = *it;
 
-		const size_t nNodes (element->getNNodes());
+		const size_t nNodes (element->getNBaseNodes());
 		for (unsigned n(0); n<nNodes; ++n)
 		{
 			std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
@@ -198,7 +202,7 @@ void Mesh::setNodesConnectedByEdges()
 		for (unsigned j=0; j<nConnElems; ++j)
 		{
 			const unsigned idx (conn_elems[j]->getNodeIDinElement(node));
-			const unsigned nElemNodes (conn_elems[j]->getNNodes());
+			const unsigned nElemNodes (conn_elems[j]->getNBaseNodes());
 			for (unsigned k(0); k<nElemNodes; ++k)
 			{
 				bool is_in_vector (false);
@@ -226,7 +230,7 @@ void Mesh::setNodesConnectedByElements()
 		const size_t nConnElems (conn_elems.size());
 		for (unsigned j=0; j<nConnElems; ++j)
 		{
-			const unsigned nElemNodes (conn_elems[j]->getNNodes());
+			const unsigned nElemNodes (conn_elems[j]->getNBaseNodes());
 			for (unsigned k(0); k<nElemNodes; ++k)
 			{
 				bool is_in_vector (false);

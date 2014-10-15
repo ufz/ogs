@@ -38,9 +38,16 @@ class Mesh : BaseLib::Counter<Mesh>
 
 public:
 	/// Constructor using a mesh name and an array of nodes and elements
+	/// @param name          Mesh name.
+	/// @param nodes         A vector of mesh nodes. In case nonlinear nodes are involved, one should 
+	///                      put them after line ones in the vector and set "n_base_nodes" argument.
+	/// @param elements      An array of mesh elements.
+	/// @param n_base_nodes  The number of base nodes. This is an optional parameter for nonlinear case.
+	///                      If the parameter is set to zero, we consider there are no nonlinear nodes.
 	Mesh(const std::string &name,
 	     const std::vector<Node*> &nodes,
-	     const std::vector<Element*> &elements);
+	     const std::vector<Element*> &elements,
+	     const std::size_t n_base_nodes = 0);
 
 	/// Copy constructor
 	Mesh(const Mesh &mesh);
@@ -96,6 +103,12 @@ public:
 	/// Get id of the mesh
 	std::size_t getID() const {return _id; }
 
+	/// Get the number of base nodes
+	std::size_t getNBaseNodes() const { return _n_base_nodes; }
+
+	/// Return true if the given node is a basic one (i.e. linear order node)
+	bool isBaseNode(std::size_t node_idx) const {return node_idx < _n_base_nodes; }
+
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
@@ -127,6 +140,7 @@ protected:
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
+	std::size_t _n_base_nodes;
 
 }; /* class */
 

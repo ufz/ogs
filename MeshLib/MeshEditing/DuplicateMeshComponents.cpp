@@ -71,8 +71,8 @@ MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::v
 template <typename E>
 MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes)
 {
-	MeshLib::Node** new_nodes = new MeshLib::Node*[element->getNNodes()];
-	for (unsigned i=0; i<element->getNNodes(); ++i)
+	MeshLib::Node** new_nodes = new MeshLib::Node*[element->getNBaseNodes()];
+	for (unsigned i=0; i<element->getNBaseNodes(); ++i)
 		new_nodes[i] = nodes[element->getNode(i)->getID()];
 	return new E(new_nodes, element->getValue());
 }

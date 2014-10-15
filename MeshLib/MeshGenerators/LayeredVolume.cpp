@@ -106,7 +106,7 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
 	const std::vector<MeshLib::Element*> &layer_elements (layer.getElements());
 	for (MeshLib::Element* elem : layer_elements)
 	{
-		const std::size_t nElemNodes (elem->getNNodes());
+		const std::size_t nElemNodes (elem->getNBaseNodes());
 		for (unsigned i=0; i<nElemNodes; ++i)
 			if (elem->getNeighbor(i) == nullptr)
 				for (unsigned j=0; j<nLayerBoundaries; ++j)
@@ -143,7 +143,7 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 			MeshLib::Element *low  (_elements[lower_offset+j]);
 
 			unsigned count(0);
-			const std::size_t nElemNodes (low->getNNodes());
+			const std::size_t nElemNodes (low->getNBaseNodes());
 			for (std::size_t k=0; k<nElemNodes; ++k)
 				if (high->getNodeIndex(k) == low->getNodeIndex(k))
 				{

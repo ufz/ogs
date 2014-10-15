@@ -88,7 +88,7 @@ void VtkMeshSource::PrintSelf( ostream& os, vtkIndent indent )
 	for (std::vector<MeshLib::Element*>::const_iterator it = elems.begin(); it != elems.end(); ++it)
 	{
 		os << indent << "Element " << i << ": ";
-		for (unsigned t = 0; t < (*it)->getNNodes(); ++t)
+		for (unsigned t = 0; t < (*it)->getNBaseNodes(); ++t)
 			os << (*it)->getNode(t)->getID() << " ";
 		os << "\n";
 	}
@@ -140,7 +140,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 
 		materialIDs->InsertValue(i, elem->getValue());
 		vtkIdList* point_ids = vtkIdList::New();
-		const unsigned nElemNodes (elem->getNNodes());
+		const unsigned nElemNodes (elem->getNBaseNodes());
 		point_ids->SetNumberOfIds(nElemNodes);
 		for (unsigned j = 0; j < nElemNodes; ++j)
 			point_ids->SetId(j, elem->getNode(j)->getID());
