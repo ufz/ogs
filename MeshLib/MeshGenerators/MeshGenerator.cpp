@@ -56,7 +56,7 @@ Mesh* MeshGenerator::generateLineMesh(const unsigned n_cells,
                                       std::string    const& mesh_name)
 {
 	//nodes
-	std::vector<Node*> nodes(generateRegularNodes({n_cells,0,0}, {cell_size,0,0}, origin));
+	std::vector<Node*> nodes(generateRegularNodes({{n_cells,0,0}}, {{cell_size,0,0}}, origin));
 
 	//elements
 	std::vector<Element*> elements;
@@ -98,7 +98,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
                               std::string const& mesh_name)
 {
 	//nodes
-	std::vector<Node*> nodes(generateRegularNodes({n_x_cells,n_y_cells,0}, {cell_size_x,cell_size_y,0}, origin));
+	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,0}}, {{cell_size_x,cell_size_y,0}}, origin));
 	const unsigned n_x_nodes (n_x_cells+1);
 
 	//elements
@@ -151,7 +151,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
 	                         std::string   const& mesh_name)
 {
 	//nodes
-	std::vector<Node*> nodes(generateRegularNodes({n_x_cells,n_y_cells,n_z_cells}, {cell_size_x,cell_size_y,cell_size_z}, origin));
+	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,n_z_cells}}, {{cell_size_x,cell_size_y,cell_size_z}}, origin));
 	const unsigned n_x_nodes (n_x_cells+1);
 	const unsigned n_y_nodes (n_y_cells+1);
 
@@ -213,7 +213,7 @@ Mesh* MeshGenerator::generateRegularTriMesh(const unsigned n_x_cells,
 	                          std::string   const& mesh_name)
 {
 	//nodes
-	std::vector<Node*> nodes(generateRegularNodes({n_x_cells,n_y_cells,0}, {cell_size_x,cell_size_y,0}, origin));
+	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,0}}, {{cell_size_x,cell_size_y,0}}, origin));
 	const unsigned n_x_nodes (n_x_cells+1);
 
 	//elements
