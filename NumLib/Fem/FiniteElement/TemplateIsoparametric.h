@@ -26,23 +26,28 @@ namespace NumLib
 /**
  * \brief Template class for isoparametric elements
  *
- * \tparam T_ELEMENT            Mesh element class
- * \tparam T_SHAPE              Shape function
- * \tparam T_NODAL_VECTOR       Nodal vector class
- * \tparam T_DIM_NODAL_MATRIX   Matrix class for a size of dim * nnodes
- * \tparam T_DIM_MATRIX         Matrix class for a size of dim * dim
+ * \tparam ShapeFunctionType_   The shape function type.
+ * \tparam ShapeMatrixTypes_    An aggregate of shape matrix types.
  */
 template <
-    class T_SHAPE,
-    class T_SHAPE_MATRICES
+    class ShapeFunctionType_,
+    class ShapeMatrixTypes_
     >
 class TemplateIsoparametric
 {
 public:
-    typedef typename T_SHAPE::MeshElement MeshElementType;
-    typedef T_SHAPE ShapeFunctionType;
-    typedef typename T_SHAPE_MATRICES::ShapeMatrices ShapeMatricesType;
-    typedef NaturalCoordinatesMapping<MeshElementType, ShapeFunctionType, ShapeMatricesType> NaturalCoordsMappingType;
+    using ShapeFunctionType = ShapeFunctionType_;
+
+    /// Coordinate mapping matrices type.
+    using ShapeMatrices = typename ShapeMatrixTypes_::ShapeMatrices;
+
+    /// Type of the underlying geometrical element.
+    using MeshElementType = typename ShapeFunctionType_::MeshElement;
+
+    /// Natural coordinates mapping tools specialization for specific
+    /// MeshElement and ShapeFunction types.
+    using NaturalCoordsMappingType = NaturalCoordinatesMapping<
+            MeshElementType, ShapeFunctionType, ShapeMatrices>;
 
     /**
      * Constructor without specifying a mesh element. setMeshElement() must be called afterwards.
@@ -79,7 +84,7 @@ public:
      * @param natural_pt    position in natural coordinates
      * @param shape         evaluated shape function matrices
      */
-    void computeShapeFunctions(const double *natural_pt, ShapeMatricesType &shape) const
+    void computeShapeFunctions(const double *natural_pt, ShapeMatrices &shape) const
     {
         NaturalCoordsMappingType::computeShapeMatrices(*_ele, natural_pt, shape);
     }
@@ -92,7 +97,7 @@ public:
      * @param shape                 evaluated shape function matrices
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-    void computeShapeFunctions(const double *natural_pt, ShapeMatricesType &shape) const
+    void computeShapeFunctions(const double *natural_pt, ShapeMatrices &shape) const
     {
         NaturalCoordsMappingType::template computeShapeMatrices<T_SHAPE_MATRIX_TYPE>(*_ele, natural_pt, shape);
     }
