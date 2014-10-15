@@ -15,15 +15,6 @@
 #ifndef MEMWATCH_H_
 #define MEMWATCH_H_
 
-#ifndef _MSC_VER
-
-#include <sys/types.h>
-#include <unistd.h>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-
 namespace BaseLib {
 
 class MemWatch {
@@ -36,14 +27,12 @@ public:
 
 private:
 	unsigned updateMemUsage ();
-	unsigned long _vmem_size;
-	unsigned long _rmem_size;
-	unsigned long _smem_size;
-	unsigned long _cmem_size;
+	unsigned long _vmem_size = 0;
+	unsigned long _rmem_size = 0;
+	unsigned long _smem_size = 0;
+	unsigned long _cmem_size = 0;
 };
 
 }
-
-#endif // not Windows
 
 #endif /* MEMWATCH_H_ */

@@ -122,7 +122,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	_rootItem->appendChild(elements_item);
 
 	const std::array<QString, 7> n_element_names = {{ "Lines:", "Triangles:", "Quads:", "Tetrahedra:", "Hexahedra:", "Pyramids:", "Prisms:" }};
-	const std::array<unsigned, 7>& n_element_types (MeshInformation::getNumberOfElementTypes(*mesh));
+	const std::array<unsigned, 7>& n_element_types (MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
 	for (std::size_t i=0; i<n_element_types.size(); ++i)
 	{
 		if (n_element_types[i])
@@ -139,7 +139,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* aabb_item = new TreeItem(bounding_box, _rootItem);
 	_rootItem->appendChild(aabb_item);
 
-	const GeoLib::AABB<MeshLib::Node> aabb (MeshInformation::getBoundingBox(*mesh));
+	const GeoLib::AABB<MeshLib::Node> aabb (MeshLib::MeshInformation::getBoundingBox(*mesh));
 	const MeshLib::Node& min = aabb.getMinPoint();
 	const MeshLib::Node& max = aabb.getMaxPoint();
 
@@ -158,7 +158,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* edge_item = new TreeItem(edges, _rootItem);
 	_rootItem->appendChild(edge_item);
 
-	std::pair<unsigned, unsigned> mat_bounds (MeshInformation::getValueBounds(*mesh));
+	std::pair<unsigned, unsigned> mat_bounds (MeshLib::MeshInformation::getValueBounds(*mesh));
 	QList<QVariant> materials;
 	materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) + "," << QString::number(mat_bounds.second) + "]" << "";
 	TreeItem* mat_item = new TreeItem(materials, _rootItem);

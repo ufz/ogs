@@ -16,6 +16,8 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 
+namespace MeshLib
+{
 
 const std::pair<unsigned, unsigned> MeshInformation::getValueBounds(const MeshLib::Mesh &mesh)
 {
@@ -51,3 +53,5 @@ const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const Mes
 	}
 	return n_element_types;
 }
+
+} //end MeshLib

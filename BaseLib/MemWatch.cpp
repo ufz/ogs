@@ -14,7 +14,14 @@
 
 #include "MemWatch.h"
 
-#ifndef _MSC_VER
+#if !defined(WIN32) && !defined(__APPLE__)
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 
 namespace BaseLib {
 
@@ -25,6 +32,7 @@ MemWatch::MemWatch ()
 
 unsigned MemWatch::updateMemUsage ()
 {
+#if !defined(WIN32) && !defined(__APPLE__)
         std::string fname ("/proc/");
         std::stringstream str_pid;
         str_pid << (unsigned) getpid();
@@ -48,6 +56,8 @@ unsigned MemWatch::updateMemUsage ()
         in >> pages;
         _cmem_size = ((unsigned long) pages) * ((unsigned long) getpagesize());
         in.close ();
+#endif
+
         return 0;
 }
 
@@ -74,4 +84,3 @@ unsigned long MemWatch::getCodeMemUsage () {
 
 } // end namespace BaseLib
 
-#endif // _MSC_VER

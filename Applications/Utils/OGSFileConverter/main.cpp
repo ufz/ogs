@@ -1,5 +1,7 @@
 #include "OGSFileConverter.h"
 
+#include <clocale>
+
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
 
