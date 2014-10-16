@@ -34,29 +34,58 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname, std::vector<Geo
 
 	GeoLib::Surface* sfc = new GeoLib::Surface(pnt_vec);
 	std::size_t id;
-	double x, y, z;
-	while (in)
+	double p0[3], p1[3], p2[3];
+	while (in.good())
 	{
 		// read id
-		in >> id;
-		// determine size
-		std::size_t pnt_pos(pnt_vec.size());
+		if (!(in >> id))
+			continue;
 		// read first point
-		in >> x >> y >> z;
-		pnt_vec.push_back(new GeoLib::Point(x, y, z));
+		if (!(in >> p0[0] >> p0[1] >> p0[2])) {
+			ERR("Could not read coords of 1st point of triangle %d.", id);
+			if (errors)
+				errors->push_back (std::string("readTIN error: ") +
+					std::string("Could not read coords of 1st point in triangle ") +
+					std::to_string(id));
+			in.close();
+			delete sfc;
+			return nullptr;
+		}
 		// read second point
-		in >> x >> y >> z;
-		pnt_vec.push_back(new GeoLib::Point(x, y, z));
+		if (!(in >> p1[0] >> p1[1] >> p1[2])) {
+			ERR("Could not read coords of 2nd point of triangle %d.", id);
+			if (errors)
+				errors->push_back (std::string("readTIN error: ") +
+					std::string("Could not read coords of 2nd point in triangle ") +
+					std::to_string(id));
+			in.close();
+			delete sfc;
+			return nullptr;
+		}
 		// read third point
-		in >> x >> y >> z;
-		pnt_vec.push_back(new GeoLib::Point(x, y, z));
+		if (!(in >> p2[0] >> p2[1] >> p2[2])) {
+			ERR("Could not read coords of 3rd point of triangle %d.", id);
+			if (errors)
+				errors->push_back (std::string("readTIN error: ") +
+					std::string("Could not read coords of 3rd point in triangle ") +
+					std::to_string(id));
+			in.close();
+			delete sfc;
+			return nullptr;
+		}
+		// determine size pnt_vec to insert the correct ids
+		std::size_t pnt_pos(pnt_vec.size());
+		pnt_vec.push_back(new GeoLib::Point(p0));
+		pnt_vec.push_back(new GeoLib::Point(p1));
+		pnt_vec.push_back(new GeoLib::Point(p2));
 		// create new Triangle
 		sfc->addTriangle(pnt_pos, pnt_pos + 1, pnt_pos + 2);
 	}
 
 	if (sfc->getNTriangles() == 0) {
 		WARN("readTIN(): No triangle found.", fname.c_str());
-		if (errors) errors->push_back ("readTIN error because of no triangle found");
+		if (errors)
+			errors->push_back ("readTIN error because of no triangle found");
 		delete sfc;
 		return nullptr;
 	}
