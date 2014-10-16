@@ -17,7 +17,7 @@
 #include "BaseLib/StringTools.h"
 
 #include "GeoLib/Surface.h"
-
+#include "GeoLib/AnalyticalGeometry.h"
 
 namespace FileIO
 {
@@ -73,6 +73,18 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname, std::vector<Geo
 			delete sfc;
 			return nullptr;
 		}
+
+		// check area of triangle
+		double const d_eps(std::numeric_limits<double>::epsilon());
+		if (GeoLib::calcTriangleArea(p0, p1, p2) < d_eps) {
+			ERR("readTIN: Triangle %d has zero area.", id);
+			if (errors)
+				errors->push_back (std::string("readTIN: Triangle ")
+					+ std::to_string(id) + std::string(" has zero area."));
+			delete sfc;
+			return nullptr;
+		}
+
 		// determine size pnt_vec to insert the correct ids
 		std::size_t pnt_pos(pnt_vec.size());
 		pnt_vec.push_back(new GeoLib::Point(p0));
