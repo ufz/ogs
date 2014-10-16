@@ -21,6 +21,8 @@
 #include <limits>
 #include <list>
 
+#include "logog/include/logog.hpp"
+
 // BaseLib
 #include "quicksort.h"
 
@@ -169,8 +171,8 @@ bool lineSegmentIntersect(
 }
 
 bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
-                            size_t &idx0,
-                            size_t &idx1,
+                           size_t &idx0,
+                           size_t &idx1,
                            GeoLib::Point& intersection_pnt)
 {
 	size_t n_segs(ply->getNumberOfPoints() - 1);
@@ -197,17 +199,28 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 	return false;
 }
 
-bool isPointInTriangle(const GeoLib::Point* p, const GeoLib::Point* a, const GeoLib::Point* b,
-                       const GeoLib::Point* c)
+bool isPointInTriangle(GeoLib::Point const& p,
+                       GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                       double eps_pnt_out_of_plane, 
+                       double eps_pnt_out_of_tri,
+                       GeoLib::TriangleTest algorithm)
 {
-	return isPointInTriangle(*p, *a, *b, *c);
+	switch (algorithm)
+	{
+	case GeoLib::GAUSS:
+		return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
+	case GeoLib::BARYCENTRIC:
+		return barycentricPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
+	default:
+		ERR ("Selected algorithm for point in triangle testing not found, falling back on default.");
+	}
+	return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 }
 
-bool isPointInTriangle(GeoLib::Point const& q,
-                       GeoLib::Point const& a,
-                       GeoLib::Point const& b,
-                       GeoLib::Point const& c,
-                       double eps)
+bool gaussPointInTriangle(GeoLib::Point const& q,
+                          GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                          double eps_pnt_out_of_plane, 
+                          double eps_pnt_out_of_tri)
 {
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(a, c);
@@ -225,7 +238,7 @@ bool isPointInTriangle(GeoLib::Point const& q,
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss(mat);
 	gauss.solve(y);
 
-	const double lower (std::numeric_limits<float>::epsilon());
+	const double lower (eps_pnt_out_of_tri);
 	const double upper (1 + lower);
 
 	if (-lower <= y[0] && y[0] <= upper && -lower <= y[1] && y[1] <= upper && y[0] + y[1] <=
@@ -235,11 +248,36 @@ bool isPointInTriangle(GeoLib::Point const& q,
 			a[1] + y[0] * v[1] + y[1] * w[1],
 			a[2] + y[0] * v[2] + y[1] * w[2]
 		);
-		if (MathLib::sqrDist(q, q_projected) < eps)
+		if (MathLib::sqrDist(q, q_projected) < eps_pnt_out_of_plane)
 			return true;
 	}
 
 	return false;
+}
+
+bool barycentricPointInTriangle(GeoLib::Point const& p,
+                                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                                double eps_pnt_out_of_plane, 
+                                double eps_pnt_out_of_tri)
+{
+	if (std::abs(orientation3d(p, a, b, c)) > eps_pnt_out_of_plane)
+		return false;
+
+	MathLib::Vector3 const pa (p,a); 
+	MathLib::Vector3 const pb (p,b);
+	MathLib::Vector3 const pc (p,c);
+	double const area_x_2 (calcTriangleArea(a,b,c) * 2);
+    
+	double const alpha ((MathLib::crossProduct(pb,pc).getLength()) / area_x_2);
+	if (alpha < -eps_pnt_out_of_tri || alpha > 1+eps_pnt_out_of_tri)
+		return false;
+	double const beta  ((MathLib::crossProduct(pc,pa).getLength()) / area_x_2);
+	if (beta  < -eps_pnt_out_of_tri || beta  > 1+eps_pnt_out_of_tri)
+		return false;
+	double const gamma (1 - alpha - beta);
+	if (gamma < -eps_pnt_out_of_tri || gamma > 1+eps_pnt_out_of_tri)
+		return false;
+	return true;
 }
 
 bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 

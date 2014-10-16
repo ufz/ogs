@@ -119,7 +119,7 @@ bool EarClippingTriangulation::isEar(std::size_t v0, std::size_t v1, std::size_t
 	for (std::list<std::size_t>::const_iterator it (_vertex_list.begin ());
 		it != _vertex_list.end(); ++it) {
 		if (*it != v0 && *it != v1 && *it != v2) {
-			if (isPointInTriangle (_pnts[*it], _pnts[v0], _pnts[v1], _pnts[v2])) {
+			if (isPointInTriangle (*_pnts[*it], *_pnts[v0], *_pnts[v1], *_pnts[v2])) {
 				return false;
 			}
 		}

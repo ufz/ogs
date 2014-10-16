@@ -26,6 +26,11 @@ namespace GeoLib
 {
 class Polyline;
 
+enum TriangleTest
+{
+	GAUSS, BARYCENTRIC
+};
+
 enum Orientation
 {
 	CW = 1, CCW = 2, COLLINEAR = 3
@@ -111,22 +116,60 @@ double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::
  */
 double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4);
 
-bool isPointInTriangle (const GeoLib::Point* p,
-		const GeoLib::Point* a, const GeoLib::Point* b, const GeoLib::Point* c);
-
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using the eps it is possible to test a 'epsilon' neighbourhood around the triangle.
+ * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
+ * as well as an 'epsilon' outside the triangles plane.
  * @param p test point
  * @param a edge node of triangle
  * @param b edge node of triangle
  * @param c edge node of triangle
- * @param eps size of neighbourhood (orthogonal distance to the plane spaned by triangle)
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
+ * @param algorithm defines the method to use
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
 bool isPointInTriangle(GeoLib::Point const& p,
-				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps = std::numeric_limits<float>::epsilon());
+                       GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                       double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+                       double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
+                       GeoLib::TriangleTest algorithm = GeoLib::GAUSS);
+
+/**
+ * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
+ * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
+ * as well as an 'epsilon' outside the triangles plane.
+ * @param p test point
+ * @param a edge node of triangle
+ * @param b edge node of triangle
+ * @param c edge node of triangle
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
+ *                             ((orthogonal distance to the plane spaned by triangle)
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
+ * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
+ */
+bool gaussPointInTriangle(GeoLib::Point const& p,
+                          GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                          double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+                          double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
+
+/**
+ * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
+ * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
+ * as well as an 'epsilon' outside the triangles plane.
+ * Algorithm based on "Fundamentals of Computer Graphics" by Peter Shirley.
+ * @param p test point
+ * @param a edge node of triangle
+ * @param b edge node of triangle
+ * @param c edge node of triangle
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
+ * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
+ */
+bool barycentricPointInTriangle(GeoLib::Point const& p,
+                                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                                double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+                                double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
