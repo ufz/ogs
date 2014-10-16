@@ -14,6 +14,10 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#ifdef USE_PETSC
+#include <petscksp.h>
+#endif
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -32,6 +36,10 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef USE_PETSC
+	char help[] = "ogs6 with PETSc \n";
+	PetscInitialize(&argc, &argv, nullptr, help);
+#endif
 
 	using ConfigTree = boost::property_tree::ptree;
 

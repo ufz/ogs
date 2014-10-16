@@ -67,6 +67,12 @@ class PETScLinearSolver
             return its;
         }
 
+        /// Get elapsed wall clock time.
+        PetscLogDouble getElapsedTime() const
+        {
+            return _elapsed_ctime;
+        }
+
     private:
         /// Matrix, kept as a member only for solving successive linear equation
         /// that preconditioner matrix may vary.
@@ -74,6 +80,8 @@ class PETScLinearSolver
 
         KSP _solver; ///< Solver type.
         PC _pc;      ///< Preconditioner type.
+
+        PetscLogDouble _elapsed_ctime; ///< Clock time
 };
 
 } // end namespace

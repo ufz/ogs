@@ -21,20 +21,20 @@
 namespace BaseLib
 {
 
-/// Record CPU time
+/// Count CPU time
 class CPUTime
 {
     public:
         /// Start the timer.
         void start()
         {
-            _timer = - clock()/static_cast<double>(CLOCKS_PER_SEC);
+            _timer = clock();
         }
 
         /// Get the epalsed time after started.
         double elapsed()
         {
-            return _timer + clock()/static_cast<double>(CLOCKS_PER_SEC);
+            return (clock() - _timer)/static_cast<double>(CLOCKS_PER_SEC);
         }
     private:
         double _timer = 0.;

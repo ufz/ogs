@@ -16,7 +16,7 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#if defined(USE_MPI) || defined(USE_PETSC)
+#if defined(USE_MPI)
 #include <mpi.h>
 #else
 #ifndef _MSC_VER
@@ -29,22 +29,22 @@
 namespace BaseLib
 {
 
-/// Record the running time.
+/// Count the running time.
 class RunTime
 {
     public:
         /// Start the timer.
         void start()
         {
-#if defined(USE_MPI) || defined(USE_PETSC)
-            _timer = -MPI_Wtime();
+#if defined(USE_MPI)
+            _timer = MPI_Wtime();
 #else
 #ifndef _MSC_VER
             timeval t;
             gettimeofday(&t, 0);
             _timer = -t.tv_sec - t.tv_usec/1000000.0;
 #else
-            _timer = -timeGetTime()/1000.0;
+            _timer = timeGetTime();
 #endif
 #endif
         }
@@ -52,8 +52,8 @@ class RunTime
         /// Get the epalsed time after started.
         double elapsed()
         {
-#if defined(USE_MPI) || defined(USE_PETSC)
-            return _timer + MPI_Wtime();
+#if defined(USE_MPI)
+            return _timer - MPI_Wtime();
 #else
 #ifndef _MSC_VER
             timeval t;
@@ -61,7 +61,7 @@ class RunTime
             _timer += t.tv_sec + t.tv_usec/1000000.0;
             return _timer;
 #else
-            return _timer + timeGetTime()/1000.0;
+            return (timeGetTime() - _timer)/1000.0;
 #endif
 #endif
         }
