@@ -169,8 +169,8 @@ bool lineSegmentIntersect(
 }
 
 bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
-                            size_t &idx0,
-                            size_t &idx1,
+                           size_t &idx0,
+                           size_t &idx1,
                            GeoLib::Point& intersection_pnt)
 {
 	size_t n_segs(ply->getNumberOfPoints() - 1);
@@ -198,9 +198,10 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 }
 
 bool isPointInTriangle(GeoLib::Point const& p,
-				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps_pnt_out_of_plane, double eps_pnt_out_of_tri,
-				GeoLib::TriangleTest algorithm)
+                       GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                       double eps_pnt_out_of_plane, 
+                       double eps_pnt_out_of_tri,
+                       GeoLib::TriangleTest algorithm)
 {
 	switch (algorithm)
 	{
@@ -213,11 +214,9 @@ bool isPointInTriangle(GeoLib::Point const& p,
 }
 
 bool gaussPointInTriangle(GeoLib::Point const& q,
-				GeoLib::Point const& a,
-				GeoLib::Point const& b,
-				GeoLib::Point const& c,
-				double eps_pnt_out_of_plane, 
-				double eps_pnt_out_of_tri)
+                          GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                          double eps_pnt_out_of_plane, 
+                          double eps_pnt_out_of_tri)
 {
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(a, c);
@@ -253,8 +252,9 @@ bool gaussPointInTriangle(GeoLib::Point const& q,
 }
 
 bool barycentricPointInTriangle(GeoLib::Point const& p,
-				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps_pnt_out_of_plane, double eps_pnt_out_of_tri)
+                                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                                double eps_pnt_out_of_plane, 
+                                double eps_pnt_out_of_tri)
 {
 	if (std::abs(orientation3d(p, a, b, c)) > eps_pnt_out_of_plane)
 		return false;

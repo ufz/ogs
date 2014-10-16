@@ -121,7 +121,6 @@ double calcTetrahedronVolume(const double* x1, const double* x2, const double* x
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
  * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
  * as well as an 'epsilon' outside the triangles plane.
- * Algorithm based on "Fundamentals of Computer Graphics" by Peter Shirley.
  * @param p test point
  * @param a edge node of triangle
  * @param b edge node of triangle
@@ -132,14 +131,15 @@ double calcTetrahedronVolume(const double* x1, const double* x2, const double* x
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
 bool isPointInTriangle(GeoLib::Point const& p,
-				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-				double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
-				GeoLib::TriangleTest algorithm = GeoLib::GAUSS);
+                       GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                       double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+                       double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
+                       GeoLib::TriangleTest algorithm = GeoLib::GAUSS);
 
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using the eps it is possible to test a 'epsilon' neighbourhood around the triangle.
+ * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
+ * as well as an 'epsilon' outside the triangles plane.
  * @param p test point
  * @param a edge node of triangle
  * @param b edge node of triangle
@@ -150,9 +150,9 @@ bool isPointInTriangle(GeoLib::Point const& p,
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
 bool gaussPointInTriangle(GeoLib::Point const& p,
-				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-				double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
+                          GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                          double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+                          double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
@@ -168,9 +168,9 @@ bool gaussPointInTriangle(GeoLib::Point const& p,
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
 bool barycentricPointInTriangle(GeoLib::Point const& p,
-				GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-				double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-				double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
+                                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+                                double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+                                double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
