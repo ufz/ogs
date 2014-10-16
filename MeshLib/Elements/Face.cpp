@@ -21,7 +21,7 @@
 
 namespace MeshLib {
 
-constexpr unsigned Face::dimension;
+const unsigned Face::dimension;
 
 /*
 Face::Face(Node** nodes, MeshElemType type, unsigned value)

@@ -27,7 +27,7 @@ class Cell : public Element
 {
 public:
 	/// Constant: Dimension of this mesh element
-	static constexpr unsigned dimension = 3;
+	static const unsigned dimension = 3;
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
 	double getContent() const { return _volume; };
