@@ -24,23 +24,43 @@ class LogogCustomCout : public logog::Target
 {
 public:
 #ifdef USE_MPI
-	LogogCustomCout(MPI_Comm mpi_comm)
-	{
-		MPI_Comm_rank(mpi_comm, &_mpi_rank);
-	}
+	/**
+	 * Constructor when MPI is involved
+	 *
+	 * @param all_rank_output_level  Minimum level to output messages from all MPI processes
+	 * @param mpi_comm               MPI communicator
+	 */
+	LogogCustomCout(LOGOG_LEVEL_TYPE all_rank_output_level = LOGOG_LEVEL_INFO, MPI_Comm mpi_comm = MPI_COMM_WORLD)
+	: _all_rank_output_level(all_rank_output_level), _is_rank0 (getRank(mpi_comm)==0)
+	{}
 #endif
+
+	virtual int Receive( const logog::Topic &topic )
+	{
+#ifdef USE_MPI
+		if (topic.Level() > _all_rank_output_level && !_is_rank0)
+			return 0;
+#endif
+		return logog::Target::Receive(topic);
+	}
 
 	virtual int Output( const LOGOG_STRING &data )
 	{
-#ifdef USE_MPI
-		if (_mpi_rank == 0)
-#endif
 		LOGOG_COUT << (const LOGOG_CHAR *)data;
 		return 0;
 	}
 
+private:
 #ifdef USE_MPI
-	int _mpi_rank;
+	int getRank(MPI_Comm mpi_comm) const
+	{
+		int rank = 0;
+		MPI_Comm_rank(mpi_comm, &rank);
+		return rank;
+	}
+
+	const LOGOG_LEVEL_TYPE _all_rank_output_level;
+	const bool _is_rank0;
 #endif
 };
 

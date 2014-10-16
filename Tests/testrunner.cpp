@@ -45,10 +45,8 @@ int main(int argc, char* argv[])
     {
 #ifdef USE_MPI
         MPI_Init(&argc, &argv);
-        BaseLib::LogogCustomCout out(MPI_COMM_WORLD);
-#else
-        BaseLib::LogogCustomCout out;
 #endif
+        BaseLib::LogogCustomCout out;
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
