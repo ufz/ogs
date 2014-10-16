@@ -17,10 +17,10 @@
 #ifndef VTKMAPPEDMESH_H_
 #define VTKMAPPEDMESH_H_
 
-#include "MeshEnums.h"
-
 #include <vtkObject.h>
 #include <vtkMappedUnstructuredGrid.h>
+
+#include "MeshEnums.h"
 
 class vtkGenericCell;
 namespace MeshLib {
@@ -76,9 +76,6 @@ private:
 		MeshElemType ogs;
 		switch (type)
 		{
-			case 0:
-				ogs = MeshElemType::INVALID;
-				break;
 			case VTK_LINE:
 				ogs = MeshElemType::LINE;
 				break;
@@ -99,6 +96,9 @@ private:
 				break;
 			case VTK_PYRAMID:
 				ogs = MeshElemType::PYRAMID;
+				break;
+			default:
+				ogs = MeshElemType::INVALID;
 				break;
 		}
 		return ogs;

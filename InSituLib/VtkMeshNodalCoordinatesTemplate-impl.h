@@ -14,12 +14,12 @@
 
 #include "VtkMeshNodalCoordinatesTemplate.h"
 
-#include "MeshLib/Node.h"
-
 #include <vtkIdList.h>
 #include <vtkObjectFactory.h>
 #include <vtkVariant.h>
 #include <vtkVariantCast.h>
+
+#include "MeshLib/Node.h"
 
 namespace InSituLib {
 
@@ -74,7 +74,7 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 		return;
 	}
 
-	vtkIdType numTuples = ptIds->GetNumberOfIds();
+	const vtkIdType numTuples = ptIds->GetNumberOfIds();
 
 	outArray->SetNumberOfComponents(this->NumberOfComponents);
 	outArray->SetNumberOfTuples(numTuples);
@@ -163,9 +163,9 @@ template <class Scalar> double* VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetTuple(vtkIdType i, double *tuple)
 {
-	tuple[0] = static_cast<double>((*(*this->_nodes)[i])[0]);
-	tuple[1] = static_cast<double>((*(*this->_nodes)[i])[1]);
-	tuple[2] = static_cast<double>((*(*this->_nodes)[i])[2]);
+	tuple[0] = (*(*this->_nodes)[i])[0];
+	tuple[1] = (*(*this->_nodes)[i])[1];
+	tuple[2] = (*(*this->_nodes)[i])[2];
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>

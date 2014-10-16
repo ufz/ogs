@@ -54,8 +54,8 @@ IF(NOT VTK_DIR)
 	ENDIF()
 ENDIF()
 
-IF(OGS_SYSTEM_VTK_ONLY AND NOT VTK_FOUND)
-	MESSAGE(FATAL_ERROR "Vtk was not found but is required! Try to set VTK_DIR to its install or build directory.")
+IF(OGS_SYSTEM_VTK_ONLY AND NOT VTK_FOUND AND NOT ParaView_FOUND)
+	MESSAGE(FATAL_ERROR "Vtk / ParaView was not found but is required! Try to set VTK_DIR or ParaView_DIR to its install or build directory.")
 ENDIF()
 
 IF(VTK_FOUND)

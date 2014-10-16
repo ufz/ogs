@@ -50,7 +50,7 @@ IF(ParaView_FOUND AND VTKIO_LIB_FOUND)
 			INCLUDE_DIRECTORIES(SYSTEM ${DIR}/../cxx ${DIR}/include)
 		ENDIF()
 	ENDFOREACH()
-	MESSAGE("Using ParaView in ${ParaView_DIR}")
+	MESSAGE(STATUS "Using ParaView in ${ParaView_DIR}")
 	RETURN()
 ELSEIF(NOT ParaView_DIR)
 	# If ParaView was not found check for VTK
@@ -65,7 +65,7 @@ ELSEIF(NOT ParaView_DIR)
 			ENDIF()
 		ENDFOREACH()
 		INCLUDE_DIRECTORIES(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
-		MESSAGE("Using VTK in ${VTK_DIR}")
+		MESSAGE(STATUS "Using VTK in ${VTK_DIR}")
 		RETURN()
 	ELSE()
 		# If nothing was found build ParaView as an external project
@@ -95,7 +95,7 @@ ELSE()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.sh)
 ENDIF()
 
-MESSAGE("Building ParaView as an external project in the build directory")
+MESSAGE(STATUS "Building ParaView as an external project in the build directory")
 ExternalProject_Add(Catalyst
 	PREFIX ${CMAKE_BINARY_DIR}/External/catalyst
 	GIT_REPOSITORY ${CATALYST_GIT_URL}

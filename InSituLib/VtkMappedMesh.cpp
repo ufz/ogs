@@ -14,9 +14,7 @@
 
 #include "VtkMappedMesh.h"
 
-#include "Element.h"
-#include "MeshLib/Node.h"
-#include "MeshEnums.h"
+#include <algorithm>
 
 #include "logog/include/logog.hpp"
 
@@ -27,7 +25,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkPoints.h>
 
-#include <algorithm>
+#include "Element.h"
+#include "MeshLib/Node.h"
+#include "MeshEnums.h"
 
 namespace InSituLib {
 
@@ -92,7 +92,7 @@ int VtkMappedMeshImpl::GetCellType(vtkIdType cellId)
 
 void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
 {
-	const MeshLib::Element* elem = (*_elements)[cellId];
+	const MeshLib::Element* const elem = (*_elements)[cellId];
 	const unsigned numNodes(elem->getNNodes());
 	const MeshLib::Node* const* nodes = (*_elements)[cellId]->getNodes();
 	ptIds->SetNumberOfIds(numNodes);

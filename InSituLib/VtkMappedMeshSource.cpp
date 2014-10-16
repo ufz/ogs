@@ -14,23 +14,22 @@
 
 #include "VtkMappedMeshSource.h"
 
-#include "VtkMappedMesh.h"
-#include "VtkMeshNodalCoordinatesTemplate.h"
-//#include "vtkCPExodusIIResultsArrayTemplate.h"
-
 #include "logog/include/logog.hpp"
 
-#include "vtkCellData.h"
-#include "vtkDemandDrivenPipeline.h"
-#include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkDoubleArray.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkPoints.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkIdTypeArray.h"
+#include <vtkCellData.h>
+#include <vtkDemandDrivenPipeline.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkDoubleArray.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkPoints.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkIdTypeArray.h>
+
+#include "VtkMappedMesh.h"
+#include "VtkMeshNodalCoordinatesTemplate.h"
 
 namespace InSituLib {
 

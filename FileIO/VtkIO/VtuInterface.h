@@ -12,12 +12,12 @@
  *
  */
 
-#ifndef BOOSTVTUINTERFACE_H_
-#define BOOSTVTUINTERFACE_H_
-
-#include "Writer.h"
+#ifndef VTUINTERFACE_H_
+#define VTUINTERFACE_H_
 
 #include <string>
+
+#include "Writer.h"
 
 namespace MeshLib {
 	class Mesh;
@@ -39,7 +39,7 @@ public:
 	static MeshLib::Mesh* readVTUFile(const std::string &file_name);
 
 	/// Decide if the mesh data should be written compressed (default is false).
-	void setCompressData(bool flag=true) { _use_compressor = flag; };
+	void setCompressData(bool flag=true) { _use_compressor = flag; }
 
 	/// Sets the mesh to write.
 	void setMesh(const MeshLib::Mesh* mesh);
@@ -53,4 +53,4 @@ private:
 
 }
 
-#endif /* BOOSTVTUINTERFACE_H_ */
+#endif /* VTUINTERFACE_H_ */

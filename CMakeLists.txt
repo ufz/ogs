@@ -102,7 +102,7 @@ INCLUDE(scripts/cmake/Pack.cmake)
 # External projects
 OPTION(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 INCLUDE(scripts/cmake/ExternalProjectBoost.cmake)
-OPTION(OGS_SYSTEM_VTK_ONLY "If On VTK will be searched if installed and will not be build locally." OFF)
+OPTION(OGS_SYSTEM_VTK_ONLY "If On VTK / ParaView will be searched if installed and will not be build locally." OFF)
 INCLUDE(scripts/cmake/ExternalProjectCatalyst.cmake)
 
 INCLUDE_DIRECTORIES( SYSTEM ${Boost_INCLUDE_DIRS} )

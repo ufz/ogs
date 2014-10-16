@@ -23,10 +23,11 @@
 #ifndef _VTKMAPPEDMESHSOURCE
 #define _VTKMAPPEDMESHSOURCE
 
-#include "vtkUnstructuredGridAlgorithm.h"
-#include "vtkNew.h"
 #include <string>
 #include <vector>
+
+#include "vtkUnstructuredGridAlgorithm.h"
+#include "vtkNew.h"
 
 class vtkDataArrayCollection;
 class vtkPointData;

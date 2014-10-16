@@ -13,13 +13,13 @@
 
 #include "VtuInterface.h"
 
-#include "Mesh.h"
-#include "MeshGenerators/VtkMeshConverter.h"
-
 #include "logog/include/logog.hpp"
 
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkSmartPointer.h>
+
+#include "Mesh.h"
+#include "MeshGenerators/VtkMeshConverter.h"
 
 namespace FileIO
 {
