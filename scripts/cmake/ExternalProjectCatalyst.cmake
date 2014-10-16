@@ -20,6 +20,8 @@ IF(OGS_BUILD_GUI)
 		vtkIOImage
 		vtkGUISupportQt
 		vtkRenderingAnnotation
+		vtkFiltersExtraction
+		vtkFiltersGeometry
 		vtkFiltersTexture
 		vtkFiltersModeling
 		vtkFiltersSources
@@ -31,6 +33,7 @@ IF(OGS_BUILD_GUI)
 	)
 	SET(CATALYST_GIT_URL https://github.com/ufz/catalyst-gui.git)
 ENDIF()
+
 SET(CATALYST_LIBRARIES ${PARAVIEW_MODULES} CACHE STRING "" FORCE)
 IF(OGS_BUILD_GUI)
 	# Replace vtknetcdf with vtkNetCDF vtkNetCDF_cxx
@@ -38,13 +41,36 @@ IF(OGS_BUILD_GUI)
 	LIST(APPEND CATALYST_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
 ENDIF()
 
-FIND_PACKAGE(ParaView 4.2 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE)
+FIND_PACKAGE(ParaView 4.2 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE QUIET)
 
 FIND_LIBRARY(VTKIO_LIB_FOUND vtkIOXML-pv4.2 HINTS ${ParaView_DIR}/lib PATH_SUFFIXES Release Debug)
 IF(ParaView_FOUND AND VTKIO_LIB_FOUND)
+	FOREACH(DIR ${PARAVIEW_INCLUDE_DIRS})
+		IF("${DIR}" MATCHES ".*vtknetcdf.*")
+			INCLUDE_DIRECTORIES(SYSTEM ${DIR}/../cxx ${DIR}/include)
+		ENDIF()
+	ENDFOREACH()
+	MESSAGE("Using ParaView in ${ParaView_DIR}")
 	RETURN()
 ELSEIF(NOT ParaView_DIR)
-	SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
+	# If ParaView was not found check for VTK
+	FIND_PACKAGE(VTK 6.1 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE QUIET)
+	IF(VTK_FOUND)
+		INCLUDE( ${VTK_USE_FILE} )
+		FOREACH(DIR ${VTK_INCLUDE_DIRS})
+			IF("${DIR}" MATCHES ".*vtknetcdf.*")
+				INCLUDE_DIRECTORIES(SYSTEM ${DIR}/../cxx ${DIR}/include)
+			ELSEIF("${DIR}" MATCHES ".*vtk.*")
+				INCLUDE_DIRECTORIES(SYSTEM ${DIR}/vtknetcdf/include)
+			ENDIF()
+		ENDFOREACH()
+		INCLUDE_DIRECTORIES(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
+		MESSAGE("Using VTK in ${VTK_DIR}")
+		RETURN()
+	ELSE()
+		# If nothing was found build ParaView as an external project
+		SET(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
+	ENDIF()
 ENDIF()
 
 SET(CATALYST_CMAKE_GENERATOR ${CMAKE_GENERATOR})
@@ -56,8 +82,8 @@ IF(WIN32)
 		SET(CATALYST_MAKE_COMMAND ninja ${CATALYST_LIBRARIES})
 	ELSE()
 		SET(CATALYST_MAKE_COMMAND
-			cmake --build . --config Release --target ${CATALYST_LIBRARIES} -- /m &&
-			cmake --build . --config Debug --target ${CATALYST_LIBRARIES} -- /m)
+			msbuild /p:Configuration=Release /m:${NUM_PROCESSORS} ParaView.sln &&
+			msbuild /p:Configuration=Debug /m:${NUM_PROCESSORS} /m ParaView.sln)
 	ENDIF()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.bat)
 ELSE()
@@ -69,11 +95,10 @@ ELSE()
 	SET(CATALYST_CONFIGURE_COMMAND cmake.sh)
 ENDIF()
 
+MESSAGE("Building ParaView as an external project in the build directory")
 ExternalProject_Add(Catalyst
 	PREFIX ${CMAKE_BINARY_DIR}/External/catalyst
 	GIT_REPOSITORY ${CATALYST_GIT_URL}
-	#URL ${OGS_VTK_URL}
-	#URL_MD5 ${OGS_VTK_MD5}
 	CONFIGURE_COMMAND ../Catalyst/${CATALYST_CONFIGURE_COMMAND} -G ${CATALYST_CMAKE_GENERATOR} ../Catalyst
 	BUILD_COMMAND ${CATALYST_MAKE_COMMAND}
 	INSTALL_COMMAND ""

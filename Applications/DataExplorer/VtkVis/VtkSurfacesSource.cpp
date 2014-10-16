@@ -128,7 +128,6 @@ int VtkSurfacesSource::RequestInformation( vtkInformation* request,
 	(void)inputVector;
 
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
-	outInfo->Set(CAN_HANDLE_PIECE_REQUEST(), 1);
 
 	return 1;
 }
