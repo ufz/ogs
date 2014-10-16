@@ -21,6 +21,8 @@
 #include <limits>
 #include <list>
 
+#include "logog/include/logog.hpp"
+
 // BaseLib
 #include "quicksort.h"
 
@@ -205,12 +207,14 @@ bool isPointInTriangle(GeoLib::Point const& p,
 {
 	switch (algorithm)
 	{
+	case GeoLib::GAUSS:
+		return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 	case GeoLib::BARYCENTRIC:
 		return barycentricPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 	default:
-		return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
+		ERR ("Selected algorithm for point in triangle testing not found, falling back on default.");
 	}
-	return false;
+	return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 }
 
 bool gaussPointInTriangle(GeoLib::Point const& q,
