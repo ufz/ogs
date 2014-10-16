@@ -166,6 +166,16 @@ T fastpow (T base, std::size_t exp)
 	return result;
 }
 
+/**
+ * Template metaprogramming, compile-time version of pow() for integral
+ * exponents.
+ */
+template <typename T>
+inline constexpr T pow(T const x, unsigned const y)
+{
+    return (y == 0) ? 1 : x * pow(x, y - 1);
+};
+
 } // namespace
 
 #endif /* MATHTOOLS_H_ */

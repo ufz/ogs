@@ -10,6 +10,8 @@
 #ifndef SHAPELINE2_H_
 #define SHAPELINE2_H_
 
+#include "MeshLib/Elements/Line.h"
+
 namespace NumLib
 {
 
@@ -41,6 +43,10 @@ public:
      */
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X &r, T_N &dN);
+
+    using MeshElement = MeshLib::Line;
+    static constexpr std::size_t DIM = MeshElement::dimension;
+    static constexpr std::size_t NPOINTS = MeshElement::n_all_nodes;
 };
 
 }

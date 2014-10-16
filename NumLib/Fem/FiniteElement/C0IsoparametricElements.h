@@ -22,36 +22,34 @@
 #include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
-#include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
-#include "NumLib/Fem/Integration/IntegrationGaussTri.h"
 
 #include "TemplateIsoparametric.h"
 
 namespace NumLib
 {
 
-template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
+template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeLINE2
 {
-    typedef TemplateIsoparametric<MeshLib::Line, ShapeLine2, IntegrationGaussRegular<1>, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeLine2, T_SHAPE_MATRIX_POLICY<ShapeLine2>> type;
 };
 
-template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
+template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeTRI3
 {
-    typedef TemplateIsoparametric<MeshLib::Tri, ShapeTri3, IntegrationGaussTri, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeTri3, T_SHAPE_MATRIX_POLICY<ShapeTri3>> type;
 };
 
-template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
+template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeQUAD4
 {
-    typedef TemplateIsoparametric<MeshLib::Quad, ShapeQuad4, IntegrationGaussRegular<2>, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeQuad4, T_SHAPE_MATRIX_POLICY<ShapeQuad4>> type;
 };
 
-template <class T_SHAPE_VECTOR, class T_DSHAPE_MATRIX, class T_JACOBIAN_MATRIX>
+template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeHEX8
 {
-    typedef TemplateIsoparametric<MeshLib::Hex, ShapeHex8, IntegrationGaussRegular<3>, T_SHAPE_VECTOR, T_DSHAPE_MATRIX, T_JACOBIAN_MATRIX> type;
+    typedef TemplateIsoparametric<ShapeHex8, T_SHAPE_MATRIX_POLICY<ShapeHex8>> type;
 };
 
 } // NumLib

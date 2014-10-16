@@ -15,6 +15,8 @@
 #ifndef SHAPETRI3_H_
 #define SHAPETRI3_H_
 
+#include "MeshLib/Elements/Tri.h"
+
 namespace NumLib
 {
 
@@ -49,6 +51,10 @@ public:
      */
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X &/*r*/, T_N &dN6);
+
+    using MeshElement = MeshLib::Tri;
+    static constexpr std::size_t DIM = MeshElement::dimension;
+    static constexpr std::size_t NPOINTS = MeshElement::n_all_nodes;
 };
 
 }

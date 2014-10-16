@@ -19,8 +19,7 @@
 
 namespace MeshLib {
 
-const unsigned Cell::dimension = 3u;
-
+constexpr unsigned Cell::dimension;
 /*
 Cell::Cell(Node** nodes, MeshElemType type, unsigned value)
 	: Element(nodes, type, value)

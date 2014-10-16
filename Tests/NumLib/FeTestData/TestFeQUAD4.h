@@ -22,12 +22,12 @@ namespace FeTestData
 class TestFeQUAD4
 {
 public:
+    using ShapeFunction = NumLib::ShapeQuad4;
+
     // Fe type information
-    template <class T_MATRIX_TYPES>
-    struct FeType
-    {
-        typedef NumLib::FeQUAD4<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
-    };
+    template <template <typename> class ShapeMatrixPolicy_>
+    using FeType = NumLib::FeQUAD4<ShapeMatrixPolicy_>;
+
     typedef MeshLib::Quad MeshElementType;
     static const unsigned dim = 2; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;

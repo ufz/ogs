@@ -53,6 +53,12 @@ struct ShapeMatrices
     JacobianType invJ;  ///< Inverse matrix of the Jacobian
     DShapeType dNdx;    ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
 
+    /** The default constructor is used by fixed-size (at compile-time)
+     * matrix/vector types where no resizing of the matrices/vectors is required
+     * in this constructor.
+     */
+    ShapeMatrices() = default;
+
     /**
      * Initialize matrices and vectors
      *

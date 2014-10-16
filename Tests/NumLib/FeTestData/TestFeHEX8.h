@@ -22,12 +22,12 @@ namespace FeTestData
 class TestFeHEX8
 {
 public:
+    using ShapeFunction = NumLib::ShapeHex8;
+
     // Fe type information
-    template <class T_MATRIX_TYPES>
-    struct FeType
-    {
-        typedef NumLib::FeHEX8<typename T_MATRIX_TYPES::NodalVectorType, typename T_MATRIX_TYPES::DimNodalMatrixType, typename T_MATRIX_TYPES::DimMatrixType> type;
-    };
+    template <template <typename> class ShapeMatrixPolicy_>
+    using FeType = NumLib::FeHEX8<ShapeMatrixPolicy_>;
+
     typedef MeshLib::Hex MeshElementType;
     static const unsigned dim = 3; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
