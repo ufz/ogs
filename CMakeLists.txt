@@ -65,7 +65,7 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
 
-# Parallel computing
+# Parallel computing: vector and matrix algebraic caculation, solvers
 OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Paralleization
@@ -120,6 +120,10 @@ INCLUDE_DIRECTORIES( SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/zlib )
 IF(OGS_USE_LIS)
     ADD_DEFINITIONS(-DUSE_LIS)
     INCLUDE_DIRECTORIES(SYSTEM ${LIS_INCLUDE_DIR})
+ENDIF()
+
+IF(OGS_USE_MPI)
+    ADD_DEFINITIONS(-DUSE_MPI)
 ENDIF()
 
 IF(OGS_USE_PETSC)

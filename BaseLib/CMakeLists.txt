@@ -2,6 +2,10 @@
 
 GET_SOURCE_FILES(SOURCES)
 
+IF(NOT OGS_USE_PETSC)
+	list(REMOVE_ITEM SOURCES PETScWallClockTimer.h)
+ENDIF()
+
 LIST(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
 
 # Create the library

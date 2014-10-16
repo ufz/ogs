@@ -1,7 +1,8 @@
 /**
  * \file
  * \author Thomas Fischer
- * \date   2012-05-10
+ * \author Wenqing Wang
+ * \date   2012-05-10, 2014.10.10
  * \brief  Definition of the CPUTime class.
  *
  * \copyright
@@ -17,17 +18,26 @@
 
 #include <ctime>
 
-namespace BaseLib {
+namespace BaseLib
+{
 
+/// Record CPU time
 class CPUTime
 {
-public:
-	void start();
-    void stop();
-    double elapsed();
-private:
-	clock_t _start;
-	clock_t _stop;
+    public:
+        /// Start the timer.
+        void start()
+        {
+            _timer = - clock()/static_cast<double>(CLOCKS_PER_SEC);
+        }
+
+        /// Get the epalsed time after started.
+        double elapsed()
+        {
+            return _timer + clock()/static_cast<double>(CLOCKS_PER_SEC);
+        }
+    private:
+        double _timer = 0.;
 };
 
 } // end namespace BaseLib

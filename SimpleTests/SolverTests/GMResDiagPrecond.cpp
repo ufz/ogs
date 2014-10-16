@@ -70,9 +70,6 @@ int main(int argc, char *argv[])
 
 	MathLib::GMRes((*mat), b, x, eps, 30, steps);
 
-	cpu_timer.stop();
-	run_timer.stop();
-
 	if (verbose) {
 		std::cout << " in " << steps << " iterations" << std::endl;
 		std::cout << "\t(residuum is " << eps << ") took "

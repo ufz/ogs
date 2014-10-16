@@ -80,7 +80,6 @@ int main (int argc, char* argv[])
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 	INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
-	run_time.stop();
 	INFO("Time for reading: %f seconds.", run_time.elapsed());
 	INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
 
