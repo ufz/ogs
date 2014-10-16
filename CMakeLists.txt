@@ -64,6 +64,8 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
+
+# Parallel computing
 OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Paralleization
