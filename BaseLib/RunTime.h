@@ -49,7 +49,7 @@ class RunTime
 #endif
         }
 
-        /// Get the epalsed time after started.
+        /// Get the elapsed time after started.
         double elapsed()
         {
 #if defined(USE_MPI)

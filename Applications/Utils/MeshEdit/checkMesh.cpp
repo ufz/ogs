@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
 	BaseLib::RunTime run_time;
 	run_time.start();
 	const MeshLib::Mesh* mesh = FileIO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
-	run_time.stop();
 	if (!mesh)
 		return 1;
 

@@ -31,7 +31,7 @@ class CPUTime
             _timer = clock();
         }
 
-        /// Get the epalsed time after started.
+        /// Get the elapsed time after started.
         double elapsed()
         {
             return (clock() - _timer)/static_cast<double>(CLOCKS_PER_SEC);
