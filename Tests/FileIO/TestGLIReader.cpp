@@ -72,7 +72,74 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
 	boost::filesystem::remove(tin_fname);
 }
 
-TEST_F(OGSIOVer4InterfaceTest, InvalidTIN)
+TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
+{
+	std::string tin_fname(BaseLib::BuildInfo::tests_tmp_path+"Surface.tin");
+	std::ofstream tin_out (tin_fname);
+	tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0 10\n";
+	tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
+	tin_out.close();
+
+	// read geometry
+	GeoLib::GEOObjects geometries;
+	std::vector<std::string> errors;
+	std::string geometry_name("TestGeometry");
+	FileIO::Legacy::readGLIFileV4(_gli_fname, &geometries, geometry_name, errors);
+
+	std::vector<GeoLib::Surface*> const*
+		sfcs(geometries.getSurfaceVec(geometry_name));
+	ASSERT_TRUE(sfcs != nullptr);
+	ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
+	ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
+
+	boost::filesystem::remove(tin_fname);
+}
+
+TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
+{
+	std::string tin_fname(BaseLib::BuildInfo::tests_tmp_path+"Surface.tin");
+	std::ofstream tin_out (tin_fname);
+	tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 0.0\n";
+	tin_out.close();
+
+	// read geometry
+	GeoLib::GEOObjects geometries;
+	std::vector<std::string> errors;
+	std::string geometry_name("TestGeometry");
+	FileIO::Legacy::readGLIFileV4(_gli_fname, &geometries, geometry_name, errors);
+
+	std::vector<GeoLib::Surface*> const*
+		sfcs(geometries.getSurfaceVec(geometry_name));
+	ASSERT_TRUE(sfcs == nullptr);
+
+	boost::filesystem::remove(tin_fname);
+}
+
+
+TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
+{
+	std::string tin_fname(BaseLib::BuildInfo::tests_tmp_path+"Surface.tin");
+	std::ofstream tin_out (tin_fname);
+	tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
+	tin_out << "a\n";
+	tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
+	tin_out.close();
+
+	// read geometry
+	GeoLib::GEOObjects geometries;
+	std::vector<std::string> errors;
+	std::string geometry_name("TestGeometry");
+	FileIO::Legacy::readGLIFileV4(_gli_fname, &geometries, geometry_name, errors);
+
+	std::vector<GeoLib::Surface*> const*
+		sfcs(geometries.getSurfaceVec(geometry_name));
+	ASSERT_TRUE(sfcs == nullptr);
+
+	boost::filesystem::remove(tin_fname);
+}
+
+
+TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
 {
 	std::string tin_fname(BaseLib::BuildInfo::tests_tmp_path+"Surface.tin");
 	std::ofstream tin_out (tin_fname);
@@ -93,7 +160,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN)
 	boost::filesystem::remove(tin_fname);
 }
 
-TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_II)
+TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
 {
 	std::string tin_fname(BaseLib::BuildInfo::tests_tmp_path+"Surface.tin");
 	std::ofstream tin_out (tin_fname);
@@ -110,6 +177,29 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_II)
 	std::vector<GeoLib::Surface*> const*
 		sfcs(geometries.getSurfaceVec(geometry_name));
 	ASSERT_TRUE(sfcs == nullptr);
+
+	boost::filesystem::remove(tin_fname);
+}
+
+TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
+{
+	std::string tin_fname(BaseLib::BuildInfo::tests_tmp_path+"Surface.tin");
+	std::ofstream tin_out (tin_fname);
+	tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0 10\n";
+	tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n\n\n";
+	tin_out.close();
+
+	// read geometry
+	GeoLib::GEOObjects geometries;
+	std::vector<std::string> errors;
+	std::string geometry_name("TestGeometry");
+	FileIO::Legacy::readGLIFileV4(_gli_fname, &geometries, geometry_name, errors);
+
+	std::vector<GeoLib::Surface*> const*
+		sfcs(geometries.getSurfaceVec(geometry_name));
+	ASSERT_TRUE(sfcs != nullptr);
+	ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
+	ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
 
 	boost::filesystem::remove(tin_fname);
 }
