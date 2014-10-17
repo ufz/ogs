@@ -20,7 +20,6 @@
 #include "GeoLib/Point.h"
 
 #include "MathLib/Vector3.h"
-#include "MeshLib/Node.h"
 
 #include "Element.h"
 
@@ -54,15 +53,10 @@ public:
 	unsigned getNFaces() const { return 0; };
 
 	/// Returns the surface normal of a 2D element.
-	MathLib::Vector3 getSurfaceNormal() const
-	{
-		const MathLib::Vector3 u (*_nodes[1], *_nodes[0]);
-		const MathLib::Vector3 v (*_nodes[1], *_nodes[2]);
-		return MathLib::crossProduct(u,v);
-	}
+	MathLib::Vector3 getSurfaceNormal() const;
 
 	/// Destructor
-	virtual ~Face() = default;
+	virtual ~Face();
 
 	/**
 	 * This method is pure virtual and is inherited from class @sa Element.
@@ -75,12 +69,7 @@ public:
 	 * Checks if the node order of an element is correct by testing surface normals.
 	 * For 2D elements true is returned if the normal points (roughly) upwards.
 	 */
-	virtual bool testElementNodeOrder() const
-	{
-		MathLib::Vector3 up_vec (0,0,1);
-		return (MathLib::scalarProduct(this->getSurfaceNormal(), up_vec) < 0)
-			? true : false;
-	}
+	virtual bool testElementNodeOrder() const;
 
 protected:
 /*
@@ -88,9 +77,7 @@ protected:
 	Face(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Face(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max())
-		: Element(value, id), _area(-1.0) // init with invalid value to detect errors
-	{ }
+	Face(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	double _area;
 
