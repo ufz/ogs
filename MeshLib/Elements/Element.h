@@ -143,6 +143,11 @@ public:
 	unsigned getValue() const { return _value; }
 
 	/**
+	 * Get the value for this element as a const reference.
+	 */
+	unsigned const& getValueReference() const { return _value; }
+
+	/**
 	 * Returns true if the element has zero length/area/volume.
 	 */
 	bool hasZeroVolume() const { return this->getContent() < std::numeric_limits<double>::epsilon(); }
@@ -193,7 +198,7 @@ public:
 
 	/// Returns the ID of a face given an array of nodes.
 	virtual unsigned identifyFace(Node* nodes[3]) const = 0;
-	
+
 	/**
 	 * Checks if the node order of an element is correct by testing surface normals.
 	 */

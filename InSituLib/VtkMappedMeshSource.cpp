@@ -5,7 +5,7 @@
  * \brief  Implementation of the VtkMappedMeshSource class.
  *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -30,6 +30,7 @@
 
 #include "VtkMappedMesh.h"
 #include "VtkMeshNodalCoordinatesTemplate.h"
+#include "VtkMappedElementDataArrayTemplate.h"
 
 namespace InSituLib {
 
@@ -72,7 +73,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 {
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
 	vtkSmartPointer<vtkUnstructuredGrid> output = vtkUnstructuredGrid::SafeDownCast(
-	        outInfo->Get(vtkDataObject::DATA_OBJECT()));
+		outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
@@ -92,10 +93,14 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	 // Use the mapped point container for the block points
 	elems->SetPoints(this->Points.GetPointer());
 
-	// TODO cell vals
-
 	output->Allocate(elems->GetNumberOfCells());
 	output->ShallowCopy(elems.GetPointer());
+
+	// Mapped data array for material ids
+	vtkNew<VtkMappedElementDataArrayTemplate<unsigned> > materialIds;
+	materialIds->SetElements(&_mesh->getElements(), _mesh->getNElements());
+	materialIds->SetName("MaterialIDs");
+	output->GetCellData()->AddArray(materialIds.GetPointer());
 
 	return 1;
 }

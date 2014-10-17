@@ -1,9 +1,9 @@
 /**
  * \file
  * \author Lars Bilke
- * \date   2014-02-26
- * \brief  VtkMeshNodalCoordinatesTemplate is a adapter for node coordinates of
- *         OGS meshes to VTK unstructured grids.
+ * \date   2014-10-17
+ * \brief  VtkMappedElementDataArrayTemplate is a adapter for cell data
+ *         on elements of OGS meshes to VTK unstructured grids.
  *
  * \copyright
  * Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
@@ -13,31 +13,34 @@
  *
  */
 
-#ifndef VTKMESHNODALCOORDINATES_H_
-#define VTKMESHNODALCOORDINATES_H_
+#ifndef VTKMAPPEDELEMENTDATAARRAY_H_
+#define VTKMAPPEDELEMENTDATAARRAY_H_
 
 #include <vtkMappedDataArray.h>
-#include <vtkTypeTemplate.h>    // For templated vtkObject API
-#include <vtkObjectFactory.h>   // for vtkStandardNewMacro
+#include <vtkTypeTemplate.h>  // For templated vtkObject API
+#include <vtkObjectFactory.h> // for vtkStandardNewMacro
 
-namespace InSituLib
-{
+#include "MeshLib/Elements/Element.h"
+
+namespace InSituLib {
 
 template <class Scalar>
-class VtkMeshNodalCoordinatesTemplate:
-	public vtkTypeTemplate<VtkMeshNodalCoordinatesTemplate<Scalar>,
+class VtkMappedElementDataArrayTemplate:
+	public vtkTypeTemplate<VtkMappedElementDataArrayTemplate<Scalar>,
 	                       vtkMappedDataArray<Scalar> >
 {
 public:
-	vtkMappedDataArrayNewInstanceMacro(
-		VtkMeshNodalCoordinatesTemplate<Scalar>)
-	static VtkMeshNodalCoordinatesTemplate *New();
+	vtkMappedDataArrayNewInstanceMacro(VtkMappedElementDataArrayTemplate<Scalar>)
+	static VtkMappedElementDataArrayTemplate *New();
 	virtual void PrintSelf(ostream &os, vtkIndent indent);
 
-	/// Pass the nodes from OGS mesh
-	void SetNodes(std::vector<MeshLib::Node*> const & nodes);
+	// Description:
+	// Set the raw scalar arrays for the coordinate set. This class takes
+	// ownership of the arrays and deletes them with delete[].
+	void SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples);
+	void SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples, bool save);
 
-	// Reimplemented virtuals -- see superclasses for descriptions
+	// Reimplemented virtuals -- see superclasses for descriptions:
 	void Initialize();
 	void GetTuples(vtkIdList *ptIds, vtkAbstractArray *output);
 	void GetTuples(vtkIdType p1, vtkIdType p2, vtkAbstractArray *output);
@@ -55,6 +58,7 @@ public:
 	Scalar& GetValueReference(vtkIdType idx);
 	void GetTupleValue(vtkIdType idx, Scalar *t);
 
+	// Description:
 	// This container is read only -- this method does nothing but print a
 	// warning.
 	int Allocate(vtkIdType sz, vtkIdType ext);
@@ -74,7 +78,7 @@ public:
 	void DeepCopy(vtkAbstractArray *aa);
 	void DeepCopy(vtkDataArray *da);
 	void InterpolateTuple(vtkIdType i, vtkIdList *ptIndices,
-	                      vtkAbstractArray* source,  double* weights);
+	                      vtkAbstractArray* source, double* weights);
 	void InterpolateTuple(vtkIdType i, vtkIdType id1, vtkAbstractArray *source1,
 	                      vtkIdType id2, vtkAbstractArray *source2, double t);
 	void SetVariantValue(vtkIdType idx, vtkVariant value);
@@ -88,24 +92,28 @@ public:
 	vtkIdType InsertNextValue(Scalar v);
 	void InsertValue(vtkIdType idx, Scalar v);
 
-
 protected:
-	VtkMeshNodalCoordinatesTemplate();
-	~VtkMeshNodalCoordinatesTemplate();
+	VtkMappedElementDataArrayTemplate();
+	~VtkMappedElementDataArrayTemplate();
 
-	const std::vector<MeshLib::Node*>* _nodes;
+	//Scalar *Array;
+	std::vector<MeshLib::Element*> const * _elements;
 
 private:
-	// Not implemented
-	VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate &);
-	void operator=(const VtkMeshNodalCoordinatesTemplate &);
+	VtkMappedElementDataArrayTemplate(
+		const VtkMappedElementDataArrayTemplate &); // Not implemented.
+	void operator=(
+		const VtkMappedElementDataArrayTemplate &); // Not implemented.
 
 	vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
-	double *TempDoubleArray;
+	double TempDouble;
+	// Description: If Save is true then this class won't delete that memory.
+	// By default Save is false.
+	bool Save;
 };
 
-} // end namespace
+#include "VtkMappedElementDataArrayTemplate-impl.h"
 
-#include "VtkMeshNodalCoordinatesTemplate-impl.h"
+} // end namespace InSituLib
 
-#endif // VTKMESHNODALCOORDINATES_H_
+#endif // VTKMAPPEDELEMENTDATAARRAY_H_

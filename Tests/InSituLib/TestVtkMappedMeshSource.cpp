@@ -11,21 +11,24 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#include "gtest/gtest.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "Mesh.h"
-#include "MeshGenerators/MeshGenerator.h"
-#include "MeshGenerators/VtkMeshConverter.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
-#include "VtkMappedMesh.h"
-#include "VtkMappedMeshSource.h"
+#include "InSituLib/VtkMappedMesh.h"
+#include "InSituLib/VtkMappedMeshSource.h"
+
+#include "gtest/gtest.h"
 
 #include <vtkNew.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkCellData.h>
 
 class InSituMesh : public ::testing::Test
 {
@@ -34,6 +37,8 @@ class InSituMesh : public ::testing::Test
 	 : mesh(nullptr)
 	{
 		mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(this->length, this->subdivisions);
+		for(MeshLib::Element* element: mesh->getElements())
+			element->setValue(0);
 	}
 
 	~InSituMesh()
@@ -79,16 +84,25 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	ASSERT_TRUE(mesh != nullptr);
 	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path + "/MappedMeshSourceRoundtrip.vtu");
 
-	// Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
+	// -- Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
 	vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
 	vtkSource->SetMesh(mesh);
 	vtkSource->Update();
 	vtkUnstructuredGrid* output = vtkSource->GetOutput();
 
+	// Point and cell numbers
 	ASSERT_EQ((subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
 	ASSERT_EQ(subdivisions*subdivisions, output->GetNumberOfCells());
 
-	// Write VTK mesh to file
+	// Cell data array
+	vtkDataArray* matIdsArray = output->GetCellData()->GetScalars("MaterialIDs");
+	ASSERT_EQ(matIdsArray->GetSize(), mesh->getNElements());
+	ASSERT_EQ((unsigned)matIdsArray->GetComponent(0, 0), 0);
+	double* range = matIdsArray->GetRange(0);
+	ASSERT_EQ((unsigned)range[0], 0);
+	ASSERT_EQ((unsigned)range[1], 0);
+
+	// -- Write VTK mesh to file
 	vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtuWriter =
 		vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
 	// Setting binary file  mode, otherwise corrupted output due to VTK bug
@@ -98,7 +112,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
 	vtuWriter->Write();
 
-	// Read back VTK mesh
+	// -- Read back VTK mesh
 	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
 		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
 	reader->SetFileName(test_data_file.c_str());
