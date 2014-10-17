@@ -90,6 +90,8 @@ TARGET_LINK_LIBRARIES ( checkMesh
 	FileIO
 	MathLib
 	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 
 SET_TARGET_PROPERTIES(checkMesh

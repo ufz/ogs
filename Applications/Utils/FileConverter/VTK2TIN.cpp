@@ -32,7 +32,7 @@
 #include "MeshLib/convertMeshToGeo.h"
 
 // FileIO
-#include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "FileIO/TINInterface.h"
 
 
@@ -54,7 +54,7 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	std::unique_ptr<MeshLib::Mesh> mesh (FileIO::BoostVtuInterface::readVTUFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh (FileIO::VtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	INFO("Converting the mesh to TIN");
