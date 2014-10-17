@@ -22,26 +22,39 @@
 namespace FileIO
 {
 
-GeoLib::Surface* TINInterface::readTIN(std::string const& fname, std::vector<GeoLib::Point*> &pnt_vec, std::vector<std::string>* errors)
+GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
+	std::vector<GeoLib::Point*> &pnt_vec,
+	std::vector<std::string>* errors)
 {
 	// open file
 	std::ifstream in(fname.c_str());
 	if (!in) {
 		WARN("readTIN(): could not open stream from %s.", fname.c_str());
-		if (errors) errors->push_back ("readTINFile error opening stream from " + fname);
+		if (errors)
+			errors->push_back ("readTINFile error opening stream from " + fname);
 		return nullptr;
 	}
 
 	GeoLib::Surface* sfc = new GeoLib::Surface(pnt_vec);
 	std::size_t id;
 	double p0[3], p1[3], p2[3];
-	while (in.good())
+	std::string line;
+	while (std::getline(in, line).good())
 	{
-		// read id
-		if (!(in >> id))
+		// allow empty lines
+		if (line.empty())
 			continue;
+
+		// parse line
+		std::stringstream input(line);
+		// read id
+		if (!(input >> id)) {
+			in.close();
+			delete sfc;
+			return nullptr;
+		}
 		// read first point
-		if (!(in >> p0[0] >> p0[1] >> p0[2])) {
+		if (!(input >> p0[0] >> p0[1] >> p0[2])) {
 			ERR("Could not read coords of 1st point of triangle %d.", id);
 			if (errors)
 				errors->push_back (std::string("readTIN error: ") +
@@ -52,7 +65,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname, std::vector<Geo
 			return nullptr;
 		}
 		// read second point
-		if (!(in >> p1[0] >> p1[1] >> p1[2])) {
+		if (!(input >> p1[0] >> p1[1] >> p1[2])) {
 			ERR("Could not read coords of 2nd point of triangle %d.", id);
 			if (errors)
 				errors->push_back (std::string("readTIN error: ") +
@@ -63,7 +76,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname, std::vector<Geo
 			return nullptr;
 		}
 		// read third point
-		if (!(in >> p2[0] >> p2[1] >> p2[2])) {
+		if (!(input >> p2[0] >> p2[1] >> p2[2])) {
 			ERR("Could not read coords of 3rd point of triangle %d.", id);
 			if (errors)
 				errors->push_back (std::string("readTIN error: ") +
@@ -86,7 +99,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname, std::vector<Geo
 		}
 
 		// determine size pnt_vec to insert the correct ids
-		std::size_t pnt_pos(pnt_vec.size());
+		std::size_t const pnt_pos(pnt_vec.size());
 		pnt_vec.push_back(new GeoLib::Point(p0));
 		pnt_vec.push_back(new GeoLib::Point(p1));
 		pnt_vec.push_back(new GeoLib::Point(p2));
