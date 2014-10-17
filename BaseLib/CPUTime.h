@@ -28,16 +28,16 @@ class CPUTime
         /// Start the timer.
         void start()
         {
-            _timer = clock();
+            _start_time = clock();
         }
 
         /// Get the elapsed time after started.
         double elapsed()
         {
-            return (clock() - _timer)/static_cast<double>(CLOCKS_PER_SEC);
+            return (clock() - _start_time)/static_cast<double>(CLOCKS_PER_SEC);
         }
     private:
-        double _timer = 0.;
+        double _start_time = 0.;
 };
 
 } // end namespace BaseLib
