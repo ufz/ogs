@@ -16,7 +16,7 @@
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
-#include "MeshEnums.h"
+#include "MeshLib/MeshEnums.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh

@@ -16,10 +16,6 @@
 #define TEMPLATETRI_H_
 
 #include <array>
-#include "Line.h"
-#include "MeshLib/Node.h"
-#include "Face.h"
-#include "MeshEnums.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 
