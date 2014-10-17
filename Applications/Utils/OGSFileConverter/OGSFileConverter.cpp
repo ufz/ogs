@@ -32,7 +32,7 @@
 
 // mesh
 #include "Legacy/MeshIO.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 OGSFileConverter::OGSFileConverter(QWidget* parent)
 	: QDialog(parent)
@@ -124,7 +124,7 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
 		if (fileExists(output_str))
 			continue;
 
-		FileIO::BoostVtuInterface vtu;
+		FileIO::VtuInterface vtu;
 		MeshLib::Mesh const*const mesh (vtu.readVTUFile(it->toStdString().c_str()));
 		if (mesh == nullptr)
 		{
@@ -159,11 +159,11 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
 			OGSError::box("Error reading mesh " + fi.fileName());
 			continue;
 		}
-		FileIO::BoostVtuInterface vtu;
+		FileIO::VtuInterface vtu;
 		vtu.setMesh(mesh);
 		vtu.writeToFile(output_str);
 		delete mesh;
-	}	
+	}
 	OGSError::box("File conversion finished");
 }
 

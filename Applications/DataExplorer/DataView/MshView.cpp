@@ -37,7 +37,7 @@
 
 #include "Legacy/MeshIO.h"
 //#include "RapidXmlIO/RapidVtuInterface.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 #include "SHPInterface.h"
 #include "TetGenInterface.h"
@@ -269,7 +269,7 @@ int MshView::writeToFile() const
 			QFileInfo fi(fileName);
 			if (fi.suffix().toLower() == "vtu")
 			{
-				FileIO::BoostVtuInterface vtkIO;
+				FileIO::VtuInterface vtkIO;
 				vtkIO.setMesh(mesh);
 				vtkIO.writeToFile(fileName.toStdString().c_str());
 			}

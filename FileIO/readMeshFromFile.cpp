@@ -27,7 +27,7 @@
 
 // FileIO
 #include "Legacy/MeshIO.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "readMeshFromFile.h"
 
 namespace FileIO
@@ -41,7 +41,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 	}
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
-		return BoostVtuInterface::readVTUFile(file_name);
+		return VtuInterface::readVTUFile(file_name);
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;

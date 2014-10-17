@@ -18,6 +18,8 @@ IF(QT4_FOUND)
 		FileIO
 		MathLib
 		MeshLib
+		InSituLib
+		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
 	)
 
@@ -32,6 +34,8 @@ TARGET_LINK_LIBRARIES( removeMeshElements
 	FileIO
 	MathLib
 	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 SET_TARGET_PROPERTIES(removeMeshElements PROPERTIES FOLDER Utilities)
 
@@ -39,6 +43,8 @@ ADD_EXECUTABLE( DataExplorer5NodeReordering DataExplorer5NodeReordering.cpp )
 TARGET_LINK_LIBRARIES( DataExplorer5NodeReordering
 	FileIO
 	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 SET_TARGET_PROPERTIES(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
 
@@ -46,6 +52,8 @@ ADD_EXECUTABLE( MoveMesh MoveMesh.cpp )
 TARGET_LINK_LIBRARIES( MoveMesh
 	FileIO
 	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 SET_TARGET_PROPERTIES(MoveMesh PROPERTIES FOLDER Utilities)
 
@@ -56,6 +64,8 @@ TARGET_LINK_LIBRARIES( appendLinesAlongPolyline
 	MathLib
 	MeshLib
 	MeshGeoToolsLib
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 
 SET_TARGET_PROPERTIES(appendLinesAlongPolyline
@@ -67,6 +77,8 @@ TARGET_LINK_LIBRARIES( editMaterialID
 	FileIO
 	MathLib
 	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 
 SET_TARGET_PROPERTIES(editMaterialID

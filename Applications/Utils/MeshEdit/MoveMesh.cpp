@@ -23,7 +23,7 @@
 
 // FileIO
 #include "readMeshFromFile.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 // GeoLib
 #include "AABB.h"
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 		out_fname += "_displaced.vtu";
 	}
 
-	FileIO::BoostVtuInterface mesh_io;
+	FileIO::VtuInterface mesh_io;
 	mesh_io.setMesh(mesh);
 	mesh_io.writeToFile(out_fname);
 

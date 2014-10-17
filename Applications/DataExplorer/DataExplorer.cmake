@@ -80,6 +80,7 @@ TARGET_LINK_LIBRARIES( DataExplorer
 	BaseLib
 	GeoLib
 	FileIO
+	InSituLib
 	MeshLib
 	#MSHGEOTOOLS
 	QtBase

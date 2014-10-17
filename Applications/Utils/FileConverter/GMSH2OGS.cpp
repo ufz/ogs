@@ -32,7 +32,7 @@
 // FileIO
 #include "Legacy/MeshIO.h"
 #include "GMSHInterface.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -101,7 +101,7 @@ int main (int argc, char* argv[])
 			ogs_mesh_fname += ".vtu";
 		}
 		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		FileIO::BoostVtuInterface mesh_io;
+		FileIO::VtuInterface mesh_io;
 		mesh_io.setMesh(mesh);
 		mesh_io.writeToFile(ogs_mesh_fname);
 	}

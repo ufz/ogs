@@ -46,7 +46,7 @@ public:
 	/// Sets the mesh to write.
 	void setMesh(const MeshLib::Mesh* mesh);
 
-	int writeToFile(std::string const &filen_name);
+	int writeToFile(std::string const &file_name);
 
 private:
 

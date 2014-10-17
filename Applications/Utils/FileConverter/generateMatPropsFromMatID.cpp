@@ -22,7 +22,7 @@
 
 // FileIO
 #include "readMeshFromFile.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -78,7 +78,7 @@ int main (int argc, char* argv[])
 
 	std::string new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
-	FileIO::BoostVtuInterface mesh_io;
+	FileIO::VtuInterface mesh_io;
 	mesh_io.setMesh(mesh);
 	mesh_io.writeToFile (new_mshname);
 
