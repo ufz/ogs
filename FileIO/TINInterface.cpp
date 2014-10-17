@@ -121,6 +121,10 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
 void TINInterface::writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string const& file_name)
 {
 	std::ofstream os (file_name.c_str());
+	if (!os) {
+		WARN("writeSurfaceAsTIN(): could not open stream to %s.", file_name.c_str());
+		return;
+	}
 	os.precision(std::numeric_limits<double>::digits10);
 	const std::size_t n_tris (surface.getNTriangles());
 	for (std::size_t l(0); l < n_tris; l++) {
