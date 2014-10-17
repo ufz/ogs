@@ -59,8 +59,8 @@ public:
     static void computeGradShapeFunction(const T_X &r, T_N &dN);
 
     using MeshElement = MeshLib::Hex;
-    static constexpr std::size_t DIM = MeshElement::dimension;
-    static constexpr std::size_t NPOINTS = MeshElement::n_all_nodes;
+    static const std::size_t DIM = MeshElement::dimension;
+    static const std::size_t NPOINTS = MeshElement::n_all_nodes;
 };
 
 }
