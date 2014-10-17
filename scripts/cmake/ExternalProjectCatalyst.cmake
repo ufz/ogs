@@ -96,6 +96,9 @@ ELSE()
 ENDIF()
 
 MESSAGE(STATUS "Building ParaView as an external project in the build directory")
+IF(CMAKE_VERSION VERSION_LESS 3.0.0)
+	MESSAGE(FATAL_ERROR "CMake 3.0.0 or higher is required for building VTK / ParaView!")
+ENDIF()
 ExternalProject_Add(Catalyst
 	PREFIX ${CMAKE_BINARY_DIR}/External/catalyst
 	GIT_REPOSITORY ${CATALYST_GIT_URL}
