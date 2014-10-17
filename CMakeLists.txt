@@ -66,6 +66,9 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 OPTION(OGS_USE_LIS "Use Lis" OFF)
 OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
+# Paralleization
+OPTION(OGS_USE_MPI "Use MPI" OFF)
+
 # Eigen
 OPTION(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
 OPTION(EIGEN_NO_DEBUG "Disables Eigen's assertions" ON)
@@ -118,6 +121,11 @@ ENDIF()
 
 IF(OGS_USE_PETSC)
     ADD_DEFINITIONS(-DUSE_PETSC)
+    SET(OGS_USE_MPI ON)
+ENDIF()
+
+IF(OGS_USE_MPI)
+    ADD_DEFINITIONS(-DUSE_MPI)
 ENDIF()
 
 IF(OGS_USE_EIGEN)

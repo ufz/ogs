@@ -74,6 +74,11 @@ void simplify(std::string &str);
  */
 std::string stringToUpper(std::string const& str);
 
+/**
+ * Returns the string which is right aligned with padding on the left.
+ */
+std::string padLeft(std::string const& str, int maxlen, char ch=' ');
+
 } // end namespace BaseLib
 
 #ifdef MSVC

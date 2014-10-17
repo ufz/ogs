@@ -16,6 +16,10 @@
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif
+
 #ifdef USE_LIS
 #include <lis.h>
 #endif
@@ -24,6 +28,7 @@
 #include <petscksp.h>
 #endif
 
+#include "BaseLib/LogogCustomCout.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef QT4_FOUND
 #include <QApplication>
@@ -33,12 +38,15 @@
 int main(int argc, char* argv[])
 {
 #ifdef QT4_FOUND
-	QApplication app(argc, argv, false);
+    QApplication app(argc, argv, false);
 #endif
     int ret = 0;
     LOGOG_INITIALIZE();
     {
-        logog::Cout out;
+#ifdef USE_MPI
+        MPI_Init(&argc, &argv);
+#endif
+        BaseLib::LogogCustomCout out;
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
@@ -76,6 +84,10 @@ int main(int argc, char* argv[])
 
 #ifdef USE_PETSC
         PetscFinalize();
+#endif
+
+#ifdef USE_MPI
+        MPI_Finalize();
 #endif
 
     } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.

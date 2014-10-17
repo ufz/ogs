@@ -12,13 +12,15 @@
  *
  */
 
+#include "StringTools.h"
+
 #include <algorithm>
 #include <cctype>
+#include <iomanip>
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "StringTools.h"
 
 namespace BaseLib
 {
@@ -75,6 +77,14 @@ std::string stringToUpper(std::string const& str)
 	std::transform(s.begin(), s.end(), s.begin(), (int(*)(int)) std::toupper);
     return s;
 }
+
+std::string padLeft(std::string const& str, int maxlen, char ch)
+{
+	std::stringstream ss(str);
+	ss << std::right << std::setw(maxlen) << std::setfill(ch) << str;
+	return ss.str();
+}
+
 } // end namespace BaseLib
 
 #ifdef MSVC
