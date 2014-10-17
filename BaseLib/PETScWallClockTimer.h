@@ -20,7 +20,7 @@
 namespace BaseLib
 {
 
-/// Record wall clock time for computations with PETSc.
+/// Count wall clock time for computations with PETSc.
 class PETScWallClockTimer
 {
     public:
