@@ -39,7 +39,7 @@ public:
 	virtual double getVolume() const { return _volume; };
 
 	/// Destructor
-	virtual ~Cell();
+	virtual ~Cell() = default;
 
 	/**
 	 * This method is pure virtual and is inherited from class @sa Element.
@@ -56,7 +56,22 @@ public:
 	 * (non-planar faces, non-convex geometry, possibly zero volume) which causes the calculated 
 	 * center of gravity to lie outside of the actual element
 	 */
-	virtual bool testElementNodeOrder() const;
+	virtual bool testElementNodeOrder() const
+	{
+		const MathLib::Vector3 c (getCenterOfGravity());
+		const unsigned nFaces (this->getNFaces());
+		for (unsigned j=0; j<nFaces; ++j)
+		{
+			MeshLib::Face const*const face (dynamic_cast<const MeshLib::Face*>(this->getFace(j)));
+			const MeshLib::Node x (*(face->getNode(1)));
+			const MathLib::Vector3 cx (c, x);
+			const double s = MathLib::scalarProduct(face->getSurfaceNormal(), cx);
+			delete face;
+			if (s >= 0)
+				return false;
+		}
+		return true;
+	}
 
 protected:
 /*
@@ -64,7 +79,9 @@ protected:
 	Cell(Node** nodes, MeshElemType type, unsigned value = 0);
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Cell(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	Cell(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max())
+		: Element(value, id), _volume(-1.0) // init with invalid value to detect errors
+	{ }
 
 	double _volume;
 
