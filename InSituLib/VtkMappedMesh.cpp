@@ -37,7 +37,6 @@ vtkStandardNewMacro(VtkMappedMeshImpl)
 void VtkMappedMeshImpl::PrintSelf(ostream &os, vtkIndent indent)
 {
 	this->Superclass::PrintSelf(os, indent);
-	// TODO
 	os << indent << "NumberOfCells: " << this->NumberOfCells << endl;
 }
 

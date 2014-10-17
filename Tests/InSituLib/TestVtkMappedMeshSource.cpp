@@ -13,13 +13,16 @@
  */
 
 #include "BaseLib/BuildInfo.h"
+
+#include "FileIO/VtkIO/VtuInterface.h"
+
+#include "InSituLib/VtkMappedMesh.h"
+#include "InSituLib/VtkMappedMeshSource.h"
+
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
-
-#include "InSituLib/VtkMappedMesh.h"
-#include "InSituLib/VtkMappedMeshSource.h"
 
 #include "gtest/gtest.h"
 
@@ -103,14 +106,10 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	ASSERT_EQ((unsigned)range[1], 0);
 
 	// -- Write VTK mesh to file
-	vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtuWriter =
-		vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-	// Setting binary file  mode, otherwise corrupted output due to VTK bug
-	// See http://www.paraview.org/Bug/view.php?id=13382
-	vtuWriter->SetDataModeToBinary();
-	vtuWriter->SetFileName(test_data_file.c_str());
-	vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
-	vtuWriter->Write();
+	FileIO::VtuInterface vtuInterface;
+	vtuInterface.setCompressData(true);
+	vtuInterface.setMesh(mesh);
+	vtuInterface.writeToFile(test_data_file);
 
 	// -- Read back VTK mesh
 	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
@@ -122,6 +121,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	// Both VTK meshes should be identical
 	ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
 	ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
+	ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("MaterialIDs")->GetNumberOfTuples(), matIdsArray->GetNumberOfTuples());
 
 	// Both OGS meshes should be identical
 	MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);

@@ -28,15 +28,17 @@ namespace FileIO
 
 /**
  * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
+ * This class is currently not inherited from Writer because VTK will implement
+ * writing to a string from 6.2 onwards.
  */
-class VtuInterface : public Writer
+class VtuInterface
 {
 public:
 	VtuInterface();
 	~VtuInterface();
 
 	/// Read an unstructured grid from a VTU file
-	static MeshLib::Mesh* readVTUFile(const std::string &file_name);
+	static MeshLib::Mesh* readVTUFile(std::string const &file_name);
 
 	/// Decide if the mesh data should be written compressed (default is false).
 	void setCompressData(bool flag=true) { _use_compressor = flag; }
@@ -44,8 +46,9 @@ public:
 	/// Sets the mesh to write.
 	void setMesh(const MeshLib::Mesh* mesh);
 
+	int writeToFile(std::string const &filen_name);
+
 private:
-	bool write();
 
 	MeshLib::Mesh* _mesh;
 	bool _use_compressor;

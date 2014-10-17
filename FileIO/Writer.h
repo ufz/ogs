@@ -26,7 +26,8 @@ namespace FileIO
 /// or file. Also formatting (precision, scientific notation of decimal values)
 /// can be set.
 ///
-/// When subclassing you only need to implement void write(std::ostream& stream).
+/// When subclassing you only need to implement void write() in which you have
+/// to write to _out.
 class Writer
 {
 public:

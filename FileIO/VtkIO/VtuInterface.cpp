@@ -15,9 +15,12 @@
 
 #include "logog/include/logog.hpp"
 
+#include <vtkNew.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkSmartPointer.h>
 
+#include "InSituLib/VtkMappedMeshSource.h"
 #include "Mesh.h"
 #include "MeshGenerators/VtkMeshConverter.h"
 
@@ -32,7 +35,7 @@ VtuInterface::VtuInterface() :
 VtuInterface::~VtuInterface()
 {}
 
-MeshLib::Mesh* VtuInterface::readVTUFile(const std::string &file_name)
+MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
 	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
 		vtkXMLUnstructuredGridReader::New();
@@ -55,16 +58,28 @@ void VtuInterface::setMesh(const MeshLib::Mesh* mesh)
 	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
 };
 
-bool VtuInterface::write()
+int VtuInterface::writeToFile(std::string const &file_name)
 {
 	if(!_mesh)
 	{
 		ERR("VtuInterface::write(): No mesh specified.");
-		return false;
+		return 0;
 	}
 
-	// TODO write with MappedMesh
-	return false;
+	vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
+	vtkSource->SetMesh(_mesh);
+
+	vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtuWriter =
+		vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+	vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
+	if(_use_compressor)
+		vtuWriter->SetCompressorTypeToZLib();
+
+	// Setting binary file  mode, otherwise corrupted output due to VTK bug
+	// See http://www.paraview.org/Bug/view.php?id=13382
+	vtuWriter->SetDataModeToBinary();
+	vtuWriter->SetFileName(file_name.c_str());
+	return vtuWriter->Write();
 }
 
 }
