@@ -16,10 +16,12 @@
 #define CONVERTMESHTOGEO_H_
 
 #include <limits>
+#include <string>
 
 namespace GeoLib
 {
 class GEOObjects;
+class Surface;
 }
 
 namespace MeshLib
@@ -35,6 +37,15 @@ namespace MeshLib
 	 * are ignored.
 	 */
 	bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects, double eps = std::numeric_limits<double>::epsilon());
+
+	/**
+	 * Converts a surface into a triangular mesh
+	 * @param sfc         Surface object
+	 * @param mesh_name   New mesh name
+	 * @param eps         Minimum distance for nodes not to be collapsed
+	 * @return a pointer to a converted mesh object. nullptr is returned if the conversion fails.
+	 */
+	MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::string &mesh_name, double eps = std::numeric_limits<double>::epsilon());
 
 } // namespace
 

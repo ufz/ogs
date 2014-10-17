@@ -15,6 +15,8 @@ SET( SOURCES
 	SHPInterface.cpp
 	TetGenInterface.h
 	TetGenInterface.cpp
+	TINInterface.h
+	TINInterface.cpp
 	Writer.h
 	Writer.cpp
 )

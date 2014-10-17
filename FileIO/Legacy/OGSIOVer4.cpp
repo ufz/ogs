@@ -43,6 +43,9 @@
 #include "AnalyticalGeometry.h"
 #include "EarClippingTriangulation.h"
 
+// FileIO
+#include "FileIO/TINInterface.h"
+
 using namespace GeoLib;
 
 namespace FileIO
@@ -267,39 +270,6 @@ std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_
 	return tag;
 }
 
-void readTINFile(const std::string &fname, Surface* sfc,
-                 std::vector<Point*> &pnt_vec, std::vector<std::string>& errors)
-{
-	// open file
-	std::ifstream in(fname.c_str());
-	if (!in) {
-		WARN("readTINFile(): could not open stream from %s.", fname.c_str());
-		errors.push_back ("readTINFile error opening stream from " + fname);
-		return;
-	}
-
-	std::size_t id;
-	double x, y, z;
-	while (in)
-	{
-		// read id
-		in >> id;
-		// determine size
-		std::size_t pnt_pos(pnt_vec.size());
-		// read first point
-		in >> x >> y >> z;
-		pnt_vec.push_back(new Point(x, y, z));
-		// read second point
-		in >> x >> y >> z;
-		pnt_vec.push_back(new Point(x, y, z));
-		// read third point
-		in >> x >> y >> z;
-		pnt_vec.push_back(new Point(x, y, z));
-		// create new Triangle
-		sfc->addTriangle(pnt_pos, pnt_pos + 1, pnt_pos + 2);
-	}
-}
-
 /**************************************************************************
    GeoLib-Method: readSurface
    Task: Read surface data from input stream
@@ -351,13 +321,7 @@ std::string readSurface(std::istream &in,
 		{
 			in >> line; // read value (file name)
 			line = path + line;
-			sfc = new Surface(pnt_vec);
-
-			readTINFile(line, sfc, pnt_vec, errors);
-			if (sfc->getNTriangles() == 0) {
-				delete sfc;
-				sfc = NULL;
-			}
+			sfc = TINInterface::readTIN(line, pnt_vec, &errors);
 		}
 		//....................................................................
 		if (line.find("$MAT_GROUP") != std::string::npos) // subkeyword found
@@ -583,16 +547,7 @@ std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_v
 		os << "\t\t" << sfc_name << "\n";
 		// create tin file
 		sfc_name = path + sfc_name;
-		std::ofstream tin_os (sfc_name.c_str());
-		GeoLib::Surface const& sfc (*(*sfcs)[k]);
-		const std::size_t n_tris (sfc.getNTriangles());
-		for (std::size_t l(0); l < n_tris; l++) {
-			GeoLib::Triangle const& tri (*(sfc[l]));
-		tin_os << l << " " << *(tri.getPoint(0)) << " " <<
-		*(tri.getPoint(1)) << " " << *(tri.getPoint(2)) <<
-		"\n";
-		}
-		tin_os.close();
+		TINInterface::writeSurfaceAsTIN(*(*sfcs)[k], sfc_name.c_str());
 		sfc_count++;
 	}
 	return sfc_count;
