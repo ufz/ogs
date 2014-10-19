@@ -421,8 +421,10 @@ void BoostVtuInterface::addScalarPointProperty(std::string const& name,
 		return;
 	}
 
+#if BOOST_VERSION <= 105500
 	const std::string data_array_close("\t\t\t\t");
 	const std::string data_array_indent("\t\t\t\t  ");
+#endif
 
 	// go to the node where data should be inserted
 	using boost::property_tree::ptree;
@@ -433,9 +435,13 @@ void BoostVtuInterface::addScalarPointProperty(std::string const& name,
 	// prepare the data
 	std::stringstream oss(std::stringstream::out);
 	oss.precision(_out.precision());
+#if BOOST_VERSION <= 105500
 	oss << "\n" << data_array_indent;
 	std::copy(prop_vals.cbegin(), prop_vals.cend(), std::ostream_iterator<double>(oss, " "));
 	oss << "\n" << data_array_close;
+#else
+	std::copy(prop_vals.cbegin(), prop_vals.cend(), std::ostream_iterator<double>(oss, " "));
+#endif
 	this->addDataArray(pointdata_node, name, "Float64", oss.str());
 	oss.str(std::string());
 }
@@ -448,8 +454,10 @@ void BoostVtuInterface::buildPropertyTree()
 	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
 	const std::vector<MeshLib::Element*> &elements (_mesh->getElements());
 
+#if BOOST_VERSION <= 105500
 	const std::string data_array_close("\t\t\t\t");
 	const std::string data_array_indent("\t\t\t\t  ");
+#endif
 
 	using boost::property_tree::ptree;
 
@@ -475,21 +483,31 @@ void BoostVtuInterface::buildPropertyTree()
 
 	std::stringstream oss(std::stringstream::out);
 	oss.precision(_out.precision());
+#if BOOST_VERSION <= 105500
 	oss << std::endl << data_array_indent;
 	for (unsigned i = 0; i < nElems; i++)
 		oss << elements[i]->getValue() << " ";
 	oss << std::endl << data_array_close;
+#else
+	for (unsigned i = 0; i < nElems; i++)
+		oss << elements[i]->getValue() << " ";
+#endif
 	this->addDataArray(celldata_node, "MaterialIDs", "Int32", oss.str());
 	oss.str(std::string());
 	oss.clear();
 
 	// point coordinates
 	ptree &points_node = piece_node.add("Points", "");
+#if BOOST_VERSION <= 105500
 	oss << std::endl;
 	for (unsigned i = 0; i < nNodes; i++)
 		oss << data_array_indent << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " <<
 		(*nodes[i])[2] << std::endl;
 	oss << data_array_close;
+#else
+	for (unsigned i = 0; i < nNodes; i++)
+		oss << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << " ";
+#endif
 	this->addDataArray(points_node, "Points", "Float64", oss.str(), 3);
 	oss.str(std::string());
 	oss.clear();
@@ -498,26 +516,33 @@ void BoostVtuInterface::buildPropertyTree()
 	ptree &cells_node = piece_node.add("Cells", "");
 	std::stringstream offstream(std::stringstream::out);
 	std::stringstream typestream(std::stringstream::out);
+#if BOOST_VERSION <= 105500
 	oss << std::endl;
 	offstream << std::endl << data_array_indent;
 	typestream << std::endl << data_array_indent;
-
+#endif
 	unsigned offset_count(0);
 	for (unsigned i = 0; i < nElems; i++)
 	{
 		MeshLib::Element* element (elements[i]);
 		const unsigned nElemNodes (element->getNBaseNodes());
+#if BOOST_VERSION <= 105500
 		oss << data_array_indent;
+#endif
 		for (unsigned j = 0; j < nElemNodes; j++)
 			oss << element->getNode(j)->getID() << " ";
+#if BOOST_VERSION <= 105500
 		oss << std::endl;
+#endif
 		offset_count += nElemNodes;
 		offstream << offset_count << " ";
 		typestream << this->getVTKElementID(element->getGeomType()) << " ";
 	}
+#if BOOST_VERSION <= 105500
 	oss << data_array_close;
 	offstream << std::endl << data_array_close;
 	typestream << std::endl << data_array_close;
+#endif
 
 	// connectivity attributes
 	this->addDataArray(cells_node, "connectivity", "Int32", oss.str());
