@@ -68,7 +68,7 @@ class PETScLinearSolver
         }
 
         /// Get elapsed wall clock time.
-        PetscLogDouble getElapsedTime() const
+        double getElapsedTime() const
         {
             return _elapsed_ctime;
         }
@@ -81,7 +81,7 @@ class PETScLinearSolver
         KSP _solver; ///< Solver type.
         PC _pc;      ///< Preconditioner type.
 
-        PetscLogDouble _elapsed_ctime; ///< Clock time
+        double _elapsed_ctime; ///< Clock time
 };
 
 } // end namespace

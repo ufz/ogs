@@ -15,7 +15,7 @@
 */
 
 #include "PETScLinearSolver.h"
-#include "BaseLib/PETScWallClockTimer.h"
+#include "BaseLib/RunTime.h"
 
 namespace MathLib
 {
@@ -37,8 +37,8 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix)
 
 bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
 {
-    BaseLib::PETScWallClockTimer ctimer;
-    ctimer.start();
+    BaseLib::RunTime wtimer;
+    wtimer.start();
     	
 // define TEST_MEM_PETSC
 #ifdef TEST_MEM_PETSC
@@ -106,7 +106,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     PetscPrintf(PETSC_COMM_WORLD, "###Memory usage by solver. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
 
-    _elapsed_ctime += ctimer.elapsed();
+    _elapsed_ctime += wtimer.elapsed();
 
     return converged;
 }
