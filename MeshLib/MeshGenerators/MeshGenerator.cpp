@@ -7,7 +7,7 @@
  *
  */
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshGenerator.h"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Line.h"
@@ -20,9 +20,9 @@ namespace MeshLib
 {
 
 std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
-        const std::array<unsigned,3> &n_cells,
-        const std::array<double,3> &cell_size,
-        const GeoLib::Point& origin)
+	const std::array<unsigned,3> &n_cells,
+	const std::array<double,3> &cell_size,
+	const GeoLib::Point& origin)
 {
 	std::vector<Node*> nodes;
 	nodes.reserve((n_cells[0]+1)*(n_cells[1]+1)*(n_cells[2]+1));
@@ -50,10 +50,11 @@ Mesh* MeshGenerator::generateLineMesh(
 	return MeshGenerator::generateLineMesh(subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateLineMesh(const unsigned n_cells,
-                                      const double   cell_size,
-                                      GeoLib::Point  const& origin,
-                                      std::string    const& mesh_name)
+Mesh* MeshGenerator::generateLineMesh(
+	const unsigned n_cells,
+	const double   cell_size,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	//nodes
 	std::vector<Node*> nodes(generateRegularNodes({{n_cells,0,0}}, {{cell_size,0,0}}, origin));
@@ -81,21 +82,23 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 	return generateRegularQuadMesh(subdivision, subdivision, length/subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
-                              const unsigned n_y_cells,
-                              const double cell_size,
-                              GeoLib::Point const& origin,
-                              std::string const& mesh_name)
+Mesh* MeshGenerator::generateRegularQuadMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double cell_size,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	return generateRegularQuadMesh(n_x_cells, n_y_cells, cell_size, cell_size, origin, mesh_name);
 }
 
-Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
-                              const unsigned n_y_cells,
-                              const double cell_size_x,
-                              const double cell_size_y,
-                              GeoLib::Point const& origin,
-                              std::string const& mesh_name)
+Mesh* MeshGenerator::generateRegularQuadMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double cell_size_x,
+	const double cell_size_y,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	//nodes
 	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,0}}, {{cell_size_x,cell_size_y,0}}, origin));
@@ -131,24 +134,26 @@ Mesh* MeshGenerator::generateRegularHexMesh(
 	return MeshGenerator::generateRegularHexMesh(subdivision, subdivision, subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
-                                            const unsigned n_y_cells,
-                                            const unsigned n_z_cells,
-                                            const double   cell_size,
-                                            GeoLib::Point  const& origin,
-                                            std::string    const& mesh_name)
+Mesh* MeshGenerator::generateRegularHexMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const unsigned n_z_cells,
+	const double   cell_size,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	return MeshGenerator::generateRegularHexMesh(n_x_cells, n_y_cells, n_z_cells, cell_size, cell_size, cell_size, origin, mesh_name);
 }
 
-Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
-	                         const unsigned n_y_cells,
-	                         const unsigned n_z_cells,
-	                         const double   cell_size_x,
-	                         const double   cell_size_y,
-	                         const double   cell_size_z,
-	                         GeoLib::Point const& origin,
-	                         std::string   const& mesh_name)
+Mesh* MeshGenerator::generateRegularHexMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const unsigned n_z_cells,
+	const double   cell_size_x,
+	const double   cell_size_y,
+	const double   cell_size_z,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	//nodes
 	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,n_z_cells}}, {{cell_size_x,cell_size_y,cell_size_z}}, origin));
@@ -196,21 +201,23 @@ Mesh* MeshGenerator::generateRegularTriMesh(
 	return generateRegularTriMesh(subdivision, subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateRegularTriMesh(const unsigned n_x_cells,
-                                            const unsigned n_y_cells,
-                                            const double   cell_size,
-                                            GeoLib::Point  const& origin,
-                                            std::string    const& mesh_name)
+Mesh* MeshGenerator::generateRegularTriMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double cell_size,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	return generateRegularTriMesh(n_x_cells, n_y_cells, cell_size, cell_size, origin, mesh_name);
 }
 
-Mesh* MeshGenerator::generateRegularTriMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-	                          const double   cell_size_x,
-	                          const double   cell_size_y,
-	                          GeoLib::Point const& origin,
-	                          std::string   const& mesh_name)
+Mesh* MeshGenerator::generateRegularTriMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double   cell_size_x,
+	const double   cell_size_y,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	//nodes
 	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,0}}, {{cell_size_x,cell_size_y,0}}, origin));
