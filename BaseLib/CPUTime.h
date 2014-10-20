@@ -32,7 +32,7 @@ class CPUTime
         }
 
         /// Get the elapsed time after started.
-        double elapsed()
+        const double elapsed()
         {
             return (clock() - _start_time)/static_cast<double>(CLOCKS_PER_SEC);
         }
