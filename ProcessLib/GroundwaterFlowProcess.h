@@ -16,6 +16,7 @@
 #include "logog/include/logog.hpp"
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/Mesh.h"
@@ -112,9 +113,9 @@ public:
                 1e-6,   // hydraulic conductivity
                 _integration_order);
 
-        //DBUG("Create global assembler.");
-        //_global_assembler.reset(
-        //    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
+        DBUG("Create global assembler.");
+        _global_assembler.reset(
+            new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
     }
 
     void solve()
@@ -157,7 +158,15 @@ private:
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>*>
             _local_assemblers;
 
+    using GlobalAssembler =
+        AssemblerLib::VectorMatrixAssembler<
+            typename GlobalSetup::MatrixType,
+            typename GlobalSetup::VectorType>;
+
+
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
+
+    std::unique_ptr<GlobalAssembler> _global_assembler;
 };
 
 }   // namespace ProcessLib
