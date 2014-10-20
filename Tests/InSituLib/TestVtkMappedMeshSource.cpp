@@ -106,9 +106,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	ASSERT_EQ((unsigned)range[1], 0);
 
 	// -- Write VTK mesh to file
-	FileIO::VtuInterface vtuInterface;
-	vtuInterface.setCompressData(true);
-	vtuInterface.setMesh(mesh);
+	FileIO::VtuInterface vtuInterface(mesh, true);
 	vtuInterface.writeToFile(test_data_file);
 
 	// -- Read back VTK mesh

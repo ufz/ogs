@@ -78,8 +78,7 @@ int main (int argc, char* argv[])
 
 	std::string new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
-	FileIO::VtuInterface mesh_io;
-	mesh_io.setMesh(mesh);
+	FileIO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile (new_mshname);
 
 	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());

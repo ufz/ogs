@@ -17,8 +17,6 @@
 
 #include <string>
 
-#include "Writer.h"
-
 namespace MeshLib {
 	class Mesh;
 }
@@ -34,23 +32,20 @@ namespace FileIO
 class VtuInterface
 {
 public:
-	VtuInterface();
+	/// Provide the mesh to write and set if compression should be used.
+	VtuInterface(const MeshLib::Mesh* mesh, bool compress = false);
 	~VtuInterface();
 
 	/// Read an unstructured grid from a VTU file
+	/// \returns The converted mesh or a nullptr if reading failed
 	static MeshLib::Mesh* readVTUFile(std::string const &file_name);
 
-	/// Decide if the mesh data should be written compressed (default is false).
-	void setCompressData(bool flag=true) { _use_compressor = flag; }
-
-	/// Sets the mesh to write.
-	void setMesh(const MeshLib::Mesh* mesh);
-
-	int writeToFile(std::string const &file_name);
+	/// Writes the given mesh to file.
+	/// \returns True on success, false on error
+	bool writeToFile(std::string const &file_name);
 
 private:
-
-	MeshLib::Mesh* _mesh;
+	const MeshLib::Mesh* _mesh;
 	bool _use_compressor;
 };
 

@@ -43,7 +43,7 @@ class VtkMappedMeshSource : public vtkUnstructuredGridAlgorithm
 public:
 	static VtkMappedMeshSource *New();
 	vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm)
-	virtual void PrintSelf(ostream &os, vtkIndent indent);
+	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
 	void SetMesh(const MeshLib::Mesh* mesh) { this->_mesh = mesh; this->Modified(); }
 	const MeshLib::Mesh* GetMesh() const { return _mesh; }

@@ -269,8 +269,7 @@ int MshView::writeToFile() const
 			QFileInfo fi(fileName);
 			if (fi.suffix().toLower() == "vtu")
 			{
-				FileIO::VtuInterface vtkIO;
-				vtkIO.setMesh(mesh);
+				FileIO::VtuInterface vtkIO(mesh);
 				vtkIO.writeToFile(fileName.toStdString().c_str());
 			}
 			if (fi.suffix().toLower() == "msh")

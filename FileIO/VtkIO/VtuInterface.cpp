@@ -27,8 +27,8 @@
 namespace FileIO
 {
 
-VtuInterface::VtuInterface() :
-	_mesh(nullptr), _use_compressor(false)
+VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, bool compress) :
+	_mesh(mesh), _use_compressor(compress)
 {
 }
 
@@ -48,22 +48,12 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 	return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid);
 }
 
-void VtuInterface::setMesh(const MeshLib::Mesh* mesh)
-{
-	if (!mesh)
-	{
-		ERR("VtuInterface::write(): No mesh specified.");
-		return;
-	}
-	this->_mesh = const_cast<MeshLib::Mesh*>(mesh);
-};
-
-int VtuInterface::writeToFile(std::string const &file_name)
+bool VtuInterface::writeToFile(std::string const &file_name)
 {
 	if(!_mesh)
 	{
 		ERR("VtuInterface::write(): No mesh specified.");
-		return 0;
+		return false;
 	}
 
 	vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
@@ -79,7 +69,7 @@ int VtuInterface::writeToFile(std::string const &file_name)
 	// See http://www.paraview.org/Bug/view.php?id=13382
 	vtuWriter->SetDataModeToBinary();
 	vtuWriter->SetFileName(file_name.c_str());
-	return vtuWriter->Write();
+	return static_cast<bool>(vtuWriter->Write());
 }
 
 }

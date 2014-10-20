@@ -94,8 +94,7 @@ int main (int argc, char* argv[])
 	INFO("Reordering nodes... ");
 	reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
 
-	FileIO::VtuInterface writer;
-	writer.setMesh(mesh);
+	FileIO::VtuInterface writer(mesh);
 	writer.writeToFile(output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written.");

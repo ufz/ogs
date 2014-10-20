@@ -93,8 +93,7 @@ int main(int argc, char *argv[])
 		out_fname += "_displaced.vtu";
 	}
 
-	FileIO::VtuInterface mesh_io;
-	mesh_io.setMesh(mesh);
+	FileIO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile(out_fname);
 
 	delete mesh;

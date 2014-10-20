@@ -59,7 +59,6 @@ OPTION(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 OPTION(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 OPTION(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 OPTION(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
-OPTION(OGS_BUILD_VIS "Should in-situ visulization be built?" OFF)
 
 OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
@@ -139,10 +138,6 @@ IF(OGS_USE_EIGEN)
 		ADD_DEFINITIONS(-DEIGEN_NO_DEBUG)
 	ENDIF()
 	INCLUDE_DIRECTORIES (SYSTEM ${EIGEN3_INCLUDE_DIR})
-ENDIF()
-
-IF(OGS_BUILD_VIS)
-	ADD_SUBDIRECTORY(InSituLib)
 ENDIF()
 
 ADD_SUBDIRECTORY( Applications )

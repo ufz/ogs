@@ -32,7 +32,7 @@ class VtkMappedElementDataArrayTemplate:
 public:
 	vtkMappedDataArrayNewInstanceMacro(VtkMappedElementDataArrayTemplate<Scalar>)
 	static VtkMappedElementDataArrayTemplate *New();
-	virtual void PrintSelf(ostream &os, vtkIndent indent);
+	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
 	// Description:
 	// Set the raw scalar arrays for the coordinate set. This class takes
@@ -112,8 +112,8 @@ private:
 	bool Save;
 };
 
-#include "VtkMappedElementDataArrayTemplate-impl.h"
-
 } // end namespace InSituLib
+
+#include "VtkMappedElementDataArrayTemplate-impl.h"
 
 #endif // VTKMAPPEDELEMENTDATAARRAY_H_

@@ -362,7 +362,7 @@ void NetCdfConfigureDialog::createDataObject()
 	{
 		MeshElemType meshElemType = MeshElemType::QUAD;
 		MeshLib::UseIntensityAs useIntensity = MeshLib::UseIntensityAs::MATERIAL;
-		if ((comboBoxMeshElemType->currentIndex()) == 1)
+		if (comboBoxMeshElemType->currentIndex() == 1)
 		{
 			meshElemType = MeshElemType::TRIANGLE;
 		}else{
