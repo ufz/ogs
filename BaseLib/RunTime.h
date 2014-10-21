@@ -1,7 +1,8 @@
 /**
  * \file
  * \author Thomas Fischer
- * \date   2012-05-10
+ * \author Wenqing Wang
+ * \date   2012-05-10, 2014-10.10
  * \brief  Definition of the RunTime class.
  *
  * \copyright
@@ -15,28 +16,57 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
+#if defined(USE_MPI)
+#include <mpi.h>
+#else
 #ifndef _MSC_VER
 #include <sys/time.h>
 #else
 #include <windows.h>
 #endif
+#endif
 
-namespace BaseLib {
+namespace BaseLib
+{
 
+/// Count the running time.
 class RunTime
 {
-public:
-	void start();
-	void stop();
-	double elapsed();
-private:
-#ifndef _MSC_VER
-	timeval _start;
-	timeval _stop;
+    public:
+        /// Start the timer.
+        void start()
+        {
+#if defined(USE_MPI)
+            _start_time = MPI_Wtime();
 #else
-	unsigned long _start;
-	unsigned long _stop;
+#ifndef _MSC_VER
+            timeval t;
+            gettimeofday(&t, 0);
+            _start_time = t.tv_sec + t.tv_usec/1000000.0;
+#else
+            _start_time = timeGetTime();
 #endif
+#endif
+        }
+
+        /// Get the elapsed time after started.
+        double elapsed() const
+        {
+#if defined(USE_MPI)
+            return MPI_Wtime() - _start_time;
+#else
+#ifndef _MSC_VER
+            timeval t;
+            gettimeofday(&t, 0);
+            return t.tv_sec + t.tv_usec/1000000.0 - _start_time;
+#else
+            return (timeGetTime() - _start_time)/1000.0;
+#endif
+#endif
+        }
+
+    private:
+        double _start_time = 0.;
 };
 
 } // end namespace BaseLib

@@ -119,7 +119,6 @@ int main(int argc, char *argv[])
 		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
-		timer.stop();
 		if (verbose) {
 			INFO("\t- took %e s", timer.elapsed());
 		}
@@ -156,8 +155,6 @@ int main(int argc, char *argv[])
 	for (unsigned k(0); k<n; k++)
 		op_perm[k] = po_perm[k] = k;
 	cluster_tree.createClusterTree(op_perm, po_perm, 1000);
-	cpu_timer.stop();
-	run_timer.stop();
 	if (verbose) {
 		INFO("\t[ND] - took %e sec \t%e sec", cpu_timer.elapsed(), run_timer.elapsed());
 	}
@@ -169,8 +166,6 @@ int main(int argc, char *argv[])
 	run_timer.start();
 	cpu_timer.start();
 	mat.reorderMatrix(op_perm, po_perm);
-	cpu_timer.stop();
-	run_timer.stop();
 	if (verbose) {
 		INFO("\t[ND]: - took %e sec\t%e sec", cpu_timer.elapsed(), run_timer.elapsed());
 	}
@@ -193,8 +188,6 @@ int main(int argc, char *argv[])
 	for (size_t k(0); k<n_mults; k++) {
 		mat.amux (1.0, x, y);
 	}
-	cpu_timer.stop();
-	run_timer.stop();
 
 	if (verbose) {
 		INFO("\t[MVM] - took %e sec\t %e sec", cpu_timer.elapsed(), run_timer.elapsed());

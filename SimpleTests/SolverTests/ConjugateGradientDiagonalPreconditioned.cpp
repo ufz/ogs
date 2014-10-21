@@ -74,9 +74,6 @@ int main(int argc, char *argv[])
 		#endif
 	}
 
-	cpu_timer.stop();
-	run_timer.stop();
-
 	if (verbose) {
 		std::cout << " in " << steps << " iterations" << std::endl;
 		std::cout << "\t(residuum is " << eps << ") took " << cpu_timer.elapsed() << " sec time and " << run_timer.elapsed() << " sec" << std::endl;

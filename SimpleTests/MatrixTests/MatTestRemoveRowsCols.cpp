@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
 		timer.start();
 		CS_read(in, n, iA, jA, A);
 		in.close();
-		timer.stop();
 		if (verbose) {
 			std::cout << "ok, " << timer.elapsed() << " s" << std::endl;
 		}
@@ -68,7 +67,6 @@ int main(int argc, char *argv[])
 	std::cout << "erasing " << n_rows_cols_to_erase << " rows and columns ... " << std::flush;
 	timer.start();
 	mat->eraseEntries(n_rows_cols_to_erase, rows_cols_to_erase);
-	timer.stop();
 	std::cout << "ok, " << timer.elapsed() << " s" << std::endl;
 	delete[] rows_cols_to_erase;
 

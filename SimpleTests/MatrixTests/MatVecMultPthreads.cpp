@@ -121,7 +121,6 @@ INFO("%s was build with compiler %s",
 		BaseLib::RunTime timer;
 		timer.start();
 		CS_read(in, n, iA, jA, A);
-		timer.stop();
 		INFO("\t- took %e s", timer.elapsed());
 	} else {
 		ERR("error reading matrix from %s", fname_mat.c_str());
@@ -151,8 +150,6 @@ INFO("%s was build with compiler %s",
 	for (size_t k(0); k<n_mults; k++) {
 		mat.amux (1.0, x, y);
 	}
-	cpu_timer.stop();
-	run_timer.stop();
 
 	INFO("\t[MVM] - took %e sec cpu time, %e sec run time", cpu_timer.elapsed(), run_timer.elapsed());
 

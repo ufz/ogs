@@ -64,6 +64,8 @@ OPTION(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers
 OPTION(OGS_USE_LIS "Use Lis" OFF)
+
+# Parallel computing: vector and matrix algebraic caculation, solvers
 OPTION(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Paralleization
@@ -120,11 +122,13 @@ IF(OGS_USE_LIS)
     INCLUDE_DIRECTORIES(SYSTEM ${LIS_INCLUDE_DIR})
 ENDIF()
 
+# Use PETSc package for global assembly and linear sover for parallel computing
 IF(OGS_USE_PETSC)
     ADD_DEFINITIONS(-DUSE_PETSC)
     SET(OGS_USE_MPI ON)
 ENDIF()
 
+# Use MPI
 IF(OGS_USE_MPI)
     ADD_DEFINITIONS(-DUSE_MPI)
 ENDIF()

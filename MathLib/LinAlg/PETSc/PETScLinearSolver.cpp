@@ -15,10 +15,12 @@
 */
 
 #include "PETScLinearSolver.h"
+#include "BaseLib/RunTime.h"
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix) : _A(A)
+PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix)
+    : _A(A), _elapsed_ctime(0.)
 {
     KSPCreate(PETSC_COMM_WORLD, &_solver);
 
@@ -35,13 +37,16 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix) 
 
 bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
 {
+    BaseLib::RunTime wtimer;
+    wtimer.start();
+    	
 // define TEST_MEM_PETSC
 #ifdef TEST_MEM_PETSC
     PetscLogDouble mem1, mem2;
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
-#if (PETSC_VERSION_MAJOR == 3) && (PETSC_VERSION_MINOR > 4 || PETSC_VERSION_MAJOR > 3)
+#if (PETSC_VERSION_NUMBER > 3040)
     KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix());
 #else
     KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
@@ -100,6 +105,8 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
     PetscMemoryGetCurrentUsage(&mem2);
     PetscPrintf(PETSC_COMM_WORLD, "###Memory usage by solver. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
+
+    _elapsed_ctime += wtimer.elapsed();
 
     return converged;
 }

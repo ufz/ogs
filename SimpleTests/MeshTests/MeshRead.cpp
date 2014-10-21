@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 //	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;
 	INFO ("mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
-	run_time.stop();
+
 //	std::cout << "time for reading: " << run_time.elapsed() << " s" << std::endl;
 	INFO ("time for reading: %f s", run_time.elapsed());
 

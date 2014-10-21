@@ -131,7 +131,6 @@ int main(int argc, char *argv[])
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 	INFO ("mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
-	run_time.stop();
 	INFO ("time for reading: %f s", run_time.elapsed());
 
 	// *** preparing test data
