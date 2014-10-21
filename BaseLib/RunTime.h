@@ -50,7 +50,7 @@ class RunTime
         }
 
         /// Get the elapsed time after started.
-        const double elapsed()
+        double elapsed() const
         {
 #if defined(USE_MPI)
             return MPI_Wtime() - _start_time;
