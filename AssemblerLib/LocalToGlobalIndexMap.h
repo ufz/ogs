@@ -33,6 +33,7 @@ public:
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:
+    /* \todo Extend the constructor for parallel meshes.
     LocalToGlobalIndexMap(
         std::vector<LineIndex> const& rows,
         std::vector<LineIndex> const & columns)
@@ -41,6 +42,7 @@ public:
         assert(_rows.size() == _columns.size());
         assert(!_rows.empty());
     }
+    */
 
     explicit LocalToGlobalIndexMap(std::vector<LineIndex> const& rows)
         : _rows(rows), _columns(rows)
@@ -67,8 +69,8 @@ public:
     }
 
 private:
-    std::vector<LineIndex> const& _rows;
-    std::vector<LineIndex> const& _columns;
+    std::vector<LineIndex> _rows;
+    std::vector<LineIndex> const& _columns = _rows;
 };
 
 }   // namespace AssemblerLib
