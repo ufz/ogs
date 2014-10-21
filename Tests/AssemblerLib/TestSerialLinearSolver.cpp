@@ -122,8 +122,9 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     typedef AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector> GlobalAssembler;
 
-    GlobalAssembler assembler(*A.get(), *rhs.get(),
-        AssemblerLib::LocalToGlobalIndexMap(map_ele_nodes2vec_entries));
+    AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
+            map_ele_nodes2vec_entries);
+    GlobalAssembler assembler(*A.get(), *rhs.get(), local_to_global_index_map);
 
     // Call global assembler for each mesh element.
     globalSetup.execute(assembler, local_assembler_data);
