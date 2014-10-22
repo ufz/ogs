@@ -88,6 +88,12 @@ public:
         }
     }
 
+    /// Returns total number of degrees of freedom.
+    std::size_t dofSize() const
+    {
+        return _mesh_component_map.size();
+    }
+
     std::size_t size() const
     {
         return _rows.size();
