@@ -71,6 +71,14 @@ public:
         //    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
     }
 
+    void solve()
+    {
+    }
+
+    void post()
+    {
+    }
+
     ~GroundwaterFlowProcess()
     {
         for (auto p : _all_mesh_subsets)

@@ -77,6 +77,18 @@ int main(int argc, char *argv[])
 	// Create processes.
 	project.buildProcesses<GlobalSetupType>();
 
+	INFO("Initialize processes.");
+	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+	{
+		(*p_it)->initialize();
+	}
+
+	INFO("Solve processes.");
+	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+	{
+		(*p_it)->solve();
+		(*p_it)->post();
+	}
 
 	delete fmt;
 	delete logog_cout;

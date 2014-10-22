@@ -28,6 +28,8 @@ public:
     virtual ~Process() = default;
 
     virtual void initialize() = 0;
+    virtual void solve() = 0;
+    virtual void post() = 0;
 
     std::vector<std::vector<std::size_t>>
     createDofMap(AssemblerLib::MeshComponentMap& mesh_component_map) const
