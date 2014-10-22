@@ -29,6 +29,32 @@
 // FileIO
 #include "FileIO/Legacy/MeshIO.h"
 
+namespace
+{
+    
+/// Get dimension of the mesh element type.
+/// @param eleType element type
+unsigned getDimension(MeshElemType eleType)
+{
+    switch (eleType)
+    {
+        case MeshElemType::LINE:
+            return 1;
+        case MeshElemType::QUAD:
+        case MeshElemType::TRIANGLE:
+            return 2;
+        case MeshElemType::HEXAHEDRON:
+        case MeshElemType::PRISM:
+        case MeshElemType::PYRAMID:
+        case MeshElemType::TETRAHEDRON:
+            return 3;
+        default:
+            return 0;
+    }
+}
+
+} // end namespace
+
 
 int main (int argc, char* argv[])
 {
@@ -68,7 +94,7 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 	const std::string eleTypeName(eleTypeArg.getValue());
 	const MeshElemType eleType = String2MeshElemType(eleTypeName);
-	const unsigned dim = MeshLib::Element::getDimension(eleType);
+	const unsigned dim = getDimension(eleType);
 
 	bool dim_used[3] = {false};
 	for (unsigned i=0; i<dim; i++)

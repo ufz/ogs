@@ -170,23 +170,4 @@ bool Element::isBoundaryElement() const
         [](MeshLib::Element const*const e){ return e == nullptr; });
 }
 
-unsigned Element::getDimension(MeshElemType eleType)
-{
-	switch (eleType)
-	{
-	case MeshElemType::LINE:
-		return 1;
-	case MeshElemType::QUAD:
-	case MeshElemType::TRIANGLE:
-		return 2;
-	case MeshElemType::HEXAHEDRON:
-	case MeshElemType::PRISM:
-	case MeshElemType::PYRAMID:
-	case MeshElemType::TETRAHEDRON:
-		return 3;
-	default:
-		return 0;
-	}
-}
-
 }
