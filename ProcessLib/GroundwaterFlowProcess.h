@@ -55,10 +55,10 @@ public:
     void initialize()
     {
         DBUG("Construct dof mappings.");
-        // Create mesh's subset using all nodes of the mesh.
+        // Create single component dof in every of the mesh's nodes.
         _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
 
-        // Define a mesh item composition in a vector.
+        // Collect the mesh subsets in a vector.
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
 
         _local_to_global_index_map.reset(
