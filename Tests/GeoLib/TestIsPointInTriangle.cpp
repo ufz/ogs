@@ -19,8 +19,6 @@ TEST(GeoLib, IsPointInTriangle)
 	GeoLib::Point const b(100.0, 0.0, 0.0);
 	GeoLib::Point const c(0.0, 100.0, 0.0);
 
-	double const default_eps (std::numeric_limits<double>::epsilon());
-
 	// check point on corner points of triangle
 	GeoLib::Point q(a);
 	EXPECT_TRUE(GeoLib::gaussPointInTriangle(q, a, b, c));
