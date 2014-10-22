@@ -51,7 +51,7 @@ PROJECT_BRIEF          = "Source code documentation"
 # and the maximum width should not exceed 200 pixels. Doxygen will copy the logo
 # to the output directory.
 
-PROJECT_LOGO           = ${PROJECT_SOURCE_DIR}/scripts/docs/OpenGeoSys-Logo.png
+PROJECT_LOGO           = ${PROJECT_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -664,7 +664,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            = ${CMAKE_SOURCE_DIR}/scripts/docs/DoxygenLayout.xml
+LAYOUT_FILE            = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
