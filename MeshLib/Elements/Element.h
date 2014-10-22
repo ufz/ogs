@@ -43,7 +43,6 @@ public:
 	virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
 	/// Compute the minimum and maximum node distances for this element.
-	/// @return a pair with the smallest as first element and the largest as second
 	virtual void computeSqrNodeDistanceRange(double &min, double &max, bool check_allnodes=true) const;
 
 	/**

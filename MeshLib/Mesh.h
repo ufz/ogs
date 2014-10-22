@@ -76,10 +76,12 @@ public:
 	/// Get the maximum edge length over all elements of the mesh.
 	double getMaxEdgeLength() const { return _edge_length[1]; }
 
-	/// Get the minimum node distance over all elements of the mesh.
+	/// Get the minimum node distance in the mesh.
+    /// The value is calculated from element-wise minimum node distances.
 	double getMinNodeDistance() const { return _node_distance[0]; }
 
 	/// Get the maximum node distance over all elements of the mesh.
+    /// The value is calculated from element-wise maximum node distances.
 	double getMaxNodeDistance() const { return _node_distance[1]; }
 
 	/// Get the number of elements
