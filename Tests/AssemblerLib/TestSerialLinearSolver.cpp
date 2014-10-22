@@ -18,7 +18,6 @@
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalAssemblerBuilder.h"
-#include "AssemblerLib/MeshComponentMap.h"
 #include "AssemblerLib/SerialDenseSetup.h"
 
 
@@ -61,40 +60,19 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
     vec_comp_dis.push_back(
         new MeshLib::MeshSubsets(&mesh_items_all_nodes));
-    AssemblerLib::MeshComponentMap vec1_composition(
-        vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
-
-    // allocate a vector and matrix
-    typedef GlobalSetup::VectorType GlobalVector;
-    typedef GlobalSetup::MatrixType GlobalMatrix;
-    std::unique_ptr<GlobalMatrix> A(globalSetup.createMatrix(vec1_composition));
-    A->setZero();
-    std::unique_ptr<GlobalVector> rhs(globalSetup.createVector(vec1_composition));
-    std::unique_ptr<GlobalVector> x(globalSetup.createVector(vec1_composition));
+    AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
+            vec_comp_dis);
 
     //--------------------------------------------------------------------------
     // Construct a linear system
     //--------------------------------------------------------------------------
-    // create a mapping table from element nodes to entries in the linear system
-    auto &all_eles = ex1.msh->getElements();
-    std::vector<std::vector<std::size_t> > map_ele_nodes2vec_entries;
-    map_ele_nodes2vec_entries.reserve(all_eles.size());
-    for (auto e = all_eles.cbegin(); e != all_eles.cend(); ++e)
-    {
-        std::size_t const nnodes = (*e)->getNNodes();
-        std::size_t const mesh_id = ex1.msh->getID();
-        std::vector<MeshLib::Location> vec_items;
-        vec_items.reserve(nnodes);
-        for (std::size_t j = 0; j < nnodes; j++)
-            vec_items.emplace_back(
-                mesh_id,
-                MeshLib::MeshItemType::Node,
-                (*e)->getNode(j)->getID());
-
-        map_ele_nodes2vec_entries.push_back(
-            vec1_composition.getGlobalIndices
-                <AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
-    }
+    // allocate a vector and matrix
+    typedef GlobalSetup::VectorType GlobalVector;
+    typedef GlobalSetup::MatrixType GlobalMatrix;
+    std::unique_ptr<GlobalMatrix> A(globalSetup.createMatrix(local_to_global_index_map.dofSize()));
+    A->setZero();
+    std::unique_ptr<GlobalVector> rhs(globalSetup.createVector(local_to_global_index_map.dofSize()));
+    std::unique_ptr<GlobalVector> x(globalSetup.createVector(local_to_global_index_map.dofSize()));
 
     // Initializer of the local assembler data.
     std::vector<SteadyDiffusion2DExample1::LocalAssemblerData*>
@@ -122,8 +100,6 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     typedef AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector> GlobalAssembler;
 
-    AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
-            map_ele_nodes2vec_entries);
     GlobalAssembler assembler(*A.get(), *rhs.get(), local_to_global_index_map);
 
     // Call global assembler for each mesh element.
