@@ -71,7 +71,8 @@ TARGET_LINK_LIBRARIES( OGSFileConverter
 	MeshLib
 	QtDataView
 	VtkVis
-	${VTK_LIBRARIES}
+	InSituLib
+	${CATALYST_LIBRARIES}
 )
 
 # Adds useful macros and variables

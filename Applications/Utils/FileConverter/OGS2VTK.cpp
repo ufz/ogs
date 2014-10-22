@@ -24,7 +24,7 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "readMeshFromFile.h"
 
 // MeshLib
@@ -51,8 +51,7 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	FileIO::BoostVtuInterface vtu;
-	vtu.setMesh(mesh);
+	FileIO::VtuInterface vtu(mesh);
 	vtu.writeToFile(mesh_out.getValue());
 
 	delete custom_format;

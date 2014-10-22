@@ -48,7 +48,7 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 
 namespace FileIO
 {

@@ -46,12 +46,12 @@ bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh, std::vector<s
     return result;
 }
 
-MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const 
+MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 {
     if (_nodes.empty() || _elements.empty())
         return nullptr;
 
-    MeshLib::Mesh* result (new MeshLib::Mesh(mesh_name, _nodes, _elements)); 
+    MeshLib::Mesh* result (new MeshLib::Mesh(mesh_name, _nodes, _elements));
     MeshLib::MeshValidation::removeUnusedMeshNodes(*result);
     return result;
 }

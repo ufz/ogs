@@ -8,6 +8,8 @@ TARGET_LINK_LIBRARIES(ogs
     BaseLib
     FileIO
     MeshLib
+    InSituLib
+    ${CATALYST_LIBRARIES}
     ${Boost_LIBRARIES}
 )
 

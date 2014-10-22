@@ -19,17 +19,18 @@
 
 /**
  * \brief Types of mesh elements supported by OpenGeoSys.
+ * Values are from VTKCellType enum
  */
 enum class MeshElemType
 {
-	INVALID,
-	LINE,
-	QUAD,
-	HEXAHEDRON,
-	TRIANGLE,
-	TETRAHEDRON,
-	PRISM,
-	PYRAMID
+	INVALID = 0,
+	LINE = 3,
+	QUAD = 9,
+	HEXAHEDRON = 12,
+	TRIANGLE = 5,
+	TETRAHEDRON = 10,
+	PRISM = 16,
+	PYRAMID = 14
 };
 
 /**

@@ -21,7 +21,7 @@
 
 // FileIO
 #include "readMeshFromFile.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -30,7 +30,7 @@
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
 {
 	std::size_t nElements (elements.size());
-	for (std::size_t i=0; i<nElements; ++i) 
+	for (std::size_t i=0; i<nElements; ++i)
 	{
 		const unsigned nElemNodes (elements[i]->getNBaseNodes());
 		std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
@@ -93,12 +93,11 @@ int main (int argc, char* argv[])
 
 	INFO("Reordering nodes... ");
 	reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
-	
-	FileIO::BoostVtuInterface writer;
-	writer.setMesh(mesh);
+
+	FileIO::VtuInterface writer(mesh);
 	writer.writeToFile(output_mesh_arg.getValue().c_str());
 
-	INFO("VTU file written."); 
+	INFO("VTU file written.");
 
 	delete formatter;
 	delete logogCout;

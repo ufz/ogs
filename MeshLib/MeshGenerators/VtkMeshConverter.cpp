@@ -17,15 +17,15 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Line.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Prism.h"
 
 // Conversion from Image to QuadMesh
 #include <vtkImageData.h>
@@ -39,6 +39,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkFloatArray.h>
 
+namespace MeshLib {
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                      const double origin[3],
@@ -368,3 +369,5 @@ double VtkMeshConverter::getExistingValue(const double* img, size_t length)
 	}
 	return -9999;
 }
+
+} // end namespace MeshLib

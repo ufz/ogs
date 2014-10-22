@@ -25,7 +25,7 @@
 
 // MeshLib
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
@@ -211,14 +211,14 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 	{
 		ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains no elements.");
 		return false;
-	}		
-		
+	}
+
 	if (nElements>10E+7) // DBF-export requires a limit, 10 mio seems good for now
 	{
 		ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains too many elements for currently implemented DBF-boundaries.");
 		return false;
 	}
-	
+
 	SHPHandle hSHP = SHPCreate(file_name.c_str(), SHPT_POLYGON);
 	DBFHandle hDBF = DBFCreate(file_name.c_str());
 	int elem_id_field = DBFAddField(hDBF, "Elem_ID", FTInteger, 7, 0); // allows integers of length "7", i.e. 10mio-1 elements
@@ -263,7 +263,7 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
 
 			SHPObject *object = SHPCreateObject(SHPT_POLYGON, polygon_id++, 0, 0, NULL, ++nNodes, padfX, padfY, padfZ, NULL);
 			SHPWriteObject(hSHP, -1, object);
-		
+
 			// Note: cleaning up the coordinate arrays padfX, -Y, -Z results in a crash, I assume that shapelib removes them
 			delete object;
 		}

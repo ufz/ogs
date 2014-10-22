@@ -50,9 +50,8 @@ add_library( VtkAct STATIC
 	${UIS}
 )
 
-IF(TARGET VtkRescan)
-	ADD_DEPENDENCIES(VtkAct VtkRescan)
-ENDIF()
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(VtkAct)
 
 target_link_libraries( VtkAct ${QT_LIBRARIES} )
 

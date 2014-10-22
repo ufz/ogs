@@ -16,7 +16,7 @@
 
 #include "Mesh.h"
 #include "Elements/Element.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshEditing/ElementExtraction.h"
 #include "AABB.h"
 #include "OGSError.h"
@@ -29,7 +29,7 @@ MeshElementRemovalDialog::MeshElementRemovalDialog(const ProjectData &project, Q
 	: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()), _matIDIndex(std::numeric_limits<unsigned>::max())
 {
 	setupUi(this);
-	
+
 	const std::vector<MeshLib::Mesh*> mesh_vec (_project.getMeshObjects());
 
 	const std::size_t nMeshes (mesh_vec.size());
@@ -37,7 +37,7 @@ MeshElementRemovalDialog::MeshElementRemovalDialog(const ProjectData &project, Q
 	{
 		std::string name = mesh_vec[i]->getName();
 		this->meshNameComboBox->addItem(QString::fromStdString(name));
-	}	
+	}
 
 	if (mesh_vec.empty())
 	{
@@ -161,7 +161,7 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
 		this->materialListWidget->clear();
 		_matIDIndex = _currentIndex;
 		const std::vector<MeshLib::Element*> elements (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getElements());
-		auto it = std::max_element(elements.begin(), elements.end(), 
+		auto it = std::max_element(elements.begin(), elements.end(),
 			[](MeshLib::Element const*const x, MeshLib::Element const*const y) { return x->getValue() < y->getValue(); }
 		);
 		unsigned max_material ((*it)->getValue());
@@ -177,7 +177,7 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 	this->_currentIndex = this->meshNameComboBox->currentIndex();
 	this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() + "_new");
 	this->elementTypeListWidget->clearSelection();
-	this->materialListWidget->clearSelection();	
+	this->materialListWidget->clearSelection();
 	if (this->boundingBoxCheckBox->isChecked()) this->on_boundingBoxCheckBox_toggled(true);
 	if (this->materialIDCheckBox->isChecked()) this->on_materialIDCheckBox_toggled(true);
 }

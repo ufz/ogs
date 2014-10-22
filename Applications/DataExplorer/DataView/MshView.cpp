@@ -22,7 +22,7 @@
 #include <QSettings>
 
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "MshItem.h"
@@ -37,7 +37,7 @@
 
 #include "Legacy/MeshIO.h"
 //#include "RapidXmlIO/RapidVtuInterface.h"
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "Writer.h" // necessary to avoid Linker Error in Windows
 #include "SHPInterface.h"
 #include "TetGenInterface.h"
@@ -230,7 +230,7 @@ void MshView::exportToTetGen()
 
 	if (!index.isValid())
 		return;
-	
+
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	QSettings settings;
 	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
@@ -269,8 +269,7 @@ int MshView::writeToFile() const
 			QFileInfo fi(fileName);
 			if (fi.suffix().toLower() == "vtu")
 			{
-				FileIO::BoostVtuInterface vtkIO;
-				vtkIO.setMesh(mesh);
+				FileIO::VtuInterface vtkIO(mesh);
 				vtkIO.writeToFile(fileName.toStdString().c_str());
 			}
 			if (fi.suffix().toLower() == "msh")

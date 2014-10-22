@@ -27,7 +27,6 @@ SET( SOURCES
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
-	VtkMeshConverter.cpp
 	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
@@ -82,7 +81,6 @@ SET( HEADERS
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
-	VtkMeshConverter.h
 	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
@@ -150,9 +148,8 @@ ADD_LIBRARY( VtkVis STATIC
 	${UIS}
 )
 
-IF(TARGET VtkRescan)
-	ADD_DEPENDENCIES(VtkVis VtkRescan)
-ENDIF()
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(VtkVis)
 
 IF (GEOTIFF_FOUND)
 	INCLUDE_DIRECTORIES( ${GEOTIFF_INCLUDE_DIRS} )

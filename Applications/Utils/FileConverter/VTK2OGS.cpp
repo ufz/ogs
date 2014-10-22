@@ -24,7 +24,7 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "Legacy/MeshIO.h"
 
 // MeshLib
@@ -48,7 +48,7 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::BoostVtuInterface::readVTUFile(mesh_in.getValue()));
+	MeshLib::Mesh* mesh (FileIO::VtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	FileIO::Legacy::MeshIO meshIO;

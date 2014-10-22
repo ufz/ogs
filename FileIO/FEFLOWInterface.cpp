@@ -17,7 +17,7 @@
 #include "FileTools.h"
 #include "Polygon.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Line.h"
 #include "Elements/Hex.h"
 #include "Elements/Prism.h"

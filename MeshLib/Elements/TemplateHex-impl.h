@@ -178,7 +178,7 @@ ElementErrorCode TemplateHex<NNODES,CELLHEXTYPE>::validate() const
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
-		
+
 	for (unsigned i=0; i<6; ++i)
 	{
 		if (error_code.all())

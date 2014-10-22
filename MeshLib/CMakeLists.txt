@@ -16,3 +16,5 @@ target_link_libraries (MeshLib
 	logog
 )
 
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(MeshLib)

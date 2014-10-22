@@ -14,7 +14,7 @@
 #include "gtest/gtest.h"
 
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MeshEditing/MeshRevision.h"
 #include "Elements/Element.h"
 #include "Elements/Tri.h"
@@ -91,7 +91,7 @@ TEST(MeshEditing, Quad2Line)
 
 	MeshLib::MeshRevision rev(mesh);
 	MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
-	
+
 	ASSERT_EQ(MeshElemType::LINE, result->getElement(0)->getGeomType());
 	ASSERT_NEAR(1.414213562373095, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
 	ASSERT_EQ(2u, result->getNNodes());
@@ -178,7 +178,7 @@ TEST(MeshEditing, Hex2PyramidPrism)
 	ASSERT_EQ(MeshElemType::PRISM, result->getElement(1)->getGeomType());
 	ASSERT_NEAR(0.3333333333333333, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(0.5, result->getElement(1)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -209,7 +209,7 @@ TEST(MeshEditing, Hex2FourTets)
 	ASSERT_NEAR(0.1666666666666667, result->getElement(1)->getContent(), std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(2)->getContent(), std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(3)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -238,7 +238,7 @@ TEST(MeshEditing, Hex2TwoTets)
 	ASSERT_EQ(MeshElemType::TETRAHEDRON, result->getElement(1)->getGeomType());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(1)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -264,7 +264,7 @@ TEST(MeshEditing, NonPlanarPyramid)
 	ASSERT_EQ(MeshElemType::TETRAHEDRON, result->getElement(1)->getGeomType());
 	ASSERT_NEAR(0.25, result->getElement(0)->getContent(),  std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(1)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -289,7 +289,7 @@ TEST(MeshEditing, Pyramid2Tet)
 	ASSERT_EQ(1u, result->getNElements());
 	ASSERT_EQ(MeshElemType::TETRAHEDRON, result->getElement(0)->getGeomType());
 	ASSERT_NEAR(0.16666666666666666, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -314,7 +314,7 @@ TEST(MeshEditing, Pyramid2Quad)
 	ASSERT_EQ(1u, result->getNElements());
 	ASSERT_EQ(MeshElemType::QUAD, result->getElement(0)->getGeomType());
 	ASSERT_NEAR(1, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -340,7 +340,7 @@ TEST(MeshEditing, Pyramid2Tri)
 	ASSERT_EQ(1u, result->getNElements());
 	ASSERT_EQ(MeshElemType::TRIANGLE, result->getElement(0)->getGeomType());
 	ASSERT_NEAR(0.5, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -366,7 +366,7 @@ TEST(MeshEditing, NonPlanarPrism)
 	ASSERT_EQ(3u, result->getNElements());
 	ASSERT_EQ(MeshElemType::TETRAHEDRON, result->getElement(2)->getGeomType());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -394,7 +394,7 @@ TEST(MeshEditing, Prism2TwoTets)
 	ASSERT_EQ(MeshElemType::TETRAHEDRON, result->getElement(1)->getGeomType());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(0.15, result->getElement(1)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 
@@ -446,7 +446,7 @@ TEST(MeshEditing, Prism2Tet)
 	ASSERT_EQ(1u, result->getNElements());
 	ASSERT_EQ(MeshElemType::TETRAHEDRON, result->getElement(0)->getGeomType());
 	ASSERT_NEAR(0.1666666666666667, result->getElement(0)->getContent(), std::numeric_limits<double>::epsilon());
-	
+
 	delete result;
 }
 

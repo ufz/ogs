@@ -29,7 +29,6 @@
 
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
 
 int main(int argc, char *argv[])
 {

@@ -15,6 +15,9 @@
 // ** INCLUDES **
 #include "VtkVisPipelineView.h"
 
+#include "Mesh.h"
+#include "MeshGenerators/VtkMeshConverter.h"
+
 #include "OGSError.h"
 
 #include "CheckboxDelegate.h"
@@ -34,7 +37,6 @@
 #include <QMessageBox>
 
 //image to mesh conversion
-#include "Mesh.h"
 #include "VtkGeoImageSource.h"
 #include <vtkImageData.h>
 #include "MeshFromRasterDialog.h"
@@ -200,7 +202,7 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 	dlg->exec();
 }
 
-void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType element_type, UseIntensityAs intensity_type)
+void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
@@ -212,7 +214,7 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType e
 	double spacing[3];
 	imageSource->GetOutput()->GetSpacing(spacing);
 
-	MeshLib::Mesh* mesh = VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
+	MeshLib::Mesh* mesh = MeshLib::VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
 	if (mesh)
 	{
 		mesh->setName(msh_name.toStdString());
@@ -246,7 +248,7 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
 			grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
 		}
 	}
-	MeshLib::Mesh* mesh = VtkMeshConverter::convertUnstructuredGrid(grid);
+	MeshLib::Mesh* mesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(grid);
 	mesh->setName(item->data(0).toString().toStdString());
 	emit meshAdded(mesh);
 }
@@ -280,7 +282,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
 
 void VtkVisPipelineView::selectItem(vtkProp3D* actor)
 {
-	this->selectItem(static_cast<VtkVisPipeline*>(this->model())->getIndex(actor));	
+	this->selectItem(static_cast<VtkVisPipeline*>(this->model())->getIndex(actor));
 }
 
 void VtkVisPipelineView::selectItem(const QModelIndex &index)

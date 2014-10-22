@@ -20,7 +20,7 @@
 
 // MeshLib
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "MeshEnums.h"
 #include "MeshGenerators/MeshGenerator.h"

@@ -202,7 +202,6 @@ int VtkStationSource::RequestInformation( vtkInformation* request,
 	(void)inputVector;
 
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
-	outInfo->Set(vtkStreamingDemandDrivenPipeline::MAXIMUM_NUMBER_OF_PIECES(), -1);
 
 	return 1;
 }

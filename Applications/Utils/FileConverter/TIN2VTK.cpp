@@ -27,7 +27,7 @@
 #include "GeoLib/Surface.h"
 
 // FileIO
-#include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "FileIO/TINInterface.h"
 
 // MeshLib
@@ -66,8 +66,7 @@ int main (int argc, char* argv[])
 	INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	INFO("Write it into VTU");
-	FileIO::BoostVtuInterface writer;
-	writer.setMesh(mesh.get());
+	FileIO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
 	for (auto p : pnt_vec) delete p;

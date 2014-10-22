@@ -10,7 +10,7 @@
 #include "Legacy/MeshIO.h"
 #include "AABB.h"
 #include "Mesh.h"
-#include "Node.h"
+#include "MeshLib/Node.h"
 #include "MathTools.h"
 
 int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Node*> const& nodes, double const& max_dist)
@@ -20,7 +20,7 @@ int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Nod
 	int idx = (sqr_shortest_dist<max_dist) ? 0 : -1;
 	const MeshLib::Node p (*point);
 
-	for (unsigned i=0; i<nNodes; i++) 
+	for (unsigned i=0; i<nNodes; i++)
 	{
 		double sqr_dist ((p[0]-(*nodes[i])[0])*(p[0]-(*nodes[i])[0]));
 		if (sqr_dist < max_dist)
@@ -37,7 +37,7 @@ int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Nod
 	return idx;
 }
 
-bool containsPoint(MeshLib::Node const& pnt, MeshLib::Node const& min, MeshLib::Node const& max) 
+bool containsPoint(MeshLib::Node const& pnt, MeshLib::Node const& min, MeshLib::Node const& max)
 {
 	if (pnt[0] < min[0] || max[0] < pnt[0]) return false;
 	if (pnt[1] < min[1] || max[1] < pnt[1]) return false;
@@ -69,7 +69,7 @@ int main (int argc, char* argv[])
 		std::cout << "\t" << "-LOWPASS : applies a lowpass filter over node elevation using directly connected nodes." << std::endl;
 		return -1;
 	}
-	
+
 	const std::string msh_name(argv[1]);
 	const std::string current_key(argv[2]);
 	//const std::string msh_name("D:\\rappbode-2013-03-03--30m_lowpass_new_new.msh");
@@ -142,7 +142,7 @@ int main (int argc, char* argv[])
 		GeoLib::AABB<MeshLib::Node> bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
 		const MeshLib::Node min (bounding_box.getMinPoint());
 		const MeshLib::Node max (bounding_box.getMaxPoint());
-		
+
 		const size_t nNodes(mesh->getNNodes());
 		std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 
@@ -158,7 +158,7 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	// a simple lowpass filter for the elevation of mesh nodes using the elevation of each node 
+	// a simple lowpass filter for the elevation of mesh nodes using the elevation of each node
 	// weighted by 2 and the elevation of each connected node weighted by 1
 	if (current_key.compare("-LOWPASS")==0)
 	{

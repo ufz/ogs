@@ -80,6 +80,7 @@ TARGET_LINK_LIBRARIES( DataExplorer
 	BaseLib
 	GeoLib
 	FileIO
+	InSituLib
 	MeshLib
 	#MSHGEOTOOLS
 	QtBase
@@ -88,7 +89,7 @@ TARGET_LINK_LIBRARIES( DataExplorer
 	VtkVis
 	VtkAct
 	${Boost_LIBRARIES}
-	${VTK_LIBRARIES}
+	${CATALYST_LIBRARIES}
 	zlib
 	shp
 )
@@ -122,6 +123,8 @@ IF(VTKFBXCONVERTER_FOUND)
 	TARGET_LINK_LIBRARIES(DataExplorer ${VTKFBXCONVERTER_LIBRARIES})
 ENDIF()
 
+INCLUDE(AddCatalystDependency)
+ADD_CATALYST_DEPENDENCY(DataExplorer)
 
 SET_PROPERTY(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
