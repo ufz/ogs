@@ -91,18 +91,6 @@ public:
 	/// Get the element-vector for the mesh.
 	std::vector<Element*> const& getElements() const { return _elements; }
 
-	/// Const iterator access to the elements.
-	std::vector<Element*>::const_iterator elementsBegin() const
-	{
-		return _elements.cbegin();
-	}
-
-	/// Const iterator access to the elements.
-	std::vector<Element*>::const_iterator elementsEnd() const
-	{
-		return _elements.cend();
-	}
-
 	/// Resets the IDs of all mesh-elements to their position in the element vector
 	void resetElementIDs();
 	
