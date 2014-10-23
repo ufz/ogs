@@ -60,11 +60,9 @@ public:
 
         // Define a mesh item composition in a vector.
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
-        AssemblerLib::MeshComponentMap mesh_component_map(_all_mesh_subsets,
-                AssemblerLib::ComponentOrder::BY_COMPONENT);
 
         _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(mesh_component_map);
+            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
         //DBUG("Create global assembler.");
         //_global_assembler.reset(

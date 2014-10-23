@@ -12,7 +12,9 @@
 
 #include <vector>
 
+#include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
+#include "MeshLib/MeshSubsets.h"
 
 namespace AssemblerLib
 {
@@ -47,7 +49,10 @@ public:
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
-        AssemblerLib::MeshComponentMap const& mesh_component_map)
+        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        AssemblerLib::ComponentOrder const order =
+            AssemblerLib::ComponentOrder::BY_COMPONENT)
+    : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
     {
         // For all MeshSubsets and each of their MeshSubset's and each element
         // of that MeshSubset save a line of global indices.
@@ -104,6 +109,9 @@ public:
     }
 
 private:
+    std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
+    AssemblerLib::MeshComponentMap _mesh_component_map;
+
     // _rows contains for each element vector of global indices to
     // node/element process variables.
     std::vector<LineIndex> _rows;
