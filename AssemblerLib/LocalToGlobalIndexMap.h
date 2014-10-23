@@ -12,8 +12,6 @@
 
 #include <vector>
 
-#include "logog/include/logog.hpp"
-
 #include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MeshLib/MeshSubsets.h"
@@ -53,88 +51,26 @@ public:
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
         AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT)
-    : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
-    {
-        // For all MeshSubsets and each of their MeshSubset's and each element
-        // of that MeshSubset save a line of global indices.
-        for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
-        {
-            for (MeshLib::MeshSubset const* const ms : *mss)
-            {
-                std::size_t const mesh_id = ms->getMeshID();
+            AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-                // For each element find the global indices for node/element
-                // components.
-                for (auto e = ms->elementsBegin();
-                        e != ms->elementsEnd(); ++e)
-                {
-                    switch (order)
-                    {
-                        case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                            appendGlobalIndices<
-                                AssemblerLib::ComponentOrder::BY_COMPONENT>(
-                                    mesh_id, **e);
-                              break;
-                        case AssemblerLib::ComponentOrder::BY_LOCATION:
-                            appendGlobalIndices<
-                                AssemblerLib::ComponentOrder::BY_LOCATION>(
-                                    mesh_id, **e);
-                              break;
-                        default:
-                            ERR("Unknown type of ComponentOrder passed.");
-                    }
-                }
-            }
-        }
-    }
 
     /// Returns total number of degrees of freedom.
-    std::size_t dofSize() const
-    {
-        return _mesh_component_map.size();
-    }
+    std::size_t dofSize() const;
 
-    std::size_t size() const
-    {
-        return _rows.size();
-    }
+    std::size_t size() const;
 
-    RowColumnIndices operator[](std::size_t const mesh_item_id) const
-    {
-        return RowColumnIndices(_rows[mesh_item_id], _columns[mesh_item_id]);
-    }
+    RowColumnIndices operator[](std::size_t const mesh_item_id) const;
 
-    LineIndex rowIndices(std::size_t const mesh_item_id) const
-    {
-        return _rows[mesh_item_id];
-    }
-
-    LineIndex columnIndices(std::size_t const mesh_item_id) const
-    {
-        return _columns[mesh_item_id];
-    }
+    LineIndex rowIndices(std::size_t const mesh_item_id) const;
+    LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
 private:
+    template <AssemblerLib::ComponentOrder Order>
+    void constructGlobalIndicesForMeshSubsets();
+
     /// Append global indices for the element e in given component order Order.
     template <AssemblerLib::ComponentOrder Order>
-    void appendGlobalIndices(std::size_t const mesh_id, MeshLib::Element const& e)
-    {
-        std::vector<MeshLib::Location> vec_items;
-        std::size_t const nnodes = e.getNNodes();
-        vec_items.reserve(nnodes);
-
-        for (std::size_t n = 0; n < nnodes; n++)
-        {
-            vec_items.emplace_back(
-                mesh_id,
-                MeshLib::MeshItemType::Node,
-                e.getNode(n)->getID());
-        }
-
-        // Save a line of indices for the current element.
-        _rows.push_back(_mesh_component_map.getGlobalIndices<Order>(vec_items));
-    }
+    void appendGlobalIndices(std::size_t const mesh_id, MeshLib::Element const& e);
 
 private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
@@ -147,5 +83,7 @@ private:
 };
 
 }   // namespace AssemblerLib
+
+#include "LocalToGlobalIndexMap-impl.h"
 
 #endif  // ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
