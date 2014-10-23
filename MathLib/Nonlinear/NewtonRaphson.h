@@ -57,7 +57,7 @@ public:
      * \f$x_k\f$ is current solution. \f$r_k\f$ is calculated residual and an output
      * of this function.
      * \tparam F_DX             Function object returning a solution increment.
-     * The object should have an operator ()(\f$x_k\f$, \f$r_k, \f$\Delta x_{k+1}}\f$).
+     * The object should have an operator ()(\f$x_k\f$, \f$r_k\f$, \f$\Delta x_{k+1}}\f$).
      * \f$\Delta x_{k+1}}\f$ is a calculated solution increment and an output of
      * this function.
      * \tparam T_VALUE          Data type of \f$x_k\f$
