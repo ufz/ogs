@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "logog/include/logog.hpp"
+
 #include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MeshLib/MeshSubsets.h"
@@ -67,22 +69,21 @@ public:
                 for (auto e = ms->elementsBegin();
                         e != ms->elementsEnd(); ++e)
                 {
-                    std::vector<MeshLib::Location> vec_items;
-                    std::size_t const nnodes = (*e)->getNNodes();
-                    for (std::size_t n = 0; n < nnodes; n++)
+                    switch (order)
                     {
-
-                        vec_items.reserve(nnodes);
-                        vec_items.emplace_back(
-                            mesh_id,
-                            MeshLib::MeshItemType::Node,
-                            (*e)->getNode(n)->getID());
-
+                        case AssemblerLib::ComponentOrder::BY_COMPONENT:
+                            appendGlobalIndices<
+                                AssemblerLib::ComponentOrder::BY_COMPONENT>(
+                                    mesh_id, **e);
+                              break;
+                        case AssemblerLib::ComponentOrder::BY_LOCATION:
+                            appendGlobalIndices<
+                                AssemblerLib::ComponentOrder::BY_LOCATION>(
+                                    mesh_id, **e);
+                              break;
+                        default:
+                            ERR("Unknown type of ComponentOrder passed.");
                     }
-
-                    // Save a line of indices for the current element.
-                    _rows.push_back(_mesh_component_map.getGlobalIndices<order>(
-                        vec_items));
                 }
             }
         }
@@ -112,6 +113,28 @@ public:
     LineIndex columnIndices(std::size_t const mesh_item_id) const
     {
         return _columns[mesh_item_id];
+    }
+
+private:
+    /// Append global indices for the element e in given component order Order.
+    template <AssemblerLib::ComponentOrder Order>
+    void appendGlobalIndices(std::size_t const mesh_id, MeshLib::Element const& e)
+    {
+        std::vector<MeshLib::Location> vec_items;
+        std::size_t const nnodes = e.getNNodes();
+        for (std::size_t n = 0; n < nnodes; n++)
+        {
+
+            vec_items.reserve(nnodes);
+            vec_items.emplace_back(
+                mesh_id,
+                MeshLib::MeshItemType::Node,
+                e.getNode(n)->getID());
+
+        }
+
+        // Save a line of indices for the current element.
+        _rows.push_back(_mesh_component_map.getGlobalIndices<Order>(vec_items));
     }
 
 private:
