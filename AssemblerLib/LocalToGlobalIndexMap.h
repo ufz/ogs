@@ -65,14 +65,6 @@ public:
     LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
 private:
-    template <AssemblerLib::ComponentOrder Order>
-    void constructGlobalIndicesForMeshSubsets();
-
-    /// Append global indices for the element e in given component order Order.
-    template <AssemblerLib::ComponentOrder Order>
-    void appendGlobalIndices(std::size_t const mesh_id, MeshLib::Element const& e);
-
-private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
@@ -86,7 +78,5 @@ private:
 };
 
 }   // namespace AssemblerLib
-
-#include "LocalToGlobalIndexMap-impl.h"
 
 #endif  // ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_

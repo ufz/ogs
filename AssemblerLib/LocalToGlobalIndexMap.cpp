@@ -22,14 +22,43 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     AssemblerLib::ComponentOrder const order)
     : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
 {
-    switch (order)
+    // For all MeshSubsets and each of their MeshSubset's and each element
+    // of that MeshSubset save a line of global indices.
+    for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
     {
-        case AssemblerLib::ComponentOrder::BY_LOCATION:
-            constructGlobalIndicesForMeshSubsets<AssemblerLib::ComponentOrder::BY_LOCATION>();
-        case AssemblerLib::ComponentOrder::BY_COMPONENT:
-        default:
-            ERR("Unknown type of ComponentOrder passed. Using BY_COMPONENT");
-            constructGlobalIndicesForMeshSubsets<AssemblerLib::ComponentOrder::BY_COMPONENT>();
+        for (MeshLib::MeshSubset const* const ms : *mss)
+        {
+            std::size_t const mesh_id = ms->getMeshID();
+
+            // For each element find the global indices for node/element
+            // components.
+            for (auto e = ms->elementsBegin();
+                    e != ms->elementsEnd(); ++e)
+            {
+                std::vector<MeshLib::Location> vec_items;
+                std::size_t const nnodes = (*e)->getNNodes();
+                vec_items.reserve(nnodes);
+
+                for (std::size_t n = 0; n < nnodes; n++)
+                {
+                    vec_items.emplace_back(
+                        mesh_id,
+                        MeshLib::MeshItemType::Node,
+                        (*e)->getNode(n)->getID());
+                }
+
+                // Save a line of indices for the current element.
+                switch (order)
+                {
+                    case AssemblerLib::ComponentOrder::BY_LOCATION:
+                        _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
+                        break;
+                    case AssemblerLib::ComponentOrder::BY_COMPONENT:
+                        _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
+                        break;
+                }
+            }
+        }
     }
 }
 
