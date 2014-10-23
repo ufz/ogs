@@ -76,9 +76,12 @@ private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
-    // _rows contains for each element vector of global indices to
-    // node/element process variables.
+    /// _rows contains for each element a vector of global indices to
+    /// node/element process variables.
     std::vector<LineIndex> _rows;
+
+    /// For non-parallel implementations the columns are equal to the rows.
+    /// \todo This is to be overriden by any parallel implementation.
     std::vector<LineIndex> const& _columns = _rows;
 };
 
