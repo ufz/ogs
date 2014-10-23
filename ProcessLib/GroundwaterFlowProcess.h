@@ -13,6 +13,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
@@ -62,11 +63,10 @@ public:
         AssemblerLib::MeshComponentMap mesh_component_map(_all_mesh_subsets,
                 AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-        _dof_map = createDofMap(mesh_component_map);
+        _local_to_global_index_map.reset(
+            new AssemblerLib::LocalToGlobalIndexMap(mesh_component_map);
 
         //DBUG("Create global assembler.");
-        //_local_to_global_index_map.reset(
-        //    new AssemblerLib::LocalToGlobalIndexMap(_dof_map));
         //_global_assembler.reset(
         //    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
     }
@@ -92,7 +92,8 @@ private:
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
-    std::vector <std::vector<std::size_t>> _dof_map;
+
+    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 };
 
 }   // namespace ProcessLib
