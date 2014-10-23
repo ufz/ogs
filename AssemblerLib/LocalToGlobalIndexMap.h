@@ -122,15 +122,14 @@ private:
     {
         std::vector<MeshLib::Location> vec_items;
         std::size_t const nnodes = e.getNNodes();
+        vec_items.reserve(nnodes);
+
         for (std::size_t n = 0; n < nnodes; n++)
         {
-
-            vec_items.reserve(nnodes);
             vec_items.emplace_back(
                 mesh_id,
                 MeshLib::MeshItemType::Node,
                 e.getNode(n)->getID());
-
         }
 
         // Save a line of indices for the current element.
