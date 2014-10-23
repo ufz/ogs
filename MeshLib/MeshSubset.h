@@ -83,12 +83,12 @@ public:
 
     std::vector<Element*>::const_iterator elementsBegin() const
     {
-        return _msh.elementsBegin();
+        return _msh.getElements().cbegin();
     }
 
     std::vector<Element*>::const_iterator elementsEnd() const
     {
-        return _msh.elementsEnd();
+        return _msh.getElements().cend();
     }
 
 private:
