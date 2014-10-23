@@ -12,8 +12,6 @@
 
 #include <iostream>
 
-#include <boost/range/algorithm/for_each.hpp>
-
 #include "MeshLib/MeshSubsets.h"
 
 #include "MeshComponentMap.h"
