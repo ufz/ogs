@@ -15,6 +15,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
