@@ -10,6 +10,8 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
+#include <memory>
+
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
