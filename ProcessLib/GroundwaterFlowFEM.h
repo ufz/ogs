@@ -10,6 +10,9 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
 #define PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
 
+#include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
+
 namespace ProcessLib
 {
 
@@ -56,10 +59,38 @@ public:
     void
     init(MeshLib::Element const& e, double const hydraulic_conductivity)
     {
+        using FemType = NumLib::TemplateIsoparametric<
+            ShapeFunction, ShapeMatrices>;
+
+        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
+
+
+        IntegrationMethod _integration_method(integration_order);
+
+        for (std::size_t ip(0); ip < n_integration_points; ip++) {
+            fe.computeShapeFunctions(
+                    _integration_method.getWeightedPoint(ip).getCoords(),
+                    _shape_matrices[ip]);
+        }
     }
 
     void assemble(std::size_t const rows, std::size_t const columns)
     {
+        localA.reset(new NodalMatrixType(rows, columns));
+        localRhs.reset(new NodalVectorType(rows));
+
+        localA->setZero();
+        localRhs->setZero();
+
+        IntegrationMethod _integration_method(integration_order);
+
+        for (std::size_t ip(0); ip < n_integration_points; ip++) {
+            auto const& wp = _integration_method.getWeightedPoint(ip);
+            *localA += _shape_matrices[ip].dNdx.transpose() *
+                        _shape_matrices[ip].dNdx *
+                        _shape_matrices[ip].detJ *
+                        wp.getWeight();
+        }
     }
 
     void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
@@ -70,10 +101,12 @@ public:
     }
 
 private:
+    std::array<ShapeMatrices, n_integration_points> _shape_matrices;
 
     std::unique_ptr<NodalMatrixType> localA;
     std::unique_ptr<NodalVectorType> localRhs;
 };
+
 
 }   // namespace GroundwaterFlow
 }   // namespace ProcessLib
