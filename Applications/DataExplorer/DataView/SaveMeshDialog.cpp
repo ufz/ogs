@@ -57,7 +57,10 @@ void SaveMeshDialog::accept()
 {
 	QString const& file_name (this->fileNameEdit->text());
 	if (file_name.isEmpty())
+	{
 		OGSError::box("No file name entered.");
+		return;
+	}
 
 	QFileInfo fi(file_name);
 	if (fi.suffix().toLower() == "vtu")
