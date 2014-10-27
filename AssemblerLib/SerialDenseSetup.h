@@ -15,6 +15,8 @@
 
 #include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
 #include "AssemblerLib/SerialExecutor.h"
+#include "AssemblerLib/SerialExecutor.h"
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 namespace AssemblerLib
 {
@@ -23,7 +25,11 @@ namespace AssemblerLib
 /// global assembly loop.
 typedef GlobalSetup<
         AssemblerLib::SerialDenseVectorMatrixBuilder,
-        AssemblerLib::SerialExecutor>
+        AssemblerLib::SerialExecutor,
+        MathLib::GaussAlgorithm<
+            typename AssemblerLib::SerialDenseVectorMatrixBuilder::MatrixType,
+            typename AssemblerLib::SerialDenseVectorMatrixBuilder::VectorType>
+        >
     SerialDenseSetup;
 
 }   // namespace AssemblerLib

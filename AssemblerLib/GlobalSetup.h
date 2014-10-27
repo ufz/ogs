@@ -19,11 +19,13 @@ namespace AssemblerLib
 
 /// The GlobalSetup collects vector and matrix builder and corresponding global
 /// loop executor.
-template <typename VectorMatrixBuilder, typename Executor>
+template <typename VectorMatrixBuilder, typename Executor, typename LinearSolver_>
 struct GlobalSetup
 {
     typedef typename VectorMatrixBuilder::VectorType VectorType;
     typedef typename VectorMatrixBuilder::MatrixType MatrixType;
+
+    using LinearSolver = LinearSolver_;
 
     template <typename... Args>
     static
