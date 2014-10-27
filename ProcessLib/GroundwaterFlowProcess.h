@@ -10,9 +10,12 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
+#include <memory>
+
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
@@ -54,19 +57,16 @@ public:
     void initialize()
     {
         DBUG("Construct dof mappings.");
-        // Create mesh's subset using all nodes of the mesh.
+        // Create single component dof in every of the mesh's nodes.
         _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
 
-        // Define a mesh item composition in a vector.
+        // Collect the mesh subsets in a vector.
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
-        AssemblerLib::MeshComponentMap mesh_component_map(_all_mesh_subsets,
-                AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-        _dof_map = createDofMap(mesh_component_map);
+        _local_to_global_index_map.reset(
+            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
         //DBUG("Create global assembler.");
-        //_local_to_global_index_map.reset(
-        //    new AssemblerLib::LocalToGlobalIndexMap(_dof_map));
         //_global_assembler.reset(
         //    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
     }
@@ -92,7 +92,8 @@ private:
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
-    std::vector <std::vector<std::size_t>> _dof_map;
+
+    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 };
 
 }   // namespace ProcessLib

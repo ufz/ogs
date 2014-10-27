@@ -81,6 +81,16 @@ public:
         return (_eles==nullptr) ? 0 : _eles->size();
     }
 
+    std::vector<Element*>::const_iterator elementsBegin() const
+    {
+        return _msh.getElements().cbegin();
+    }
+
+    std::vector<Element*>::const_iterator elementsEnd() const
+    {
+        return _msh.getElements().cend();
+    }
+
 private:
     const Mesh& _msh;
     std::vector<Node*> const* _nodes;

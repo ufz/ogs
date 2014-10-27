@@ -27,16 +27,16 @@ public:
 
 public:
     static
-    VectorType* createVector(const MeshComponentMap &dist_layout)
+    VectorType* createVector(std::size_t const size)
     {
-        VectorType* vec = new VectorType(dist_layout.size());
+        VectorType* vec = new VectorType(size);
         return vec;
     }
 
     static
-    MatrixType* createMatrix(const MeshComponentMap &dist_layout)
+    MatrixType* createMatrix(std::size_t const size)
     {
-        MatrixType* mat = new MatrixType(dist_layout.size());
+        MatrixType* mat = new MatrixType(size);
         return mat;
     }
 

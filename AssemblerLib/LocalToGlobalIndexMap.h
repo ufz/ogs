@@ -12,7 +12,9 @@
 
 #include <vector>
 
+#include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
+#include "MeshLib/MeshSubsets.h"
 
 namespace AssemblerLib
 {
@@ -33,6 +35,7 @@ public:
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:
+    /* \todo Extend the constructor for parallel meshes.
     LocalToGlobalIndexMap(
         std::vector<LineIndex> const& rows,
         std::vector<LineIndex> const & columns)
@@ -41,34 +44,37 @@ public:
         assert(_rows.size() == _columns.size());
         assert(!_rows.empty());
     }
+    */
 
-    explicit LocalToGlobalIndexMap(std::vector<LineIndex> const& rows)
-        : _rows(rows), _columns(rows)
-    { }
+    /// Creates a MeshComponentMap internally and stores the global indices for
+    /// each mesh element of the given mesh_subsets.
+    explicit LocalToGlobalIndexMap(
+        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        AssemblerLib::ComponentOrder const order =
+            AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-    std::size_t size() const
-    {
-        return _rows.size();
-    }
 
-    RowColumnIndices operator[](std::size_t const mesh_item_id) const
-    {
-        return RowColumnIndices(_rows[mesh_item_id], _columns[mesh_item_id]);
-    }
+    /// Returns total number of degrees of freedom.
+    std::size_t dofSize() const;
 
-    LineIndex rowIndices(std::size_t const mesh_item_id) const
-    {
-        return _rows[mesh_item_id];
-    }
+    std::size_t size() const;
 
-    LineIndex columnIndices(std::size_t const mesh_item_id) const
-    {
-        return _columns[mesh_item_id];
-    }
+    RowColumnIndices operator[](std::size_t const mesh_item_id) const;
+
+    LineIndex rowIndices(std::size_t const mesh_item_id) const;
+    LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
 private:
-    std::vector<LineIndex> const& _rows;
-    std::vector<LineIndex> const& _columns;
+    std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
+    AssemblerLib::MeshComponentMap _mesh_component_map;
+
+    /// _rows contains for each element a vector of global indices to
+    /// node/element process variables.
+    std::vector<LineIndex> _rows;
+
+    /// For non-parallel implementations the columns are equal to the rows.
+    /// \todo This is to be overriden by any parallel implementation.
+    std::vector<LineIndex> const& _columns = _rows;
 };
 
 }   // namespace AssemblerLib

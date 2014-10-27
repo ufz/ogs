@@ -72,6 +72,15 @@ public:
         return *_mesh_subsets[mesh_index];
     }
 
+    std::vector<const MeshSubset*>::const_iterator begin() const
+    {
+        return _mesh_subsets.begin();
+    }
+
+    std::vector<const MeshSubset*>::const_iterator end() const
+    {
+        return _mesh_subsets.end();
+    }
 private:
     /// returns true if all mesh ids of _mesh_subsets elements are different.
     bool areMeshSubsetMeshesUnique() const
