@@ -33,7 +33,7 @@ class VtuInterface
 {
 public:
 	/// Provide the mesh to write and set if compression should be used.
-	VtuInterface(const MeshLib::Mesh* mesh, bool compress = false);
+	VtuInterface(const MeshLib::Mesh* mesh, bool binary_mode = true, bool appended = false, bool compressed = false);
 	~VtuInterface();
 
 	/// Read an unstructured grid from a VTU file
@@ -46,6 +46,8 @@ public:
 
 private:
 	const MeshLib::Mesh* _mesh;
+	bool _append_data;
+	bool _use_binary;
 	bool _use_compressor;
 };
 

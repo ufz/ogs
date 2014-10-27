@@ -27,8 +27,8 @@
 namespace FileIO
 {
 
-VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, bool compress) :
-	_mesh(mesh), _use_compressor(compress)
+VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, bool binary_mode, bool appended, bool compress) :
+	_mesh(mesh), _append_data(appended), _use_binary(binary_mode), _use_compressor(compress)
 {
 }
 
@@ -65,11 +65,19 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 	if(_use_compressor)
 		vtuWriter->SetCompressorTypeToZLib();
 
-	// Setting binary file  mode, otherwise corrupted output due to VTK bug
+	// If not set to binary file  mode there is corrupted output due to VTK bug
 	// See http://www.paraview.org/Bug/view.php?id=13382
-	vtuWriter->SetDataModeToBinary();
+	if (_append_data)
+		vtuWriter->SetDataMode(vtkXMLWriter::Appended);
+	else
+	{
+		if (_use_binary)
+			vtuWriter->SetDataMode(vtkXMLWriter::Binary);
+		else
+			vtuWriter->SetDataMode(vtkXMLWriter::Ascii);
+	}
 	vtuWriter->SetFileName(file_name.c_str());
-	return static_cast<bool>(vtuWriter->Write());
+	return (vtuWriter->Write() > 0);
 }
 
 }
