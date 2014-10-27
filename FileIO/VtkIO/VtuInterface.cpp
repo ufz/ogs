@@ -20,6 +20,7 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkSmartPointer.h>
 
+#include "FileTools.h"
 #include "InSituLib/VtkMappedMeshSource.h"
 #include "Mesh.h"
 #include "MeshGenerators/VtkMeshConverter.h"
@@ -45,7 +46,8 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 
 	vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
 
-	return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid);
+	std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
+	return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
 }
 
 bool VtuInterface::writeToFile(std::string const &file_name)

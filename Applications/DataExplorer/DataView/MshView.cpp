@@ -33,6 +33,7 @@
 #include "ImportFileTypes.h"
 #include "LastSavedFileDirectory.h"
 
+#include "SaveMeshDialog.h"
 #include "VtkMeshSource.h"
 
 #include "Legacy/MeshIO.h"
@@ -244,47 +245,26 @@ void MshView::exportToTetGen()
 	}
 }
 
-int MshView::writeToFile() const
+void MshView::writeToFile() const
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 
 	if (!index.isValid())
 	{
 		OGSError::box("No mesh selected.");
-		return 0;
+		return;
 	}
 
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 
-	if (mesh)
+	if (mesh == nullptr)
 	{
-		QString mshName = QString::fromStdString(
-			static_cast<MshModel*>(this->model())->getMesh(index)->getName());
-		QString fileName = QFileDialog::getSaveFileName(NULL, "Save mesh as",
-			LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
-			"VTK Unstructured Grid (*.vtu);;GeoSys legacy mesh file (*.msh)");
-
-		if (!fileName.isEmpty())
-		{
-			QFileInfo fi(fileName);
-			if (fi.suffix().toLower() == "vtu")
-			{
-				FileIO::VtuInterface vtkIO(mesh);
-				vtkIO.writeToFile(fileName.toStdString().c_str());
-			}
-			if (fi.suffix().toLower() == "msh")
-			{
-				FileIO::Legacy::MeshIO meshIO;
-				meshIO.setMesh(mesh);
-				meshIO.writeToFile(fileName.toStdString().c_str());
-			}
-			LastSavedFileDirectory::setDir(fileName);
-			return 1;
-		}
-		else
-			OGSError::box("No file name entered.");
+		OGSError::box("No mesh selected.");
+		return;
 	}
-	return 0;
+
+	SaveMeshDialog dlg(*mesh);
+	dlg.exec();
 }
 
 void MshView::addDIRECTSourceTerms()

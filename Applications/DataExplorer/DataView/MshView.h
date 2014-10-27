@@ -85,7 +85,7 @@ private slots:
 	void removeMesh();
 
 	/// Calls the FileDialog to save a mesh to a file.
-	int writeToFile() const;
+	void writeToFile() const;
 
 	/// Calls the dialog for calculating an element quality metric
 	void checkMeshQuality();
