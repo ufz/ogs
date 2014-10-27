@@ -33,7 +33,6 @@ public:
 	SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = 0);
 	~SaveMeshDialog(void) {}
 
-
 private slots:
 	/// Selection of path to save file
 	void on_selectDirButton_clicked();

@@ -44,9 +44,11 @@ void SaveMeshDialog::on_selectDirButton_clicked()
 	file_type.append(";;Legacy geometry file (*.msh)");
 #endif // DEBUG
 	QSettings settings;
-	QString file_name = QFileDialog::getSaveFileName(this, "Save mesh as...",
-	                                                 LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()),
-	                                                 file_type);
+	QString const file_name = QFileDialog::getSaveFileName(this, 
+		"Save mesh as...",
+		LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()), 
+		file_type);
+
 	if (!file_name.isEmpty())
 		this->fileNameEdit->setText(file_name);
 }
@@ -60,9 +62,9 @@ void SaveMeshDialog::accept()
 	QFileInfo fi(file_name);
 	if (fi.suffix().toLower() == "vtu")
 	{
-		bool append = (this->dataModeBox->currentIndex() == 2);
-		bool binary = (this->dataModeBox->currentIndex() > 0);
-		bool compress = (this->compressionBox->currentIndex() > 0);
+		bool append (this->dataModeBox->currentIndex() == 2);
+		bool binary (this->dataModeBox->currentIndex() > 0);
+		bool compress (this->compressionBox->currentIndex() > 0);
 		FileIO::VtuInterface vtkIO(&_mesh, binary, append, compress);
 		vtkIO.writeToFile(file_name.toStdString().c_str());
 	}
