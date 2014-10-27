@@ -72,6 +72,8 @@ public:
                     _integration_method.getWeightedPoint(ip).getCoords(),
                     _shape_matrices[ip]);
         }
+
+        _hydraulic_conductivity = hydraulic_conductivity;
     }
 
     void assemble(std::size_t const rows, std::size_t const columns)
@@ -87,6 +89,7 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& wp = _integration_method.getWeightedPoint(ip);
             *localA += _shape_matrices[ip].dNdx.transpose() *
+                        _hydraulic_conductivity *
                         _shape_matrices[ip].dNdx *
                         _shape_matrices[ip].detJ *
                         wp.getWeight();
@@ -102,6 +105,7 @@ public:
 
 private:
     std::array<ShapeMatrices, n_integration_points> _shape_matrices;
+    double _hydraulic_conductivity;
 
     std::unique_ptr<NodalMatrixType> localA;
     std::unique_ptr<NodalVectorType> localRhs;
