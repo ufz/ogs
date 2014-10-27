@@ -133,9 +133,6 @@ void
 LisMatrix::add(std::vector<std::size_t> const& row_pos, std::vector<std::size_t> const& col_pos,
         const T_DENSE_MATRIX &sub_matrix, double fkt)
 {
-    if (row_pos.size() != sub_matrix.getNRows() || col_pos.size() != sub_matrix.getNCols())
-        return;
-
     const std::size_t n_rows = row_pos.size();
     const std::size_t n_cols = col_pos.size();
     for (std::size_t i = 0; i < n_rows; i++) {
