@@ -68,6 +68,8 @@ public:
 
     void initialize()
     {
+        DBUG("Initialize GroundwaterFlowProcess.");
+
         DBUG("Construct dof mappings.");
         // Create single component dof in every of the mesh's nodes.
         _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
@@ -120,6 +122,8 @@ public:
 
     void solve()
     {
+        DBUG("Solve GroundwaterFlowProcess.");
+
         this->_A->setZero();
 
         // Call global assembler for each local assembly item.
@@ -130,6 +134,9 @@ public:
 
     void post()
     {
+        DBUG("Postprocessing GroundwaterFlowProcess.");
+        // Postprocessing of the linear system of equations solver results:
+        // For example, write _x to _hydraulic_head or convert to velocity etc.
     }
 
     ~GroundwaterFlowProcess()
