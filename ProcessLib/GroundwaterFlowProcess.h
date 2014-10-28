@@ -44,7 +44,7 @@ public:
     GroundwaterFlowProcess(MeshLib::Mesh const& mesh,
             std::vector<ProcessVariable> const& variables,
             ConfigTree const& config)
-        : Process(mesh, 1)
+        : Process(mesh)
     {
         DBUG("Create GroundwaterFlowProcess.");
 
