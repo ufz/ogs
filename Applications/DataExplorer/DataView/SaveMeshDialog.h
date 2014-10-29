@@ -37,6 +37,8 @@ private slots:
 	/// Selection of path to save file
 	void on_selectDirButton_clicked();
 
+	void on_dataModeBox_currentIndexChanged(int index);
+
 	/// Instructions if the OK-Button has been pressed.
 	void accept();
 

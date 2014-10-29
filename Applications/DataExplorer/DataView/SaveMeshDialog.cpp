@@ -32,9 +32,6 @@ SaveMeshDialog::SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent)
 {
 	setupUi(this);
 	this->fileNameEdit->setText(LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()) + ".vtu");
-
-	// set default data mode to appended because of ascii bug (see VtuInterface documentation)
-	this->dataModeBox->setCurrentIndex(2);
 }
 
 void SaveMeshDialog::on_selectDirButton_clicked()
@@ -44,13 +41,29 @@ void SaveMeshDialog::on_selectDirButton_clicked()
 	file_type.append(";;Legacy geometry file (*.msh)");
 #endif // DEBUG
 	QSettings settings;
-	QString const file_name = QFileDialog::getSaveFileName(this, 
+	QString const file_name = QFileDialog::getSaveFileName(this,
 		"Save mesh as...",
-		LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()), 
+		LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()),
 		file_type);
 
 	if (!file_name.isEmpty())
 		this->fileNameEdit->setText(file_name);
+}
+
+void SaveMeshDialog::on_dataModeBox_currentIndexChanged(int index)
+{
+	// Disable compression on Ascii
+	if(index == 0)
+	{
+		this->compressionCheckBox->setChecked(false);
+		this->compressionCheckBox->setEnabled(false);
+		this->compressionLabel->setEnabled(false);
+	}
+	else
+	{
+		this->compressionCheckBox->setEnabled(true);
+		this->compressionLabel->setEnabled(true);
+	}
 }
 
 void SaveMeshDialog::accept()
@@ -65,10 +78,10 @@ void SaveMeshDialog::accept()
 	QFileInfo fi(file_name);
 	if (fi.suffix().toLower() == "vtu")
 	{
-		bool append (this->dataModeBox->currentIndex() == 2);
-		bool binary (this->dataModeBox->currentIndex() > 0);
-		bool compress (this->compressionBox->currentIndex() > 0);
-		FileIO::VtuInterface vtkIO(&_mesh, binary, append, compress);
+
+		int dataMode = this->dataModeBox->currentIndex();
+		bool compress (this->compressionCheckBox->isChecked());
+		FileIO::VtuInterface vtkIO(&_mesh, dataMode, compress);
 		vtkIO.writeToFile(file_name.toStdString().c_str());
 	}
 	if (fi.suffix().toLower() == "msh")
@@ -78,7 +91,7 @@ void SaveMeshDialog::accept()
 		meshIO.writeToFile(file_name.toStdString().c_str());
 	}
 	LastSavedFileDirectory::setDir(file_name);
-			
-	this->done(QDialog::Accepted);	
+
+	this->done(QDialog::Accepted);
 }
 

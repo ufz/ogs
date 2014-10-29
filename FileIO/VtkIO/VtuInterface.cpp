@@ -19,6 +19,7 @@
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
 
 #include "FileTools.h"
 #include "InSituLib/VtkMappedMeshSource.h"
@@ -28,9 +29,13 @@
 namespace FileIO
 {
 
-VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, bool binary_mode, bool appended, bool compress) :
-	_mesh(mesh), _append_data(appended), _use_binary(binary_mode), _use_compressor(compress)
+VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compress) :
+	_mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
 {
+	if(_data_mode == vtkXMLWriter::Appended)
+		ERR("Appended data mode is currently not supported!");
+	if(_data_mode == vtkXMLWriter::Ascii && compress)
+		WARN("Ascii data cannot be compressed, ignoring compression flag.")
 }
 
 VtuInterface::~VtuInterface()
@@ -58,6 +63,10 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 		return false;
 	}
 
+	// See http://www.paraview.org/Bug/view.php?id=13382
+	if(_data_mode == vtkXMLWriter::Appended)
+		WARN("Appended data mode is currently not supported, written file is not valid!");
+
 	vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
 	vtkSource->SetMesh(_mesh);
 
@@ -67,17 +76,20 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 	if(_use_compressor)
 		vtuWriter->SetCompressorTypeToZLib();
 
-	// If not set to binary file  mode there is corrupted output due to VTK bug
-	// See http://www.paraview.org/Bug/view.php?id=13382
-	if (_append_data)
-		vtuWriter->SetDataMode(vtkXMLWriter::Appended);
-	else
+	vtuWriter->SetDataMode(_data_mode);
+	if (_data_mode == vtkXMLWriter::Ascii)
 	{
-		if (_use_binary)
-			vtuWriter->SetDataMode(vtkXMLWriter::Binary);
-		else
-			vtuWriter->SetDataMode(vtkXMLWriter::Ascii);
+		// Mapped data structures for OGS to VTK mesh conversion are not fully
+		// implemented and doing so is not trivial. Therefore for ascii output
+		// the mapped unstructured grid is copied to a regular VTK grid.
+		// See http://www.vtk.org/pipermail/vtkusers/2014-October/089400.html
+		vtkSource->Update();
+		vtkSmartPointer<vtkUnstructuredGrid> tempGrid =
+			vtkSmartPointer<vtkUnstructuredGrid>::New();
+		tempGrid->DeepCopy(vtkSource->GetOutput());
+		vtuWriter->SetInputDataObject(tempGrid);
 	}
+
 	vtuWriter->SetFileName(file_name.c_str());
 	return (vtuWriter->Write() > 0);
 }
