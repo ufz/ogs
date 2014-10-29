@@ -22,6 +22,7 @@ IF(QT4_FOUND)
 		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
 	)
+	ADD_CATALYST_DEPENDENCY(moveMeshNodes)
 
 	SET_TARGET_PROPERTIES(moveMeshNodes
 		PROPERTIES FOLDER Utilities)
@@ -37,6 +38,7 @@ TARGET_LINK_LIBRARIES( removeMeshElements
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(removeMeshElements)
 SET_TARGET_PROPERTIES(removeMeshElements PROPERTIES FOLDER Utilities)
 
 ADD_EXECUTABLE( DataExplorer5NodeReordering DataExplorer5NodeReordering.cpp )
@@ -46,6 +48,7 @@ TARGET_LINK_LIBRARIES( DataExplorer5NodeReordering
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(DataExplorer5NodeReordering)
 SET_TARGET_PROPERTIES(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
 
 ADD_EXECUTABLE( MoveMesh MoveMesh.cpp )
@@ -55,6 +58,7 @@ TARGET_LINK_LIBRARIES( MoveMesh
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(MoveMesh)
 SET_TARGET_PROPERTIES(MoveMesh PROPERTIES FOLDER Utilities)
 
 ADD_EXECUTABLE( appendLinesAlongPolyline appendLinesAlongPolyline.cpp )
@@ -67,6 +71,7 @@ TARGET_LINK_LIBRARIES( appendLinesAlongPolyline
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(appendLinesAlongPolyline)
 
 SET_TARGET_PROPERTIES(appendLinesAlongPolyline
 	PROPERTIES FOLDER Utilities)
@@ -80,6 +85,7 @@ TARGET_LINK_LIBRARIES( editMaterialID
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(editMaterialID)
 
 SET_TARGET_PROPERTIES(editMaterialID
 	PROPERTIES FOLDER Utilities)
@@ -93,6 +99,7 @@ TARGET_LINK_LIBRARIES ( checkMesh
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(checkMesh)
 
 SET_TARGET_PROPERTIES(checkMesh
 	PROPERTIES FOLDER Utilities)

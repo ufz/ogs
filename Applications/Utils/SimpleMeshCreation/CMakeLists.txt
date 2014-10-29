@@ -23,6 +23,7 @@ IF(TARGET VtkVis)
 		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
 	)
+	ADD_CATALYST_DEPENDENCY(generateStructuredQuadMesh)
 
 	ADD_EXECUTABLE(  createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp )
 	SET_TARGET_PROPERTIES( createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
@@ -34,6 +35,7 @@ IF(TARGET VtkVis)
 		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
 	)
+	ADD_CATALYST_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 
 ENDIF() # VtkVis-target is existing
 

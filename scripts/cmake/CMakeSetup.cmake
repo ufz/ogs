@@ -8,6 +8,7 @@ INCLUDE(UseBackportedModules)
 INCLUDE(OptionRequires)
 INCLUDE(CppcheckTargets)
 INCLUDE(GetCompilerInfoString)
+INCLUDE(AddCatalystDependency)
 
 INCLUDE(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)

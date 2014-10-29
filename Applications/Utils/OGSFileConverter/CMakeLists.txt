@@ -74,6 +74,7 @@ TARGET_LINK_LIBRARIES( OGSFileConverter
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(OGSFileConverter)
 
 # Adds useful macros and variables
 # this is needed to correctly link the qt and vtk libraries through target_link_libraries

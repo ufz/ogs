@@ -56,7 +56,6 @@ TARGET_LINK_LIBRARIES (FileIO
 	shp
 )
 
-INCLUDE(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(FileIO)
 
 FILE(GLOB XSD_FILES . *.xsd)
