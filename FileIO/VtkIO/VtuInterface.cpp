@@ -77,6 +77,8 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 		vtuWriter->SetCompressorTypeToZLib();
 
 	vtuWriter->SetDataMode(_data_mode);
+	if (_data_mode == vtkXMLWriter::Appended)
+		vtuWriter->SetEncodeAppendedData(1);
 	if (_data_mode == vtkXMLWriter::Ascii)
 	{
 		// Mapped data structures for OGS to VTK mesh conversion are not fully
