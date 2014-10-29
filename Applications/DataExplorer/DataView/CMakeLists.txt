@@ -31,6 +31,7 @@ set( SOURCES
 	MshTabWidget.cpp
 	MshView.cpp
 	NetCdfConfigureDialog.cpp
+	SaveMeshDialog.cpp
 	SelectMeshDialog.cpp
 	SetNameDialog.cpp
 	SHPImportDialog.cpp
@@ -68,6 +69,7 @@ set( MOC_HEADERS
 	MshTabWidget.h
 	MshView.h
 	NetCdfConfigureDialog.h
+	SaveMeshDialog.h
 	SelectMeshDialog.h
 	SetNameDialog.h
 	SHPImportDialog.h
@@ -111,6 +113,7 @@ set( UIS
 	MshTabWidgetBase.ui
 	NetCdfConfigure.ui
 	NewProcess.ui
+	SaveMesh.ui
 	StationTabWidgetBase.ui
 )
 

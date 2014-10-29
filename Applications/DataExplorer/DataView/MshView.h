@@ -49,13 +49,6 @@ protected slots:
 	/// Is called when the selection of this view changes.
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
-	/// Selects items without sending signals.
-	//void selectionChangedFromOutside(const QItemSelection &selected,
-	//	const QItemSelection &deselected);
-
-	/// Clears the selection
-	//void clearSelection();
-
 private:
 	void contextMenuEvent( QContextMenuEvent* event );
 
@@ -85,7 +78,7 @@ private slots:
 	void removeMesh();
 
 	/// Calls the FileDialog to save a mesh to a file.
-	int writeToFile() const;
+	void writeToFile() const;
 
 	/// Calls the dialog for calculating an element quality metric
 	void checkMeshQuality();
@@ -104,11 +97,5 @@ signals:
 	void loadFEMCondFileRequested(const std::string);
 	void saveMeshAction();
 
-/*
-    void itemSelectionChanged(const QItemSelection &selected,
-        const QItemSelection &deselected);
-    //void itemSelectionChangedFromOutside(const QItemSelection &selected,
-        const QItemSelection &deselected);
- */
 };
 #endif // MSHVIEW_H

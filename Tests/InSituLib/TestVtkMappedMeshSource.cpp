@@ -105,24 +105,33 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	ASSERT_EQ((unsigned)range[0], 0);
 	ASSERT_EQ((unsigned)range[1], 0);
 
-	// -- Write VTK mesh to file
-	FileIO::VtuInterface vtuInterface(mesh, true);
-	vtuInterface.writeToFile(test_data_file);
+	// -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
+	// atm vtkXMLWriter::Appended does not work, see http://www.paraview.org/Bug/view.php?id=13382
+	std::array<int, 2> dataModes = {{ vtkXMLWriter::Ascii, vtkXMLWriter::Binary }};
+	std::array<bool, 2> booleans = {{ true, false }};
+	for(int dataMode : dataModes)
+	{
+		for(bool compressed : booleans)
+		{
+			FileIO::VtuInterface vtuInterface(mesh, dataMode, compressed);
+			ASSERT_EQ(vtuInterface.writeToFile(test_data_file), 1);
 
-	// -- Read back VTK mesh
-	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
-		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-	reader->SetFileName(test_data_file.c_str());
-	reader->Update();
-	vtkUnstructuredGrid* vtkMesh = reader->GetOutput();
+			// -- Read back VTK mesh
+			vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
+				vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+			reader->SetFileName(test_data_file.c_str());
+			reader->Update();
+			vtkUnstructuredGrid* vtkMesh = reader->GetOutput();
 
-	// Both VTK meshes should be identical
-	ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
-	ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
-	ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("MaterialIDs")->GetNumberOfTuples(), matIdsArray->GetNumberOfTuples());
+			// Both VTK meshes should be identical
+			ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
+			ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
+			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("MaterialIDs")->GetNumberOfTuples(), matIdsArray->GetNumberOfTuples());
 
-	// Both OGS meshes should be identical
-	MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);
-	ASSERT_EQ(mesh->getNNodes(), newMesh->getNNodes());
-	ASSERT_EQ(mesh->getNElements(), newMesh->getNElements());
+			// Both OGS meshes should be identical
+			MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);
+			ASSERT_EQ(mesh->getNNodes(), newMesh->getNNodes());
+			ASSERT_EQ(mesh->getNElements(), newMesh->getNElements());
+		}
+	}
 }

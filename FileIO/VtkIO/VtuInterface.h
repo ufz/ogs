@@ -16,6 +16,7 @@
 #define VTUINTERFACE_H_
 
 #include <string>
+#include <vtkXMLWriter.h>
 
 namespace MeshLib {
 	class Mesh;
@@ -33,7 +34,7 @@ class VtuInterface
 {
 public:
 	/// Provide the mesh to write and set if compression should be used.
-	VtuInterface(const MeshLib::Mesh* mesh, bool compress = false);
+	VtuInterface(const MeshLib::Mesh* mesh, int dataMode = vtkXMLWriter::Binary, bool compressed = false);
 	~VtuInterface();
 
 	/// Read an unstructured grid from a VTU file
@@ -46,6 +47,7 @@ public:
 
 private:
 	const MeshLib::Mesh* _mesh;
+	int _data_mode;
 	bool _use_compressor;
 };
 

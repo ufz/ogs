@@ -46,10 +46,10 @@ public:
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static MeshLib::Mesh* convertImgToMesh(vtkImageData* img,
-									      const double origin[3],
-	                                      const double scalingFactor,
-										  MeshElemType elem_type,
-										  UseIntensityAs intensity_type);
+	                                       const double origin[3],
+	                                       const double scalingFactor,
+	                                       MeshElemType elem_type,
+	                                       UseIntensityAs intensity_type);
 
 	/**
 	 * Converts double array with raster values to a mesh
@@ -58,26 +58,27 @@ public:
 	 */
 	static MeshLib::Mesh* convertImgToMesh(const double* img,
 	                                      const double origin[3],
-										  const std::size_t imgHeight,
-										  const std::size_t imgWidth,
+	                                      const std::size_t imgHeight,
+	                                      const std::size_t imgWidth,
 	                                      const double &scalingFactor,
-										  MeshElemType elem_type,
-										  UseIntensityAs intensity_type);
+	                                      MeshElemType elem_type,
+	                                      UseIntensityAs intensity_type);
 
 	/// Converts a vtkUnstructuredGrid object to a Mesh
-	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid);
+	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid, 
+	                                              std::string const& mesh_name = "vtkUnstructuredGrid");
 
 private:
 	/// Does the actual mesh generation based on the data given to the public methods.
 	static MeshLib::Mesh* constructMesh(const double* pixVal,
-									   int* node_idx_map,
-									   const bool* visNodes,
-									   const double origin[3],
-									   const std::size_t &imgHeight,
-									   const std::size_t &imgWidth,
-									   const double &scalingFactor,
-									   MeshElemType elem_type,
-									   UseIntensityAs intensity_type);
+	                                    int* node_idx_map,
+	                                    const bool* visNodes,
+	                                    const double origin[3],
+	                                    const std::size_t &imgHeight,
+	                                    const std::size_t &imgWidth,
+	                                    const double &scalingFactor,
+	                                    MeshElemType elem_type,
+	                                    UseIntensityAs intensity_type);
 
 	static double getExistingValue(const double* img, std::size_t length);
 };

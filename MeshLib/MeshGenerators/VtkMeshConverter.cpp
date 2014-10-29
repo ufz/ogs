@@ -246,7 +246,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 	return new MeshLib::Mesh("RasterDataMesh", nodes, elements); // the name is only a temp-name, the name given in the dialog is set later
 }
 
-MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid)
+MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid, std::string const& mesh_name)
 {
 	if (!grid)
 		return nullptr;
@@ -356,7 +356,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		elements[i] = elem;
 	}
 
-	return new MeshLib::Mesh("vtkUnstructuredGrid", nodes, elements);
+	return new MeshLib::Mesh(mesh_name, nodes, elements);
 
 }
 
