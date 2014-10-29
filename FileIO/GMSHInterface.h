@@ -30,6 +30,8 @@
 
 namespace MeshLib {
 	class Mesh;
+	class Element;
+	class Node;
 }
 
 namespace FileIO
@@ -87,6 +89,9 @@ protected:
 	bool write();
 
 private:
+	/// Reads a mesh element from the input stream
+	static MeshLib::Element* readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map);
+
 	/**
 	 * 1. get and merge data from _geo_objs
 	 * 2. compute topological hierarchy
@@ -94,7 +99,7 @@ private:
 	 */
 	void writeGMSHInputFile(std::ostream & out);
 
-	static void readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> &id_map);
+	static void readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> const& id_map);
 
 	void writePoints(std::ostream& out) const;
 
