@@ -76,6 +76,14 @@ public:
 	/// Get the maximum edge length over all elements of the mesh.
 	double getMaxEdgeLength() const { return _edge_length[1]; }
 
+	/// Get the minimum node distance in the mesh.
+    /// The value is calculated from element-wise minimum node distances.
+	double getMinNodeDistance() const { return _node_distance[0]; }
+
+	/// Get the maximum node distance over all elements of the mesh.
+    /// The value is calculated from element-wise maximum node distances.
+	double getMaxNodeDistance() const { return _node_distance[1]; }
+
 	/// Get the number of elements
 	std::size_t getNElements() const { return _elements.size(); }
 
@@ -109,9 +117,14 @@ public:
 	/// Return true if the given node is a basic one (i.e. linear order node)
 	bool isBaseNode(std::size_t node_idx) const {return node_idx < _n_base_nodes; }
 
+	/// Return true if the mesh has any nonlinear nodes
+	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
+
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
+	/// Set the minimum and maximum node distances within elements.
+	void calcNodeDistanceRange();
 
 	/**
 	 * Resets the connected elements for the node vector, i.e. removes the old information and
@@ -137,6 +150,7 @@ protected:
 	std::size_t const _id;
 	unsigned _mesh_dimension;
 	double _edge_length[2];
+	double _node_distance[2];
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;

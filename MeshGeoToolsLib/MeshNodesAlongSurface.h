@@ -35,7 +35,7 @@ public:
 	 * @param mesh_nodes Nodes the search will be performed on.
 	 * @param sfc Along the GeoLib::Surface sfc the mesh nodes are searched.
 	 */
-	MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc);
+	MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc, bool search_all_nodes = true);
 
 	/// return the mesh object
 	MeshLib::Mesh const& getMesh() const;

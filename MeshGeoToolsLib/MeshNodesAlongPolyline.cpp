@@ -25,12 +25,13 @@ namespace MeshGeoToolsLib
 MeshNodesAlongPolyline::MeshNodesAlongPolyline(
 		MeshLib::Mesh const& mesh,
 		GeoLib::Polyline const& ply,
-		double epsilon_radius) :
+		double epsilon_radius,
+		bool search_all_nodes) :
 	_mesh(mesh), _ply(ply)
 {
 	assert(epsilon_radius > 0);
+	const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
 	auto &mesh_nodes = _mesh.getNodes();
-	const std::size_t n_nodes (mesh_nodes.size());
 	// loop over all nodes
 	for (size_t i = 0; i < n_nodes; i++) {
 		double dist = _ply.getDistanceAlongPolyline(*mesh_nodes[i], epsilon_radius);

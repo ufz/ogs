@@ -20,28 +20,39 @@
 namespace MeshGeoToolsLib
 {
 
-HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh)
+HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthType length_type)
 : _mesh(mesh)
 {
 	double sum (0.0);
 	double sum_of_sqr (0.0); // total length of edges
-	std::size_t edge_cnt(0); // total length of edges squared
+
+	std::size_t n_sampling(0); // total length of edges squared
 	std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
 
-	for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
-			it != elements.cend(); ++it) {
-		std::size_t const n_edges((*it)->getNEdges());
-		for (std::size_t k(0); k<n_edges; k++) {
-			double const len =
-				static_cast<MeshLib::Line const*>((*it)->getEdge(k))->getLength();
-			sum += len;
-			sum_of_sqr += len*len;
+	if (length_type==LengthType::Edge) {
+		for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
+				it != elements.cend(); ++it) {
+			std::size_t const n_edges((*it)->getNEdges());
+			for (std::size_t k(0); k<n_edges; k++) {
+				double const len =
+					static_cast<MeshLib::Line const*>((*it)->getEdge(k))->getLength();
+				sum += len;
+				sum_of_sqr += len*len;
+			}
+			n_sampling += n_edges;
 		}
-		edge_cnt += n_edges;
+	} else {
+		double min=0, max=0;
+		for (const MeshLib::Element* e : elements) {
+			e->computeSqrNodeDistanceRange(min, max, true);
+			sum += std::sqrt(min);
+			sum_of_sqr += min;
+		}
+		n_sampling = _mesh.getNElements();
 	}
 
-	const double mean (sum/edge_cnt);
-	const double variance ((sum_of_sqr - (sum*sum)/edge_cnt)/(edge_cnt-1));
+	const double mean (sum/n_sampling);
+	const double variance ((sum_of_sqr - (sum*sum)/n_sampling)/(n_sampling-1));
 
 	// Set the search length for the case of non-positive variance (which can
 	// happen due to numerics).
