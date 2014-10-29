@@ -71,18 +71,18 @@ public:
 	const Element* getElement(unsigned idx) const { return _elements[idx]; }
 
 	/// Get the minimum edge length over all elements of the mesh.
-	double getMinEdgeLength() const { return _edge_length[0]; }
+	double getMinEdgeLength() const { return _edge_length.first; }
 
 	/// Get the maximum edge length over all elements of the mesh.
-	double getMaxEdgeLength() const { return _edge_length[1]; }
+	double getMaxEdgeLength() const { return _edge_length.second; }
 
 	/// Get the minimum node distance in the mesh.
     /// The value is calculated from element-wise minimum node distances.
-	double getMinNodeDistance() const { return _node_distance[0]; }
+	double getMinNodeDistance() const { return _node_distance.first; }
 
 	/// Get the maximum node distance over all elements of the mesh.
     /// The value is calculated from element-wise maximum node distances.
-	double getMaxNodeDistance() const { return _node_distance[1]; }
+	double getMaxNodeDistance() const { return _node_distance.second; }
 
 	/// Get the number of elements
 	std::size_t getNElements() const { return _elements.size(); }
@@ -149,8 +149,10 @@ protected:
 
 	std::size_t const _id;
 	unsigned _mesh_dimension;
-	double _edge_length[2];
-	double _node_distance[2];
+	/// The minimal and maximal edge length over all elements in the mesh
+	std::pair<double, double> _edge_length;
+	/// The minimal and maximal distance of nodes within an element over all elements in the mesh
+	std::pair<double, double> _node_distance;
 	std::string _name;
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
