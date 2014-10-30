@@ -103,10 +103,13 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 {
 	std::string line;
 	std::ifstream in(fname.c_str(), std::ios::in);
-	getline(in, line); // Node keyword
-	std::vector<MeshLib::Node*> nodes;
-	std::vector<MeshLib::Element*> elements;
+	if (!in.is_open())
+	{
+		WARN ("GMSHInterface::readGMSHMesh() - Could not open file %s.", fname.c_str());
+		return nullptr;
+	}
 
+	getline(in, line); // $MeshFormat keyword
 	if (line.find("$MeshFormat") == std::string::npos)
 	{
 		in.close();
@@ -126,6 +129,8 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 	}
 	getline(in, line); //$EndMeshFormat
 
+	std::vector<MeshLib::Node*> nodes;
+	std::vector<MeshLib::Element*> elements;
 	std::map<unsigned, unsigned> id_map;
 	while (line.find("$EndElements") == std::string::npos)
 	{
