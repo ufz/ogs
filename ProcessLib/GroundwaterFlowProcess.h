@@ -19,6 +19,12 @@
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+
+#include "MathLib/LinAlg/Dense/DenseTools.h"
+#ifdef USE_LIS
+#include "MathLib/LinAlg/Lis/LisTools.h"
+#endif  // USE_LIS
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
@@ -130,6 +136,9 @@ public:
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
 
+        // Apply known values from the Dirichlet boundary conditions.
+        MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
+
         _linearSolver->solve(*_rhs, *_x);
     }
 
@@ -176,6 +185,14 @@ private:
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
+
+    /// Global ids in the global matrix/vector where the dirichlet bc is
+    /// imposed and their corresponding values.
+    struct DirichletBC {
+        std::vector<std::size_t> global_ids;
+        std::vector<double> values;
+    } _dirichlet_bc;
+
 };
 
 }   // namespace ProcessLib
