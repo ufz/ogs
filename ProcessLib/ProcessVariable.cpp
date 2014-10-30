@@ -85,8 +85,6 @@ ProcessVariable::ProcessVariable(
                 ERR("Unknown type \'%s\' of the boundary condition.",
                         type.c_str());
             }
-
-            _boundary_conditions.back()->applyToMesh(mesh);
         }
 
     }

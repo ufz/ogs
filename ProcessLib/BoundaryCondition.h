@@ -34,15 +34,8 @@ public:
 
     virtual ~BoundaryCondition() = default;
 
-    void applyToMesh(MeshLib::Mesh const& mesh)
-    {
-        MeshGeoToolsLib::MeshNodeSearcher searcher(mesh);
-        _node_ids = searcher.getMeshNodeIDs(*_geometry);
-    }
-
 protected:
     GeoLib::GeoObject const* const _geometry;
-    std::vector<std::size_t> _node_ids;
 };
 
 /// The UniformDirichletBoundaryCondition class describes a constant in space
@@ -61,6 +54,14 @@ public:
 
         _value = config.get<double>("value", 0);
         DBUG("Using value %g", _value);
+    }
+
+    /// Find nodes' ids on the given mesh on which this boundary condition is
+    /// defined.
+    std::vector<std::size_t> findMeshNodes(MeshLib::Mesh const& mesh)
+    {
+        MeshGeoToolsLib::MeshNodeSearcher searcher(mesh);
+        return searcher.getMeshNodeIDs(*_geometry);
     }
 
 private:
