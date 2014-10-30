@@ -103,130 +103,76 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 {
 	std::string line;
 	std::ifstream in(fname.c_str(), std::ios::in);
-	getline(in, line); // Node keyword
+	if (!in.is_open())
+	{
+		WARN ("GMSHInterface::readGMSHMesh() - Could not open file %s.", fname.c_str());
+		return nullptr;
+	}
+
+	getline(in, line); // $MeshFormat keyword
+	if (line.find("$MeshFormat") == std::string::npos)
+	{
+		in.close();
+		WARN ("No GMSH file format recognized.");
+		return nullptr;
+	}
+
+	getline(in, line); // version-number file-type data-size
+	if (line.substr(0,3).compare("2.2") != 0) {
+		WARN("Wrong gmsh file format version.");
+		return nullptr;
+	}
+
+	if (line.substr(4,1).compare("0") != 0) {
+		WARN("Currently reading gmsh binary file type is not supported.");
+		return nullptr;
+	}
+	getline(in, line); //$EndMeshFormat
+
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
-
-	if (line.find("$MeshFormat") != std::string::npos)
+	std::map<unsigned, unsigned> id_map;
+	while (line.find("$EndElements") == std::string::npos)
 	{
-		getline(in, line); // version-number file-type data-size
-		if (line.substr(0,3).compare("2.2") != 0) {
-			WARN("Wrong gmsh file format version.");
-			return nullptr;
-		}
-		if (line.substr(4,1).compare("0") != 0) {
-			WARN("Currently reading gmsh binary file type is not supported.");
-			return nullptr;
-		}
-		getline(in, line); //$EndMeshFormat
+		// Node data
 		getline(in, line); //$Nodes Keywords
-
-		size_t n_nodes(0);
-		size_t n_elements(0);
-		while (line.find("$EndElements") == std::string::npos)
+		if (line.find("$Nodes") != std::string::npos)
 		{
-			// Node data
+			size_t n_nodes(0);
 			long id;
 			double x, y, z;
 			in >> n_nodes >> std::ws;
 			nodes.resize(n_nodes);
-			std::map<unsigned, unsigned> id_map;
 			for (size_t i = 0; i < n_nodes; i++) {
 				in >> id >> x >> y >> z >> std::ws;
 				id_map.insert(std::map<unsigned, unsigned>::value_type(id, i));
 				nodes[i] = new MeshLib::Node(x,y,z,id);
 			}
 			getline(in, line); // End Node keyword $EndNodes
+		}
 
-			// Element data
-			getline(in, line); // Element keyword $Elements
+		// Element data
+		if (line.find("$Elements") != std::string::npos)
+		{
+			size_t n_elements(0);
 			in >> n_elements >> std::ws; // number-of-elements
 			elements.reserve(n_elements);
-			unsigned idx, type, n_tags, dummy, mat_id;
 			for (size_t i = 0; i < n_elements; i++)
 			{
-				MeshLib::Element* elem (NULL);
-				std::vector<unsigned> node_ids;
-				std::vector<MeshLib::Node*> elem_nodes;
-				in >> idx >> type >> n_tags >> dummy >> mat_id;
+				MeshLib::Element* elem (readElement(in, nodes, id_map));
 
-				// skip tags
-				for (size_t j = 2; j < n_tags; j++)
-					in >> dummy;
-
-				switch (type)
-				{
-				case 1: {
-					readNodeIDs(in, 2, node_ids, id_map);
-					// edge_nodes array will be deleted from Line object
-					MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
-					edge_nodes[0] = nodes[node_ids[0]];
-					edge_nodes[1] = nodes[node_ids[1]];
-					elem = new MeshLib::Line(edge_nodes, 0);
-					break;
-				}
-				case 2: {
-					readNodeIDs(in, 3, node_ids, id_map);
-					MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-					tri_nodes[0] = nodes[node_ids[2]];
-					tri_nodes[1] = nodes[node_ids[1]];
-					tri_nodes[2] = nodes[node_ids[0]];
-					elem = new MeshLib::Tri(tri_nodes, mat_id);
-					break;
-				}
-				case 3: {
-					readNodeIDs(in, 4, node_ids, id_map);
-					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-					for (unsigned k(0); k < 4; k++)
-						quad_nodes[k] = nodes[node_ids[k]];
-					elem = new MeshLib::Quad(quad_nodes, mat_id);
-					break;
-				}
-				case 4: {
-					readNodeIDs(in, 4, node_ids, id_map);
-					MeshLib::Node** tet_nodes = new MeshLib::Node*[5];
-					for (unsigned k(0); k < 4; k++)
-						tet_nodes[k] = nodes[node_ids[k]];
-					elem = new MeshLib::Tet(tet_nodes, mat_id);
-					break;
-				}
-				case 5: {
-					readNodeIDs(in, 8, node_ids, id_map);
-					MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
-					for (unsigned k(0); k < 8; k++)
-						hex_nodes[k] = nodes[node_ids[k]];
-					elem = new MeshLib::Hex(hex_nodes, mat_id);
-					break;
-				}
-				case 6: {
-					readNodeIDs(in, 6, node_ids, id_map);
-					MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
-					for (unsigned k(0); k < 6; k++)
-						prism_nodes[k] = nodes[node_ids[k]];
-					elem = new MeshLib::Prism(prism_nodes, mat_id);
-					break;
-				}
-				case 7: {
-					readNodeIDs(in, 5, node_ids, id_map);
-					MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
-					for (unsigned k(0); k < 5; k++)
-						pyramid_nodes[k] = nodes[node_ids[k]];
-					elem = new MeshLib::Pyramid(pyramid_nodes, mat_id);
-					break;
-				}
-				case 15:
-					in >> dummy; // skip rest of line
-					continue;
-					break;
-				default:
-						WARN("GMSHInterface::readGMSHMesh(): Unknown element type %d.", type);
-				}
-				in >> std::ws;
-
-				if (type > 0 && type < 8)
+				if (elem)
 					elements.push_back(elem);
 			}
+			getline(in, line); // END keyword
+		}
 
+		if (line.find("PhysicalNames") != std::string::npos)
+		{
+			size_t n_lines(0);
+			in >> n_lines >> std::ws; // number-of-lines
+			for (size_t i = 0; i < n_lines; i++)
+				getline(in, line);
 			getline(in, line); // END keyword
 		}
 	}
@@ -243,15 +189,90 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 void GMSHInterface::readNodeIDs(std::ifstream &in,
                                 unsigned n_nodes,
                                 std::vector<unsigned> &node_ids,
-                                std::map<unsigned, unsigned> &id_map)
+                                std::map<unsigned, unsigned> const& id_map)
 {
 	unsigned idx;
 	for (unsigned i = 0; i < n_nodes; i++)
 	{
 		in >> idx;
-		node_ids.push_back(id_map[idx]);
+		node_ids.push_back(id_map.at(idx));
 	}
 }
+
+MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map)
+{	
+	unsigned idx, type, n_tags, dummy, mat_id;
+	MeshLib::Element* elem (nullptr);
+	std::vector<unsigned> node_ids;
+	std::vector<MeshLib::Node*> elem_nodes;
+	in >> idx >> type >> n_tags >> dummy >> mat_id;
+
+	// skip tags
+	for (size_t j = 2; j < n_tags; j++)
+		in >> dummy;
+
+	switch (type)
+	{
+	case 1: {
+		readNodeIDs(in, 2, node_ids, id_map);
+		// edge_nodes array will be deleted from Line object
+		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
+		edge_nodes[0] = nodes[node_ids[0]];
+		edge_nodes[1] = nodes[node_ids[1]];
+		return new MeshLib::Line(edge_nodes, 0);
+	}
+	case 2: {
+		readNodeIDs(in, 3, node_ids, id_map);
+		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+		tri_nodes[0] = nodes[node_ids[2]];
+		tri_nodes[1] = nodes[node_ids[1]];
+		tri_nodes[2] = nodes[node_ids[0]];
+		return new MeshLib::Tri(tri_nodes, mat_id);
+	}
+	case 3: {
+		readNodeIDs(in, 4, node_ids, id_map);
+		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+		for (unsigned k(0); k < 4; k++)
+			quad_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Quad(quad_nodes, mat_id);
+	}
+	case 4: {
+		readNodeIDs(in, 4, node_ids, id_map);
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[5];
+		for (unsigned k(0); k < 4; k++)
+			tet_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Tet(tet_nodes, mat_id);
+	}
+	case 5: {
+		readNodeIDs(in, 8, node_ids, id_map);
+		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
+		for (unsigned k(0); k < 8; k++)
+			hex_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Hex(hex_nodes, mat_id);
+	}
+	case 6: {
+		readNodeIDs(in, 6, node_ids, id_map);
+		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
+		for (unsigned k(0); k < 6; k++)
+			prism_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Prism(prism_nodes, mat_id);
+	}
+	case 7: {
+		readNodeIDs(in, 5, node_ids, id_map);
+		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
+		for (unsigned k(0); k < 5; k++)
+			pyramid_nodes[k] = nodes[node_ids[k]];
+		return new MeshLib::Pyramid(pyramid_nodes, mat_id);
+	}
+	case 15:
+		in >> dummy; // skip rest of line
+		break;
+	default:
+		WARN("GMSHInterface::readGMSHMesh(): Unknown element type %d.", type);
+	}
+	return nullptr;
+}
+
 
 bool GMSHInterface::write()
 {
