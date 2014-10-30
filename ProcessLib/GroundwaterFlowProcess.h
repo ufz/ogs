@@ -20,10 +20,7 @@
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 
-#include "MathLib/LinAlg/Dense/DenseTools.h"
-#ifdef USE_LIS
-#include "MathLib/LinAlg/Lis/LisTools.h"
-#endif  // USE_LIS
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"

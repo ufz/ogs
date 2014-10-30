@@ -19,20 +19,18 @@
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
-#include "MathLib/LinAlg/Dense/DenseTools.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisLinearSolver.h"
-#include "MathLib/LinAlg/Lis/LisTools.h"
 #endif
 
 #ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
-#include "MathLib/LinAlg/PETSc/PETScTools.h"
 #endif
 
 #include "../TestTools.h"
