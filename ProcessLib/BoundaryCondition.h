@@ -40,7 +40,7 @@ public:
         _node_ids = searcher.getMeshNodeIDs(*_geometry);
     }
 
-private:
+protected:
     GeoLib::GeoObject const* const _geometry;
     std::vector<std::size_t> _node_ids;
 };
