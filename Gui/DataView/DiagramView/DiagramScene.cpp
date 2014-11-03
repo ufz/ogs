@@ -14,7 +14,7 @@
 
 #include "DiagramScene.h"
 #include <limits>
-#include <math.h>
+#include <cmath>
 
 // default size of a new window
 const float DEFAULTX = 500.0;
