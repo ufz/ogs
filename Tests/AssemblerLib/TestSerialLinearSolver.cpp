@@ -84,11 +84,13 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
             void (const MeshLib::Element &,
                     SteadyDiffusion2DExample1::LocalAssemblerData<
                         GlobalMatrix, GlobalVector> *&,
+                    std::size_t const local_matrix_size,
                     SteadyDiffusion2DExample1 const&)
                 > LocalAssemblerBuilder;
 
     LocalAssemblerBuilder local_asm_builder(
-        SteadyDiffusion2DExample1::initializeLocalData<GlobalMatrix, GlobalVector>);
+        SteadyDiffusion2DExample1::initializeLocalData<GlobalMatrix, GlobalVector>,
+        local_to_global_index_map);
 
     // Call global initializer for each mesh element.
     globalSetup.execute(

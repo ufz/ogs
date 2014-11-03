@@ -26,9 +26,10 @@ public:
     virtual ~LocalAssemblerDataInterface() = default;
 
     virtual void init(MeshLib::Element const& e,
+            std::size_t const local_matrix_size,
             double const hydraulic_conductivity) = 0;
 
-    virtual void assemble(std::size_t const rows, std::size_t const columns) = 0;
+    virtual void assemble() = 0;
 
     virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
@@ -57,7 +58,9 @@ public:
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
     void
-    init(MeshLib::Element const& e, double const hydraulic_conductivity)
+    init(MeshLib::Element const& e,
+        std::size_t const local_matrix_size,
+        double const hydraulic_conductivity)
     {
         using FemType = NumLib::TemplateIsoparametric<
             ShapeFunction, ShapeMatrices>;
@@ -74,13 +77,13 @@ public:
         }
 
         _hydraulic_conductivity = hydraulic_conductivity;
+
+        localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
+        localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
-    void assemble(std::size_t const rows, std::size_t const columns)
+    void assemble()
     {
-        localA.reset(new NodalMatrixType(rows, columns));
-        localRhs.reset(new NodalVectorType(rows));
-
         localA->setZero();
         localRhs->setZero();
 

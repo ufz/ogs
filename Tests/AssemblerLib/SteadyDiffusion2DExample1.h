@@ -34,6 +34,7 @@ struct SteadyDiffusion2DExample1
 	{
 	public:
 		void init(MeshLib::Element const&,
+			std::size_t const /*local_matrix_size*/,
 			LocalMatrixType const& localA,
 			LocalVectorType const& localRhs)
 		{
@@ -41,7 +42,7 @@ struct SteadyDiffusion2DExample1
 			_localRhs = &localRhs;
 		}
 
-		void assemble(std::size_t const /*rows*/, std::size_t const /*columns*/)
+		void assemble()
 		{
 			// The local contributions are computed here, usually, but for this
 			// particular test all contributions are equal for all elements and are
@@ -75,10 +76,11 @@ struct SteadyDiffusion2DExample1
 	static
 	void initializeLocalData(const MeshLib::Element& e,
 			LocalAssemblerData<GlobalMatrix, GlobalVector>*& data_ptr,
+			std::size_t const local_matrix_size,
 			SteadyDiffusion2DExample1 const& example)
 	{
 		data_ptr = new LocalAssemblerData<GlobalMatrix, GlobalVector>;
-		data_ptr->init(e, example._localA, example._localRhs);
+		data_ptr->init(e, local_matrix_size, example._localA, example._localRhs);
 	}
 
 	SteadyDiffusion2DExample1()
