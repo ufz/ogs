@@ -164,6 +164,6 @@ int main (int argc, char* argv[])
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
 
-	return 1;
+	return 0;
 }
 
