@@ -20,10 +20,10 @@ namespace GroundwaterFlow
 {
 
 template <typename GlobalMatrix, typename GlobalVector>
-class LocalAssemblerDataBase
+class LocalAssemblerDataInterface
 {
 public:
-    virtual ~LocalAssemblerDataBase() = default;
+    virtual ~LocalAssemblerDataInterface() = default;
 
     virtual void init(MeshLib::Element const& e,
             double const hydraulic_conductivity) = 0;
@@ -39,7 +39,7 @@ template <typename ShapeFunction_,
          unsigned IntegrationOrder_,
          typename GlobalMatrix,
          typename GlobalVector>
-class LocalAssemblerData : public LocalAssemblerDataBase<GlobalMatrix, GlobalVector>
+class LocalAssemblerData : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
 {
 public:
     using ShapeFunction = ShapeFunction_;
