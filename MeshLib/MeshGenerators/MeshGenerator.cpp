@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Norihiro Watanabe
- * \date   2012-08-03
- * \brief
- *
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,9 +7,7 @@
  *
  */
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-
-#include <vector>
+#include "MeshGenerator.h"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Line.h"
@@ -25,6 +18,30 @@
 
 namespace MeshLib
 {
+
+std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
+	const std::array<unsigned,3> &n_cells,
+	const std::array<double,3> &cell_size,
+	const GeoLib::Point& origin)
+{
+	std::vector<Node*> nodes;
+	nodes.reserve((n_cells[0]+1)*(n_cells[1]+1)*(n_cells[2]+1));
+
+	for (std::size_t i = 0; i < n_cells[2]+1; i++)
+	{
+		const double z (origin[2] + cell_size[2] * i);
+		for (std::size_t j = 0; j < n_cells[1]+1; j++)
+		{
+			const double y (origin[1] + cell_size[1] * j);
+			for (std::size_t k = 0; k < n_cells[0]+1; k++)
+			{
+				nodes.push_back (new Node(origin[0] + cell_size[0] * k, y, z));
+			}
+		}
+	}
+	return nodes;
+}
+
 Mesh* MeshGenerator::generateLineMesh(
 	const double length,
 	const std::size_t subdivision,
@@ -33,18 +50,14 @@ Mesh* MeshGenerator::generateLineMesh(
 	return MeshGenerator::generateLineMesh(subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateLineMesh(const unsigned n_cells,
-                                      const double   cell_size,
-                                      GeoLib::Point  const& origin,
-                                      std::string    const& mesh_name)
+Mesh* MeshGenerator::generateLineMesh(
+	const unsigned n_cells,
+	const double   cell_size,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	//nodes
-	const std::size_t n_nodes (n_cells + 1);
-	std::vector<Node*> nodes;
-	nodes.reserve(n_nodes);
-
-	for (std::size_t i = 0; i < n_nodes; i++)
-		nodes.push_back (new Node(origin[0] + cell_size * i, origin[1], origin[2], i));
+	std::vector<Node*> nodes(generateRegularNodes({{n_cells,0,0}}, {{cell_size,0,0}}, origin));
 
 	//elements
 	std::vector<Element*> elements;
@@ -66,27 +79,30 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 	const std::size_t subdivision,
 	const GeoLib::Point& origin)
 {
-	return generateRegularQuadMesh(subdivision, subdivision, length/subdivision, origin);
+	return generateRegularQuadMesh(subdivision, subdivision, length/subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateRegularQuadMesh(const unsigned n_x_cells,
-                              const unsigned n_y_cells,
-                              const double cell_size,
-                              GeoLib::Point const& origin,
-                              std::string const& mesh_name)
+Mesh* MeshGenerator::generateRegularQuadMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double cell_size,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
+{
+	return generateRegularQuadMesh(n_x_cells, n_y_cells, cell_size, cell_size, origin, mesh_name);
+}
+
+Mesh* MeshGenerator::generateRegularQuadMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double cell_size_x,
+	const double cell_size_y,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	//nodes
+	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,0}}, {{cell_size_x,cell_size_y,0}}, origin));
 	const unsigned n_x_nodes (n_x_cells+1);
-	const unsigned n_y_nodes (n_y_cells+1);
-	std::vector<Node*> nodes;
-	nodes.reserve(n_x_nodes * n_y_nodes);
-
-	for (std::size_t i = 0; i < n_y_nodes; i++)
-	{
-		const double y_offset (origin[1] + cell_size * i);
-		for (std::size_t j = 0; j < n_x_nodes; j++)
-			nodes.push_back (new Node(origin[0] + cell_size * j, y_offset, origin[2]));
-	}
 
 	//elements
 	std::vector<Element*> elements;
@@ -118,30 +134,31 @@ Mesh* MeshGenerator::generateRegularHexMesh(
 	return MeshGenerator::generateRegularHexMesh(subdivision, subdivision, subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateRegularHexMesh(const unsigned n_x_cells,
-                                            const unsigned n_y_cells,
-                                            const unsigned n_z_cells,
-                                            const double   cell_size,
-                                            GeoLib::Point  const& origin,
-                                            std::string    const& mesh_name)
+Mesh* MeshGenerator::generateRegularHexMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const unsigned n_z_cells,
+	const double   cell_size,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
+{
+	return MeshGenerator::generateRegularHexMesh(n_x_cells, n_y_cells, n_z_cells, cell_size, cell_size, cell_size, origin, mesh_name);
+}
+
+Mesh* MeshGenerator::generateRegularHexMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const unsigned n_z_cells,
+	const double   cell_size_x,
+	const double   cell_size_y,
+	const double   cell_size_z,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	//nodes
+	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,n_z_cells}}, {{cell_size_x,cell_size_y,cell_size_z}}, origin));
 	const unsigned n_x_nodes (n_x_cells+1);
 	const unsigned n_y_nodes (n_y_cells+1);
-	const unsigned n_z_nodes (n_z_cells+1);
-	std::vector<Node*> nodes;
-	nodes.reserve(n_x_nodes * n_y_nodes * n_z_nodes);
-
-	for (std::size_t i = 0; i < n_z_nodes; i++)
-	{
-		const double z_offset (origin[2] + cell_size * i);
-		for (std::size_t j = 0; j < n_y_nodes; j++)
-		{
-			const double y_offset (origin[1] + cell_size * j);
-			for (std::size_t k = 0; k < n_x_nodes; k++)
-				nodes.push_back (new Node(origin[0] + cell_size * k, y_offset, z_offset));
-		}
-	}
 
 	//elements
 	std::vector<Element*> elements;
@@ -184,24 +201,27 @@ Mesh* MeshGenerator::generateRegularTriMesh(
 	return generateRegularTriMesh(subdivision, subdivision, length/subdivision, origin);
 }
 
-Mesh* MeshGenerator::generateRegularTriMesh(const unsigned n_x_cells,
-                                            const unsigned n_y_cells,
-                                            const double   cell_size,
-                                            GeoLib::Point  const& origin,
-                                            std::string    const& mesh_name)
+Mesh* MeshGenerator::generateRegularTriMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double cell_size,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
+{
+	return generateRegularTriMesh(n_x_cells, n_y_cells, cell_size, cell_size, origin, mesh_name);
+}
+
+Mesh* MeshGenerator::generateRegularTriMesh(
+	const unsigned n_x_cells,
+	const unsigned n_y_cells,
+	const double   cell_size_x,
+	const double   cell_size_y,
+	GeoLib::Point const& origin,
+	std::string   const& mesh_name)
 {
 	//nodes
+	std::vector<Node*> nodes(generateRegularNodes({{n_x_cells,n_y_cells,0}}, {{cell_size_x,cell_size_y,0}}, origin));
 	const unsigned n_x_nodes (n_x_cells+1);
-	const unsigned n_y_nodes (n_y_cells+1);
-	std::vector<Node*> nodes;
-	nodes.reserve(n_x_nodes * n_y_nodes);
-
-	for (std::size_t i = 0; i < n_y_nodes; i++)
-	{
-		const double y_offset (origin[1] + cell_size * i);
-		for (std::size_t j = 0; j < n_x_nodes; j++)
-			nodes.push_back (new Node(origin[0] + cell_size * j, y_offset, origin[2]));
-	}
 
 	//elements
 	std::vector<Element*> elements;
