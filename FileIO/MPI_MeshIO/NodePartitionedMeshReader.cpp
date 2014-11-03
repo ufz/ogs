@@ -172,7 +172,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     MPI_File_close(&fh);
 
     vector<MeshLib::Node*> mesh_nodes;
-    setNodes(s_nodes, mesh_nodes);
+    vector<unsigned> glb_node_ids;
+    setNodes(s_nodes, mesh_nodes, glb_node_ids);
 
     free(s_nodes);
     MPI_Type_free(&MPI_node);
@@ -231,8 +232,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
                                 static_cast<unsigned>(mesh_controls[7])
                                };
 
-    return  new NodePartitionedMesh(BaseLib::extractBaseName(file_name) + _size_str, mesh_nodes,  mesh_elems,
-                                    ghost_elems, mesh_controls[2], nnodes_global, nnodes_active);
+    return  new NodePartitionedMesh(BaseLib::extractBaseName(file_name) + _size_str, mesh_nodes,
+                                    glb_node_ids, mesh_elems, ghost_elems,
+                                    mesh_controls[2], nnodes_global, nnodes_active);
 }
 
 MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm, const std::string &file_name)
@@ -315,6 +317,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
     //MPI_Request send_request, recv_request;
     MPI_Status status;
     vector<MeshLib::Node*> mesh_nodes;
+    vector<unsigned> glb_node_ids;
     std::vector<MeshLib::Element*> mesh_elems;
     std::vector<short*> ghost_elems;
     for(int i=0; i<_size; i++)
@@ -362,7 +365,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
 
             if(i == 0)
             {
-                setNodes(s_nodes, mesh_nodes);
+                setNodes(s_nodes, mesh_nodes, glb_node_ids);
             }
             else
             {
@@ -374,7 +377,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
             if(_rank == i)
             {
                 MPI_Recv(s_nodes, _num_nodes_part, MPI_node, 0, tag[0], comm, &status);
-                setNodes(s_nodes, mesh_nodes);
+                setNodes(s_nodes, mesh_nodes, glb_node_ids);
             }
         }
 
@@ -444,8 +447,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
                                         static_cast<unsigned>(mesh_controls[7])
                                        };
 
-            elem =  new NodePartitionedMesh(BaseLib::extractBaseName(file_name) + _size_str, mesh_nodes,  mesh_elems,
-                                            ghost_elems,  mesh_controls[2], nnodes_global, nnodes_active);
+            elem =  new NodePartitionedMesh(BaseLib::extractBaseName(file_name) + _size_str, mesh_nodes,
+                                            glb_node_ids, mesh_elems, ghost_elems,
+                                            mesh_controls[2], nnodes_global, nnodes_active);
         }
     }
 
@@ -510,14 +514,16 @@ void NodePartitionedMeshReader::readElementASCII(std::ifstream &ins,
 }
 
 void NodePartitionedMeshReader::setNodes(const NodeData *node_data,
-        std::vector<MeshLib::Node*> &mesh_node)
+        std::vector<MeshLib::Node*> &mesh_node, std::vector<unsigned> &glb_node_ids)
 {
     mesh_node.resize( _num_nodes_part );
+    glb_node_ids.resize( _num_nodes_part );
 
     for(size_t i=0; i<mesh_node.size(); i++)
     {
         const NodeData *nd = &node_data[i];
-        mesh_node[i] = new MeshLib::Node( nd->x, nd->y, nd->z, static_cast<unsigned>(nd->index) );
+        glb_node_ids[i] = static_cast<unsigned>(nd->index);
+        mesh_node[i] = new MeshLib::Node(nd->x, nd->y, nd->z, i);
     }
 }
 

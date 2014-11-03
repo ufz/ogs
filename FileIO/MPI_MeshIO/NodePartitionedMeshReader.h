@@ -109,8 +109,10 @@ class NodePartitionedMeshReader
              \brief Set mesh nodes from a tempory array containing node data read from file.
              \param node_data  Array containing node data read from file.
              \param mesh_node  Vector of mesh nodes to be set.
+             \param glb_node_ids  Global IDs of nodes of a partition.
         */
-        void setNodes(const NodeData *node_data, std::vector<MeshLib::Node*> &mesh_node);
+        void setNodes(const NodeData *node_data, std::vector<MeshLib::Node*> &mesh_node,
+                      std::vector<unsigned> &glb_node_ids);
 
         /*!
              \brief Set mesh elements from a tempory array containing node data read from file.

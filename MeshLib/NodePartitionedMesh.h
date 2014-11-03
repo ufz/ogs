@@ -46,6 +46,7 @@ class NodePartitionedMesh : public Mesh
             \brief Constructor
             \param name          Name assigned to the mesh.
             \param nodes         Vector for nodes.
+            \param glb_node_ids  Global IDs of nodes of a partition.
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
             \param g_elem_data   Element wise local node IDs of active nodes.
@@ -60,12 +61,14 @@ class NodePartitionedMesh : public Mesh
         */
         NodePartitionedMesh(const std::string &name,
                             const std::vector<Node*> &nodes,
+                            const std::vector<unsigned> &glb_node_ids,
                             const std::vector<Element*> &elements,
                             const std::vector<short*> &g_elem_data,
                             const std::size_t start_id_g_elem,
                             const unsigned nnodes_global[],
                             const unsigned nnodes_active[])
             : Mesh(name, nodes, elements, false),
+              _global_node_ids(glb_node_ids),
               _start_id_g_elem(start_id_g_elem),
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
                          _nnodes_active {nnodes_active[0], nnodes_active[1] },
@@ -141,6 +144,9 @@ class NodePartitionedMesh : public Mesh
         }
 
     private:
+        /// Global IDs of nodes of a partition
+        std::vector<unsigned> _global_node_ids;
+
         /// ID of the start entry of ghost elements in _elements vector.
         std::size_t _start_id_g_elem;
 
