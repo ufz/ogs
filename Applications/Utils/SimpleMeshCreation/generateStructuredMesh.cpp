@@ -32,7 +32,7 @@
 
 namespace
 {
-    
+
 /// Get dimension of the mesh element type.
 /// @param eleType element type
 unsigned getDimension(MeshElemType eleType)
