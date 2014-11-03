@@ -71,24 +71,24 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
 	                                      "element type to be created", true, "line", "element type");
 	cmd.add(eleTypeArg);
-	TCLAP::ValueArg<double> lengthXArg("", "lx",
-	                                      "length of a domain in x direction", false, 10.0, "real");
-	cmd.add(lengthXArg);
-	TCLAP::ValueArg<double> lengthYArg("", "ly",
-	                                      "length of a domain in y direction", false, 10.0, "real");
-	cmd.add(lengthYArg);
 	TCLAP::ValueArg<double> lengthZArg("", "lz",
 	                                      "length of a domain in z direction", false, 10.0, "real");
 	cmd.add(lengthZArg);
-	TCLAP::ValueArg<unsigned> nsubdivXArg("", "nx",
-	                                      "the number of subdivision in x direction", false, 10, "integer");
-	cmd.add(nsubdivXArg);
-	TCLAP::ValueArg<unsigned> nsubdivYArg("", "ny",
-	                                      "the number of subdivision in y direction", false, 10, "integer");
-	cmd.add(nsubdivYArg);
+	TCLAP::ValueArg<double> lengthYArg("", "ly",
+	                                      "length of a domain in y direction", false, 10.0, "real");
+	cmd.add(lengthYArg);
+	TCLAP::ValueArg<double> lengthXArg("", "lx",
+	                                      "length of a domain in x direction", false, 10.0, "real");
+	cmd.add(lengthXArg);
 	TCLAP::ValueArg<unsigned> nsubdivZArg("", "nz",
 	                                      "the number of subdivision in z direction", false, 10, "integer");
 	cmd.add(nsubdivZArg);
+	TCLAP::ValueArg<unsigned> nsubdivYArg("", "ny",
+	                                      "the number of subdivision in y direction", false, 10, "integer");
+	cmd.add(nsubdivYArg);
+	TCLAP::ValueArg<unsigned> nsubdivXArg("", "nx",
+	                                      "the number of subdivision in x direction", false, 10, "integer");
+	cmd.add(nsubdivXArg);
 
 	// parse arguments
 	cmd.parse(argc, argv);
