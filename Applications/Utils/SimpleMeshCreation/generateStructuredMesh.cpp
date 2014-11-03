@@ -17,6 +17,7 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // MeshLib
@@ -63,7 +64,16 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Generate a structured mesh.", ' ', "0.1");
+	TCLAP::CmdLine cmd("Structured mesh generator.\n"
+			"OpenGeoSys-6 software.\n"
+			"Copyright (c) 2012-2014, OpenGeoSys Community "
+			"(http://www.opengeosys.org) "
+			"Distributed under a Modified BSD License. "
+			"See accompanying file LICENSE.txt or "
+			"http://www.opengeosys.org/project/license",
+		' ',
+		BaseLib::BuildInfo::git_version_sha1);
+
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
 	                                      "the name of the file the mesh will be written to", true,
 	                                      "", "file name of output mesh");
