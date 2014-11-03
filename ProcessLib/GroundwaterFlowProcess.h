@@ -124,7 +124,8 @@ public:
     {
         DBUG("Solve GroundwaterFlowProcess.");
 
-        this->_A->setZero();
+        _A->setZero();
+        *_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
