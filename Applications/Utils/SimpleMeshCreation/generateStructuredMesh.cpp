@@ -118,14 +118,14 @@ int main (int argc, char* argv[])
 	}
 
 	std::vector<double> length(dim);
-	for (unsigned i=0; i<dim; i++)
-		length[i] = vec_lengthArg[i]->getValue();
 	std::vector<unsigned> n_subdivision(dim);
-	for (unsigned i=0; i<dim; i++)
-		n_subdivision[i] = vec_ndivArg[i]->getValue();
 	std::vector<double> vec_dx(dim);
 	for (unsigned i=0; i<dim; i++)
+	{
+		length[i] = vec_lengthArg[i]->getValue();
+		n_subdivision[i] = vec_ndivArg[i]->getValue();
 		vec_dx[i] = length[i] / n_subdivision[i];
+	}
 
 	// generate a mesh
 	MeshLib::Mesh* mesh = nullptr;
