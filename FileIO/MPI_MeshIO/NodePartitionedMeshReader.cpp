@@ -619,8 +619,7 @@ void NodePartitionedMeshReader::printMessage(const std::string & err_message, co
 {
     if( for_fileopen )
     {
-        if(_rank == 0)
-            INFO("! File %s does not exist.", &err_message[0]);
+        INFO("! File %s does not exist.", &err_message[0]);
     }
     else
     {
