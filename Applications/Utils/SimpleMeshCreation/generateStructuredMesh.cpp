@@ -79,7 +79,7 @@ int main (int argc, char* argv[])
 	                                      "", "file name of output mesh");
 	cmd.add(mesh_out);
 	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
-	                                      "element type to be created", true, "line", "element type");
+	                                      "element type to be created: line | tri | quad | hex", true, "line", "element type");
 	cmd.add(eleTypeArg);
 	TCLAP::ValueArg<double> lengthZArg("", "lz",
 	                                      "length of a domain in z direction", false, 10.0, "real");
