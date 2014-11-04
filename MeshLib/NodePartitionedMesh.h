@@ -45,8 +45,8 @@ class NodePartitionedMesh : public Mesh
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
             \param g_elem_data   Element wise local node IDs of active nodes.
-            \param start_id_gele Start ID of the entry of ghost element in
-                                 the element vector.
+            \param n_nghost_elem Number of non-ghost elements, or the start ID of
+                                 the entry of ghost element in the element vector.
             \param nnodes_global Number of nodes of the global mesh.
                                  0: with linear elements
                                  1: with quadratic elemens.
@@ -59,12 +59,12 @@ class NodePartitionedMesh : public Mesh
                             const std::vector<unsigned> &glb_node_ids,
                             const std::vector<Element*> &elements,
                             const std::vector<short*> &g_elem_data,
-                            const std::size_t start_id_g_elem,
+                            const std::size_t n_nghost_elem,
                             const unsigned nnodes_global[],
                             const unsigned nnodes_active[])
             : Mesh(name, nodes, elements, false),
               _global_node_ids(glb_node_ids),
-              _start_id_g_elem(start_id_g_elem),
+              _n_nghost_elem(n_nghost_elem),
               _nnodes_global {nnodes_global[0], nnodes_global[1] },
                          _nnodes_active {nnodes_active[0], nnodes_active[1] },
                          _act_nodes_ids_of_ghost_element(g_elem_data)
@@ -148,18 +148,18 @@ class NodePartitionedMesh : public Mesh
             return static_cast<unsigned>( _nodes.size() ) + _nnodes_active[1] - _nnodes_active[0];
         }
 
-        /// Get the start entry ID of ghost elements in element vector.
-        size_t getStartIndexOfGhostElement() const
+        /// Get the number of non-ghost elements, or the start entry ID of ghost elements in element vector.
+        size_t getNNonGhostElements() const
         {
-            return _start_id_g_elem;
+            return _n_nghost_elem;
         }
 
     private:
         /// Global IDs of nodes of a partition
         std::vector<unsigned> _global_node_ids;
 
-        /// ID of the start entry of ghost elements in _elements vector.
-        std::size_t _start_id_g_elem;
+        /// Number of non-ghost elements, or the ID of the start entry of ghost elements in _elements vector.
+        std::size_t _n_nghost_elem;
 
         /// Number of nodes of the whole mesh. 0: for linear elements; 1: for quadratic elements.
         unsigned _nnodes_global[2];

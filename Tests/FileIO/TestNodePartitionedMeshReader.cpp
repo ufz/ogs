@@ -30,7 +30,7 @@ void testNodePartitionedMeshReader(const std::string &file_name)
 
     const size_t nn = mesh->getNNodes();
     const size_t ne = mesh->getNElements();
-    const unsigned id_1stg_elem = mesh->getStartIndexOfGhostElement();
+    const unsigned id_1stg_elem = mesh->getNNonGhostElements();
     const unsigned ne_ghost = ne - id_1stg_elem;
 
     int rank;
