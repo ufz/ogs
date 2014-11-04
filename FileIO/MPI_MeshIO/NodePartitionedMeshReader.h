@@ -42,16 +42,13 @@ struct NodeData
 class NodePartitionedMeshReader
 {
     public:
-
-        NodePartitionedMeshReader()
-        {
-        }
+        NodePartitionedMeshReader() = default;
 
         /*!
              \brief Create a NodePartitionedMesh object, read data to it,
                     and return a pointer to it.
              \param comm  MPI  communicator.
-             \param file_name  Name of file to be read, and it must be base name.
+             \param file_name  Name of file to be read, and it must be base name without name extension.
              \return           Pointer to Mesh object. If the creation of mesh object
                                fails, return a null pointer.
         */
@@ -126,7 +123,7 @@ class NodePartitionedMeshReader
                          std::vector<MeshLib::Element*> &mesh_elems,
                          std::vector<short*> &mesh_ghost_elems, const bool ghost = false);
 
-        /// Teminate programm due to failed to open the file or mismatch between two requested numbers
+        /// Terminate programm due to failed in file opening or due to mismatch between two requested numbers
         void printMessage(const std::string & err_message, const bool for_fileopen = true);
 };
 

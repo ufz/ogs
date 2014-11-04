@@ -31,11 +31,15 @@ namespace MeshLib
 class Node;
 class Element;
 
-/// Element order for reading partitioned mesh data
+/*!
+    Element order for reading partitioned mesh data
+    Used to get node information of a partiton, 
+    e.g., number of global nodes, or number of non-ghost nodes.
+*/
 enum class ElementOrder
 {
-    LINEAR = 0,
-    QUADRATIC = 1,
+    LINEAR = 0,    ///< For those make linear interpolation.
+    QUADRATIC = 1  ///< For those make quadratic or higher order interpolation.  
 };
 
 /// A subdomain mesh.
