@@ -29,16 +29,15 @@ namespace AssemblerLib
 
 template <
     template <typename, typename> class LocalAssemblerDataInterface_,
-    template <typename, typename, unsigned, typename, typename> class LocalAssemblerData_,
+    template <typename, typename, typename, typename> class LocalAssemblerData_,
     template <typename> class IntegrationPolicy_,
-    unsigned IntegrationOrder_,
     typename GlobalMatrix,
     typename GlobalVector>
 class LocalDataInitializer
 {
     template <typename ShapeFunction_>
         using LAData = LocalAssemblerData_<
-                ShapeFunction_, IntegrationPolicy_<ShapeFunction_>, IntegrationOrder_,
+                ShapeFunction_, IntegrationPolicy_<ShapeFunction_>,
                 GlobalMatrix, GlobalVector>;
 
 

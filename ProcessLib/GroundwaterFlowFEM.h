@@ -27,7 +27,8 @@ public:
 
     virtual void init(MeshLib::Element const& e,
             std::size_t const local_matrix_size,
-            double const hydraulic_conductivity) = 0;
+            double const hydraulic_conductivity,
+            unsigned const integration_order) = 0;
 
     virtual void assemble() = 0;
 
@@ -37,7 +38,6 @@ public:
 
 template <typename ShapeFunction_,
          typename IntegrationMethod_,
-         unsigned IntegrationOrder_,
          typename GlobalMatrix,
          typename GlobalVector>
 class LocalAssemblerData : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
@@ -49,18 +49,13 @@ public:
 
     using ShapeMatrices = typename ShapeMatrixPolicyType<ShapeFunction>::ShapeMatrices;
 
-
-    static unsigned constexpr integration_order = IntegrationOrder_;
-    static unsigned constexpr n_integration_points =
-        MathLib::pow(integration_order, ShapeFunction::DIM);
-    using IntegrationMethod = IntegrationMethod_;
-
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
     void
     init(MeshLib::Element const& e,
         std::size_t const local_matrix_size,
-        double const hydraulic_conductivity)
+        double const hydraulic_conductivity,
+        unsigned const integration_order)
     {
         using FemType = NumLib::TemplateIsoparametric<
             ShapeFunction, ShapeMatrices>;
@@ -68,12 +63,15 @@ public:
         FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
 
 
-        IntegrationMethod _integration_method(integration_order);
+        _integration_order = integration_order;
+        IntegrationMethod_ integration_method(_integration_order);
+        unsigned const n_integration_points = integration_method.getNPoints();
 
+        _shape_matrices.resize(n_integration_points);
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             _shape_matrices[ip].resize(ShapeFunction::DIM, ShapeFunction::NPOINTS);
             fe.computeShapeFunctions(
-                    _integration_method.getWeightedPoint(ip).getCoords(),
+                    integration_method.getWeightedPoint(ip).getCoords(),
                     _shape_matrices[ip]);
         }
 
@@ -88,11 +86,12 @@ public:
         localA->setZero();
         localRhs->setZero();
 
-        IntegrationMethod _integration_method(integration_order);
+        IntegrationMethod_ integration_method(_integration_order);
+        unsigned const n_integration_points = integration_method.getNPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
-            auto const& wp = _integration_method.getWeightedPoint(ip);
+            auto const& wp = integration_method.getWeightedPoint(ip);
             *localA += sm.dNdx.transpose() * _hydraulic_conductivity *
                         sm.dNdx * sm.detJ * wp.getWeight();
         }
@@ -106,11 +105,13 @@ public:
     }
 
 private:
-    std::array<ShapeMatrices, n_integration_points> _shape_matrices;
+    std::vector<ShapeMatrices> _shape_matrices;
     double _hydraulic_conductivity;
 
     std::unique_ptr<NodalMatrixType> localA;
     std::unique_ptr<NodalVectorType> localRhs;
+
+    unsigned _integration_order = 2;
 };
 
 
