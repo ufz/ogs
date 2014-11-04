@@ -17,6 +17,7 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // MeshLib
@@ -31,7 +32,7 @@
 
 namespace
 {
-    
+
 /// Get dimension of the mesh element type.
 /// @param eleType element type
 unsigned getDimension(MeshElemType eleType)
@@ -63,32 +64,41 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Generate a structured mesh.", ' ', "0.1");
+	TCLAP::CmdLine cmd("Structured mesh generator.\n"
+			"OpenGeoSys-6 software.\n"
+			"Copyright (c) 2012-2014, OpenGeoSys Community "
+			"(http://www.opengeosys.org) "
+			"Distributed under a Modified BSD License. "
+			"See accompanying file LICENSE.txt or "
+			"http://www.opengeosys.org/project/license",
+		' ',
+		BaseLib::BuildInfo::git_version_sha1);
+
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
 	                                      "the name of the file the mesh will be written to", true,
 	                                      "", "file name of output mesh");
 	cmd.add(mesh_out);
 	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
-	                                      "element type to be created", true, "line", "element type");
+	                                      "element type to be created: line | tri | quad | hex", true, "line", "element type");
 	cmd.add(eleTypeArg);
-	TCLAP::ValueArg<double> lengthXArg("", "lx",
-	                                      "length of a domain in x direction", false, 10.0, "real");
-	cmd.add(lengthXArg);
-	TCLAP::ValueArg<double> lengthYArg("", "ly",
-	                                      "length of a domain in y direction", false, 10.0, "real");
-	cmd.add(lengthYArg);
 	TCLAP::ValueArg<double> lengthZArg("", "lz",
 	                                      "length of a domain in z direction", false, 10.0, "real");
 	cmd.add(lengthZArg);
-	TCLAP::ValueArg<unsigned> nsubdivXArg("", "nx",
-	                                      "the number of subdivision in x direction", false, 10, "integer");
-	cmd.add(nsubdivXArg);
-	TCLAP::ValueArg<unsigned> nsubdivYArg("", "ny",
-	                                      "the number of subdivision in y direction", false, 10, "integer");
-	cmd.add(nsubdivYArg);
+	TCLAP::ValueArg<double> lengthYArg("", "ly",
+	                                      "length of a domain in y direction", false, 10.0, "real");
+	cmd.add(lengthYArg);
+	TCLAP::ValueArg<double> lengthXArg("", "lx",
+	                                      "length of a domain in x direction", false, 10.0, "real");
+	cmd.add(lengthXArg);
 	TCLAP::ValueArg<unsigned> nsubdivZArg("", "nz",
 	                                      "the number of subdivision in z direction", false, 10, "integer");
 	cmd.add(nsubdivZArg);
+	TCLAP::ValueArg<unsigned> nsubdivYArg("", "ny",
+	                                      "the number of subdivision in y direction", false, 10, "integer");
+	cmd.add(nsubdivYArg);
+	TCLAP::ValueArg<unsigned> nsubdivXArg("", "nx",
+	                                      "the number of subdivision in x direction", false, 10, "integer");
+	cmd.add(nsubdivXArg);
 
 	// parse arguments
 	cmd.parse(argc, argv);
@@ -118,14 +128,14 @@ int main (int argc, char* argv[])
 	}
 
 	std::vector<double> length(dim);
-	for (unsigned i=0; i<dim; i++)
-		length[i] = vec_lengthArg[i]->getValue();
 	std::vector<unsigned> n_subdivision(dim);
-	for (unsigned i=0; i<dim; i++)
-		n_subdivision[i] = vec_ndivArg[i]->getValue();
 	std::vector<double> vec_dx(dim);
 	for (unsigned i=0; i<dim; i++)
+	{
+		length[i] = vec_lengthArg[i]->getValue();
+		n_subdivision[i] = vec_ndivArg[i]->getValue();
 		vec_dx[i] = length[i] / n_subdivision[i];
+	}
 
 	// generate a mesh
 	MeshLib::Mesh* mesh = nullptr;
@@ -164,6 +174,6 @@ int main (int argc, char* argv[])
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
 
-	return 1;
+	return 0;
 }
 
