@@ -31,17 +31,6 @@ namespace MeshLib
 class Node;
 class Element;
 
-/*!
-    Element order for reading partitioned mesh data
-    Used to get node information of a partiton, 
-    e.g., number of global nodes, or number of non-ghost nodes.
-*/
-enum class ElementOrder
-{
-    LINEAR = 0,    ///< For those make linear interpolation.
-    QUADRATIC = 1  ///< For those make quadratic or higher order interpolation.  
-};
-
 /// A subdomain mesh.
 class NodePartitionedMesh : public Mesh
 {
@@ -49,7 +38,9 @@ class NodePartitionedMesh : public Mesh
         /*!
             \brief Constructor
             \param name          Name assigned to the mesh.
-            \param nodes         Vector for nodes.
+            \param nodes         Vector for nodes, which first stores base noodes
+                                 (for linear elements), then follows with the nodes
+                                 that make up high order elements.
             \param glb_node_ids  Global IDs of nodes of a partition.
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
@@ -88,45 +79,61 @@ class NodePartitionedMesh : public Mesh
             }
         }
 
-        /*!
-            \brief Get the number of nodes of the whole mesh.
-            \param order The order of elements (0 or 1).
-                         Its default value is 0 for linear elements.
-        */
-        unsigned getNGlobalNodes(const ElementOrder order = ElementOrder::LINEAR) const
+        /// Get the number of nodes of the global mesh for linear elements.
+        unsigned getNGlobalBaseNodes() const
         {
-            return _nnodes_global[static_cast<int>(order)];
+            return _nnodes_global[0];
+        }
+
+        /// Get the number of all nodes of the global mesh.
+        unsigned getNGlobalNodes() const
+        {
+            return _nnodes_global[1];
+        }
+
+        /// Get the number of the active nodes of the partition for linear elements.
+        unsigned getNActiveBaseNodes() const
+        {
+            return _nnodes_active[0];
+        }
+
+        /// Get the number of all active nodes of the partition.
+        unsigned getNActiveNodes() const
+        {
+            return _nnodes_active[1];
         }
 
         /*!
-            \brief Get the number of the active nodes of the partition.
-            \param order The order of elements (0 or 1).
-                         Its default value is 0 for linear elements.
-        */
-        unsigned getNActiveNodes(const ElementOrder order = ElementOrder::LINEAR) const
-        {
-            return _nnodes_active[static_cast<int>(order)];
-        }
-
-        /*!
-          \brief Get the number of active nodes of a ghost element
+          \brief Get the number of active nodes of a ghost element for linear interpolation
           \param gelem_id Index of ghost element
-          \param order    The order of elements (either 0 or 1).
           \return         The first or the second element of array by
                            _nnodes_active[static_cast<gelem_id> , which stores
                           the number of active nodes either for linear or high
                           order element of an ghost element.
         */
-        unsigned getNGhostElementActiveNodes(const unsigned gelem_id,
-                                             const ElementOrder order = ElementOrder::LINEAR) const
+        unsigned getNGhostElementActiveBaseNodes(const unsigned gelem_id) const
         {
-            return _act_nodes_ids_of_ghost_element[gelem_id][static_cast<int>(order)];
+            return _act_nodes_ids_of_ghost_element[gelem_id][0];
         }
 
         /*!
-          \brief Get local IDs of the active nodes of a ghost element by a pointer to
-                 an array.
-          \param gelem_id Index of ghost element.
+          \brief Get the number of all active nodes of a ghost element
+          \param gelem_id Index of ghost element
+          \return         The first or the second element of array by
+                           _nnodes_active[static_cast<gelem_id> , which stores
+                          the number of active nodes either for linear or high
+                          order element of an ghost element.
+        */
+        unsigned getNGhostElementActiveNodes(const unsigned gelem_id) const
+        {
+            return _act_nodes_ids_of_ghost_element[gelem_id][1];
+        }
+
+
+        /*!
+         \brief Get local IDs of the active nodes of a ghost element by a pointer to
+                an array.
+         \param gelem_id Index of ghost element.
         */
         short *getGhostElementActiveNodes(const unsigned gelem_id) const
         {

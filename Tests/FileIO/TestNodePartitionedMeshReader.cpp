@@ -15,9 +15,9 @@
 #include "gtest/gtest.h"
 #include "BaseLib/BuildInfo.h" // Path to input file
 
-#include "Node.h"
+#include "MeshLib/Node.h"
 
-#include "MPI_MeshIO/NodePartitionedMeshReader.h"
+#include "MPI_IO/NodePartitionedMeshReader.h"
 
 using namespace MeshLib;
 using namespace FileIO;
@@ -53,7 +53,9 @@ void testNodePartitionedMeshReader(const std::string &file_name)
                 ASSERT_NEAR(7.50004016082884e-01, x1[1], 1.e-16);
                 ASSERT_NEAR(2.50030875593138e-01, x1[2], 1.e-16);
 
-                unsigned e_act_nn = mesh->getNGhostElementActiveNodes(ne_ghost-1);
+                unsigned e_act_nn = mesh->getNGhostElementActiveBaseNodes(ne_ghost-1);
+                ASSERT_EQ(1u, e_act_nn);
+                e_act_nn = mesh->getNGhostElementActiveNodes(ne_ghost-1);
                 ASSERT_EQ(1u, e_act_nn);
                 short *e_act_nodes = mesh->getGhostElementActiveNodes(ne_ghost-1);
                 ASSERT_EQ(3u, e_act_nodes[0]);
@@ -74,7 +76,9 @@ void testNodePartitionedMeshReader(const std::string &file_name)
                 ASSERT_NEAR(2.50077599298029e-01, x1[1], 1.e-16);
                 ASSERT_NEAR(1.0, x1[2], 1.e-16);
 
-                unsigned e_act_nn = mesh->getNGhostElementActiveNodes(ne_ghost-1);
+                unsigned e_act_nn = mesh->getNGhostElementActiveBaseNodes(ne_ghost-1);
+                ASSERT_EQ(1u, e_act_nn);
+                e_act_nn = mesh->getNGhostElementActiveNodes(ne_ghost-1);
                 ASSERT_EQ(1u, e_act_nn);
                 short *e_act_nodes = mesh->getGhostElementActiveNodes(ne_ghost-1);
                 ASSERT_EQ(1u, e_act_nodes[0]);
@@ -95,7 +99,9 @@ void testNodePartitionedMeshReader(const std::string &file_name)
                 ASSERT_NEAR(2.50043690294878e-01, x1[1], 1.e-16);
                 ASSERT_NEAR(7.50023794732280e-01, x1[2], 1.e-16);
 
-                unsigned e_act_nn = mesh->getNGhostElementActiveNodes(ne_ghost-1);
+                unsigned e_act_nn = mesh->getNGhostElementActiveBaseNodes(ne_ghost-1);
+                ASSERT_EQ(1u, e_act_nn);
+                e_act_nn = mesh->getNGhostElementActiveNodes(ne_ghost-1);
                 ASSERT_EQ(1u, e_act_nn);
                 short *e_act_nodes = mesh->getGhostElementActiveNodes(ne_ghost-1);
                 ASSERT_EQ(0u, e_act_nodes[0]);

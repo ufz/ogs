@@ -36,35 +36,6 @@ using namespace MeshLib;
 
 namespace FileIO
 {
-// Local function:
-// Define MPI data type, MPI_Node_ptr, for struct MeshNode for palllel reading of nodes
-static void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
-{
-
-    int nblocklen[4] = {1, 1, 1, 1};
-
-    MPI_Aint disp[4], base;
-    MPI_Get_address(anode, disp);
-    MPI_Get_address(&(anode[0].x), disp+1);
-    MPI_Get_address(&(anode[0].y), disp+2);
-    MPI_Get_address(&(anode[0].z), disp+3);
-    base = disp[0];
-    for(int j=0; j <4; j++)
-    {
-        disp[j] -= base;
-    }
-
-    MPI_Datatype my_comp_type[4];
-    my_comp_type[0] = MPI_LONG;
-    my_comp_type[1] = MPI_DOUBLE;
-    my_comp_type[2] = MPI_DOUBLE;
-    my_comp_type[3] = MPI_DOUBLE;
-
-    // build datatype describing structure
-    MPI_Type_create_struct(4, nblocklen, disp, my_comp_type, MPI_Node_ptr);
-    MPI_Type_commit(MPI_Node_ptr);
-}
-
 MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, const std::string &file_name)
 {
     BaseLib::RunTime timer;
@@ -605,6 +576,33 @@ void NodePartitionedMeshReader::setElements(const std::vector<MeshLib::Node*> &m
             mesh_elems[i] = elem;
         }
     }
+}
+
+void NodePartitionedMeshReader::buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr)
+{
+
+    int nblocklen[4] = {1, 1, 1, 1};
+
+    MPI_Aint disp[4], base;
+    MPI_Get_address(anode, disp);
+    MPI_Get_address(&(anode[0].x), disp+1);
+    MPI_Get_address(&(anode[0].y), disp+2);
+    MPI_Get_address(&(anode[0].z), disp+3);
+    base = disp[0];
+    for(int j=0; j <4; j++)
+    {
+        disp[j] -= base;
+    }
+
+    MPI_Datatype my_comp_type[4];
+    my_comp_type[0] = MPI_LONG;
+    my_comp_type[1] = MPI_DOUBLE;
+    my_comp_type[2] = MPI_DOUBLE;
+    my_comp_type[3] = MPI_DOUBLE;
+
+    // build datatype describing structure
+    MPI_Type_create_struct(4, nblocklen, disp, my_comp_type, MPI_Node_ptr);
+    MPI_Type_commit(MPI_Node_ptr);
 }
 
 void NodePartitionedMeshReader::printMessage(const std::string & err_message, const bool for_fileopen)

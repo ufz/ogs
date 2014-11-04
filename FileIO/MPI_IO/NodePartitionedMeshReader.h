@@ -19,7 +19,7 @@
 
 #include <mpi.h>
 
-#include "NodePartitionedMesh.h"
+#include "MeshLib/NodePartitionedMesh.h"
 
 namespace MeshLib
 {
@@ -29,15 +29,6 @@ class Element;
 
 namespace FileIO
 {
-/// Node data only for parallel reading.
-struct NodeData
-{
-    long index; ///< Global node index.
-    double x;
-    double y;
-    double z;
-};
-
 /// Class to handle reading data of partitioned mesh.
 class NodePartitionedMeshReader
 {
@@ -102,6 +93,20 @@ class NodePartitionedMeshReader
         void readElementASCII(std::ifstream &ins, long *elem_info,
                               const bool ghost = false);
 
+        /// Node data only for parallel reading.
+        struct NodeData
+        {
+            long index; ///< Global node index.
+            double x;
+            double y;
+            double z;
+        };
+
+        /*! Define MPI data type, MPI_Node_ptr, for struct MeshNode for palllel reading of nodes
+              \param anode        a NodeData variable.
+              \param MPI_Node_ptr Defined MPI data type of struct NodeData.
+        */
+        void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *MPI_Node_ptr);
         /*!
              \brief Set mesh nodes from a tempory array containing node data read from file.
              \param node_data  Array containing node data read from file.
@@ -125,6 +130,7 @@ class NodePartitionedMeshReader
 
         /// Terminate programm due to failed in file opening or due to mismatch between two requested numbers
         void printMessage(const std::string & err_message, const bool for_fileopen = true);
+
 };
 
 } // End of namespace
