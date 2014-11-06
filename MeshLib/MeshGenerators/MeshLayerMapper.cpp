@@ -121,7 +121,10 @@ bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<
 
 	MeshLib::Mesh* bottom (new MeshLib::Mesh(mesh));
 	if (!layerMapping(*bottom, *rasters[0], 0))
+	{
+		delete top;
 		return false;
+	}
 
 	std::size_t const nNodes = mesh.getNNodes();
 	_nodes.reserve(nLayers * nNodes);
@@ -131,14 +134,17 @@ bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<
 		[](MeshLib::Element const* elem) { return (elem->getGeomType() == MeshElemType::TRIANGLE);}));
 	_elements.reserve(nElems * (nLayers-1));
 
-	// bottom layer
+	// add bottom layer
 	std::vector<MeshLib::Node*> const& nodes = bottom->getNodes();
-	std::copy(nodes.cbegin(), nodes.cend(), std::back_inserter(_nodes));
+	for (MeshLib::Node* node : nodes)
+		_nodes.push_back(new MeshLib::Node(*node));
+	delete bottom;
 	
-	// the other layers
+	// add the other layers
 	for (std::size_t i=1; i<nLayers; ++i)
 		addLayerToMesh(*top, i, *rasters[i]);
 
+	delete top;
 	return true;
 }
 
