@@ -70,9 +70,9 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
-		if (layer_id > 0 &&
-		   ((*layer_nodes[i])[2] == no_data_value ||
-		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < _elevation_epsilon))
+		if ((layer_id > 0) &&
+		    ((std::abs((*layer_nodes[i])[2] - no_data_value) < std::numeric_limits<double>::epsilon()) ||
+		     ((*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < _elevation_epsilon)))
 			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
 		else
 			_nodes.push_back(new MeshLib::Node(layer_nodes[i]->getCoords(), _nodes.size()));
@@ -84,16 +84,16 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned lay
 		if (elem->getGeomType() == MeshElemType::TRIANGLE)
 		{
 			std::array<MeshLib::Node*,3> tri_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
-			                                           _nodes[node_id_offset+elem->getNodeIndex(1)],
-			                                           _nodes[node_id_offset+elem->getNodeIndex(2)] }};
+			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
+			                                            _nodes[node_id_offset+elem->getNodeIndex(2)] }};
 			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id+1));
 		}
 		else if (elem->getGeomType() == MeshElemType::QUAD)
 		{
 			std::array<MeshLib::Node*,4> quad_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(2)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(3)] }};
+			                                             _nodes[node_id_offset+elem->getNodeIndex(1)],
+			                                             _nodes[node_id_offset+elem->getNodeIndex(2)],
+			                                             _nodes[node_id_offset+elem->getNodeIndex(3)] }};
 			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id+1));
 		}
 	}
@@ -139,15 +139,15 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 		const std::size_t lower_offset ( i    * nElementsPerLayer);
 		for (std::size_t j=0; j<nElementsPerLayer; ++j)
 		{
-			MeshLib::Element const*const high (_elements[upper_offset+j]);
-			MeshLib::Element *low  (_elements[lower_offset+j]);
+			MeshLib::Element *const high (_elements[upper_offset+j]);
+			MeshLib::Element const*const low  (_elements[lower_offset+j]);
 
 			unsigned count(0);
 			const std::size_t nElemNodes (low->getNBaseNodes());
 			for (std::size_t k=0; k<nElemNodes; ++k)
 				if (high->getNodeIndex(k) == low->getNodeIndex(k))
 				{
-					low->setNode(k, _nodes[high->getNodeIndex(k)]);
+					high->setNode(k, _nodes[low->getNodeIndex(k)]);
 					count++;
 				}
 
