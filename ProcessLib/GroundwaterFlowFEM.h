@@ -68,7 +68,7 @@ public:
 
         _integration_order = integration_order;
         IntegrationMethod_ integration_method(_integration_order);
-        unsigned const n_integration_points = integration_method.getNPoints();
+        std::size_t const n_integration_points = integration_method.getNPoints();
 
         _shape_matrices.resize(n_integration_points);
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
