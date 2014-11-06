@@ -27,6 +27,11 @@
 namespace AssemblerLib
 {
 
+/// The LocalDataInitializer is a functor creating a local assembler data with
+/// corresponding to the mesh element type shape functions and calling
+/// initialization of the new local assembler data.
+/// For example for MeshLib::Line a local assembler data with template argument
+/// NumLib::ShapeLine2 is created.
 template <
     template <typename, typename> class LocalAssemblerDataInterface_,
     template <typename, typename, typename, typename> class LocalAssemblerData_,
@@ -54,6 +59,8 @@ public:
                 [](){ return new LAData<NumLib::ShapeHex8>; };
     }
 
+    /// Sets the provided data_ptr to the newly created local assembler data and
+    /// calls init() forwarding all remaining arguments.
     template <typename ...Args_>
     void operator()(const MeshLib::Element& e,
         LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>*& data_ptr, Args_&&... args)

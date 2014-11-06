@@ -23,14 +23,18 @@ namespace AssemblerLib
 ///
 /// \tparam MeshItem is usually a mesh element, but could be a mesh's edge or
 /// node depending on discretization method.
-/// \tparam Builder is the local assembler builder, initializing the data
-/// depending on the passed mesh item.
+/// \tparam Builder is the local assembler builder type, used for initialisation
+/// of the local assembler data depending on the passed mesh item.
 template<
     typename MeshItem,
     typename Builder>
 class LocalAssemblerBuilder
 {
 public:
+    /// \param builder is the local assembler builder for initialization of the
+    /// local assembler data.
+    /// \param local_to_global_index_map is used to determine the size of local
+    /// matrix/vector for a mesh item.
     LocalAssemblerBuilder(Builder &builder,
         LocalToGlobalIndexMap const& local_to_global_index_map)
     : _builder(builder), _local_to_global_index_map(local_to_global_index_map)
