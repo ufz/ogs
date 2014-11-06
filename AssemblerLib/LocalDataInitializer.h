@@ -31,14 +31,14 @@ template <
     template <typename, typename> class LocalAssemblerDataInterface_,
     template <typename, typename, typename, typename> class LocalAssemblerData_,
     template <typename> class IntegrationPolicy_,
-    typename GlobalMatrix,
-    typename GlobalVector>
+    typename GlobalMatrix_,
+    typename GlobalVector_>
 class LocalDataInitializer
 {
     template <typename ShapeFunction_>
         using LAData = LocalAssemblerData_<
                 ShapeFunction_, IntegrationPolicy_<ShapeFunction_>,
-                GlobalMatrix, GlobalVector>;
+                GlobalMatrix_, GlobalVector_>;
 
 
 public:
@@ -56,7 +56,7 @@ public:
 
     template <typename ...Args_>
     void operator()(const MeshLib::Element& e,
-        LocalAssemblerDataInterface_<GlobalMatrix, GlobalVector>*& data_ptr, Args_&&... args)
+        LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>*& data_ptr, Args_&&... args)
     {
         data_ptr = _builder[std::type_index(typeid(e))]();
         data_ptr->init(e, std::forward<Args_>(args)...);
@@ -66,7 +66,7 @@ private:
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<
         std::type_index,
-        std::function<LocalAssemblerDataInterface_<GlobalMatrix, GlobalVector>*()>
+        std::function<LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>*()>
             > _builder;
 };
 
