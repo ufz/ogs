@@ -10,6 +10,9 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
 #define PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
 
+#include <memory>
+#include <vector>
+
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
