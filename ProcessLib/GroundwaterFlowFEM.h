@@ -92,7 +92,7 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            *_localA += sm.dNdx.transpose() * _hydraulic_conductivity *
+            _localA->noalias() += sm.dNdx.transpose() * _hydraulic_conductivity *
                         sm.dNdx * sm.detJ * wp.getWeight();
         }
     }
