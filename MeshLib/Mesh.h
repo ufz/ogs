@@ -18,6 +18,9 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <map>
+
+#include <boost/any.hpp>
 
 #include "BaseLib/Counter.h"
 
@@ -157,6 +160,8 @@ protected:
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
 	std::size_t _n_base_nodes;
+
+	std::map<std::string, boost::any> _properties;
 
 }; /* class */
 
