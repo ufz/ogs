@@ -77,14 +77,14 @@ public:
 
         _hydraulic_conductivity = hydraulic_conductivity;
 
-        localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
-        localRhs.reset(new NodalVectorType(local_matrix_size));
+        _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
+        _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
     void assemble()
     {
-        localA->setZero();
-        localRhs->setZero();
+        _localA->setZero();
+        _localRhs->setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
@@ -92,7 +92,7 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            *localA += sm.dNdx.transpose() * _hydraulic_conductivity *
+            *_localA += sm.dNdx.transpose() * _hydraulic_conductivity *
                         sm.dNdx * sm.detJ * wp.getWeight();
         }
     }
@@ -100,16 +100,16 @@ public:
     void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
     {
-        A.add(indices, *localA);
-        rhs.add(indices.rows, *localRhs);
+        A.add(indices, *_localA);
+        rhs.add(indices.rows, *_localRhs);
     }
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
     double _hydraulic_conductivity;
 
-    std::unique_ptr<NodalMatrixType> localA;
-    std::unique_ptr<NodalVectorType> localRhs;
+    std::unique_ptr<NodalMatrixType> _localA;
+    std::unique_ptr<NodalVectorType> _localRhs;
 
     unsigned _integration_order = 2;
 };
