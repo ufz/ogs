@@ -39,7 +39,7 @@ class Mesh : BaseLib::Counter<Mesh>
 public:
 	/// Constructor using a mesh name and an array of nodes and elements
 	/// @param name          Mesh name.
-	/// @param nodes         A vector of mesh nodes. In case nonlinear nodes are involved, one should 
+	/// @param nodes         A vector of mesh nodes. In case nonlinear nodes are involved, one should
 	///                      put them after line ones in the vector and set "n_base_nodes" argument.
 	/// @param elements      An array of mesh elements.
 	/// @param n_base_nodes  The number of base nodes. This is an optional parameter for nonlinear case.
@@ -131,7 +131,7 @@ protected:
 	 * calls setElementsConnectedToNodes to set the new information.
 	 * \attention This needs to be called if node neighbourhoods are reset.
 	 */
-	void resetElementsConnectedToNodes();	
+	void resetElementsConnectedToNodes();
 
 	/// Sets the dimension of the mesh.
 	void setDimension();
