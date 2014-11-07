@@ -70,7 +70,7 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vec
 void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer_id, GeoLib::Raster const& raster)
 {
 	const std::size_t nNodes (dem_mesh.getNNodes());
-	const std::vector<MeshLib::Node*> const& nodes (dem_mesh.getNodes());
+	const std::vector<MeshLib::Node*> &nodes (dem_mesh.getNodes());
 	const std::size_t node_id_offset (_nodes.size());
 	const std::size_t last_layer_offset (node_id_offset-nNodes);
 	const double no_data_value (raster.getNoDataValue());
