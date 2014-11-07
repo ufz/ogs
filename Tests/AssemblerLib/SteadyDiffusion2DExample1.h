@@ -29,10 +29,12 @@ struct SteadyDiffusion2DExample1
 	using LocalMatrixType = MathLib::DenseMatrix<double>;
 	using LocalVectorType = MathLib::DenseVector<double>;
 
+	template <typename GlobalMatrix, typename GlobalVector>
 	class LocalAssemblerData
 	{
 	public:
 		void init(MeshLib::Element const&,
+			std::size_t const /*local_matrix_size*/,
 			LocalMatrixType const& localA,
 			LocalVectorType const& localRhs)
 		{
@@ -40,12 +42,20 @@ struct SteadyDiffusion2DExample1
 			_localRhs = &localRhs;
 		}
 
-		void assemble(std::size_t const /*rows*/, std::size_t const /*columns*/)
+		void assemble()
 		{
 			// The local contributions are computed here, usually, but for this
 			// particular test all contributions are equal for all elements and are
 			// already stored in the _localA matrix.
 		}
+
+		void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
+				AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
+		{
+			A.add(indices, *_localA);
+			rhs.add(indices.rows, *_localRhs);
+		}
+
 
 		LocalMatrixType const& getLocalMatrix() const
 		{
@@ -62,13 +72,15 @@ struct SteadyDiffusion2DExample1
 		LocalVectorType const* _localRhs = nullptr;
 	};
 
+	template <typename GlobalMatrix, typename GlobalVector>
 	static
 	void initializeLocalData(const MeshLib::Element& e,
-			LocalAssemblerData*& data_ptr,
+			LocalAssemblerData<GlobalMatrix, GlobalVector>*& data_ptr,
+			std::size_t const local_matrix_size,
 			SteadyDiffusion2DExample1 const& example)
 	{
-		data_ptr = new LocalAssemblerData;
-		data_ptr->init(e, example._localA, example._localRhs);
+		data_ptr = new LocalAssemblerData<GlobalMatrix, GlobalVector>;
+		data_ptr->init(e, local_matrix_size, example._localA, example._localRhs);
 	}
 
 	SteadyDiffusion2DExample1()

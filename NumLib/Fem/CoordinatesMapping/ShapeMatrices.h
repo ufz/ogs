@@ -74,6 +74,14 @@ struct ShapeMatrices
 
     ~ShapeMatrices() {}
 
+    /// Reinitialize the matrices and vectors. When using dynamic size matrices
+    /// and the default constructor of this class memory allocation must be
+    /// performed calling this function.
+    /// For fixed size matrices no memory reallocation happens and the
+    /// matrix/vector sizes must be the same as at construction (given by the
+    /// template parameters).
+    void resize(std::size_t const dim, std::size_t n_nodes);
+
     /// reset all data with zero
     void setZero();
 

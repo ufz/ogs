@@ -65,6 +65,7 @@ struct EigenDynamicShapeMatrixPolicy
 /// Default choice of the ShapeMatrixPolicy.
 template <typename ShapeFunction>
 using ShapeMatrixPolicyType = EigenFixedShapeMatrixPolicy<ShapeFunction>;
+//using ShapeMatrixPolicyType = EigenDynamicShapeMatrixPolicy<ShapeFunction>;
 
 #endif  // OGS_USE_EIGEN
 

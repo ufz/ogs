@@ -51,9 +51,8 @@ public:
 
         LocalToGlobalIndexMap::RowColumnIndices const& indices = _data_pos[id];
 
-        local_assembler->assemble(indices.rows.size(), indices.columns.size());
-        _A.add(indices, local_assembler->getLocalMatrix());
-        _rhs.add(indices.rows, local_assembler->getLocalVector());
+        local_assembler->assemble();
+        local_assembler->addToGlobal(_A, _rhs, indices);
     }
 
 protected:
