@@ -63,7 +63,7 @@ protected:
     virtual void addLayerToMesh(MeshLib::Mesh const& mesh_layer, unsigned layer_id, GeoLib::Raster const& raster) = 0;
 
     /// Calculates a data-dependent epsilon value
-    double calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low);
+    double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
     /// Checks if all raster files actually exist
     bool allRastersExist(std::vector<std::string> const& raster_paths) const;

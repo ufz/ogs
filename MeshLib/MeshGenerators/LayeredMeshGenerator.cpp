@@ -56,7 +56,7 @@ MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
     return result;
 }
 
-double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low)
+double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high)
 {
     const double max (*std::max_element(high.begin(), high.end()));
     const double min (*std::min_element( low.begin(),  low.end()));
