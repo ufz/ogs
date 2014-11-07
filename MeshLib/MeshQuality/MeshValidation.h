@@ -48,10 +48,14 @@ public:
 	static std::vector<std::size_t> removeUnusedMeshNodes(MeshLib::Mesh &mesh);
 
 	/**
-	 * Tests if elements are geometrically correct
+	 * Tests if elements are geometrically correct.
+	 * @param mesh The mesh that is tested
+	 * @param min_volume The minimum volume an mesh element needs to have to be NOT considered faulty
 	 * @return Vector of error codes for each mesh element
 	 */
-	static std::vector<ElementErrorCode> testElementGeometry(const MeshLib::Mesh &mesh);
+	static std::vector<ElementErrorCode> testElementGeometry(
+		const MeshLib::Mesh &mesh, 
+		double min_volume = std::numeric_limits<double>::epsilon());
 
 	/** 
 	 * Detailed output which ElementID is associated with which error(s)
