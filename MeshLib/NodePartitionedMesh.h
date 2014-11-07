@@ -6,7 +6,7 @@
           framework of domain decomposition (DDC).
 
   \copyright
-  Copyright (c) 2014, OpenGeoSys Community (http://www.opengeosys.org)
+  Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
              Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
@@ -38,9 +38,10 @@ class NodePartitionedMesh : public Mesh
         /*!
             \brief Constructor
             \param name          Name assigned to the mesh.
-            \param nodes         Vector for nodes, which first stores base noodes
-                                 (for linear elements), then follows with the nodes
-                                 that make up high order elements.
+            \param nodes         Vector for nodes, which storage looks like: 
+                                 ||--active base nodes--|--ghost base nodes--|
+                                  --active extra nodes--|--ghost extra nodes--||
+                                 (extra nodes: nodes for high order interpolations)  
             \param glb_node_ids  Global IDs of nodes of a partition.
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
@@ -111,7 +112,7 @@ class NodePartitionedMesh : public Mesh
                           the number of active nodes either for linear or high
                           order element of an ghost element.
         */
-        unsigned getNGhostElementActiveBaseNodes(const unsigned gelem_id) const
+        short getNGhostElementActiveBaseNodes(const unsigned gelem_id) const
         {
             return _act_nodes_ids_of_ghost_element[gelem_id][0];
         }
@@ -124,7 +125,7 @@ class NodePartitionedMesh : public Mesh
                           the number of active nodes either for linear or high
                           order element of an ghost element.
         */
-        unsigned getNGhostElementActiveNodes(const unsigned gelem_id) const
+        short getNGhostElementActiveNodes(const unsigned gelem_id) const
         {
             return _act_nodes_ids_of_ghost_element[gelem_id][1];
         }
