@@ -17,6 +17,8 @@
 #include "MeshQuality/MeshValidation.h"
 #include "MeshEditing/MeshRevision.h"
 
+#include "StrictDoubleValidator.h"
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -31,6 +33,12 @@ MeshAnalysisDialog::MeshAnalysisDialog(const std::vector<MeshLib::Mesh*> &mesh_v
 
 	for (std::size_t i=0; i<mesh_vec.size(); ++i)
 		this->meshListBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
+
+	StrictDoubleValidator* collapse_threshold_validator = new StrictDoubleValidator(0, 1000000, 7, this);
+	this->collapsibleNodesThreshold->setValidator (collapse_threshold_validator);
+
+	StrictDoubleValidator* volume_threshold_validator = new StrictDoubleValidator(0, 1e10, 10, this);
+	this->zeroVolumeThreshold->setValidator (volume_threshold_validator);
 }
 
 MeshAnalysisDialog::~MeshAnalysisDialog()

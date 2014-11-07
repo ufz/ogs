@@ -89,6 +89,15 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Minimum distance for nodes to be not considered identical.</string>
+        </property>
+        <property name="statusTip">
+         <string/>
+        </property>
+        <property name="whatsThis">
+         <string/>
+        </property>
         <property name="text">
          <string>0.0</string>
         </property>
@@ -265,6 +274,9 @@
           <width>100</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Minimum volume of elements to be not considered faulty.</string>
         </property>
         <property name="text">
          <string>0.0</string>
