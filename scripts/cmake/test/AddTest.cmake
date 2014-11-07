@@ -148,5 +148,7 @@ function (AddTest)
 			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
 		)
 	endif()
+	set_tests_properties(${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}
+		PROPERTIES DEPENDS ${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER})
 
 endfunction()
