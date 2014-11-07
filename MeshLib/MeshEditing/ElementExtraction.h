@@ -46,8 +46,8 @@ public:
 	/// Marks all elements of the given element type.
 	std::size_t searchByElementType(MeshElemType eleType);
 
-	/// Marks all elements with a volume smaller than std::numeric_limits<double>::epsilon().
-	std::size_t searchByZeroContent();
+	/// Marks all elements with a volume smaller than eps.
+	std::size_t searchByContent(double eps = std::numeric_limits<double>::epsilon());
 
 	/// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
 	std::size_t searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2);

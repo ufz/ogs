@@ -89,7 +89,7 @@ void MeshElementRemovalDialog::accept()
 	}
 	if (this->zeroVolumeCheckBox->isChecked())
 	{
-		ex.searchByZeroContent();
+		ex.searchByContent();
 		anything_checked = true;
 	}
 
