@@ -55,6 +55,9 @@ public:
 	/// Returns the number of potentially collapsable nodes
 	unsigned getNCollapsableNodes(double eps = std::numeric_limits<double>::epsilon()) const;
 
+	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
+	std::vector<std::size_t> collapseNodeIndeces(double eps) const;
+
 	/**
 	 * Create a new mesh where all nodes with a distance < eps from each other are collapsed.
 	 * Elements are adjusted accordingly and elements with nonplanar faces are subdivided into 
@@ -72,8 +75,6 @@ public:
 	MeshLib::Mesh* subdivideMesh(const std::string &new_mesh_name) const;
 
 private:
-	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
-	std::vector<std::size_t> collapseNodeIndeces(double eps) const;
 	/// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.
 	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map) const;
 

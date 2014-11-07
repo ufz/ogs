@@ -43,9 +43,9 @@ void MeshAnalysisDialog::on_startButton_pressed()
 
 	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
 	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
-	const unsigned nCollapsibleNodes (rev.getNCollapsableNodes(this->collapsibleNodesThreshold->text().toDouble()));
+	std::vector<std::size_t> const& collapsibleNodeIds (rev.collapseNodeIndeces(this->collapsibleNodesThreshold->text().toDouble()));
 	this->nodesGroupBox->setTitle("Nodes (out of " + QString::number(mesh->getNNodes()) + ")");
-	this->nodesMsgOutput(unusedNodesIdx, nCollapsibleNodes);
+	this->nodesMsgOutput(unusedNodesIdx, collapsibleNodeIds);
 
 	const std::vector<ElementErrorCode> element_error_codes (
 		MeshLib::MeshValidation::testElementGeometry(*mesh, this->zeroVolumeThreshold->text().toDouble()));
@@ -53,7 +53,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
 	this->elementsMsgOutput(element_error_codes);
 }
 
-void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids, unsigned nCollapsibleNodes)
+void MeshAnalysisDialog::nodesMsgOutput(std::vector<std::size_t> const& node_ids, std::vector<std::size_t> const& collapsibleNodeIds)
 {
 	const std::size_t nNodeIds (node_ids.size());
 	QString nodes_output("");
@@ -67,7 +67,17 @@ void MeshAnalysisDialog::nodesMsgOutput(const std::vector<std::size_t> &node_ids
 	}
 	this->unusedNodesText->setText(nodes_output);
 
-	nodes_output = QString::number(nCollapsibleNodes) + " nodes found.";
+	std::size_t const nNodes(collapsibleNodeIds.size());
+	QString node_ids_str("");
+	unsigned count(0);
+	for (std::size_t i = 0; i < nNodes; ++i)
+		if (i != collapsibleNodeIds[i])
+		{
+			node_ids_str.append(QString::number(i) + ", ");
+			count++;
+		}
+	nodes_output = (count > 0) ? QString::number(count) + " nodes found:\n" : "No nodes found.";
+	nodes_output.append(node_ids_str);
 	this->collapsibleNodesText->setText(nodes_output);
 }
 
