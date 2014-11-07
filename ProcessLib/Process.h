@@ -20,8 +20,8 @@ namespace ProcessLib
 class Process
 {
 public:
-    Process(MeshLib::Mesh const& mesh, std::size_t const numberOfNodeComponents)
-        : _mesh(mesh), _numberOfNodeComponents(numberOfNodeComponents)
+    Process(MeshLib::Mesh const& mesh)
+        : _mesh(mesh)
     { }
 
     virtual ~Process() = default;
@@ -32,7 +32,6 @@ public:
 
 protected:
     MeshLib::Mesh const& _mesh;
-    std::size_t const _numberOfNodeComponents;
 };
 
 }   // namespace ProcessLib
