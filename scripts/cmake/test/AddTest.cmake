@@ -1,61 +1,152 @@
-FUNCTION (AddOgsBenchmark name project_name)
+#
+# AddTest
+# -------
+#
+# Creates application test runs. Order of arguments can be arbitrary.
+#
+# AddTest(
+#   NAME <name of the the test>
+#   PATH <working directory> # use ${ExternalData_SOURCE_ROOT}
+#   EXECUTABLE <executable target> # optional, defaults to ogs
+#   EXECUTABLE_ARGS <arguments> # files referenced in the DATA argument can be used here
+#   WRAPPER <time|memcheck|callgrind> # optional, defaults to time
+#   TESTER <diff|memcheck> # optional
+#   DATA <list of all required data files, white-space separated, have to be in PATH>
+# )
+#
+# Conditional arguments:
+#
+#   diff-tester
+#     - DIFF_DATA <list of files to diff>
+#       # the given file is compared to [filename]_expected.[extension]
+#
 
-	ExternalData_Add_Test(data
-		NAME "${name}-${project_name}"
-		COMMAND ogs DATA{${ExternalData_SOURCE_ROOT}/${project_name}} ${ARGN}
-	)
+function (AddTest)
 
-ENDFUNCTION()
+	# parse arguments
+	set(options NONE)
+	set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER)
+	set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA)
+	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-FUNCTION (AddTest executable case_path case_name wrapper)
+	# set defaults
+	if(NOT AddTest_EXECUTABLE)
+		set(AddTest_EXECUTABLE ogs)
+	endif()
 
-	SET(tester ${ARGV4})
+	if(NOT AddTest_WRAPPER)
+		set(AddTest_WRAPPER time)
+	endif()
 
-	# Implement wrappers
-	IF(wrapper STREQUAL "TIME")
-		SET(WRAPPER_COMMAND time)
-	ELSEIF(wrapper STREQUAL "MEMCHECK" AND VALGRIND_TOOL_PATH)
-		SET(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${case_path}/${case_name}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
-		SET(tester MEMCHECK)
-	ELSEIF(wrapper STREQUAL "CALLGRIND" AND VALGRIND_TOOL_PATH)
-		SET(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
-		UNSET(tester)
-	ENDIF()
+	# replace arguments which reference test data files with the correct DATA{}-path
+	foreach(ARG ${AddTest_EXECUTABLE_ARGS})
+		string(REGEX MATCH ".*${ARG}.*" ARG_FOUND ${AddTest_DATA} )
+		if(ARG_FOUND)
+			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} DATA{${AddTest_PATH}/${ARG}})
+		else()
+			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} ${ARG}})
+		endif()
+	endforeach()
 
-	# Implement testers
-	IF(tester STREQUAL "DIFF")
-		SET(TESTER_COMMAND "${DIFF_TOOL_PATH} -sbB ${case_path}/${case_name}_expected_result.vtu ${case_path}/${case_name}_with_results.vtu")
-	ELSEIF(tester STREQUAL "MEMCHECK")
-		SET(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${case_path}/${case_name}_memcheck.log")
-	ENDIF()
+	string(REPLACE ";" "," AddTest_DATA "${AddTest_DATA}")
+	set(AddTest_DATA "${AddTest_PATH}/${AddTest_DATA}")
+
+
+	# --- Implement wrappers ---
+	# check requirements
+	if(AddTest_WRAPPER STREQUAL "time" AND NOT TIME_TOOL_PATH)
+		message(FATAL_ERROR "time-command is required for time wrapper but was not found!")
+	endif()
+	if(AddTest_WRAPPER STREQUAL "memcheck" AND NOT VALGRIND_TOOL_PATH)
+		message(FATAL_ERROR "Valgrind is required for memcheck wrapper but was not found!")
+	endif()
+	if(AddTest_WRAPPER STREQUAL "callgrind" AND NOT VALGRIND_TOOL_PATH)
+		message(FATAL_ERROR "Valgrind is required for callgrind wrapper but was not found!")
+	endif()
+
+	if(AddTest_WRAPPER STREQUAL "time")
+		set(WRAPPER_COMMAND time)
+	elseif(AddTest_WRAPPER STREQUAL "memcheck" AND VALGRIND_TOOL_PATH)
+		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_PATH}/${AddTest_NAME}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
+		set(tester memcheck)
+	elseif(AddTest_WRAPPER STREQUAL "callgrind" AND VALGRIND_TOOL_PATH)
+		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
+		unset(tester)
+	endif()
+
+	# --- Implement testers ---
+	# check requirements
+	if(AddTest_TESTER STREQUAL "diff" AND NOT DIFF_TOOL_PATH)
+		message(FATAL_ERROR "diff-command is required for diff tester but was not found!")
+	endif()
+	if(AddTest_TESTER STREQUAL "diff" AND NOT AddTest_DIFF_DATA)
+		message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
+	endif()
+	if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
+		message(FATAL_ERROR "grep-command is required for memcheck tester but was not found!")
+	endif()
+
+	if(AddTest_TESTER STREQUAL "diff")
+		foreach(FILE ${AddTest_DIFF_DATA})
+			get_filename_component(FILE_NAME ${FILE} NAME_WE)
+			get_filename_component(FILE_EXT ${FILE} EXT)
+			set(FILE_EXPECTED ${FILE_NAME}_expected${FILE_EXT})
+			set(TESTER_COMMAND ${TESTER_COMMAND} "${DIFF_TOOL_PATH} -sbB ${AddTest_PATH}/${FILE_EXPECTED} ${AddTest_PATH}/${FILE}")
+			if(AddTest_DIFF_DATA_PARSED)
+				set(AddTest_DIFF_DATA_PARSED "${AddTest_DIFF_DATA_PARSED},${FILE_EXPECTED}")
+			else()
+				set(AddTest_DIFF_DATA_PARSED "${FILE_EXPECTED}")
+			endif()
+		endforeach()
+		string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
+		set(AddTest_DIFF_DATA_PARSED "${AddTest_PATH}/${AddTest_DIFF_DATA_PARSED}")
+		message("foo: ${AddTest_DIFF_DATA_PARSED}")
+	elseif(tester STREQUAL "memcheck")
+		set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_PATH}/${AddTest_NAME}_memcheck.log")
+	endif()
 
 	## -----------
 
+	# Run the wrapper
 	ExternalData_Add_Test(data
-		NAME "${executable}-${case_path}-${wrapper}"
+		NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
 		COMMAND ${CMAKE_COMMAND}
-		-Dexecutable=$<TARGET_FILE:${executable}>
-		-Dcase_path=${case_path}
-		-Dcase_name=${case_name}
-		-Dwrapper=${wrapper}
+		-DEXECUTABLE=$<TARGET_FILE:${AddTest_EXECUTABLE}>
+		-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS_PARSED}
+		-Dcase_path=${AddTest_PATH}
+		-Dcase_name=${AddTest_NAME}
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
 		-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
-		DATA{${case_path}/${case_name}.cnd, ${case_path}/${case_name}.gml, ${case_path}/${case_name}.vtu}
+		DATA{${AddTest_DATA}}
 	)
 
-	IF(NOT tester)
-		RETURN()
-	ENDIF()
+	if(NOT AddTest_TESTER)
+		return()
+	endif()
 
-	ADD_TEST(NAME "${executable}-${case_path}-${wrapper}-${tester}"
-		COMMAND ${CMAKE_COMMAND}
-		-Dcase_path=${case_path}
-		-Dcase_name=${case_name}
-		-Dtester=${tester}
-		-DTESTER_COMMAND=${TESTER_COMMAND}
-		-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
-		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
-	)
+	# Run the tester
+	if(AddTest_TESTER STREQUAL "diff")
+		ExternalData_Add_Test(data
+			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
+			COMMAND ${CMAKE_COMMAND}
+			-Dcase_path=${AddTest_PATH}
+			-Dcase_name=${AddTest_NAME}
+			-DTESTER_COMMAND=${TESTER_COMMAND}
+			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
+			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
+			DATA{${AddTest_DIFF_DATA_PARSED}}
+		)
+	else()
+		add_test(
+			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
+			COMMAND ${CMAKE_COMMAND}
+			-Dcase_path=${AddTest_PATH}
+			-Dcase_name=${AddTest_NAME}
+			-DTESTER_COMMAND=${TESTER_COMMAND}
+			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
+			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
+		)
+	endif()
 
-ENDFUNCTION()
+endfunction()
