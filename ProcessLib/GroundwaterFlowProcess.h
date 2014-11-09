@@ -25,9 +25,11 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
 
+#include "BoundaryCondition.h"
 #include "GroundwaterFlowFEM.h"
 #include "ProcessVariable.h"
 
@@ -123,9 +125,17 @@ public:
             new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
 
         DBUG("Initialize boundary conditions.");
-        for (auto bc = _hydraulic_head->beginBoundaryConditions();
+        MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
+            MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+                _hydraulic_head->getMesh());
+
+        using BCCI = ProcessVariable::BoundaryConditionCI;
+        for (BCCI bc = _hydraulic_head->beginBoundaryConditions();
                 bc != _hydraulic_head->endBoundaryConditions(); ++bc)
         {
+            (*bc)->initialize(
+                hydraulic_head_mesh_node_searcher,
+                _dirichlet_bc.global_ids, _dirichlet_bc.values);
         }
 
     }
