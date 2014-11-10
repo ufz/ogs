@@ -21,6 +21,9 @@
 #include <map>
 
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
+
+#include "logog/include/logog.hpp"
 
 #include "BaseLib/Counter.h"
 
@@ -122,6 +125,34 @@ public:
 
 	/// Return true if the mesh has any nonlinear nodes
 	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
+
+	template <typename T>
+	boost::optional<std::vector<T> const&>
+	getProperty(std::string const& name) const
+	{
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
+		);
+		if (it != _properties.end()) {
+			return boost::any_cast<std::vector<T> const&>(it->second);
+		} else {
+			return boost::optional<std::vector<T> const&>();
+		}
+	}
+
+	template <typename T>
+	void addProperty(std::string const& name, std::vector<T> const& property)
+	{
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
+		);
+		if (it != _properties.end()) {
+			WARN("A property of the name \"%s\" already assigned to the mesh.",
+				name.c_str());
+			return;
+		}
+		_properties[name] = boost::any(property);
+	}
 
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
