@@ -112,7 +112,7 @@ bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<
 	if (nLayers < 1 || mesh.getDimension() != 2)
 	{
 		ERR("MeshLayerMapper::createRasterLayers(): A 2D mesh and at least two rasters required as input.");
-		return nullptr;
+		return false;
 	}
 
 	MeshLib::Mesh* top (new MeshLib::Mesh(mesh));
