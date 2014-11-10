@@ -126,6 +126,7 @@ public:
 	/// Return true if the mesh has any nonlinear nodes
 	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
 
+	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<std::vector<T> const&>
 	getProperty(std::string const& name) const
@@ -140,6 +141,13 @@ public:
 		}
 	}
 
+	/// Method to store a vector of property values assigned to a property name.
+	/// Since the implementation makes no assumption about the number of data
+	/// items stored within the vector, it is possible either to use a small
+	/// number of properties where each particular property can be assigned to
+	/// several mesh items. In contrast to this it is possible to have a
+	/// separate value for each mesh item.
+	/// The user has to ensure the correct usage of the vector later on.
 	template <typename T>
 	void addProperty(std::string const& name, std::vector<T> const& property)
 	{
