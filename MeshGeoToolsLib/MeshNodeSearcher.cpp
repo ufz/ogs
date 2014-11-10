@@ -25,6 +25,9 @@
 namespace MeshGeoToolsLib
 {
 
+std::vector<std::unique_ptr<MeshNodeSearcher>> MeshNodeSearcher::_mesh_node_searchers;
+
+
 MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
 	MeshGeoToolsLib::SearchLength const& search_length_algorithm, bool search_all_nodes) :
 		_mesh(mesh), _mesh_grid(_mesh.getNodes().cbegin(), _mesh.getNodes().cend()),
@@ -117,6 +120,20 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
 	_mesh_nodes_along_surfaces.push_back(
 			new MeshNodesAlongSurface(_mesh, sfc, _search_all_nodes));
 	return *_mesh_nodes_along_surfaces.back();
+}
+
+MeshNodeSearcher&
+MeshNodeSearcher::getMeshNodeSearcher(MeshLib::Mesh const& mesh)
+{
+	std::size_t const mesh_id = mesh.getID();
+	if (_mesh_node_searchers.size() < mesh_id)
+		_mesh_node_searchers.resize(mesh_id+1);
+
+	if (!_mesh_node_searchers[mesh_id])
+		_mesh_node_searchers[mesh_id].reset(
+			new MeshGeoToolsLib::MeshNodeSearcher(mesh));
+
+	return *_mesh_node_searchers[mesh_id];
 }
 
 } // end namespace MeshGeoTools

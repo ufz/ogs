@@ -10,6 +10,7 @@
 #ifndef MESHNODESEARCHER_H_
 #define MESHNODESEARCHER_H_
 
+#include <memory>
 #include <vector>
 
 #include "boost/optional.hpp"
@@ -107,6 +108,12 @@ public:
 	 */
 	MeshNodesAlongSurface& getMeshNodesAlongSurface(GeoLib::Surface const& sfc);
 
+	/**
+	 * Returns a (possibly new) mesh node searcher for the mesh.
+	 * A new one will be created, if it does not already exists.
+	 */
+	static MeshNodeSearcher& getMeshNodeSearcher(MeshLib::Mesh const& mesh);
+
 private:
 	MeshLib::Mesh const& _mesh;
 	GeoLib::Grid<MeshLib::Node> _mesh_grid;
@@ -115,6 +122,9 @@ private:
 	// with newer compiler we can omit to use a pointer here
 	std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
 	std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
+
+	/// Mesh node searcher for the meshes indexed by the meshs' ids.
+	static std::vector<std::unique_ptr<MeshNodeSearcher>> _mesh_node_searchers;
 };
 
 } // end namespace MeshGeoTools
