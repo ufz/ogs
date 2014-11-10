@@ -14,10 +14,6 @@
 
 #include "Mesh.h"
 
-#include <boost/optional.hpp>
-
-#include "logog/include/logog.hpp"
-
 #include "BaseLib/RunTime.h"
 
 #include "Elements/Tri.h"

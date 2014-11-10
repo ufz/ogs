@@ -21,6 +21,9 @@
 #include <map>
 
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
+
+#include "logog/include/logog.hpp"
 
 #include "BaseLib/Counter.h"
 
@@ -123,6 +126,42 @@ public:
 
 	/// Return true if the mesh has any nonlinear nodes
 	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
+
+	template <typename T>
+	boost::optional<std::vector<T> const&>
+	getProperty(std::string const& name) const
+	{
+		PropertyKeyType property_key(name, MeshItemType::Cell);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
+		);
+		if (it != _properties.end()) {
+			try {
+				boost::any_cast<std::vector<T> const&>(it->second);
+				return boost::any_cast<std::vector<T> const&>(it->second);
+			} catch (boost::bad_any_cast const&) {
+				ERR("A property with the desired data type is not available.");
+				return boost::optional<std::vector<T> const&>();
+			}
+		} else {
+			return boost::optional<std::vector<T> const&>();
+		}
+	}
+
+	template <typename T>
+	void addProperty(std::string const& name, std::vector<T> const& property)
+	{
+		PropertyKeyType property_key(name, MeshItemType::Cell);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
+		);
+		if (it != _properties.end()) {
+			WARN("A property of the name \"%s\" already assigned to the mesh.",
+				name.c_str());
+			return;
+		}
+		_properties[property_key] = boost::any(property);
+	}
 
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
