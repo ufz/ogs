@@ -103,4 +103,9 @@ std::string const& ProcessVariable::getName() const
     return _name;
 }
 
+MeshLib::Mesh const& ProcessVariable::getMesh() const
+{
+    return _mesh;
+}
+
 }   // namespace ProcessLib
