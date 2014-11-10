@@ -26,7 +26,7 @@ function (AddTest)
 	# parse arguments
 	set(options NONE)
 	set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER)
-	set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA)
+	set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS)
 	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	# set defaults
@@ -63,6 +63,9 @@ function (AddTest)
 	if(AddTest_WRAPPER STREQUAL "callgrind" AND NOT VALGRIND_TOOL_PATH)
 		message(FATAL_ERROR "Valgrind is required for callgrind wrapper but was not found!")
 	endif()
+	if(AddTest_WRAPPER STREQUAL "mpirun" AND NOT MPIRUN_TOOL_PATH)
+		message(FATAL_ERROR "mpirun is required for mpirun wrapper but was not found!")
+	endif()
 
 	if(AddTest_WRAPPER STREQUAL "time")
 		set(WRAPPER_COMMAND time)
@@ -72,6 +75,8 @@ function (AddTest)
 	elseif(AddTest_WRAPPER STREQUAL "callgrind" AND VALGRIND_TOOL_PATH)
 		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
 		unset(tester)
+	elseif(AddTest_WRAPPER STREQUAL "mpirun")
+		set(WRAPPER_COMMAND "${MPIRUN_TOOL_PATH} ${AddTest_WRAPPER_ARGS}")
 	endif()
 
 	# --- Implement testers ---
