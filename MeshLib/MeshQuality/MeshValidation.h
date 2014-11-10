@@ -17,6 +17,7 @@
 
 #include <array>
 #include <vector>
+#include <limits>
 
 #include "ElementErrorCode.h"
 
