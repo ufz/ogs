@@ -21,7 +21,7 @@
 #include <vector>
 
 #include <petscvec.h>
-#include "LinAlg/VectorNorms.h"
+#include "MathLib/LinAlg/VectorNorms.h"
 
 typedef Vec PETSc_Vec;
 
