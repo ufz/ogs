@@ -106,12 +106,17 @@ function (AddTest)
 	endif()
 
 	## -----------
+	if(TARGET ${AddTest_EXECUTABLE})
+		set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
+	else()
+		set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
+	endif()
 
 	# Run the wrapper
 	ExternalData_Add_Test(data
 		NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
 		COMMAND ${CMAKE_COMMAND}
-		-DEXECUTABLE=$<TARGET_FILE:${AddTest_EXECUTABLE}>
+		-DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
 		-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS_PARSED}
 		-Dcase_path=${AddTest_PATH}
 		-Dcase_name=${AddTest_NAME}
