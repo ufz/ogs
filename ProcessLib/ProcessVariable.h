@@ -37,6 +37,23 @@ public:
 
     std::string const& getName() const;
 
+    /// Const iterator over boundary conditions of the process variable.
+    using BoundaryConditionCI = std::vector<BoundaryCondition*>::const_iterator;
+
+    /// Returns a BoundaryConditionCI iterator to the beginning.
+    BoundaryConditionCI
+    beginBoundaryConditions() const
+    {
+        return _boundary_conditions.cbegin();
+    }
+
+    /// Returns a past-the-end BoundaryConditionCI iterator.
+    BoundaryConditionCI
+    endBoundaryConditions() const
+    {
+        return _boundary_conditions.cend();
+    }
+
 private:
     std::string const _name;
     MeshLib::Mesh const& _mesh;

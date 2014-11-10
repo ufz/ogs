@@ -121,6 +121,13 @@ public:
         DBUG("Create global assembler.");
         _global_assembler.reset(
             new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
+
+        DBUG("Initialize boundary conditions.");
+        for (auto bc = _hydraulic_head->beginBoundaryConditions();
+                bc != _hydraulic_head->endBoundaryConditions(); ++bc)
+        {
+        }
+
     }
 
     void solve()
