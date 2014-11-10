@@ -74,7 +74,8 @@ int main(int argc, char *argv[])
         for(size_t i=0; i<nn; i++)
         {
             const double *x = mesh->getNode(i)->getCoords();
-            os << std::setw(14) << x[0]  << " " << x[1] << " "<< x[2] << "\n";
+            os << mesh->getNode(i)->getID() << " "
+               << std::setw(14) << x[0]  << " " << x[1] << " "<< x[2] << "\n";
         }
         os.flush();
 
@@ -92,24 +93,6 @@ int main(int argc, char *argv[])
             os << "\n";
         }
         os.flush();
-
-        const unsigned ne_ghost = ne - mesh->getNNonGhostElements();
-        for(size_t i=0; i<ne_ghost; i++)
-        {
-            const short* g_nodes = mesh->getGhostElementActiveNodes(i);
-
-            os << mesh->getNGhostElementActiveBaseNodes(i) << " ";
-            os << mesh->getNGhostElementActiveNodes(i) << " ";
-
-            for(short j=0; j<mesh->getNGhostElementActiveBaseNodes(i); j++)
-            {
-                os << g_nodes[j] << " ";
-            }
-            os << "\n";
-        }
-        os.flush();
-
-        os.close();
 
 #ifdef USE_PETSC
         PetscFinalize();

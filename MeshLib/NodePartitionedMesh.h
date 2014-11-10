@@ -45,12 +45,13 @@ class NodePartitionedMesh : public Mesh
             \param glb_node_ids  Global IDs of nodes of a partition.
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
-            \param g_elem_data   Element wise local node IDs of active nodes.
             \param n_nghost_elem Number of non-ghost elements, or the start ID of
                                  the entry of ghost element in the element vector.
-            \param nnodes_global Number of nodes of the global mesh.
-                                 0: with linear elements
-                                 1: with quadratic elemens.
+            \param n_global_base_nodes Number of the base nodes of the global mesh.
+            \param n_global_nodes      Number of all nodes of the global mesh.
+            \param n_base_nodes        Number of the base nodes.
+            \param n_active_base_nodes Number of the active base nodes.
+            \param n_active_nodes      Number of all active nodes.            
             \param nnodes_active Number of active nodes of the partition.
                                  0: with linear elements
                                  1: with quadratic elemens.
@@ -59,94 +60,64 @@ class NodePartitionedMesh : public Mesh
                             const std::vector<Node*> &nodes,
                             const std::vector<unsigned> &glb_node_ids,
                             const std::vector<Element*> &elements,
-                            const std::vector<short*> &g_elem_data,
                             const std::size_t n_nghost_elem,
-                            const unsigned nnodes_global[],
-                            const unsigned nnodes_active[])
-            : Mesh(name, nodes, elements, false),
-              _global_node_ids(glb_node_ids),
-              _n_nghost_elem(n_nghost_elem),
-              _nnodes_global {nnodes_global[0], nnodes_global[1] },
-                         _nnodes_active {nnodes_active[0], nnodes_active[1] },
-                         _act_nodes_ids_of_ghost_element(g_elem_data)
+                            const unsigned n_global_base_nodes,
+                            const unsigned n_global_nodes,
+                            const unsigned n_base_nodes,
+                            const unsigned n_active_base_nodes,
+                            const unsigned n_active_nodes)
+            : Mesh(name, nodes, elements, n_base_nodes),
+              _global_node_ids(glb_node_ids), _n_nghost_elem(n_nghost_elem),
+              _n_global_base_nodes(n_global_base_nodes), 
+              _n_global_nodes(n_global_nodes), 
+              _n_active_base_nodes(n_active_base_nodes),
+              _n_active_nodes(n_active_nodes)
         {
         }
 
         ~NodePartitionedMesh()
         {
-            for(auto ele_data : _act_nodes_ids_of_ghost_element)
-            {
-                delete [] ele_data;
-            }
         }
 
         /// Get the number of nodes of the global mesh for linear elements.
         unsigned getNGlobalBaseNodes() const
         {
-            return _nnodes_global[0];
+            return _n_global_base_nodes;
         }
 
         /// Get the number of all nodes of the global mesh.
         unsigned getNGlobalNodes() const
         {
-            return _nnodes_global[1];
+            return _n_global_nodes;
         }
 
         /// Get the number of the active nodes of the partition for linear elements.
         unsigned getNActiveBaseNodes() const
         {
-            return _nnodes_active[0];
+            return _n_active_base_nodes;
         }
 
         /// Get the number of all active nodes of the partition.
         unsigned getNActiveNodes() const
         {
-            return _nnodes_active[1];
+            return _n_active_nodes;
         }
 
-        /*!
-          \brief Get the number of active nodes of a ghost element for linear interpolation
-          \param gelem_id Index of ghost element
-          \return         The first or the second element of array by
-                           _nnodes_active[static_cast<gelem_id> , which stores
-                          the number of active nodes either for linear or high
-                          order element of an ghost element.
-        */
-        short getNGhostElementActiveBaseNodes(const unsigned gelem_id) const
+        /// Check whether a node with ID of node_id is a ghost node
+        bool isGhostNode(const unsigned node_id)
         {
-            return _act_nodes_ids_of_ghost_element[gelem_id][0];
-        }
-
-        /*!
-          \brief Get the number of all active nodes of a ghost element
-          \param gelem_id Index of ghost element
-          \return         The first or the second element of array by
-                           _nnodes_active[static_cast<gelem_id> , which stores
-                          the number of active nodes either for linear or high
-                          order element of an ghost element.
-        */
-        short getNGhostElementActiveNodes(const unsigned gelem_id) const
-        {
-            return _act_nodes_ids_of_ghost_element[gelem_id][1];
-        }
-
-
-        /*!
-         \brief Get local IDs of the active nodes of a ghost element by a pointer to
-                an array.
-         \param gelem_id Index of ghost element.
-        */
-        short *getGhostElementActiveNodes(const unsigned gelem_id) const
-        {
-            return &_act_nodes_ids_of_ghost_element[gelem_id][2];
-        }
+			if(node_id < _n_active_base_nodes)
+			 return true;
+			else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
+			 return true;
+			else
+			 return false; 
+		}
 
         /// Get the largest ID of active nodes for higher order elements in a partition.
         unsigned getLargestActiveNodeID() const
         {
-            // Note: _nodes.size() should be changed once the high order element is condidered
-            // in the root class.
-            return static_cast<unsigned>( _nodes.size() ) + _nnodes_active[1] - _nnodes_active[0];
+            return _n_base_nodes + _n_active_nodes - _n_active_base_nodes;
         }
 
         /// Get the number of non-ghost elements, or the start entry ID of ghost elements in element vector.
@@ -162,18 +133,17 @@ class NodePartitionedMesh : public Mesh
         /// Number of non-ghost elements, or the ID of the start entry of ghost elements in _elements vector.
         std::size_t _n_nghost_elem;
 
-        /// Number of nodes of the whole mesh. 0: for linear elements; 1: for quadratic elements.
-        unsigned _nnodes_global[2];
+        /// Number of the nodes of the global mesh linear interpolations.
+        unsigned _n_global_base_nodes;
 
-        /// Number of the active nodes. 0: for linear elements; 1: for quadratic elements.
-        unsigned  _nnodes_active[2];
+        /// Number of all nodes of the global mesh.
+        unsigned _n_global_nodes;
 
-        /*! Active node indices of each ghost elements.
-            In each element of the vector, an integer array, the first and the second element of the array
-            stores the numbers of active nodes either for linear and high order element, respectively,
-            while the remaining elements of the array are for local IDs of active nodes.
-        */
-        std::vector<short *> _act_nodes_ids_of_ghost_element;
+        /// Number of the active nodes for linear interpolations
+        unsigned  _n_active_base_nodes;
+
+        /// Number of the all active nodes.
+        unsigned  _n_active_nodes;
 
         friend FileIO::readNodePartitionedMesh;
 };

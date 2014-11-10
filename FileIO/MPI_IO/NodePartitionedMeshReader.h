@@ -121,16 +121,13 @@ class NodePartitionedMeshReader
              \param mesh_nodes        Vector of mesh nodes used to set element nodes.
              \param elem_data         Array containing element data read from file.
              \param mesh_elems        Vector of mesh elements to be set.
-             \param mesh_ghost_elems  Local IDs of active element nodes.
              \param ghost             Flag of processing ghost elements.
         */
         void setElements(const std::vector<MeshLib::Node*> &mesh_nodes, const long *elem_data,
-                         std::vector<MeshLib::Element*> &mesh_elems,
-                         std::vector<short*> &mesh_ghost_elems, const bool ghost = false);
+                         std::vector<MeshLib::Element*> &mesh_elems, const bool ghost = false);
 
         /// Terminate programm due to failed in file opening or due to mismatch between two requested numbers
         void printMessage(const std::string & err_message, const bool for_fileopen = true);
-
 };
 
 } // End of namespace
