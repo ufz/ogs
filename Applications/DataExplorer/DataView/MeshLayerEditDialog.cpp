@@ -34,6 +34,7 @@
 #include <QRadioButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QTime>
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _n_layers(0),
@@ -191,6 +192,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     MeshLayerMapper mapper;
     MeshLib::Mesh* new_mesh (nullptr);
 
+    QTime myTimer0;
+    myTimer0.start();
     if (_use_rasters)
     {
         std::vector<std::string> raster_paths;
@@ -201,6 +204,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     }
     else
         new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
+    INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+
     return new_mesh;
 }
 
@@ -215,6 +220,9 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
 	const unsigned nLayers = _layerEdit->text().toInt();
 	MeshLib::Mesh* tg_mesh (nullptr);
+	QTime myTimer0;
+	myTimer0.start();
+
 	if (_use_rasters)
 	{
 		std::vector<std::string> raster_paths;
@@ -242,6 +250,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		FileIO::TetGenInterface tetgen_interface;
 		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
 	}
+	INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
 		
 	return tg_mesh;
 }
