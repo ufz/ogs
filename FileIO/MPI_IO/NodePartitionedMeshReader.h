@@ -38,12 +38,12 @@ class NodePartitionedMeshReader
         /*!
              \brief Create a NodePartitionedMesh object, read data to it,
                     and return a pointer to it.
-             \param comm  MPI  communicator.
-             \param file_name  Name of file to be read, and it must be base name without name extension.
+             \param comm            MPI Communicator.
+             \param file_name_base  Name of file to be read, and it must be base name without name extension.
              \return           Pointer to Mesh object. If the creation of mesh object
                                fails, return a null pointer.
         */
-        MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name);
+        MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name_base);
 
     private:
         /// Number of all nodes of a partition.

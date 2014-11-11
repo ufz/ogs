@@ -23,12 +23,12 @@
 #include <petscksp.h>
 #endif
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 // BaseLib
 #include "BaseLib/LogogCustomCout.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"

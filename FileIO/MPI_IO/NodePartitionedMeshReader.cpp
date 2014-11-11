@@ -36,7 +36,7 @@ using namespace MeshLib;
 
 namespace FileIO
 {
-MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, const std::string &file_name)
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, const std::string &file_name_base)
 {
     BaseLib::RunTime timer;
     timer.start();
@@ -46,7 +46,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     MPI_Comm_rank(comm, &_rank);
 
     // Always try binary file first
-    std::string fname_new = file_name + "_partitioned_msh_cfg" + _size_str + ".bin";
+    std::string fname_new = file_name_base + "_partitioned_msh_cfg" + _size_str + ".bin";
 
     NodePartitionedMesh *mesh = nullptr;
 
@@ -57,14 +57,14 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     {
         INFO("-->Reading ASCII mesh file ...");
 
-        mesh = readASCII(comm, file_name);
+        mesh = readASCII(comm, file_name_base);
     }
     else
     {
         MPI_File_close(&fh);
         INFO("-->Reading binary mesh file ...");
 
-        mesh = readBinary(comm, file_name);
+        mesh = readBinary(comm, file_name_base);
     }
 
     INFO("\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed());

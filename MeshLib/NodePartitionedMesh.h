@@ -38,10 +38,10 @@ class NodePartitionedMesh : public Mesh
         /*!
             \brief Constructor
             \param name          Name assigned to the mesh.
-            \param nodes         Vector for nodes, which storage looks like: 
+            \param nodes         Vector for nodes, which storage looks like:
                                  ||--active base nodes--|--ghost base nodes--|
                                   --active extra nodes--|--ghost extra nodes--||
-                                 (extra nodes: nodes for high order interpolations)  
+                                 (extra nodes: nodes for high order interpolations)
             \param glb_node_ids  Global IDs of nodes of a partition.
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
@@ -51,10 +51,7 @@ class NodePartitionedMesh : public Mesh
             \param n_global_nodes      Number of all nodes of the global mesh.
             \param n_base_nodes        Number of the base nodes.
             \param n_active_base_nodes Number of the active base nodes.
-            \param n_active_nodes      Number of all active nodes.            
-            \param nnodes_active Number of active nodes of the partition.
-                                 0: with linear elements
-                                 1: with quadratic elemens.
+            \param n_active_nodes      Number of all active nodes.
         */
         NodePartitionedMesh(const std::string &name,
                             const std::vector<Node*> &nodes,
@@ -68,8 +65,8 @@ class NodePartitionedMesh : public Mesh
                             const unsigned n_active_nodes)
             : Mesh(name, nodes, elements, n_base_nodes),
               _global_node_ids(glb_node_ids), _n_nghost_elem(n_nghost_elem),
-              _n_global_base_nodes(n_global_base_nodes), 
-              _n_global_nodes(n_global_nodes), 
+              _n_global_base_nodes(n_global_base_nodes),
+              _n_global_nodes(n_global_nodes),
               _n_active_base_nodes(n_active_base_nodes),
               _n_active_nodes(n_active_nodes)
         {
@@ -106,13 +103,13 @@ class NodePartitionedMesh : public Mesh
         /// Check whether a node with ID of node_id is a ghost node
         bool isGhostNode(const unsigned node_id)
         {
-			if(node_id < _n_active_base_nodes)
-			 return true;
-			else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
-			 return true;
-			else
-			 return false; 
-		}
+            if(node_id < _n_active_base_nodes)
+                return true;
+            else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
+                return true;
+            else
+                return false;
+        }
 
         /// Get the largest ID of active nodes for higher order elements in a partition.
         unsigned getLargestActiveNodeID() const
@@ -140,10 +137,10 @@ class NodePartitionedMesh : public Mesh
         unsigned _n_global_nodes;
 
         /// Number of the active nodes for linear interpolations
-        unsigned  _n_active_base_nodes;
+        unsigned _n_active_base_nodes;
 
         /// Number of the all active nodes.
-        unsigned  _n_active_nodes;
+        unsigned _n_active_nodes;
 
         friend FileIO::readNodePartitionedMesh;
 };
