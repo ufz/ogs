@@ -57,7 +57,7 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vec
 
 	// map each layer and attach to subsurface mesh
 	const std::size_t nRasters (rasters.size());
-	for (int i=1; i<nRasters; ++i)
+	for (std::size_t i=1; i<nRasters; ++i)
 		this->addLayerToMesh(*top, i, *rasters[i]);
 
 	// close boundaries between layers
