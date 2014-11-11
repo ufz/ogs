@@ -51,7 +51,7 @@ public:
 	/**
 	 * Tests if elements are geometrically correct.
 	 * @param mesh The mesh that is tested
-	 * @param min_volume The minimum volume an mesh element needs to have to be NOT considered faulty
+	 * @param min_volume The minimum required volume for a mesh element, so it is NOT considered faulty
 	 * @return Vector of error codes for each mesh element
 	 */
 	static std::vector<ElementErrorCode> testElementGeometry(
