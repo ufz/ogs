@@ -54,11 +54,9 @@ int main(int argc, char *argv[])
         BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
         out.SetFormatter(custom_format);
 
+        const std::string file_name = argv[1];
 
-        const std::string file_path = argv[1];
-        const std::string file_name = file_path + "/mesh_3d";
         NodePartitionedMeshReader read_pmesh;
-
         NodePartitionedMesh *mesh = read_pmesh.read(MPI_COMM_WORLD, file_name);
 
         int rank;

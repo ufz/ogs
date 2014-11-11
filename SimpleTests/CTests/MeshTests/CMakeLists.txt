@@ -27,20 +27,20 @@ IF (OGS_USE_MPI)
 	TARGET_LINK_LIBRARIES( test_node_partitioned_mesh  ${MPI_CXX_LIBRARIES})
 ENDIF ()
 
-ExternalData_expand_arguments(
-data
-NodePartitionedMeshReader
-DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII/Output/,REGEX:.*}
-)
+#ExternalData_expand_arguments(
+#data
+#NodePartitionedMeshReader
+#DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII/Output/,REGEX:.*}
+#)
 
-ExternalData_expand_arguments(
-data
-NodePartitionedMeshReader
-DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/Binary/Output/,REGEX:.*}
-)
+#ExternalData_expand_arguments(
+#data
+#NodePartitionedMeshReader
+#DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/Binary/Output/,REGEX:.*}
+#)
 
 set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII/,REGEX:.*}")
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}")
+set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}/mesh_3d")
 ExternalData_Add_Test(
     data
     NAME NodePartitionedMeshTestASCII
@@ -48,9 +48,23 @@ ExternalData_Add_Test(
 )
 
 set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/Binary/,REGEX:.*}")
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}")
+set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}/mesh_3d")
 ExternalData_Add_Test(
     data
     NAME NodePartitionedMeshTestBinary
     COMMAND  "mpirun" ${MPITestParameters} 
 )
+
+
+#AddTest(
+#    NAME test_under_mpi
+#    PATH ${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII
+#    EXECUTABLE ${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh
+#    WRAPPER mpirun
+#    WRAPPER_ARGS "-np 3" ${MPITestParameters} 
+#    TESTER diff
+#    DATA {${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII/,REGEX:.}
+#    DIFF_DATA mesh_3d_partition_0.msh mesh_3d_partition_1.msh mesh_3d_partition_2.msh
+#)
+
+
