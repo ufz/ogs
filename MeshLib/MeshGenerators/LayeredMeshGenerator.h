@@ -17,6 +17,7 @@
 
 #include <string>
 #include <vector>
+#include <limits>
 
 namespace GeoLib {
     class Raster;
