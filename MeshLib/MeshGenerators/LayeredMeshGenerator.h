@@ -17,6 +17,7 @@
 
 #include <string>
 #include <vector>
+#include <limits>
 
 namespace GeoLib {
     class Raster;
@@ -62,8 +63,24 @@ protected:
     /// Adds another layer to the subsurface mesh
     virtual void addLayerToMesh(MeshLib::Mesh const& mesh_layer, unsigned layer_id, GeoLib::Raster const& raster) = 0;
 
+	/**
+	 * Calculates the node Position of a subsurface node based on the given raster but also constrained the DEM layer
+	 * the layer located below.
+	 * @param dem_node          The node at this xy-location on the DEM
+	 * @param last_layer_node   The node at this xy-location on the layer below
+	 * @param raster            The raster file for the current layer
+	 * @param new_node_id       Node ID to be used if there is a meaningful node position to be found
+	 * @param minimum_thickness The minimum thickness required for the layer (i.e. if the distance to the bottom is smaller, the node is collapsed)
+	 * @result A new node at the given xy position.
+	 */
+    MeshLib::Node* getNewLayerNode(MeshLib::Node const& dem_node, 
+                                   MeshLib::Node const& last_layer_node, 
+                                   GeoLib::Raster const& raster, 
+                                   std::size_t new_node_id,
+                                   double minimum_thickness = std::numeric_limits<double>::epsilon()) const;
+
     /// Calculates a data-dependent epsilon value
-    double calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low);
+    double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
     /// Checks if all raster files actually exist
     bool allRastersExist(std::vector<std::string> const& raster_paths) const;

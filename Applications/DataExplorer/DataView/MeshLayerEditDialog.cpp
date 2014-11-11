@@ -34,6 +34,7 @@
 #include <QRadioButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QTime>
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _n_layers(0),
@@ -191,6 +192,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     MeshLayerMapper mapper;
     MeshLib::Mesh* new_mesh (nullptr);
 
+    QTime myTimer0;
+    myTimer0.start();
     if (_use_rasters)
     {
         std::vector<std::string> raster_paths;
@@ -201,6 +204,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     }
     else
         new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
+    INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+
     return new_mesh;
 }
 
@@ -215,17 +220,18 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
 	const unsigned nLayers = _layerEdit->text().toInt();
 	MeshLib::Mesh* tg_mesh (nullptr);
+	QTime myTimer0;
+	myTimer0.start();
+
 	if (_use_rasters)
 	{
-		std::vector<std::string> raster_paths(nLayers+1);
+		std::vector<std::string> raster_paths;
 		for (int i=nLayers; i>=0; --i)
-			raster_paths[i] = this->_edits[i]->text().toStdString();
+			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		LayeredVolume lv;
-		lv.createLayers(*_msh, raster_paths);
+		if (lv.createLayers(*_msh, raster_paths))
+			tg_mesh = lv.getMesh("SubsurfaceMesh");
 
-		tg_mesh = lv.getMesh("SubsurfaceMesh");
-
-		QString file_path("");
 		if (tg_mesh)
 		{
 			std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());
@@ -244,6 +250,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		FileIO::TetGenInterface tetgen_interface;
 		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
 	}
+	INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
 		
 	return tg_mesh;
 }

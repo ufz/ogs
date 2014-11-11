@@ -21,8 +21,8 @@
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/MeshEditing/ElementExtraction.h"
-
-#include "MeshLayerMapper.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 
 
 bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue)
@@ -33,68 +33,67 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vec
 	_elevation_epsilon = calcEpsilon(*rasters[0], *rasters.back());
 	if (_elevation_epsilon <= 0)
 		return false;
-
+	
 	// remove line elements, only tri + quad remain
 	MeshLib::ElementExtraction ex(mesh);
 	ex.searchByElementType(MeshElemType::LINE);
-	MeshLib::Mesh* mesh_layer (ex.removeMeshElements("MeshLayer"));
-	if (mesh_layer==nullptr)
-		mesh_layer = new MeshLib::Mesh(mesh);
+	MeshLib::Mesh* top (ex.removeMeshElements("MeshLayer"));
+	if (top==nullptr)
+		top = new MeshLib::Mesh(mesh);
+
+	if (!MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue))
+		return false;
+
+	MeshLib::Mesh* bottom (new MeshLib::Mesh(*top));
+	if (!MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
+	{
+		delete top;
+		return false;
+	}
+
+	_nodes = MeshLib::copyNodeVector(bottom->getNodes());
+	_elements = MeshLib::copyElementVector(bottom->getElements(), _nodes);
+	delete bottom;
 
 	// map each layer and attach to subsurface mesh
 	const std::size_t nRasters (rasters.size());
-	for (size_t i=0; i<nRasters; ++i)
-	{
-		const double replacement_value = (i==(nRasters-1)) ? noDataReplacementValue : rasters[i]->getNoDataValue();
-		if (!MeshLayerMapper::layerMapping(*mesh_layer, *rasters[i], replacement_value))
-		{
-			this->cleanUpOnError();
-			return false;
-		}
-		this->addLayerToMesh(*mesh_layer, i, *rasters[i]);
-	}
+	for (std::size_t i=1; i<nRasters; ++i)
+		this->addLayerToMesh(*top, i, *rasters[i]);
+
 	// close boundaries between layers
-	this->addLayerBoundaries(*mesh_layer, nRasters);
-	this->removeCongruentElements(nRasters, mesh_layer->getNElements());
-	delete mesh_layer;
+	this->addLayerBoundaries(*top, nRasters);
+	this->removeCongruentElements(nRasters, top->getNElements());
+	delete top;
 	return true;
 }
 
-void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster)
+void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer_id, GeoLib::Raster const& raster)
 {
-	const std::vector<MeshLib::Node*> &layer_nodes (mesh_layer.getNodes());
-	const std::size_t nNodes (layer_nodes.size());
+	const std::size_t nNodes (dem_mesh.getNNodes());
+	const std::vector<MeshLib::Node*> &nodes (dem_mesh.getNodes());
 	const std::size_t node_id_offset (_nodes.size());
-	const std::size_t last_layer_offset (node_id_offset-nNodes);
-	const double no_data_value (raster.getNoDataValue());
+	const std::size_t last_layer_node_offset (node_id_offset-nNodes);
 
 	for (std::size_t i=0; i<nNodes; ++i)
-	{
-		if (layer_id > 0 &&
-		   ((*layer_nodes[i])[2] == no_data_value ||
-		    (*_nodes[last_layer_offset+i])[2]-(*layer_nodes[i])[2] < _elevation_epsilon))
-			_nodes.push_back(new MeshLib::Node(*_nodes[last_layer_offset+i]));
-		else
-			_nodes.push_back(new MeshLib::Node(layer_nodes[i]->getCoords(), _nodes.size()));
-	}
+		_nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size(), _elevation_epsilon));
 
-	const std::vector<MeshLib::Element*> &layer_elements (mesh_layer.getElements());
+	const std::vector<MeshLib::Element*> &layer_elements (dem_mesh.getElements());
 	for (MeshLib::Element* elem : layer_elements)
 	{
 		if (elem->getGeomType() == MeshElemType::TRIANGLE)
 		{
 			std::array<MeshLib::Node*,3> tri_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
-			                                           _nodes[node_id_offset+elem->getNodeIndex(1)],
-			                                           _nodes[node_id_offset+elem->getNodeIndex(2)] }};
-			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id+1));
+			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
+			                                            _nodes[node_id_offset+elem->getNodeIndex(2)] }};
+			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id));
 		}
 		else if (elem->getGeomType() == MeshElemType::QUAD)
 		{
 			std::array<MeshLib::Node*,4> quad_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(2)],
-			                                            _nodes[node_id_offset+elem->getNodeIndex(3)] }};
-			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id+1));
+			                                             _nodes[node_id_offset+elem->getNodeIndex(1)],
+			                                             _nodes[node_id_offset+elem->getNodeIndex(2)],
+			                                             _nodes[node_id_offset+elem->getNodeIndex(3)] }};
+			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id));
 		}
 	}
 }
@@ -133,14 +132,14 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
 
 void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer)
 {
-	for (std::size_t i=1; i<nLayers; ++i)
+	for (std::size_t i=nLayers-1; i>0; --i)
 	{
-		const std::size_t upper_offset ((i-1) * nElementsPerLayer);
-		const std::size_t lower_offset ( i    * nElementsPerLayer);
+		const std::size_t lower_offset ((i-1) * nElementsPerLayer);
+		const std::size_t upper_offset ( i    * nElementsPerLayer);
 		for (std::size_t j=0; j<nElementsPerLayer; ++j)
 		{
 			MeshLib::Element const*const high (_elements[upper_offset+j]);
-			MeshLib::Element *low  (_elements[lower_offset+j]);
+			MeshLib::Element *const low  (_elements[lower_offset+j]);
 
 			unsigned count(0);
 			const std::size_t nElemNodes (low->getNBaseNodes());
