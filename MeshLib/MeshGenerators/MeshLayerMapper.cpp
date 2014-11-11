@@ -153,20 +153,10 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
     std::size_t const nNodes = dem_mesh.getNNodes();
     std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
     int const last_layer_node_offset = (layer_id-1) * nNodes;
-    double const no_data_value (raster.getNoDataValue());
 
     // add nodes for new layer
     for (std::size_t i=0; i<nNodes; ++i)
-    {
-        // min of dem elevation and layer elevation
-        double const elevation = std::min(raster.interpolateValueAtPoint(*nodes[i]), (*nodes[i])[2]);
-
-        if ((std::abs(elevation - no_data_value) < std::numeric_limits<double>::epsilon()) ||
-            (elevation - (*_nodes[last_layer_node_offset + i])[2] < std::numeric_limits<double>::epsilon()))
-            _nodes.push_back(new MeshLib::Node((*nodes[i])[0], (*nodes[i])[1], elevation, _nodes[last_layer_node_offset +i]->getID()));
-        else
-            _nodes.push_back(new MeshLib::Node((*nodes[i])[0], (*nodes[i])[1], elevation, (layer_id * nNodes) + i));
-    }
+        _nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size()));
 
     std::vector<MeshLib::Element*> const& elems = dem_mesh.getElements();
     std::size_t const nElems (dem_mesh.getNElements());

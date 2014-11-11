@@ -62,6 +62,12 @@ protected:
     /// Adds another layer to the subsurface mesh
     virtual void addLayerToMesh(MeshLib::Mesh const& mesh_layer, unsigned layer_id, GeoLib::Raster const& raster) = 0;
 
+    MeshLib::Node* getNewLayerNode(MeshLib::Node const& dem_node, 
+                                   MeshLib::Node const& last_layer_node, 
+                                   GeoLib::Raster const& raster, 
+                                   std::size_t new_node_id,
+                                   double minimum_thickness = std::numeric_limits<double>::epsilon()) const;
+
     /// Calculates a data-dependent epsilon value
     double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
