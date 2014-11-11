@@ -109,7 +109,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<GeoLib::Raster const*> const& rasters, double noDataReplacementValue)
 {
 	const std::size_t nLayers(rasters.size());
-	if (nLayers < 1 || mesh.getDimension() != 2)
+	if (nLayers < 2 || mesh.getDimension() != 2)
 	{
 		ERR("MeshLayerMapper::createRasterLayers(): A 2D mesh and at least two rasters required as input.");
 		return nullptr;
