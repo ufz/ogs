@@ -29,6 +29,7 @@
 
 namespace detail
 {
+static
 void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 {
 	DBUG("Reading geometry file \'%s\'.", fname.c_str());

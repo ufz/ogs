@@ -27,6 +27,8 @@ struct SUM
     }
 };
 
+/// Anchor for the SUM recursion always returning 0.
+/// \tparam Method  Integration method.
 template <typename Method>
 struct SUM<0, Method>
 {
@@ -47,10 +49,10 @@ struct SUM<0, Method>
 /// \\sum_{i = 0..Method::Order} (f(x_i) * w_i).
 ///
 /// \tparam Method  Integration method.
-/// \tparam Func    Function type.
 template <typename Method>
 struct WeightedSum
 {
+    /// \tparam Func    Function type.
     template <typename Func>
     static
     double

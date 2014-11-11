@@ -49,6 +49,7 @@ public:
 	/// configuration.
 	ProjectData(ConfigTree const& config_tree, std::string const& path);
 
+	ProjectData(ProjectData&) = delete;
 	virtual ~ProjectData();
 
 	/// Returns the GEOObjects containing all points, polylines and surfaces.

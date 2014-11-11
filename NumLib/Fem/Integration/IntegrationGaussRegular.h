@@ -23,23 +23,19 @@
 namespace NumLib
 {
 
-/**
- * \brief Gauss quadrature rule for regular shape elements, i.e. line, quad and hex
- *
- * \tparam N_DIM    Spatial dimension
- */
+/// Gauss quadrature rule for regular shape elements: line, quad and hex.
+///
+/// \tparam N_DIM    Spatial dimension
 template <std::size_t N_DIM>
 class IntegrationGaussRegular
 {
     typedef typename MathLib::TemplateWeightedPoint<double, double, N_DIM>
         WeightedPoint;
 public:
-    /**
-     * Create IntegrationGaussRegular of the given Gauss-Legendre integration
-     * order.
-     *
-     * @param order     integration order (default 2)
-     */
+    /// Create IntegrationGaussRegular of the given Gauss-Legendre integration
+    /// order.
+    ///
+    /// @param order     integration order (default 2)
     explicit IntegrationGaussRegular(std::size_t order = 2)
     : _order(order), _n_sampl_pt(0)
     {
@@ -59,34 +55,28 @@ public:
     /// return the number of sampling points
     std::size_t getNPoints() const {return _n_sampl_pt;}
 
-    /**
-     * get coordinates of a integration point
-     *
-     * @param igp      The integration point index
-     * @return a weighted point
-     */
+    /// Get coordinates of the integration point.
+    ///
+    /// @param igp       The integration point index
+    /// @return a weighted point
     WeightedPoint
     getWeightedPoint(std::size_t igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /**
-     * get position indexes in r-s-t axis
-     *
-     * @param order    The number of integration points
-     * @param igp       The integration point index
-     * @return  a tuple of position indexes
-     */
+    /// Get position indexes in r-s-t axis.
+    ///
+    /// @param order     The number of integration points
+    /// @param igp       The integration point index
+    /// @return  a tuple of position indexes
     static std::array<std::size_t, N_DIM> getPositionIndices(std::size_t order, std::size_t igp);
 
-    /**
-     * get coordinates of a integration point
-     *
-     * @param order    the number of integration points
-     * @param pt_id     the sampling point id
-     * @return weight
-     */
+    /// Get coordinates of the integration point.
+    ///
+    /// @param order     The number of integration points
+    /// @param igp       The integration point index
+    /// @return a weighted point
     static WeightedPoint
     getWeightedPoint(std::size_t order, std::size_t igp);
 
