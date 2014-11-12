@@ -141,8 +141,6 @@ class NodePartitionedMesh : public Mesh
 
         /// Number of the all active nodes.
         unsigned _n_active_nodes;
-
-        friend FileIO::readNodePartitionedMesh;
 };
 
 } // end of namespace

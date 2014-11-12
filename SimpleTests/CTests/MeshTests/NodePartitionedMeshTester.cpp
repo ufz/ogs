@@ -1,5 +1,5 @@
 /*!
-  \file TestNodePartitionedMeshTester.cpp
+  \file NodePartitionedMeshTester.cpp
   \author Wenqing Wang
   \date   2014.11
   \brief  Test class readNodePartitionedMesh to read node-wise partitioned mesh with MPI functions.

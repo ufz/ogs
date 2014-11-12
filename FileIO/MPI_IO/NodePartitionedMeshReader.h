@@ -37,7 +37,8 @@ class NodePartitionedMeshReader
 
         /*!
              \brief Create a NodePartitionedMesh object, read data to it,
-                    and return a pointer to it.
+                    and return a pointer to it. Data files are either in
+                    ASCII format or binary format.
              \param comm            MPI Communicator.
              \param file_name_base  Name of file to be read, and it must be base name without name extension.
              \return           Pointer to Mesh object. If the creation of mesh object
@@ -65,32 +66,82 @@ class NodePartitionedMeshReader
         int _rank;
 
         /*!
-             \brief Create a NodePartitionedMesh object, read binary mesh data to it,
-                    and return a pointer to it.
-             \param comm  MPI  Communicator.
-             \param file_name  Name of file to be read, which must be a name with the
+             \brief Create a NodePartitionedMesh object, read binary mesh data
+                    in the manner of parallel, and return a pointer to it.
+                    Four binary files have to been read in this function named as:
+                    file_name_base+_partitioned_msh_cfg[number of partitions].bin
+                    file_name_base+_partitioned_msh_nod[number of partitions].bin
+                    file_name_base+_partitioned_msh_ele[number of partitions].bin
+                    file_name_base+_partitioned_msh_ele_g[number of partitions].bin
+                    in which,
+                    the first file contains an array of integers of
+                        0:    Number of all nodes of a partition,
+                        1:    Number of nodes for linear element of a parition,
+                        2:    Number of non-ghost elements of a partition,
+                        3:    Number of ghost element of a partition,
+                        4:    Number of active nodes for linear element of a parition,
+                        5:    Number of all active nodes a parition,
+                        6:    Number of nodes for linear element of global mesh,
+                        7:    Number of all nodes of global mesh,
+                        8~12: Offsets of positions of partitions in the data arrays,
+                        13:   Reserved for exra flag.
+                     for all partitions
+
+                     the second file contains a struct type (long, double double double) array of
+                     nodes information of global IDs and coordinates of all partitions.
+
+                     the third file contains a long type integer array of element information of
+                     material ID, element type and node IDs of each non-ghost element of all partitoions.
+
+                     the forth file contains a long type integer array of element information of
+                     material ID, element type and node IDs of each ghost element of all partitoions.
+             \param comm            MPI  Communicator.
+             \param file_name_base  Name of file to be read, which must be a name with the
                                path to the file and without file extension.
              \return           Pointer to Mesh object.
         */
-        MeshLib::NodePartitionedMesh* readBinary(MPI_Comm comm, const std::string &file_name);
+        MeshLib::NodePartitionedMesh* readBinary(MPI_Comm comm, const std::string &file_name_base);
 
         /*!
-             \brief Create a NodePartitionedMesh object, read ASCII mesh data to it,
+             \brief Create a NodePartitionedMesh object, read ASCII mesh data,
                     and return a pointer to it.
-             \param comm  MPI  Communicator.
-             \param file_name  Name of file to be read, which must be a name with the
+                    Three ASCII files have to been read in this function named as:
+                    file_name_base+_partitioned_cfg[number of partitions].msh
+                    file_name_base+_partitioned_nodes[number of partitions].msh
+                    file_name_base+_partitioned_elems[number of partitions].msh
+                    in which,
+                    the first file contains lines of integers of
+                         0:    Number of all nodes of a partition,
+                         1:    Number of nodes for linear element of a parition,
+                         2:    Number of non-ghost elements of a partition,
+                         3:    Number of ghost element of a partition,
+                         4:    Number of active nodes for linear element of a parition,
+                         5:    Number of all active nodes a parition,
+                         6:    Number of nodes for linear element of global mesh,
+                         7:    Number of all nodes of global mesh,
+                         8~9:  Offsets of positions of partitions in the data arrays,
+                        11:   Reserved for exra flag.
+                        for all partitions
+
+                     the second file contains nodes information of global IDs and coordinates
+                     of all partitions.
+
+                     the third file contains element information of material ID, element type
+                     and node IDs of each element of all partitoions.
+             \param comm            MPI  Communicator.
+             \param file_name_base  Name of file to be read, which must be a name with the
                                path to the file and without file extension.
              \return           Pointer to Mesh object.
         */
-        MeshLib::NodePartitionedMesh* readASCII(MPI_Comm comm, const std::string &file_name);
+        MeshLib::NodePartitionedMesh* readASCII(MPI_Comm comm, const std::string &file_name_base);
 
         /*!
              \brief Read elements data from ASCII file.
              \param ins       Input stream.
-             \param elem_info Pointer to array that contains element data, which to be filled.
+             \param elem_data Pointer to array that contains element data, which to be filled.
              \param ghost     Flag to read ghost elements.
         */
-        void readElementASCII(std::ifstream &ins, long *elem_info,
+        void readElementASCII(std::ifstream &ins, long *elem_data,
                               const bool ghost = false);
 
         /// Node data only for parallel reading.
@@ -113,7 +164,7 @@ class NodePartitionedMeshReader
              \param mesh_node  Vector of mesh nodes to be set.
              \param glb_node_ids  Global IDs of nodes of a partition.
         */
-        void setNodes(const NodeData *node_data, std::vector<MeshLib::Node*> &mesh_node,
+        void setNodes(const std::vector<NodeData> &node_data, std::vector<MeshLib::Node*> &mesh_node,
                       std::vector<unsigned> &glb_node_ids);
 
         /*!
@@ -126,7 +177,7 @@ class NodePartitionedMeshReader
         void setElements(const std::vector<MeshLib::Node*> &mesh_nodes, const long *elem_data,
                          std::vector<MeshLib::Element*> &mesh_elems, const bool ghost = false);
 
-        /// Terminate programm due to failed in file opening or due to mismatch between two requested numbers
+        /// Print message when file opening fails or the requested numbers mismatch
         void printMessage(const std::string & err_message, const bool for_fileopen = true);
 };
 
