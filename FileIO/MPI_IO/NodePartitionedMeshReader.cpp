@@ -277,7 +277,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
     NodePartitionedMesh *np_mesh = nullptr;
     std::vector<NodeData> s_nodes;
     long *elem_info = nullptr;
-    MPI_Datatype MPI_node;
     int tag[] = {0, 1, 2};
     MPI_Status status;
     std::vector<MeshLib::Node*> mesh_nodes;
@@ -311,6 +310,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
         // Read Nodes
         s_nodes.resize(_num_nodes_part);
 
+        MPI_Datatype MPI_node;
         if(i > 0)
             buildNodeStrucTypeMPI(&s_nodes[0], &MPI_node);
 
