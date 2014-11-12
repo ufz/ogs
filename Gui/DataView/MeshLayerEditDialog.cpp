@@ -217,15 +217,13 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 	MeshLib::Mesh* tg_mesh (nullptr);
 	if (_use_rasters)
 	{
-		std::vector<std::string> raster_paths(nLayers+1);
+		std::vector<std::string> raster_paths;
 		for (int i=nLayers; i>=0; --i)
-			raster_paths[i] = this->_edits[i]->text().toStdString();
+			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		LayeredVolume lv;
-		lv.createLayers(*_msh, raster_paths);
+		if (lv.createLayers(*_msh, raster_paths))
+			tg_mesh = lv.getMesh("SubsurfaceMesh");
 
-		tg_mesh = lv.getMesh("SubsurfaceMesh");
-
-		QString file_path("");
 		if (tg_mesh)
 		{
 			std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());

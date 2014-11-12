@@ -41,11 +41,11 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vec
 	if (top==nullptr)
 		top = new MeshLib::Mesh(mesh);
 
-	if (!MeshLayerMapper::layerMapping(*top, *rasters[0], noDataReplacementValue))
+	if (!MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue))
 		return false;
 
 	MeshLib::Mesh* bottom (new MeshLib::Mesh(*top));
-	if (!MeshLayerMapper::layerMapping(*bottom, *rasters.back(), 0))
+	if (!MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
 	{
 		delete top;
 		return false;

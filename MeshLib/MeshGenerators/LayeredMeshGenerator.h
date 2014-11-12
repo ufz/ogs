@@ -80,7 +80,7 @@ protected:
                                    double minimum_thickness = std::numeric_limits<double>::epsilon()) const;
 
     /// Calculates a data-dependent epsilon value
-    double calcEpsilon(GeoLib::Raster const& high, GeoLib::Raster const& low);
+    double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
     /// Checks if all raster files actually exist
     bool allRastersExist(std::vector<std::string> const& raster_paths) const;

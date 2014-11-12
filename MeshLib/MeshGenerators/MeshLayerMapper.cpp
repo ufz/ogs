@@ -156,7 +156,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
 
     // add nodes for new layer
     for (std::size_t i=0; i<nNodes; ++i)
-        _nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size()));
+        _nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size(), _elevation_epsilon));
 
     std::vector<MeshLib::Element*> const& elems = dem_mesh.getElements();
     std::size_t const nElems (dem_mesh.getNElements());
