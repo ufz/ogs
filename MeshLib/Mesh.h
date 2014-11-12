@@ -135,7 +135,13 @@ public:
 			_properties.find(name)
 		);
 		if (it != _properties.end()) {
-			return boost::any_cast<std::vector<T> const&>(it->second);
+			try {
+				boost::any_cast<std::vector<T> const&>(it->second);
+				return boost::any_cast<std::vector<T> const&>(it->second);
+			} catch (boost::bad_any_cast const&) {
+				ERR("A property with the desired data type is not available.");
+				return boost::optional<std::vector<T> const&>();
+			}
 		} else {
 			return boost::optional<std::vector<T> const&>();
 		}
