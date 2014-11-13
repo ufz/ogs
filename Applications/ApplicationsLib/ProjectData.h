@@ -120,6 +120,11 @@ public:
 		return _processes.end();
 	}
 
+	std::string const&
+	getOutputFilePrefix() const
+	{
+		return _output_file_prefix;
+	}
 
 private:
 	/// Checks if a mesh with the same name exists and provides a unique name in
@@ -147,6 +152,10 @@ private:
 	/// constructor.
 	void parseProcesses(ConfigTree const& process_config);
 
+	/// Parses the output configuration.
+	/// Parses the file tag and sets output file prefix.
+	void parseOutput(ConfigTree const& output_config, std::string const& path);
+
 private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects = new GEOModels();
@@ -160,7 +169,8 @@ private:
 	/// Buffer for each process' config used in the process building function.
 	std::vector<ConfigTree> _process_configs;
 
-
+	/// Output file path with project prefix.
+	std::string _output_file_prefix;
 };
 
 #endif //PROJECTDATA_H_

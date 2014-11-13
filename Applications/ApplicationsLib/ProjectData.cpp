@@ -64,6 +64,9 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 
 	// processes
 	parseProcesses(project_config.get_child("processes"));
+
+	// output
+	parseOutput(project_config.get_child("output"), path);
 }
 
 ProjectData::~ProjectData()
@@ -202,4 +205,19 @@ void ProjectData::parseProcesses(ConfigTree const& processes_config)
 		}
 		_process_configs.push_back(process_config);
 	}
+}
+
+void ProjectData::parseOutput(ConfigTree const& output_config,
+	std::string const& path)
+{
+	DBUG("Parse output configuration:\n");
+
+	auto const file = output_config.get_optional<std::string>("file");
+	if (!file) {
+		ERR("The output config does not provide a file tag.");
+		ERR("    Output file not set.");
+		return;
+	}
+
+	_output_file_prefix = path + *file;
 }
