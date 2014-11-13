@@ -132,8 +132,9 @@ public:
 	boost::optional<std::vector<T> const&>
 	getProperty(std::string const& name) const
 	{
-		std::map<std::string, boost::any>::const_iterator it(
-			_properties.find(name)
+		PropertyKeyType property_key(name, MeshItemType::Cell);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
 		);
 		if (it != _properties.end()) {
 			try {
@@ -158,15 +159,16 @@ public:
 	template <typename T>
 	void addProperty(std::string const& name, std::vector<T> const& property)
 	{
-		std::map<std::string, boost::any>::const_iterator it(
-			_properties.find(name)
+		PropertyKeyType property_key(name, MeshItemType::Cell);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
 		);
 		if (it != _properties.end()) {
 			WARN("A property of the name \"%s\" already assigned to the mesh.",
 				name.c_str());
 			return;
 		}
-		_properties[name] = boost::any(property);
+		_properties[property_key] = boost::any(property);
 	}
 
 protected:
