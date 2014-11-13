@@ -50,7 +50,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     // Always try binary file first
     std::string fname_new = file_name_base + "_partitioned_msh_cfg" + _size_str + ".bin";
 
-    if(!BaseLib::IsFileExisting(fname_new)) // doesn't exsit binary file.
+    if(!BaseLib::IsFileExisting(fname_new)) // doesn't exist binary file.
     {
         INFO("-->Reading ASCII mesh file ...");
 
