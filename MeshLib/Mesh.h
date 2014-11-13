@@ -28,6 +28,7 @@
 #include "BaseLib/Counter.h"
 
 #include "MeshEnums.h"
+#include "Location.h"
 
 namespace MeshLib
 {
@@ -206,9 +207,27 @@ protected:
 	std::vector<Element*> _elements;
 	std::size_t _n_base_nodes;
 
+	struct PropertyKeyType
+	{
+		PropertyKeyType(std::string const& n, MeshItemType t)
+			: name(n), mesh_item_type(t)
+		{}
+
+		std::string name;
+		MeshItemType mesh_item_type;
+
+		bool operator<(PropertyKeyType const& other) const
+		{
+			if (name.compare(other.name) == 0) {
+				return mesh_item_type < other.mesh_item_type;
+			}
+			return name.compare(other.name) < 0 ? true : false;
+		}
+	};
+
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
-	std::map<std::string, boost::any> _properties;
+	std::map<PropertyKeyType, boost::any> _properties;
 
 }; /* class */
 
