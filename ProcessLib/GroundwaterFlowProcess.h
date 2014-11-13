@@ -133,7 +133,7 @@ public:
         _linearSolver->solve(*_rhs, *_x);
     }
 
-    void post()
+    void post(std::ostream& os)
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
         // Postprocessing of the linear system of equations solver results:
