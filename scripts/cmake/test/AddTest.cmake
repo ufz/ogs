@@ -28,6 +28,7 @@ function (AddTest)
 	set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER)
 	set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS)
 	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+	set(AddTest_SOURCE_PATH "${ExternalData_SOURCE_ROOT}/${AddTest_PATH}")
 
 	# set defaults
 	if(NOT AddTest_EXECUTABLE)
@@ -42,14 +43,14 @@ function (AddTest)
 	foreach(ARG ${AddTest_EXECUTABLE_ARGS})
 		string(REGEX MATCH ".*${ARG}.*" ARG_FOUND ${AddTest_DATA} )
 		if(ARG_FOUND)
-			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} DATA{${AddTest_PATH}/${ARG}})
+			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} DATA{${AddTest_SOURCE_PATH}/${ARG}})
 		else()
 			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} ${ARG}})
 		endif()
 	endforeach()
 
 	string(REPLACE ";" "," AddTest_DATA "${AddTest_DATA}")
-	set(AddTest_DATA "${AddTest_PATH}/${AddTest_DATA}")
+	set(AddTest_DATA "${AddTest_SOURCE_PATH}/${AddTest_DATA}")
 
 
 	# --- Implement wrappers ---
@@ -70,7 +71,7 @@ function (AddTest)
 	if(AddTest_WRAPPER STREQUAL "time")
 		set(WRAPPER_COMMAND time)
 	elseif(AddTest_WRAPPER STREQUAL "memcheck" AND VALGRIND_TOOL_PATH)
-		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_PATH}/${AddTest_NAME}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
+		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
 		set(tester memcheck)
 	elseif(AddTest_WRAPPER STREQUAL "callgrind" AND VALGRIND_TOOL_PATH)
 		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
@@ -96,7 +97,7 @@ function (AddTest)
 			get_filename_component(FILE_NAME ${FILE} NAME_WE)
 			get_filename_component(FILE_EXT ${FILE} EXT)
 			set(FILE_EXPECTED ${FILE_NAME}_expected${FILE_EXT})
-			set(TESTER_COMMAND ${TESTER_COMMAND} "${DIFF_TOOL_PATH} -sbB ${AddTest_PATH}/${FILE_EXPECTED} ${AddTest_PATH}/${FILE}")
+			set(TESTER_COMMAND ${TESTER_COMMAND} "${DIFF_TOOL_PATH} -sbB DATA{${AddTest_SOURCE_PATH}/${FILE_EXPECTED}} ${AddTest_SOURCE_PATH}/${FILE}")
 			if(AddTest_DIFF_DATA_PARSED)
 				set(AddTest_DIFF_DATA_PARSED "${AddTest_DIFF_DATA_PARSED},${FILE_EXPECTED}")
 			else()
@@ -104,10 +105,10 @@ function (AddTest)
 			endif()
 		endforeach()
 		string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
-		set(AddTest_DIFF_DATA_PARSED "${AddTest_PATH}/${AddTest_DIFF_DATA_PARSED}")
+		set(AddTest_DIFF_DATA_PARSED "${AddTest_SOURCE_PATH}/${AddTest_DIFF_DATA_PARSED}")
 		message("foo: ${AddTest_DIFF_DATA_PARSED}")
 	elseif(tester STREQUAL "memcheck")
-		set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_PATH}/${AddTest_NAME}_memcheck.log")
+		set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log")
 	endif()
 
 	## -----------
@@ -123,7 +124,7 @@ function (AddTest)
 		COMMAND ${CMAKE_COMMAND}
 		-DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
 		-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS_PARSED}
-		-Dcase_path=${AddTest_PATH}
+		-Dcase_path=${AddTest_SOURCE_PATH}
 		-Dcase_name=${AddTest_NAME}
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
 		-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
@@ -140,7 +141,7 @@ function (AddTest)
 		ExternalData_Add_Test(data
 			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
 			COMMAND ${CMAKE_COMMAND}
-			-Dcase_path=${AddTest_PATH}
+			-Dcase_path=${AddTest_SOURCE_PATH}
 			-Dcase_name=${AddTest_NAME}
 			-DTESTER_COMMAND=${TESTER_COMMAND}
 			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
@@ -151,7 +152,7 @@ function (AddTest)
 		add_test(
 			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
 			COMMAND ${CMAKE_COMMAND}
-			-Dcase_path=${AddTest_PATH}
+			-Dcase_path=${AddTest_SOURCE_PATH}
 			-Dcase_name=${AddTest_NAME}
 			-DTESTER_COMMAND=${TESTER_COMMAND}
 			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
