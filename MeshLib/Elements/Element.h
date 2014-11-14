@@ -199,6 +199,8 @@ public:
 	 */
 	virtual bool testElementNodeOrder() const = 0;
 
+	/// Returns if this element is linear order
+	bool isLinearElement() const { return getNBaseNodes()==getNNodes(); }
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
