@@ -202,12 +202,12 @@ public:
 	/// Returns if this element is linear order
 	bool isLinearElement() const { return getNBaseNodes()==getNNodes(); }
 
+	/// Return a specific edge node.
+	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
+
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Element(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
-
-	/// Return a specific edge node.
-	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
 	/// Sets the element ID.
 	virtual void setID(std::size_t id) { this->_id = id; }
