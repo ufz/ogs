@@ -16,14 +16,14 @@
 #define QUAD_H_
 
 #include "TemplateQuad.h"
-#include "TemplateQuadQuadratic.h"
+#include "EdgeRules.h"
 
 namespace MeshLib
 {
 
 typedef TemplateQuad<4, CellType::QUAD4> Quad;
-typedef TemplateQuadQuadratic<8, CellType::QUAD8> Quad8;
-typedef TemplateQuadQuadratic<9, CellType::QUAD9> Quad9;
+typedef TemplateQuad<8, CellType::QUAD8, detail::QuadEdgeQuadraticNodes> Quad8;
+typedef TemplateQuad<9, CellType::QUAD9, detail::QuadEdgeQuadraticNodes> Quad9;
 
 }
 

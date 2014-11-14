@@ -18,22 +18,9 @@
 #include <array>
 #include "MeshLib/MeshEnums.h"
 #include "Face.h"
+#include "EdgeRules.h"
 
 namespace MeshLib {
-
-namespace detail
-{
-class QuadEdgeLinearNodes
-{
-protected:
-	static constexpr unsigned _edge_nodes[4][2] = {
-		{0, 1}, // Edge 0
-		{1, 2}, // Edge 1
-		{2, 3}, // Edge 2
-		{0, 3}  // Edge 3
-	};
-};
-} // end detail
 
 /**
  * This class represents a 2d quadliteral element. The following sketch shows the node and edge numbering.
@@ -78,6 +65,9 @@ public:
 
 	/// Destructor
 	virtual ~TemplateQuad();
+
+	/// Returns the i-th edge of the element.
+	virtual const Element* getEdge(unsigned i) const { return EDGENODES::getEdge(this, i);}
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 4; };

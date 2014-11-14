@@ -26,21 +26,9 @@
 
 #include "Face.h"
 #include "Line.h"
+#include "EdgeRules.h"
 
 namespace MeshLib {
-
-namespace detail
-{
-class TriEdgeLinearNodes
-{
-protected:
-	static constexpr unsigned _edge_nodes[3][2] = {
-		{0, 1}, // Edge 0
-		{1, 2}, // Edge 1
-		{0, 2}  // Edge 2
-	};
-};
-} // end detail
 
 /**
  * This class represents a 2d triangle element. The following sketch shows the node and edge numbering.

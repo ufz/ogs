@@ -13,22 +13,9 @@
 #include <array>
 #include "MeshLib/MeshEnums.h"
 #include "TemplateTri.h"
+#include "EdgeRules.h"
 
 namespace MeshLib {
-
-namespace detail
-{
-class TriEdgeQuadraticNodes
-{
-protected:
-	static constexpr unsigned _edge_nodes[4][3] = {
-		{0, 1, 4}, // Edge 0
-		{1, 2, 5}, // Edge 1
-		{2, 3, 6}, // Edge 2
-		{0, 3, 7}  // Edge 3
-	};
-};
-} // end detail
 
 /**
  * This class represents a 2d triangle element. The following sketch shows the node and edge numbering.
