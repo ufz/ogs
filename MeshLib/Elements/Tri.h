@@ -16,10 +16,12 @@
 #define TRI_H_
 
 #include "TemplateTri.h"
+#include "TemplateTriQuadratic.h"
 
 namespace MeshLib {
 
 typedef TemplateTri<3,CellType::TRI3> Tri;
+typedef TemplateTriQuadratic<6,CellType::TRI6> Tri6;
 
 }
 

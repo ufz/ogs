@@ -14,21 +14,14 @@
 
 namespace MeshLib {
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_all_nodes;
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+const unsigned TemplateTri<NNODES, CELLTRITYPE, EDGENODES>::n_all_nodes;
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES, CELLTRITYPE>::n_base_nodes;
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+const unsigned TemplateTri<NNODES, CELLTRITYPE, EDGENODES>::n_base_nodes;
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-const unsigned TemplateTri<NNODES,CELLTRITYPE>::_edge_nodes[3][2] = {
-		{0, 1}, // Edge 0
-		{1, 2}, // Edge 1
-		{0, 2}  // Edge 2
-	};
-
-template <unsigned NNODES, CellType CELLTRITYPE>
-TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value, std::size_t id) :
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::TemplateTri(Node* nodes[NNODES], unsigned value, std::size_t id) :
 	Face(value, id)
 {
 	_nodes = nodes;
@@ -37,8 +30,8 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(Node* nodes[NNODES], unsigned value
 	this->_area = this->computeVolume();
 }
 
-template<unsigned NNODES, CellType CELLTRITYPE>
-TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& nodes,
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::TemplateTri(std::array<Node*, NNODES> const& nodes,
                                              unsigned value, std::size_t id)
 	: Face(value, id)
 {
@@ -51,8 +44,8 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(std::array<Node*, NNODES> const& no
 	this->_area = this->computeVolume();
 }
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE> &tri) :
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::TemplateTri(const TemplateTri<NNODES,CELLTRITYPE,EDGENODES> &tri) :
 	Face(tri.getValue(), tri.getID())
 {
 	_nodes = new Node*[NNODES];
@@ -69,12 +62,12 @@ TemplateTri<NNODES,CELLTRITYPE>::TemplateTri(const TemplateTri<NNODES,CELLTRITYP
 	_area = tri.getArea();
 }
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-TemplateTri<NNODES,CELLTRITYPE>::~TemplateTri()
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::~TemplateTri()
 {}
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+bool TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::isEdge(unsigned idx1, unsigned idx2) const
 {
 	for (unsigned i(0); i<3; i++)
 	{
@@ -84,14 +77,14 @@ bool TemplateTri<NNODES,CELLTRITYPE>::isEdge(unsigned idx1, unsigned idx2) const
 	return false;
 }
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-bool TemplateTri<NNODES,CELLTRITYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+bool TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::isPntInElement(GeoLib::Point const& pnt, double eps) const
 {
 	return GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-ElementErrorCode TemplateTri<NNODES,CELLTRITYPE>::validate() const 
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+ElementErrorCode TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::validate() const
 { 
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = this->hasZeroVolume();
@@ -99,8 +92,8 @@ ElementErrorCode TemplateTri<NNODES,CELLTRITYPE>::validate() const
 	return error_code;
 }
 
-template <unsigned NNODES, CellType CELLTRITYPE>
-unsigned TemplateTri<NNODES,CELLTRITYPE>::identifyFace(Node* nodes[3]) const
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES>
+unsigned TemplateTri<NNODES,CELLTRITYPE,EDGENODES>::identifyFace(Node* nodes[3]) const
 {
 	for (unsigned i=0; i<3; i++)
 	{
