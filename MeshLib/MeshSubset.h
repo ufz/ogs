@@ -14,10 +14,9 @@
 #define MESHSUBSET_H_
 
 #include <vector>
-
-#include "Mesh.h"
-#include "Node.h"
-#include "Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
 
 
 namespace MeshLib
@@ -74,7 +73,7 @@ public:
 
         return (*_nodes)[i]->getID();
     }
-
+    
     /// return the number of registered elements
     std::size_t getNElements() const
     {
@@ -90,6 +89,11 @@ public:
     {
         return _msh.getElements().cend();
     }
+
+    const Mesh &getMesh() const
+    {
+        return _msh;
+    }  
 
 private:
     const Mesh& _msh;

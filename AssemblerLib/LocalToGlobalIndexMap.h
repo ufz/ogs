@@ -1,4 +1,8 @@
 /**
+ * \file LocalToGlobalIndexMap.h
+ * \author Norihiro Watanabe
+ * \author Wenqing Wang
+ * \date   2013-04-16, 2014-11-14
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -35,24 +39,13 @@ public:
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:
-    /* \todo Extend the constructor for parallel meshes.
-    LocalToGlobalIndexMap(
-        std::vector<LineIndex> const& rows,
-        std::vector<LineIndex> const & columns)
-        : _rows(rows), _columns(columns)
-    {
-        assert(_rows.size() == _columns.size());
-        assert(!_rows.empty());
-    }
-    */
-
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
         AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT);
-
+            AssemblerLib::ComponentOrder::BY_COMPONENT,
+            const bool is_linear_element = true);
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
@@ -68,13 +61,17 @@ private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
-    /// _rows contains for each element a vector of global indices to
-    /// node/element process variables.
+    /// Vector contains for each element a vector of global row/or entry indices
+    /// in the global stiffness matrix or vector
     std::vector<LineIndex> _rows;
 
-    /// For non-parallel implementations the columns are equal to the rows.
-    /// \todo This is to be overriden by any parallel implementation.
-    std::vector<LineIndex> const& _columns = _rows;
+    /// Vector contains for each element a vector of global column indices
+    /// in the global stiffness matrix
+    std::vector<LineIndex> _columns_real;
+
+    /// Vector alias to that contains for each element a vector of global column indices
+    /// in the global stiffness matrix
+    std::vector<LineIndex> &_columns = _rows;
 };
 
 }   // namespace AssemblerLib

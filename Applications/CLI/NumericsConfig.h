@@ -23,7 +23,7 @@
 //
 // Global vector/matrix types and linear solver.
 //
-#ifdef USE_LIS
+#if defined(USE_LIS)
 
     #include "MathLib/LinAlg/Lis/LisMatrix.h"
     #include "MathLib/LinAlg/Lis/LisVector.h"
@@ -35,6 +35,18 @@ namespace detail
     using GlobalMatrixType = MathLib::LisMatrix;
 
     using LinearSolverType = MathLib::LisLinearSolver;
+}
+
+#elif defined(USE_PTESC)
+    #include "MathLib/LinAlg/PETSc/PETScVector.h"
+    #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+    #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
+namespace detail
+{
+    using GlobalVectorType = MathLib::PETScVector;
+    using GlobalMatrixType = MathLib::PETScMatrix;
+
+    using LinearSolverType = MathLib::PETScLinearSolver;
 }
 
 #else    // USE_LIS

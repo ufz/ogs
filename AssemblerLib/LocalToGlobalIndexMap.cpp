@@ -1,4 +1,8 @@
 /**
+ * \file LocalToGlobalIndexMap.cpp
+ * \author Norihiro Watanabe
+ * \author Wenqing Wang
+ * \date   2013-04-16, 2014-11-14
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,12 +18,17 @@
 #include "AssemblerLib/MeshComponentMap.h"
 #include "MeshLib/MeshSubsets.h"
 
+#ifdef USE_PETSC
+#include "MeshLib/NodePartitionedMesh.h"
+#endif
+
 namespace AssemblerLib
 {
 
+#ifndef USE_PETSC
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-    AssemblerLib::ComponentOrder const order)
+    AssemblerLib::ComponentOrder const order, const bool is_linear_element)
     : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
 {
     // For all MeshSubsets and each of their MeshSubset's and each element
@@ -36,7 +45,9 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
                     e != ms->elementsEnd(); ++e)
             {
                 std::vector<MeshLib::Location> vec_items;
-                std::size_t const nnodes = (*e)->getNNodes();
+                std::size_t nnodes = (*e)->getNNodes();
+                if(is_is_linear_element)
+                    nnodes = (*e)->getNBaseNodes();
                 vec_items.reserve(nnodes);
 
                 for (std::size_t n = 0; n < nnodes; n++)
@@ -59,8 +70,76 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
                 }
             }
         }
-    }
+    }    
 }
+
+#else   //#if defined(USE_PETSC)
+LocalToGlobalIndexMap::LocalToGlobalIndexMap(
+    std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+    AssemblerLib::ComponentOrder const order, const bool is_linear_element)
+    : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
+{
+    _columns = _columns_real; 	
+    // For all MeshSubsets and each of their MeshSubset's and each element
+    // of that MeshSubset save a line of global indices.
+    for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
+    {
+        for (MeshLib::MeshSubset const* const ms : *mss)
+        {
+            std::size_t const mesh_id = ms->getMeshID();
+
+            const MeshLib::NodePartitionedMesh &mesh 
+                    = dynamic_cast<const MeshLib::NodePartitionedMesh&>(ms->getMesh());
+                        
+            // For each element find the global indices for node/element
+            // components.
+            for (auto e = ms->elementsBegin();
+                    e != ms->elementsEnd(); ++e)
+            {
+                std::vector<MeshLib::Location> vec_items_row;
+                std::vector<MeshLib::Location> vec_items_col;
+                std::size_t nnodes = (*e)->getNNodes();
+                if(is_linear_element)
+                    nnodes = (*e)->getNBaseNodes();
+                vec_items_col.reserve(nnodes);
+
+                for (std::size_t n = 0; n < nnodes; n++)
+                {
+                    const size_t node_id = (*e)->getNode(n)->getID(); 
+                    const site_t global_node_id = mesh->getGlobalNodeID(node_id);                     					
+                    vec_items_col.emplace_back(
+                        mesh_id,
+                        MeshLib::MeshItemType::Node, global_node_id);
+                        
+                    if( mesh.isGhostNode(node_id) )
+                       continue;     
+
+                    vec_items_row.emplace_back(
+                        mesh_id,
+                        MeshLib::MeshItemType::Node, global_node_id);
+                }
+
+                // Save a line of indices for the current element.
+                switch (order)
+                {
+                    case AssemblerLib::ComponentOrder::BY_LOCATION:
+                        {                    
+                            _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items_row));
+                            _columns.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items_col));
+                        }
+                        break;
+                    case AssemblerLib::ComponentOrder::BY_COMPONENT:
+                        {                     
+                            _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items_row));
+                            _columns.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items_col));
+                        } 
+                        break;
+                }
+            }
+        }
+    }    
+} 
+#endif  //#ifndef USE_PETSC
 
 std::size_t
 LocalToGlobalIndexMap::dofSize() const

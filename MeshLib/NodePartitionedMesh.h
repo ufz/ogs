@@ -88,6 +88,12 @@ class NodePartitionedMesh : public Mesh
             return _n_global_nodes;
         }
 
+        /// Get the global node ID of the node with ID of node_id.
+        unsigned getGlobalNodeID(const size_t node_id) const
+        {
+            return _global_node_ids[node_id];
+        }
+
         /// Get the number of the active nodes of the partition for linear elements.
         unsigned getNActiveBaseNodes() const
         {
@@ -101,14 +107,14 @@ class NodePartitionedMesh : public Mesh
         }
 
         /// Check whether a node with ID of node_id is a ghost node
-        bool isGhostNode(const unsigned node_id)
+        bool isGhostNode(const size_t node_id) const
         {
             if(node_id < _n_active_base_nodes)
-                return true;
-            else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
-                return true;
-            else
                 return false;
+            else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
+                return false;
+            else
+                return true;
         }
 
         /// Get the largest ID of active nodes for higher order elements in a partition.
