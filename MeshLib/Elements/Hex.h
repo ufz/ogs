@@ -15,10 +15,19 @@
 #ifndef HEX_H_
 #define HEX_H_
 
-#include "TemplateHex.h"
+//#include "TemplateHex.h"
+#include "TemplateElement.h"
+#include "HexRule8.h"
+#include "HexRule20.h"
+#include "Cell.h"
 
-namespace MeshLib {
-typedef TemplateHex<8, CellType::HEX8> Hex;
+namespace MeshLib
+{
+
+typedef TemplateElement<Cell, HexRule8> Hex;
+typedef TemplateElement<Cell, HexRule20> Hex20;
+//typedef TemplateHex<8, CellType::HEX8> Hex;
+
 }
 
 #endif /* HEX_H_ */
