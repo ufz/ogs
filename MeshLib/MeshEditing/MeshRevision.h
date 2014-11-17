@@ -56,7 +56,7 @@ public:
 	unsigned getNCollapsableNodes(double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
-	std::vector<std::size_t> collapseNodeIndeces(double eps) const;
+	std::vector<std::size_t> collapseNodeIndices(double eps) const;
 
 	/**
 	 * Create a new mesh where all nodes with a distance < eps from each other are collapsed.

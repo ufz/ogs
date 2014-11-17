@@ -51,7 +51,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
 
 	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
 	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
-	std::vector<std::size_t> const& collapsibleNodeIds (rev.collapseNodeIndeces(
+	std::vector<std::size_t> const& collapsibleNodeIds (rev.collapseNodeIndices(
 		this->collapsibleNodesThreshold->text().toDouble() + std::numeric_limits<double>::epsilon()));
 	this->nodesGroupBox->setTitle("Nodes (out of " + QString::number(mesh->getNNodes()) + ")");
 	this->nodesMsgOutput(unusedNodesIdx, collapsibleNodeIds);
