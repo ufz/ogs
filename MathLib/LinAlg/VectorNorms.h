@@ -20,7 +20,8 @@
 
 #include <cmath>
 
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
+
 #include "LinAlgEnums.h"
 
 namespace MathLib

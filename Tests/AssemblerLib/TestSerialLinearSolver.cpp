@@ -21,7 +21,7 @@
 #include "AssemblerLib/SerialDenseSetup.h"
 
 
-#include "MathLib/LinAlg/Dense/DenseTools.h"
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/MathTools.h"
