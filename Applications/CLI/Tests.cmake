@@ -4,7 +4,7 @@ set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
 
 AddTest(
 	NAME GroundWaterFlowProcess
-	PATH ${ExternalData_SOURCE_ROOT}/Elliptic/quad_20x10_GroundWaterFlow
+	PATH Elliptic/quad_20x10_GroundWaterFlow
 	EXECUTABLE ogs # optional
 	EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj
 	WRAPPER time # optional
