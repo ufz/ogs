@@ -83,12 +83,18 @@ int main(int argc, char *argv[])
 		(*p_it)->initialize();
 	}
 
+	std::string const output_file_name(project.getOutputFilePrefix() + "_result.dat");
+	DBUG("Create output file %s", output_file_name.c_str());
+	std::ofstream output_file(output_file_name);
+
 	INFO("Solve processes.");
 	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
 	{
 		(*p_it)->solve();
-		(*p_it)->post();
+		(*p_it)->post(output_file);
 	}
+
+	output_file.close();
 
 	delete fmt;
 	delete logog_cout;

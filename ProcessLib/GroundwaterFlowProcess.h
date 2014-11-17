@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
@@ -156,11 +157,13 @@ public:
         _linearSolver->solve(*_rhs, *_x);
     }
 
-    void post()
+    void post(std::ostream& os)
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
         // Postprocessing of the linear system of equations solver results:
         // For example, write _x to _hydraulic_head or convert to velocity etc.
+        for (std::size_t i = 0; i < _x->size(); ++i)
+            os << (*_x)[i] << " ";
     }
 
     ~GroundwaterFlowProcess()
