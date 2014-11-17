@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>560</height>
+    <width>483</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,8 +42,25 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="1" colspan="3">
+       <widget class="QTextEdit" name="unusedNodesText">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="collapsibleNodesThresholdLabel">
+        <property name="text">
+         <string>Threshold:</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="collapsableNodesLabel">
+       <widget class="QLabel" name="collapsibleNodesLabel">
         <property name="minimumSize">
          <size>
           <width>100</width>
@@ -52,27 +69,61 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>150</width>
+          <width>100</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="text">
-         <string>Collapsable nodes:</string>
+         <string>Collapsible nodes:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QTextEdit" name="unusedNodesText">
-        <property name="readOnly">
-         <bool>true</bool>
+      <item row="1" column="3">
+       <widget class="QLineEdit" name="collapsibleNodesThreshold">
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Minimum distance for nodes to be not considered identical.</string>
+        </property>
+        <property name="statusTip">
+         <string/>
+        </property>
+        <property name="whatsThis">
+         <string/>
+        </property>
+        <property name="text">
+         <string>0.0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="collapsableNodesText">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QTextEdit" name="collapsibleNodesText">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -142,8 +193,8 @@
       <string>Elements</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
-       <widget class="QLabel" name="zeroVolumeLabel">
+      <item row="2" column="0">
+       <widget class="QLabel" name="nonPlanarLabel">
         <property name="minimumSize">
          <size>
           <width>100</width>
@@ -157,7 +208,30 @@
          </size>
         </property>
         <property name="text">
-         <string>Zero volume:</string>
+         <string>Non-planar:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="nodeOrderLabel">
+        <property name="text">
+         <string>Node order:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -186,8 +260,74 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="nonPlanarLabel">
+      <item row="0" column="2">
+       <widget class="QLabel" name="zeroVolumeThresholdLabel">
+        <property name="text">
+         <string>Threshold:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLineEdit" name="zeroVolumeThreshold">
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Minimum volume of elements to be not considered faulty.</string>
+        </property>
+        <property name="text">
+         <string>0.0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QTextEdit" name="zeroVolumeText">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QTextEdit" name="nonPlanarText">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="3">
+       <widget class="QTextEdit" name="nonConvexText">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="3">
+       <widget class="QTextEdit" name="nodeOrderText">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="zeroVolumeLabel">
         <property name="minimumSize">
          <size>
           <width>100</width>
@@ -201,48 +341,10 @@
          </size>
         </property>
         <property name="text">
-         <string>Non-planar:</string>
+         <string>Volume:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QTextEdit" name="zeroVolumeText">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QTextEdit" name="nonPlanarText">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QTextEdit" name="nonConvexText">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="nodeOrderLabel">
-        <property name="text">
-         <string>Node order:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QTextEdit" name="nodeOrderText">
-        <property name="readOnly">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -251,6 +353,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>meshListBox</tabstop>
+  <tabstop>collapsibleNodesThreshold</tabstop>
+  <tabstop>zeroVolumeThreshold</tabstop>
+  <tabstop>startButton</tabstop>
+  <tabstop>closeButton</tabstop>
+  <tabstop>unusedNodesText</tabstop>
+  <tabstop>collapsibleNodesText</tabstop>
+  <tabstop>zeroVolumeText</tabstop>
+  <tabstop>nonPlanarText</tabstop>
+  <tabstop>nonConvexText</tabstop>
+  <tabstop>nodeOrderText</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

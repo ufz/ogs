@@ -88,7 +88,7 @@ int main (int argc, char* argv[])
 
 	// search elements IDs to be removed
 	if (zveArg.isSet()) {
-		const std::size_t n_removed_elements = ex.searchByZeroContent();
+		const std::size_t n_removed_elements = ex.searchByContent();
 		INFO("%d zero volume elements found.", n_removed_elements);
 	}
 	if (eleTypeArg.isSet()) {

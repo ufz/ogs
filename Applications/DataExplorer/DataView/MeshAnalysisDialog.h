@@ -37,7 +37,7 @@ public:
 
 private:
 	/// Prepares the output for the node message window
-	void nodesMsgOutput(const std::vector<std::size_t> &node_ids, unsigned nCollapsableNodes);
+	void nodesMsgOutput(std::vector<std::size_t> const& node_ids, std::vector<std::size_t> const& collapsibleNodeIds);
 
 	/// Prepares the output for the node message window
 	void elementsMsgOutput(const std::vector<ElementErrorCode> &error_codes);

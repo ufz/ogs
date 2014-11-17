@@ -70,7 +70,7 @@ std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &me
 	return del_node_idx;
 }
 
- std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh)
+ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)
 {
 	INFO ("Testing mesh element geometry:");
 	const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
@@ -93,6 +93,12 @@ std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &me
 		for (unsigned j=0; j<nErrorCodes; ++j)
 			error_count[j] += flags[j];
 	}
+
+	// if a larger volume threshold is given, evaluate elements again to add them even if they are formally okay
+	if (min_volume > std::numeric_limits<double>::epsilon())
+		for (std::size_t i=0; i<nElements; ++i)
+			if (elements[i]->getContent() < min_volume)
+				error_code_vector[i].set(ElementErrorFlag::ZeroVolume);
 
 	// output
 	const unsigned error_sum (static_cast<unsigned>(std::accumulate(error_count, error_count+nErrorCodes, 0.0)));

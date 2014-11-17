@@ -92,13 +92,13 @@ std::size_t ElementExtraction::searchByElementType(MeshElemType eleType)
 	return matchedIDs.size();
 }
 
-std::size_t ElementExtraction::searchByZeroContent()
+std::size_t ElementExtraction::searchByContent(double eps)
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
 	for (MeshLib::Element* ele : ele_vec) {
-		if (ele->getContent()<std::numeric_limits<double>::epsilon())
+		if (ele->getContent() < eps)
 			matchedIDs.push_back(i);
 		i++;
 	}
