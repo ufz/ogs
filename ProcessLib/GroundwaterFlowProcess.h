@@ -163,7 +163,7 @@ public:
         // Postprocessing of the linear system of equations solver results:
         // For example, write _x to _hydraulic_head or convert to velocity etc.
         for (std::size_t i = 0; i < _x->size(); ++i)
-            os << (*_x)[i] << " ";
+            os << (*_x)[i] << "\n";
     }
 
     ~GroundwaterFlowProcess()
