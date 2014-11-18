@@ -85,6 +85,22 @@ public:
 		_properties[property_key] = boost::any(property);
 	}
 
+	template <typename T>
+	void removeProperty(std::string const& name,
+		MeshItemType mesh_item_type = MeshItemType::Cell)
+	{
+		PropertyKeyType property_key(name, mesh_item_type);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
+		);
+		if (it == _properties.end()) {
+			WARN("A property of the name \"%s\" does not exist.",
+				name.c_str());
+			return;
+		}
+		_properties.erase(it);
+	}
+
 private:
 	struct PropertyKeyType
 	{
