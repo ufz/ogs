@@ -42,9 +42,10 @@ public:
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<std::vector<T> const&>
-	getProperty(std::string const& name) const
+	getProperty(std::string const& name,
+		MeshItemType mesh_item_type = MeshItemType::Cell) const
 	{
-		PropertyKeyType property_key(name, MeshItemType::Cell);
+		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
 		);
@@ -69,9 +70,10 @@ public:
 	/// separate value for each mesh item.
 	/// The user has to ensure the correct usage of the vector later on.
 	template <typename T>
-	void addProperty(std::string const& name, std::vector<T> const& property)
+	void addProperty(std::string const& name, std::vector<T> const& property,
+		MeshItemType mesh_item_type = MeshItemType::Cell)
 	{
-		PropertyKeyType property_key(name, MeshItemType::Cell);
+		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
 		);
