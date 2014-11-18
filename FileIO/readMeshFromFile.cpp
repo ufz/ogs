@@ -46,7 +46,8 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 #ifdef USE_PETSC
 	NodePartitionedMeshReader read_pmesh;
 	MeshLib::NodePartitionedMesh *mesh 
-		= read_pmesh.read(PETSC_COMM_WORLD, BaseLib::extractBaseName(file_name));
+		= read_pmesh.read(PETSC_COMM_WORLD, file_name);
+				
 	if(mesh)
 		return mesh;
 #else
