@@ -45,9 +45,16 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 
 	boost::optional<std::vector<double> const&>
 		double_properties_cpy(mesh->getProperties().getProperty<double>(prop_name));
+	ASSERT_FALSE(!double_properties_cpy);
 
 	for (std::size_t k(0); k<size; k++) {
 		ASSERT_EQ(double_properties[k], (*double_properties_cpy)[k]);
 	}
+
+	mesh->getProperties().removeProperty<double>(prop_name);
+	boost::optional<std::vector<double> const&>
+		removed_double_properties(mesh->getProperties().getProperty<double>(prop_name));
+
+	ASSERT_TRUE(!removed_double_properties);
 }
 
