@@ -6,7 +6,7 @@
 #
 # AddTest(
 #   NAME <name of the the test>
-#   PATH <working directory> # use ${ExternalData_SOURCE_ROOT}
+#   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
 #   EXECUTABLE_ARGS <arguments> # files referenced in the DATA argument can be used here
 #   WRAPPER <time|memcheck|callgrind> # optional, defaults to time
