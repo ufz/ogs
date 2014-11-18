@@ -18,10 +18,17 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <map>
+
+#include <boost/any.hpp>
+#include <boost/optional.hpp>
+
+#include "logog/include/logog.hpp"
 
 #include "BaseLib/Counter.h"
 
 #include "MeshEnums.h"
+#include "Properties.h"
 
 namespace MeshLib
 {
@@ -39,7 +46,7 @@ class Mesh : BaseLib::Counter<Mesh>
 public:
 	/// Constructor using a mesh name and an array of nodes and elements
 	/// @param name          Mesh name.
-	/// @param nodes         A vector of mesh nodes. In case nonlinear nodes are involved, one should 
+	/// @param nodes         A vector of mesh nodes. In case nonlinear nodes are involved, one should
 	///                      put them after line ones in the vector and set "n_base_nodes" argument.
 	/// @param elements      An array of mesh elements.
 	/// @param n_base_nodes  The number of base nodes. This is an optional parameter for nonlinear case.
@@ -120,6 +127,9 @@ public:
 	/// Return true if the mesh has any nonlinear nodes
 	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
 
+	MeshLib::Properties & getProperties() { return _properties; }
+	MeshLib::Properties const& getProperties() const { return _properties; }
+
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
@@ -131,7 +141,7 @@ protected:
 	 * calls setElementsConnectedToNodes to set the new information.
 	 * \attention This needs to be called if node neighbourhoods are reset.
 	 */
-	void resetElementsConnectedToNodes();	
+	void resetElementsConnectedToNodes();
 
 	/// Sets the dimension of the mesh.
 	void setDimension();
@@ -157,7 +167,7 @@ protected:
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
 	std::size_t _n_base_nodes;
-
+	Properties _properties;
 }; /* class */
 
 } /* namespace */

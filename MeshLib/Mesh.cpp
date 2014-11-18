@@ -14,10 +14,6 @@
 
 #include "Mesh.h"
 
-#include <boost/optional.hpp>
-
-#include "logog/include/logog.hpp"
-
 #include "BaseLib/RunTime.h"
 
 #include "Elements/Tri.h"
@@ -38,7 +34,8 @@ Mesh::Mesh(const std::string &name,
 	  _edge_length(std::numeric_limits<double>::max(), 0),
 	  _node_distance(std::numeric_limits<double>::max(), 0),
 	  _name(name), _nodes(nodes), _elements(elements),
-	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes)
+	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes),
+	  _properties(*this)
 {
 	assert(n_base_nodes <= nodes.size());
 	this->resetNodeIDs();
@@ -58,7 +55,8 @@ Mesh::Mesh(const Mesh &mesh)
 	  _edge_length(mesh._edge_length.first, mesh._edge_length.second),
 	  _node_distance(mesh._node_distance.first, mesh._node_distance.second),
 	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
-	  _n_base_nodes(mesh.getNBaseNodes())
+	  _n_base_nodes(mesh.getNBaseNodes()),
+	  _properties(*this)
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
