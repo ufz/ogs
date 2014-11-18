@@ -29,6 +29,8 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #ifdef USE_PETSC
+#include <petscmat.h>
+#include "MeshLib/NodePartitionedMesh.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
 #endif
 
@@ -165,10 +167,26 @@ public:
 
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
-
-        // Apply known values from the Dirichlet boundary conditions.
-        MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
-
+        
+#ifdef USE_PETSC
+       // Just for test
+       std::vector<PetscInt> dbc_pos;
+       std::vector<PetscScalar> dbc_value;
+       const MeshLib::NodePartitionedMesh &mesh 
+                    = dynamic_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+                    
+       for(size_t i=0; i<_dirichlet_bc.global_ids.size(); i++)
+       {
+             if( mesh.isGhostNode(_dirichlet_bc.global_ids[i]) )
+                continue;
+                
+             dbc_pos.push_back(static_cast<PetscInt>(_dirichlet_bc.global_ids[i])); 
+             dbc_pos.push_back(static_cast<PetscScalar>(_dirichlet_bc.values[i])); 	   
+       }       
+#else       
+         // Apply known values from the Dirichlet boundary conditions.
+         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
+#endif
         _linearSolver->solve(*_rhs, *_x);
     }
 
