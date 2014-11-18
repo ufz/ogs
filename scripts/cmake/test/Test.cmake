@@ -1,5 +1,6 @@
 # Find tools and data
 FIND_PROGRAM(DIFF_TOOL_PATH diff)
+FIND_PROGRAM(NUMDIFF_TOOL_PATH numdiff)
 # FIND_PROGRAM(TIME_TOOL_PATH time) # TODO: does not work Travis
 SET(TIME_TOOL_PATH time)
 FIND_PROGRAM(GREP_TOOL_PATH grep)
