@@ -28,7 +28,7 @@
 #include "BaseLib/Counter.h"
 
 #include "MeshEnums.h"
-#include "Location.h"
+#include "Properties.h"
 
 namespace MeshLib
 {
@@ -127,49 +127,8 @@ public:
 	/// Return true if the mesh has any nonlinear nodes
 	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
 
-	/// Method to get a vector of property values.
-	template <typename T>
-	boost::optional<std::vector<T> const&>
-	getProperty(std::string const& name) const
-	{
-		PropertyKeyType property_key(name, MeshItemType::Cell);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
-		);
-		if (it != _properties.end()) {
-			try {
-				boost::any_cast<std::vector<T> const&>(it->second);
-				return boost::any_cast<std::vector<T> const&>(it->second);
-			} catch (boost::bad_any_cast const&) {
-				ERR("A property with the desired data type is not available.");
-				return boost::optional<std::vector<T> const&>();
-			}
-		} else {
-			return boost::optional<std::vector<T> const&>();
-		}
-	}
-
-	/// Method to store a vector of property values assigned to a property name.
-	/// Since the implementation makes no assumption about the number of data
-	/// items stored within the vector, it is possible either to use a small
-	/// number of properties where each particular property can be assigned to
-	/// several mesh items. In contrast to this it is possible to have a
-	/// separate value for each mesh item.
-	/// The user has to ensure the correct usage of the vector later on.
-	template <typename T>
-	void addProperty(std::string const& name, std::vector<T> const& property)
-	{
-		PropertyKeyType property_key(name, MeshItemType::Cell);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
-		);
-		if (it != _properties.end()) {
-			WARN("A property of the name \"%s\" already assigned to the mesh.",
-				name.c_str());
-			return;
-		}
-		_properties[property_key] = boost::any(property);
-	}
+	MeshLib::Properties & getProperties() { return _properties; }
+	MeshLib::Properties const& getProperties() const { return _properties; }
 
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
@@ -208,29 +167,7 @@ protected:
 	std::vector<Node*> _nodes;
 	std::vector<Element*> _elements;
 	std::size_t _n_base_nodes;
-
-	struct PropertyKeyType
-	{
-		PropertyKeyType(std::string const& n, MeshItemType t)
-			: name(n), mesh_item_type(t)
-		{}
-
-		std::string name;
-		MeshItemType mesh_item_type;
-
-		bool operator<(PropertyKeyType const& other) const
-		{
-			if (name.compare(other.name) == 0) {
-				return mesh_item_type < other.mesh_item_type;
-			}
-			return name.compare(other.name) < 0 ? true : false;
-		}
-	};
-
-	/// A mapping from property's name to the stored object of any type.
-	/// See addProperty() and getProperty() documentation.
-	std::map<PropertyKeyType, boost::any> _properties;
-
+	Properties _properties;
 }; /* class */
 
 } /* namespace */

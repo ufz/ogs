@@ -41,10 +41,10 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 
 	std::string const& prop_name("FirstTestProperty");
 	// add a vector with property values to the mesh
-	mesh->addProperty(prop_name, double_properties);
+	mesh->getProperties().addProperty(prop_name, double_properties);
 
 	boost::optional<std::vector<double> const&>
-		double_properties_cpy(mesh->getProperty<double>(prop_name));
+		double_properties_cpy(mesh->getProperties().getProperty<double>(prop_name));
 
 	for (std::size_t k(0); k<size; k++) {
 		ASSERT_EQ(double_properties[k], (*double_properties_cpy)[k]);
