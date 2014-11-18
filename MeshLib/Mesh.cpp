@@ -269,5 +269,17 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
+/// Get the maximum number of connected nodes to a node
+size_t Mesh:: getMaximumNConnectedNodesToNode() const
+{
+    size_t max_ncn = 0;
+    for(auto node : _nodes)
+    {
+        if(node->getConnectedNodes().size() > max_ncn) 
+            max_ncn = node->getConnectedNodes().size(); 				
+    }  
+    return max_ncn;			
+}          
+
 
 }

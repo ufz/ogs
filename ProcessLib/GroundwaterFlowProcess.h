@@ -28,6 +28,10 @@
 #include "MeshLib/MeshSubsets.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
+#ifdef USE_PETSC
+#include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
+#endif
+
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
 
 #include "BoundaryCondition.h"
@@ -87,10 +91,21 @@ public:
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
         DBUG("Allocate global matrix, vectors, and linear solver.");
+
+#ifdef USE_PETSC
+         MathLib::PETScMatrixOption mat_opt;
+         mat_opt.d_nz = _mesh.getMaximumNConnectedNodesToNode();
+         mat_opt.o_nz = 0;
+        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize(), mat_opt) );        
+        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+#else        
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+#endif
 
         DBUG("Create local assemblers.");
         // Populate the vector of local assemblers.

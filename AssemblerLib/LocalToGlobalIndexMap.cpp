@@ -79,7 +79,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     AssemblerLib::ComponentOrder const order, const bool is_linear_element)
     : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
 {
-    _columns = _columns_real; 	
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
     for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
@@ -96,42 +95,44 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             for (auto e = ms->elementsBegin();
                     e != ms->elementsEnd(); ++e)
             {
-                std::vector<MeshLib::Location> vec_items_row;
-                std::vector<MeshLib::Location> vec_items_col;
+                std::vector<MeshLib::Location> vec_items;
                 std::size_t nnodes = (*e)->getNNodes();
                 if(is_linear_element)
                     nnodes = (*e)->getNBaseNodes();
-                vec_items_col.reserve(nnodes);
+                vec_items.reserve(nnodes);
+                std::vector<bool> ghost_node_flag(nnodes+1);
 
+                ghost_node_flag[0] = false; // Indicator for ghost element		
                 for (std::size_t n = 0; n < nnodes; n++)
                 {
                     const size_t node_id = (*e)->getNode(n)->getID(); 
-                    const site_t global_node_id = mesh->getGlobalNodeID(node_id);                     					
-                    vec_items_col.emplace_back(
+                    const size_t global_node_id = mesh.getGlobalNodeID(node_id);                     					
+                    vec_items.emplace_back(
                         mesh_id,
                         MeshLib::MeshItemType::Node, global_node_id);
                         
                     if( mesh.isGhostNode(node_id) )
-                       continue;     
-
-                    vec_items_row.emplace_back(
-                        mesh_id,
-                        MeshLib::MeshItemType::Node, global_node_id);
+                    {                   
+                       ghost_node_flag[n+1] = true;
+                       ghost_node_flag[0] = true;                       
+                    }                        
+                    else
+                       ghost_node_flag[n+1] = false;                            
                 }
+                
+                _element_ghost_node_flags.push_back(ghost_node_flag);
 
                 // Save a line of indices for the current element.
                 switch (order)
                 {
                     case AssemblerLib::ComponentOrder::BY_LOCATION:
                         {                    
-                            _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items_row));
-                            _columns.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items_col));
+                            _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
                         }
                         break;
                     case AssemblerLib::ComponentOrder::BY_COMPONENT:
                         {                     
-                            _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items_row));
-                            _columns.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items_col));
+                            _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
                         } 
                         break;
                 }

@@ -38,9 +38,6 @@ namespace detail
 }
 
 #elif defined(USE_PTESC)
-    #include "MathLib/LinAlg/PETSc/PETScVector.h"
-    #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
-    #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 namespace detail
 {
     using GlobalVectorType = MathLib::PETScVector;
@@ -69,8 +66,33 @@ namespace detail
 // Global executor and vector/matrix builder.
 //
 #include "AssemblerLib/SerialExecutor.h"
-#include "AssemblerLib/SerialVectorMatrixBuilder.h"
+#include "AssemblerLib/GlobalSetup.h"
 
+#ifdef USE_PETSC
+    #include "AssemblerLib/PETScVectorMatrixBuilder.h"
+    #include "MathLib/LinAlg/PETSc/PETScVector.h"
+    #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+    #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
+namespace detail
+{
+using GlobalExecutorType = AssemblerLib::SerialExecutor;
+
+using GlobalVectorMatrixBuilderType =
+        AssemblerLib::PETScVectorMatrixBuilder<
+            MathLib::PETScMatrix, MathLib::PETScVector>;
+}
+
+///
+/// Global setup collects the previous configuration in single place.
+///
+using GlobalSetupType =
+    AssemblerLib::GlobalSetup<
+        detail::GlobalVectorMatrixBuilderType,
+        detail::GlobalExecutorType,
+        MathLib::PETScLinearSolver>;
+
+#else
+    #include "AssemblerLib/SerialVectorMatrixBuilder.h"
 namespace detail
 {
 using GlobalExecutorType = AssemblerLib::SerialExecutor;
@@ -81,9 +103,6 @@ using GlobalVectorMatrixBuilderType =
             GlobalVectorType>;
 }
 
-
-#include "AssemblerLib/GlobalSetup.h"
-
 ///
 /// Global setup collects the previous configuration in single place.
 ///
@@ -92,11 +111,11 @@ using GlobalSetupType =
         detail::GlobalVectorMatrixBuilderType,
         detail::GlobalExecutorType,
         detail::LinearSolverType>;
-
-
 //
 // Check the configuration
 //
+#endif
+
 static_assert(std::is_class<GlobalSetupType>::value,
         "GlobalSetupType was not defined.");
 #endif  // APPLICATIONS_NUMERICSCONFIG_H_

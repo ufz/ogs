@@ -36,6 +36,7 @@
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
 
+#ifndef USE_PETSC
 TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 {
     // example
@@ -134,3 +135,4 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
         [](MeshLib::MeshSubsets * p) { delete p; return true; });
 }
+#endif

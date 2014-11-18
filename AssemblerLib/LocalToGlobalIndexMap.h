@@ -56,6 +56,13 @@ public:
 
     LineIndex rowIndices(std::size_t const mesh_item_id) const;
     LineIndex columnIndices(std::size_t const mesh_item_id) const;
+    
+#ifdef USE_PETSC
+    const std::vector<bool> &getNodeGhostFlags(std::size_t const mesh_item_id) const
+    {
+        return _element_ghost_node_flags[mesh_item_id];
+    }
+#endif    
 
 private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
@@ -65,13 +72,16 @@ private:
     /// in the global stiffness matrix or vector
     std::vector<LineIndex> _rows;
 
-    /// Vector contains for each element a vector of global column indices
-    /// in the global stiffness matrix
-    std::vector<LineIndex> _columns_real;
-
     /// Vector alias to that contains for each element a vector of global column indices
     /// in the global stiffness matrix
-    std::vector<LineIndex> &_columns = _rows;
+    const std::vector<LineIndex> &_columns = _rows;
+
+#ifdef USE_PETSC
+    /// Element nodal flag for whether the node is a ghost node.
+    /// Its first entry of each sub-vector is the indicator for whether the element is a ghost element
+    std::vector<std::vector<bool>> _element_ghost_node_flags;
+#endif
+    
 };
 
 }   // namespace AssemblerLib

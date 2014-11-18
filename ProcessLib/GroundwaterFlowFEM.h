@@ -13,6 +13,10 @@
 #include <memory>
 #include <vector>
 
+#ifdef USE_PETSC
+#include <petscmat.h>
+#endif
+
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -34,6 +38,8 @@ public:
             unsigned const integration_order) = 0;
 
     virtual void assemble() = 0;
+
+    virtual void setGhostElement(const std::vector<bool> elem_ghost_flags) = 0;
 
     virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
@@ -101,11 +107,39 @@ public:
         }
     }
 
+    void setGhostElement(const std::vector<bool> elem_ghost_flags)
+    {
+        if(!elem_ghost_flags[0]) // non-ghost element;	
+           return;	
+        
+        const size_t size = elem_ghost_flags.size();
+        for(size_t i=0; i< size-1; i++)
+        {   
+            if(elem_ghost_flags[i+1]) 
+            {
+               _localA->row(i).setZero(); 
+               (*_localRhs)[i] = 0.;
+            }   
+             
+        }     
+	}
+
     void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
     {
-        A.add(indices, *_localA);
-        rhs.add(indices.rows, *_localRhs);
+#ifdef USE_PETSC
+       std::vector<PetscInt> row_pos(indices.rows.size());   
+       std::vector<PetscInt> col_pos(indices.columns.size());  
+       for(size_t i=0; i<row_pos.size(); i++)
+          row_pos[i] = static_cast<PetscInt>(indices.rows[i]);
+       for(size_t i=0; i<row_pos.size(); i++)
+          col_pos[i] = static_cast<PetscInt>(indices.columns[i]); 
+       A.add(row_pos, col_pos, *_localA);   
+       rhs.add(row_pos, *_localRhs);
+#else
+       A.add(indices, *_localA);
+       rhs.add(indices.rows, *_localRhs);
+#endif       
     }
 
 private:
