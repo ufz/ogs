@@ -6,7 +6,7 @@
 #
 # AddTest(
 #   NAME <name of the the test>
-#   PATH <working directory> # use ${ExternalData_SOURCE_ROOT}
+#   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
 #   EXECUTABLE_ARGS <arguments> # files referenced in the DATA argument can be used here
 #   WRAPPER <time|memcheck|callgrind> # optional, defaults to time
@@ -18,6 +18,10 @@
 #
 #   diff-tester
 #     - DIFF_DATA <list of files to diff>
+#       # the given file is compared to [filename]_expected.[extension]
+#
+#   numdiff-tester
+#     - DIFF_DATA <list of files to numdiff>
 #       # the given file is compared to [filename]_expected.[extension]
 #
 
@@ -86,7 +90,10 @@ function (AddTest)
 	if(AddTest_TESTER STREQUAL "diff" AND NOT DIFF_TOOL_PATH)
 		message(FATAL_ERROR "diff-command is required for diff tester but was not found!")
 	endif()
-	if(AddTest_TESTER STREQUAL "diff" AND NOT AddTest_DIFF_DATA)
+	if(AddTest_TESTER STREQUAL "numdiff" AND NOT NUMDIFF_TOOL_PATH)
+		message(FATAL_ERROR "numdiff-command is required for numdiff tester but was not found!")
+	endif()
+	if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff") AND NOT AddTest_DIFF_DATA)
 		message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
 	endif()
 	if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
@@ -94,11 +101,17 @@ function (AddTest)
 	endif()
 
 	if(AddTest_TESTER STREQUAL "diff")
+		set(TESTER_ARGS "-sbB")
+	elseif(AddTest_TESTER STREQUAL "numdiff")
+		set(TESTER_ARGS "--statistics --absolute-tolerance=1e-5 --relative-tolerance=1e-4")
+	endif()
+
+	if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
 		foreach(FILE ${AddTest_DIFF_DATA})
 			get_filename_component(FILE_NAME ${FILE} NAME_WE)
 			get_filename_component(FILE_EXT ${FILE} EXT)
 			set(FILE_EXPECTED ${FILE_NAME}_expected${FILE_EXT})
-			set(TESTER_COMMAND ${TESTER_COMMAND} "${DIFF_TOOL_PATH} -sbB DATA{${AddTest_SOURCE_PATH}/${FILE_EXPECTED}} ${AddTest_BINARY_PATH}/${FILE}")
+			set(TESTER_COMMAND ${TESTER_COMMAND} "${NUMDIFF_TOOL_PATH} ${TESTER_ARGS} DATA{${AddTest_SOURCE_PATH}/${FILE_EXPECTED}} ${AddTest_BINARY_PATH}/${FILE}")
 			if(AddTest_DIFF_DATA_PARSED)
 				set(AddTest_DIFF_DATA_PARSED "${AddTest_DIFF_DATA_PARSED},${FILE_EXPECTED}")
 			else()
@@ -137,7 +150,7 @@ function (AddTest)
 	endif()
 
 	# Run the tester
-	if(AddTest_TESTER STREQUAL "diff")
+	if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
 		ExternalData_Add_Test(data
 			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
 			COMMAND ${CMAKE_COMMAND}
