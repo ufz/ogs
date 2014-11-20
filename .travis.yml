@@ -26,7 +26,7 @@ before_install:
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 
   # -- Install packages --
-  - travis_retry sudo apt-get install libeigen3-dev
+  - travis_retry sudo apt-get install libeigen3-dev numdiff
 
   # Boost
   - travis_retry sudo apt-get install libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev

@@ -23,3 +23,21 @@ ADD_CUSTOM_TARGET(
 	-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/MoveDataToStore.cmake
 	VERBATIM
 )
+
+IF(HOSTNAME STREQUAL "envinf1.eve.ufz.de")
+	ADD_CUSTOM_TARGET(
+		sync-data
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/../ogs6-data
+		/data/ogs/ogs6-data
+	)
+	IF(CURL_TOOL_PATH)
+		ADD_CUSTOM_COMMAND(
+			TARGET sync-data POST_BUILD
+			COMMAND ${CURL_TOOL_PATH} --insecure 'https://svn.ufz.de:8443/buildByToken/build?job=Tmp_Trigger&token=ogsbuild&cause=Triggered_by_sync-data_target_on_envinf1'
+			COMMENT "Triggered sync to opengeosys.org, see https://svn.ufz.de:8443/job/OGS-6/job/SyncExternalData"
+		)
+	ELSE()
+		MESSAGE(STATUS "curl tool was not found but is required for the sync-data target!")
+	ENDIF()
+ENDIF()

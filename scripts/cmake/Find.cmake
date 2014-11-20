@@ -55,6 +55,8 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
+FIND_PROGRAM(CURL_TOOL_PATH curl DOC "The curl-tool")
+
 ######################
 ### Find libraries ###
 ######################
@@ -125,7 +127,7 @@ IF(OGS_USE_PETSC)
     ##This may cause the compilation broken.
     IF(FORCE_PETSC_EXECUTABLE_RUNS)
         SET(PETSC_EXECUTABLE_RUNS YES)
-    ENDIF() 
+    ENDIF()
 
     SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
     FIND_PACKAGE(PETSc REQUIRED)
@@ -133,9 +135,9 @@ IF(OGS_USE_PETSC)
     include_directories(
               ${PETSC_INCLUDES}
      )
-  
+
     ADD_DEFINITIONS(-DPETSC_VERSION_NUMBER=PETSC_VERSION_MAJOR*1000+PETSC_VERSION_MINOR*10)
-    
+
 ENDIF()
 
 ## Check MPI package

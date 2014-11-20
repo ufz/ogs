@@ -1,8 +1,6 @@
-SET(ARGS --boundary_condition ${case_path}/${case_name}.cnd -g ${case_path}/${case_name}.gml -m ${case_path}/${case_name}.vtu)
-
 STRING(REPLACE " " ";" WRAPPER_COMMAND ${WRAPPER_COMMAND})
 EXECUTE_PROCESS(
-	COMMAND ${WRAPPER_COMMAND} ${executable} ${ARGS}
+	COMMAND ${WRAPPER_COMMAND} ${EXECUTABLE} ${EXECUTABLE_ARGS}
 	WORKING_DIRECTORY ${case_path}
 	RESULT_VARIABLE EXIT_CODE
 )
