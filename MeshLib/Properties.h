@@ -16,7 +16,6 @@
 
 #include <cstdlib>
 #include <string>
-#include <vector>
 #include <map>
 
 #include <boost/any.hpp>
@@ -25,6 +24,8 @@
 #include "logog/include/logog.hpp"
 
 #include "Location.h"
+
+#include "PropertyVector.h"
 
 namespace MeshLib
 {
@@ -41,7 +42,7 @@ public:
 
 	/// Method to get a vector of property values.
 	template <typename T>
-	boost::optional<std::vector<T> const&>
+	boost::optional<PropertyVector<T> *>
 	getProperty(std::string const& name,
 		MeshItemType mesh_item_type = MeshItemType::Cell) const
 	{
@@ -51,14 +52,13 @@ public:
 		);
 		if (it != _properties.end()) {
 			try {
-				boost::any_cast<std::vector<T> const&>(it->second);
-				return boost::any_cast<std::vector<T> const&>(it->second);
+				return boost::any_cast<PropertyVector<T> *>(it->second);
 			} catch (boost::bad_any_cast const&) {
 				ERR("A property with the desired data type is not available.");
-				return boost::optional<std::vector<T> const&>();
+				return boost::optional<PropertyVector<T> *>();
 			}
 		} else {
-			return boost::optional<std::vector<T> const&>();
+			return boost::optional<PropertyVector<T> *>();
 		}
 	}
 
@@ -70,7 +70,7 @@ public:
 	/// separate value for each mesh item.
 	/// The user has to ensure the correct usage of the vector later on.
 	template <typename T>
-	void addProperty(std::string const& name, std::vector<T> const& property,
+	void addProperty(std::string const& name, PropertyVector<T> * property,
 		MeshItemType mesh_item_type = MeshItemType::Cell)
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
