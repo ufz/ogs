@@ -6,5 +6,6 @@ ADD_LIBRARY (ApplicationsLib STATIC ${LIB_SOURCES})
 
 TARGET_LINK_LIBRARIES( ApplicationsLib
 	GeoLib
+	MeshGeoToolsLib
 	ProcessLib
 )
