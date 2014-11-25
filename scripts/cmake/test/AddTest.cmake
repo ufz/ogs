@@ -59,18 +59,18 @@ function (AddTest)
 
 
 	# --- Implement wrappers ---
-	# check requirements
+	# check requirements, disable if not met
 	if(AddTest_WRAPPER STREQUAL "time" AND NOT TIME_TOOL_PATH)
-		message(FATAL_ERROR "time-command is required for time wrapper but was not found!")
+		return()
 	endif()
 	if(AddTest_WRAPPER STREQUAL "memcheck" AND NOT VALGRIND_TOOL_PATH)
-		message(FATAL_ERROR "Valgrind is required for memcheck wrapper but was not found!")
+		return()
 	endif()
 	if(AddTest_WRAPPER STREQUAL "callgrind" AND NOT VALGRIND_TOOL_PATH)
-		message(FATAL_ERROR "Valgrind is required for callgrind wrapper but was not found!")
+		return()
 	endif()
 	if(AddTest_WRAPPER STREQUAL "mpirun" AND NOT MPIRUN_TOOL_PATH)
-		message(FATAL_ERROR "mpirun is required for mpirun wrapper but was not found!")
+		return()
 	endif()
 
 	if(AddTest_WRAPPER STREQUAL "time")
@@ -86,18 +86,19 @@ function (AddTest)
 	endif()
 
 	# --- Implement testers ---
-	# check requirements
+	# check requirements, disable if not met
 	if(AddTest_TESTER STREQUAL "diff" AND NOT DIFF_TOOL_PATH)
-		message(FATAL_ERROR "diff-command is required for diff tester but was not found!")
+		return()
 	endif()
 	if(AddTest_TESTER STREQUAL "numdiff" AND NOT NUMDIFF_TOOL_PATH)
-		message(FATAL_ERROR "numdiff-command is required for numdiff tester but was not found!")
-	endif()
-	if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff") AND NOT AddTest_DIFF_DATA)
-		message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
+		return()
 	endif()
 	if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
-		message(FATAL_ERROR "grep-command is required for memcheck tester but was not found!")
+		return()
+	endif()
+
+	if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff") AND NOT AddTest_DIFF_DATA)
+		message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
 	endif()
 
 	if(AddTest_TESTER STREQUAL "diff")
