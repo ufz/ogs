@@ -170,7 +170,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         std::array<MeshLib::Node*, 6> new_elem_nodes;
         for (unsigned j=0; j<3; ++j)
         {
-            new_elem_nodes[j] = _nodes[last_layer_node_offset + elem->getNodeIndex(j)];
+            new_elem_nodes[j] = _nodes[_nodes[last_layer_node_offset + elem->getNodeIndex(j)]->getID()];
             new_elem_nodes[node_counter] = (_nodes[last_layer_node_offset + elem->getNodeIndex(j) + nNodes]);
             if (new_elem_nodes[j]->getID() != new_elem_nodes[node_counter]->getID())
                 node_counter++;
