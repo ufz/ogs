@@ -50,7 +50,8 @@ public:
     using NodalMatrixType = typename ShapeMatrixPolicyType<ShapeFunction>::NodalMatrixType;
     using NodalVectorType = typename ShapeMatrixPolicyType<ShapeFunction>::NodalVectorType;
 
-    using ShapeMatrices = typename ShapeMatrixPolicyType<ShapeFunction>::ShapeMatrices;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction>;
+    using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
@@ -61,7 +62,7 @@ public:
         unsigned const integration_order)
     {
         using FemType = NumLib::TemplateIsoparametric<
-            ShapeFunction, ShapeMatrices>;
+            ShapeFunction, ShapeMatricesType>;
 
         FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
 
