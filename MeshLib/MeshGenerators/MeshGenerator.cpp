@@ -98,7 +98,7 @@ Mesh* MeshGenerator::generateLineMesh(
 	const GeoLib::Point& origin,
 	std::string   const& mesh_name)
 {
-	return generateRegularQuadMesh(subdivision, subdivision, length/subdivision, length/subdivision, origin, mesh_name);
+	return generateLineMesh(subdivision, length/subdivision, origin, mesh_name);
 }
 
 Mesh* MeshGenerator::generateLineMesh(
@@ -107,7 +107,7 @@ Mesh* MeshGenerator::generateLineMesh(
 	GeoLib::Point const& origin,
 	std::string   const& mesh_name)
 {
-	return MeshGenerator::generateLineMesh(BaseLib::UniformSubdivision(n_cells*cell_size, n_cells), origin, mesh_name);
+	return generateLineMesh(BaseLib::UniformSubdivision(n_cells*cell_size, n_cells), origin, mesh_name);
 }
 
 Mesh* MeshGenerator::generateLineMesh(const BaseLib::ISubdivision &div, GeoLib::Point const& origin, std::string const& mesh_name)
