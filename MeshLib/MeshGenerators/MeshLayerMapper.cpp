@@ -181,7 +181,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         switch (node_counter)
         {
         case 6:
-            _elements.push_back(new MeshLib::Prism(new_elem_nodes, layer_id));
+            _elements.push_back(new MeshLib::Prism(new_elem_nodes, layer_id-1));
             break;
         case 5:
             std::array<MeshLib::Node*, 5> pyramid_nodes;
@@ -190,12 +190,12 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
             pyramid_nodes[2] = new_elem_nodes[_pyramid_base[missing_idx][2]];
             pyramid_nodes[3] = new_elem_nodes[_pyramid_base[missing_idx][3]];
             pyramid_nodes[4] = new_elem_nodes[missing_idx];
-            _elements.push_back(new MeshLib::Pyramid(pyramid_nodes, layer_id));
+            _elements.push_back(new MeshLib::Pyramid(pyramid_nodes, layer_id-1));
             break;
         case 4:
             std::array<MeshLib::Node*, 4> tet_nodes;
             std::copy(new_elem_nodes.begin(), new_elem_nodes.begin() + node_counter, tet_nodes.begin());
-            _elements.push_back(new MeshLib::Tet(tet_nodes, layer_id));
+            _elements.push_back(new MeshLib::Tet(tet_nodes, layer_id-1));
             break;
         default:
             continue;
