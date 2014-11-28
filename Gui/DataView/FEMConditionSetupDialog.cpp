@@ -260,7 +260,7 @@ void FEMConditionSetupDialog::on_disTypeBox_currentIndexChanged(int index)
 
 void FEMConditionSetupDialog::setValueInputWidget(bool is_button)
 {
-	if (is_button || _cond.getGeomType() == GeoLib::GEOTYPE::INVALID) // linear or direct
+	if (is_button) // linear or direct
 	{
 		static_cast<QGridLayout*>(this->layout())->removeWidget(this->firstValueEdit);
 		delete firstValueEdit;
