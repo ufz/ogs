@@ -52,9 +52,10 @@ unsigned getDimension(MeshElemType eleType)
 		case MeshElemType::PYRAMID:
 		case MeshElemType::TETRAHEDRON:
 			return 3;
-		default:
+		case MeshElemType::INVALID:
 			return 0;
 	}
+	return 0;
 }
 
 } // end namespace
