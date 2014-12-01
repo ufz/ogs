@@ -19,7 +19,9 @@
 namespace MeshLib
 {
 
-std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(const std::vector<const std::vector<double>*> &vec_xyz_coords, const GeoLib::Point& origin)
+std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
+	const std::vector<const std::vector<double>*> &vec_xyz_coords,
+	const GeoLib::Point& origin)
 {
 	std::vector<Node*> nodes;
 	nodes.reserve(vec_xyz_coords[0]->size()*vec_xyz_coords[1]->size()*vec_xyz_coords[2]->size());
@@ -39,7 +41,9 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(const std::vecto
 	return nodes;
 }
 
-std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(const std::vector<double> &vec_x_coords, const GeoLib::Point& origin)
+std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
+	const std::vector<double> &vec_x_coords,
+	const GeoLib::Point& origin)
 {
 	std::vector<const std::vector<double>*> vec_xyz_coords;
 	vec_xyz_coords.push_back(&vec_x_coords);
@@ -49,7 +53,10 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(const std::vecto
 	return generateRegularNodes(vec_xyz_coords, origin);
 }
 
-std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(std::vector<double> &vec_x_coords, std::vector<double> &vec_y_coords, const GeoLib::Point& origin)
+std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
+	std::vector<double> &vec_x_coords,
+	std::vector<double> &vec_y_coords,
+	const GeoLib::Point& origin)
 {
 	std::vector<const std::vector<double>*> vec_xyz_coords;
 	vec_xyz_coords.push_back(&vec_x_coords);
@@ -60,7 +67,11 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(std::vector<doub
 	return generateRegularNodes(vec_xyz_coords, origin);
 }
 
-std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(std::vector<double> &vec_x_coords, std::vector<double> &vec_y_coords, std::vector<double> &vec_z_coords, const GeoLib::Point& origin)
+std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
+	std::vector<double> &vec_x_coords,
+	std::vector<double> &vec_y_coords,
+	std::vector<double> &vec_z_coords,
+	const GeoLib::Point& origin)
 {
 	std::vector<const std::vector<double>*> vec_xyz_coords;
 	vec_xyz_coords.push_back(&vec_x_coords);
@@ -110,7 +121,10 @@ Mesh* MeshGenerator::generateLineMesh(
 	return generateLineMesh(BaseLib::UniformSubdivision(n_cells*cell_size, n_cells), origin, mesh_name);
 }
 
-Mesh* MeshGenerator::generateLineMesh(const BaseLib::ISubdivision &div, GeoLib::Point const& origin, std::string const& mesh_name)
+Mesh* MeshGenerator::generateLineMesh(
+	const BaseLib::ISubdivision &div,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	const std::vector<double> vec_x(div());
 	std::vector<Node*> nodes(generateRegularNodes(vec_x, origin));
@@ -231,7 +245,12 @@ Mesh* MeshGenerator::generateRegularHexMesh(
 			origin, mesh_name);
 }
 
-Mesh* MeshGenerator::generateRegularHexMesh(const BaseLib::ISubdivision &div_x, const BaseLib::ISubdivision &div_y, const BaseLib::ISubdivision &div_z, GeoLib::Point const& origin, std::string const& mesh_name)
+Mesh* MeshGenerator::generateRegularHexMesh(
+	const BaseLib::ISubdivision &div_x,
+	const BaseLib::ISubdivision &div_y,
+	const BaseLib::ISubdivision &div_z,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	std::vector<double> vec_x(div_x());
 	std::vector<double> vec_y(div_y());
@@ -306,7 +325,11 @@ Mesh* MeshGenerator::generateRegularTriMesh(
 	return generateRegularTriMesh(BaseLib::UniformSubdivision(n_x_cells*cell_size_x, n_x_cells), BaseLib::UniformSubdivision(n_y_cells*cell_size_y, n_y_cells), origin, mesh_name);
 }
 
-Mesh* MeshGenerator::generateRegularTriMesh(const BaseLib::ISubdivision &div_x, const BaseLib::ISubdivision &div_y, GeoLib::Point const& origin, std::string const& mesh_name)
+Mesh* MeshGenerator::generateRegularTriMesh(
+	const BaseLib::ISubdivision &div_x,
+	const BaseLib::ISubdivision &div_y,
+	GeoLib::Point const& origin,
+	std::string const& mesh_name)
 {
 	std::vector<double> vec_x(div_x());
 	std::vector<double> vec_y(div_y());
