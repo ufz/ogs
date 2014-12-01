@@ -78,7 +78,7 @@ std::vector<MeshLib::Node*> generateRegularNodes(
  * @param origin     coordinates of the left-most point
  * @return a vector of created mesh nodes
  */
-std::vector<MeshLib::Node*> generateRegularNodes(const std::array<unsigned,3> &n_celss,
+std::vector<MeshLib::Node*> generateRegularNodes(const std::array<unsigned,3> &n_cells,
                                                  const std::array<double,3> &cell_size,
                                                  const GeoLib::Point& origin);
 
