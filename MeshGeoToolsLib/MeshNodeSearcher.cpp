@@ -42,10 +42,10 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
 
 MeshNodeSearcher::~MeshNodeSearcher()
 {
-	std::vector<MeshNodesAlongPolyline*>::iterator it(_mesh_nodes_along_polylines.begin());
-	for (; it != _mesh_nodes_along_polylines.end(); ++it) {
-		delete (*it);
-	}
+	for (auto pointer : _mesh_nodes_along_polylines)
+		delete pointer;
+	for (auto pointer : _mesh_nodes_along_surfaces)
+		delete pointer;
 }
 
 std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject const& geoObj)
