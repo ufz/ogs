@@ -194,15 +194,10 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	return 1;
 }
 
-int VtkStationSource::RequestInformation( vtkInformation* request,
-                                          vtkInformationVector** inputVector,
-                                          vtkInformationVector* outputVector )
+int VtkStationSource::RequestInformation( vtkInformation* /*request*/,
+                                          vtkInformationVector** /*inputVector*/,
+                                          vtkInformationVector* /*outputVector*/ )
 {
-	(void)request;
-	(void)inputVector;
-
-	vtkInformation* outInfo = outputVector->GetInformationObject(0);
-
 	return 1;
 }
 

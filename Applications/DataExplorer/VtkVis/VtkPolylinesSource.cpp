@@ -142,15 +142,10 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 	return 1;
 }
 
-int VtkPolylinesSource::RequestInformation( vtkInformation* request,
-                                            vtkInformationVector** inputVector,
-                                            vtkInformationVector* outputVector )
+int VtkPolylinesSource::RequestInformation( vtkInformation* /*request*/,
+                                            vtkInformationVector** /*inputVector*/,
+                                            vtkInformationVector* /*outputVector*/ )
 {
-	(void)request;
-	(void)inputVector;
-
-	vtkInformation* outInfo = outputVector->GetInformationObject(0);
-
 	return 1;
 }
 
