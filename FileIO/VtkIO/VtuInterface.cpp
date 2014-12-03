@@ -44,7 +44,7 @@ VtuInterface::~VtuInterface()
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
 	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
-		vtkXMLUnstructuredGridReader::New();
+		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
 
 	reader->SetFileName(file_name.c_str());
 	reader->Update();
