@@ -39,8 +39,6 @@ public:
 
     virtual void assemble() = 0;
 
-    virtual void setGhostElement(const std::vector<bool> elem_ghost_flags) = 0;
-
     virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
 };
@@ -107,22 +105,6 @@ public:
         }
     }
 
-    void setGhostElement(const std::vector<bool> elem_ghost_flags)
-    {
-        if(!elem_ghost_flags[0]) // non-ghost element;	
-           return;	
-        
-        const size_t size = elem_ghost_flags.size();
-        for(size_t i=0; i< size-1; i++)
-        {   
-            if(elem_ghost_flags[i+1]) 
-            {
-               _localA->row(i).setZero(); 
-               (*_localRhs)[i] = 0.;
-            }   
-             
-        }     
-	}
 
     void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
@@ -134,6 +116,16 @@ public:
           row_pos[i] = static_cast<PetscInt>(indices.rows[i]);
        for(size_t i=0; i<row_pos.size(); i++)
           col_pos[i] = static_cast<PetscInt>(indices.columns[i]); 
+          
+       for(size_t i=0; i<indices.ghost_flags.size(); i++)
+       {
+            if(indices.ghost_flags[i]) 
+            {
+               _localA->row(i).setZero(); 
+               (*_localRhs)[i] = 0.;
+            }   
+	   }
+               
        A.add(row_pos, col_pos, *_localA);   
        rhs.add(row_pos, *_localRhs);
 #else

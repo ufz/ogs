@@ -52,12 +52,7 @@ public:
         LocalToGlobalIndexMap::RowColumnIndices const& indices = _data_pos[id];
 
         local_assembler->assemble();
- 
-#ifdef USE_PETSC
-        std::vector<bool>const&  elem_ghost_flags = _data_pos.getNodeGhostFlags(id);
-        local_assembler->setGhostElement(elem_ghost_flags);
-#endif    
-        
+         
         local_assembler->addToGlobal(_A, _rhs, indices);
     }
 

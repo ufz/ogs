@@ -39,20 +39,24 @@ struct Line
 
     // Position in global matrix or vector
     std::size_t global_index;
+    
+    // Element entity status in a mesh partition, either ghost or real one in use
+    bool is_ghost = false;           
 
-    Line(MeshLib::Location const& l, std::size_t c, std::size_t i)
-    : location(l), comp_id(c), global_index(i)
+    Line(MeshLib::Location const& l, std::size_t c, std::size_t i, const bool ghost_flag = false)
+    : location(l), comp_id(c), global_index(i), is_ghost(ghost_flag) 
     {}
 
-    Line(MeshLib::Location const& l, std::size_t c)
+    Line(MeshLib::Location const& l, std::size_t c, const bool ghost_flag = false)
     : location(l), comp_id(c),
-        global_index(std::numeric_limits<std::size_t>::max())
+        global_index(std::numeric_limits<std::size_t>::max()), is_ghost(ghost_flag)
     {}
 
-    explicit Line(MeshLib::Location const& l)
+    explicit Line(MeshLib::Location const& l, const bool ghost_flag = false)
     : location(l),
         comp_id(std::numeric_limits<std::size_t>::max()),
-        global_index(std::numeric_limits<std::size_t>::max())
+        global_index(std::numeric_limits<std::size_t>::max()),
+        is_ghost(ghost_flag)
     {}
 
     friend std::ostream& operator<<(std::ostream& os, Line const& l)

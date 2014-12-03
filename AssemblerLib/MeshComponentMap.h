@@ -42,6 +42,7 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
+    /// \param is_ghost     flag for ghost entity 
     MeshComponentMap(std::vector<MeshLib::MeshSubsets*> const& components,
         ComponentOrder order);
 
@@ -110,6 +111,17 @@ public:
     template <ComponentOrder ORDER>
     std::vector<std::size_t> getGlobalIndices(const std::vector<Location> &ls) const;
 
+    /// Get flags of ghost location at location \c l.
+    ///
+    /// | Location | ComponentID | GlobalIndex |  Ghost flag |
+    /// | -------- | ----------- | ----------- |-------------|             
+    /// | l        | c           | gi          |is_ghost     | 
+
+    std::vector<bool> getGhostFlags(const Location &l) const;
+    
+    template <ComponentOrder ORDER>
+    std::vector<bool> getGhostFlags(const std::vector<Location> &ls) const;    
+
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
     static std::size_t const nop;
@@ -131,7 +143,6 @@ public:
 private:
     void renumberByLocation(std::size_t offset=0);
 
-private:
     detail::ComponentGlobalIndexDict _dict;
 };
 

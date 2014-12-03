@@ -46,7 +46,7 @@ Mesh::Mesh(const std::string &name,
 	this->setDimension();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
-	//this->setNodesConnectedByElements();
+	this->setNodesConnectedByElements();
 	this->setElementNeighbors();
 
 	this->calcEdgeLengthRange();

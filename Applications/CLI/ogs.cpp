@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
 	ProjectData project(project_config,
 			BaseLib::extractPath(project_arg.getValue()));
 
+
 	// Create processes.
 	project.buildProcesses<GlobalSetupType>();
 
@@ -107,6 +108,7 @@ int main(int argc, char *argv[])
 		(*p_it)->initialize();
 	}
 
+/*
 	std::string const output_file_name(project.getOutputFilePrefix() + "_result.dat");
 	DBUG("Create output file %s", output_file_name.c_str());
 	std::ofstream output_file(output_file_name);
@@ -119,6 +121,8 @@ int main(int argc, char *argv[])
 	}
 
 	output_file.close();
+*/
+
 	INFO("Elapsed running time in total computation %g s", run_timer.elapsed()); 
 	INFO("Elapsed CPU time in total computation %g s", CPU_timer.elapsed()); 
 
