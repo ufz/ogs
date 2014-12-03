@@ -1,6 +1,10 @@
 OpenGeoSys 6                                                      {#mainpage}
 ============
 
+[![Tag](https://img.shields.io/github/tag/ufz/ogs.svg?style=flat-square)](https://github.com/ufz/ogs/releases)
+[![BSD License (modified)](http://img.shields.io/badge/license-BSD-blue.svg?style=flat-square)](https://github.com/ufz/ogs/blob/master/LICENSE.txt)
+[![Travis](https://img.shields.io/travis/ufz/ogs.svg?style=flat-square)](https://travis-ci.org/ufz/ogs)
+
 [OpenGeoSys][ogs] (OGS) is a scientific open source project for the development of
 numerical methods for the simulation of thermo-hydro-mechanical-chemical
 (THMC) processes in porous and fractured media. OGS is implemented in C++, it
