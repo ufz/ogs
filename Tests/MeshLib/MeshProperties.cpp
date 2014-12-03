@@ -61,7 +61,7 @@ public:
 		return group_props;
 	}
 
-	static std::size_t const mesh_size = 3;
+	static std::size_t const mesh_size = 5;
 	MeshLib::Mesh * mesh;
 };
 std::size_t const MeshLibMeshProperties::mesh_size;
@@ -175,9 +175,12 @@ TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 	ASSERT_FALSE(!pointer_properties_cpy);
 
 	for (std::size_t k(0); k<n_elements; k++) {
-		ASSERT_EQ((*pointer_properties)[k][0], (*(*pointer_properties_cpy))[k][0]);
-		ASSERT_EQ((*pointer_properties)[k][1], (*(*pointer_properties_cpy))[k][1]);
-		ASSERT_EQ((*pointer_properties)[k][2], (*(*pointer_properties_cpy))[k][2]);
+		ASSERT_EQ((*((*pointer_properties)[k]))[0],
+			(*((*(*pointer_properties_cpy))[k]))[0]);
+		ASSERT_EQ((*((*pointer_properties)[k]))[1],
+			(*((*(*pointer_properties_cpy))[k]))[1]);
+		ASSERT_EQ((*((*pointer_properties)[k]))[2],
+			(*((*(*pointer_properties_cpy))[k]))[2]);
 	}
 
 	mesh->getProperties().removeProperty(prop_name);
@@ -210,9 +213,12 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	// compare the content
 	const std::size_t n_elements(mesh_size*mesh_size*mesh_size);
 	for (std::size_t k(0); k<n_elements; k++) {
-		ASSERT_EQ((*pointer_properties)[k][0], (*(*pointer_properties_cpy))[k][0]);
-		ASSERT_EQ((*pointer_properties)[k][1], (*(*pointer_properties_cpy))[k][1]);
-		ASSERT_EQ((*pointer_properties)[k][2], (*(*pointer_properties_cpy))[k][2]);
+		ASSERT_EQ((*((*pointer_properties)[k]))[0],
+			(*((*(*pointer_properties_cpy))[k]))[0]);
+		ASSERT_EQ((*((*pointer_properties)[k]))[1],
+			(*((*(*pointer_properties_cpy))[k]))[1]);
+		ASSERT_EQ((*((*pointer_properties)[k]))[2],
+			(*((*(*pointer_properties_cpy))[k]))[2]);
 	}
 
 	// add a 2nd property
