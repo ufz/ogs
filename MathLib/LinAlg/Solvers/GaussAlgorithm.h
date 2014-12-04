@@ -65,8 +65,6 @@ public:
 	 */
 	template <typename V> void solve(V & b) const;
 	void solve(FP_T* & b) const;
-	void solve(FP_T const* & b) const;
-
 
 	/**
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)

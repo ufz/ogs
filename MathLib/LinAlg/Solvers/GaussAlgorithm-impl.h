@@ -70,14 +70,6 @@ void GaussAlgorithm<MAT_T, VEC_T>::solve (V & b) const
 }
 
 template <typename MAT_T, typename VEC_T>
-void GaussAlgorithm<MAT_T, VEC_T>:: solve(FP_T const* & b) const
-{
-	permuteRHS (b);
-	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
-	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
-}
-
-template <typename MAT_T, typename VEC_T>
 void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b) const
 {
 	permuteRHS (b);
