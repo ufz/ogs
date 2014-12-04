@@ -35,10 +35,6 @@ template <typename T>
 class PropertyVector<T*> : public std::vector<T*>
 {
 public:
-	PropertyVector(std::vector<T*> const& properties)
-		: std::vector<T*>(properties)
-	{}
-
 	PropertyVector(std::size_t n_mat_groups,
 		std::vector<std::size_t> const& mat_group_idx_map)
 		: std::vector<T*>(n_mat_groups), _mat_group_idx_map(mat_group_idx_map)
