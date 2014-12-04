@@ -71,32 +71,15 @@ public:
 
 	/// Sets the type of interpolation.
 	void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; }
-
-	/// Imports a color table from a file.
-	//void readFromFile(const std::string &filename);
-
+	
 	/// Exports a color table to a file.
 	void writeToFile(const std::string &filename);
 
-	/**
-	 * Directly load color into lookup table. Use unsigned char values for color
-	 * component specification. Make sure that you've either used the
-	 * Build() method or used SetNumberOfTableValues() prior to using this method.
-	 * This is just a convenience method to use instead of vtkLookupTable::SetTableValue().
-	 */
-	void SetTableValue(vtkIdType indx, unsigned char rgba[4]);
+	/// Set a value within the LUT
+	void SetTableValue(vtkIdType idx, unsigned char rgba[4]);
 
-	/// Directly load color into lookup table.
-	/// This is just a convenience method to use instead of vtkLookupTable::SetTableValue().
-	void SetTableValue(vtkIdType indx,
-	                   unsigned char r,
-	                   unsigned char g,
-	                   unsigned char b,
-	                   unsigned char a);
-
-	/// Return a rgba color value for the given index into the lookup Table.
-	/// This is just a convenience method to use instead of vtkLookupTable::GetTableValue().
-	void GetTableValue(vtkIdType indx, unsigned char rgba[4]);
+	/// Get a value from the LUT
+	void GetTableValue(vtkIdType idx, unsigned char rgba[4]);
 
 protected:
 	/// Constructor

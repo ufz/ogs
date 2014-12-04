@@ -120,50 +120,22 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
 	out.close();
 }
 
-void VtkColorLookupTable::SetTableValue(vtkIdType indx, unsigned char rgba[4])
+void VtkColorLookupTable::SetTableValue(vtkIdType idx, unsigned char rgba[4])
 {
-	// Check the index to make sure it is valid
-	if (indx < 0)
-	{
-		vtkErrorMacro("Can't set the table value for negative index " << indx);
-		return;
-	}
-	if (indx >= this->NumberOfColors)
-	{
-		vtkErrorMacro(
-		        "Index " << indx << " is greater than the number of colors " <<
-		        this->NumberOfColors);
-		return;
-	}
+	double value[4];
 
-	unsigned char* _rgba = this->Table->WritePointer(4 * indx,4);
-	for (size_t i = 0; i < 4; i++)
-		_rgba[i] = rgba[i];
-
-	this->InsertTime.Modified();
-	this->Modified();
+	for (unsigned i=0; i<4; ++i)
+		value[i] = rgba[i]/255.0;
+	vtkLookupTable::SetTableValue(idx, value);
 }
 
-void VtkColorLookupTable::SetTableValue(vtkIdType indx,
-                                        unsigned char r,
-                                        unsigned char g,
-                                        unsigned char b,
-                                        unsigned char a)
+void VtkColorLookupTable::GetTableValue(vtkIdType idx, unsigned char rgba[4])
 {
-	unsigned char rgba[4];
-	rgba[0] = r;
-	rgba[1] = g;
-	rgba[2] = b;
-	rgba[3] = a;
-	this->SetTableValue(indx,rgba);
-}
+	double value[4];
+	vtkLookupTable::GetTableValue(idx, value);
 
-void VtkColorLookupTable::GetTableValue(vtkIdType indx, unsigned char rgba[4])
-{
-	unsigned char* _rgba;
-	_rgba = this->Table->GetPointer(indx * 4);
-	for (size_t i = 0; i < 4; i++)
-		rgba[i] = _rgba[i];
+	for (unsigned i=0; i<4; ++i)
+		rgba[i] = value[i]*255.0;
 }
 
 void VtkColorLookupTable::setColor(double pos, unsigned char rgba[4])
