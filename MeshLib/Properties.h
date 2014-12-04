@@ -115,7 +115,7 @@ private:
 			if (name.compare(other.name) == 0) {
 				return mesh_item_type < other.mesh_item_type;
 			}
-			return name.compare(other.name) < 0 ? true : false;
+			return name.compare(other.name) < 0;
 		}
 	};
 
