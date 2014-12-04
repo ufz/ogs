@@ -44,7 +44,7 @@ public:
 	template <typename T>
 	boost::optional<PropertyVector<T> *>
 	getProperty(std::string const& name,
-		MeshItemType mesh_item_type = MeshItemType::Cell) const
+		MeshItemType mesh_item_type) const
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
@@ -71,7 +71,7 @@ public:
 	/// The user has to ensure the correct usage of the vector later on.
 	template <typename T>
 	void addProperty(std::string const& name, PropertyVector<T> * property,
-		MeshItemType mesh_item_type = MeshItemType::Cell)
+		MeshItemType mesh_item_type)
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
@@ -86,7 +86,7 @@ public:
 	}
 
 	void removeProperty(std::string const& name,
-		MeshItemType mesh_item_type = MeshItemType::Cell)
+		MeshItemType mesh_item_type)
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
