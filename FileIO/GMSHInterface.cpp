@@ -202,7 +202,6 @@ void GMSHInterface::readNodeIDs(std::ifstream &in,
 MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map)
 {	
 	unsigned idx, type, n_tags, dummy, mat_id;
-	MeshLib::Element* elem (nullptr);
 	std::vector<unsigned> node_ids;
 	std::vector<MeshLib::Node*> elem_nodes;
 	in >> idx >> type >> n_tags >> dummy >> mat_id;

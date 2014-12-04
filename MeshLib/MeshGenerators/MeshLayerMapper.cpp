@@ -106,7 +106,10 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 	return new MeshLib::Mesh(mesh_name, new_nodes, new_elems);
 }
 
-bool MeshLayerMapper::createRasterLayers(MeshLib::Mesh const& mesh, std::vector<GeoLib::Raster const*> const& rasters, double noDataReplacementValue)
+bool MeshLayerMapper::createRasterLayers(
+	MeshLib::Mesh const& mesh,
+	std::vector<GeoLib::Raster const*> const& rasters,
+	double /*noDataReplacementValue*/)
 {
 	const std::size_t nLayers(rasters.size());
 	if (nLayers < 2 || mesh.getDimension() != 2)

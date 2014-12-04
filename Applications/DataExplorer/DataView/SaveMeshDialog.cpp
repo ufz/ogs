@@ -28,7 +28,7 @@
 #include "LastSavedFileDirectory.h"
 
 SaveMeshDialog::SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent)
-	: _mesh(mesh), QDialog(parent)
+	: QDialog(parent), _mesh(mesh)
 {
 	setupUi(this);
 	this->fileNameEdit->setText(LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()) + ".vtu");
