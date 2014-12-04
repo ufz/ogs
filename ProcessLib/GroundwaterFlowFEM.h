@@ -110,12 +110,6 @@ public:
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
     {
 #ifdef USE_PETSC
-       std::vector<PetscInt> row_pos(indices.rows.size());   
-       std::vector<PetscInt> col_pos(indices.columns.size());  
-       for(size_t i=0; i<row_pos.size(); i++)
-          row_pos[i] = static_cast<PetscInt>(indices.rows[i]);
-       for(size_t i=0; i<row_pos.size(); i++)
-          col_pos[i] = static_cast<PetscInt>(indices.columns[i]); 
           
        for(size_t i=0; i<indices.ghost_flags.size(); i++)
        {
@@ -126,8 +120,8 @@ public:
             }   
 	   }
                
-       A.add(row_pos, col_pos, *_localA);   
-       rhs.add(row_pos, *_localRhs);
+       A.add(indices.rows, indices.columns, *_localA);   
+       rhs.add(indices.rows, *_localRhs);
 #else
        A.add(indices, *_localA);
        rhs.add(indices.rows, *_localRhs);

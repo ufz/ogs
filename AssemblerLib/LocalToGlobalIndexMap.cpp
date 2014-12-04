@@ -40,6 +40,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 #ifdef USE_PETSC
             const MeshLib::NodePartitionedMesh &mesh 
                     = dynamic_cast<const MeshLib::NodePartitionedMesh&>(ms->getMesh());
+            std::vector<bool> null_vec;        
 #endif
             // For each element find the global indices for node/element
             // components.
@@ -59,31 +60,37 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
                         MeshLib::MeshItemType::Node,
                         (*e)->getNode(n)->getID());
                 }
-
+                
+#ifdef USE_PETSC            
+                switch (order)
+                {
+                    case AssemblerLib::ComponentOrder::BY_LOCATION:
+                        _rows.push_back(_mesh_component_map.getGlobalIndicesByLocation<PetscInt>(vec_items));
+                        if((*e)->getID() >= mesh.getNNonGhostElements()) // ghost element
+                            _element_ghost_node_flags.push_back(_mesh_component_map.getGhostFlags<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
+                        else
+                            _element_ghost_node_flags.push_back(null_vec);
+                        break;
+                    case AssemblerLib::ComponentOrder::BY_COMPONENT:
+                        _rows.push_back(_mesh_component_map.getGlobalIndicesByComponent<PetscInt>(vec_items));
+                        if((*e)->getID() >= mesh.getNNonGhostElements()) // ghost element
+                            _element_ghost_node_flags.push_back(_mesh_component_map.getGhostFlags<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
+                        else
+                            _element_ghost_node_flags.push_back(null_vec);
+                        break;
+                }
+#else
                 // Save a line of indices for the current element.
                 switch (order)
                 {
                     case AssemblerLib::ComponentOrder::BY_LOCATION:
-                        _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
+                        _rows.push_back(_mesh_component_map.getGlobalIndicesByLocation<std:size_t>(vec_items));
                         break;
                     case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                        _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
+                        _rows.push_back(_mesh_component_map.getGlobalIndicesByComponent<std:size_t>(vec_items));
                         break;
                 }
-                
-#ifdef USE_PETSC
-                if((*e)->getID() < mesh.getNNonGhostElements()) // Non ghost element
-                   continue;  
-            
-                switch (order)
-                {
-                    case AssemblerLib::ComponentOrder::BY_LOCATION:
-                       _element_ghost_node_flags.push_back(_mesh_component_map.getGhostFlags<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
-                        break;
-                    case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                       _element_ghost_node_flags.push_back(_mesh_component_map.getGhostFlags<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
-                        break;
-                }                
+                                
 #endif                
                 
             }

@@ -98,9 +98,9 @@ public:
          MathLib::PETScMatrixOption mat_opt;
          mat_opt.d_nz = _mesh.getMaximumNConnectedNodesToNode();
          mat_opt.o_nz = 0;
-        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize(), mat_opt) );        
-        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSizeGlobal(), mat_opt) );        
+        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
+        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
 #else        
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
@@ -181,9 +181,10 @@ public:
              if( mesh.isGhostNode(_dirichlet_bc.global_ids[i]) )
                 continue;
                 
-             dbc_pos.push_back(static_cast<PetscInt>(_dirichlet_bc.global_ids[i])); 
-             dbc_pos.push_back(static_cast<PetscScalar>(_dirichlet_bc.values[i])); 	   
+             dbc_pos.push_back(static_cast<PetscInt>(mesh.getGlobalNodeID(_dirichlet_bc.global_ids[i]))); 
+             dbc_value.push_back(static_cast<PetscScalar>(_dirichlet_bc.values[i])); 	   
         }       
+        MathLib::applyKnownSolution(*_A, *_rhs, *_x, dbc_pos, dbc_value);
 #else       
          // Apply known values from the Dirichlet boundary conditions.
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);

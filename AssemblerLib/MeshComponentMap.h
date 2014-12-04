@@ -108,8 +108,13 @@ public:
     /// | l_m      | comp_id_2   | gi78        |
     /// | ...      |  ...        | ...         |
     /// | l_n      | comp_id_n   | gi89        |
-    template <ComponentOrder ORDER>
-    std::vector<std::size_t> getGlobalIndices(const std::vector<Location> &ls) const;
+    template <typename T_INT_TYPE>
+    std::vector<T_INT_TYPE> getGlobalIndicesByLocation(const std::vector<Location> &ls) const;
+
+    /// The same fucntion as getGlobalIndicesByLocation but by component    
+    template <typename T_INT_TYPE>
+    std::vector<T_INT_TYPE> getGlobalIndicesByComponent(const std::vector<Location> &ls) const;
+
 
     /// Get flags of ghost location at location \c l.
     ///
@@ -118,6 +123,11 @@ public:
     /// | l        | c           | gi          |is_ghost     | 
 
     std::vector<bool> getGhostFlags(const Location &l) const;
+    
+    std::size_t getGlobalDOF() const
+    {
+        return _num_global_dof;	
+    }
     
     template <ComponentOrder ORDER>
     std::vector<bool> getGhostFlags(const std::vector<Location> &ls) const;    
@@ -144,8 +154,12 @@ private:
     void renumberByLocation(std::size_t offset=0);
 
     detail::ComponentGlobalIndexDict _dict;
+    
+    size_t _num_global_dof = 0;
 };
 
 }   // namespace AssemblerLib
+
+#include "MeshComponentMap-impl.h"
 
 #endif  // ASSEMBLERLIB_MESHCOMPONENTMAP_H_

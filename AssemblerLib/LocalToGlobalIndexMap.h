@@ -16,6 +16,10 @@
 
 #include <vector>
 
+#ifdef USE_PETSC
+#include <petscsys.h>
+#endif
+
 #include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MeshLib/MeshSubsets.h"
@@ -35,7 +39,11 @@ namespace AssemblerLib
 class LocalToGlobalIndexMap
 {
 public:
+#ifdef USE_PETSC
+    typedef MathLib::RowColumnIndices<PetscInt> RowColumnIndices;
+#else
     typedef MathLib::RowColumnIndices<std::size_t> RowColumnIndices;
+#endif    
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:
@@ -49,6 +57,12 @@ public:
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
+
+    /// Returns total number of global degrees of freedom for DDC.
+    std::size_t dofSizeGlobal() const
+    {
+		return _mesh_component_map.getGlobalDOF();
+    }
 
     std::size_t size() const;
 
