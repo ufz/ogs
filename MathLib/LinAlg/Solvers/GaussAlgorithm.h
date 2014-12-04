@@ -75,6 +75,7 @@ public:
 	void solve(VEC_T const& b, VEC_T & x) const;
 
 private:
+	void performLU();
 	/**
 	 * permute the right hand side vector according to the
 	 * row permutations of the LU factorization
