@@ -18,12 +18,6 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include <map>
-
-#include <boost/any.hpp>
-#include <boost/optional.hpp>
-
-#include "logog/include/logog.hpp"
 
 #include "BaseLib/Counter.h"
 
