@@ -42,3 +42,13 @@ ExternalData_Add_Test(
     NAME NodePartitionedMeshTestBinary
     COMMAND  "mpirun" ${MPITestParameters} 
 )
+
+## 
+set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/EllipticPETSc/,REGEX:.*}")
+set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/quad_20x10_GroundWaterFlow.prj")
+ExternalData_Add_Test(
+    data
+    NAME ParalllelFEM_GroundWaterFlow
+    COMMAND  "mpirun" ${MPITestParameters} 
+)
+
