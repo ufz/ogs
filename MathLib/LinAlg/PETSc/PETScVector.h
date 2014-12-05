@@ -231,7 +231,7 @@ class PETScVector
              PETSC_VIEWER_DRAW_CONTOUR       Views the vector with a contour plot
         */
         void viewer(const std::string &file_name,
-                    const PetscViewerFormat vw_format = PETSC_VIEWER_ASCII_MATLAB );
+                    const PetscViewerFormat vw_format = PETSC_VIEWER_ASCII_MATLAB ) const;
 
     private:
         PETSc_Vec _v;

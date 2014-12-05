@@ -98,10 +98,10 @@ public:
          MathLib::PETScMatrixOption mat_opt;
          mat_opt.d_nz = _mesh.getMaximumNConnectedNodesToNode();
          mat_opt.o_nz = 0;
-        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSizeGlobal(), mat_opt) );        
-        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
-        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
-        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSizeGlobal(), mat_opt) );        
+         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
+         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
+         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
 #else        
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
@@ -197,8 +197,22 @@ public:
         DBUG("Postprocessing GroundwaterFlowProcess.");
         // Postprocessing of the linear system of equations solver results:
         // For example, write _x to _hydraulic_head or convert to velocity etc.
+        
+#ifdef USE_PETSC // Note: this is only a test
+        int rank; 
+        MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+                    
+        std::vector<PetscScalar>  u(_x->size()); 
+        _x->getGlobalVector(&u[0]);
+        if(rank == 0)
+        {  
+            for (std::size_t i = 0; i < u.size(); ++i)
+                 os << u[i] << " ";
+        }        
+#else        
         for (std::size_t i = 0; i < _x->size(); ++i)
-            os << (*_x)[i] << "\n";
+            os << (*_x)[i] << " ";
+#endif            
     }
 
     ~GroundwaterFlowProcess()
@@ -210,6 +224,13 @@ public:
             delete p;
 
         delete _mesh_subset_all_nodes;
+        
+#ifdef USE_PETSC // Release ownership of unique_ptr
+        _A.release();
+        _rhs.release();
+        _x.release();
+        _linearSolver.release();
+#endif        
     }
 
 private:
@@ -223,7 +244,7 @@ private:
     std::unique_ptr<typename GlobalSetup::MatrixType> _A;
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
-
+    
     std::vector<GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>*>
             _local_assemblers;
