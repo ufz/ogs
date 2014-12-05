@@ -22,9 +22,7 @@ template <typename MAT_T, typename VEC_T>
 GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
 		boost::property_tree::ptree const* const) :
 		_mat(A), _n(_mat.getNRows()), _perm(new IDX_T[_n])
-{
-	performLU();
-}
+{}
 
 template <typename MAT_T, typename VEC_T>
 void GaussAlgorithm<MAT_T, VEC_T>::performLU()
@@ -68,27 +66,32 @@ GaussAlgorithm<MAT_T, VEC_T>::~GaussAlgorithm()
 
 template <typename MAT_T, typename VEC_T>
 template <typename V>
-void GaussAlgorithm<MAT_T, VEC_T>::solve (V & b) const
+void GaussAlgorithm<MAT_T, VEC_T>::solve (V & b, bool decompose)
 {
+	if (decompose)
+		performLU();
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
 	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
 }
 
 template <typename MAT_T, typename VEC_T>
-void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b) const
+void GaussAlgorithm<MAT_T, VEC_T>::solve (FP_T* & b, bool decompose)
 {
+	if (decompose)
+		performLU();
 	permuteRHS (b);
 	forwardSolve (_mat, b); // L z = b, b will be overwritten by z
 	backwardSolve (_mat, b); // U x = z, b (z) will be overwritten by x
 }
 
 template <typename MAT_T, typename VEC_T>
-void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T const& b, VEC_T & x) const
+void GaussAlgorithm<MAT_T, VEC_T>::solve (VEC_T const& b, VEC_T & x,
+	bool decompose)
 {
 	for (std::size_t k(0); k<_mat.getNRows(); k++)
 		x[k] = b[k];
-	solve(x);
+	solve(x, decompose);
 }
 
 template <typename MAT_T, typename VEC_T>
