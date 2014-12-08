@@ -33,35 +33,6 @@ public:
 		delete mesh;
 	}
 
-	template <typename T>
-	MeshLib::PropertyVector<T*>* createGroupPropertyValueVector(
-		std::size_t n_mat_groups)
-	{
-		const std::size_t n_elements(mesh_size*mesh_size*mesh_size);
-		std::vector<std::size_t> mat_group_idx_map(n_elements);
-		// create simple mat_group to index mapping
-		for (std::size_t j(0); j<n_mat_groups; j++) {
-			std::size_t const lower((double)(j)/(double)(n_mat_groups)*n_elements);
-			std::size_t const upper((double)(j+1)/(double)(n_mat_groups)*n_elements);
-			for (std::size_t k(lower); k<upper; k++) {
-				mat_group_idx_map[k] = j;
-			}
-		}
-		MeshLib::PropertyVector<T*> *group_props(
-			new MeshLib::PropertyVector<T*>(
-				n_mat_groups, mat_group_idx_map
-			)
-		);
-		for (auto it=group_props->begin(); it != group_props->end(); it++) {
-			(*it) = new T;
-			for (std::size_t idx(0); idx<(*it)->size(); idx++) {
-				(*(*it))[idx] = std::distance(group_props->begin(), it)+idx;
-			}
-		}
-
-		return group_props;
-	}
-
 	static std::size_t const mesh_size = 5;
 	MeshLib::Mesh * mesh;
 };
@@ -71,29 +42,27 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
 	const std::size_t size(mesh_size*mesh_size*mesh_size);
-	MeshLib::PropertyVector<double> *double_properties(
-		new MeshLib::PropertyVector<double>(size)
+
+	std::string const prop_name("TestProperty");
+	boost::optional<MeshLib::PropertyVector<double> &> double_properties(
+		mesh->getProperties().newProperty<double>(prop_name,
+			MeshLib::MeshItemType::Cell)
 	);
-	// init property values
-	std::iota(double_properties->begin(), double_properties->end(), 1);
+	(*double_properties).resize(size);
+	std::iota((*double_properties).begin(), (*double_properties).end(), 1);
 
-	std::string const& prop_name("FirstTestProperty");
-	// add a vector with property values to the mesh
-	mesh->getProperties().addProperty(prop_name, double_properties,
-		MeshLib::MeshItemType::Cell);
-
-	boost::optional<MeshLib::PropertyVector<double> *>
+	boost::optional<MeshLib::PropertyVector<double> const&>
 		double_properties_cpy(mesh->getProperties().getProperty<double>(
 			prop_name, MeshLib::MeshItemType::Cell
 		));
 	ASSERT_FALSE(!double_properties_cpy);
 
 	for (std::size_t k(0); k<size; k++) {
-		ASSERT_EQ((*double_properties)[k], (*(*double_properties_cpy))[k]);
+		ASSERT_EQ((*double_properties)[k], (*double_properties_cpy)[k]);
 	}
 
 	mesh->getProperties().removeProperty(prop_name, MeshLib::MeshItemType::Cell);
-	boost::optional<MeshLib::PropertyVector<double> *>
+	boost::optional<MeshLib::PropertyVector<double> const&>
 		removed_double_properties(mesh->getProperties().getProperty<double>(prop_name,
 			MeshLib::MeshItemType::Cell)
 		);
@@ -104,209 +73,226 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
-	const std::size_t n_mat_groups(10);
-	const std::size_t n_elements(mesh_size*mesh_size*mesh_size);
-	std::vector<std::size_t> mat_group_idx_map(n_elements);
+	std::string const& prop_name("GroupProperty");
+	const std::size_t n_prop_val_groups(10);
+	const std::size_t n_items(mesh_size*mesh_size*mesh_size);
+	std::vector<std::size_t> prop_item2group_mapping(n_items);
 	// create simple mat_group to index mapping
-	for (std::size_t j(0); j<n_mat_groups; j++) {
-		std::size_t const lower((double)(j)/(double)(n_mat_groups)*n_elements);
-		std::size_t const upper((double)(j+1)/(double)(n_mat_groups)*n_elements);
+	for (std::size_t j(0); j<n_prop_val_groups; j++) {
+		std::size_t const lower((double)(j)/(double)(n_prop_val_groups)*n_items);
+		std::size_t const upper((double)(j+1)/(double)(n_prop_val_groups)*n_items);
 		for (std::size_t k(lower); k<upper; k++) {
-			mat_group_idx_map[k] = j;
+			prop_item2group_mapping[k] = j;
 		}
 	}
-	MeshLib::PropertyVector<double*> *pointer_properties(
-		new MeshLib::PropertyVector<double*>(n_mat_groups, mat_group_idx_map)
+	// obtain PropertyVector data structure
+	boost::optional<MeshLib::PropertyVector<double*> &> group_properties(
+		mesh->getProperties().newProperty<double*>(
+			prop_name, n_prop_val_groups, prop_item2group_mapping,
+			MeshLib::MeshItemType::Cell
+		)
 	);
-	for (auto it=pointer_properties->begin(); it != pointer_properties->end(); it++)
+	// initialize the property values
+	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++)
 	{
 		(*it) = new double;
-		*(*it) = std::distance(pointer_properties->begin(), it);
+		*(*it) = std::distance((*group_properties).begin(), it);
 	}
 
-	std::string const& prop_name("TestMatGroupProperty");
-	// add a vector with property values to the mesh
-	mesh->getProperties().addProperty(prop_name, pointer_properties,
-		MeshLib::MeshItemType::Cell);
-
-	boost::optional<MeshLib::PropertyVector<double*> *>
-		pointer_properties_cpy(mesh->getProperties().getProperty<double*>(
+	// fetch the properties from the container
+	boost::optional<MeshLib::PropertyVector<double*> const&>
+		group_properties_cpy(mesh->getProperties().getProperty<double*>(
 			prop_name, MeshLib::MeshItemType::Cell
 		));
-	ASSERT_FALSE(!pointer_properties_cpy);
+	ASSERT_FALSE(!group_properties_cpy);
 
-	for (std::size_t k(0); k<n_elements; k++) {
-		ASSERT_EQ((*pointer_properties)[k], (*(*pointer_properties_cpy))[k]);
+	for (std::size_t k(0); k<n_items; k++) {
+		ASSERT_EQ((*group_properties)[k], (*group_properties_cpy)[k]);
 	}
 
 	mesh->getProperties().removeProperty(prop_name, MeshLib::MeshItemType::Cell);
-	boost::optional<MeshLib::PropertyVector<double*> *>
-		removed_double_properties(mesh->getProperties().getProperty<double*>(
+	boost::optional<MeshLib::PropertyVector<double*> const&>
+		removed_group_properties(mesh->getProperties().getProperty<double*>(
 			prop_name, MeshLib::MeshItemType::Cell
 		));
 
-	ASSERT_TRUE(!removed_double_properties);
+	ASSERT_TRUE(!removed_group_properties);
 }
 
 TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
-	const std::size_t n_mat_groups(10);
-	const std::size_t n_elements(mesh_size*mesh_size*mesh_size);
-	std::vector<std::size_t> mat_group_idx_map(n_elements);
+	std::string const& prop_name("TestGroupPropertyWithArray");
+	const std::size_t n_prop_val_groups(10);
+	const std::size_t n_items(mesh_size*mesh_size*mesh_size);
+	std::vector<std::size_t> prop_item2group_mapping(n_items);
 	// create simple mat_group to index mapping
-	for (std::size_t j(0); j<n_mat_groups; j++) {
-		std::size_t const lower((double)(j)/(double)(n_mat_groups)*n_elements);
-		std::size_t const upper((double)(j+1)/(double)(n_mat_groups)*n_elements);
+	for (std::size_t j(0); j<n_prop_val_groups; j++) {
+		std::size_t const lower((double)(j)/(double)(n_prop_val_groups)*n_items);
+		std::size_t const upper((double)(j+1)/(double)(n_prop_val_groups)*n_items);
 		for (std::size_t k(lower); k<upper; k++) {
-			mat_group_idx_map[k] = j;
+			prop_item2group_mapping[k] = j;
 		}
 	}
-	MeshLib::PropertyVector<std::array<double,3>*> *pointer_properties(
-		new MeshLib::PropertyVector<std::array<double,3>*>(
-			n_mat_groups, mat_group_idx_map
-		)
-	);
-	for (auto it=pointer_properties->begin(); it != pointer_properties->end(); it++)
+	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> &>
+		group_properties(
+			mesh->getProperties().newProperty<std::array<double,3>*>(
+				prop_name, n_prop_val_groups, prop_item2group_mapping,
+				MeshLib::MeshItemType::Cell
+			)
+		);
+	// initialize the property values
+	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++)
 	{
 		(*it) = new std::array<double,3>;
-		(*(*it))[0] = std::distance(pointer_properties->begin(), it);
-		(*(*it))[1] = std::distance(pointer_properties->begin(), it)+1;
-		(*(*it))[2] = std::distance(pointer_properties->begin(), it)+2;
+		(*(*it))[0] = std::distance((*group_properties).begin(), it);
+		(*(*it))[1] = std::distance((*group_properties).begin(), it)+1;
+		(*(*it))[2] = std::distance((*group_properties).begin(), it)+2;
 	}
 
-	std::string const& prop_name("TestMatGroupProperty");
-	// add a vector with property values to the mesh
-	mesh->getProperties().addProperty(prop_name, pointer_properties,
-		MeshLib::MeshItemType::Cell);
-
-	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> *>
-		pointer_properties_cpy(
+	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
+		group_properties_cpy(
 			mesh->getProperties().getProperty<std::array<double,3>*>(
 				prop_name, MeshLib::MeshItemType::Cell
 			)
 		);
-	ASSERT_FALSE(!pointer_properties_cpy);
+	ASSERT_FALSE(!group_properties_cpy);
 
-	for (std::size_t k(0); k<n_elements; k++) {
-		ASSERT_EQ((*((*pointer_properties)[k]))[0],
-			(*((*(*pointer_properties_cpy))[k]))[0]);
-		ASSERT_EQ((*((*pointer_properties)[k]))[1],
-			(*((*(*pointer_properties_cpy))[k]))[1]);
-		ASSERT_EQ((*((*pointer_properties)[k]))[2],
-			(*((*(*pointer_properties_cpy))[k]))[2]);
+	for (std::size_t k(0); k<n_items; k++) {
+		ASSERT_EQ((*((*group_properties)[k]))[0],
+			(*((*group_properties_cpy)[k]))[0]);
+		ASSERT_EQ((*((*group_properties)[k]))[1],
+			(*((*group_properties_cpy)[k]))[1]);
+		ASSERT_EQ((*((*group_properties)[k]))[2],
+			(*((*group_properties_cpy)[k]))[2]);
 	}
 
 	mesh->getProperties().removeProperty(prop_name, MeshLib::MeshItemType::Cell);
-	boost::optional<MeshLib::PropertyVector<std::array<double, 3>*> *>
-		removed_double_properties(
+	boost::optional<MeshLib::PropertyVector<std::array<double, 3>*> const&>
+		removed_group_properties(
 			mesh->getProperties().getProperty<std::array<double,3>*>(
 				prop_name, MeshLib::MeshItemType::Cell
 			)
 		);
 
-	ASSERT_TRUE(!removed_double_properties);
+	ASSERT_TRUE(!removed_group_properties);
 }
 
 TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
 
-	const std::size_t n_mat_groups(10);
 	std::string const& prop_name("TestMatGroupVectorProperty");
-	// add a vector with property values to the mesh
-	MeshLib::PropertyVector<std::array<double,3>*> *pointer_properties(
-		createGroupPropertyValueVector<std::array<double,3>>(n_mat_groups));
-	mesh->getProperties().addProperty(prop_name, pointer_properties,
-		MeshLib::MeshItemType::Cell);
+	const std::size_t n_prop_val_groups(10);
+	const std::size_t n_items(mesh_size*mesh_size*mesh_size);
+	std::vector<std::size_t> prop_item2group_mapping(n_items);
+	// create simple mat_group to index mapping
+	for (std::size_t j(0); j<n_prop_val_groups; j++) {
+		std::size_t const lower((double)(j)/(double)(n_prop_val_groups)*n_items);
+		std::size_t const upper((double)(j+1)/(double)(n_prop_val_groups)*n_items);
+		for (std::size_t k(lower); k<upper; k++) {
+			prop_item2group_mapping[k] = j;
+		}
+	}
+	// create data structure for the property
+	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> &>
+		group_properties(
+			mesh->getProperties().newProperty<std::array<double,3>*>(
+				prop_name, n_prop_val_groups, prop_item2group_mapping,
+				MeshLib::MeshItemType::Cell
+			)
+		);
+	// initialize the property values
+	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++) {
+		(*it) = new std::array<double,3>;
+		for (std::size_t idx(0); idx<(*it)->size(); idx++) {
+			(*(*it))[idx] = std::distance((*group_properties).begin(), it)+idx;
+		}
+	}
 
 	// fetch the vector filled with property values from mesh
-	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> *>
-		pointer_properties_cpy(
+	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
+		group_properties_cpy(
 			mesh->getProperties().getProperty<std::array<double,3>*>(
 				prop_name, MeshLib::MeshItemType::Cell
 			)
 		);
-	ASSERT_FALSE(!pointer_properties_cpy);
-
+	ASSERT_FALSE(!group_properties_cpy);
 	// compare the content
 	const std::size_t n_elements(mesh_size*mesh_size*mesh_size);
 	for (std::size_t k(0); k<n_elements; k++) {
-		ASSERT_EQ((*((*pointer_properties)[k]))[0],
-			(*((*(*pointer_properties_cpy))[k]))[0]);
-		ASSERT_EQ((*((*pointer_properties)[k]))[1],
-			(*((*(*pointer_properties_cpy))[k]))[1]);
-		ASSERT_EQ((*((*pointer_properties)[k]))[2],
-			(*((*(*pointer_properties_cpy))[k]))[2]);
+		ASSERT_EQ((*((*group_properties)[k]))[0],
+			(*((*group_properties_cpy)[k]))[0]);
+		ASSERT_EQ((*((*group_properties)[k]))[1],
+			(*((*group_properties_cpy))[k])[1]);
+		ASSERT_EQ((*((*group_properties)[k]))[2],
+			(*((*group_properties_cpy)[k]))[2]);
 	}
 
-	// add a 2nd property
-	const std::size_t size(mesh_size*mesh_size*mesh_size);
-	MeshLib::PropertyVector<std::array<float,9>> *matrix_properties(
-		new MeshLib::PropertyVector<std::array<float,9>>(size)
+	// *** add a 2nd property ***
+	std::string const& prop_name_2("ItemwiseMatrixProperties");
+	const std::size_t n_items_2(mesh_size*mesh_size*mesh_size);
+	boost::optional<MeshLib::PropertyVector<std::array<float,9>> &>
+		array_properties(mesh->getProperties().newProperty<
+			std::array<float,9>
+		> (prop_name_2, MeshLib::MeshItemType::Cell)
 	);
 	// init property values
-	for (auto it=matrix_properties->begin(); it != matrix_properties->end(); it++)
+	for (auto it=(*array_properties).begin(); it != (*array_properties).end(); it++)
 	{
 		for (std::size_t k(0); k<it->size(); k++) {
-			(*it)[k] = std::distance(matrix_properties->begin(), it)+k;
+			(*it)[k] = std::distance(array_properties->begin(), it)+k;
 		}
 	}
 
-	std::string const& prop_name_2("MatrixProperties");
-	// add a vector with property values to the mesh
-	mesh->getProperties().addProperty(prop_name_2, matrix_properties,
-		MeshLib::MeshItemType::Cell);
-
 	// fetch the vector in order to compare the content
-	boost::optional<MeshLib::PropertyVector<std::array<float,9>> *>
-		matrix_properties_cpy(mesh->getProperties().getProperty<std::array<float,9>>(
+	boost::optional<MeshLib::PropertyVector<std::array<float,9>> const&>
+		array_properties_cpy(mesh->getProperties().getProperty<std::array<float,9>>(
 			prop_name_2, MeshLib::MeshItemType::Cell
 		)
 	);
-	ASSERT_FALSE(!matrix_properties_cpy);
+	ASSERT_FALSE(!array_properties_cpy);
 
 	// compare the values/matrices
-	for (std::size_t k(0); k<size; k++) {
-		ASSERT_EQ((*matrix_properties)[k], (*(*matrix_properties_cpy))[k]);
+	for (std::size_t k(0); k<n_items_2; k++) {
+		for (std::size_t j(0); j<(*array_properties).size(); j++) {
+			ASSERT_EQ((*array_properties)[k][j], (*array_properties_cpy)[k][j]);
+		}
 	}
 
-	// add a 3rd property
+	// *** add a 3rd property ***
 #ifdef OGS_USE_EIGEN
-	MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>>
-		*properties_3(
-			new MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>>(size)
+	std::string const& prop_name_3("ItemwiseEigenMatrixProperties");
+	boost::optional<
+		MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>> &>
+	matrix_properties(mesh->getProperties().newProperty
+		<Eigen::Matrix<double,3,3,Eigen::RowMajor>> (
+			prop_name_3, MeshLib::MeshItemType::Cell)
 	);
-
 	// init property values
-	for (auto it=properties_3->begin(); it != properties_3->end(); it++)
+	for (auto it=(*matrix_properties).begin(); it != (*matrix_properties).end(); it++)
 	{
 		for (int r(0); r<it->rows(); r++) {
 			for (int c(0); c<it->cols(); c++) {
-				(*it)(r,c) = std::distance(properties_3->begin(),it)
+				(*it)(r,c) = std::distance((*matrix_properties).begin(),it)
 					+ r*it->cols()+c+1;
 			}
 		}
 	}
 
-	std::string const& prop_name_3("Properties3");
-	// add a vector with property values to the mesh
-	mesh->getProperties().addProperty(prop_name_3, properties_3,
-		MeshLib::MeshItemType::Cell);
-
 	// fetch the vector in order to compare the content
 	boost::optional<
-		MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>>*
-	> properties_3_cpy(
+		MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>> const&
+	> matrix_properties_cpy(
 		mesh->getProperties().getProperty<Eigen::Matrix<double,3,3,Eigen::RowMajor>>(
 			prop_name_3, MeshLib::MeshItemType::Cell
 		)
 	);
-	ASSERT_FALSE(!properties_3_cpy);
+	ASSERT_FALSE(!matrix_properties_cpy);
 
 	// compare the values/matrices
-	auto it_cpy=(*properties_3_cpy)->begin();
-	for (auto it=properties_3->begin(); it != properties_3->end();
+	auto it_cpy=(*matrix_properties_cpy).begin();
+	for (auto it=(*matrix_properties).begin(); it != (*matrix_properties).end();
 		it++, it_cpy++) {
 		for (int r(0); r<it->rows(); r++) {
 			for (int c(0); c<it->cols(); c++) {
@@ -316,4 +302,3 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	}
 #endif
 }
-
