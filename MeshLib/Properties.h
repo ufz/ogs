@@ -29,16 +29,11 @@
 
 namespace MeshLib
 {
-// forward declaration
-class Mesh;
 
 /// Properties associated to mesh items (nodes or elements).
 class Properties
 {
 public:
-	explicit Properties(MeshLib::Mesh const& mesh)
-		: _mesh(mesh)
-	{}
 
 	/// Method to get a vector of property values.
 	template <typename T>
@@ -119,8 +114,6 @@ private:
 		}
 	};
 
-	/// Mesh object the properties are assigned to.
-	MeshLib::Mesh const& _mesh;
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
 	std::map<PropertyKeyType, boost::any> _properties;

@@ -35,7 +35,7 @@ Mesh::Mesh(const std::string &name,
 	  _node_distance(std::numeric_limits<double>::max(), 0),
 	  _name(name), _nodes(nodes), _elements(elements),
 	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes),
-	  _properties(*this)
+	  _properties()
 {
 	assert(n_base_nodes <= nodes.size());
 	this->resetNodeIDs();
@@ -56,7 +56,7 @@ Mesh::Mesh(const Mesh &mesh)
 	  _node_distance(mesh._node_distance.first, mesh._node_distance.second),
 	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
 	  _n_base_nodes(mesh.getNBaseNodes()),
-	  _properties(*this)
+	  _properties()
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
