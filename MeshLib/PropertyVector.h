@@ -26,7 +26,11 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector : public std::vector<PROP_VAL_TYPE>
 {
 public:
-	PropertyVector(std::size_t size)
+	PropertyVector()
+		: std::vector<PROP_VAL_TYPE>()
+	{}
+
+	explicit PropertyVector(std::size_t size)
 		: std::vector<PROP_VAL_TYPE>(size)
 	{}
 };
