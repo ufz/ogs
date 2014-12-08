@@ -39,9 +39,10 @@ template <typename T>
 class PropertyVector<T*> : public std::vector<T*>
 {
 public:
-	PropertyVector(std::size_t n_mat_groups,
-		std::vector<std::size_t> const& mat_group_idx_map)
-		: std::vector<T*>(n_mat_groups), _mat_group_idx_map(mat_group_idx_map)
+	PropertyVector(std::size_t n_prop_groups,
+		std::vector<std::size_t> const& item2group_mapping)
+		: std::vector<T*>(n_prop_groups),
+		_item2group_mapping(item2group_mapping)
 	{}
 
 	~PropertyVector()
@@ -53,11 +54,11 @@ public:
 
 	T* const& operator[](std::size_t id) const
 	{
-		return (*static_cast<std::vector<T*> const *>(this))[_mat_group_idx_map[id]];
+		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
 	}
 
 private:
-	std::vector<std::size_t> _mat_group_idx_map;
+	std::vector<std::size_t> _item2group_mapping;
 };
 
 } // end namespace MeshLib
