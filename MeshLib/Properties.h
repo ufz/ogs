@@ -91,9 +91,9 @@ public:
 
 	/// Method to get a vector of property values.
 	template <typename T>
-	boost::optional<PropertyVector<T> *>
+	boost::optional<PropertyVector<T> const&>
 	getProperty(std::string const& name,
-		MeshItemType mesh_item_type) const
+		MeshItemType mesh_item_type)
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
@@ -101,13 +101,15 @@ public:
 		);
 		if (it != _properties.end()) {
 			try {
-				return boost::any_cast<PropertyVector<T> *>(it->second);
+				return boost::optional<PropertyVector<T> const&>(
+						boost::any_cast<PropertyVector<T> const&>(it->second)
+					);
 			} catch (boost::bad_any_cast const&) {
 				ERR("A property with the desired data type is not available.");
-				return boost::optional<PropertyVector<T> *>();
+				return boost::optional<PropertyVector<T> const&>();
 			}
 		} else {
-			return boost::optional<PropertyVector<T> *>();
+			return boost::optional<PropertyVector<T> const&>();
 		}
 	}
 
