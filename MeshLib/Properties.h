@@ -34,6 +34,16 @@ namespace MeshLib
 class Properties
 {
 public:
+	/// Method creates a PropertyVector if a PropertyVector with the same name
+	/// and the same type T was not already created before.
+	/// There are two versions of this method. This method is used
+	/// when every mesh item at hand has its own property value.
+	/// The user has to ensure the correct usage of the vector later on.
+	/// @tparam T type of the property value
+	/// @param name the name of the property
+	/// @param mesh_item_type for instance node or element assigned properties
+	/// @return On success a reference to a PropertyVector packed into a
+	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
 	newProperty(std::string const& name, MeshItemType mesh_item_type)
@@ -59,6 +69,17 @@ public:
 			);
 	}
 
+	/// Method creates a PropertyVector if a PropertyVector with the same name
+	/// and the same type T was not already created before.
+	/// Since the implementation makes no assumption about the number of data
+	/// items stored within the vector, it is possible either to use a small
+	/// number of properties where each particular property can be assigned to
+	/// several mesh items.
+	/// @tparam T type of the property value
+	/// @param name the name of the property
+	/// @param mesh_item_type for instance node or element assigned properties
+	/// @return On success a reference to a PropertyVector packed into a
+	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
 	newProperty(std::string const& name,
