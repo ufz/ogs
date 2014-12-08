@@ -59,6 +59,35 @@ public:
 			);
 	}
 
+	template <typename T>
+	boost::optional<PropertyVector<T> &>
+	newProperty(std::string const& name,
+		std::size_t n_prop_groups,
+		std::vector<std::size_t> const& item2group_mapping,
+		MeshItemType mesh_item_type)
+	{
+		PropertyKeyType property_key(name, mesh_item_type);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
+		);
+		if (it != _properties.end()) {
+			WARN("A property of the name \"%s\" already assigned to the mesh.",
+				name.c_str());
+			return boost::optional<PropertyVector<T> &>();
+		}
+		auto entry_info(
+			_properties.insert(
+				std::pair<PropertyKeyType, boost::any>(
+					property_key,
+					boost::any(PropertyVector<T>(n_prop_groups, item2group_mapping))
+				)
+			)
+		);
+		return boost::optional<PropertyVector<T> &>(
+			boost::any_cast<PropertyVector<T> &>(
+				(entry_info.first)->second)
+			);
+	}
 
 	/// Method to get a vector of property values.
 	template <typename T>
