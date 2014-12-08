@@ -113,29 +113,6 @@ public:
 		}
 	}
 
-	/// Method to store a vector of property values assigned to a property name.
-	/// Since the implementation makes no assumption about the number of data
-	/// items stored within the vector, it is possible either to use a small
-	/// number of properties where each particular property can be assigned to
-	/// several mesh items. In contrast to this it is possible to have a
-	/// separate value for each mesh item.
-	/// The user has to ensure the correct usage of the vector later on.
-	template <typename T>
-	void addProperty(std::string const& name, PropertyVector<T> * property,
-		MeshItemType mesh_item_type)
-	{
-		PropertyKeyType property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
-		);
-		if (it != _properties.end()) {
-			WARN("A property of the name \"%s\" already assigned to the mesh.",
-				name.c_str());
-			return;
-		}
-		_properties[property_key] = boost::any(property);
-	}
-
 	void removeProperty(std::string const& name,
 		MeshItemType mesh_item_type)
 	{
