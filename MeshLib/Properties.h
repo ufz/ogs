@@ -128,6 +128,18 @@ public:
 		_properties.erase(it);
 	}
 
+	bool hasProperty(std::string const& name, MeshItemType mesh_item_type)
+	{
+		PropertyKeyType property_key(name, mesh_item_type);
+		std::map<PropertyKeyType, boost::any>::const_iterator it(
+			_properties.find(property_key)
+		);
+		if (it == _properties.end()) {
+			return false;
+		}
+		return true;
+	}
+
 private:
 	struct PropertyKeyType
 	{
