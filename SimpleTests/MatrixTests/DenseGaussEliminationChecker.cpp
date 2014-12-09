@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	b = mat * x;
 
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>> gauss(mat);
-	gauss.solve(b);
+	gauss.solve(b, true);
 
 	{
 		std::stringstream stream;

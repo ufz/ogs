@@ -143,7 +143,7 @@ bool lineSegmentIntersect(
 	double rhs[2] = {MathLib::scalarProduct(v,qp), MathLib::scalarProduct(w,pq)};
 
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
-	lu.solve (rhs);
+	lu.solve(rhs, true);
 
 	// no theory for the following tolerances, determined by testing
 	// lower tolerance: little bit smaller than zero

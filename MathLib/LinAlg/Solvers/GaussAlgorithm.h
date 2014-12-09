@@ -42,8 +42,8 @@ public:
 public:
 	/**
 	 * A direct solver for the (dense) linear system \f$A x = b\f$.
-	 * @param A at the beginning the matrix A, at the end of the construction
-	 * of the object the matrix contains the factor L (without the diagonal)
+	 * @param A at the beginning the matrix A, at the end of the application of
+	 * method solve the matrix contains the factor L (without the diagonal)
 	 * in the strictly lower part and the factor U in the upper part.
 	 * The diagonal entries of L are all 1.0 and are not explicitly stored.
 	 * @attention The entries of the given matrix will be changed!
@@ -62,21 +62,26 @@ public:
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
 	 * using forward solve and backward solve.
 	 * @param b at the beginning the right hand side, at the end the solution
+	 * @param decompose Flag that signals if the LU decomposition should be
+	 *        performed or not. If the matrix \f$A\f$ does not change, the LU
+	 *        decomposition needs to be performed once only!
+	 * @attention The entries of the given matrix will be changed!
 	 */
-	template <typename V> void solve(V & b) const;
-	void solve(FP_T* & b) const;
-	void solve(FP_T const* & b) const;
-
+	template <typename V> void solve (V & b, bool decompose = true);
+	void solve(FP_T* & b, bool decompose = true);
 
 	/**
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
 	 * using forward solve and backward solve.
 	 * @param b (input) the right hand side
 	 * @param x (output) the solution
+	 * @param decompose see documentation of the other solve methods.
+	 * @attention The entries of the given matrix will be changed!
 	 */
-	void solve(VEC_T const& b, VEC_T & x) const;
+	void solve(VEC_T const& b, VEC_T & x, bool decompose = true);
 
 private:
+	void performLU();
 	/**
 	 * permute the right hand side vector according to the
 	 * row permutations of the LU factorization

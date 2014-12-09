@@ -85,7 +85,7 @@ bool Triangle::containsPoint2D (Point const& pnt) const
 	double y[2] = {pnt[0]-a[0], pnt[1]-a[1]};
 
 	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
-	gauss.solve (y);
+	gauss.solve (y, true);
 
 	const double delta (std::numeric_limits<double>::epsilon());
 	const double upper (1+delta);
