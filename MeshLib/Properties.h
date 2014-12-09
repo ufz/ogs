@@ -30,14 +30,22 @@
 namespace MeshLib
 {
 
-/// Properties associated to mesh items (nodes or elements).
+/// @brief Material property manager on mesh items.
+/// Class Properties manages scalar, vector or matrix properties. For instance
+/// in groundwater flow porosity is scalar property and permeabilty can be
+/// stored as a tensor property. Properties are assigned to mesh items, i.e.
+/// Node or Element objects. The newProperty() method first creates a
+/// PropertyVector of template type T (scalar, vector or matrix).
+/// This class stores the PropertyVector, accessible by a combination of the
+/// name and the type of the mesh item (Node or Element).
 class Properties
 {
 public:
 	/// Method creates a PropertyVector if a PropertyVector with the same name
 	/// and the same type T was not already created before.
 	/// There are two versions of this method. This method is used
-	/// when every mesh item at hand has its own property value.
+	/// when every mesh item at hand has its own property value, i.e. \f$n\f$
+	/// mesh item and \f$n\f$ different property values.
 	/// The user has to ensure the correct usage of the vector later on.
 	/// @tparam T type of the property value
 	/// @param name the name of the property
@@ -71,10 +79,9 @@ public:
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
 	/// and the same type T was not already created before.
-	/// Since the implementation makes no assumption about the number of data
-	/// items stored within the vector, it is possible either to use a small
-	/// number of properties where each particular property can be assigned to
-	/// several mesh items.
+	/// This method is used if only a small number of different properties
+	/// exists. In this case a mapping between mesh items and properties (stored
+	/// on the heap), see the parameter item2group_mapping, is required.
 	/// @tparam T type of the property value
 	/// @param name the name of the property
 	/// @param mesh_item_type for instance node or element assigned properties
@@ -149,6 +156,11 @@ public:
 		_properties.erase(it);
 	}
 
+	/// Check if a PropertyVector accessible by a combination of the
+	/// name and the type of the mesh item (Node or Element) is already
+	/// stored within the Properties object.
+	/// @param name the name of the property (for instance porosity)
+	/// @param mesh_item_type to which item type the property is assigned to
 	bool hasProperty(std::string const& name, MeshItemType mesh_item_type)
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
