@@ -22,10 +22,12 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
+#include "MeshLib/NodeAdjacencyTable.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
@@ -85,6 +87,9 @@ public:
 
         _local_to_global_index_map.reset(
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
+
+        DBUG("Compute sparsity pattern");
+        _node_adjacency_table.createTable(_mesh.getNodes(), 10);
 
         DBUG("Allocate global matrix, vectors, and linear solver.");
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
@@ -146,6 +151,7 @@ public:
         DBUG("Solve GroundwaterFlowProcess.");
 
         _A->setZero();
+        MathLib::setMatrixSparsity(*_A, _node_adjacency_table);
         *_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
@@ -210,6 +216,7 @@ private:
         std::vector<double> values;
     } _dirichlet_bc;
 
+    MeshLib::NodeAdjacencyTable _node_adjacency_table;
 };
 
 }   // namespace ProcessLib
