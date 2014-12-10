@@ -54,7 +54,7 @@ public:
 
 private:
 	const double _length;
-	const double _n_subdivision;
+	const std::size_t _n_subdivision;
 };
 
 /**
