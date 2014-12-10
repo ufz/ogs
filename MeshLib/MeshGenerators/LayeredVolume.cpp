@@ -25,7 +25,10 @@
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 
 
-bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vector<GeoLib::Raster const*> &rasters, double noDataReplacementValue)
+bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, 
+                                       const std::vector<GeoLib::Raster const*> &rasters, 
+                                       double minimum_thickness, 
+                                       double noDataReplacementValue)
 {
 	if (mesh.getDimension() != 2)
 		return false;
@@ -51,6 +54,7 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, const std::vec
 		return false;
 	}
 
+	this->_minimum_thickness = minimum_thickness;
 	_nodes = MeshLib::copyNodeVector(bottom->getNodes());
 	_elements = MeshLib::copyElementVector(bottom->getElements(), _nodes);
 	delete bottom;
@@ -75,7 +79,7 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
 	const std::size_t last_layer_node_offset (node_id_offset-nNodes);
 
 	for (std::size_t i=0; i<nNodes; ++i)
-		_nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size(), _elevation_epsilon));
+		_nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size()));
 
 	const std::vector<MeshLib::Element*> &layer_elements (dem_mesh.getElements());
 	for (MeshLib::Element* elem : layer_elements)

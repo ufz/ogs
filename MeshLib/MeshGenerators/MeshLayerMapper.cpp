@@ -109,7 +109,8 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 bool MeshLayerMapper::createRasterLayers(
 	MeshLib::Mesh const& mesh,
 	std::vector<GeoLib::Raster const*> const& rasters,
-	double /*noDataReplacementValue*/)
+	double minimum_thickness,
+	double noDataReplacementValue)
 {
 	const std::size_t nLayers(rasters.size());
 	if (nLayers < 2 || mesh.getDimension() != 2)
@@ -119,7 +120,7 @@ bool MeshLayerMapper::createRasterLayers(
 	}
 
 	MeshLib::Mesh* top (new MeshLib::Mesh(mesh));
-	if (!layerMapping(*top, *rasters.back(), 0))
+	if (!layerMapping(*top, *rasters.back(), noDataReplacementValue))
 		return false;
 
 	MeshLib::Mesh* bottom (new MeshLib::Mesh(mesh));
@@ -129,6 +130,7 @@ bool MeshLayerMapper::createRasterLayers(
 		return false;
 	}
 
+	this->_minimum_thickness = minimum_thickness;
 	std::size_t const nNodes = mesh.getNNodes();
 	_nodes.reserve(nLayers * nNodes);
 
