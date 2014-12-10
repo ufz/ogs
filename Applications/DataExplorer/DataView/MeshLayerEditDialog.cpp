@@ -32,7 +32,7 @@
 #include <QLineEdit>
 #include <QGroupBox>
 #include <QRadioButton>
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QVBoxLayout>
 #include <QTime>
 
@@ -41,6 +41,7 @@ MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* par
 	  _nLayerExplanation (new QLabel(this)),
 	  _layerEdit (new QLineEdit("0", this)),
 	  _noDataReplacementEdit(nullptr),
+	  _minThicknessEdit(nullptr),
 	  _nextButton (new QPushButton("Next", this)),
 	  _layerBox (nullptr),
 	  _radioButtonBox (nullptr),
@@ -166,55 +167,66 @@ void MeshLayerEditDialog::createStatic()
 void MeshLayerEditDialog::createMeshToolSelection()
 {
 	QGroupBox* meshToolSelectionBox (new QGroupBox(this));
-	meshToolSelectionBox->setTitle("Select output element type");
-	QHBoxLayout* meshToolSelectionLayout (new QHBoxLayout(meshToolSelectionBox));
+	meshToolSelectionBox->setTitle("Output element type");
+	QGridLayout* meshToolSelectionLayout (new QGridLayout(meshToolSelectionBox));
 	_ogsMeshButton = new QRadioButton("Prisms", meshToolSelectionBox);
 	QRadioButton* tetgenMeshButton = new QRadioButton("Tetrahedra", meshToolSelectionBox);
-	meshToolSelectionLayout->addWidget(_ogsMeshButton);
-	meshToolSelectionLayout->addWidget(tetgenMeshButton);
+	tetgenMeshButton->setFixedWidth(150);
+	QLabel* minThicknessLabel = new QLabel(meshToolSelectionBox);
+	minThicknessLabel->setText("Minimum thickness of layers:");
+	_minThicknessEdit = new QLineEdit(meshToolSelectionBox);
+	_minThicknessEdit->setText("1.0");
+	QDoubleValidator* min_thickness_validator = new QDoubleValidator(0, 1000000, 15, _minThicknessEdit);
+	
+	_minThicknessEdit->setMaximumWidth(100);
+	_minThicknessEdit->setFixedWidth(100);
+	meshToolSelectionLayout->addWidget(_ogsMeshButton, 0, 0);
+	meshToolSelectionLayout->addWidget(tetgenMeshButton, 0, 1);
+	meshToolSelectionLayout->addWidget(minThicknessLabel, 1, 0);
+	meshToolSelectionLayout->addWidget(_minThicknessEdit, 1, 1);
 	meshToolSelectionBox->setLayout(meshToolSelectionLayout);
 	_ogsMeshButton->setChecked(true);
+
 	gridLayoutLayerMapping->addWidget(meshToolSelectionBox, 5, 0, 1, 3);
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 {
-    const unsigned nLayers = _layerEdit->text().toInt();
-    std::vector<float> layer_thickness;
-    for (unsigned i=0; i<nLayers; ++i)
-    {
-        // "100" is just a default size to have any value for extruding 2D elements.
-        // The actual mapping based on a raster file will be performed later.
-        const float thickness = (_use_rasters) ? 100 : (this->_edits[i]->text().toFloat());
-        layer_thickness.push_back(thickness);
-    }
+	const unsigned nLayers = _layerEdit->text().toInt();
 
-    MeshLayerMapper mapper;
-    MeshLib::Mesh* new_mesh (nullptr);
+	MeshLayerMapper mapper;
+	MeshLib::Mesh* new_mesh (nullptr);
 
-    QTime myTimer0;
-    myTimer0.start();
-    if (_use_rasters)
-    {
-        std::vector<std::string> raster_paths;
-        for (int i=nLayers; i>=0; --i)
-            raster_paths.push_back(this->_edits[i]->text().toStdString());
-        if (mapper.createLayers(*_msh, raster_paths))
-            new_mesh= mapper.getMesh("SubsurfaceMesh");
-    }
-    else
-        new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
-    INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+	QTime myTimer0;
+	myTimer0.start();
+	if (_use_rasters)
+	{
+		float minimum_thickness (_minThicknessEdit->text().toFloat());
+		if (minimum_thickness <= 0) minimum_thickness = std::numeric_limits<float>::epsilon();
+		std::vector<std::string> raster_paths;
+		for (int i=nLayers; i>=0; --i)
+			raster_paths.push_back(this->_edits[i]->text().toStdString());
+		if (mapper.createLayers(*_msh, raster_paths, minimum_thickness))
+			new_mesh= mapper.getMesh("SubsurfaceMesh");
+	}
+	else
+	{
+		std::vector<float> layer_thickness;
+		for (unsigned i=0; i<nLayers; ++i)
+			layer_thickness.push_back(this->_edits[i]->text().toFloat());
+		new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
+	}
+	INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
 
-    return new_mesh;
+	return new_mesh;
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 {
 	QSettings settings;
 	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
-													settings.value("lastOpenedTetgenFileDirectory").toString(),
-													"TetGen Geometry (*.smesh)");
+	                                                settings.value("lastOpenedTetgenFileDirectory").toString(),
+	                                                "TetGen Geometry (*.smesh)");
 	if (filename.isEmpty())
 		return nullptr;
 
@@ -225,11 +237,13 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
 	if (_use_rasters)
 	{
+		float minimum_thickness (_minThicknessEdit->text().toFloat());
+		if (minimum_thickness <= 0) minimum_thickness = std::numeric_limits<float>::epsilon();
 		std::vector<std::string> raster_paths;
 		for (int i=nLayers; i>=0; --i)
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		LayeredVolume lv;
-		if (lv.createLayers(*_msh, raster_paths))
+		if (lv.createLayers(*_msh, raster_paths, minimum_thickness))
 			tg_mesh = lv.getMesh("SubsurfaceMesh");
 
 		if (tg_mesh)
