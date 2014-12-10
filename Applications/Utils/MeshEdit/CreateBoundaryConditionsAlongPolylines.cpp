@@ -22,11 +22,12 @@
 
 // BaseLib
 #include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/FileTools.h"
 
 // FileIO
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -131,8 +132,26 @@ int main (int argc, char* argv[])
 
 	// *** read mesh
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	MeshLib::Mesh * subsurface_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 	INFO("done.");
+	INFO("Extracting top surface of mesh \"%s\" ... ",
+		mesh_arg.getValue().c_str());
+	const MathLib::Vector3 dir(0,0,-1);
+	double const angle(90);
+	std::unique_ptr<MeshLib::Mesh> surface_mesh(
+		MeshLib::MeshSurfaceExtraction::getMeshSurface(
+			*subsurface_mesh, dir, angle, false
+		)
+	);
+	{
+		FileIO::VtuInterface mesh_io(surface_mesh.get(), vtkXMLWriter::Ascii);
+		std::string const surface_mesh_fname(
+			BaseLib::dropFileExtension(mesh_arg.getValue())+"-Surface.vtu");
+		mesh_io.writeToFile(surface_mesh_fname);
+	}
+	INFO("done.");
+	delete subsurface_mesh;
+	subsurface_mesh = nullptr;
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
@@ -144,7 +163,6 @@ int main (int argc, char* argv[])
 		} else {
 			ERR("Problems to read geometry from file \"%s\".",
 				geometry_fname.getValue().c_str());
-			delete mesh;
 			return -1;
 		}
 	}
@@ -162,7 +180,6 @@ int main (int argc, char* argv[])
 	if (!plys) {
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
-		delete mesh;
 		return -1;
 	}
 
@@ -173,7 +190,7 @@ int main (int argc, char* argv[])
 	}
 
 	GeoLib::GEOObjects geometry_sets;
-	MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(*mesh,
+	MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(*surface_mesh,
 		search_length_strategy);
 	for(std::size_t k(0); k<plys->size(); k++) {
 		std::vector<std::size_t> ids
@@ -181,7 +198,7 @@ int main (int argc, char* argv[])
 		if (ids.empty())
 			continue;
 		std::string geo_name("Polyline-"+std::to_string(k));
-		convertMeshNodesToGeometry(mesh->getNodes(), ids, geo_name,
+		convertMeshNodesToGeometry(surface_mesh->getNodes(), ids, geo_name,
 			geometry_sets);
 	}
 
@@ -216,11 +233,19 @@ int main (int argc, char* argv[])
 	std::map<std::string, std::size_t> *name_id_map(
 		new std::map<std::string, std::size_t>
 	);
+
+	// insert first point
+	surface_pnts->push_back(new GeoLib::Point(pnts_with_id[0]));
+	std::string element_name;
+	pnt_vec->getNameOfElementByID(0, element_name);
+	name_id_map->insert(
+		std::pair<std::string, std::size_t>(element_name,0)
+	);
 	for (std::size_t k(1); k < n_merged_pnts; ++k) {
 		const GeoLib::PointWithID& p0 (pnts_with_id[k-1]);
 		const GeoLib::PointWithID& p1 (pnts_with_id[k]);
 		if (std::abs (p0[0] - p1[0]) > eps || std::abs (p0[1] - p1[1]) > eps) {
-			surface_pnts->push_back(new GeoLib::Point(pnts_with_id[k-1]));
+			surface_pnts->push_back(new GeoLib::Point(pnts_with_id[k]));
 			std::string element_name;
 			pnt_vec->getNameOfElementByID(k, element_name);
 			name_id_map->insert(
@@ -229,12 +254,6 @@ int main (int argc, char* argv[])
 			);
 		}
 	}
-	// last point
-	surface_pnts->push_back (new GeoLib::Point((*(*merged_pnts)[n_merged_pnts - 1])));
-	std::string element_name;
-	pnt_vec->getNameOfElementByID(n_merged_pnts-1, element_name);
-	name_id_map->insert(std::pair<std::string, std::size_t>
-		(element_name, surface_pnts->size()-1));
 
 	std::string surface_name(BaseLib::dropFileExtension(mesh_arg.getValue())+"-MeshNodesAlongPolylines");
 	geometry_sets.addPointVec(surface_pnts, surface_name, name_id_map, 1e-6);
