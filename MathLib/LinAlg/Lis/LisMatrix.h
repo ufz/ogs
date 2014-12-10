@@ -20,6 +20,8 @@
 #include <vector>
 
 #include "MathLib/LinAlg/RowColumnIndices.h"
+#include "MathLib/LinAlg/Lis/LisCheck.h"
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
 
 #include "lis.h"
 
@@ -27,7 +29,12 @@
 
 namespace MathLib
 {
+// Forward declarations.
 class LisVector;
+class LisMatrix;
+
+template <typename SPARSITY_PATTERN>
+struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>;
 
 /**
  * \brief LisMatrix is a wrapper class for matrix types of the
@@ -126,6 +133,9 @@ private:
 
     // friend function
     friend bool finalizeMatrixAssembly(LisMatrix &mat);
+
+    template <typename MATRIX, typename SPARSITY_PATTERN>
+    friend struct SetMatrixSparsity;
 };
 
 template<class T_DENSE_MATRIX>
@@ -146,6 +156,27 @@ LisMatrix::add(std::vector<std::size_t> const& row_pos, std::vector<std::size_t>
 
 /// finish assembly to make this matrix be ready for use
 bool finalizeMatrixAssembly(LisMatrix &mat);
+
+/// Sets the sparsity pattern of the underlying LisMatrix.
+template <typename SPARSITY_PATTERN>
+struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>
+{
+
+void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
+{
+    std::size_t n_rows = matrix.getNRows();
+    std::vector<int> row_sizes;
+    row_sizes.reserve(n_rows);
+
+    // LIS needs 1 more entry, otherewise it starts reallocating arrays.
+    for (std::size_t i = 0; i < n_rows; i++)
+        row_sizes.push_back(sparsity_pattern.getNodeDegree(i) + 1);
+
+    int ierr = lis_matrix_malloc(matrix._AA, 0, row_sizes.data());
+    checkLisError(ierr);
+}
+};
+
 
 } // MathLib
 
