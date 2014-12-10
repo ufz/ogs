@@ -61,20 +61,22 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 }
 
 void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
-	std::string & geo_name)
+	std::string & geo_name, bool write_gml)
 {
 	INFO("write points to \"%s.gml\".", geo_name.c_str());
-	FileIO::BoostXmlGmlInterface xml_io(geometry_sets);
-	xml_io.setNameForExport(geo_name);
-	xml_io.writeToFile(geo_name+".gml");
+	if (write_gml) {
+		FileIO::BoostXmlGmlInterface xml_io(geometry_sets);
+		xml_io.setNameForExport(geo_name);
+		xml_io.writeToFile(geo_name+".gml");
+	}
 
 	GeoLib::PointVec const* pnt_vec_objs(geometry_sets.getPointVecObj(geo_name));
 	std::vector<GeoLib::Point*> const& pnts(*(pnt_vec_objs->getVector()));
-	std::string fname("UnstrutCatchment.gli");
+	std::string fname(geo_name+".gli");
 	std::ofstream out (fname.c_str());
 	out << "#POINTS\n";
 	out.precision(20);
-	std::ofstream bc_out ("UnstrutCatchment.bc");
+	std::ofstream bc_out (geo_name+".bc");
 	for (std::size_t k(0); k<pnts.size(); k++) {
 		out << k << " " << *(pnts[k]);
 		std::string pnt_name;
@@ -184,10 +186,16 @@ int main (int argc, char* argv[])
 	}
 
 	// merge all together
-	std::string merge_name("NodesAlongPolylineUnsorted");
 	std::vector<std::string> geo_names;
 	geometry_sets.getGeometryNames(geo_names);
-	geometry_sets.mergeGeometries(geo_names, merge_name);
+	if (geo_names.empty()) {
+		ERR("Did not find mesh nodes along polylines.");
+		return -1;
+	}
+
+	std::string merge_name("AllMeshNodesAlongPolylines");
+	if (geometry_sets.mergeGeometries(geo_names, merge_name) == 2)
+		merge_name = geo_names[0];
 
 	GeoLib::PointVec const* pnt_vec(geometry_sets.getPointVecObj(merge_name));
 	std::vector<GeoLib::Point*> const* merged_pnts(pnt_vec->getVector());
@@ -228,11 +236,10 @@ int main (int argc, char* argv[])
 	name_id_map->insert(std::pair<std::string, std::size_t>
 		(element_name, surface_pnts->size()-1));
 
-	std::string surface_name("TM");
+	std::string surface_name(BaseLib::dropFileExtension(mesh_arg.getValue())+"-MeshNodesAlongPolylines");
 	geometry_sets.addPointVec(surface_pnts, surface_name, name_id_map, 1e-6);
 
 	// write the BCs and the merged geometry set to file
-	writeBCsAndGML(geometry_sets, surface_name);
-
+	writeBCsAndGML(geometry_sets, surface_name, vis_arg.getValue());
 	return 0;
 }
