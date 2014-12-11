@@ -89,7 +89,7 @@ public:
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
         DBUG("Compute sparsity pattern");
-        _node_adjacency_table.createTable(_mesh.getNodes(), 10);
+        _node_adjacency_table.createTable(_mesh.getNodes());
 
         DBUG("Allocate global matrix, vectors, and linear solver.");
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));

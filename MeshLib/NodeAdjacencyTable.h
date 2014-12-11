@@ -37,12 +37,9 @@ public:
     NodeAdjacencyTable() = default;
 
     explicit
-    NodeAdjacencyTable(std::vector<Node*> const& nodes, std::size_t hint_adjacency_degree = 0)
+    NodeAdjacencyTable(std::vector<Node*> const& nodes)
     {
         _data.resize(nodes.size());
-        if (hint_adjacency_degree > 0)
-            for (auto row : _data)
-                row.reserve(hint_adjacency_degree);
 
         createTable(nodes);
     }
@@ -57,7 +54,7 @@ public:
         return _data[node_id].size();
     }
 
-    void createTable(std::vector<Node*> const& nodes, std::size_t hint_adjacency_degree = 0)
+    void createTable(std::vector<Node*> const& nodes)
     {
         if (_data.size() != nodes.size())
             _data.resize(nodes.size());
