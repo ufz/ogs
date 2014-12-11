@@ -43,18 +43,19 @@ INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/Data.cmake)
 
 IF(CMAKE_CONFIGURATION_TYPES)
-	ADD_CUSTOM_TARGET(
-		ctest
-		COMMAND ${CMAKE_CTEST_COMMAND}
-		--force-new-ctest-process --output-on-failure
-		--build-config "$<CONFIGURATION>"
-		DEPENDS data
-	)
-ELSE()
-	ADD_CUSTOM_TARGET(
-		ctest
-		COMMAND ${CMAKE_CTEST_COMMAND}
-		--force-new-ctest-process --output-on-failure
-		DEPENDS data
-	)
+	SET(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
 ENDIF()
+ADD_CUSTOM_TARGET(
+	ctest
+	COMMAND ${CMAKE_CTEST_COMMAND}
+	--force-new-ctest-process --output-on-failure --exclude-regex LARGE
+	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS}
+	DEPENDS data
+)
+ADD_CUSTOM_TARGET(
+	ctest-large
+	COMMAND ${CMAKE_CTEST_COMMAND}
+	--force-new-ctest-process --output-on-failure --tests-regex LARGE
+	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS}
+	DEPENDS data
+)
