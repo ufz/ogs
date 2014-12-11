@@ -46,7 +46,7 @@ Mesh::Mesh(const std::string &name,
 	this->setDimension();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
-	//this->setNodesConnectedByElements();
+	this->setNodesConnectedByElements();
 	this->setElementNeighbors();
 
 	this->calcEdgeLengthRange();
@@ -242,30 +242,32 @@ void Mesh::setNodesConnectedByEdges()
 
 void Mesh::setNodesConnectedByElements()
 {
-	const size_t nNodes (this->_nodes.size());
-	for (unsigned i=0; i<nNodes; ++i)
+	// Allocate temporary space for adjacent nodes.
+	std::vector<Node*> adjacent_nodes;
+	for (Node* const node : _nodes)
 	{
-		MeshLib::Node* node (_nodes[i]);
-		std::vector<MeshLib::Node*> conn_vec;
-		const std::vector<MeshLib::Element*> &conn_elems (node->getElements());
-		const size_t nConnElems (conn_elems.size());
-		for (unsigned j=0; j<nConnElems; ++j)
+		adjacent_nodes.clear();
+
+		// Get all elements, to which this node is connected.
+		std::vector<Element*> const& conn_elems = node->getElements();
+
+		// And collect all elements' nodes.
+		for (Element const* const element : conn_elems)
 		{
-			const unsigned nElemNodes (conn_elems[j]->getNBaseNodes());
-			for (unsigned k(0); k<nElemNodes; ++k)
-			{
-				bool is_in_vector (false);
-				const MeshLib::Node* c_node (conn_elems[j]->getNode(k));
-				if (c_node == node) continue;
-				const size_t nConnNodes (conn_vec.size());
-				for (unsigned l(0); l<nConnNodes; ++l)
-					if (c_node == conn_vec[l])
-						is_in_vector = true;
-				if (!is_in_vector)
-					conn_vec.push_back(_nodes[c_node->getID()]);
-			}
+			Node* const* const single_elem_nodes = element->getNodes();
+			std::size_t const nnodes = element->getNBaseNodes();
+			for (std::size_t n = 0; n < nnodes; n++)
+				adjacent_nodes.push_back(single_elem_nodes[n]);
 		}
-		node->setConnectedNodes(conn_vec);
+
+		// Make nodes unique and sorted by their ids.
+		// This relies on the node's id being equivalent to it's address.
+		std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
+			[](Node* a, Node* b) { return a->getID() < b->getID(); });
+		auto const last = std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
+		adjacent_nodes.erase(last, adjacent_nodes.end());
+
+		node->setConnectedNodes(adjacent_nodes);
 	}
 }
 
