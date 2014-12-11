@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <cassert>
+
 namespace MathLib
 {
 
@@ -257,8 +259,7 @@ template<typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col)
 {
-	if ((row >= _n_rows) | (col >= _n_cols))
-		throw std::range_error("DenseMatrix: op() const range error");
+	assert((row < _n_rows) && (col < _n_cols));
 	return _data [address(row,col)];
 }
 
@@ -267,8 +268,7 @@ template<typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE const&
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator() (IDX_TYPE row, IDX_TYPE col) const
 {
-	if ((row >= _n_rows) | (col >= _n_cols))
-		throw std::range_error("DenseMatrix: op() const range error");
+	assert((row < _n_rows) && (col < _n_cols));
 	return _data[address(row, col)];
 }
 
