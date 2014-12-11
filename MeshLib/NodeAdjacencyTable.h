@@ -62,33 +62,14 @@ public:
         if (_data.size() != nodes.size())
             _data.resize(nodes.size());
 
-        // Allocate temporary space for adjacent nodes.
-        std::vector<std::size_t> adjacent_nodes;
-
         for (auto n_ptr : nodes)
         {
-            adjacent_nodes.clear();
-
-            // Get all elements, to which this node is connected.
-            std::vector<Element*> const& connected_elements = n_ptr->getElements();
-
-            // And collect all elements' nodes.
-            for (auto e : connected_elements)
-            {
-                Node* const* const single_elem_nodes = e->getNodes();
-                std::size_t const nnodes = e->getNNodes();
-                for (std::size_t n = 0; n < nnodes; n++)
-                    adjacent_nodes.push_back(single_elem_nodes[n]->getID());
-            }
-
-            // Copy only unique node ids.
-            std::sort(adjacent_nodes.begin(), adjacent_nodes.end());
-
-            std::size_t const node_id = n_ptr->getID();
-            std::vector<std::size_t>& row = _data[node_id];
-            row.reserve(hint_adjacency_degree);
-            std::unique_copy(adjacent_nodes.begin(), adjacent_nodes.end(),
-                std::back_inserter(row));
+            std::vector<Node*> const& connected_nodes = n_ptr->getConnectedNodes();
+            std::vector<std::size_t>& row = _data[n_ptr->getID()];
+            row.reserve(connected_nodes.size());
+            std::transform(connected_nodes.cbegin(), connected_nodes.cend(),
+                std::back_inserter(row),
+                [](Node const* const n) { return n->getID(); });
         }
     }
 
