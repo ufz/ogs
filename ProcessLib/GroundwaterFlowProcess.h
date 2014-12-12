@@ -101,7 +101,7 @@ public:
          _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSizeGlobal(), mat_opt) );        
          _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
          _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
-         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A, "gw_"));
 #else        
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
