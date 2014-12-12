@@ -128,6 +128,11 @@ int main(int argc, char *argv[])
 	LOGOG_SHUTDOWN();
     
 #ifdef USE_PETSC
+	PetscPrintf(PETSC_COMM_WORLD, "info: Released the memory occupied by MPI based vector, matrix and linear solver.\n"); 
+	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+	{
+		(*p_it)->releaseEquationMemory();
+	}
 	PetscFinalize();
 #endif
 

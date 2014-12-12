@@ -224,15 +224,20 @@ public:
             delete p;
 
         delete _mesh_subset_all_nodes;
-        
-#ifdef USE_PETSC // Release ownership of unique_ptr
-        _A.release();
-        _rhs.release();
-        _x.release();
-        _linearSolver.release();
-#endif        
     }
 
+    /// Explicitly release memory of global vector, matrix and linear solvers
+    /// for MPI based parallel computing    
+    void releaseEquationMemory()
+    {               
+#ifdef USE_PETSC 
+        delete _A.release();
+        delete _rhs.release();
+        delete _x.release();
+        delete _linearSolver.release();
+#endif        
+    }
+    
 private:
     ProcessVariable const* _hydraulic_head = nullptr;
 
