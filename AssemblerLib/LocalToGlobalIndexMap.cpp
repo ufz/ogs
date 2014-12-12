@@ -84,10 +84,10 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
                 switch (order)
                 {
                     case AssemblerLib::ComponentOrder::BY_LOCATION:
-                        _rows.push_back(_mesh_component_map.getGlobalIndicesByLocation<std:size_t>(vec_items));
+                        _rows.push_back(_mesh_component_map.getGlobalIndicesByLocation<std::size_t>(vec_items));
                         break;
                     case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                        _rows.push_back(_mesh_component_map.getGlobalIndicesByComponent<std:size_t>(vec_items));
+                        _rows.push_back(_mesh_component_map.getGlobalIndicesByComponent<std::size_t>(vec_items));
                         break;
                 }
                                 
