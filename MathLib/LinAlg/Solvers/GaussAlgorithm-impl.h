@@ -27,30 +27,31 @@ GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
 template <typename MAT_T, typename VEC_T>
 void GaussAlgorithm<MAT_T, VEC_T>::performLU()
 {
-	IDX_T k, i, j, nr (_mat.getNRows()), nc(_mat.getNCols());
-	FP_T l;
+	IDX_T const nr(_mat.getNRows());
+	IDX_T const nc(_mat.getNCols());
 
-	for (k=0; k<nc; k++) {
+	for (IDX_T k=0; k<nc; k++) {
 		// search pivot
 		FP_T t = std::abs(_mat(k, k));
 		_perm[k] = k;
-		for (i=k+1; i<nr; i++) {
-			if (std::abs(_mat(i,k)) > t) {
-				t = std::abs(_mat(i,k));
+		for (IDX_T i=k+1; i<nr; i++) {
+			FP_T const s = std::abs(_mat(i,k));
+			if (s > t) {
+				t = s;
 				_perm[k] = i;
 			}
 		}
 
 		// exchange rows
 		if (_perm[k] != k) {
-			for (j=0; j<nc; j++)
+			for (IDX_T j=0; j<nc; j++)
 				std::swap (_mat(_perm[k],j), _mat(k,j));
 		}
 
 		// eliminate
-		for (i=k+1; i<nr; i++) {
-			l=_mat(i,k)/_mat(k,k);
-			for (j=k; j<nc; j++) {
+		for (IDX_T i=k+1; i<nr; i++) {
+			FP_T const l = _mat(i,k)/_mat(k,k);
+			for (IDX_T j=k; j<nc; j++) {
 				_mat(i,j) -= _mat(k,j) * l;
 			}
 			_mat(i,k) = l;
