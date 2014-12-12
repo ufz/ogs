@@ -41,7 +41,7 @@ public:
 /// The behaviour has changed for the constructor, destructor and the operator[].
 /// The user has to provide the size and an item to group mapping for construction.
 /// The destructor takes care to delete the entries of the vector.
-/// The operator[] uses an item to group property map to access to the
+/// The operator[] uses an item-to-group property map to access the
 /// correct property.
 /// \tparam T pointer type, the type the type points to is typical a scalar,
 /// a vector or a matrix type

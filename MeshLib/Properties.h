@@ -32,7 +32,7 @@ namespace MeshLib
 
 /// @brief Material property manager on mesh items.
 /// Class Properties manages scalar, vector or matrix properties. For instance
-/// in groundwater flow porosity is scalar property and permeabilty can be
+/// in groundwater flow porosity is a scalar property and permeabilty can be
 /// stored as a tensor property. Properties are assigned to mesh items, i.e.
 /// Node or Element objects. The newProperty() method first creates a
 /// PropertyVector of template type T (scalar, vector or matrix).
@@ -79,8 +79,9 @@ public:
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
 	/// and the same type T was not already created before.
-	/// This method is used if only a small number of different properties
-	/// exists. In this case a mapping between mesh items and properties (stored
+	/// This method is used if only a small number of distinct property values
+	/// in a property exist (e.g. mapping material groups to elements).
+	/// In this case a mapping between mesh items and properties (stored
 	/// on the heap), see the parameter item2group_mapping, is required.
 	/// @tparam T type of the property value
 	/// @param name the name of the property
