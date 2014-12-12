@@ -61,7 +61,7 @@ public:
 			_properties.find(property_key)
 		);
 		if (it != _properties.end()) {
-			WARN("A property of the name \"%s\" already assigned to the mesh.",
+			WARN("A property of the name \"%s\" is already assigned to the mesh.",
 				name.c_str());
 			return boost::optional<PropertyVector<T> &>();
 		}
