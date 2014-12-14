@@ -35,10 +35,21 @@ TEST(MeshLib, CreateNodeAdjacencyTable1D)
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
-        if (i == 0 || i == mesh->getNNodes()-1)
+
+        std::size_t const n_elements = mesh->getNode(i)->getNElements();
+        switch (n_elements)
+        {
+        case 1: // a corner node has 2 adjacent nodes.
             ASSERT_EQ(2, n_connections) << " for boundary node " << i;
-        else
+            break;
+        case 2: // an interior node has 3 adjacent nodes.
             ASSERT_EQ(3, n_connections) << " for interior node " << i;
+            break;
+        default:
+                FAIL() << "The regular line mesh node has unexpected number "
+                    << "of elements. Node " << i << " has " << n_elements
+                    << " elements.";
+        }
     }
 }
 
@@ -59,13 +70,23 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        if (mesh->getNode(i)->getNElements() < 4)
-        {   // boundary node has at least 4 and at most 6 adjacent nodes.
-            ASSERT_LE(4, n_connections) << " for boundary node " << i;
-            ASSERT_GE(6, n_connections) << " for boundary node " << i;
+        std::size_t const n_elements = mesh->getNode(i)->getNElements();
+        switch (n_elements)
+        {
+        case 1: // a corner node has 4 adjacent nodes.
+                ASSERT_EQ(4, n_connections) << " for corner node " << i;
+                break;
+        case 2: // a boundary node has 6 adjacent nodes.
+                ASSERT_EQ(6, n_connections) << " for boundary node " << i;
+                break;
+        case 4: // an interior node has 9 connections.
+                ASSERT_EQ(9, n_connections) << " for interior node " << i;
+                break;
+        default:
+                FAIL() << "The regular quad mesh node has unexpected number "
+                    << "of elements. Node " << i << " has " << n_elements
+                    << " elements.";
         }
-        else
-            ASSERT_EQ(9, n_connections) << " for interior node " << i;
     }
 }
 
@@ -87,12 +108,25 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        if (mesh->getNode(i)->getNElements() < 4)
-        {   // boundary node has at least 8 and at most 18 adjacent nodes.
-            ASSERT_LE(8, n_connections) << " for boundary node " << i;
-            ASSERT_GE(18, n_connections) << " for boundary node " << i;
+        std::size_t const n_elements = mesh->getNode(i)->getNElements();
+        switch (n_elements)
+        {
+        case 1: // a corner node has 8 adjacent nodes.
+                ASSERT_EQ(8, n_connections) << " for corner node " << i;
+                break;
+        case 2: // an edge node has 12 adjacent nodes.
+                ASSERT_EQ(12, n_connections) << " for edge node " << i;
+                break;
+        case 3: // a boundary node has 18 adjacent nodes.
+                ASSERT_EQ(18, n_connections) << " for boundary node " << i;
+                break;
+        case 4: // an interior node has 27 connections.
+                ASSERT_EQ(27, n_connections) << " for interior node " << i;
+                break;
+        default:
+                FAIL() << "The regular hex mesh node has unexpected number "
+                    << "of elements. Node " << i << " has " << n_elements
+                    << " elements.";
         }
-        else
-            ASSERT_EQ(27, n_connections) << " for interior node " << i;
     }
 }
