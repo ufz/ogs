@@ -278,7 +278,7 @@ size_t Mesh:: getMaximumNConnectedNodesToNode() const
         if(node->getConnectedNodes().size() > max_ncn) 
             max_ncn = node->getConnectedNodes().size(); 				
     }  
-    return max_ncn;			
+    return max_ncn + 1;			
 }          
 
 

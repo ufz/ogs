@@ -91,12 +91,10 @@ void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
 
     MatSetFromOptions(_A);
 
-    (void)d_nz;
-    (void)o_nz;     
-    // MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
-    // MatMPIAIJSetPreallocation(_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
     MatSetType(_A, MATMPIAIJ);
-    MatSetUp(_A);
+    MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
+    MatMPIAIJSetPreallocation(_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
+    // MatSetUp(_A); // Needed only of pre-allocation does not work.
 
     MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
     MatGetSize(_A, &_nrows,  &_ncols);

@@ -110,7 +110,6 @@ public:
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
     {
 #ifdef USE_PETSC
-          
        for(size_t i=0; i<indices.ghost_flags.size(); i++)
        {
             if(indices.ghost_flags[i]) 

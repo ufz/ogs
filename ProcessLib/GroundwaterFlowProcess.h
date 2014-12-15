@@ -97,7 +97,7 @@ public:
 #ifdef USE_PETSC
          MathLib::PETScMatrixOption mat_opt;
          mat_opt.d_nz = _mesh.getMaximumNConnectedNodesToNode();
-         mat_opt.o_nz = 0;
+         mat_opt.o_nz = mat_opt.d_nz;
          _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSizeGlobal(), mat_opt) );        
          _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
          _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
