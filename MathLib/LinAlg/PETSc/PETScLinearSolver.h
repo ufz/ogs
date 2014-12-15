@@ -46,7 +46,10 @@ class PETScLinearSolver
         PETScLinearSolver(PETScMatrix &A, const std::string &prefix="");
 
         ~PETScLinearSolver()
-        {
+        {            
+            PetscPrintf(PETSC_COMM_WORLD, "info: Time elapsed in PETSc ksp solver for equation: %g s.\n",
+                                          _elapsed_ctime);
+                                        
             KSPDestroy(&_solver);
         }
 

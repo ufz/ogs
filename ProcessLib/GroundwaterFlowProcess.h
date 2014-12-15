@@ -16,6 +16,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/RunTime.h"
+
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
@@ -166,7 +168,12 @@ public:
         *_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
+        BaseLib::RunTime assembly_wtimer;
+        assembly_wtimer.start();
+        //
         _global_setup.execute(*_global_assembler, _local_assemblers);
+        //
+        _elapsed_ctime += assembly_wtimer.elapsed();
         
 #ifdef USE_PETSC
 
@@ -231,6 +238,9 @@ public:
     void releaseEquationMemory()
     {               
 #ifdef USE_PETSC 
+        PetscPrintf(PETSC_COMM_WORLD, "info: Time elapsed in the assembly using PETSc vector and matrix: %g s.\n",
+                                       _elapsed_ctime);
+        
         delete _A.release();
         delete _rhs.release();
         delete _x.release();
@@ -270,6 +280,8 @@ private:
         std::vector<std::size_t> global_ids;
         std::vector<double> values;
     } _dirichlet_bc;
+    
+    double _elapsed_ctime = 0.; ///< Clock time
 
 };
 
