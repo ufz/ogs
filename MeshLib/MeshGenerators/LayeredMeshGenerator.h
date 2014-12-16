@@ -72,8 +72,9 @@ protected:
 	virtual void addLayerToMesh(MeshLib::Mesh const& mesh_layer, unsigned layer_id, GeoLib::Raster const& raster) = 0;
 
 	/**
-	* Calculates the node Position of a subsurface node based on the given raster but also constrained the DEM layer
-	* the layer located below.
+	* Calculates the node Position of a subsurface node based on the given raster but also constrained by the DEM layer
+	* as an upper bound and the the layer located below as a lower bound (i.e. older stratigraphic layers are favored and
+	* nodes cannot be located above surface).
 	* @param dem_node          The node at this xy-location on the DEM
 	* @param last_layer_node   The node at this xy-location on the layer below
 	* @param raster            The raster file for the current layer
