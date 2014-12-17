@@ -54,7 +54,7 @@ public:
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
-	newProperty(std::string const& name, MeshItemType mesh_item_type)
+	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type)
 	{
 		PropertyKeyType property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
@@ -90,7 +90,7 @@ public:
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
-	newProperty(std::string const& name,
+	createNewPropertyVector(std::string const& name,
 		std::size_t n_prop_groups,
 		std::vector<std::size_t> const& item2group_mapping,
 		MeshItemType mesh_item_type)

@@ -45,7 +45,7 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 
 	std::string const prop_name("TestProperty");
 	boost::optional<MeshLib::PropertyVector<double> &> double_properties(
-		mesh->getProperties().newProperty<double>(prop_name,
+		mesh->getProperties().createNewPropertyVector<double>(prop_name,
 			MeshLib::MeshItemType::Cell)
 	);
 	(*double_properties).resize(size);
@@ -93,7 +93,7 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	}
 	// obtain PropertyVector data structure
 	boost::optional<MeshLib::PropertyVector<double*> &> group_properties(
-		mesh->getProperties().newProperty<double*>(
+		mesh->getProperties().createNewPropertyVector<double*>(
 			prop_name, n_prop_val_groups, prop_item2group_mapping,
 			MeshLib::MeshItemType::Cell
 		)
@@ -147,7 +147,7 @@ TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 	}
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> &>
 		group_properties(
-			mesh->getProperties().newProperty<std::array<double,3>*>(
+			mesh->getProperties().createNewPropertyVector<std::array<double,3>*>(
 				prop_name, n_prop_val_groups, prop_item2group_mapping,
 				MeshLib::MeshItemType::Cell
 			)
@@ -211,7 +211,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	// create data structure for the property
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> &>
 		group_properties(
-			mesh->getProperties().newProperty<std::array<double,3>*>(
+			mesh->getProperties().createNewPropertyVector<std::array<double,3>*>(
 				prop_name, n_prop_val_groups, prop_item2group_mapping,
 				MeshLib::MeshItemType::Cell
 			)
@@ -254,7 +254,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 		MeshLib::MeshItemType::Cell));
 	const std::size_t n_items_2(mesh_size*mesh_size*mesh_size);
 	boost::optional<MeshLib::PropertyVector<std::array<float,9>> &>
-		array_properties(mesh->getProperties().newProperty<
+		array_properties(mesh->getProperties().createNewPropertyVector<
 			std::array<float,9>
 		> (prop_name_2, MeshLib::MeshItemType::Cell)
 	);
@@ -293,7 +293,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 		MeshLib::MeshItemType::Cell));
 	boost::optional<
 		MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>> &>
-	matrix_properties(mesh->getProperties().newProperty
+	matrix_properties(mesh->getProperties().createNewPropertyVector
 		<Eigen::Matrix<double,3,3,Eigen::RowMajor>> (
 			prop_name_3, MeshLib::MeshItemType::Cell)
 	);
