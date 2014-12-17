@@ -30,11 +30,11 @@
 namespace MeshLib
 {
 
-/// @brief Material property manager on mesh items.
+/// @brief Property manager on mesh items.
 /// Class Properties manages scalar, vector or matrix properties. For instance
 /// in groundwater flow porosity is a scalar property and permeabilty can be
 /// stored as a tensor property. Properties are assigned to mesh items, i.e.
-/// Node or Element objects. The newProperty() method first creates a
+/// Node or Element objects. The createNewPropertyVector() method first creates a
 /// PropertyVector of template type T (scalar, vector or matrix).
 /// This class stores the PropertyVector, accessible by a combination of the
 /// name and the type of the mesh item (Node or Element).
@@ -42,7 +42,9 @@ class Properties
 {
 public:
 	/// Method creates a PropertyVector if a PropertyVector with the same name
-	/// and the same type T was not already created before.
+	/// and the same type T was not already created before. In case there exists
+	/// already such a PropertyVector the returned boost::optional holds an
+	/// invalid/unusable PropertyVector.
 	/// There are two versions of this method. This method is used
 	/// when every mesh item at hand has its own property value, i.e. \f$n\f$
 	/// mesh item and \f$n\f$ different property values.
@@ -61,7 +63,7 @@ public:
 			_properties.find(property_key)
 		);
 		if (it != _properties.end()) {
-			WARN("A property of the name \"%s\" is already assigned to the mesh.",
+			ERR("A property of the name \"%s\" is already assigned to the mesh.",
 				name.c_str());
 			return boost::optional<PropertyVector<T> &>();
 		}
@@ -78,13 +80,18 @@ public:
 	}
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
-	/// and the same type T was not already created before.
+	/// and the same type T was not already created before. In case there exists
+	/// already such a PropertyVector the returned boost::optional holds an
+	/// invalid/unusable PropertyVector.
 	/// This method is used if only a small number of distinct property values
-	/// in a property exist (e.g. mapping material groups to elements).
+	/// in a property exist (e.g. mapping property groups to elements).
 	/// In this case a mapping between mesh items and properties (stored
 	/// on the heap), see the parameter item2group_mapping, is required.
 	/// @tparam T type of the property value
 	/// @param name the name of the property
+	/// @param n_prop_groups number of distinct property groups
+	/// @param item2group_mapping the mapping between mesh item and the property
+	/// group
 	/// @param mesh_item_type for instance node or element assigned properties
 	/// @return On success a reference to a PropertyVector packed into a
 	///   boost::optional else an empty boost::optional.
@@ -100,7 +107,7 @@ public:
 			_properties.find(property_key)
 		);
 		if (it != _properties.end()) {
-			WARN("A property of the name \"%s\" already assigned to the mesh.",
+			ERR("A property of the name \"%s\" already assigned to the mesh.",
 				name.c_str());
 			return boost::optional<PropertyVector<T> &>();
 		}
@@ -134,10 +141,11 @@ public:
 						boost::any_cast<PropertyVector<T> const&>(it->second)
 					);
 			} catch (boost::bad_any_cast const&) {
-				ERR("A property with the desired data type is not available.");
+				ERR("A property with the specified data type is not available.");
 				return boost::optional<PropertyVector<T> const&>();
 			}
 		} else {
+			ERR("A property with the specified name and MeshItemType is not available.");
 			return boost::optional<PropertyVector<T> const&>();
 		}
 	}
