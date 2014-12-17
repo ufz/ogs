@@ -95,7 +95,7 @@ public:
 		std::vector<std::size_t> const& item2group_mapping,
 		MeshItemType mesh_item_type)
 	{
-		PropertyKeyType property_key(name, mesh_item_type);
+		PropertyKeyType const property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
 		);
@@ -124,7 +124,7 @@ public:
 	getProperty(std::string const& name,
 		MeshItemType mesh_item_type)
 	{
-		PropertyKeyType property_key(name, mesh_item_type);
+		PropertyKeyType const property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
 		);
@@ -145,7 +145,7 @@ public:
 	void removeProperty(std::string const& name,
 		MeshItemType mesh_item_type)
 	{
-		PropertyKeyType property_key(name, mesh_item_type);
+		PropertyKeyType const property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
 		);
@@ -164,7 +164,7 @@ public:
 	/// @param mesh_item_type to which item type the property is assigned to
 	bool hasProperty(std::string const& name, MeshItemType mesh_item_type)
 	{
-		PropertyKeyType property_key(name, mesh_item_type);
+		PropertyKeyType const property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
 		);
@@ -181,8 +181,8 @@ private:
 			: name(n), mesh_item_type(t)
 		{}
 
-		std::string name;
-		MeshItemType mesh_item_type;
+		std::string const name;
+		MeshItemType const mesh_item_type;
 
 		bool operator<(PropertyKeyType const& other) const
 		{
