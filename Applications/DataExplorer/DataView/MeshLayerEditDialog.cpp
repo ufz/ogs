@@ -177,7 +177,7 @@ void MeshLayerEditDialog::createMeshToolSelection()
 	_minThicknessEdit = new QLineEdit(meshToolSelectionBox);
 	_minThicknessEdit->setText("1.0");
 	QDoubleValidator* min_thickness_validator = new QDoubleValidator(0, 1000000, 15, _minThicknessEdit);
-	
+	_minThicknessEdit->setValidator(min_thickness_validator);
 	_minThicknessEdit->setMaximumWidth(100);
 	_minThicknessEdit->setFixedWidth(100);
 	meshToolSelectionLayout->addWidget(_ogsMeshButton, 0, 0);
