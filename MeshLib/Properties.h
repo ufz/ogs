@@ -137,7 +137,7 @@ public:
 	template <typename T>
 	boost::optional<PropertyVector<T> const&>
 	getProperty(std::string const& name,
-		MeshItemType mesh_item_type)
+		MeshItemType mesh_item_type) const
 	{
 		PropertyKeyType const property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
