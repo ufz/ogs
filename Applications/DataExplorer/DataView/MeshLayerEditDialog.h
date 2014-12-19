@@ -56,6 +56,7 @@ private:
 	QLabel* _nLayerExplanation;
 	QLineEdit* _layerEdit;
 	QLineEdit* _noDataReplacementEdit;
+	QLineEdit* _minThicknessEdit;
 	QPushButton* _nextButton;
 	QGroupBox* _layerBox;
 	QGroupBox* _radioButtonBox;
