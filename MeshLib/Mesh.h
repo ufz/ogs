@@ -145,7 +145,7 @@ protected:
 
 	void setNodesConnectedByEdges();
 
-	/// Computes the element-connectivit of nodes. Two nodes i and j are
+	/// Computes the element-connectivity of nodes. Two nodes i and j are
 	/// connected if they are shared by an element.
 	void setNodesConnectedByElements();
 
