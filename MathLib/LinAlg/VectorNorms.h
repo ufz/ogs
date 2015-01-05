@@ -21,8 +21,7 @@
 #include <cmath>
 
 #include "MathLib/MathTools.h"
-
-#include "LinAlgEnums.h"
+#include "MathLib/LinAlg/LinAlgEnums.h"
 
 namespace MathLib
 {
