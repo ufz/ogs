@@ -44,7 +44,7 @@ MeshComponentMap::MeshComponentMap(
             MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
             const MeshLib::NodePartitionedMesh &mesh 
-                   = dynamic_cast<const MeshLib::NodePartitionedMesh&>(mesh_subset.getMesh());
+                   = static_cast<const MeshLib::NodePartitionedMesh&>(mesh_subset.getMesh());
              
             if (order == ComponentOrder::BY_LOCATION)
             {            

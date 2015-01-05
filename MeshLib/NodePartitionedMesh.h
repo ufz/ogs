@@ -129,6 +129,12 @@ class NodePartitionedMesh : public Mesh
             return _n_nghost_elem;
         }
 
+        /// Clean the vector for global node IDs.
+        void clearGlobalNodeIDs()
+        {
+            _global_node_ids.clear();
+        }
+
     private:
         /// Global IDs of nodes of a partition
         std::vector<unsigned> _global_node_ids;

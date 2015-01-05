@@ -39,7 +39,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
 #ifdef USE_PETSC
             const MeshLib::NodePartitionedMesh &mesh 
-                    = dynamic_cast<const MeshLib::NodePartitionedMesh&>(ms->getMesh());
+                    = static_cast<const MeshLib::NodePartitionedMesh&>(ms->getMesh());
             std::vector<bool> null_vec;        
 #endif
             // For each element find the global indices for node/element

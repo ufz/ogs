@@ -77,7 +77,6 @@ public:
         DBUG("Associate hydraulic_head with process variable \'%s\'.",
             name.c_str());
         _hydraulic_head = &*variable;
-
     }
 
     void initialize()
@@ -268,7 +267,6 @@ private:
         AssemblerLib::VectorMatrixAssembler<
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType>;
-
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
