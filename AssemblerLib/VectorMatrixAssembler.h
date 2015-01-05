@@ -52,6 +52,7 @@ public:
         LocalToGlobalIndexMap::RowColumnIndices const& indices = _data_pos[id];
 
         local_assembler->assemble();
+         
         local_assembler->addToGlobal(_A, _rhs, indices);
     }
 

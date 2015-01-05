@@ -37,6 +37,12 @@ IF (QT4_FOUND)
 	SET ( SOURCES ${SOURCES} ${SOURCES_QT_XML})
 ENDIF (QT4_FOUND)
 
+# It could be used for other MPI based DDC approach in future.
+IF(OGS_USE_PETSC)
+	GET_SOURCE_FILES(SOURCES_MPI_IO MPI_IO)
+	SET (SOURCES ${SOURCES} ${SOURCES_MPI_IO})
+ENDIF()
+
 # Create the library
 ADD_LIBRARY(FileIO STATIC ${SOURCES})
 

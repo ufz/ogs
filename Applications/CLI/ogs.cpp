@@ -14,6 +14,14 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif
+
+#ifdef USE_PETSC
+#include <petscksp.h>
+#endif
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -24,6 +32,8 @@
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/CPUTime.h"
+#include "BaseLib/RunTime.h"
 
 #include "Applications/ApplicationsLib/ProjectData.h"
 
@@ -34,6 +44,15 @@ int main(int argc, char *argv[])
 {
 
 	using ConfigTree = boost::property_tree::ptree;
+
+#ifdef USE_MPI
+	MPI_Init(&argc, &argv);
+#endif
+
+#ifdef USE_PETSC
+	char help[] = "ogs6 with PETSc \n";
+	PetscInitialize(&argc, &argv, nullptr, help);
+#endif
 
 	// logog
 	LOGOG_INITIALIZE();
@@ -57,6 +76,11 @@ int main(int argc, char *argv[])
 		true,
 		"",
 		"PROJECT FILE");
+
+	BaseLib::RunTime run_timer;
+	run_timer.start();
+	BaseLib::CPUTime CPU_timer;
+	CPU_timer.start();
 
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
@@ -96,9 +120,25 @@ int main(int argc, char *argv[])
 
 	output_file.close();
 
+	INFO("Elapsed running time in total computation %g s", run_timer.elapsed()); 
+	INFO("Elapsed CPU time in total computation %g s", CPU_timer.elapsed()); 
+
 	delete fmt;
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
+    
+#ifdef USE_PETSC
+	PetscPrintf(PETSC_COMM_WORLD, "info: Released the memory occupied by MPI based vector, matrix and linear solver.\n"); 
+	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+	{
+		(*p_it)->releaseEquationMemory();
+	}
+	PetscFinalize();
+#endif
+
+#ifdef USE_MPI
+	MPI_Finalize();
+#endif
 
 	return 0;
 }

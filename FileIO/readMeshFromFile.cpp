@@ -17,6 +17,9 @@
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
+#ifdef USE_PETSC
+#include <petscksp.h>
+#endif
 
 // BaseLib
 #include "FileTools.h"
@@ -29,11 +32,25 @@
 #include "Legacy/MeshIO.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 #include "readMeshFromFile.h"
+//
+#ifdef USE_PETSC
+#include "MPI_IO/NodePartitionedMeshReader.h"
+#include "MeshLib/NodePartitionedMesh.h"
+#endif
+
 
 namespace FileIO
 {
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
+#ifdef USE_PETSC
+	NodePartitionedMeshReader read_pmesh;
+	MeshLib::NodePartitionedMesh *mesh 
+		= read_pmesh.read(PETSC_COMM_WORLD, file_name);
+				
+	if(mesh)
+		return mesh;
+#else
 	if (BaseLib::hasFileExtension("msh", file_name))
 	{
 		Legacy::MeshIO meshIO;
@@ -42,6 +59,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
 		return VtuInterface::readVTUFile(file_name);
+#endif
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;

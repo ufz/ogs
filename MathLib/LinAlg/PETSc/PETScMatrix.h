@@ -21,6 +21,8 @@
 #include "PETScMatrixOption.h"
 #include "PETScVector.h"
 
+#include "MathLib/LinAlg/RowColumnIndices.h"
+
 typedef Mat PETSc_Mat;
 
 namespace MathLib
@@ -167,7 +169,7 @@ class PETScMatrix
         void add(std::vector<PetscInt> const& row_pos,
                  std::vector<PetscInt> const& col_pos,
                  const T_DENSE_MATRIX &sub_mat );
-
+                                                
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output
             \vw_format        File format listed as:
@@ -242,7 +244,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
     const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
     const PetscInt ncols = static_cast<PetscInt> (col_pos.size());
 
-    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], sub_mat.getEntries(), ADD_VALUES);
+    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], &sub_mat(0,0), ADD_VALUES);
 };
 
 /*!

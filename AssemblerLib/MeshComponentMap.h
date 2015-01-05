@@ -42,6 +42,7 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
+    /// \param is_ghost     flag for ghost entity 
     MeshComponentMap(std::vector<MeshLib::MeshSubsets*> const& components,
         ComponentOrder order);
 
@@ -107,8 +108,29 @@ public:
     /// | l_m      | comp_id_2   | gi78        |
     /// | ...      |  ...        | ...         |
     /// | l_n      | comp_id_n   | gi89        |
+    template <typename T_INT_TYPE>
+    std::vector<T_INT_TYPE> getGlobalIndicesByLocation(const std::vector<Location> &ls) const;
+
+    /// The same fucntion as getGlobalIndicesByLocation but by component    
+    template <typename T_INT_TYPE>
+    std::vector<T_INT_TYPE> getGlobalIndicesByComponent(const std::vector<Location> &ls) const;
+
+
+    /// Get flags of ghost location at location \c l.
+    ///
+    /// | Location | ComponentID | GlobalIndex |  Ghost flag |
+    /// | -------- | ----------- | ----------- |-------------|             
+    /// | l        | c           | gi          |is_ghost     | 
+
+    std::vector<bool> getGhostFlags(const Location &l) const;
+    
+    std::size_t getGlobalDOF() const
+    {
+        return _num_global_dof;	
+    }
+    
     template <ComponentOrder ORDER>
-    std::vector<std::size_t> getGlobalIndices(const std::vector<Location> &ls) const;
+    std::vector<bool> getGhostFlags(const std::vector<Location> &ls) const;    
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
@@ -131,10 +153,13 @@ public:
 private:
     void renumberByLocation(std::size_t offset=0);
 
-private:
     detail::ComponentGlobalIndexDict _dict;
+    
+    size_t _num_global_dof = 0;
 };
 
 }   // namespace AssemblerLib
+
+#include "MeshComponentMap-impl.h"
 
 #endif  // ASSEMBLERLIB_MESHCOMPONENTMAP_H_

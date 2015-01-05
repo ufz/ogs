@@ -46,7 +46,7 @@ Mesh::Mesh(const std::string &name,
 	this->setDimension();
 	this->setElementsConnectedToNodes();
 	//this->setNodesConnectedByEdges();
-	//this->setNodesConnectedByElements();
+	this->setNodesConnectedByElements();
 	this->setElementNeighbors();
 
 	this->calcEdgeLengthRange();
@@ -268,6 +268,18 @@ void Mesh::setNodesConnectedByElements()
 		node->setConnectedNodes(conn_vec);
 	}
 }
+
+/// Get the maximum number of connected nodes to a node
+size_t Mesh:: getMaximumNConnectedNodesToNode() const
+{
+    size_t max_ncn = 0;
+    for(auto node : _nodes)
+    {
+        if(node->getConnectedNodes().size() > max_ncn) 
+            max_ncn = node->getConnectedNodes().size(); 				
+    }  
+    return max_ncn + 1;			
+}          
 
 
 }

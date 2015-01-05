@@ -13,10 +13,6 @@ APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
 
-IF (QT4_FOUND)
-	APPEND_SOURCE_FILES(TEST_SOURCES FileIO)
-ENDIF()
-
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/AssemblerLib
 	${CMAKE_SOURCE_DIR}/BaseLib
@@ -80,7 +76,7 @@ ADD_CATALYST_DEPENDENCY(testrunner)
 # This should override CTest's predefined test-target but it does not
 IF (OGS_USE_PETSC)
 	ADD_CUSTOM_TARGET(tests
-		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*
+		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*:Assembler*:templated*
 		DEPENDS testrunner
 	)
 	ADD_CUSTOM_TARGET(tests_mpi

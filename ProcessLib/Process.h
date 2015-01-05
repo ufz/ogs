@@ -28,7 +28,11 @@ public:
 
     virtual void initialize() = 0;
     virtual void solve() = 0;
-
+    
+    /// Explicitly release memory of global vector, matrix and linear solvers
+    /// for MPI based parallel computing    
+    virtual void releaseEquationMemory() = 0;
+    
     /// Postprocessing after solve().
     /// The output stream is dedicated for the ascii result output.
     virtual void post(std::ostream& os) = 0;

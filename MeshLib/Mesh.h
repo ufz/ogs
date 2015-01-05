@@ -120,6 +120,9 @@ public:
 	/// Return true if the mesh has any nonlinear nodes
 	bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
 
+    /// Get the maximum number of connected nodes to a node
+    size_t getMaximumNConnectedNodesToNode() const;
+
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();

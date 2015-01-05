@@ -16,6 +16,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/RunTime.h"
+
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
@@ -27,6 +29,12 @@
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+
+#ifdef USE_PETSC
+#include <petscmat.h>
+#include "MeshLib/NodePartitionedMesh.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
+#endif
 
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
 
@@ -69,7 +77,6 @@ public:
         DBUG("Associate hydraulic_head with process variable \'%s\'.",
             name.c_str());
         _hydraulic_head = &*variable;
-
     }
 
     void initialize()
@@ -87,10 +94,21 @@ public:
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
         DBUG("Allocate global matrix, vectors, and linear solver.");
+
+#ifdef USE_PETSC
+         MathLib::PETScMatrixOption mat_opt;
+         mat_opt.d_nz = _mesh.getMaximumNConnectedNodesToNode();
+         mat_opt.o_nz = mat_opt.d_nz;
+         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSizeGlobal(), mat_opt) );        
+         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
+         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSizeGlobal()));
+         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A, "gw_"));
+#else        
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+#endif
 
         DBUG("Create local assemblers.");
         // Populate the vector of local assemblers.
@@ -149,11 +167,34 @@ public:
         *_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
+        BaseLib::RunTime assembly_wtimer;
+        assembly_wtimer.start();
+        //
         _global_setup.execute(*_global_assembler, _local_assemblers);
+        //
+        _elapsed_ctime += assembly_wtimer.elapsed();
+        
+#ifdef USE_PETSC
 
-        // Apply known values from the Dirichlet boundary conditions.
+        // Just for test
+        std::vector<PetscInt> dbc_pos;
+        std::vector<PetscScalar> dbc_value;
+        const MeshLib::NodePartitionedMesh &mesh 
+                    = dynamic_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+                    
+        for(size_t i=0; i<_dirichlet_bc.global_ids.size(); i++)
+        {
+             if( mesh.isGhostNode(_dirichlet_bc.global_ids[i]) )
+                continue;
+                
+             dbc_pos.push_back(static_cast<PetscInt>(mesh.getGlobalNodeID(_dirichlet_bc.global_ids[i]))); 
+             dbc_value.push_back(static_cast<PetscScalar>(_dirichlet_bc.values[i])); 	   
+        }       
+        MathLib::applyKnownSolution(*_A, *_rhs, *_x, dbc_pos, dbc_value);
+#else       
+         // Apply known values from the Dirichlet boundary conditions.
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
-
+#endif
         _linearSolver->solve(*_rhs, *_x);
     }
 
@@ -162,8 +203,22 @@ public:
         DBUG("Postprocessing GroundwaterFlowProcess.");
         // Postprocessing of the linear system of equations solver results:
         // For example, write _x to _hydraulic_head or convert to velocity etc.
+        
+#ifdef USE_PETSC // Note: this is only a test
+        int rank; 
+        MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+                    
+        std::vector<PetscScalar>  u(_x->size()); 
+        _x->getGlobalVector(&u[0]);
+        if(rank == 0)
+        {  
+            for (std::size_t i = 0; i < u.size(); ++i)
+                 os << u[i] << " ";
+        }        
+#else        
         for (std::size_t i = 0; i < _x->size(); ++i)
-            os << (*_x)[i] << "\n";
+            os << (*_x)[i] << " ";
+#endif            
     }
 
     ~GroundwaterFlowProcess()
@@ -177,6 +232,21 @@ public:
         delete _mesh_subset_all_nodes;
     }
 
+    /// Explicitly release memory of global vector, matrix and linear solvers
+    /// for MPI based parallel computing    
+    void releaseEquationMemory()
+    {               
+#ifdef USE_PETSC 
+        PetscPrintf(PETSC_COMM_WORLD, "info: Time elapsed in the assembly using PETSc vector and matrix: %g s.\n",
+                                       _elapsed_ctime);
+        
+        delete _A.release();
+        delete _rhs.release();
+        delete _x.release();
+        delete _linearSolver.release();
+#endif        
+    }
+    
 private:
     ProcessVariable const* _hydraulic_head = nullptr;
 
@@ -188,7 +258,7 @@ private:
     std::unique_ptr<typename GlobalSetup::MatrixType> _A;
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
-
+    
     std::vector<GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>*>
             _local_assemblers;
@@ -197,7 +267,6 @@ private:
         AssemblerLib::VectorMatrixAssembler<
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType>;
-
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
@@ -209,6 +278,8 @@ private:
         std::vector<std::size_t> global_ids;
         std::vector<double> values;
     } _dirichlet_bc;
+    
+    double _elapsed_ctime = 0.; ///< Clock time
 
 };
 

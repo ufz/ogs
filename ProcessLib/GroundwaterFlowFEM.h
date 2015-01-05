@@ -13,6 +13,10 @@
 #include <memory>
 #include <vector>
 
+#ifdef USE_PETSC
+#include <petscmat.h>
+#endif
+
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -101,11 +105,26 @@ public:
         }
     }
 
+
     void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
     {
-        A.add(indices, *_localA);
-        rhs.add(indices.rows, *_localRhs);
+#ifdef USE_PETSC
+       for(size_t i=0; i<indices.ghost_flags.size(); i++)
+       {
+            if(indices.ghost_flags[i]) 
+            {
+               _localA->row(i).setZero(); 
+               (*_localRhs)[i] = 0.;
+            }   
+	   }
+               
+       A.add(indices.rows, indices.columns, *_localA);   
+       rhs.add(indices.rows, *_localRhs);
+#else
+       A.add(indices, *_localA);
+       rhs.add(indices.rows, *_localRhs);
+#endif       
     }
 
 private:

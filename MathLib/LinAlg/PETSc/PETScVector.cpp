@@ -135,13 +135,13 @@ PetscScalar PETScVector::getNorm(MathLib::VecNormType nmtype) const
     return norm;
 }
 
-void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat vw_format)
+void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat vw_format) const
 {
     PetscViewer viewer;
     PetscViewerASCIIOpen(PETSC_COMM_WORLD, file_name.c_str(), &viewer);
     PetscViewerPushFormat(viewer, vw_format);
 
-    finalizeAssembly();
+    //finalizeAssembly();
 
     PetscObjectSetName((PetscObject)_v, file_name.c_str());
     VecView(_v, viewer);
