@@ -202,10 +202,11 @@ private:
 
 		bool operator<(PropertyKeyType const& other) const
 		{
-			if (name.compare(other.name) == 0) {
+			int res(name.compare(other.name));
+			if (res == 0) {
 				return mesh_item_type < other.mesh_item_type;
 			}
-			return name.compare(other.name) < 0;
+			return res < 0;
 		}
 	};
 
