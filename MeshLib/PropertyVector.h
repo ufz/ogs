@@ -26,6 +26,7 @@ namespace MeshLib
 template <typename PROP_VAL_TYPE>
 class PropertyVector : public std::vector<PROP_VAL_TYPE>
 {
+friend class Properties;
 public:
 	PropertyVector()
 		: std::vector<PROP_VAL_TYPE>()
@@ -48,6 +49,7 @@ public:
 template <typename T>
 class PropertyVector<T*> : public std::vector<T*>
 {
+friend class Properties;
 public:
 	/// @param n_prop_groups number of different property values
 	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
