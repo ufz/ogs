@@ -102,14 +102,8 @@ public:
 		std::vector<std::size_t> const& item2group_mapping,
 		MeshItemType mesh_item_type)
 	{
-		// check entries of item2group_mapping of consistence
-		for (std::size_t k(0); k<item2group_mapping.size(); k++) {
-			std::size_t const group_id (item2group_mapping[k]);
-			if (group_id >= n_prop_groups) {
-				ERR("The mapping to property %d for item %d is not in the correct range [0,%d).", group_id, k, n_prop_groups);
-				return boost::optional<PropertyVector<T> &>();
-			}
-		}
+		// check if there is already a PropertyVector with the same name and
+		// mesh_item_type
 		PropertyKeyType const property_key(name, mesh_item_type);
 		std::map<PropertyKeyType, boost::any>::const_iterator it(
 			_properties.find(property_key)
@@ -119,6 +113,16 @@ public:
 				name.c_str());
 			return boost::optional<PropertyVector<T> &>();
 		}
+
+		// check entries of item2group_mapping of consistence
+		for (std::size_t k(0); k<item2group_mapping.size(); k++) {
+			std::size_t const group_id (item2group_mapping[k]);
+			if (group_id >= n_prop_groups) {
+				ERR("The mapping to property %d for item %d is not in the correct range [0,%d).", group_id, k, n_prop_groups);
+				return boost::optional<PropertyVector<T> &>();
+			}
+		}
+
 		auto entry_info(
 			_properties.insert(
 				std::pair<PropertyKeyType, boost::any>(
