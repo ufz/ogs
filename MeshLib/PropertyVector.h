@@ -27,7 +27,7 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector : public std::vector<PROP_VAL_TYPE>
 {
 friend class Properties;
-public:
+protected:
 	PropertyVector()
 		: std::vector<PROP_VAL_TYPE>()
 	{}
@@ -50,7 +50,7 @@ template <typename T>
 class PropertyVector<T*> : public std::vector<T*>
 {
 friend class Properties;
-public:
+protected:
 	/// @param n_prop_groups number of different property values
 	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
 	/// (Node or Element) to an index (position in the data structure).
@@ -63,6 +63,7 @@ public:
 		_item2group_mapping(item2group_mapping)
 	{}
 
+public:
 	/// Destructor ensures the deletion of the heap-constructed objects.
 	~PropertyVector()
 	{
