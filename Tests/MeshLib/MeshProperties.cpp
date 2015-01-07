@@ -7,6 +7,7 @@
  */
 
 #include <ctime>
+#include <numeric>
 #include "gtest/gtest.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
