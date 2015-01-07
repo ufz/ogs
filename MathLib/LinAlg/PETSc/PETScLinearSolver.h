@@ -19,6 +19,8 @@
 
 #include<string>
 
+#include "logog/include/logog.hpp"
+
 #include "petscksp.h"
 
 #include "PETScMatrix.h"
@@ -47,6 +49,9 @@ class PETScLinearSolver
 
         ~PETScLinearSolver()
         {
+            INFO("info: Time elapsed in PETSc ksp solver for equation: %g s.\n",
+                 _elapsed_ctime);
+
             KSPDestroy(&_solver);
         }
 

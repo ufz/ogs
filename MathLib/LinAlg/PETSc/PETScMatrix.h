@@ -21,6 +21,8 @@
 #include "PETScMatrixOption.h"
 #include "PETScVector.h"
 
+#include "MathLib/LinAlg/RowColumnIndices.h"
+
 typedef Mat PETSc_Mat;
 
 namespace MathLib
@@ -242,7 +244,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
     const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
     const PetscInt ncols = static_cast<PetscInt> (col_pos.size());
 
-    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], sub_mat.getEntries(), ADD_VALUES);
+    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], &sub_mat(0,0), ADD_VALUES);
 };
 
 /*!
