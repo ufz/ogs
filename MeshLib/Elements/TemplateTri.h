@@ -26,6 +26,7 @@
 
 #include "Face.h"
 #include "Line.h"
+#include "EdgeRules.h"
 
 namespace MeshLib {
 
@@ -46,9 +47,12 @@ namespace MeshLib {
  *
  * @endcode
  */
-template <unsigned NNODES, CellType CELLTRITYPE>
-class TemplateTri : public Face
+template <unsigned NNODES, CellType CELLTRITYPE, typename EDGENODES = detail::TriEdgeLinearNodes>
+class TemplateTri : public Face, public EDGENODES
 {
+protected:
+	using EDGENODES::_edge_nodes;
+
 public:
 	/// Constant: The number of all nodes for this element
 	static const unsigned n_all_nodes = NNODES;
@@ -143,7 +147,6 @@ protected:
 		return _nodes[_edge_nodes[edge_id][node_id]];
 	}
 
-	static const unsigned _edge_nodes[3][2];
 }; /* class */
 
 } /* namespace */

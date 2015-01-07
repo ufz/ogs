@@ -18,6 +18,7 @@
 #include <array>
 #include "MeshLib/MeshEnums.h"
 #include "Face.h"
+#include "EdgeRules.h"
 
 namespace MeshLib {
 
@@ -36,9 +37,12 @@ namespace MeshLib {
  *              0
  * @endcode
  */
-template <unsigned NNODES, CellType CELLQUADTYPE>
-class TemplateQuad : public Face
+template <unsigned NNODES, CellType CELLQUADTYPE, typename EDGENODES = detail::QuadEdgeLinearNodes>
+class TemplateQuad : public Face, public EDGENODES
 {
+protected:
+	using EDGENODES::_edge_nodes;
+
 public:
 	/// Constant: The number of all nodes for this element
 	static const unsigned n_all_nodes = NNODES;
@@ -61,6 +65,9 @@ public:
 
 	/// Destructor
 	virtual ~TemplateQuad();
+
+	/// Returns the i-th edge of the element.
+	virtual const Element* getEdge(unsigned i) const { return EDGENODES::getEdge(this, i);}
 
 	/// Get the number of edges for this element.
 	unsigned getNEdges() const { return 4; };
@@ -126,7 +133,6 @@ protected:
 	/// Return a specific edge node.
 	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
 
-	static const unsigned _edge_nodes[4][2];
 }; /* class */
 
 } /* namespace */

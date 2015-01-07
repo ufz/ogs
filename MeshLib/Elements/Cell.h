@@ -36,17 +36,10 @@ public:
 	unsigned getDimension() const { return dimension; };
 
 	/// Get the volume of this 3d element.
-	virtual double getVolume() const { return _volume; };
+	virtual double getVolume() const { return getContent(); }
 
 	/// Destructor
 	virtual ~Cell();
-
-	/**
-	 * This method is pure virtual and is inherited from class @sa Element.
-	 * It has to be implemented in the derived classes of class Cell!
-	 * @return a copy of the object
-	 */
-	virtual Element* clone() const = 0;
 
 	/**
 	 * Checks if the node order of an element is correct by testing surface normals.
