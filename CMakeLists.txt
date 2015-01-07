@@ -156,11 +156,17 @@ IF( OGS_BUILD_TESTS AND NOT IS_SUBPROJECT )
 		MESSAGE(FATAL_ERROR "CMAKE 2.8.11 or higher is required to build the tests!")
 	ENDIF()
 	ADD_SUBDIRECTORY( Tests )
-	ADD_SUBDIRECTORY( SimpleTests/MatrixTests EXCLUDE_FROM_ALL )
-	ADD_SUBDIRECTORY( SimpleTests/MeshTests EXCLUDE_FROM_ALL )
-	IF(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
-		ADD_SUBDIRECTORY( SimpleTests/SolverTests EXCLUDE_FROM_ALL )
-	ENDIF()
+
+	IF(OGS_USE_MPI)
+		ADD_SUBDIRECTORY( SimpleTests/MeshTests/MPI )
+	ELSE(OGS_USE_MPI)
+		ADD_SUBDIRECTORY( SimpleTests/MatrixTests EXCLUDE_FROM_ALL )
+		ADD_SUBDIRECTORY( SimpleTests/MeshTests EXCLUDE_FROM_ALL )
+		IF(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
+			ADD_SUBDIRECTORY( SimpleTests/SolverTests EXCLUDE_FROM_ALL )
+		ENDIF()
+	ENDIF(OGS_USE_MPI)
+
 	# Create a target 'data', which downloads all referenced data sets into the build tree
 	# This has to be defined after all tests are defined
 	ExternalData_Add_Target(data)
