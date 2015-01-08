@@ -20,6 +20,7 @@
 #include <mpi.h>
 
 #include "MeshLib/NodePartitionedMesh.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -62,6 +63,9 @@ class NodePartitionedMeshReader
         /// _size converted to string
         std::string _size_str;
 
+        /// MPI commumicator;
+        MPI_Comm mpi_comm_ = MPI_COMM_WORLD;
+
         /// Rank of compute core
         int _rank;
 
@@ -95,12 +99,51 @@ class NodePartitionedMeshReader
 
                      the forth file contains a long type integer array of element information of
                      material ID, element type and node IDs of each ghost element of all partitoions.
-             \param comm            MPI  Communicator.
              \param file_name_base  Name of file to be read, which must be a name with the
                                path to the file and without file extension.
              \return           Pointer to Mesh object.
         */
-        MeshLib::NodePartitionedMesh* readBinary(MPI_Comm comm, const std::string &file_name_base);
+        MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
+
+        /*
+            \brief Open ASCII files of node partitioned mesh data.
+
+            \param file_name_base  Name of file to be read, which must be a name with the
+                                   path to the file and without file extension.
+            \param is_cfg          Input stream for the file contains configuration data.
+            \param is_node         Input stream for the file contains node data.
+            \param is_elem         Input stream for the file contains element data.
+            \return                Return true if all files are good.
+        */
+        bool openASCIIFiles(std::string const& file_name_base,std::ifstream& is_cfg,
+                            std::ifstream& is_node, std::ifstream& is_elem);
+
+        /*
+            \brief Read mesh nodes from an ASCII file and cast to the correponding rank.
+
+            \param is_node    Input stream for the file contains node data.
+            \param part_id    Partition ID.
+            \param mesh_nodes Node vector to be filled.
+            \param part_id    Global Node ID to be filled.
+        */
+        void readCastNodesASCII(std::ifstream& is_node, const int part_id,
+                                std::vector<MeshLib::Node*> &mesh_nodes,
+                                std::vector<unsigned> &glb_node_ids);
+
+        /*
+            \brief Read mesh elements from an ASCII file  and cast to the correponding rank.
+
+            \param is_elem    Input stream for the file contains element data.
+            \param part_id    Partition ID.
+            \param data_size  Total size of the data to be read.
+            \param proc_ghost Flag to process ghost element.
+            \param mesh_nodes Node vector to be filled.
+            \param mesh_elems Element vector to be filled.
+        */
+        void readCastElemsASCII(std::ifstream& is_elem, const int part_id,
+                                const long data_size, const bool process_ghost,
+                                const std::vector<MeshLib::Node*> &mesh_nodes,
+                                std::vector<MeshLib::Element*> &mesh_elems);
 
         /*!
              \brief Create a NodePartitionedMesh object, read ASCII mesh data,
@@ -128,12 +171,11 @@ class NodePartitionedMeshReader
 
                      the third file contains element information of material ID, element type
                      and node IDs of each element of all partitoions.
-             \param comm            MPI  Communicator.
              \param file_name_base  Name of file to be read, which must be a name with the
                                path to the file and without file extension.
              \return           Pointer to Mesh object.
         */
-        MeshLib::NodePartitionedMesh* readASCII(MPI_Comm comm, const std::string &file_name_base);
+        MeshLib::NodePartitionedMesh* readASCII(const std::string &file_name_base);
 
         /*!
              \brief Read elements data from ASCII file.

@@ -19,9 +19,6 @@
 #include "BaseLib/RunTime.h"
 #include "BaseLib/FileTools.h"
 
-#include "MeshLib/NodePartitionedMesh.h"
-#include "MeshLib/Node.h"
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Hex.h"
@@ -40,9 +37,10 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     BaseLib::RunTime timer;
     timer.start();
 
-    MPI_Comm_size(comm, &_size);
+    mpi_comm_ = comm;
+    MPI_Comm_size(mpi_comm_, &_size);
     _size_str = std::to_string(_size);
-    MPI_Comm_rank(comm, &_rank);
+    MPI_Comm_rank(mpi_comm_, &_rank);
 
     NodePartitionedMesh *mesh = nullptr;
 
@@ -53,13 +51,13 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     {
         INFO("-->Reading ASCII mesh file ...");
 
-        mesh = readASCII(comm, file_name_base);
+        mesh = readASCII(file_name_base);
     }
     else
     {
         INFO("-->Reading binary mesh file ...");
 
-        mesh = readBinary(comm, file_name_base);
+        mesh = readBinary(file_name_base);
     }
 
     INFO("\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed());
@@ -69,8 +67,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(MPI_Comm comm, con
     return mesh;
 }
 
-MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm comm,
-        const std::string &file_name_base)
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader
+::readBinary(const std::string &file_name_base)
 {
     //----------------------------------------------------------------------------------
     // Read headers
@@ -81,7 +79,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     const std::string fname_num_p_ext = _size_str + ".bin";
 
     std::string fname_new_base = fname_header + "cfg" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
+    file_status = MPI_File_open(mpi_comm_, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
@@ -118,7 +116,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     // Read Nodes
     fname_new_base = fname_header + "nod" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
+    file_status = MPI_File_open(mpi_comm_, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
@@ -144,7 +142,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     // Read non-ghost elements
     fname_new_base = fname_header +"ele" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
+    file_status = MPI_File_open(mpi_comm_, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status) // Failed to open the file
     {
@@ -165,7 +163,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
     //----------------------------------------------------------------------------------
     //Read ghost element
     fname_new_base = fname_header + "ele_g" + fname_num_p_ext;
-    file_status = MPI_File_open(comm, &fname_new_base[0], MPI_MODE_RDONLY,
+    file_status = MPI_File_open(mpi_comm_, &fname_new_base[0], MPI_MODE_RDONLY,
                                 MPI_INFO_NULL, &fh);
     if(file_status)
     {
@@ -199,8 +197,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(MPI_Comm com
                                    n_base_nodes, n_active_base_nodes, n_active_nodes);
 }
 
-bool readMeshDataConfiguration(std::string const& file_name_base,std::ifstream& is_cfg, std::ifstream& is_node,
-    std::ifstream& is_elem)
+bool NodePartitionedMeshReader::
+openASCIIFiles(std::string const& file_name_base,
+               std::ifstream& is_cfg, std::ifstream& is_node, std::ifstream& is_elem)
 {
     const std::string fname_header = file_name_base +  "_partitioned_";
     const std::string fname_num_p_ext = _size_str + ".msh";
@@ -243,8 +242,90 @@ bool readMeshDataConfiguration(std::string const& file_name_base,std::ifstream& 
     return true;
 }
 
-MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm,
-        const std::string &file_name_base)
+void NodePartitionedMeshReader
+::readCastNodesASCII(std::ifstream& is_node, const int part_id,
+                     std::vector<MeshLib::Node*> &mesh_nodes,
+                     std::vector<unsigned> &glb_node_ids)
+{
+    int tag = 0;
+    MPI_Status status;
+
+    //----------------------------------------------------------------------------------
+    // Read Nodes
+    std::vector<NodeData> s_nodes(_num_nodes_part);
+
+    MPI_Datatype MPI_node;
+    if(part_id > 0)
+        buildNodeStrucTypeMPI(&s_nodes[0], &MPI_node);
+
+    if(_rank == 0)
+    {
+        for(long k=0; k<_num_nodes_part; k++)
+        {
+            NodeData *anode = &s_nodes[k];
+            is_node >> anode->index
+                    >> anode->x >> anode->y >> anode->z >> std::ws;
+        }
+
+        if(part_id == 0)
+        {
+            setNodes(s_nodes, mesh_nodes, glb_node_ids);
+        }
+        else
+        {
+            MPI_Send(&s_nodes[0], _num_nodes_part, MPI_node, part_id, tag, mpi_comm_);
+        }
+    }
+    else if(part_id > 0 && _rank == part_id)
+    {
+        MPI_Recv(&s_nodes[0], _num_nodes_part, MPI_node, 0, tag, mpi_comm_, &status);
+        setNodes(s_nodes, mesh_nodes, glb_node_ids);
+    }
+
+    if(part_id > 0)
+        MPI_Type_free(&MPI_node);
+
+}
+
+void NodePartitionedMeshReader
+::readCastElemsASCII(std::ifstream& is_elem, const int part_id,
+                     const long data_size, const bool process_ghost,
+                     const std::vector<MeshLib::Node*> &mesh_nodes,
+                     std::vector<MeshLib::Element*> &mesh_elems)
+{
+    int tag = 0;
+    MPI_Status status;
+
+    long *elem_data = new long[data_size];
+    if(_rank == 0)
+    {
+        readElementASCII(is_elem, elem_data, process_ghost);
+
+        if(part_id == 0)
+        {
+            if(!process_ghost)
+                mesh_elems.resize(_num_regular_elems_part + _num_ghost_elems_part);
+            setElements(mesh_nodes, elem_data, mesh_elems, process_ghost);
+        }
+        else
+        {
+            MPI_Send(elem_data, data_size, MPI_LONG, part_id, tag, mpi_comm_);
+        }
+    }
+    else if(part_id > 0 && _rank == part_id)
+    {
+        MPI_Recv(elem_data, data_size, MPI_LONG, 0, tag, mpi_comm_, &status);
+
+        if(!process_ghost)
+            mesh_elems.resize(_num_regular_elems_part + _num_ghost_elems_part);
+        setElements(mesh_nodes, elem_data, mesh_elems, process_ghost);
+    }
+
+    delete [] elem_data;
+}
+
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader
+::readASCII(const std::string &file_name_base)
 {
     std::ifstream is_cfg;
     std::ifstream is_node;
@@ -253,16 +334,17 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
     bool file_opened = false;
     if(_rank == 0)
     {
-        file_opened = readMeshDataConfiguration(file_name_base, is_cfg, is_node, is_elem);
+        file_opened = openASCIIFiles(file_name_base, is_cfg, is_node, is_elem);
 
-        if(!file_opened) {
+        if(!file_opened)
+        {
             is_cfg.close();
             is_node.close();
             is_elem.close();
         }
     }
 
-    MPI_Bcast(&file_opened, 1, MPI_INT, 0, comm);
+    MPI_Bcast(&file_opened, 1, MPI_INT, 0, mpi_comm_);
 
     if(!file_opened)
         return nullptr;
@@ -285,13 +367,12 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
     long mesh_controls[num_controls];
 
     NodePartitionedMesh *np_mesh = nullptr;
-    std::vector<NodeData> s_nodes;
-    long *elem_info = nullptr;
-    int tag[] = {0, 1, 2};
-    MPI_Status status;
     std::vector<MeshLib::Node*> mesh_nodes;
     std::vector<unsigned> glb_node_ids;
     std::vector<MeshLib::Element*> mesh_elems;
+    int tag = 0;
+    MPI_Status status;
+
     for(int i=0; i<_size; i++)
     {
         if(_rank == 0)
@@ -304,12 +385,12 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
 
             if(i > 0)
             {
-                MPI_Send(mesh_controls, num_controls, MPI_LONG, i, tag[0], comm);
+                MPI_Send(mesh_controls, num_controls, MPI_LONG, i, tag, mpi_comm_);
             }
         }
         else if(i > 0 && _rank == i)
         {
-            MPI_Recv(mesh_controls, num_controls, MPI_LONG, 0, tag[0], comm, &status);
+            MPI_Recv(mesh_controls, num_controls, MPI_LONG, 0, tag, mpi_comm_, &status);
         }
 
         _num_nodes_part = mesh_controls[0];
@@ -318,86 +399,21 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
 
         //----------------------------------------------------------------------------------
         // Read Nodes
-        s_nodes.resize(_num_nodes_part);
-
-        MPI_Datatype MPI_node;
-        if(i > 0)
-            buildNodeStrucTypeMPI(&s_nodes[0], &MPI_node);
-
-        if(_rank == 0)
-        {
-            for(long k=0; k<_num_nodes_part; k++)
-            {
-                NodeData anode = s_nodes[k];
-                is_node >> anode.index
-                        >> anode.x >> anode.y >> anode.z >> std::ws;
-            }
-
-            if(i == 0)
-            {
-                setNodes(s_nodes, mesh_nodes, glb_node_ids);
-            }
-            else
-            {
-                MPI_Send(&s_nodes[0], _num_nodes_part, MPI_node, i, tag[0], comm);
-            }
-        }
-        else if(i > 0 && _rank == i)
-        {
-            MPI_Recv(&s_nodes[0], _num_nodes_part, MPI_node, 0, tag[0], comm, &status);
-            setNodes(s_nodes, mesh_nodes, glb_node_ids);
-        }
-
-        if(i > 0)
-            MPI_Type_free(&MPI_node);
+        readCastNodesASCII(is_node, i, mesh_nodes, glb_node_ids);
 
         //----------------------------------------------------------------------------------
         // Read elements
+        bool process_ghost = false;
         const long size_elem_info = _num_regular_elems_part + mesh_controls[8];
-        elem_info = (long *)realloc(elem_info, sizeof(long) * size_elem_info );
-        if(_rank == 0)
-        {
-            readElementASCII(is_elem, elem_info);
-            if(i == 0)
-            {
-                mesh_elems.resize(_num_regular_elems_part + _num_ghost_elems_part);
-                setElements(mesh_nodes, elem_info, mesh_elems);
-            }
-            else
-            {
-                MPI_Send(elem_info, size_elem_info, MPI_LONG, i, tag[1], comm);
-            }
-        }
-        else if(i > 0 && _rank == i)
-        {
-            MPI_Recv(elem_info, size_elem_info, MPI_LONG, 0, tag[1], comm, &status);
-            mesh_elems.resize(_num_regular_elems_part + _num_ghost_elems_part);
-            setElements(mesh_nodes, elem_info, mesh_elems);
-        }
+        readCastElemsASCII(is_elem, i, size_elem_info, process_ghost,
+                           mesh_nodes, mesh_elems);
 
         //-------------------------------------------------------------------------
         // Ghost elements
-        const bool process_ghost = true;
+        process_ghost = true;
         const long size_elem_g_info = _num_ghost_elems_part + mesh_controls[9];
-        elem_info = (long *)realloc(elem_info, sizeof(long) * size_elem_g_info );
-        if(_rank == 0)
-        {
-            readElementASCII(is_elem, elem_info, true);
-
-            if(i == 0)
-            {
-                setElements(mesh_nodes, elem_info, mesh_elems, process_ghost);
-            }
-            else
-            {
-                MPI_Send(elem_info, size_elem_g_info, MPI_LONG, i, tag[2], comm);
-            }
-        }
-        else if(i > 0 && _rank == i)
-        {
-            MPI_Recv(elem_info, size_elem_g_info, MPI_LONG, 0, tag[2], comm, &status);
-            setElements(mesh_nodes, elem_info, mesh_elems, process_ghost);
-        }
+        readCastElemsASCII(is_elem, i, size_elem_g_info, process_ghost,
+                           mesh_nodes, mesh_elems);
 
         if(_rank == i)
         {
@@ -418,8 +434,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
         }
     }
 
-    free(elem_info);
-
     if(_rank == 0)
     {
         is_cfg.close();
@@ -427,7 +441,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(MPI_Comm comm
         is_elem.close();
     }
 
-    MPI_Barrier(comm);
+    MPI_Barrier(mpi_comm_);
 
     return  np_mesh;
 }
