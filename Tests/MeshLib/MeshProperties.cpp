@@ -108,11 +108,12 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 		)
 	);
 	// initialize the property values
-	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++)
+	for (auto it=group_properties->begin(); it != group_properties->end(); it++)
 	{
 		(*it) = new double;
 		*(*it) = static_cast<double>(
 			std::distance(group_properties->begin(), it)
+		);
 	}
 
 	// the mesh should have the property assigned to cells
@@ -243,7 +244,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 			)
 		);
 	// initialize the property values
-	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++) {
+	for (auto it=group_properties->begin(); it != group_properties->end(); it++) {
 		(*it) = new std::array<double,3>;
 		for (std::size_t idx(0); idx<(*it)->size(); idx++) {
 			(*(*it))[idx] = static_cast<double>(
@@ -287,7 +288,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 		> (prop_name_2, MeshLib::MeshItemType::Cell)
 	);
 	// init property values
-	for (auto it=(*array_properties).begin(); it != (*array_properties).end(); it++)
+	for (auto it=array_properties->begin(); it != array_properties->end(); it++)
 	{
 		for (std::size_t k(0); k<it->size(); k++) {
 			(*it)[k] = static_cast<float>(
@@ -310,7 +311,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 
 	// compare the values/matrices
 	for (std::size_t k(0); k<n_items_2; k++) {
-		for (std::size_t j(0); j<(*array_properties).size(); j++) {
+		for (std::size_t j(0); j<array_properties->size(); j++) {
 			ASSERT_EQ((*array_properties)[k][j], (*array_properties_cpy)[k][j]);
 		}
 	}
@@ -328,7 +329,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 			prop_name_3, MeshLib::MeshItemType::Cell)
 	);
 	// init property values
-	for (auto it=(*matrix_properties).begin(); it != (*matrix_properties).end(); it++)
+	for (auto it=matrix_properties->begin(); it != matrix_properties->end(); it++)
 	{
 		for (int r(0); r<it->rows(); r++) {
 			for (int c(0); c<it->cols(); c++) {
@@ -353,8 +354,8 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	ASSERT_FALSE(!matrix_properties_cpy);
 
 	// compare the values/matrices
-	auto it_cpy=(*matrix_properties_cpy).begin();
-	for (auto it=(*matrix_properties).begin(); it != (*matrix_properties).end();
+	auto it_cpy=matrix_properties_cpy->begin();
+	for (auto it=matrix_properties->begin(); it != matrix_properties->end();
 		it++, it_cpy++) {
 		for (int r(0); r<it->rows(); r++) {
 			for (int c(0); c<it->cols(); c++) {
