@@ -39,7 +39,7 @@ public:
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
 	GlobalDenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
 	GlobalDenseMatrix (const GlobalDenseMatrix &src);
-	virtual ~GlobalDenseMatrix() {};
+	virtual ~GlobalDenseMatrix() {}
 
     /// return a start index of the active data range
 	IDX_TYPE getRangeBegin() const { return static_cast<IDX_TYPE>(0); }
