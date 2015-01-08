@@ -86,8 +86,16 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	std::vector<std::size_t> prop_item2group_mapping(n_items);
 	// create simple mat_group to index mapping
 	for (std::size_t j(0); j<n_prop_val_groups; j++) {
-		std::size_t const lower((double)(j)/(double)(n_prop_val_groups)*n_items);
-		std::size_t const upper((double)(j+1)/(double)(n_prop_val_groups)*n_items);
+		std::size_t const lower(
+			static_cast<std::size_t>(
+				(static_cast<double>(j)/n_prop_val_groups)*n_items
+			)
+		);
+		std::size_t const upper(
+			static_cast<std::size_t>(
+				(static_cast<double>(j+1)/n_prop_val_groups)*n_items
+			)
+		);
 		for (std::size_t k(lower); k<upper; k++) {
 			prop_item2group_mapping[k] = j;
 		}
@@ -103,7 +111,8 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++)
 	{
 		(*it) = new double;
-		*(*it) = std::distance((*group_properties).begin(), it);
+		*(*it) = static_cast<double>(
+			std::distance(group_properties->begin(), it)
 	}
 
 	// the mesh should have the property assigned to cells
@@ -140,8 +149,16 @@ TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 	std::vector<std::size_t> prop_item2group_mapping(n_items);
 	// create simple mat_group to index mapping
 	for (std::size_t j(0); j<n_prop_val_groups; j++) {
-		std::size_t const lower((double)(j)/(double)(n_prop_val_groups)*n_items);
-		std::size_t const upper((double)(j+1)/(double)(n_prop_val_groups)*n_items);
+		std::size_t const lower(
+			static_cast<std::size_t>(
+				(static_cast<double>(j)/n_prop_val_groups)*n_items
+			)
+		);
+		std::size_t const upper(
+			static_cast<std::size_t>(
+				(static_cast<double>(j+1)/n_prop_val_groups)*n_items
+			)
+		);
 		for (std::size_t k(lower); k<upper; k++) {
 			prop_item2group_mapping[k] = j;
 		}
@@ -203,8 +220,16 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	std::vector<std::size_t> prop_item2group_mapping(n_items);
 	// create simple mat_group to index mapping
 	for (std::size_t j(0); j<n_prop_val_groups; j++) {
-		std::size_t const lower((double)(j)/(double)(n_prop_val_groups)*n_items);
-		std::size_t const upper((double)(j+1)/(double)(n_prop_val_groups)*n_items);
+		std::size_t const lower(
+			static_cast<std::size_t>(
+				(static_cast<double>(j)/n_prop_val_groups)*n_items
+			)
+		);
+		std::size_t const upper(
+			static_cast<std::size_t>(
+				(static_cast<double>(j+1)/n_prop_val_groups)*n_items
+			)
+		);
 		for (std::size_t k(lower); k<upper; k++) {
 			prop_item2group_mapping[k] = j;
 		}
@@ -221,7 +246,9 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++) {
 		(*it) = new std::array<double,3>;
 		for (std::size_t idx(0); idx<(*it)->size(); idx++) {
-			(*(*it))[idx] = std::distance((*group_properties).begin(), it)+idx;
+			(*(*it))[idx] = static_cast<double>(
+				static_cast<std::size_t>(
+					std::distance(group_properties->begin(),it)) + idx);
 		}
 	}
 
@@ -263,7 +290,9 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	for (auto it=(*array_properties).begin(); it != (*array_properties).end(); it++)
 	{
 		for (std::size_t k(0); k<it->size(); k++) {
-			(*it)[k] = std::distance(array_properties->begin(), it)+k;
+			(*it)[k] = static_cast<float>(
+				static_cast<std::size_t>(
+					std::distance(array_properties->begin(), it)) + k);
 		}
 	}
 
@@ -303,8 +332,8 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	{
 		for (int r(0); r<it->rows(); r++) {
 			for (int c(0); c<it->cols(); c++) {
-				(*it)(r,c) = std::distance((*matrix_properties).begin(),it)
-					+ r*it->cols()+c+1;
+				(*it)(r,c) = static_cast<double>(
+					std::distance(matrix_properties->begin(),it)+r*it->cols()+c+1);
 			}
 		}
 	}
