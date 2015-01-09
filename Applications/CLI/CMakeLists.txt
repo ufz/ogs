@@ -19,3 +19,19 @@ IF(OGS_USE_PETSC)
 ENDIF()
 
 INCLUDE(Tests.cmake)
+
+####################
+### Installation ###
+####################
+IF(APPLE AND OGS_BUILD_GUI)
+	INSTALL (TARGETS ogs RUNTIME DESTINATION . COMPONENT ogs_cli)
+ELSE()
+	INSTALL (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
+ENDIF()
+
+set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs" "OGS Simulator")
+cpack_add_component(ogs_cli
+	DISPLAY_NAME "OGS THMC Simulator"
+	DESCRIPTION "The OGS simulation as a command line executable."
+	GROUP Applications
+)
