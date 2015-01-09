@@ -16,7 +16,10 @@
 #define MSHMODEL_H
 
 // ** INCLUDES **
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include "Applications/ApplicationsLib/ProjectData.h"
+#endif
+
 #include "TreeModel.h"
 
 namespace MeshLib {

@@ -15,7 +15,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include "Applications/ApplicationsLib/ProjectData.h"
+#endif
+
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
 
