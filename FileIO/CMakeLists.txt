@@ -19,6 +19,8 @@ SET( SOURCES
 	TINInterface.cpp
 	Writer.h
 	Writer.cpp
+	writeMeshToFile.h
+	writeMeshToFile.cpp
 )
 
 GET_SOURCE_FILES(SOURCES_LEGACY Legacy)
