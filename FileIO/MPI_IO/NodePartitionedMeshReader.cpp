@@ -370,8 +370,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader
     std::vector<MeshLib::Node*> mesh_nodes;
     std::vector<unsigned> glb_node_ids;
     std::vector<MeshLib::Element*> mesh_elems;
-    int tag = 0;
-    MPI_Status status;
 
     for(int i=0; i<_size; i++)
     {
@@ -382,16 +380,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader
             for(long j=0; j< num_controls; j++)
                 is_cfg >> mesh_controls[j];
             is_cfg >> std::ws;
+        }
 
-            if(i > 0)
-            {
-                MPI_Send(mesh_controls, num_controls, MPI_LONG, i, tag, mpi_comm_);
-            }
-        }
-        else if(i > 0 && _rank == i)
-        {
-            MPI_Recv(mesh_controls, num_controls, MPI_LONG, 0, tag, mpi_comm_, &status);
-        }
+        MPI_Bcast(mesh_controls, num_controls, MPI_LONG, 0, mpi_comm_);
 
         _num_nodes_part = mesh_controls[0];
         _num_regular_elems_part = mesh_controls[2];
