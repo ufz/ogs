@@ -94,7 +94,7 @@ OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 IF(WIN32)
 	OPTION(OGS_PACKAGING_NSIS "Do you want to package with NSIS?")
 ENDIF()
-INCLUDE(scripts/cmake/Pack.cmake)
+INCLUDE(scripts/cmake/packaging/Pack.cmake)
 
 ######################
 ### Subdirectories ###
