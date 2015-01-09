@@ -136,9 +136,7 @@ SET_PROPERTY(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 ####################
 ### Installation ###
 ####################
-
 IF(APPLE)
-
 	INCLUDE(packaging/PackagingMacros)
 	ConfigureMacOSXBundle(DataExplorer ${APP_ICON})
 
@@ -146,12 +144,21 @@ IF(APPLE)
 	SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
 	INCLUDE(InstallRequiredSystemLibraries)
 	INCLUDE(DeployQt4)
-	INSTALL_QT4_EXECUTABLE(DataExplorer.app)
-
-	RETURN()
+	INSTALL_QT4_EXECUTABLE(DataExplorer.app "" "" "" "" "" ogs_gui)
+ELSE()
+	INSTALL (TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
 ENDIF()
 
-INSTALL (TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
+cpack_add_component(ogs_gui
+	DISPLAY_NAME "OGS Data Explorer"
+	DESCRIPTION "The graphical user interface for OpenGeoSys."
+	GROUP Applications
+)
+set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer" "OGS Data Explorer")
+
+IF(APPLE)
+	RETURN()
+ENDIF()
 
 IF(MSVC)
 	SET(OGS_GUI_EXE ${EXECUTABLE_OUTPUT_PATH}/Release/DataExplorer.exe)
