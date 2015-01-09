@@ -91,4 +91,18 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	return nValues;
 }
 
+unsigned ElementValueModification::set(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
+{
+	std::vector<MeshLib::Element*> elements (mesh.getElements());
+	unsigned nValues = 0;
+	for (auto e : elements) {
+		if (e->getGeomType()!=ele_type)
+			continue;
+		e->setValue(new_value);
+		nValues++;
+	}
+
+	return nValues;
+}
+
 } // end namespace MeshLib
