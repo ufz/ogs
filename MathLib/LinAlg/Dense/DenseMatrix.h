@@ -33,7 +33,7 @@ public:
 
 public:
    /// Dense square matrix constructor.
-   explicit DenseMatrix (IDX_TYPE rows) : DenseMatrix(rows, rows) {};
+   explicit DenseMatrix (IDX_TYPE rows) : DenseMatrix(rows, rows) {}
 
    /// Dense rectangular matrix constructor.
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols);

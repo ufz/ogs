@@ -35,7 +35,7 @@ public:
 
 	/// The error code determined during element extraction
 	/// (0 = no errors, 1 = all elements selected, 2 = no elements selected)
-	unsigned getErrorCode() { return _error_code; };
+	unsigned getErrorCode() { return _error_code; }
 
 	/// Removes all mesh elements marked by search-methods.
 	MeshLib::Mesh* removeMeshElements(const std::string &new_mesh_name);

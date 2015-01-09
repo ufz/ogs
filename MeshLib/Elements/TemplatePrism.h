@@ -70,16 +70,16 @@ public:
 	const Element* getFace(unsigned i) const;
 
 	/// Get the number of edges for this element.
-	unsigned getNEdges() const { return 9; };
+	unsigned getNEdges() const { return 9; }
 
 	/// Get the number of nodes for face i.
 	unsigned getNFaceNodes(unsigned i) const;
 
 	/// Get the number of faces for this element.
-	unsigned getNFaces() const { return 5; };
+	unsigned getNFaces() const { return 5; }
 
 	/// Get the number of neighbors for this element.
-	unsigned getNNeighbors() const { return 5; };
+	unsigned getNNeighbors() const { return 5; }
 
 	/// Get the number of linear nodes for this element.
 	virtual unsigned getNBaseNodes() const
@@ -103,7 +103,7 @@ public:
 	 * Get the type of the element in context of the finite element method.
 	 * @return a value of the enum CellType
 	 */
-	virtual CellType getCellType() const { return CELLPRISMTYPE; };
+	virtual CellType getCellType() const { return CELLPRISMTYPE; }
 
 	/// Returns true if these two indeces form an edge and false otherwise
 	bool isEdge(unsigned i, unsigned j) const;
@@ -137,7 +137,10 @@ protected:
 	double computeVolume();
 
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
+	{
+		return _nodes[_edge_nodes[edge_id][node_id]];
+	}
 
 	static const unsigned _face_nodes[5][4];
 	static const unsigned _edge_nodes[9][2];

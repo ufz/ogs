@@ -40,7 +40,7 @@ bool IsFileExisting(const std::string &strFilename);
  */
 template <typename T> void writeValueBinary(std::ostream &out, T const& val)
 {
-	out.write((const char*)&val, sizeof(T));
+	out.write(static_cast<const char*>(&val), sizeof(T));
 }
 
 template <typename T>

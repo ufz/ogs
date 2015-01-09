@@ -58,7 +58,7 @@ public:
 	/// Sets the status of material group i
 	void setMaterialStatus(unsigned material_id, bool status);
 
-	~ElementStatus() {};
+	~ElementStatus() {}
 
 protected:
 	/// The mesh for which the element status is administrated

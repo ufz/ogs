@@ -262,23 +262,33 @@ private:
 				} else { // 1d case: dx == 0, dy == 0, dz != 0
 					_n_steps[0] = 1;
 					_n_steps[1] = 1;
-					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[2] = static_cast<std::size_t> (
+						ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
+					);
 				}
 			} else { // dy != 0
 				if(fabs(delta[2]) < eps) { // 1d case: dx == 0, dy != 0, dz == 0
 					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[1] = static_cast<std::size_t> (
+						ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
+					);
 					_n_steps[2] = 1;
 				} else { // 2d case: dx == 0, dy != 0, dz != 0
 					_n_steps[0] = 1;
-					_n_steps[1] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[1] / (max_num_per_grid_cell * delta[2]))));
-					_n_steps[2] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[1] = static_cast<std::size_t> (
+						ceil(sqrt(n_pnts*delta[1]/(max_num_per_grid_cell*delta[2])))
+					);
+					_n_steps[2] = static_cast<std::size_t> (
+						ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
+					);
 				}
 			}
 		} else { // dx != 0
 			if(fabs(delta[1]) < eps) { // dy == 0
 				if(fabs(delta[2]) < eps) { // 1d case: dx != 0, dy == 0, dz == 0
-					_n_steps[0] = static_cast<std::size_t> (ceil(n_pnts / (double) max_num_per_grid_cell));
+					_n_steps[0] = static_cast<std::size_t> (
+						ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
+					);
 					_n_steps[1] = 1;
 					_n_steps[2] = 1;
 				} else { // 2d case: dx != 0, dy == 0, dz != 0
