@@ -2,7 +2,6 @@ IF(OGS_PACKAGING_NSIS)
 	SET(CPACK_GENERATOR NSIS)
 	# There is a bug in NSI that does not handle full unix paths properly. Make
 	# sure there is at least one set of four (4) backlasshes.
-	#SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/CMakeConfiguration\\\\OGS_Logo_Installer.bmp")
 	#SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
 	SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
 	SET(CPACK_NSIS_HELP_LINK "https:\\\\\\\\www.opengeosys.org")
