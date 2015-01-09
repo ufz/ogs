@@ -293,13 +293,13 @@ namespace blas
   // Conv.Copy double2float
   inline void copy(const unsigned n, double* orig, float* dest)
   {
-    for (unsigned i=0; i<n; i++) dest[i] = (float) orig[i];
+    for (unsigned i=0; i<n; i++) dest[i] = static_cast<float>(orig[i]);
   }
 
   // Conv.Copy float2double
   inline void copy(const unsigned n, float* orig, double* dest)
   {
-    for (unsigned i=0; i<n; i++) dest[i] = (double) orig[i];
+    for (unsigned i=0; i<n; i++) dest[i] = static_cast<double>(orig[i]);
   }
 
   // Scalar product conj(x)*y
@@ -1014,14 +1014,14 @@ namespace blas
   inline void fill0_ltr(unsigned n, double* A)
   {
     for (unsigned j=0; j<n; ++j) {
-      *A++ = (double) j;
+      *A++ = static_cast<double>(j);
       for (unsigned i=j+1; i<n; ++i) *A++ = D_ZERO;
     }
   }
   inline void fill0_ltr(unsigned n, float* A)
   {
     for (unsigned j=0; j<n; ++j) {
-      *A++ = (float) j;
+      *A++ = static_cast<float>(j);
       for (unsigned i=j+1; i<n; ++i) *A++ = S_ZERO;
     }
   }
@@ -1070,7 +1070,7 @@ namespace blas
     for (unsigned i=0; i<n; ++i) {
       for (unsigned j=0; j<i; ++j) *A++ = D_ZERO;
       // for pivoting, a ltr is assumed to have ones on the diagonal
-      *A++ = (double) i;
+      *A++ = static_cast<double>(i);
     }
   }
   inline void fillId_ltr(unsigned n, float *A)
@@ -1078,7 +1078,7 @@ namespace blas
     for (unsigned i=0; i<n; ++i) {
       for (unsigned j=0; j<i; ++j) *A++ = S_ZERO;
       // for pivoting, a ltr is assumed to have ones on the diagonal
-      *A++ = (float) i;
+      *A++ = static_cast<float>(i);
     }
   }
 

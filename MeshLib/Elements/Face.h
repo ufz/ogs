@@ -35,22 +35,22 @@ public:
 	static const unsigned dimension = 2;
 
 	/// Get the area of this 2d element.
-	virtual double getArea() const { return _area; };
+	virtual double getArea() const { return _area; }
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _area; };
+	double getContent() const { return _area; }
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; };
+	unsigned getDimension() const { return dimension; }
 
 	/// Returns the face i of the element.
-	const Element* getFace(unsigned i) const { return this->getEdge(i); };
+	const Element* getFace(unsigned i) const { return this->getEdge(i); }
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { (void)i; return 2; };
+	unsigned getNFaceNodes(unsigned i) const { (void)i; return 2; }
 
 	/// 2D elements have no faces.
-	unsigned getNFaces() const { return 0; };
+	unsigned getNFaces() const { return 0; }
 
 	/// Returns the surface normal of a 2D element.
 	MathLib::Vector3 getSurfaceNormal() const;

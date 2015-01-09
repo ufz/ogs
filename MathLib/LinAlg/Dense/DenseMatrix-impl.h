@@ -289,7 +289,7 @@ template <typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE
 sqrFrobNrm (const DenseMatrix<FP_TYPE, IDX_TYPE> &mat)
 {
-	FP_TYPE nrm((FP_TYPE) (0));
+	FP_TYPE nrm(static_cast<FP_TYPE>(0));
 	IDX_TYPE i, j;
 	for (j = 0; j < mat.getNCols(); j++)
 		for (i = 0; i < mat.getNRows(); i++)

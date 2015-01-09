@@ -69,10 +69,10 @@ public:
 	virtual ~TemplateTri();
 
 	/// Get the number of edges for this element.
-	unsigned getNEdges() const { return 3; };
+	unsigned getNEdges() const { return 3; }
 
 	/// Get the number of neighbors for this element.
-	unsigned getNNeighbors() const { return 3; };
+	unsigned getNNeighbors() const { return 3; }
 
 	/// Get the number of linear nodes for this element.
 	virtual unsigned getNBaseNodes() const

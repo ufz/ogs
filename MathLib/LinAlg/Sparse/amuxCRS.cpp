@@ -45,7 +45,7 @@ struct MatMultThreadParam {
 extern "C" {
 void* amuxCRSpthread (void* ptr)
 {
-	MatMultThreadParam *thread_param((MatMultThreadParam*) (ptr));
+	MatMultThreadParam *thread_param(static_cast<MatMultThreadParam*>(ptr));
 	const double a(thread_param->_a);
 	const unsigned beg_row(thread_param->_beg_row);
 	const unsigned end_row(thread_param->_end_row);
@@ -75,7 +75,7 @@ void amuxCRSParallelPThreads (double a,
 #ifdef HAVE_PTHREADS
 	// fill thread data objects
 	MatMultThreadParam** thread_param_array (new MatMultThreadParam*[num_of_pthreads]);
-	double step_size ((double)(n)/(double)(num_of_pthreads));
+	double step_size (static_cast<double>(n)/(num_of_pthreads));
 	for (unsigned k(0); k<num_of_pthreads; k++) {
 		const unsigned beg (static_cast<unsigned>(k*step_size));
 		const unsigned end (static_cast<unsigned>((k+1)*step_size));

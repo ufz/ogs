@@ -67,16 +67,16 @@ public:
 	const Element* getFace(unsigned i) const;
 
 	/// Get the number of edges for this element.
-	unsigned getNEdges() const { return 6; };
+	unsigned getNEdges() const { return 6; }
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { (void)i; return 3; };
+	unsigned getNFaceNodes(unsigned i) const { (void)i; return 3; }
 
 	/// Get the number of faces for this element.
-	unsigned getNFaces() const { return 4; };
+	unsigned getNFaces() const { return 4; }
 
 	/// Get the number of neighbors for this element.
-	unsigned getNNeighbors() const { return 4; };
+	unsigned getNNeighbors() const { return 4; }
 
 	/// Get the number of linear nodes for this element.
 	virtual unsigned getNBaseNodes() const

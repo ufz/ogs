@@ -168,23 +168,41 @@ protected:
 	 * \param stnObject A pointer to the station object for which the x-coordinate should be returned, usually (void*)this will work fine.
 	 * \return The x-coordinate for this station.
 	 */
-	static double getX(void* stnObject) { Station* stn = (Station*)stnObject;
-		                              return (*stn)[0]; }
+	static double getX(void* stnObject)
+	{
+		Station const*const stn = static_cast<Station*>(stnObject);
+		return (*stn)[0];
+	}
 	/// Returns the y-coordinate of this station. See the detailed documentation for getX concerning the syntax.
-	static double getY(void* stnObject) { Station* stn = (Station*)stnObject;
-		                              return (*stn)[1]; }
+	static double getY(void* stnObject)
+	{
+		Station const*const stn = static_cast<Station*>(stnObject);
+		return (*stn)[1];
+	}
 	/// Returns the z-coordinate of this station. See the detailed documentation for getX concerning the syntax.
-	static double getZ(void* stnObject) { Station* stn = (Station*)stnObject;
-		                              return (*stn)[2]; }
+	static double getZ(void* stnObject)
+	{
+		Station* stn = static_cast<Station*>(stnObject);
+		return (*stn)[2];
+	}
 	/// Sets the x-coordinate for this station. See the detailed documentation for getX concerning the syntax.
-	static void setX(void* stnObject, double val) { Station* stn = (Station*)stnObject;
-		                                        (*stn)[0] = val; }
+	static void setX(void* stnObject, double val)
+	{
+		Station* stn = static_cast<Station*>(stnObject);
+		(*stn)[0] = val;
+	}
 	/// Sets the y-coordinate for this station. See the detailed documentation for getX concerning the syntax.
-	static void setY(void* stnObject, double val) { Station* stn = (Station*)stnObject;
-		                                        (*stn)[1] = val; }
+	static void setY(void* stnObject, double val)
+	{
+		Station* stn = static_cast<Station*>(stnObject);
+		(*stn)[1] = val;
+	}
 	/// Sets the z-coordinate for this station. See the detailed documentation for getX concerning the syntax.
-	static void setZ(void* stnObject, double val) { Station* stn = (Station*)stnObject;
-		                                        (*stn)[2] = val; }
+	static void setZ(void* stnObject, double val)
+	{
+		Station* stn = static_cast<Station*>(stnObject);
+		(*stn)[2] = val;
+	}
 
 	std::string _name;
 	StationType _type; // GeoSys Station Type

@@ -72,16 +72,16 @@ public:
 	const Element* getFace(unsigned i) const;
 
 	/// Get the number of edges for this element.
-	unsigned getNEdges() const { return 12; };
+	unsigned getNEdges() const { return 12; }
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { (void)i; return 4; };
+	unsigned getNFaceNodes(unsigned i) const { (void)i; return 4; }
 
 	/// Get the number of faces for this element.
-	unsigned getNFaces() const { return 6; };
+	unsigned getNFaces() const { return 6; }
 
 	/// Get the number of neighbors for this element.
-	unsigned getNNeighbors() const { return 6; };
+	unsigned getNNeighbors() const { return 6; }
 
 	/// Get the number of linear nodes for this element.
 	virtual unsigned getNBaseNodes() const
@@ -138,7 +138,10 @@ protected:
 	double computeVolume();
 
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
+	{
+		return _nodes[_edge_nodes[edge_id][node_id]];
+	}
 
 	static const unsigned _face_nodes[6][4];
 	static const unsigned _edge_nodes[12][2];

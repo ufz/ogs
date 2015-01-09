@@ -30,13 +30,13 @@ public:
 	static const unsigned dimension = 3;
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _volume; };
+	double getContent() const { return _volume; }
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; };
+	unsigned getDimension() const { return dimension; }
 
 	/// Get the volume of this 3d element.
-	virtual double getVolume() const { return _volume; };
+	virtual double getVolume() const { return _volume; }
 
 	/// Destructor
 	virtual ~Cell();
