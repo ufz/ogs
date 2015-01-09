@@ -14,13 +14,13 @@
 #ifndef NODE_PARTITIONED_MESH_READER_H
 #define NODE_PARTITIONED_MESH_READER_H
 
-#include <string>
 #include <fstream>
+#include <string>
+#include <vector>
 
 #include <mpi.h>
 
 #include "MeshLib/NodePartitionedMesh.h"
-#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -30,24 +30,42 @@ class Element;
 
 namespace FileIO
 {
-/// Class to handle reading data of partitioned mesh.
+/// Class for reading of ascii or binary partitioned mesh files into a
+/// NodePartitionedMesh.
 class NodePartitionedMeshReader
 {
     public:
-        NodePartitionedMeshReader() = default;
+        /*!
+             \param comm            MPI Communicator.
+         */
+        NodePartitionedMeshReader(MPI_Comm comm);
+
+        ~NodePartitionedMeshReader();
 
         /*!
              \brief Create a NodePartitionedMesh object, read data to it,
                     and return a pointer to it. Data files are either in
                     ASCII format or binary format.
-             \param comm            MPI Communicator.
              \param file_name_base  Name of file to be read, and it must be base name without name extension.
              \return           Pointer to Mesh object. If the creation of mesh object
                                fails, return a null pointer.
         */
-        MeshLib::NodePartitionedMesh* read(MPI_Comm comm, const std::string &file_name_base);
+        MeshLib::NodePartitionedMesh* read(const std::string &file_name_base);
 
     private:
+        /// Pointer to MPI commumicator;
+        MPI_Comm _mpi_comm = MPI_COMM_WORLD;
+
+        /// Number of MPI processes
+        int _mpi_comm_size;
+
+        /// Rank of compute core
+        int _mpi_rank;
+
+        /// MPI data type description for sending/receiving of node data.
+        MPI_Datatype _mpi_node_type;
+
+
         /// Number of all nodes of a partition.
         long _num_nodes_part;
 
@@ -56,18 +74,6 @@ class NodePartitionedMeshReader
 
         /// Number of ghost elements of a partition.
         long _num_ghost_elems_part;
-
-        /// Number of MPI processes
-        int _size;
-
-        /// _size converted to string
-        std::string _size_str;
-
-        /// MPI commumicator;
-        MPI_Comm mpi_comm_ = MPI_COMM_WORLD;
-
-        /// Rank of compute core
-        int _rank;
 
         /*!
              \brief Create a NodePartitionedMesh object, read binary mesh data
@@ -88,7 +94,7 @@ class NodePartitionedMeshReader
                         6:    Number of nodes for linear element of global mesh,
                         7:    Number of all nodes of global mesh,
                         8~12: Offsets of positions of partitions in the data arrays,
-                        13:   Reserved for exra flag.
+                        13:   Reserved for extra flag.
                      for all partitions
 
                      the second file contains a struct type (long, double double double) array of
@@ -105,7 +111,7 @@ class NodePartitionedMeshReader
         */
         MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
 
-        /*
+        /*!
             \brief Open ASCII files of node partitioned mesh data.
 
             \param file_name_base  Name of file to be read, which must be a name with the
@@ -116,34 +122,35 @@ class NodePartitionedMeshReader
             \return                Return true if all files are good.
         */
         bool openASCIIFiles(std::string const& file_name_base,std::ifstream& is_cfg,
-                            std::ifstream& is_node, std::ifstream& is_elem);
+                            std::ifstream& is_node, std::ifstream& is_elem) const;
 
-        /*
-            \brief Read mesh nodes from an ASCII file and cast to the correponding rank.
+        /*!
+            \brief Read mesh nodes from an ASCII file and cast to the corresponding rank.
 
             \param is_node    Input stream for the file contains node data.
             \param part_id    Partition ID.
             \param mesh_nodes Node vector to be filled.
-            \param part_id    Global Node ID to be filled.
+            \param glb_node_ids Global Node IDs to be filled.
         */
         void readCastNodesASCII(std::ifstream& is_node, const int part_id,
                                 std::vector<MeshLib::Node*> &mesh_nodes,
-                                std::vector<unsigned> &glb_node_ids);
+                                std::vector<std::size_t> &glb_node_ids) const;
 
-        /*
-            \brief Read mesh elements from an ASCII file  and cast to the correponding rank.
+        /*!
+            \brief Read mesh elements from an ASCII file and cast to the corresponding rank.
 
             \param is_elem    Input stream for the file contains element data.
             \param part_id    Partition ID.
-            \param data_size  Total size of the data to be read.
-            \param proc_ghost Flag to process ghost element.
+            \param data_size  Total size of the data to be read. This type is an
+                              int because of MPI_Send() implicit cast.
+            \param process_ghost Flag to process ghost element.
             \param mesh_nodes Node vector to be filled.
             \param mesh_elems Element vector to be filled.
         */
         void readCastElemsASCII(std::ifstream& is_elem, const int part_id,
-                                const long data_size, const bool process_ghost,
+                                const int data_size, const bool process_ghost,
                                 const std::vector<MeshLib::Node*> &mesh_nodes,
-                                std::vector<MeshLib::Element*> &mesh_elems);
+                                std::vector<MeshLib::Element*> &mesh_elems) const;
 
         /*!
              \brief Create a NodePartitionedMesh object, read ASCII mesh data,
@@ -163,7 +170,7 @@ class NodePartitionedMeshReader
                          6:    Number of nodes for linear element of global mesh,
                          7:    Number of all nodes of global mesh,
                          8~9:  Offsets of positions of partitions in the data arrays,
-                        11:   Reserved for exra flag.
+                        11:   Reserved for extra flag.
                         for all partitions
 
                      the second file contains nodes information of global IDs and coordinates
@@ -183,31 +190,31 @@ class NodePartitionedMeshReader
              \param elem_data Pointer to array that contains element data, which to be filled.
              \param ghost     Flag to read ghost elements.
         */
-        void readElementASCII(std::ifstream &ins, long *elem_data,
-                              const bool ghost = false);
+        void readElementASCII(std::ifstream &ins,
+                std::vector<long>& elem_data,
+                const bool ghost = false) const;
 
         /// Node data only for parallel reading.
         struct NodeData
         {
-            long index; ///< Global node index.
+            std::size_t index; ///< Global node index.
             double x;
             double y;
             double z;
         };
 
-        /*! Define MPI data type, mpi_node_ptr, for struct MeshNode for palllel reading of nodes
-              \param anode        a NodeData variable.
-              \param mpi_node_ptr Defined MPI data type of struct NodeData.
-        */
-        void buildNodeStrucTypeMPI(NodeData *anode, MPI_Datatype *mpi_node_ptr);
+        /// Define MPI data type for NodeData struct.
+        void registerNodeDataMpiType();
+
         /*!
              \brief Set mesh nodes from a tempory array containing node data read from file.
              \param node_data  Array containing node data read from file.
              \param mesh_node  Vector of mesh nodes to be set.
              \param glb_node_ids  Global IDs of nodes of a partition.
         */
-        void setNodes(const std::vector<NodeData> &node_data, std::vector<MeshLib::Node*> &mesh_node,
-                      std::vector<unsigned> &glb_node_ids);
+        void setNodes(const std::vector<NodeData> &node_data,
+                std::vector<MeshLib::Node*> &mesh_node,
+                    std::vector<std::size_t> &glb_node_ids) const;
 
         /*!
              \brief Set mesh elements from a tempory array containing node data read from file.
@@ -216,13 +223,29 @@ class NodePartitionedMeshReader
              \param mesh_elems        Vector of mesh elements to be set.
              \param ghost             Flag of processing ghost elements.
         */
-        void setElements(const std::vector<MeshLib::Node*> &mesh_nodes, const long *elem_data,
-                         std::vector<MeshLib::Element*> &mesh_elems, const bool ghost = false);
+        void setElements(const std::vector<MeshLib::Node*> &mesh_nodes,
+                const std::vector<long> &elem_data,
+                std::vector<MeshLib::Element*> &mesh_elems,
+                const bool ghost = false) const;
 
-        /// Print message when file opening fails or the requested numbers mismatch
-        void printMessage(const std::string & err_message, const bool for_fileopen = true);
+        /*! Fills the given data vector with data read from file starting at an
+            offset.
+            \note           In case of failure during opening of the file, an
+                            error message is printed.
+            \param filename File name containing data.
+            \param offset   Displacement of the data accessible from the view;
+                            see MPI_File_set_view() documentation.
+            \param type     Type of data.
+            \param data     A container to be filled with data. Its size is used
+                            to determine how many values should be read.
+            \tparam DATA    A homogeneous contaner type supporting data() and size().
+            \return         True on success and false otherwise.
+         */
+        template <typename DATA>
+        bool readBinaryDataFromFile(std::string const& filename, MPI_Offset offset,
+                MPI_Datatype type, DATA& data) const;
 };
 
-} // End of namespace
+}   // FileIO
 
-#endif // end of #ifndef READ_NODE_PARTITIONED_MESH_H
+#endif  // READ_NODE_PARTITIONED_MESH_H

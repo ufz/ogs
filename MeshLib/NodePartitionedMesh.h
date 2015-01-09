@@ -21,11 +21,6 @@
 
 #include "Mesh.h"
 
-namespace FileIO
-{
-class readNodePartitionedMesh;
-};
-
 namespace MeshLib
 {
 class Node;
@@ -55,14 +50,14 @@ class NodePartitionedMesh : public Mesh
         */
         NodePartitionedMesh(const std::string &name,
                             const std::vector<Node*> &nodes,
-                            const std::vector<unsigned> &glb_node_ids,
+                            const std::vector<std::size_t> &glb_node_ids,
                             const std::vector<Element*> &elements,
                             const std::size_t n_nghost_elem,
-                            const unsigned n_global_base_nodes,
-                            const unsigned n_global_nodes,
-                            const unsigned n_base_nodes,
-                            const unsigned n_active_base_nodes,
-                            const unsigned n_active_nodes)
+                            const std::size_t n_global_base_nodes,
+                            const std::size_t n_global_nodes,
+                            const std::size_t n_base_nodes,
+                            const std::size_t n_active_base_nodes,
+                            const std::size_t n_active_nodes)
             : Mesh(name, nodes, elements, n_base_nodes),
               _global_node_ids(glb_node_ids), _n_nghost_elem(n_nghost_elem),
               _n_global_base_nodes(n_global_base_nodes),
@@ -72,36 +67,32 @@ class NodePartitionedMesh : public Mesh
         {
         }
 
-        ~NodePartitionedMesh()
-        {
-        }
-
         /// Get the number of nodes of the global mesh for linear elements.
-        unsigned getNGlobalBaseNodes() const
+        std::size_t getNGlobalBaseNodes() const
         {
             return _n_global_base_nodes;
         }
 
         /// Get the number of all nodes of the global mesh.
-        unsigned getNGlobalNodes() const
+        std::size_t getNGlobalNodes() const
         {
             return _n_global_nodes;
         }
 
         /// Get the number of the active nodes of the partition for linear elements.
-        unsigned getNActiveBaseNodes() const
+        std::size_t getNActiveBaseNodes() const
         {
             return _n_active_base_nodes;
         }
 
         /// Get the number of all active nodes of the partition.
-        unsigned getNActiveNodes() const
+        std::size_t getNActiveNodes() const
         {
             return _n_active_nodes;
         }
 
         /// Check whether a node with ID of node_id is a ghost node
-        bool isGhostNode(const unsigned node_id)
+        bool isGhostNode(const std::size_t node_id) const
         {
             if(node_id < _n_active_base_nodes)
                 return true;
@@ -112,35 +103,35 @@ class NodePartitionedMesh : public Mesh
         }
 
         /// Get the largest ID of active nodes for higher order elements in a partition.
-        unsigned getLargestActiveNodeID() const
+        std::size_t getLargestActiveNodeID() const
         {
             return _n_base_nodes + _n_active_nodes - _n_active_base_nodes;
         }
 
         /// Get the number of non-ghost elements, or the start entry ID of ghost elements in element vector.
-        size_t getNNonGhostElements() const
+        std::size_t getNNonGhostElements() const
         {
             return _n_nghost_elem;
         }
 
     private:
         /// Global IDs of nodes of a partition
-        std::vector<unsigned> _global_node_ids;
+        std::vector<std::size_t> _global_node_ids;
 
         /// Number of non-ghost elements, or the ID of the start entry of ghost elements in _elements vector.
         std::size_t _n_nghost_elem;
 
         /// Number of the nodes of the global mesh linear interpolations.
-        unsigned _n_global_base_nodes;
+        std::size_t _n_global_base_nodes;
 
         /// Number of all nodes of the global mesh.
-        unsigned _n_global_nodes;
+        std::size_t _n_global_nodes;
 
         /// Number of the active nodes for linear interpolations
-        unsigned _n_active_base_nodes;
+        std::size_t _n_active_base_nodes;
 
         /// Number of the all active nodes.
-        unsigned _n_active_nodes;
+        std::size_t _n_active_nodes;
 };
 
 }   // namespace MeshLib
