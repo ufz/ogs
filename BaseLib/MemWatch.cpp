@@ -35,7 +35,7 @@ unsigned MemWatch::updateMemUsage ()
 #if !defined(WIN32) && !defined(__APPLE__)
         std::string fname ("/proc/");
         std::stringstream str_pid;
-        str_pid << (unsigned) getpid();
+        str_pid << static_cast<unsigned> (getpid());
         fname += str_pid.str();
         fname += "/statm";
         unsigned pages;
@@ -48,13 +48,17 @@ unsigned MemWatch::updateMemUsage ()
         }
 
         in >> pages;
-        _vmem_size = ((unsigned long) pages) * ((unsigned long) getpagesize());
+        _vmem_size = static_cast<unsigned long>(pages) *
+            static_cast<unsigned long>(getpagesize());
         in >> pages;
-        _rmem_size = ((unsigned long) pages) * ((unsigned long) getpagesize());
+        _rmem_size =static_cast<unsigned long>(pages) *
+            static_cast<unsigned long>(getpagesize());
         in >> pages;
-        _smem_size = ((unsigned long) pages) * ((unsigned long) getpagesize());
+        _smem_size = static_cast<unsigned long>(pages) *
+            static_cast<unsigned long>(getpagesize());
         in >> pages;
-        _cmem_size = ((unsigned long) pages) * ((unsigned long) getpagesize());
+        _cmem_size = static_cast<unsigned long>(pages) *
+            static_cast<unsigned long>(getpagesize());
         in.close ();
 #endif
 
