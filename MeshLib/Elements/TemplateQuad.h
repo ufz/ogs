@@ -63,10 +63,10 @@ public:
 	virtual ~TemplateQuad();
 
 	/// Get the number of edges for this element.
-	unsigned getNEdges() const { return 4; };
+	unsigned getNEdges() const { return 4; }
 
 	/// Get the number of neighbors for this element.
-	unsigned getNNeighbors() const { return 4; };
+	unsigned getNNeighbors() const { return 4; }
 
 	/// Get the number of linear nodes for this element.
 	virtual unsigned getNBaseNodes() const
@@ -124,7 +124,10 @@ protected:
 
 protected:
 	/// Return a specific edge node.
-	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const { return _nodes[_edge_nodes[edge_id][node_id]]; };
+	inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
+	{
+		return _nodes[_edge_nodes[edge_id][node_id]];
+	}
 
 	static const unsigned _edge_nodes[4][2];
 }; /* class */

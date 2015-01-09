@@ -32,7 +32,7 @@ inline void computeMappingMatrices(
         FieldType<ShapeMatrixType::N>)
 {
     T_SHAPE_FUNC::computeShapeFunction(natural_pt, shapemat.N);
-};
+}
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
@@ -43,7 +43,7 @@ inline void computeMappingMatrices(
 {
     double* const dNdr = shapemat.dNdr.data();
     T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
-};
+}
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
@@ -74,7 +74,7 @@ inline void computeMappingMatrices(
     if (shapemat.detJ<=.0)
         ERR("***error: det|J|=%e is not positive.\n", shapemat.detJ);
 #endif
-};
+}
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
@@ -87,7 +87,7 @@ inline void computeMappingMatrices(
         (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::N>());
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
-};
+}
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
@@ -104,7 +104,7 @@ inline void computeMappingMatrices(
         shapemat.invJ = shapemat.J.inverse();
         shapemat.dNdx = shapemat.invJ * shapemat.dNdr;
     }
-};
+}
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
@@ -117,7 +117,7 @@ inline void computeMappingMatrices(
         (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::N>());
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, shapemat, FieldType<ShapeMatrixType::DNDX>());
-};
+}
 
 } // detail
 

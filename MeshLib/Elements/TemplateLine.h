@@ -60,31 +60,31 @@ public:
 	virtual ~TemplateLine();
 
 	/// Compute the minimum and maximum squared edge length for this element
-	void computeSqrEdgeLengthRange(double &min, double &max) const { min = _length; max = _length; };
+	void computeSqrEdgeLengthRange(double &min, double &max) const { min = _length; max = _length; }
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _length; };
+	double getContent() const { return _length; }
 
 	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; };
+	unsigned getDimension() const { return dimension; }
 
 	/// Returns the edge i of the element.
-	const Element* getEdge(unsigned /*i*/) const { return nullptr; };
+	const Element* getEdge(unsigned /*i*/) const { return nullptr; }
 
 	/// Returns the face i of the element.
-	const Element* getFace(unsigned /*i*/) const { return nullptr; };
+	const Element* getFace(unsigned /*i*/) const { return nullptr; }
 
 	/// Get the length of this 1d element.
-	double getLength() const { return _length; };
+	double getLength() const { return _length; }
 
 	/// 1D elements have no edges
-	unsigned getNEdges() const { return 1; };
+	unsigned getNEdges() const { return 1; }
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned /*i*/) const { return 0; };
+	unsigned getNFaceNodes(unsigned /*i*/) const { return 0; }
 
 	/// Get the number of faces for this element.
-	unsigned getNFaces() const { return 0; };
+	unsigned getNFaces() const { return 0; }
 
 	/// Get the number of neighbors for this element.
 	unsigned getNNeighbors() const { return 2; }
@@ -131,7 +131,6 @@ public:
 
 	/**
 		* Tests if the element is geometrically valid.
-		* @param check_zero_volume indicates if area == 0 should be checked
 		* @return error code (0 = okay, 1 = zero volume)
 		*/
 	virtual ElementErrorCode validate() const;
@@ -163,7 +162,7 @@ protected:
 		if (edge_id==0 && node_id<2)
 			return _nodes[node_id];
 		return nullptr;
-	};
+	}
 
 	/// Returns the ID of a face given an array of nodes.
 	/// As element faces are always element->getDimensionality() - 1, the "face" of a line is just a node
