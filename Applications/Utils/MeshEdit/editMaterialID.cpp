@@ -35,7 +35,7 @@ int main (int argc, char* argv[])
 	TCLAP::CmdLine cmd("Edit material IDs of mesh elements.", ' ', "0.1");
 	TCLAP::SwitchArg replaceArg("r", "replace", "replace material IDs", false);
 	TCLAP::SwitchArg condenseArg("c", "condense", "condense material IDs", false);
-	TCLAP::SwitchArg specifyArg("s", "specify", "specify material IDs", false);
+	TCLAP::SwitchArg specifyArg("s", "specify", "specify material IDs by element types (-e)", false);
 	std::vector<TCLAP::Arg*> vec_xors;
 	vec_xors.push_back(&replaceArg);
 	vec_xors.push_back(&condenseArg);
