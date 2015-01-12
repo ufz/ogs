@@ -98,7 +98,7 @@ int main (int argc, char* argv[])
 		const std::string eleTypeName(eleTypeArg.getValue());
 		const MeshElemType eleType = String2MeshElemType(eleTypeName);
 		const unsigned newID = newIDArg.getValue();
-		unsigned cnt = MeshLib::ElementValueModification::set(*mesh, eleType, newID);
+		unsigned cnt = MeshLib::ElementValueModification::setByElementType(*mesh, eleType, newID);
 		INFO("updated %d elements", cnt);
 	}
 

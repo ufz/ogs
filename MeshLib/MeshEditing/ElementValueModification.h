@@ -16,6 +16,7 @@
 #define MESHVALUEMODIFICATION_H
 
 #include <vector>
+
 #include "MeshLib/MeshEnums.h"
 
 namespace MeshLib {
@@ -37,7 +38,8 @@ public:
 	static bool replace(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists = false);
 
 	/// Sets new value for all elements having the given element type
-	static unsigned set(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value);
+	/// Returns the number of elements having the given element type
+	static unsigned setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value);
 
 private:
 	/// Returns the values of elements within the mesh

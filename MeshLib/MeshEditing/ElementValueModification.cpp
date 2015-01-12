@@ -91,7 +91,7 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	return nValues;
 }
 
-unsigned ElementValueModification::set(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
+unsigned ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
 {
 	std::vector<MeshLib::Element*> elements (mesh.getElements());
 	unsigned nValues = 0;
