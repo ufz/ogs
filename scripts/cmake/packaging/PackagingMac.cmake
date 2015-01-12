@@ -1,4 +1,4 @@
-SET(CPACK_GENERATOR "DragNDrop")
+SET(CPACK_GENERATOR DragNDrop ZIP)
 SET(CPACK_DMG_FORMAT "UDBZ")
 
 # See http://stackoverflow.com/a/16662169/80480 how to create the DS_Store file.
