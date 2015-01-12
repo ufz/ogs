@@ -1,18 +1,17 @@
-IF(OGS_PACKAGING_NSIS)
-	SET(CPACK_GENERATOR NSIS)
-	# There is a bug in NSI that does not handle full unix paths properly. Make
-	# sure there is at least one set of four (4) backlasshes.
-	#SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
-	SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
-	SET(CPACK_NSIS_HELP_LINK "https:\\\\\\\\www.opengeosys.org")
-	SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.opengeosys.org")
-	SET(CPACK_NSIS_CONTACT "info@opengeosys.org")
-	SET(CPACK_NSIS_MODIFY_PATH ON)
-	# SET(CPACK_NSIS_MENU_LINKS "http://www.opengeosys.org" "OGS Project Page")
-	# SET(CPACK_NSIS_MENU_LINKS "http://www.opengeosys.org/forum/" "OGS forum")
-	# SET(CPACK_NSIS_MENU_LINKS "https://github.com/ufz/ogs" "OGS source code")
-	# SET(CPACK_NSIS_MENU_LINKS "http://devguide.opengeosys.org" "OGS developer guide")
-ELSE()
-	SET(CPACK_GENERATOR ZIP)
-	SET(CPACK_PACKAGE_FILE_NAME "ogs-6")
-ENDIF()
+SET(CPACK_GENERATOR NSIS ZIP)
+SET(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/scripts/packaging/ogs-de-icon.ico)
+FILE(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.bmp" BACKGROUND_IMAGE)
+SET(CPACK_PACKAGE_ICON ${BACKGROUND_IMAGE})
+SET(CPACK_NSIS_INSTALLED_ICON_NAME ${CPACK_NSIS_MUI_ICON})
+SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
+SET(CPACK_NSIS_CONTACT "info@opengeosys.org")
+SET(CPACK_NSIS_MODIFY_PATH ON)
+SET(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+SET(CPACK_NSIS_HELP_LINK "http://docs.opengeosys.org/assets/files/Documentation/User_Manual.pdf")
+SET(CPACK_NSIS_MENU_LINKS
+	"bin/DataExplorer.exe" "Data Explorer"
+	"bin" "Executables folder"
+	"http://www.opengeosys.org" "Website"
+	"https://github.com/ufz/ogs" "Source code on GitHub"
+	"http://docs.opengeosys.org" "Documentation"
+)

@@ -76,6 +76,7 @@ ADD_EXECUTABLE( DataExplorer MACOSX_BUNDLE
 	${UIS}
 	${QTRESOURCES}
 	${APP_ICON}
+	exe-icon.rc
 )
 
 TARGET_LINK_LIBRARIES( DataExplorer
