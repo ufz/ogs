@@ -63,7 +63,10 @@ INCLUDE_DIRECTORIES(
 SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 SOURCE_GROUP("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
-# Create the library
+# Application icon
+SET(APP_ICON ${CMAKE_SOURCE_DIR}/scripts/packaging/ogs-de-icon.icns)
+
+# Create the executable
 ADD_EXECUTABLE( DataExplorer MACOSX_BUNDLE
 	main.cpp
 	${SOURCES}
@@ -72,6 +75,8 @@ ADD_EXECUTABLE( DataExplorer MACOSX_BUNDLE
 	${MOC_SOURCES}
 	${UIS}
 	${QTRESOURCES}
+	${APP_ICON}
+	exe-icon.rc
 )
 
 TARGET_LINK_LIBRARIES( DataExplorer
@@ -132,32 +137,29 @@ SET_PROPERTY(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 ####################
 ### Installation ###
 ####################
-
 IF(APPLE)
-	SET(MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${OGS_VERSION}")
-	SET(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_NAME} ${OGS_VERSION}")
-	SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_NAME} ${OGS_VERSION}")
-	SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${OGS_VERSION}")
-	SET(MACOSX_BUNDLE_COPYRIGHT "2013 OpenGeoSys Community")
-	#SET(MACOSX_BUNDLE_ICON_FILE "audio-input-microphone.icns")
-	SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.opengeosys")
-	SET(MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}")
-
-	SET(MACOSX_BUNDLE_RESOURCES "${EXECUTABLE_OUTPUT_PATH}/DataExplorer.app/Contents/Resources")
-	SET(MACOSX_BUNDLE_ICON "${ICONS_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
-	#EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E make_directory ${MACOSX_BUNDLE_RESOURCES})
-	#EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MACOSX_BUNDLE_ICON} ${MACOSX_BUNDLE_RESOURCES})
+	INCLUDE(packaging/PackagingMacros)
+	ConfigureMacOSXBundle(DataExplorer ${APP_ICON})
 
 	INSTALL (TARGETS DataExplorer DESTINATION .)
 	SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
 	INCLUDE(InstallRequiredSystemLibraries)
 	INCLUDE(DeployQt4)
-	INSTALL_QT4_EXECUTABLE(DataExplorer.app)
-
-	RETURN()
+	INSTALL_QT4_EXECUTABLE(DataExplorer.app "" "" "" "" "" ogs_gui)
+ELSE()
+	INSTALL (TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
 ENDIF()
 
-INSTALL (TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
+cpack_add_component(ogs_gui
+	DISPLAY_NAME "OGS Data Explorer"
+	DESCRIPTION "The graphical user interface for OpenGeoSys."
+	GROUP Applications
+)
+set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer" "OGS Data Explorer")
+set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "bin/DataExplorer.exe" "Data Explorer" PARENT_SCOPE)
+IF(APPLE)
+	RETURN()
+ENDIF()
 
 IF(MSVC)
 	SET(OGS_GUI_EXE ${EXECUTABLE_OUTPUT_PATH}/Release/DataExplorer.exe)

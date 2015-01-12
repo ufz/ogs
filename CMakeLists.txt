@@ -13,10 +13,11 @@ PROJECT( OGS-6 )
 ###########################################################################
 SET (OGS_VERSION_MAJOR 6)
 SET (OGS_VERSION_MINOR 0)
-SET (OGS_VERSION_PATCH "0 Beta")
+SET (OGS_VERSION_PATCH 0)
+SET (OSG_VERSION_STATUS "Beta") # Can be words like Alpha, Beta, Prerelease or ""
 SET (OGS_RELEASE_PERSONS "Core developers")
 SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}")
-SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} (${OGS_RELEASE_PERSONS})")
+SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} ${OSG_VERSION_STATUS} (${OGS_RELEASE_PERSONS})")
 SET (OGS_DATE "2012-08-20")
 
 
@@ -91,10 +92,8 @@ ENDIF (OGS_CMAKE_DEBUG)
 OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 # Packaging
-IF(WIN32)
-	OPTION(OGS_PACKAGING_NSIS "Do you want to package with NSIS?")
-ENDIF()
-INCLUDE(scripts/cmake/Pack.cmake)
+OPTION(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
+INCLUDE(scripts/cmake/packaging/Pack.cmake)
 
 ######################
 ### Subdirectories ###
