@@ -5,13 +5,12 @@ SET(CPACK_PACKAGE_ICON ${BACKGROUND_IMAGE})
 SET(CPACK_NSIS_INSTALLED_ICON_NAME ${CPACK_NSIS_MUI_ICON})
 SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
 SET(CPACK_NSIS_CONTACT "info@opengeosys.org")
-SET(CPACK_NSIS_MODIFY_PATH ON)
+SET(CPACK_NSIS_MODIFY_PATH OFF)
 SET(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 SET(CPACK_NSIS_HELP_LINK "http://docs.opengeosys.org/assets/files/Documentation/User_Manual.pdf")
 SET(CPACK_NSIS_MENU_LINKS
-	"bin/DataExplorer.exe" "Data Explorer"
 	"bin" "Executables folder"
 	"http://www.opengeosys.org" "Website"
 	"https://github.com/ufz/ogs" "Source code on GitHub"
-	"http://docs.opengeosys.org" "Documentation"
+	"docs" "Documentation folder"
 )

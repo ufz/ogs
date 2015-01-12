@@ -80,7 +80,7 @@ cpack_add_component(ogs_extras
 )
 
 cpack_add_component(ogs_docs
-	DISPLAY_NAME "OpenGeosys documentation"
+	DISPLAY_NAME "Documentation"
 	DESCRIPTION "PDF documentation."
 	GROUP Utilities
 )
