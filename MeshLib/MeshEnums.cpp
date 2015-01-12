@@ -33,6 +33,25 @@ const std::string MeshElemType2String(const MeshElemType t)
 	return "none";
 }
 
+const std::string MeshElemType2StringShort(const MeshElemType t)
+{
+	if (t == MeshElemType::LINE)
+		return "line";
+	if (t == MeshElemType::QUAD)
+		return "quad";
+	if (t == MeshElemType::HEXAHEDRON)
+		return "hex";
+	if (t == MeshElemType::TRIANGLE)
+		return "tri";
+	if (t == MeshElemType::TETRAHEDRON)
+		return "tet";
+	if (t == MeshElemType::PRISM)
+		return "pris";
+	if (t == MeshElemType::PYRAMID)
+		return "pyra";
+	return "none";
+}
+
 MeshElemType String2MeshElemType(const std::string &s)
 {
 	if ((s.compare("line") == 0) || (s.compare("Line") == 0))
@@ -50,6 +69,27 @@ MeshElemType String2MeshElemType(const std::string &s)
 	if ((s.compare("pyra") == 0) || (s.compare("Pyramid") == 0))
 		return MeshElemType::PYRAMID;
 	return MeshElemType::INVALID;
+}
+
+std::vector<MeshElemType> getMeshElemTypes()
+{
+	std::vector<MeshElemType> vec;
+	vec.push_back(MeshElemType::LINE);
+	vec.push_back(MeshElemType::QUAD);
+	vec.push_back(MeshElemType::HEXAHEDRON);
+	vec.push_back(MeshElemType::TRIANGLE);
+	vec.push_back(MeshElemType::TETRAHEDRON);
+	vec.push_back(MeshElemType::PRISM);
+	vec.push_back(MeshElemType::PYRAMID);
+	return vec;
+}
+
+std::vector<std::string> getMeshElemTypeStringsShort()
+{
+	std::vector<std::string> vec;
+	for (MeshElemType eleType : getMeshElemTypes())
+		vec.push_back(MeshElemType2StringShort(eleType));
+	return vec;
 }
 
 const std::string MeshQualityType2String(const MeshQualityType t)
