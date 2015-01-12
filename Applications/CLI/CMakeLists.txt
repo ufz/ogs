@@ -23,11 +23,7 @@ INCLUDE(Tests.cmake)
 ####################
 ### Installation ###
 ####################
-IF(APPLE AND OGS_BUILD_GUI)
-	INSTALL (TARGETS ogs RUNTIME DESTINATION . COMPONENT ogs_cli)
-ELSE()
-	INSTALL (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
-ENDIF()
+INSTALL (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
 
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs" "OGS Simulator")
 cpack_add_component(ogs_cli
