@@ -92,9 +92,7 @@ ENDIF (OGS_CMAKE_DEBUG)
 OPTION(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 # Packaging
-IF(WIN32)
-	OPTION(OGS_PACKAGING_NSIS "Do you want to package with NSIS?")
-ENDIF()
+OPTION(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
 INCLUDE(scripts/cmake/packaging/Pack.cmake)
 
 ######################
