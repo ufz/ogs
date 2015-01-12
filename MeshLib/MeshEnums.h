@@ -16,6 +16,7 @@
 #define MESHENUMS_H
 
 #include <string>
+#include <vector>
 
 /**
  * \brief Types of mesh elements supported by OpenGeoSys.
@@ -73,8 +74,17 @@ enum class MeshQualityType
 /// Given a MeshElemType this returns the appropriate string.
 const std::string MeshElemType2String(const MeshElemType t);
 
+/// Given a MeshElemType this returns the appropriate string with a short name.
+const std::string MeshElemType2StringShort(const MeshElemType t);
+
 /// Given a string of the shortened name of the element type, this returns the corresponding MeshElemType.
 MeshElemType String2MeshElemType(const std::string &s);
+
+/// Returns a vector of all mesh element types
+std::vector<MeshElemType> getMeshElemTypes();
+
+/// Returns a vector of strings of mesh element types
+std::vector<std::string> getMeshElemTypeStringsShort();
 
 const std::string MeshQualityType2String(const MeshQualityType t);
 

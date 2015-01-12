@@ -66,7 +66,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh, unsigned old_value, 
 		}
 	}
 	const std::size_t nElements (mesh.getNElements());
-	std::vector<MeshLib::Element*> elements (mesh.getElements());
+	std::vector<MeshLib::Element*> &elements (const_cast<std::vector<MeshLib::Element*>&>(mesh.getElements()));
 	for (unsigned i=0; i<nElements; ++i)
 	{
 		if (elements[i]->getValue() == old_value)
@@ -84,9 +84,23 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 		reverse_mapping[value_mapping[i]] = i;
 
 	const std::size_t nElements (mesh.getNElements());
-	std::vector<MeshLib::Element*> elements (mesh.getElements());
+	std::vector<MeshLib::Element*> &elements (const_cast<std::vector<MeshLib::Element*>&>(mesh.getElements()));
 	for (unsigned i=0; i<nElements; ++i)
 		elements[i]->setValue(reverse_mapping[elements[i]->getValue()]);
+
+	return nValues;
+}
+
+unsigned ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
+{
+	std::vector<MeshLib::Element*> &elements (const_cast<std::vector<MeshLib::Element*>&>(mesh.getElements()));
+	unsigned nValues = 0;
+	for (auto e : elements) {
+		if (e->getGeomType()!=ele_type)
+			continue;
+		e->setValue(new_value);
+		nValues++;
+	}
 
 	return nValues;
 }

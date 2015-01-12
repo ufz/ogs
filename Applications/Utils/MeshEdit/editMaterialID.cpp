@@ -13,16 +13,17 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
-#include "LogogSimpleFormatter.h"
+#include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "Legacy/MeshIO.h"
-#include "readMeshFromFile.h"
+#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
 
 // MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
-#include "MeshEditing/ElementValueModification.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEditing/ElementValueModification.h"
 
 int main (int argc, char* argv[])
 {
@@ -34,7 +35,12 @@ int main (int argc, char* argv[])
 	TCLAP::CmdLine cmd("Edit material IDs of mesh elements.", ' ', "0.1");
 	TCLAP::SwitchArg replaceArg("r", "replace", "replace material IDs", false);
 	TCLAP::SwitchArg condenseArg("c", "condense", "condense material IDs", false);
-	cmd.xorAdd(replaceArg, condenseArg);
+	TCLAP::SwitchArg specifyArg("s", "specify", "specify material IDs by element types (-e)", false);
+	std::vector<TCLAP::Arg*> vec_xors;
+	vec_xors.push_back(&replaceArg);
+	vec_xors.push_back(&condenseArg);
+	vec_xors.push_back(&specifyArg);
+	cmd.xorAdd(vec_xors);
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
 	                                     "the name of the file containing the input mesh", true,
 	                                     "", "file name");
@@ -49,17 +55,28 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<unsigned> newIDArg("n", "new-material-id",
 	                                      "new material id", false, 0, "number");
 	cmd.add(newIDArg);
+	std::vector<std::string> eleList(getMeshElemTypeStringsShort());
+	TCLAP::ValuesConstraint<std::string> allowedVals(eleList);
+	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
+	                                      "element type", false, "", &allowedVals);
+	cmd.add(eleTypeArg);
+
 	cmd.parse(argc, argv);
 
-	if (!replaceArg.isSet() && !condenseArg.isSet()) {
-		INFO("Please select editing mode: -r or -c");
+	if (!replaceArg.isSet() && !condenseArg.isSet() && !specifyArg.isSet()) {
+		INFO("Please select editing mode: -r or -c or -s");
 		return 0;
 	} else if (replaceArg.isSet() && condenseArg.isSet()) {
-		INFO("Please select only one editing mode: -r or -c");
+		INFO("Please select only one editing mode: -r or -c or -s");
 		return 0;
 	} else if (replaceArg.isSet()) {
 		if (!matIDArg.isSet() || !newIDArg.isSet()) {
-			INFO("current and new material IDs must be provided for relplacement");
+			INFO("current and new material IDs must be provided for replacement");
+			return 0;
+		}
+	} else if (specifyArg.isSet()) {
+		if (!eleTypeArg.isSet() || !newIDArg.isSet()) {
+			INFO("element type and new material IDs must be provided to specify elements");
 			return 0;
 		}
 	}
@@ -78,12 +95,17 @@ int main (int argc, char* argv[])
 			INFO("%d -> %d", oldID, newID);
 			MeshLib::ElementValueModification::replace(*mesh, oldID, newID, true);
 		}
+	} else if (specifyArg.isSet()) {
+		INFO("Specifying material ID...");
+		const std::string eleTypeName(eleTypeArg.getValue());
+		const MeshElemType eleType = String2MeshElemType(eleTypeName);
+		const unsigned newID = newIDArg.getValue();
+		unsigned cnt = MeshLib::ElementValueModification::setByElementType(*mesh, eleType, newID);
+		INFO("updated %d elements", cnt);
 	}
 
 	// write into a file
-	FileIO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(mesh);
-	meshIO.writeToFile(mesh_out.getValue());
+	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 	delete custom_format;
 	delete logog_cout;

@@ -103,3 +103,18 @@ ADD_CATALYST_DEPENDENCY(checkMesh)
 
 SET_TARGET_PROPERTIES(checkMesh
 	PROPERTIES FOLDER Utilities)
+
+ADD_EXECUTABLE( reviseMesh reviseMesh.cpp)
+TARGET_LINK_LIBRARIES ( reviseMesh
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
+ADD_CATALYST_DEPENDENCY(reviseMesh)
+
+SET_TARGET_PROPERTIES(reviseMesh
+	PROPERTIES FOLDER Utilities)
+	
