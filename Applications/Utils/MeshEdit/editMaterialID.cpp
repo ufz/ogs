@@ -55,8 +55,10 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<unsigned> newIDArg("n", "new-material-id",
 	                                      "new material id", false, 0, "number");
 	cmd.add(newIDArg);
+	std::vector<std::string> eleList(getMeshElemTypeStringsShort());
+	TCLAP::ValuesConstraint<std::string> allowedVals(eleList);
 	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
-	                                      "element type", false, "", "element type");
+	                                      "element type", false, "", &allowedVals);
 	cmd.add(eleTypeArg);
 
 	cmd.parse(argc, argv);
