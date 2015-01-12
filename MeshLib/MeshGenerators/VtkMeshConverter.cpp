@@ -393,7 +393,7 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	int const nComponents (array->GetNumberOfComponents());
 
 	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
-	if (array)
+	if (double_array)
 	{
 		std::vector<double> vec;
 		vec.reserve(nTuples);
@@ -411,7 +411,7 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	}
 
 	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
-	if (array)
+	if (int_array)
 	{
 		std::vector<int> vec;
 		vec.reserve(nTuples);
