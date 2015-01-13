@@ -50,18 +50,6 @@ template <typename T>
 class PropertyVector<T*> : public std::vector<T*>
 {
 friend class Properties;
-protected:
-	/// @param n_prop_groups number of different property values
-	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
-	/// (Node or Element) to an index (position in the data structure).
-	/// The vector item2group_mapping must have the same number of entries as
-	/// the above mapping and the values have to be in the range
-	/// \f$[0, \text{n_prop_groups})\f$.
-	PropertyVector(std::size_t n_prop_groups,
-		std::vector<std::size_t> const& item2group_mapping)
-		: std::vector<T*>(n_prop_groups),
-		_item2group_mapping(item2group_mapping)
-	{}
 
 public:
 	/// Destructor ensures the deletion of the heap-constructed objects.
@@ -79,7 +67,28 @@ public:
 		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
 	}
 
+	/// Returns the tuple size for this property.
+	unsigned getTupleSize() const { return _tuple_size; }
+
+	/// Returns the target type (nodes/cells) for this property.
+	MeshLib::MeshItemType getType() const { return _type; }
+
+protected:
+	/// @param n_prop_groups number of different property values
+	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
+	/// (Node or Element) to an index (position in the data structure).
+	/// The vector item2group_mapping must have the same number of entries as
+	/// the above mapping and the values have to be in the range
+	/// \f$[0, \text{n_prop_groups})\f$.
+	PropertyVector(std::size_t n_prop_groups,
+		std::vector<std::size_t> const& item2group_mapping)
+		: std::vector<T*>(n_prop_groups),
+		_item2group_mapping(item2group_mapping)
+	{}
+
 private:
+	MeshLib::MeshItemType _type;
+	unsigned _tuple_size;
 	std::vector<std::size_t> _item2group_mapping;
 };
 

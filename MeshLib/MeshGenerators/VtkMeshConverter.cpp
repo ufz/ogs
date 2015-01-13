@@ -371,61 +371,55 @@ void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::M
 		return;
 	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
 	for (unsigned i=0; i<n_point_arrays; ++i)
-	{
-		char const*const array_name (point_data->GetArrayName(i));
-		vtkDataArray* array (point_data->GetArray(array_name));
-		convertArray(array, mesh.getProperties(), MeshLib::MeshItemType::Node);
-	}
+		convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
 
 	vtkCellData* cell_data = grid.GetCellData();
+	if (cell_data == nullptr)
+		return;
 	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
 	for (unsigned i=0; i<n_cell_arrays; ++i)
-	{
-		char const*const array_name (cell_data->GetArrayName(i));
-		if (std::string(array_name).compare("MaterialIDs") == 0)
-			continue;
-		vtkDataArray* array (cell_data->GetArray(array_name));
-		convertArray(array, mesh.getProperties(), MeshLib::MeshItemType::Cell);
-	}
+		convertArray(cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
 }
 
 void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
 {
 	vtkIdType const nTuples (array->GetNumberOfTuples());
 	int const nComponents (array->GetNumberOfComponents());
+	char const*const array_name (array->GetName());
+	if (type == MeshLib::MeshItemType::Cell && std::string(array_name).compare("MaterialIDs") == 0)
+		return;
 
 	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
 	if (double_array)
 	{
-		std::vector<double> vec;
-		vec.reserve(nTuples);
-		if (nComponents == 1)
+		if (nComponents != 1)
 		{
-			double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
-			std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(vec));
+			ERR ("Scalar arrays containing vectors or matrices are currently not supported");
+			return;
 		}
-		else
-			for (vtkIdType i=0; i<nTuples; ++i)
-			{
-				for (int j=0; j<nComponents; ++j)
-					double_array->GetComponent(i,j);
-			}
-		
+		boost::optional<MeshLib::PropertyVector<double> &> vec (properties.createNewPropertyVector<double>(array_name, type));
+		if (!vec)
+			return;
+		vec->reserve(nTuples);
+		double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(*vec));
 		return;
 	}
 
 	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
 	if (int_array)
 	{
-		std::vector<int> vec;
-		vec.reserve(nTuples);
 		if (nComponents != 1)
 		{
 			ERR ("Scalar arrays containing vectors or matrices are currently not supported");
 			return;
 		}
+		boost::optional<MeshLib::PropertyVector<int> &> vec (properties.createNewPropertyVector<int>(array_name, type));
+		if (!vec)
+			return;
+		vec->reserve(nTuples);
 		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
-		std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(vec));
+		std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(*vec));
 		return;
 	}
 

@@ -102,6 +102,11 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	materialIds->SetName("MaterialIDs");
 	output->GetCellData()->AddArray(materialIds.GetPointer());
 
+	MeshLib::Properties const& properties (_mesh->getProperties());
+
+
+
+
 	return 1;
 }
 
