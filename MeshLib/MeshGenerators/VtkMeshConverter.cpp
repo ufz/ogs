@@ -366,23 +366,25 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 
 void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
 {
-	vtkPointData &point_data = *grid.GetPointData();
-	unsigned const n_point_arrays = static_cast<unsigned>(point_data.GetNumberOfArrays());
+	vtkPointData* point_data = grid.GetPointData();
+	if (point_data == nullptr)
+		return;
+	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
 	for (unsigned i=0; i<n_point_arrays; ++i)
 	{
-		char const*const array_name (point_data.GetArrayName(i));
-		vtkDataArray* array (point_data.GetArray(array_name));
+		char const*const array_name (point_data->GetArrayName(i));
+		vtkDataArray* array (point_data->GetArray(array_name));
 		convertArray(array, mesh.getProperties(), MeshLib::MeshItemType::Node);
 	}
 
-	vtkCellData &cell_data = *grid.GetCellData();
-	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data.GetNumberOfArrays());
+	vtkCellData* cell_data = grid.GetCellData();
+	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
 	for (unsigned i=0; i<n_cell_arrays; ++i)
 	{
-		char const*const array_name (cell_data.GetArrayName(i));
+		char const*const array_name (cell_data->GetArrayName(i));
 		if (std::string(array_name).compare("MaterialIDs") == 0)
 			continue;
-		vtkDataArray* array (cell_data.GetArray(array_name));
+		vtkDataArray* array (cell_data->GetArray(array_name));
 		convertArray(array, mesh.getProperties(), MeshLib::MeshItemType::Cell);
 	}
 }
@@ -398,8 +400,10 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 		std::vector<double> vec;
 		vec.reserve(nTuples);
 		if (nComponents == 1)
-			for (vtkIdType i=0; i<nTuples; ++i)
-				vec.push_back(double_array->GetComponent(i,0));
+		{
+			double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
+			std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(vec));
+		}
 		else
 			for (vtkIdType i=0; i<nTuples; ++i)
 			{
@@ -420,8 +424,8 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 			ERR ("Scalar arrays containing vectors or matrices are currently not supported");
 			return;
 		}
-		for (vtkIdType i=0; i<nTuples; ++i)
-			vec.push_back(int_array->GetComponent(i,0));
+		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(vec));
 		return;
 	}
 
