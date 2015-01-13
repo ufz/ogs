@@ -65,15 +65,24 @@ class NodePartitionedMeshReader
         /// MPI data type description for sending/receiving of node data.
         MPI_Datatype _mpi_node_type;
 
+        struct PartitionedMeshInfo
+        {
+            long nodes;               //< 0:    Number of all nodes of a partition,
+            long base_nodes;          //< 1:    Number of nodes for linear elements of a parition,
+            long regular_elements;    //< 2:    Number of non-ghost elements of a partition,
+            long ghost_elements;      //< 3:    Number of ghost element of a partition,
+            long active_base_nodes;   //< 4:    Number of active nodes for linear element of a parition,
+            long active_nodes;        //< 5:    Number of all active nodes a parition,
+            long global_base_nodes;   //< 6:    Number of nodes for linear element of global mesh,
+            long global_nodes;        //< 7:    Number of all nodes of global mesh,
+            long offset[5];           //< 8~12: Offsets of positions of partitions in the data arrays
+                                      ///       (only 8 and 9 are used for ascii input)
+            long extra_flag;          //< 13:   Reserved for extra flag.
 
-        /// Number of all nodes of a partition.
-        long _num_nodes_part;
+            std::size_t size() const { return 14; }
+            long* data() { return &nodes; }
 
-        /// Number of regular (non-ghost) elements of a partition.
-        long _num_regular_elems_part;
-
-        /// Number of ghost elements of a partition.
-        long _num_ghost_elems_part;
+        } _mesh_info;
 
         /*!
              \brief Create a NodePartitionedMesh object, read binary mesh data
@@ -83,28 +92,17 @@ class NodePartitionedMeshReader
                     file_name_base+_partitioned_msh_nod[number of partitions].bin
                     file_name_base+_partitioned_msh_ele[number of partitions].bin
                     file_name_base+_partitioned_msh_ele_g[number of partitions].bin
-                    in which,
-                    the first file contains an array of integers of
-                        0:    Number of all nodes of a partition,
-                        1:    Number of nodes for linear element of a parition,
-                        2:    Number of non-ghost elements of a partition,
-                        3:    Number of ghost element of a partition,
-                        4:    Number of active nodes for linear element of a parition,
-                        5:    Number of all active nodes a parition,
-                        6:    Number of nodes for linear element of global mesh,
-                        7:    Number of all nodes of global mesh,
-                        8~12: Offsets of positions of partitions in the data arrays,
-                        13:   Reserved for extra flag.
-                     for all partitions
+                    in which, the first file contains an array of integers for the
+                    PartitionMeshInfo for all partitions
 
-                     the second file contains a struct type (long, double double double) array of
-                     nodes information of global IDs and coordinates of all partitions.
+                    the second file contains a struct type (long, double double double) array of
+                    nodes information of global IDs and coordinates of all partitions.
 
-                     the third file contains a long type integer array of element information of
-                     material ID, element type and node IDs of each non-ghost element of all partitoions.
+                    the third file contains a long type integer array of element information of
+                    material ID, element type and node IDs of each non-ghost element of all partitoions.
 
-                     the forth file contains a long type integer array of element information of
-                     material ID, element type and node IDs of each ghost element of all partitoions.
+                    the forth file contains a long type integer array of element information of
+                    material ID, element type and node IDs of each ghost element of all partitoions.
              \param file_name_base  Name of file to be read, which must be a name with the
                                path to the file and without file extension.
              \return           Pointer to Mesh object.
@@ -159,25 +157,14 @@ class NodePartitionedMeshReader
                     file_name_base+_partitioned_cfg[number of partitions].msh
                     file_name_base+_partitioned_nodes[number of partitions].msh
                     file_name_base+_partitioned_elems[number of partitions].msh
-                    in which,
-                    the first file contains lines of integers of
-                         0:    Number of all nodes of a partition,
-                         1:    Number of nodes for linear element of a parition,
-                         2:    Number of non-ghost elements of a partition,
-                         3:    Number of ghost element of a partition,
-                         4:    Number of active nodes for linear element of a parition,
-                         5:    Number of all active nodes a parition,
-                         6:    Number of nodes for linear element of global mesh,
-                         7:    Number of all nodes of global mesh,
-                         8~9:  Offsets of positions of partitions in the data arrays,
-                        11:   Reserved for extra flag.
-                        for all partitions
+                    in which, the first file contains an array of integers for the
+                    PartitionMeshInfo for all partitions
 
-                     the second file contains nodes information of global IDs and coordinates
-                     of all partitions.
+                    the second file contains nodes information of global IDs and coordinates
+                    of all partitions.
 
-                     the third file contains element information of material ID, element type
-                     and node IDs of each element of all partitoions.
+                    the third file contains element information of material ID, element type
+                    and node IDs of each element of all partitoions.
              \param file_name_base  Name of file to be read, which must be a name with the
                                path to the file and without file extension.
              \return           Pointer to Mesh object.
