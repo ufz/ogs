@@ -84,6 +84,14 @@ class NodePartitionedMeshReader
 
         } _mesh_info;
 
+        /*! Creates a new mesh using PartitionMeshInfo
+         */
+        MeshLib::NodePartitionedMesh* newMesh(
+            std::string const& mesh_name,
+            std::vector<MeshLib::Node*> const& mesh_nodes,
+            std::vector<std::size_t> const& glb_node_ids,
+            std::vector<MeshLib::Element*> const& mesh_elems) const;
+
         /*!
              \brief Create a NodePartitionedMesh object, read binary mesh data
                     in the manner of parallel, and return a pointer to it.
