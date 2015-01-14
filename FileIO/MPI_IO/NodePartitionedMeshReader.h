@@ -67,17 +67,17 @@ class NodePartitionedMeshReader
 
         struct PartitionedMeshInfo
         {
-            long nodes;               //< 0:    Number of all nodes of a partition,
-            long base_nodes;          //< 1:    Number of nodes for linear elements of a parition,
-            long regular_elements;    //< 2:    Number of non-ghost elements of a partition,
-            long ghost_elements;      //< 3:    Number of ghost element of a partition,
-            long active_base_nodes;   //< 4:    Number of active nodes for linear element of a parition,
-            long active_nodes;        //< 5:    Number of all active nodes a parition,
-            long global_base_nodes;   //< 6:    Number of nodes for linear element of global mesh,
-            long global_nodes;        //< 7:    Number of all nodes of global mesh,
-            long offset[5];           //< 8~12: Offsets of positions of partitions in the data arrays
-                                      ///       (only 8 and 9 are used for ascii input)
-            long extra_flag;          //< 13:   Reserved for extra flag.
+            long nodes;               ///< 0:    Number of all nodes of a partition,
+            long base_nodes;          ///< 1:    Number of nodes for linear elements of a parition,
+            long regular_elements;    ///< 2:    Number of non-ghost elements of a partition,
+            long ghost_elements;      ///< 3:    Number of ghost element of a partition,
+            long active_base_nodes;   ///< 4:    Number of active nodes for linear element of a parition,
+            long active_nodes;        ///< 5:    Number of all active nodes a parition,
+            long global_base_nodes;   ///< 6:    Number of nodes for linear element of global mesh,
+            long global_nodes;        ///< 7:    Number of all nodes of global mesh,
+            long offset[5];           ///< 8~12: Offsets of positions of partitions in the data arrays
+                                      ///        (only 8 and 9 are used for ascii input)
+            long extra_flag;          ///< 13:   Reserved for extra flag.
 
             std::size_t size() const { return 14; }
             long* data() { return &nodes; }
