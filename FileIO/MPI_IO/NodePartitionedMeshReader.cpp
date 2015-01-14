@@ -45,6 +45,18 @@ NodePartitionedMeshReader::~NodePartitionedMeshReader()
     MPI_Type_free(&_mpi_node_type);
 }
 
+
+void NodePartitionedMeshReader::registerNodeDataMpiType()
+{
+    int const count = 2;
+    int blocks[count] = {1, 3};
+    MPI_Datatype types[count] = {MPI_UNSIGNED_LONG, MPI_DOUBLE};
+    MPI_Aint displacements[count] = {0, sizeof(NodeData::index)};
+
+    MPI_Type_create_struct(count, blocks, displacements, types, &_mpi_node_type);
+    MPI_Type_commit(&_mpi_node_type);
+}
+
 MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
     const std::string &file_name_base)
 {
@@ -470,17 +482,6 @@ void NodePartitionedMeshReader::setElements(
 
         mesh_elems[i + id_offset] = elem;
     }
-}
-
-void NodePartitionedMeshReader::registerNodeDataMpiType()
-{
-    int const count = 2;
-    int blocks[count] = {1, 3};
-    MPI_Datatype types[count] = {MPI_UNSIGNED_LONG, MPI_DOUBLE};
-    MPI_Aint displacements[count] = {0, sizeof(NodeData::index)};
-
-    MPI_Type_create_struct(count, blocks, displacements, types, &_mpi_node_type);
-    MPI_Type_commit(&_mpi_node_type);
 }
 
 }   // namespace FileIO

@@ -30,14 +30,12 @@ class Element;
 
 namespace FileIO
 {
-/// Class for reading of ascii or binary partitioned mesh files into a
-/// NodePartitionedMesh.
+/// Class for parallel reading of ascii or binary partitioned mesh files into a
+/// NodePartitionedMesh via MPI.
 class NodePartitionedMeshReader
 {
     public:
-        /*!
-             \param comm            MPI Communicator.
-         */
+        ///  \param comm   MPI communicator.
         NodePartitionedMeshReader(MPI_Comm comm);
 
         ~NodePartitionedMeshReader();
@@ -47,8 +45,8 @@ class NodePartitionedMeshReader
                     and return a pointer to it. Data files are either in
                     ASCII format or binary format.
              \param file_name_base  Name of file to be read, and it must be base name without name extension.
-             \return           Pointer to Mesh object. If the creation of mesh object
-                               fails, return a null pointer.
+             \return                Pointer to Mesh object. If the creation of mesh object
+                                    fails, return a null pointer.
         */
         MeshLib::NodePartitionedMesh* read(const std::string &file_name_base);
 
@@ -56,15 +54,28 @@ class NodePartitionedMeshReader
         /// Pointer to MPI commumicator;
         MPI_Comm _mpi_comm = MPI_COMM_WORLD;
 
-        /// Number of MPI processes
+        /// Number of processes in the communicator: _mpi_comm
         int _mpi_comm_size;
 
         /// Rank of compute core
         int _mpi_rank;
 
-        /// MPI data type description for sending/receiving of node data.
+        /// MPI data type for struct NodeData.
         MPI_Datatype _mpi_node_type;
 
+        /// Node data only for parallel reading.
+        struct NodeData
+        {
+            std::size_t index; ///< Global node index.
+            double x;
+            double y;
+            double z;
+        };
+
+        /// Define MPI data type for NodeData struct.
+        void registerNodeDataMpiType();
+
+        /// A collection of integers that congfigure the partitioned mesh data.
         struct PartitionedMeshInfo
         {
             long nodes;               ///< 0:    Number of all nodes of a partition,
@@ -84,13 +95,36 @@ class NodePartitionedMeshReader
 
         } _mesh_info;
 
-        /*! Creates a new mesh using PartitionMeshInfo
-         */
-        MeshLib::NodePartitionedMesh* newMesh(
-            std::string const& mesh_name,
-            std::vector<MeshLib::Node*> const& mesh_nodes,
-            std::vector<std::size_t> const& glb_node_ids,
-            std::vector<MeshLib::Element*> const& mesh_elems) const;
+        /*!
+            \brief Create a new mesh of NodePartitionedMesh after reading and processing the data
+            \param mesh_name    Name assigned to the new mesh.
+            \param mesh_nodes   Node data.
+            \param glb_node_ids Global IDs of nodes.
+            \param mesh_elems   Element data.
+            \return         True on success and false otherwise.
+        */
+        MeshLib::NodePartitionedMesh* newMesh(std::string const& mesh_name,
+                                              std::vector<MeshLib::Node*> const& mesh_nodes,
+                                              std::vector<std::size_t> const& glb_node_ids,
+                                              std::vector<MeshLib::Element*> const& mesh_elems) const;
+
+        /*!
+            \brief Parallel reading of a binary file via MPI_File_read, and it is called by readBinary
+                   to read files of mesh data head, nodes, non-ghost elements and ghost elements, respectively.
+            \note           In case of failure during opening of the file, an
+                            error message is printed.
+            \param filename File name containing data.
+            \param offset   Displacement of the data accessible from the view.
+                            see MPI_File_set_view() documentation.
+            \param type     Type of data.
+            \param data     A container to be filled with data. Its size is used
+                            to determine how many values should be read.
+            \tparam DATA    A homogeneous contaner type supporting data() and size().
+            \return         True on success and false otherwise.
+        */
+        template <typename DATA>
+        bool readBinaryDataFromFile(std::string const& filename, MPI_Offset offset,
+                                    MPI_Datatype type, DATA& data) const;
 
         /*!
              \brief Create a NodePartitionedMesh object, read binary mesh data
@@ -189,18 +223,6 @@ class NodePartitionedMeshReader
                 std::vector<long>& elem_data,
                 const bool ghost = false) const;
 
-        /// Node data only for parallel reading.
-        struct NodeData
-        {
-            std::size_t index; ///< Global node index.
-            double x;
-            double y;
-            double z;
-        };
-
-        /// Define MPI data type for NodeData struct.
-        void registerNodeDataMpiType();
-
         /*!
              \brief Set mesh nodes from a tempory array containing node data read from file.
              \param node_data  Array containing node data read from file.
@@ -223,22 +245,6 @@ class NodePartitionedMeshReader
                 std::vector<MeshLib::Element*> &mesh_elems,
                 const bool ghost = false) const;
 
-        /*! Fills the given data vector with data read from file starting at an
-            offset.
-            \note           In case of failure during opening of the file, an
-                            error message is printed.
-            \param filename File name containing data.
-            \param offset   Displacement of the data accessible from the view;
-                            see MPI_File_set_view() documentation.
-            \param type     Type of data.
-            \param data     A container to be filled with data. Its size is used
-                            to determine how many values should be read.
-            \tparam DATA    A homogeneous contaner type supporting data() and size().
-            \return         True on success and false otherwise.
-         */
-        template <typename DATA>
-        bool readBinaryDataFromFile(std::string const& filename, MPI_Offset offset,
-                MPI_Datatype type, DATA& data) const;
 };
 
 }   // FileIO
