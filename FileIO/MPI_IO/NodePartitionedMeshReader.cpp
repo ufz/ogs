@@ -323,8 +323,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
 
             // Read first part into _mesh_info which is equal with the binary
             // structure.
-            for(std::size_t i = 0; i < 10; ++i)
-                is_cfg >> *(_mesh_info.data() + i);
+            for(std::size_t j = 0; j < 10; ++j)
+                is_cfg >> *(_mesh_info.data() + j);
             // The last positon is the extra_flag.
             is_cfg >> _mesh_info.extra_flag;
             is_cfg >> std::ws;
