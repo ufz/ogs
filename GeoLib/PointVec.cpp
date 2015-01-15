@@ -16,7 +16,6 @@
 #include "logog/include/logog.hpp"
 
 // GeoLib
-#include "BruteForceClosestPair.h"
 #include "PointVec.h"
 #include "PointWithID.h"
 
@@ -31,7 +30,7 @@ namespace GeoLib
 PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
                     std::map<std::string, std::size_t>* name_id_map, PointType type, double rel_eps) :
 	TemplateVec<Point> (name, points, name_id_map),
-	_type(type), _sqr_shortest_dist (std::numeric_limits<double>::max()),
+	_type(type),
 	_aabb(points->begin(), points->end())
 {
 	assert (_data_vec);
@@ -87,21 +86,13 @@ std::size_t PointVec::uniqueInsert (Point* pnt)
 	{
 		delete pnt;
 		pnt = NULL;
-		return std::distance(_data_vec->begin(), it);
+		return static_cast<std::size_t>(std::distance(_data_vec->begin(), it));
 	}
 
 	_data_vec->push_back(pnt);
 
 	// update bounding box
 	_aabb.update (*(_data_vec->back()));
-
-	// update shortest distance
-	std::for_each(_data_vec->begin(), _data_vec->end(),
-			[this](Point* const p)
-			{
-				_sqr_shortest_dist = std::min(_sqr_shortest_dist,
-						MathLib::sqrDist(*p, *(_data_vec->back())));
-			});
 
 	return _data_vec->size()-1;
 }
@@ -114,11 +105,6 @@ std::vector<Point*>* PointVec::filterStations(const std::vector<PropertyBounds> 
 		if (static_cast<Station*>((*_data_vec)[i])->inSelection(bounds))
 			tmpStations->push_back((*_data_vec)[i]);
 	return tmpStations;
-}
-
-double PointVec::getShortestPointDistance () const
-{
-	return sqrt (_sqr_shortest_dist);
 }
 
 void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
@@ -228,13 +214,6 @@ void PointVec::correctNameIDMapping()
 			++it;
 		}
 	}
-}
-
-void PointVec::calculateShortestDistance ()
-{
-	std::size_t i, j;
-	BruteForceClosestPair (*_data_vec, i, j);
-	_sqr_shortest_dist = MathLib::sqrDist (*(*_data_vec)[i], *(*_data_vec)[j]);
 }
 
 std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> &subset) const
