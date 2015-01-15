@@ -54,14 +54,6 @@ public:
 		return _pnt_ids[i];
 	}
 
-//	/** \brief access operator to access the index
-//	 * of the i-th triangle point
-//	 * */
-//	std::size_t& operator[] (std::size_t i) {
-//		assert (i < 3);
-//		return _pnt_ids[i];
-//	}
-
 	/**
 	 * \brief const access operator to access the i-th triangle Point
 	 */
