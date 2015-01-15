@@ -91,12 +91,6 @@ const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) cons
 {
 	int idx = this->exists(name);
 	if (idx>=0) return _pnt_vecs[idx]->getVector();
-/*
-	std::size_t size (_pnt_vecs.size());
-	for (std::size_t i = 0; i < size; i++)
-		if (_pnt_vecs[i]->getName().compare(name) == 0)
-			return _pnt_vecs[i]->getVector();
-*/
 	INFO("GEOObjects::getPointVec() - No entry found with name \"%s\".", name.c_str());
 	return NULL;
 }
@@ -105,12 +99,6 @@ const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
 {
 	int idx = this->exists(name);
 	if (idx>=0) return _pnt_vecs[idx];
-/*
-	std::size_t size (_pnt_vecs.size());
-	for (std::size_t i = 0; i < size; i++)
-		if (_pnt_vecs[i]->getName().compare(name) == 0)
-			return _pnt_vecs[i];
-*/
 	INFO("GEOObjects::getPointVecObj() - No entry found with name \"%s\".", name.c_str());
 	return NULL;
 }
