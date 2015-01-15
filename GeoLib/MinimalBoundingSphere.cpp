@@ -194,7 +194,7 @@ std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std
         double sum (0);
         for (unsigned i=0; i<3; ++i)
         {
-            vec[i] = (double)rand()-(RAND_MAX/2.0);
+            vec[i] = static_cast<double>(rand())-(RAND_MAX/2.0);
             sum+=(vec[i]*vec[i]);
         }
         double const fac (_radius/sqrt(sum));
