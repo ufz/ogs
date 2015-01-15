@@ -110,8 +110,10 @@ double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
 		int cell_y = static_cast<int>(std::floor((pnt[1] - _ll_pnt[1])/_cell_size));
 
 		// use raster boundary values if node is outside raster due to rounding errors or floating point arithmetic
-		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ? (_n_cols-1) : cell_x);
-		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_n_rows)) ? (_n_rows-1) : cell_y);
+		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ?
+			static_cast<int>(_n_cols-1) : cell_x);
+		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_n_rows)) ?
+			static_cast<int>(_n_rows-1) : cell_y);
 
 		const std::size_t index = cell_y*_n_cols+cell_x;
 		return _raster_data[index];
