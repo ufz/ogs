@@ -78,21 +78,20 @@ class NodePartitionedMeshReader
         /// A collection of integers that congfigure the partitioned mesh data.
         struct PartitionedMeshInfo
         {
-            long nodes;               ///< 0:    Number of all nodes of a partition,
-            long base_nodes;          ///< 1:    Number of nodes for linear elements of a parition,
-            long regular_elements;    ///< 2:    Number of non-ghost elements of a partition,
-            long ghost_elements;      ///< 3:    Number of ghost element of a partition,
-            long active_base_nodes;   ///< 4:    Number of active nodes for linear element of a parition,
-            long active_nodes;        ///< 5:    Number of all active nodes a parition,
-            long global_base_nodes;   ///< 6:    Number of nodes for linear element of global mesh,
-            long global_nodes;        ///< 7:    Number of all nodes of global mesh,
-            long offset[5];           ///< 8~12: Offsets of positions of partitions in the data arrays
-                                      ///        (only 8 and 9 are used for ascii input)
-            long extra_flag;          ///< 13:   Reserved for extra flag.
+            unsigned long nodes;               ///< 0:    Number of all nodes of a partition,
+            unsigned long base_nodes;          ///< 1:    Number of nodes for linear elements of a parition,
+            unsigned long regular_elements;    ///< 2:    Number of non-ghost elements of a partition,
+            unsigned long ghost_elements;      ///< 3:    Number of ghost element of a partition,
+            unsigned long active_base_nodes;   ///< 4:    Number of active nodes for linear element of a parition,
+            unsigned long active_nodes;        ///< 5:    Number of all active nodes a parition,
+            unsigned long global_base_nodes;   ///< 6:    Number of nodes for linear element of global mesh,
+            unsigned long global_nodes;        ///< 7:    Number of all nodes of global mesh,
+            unsigned long offset[5];           ///< 8~12: Offsets of positions of partitions in the data arrays
+                                               ///        (only 8 and 9 are used for ascii input)
+            unsigned long extra_flag;          ///< 13:   Reserved for extra flag.
 
             std::size_t size() const { return 14; }
-            long* data() { return &nodes; }
-
+            unsigned long* data() { return &nodes; }
         } _mesh_info;
 
         /*!
@@ -105,7 +104,7 @@ class NodePartitionedMeshReader
         */
         MeshLib::NodePartitionedMesh* newMesh(std::string const& mesh_name,
                                               std::vector<MeshLib::Node*> const& mesh_nodes,
-                                              std::vector<std::size_t> const& glb_node_ids,
+                                              std::vector<unsigned long> const& glb_node_ids,
                                               std::vector<MeshLib::Element*> const& mesh_elems) const;
 
         /*!
@@ -177,7 +176,7 @@ class NodePartitionedMeshReader
         */
         bool readCastNodesASCII(std::ifstream& is_node, const int part_id,
                                 std::vector<MeshLib::Node*> &mesh_nodes,
-                                std::vector<std::size_t> &glb_node_ids) const;
+                                std::vector<unsigned long> &glb_node_ids) const;
 
         /*!
             \brief Read mesh elements from an ASCII file and cast to the corresponding rank.
@@ -191,7 +190,7 @@ class NodePartitionedMeshReader
             \param mesh_elems Element vector to be filled.
         */
         bool readCastElemsASCII(std::ifstream& is_elem, const int part_id,
-                                const long data_size, const bool process_ghost,
+                                const std::size_t data_size, const bool process_ghost,
                                 const std::vector<MeshLib::Node*> &mesh_nodes,
                                 std::vector<MeshLib::Element*> &mesh_elems) const;
 
@@ -223,7 +222,7 @@ class NodePartitionedMeshReader
              \param ghost     Flag to read ghost elements.
         */
         void readElementASCII(std::ifstream &ins,
-                std::vector<long>& elem_data,
+                std::vector<unsigned long>& elem_data,
                 const bool ghost = false) const;
 
         /*!
@@ -234,7 +233,7 @@ class NodePartitionedMeshReader
         */
         void setNodes(const std::vector<NodeData> &node_data,
                 std::vector<MeshLib::Node*> &mesh_node,
-                    std::vector<std::size_t> &glb_node_ids) const;
+                    std::vector<unsigned long> &glb_node_ids) const;
 
         /*!
              \brief Set mesh elements from a tempory array containing node data read from file.
@@ -244,7 +243,7 @@ class NodePartitionedMeshReader
              \param ghost             Flag of processing ghost elements.
         */
         void setElements(const std::vector<MeshLib::Node*> &mesh_nodes,
-                const std::vector<long> &elem_data,
+                const std::vector<unsigned long> &elem_data,
                 std::vector<MeshLib::Element*> &mesh_elems,
                 const bool ghost = false) const;
 
