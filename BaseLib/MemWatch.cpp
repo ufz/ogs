@@ -14,7 +14,7 @@
 
 #include "MemWatch.h"
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__MINGW32__)
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -32,7 +32,7 @@ MemWatch::MemWatch ()
 
 unsigned MemWatch::updateMemUsage ()
 {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__MINGW32__)
         std::string fname ("/proc/");
         std::stringstream str_pid;
         str_pid << static_cast<unsigned> (getpid());
