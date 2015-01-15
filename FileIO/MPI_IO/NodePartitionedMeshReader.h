@@ -113,6 +113,9 @@ class NodePartitionedMeshReader
                    to read files of mesh data head, nodes, non-ghost elements and ghost elements, respectively.
             \note           In case of failure during opening of the file, an
                             error message is printed.
+            \note If the number of elements in container is larger than
+                  MPI_file_read() supports (maximum of current \c int type), an
+                  error is printed.
             \param filename File name containing data.
             \param offset   Displacement of the data accessible from the view.
                             see MPI_File_set_view() documentation.
@@ -172,7 +175,7 @@ class NodePartitionedMeshReader
             \param mesh_nodes Node vector to be filled.
             \param glb_node_ids Global Node IDs to be filled.
         */
-        void readCastNodesASCII(std::ifstream& is_node, const int part_id,
+        bool readCastNodesASCII(std::ifstream& is_node, const int part_id,
                                 std::vector<MeshLib::Node*> &mesh_nodes,
                                 std::vector<std::size_t> &glb_node_ids) const;
 
@@ -187,8 +190,8 @@ class NodePartitionedMeshReader
             \param mesh_nodes Node vector to be filled.
             \param mesh_elems Element vector to be filled.
         */
-        void readCastElemsASCII(std::ifstream& is_elem, const int part_id,
-                                const int data_size, const bool process_ghost,
+        bool readCastElemsASCII(std::ifstream& is_elem, const int part_id,
+                                const long data_size, const bool process_ghost,
                                 const std::vector<MeshLib::Node*> &mesh_nodes,
                                 std::vector<MeshLib::Element*> &mesh_elems) const;
 

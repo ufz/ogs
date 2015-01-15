@@ -107,6 +107,13 @@ bool
 NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
         MPI_Offset offset, MPI_Datatype type, DATA& data) const
 {
+    // Check container size
+    if (!is_safely_convertable<std::size_t, int>(data.size()))
+    {
+        ERR("The container size is too large for MPI_File_read() call.");
+        return false;
+    }
+
     // Open file
     MPI_File file;
 
@@ -123,7 +130,9 @@ NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
     // Read data
     char file_mode[] = "native";
     MPI_File_set_view(file, offset, type, type, file_mode, MPI_INFO_NULL);
-    MPI_File_read(file, data.data(), data.size(), type, MPI_STATUS_IGNORE);
+    // The static cast is checked above.
+    MPI_File_read(file, data.data(), static_cast<int>(data.size()), type,
+            MPI_STATUS_IGNORE);
     MPI_File_close(&file);
 
     return true;
@@ -238,11 +247,18 @@ bool NodePartitionedMeshReader::openASCIIFiles(std::string const& file_name_base
     return true;
 }
 
-void NodePartitionedMeshReader::readCastNodesASCII(std::ifstream& is_node,
+bool NodePartitionedMeshReader::readCastNodesASCII(std::ifstream& is_node,
         const int part_id, std::vector<MeshLib::Node*> &mesh_nodes,
         std::vector<std::size_t> &glb_node_ids) const
 {
     int const message_tag = 0;
+
+    // MPI_Send/Recv can handle only int. Check for overflow.
+    if (!is_safely_convertable<long, int>(_mesh_info.nodes))
+    {
+        ERR("Too large number of nodes to read.");
+        return false;
+    }
 
     //----------------------------------------------------------------------------------
     // Read Nodes
@@ -263,24 +279,33 @@ void NodePartitionedMeshReader::readCastNodesASCII(std::ifstream& is_node,
         }
         else
         {
-            MPI_Send(nodes.data(), _mesh_info.nodes, _mpi_node_type, part_id,
-                    message_tag, _mpi_comm);
+            MPI_Send(nodes.data(), static_cast<int>(_mesh_info.nodes),
+                    _mpi_node_type, part_id, message_tag, _mpi_comm);
         }
     }
     else if(part_id > 0 && _mpi_rank == part_id)
     {
-        MPI_Recv(nodes.data(), _mesh_info.nodes, _mpi_node_type, 0,
-                message_tag, _mpi_comm, MPI_STATUS_IGNORE);
+        MPI_Recv(nodes.data(), static_cast<int>(_mesh_info.nodes),
+                _mpi_node_type, 0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
         setNodes(nodes, mesh_nodes, glb_node_ids);
     }
+
+    return true;
 }
 
-void NodePartitionedMeshReader::readCastElemsASCII(std::ifstream& is_elem,
-        const int part_id, const int data_size, const bool process_ghost,
+bool NodePartitionedMeshReader::readCastElemsASCII(std::ifstream& is_elem,
+        const int part_id, const long data_size, const bool process_ghost,
         const std::vector<MeshLib::Node*> &mesh_nodes,
         std::vector<MeshLib::Element*> &mesh_elems) const
 {
     int const message_tag = 0;
+
+    // MPI_Send/Recv can handle only int. Check for overflow.
+    if (!is_safely_convertable<long, int>(data_size))
+    {
+        ERR("Too large number of elements to read.");
+        return false;
+    }
 
     std::vector<long> elem_data(static_cast<std::size_t>(data_size));
     if(_mpi_rank == 0)
@@ -296,18 +321,22 @@ void NodePartitionedMeshReader::readCastElemsASCII(std::ifstream& is_elem,
         }
         else
         {
-            MPI_Send(elem_data.data(), data_size, MPI_LONG, part_id, message_tag, _mpi_comm);
+            MPI_Send(elem_data.data(), static_cast<int>(data_size), MPI_LONG,
+                part_id, message_tag, _mpi_comm);
         }
     }
     else if(part_id > 0 && _mpi_rank == part_id)
     {
-        MPI_Recv(elem_data.data(), data_size, MPI_LONG, 0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
+        MPI_Recv(elem_data.data(), static_cast<int>(data_size), MPI_LONG,
+            0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
 
         if(!process_ghost)
             mesh_elems.resize(_mesh_info.regular_elements +
                                 _mesh_info.ghost_elements);
         setElements(mesh_nodes, elem_data, mesh_elems, process_ghost);
     }
+
+    return true;
 }
 
 MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
@@ -359,19 +388,22 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
 
         //----------------------------------------------------------------------------------
         // Read Nodes
-        readCastNodesASCII(is_node, i, mesh_nodes, glb_node_ids);
+        if (!readCastNodesASCII(is_node, i, mesh_nodes, glb_node_ids))
+            return nullptr;
 
         //----------------------------------------------------------------------------------
         // Read elements
-        readCastElemsASCII(is_elem, i,
+        if (!readCastElemsASCII(is_elem, i,
             _mesh_info.regular_elements + _mesh_info.offset[0],
-            false, mesh_nodes, mesh_elems);
+            false, mesh_nodes, mesh_elems))
+            return nullptr;
 
         //-------------------------------------------------------------------------
         // Ghost elements
-        readCastElemsASCII(is_elem, i,
+        if (!readCastElemsASCII(is_elem, i,
             _mesh_info.ghost_elements + _mesh_info.offset[1],
-            true, mesh_nodes, mesh_elems);
+            true, mesh_nodes, mesh_elems))
+            return nullptr;
 
         if(_mpi_rank == i)
         {
