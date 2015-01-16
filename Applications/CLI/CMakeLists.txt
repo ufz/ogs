@@ -19,3 +19,15 @@ IF(OGS_USE_PETSC)
 ENDIF()
 
 INCLUDE(Tests.cmake)
+
+####################
+### Installation ###
+####################
+INSTALL (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
+
+set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs" "OGS Simulator")
+cpack_add_component(ogs_cli
+	DISPLAY_NAME "OGS THMC Simulator"
+	DESCRIPTION "The command line interface for OpenGeoSys."
+	GROUP Applications
+)

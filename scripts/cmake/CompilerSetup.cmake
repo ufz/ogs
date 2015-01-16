@@ -3,16 +3,17 @@ INCLUDE(SetDefaultBuildType)
 INCLUDE(DisableCompilerFlag)
 SET_DEFAULT_BUILD_TYPE(Debug)
 INCLUDE(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
+SET(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 # Set compiler helper variables
 
-IF ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+IF (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     SET(COMPILER_IS_CLANG TRUE)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+ELSEIF (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     SET(COMPILER_IS_GCC TRUE)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+ELSEIF (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
     SET(COMPILER_IS_INTEL TRUE)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+ELSEIF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     SET(COMPILER_IS_MSVC TRUE)
 ENDIF () # CMAKE_CXX_COMPILER_ID
 
@@ -32,21 +33,16 @@ IF(COMPILER_IS_GCC)
 		ENDIF()
 		IF( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
 				MESSAGE(STATUS "Set GCC release flags")
-				IF(APPLE AND GCC_VERSION VERSION_LESS "4.3" AND NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode" )
-					# -march=native does not work here when on normal gcc compiler
-					# see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=33144
-					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
-				ELSE()
-					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
-					# Disable -march=native on mac or Ninja generator
-					IF(NOT APPLE AND NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
-						SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-					ENDIF()
+				SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -msse4.2 -DNDEBUG")
+				# Disable -march=native on mac or Ninja generator
+				IF(NOT APPLE AND NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
+					SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 				ENDIF()
 		ENDIF()
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
 ENDIF() # COMPILER_IS_GCC
 
+### Clang
 IF(COMPILER_IS_CLANG)
 	IF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
 		MESSAGE(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")

@@ -21,8 +21,6 @@ IF (QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 
-	INSTALL ( TARGETS ConvertSHPToGLI RUNTIME DESTINATION bin COMPONENT ConvertSHPToGLI )
-
 	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
 	TARGET_LINK_LIBRARIES (generateBCandGLI
 		ApplicationsLib
@@ -125,3 +123,16 @@ TARGET_LINK_LIBRARIES (TIN2VTK
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(TIN2VTK)
+
+####################
+### Installation ###
+####################
+INSTALL(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
+	              FEFLOW2OGS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
+	RUNTIME DESTINATION bin COMPONENT ogs_converter)
+
+cpack_add_component(ogs_converter
+	DISPLAY_NAME "File converter"
+	DESCRIPTION "File converter."
+	GROUP Utilities
+)
