@@ -14,9 +14,11 @@ IF(MSVC)
 	ENDIF()
 	GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\${MSVC_NUMBER}\\Setup\\VS;ProductDir]" REALPATH)
 	GET_FILENAME_COMPONENT(VS_EXPRESS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VCExpress\\${MSVC_NUMBER}\\Setup\\VS;ProductDir]" REALPATH)
+	
+	SET(X86_TMP "ProgramFiles(x86)")
 	SET(MSVC_INSTALL_PATHS
 		${VS_DIR} ${VS_EXPRESS_DIR}
-		"$ENV{ProgramFiles}/Microsoft Visual Studio ${MSVC_NUMBER}"
-		"$ENV{ProgramFiles(x86)}/Microsoft Visual Studio ${MSVC_NUMBER}"
+		"$ENV{ProgramFiles}/Microsoft\ Visual\ Studio\ ${MSVC_NUMBER}"
+		"$ENV{${X86_TMP}}/Microsoft\ Visual\ Studio\ ${MSVC_NUMBER}"
 		CACHE STRING "" FORCE)
 ENDIF()
