@@ -22,7 +22,7 @@
 #include "GeoObject.h"
 
 // MathLib
-#include "MathLib/TemplatePoint.h"
+#include "MathLib/MathPoint.h"
 
 namespace GeoLib
 {
@@ -30,30 +30,28 @@ namespace GeoLib
  * \ingroup GeoLib
  */
 
-template<typename T> class GeoPoint : public MathLib::TemplatePoint<T>, public GeoLib::GeoObject
+class Point : public MathLib::MathPoint, public GeoLib::GeoObject
 {
 public:
-	GeoPoint(T x1, T x2, T x3) :
-		MathLib::TemplatePoint<T>(), GeoLib::GeoObject()
+	Point(double x1, double x2, double x3) :
+		MathLib::MathPoint(), GeoLib::GeoObject()
 	{
 		this->_x[0] = x1;
 		this->_x[1] = x2;
 		this->_x[2] = x3;
 	}
 
-	GeoPoint() :
-		MathLib::TemplatePoint<T>(), GeoLib::GeoObject()
+	Point() :
+		MathLib::MathPoint(), GeoLib::GeoObject()
 	{}
 
-	GeoPoint (T const* x) :
-		MathLib::TemplatePoint<T>(x), GeoObject()
+	Point (double const* x) :
+		MathLib::MathPoint(x), GeoLib::GeoObject()
 	{}
 
 	/// return a geometry type
 	virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
 };
-
-typedef GeoLib::GeoPoint<double> Point;
 
 static const Point ORIGIN(0, 0, 0);
 
