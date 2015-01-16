@@ -132,7 +132,7 @@ INSTALL(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generate
 	RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 cpack_add_component(ogs_converter
-	DISPLAY_NAME "File converter tools"
-	DESCRIPTION "File conversion tools."
+	DISPLAY_NAME "File converter"
+	DESCRIPTION "File converter."
 	GROUP Utilities
 )
