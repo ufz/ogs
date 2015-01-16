@@ -127,9 +127,13 @@ ADD_CATALYST_DEPENDENCY(TIN2VTK)
 ####################
 ### Installation ###
 ####################
-INSTALL(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
-	              FEFLOW2OGS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
+INSTALL(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
 	RUNTIME DESTINATION bin COMPONENT ogs_converter)
+
+IF(QT4_FOUND)
+	INSTALL(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
+		FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
+ENDIF()
 
 cpack_add_component(ogs_converter
 	DISPLAY_NAME "File converter"
