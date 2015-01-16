@@ -199,9 +199,11 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 	return false;
 }
 
-bool isPointInTriangle(GeoLib::Point const& p,
-                       GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-                       double eps_pnt_out_of_plane, 
+bool isPointInTriangle(MathLib::MathPoint const& p,
+                       MathLib::MathPoint const& a,
+                       MathLib::MathPoint const& b,
+                       MathLib::MathPoint const& c,
+                       double eps_pnt_out_of_plane,
                        double eps_pnt_out_of_tri,
                        GeoLib::TriangleTest algorithm)
 {
@@ -217,9 +219,11 @@ bool isPointInTriangle(GeoLib::Point const& p,
 	return gaussPointInTriangle(p, a, b, c, eps_pnt_out_of_plane, eps_pnt_out_of_tri);
 }
 
-bool gaussPointInTriangle(GeoLib::Point const& q,
-                          GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-                          double eps_pnt_out_of_plane, 
+bool gaussPointInTriangle(MathLib::MathPoint const& q,
+                          MathLib::MathPoint const& a,
+                          MathLib::MathPoint const& b,
+                          MathLib::MathPoint const& c,
+                          double eps_pnt_out_of_plane,
                           double eps_pnt_out_of_tri)
 {
 	MathLib::Vector3 const v(a, b);
@@ -243,11 +247,11 @@ bool gaussPointInTriangle(GeoLib::Point const& q,
 
 	if (-lower <= y[0] && y[0] <= upper && -lower <= y[1] && y[1] <= upper && y[0] + y[1] <=
 	    upper) {
-		GeoLib::Point const q_projected(
+		MathLib::MathPoint const q_projected(std::array<double,3>{{
 			a[0] + y[0] * v[0] + y[1] * w[0],
 			a[1] + y[0] * v[1] + y[1] * w[1],
 			a[2] + y[0] * v[2] + y[1] * w[2]
-		);
+		}});
 		if (MathLib::sqrDist(q, q_projected) < eps_pnt_out_of_plane)
 			return true;
 	}
@@ -255,9 +259,11 @@ bool gaussPointInTriangle(GeoLib::Point const& q,
 	return false;
 }
 
-bool barycentricPointInTriangle(GeoLib::Point const& p,
-                                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-                                double eps_pnt_out_of_plane, 
+bool barycentricPointInTriangle(MathLib::MathPoint const& p,
+                                MathLib::MathPoint const& a,
+                                MathLib::MathPoint const& b,
+                                MathLib::MathPoint const& c,
+                                double eps_pnt_out_of_plane,
                                 double eps_pnt_out_of_tri)
 {
 	if (std::abs(orientation3d(p, a, b, c)) > eps_pnt_out_of_plane)
@@ -280,8 +286,9 @@ bool barycentricPointInTriangle(GeoLib::Point const& p,
 	return true;
 }
 
-bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
-                          GeoLib::Point const& c, GeoLib::Point const& d, double eps)
+bool isPointInTetrahedron(MathLib::MathPoint const& p,
+	MathLib::MathPoint const& a, MathLib::MathPoint const& b,
+	MathLib::MathPoint const& c, MathLib::MathPoint const& d, double eps)
 {
     double const d0 (orientation3d(d,a,b,c));
     // if tetrahedron is not coplanar
@@ -309,7 +316,8 @@ bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib
     return false;
 }
 
-double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
+double calcTriangleArea(MathLib::MathPoint const& a,
+    MathLib::MathPoint const& b, MathLib::MathPoint const& c)
 {
 	MathLib::Vector3 const u(a,c);
 	MathLib::Vector3 const v(a,b);
@@ -445,7 +453,7 @@ void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
 		(*(pnts[k]))[1] = 0.0; // should be -= d but there are numerical errors
 }
 
-GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q)
+GeoLib::Point* triangleLineIntersection(MathLib::MathPoint const& a, MathLib::MathPoint const& b, MathLib::MathPoint const& c, MathLib::MathPoint const& p, MathLib::MathPoint const& q)
 {
 	const MathLib::Vector3 pq(p, q);
 	const MathLib::Vector3 pa(p, a);
@@ -472,8 +480,10 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
 	return MathLib::scalarProduct(cross,w);
 }
 
-double orientation3d(GeoLib::Point const& p,
-                     GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c)
+double orientation3d(MathLib::MathPoint const& p,
+                     MathLib::MathPoint const& a,
+                     MathLib::MathPoint const& b,
+                     MathLib::MathPoint const& c)
 {
     MathLib::Vector3 const ap (a, p);
     MathLib::Vector3 const bp (b, p);
@@ -481,7 +491,8 @@ double orientation3d(GeoLib::Point const& p,
     return scalarTriple(bp,cp,ap);
 }
 
-bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+bool dividedByPlane(const MathLib::MathPoint& a, const MathLib::MathPoint& b,
+	const MathLib::MathPoint& c, const MathLib::MathPoint& d)
 {
 	for (unsigned x=0; x<3; ++x)
 	{
@@ -495,7 +506,8 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 	return false;
 }
 
-bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib::Point& c, const GeoLib::Point& d)
+bool isCoplanar(const MathLib::MathPoint& a, const MathLib::MathPoint& b,
+	const MathLib::MathPoint& c, const MathLib::MathPoint& d)
 {
 	const MathLib::Vector3 ab(a,b);
 	const MathLib::Vector3 ac(a,c);
