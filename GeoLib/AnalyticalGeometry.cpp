@@ -263,11 +263,11 @@ bool barycentricPointInTriangle(GeoLib::Point const& p,
 	if (std::abs(orientation3d(p, a, b, c)) > eps_pnt_out_of_plane)
 		return false;
 
-	MathLib::Vector3 const pa (p,a); 
+	MathLib::Vector3 const pa (p,a);
 	MathLib::Vector3 const pb (p,b);
 	MathLib::Vector3 const pc (p,c);
 	double const area_x_2 (calcTriangleArea(a,b,c) * 2);
-    
+
 	double const alpha ((MathLib::crossProduct(pb,pc).getLength()) / area_x_2);
 	if (alpha < -eps_pnt_out_of_tri || alpha > 1+eps_pnt_out_of_tri)
 		return false;
@@ -451,14 +451,14 @@ GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point co
 	const MathLib::Vector3 pa(p, a);
 	const MathLib::Vector3 pb(p, b);
 	const MathLib::Vector3 pc(p, c);
-	
+
 	double u (scalarTriple(pq, pc, pb));
 	if (u<0) return nullptr;
 	double v (scalarTriple(pq, pa, pc));
 	if (v<0) return nullptr;
 	double w (scalarTriple(pq, pb, pa));
 	if (w<0) return nullptr;
-	
+
 	const double denom (1.0/(u+v+w));
 	u*=denom;
 	v*=denom;
@@ -490,7 +490,7 @@ bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, const GeoLib
 		const double abd = (b[x] - a[x])*(d[y] - a[y]) - (b[y] - a[y])*(d[x] - a[x]);
 
 		if ((abc>0 && abd<0) || (abc<0 && abd>0))
-			return true;		
+			return true;
 	}
 	return false;
 }
