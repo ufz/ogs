@@ -28,6 +28,19 @@
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 
+// Check if the value can by converted to given type without overflow.
+template <typename VALUE, typename TYPE>
+bool
+is_safely_convertable(VALUE const& value)
+{
+    bool const result = value <= std::numeric_limits<TYPE>::max();
+    if (!result) {
+        ERR("The value %d is too large for conversion.", value);
+        ERR("Maximum available size is %d.", std::numeric_limits<TYPE>::max());
+    }
+    return result;
+}
+
 namespace FileIO
 {
 
