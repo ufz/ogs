@@ -23,9 +23,13 @@ void applyKnownSolution(PETScMatrix &A, PETScVector &b, PETScVector &x,
                         const std::vector<PetscInt>  &vec_knownX_id,
                         const std::vector<PetscScalar> &vec_knownX_x)
 {
+    A.finalizeAssembly();
+
     A.setRowsColumnsZero(vec_knownX_id);
     A.finalizeAssembly();
 
+    x.finalizeAssembly();
+    b.finalizeAssembly();
     if(vec_knownX_id.size() > 0)
     {
         x.set(vec_knownX_id, vec_knownX_x);
