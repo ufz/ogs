@@ -45,7 +45,6 @@ class Node : public GeoLib::PointWithID
 	friend class Mesh;
 	friend class MeshRevision;
 
-
 public:
 	/// Constructor using a coordinate array
 	Node(const double coords[3], unsigned id = std::numeric_limits<unsigned>::max());
@@ -95,7 +94,6 @@ protected:
 
 	std::vector<Node*> _connected_nodes;
 	std::vector<Element*> _elements;
-
 }; /* class */
 
 } /* namespace */
