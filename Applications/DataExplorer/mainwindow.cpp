@@ -1101,7 +1101,7 @@ void MainWindow::LoadFile(const QString &fileName)
 	ImportFileType::type t;
 	QString ext = QFileInfo(fileName).suffix();
 	if (ext=="msh" || ext=="vtu" || ext=="gli" || ext=="gml") {
-		t = ImportFileType::OGS_MSH;
+		t = ImportFileType::OGS;
 		this->loadFile(t,fileName);
 	}
 }
