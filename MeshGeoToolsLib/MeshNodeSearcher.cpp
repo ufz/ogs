@@ -13,6 +13,9 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+// GeoLib
+#include "GeoLib/PointWithID.h"
+
 // MeshLib
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
