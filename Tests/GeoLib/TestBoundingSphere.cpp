@@ -12,6 +12,8 @@
  *
  */
 
+#include <memory>
+
 #include "gtest/gtest.h"
 
 #include "GeoLib/MinimalBoundingSphere.h"
@@ -118,4 +120,7 @@ TEST(GeoLib, TestBoundingSphere)
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
+
+    std::for_each(pnts.begin(), pnts.end(),
+        std::default_delete<MathLib::MathPoint>());
 }
