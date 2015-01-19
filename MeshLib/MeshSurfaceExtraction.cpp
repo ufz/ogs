@@ -68,10 +68,10 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib:
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)
 {
-	if (angle< 0 ||  angle > 90) 
+	if (angle < 0 || angle > 90)
 	{
-	    ERR ("Supported angle between 0 and 90 degrees only.");
-	    return nullptr;
+		ERR ("Supported angle between 0 and 90 degrees only.");
+		return nullptr;
 	}
 
 	INFO ("Extracting mesh surface...");
@@ -141,7 +141,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 			{
 				MeshLib::Face* face = static_cast<MeshLib::Face*>(*elem);
 				if (MathLib::scalarProduct(face->getSurfaceNormal().getNormalizedVector(), norm_dir) > cos_theta)
-					continue;	
+					continue;
 			}
 			sfc_elements.push_back(*elem);
 		}

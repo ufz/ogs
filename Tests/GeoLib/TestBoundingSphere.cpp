@@ -19,10 +19,6 @@
 
 TEST(GeoLib, TestBoundingSphere)
 {
-    GeoLib::Point a(0,  0   ,0);
-    GeoLib::Point b(2,  0   ,0);
-    GeoLib::Point c(1,  0.1 ,0);
-    GeoLib::Point d(1, -0.1 ,0);
     std::vector<GeoLib::Point*> pnts;
     pnts.push_back(new GeoLib::Point(0,  0   , 0));
     pnts.push_back(new GeoLib::Point(2,  0   , 0));
@@ -69,7 +65,7 @@ TEST(GeoLib, TestBoundingSphere)
     ASSERT_NEAR(-0.3446, center[2], 0.0001);
     ASSERT_NEAR(1.0580, s.getRadius(), 0.0001);
     }
-    
+
     pnts[0] = new GeoLib::Point(0, 0, 0);
     pnts[1] = new GeoLib::Point(1, 0, 0);
     pnts[2] = new GeoLib::Point(1, 1, 0);

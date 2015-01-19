@@ -1,7 +1,7 @@
 /**
  * \author Thomas Fischer / Karsten Rink
  * \date   2010-01-21
- * \brief  Definition of the GeoObjects class.
+ * \brief  Definition of the GEOObjects class.
  *
  * \copyright
  * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)

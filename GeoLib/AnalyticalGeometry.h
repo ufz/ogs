@@ -28,12 +28,12 @@ class Polyline;
 
 enum TriangleTest
 {
-	GAUSS, BARYCENTRIC
+    GAUSS, BARYCENTRIC
 };
 
 enum Orientation
 {
-	CW = 1, CCW = 2, COLLINEAR = 3
+    CW = 1, CCW = 2, COLLINEAR = 3
 };
 
 /**
@@ -42,8 +42,8 @@ enum Orientation
  * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a line)
  */
 Orientation getOrientation (const double& p0_x, const double& p0_y,
-	const double& p1_x, const double& p1_y,
-	const double& p2_x, const double& p2_y);
+    const double& p1_x, const double& p1_y,
+    const double& p2_x, const double& p2_y);
 
 /**
  * wrapper for getOrientation ()
@@ -218,10 +218,10 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
  * @return true, if the line segments intersect, else false
  */
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
-		const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
+        const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
 
 /**
- * Calculates the intersection points of a line PQ and a triangle ABC. 
+ * Calculates the intersection points of a line PQ and a triangle ABC.
  * This method requires ABC to be counterclockwise and PQ to point downward.
  * @return Intersection point or NULL if there is no intersection.
  */
@@ -249,7 +249,7 @@ double orientation3d(GeoLib::Point const& p,
  * @param b second point on plane
  * @param c first point to test
  * @param d second point to test
- * @return true, if such a plane can be found, false otherwise 
+ * @return true, if such a plane can be found, false otherwise
  */
  bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
 	 const GeoLib::Point& c, const GeoLib::Point& d);
@@ -264,9 +264,8 @@ double orientation3d(GeoLib::Point const& p,
  * pnt_vec. For each intersection an id is returned.  This id is used to split the two
  * intersecting straight line segments in four straight line segments.
  */
-void computeAndInsertAllIntersectionPoints(
-	GeoLib::PointVec &pnt_vec,
-	std::vector<GeoLib::Polyline*> & plys);
+void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
+    std::vector<GeoLib::Polyline*> & plys);
 
 
 } // end namespace GeoLib
