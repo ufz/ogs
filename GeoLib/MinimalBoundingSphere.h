@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "MathLib/Vector3.h"
-#include "Point.h"
+#include "MathLib/MathPoint.h"
 
 namespace GeoLib
 {
@@ -33,28 +33,33 @@ public:
     /// Copy constructor
     MinimalBoundingSphere(MinimalBoundingSphere const&) = default;
     /// Point-Sphere
-    MinimalBoundingSphere(GeoLib::Point const& p, double radius = std::numeric_limits<double>::epsilon());
+    MinimalBoundingSphere(MathLib::MathPoint const& p, double radius = std::numeric_limits<double>::epsilon());
     /// Bounding sphere using two points
-    MinimalBoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q);
+    MinimalBoundingSphere(MathLib::MathPoint const& p, MathLib::MathPoint const& q);
     /// Bounding sphere using three points
-    MinimalBoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q, GeoLib::Point const& r);
+    MinimalBoundingSphere(MathLib::MathPoint const& p,
+        MathLib::MathPoint const& q, MathLib::MathPoint const& r);
     /// Bounding sphere using four points
-    MinimalBoundingSphere(GeoLib::Point const& p, GeoLib::Point const& q, GeoLib::Point const& r, GeoLib::Point const& s);
+    MinimalBoundingSphere(MathLib::MathPoint const& p,
+        MathLib::MathPoint const& q,
+        MathLib::MathPoint const& r,
+        MathLib::MathPoint const& s);
     /// Bounding sphere of n points
-    MinimalBoundingSphere(std::vector<GeoLib::Point*> const& points);
+    MinimalBoundingSphere(std::vector<MathLib::MathPoint*> const& points);
     ~MinimalBoundingSphere() {}
 
     /// Returns the center point of the sphere
-    GeoLib::Point getCenter() const { return GeoLib::Point(_center.getCoords()); }
+    MathLib::MathPoint getCenter() const { return MathLib::MathPoint(_center.getCoords()); }
 
     /// Returns the radius of the sphere
     double getRadius() const {return _radius; }
 
     /// Returns the squared euclidean distance of a point from the sphere (for points within the sphere distance is negative)
-    double pointDistanceSquared(GeoLib::Point const& pnt) const;
+    double pointDistanceSquared(MathLib::MathPoint const& pnt) const;
 
     /// Creates n_points random points located on the surface of the bounding sphere (useful for visualisation)
-    std::vector<GeoLib::Point*>* getRandomSpherePoints(std::size_t n_points) const;
+    std::vector<MathLib::MathPoint*>*
+    getRandomSpherePoints(std::size_t n_points) const;
 
 private:
     /// Constructor using no points
@@ -73,7 +78,11 @@ private:
      *   Bernd Gaertner: Fast and Robust Smallest Enclosing Balls. ESA99, pp. 325--338, 1999.
      * Code based on "Smallest Enclosing Spheres" implementation by Nicolas Capens on flipcode's Developer Toolbox (www.flipcode.com)
      */
-    static MinimalBoundingSphere recurseCalculation(std::vector<GeoLib::Point*> sphere_points, std::size_t start_idx, std::size_t length, std::size_t n_boundary_points);
+    static MinimalBoundingSphere recurseCalculation(
+        std::vector<MathLib::MathPoint*> sphere_points,
+        std::size_t start_idx,
+        std::size_t length,
+        std::size_t n_boundary_points);
 
     double _radius;
     MathLib::Vector3 _center;
