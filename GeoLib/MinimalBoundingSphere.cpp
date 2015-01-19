@@ -23,7 +23,7 @@ namespace GeoLib {
 
 MinimalBoundingSphere::MinimalBoundingSphere()
 : _radius(-1), _center(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max())
-{	
+{
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(
@@ -71,7 +71,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::MathPoint const& p,
         else
             two_pnts_sphere = MinimalBoundingSphere(p,q);
         _radius = two_pnts_sphere.getRadius();
-	    _center = two_pnts_sphere.getCenter();
+        _center = two_pnts_sphere.getCenter();
     }
 }
 
@@ -126,7 +126,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(
 : _radius(-1), _center(0,0,0)
 {
 	std::vector<MathLib::MathPoint*> sphere_points(points);
- 	MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
+	MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
 	_center = bounding_sphere.getCenter();
 	_radius = bounding_sphere.getRadius();
 }
@@ -188,7 +188,7 @@ std::vector<MathLib::MathPoint*>* MinimalBoundingSphere::getRandomSpherePoints(s
     pnts->reserve(n_points);
     srand ( static_cast<unsigned>(time(NULL)) );
 
-    for (std::size_t k(0); k<n_points; ++k) 
+    for (std::size_t k(0); k<n_points; ++k)
     {
         MathLib::Vector3 vec (0,0,0);
         double sum (0);
