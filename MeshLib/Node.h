@@ -20,7 +20,7 @@
 #include <set>
 #include <vector>
 
-#include "GeoLib/PointWithID.h"
+#include "MathLib/MathPoint.h"
 
 #include "MeshEditing/removeMeshNodes.h"
 #include "MeshGenerators/MeshLayerMapper.h"
@@ -35,7 +35,7 @@ class Element;
 /**
  * A mesh node with coordinates in 3D space.
  */
-class Node : public GeoLib::PointWithID
+class Node : public MathLib::MathPoint
 {
 	/* friend functions: */
 	friend bool MeshLayerMapper::layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);
@@ -54,6 +54,8 @@ public:
 
 	/// Copy constructor
 	Node(const Node &node);
+
+	std::size_t getID() const { return _id; }
 
 	/// Return all the nodes connected to this one
 	const std::vector<MeshLib::Node*>& getConnectedNodes() const { return _connected_nodes; }
@@ -92,6 +94,7 @@ protected:
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
 
+	std::size_t _id;
 	std::vector<Node*> _connected_nodes;
 	std::vector<Element*> _elements;
 }; /* class */

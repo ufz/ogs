@@ -18,17 +18,17 @@
 namespace MeshLib {
 
 Node::Node(const double coords[3], unsigned id)
-	: GeoLib::PointWithID(coords, id)
+	: MathLib::MathPoint(coords), _id(id)
 {
 }
 
 Node::Node(double x, double y, double z, unsigned id)
-	: GeoLib::PointWithID(x, y, z, id)
+	: MathLib::MathPoint({x, y, z}), _id(id)
 {
 }
 
 Node::Node(const Node &node)
-	: GeoLib::PointWithID(node.getCoords(), node.getID())
+	: MathLib::MathPoint(node.getCoords()), _id(node.getID())
 {
 }
 
