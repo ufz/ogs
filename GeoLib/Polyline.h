@@ -22,6 +22,9 @@
 #include "GeoObject.h"
 #include "Point.h"
 
+// MathLib
+#include "MathLib/MathPoint.h"
+
 namespace GeoLib
 {
 enum class Location
@@ -151,7 +154,8 @@ public:
 	 * @return the distance along the polyline between the given point and the beginning of the polyline.
 	 * If the given point is not on the polyine, negative value is returned.
 	 */
-	double getDistanceAlongPolyline(const GeoLib::Point& pnt, const double epsilon_radius) const;
+	double getDistanceAlongPolyline(const MathLib::MathPoint& pnt,
+		const double epsilon_radius) const;
 
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
