@@ -66,14 +66,22 @@ TEST(GeoLib, TestBoundingSphere)
     ASSERT_NEAR(1.0580, s.getRadius(), 0.0001);
     }
 
-    pnts[0] = new MathLib::MathPoint({0, 0, 0});
-    pnts[1] = new MathLib::MathPoint({1, 0, 0});
-    pnts[2] = new MathLib::MathPoint({1, 1, 0});
-    pnts[3] = new MathLib::MathPoint({0, 1, 0});
     pnts.push_back(new MathLib::MathPoint({0, 0, 1}));
     pnts.push_back(new MathLib::MathPoint({1, 0, 1}));
     pnts.push_back(new MathLib::MathPoint({1, 1, 1}));
     pnts.push_back(new MathLib::MathPoint({0, 1, 0.9}));
+    (*pnts[0])[0] = 0.0;
+    (*pnts[0])[1] = 0.0;
+    (*pnts[0])[2] = 0.0;
+    (*pnts[1])[0] = 1.0;
+    (*pnts[1])[1] = 0.0;
+    (*pnts[1])[2] = 0.0;
+    (*pnts[2])[0] = 1.0;
+    (*pnts[2])[1] = 1.0;
+    (*pnts[2])[2] = 0.0;
+    (*pnts[3])[0] = 0.0;
+    (*pnts[3])[1] = 1.0;
+    (*pnts[3])[2] = 0.0;
 
     {
     /**
