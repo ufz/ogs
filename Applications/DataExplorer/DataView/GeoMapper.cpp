@@ -94,7 +94,7 @@ void GeoMapper::mapData()
 	double min_val(0), max_val(0);
 	if (_mesh)
 	{
-		GeoLib::AABB<GeoLib::Point> bounding_box (_mesh->getNodes().begin(), _mesh->getNodes().end());
+		GeoLib::AABB<MeshLib::Node> bounding_box (_mesh->getNodes().begin(), _mesh->getNodes().end());
 		min_val = bounding_box.getMinPoint()[2];
 		max_val = bounding_box.getMaxPoint()[2];
 	}
@@ -302,7 +302,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	this->mapOnMesh(mesh);
 }
 
-GeoLib::Point* GeoMapper::calcIntersection(GeoLib::Point const*const p1, GeoLib::Point const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const
+GeoLib::Point* GeoMapper::calcIntersection(MathLib::MathPoint const*const p1, MathLib::MathPoint const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const
 {
 	const double x1 = (*p1)[0], x2 = (*p2)[0], x3 = (*q1)[0], x4 = (*q2)[0];
 	const double y1 = (*p1)[1], y2 = (*p2)[1], y3 = (*q1)[1], y4 = (*q2)[1];
