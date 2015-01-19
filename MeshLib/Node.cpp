@@ -17,13 +17,13 @@
 
 namespace MeshLib {
 
-Node::Node(const double coords[3], unsigned id)
+Node::Node(const double coords[3], std::size_t id)
 	: MathLib::MathPoint(coords), _id(id)
 {
 }
 
-Node::Node(double x, double y, double z, unsigned id)
-	: MathLib::MathPoint({x, y, z}), _id(id)
+Node::Node(double x, double y, double z, std::size_t id)
+	: MathLib::MathPoint(std::array<double,3>({{x, y, z}})), _id(id)
 {
 }
 
@@ -43,7 +43,7 @@ void Node::updateCoordinates(double x, double y, double z)
 	_x[2] = z;
 
 	const size_t nElements (this->_elements.size());
-	for (unsigned i=0; i<nElements; i++)
+	for (std::size_t i=0; i<nElements; i++)
 		_elements[i]->computeVolume();
 }
 

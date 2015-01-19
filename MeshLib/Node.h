@@ -47,10 +47,10 @@ class Node : public MathLib::MathPoint
 
 public:
 	/// Constructor using a coordinate array
-	Node(const double coords[3], unsigned id = std::numeric_limits<unsigned>::max());
+	Node(const double coords[3], std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructor using single coordinates
-	Node(double x, double y, double z, unsigned id = std::numeric_limits<unsigned>::max());
+	Node(double x, double y, double z, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	Node(const Node &node);
@@ -61,7 +61,7 @@ public:
 	const std::vector<MeshLib::Node*>& getConnectedNodes() const { return _connected_nodes; }
 
 	/// Get an element the node is part of.
-	const Element* getElement(unsigned idx) const { return _elements[idx]; }
+	const Element* getElement(std::size_t idx) const { return _elements[idx]; }
 
 	/// Get all elements the node is part of.
 	const std::vector<Element*>& getElements() const { return _elements; }
@@ -88,7 +88,7 @@ protected:
 	}
 
 	/// Sets the ID of a node to the given value.
-	void setID(unsigned id) { this->_id = id; }
+	void setID(std::size_t id) { this->_id = id; }
 
 	/// Update coordinates of a node.
 	/// This method automatically also updates the areas/volumes of all connected elements.
