@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Checks mesh properties", ' ', BaseLib::BuildInfo::git_version_sha1);
+	TCLAP::CmdLine cmd("Checks mesh properties", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
 	cmd.add( mesh_arg );
 	TCLAP::SwitchArg valid_arg("v","validation","validate the mesh");

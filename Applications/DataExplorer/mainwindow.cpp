@@ -692,9 +692,9 @@ void MainWindow::showLicense()
 void MainWindow::about()
 {
 	QString about("<a href='http://www.opengeosys.org'>http://www.opengeosys.org</a><br /><br />");
-	QString ogsVersion = QString::fromStdString(
-		BaseLib::BuildInfo::ogs_version_and_persons);
-	about.append(QString("Version: %1<br /><br />").arg(ogsVersion));
+	about.append(QString("Version: <a href='https://github.com/ufz/ogs/releases/tag/%2'>%1</a><br /><br />")
+		.arg(QString::fromStdString(BaseLib::BuildInfo::git_describe))
+		.arg(QString::fromStdString(BaseLib::BuildInfo::ogs_version)));
 
 	about.append(QString("Git commit: <a href='https://github.com/ufz/ogs/commit/%1'>%1</a><br />")
 		.arg(QString::fromStdString(BaseLib::BuildInfo::git_version_sha1_short)));

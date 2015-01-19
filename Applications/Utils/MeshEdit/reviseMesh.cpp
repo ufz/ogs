@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Mesh revision tool", ' ', BaseLib::BuildInfo::git_version_sha1);
+	TCLAP::CmdLine cmd("Mesh revision tool", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file","input mesh file",true,"","string");
 	cmd.add( input_arg );
 	TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file","output mesh file",true,"","string");

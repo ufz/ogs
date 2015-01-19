@@ -36,8 +36,7 @@ int main(int argc, char* argv[])
 	QLocale::setDefault(QLocale::German);
 	MainWindow* w = new MainWindow();
 	w->setWindowTitle( w->windowTitle() + " - " +
-		QString::fromStdString(BaseLib::BuildInfo::ogs_version_and_persons) +
-		" - FirstFloor");
+		QString::fromStdString(BaseLib::BuildInfo::git_describe));
 	w->show();
 	int returncode = a.exec();
 	delete w;

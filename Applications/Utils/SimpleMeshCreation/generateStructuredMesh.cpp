@@ -76,7 +76,7 @@ int main (int argc, char* argv[])
 			"See accompanying file LICENSE.txt or "
 			"http://www.opengeosys.org/project/license",
 		' ',
-		BaseLib::BuildInfo::git_version_sha1);
+		BaseLib::BuildInfo::git_describe);
 
 	std::unique_ptr<BaseLib::TCLAPCustomOutput> tclapOutput(new BaseLib::TCLAPCustomOutput());
 	cmd.setOutput(tclapOutput.get());

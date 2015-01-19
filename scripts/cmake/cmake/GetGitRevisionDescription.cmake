@@ -128,3 +128,8 @@ function(git_get_exact_tag _var)
 	git_describe(out --exact-match ${ARGN})
 	set(${_var} "${out}" PARENT_SCOPE)
 endfunction()
+
+function(git_get_tag _var)
+	git_describe(out --tags ${ARGN})
+	set(${_var} "${out}" PARENT_SCOPE)
+endfunction()
