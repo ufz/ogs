@@ -32,7 +32,7 @@ void RadiusEdgeRatioMetric::calculateQuality ()
     {
         Element const& elem (*elements[k]);
         std::size_t const n_nodes (elem.getNBaseNodes());
-        std::vector<GeoLib::Point*> pnts(n_nodes);
+        std::vector<MathLib::MathPoint*> pnts(n_nodes);
         std::copy_n(elem.getNodes(), n_nodes, pnts.begin());
         GeoLib::MinimalBoundingSphere const s(pnts);
         double min, max;
