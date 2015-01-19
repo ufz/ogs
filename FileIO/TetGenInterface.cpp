@@ -26,6 +26,9 @@
 // FileIO
 #include "TetGenInterface.h"
 
+// GeoLib
+#include "GeoLib/PointWithID.h"
+
 // MathLib
 #include "TemplatePoint.h"
 
