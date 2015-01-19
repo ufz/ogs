@@ -42,7 +42,7 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_version_sha1);
+	TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
 	                                     "the name of the file containing the input TIN", true,
 	                                     "", "string");

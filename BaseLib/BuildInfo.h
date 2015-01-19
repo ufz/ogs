@@ -29,8 +29,8 @@ namespace BuildInfo
     extern const std::string git_version_sha1;
     extern const std::string git_version_sha1_short;
 
+    extern const std::string git_describe;
     extern const std::string ogs_version;
-    extern const std::string ogs_version_and_persons;
 
     extern const std::string source_path;
     extern const std::string tests_tmp_path;

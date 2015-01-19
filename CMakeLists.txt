@@ -14,19 +14,6 @@ ENDIF()
 # Project name
 PROJECT( OGS-6 )
 
-###########################################################################
-### OGS version information. Adjust these if you release a new version. ###
-###########################################################################
-SET (OGS_VERSION_MAJOR 6)
-SET (OGS_VERSION_MINOR 0)
-SET (OGS_VERSION_PATCH 0)
-SET (OSG_VERSION_STATUS "Beta") # Can be words like Alpha, Beta, Prerelease or ""
-SET (OGS_RELEASE_PERSONS "Core developers")
-SET (OGS_VERSION "${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}")
-SET (OGS_VERSION_AND_PERSONS "${OGS_VERSION} ${OSG_VERSION_STATUS} (${OGS_RELEASE_PERSONS})")
-SET (OGS_DATE "2012-08-20")
-
-
 ###########################
 ### Preliminary Options ###
 ###########################

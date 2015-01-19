@@ -43,7 +43,7 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Converts VTK mesh into TIN file.", ' ', BaseLib::BuildInfo::git_version_sha1);
+	TCLAP::CmdLine cmd("Converts VTK mesh into TIN file.", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
 	                                     "the name of the file containing the input mesh", true,
 	                                     "", "file name of input mesh");

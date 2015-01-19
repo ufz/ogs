@@ -200,7 +200,7 @@ void GMSHInterface::readNodeIDs(std::ifstream &in,
 }
 
 MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map)
-{	
+{
 	unsigned idx, type, n_tags, dummy, mat_id;
 	std::vector<unsigned> node_ids;
 	std::vector<MeshLib::Node*> elem_nodes;
@@ -275,7 +275,7 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 
 bool GMSHInterface::write()
 {
-	_out << "// GMSH input file created by OpenGeoSys " << BaseLib::BuildInfo::ogs_version_and_persons;
+	_out << "// GMSH input file created by OpenGeoSys " << BaseLib::BuildInfo::git_describe;
 #ifdef BUILD_TIMESTAMP
 	_out << " built on " << BaseLib::BuildInfo::build_timestamp;
 #endif
