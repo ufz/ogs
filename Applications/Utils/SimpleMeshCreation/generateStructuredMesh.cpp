@@ -1,6 +1,6 @@
 /**
  * @copyright
- * Copyright (c) 2012-2014, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
 
 	TCLAP::CmdLine cmd("Structured mesh generator.\n"
 			"OpenGeoSys-6 software.\n"
-			"Copyright (c) 2012-2014, OpenGeoSys Community "
+			"Copyright (c) 2012-2015, OpenGeoSys Community "
 			"(http://www.opengeosys.org) "
 			"Distributed under a Modified BSD License. "
 			"See accompanying file LICENSE.txt or "
