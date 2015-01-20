@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
 	// Parse CLI arguments.
 	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
-			"Copyright (c) 2012-2014, OpenGeoSys Community "
+			"Copyright (c) 2012-2015, OpenGeoSys Community "
 			"(http://www.opengeosys.org) "
 			"Distributed under a Modified BSD License. "
 			"See accompanying file LICENSE.txt or "
