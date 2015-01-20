@@ -52,7 +52,7 @@ public:
 
 private:
     /// Pointer to MPI commumicator;
-    MPI_Comm _mpi_comm = MPI_COMM_WORLD;
+    MPI_Comm _mpi_comm;
 
     /// Number of processes in the communicator: _mpi_comm
     int _mpi_comm_size;
