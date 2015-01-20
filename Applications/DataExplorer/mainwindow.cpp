@@ -1096,7 +1096,7 @@ void MainWindow::HideWindow()
 	this->hide();
 }
 
-void MainWindow::LoadFile(const QString &fileName)
+void MainWindow::loadFileOnStartUp(const QString &fileName)
 {
 	ImportFileType::type t;
 	QString ext = QFileInfo(fileName).suffix();

@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 	w->setWindowTitle( w->windowTitle() + " - " +
 		QString::fromStdString(BaseLib::BuildInfo::git_describe));
 	if (QCoreApplication::arguments().size()>1) {
-		w->LoadFile(QCoreApplication::arguments().at(1));
+		w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
 	}
 	w->show();
 	int returncode = a.exec();
