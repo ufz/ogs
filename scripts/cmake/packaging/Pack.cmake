@@ -34,8 +34,8 @@ ENDIF()
 IF(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
 	DownloadAdditionalFilesForPackaging(
 		URLS http://docs.opengeosys.org/assets/releases/head/docs/DataExplorer-Manual.pdf
-		     http://docs.opengeosys.org/assets/releases/head/docs/User_Manual.pdf
-		     http://docs.opengeosys.org/assets/releases/head/docs/Theory_Manual.pdf
+		     http://docs.opengeosys.org/assets/releases/head/docs/User-Manual.pdf
+		     http://docs.opengeosys.org/assets/releases/head/docs/Theory-Manual.pdf
 		DESTINATION docs
 		PACKAGE_GROUP ogs_docs
 	)
