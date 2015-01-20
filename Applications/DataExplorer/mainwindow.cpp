@@ -1096,6 +1096,14 @@ void MainWindow::HideWindow()
 	this->hide();
 }
 
+void MainWindow::loadFileOnStartUp(const QString &fileName)
+{
+	QString ext = QFileInfo(fileName).suffix();
+	if (ext=="msh" || ext=="vtu" || ext=="gli" || ext=="gml") {
+		this->loadFile(ImportFileType::OGS,fileName);
+	}
+}
+
 void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 {
 	Q_UNUSED(checked)

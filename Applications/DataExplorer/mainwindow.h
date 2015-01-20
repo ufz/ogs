@@ -45,6 +45,7 @@ public:
 
 	void ShowWindow();
 	void HideWindow();
+	void loadFileOnStartUp(const QString &fileName);
 
 protected:
 	void closeEvent( QCloseEvent* event );
