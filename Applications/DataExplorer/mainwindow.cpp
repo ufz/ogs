@@ -1098,11 +1098,9 @@ void MainWindow::HideWindow()
 
 void MainWindow::loadFileOnStartUp(const QString &fileName)
 {
-	ImportFileType::type t;
 	QString ext = QFileInfo(fileName).suffix();
 	if (ext=="msh" || ext=="vtu" || ext=="gli" || ext=="gml") {
-		t = ImportFileType::OGS;
-		this->loadFile(t,fileName);
+		this->loadFile(ImportFileType::OGS,fileName);
 	}
 }
 
