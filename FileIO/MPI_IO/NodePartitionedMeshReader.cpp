@@ -378,21 +378,21 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
         //----------------------------------------------------------------------------------
         // Read Nodes
         if (!readCastNodesASCII(is_node, i, mesh_nodes, glb_node_ids))
-            return nullptr;
+            break;
 
         //----------------------------------------------------------------------------------
         // Read elements
         if (!readCastElemsASCII(is_elem, i,
             _mesh_info.regular_elements + _mesh_info.offset[0],
             false, mesh_nodes, mesh_elems))
-            return nullptr;
+            break;
 
         //-------------------------------------------------------------------------
         // Ghost elements
         if (!readCastElemsASCII(is_elem, i,
             _mesh_info.ghost_elements + _mesh_info.offset[1],
             true, mesh_nodes, mesh_elems))
-            return nullptr;
+            break;
 
         if(_mpi_rank == i)
             np_mesh = newMesh(BaseLib::extractBaseName(file_name_base),
