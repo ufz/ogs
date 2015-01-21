@@ -81,11 +81,7 @@ bool GEOObjects::appendPoint(Point* point, std::string const &name, std::size_t&
 	std::size_t const size_previous(_pnt_vecs[idx]->size());
 
 	id = _pnt_vecs[idx]->push_back(point);
-	if (size_previous < _pnt_vecs[idx]->size()) {
-		return true;
-	} else {
-		return false;
-	}
+	return size_previous < _pnt_vecs[idx]->size();
 }
 
 const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) const
