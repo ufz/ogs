@@ -14,7 +14,7 @@
 #ifndef MATHPOINT_H_
 #define MATHPOINT_H_
 
-#include <cmath>
+#include <limits>
 
 #include "TemplatePoint.h"
 

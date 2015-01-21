@@ -15,9 +15,6 @@
 #ifndef POINT_H_
 #define POINT_H_
 
-// STL
-#include <limits>
-
 // GeoLib
 #include "GeoObject.h"
 
