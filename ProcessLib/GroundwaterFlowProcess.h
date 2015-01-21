@@ -55,7 +55,7 @@ public:
         // Find the corresponding process variable.
         std::string const name = config.get<std::string>("process_variable");
 
-        auto const& variable = std::find_if(variables.cbegin(), variables.cend(),
+        auto variable = std::find_if(variables.cbegin(), variables.cend(),
                 [&name](ProcessVariable const& v) {
                     return v.getName() == name;
                 });
@@ -66,7 +66,7 @@ public:
 
         DBUG("Associate hydraulic_head with process variable \'%s\'.",
             name.c_str());
-        _hydraulic_head = &*variable;
+        _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
 
     }
 
@@ -130,15 +130,9 @@ public:
             MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
                 _hydraulic_head->getMesh());
 
-        using BCCI = ProcessVariable::BoundaryConditionCI;
-        for (BCCI bc = _hydraulic_head->beginBoundaryConditions();
-                bc != _hydraulic_head->endBoundaryConditions(); ++bc)
-        {
-            (*bc)->initialize(
+        _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
-        }
-
     }
 
     void solve()
@@ -179,7 +173,7 @@ public:
     }
 
 private:
-    ProcessVariable const* _hydraulic_head = nullptr;
+    ProcessVariable* _hydraulic_head = nullptr;
 
     double const _hydraulic_conductivity = 1e-6;
 

@@ -35,14 +35,6 @@ public:
 
     virtual ~BoundaryCondition() = default;
 
-    /// Initialization interface of Dirichlet type boundary conditions.
-    /// Fills in global_ids of the particular geometry of the boundary condition
-    /// and the corresponding values.
-    /// The ids are appended to the global_ids and also the values.
-    virtual void initialize(
-            MeshGeoToolsLib::MeshNodeSearcher& searcher,
-            std::vector<std::size_t>& global_ids, std::vector<double>& values) = 0;
-
 protected:
     GeoLib::GeoObject const* const _geometry;
 };
