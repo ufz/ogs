@@ -31,7 +31,7 @@ bool operator<= (MathLib::MathPoint const & p0, MathLib::MathPoint const & p1);
 /**
  * lexicographical comparison of points taking an epsilon into account
  * @param p0 first input MathPoint
- * @param p1 first input MathPoint
+ * @param p1 second input MathPoint
  * @param tol tolerance (if in the comparison operation the property fabs(p0[k] - p1[k]) < tol
  *     holds for the k-th coordinate the points are assumed the be equal in this coordinate)
  * @return true, if p0 is lexicographically smaller than p1
