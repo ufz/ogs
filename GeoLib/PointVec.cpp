@@ -12,6 +12,8 @@
  *
  */
 
+#include <numeric>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
