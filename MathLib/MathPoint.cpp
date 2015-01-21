@@ -1,7 +1,7 @@
 /**
  * \file
  * \date   2015-01-16
- * \brief  Implementation of the MathPoint class.
+ * \brief  Implementation of the Point3d class.
  *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
@@ -13,9 +13,9 @@
 
 #include <cmath>
 
-#include "MathPoint.h"
+#include "Point3d.h"
 
-bool operator<= (const MathLib::MathPoint& p0, const MathLib::MathPoint& p1)
+bool operator<= (const MathLib::Point3d& p0, const MathLib::Point3d& p1)
 {
 	if (p0[0] > p1[0]) {
 		return false;
@@ -42,7 +42,7 @@ bool operator<= (const MathLib::MathPoint& p0, const MathLib::MathPoint& p1)
 	}
 }
 
-bool lessEq(const MathLib::MathPoint& p0, const MathLib::MathPoint& p1, double tol)
+bool lessEq(const MathLib::Point3d& p0, const MathLib::Point3d& p1, double tol)
 {
 	// test a relative and an absolute criterion
 	if (fabs(p0[0]-p1[0]) > tol * std::min(fabs(p1[0]), fabs(p0[0])) && fabs(p0[0]-p1[0]) > tol) {
