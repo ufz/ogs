@@ -56,7 +56,7 @@ TemplateLine<NNODES,CELLLINETYPE>::~TemplateLine()
 {}
 
 template <unsigned NNODES, CellType CELLLINETYPE>
-bool TemplateLine<NNODES,CELLLINETYPE>::isPntInElement(MathLib::MathPoint const& pnt, double eps) const
+bool TemplateLine<NNODES,CELLLINETYPE>::isPntInElement(MathLib::Point3d const& pnt, double eps) const
 {
     double tmp;
     double tmp_dst(0);

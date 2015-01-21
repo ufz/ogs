@@ -20,7 +20,7 @@
 #include <set>
 #include <vector>
 
-#include "MathLib/MathPoint.h"
+#include "MathLib/Point3d.h"
 
 #include "MeshEditing/removeMeshNodes.h"
 #include "MeshGenerators/MeshLayerMapper.h"
@@ -35,7 +35,7 @@ class Element;
 /**
  * A mesh node with coordinates in 3D space.
  */
-class Node : public MathLib::MathPoint
+class Node : public MathLib::Point3d
 {
 	/* friend functions: */
 	friend bool MeshLayerMapper::layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);

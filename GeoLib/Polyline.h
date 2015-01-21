@@ -23,7 +23,7 @@
 #include "Point.h"
 
 // MathLib
-#include "MathLib/MathPoint.h"
+#include "MathLib/Point3d.h"
 
 namespace GeoLib
 {
@@ -154,7 +154,7 @@ public:
 	 * @return the distance along the polyline between the given point and the beginning of the polyline.
 	 * If the given point is not on the polyine, negative value is returned.
 	 */
-	double getDistanceAlongPolyline(const MathLib::MathPoint& pnt,
+	double getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 		const double epsilon_radius) const;
 
 	friend bool operator==(Polyline const& lhs, Polyline const& rhs);

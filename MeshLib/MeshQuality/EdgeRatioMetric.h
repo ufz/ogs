@@ -16,7 +16,7 @@
 #define EDGERATIOMETRIC_H_
 
 #include "ElementQualityMetric.h"
-#include "MathLib/MathPoint.h"
+#include "MathLib/Point3d.h"
 
 namespace MeshLib
 {
@@ -33,20 +33,20 @@ public:
     virtual void calculateQuality ();
 
 private:
-    double checkTriangle (MathLib::MathPoint const& a,
-                          MathLib::MathPoint const& b,
-                          MathLib::MathPoint const& c) const;
-    double checkQuad (MathLib::MathPoint const& a,
-                      MathLib::MathPoint const& b,
-                      MathLib::MathPoint const& c,
-                      MathLib::MathPoint const& d) const;
-    double checkTetrahedron (MathLib::MathPoint const& a,
-                             MathLib::MathPoint const& b,
-                             MathLib::MathPoint const& c,
-                             MathLib::MathPoint const& d) const;
-    double checkPrism (std::vector<const MathLib::MathPoint*> const& pnts) const;
-    double checkPyramid (std::vector<const MathLib::MathPoint*> const& pnts) const;
-    double checkHexahedron (std::vector<const MathLib::MathPoint*> const& pnts) const;
+    double checkTriangle (MathLib::Point3d const& a,
+                          MathLib::Point3d const& b,
+                          MathLib::Point3d const& c) const;
+    double checkQuad (MathLib::Point3d const& a,
+                      MathLib::Point3d const& b,
+                      MathLib::Point3d const& c,
+                      MathLib::Point3d const& d) const;
+    double checkTetrahedron (MathLib::Point3d const& a,
+                             MathLib::Point3d const& b,
+                             MathLib::Point3d const& c,
+                             MathLib::Point3d const& d) const;
+    double checkPrism (std::vector<const MathLib::Point3d*> const& pnts) const;
+    double checkPyramid (std::vector<const MathLib::Point3d*> const& pnts) const;
+    double checkHexahedron (std::vector<const MathLib::Point3d*> const& pnts) const;
 };
 }
 

@@ -108,11 +108,11 @@ public:
 
 	/**
 	 * Checks if a point is inside the element.
-	 * @param pnt a 3D MathLib::MathPoint object
+	 * @param pnt a 3D MathLib::Point3d object
 	 * @param eps tolerance for numerical algorithm used or computing the property
 	 * @return true if the point is not outside the element, false otherwise
 	 */
-	bool isPntInElement(MathLib::MathPoint const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
+	bool isPntInElement(MathLib::Point3d const& pnt, double eps = std::numeric_limits<double>::epsilon()) const;
 
 	/**
 	 * Tests if the element is geometrically valid.

@@ -19,7 +19,7 @@
 #include "GeoObject.h"
 
 // MathLib
-#include "MathLib/MathPoint.h"
+#include "MathLib/Point3d.h"
 
 namespace GeoLib
 {
@@ -27,11 +27,11 @@ namespace GeoLib
  * \ingroup GeoLib
  */
 
-class Point : public MathLib::MathPoint, public GeoLib::GeoObject
+class Point : public MathLib::Point3d, public GeoLib::GeoObject
 {
 public:
 	Point(double x1, double x2, double x3) :
-		MathLib::MathPoint(), GeoLib::GeoObject()
+		MathLib::Point3d(), GeoLib::GeoObject()
 	{
 		this->_x[0] = x1;
 		this->_x[1] = x2;
@@ -39,11 +39,11 @@ public:
 	}
 
 	Point() :
-		MathLib::MathPoint(), GeoLib::GeoObject()
+		MathLib::Point3d(), GeoLib::GeoObject()
 	{}
 
 	Point (double const* x) :
-		MathLib::MathPoint(x), GeoLib::GeoObject()
+		MathLib::Point3d(x), GeoLib::GeoObject()
 	{}
 
 	/// return a geometry type

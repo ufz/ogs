@@ -23,7 +23,7 @@
 #include "Grid.h"
 
 // MathLib
-#include "MathLib/MathPoint.h"
+#include "MathLib/Point3d.h"
 
 namespace MeshLib {
 	class Mesh;
@@ -63,7 +63,7 @@ private:
 	float getDemElevation(GeoLib::Point const& pnt) const;
 
 	// Calculates the intersection of two lines embedded in the xy-plane
-	GeoLib::Point* calcIntersection(MathLib::MathPoint const*const p1, MathLib::MathPoint const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
+	GeoLib::Point* calcIntersection(MathLib::Point3d const*const p1, MathLib::Point3d const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const;
 
 	// Returns the position of a point within a line-segment
 	unsigned getPointPosInLine(GeoLib::Polyline const*const line, unsigned start, unsigned end, GeoLib::Point const*const point, double eps) const;

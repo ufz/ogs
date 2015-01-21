@@ -128,7 +128,7 @@ bool TemplateTet<NNODES,CELLTETTYPE>::isEdge(unsigned idx1, unsigned idx2) const
 }
 
 template <unsigned NNODES, CellType CELLTETTYPE>
-bool TemplateTet<NNODES,CELLTETTYPE>::isPntInElement(MathLib::MathPoint const& pnt, double eps) const
+bool TemplateTet<NNODES,CELLTETTYPE>::isPntInElement(MathLib::Point3d const& pnt, double eps) const
 {
     return GeoLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3], eps);
 }

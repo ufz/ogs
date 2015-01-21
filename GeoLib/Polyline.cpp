@@ -377,7 +377,7 @@ void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
 	}
 }
 
-double Polyline::getDistanceAlongPolyline(const MathLib::MathPoint& pnt,
+double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 	const double epsilon_radius) const
 {
 	double dist, lambda;

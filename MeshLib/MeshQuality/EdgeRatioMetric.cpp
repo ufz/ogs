@@ -50,21 +50,21 @@ void EdgeRatioMetric::calculateQuality()
 			break;
 		}
 		case MeshElemType::PRISM: {
-			std::vector<const MathLib::MathPoint*> pnts;
+			std::vector<const MathLib::Point3d*> pnts;
 			for (size_t j(0); j < 6; j++)
 				pnts.push_back(elem.getNode(j));
 			_element_quality_metric[k] = checkPrism(pnts);
 			break;
 		}
 		case MeshElemType::PYRAMID: {
-			std::vector<const MathLib::MathPoint*> pnts;
+			std::vector<const MathLib::Point3d*> pnts;
 			for (size_t j(0); j < 5; j++)
 				pnts.push_back(elem.getNode(j));
 			_element_quality_metric[k] = checkPyramid(pnts);
 			break;
 		}
 		case MeshElemType::HEXAHEDRON: {
-			std::vector<const MathLib::MathPoint*> pnts;
+			std::vector<const MathLib::Point3d*> pnts;
 			for (size_t j(0); j < 8; j++)
 				pnts.push_back(elem.getNode(j));
 			_element_quality_metric[k] = checkHexahedron(pnts);
@@ -77,9 +77,9 @@ void EdgeRatioMetric::calculateQuality()
 	}
 }
 
-double EdgeRatioMetric::checkTriangle (MathLib::MathPoint const& a,
-                                       MathLib::MathPoint const& b,
-                                       MathLib::MathPoint const& c) const
+double EdgeRatioMetric::checkTriangle (MathLib::Point3d const& a,
+                                       MathLib::Point3d const& b,
+                                       MathLib::Point3d const& c) const
 {
 	double len0 (sqrt(MathLib::sqrDist (b,a)));
 	double len1 (sqrt(MathLib::sqrDist (b,c)));
@@ -111,10 +111,10 @@ double EdgeRatioMetric::checkTriangle (MathLib::MathPoint const& a,
 	}
 }
 
-double EdgeRatioMetric::checkQuad (MathLib::MathPoint const& a,
-                                   MathLib::MathPoint const& b,
-                                   MathLib::MathPoint const& c,
-                                   MathLib::MathPoint const& d) const
+double EdgeRatioMetric::checkQuad (MathLib::Point3d const& a,
+                                   MathLib::Point3d const& b,
+                                   MathLib::Point3d const& c,
+                                   MathLib::Point3d const& d) const
 {
 	double sqr_lengths[4] = {MathLib::sqrDist (b,a),
 		                 MathLib::sqrDist (c,b),
@@ -130,10 +130,10 @@ double EdgeRatioMetric::checkQuad (MathLib::MathPoint const& a,
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[3]);
 }
 
-double EdgeRatioMetric::checkTetrahedron (MathLib::MathPoint const& a,
-                                          MathLib::MathPoint const& b,
-                                          MathLib::MathPoint const& c,
-                                          MathLib::MathPoint const& d) const
+double EdgeRatioMetric::checkTetrahedron (MathLib::Point3d const& a,
+                                          MathLib::Point3d const& b,
+                                          MathLib::Point3d const& c,
+                                          MathLib::Point3d const& d) const
 {
 	double sqr_lengths[6] = {MathLib::sqrDist (b,a), MathLib::sqrDist (c,b),
 		                 MathLib::sqrDist (c,a), MathLib::sqrDist (a,d),
@@ -148,7 +148,7 @@ double EdgeRatioMetric::checkTetrahedron (MathLib::MathPoint const& a,
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[5]);
 }
 
-double EdgeRatioMetric::checkPrism (std::vector<const MathLib::MathPoint*> const& pnts) const
+double EdgeRatioMetric::checkPrism (std::vector<const MathLib::Point3d*> const& pnts) const
 {
 	double sqr_lengths[9] = {MathLib::sqrDist (*pnts[0],*pnts[1]),
 		                 MathLib::sqrDist (*pnts[1],*pnts[2]),
@@ -169,7 +169,7 @@ double EdgeRatioMetric::checkPrism (std::vector<const MathLib::MathPoint*> const
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[8]);
 }
 
-double EdgeRatioMetric::checkPyramid (std::vector<const MathLib::MathPoint*> const &pnts) const
+double EdgeRatioMetric::checkPyramid (std::vector<const MathLib::Point3d*> const &pnts) const
 {
 	double sqr_lengths[8] = {MathLib::sqrDist (*pnts[0],*pnts[1]),
 		                 MathLib::sqrDist (*pnts[1],*pnts[2]),
@@ -189,7 +189,7 @@ double EdgeRatioMetric::checkPyramid (std::vector<const MathLib::MathPoint*> con
 	return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[7]);
 }
 
-double EdgeRatioMetric::checkHexahedron (std::vector<const MathLib::MathPoint*> const & pnts) const
+double EdgeRatioMetric::checkHexahedron (std::vector<const MathLib::Point3d*> const & pnts) const
 {
 	double sqr_lengths[12] = {MathLib::sqrDist (*pnts[0],*pnts[1]),
 		                  MathLib::sqrDist (*pnts[1],*pnts[2]),

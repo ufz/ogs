@@ -101,7 +101,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, z_vals, z_vals+n_cols*n_rows ,-9999);
 }
 
-double Raster::getValueAtPoint(const MathLib::MathPoint &pnt) const
+double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
 {
 	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
 		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
@@ -119,7 +119,7 @@ double Raster::getValueAtPoint(const MathLib::MathPoint &pnt) const
 	return _no_data_val;
 }
 
-double Raster::interpolateValueAtPoint(MathLib::MathPoint const& pnt) const
+double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 {
     // position in raster
     double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
@@ -167,7 +167,7 @@ double Raster::interpolateValueAtPoint(MathLib::MathPoint const& pnt) const
     return MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
 }
 
-bool Raster::isPntOnRaster(MathLib::MathPoint const& pnt) const
+bool Raster::isPntOnRaster(MathLib::Point3d const& pnt) const
 {
     if ((pnt[0]<_ll_pnt[0]) || (pnt[0]>_ll_pnt[0]+(_n_cols*_cell_size)) || 
         (pnt[1]<_ll_pnt[1]) || (pnt[1]>_ll_pnt[1]+(_n_rows*_cell_size)))
