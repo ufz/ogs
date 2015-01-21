@@ -16,7 +16,7 @@
 
 #include <vector>
 
-#include "GeoLib/Point.h"
+#include "MathLib/Point3d.h"
 
 namespace NumLib
 {
@@ -34,7 +34,7 @@ public:
 	 * \param pnt  a point object
 	 * \return evaluated value
 	 */
-	virtual double operator()(const GeoLib::Point& pnt) const = 0;
+	virtual double operator()(const MathLib::Point3d& pnt) const = 0;
 };
 
 } // NumLib

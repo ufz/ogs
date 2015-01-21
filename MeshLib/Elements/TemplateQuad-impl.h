@@ -104,7 +104,7 @@ bool TemplateQuad<NNODES,CELLQUADTYPE>::isEdge(unsigned idx1, unsigned idx2) con
 }
 
 template <unsigned NNODES, CellType CELLQUADTYPE>
-bool TemplateQuad<NNODES,CELLQUADTYPE>::isPntInElement(GeoLib::Point const& pnt, double eps) const
+bool TemplateQuad<NNODES,CELLQUADTYPE>::isPntInElement(MathLib::Point3d const& pnt, double eps) const
 {
 	return (GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps) ||
 	        GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[2], *_nodes[3], eps));

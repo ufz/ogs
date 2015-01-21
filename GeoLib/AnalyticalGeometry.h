@@ -108,7 +108,8 @@ void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
  * The formula is \f$A= \frac{1}{2} \cdot |u \times v|\f$, i.e. half of the area of the
  * parallelogram specified by the vectors\f$u=b-a\f$ and \f$v=c-a\f$.
  */
-double calcTriangleArea(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
+double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
+    MathLib::Point3d const& c);
 
 /**
  * Calculates the volume of a tetrahedron.
@@ -129,8 +130,10 @@ double calcTetrahedronVolume(const double* x1, const double* x2, const double* x
  * @param algorithm defines the method to use
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
-bool isPointInTriangle(GeoLib::Point const& p,
-                       GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
+bool isPointInTriangle(MathLib::Point3d const& p,
+                       MathLib::Point3d const& a,
+                       MathLib::Point3d const& b,
+                       MathLib::Point3d const& c,
                        double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
                        double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
                        GeoLib::TriangleTest algorithm = GeoLib::GAUSS);
@@ -148,10 +151,11 @@ bool isPointInTriangle(GeoLib::Point const& p,
  * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
-bool gaussPointInTriangle(GeoLib::Point const& p,
-                          GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-                          double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-                          double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
+bool gaussPointInTriangle(MathLib::Point3d const& p,
+    MathLib::Point3d const& a, MathLib::Point3d const& b,
+    MathLib::Point3d const& c,
+    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
@@ -166,10 +170,11 @@ bool gaussPointInTriangle(GeoLib::Point const& p,
  * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
  * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
  */
-bool barycentricPointInTriangle(GeoLib::Point const& p,
-                                GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c,
-                                double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-                                double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
+bool barycentricPointInTriangle(MathLib::Point3d const& p,
+    MathLib::Point3d const& a, MathLib::Point3d const& b,
+    MathLib::Point3d const& c,
+    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
@@ -183,8 +188,10 @@ bool barycentricPointInTriangle(GeoLib::Point const& p,
  * @param eps Accounts for numerical inaccuracies by allowing a point to be slightly outside of the element and still be regarded as inside.
  * @return true if the test point p is not located outside of abcd (i.e. inside or on a plane/edge).
  */
-bool isPointInTetrahedron(GeoLib::Point const& p, GeoLib::Point const& a, GeoLib::Point const& b, 
-                          GeoLib::Point const& c, GeoLib::Point const& d, double eps = std::numeric_limits<double>::epsilon());
+bool isPointInTetrahedron(MathLib::Point3d const& p,
+    MathLib::Point3d const& a, MathLib::Point3d const& b,
+    MathLib::Point3d const& c, MathLib::Point3d const& d,
+    double eps = std::numeric_limits<double>::epsilon());
 
 /**
  * test for intersections of the line segments of the Polyline
@@ -225,7 +232,7 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
  * This method requires ABC to be counterclockwise and PQ to point downward.
  * @return Intersection point or NULL if there is no intersection.
  */
-GeoLib::Point* triangleLineIntersection(GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c, GeoLib::Point const& p, GeoLib::Point const& q);
+GeoLib::Point* triangleLineIntersection(MathLib::Point3d const& a, MathLib::Point3d const& b, MathLib::Point3d const& c, MathLib::Point3d const& p, MathLib::Point3d const& q);
 
 /// Calculates the scalar triple (u x v) . w
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
@@ -239,8 +246,10 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLi
  * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a negative value,
  * otherwise it will return a positive value. If p is coplanar with abc, the function will return 0.
  */
-double orientation3d(GeoLib::Point const& p,
-                     GeoLib::Point const& a, GeoLib::Point const& b, GeoLib::Point const& c);
+double orientation3d(MathLib::Point3d const& p,
+                     MathLib::Point3d const& a,
+                     MathLib::Point3d const& b,
+                     MathLib::Point3d const& c);
 
 /**
  * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
@@ -251,13 +260,13 @@ double orientation3d(GeoLib::Point const& p,
  * @param d second point to test
  * @return true, if such a plane can be found, false otherwise
  */
- bool dividedByPlane(const GeoLib::Point& a, const GeoLib::Point& b, 
-	 const GeoLib::Point& c, const GeoLib::Point& d);
+ bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
+     const MathLib::Point3d& c, const MathLib::Point3d& d);
 
  /// Checks if the four given points are located on a plane.
- bool isCoplanar(const GeoLib::Point& a, const GeoLib::Point& b, 
-	 const GeoLib::Point& c, const GeoLib::Point& d);
- 
+ bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
+     const MathLib::Point3d& c, const MathLib::Point3d & d);
+
 /**
  * Method first computes the intersection points of line segements of GeoLib::Polyline objects
  * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec

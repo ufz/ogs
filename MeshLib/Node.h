@@ -20,7 +20,7 @@
 #include <set>
 #include <vector>
 
-#include "GeoLib/PointWithID.h"
+#include "MathLib/Point3d.h"
 
 #include "MeshEditing/removeMeshNodes.h"
 #include "MeshGenerators/MeshLayerMapper.h"
@@ -35,7 +35,7 @@ class Element;
 /**
  * A mesh node with coordinates in 3D space.
  */
-class Node : public GeoLib::PointWithID
+class Node : public MathLib::Point3d
 {
 	/* friend functions: */
 	friend bool MeshLayerMapper::layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);
@@ -47,19 +47,21 @@ class Node : public GeoLib::PointWithID
 
 public:
 	/// Constructor using a coordinate array
-	Node(const double coords[3], unsigned id = std::numeric_limits<unsigned>::max());
+	Node(const double coords[3], std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Constructor using single coordinates
-	Node(double x, double y, double z, unsigned id = std::numeric_limits<unsigned>::max());
+	Node(double x, double y, double z, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	Node(const Node &node);
+
+	std::size_t getID() const { return _id; }
 
 	/// Return all the nodes connected to this one
 	const std::vector<MeshLib::Node*>& getConnectedNodes() const { return _connected_nodes; }
 
 	/// Get an element the node is part of.
-	const Element* getElement(unsigned idx) const { return _elements[idx]; }
+	const Element* getElement(std::size_t idx) const { return _elements[idx]; }
 
 	/// Get all elements the node is part of.
 	const std::vector<Element*>& getElements() const { return _elements; }
@@ -86,12 +88,13 @@ protected:
 	}
 
 	/// Sets the ID of a node to the given value.
-	void setID(unsigned id) { this->_id = id; }
+	void setID(std::size_t id) { this->_id = id; }
 
 	/// Update coordinates of a node.
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
 
+	std::size_t _id;
 	std::vector<Node*> _connected_nodes;
 	std::vector<Element*> _elements;
 }; /* class */

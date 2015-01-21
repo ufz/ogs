@@ -99,13 +99,13 @@ public:
 	/**
 	 * Returns the raster value at the position of the given point.
 	 */
-	double getValueAtPoint(const GeoLib::Point &pnt) const;
+	double getValueAtPoint(const MathLib::Point3d &pnt) const;
 
 	/// Interpolates the elevation of the given point based on the 8-neighbourhood of the raster cell it is located on
-	double interpolateValueAtPoint(const GeoLib::Point &pnt) const;
+	double interpolateValueAtPoint(const MathLib::Point3d &pnt) const;
     
 	/// Checks if the given point is located within the (x,y)-extension of the raster.
-	bool isPntOnRaster(GeoLib::Point const& node) const;
+	bool isPntOnRaster(MathLib::Point3d const& node) const;
 
 	~Raster();
 

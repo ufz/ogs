@@ -25,6 +25,9 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 
+// GeoLib
+#include "GeoLib/PointWithID.h"
+
 namespace FileIO
 {
 

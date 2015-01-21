@@ -17,18 +17,18 @@
 
 namespace MeshLib {
 
-Node::Node(const double coords[3], unsigned id)
-	: GeoLib::PointWithID(coords, id)
+Node::Node(const double coords[3], std::size_t id)
+	: MathLib::Point3d(coords), _id(id)
 {
 }
 
-Node::Node(double x, double y, double z, unsigned id)
-	: GeoLib::PointWithID(x, y, z, id)
+Node::Node(double x, double y, double z, std::size_t id)
+	: MathLib::Point3d(std::array<double,3>({{x, y, z}})), _id(id)
 {
 }
 
 Node::Node(const Node &node)
-	: GeoLib::PointWithID(node.getCoords(), node.getID())
+	: MathLib::Point3d(node.getCoords()), _id(node.getID())
 {
 }
 
@@ -43,7 +43,7 @@ void Node::updateCoordinates(double x, double y, double z)
 	_x[2] = z;
 
 	const size_t nElements (this->_elements.size());
-	for (unsigned i=0; i<nElements; i++)
+	for (std::size_t i=0; i<nElements; i++)
 		_elements[i]->computeVolume();
 }
 

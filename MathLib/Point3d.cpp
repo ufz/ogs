@@ -1,8 +1,7 @@
 /**
  * \file
- * \author Thomas Fischer
- * \date   2010-06-22
- * \brief  Implementation of the Point class.
+ * \date   2015-01-16
+ * \brief  Implementation of the Point3d class.
  *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,14 +11,11 @@
  *
  */
 
-
 #include <cmath>
 
-#include "Point.h"
+#include "Point3d.h"
 
-namespace GeoLib {
-
-bool operator<= (const GeoLib::Point& p0, const GeoLib::Point& p1)
+bool operator<= (const MathLib::Point3d& p0, const MathLib::Point3d& p1)
 {
 	if (p0[0] > p1[0]) {
 		return false;
@@ -46,7 +42,7 @@ bool operator<= (const GeoLib::Point& p0, const GeoLib::Point& p1)
 	}
 }
 
-bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol)
+bool lessEq(const MathLib::Point3d& p0, const MathLib::Point3d& p1, double tol)
 {
 	// test a relative and an absolute criterion
 	if (fabs(p0[0]-p1[0]) > tol * std::min(fabs(p1[0]), fabs(p0[0])) && fabs(p0[0]-p1[0]) > tol) {
@@ -75,4 +71,3 @@ bool lessEq(const GeoLib::Point& p0, const GeoLib::Point& p1, double tol)
 	}
 }
 
-} // end namespace GeoLib

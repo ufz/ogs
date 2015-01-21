@@ -57,7 +57,7 @@ MathLib::PiecewiseLinearInterpolation LinearInterpolationAlongPolyline::createIn
 	return MathLib::PiecewiseLinearInterpolation(vec_known_dist, vec_known_values);
 }
 
-double LinearInterpolationAlongPolyline::operator()(const GeoLib::Point& pnt) const
+double LinearInterpolationAlongPolyline::operator()(const MathLib::Point3d& pnt) const
 {
 	const double dist = _ply.getDistanceAlongPolyline(pnt, _search_length);
 	return dist>=0 ? _interpolation.getValue(dist) : _default_value;

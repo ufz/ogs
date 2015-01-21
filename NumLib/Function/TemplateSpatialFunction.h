@@ -39,7 +39,7 @@ public:
 	 * @param pnt  a point object
 	 * @return evaluated value
 	 */
-	virtual double operator()(const GeoLib::Point& pnt) const
+	virtual double operator()(const MathLib::Point3d& pnt) const
 	{
 		return _f(pnt.getCoords());
 	}

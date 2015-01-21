@@ -39,7 +39,7 @@ LinearInterpolationOnSurface::LinearInterpolationOnSurface(
 	assert(vec_interpolate_point_ids.size()==vec_interpolate_point_values.size());
 }
 
-double LinearInterpolationOnSurface::operator()(const GeoLib::Point& pnt) const
+double LinearInterpolationOnSurface::operator()(const MathLib::Point3d& pnt) const
 {
 	const double* coords = pnt.getCoords();
 	if (!_sfc.isPntInBoundingVolume(coords))

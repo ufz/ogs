@@ -12,18 +12,20 @@
  *
  */
 
+#include <memory>
+
 #include "gtest/gtest.h"
 
 #include "GeoLib/MinimalBoundingSphere.h"
-#include "GeoLib/Point.h"
+#include "MathLib/Point3d.h"
 
 TEST(GeoLib, TestBoundingSphere)
 {
-    std::vector<GeoLib::Point*> pnts;
-    pnts.push_back(new GeoLib::Point(0,  0   , 0));
-    pnts.push_back(new GeoLib::Point(2,  0   , 0));
-    pnts.push_back(new GeoLib::Point(1,  0.1 , 0));
-    pnts.push_back(new GeoLib::Point(1, -0.1 , 0));
+    std::vector<MathLib::Point3d*> pnts;
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{0,  0   , 0}})));
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{2,  0   , 0}})));
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{1,  0.1 , 0}})));
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{1, -0.1 , 0}})));
 
     {
     /**
@@ -37,7 +39,7 @@ TEST(GeoLib, TestBoundingSphere)
      * Expected result is C=(1,0,0), r=1
      */
     GeoLib::MinimalBoundingSphere s(pnts);
-    GeoLib::Point center = s.getCenter();
+    MathLib::Point3d center = s.getCenter();
     ASSERT_NEAR(1.0, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.0, center[1], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.0, center[2], std::numeric_limits<double>::epsilon());
@@ -59,21 +61,29 @@ TEST(GeoLib, TestBoundingSphere)
      */
     (*pnts[2])[2] -= 1.4;
     GeoLib::MinimalBoundingSphere s(pnts);
-    GeoLib::Point center = s.getCenter();
+    MathLib::Point3d center = s.getCenter();
     ASSERT_NEAR(1.0, center[0], 0.0001);
     ASSERT_NEAR(0.0246, center[1], 0.0001);
     ASSERT_NEAR(-0.3446, center[2], 0.0001);
     ASSERT_NEAR(1.0580, s.getRadius(), 0.0001);
     }
 
-    pnts[0] = new GeoLib::Point(0, 0, 0);
-    pnts[1] = new GeoLib::Point(1, 0, 0);
-    pnts[2] = new GeoLib::Point(1, 1, 0);
-    pnts[3] = new GeoLib::Point(0, 1, 0);
-    pnts.push_back(new GeoLib::Point(0, 0, 1));
-    pnts.push_back(new GeoLib::Point(1, 0, 1));
-    pnts.push_back(new GeoLib::Point(1, 1, 1));
-    pnts.push_back(new GeoLib::Point(0, 1, 0.9));
+    (*pnts[0])[0] = 0.0;
+    (*pnts[0])[1] = 0.0;
+    (*pnts[0])[2] = 0.0;
+    (*pnts[1])[0] = 1.0;
+    (*pnts[1])[1] = 0.0;
+    (*pnts[1])[2] = 0.0;
+    (*pnts[2])[0] = 1.0;
+    (*pnts[2])[1] = 1.0;
+    (*pnts[2])[2] = 0.0;
+    (*pnts[3])[0] = 0.0;
+    (*pnts[3])[1] = 1.0;
+    (*pnts[3])[2] = 0.0;
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{0, 0, 1}})));
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{1, 0, 1}})));
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{1, 1, 1}})));
+    pnts.push_back(new MathLib::Point3d(std::array<double,3>({{0, 1, 0.9}})));
 
     {
     /**
@@ -81,7 +91,7 @@ TEST(GeoLib, TestBoundingSphere)
      * Expected result is C=(0.5,0.5,0.5), r=0.866
      */
     GeoLib::MinimalBoundingSphere s(pnts);
-    GeoLib::Point center = s.getCenter();
+    MathLib::Point3d center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[2], std::numeric_limits<double>::epsilon());
@@ -95,7 +105,7 @@ TEST(GeoLib, TestBoundingSphere)
     (*pnts[7])[2] += 0.3;
     GeoLib::MinimalBoundingSphere s(pnts);
     {
-    GeoLib::Point center = s.getCenter();
+    MathLib::Point3d center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
@@ -103,11 +113,14 @@ TEST(GeoLib, TestBoundingSphere)
     }
 
     /// Calculates the bounding sphere of points on a bounding sphere
-    std::vector<GeoLib::Point*> *sphere_points (s.getRandomSpherePoints(1000));
+    std::vector<MathLib::Point3d*> *sphere_points (s.getRandomSpherePoints(1000));
     GeoLib::MinimalBoundingSphere t(*sphere_points);
-    GeoLib::Point center = s.getCenter();
+    MathLib::Point3d center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
+
+    std::for_each(pnts.begin(), pnts.end(),
+        std::default_delete<MathLib::Point3d>());
 }
