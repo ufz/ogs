@@ -23,9 +23,7 @@ namespace GeoLib
 class GeoObject
 {
 public:
-	GeoObject() {}
-	virtual ~GeoObject() {}
-
+	virtual ~GeoObject() = default;
 	/// return a geometry type
 	virtual GEOTYPE getGeoType() const = 0;
 };
