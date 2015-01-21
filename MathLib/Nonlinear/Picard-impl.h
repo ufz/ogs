@@ -78,9 +78,9 @@ bool Picard::solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new)
     }
     INFO("iteration : %d/%d", itr_cnt, _max_itr);
     if (checkAbsError)
-        INFO("abs error : %1.3e (tolerance=%1.3e)", abs_error, _abs_tol);
+        INFO("abs error = %1.3e (tolerance=%1.3e)", abs_error, _abs_tol);
     if (checkRelError)
-        INFO("rel error : %1.3e (tolerance=%1.3e)", rel_error, _rel_tol);
+        INFO("rel error = %1.3e (tolerance=%1.3e)", rel_error, _rel_tol);
     INFO("norm type : %s", convertVecNormTypeToString(_normType).c_str());
     INFO("------------------------------------------------------------------");
 
