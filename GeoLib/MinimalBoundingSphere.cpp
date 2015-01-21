@@ -166,10 +166,10 @@ MinimalBoundingSphere::recurseCalculation(
             if (i>start_idx)
             {
                 MathLib::Point3d* tmp = sphere_points[start_idx+i];
-                GeoLib::Point* tmp = sphere_points[start_idx+i];
-                std::copy(sphere_points.begin()+static_cast<std::vector<MathLib::Point3d*>::iterator::difference_type>(start_idx),
-                    sphere_points.begin()+static_cast<std::vector<MathLib::Point3d*>::iterator::difference_type>(start_idx + i),
-                    sphere_points.begin()+static_cast<std::vector<MathLib::Point3d*>::iterator::difference_type>(start_idx + 1));
+                using DiffType = std::vector<MathLib::Point3d*>::iterator::difference_type;
+                std::copy(sphere_points.begin()+static_cast<DiffType>(start_idx),
+                    sphere_points.begin()+static_cast<DiffType>(start_idx + i),
+                    sphere_points.begin()+static_cast<DiffType>(start_idx + 1));
                 sphere_points[start_idx] = tmp;
             }
             sphere = recurseCalculation(sphere_points, start_idx+1, i, n_boundary_points+1);
