@@ -273,7 +273,7 @@ bool NodePartitionedMeshReader::readCastNodesASCII(std::ifstream& is_node,
             MPI_Send(nodes.data(), static_cast<int>(_mesh_info.nodes),
                 _mpi_node_type, part_id, message_tag, _mpi_comm);
     }
-    else if(part_id > 0 && _mpi_rank == part_id)
+    else if(_mpi_rank == part_id)
     {
         MPI_Recv(nodes.data(), static_cast<int>(_mesh_info.nodes),
             _mpi_node_type, 0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
@@ -313,7 +313,7 @@ bool NodePartitionedMeshReader::readCastElemsASCII(std::ifstream& is_elem,
             MPI_Send(elem_data.data(), static_cast<int>(data_size), MPI_LONG,
                 part_id, message_tag, _mpi_comm);
     }
-    else if(part_id > 0 && _mpi_rank == part_id)
+    else if(_mpi_rank == part_id)
     {
         MPI_Recv(elem_data.data(), static_cast<int>(data_size), MPI_LONG,
             0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
