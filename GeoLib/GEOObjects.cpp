@@ -52,11 +52,10 @@ bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
                                 std::string const &name, std::vector<std::size_t>* ids)
 {
 	// search vector
-	int const id = this->exists(name);
-	if (id < 0)
+	std::size_t const idx = this->exists(name);
+	if (idx == std::numeric_limits<std::size_t>::max())
 		return false;
 
-	std::size_t const idx(static_cast<std::size_t>(id));
 	std::size_t const n_new_pnts(new_points.size());
 
 	// append points
@@ -73,11 +72,10 @@ bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
 bool GEOObjects::appendPoint(Point* point, std::string const &name, std::size_t& id)
 {
 	// search vector
-	int i = this->exists(name);
-	if (i < 0)
+	std::size_t const idx = this->exists(name);
+	if (idx == std::numeric_limits<std::size_t>::max())
 		return false;
 
-	std::size_t const idx(static_cast<std::size_t>(i));
 	std::size_t const size_previous(_pnt_vecs[idx]->size());
 
 	id = _pnt_vecs[idx]->push_back(point);
@@ -86,9 +84,9 @@ bool GEOObjects::appendPoint(Point* point, std::string const &name, std::size_t&
 
 const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) const
 {
-	int idx = this->exists(name);
-	if (idx>=0)
-		return _pnt_vecs[static_cast<std::size_t>(idx)]->getVector();
+	std::size_t const idx = this->exists(name);
+	if (idx != std::numeric_limits<std::size_t>::max())
+		return _pnt_vecs[idx]->getVector();
 
 	INFO("GEOObjects::getPointVec() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
@@ -96,9 +94,9 @@ const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) cons
 
 const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
 {
-	int idx = this->exists(name);
-	if (idx>=0)
-		return _pnt_vecs[static_cast<std::size_t>(idx)];
+	std::size_t const idx = this->exists(name);
+	if (idx != std::numeric_limits<std::size_t>::max())
+		return _pnt_vecs[idx];
 
 	INFO("GEOObjects::getPointVecObj() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
@@ -598,18 +596,18 @@ GeoLib::GeoObject const* GEOObjects::getGeoObject(
 	return geo_obj;
 }
 
-int GEOObjects::exists(const std::string &geometry_name) const
+std::size_t GEOObjects::exists(const std::string &geometry_name) const
 {
 	std::size_t const size (_pnt_vecs.size());
 	for (std::size_t i = 0; i < size; i++)
 		if (_pnt_vecs[i]->getName().compare(geometry_name) == 0)
-			return static_cast<int>(i);
+			return i;
 
 	// HACK for enabling conversion of files without loading the associated geometry
 	if (size>0 && _pnt_vecs[0]->getName().compare("conversionTestRun#1")==0)
 		return 1;
 
-	return -1;
+	return std::numeric_limits<std::size_t>::max();
 }
 
 
