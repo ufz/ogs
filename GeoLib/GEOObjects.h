@@ -222,9 +222,6 @@ public:
 	 */
 	const SurfaceVec* getSurfaceVecObj(const std::string &name) const;
 
-	/// Returns -1 if no geometry of the given name exists or die index of the geometry in _pnt_vecs otherwise
-	int exists(const std::string &geometry_name) const;
-
 	/// Returns the names of all geometry vectors.
 	void getGeometryNames (std::vector<std::string>& names) const;
 
@@ -274,6 +271,10 @@ public:
 	virtual ~GEOObjects();
 
 protected:
+	/// Returns std::numeric_limits<std::size_t>::max() if no geometry of the
+	/// given name exists or the index of the geometry in _pnt_vecs otherwise
+	std::size_t exists(const std::string &geometry_name) const;
+
 	/// Checks if the point vector with the given name is referenced in a polyline- or surface vector.
 	bool isPntVecUsed (const std::string &name) const;
 

@@ -79,12 +79,11 @@ protected:
 	* @param last_layer_node   The node at this xy-location on the layer below
 	* @param raster            The raster file for the current layer
 	* @param new_node_id       Node ID to be used if there is a meaningful node position to be found
-	* @param minimum_thickness The minimum thickness required for the layer (i.e. if the distance to the bottom is smaller, the node is collapsed)
 	* @result A new node at the given xy position.
 	*/
-	MeshLib::Node* getNewLayerNode(MeshLib::Node const& dem_node, 
-	                               MeshLib::Node const& last_layer_node, 
-	                               GeoLib::Raster const& raster, 
+	MeshLib::Node* getNewLayerNode(MeshLib::Node const& dem_node,
+	                               MeshLib::Node const& last_layer_node,
+	                               GeoLib::Raster const& raster,
 	                               std::size_t new_node_id) const;
 
 	/// Calculates a data-dependent epsilon value

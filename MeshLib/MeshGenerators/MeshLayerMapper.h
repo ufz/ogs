@@ -29,8 +29,10 @@ public:
 	/**
 	* Based on a 2D triangle-or quad mesh this method creates a 3D mesh with a given number of prism- or hex-layers
 	* \param mesh The triangle/quad mesh that is the basis for the new prism/hex mesh
-	* \param nLayers The number of layers of prism/hex elements that will be extruded from the triangle/quad elements of the original mesh
-	* \param thickness The thickness of each of these newly added layers
+	* \param layer_thickness_vector The size of the vector equals the number of
+		layers of prism/hex elements that will be extruded from the
+		triangle/quad elements of the original mesh. The thickness of the
+		\f$i\f$-th layer corresponds to the \f$i\f$ entry of the vector.
 	* \param mesh_name The name of the newly created mesh
 	* \return A mesh with the requested number of layers of prism/hex elements
 	*/

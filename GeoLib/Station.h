@@ -128,9 +128,6 @@ public:
 	/// Determines if the station's parameters are within the the bounds of the current selection (see property system for details)
 	bool inSelection(const std::vector<PropertyBounds> &bounds);
 
-	/// Returns true if all properties of this stations are within the boundaries given by \param bounds and false otherwise
-	bool inSelection(std::map<std::string, double> properties) const;
-
 	/// Returns the name of the station.
 	std::string const& getName() const { return _name; }
 

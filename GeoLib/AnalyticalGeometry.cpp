@@ -354,12 +354,25 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
-void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
+void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
+	MathLib::DenseMatrix<double> & rot_mat)
 {
 	// *** some frequently used terms ***
 	// sqrt (v_1^2 + v_2^2)
 	double h0(sqrt(plane_normal[0] * plane_normal[0] + plane_normal[1]
 	               * plane_normal[1]));
+	if (h0 == 0) {
+		rot_mat(0,0) = 1.0;
+		rot_mat(0,1) = 0.0;
+		rot_mat(0,2) = 0.0;
+		rot_mat(1,0) = 0.0;
+		rot_mat(1,1) = 1.0;
+		rot_mat(1,2) = 0.0;
+		rot_mat(2,0) = 0.0;
+		rot_mat(2,1) = 0.0;
+		rot_mat(2,2) = 1.0;
+		return;
+	}
 	// 1 / sqrt (v_1^2 + v_2^2)
 	double h1(1 / h0);
 	// 1 / sqrt (h0 + v_3^2)

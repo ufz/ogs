@@ -166,9 +166,10 @@ MinimalBoundingSphere::recurseCalculation(
             if (i>start_idx)
             {
                 MathLib::Point3d* tmp = sphere_points[start_idx+i];
-                std::copy(sphere_points.begin() + start_idx,
-                    sphere_points.begin() + (start_idx + i),
-                    sphere_points.begin() + (start_idx + 1));
+                using DiffType = std::vector<MathLib::Point3d*>::iterator::difference_type;
+                std::copy(sphere_points.begin()+static_cast<DiffType>(start_idx),
+                    sphere_points.begin()+static_cast<DiffType>(start_idx + i),
+                    sphere_points.begin()+static_cast<DiffType>(start_idx + 1));
                 sphere_points[start_idx] = tmp;
             }
             sphere = recurseCalculation(sphere_points, start_idx+1, i, n_boundary_points+1);
@@ -194,7 +195,7 @@ std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std
         double sum (0);
         for (unsigned i=0; i<3; ++i)
         {
-            vec[i] = (double)rand()-(RAND_MAX/2.0);
+            vec[i] = static_cast<double>(rand())-(RAND_MAX/2.0);
             sum+=(vec[i]*vec[i]);
         }
         double const fac (_radius/sqrt(sum));

@@ -102,7 +102,6 @@ public:
 
 	const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
 
-	double getShortestPointDistance () const;
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
 
 	/// Returns a subset of this point vector containing only the points specified in "subset" as PointWithID-objects
@@ -145,15 +144,6 @@ private:
 	 * to their lexicographical order
 	 */
 	std::vector<std::size_t> _pnt_id_map;
-
-	/**
-	 * method calculates the shortest distance of points inside the _pnt_vec
-	 */
-	void calculateShortestDistance ();
-	/**
-	 * squared shortest distance - calculated by calculateShortestAndLargestDistance, possible update by uniqueInsert
-	 */
-	double _sqr_shortest_dist;
 
 	AABB<GeoLib::Point> _aabb;
 };
