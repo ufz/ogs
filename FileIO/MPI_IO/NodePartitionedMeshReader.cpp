@@ -357,12 +357,12 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
     std::vector<unsigned long> glb_node_ids;
     std::vector<MeshLib::Element*> mesh_elems;
 
+    INFO("-->Reading partitioned mesh.");
+
     for(int i = 0; i < _mpi_comm_size; i++)
     {
         if(_mpi_rank == 0)
         {
-            INFO("-->Parallel reading the partitioned mesh: ");
-
             // Read first part into _mesh_info which is equal with the binary
             // structure.
             for(unsigned long j = 0; j < 10; ++j)
