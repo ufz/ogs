@@ -207,6 +207,9 @@ public:
 	 */
 	virtual bool testElementNodeOrder() const = 0;
 
+	/// Returns if this element is linear order
+	bool isLinearElement() const { return getNBaseNodes()==getNNodes(); }
+
 	/// Return a specific edge node.
 	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
