@@ -35,10 +35,10 @@ public:
 	static const unsigned dimension = 2;
 
 	/// Get the area of this 2d element.
-	virtual double getArea() const { return _area; }
+	virtual double getArea() const { return _content; }
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _area; }
+	double getContent() const { return _content; }
 
 	/// Get dimension of the mesh element.
 	unsigned getDimension() const { return dimension; }
@@ -47,7 +47,7 @@ public:
 	const Element* getFace(unsigned i) const { return this->getEdge(i); }
 
 	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned i) const { (void)i; return 2; }
+	unsigned getNFaceNodes(unsigned /*i*/) const { return 2; }
 
 	/// 2D elements have no faces.
 	unsigned getNFaces() const { return 0; }
@@ -78,8 +78,6 @@ protected:
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Face(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
-
-	double _area;
 
 private:
 

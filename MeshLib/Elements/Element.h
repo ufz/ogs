@@ -57,7 +57,7 @@ public:
 	MeshLib::Node getCenterOfGravity() const;
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	virtual double getContent() const = 0;
+	double getContent() const { return _content; }
 
 	/**
 	 * Get node with local index i where i should be at most the number
@@ -219,6 +219,7 @@ protected:
 
 	Node** _nodes;
 	std::size_t _id;
+	double _content;
 	/**
 	 * this is an index for external additional information like materials
 	 */
