@@ -18,10 +18,14 @@
 #include "TemplateElement.h"
 #include "Cell.h"
 #include "HexRule8.h"
+#include "HexRule20.h"
 
 namespace MeshLib
 {
+
 typedef TemplateElement<Cell, HexRule8> Hex;
+typedef TemplateElement<Cell, HexRule20> Hex20;
+
 }
 
 #endif /* HEX_H_ */

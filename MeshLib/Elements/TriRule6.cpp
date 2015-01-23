@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Sep 27, 2012
- * \brief  Definition of the Tri class.
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,19 +7,17 @@
  *
  */
 
-#ifndef TRI_H_
-#define TRI_H_
-
-#include "TemplateElement.h"
-#include "Face.h"
-#include "TriRule3.h"
 #include "TriRule6.h"
 
 namespace MeshLib {
 
-typedef TemplateElement<Face,TriRule3> Tri;
-typedef TemplateElement<Face,TriRule6> Tri6;
+const unsigned TriRule6::n_all_nodes;
 
-}
+const unsigned TriRule6::_edge_nodes[3][3] =
+{
+		{0, 1, 3}, // Edge 0
+		{1, 2, 4}, // Edge 1
+		{2, 0, 5}, // Edge 2
+};
 
-#endif /* TRI_H_ */
+} // end namespace MeshLib
