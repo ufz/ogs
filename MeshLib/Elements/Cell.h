@@ -42,13 +42,6 @@ public:
 	virtual ~Cell();
 
 	/**
-	 * This method is pure virtual and is inherited from class @sa Element.
-	 * It has to be implemented in the derived classes of class Cell!
-	 * @return a copy of the object
-	 */
-	virtual Element* clone() const = 0;
-
-	/**
 	 * Checks if the node order of an element is correct by testing surface normals.
 	 * For 3D elements true is returned if the normals of all faces points away from the centre of 
 	 * the element.
