@@ -15,11 +15,13 @@
 #ifndef LINE_H_
 #define LINE_H_
 
-#include "TemplateLine.h"
+#include "TemplateElement.h"
+#include "Edge.h"
+#include "LineRule2.h"
 
 namespace MeshLib {
 
-typedef TemplateLine<2,CellType::LINE2> Line;
+typedef TemplateElement<Edge, LineRule2> Line;
 
 }
 

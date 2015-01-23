@@ -15,11 +15,13 @@
 #ifndef PYRAMID_H_
 #define PYRAMID_H_
 
-#include "TemplatePyramid.h"
+#include "TemplateElement.h"
+#include "Cell.h"
+#include "PyramidRule5.h"
 
 namespace MeshLib {
 
-typedef TemplatePyramid<5,CellType::PYRAMID5> Pyramid;
+typedef TemplateElement<Cell, PyramidRule5> Pyramid;
 
 }
 

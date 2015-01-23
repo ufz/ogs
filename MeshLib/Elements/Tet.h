@@ -15,11 +15,13 @@
 #ifndef TET_H_
 #define TET_H_
 
-#include "TemplateTet.h"
+#include "TemplateElement.h"
+#include "Cell.h"
+#include "TetRule4.h"
 
 namespace MeshLib {
 
-typedef TemplateTet<4,CellType::TET4> Tet;
+typedef TemplateElement<Cell,TetRule4> Tet;
 
 }
 
