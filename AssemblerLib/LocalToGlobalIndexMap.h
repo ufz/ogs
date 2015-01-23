@@ -10,6 +10,10 @@
 #ifndef ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
 #define ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
 
+#ifndef NDEBUG
+#include <iostream>
+#endif  // NDEBUG
+
 #include <vector>
 
 #include "AssemblerLib/MeshComponentMap.h"
@@ -110,6 +114,34 @@ private:
     /// For non-parallel implementations the columns are equal to the rows.
     /// \todo This is to be overriden by any parallel implementation.
     std::vector<LineIndex> const& _columns = _rows;
+
+#ifndef NDEBUG
+    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap& map)
+    {
+        std::size_t const max_lines = 10;
+        std::size_t lines_printed = 0;
+
+        os << "Rows of the local to global index map; " << map._rows.size()
+            << " rows\n";
+        for (auto line : map._rows)
+        {
+            if (lines_printed++ > max_lines)
+            {
+                os << "...";
+                break;
+            }
+
+            os << "{ ";
+            std::copy(line.cbegin(), line.cend(),
+                std::ostream_iterator<std::size_t>(os, " "));
+            os << " }\n";
+        }
+        lines_printed = 0;
+
+        os << "Mesh component map:\n" << map._mesh_component_map;
+        return os;
+    }
+#endif  // NDEBUG
 };
 
 }   // namespace AssemblerLib
