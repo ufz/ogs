@@ -37,9 +37,6 @@ public:
 	/// Get the area of this 2d element.
 	virtual double getArea() const { return _content; }
 
-	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _content; }
-
 	/// Get dimension of the mesh element.
 	unsigned getDimension() const { return dimension; }
 
