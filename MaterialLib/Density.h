@@ -22,13 +22,13 @@
 namespace MaterialLib
 {
 /// Density class
-template<typename T_SOLID_MODEL> class Density : public DensityBase
+template<typename T_DENSITY_MODEL> class Density : public DensityBase
 {
     public:
 
         template<typename... Args> Density(Args... args)
         {
-            _density_model.reset(new T_SOLID_MODEL(args...));
+            _density_model.reset(new T_DENSITY_MODEL(args...));
         }
 
         /// Get desity model name.
@@ -48,7 +48,7 @@ template<typename T_SOLID_MODEL> class Density : public DensityBase
             return _density_model->getDensity(args...);
         }
     private:
-        std::unique_ptr<T_SOLID_MODEL> _density_model;
+        std::unique_ptr<T_DENSITY_MODEL> _density_model;
 };
 
 } // end namespace
