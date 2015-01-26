@@ -32,6 +32,9 @@ public:
 	/// Constant: The number of all nodes for this element
 	static const unsigned n_all_nodes = 2u;
 
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension = 1;
+
 	/// Constant: The geometric type of the element
 	static const MeshElemType mesh_elem_type = MeshElemType::LINE;
 

@@ -16,7 +16,6 @@
 #define CELL_H_
 
 #include "Element.h"
-#include "Face.h"
 
 namespace MeshLib {
 
@@ -26,15 +25,6 @@ namespace MeshLib {
 class Cell : public Element
 {
 public:
-	/// Constant: Dimension of this mesh element
-	static const unsigned dimension = 3;
-
-	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _content; }
-
-	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; }
-
 	/// Get the volume of this 3d element.
 	virtual double getVolume() const { return getContent(); }
 

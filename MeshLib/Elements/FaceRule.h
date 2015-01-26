@@ -20,6 +20,9 @@ namespace MeshLib {
 class FaceRule
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension = 2;
+
 	/// Returns the face i of the element.
 	static const Element* getFace(const Element* e, unsigned i) { return e->getEdge(i); }
 

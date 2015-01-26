@@ -31,27 +31,14 @@ namespace MeshLib {
 class Face : public Element
 {
 public:
-	/// Constant: Dimension of this mesh element
-	static const unsigned dimension = 2;
-
 	/// Get the area of this 2d element.
 	virtual double getArea() const { return _content; }
-
-	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; }
 
 	/// Returns the surface normal of a 2D element.
 	MathLib::Vector3 getSurfaceNormal() const;
 
 	/// Destructor
 	virtual ~Face();
-
-	/**
-	 * This method is pure virtual and is inherited from class @sa Element.
-	 * It has to be implemented in the derived classes of class Face!
-	 * @return a copy of the object
-	 */
-	virtual Element* clone() const = 0;
 
 	/**
 	 * Checks if the node order of an element is correct by testing surface normals.

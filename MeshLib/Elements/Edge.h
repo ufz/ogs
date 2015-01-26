@@ -27,14 +27,8 @@ namespace MeshLib {
 class Edge : public Element
 {
 public:
-	/// Constant: Dimension of this mesh element
-	static const unsigned dimension = 1;
-
 	/// Get the length of this 1d element.
 	virtual double getLength() const { return _content; }
-
-	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; }
 
 	/// Destructor
 	virtual ~Edge() {}

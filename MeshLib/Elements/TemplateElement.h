@@ -38,6 +38,9 @@ public:
 	/// Constant: The number of base nodes for this element
 	static const unsigned n_base_nodes = ELEMENT_RULE::n_base_nodes;
 
+	/// Constant: The dimension of this element
+	static const unsigned dimension = ELEMENT_RULE::dimension;
+
 	/**
 	 * Constructor with an array of mesh nodes.
 	 *
@@ -67,6 +70,9 @@ public:
 	{
 		return new TemplateElement(*this);
 	}
+
+	/// Get dimension of the mesh element.
+	unsigned getDimension() const { return dimension; }
 
 	/// Returns the edge i of the element.
 	const Element* getEdge(unsigned i) const { return ELEMENT_RULE::EdgeReturn::getEdge(this, i); }
