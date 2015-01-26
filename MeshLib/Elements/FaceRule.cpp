@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Sep 27, 2012
- * \brief  Definition of the Tet class.
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,17 +7,11 @@
  *
  */
 
-#ifndef TET_H_
-#define TET_H_
-
-#include "TemplateElement.h"
-#include "Cell.h"
-#include "TetRule4.h"
+#include "FaceRule.h"
 
 namespace MeshLib {
 
-typedef TemplateElement<Cell,TetRule4> Tet;
+const unsigned FaceRule::dimension;
 
-}
+} /* namespace */
 
-#endif /* TET_H_ */

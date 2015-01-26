@@ -15,11 +15,15 @@
 #ifndef TRI_H_
 #define TRI_H_
 
-#include "TemplateTri.h"
+#include "TemplateElement.h"
+#include "Face.h"
+#include "TriRule3.h"
+#include "TriRule6.h"
 
 namespace MeshLib {
 
-typedef TemplateTri<3,CellType::TRI3> Tri;
+typedef TemplateElement<Face,TriRule3> Tri;
+typedef TemplateElement<Face,TriRule6> Tri6;
 
 }
 

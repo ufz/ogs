@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Sep 27, 2012
- * \brief  Definition of the Tet class.
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,17 +7,17 @@
  *
  */
 
-#ifndef TET_H_
-#define TET_H_
-
-#include "TemplateElement.h"
-#include "Cell.h"
-#include "TetRule4.h"
+#include "TriRule6.h"
 
 namespace MeshLib {
 
-typedef TemplateElement<Cell,TetRule4> Tet;
+const unsigned TriRule6::n_all_nodes;
 
-}
+const unsigned TriRule6::edge_nodes[3][3] =
+{
+		{0, 1, 3}, // Edge 0
+		{1, 2, 4}, // Edge 1
+		{2, 0, 5}, // Edge 2
+};
 
-#endif /* TET_H_ */
+} // end namespace MeshLib

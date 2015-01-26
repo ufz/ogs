@@ -21,11 +21,6 @@
 
 namespace MeshLib {
 
-#ifndef WIN32
-	/// \todo Windows compiler does not accept this definition and issues a linking error.
-	const unsigned Face::dimension;
-#endif	// WIN32
-
 /*
 Face::Face(Node** nodes, MeshElemType type, unsigned value)
 	: Element(nodes, type, value)
@@ -33,7 +28,7 @@ Face::Face(Node** nodes, MeshElemType type, unsigned value)
 }
 */
 Face::Face(unsigned value, std::size_t id)
-	: Element(value, id), _area(-1.0) // init with invalid value to detect errors
+	: Element(value, id)
 {
 }
 

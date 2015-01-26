@@ -16,13 +16,9 @@
 
 #include "MathLib/Vector3.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Elements/Face.h"
 
 namespace MeshLib {
-
-#ifndef WIN32
-/// \todo Windows compiler does not accept this definition and issues a linking error.
-const unsigned Cell::dimension;
-#endif	// WIN32
 
 /*
 Cell::Cell(Node** nodes, MeshElemType type, unsigned value)
@@ -31,7 +27,7 @@ Cell::Cell(Node** nodes, MeshElemType type, unsigned value)
 }
 */
 Cell::Cell(unsigned value, std::size_t id)
-	: Element(value, id), _volume(-1.0) // init with invalid value to detect errors
+	: Element(value, id)
 {
 }
 

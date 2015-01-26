@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2012-05-03
- * \brief  Implementation of the FemElem class.
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,23 +7,10 @@
  *
  */
 
-#include "FemElem.h"
+#include "QuadRule9.h"
 
 namespace MeshLib {
 
-FemElem::FemElem()
-	: _centroid(GeoLib::Point(0,0,0))
-{
-}
+const unsigned QuadRule9::n_all_nodes;
 
-FemElem::FemElem(const FemElem &elem)
-	: _centroid(elem.getCentroid())
-{
-}
-
-FemElem::~FemElem()
-{
-}
-
-}
-
+} // end namespace MeshLib
