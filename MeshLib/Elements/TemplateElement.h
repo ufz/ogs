@@ -27,7 +27,6 @@ namespace MeshLib
  *
  * \tparam T_BASE         Base element class, e.g. Face, Cell
  * \tparam ELEMENT_RULE   Geometrical and topological rules of the element
- * \tparam EDGE_RULE      Edge rule of the element
  */
 template <class T_BASE, class ELEMENT_RULE>
 class TemplateElement : public T_BASE
@@ -63,11 +62,7 @@ public:
 	/// Destructor
 	virtual ~TemplateElement() {}
 
-	/**
-	 * This method is pure virtual and is inherited from class @sa Element.
-	 * It has to be implemented in the derived classes of class Cell!
-	 * @return a copy of the object
-	 */
+	/// Returns a copy of this object.
 	virtual Element* clone() const
 	{
 		return new TemplateElement(*this);
@@ -139,7 +134,7 @@ public:
 	virtual inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
 	{
 		if (getNEdges()>0)
-			return const_cast<Node*>(this->_nodes[ELEMENT_RULE::_edge_nodes[edge_id][node_id]]);
+			return const_cast<Node*>(this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
 		else
 			return nullptr;
 	}

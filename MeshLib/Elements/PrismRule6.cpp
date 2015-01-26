@@ -23,7 +23,7 @@ const unsigned PrismRule6::n_all_nodes;
 
 const unsigned PrismRule6::n_base_nodes;
 
-const unsigned PrismRule6::_face_nodes[5][4] =
+const unsigned PrismRule6::face_nodes[5][4] =
 {
 	{0, 2, 1, 99}, // Face 0
 	{0, 1, 4,  3}, // Face 1
@@ -32,7 +32,7 @@ const unsigned PrismRule6::_face_nodes[5][4] =
 	{3, 4, 5, 99}  // Face 4
 };
 
-const unsigned PrismRule6::_edge_nodes[9][2] =
+const unsigned PrismRule6::edge_nodes[9][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -45,12 +45,12 @@ const unsigned PrismRule6::_edge_nodes[9][2] =
 	{3, 5}  // Edge 8
 };
 
-const unsigned PrismRule6::_n_face_nodes[5] = { 3, 4, 4, 4, 3 };
+const unsigned PrismRule6::n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
 unsigned PrismRule6::getNFaceNodes(unsigned i)
 {
 	if (i<5)
-		return _n_face_nodes[i];
+		return n_face_nodes[i];
 	ERR("Error in MeshLib::Element::getNFaceNodes() - Index %d does not exist.", i);
 	return 0;
 }
@@ -62,7 +62,7 @@ const Element* PrismRule6::getFace(const Element* e, unsigned i)
 		unsigned nFaceNodes (e->getNFaceNodes(i));
 		Node** nodes = new Node*[nFaceNodes];
 		for (unsigned j=0; j<nFaceNodes; j++)
-			nodes[j] = const_cast<Node*>(e->getNode(_face_nodes[i][j]));
+			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
 		if (i==0 || i==4)
 			return new Tri(nodes);
@@ -70,7 +70,7 @@ const Element* PrismRule6::getFace(const Element* e, unsigned i)
 			return new Quad(nodes);
 	}
 	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
-	return NULL;
+	return nullptr;
 }
 
 double PrismRule6::computeVolume(Node const* const* _nodes)
@@ -94,7 +94,7 @@ unsigned PrismRule6::identifyFace(Node const* const* _nodes, Node* nodes[3])
 		unsigned flag(0);
 		for (unsigned j=0; j<4; j++)
 			for (unsigned k=0; k<3; k++)
-				if (_face_nodes[i][j] != 99 && _nodes[_face_nodes[i][j]] == nodes[k])
+				if (face_nodes[i][j] != 99 && _nodes[face_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==3)
 			return i;

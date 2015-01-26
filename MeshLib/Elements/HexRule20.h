@@ -51,8 +51,8 @@ public:
 	/// Constant: The FEM type of the element
 	static const CellType cell_type = CellType::HEX20;
 
-	static const unsigned _face_nodes[6][8];
-	static const unsigned _edge_nodes[12][3];
+	static const unsigned face_nodes[6][8];
+	static const unsigned edge_nodes[12][3];
 
 	/// Get the number of nodes for face i.
 	static unsigned getNFaceNodes(unsigned /*i*/) { return 8; }

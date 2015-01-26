@@ -23,7 +23,7 @@ const unsigned PyramidRule5::n_all_nodes;
 
 const unsigned PyramidRule5::n_base_nodes;
 
-const unsigned PyramidRule5::_face_nodes[5][4] =
+const unsigned PyramidRule5::face_nodes[5][4] =
 {
 	{0, 1, 4, 99}, // Face 0
 	{1, 2, 4, 99}, // Face 1
@@ -32,7 +32,7 @@ const unsigned PyramidRule5::_face_nodes[5][4] =
 	{0, 3, 2,  1}  // Face 4
 };
 
-const unsigned PyramidRule5::_edge_nodes[8][2] =
+const unsigned PyramidRule5::edge_nodes[8][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -44,12 +44,12 @@ const unsigned PyramidRule5::_edge_nodes[8][2] =
 	{3, 4}  // Edge 7
 };
 
-const unsigned PyramidRule5::_n_face_nodes[5] = { 3, 3, 3, 3, 4 };
+const unsigned PyramidRule5::n_face_nodes[5] = { 3, 3, 3, 3, 4 };
 
 unsigned PyramidRule5::getNFaceNodes(unsigned i)
 {
 	if (i<5)
-		return _n_face_nodes[i];
+		return n_face_nodes[i];
 	ERR("Error in MeshLib::Element::getNFaceNodes() - Index %d does not exist.", i);
 	return 0;
 }
@@ -61,7 +61,7 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 		unsigned nFaceNodes (e->getNFaceNodes(i));
 		Node** nodes = new Node*[nFaceNodes];
 		for (unsigned j=0; j<nFaceNodes; j++)
-			nodes[j] = const_cast<Node*>(e->getNode(_face_nodes[i][j]));
+			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
 		if (i<4)
 			return new Tri(nodes);
@@ -69,7 +69,7 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 			return new Quad(nodes);
 	}
 	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
-	return NULL;
+	return nullptr;
 }
 
 double PyramidRule5::computeVolume(Node const* const* _nodes)
@@ -91,7 +91,7 @@ unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])
 		unsigned flag(0);
 		for (unsigned j=0; j<4; j++)
 			for (unsigned k=0; k<3; k++)
-				if (_face_nodes[i][j] != 99 && _nodes[_face_nodes[i][j]] == nodes[k])
+				if (face_nodes[i][j] != 99 && _nodes[face_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==3)
 			return i;

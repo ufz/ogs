@@ -65,13 +65,13 @@ public:
 	static const unsigned n_neighbors = 5;
 
 	/// Constant: Local node index table for faces
-	static const unsigned _face_nodes[5][4];
+	static const unsigned face_nodes[5][4];
 
 	/// Constant: Local node index table for edge
-	static const unsigned _edge_nodes[8][2];
+	static const unsigned edge_nodes[8][2];
 
 	/// Constant: Table for the number of nodes for each face
-	static const unsigned _n_face_nodes[5];
+	static const unsigned n_face_nodes[5];
 
 	/// Returns the i-th edge of the element.
 	typedef LinearEdgeReturn EdgeReturn;

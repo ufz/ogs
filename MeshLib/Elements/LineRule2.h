@@ -48,7 +48,7 @@ public:
 	static const unsigned n_neighbors = 2;
 
 	/// Constant: Local node index table for edge
-	static const unsigned _edge_nodes[1][2];
+	static const unsigned edge_nodes[1][2];
 
 	/// Edge rule
 	typedef DummyEdgeReturn EdgeReturn;

@@ -22,7 +22,7 @@ const unsigned HexRule20::n_all_nodes;
 const CellType HexRule20::cell_type;
 
 //TODO
-const unsigned HexRule20::_face_nodes[6][8] =
+const unsigned HexRule20::face_nodes[6][8] =
 {
 	{0, 3, 2, 1, 0, 0, 0, 0}, // Face 0
 	{0, 1, 5, 4, 0, 0, 0, 0}, // Face 1
@@ -33,7 +33,7 @@ const unsigned HexRule20::_face_nodes[6][8] =
 };
 
 //TODO
-const unsigned HexRule20::_edge_nodes[12][3] =
+const unsigned HexRule20::edge_nodes[12][3] =
 {
 	{0, 1, 0}, // Edge 0
 	{1, 2, 0}, // Edge 1
@@ -56,11 +56,11 @@ const Element* HexRule20::getFace(const Element* e, unsigned i)
 		unsigned nFaceNodes (getNFaceNodes(i));
 		Node** nodes = new Node*[nFaceNodes];
 		for (unsigned j=0; j<nFaceNodes; j++)
-			nodes[j] = const_cast<Node*>(e->getNode(_face_nodes[i][j]));
+			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 		return new Quad8(nodes);
 	}
 	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
-	return NULL;
+	return nullptr;
 }
 
 

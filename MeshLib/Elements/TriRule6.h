@@ -45,7 +45,7 @@ public:
 	static const CellType cell_type = CellType::TRI6;
 
 	/// Constant: Local node index table for edge
-	static const unsigned _edge_nodes[3][3];
+	static const unsigned edge_nodes[3][3];
 
 	/// Returns the i-th edge of the element.
 	typedef QuadraticEdgeReturn EdgeReturn;

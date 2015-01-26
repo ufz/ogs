@@ -57,8 +57,8 @@ bool TemplateElement<T_BASE, ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2)
 {
 	for (unsigned i(0); i<getNEdges(); i++)
 	{
-		if (ELEMENT_RULE::_edge_nodes[i][0]==idx1 && ELEMENT_RULE::_edge_nodes[i][1]==idx2) return true;
-		if (ELEMENT_RULE::_edge_nodes[i][1]==idx1 && ELEMENT_RULE::_edge_nodes[i][0]==idx2) return true;
+		if (ELEMENT_RULE::edge_nodes[i][0]==idx1 && ELEMENT_RULE::edge_nodes[i][1]==idx2) return true;
+		if (ELEMENT_RULE::edge_nodes[i][1]==idx1 && ELEMENT_RULE::edge_nodes[i][0]==idx2) return true;
 	}
 	return false;
 }

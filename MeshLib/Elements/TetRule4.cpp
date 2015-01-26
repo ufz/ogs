@@ -23,7 +23,7 @@ const unsigned TetRule4::n_all_nodes;
 
 const unsigned TetRule4::n_base_nodes;
 
-const unsigned TetRule4::_face_nodes[4][3] =
+const unsigned TetRule4::face_nodes[4][3] =
 {
 	{0, 2, 1}, // Face 0
 	{0, 1, 3}, // Face 1
@@ -31,7 +31,7 @@ const unsigned TetRule4::_face_nodes[4][3] =
 	{2, 0, 3}  // Face 3
 };
 
-const unsigned TetRule4::_edge_nodes[6][2] =
+const unsigned TetRule4::edge_nodes[6][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -48,11 +48,11 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
 		unsigned nFaceNodes (e->getNFaceNodes(i));
 		Node** nodes = new Node*[nFaceNodes];
 		for (unsigned j=0; j<nFaceNodes; j++)
-			nodes[j] = const_cast<Node*>(e->getNode(_face_nodes[i][j]));
+			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 		return new Tri(nodes);
 	}
 	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
-	return NULL;
+	return nullptr;
 }
 
 double TetRule4::computeVolume(Node const* const* _nodes)
@@ -72,7 +72,7 @@ unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
 		unsigned flag(0);
 		for (unsigned j=0; j<3; j++)
 			for (unsigned k=0; k<3; k++)
-				if (_nodes[_face_nodes[i][j]] == nodes[k])
+				if (_nodes[face_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==3)
 			return i;

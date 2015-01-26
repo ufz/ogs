@@ -21,7 +21,7 @@ const unsigned TriRule3::n_all_nodes;
 
 const unsigned TriRule3::n_base_nodes;
 
-const unsigned TriRule3::_edge_nodes[3][2] =
+const unsigned TriRule3::edge_nodes[3][2] =
 {
 		{0, 1}, // Edge 0
 		{1, 2}, // Edge 1
@@ -45,7 +45,7 @@ unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])
 		unsigned flag(0);
 		for (unsigned j=0; j<2; j++)
 			for (unsigned k=0; k<2; k++)
-				if (_nodes[_edge_nodes[i][j]] == nodes[k])
+				if (_nodes[edge_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==2)
 			return i;

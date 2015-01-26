@@ -23,7 +23,7 @@ const unsigned HexRule8::n_all_nodes;
 
 const unsigned HexRule8::n_base_nodes;
 
-const unsigned HexRule8::_face_nodes[6][4] =
+const unsigned HexRule8::face_nodes[6][4] =
 {
 	{0, 3, 2, 1}, // Face 0
 	{0, 1, 5, 4}, // Face 1
@@ -33,7 +33,7 @@ const unsigned HexRule8::_face_nodes[6][4] =
 	{4, 5, 6, 7}  // Face 5
 };
 
-const unsigned HexRule8::_edge_nodes[12][2] =
+const unsigned HexRule8::edge_nodes[12][2] =
 {
 	{0, 1}, // Edge 0
 	{1, 2}, // Edge 1
@@ -56,11 +56,11 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
 		unsigned nFaceNodes (getNFaceNodes(i));
 		Node** nodes = new Node*[nFaceNodes];
 		for (unsigned j=0; j<nFaceNodes; j++)
-			nodes[j] = const_cast<Node*>(e->getNode(_face_nodes[i][j]));
+			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 		return new Quad(nodes);
 	}
 	ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
-	return NULL;
+	return nullptr;
 }
 
 double HexRule8::computeVolume(Node const* const* _nodes)
@@ -90,7 +90,7 @@ unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])
 		unsigned flag(0);
 		for (unsigned j=0; j<4; j++)
 			for (unsigned k=0; k<3; k++)
-				if (_nodes[_face_nodes[i][j]] == nodes[k])
+				if (_nodes[face_nodes[i][j]] == nodes[k])
 					flag++;
 		if (flag==3)
 			return i;
