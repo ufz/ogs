@@ -40,15 +40,6 @@ public:
 	/// Get dimension of the mesh element.
 	unsigned getDimension() const { return dimension; }
 
-	/// Returns the face i of the element.
-	const Element* getFace(unsigned i) const { return this->getEdge(i); }
-
-	/// Get the number of nodes for face i.
-	unsigned getNFaceNodes(unsigned /*i*/) const { return 2; }
-
-	/// 2D elements have no faces.
-	unsigned getNFaces() const { return 0; }
-
 	/// Returns the surface normal of a 2D element.
 	MathLib::Vector3 getSurfaceNormal() const;
 
