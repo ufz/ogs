@@ -65,7 +65,7 @@ public:
 	 * @param eps tolerance for numerical algorithm used or computing the property
 	 * @return true if the point is not outside the element, false otherwise
 	 */
-	static bool isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps = std::numeric_limits<double>::epsilon());
+	static bool isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps);
 
 	/**
 	 * Tests if the element is geometrically valid.
