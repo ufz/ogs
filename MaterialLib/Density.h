@@ -17,11 +17,12 @@
 #include<memory>
 #include<string>
 
+#include<DensityBase.h>
+
 namespace MaterialLib
 {
-
 /// Density class
-template<typename T_SOLID_MODEL> class Density
+template<typename T_SOLID_MODEL> class Density : public DensityBase
 {
     public:
 
@@ -34,6 +35,11 @@ template<typename T_SOLID_MODEL> class Density
         std::string getName() const
         {
             return _density_model->getName();
+        }
+
+        DensityType getType() const
+        {
+            return DensityType::CONSTANT;
         }
 
         /// Get density value

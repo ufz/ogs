@@ -17,6 +17,8 @@
 
 #include<string>
 
+#include"DensityBase.h"
+
 namespace MaterialLib
 {
 
@@ -41,9 +43,13 @@ class LinearSolidDensityModel
         /// Get desity model name.
         std::string getName() const
         {
-           return "Linear density" ;  
+           return "Linear density of solid" ;
         }
 
+        DensityType getType() const
+        {
+            return DensityType::SOLID_LINEAR;
+        }
         /// Get density value
         /// \param var Variable
         double getDensity(const double var) const
@@ -53,7 +59,7 @@ class LinearSolidDensityModel
     private:
        double _var1;       ///<  Reference variable 1.
        double _density1;   ///<  Reference density 1.
-       double _tangential; ///< Tangential of the linear curve
+       double _tangential; ///< Tangential of the linear curve.
 };
 
 } // end namespace
