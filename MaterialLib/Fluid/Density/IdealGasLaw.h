@@ -35,6 +35,11 @@ class IdealGasLaw
            return "Ideal gas law";  
         }
 
+        DensityType getType() const
+        {
+            return DensityType::IDEAL_GAS;
+        }
+
         /// Get density value
         /// \param T  Temperature in K.
         /// \param pg Gas phase pressure in Pa.        

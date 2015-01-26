@@ -44,6 +44,12 @@ TEST(Material, checkDensity)
     constexpr double R = 8315.41;
     constexpr double expected_air_dens = molar_air * p /(R * T);
     ASSERT_NEAR(expected_air_dens, air_density.getDensity(T, p), 1.e-10);
+
+    // Check polymorphy
+    MaterialLib::DensityBase *den_ptr_base = &air_density;
+    MaterialLib::Density<MaterialLib::IdealGasLaw> *den_ptr
+      = static_cast< MaterialLib::Density<MaterialLib::IdealGasLaw>* >(den_ptr_base);
+    ASSERT_NEAR(molar_air * 2.e+5 /(R * 253.), den_ptr->getDensity(253., 2.e+5), 1.e-10);
 }
 
 }
