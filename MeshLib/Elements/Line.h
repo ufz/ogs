@@ -18,10 +18,12 @@
 #include "TemplateElement.h"
 #include "Edge.h"
 #include "LineRule2.h"
+#include "LineRule3.h"
 
 namespace MeshLib {
 
 typedef TemplateElement<Edge, LineRule2> Line;
+typedef TemplateElement<Edge, LineRule3> Line3;
 
 }
 
