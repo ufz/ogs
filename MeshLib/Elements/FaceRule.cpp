@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Sep 27, 2012
- * \brief  Definition of the Hex class.
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,15 +7,11 @@
  *
  */
 
-#ifndef HEX_H_
-#define HEX_H_
-
-#include "TemplateElement.h"
-#include "Cell.h"
-#include "HexRule8.h"
+#include "FaceRule.h"
 
 namespace MeshLib {
-typedef TemplateElement<Cell, HexRule8> Hex;
-}
 
-#endif /* HEX_H_ */
+const unsigned FaceRule::dimension;
+
+} /* namespace */
+

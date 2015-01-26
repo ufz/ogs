@@ -24,7 +24,7 @@
 namespace MeshLib {
 
 Element::Element(unsigned value, std::size_t id)
-	: _nodes(nullptr), _id(id), _value(value), _neighbors(nullptr)
+	: _nodes(nullptr), _id(id), _content(-1.0), _value(value), _neighbors(nullptr)
 {
 }
 

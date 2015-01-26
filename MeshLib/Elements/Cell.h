@@ -16,7 +16,6 @@
 #define CELL_H_
 
 #include "Element.h"
-#include "Face.h"
 
 namespace MeshLib {
 
@@ -26,27 +25,11 @@ namespace MeshLib {
 class Cell : public Element
 {
 public:
-	/// Constant: Dimension of this mesh element
-	static const unsigned dimension = 3;
-
-	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	double getContent() const { return _volume; }
-
-	/// Get dimension of the mesh element.
-	unsigned getDimension() const { return dimension; }
-
 	/// Get the volume of this 3d element.
-	virtual double getVolume() const { return _volume; }
+	virtual double getVolume() const { return getContent(); }
 
 	/// Destructor
 	virtual ~Cell();
-
-	/**
-	 * This method is pure virtual and is inherited from class @sa Element.
-	 * It has to be implemented in the derived classes of class Cell!
-	 * @return a copy of the object
-	 */
-	virtual Element* clone() const = 0;
 
 	/**
 	 * Checks if the node order of an element is correct by testing surface normals.
@@ -65,9 +48,6 @@ protected:
 */
 	/// Constructor for a generic mesh element without an array of mesh nodes.
 	Cell(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
-
-	double _volume;
-
 }; /* class */
 
 }

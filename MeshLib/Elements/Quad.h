@@ -15,13 +15,18 @@
 #ifndef QUAD_H_
 #define QUAD_H_
 
-#include "TemplateQuad.h"
+#include "TemplateElement.h"
+#include "Face.h"
+#include "QuadRule4.h"
+#include "QuadRule8.h"
+#include "QuadRule9.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 
-typedef TemplateQuad<4,CellType::QUAD4> Quad;
-typedef TemplateQuad<8, CellType::QUAD8> Quad8;
-typedef TemplateQuad<9, CellType::QUAD9> Quad9;
+typedef TemplateElement<Face, QuadRule4> Quad;
+typedef TemplateElement<Face, QuadRule8> Quad8;
+typedef TemplateElement<Face, QuadRule9> Quad9;
 
 }
 
