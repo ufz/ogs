@@ -91,6 +91,25 @@ public:
         return _msh.getElements().cend();
     }
 
+    MeshSubset*
+    setIntersectionByNodes(std::vector<Node*> const& nodes) const
+    {
+        std::vector<Node*>* active_nodes = new std::vector<Node*>;
+
+        if (_nodes == nullptr || _nodes->empty())
+            return new MeshSubset(_msh, *active_nodes);   // Empty mesh subset
+
+        for (auto n : nodes)
+        {
+            auto it = std::find(_nodes->cbegin(), _nodes->cend(), n);
+            if (it == _nodes->cend())
+                continue;
+            active_nodes->push_back(n);
+        }
+
+        return new MeshSubset(_msh, *active_nodes);
+    }
+
 private:
     const Mesh& _msh;
     std::vector<Node*> const* _nodes;
