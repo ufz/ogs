@@ -51,13 +51,13 @@ public:
     MeshLib::NodePartitionedMesh* read(const std::string &file_name_base);
 
 private:
-    /// Pointer to MPI commumicator;
+    /// Pointer to MPI communicator.
     MPI_Comm _mpi_comm;
 
-    /// Number of processes in the communicator: _mpi_comm
+    /// Number of processes in the communicator: _mpi_comm.
     int _mpi_comm_size;
 
-    /// Rank of compute core
+    /// Rank of compute core.
     int _mpi_rank;
 
     /// MPI data type for struct NodeData.
@@ -75,7 +75,7 @@ private:
     /// Define MPI data type for NodeData struct.
     void registerNodeDataMpiType();
 
-    /// A collection of integers that congfigure the partitioned mesh data.
+    /// A collection of integers that configure the partitioned mesh data.
     struct PartitionedMeshInfo
     {
         unsigned long nodes;                   ///< 0:    Number of all nodes of a partition,
@@ -95,12 +95,12 @@ private:
     } _mesh_info;
 
     /*!
-        \brief Create a new mesh of NodePartitionedMesh after reading and processing the data
+        \brief Create a new mesh of NodePartitionedMesh after reading and processing the data.
         \param mesh_name    Name assigned to the new mesh.
         \param mesh_nodes   Node data.
         \param glb_node_ids Global IDs of nodes.
         \param mesh_elems   Element data.
-        \return         True on success and false otherwise.
+        \return             True on success and false otherwise.
      */
     MeshLib::NodePartitionedMesh* newMesh(std::string const& mesh_name,
         std::vector<MeshLib::Node*> const& mesh_nodes,
@@ -169,9 +169,9 @@ private:
     /*!
         \brief Read mesh nodes from an ASCII file and cast to the corresponding rank.
 
-        \param is_node    Input stream for the file contains node data.
-        \param part_id    Partition ID.
-        \param mesh_nodes Node vector to be filled.
+        \param is_node      Input stream for the file contains node data.
+        \param part_id      Partition ID.
+        \param mesh_nodes   Node vector to be filled.
         \param glb_node_ids Global Node IDs to be filled.
      */
     bool readCastNodesASCII(std::ifstream& is_node, const int part_id,
@@ -218,7 +218,11 @@ private:
     /*!
          \brief Read elements data from ASCII file.
          \param ins       Input stream.
-         \param elem_data Pointer to array that contains element data, which to be filled.
+         \param elem_data Vector that contains element data, which to be filled.
+                          Note: Entries from 0 to ne-1, where ne is the number of elements,
+                                contain the ID of the starting entry of each element. While
+                                entries after ne-1 store element data including material ID,
+                                element type, and node IDs.
          \param ghost     Flag to read ghost elements.
      */
     void readElementASCII(std::ifstream &ins,
@@ -227,8 +231,8 @@ private:
 
     /*!
          \brief Set mesh nodes from a tempory array containing node data read from file.
-         \param node_data  Array containing node data read from file.
-         \param mesh_node  Vector of mesh nodes to be set.
+         \param node_data     Vector containing node data read from file.
+         \param mesh_node     Vector of mesh nodes to be set.
          \param glb_node_ids  Global IDs of nodes of a partition.
      */
     void setNodes(const std::vector<NodeData> &node_data,
@@ -238,7 +242,7 @@ private:
     /*!
          \brief Set mesh elements from a tempory array containing node data read from file.
          \param mesh_nodes        Vector of mesh nodes used to set element nodes.
-         \param elem_data         Array containing element data read from file.
+         \param elem_data         Vector containing element data read from file.
          \param mesh_elems        Vector of mesh elements to be set.
          \param ghost             Flag of processing ghost elements.
      */
