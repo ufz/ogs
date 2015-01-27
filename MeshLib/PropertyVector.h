@@ -86,9 +86,12 @@ protected:
 		_item2group_mapping(item2group_mapping)
 	{}
 
+	void setTupleSize(std::size_t tuple_size) { _tuple_size = tuple_size; }
+	void setType(MeshLib::MeshItemType type) { _type = type; }
+
 private:
 	MeshLib::MeshItemType _type;
-	unsigned _tuple_size;
+	tuple_size _tuple_size;
 	std::vector<std::size_t> _item2group_mapping;
 };
 
