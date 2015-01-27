@@ -435,16 +435,16 @@ void NodePartitionedMeshReader::readElementASCII(std::ifstream &ins,
     // Set number of elements.
     unsigned long const ne =
         ghost ? _mesh_info.ghost_elements : _mesh_info.regular_elements;
-    unsigned long counter = ne;
+    unsigned long id_offset_elem = ne;
     for(unsigned long j = 0; j < ne; j++)
     {
-        elem_data[j] = counter;
-        ins >> elem_data[counter++];  //mat. idx
-        ins >> elem_data[counter++];  //type
-        ins >> elem_data[counter];  //nnodes
-        unsigned long const nn_e =  elem_data[counter++];
+        elem_data[j] = id_offset_elem;
+        ins >> elem_data[id_offset_elem++];  //mat. idx
+        ins >> elem_data[id_offset_elem++];  //type
+        ins >> elem_data[id_offset_elem];  //nnodes
+        unsigned long const nn_e =  elem_data[id_offset_elem++];
         for(unsigned long k = 0; k < nn_e; k++)
-            ins >> elem_data[counter++];
+            ins >> elem_data[id_offset_elem++];
     }
 }
 
@@ -471,51 +471,47 @@ void NodePartitionedMeshReader::setElements(
     // Number of elements, ether ghost or regular
     unsigned long const ne =
         ghost ? _mesh_info.ghost_elements : _mesh_info.regular_elements;
-    unsigned long const id_offset =
+    unsigned long const id_offset_ghost =
         ghost ? _mesh_info.regular_elements : 0;
 
     for(unsigned long i = 0; i < ne; i++)
     {
-        unsigned long counter = elem_data[i];
+        unsigned long id_offset_elem = elem_data[i];
 
-        const unsigned mat_idx = static_cast<unsigned>( elem_data[counter++] );
-        const unsigned long e_type = elem_data[counter++];
-        unsigned long const nnodes = elem_data[counter++];
+        const unsigned mat_idx = static_cast<unsigned>( elem_data[id_offset_elem++] );
+        const unsigned long e_type = elem_data[id_offset_elem++];
+        unsigned long const nnodes = elem_data[id_offset_elem++];
 
         MeshLib::Node** elem_nodes = new MeshLib::Node*[nnodes];
         for(unsigned long k = 0; k < nnodes; k++)
-            elem_nodes[k] = mesh_nodes[ elem_data[counter++] ];
-
-        MeshLib::Element* elem = nullptr;
+            elem_nodes[k] = mesh_nodes[ elem_data[id_offset_elem++] ];
 
         // The element types below are defined by the mesh_partition tool
         // available at https://github.com/ufz/mesh_partition .
         switch(e_type)
         {
         case 1:
-            elem = new MeshLib::Line(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Line(elem_nodes, mat_idx);
             break;
         case 2:
-            elem = new MeshLib::Quad(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Quad(elem_nodes, mat_idx);
             break;
         case 3:
-            elem = new MeshLib::Hex(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Hex(elem_nodes, mat_idx);
             break;
         case 4:
-            elem = new MeshLib::Tri(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Tri(elem_nodes, mat_idx);
             break;
         case 5:
-            elem = new MeshLib::Tet(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Tet(elem_nodes, mat_idx);
             break;
         case 6:
-            elem = new MeshLib::Prism(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Prism(elem_nodes, mat_idx);
             break;
         case 7:
-            elem = new MeshLib::Pyramid(elem_nodes, mat_idx);
+            mesh_elems[i + id_offset_ghost] = new MeshLib::Pyramid(elem_nodes, mat_idx);
             break;
         }
-
-        mesh_elems[i + id_offset] = elem;
     }
 }
 }   // namespace FileIO
