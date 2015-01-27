@@ -1,5 +1,5 @@
 /*!
-   \file  LiearSolidDensityModel.h
+   \file  LinearSolidDensityModel.h
    \brief Declaration of class LinearSolidDensityModel for solid density
           depending on a variable linearly.
    
