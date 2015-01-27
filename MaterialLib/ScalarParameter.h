@@ -30,7 +30,7 @@ template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL> class ScalarParameter
         template<typename... Args> ScalarParameter(Args... args)
         {
             _material_model.reset(new T_MAT_MODEL(args...));
-            //   setType(_density_model.getType())
+            this->setType(_material_model->getType());
         }
 
         /// Get desity model name.
