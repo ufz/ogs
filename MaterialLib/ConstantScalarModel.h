@@ -1,6 +1,6 @@
 /*!
-   \file  ConstantDensityModel.h
-   \brief Declaration of class ConstantDensityModel for constant density.
+   \file  ConstantScalarModel.h
+   \brief Declaration of class ConstantScalarModel.
 
    \author Wenqing Wang
    \date Jan 2015
@@ -11,8 +11,8 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef CONSTANT_DENSITY_MODEL_H_
-#define CONSTANT_DENSITY_MODEL_H_
+#ifndef CONSTANT_SCALAR_MODEL_H_
+#define CONSTANT_SCALAR_MODEL_H_
 
 #include<string>
 
@@ -21,34 +21,33 @@
 namespace MaterialLib
 {
 
-/// Constant density model
-class ConstantDensityModel
+/// Constant scalar parameter.
+class ConstantScalarModel
 {
     public:
-        ConstantDensityModel(const double density) : _density(density)
+        ConstantScalarModel(const double value) : _value(value)
         {
         }
 
-        /// Get desity model name.
+        /// Get model name.
         std::string getName() const
         {
             return "Constant";
         }
 
-        DensityType getType() const
+        unsigned getType() const
         {
-            return DensityType::CONSTANT;
+            return 0;
         }
 
-        /// Get density value
+        /// Get model value
         double getValue() const
         {
-            return _density;
+            return _value;
         }
     private:
-        double _density;
+        double _value;
 };
 
 } // end namespace
 #endif
-

@@ -15,7 +15,7 @@
 
 #include "MaterialLib/Solid/Density/LinearSolidDensityModel.h"
 #include "MaterialLib/Fluid/Density/IdealGasLaw.h"
-#include "MaterialLib/ConstantDensityModel.h"
+#include "MaterialLib/ConstantScalarModel.h"
 #include "MaterialLib/ScalarParameter.h"
 
 namespace
@@ -28,8 +28,9 @@ TEST(Material, checkDensity)
     //-- Solid --------------------------------------------------------------
     // Constant
     constexpr double rho = 2080.;
-    MaterialLib::ScalarParameter<DensityType, ConstantDensityModel> s_density(rho);
+    MaterialLib::ScalarParameter<DensityType, ConstantScalarModel> s_density(rho);
     ASSERT_NEAR(rho, s_density.getValue(), 1.e-10);
+    ASSERT_EQ(DensityType::CONSTANT, s_density.getType());
 
     // Linear
     MaterialLib::ScalarParameter<DensityType, LinearSolidDensityModel>
