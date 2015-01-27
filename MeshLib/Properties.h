@@ -229,14 +229,14 @@ public:
 		return count;
 	}
 
-	template <typename T>
-	std::size_t size(T) const
+	std::vector<std::string> getPropertyNames() const
 	{
-		std::size_t count(0);
+		std::vector <std::string> prop_names;
+		prop_names.reserve(_properties.size());
 		for (auto it = _properties.cbegin(); it != _properties.cend(); ++it)
-			if (typeid(it->second) == T)
-				count++;
-		return count;
+			prop_names.push_back(it->first.name);
+
+		return prop_names;
 	}
 
 private:

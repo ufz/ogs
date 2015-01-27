@@ -16,6 +16,8 @@
 #include <type_traits>
 #include <memory>
 
+#include "MeshLib/Location.h"
+
 namespace MeshLib
 {
 
@@ -72,7 +74,7 @@ public:
 
 	/// Returns the target type (nodes/cells) for this property.
 	MeshLib::MeshItemType getType() const { return _type; }
-
+	
 protected:
 	/// @param n_prop_groups number of different property values
 	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
@@ -91,7 +93,7 @@ protected:
 
 private:
 	MeshLib::MeshItemType _type;
-	tuple_size _tuple_size;
+	std::size_t _tuple_size;
 	std::vector<std::size_t> _item2group_mapping;
 };
 
