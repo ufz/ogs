@@ -19,7 +19,7 @@ namespace MaterialLib
 
 enum class DensityType
 {
-    CONSTANT,
+    CONSTANT = 0,
     SOLID_LINEAR,
     IDEAL_GAS
 };
