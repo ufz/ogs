@@ -1,0 +1,52 @@
+/*!
+   \file  ScalarParameter.h
+   \brief Declaration of generic class for scalar material parameter.
+
+   \author Wenqing Wang
+   \date Jan 2015
+
+   \copyright
+    Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+               Distributed under a Modified BSD License.
+               See accompanying file LICENSE.txt or
+               http://www.opengeosys.org/project/license
+*/
+#ifndef SCALAR_PARAMETER_H_
+#define SCALAR_PARAMETER_H_
+
+#include<memory>
+#include<string>
+
+#include<ScalarParameterBase.h>
+
+namespace MaterialLib
+{
+/// Density class
+template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL> class ScalarParameter
+    : public ScalarParameterBase<T_PARAMETER_TYPE>
+{
+    public:
+
+        template<typename... Args> ScalarParameter(Args... args)
+        {
+            _material_model.reset(new T_MAT_MODEL(args...));
+            //   setType(_density_model.getType())
+        }
+
+        /// Get desity model name.
+        std::string getName() const
+        {
+            return _material_model->getName();
+        }
+
+        /// Get density value
+        template<typename... Args> double getValue(Args... args) const
+        {
+            return _material_model->getValue(args...);
+        }
+    private:
+        std::unique_ptr<T_MAT_MODEL> _material_model;
+};
+
+} // end namespace
+#endif

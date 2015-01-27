@@ -1,8 +1,8 @@
 /*!
    \file  IdealGasLow.h
-   \brief Declaration of class LIdealGasLow for fluid density by ideal gas low
-          depending on a variable linearly.
-   
+   \brief Declaration of class LIdealGasLow for fluid density by the ideal gas law
+          depending on one variable linearly.
+
    \author Wenqing Wang
    \date Jan 2015
 
@@ -16,6 +16,8 @@
 #define IDEAL_GAS_LAW_H_
 
 #include<string>
+
+#include"DensityType.h"
 
 namespace MaterialLib
 {
@@ -43,7 +45,7 @@ class IdealGasLaw
         /// Get density value
         /// \param T  Temperature in K.
         /// \param pg Gas phase pressure in Pa.        
-        double getDensity(const double T, const double pg) const
+        double getValue(const double T, const double pg) const
         {
            return _molar_mass * pg /(_gas_constant * T);  
         }

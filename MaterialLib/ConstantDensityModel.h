@@ -16,6 +16,8 @@
 
 #include<string>
 
+#include"DensityType.h"
+
 namespace MaterialLib
 {
 
@@ -33,8 +35,13 @@ class ConstantDensityModel
             return "Constant";
         }
 
+        DensityType getType() const
+        {
+            return DensityType::CONSTANT;
+        }
+
         /// Get density value
-        double getDensity() const
+        double getValue() const
         {
             return _density;
         }

@@ -17,7 +17,7 @@
 
 #include<string>
 
-#include"DensityBase.h"
+#include"DensityType.h"
 
 namespace MaterialLib
 {
@@ -52,7 +52,7 @@ class LinearSolidDensityModel
         }
         /// Get density value
         /// \param var Variable
-        double getDensity(const double var) const
+        double getValue(const double var) const
         {
            return _tangential * (var - _var1) + _density1;  
         }
