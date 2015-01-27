@@ -1,6 +1,6 @@
 /*!
-   \file  TestDensity.cpp
-   \brief Test classes of density.
+   \file  TestScalarMaterialParameter.cpp
+   \brief Test classes for scalar material parameters.
 
    \author Wenqing Wang
    \date Jan 2015
@@ -13,10 +13,15 @@
 */
 #include <gtest/gtest.h>
 
+#include <algorithm>    // std::max
+
+#include "MaterialLib/ScalarParameter.h"
+#include "MaterialLib/ConstantScalarModel.h"
+
 #include "MaterialLib/Solid/Density/LinearSolidDensityModel.h"
 #include "MaterialLib/Fluid/Density/IdealGasLaw.h"
-#include "MaterialLib/ConstantScalarModel.h"
-#include "MaterialLib/ScalarParameter.h"
+
+#include "MaterialLib/Fluid/Viscosity/PressureDependentViscosity.h"
 
 namespace
 {
@@ -56,6 +61,24 @@ TEST(Material, checkDensity)
             = static_cast< MaterialLib::ScalarParameter<DensityType, IdealGasLaw>* >(den_ptr_base);
         ASSERT_NEAR(molar_air * 2.e+5 /(R * 253.), den_ptr->getValue(253., 2.e+5), 1.e-10);
     }
+}
+
+TEST(Material, checkViscosity)
+{
+    // Constant
+    constexpr double mu = 1.e-3;
+    MaterialLib::ScalarParameter<ViscosityType, ConstantScalarModel> mu_const(mu);
+    ASSERT_NEAR(mu, mu_const.getValue(), 1.e-10);
+    ASSERT_EQ(ViscosityType::CONSTANT, mu_const.getType());
+
+    // Pressure dependent
+    constexpr double mu0 = 1.e-3;
+    constexpr double p0 = 1.e+5;
+    constexpr double gamma = 10.;
+    MaterialLib::ScalarParameter<ViscosityType, PressureDependentViscosity>
+        mu_pre(mu0, p0, gamma);
+    const double mu_pre_expected = mu0 * (1 + gamma* (std::max(1.e+6, 0.) - p0) );
+    ASSERT_NEAR(mu_pre_expected, mu_pre.getValue(1.e+6), 1.e-10);
 }
 
 }
