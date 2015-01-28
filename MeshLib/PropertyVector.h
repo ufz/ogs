@@ -27,6 +27,12 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector : public std::vector<PROP_VAL_TYPE>
 {
 friend class Properties;
+
+public:
+	std::size_t getTupleSize() const { return _tuple_size; }
+	MeshItemType getMeshItemType() const { return _mesh_item_type; }
+	std::string const& getPropertyName() const { return _property_name; }
+
 protected:
 	/// @brief The constructor taking meta information for the data.
 	/// @param property_name a string describing the property
@@ -89,6 +95,10 @@ public:
 	{
 		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
 	}
+
+	std::size_t getTupleSize() const { return _tuple_size; }
+	MeshItemType getMeshItemType() const { return _mesh_item_type; }
+	std::string const& getPropertyName() const { return _property_name; }
 
 protected:
 	/// @brief The constructor taking meta information for the data.
