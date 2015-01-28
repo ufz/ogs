@@ -49,9 +49,6 @@ public:
 	/// Constant: The FEM type of the element
 	static const CellType cell_type = CellType::QUAD4;
 
-	/// Constant: The number of faces
-	static const unsigned n_faces = 0;
-
 	/// Constant: The number of edges
 	static const unsigned n_edges = 4;
 

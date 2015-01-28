@@ -26,8 +26,8 @@ public:
 	/// Get the number of nodes for face i.
 	static unsigned getNFaceNodes(unsigned /*i*/) { return 2; }
 
-	/// 2D elements have no faces.
-	static unsigned getNFaces() { return 0; }
+	/// Constant: The number of faces
+	static const unsigned n_faces = 0;
 }; /* class */
 
 } /* namespace */
