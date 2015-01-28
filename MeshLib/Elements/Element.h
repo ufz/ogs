@@ -225,6 +225,7 @@ protected:
 
 	Node** _nodes;
 	std::size_t _id;
+	/// Content corresponds to length for 1D, area for 2D, and volume for 3D elements
 	double _content;
 	/**
 	 * this is an index for external additional information like materials

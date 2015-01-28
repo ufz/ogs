@@ -64,7 +64,7 @@ public:
 
 	/**
 	 * Checks if a point is inside the element.
-	 * @param pnt a 3D GeoLib::Point object
+	 * @param pnt a 3D MathLib::Point3d object
 	 * @param eps tolerance for numerical algorithm used or computing the property
 	 * @return true if the point is not outside the element, false otherwise
 	 */
