@@ -119,8 +119,6 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	// the mesh should have the property assigned to cells
 	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name,
 			MeshLib::MeshItemType::Cell));
-	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name,
-			MeshLib::MeshItemType::Node));
 	// fetch the properties from the container
 	boost::optional<MeshLib::PropertyVector<double*> const&>
 		group_properties_cpy(mesh->getProperties().getProperty<double*>(
