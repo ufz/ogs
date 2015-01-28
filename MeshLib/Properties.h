@@ -69,7 +69,7 @@ public:
 		auto entry_info(
 			_properties.insert(
 				std::pair<std::string, boost::any>(
-					name, boost::any(PropertyVector<T>())
+					name, boost::any(PropertyVector<T>(name, mesh_item_type))
 				)
 			)
 		);
@@ -125,7 +125,8 @@ public:
 			_properties.insert(
 				std::pair<std::string, boost::any>(
 					name,
-					boost::any(PropertyVector<T>(n_prop_groups, item2group_mapping))
+					boost::any(PropertyVector<T>(n_prop_groups,
+						item2group_mapping, name, mesh_item_type))
 				)
 			)
 		);

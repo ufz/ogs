@@ -28,13 +28,37 @@ class PropertyVector : public std::vector<PROP_VAL_TYPE>
 {
 friend class Properties;
 protected:
-	PropertyVector()
-		: std::vector<PROP_VAL_TYPE>()
+	/// @brief The constructor taking meta information for the data.
+	/// @param property_name a string describing the property
+	/// @param mesh_item_type the values of the property are either assigned to
+	/// nodes or cells (see enumeration @MeshItemType) (default:
+	/// MeshItemType::Cell)
+	/// @param tuple_size the number of elements of a tuple (default: 1)
+	explicit PropertyVector(std::string const& property_name,
+		MeshItemType mesh_item_type = MeshItemType::Cell,
+		std::size_t tuple_size = 1)
+		: std::vector<PROP_VAL_TYPE>(), _tuple_size(tuple_size),
+		_mesh_item_type(mesh_item_type), _property_name(property_name)
 	{}
 
-	explicit PropertyVector(std::size_t size)
-		: std::vector<PROP_VAL_TYPE>(size)
+	/// @brief The constructor taking meta information for the data.
+	/// @param n_property_values number of property values (value can be a tuple
+	/// with several entries)
+	/// @param property_name a string describing the property
+	/// @param mesh_item_type the values of the property are either assigned to
+	/// nodes or cells (see enumeration @MeshItemType) (default:
+	/// MeshItemType::Cell)
+	/// @param tuple_size the number of elements of a tuple (default: 1)
+	PropertyVector(std::size_t n_property_values,
+		std::string const& property_name,
+		MeshItemType mesh_item_type = MeshItemType::Cell,
+		std::size_t tuple_size = 1)
+		: std::vector<PROP_VAL_TYPE>(n_property_values*tuple_size)
 	{}
+
+	std::size_t const _tuple_size;
+	MeshItemType const _mesh_item_type;
+	std::string const _property_name;
 };
 
 /// Class template PropertyVector is a std::vector with template parameter
@@ -50,19 +74,6 @@ template <typename T>
 class PropertyVector<T*> : public std::vector<T*>
 {
 friend class Properties;
-protected:
-	/// @param n_prop_groups number of different property values
-	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
-	/// (Node or Element) to an index (position in the data structure).
-	/// The vector item2group_mapping must have the same number of entries as
-	/// the above mapping and the values have to be in the range
-	/// \f$[0, \text{n_prop_groups})\f$.
-	PropertyVector(std::size_t n_prop_groups,
-		std::vector<std::size_t> const& item2group_mapping)
-		: std::vector<T*>(n_prop_groups),
-		_item2group_mapping(item2group_mapping)
-	{}
-
 public:
 	/// Destructor ensures the deletion of the heap-constructed objects.
 	~PropertyVector()
@@ -78,6 +89,36 @@ public:
 	{
 		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
 	}
+
+protected:
+	/// @brief The constructor taking meta information for the data.
+	/// @param n_prop_groups number of different property values
+	/// @param item2group_mapping Class Mesh has a mapping from the mesh items
+	/// (Node or Element) to an index (position in the data structure).
+	/// The vector item2group_mapping must have the same number of entries as
+	/// the above mapping and the values have to be in the range
+	/// \f$[0, \text{n_prop_groups})\f$.
+	/// @param property_name a string describing the property
+	/// @param mesh_item_type the values of the property are either assigned to
+	/// nodes or cells (see enumeration @MeshItemType) (default:
+	/// MeshItemType::Cell)
+	/// @param tuple_size the number of elements of a tuple (default: 1)
+	PropertyVector(std::size_t n_prop_groups,
+		std::vector<std::size_t> const& item2group_mapping,
+		std::string const& property_name,
+		MeshItemType mesh_item_type = MeshItemType::Cell,
+		std::size_t tuple_size = 1)
+		: std::vector<T*>(n_prop_groups * tuple_size),
+		_tuple_size(tuple_size),
+		_mesh_item_type(mesh_item_type),
+		_property_name(property_name),
+		_item2group_mapping(item2group_mapping)
+	{}
+
+protected:
+	std::size_t const _tuple_size;
+	MeshItemType const _mesh_item_type;
+	std::string const _property_name;
 
 private:
 	std::vector<std::size_t> _item2group_mapping;
