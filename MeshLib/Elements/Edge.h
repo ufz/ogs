@@ -15,8 +15,6 @@
 #ifndef EDGE_H_
 #define EDGE_H_
 
-#include <limits>
-
 #include "Element.h"
 
 namespace MeshLib {
@@ -34,15 +32,16 @@ public:
 	virtual ~Edge() {}
 
 	/**
-		* Checks if the node order of an element is correct by testing surface normals.
-		* For 1D elements this always returns true.
-		*/
+	* Checks if the node order of an element is correct by testing surface normals.
+	* For 1D elements this always returns true.
+	*/
 	virtual bool testElementNodeOrder() const { return true; }
 
 protected:
-	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Edge(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max()) : Element(value, id) {}
-
+	/// Constructor
+	/// @param value  element value
+	/// @param id     element id
+	Edge(unsigned value, std::size_t id) : Element(value, id) {}
 
 }; /* class */
 

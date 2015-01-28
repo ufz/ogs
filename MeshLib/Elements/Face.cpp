@@ -21,12 +21,6 @@
 
 namespace MeshLib {
 
-/*
-Face::Face(Node** nodes, MeshElemType type, unsigned value)
-	: Element(nodes, type, value)
-{
-}
-*/
 Face::Face(unsigned value, std::size_t id)
 	: Element(value, id)
 {

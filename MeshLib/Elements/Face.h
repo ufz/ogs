@@ -15,8 +15,6 @@
 #ifndef FACE_H_
 #define FACE_H_
 
-#include <limits>
-
 #include "GeoLib/Point.h"
 
 #include "MathLib/Vector3.h"
@@ -47,12 +45,10 @@ public:
 	virtual bool testElementNodeOrder() const;
 
 protected:
-/*
-	/// Constructor for a generic mesh element containing an array of mesh nodes.
-	Face(Node** nodes, MeshElemType type, unsigned value = 0);
-*/
-	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Face(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	/// Constructor
+	/// @param value  element value
+	/// @param id     element id
+	Face(unsigned value, std::size_t id);
 
 private:
 

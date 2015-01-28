@@ -42,12 +42,10 @@ public:
 	virtual bool testElementNodeOrder() const;
 
 protected:
-/*
-	/// Constructor for a generic mesh element containing an array of mesh nodes.
-	Cell(Node** nodes, MeshElemType type, unsigned value = 0);
-*/
-	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Cell(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	/// Constructor
+	/// @param value  element value
+	/// @param id     element id
+	Cell(unsigned value, std::size_t id);
 }; /* class */
 
 }

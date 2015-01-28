@@ -216,7 +216,9 @@ public:
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Element(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	/// @param value  element value
+	/// @param id     element id
+	Element(unsigned value, std::size_t id);
 
 	/// Sets the element ID.
 	virtual void setID(std::size_t id) { this->_id = id; }

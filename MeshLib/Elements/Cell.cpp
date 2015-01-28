@@ -20,12 +20,6 @@
 
 namespace MeshLib {
 
-/*
-Cell::Cell(Node** nodes, MeshElemType type, unsigned value)
-	: Element(nodes, type, value)
-{
-}
-*/
 Cell::Cell(unsigned value, std::size_t id)
 	: Element(value, id)
 {
