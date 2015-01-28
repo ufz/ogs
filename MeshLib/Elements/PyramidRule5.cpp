@@ -19,10 +19,6 @@
 
 namespace MeshLib {
 
-const unsigned PyramidRule5::n_all_nodes;
-
-const unsigned PyramidRule5::n_base_nodes;
-
 const unsigned PyramidRule5::face_nodes[5][4] =
 {
 	{0, 1, 4, 99}, // Face 0

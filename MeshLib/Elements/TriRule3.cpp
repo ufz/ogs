@@ -17,10 +17,6 @@
 
 namespace MeshLib {
 
-const unsigned TriRule3::n_all_nodes;
-
-const unsigned TriRule3::n_base_nodes;
-
 const unsigned TriRule3::edge_nodes[3][2] =
 {
 		{0, 1}, // Edge 0

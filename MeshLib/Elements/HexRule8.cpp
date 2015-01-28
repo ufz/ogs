@@ -21,10 +21,6 @@
 
 namespace MeshLib {
 
-const unsigned HexRule8::n_all_nodes;
-
-const unsigned HexRule8::n_base_nodes;
-
 const unsigned HexRule8::face_nodes[6][4] =
 {
 	{0, 3, 2, 1}, // Face 0

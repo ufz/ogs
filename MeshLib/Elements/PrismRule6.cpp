@@ -19,10 +19,6 @@
 
 namespace MeshLib {
 
-const unsigned PrismRule6::n_all_nodes;
-
-const unsigned PrismRule6::n_base_nodes;
-
 const unsigned PrismRule6::face_nodes[5][4] =
 {
 	{0, 2, 1, 99}, // Face 0

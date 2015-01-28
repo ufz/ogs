@@ -21,10 +21,6 @@
 
 namespace MeshLib {
 
-const unsigned TetRule4::n_all_nodes;
-
-const unsigned TetRule4::n_base_nodes;
-
 const unsigned TetRule4::face_nodes[4][3] =
 {
 	{0, 2, 1}, // Face 0
