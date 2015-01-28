@@ -54,8 +54,7 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 
 	boost::optional<MeshLib::PropertyVector<double> const&>
 		double_properties_cpy(mesh->getProperties().getProperty<double>(
-			prop_name, MeshLib::MeshItemType::Cell
-		));
+			prop_name));
 	ASSERT_FALSE(!double_properties_cpy);
 
 	for (std::size_t k(0); k<size; k++) {
@@ -64,8 +63,8 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 
 	mesh->getProperties().removeProperty(prop_name, MeshLib::MeshItemType::Cell);
 	boost::optional<MeshLib::PropertyVector<double> const&>
-		removed_double_properties(mesh->getProperties().getProperty<double>(prop_name,
-			MeshLib::MeshItemType::Cell)
+		removed_double_properties(
+			mesh->getProperties().getProperty<double>(prop_name)
 		);
 
 	ASSERT_TRUE(!removed_double_properties);
@@ -118,8 +117,7 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	// fetch the properties from the container
 	boost::optional<MeshLib::PropertyVector<double*> const&>
 		group_properties_cpy(mesh->getProperties().getProperty<double*>(
-			prop_name, MeshLib::MeshItemType::Cell
-		));
+			prop_name));
 	ASSERT_FALSE(!group_properties_cpy);
 
 	for (std::size_t k(0); k<n_items; k++) {
@@ -129,8 +127,7 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	mesh->getProperties().removeProperty(prop_name, MeshLib::MeshItemType::Cell);
 	boost::optional<MeshLib::PropertyVector<double*> const&>
 		removed_group_properties(mesh->getProperties().getProperty<double*>(
-			prop_name, MeshLib::MeshItemType::Cell
-		));
+			prop_name));
 
 	ASSERT_TRUE(!removed_group_properties);
 }
@@ -176,9 +173,7 @@ TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
 		group_properties_cpy(
-			mesh->getProperties().getProperty<std::array<double,3>*>(
-				prop_name, MeshLib::MeshItemType::Cell
-			)
+			mesh->getProperties().getProperty<std::array<double,3>*>(prop_name)
 		);
 	ASSERT_FALSE(!group_properties_cpy);
 
@@ -194,9 +189,7 @@ TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 	mesh->getProperties().removeProperty(prop_name, MeshLib::MeshItemType::Cell);
 	boost::optional<MeshLib::PropertyVector<std::array<double, 3>*> const&>
 		removed_group_properties(
-			mesh->getProperties().getProperty<std::array<double,3>*>(
-				prop_name, MeshLib::MeshItemType::Cell
-			)
+			mesh->getProperties().getProperty<std::array<double,3>*>(prop_name)
 		);
 
 	ASSERT_TRUE(!removed_group_properties);
@@ -252,9 +245,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	// fetch the vector filled with property values from mesh
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
 		group_properties_cpy(
-			mesh->getProperties().getProperty<std::array<double,3>*>(
-				prop_name, MeshLib::MeshItemType::Cell
-			)
+			mesh->getProperties().getProperty<std::array<double,3>*>(prop_name)
 		);
 	ASSERT_FALSE(!group_properties_cpy);
 	// compare the content
@@ -294,8 +285,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	// fetch the vector in order to compare the content
 	boost::optional<MeshLib::PropertyVector<std::array<float,9>> const&>
 		array_properties_cpy(mesh->getProperties().getProperty<std::array<float,9>>(
-			prop_name_2, MeshLib::MeshItemType::Cell
-		)
+			prop_name_2)
 	);
 	ASSERT_FALSE(!array_properties_cpy);
 
@@ -336,8 +326,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 		MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>> const&
 	> matrix_properties_cpy(
 		mesh->getProperties().getProperty<Eigen::Matrix<double,3,3,Eigen::RowMajor>>(
-			prop_name_3, MeshLib::MeshItemType::Cell
-		)
+			prop_name_3)
 	);
 	ASSERT_FALSE(!matrix_properties_cpy);
 

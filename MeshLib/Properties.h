@@ -138,8 +138,7 @@ public:
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T> const&>
-	getProperty(std::string const& name,
-		MeshItemType mesh_item_type) const
+	getProperty(std::string const& name) const
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
