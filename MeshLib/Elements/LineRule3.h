@@ -17,7 +17,7 @@ namespace MeshLib
 {
 
 /**
- * A 1d Edge or Line Element.
+ * A 1d Edge or Line element with 3 nodes.
  * @code
  *  0----2----1
  * @endcode
