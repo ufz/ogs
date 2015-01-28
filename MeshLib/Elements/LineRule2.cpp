@@ -21,8 +21,6 @@ const unsigned LineRule2::n_all_nodes;
 
 const unsigned LineRule2::n_base_nodes;
 
-const unsigned LineRule2::dimension;
-
 const unsigned LineRule2::edge_nodes[1][2] =
 {
 	{0, 1} // Edge 0
