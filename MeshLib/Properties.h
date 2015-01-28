@@ -173,12 +173,10 @@ public:
 		_properties.erase(it);
 	}
 
-	/// Check if a PropertyVector accessible by a combination of the
-	/// name and the type of the mesh item (Node or Element) is already
+	/// Check if a PropertyVector accessible by the name is already
 	/// stored within the Properties object.
 	/// @param name the name of the property (for instance porosity)
-	/// @param mesh_item_type to which item type the property is assigned to
-	bool hasProperty(std::string const& name, MeshItemType mesh_item_type)
+	bool hasProperty(std::string const& name)
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)

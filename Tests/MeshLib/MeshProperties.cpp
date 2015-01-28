@@ -76,10 +76,7 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	ASSERT_TRUE(mesh != nullptr);
 	std::string const& prop_name("GroupProperty");
 	// check if a property with the name is already assigned to the mesh
-	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name,
-			MeshLib::MeshItemType::Cell));
-	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name,
-			MeshLib::MeshItemType::Node));
+	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name));
 	// data needed for the property
 	const std::size_t n_prop_val_groups(10);
 	const std::size_t n_items(mesh_size*mesh_size*mesh_size);
@@ -117,8 +114,7 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	}
 
 	// the mesh should have the property assigned to cells
-	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name,
-			MeshLib::MeshItemType::Cell));
+	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name));
 	// fetch the properties from the container
 	boost::optional<MeshLib::PropertyVector<double*> const&>
 		group_properties_cpy(mesh->getProperties().getProperty<double*>(
@@ -212,8 +208,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 
 	std::string const& prop_name("GroupVectorProperty");
 	// check if the property is already assigned to the mesh
-	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name,
-		MeshLib::MeshItemType::Cell));
+	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name));
 	const std::size_t n_prop_val_groups(10);
 	const std::size_t n_items(mesh_size*mesh_size*mesh_size);
 	std::vector<std::size_t> prop_item2group_mapping(n_items);
@@ -252,8 +247,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	}
 
 	// the mesh should have the property assigned to cells
-	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name,
-		MeshLib::MeshItemType::Cell));
+	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name));
 
 	// fetch the vector filled with property values from mesh
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
@@ -277,8 +271,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	// *** add a 2nd property ***
 	std::string const& prop_name_2("ItemwiseMatrixProperties");
 	// check if the property is already assigned to the mesh
-	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name_2,
-		MeshLib::MeshItemType::Cell));
+	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name_2));
 	const std::size_t n_items_2(mesh_size*mesh_size*mesh_size);
 	boost::optional<MeshLib::PropertyVector<std::array<float,9>> &>
 		array_properties(mesh->getProperties().createNewPropertyVector<
@@ -296,8 +289,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	}
 
 	// the mesh should have the property assigned to cells
-	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name_2,
-		MeshLib::MeshItemType::Cell));
+	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name_2));
 
 	// fetch the vector in order to compare the content
 	boost::optional<MeshLib::PropertyVector<std::array<float,9>> const&>
@@ -318,8 +310,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 #ifdef OGS_USE_EIGEN
 	std::string const& prop_name_3("ItemwiseEigenMatrixProperties");
 	// check if the property is already assigned to the mesh
-	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name_3,
-		MeshLib::MeshItemType::Cell));
+	ASSERT_FALSE(mesh->getProperties().hasProperty(prop_name_3));
 	boost::optional<
 		MeshLib::PropertyVector<Eigen::Matrix<double,3,3,Eigen::RowMajor>> &>
 	matrix_properties(mesh->getProperties().createNewPropertyVector
@@ -338,8 +329,7 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	}
 
 	// the mesh should have the property assigned to cells
-	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name_3,
-		MeshLib::MeshItemType::Cell));
+	ASSERT_TRUE(mesh->getProperties().hasProperty(prop_name_3));
 
 	// fetch the vector in order to compare the content
 	boost::optional<
