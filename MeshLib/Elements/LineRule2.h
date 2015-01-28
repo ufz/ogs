@@ -54,7 +54,7 @@ public:
 	static const unsigned edge_nodes[1][2];
 
 	/// Edge rule
-	typedef DummyEdgeReturn EdgeReturn;
+	typedef NoEdgeReturn EdgeReturn;
 
 	/// Get the number of nodes for face i.
 	static unsigned getNFaceNodes(unsigned /*i*/) { return 0; }

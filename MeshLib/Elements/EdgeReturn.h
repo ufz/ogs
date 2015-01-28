@@ -18,7 +18,7 @@ namespace MeshLib
 class Element;
 
 /// Returns always null pointer
-class DummyEdgeReturn
+class NoEdgeReturn
 {
 public:
 	/// Returns i-th edge of the given element
