@@ -23,11 +23,6 @@ public:
 	/// Constant: Dimension of this mesh element
 	static const unsigned dimension = 3u;
 
-	/**
-	 * Checks if the node order of an element is correct by testing surface normals.
-	 */
-	static bool testElementNodeOrder(const Element* e);
-
 }; /* class */
 
 } /* namespace */
