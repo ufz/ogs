@@ -65,12 +65,12 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
 
 double HexRule8::computeVolume(Node const* const* _nodes)
 {
-	return GeoLib::calcTetrahedronVolume(_nodes[4]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[0]->getCoords())
-		 + GeoLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[3]->getCoords(), _nodes[1]->getCoords(), _nodes[0]->getCoords())
-		 + GeoLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[7]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords())
-		 + GeoLib::calcTetrahedronVolume(_nodes[5]->getCoords(), _nodes[7]->getCoords(), _nodes[6]->getCoords(), _nodes[2]->getCoords())
-		 + GeoLib::calcTetrahedronVolume(_nodes[1]->getCoords(), _nodes[3]->getCoords(), _nodes[5]->getCoords(), _nodes[2]->getCoords())
-		 + GeoLib::calcTetrahedronVolume(_nodes[3]->getCoords(), _nodes[7]->getCoords(), _nodes[5]->getCoords(), _nodes[2]->getCoords());
+	return GeoLib::calcTetrahedronVolume(*_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0])
+		 + GeoLib::calcTetrahedronVolume(*_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0])
+		 + GeoLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0])
+		 + GeoLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2])
+		 + GeoLib::calcTetrahedronVolume(*_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2])
+		 + GeoLib::calcTetrahedronVolume(*_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
 }
 
 bool HexRule8::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)

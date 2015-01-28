@@ -74,8 +74,8 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 
 double PyramidRule5::computeVolume(Node const* const* _nodes)
 {
-	return GeoLib::calcTetrahedronVolume(_nodes[0]->getCoords(), _nodes[1]->getCoords(), _nodes[2]->getCoords(), _nodes[4]->getCoords())
-		 + GeoLib::calcTetrahedronVolume(_nodes[2]->getCoords(), _nodes[3]->getCoords(), _nodes[0]->getCoords(), _nodes[4]->getCoords());
+	return GeoLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4])
+		 + GeoLib::calcTetrahedronVolume(*_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
 }
 
 bool PyramidRule5::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
