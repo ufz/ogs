@@ -58,9 +58,8 @@ public:
 	boost::optional<PropertyVector<T> &>
 	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type)
 	{
-		PropertyKeyType property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it != _properties.end()) {
 			ERR("A property of the name \"%s\" is already assigned to the mesh.",
@@ -69,8 +68,8 @@ public:
 		}
 		auto entry_info(
 			_properties.insert(
-				std::pair<PropertyKeyType, boost::any>(
-					property_key, boost::any(PropertyVector<T>())
+				std::pair<std::string, boost::any>(
+					name, boost::any(PropertyVector<T>())
 				)
 			)
 		);
@@ -104,9 +103,8 @@ public:
 	{
 		// check if there is already a PropertyVector with the same name and
 		// mesh_item_type
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it != _properties.end()) {
 			ERR("A property of the name \"%s\" already assigned to the mesh.",
@@ -125,8 +123,8 @@ public:
 
 		auto entry_info(
 			_properties.insert(
-				std::pair<PropertyKeyType, boost::any>(
-					property_key,
+				std::pair<std::string, boost::any>(
+					name,
 					boost::any(PropertyVector<T>(n_prop_groups, item2group_mapping))
 				)
 			)
@@ -140,12 +138,10 @@ public:
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T> const&>
-	getProperty(std::string const& name,
-		MeshItemType mesh_item_type) const
+	getProperty(std::string const& name) const
 	{
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it != _properties.end()) {
 			try {
@@ -165,9 +161,8 @@ public:
 	void removeProperty(std::string const& name,
 		MeshItemType mesh_item_type)
 	{
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it == _properties.end()) {
 			WARN("A property of the name \"%s\" does not exist.",
@@ -177,16 +172,13 @@ public:
 		_properties.erase(it);
 	}
 
-	/// Check if a PropertyVector accessible by a combination of the
-	/// name and the type of the mesh item (Node or Element) is already
+	/// Check if a PropertyVector accessible by the name is already
 	/// stored within the Properties object.
 	/// @param name the name of the property (for instance porosity)
-	/// @param mesh_item_type to which item type the property is assigned to
-	bool hasProperty(std::string const& name, MeshItemType mesh_item_type)
+	bool hasProperty(std::string const& name)
 	{
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, boost::any>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it == _properties.end()) {
 			return false;
@@ -195,28 +187,9 @@ public:
 	}
 
 private:
-	struct PropertyKeyType
-	{
-		PropertyKeyType(std::string const& n, MeshItemType t)
-			: name(n), mesh_item_type(t)
-		{}
-
-		std::string const name;
-		MeshItemType const mesh_item_type;
-
-		bool operator<(PropertyKeyType const& other) const
-		{
-			int res(name.compare(other.name));
-			if (res == 0) {
-				return mesh_item_type < other.mesh_item_type;
-			}
-			return res < 0;
-		}
-	};
-
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
-	std::map<PropertyKeyType, boost::any> _properties;
+	std::map<std::string, boost::any> _properties;
 }; // end class
 
 } // end namespace MeshLib
