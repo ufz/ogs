@@ -39,7 +39,7 @@ public:
 	static const unsigned n_base_nodes = ELEMENT_RULE::n_base_nodes;
 
 	/// Constant: The dimension of this element
-	static const unsigned dimension = ELEMENT_RULE::dimension;
+	using T_BASE::dimension;
 
 	/**
 	 * Constructor with an array of mesh nodes.

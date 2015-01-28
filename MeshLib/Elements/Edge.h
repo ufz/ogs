@@ -25,6 +25,9 @@ namespace MeshLib {
 class Edge : public Element
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension = 1u;
+
 	/// Get the length of this 1d element.
 	virtual double getLength() const { return _content; }
 

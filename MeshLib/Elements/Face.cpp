@@ -21,6 +21,8 @@
 
 namespace MeshLib {
 
+const unsigned Face::dimension;
+
 Face::Face(unsigned value, std::size_t id)
 	: Element(value, id)
 {

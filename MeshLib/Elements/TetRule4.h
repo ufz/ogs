@@ -12,7 +12,6 @@
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
-#include "CellRule.h"
 #include "EdgeReturn.h"
 
 namespace MeshLib
@@ -38,7 +37,7 @@ namespace MeshLib
  *
  * @endcode
  */
-class TetRule4 : public CellRule
+class TetRule4
 {
 public:
 	/// Constant: The number of base nodes for this element

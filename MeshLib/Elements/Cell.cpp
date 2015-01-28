@@ -20,6 +20,8 @@
 
 namespace MeshLib {
 
+const unsigned Cell::dimension;
+
 Cell::Cell(unsigned value, std::size_t id)
 	: Element(value, id)
 {

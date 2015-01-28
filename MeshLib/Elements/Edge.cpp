@@ -7,18 +7,11 @@
  *
  */
 
-#include "CellRule.h"
+#include "Edge.h"
 
-#include "logog/include/logog.hpp"
+namespace MeshLib {
 
-#include "GeoLib/AnalyticalGeometry.h"
+const unsigned Edge::dimension;
 
-#include "MeshLib/Node.h"
-#include "Face.h"
+} /* namespace */
 
-namespace MeshLib
-{
-
-const unsigned CellRule::dimension;
-
-} // end namespace MeshLib

@@ -29,6 +29,9 @@ namespace MeshLib {
 class Face : public Element
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension = 2u;
+
 	/// Get the area of this 2d element.
 	virtual double getArea() const { return _content; }
 

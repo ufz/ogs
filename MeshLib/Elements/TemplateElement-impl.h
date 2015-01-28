@@ -19,9 +19,6 @@ template <class T_BASE, class ELEMENT_RULE>
 const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::n_base_nodes;
 
 template <class T_BASE, class ELEMENT_RULE>
-const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::dimension;
-
-template <class T_BASE, class ELEMENT_RULE>
 TemplateElement<T_BASE, ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], unsigned value, std::size_t id)
 : T_BASE(value, id)
 {

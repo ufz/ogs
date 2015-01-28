@@ -25,6 +25,9 @@ namespace MeshLib {
 class Cell : public Element
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension = 3u;
+
 	/// Get the volume of this 3d element.
 	virtual double getVolume() const { return getContent(); }
 

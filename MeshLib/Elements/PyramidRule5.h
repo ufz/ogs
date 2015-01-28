@@ -12,7 +12,6 @@
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
-#include "CellRule.h"
 #include "EdgeReturn.h"
 
 namespace MeshLib
@@ -40,7 +39,7 @@ namespace MeshLib
  * @endcode
 
  */
-class PyramidRule5 : public CellRule
+class PyramidRule5
 {
 public:
 	/// Constant: The number of base nodes for this element
