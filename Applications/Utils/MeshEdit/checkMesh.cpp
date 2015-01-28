@@ -91,8 +91,16 @@ int main(int argc, char *argv[])
 		// Validation
 		MeshLib::MeshValidation validation(*const_cast<MeshLib::Mesh*>(mesh)); // MeshValidation outputs error messages
 		/* Remark: MeshValidation can modify the original mesh */
-	}
 
+		unsigned const n_holes (MeshLib::MeshValidation::detectHoles(*mesh));
+		if (n_holes > 0)
+		{
+			INFO("%d hole(s) detected within the mesh", n_holes);
+		}
+		else
+			INFO ("No holes found within the mesh.");
+	}
+	
 	delete mesh;
 	delete custom_format;
 	delete logog_cout;
