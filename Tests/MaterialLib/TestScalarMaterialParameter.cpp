@@ -26,6 +26,23 @@
 namespace
 {
 
+// For local assembly
+template<typename T_MAT>class TestScalar
+{
+    public:
+    TestScalar(const T_MAT &mat) : _mat(const_cast<T_MAT*>(&mat))
+    {
+    }
+
+    // Test function
+    template<typename... Args> double getMatParameterTest(Args... args) const
+    {
+          return _mat->getValue(args...);
+    }
+    private:
+      T_MAT *_mat;
+};
+
 using namespace MaterialLib;
 
 TEST(Material, checkDensity)
@@ -52,6 +69,9 @@ TEST(Material, checkDensity)
     constexpr double R = 8315.41;
     constexpr double expected_air_dens = molar_air * p /(R * T);
     ASSERT_NEAR(expected_air_dens, air_density.getValue(T, p), 1.e-10);
+
+    TestScalar< MaterialLib::ScalarParameter<DensityType, IdealGasLaw> > test0(air_density);
+    ASSERT_NEAR(expected_air_dens, test0.getMatParameterTest(T, p), 1.e-10);
 
     // Check polymorphy
     MaterialLib::ScalarParameterBase<DensityType> *den_ptr_base = &air_density;
