@@ -19,7 +19,7 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 2d quadliteral element with 8 nodes.
+ * This class represents a 2d quadrilateral element with 8 nodes.
  * The following sketch shows the node and edge numbering.
  * @anchor QuadNodeAndEdgeNumbering
  * @code
