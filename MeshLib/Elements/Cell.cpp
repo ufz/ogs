@@ -20,7 +20,10 @@
 
 namespace MeshLib {
 
+#ifndef WIN32
+/// \todo Windows compiler does not accept this definition and issues a linking error.
 const unsigned Cell::dimension;
+#endif
 
 Cell::Cell(unsigned value, std::size_t id)
 	: Element(value, id)

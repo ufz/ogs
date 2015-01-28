@@ -12,11 +12,14 @@
 namespace MeshLib
 {
 
+#ifndef WIN32
+/// \todo Windows compiler does not accept this definition and issues a linking error.
 template <class T_BASE, class ELEMENT_RULE>
 const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::n_all_nodes;
 
 template <class T_BASE, class ELEMENT_RULE>
 const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::n_base_nodes;
+#endif // WIN32
 
 template <class T_BASE, class ELEMENT_RULE>
 TemplateElement<T_BASE, ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], unsigned value, std::size_t id)
