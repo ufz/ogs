@@ -15,6 +15,8 @@
 #include "MeshValidation.h"
 
 #include <numeric>
+#include <algorithm>
+#include <stack>
 
 #include "logog/include/logog.hpp"
 
@@ -23,6 +25,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/removeMeshNodes.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib {
 
@@ -145,6 +148,59 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 			output[i] += ("ElementIDs: " + elementIdStr + "\n");
 	}
 	return output;
+}
+
+unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
+{
+	MeshLib::Mesh* sfc_mesh (nullptr);
+	std::vector<MeshLib::Element*> elements;
+	if (mesh.getDimension() == 3)
+	{
+		MathLib::Vector3 const all_dir(0, 0, 0);
+		sfc_mesh = MeshSurfaceExtraction::getMeshSurface(mesh, all_dir, 90);
+		elements = sfc_mesh->getElements();
+	}
+	else
+		elements = mesh.getElements();
+
+	std::vector<unsigned> sfc_idx (elements.size(), std::numeric_limits<unsigned>::max());
+	unsigned current_surface_id (0);
+	std::vector<unsigned>::const_iterator it = sfc_idx.cbegin();
+
+	while (it != sfc_idx.cend())
+	{
+		int const idx = static_cast<int>(std::distance(sfc_idx.cbegin(), it));
+		if (idx<0 || idx>elements.size())
+		{
+			ERR ("Illegal element index found");
+			return std::numeric_limits<unsigned>::max();
+		}
+		trackSurface(elements[idx], sfc_idx, current_surface_id++);
+		it = std::find(sfc_idx.cbegin(), sfc_idx.cend(), std::numeric_limits<unsigned>::max());
+	}
+	delete sfc_mesh;
+
+	// Subtract "1" from the number of surfaces found to get the number of holes.
+	return (--current_surface_id); 
+}
+
+void MeshValidation::trackSurface(MeshLib::Element const*const element, std::vector<unsigned> &sfc_idx, unsigned const current_index)
+{
+	std::stack<MeshLib::Element const*const> elem_stack;
+	elem_stack.push(element);
+	while (!elem_stack.empty())
+	{
+		MeshLib::Element const*const elem = elem_stack.top();
+		elem_stack.pop();
+		sfc_idx[elem->getID()] = current_index;
+		std::size_t const n_neighbors (elem->getNNeighbors());
+		for (std::size_t i=0; i<n_neighbors; ++i)
+		{
+			MeshLib::Element const*const neighbor (elem->getNeighbor(i));
+			if ( neighbor != nullptr && sfc_idx[neighbor->getID()] == std::numeric_limits<unsigned>::max())
+				elem_stack.push(neighbor);
+		}
+	}
 }
 
 } // end namespace MeshLib
