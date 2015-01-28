@@ -9,6 +9,8 @@
 
 #include "HexRule8.h"
 
+#include <array>
+
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/AnalyticalGeometry.h"
@@ -53,9 +55,8 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
 {
 	if (i < n_faces)
 	{
-		unsigned nFaceNodes (getNFaceNodes(i));
-		Node** nodes = new Node*[nFaceNodes];
-		for (unsigned j=0; j<nFaceNodes; j++)
+		std::array<Node*, 4> nodes;
+		for (unsigned j=0; j<4; j++)
 			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 		return new Quad(nodes);
 	}

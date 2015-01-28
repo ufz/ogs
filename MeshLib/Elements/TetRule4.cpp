@@ -9,6 +9,8 @@
 
 #include "TetRule4.h"
 
+#include <array>
+
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/AnalyticalGeometry.h"
@@ -43,11 +45,10 @@ const unsigned TetRule4::edge_nodes[6][2] =
 
 const Element* TetRule4::getFace(const Element* e, unsigned i)
 {
-	if (i<e->getNFaces())
+	if (i<n_faces)
 	{
-		unsigned nFaceNodes (e->getNFaceNodes(i));
-		Node** nodes = new Node*[nFaceNodes];
-		for (unsigned j=0; j<nFaceNodes; j++)
+		std::array<Node*,3> nodes;
+		for (unsigned j=0; j<3; j++)
 			nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 		return new Tri(nodes);
 	}
