@@ -52,6 +52,11 @@ public:
 	 */
 	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds = false);
 
+	/**
+	 * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for 3D meshes.
+	 * \param mesh The original mesh of dimension d
+	 * \return     A mesh of dimension (d-1) representing the boundary of the mesh.
+	 */
 	static MeshLib::Mesh* getMeshBoundary(const MeshLib::Mesh &mesh);
 
 private:
