@@ -72,11 +72,11 @@ public:
 	 * the actual boundary of the mesh. Examples include a missing triangle in a 2D mesh or a missing 
 	 * Tetrahedron in a 3D mesh.
 	 * Note, that this method does not work when complex 3D structures are build from 2D mesh elements,
-	 * e.g. using the LayeredVolume-class.
+	 * e.g. using the LayeredVolume-class, where more than two 2D elements may share an edge.
 	 * @param mesh The mesh that is tested
 	 * @return The number of holes that have been found.
 	 */
-	static unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh);
+	static unsigned detectHoles(MeshLib::Mesh const& mesh);
 
 private:
 	/** Finds all surface elements that can be reached from element. All elements that are found in this 

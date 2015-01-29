@@ -152,16 +152,8 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 
 unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 {
-	MeshLib::Mesh* sfc_mesh (nullptr);
-	std::vector<MeshLib::Element*> elements;
-	if (mesh.getDimension() == 3)
-	{
-		MathLib::Vector3 const all_dir(0, 0, 0);
-		sfc_mesh = MeshSurfaceExtraction::getMeshSurface(mesh, all_dir, 90);
-		elements = sfc_mesh->getElements();
-	}
-	else
-		elements = mesh.getElements();
+	MeshLib::Mesh* boundary_mesh (MeshSurfaceExtraction::getMeshBoundary(mesh));
+	std::vector<MeshLib::Element*> const& elements (boundary_mesh->getElements());
 
 	std::vector<unsigned> sfc_idx (elements.size(), std::numeric_limits<unsigned>::max());
 	unsigned current_surface_id (0);
@@ -178,7 +170,7 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 		trackSurface(elements[idx], sfc_idx, current_surface_id++);
 		it = std::find(sfc_idx.cbegin(), sfc_idx.cend(), std::numeric_limits<unsigned>::max());
 	}
-	delete sfc_mesh;
+	delete boundary_mesh;
 
 	// Subtract "1" from the number of surfaces found to get the number of holes.
 	return (--current_surface_id); 
