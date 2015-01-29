@@ -20,11 +20,14 @@
 
 #include "GeoLib/PointWithID.h"
 
-#include "Mesh.h"
-#include "Elements/Face.h"
-#include "Elements/Cell.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Face.h"
+#include "MeshLib/Elements/Cell.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
 
 namespace MeshLib {
 
@@ -115,6 +118,40 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
 			(*node)->setID(id_map[(*node)->getID()]);
 
+	return result;
+}
+
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
+{
+	if (mesh.getDimension()==1)
+		return nullptr;
+
+	// For 3D meshes return the 2D surface
+	if (mesh.getDimension()==3)
+	{
+		MathLib::Vector3 dir(0,0,0);
+		return getMeshSurface(mesh, dir, 90);
+	}
+
+	// For 2D meshes return the boundary lines
+	std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh.getNodes());
+	std::vector<MeshLib::Element*> boundary_elements;
+
+	std::vector<MeshLib::Element*> const& org_elems (mesh.getElements());
+	for (auto it=org_elems.begin(); it!=org_elems.end(); ++it)
+	{
+		MeshLib::Element* elem (*it);
+		std::size_t const n_edges (elem->getNEdges());
+		for (std::size_t i=0; i<n_edges; ++i)
+			if (elem->getNeighbor(i) == nullptr)
+			{
+				MeshLib::Element const*const edge (elem->getEdge(i));
+				boundary_elements.push_back(MeshLib::copyElement(edge, nodes));
+				delete edge;
+			}
+	}
+	MeshLib::Mesh* result = new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
+	MeshLib::MeshValidation::removeUnusedMeshNodes(*result);
 	return result;
 }
 
