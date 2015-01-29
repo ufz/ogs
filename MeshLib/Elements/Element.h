@@ -207,6 +207,9 @@ public:
 	 */
 	virtual bool testElementNodeOrder() const = 0;
 
+#ifndef NDEBUG
+	friend std::ostream& operator<<(std::ostream& os, Element const& e);
+#endif  // NDEBUG
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
