@@ -38,6 +38,7 @@ set( SOURCES
 	StationTabWidget.cpp
 	StationTreeModel.cpp
 	StationTreeView.cpp
+	SurfaceExtractionDialog.cpp
 )
 
 # Moc Header files
@@ -76,6 +77,7 @@ set( MOC_HEADERS
 	StationTabWidget.h
 	StationTreeModel.h
 	StationTreeView.h
+	SurfaceExtractionDialog.h
 )
 
 # Header files
@@ -115,6 +117,7 @@ set( UIS
 	NewProcess.ui
 	SaveMesh.ui
 	StationTabWidgetBase.ui
+	SurfaceExtraction.ui
 )
 
 # Put filter in a folder
