@@ -11,7 +11,6 @@
 #define QUADRULE8_H_
 
 #include "MeshLib/MeshEnums.h"
-#include "Element.h"
 #include "QuadRule4.h"
 #include "EdgeReturn.h"
 

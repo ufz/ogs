@@ -11,7 +11,6 @@
 #define QUADRULE9_H_
 
 #include "MeshLib/MeshEnums.h"
-#include "Element.h"
 #include "QuadRule8.h"
 
 namespace MeshLib
