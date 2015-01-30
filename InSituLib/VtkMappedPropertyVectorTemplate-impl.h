@@ -22,22 +22,22 @@
 namespace InSituLib {
 
 // Can't use vtkStandardNewMacro on a templated class.
-template <class Scalar> VtkMappedElementDataArrayTemplate<Scalar> *
-VtkMappedElementDataArrayTemplate<Scalar>::New()
+template <class Scalar> VtkMappedPropertyVectorTemplate<Scalar> *
+VtkMappedPropertyVectorTemplate<Scalar>::New()
 {
-	VTK_STANDARD_NEW_BODY(VtkMappedElementDataArrayTemplate<Scalar>)
+	VTK_STANDARD_NEW_BODY(VtkMappedPropertyVectorTemplate<Scalar>)
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::PrintSelf(ostream &os, vtkIndent indent)
 {
-	this->VtkMappedElementDataArrayTemplate<Scalar>::Superclass::PrintSelf(
+	this->VtkMappedPropertyVectorTemplate<Scalar>::Superclass::PrintSelf(
 		os, indent);
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector)
 {
 	this->Initialize();
@@ -49,7 +49,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector, bool save)
 {
 	this->SetPropertyVector(propertyVector);
@@ -57,7 +57,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::Initialize()
 {
 	this->MaxId = -1;
@@ -68,7 +68,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::GetTuples(vtkIdList *ptIds, vtkAbstractArray *output)
 {
 	vtkDataArray *da = vtkDataArray::FastDownCast(output);
@@ -92,7 +92,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::GetTuples(vtkIdType p1, vtkIdType p2, vtkAbstractArray *output)
 {
 	vtkDataArray *da = vtkDataArray::FastDownCast(output);
@@ -115,7 +115,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::Squeeze()
 {
 	// noop
@@ -123,14 +123,14 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 
 //------------------------------------------------------------------------------
 template <class Scalar> vtkArrayIterator*
-VtkMappedElementDataArrayTemplate<Scalar>::NewIterator()
+VtkMappedPropertyVectorTemplate<Scalar>::NewIterator()
 {
 	vtkErrorMacro(<<"Not implemented.");
 	return nullptr;
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::LookupValue(vtkVariant value)
 {
 	bool valid = true;
@@ -143,7 +143,7 @@ template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::LookupValue(vtkVariant value, vtkIdList *ids)
 {
 	bool valid = true;
@@ -161,21 +161,21 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkVariant VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkVariant VtkMappedPropertyVectorTemplate<Scalar>
 ::GetVariantValue(vtkIdType idx)
 {
 	return vtkVariant(this->GetValueReference(idx));
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::ClearLookup()
 {
 	// no-op, no fast lookup implemented.
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> double* VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> double* VtkMappedPropertyVectorTemplate<Scalar>
 ::GetTuple(vtkIdType i)
 {
 	this->TempDouble = (*this->_propertyVector)[i];
@@ -183,21 +183,21 @@ template <class Scalar> double* VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::GetTuple(vtkIdType i, double *tuple)
 {
 	*tuple = (*this->_propertyVector)[i];
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::LookupTypedValue(Scalar value)
 {
 	return this->Lookup(value, 0);
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::LookupTypedValue(Scalar value, vtkIdList *ids)
 {
 	ids->Reset();
@@ -210,14 +210,14 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> Scalar VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> Scalar VtkMappedPropertyVectorTemplate<Scalar>
 ::GetValue(vtkIdType idx)
 {
 	return (*this->_propertyVector)[idx];
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> Scalar& VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> Scalar& VtkMappedPropertyVectorTemplate<Scalar>
 ::GetValueReference(vtkIdType idx)
 {
 	// VTK has no concept of 'const', so we'll just cross our fingers
@@ -227,14 +227,14 @@ template <class Scalar> Scalar& VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
 {
 	*tuple = (*this->_propertyVector)[tupleId];
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> int VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> int VtkMappedPropertyVectorTemplate<Scalar>
 ::Allocate(vtkIdType, vtkIdType)
 {
 	vtkErrorMacro("Read only container.")
@@ -242,7 +242,7 @@ template <class Scalar> int VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> int VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> int VtkMappedPropertyVectorTemplate<Scalar>
 ::Resize(vtkIdType)
 {
 	vtkErrorMacro("Read only container.")
@@ -250,55 +250,55 @@ template <class Scalar> int VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetNumberOfTuples(vtkIdType)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTuple(vtkIdType, vtkIdType, vtkAbstractArray *)
 {
 	vtkErrorMacro("Read only container.")}
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTuple(vtkIdType, const float *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTuple(vtkIdType, const double *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuple(vtkIdType, vtkIdType, vtkAbstractArray *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuple(vtkIdType, const float *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuple(vtkIdType, const double *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuples(vtkIdList *, vtkIdList *, vtkAbstractArray *)
 {
 	vtkErrorMacro("Read only container.")
@@ -311,7 +311,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTuple(vtkIdType, vtkAbstractArray *)
 {
 	vtkErrorMacro("Read only container.")
@@ -319,7 +319,7 @@ template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTuple(const float *)
 {
 
@@ -328,7 +328,7 @@ template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTuple(const double *)
 {
 	vtkErrorMacro("Read only container.")
@@ -336,28 +336,28 @@ template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::DeepCopy(vtkAbstractArray *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::DeepCopy(vtkDataArray *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InterpolateTuple(vtkIdType, vtkIdList *, vtkAbstractArray *, double *)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InterpolateTuple(vtkIdType, vtkIdType, vtkAbstractArray*, vtkIdType,
 				   vtkAbstractArray*, double)
 {
@@ -365,49 +365,49 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetVariantValue(vtkIdType, vtkVariant)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::RemoveTuple(vtkIdType)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::RemoveFirstTuple()
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::RemoveLastTuple()
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTupleValue(vtkIdType, const Scalar*)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTupleValue(vtkIdType, const Scalar*)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTupleValue(const Scalar *)
 {
 	vtkErrorMacro("Read only container.")
@@ -415,14 +415,14 @@ template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetValue(vtkIdType, Scalar)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextValue(Scalar)
 {
 	vtkErrorMacro("Read only container.")
@@ -430,28 +430,28 @@ template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertValue(vtkIdType, Scalar)
 {
 	vtkErrorMacro("Read only container.")
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> VtkMappedElementDataArrayTemplate<Scalar>
-::VtkMappedElementDataArrayTemplate()
+template <class Scalar> VtkMappedPropertyVectorTemplate<Scalar>
+::VtkMappedPropertyVectorTemplate()
   : Save(false)
 {
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> VtkMappedElementDataArrayTemplate<Scalar>
-::~VtkMappedElementDataArrayTemplate()
+template <class Scalar> VtkMappedPropertyVectorTemplate<Scalar>
+::~VtkMappedPropertyVectorTemplate()
 {
 
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
+template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::Lookup(const Scalar &val, vtkIdType index)
 {
 	while (index <= this->MaxId)

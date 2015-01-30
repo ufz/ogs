@@ -21,7 +21,7 @@
 #include "Mesh.h"
 #include "MeshGenerators/MeshGenerator.h"
 
-#include "VtkMappedElementDataArrayTemplate.h"
+#include "VtkMappedPropertyVectorTemplate.h"
 
 TEST(InSituLibMappedArrays, Double)
 {
@@ -40,7 +40,7 @@ TEST(InSituLibMappedArrays, Double)
 	(*double_properties).resize(size);
 	std::iota((*double_properties).begin(), (*double_properties).end(), 1);
 
-	vtkNew<InSituLib::VtkMappedElementDataArrayTemplate<double> > dataArray;
+	vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<double> > dataArray;
 	dataArray->SetPropertyVector(*double_properties);
 
 	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
@@ -71,7 +71,7 @@ TEST(InSituLibMappedArrays, Int)
 	(*properties).resize(size);
 	std::iota((*properties).begin(), (*properties).end(), 1);
 
-	vtkNew<InSituLib::VtkMappedElementDataArrayTemplate<int> > dataArray;
+	vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<int> > dataArray;
 	dataArray->SetPropertyVector(*properties);
 
 	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
