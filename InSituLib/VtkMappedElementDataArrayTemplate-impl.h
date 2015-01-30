@@ -38,22 +38,21 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
-::SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples)
+::SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector)
 {
 	this->Initialize();
-	this->NumberOfComponents = 1;
-	this->_elements = elements;
-	this->Size = this->NumberOfComponents * numTuples;
+	_propertyVector = &propertyVector;
+	this->NumberOfComponents = _propertyVector->getTupleSize();
+	this->Size = this->NumberOfComponents *  _propertyVector->size();
 	this->MaxId = this->Size - 1;
 	this->Modified();
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
-::SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples,
-						bool save)
+::SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector, bool save)
 {
-	this->SetElements(elements, numTuples);
+	this->SetPropertyVector(propertyVector);
 	this->Save = save;
 }
 
@@ -61,13 +60,11 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 ::Initialize()
 {
-	this->_elements = nullptr;
-
 	this->MaxId = -1;
 	this->Size = 0;
 	this->NumberOfComponents = 1;
-	// the default is to have this class delete the arrays when done with them.
-	this->Save = false;
+	// per default property vector deletion is managed elsewhere
+	this->Save = true;
 }
 
 //------------------------------------------------------------------------------
@@ -181,7 +178,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 template <class Scalar> double* VtkMappedElementDataArrayTemplate<Scalar>
 ::GetTuple(vtkIdType i)
 {
-	this->TempDouble = (*this->_elements)[i]->getValue();
+	this->TempDouble = (*this->_propertyVector)[i];
 	return &this->TempDouble;
 }
 
@@ -189,7 +186,7 @@ template <class Scalar> double* VtkMappedElementDataArrayTemplate<Scalar>
 template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 ::GetTuple(vtkIdType i, double *tuple)
 {
-	*tuple = (*this->_elements)[i]->getValue();
+	*tuple = (*this->_propertyVector)[i];
 }
 
 //------------------------------------------------------------------------------
@@ -216,7 +213,7 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 template <class Scalar> Scalar VtkMappedElementDataArrayTemplate<Scalar>
 ::GetValue(vtkIdType idx)
 {
-	return (*this->_elements)[idx]->getValue();
+	return (*this->_propertyVector)[idx];
 }
 
 //------------------------------------------------------------------------------
@@ -225,7 +222,7 @@ template <class Scalar> Scalar& VtkMappedElementDataArrayTemplate<Scalar>
 {
 	// VTK has no concept of 'const', so we'll just cross our fingers
 	// that no one writes to the returned reference.
-	Scalar& value = const_cast<Scalar&>((*this->_elements)[idx]->getValueReference());
+	Scalar& value = const_cast<Scalar&>((*this->_propertyVector)[idx]);
 	return value;
 }
 
@@ -233,7 +230,7 @@ template <class Scalar> Scalar& VtkMappedElementDataArrayTemplate<Scalar>
 template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 ::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
 {
-	*tuple = (*this->_elements)[tupleId]->getValue();
+	*tuple = (*this->_propertyVector)[tupleId];
 }
 
 //------------------------------------------------------------------------------

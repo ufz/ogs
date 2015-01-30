@@ -14,6 +14,8 @@
 
 #include "BaseLib/BuildInfo.h"
 
+#include <numeric>
+
 #include "FileIO/VtkIO/VtuInterface.h"
 
 #include "InSituLib/VtkMappedMesh.h"
@@ -32,6 +34,7 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkCellData.h>
+#include <vtkPointData.h>
 
 class InSituMesh : public ::testing::Test
 {
@@ -39,9 +42,23 @@ class InSituMesh : public ::testing::Test
 	InSituMesh()
 	 : mesh(nullptr)
 	{
-		mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(this->length, this->subdivisions);
-		for(MeshLib::Element* element: mesh->getElements())
-			element->setValue(0);
+		mesh = MeshLib::MeshGenerator::generateRegularHexMesh(this->length, this->subdivisions);
+
+		std::string const point_prop_name("PointDoubleProperty");
+		boost::optional<MeshLib::PropertyVector<double> &> point_double_properties(
+			mesh->getProperties().createNewPropertyVector<double>(point_prop_name,
+				MeshLib::MeshItemType::Node)
+		);
+		(*point_double_properties).resize(mesh->getNNodes());
+		std::iota((*point_double_properties).begin(), (*point_double_properties).end(), 1);
+
+		std::string const cell_prop_name("CellDoubleProperty");
+		boost::optional<MeshLib::PropertyVector<double> &> cell_double_properties(
+			mesh->getProperties().createNewPropertyVector<double>(cell_prop_name,
+				MeshLib::MeshItemType::Cell)
+		);
+		(*cell_double_properties).resize(mesh->getNElements());
+		std::iota((*cell_double_properties).begin(), (*cell_double_properties).end(), 1);
 	}
 
 	~InSituMesh()
@@ -49,16 +66,16 @@ class InSituMesh : public ::testing::Test
 		delete mesh;
 	}
 
-	MeshLib::Mesh const* mesh;
-	const size_t subdivisions = 99;
-	const double length = 10.0;
+	MeshLib::Mesh * mesh;
+	const size_t subdivisions = 5;
+	const double length = 1.0;
 	const double dx = length / subdivisions;
 };
 
 TEST_F(InSituMesh, Construction)
 {
 	ASSERT_TRUE(mesh != nullptr);
-	ASSERT_EQ((subdivisions+1)*(subdivisions+1), mesh->getNNodes());
+	ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), mesh->getNNodes());
 }
 
 
@@ -70,11 +87,11 @@ TEST_F(InSituMesh, MappedMesh)
 	vtkMesh->GetImplementation()->SetNodes(mesh->getNodes());
 	vtkMesh->GetImplementation()->SetElements(mesh->getElements());
 
-	ASSERT_EQ(subdivisions*subdivisions, vtkMesh->GetNumberOfCells());
-	ASSERT_EQ(VTK_QUAD, vtkMesh->GetCellType(0));
-	ASSERT_EQ(VTK_QUAD, vtkMesh->GetCellType(vtkMesh->GetNumberOfCells()-1));
+	ASSERT_EQ(subdivisions*subdivisions*subdivisions, vtkMesh->GetNumberOfCells());
+	ASSERT_EQ(VTK_HEXAHEDRON, vtkMesh->GetCellType(0));
+	ASSERT_EQ(VTK_HEXAHEDRON, vtkMesh->GetCellType(vtkMesh->GetNumberOfCells()-1));
 	ASSERT_EQ(1, vtkMesh->IsHomogeneous());
-	ASSERT_EQ(4, vtkMesh->GetMaxCellSize());
+	ASSERT_EQ(8, vtkMesh->GetMaxCellSize());
 
 
 	ASSERT_EQ(0, vtkMesh->GetNumberOfPoints()); // No points are defined
@@ -94,16 +111,24 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	vtkUnstructuredGrid* output = vtkSource->GetOutput();
 
 	// Point and cell numbers
-	ASSERT_EQ((subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
-	ASSERT_EQ(subdivisions*subdivisions, output->GetNumberOfCells());
+	ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
+	ASSERT_EQ(subdivisions*subdivisions*subdivisions, output->GetNumberOfCells());
+
+	// Point data array
+	vtkDataArray* pointDoubleArray = output->GetPointData()->GetScalars("PointDoubleProperty");
+	ASSERT_EQ(pointDoubleArray->GetSize(), mesh->getNNodes());
+	ASSERT_EQ(pointDoubleArray->GetComponent(0, 0), 1.0);
+	double* range = pointDoubleArray->GetRange(0);
+	ASSERT_EQ(range[0], 1.0);
+	ASSERT_EQ(range[1], 1.0 + mesh->getNNodes() - 1.0);
 
 	// Cell data array
-	vtkDataArray* matIdsArray = output->GetCellData()->GetScalars("MaterialIDs");
-	ASSERT_EQ(matIdsArray->GetSize(), mesh->getNElements());
-	ASSERT_EQ((unsigned)matIdsArray->GetComponent(0, 0), 0);
-	double* range = matIdsArray->GetRange(0);
-	ASSERT_EQ((unsigned)range[0], 0);
-	ASSERT_EQ((unsigned)range[1], 0);
+	vtkDataArray* cellDoubleArray = output->GetCellData()->GetScalars("CellDoubleProperty");
+	ASSERT_EQ(cellDoubleArray->GetSize(), mesh->getNElements());
+	ASSERT_EQ(cellDoubleArray->GetComponent(0, 0), 1.0);
+	double* range2 = cellDoubleArray->GetRange(0);
+	ASSERT_EQ(range2[0], 1.0);
+	ASSERT_EQ(range2[1], 1.0 + mesh->getNElements() - 1.0);
 
 	// -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
 	// atm vtkXMLWriter::Appended does not work, see http://www.paraview.org/Bug/view.php?id=13382
@@ -126,7 +151,8 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 			// Both VTK meshes should be identical
 			ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
 			ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
-			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("MaterialIDs")->GetNumberOfTuples(), matIdsArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointDoubleProperty")->GetNumberOfTuples(), pointDoubleArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellDoubleProperty")->GetNumberOfTuples(), cellDoubleArray->GetNumberOfTuples());
 
 			// Both OGS meshes should be identical
 			MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);

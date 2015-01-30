@@ -84,8 +84,6 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	nodeCoords->SetNodes(_mesh->getNodes());
 	this->Points->SetData(nodeCoords.GetPointer());
 
-	// TODO nodal vals
-
 	vtkNew<VtkMappedMesh> elems;
 	elems->GetImplementation()->SetNodes(_mesh->getNodes());
 	elems->GetImplementation()->SetElements(_mesh->getElements());
@@ -96,11 +94,25 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	output->Allocate(elems->GetNumberOfCells());
 	output->ShallowCopy(elems.GetPointer());
 
-	// Mapped data array for material ids
-	vtkNew<VtkMappedElementDataArrayTemplate<unsigned> > materialIds;
-	materialIds->SetElements(&_mesh->getElements(), _mesh->getNElements());
-	materialIds->SetName("MaterialIDs");
-	output->GetCellData()->AddArray(materialIds.GetPointer());
+	MeshLib::Properties const & properties = _mesh->getProperties();
+	std::vector<std::string> propertyNames = properties.getPropertyNames();
+
+	// double
+	for(std::vector<std::string>::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it)
+	{
+		boost::optional<MeshLib::PropertyVector<double> const &> propertyVector(properties.getProperty<double>(*it));
+		if(!propertyVector)
+			continue;
+
+		vtkNew<VtkMappedElementDataArrayTemplate<double> > dataArray;
+		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<double> &>(*propertyVector));
+		dataArray->SetName(it->c_str());
+
+		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+			output->GetPointData()->AddArray(dataArray.GetPointer());
+		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+			output->GetCellData()->AddArray(dataArray.GetPointer());
+	}
 
 	return 1;
 }
