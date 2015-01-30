@@ -8,9 +8,9 @@ cache:
   - apt
 
 env:
-  - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON -DVTK_DIR=`pwd`/VTK-Install/lib/cmake/vtk-6.1/"
-  - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DVTK_DIR=`pwd`/VTK-Install/lib/cmake/vtk-6.1/ -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
-  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DVTK_DIR=`pwd`/VTK-Install/lib/cmake/vtk-6.1/"
+  - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+  - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
+  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
 
 before_install:
   # -- External package sources --
@@ -18,37 +18,44 @@ before_install:
   - travis_retry sudo apt-get install python-software-properties
   - travis_retry sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:fenics-packages/fenics-dev; fi
-  - travis_retry sudo apt-get update;
+  - travis_retry sudo apt-get update -qq;
 
   # GCC 4.8
-  - travis_retry sudo apt-get install gcc-4.8 g++-4.8
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+  - travis_retry sudo apt-get install -qq g++-4.8
+  - export CXX="g++-4.8" CC="gcc-4.8"
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 
+install:
   # -- Install packages --
-  - travis_retry sudo apt-get install libeigen3-dev numdiff
+  - travis_retry sudo apt-get install -qq libeigen3-dev numdiff
 
   # Boost
-  - travis_retry sudo apt-get install libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
+  - travis_retry sudo apt-get install -qq libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
 
-  # CMake (32-bit)
-  - sudo apt-get remove cmake-data cmake
-  - travis_retry sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
-  - travis_retry wget http://www.cmake.org/files/v3.0/cmake-3.0.2-Linux-i386.tar.gz
-  - "tar -xf cmake-3.0.2-Linux-i386.tar.gz && mv cmake-3.0.2-Linux-i386 cmake"
+  # CMake
+  - travis_retry wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.tar.gz
+  - tar -xzf cmake-3.1.1-Linux-x86_64.tar.gz
+  - sudo cp -fR cmake-3.1.1-Linux-x86_64/* /usr
+  - rm -rf cmake-3.1.1-Linux-x86_64.tar.gz cmake-3.1.1-Linux-x86_64
 
-  # Qt and VTK
-  - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
+  # Qt
+  - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install -qq qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
+
+  # VTK
   - travis_retry wget http://www.opengeosys.org/images/dev/vtk-6.1.0.tar.gz
-  - tar -xf vtk-6.1.0.tar.gz
+  - tar -xzf vtk-6.1.0.tar.gz
+  - sudo cp -fR VTK-Install/* /usr
+  - rm -rf vtk-6.1.0.tar.gz VTK-Install
 
   # PetSc
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install libpetsc3.4.2 libpetsc3.4.2-dev; fi
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install -qq libpetsc3.4.2 libpetsc3.4.2-dev; fi
 
 script:
-  - "export PATH=$PATH:`pwd`/cmake/bin && mkdir build && cd build && cmake $CMAKE_ARGS .. && make"
+  - mkdir build
+  - cd build
+  - cmake $CMAKE_ARGS ..
+  - make
   - ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3
-  # PetSc
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
 notifications:
