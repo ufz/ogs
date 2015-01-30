@@ -42,10 +42,10 @@
 namespace MeshLib {
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
-                                                     const double origin[3],
-                                                     const double scalingFactor,
-													 MeshElemType elem_type,
-													 UseIntensityAs intensity_type)
+                                                  const double origin[3],
+                                                  const double scalingFactor,
+                                                  MeshElemType elem_type,
+                                                  UseIntensityAs intensity_type)
 {
 	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
@@ -111,12 +111,12 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
-													 const double origin[3],
-													 const size_t imgHeight,
-													 const size_t imgWidth,
-													 const double &scalingFactor,
-													 MeshElemType elem_type,
-													UseIntensityAs intensity_type)
+                                                  const double origin[3],
+                                                  const size_t imgHeight,
+                                                  const size_t imgWidth,
+                                                  const double &scalingFactor,
+                                                  MeshElemType elem_type,
+                                                  UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -166,14 +166,14 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
 }
 
 MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
-												  int* node_idx_map,
-												  const bool* visNodes,
-												  const double origin[3],
-                                                  const size_t &imgHeight,
-												  const size_t &imgWidth,
-                                                  const double &scalingFactor,
-										 		  MeshElemType elem_type,
-												  UseIntensityAs intensity_type)
+                                               int* node_idx_map,
+                                               const bool* visNodes,
+                                               const double origin[3],
+                                               const size_t &imgHeight,
+                                               const size_t &imgWidth,
+                                               const double &scalingFactor,
+                                               MeshElemType elem_type,
+                                               UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -357,7 +357,6 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 	}
 
 	return new MeshLib::Mesh(mesh_name, nodes, elements);
-
 }
 
 double VtkMeshConverter::getExistingValue(const double* img, size_t length)

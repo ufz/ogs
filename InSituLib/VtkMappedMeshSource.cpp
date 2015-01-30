@@ -30,7 +30,7 @@
 
 #include "VtkMappedMesh.h"
 #include "VtkMeshNodalCoordinatesTemplate.h"
-#include "VtkMappedElementDataArrayTemplate.h"
+#include "VtkMappedPropertyVectorTemplate.h"
 
 namespace InSituLib {
 
@@ -104,7 +104,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 		if(!propertyVector)
 			continue;
 
-		vtkNew<VtkMappedElementDataArrayTemplate<double> > dataArray;
+		vtkNew<VtkMappedPropertyVectorTemplate<double> > dataArray;
 		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<double> &>(*propertyVector));
 		dataArray->SetName(it->c_str());
 
@@ -121,7 +121,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 		if(!propertyVector)
 			continue;
 
-		vtkNew<VtkMappedElementDataArrayTemplate<int> > dataArray;
+		vtkNew<VtkMappedPropertyVectorTemplate<int> > dataArray;
 		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<int> &>(*propertyVector));
 		dataArray->SetName(it->c_str());
 

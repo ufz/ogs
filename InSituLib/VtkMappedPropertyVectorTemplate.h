@@ -25,13 +25,13 @@
 namespace InSituLib {
 
 template <class Scalar>
-class VtkMappedElementDataArrayTemplate:
-	public vtkTypeTemplate<VtkMappedElementDataArrayTemplate<Scalar>,
+class VtkMappedPropertyVectorTemplate :
+	public vtkTypeTemplate<VtkMappedPropertyVectorTemplate<Scalar>,
 	                       vtkMappedDataArray<Scalar> >
 {
 public:
-	vtkMappedDataArrayNewInstanceMacro(VtkMappedElementDataArrayTemplate<Scalar>)
-	static VtkMappedElementDataArrayTemplate *New();
+	vtkMappedDataArrayNewInstanceMacro(VtkMappedPropertyVectorTemplate<Scalar>)
+	static VtkMappedPropertyVectorTemplate *New();
 	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
 	// Description:
@@ -93,16 +93,16 @@ public:
 	void InsertValue(vtkIdType idx, Scalar v);
 
 protected:
-	VtkMappedElementDataArrayTemplate();
-	~VtkMappedElementDataArrayTemplate();
+	VtkMappedPropertyVectorTemplate();
+	~VtkMappedPropertyVectorTemplate();
 
 	MeshLib::PropertyVector<Scalar> * _propertyVector;
 
 private:
-	VtkMappedElementDataArrayTemplate(
-		const VtkMappedElementDataArrayTemplate &); // Not implemented.
+	VtkMappedPropertyVectorTemplate(
+		const VtkMappedPropertyVectorTemplate &); // Not implemented.
 	void operator=(
-		const VtkMappedElementDataArrayTemplate &); // Not implemented.
+		const VtkMappedPropertyVectorTemplate &); // Not implemented.
 
 	vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
 	double TempDouble;
@@ -113,6 +113,6 @@ private:
 
 } // end namespace InSituLib
 
-#include "VtkMappedElementDataArrayTemplate-impl.h"
+#include "VtkMappedPropertyVectorTemplate-impl.h"
 
 #endif // VTKMAPPEDELEMENTDATAARRAY_H_
