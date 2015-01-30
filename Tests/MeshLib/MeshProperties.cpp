@@ -39,6 +39,22 @@ public:
 };
 std::size_t const MeshLibMeshProperties::mesh_size;
 
+TEST_F(MeshLibMeshProperties, PropertyVectorTestMetaData)
+{
+	ASSERT_TRUE(mesh != nullptr);
+
+	std::string const prop_name("TestProperty");
+	boost::optional<MeshLib::PropertyVector<double> &> p(
+		mesh->getProperties().createNewPropertyVector<double>(prop_name,
+			MeshLib::MeshItemType::Cell)
+	);
+
+	ASSERT_EQ((*p).getPropertyName().compare(prop_name), 0u);
+	ASSERT_EQ((*p).getMeshItemType(), MeshLib::MeshItemType::Cell);
+	ASSERT_EQ((*p).getTupleSize(), 1u);
+}
+
+
 TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
