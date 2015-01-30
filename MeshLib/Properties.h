@@ -154,13 +154,12 @@ public:
 				return boost::optional<PropertyVector<T> const&>();
 			}
 		} else {
-			ERR("A property with the specified name and MeshItemType is not available.");
+			ERR("A property with the specified name is not available.");
 			return boost::optional<PropertyVector<T> const&>();
 		}
 	}
 
-	void removeProperty(std::string const& name,
-		MeshItemType mesh_item_type)
+	void removeProperty(std::string const& name)
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
