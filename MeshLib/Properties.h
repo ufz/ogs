@@ -186,6 +186,14 @@ public:
 		return true;
 	}
 
+	std::vector<std::string> getPropertyNames() const
+	{
+		std::vector<std::string> names;
+		for (auto it(_properties.cbegin()); it != _properties.cend(); it++)
+			names.push_back(it->first);
+		return names;
+	}
+
 private:
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
