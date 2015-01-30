@@ -35,10 +35,9 @@ public:
 	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
 	// Description:
-	// Set the raw scalar arrays for the coordinate set. This class takes
-	// ownership of the arrays and deletes them with delete[].
-	void SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples);
-	void SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples, bool save);
+	// Set the raw scalar arrays for the coordinate set.
+	void SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector);
+	void SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector, bool save);
 
 	// Reimplemented virtuals -- see superclasses for descriptions:
 	void Initialize();
@@ -97,8 +96,7 @@ protected:
 	VtkMappedElementDataArrayTemplate();
 	~VtkMappedElementDataArrayTemplate();
 
-	//Scalar *Array;
-	std::vector<MeshLib::Element*> const * _elements;
+	MeshLib::PropertyVector<Scalar> * _propertyVector;
 
 private:
 	VtkMappedElementDataArrayTemplate(
