@@ -114,6 +114,23 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 			output->GetCellData()->AddArray(dataArray.GetPointer());
 	}
 
+	// int
+	for(std::vector<std::string>::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it)
+	{
+		boost::optional<MeshLib::PropertyVector<int> const &> propertyVector(properties.getPropertyVector<int>(*it));
+		if(!propertyVector)
+			continue;
+
+		vtkNew<VtkMappedElementDataArrayTemplate<int> > dataArray;
+		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<int> &>(*propertyVector));
+		dataArray->SetName(it->c_str());
+
+		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+			output->GetPointData()->AddArray(dataArray.GetPointer());
+		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+			output->GetCellData()->AddArray(dataArray.GetPointer());
+	}
+
 	return 1;
 }
 

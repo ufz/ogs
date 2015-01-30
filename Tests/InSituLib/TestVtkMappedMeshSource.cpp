@@ -59,6 +59,22 @@ class InSituMesh : public ::testing::Test
 		);
 		(*cell_double_properties).resize(mesh->getNElements());
 		std::iota((*cell_double_properties).begin(), (*cell_double_properties).end(), 1);
+
+		std::string const point_int_prop_name("PointIntProperty");
+		boost::optional<MeshLib::PropertyVector<int> &> point_int_properties(
+			mesh->getProperties().createNewPropertyVector<int>(point_int_prop_name,
+				MeshLib::MeshItemType::Node)
+		);
+		(*point_int_properties).resize(mesh->getNNodes());
+		std::iota((*point_int_properties).begin(), (*point_int_properties).end(), 1);
+
+		std::string const cell_int_prop_name("CellIntProperty");
+		boost::optional<MeshLib::PropertyVector<int> &> cell_int_properties(
+			mesh->getProperties().createNewPropertyVector<int>(cell_int_prop_name,
+				MeshLib::MeshItemType::Cell)
+		);
+		(*cell_int_properties).resize(mesh->getNElements());
+		std::iota((*cell_int_properties).begin(), (*cell_int_properties).end(), 1);
 	}
 
 	~InSituMesh()
@@ -114,7 +130,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
 	ASSERT_EQ(subdivisions*subdivisions*subdivisions, output->GetNumberOfCells());
 
-	// Point data array
+	// Point data arrays
 	vtkDataArray* pointDoubleArray = output->GetPointData()->GetScalars("PointDoubleProperty");
 	ASSERT_EQ(pointDoubleArray->GetSize(), mesh->getNNodes());
 	ASSERT_EQ(pointDoubleArray->GetComponent(0, 0), 1.0);
@@ -122,13 +138,27 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	ASSERT_EQ(range[0], 1.0);
 	ASSERT_EQ(range[1], 1.0 + mesh->getNNodes() - 1.0);
 
-	// Cell data array
+	vtkDataArray* pointIntArray = output->GetPointData()->GetScalars("PointIntProperty");
+	ASSERT_EQ(pointIntArray->GetSize(), mesh->getNNodes());
+	ASSERT_EQ(pointIntArray->GetComponent(0, 0), 1.0);
+	range = pointIntArray->GetRange(0);
+	ASSERT_EQ(range[0], 1.0);
+	ASSERT_EQ(range[1], 1 + mesh->getNNodes() - 1);
+
+	// Cell data arrays
 	vtkDataArray* cellDoubleArray = output->GetCellData()->GetScalars("CellDoubleProperty");
 	ASSERT_EQ(cellDoubleArray->GetSize(), mesh->getNElements());
 	ASSERT_EQ(cellDoubleArray->GetComponent(0, 0), 1.0);
-	double* range2 = cellDoubleArray->GetRange(0);
-	ASSERT_EQ(range2[0], 1.0);
-	ASSERT_EQ(range2[1], 1.0 + mesh->getNElements() - 1.0);
+	range = cellDoubleArray->GetRange(0);
+	ASSERT_EQ(range[0], 1.0);
+	ASSERT_EQ(range[1], 1.0 + mesh->getNElements() - 1.0);
+
+	vtkDataArray* cellIntArray = output->GetCellData()->GetScalars("CellIntProperty");
+	ASSERT_EQ(cellIntArray->GetSize(), mesh->getNElements());
+	ASSERT_EQ(cellIntArray->GetComponent(0, 0), 1.0);
+	range = cellIntArray->GetRange(0);
+	ASSERT_EQ(range[0], 1.0);
+	ASSERT_EQ(range[1], 1 + mesh->getNElements() - 1);
 
 	// -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
 	// atm vtkXMLWriter::Appended does not work, see http://www.paraview.org/Bug/view.php?id=13382
@@ -152,7 +182,9 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 			ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
 			ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
 			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointDoubleProperty")->GetNumberOfTuples(), pointDoubleArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointIntProperty")->GetNumberOfTuples(), pointIntArray->GetNumberOfTuples());
 			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellDoubleProperty")->GetNumberOfTuples(), cellDoubleArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellIntProperty")->GetNumberOfTuples(), cellIntArray->GetNumberOfTuples());
 
 			// Both OGS meshes should be identical
 			MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);

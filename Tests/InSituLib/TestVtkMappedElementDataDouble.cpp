@@ -23,7 +23,7 @@
 
 #include "VtkMappedElementDataArrayTemplate.h"
 
-TEST(InSituLibDoubleArray, Init)
+TEST(InSituLibMappedArrays, Double)
 {
 	const size_t mesh_size = 5;
 	const double length = 1.0;
@@ -46,8 +46,41 @@ TEST(InSituLibDoubleArray, Init)
 	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
 	ASSERT_EQ(dataArray->GetNumberOfTuples(), size);
 
-	// First array entry
 	ASSERT_EQ(dataArray->GetValueReference(0), 1.0);
+	double* range = dataArray->GetRange(0);
+	ASSERT_EQ(range[0], 1.0);
+	ASSERT_EQ(range[1], 1.0 + mesh->getNElements() - 1.0);
+
+	delete mesh;
+}
+
+TEST(InSituLibMappedArrays, Int)
+{
+	const size_t mesh_size = 5;
+	const double length = 1.0;
+
+	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+
+	ASSERT_TRUE(mesh != nullptr);
+	const std::size_t size(mesh_size*mesh_size*mesh_size);
+
+	std::string const prop_name("TestProperty");
+	boost::optional<MeshLib::PropertyVector<int> &> properties(
+		mesh->getProperties().createNewPropertyVector<int>(prop_name,
+			MeshLib::MeshItemType::Cell));
+	(*properties).resize(size);
+	std::iota((*properties).begin(), (*properties).end(), 1);
+
+	vtkNew<InSituLib::VtkMappedElementDataArrayTemplate<int> > dataArray;
+	dataArray->SetPropertyVector(*properties);
+
+	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
+	ASSERT_EQ(dataArray->GetNumberOfTuples(), size);
+
+	ASSERT_EQ(dataArray->GetValueReference(0), 1);
+	double* range = dataArray->GetRange(0);
+	ASSERT_EQ(range[0], 1);
+	ASSERT_EQ(range[1], 1 + mesh->getNElements() - 1);
 
 	delete mesh;
 }
