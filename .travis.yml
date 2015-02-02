@@ -55,7 +55,8 @@ script:
   - cd build
   - cmake $CMAKE_ARGS ..
   - make
-  - ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3
+  - if [[ "$CASE" != "CLI_PETSC" ]]; then ./bin/testrunner --gtest_filter=-MPITest* --gtest_shuffle --gtest_repeat=3; fi
+  # PetSc
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
 notifications:
