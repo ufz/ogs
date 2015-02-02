@@ -16,7 +16,7 @@
  */
 
 #ifdef USE_PETSC
-#include <petscksp.h>
+#include <petsc.h>
 #endif
 
 // ThirdParty/logog
@@ -33,7 +33,7 @@
 #include "Legacy/MeshIO.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 #include "readMeshFromFile.h"
-//
+// FileIO : for reading partitioned mesh.
 #ifdef USE_PETSC
 #include "MPI_IO/NodePartitionedMeshReader.h"
 #include "MeshLib/NodePartitionedMesh.h"
