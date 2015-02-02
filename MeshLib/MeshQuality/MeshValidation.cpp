@@ -176,9 +176,9 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 	return (--current_surface_id); 
 }
 
-void MeshValidation::trackSurface(MeshLib::Element const*const element, std::vector<unsigned> &sfc_idx, unsigned const current_index)
+void MeshValidation::trackSurface(MeshLib::Element const* element, std::vector<unsigned> &sfc_idx, unsigned const current_index)
 {
-	std::stack<MeshLib::Element const*const> elem_stack;
+	std::stack<MeshLib::Element const*> elem_stack;
 	elem_stack.push(element);
 	while (!elem_stack.empty())
 	{
@@ -188,7 +188,7 @@ void MeshValidation::trackSurface(MeshLib::Element const*const element, std::vec
 		std::size_t const n_neighbors (elem->getNNeighbors());
 		for (std::size_t i=0; i<n_neighbors; ++i)
 		{
-			MeshLib::Element const*const neighbor (elem->getNeighbor(i));
+			MeshLib::Element const* neighbor (elem->getNeighbor(i));
 			if ( neighbor != nullptr && sfc_idx[neighbor->getID()] == std::numeric_limits<unsigned>::max())
 				elem_stack.push(neighbor);
 		}
