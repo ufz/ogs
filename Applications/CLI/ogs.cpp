@@ -13,6 +13,14 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif
+
+#ifdef USE_PETSC
+#include <petsc.h>
+#endif
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -77,6 +85,15 @@ int main(int argc, char *argv[])
 {
 	using ConfigTree = boost::property_tree::ptree;
 
+#ifdef USE_MPI
+	MPI_Init(&argc, &argv);
+#endif
+
+#ifdef USE_PETSC
+	char help[] = "ogs6 with PETSc \n";
+	PetscInitialize(&argc, &argv, nullptr, help);
+#endif
+
 	// logog
 	LOGOG_INITIALIZE();
 	BaseLib::LogogSimpleFormatter *fmt(new BaseLib::LogogSimpleFormatter);
@@ -134,6 +151,18 @@ int main(int argc, char *argv[])
 	std::string const output_file_name(project.getOutputFilePrefix() + ".vtu");
 
 	solveProcesses(project);
+
+#ifdef USE_PETSC
+	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+	{
+		(*p_it)->releaseEquationMemory();
+	}
+	PetscFinalize();
+#endif
+
+#ifdef USE_MPI
+	MPI_Finalize();
+#endif
 
 	delete fmt;
 	delete logog_cout;
