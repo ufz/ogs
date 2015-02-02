@@ -10,8 +10,6 @@
 #ifndef EDGERETURN_H_
 #define EDGERETURN_H_
 
-#include "logog/include/logog.hpp"
-
 namespace MeshLib
 {
 
