@@ -14,6 +14,10 @@
 
 #include "MeshLib/MeshSubsets.h"
 
+#ifdef USE_PETSC
+#include "MeshLib/NodePartitionedMesh.h"
+#endif
+
 #include "MeshComponentMap.h"
 
 namespace AssemblerLib
@@ -24,6 +28,72 @@ using namespace detail;
 GlobalIndexType const MeshComponentMap::nop =
     std::numeric_limits<GlobalIndexType>::max();
 
+#ifdef USE_PETSC
+MeshComponentMap::MeshComponentMap(
+    const std::vector<MeshLib::MeshSubsets*> &components, ComponentOrder order)
+{
+    // construct dict (and here we number global_index by component type)
+    std::size_t global_index_offset = 0;
+    std::size_t cell_index = 0;
+    std::size_t comp_id = 0;
+
+    _num_global_dof = 0;
+    for (auto c = components.cbegin(); c != components.cend(); ++c)
+    {
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        {
+            MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
+            std::size_t const mesh_id = mesh_subset.getMeshID();
+            const MeshLib::NodePartitionedMesh &mesh
+                   = static_cast<const MeshLib::NodePartitionedMesh&>(mesh_subset.getMesh());
+
+            if (order == ComponentOrder::BY_LOCATION)
+            {
+                // mesh items are ordered first by node, cell, ....
+                for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
+                {
+                    const GlobalIndexType global_id = static_cast<GlobalIndexType>(components.size()
+                                               * mesh.getGlobalNodeID(j) + comp_id);
+                    const GlobalIndexType signed_global_id = mesh.isGhostNode( mesh.getNode(j)->getID() )
+                                                    ? -global_id : global_id;
+                    _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
+                                comp_id, signed_global_id) );
+                }
+
+                // Note: If the cells are really used (e.g. for the mixed FEM), the following global cell index must be reconsidered
+                // according to the employed cell indexing method.
+                for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
+                    _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
+                                 comp_id, cell_index++));
+            }
+            else
+            {
+                // mesh items are ordered first by node, cell, ....
+                for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
+                {
+                    const GlobalIndexType global_id = static_cast<GlobalIndexType>(global_index_offset
+                                                          + mesh.getGlobalNodeID(j) );
+                    const GlobalIndexType signed_global_id = mesh.isGhostNode( mesh.getNode(j)->getID() )
+                                                    ? -global_id : global_id;
+                    _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
+                                comp_id, signed_global_id) );
+                }
+
+                // Note: If the cells are really used (e.g. for the mixed FEM), the following global cell index must be reconsidered
+                // according to the employed cell indexing method.
+                for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
+                    _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
+                                 comp_id, cell_index++));
+
+                global_index_offset += mesh.getNGlobalNodes(); // Include base nodes. Should be considered again for a general case.
+            }
+
+            _num_global_dof += mesh.getNGlobalNodes();
+       }
+        comp_id++;
+    }
+}
+#else
 MeshComponentMap::MeshComponentMap(
     const std::vector<MeshLib::MeshSubsets*> &components, ComponentOrder order)
 {
@@ -48,6 +118,7 @@ MeshComponentMap::MeshComponentMap(
     if (order == ComponentOrder::BY_LOCATION)
         renumberByLocation();
 }
+#endif // end of USE_PETSC
 
 MeshComponentMap
 MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components) const

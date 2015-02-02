@@ -39,17 +39,6 @@ public:
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:
-    /* \todo Extend the constructor for parallel meshes.
-    LocalToGlobalIndexMap(
-        std::vector<LineIndex> const& rows,
-        std::vector<LineIndex> const & columns)
-        : _rows(rows), _columns(columns)
-    {
-        assert(_rows.size() == _columns.size());
-        assert(!_rows.empty());
-    }
-    */
-
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
@@ -111,12 +100,12 @@ private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
-    /// _rows contains for each element a vector of global indices to
-    /// node/element process variables.
+    /// Vector contains for each element a vector of global row/or entry indices
+    /// in the global stiffness matrix or vector
     std::vector<LineIndex> _rows;
 
-    /// For non-parallel implementations the columns are equal to the rows.
-    /// \todo This is to be overriden by any parallel implementation.
+    /// Vector alias to that contains for each element a vector of global column
+    /// indices in the global stiffness matrix
     std::vector<LineIndex> const& _columns = _rows;
 
 #ifndef NDEBUG
