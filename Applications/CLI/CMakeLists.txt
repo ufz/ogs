@@ -23,7 +23,9 @@ if(OGS_USE_PETSC)
     target_link_libraries(ogs ${PETSC_LIBRARIES})
 endif()
 
-include(Tests.cmake)
+if(NOT OGS_USE_MPI)
+    include(Tests.cmake)
+endif()
 
 ####################
 ### Installation ###
