@@ -15,7 +15,14 @@
 
 #include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/algorithm/string/erase.hpp>
+
 #include "logog/include/logog.hpp"
+
+#ifdef USE_PETSC
+#include "MeshLib/NodePartitionedMesh.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
+#endif
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
@@ -33,6 +40,7 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "UniformDirichletBoundaryCondition.h"
+
 #include "GroundwaterFlowFEM.h"
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
@@ -208,15 +216,28 @@ public:
         _local_to_global_index_map.reset(
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
 
+#ifdef USE_PETSC
+        DBUG("Allocate global matrix, vectors, and linear solver.");
+        MathLib::PETScMatrixOption mat_opt;
+        const MeshLib::NodePartitionedMesh& pmesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+        mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
+        mat_opt.o_nz = mat_opt.d_nz;
+        const std::size_t num_unknowns =
+            _local_to_global_index_map->dofSizeGlobal();
+        _A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
+#else
         DBUG("Compute sparsity pattern");
         _node_adjacency_table.createTable(_mesh.getNodes());
 
         DBUG("Allocate global matrix, vectors, and linear solver.");
-        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
-        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+        const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
+        _A.reset(_global_setup.createMatrix(num_unknowns));
+#endif
 
+        _x.reset(_global_setup.createVector(num_unknowns));
+        _rhs.reset(_global_setup.createVector(num_unknowns));
+        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A, "gw_"));
 
         setInitialConditions(*_hydraulic_head);
 
@@ -256,6 +277,25 @@ public:
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
 
+#ifdef USE_PETSC
+        std::vector<PetscInt> dbc_pos;
+        std::vector<PetscScalar> dbc_value;
+        auto const& mesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+
+        for (std::size_t i = 0; i < _dirichlet_bc.global_ids.size(); i++)
+        {
+            if (mesh.isGhostNode(_dirichlet_bc.global_ids[i]))
+                continue;
+
+            dbc_pos.push_back(static_cast<PetscInt>(
+                mesh.getGlobalNodeID(_dirichlet_bc.global_ids[i])));
+            dbc_value.push_back(
+                static_cast<PetscScalar>(_dirichlet_bc.values[i]));
+        }
+        MathLib::applyKnownSolution(*_A, *_rhs, *_x, dbc_pos, dbc_value);
+#else
+
         // Call global assembler for each Neumann boundary local assembler.
         for (auto bc : _neumann_bcs)
             bc->integrate(_global_setup);
@@ -263,6 +303,7 @@ public:
         // Apply known values from the Dirichlet boundary conditions.
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
+#endif
         _linearSolver->solve(*_rhs, *_x);
 
         return true;
@@ -271,6 +312,27 @@ public:
     void post(std::string const& file_name) override
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
+
+#ifdef USE_PETSC // Note: this is only a test
+
+        std::vector<PetscScalar>  u(_x->size());
+        _x->getGlobalVector(&u[0]);
+
+        int rank;
+        MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+        if(rank == 0)
+        {
+            std::string output_file_name = file_name;
+            boost::erase_last(output_file_name, ".vtu");
+            output_file_name.append(".dat");
+            std::ofstream os(output_file_name);
+            os << "SCALARS HEAD double 1"<<endl;
+            os << "LOOKUP_TABLE default"<< endl;
+            for (std::size_t i = 0; i < u.size(); ++i)
+                 os << u[i] << "\n";
+            os.close();
+        }
+#else
         std::string const property_name = "Result";
 
         // Get or create a property vector for results.
@@ -296,6 +358,7 @@ public:
         // Write output file
         FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
         vtu_interface.writeToFile(file_name);
+#endif
     }
 
     void postTimestep(std::string const& file_name, const unsigned /*timestep*/) override
