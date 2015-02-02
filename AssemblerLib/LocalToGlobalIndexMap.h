@@ -71,6 +71,12 @@ public:
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
 
+    /// Returns total number of global degrees of freedom for DDC.
+    std::size_t dofSizeGlobal() const
+    {
+        return _mesh_component_map.getNGlobalUnknowns();
+    }
+
     std::size_t size() const;
 
     RowColumnIndices operator[](std::size_t const mesh_item_id) const;

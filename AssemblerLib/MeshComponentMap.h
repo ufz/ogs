@@ -115,6 +115,12 @@ public:
     std::vector<GlobalIndexType> getGlobalIndicesByComponent(
         const std::vector<Location>& ls) const;
 
+    /// Get the number of global unknowns.
+    std::size_t getNGlobalUnknowns() const
+    {
+        return _num_global_dof;
+    }
+
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
     static GlobalIndexType const nop;
@@ -150,6 +156,9 @@ private:
 
 private:
     detail::ComponentGlobalIndexDict _dict;
+
+    /// Number of global unknowns.
+    std::size_t _num_global_dof = 0;
 };
 
 }   // namespace AssemblerLib
