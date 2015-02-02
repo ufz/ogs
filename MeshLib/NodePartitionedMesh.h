@@ -16,16 +16,15 @@
 #ifndef NODE_PARTITIONED_MESH_H_
 #define NODE_PARTITIONED_MESH_H_
 
-#include <vector>
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "Mesh.h"
+#include "Node.h"
 
 namespace MeshLib
 {
-class Node;
-class Element;
-
 /// A subdomain mesh.
 class NodePartitionedMesh : public Mesh
 {
@@ -119,6 +118,19 @@ class NodePartitionedMesh : public Mesh
         std::size_t getNNonGhostElements() const
         {
             return _n_nghost_elem;
+        }
+
+        /// Get the maximum number of connected nodes to node.
+        std::size_t getMaximumNConnectedNodesToNode() const
+        {
+            std::vector<Node *>::const_iterator it_max_ncn = std::max_element(
+                _nodes.cbegin(), _nodes.cend(),
+                [](Node const *const node_a, Node const *const node_b)
+                {
+                    return (node_a->getConnectedNodes().size() <
+                            node_b->getConnectedNodes().size());
+                });
+            return (*it_max_ncn)->getConnectedNodes().size() + 1;
         }
 
     private:
