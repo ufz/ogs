@@ -14,14 +14,7 @@
 
 #include "SurfaceExtractionDialog.h"
 
-#include "MeshLib/MeshSurfaceExtraction.h"
-
-#include <QFileDialog>
-#include <QSettings>
 #include <QDoubleValidator>
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
 
 
 SurfaceExtractionDialog::SurfaceExtractionDialog(QDialog* parent)
