@@ -106,10 +106,8 @@ int main(int argc, char *argv[])
 	else
 		geo_objects.appendSurfaceVec(*new_sfc, geo_names[0]);
 	std::string const surface_name (polyline_name + "_surface");
-	std::size_t id (0);
-	sfc_vec = geo_objects.getSurfaceVecObj(geo_names[0]);
-	sfc_vec->getElementIDByName(surface_name, id);
-	sfc_vec->setNameForElement(id, surface_name);
+	std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_names[0])->size() - 1;
+	sfc_vec->setNameForElement(sfc_id, surface_name);
 	
 	// write new file
 	xml.setNameForExport(geo_names[0]);
