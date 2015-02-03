@@ -25,6 +25,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
+#include "SurfaceExtractionDialog.h"
 #include "MshItem.h"
 #include "MshModel.h"
 #include "OGSError.h"
@@ -120,7 +121,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QAction* tetgenExportAction (nullptr);
 		if (mesh_dim==3)
 		{
-			surfaceMeshAction = menu.addAction("Extract surface");
+			surfaceMeshAction = menu.addAction("Extract surface...");
 			tetgenExportAction = menu.addAction("Export to TetGen...");
 		}
 		QAction* mesh2geoAction (nullptr);
@@ -187,8 +188,17 @@ void MshView::extractSurfaceMesh()
 		return;
 
 	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
-	const MathLib::Vector3 dir(0, 0, -1);
-	static_cast<MshModel*>(this->model())->addMesh( MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 89) );
+	SurfaceExtractionDialog dlg;
+	if (dlg.exec() != QDialog::Accepted)
+		return;
+	
+	MathLib::Vector3 const& dir (dlg.getNormal());
+	int const tolerance (dlg.getTolerance());
+	MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
+	if (sfc_mesh != nullptr)
+		static_cast<MshModel*>(this->model())->addMesh(sfc_mesh);
+	else
+		OGSError::box(" No surfaces found to extract\n using the specified parameters.");
 }
 
 void MshView::convertMeshToGeometry()
