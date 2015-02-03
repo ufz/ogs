@@ -196,18 +196,18 @@ bool Polyline::isClosed() const
 bool Polyline::isCoplanar() const
 {
 	std::size_t const n_points (_ply_pnt_ids.size());
-	if (n_points > 3)
+	if (n_points < 4)
+		return true;
+
+	GeoLib::Point const& p0 (*this->getPoint(0));
+	GeoLib::Point const& p1 (*this->getPoint(1));
+	GeoLib::Point const& p2 (*this->getPoint(2));
+	for (std::size_t i=3; i<n_points; ++i)
 	{
-		GeoLib::Point const& p0 (*this->getPoint(0));
-		GeoLib::Point const& p1 (*this->getPoint(1));
-		GeoLib::Point const& p2 (*this->getPoint(2));
-		for (std::size_t i=3; i<n_points; ++i)
+		if (!GeoLib::isCoplanar(p0, p1, p2, *this->getPoint(i)))
 		{
-			if (!GeoLib::isCoplanar(p0, p1, p2, *this->getPoint(i)))
-			{
-				ERR ("Point %d is not coplanar to the first three points of the line.", i);
-				return false;
-			}
+			ERR ("Point %d is not coplanar to the first three points of the line.", i);
+			return false;
 		}
 	}
 	return true;

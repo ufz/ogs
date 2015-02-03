@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 
 	TCLAP::CmdLine cmd("Triangulates the specified polyline in the given geometry file.", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string>  input_arg("i", "input",  "GML input file (*.gml)", true, "", "string");
-	TCLAP::ValueArg<std::string>   name_arg("n", "name",   "Name of polyline in given file", true, "", "string");
 	TCLAP::ValueArg<std::string> output_arg("o", "output", "GML output file (*.gml)", true, "", "string");
+	TCLAP::ValueArg<std::string>   name_arg("n", "name",   "Name of polyline in given file", true, "", "string");
 	cmd.add( input_arg );
 	cmd.add( name_arg );
 	cmd.add( output_arg );
@@ -105,10 +105,18 @@ int main(int argc, char *argv[])
 		geo_objects.addSurfaceVec(new_sfc, geo_names[0]);
 	else
 		geo_objects.appendSurfaceVec(*new_sfc, geo_names[0]);
-	std::string const surface_name (polyline_name + "_surface");
 	std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_names[0])->size() - 1;
-	sfc_vec->setNameForElement(sfc_id, surface_name);
-	
+	std::string const surface_name (polyline_name + "_surface");
+	for (std::size_t i=1;;++i)
+	{
+		std::string const new_surface_name = (i>1) ? (surface_name + std::to_string(i)) : surface_name;
+		if (sfc_vec->getElementByName(new_surface_name) == nullptr)
+		{
+			sfc_vec->setNameForElement(sfc_id, new_surface_name);
+			break;
+		}
+	}
+
 	// write new file
 	xml.setNameForExport(geo_names[0]);
 	xml.writeToFile(output_arg.getValue());
