@@ -35,7 +35,7 @@
 #include "readMeshFromFile.h"
 // FileIO : for reading partitioned mesh.
 #ifdef USE_PETSC
-#include "MPI_IO/NodePartitionedMeshReader.h"
+#include "FileIO/MPI_IO/NodePartitionedMeshReader.h"
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
@@ -55,9 +55,9 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
 		return VtuInterface::readVTUFile(file_name);
-#endif
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;
+#endif
 }
 } // end namespace FileIO
