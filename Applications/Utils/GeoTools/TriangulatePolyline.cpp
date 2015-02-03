@@ -18,7 +18,7 @@
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
-#include "FileIO/XmlIO/QT/XmlGmlInterface.h"
+#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 			return 1;
 	}
 
-		// create surface
+	// create surface
 	INFO ("Triangulating surface...");
 	std::vector<GeoLib::Surface*> *new_sfc = new std::vector<GeoLib::Surface*>;
 	new_sfc->push_back(GeoLib::Surface::createSurface(*line));
