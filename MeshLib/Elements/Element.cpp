@@ -90,19 +90,6 @@ MeshLib::Node Element::getCenterOfGravity() const
 	return center;
 }
 
-const Element* Element::getEdge(unsigned i) const
-{
-	if (i < getNEdges())
-	{
-		Node** nodes = new Node*[2];
-		nodes[0] = const_cast<Node*>(getEdgeNode(i,0));
-		nodes[1] = const_cast<Node*>(getEdgeNode(i,1));
-		return new Line(nodes);
-	}
-	ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
-	return nullptr;
-}
-
 void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 {
 	min = std::numeric_limits<double>::max();
