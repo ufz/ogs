@@ -54,6 +54,8 @@ public:
 
 	/**
 	 * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for 3D meshes.
+	 * Note, that this method also returns inner boundaries and might give unexpected results
+	 * when the mesh geometry is not strict (e.g. more than two triangles sharing an edge).
 	 * \param mesh The original mesh of dimension d
 	 * \return     A mesh of dimension (d-1) representing the boundary of the mesh.
 	 */

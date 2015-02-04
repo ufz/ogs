@@ -161,12 +161,7 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 
 	while (it != sfc_idx.cend())
 	{
-		int const idx = static_cast<int>(std::distance(sfc_idx.cbegin(), it));
-		if (idx<0 || idx>elements.size())
-		{
-			ERR ("Illegal element index found");
-			return std::numeric_limits<unsigned>::max();
-		}
+		std::size_t const idx = static_cast<std::size_t>(std::distance(sfc_idx.cbegin(), it));
 		trackSurface(elements[idx], sfc_idx, current_surface_id++);
 		it = std::find(sfc_idx.cbegin(), sfc_idx.cend(), std::numeric_limits<unsigned>::max());
 	}
