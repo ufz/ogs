@@ -16,7 +16,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
 	)
 endforeach()
 
-foreach(mesh_size 2e4 3e4 4e4 5e4 1e5 1e6)
+foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
 	AddTest(
 		NAME LARGE_GroundWaterFlowProcess_cube_1x1x1_${mesh_size}
 		PATH Elliptic/cube_1x1x1_GroundWaterFlow
@@ -30,7 +30,7 @@ foreach(mesh_size 2e4 3e4 4e4 5e4 1e5 1e6)
 endforeach()
 
 # SQUARE 1x1 GROUNDWATER FLOW TESTS
-foreach(mesh_size 1e0 1e1 1e2 1e3)
+foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
 	AddTest(
 		NAME GroundWaterFlowProcess_square_1x1_${mesh_size}
 		PATH Elliptic/square_1x1_GroundWaterFlow
