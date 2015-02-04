@@ -79,7 +79,6 @@ ADD_CATALYST_DEPENDENCY(OGSFileConverter)
 # Adds useful macros and variables
 # this is needed to correctly link the qt and vtk libraries through target_link_libraries
 INCLUDE( ${QT_USE_FILE} )
-INCLUDE( ${VTK_USE_FILE} )
 
 # Set build configuration types
 # "RelWithDebInfo" and "MinSizeRelease" can be added here
