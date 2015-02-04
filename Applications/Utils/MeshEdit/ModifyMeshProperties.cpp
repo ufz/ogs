@@ -15,7 +15,7 @@
 // FileIO
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/XmlIO/Boost/BoostVtuInterface.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -211,8 +211,7 @@ int main (int argc, char* argv[])
 
 	resetMaterialProperty(*mesh, polygon, new_material_id);
 
-	FileIO::BoostVtuInterface mesh_io;
-	mesh_io.setMesh(mesh);
+	FileIO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile (mesh_out.getValue());
 
 	return 0;
