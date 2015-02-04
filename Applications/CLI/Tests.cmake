@@ -12,7 +12,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
 		WRAPPER time
 		TESTER numdiff
 		DIFF_DATA cube_${mesh_size}_result.dat
-		DATA cube_${mesh_size}.prj cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1_left_right.gml
+		DATA cube_${mesh_size}.prj cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1.gml
 	)
 endforeach(mesh_size)
 
@@ -25,7 +25,7 @@ foreach(mesh_size 2e4 3e4 4e4 5e4 1e5 1e6)
 		WRAPPER time
 		TESTER numdiff
 		DIFF_DATA cube_${mesh_size}_result.dat
-		DATA cube_${mesh_size}.prj cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1_left_right.gml
+		DATA cube_${mesh_size}.prj cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1.gml
 	)
 endforeach(mesh_size)
 
@@ -39,7 +39,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
 		WRAPPER time
 		TESTER numdiff
 		DIFF_DATA square_${mesh_size}_result.dat
-		DATA square_${mesh_size}.prj square_1x1_quad_${mesh_size}.vtu square_1x1_left_right.gml
+		DATA square_${mesh_size}.prj square_1x1_quad_${mesh_size}.vtu square_1x1.gml
 	)
 endforeach(mesh_size)
 
@@ -52,6 +52,6 @@ foreach(mesh_size 1e5 1e6)
 		WRAPPER time
 		TESTER numdiff
 		DIFF_DATA square_${mesh_size}_result.dat
-		DATA square_${mesh_size}.prj square_1x1_quad_${mesh_size}.vtu square_1x1_left_right.gml
+		DATA square_${mesh_size}.prj square_1x1_quad_${mesh_size}.vtu square_1x1.gml
 	)
 endforeach(mesh_size)
