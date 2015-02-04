@@ -112,6 +112,9 @@ public:
 	/** returns true if the polyline is closed */
 	bool isClosed() const;
 
+	/** returns true if the polyline is coplanar */
+	bool isCoplanar() const;
+
 	/**
 	 * Method tests if the given id of a point (within the vector of points the polyline is
 	 * based on) is inside the polyline.
