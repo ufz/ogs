@@ -206,7 +206,7 @@ bool Polyline::isCoplanar() const
 	{
 		if (!GeoLib::isCoplanar(p0, p1, p2, *this->getPoint(i)))
 		{
-			ERR ("Point %d is not coplanar to the first three points of the line.", i);
+			DBUG ("Point %d is not coplanar to the first three points of the line.", i);
 			return false;
 		}
 	}

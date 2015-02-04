@@ -72,13 +72,16 @@ int main(int argc, char *argv[])
 	// check if line exists
 	if (line == nullptr)
 	{
-		ERR ("No polyline found with name \"%s\"", polyline_name.c_str());
+		ERR ("No polyline found with name \"%s\". Aborting...", polyline_name.c_str());
 		return 1;
 	}
 
 	// check if polyline can be triangulated (i.e. closed + coplanar)
 	if (!line->isCoplanar())
+	{
+		ERR ("Polyline is not coplanar, no unambiguous triangulation possible. Aborting...");
 		return 1;
+	}
 
 	if (!line->isClosed())
 	{
