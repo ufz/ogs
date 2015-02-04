@@ -79,9 +79,9 @@ ADD_CATALYST_DEPENDENCY(testrunner)
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
-IF (OGS_USE_PETSC)
+IF (OGS_USE_MPI)
 	ADD_CUSTOM_TARGET(tests
-		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*
+		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*:AssemblerLib*:templated*
 		DEPENDS testrunner
 	)
 	ADD_CUSTOM_TARGET(tests_mpi
