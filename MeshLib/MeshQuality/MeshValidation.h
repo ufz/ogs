@@ -23,6 +23,7 @@
 
 namespace MeshLib {
 	class Mesh;
+	class Element;
 
 /**
  * \brief A collection of methods for testing mesh quality and correctness
@@ -65,7 +66,26 @@ public:
 	static std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
 		ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes);
 
+	/** 
+	 * Tests if holes are located within the mesh. 
+	 * In this context, a hole is a boundary of an element with no neighbor that cannot be reached from
+	 * the actual boundary of the mesh. Examples include a missing triangle in a 2D mesh or a missing 
+	 * Tetrahedron in a 3D mesh.
+	 * Note, that this method does not work when complex 3D structures are build from 2D mesh elements,
+	 * e.g. using the LayeredVolume-class, where more than two 2D elements may share an edge.
+	 * @param mesh The mesh that is tested
+	 * @return The number of holes that have been found.
+	 */
+	static unsigned detectHoles(MeshLib::Mesh const& mesh);
+
 private:
+	/** Finds all surface elements that can be reached from element. All elements that are found in this 
+	 * way are marked in the global sfc_idx vector using the current_index.
+	 * @param element The mesh element from which the search is started
+	 * @param sfc_idx The global index vector notifying to which surface elements belong
+	 * @param current_index The index that all elements reachable from element will be assigned in sfc_idx
+	 */
+	static void trackSurface(MeshLib::Element const*const element, std::vector<unsigned> &sfc_idx, unsigned const current_index);
 
 };
 
