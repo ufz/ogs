@@ -164,7 +164,7 @@ int main (int argc, char* argv[])
 			ERR("Problems to read geometry from file \"%s\".",
 				geometry_fname.getValue().c_str());
 			delete mesh;
-			return -1;
+			return EXIT_FAILURE;
 		}
 	}
 
@@ -182,7 +182,7 @@ int main (int argc, char* argv[])
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
 		delete mesh;
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	// *** get polygon id
@@ -190,7 +190,7 @@ int main (int argc, char* argv[])
 	if (plys->size() <= polygon_id) {
 		ERR("Polyline for id %d not found.", polygon_id);
 		delete mesh;
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	// *** check if the polyline is closed (i.e. is a polygon)
@@ -200,7 +200,7 @@ int main (int argc, char* argv[])
 		ERR("Polyline with id %d is not closed, i.e. does not describe a\
 			region.", polygon_id);
 		delete mesh;
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	std::size_t new_property(new_material_id_arg.getValue());
@@ -212,5 +212,5 @@ int main (int argc, char* argv[])
 	FileIO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile (mesh_out.getValue());
 
-	return 0;
+	return EXIT_SUCCESS;
 }
