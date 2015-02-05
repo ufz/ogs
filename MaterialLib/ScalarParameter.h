@@ -17,13 +17,13 @@
 #include<memory>
 #include<string>
 
-#include<ScalarParameterBase.h>
+#include<ParameterBase.h>
 
 namespace MaterialLib
 {
-/// Density class
+/// Class for scalar material parameter
 template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL> class ScalarParameter
-    : public ScalarParameterBase<T_PARAMETER_TYPE>
+    : public ParameterBase<T_PARAMETER_TYPE>
 {
     public:
 
