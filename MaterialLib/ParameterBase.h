@@ -1,6 +1,7 @@
 /*!
-   \file  ScalarParameterBase.h
-   \brief Declaration of root class for scalar material parameter.
+   \file  ParameterBase.h
+   \brief Declaration of root class for material parameter classes,
+          which holds parameter type only,
 
    \author Wenqing Wang
    \date Jan 2015
@@ -11,13 +12,13 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef SCALAR_PARAMETER_BASE_H_
-#define SCALAR_PARAMETER_BASE_H_
+#ifndef PARAMETER_BASE_H_
+#define PARAMETER_BASE_H_
 
 namespace MaterialLib
 {
-/// Base scalar parameter class.
-template<typename T_PARAMETER_TYPE> class ScalarParameterBase
+/// Root class for material parameter classes.
+template<typename T_PARAMETER_TYPE> class ParameterBase
 {
     public:
         void setType(const T_PARAMETER_TYPE type )
@@ -28,11 +29,6 @@ template<typename T_PARAMETER_TYPE> class ScalarParameterBase
         T_PARAMETER_TYPE getType() const
         {
             return _type;
-        }
-
-        double getValue()
-        {
-            return 0.;
         }
 
     private:

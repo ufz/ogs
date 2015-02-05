@@ -74,7 +74,7 @@ TEST(Material, checkDensity)
     ASSERT_NEAR(expected_air_dens, test0.getMatParameterTest(T, p), 1.e-10);
 
     // Check polymorphy
-    MaterialLib::ScalarParameterBase<DensityType> *den_ptr_base = &air_density;
+    MaterialLib::ParameterBase<DensityType> *den_ptr_base = &air_density;
     if(den_ptr_base->getType() == DensityType::IDEAL_GAS)
     {
         MaterialLib::ScalarParameter<DensityType, IdealGasLaw> *den_ptr
