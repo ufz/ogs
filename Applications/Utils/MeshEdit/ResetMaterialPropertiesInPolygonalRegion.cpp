@@ -103,8 +103,8 @@ std::vector<bool> markNodesOutSideOfPolygon(
 	return outside;
 }
 
-void resetMaterialProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
-	std::size_t new_material_id)
+void resetProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
+	std::size_t new_property)
 {
 	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
 		polygon));
@@ -117,7 +117,7 @@ void resetMaterialProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
 			}
 		}
 		if (elem_out) {
-			elem->setValue(new_material_id);
+			elem->setValue(new_property);
 		}
 	}
 }
@@ -203,11 +203,11 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 
-	std::size_t new_material_id(new_material_id_arg.getValue());
+	std::size_t new_property(new_material_id_arg.getValue());
 
 	GeoLib::Polygon polygon(*((*plys)[polygon_id]));
 
-	resetMaterialProperty(*mesh, polygon, new_material_id);
+	resetProperty(*mesh, polygon, new_property);
 
 	FileIO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile (mesh_out.getValue());
