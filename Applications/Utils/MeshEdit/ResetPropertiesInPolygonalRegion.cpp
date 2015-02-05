@@ -36,7 +36,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 {
 	// 1 copy all points
 	std::vector<GeoLib::Point*> *polygon_pnts(new std::vector<GeoLib::Point*>);
-	for (size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
+	for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
 		polygon_pnts->push_back (new GeoLib::Point (*(polygon_in.getPoint(k))));
 
 	// 2 rotate points
@@ -53,7 +53,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 
 	// 4 create new polygon
 	GeoLib::Polyline rot_polyline(*polygon_pnts);
-	for (size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
+	for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
 		rot_polyline.addPoint (k);
 	rot_polyline.addPoint (0);
 	return GeoLib::Polygon(rot_polyline);
@@ -70,7 +70,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
 	// *** rotate mesh nodes to xy-plane
 	// 1 copy all mesh nodes to GeoLib::Points
 	std::vector<GeoLib::Point*> rotated_nodes;
-	for (size_t j(0); j < nodes.size(); j++)
+	for (std::size_t j(0); j < nodes.size(); j++)
 		rotated_nodes.push_back(new GeoLib::Point(nodes[j]->getCoords()));
 	// 2 rotate the Points
 	MathLib::DenseMatrix<double> rot_mat(3,3);
@@ -89,7 +89,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
 		}
 	}
 
-	for (size_t j(0); j < rotated_nodes.size(); j++)
+	for (std::size_t j(0); j < rotated_nodes.size(); j++)
 		delete rotated_nodes[j];
 
 	std::vector<GeoLib::Point*> & rot_polygon_pnts(
@@ -97,7 +97,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
 			rot_polygon.getPointsVec()
 		)
 	);
-	for (size_t k(0); k < rot_polygon_pnts.size(); k++)
+	for (std::size_t k(0); k < rot_polygon_pnts.size(); k++)
 		delete rot_polygon_pnts[k];
 
 	return outside;
