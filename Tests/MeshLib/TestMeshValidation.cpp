@@ -86,8 +86,7 @@ TEST(MeshValidation, DetectHolesTri)
 
 TEST(MeshValidation, DetectHolesHex)
 {
-	GeoLib::Point origin(0,0,0);
-	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(5,4,4,1,1,1,origin, "mesh");
+	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(5,4,4,1,1,1,GeoLib::ORIGIN, "mesh");
 	unsigned n_holes = MeshLib::MeshValidation::detectHoles(*mesh);
 	ASSERT_EQ(0, n_holes);
 
