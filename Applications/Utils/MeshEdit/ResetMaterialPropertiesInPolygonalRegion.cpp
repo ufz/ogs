@@ -32,7 +32,7 @@
 #include "MeshLib/MeshEditing/ElementValueModification.h"
 
 GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
-	MathLib::Vector3 & original_plane_normal)
+	MathLib::Vector3 & plane_normal)
 {
 	// 1 copy all points
 	std::vector<GeoLib::Point*> *polygon_pnts(new std::vector<GeoLib::Point*>);
@@ -40,12 +40,10 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 		polygon_pnts->push_back (new GeoLib::Point (*(polygon_in.getPoint(k))));
 
 	// 2 rotate points
-	MathLib::Vector3 normal(0.0, 0.0, 0.0);
 	double d_polygon (0.0);
-	GeoLib::getNewellPlane (*polygon_pnts, normal, d_polygon);
-	original_plane_normal = normal;
+	GeoLib::getNewellPlane (*polygon_pnts, plane_normal, d_polygon);
 	MathLib::DenseMatrix<double> rot_mat(3,3);
-	GeoLib::computeRotationMatrixToXY(normal, rot_mat);
+	GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
 	GeoLib::rotatePoints(rot_mat, *polygon_pnts);
 
 	// 3 set z coord to zero
