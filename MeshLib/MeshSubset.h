@@ -81,6 +81,18 @@ public:
         return (_eles==nullptr) ? 0 : _eles->size();
     }
 
+    /// Returns the global element id Element::getID() of i-th element in the
+    /// mesh subset.
+    /// Throws std::out_of_range exception if there are no nodes available.
+    std::size_t getElementID(std::size_t const i) const
+    {
+        if (!_eles)
+            throw std::out_of_range(
+                "In MeshSubset::getElementID(): no elements or elements are empty.");
+
+        return (*_eles)[i]->getID();
+    }
+
     std::vector<Element*>::const_iterator elementsBegin() const
     {
         return _msh.getElements().cbegin();
