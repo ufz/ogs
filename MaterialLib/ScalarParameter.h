@@ -33,13 +33,13 @@ template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL> class ScalarParameter
             this->setType(static_cast<T_PARAMETER_TYPE>(_material_model->getType()));
         }
 
-        /// Get desity model name.
+        /// Get material model name.
         std::string getName() const
         {
             return _material_model->getName();
         }
 
-        /// Get density value
+        /// Get the parameter value.
         template<typename... Args> double getValue(Args... args) const
         {
             return _material_model->getValue(args...);
