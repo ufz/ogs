@@ -189,12 +189,14 @@ bool Element::isBoundaryElement() const
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-	os << "Element " << e._id << " @ " << &e
+	os << "Element #" << e._id << " value " << e._value << " @ " << &e
 		<< " with " << e.getNNeighbors() << " neighbours\n";
 
 	unsigned const nnodes = e.getNNodes();
 	MeshLib::Node* const* const nodes = e.getNodes();
-	os << nnodes << " nodes: { ";
+	os << "MeshElemType: "
+		<< static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())
+		<< " with " << nnodes << " nodes: { ";
 	for (unsigned n = 0; n < nnodes; ++n)
 		os << nodes[n]->getID() << " @ " << nodes[n] << "  ";
 	os << "}\n";
