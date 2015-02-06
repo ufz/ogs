@@ -24,7 +24,7 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/Elements/Face.h"
+#include "MeshLib/Elements/Element.h"
 
 namespace MeshLib {
 
