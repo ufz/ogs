@@ -10,16 +10,18 @@
 #ifndef FACERULE_H_
 #define FACERULE_H_
 
-#include "MeshLib/MeshEnums.h"
+#include "MathLib/Vector3.h"
 #include "Element.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 
-/**
- */
 class FaceRule
 {
 public:
+	/// Constant: Dimension of this mesh element
+	static const unsigned dimension = 2u;
+
 	/// Returns the face i of the element.
 	static const Element* getFace(const Element* e, unsigned i) { return e->getEdge(i); }
 
@@ -28,6 +30,16 @@ public:
 
 	/// Constant: The number of faces
 	static const unsigned n_faces = 0;
+
+	/**
+	 * Checks if the node order of an element is correct by testing surface normals.
+	 * For 2D elements true is returned if the normal points (roughly) upwards.
+	 */
+	static bool testElementNodeOrder(const Element* /*e*/);
+
+	/// Returns the surface normal of a 2D element.
+	static MathLib::Vector3 getSurfaceNormal(const Element* e);
+
 }; /* class */
 
 } /* namespace */

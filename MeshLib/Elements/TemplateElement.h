@@ -39,7 +39,7 @@ public:
 	static const unsigned n_base_nodes = ELEMENT_RULE::n_base_nodes;
 
 	/// Constant: The dimension of this element
-	using T_BASE::dimension;
+	static const unsigned dimension = ELEMENT_RULE::dimension;
 
 	/**
 	 * Constructor with an array of mesh nodes.
@@ -143,6 +143,15 @@ public:
 			return const_cast<Node*>(this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
 		else
 			return nullptr;
+	}
+
+	/**
+	* Checks if the node order of an element is correct by testing surface normals.
+	* For 1D elements this always returns true.
+	*/
+	virtual bool testElementNodeOrder() const
+	{
+		return ELEMENT_RULE::testElementNodeOrder(this);
 	}
 
 };

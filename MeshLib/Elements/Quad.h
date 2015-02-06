@@ -16,7 +16,6 @@
 #define QUAD_H_
 
 #include "TemplateElement.h"
-#include "Face.h"
 #include "QuadRule4.h"
 #include "QuadRule8.h"
 #include "QuadRule9.h"
@@ -24,9 +23,9 @@
 namespace MeshLib
 {
 
-typedef TemplateElement<Face, QuadRule4> Quad;
-typedef TemplateElement<Face, QuadRule8> Quad8;
-typedef TemplateElement<Face, QuadRule9> Quad9;
+typedef TemplateElement<Element, QuadRule4> Quad;
+typedef TemplateElement<Element, QuadRule8> Quad8;
+typedef TemplateElement<Element, QuadRule9> Quad9;
 
 }
 

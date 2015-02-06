@@ -12,6 +12,7 @@
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
+#include "EdgeRule.h"
 #include "EdgeReturn.h"
 
 namespace MeshLib
@@ -23,7 +24,7 @@ namespace MeshLib
  *  0--------1
  * @endcode
  */
-class LineRule2
+class LineRule2 : public EdgeRule
 {
 public:
 	/// Constant: The number of base nodes for this element
@@ -38,12 +39,6 @@ public:
 	/// Constant: The FEM type of the element
 	static const CellType cell_type = CellType::LINE2;
 
-	/// Constant: The number of faces
-	static const unsigned n_faces = 0;
-
-	/// Constant: The number of edges
-	static const unsigned n_edges = 0;
-
 	/// Constant: The number of neighbors
 	static const unsigned n_neighbors = 2;
 
@@ -52,12 +47,6 @@ public:
 
 	/// Edge rule
 	typedef NoEdgeReturn EdgeReturn;
-
-	/// Get the number of nodes for face i.
-	static unsigned getNFaceNodes(unsigned /*i*/) { return 0; }
-
-	/// Returns the i-th face of the element.
-	static const Element* getFace(const Element* /*e*/, unsigned /*i*/) { return nullptr; }
 
 	/**
 	 * Checks if a point is inside the element.

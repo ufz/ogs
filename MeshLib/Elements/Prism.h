@@ -16,12 +16,11 @@
 #define PRISM_H_
 
 #include "TemplateElement.h"
-#include "Cell.h"
 #include "PrismRule6.h"
 
 namespace MeshLib {
 
-typedef TemplateElement<Cell, PrismRule6> Prism;
+typedef TemplateElement<Element, PrismRule6> Prism;
 
 }
 

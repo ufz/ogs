@@ -19,6 +19,9 @@ const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::n_all_nodes;
 
 template <class T_BASE, class ELEMENT_RULE>
 const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::n_base_nodes;
+
+template <class T_BASE, class ELEMENT_RULE>
+const unsigned TemplateElement<T_BASE, ELEMENT_RULE>::dimension;
 #endif // WIN32
 
 template <class T_BASE, class ELEMENT_RULE>

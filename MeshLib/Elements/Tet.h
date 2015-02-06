@@ -16,12 +16,11 @@
 #define TET_H_
 
 #include "TemplateElement.h"
-#include "Cell.h"
 #include "TetRule4.h"
 
 namespace MeshLib {
 
-typedef TemplateElement<Cell,TetRule4> Tet;
+typedef TemplateElement<Element,TetRule4> Tet;
 
 }
 
