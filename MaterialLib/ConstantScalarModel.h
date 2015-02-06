@@ -16,11 +16,8 @@
 
 #include<string>
 
-#include"DensityType.h"
-
 namespace MaterialLib
 {
-
 /// Constant scalar parameter.
 class ConstantScalarModel
 {
