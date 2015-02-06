@@ -136,3 +136,72 @@ TEST_F(AssemblerLibMeshComponentMapTest, OutOfRangeAccess)
     ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
         Location(mesh->getID(), MeshItemType::Node, 0), 10));
 }
+
+TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
+{
+    cmap = new MeshComponentMap(components,
+        AssemblerLib::ComponentOrder::BY_COMPONENT);
+
+    //std::cout << "# database \n" << *cmap << std::endl;
+
+    // Select some nodes from the full mesh.
+    std::array<std::size_t, 3> const ids = {{ 0, 5, 9 }};
+    std::vector<MeshLib::Node*> some_nodes;
+    for (std::size_t id : ids)
+        some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
+
+    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, some_nodes);
+
+    std::vector<MeshLib::MeshSubsets*> selected_components;
+    selected_components.emplace_back(nullptr);  // empty component
+    selected_components.emplace_back(new MeshLib::MeshSubsets(&some_nodes_mesh_subset));
+
+    // Subset the original cmap.
+    MeshComponentMap cmap_subset = cmap->getSubset(selected_components);
+    //std::cout << "# database \n" << cmap_subset << std::endl;
+
+    // Check number of components as selected
+    ASSERT_EQ(ids.size(), cmap_subset.size());
+
+    // .. and the content of the subset.
+    for (std::size_t id : ids)
+    {
+        Location const l(mesh->getID(), MeshItemType::Node, id);
+        EXPECT_EQ(cmap->getGlobalIndex(l, comp1_id),
+            cmap_subset.getGlobalIndex(l, comp1_id));
+    }
+}
+TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
+{
+    cmap = new MeshComponentMap(components,
+        AssemblerLib::ComponentOrder::BY_LOCATION);
+
+    //std::cout << "# database \n" << *cmap << std::endl;
+
+    // Select some nodes from the full mesh.
+    std::array<std::size_t, 3> const ids = {{ 0, 5, 9 }};
+    std::vector<MeshLib::Node*> some_nodes;
+    for (std::size_t id : ids)
+        some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
+
+    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, some_nodes);
+
+    std::vector<MeshLib::MeshSubsets*> selected_components;
+    selected_components.emplace_back(nullptr);  // empty component
+    selected_components.emplace_back(new MeshLib::MeshSubsets(&some_nodes_mesh_subset));
+
+    // Subset the original cmap.
+    MeshComponentMap cmap_subset = cmap->getSubset(selected_components);
+    //std::cout << "# database \n" << cmap_subset << std::endl;
+
+    // Check number of components as selected
+    ASSERT_EQ(ids.size(), cmap_subset.size());
+
+    // .. and the content of the subset.
+    for (std::size_t id : ids)
+    {
+        Location const l(mesh->getID(), MeshItemType::Node, id);
+        EXPECT_EQ(cmap->getGlobalIndex(l, comp1_id),
+            cmap_subset.getGlobalIndex(l, comp1_id));
+    }
+}
