@@ -14,8 +14,8 @@
 
 // FileIO
 #include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/VtkIO/VtuInterface.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -209,8 +209,7 @@ int main (int argc, char* argv[])
 
 	resetProperty(*mesh, polygon, new_property);
 
-	FileIO::VtuInterface mesh_io(mesh);
-	mesh_io.writeToFile (mesh_out.getValue());
+	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 	return EXIT_SUCCESS;
 }
