@@ -25,7 +25,7 @@
 
 TEST(MeshValidation, UnusedNodes)
 {
-	std::array<double, 12> pix = {0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0};
+	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
 	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
 	MeshLib::ConvertRasterToMesh conv(raster, MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
 	MeshLib::Mesh* mesh = conv.execute();
@@ -45,7 +45,7 @@ TEST(MeshValidation, UnusedNodes)
 
 TEST(MeshValidation, DetectHolesTri)
 {
-	std::array<double, 12> pix = {0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0};
+	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
 	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
 	MeshLib::ConvertRasterToMesh conv(raster, MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
 	MeshLib::Mesh* mesh = conv.execute();
@@ -86,9 +86,7 @@ TEST(MeshValidation, DetectHolesTri)
 
 TEST(MeshValidation, DetectHolesHex)
 {
-	std::size_t xs=5, ys=4, zs=4;
-	GeoLib::Point origin(0,0,0);
-	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(5,4,4,1,1,1,origin, "mesh");
+	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(5,4,4,1,1,1,GeoLib::ORIGIN, "mesh");
 	unsigned n_holes = MeshLib::MeshValidation::detectHoles(*mesh);
 	ASSERT_EQ(0, n_holes);
 
