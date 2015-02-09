@@ -13,8 +13,7 @@ SET(CPACK_NSIS_HELP_LINK "http://docs.opengeosys.org/assets/files/Documentation/
 SET(CPACK_NSIS_MENU_LINKS
 	"bin" "Executables folder"
 	"http://www.opengeosys.org" "Website"
-	"https://github.com/ufz/ogs" "Source code on GitFHub"
-	PARENT_SCOPE
+	"https://github.com/ufz/ogs" "Source code on GitHub"
 )
 IF(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
 	SET(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "docs" "Documentation folder" PARENT_SCOPE)
