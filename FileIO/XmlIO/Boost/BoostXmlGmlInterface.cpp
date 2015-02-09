@@ -53,7 +53,7 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	// build DOM tree
 	using boost::property_tree::ptree;
 	ptree doc;
-	read_xml(in, doc);
+	read_xml(in, doc, boost::property_tree::xml_parser::no_comments);
 
 	
 	if (!isGmlFile(doc))
