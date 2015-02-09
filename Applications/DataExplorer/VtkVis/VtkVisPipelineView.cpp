@@ -142,7 +142,7 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
 	QModelIndex idx = this->selectionModel()->currentIndex();
 	QString filename = QFileDialog::getSaveFileName(this, "Export object to vtk-file",
 	                                settings.value("lastExportedFileDirectory").toString(),
-									"All files (* *.*)");
+	                                "VTK file (*.*)");
 	if (!filename.isEmpty())
 	{
 		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->

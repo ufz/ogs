@@ -18,6 +18,8 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/FileTools.h"
+
 #include "VtkAlgorithmProperties.h"
 #include "VtkGeoImageSource.h"
 
@@ -140,15 +142,16 @@ void VtkVisImageItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 
 int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
+	std::string file_name_cpy(filename);
 	vtkImageAlgorithm* algID = dynamic_cast<vtkImageAlgorithm*>(algorithm);
 	if (algID)
 	{
 		vtkSmartPointer<vtkXMLImageDataWriter> iWriter =
 		        vtkSmartPointer<vtkXMLImageDataWriter>::New();
 		iWriter->SetInputData(algID->GetOutputDataObject(0));
-		std::string filenameWithExt = filename;
-		filenameWithExt.append(".vti");
-		iWriter->SetFileName(filenameWithExt.c_str());
+		if (BaseLib::getFileExtension(filename).compare("vti") != 0)
+			file_name_cpy.append(".vti");
+		iWriter->SetFileName(file_name_cpy.c_str());
 		return iWriter->Write();
 	}
 	ERR("VtkVisPipelineItem::writeToFile() - Unknown data type.");
