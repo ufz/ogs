@@ -25,6 +25,8 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/FileTools.h"
+
 #include "VtkAlgorithmProperties.h"
 #include "VtkCompositeFilter.h"
 #include "VtkCompositeContourFilter.h"
@@ -212,33 +214,31 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 
 int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
+	std::string file_name_cpy(filename);
 	vtkPolyDataAlgorithm* algPD = dynamic_cast<vtkPolyDataAlgorithm*>(algorithm);
-	vtkUnstructuredGridAlgorithm* algUG = dynamic_cast<vtkUnstructuredGridAlgorithm*>(algorithm);
 	if (algPD)
 	{
-//		vtkGenericDataObjectWriter* pdWriter = vtkGenericDataObjectWriter::New();
 		vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
 		        vtkSmartPointer<vtkXMLPolyDataWriter>::New();
 		pdWriter->SetInputData(algPD->GetOutputDataObject(0));
-		//pdWriter->SetDataModeToAscii();
-		//pdWriter->SetCompressorTypeToNone();
-		std::string filenameWithExt = filename;
-		filenameWithExt.append(".vtp");
-		pdWriter->SetFileName(filenameWithExt.c_str());
+		if (BaseLib::getFileExtension(filename).compare("vtp") != 0)
+			file_name_cpy.append(".vtp");
+		pdWriter->SetFileName(file_name_cpy.c_str());
 		return pdWriter->Write();
 	}
-	else if (algUG)
+	
+	vtkUnstructuredGridAlgorithm* algUG = dynamic_cast<vtkUnstructuredGridAlgorithm*>(algorithm);
+	if (algUG)
 	{
 		vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
 		        vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
 		ugWriter->SetInputData(algUG->GetOutputDataObject(0));
-		//ugWriter->SetDataModeToAscii();
-		//ugWriter->SetCompressorTypeToNone();
-		std::string filenameWithExt = filename;
-		filenameWithExt.append(".vtu");
-		ugWriter->SetFileName(filenameWithExt.c_str());
+		if (BaseLib::getFileExtension(filename).compare("vtu") != 0)
+			file_name_cpy.append(".vtu");
+		ugWriter->SetFileName(file_name_cpy.c_str());
 		return ugWriter->Write();
 	}
+	
 	WARN("VtkVisPipelineItem::writeToFile(): Unknown data type.");
 	return 0;
 }
