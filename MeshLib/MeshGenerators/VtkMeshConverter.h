@@ -17,13 +17,16 @@
 #define VTKMESHCONVERTER_H
 
 #include "MeshLib/MeshEnums.h"
+#include "MeshLib/Location.h"
 
-class vtkImageData; // For conversion from Image to QuadMesh
-class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
+class vtkImageData;
+class vtkUnstructuredGrid;
+class vtkDataArray;
 
 namespace MeshLib {
 
 class Mesh;
+class Properties;
 
 /// Selection of possible interpretations for intensities
 enum class UseIntensityAs
@@ -80,7 +83,15 @@ private:
 	                                    MeshElemType elem_type,
 	                                    UseIntensityAs intensity_type);
 
+	/// return the first value that is not a "no data" value (i.e. a value that actually exists in the data)
 	static double getExistingValue(const double* img, std::size_t length);
+
+	/// Looks up all existing scalar array in the grid object and converts them (if possible) via convertArray.
+	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
+
+	/// Converts a vtkDataArray into a std::vector and adds it to mesh properties.
+	/// Currently only data arrays containing double or int values (or tuples) are supported.
+	static void convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type);
 };
 
 } // end namespace MeshLib

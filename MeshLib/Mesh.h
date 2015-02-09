@@ -164,6 +164,7 @@ protected:
 	std::vector<Element*> _elements;
 	std::size_t _n_base_nodes;
 	Properties _properties;
+
 }; /* class */
 
 } /* namespace */

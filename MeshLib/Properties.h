@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <string>
 #include <map>
+#include <algorithm>
 
 #include <boost/any.hpp>
 #include <boost/optional.hpp>
@@ -162,6 +163,26 @@ public:
 		}
 	}
 
+	/// Get a property vector using an index
+	boost::optional<boost::any const&> getProperty(std::size_t idx) const
+	{
+		if (idx >= this->size())
+		{
+			ERR("Index out of bounds.");
+			return boost::optional<boost::any const&>();
+		}
+
+		std::size_t count(0);
+		for (auto it = _properties.cbegin(); it != _properties.cend(); ++it) 
+		{
+			if (count == idx)
+				return it->second;
+			count++;
+		}
+		return boost::optional<boost::any const&>(); // should never be reached
+	}
+
+
 	void removeProperty(std::string const& name,
 		MeshItemType mesh_item_type)
 	{
@@ -192,6 +213,30 @@ public:
 			return false;
 		}
 		return true;
+	}
+
+	std::size_t size() const
+	{
+		return _properties.size();
+	}
+
+	std::size_t size(MeshLib::MeshItemType type) const
+	{
+		std::size_t count(0);
+		for (auto it = _properties.cbegin(); it != _properties.cend(); ++it)
+			if (it->first.mesh_item_type == type)
+				count++;
+		return count;
+	}
+
+	std::vector<std::string> getPropertyNames() const
+	{
+		std::vector <std::string> prop_names;
+		prop_names.reserve(_properties.size());
+		for (auto it = _properties.cbegin(); it != _properties.cend(); ++it)
+			prop_names.push_back(it->first.name);
+
+		return prop_names;
 	}
 
 private:

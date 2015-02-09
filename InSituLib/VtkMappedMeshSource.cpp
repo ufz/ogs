@@ -16,6 +16,8 @@
 
 #include "logog/include/logog.hpp"
 
+#include "MeshLib/PropertyVector.h"
+
 #include <vtkCellData.h>
 #include <vtkDemandDrivenPipeline.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
@@ -102,6 +104,25 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	materialIds->SetName("MaterialIDs");
 	output->GetCellData()->AddArray(materialIds.GetPointer());
 
+	MeshLib::Properties const& properties (_mesh->getProperties());
+	std::vector<std::string> const prop_names = properties.getPropertyNames();
+
+	std::size_t const nProperties (prop_names.size());
+	for (std::size_t i=0; i<nProperties; ++i)
+	{
+		/// get double properties
+		boost::optional< MeshLib::PropertyVector<double> const&> double_properties = 
+			properties.getProperty<double>(prop_names[i], MeshLib::MeshItemType::Cell);
+
+		if (double_properties != boost::optional< MeshLib::PropertyVector<double> const&>())
+		{
+			vtkNew<VtkMappedElementDataArrayTemplate<double> > double_array;
+			/// TODO: adjust VtkMappedElementArrayTemplate to accept PropertyVector objects
+			double_array->SetElements(&_mesh->getElements(), _mesh->getNElements());
+			double_array->SetName(prop_names[i].c_str());
+			output->GetCellData()->AddArray(double_array.GetPointer());
+		}
+	}	
 	return 1;
 }
 

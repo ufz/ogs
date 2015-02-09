@@ -31,7 +31,9 @@
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
-#include <vtkUnsignedCharArray.h>
+#include <vtkDataArray.h>
+#include <vtkIntArray.h>
+#include <vtkDoubleArray.h>
 
 // Conversion from vtkUnstructuredGrid
 #include <vtkCell.h>
@@ -42,10 +44,10 @@
 namespace MeshLib {
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
-                                                     const double origin[3],
-                                                     const double scalingFactor,
-													 MeshElemType elem_type,
-													 UseIntensityAs intensity_type)
+                                                  const double origin[3],
+                                                  const double scalingFactor,
+                                                  MeshElemType elem_type,
+                                                  UseIntensityAs intensity_type)
 {
 	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
@@ -111,12 +113,12 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
-													 const double origin[3],
-													 const size_t imgHeight,
-													 const size_t imgWidth,
-													 const double &scalingFactor,
-													 MeshElemType elem_type,
-													UseIntensityAs intensity_type)
+                                                  const double origin[3],
+                                                  const size_t imgHeight,
+                                                  const size_t imgWidth,
+                                                  const double &scalingFactor,
+                                                  MeshElemType elem_type,
+                                                  UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -166,14 +168,14 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
 }
 
 MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
-												  int* node_idx_map,
-												  const bool* visNodes,
-												  const double origin[3],
-                                                  const size_t &imgHeight,
-												  const size_t &imgWidth,
-                                                  const double &scalingFactor,
-										 		  MeshElemType elem_type,
-												  UseIntensityAs intensity_type)
+                                               int* node_idx_map,
+                                               const bool* visNodes,
+                                               const double origin[3],
+                                               const size_t &imgHeight,
+                                               const size_t &imgWidth,
+                                               const double &scalingFactor,
+                                               MeshElemType elem_type,
+                                               UseIntensityAs intensity_type)
 {
 	const size_t incHeight = imgHeight+1;
 	const size_t incWidth  = imgWidth+1;
@@ -272,7 +274,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		std::vector<unsigned> node_ids(nElemNodes);
 		for (size_t j=0; j<nElemNodes; j++)
 			node_ids[j] = grid->GetCell(i)->GetPointId(j);
-		const unsigned material = (scalars) ? static_cast<int>(scalars->GetComponent(i,0)) : 0;
+		const unsigned material = (scalars) ? static_cast<unsigned>(scalars->GetComponent(i,0)) : 0;
 
 		int cell_type = grid->GetCellType(i);
 		switch (cell_type)
@@ -356,8 +358,73 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		elements[i] = elem;
 	}
 
-	return new MeshLib::Mesh(mesh_name, nodes, elements);
+	MeshLib::Mesh* mesh (new MeshLib::Mesh(mesh_name, nodes, elements));
+	convertScalarArrays(*grid, *mesh);
 
+	return mesh;
+}
+
+void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
+{
+	vtkPointData* point_data = grid.GetPointData();
+	if (point_data == nullptr)
+		return;
+	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
+	for (unsigned i=0; i<n_point_arrays; ++i)
+		convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
+
+	vtkCellData* cell_data = grid.GetCellData();
+	if (cell_data == nullptr)
+		return;
+	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
+	for (unsigned i=0; i<n_cell_arrays; ++i)
+		convertArray(cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
+}
+
+void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
+{
+	vtkIdType const nTuples (array->GetNumberOfTuples());
+	int const nComponents (array->GetNumberOfComponents());
+	char const*const array_name (array->GetName());
+	if (type == MeshLib::MeshItemType::Cell && std::string(array_name).compare("MaterialIDs") == 0)
+		return;
+
+	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
+	if (double_array)
+	{
+		if (nComponents != 1)
+		{
+			ERR ("Scalar arrays containing vectors or matrices are currently not supported");
+			return;
+		}
+		boost::optional<MeshLib::PropertyVector<double> &> vec (properties.createNewPropertyVector<double>(array_name, type));
+		if (!vec)
+			return;
+		vec->reserve(nTuples);
+		double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(*vec));
+		return;
+	}
+
+	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
+	if (int_array)
+	{
+		if (nComponents != 1)
+		{
+			ERR ("Scalar arrays containing vectors or matrices are currently not supported");
+			return;
+		}
+		boost::optional<MeshLib::PropertyVector<int> &> vec (properties.createNewPropertyVector<int>(array_name, type));
+		if (!vec)
+			return;
+		vec->reserve(nTuples);
+		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples], std::back_inserter(*vec));
+		return;
+	}
+
+	ERR ("Unsupported array data type in VTU file.");
+	return;
 }
 
 double VtkMeshConverter::getExistingValue(const double* img, size_t length)
