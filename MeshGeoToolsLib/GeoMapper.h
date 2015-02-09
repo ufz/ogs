@@ -43,14 +43,17 @@ public:
 	GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name);
 	~GeoMapper();
 
-	/// Maps geo geometry based on a raster file
+	/// Maps geometry based on a raster file
 	void mapOnDEM(const std::string &file_name);
 	
-	/// Maps geo geometry based on a mesh file
+	/// Maps geometry based on a mesh file
 	void mapOnMesh(const std::string &file_name);
 
-	/// Maps geo geometry based on a mesh
+	/// Maps geometry based on a mesh
 	void mapOnMesh(const MeshLib::Mesh* mesh);
+
+	/// Maps geometry to constant elevation value
+	void mapToConstantValue(double value);
 
 	void advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &new_geo_name);
 
