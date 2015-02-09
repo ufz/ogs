@@ -20,7 +20,7 @@
 
 namespace MeshLib {
 
-typedef TemplateElement<Element, PyramidRule5> Pyramid;
+typedef TemplateElement<PyramidRule5> Pyramid;
 
 }
 

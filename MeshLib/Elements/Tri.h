@@ -20,7 +20,7 @@
 
 namespace MeshLib {
 
-typedef TemplateElement<Element,TriRule3> Tri;
+typedef TemplateElement<TriRule3> Tri;
 
 }
 

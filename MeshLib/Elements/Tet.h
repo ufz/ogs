@@ -20,7 +20,7 @@
 
 namespace MeshLib {
 
-typedef TemplateElement<Element,TetRule4> Tet;
+typedef TemplateElement<TetRule4> Tet;
 
 }
 

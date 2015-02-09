@@ -20,7 +20,7 @@
 
 namespace MeshLib {
 
-typedef TemplateElement<Element, PrismRule6> Prism;
+typedef TemplateElement<PrismRule6> Prism;
 
 }
 

@@ -28,8 +28,8 @@ namespace MeshLib
  * \tparam T_BASE         Base element class, e.g. Face, Cell
  * \tparam ELEMENT_RULE   Geometrical and topological rules of the element
  */
-template <class T_BASE, class ELEMENT_RULE>
-class TemplateElement : public T_BASE
+template <class ELEMENT_RULE>
+class TemplateElement : public Element
 {
 public:
 	/// Constant: The number of all nodes for this element

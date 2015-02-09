@@ -19,7 +19,7 @@
 #include "HexRule8.h"
 
 namespace MeshLib {
-typedef TemplateElement<Element, HexRule8> Hex;
+typedef TemplateElement<HexRule8> Hex;
 }
 
 #endif /* HEX_H_ */

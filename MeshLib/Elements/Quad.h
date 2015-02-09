@@ -23,9 +23,9 @@
 namespace MeshLib
 {
 
-typedef TemplateElement<Element, QuadRule4> Quad;
-typedef TemplateElement<Element, QuadRule8> Quad8;
-typedef TemplateElement<Element, QuadRule9> Quad9;
+typedef TemplateElement<QuadRule4> Quad;
+typedef TemplateElement<QuadRule8> Quad8;
+typedef TemplateElement<QuadRule9> Quad9;
 
 }
 

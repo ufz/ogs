@@ -21,8 +21,8 @@
 
 namespace MeshLib {
 
-typedef TemplateElement<Element, LineRule2> Line;
-typedef TemplateElement<Element, LineRule3> Line3;
+typedef TemplateElement<LineRule2> Line;
+typedef TemplateElement<LineRule3> Line3;
 
 }
 
