@@ -79,18 +79,21 @@ ADD_CATALYST_DEPENDENCY(testrunner)
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
+IF(DEFINED ENV{CI})
+	SET(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS} --gtest_shuffle --gtest_repeat=3)
+ENDIF()
 IF (OGS_USE_PETSC)
 	ADD_CUSTOM_TARGET(tests
-		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*
+		mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} --gtest_filter=-MPITest*
 		DEPENDS testrunner
 	)
 	ADD_CUSTOM_TARGET(tests_mpi
-		mpirun -np 3 $<TARGET_FILE:testrunner>  --gtest_filter=MPITest*
+		mpirun -np 3 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS}  --gtest_filter=MPITest*
 		DEPENDS testrunner
 	)
 ELSE ()
 	ADD_CUSTOM_TARGET(tests
-		$<TARGET_FILE:testrunner>
+		$<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
 		DEPENDS testrunner
 	)
 ENDIF ()

@@ -50,12 +50,12 @@ ADD_CUSTOM_TARGET(
 	COMMAND ${CMAKE_CTEST_COMMAND}
 	--force-new-ctest-process --output-on-failure --exclude-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
-	DEPENDS data
+	DEPENDS data ogs
 )
 ADD_CUSTOM_TARGET(
 	ctest-large
 	COMMAND ${CMAKE_CTEST_COMMAND}
 	--force-new-ctest-process --output-on-failure --tests-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
-	DEPENDS data
+	DEPENDS data ogs
 )
