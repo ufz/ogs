@@ -17,6 +17,7 @@
 
 #include "GeoMapper.h"
 
+#include <algorithm>
 #include <numeric>
 
 #include "FileIO/AsciiRasterInterface.h"
