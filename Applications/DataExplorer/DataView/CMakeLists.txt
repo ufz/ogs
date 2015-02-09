@@ -7,7 +7,6 @@ set( SOURCES
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
 	ElementTreeView.cpp
-	GeoMapper.cpp
 	GEOModels.cpp
 	GeoOnMeshMappingDialog.cpp
 	GeoTabWidget.cpp
@@ -86,7 +85,6 @@ set( HEADERS
 	CondItem.h
 	DirectConditionGenerator.h
 	CondObjectListItem.h
-	GeoMapper.h
 	GeoObjectListItem.h
 	GeoTreeItem.h
 	ModelTreeItem.h
@@ -146,6 +144,7 @@ include_directories(
 	${SOURCE_DIR_REL}/BaseLib
 	${SOURCE_DIR_REL}/MathLib
 	${SOURCE_DIR_REL}/GeoLib
+	${SOURCE_DIR_REL}/MeshGeoToolsLib
 	${SOURCE_DIR_REL}/MeshLib
 	${SOURCE_DIR_REL}/FileIO
 	${CMAKE_CURRENT_SOURCE_DIR}

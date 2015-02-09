@@ -20,18 +20,18 @@
 #include <numeric>
 
 #include "FileIO/AsciiRasterInterface.h"
+#include "FileIO/readMeshFromFile.h"
 
-#include "AABB.h"
-#include "Mesh.h"
-#include "Elements/Element.h"
+#include "GeoLib/AABB.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "GeoLib/PointWithID.h"
+#include "GeoLib/Raster.h"
+#include "GeoLib/StationBorehole.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "MeshSurfaceExtraction.h"
-#include "AnalyticalGeometry.h"
-#include "PointWithID.h"
-#include "Raster.h"
-#include "readMeshFromFile.h"
-#include "StationBorehole.h"
-
+#include "MeshLib/MeshSurfaceExtraction.h"
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
 	: _geo_objects(geo_objects), _geo_name(const_cast<std::string&>(geo_name)), _mesh(nullptr), _grid(nullptr), _raster(nullptr)
