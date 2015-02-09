@@ -1,4 +1,3 @@
-
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/BaseLib
@@ -8,14 +7,12 @@ INCLUDE_DIRECTORIES(
 )
 
 IF(QT4_FOUND)
-ADD_EXECUTABLE( TriangulatePolyline TriangulatePolyline.cpp )
-TARGET_LINK_LIBRARIES( TriangulatePolyline
-	BaseLib
-	FileIO
-	MathLib
-	${QT_LIBRARIES}
-)
+	ADD_EXECUTABLE( TriangulatePolyline TriangulatePolyline.cpp )
+	TARGET_LINK_LIBRARIES( TriangulatePolyline
+		BaseLib
+		FileIO
+		MathLib
+		${QT_LIBRARIES}
+	)
+	SET_TARGET_PROPERTIES(TriangulatePolyline PROPERTIES FOLDER Utilities)
 ENDIF() # QT4_FOUND
-
-SET_TARGET_PROPERTIES(TriangulatePolyline PROPERTIES FOLDER Utilities)
-
