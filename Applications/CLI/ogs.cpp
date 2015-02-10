@@ -64,7 +64,8 @@ int main(int argc, char *argv[])
 	// Project's configuration
 	ConfigTree project_config;
 
-	read_xml(project_arg.getValue(), project_config, false);
+	read_xml(project_arg.getValue(), project_config,
+			boost::property_tree::xml_parser::no_comments);
 	DBUG("Project configuration from file \'%s\' read.",
 		project_arg.getValue().c_str());
 
