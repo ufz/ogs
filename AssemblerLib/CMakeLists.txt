@@ -1,11 +1,11 @@
 #Source files grouped by a directory
 GET_SOURCE_FILES(SOURCES_ASSEMBLERLIB)
-SET ( SOURCES ${SOURCES_ASSEMBLERLIB})
+set ( SOURCES ${SOURCES_ASSEMBLERLIB})
 
 # Create the library
-ADD_LIBRARY( AssemblerLib STATIC ${SOURCES} )
+add_library( AssemblerLib STATIC ${SOURCES} )
 
-INCLUDE_DIRECTORIES (
+include_directories (
 	.
 	../BaseLib
 	../GeoLib
@@ -13,7 +13,7 @@ INCLUDE_DIRECTORIES (
 	../MeshLib
 )
 
-TARGET_LINK_LIBRARIES (AssemblerLib 
+target_link_libraries (AssemblerLib 
 	${Boost_LIBRARIES}
 	MeshLib
 )

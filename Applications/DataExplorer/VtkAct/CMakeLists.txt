@@ -50,7 +50,7 @@ add_library( VtkAct STATIC
 	${UIS}
 )
 
-INCLUDE(AddCatalystDependency)
+include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(VtkAct)
 
 target_link_libraries( VtkAct ${QT_LIBRARIES} )

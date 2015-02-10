@@ -1,6 +1,6 @@
-INCLUDE(CodeCoverage)
+include(CodeCoverage)
 
-SET(COVERAGE_EXCLUDES
+set(COVERAGE_EXCLUDES
 	'/gpfs0/*'
 	'/usr/*'
 	'${CMAKE_BINARY_DIR}/*'
@@ -8,17 +8,17 @@ SET(COVERAGE_EXCLUDES
 	'${CMAKE_SOURCE_DIR}/ThirdParty/*'
 )
 
-IF(LCOV_PATH AND GENHTML_PATH)
+if(LCOV_PATH AND GENHTML_PATH)
 	SETUP_TARGET_FOR_COVERAGE(testrunner_coverage testrunner "testrunner_coverage_results" "-j;${PROCESSOR_COUNT}")
-	IF(OGS_BUILD_GUI)
+	if(OGS_BUILD_GUI)
 		SETUP_TARGET_FOR_COVERAGE(DataExplorer_coverage DataExplorer "DataExplorer_coverage_results")
-	ENDIF()
-ELSE()
-	MESSAGE(STATUS "No lcov coverage report generated because lcov or genhtml was not found.")
-ENDIF()
+	endif()
+else()
+	message(STATUS "No lcov coverage report generated because lcov or genhtml was not found.")
+endif()
 
-IF(PYTHON_EXECUTABLE)
+if(PYTHON_EXECUTABLE)
 	SETUP_TARGET_FOR_COVERAGE_COBERTURA(testrunner_coverage_cobertura testrunner "testrunner_coverage_cobertura_results" "-j;${PROCESSOR_COUNT}")
-ELSE()
-	MESSAGE(STATUS "No cobertura coverage report generated because Python executable was not found.")
-ENDIF()
+else()
+	message(STATUS "No cobertura coverage report generated because Python executable was not found.")
+endif()

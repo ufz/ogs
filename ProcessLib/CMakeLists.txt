@@ -1,9 +1,9 @@
 # Source files
 GET_SOURCE_FILES(SOURCES)
 
-ADD_LIBRARY(ProcessLib STATIC ${SOURCES})
+add_library(ProcessLib STATIC ${SOURCES})
 
-TARGET_LINK_LIBRARIES( ProcessLib
+target_link_libraries( ProcessLib
     AssemblerLib
     MeshLib
     MeshGeoToolsLib

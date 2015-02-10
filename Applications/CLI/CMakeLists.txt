@@ -1,9 +1,9 @@
 
-ADD_EXECUTABLE(ogs
+add_executable(ogs
     ogs.cpp
 )
 
-TARGET_LINK_LIBRARIES(ogs
+target_link_libraries(ogs
     ApplicationsLib
     BaseLib
     FileIO
@@ -14,16 +14,16 @@ TARGET_LINK_LIBRARIES(ogs
 )
 ADD_CATALYST_DEPENDENCY(ogs)
 
-IF(OGS_USE_PETSC)
-    TARGET_LINK_LIBRARIES(ogs ${PETSC_LIBRARIES})
-ENDIF()
+if(OGS_USE_PETSC)
+    target_link_libraries(ogs ${PETSC_LIBRARIES})
+endif()
 
-INCLUDE(Tests.cmake)
+include(Tests.cmake)
 
 ####################
 ### Installation ###
 ####################
-INSTALL (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
+install (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
 
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs" "OGS Simulator")
 cpack_add_component(ogs_cli

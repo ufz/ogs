@@ -9,8 +9,8 @@
 #    add_dependencies(some_other_target this_target) to specify that another
 #    target depends on this.
 #
-#  install_file_copy_target(<target_name> [arguments to INSTALL(PROGRAMS ...) ])
-#    Works just the same as INSTALL(PROGRAMS ...) because it wraps it to install
+#  install_file_copy_target(<target_name> [arguments to install(PROGRAMS ...) ])
+#    Works just the same as install(PROGRAMS ...) because it wraps it to install
 #    the files you specified in add_file_copy_target
 #
 #

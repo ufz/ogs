@@ -1,8 +1,8 @@
 # VS2012 doesn't support correctly the tuples yet
 # See http://code.google.com/p/googletest/issues/detail?id=412
-IF( MSVC )
-	ADD_DEFINITIONS( /D_VARIADIC_MAX=10 )
-ENDIF()
+if( MSVC )
+	add_definitions( /D_VARIADIC_MAX=10 )
+endif()
 
 APPEND_SOURCE_FILES(TEST_SOURCES)
 APPEND_SOURCE_FILES(TEST_SOURCES AssemblerLib)
@@ -13,12 +13,12 @@ APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
 
-SET (TEST_SOURCES ${TEST_SOURCES} FileIO/TestGLIReader.cpp)
-IF (QT4_FOUND)
-	SET (TEST_SOURCES ${TEST_SOURCES} FileIO/TestXmlGmlReader.cpp)
-ENDIF()
+set (TEST_SOURCES ${TEST_SOURCES} FileIO/TestGLIReader.cpp)
+if (QT4_FOUND)
+	set (TEST_SOURCES ${TEST_SOURCES} FileIO/TestXmlGmlReader.cpp)
+endif()
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	${CMAKE_SOURCE_DIR}/AssemblerLib
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/FileIO
@@ -31,13 +31,13 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_BINARY_DIR}/BaseLib
 )
 
-ADD_EXECUTABLE (testrunner testrunner.cpp ${TEST_SOURCES})
-SET_TARGET_PROPERTIES(testrunner PROPERTIES FOLDER Testing)
-IF(TARGET Eigen)
-	ADD_DEPENDENCIES(testrunner Eigen)
-ENDIF()
+add_executable (testrunner testrunner.cpp ${TEST_SOURCES})
+set_target_properties(testrunner PROPERTIES FOLDER Testing)
+if(TARGET Eigen)
+	add_dependencies(testrunner Eigen)
+endif()
 
-TARGET_LINK_LIBRARIES(testrunner
+target_link_libraries(testrunner
 	GTest
 	ApplicationsLib
 	AssemblerLib
@@ -55,48 +55,48 @@ TARGET_LINK_LIBRARIES(testrunner
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(testrunner)
-IF (OGS_USE_PETSC)
-	TARGET_LINK_LIBRARIES( testrunner  ${PETSC_LIBRARIES})
-ENDIF (OGS_USE_PETSC)
+if (OGS_USE_PETSC)
+	target_link_libraries( testrunner  ${PETSC_LIBRARIES})
+endif (OGS_USE_PETSC)
 
-IF (OGS_USE_MPI)
-	TARGET_LINK_LIBRARIES( testrunner  ${MPI_CXX_LIBRARIES})
-ENDIF ()
+if (OGS_USE_MPI)
+	target_link_libraries( testrunner  ${MPI_CXX_LIBRARIES})
+endif ()
 
-IF(OGS_BUILD_GUI)
-	TARGET_LINK_LIBRARIES(testrunner
+if(OGS_BUILD_GUI)
+	target_link_libraries(testrunner
 		QtDataView
 		VtkVis
 	)
-ENDIF()
+endif()
 
-IF (QT4_FOUND)
-	TARGET_LINK_LIBRARIES(testrunner ${QT_LIBRARIES})
-ENDIF()
+if (QT4_FOUND)
+	target_link_libraries(testrunner ${QT_LIBRARIES})
+endif()
 
-INCLUDE(AddCatalystDependency)
+include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(testrunner)
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not
-IF (OGS_USE_PETSC)
-	ADD_CUSTOM_TARGET(tests
+if (OGS_USE_PETSC)
+	add_custom_target(tests
 		mpirun -np 1 $<TARGET_FILE:testrunner> --gtest_filter=-MPITest*
 		DEPENDS testrunner
 	)
-	ADD_CUSTOM_TARGET(tests_mpi
+	add_custom_target(tests_mpi
 		mpirun -np 3 $<TARGET_FILE:testrunner>  --gtest_filter=MPITest*
 		DEPENDS testrunner
 	)
-ELSE ()
-	ADD_CUSTOM_TARGET(tests
+else ()
+	add_custom_target(tests
 		$<TARGET_FILE:testrunner>
 		DEPENDS testrunner
 	)
-ENDIF ()
+endif ()
 
 # Testing
-#ENABLE_TESTING()
+#enable_testing()
 
 # Creates one ctest entry for every googletest
 #ADD_GOOGLE_TESTS ( ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner ${TEST_SOURCES})

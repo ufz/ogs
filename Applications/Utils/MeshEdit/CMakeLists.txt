@@ -1,5 +1,5 @@
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/GeoLib
@@ -10,10 +10,10 @@ INCLUDE_DIRECTORIES(
 )
 
 # Create executables
-IF(QT4_FOUND)
+if(QT4_FOUND)
 
-	ADD_EXECUTABLE( moveMeshNodes moveMeshNodes.cpp )
-	TARGET_LINK_LIBRARIES( moveMeshNodes
+	add_executable( moveMeshNodes moveMeshNodes.cpp )
+	target_link_libraries( moveMeshNodes
 		BaseLib
 		FileIO
 		MathLib
@@ -24,13 +24,13 @@ IF(QT4_FOUND)
 	)
 	ADD_CATALYST_DEPENDENCY(moveMeshNodes)
 
-	SET_TARGET_PROPERTIES(moveMeshNodes
+	set_target_properties(moveMeshNodes
 		PROPERTIES FOLDER Utilities)
 
-ENDIF() # QT4_FOUND
+endif() # QT4_FOUND
 
-ADD_EXECUTABLE( removeMeshElements removeMeshElements.cpp )
-TARGET_LINK_LIBRARIES( removeMeshElements
+add_executable( removeMeshElements removeMeshElements.cpp )
+target_link_libraries( removeMeshElements
 	BaseLib
 	FileIO
 	MathLib
@@ -39,30 +39,30 @@ TARGET_LINK_LIBRARIES( removeMeshElements
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(removeMeshElements)
-SET_TARGET_PROPERTIES(removeMeshElements PROPERTIES FOLDER Utilities)
+set_target_properties(removeMeshElements PROPERTIES FOLDER Utilities)
 
-ADD_EXECUTABLE( DataExplorer5NodeReordering DataExplorer5NodeReordering.cpp )
-TARGET_LINK_LIBRARIES( DataExplorer5NodeReordering
+add_executable( DataExplorer5NodeReordering DataExplorer5NodeReordering.cpp )
+target_link_libraries( DataExplorer5NodeReordering
 	FileIO
 	MeshLib
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(DataExplorer5NodeReordering)
-SET_TARGET_PROPERTIES(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
+set_target_properties(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
 
-ADD_EXECUTABLE( MoveMesh MoveMesh.cpp )
-TARGET_LINK_LIBRARIES( MoveMesh
+add_executable( MoveMesh MoveMesh.cpp )
+target_link_libraries( MoveMesh
 	FileIO
 	MeshLib
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(MoveMesh)
-SET_TARGET_PROPERTIES(MoveMesh PROPERTIES FOLDER Utilities)
+set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
-ADD_EXECUTABLE( appendLinesAlongPolyline appendLinesAlongPolyline.cpp )
-TARGET_LINK_LIBRARIES( appendLinesAlongPolyline
+add_executable( appendLinesAlongPolyline appendLinesAlongPolyline.cpp )
+target_link_libraries( appendLinesAlongPolyline
 	BaseLib
 	FileIO
 	MathLib
@@ -73,11 +73,11 @@ TARGET_LINK_LIBRARIES( appendLinesAlongPolyline
 )
 ADD_CATALYST_DEPENDENCY(appendLinesAlongPolyline)
 
-SET_TARGET_PROPERTIES(appendLinesAlongPolyline
+set_target_properties(appendLinesAlongPolyline
 	PROPERTIES FOLDER Utilities)
 
-ADD_EXECUTABLE( editMaterialID editMaterialID.cpp )
-TARGET_LINK_LIBRARIES( editMaterialID
+add_executable( editMaterialID editMaterialID.cpp )
+target_link_libraries( editMaterialID
 	BaseLib
 	FileIO
 	MathLib
@@ -87,11 +87,11 @@ TARGET_LINK_LIBRARIES( editMaterialID
 )
 ADD_CATALYST_DEPENDENCY(editMaterialID)
 
-SET_TARGET_PROPERTIES(editMaterialID
+set_target_properties(editMaterialID
 	PROPERTIES FOLDER Utilities)
 
-ADD_EXECUTABLE( checkMesh checkMesh.cpp)
-TARGET_LINK_LIBRARIES ( checkMesh
+add_executable( checkMesh checkMesh.cpp)
+target_link_libraries ( checkMesh
 	BaseLib
 	FileIO
 	MathLib
@@ -101,11 +101,11 @@ TARGET_LINK_LIBRARIES ( checkMesh
 )
 ADD_CATALYST_DEPENDENCY(checkMesh)
 
-SET_TARGET_PROPERTIES(checkMesh
+set_target_properties(checkMesh
 	PROPERTIES FOLDER Utilities)
 
-ADD_EXECUTABLE( reviseMesh reviseMesh.cpp)
-TARGET_LINK_LIBRARIES ( reviseMesh
+add_executable( reviseMesh reviseMesh.cpp)
+target_link_libraries ( reviseMesh
 	BaseLib
 	FileIO
 	MathLib
@@ -115,6 +115,6 @@ TARGET_LINK_LIBRARIES ( reviseMesh
 )
 ADD_CATALYST_DEPENDENCY(reviseMesh)
 
-SET_TARGET_PROPERTIES(reviseMesh
+set_target_properties(reviseMesh
 	PROPERTIES FOLDER Utilities)
 	

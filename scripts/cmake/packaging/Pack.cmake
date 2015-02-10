@@ -1,37 +1,37 @@
-INCLUDE(packaging/PackagingMacros)
+include(packaging/PackagingMacros)
 
 #### Packaging setup ####
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OGS-6 THM/C Simulator")
-SET(CPACK_PACKAGE_VENDOR "OpenGeoSys Community (http://www.opengeosys.org)")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "OGS-${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
-SET(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-# SET(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_SOURCE_DIR}/README.md")
-SET(CPACK_PACKAGE_VERSION_MAJOR "${OGS_VERSION_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${OGS_VERSION_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${OGS_VERSION_PATCH}")
-IF(APPLE)
-	SET(CPACK_PACKAGE_FILE_NAME "ogs-${GIT_DESCRIBE}-OSX-${OSX_VERSION}-x${BITS}")
-	SET(CPACK_SOURCE_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME})
-ELSE()
-	SET(CPACK_PACKAGE_FILE_NAME "ogs-${GIT_DESCRIBE}-${CMAKE_SYSTEM}-x${BITS}")
-ENDIF()
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OGS-6 THM/C Simulator")
+set(CPACK_PACKAGE_VENDOR "OpenGeoSys Community (http://www.opengeosys.org)")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "OGS-${OGS_VERSION_MAJOR}.${OGS_VERSION_MINOR}.${OGS_VERSION_PATCH}")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+# set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_PACKAGE_VERSION_MAJOR "${OGS_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${OGS_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${OGS_VERSION_PATCH}")
+if(APPLE)
+	set(CPACK_PACKAGE_FILE_NAME "ogs-${GIT_DESCRIBE}-OSX-${OSX_VERSION}-x${BITS}")
+	set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME})
+else()
+	set(CPACK_PACKAGE_FILE_NAME "ogs-${GIT_DESCRIBE}-${CMAKE_SYSTEM}-x${BITS}")
+endif()
 
-#SET(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
+#set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
 
-IF (WIN32)
-	INCLUDE (packaging/PackagingWin)
-ENDIF()
-IF(UNIX)
-	INCLUDE (packaging/PackagingLinux)
-ENDIF()
-IF(APPLE)
-	INCLUDE (packaging/PackagingMac)
-ENDIF()
+if (WIN32)
+	include (packaging/PackagingWin)
+endif()
+if(UNIX)
+	include (packaging/PackagingLinux)
+endif()
+if(APPLE)
+	include (packaging/PackagingMac)
+endif()
 
 # Download additional content
-IF(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
+if(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
 	DownloadAdditionalFilesForPackaging(
 		URLS http://docs.opengeosys.org/assets/releases/head/docs/DataExplorer-Manual.pdf
 		     http://docs.opengeosys.org/assets/releases/head/docs/User-Manual.pdf
@@ -40,25 +40,25 @@ IF(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
 		PACKAGE_GROUP ogs_docs
 	)
 
-	IF(WIN32)
+	if(WIN32)
 		DownloadAdditionalFilesForPackaging(
 			URLS http://docs.opengeosys.org/assets/releases/head/win/OGSFileConverter.exe
 			DESTINATION bin
 			EXECUTABLE TRUE
 			PACKAGE_GROUP ogs_converter
 		)
-	ENDIF()
-	IF(APPLE)
+	endif()
+	if(APPLE)
 		DownloadAdditionalFilesForPackaging(
 			URLS http://docs.opengeosys.org/assets/releases/head/mac/OGSFileConverter
 			DESTINATION bin
 			EXECUTABLE TRUE
 			PACKAGE_GROUP ogs_converter
 		)
-	ENDIF()
-ENDIF()
+	endif()
+endif()
 
-INCLUDE (CPack)
+include (CPack)
 
 cpack_add_component_group(Applications
 	DISPLAY_NAME Applications

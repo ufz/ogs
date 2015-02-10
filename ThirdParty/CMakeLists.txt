@@ -1,46 +1,46 @@
 # Disable all warnings
-IF(COMPILER_IS_CLANG OR COMPILER_IS_GCC)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-ELSEIF(MSVC)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
-ENDIF()
+if(COMPILER_IS_CLANG OR COMPILER_IS_GCC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+elseif(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+endif()
 
 # Add logog subdirectory and group its targets in a Visual Studio folder
-ADD_SUBDIRECTORY(logog)
-IF(BUILD_TESTING)
-	SET_PROPERTY(TARGET Continuous PROPERTY FOLDER "logog")
-ENDIF()
-SET_PROPERTY(TARGET logog PROPERTY FOLDER "logog")
-SET_PROPERTY(TARGET test-logog PROPERTY FOLDER "logog")
-SET_TARGET_PROPERTIES(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
+add_subdirectory(logog)
+if(BUILD_TESTING)
+	set_property(TARGET Continuous PROPERTY FOLDER "logog")
+endif()
+set_property(TARGET logog PROPERTY FOLDER "logog")
+set_property(TARGET test-logog PROPERTY FOLDER "logog")
+set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-ADD_SUBDIRECTORY(zlib)
+add_subdirectory(zlib)
 
-ADD_SUBDIRECTORY(gtest)
+add_subdirectory(gtest)
 
-ADD_SUBDIRECTORY(shape)
+add_subdirectory(shape)
 
 # This is a workaround for Travis builds.
-OPTION(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
+option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
 # VtkFbxConverter
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
 	AND OGS_USE_OPTIONAL_SUBMODULES)
-	ADD_SUBDIRECTORY(VtkFbxConverter)
-ENDIF()
+	add_subdirectory(VtkFbxConverter)
+endif()
 
 # VtkOsgConverter
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkOsgConverter/CMakeLists.txt
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkOsgConverter/CMakeLists.txt
 	AND OGS_USE_OPTIONAL_SUBMODULES)
-	ADD_SUBDIRECTORY(VtkOsgConverter)
-ENDIF()
+	add_subdirectory(VtkOsgConverter)
+endif()
 
 # tetgen
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
-	ADD_SUBDIRECTORY(tetgen)
-	IF(APPLE AND OGS_BUILD_GUI)
-		INSTALL (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION DataExplorer.app/Contents/MacOS COMPONENT ogs_extras)
-	ELSE()
-		INSTALL (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
-	ENDIF()
-ENDIF()
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
+	add_subdirectory(tetgen)
+	if(APPLE AND OGS_BUILD_GUI)
+		install (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION DataExplorer.app/Contents/MacOS COMPONENT ogs_extras)
+	else()
+		install (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
+	endif()
+endif()

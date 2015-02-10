@@ -2,9 +2,9 @@
 GET_SOURCE_FILES(SOURCES_MeshGeoToolsLib)
 
 # Create the library
-ADD_LIBRARY(MeshGeoToolsLib STATIC ${SOURCES_MeshGeoToolsLib})
+add_library(MeshGeoToolsLib STATIC ${SOURCES_MeshGeoToolsLib})
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	.
 	${CMAKE_CURRENT_SOURCE_DIR}/../BaseLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../MathLib
@@ -12,7 +12,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/../GeoLib
 )
 
-TARGET_LINK_LIBRARIES (MeshGeoToolsLib
+target_link_libraries (MeshGeoToolsLib
 	BaseLib
 	MathLib
 	MeshLib

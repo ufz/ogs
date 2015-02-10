@@ -65,7 +65,7 @@ foreach(_library ${_list})
   set(_combined_name ${_combined_name}_${_library})
 
   if(_libraries_work)
-  IF (WIN32)
+  if (WIN32)
     if(BLA_STATIC)
       set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.dll")
     endif(BLA_STATIC)
@@ -73,7 +73,7 @@ foreach(_library ${_list})
     NAMES ${_library}
     PATHS ENV LIB
     )
-  ENDIF (WIN32)
+  endif (WIN32)
 
   if(APPLE)
     if(BLA_STATIC)

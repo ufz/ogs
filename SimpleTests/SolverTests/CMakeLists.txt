@@ -1,73 +1,73 @@
-INCLUDE_DIRECTORIES(
+include_directories(
         .
 	../../BaseLib/
 	../../MathLib/
 )
 
 # Create the executable
-ADD_EXECUTABLE( ConjugateGradientUnpreconditioned
+add_executable( ConjugateGradientUnpreconditioned
         ConjugateGradientUnpreconditioned.cpp
         ${SOURCES}
         ${HEADERS}
 )
-SET_TARGET_PROPERTIES(ConjugateGradientUnpreconditioned PROPERTIES FOLDER SimpleTests)
+set_target_properties(ConjugateGradientUnpreconditioned PROPERTIES FOLDER SimpleTests)
 
-ADD_EXECUTABLE( ConjugateGradientDiagPrecond
+add_executable( ConjugateGradientDiagPrecond
         ConjugateGradientDiagonalPreconditioned.cpp
         ${SOURCES}
         ${HEADERS}
 )
-SET_TARGET_PROPERTIES(ConjugateGradientDiagPrecond PROPERTIES FOLDER SimpleTests)
+set_target_properties(ConjugateGradientDiagPrecond PROPERTIES FOLDER SimpleTests)
 
-ADD_EXECUTABLE( BiCGStabDiagPrecond
+add_executable( BiCGStabDiagPrecond
 	BiCGStabDiagPrecond.cpp
         ${SOURCES}
         ${HEADERS}
 )
-SET_TARGET_PROPERTIES(BiCGStabDiagPrecond PROPERTIES FOLDER SimpleTests)
+set_target_properties(BiCGStabDiagPrecond PROPERTIES FOLDER SimpleTests)
 
-ADD_EXECUTABLE( GMResDiagPrecond
+add_executable( GMResDiagPrecond
 	GMResDiagPrecond.cpp
         ${SOURCES}
         ${HEADERS}
 )
-SET_TARGET_PROPERTIES(GMResDiagPrecond PROPERTIES FOLDER SimpleTests)
+set_target_properties(GMResDiagPrecond PROPERTIES FOLDER SimpleTests)
 
 
-IF (WIN32)
-        TARGET_LINK_LIBRARIES(ConjugateGradientUnpreconditioned Winmm.lib)
-ENDIF (WIN32)
-TARGET_LINK_LIBRARIES ( ConjugateGradientUnpreconditioned
+if (WIN32)
+        target_link_libraries(ConjugateGradientUnpreconditioned Winmm.lib)
+endif (WIN32)
+target_link_libraries ( ConjugateGradientUnpreconditioned
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
 	BaseLib
 )
 
-IF (WIN32)
-        TARGET_LINK_LIBRARIES(ConjugateGradientDiagPrecond Winmm.lib)
-ENDIF (WIN32)
-TARGET_LINK_LIBRARIES ( ConjugateGradientDiagPrecond
+if (WIN32)
+        target_link_libraries(ConjugateGradientDiagPrecond Winmm.lib)
+endif (WIN32)
+target_link_libraries ( ConjugateGradientDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
 	BaseLib
 )
 
-IF (WIN32)
-        TARGET_LINK_LIBRARIES(BiCGStabDiagPrecond Winmm.lib)
-ENDIF (WIN32)
-TARGET_LINK_LIBRARIES( BiCGStabDiagPrecond
+if (WIN32)
+        target_link_libraries(BiCGStabDiagPrecond Winmm.lib)
+endif (WIN32)
+target_link_libraries( BiCGStabDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
 	BaseLib
 )
 
-IF (WIN32)
-        TARGET_LINK_LIBRARIES(GMResDiagPrecond Winmm.lib)
-ENDIF (WIN32)
-TARGET_LINK_LIBRARIES( GMResDiagPrecond
+if (WIN32)
+        target_link_libraries(GMResDiagPrecond Winmm.lib)
+endif (WIN32)
+target_link_libraries( GMResDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
 	MathLib
