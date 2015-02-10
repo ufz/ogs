@@ -57,7 +57,7 @@ public:
 	MeshLib::Node getCenterOfGravity() const;
 
 	/// Returns the length, area or volume of a 1D, 2D or 3D element
-	virtual double getContent() const = 0;
+	double getContent() const { return _content; }
 
 	/**
 	 * Get node with local index i where i should be at most the number
@@ -84,7 +84,7 @@ public:
 	virtual unsigned getDimension() const = 0;
 
 	/// Returns the i-th edge of the element.
-	const Element* getEdge(unsigned i) const;
+	virtual const Element* getEdge(unsigned i) const = 0;
 
 	/// Returns the i-th face of the element.
 	virtual const Element* getFace(unsigned i) const = 0;
@@ -207,22 +207,26 @@ public:
 	 */
 	virtual bool testElementNodeOrder() const = 0;
 
+	/// Return a specific edge node.
+	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
+
 #ifndef NDEBUG
 	friend std::ostream& operator<<(std::ostream& os, Element const& e);
 #endif  // NDEBUG
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	Element(unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
-
-	/// Return a specific edge node.
-	virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
+	/// @param value  element value
+	/// @param id     element id
+	Element(unsigned value, std::size_t id);
 
 	/// Sets the element ID.
 	virtual void setID(std::size_t id) { this->_id = id; }
 
 	Node** _nodes;
 	std::size_t _id;
+	/// Content corresponds to length for 1D, area for 2D, and volume for 3D elements
+	double _content;
 	/**
 	 * this is an index for external additional information like materials
 	 */

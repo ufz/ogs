@@ -22,8 +22,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Face.h"
-#include "MeshLib/Elements/Cell.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
@@ -176,8 +174,8 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 		{
 			if (!complete_surface)
 			{
-				MeshLib::Face* face = static_cast<MeshLib::Face*>(*elem);
-				if (MathLib::scalarProduct(face->getSurfaceNormal().getNormalizedVector(), norm_dir) > cos_theta)
+				MeshLib::Element* face = *elem;
+				if (MathLib::scalarProduct(FaceRule::getSurfaceNormal(face).getNormalizedVector(), norm_dir) > cos_theta)
 					continue;
 			}
 			sfc_elements.push_back(*elem);
@@ -192,10 +190,10 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 				if ((*elem)->getNeighbor(j) != nullptr)
 					continue;
 
-				const MeshLib::Face* face = static_cast<const MeshLib::Face*>((*elem)->getFace(j));
+				const MeshLib::Element* face = (*elem)->getFace(j);
 				if (!complete_surface)
 				{
-					if (MathLib::scalarProduct(face->getSurfaceNormal().getNormalizedVector(), norm_dir) < cos_theta)
+					if (MathLib::scalarProduct(FaceRule::getSurfaceNormal(face).getNormalizedVector(), norm_dir) < cos_theta)
 					{
 						delete face;
 						continue;

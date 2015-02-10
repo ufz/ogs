@@ -35,7 +35,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
 			std::size_t const n_edges((*it)->getNEdges());
 			for (std::size_t k(0); k<n_edges; k++) {
 				double const len =
-					static_cast<MeshLib::Line const*>((*it)->getEdge(k))->getLength();
+					static_cast<MeshLib::Line const*>((*it)->getEdge(k))->getContent();
 				sum += len;
 				sum_of_sqr += len*len;
 			}

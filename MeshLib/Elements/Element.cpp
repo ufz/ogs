@@ -24,7 +24,7 @@
 namespace MeshLib {
 
 Element::Element(unsigned value, std::size_t id)
-	: _nodes(nullptr), _id(id), _value(value), _neighbors(nullptr)
+	: _nodes(nullptr), _id(id), _content(-1.0), _value(value), _neighbors(nullptr)
 {
 }
 
@@ -88,19 +88,6 @@ MeshLib::Node Element::getCenterOfGravity() const
 	center[1] /= nNodes;
 	center[2] /= nNodes;
 	return center;
-}
-
-const Element* Element::getEdge(unsigned i) const
-{
-	if (i < getNEdges())
-	{
-		Node** nodes = new Node*[2];
-		nodes[0] = const_cast<Node*>(getEdgeNode(i,0));
-		nodes[1] = const_cast<Node*>(getEdgeNode(i,1));
-		return new Line(nodes);
-	}
-	ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
-	return nullptr;
 }
 
 void Element::computeSqrEdgeLengthRange(double &min, double &max) const

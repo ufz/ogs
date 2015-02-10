@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Sep 27, 2012
- * \brief  Definition of the Pyramid class.
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,16 +7,16 @@
  *
  */
 
-#ifndef PYRAMID_H_
-#define PYRAMID_H_
-
-#include "TemplateElement.h"
-#include "PyramidRule5.h"
+#include "QuadRule8.h"
 
 namespace MeshLib {
 
-typedef TemplateElement<PyramidRule5> Pyramid;
+const unsigned QuadRule8::edge_nodes[4][3] =
+{
+		{0, 1, 4}, // Edge 0
+		{1, 2, 5}, // Edge 1
+		{2, 3, 6}, // Edge 2
+		{0, 3, 7}  // Edge 3
+};
 
-}
-
-#endif /* PYRAMID_H_ */
+} // end namespace MeshLib

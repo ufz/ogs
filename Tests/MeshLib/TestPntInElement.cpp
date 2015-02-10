@@ -13,6 +13,8 @@
 
 #include "gtest/gtest.h"
 
+#include "GeoLib/Point.h"
+
 #include "Mesh.h"
 #include "Node.h"
 #include "MeshEditing/MeshRevision.h"
