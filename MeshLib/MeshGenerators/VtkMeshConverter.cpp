@@ -386,8 +386,6 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	vtkIdType const nTuples (array->GetNumberOfTuples());
 	int const nComponents (array->GetNumberOfComponents());
 	char const*const array_name (array->GetName());
-	if (type == MeshLib::MeshItemType::Cell && std::string(array_name).compare("MaterialIDs") == 0)
-		return;
 
 	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
 	if (double_array)

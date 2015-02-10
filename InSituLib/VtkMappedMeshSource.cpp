@@ -95,41 +95,58 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	output->ShallowCopy(elems.GetPointer());
 
 	MeshLib::Properties const & properties = _mesh->getProperties();
-	std::vector<std::string> propertyNames = properties.getPropertyNames();
+	std::vector<std::string> const& propertyNames = properties.getPropertyNames();
 
 	// double
-	for(std::vector<std::string>::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it)
+	for(std::vector<std::string>::const_iterator it = propertyNames.cbegin(); it != propertyNames.cend(); ++it)
 	{
-		boost::optional<MeshLib::PropertyVector<double> const &> propertyVector(properties.getProperty<double>(*it));
-		if(!propertyVector)
+		if (addDoubleProperty(*output, properties, *it))
 			continue;
 
-		vtkNew<VtkMappedPropertyVectorTemplate<double> > dataArray;
-		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<double> &>(*propertyVector));
-		dataArray->SetName(it->c_str());
-
-		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-			output->GetPointData()->AddArray(dataArray.GetPointer());
-		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-			output->GetCellData()->AddArray(dataArray.GetPointer());
-	}
-
-	// int
-	for(std::vector<std::string>::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it)
-	{
-		boost::optional<MeshLib::PropertyVector<int> const &> propertyVector(properties.getProperty<int>(*it));
-		if(!propertyVector)
+		if (addIntProperty(*output, properties, *it))
 			continue;
 
-		vtkNew<VtkMappedPropertyVectorTemplate<int> > dataArray;
-		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<int> &>(*propertyVector));
-		dataArray->SetName(it->c_str());
-
-		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-			output->GetPointData()->AddArray(dataArray.GetPointer());
-		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-			output->GetCellData()->AddArray(dataArray.GetPointer());
+		DBUG ("Mesh property \"%s\" with unknown data type.", *it->c_str());
 	}
+	return 1;
+}
+
+int VtkMappedMeshSource::addDoubleProperty(vtkUnstructuredGrid &output,
+                                           MeshLib::Properties const& properties,
+                                           std::string const& prop_name) const
+{
+	boost::optional<MeshLib::PropertyVector<double> const &> propertyVector(properties.getProperty<double>(prop_name));
+	if(!propertyVector)
+		return 0;
+
+	vtkNew<VtkMappedPropertyVectorTemplate<double> > dataArray;
+	dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<double> &>(*propertyVector));
+	dataArray->SetName(prop_name.c_str());
+
+	if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+		output.GetPointData()->AddArray(dataArray.GetPointer());
+	else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+		output.GetCellData()->AddArray(dataArray.GetPointer());
+
+	return 1;
+}
+
+int VtkMappedMeshSource::addIntProperty(vtkUnstructuredGrid &output,
+                                        MeshLib::Properties const& properties,
+                                        std::string const& prop_name) const
+{
+	boost::optional<MeshLib::PropertyVector<int> const &> propertyVector(properties.getProperty<int>(prop_name));
+	if(!propertyVector)
+		return 0;
+
+	vtkNew<VtkMappedPropertyVectorTemplate<int> > dataArray;
+	dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<int> &>(*propertyVector));
+	dataArray->SetName(prop_name.c_str());
+
+	if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+		output.GetPointData()->AddArray(dataArray.GetPointer());
+	else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+		output.GetCellData()->AddArray(dataArray.GetPointer());
 
 	return 1;
 }

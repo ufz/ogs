@@ -150,7 +150,6 @@ public:
 						boost::any_cast<PropertyVector<T> const&>(it->second)
 					);
 			} catch (boost::bad_any_cast const&) {
-				ERR("A property with the specified data type is not available.");
 				return boost::optional<PropertyVector<T> const&>();
 			}
 		} else {
