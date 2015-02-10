@@ -18,7 +18,7 @@
 #include "ui_GeoOnMeshMapping.h"
 #include <QDialog>
 
-#include "GeoMapper.h"
+#include "MeshGeoToolsLib/GeoMapper.h"
 
 namespace MeshLib {
 	class Mesh;

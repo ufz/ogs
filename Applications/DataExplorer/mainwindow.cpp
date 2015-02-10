@@ -50,7 +50,7 @@
 
 #include "SHPImportDialog.h"
 
-#include "GeoMapper.h"
+#include "MeshGeoToolsLib/GeoMapper.h"
 #include "OGSError.h"
 #include "VtkRaster.h"
 #include "RecentFiles.h"
