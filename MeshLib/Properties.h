@@ -56,7 +56,7 @@ public:
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
-	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type)
+	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type, std::size_t tuple_size = 1)
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
@@ -69,7 +69,7 @@ public:
 		auto entry_info(
 			_properties.insert(
 				std::pair<std::string, boost::any>(
-					name, boost::any(PropertyVector<T>(name, mesh_item_type))
+					name, boost::any(PropertyVector<T>(name, mesh_item_type, tuple_size))
 				)
 			)
 		);

@@ -17,13 +17,16 @@
 #define VTKMESHCONVERTER_H
 
 #include "MeshLib/MeshEnums.h"
+#include "MeshLib/Location.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
+class vtkDataArray; // For node/cell properties
 
 namespace MeshLib {
 
 class Mesh;
+class Properties;
 
 /// Selection of possible interpretations for intensities
 enum class UseIntensityAs
@@ -79,6 +82,10 @@ private:
 	                                    const double &scalingFactor,
 	                                    MeshElemType elem_type,
 	                                    UseIntensityAs intensity_type);
+
+	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
+
+	static void convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type);
 
 	static double getExistingValue(const double* img, std::size_t length);
 };
