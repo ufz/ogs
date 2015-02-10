@@ -420,45 +420,36 @@ void MainWindow::openRecentFile()
 void MainWindow::save()
 {
 	QString fileName = QFileDialog::getSaveFileName(
-	        this,
-	        "Save data as",
-	        LastSavedFileDirectory::getDir(),
-			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)"); //Saving gli files is no longer possible
+			this,
+			"Save data as",
+			LastSavedFileDirectory::getDir(),
+			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)");
 
-	if (!fileName.isEmpty())
+	if (fileName.isEmpty())
 	{
-		QFileInfo fi(fileName);
-		LastSavedFileDirectory::setDir(fileName);
+		OGSError::box("No filename specified.");
+		return;
+	}
 
-		if (fi.suffix().toLower() == "gsp")
-		{
-			XmlGspInterface xml(_project);
-			xml.writeToFile(fileName.toStdString());
-		}
-		else if (fi.suffix().toLower() == "geo")
-		{
-			// it works like this (none of it is particularily fast or optimised or anything):
-			// 1. merge all geometries that are currently loaded, all of these will be integrated into the mesh
-			// 2. if "useStationsAsConstraints"-parameter is true, GMSH-Interface will also integrate all stations that are currently loaded
-			//    if "useSteinerPoints"-parameter is true, additional points will be inserted in large areas without information
-			// 3. after the geo-file is created the merged geometry is deleted again as it is no longer needed
-			std::vector<std::string> names;
-			this->_project.getGEOObjects()->getGeometryNames(names);
-			std::string merge_name("MergedGeometry");
-			_project.getGEOObjects()->mergeGeometries (names, merge_name);
-			names.clear();
-			names.push_back(merge_name);
+	QFileInfo fi(fileName);
+	LastSavedFileDirectory::setDir(fileName);
 
-			double param1(0.5); // mesh density scaling on normal points
-			double param2(0.05); // mesh density scaling on station points
-			size_t param3(2); // points per leaf
-			GMSHInterface gmsh_io(*(this->_project.getGEOObjects()), true, FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, param1, param2, param3, names);
-			gmsh_io.writeToFile(fileName.toStdString());
+	if (fi.suffix().toLower() == "gsp")
+	{
+		XmlGspInterface xml(_project);
+		xml.writeToFile(fileName.toStdString());
+	}
+	else if (fi.suffix().toLower() == "geo")
+	{
+		int const return_val = 
+			FileIO::GMSHInterface::writeGeoFile(*_project.getGEOObjects(), fileName.toStdString());
 
-			this->_project.getGEOObjects()->removeSurfaceVec(merge_name);
-			this->_project.getGEOObjects()->removePolylineVec(merge_name);
-			this->_project.getGEOObjects()->removePointVec(merge_name);
-		}
+		if (return_val == 1)
+			OGSError::box(" No geometry available\n to write to geo-file");
+		else if (return_val == 2)
+			OGSError::box("Error merging geometries");
+		else if (return_val == 3)
+			OGSError::box("Error writing geo-file.");
 	}
 }
 
