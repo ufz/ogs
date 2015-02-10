@@ -71,7 +71,7 @@ if (OGS_PROFILE)
 		set(PROFILE_FLAGS "${PROFILE_FLAGS} -fno-inline-functions-called-once -fno-optimize-sibling-calls")
 	endif()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROFILE_FLAGS}")
-endif (OGS_PROFILE)
+endif ()
 
 ### Windows
 if (WIN32)
@@ -90,11 +90,11 @@ if (WIN32)
 
 		DisableCompilerFlag(DEBUG /RTC1)
 	# cygwin
-	else (MSVC)
+	else ()
 		message (STATUS "Might be GCC under cygwin.")
 		add_definitions( -DGCC )
-	endif (MSVC)
-endif (WIN32)
+	endif ()
+endif ()
 
 # Missing OpenMP 3.0 implementation fix for Windows, this fixes #6
 if(MSVC)

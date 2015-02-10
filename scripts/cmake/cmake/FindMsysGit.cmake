@@ -21,7 +21,7 @@ if(GIT_EXECUTABLE)
     endif()
   endif()
   unset(git_version)
-endif(GIT_EXECUTABLE)
+endif()
 
 if(GIT_IS_MSYSGIT)
   get_filename_component(MSYS_DIR ${GIT_EXECUTABLE} PATH)

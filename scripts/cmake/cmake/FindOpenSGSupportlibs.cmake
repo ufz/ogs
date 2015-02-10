@@ -21,7 +21,7 @@ if (NOT OpenSGSupportlibs_FOUND)
 		NAMES glut32 libjpg libpng tif32 zlib
 		PATHS ${LIBRARIES_DIR}/supportlibs/lib
 		  ${CMAKE_SOURCE_DIR}/../supportlibs/lib )  
-	else (VS32)  
+	else ()  
 	  if (VS64) 
 	    # Visual Studio x64
 		find_path( OpenSGSupportlibs_INCLUDE_DIR
@@ -33,8 +33,8 @@ if (NOT OpenSGSupportlibs_FOUND)
 		NAMES glut32 libjpg libpng tif32 zlib
 		PATHS ${LIBRARIES_DIR}/supportlibs_x64/lib
 		  ${CMAKE_SOURCE_DIR}/../supportlibs_x64/lib )
-	  endif(VS64)
-	endif (VS32)
+	  endif()
+	endif ()
 
 	# Set the include dir variables and the libraries and let libfind_process do the rest.
 	# NOTE: Singular variables for this library, plural for libraries this this lib depends on.
@@ -42,4 +42,4 @@ if (NOT OpenSGSupportlibs_FOUND)
 	set(OpenSGSupportlibs_PROCESS_LIBS OpenSGSupportlibs_LIBRARY)
 	libfind_process(OpenSGSupportlibs)
 	
-endif (NOT OpenSGSupportlibs_FOUND)
+endif ()

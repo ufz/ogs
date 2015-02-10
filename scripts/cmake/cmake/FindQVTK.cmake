@@ -19,9 +19,9 @@ find_package_handle_standard_args(QVTK DEFAULT_MSG
 
 if(NOT QVTK_FOUND)
   set (VTK_USE_QVTK OFF)
-else(NOT QVTK_FOUND)
+else()
   get_filename_component (QVTK_LIBRARY_DIR ${QVTK_LIBRARY} PATH)
   set (VTK_LIBRARY_DIRS ${VTK_LIBRARY_DIRS} ${QVTK_LIBRARY_DIR})
   set (VTK_INCLUDE_DIRS ${VTK_INCLUDE_DIRS} ${QVTK_INCLUDE_DIR})
   set (VTK_USE_QVTK ON)
-endif(NOT QVTK_FOUND)
+endif()

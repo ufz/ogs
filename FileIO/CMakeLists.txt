@@ -37,7 +37,7 @@ if (QT4_FOUND)
 	set ( SOURCES ${SOURCES} FEFLOWInterface.h FEFLOWInterface.cpp)
 	GET_SOURCE_FILES(SOURCES_QT_XML XmlIO/Qt)
 	set ( SOURCES ${SOURCES} ${SOURCES_QT_XML})
-endif (QT4_FOUND)
+endif ()
 
 # It could be used for other MPI based DDC approach in future.
 if(OGS_USE_PETSC)

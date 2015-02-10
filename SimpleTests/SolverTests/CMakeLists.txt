@@ -36,7 +36,7 @@ set_target_properties(GMResDiagPrecond PROPERTIES FOLDER SimpleTests)
 
 if (WIN32)
         target_link_libraries(ConjugateGradientUnpreconditioned Winmm.lib)
-endif (WIN32)
+endif ()
 target_link_libraries ( ConjugateGradientUnpreconditioned
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -46,7 +46,7 @@ target_link_libraries ( ConjugateGradientUnpreconditioned
 
 if (WIN32)
         target_link_libraries(ConjugateGradientDiagPrecond Winmm.lib)
-endif (WIN32)
+endif ()
 target_link_libraries ( ConjugateGradientDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -56,7 +56,7 @@ target_link_libraries ( ConjugateGradientDiagPrecond
 
 if (WIN32)
         target_link_libraries(BiCGStabDiagPrecond Winmm.lib)
-endif (WIN32)
+endif ()
 target_link_libraries( BiCGStabDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}
@@ -66,7 +66,7 @@ target_link_libraries( BiCGStabDiagPrecond
 
 if (WIN32)
         target_link_libraries(GMResDiagPrecond Winmm.lib)
-endif (WIN32)
+endif ()
 target_link_libraries( GMResDiagPrecond
         ${BLAS_LIBRARIES}
         ${LAPACK_LIBRARIES}

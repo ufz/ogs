@@ -9,5 +9,5 @@ macro (CONVERT_CYGWIN_PATH _path)
     execute_process(COMMAND cygpath.exe -m ${${_path}}
       OUTPUT_VARIABLE ${_path})
     string (STRIP ${${_path}} ${_path})
-  endif (WIN32)
-endmacro (CONVERT_CYGWIN_PATH)
+  endif ()
+endmacro ()

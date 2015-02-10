@@ -83,7 +83,7 @@ find_package(Metis QUIET)
 ## Qt4 library ##
 if(NOT OGS_DONT_USE_QT)
 	find_package( Qt4 4.7)
-endif(NOT OGS_DONT_USE_QT)
+endif()
 
 if ( QT4_FOUND )
 	# Enable more modules
@@ -94,7 +94,7 @@ if ( QT4_FOUND )
 	set(QT_USE_QTXMLPATTERNS TRUE)
 	include( ${QT_USE_FILE} )
 	add_definitions(${QT_DEFINITIONS} -DQT4_FOUND)
-endif (QT4_FOUND )
+endif ()
 
 ## pthread ##
 set ( CMAKE_THREAD_PREFER_PTHREAD ON )
@@ -102,7 +102,7 @@ find_package ( Threads )
 if ( CMAKE_USE_PTHREADS_INIT )
 	set (HAVE_PTHREADS TRUE)
 	add_definitions(-DHAVE_PTHREADS)
-endif (CMAKE_USE_PTHREADS_INIT )
+endif ()
 
 # blas
 #find_package ( BLAS QUIET )

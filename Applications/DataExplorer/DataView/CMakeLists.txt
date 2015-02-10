@@ -156,7 +156,7 @@ include_directories(
 
 if (VTKOSGCONVERTER_FOUND)
 	include_directories( ${VTKOSGCONVERTER_INCLUDE_DIRS} )
-endif (VTKOSGCONVERTER_FOUND)
+endif ()
 
 if (GEOTIFF_FOUND)
 	include_directories( ${GEOTIFF_INCLUDE_DIRS} )

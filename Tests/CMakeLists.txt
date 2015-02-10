@@ -57,7 +57,7 @@ target_link_libraries(testrunner
 ADD_CATALYST_DEPENDENCY(testrunner)
 if (OGS_USE_PETSC)
 	target_link_libraries( testrunner  ${PETSC_LIBRARIES})
-endif (OGS_USE_PETSC)
+endif ()
 
 if (OGS_USE_MPI)
 	target_link_libraries( testrunner  ${MPI_CXX_LIBRARIES})

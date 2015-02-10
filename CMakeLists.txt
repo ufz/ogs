@@ -79,7 +79,7 @@ set(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
 if (OGS_CMAKE_DEBUG)
 	include(ListAllCMakeVariableValues)
 	list_all_cmake_variable_values()
-endif (OGS_CMAKE_DEBUG)
+endif ()
 
 # Code coverage
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)

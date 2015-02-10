@@ -21,7 +21,7 @@ target_link_libraries ( test_node_partitioned_mesh
 
 if (OGS_USE_PETSC)
 	target_link_libraries( test_node_partitioned_mesh  ${PETSC_LIBRARIES})
-endif (OGS_USE_PETSC)
+endif ()
 
 if (OGS_USE_MPI)
 	target_link_libraries( test_node_partitioned_mesh  ${MPI_CXX_LIBRARIES})

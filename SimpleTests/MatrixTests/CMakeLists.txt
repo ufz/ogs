@@ -5,7 +5,7 @@ endif()
 
 if ( CMAKE_USE_PTHREADS_INIT )
         set (HAVE_PTHREADS TRUE)
-endif (CMAKE_USE_PTHREADS_INIT )
+endif ()
 
 include_directories(
         .
@@ -35,7 +35,7 @@ target_link_libraries(MatVecMultPthreads
 	BaseLib
 	MathLib
 	logog)
-endif ( HAVE_PTHREADS )
+endif ()
 
 set_target_properties(MatMult PROPERTIES FOLDER SimpleTests)
 target_link_libraries(MatMult logog)
@@ -80,12 +80,12 @@ if (METIS_FOUND)
 			${ADDITIONAL_LIBS}
 		)
 	endif()
-endif(METIS_FOUND)
+endif()
 
 
 if (WIN32)
         target_link_libraries(MatMult Winmm.lib)
-endif (WIN32)
+endif ()
 
 target_link_libraries ( MatMult
 	BaseLib
@@ -94,7 +94,7 @@ target_link_libraries ( MatMult
 
 if (WIN32)
         target_link_libraries(MatTestRemoveRowsCols Winmm.lib)
-endif (WIN32)
+endif ()
 
 target_link_libraries ( MatTestRemoveRowsCols
 	BaseLib

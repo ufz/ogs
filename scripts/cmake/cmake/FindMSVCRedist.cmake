@@ -17,9 +17,9 @@ if (MSVC)
     #  # VS 9 and earlier:
     #  set(CMAKE_MSVC_ARCH amd64)
     #endif()
-  else(CMAKE_CL_64)
+  else()
     set(CMAKE_MSVC_ARCH x86)
-  endif(CMAKE_CL_64)
+  endif()
   
   set(SDKVERS "2.0")
   if(${VCVERS} EQUAL 8)
@@ -44,5 +44,5 @@ vcredist_${CMAKE_MSVC_ARCH}/vcredist_${CMAKE_MSVC_ARCH}.exe
     install(PROGRAMS ${MSVC_REDIST} COMPONENT msvc_redist DESTINATION bin)
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\bin\\\\${vcredist_name}\\\"'")
     message(STATUS "MSVC_REDIST: ${MSVC_REDIST}")
-  endif(MSVC${VCVERS}0 OR MSVC${VCVERS})
+  endif()
 endif ()
