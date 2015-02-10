@@ -79,13 +79,13 @@ int GMSHInterface::writeGeoFile(GeoLib::GEOObjects &geo_objects, std::string con
 	std::vector<std::string> names;
 	geo_objects.getGeometryNames(names);
 
-	if (names.size() == 0)
+	if (names.empty())
 	{
 		ERR ("No geometry information available.");
 		return 1;
 	}
 
-	bool const multiple_geometries = (names.size() > 1) ? true : false;
+	bool const multiple_geometries = (names.size() > 1);
 	std::string merge_name("MergedGeometry");
 	if (multiple_geometries)
 	{
@@ -97,9 +97,10 @@ int GMSHInterface::writeGeoFile(GeoLib::GEOObjects &geo_objects, std::string con
 	else
 		merge_name = names[0];
 
-	double param1(0.5); // mesh density scaling on normal points
-	double param2(0.05); // mesh density scaling on station points
-	size_t param3(2); // points per leaf
+	// default parameters for GMSH interface
+	double param1(0.5);    // mesh density scaling on normal points
+	double param2(0.05);   // mesh density scaling on station points
+	std::size_t param3(2); // points per leaf
 	GMSHInterface gmsh_io(geo_objects, true, FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, param1, param2, param3, names);
 	int const writer_return_val = gmsh_io.writeToFile(file_name);
 
