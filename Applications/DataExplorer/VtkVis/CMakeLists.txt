@@ -27,7 +27,6 @@ set(SOURCES
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
-	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
 	VtkRaster.cpp
@@ -81,7 +80,6 @@ set(HEADERS
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
-	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
 	VtkRaster.h

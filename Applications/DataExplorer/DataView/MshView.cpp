@@ -34,7 +34,6 @@
 #include "ImportFileTypes.h"
 #include "LastSavedFileDirectory.h"
 #include "SaveMeshDialog.h"
-#include "VtkMeshSource.h"
 
 #include "SHPInterface.h"
 #include "TetGenInterface.h"
@@ -80,7 +79,9 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
 		{
 			emit enableSaveButton(false);
 			emit enableRemoveButton(false);
-			emit elementSelected(dynamic_cast<const MshItem*>(tree_item->parentItem())->vtkSource(), static_cast<unsigned>(tree_item->row()), true);
+			emit elementSelected(static_cast<InSituLib::VtkMappedMeshSource*>(
+				static_cast<const MshItem*>(tree_item->parentItem())->vtkSource()),
+				static_cast<unsigned>(tree_item->row()), true);
 		}
 	}
 }
@@ -287,6 +288,6 @@ void MshView::checkMeshQuality ()
 {
 	QModelIndex index = this->selectionModel()->currentIndex();
 	MshItem* item = static_cast<MshItem*>(static_cast<MshModel*>(this->model())->getItem(index));
-	emit qualityCheckRequested(item->vtkSource());
+	emit qualityCheckRequested(static_cast<InSituLib::VtkMappedMeshSource*>(item->vtkSource()));
 }
 

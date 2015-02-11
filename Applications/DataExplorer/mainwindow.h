@@ -30,6 +30,10 @@ class ProcessModel;
 class VtkVisPipeline;
 class VisPrefsDialog;
 
+namespace InSituLib {
+	class VtkMappedMeshSource;
+}
+
 class QSignalMapper;
 
 /**

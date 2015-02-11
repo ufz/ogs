@@ -19,7 +19,9 @@
 #include "ui_MeshQualitySelection.h"
 #include <QDialog>
 
-class vtkUnstructuredGridAlgorithm;
+namespace InSituLib {
+	class VtkMappedMeshSource;
+}
 
 /**
  * \brief A dialog for selecting a mesh quality metric

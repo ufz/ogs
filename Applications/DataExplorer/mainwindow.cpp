@@ -176,8 +176,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _meshModels, SLOT(removeMesh(const QModelIndex &)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
 	        _elementModel, SLOT(clearView()));
-	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(vtkUnstructuredGridAlgorithm*)),
-	        this, SLOT(showMeshQualitySelectionDialog(vtkUnstructuredGridAlgorithm*)));
+	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(InSituLib::VtkMappedMeshSource*)),
+	        this, SLOT(showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
 			this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
