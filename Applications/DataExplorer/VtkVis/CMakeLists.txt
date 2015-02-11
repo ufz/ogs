@@ -1,5 +1,5 @@
 # Source files
-set( SOURCES
+set(SOURCES
 	MeshFromRasterDialog.cpp
 	QVtkDataSetMapper.cpp
 	VisPrefsDialog.cpp
@@ -45,7 +45,7 @@ set( SOURCES
 )
 
 # Moc headers
-set( MOC_HEADERS
+set(MOC_HEADERS
 	MeshFromRasterDialog.h
 	QVtkDataSetMapper.h
 	VisPrefsDialog.h
@@ -61,7 +61,7 @@ set( MOC_HEADERS
 )
 
 # Header files
-set( HEADERS
+set(HEADERS
 	VtkAppendArrayFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
@@ -95,7 +95,7 @@ set( HEADERS
 )
 
 # UI files
-set ( UIS
+set(UIS
 	MeshFromRaster.ui
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
@@ -116,10 +116,10 @@ source_group("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
 source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
 
 # Run Qts user interface compiler uic on .ui files
-QT4_WRAP_UI( UI_HEADERS ${UIS} )
+qt4_wrap_ui(UI_HEADERS ${UIS})
 
 # Run Qts meta object compiler moc on header files
-QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
+qt4_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -140,7 +140,7 @@ include_directories(
 )
 
 # Create the library
-add_library( VtkVis STATIC
+add_library(VtkVis STATIC
 	${SOURCES}
 	${HEADERS}
 	${MOC_HEADERS}
@@ -151,18 +151,18 @@ add_library( VtkVis STATIC
 include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(VtkVis)
 
-if (GEOTIFF_FOUND)
-	include_directories( ${GEOTIFF_INCLUDE_DIRS} )
-	target_link_libraries( VtkVis ${GEOTIFF_LIBRARIES} )
-endif () # GEOTIFF_FOUND
+if(GEOTIFF_FOUND)
+	include_directories(${GEOTIFF_INCLUDE_DIRS})
+	target_link_libraries(VtkVis ${GEOTIFF_LIBRARIES})
+endif() # GEOTIFF_FOUND
 
-target_link_libraries( VtkVis ${QT_LIBRARIES} )
+target_link_libraries(VtkVis ${QT_LIBRARIES})
 
 add_dependencies(VtkVis QtDataView)
 
-if (VTKOSGCONVERTER_FOUND)
+if(VTKOSGCONVERTER_FOUND)
 	USE_OPENSG(VtkVis)
-	include_directories( ${VTKOSGCONVERTER_INCLUDE_DIRS} )
-endif ()
+	include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
+endif()
 
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")

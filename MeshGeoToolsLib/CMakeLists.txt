@@ -12,7 +12,7 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../GeoLib
 )
 
-target_link_libraries (MeshGeoToolsLib
+target_link_libraries(MeshGeoToolsLib
 	BaseLib
 	MathLib
 	MeshLib

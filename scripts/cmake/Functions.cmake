@@ -30,7 +30,7 @@ macro(GET_SOURCE_FILES SOURCE_FILES)
 	endif()
 
 	GET_CURRENT_SOURCE_SUBDIRECTORY(DIRECTORY)
-	source_group( "${DIRECTORY}${DIR}" FILES
+	source_group("${DIRECTORY}${DIR}" FILES
 		${GET_SOURCE_FILES_HEADERS}
 		${GET_SOURCE_FILES_SOURCES}
 		${GET_SOURCE_FILES_TEMPLATES})
@@ -47,13 +47,12 @@ endmacro()
 # Creates one ctest for each googletest found in source files passed as arguments
 # number two onwards. Argument one specifies the testrunner executable.
 macro(ADD_GOOGLE_TESTS executable)
-	foreach ( source ${ARGN} )
+	foreach(source ${ARGN})
 		file(READ "${source}" contents)
 		string(REGEX MATCHALL "TEST_?F?\\(([A-Za-z_0-9 ,]+)\\)" found_tests ${contents})
 		foreach(hit ${found_tests})
 			string(REGEX REPLACE ".*\\(([A-Za-z_0-9]+)[, ]*([A-Za-z_0-9]+)\\).*" "\\1.\\2" test_name ${hit})
 			add_test(${test_name} ${executable}  --gtest_output=xml --gtest_filter=${test_name} ${MI3CTestingDir})
-			# message ("Adding test: ${test_name}")
 		endforeach()
 	endforeach()
 endmacro()

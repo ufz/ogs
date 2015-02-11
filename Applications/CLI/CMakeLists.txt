@@ -23,7 +23,7 @@ include(Tests.cmake)
 ####################
 ### Installation ###
 ####################
-install (TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
+install(TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
 
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs" "OGS Simulator")
 cpack_add_component(ogs_cli

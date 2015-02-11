@@ -1,62 +1,72 @@
 ## pthread ##
-if (WIN32)
-	set ( ADDITIONAL_LIBS Winmm.lib )
+if(WIN32)
+	set(ADDITIONAL_LIBS Winmm.lib)
 endif()
 
-if ( CMAKE_USE_PTHREADS_INIT )
-        set (HAVE_PTHREADS TRUE)
-endif ()
+if(CMAKE_USE_PTHREADS_INIT)
+	set(HAVE_PTHREADS TRUE)
+endif()
 
 include_directories(
-        .
+	.
 	${CMAKE_SOURCE_DIR}/BaseLib/
 	${CMAKE_BINARY_DIR}/BaseLib/
 	${CMAKE_SOURCE_DIR}/MathLib/
 )
 
 # Create the executable
-add_executable( MatMult
-        MatMult.cpp
-        ${SOURCES}
-        ${HEADERS}
+add_executable(MatMult
+	MatMult.cpp
+	${SOURCES}
+	${HEADERS}
 )
 set_target_properties(MatMult PROPERTIES FOLDER SimpleTests)
 target_link_libraries(MatMult logog)
 
-if ( HAVE_PTHREADS )
-add_executable( MatVecMultPthreads
-        MatVecMultPthreads.cpp
-        ${SOURCES}
-        ${HEADERS}
-)
-set_target_properties(MatVecMultPthreads PROPERTIES FOLDER SimpleTests)
-target_link_libraries(MatVecMultPthreads
-	pthread
+if(HAVE_PTHREADS)
+	add_executable(MatVecMultPthreads
+		MatVecMultPthreads.cpp
+		${SOURCES}
+		${HEADERS}
+	)
+	set_target_properties(MatVecMultPthreads PROPERTIES FOLDER SimpleTests)
+	target_link_libraries(MatVecMultPthreads
+		pthread
+		BaseLib
+		MathLib
+		logog
+	)
+endif()
+
+set_target_properties(MatMult PROPERTIES FOLDER SimpleTests)
+target_link_libraries(MatMult
+	logog
 	BaseLib
 	MathLib
-	logog)
-endif ()
+	${ADDITIONAL_LIBS}
+)
 
-set_target_properties(MatMult PROPERTIES FOLDER SimpleTests)
-target_link_libraries(MatMult logog)
-
-# Create the executable
-add_executable( MatTestRemoveRowsCols
-        MatTestRemoveRowsCols.cpp
-        ${SOURCES}
-        ${HEADERS}
+add_executable(MatTestRemoveRowsCols
+	MatTestRemoveRowsCols.cpp
+	${SOURCES}
+	${HEADERS}
 )
 set_target_properties(MatTestRemoveRowsCols PROPERTIES FOLDER SimpleTests)
+target_link_libraries(MatTestRemoveRowsCols
+	BaseLib
+	MathLib
+	${ADDITIONAL_LIBS}
+)
 
-if (METIS_FOUND)
-	add_executable( MatVecMultNDPerm
-        	MatVecMultNDPerm.cpp
-	        ${SOURCES}
-        	${HEADERS}
+if(METIS_FOUND)
+	add_executable(MatVecMultNDPerm
+		MatVecMultNDPerm.cpp
+		${SOURCES}
+		${HEADERS}
 	)
 	set_target_properties(MatVecMultNDPerm PROPERTIES FOLDER SimpleTests)
 
-	target_link_libraries ( MatVecMultNDPerm
+	target_link_libraries(MatVecMultNDPerm
 		BaseLib
 		MathLib
 		logog
@@ -65,14 +75,14 @@ if (METIS_FOUND)
 	)
 
 	if(OPENMP_FOUND)
-		add_executable( MatVecMultNDPermOpenMP
+		add_executable(MatVecMultNDPermOpenMP
 			MatVecMultNDPermOpenMP.cpp
 			${SOURCES}
 			${HEADERS}
 		)
 		set_target_properties(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
 
-		target_link_libraries ( MatVecMultNDPermOpenMP
+		target_link_libraries(MatVecMultNDPermOpenMP
 			BaseLib
 			MathLib
 			logog
@@ -82,29 +92,10 @@ if (METIS_FOUND)
 	endif()
 endif()
 
-
-if (WIN32)
-        target_link_libraries(MatMult Winmm.lib)
-endif ()
-
-target_link_libraries ( MatMult
-	BaseLib
-	MathLib
-)
-
-if (WIN32)
-        target_link_libraries(MatTestRemoveRowsCols Winmm.lib)
-endif ()
-
-target_link_libraries ( MatTestRemoveRowsCols
-	BaseLib
-	MathLib
-)
-
-add_executable( DenseGaussEliminationChecker
-        DenseGaussEliminationChecker.cpp
-        ${SOURCES}
-        ${HEADERS}
+add_executable(DenseGaussEliminationChecker
+	DenseGaussEliminationChecker.cpp
+	${SOURCES}
+	${HEADERS}
 )
 set_target_properties(DenseGaussEliminationChecker PROPERTIES FOLDER SimpleTests)
 target_link_libraries(DenseGaussEliminationChecker

@@ -7,8 +7,8 @@ include_directories(
 )
 
 if(QT4_FOUND)
-	add_executable( TriangulatePolyline TriangulatePolyline.cpp )
-	target_link_libraries( TriangulatePolyline
+	add_executable(TriangulatePolyline TriangulatePolyline.cpp)
+	target_link_libraries(TriangulatePolyline
 		BaseLib
 		FileIO
 		MathLib

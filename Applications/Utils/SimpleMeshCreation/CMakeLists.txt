@@ -12,9 +12,9 @@ include_directories(
 
 if(TARGET VtkVis)
 
-	add_executable( generateStructuredQuadMesh generateStructuredQuadMesh.cpp )
-	set_target_properties( generateStructuredQuadMesh PROPERTIES FOLDER Utils)
-	target_link_libraries( generateStructuredQuadMesh
+	add_executable(generateStructuredQuadMesh generateStructuredQuadMesh.cpp)
+	set_target_properties(generateStructuredQuadMesh PROPERTIES FOLDER Utils)
+	target_link_libraries(generateStructuredQuadMesh
 		MeshLib
 		FileIO
 		GeoLib
@@ -25,9 +25,9 @@ if(TARGET VtkVis)
 	)
 	ADD_CATALYST_DEPENDENCY(generateStructuredQuadMesh)
 
-	add_executable(  createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp )
-	set_target_properties( createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
-	target_link_libraries( createMeshElemPropertiesFromASCRaster
+	add_executable(createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp)
+	set_target_properties(createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
+	target_link_libraries(createMeshElemPropertiesFromASCRaster
 		MeshLib
 		FileIO
 		VtkVis
@@ -40,8 +40,8 @@ if(TARGET VtkVis)
 endif() # VtkVis-target is existing
 
 
-add_executable( generateStructuredMesh generateStructuredMesh.cpp )
-target_link_libraries( generateStructuredMesh
+add_executable(generateStructuredMesh generateStructuredMesh.cpp)
+target_link_libraries(generateStructuredMesh
 	BaseLib
 	FileIO
 	MathLib

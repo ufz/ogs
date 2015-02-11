@@ -1,6 +1,6 @@
 # Set build directories
-set( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
-set( LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib )
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 # Logging level
 if(OGS_DISABLE_LOGGING)
@@ -20,7 +20,7 @@ endif() # NOT DEFINED OGS_LOG_LEVEL
 # Enable Visual Studio project folder grouping
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Check if this project is included in another
 if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)

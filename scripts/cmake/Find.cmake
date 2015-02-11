@@ -85,7 +85,7 @@ if(NOT OGS_DONT_USE_QT)
 	find_package( Qt4 4.7)
 endif()
 
-if ( QT4_FOUND )
+if(QT4_FOUND)
 	# Enable more modules
 	set(QT_USE_QTOPENGL TRUE)
 	set(QT_USE_QTSQL TRUE)
@@ -94,24 +94,21 @@ if ( QT4_FOUND )
 	set(QT_USE_QTXMLPATTERNS TRUE)
 	include( ${QT_USE_FILE} )
 	add_definitions(${QT_DEFINITIONS} -DQT4_FOUND)
-endif ()
+endif()
 
 ## pthread ##
-set ( CMAKE_THREAD_PREFER_PTHREAD ON )
-find_package ( Threads )
-if ( CMAKE_USE_PTHREADS_INIT )
-	set (HAVE_PTHREADS TRUE)
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+find_package(Threads)
+if(CMAKE_USE_PTHREADS_INIT)
+	set(HAVE_PTHREADS TRUE)
 	add_definitions(-DHAVE_PTHREADS)
-endif ()
-
-# blas
-#find_package ( BLAS QUIET )
+endif()
 
 # lapack
-find_package ( LAPACK QUIET )
+find_package(LAPACK QUIET)
 
 ## geotiff ##
-find_package( LibGeoTiff )
+find_package(LibGeoTiff)
 if(GEOTIFF_FOUND)
 	add_definitions(-DGEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
@@ -122,28 +119,28 @@ if(OGS_USE_LIS)
 endif()
 
 if(OGS_USE_PETSC)
-    message (STATUS  "Configuring for PETSc" )
+	message(STATUS "Configuring for PETSc")
 
-    option(FORCE_PETSC_EXECUTABLE_RUNS "Force CMake to accept a given PETSc configuration" ON)
+	option(FORCE_PETSC_EXECUTABLE_RUNS "Force CMake to accept a given PETSc configuration" ON)
 
-    ##Force CMake to accept a given PETSc configuration in case the failure of MPI tests
-    ##This may cause the compilation broken.
-    if(FORCE_PETSC_EXECUTABLE_RUNS)
-        set(PETSC_EXECUTABLE_RUNS YES)
-    endif()
+	##Force CMake to accept a given PETSc configuration in case the failure of MPI tests
+	##This may cause the compilation broken.
+	if(FORCE_PETSC_EXECUTABLE_RUNS)
+		set(PETSC_EXECUTABLE_RUNS YES)
+	endif()
 
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
-    find_package(PETSc REQUIRED)
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
+	find_package(PETSc REQUIRED)
 
-    include_directories(SYSTEM ${PETSC_INCLUDES})
+	include_directories(SYSTEM ${PETSC_INCLUDES})
 
-    add_definitions(-DPETSC_VERSION_NUMBER=PETSC_VERSION_MAJOR*1000+PETSC_VERSION_MINOR*10)
+	add_definitions(-DPETSC_VERSION_NUMBER=PETSC_VERSION_MAJOR*1000+PETSC_VERSION_MINOR*10)
 
 endif()
 
 ## Check MPI package
 if(OGS_USE_MPI)
-    find_package(MPI REQUIRED)
-    include_directories(SYSTEM ${MPI_CXX_INCLUDE_PATH})
+	find_package(MPI REQUIRED)
+	include_directories(SYSTEM ${MPI_CXX_INCLUDE_PATH})
 endif()
 

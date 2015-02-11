@@ -1,5 +1,5 @@
-if (WIN32)
-	set ( ADDITIONAL_LIBS Winmm.lib )
+if(WIN32)
+	set(ADDITIONAL_LIBS Winmm.lib)
 endif()
 
 include_directories(
@@ -12,13 +12,13 @@ include_directories(
 )
 
 # Create the executable
-add_executable( MeshRead
+add_executable(MeshRead
 	MeshRead.cpp
 	${SOURCES}
 	${HEADERS}
 )
 
-target_link_libraries ( MeshRead
+target_link_libraries(MeshRead
 	MeshLib
 	FileIO
 	MathLib
@@ -31,13 +31,13 @@ target_link_libraries ( MeshRead
 )
 
 # Create MeshSearchTest executable
-add_executable( MeshSearchTest
+add_executable(MeshSearchTest
 	MeshSearchTest.cpp
 	${SOURCES}
 	${HEADERS}
 )
 
-target_link_libraries ( MeshSearchTest
+target_link_libraries(MeshSearchTest
 	MeshLib
 	FileIO
 	MathLib
