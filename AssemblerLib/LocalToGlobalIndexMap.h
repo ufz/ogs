@@ -69,6 +69,16 @@ public:
     LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
 private:
+
+    /// Private constructor used by internally created local-to-global index
+    /// maps. The mesh_component_map is passed as argument instead of being
+    /// created by the constructor.
+    explicit LocalToGlobalIndexMap(
+        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<MeshLib::Element*> const& elements,
+        AssemblerLib::MeshComponentMap const& mesh_component_map,
+        AssemblerLib::ComponentOrder const order);
+
     template <typename ElementIterator>
     void
     findGlobalIndices(ElementIterator first, ElementIterator last,

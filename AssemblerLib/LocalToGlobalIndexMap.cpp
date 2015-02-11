@@ -35,6 +35,26 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     }
 }
 
+LocalToGlobalIndexMap::LocalToGlobalIndexMap(
+    std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+    std::vector<MeshLib::Element*> const& elements,
+    AssemblerLib::MeshComponentMap const& mesh_component_map,
+    AssemblerLib::ComponentOrder const order)
+    : _mesh_subsets(mesh_subsets), _mesh_component_map(mesh_component_map)
+{
+    // For all MeshSubsets and each of their MeshSubset's and each element
+    // of that MeshSubset save a line of global indices.
+    for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
+    {
+        for (MeshLib::MeshSubset const* const ms : *mss)
+        {
+            std::size_t const mesh_id = ms->getMeshID();
+
+            findGlobalIndices(elements.cbegin(), elements.cend(), mesh_id, order);
+        }
+    }
+}
+
 std::size_t
 LocalToGlobalIndexMap::dofSize() const
 {
