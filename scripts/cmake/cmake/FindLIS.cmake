@@ -27,8 +27,8 @@ find_library(LIS_LIBRARY
     $ENV{HOME}/lib/
     ) 
 
-SET(LIS_LIBRARIES ${LIS_LIBRARY})
+set(LIS_LIBRARIES ${LIS_LIBRARY})
 
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIS DEFAULT_MSG LIS_LIBRARY LIS_INCLUDE_DIR)
 

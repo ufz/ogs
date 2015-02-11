@@ -1,7 +1,7 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.8.8)
 
-PROJECT(Shapelib)
+project(Shapelib)
 
-ADD_LIBRARY(shp
+add_library(shp
 	shpopen.c dbfopen.c safileio.c shptree.c
 )

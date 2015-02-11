@@ -1,5 +1,5 @@
 # Source files
-SET( SOURCES
+set(SOURCES
 	MeshFromRasterDialog.cpp
 	QVtkDataSetMapper.cpp
 	VisPrefsDialog.cpp
@@ -45,7 +45,7 @@ SET( SOURCES
 )
 
 # Moc headers
-SET( MOC_HEADERS
+set(MOC_HEADERS
 	MeshFromRasterDialog.h
 	QVtkDataSetMapper.h
 	VisPrefsDialog.h
@@ -61,7 +61,7 @@ SET( MOC_HEADERS
 )
 
 # Header files
-SET( HEADERS
+set(HEADERS
 	VtkAppendArrayFilter.h
 	VtkBGImageSource.h
 	VtkColorByHeightFilter.h
@@ -95,7 +95,7 @@ SET( HEADERS
 )
 
 # UI files
-SET ( UIS
+set(UIS
 	MeshFromRaster.ui
 	VtkAddFilterDialogBase.ui
 	VtkVisTabWidgetBase.ui
@@ -104,26 +104,26 @@ SET ( UIS
 )
 
 # Put moc files in a project folder
-SOURCE_GROUP("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
-SOURCE_GROUP("Moc Files" REGULAR_EXPRESSION "moc_.*")
+source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
+source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
 # Put filter in a folder
-SOURCE_GROUP("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
-SOURCE_GROUP("Filter Source Files" REGULAR_EXPRESSION "[.]*Filter.cpp")
+source_group("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
+source_group("Filter Source Files" REGULAR_EXPRESSION "[.]*Filter.cpp")
 
 # Put vtk source files in a folder
-SOURCE_GROUP("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
-SOURCE_GROUP("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
+source_group("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
+source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
 
 # Run Qts user interface compiler uic on .ui files
-QT4_WRAP_UI( UI_HEADERS ${UIS} )
+qt4_wrap_ui(UI_HEADERS ${UIS})
 
 # Run Qts meta object compiler moc on header files
-QT4_WRAP_CPP( MOC_SOURCES ${MOC_HEADERS} )
+qt4_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
 
-SET(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
-SET(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
-INCLUDE_DIRECTORIES(
+set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
+include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${SOURCE_DIR_REL}/BaseLib
 	${SOURCE_DIR_REL}/GeoLib
@@ -140,7 +140,7 @@ INCLUDE_DIRECTORIES(
 )
 
 # Create the library
-ADD_LIBRARY( VtkVis STATIC
+add_library(VtkVis STATIC
 	${SOURCES}
 	${HEADERS}
 	${MOC_HEADERS}
@@ -148,21 +148,21 @@ ADD_LIBRARY( VtkVis STATIC
 	${UIS}
 )
 
-INCLUDE(AddCatalystDependency)
+include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(VtkVis)
 
-IF (GEOTIFF_FOUND)
-	INCLUDE_DIRECTORIES( ${GEOTIFF_INCLUDE_DIRS} )
-	TARGET_LINK_LIBRARIES( VtkVis ${GEOTIFF_LIBRARIES} )
-ENDIF () # GEOTIFF_FOUND
+if(GEOTIFF_FOUND)
+	include_directories(${GEOTIFF_INCLUDE_DIRS})
+	target_link_libraries(VtkVis ${GEOTIFF_LIBRARIES})
+endif() # GEOTIFF_FOUND
 
-TARGET_LINK_LIBRARIES( VtkVis ${QT_LIBRARIES} )
+target_link_libraries(VtkVis ${QT_LIBRARIES})
 
-ADD_DEPENDENCIES(VtkVis QtDataView)
+add_dependencies(VtkVis QtDataView)
 
-IF (VTKOSGCONVERTER_FOUND)
+if(VTKOSGCONVERTER_FOUND)
 	USE_OPENSG(VtkVis)
-	INCLUDE_DIRECTORIES( ${VTKOSGCONVERTER_INCLUDE_DIRS} )
-ENDIF ()
+	include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
+endif()
 
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")

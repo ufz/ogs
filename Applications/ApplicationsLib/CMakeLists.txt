@@ -1,10 +1,10 @@
 # Source files
-SET ( LIB_SOURCES ProjectData.cpp )
+set(LIB_SOURCES ProjectData.cpp)
 
 # Library
-ADD_LIBRARY (ApplicationsLib STATIC ${LIB_SOURCES})
+add_library(ApplicationsLib STATIC ${LIB_SOURCES})
 
-TARGET_LINK_LIBRARIES( ApplicationsLib
+target_link_libraries(ApplicationsLib
 	GeoLib
 	MeshGeoToolsLib
 	ProcessLib

@@ -1,5 +1,5 @@
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	${CMAKE_SOURCE_DIR}/Utils/FileConverter
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/GeoLib
@@ -9,11 +9,11 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/Gui/OpenSG
 )
 
-IF (QT4_FOUND)
-	ADD_EXECUTABLE( ConvertSHPToGLI ConvertSHPToGLI.cpp )
-	SET_TARGET_PROPERTIES(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
+if (QT4_FOUND)
+	add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
+	set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
 
-	TARGET_LINK_LIBRARIES( ConvertSHPToGLI
+	target_link_libraries(ConvertSHPToGLI
 		FileIO
 		GeoLib
 		BaseLib
@@ -21,28 +21,28 @@ IF (QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 
-	ADD_EXECUTABLE (generateBCandGLI generateBCandGLI.cpp )
-	TARGET_LINK_LIBRARIES (generateBCandGLI
+	add_executable(generateBCandGLI generateBCandGLI.cpp )
+	target_link_libraries(generateBCandGLI
 		ApplicationsLib
 		FileIO
 		GeoLib
 		${QT_LIBRARIES}
 	)
 
-	ADD_EXECUTABLE (generateBCFromPolyline generateBCFromPolyline.cpp )
-	TARGET_LINK_LIBRARIES (generateBCFromPolyline
+	add_executable(generateBCFromPolyline generateBCFromPolyline.cpp )
+	target_link_libraries(generateBCFromPolyline
 		ApplicationsLib
 		FileIO
 		GeoLib
 		${QT_LIBRARIES}
 	)
 
-	SET_TARGET_PROPERTIES(generateBCandGLI generateBCFromPolyline
+	set_target_properties(generateBCandGLI generateBCFromPolyline
 		PROPERTIES FOLDER Utilities)
 
-	ADD_EXECUTABLE (FEFLOW2OGS FEFLOW2OGS.cpp)
-	SET_TARGET_PROPERTIES(FEFLOW2OGS PROPERTIES FOLDER Utilities)
-	TARGET_LINK_LIBRARIES (FEFLOW2OGS
+	add_executable(FEFLOW2OGS FEFLOW2OGS.cpp)
+	set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
+	target_link_libraries(FEFLOW2OGS
 		GeoLib
 		MeshLib
 		FileIO
@@ -51,11 +51,11 @@ IF (QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 	ADD_CATALYST_DEPENDENCY(FEFLOW2OGS)
-ENDIF () # QT4_FOUND
+endif () # QT4_FOUND
 
-IF (Boost_FOUND)
-	ADD_EXECUTABLE (generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
-	TARGET_LINK_LIBRARIES (generateMatPropsFromMatID
+if (Boost_FOUND)
+	add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
+	target_link_libraries(generateMatPropsFromMatID
 		FileIO
 		MeshLib
 		logog
@@ -63,26 +63,26 @@ IF (Boost_FOUND)
 		${CATALYST_LIBRARIES}
 	)
 	ADD_CATALYST_DEPENDENCY(generateMatPropsFromMatID)
-	SET_TARGET_PROPERTIES(generateMatPropsFromMatID
+	set_target_properties(generateMatPropsFromMatID
 		PROPERTIES FOLDER Utilities)
-ENDIF () # Boost_FOUND
+endif () # Boost_FOUND
 
-ADD_EXECUTABLE (GMSH2OGS GMSH2OGS.cpp)
-SET_TARGET_PROPERTIES(GMSH2OGS PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES (GMSH2OGS
+add_executable(GMSH2OGS GMSH2OGS.cpp)
+set_target_properties(GMSH2OGS PROPERTIES FOLDER Utilities)
+target_link_libraries(GMSH2OGS
 	MeshLib
 	FileIO
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(GMSH2OGS)
-IF(MSVC)
-	TARGET_LINK_LIBRARIES (GMSH2OGS winmm)
-ENDIF()
+if(MSVC)
+	target_link_libraries(GMSH2OGS winmm)
+endif()
 
-ADD_EXECUTABLE (OGS2VTK OGS2VTK.cpp)
-SET_TARGET_PROPERTIES(OGS2VTK PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES (OGS2VTK
+add_executable(OGS2VTK OGS2VTK.cpp)
+set_target_properties(OGS2VTK PROPERTIES FOLDER Utilities)
+target_link_libraries(OGS2VTK
 	MeshLib
 	FileIO
 	zlib
@@ -91,9 +91,9 @@ TARGET_LINK_LIBRARIES (OGS2VTK
 )
 ADD_CATALYST_DEPENDENCY(OGS2VTK)
 
-ADD_EXECUTABLE (VTK2OGS VTK2OGS.cpp)
-SET_TARGET_PROPERTIES(VTK2OGS PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES (VTK2OGS
+add_executable(VTK2OGS VTK2OGS.cpp)
+set_target_properties(VTK2OGS PROPERTIES FOLDER Utilities)
+target_link_libraries(VTK2OGS
 	MeshLib
 	FileIO
 	zlib
@@ -102,9 +102,9 @@ TARGET_LINK_LIBRARIES (VTK2OGS
 )
 ADD_CATALYST_DEPENDENCY(VTK2OGS)
 
-ADD_EXECUTABLE (VTK2TIN VTK2TIN.cpp)
-SET_TARGET_PROPERTIES(VTK2TIN PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES (VTK2TIN
+add_executable(VTK2TIN VTK2TIN.cpp)
+set_target_properties(VTK2TIN PROPERTIES FOLDER Utilities)
+target_link_libraries(VTK2TIN
 	MeshLib
 	FileIO
 	zlib
@@ -113,9 +113,9 @@ TARGET_LINK_LIBRARIES (VTK2TIN
 )
 ADD_CATALYST_DEPENDENCY(VTK2TIN)
 
-ADD_EXECUTABLE (TIN2VTK TIN2VTK.cpp)
-SET_TARGET_PROPERTIES(TIN2VTK PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES (TIN2VTK
+add_executable(TIN2VTK TIN2VTK.cpp)
+set_target_properties(TIN2VTK PROPERTIES FOLDER Utilities)
+target_link_libraries(TIN2VTK
 	MeshLib
 	FileIO
 	zlib
@@ -127,13 +127,13 @@ ADD_CATALYST_DEPENDENCY(TIN2VTK)
 ####################
 ### Installation ###
 ####################
-INSTALL(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
+install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
 	RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
-IF(QT4_FOUND)
-	INSTALL(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
+if(QT4_FOUND)
+	install(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
 		FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
-ENDIF()
+endif()
 
 cpack_add_component(ogs_converter
 	DISPLAY_NAME "File converter"

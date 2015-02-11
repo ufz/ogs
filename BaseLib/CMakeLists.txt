@@ -1,22 +1,20 @@
-# Source files
-
 GET_SOURCE_FILES(SOURCES)
 
-LIST(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
+list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
 
 # Create the library
-ADD_LIBRARY( BaseLib STATIC ${SOURCES})
+add_library(BaseLib STATIC ${SOURCES})
 
-SET_TARGET_PROPERTIES(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	.
 )
 
-TARGET_LINK_LIBRARIES( BaseLib
+target_link_libraries(BaseLib
 	${Boost_LIBRARIES}
 )
 
-IF(WIN32)
-	TARGET_LINK_LIBRARIES( BaseLib WinMM )
-ENDIF()
+if(WIN32)
+	target_link_libraries(BaseLib WinMM)
+endif()

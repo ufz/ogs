@@ -2,7 +2,7 @@
 #
 # Usage:
 #
-#  INCLUDE(ListAllCMakeVariableValues)
+#  include(ListAllCMakeVariableValues)
 #  list_all_cmake_variable_values()
 
 function(list_all_cmake_variable_values)
@@ -10,6 +10,6 @@ function(list_all_cmake_variable_values)
   get_cmake_property(vs VARIABLES)
   foreach(v ${vs})
     message(STATUS "${v}='${${v}}'")
-  endforeach(v)
+  endforeach()
   message(STATUS "")
 endfunction()

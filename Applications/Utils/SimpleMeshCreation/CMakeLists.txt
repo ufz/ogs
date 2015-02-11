@@ -1,5 +1,5 @@
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/FileIO
@@ -10,11 +10,11 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/Gui/VtkVis
 )
 
-IF(TARGET VtkVis)
+if(TARGET VtkVis)
 
-	ADD_EXECUTABLE( generateStructuredQuadMesh generateStructuredQuadMesh.cpp )
-	SET_TARGET_PROPERTIES( generateStructuredQuadMesh PROPERTIES FOLDER Utils)
-	TARGET_LINK_LIBRARIES( generateStructuredQuadMesh
+	add_executable(generateStructuredQuadMesh generateStructuredQuadMesh.cpp)
+	set_target_properties(generateStructuredQuadMesh PROPERTIES FOLDER Utils)
+	target_link_libraries(generateStructuredQuadMesh
 		MeshLib
 		FileIO
 		GeoLib
@@ -25,9 +25,9 @@ IF(TARGET VtkVis)
 	)
 	ADD_CATALYST_DEPENDENCY(generateStructuredQuadMesh)
 
-	ADD_EXECUTABLE(  createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp )
-	SET_TARGET_PROPERTIES( createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
-	TARGET_LINK_LIBRARIES( createMeshElemPropertiesFromASCRaster
+	add_executable(createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp)
+	set_target_properties(createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
+	target_link_libraries(createMeshElemPropertiesFromASCRaster
 		MeshLib
 		FileIO
 		VtkVis
@@ -37,15 +37,15 @@ IF(TARGET VtkVis)
 	)
 	ADD_CATALYST_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 
-ENDIF() # VtkVis-target is existing
+endif() # VtkVis-target is existing
 
 
-ADD_EXECUTABLE( generateStructuredMesh generateStructuredMesh.cpp )
-TARGET_LINK_LIBRARIES( generateStructuredMesh
+add_executable(generateStructuredMesh generateStructuredMesh.cpp)
+target_link_libraries(generateStructuredMesh
 	BaseLib
 	FileIO
 	MathLib
 	MeshLib
 )
-SET_TARGET_PROPERTIES(generateStructuredMesh PROPERTIES FOLDER Utilities)
+set_target_properties(generateStructuredMesh PROPERTIES FOLDER Utilities)
 

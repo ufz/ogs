@@ -14,7 +14,7 @@ macro(ConfigureMacOSXBundle TARGET_NAME ICON_FILE_PATH)
 		MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2012-2015, OpenGeoSys Community. All Rights Reserved."
 	)
 
-	SET_SOURCE_FILES_PROPERTIES(${ICON_FILE_PATH} PROPERTIES
+	set_source_files_properties(${ICON_FILE_PATH} PROPERTIES
 		MACOSX_PACKAGE_LOCATION Resources)
 endmacro()
 

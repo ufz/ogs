@@ -1,12 +1,12 @@
-MACRO(ADD_CATALYST_DEPENDENCY target)
-	IF(ParaView_FOUND)
-		INCLUDE("${PARAVIEW_USE_FILE}")
+macro(ADD_CATALYST_DEPENDENCY target)
+	if(ParaView_FOUND)
+		include("${PARAVIEW_USE_FILE}")
 
 		# see http://stackoverflow.com/questions/18642155
-		SET_PROPERTY(TARGET ${target} APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
-	ENDIF()
+		set_property(TARGET ${target} APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
+	endif()
 
-	IF(TARGET VtkRescan)
-		ADD_DEPENDENCIES(${target} VtkRescan)
-	ENDIF()
-ENDMACRO()
+	if(TARGET VtkRescan)
+		add_dependencies(${target} VtkRescan)
+	endif()
+endmacro()

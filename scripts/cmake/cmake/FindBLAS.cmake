@@ -64,36 +64,36 @@ foreach(_library ${_list})
    if ( WIN32 )
     if(BLA_STATIC)
       set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.dll")
-    endif(BLA_STATIC)
+    endif()
     find_library(${_prefix}_${_library}_LIBRARY
     NAMES ${_library}
     PATHS ENV LIB
     )
-   endif ( WIN32 )
+   endif ()
 
    if ( APPLE )
     if(BLA_STATIC)
      set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.dll")
-    endif(BLA_STATIC)
+    endif()
     find_library(${_prefix}_${_library}_LIBRARY
     NAMES ${_library}
     PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH
     )
 
-   else ( APPLE )
+   else ()
     if(BLA_STATIC)
       set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")
-    endif(BLA_STATIC)
+    endif()
     find_library(${_prefix}_${_library}_LIBRARY
     NAMES ${_library}
     PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
     )
-   endif( APPLE )
+   endif()
     mark_as_advanced(${_prefix}_${_library}_LIBRARY)
     set(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
     set(_libraries_work ${${_prefix}_${_library}_LIBRARY})
-  endif(_libraries_work)
-endforeach(_library ${_list})
+  endif()
+endforeach()
 if(_libraries_work)
   # Test this combination of libraries.
   set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_threads})
@@ -102,23 +102,23 @@ if(_libraries_work)
   set(CMAKE_REQUIRED_LIBRARIES)
   mark_as_advanced(${_prefix}${_combined_name}_WORKS)
   set(_libraries_work ${${_prefix}${_combined_name}_WORKS})
-endif(_libraries_work)
+endif()
 if(NOT _libraries_work)
   set(${LIBRARIES} FALSE)
-endif(NOT _libraries_work)
+endif()
 #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
-endmacro(Check_Fortran_Libraries)
+endmacro()
 
 set(BLAS_LINKER_FLAGS)
 set(BLAS_LIBRARIES)
 set(BLAS95_LIBRARIES)
 if ($ENV{BLA_VENDOR} MATCHES ".+")
   set(BLA_VENDOR $ENV{BLA_VENDOR})
-else ($ENV{BLA_VENDOR} MATCHES ".+")
+else ()
   if(NOT BLA_VENDOR)
     set(BLA_VENDOR "All")
-  endif(NOT BLA_VENDOR)
-endif ($ENV{BLA_VENDOR} MATCHES ".+")
+  endif()
+endif ()
 
 if (BLA_VENDOR STREQUAL "ATLAS" OR BLA_VENDOR STREQUAL "All")
  if(NOT BLAS_LIBRARIES)
@@ -131,8 +131,8 @@ if (BLA_VENDOR STREQUAL "ATLAS" OR BLA_VENDOR STREQUAL "All")
   "cblas;f77blas;atlas"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "ATLAS" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
 if (BLA_VENDOR STREQUAL "PhiPACK" OR BLA_VENDOR STREQUAL "All")
@@ -145,8 +145,8 @@ if (BLA_VENDOR STREQUAL "PhiPACK" OR BLA_VENDOR STREQUAL "All")
   "sgemm;dgemm;blas"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "PhiPACK" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # BLAS in Alpha CXML library?
 if (BLA_VENDOR STREQUAL "CXML" OR BLA_VENDOR STREQUAL "All")
@@ -159,8 +159,8 @@ if (BLA_VENDOR STREQUAL "CXML" OR BLA_VENDOR STREQUAL "All")
   "cxml"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "CXML" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # BLAS in Alpha DXML library? (now called CXML, see above)
 if (BLA_VENDOR STREQUAL "DXML" OR BLA_VENDOR STREQUAL "All")
@@ -173,8 +173,8 @@ if (BLA_VENDOR STREQUAL "DXML" OR BLA_VENDOR STREQUAL "All")
   "dxml"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "DXML" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # BLAS in Sun Performance library?
 if (BLA_VENDOR STREQUAL "SunPerf" OR BLA_VENDOR STREQUAL "All")
@@ -189,9 +189,9 @@ if (BLA_VENDOR STREQUAL "SunPerf" OR BLA_VENDOR STREQUAL "All")
   )
   if(BLAS_LIBRARIES)
     set(BLAS_LINKER_FLAGS "-xlic_lib=sunperf")
-  endif(BLAS_LIBRARIES)
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "SunPerf" OR BLA_VENDOR STREQUAL "All")
+  endif()
+ endif()
+endif ()
 
 # BLAS in SCSL library?  (SGI/Cray Scientific Library)
 if (BLA_VENDOR STREQUAL "SCSL" OR BLA_VENDOR STREQUAL "All")
@@ -204,8 +204,8 @@ if (BLA_VENDOR STREQUAL "SCSL" OR BLA_VENDOR STREQUAL "All")
   "scsl"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "SCSL" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # BLAS in SGIMATH library?
 if (BLA_VENDOR STREQUAL "SGIMATH" OR BLA_VENDOR STREQUAL "All")
@@ -218,8 +218,8 @@ if (BLA_VENDOR STREQUAL "SGIMATH" OR BLA_VENDOR STREQUAL "All")
   "complib.sgimath"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "SGIMATH" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # BLAS in IBM ESSL library? (requires generic BLAS lib, too)
 if (BLA_VENDOR STREQUAL "IBMESSL" OR BLA_VENDOR STREQUAL "All")
@@ -232,8 +232,8 @@ if (BLA_VENDOR STREQUAL "IBMESSL" OR BLA_VENDOR STREQUAL "All")
   "essl;blas"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "IBMESSL" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 #BLAS in acml library?
 if (BLA_VENDOR STREQUAL "ACML" OR BLA_VENDOR STREQUAL "All")
@@ -246,8 +246,8 @@ if (BLA_VENDOR STREQUAL "ACML" OR BLA_VENDOR STREQUAL "All")
   "acml_mp;acml_mv"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "ACML" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 # Apple BLAS library?
 if (BLA_VENDOR STREQUAL "Apple" OR BLA_VENDOR STREQUAL "All")
@@ -260,8 +260,8 @@ if(NOT BLAS_LIBRARIES)
   "Accelerate"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "Apple" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 if (BLA_VENDOR STREQUAL "NAS" OR BLA_VENDOR STREQUAL "All")
  if ( NOT BLAS_LIBRARIES )
@@ -273,8 +273,8 @@ if (BLA_VENDOR STREQUAL "NAS" OR BLA_VENDOR STREQUAL "All")
     "vecLib"
     ""
     )
- endif ( NOT BLAS_LIBRARIES )
-endif (BLA_VENDOR STREQUAL "NAS" OR BLA_VENDOR STREQUAL "All")
+ endif ()
+endif ()
 # Generic BLAS library?
 if (BLA_VENDOR STREQUAL "Generic" OR BLA_VENDOR STREQUAL "All")
  if(NOT BLAS_LIBRARIES)
@@ -286,8 +286,8 @@ if (BLA_VENDOR STREQUAL "Generic" OR BLA_VENDOR STREQUAL "All")
   "blas"
   ""
   )
- endif(NOT BLAS_LIBRARIES)
-endif (BLA_VENDOR STREQUAL "Generic" OR BLA_VENDOR STREQUAL "All")
+ endif()
+endif ()
 
 #BLAS in intel mkl 10 library? (em64t 64bit)
 if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
@@ -297,9 +297,9 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
  if (_LANGUAGES_ MATCHES C OR _LANGUAGES_ MATCHES CXX)
   if(BLAS_FIND_QUIETLY OR NOT BLAS_FIND_REQUIRED)
     find_package(Threads)
-  else(BLAS_FIND_QUIETLY OR NOT BLAS_FIND_REQUIRED)
+  else()
     find_package(Threads REQUIRED)
-  endif(BLAS_FIND_QUIETLY OR NOT BLAS_FIND_REQUIRED)
+  endif()
   if (WIN32)
   if(BLA_F95)
     if(NOT BLAS95_LIBRARIES)
@@ -311,8 +311,8 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
     "mkl_blas95;mkl_intel_c;mkl_intel_thread;mkl_core;libguide40"
     ""
     )
-    endif(NOT BLAS95_LIBRARIES)
-  else(BLA_F95)
+    endif()
+  else()
     if(NOT BLAS_LIBRARIES)
     check_fortran_libraries(
     BLAS_LIBRARIES
@@ -322,9 +322,9 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
     "mkl_c_dll;mkl_intel_thread_dll;mkl_core_dll;libguide40"
     ""
     )
-    endif(NOT BLAS_LIBRARIES)
-  endif(BLA_F95)
-  else(WIN32)
+    endif()
+  endif()
+  else()
   if (BLA_VENDOR STREQUAL "Intel10_32" OR BLA_VENDOR STREQUAL "All")
     if(BLA_F95)
       if(NOT BLAS95_LIBRARIES)
@@ -336,8 +336,8 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
       "mkl_blas95;mkl_intel;mkl_intel_thread;mkl_core;guide"
       "${CMAKE_THREAD_LIBS_INIT};${LM}"
       )
-      endif(NOT BLAS95_LIBRARIES)
-    else(BLA_F95)
+      endif()
+    else()
     if(NOT BLAS_LIBRARIES)
       check_fortran_libraries(
       BLAS_LIBRARIES
@@ -348,9 +348,9 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
       "${CMAKE_THREAD_LIBS_INIT}"
       "${LM}"
       )
-      endif(NOT BLAS_LIBRARIES)
-    endif(BLA_F95)
-  endif (BLA_VENDOR STREQUAL "Intel10_32" OR BLA_VENDOR STREQUAL "All")
+      endif()
+    endif()
+  endif ()
   if (BLA_VENDOR STREQUAL "Intel10_64lp" OR BLA_VENDOR STREQUAL "All")
    if(BLA_F95)
     if(NOT BLAS95_LIBRARIES)
@@ -362,8 +362,8 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
       "mkl_blas95;mkl_intel_lp64;mkl_intel_thread;mkl_core;guide"
       "${CMAKE_THREAD_LIBS_INIT};${LM}"
       )
-    endif(NOT BLAS95_LIBRARIES)
-   else(BLA_F95)
+    endif()
+   else()
      if(NOT BLAS_LIBRARIES)
       check_fortran_libraries(
       BLAS_LIBRARIES
@@ -373,10 +373,10 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
       "mkl_intel_lp64;mkl_intel_thread;mkl_core;guide"
       "${CMAKE_THREAD_LIBS_INIT};${LM}"
       )
-     endif(NOT BLAS_LIBRARIES)
-   endif(BLA_F95)
-  endif (BLA_VENDOR STREQUAL "Intel10_64lp" OR BLA_VENDOR STREQUAL "All")
-  endif (WIN32)
+     endif()
+   endif()
+  endif ()
+  endif ()
   #older vesions of intel mkl libs
   # BLAS in intel mkl library? (shared)
   if(NOT BLAS_LIBRARIES)
@@ -388,7 +388,7 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
     "mkl;guide"
     "${CMAKE_THREAD_LIBS_INIT};${LM}"
     )
-  endif(NOT BLAS_LIBRARIES)
+  endif()
   #BLAS in intel mkl library? (static, 32bit)
   if(NOT BLAS_LIBRARIES)
     check_fortran_libraries(
@@ -399,7 +399,7 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
     "mkl_ia32;guide"
     "${CMAKE_THREAD_LIBS_INIT};${LM}"
     )
-  endif(NOT BLAS_LIBRARIES)
+  endif()
   #BLAS in intel mkl library? (static, em64t 64bit)
   if(NOT BLAS_LIBRARIES)
     check_fortran_libraries(
@@ -410,53 +410,53 @@ if (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
     "mkl_em64t;guide"
     "${CMAKE_THREAD_LIBS_INIT};${LM}"
     )
-  endif(NOT BLAS_LIBRARIES)
- endif (_LANGUAGES_ MATCHES C OR _LANGUAGES_ MATCHES CXX)
-endif (BLA_VENDOR MATCHES "Intel*" OR BLA_VENDOR STREQUAL "All")
+  endif()
+ endif ()
+endif ()
 
 
 if(BLA_F95)
  if(BLAS95_LIBRARIES)
     set(BLAS95_FOUND TRUE)
-  else(BLAS95_LIBRARIES)
+  else()
     set(BLAS95_FOUND FALSE)
-  endif(BLAS95_LIBRARIES)
+  endif()
 
   if(NOT BLAS_FIND_QUIETLY)
     if(BLAS95_FOUND)
       message(STATUS "A library with BLAS95 API found.")
-    else(BLAS95_FOUND)
+    else()
       if(BLAS_FIND_REQUIRED)
         message(FATAL_ERROR
         "A required library with BLAS95 API not found. Please specify library location.")
-      else(BLAS_FIND_REQUIRED)
+      else()
         message(STATUS
         "A library with BLAS95 API not found. Please specify library location.")
-      endif(BLAS_FIND_REQUIRED)
-    endif(BLAS95_FOUND)
-  endif(NOT BLAS_FIND_QUIETLY)
+      endif()
+    endif()
+  endif()
   set(BLAS_FOUND TRUE)
   set(BLAS_LIBRARIES "${BLAS95_LIBRARIES}")
-else(BLA_F95)
+else()
   if(BLAS_LIBRARIES)
     set(BLAS_FOUND TRUE)
-  else(BLAS_LIBRARIES)
+  else()
     set(BLAS_FOUND FALSE)
-  endif(BLAS_LIBRARIES)
+  endif()
 
   if(NOT BLAS_FIND_QUIETLY)
     if(BLAS_FOUND)
       message(STATUS "A library with BLAS API found.")
-    else(BLAS_FOUND)
+    else()
       if(BLAS_FIND_REQUIRED)
         message(FATAL_ERROR
         "A required library with BLAS API not found. Please specify library location."
         )
-      else(BLAS_FIND_REQUIRED)
+      else()
         message(STATUS
         "A library with BLAS API not found. Please specify library location."
         )
-      endif(BLAS_FIND_REQUIRED)
-    endif(BLAS_FOUND)
-  endif(NOT BLAS_FIND_QUIETLY)
-endif(BLA_F95)
+      endif()
+    endif()
+  endif()
+endif()

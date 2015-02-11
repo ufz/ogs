@@ -1,8 +1,8 @@
-ADD_SUBDIRECTORY( FileConverter )
-ADD_SUBDIRECTORY( GeoTools )
-ADD_SUBDIRECTORY( MeshEdit )
-ADD_SUBDIRECTORY( SimpleMeshCreation )
+add_subdirectory(FileConverter)
+add_subdirectory(GeoTools)
+add_subdirectory(MeshEdit)
+add_subdirectory(SimpleMeshCreation)
 
-IF(OGS_BUILD_GUI)
-	ADD_SUBDIRECTORY(OGSFileConverter)
-ENDIF() # OGS_BUILD_GUI
+if(OGS_BUILD_GUI)
+	add_subdirectory(OGSFileConverter)
+endif() # OGS_BUILD_GUI

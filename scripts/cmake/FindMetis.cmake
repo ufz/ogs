@@ -11,11 +11,11 @@
 # http://glaros.dtc.umn.edu/gkhome/metis/metis/download
 #
 
-FIND_PATH(METIS_INCLUDE_DIR metis.h)
+find_path(METIS_INCLUDE_DIR metis.h)
 
-FIND_LIBRARY(METIS_LIBRARY metis)
+find_library(METIS_LIBRARY metis)
 
-SET(METIS_LIBRARIES ${METIS_LIBRARY})
+set(METIS_LIBRARIES ${METIS_LIBRARY})
 
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Metis DEFAULT_MSG METIS_LIBRARY METIS_INCLUDE_DIR)

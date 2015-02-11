@@ -1,8 +1,8 @@
-IF (WIN32)
-	SET ( ADDITIONAL_LIBS Winmm.lib )
-ENDIF()
+if(WIN32)
+	set(ADDITIONAL_LIBS Winmm.lib)
+endif()
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	.
 	${CMAKE_SOURCE_DIR}/BaseLib/
 	${CMAKE_SOURCE_DIR}/FileIO/
@@ -12,13 +12,13 @@ INCLUDE_DIRECTORIES(
 )
 
 # Create the executable
-ADD_EXECUTABLE( MeshRead
+add_executable(MeshRead
 	MeshRead.cpp
 	${SOURCES}
 	${HEADERS}
 )
 
-TARGET_LINK_LIBRARIES ( MeshRead
+target_link_libraries(MeshRead
 	MeshLib
 	FileIO
 	MathLib
@@ -31,13 +31,13 @@ TARGET_LINK_LIBRARIES ( MeshRead
 )
 
 # Create MeshSearchTest executable
-ADD_EXECUTABLE( MeshSearchTest
+add_executable(MeshSearchTest
 	MeshSearchTest.cpp
 	${SOURCES}
 	${HEADERS}
 )
 
-TARGET_LINK_LIBRARIES ( MeshSearchTest
+target_link_libraries(MeshSearchTest
 	MeshLib
 	FileIO
 	MathLib

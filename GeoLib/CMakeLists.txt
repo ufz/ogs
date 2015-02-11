@@ -2,15 +2,15 @@
 GET_SOURCE_FILES(SOURCES_GeoLib)
 
 # Create the library
-ADD_LIBRARY(GeoLib STATIC ${SOURCES_GeoLib})
+add_library(GeoLib STATIC ${SOURCES_GeoLib})
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	.
 	${CMAKE_CURRENT_SOURCE_DIR}/../BaseLib
 	${CMAKE_CURRENT_SOURCE_DIR}/../MathLib
 )
 
-TARGET_LINK_LIBRARIES (GeoLib
+target_link_libraries(GeoLib
 	BaseLib
 	MathLib
 )

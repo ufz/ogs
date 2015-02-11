@@ -1,62 +1,72 @@
 ## pthread ##
-IF (WIN32)
-	SET ( ADDITIONAL_LIBS Winmm.lib )
-ENDIF()
+if(WIN32)
+	set(ADDITIONAL_LIBS Winmm.lib)
+endif()
 
-IF ( CMAKE_USE_PTHREADS_INIT )
-        SET (HAVE_PTHREADS TRUE)
-ENDIF (CMAKE_USE_PTHREADS_INIT )
+if(CMAKE_USE_PTHREADS_INIT)
+	set(HAVE_PTHREADS TRUE)
+endif()
 
-INCLUDE_DIRECTORIES(
-        .
+include_directories(
+	.
 	${CMAKE_SOURCE_DIR}/BaseLib/
 	${CMAKE_BINARY_DIR}/BaseLib/
 	${CMAKE_SOURCE_DIR}/MathLib/
 )
 
 # Create the executable
-ADD_EXECUTABLE( MatMult
-        MatMult.cpp
-        ${SOURCES}
-        ${HEADERS}
+add_executable(MatMult
+	MatMult.cpp
+	${SOURCES}
+	${HEADERS}
 )
-SET_TARGET_PROPERTIES(MatMult PROPERTIES FOLDER SimpleTests)
-TARGET_LINK_LIBRARIES(MatMult logog)
+set_target_properties(MatMult PROPERTIES FOLDER SimpleTests)
+target_link_libraries(MatMult logog)
 
-IF ( HAVE_PTHREADS )
-ADD_EXECUTABLE( MatVecMultPthreads
-        MatVecMultPthreads.cpp
-        ${SOURCES}
-        ${HEADERS}
-)
-SET_TARGET_PROPERTIES(MatVecMultPthreads PROPERTIES FOLDER SimpleTests)
-TARGET_LINK_LIBRARIES(MatVecMultPthreads
-	pthread
+if(HAVE_PTHREADS)
+	add_executable(MatVecMultPthreads
+		MatVecMultPthreads.cpp
+		${SOURCES}
+		${HEADERS}
+	)
+	set_target_properties(MatVecMultPthreads PROPERTIES FOLDER SimpleTests)
+	target_link_libraries(MatVecMultPthreads
+		pthread
+		BaseLib
+		MathLib
+		logog
+	)
+endif()
+
+set_target_properties(MatMult PROPERTIES FOLDER SimpleTests)
+target_link_libraries(MatMult
+	logog
 	BaseLib
 	MathLib
-	logog)
-ENDIF ( HAVE_PTHREADS )
-
-SET_TARGET_PROPERTIES(MatMult PROPERTIES FOLDER SimpleTests)
-TARGET_LINK_LIBRARIES(MatMult logog)
-
-# Create the executable
-ADD_EXECUTABLE( MatTestRemoveRowsCols
-        MatTestRemoveRowsCols.cpp
-        ${SOURCES}
-        ${HEADERS}
+	${ADDITIONAL_LIBS}
 )
-SET_TARGET_PROPERTIES(MatTestRemoveRowsCols PROPERTIES FOLDER SimpleTests)
 
-IF (METIS_FOUND)
-	ADD_EXECUTABLE( MatVecMultNDPerm
-        	MatVecMultNDPerm.cpp
-	        ${SOURCES}
-        	${HEADERS}
+add_executable(MatTestRemoveRowsCols
+	MatTestRemoveRowsCols.cpp
+	${SOURCES}
+	${HEADERS}
+)
+set_target_properties(MatTestRemoveRowsCols PROPERTIES FOLDER SimpleTests)
+target_link_libraries(MatTestRemoveRowsCols
+	BaseLib
+	MathLib
+	${ADDITIONAL_LIBS}
+)
+
+if(METIS_FOUND)
+	add_executable(MatVecMultNDPerm
+		MatVecMultNDPerm.cpp
+		${SOURCES}
+		${HEADERS}
 	)
-	SET_TARGET_PROPERTIES(MatVecMultNDPerm PROPERTIES FOLDER SimpleTests)
+	set_target_properties(MatVecMultNDPerm PROPERTIES FOLDER SimpleTests)
 
-	TARGET_LINK_LIBRARIES ( MatVecMultNDPerm
+	target_link_libraries(MatVecMultNDPerm
 		BaseLib
 		MathLib
 		logog
@@ -64,50 +74,31 @@ IF (METIS_FOUND)
 		${ADDITIONAL_LIBS}
 	)
 
-	IF(OPENMP_FOUND)
-		ADD_EXECUTABLE( MatVecMultNDPermOpenMP
+	if(OPENMP_FOUND)
+		add_executable(MatVecMultNDPermOpenMP
 			MatVecMultNDPermOpenMP.cpp
 			${SOURCES}
 			${HEADERS}
 		)
-		SET_TARGET_PROPERTIES(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
+		set_target_properties(MatVecMultNDPermOpenMP PROPERTIES FOLDER SimpleTests)
 
-		TARGET_LINK_LIBRARIES ( MatVecMultNDPermOpenMP
+		target_link_libraries(MatVecMultNDPermOpenMP
 			BaseLib
 			MathLib
 			logog
 			${METIS_LIBRARIES}
 			${ADDITIONAL_LIBS}
 		)
-	ENDIF()
-ENDIF(METIS_FOUND)
+	endif()
+endif()
 
-
-IF (WIN32)
-        TARGET_LINK_LIBRARIES(MatMult Winmm.lib)
-ENDIF (WIN32)
-
-TARGET_LINK_LIBRARIES ( MatMult
-	BaseLib
-	MathLib
+add_executable(DenseGaussEliminationChecker
+	DenseGaussEliminationChecker.cpp
+	${SOURCES}
+	${HEADERS}
 )
-
-IF (WIN32)
-        TARGET_LINK_LIBRARIES(MatTestRemoveRowsCols Winmm.lib)
-ENDIF (WIN32)
-
-TARGET_LINK_LIBRARIES ( MatTestRemoveRowsCols
-	BaseLib
-	MathLib
-)
-
-ADD_EXECUTABLE( DenseGaussEliminationChecker
-        DenseGaussEliminationChecker.cpp
-        ${SOURCES}
-        ${HEADERS}
-)
-SET_TARGET_PROPERTIES(DenseGaussEliminationChecker PROPERTIES FOLDER SimpleTests)
-TARGET_LINK_LIBRARIES(DenseGaussEliminationChecker
+set_target_properties(DenseGaussEliminationChecker PROPERTIES FOLDER SimpleTests)
+target_link_libraries(DenseGaussEliminationChecker
 	logog
 	BaseLib
 	MathLib

@@ -1,12 +1,12 @@
 # Find tools and data
-FIND_PROGRAM(DIFF_TOOL_PATH diff)
-FIND_PROGRAM(NUMDIFF_TOOL_PATH numdiff)
-# FIND_PROGRAM(TIME_TOOL_PATH time) # TODO: does not work Travis
-SET(TIME_TOOL_PATH time)
-FIND_PROGRAM(GREP_TOOL_PATH grep)
-FIND_PROGRAM(BASH_TOOL_PATH bash)
-FIND_PROGRAM(VALGRIND_TOOL_PATH valgrind)
-FIND_PROGRAM(MPIRUN_TOOL_PATH mpirun)
+find_program(DIFF_TOOL_PATH diff)
+find_program(NUMDIFF_TOOL_PATH numdiff)
+# find_program(TIME_TOOL_PATH time) # TODO: does not work Travis
+set(TIME_TOOL_PATH time)
+find_program(GREP_TOOL_PATH grep)
+find_program(BASH_TOOL_PATH bash)
+find_program(VALGRIND_TOOL_PATH valgrind)
+find_program(MPIRUN_TOOL_PATH mpirun)
 
 if(NOT TIME_TOOL_PATH)
 	message(STATUS "time-command is required for time wrapper but was not found! All corresponding tests are disabled.")
@@ -30,29 +30,29 @@ if(NOT GREP_TOOL_PATH)
 	message(STATUS "grep-command is required for memcheck tester but was not found! All corresponding tests are disabled.")
 endif()
 
-ENABLE_TESTING() # Enable CTest
+enable_testing() # Enable CTest
 
 # See http://www.vtk.org/Wiki/CMake/Testing_With_CTest for some customization options
-SET(CTEST_CUSTOM_TESTS_IGNORE test-harness) # ignore logog test
-CONFIGURE_FILE(
+set(CTEST_CUSTOM_TESTS_IGNORE test-harness) # ignore logog test
+configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.cmake.in
 	${CMAKE_BINARY_DIR}/CTestCustom.cmake
 )
 
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/Data.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/Data.cmake)
 
-IF(CMAKE_CONFIGURATION_TYPES)
-	SET(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
-ENDIF()
-ADD_CUSTOM_TARGET(
+if(CMAKE_CONFIGURATION_TYPES)
+	set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
+endif()
+add_custom_target(
 	ctest
 	COMMAND ${CMAKE_CTEST_COMMAND}
 	--force-new-ctest-process --output-on-failure --exclude-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
 	DEPENDS data
 )
-ADD_CUSTOM_TARGET(
+add_custom_target(
 	ctest-large
 	COMMAND ${CMAKE_CTEST_COMMAND}
 	--force-new-ctest-process --output-on-failure --tests-regex LARGE
