@@ -129,6 +129,13 @@ public:
 #endif  // NDEBUG
 
 private:
+
+    /// Looks up of a line already stored in the dictionary.
+    /// \attention The line for the location l and component c must exist,
+    /// the behaviour is undefined otherwise.
+    /// \return a copy of the line.
+    detail::Line getLine(Location const& l, std::size_t const c) const;
+
     void renumberByLocation(std::size_t offset=0);
 
 private:
