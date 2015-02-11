@@ -129,6 +129,10 @@ public:
 #endif  // NDEBUG
 
 private:
+    /// Private constructor used by internally created mesh component maps.
+    MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
+        : _dict(dict)
+    { }
 
     /// Looks up of a line already stored in the dictionary.
     /// \attention The line for the location l and component c must exist,
