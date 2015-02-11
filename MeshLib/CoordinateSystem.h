@@ -106,6 +106,8 @@ CoordinateSystem::CoordinateSystem(const GeoLib::AABB<T> &bbox)
         }
     } else if (hasZ) {
         coords = CoordinateSystemType::Z;
+    } else {
+        coords = CoordinateSystemType::X;
     }
 
     _type = coords;

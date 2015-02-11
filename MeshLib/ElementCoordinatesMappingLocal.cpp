@@ -20,7 +20,7 @@ namespace MeshLib
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(const Element* e, const CoordinateSystem &coordinate_system)
 : _pt_translate(std::array<double,3>({{0,0,0}}))
 {
-    assert (e->getDimension() <= coordinate_system.getDimension());
+    //assert (e->getDimension() <= coordinate_system.getDimension());
 
     // set initial coordinates
     for(size_t i = 0; i < e->getNNodes(); i++)
