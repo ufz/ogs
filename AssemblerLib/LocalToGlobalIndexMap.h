@@ -57,6 +57,19 @@ public:
         AssemblerLib::ComponentOrder const order =
             AssemblerLib::ComponentOrder::BY_COMPONENT);
 
+    // The elements are not necessary those used in the mesh_subsets.
+    LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
+        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<MeshLib::Element*> const& elements,
+        AssemblerLib::ComponentOrder const order =
+            AssemblerLib::ComponentOrder::BY_COMPONENT) const
+    {
+        DBUG("Construct reduced local to global index map.");
+
+        return new LocalToGlobalIndexMap(mesh_subsets, elements,
+            _mesh_component_map.getSubset(mesh_subsets),
+            order);
+    }
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
