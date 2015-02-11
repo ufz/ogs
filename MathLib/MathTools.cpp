@@ -62,6 +62,19 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	return acos (scalarProduct<double,3> (v0,v1) / (sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
+void normalizeVector(const double* u, std::size_t n, double* r)
+{
+	double nrm(u[0] * u[0]);
+	for (std::size_t i = 1; i < n; i++)
+		nrm += u[i] * u[i];
+	const double sqrt_nrm(sqrt(nrm));
+	for (std::size_t i = 0; i < n; i++)
+		r[i] = u[i] / sqrt_nrm;
+}
 
+void normalizeVector(double* u, std::size_t n)
+{
+	normalizeVector(u, n, u);
+}
 
 } // namespace
