@@ -45,6 +45,11 @@ public:
     MeshComponentMap(std::vector<MeshLib::MeshSubsets*> const& components,
         ComponentOrder order);
 
+    /// Creates a subset of the current mesh component map.
+    /// The order of components is the same as of the current map.
+    MeshComponentMap getSubset(
+        std::vector<MeshLib::MeshSubsets*> const& components) const;
+
     /// The number of components in the map.
     std::size_t size() const
     {
