@@ -26,7 +26,7 @@ namespace MeshLib {
 	class Mesh;
 }
 
-class VtkMeshSource;
+class vtkUnstructuredGridAlgorithm;
 
 /**
  * The MshModel is a Qt model which represents Mesh objects.
@@ -57,9 +57,9 @@ public slots:
 	/// Updates the model based on the ProjectData-object
 	void updateModel();
 	/// Returns the VTK source item for the mesh with the given index.
-	VtkMeshSource* vtkSource(const QModelIndex &idx) const;
+	vtkUnstructuredGridAlgorithm* vtkSource(const QModelIndex &idx) const;
 	/// Returns the VTK source item for the mesh with the given name.
-	VtkMeshSource* vtkSource(const std::string &name) const;
+	vtkUnstructuredGridAlgorithm* vtkSource(const std::string &name) const;
 
 private:
 	/// Adds the mesh to the GUI-Mesh-Model und -View

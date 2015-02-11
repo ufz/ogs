@@ -16,9 +16,9 @@
 #define MSHITEM_H
 
 #include "TreeItem.h"
-#include "VtkMeshSource.h"
 
-class VtkMeshSource;
+class VtkMappedMeshSource;
+class vtkUnstructuredGridAlgorithm;
 
 namespace MeshLib {
 	class Mesh;
@@ -36,12 +36,13 @@ public:
 	~MshItem();
 
 	/// Returns the mesh.
-	const MeshLib::Mesh* getMesh() const { return this->_meshSource->GetMesh(); }
+	const MeshLib::Mesh* getMesh() const { return this->_mesh; }
 	/// Returns the VTK object.
-	VtkMeshSource* vtkSource() const { return _meshSource; }
+	vtkUnstructuredGridAlgorithm* vtkSource() const { return this->_mesh_source; }
 
 private:
-	VtkMeshSource* _meshSource;
+	MeshLib::Mesh const* _mesh;
+	vtkUnstructuredGridAlgorithm* _mesh_source;
 };
 
 #endif //MSHITEM_H

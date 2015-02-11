@@ -176,8 +176,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        _meshModels, SLOT(removeMesh(const QModelIndex &)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
 	        _elementModel, SLOT(clearView()));
-	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(VtkMeshSource*)),
-	        this, SLOT(showMshQualitySelectionDialog(VtkMeshSource*)));
+	connect(mshTabWidget->treeView, SIGNAL(qualityCheckRequested(vtkUnstructuredGridAlgorithm*)),
+	        this, SLOT(showMeshQualitySelectionDialog(vtkUnstructuredGridAlgorithm*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
 			this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
@@ -1039,7 +1039,7 @@ void MainWindow::showMergeGeometriesDialog()
 		OGSError::box("Points are missing for\n at least one geometry.");
 }
 
-void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
+void MainWindow::showMshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource)
 {
 	MshQualitySelectionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)

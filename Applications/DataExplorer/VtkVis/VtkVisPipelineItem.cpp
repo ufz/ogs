@@ -242,8 +242,10 @@ QStringList VtkVisPipelineItem::getScalarArrayNames() const
 		vtkCellData* cellData = dataSet->GetCellData();
 		//std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
 		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-			//std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+		{
+			std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
 			dataSetAttributesList.push_back(QString("C-") + cellData->GetArrayName(i));
+		}
 	}
 	return dataSetAttributesList;
 }

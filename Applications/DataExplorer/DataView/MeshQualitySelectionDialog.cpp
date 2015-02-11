@@ -13,7 +13,6 @@
  */
 
 #include "MeshQualitySelectionDialog.h"
-#include "VtkMeshSource.h"
 
 /// Constructor
 MshQualitySelectionDialog::MshQualitySelectionDialog(QDialog* parent)

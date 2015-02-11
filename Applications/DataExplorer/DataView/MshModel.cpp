@@ -21,7 +21,6 @@
 #include "MshItem.h"
 #include "StringTools.h"
 #include "TreeItem.h"
-#include "VtkMeshSource.h"
 
 // MeshLib
 #include "MeshLib/Node.h"
@@ -32,7 +31,7 @@
 #include <QFileInfo>
 #include <QString>
 
-#include "StringTools.h"
+#include <vtkUnstructuredGridAlgorithm.h>
 
 MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
 	: TreeModel(parent), _project(project)
@@ -63,8 +62,8 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 	QList<QVariant> meshData;
 	meshData << display_name << "";
 	MshItem* newMesh = new MshItem(meshData, _rootItem, mesh);
-	if (newMesh->vtkSource())
-		newMesh->vtkSource()->SetName(display_name);
+	//if (newMesh->vtkSource())
+	//	newMesh->vtkSource()->SetName(display_name);
 	_rootItem->appendChild(newMesh);
 
 	// display elements
@@ -171,7 +170,7 @@ void MshModel::updateModel()
 			addMeshObject(*it);
 }
 
-VtkMeshSource* MshModel::vtkSource(const QModelIndex &idx) const
+vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const QModelIndex &idx) const
 {
 	if (idx.isValid())
 	{
@@ -183,7 +182,7 @@ VtkMeshSource* MshModel::vtkSource(const QModelIndex &idx) const
 	return nullptr;
 }
 
-VtkMeshSource* MshModel::vtkSource(const std::string &name) const
+vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const std::string &name) const
 {
 	for (int i = 0; i < _rootItem->childCount(); i++)
 	{
