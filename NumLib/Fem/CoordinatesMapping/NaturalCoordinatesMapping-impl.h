@@ -15,6 +15,14 @@
 #include <cassert>
 
 #include "logog/include/logog.hpp"
+#ifdef OGS_USE_EIGEN
+#include <Eigen/Eigen>
+#endif
+
+#include "GeoLib/AABB.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/CoordinateSystem.h"
 
 namespace NumLib
 {
@@ -59,8 +67,11 @@ inline void computeMappingMatrices(
     const std::size_t nnodes = T_MESH_ELEMENT::n_all_nodes;
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
+    GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(), ele.getNNodes());
+    MeshLib::CoordinateSystem coords(aabb);
+    MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
     for (std::size_t k=0; k<nnodes; k++) {
-        double const* const xyz = ele.getNode(k)->getCoords();
+        double const* const xyz = ele_local_coord.getMappedPoint(k)->getCoords();
         // outer product of dNdr and xyz for a particular node
         for (std::size_t i_r=0; i_r<dim; i_r++) {
             for (std::size_t j_x=0; j_x<dim; j_x++) {
@@ -74,6 +85,13 @@ inline void computeMappingMatrices(
     if (shapemat.detJ<=.0)
         ERR("***error: det|J|=%e is not positive.\n", shapemat.detJ);
 #endif
+
+    if (coords.getDimension()>ele.getDimension()) {
+        const Eigen::MatrixXd &matR = ele_local_coord.getRotationMatrixToOriginal();
+        Eigen::MatrixXd dshape_local = Eigen::MatrixXd::Zero(matR.rows(), shapemat.dNdx.cols());
+        dshape_local.topLeftCorner(shapemat.dNdx.rows(), shapemat.dNdx.cols()) = shapemat.dNdx;
+        shapemat.dNdx =  matR * dshape_local;
+    }
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>

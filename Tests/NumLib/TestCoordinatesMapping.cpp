@@ -278,4 +278,22 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), this->eps);
 }
 
+TEST(NumLib, LowerDimensionMapping)
+{
+#ifdef OGS_USE_EIGEN
+    typedef Eigen::Matrix<double, 2, 1> NodalVector;
+    typedef Eigen::Matrix<double, 1, 2, Eigen::RowMajor> DimNodalMatrix;
+    typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> DimMatrix;
+#endif
+    // Shape data type
+    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix> ShapeMatricesType;
+    typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;
+    double r[] = {0.5};
+    auto line = TestLine2::createInclined();
+    unsigned dim = 1;
+    unsigned e_nnodes = 2;
+    ShapeMatricesType shape(dim, e_nnodes);
+    MappingType::computeShapeMatrices(*line, r, shape);
 
+    delete line;
+}
