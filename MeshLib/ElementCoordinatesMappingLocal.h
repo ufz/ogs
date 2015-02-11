@@ -23,6 +23,8 @@
 namespace MeshLib
 {
 
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> EMatrix;
+
 /**
  * This class maps node coordinates on intrinsic coordinates of the given element.
  */
@@ -46,11 +48,11 @@ public:
     }
 
     /// return a rotation matrix converting to orinal coordinates
-    const Eigen::MatrixXd& getRotationMatrixToOriginal() const {return _matR2original;};
+    const EMatrix& getRotationMatrixToOriginal() const {return _matR2original;};
 
 private:
     /// translate points to the origin
-    void translate(std::vector<MathLib::Point3d> &point_vec, const MathLib::Point3d &origin);
+    void translate(std::vector<MathLib::Point3d> &point_vec, const MathLib::Point3d origin);
 
     /// flip points vertically or horizontally
     void flip(const CoordinateSystem &coordinate_system, std::vector<MathLib::Point3d> &vec_pt);
@@ -60,12 +62,12 @@ private:
 
     /// get a rotation matrix to the original coordinates
     /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
-    void getRotationMatrixToOriginal(const Element &e, const CoordinateSystem &coordinate_system, const std::vector<MathLib::Point3d> &vec_pt, Eigen::MatrixXd &matR2original);
+    void getRotationMatrixToOriginal(const Element &e, const CoordinateSystem &coordinate_system, const std::vector<MathLib::Point3d> &vec_pt, EMatrix &matR2original);
 
 private:
     std::vector<MathLib::Point3d> _point_vec;
     MathLib::Point3d _pt_translate;
-    Eigen::MatrixXd _matR2original;
+    EMatrix _matR2original;
 };
 
 }

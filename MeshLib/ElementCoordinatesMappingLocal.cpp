@@ -26,7 +26,7 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(const Element* e,
     for(size_t i = 0; i < e->getNNodes(); i++)
         _point_vec.push_back(MathLib::Point3d(e->getNode(i)->getCoords()));
 
-    flip(coordinate_system, _point_vec);
+    //flip(coordinate_system, _point_vec);
     if (e->getDimension() < coordinate_system.getDimension()) {
         translate(_point_vec, _point_vec[0]);
         rotate(*e, coordinate_system, _point_vec);
@@ -72,7 +72,7 @@ void ElementCoordinatesMappingLocal::flip(const CoordinateSystem &coordinate_sys
     }
 }
 
-void ElementCoordinatesMappingLocal::translate(std::vector<MathLib::Point3d> &vec_pt, const MathLib::Point3d &origin)
+void ElementCoordinatesMappingLocal::translate(std::vector<MathLib::Point3d> &vec_pt, const MathLib::Point3d origin)
 {
     for (std::size_t i=0; i<vec_pt.size(); ++i) {
         vec_pt[i] -= origin;
@@ -106,16 +106,16 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToOriginal(
     const Element &e,
     const CoordinateSystem &coordinate_system,
     const std::vector<MathLib::Point3d> &vec_pt,
-    Eigen::MatrixXd &matR)
+    EMatrix &matR)
 {
     const std::size_t global_dim = coordinate_system.getDimension();
     double xx[3];
     double yy[3];
     double zz[3];
 
-    matR = Eigen::MatrixXd::Zero(global_dim, global_dim);
+    matR = EMatrix::Zero(global_dim, global_dim);
     if (global_dim == e.getDimension()) {
-        matR = Eigen::MatrixXd::Identity(global_dim, global_dim);
+        matR = EMatrix::Identity(global_dim, global_dim);
     } else if (global_dim == 2 && e.getDimension() == 1) {
         double const* const pnt0(vec_pt[0].getCoords());
         double const* const pnt1(vec_pt[1].getCoords());

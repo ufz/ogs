@@ -27,6 +27,8 @@
 namespace NumLib
 {
 
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> EMatrix;
+
 namespace detail
 {
 
@@ -85,13 +87,6 @@ inline void computeMappingMatrices(
     if (shapemat.detJ<=.0)
         ERR("***error: det|J|=%e is not positive.\n", shapemat.detJ);
 #endif
-
-    if (coords.getDimension()>ele.getDimension()) {
-        const Eigen::MatrixXd &matR = ele_local_coord.getRotationMatrixToOriginal();
-        Eigen::MatrixXd dshape_local = Eigen::MatrixXd::Zero(matR.rows(), shapemat.dNdx.cols());
-        dshape_local.topLeftCorner(shapemat.dNdx.rows(), shapemat.dNdx.cols()) = shapemat.dNdx;
-        shapemat.dNdx =  matR * dshape_local;
-    }
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
@@ -120,7 +115,18 @@ inline void computeMappingMatrices(
     if (shapemat.detJ>.0) {
         //J^-1, dshape/dx
         shapemat.invJ = shapemat.J.inverse();
-        shapemat.dNdx = shapemat.invJ * shapemat.dNdr;
+		
+		GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(), ele.getNNodes());
+		MeshLib::CoordinateSystem coords(aabb);
+		if (coords.getDimension()==ele.getDimension()) {
+			shapemat.dNdx.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
+		} else {
+			MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
+			const EMatrix&matR = ele_local_coord.getRotationMatrixToOriginal();
+			EMatrix dshape_local = EMatrix::Zero(matR.rows(), shapemat.dNdx.cols());
+			dshape_local.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
+			shapemat.dNdx = matR * dshape_local;
+		}
     }
 }
 

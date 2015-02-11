@@ -57,7 +57,7 @@ public:
     typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrix;
 #endif
     // Shape data type
-    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix> ShapeMatricesType;
+    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,DimNodalMatrix> ShapeMatricesType;
     // Natural coordinates mapping type
     typedef NaturalCoordinatesMapping<ElementType, ShapeFunctionType, ShapeMatricesType> NaturalCoordsMappingType;
 
@@ -278,7 +278,8 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), this->eps);
 }
 
-TEST(NumLib, LowerDimensionMapping)
+#if 0
+TEST(NumLib, LowerDimensionMappingXY)
 {
 #ifdef OGS_USE_EIGEN
     typedef Eigen::Matrix<double, 2, 1> NodalVector;
@@ -290,10 +291,79 @@ TEST(NumLib, LowerDimensionMapping)
     typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;
     double r[] = {0.5};
     auto line = TestLine2::createInclined();
-    unsigned dim = 1;
-    unsigned e_nnodes = 2;
+	static const unsigned dim = 1;
+	static const unsigned e_nnodes = 2;
     ShapeMatricesType shape(dim, e_nnodes);
     MappingType::computeShapeMatrices(*line, r, shape);
+	std::cout <<  std::setprecision(16) << shape;
 
+	double exp_J[dim*dim]= {0.0};
+	for (unsigned i=0; i<dim; i++)
+		exp_J[i+dim*i] = 1.0;
+	
+	const double eps(std::numeric_limits<double>::epsilon());
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_N, shape.N.data(), shape.N.size(), eps);
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), eps);
+	ASSERT_ARRAY_NEAR(exp_J, shape.J.data(), shape.J.size(), eps);
+	ASSERT_ARRAY_NEAR(exp_J, shape.invJ.data(), shape.invJ.size(), eps);
+	ASSERT_NEAR(1.0, shape.detJ, eps);
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_dNdr, shape.dNdx.data(), shape.dNdx.size(), eps);
+	
     delete line;
 }
+#endif
+
+TEST(NumLib, LowerCoordinatesMapping)
+{
+	auto line = TestLine2::createY();
+	//std::cout << "original" << std::endl;
+	//for (unsigned i=0; i<line->getNNodes(); i++)
+	//	std::cout << *line->getNode(i) << std::endl;
+	MeshLib::ElementCoordinatesMappingLocal mapping(line, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Y));
+	//std::cout << "mapped" << std::endl;
+	//for (unsigned i=0; i<line->getNNodes(); i++)
+	//	std::cout << *mapping.getMappedPoint(i) << std::endl;
+	//std::cout << "R=" << mapping.getRotationMatrixToOriginal();
+	auto matR(mapping.getRotationMatrixToOriginal());
+	
+	double exp_R[2*2] = {0, -1, 1, 0}; //row major
+	const double eps(std::numeric_limits<double>::epsilon());
+	ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+}
+
+TEST(NumLib, LowerDimensionMappingY)
+{
+#ifdef OGS_USE_EIGEN
+	typedef Eigen::Matrix<double, 2, 1> NodalVector;
+	typedef Eigen::Matrix<double, 1, 2, Eigen::RowMajor> DimNodalMatrix;
+	typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> DimMatrix;
+	typedef Eigen::Matrix<double, 2, 2, Eigen::RowMajor> GlobalDimNodalMatrix;
+#endif
+	// Shape data type
+	typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
+	typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;
+	double r[] = {0.5};
+	auto line = TestLine2::createY();
+	//std::cout << *line;
+	static const unsigned dim = 1;
+	static const unsigned e_nnodes = 2;
+	ShapeMatricesType shape(dim, 2, e_nnodes);
+	MappingType::computeShapeMatrices(*line, r, shape);
+	std::cout <<  std::setprecision(16) << shape;
+	
+	double exp_J[dim*dim]= {0.0};
+	for (unsigned i=0; i<dim; i++)
+		exp_J[i+dim*i] = 1.0;
+	
+	const double eps(std::numeric_limits<double>::epsilon());
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_N, shape.N.data(), shape.N.size(), eps);
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), eps);
+	ASSERT_ARRAY_NEAR(exp_J, shape.J.data(), shape.J.size(), eps);
+	ASSERT_ARRAY_NEAR(exp_J, shape.invJ.data(), shape.invJ.size(), eps);
+	ASSERT_NEAR(1.0, shape.detJ, eps);
+	double exp_dNdx[2*e_nnodes] = {0, 0, -0.5, 0.5};
+	ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), eps);
+
+	delete line;
+}
+
