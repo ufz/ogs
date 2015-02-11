@@ -116,17 +116,17 @@ inline void computeMappingMatrices(
         //J^-1, dshape/dx
         shapemat.invJ = shapemat.J.inverse();
 		
-		GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(), ele.getNNodes());
-		MeshLib::CoordinateSystem coords(aabb);
-		if (coords.getDimension()==ele.getDimension()) {
-			shapemat.dNdx.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
-		} else {
-			MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
-			const EMatrix&matR = ele_local_coord.getRotationMatrixToOriginal();
-			EMatrix dshape_local = EMatrix::Zero(matR.rows(), shapemat.dNdx.cols());
-			dshape_local.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
-			shapemat.dNdx = matR * dshape_local;
-		}
+        GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(), ele.getNNodes());
+        MeshLib::CoordinateSystem coords(aabb);
+        if (coords.getDimension()==ele.getDimension()) {
+            shapemat.dNdx.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
+        } else {
+            MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
+            const EMatrix&matR = ele_local_coord.getRotationMatrixToOriginal();
+            EMatrix dshape_local = EMatrix::Zero(matR.rows(), shapemat.dNdx.cols());
+            dshape_local.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
+            shapemat.dNdx = matR * dshape_local;
+        }
     }
 }
 
