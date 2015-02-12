@@ -78,26 +78,25 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
+	// Points
 	this->Points->Reset();
-
 	vtkNew<VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
 	nodeCoords->SetNodes(_mesh->getNodes());
 	this->Points->SetData(nodeCoords.GetPointer());
+	output->SetPoints(this->Points.GetPointer());
 
+	// Elements
 	vtkNew<VtkMappedMesh> elems;
 	elems->GetImplementation()->SetNodes(_mesh->getNodes());
 	elems->GetImplementation()->SetElements(_mesh->getElements());
-
-	 // Use the mapped point container for the block points
 	elems->SetPoints(this->Points.GetPointer());
-
 	output->Allocate(elems->GetNumberOfCells());
 	output->ShallowCopy(elems.GetPointer());
 
+	// Arrays
 	MeshLib::Properties const & properties = _mesh->getProperties();
 	std::vector<std::string> const& propertyNames = properties.getPropertyNames();
 
-	// double
 	for(std::vector<std::string>::const_iterator it = propertyNames.cbegin(); it != propertyNames.cend(); ++it)
 	{
 		if (addDoubleProperty(*output, properties, *it))
@@ -108,6 +107,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 
 		DBUG ("Mesh property \"%s\" with unknown data type.", *it->c_str());
 	}
+
+	output->GetPointData()->ShallowCopy(this->PointData.GetPointer());
+	output->GetCellData()->ShallowCopy(this->CellData.GetPointer());
+
 	return 1;
 }
 
@@ -124,9 +127,9 @@ int VtkMappedMeshSource::addDoubleProperty(vtkUnstructuredGrid &output,
 	dataArray->SetName(prop_name.c_str());
 
 	if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-		output.GetPointData()->AddArray(dataArray.GetPointer());
+		this->PointData->AddArray(dataArray.GetPointer());
 	else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-		output.GetCellData()->AddArray(dataArray.GetPointer());
+		this->CellData->AddArray(dataArray.GetPointer());
 
 	return 1;
 }
@@ -144,9 +147,9 @@ int VtkMappedMeshSource::addIntProperty(vtkUnstructuredGrid &output,
 	dataArray->SetName(prop_name.c_str());
 
 	if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-		output.GetPointData()->AddArray(dataArray.GetPointer());
+		this->PointData->AddArray(dataArray.GetPointer());
 	else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-		output.GetCellData()->AddArray(dataArray.GetPointer());
+		this->CellData->AddArray(dataArray.GetPointer());
 
 	return 1;
 }

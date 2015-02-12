@@ -29,6 +29,7 @@
 #include "vtkUnstructuredGridAlgorithm.h"
 #include "vtkNew.h"
 
+class vtkCellData;
 class vtkDataArrayCollection;
 class vtkPointData;
 class vtkPoints;
@@ -80,6 +81,7 @@ private:
 
 	vtkNew<vtkPoints> Points;
 	vtkNew<vtkPointData> PointData;
+	vtkNew<vtkCellData> CellData;
 };
 
 } // Namespace InSituLib
