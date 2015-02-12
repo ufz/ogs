@@ -31,7 +31,9 @@
 
 // FileIO
 #include "Legacy/MeshIO.h"
+#ifndef OGS_DONT_USE_VTK
 #include "FileIO/VtkIO/VtuInterface.h"
+#endif
 #include "readMeshFromFile.h"
 // FileIO : for reading partitioned mesh.
 #ifdef USE_PETSC
@@ -53,8 +55,10 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 		return meshIO.loadMeshFromFile(file_name);
 	}
 
+#ifndef OGS_DONT_USE_VTK
 	if (BaseLib::hasFileExtension("vtu", file_name))
 		return VtuInterface::readVTUFile(file_name);
+#endif
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;

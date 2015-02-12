@@ -8,10 +8,15 @@ target_link_libraries(ogs
     BaseLib
     FileIO
     MeshLib
-    InSituLib
-    ${CATALYST_LIBRARIES}
     ${Boost_LIBRARIES}
 )
+if(NOT OGS_DONT_USE_VTK)
+    target_link_libraries(ogs
+        InSituLib
+        ${CATALYST_LIBRARIES}
+    )
+endif()
+
 ADD_CATALYST_DEPENDENCY(ogs)
 
 if(OGS_USE_PETSC)
