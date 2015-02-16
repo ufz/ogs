@@ -83,7 +83,6 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	vtkNew<VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
 	nodeCoords->SetNodes(_mesh->getNodes());
 	this->Points->SetData(nodeCoords.GetPointer());
-	output->SetPoints(this->Points.GetPointer());
 
 	// Elements
 	vtkNew<VtkMappedMesh> elems;
@@ -99,10 +98,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 
 	for(std::vector<std::string>::const_iterator it = propertyNames.cbegin(); it != propertyNames.cend(); ++it)
 	{
-		if (addDoubleProperty(*output, properties, *it))
+		if (addDoubleProperty(properties, *it))
 			continue;
 
-		if (addIntProperty(*output, properties, *it))
+		if (addIntProperty(properties, *it))
 			continue;
 
 		DBUG ("Mesh property \"%s\" with unknown data type.", *it->c_str());
@@ -114,8 +113,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	return 1;
 }
 
-int VtkMappedMeshSource::addDoubleProperty(vtkUnstructuredGrid &output,
-                                           MeshLib::Properties const& properties,
+int VtkMappedMeshSource::addDoubleProperty(MeshLib::Properties const& properties,
                                            std::string const& prop_name) const
 {
 	boost::optional<MeshLib::PropertyVector<double> const &> propertyVector(properties.getProperty<double>(prop_name));
@@ -134,8 +132,7 @@ int VtkMappedMeshSource::addDoubleProperty(vtkUnstructuredGrid &output,
 	return 1;
 }
 
-int VtkMappedMeshSource::addIntProperty(vtkUnstructuredGrid &output,
-                                        MeshLib::Properties const& properties,
+int VtkMappedMeshSource::addIntProperty(MeshLib::Properties const& properties,
                                         std::string const& prop_name) const
 {
 	boost::optional<MeshLib::PropertyVector<int> const &> propertyVector(properties.getProperty<int>(prop_name));
