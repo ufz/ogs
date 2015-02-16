@@ -20,7 +20,7 @@
 #include "AssemblerLib/SerialLisVectorMatrixBuilder.h"
 #endif  // USE_LIS
 
-template <typename SerialBuilder>
+template <typename Builder>
 class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
 {
     public:
@@ -28,8 +28,8 @@ class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
     typedef MeshLib::Location Location;
     typedef AssemblerLib::MeshComponentMap MeshComponentMap;
 
-    typedef typename SerialBuilder::VectorType VectorType;
-    typedef typename SerialBuilder::MatrixType MatrixType;
+    typedef typename Builder::VectorType VectorType;
+    typedef typename Builder::MatrixType MatrixType;
 
     public:
     AssemblerLibSerialVectorMatrixBuilder()
@@ -68,8 +68,8 @@ TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder);
 TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createVector)
 {
     typedef typename TestFixture::VectorType V;
-    typedef TypeParam SerialBuilder;
-    V* v = SerialBuilder::createVector(this->cmap->size());
+    typedef TypeParam Builder;
+    V* v = Builder::createVector(this->cmap->size());
 
     ASSERT_TRUE(v != nullptr);
     ASSERT_EQ(this->cmap->size(), v->size());
@@ -80,8 +80,8 @@ TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createVector)
 TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createMatrix)
 {
     typedef typename TestFixture::MatrixType M;
-    typedef TypeParam SerialBuilder;
-    M* v = SerialBuilder::createMatrix(this->cmap->size());
+    typedef TypeParam Builder;
+    M* v = Builder::createMatrix(this->cmap->size());
 
     ASSERT_TRUE(v != nullptr);
     ASSERT_EQ(this->cmap->size(), v->getNRows());
