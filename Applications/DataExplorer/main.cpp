@@ -1,5 +1,9 @@
 #include "mainwindow.h"
 #include <QtGui/QApplication>
+
+#include <vtkSmartPointer.h>
+#include "VtkConsoleOutputWindow.h"
+
 #ifdef VTKOSGCONVERTER_FOUND
 #include <OpenSG/OSGBaseFunctions.h>
 #endif
@@ -22,6 +26,10 @@ int main(int argc, char* argv[])
 #ifdef VTKFBXCONVERTER_FOUND
 	InitializeSdkObjects(lSdkManager, lScene);
 #endif
+
+	vtkSmartPointer<VtkConsoleOutputWindow> myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
+	vtkOutputWindow::SetInstance(myOutputWindow);
+
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
 	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;

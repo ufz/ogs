@@ -41,6 +41,7 @@ set(SOURCES
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
 	VtkAlgorithmProperties.cpp
+	VtkConsoleOutputWindow.cpp
 )
 
 # Moc headers
@@ -57,39 +58,6 @@ set(MOC_HEADERS
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
-)
-
-# Header files
-set(HEADERS
-	VtkAppendArrayFilter.h
-	VtkBGImageSource.h
-	VtkColorByHeightFilter.h
-	VtkColorLookupTable.h
-	VtkCompositeFilter.h
-	VtkCompositeColorByHeightFilter.h
-	VtkCompositeColormapToImageFilter.h
-	VtkCompositeContourFilter.h
-	VtkCompositeElementSelectionFilter.h
-	VtkCompositeGeoObjectFilter.h
-	VtkCompositeImageToCylindersFilter.h
-	VtkCompositeLineToTubeFilter.h
-	VtkCompositeNodeSelectionFilter.h
-	VtkCompositePointToGlyphFilter.h
-	VtkCompositeTextureOnSurfaceFilter.h
-	VtkCompositeThresholdFilter.h
-	VtkFilterFactory.h
-	VtkGeoImageSource.h
-	VtkImageDataToLinePolyDataFilter.h
-	VtkPolylinesSource.h
-	VtkPointsSource.h
-	VtkRaster.h
-	VtkStationSource.h
-	VtkSurfacesSource.h
-	VtkTextureOnSurfaceFilter.h
-	VtkVisHelper.h
-	VtkVisImageItem.h
-	VtkVisPipelineItem.h
-	VtkVisPointSetItem.h
 )
 
 # UI files
@@ -140,7 +108,6 @@ include_directories(
 # Create the library
 add_library(VtkVis STATIC
 	${SOURCES}
-	${HEADERS}
 	${MOC_HEADERS}
 	${MOC_SOURCES}
 	${UIS}
