@@ -148,8 +148,8 @@ void checkGlobalVectorInterfaceMPI()
 
     // -------------------------------------------------------------------
     // User determined partitioning
-    const bool is_gloabal_size = false;
-    T_VECTOR x_fixed_p(2, is_gloabal_size);
+    const bool is_global_size = false;
+    T_VECTOR x_fixed_p(2, is_global_size);
 
     ASSERT_EQ(6u, x_fixed_p.size());
 
