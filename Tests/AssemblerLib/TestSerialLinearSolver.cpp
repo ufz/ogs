@@ -16,9 +16,9 @@
 
 #include <gtest/gtest.h>
 
+#include "Applications/CLI/NumericsConfig.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalAssemblerBuilder.h"
-#include "AssemblerLib/SerialDenseSetup.h"
 
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
@@ -44,7 +44,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //--------------------------------------------------------------------------
     // Choose implementation type
     //--------------------------------------------------------------------------
-    typedef AssemblerLib::SerialDenseSetup GlobalSetup;
+    using GlobalSetup = GlobalSetupType;    // defined in numerics config
     const GlobalSetup globalSetup;
 
     //--------------------------------------------------------------------------
@@ -125,7 +125,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //--------------------------------------------------------------------------
     // solve x=A^-1 rhs
     //--------------------------------------------------------------------------
-    MathLib::GaussAlgorithm<GlobalMatrix, GlobalVector> ls(*A);
+    typename GlobalSetup::LinearSolver ls(*A);
     ls.solve(*rhs, *x);
 
     // copy solution to double vector
