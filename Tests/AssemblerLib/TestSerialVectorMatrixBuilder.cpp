@@ -14,11 +14,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubsets.h"
 
-#include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
-
-#ifdef USE_LIS
-#include "AssemblerLib/SerialLisVectorMatrixBuilder.h"
-#endif  // USE_LIS
+#include "AssemblerLib/SerialVectorMatrixBuilder.h"
 
 template <typename Builder>
 class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
@@ -93,11 +89,20 @@ TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createMatrix)
 REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
     createVector, createMatrix);
 
+#include "MathLib/LinAlg/Dense/DenseVector.h"
+#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
+
+#ifdef USE_LIS
+#include "MathLib/LinAlg/Lis/LisVector.h"
+#include "MathLib/LinAlg/Lis/LisMatrix.h"
+#endif  // USE_LIS
 
 typedef ::testing::Types
-    < AssemblerLib::SerialDenseVectorMatrixBuilder
+    < AssemblerLib::SerialVectorMatrixBuilder<
+        MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
 #ifdef USE_LIS
-    , AssemblerLib::SerialLisVectorMatrixBuilder
+    , AssemblerLib::SerialVectorMatrixBuilder<
+        MathLib::LisMatrix, MathLib::LisVector>
 #endif  // USE_LIS
     > TestTypes;
 
