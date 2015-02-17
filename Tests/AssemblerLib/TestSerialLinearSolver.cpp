@@ -128,8 +128,12 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     MathLib::GaussAlgorithm<GlobalMatrix, GlobalVector> ls(*A);
     ls.solve(*rhs, *x);
 
-    double* px = &(*x)[0];
-    ASSERT_ARRAY_NEAR(&ex1.exact_solutions[0], px, ex1.dim_eqs, 1.e-5);
+    // copy solution to double vector
+    std::vector<double> solution(x->size());
+    for (std::size_t i = 0; i < x->size(); ++i)
+        solution[i] = (*x)[i];
+
+    ASSERT_ARRAY_NEAR(&ex1.exact_solutions[0], &solution[0], ex1.dim_eqs, 1.e-5);
 
     std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
         [](MeshLib::MeshSubsets * p) { delete p; return true; });
