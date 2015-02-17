@@ -26,18 +26,22 @@ public:
     typedef MatrixType_ MatrixType;
 
 public:
+    /// Create matrix of given size. Any additional arguments are directly
+    /// passed to the vector constructor.
+    template <typename ...Args_>
     static
-    VectorType* createVector(std::size_t const size)
+    VectorType* createVector(std::size_t const size, Args_&&... args)
     {
-        VectorType* vec = new VectorType(size);
-        return vec;
+        return new VectorType(size, std::forward<Args_>(args)...);
     }
 
+    /// Create a matrix of given size. Any additional arguments are directly
+    /// passed to the matrix constructor.
+    template <typename ...Args_>
     static
-    MatrixType* createMatrix(std::size_t const size)
+    MatrixType* createMatrix(std::size_t const size, Args_&&... args)
     {
-        MatrixType* mat = new MatrixType(size);
-        return mat;
+        return new MatrixType(size, std::forward<Args_>(args)...);
     }
 
 };
