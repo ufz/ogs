@@ -77,13 +77,13 @@ TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createMatrix)
 {
     typedef typename TestFixture::MatrixType M;
     typedef TypeParam Builder;
-    M* v = Builder::createMatrix(this->cmap->size());
+    M* m = Builder::createMatrix(this->cmap->size());
 
-    ASSERT_TRUE(v != nullptr);
-    ASSERT_EQ(this->cmap->size(), v->getNRows());
-    ASSERT_EQ(this->cmap->size(), v->getNCols());
+    ASSERT_TRUE(m != nullptr);
+    ASSERT_EQ(this->cmap->size(), m->getNRows());
+    ASSERT_EQ(this->cmap->size(), m->getNCols());
 
-    delete v;
+    delete m;
 }
 
 REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
