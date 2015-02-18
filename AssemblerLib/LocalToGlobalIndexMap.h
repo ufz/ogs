@@ -139,7 +139,7 @@ private:
     std::vector<LineIndex> const& _columns = _rows;
 
 #ifndef NDEBUG
-    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap& map)
+    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
     {
         std::size_t const max_lines = 10;
         std::size_t lines_printed = 0;
