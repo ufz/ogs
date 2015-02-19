@@ -158,6 +158,28 @@ public:
 		}
 	}
 
+	/// Method to get a vector of property values.
+	template <typename T>
+	boost::optional<PropertyVector<T>&>
+	getProperty(std::string const& name)
+	{
+		std::map<std::string, boost::any>::iterator it(
+			_properties.find(name)
+		);
+		if (it != _properties.end()) {
+			try {
+				return boost::optional<PropertyVector<T>&>(
+						boost::any_cast<PropertyVector<T>&>(it->second)
+					);
+			} catch (boost::bad_any_cast &) {
+				return boost::optional<PropertyVector<T>&>();
+			}
+		} else {
+			ERR("A property with the specified name is not available.");
+			return boost::optional<PropertyVector<T>&>();
+		}
+	}
+
 	void removeProperty(std::string const& name)
 	{
 		std::map<std::string, boost::any>::const_iterator it(

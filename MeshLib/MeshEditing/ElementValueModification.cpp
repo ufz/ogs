@@ -72,6 +72,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh, unsigned old_value, 
 		if (elements[i]->getValue() == old_value)
 			elements[i]->setValue(new_value);
 	}
+	mesh.updateMaterialGroups();
 	return true;
 }
 
@@ -88,6 +89,7 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	for (unsigned i=0; i<nElements; ++i)
 		elements[i]->setValue(reverse_mapping[elements[i]->getValue()]);
 
+	mesh.updateMaterialGroups();
 	return nValues;
 }
 
@@ -102,6 +104,7 @@ unsigned ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshEle
 		nValues++;
 	}
 
+	mesh.updateMaterialGroups();
 	return nValues;
 }
 

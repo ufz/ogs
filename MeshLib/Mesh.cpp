@@ -48,6 +48,7 @@ Mesh::Mesh(const std::string &name,
 
 	this->calcEdgeLengthRange();
 	this->calcNodeDistanceRange();
+	this->updateMaterialGroups();
 }
 
 Mesh::Mesh(const Mesh &mesh)
@@ -269,5 +270,22 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
+void Mesh::updateMaterialGroups()
+{
+	std::size_t const nElements (_elements.size());
+	boost::optional<PropertyVector<int>&> materials (_properties.getProperty<int>("MaterialIDs"));
+	if (!materials)
+	{
+		materials = _properties.createNewPropertyVector<int>("MaterialIDs", MeshItemType::Cell, 1);
+		materials->resize(nElements, 0);
+	}
+	else if (materials->size() != nElements)
+	{
+		ERR ("Size of element vector and material vector do not match.");
+		return;
+	}
+	for (std::size_t i=0; i<nElements; ++i)
+		materials->at(i) = _elements[i]->getValue();
+}
 
 }

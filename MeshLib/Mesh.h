@@ -124,6 +124,8 @@ public:
 	MeshLib::Properties & getProperties() { return _properties; }
 	MeshLib::Properties const& getProperties() const { return _properties; }
 
+	void updateMaterialGroups();
+
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.
 	void calcEdgeLengthRange();
