@@ -23,6 +23,8 @@ namespace MathLib
 typedef MathLib::TemplatePoint<double,3> Point3d;
 } // end namespace MathLib
 
+bool operator< (MathLib::Point3d const & p0, MathLib::Point3d const & p1);
+
 /**
  * lexicographic comparison of points
  */
