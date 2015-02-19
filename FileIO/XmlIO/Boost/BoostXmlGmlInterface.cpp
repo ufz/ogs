@@ -20,7 +20,7 @@
 #include <fstream>
 
 #include "logog/include/logog.hpp"
-
+#include "BaseLib/StringTools.h"
 
 namespace FileIO
 {
@@ -55,7 +55,7 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	ptree doc;
 	read_xml(in, doc, boost::property_tree::xml_parser::no_comments);
 
-	
+
 	if (!isGmlFile(doc))
 		return false;
 
@@ -121,9 +121,10 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 		double   p_z  = static_cast<double>  (point.second.get("<xmlattr>.z",  std::numeric_limits<double>::max()));
 		std::string p_name = point.second.get("<xmlattr>.name", "");
 
-		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() || 
-			 p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() ) 
-			WARN("BoostXmlGmlInterface::readPoints(): Attribute missing in <point> tag. Skipping point...")
+		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() ||
+			 p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() )
+		WARN("BoostXmlGmlInterface::readPoints(): Skipping point, attribute missing in <point> tag:\n%s",
+			BaseLib::propertyTreeToString(point.second).c_str())
 		else
 		{
 			_idx_map.insert (std::pair<std::size_t, std::size_t>(p_id, points->size()));
@@ -138,7 +139,7 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 	if (pnt_names->empty())
 	{
 		delete pnt_names;
-		pnt_names = nullptr; 
+		pnt_names = nullptr;
 	}
 }
 
@@ -156,7 +157,8 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 			continue;
 
 		if (static_cast<unsigned>(polyline.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
-			WARN("BoostXmlGmlInterface::readPolylines(): Attribute \"id\" missing in <polyline> tag. Skipping polyline...")
+			WARN("BoostXmlGmlInterface::readPolylines(): Skipping polyline, attribute \"id\" missing in <polyline> tag:\n%s",
+				BaseLib::propertyTreeToString(polyline.second).c_str())
 		else
 		{
 			polylines->push_back(new GeoLib::Polyline(*points));
@@ -177,7 +179,7 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 	if (ply_names->empty())
 	{
 		delete ply_names;
-		ply_names = nullptr; 
+		ply_names = nullptr;
 	}
 }
 
@@ -195,7 +197,8 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 
 		if (static_cast<unsigned>(surface.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
 		{
-			WARN("BoostXmlGmlInterface::readSurfaces(): Attribute \"id\" missing in <surface> tag. Skipping surface...")
+			WARN("BoostXmlGmlInterface::readSurfaces(): Skipping surface, attribute \"id\" missing in <surface> tag:\n%s",
+				BaseLib::propertyTreeToString(surface.second).c_str())
 			continue;
 		}
 
@@ -215,7 +218,8 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 			unsigned p3_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p3", std::numeric_limits<unsigned>::max()));
 
 			if (p1_attr == std::numeric_limits<unsigned>::max() || p2_attr == std::numeric_limits<unsigned>::max() || p3_attr == std::numeric_limits<unsigned>::max())
-				WARN("BoostXmlGmlInterface::readSurfaces(): Attribute missing in <element> tag. Skipping triangle...");
+				WARN("BoostXmlGmlInterface::readSurfaces(): Skipping triangle, attribute missing in <element> tag:\n%s",
+					BaseLib::propertyTreeToString(element.second).c_str())
 			{
 				std::size_t p1 = pnt_id_map[_idx_map[p1_attr]];
 				std::size_t p2 = pnt_id_map[_idx_map[p2_attr]];
@@ -229,7 +233,7 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 	if (sfc_names->empty())
 	{
 		delete sfc_names;
-		sfc_names = nullptr; 
+		sfc_names = nullptr;
 	}
 }
 
