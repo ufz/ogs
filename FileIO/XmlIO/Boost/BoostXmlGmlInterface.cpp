@@ -32,7 +32,8 @@ BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 bool BoostXmlGmlInterface::readFile(const std::string &fname)
 {
 	std::ifstream in(fname.c_str());
-	if (!in) {
+	if (!in)
+	{
 		ERR("BoostXmlGmlInterface::readFile(): Can't open xml-file %s.", fname.c_str());
 		return false;
 	}
@@ -122,9 +123,9 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 		std::string p_name = point.second.get("<xmlattr>.name", "");
 
 		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() ||
-			 p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() )
-		WARN("BoostXmlGmlInterface::readPoints(): Skipping point, attribute missing in <point> tag:\n%s",
-			BaseLib::propertyTreeToString(point.second).c_str())
+		     p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() )
+			WARN("BoostXmlGmlInterface::readPoints(): Skipping point, attribute missing in <point> tag:\n%s",
+				BaseLib::propertyTreeToString(point.second).c_str())
 		else
 		{
 			_idx_map.insert (std::pair<std::size_t, std::size_t>(p_id, points->size()));
