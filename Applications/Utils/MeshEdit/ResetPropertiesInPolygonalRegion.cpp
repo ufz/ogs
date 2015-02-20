@@ -144,9 +144,9 @@ int main (int argc, char* argv[])
 		"the name of the file containing the input geometry", true,
 		"", "file name");
 	cmd.add(geometry_fname);
-	TCLAP::ValueArg<unsigned> polygon_id_arg("p", "polygon-id",
-		"id of polygon in the geometry", true, 0, "number");
-	cmd.add(polygon_id_arg);
+	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
+		"name of polygon in the geometry", true, "", "string");
+	cmd.add(polygon_name_arg);
 	TCLAP::ValueArg<unsigned> new_material_id_arg("n", "new-material-id",
 		"new material id", false, 0, "number");
 	cmd.add(new_material_id_arg);
@@ -177,7 +177,7 @@ int main (int argc, char* argv[])
 
 	// *** check if the data is usable
 	// *** get vector of polylines
-	std::vector<GeoLib::Polyline*> const* plys(geometries.getPolylineVec(geo_name));
+	GeoLib::PolylineVec const* plys(geometries.getPolylineVecObj(geo_name));
 	if (!plys) {
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
@@ -185,27 +185,29 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	// *** get polygon id
-	std::size_t polygon_id(polygon_id_arg.getValue());
-	if (plys->size() <= polygon_id) {
-		ERR("Polyline for id %d not found.", polygon_id);
+	// *** get polygon
+	GeoLib::Polyline const* ply(
+		plys->getElementByName(polygon_name_arg.getValue())
+	);
+	if (! ply) {
+		ERR("Polyline \"%s\" not found.", polygon_name_arg.getValue().c_str());
 		delete mesh;
 		return EXIT_FAILURE;
 	}
 
 	// *** check if the polyline is closed (i.e. is a polygon)
-	bool closed ((*plys)[polygon_id]->isClosed());
+	bool closed (ply->isClosed());
 	if (!closed)
 	{
-		ERR("Polyline with id %d is not closed, i.e. does not describe a\
-			region.", polygon_id);
+		ERR("Polyline \"%s\" is not closed, i.e. does not describe a\
+			region.", polygon_name_arg.getValue().c_str());
 		delete mesh;
 		return EXIT_FAILURE;
 	}
 
 	std::size_t new_property(new_material_id_arg.getValue());
 
-	GeoLib::Polygon polygon(*((*plys)[polygon_id]));
+	GeoLib::Polygon polygon(*(ply));
 
 	resetProperty(*mesh, polygon, new_property);
 
