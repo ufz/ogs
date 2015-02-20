@@ -163,8 +163,6 @@ int main (int argc, char* argv[])
 			INFO("Read geometry from file \"%s\".",
 				geometry_fname.getValue().c_str());
 		} else {
-			ERR("Problems to read geometry from file \"%s\".",
-				geometry_fname.getValue().c_str());
 			delete mesh;
 			return EXIT_FAILURE;
 		}
