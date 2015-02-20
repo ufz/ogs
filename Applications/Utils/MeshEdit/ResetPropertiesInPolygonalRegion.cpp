@@ -54,8 +54,8 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 	// 4 create new polygon
 	GeoLib::Polyline rot_polyline(*polygon_pnts);
 	for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
-		rot_polyline.addPoint (k);
-	rot_polyline.addPoint (0);
+		rot_polyline.addPoint(k);
+	rot_polyline.addPoint(0);
 	return GeoLib::Polygon(rot_polyline);
 }
 
@@ -129,7 +129,9 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("desc", ' ', "0.1");
+	TCLAP::CmdLine cmd("Sets the property id of an mesh element to a given new "
+		"id iff all nodes of the element are within a polygonal region "
+		"given by a polygon read from a gml file.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
 		"the name of the file containing the input mesh", true,
 		"", "file name");
